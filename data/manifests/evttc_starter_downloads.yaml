@@ -25,7 +25,7 @@ sequences:
         url: https://drive.google.com/file/d/1G3n7TIDlXBEHXu2IFSglQ_Ham1FeH-oM/view?usp=drive_link
       gt_ttc:
         kind: file
-        output: gt_ttc.zip
+        output: ttc.csv
         url: https://drive.google.com/file/d/1xY4ErB9ciicnaP5V9hkmDzw7D7DN0A75/view?usp=drive_link
       bbox_segmentation:
         kind: folder
@@ -44,7 +44,7 @@ sequences:
         url: https://drive.google.com/file/d/17Ph0WUvkNLF4g7AUb5QT1JMqa0trkYMI/view?usp=drive_link
       gt_ttc:
         kind: file
-        output: gt_ttc.zip
+        output: ttc.csv
         url: https://drive.google.com/file/d/1AdWsom8N1yPUM3rxHMZUQS_-FaRtoIWz/view?usp=drive_link
       bbox_segmentation:
         kind: folder
@@ -63,7 +63,7 @@ sequences:
         url: https://drive.google.com/file/d/1dUnAqWo8JR7P-MyryuD6ZGntC2o6SGJu/view?usp=drive_link
       gt_ttc:
         kind: file
-        output: gt_ttc.zip
+        output: ttc.csv
         url: https://drive.google.com/file/d/1O_pN0gVgrqMN5ekQQDjvA4g73_IqWy-o/view?usp=drive_link
       bbox_segmentation:
         kind: folder
@@ -82,7 +82,7 @@ sequences:
         url: https://drive.google.com/file/d/10oKP-BrkexYN33oIJSWg4-lWdIRzv31Y/view?usp=drive_link
       gt_ttc:
         kind: file
-        output: gt_ttc.zip
+        output: ttc.csv
         url: https://drive.google.com/file/d/1GTuIiaYRJuetAsPSoJU-56zyQaydREJg/view?usp=drive_link
       bbox_segmentation:
         kind: folder
@@ -101,7 +101,7 @@ sequences:
         url: https://drive.google.com/file/d/1qnu1-oD7zKMxKDCWSl0_eUW_HRIw7A2O/view?usp=drive_link
       gt_ttc:
         kind: file
-        output: gt_ttc.zip
+        output: ttc.csv
         url: https://drive.google.com/file/d/1iov7gaCyyXQR-OIfwTMkgegWqMz3hWOd/view?usp=drive_link
       bbox_segmentation:
         kind: folder
@@ -120,7 +120,7 @@ sequences:
         url: https://drive.google.com/file/d/1Qg4bEOqp7gmNTc-N20KUgejiRCrbl1CN/view?usp=drive_link
       gt_ttc:
         kind: file
-        output: gt_ttc.zip
+        output: ttc.csv
         url: https://drive.google.com/file/d/12YFy6S-5V5Kbdl5o2MyBzfGR4exdKHvb/view?usp=drive_link
       bbox_segmentation:
         kind: folder

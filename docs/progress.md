@@ -186,6 +186,9 @@ official Google Drive links for hdf5, gt-ttc, and bbox-segmentation assets.
 
 Added `scripts/download_evttc_starter.py`, which prints a dry-run download plan by default and only
 executes `gdown` when `--execute` is passed. Verified dry-run output contains 18 planned actions.
+Installed `gdown` in the local `.venv` and verified public access by downloading all six small
+`gt_ttc` assets as `ttc.csv` under ignored `datasets/evttc/...` directories. HDF5 and
+bbox-segmentation assets are still pending because they are the large downloads.
 
 The next sealed protocol should download these assets, rescan `datasets/evttc`, create a new starter
 manifest/split, and avoid tuning on the new test split.
