@@ -46,3 +46,12 @@ Dataset validation:
 - `data/splits/evttc_local.yaml` generated with full-sequence train/validation/test split.
 - Real HDF5 layout validated as `prophesee/event_cam_left/{x,y,t,p,ms_map_idx}`.
 - Real 100 ms window read from `CCRs-1-low-100-overlap-100`: 362,062 events, resolution 1280x720.
+
+Baseline:
+
+```text
+uv run --no-sync e-jepa-ttc baseline trivial --manifest data/manifests/evttc_local.yaml --split data/splits/evttc_local.yaml --output artifacts/metrics/trivial_baseline.json
+```
+
+Output is generated under ignored `artifacts/metrics/`. It is a sanity baseline only, not a model
+result or project claim.

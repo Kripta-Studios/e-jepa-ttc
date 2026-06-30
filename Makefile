@@ -1,4 +1,4 @@
-.PHONY: setup test lint smoke-data scan-data validate-data index-data split-data clean
+.PHONY: setup test lint smoke-data scan-data validate-data index-data split-data train-baseline clean
 
 setup:
 	uv sync --all-groups --no-editable
@@ -24,6 +24,9 @@ index-data:
 
 split-data:
 	uv run --no-sync e-jepa-ttc split create --manifest data/manifests/evttc_local.yaml --output data/splits/evttc_local.yaml --seed 42
+
+train-baseline:
+	uv run --no-sync e-jepa-ttc baseline trivial --manifest data/manifests/evttc_local.yaml --split data/splits/evttc_local.yaml --output artifacts/metrics/trivial_baseline.json
 
 clean:
 	python -m compileall -q src tests

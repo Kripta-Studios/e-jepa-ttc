@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 from typing import Any
 
+from e_jepa_ttc.baselines.trivial import run_trivial_baseline
 from e_jepa_ttc.data.evttc import (
     scan_evttc_root,
     validate_manifest,
@@ -82,6 +83,16 @@ def _cmd_split_create(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_baseline_trivial(args: argparse.Namespace) -> int:
+    payload = run_trivial_baseline(
+        manifest_path=args.manifest,
+        split_path=args.split,
+        output_path=args.output,
+    )
+    _print_json(payload)
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     """Build the root CLI parser."""
 
@@ -130,6 +141,17 @@ def build_parser() -> argparse.ArgumentParser:
     split_create.add_argument("--output", type=Path, required=True)
     split_create.add_argument("--seed", type=int, default=42)
     split_create.set_defaults(func=_cmd_split_create)
+
+    baseline = subparsers.add_parser("baseline", help="Baseline evaluation commands.")
+    baseline_sub = baseline.add_subparsers(dest="baseline_command", required=True)
+    baseline_trivial = baseline_sub.add_parser(
+        "trivial",
+        help="Evaluate mean/median TTC baselines.",
+    )
+    baseline_trivial.add_argument("--manifest", type=Path, required=True)
+    baseline_trivial.add_argument("--split", type=Path, required=True)
+    baseline_trivial.add_argument("--output", type=Path)
+    baseline_trivial.set_defaults(func=_cmd_baseline_trivial)
 
     return parser
 

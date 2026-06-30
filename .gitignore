@@ -21,6 +21,8 @@ artifacts/*
 !data/cache/
 !data/cache/.gitkeep
 !artifacts/metrics/
+artifacts/metrics/*
 !artifacts/figures/
+artifacts/figures/*
 !artifacts/metrics/.gitkeep
 !artifacts/figures/.gitkeep

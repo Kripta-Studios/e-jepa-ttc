@@ -50,6 +50,7 @@ install `.pth` encoding issue observed with CPython 3.11.
 - Sequence-level split generation and validation.
 - Event count, time surface, voxel grid, and sparse token representations.
 - Unit and integration tests for data contracts, representations, synthetic data, manifests, and splits.
+- Train-only mean/median TTC baseline runner with JSON metrics output.
 
 ## Not Implemented Yet
 
