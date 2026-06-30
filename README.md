@@ -4,10 +4,12 @@ Research MVP for Time-to-Contact / Time-to-Collision estimation from event camer
 
 The current repository implements the first engineering milestones from `AGENTS.md`: project
 bootstrap, typed data contracts, synthetic event data with known TTC, EvTTC dataset discovery,
-manifest validation, temporal indexing, sequence-level splits, and dense event representations.
+manifest validation, temporal indexing, sequence-level splits, dense event representations,
+classical TTC baselines, voxel-cache materialization, and a supervised TinyCNN TTC regressor.
 
-No experimental claims or benchmark numbers are reported yet. Metrics must be generated from
-reproducible runs before being added to this README.
+Experimental numbers must be generated from reproducible runs before being promoted to project
+claims. The bundled local EvTTC data is a three-sequence mini subset, so local results are smoke and
+sanity evidence rather than a broad benchmark.
 
 ## Quickstart
 
@@ -39,6 +41,25 @@ uv run --no-sync e-jepa-ttc split create --manifest data/manifests/evttc_local.y
 On Windows paths containing non-ASCII characters, `--no-editable` and `--no-sync` avoid an editable
 install `.pth` encoding issue observed with CPython 3.11.
 
+## GPU Training
+
+The base project dependencies stay lightweight. Install PyTorch into the existing virtualenv before
+using `train tiny-cnn`:
+
+```powershell
+uv pip install --python .\.venv\Scripts\python.exe torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128
+```
+
+Then build a voxel cache and train the supervised CNN:
+
+```powershell
+$env:PYTHONPATH='src'
+.\.venv\Scripts\python.exe -m e_jepa_ttc cache voxel --manifest data/manifests/evttc_local.yaml --split data/splits/evttc_local.yaml --index data/cache/evttc_index.json --output artifacts/features/evttc_voxel_160x90_b5.npz --width 160 --height 90 --bins 5
+.\.venv\Scripts\python.exe -m e_jepa_ttc train tiny-cnn --cache artifacts/features/evttc_voxel_160x90_b5.npz --output-dir artifacts/runs/tiny_cnn_voxel_160x90_b5_seed42 --epochs 80 --batch-size 96 --learning-rate 0.0003 --seed 42 --device auto
+```
+
+## Script Wrappers
+
 Implemented script wrappers mirror the CLI for current milestones:
 
 ```bash
@@ -47,6 +68,8 @@ uv run --no-sync python scripts/validate_dataset.py --manifest data/manifests/ev
 uv run --no-sync python scripts/build_index.py --manifest data/manifests/evttc_local.yaml --output data/cache/evttc_index.json
 uv run --no-sync python scripts/make_splits.py --manifest data/manifests/evttc_local.yaml --output data/splits/evttc_local.yaml
 uv run --no-sync python scripts/train_baseline.py --manifest data/manifests/evttc_local.yaml --split data/splits/evttc_local.yaml --output artifacts/metrics/trivial_baseline.json
+uv run --no-sync python scripts/build_voxel_cache.py --manifest data/manifests/evttc_local.yaml --split data/splits/evttc_local.yaml --index data/cache/evttc_index.json --output artifacts/features/evttc_voxel_160x90_b5.npz
+uv run --no-sync python scripts/train_tiny_cnn.py --cache artifacts/features/evttc_voxel_160x90_b5.npz --output-dir artifacts/runs/tiny_cnn_voxel_160x90_b5_seed42
 ```
 
 ## Implemented
@@ -59,17 +82,19 @@ uv run --no-sync python scripts/train_baseline.py --manifest data/manifests/evtt
 - Temporal window index generation from TTC timestamps.
 - Sequence-level split generation and validation.
 - Event count, time surface, voxel grid, and sparse token representations.
-- Unit and integration tests for data contracts, representations, synthetic data, manifests, and splits.
-- Train-only mean/median TTC baseline runner with JSON metrics output.
+- Mean/median, geometric bbox-expansion, and event-rate ridge TTC baselines.
+- Voxel tensor cache builder for supervised and representation-learning experiments.
+- Supervised TinyCNN log-TTC regressor with CUDA AMP, checkpoints, history, metrics, and predictions.
+- Unit and integration tests for data contracts, representations, synthetic data, manifests, splits,
+  and EvTTC window reads.
 
 ## Not Implemented Yet
 
-- Supervised Tiny CNN training.
 - E-JEPA target encoder and multi-horizon predictor.
-- Fine-tuning, robustness suite, ONNX export, streaming demo, and report generation.
+- Fine-tuning, robustness suite, ONNX export, streaming demo, and final report generation.
 
-These remain in the milestone order defined in `AGENTS.md`; they should be added after the data
-pipeline and representations remain green under tests.
+These remain in the milestone order defined in `AGENTS.md`; they should be added after the
+supervised baseline is established against the local data.
 
 ## Local Dataset Notes
 
