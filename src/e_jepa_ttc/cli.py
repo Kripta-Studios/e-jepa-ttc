@@ -163,6 +163,8 @@ def _cmd_pretrain_jepa(args: argparse.Namespace) -> int:
         mask_ratio=args.mask_ratio,
         block_count=args.block_count,
         ema_momentum=args.ema_momentum,
+        variance_weight=args.variance_weight,
+        min_std=args.min_std,
     )
     _print_json(payload)
     return 0
@@ -293,6 +295,8 @@ def build_parser() -> argparse.ArgumentParser:
     pretrain_jepa.add_argument("--mask-ratio", type=float, default=0.45)
     pretrain_jepa.add_argument("--block-count", type=int, default=4)
     pretrain_jepa.add_argument("--ema-momentum", type=float, default=0.99)
+    pretrain_jepa.add_argument("--variance-weight", type=float, default=1.0)
+    pretrain_jepa.add_argument("--min-std", type=float, default=0.05)
     pretrain_jepa.set_defaults(func=_cmd_pretrain_jepa)
 
     return parser

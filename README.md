@@ -62,7 +62,7 @@ To pretrain the encoder without TTC labels and then fine-tune the supervised hea
 
 ```powershell
 $env:PYTHONPATH='src'
-.\.venv\Scripts\python.exe -m e_jepa_ttc pretrain jepa --cache artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz --output-dir artifacts/runs/jepa_voxel_160x90_b5_raw_meta_train_seed7 --epochs 160 --batch-size 128 --learning-rate 0.0005 --seed 7 --device auto --pretrain-splits train --validation-splits validation
+.\.venv\Scripts\python.exe -m e_jepa_ttc pretrain jepa --cache artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz --output-dir artifacts/runs/jepa_voxel_160x90_b5_raw_meta_train_seed7 --epochs 160 --batch-size 128 --learning-rate 0.0005 --seed 7 --device auto --pretrain-splits train --validation-splits validation --variance-weight 1.0 --min-std 0.05
 .\.venv\Scripts\python.exe -m e_jepa_ttc train tiny-cnn --cache artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz --output-dir artifacts/runs/tiny_cnn_voxel_160x90_b5_raw_meta_jepa_seed7 --epochs 80 --batch-size 96 --learning-rate 0.0003 --seed 7 --device auto --pretrained-encoder artifacts/runs/jepa_voxel_160x90_b5_raw_meta_train_seed7/jepa_encoder_best.pt
 ```
 

@@ -100,6 +100,12 @@ def _update_ema(target: nn.Module, online: nn.Module, *, momentum: float) -> Non
         target_buffer.copy_(online_buffer)
 
 
+def _variance_loss(z: torch.Tensor, *, min_std: float) -> torch.Tensor:
+    z = z.float()
+    std = torch.sqrt(z.var(dim=0, unbiased=False) + 1e-4)
+    return torch.relu(min_std - std).mean()
+
+
 def _jepa_loss(
     encoder: TinyCNNEncoder,
     target_encoder: TinyCNNEncoder,
@@ -108,16 +114,27 @@ def _jepa_loss(
     *,
     mask_ratio: float,
     block_count: int,
-) -> tuple[torch.Tensor, float]:
+    variance_weight: float,
+    min_std: float,
+) -> tuple[torch.Tensor, dict[str, float]]:
     context = _masked_context(x, mask_ratio=mask_ratio, block_count=block_count)
-    pred = predictor(encoder(context))
+    context_z = encoder(context)
+    pred = predictor(context_z)
     with torch.no_grad():
-        target = target_encoder(x)
-    pred = functional.normalize(pred, dim=-1)
-    target = functional.normalize(target, dim=-1)
-    loss = functional.smooth_l1_loss(pred, target, beta=0.1)
-    target_std = float(target.detach().std(dim=0).mean().cpu())
-    return loss, target_std
+        target_z = target_encoder(x)
+    pred_norm = functional.normalize(pred, dim=-1)
+    target_norm = functional.normalize(target_z, dim=-1)
+    alignment_loss = functional.smooth_l1_loss(pred_norm, target_norm, beta=0.1)
+    variance = _variance_loss(context_z, min_std=min_std) + _variance_loss(pred, min_std=min_std)
+    loss = alignment_loss + variance_weight * variance
+    metrics = {
+        "alignment_loss": float(alignment_loss.detach().cpu()),
+        "variance_loss": float(variance.detach().cpu()),
+        "context_embedding_std": float(context_z.detach().float().std(dim=0).mean().cpu()),
+        "pred_embedding_std": float(pred.detach().float().std(dim=0).mean().cpu()),
+        "target_embedding_std": float(target_z.detach().float().std(dim=0).mean().cpu()),
+    }
+    return loss, metrics
 
 
 def _run_epoch(
@@ -132,27 +149,30 @@ def _run_epoch(
     mask_ratio: float,
     block_count: int,
     ema_momentum: float,
+    variance_weight: float,
+    min_std: float,
 ) -> dict[str, float]:
     train_mode = optimizer is not None
     encoder.train(train_mode)
     predictor.train(train_mode)
     target_encoder.eval()
     use_amp = scaler is not None and device.type == "cuda"
-    losses: list[float] = []
-    target_stds: list[float] = []
+    rows: list[dict[str, float]] = []
 
     for x in loader:
         x = x.to(device=device, non_blocking=True)
         if optimizer is not None:
             optimizer.zero_grad(set_to_none=True)
         with torch.autocast(device_type=device.type, dtype=torch.float16, enabled=use_amp):
-            loss, target_std = _jepa_loss(
+            loss, metrics = _jepa_loss(
                 encoder,
                 target_encoder,
                 predictor,
                 x,
                 mask_ratio=mask_ratio,
                 block_count=block_count,
+                variance_weight=variance_weight,
+                min_std=min_std,
             )
         if optimizer is not None:
             if scaler is None:
@@ -172,13 +192,12 @@ def _run_epoch(
                 scaler.step(optimizer)
                 scaler.update()
             _update_ema(target_encoder, encoder, momentum=ema_momentum)
-        losses.append(float(loss.detach().cpu()))
-        target_stds.append(target_std)
+        rows.append({"loss": float(loss.detach().cpu()), **metrics})
 
-    return {
-        "loss": float(np.mean(losses)) if losses else float("nan"),
-        "target_embedding_std": float(np.mean(target_stds)) if target_stds else float("nan"),
-    }
+    if not rows:
+        return {"loss": float("nan")}
+    keys = rows[0].keys()
+    return {key: float(np.mean([row[key] for row in rows])) for key in keys}
 
 
 def pretrain_jepa(
@@ -196,6 +215,8 @@ def pretrain_jepa(
     mask_ratio: float = 0.45,
     block_count: int = 4,
     ema_momentum: float = 0.99,
+    variance_weight: float = 1.0,
+    min_std: float = 0.05,
 ) -> dict[str, Any]:
     """Pretrain a TinyCNN encoder with a JEPA-style latent prediction objective."""
 
@@ -273,6 +294,8 @@ def pretrain_jepa(
                 mask_ratio=mask_ratio,
                 block_count=block_count,
                 ema_momentum=ema_momentum,
+                variance_weight=variance_weight,
+                min_std=min_std,
             )
             validation_metrics = None
             if val_loader is not None:
@@ -288,6 +311,8 @@ def pretrain_jepa(
                         mask_ratio=mask_ratio,
                         block_count=block_count,
                         ema_momentum=ema_momentum,
+                        variance_weight=variance_weight,
+                        min_std=min_std,
                     )
             score = (
                 validation_metrics["loss"]
@@ -356,6 +381,8 @@ def pretrain_jepa(
         "mask_ratio": mask_ratio,
         "block_count": block_count,
         "ema_momentum": ema_momentum,
+        "variance_weight": variance_weight,
+        "min_std": min_std,
         "best_epoch": best_epoch,
         "best_loss": best_score,
         "best_checkpoint": best_path.as_posix(),
