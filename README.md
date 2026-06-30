@@ -39,6 +39,16 @@ uv run --no-sync e-jepa-ttc split create --manifest data/manifests/evttc_local.y
 On Windows paths containing non-ASCII characters, `--no-editable` and `--no-sync` avoid an editable
 install `.pth` encoding issue observed with CPython 3.11.
 
+Implemented script wrappers mirror the CLI for current milestones:
+
+```bash
+uv run --no-sync python scripts/scan_evttc_manifest.py --root datasets/evttc --output data/manifests/evttc_local.yaml
+uv run --no-sync python scripts/validate_dataset.py --manifest data/manifests/evttc_local.yaml
+uv run --no-sync python scripts/build_index.py --manifest data/manifests/evttc_local.yaml --output data/cache/evttc_index.json
+uv run --no-sync python scripts/make_splits.py --manifest data/manifests/evttc_local.yaml --output data/splits/evttc_local.yaml
+uv run --no-sync python scripts/train_baseline.py --manifest data/manifests/evttc_local.yaml --split data/splits/evttc_local.yaml --output artifacts/metrics/trivial_baseline.json
+```
+
 ## Implemented
 
 - Synthetic expanding-object event generator with monotonic timestamps and known TTC labels.

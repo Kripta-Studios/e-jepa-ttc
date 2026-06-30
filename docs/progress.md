@@ -55,3 +55,13 @@ uv run --no-sync e-jepa-ttc baseline trivial --manifest data/manifests/evttc_loc
 
 Output is generated under ignored `artifacts/metrics/`. It is a sanity baseline only, not a model
 result or project claim.
+
+Implemented script wrappers:
+
+```text
+scripts/scan_evttc_manifest.py
+scripts/validate_dataset.py
+scripts/build_index.py
+scripts/make_splits.py
+scripts/train_baseline.py
+```
