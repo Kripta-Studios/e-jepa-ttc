@@ -132,6 +132,11 @@ The handoff contains an EvTTC mini subset under `datasets/evttc/CCRs-1` with thr
 sequences missing from the handoff. `scripts/download_evttc_starter.py` prints a dry-run plan by
 default and only calls `gdown` when `--execute` is passed.
 
+One extra HDF5 sequence, `CCRs-side-low`, was downloaded and scanned into
+`data/manifests/evttc_partial_starter.yaml` with split
+`data/splits/evttc_partial_starter.yaml`. This partial starter split is exploratory only; remaining
+starter HDF5 downloads hit Google Drive/gdown public-link limits during this run.
+
 See [docs/datasets_local.md](docs/datasets_local.md), [docs/progress.md](docs/progress.md), and [docs/local_results.md](docs/local_results.md).
 
 

@@ -193,3 +193,31 @@ bbox-segmentation assets are still pending because they are the large downloads.
 The next sealed protocol should download these assets, rescan `datasets/evttc`, create a new starter
 manifest/split, and avoid tuning on the new test split.
 
+Downloaded `CCRs-side-low` HDF5 successfully and validated that the scanner detects it. Attempted
+the bbox-segmentation folder, but `gdown --folder` failed after 78 JSON files because one Drive file
+could not expose a public download URL. Attempts to fetch additional HDF5 files also hit gdown/Drive
+public-link limits. Treat the local starter state as partial.
+
+Created:
+
+- `data/manifests/evttc_partial_starter.yaml`;
+- `data/splits/evttc_partial_starter.yaml`;
+- ignored `data/cache/evttc_partial_starter_index.json`;
+- ignored `artifacts/features/evttc_partial_starter_voxel_160x90_b5_raw_meta.npz`.
+
+Partial split:
+
+- train: `CCRs-1-low-100-overlap-100`, `CCRs-side-low`;
+- validation: `CCRs-1-medium-100-overlap-100`;
+- test: `CCRs-1-high-100-overlap-100`.
+
+Exploratory partial results:
+
+- Event-rate ridge: validation MAE 2.816 s, test MAE 2.970 s.
+- TinyCNN scratch full-label: validation MAE 3.047 s, test MAE 2.798 s.
+- Temporal JEPA partial full-label, best validation LR: validation MAE 2.468 s, test MAE 2.802 s.
+- TinyCNN scratch 5% labels: validation MAE 1.299 s, test MAE 3.091 s.
+- Temporal JEPA partial 5% labels, best validation LR: validation MAE 1.522 s, test MAE 2.939 s.
+- Temporal JEPA partial 5% labels at LR 3e-4 gives test MAE 2.489 s, but validation MAE 2.040 s;
+  this is diagnostic only and not a model one would select by validation.
+

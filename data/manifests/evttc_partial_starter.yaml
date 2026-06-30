@@ -1,0 +1,103 @@
+dataset: EvTTC
+version: local-handoff-2026-06-30
+notes: Local smoke subset discovered from datasets/evttc.
+sequences:
+- dataset: EvTTC
+  sequence_id: CCRs-1-high-100-overlap-100
+  local_path: datasets/evttc/CCRs-1/high-100/overlap-100
+  event_hdf5: 2024-09-25-16-03-10-003.hdf5
+  gt_hdf5: gt.hdf5
+  ttc_csv: ttc.csv
+  label_dir: leftlabel
+  scenario_family: CCRs-1
+  speed_bucket: high
+  target_type: car
+  split_group: CCRs-1-high-100-overlap-100
+  size_bytes: 8291180130
+  source_url: null
+  retrieval_date: null
+  license: null
+  citation: null
+  original_filename: 2024-09-25-16-03-10-003.hdf5
+  sha256: null
+  remote_name: CCRs-1-high-100-overlap-100
+  extra:
+    relative_parts:
+    - CCRs-1
+    - high-100
+    - overlap-100
+    label_count: 105
+- dataset: EvTTC
+  sequence_id: CCRs-1-low-100-overlap-100
+  local_path: datasets/evttc/CCRs-1/low-100/overlap-100
+  event_hdf5: 2024-07-15-14-53-45-001.hdf5
+  gt_hdf5: gt.hdf5
+  ttc_csv: ttc.csv
+  label_dir: leftlabel
+  scenario_family: CCRs-1
+  speed_bucket: low
+  target_type: car
+  split_group: CCRs-1-low-100-overlap-100
+  size_bytes: 3739814148
+  source_url: null
+  retrieval_date: null
+  license: null
+  citation: null
+  original_filename: 2024-07-15-14-53-45-001.hdf5
+  sha256: null
+  remote_name: CCRs-1-low-100-overlap-100
+  extra:
+    relative_parts:
+    - CCRs-1
+    - low-100
+    - overlap-100
+    label_count: 107
+- dataset: EvTTC
+  sequence_id: CCRs-1-medium-100-overlap-100
+  local_path: datasets/evttc/CCRs-1/medium-100/overlap-100
+  event_hdf5: 2024-07-15-14-56-33-002.hdf5
+  gt_hdf5: gt.hdf5
+  ttc_csv: ttc.csv
+  label_dir: leftlabel
+  scenario_family: CCRs-1
+  speed_bucket: medium
+  target_type: car
+  split_group: CCRs-1-medium-100-overlap-100
+  size_bytes: 4126871603
+  source_url: null
+  retrieval_date: null
+  license: null
+  citation: null
+  original_filename: 2024-07-15-14-56-33-002.hdf5
+  sha256: null
+  remote_name: CCRs-1-medium-100-overlap-100
+  extra:
+    relative_parts:
+    - CCRs-1
+    - medium-100
+    - overlap-100
+    label_count: 153
+- dataset: EvTTC
+  sequence_id: CCRs-side-low
+  local_path: datasets/evttc/CCRs-side/low
+  event_hdf5: data.hdf5
+  gt_hdf5: null
+  ttc_csv: ttc.csv
+  label_dir: null
+  scenario_family: CCRs-side
+  speed_bucket: low
+  target_type: car
+  split_group: CCRs-side-low
+  size_bytes: 4811301729
+  source_url: null
+  retrieval_date: null
+  license: null
+  citation: null
+  original_filename: data.hdf5
+  sha256: null
+  remote_name: CCRs-side-low
+  extra:
+    relative_parts:
+    - CCRs-side
+    - low
+    label_count: 0

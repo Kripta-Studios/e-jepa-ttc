@@ -150,6 +150,25 @@ def build_report(root: Path = ROOT) -> str:
         / "tiny_cnn_voxel_160x90_b5_raw_meta_temporal_jepa_seed7_frac10"
         / "metrics.json"
     )
+    partial_event_rate = _load_json(metrics_dir / "event_rate_partial_starter_baseline.json")
+    partial_scratch = _load_json(
+        runs_dir / "tiny_cnn_partial_starter_raw_meta_seed7" / "metrics.json"
+    )
+    partial_jepa = _load_json(
+        runs_dir / "tiny_cnn_partial_starter_temporal_jepa_seed7" / "metrics.json"
+    )
+    partial_jepa_lr = _load_json(
+        runs_dir / "tiny_cnn_partial_starter_temporal_jepa_seed7_lr1e4" / "metrics.json"
+    )
+    partial_frac05_scratch = _load_json(
+        runs_dir / "tiny_cnn_partial_starter_raw_meta_seed7_frac05" / "metrics.json"
+    )
+    partial_frac05_jepa = _load_json(
+        runs_dir / "tiny_cnn_partial_starter_temporal_jepa_seed7_frac05" / "metrics.json"
+    )
+    partial_frac05_jepa_lr = _load_json(
+        runs_dir / "tiny_cnn_partial_starter_temporal_jepa_seed7_frac05_lr1e4" / "metrics.json"
+    )
     jepa_all = _load_json(runs_dir / "jepa_voxel_160x90_b5_raw_meta_all_seed7" / "metrics.json")
     jepa_all_ft = _load_json(
         runs_dir / "tiny_cnn_voxel_160x90_b5_raw_meta_jepa_all_seed7" / "metrics.json"
@@ -194,6 +213,14 @@ def build_report(root: Path = ROOT) -> str:
     )
     best_jepa_train_ft = min(
         [jepa_train_ft, jepa_train_ft_lr],
+        key=lambda payload: _metric(payload, "validation", "mae_s"),
+    )
+    best_partial_jepa = min(
+        [partial_jepa, partial_jepa_lr],
+        key=lambda payload: _metric(payload, "validation", "mae_s"),
+    )
+    best_partial_frac05_jepa = min(
+        [partial_frac05_jepa, partial_frac05_jepa_lr],
         key=lambda payload: _metric(payload, "validation", "mae_s"),
     )
     (
@@ -336,6 +363,51 @@ def build_report(root: Path = ROOT) -> str:
             "Single-seed check. |"
         ),
         "",
+        "## Partial Starter Exploratory",
+        "",
+        "This protocol adds the downloaded `CCRs-side-low` HDF5+TTC sequence to train while",
+        "keeping the original validation/test sequences. It is useful for stress testing",
+        "domain shift, but it is not a sealed final protocol.",
+        "",
+        "| Method | Train labels | Validation MAE | Test MAE | Notes |",
+        "| --- | ---: | ---: | ---: | --- |",
+        (
+            "| Event-rate ridge | 100% | "
+            f"{_fmt(_metric(partial_event_rate, 'validation', 'mae_s'))} | "
+            f"{_fmt(_metric(partial_event_rate, 'test', 'mae_s'))} | "
+            "Fit on CCRs-1-low + CCRs-side-low. |"
+        ),
+        (
+            "| TinyCNN scratch | 100% | "
+            f"{_fmt(_metric(partial_scratch, 'validation', 'mae_s'))} | "
+            f"{_fmt(_metric(partial_scratch, 'test', 'mae_s'))} | "
+            "Raw+metadata partial-starter cache. |"
+        ),
+        (
+            "| Temporal JEPA + fine-tune | 100% | "
+            f"{_fmt(_metric(best_partial_jepa, 'validation', 'mae_s'))} | "
+            f"{_fmt(_metric(best_partial_jepa, 'test', 'mae_s'))} | "
+            "Best validation of lr 3e-4/1e-4. |"
+        ),
+        (
+            "| TinyCNN scratch | 5% | "
+            f"{_fmt(_metric(partial_frac05_scratch, 'validation', 'mae_s'))} | "
+            f"{_fmt(_metric(partial_frac05_scratch, 'test', 'mae_s'))} | "
+            "38 labeled train windows. |"
+        ),
+        (
+            "| Temporal JEPA + fine-tune | 5% | "
+            f"{_fmt(_metric(best_partial_frac05_jepa, 'validation', 'mae_s'))} | "
+            f"{_fmt(_metric(best_partial_frac05_jepa, 'test', 'mae_s'))} | "
+            "Best validation of lr 3e-4/1e-4. |"
+        ),
+        (
+            "| Temporal JEPA diagnostic | 5% | "
+            f"{_fmt(_metric(partial_frac05_jepa, 'validation', 'mae_s'))} | "
+            f"{_fmt(_metric(partial_frac05_jepa, 'test', 'mae_s'))} | "
+            "Not validation-selected; included because test shift response is notable. |"
+        ),
+        "",
         "## Anti-Leakage Audit",
         "",
         "- The `causal_geometry_baseline.json` run reports `uses_future_bboxes=false`,",
@@ -351,6 +423,8 @@ def build_report(root: Path = ROOT) -> str:
         "- Low-label subsets are sampled only from the train split. Validation is used for",
         "  checkpoint selection; the mini test split has been inspected repeatedly and is",
         "  therefore exploratory rather than a sealed final test.",
+        "- The partial starter runs add only `CCRs-side-low` to train. Remaining starter HDF5",
+        "  downloads were blocked by Google Drive/gdown access limits during this run.",
         "",
         "## JEPA Diagnostics",
         "",
@@ -400,8 +474,11 @@ def build_report(root: Path = ROOT) -> str:
         "   Raw+metadata improves sharply and can beat event-rate on validation for one seed,",
         "   but the five-seed mean remains behind event-rate on test and has high variance.",
         "6. With one training sequence, there is still not enough evidence to claim learned",
-        "   visual event representations generalize across speeds. The next meaningful step is",
-        "   the EvTTC starter subset with a fresh sealed test protocol.",
+        "   visual event representations generalize across speeds. Adding only CCRs-side-low",
+        "   gives mixed results: JEPA improves partial full-label validation over scratch, but",
+        "   the partial low-label validation-selected model still does not beat scratch.",
+        "7. The next meaningful step is the full EvTTC starter subset with a fresh sealed test",
+        "   protocol; gdown retrieved one extra HDF5 but then hit Drive access limits.",
         "",
         "## Reproduction",
         "",

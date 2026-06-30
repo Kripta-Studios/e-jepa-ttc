@@ -45,6 +45,21 @@ JEPA encoder is pretrained on train events only, without TTC labels.
 | 10% (34 windows) | TinyCNN scratch | 7 | 1.842 | 3.159 | Single-seed check. |
 | 10% (34 windows) | Temporal JEPA + fine-tune | 7 | 1.813 | 3.007 | Single-seed check. |
 
+## Partial Starter Exploratory
+
+This protocol adds the downloaded `CCRs-side-low` HDF5+TTC sequence to train while
+keeping the original validation/test sequences. It is useful for stress testing
+domain shift, but it is not a sealed final protocol.
+
+| Method | Train labels | Validation MAE | Test MAE | Notes |
+| --- | ---: | ---: | ---: | --- |
+| Event-rate ridge | 100% | 2.816 | 2.970 | Fit on CCRs-1-low + CCRs-side-low. |
+| TinyCNN scratch | 100% | 3.047 | 2.798 | Raw+metadata partial-starter cache. |
+| Temporal JEPA + fine-tune | 100% | 2.468 | 2.802 | Best validation of lr 3e-4/1e-4. |
+| TinyCNN scratch | 5% | 1.299 | 3.091 | 38 labeled train windows. |
+| Temporal JEPA + fine-tune | 5% | 1.522 | 2.939 | Best validation of lr 3e-4/1e-4. |
+| Temporal JEPA diagnostic | 5% | 2.040 | 2.489 | Not validation-selected; included because test shift response is notable. |
+
 ## Anti-Leakage Audit
 
 - The `causal_geometry_baseline.json` run reports `uses_future_bboxes=false`,
@@ -60,6 +75,8 @@ JEPA encoder is pretrained on train events only, without TTC labels.
 - Low-label subsets are sampled only from the train split. Validation is used for
   checkpoint selection; the mini test split has been inspected repeatedly and is
   therefore exploratory rather than a sealed final test.
+- The partial starter runs add only `CCRs-side-low` to train. Remaining starter HDF5
+  downloads were blocked by Google Drive/gdown access limits during this run.
 
 ## JEPA Diagnostics
 
@@ -87,8 +104,11 @@ JEPA encoder is pretrained on train events only, without TTC labels.
    Raw+metadata improves sharply and can beat event-rate on validation for one seed,
    but the five-seed mean remains behind event-rate on test and has high variance.
 6. With one training sequence, there is still not enough evidence to claim learned
-   visual event representations generalize across speeds. The next meaningful step is
-   the EvTTC starter subset with a fresh sealed test protocol.
+   visual event representations generalize across speeds. Adding only CCRs-side-low
+   gives mixed results: JEPA improves partial full-label validation over scratch, but
+   the partial low-label validation-selected model still does not beat scratch.
+7. The next meaningful step is the full EvTTC starter subset with a fresh sealed test
+   protocol; gdown retrieved one extra HDF5 but then hit Drive access limits.
 
 ## Reproduction
 

@@ -1,0 +1,15 @@
+version: 1
+seed: 42
+manifest: data/manifests/evttc_partial_starter.yaml
+splits:
+  train:
+    - CCRs-1-low-100-overlap-100
+    - CCRs-side-low
+  validation:
+    - CCRs-1-medium-100-overlap-100
+  test:
+    - CCRs-1-high-100-overlap-100
+notes: >
+  Partial starter split after downloading CCRs-side-low HDF5+TTC. This is not a
+  final sealed protocol; it keeps the repeatedly inspected CCRs-1-high sequence
+  as the same exploratory mini test while adding CCRs-side-low only to train.
