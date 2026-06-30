@@ -51,6 +51,16 @@ def _downsample_events(events: EventBatch, *, width: int, height: int) -> EventB
     )
 
 
+def _metadata_channels(events: EventBatch, *, width: int, height: int) -> np.ndarray:
+    duration_s = max(events.duration_us / 1_000_000.0, 1e-6)
+    log_count = np.float32(np.log1p(events.num_events))
+    log_rate = np.float32(np.log1p(events.num_events / duration_s))
+    meta = np.empty((2, height, width), dtype=np.float32)
+    meta[0].fill(log_count)
+    meta[1].fill(log_rate)
+    return meta
+
+
 def build_voxel_cache(
     *,
     manifest_path: str | Path,
@@ -60,6 +70,8 @@ def build_voxel_cache(
     width: int = 160,
     height: int = 90,
     bins: int = 5,
+    normalize: bool = True,
+    metadata_channels: bool = False,
     limit: int | None = None,
 ) -> dict[str, Any]:
     """Build an `.npz` cache with voxel tensors and labels."""
@@ -82,7 +94,7 @@ def build_voxel_cache(
     windows = _load_windows(index_path)
     if limit is not None:
         windows = windows[:limit]
-    channels = bins * 2
+    channels = bins * 2 + (2 if metadata_channels else 0)
     x_out = np.empty((len(windows), channels, height, width), dtype=np.float16)
     y_ttc = np.empty((len(windows),), dtype=np.float32)
     timestamps = np.empty((len(windows),), dtype=np.int64)
@@ -105,7 +117,10 @@ def build_voxel_cache(
             sequence_id=sequence_id,
         )
         small = _downsample_events(events, width=width, height=height)
-        x_out[idx] = encode_voxel_grid(small, bins=bins, normalize=True).astype(np.float16)
+        voxel = encode_voxel_grid(small, bins=bins, normalize=normalize)
+        if metadata_channels:
+            voxel = np.concatenate([voxel, _metadata_channels(events, width=width, height=height)])
+        x_out[idx] = voxel.astype(np.float16)
         y_ttc[idx] = float(window["ttc_seconds"])
         timestamps[idx] = int(window["timestamp_us"])
         sequence_ids.append(sequence_id)
@@ -124,6 +139,8 @@ def build_voxel_cache(
         width=np.array(width, dtype=np.int32),
         height=np.array(height, dtype=np.int32),
         bins=np.array(bins, dtype=np.int32),
+        normalize=np.array(normalize, dtype=np.bool_),
+        metadata_channels=np.array(metadata_channels, dtype=np.bool_),
     )
     summary = {
         "output": output.as_posix(),
@@ -133,6 +150,8 @@ def build_voxel_cache(
         "width": width,
         "height": height,
         "bins": bins,
+        "normalize": normalize,
+        "metadata_channels": metadata_channels,
         "seconds": time.perf_counter() - start_time,
         "mean_events_per_window": float(np.mean(event_counts)) if len(event_counts) else 0.0,
     }

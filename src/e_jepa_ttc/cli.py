@@ -122,6 +122,8 @@ def _cmd_cache_voxel(args: argparse.Namespace) -> int:
         width=args.width,
         height=args.height,
         bins=args.bins,
+        normalize=args.normalize,
+        metadata_channels=args.metadata_channels,
         limit=args.limit,
     )
     _print_json(payload)
@@ -227,6 +229,17 @@ def build_parser() -> argparse.ArgumentParser:
     cache_voxel.add_argument("--width", type=int, default=160)
     cache_voxel.add_argument("--height", type=int, default=90)
     cache_voxel.add_argument("--bins", type=int, default=5)
+    cache_voxel.add_argument(
+        "--no-normalize",
+        dest="normalize",
+        action="store_false",
+        help="Preserve raw voxel counts instead of robust per-window normalization.",
+    )
+    cache_voxel.add_argument(
+        "--metadata-channels",
+        action="store_true",
+        help="Append log event-count and log event-rate channels to each voxel grid.",
+    )
     cache_voxel.add_argument("--limit", type=int)
     cache_voxel.set_defaults(func=_cmd_cache_voxel)
 
@@ -251,4 +264,5 @@ def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
     return int(args.func(args))
+
 

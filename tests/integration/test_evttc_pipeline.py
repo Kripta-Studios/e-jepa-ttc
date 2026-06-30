@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import numpy as np
+
 from e_jepa_ttc.data.evttc import (
     count_events_window,
     discover_event_layout,
@@ -9,9 +11,11 @@ from e_jepa_ttc.data.evttc import (
     validate_manifest,
     write_manifest,
 )
-from e_jepa_ttc.data.index import build_temporal_index
+from e_jepa_ttc.data.index import build_temporal_index, write_index
+from e_jepa_ttc.data.ml_cache import build_voxel_cache
 from e_jepa_ttc.data.split import create_sequence_splits, validate_split_groups
 from e_jepa_ttc.data.synthetic import generate_synthetic_sequence, write_synthetic_hdf5
+from e_jepa_ttc.utils.io import write_structured
 
 
 def _write_sequence(root: Path, family: str, speed: str) -> None:
@@ -72,6 +76,31 @@ def test_scan_validate_index_and_split(tmp_path: Path) -> None:
     assert splits["validation"] == ["CCRs-1-medium-100-overlap-100"]
     assert splits["test"] == ["CCRs-1-high-100-overlap-100"]
 
+    index_path = tmp_path / "index.json"
+    split_path = tmp_path / "split.yaml"
+    cache_path = tmp_path / "voxel_cache.npz"
+    write_index(index_path, entries)
+    write_structured(split_path, {"splits": splits})
+    summary = build_voxel_cache(
+        manifest_path=manifest,
+        split_path=split_path,
+        index_path=index_path,
+        output_path=cache_path,
+        width=16,
+        height=12,
+        bins=2,
+        normalize=False,
+        metadata_channels=True,
+        limit=3,
+    )
+    assert summary["shape"] == [3, 6, 12, 16]
+    assert summary["normalize"] is False
+    assert summary["metadata_channels"] is True
+    cache = np.load(cache_path, allow_pickle=False)
+    assert bool(cache["normalize"]) is False
+    assert bool(cache["metadata_channels"]) is True
+    assert np.all(cache["x"][:, -2:].astype(np.float32) > 0.0)
+
 
 def test_discover_event_layout_on_fixture(tmp_path: Path) -> None:
     sequence = generate_synthetic_sequence(windows=4, seed=1)
@@ -103,3 +132,5 @@ def test_discover_event_layout_on_fixture(tmp_path: Path) -> None:
         t_end_us=60_000,
     )
     assert counted == window.num_events
+
+
