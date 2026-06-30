@@ -10,12 +10,9 @@ from typing import Any
 from e_jepa_ttc.baselines.event_rate import run_event_rate_baseline
 from e_jepa_ttc.baselines.geometric import run_geometric_baseline
 from e_jepa_ttc.baselines.trivial import run_trivial_baseline
-from e_jepa_ttc.data.evttc import (
-    scan_evttc_root,
-    validate_manifest,
-    write_manifest,
-)
+from e_jepa_ttc.data.evttc import scan_evttc_root, validate_manifest, write_manifest
 from e_jepa_ttc.data.index import build_temporal_index, write_index
+from e_jepa_ttc.data.ml_cache import build_voxel_cache
 from e_jepa_ttc.data.split import write_splits
 from e_jepa_ttc.data.synthetic import generate_synthetic_sequence, write_synthetic_hdf5
 
@@ -116,6 +113,37 @@ def _cmd_baseline_event_rate(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_cache_voxel(args: argparse.Namespace) -> int:
+    payload = build_voxel_cache(
+        manifest_path=args.manifest,
+        split_path=args.split,
+        index_path=args.index,
+        output_path=args.output,
+        width=args.width,
+        height=args.height,
+        bins=args.bins,
+        limit=args.limit,
+    )
+    _print_json(payload)
+    return 0
+
+
+def _cmd_train_tiny_cnn(args: argparse.Namespace) -> int:
+    from e_jepa_ttc.training.supervised import train_tiny_cnn
+
+    payload = train_tiny_cnn(
+        cache_path=args.cache,
+        output_dir=args.output_dir,
+        epochs=args.epochs,
+        batch_size=args.batch_size,
+        learning_rate=args.learning_rate,
+        seed=args.seed,
+        device_name=args.device,
+    )
+    _print_json(payload)
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     """Build the root CLI parser."""
 
@@ -137,16 +165,13 @@ def build_parser() -> argparse.ArgumentParser:
 
     data = subparsers.add_parser("data", help="Dataset manifest and indexing commands.")
     data_sub = data.add_subparsers(dest="data_command", required=True)
-
     data_scan = data_sub.add_parser("scan", help="Scan an EvTTC local root.")
     data_scan.add_argument("--root", type=Path, required=True)
     data_scan.add_argument("--output", type=Path, required=True)
     data_scan.set_defaults(func=_cmd_data_scan)
-
     data_validate = data_sub.add_parser("validate", help="Validate a dataset manifest.")
     data_validate.add_argument("--manifest", type=Path, required=True)
     data_validate.set_defaults(func=_cmd_data_validate)
-
     data_index = data_sub.add_parser("index", help="Create a temporal window index.")
     data_index.add_argument("--manifest", type=Path, required=True)
     data_index.add_argument("--output", type=Path, required=True)
@@ -168,14 +193,12 @@ def build_parser() -> argparse.ArgumentParser:
     baseline = subparsers.add_parser("baseline", help="Baseline evaluation commands.")
     baseline_sub = baseline.add_subparsers(dest="baseline_command", required=True)
     baseline_trivial = baseline_sub.add_parser(
-        "trivial",
-        help="Evaluate mean/median TTC baselines.",
+        "trivial", help="Evaluate mean/median TTC baselines."
     )
     baseline_trivial.add_argument("--manifest", type=Path, required=True)
     baseline_trivial.add_argument("--split", type=Path, required=True)
     baseline_trivial.add_argument("--output", type=Path)
     baseline_trivial.set_defaults(func=_cmd_baseline_trivial)
-
     baseline_geometric = baseline_sub.add_parser(
         "geometric",
         help="Evaluate bbox apparent-expansion TTC baseline.",
@@ -184,15 +207,40 @@ def build_parser() -> argparse.ArgumentParser:
     baseline_geometric.add_argument("--split", type=Path, required=True)
     baseline_geometric.add_argument("--output", type=Path)
     baseline_geometric.set_defaults(func=_cmd_baseline_geometric)
-
     baseline_event_rate = baseline_sub.add_parser(
-        "event-rate", help="Evaluate event-rate ridge baseline."
+        "event-rate",
+        help="Evaluate event-rate ridge baseline.",
     )
     baseline_event_rate.add_argument("--manifest", type=Path, required=True)
     baseline_event_rate.add_argument("--split", type=Path, required=True)
     baseline_event_rate.add_argument("--index", type=Path, required=True)
     baseline_event_rate.add_argument("--output", type=Path)
     baseline_event_rate.set_defaults(func=_cmd_baseline_event_rate)
+
+    cache = subparsers.add_parser("cache", help="Feature cache commands.")
+    cache_sub = cache.add_subparsers(dest="cache_command", required=True)
+    cache_voxel = cache_sub.add_parser("voxel", help="Build compact voxel-grid tensor cache.")
+    cache_voxel.add_argument("--manifest", type=Path, required=True)
+    cache_voxel.add_argument("--split", type=Path, required=True)
+    cache_voxel.add_argument("--index", type=Path, required=True)
+    cache_voxel.add_argument("--output", type=Path, required=True)
+    cache_voxel.add_argument("--width", type=int, default=160)
+    cache_voxel.add_argument("--height", type=int, default=90)
+    cache_voxel.add_argument("--bins", type=int, default=5)
+    cache_voxel.add_argument("--limit", type=int)
+    cache_voxel.set_defaults(func=_cmd_cache_voxel)
+
+    train = subparsers.add_parser("train", help="Training commands.")
+    train_sub = train.add_subparsers(dest="train_command", required=True)
+    train_tiny = train_sub.add_parser("tiny-cnn", help="Train supervised TinyCNN on voxel cache.")
+    train_tiny.add_argument("--cache", type=Path, required=True)
+    train_tiny.add_argument("--output-dir", type=Path, required=True)
+    train_tiny.add_argument("--epochs", type=int, default=80)
+    train_tiny.add_argument("--batch-size", type=int, default=64)
+    train_tiny.add_argument("--learning-rate", type=float, default=3e-4)
+    train_tiny.add_argument("--seed", type=int, default=42)
+    train_tiny.add_argument("--device", type=str, default="auto")
+    train_tiny.set_defaults(func=_cmd_train_tiny_cnn)
 
     return parser
 
@@ -203,3 +251,4 @@ def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
     return int(args.func(args))
+
