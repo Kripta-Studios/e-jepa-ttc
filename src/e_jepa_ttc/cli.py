@@ -7,6 +7,8 @@ import json
 from pathlib import Path
 from typing import Any
 
+from e_jepa_ttc.baselines.event_rate import run_event_rate_baseline
+from e_jepa_ttc.baselines.geometric import run_geometric_baseline
 from e_jepa_ttc.baselines.trivial import run_trivial_baseline
 from e_jepa_ttc.data.evttc import (
     scan_evttc_root,
@@ -93,6 +95,27 @@ def _cmd_baseline_trivial(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_baseline_geometric(args: argparse.Namespace) -> int:
+    payload = run_geometric_baseline(
+        manifest_path=args.manifest,
+        split_path=args.split,
+        output_path=args.output,
+    )
+    _print_json(payload)
+    return 0
+
+
+def _cmd_baseline_event_rate(args: argparse.Namespace) -> int:
+    payload = run_event_rate_baseline(
+        manifest_path=args.manifest,
+        split_path=args.split,
+        index_path=args.index,
+        output_path=args.output,
+    )
+    _print_json(payload)
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     """Build the root CLI parser."""
 
@@ -152,6 +175,24 @@ def build_parser() -> argparse.ArgumentParser:
     baseline_trivial.add_argument("--split", type=Path, required=True)
     baseline_trivial.add_argument("--output", type=Path)
     baseline_trivial.set_defaults(func=_cmd_baseline_trivial)
+
+    baseline_geometric = baseline_sub.add_parser(
+        "geometric",
+        help="Evaluate bbox apparent-expansion TTC baseline.",
+    )
+    baseline_geometric.add_argument("--manifest", type=Path, required=True)
+    baseline_geometric.add_argument("--split", type=Path, required=True)
+    baseline_geometric.add_argument("--output", type=Path)
+    baseline_geometric.set_defaults(func=_cmd_baseline_geometric)
+
+    baseline_event_rate = baseline_sub.add_parser(
+        "event-rate", help="Evaluate event-rate ridge baseline."
+    )
+    baseline_event_rate.add_argument("--manifest", type=Path, required=True)
+    baseline_event_rate.add_argument("--split", type=Path, required=True)
+    baseline_event_rate.add_argument("--index", type=Path, required=True)
+    baseline_event_rate.add_argument("--output", type=Path)
+    baseline_event_rate.set_defaults(func=_cmd_baseline_event_rate)
 
     return parser
 

@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from e_jepa_ttc.data.evttc import (
+    count_events_window,
     discover_event_layout,
     read_events_window,
     read_manifest,
@@ -95,3 +96,10 @@ def test_discover_event_layout_on_fixture(tmp_path: Path) -> None:
     assert window.height == 48
     assert int(window.t_us[0]) >= 20_000
     assert int(window.t_us[-1]) < 60_000
+
+    counted = count_events_window(
+        path,
+        t_start_us=20_000,
+        t_end_us=60_000,
+    )
+    assert counted == window.num_events

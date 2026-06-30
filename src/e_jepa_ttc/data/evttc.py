@@ -347,6 +347,37 @@ def read_events_window(
     return batch
 
 
+def count_events_window(
+    path: str | Path,
+    *,
+    t_start_us: int,
+    t_end_us: int,
+) -> int:
+    """Count events in ``[t_start_us, t_end_us]`` without reading all event fields."""
+
+    import h5py
+
+    layout = discover_event_layout(path)
+    if layout is None or layout.t is None:
+        msg = f"Could not discover timestamp field in {path}."
+        raise ValueError(msg)
+
+    with h5py.File(path, "r") as h5:
+        event_count = int(h5[layout.t].shape[0])
+        if layout.ms_map_idx and layout.ms_map_idx in h5:
+            rough_start, rough_end = _slice_bounds_from_ms_map(
+                h5[layout.ms_map_idx],
+                event_count=event_count,
+                t_start_us=t_start_us,
+                t_end_us=t_end_us,
+            )
+        else:
+            rough_start, rough_end = 0, event_count
+        timestamps = h5[layout.t][rough_start:rough_end]
+    start, end = _refine_bounds(timestamps, rough_start, t_start_us, t_end_us)
+    return max(0, int(end - start))
+
+
 def validate_manifest(path: str | Path) -> dict[str, Any]:
     """Validate manifest paths and target files."""
 
