@@ -103,6 +103,25 @@ def _train_one_epoch(
     return float(np.mean(losses)) if losses else float("nan")
 
 
+def _load_pretrained_encoder(
+    model: TinyCNNRegressor,
+    checkpoint_path: str | Path,
+    *,
+    device: torch.device,
+) -> dict[str, Any]:
+    checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)
+    state = checkpoint.get("encoder_state_dict")
+    if state is None:
+        msg = f"Checkpoint {checkpoint_path} does not contain encoder_state_dict."
+        raise ValueError(msg)
+    model.encoder.load_state_dict(state)
+    return {
+        "path": Path(checkpoint_path).as_posix(),
+        "source_epoch": checkpoint.get("epoch"),
+        "source_model": checkpoint.get("model"),
+    }
+
+
 def train_tiny_cnn(
     *,
     cache_path: str | Path,
@@ -113,6 +132,7 @@ def train_tiny_cnn(
     weight_decay: float = 1e-3,
     seed: int = 42,
     device_name: str = "auto",
+    pretrained_encoder_path: str | Path | None = None,
 ) -> dict[str, Any]:
     """Train TinyCNN on a materialized voxel cache."""
 
@@ -147,6 +167,13 @@ def train_tiny_cnn(
     )
 
     model = TinyCNNRegressor(in_channels=int(x.shape[1])).to(device)
+    pretrained_encoder: dict[str, Any] | None = None
+    if pretrained_encoder_path is not None:
+        pretrained_encoder = _load_pretrained_encoder(
+            model,
+            pretrained_encoder_path,
+            device=device,
+        )
     optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=weight_decay)
     loss_fn = nn.SmoothL1Loss(beta=0.25)
     scaler = torch.amp.GradScaler("cuda") if device.type == "cuda" else None
@@ -250,6 +277,7 @@ def train_tiny_cnn(
         "batch_size": batch_size,
         "learning_rate": learning_rate,
         "weight_decay": weight_decay,
+        "pretrained_encoder": pretrained_encoder,
         "best_epoch": best_epoch,
         "best_checkpoint": best_path.as_posix(),
         "last_checkpoint": last_path.as_posix(),

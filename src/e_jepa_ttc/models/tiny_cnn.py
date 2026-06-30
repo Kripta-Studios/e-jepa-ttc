@@ -1,4 +1,4 @@
-"""Tiny CNN supervised TTC regressor."""
+"""Tiny CNN encoder and supervised TTC regressor."""
 
 from __future__ import annotations
 
@@ -26,11 +26,12 @@ class ResidualBlock(nn.Module):
         return self.activation(x + self.net(x))
 
 
-class TinyCNNRegressor(nn.Module):
-    """Compact CNN predicting log-TTC from voxel grids."""
+class TinyCNNEncoder(nn.Module):
+    """Compact CNN encoder for dense event voxel grids."""
 
     def __init__(self, in_channels: int, width: int = 48) -> None:
         super().__init__()
+        self.output_dim = width * 4
         self.backbone = nn.Sequential(
             nn.Conv2d(in_channels, width, kernel_size=5, stride=2, padding=2, bias=False),
             nn.BatchNorm2d(width),
@@ -46,9 +47,21 @@ class TinyCNNRegressor(nn.Module):
             ResidualBlock(width * 4),
             nn.AdaptiveAvgPool2d((1, 1)),
         )
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Encode a batch into pooled latent vectors."""
+
+        return self.backbone(x).flatten(1)
+
+
+class TinyCNNRegressor(nn.Module):
+    """Compact CNN predicting log-TTC from voxel grids."""
+
+    def __init__(self, in_channels: int, width: int = 48) -> None:
+        super().__init__()
+        self.encoder = TinyCNNEncoder(in_channels=in_channels, width=width)
         self.head = nn.Sequential(
-            nn.Flatten(),
-            nn.Linear(width * 4, width * 2),
+            nn.Linear(self.encoder.output_dim, width * 2),
             nn.SiLU(inplace=True),
             nn.Dropout(p=0.1),
             nn.Linear(width * 2, 1),
@@ -57,4 +70,4 @@ class TinyCNNRegressor(nn.Module):
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """Predict log-TTC for a batch of voxel grids."""
 
-        return self.head(self.backbone(x)).squeeze(-1)
+        return self.head(self.encoder(x)).squeeze(-1)

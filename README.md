@@ -58,6 +58,14 @@ $env:PYTHONPATH='src'
 .\.venv\Scripts\python.exe -m e_jepa_ttc train tiny-cnn --cache artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz --output-dir artifacts/runs/tiny_cnn_voxel_160x90_b5_raw_meta_seed7 --epochs 80 --batch-size 96 --learning-rate 0.0003 --seed 7 --device auto
 ```
 
+To pretrain the encoder without TTC labels and then fine-tune the supervised head:
+
+```powershell
+$env:PYTHONPATH='src'
+.\.venv\Scripts\python.exe -m e_jepa_ttc pretrain jepa --cache artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz --output-dir artifacts/runs/jepa_voxel_160x90_b5_raw_meta_train_seed7 --epochs 160 --batch-size 128 --learning-rate 0.0005 --seed 7 --device auto --pretrain-splits train --validation-splits validation
+.\.venv\Scripts\python.exe -m e_jepa_ttc train tiny-cnn --cache artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz --output-dir artifacts/runs/tiny_cnn_voxel_160x90_b5_raw_meta_jepa_seed7 --epochs 80 --batch-size 96 --learning-rate 0.0003 --seed 7 --device auto --pretrained-encoder artifacts/runs/jepa_voxel_160x90_b5_raw_meta_train_seed7/jepa_encoder_best.pt
+```
+
 ## Local Results
 
 Current local results are summarized in [docs/local_results.md](docs/local_results.md). The strongest
@@ -76,6 +84,7 @@ uv run --no-sync python scripts/build_index.py --manifest data/manifests/evttc_l
 uv run --no-sync python scripts/make_splits.py --manifest data/manifests/evttc_local.yaml --output data/splits/evttc_local.yaml
 uv run --no-sync python scripts/train_baseline.py --manifest data/manifests/evttc_local.yaml --split data/splits/evttc_local.yaml --output artifacts/metrics/trivial_baseline.json
 uv run --no-sync python scripts/build_voxel_cache.py --manifest data/manifests/evttc_local.yaml --split data/splits/evttc_local.yaml --index data/cache/evttc_index.json --output artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz --no-normalize --metadata-channels
+uv run --no-sync python scripts/pretrain_jepa.py --cache artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz --output-dir artifacts/runs/jepa_voxel_160x90_b5_raw_meta_train_seed7
 uv run --no-sync python scripts/train_tiny_cnn.py --cache artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz --output-dir artifacts/runs/tiny_cnn_voxel_160x90_b5_raw_meta_seed7 --seed 7
 ```
 
@@ -91,13 +100,15 @@ uv run --no-sync python scripts/train_tiny_cnn.py --cache artifacts/features/evt
 - Event count, time surface, voxel grid, and sparse token representations.
 - Mean/median, geometric bbox-expansion, and event-rate ridge TTC baselines.
 - Voxel tensor cache builder for supervised and representation-learning experiments.
+- JEPA-style self-supervised pretraining with online encoder, EMA target encoder, latent
+  predictor, and masked context views.
 - Supervised TinyCNN log-TTC regressor with CUDA AMP, checkpoints, history, metrics, and predictions.
 - Unit and integration tests for data contracts, representations, synthetic data, manifests, splits,
   and EvTTC window reads.
 
 ## Not Implemented Yet
 
-- E-JEPA target encoder and multi-horizon predictor.
+- Multi-horizon JEPA predictor and larger-scale pretraining.
 - Fine-tuning, robustness suite, ONNX export, streaming demo, and project-level final report generation.
 
 These remain in the milestone order defined in `AGENTS.md`; they should be added after the

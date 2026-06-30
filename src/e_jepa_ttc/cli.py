@@ -141,6 +141,28 @@ def _cmd_train_tiny_cnn(args: argparse.Namespace) -> int:
         learning_rate=args.learning_rate,
         seed=args.seed,
         device_name=args.device,
+        pretrained_encoder_path=args.pretrained_encoder,
+    )
+    _print_json(payload)
+    return 0
+
+
+def _cmd_pretrain_jepa(args: argparse.Namespace) -> int:
+    from e_jepa_ttc.training.jepa import pretrain_jepa
+
+    payload = pretrain_jepa(
+        cache_path=args.cache,
+        output_dir=args.output_dir,
+        epochs=args.epochs,
+        batch_size=args.batch_size,
+        learning_rate=args.learning_rate,
+        seed=args.seed,
+        device_name=args.device,
+        pretrain_splits=tuple(args.pretrain_splits),
+        validation_splits=tuple(args.validation_splits),
+        mask_ratio=args.mask_ratio,
+        block_count=args.block_count,
+        ema_momentum=args.ema_momentum,
     )
     _print_json(payload)
     return 0
@@ -253,7 +275,25 @@ def build_parser() -> argparse.ArgumentParser:
     train_tiny.add_argument("--learning-rate", type=float, default=3e-4)
     train_tiny.add_argument("--seed", type=int, default=42)
     train_tiny.add_argument("--device", type=str, default="auto")
+    train_tiny.add_argument("--pretrained-encoder", type=Path)
     train_tiny.set_defaults(func=_cmd_train_tiny_cnn)
+
+    pretrain = subparsers.add_parser("pretrain", help="Self-supervised pretraining commands.")
+    pretrain_sub = pretrain.add_subparsers(dest="pretrain_command", required=True)
+    pretrain_jepa = pretrain_sub.add_parser("jepa", help="Pretrain TinyCNN encoder with JEPA.")
+    pretrain_jepa.add_argument("--cache", type=Path, required=True)
+    pretrain_jepa.add_argument("--output-dir", type=Path, required=True)
+    pretrain_jepa.add_argument("--epochs", type=int, default=120)
+    pretrain_jepa.add_argument("--batch-size", type=int, default=128)
+    pretrain_jepa.add_argument("--learning-rate", type=float, default=5e-4)
+    pretrain_jepa.add_argument("--seed", type=int, default=42)
+    pretrain_jepa.add_argument("--device", type=str, default="auto")
+    pretrain_jepa.add_argument("--pretrain-splits", nargs="+", default=["train"])
+    pretrain_jepa.add_argument("--validation-splits", nargs="+", default=["validation"])
+    pretrain_jepa.add_argument("--mask-ratio", type=float, default=0.45)
+    pretrain_jepa.add_argument("--block-count", type=int, default=4)
+    pretrain_jepa.add_argument("--ema-momentum", type=float, default=0.99)
+    pretrain_jepa.set_defaults(func=_cmd_pretrain_jepa)
 
     return parser
 

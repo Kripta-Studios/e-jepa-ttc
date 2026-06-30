@@ -1,4 +1,4 @@
-.PHONY: setup test lint smoke-data scan-data validate-data index-data split-data train-baseline baseline-trivial baseline-geometric baseline-event-rate cache-voxel train-tiny-cnn clean
+.PHONY: setup test lint smoke-data scan-data validate-data index-data split-data train-baseline baseline-trivial baseline-geometric baseline-event-rate cache-voxel pretrain-jepa train-tiny-cnn train-tiny-cnn-jepa clean
 
 setup:
 	uv sync --all-groups --no-editable
@@ -39,8 +39,14 @@ baseline-event-rate:
 cache-voxel:
 	uv run --no-sync e-jepa-ttc cache voxel --manifest data/manifests/evttc_local.yaml --split data/splits/evttc_local.yaml --index data/cache/evttc_index.json --output artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz --width 160 --height 90 --bins 5 --no-normalize --metadata-channels
 
+pretrain-jepa:
+	uv run --no-sync e-jepa-ttc pretrain jepa --cache artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz --output-dir artifacts/runs/jepa_voxel_160x90_b5_raw_meta_train_seed7 --epochs 160 --batch-size 128 --learning-rate 0.0005 --seed 7 --device auto --pretrain-splits train --validation-splits validation
+
 train-tiny-cnn:
 	uv run --no-sync e-jepa-ttc train tiny-cnn --cache artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz --output-dir artifacts/runs/tiny_cnn_voxel_160x90_b5_raw_meta_seed7 --epochs 80 --batch-size 96 --learning-rate 0.0003 --seed 7 --device auto
+
+train-tiny-cnn-jepa:
+	uv run --no-sync e-jepa-ttc train tiny-cnn --cache artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz --output-dir artifacts/runs/tiny_cnn_voxel_160x90_b5_raw_meta_jepa_seed7 --epochs 80 --batch-size 96 --learning-rate 0.0003 --seed 7 --device auto --pretrained-encoder artifacts/runs/jepa_voxel_160x90_b5_raw_meta_train_seed7/jepa_encoder_best.pt
 
 clean:
 	python -m compileall -q src tests
