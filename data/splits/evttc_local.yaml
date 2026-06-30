@@ -1,0 +1,30 @@
+version: 1
+seed: 42
+manifest: data/manifests/evttc_local.yaml
+splits:
+  train:
+  - CCRs-1-low-100-overlap-100
+  validation:
+  - CCRs-1-medium-100-overlap-100
+  test:
+  - CCRs-1-high-100-overlap-100
+statistics:
+  train:
+    sequence_count: 1
+    ttc_rows: 750
+    ttc_min_s: 0.840111
+    ttc_max_s: 13.599923
+    ttc_mean_s: 4.251744258666667
+  validation:
+    sequence_count: 1
+    ttc_rows: 900
+    ttc_min_s: 1.199107
+    ttc_max_s: 11.703585
+    ttc_mean_s: 4.797341747777778
+  test:
+    sequence_count: 1
+    ttc_rows: 1150
+    ttc_min_s: 1.068457
+    ttc_max_s: 15.82884
+    ttc_mean_s: 5.781778427826087
+notes: Local mini split by full sequence; not a final cross-scenario protocol.

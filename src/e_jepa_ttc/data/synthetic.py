@@ -155,6 +155,10 @@ def write_synthetic_hdf5(path: str | Path, sequence: SyntheticSequence) -> None:
         events_group.create_dataset("y", data=sequence.events.y, compression="gzip")
         events_group.create_dataset("t", data=sequence.events.t_us, compression="gzip")
         events_group.create_dataset("p", data=sequence.events.polarity, compression="gzip")
+        max_ms = int(sequence.events.t_us[-1] // 1000) + 1
+        ms_grid = np.arange(max_ms, dtype=np.int64) * 1000
+        ms_map_idx = np.searchsorted(sequence.events.t_us, ms_grid, side="left").astype(np.uint64)
+        events_group.create_dataset("ms_map_idx", data=ms_map_idx)
 
         ttc_group = h5.create_group("ttc")
         ttc_group.create_dataset("frame_id", data=sequence.frame_id)

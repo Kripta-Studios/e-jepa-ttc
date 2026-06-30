@@ -2,6 +2,7 @@ from pathlib import Path
 
 from e_jepa_ttc.data.evttc import (
     discover_event_layout,
+    read_events_window,
     read_manifest,
     scan_evttc_root,
     validate_manifest,
@@ -51,6 +52,9 @@ def test_scan_validate_index_and_split(tmp_path: Path) -> None:
     report = validate_manifest(manifest)
     assert report["sequence_count"] == 3
     assert report["sequences"][0]["event_layout"]["kind"] == "separate"
+    assert report["sequences"][0]["event_layout"]["ms_map_idx"].endswith("ms_map_idx")
+    assert report["sequences"][0]["event_layout"]["width"] == 64
+    assert report["sequences"][0]["event_layout"]["height"] == 48
 
     entries = build_temporal_index(
         manifest_path=manifest,
@@ -78,3 +82,16 @@ def test_discover_event_layout_on_fixture(tmp_path: Path) -> None:
     assert layout is not None
     assert layout.x == "events/x"
     assert layout.t == "events/t"
+    assert layout.ms_map_idx == "events/ms_map_idx"
+
+    window = read_events_window(
+        path,
+        t_start_us=20_000,
+        t_end_us=60_000,
+        sequence_id="fixture",
+    )
+    assert window.num_events > 0
+    assert window.width == 64
+    assert window.height == 48
+    assert int(window.t_us[0]) >= 20_000
+    assert int(window.t_us[-1]) < 60_000

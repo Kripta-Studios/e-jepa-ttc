@@ -23,3 +23,26 @@ Known limitations:
 - On this Windows path, editable installs create a `.pth` file with the non-ASCII user path encoded
   incompatibly for CPython 3.11. Use `uv sync --all-groups --no-editable` and
   `uv run --no-sync ...`.
+
+Verification:
+
+```text
+uv run --no-sync ruff check .
+uv run --no-sync ruff format --check .
+uv run --no-sync pytest
+```
+
+Result: 11 tests passed.
+
+Git:
+
+```text
+df4ecae chore: bootstrap project and data pipeline
+```
+
+Dataset validation:
+
+- `data/manifests/evttc_local.yaml` generated from the local EvTTC mini subset.
+- `data/splits/evttc_local.yaml` generated with full-sequence train/validation/test split.
+- Real HDF5 layout validated as `prophesee/event_cam_left/{x,y,t,p,ms_map_idx}`.
+- Real 100 ms window read from `CCRs-1-low-100-overlap-100`: 362,062 events, resolution 1280x720.

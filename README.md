@@ -44,6 +44,7 @@ install `.pth` encoding issue observed with CPython 3.11.
 - Synthetic expanding-object event generator with monotonic timestamps and known TTC labels.
 - EvTTC local scanner for sequence folders with event HDF5, `gt.hdf5`, `ttc.csv`, and ISAT labels.
 - Lazy HDF5 event-field discovery for common separate-field and compound-event layouts.
+- EvTTC window reads using `ms_map_idx` when available, validated on the local HDF5 files.
 - Dataset manifest validation without loading full event streams into memory.
 - Temporal window index generation from TTC timestamps.
 - Sequence-level split generation and validation.

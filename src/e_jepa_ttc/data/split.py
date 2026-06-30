@@ -118,7 +118,7 @@ def write_splits(
     payload = {
         "version": 1,
         "seed": seed,
-        "manifest": str(manifest_path),
+        "manifest": Path(manifest_path).as_posix(),
         "splits": splits,
         "statistics": split_statistics(sequences, splits),
         "notes": "Local mini split by full sequence; not a final cross-scenario protocol.",

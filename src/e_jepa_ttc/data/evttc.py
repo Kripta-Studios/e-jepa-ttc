@@ -33,6 +33,7 @@ class HDF5EventLayout:
     y: str | None = None
     t: str | None = None
     p: str | None = None
+    ms_map_idx: str | None = None
     compound: str | None = None
     width: int | None = None
     height: int | None = None
@@ -80,7 +81,7 @@ def scan_evttc_root(root: str | Path) -> list[DatasetSequence]:
             DatasetSequence(
                 dataset="EvTTC",
                 sequence_id=sequence_id,
-                local_path=str(sequence_dir),
+                local_path=sequence_dir.as_posix(),
                 event_hdf5=event_hdf5.name,
                 gt_hdf5=gt_hdf5.name if gt_hdf5.exists() else None,
                 ttc_csv=ttc_csv.name,
@@ -167,6 +168,16 @@ def _infer_resolution(
     return None, None
 
 
+def _read_resolution_dataset(h5: object, parent: str) -> tuple[int | None, int | None]:
+    resolution_path = f"{parent}/calib/resolution" if parent else "calib/resolution"
+    if resolution_path not in h5:
+        return None, None
+    values = h5[resolution_path][:]
+    if len(values) != 2:
+        return None, None
+    return int(values[0]), int(values[1])
+
+
 def discover_event_layout(path: str | Path) -> HDF5EventLayout | None:
     """Discover common event layouts in an HDF5 file."""
 
@@ -218,15 +229,53 @@ def discover_event_layout(path: str | Path) -> HDF5EventLayout | None:
         y = names.get("y") or names.get("ys")
         t = names.get("t") or names.get("ts") or names.get("timestamp") or names.get("timestamps")
         p = names.get("p") or names.get("polarity") or names.get("polarities")
+        ms_map_idx = names.get("ms_map_idx")
         if x and y and t and p:
             import h5py
 
             with h5py.File(path, "r") as h5:
                 attrs = dict(h5[parent].attrs) if parent in h5 else dict(h5.attrs)
-            width, height = _infer_resolution(attrs, infos)
-            return HDF5EventLayout(kind="separate", x=x, y=y, t=t, p=p, width=width, height=height)
+                width, height = _read_resolution_dataset(h5, parent)
+            if width is None or height is None:
+                width, height = _infer_resolution(attrs, infos)
+            return HDF5EventLayout(
+                kind="separate",
+                x=x,
+                y=y,
+                t=t,
+                p=p,
+                ms_map_idx=ms_map_idx,
+                width=width,
+                height=height,
+            )
 
     return None
+
+
+def _slice_bounds_from_ms_map(
+    ms_map_idx: object,
+    *,
+    event_count: int,
+    t_start_us: int,
+    t_end_us: int,
+) -> tuple[int, int]:
+    if len(ms_map_idx) == 0:
+        return 0, event_count
+    start_lookup = max(0, min(int(t_start_us // 1000), len(ms_map_idx) - 1))
+    end_lookup_raw = int(t_end_us // 1000) + 2
+    if end_lookup_raw >= len(ms_map_idx):
+        return int(ms_map_idx[start_lookup]), event_count
+    return int(ms_map_idx[start_lookup]), int(ms_map_idx[end_lookup_raw])
+
+
+def _refine_bounds(
+    timestamps: np.ndarray,
+    rough_start: int,
+    t_start_us: int,
+    t_end_us: int,
+) -> tuple[int, int]:
+    local_start, local_end = np.searchsorted(timestamps, [t_start_us, t_end_us], side="left")
+    return int(rough_start + local_start), int(rough_start + local_end)
 
 
 def read_events_window(
@@ -240,9 +289,8 @@ def read_events_window(
 ) -> EventBatch:
     """Read events in `[t_start_us, t_end_us]` from a supported HDF5 layout.
 
-    This MVP reader materializes timestamp arrays to locate the window. It is
-    correct for fixtures and smoke runs; large EvTTC training should replace
-    this with ms-index based access once the exact local schema is confirmed.
+    When `ms_map_idx` is available, the reader uses it to restrict timestamp
+    reads to the relevant millisecond range before refining bounds.
     """
 
     import h5py
@@ -256,8 +304,10 @@ def read_events_window(
         if layout.kind == "compound":
             assert layout.compound and layout.x and layout.y and layout.t and layout.p
             dataset = h5[layout.compound]
-            timestamps = dataset[layout.t][:]
-            start, end = np.searchsorted(timestamps, [t_start_us, t_end_us], side="left")
+            rough_start = 0
+            rough_end = int(dataset.shape[0])
+            timestamps = dataset[layout.t][rough_start:rough_end]
+            start, end = _refine_bounds(timestamps, rough_start, t_start_us, t_end_us)
             rows = dataset[start:end]
             x = rows[layout.x].astype(np.int32)
             y = rows[layout.y].astype(np.int32)
@@ -265,11 +315,21 @@ def read_events_window(
             p = normalize_polarity(rows[layout.p])
         else:
             assert layout.x and layout.y and layout.t and layout.p
-            timestamps = h5[layout.t][:]
-            start, end = np.searchsorted(timestamps, [t_start_us, t_end_us], side="left")
+            event_count = int(h5[layout.t].shape[0])
+            if layout.ms_map_idx and layout.ms_map_idx in h5:
+                rough_start, rough_end = _slice_bounds_from_ms_map(
+                    h5[layout.ms_map_idx],
+                    event_count=event_count,
+                    t_start_us=t_start_us,
+                    t_end_us=t_end_us,
+                )
+            else:
+                rough_start, rough_end = 0, event_count
+            timestamps = h5[layout.t][rough_start:rough_end]
+            start, end = _refine_bounds(timestamps, rough_start, t_start_us, t_end_us)
             x = h5[layout.x][start:end].astype(np.int32)
             y = h5[layout.y][start:end].astype(np.int32)
-            t = timestamps[start:end].astype(np.int64)
+            t = h5[layout.t][start:end].astype(np.int64)
             p = normalize_polarity(h5[layout.p][start:end])
 
     batch = EventBatch(
