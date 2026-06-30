@@ -16,7 +16,7 @@ def _write_cache(path: Path) -> None:
         x=x,
         y_ttc=y_ttc,
         split=split,
-        timestamp_us=np.arange(12, dtype=np.int64),
+        timestamp_us=np.arange(12, dtype=np.int64) * 20_000,
         sequence_id=np.array(["fixture"] * 12),
         event_count=np.arange(12, dtype=np.int32),
         width=np.array(16, dtype=np.int32),
@@ -40,6 +40,9 @@ def test_jepa_checkpoint_loads_into_supervised_trainer(tmp_path: Path) -> None:
         validation_splits=("validation",),
     )
     assert pretrain_summary["best_epoch"] == 1
+    assert pretrain_summary["objective"] == "temporal_multihorizon"
+    assert pretrain_summary["leakage_audit"]["uses_ttc_labels"] is False
+    assert pretrain_summary["train_pair_stats"]["target_pair_count"] > 0
     checkpoint = tmp_path / "jepa" / "jepa_encoder_best.pt"
     assert checkpoint.exists()
 

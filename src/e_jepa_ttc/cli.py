@@ -172,6 +172,8 @@ def _cmd_pretrain_jepa(args: argparse.Namespace) -> int:
         device_name=args.device,
         pretrain_splits=tuple(args.pretrain_splits),
         validation_splits=tuple(args.validation_splits),
+        temporal_horizons_ms=tuple(args.temporal_horizons_ms),
+        max_target_slop_ms=args.max_target_slop_ms,
         mask_ratio=args.mask_ratio,
         block_count=args.block_count,
         ema_momentum=args.ema_momentum,
@@ -313,6 +315,17 @@ def build_parser() -> argparse.ArgumentParser:
     pretrain_jepa.add_argument("--device", type=str, default="auto")
     pretrain_jepa.add_argument("--pretrain-splits", nargs="+", default=["train"])
     pretrain_jepa.add_argument("--validation-splits", nargs="+", default=["validation"])
+    pretrain_jepa.add_argument(
+        "--temporal-horizons-ms",
+        type=int,
+        nargs="*",
+        default=[20, 60, 100, 240, 500],
+        help=(
+            "Future cache horizons for temporal JEPA. Pass the flag with no values to use "
+            "same-window masked JEPA."
+        ),
+    )
+    pretrain_jepa.add_argument("--max-target-slop-ms", type=int, default=10)
     pretrain_jepa.add_argument("--mask-ratio", type=float, default=0.45)
     pretrain_jepa.add_argument("--block-count", type=int, default=4)
     pretrain_jepa.add_argument("--ema-momentum", type=float, default=0.99)
