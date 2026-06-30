@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 from typing import Any
 
+from e_jepa_ttc.baselines.causal_geometry import run_causal_geometry_baseline
 from e_jepa_ttc.baselines.event_rate import run_event_rate_baseline
 from e_jepa_ttc.baselines.geometric import run_geometric_baseline
 from e_jepa_ttc.baselines.trivial import run_trivial_baseline
@@ -108,6 +109,17 @@ def _cmd_baseline_event_rate(args: argparse.Namespace) -> int:
         split_path=args.split,
         index_path=args.index,
         output_path=args.output,
+    )
+    _print_json(payload)
+    return 0
+
+
+def _cmd_baseline_causal_geometry(args: argparse.Namespace) -> int:
+    payload = run_causal_geometry_baseline(
+        manifest_path=args.manifest,
+        split_path=args.split,
+        output_path=args.output,
+        derivative_window=args.derivative_window,
     )
     _print_json(payload)
     return 0
@@ -242,6 +254,15 @@ def build_parser() -> argparse.ArgumentParser:
     baseline_event_rate.add_argument("--index", type=Path, required=True)
     baseline_event_rate.add_argument("--output", type=Path)
     baseline_event_rate.set_defaults(func=_cmd_baseline_event_rate)
+    baseline_causal_geometry = baseline_sub.add_parser(
+        "causal-geometry",
+        help="Evaluate causal detection-assisted bbox expansion baseline.",
+    )
+    baseline_causal_geometry.add_argument("--manifest", type=Path, required=True)
+    baseline_causal_geometry.add_argument("--split", type=Path, required=True)
+    baseline_causal_geometry.add_argument("--output", type=Path)
+    baseline_causal_geometry.add_argument("--derivative-window", type=int, default=15)
+    baseline_causal_geometry.set_defaults(func=_cmd_baseline_causal_geometry)
 
     cache = subparsers.add_parser("cache", help="Feature cache commands.")
     cache_sub = cache.add_subparsers(dest="cache_command", required=True)
