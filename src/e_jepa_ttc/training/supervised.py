@@ -134,10 +134,14 @@ def train_tiny_cnn(
     device_name: str = "auto",
     pretrained_encoder_path: str | Path | None = None,
     freeze_encoder: bool = False,
+    train_fraction: float = 1.0,
 ) -> dict[str, Any]:
     """Train TinyCNN on a materialized voxel cache."""
 
     _set_seed(seed)
+    if not 0.0 < train_fraction <= 1.0:
+        msg = "train_fraction must be in (0, 1]."
+        raise ValueError(msg)
     cache = np.load(cache_path, allow_pickle=False)
     x = cache["x"]
     y_ttc = cache["y_ttc"].astype(np.float32)
@@ -150,6 +154,13 @@ def train_tiny_cnn(
     if train_idx.size == 0 or val_idx.size == 0 or test_idx.size == 0:
         msg = "Cache must contain train, validation and test splits."
         raise ValueError(msg)
+    full_train_count = int(train_idx.size)
+    if train_fraction < 1.0:
+        rng = np.random.default_rng(seed)
+        subset_count = max(1, int(round(train_idx.size * train_fraction)))
+        train_idx = np.sort(
+            rng.choice(train_idx, size=subset_count, replace=False)
+        ).astype(np.int64)
 
     if device_name == "auto":
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -287,6 +298,9 @@ def train_tiny_cnn(
         "weight_decay": weight_decay,
         "pretrained_encoder": pretrained_encoder,
         "freeze_encoder": freeze_encoder,
+        "train_fraction": train_fraction,
+        "full_train_count": full_train_count,
+        "effective_train_count": int(train_idx.size),
         "best_epoch": best_epoch,
         "best_checkpoint": best_path.as_posix(),
         "last_checkpoint": last_path.as_posix(),

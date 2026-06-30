@@ -155,6 +155,7 @@ def _cmd_train_tiny_cnn(args: argparse.Namespace) -> int:
         device_name=args.device,
         pretrained_encoder_path=args.pretrained_encoder,
         freeze_encoder=args.freeze_encoder,
+        train_fraction=args.train_fraction,
     )
     _print_json(payload)
     return 0
@@ -302,6 +303,7 @@ def build_parser() -> argparse.ArgumentParser:
     train_tiny.add_argument("--seed", type=int, default=42)
     train_tiny.add_argument("--device", type=str, default="auto")
     train_tiny.add_argument("--pretrained-encoder", type=Path)
+    train_tiny.add_argument("--train-fraction", type=float, default=1.0)
     train_tiny.add_argument(
         "--freeze-encoder",
         action="store_true",

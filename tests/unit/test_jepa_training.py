@@ -55,6 +55,8 @@ def test_jepa_checkpoint_loads_into_supervised_trainer(tmp_path: Path) -> None:
         device_name="cpu",
         pretrained_encoder_path=checkpoint,
         freeze_encoder=True,
+        train_fraction=0.5,
     )
     assert train_summary["pretrained_encoder"]["source_model"] == "tiny_cnn_jepa"
     assert train_summary["freeze_encoder"] is True
+    assert train_summary["effective_train_count"] == 3
