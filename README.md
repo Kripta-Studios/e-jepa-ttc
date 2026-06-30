@@ -90,6 +90,7 @@ uv run --no-sync python scripts/train_baseline.py --manifest data/manifests/evtt
 uv run --no-sync python scripts/build_voxel_cache.py --manifest data/manifests/evttc_local.yaml --split data/splits/evttc_local.yaml --index data/cache/evttc_index.json --output artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz --no-normalize --metadata-channels
 uv run --no-sync python scripts/pretrain_jepa.py --cache artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz --output-dir artifacts/runs/jepa_temporal_voxel_160x90_b5_raw_meta_train_seed7 --temporal-horizons-ms 20 60 100 240 500
 uv run --no-sync python scripts/train_tiny_cnn.py --cache artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz --output-dir artifacts/runs/tiny_cnn_voxel_160x90_b5_raw_meta_seed7 --seed 7
+uv run --no-sync python scripts/download_evttc_starter.py --manifest data/manifests/evttc_starter_downloads.yaml --root .
 ```
 
 ## Implemented
@@ -126,6 +127,10 @@ The handoff contains an EvTTC mini subset under `datasets/evttc/CCRs-1` with thr
 `low-100`, `medium-100`, and `high-100`. Each sequence includes `ttc.csv`, one large event HDF5,
 `gt.hdf5`, ISAT JSON labels, and video/bag files. The current pipeline uses only HDF5 metadata,
 `ttc.csv`, and label metadata; video and bag files are intentionally ignored for the MVP.
+
+`data/manifests/evttc_starter_downloads.yaml` records public official links for the six starter
+sequences missing from the handoff. `scripts/download_evttc_starter.py` prints a dry-run plan by
+default and only calls `gdown` when `--execute` is passed.
 
 See [docs/datasets_local.md](docs/datasets_local.md), [docs/progress.md](docs/progress.md), and [docs/local_results.md](docs/local_results.md).
 

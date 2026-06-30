@@ -178,3 +178,15 @@ Conclusion:
 - The high-speed mini test has been inspected repeatedly, so it is no longer a sealed test. Treat
   the test numbers as exploratory and use a fresh EvTTC starter protocol for any final claim.
 
+## 2026-07-01 EvTTC Starter Download Plan
+
+Added `data/manifests/evttc_starter_downloads.yaml` for the six starter sequences missing from the
+local handoff: CCRs-side low/medium/high and CPLA low/medium/high. The manifest records public
+official Google Drive links for hdf5, gt-ttc, and bbox-segmentation assets.
+
+Added `scripts/download_evttc_starter.py`, which prints a dry-run download plan by default and only
+executes `gdown` when `--execute` is passed. Verified dry-run output contains 18 planned actions.
+
+The next sealed protocol should download these assets, rescan `datasets/evttc`, create a new starter
+manifest/split, and avoid tuning on the new test split.
+

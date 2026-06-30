@@ -1,0 +1,128 @@
+dataset: EvTTC
+version: starter-public-links-2026-07-01
+retrieved_from: https://nail-hnu.github.io/EvTTC/download/download/
+retrieval_date: 2026-07-01
+notes: >
+  Public Google Drive links for the six EvTTC starter sequences missing from the
+  local handoff. The existing local mini subset already contains CCRs-1 low,
+  medium, and high at 100% overlap. Download only hdf5, gt-ttc, and
+  bbox-segmentation assets for the MVP protocol.
+existing_local_sequences:
+  - CCRs-1-low-100-overlap-100
+  - CCRs-1-medium-100-overlap-100
+  - CCRs-1-high-100-overlap-100
+sequences:
+  - sequence_id: CCRs-side-low
+    scenario_family: CCRs-side
+    speed_bucket: low
+    target_type: car
+    local_dir: datasets/evttc/CCRs-side/low
+    assets:
+      hdf5:
+        kind: file
+        size_gb: 4.48
+        output: data.hdf5
+        url: https://drive.google.com/file/d/1G3n7TIDlXBEHXu2IFSglQ_Ham1FeH-oM/view?usp=drive_link
+      gt_ttc:
+        kind: file
+        output: gt_ttc.zip
+        url: https://drive.google.com/file/d/1xY4ErB9ciicnaP5V9hkmDzw7D7DN0A75/view?usp=drive_link
+      bbox_segmentation:
+        kind: folder
+        output: bbox_segmentation
+        url: https://drive.google.com/drive/folders/16eKXuOBBH041GHaMP4kztUK4oRjtXZtY?usp=drive_link
+  - sequence_id: CCRs-side-medium
+    scenario_family: CCRs-side
+    speed_bucket: medium
+    target_type: car
+    local_dir: datasets/evttc/CCRs-side/medium
+    assets:
+      hdf5:
+        kind: file
+        size_gb: 4.26
+        output: data.hdf5
+        url: https://drive.google.com/file/d/17Ph0WUvkNLF4g7AUb5QT1JMqa0trkYMI/view?usp=drive_link
+      gt_ttc:
+        kind: file
+        output: gt_ttc.zip
+        url: https://drive.google.com/file/d/1AdWsom8N1yPUM3rxHMZUQS_-FaRtoIWz/view?usp=drive_link
+      bbox_segmentation:
+        kind: folder
+        output: bbox_segmentation
+        url: https://drive.google.com/drive/folders/1GPzxL4imhyrO4Y7ZWEa6idR09jynkjmm?usp=drive_link
+  - sequence_id: CCRs-side-high
+    scenario_family: CCRs-side
+    speed_bucket: high
+    target_type: car
+    local_dir: datasets/evttc/CCRs-side/high
+    assets:
+      hdf5:
+        kind: file
+        size_gb: 5.17
+        output: data.hdf5
+        url: https://drive.google.com/file/d/1dUnAqWo8JR7P-MyryuD6ZGntC2o6SGJu/view?usp=drive_link
+      gt_ttc:
+        kind: file
+        output: gt_ttc.zip
+        url: https://drive.google.com/file/d/1O_pN0gVgrqMN5ekQQDjvA4g73_IqWy-o/view?usp=drive_link
+      bbox_segmentation:
+        kind: folder
+        output: bbox_segmentation
+        url: https://drive.google.com/drive/folders/1rKr5J_-FIxvMx_RC7g18ywAkj7hOcxrc?usp=drive_link
+  - sequence_id: CPLA-low
+    scenario_family: CPLA
+    speed_bucket: low
+    target_type: pedestrian
+    local_dir: datasets/evttc/CPLA/low
+    assets:
+      hdf5:
+        kind: file
+        size_gb: 7.01
+        output: data.hdf5
+        url: https://drive.google.com/file/d/10oKP-BrkexYN33oIJSWg4-lWdIRzv31Y/view?usp=drive_link
+      gt_ttc:
+        kind: file
+        output: gt_ttc.zip
+        url: https://drive.google.com/file/d/1GTuIiaYRJuetAsPSoJU-56zyQaydREJg/view?usp=drive_link
+      bbox_segmentation:
+        kind: folder
+        output: bbox_segmentation
+        url: https://drive.google.com/drive/folders/1wV4k_qSBowNILdvLGfFxWWeF_-Mb-ThC?usp=drive_link
+  - sequence_id: CPLA-medium
+    scenario_family: CPLA
+    speed_bucket: medium
+    target_type: pedestrian
+    local_dir: datasets/evttc/CPLA/medium
+    assets:
+      hdf5:
+        kind: file
+        size_gb: 6.13
+        output: data.hdf5
+        url: https://drive.google.com/file/d/1qnu1-oD7zKMxKDCWSl0_eUW_HRIw7A2O/view?usp=drive_link
+      gt_ttc:
+        kind: file
+        output: gt_ttc.zip
+        url: https://drive.google.com/file/d/1iov7gaCyyXQR-OIfwTMkgegWqMz3hWOd/view?usp=drive_link
+      bbox_segmentation:
+        kind: folder
+        output: bbox_segmentation
+        url: https://drive.google.com/drive/folders/19c8z3NJPJY0m0XuerEIFJlbA58QpZ_fn?usp=drive_link
+  - sequence_id: CPLA-high
+    scenario_family: CPLA
+    speed_bucket: high
+    target_type: pedestrian
+    local_dir: datasets/evttc/CPLA/high
+    assets:
+      hdf5:
+        kind: file
+        size_gb: 6.52
+        output: data.hdf5
+        url: https://drive.google.com/file/d/1Qg4bEOqp7gmNTc-N20KUgejiRCrbl1CN/view?usp=drive_link
+      gt_ttc:
+        kind: file
+        output: gt_ttc.zip
+        url: https://drive.google.com/file/d/12YFy6S-5V5Kbdl5o2MyBzfGR4exdKHvb/view?usp=drive_link
+      bbox_segmentation:
+        kind: folder
+        output: bbox_segmentation
+        url: https://drive.google.com/drive/folders/1DPfSXG5P_pnueT0JzgomH43GUXF1P3mR?usp=drive_link
