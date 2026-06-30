@@ -1,0 +1,26 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+dist/
+build/
+*.egg-info/
+
+# Large local datasets and generated artifacts.
+datasets/
+data/cache/*
+artifacts/*
+*.bag
+*.mp4
+*.hdf5
+*.h5
+
+# Keep empty directories tracked through .gitkeep files.
+!data/cache/
+!data/cache/.gitkeep
+!artifacts/metrics/
+!artifacts/figures/
+!artifacts/metrics/.gitkeep
+!artifacts/figures/.gitkeep

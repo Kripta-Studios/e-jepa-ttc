@@ -1,0 +1,3 @@
+name: event_count
+normalize: log1p
+duration_normalize: false

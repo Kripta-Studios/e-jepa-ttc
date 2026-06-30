@@ -1,0 +1,12 @@
+experiment:
+  name: smoke_synthetic
+  seed: 7
+
+data:
+  dataset: synthetic_events
+  context_ms: 100
+  horizons_ms: [50, 100]
+
+representation:
+  name: voxel_grid
+  bins: 5

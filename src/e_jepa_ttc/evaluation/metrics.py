@@ -1,0 +1,29 @@
+"""Basic regression metrics."""
+
+from __future__ import annotations
+
+import numpy as np
+
+
+def regression_metrics(y_true: np.ndarray, y_pred: np.ndarray) -> dict[str, float]:
+    """Compute finite TTC regression metrics."""
+
+    true = np.asarray(y_true, dtype=np.float64)
+    pred = np.asarray(y_pred, dtype=np.float64)
+    if true.shape != pred.shape:
+        msg = f"Shape mismatch: y_true {true.shape}, y_pred {pred.shape}."
+        raise ValueError(msg)
+    mask = np.isfinite(true) & np.isfinite(pred)
+    if not np.any(mask):
+        msg = "No finite samples for regression metrics."
+        raise ValueError(msg)
+    err = pred[mask] - true[mask]
+    abs_err = np.abs(err)
+    return {
+        "mae_s": float(np.mean(abs_err)),
+        "median_abs_error_s": float(np.median(abs_err)),
+        "rmse_s": float(np.sqrt(np.mean(err**2))),
+        "log_mae": float(
+            np.mean(np.abs(np.log(np.maximum(pred[mask], 1e-6)) - np.log(true[mask])))
+        ),
+    }

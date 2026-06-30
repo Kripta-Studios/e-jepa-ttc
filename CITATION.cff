@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+title: "E-JEPA-TTC"
+message: "Cite this software when using this research MVP."
+type: software
+authors:
+  - family-names: "KriptaStudios"
+version: "0.1.0"
+date-released: "2026-06-30"
+license: "MIT"

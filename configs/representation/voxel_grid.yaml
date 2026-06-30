@@ -1,0 +1,4 @@
+name: voxel_grid
+bins: 5
+separate_polarity: true
+normalization: robust_per_window

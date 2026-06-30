@@ -1,0 +1,8 @@
+dataset: evttc
+root: datasets/evttc
+manifest: data/manifests/evttc_local.yaml
+context_ms: 100
+stride_ms: 20
+horizons_ms: [25, 50, 100, 250, 500]
+min_events: 0
+clip_ttc_seconds: [0.1, 12.0]
