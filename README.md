@@ -54,9 +54,16 @@ Then build a voxel cache and train the supervised CNN:
 
 ```powershell
 $env:PYTHONPATH='src'
-.\.venv\Scripts\python.exe -m e_jepa_ttc cache voxel --manifest data/manifests/evttc_local.yaml --split data/splits/evttc_local.yaml --index data/cache/evttc_index.json --output artifacts/features/evttc_voxel_160x90_b5.npz --width 160 --height 90 --bins 5
-.\.venv\Scripts\python.exe -m e_jepa_ttc train tiny-cnn --cache artifacts/features/evttc_voxel_160x90_b5.npz --output-dir artifacts/runs/tiny_cnn_voxel_160x90_b5_seed42 --epochs 80 --batch-size 96 --learning-rate 0.0003 --seed 42 --device auto
+.\.venv\Scripts\python.exe -m e_jepa_ttc cache voxel --manifest data/manifests/evttc_local.yaml --split data/splits/evttc_local.yaml --index data/cache/evttc_index.json --output artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz --width 160 --height 90 --bins 5 --no-normalize --metadata-channels
+.\.venv\Scripts\python.exe -m e_jepa_ttc train tiny-cnn --cache artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz --output-dir artifacts/runs/tiny_cnn_voxel_160x90_b5_raw_meta_seed7 --epochs 80 --batch-size 96 --learning-rate 0.0003 --seed 7 --device auto
 ```
+
+## Local Results
+
+Current local results are summarized in [docs/local_results.md](docs/local_results.md). The strongest
+pure indexed-window baseline is event-rate ridge on the held-out high-speed sequence; TinyCNN
+raw+metadata improves over normalized voxels but is not stable enough across seeds to claim robust
+generalization from one training sequence.
 
 ## Script Wrappers
 
@@ -68,8 +75,8 @@ uv run --no-sync python scripts/validate_dataset.py --manifest data/manifests/ev
 uv run --no-sync python scripts/build_index.py --manifest data/manifests/evttc_local.yaml --output data/cache/evttc_index.json
 uv run --no-sync python scripts/make_splits.py --manifest data/manifests/evttc_local.yaml --output data/splits/evttc_local.yaml
 uv run --no-sync python scripts/train_baseline.py --manifest data/manifests/evttc_local.yaml --split data/splits/evttc_local.yaml --output artifacts/metrics/trivial_baseline.json
-uv run --no-sync python scripts/build_voxel_cache.py --manifest data/manifests/evttc_local.yaml --split data/splits/evttc_local.yaml --index data/cache/evttc_index.json --output artifacts/features/evttc_voxel_160x90_b5.npz
-uv run --no-sync python scripts/train_tiny_cnn.py --cache artifacts/features/evttc_voxel_160x90_b5.npz --output-dir artifacts/runs/tiny_cnn_voxel_160x90_b5_seed42
+uv run --no-sync python scripts/build_voxel_cache.py --manifest data/manifests/evttc_local.yaml --split data/splits/evttc_local.yaml --index data/cache/evttc_index.json --output artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz --no-normalize --metadata-channels
+uv run --no-sync python scripts/train_tiny_cnn.py --cache artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz --output-dir artifacts/runs/tiny_cnn_voxel_160x90_b5_raw_meta_seed7 --seed 7
 ```
 
 ## Implemented
@@ -91,7 +98,7 @@ uv run --no-sync python scripts/train_tiny_cnn.py --cache artifacts/features/evt
 ## Not Implemented Yet
 
 - E-JEPA target encoder and multi-horizon predictor.
-- Fine-tuning, robustness suite, ONNX export, streaming demo, and final report generation.
+- Fine-tuning, robustness suite, ONNX export, streaming demo, and project-level final report generation.
 
 These remain in the milestone order defined in `AGENTS.md`; they should be added after the
 supervised baseline is established against the local data.
@@ -103,4 +110,7 @@ The handoff contains an EvTTC mini subset under `datasets/evttc/CCRs-1` with thr
 `gt.hdf5`, ISAT JSON labels, and video/bag files. The current pipeline uses only HDF5 metadata,
 `ttc.csv`, and label metadata; video and bag files are intentionally ignored for the MVP.
 
-See [docs/datasets_local.md](docs/datasets_local.md) and [docs/progress.md](docs/progress.md).
+See [docs/datasets_local.md](docs/datasets_local.md), [docs/progress.md](docs/progress.md), and [docs/local_results.md](docs/local_results.md).
+
+
+

@@ -37,10 +37,11 @@ baseline-event-rate:
 	uv run --no-sync e-jepa-ttc baseline event-rate --manifest data/manifests/evttc_local.yaml --split data/splits/evttc_local.yaml --index data/cache/evttc_index.json --output artifacts/metrics/event_rate_baseline.json
 
 cache-voxel:
-	uv run --no-sync e-jepa-ttc cache voxel --manifest data/manifests/evttc_local.yaml --split data/splits/evttc_local.yaml --index data/cache/evttc_index.json --output artifacts/features/evttc_voxel_160x90_b5.npz --width 160 --height 90 --bins 5
+	uv run --no-sync e-jepa-ttc cache voxel --manifest data/manifests/evttc_local.yaml --split data/splits/evttc_local.yaml --index data/cache/evttc_index.json --output artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz --width 160 --height 90 --bins 5 --no-normalize --metadata-channels
 
 train-tiny-cnn:
-	uv run --no-sync e-jepa-ttc train tiny-cnn --cache artifacts/features/evttc_voxel_160x90_b5.npz --output-dir artifacts/runs/tiny_cnn_voxel_160x90_b5_seed42 --epochs 80 --batch-size 96 --learning-rate 0.0003 --seed 42 --device auto
+	uv run --no-sync e-jepa-ttc train tiny-cnn --cache artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz --output-dir artifacts/runs/tiny_cnn_voxel_160x90_b5_raw_meta_seed7 --epochs 80 --batch-size 96 --learning-rate 0.0003 --seed 7 --device auto
 
 clean:
 	python -m compileall -q src tests
+
