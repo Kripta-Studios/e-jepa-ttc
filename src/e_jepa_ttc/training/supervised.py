@@ -133,6 +133,7 @@ def train_tiny_cnn(
     seed: int = 42,
     device_name: str = "auto",
     pretrained_encoder_path: str | Path | None = None,
+    freeze_encoder: bool = False,
 ) -> dict[str, Any]:
     """Train TinyCNN on a materialized voxel cache."""
 
@@ -174,7 +175,14 @@ def train_tiny_cnn(
             pretrained_encoder_path,
             device=device,
         )
-    optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=weight_decay)
+    if freeze_encoder:
+        for param in model.encoder.parameters():
+            param.requires_grad_(False)
+    trainable_parameters = [param for param in model.parameters() if param.requires_grad]
+    if not trainable_parameters:
+        msg = "No trainable parameters remain after applying freeze settings."
+        raise ValueError(msg)
+    optimizer = torch.optim.AdamW(trainable_parameters, lr=learning_rate, weight_decay=weight_decay)
     loss_fn = nn.SmoothL1Loss(beta=0.25)
     scaler = torch.amp.GradScaler("cuda") if device.type == "cuda" else None
 
@@ -278,6 +286,7 @@ def train_tiny_cnn(
         "learning_rate": learning_rate,
         "weight_decay": weight_decay,
         "pretrained_encoder": pretrained_encoder,
+        "freeze_encoder": freeze_encoder,
         "best_epoch": best_epoch,
         "best_checkpoint": best_path.as_posix(),
         "last_checkpoint": last_path.as_posix(),

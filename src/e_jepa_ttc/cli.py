@@ -154,6 +154,7 @@ def _cmd_train_tiny_cnn(args: argparse.Namespace) -> int:
         seed=args.seed,
         device_name=args.device,
         pretrained_encoder_path=args.pretrained_encoder,
+        freeze_encoder=args.freeze_encoder,
     )
     _print_json(payload)
     return 0
@@ -301,6 +302,11 @@ def build_parser() -> argparse.ArgumentParser:
     train_tiny.add_argument("--seed", type=int, default=42)
     train_tiny.add_argument("--device", type=str, default="auto")
     train_tiny.add_argument("--pretrained-encoder", type=Path)
+    train_tiny.add_argument(
+        "--freeze-encoder",
+        action="store_true",
+        help="Train only the TTC head after loading or initializing the encoder.",
+    )
     train_tiny.set_defaults(func=_cmd_train_tiny_cnn)
 
     pretrain = subparsers.add_parser("pretrain", help="Self-supervised pretraining commands.")
