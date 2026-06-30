@@ -98,3 +98,25 @@ Local conclusion:
 
 See `docs/local_results.md`.
 
+## 2026-06-30 JEPA Pass
+
+Implemented and committed JEPA-style self-supervised pretraining:
+
+- `TinyCNNEncoder` factored out of the supervised regressor.
+- `e-jepa-ttc pretrain jepa` added with online encoder, EMA target encoder, latent predictor,
+  masked context views, and variance regularization to avoid collapsed embeddings.
+- `train tiny-cnn --pretrained-encoder` added for supervised fine-tuning from JEPA checkpoints.
+- Smoke tests cover encoder shapes and loading a JEPA checkpoint into the supervised trainer.
+
+Executed GPU runs on the raw+metadata `160x90`, `bins=5` cache:
+
+- Train-only JEPA pretraining: 160 epochs, best epoch 109, best latent loss 0.0145.
+- Train-only JEPA fine-tuning: validation MAE 3.297 s, test MAE 3.290 s.
+- All-splits diagnostic JEPA pretraining: 160 epochs, best epoch 158, best latent loss 0.0114.
+- All-splits diagnostic fine-tuning: validation MAE 3.598 s, test MAE 3.351 s.
+
+Conclusion: JEPA runs end to end, but in this mini subset it does not improve TTC over the
+non-pretrained TinyCNN seed 7 result. The all-splits diagnostic also underperforms, so the issue is
+not only lack of unlabeled validation/test windows; the next useful step is larger multi-sequence
+data and a stronger temporal/multi-horizon JEPA objective.
+

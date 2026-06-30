@@ -71,7 +71,8 @@ $env:PYTHONPATH='src'
 Current local results are summarized in [docs/local_results.md](docs/local_results.md). The strongest
 pure indexed-window baseline is event-rate ridge on the held-out high-speed sequence; TinyCNN
 raw+metadata improves over normalized voxels but is not stable enough across seeds to claim robust
-generalization from one training sequence.
+generalization from one training sequence. JEPA/self-supervised pretraining now runs end to end, but
+the local train-only and all-splits diagnostic runs did not improve downstream TTC.
 
 ## Script Wrappers
 
@@ -108,7 +109,7 @@ uv run --no-sync python scripts/train_tiny_cnn.py --cache artifacts/features/evt
 
 ## Not Implemented Yet
 
-- Multi-horizon JEPA predictor and larger-scale pretraining.
+- Larger-scale multi-sequence JEPA pretraining and multi-horizon predictors.
 - Fine-tuning, robustness suite, ONNX export, streaming demo, and project-level final report generation.
 
 These remain in the milestone order defined in `AGENTS.md`; they should be added after the

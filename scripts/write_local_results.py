@@ -60,7 +60,7 @@ def _tiny_row(path: Path) -> dict[str, Any]:
     }
 
 
-def _reproduction_commands() -> tuple[str, str, str]:
+def _reproduction_commands() -> tuple[str, str, str, str, str]:
     cache_command = (
         ".\\.venv\\Scripts\\python.exe -m e_jepa_ttc cache voxel "
         "--manifest data/manifests/evttc_local.yaml "
@@ -75,11 +75,27 @@ def _reproduction_commands() -> tuple[str, str, str]:
         "--output-dir artifacts/runs/tiny_cnn_voxel_160x90_b5_raw_meta_seed7 "
         "--epochs 80 --batch-size 96 --learning-rate 0.0003 --seed 7 --device auto"
     )
+    pretrain_command = (
+        ".\\.venv\\Scripts\\python.exe -m e_jepa_ttc pretrain jepa "
+        "--cache artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz "
+        "--output-dir artifacts/runs/jepa_voxel_160x90_b5_raw_meta_train_seed7 "
+        "--epochs 160 --batch-size 128 --learning-rate 0.0005 --seed 7 --device auto "
+        "--pretrain-splits train --validation-splits validation "
+        "--variance-weight 1.0 --min-std 0.05"
+    )
+    finetune_command = (
+        ".\\.venv\\Scripts\\python.exe -m e_jepa_ttc train tiny-cnn "
+        "--cache artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz "
+        "--output-dir artifacts/runs/tiny_cnn_voxel_160x90_b5_raw_meta_jepa_seed7 "
+        "--epochs 80 --batch-size 96 --learning-rate 0.0003 --seed 7 --device auto "
+        "--pretrained-encoder "
+        "artifacts/runs/jepa_voxel_160x90_b5_raw_meta_train_seed7/jepa_encoder_best.pt"
+    )
     report_command = (
         ".\\.venv\\Scripts\\python.exe scripts/write_local_results.py "
         "--output docs/local_results.md"
     )
-    return cache_command, train_command, report_command
+    return cache_command, train_command, pretrain_command, finetune_command, report_command
 
 
 def build_report(root: Path = ROOT) -> str:
@@ -91,6 +107,17 @@ def build_report(root: Path = ROOT) -> str:
     event_rate = _load_json(metrics_dir / "event_rate_baseline.json")
     geometric = _load_json(metrics_dir / "geometric_baseline.json")
     normalized_cnn = _load_json(runs_dir / "tiny_cnn_voxel_160x90_b5_seed42" / "metrics.json")
+    jepa_train = _load_json(runs_dir / "jepa_voxel_160x90_b5_raw_meta_train_seed7" / "metrics.json")
+    jepa_train_ft = _load_json(
+        runs_dir / "tiny_cnn_voxel_160x90_b5_raw_meta_jepa_seed7" / "metrics.json"
+    )
+    jepa_train_ft_lr = _load_json(
+        runs_dir / "tiny_cnn_voxel_160x90_b5_raw_meta_jepa_seed7_lr1e4" / "metrics.json"
+    )
+    jepa_all = _load_json(runs_dir / "jepa_voxel_160x90_b5_raw_meta_all_seed7" / "metrics.json")
+    jepa_all_ft = _load_json(
+        runs_dir / "tiny_cnn_voxel_160x90_b5_raw_meta_jepa_all_seed7" / "metrics.json"
+    )
     cache_summary = _load_json(features_dir / "evttc_voxel_160x90_b5.summary.json")
     raw_cache_summary = _load_json(features_dir / "evttc_voxel_160x90_b5_raw_meta.summary.json")
 
@@ -101,7 +128,17 @@ def build_report(root: Path = ROOT) -> str:
     raw_val_mean, raw_val_std = _mean_std([row["validation_mae"] for row in raw_meta_rows])
     raw_test_mean, raw_test_std = _mean_std([row["test_mae"] for row in raw_meta_rows])
     best_raw = min(raw_meta_rows, key=lambda row: row["validation_mae"])
-    cache_command, train_command, report_command = _reproduction_commands()
+    best_jepa_train_ft = min(
+        [jepa_train_ft, jepa_train_ft_lr],
+        key=lambda payload: _metric(payload, "validation", "mae_s"),
+    )
+    (
+        cache_command,
+        train_command,
+        pretrain_command,
+        finetune_command,
+        report_command,
+    ) = _reproduction_commands()
 
     lines = [
         "# Local Results",
@@ -160,11 +197,45 @@ def build_report(root: Path = ROOT) -> str:
             f"seed {best_raw['seed']}, best epoch {best_raw['best_epoch']}. |"
         ),
         (
+            "| JEPA train-only + TinyCNN | indexed windows | "
+            f"{_fmt(_metric(best_jepa_train_ft, 'validation', 'mae_s'))} | "
+            f"{_fmt(_metric(best_jepa_train_ft, 'test', 'mae_s'))} | "
+            "Self-supervised on train split only; best of lr 3e-4/1e-4. |"
+        ),
+        (
+            "| JEPA all-splits + TinyCNN | indexed windows | "
+            f"{_fmt(_metric(jepa_all_ft, 'validation', 'mae_s'))} | "
+            f"{_fmt(_metric(jepa_all_ft, 'test', 'mae_s'))} | "
+            "Diagnostic only; uses validation/test events without labels. |"
+        ),
+        (
             "| Geometric bbox expansion | labeled frames only | "
             f"{_fmt(_metric(geometric, 'validation', 'mae_s'))} "
             f"(n={_count(geometric, 'validation')}) | "
             f"{_fmt(_metric(geometric, 'test', 'mae_s'))} "
             f"(n={_count(geometric, 'test')}) | Not directly comparable; uses bbox labels. |"
+        ),
+        "",
+        "## JEPA Diagnostics",
+        "",
+        "| Pretrain scope | Best epoch | Best loss | Last train target std | "
+        "Last validation target std | Downstream validation MAE | Downstream test MAE |",
+        "| --- | ---: | ---: | ---: | ---: | ---: | ---: |",
+        (
+            "| train only | "
+            f"{jepa_train['best_epoch']} | {_fmt(float(jepa_train['best_loss']))} | "
+            f"{_fmt(float(jepa_train['last']['train']['target_embedding_std']))} | "
+            f"{_fmt(float(jepa_train['last']['validation']['target_embedding_std']))} | "
+            f"{_fmt(_metric(best_jepa_train_ft, 'validation', 'mae_s'))} | "
+            f"{_fmt(_metric(best_jepa_train_ft, 'test', 'mae_s'))} |"
+        ),
+        (
+            "| train+validation+test | "
+            f"{jepa_all['best_epoch']} | {_fmt(float(jepa_all['best_loss']))} | "
+            f"{_fmt(float(jepa_all['last']['train']['target_embedding_std']))} | "
+            f"{_fmt(float(jepa_all['last']['validation']['target_embedding_std']))} | "
+            f"{_fmt(_metric(jepa_all_ft, 'validation', 'mae_s'))} | "
+            f"{_fmt(_metric(jepa_all_ft, 'test', 'mae_s'))} |"
         ),
         "",
         "## Conclusion",
@@ -177,9 +248,13 @@ def build_report(root: Path = ROOT) -> str:
         "3. The CNN needs raw density information: normalized voxels underperform.",
         "   Raw+metadata improves sharply and can beat event-rate on validation for one seed,",
         "   but the five-seed mean remains behind event-rate on test and has high variance.",
-        "4. With only one training sequence, there is not enough evidence to claim learned",
+        "4. JEPA/self-supervised pretraining is implemented and runs on GPU, but this local",
+        "   train-only run does not improve downstream TTC. Even the all-splits diagnostic is",
+        "   worse than the non-pretrained TinyCNN seed 7, so the limiting factor is not just",
+        "   access to unlabeled validation/test event windows.",
+        "5. With one training sequence, there is still not enough evidence to claim learned",
         "   visual event representations generalize across speeds. The next meaningful step is",
-        "   more data or a JEPA/self-supervised pretraining stage before supervised TTC tuning.",
+        "   a larger EvTTC subset and stronger multi-horizon JEPA rather than this tiny run.",
         "",
         "## Reproduction",
         "",
@@ -187,6 +262,8 @@ def build_report(root: Path = ROOT) -> str:
         "$env:PYTHONPATH='src'",
         cache_command,
         train_command,
+        pretrain_command,
+        finetune_command,
         report_command,
         "```",
         "",
