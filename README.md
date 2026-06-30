@@ -69,10 +69,11 @@ $env:PYTHONPATH='src'
 ## Local Results
 
 Current local results are summarized in [docs/local_results.md](docs/local_results.md). The strongest
-pure indexed-window baseline is event-rate ridge on the held-out high-speed sequence; TinyCNN
-raw+metadata improves over normalized voxels but is not stable enough across seeds to claim robust
-generalization from one training sequence. JEPA/self-supervised pretraining now runs end to end, but
-the local train-only and all-splits diagnostic runs did not improve downstream TTC.
+leakage-safe local result is the causal detection-assisted geometry model: validation MAE `0.439s`
+and test MAE `0.188s` on labeled frames, with train-only calibration and no future boxes/events.
+For pure event-window models, event-rate ridge remains the strongest robust held-out result.
+JEPA/self-supervised pretraining runs end to end, but the local train-only and all-splits diagnostic
+runs did not improve downstream TTC.
 
 ## Script Wrappers
 
@@ -100,6 +101,7 @@ uv run --no-sync python scripts/train_tiny_cnn.py --cache artifacts/features/evt
 - Sequence-level split generation and validation.
 - Event count, time surface, voxel grid, and sparse token representations.
 - Mean/median, geometric bbox-expansion, and event-rate ridge TTC baselines.
+- Causal detection-assisted geometry baseline with explicit anti-lookahead audit.
 - Voxel tensor cache builder for supervised and representation-learning experiments.
 - JEPA-style self-supervised pretraining with online encoder, EMA target encoder, latent
   predictor, and masked context views.

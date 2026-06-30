@@ -69,8 +69,9 @@ def run_geometric_baseline(
         "split": Path(split_path).as_posix(),
         "splits": {},
         "notes": (
-            "Analytic baseline on frames with ISAT labels only; predictions with non-positive "
-            "apparent expansion are excluded and counted."
+            "Diagnostic analytic baseline on frames with ISAT labels only. This implementation "
+            "uses a centered derivative window and therefore includes future bboxes; do not use "
+            "it for anti-lookahead claims. Use baseline causal-geometry instead."
         ),
     }
     for split_name, sequence_ids in splits.items():

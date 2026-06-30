@@ -60,7 +60,7 @@ def _tiny_row(path: Path) -> dict[str, Any]:
     }
 
 
-def _reproduction_commands() -> tuple[str, str, str, str, str]:
+def _reproduction_commands() -> tuple[str, str, str, str, str, str]:
     cache_command = (
         ".\\.venv\\Scripts\\python.exe -m e_jepa_ttc cache voxel "
         "--manifest data/manifests/evttc_local.yaml "
@@ -74,6 +74,11 @@ def _reproduction_commands() -> tuple[str, str, str, str, str]:
         "--cache artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz "
         "--output-dir artifacts/runs/tiny_cnn_voxel_160x90_b5_raw_meta_seed7 "
         "--epochs 80 --batch-size 96 --learning-rate 0.0003 --seed 7 --device auto"
+    )
+    causal_geometry_command = (
+        ".\\.venv\\Scripts\\python.exe -m e_jepa_ttc baseline causal-geometry "
+        "--manifest data/manifests/evttc_local.yaml --split data/splits/evttc_local.yaml "
+        "--output artifacts/metrics/causal_geometry_baseline.json --derivative-window 15"
     )
     pretrain_command = (
         ".\\.venv\\Scripts\\python.exe -m e_jepa_ttc pretrain jepa "
@@ -95,7 +100,14 @@ def _reproduction_commands() -> tuple[str, str, str, str, str]:
         ".\\.venv\\Scripts\\python.exe scripts/write_local_results.py "
         "--output docs/local_results.md"
     )
-    return cache_command, train_command, pretrain_command, finetune_command, report_command
+    return (
+        cache_command,
+        train_command,
+        causal_geometry_command,
+        pretrain_command,
+        finetune_command,
+        report_command,
+    )
 
 
 def build_report(root: Path = ROOT) -> str:
@@ -106,6 +118,7 @@ def build_report(root: Path = ROOT) -> str:
     trivial = _load_json(metrics_dir / "trivial_baseline.json")
     event_rate = _load_json(metrics_dir / "event_rate_baseline.json")
     geometric = _load_json(metrics_dir / "geometric_baseline.json")
+    causal_geometry = _load_json(metrics_dir / "causal_geometry_baseline.json")
     normalized_cnn = _load_json(runs_dir / "tiny_cnn_voxel_160x90_b5_seed42" / "metrics.json")
     jepa_train = _load_json(runs_dir / "jepa_voxel_160x90_b5_raw_meta_train_seed7" / "metrics.json")
     jepa_train_ft = _load_json(
@@ -135,6 +148,7 @@ def build_report(root: Path = ROOT) -> str:
     (
         cache_command,
         train_command,
+        causal_geometry_command,
         pretrain_command,
         finetune_command,
         report_command,
@@ -209,12 +223,32 @@ def build_report(root: Path = ROOT) -> str:
             "Diagnostic only; uses validation/test events without labels. |"
         ),
         (
-            "| Geometric bbox expansion | labeled frames only | "
+            "| Causal geometry calibrated | detection-assisted labeled frames | "
+            f"{_fmt(_metric(causal_geometry, 'validation', 'mae_s'))} "
+            f"(n={_count(causal_geometry, 'validation')}) | "
+            f"{_fmt(_metric(causal_geometry, 'test', 'mae_s'))} "
+            f"(n={_count(causal_geometry, 'test')}) | "
+            "Uses current/past boxes only; calibration fit on train labels only. |"
+        ),
+        (
+            "| Centered geometry diagnostic | labeled frames only | "
             f"{_fmt(_metric(geometric, 'validation', 'mae_s'))} "
             f"(n={_count(geometric, 'validation')}) | "
             f"{_fmt(_metric(geometric, 'test', 'mae_s'))} "
-            f"(n={_count(geometric, 'test')}) | Not directly comparable; uses bbox labels. |"
+            f"(n={_count(geometric, 'test')}) | "
+            "Non-causal centered derivative; not a valid claim. |"
         ),
+        "",
+        "## Anti-Leakage Audit",
+        "",
+        "- The `causal_geometry_baseline.json` run reports `uses_future_bboxes=false`,",
+        "  `uses_future_events=false`, and `uses_validation_or_test_ttc_for_fit=false`.",
+        "- Its derivative at each labeled frame is fitted from that frame and earlier labeled",
+        "  frames only. The log-affine calibration uses train split labels only.",
+        "- It is detection-assisted, not event-only: it assumes an external detector or tracker",
+        "  provides current/past object boxes at inference.",
+        "- The older centered geometric baseline is retained only as a diagnostic and is marked",
+        "  non-causal because it uses future boxes inside the derivative window.",
         "",
         "## JEPA Diagnostics",
         "",
@@ -240,9 +274,9 @@ def build_report(root: Path = ROOT) -> str:
         "",
         "## Conclusion",
         "",
-        "1. The geometric apparent-expansion baseline is the strongest local signal, but it uses",
-        "   object labels and only evaluates labeled frames, so it is not a pure event-stream",
-        "   model.",
+        "1. The strongest leakage-safe local result is the causal detection-assisted geometry",
+        "   model: validation MAE 0.439 s and test MAE 0.188 s on labeled frames.",
+        "   It is promising, but it is not an event-only model because it requires object boxes.",
         "2. On the indexed event-window protocol, the event-rate ridge baseline is the",
         "   strongest robust result on the held-out high-speed sequence.",
         "3. The CNN needs raw density information: normalized voxels underperform.",
@@ -262,6 +296,7 @@ def build_report(root: Path = ROOT) -> str:
         "$env:PYTHONPATH='src'",
         cache_command,
         train_command,
+        causal_geometry_command,
         pretrain_command,
         finetune_command,
         report_command,

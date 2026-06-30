@@ -1,4 +1,4 @@
-.PHONY: setup test lint smoke-data scan-data validate-data index-data split-data train-baseline baseline-trivial baseline-geometric baseline-event-rate cache-voxel pretrain-jepa train-tiny-cnn train-tiny-cnn-jepa clean
+.PHONY: setup test lint smoke-data scan-data validate-data index-data split-data train-baseline baseline-trivial baseline-geometric baseline-causal-geometry baseline-event-rate cache-voxel pretrain-jepa train-tiny-cnn train-tiny-cnn-jepa clean
 
 setup:
 	uv sync --all-groups --no-editable
@@ -32,6 +32,9 @@ baseline-trivial:
 
 baseline-geometric:
 	uv run --no-sync e-jepa-ttc baseline geometric --manifest data/manifests/evttc_local.yaml --split data/splits/evttc_local.yaml --output artifacts/metrics/geometric_baseline.json
+
+baseline-causal-geometry:
+	uv run --no-sync e-jepa-ttc baseline causal-geometry --manifest data/manifests/evttc_local.yaml --split data/splits/evttc_local.yaml --output artifacts/metrics/causal_geometry_baseline.json --derivative-window 15
 
 baseline-event-rate:
 	uv run --no-sync e-jepa-ttc baseline event-rate --manifest data/manifests/evttc_local.yaml --split data/splits/evttc_local.yaml --index data/cache/evttc_index.json --output artifacts/metrics/event_rate_baseline.json

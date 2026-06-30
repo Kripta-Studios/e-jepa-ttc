@@ -120,3 +120,29 @@ non-pretrained TinyCNN seed 7 result. The all-splits diagnostic also underperfor
 not only lack of unlabeled validation/test windows; the next useful step is larger multi-sequence
 data and a stronger temporal/multi-horizon JEPA objective.
 
+## 2026-07-01 Causal Geometry Audit
+
+Found and documented a lookahead issue in the original centered geometric baseline: its derivative
+window used future bounding boxes. That result is now treated as diagnostic only.
+
+Implemented `baseline causal-geometry`, a detection-assisted TTC estimator that:
+
+- uses only current and previous object boxes for apparent expansion;
+- fits a two-parameter log-affine calibration using train labels only;
+- reports explicit leakage audit flags in `artifacts/metrics/causal_geometry_baseline.json`;
+- keeps the protocol separate from event-only models.
+
+Run:
+
+```text
+.\.venv\Scripts\python.exe -m e_jepa_ttc baseline causal-geometry --manifest data/manifests/evttc_local.yaml --split data/splits/evttc_local.yaml --output artifacts/metrics/causal_geometry_baseline.json --derivative-window 15
+```
+
+Result on labeled frames:
+
+- validation MAE 0.439 s, RMSE 0.595 s, n=143;
+- test MAE 0.188 s, RMSE 0.359 s, n=96.
+
+This is the first excellent/promising local result without lookahead bias, but it is
+detection-assisted, not event-only.
+
