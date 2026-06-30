@@ -5,7 +5,8 @@ Research MVP for Time-to-Contact / Time-to-Collision estimation from event camer
 The current repository implements the first engineering milestones from `AGENTS.md`: project
 bootstrap, typed data contracts, synthetic event data with known TTC, EvTTC dataset discovery,
 manifest validation, temporal indexing, sequence-level splits, dense event representations,
-classical TTC baselines, voxel-cache materialization, and a supervised TinyCNN TTC regressor.
+classical TTC baselines, voxel-cache materialization, a supervised TinyCNN TTC regressor,
+temporal multi-horizon JEPA pretraining, and low-label probes.
 
 Experimental numbers must be generated from reproducible runs before being promoted to project
 claims. The bundled local EvTTC data is a three-sequence mini subset, so local results are smoke and
@@ -62,8 +63,8 @@ To pretrain the encoder without TTC labels and then fine-tune the supervised hea
 
 ```powershell
 $env:PYTHONPATH='src'
-.\.venv\Scripts\python.exe -m e_jepa_ttc pretrain jepa --cache artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz --output-dir artifacts/runs/jepa_voxel_160x90_b5_raw_meta_train_seed7 --epochs 160 --batch-size 128 --learning-rate 0.0005 --seed 7 --device auto --pretrain-splits train --validation-splits validation --variance-weight 1.0 --min-std 0.05
-.\.venv\Scripts\python.exe -m e_jepa_ttc train tiny-cnn --cache artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz --output-dir artifacts/runs/tiny_cnn_voxel_160x90_b5_raw_meta_jepa_seed7 --epochs 80 --batch-size 96 --learning-rate 0.0003 --seed 7 --device auto --pretrained-encoder artifacts/runs/jepa_voxel_160x90_b5_raw_meta_train_seed7/jepa_encoder_best.pt
+.\.venv\Scripts\python.exe -m e_jepa_ttc pretrain jepa --cache artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz --output-dir artifacts/runs/jepa_temporal_voxel_160x90_b5_raw_meta_train_seed7 --epochs 160 --batch-size 64 --learning-rate 0.0005 --seed 7 --device auto --pretrain-splits train --validation-splits validation --temporal-horizons-ms 20 60 100 240 500 --max-target-slop-ms 10 --variance-weight 1.0 --min-std 0.05
+.\.venv\Scripts\python.exe -m e_jepa_ttc train tiny-cnn --cache artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz --output-dir artifacts/runs/tiny_cnn_voxel_160x90_b5_raw_meta_temporal_jepa_seed7 --epochs 80 --batch-size 96 --learning-rate 0.0003 --seed 7 --device auto --pretrained-encoder artifacts/runs/jepa_temporal_voxel_160x90_b5_raw_meta_train_seed7/jepa_encoder_best.pt
 ```
 
 ## Local Results
@@ -71,9 +72,10 @@ $env:PYTHONPATH='src'
 Current local results are summarized in [docs/local_results.md](docs/local_results.md). The strongest
 leakage-safe local result is the causal detection-assisted geometry model: validation MAE `0.439s`
 and test MAE `0.188s` on labeled frames, with train-only calibration and no future boxes/events.
-For pure event-window models, event-rate ridge remains the strongest robust held-out result.
-JEPA/self-supervised pretraining runs end to end, but the local train-only and all-splits diagnostic
-runs did not improve downstream TTC.
+For pure event-window models, temporal JEPA is now positive in low-label mode: with 5% train labels
+it improves validation MAE from `2.909 +/- 0.743s` to `1.548 +/- 0.176s` across three seeds and
+modestly improves the repeatedly inspected mini-test mean. Event-rate ridge remains the strongest
+full-label held-out event-window baseline on this mini split.
 
 ## Script Wrappers
 
@@ -86,7 +88,7 @@ uv run --no-sync python scripts/build_index.py --manifest data/manifests/evttc_l
 uv run --no-sync python scripts/make_splits.py --manifest data/manifests/evttc_local.yaml --output data/splits/evttc_local.yaml
 uv run --no-sync python scripts/train_baseline.py --manifest data/manifests/evttc_local.yaml --split data/splits/evttc_local.yaml --output artifacts/metrics/trivial_baseline.json
 uv run --no-sync python scripts/build_voxel_cache.py --manifest data/manifests/evttc_local.yaml --split data/splits/evttc_local.yaml --index data/cache/evttc_index.json --output artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz --no-normalize --metadata-channels
-uv run --no-sync python scripts/pretrain_jepa.py --cache artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz --output-dir artifacts/runs/jepa_voxel_160x90_b5_raw_meta_train_seed7
+uv run --no-sync python scripts/pretrain_jepa.py --cache artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz --output-dir artifacts/runs/jepa_temporal_voxel_160x90_b5_raw_meta_train_seed7 --temporal-horizons-ms 20 60 100 240 500
 uv run --no-sync python scripts/train_tiny_cnn.py --cache artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz --output-dir artifacts/runs/tiny_cnn_voxel_160x90_b5_raw_meta_seed7 --seed 7
 ```
 
@@ -103,16 +105,17 @@ uv run --no-sync python scripts/train_tiny_cnn.py --cache artifacts/features/evt
 - Mean/median, geometric bbox-expansion, and event-rate ridge TTC baselines.
 - Causal detection-assisted geometry baseline with explicit anti-lookahead audit.
 - Voxel tensor cache builder for supervised and representation-learning experiments.
-- JEPA-style self-supervised pretraining with online encoder, EMA target encoder, latent
-  predictor, and masked context views.
+- JEPA-style self-supervised pretraining with online encoder, EMA target encoder, temporal
+  multi-horizon future embedding prediction, masked context views, and leakage audit metadata.
 - Supervised TinyCNN log-TTC regressor with CUDA AMP, checkpoints, history, metrics, and predictions.
+- Frozen-encoder probes and low-label supervised runs via `--freeze-encoder` and `--train-fraction`.
 - Unit and integration tests for data contracts, representations, synthetic data, manifests, splits,
   and EvTTC window reads.
 
 ## Not Implemented Yet
 
-- Larger-scale multi-sequence JEPA pretraining and multi-horizon predictors.
-- Fine-tuning, robustness suite, ONNX export, streaming demo, and project-level final report generation.
+- Larger-scale multi-sequence JEPA pretraining on the EvTTC starter subset.
+- Robustness suite, ONNX export, streaming demo, and project-level final report generation.
 
 These remain in the milestone order defined in `AGENTS.md`; they should be added after the
 supervised baseline is established against the local data.

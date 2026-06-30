@@ -83,18 +83,20 @@ def _reproduction_commands() -> tuple[str, str, str, str, str, str]:
     pretrain_command = (
         ".\\.venv\\Scripts\\python.exe -m e_jepa_ttc pretrain jepa "
         "--cache artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz "
-        "--output-dir artifacts/runs/jepa_voxel_160x90_b5_raw_meta_train_seed7 "
-        "--epochs 160 --batch-size 128 --learning-rate 0.0005 --seed 7 --device auto "
+        "--output-dir artifacts/runs/jepa_temporal_voxel_160x90_b5_raw_meta_train_seed7 "
+        "--epochs 160 --batch-size 64 --learning-rate 0.0005 --seed 7 --device auto "
         "--pretrain-splits train --validation-splits validation "
+        "--temporal-horizons-ms 20 60 100 240 500 --max-target-slop-ms 10 "
         "--variance-weight 1.0 --min-std 0.05"
     )
     finetune_command = (
         ".\\.venv\\Scripts\\python.exe -m e_jepa_ttc train tiny-cnn "
         "--cache artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz "
-        "--output-dir artifacts/runs/tiny_cnn_voxel_160x90_b5_raw_meta_jepa_seed7 "
+        "--output-dir artifacts/runs/tiny_cnn_voxel_160x90_b5_raw_meta_temporal_jepa_seed7 "
         "--epochs 80 --batch-size 96 --learning-rate 0.0003 --seed 7 --device auto "
         "--pretrained-encoder "
-        "artifacts/runs/jepa_voxel_160x90_b5_raw_meta_train_seed7/jepa_encoder_best.pt"
+        "artifacts/runs/jepa_temporal_voxel_160x90_b5_raw_meta_train_seed7/"
+        "jepa_encoder_best.pt"
     )
     report_command = (
         ".\\.venv\\Scripts\\python.exe scripts/write_local_results.py "
@@ -127,6 +129,27 @@ def build_report(root: Path = ROOT) -> str:
     jepa_train_ft_lr = _load_json(
         runs_dir / "tiny_cnn_voxel_160x90_b5_raw_meta_jepa_seed7_lr1e4" / "metrics.json"
     )
+    jepa_temporal = _load_json(
+        runs_dir / "jepa_temporal_voxel_160x90_b5_raw_meta_train_seed7" / "metrics.json"
+    )
+    jepa_temporal_ft = _load_json(
+        runs_dir
+        / "tiny_cnn_voxel_160x90_b5_raw_meta_temporal_jepa_seed7"
+        / "metrics.json"
+    )
+    jepa_temporal_probe = _load_json(
+        runs_dir
+        / "tiny_cnn_voxel_160x90_b5_raw_meta_temporal_jepa_probe_seed7"
+        / "metrics.json"
+    )
+    lowlabel_10_scratch = _load_json(
+        runs_dir / "tiny_cnn_voxel_160x90_b5_raw_meta_seed7_frac10" / "metrics.json"
+    )
+    lowlabel_10_jepa = _load_json(
+        runs_dir
+        / "tiny_cnn_voxel_160x90_b5_raw_meta_temporal_jepa_seed7_frac10"
+        / "metrics.json"
+    )
     jepa_all = _load_json(runs_dir / "jepa_voxel_160x90_b5_raw_meta_all_seed7" / "metrics.json")
     jepa_all_ft = _load_json(
         runs_dir / "tiny_cnn_voxel_160x90_b5_raw_meta_jepa_all_seed7" / "metrics.json"
@@ -135,12 +158,40 @@ def build_report(root: Path = ROOT) -> str:
     raw_cache_summary = _load_json(features_dir / "evttc_voxel_160x90_b5_raw_meta.summary.json")
 
     raw_meta_paths = sorted(
-        runs_dir.glob("tiny_cnn_voxel_160x90_b5_raw_meta_seed*/metrics.json")
+        path
+        for path in runs_dir.glob("tiny_cnn_voxel_160x90_b5_raw_meta_seed*/metrics.json")
+        if "_frac" not in path.parent.name
     )
     raw_meta_rows = [_tiny_row(path) for path in raw_meta_paths]
     raw_val_mean, raw_val_std = _mean_std([row["validation_mae"] for row in raw_meta_rows])
     raw_test_mean, raw_test_std = _mean_std([row["test_mae"] for row in raw_meta_rows])
     best_raw = min(raw_meta_rows, key=lambda row: row["validation_mae"])
+    lowlabel_05_scratch_rows = [
+        _tiny_row(path)
+        for path in sorted(
+            runs_dir.glob("tiny_cnn_voxel_160x90_b5_raw_meta_seed*_frac05/metrics.json")
+        )
+    ]
+    lowlabel_05_jepa_rows = [
+        _tiny_row(path)
+        for path in sorted(
+            runs_dir.glob(
+                "tiny_cnn_voxel_160x90_b5_raw_meta_temporal_jepa_seed*_frac05/metrics.json"
+            )
+        )
+    ]
+    lowlabel_05_scratch_val_mean, lowlabel_05_scratch_val_std = _mean_std(
+        [row["validation_mae"] for row in lowlabel_05_scratch_rows]
+    )
+    lowlabel_05_scratch_test_mean, lowlabel_05_scratch_test_std = _mean_std(
+        [row["test_mae"] for row in lowlabel_05_scratch_rows]
+    )
+    lowlabel_05_jepa_val_mean, lowlabel_05_jepa_val_std = _mean_std(
+        [row["validation_mae"] for row in lowlabel_05_jepa_rows]
+    )
+    lowlabel_05_jepa_test_mean, lowlabel_05_jepa_test_std = _mean_std(
+        [row["test_mae"] for row in lowlabel_05_jepa_rows]
+    )
     best_jepa_train_ft = min(
         [jepa_train_ft, jepa_train_ft_lr],
         key=lambda payload: _metric(payload, "validation", "mae_s"),
@@ -211,10 +262,22 @@ def build_report(root: Path = ROOT) -> str:
             f"seed {best_raw['seed']}, best epoch {best_raw['best_epoch']}. |"
         ),
         (
-            "| JEPA train-only + TinyCNN | indexed windows | "
+            "| Masked JEPA train-only + TinyCNN | indexed windows | "
             f"{_fmt(_metric(best_jepa_train_ft, 'validation', 'mae_s'))} | "
             f"{_fmt(_metric(best_jepa_train_ft, 'test', 'mae_s'))} | "
-            "Self-supervised on train split only; best of lr 3e-4/1e-4. |"
+            "Same-window masked objective; self-supervised on train split only. |"
+        ),
+        (
+            "| Temporal JEPA train-only + TinyCNN | indexed windows | "
+            f"{_fmt(_metric(jepa_temporal_ft, 'validation', 'mae_s'))} | "
+            f"{_fmt(_metric(jepa_temporal_ft, 'test', 'mae_s'))} | "
+            "Multi-horizon future embedding objective; self-supervised on train only. |"
+        ),
+        (
+            "| Temporal JEPA frozen probe | indexed windows | "
+            f"{_fmt(_metric(jepa_temporal_probe, 'validation', 'mae_s'))} | "
+            f"{_fmt(_metric(jepa_temporal_probe, 'test', 'mae_s'))} | "
+            "Only TTC head trained after JEPA pretraining. |"
         ),
         (
             "| JEPA all-splits + TinyCNN | indexed windows | "
@@ -239,6 +302,40 @@ def build_report(root: Path = ROOT) -> str:
             "Non-causal centered derivative; not a valid claim. |"
         ),
         "",
+        "## Low-Label Results",
+        "",
+        "These runs use the same train sequence but restrict supervised TTC labels. The temporal",
+        "JEPA encoder is pretrained on train events only, without TTC labels.",
+        "",
+        "| Labels | Method | Seeds | Validation MAE | Test MAE | Notes |",
+        "| --- | --- | --- | ---: | ---: | --- |",
+        (
+            "| 5% (17 windows) | TinyCNN scratch | 7,13,21 | "
+            f"{_fmt(lowlabel_05_scratch_val_mean)} +/- "
+            f"{_fmt(lowlabel_05_scratch_val_std)} | "
+            f"{_fmt(lowlabel_05_scratch_test_mean)} +/- "
+            f"{_fmt(lowlabel_05_scratch_test_std)} | "
+            "Random train-label subset per seed. |"
+        ),
+        (
+            "| 5% (17 windows) | Temporal JEPA + fine-tune | 7,13,21 | "
+            f"{_fmt(lowlabel_05_jepa_val_mean)} +/- {_fmt(lowlabel_05_jepa_val_std)} | "
+            f"{_fmt(lowlabel_05_jepa_test_mean)} +/- {_fmt(lowlabel_05_jepa_test_std)} | "
+            "Same label subsets; train-only SSL encoder. |"
+        ),
+        (
+            "| 10% (34 windows) | TinyCNN scratch | 7 | "
+            f"{_fmt(_metric(lowlabel_10_scratch, 'validation', 'mae_s'))} | "
+            f"{_fmt(_metric(lowlabel_10_scratch, 'test', 'mae_s'))} | "
+            "Single-seed check. |"
+        ),
+        (
+            "| 10% (34 windows) | Temporal JEPA + fine-tune | 7 | "
+            f"{_fmt(_metric(lowlabel_10_jepa, 'validation', 'mae_s'))} | "
+            f"{_fmt(_metric(lowlabel_10_jepa, 'test', 'mae_s'))} | "
+            "Single-seed check. |"
+        ),
+        "",
         "## Anti-Leakage Audit",
         "",
         "- The `causal_geometry_baseline.json` run reports `uses_future_bboxes=false`,",
@@ -249,6 +346,11 @@ def build_report(root: Path = ROOT) -> str:
         "  provides current/past object boxes at inference.",
         "- The older centered geometric baseline is retained only as a diagnostic and is marked",
         "  non-causal because it uses future boxes inside the derivative window.",
+        "- The temporal JEPA run reports `uses_ttc_labels=false`; future event windows are used",
+        "  only as self-supervised targets and never cross sequence or split boundaries.",
+        "- Low-label subsets are sampled only from the train split. Validation is used for",
+        "  checkpoint selection; the mini test split has been inspected repeatedly and is",
+        "  therefore exploratory rather than a sealed final test.",
         "",
         "## JEPA Diagnostics",
         "",
@@ -256,7 +358,7 @@ def build_report(root: Path = ROOT) -> str:
         "Last validation target std | Downstream validation MAE | Downstream test MAE |",
         "| --- | ---: | ---: | ---: | ---: | ---: | ---: |",
         (
-            "| train only | "
+            "| masked train only | "
             f"{jepa_train['best_epoch']} | {_fmt(float(jepa_train['best_loss']))} | "
             f"{_fmt(float(jepa_train['last']['train']['target_embedding_std']))} | "
             f"{_fmt(float(jepa_train['last']['validation']['target_embedding_std']))} | "
@@ -264,7 +366,15 @@ def build_report(root: Path = ROOT) -> str:
             f"{_fmt(_metric(best_jepa_train_ft, 'test', 'mae_s'))} |"
         ),
         (
-            "| train+validation+test | "
+            "| temporal train only | "
+            f"{jepa_temporal['best_epoch']} | {_fmt(float(jepa_temporal['best_loss']))} | "
+            f"{_fmt(float(jepa_temporal['last']['train']['target_embedding_std']))} | "
+            f"{_fmt(float(jepa_temporal['last']['validation']['target_embedding_std']))} | "
+            f"{_fmt(_metric(jepa_temporal_ft, 'validation', 'mae_s'))} | "
+            f"{_fmt(_metric(jepa_temporal_ft, 'test', 'mae_s'))} |"
+        ),
+        (
+            "| masked train+validation+test | "
             f"{jepa_all['best_epoch']} | {_fmt(float(jepa_all['best_loss']))} | "
             f"{_fmt(float(jepa_all['last']['train']['target_embedding_std']))} | "
             f"{_fmt(float(jepa_all['last']['validation']['target_embedding_std']))} | "
@@ -277,18 +387,21 @@ def build_report(root: Path = ROOT) -> str:
         "1. The strongest leakage-safe local result is the causal detection-assisted geometry",
         "   model: validation MAE 0.439 s and test MAE 0.188 s on labeled frames.",
         "   It is promising, but it is not an event-only model because it requires object boxes.",
-        "2. On the indexed event-window protocol, the event-rate ridge baseline is the",
-        "   strongest robust result on the held-out high-speed sequence.",
-        "3. The CNN needs raw density information: normalized voxels underperform.",
+        "2. Temporal multi-horizon JEPA is the first positive self-supervised result: with",
+        "   only 5% train labels, validation MAE improves from 2.909 +/- 0.743 s to",
+        "   1.548 +/- 0.176 s across three seeds, and test mean improves modestly from",
+        "   3.107 +/- 0.277 s to 2.986 +/- 0.106 s.",
+        "3. With 100% labels, temporal JEPA improves validation MAE over the matching",
+        "   TinyCNN seed 7 run (1.518 s vs 1.877 s), but it does not beat the event-rate",
+        "   baseline on the repeatedly inspected high-speed mini test split.",
+        "4. On the full-label indexed event-window protocol, event-rate ridge remains the",
+        "   strongest robust held-out result among pure event-window models.",
+        "5. The CNN needs raw density information: normalized voxels underperform.",
         "   Raw+metadata improves sharply and can beat event-rate on validation for one seed,",
         "   but the five-seed mean remains behind event-rate on test and has high variance.",
-        "4. JEPA/self-supervised pretraining is implemented and runs on GPU, but this local",
-        "   train-only run does not improve downstream TTC. Even the all-splits diagnostic is",
-        "   worse than the non-pretrained TinyCNN seed 7, so the limiting factor is not just",
-        "   access to unlabeled validation/test event windows.",
-        "5. With one training sequence, there is still not enough evidence to claim learned",
+        "6. With one training sequence, there is still not enough evidence to claim learned",
         "   visual event representations generalize across speeds. The next meaningful step is",
-        "   a larger EvTTC subset and stronger multi-horizon JEPA rather than this tiny run.",
+        "   the EvTTC starter subset with a fresh sealed test protocol.",
         "",
         "## Reproduction",
         "",

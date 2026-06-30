@@ -146,3 +146,35 @@ Result on labeled frames:
 This is the first excellent/promising local result without lookahead bias, but it is
 detection-assisted, not event-only.
 
+## 2026-07-01 Temporal Multi-Horizon JEPA
+
+Replaced the first masked same-window JEPA objective with a temporal multi-horizon objective:
+
+- context windows predict future target-encoder embeddings at 20, 60, 100, 240, and 500 ms;
+- temporal pairs are matched only within the same sequence and selected split;
+- the pretraining summary records `uses_ttc_labels=false` and no cross-sequence/split targets;
+- the supervised trainer now supports frozen-encoder probes and deterministic low-label subsets.
+
+Train-only SSL run:
+
+```text
+.\.venv\Scripts\python.exe -m e_jepa_ttc pretrain jepa --cache artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz --output-dir artifacts/runs/jepa_temporal_voxel_160x90_b5_raw_meta_train_seed7 --epochs 160 --batch-size 64 --learning-rate 0.0005 --seed 7 --device auto --pretrain-splits train --validation-splits validation --temporal-horizons-ms 20 60 100 240 500 --max-target-slop-ms 10 --variance-weight 1.0 --min-std 0.05
+```
+
+Result:
+
+- best temporal JEPA epoch 30, best validation latent loss 0.00544;
+- full-label fine-tune seed 7: validation MAE 1.518 s, test MAE 3.183 s;
+- frozen probe seed 7: validation MAE 1.916 s, test MAE 2.911 s;
+- 5% labels, three seeds: scratch validation MAE 2.909 +/- 0.743 s, temporal JEPA
+  validation MAE 1.548 +/- 0.176 s;
+- 5% labels, three seeds: scratch test MAE 3.107 +/- 0.277 s, temporal JEPA test
+  MAE 2.986 +/- 0.106 s.
+
+Conclusion:
+
+- This is the first positive self-supervised JEPA result in the repo, especially in low-label
+  validation.
+- The high-speed mini test has been inspected repeatedly, so it is no longer a sealed test. Treat
+  the test numbers as exploratory and use a fresh EvTTC starter protocol for any final claim.
+
