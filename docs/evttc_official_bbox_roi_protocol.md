@@ -35,6 +35,19 @@ Current local sealed full-starter split:
 - Validation: `CCRs-side-high`
 - Sealed test: `CPLA-high`
 
+Local official-Table-V asset coverage:
+
+| Sequence family | Local status | Use in current sealed split |
+| --- | --- | --- |
+| `CCRs1-low/medium/high` | Present with HDF5, `ttc.csv`, `gt.hdf5`, and `leftlabel` | Train only |
+| `CCRs2-low/medium/high` | Missing locally | Not available |
+| `CCRm-low/medium` | Missing locally | Not available |
+| `Slider-750/1000` | Missing locally | Not available |
+
+Therefore a partial CCRs1-only reproduction is possible as a smoke check, but
+not as an official comparison: the current protocol has already used CCRs1 for
+training, and the remaining official benchmark sequences are not present.
+
 Current local bbox/ROI result:
 
 | Method | Split | Labels | Predictions | Metric |
@@ -62,13 +75,15 @@ the official CMax/STRTTC metric table and must not be compared as if it were.
 
 1. Download or recover complete bbox/segmentation assets for the official Table V
    real-world sequences: CCRs1, CCRs2, and CCRm at the required speeds.
-2. Implement or wrap the official STRTTC MATLAB code and a CMax baseline under a
+2. Add the slider-testbed data if the goal is to reproduce the complete Table V
+   including `Slider-750` and `Slider-1000`.
+3. Implement or wrap the official STRTTC MATLAB code and a CMax baseline under a
    deterministic CLI, recording runtime and random seeds.
-3. Add an ROI event extractor that uses only current/past bbox information at
+4. Add an ROI event extractor that uses only current/past bbox information at
    inference time and never future boxes.
-4. Evaluate every method on the same frames/events, same sequence list, same TTC
+5. Evaluate every method on the same frames/events, same sequence list, same TTC
    alignment, and same metric.
-5. Keep model selection on validation. Run the sealed test once per frozen
+6. Keep model selection on validation. Run the sealed test once per frozen
    protocol and do not change hyperparameters after seeing it.
 
 Until those items are done, the correct comparison is:
