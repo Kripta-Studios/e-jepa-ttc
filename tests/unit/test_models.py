@@ -9,7 +9,9 @@ def test_tiny_cnn_encoder_and_regressor_shapes() -> None:
     regressor = TinyCNNRegressor(in_channels=6, width=16)
 
     encoded = encoder(x)
+    tokens = encoder.forward_tokens(x)
     pred = regressor(x)
 
     assert encoded.shape == (2, 64)
+    assert tokens.shape == (2, 12, 64)
     assert pred.shape == (2,)

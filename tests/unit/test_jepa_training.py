@@ -40,8 +40,11 @@ def test_jepa_checkpoint_loads_into_supervised_trainer(tmp_path: Path) -> None:
         validation_splits=("validation",),
     )
     assert pretrain_summary["best_epoch"] == 1
-    assert pretrain_summary["objective"] == "temporal_multihorizon"
+    assert pretrain_summary["objective"] == "dense_temporal_token_motion_multihorizon"
+    assert pretrain_summary["dense_tokens"] is True
+    assert pretrain_summary["motion_conditioning"] is True
     assert pretrain_summary["leakage_audit"]["uses_ttc_labels"] is False
+    assert pretrain_summary["leakage_audit"]["motion_conditioning_uses_context_only"] is True
     assert pretrain_summary["train_pair_stats"]["target_pair_count"] > 0
     checkpoint = tmp_path / "jepa" / "jepa_encoder_best.pt"
     assert checkpoint.exists()

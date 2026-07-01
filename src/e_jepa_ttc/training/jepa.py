@@ -105,6 +105,74 @@ class TemporalJEPAPredictor(nn.Module):
         return self.net(torch.cat([context, horizon], dim=-1))
 
 
+class DenseTemporalJEPAPredictor(nn.Module):
+    """Predict horizon-conditioned dense future tokens from context tokens."""
+
+    def __init__(
+        self,
+        dim: int,
+        horizon_count: int,
+        *,
+        motion_dim: int = 0,
+        hidden_dim: int | None = None,
+    ) -> None:
+        super().__init__()
+        if horizon_count <= 0:
+            msg = "horizon_count must be positive."
+            raise ValueError(msg)
+        if motion_dim < 0:
+            msg = "motion_dim must be non-negative."
+            raise ValueError(msg)
+        hidden = hidden_dim or dim * 2
+        self.motion_dim = motion_dim
+        self.horizon_embedding = nn.Embedding(horizon_count, dim)
+        self.motion_projection = nn.Linear(motion_dim, dim) if motion_dim else None
+        input_dim = dim * (3 if motion_dim else 2)
+        self.net = nn.Sequential(
+            nn.Linear(input_dim, hidden),
+            nn.LayerNorm(hidden),
+            nn.SiLU(inplace=True),
+            nn.Linear(hidden, dim),
+        )
+
+    def forward(
+        self,
+        context_tokens: torch.Tensor,
+        horizon_ids: torch.Tensor,
+        motion_features: torch.Tensor | None,
+    ) -> torch.Tensor:
+        """Predict one dense token grid per requested future horizon."""
+
+        batch, token_count, dim = context_tokens.shape
+        horizon_z = self.horizon_embedding(horizon_ids.to(device=context_tokens.device))
+        context = context_tokens[:, None, :, :].expand(
+            batch,
+            horizon_z.shape[0],
+            token_count,
+            dim,
+        )
+        horizon = horizon_z[None, :, None, :].expand(
+            batch,
+            horizon_z.shape[0],
+            token_count,
+            dim,
+        )
+        pieces = [context, horizon]
+        if self.motion_projection is not None:
+            if motion_features is None:
+                msg = "motion_features are required for motion-conditioned dense JEPA."
+                raise ValueError(msg)
+            motion_z = self.motion_projection(motion_features.to(device=context_tokens.device))
+            motion = motion_z[:, None, None, :].expand(
+                batch,
+                horizon_z.shape[0],
+                token_count,
+                dim,
+            )
+            pieces.append(motion)
+        return self.net(torch.cat(pieces, dim=-1))
+
+
 def _set_seed(seed: int) -> None:
     random.seed(seed)
     np.random.seed(seed)
@@ -236,6 +304,62 @@ def _variance_loss(z: torch.Tensor, *, min_std: float) -> torch.Tensor:
     return torch.relu(min_std - std).mean()
 
 
+def _context_motion_features(x: torch.Tensor, *, bins: int) -> torch.Tensor:
+    """Extract causal motion proxy features from the context voxel window."""
+
+    if bins <= 0:
+        msg = "bins must be positive."
+        raise ValueError(msg)
+    if x.shape[1] < bins * 2:
+        msg = f"Expected at least {bins * 2} event channels, got {x.shape[1]}."
+        raise ValueError(msg)
+
+    events = x[:, : bins * 2].float().view(x.shape[0], 2, bins, x.shape[-2], x.shape[-1])
+    mass_by_time = events.abs().sum(dim=(1, 3, 4))
+    pos_mass = events[:, 0].abs().sum(dim=(1, 2, 3))
+    neg_mass = events[:, 1].abs().sum(dim=(1, 2, 3))
+    total_mass = mass_by_time.sum(dim=1).clamp_min(1e-6)
+    midpoint = max(1, bins // 2)
+    early_mass = mass_by_time[:, :midpoint].sum(dim=1)
+    late_mass = mass_by_time[:, midpoint:].sum(dim=1)
+    temporal_slope = (late_mass - early_mass) / total_mass
+    polarity_balance = (pos_mass - neg_mass) / (pos_mass + neg_mass).clamp_min(1e-6)
+
+    spatial_mass = events.abs().sum(dim=1)
+    early_map = spatial_mass[:, :midpoint].sum(dim=1)
+    late_map = spatial_mass[:, midpoint:].sum(dim=1)
+    grid_x = torch.linspace(-1.0, 1.0, x.shape[-1], device=x.device, dtype=torch.float32)
+    grid_y = torch.linspace(-1.0, 1.0, x.shape[-2], device=x.device, dtype=torch.float32)
+    early_total = early_map.sum(dim=(1, 2)).clamp_min(1e-6)
+    late_total = late_map.sum(dim=(1, 2)).clamp_min(1e-6)
+    early_cx = (early_map * grid_x[None, None, :]).sum(dim=(1, 2)) / early_total
+    late_cx = (late_map * grid_x[None, None, :]).sum(dim=(1, 2)) / late_total
+    early_cy = (early_map * grid_y[None, :, None]).sum(dim=(1, 2)) / early_total
+    late_cy = (late_map * grid_y[None, :, None]).sum(dim=(1, 2)) / late_total
+
+    return torch.stack(
+        [
+            torch.log1p(total_mass),
+            torch.log1p(late_mass.clamp_min(0.0)) - torch.log1p(early_mass.clamp_min(0.0)),
+            temporal_slope,
+            late_cx - early_cx,
+            late_cy - early_cy,
+            polarity_balance,
+        ],
+        dim=1,
+    )
+
+
+def _objective_name(*, use_temporal: bool, dense_tokens: bool, motion_conditioning: bool) -> str:
+    if not use_temporal:
+        return "masked_same_window"
+    if dense_tokens and motion_conditioning:
+        return "dense_temporal_token_motion_multihorizon"
+    if dense_tokens:
+        return "dense_temporal_token_multihorizon"
+    return "temporal_multihorizon"
+
+
 def _jepa_loss(
     encoder: TinyCNNEncoder,
     target_encoder: TinyCNNEncoder,
@@ -249,9 +373,15 @@ def _jepa_loss(
     block_count: int,
     variance_weight: float,
     min_std: float,
+    dense_tokens: bool,
+    motion_conditioning: bool,
+    bins: int,
 ) -> tuple[torch.Tensor, dict[str, float]]:
     context = _masked_context(x, mask_ratio=mask_ratio, block_count=block_count)
-    context_z = encoder(context)
+    if dense_tokens and future_x is not None:
+        context_z = encoder.forward_tokens(context)
+    else:
+        context_z = encoder(context)
     if future_x is None:
         pred = predictor(context_z)
         with torch.no_grad():
@@ -268,9 +398,18 @@ def _jepa_loss(
             msg = "future_mask and horizon_ids are required for temporal JEPA."
             raise ValueError(msg)
         batch, horizon_count = future_mask.shape
-        pred = predictor(context_z, horizon_ids)
-        with torch.no_grad():
-            target_z = target_encoder(future_x.flatten(0, 1)).view(batch, horizon_count, -1)
+        if dense_tokens:
+            motion_features = (
+                _context_motion_features(x, bins=bins) if motion_conditioning else None
+            )
+            pred = predictor(context_z, horizon_ids, motion_features)
+            with torch.no_grad():
+                flat_target = target_encoder.forward_tokens(future_x.flatten(0, 1))
+                target_z = flat_target.view(batch, horizon_count, *flat_target.shape[1:])
+        else:
+            pred = predictor(context_z, horizon_ids)
+            with torch.no_grad():
+                target_z = target_encoder(future_x.flatten(0, 1)).view(batch, horizon_count, -1)
         pred_norm = functional.normalize(pred, dim=-1)
         target_norm = functional.normalize(target_z, dim=-1)
         per_pair_loss = functional.smooth_l1_loss(
@@ -278,20 +417,23 @@ def _jepa_loss(
             target_norm,
             beta=0.1,
             reduction="none",
-        ).mean(dim=-1)
+        ).mean(dim=tuple(range(2, pred_norm.ndim)))
         valid = future_mask.to(device=per_pair_loss.device, dtype=per_pair_loss.dtype)
         valid_count = valid.sum().clamp_min(1.0)
         alignment_loss = (per_pair_loss * valid).sum() / valid_count
         valid_bool = future_mask.to(device=pred.device, dtype=torch.bool)
-        pred_for_variance = pred[valid_bool]
-        target_for_metrics = target_z[valid_bool]
+        pred_for_variance = pred[valid_bool].reshape(-1, pred.shape[-1])
+        target_for_metrics = target_z[valid_bool].reshape(-1, target_z.shape[-1])
         valid_fraction = float(valid.mean().detach().cpu())
         target_pair_count = int(future_mask.sum().detach().cpu())
+    context_for_variance = (
+        context_z.reshape(-1, context_z.shape[-1]) if context_z.ndim == 3 else context_z
+    )
     if pred_for_variance.shape[0] <= 1:
         pred_for_variance = pred.reshape(-1, pred.shape[-1])
     if target_for_metrics.shape[0] <= 1:
         target_for_metrics = target_z.reshape(-1, target_z.shape[-1])
-    variance = _variance_loss(context_z, min_std=min_std) + _variance_loss(
+    variance = _variance_loss(context_for_variance, min_std=min_std) + _variance_loss(
         pred_for_variance,
         min_std=min_std,
     )
@@ -299,7 +441,9 @@ def _jepa_loss(
     metrics = {
         "alignment_loss": float(alignment_loss.detach().cpu()),
         "variance_loss": float(variance.detach().cpu()),
-        "context_embedding_std": float(context_z.detach().float().std(dim=0).mean().cpu()),
+        "context_embedding_std": float(
+            context_for_variance.detach().float().std(dim=0).mean().cpu()
+        ),
         "pred_embedding_std": float(
             pred_for_variance.detach().float().std(dim=0).mean().cpu()
         ),
@@ -327,6 +471,9 @@ def _run_epoch(
     ema_momentum: float,
     variance_weight: float,
     min_std: float,
+    dense_tokens: bool,
+    motion_conditioning: bool,
+    bins: int,
 ) -> dict[str, float]:
     train_mode = optimizer is not None
     encoder.train(train_mode)
@@ -360,6 +507,9 @@ def _run_epoch(
                 block_count=block_count,
                 variance_weight=variance_weight,
                 min_std=min_std,
+                dense_tokens=dense_tokens,
+                motion_conditioning=motion_conditioning,
+                bins=bins,
             )
         if optimizer is not None:
             if scaler is None:
@@ -406,6 +556,8 @@ def pretrain_jepa(
     ema_momentum: float = 0.99,
     variance_weight: float = 1.0,
     min_std: float = 0.05,
+    dense_tokens: bool = True,
+    motion_conditioning: bool = True,
 ) -> dict[str, Any]:
     """Pretrain a TinyCNN encoder with a JEPA-style latent prediction objective."""
 
@@ -420,7 +572,15 @@ def pretrain_jepa(
     cache = np.load(cache_path, allow_pickle=False)
     x = cache["x"]
     split = cache["split"].astype(str)
+    bins = int(cache["bins"]) if "bins" in cache.files else int(x.shape[1] // 2)
     use_temporal = bool(temporal_horizons_ms)
+    use_dense_tokens = bool(dense_tokens and use_temporal)
+    use_motion_conditioning = bool(motion_conditioning and use_dense_tokens)
+    objective = _objective_name(
+        use_temporal=use_temporal,
+        dense_tokens=use_dense_tokens,
+        motion_conditioning=use_motion_conditioning,
+    )
     train_pair_stats = None
     validation_pair_stats = None
     if use_temporal:
@@ -495,7 +655,13 @@ def pretrain_jepa(
     for param in target_encoder.parameters():
         param.requires_grad_(False)
     predictor: nn.Module
-    if use_temporal:
+    if use_dense_tokens:
+        predictor = DenseTemporalJEPAPredictor(
+            dim=encoder.output_dim,
+            horizon_count=len(temporal_horizons_ms),
+            motion_dim=6 if use_motion_conditioning else 0,
+        ).to(device)
+    elif use_temporal:
         predictor = TemporalJEPAPredictor(
             dim=encoder.output_dim,
             horizon_count=len(temporal_horizons_ms),
@@ -536,6 +702,9 @@ def pretrain_jepa(
                 ema_momentum=ema_momentum,
                 variance_weight=variance_weight,
                 min_std=min_std,
+                dense_tokens=use_dense_tokens,
+                motion_conditioning=use_motion_conditioning,
+                bins=bins,
             )
             validation_metrics = None
             if val_loader is not None:
@@ -554,6 +723,9 @@ def pretrain_jepa(
                         ema_momentum=ema_momentum,
                         variance_weight=variance_weight,
                         min_std=min_std,
+                        dense_tokens=use_dense_tokens,
+                        motion_conditioning=use_motion_conditioning,
+                        bins=bins,
                     )
             score = (
                 validation_metrics["loss"]
@@ -574,9 +746,7 @@ def pretrain_jepa(
                 torch.save(
                     {
                         "model": "tiny_cnn_jepa",
-                        "objective": (
-                            "temporal_multihorizon" if use_temporal else "masked_same_window"
-                        ),
+                        "objective": objective,
                         "encoder_state_dict": encoder.state_dict(),
                         "target_encoder_state_dict": target_encoder.state_dict(),
                         "predictor_state_dict": predictor.state_dict(),
@@ -588,6 +758,10 @@ def pretrain_jepa(
                         "validation_splits": list(validation_splits),
                         "temporal_horizons_ms": list(temporal_horizons_ms),
                         "max_target_slop_ms": max_target_slop_ms,
+                        "dense_tokens": use_dense_tokens,
+                        "motion_conditioning": use_motion_conditioning,
+                        "motion_feature_dim": 6 if use_motion_conditioning else 0,
+                        "bins": bins,
                     },
                     best_path,
                 )
@@ -595,7 +769,7 @@ def pretrain_jepa(
     torch.save(
         {
             "model": "tiny_cnn_jepa",
-            "objective": "temporal_multihorizon" if use_temporal else "masked_same_window",
+            "objective": objective,
             "encoder_state_dict": encoder.state_dict(),
             "target_encoder_state_dict": target_encoder.state_dict(),
             "predictor_state_dict": predictor.state_dict(),
@@ -607,12 +781,16 @@ def pretrain_jepa(
             "validation_splits": list(validation_splits),
             "temporal_horizons_ms": list(temporal_horizons_ms),
             "max_target_slop_ms": max_target_slop_ms,
+            "dense_tokens": use_dense_tokens,
+            "motion_conditioning": use_motion_conditioning,
+            "motion_feature_dim": 6 if use_motion_conditioning else 0,
+            "bins": bins,
         },
         last_path,
     )
     summary: dict[str, Any] = {
         "model": "tiny_cnn_jepa",
-        "objective": "temporal_multihorizon" if use_temporal else "masked_same_window",
+        "objective": objective,
         "cache": str(cache_path),
         "output_dir": output.as_posix(),
         "device": str(device),
@@ -630,6 +808,10 @@ def pretrain_jepa(
         "validation_count": int(val_idx.size),
         "temporal_horizons_ms": list(temporal_horizons_ms),
         "max_target_slop_ms": max_target_slop_ms,
+        "dense_tokens": use_dense_tokens,
+        "motion_conditioning": use_motion_conditioning,
+        "motion_feature_dim": 6 if use_motion_conditioning else 0,
+        "bins": bins,
         "train_pair_stats": train_pair_stats,
         "validation_pair_stats": validation_pair_stats,
         "mask_ratio": mask_ratio,
@@ -646,6 +828,7 @@ def pretrain_jepa(
         "leakage_audit": {
             "uses_ttc_labels": False,
             "uses_future_events_as_ssl_targets": use_temporal,
+            "motion_conditioning_uses_context_only": use_motion_conditioning,
             "targets_cross_sequence_boundary": False,
             "targets_cross_split_boundary": False,
             "target_timestamps_are_after_context": use_temporal,

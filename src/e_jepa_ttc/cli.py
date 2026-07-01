@@ -181,6 +181,8 @@ def _cmd_pretrain_jepa(args: argparse.Namespace) -> int:
         ema_momentum=args.ema_momentum,
         variance_weight=args.variance_weight,
         min_std=args.min_std,
+        dense_tokens=args.dense_tokens,
+        motion_conditioning=args.motion_conditioning,
     )
     _print_json(payload)
     return 0
@@ -339,6 +341,19 @@ def build_parser() -> argparse.ArgumentParser:
     pretrain_jepa.add_argument("--ema-momentum", type=float, default=0.99)
     pretrain_jepa.add_argument("--variance-weight", type=float, default=1.0)
     pretrain_jepa.add_argument("--min-std", type=float, default=0.05)
+    pretrain_jepa.add_argument(
+        "--global-latent",
+        dest="dense_tokens",
+        action="store_false",
+        help="Use the older global-latent temporal JEPA objective.",
+    )
+    pretrain_jepa.add_argument(
+        "--no-motion-conditioning",
+        dest="motion_conditioning",
+        action="store_false",
+        help="Disable causal context-motion conditioning for dense temporal JEPA.",
+    )
+    pretrain_jepa.set_defaults(dense_tokens=True, motion_conditioning=True)
     pretrain_jepa.set_defaults(func=_cmd_pretrain_jepa)
 
     return parser

@@ -53,6 +53,19 @@ class TinyCNNEncoder(nn.Module):
 
         return self.backbone(x).flatten(1)
 
+    def forward_feature_map(self, x: torch.Tensor) -> torch.Tensor:
+        """Encode a batch into the final dense feature map before global pooling."""
+
+        for layer in list(self.backbone.children())[:-1]:
+            x = layer(x)
+        return x
+
+    def forward_tokens(self, x: torch.Tensor) -> torch.Tensor:
+        """Encode a batch into dense spatial tokens."""
+
+        feature_map = self.forward_feature_map(x)
+        return feature_map.flatten(2).transpose(1, 2)
+
 
 class TinyCNNRegressor(nn.Module):
     """Compact CNN predicting log-TTC from voxel grids."""
