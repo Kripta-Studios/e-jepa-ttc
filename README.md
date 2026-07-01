@@ -70,12 +70,15 @@ $env:PYTHONPATH='src'
 ## Local Results
 
 Current mini-subset results are summarized in [docs/local_results.md](docs/local_results.md).
-Available-starter sealed results are summarized in
-[docs/available_starter_results.md](docs/available_starter_results.md). On that newly sealed
-available-starter protocol, dense motion JEPA is clearly positive in low-label mode: with 5% train
-labels it improves validation MAE from `2.413 +/- 0.480s` to `1.694 +/- 0.174s` and sealed-test MAE
-from `2.241 +/- 0.350s` to `1.149 +/- 0.119s`. With 100% labels, supervised scratch still wins on
-sealed-test MAE (`0.519s` vs `0.945s` for dense JEPA fine-tune).
+Full-starter sealed results are summarized in
+[docs/full_starter_results.md](docs/full_starter_results.md). On the full local starter protocol,
+the token-transformer dense JEPA model is the strongest result so far: with 100% labels it reaches
+`0.350s` validation MAE and `0.422s` sealed-test MAE, beating TinyCNN scratch (`0.549s` /
+`0.513s`) and the same token transformer trained from scratch (`0.709s` / `0.854s`). With 10%
+labels, token JEPA improves sealed-test MAE from `1.327 +/- 0.104s` to `0.460 +/- 0.029s`.
+
+Earlier available-starter sealed results are kept in
+[docs/available_starter_results.md](docs/available_starter_results.md).
 
 ## Script Wrappers
 
@@ -116,7 +119,6 @@ uv run --no-sync python scripts/download_evttc_starter.py --manifest data/manife
 
 ## Not Implemented Yet
 
-- Final full-starter run after `CPLA-medium/data.hdf5` and `CPLA-high/data.hdf5` become available.
 - Robustness suite, ONNX export, streaming demo, and project-level final report generation.
 
 These remain in the milestone order defined in `AGENTS.md`; they should be added after the
@@ -134,16 +136,19 @@ sequences missing from the handoff. `scripts/download_evttc_starter.py` prints a
 default and only calls `gdown` when `--execute` is passed; it also supports `--continue` and
 `--quiet`.
 
-The locally complete available-starter manifest is
+The locally complete full-starter manifest is
+`data/manifests/evttc_full_starter_local.yaml`, with split
+`data/splits/evttc_full_starter_sealed.yaml`. It contains the three original `CCRs-1` sequences,
+all three `CCRs-side` sequences, and all three `CPLA` starter sequences. The sealed test sequence is
+`CPLA-high`.
+
+The earlier available-starter manifest is
 `data/manifests/evttc_available_starter_local.yaml`, with split
-`data/splits/evttc_available_starter_sealed.yaml`. It contains the three original `CCRs-1`
-sequences, all three `CCRs-side` sequences, and `CPLA-low`. Google Drive quota blocked
-`CPLA-medium/data.hdf5` and `CPLA-high/data.hdf5`; the intended full-starter split is already fixed
-in `data/splits/evttc_full_starter_sealed.yaml` for when those files are available.
+`data/splits/evttc_available_starter_sealed.yaml`.
 
 See [docs/datasets_local.md](docs/datasets_local.md), [docs/progress.md](docs/progress.md),
 [docs/local_results.md](docs/local_results.md), and
-[docs/available_starter_results.md](docs/available_starter_results.md).
+[docs/full_starter_results.md](docs/full_starter_results.md).
 
 
 

@@ -273,3 +273,51 @@ Conclusion:
 - The full-starter protocol is still pending only because Drive blocked the remaining two CPLA HDF5
   files; the committed full-starter split should be used once they are available.
 
+## 2026-07-01 Full Starter Token JEPA
+
+After `CPLA-medium/data.hdf5` and `CPLA-high/data.hdf5` were added locally, the full starter
+protocol was scanned, validated, indexed, cached, and run end to end.
+
+Created and committed:
+
+- `data/manifests/evttc_full_starter_local.yaml`
+- `docs/full_starter_results.md`
+
+The full sealed split has 3972 windows: train 3019, validation 475, test 478.
+Validation is `CCRs-side-high`; the sealed test is `CPLA-high`.
+
+Implemented and used a token-transformer backbone for JEPA and supervised TTC:
+
+- `EventTokenTransformerEncoder`
+- `EventTokenTransformerRegressor`
+- `--model token-transformer` for `pretrain jepa` and `train tiny-cnn`
+
+Token JEPA pretraining:
+
+- objective: `dense_temporal_token_motion_multihorizon`
+- train split only, validation split for SSL checkpoint selection
+- best epoch 56, best SSL loss 0.003049
+- leakage audit: no TTC labels, target timestamps after context, no sequence/split crossing,
+  motion conditioning uses context only
+
+Key full-starter results:
+
+- Event-rate ridge: validation MAE 2.303 s, sealed-test MAE 2.489 s.
+- TinyCNN scratch full-label seed 7: validation MAE 0.549 s, sealed-test MAE 0.513 s.
+- Token transformer scratch full-label seed 7: validation MAE 0.709 s, sealed-test MAE 0.854 s.
+- Token JEPA full-label seed 7: validation MAE 0.350 s, sealed-test MAE 0.422 s.
+- 5% labels, three seeds: token scratch validation/test 1.226 +/- 0.031 / 1.382 +/- 0.044 s;
+  token JEPA validation/test 0.524 +/- 0.047 / 0.636 +/- 0.109 s.
+- 10% labels, three seeds: token scratch validation/test 1.178 +/- 0.056 / 1.327 +/- 0.104 s;
+  token JEPA validation/test 0.437 +/- 0.039 / 0.460 +/- 0.029 s.
+
+Conclusion:
+
+- Token JEPA is now the best local full-starter learned result.
+- Against the matching scratch token backbone, JEPA improves 100% label sealed-test MAE by 50.6%,
+  5% label sealed-test MAE by 53.9%, and 10% label sealed-test MAE by 65.4%.
+- Against TinyCNN scratch with 100% labels, token JEPA improves sealed-test MAE by 17.8%.
+- This is a strong sealed starter result, but not an official SOTA claim because it has not been
+  compared on a published leaderboard or reproduced against the exact Event-Aided TTC baseline
+  protocol.
+

@@ -92,15 +92,25 @@ What matches SOTA direction:
 - Anti-leakage controls: future targets are self-supervised only, and pair
   construction forbids crossing sequence or split boundaries.
 
-What is not yet SOTA:
+What is now closer to SOTA after the full-starter pass:
 
-- Backbone scale: the repo uses a small `TinyCNNEncoder`, not a ViT/transformer
-  token backbone.
-- Dense feature learning: the loss is on global latent vectors, not dense
-  spatio-temporal patch tokens as in V-JEPA 2.1.
+- The repo includes a token-transformer backbone for `pretrain jepa` and
+  supervised TTC via `--model token-transformer`.
+- The default temporal objective is dense token prediction with causal
+  motion-conditioning, not only pooled global prediction.
+- The full-starter protocol reports sealed validation/test results and
+  low-label transfer for the token JEPA model.
+
+What is still not SOTA:
+
+- Backbone scale: the token transformer is small and local; it is not a
+  large-scale ViT trained on broad video data.
+- Dense feature learning: the loss is now dense over spatial tokens, but not
+  full V-JEPA 2.1-style deep multi-layer supervision.
 - Deep self-supervision: intermediate encoder layers are not supervised.
-- Action conditioning: there is no ego-action, relative motion, optical-flow,
-  bbox-motion, or control-conditioned predictor.
+- Action conditioning: the predictor uses event-derived causal motion proxies,
+  but there is no ego-action, control, trajectory, optical-flow, or
+  planner-conditioned predictor.
 - Multi-modal fusion: the current event-only path does not use RGB, LiDAR,
   depth, boxes, or segmentation during JEPA pretraining.
 - Closed-loop planning: the model estimates TTC; it does not simulate futures for
@@ -111,24 +121,27 @@ What is not yet SOTA:
 
 ## Practical Interpretation
 
-The implementation is a correct small-scale JEPA prototype for event-based TTC:
-it is using latent prediction, future horizons, low-label evaluation, and
-anti-leakage discipline. It should not be called a SOTA world model yet.
+The implementation is now a stronger small-scale JEPA prototype for event-based
+TTC: it is using latent prediction, future horizons, dense token loss,
+event-motion conditioning, low-label evaluation, and anti-leakage discipline. It
+should not be called a SOTA world model yet.
 
-The strongest current evidence for JEPA in this repo is label efficiency:
-with 5% train labels on the mini split, temporal JEPA improves validation MAE
-from `2.909 +/- 0.743 s` to `1.548 +/- 0.176 s`, while test MAE improves modestly
-from `3.107 +/- 0.277 s` to `2.986 +/- 0.106 s`. This is promising but not final.
+The strongest current evidence for JEPA in this repo is the full-starter sealed
+run. With 100% labels, token JEPA improves sealed-test MAE from `0.854 s` to
+`0.422 s` versus the matching scratch token backbone. With 10% labels, token
+JEPA improves sealed-test MAE from `1.327 +/- 0.104 s` to
+`0.460 +/- 0.029 s`.
 
 ## Next Alignment Steps
 
-1. Finish the full EvTTC starter download and create a fresh sealed test split.
-2. Replace global-only TinyCNN JEPA with dense spatio-temporal token prediction.
-3. Add deep self-supervision from intermediate encoder stages.
-4. Add motion/action conditioning suitable for TTC: ego speed if available,
-   event-flow proxy, bbox scale derivative, or horizon-conditioned relative
-   approach features.
+1. Add deep self-supervision from intermediate encoder stages.
+2. Add richer motion/action conditioning suitable for TTC: ego speed if
+   available, event-flow proxy, bbox scale derivative, or horizon-conditioned
+   relative approach features.
+3. Add multi-modal ablations using RGB, depth, boxes, or segmentation without
+   leaking TTC labels into SSL.
+4. Reproduce or reimplement the Event-Aided TTC/EvTTC reference protocol for
+   direct benchmark comparison.
 5. Keep low-label and frozen-probe evaluations as first-class metrics.
 6. Report final claims only on a new held-out test split that was not used during
    architecture or hyperparameter selection.
-
