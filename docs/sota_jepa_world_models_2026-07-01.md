@@ -152,11 +152,11 @@ With causal integrated-navigation channels, token JEPA improves further to
 `0.356 +/- 0.022 s`. With 10% labels and event-only input, token JEPA improves
 sealed-test MAE from `1.327 +/- 0.104 s` to `0.460 +/- 0.029 s`.
 
-The first `event-tubelet-transformer` run is now the best single-seed
-all-window result: seed 7 reaches `0.243 s` validation MAE and `0.323 s`
-sealed-test MAE after tubelet JEPA pretraining. This is 9.3% less sealed-test
-error than the previous three-seed navigation Token JEPA mean, but it remains a
-single-seed result until the same robustness pass is run for seeds 13 and 21.
+The first `event-tubelet-transformer` run is now the best robust all-window
+result in the local full-starter protocol. Using the same pretrained tubelet
+encoder and fine-tuning seeds 7/13/21, it reaches `0.243 +/- 0.007 s`
+validation MAE and `0.328 +/- 0.030 s` sealed-test MAE. This is 7.9% less
+sealed-test error than the previous three-seed navigation Token JEPA mean.
 
 Deep-supervision ablations did not improve this result: the plain deep variant
 reached `0.594 s` sealed-test MAE, and the layer-aware deep variant reached

@@ -518,23 +518,28 @@ to overfit the SSL validation split:
 - previous token-transformer SSL best loss: 0.003049
 - relative SSL-loss reduction: 48.3%
 
-Fine-tuned seed 7 from the best tubelet checkpoint:
+Fine-tuned seeds 7/13/21 from the best tubelet checkpoint:
 
-- validation MAE: 0.243 s
-- sealed-test MAE: 0.323 s
-- best epoch: 28/80
+- validation MAE: `0.243 +/- 0.007 s`
+- sealed-test MAE: `0.328 +/- 0.030 s`
+- per-seed sealed-test MAE: seed 7 `0.323 s`, seed 13 `0.301 s`, seed 21 `0.360 s`
 
 Percent interpretation:
 
-- 9.3% less sealed-test error than the previous three-seed navigation Token
-  JEPA mean (`0.356 s` to `0.323 s`);
-- 6.2% less sealed-test error than the previous seed-7 navigation Token JEPA
-  (`0.344 s` to `0.323 s`);
-- 37.1% less sealed-test error than TinyCNN scratch seed 7 (`0.513 s` to
-  `0.323 s`);
-- 87.0% less sealed-test error than the event-rate baseline (`2.489 s` to
-  `0.323 s`).
+- 7.9% less sealed-test error than the previous three-seed navigation Token
+  JEPA mean (`0.356 s` to `0.328 s`);
+- 29.5% less sealed-test error than navigation token scratch (`0.465 s` to
+  `0.328 s`);
+- 31.8% less sealed-test error than event-only Token JEPA (`0.481 s` to
+  `0.328 s`);
+- 61.1% less sealed-test error than event-only token scratch (`0.844 s` to
+  `0.328 s`);
+- 36.1% less sealed-test error than TinyCNN scratch seed 7 (`0.513 s` to
+  `0.328 s`);
+- 86.8% less sealed-test error than the event-rate baseline (`2.489 s` to
+  `0.328 s`).
 
-This is the best single-seed all-window result so far, but it is not yet a
-robust new headline result until seeds 13 and 21 are run under the same protocol.
+This is now the best robust all-window result in the local full-starter sealed
+protocol. It is still not an official EvTTC SOTA claim because the official
+comparisons use a bbox/ROI frame protocol.
 

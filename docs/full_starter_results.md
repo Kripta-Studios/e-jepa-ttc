@@ -70,7 +70,7 @@ for model or hyperparameter selection in this protocol.
 | Token JEPA + fine-tune | 100% | 7,13,21 | 0.358 +/- 0.007 | 0.481 +/- 0.042 |
 | Token transformer + navigation scratch | 100% | 7,13,21 | 0.440 +/- 0.020 | 0.465 +/- 0.021 |
 | Token JEPA + navigation fine-tune | 100% | 7,13,21 | 0.261 +/- 0.021 | 0.356 +/- 0.022 |
-| Event tubelet JEPA + navigation fine-tune | 100% | 7 | 0.243 | 0.323 |
+| Event tubelet JEPA + navigation fine-tune | 100% | 7,13,21 | 0.243 +/- 0.007 | 0.328 +/- 0.030 |
 | Deep Token JEPA + fine-tune | 100% | 7 | 0.491 | 0.594 |
 | Deep layer-aware Token JEPA + fine-tune | 100% | 7 | 0.472 | 0.505 |
 | Large Token JEPA + fine-tune | 100% | 7 | 0.504 | 0.529 |
@@ -105,18 +105,15 @@ Percent improvements over matching scratch runs:
 
 ## Interpretation
 
-The strongest robust local result remains `Token JEPA + navigation fine-tune`
-with full labels: `0.261 +/- 0.021 s` validation MAE and `0.356 +/- 0.022 s`
-sealed-test MAE over three fine-tuning seeds. It beats the same token
-transformer trained from scratch robustly, improves on event-only Token JEPA,
-and is clearly better than the supervised TinyCNN full-label seed-7 baseline.
+The strongest robust local result is now `Event tubelet JEPA + navigation
+fine-tune` with full labels: `0.243 +/- 0.007 s` validation MAE and
+`0.328 +/- 0.030 s` sealed-test MAE over three fine-tuning seeds. It improves
+sealed-test MAE by 7.9% versus the previous navigation Token JEPA mean
+(`0.356 s`) and by 29.5% versus navigation token scratch (`0.465 s`).
 
-The new `event-tubelet-transformer` result is the best single-seed all-window
-result so far: `0.243 s` validation MAE and `0.323 s` sealed-test MAE for seed
-7. It improves sealed-test MAE by 9.3% versus the previous three-seed navigation
-Token JEPA mean (`0.356 s`) and by 6.2% versus the previous seed-7 navigation
-Token JEPA run (`0.344 s`). It should be promoted to the main result only after
-the same seeds 13/21 robustness pass.
+The previous best robust result was `Token JEPA + navigation fine-tune`:
+`0.261 +/- 0.021 s` validation MAE and `0.356 +/- 0.022 s` sealed-test MAE over
+three fine-tuning seeds.
 
 The navigation channels are causal integrated-navigation features from the
 current context window only: ego speed, velocity components, acceleration
@@ -152,9 +149,9 @@ regularization, data, or a stronger predictor.
 The first V-JEPA-like tubelet run changes the tokenization rather than only
 scaling width/depth. It treats event bins as a polarity-by-time tensor and uses
 3D tubelet patching before the transformer, while causal metadata/navigation
-channels are added as auxiliary spatial patch context. SSL pretraining for seed
-7 selected epoch 12 with validation loss `0.001577`; fine-tuning selected epoch
-28 and reached `0.323 s` sealed-test MAE.
+channels are added as auxiliary spatial patch context. SSL pretraining selected
+epoch 12 with validation loss `0.001577`. Fine-tuning seeds 7/13/21 reached
+sealed-test MAEs `0.323`, `0.301`, and `0.360 s`.
 
 ## Detection-Assisted Reference
 
