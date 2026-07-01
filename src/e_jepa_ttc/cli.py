@@ -159,6 +159,7 @@ def _cmd_train_tiny_cnn(args: argparse.Namespace) -> int:
         freeze_encoder=args.freeze_encoder,
         train_fraction=args.train_fraction,
         model_name=args.model,
+        evaluation_splits=tuple(args.evaluation_splits),
     )
     _print_json(payload)
     return 0
@@ -317,6 +318,13 @@ def build_parser() -> argparse.ArgumentParser:
     train_tiny.add_argument("--model", choices=MODEL_NAMES, default="tiny-cnn")
     train_tiny.add_argument("--pretrained-encoder", type=Path)
     train_tiny.add_argument("--train-fraction", type=float, default=1.0)
+    train_tiny.add_argument(
+        "--evaluation-splits",
+        nargs="+",
+        default=["train", "validation", "test"],
+        choices=["train", "validation", "test"],
+        help="Splits to evaluate after validation-selected training.",
+    )
     train_tiny.add_argument(
         "--freeze-encoder",
         action="store_true",

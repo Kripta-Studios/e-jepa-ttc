@@ -145,12 +145,20 @@ def train_tiny_cnn(
     freeze_encoder: bool = False,
     train_fraction: float = 1.0,
     model_name: str = "tiny-cnn",
+    evaluation_splits: tuple[str, ...] = ("train", "validation", "test"),
 ) -> dict[str, Any]:
     """Train a supervised TTC model on a materialized voxel cache."""
 
     _set_seed(seed)
     if not 0.0 < train_fraction <= 1.0:
         msg = "train_fraction must be in (0, 1]."
+        raise ValueError(msg)
+    if not evaluation_splits:
+        msg = "evaluation_splits must contain at least one split."
+        raise ValueError(msg)
+    unknown_eval_splits = set(evaluation_splits) - {"train", "validation", "test"}
+    if unknown_eval_splits:
+        msg = f"Unknown evaluation splits: {sorted(unknown_eval_splits)}."
         raise ValueError(msg)
     cache = np.load(cache_path, allow_pickle=False)
     x = cache["x"]
@@ -161,8 +169,17 @@ def train_tiny_cnn(
     train_idx = _split_indices(split, "train")
     val_idx = _split_indices(split, "validation")
     test_idx = _split_indices(split, "test")
-    if train_idx.size == 0 or val_idx.size == 0 or test_idx.size == 0:
-        msg = "Cache must contain train, validation and test splits."
+    split_indices = {"train": train_idx, "validation": val_idx, "test": test_idx}
+    if train_idx.size == 0 or val_idx.size == 0:
+        msg = "Cache must contain train and validation splits."
+        raise ValueError(msg)
+    missing_eval_splits = [
+        split_name
+        for split_name in evaluation_splits
+        if split_indices[split_name].size == 0
+    ]
+    if missing_eval_splits:
+        msg = f"Requested evaluation splits are empty: {missing_eval_splits}."
         raise ValueError(msg)
     full_train_count = int(train_idx.size)
     if train_fraction < 1.0:
@@ -180,7 +197,11 @@ def train_tiny_cnn(
 
     train_dataset = VoxelCacheDataset(x, y_log, train_idx)
     val_dataset = VoxelCacheDataset(x, y_log, val_idx)
-    test_dataset = VoxelCacheDataset(x, y_log, test_idx)
+    datasets = {
+        "train": train_dataset,
+        "validation": val_dataset,
+        "test": VoxelCacheDataset(x, y_log, test_idx),
+    }
     train_loader = DataLoader(
         train_dataset,
         batch_size=batch_size,
@@ -278,11 +299,8 @@ def train_tiny_cnn(
     split_results: dict[str, Any] = {}
     predictions: dict[str, list[float]] = {}
     targets: dict[str, list[float]] = {}
-    for split_name, dataset in [
-        ("train", train_dataset),
-        ("validation", val_dataset),
-        ("test", test_dataset),
-    ]:
+    for split_name in evaluation_splits:
+        dataset = datasets[split_name]
         y_true, y_pred, seconds = _evaluate_model(
             model,
             dataset,
@@ -314,6 +332,7 @@ def train_tiny_cnn(
         "pretrained_encoder": pretrained_encoder,
         "freeze_encoder": freeze_encoder,
         "train_fraction": train_fraction,
+        "evaluation_splits": list(evaluation_splits),
         "full_train_count": full_train_count,
         "effective_train_count": int(train_idx.size),
         "best_epoch": best_epoch,
@@ -323,13 +342,15 @@ def train_tiny_cnn(
         "splits": split_results,
     }
     write_structured(metrics_path, summary)
-    np.savez(
-        ensure_parent(output / "predictions.npz"),
-        train_pred=np.array(predictions["train"], dtype=np.float32),
-        train_true=np.array(targets["train"], dtype=np.float32),
-        validation_pred=np.array(predictions["validation"], dtype=np.float32),
-        validation_true=np.array(targets["validation"], dtype=np.float32),
-        test_pred=np.array(predictions["test"], dtype=np.float32),
-        test_true=np.array(targets["test"], dtype=np.float32),
-    )
+    prediction_arrays: dict[str, np.ndarray] = {}
+    for split_name in evaluation_splits:
+        prediction_arrays[f"{split_name}_pred"] = np.array(
+            predictions[split_name],
+            dtype=np.float32,
+        )
+        prediction_arrays[f"{split_name}_true"] = np.array(
+            targets[split_name],
+            dtype=np.float32,
+        )
+    np.savez(ensure_parent(output / "predictions.npz"), **prediction_arrays)
     return summary

@@ -586,3 +586,16 @@ claim is valid until those baselines are reproduced on the same official
 bbox/ROI protocol. All tuning continues to be validation-only, with sealed test
 reserved for frozen protocols.
 
+## 2026-07-02 Validation-Only Fine-Tuning Gate
+
+Added `--evaluation-splits` to supervised training. The default remains
+`train validation test` for final frozen reports, but tuning runs can now pass:
+
+```text
+--evaluation-splits train validation
+```
+
+In that mode, the trainer does not evaluate `test` and does not write
+`test_pred`/`test_true` arrays. This lets action-conditioned JEPA fine-tuning
+iterate on validation only, preserving the sealed test for a final protocol run.
+

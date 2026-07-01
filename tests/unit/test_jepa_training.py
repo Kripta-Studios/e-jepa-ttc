@@ -110,6 +110,27 @@ def test_jepa_checkpoint_loads_into_supervised_trainer(tmp_path: Path) -> None:
     assert train_summary["effective_train_count"] == 3
 
 
+def test_supervised_training_can_skip_test_evaluation(tmp_path: Path) -> None:
+    cache_path = tmp_path / "cache.npz"
+    _write_cache(cache_path)
+
+    train_summary = train_tiny_cnn(
+        cache_path=cache_path,
+        output_dir=tmp_path / "validation_only_finetune",
+        epochs=1,
+        batch_size=3,
+        seed=5,
+        device_name="cpu",
+        evaluation_splits=("train", "validation"),
+    )
+
+    assert train_summary["evaluation_splits"] == ["train", "validation"]
+    assert sorted(train_summary["splits"]) == ["train", "validation"]
+    predictions = np.load(tmp_path / "validation_only_finetune" / "predictions.npz")
+    assert "test_pred" not in predictions.files
+    assert "test_true" not in predictions.files
+
+
 def test_token_jepa_deep_supervision(tmp_path: Path) -> None:
     cache_path = tmp_path / "cache.npz"
     _write_cache(cache_path)
