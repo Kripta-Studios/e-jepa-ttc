@@ -16,6 +16,7 @@ from e_jepa_ttc.data.index import build_temporal_index, write_index
 from e_jepa_ttc.data.ml_cache import build_voxel_cache
 from e_jepa_ttc.data.split import write_splits
 from e_jepa_ttc.data.synthetic import generate_synthetic_sequence, write_synthetic_hdf5
+from e_jepa_ttc.models import MODEL_NAMES
 
 
 def _print_json(data: dict[str, Any]) -> None:
@@ -156,6 +157,7 @@ def _cmd_train_tiny_cnn(args: argparse.Namespace) -> int:
         pretrained_encoder_path=args.pretrained_encoder,
         freeze_encoder=args.freeze_encoder,
         train_fraction=args.train_fraction,
+        model_name=args.model,
     )
     _print_json(payload)
     return 0
@@ -183,6 +185,7 @@ def _cmd_pretrain_jepa(args: argparse.Namespace) -> int:
         min_std=args.min_std,
         dense_tokens=args.dense_tokens,
         motion_conditioning=args.motion_conditioning,
+        model_name=args.model,
     )
     _print_json(payload)
     return 0
@@ -304,6 +307,7 @@ def build_parser() -> argparse.ArgumentParser:
     train_tiny.add_argument("--learning-rate", type=float, default=3e-4)
     train_tiny.add_argument("--seed", type=int, default=42)
     train_tiny.add_argument("--device", type=str, default="auto")
+    train_tiny.add_argument("--model", choices=MODEL_NAMES, default="tiny-cnn")
     train_tiny.add_argument("--pretrained-encoder", type=Path)
     train_tiny.add_argument("--train-fraction", type=float, default=1.0)
     train_tiny.add_argument(
@@ -323,6 +327,7 @@ def build_parser() -> argparse.ArgumentParser:
     pretrain_jepa.add_argument("--learning-rate", type=float, default=5e-4)
     pretrain_jepa.add_argument("--seed", type=int, default=42)
     pretrain_jepa.add_argument("--device", type=str, default="auto")
+    pretrain_jepa.add_argument("--model", choices=MODEL_NAMES, default="tiny-cnn")
     pretrain_jepa.add_argument("--pretrain-splits", nargs="+", default=["train"])
     pretrain_jepa.add_argument("--validation-splits", nargs="+", default=["validation"])
     pretrain_jepa.add_argument(

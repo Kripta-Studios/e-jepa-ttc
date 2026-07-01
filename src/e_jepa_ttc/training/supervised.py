@@ -14,7 +14,7 @@ from torch import nn
 from torch.utils.data import DataLoader, Dataset
 
 from e_jepa_ttc.evaluation.metrics import regression_metrics
-from e_jepa_ttc.models import TinyCNNRegressor
+from e_jepa_ttc.models import build_regressor
 from e_jepa_ttc.utils.io import ensure_parent, write_structured
 
 
@@ -104,21 +104,30 @@ def _train_one_epoch(
 
 
 def _load_pretrained_encoder(
-    model: TinyCNNRegressor,
+    model: nn.Module,
     checkpoint_path: str | Path,
     *,
     device: torch.device,
+    expected_model_name: str,
 ) -> dict[str, Any]:
     checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)
     state = checkpoint.get("encoder_state_dict")
     if state is None:
         msg = f"Checkpoint {checkpoint_path} does not contain encoder_state_dict."
         raise ValueError(msg)
+    source_model_name = checkpoint.get("model_name", "tiny-cnn")
+    if source_model_name != expected_model_name:
+        msg = (
+            f"Checkpoint encoder is {source_model_name!r}, but training model is "
+            f"{expected_model_name!r}."
+        )
+        raise ValueError(msg)
     model.encoder.load_state_dict(state)
     return {
         "path": Path(checkpoint_path).as_posix(),
         "source_epoch": checkpoint.get("epoch"),
         "source_model": checkpoint.get("model"),
+        "source_model_name": source_model_name,
     }
 
 
@@ -135,8 +144,9 @@ def train_tiny_cnn(
     pretrained_encoder_path: str | Path | None = None,
     freeze_encoder: bool = False,
     train_fraction: float = 1.0,
+    model_name: str = "tiny-cnn",
 ) -> dict[str, Any]:
-    """Train TinyCNN on a materialized voxel cache."""
+    """Train a supervised TTC model on a materialized voxel cache."""
 
     _set_seed(seed)
     if not 0.0 < train_fraction <= 1.0:
@@ -166,6 +176,7 @@ def train_tiny_cnn(
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     else:
         device = torch.device(device_name)
+    model_tag = model_name.replace("-", "_")
 
     train_dataset = VoxelCacheDataset(x, y_log, train_idx)
     val_dataset = VoxelCacheDataset(x, y_log, val_idx)
@@ -178,13 +189,14 @@ def train_tiny_cnn(
         pin_memory=device.type == "cuda",
     )
 
-    model = TinyCNNRegressor(in_channels=int(x.shape[1])).to(device)
+    model = build_regressor(model_name, in_channels=int(x.shape[1])).to(device)
     pretrained_encoder: dict[str, Any] | None = None
     if pretrained_encoder_path is not None:
         pretrained_encoder = _load_pretrained_encoder(
             model,
             pretrained_encoder_path,
             device=device,
+            expected_model_name=model_name,
         )
     if freeze_encoder:
         for param in model.encoder.parameters():
@@ -240,6 +252,7 @@ def train_tiny_cnn(
                 torch.save(
                     {
                         "model_state_dict": model.state_dict(),
+                        "model_name": model_name,
                         "epoch": epoch,
                         "cache_path": str(cache_path),
                         "seed": seed,
@@ -251,6 +264,7 @@ def train_tiny_cnn(
     torch.save(
         {
             "model_state_dict": model.state_dict(),
+            "model_name": model_name,
             "epoch": epochs,
             "cache_path": str(cache_path),
             "seed": seed,
@@ -284,7 +298,8 @@ def train_tiny_cnn(
         targets[split_name] = y_true.astype(float).tolist()
 
     summary: dict[str, Any] = {
-        "model": "tiny_cnn_voxel_supervised",
+        "model": f"{model_tag}_voxel_supervised",
+        "model_name": model_name,
         "cache": str(cache_path),
         "output_dir": output.as_posix(),
         "device": str(device),

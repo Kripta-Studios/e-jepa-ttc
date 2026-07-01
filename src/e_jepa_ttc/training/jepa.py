@@ -14,7 +14,7 @@ from torch import nn
 from torch.nn import functional
 from torch.utils.data import DataLoader, Dataset
 
-from e_jepa_ttc.models import TinyCNNEncoder
+from e_jepa_ttc.models import build_encoder
 from e_jepa_ttc.utils.io import ensure_parent, write_structured
 
 
@@ -361,8 +361,8 @@ def _objective_name(*, use_temporal: bool, dense_tokens: bool, motion_conditioni
 
 
 def _jepa_loss(
-    encoder: TinyCNNEncoder,
-    target_encoder: TinyCNNEncoder,
+    encoder: nn.Module,
+    target_encoder: nn.Module,
     predictor: nn.Module,
     x: torch.Tensor,
     *,
@@ -457,8 +457,8 @@ def _jepa_loss(
 
 
 def _run_epoch(
-    encoder: TinyCNNEncoder,
-    target_encoder: TinyCNNEncoder,
+    encoder: nn.Module,
+    target_encoder: nn.Module,
     predictor: nn.Module,
     loader: DataLoader[Any],
     optimizer: torch.optim.Optimizer | None,
@@ -558,8 +558,9 @@ def pretrain_jepa(
     min_std: float = 0.05,
     dense_tokens: bool = True,
     motion_conditioning: bool = True,
+    model_name: str = "tiny-cnn",
 ) -> dict[str, Any]:
-    """Pretrain a TinyCNN encoder with a JEPA-style latent prediction objective."""
+    """Pretrain an encoder with a JEPA-style latent prediction objective."""
 
     if epochs <= 0:
         msg = "epochs must be positive."
@@ -581,6 +582,7 @@ def pretrain_jepa(
         dense_tokens=use_dense_tokens,
         motion_conditioning=use_motion_conditioning,
     )
+    model_tag = model_name.replace("-", "_")
     train_pair_stats = None
     validation_pair_stats = None
     if use_temporal:
@@ -649,8 +651,8 @@ def pretrain_jepa(
         else None
     )
 
-    encoder = TinyCNNEncoder(in_channels=int(x.shape[1])).to(device)
-    target_encoder = TinyCNNEncoder(in_channels=int(x.shape[1])).to(device)
+    encoder = build_encoder(model_name, in_channels=int(x.shape[1])).to(device)
+    target_encoder = build_encoder(model_name, in_channels=int(x.shape[1])).to(device)
     target_encoder.load_state_dict(encoder.state_dict())
     for param in target_encoder.parameters():
         param.requires_grad_(False)
@@ -745,7 +747,8 @@ def pretrain_jepa(
                 best_epoch = epoch
                 torch.save(
                     {
-                        "model": "tiny_cnn_jepa",
+                        "model": f"{model_tag}_jepa",
+                        "model_name": model_name,
                         "objective": objective,
                         "encoder_state_dict": encoder.state_dict(),
                         "target_encoder_state_dict": target_encoder.state_dict(),
@@ -762,13 +765,15 @@ def pretrain_jepa(
                         "motion_conditioning": use_motion_conditioning,
                         "motion_feature_dim": 6 if use_motion_conditioning else 0,
                         "bins": bins,
+                        "encoder_name": encoder.__class__.__name__,
                     },
                     best_path,
                 )
 
     torch.save(
         {
-            "model": "tiny_cnn_jepa",
+            "model": f"{model_tag}_jepa",
+            "model_name": model_name,
             "objective": objective,
             "encoder_state_dict": encoder.state_dict(),
             "target_encoder_state_dict": target_encoder.state_dict(),
@@ -785,11 +790,13 @@ def pretrain_jepa(
             "motion_conditioning": use_motion_conditioning,
             "motion_feature_dim": 6 if use_motion_conditioning else 0,
             "bins": bins,
+            "encoder_name": encoder.__class__.__name__,
         },
         last_path,
     )
     summary: dict[str, Any] = {
-        "model": "tiny_cnn_jepa",
+        "model": f"{model_tag}_jepa",
+        "model_name": model_name,
         "objective": objective,
         "cache": str(cache_path),
         "output_dir": output.as_posix(),
@@ -841,7 +848,8 @@ def pretrain_jepa(
         output / "encoder_config.json",
         {
             "in_channels": int(x.shape[1]),
-            "encoder": "TinyCNNEncoder",
+            "encoder": encoder.__class__.__name__,
+            "model_name": model_name,
             "output_dim": int(encoder.output_dim),
         },
     )
