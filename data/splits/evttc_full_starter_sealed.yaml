@@ -1,0 +1,20 @@
+version: 1
+protocol: evttc-full-starter-sealed-2026-07-01
+notes: >
+  Sequence-level split for the full local EvTTC starter protocol. Previously
+  inspected CCRs-1 sequences are assigned to train only. Validation and test use
+  newly added starter sequences; CPLA-high is the sealed final test sequence and
+  must not be used for architecture or hyperparameter selection.
+splits:
+  train:
+    - CCRs-1-low-100-overlap-100
+    - CCRs-1-medium-100-overlap-100
+    - CCRs-1-high-100-overlap-100
+    - CCRs-side-low
+    - CCRs-side-medium
+    - CPLA-low
+    - CPLA-medium
+  validation:
+    - CCRs-side-high
+  test:
+    - CPLA-high
