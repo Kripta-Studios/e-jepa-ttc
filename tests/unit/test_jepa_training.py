@@ -85,4 +85,5 @@ def test_token_jepa_deep_supervision(tmp_path: Path) -> None:
     assert pretrain_summary["objective"] == "deep_dense_temporal_token_motion_multihorizon"
     assert pretrain_summary["deep_supervision"] is True
     assert pretrain_summary["deep_supervision_layers"] == [1, 3]
+    assert pretrain_summary["deep_supervision_layer_conditioning"] is True
     assert pretrain_summary["last"]["train"]["deep_supervision_layer_count"] == 2.0

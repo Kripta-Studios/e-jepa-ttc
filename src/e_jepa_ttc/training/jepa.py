@@ -114,6 +114,7 @@ class DenseTemporalJEPAPredictor(nn.Module):
         horizon_count: int,
         *,
         motion_dim: int = 0,
+        layer_count: int = 0,
         hidden_dim: int | None = None,
     ) -> None:
         super().__init__()
@@ -123,11 +124,15 @@ class DenseTemporalJEPAPredictor(nn.Module):
         if motion_dim < 0:
             msg = "motion_dim must be non-negative."
             raise ValueError(msg)
+        if layer_count < 0:
+            msg = "layer_count must be non-negative."
+            raise ValueError(msg)
         hidden = hidden_dim or dim * 2
         self.motion_dim = motion_dim
         self.horizon_embedding = nn.Embedding(horizon_count, dim)
         self.motion_projection = nn.Linear(motion_dim, dim) if motion_dim else None
-        input_dim = dim * (3 if motion_dim else 2)
+        self.layer_embedding = nn.Embedding(layer_count, dim) if layer_count else None
+        input_dim = dim * (2 + bool(motion_dim) + bool(layer_count))
         self.net = nn.Sequential(
             nn.Linear(input_dim, hidden),
             nn.LayerNorm(hidden),
@@ -140,6 +145,7 @@ class DenseTemporalJEPAPredictor(nn.Module):
         context_tokens: torch.Tensor,
         horizon_ids: torch.Tensor,
         motion_features: torch.Tensor | None,
+        layer_id: int | None = None,
     ) -> torch.Tensor:
         """Predict one dense token grid per requested future horizon."""
 
@@ -170,6 +176,14 @@ class DenseTemporalJEPAPredictor(nn.Module):
                 dim,
             )
             pieces.append(motion)
+        if self.layer_embedding is not None:
+            if layer_id is None:
+                msg = "layer_id is required for layer-conditioned dense JEPA."
+                raise ValueError(msg)
+            layer_idx = torch.tensor(layer_id, device=context_tokens.device, dtype=torch.long)
+            layer_z = self.layer_embedding(layer_idx).view(1, 1, 1, dim)
+            layer = layer_z.expand(batch, horizon_z.shape[0], token_count, dim)
+            pieces.append(layer)
         return self.net(torch.cat(pieces, dim=-1))
 
 
@@ -388,9 +402,13 @@ def _dense_temporal_alignment(
     horizon_ids: torch.Tensor,
     motion_features: torch.Tensor | None,
     future_mask: torch.Tensor,
+    layer_ids: tuple[int, ...],
 ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
     if len(context_layers) != len(target_layers):
         msg = "context_layers and target_layers must have the same length."
+        raise ValueError(msg)
+    if layer_ids and len(layer_ids) != len(context_layers):
+        msg = "layer_ids must match context_layers when provided."
         raise ValueError(msg)
     batch, horizon_count = future_mask.shape
     valid = future_mask.to(dtype=torch.float32, device=future_mask.device)
@@ -399,8 +417,11 @@ def _dense_temporal_alignment(
     losses: list[torch.Tensor] = []
     pred_rows: list[torch.Tensor] = []
     target_rows: list[torch.Tensor] = []
-    for context_z, flat_target in zip(context_layers, target_layers, strict=True):
-        pred = predictor(context_z, horizon_ids, motion_features)
+    for layer_position, (context_z, flat_target) in enumerate(
+        zip(context_layers, target_layers, strict=True)
+    ):
+        layer_id = layer_ids[layer_position] if layer_ids else None
+        pred = predictor(context_z, horizon_ids, motion_features, layer_id)
         target_z = flat_target.view(batch, horizon_count, *flat_target.shape[1:])
         pred_norm = functional.normalize(pred, dim=-1)
         target_norm = functional.normalize(target_z, dim=-1)
@@ -480,6 +501,7 @@ def _jepa_loss(
                     horizon_ids=horizon_ids,
                     motion_features=motion_features,
                     future_mask=future_mask.to(device=context_z.device),
+                    layer_ids=deep_supervision_layers,
                 )
             )
             pred = pred_for_variance
@@ -748,6 +770,7 @@ def pretrain_jepa(
             dim=encoder.output_dim,
             horizon_count=len(temporal_horizons_ms),
             motion_dim=6 if use_motion_conditioning else 0,
+            layer_count=max(deep_supervision_layers) + 1 if use_deep_supervision else 0,
         ).to(device)
     elif use_temporal:
         predictor = TemporalJEPAPredictor(
@@ -856,6 +879,7 @@ def pretrain_jepa(
                         "deep_supervision_layers": list(deep_supervision_layers)
                         if use_deep_supervision
                         else [],
+                        "deep_supervision_layer_conditioning": use_deep_supervision,
                         "motion_feature_dim": 6 if use_motion_conditioning else 0,
                         "bins": bins,
                         "encoder_name": encoder.__class__.__name__,
@@ -884,6 +908,7 @@ def pretrain_jepa(
             "deep_supervision_layers": list(deep_supervision_layers)
             if use_deep_supervision
             else [],
+            "deep_supervision_layer_conditioning": use_deep_supervision,
             "motion_feature_dim": 6 if use_motion_conditioning else 0,
             "bins": bins,
             "encoder_name": encoder.__class__.__name__,
@@ -915,6 +940,7 @@ def pretrain_jepa(
         "motion_conditioning": use_motion_conditioning,
         "deep_supervision": use_deep_supervision,
         "deep_supervision_layers": list(deep_supervision_layers) if use_deep_supervision else [],
+        "deep_supervision_layer_conditioning": use_deep_supervision,
         "motion_feature_dim": 6 if use_motion_conditioning else 0,
         "bins": bins,
         "train_pair_stats": train_pair_stats,
@@ -935,6 +961,7 @@ def pretrain_jepa(
             "uses_future_events_as_ssl_targets": use_temporal,
             "motion_conditioning_uses_context_only": use_motion_conditioning,
             "deep_supervision_uses_intermediate_target_layers": use_deep_supervision,
+            "deep_supervision_layer_conditioning": use_deep_supervision,
             "targets_cross_sequence_boundary": False,
             "targets_cross_split_boundary": False,
             "target_timestamps_are_after_context": use_temporal,
