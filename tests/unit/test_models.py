@@ -5,6 +5,8 @@ from e_jepa_ttc.models import (
     EventTokenTransformerRegressor,
     TinyCNNEncoder,
     TinyCNNRegressor,
+    build_encoder,
+    build_regressor,
 )
 
 
@@ -47,4 +49,20 @@ def test_event_token_transformer_shapes() -> None:
     assert encoded.shape == (2, 48)
     assert tokens.shape == (2, 12, 48)
     assert [layer.shape for layer in intermediate] == [(2, 12, 48), (2, 12, 48)]
+    assert pred.shape == (2,)
+
+
+def test_large_token_transformer_factory_shapes() -> None:
+    x = torch.randn(2, 6, 24, 32)
+    encoder = build_encoder("token-transformer-large", in_channels=6)
+    regressor = build_regressor("token-transformer-large", in_channels=6)
+
+    encoded = encoder(x)
+    tokens = encoder.forward_tokens(x)
+    intermediate = encoder.forward_intermediate_tokens(x, (2, 5))
+    pred = regressor(x)
+
+    assert encoded.shape == (2, 256)
+    assert tokens.shape == (2, 12, 256)
+    assert [layer.shape for layer in intermediate] == [(2, 12, 256), (2, 12, 256)]
     assert pred.shape == (2,)
