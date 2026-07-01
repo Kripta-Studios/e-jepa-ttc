@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
+import json
 import subprocess
 import sys
-from pathlib import Path
+import urllib.parse
+import urllib.request
+from pathlib import Path, PurePosixPath
 from typing import Any
 
 from e_jepa_ttc.utils.io import read_structured
@@ -94,3 +97,57 @@ def run_gdown_plan(
         output.parent.mkdir(parents=True, exist_ok=True)
         command = build_gdown_command(item, python=python, quiet=quiet, resume=resume)
         subprocess.run(command, check=True)
+
+
+def google_uc_to_usercontent_url(url: str) -> str:
+    """Convert a Google Drive uc URL from gdown listings into a direct download URL."""
+
+    parsed = urllib.parse.urlparse(url)
+    query = urllib.parse.parse_qs(parsed.query)
+    file_id = query.get("id", [""])[0]
+    if not file_id:
+        return url
+    return "https://drive.usercontent.google.com/download?" + urllib.parse.urlencode(
+        {"id": file_id, "export": "download"}
+    )
+
+
+def _safe_listing_path(path: str) -> Path:
+    relative_path = PurePosixPath(path)
+    if relative_path.is_absolute() or ".." in relative_path.parts:
+        raise ValueError(f"unsafe listing path: {path}")
+    return Path(*relative_path.parts)
+
+
+def download_gdown_listing(
+    *,
+    listing_path: str | Path,
+    output_dir: str | Path,
+    skip_existing: bool = True,
+    suffixes: tuple[str, ...] = (),
+) -> list[dict[str, str]]:
+    """Download files from a `gdown --json` folder listing via direct HTTP URLs."""
+
+    listing = json.loads(Path(listing_path).read_text(encoding="utf-8-sig"))
+    output_root = Path(output_dir)
+    selected_suffixes = tuple(suffix.lower() for suffix in suffixes)
+    records: list[dict[str, str]] = []
+    for item in listing:
+        if not isinstance(item, dict):
+            continue
+        path = str(item.get("path", ""))
+        url = str(item.get("url", ""))
+        if not path or not url:
+            continue
+        if selected_suffixes and not path.lower().endswith(selected_suffixes):
+            continue
+        relative_path = _safe_listing_path(path)
+        output_path = output_root / relative_path
+        download_url = google_uc_to_usercontent_url(url)
+        if skip_existing and output_path.exists() and output_path.stat().st_size > 0:
+            records.append({"status": "skipped", "path": output_path.as_posix(), "url": url})
+            continue
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        urllib.request.urlretrieve(download_url, output_path)
+        records.append({"status": "downloaded", "path": output_path.as_posix(), "url": url})
+    return records

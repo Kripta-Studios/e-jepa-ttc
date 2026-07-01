@@ -432,28 +432,35 @@ Conclusion:
 - At 10% labels, navigation helps scratch but not JEPA transfer; event-only Token JEPA remains the
   better low-label model on sealed test.
 
-## 2026-07-01 Partial BBox-Assisted Reference
+## 2026-07-01 CPLA-High BBox-Assisted Reference
 
-Attempted to download `CPLA-high/bbox_segmentation` for benchmark-aligned
-detection-assisted baselines. Google Drive downloaded 76 JSON labels
-(`0308.json` through `0383.json`) and then failed at `0384.json` with a public
-link/access error. The local folder is partial.
+Recovered `CPLA-high/bbox_segmentation` for benchmark-aligned
+detection-assisted baselines. `gdown --folder` listed the folder but failed to
+resolve public per-file URLs. The working path was:
 
-Implemented scanner support for `bbox_segmentation` as an ISAT label directory
-fallback when `leftlabel` is absent, and updated target-type inference so `CP*`
-families are marked as `pedestrian`.
+- save the folder listing with `gdown --folder --json`;
+- download the listed JSON files through `scripts/download_gdown_listing.py`,
+  which rewrites Drive `uc?id=...` links to `drive.usercontent.google.com`.
 
-Using a temporary scan manifest with partial `CPLA-high` labels:
+The local `CPLA-high/bbox_segmentation` folder now has 87 JSON labels
+(`0308.json` through `0394.json`). Implemented scanner support for
+`bbox_segmentation` as an ISAT label directory fallback when `leftlabel` is
+absent, and updated target-type inference so `CP*` families are marked as
+`pedestrian`.
+
+Using a temporary scan manifest with the recovered `CPLA-high` labels:
 
 ```text
-.\.venv\Scripts\python.exe -m e_jepa_ttc baseline causal-geometry --manifest artifacts\metrics\evttc_scan_with_partial_bbox.yaml --split data\splits\evttc_full_starter_sealed.yaml --output artifacts\metrics\causal_geometry_full_starter_partial_bbox.json --derivative-window 15
+$env:PYTHONPATH=(Resolve-Path src).Path
+.\.venv\Scripts\e-jepa-ttc.exe baseline causal-geometry --manifest artifacts\metrics\evttc_scan_with_cpla_high_bbox.yaml --split data\splits\evttc_full_starter_sealed.yaml --output artifacts\metrics\causal_geometry_full_starter_cpla_high_bbox.json --derivative-window 15
 ```
 
 Result:
 
 - train: 426 labels, 417 predictions, MAE 0.392 s, RMSE 0.713 s;
 - validation: no labels available;
-- partial sealed test: 76 labels, 74 predictions, MAE 0.142 s, RMSE 0.311 s.
+- sealed `CPLA-high` bbox frames: 83 TTC-matched labels, 81 predictions, MAE 0.159 s,
+  RMSE 0.319 s.
 
 Interpretation:
 

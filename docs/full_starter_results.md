@@ -143,17 +143,20 @@ regularization, data, or a stronger predictor.
 
 ## Detection-Assisted Reference
 
-A partial `CPLA-high/bbox_segmentation` download was attempted to move toward
-the official bbox-assisted TTC baselines. Google Drive failed at `0384.json`,
-leaving 76 JSON labels (`0308.json` through `0383.json`) locally available.
+`CPLA-high/bbox_segmentation` was recovered from the official Google Drive
+folder after `gdown --folder` failed to resolve per-file public links. The
+workaround is reproducible: write a `gdown --folder --json` listing, then use
+`scripts/download_gdown_listing.py` to download the listed JSON files through
+`drive.usercontent.google.com`.
 
-Using a temporary manifest that detects those partial labels, the causal
-geometry baseline gives:
+The local folder now has 87 JSON labels (`0308.json` through `0394.json`).
+After TTC alignment, the causal bbox geometry baseline evaluates 83 sealed-test
+labels and produces 81 valid predictions:
 
 | Method | Split | Labels | Predictions | MAE | RMSE |
 | --- | --- | ---: | ---: | ---: | ---: |
 | Causal bbox geometry | train | 426 | 417 | 0.392 | 0.713 |
-| Causal bbox geometry | partial test | 76 | 74 | 0.142 | 0.311 |
+| Causal bbox geometry | CPLA-high bbox test | 83 | 81 | 0.159 | 0.319 |
 
 This is detection-assisted and evaluated only on labeled frames, not on all 478
 sealed test windows. It should not be compared as an event-only model result.
@@ -163,7 +166,8 @@ bbox/segmentation assets and a benchmark-aligned frame protocol.
 Run:
 
 ```powershell
-.\.venv\Scripts\python.exe -m e_jepa_ttc baseline causal-geometry --manifest artifacts\metrics\evttc_scan_with_partial_bbox.yaml --split data\splits\evttc_full_starter_sealed.yaml --output artifacts\metrics\causal_geometry_full_starter_partial_bbox.json --derivative-window 15
+$env:PYTHONPATH=(Resolve-Path src).Path
+.\.venv\Scripts\e-jepa-ttc.exe baseline causal-geometry --manifest artifacts\metrics\evttc_scan_with_cpla_high_bbox.yaml --split data\splits\evttc_full_starter_sealed.yaml --output artifacts\metrics\causal_geometry_full_starter_cpla_high_bbox.json --derivative-window 15
 ```
 
 This is not an official SOTA claim. The run is a local starter protocol, not a

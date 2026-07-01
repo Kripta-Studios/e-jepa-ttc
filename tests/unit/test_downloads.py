@@ -1,8 +1,15 @@
+import json
 from pathlib import Path
 
+import pytest
 import yaml
 
-from e_jepa_ttc.data.downloads import build_download_plan, build_gdown_command
+from e_jepa_ttc.data.downloads import (
+    build_download_plan,
+    build_gdown_command,
+    download_gdown_listing,
+    google_uc_to_usercontent_url,
+)
 
 
 def test_build_download_plan_filters_sequence_and_kind(tmp_path: Path) -> None:
@@ -82,3 +89,53 @@ def test_build_gdown_command_supports_quiet_resume_and_folders() -> None:
         "-O",
         "datasets/seq-a/bbox",
     ]
+
+
+def test_google_uc_to_usercontent_url() -> None:
+    assert google_uc_to_usercontent_url("https://drive.google.com/uc?id=file-123") == (
+        "https://drive.usercontent.google.com/download?id=file-123&export=download"
+    )
+
+
+def test_download_gdown_listing_skips_existing_and_downloads_missing(tmp_path, monkeypatch) -> None:
+    listing_path = tmp_path / "listing.json"
+    listing_path.write_text(
+        json.dumps(
+            [
+                {"url": "https://drive.google.com/uc?id=existing-id", "path": "0001.json"},
+                {"url": "https://drive.google.com/uc?id=missing-id", "path": "nested/0002.json"},
+            ]
+        ),
+        encoding="utf-8",
+    )
+    output_dir = tmp_path / "out"
+    output_dir.mkdir()
+    (output_dir / "0001.json").write_text("{}", encoding="utf-8")
+    calls = []
+
+    def fake_urlretrieve(url: str, output_path: Path) -> None:
+        calls.append((url, output_path))
+        output_path.write_text('{"ok": true}', encoding="utf-8")
+
+    monkeypatch.setattr("urllib.request.urlretrieve", fake_urlretrieve)
+
+    records = download_gdown_listing(listing_path=listing_path, output_dir=output_dir)
+
+    assert [record["status"] for record in records] == ["skipped", "downloaded"]
+    assert calls == [
+        (
+            "https://drive.usercontent.google.com/download?id=missing-id&export=download",
+            output_dir / "nested/0002.json",
+        )
+    ]
+
+
+def test_download_gdown_listing_rejects_unsafe_paths(tmp_path: Path) -> None:
+    listing_path = tmp_path / "listing.json"
+    listing_path.write_text(
+        json.dumps([{"url": "https://drive.google.com/uc?id=file-id", "path": "../escape.json"}]),
+        encoding="utf-8",
+    )
+
+    with pytest.raises(ValueError, match="unsafe listing path"):
+        download_gdown_listing(listing_path=listing_path, output_dir=tmp_path / "out")

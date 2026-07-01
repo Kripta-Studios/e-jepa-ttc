@@ -151,11 +151,12 @@ behind the base Token JEPA result. The navigation result suggests that stronger
 conditioning is currently more valuable than parameter scaling alone.
 
 The official EvTTC benchmark evaluates bbox/ROI-assisted methods such as STRTTC,
-CMax, ETTCM, FAITH, AEB-Tracker, and Image FoE. A partial local
-`CPLA-high/bbox_segmentation` download allowed a causal bbox-geometry reference
-on 74 labeled test frames, reaching `0.142 s` MAE. This is not comparable to the
-all-window JEPA protocol, but it confirms that a real SOTA claim requires
-complete bbox assets and reproduction of the official frame/ROI benchmark.
+CMax, ETTCM, FAITH, AEB-Tracker, and Image FoE. The recovered local
+`CPLA-high/bbox_segmentation` folder allowed a causal bbox-geometry reference on
+81 valid labeled test frames, reaching `0.159 s` MAE after train-only
+calibration. This is not comparable to the all-window JEPA protocol, but it
+confirms that a real SOTA claim requires complete bbox assets and reproduction of
+the official frame/ROI benchmark.
 
 ## Next Alignment Steps
 

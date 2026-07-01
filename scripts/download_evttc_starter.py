@@ -7,7 +7,11 @@ import json
 import sys
 from pathlib import Path
 
-from e_jepa_ttc.data.downloads import build_download_plan, run_gdown_plan
+repo_src = Path(__file__).resolve().parents[1] / "src"
+if repo_src.exists():
+    sys.path.insert(0, str(repo_src))
+
+from e_jepa_ttc.data.downloads import build_download_plan, run_gdown_plan  # noqa: E402
 
 
 def main() -> int:
