@@ -63,3 +63,26 @@ def test_jepa_checkpoint_loads_into_supervised_trainer(tmp_path: Path) -> None:
     assert train_summary["pretrained_encoder"]["source_model"] == "tiny_cnn_jepa"
     assert train_summary["freeze_encoder"] is True
     assert train_summary["effective_train_count"] == 3
+
+
+def test_token_jepa_deep_supervision(tmp_path: Path) -> None:
+    cache_path = tmp_path / "cache.npz"
+    _write_cache(cache_path)
+
+    pretrain_summary = pretrain_jepa(
+        cache_path=cache_path,
+        output_dir=tmp_path / "token_jepa",
+        epochs=1,
+        batch_size=3,
+        seed=5,
+        device_name="cpu",
+        pretrain_splits=("train",),
+        validation_splits=("validation",),
+        model_name="token-transformer",
+        deep_supervision_layers=(1, 3),
+    )
+
+    assert pretrain_summary["objective"] == "deep_dense_temporal_token_motion_multihorizon"
+    assert pretrain_summary["deep_supervision"] is True
+    assert pretrain_summary["deep_supervision_layers"] == [1, 3]
+    assert pretrain_summary["last"]["train"]["deep_supervision_layer_count"] == 2.0

@@ -185,6 +185,7 @@ def _cmd_pretrain_jepa(args: argparse.Namespace) -> int:
         min_std=args.min_std,
         dense_tokens=args.dense_tokens,
         motion_conditioning=args.motion_conditioning,
+        deep_supervision_layers=tuple(args.deep_supervision_layers),
         model_name=args.model,
     )
     _print_json(payload)
@@ -357,6 +358,16 @@ def build_parser() -> argparse.ArgumentParser:
         dest="motion_conditioning",
         action="store_false",
         help="Disable causal context-motion conditioning for dense temporal JEPA.",
+    )
+    pretrain_jepa.add_argument(
+        "--deep-supervision-layers",
+        type=int,
+        nargs="*",
+        default=[],
+        help=(
+            "0-based token-transformer layer indices to supervise with dense JEPA. "
+            "Use an empty list for final-layer-only JEPA."
+        ),
     )
     pretrain_jepa.set_defaults(dense_tokens=True, motion_conditioning=True)
     pretrain_jepa.set_defaults(func=_cmd_pretrain_jepa)

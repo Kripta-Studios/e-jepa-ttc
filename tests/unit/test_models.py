@@ -41,8 +41,10 @@ def test_event_token_transformer_shapes() -> None:
 
     encoded = encoder(x)
     tokens = encoder.forward_tokens(x)
+    intermediate = encoder.forward_intermediate_tokens(x, (0, 1))
     pred = regressor(x)
 
     assert encoded.shape == (2, 48)
     assert tokens.shape == (2, 12, 48)
+    assert [layer.shape for layer in intermediate] == [(2, 12, 48), (2, 12, 48)]
     assert pred.shape == (2,)

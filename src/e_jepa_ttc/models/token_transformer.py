@@ -82,9 +82,7 @@ class EventTokenTransformerEncoder(nn.Module):
         )
         self.final_norm = nn.LayerNorm(embed_dim)
 
-    def forward_tokens(self, x: torch.Tensor) -> torch.Tensor:
-        """Encode a batch into dense spatial tokens."""
-
+    def _patch_tokens(self, x: torch.Tensor) -> torch.Tensor:
         tokens = self.patch_embed(x)
         grid_h, grid_w = tokens.shape[-2:]
         tokens = tokens.flatten(2).transpose(1, 2)
@@ -96,10 +94,37 @@ class EventTokenTransformerEncoder(nn.Module):
             device=tokens.device,
             dtype=tokens.dtype,
         )
-        tokens = tokens + pos[None, :, :]
+        return tokens + pos[None, :, :]
+
+    def forward_tokens(self, x: torch.Tensor) -> torch.Tensor:
+        """Encode a batch into dense spatial tokens."""
+
+        tokens = self._patch_tokens(x)
         for layer in self.layers:
             tokens = layer(tokens)
         return self.final_norm(tokens)
+
+    def forward_intermediate_tokens(
+        self,
+        x: torch.Tensor,
+        layer_indices: tuple[int, ...],
+    ) -> list[torch.Tensor]:
+        """Encode a batch and return selected intermediate dense token layers."""
+
+        if not layer_indices:
+            return [self.forward_tokens(x)]
+        depth = len(self.layers)
+        if any(layer_idx < 0 or layer_idx >= depth for layer_idx in layer_indices):
+            msg = f"layer_indices must be in [0, {depth - 1}], got {layer_indices}."
+            raise ValueError(msg)
+        selected = set(layer_indices)
+        tokens = self._patch_tokens(x)
+        outputs: list[torch.Tensor] = []
+        for layer_idx, layer in enumerate(self.layers):
+            tokens = layer(tokens)
+            if layer_idx in selected:
+                outputs.append(self.final_norm(tokens))
+        return outputs
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """Encode a batch into pooled latent vectors."""

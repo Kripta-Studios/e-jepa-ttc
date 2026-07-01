@@ -350,14 +350,75 @@ def _context_motion_features(x: torch.Tensor, *, bins: int) -> torch.Tensor:
     )
 
 
-def _objective_name(*, use_temporal: bool, dense_tokens: bool, motion_conditioning: bool) -> str:
+def _objective_name(
+    *,
+    use_temporal: bool,
+    dense_tokens: bool,
+    motion_conditioning: bool,
+    deep_supervision: bool,
+) -> str:
     if not use_temporal:
         return "masked_same_window"
+    prefix = "deep_" if deep_supervision and dense_tokens else ""
     if dense_tokens and motion_conditioning:
-        return "dense_temporal_token_motion_multihorizon"
+        return f"{prefix}dense_temporal_token_motion_multihorizon"
     if dense_tokens:
-        return "dense_temporal_token_multihorizon"
+        return f"{prefix}dense_temporal_token_multihorizon"
     return "temporal_multihorizon"
+
+
+def _forward_token_layers(
+    encoder: nn.Module,
+    x: torch.Tensor,
+    layer_indices: tuple[int, ...],
+) -> list[torch.Tensor]:
+    if not layer_indices:
+        return [encoder.forward_tokens(x)]
+    if not hasattr(encoder, "forward_intermediate_tokens"):
+        msg = f"{encoder.__class__.__name__} does not support deep token supervision."
+        raise ValueError(msg)
+    return encoder.forward_intermediate_tokens(x, layer_indices)
+
+
+def _dense_temporal_alignment(
+    *,
+    predictor: nn.Module,
+    context_layers: list[torch.Tensor],
+    target_layers: list[torch.Tensor],
+    horizon_ids: torch.Tensor,
+    motion_features: torch.Tensor | None,
+    future_mask: torch.Tensor,
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+    if len(context_layers) != len(target_layers):
+        msg = "context_layers and target_layers must have the same length."
+        raise ValueError(msg)
+    batch, horizon_count = future_mask.shape
+    valid = future_mask.to(dtype=torch.float32, device=future_mask.device)
+    valid_count = valid.sum().clamp_min(1.0)
+    valid_bool = future_mask.to(dtype=torch.bool, device=future_mask.device)
+    losses: list[torch.Tensor] = []
+    pred_rows: list[torch.Tensor] = []
+    target_rows: list[torch.Tensor] = []
+    for context_z, flat_target in zip(context_layers, target_layers, strict=True):
+        pred = predictor(context_z, horizon_ids, motion_features)
+        target_z = flat_target.view(batch, horizon_count, *flat_target.shape[1:])
+        pred_norm = functional.normalize(pred, dim=-1)
+        target_norm = functional.normalize(target_z, dim=-1)
+        per_pair_loss = functional.smooth_l1_loss(
+            pred_norm,
+            target_norm,
+            beta=0.1,
+            reduction="none",
+        ).mean(dim=tuple(range(2, pred_norm.ndim)))
+        losses.append((per_pair_loss * valid).sum() / valid_count)
+        pred_rows.append(pred[valid_bool].reshape(-1, pred.shape[-1]))
+        target_rows.append(target_z[valid_bool].reshape(-1, target_z.shape[-1]))
+    return (
+        torch.stack(losses).mean(),
+        torch.cat(pred_rows, dim=0),
+        torch.cat(target_rows, dim=0),
+        torch.cat([layer.reshape(-1, layer.shape[-1]) for layer in context_layers], dim=0),
+    )
 
 
 def _jepa_loss(
@@ -375,12 +436,15 @@ def _jepa_loss(
     min_std: float,
     dense_tokens: bool,
     motion_conditioning: bool,
+    deep_supervision_layers: tuple[int, ...],
     bins: int,
 ) -> tuple[torch.Tensor, dict[str, float]]:
     context = _masked_context(x, mask_ratio=mask_ratio, block_count=block_count)
     if dense_tokens and future_x is not None:
-        context_z = encoder.forward_tokens(context)
+        context_layers = _forward_token_layers(encoder, context, deep_supervision_layers)
+        context_z = context_layers[-1]
     else:
+        context_layers = []
         context_z = encoder(context)
     if future_x is None:
         pred = predictor(context_z)
@@ -402,33 +466,49 @@ def _jepa_loss(
             motion_features = (
                 _context_motion_features(x, bins=bins) if motion_conditioning else None
             )
-            pred = predictor(context_z, horizon_ids, motion_features)
             with torch.no_grad():
-                flat_target = target_encoder.forward_tokens(future_x.flatten(0, 1))
-                target_z = flat_target.view(batch, horizon_count, *flat_target.shape[1:])
+                flat_target_layers = _forward_token_layers(
+                    target_encoder,
+                    future_x.flatten(0, 1),
+                    deep_supervision_layers,
+                )
+            alignment_loss, pred_for_variance, target_for_metrics, context_for_variance = (
+                _dense_temporal_alignment(
+                    predictor=predictor,
+                    context_layers=context_layers,
+                    target_layers=flat_target_layers,
+                    horizon_ids=horizon_ids,
+                    motion_features=motion_features,
+                    future_mask=future_mask.to(device=context_z.device),
+                )
+            )
+            pred = pred_for_variance
+            target_z = target_for_metrics
         else:
             pred = predictor(context_z, horizon_ids)
             with torch.no_grad():
                 target_z = target_encoder(future_x.flatten(0, 1)).view(batch, horizon_count, -1)
-        pred_norm = functional.normalize(pred, dim=-1)
-        target_norm = functional.normalize(target_z, dim=-1)
-        per_pair_loss = functional.smooth_l1_loss(
-            pred_norm,
-            target_norm,
-            beta=0.1,
-            reduction="none",
-        ).mean(dim=tuple(range(2, pred_norm.ndim)))
-        valid = future_mask.to(device=per_pair_loss.device, dtype=per_pair_loss.dtype)
-        valid_count = valid.sum().clamp_min(1.0)
-        alignment_loss = (per_pair_loss * valid).sum() / valid_count
-        valid_bool = future_mask.to(device=pred.device, dtype=torch.bool)
-        pred_for_variance = pred[valid_bool].reshape(-1, pred.shape[-1])
-        target_for_metrics = target_z[valid_bool].reshape(-1, target_z.shape[-1])
+            pred_norm = functional.normalize(pred, dim=-1)
+            target_norm = functional.normalize(target_z, dim=-1)
+            per_pair_loss = functional.smooth_l1_loss(
+                pred_norm,
+                target_norm,
+                beta=0.1,
+                reduction="none",
+            ).mean(dim=tuple(range(2, pred_norm.ndim)))
+            valid = future_mask.to(device=per_pair_loss.device, dtype=per_pair_loss.dtype)
+            valid_count = valid.sum().clamp_min(1.0)
+            alignment_loss = (per_pair_loss * valid).sum() / valid_count
+            valid_bool = future_mask.to(device=pred.device, dtype=torch.bool)
+            pred_for_variance = pred[valid_bool].reshape(-1, pred.shape[-1])
+            target_for_metrics = target_z[valid_bool].reshape(-1, target_z.shape[-1])
+        valid = future_mask.to(device=context_z.device, dtype=torch.float32)
         valid_fraction = float(valid.mean().detach().cpu())
         target_pair_count = int(future_mask.sum().detach().cpu())
-    context_for_variance = (
-        context_z.reshape(-1, context_z.shape[-1]) if context_z.ndim == 3 else context_z
-    )
+    if not (dense_tokens and future_x is not None):
+        context_for_variance = (
+            context_z.reshape(-1, context_z.shape[-1]) if context_z.ndim == 3 else context_z
+        )
     if pred_for_variance.shape[0] <= 1:
         pred_for_variance = pred.reshape(-1, pred.shape[-1])
     if target_for_metrics.shape[0] <= 1:
@@ -452,6 +532,7 @@ def _jepa_loss(
         ),
         "valid_target_fraction": valid_fraction,
         "target_pair_count": float(target_pair_count),
+        "deep_supervision_layer_count": float(max(1, len(deep_supervision_layers))),
     }
     return loss, metrics
 
@@ -473,6 +554,7 @@ def _run_epoch(
     min_std: float,
     dense_tokens: bool,
     motion_conditioning: bool,
+    deep_supervision_layers: tuple[int, ...],
     bins: int,
 ) -> dict[str, float]:
     train_mode = optimizer is not None
@@ -509,6 +591,7 @@ def _run_epoch(
                 min_std=min_std,
                 dense_tokens=dense_tokens,
                 motion_conditioning=motion_conditioning,
+                deep_supervision_layers=deep_supervision_layers,
                 bins=bins,
             )
         if optimizer is not None:
@@ -558,6 +641,7 @@ def pretrain_jepa(
     min_std: float = 0.05,
     dense_tokens: bool = True,
     motion_conditioning: bool = True,
+    deep_supervision_layers: tuple[int, ...] = (),
     model_name: str = "tiny-cnn",
 ) -> dict[str, Any]:
     """Pretrain an encoder with a JEPA-style latent prediction objective."""
@@ -577,10 +661,12 @@ def pretrain_jepa(
     use_temporal = bool(temporal_horizons_ms)
     use_dense_tokens = bool(dense_tokens and use_temporal)
     use_motion_conditioning = bool(motion_conditioning and use_dense_tokens)
+    use_deep_supervision = bool(deep_supervision_layers and use_dense_tokens)
     objective = _objective_name(
         use_temporal=use_temporal,
         dense_tokens=use_dense_tokens,
         motion_conditioning=use_motion_conditioning,
+        deep_supervision=use_deep_supervision,
     )
     model_tag = model_name.replace("-", "_")
     train_pair_stats = None
@@ -706,6 +792,7 @@ def pretrain_jepa(
                 min_std=min_std,
                 dense_tokens=use_dense_tokens,
                 motion_conditioning=use_motion_conditioning,
+                deep_supervision_layers=deep_supervision_layers if use_deep_supervision else (),
                 bins=bins,
             )
             validation_metrics = None
@@ -727,6 +814,9 @@ def pretrain_jepa(
                         min_std=min_std,
                         dense_tokens=use_dense_tokens,
                         motion_conditioning=use_motion_conditioning,
+                        deep_supervision_layers=(
+                            deep_supervision_layers if use_deep_supervision else ()
+                        ),
                         bins=bins,
                     )
             score = (
@@ -763,6 +853,9 @@ def pretrain_jepa(
                         "max_target_slop_ms": max_target_slop_ms,
                         "dense_tokens": use_dense_tokens,
                         "motion_conditioning": use_motion_conditioning,
+                        "deep_supervision_layers": list(deep_supervision_layers)
+                        if use_deep_supervision
+                        else [],
                         "motion_feature_dim": 6 if use_motion_conditioning else 0,
                         "bins": bins,
                         "encoder_name": encoder.__class__.__name__,
@@ -788,6 +881,9 @@ def pretrain_jepa(
             "max_target_slop_ms": max_target_slop_ms,
             "dense_tokens": use_dense_tokens,
             "motion_conditioning": use_motion_conditioning,
+            "deep_supervision_layers": list(deep_supervision_layers)
+            if use_deep_supervision
+            else [],
             "motion_feature_dim": 6 if use_motion_conditioning else 0,
             "bins": bins,
             "encoder_name": encoder.__class__.__name__,
@@ -817,6 +913,8 @@ def pretrain_jepa(
         "max_target_slop_ms": max_target_slop_ms,
         "dense_tokens": use_dense_tokens,
         "motion_conditioning": use_motion_conditioning,
+        "deep_supervision": use_deep_supervision,
+        "deep_supervision_layers": list(deep_supervision_layers) if use_deep_supervision else [],
         "motion_feature_dim": 6 if use_motion_conditioning else 0,
         "bins": bins,
         "train_pair_stats": train_pair_stats,
@@ -836,6 +934,7 @@ def pretrain_jepa(
             "uses_ttc_labels": False,
             "uses_future_events_as_ssl_targets": use_temporal,
             "motion_conditioning_uses_context_only": use_motion_conditioning,
+            "deep_supervision_uses_intermediate_target_layers": use_deep_supervision,
             "targets_cross_sequence_boundary": False,
             "targets_cross_split_boundary": False,
             "target_timestamps_are_after_context": use_temporal,
