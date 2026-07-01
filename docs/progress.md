@@ -509,3 +509,32 @@ Next empirical step:
 .\.venv\Scripts\e-jepa-ttc.exe pretrain jepa --cache artifacts\features\evttc_full_starter_voxel_160x90_b5_raw_meta_nav.npz --output-dir artifacts\runs\jepa_event_tubelet_nav_full_starter_seed7 --epochs 120 --batch-size 24 --learning-rate 0.0003 --seed 7 --device auto --model event-tubelet-transformer --pretrain-splits train --validation-splits validation --temporal-horizons-ms 20 60 100 240 500 --max-target-slop-ms 10 --variance-weight 1.0 --min-std 0.05 --deep-supervision-layers 1 5
 ```
 
+Executed a 30-epoch diagnostic run instead of immediately committing to 120
+epochs. Validation selected epoch 12, so longer pretraining was already starting
+to overfit the SSL validation split:
+
+- SSL best epoch: 12/30
+- SSL best validation loss: 0.001577
+- previous token-transformer SSL best loss: 0.003049
+- relative SSL-loss reduction: 48.3%
+
+Fine-tuned seed 7 from the best tubelet checkpoint:
+
+- validation MAE: 0.243 s
+- sealed-test MAE: 0.323 s
+- best epoch: 28/80
+
+Percent interpretation:
+
+- 9.3% less sealed-test error than the previous three-seed navigation Token
+  JEPA mean (`0.356 s` to `0.323 s`);
+- 6.2% less sealed-test error than the previous seed-7 navigation Token JEPA
+  (`0.344 s` to `0.323 s`);
+- 37.1% less sealed-test error than TinyCNN scratch seed 7 (`0.513 s` to
+  `0.323 s`);
+- 87.0% less sealed-test error than the event-rate baseline (`2.489 s` to
+  `0.323 s`).
+
+This is the best single-seed all-window result so far, but it is not yet a
+robust new headline result until seeds 13 and 21 are run under the same protocol.
+
