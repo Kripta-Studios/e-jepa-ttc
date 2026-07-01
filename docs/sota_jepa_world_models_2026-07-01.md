@@ -114,6 +114,10 @@ What is now closer to SOTA after the full-starter pass:
   optional predictor layer-id conditioning.
 - Causal integrated-navigation channels provide ego-motion conditioning from the
   current context window.
+- The JEPA predictor now has an action-conditioned path: when a cache includes
+  navigation channels, the dense temporal predictor receives 6 event-motion
+  context features plus 9 causal navigation/ego-motion features. The objective
+  is recorded as `dense_temporal_token_action_multihorizon` for those runs.
 - The full-starter protocol reports sealed validation/test results and
   low-label transfer for the token JEPA model.
 
@@ -125,10 +129,10 @@ What is still not SOTA:
   full V-JEPA 2.1 scale or tokenizer depth.
 - Deep self-supervision: intermediate encoder layers can be supervised, but the
   current two-layer ablations underperform final-layer-only Token JEPA.
-- Action conditioning: the predictor uses event-derived causal motion proxies,
-  and the cache can include causal integrated-navigation motion channels, but
-  there is no learned action-token predictor, counterfactual action rollout, or
-  planner-conditioned objective yet.
+- Action conditioning: the predictor now uses event-derived causal motion
+  proxies plus integrated-navigation ego-action features when present, but there
+  is still no counterfactual action rollout, planner-conditioned objective, or
+  closed-loop control.
 - Multi-modal fusion: the current event plus ego-motion path does not use RGB,
   LiDAR, depth, boxes, or segmentation during JEPA pretraining.
 - Closed-loop planning: the model estimates TTC; it does not simulate futures for
@@ -193,3 +197,20 @@ event-only all-window proxy.
 6. Keep low-label and frozen-probe evaluations as first-class metrics.
 7. Report final claims only on a new held-out test split that was not used during
    architecture or hyperparameter selection.
+
+## 2026-07-02 Implementation Update
+
+The repo now implements the LeWorldModel/V-JEPA-2-AC-aligned action path in
+`src/e_jepa_ttc/training/jepa.py`. It does not use future events, future
+navigation, or TTC labels during SSL. Checkpoints and `metrics.json` include:
+
+- `action_conditioning`
+- `uses_navigation_action_conditioning`
+- `action_feature_dim`
+- `action_feature_names`
+- `leakage_audit.uses_future_navigation=false`
+- `leakage_audit.action_conditioning_uses_context_only=true`
+
+This is an implementation milestone, not a new result claim. The table in
+`docs/full_starter_results.md` remains the current empirical record until a
+validation-selected action-conditioned run is completed and frozen.

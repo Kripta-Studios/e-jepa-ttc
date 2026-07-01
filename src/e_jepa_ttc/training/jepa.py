@@ -10,12 +10,23 @@ from typing import Any
 
 import numpy as np
 import torch
+from numpy.lib.npyio import NpzFile
 from torch import nn
 from torch.nn import functional
 from torch.utils.data import DataLoader, Dataset
 
+from e_jepa_ttc.data.evttc import NAVIGATION_FEATURE_NAMES
 from e_jepa_ttc.models import build_encoder
 from e_jepa_ttc.utils.io import ensure_parent, write_structured
+
+EVENT_MOTION_FEATURE_NAMES = (
+    "event_log_total_mass",
+    "event_log_late_minus_early_mass",
+    "event_temporal_mass_slope",
+    "event_centroid_dx",
+    "event_centroid_dy",
+    "event_polarity_balance",
+)
 
 
 class VoxelOnlyDataset(Dataset[torch.Tensor]):
@@ -364,16 +375,57 @@ def _context_motion_features(x: torch.Tensor, *, bins: int) -> torch.Tensor:
     )
 
 
+def _context_action_features(
+    x: torch.Tensor,
+    *,
+    bins: int,
+    metadata_channels: bool,
+    navigation_feature_count: int,
+) -> torch.Tensor:
+    """Extract causal event-motion and ego-action features from context only."""
+
+    pieces = [_context_motion_features(x, bins=bins)]
+    if navigation_feature_count:
+        event_channel_count = bins * 2
+        metadata_channel_count = 2 if metadata_channels else 0
+        navigation_start = event_channel_count + metadata_channel_count
+        navigation_end = navigation_start + navigation_feature_count
+        if x.shape[1] < navigation_end:
+            msg = (
+                "Expected navigation channels at "
+                f"[{navigation_start}:{navigation_end}], got {x.shape[1]} channels."
+            )
+            raise ValueError(msg)
+        navigation = x[:, navigation_start:navigation_end].float().mean(dim=(2, 3))
+        pieces.append(navigation)
+    return torch.nan_to_num(torch.cat(pieces, dim=1), nan=0.0, posinf=0.0, neginf=0.0)
+
+
+def _cache_bool(cache: NpzFile, key: str) -> bool:
+    if key not in cache.files:
+        return False
+    return bool(np.asarray(cache[key]).item())
+
+
+def _cache_string_tuple(cache: NpzFile, key: str, fallback: tuple[str, ...]) -> tuple[str, ...]:
+    if key not in cache.files:
+        return fallback
+    return tuple(str(value) for value in np.asarray(cache[key]).astype(str).tolist())
+
+
 def _objective_name(
     *,
     use_temporal: bool,
     dense_tokens: bool,
     motion_conditioning: bool,
+    action_conditioning: bool,
     deep_supervision: bool,
 ) -> str:
     if not use_temporal:
         return "masked_same_window"
     prefix = "deep_" if deep_supervision and dense_tokens else ""
+    if dense_tokens and action_conditioning:
+        return f"{prefix}dense_temporal_token_action_multihorizon"
     if dense_tokens and motion_conditioning:
         return f"{prefix}dense_temporal_token_motion_multihorizon"
     if dense_tokens:
@@ -459,6 +511,8 @@ def _jepa_loss(
     motion_conditioning: bool,
     deep_supervision_layers: tuple[int, ...],
     bins: int,
+    metadata_channels: bool,
+    navigation_feature_count: int,
 ) -> tuple[torch.Tensor, dict[str, float]]:
     context = _masked_context(x, mask_ratio=mask_ratio, block_count=block_count)
     if dense_tokens and future_x is not None:
@@ -485,7 +539,14 @@ def _jepa_loss(
         batch, horizon_count = future_mask.shape
         if dense_tokens:
             motion_features = (
-                _context_motion_features(x, bins=bins) if motion_conditioning else None
+                _context_action_features(
+                    x,
+                    bins=bins,
+                    metadata_channels=metadata_channels,
+                    navigation_feature_count=navigation_feature_count,
+                )
+                if motion_conditioning
+                else None
             )
             with torch.no_grad():
                 flat_target_layers = _forward_token_layers(
@@ -578,6 +639,8 @@ def _run_epoch(
     motion_conditioning: bool,
     deep_supervision_layers: tuple[int, ...],
     bins: int,
+    metadata_channels: bool,
+    navigation_feature_count: int,
 ) -> dict[str, float]:
     train_mode = optimizer is not None
     encoder.train(train_mode)
@@ -615,6 +678,8 @@ def _run_epoch(
                 motion_conditioning=motion_conditioning,
                 deep_supervision_layers=deep_supervision_layers,
                 bins=bins,
+                metadata_channels=metadata_channels,
+                navigation_feature_count=navigation_feature_count,
             )
         if optimizer is not None:
             if scaler is None:
@@ -680,14 +745,30 @@ def pretrain_jepa(
     x = cache["x"]
     split = cache["split"].astype(str)
     bins = int(cache["bins"]) if "bins" in cache.files else int(x.shape[1] // 2)
+    metadata_channels = _cache_bool(cache, "metadata_channels")
+    navigation_channels = _cache_bool(cache, "navigation_channels")
+    navigation_feature_names = (
+        _cache_string_tuple(cache, "navigation_feature_names", NAVIGATION_FEATURE_NAMES)
+        if navigation_channels
+        else ()
+    )
     use_temporal = bool(temporal_horizons_ms)
     use_dense_tokens = bool(dense_tokens and use_temporal)
     use_motion_conditioning = bool(motion_conditioning and use_dense_tokens)
     use_deep_supervision = bool(deep_supervision_layers and use_dense_tokens)
+    navigation_feature_count = len(navigation_feature_names) if use_motion_conditioning else 0
+    use_action_conditioning = bool(navigation_feature_count)
+    action_feature_names = (
+        (*EVENT_MOTION_FEATURE_NAMES, *navigation_feature_names)
+        if use_motion_conditioning
+        else ()
+    )
+    action_feature_dim = len(action_feature_names)
     objective = _objective_name(
         use_temporal=use_temporal,
         dense_tokens=use_dense_tokens,
         motion_conditioning=use_motion_conditioning,
+        action_conditioning=use_action_conditioning,
         deep_supervision=use_deep_supervision,
     )
     model_tag = model_name.replace("-", "_")
@@ -769,7 +850,7 @@ def pretrain_jepa(
         predictor = DenseTemporalJEPAPredictor(
             dim=encoder.output_dim,
             horizon_count=len(temporal_horizons_ms),
-            motion_dim=6 if use_motion_conditioning else 0,
+            motion_dim=action_feature_dim,
             layer_count=max(deep_supervision_layers) + 1 if use_deep_supervision else 0,
         ).to(device)
     elif use_temporal:
@@ -796,6 +877,20 @@ def pretrain_jepa(
     best_epoch = -1
     start_time = time.perf_counter()
     history: list[dict[str, Any]] = []
+    conditioning_metadata = {
+        "motion_conditioning": use_motion_conditioning,
+        "action_conditioning": use_action_conditioning,
+        "uses_navigation_action_conditioning": use_action_conditioning,
+        "metadata_channels": metadata_channels,
+        "navigation_channels": navigation_channels,
+        "event_motion_feature_names": list(EVENT_MOTION_FEATURE_NAMES)
+        if use_motion_conditioning
+        else [],
+        "navigation_feature_names": list(navigation_feature_names),
+        "action_feature_names": list(action_feature_names),
+        "action_feature_dim": action_feature_dim,
+        "motion_feature_dim": action_feature_dim,
+    }
 
     with history_path.open("w", encoding="utf-8") as history_file:
         for epoch in range(1, epochs + 1):
@@ -817,6 +912,8 @@ def pretrain_jepa(
                 motion_conditioning=use_motion_conditioning,
                 deep_supervision_layers=deep_supervision_layers if use_deep_supervision else (),
                 bins=bins,
+                metadata_channels=metadata_channels,
+                navigation_feature_count=navigation_feature_count,
             )
             validation_metrics = None
             if val_loader is not None:
@@ -841,6 +938,8 @@ def pretrain_jepa(
                             deep_supervision_layers if use_deep_supervision else ()
                         ),
                         bins=bins,
+                        metadata_channels=metadata_channels,
+                        navigation_feature_count=navigation_feature_count,
                     )
             score = (
                 validation_metrics["loss"]
@@ -875,12 +974,11 @@ def pretrain_jepa(
                         "temporal_horizons_ms": list(temporal_horizons_ms),
                         "max_target_slop_ms": max_target_slop_ms,
                         "dense_tokens": use_dense_tokens,
-                        "motion_conditioning": use_motion_conditioning,
+                        **conditioning_metadata,
                         "deep_supervision_layers": list(deep_supervision_layers)
                         if use_deep_supervision
                         else [],
                         "deep_supervision_layer_conditioning": use_deep_supervision,
-                        "motion_feature_dim": 6 if use_motion_conditioning else 0,
                         "bins": bins,
                         "encoder_name": encoder.__class__.__name__,
                     },
@@ -904,12 +1002,11 @@ def pretrain_jepa(
             "temporal_horizons_ms": list(temporal_horizons_ms),
             "max_target_slop_ms": max_target_slop_ms,
             "dense_tokens": use_dense_tokens,
-            "motion_conditioning": use_motion_conditioning,
+            **conditioning_metadata,
             "deep_supervision_layers": list(deep_supervision_layers)
             if use_deep_supervision
             else [],
             "deep_supervision_layer_conditioning": use_deep_supervision,
-            "motion_feature_dim": 6 if use_motion_conditioning else 0,
             "bins": bins,
             "encoder_name": encoder.__class__.__name__,
         },
@@ -937,11 +1034,10 @@ def pretrain_jepa(
         "temporal_horizons_ms": list(temporal_horizons_ms),
         "max_target_slop_ms": max_target_slop_ms,
         "dense_tokens": use_dense_tokens,
-        "motion_conditioning": use_motion_conditioning,
+        **conditioning_metadata,
         "deep_supervision": use_deep_supervision,
         "deep_supervision_layers": list(deep_supervision_layers) if use_deep_supervision else [],
         "deep_supervision_layer_conditioning": use_deep_supervision,
-        "motion_feature_dim": 6 if use_motion_conditioning else 0,
         "bins": bins,
         "train_pair_stats": train_pair_stats,
         "validation_pair_stats": validation_pair_stats,
@@ -960,6 +1056,8 @@ def pretrain_jepa(
             "uses_ttc_labels": False,
             "uses_future_events_as_ssl_targets": use_temporal,
             "motion_conditioning_uses_context_only": use_motion_conditioning,
+            "action_conditioning_uses_context_only": use_action_conditioning,
+            "uses_future_navigation": False,
             "deep_supervision_uses_intermediate_target_layers": use_deep_supervision,
             "deep_supervision_layer_conditioning": use_deep_supervision,
             "targets_cross_sequence_boundary": False,

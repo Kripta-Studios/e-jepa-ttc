@@ -37,6 +37,10 @@ default objective, `dense_temporal_token_motion_multihorizon`:
 - dense future token prediction instead of only global latent prediction;
 - causal context-motion conditioning from event mass, temporal mass slope,
   centroid shift, and polarity balance;
+- for runs created after 2026-07-02, navigation caches additionally enable
+  predictor-level action conditioning from causal ego-motion/navigation
+  features; older rows in the table used navigation as input channels but not
+  as an explicit predictor action vector;
 - future horizons at 20, 60, 100, 240, and 500 ms;
 - train events only for SSL pretraining and validation events only for SSL
   checkpoint selection;
@@ -195,13 +199,20 @@ published EvTTC leaderboard comparison. It is, however, the first local result
 that is both sealed-protocol positive and directionally aligned with current
 dense JEPA world-model practice.
 
+For official bbox/ROI comparison status, see
+`docs/evttc_official_bbox_roi_protocol.md`. The short version is that EvTTC
+Table V compares STRTTC, CMax, ETTCM, FAITH, AEB-Tracker, and Image FoE on a
+bbox/ROI-assisted frame/event protocol over specific CCRs/CCRm/slider
+sequences. The current all-window JEPA results and the causal bbox geometry
+reference are not directly comparable to that table.
+
 ## SOTA Position
 
 Compared with current JEPA/world-model SOTA as of 2026-07-01:
 
 - Aligned: latent prediction, EMA target encoder, future multi-horizon
-  prediction, dense token loss, motion conditioning, no TTC-label leakage,
-  low-label transfer evaluation.
+  prediction, dense token loss, causal motion/action conditioning, no TTC-label
+  leakage, low-label transfer evaluation.
 - Still below SOTA: small local training scale, shallow token transformer, deep
   self-supervision currently negative in ablation, event plus ego-motion only,
   no RGB/LiDAR/depth/box fusion, no action-conditioned planning or closed-loop

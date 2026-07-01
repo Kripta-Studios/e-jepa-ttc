@@ -543,3 +543,46 @@ This is now the best robust all-window result in the local full-starter sealed
 protocol. It is still not an official EvTTC SOTA claim because the official
 comparisons use a bbox/ROI frame protocol.
 
+## 2026-07-02 Action-Conditioned JEPA Predictor
+
+Implemented the LeWorldModel/V-JEPA-2-AC-aligned predictor step for dense
+temporal JEPA. When the cache contains navigation channels, the predictor now
+receives a causal action vector built from:
+
+- 6 event-motion context features: total mass, late-minus-early mass, temporal
+  slope, centroid dx/dy, and polarity balance;
+- 9 integrated-navigation features from the current context window: ego speed,
+  velocity, acceleration, yaw-rate, and validity.
+
+The action-conditioned objective is recorded as
+`dense_temporal_token_action_multihorizon`. Checkpoints and metrics now include
+`action_feature_dim`, `action_feature_names`,
+`uses_navigation_action_conditioning`, and explicit leakage audit fields:
+
+- `action_conditioning_uses_context_only=true`
+- `uses_future_navigation=false`
+- `uses_ttc_labels=false`
+
+Added a unit fixture with metadata plus navigation channels to verify the 15-D
+causal action vector and the anti-leakage metadata. The existing no-navigation
+JEPA path remains backward compatible and still reports the motion-conditioned
+objective.
+
+Real-cache smoke, train/validation only:
+
+```text
+.\.venv\Scripts\python.exe -m e_jepa_ttc pretrain jepa --cache artifacts\features\evttc_full_starter_voxel_160x90_b5_raw_meta_nav.npz --output-dir artifacts\runs\jepa_event_tubelet_action_nav_full_starter_smoke_2e --epochs 2 --batch-size 24 --learning-rate 0.0003 --seed 7 --device auto --model event-tubelet-transformer --pretrain-splits train --validation-splits validation --temporal-horizons-ms 20 60 100 240 500 --max-target-slop-ms 10 --variance-weight 1.0 --min-std 0.05 --deep-supervision-layers 1 5
+```
+
+Smoke result: objective `deep_dense_temporal_token_action_multihorizon`, action
+feature dimension 15, validation SSL loss `0.003594` at epoch 2, and
+`uses_future_navigation=false`. This is only an implementation check, not a TTC
+MAE result or a model-selection claim.
+
+Also added `docs/evttc_official_bbox_roi_protocol.md` to pin down the official
+bbox/ROI comparison requirements against STRTTC, CMax, ETTCM, FAITH,
+AEB-Tracker, and Image FoE. The current conclusion remains strict: no SOTA/SOTSA
+claim is valid until those baselines are reproduced on the same official
+bbox/ROI protocol. All tuning continues to be validation-only, with sealed test
+reserved for frozen protocols.
+

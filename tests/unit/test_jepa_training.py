@@ -2,6 +2,7 @@ from pathlib import Path
 
 import numpy as np
 
+from e_jepa_ttc.data.evttc import NAVIGATION_FEATURE_NAMES
 from e_jepa_ttc.training.jepa import pretrain_jepa
 from e_jepa_ttc.training.supervised import train_tiny_cnn
 
@@ -41,6 +42,31 @@ def _write_tubelet_cache(path: Path) -> None:
         width=np.array(32, dtype=np.int32),
         height=np.array(32, dtype=np.int32),
         bins=np.array(5, dtype=np.int32),
+    )
+
+
+def _write_navigation_cache(path: Path) -> None:
+    rng = np.random.default_rng(13)
+    x = rng.normal(size=(12, 21, 32, 32)).astype(np.float16)
+    x[:, 10:12] = 0.0
+    for idx in range(len(NAVIGATION_FEATURE_NAMES)):
+        x[:, 12 + idx] = np.linspace(0.1, 0.9, num=12, dtype=np.float16)[:, None, None]
+    y_ttc = np.linspace(1.0, 6.0, num=12, dtype=np.float32)
+    split = np.array(["train"] * 6 + ["validation"] * 3 + ["test"] * 3)
+    np.savez(
+        path,
+        x=x,
+        y_ttc=y_ttc,
+        split=split,
+        timestamp_us=np.arange(12, dtype=np.int64) * 20_000,
+        sequence_id=np.array(["fixture"] * 12),
+        event_count=np.arange(12, dtype=np.int32),
+        width=np.array(32, dtype=np.int32),
+        height=np.array(32, dtype=np.int32),
+        bins=np.array(5, dtype=np.int32),
+        metadata_channels=np.array(True, dtype=np.bool_),
+        navigation_channels=np.array(True, dtype=np.bool_),
+        navigation_feature_names=np.array(NAVIGATION_FEATURE_NAMES),
     )
 
 
@@ -130,3 +156,30 @@ def test_event_tubelet_jepa_pretraining_smoke(tmp_path: Path) -> None:
     assert pretrain_summary["dense_tokens"] is True
     assert pretrain_summary["deep_supervision"] is True
     assert (tmp_path / "tubelet_jepa" / "jepa_encoder_best.pt").exists()
+
+
+def test_jepa_action_conditioning_uses_causal_navigation(tmp_path: Path) -> None:
+    cache_path = tmp_path / "navigation_cache.npz"
+    _write_navigation_cache(cache_path)
+
+    pretrain_summary = pretrain_jepa(
+        cache_path=cache_path,
+        output_dir=tmp_path / "action_jepa",
+        epochs=1,
+        batch_size=3,
+        seed=5,
+        device_name="cpu",
+        pretrain_splits=("train",),
+        validation_splits=("validation",),
+    )
+
+    assert pretrain_summary["objective"] == "dense_temporal_token_action_multihorizon"
+    assert pretrain_summary["motion_conditioning"] is True
+    assert pretrain_summary["action_conditioning"] is True
+    assert pretrain_summary["uses_navigation_action_conditioning"] is True
+    assert pretrain_summary["action_feature_dim"] == 15
+    assert pretrain_summary["motion_feature_dim"] == 15
+    assert pretrain_summary["navigation_feature_names"] == list(NAVIGATION_FEATURE_NAMES)
+    assert pretrain_summary["action_feature_names"][-1] == "ego_navigation_valid"
+    assert pretrain_summary["leakage_audit"]["action_conditioning_uses_context_only"] is True
+    assert pretrain_summary["leakage_audit"]["uses_future_navigation"] is False
