@@ -83,7 +83,7 @@ sequences:
   event_hdf5: data.hdf5
   gt_hdf5: null
   ttc_csv: ttc.csv
-  label_dir: null
+  label_dir: bbox_segmentation
   scenario_family: CCRs-side
   speed_bucket: high
   target_type: car
@@ -100,14 +100,14 @@ sequences:
     relative_parts:
     - CCRs-side
     - high
-    label_count: 0
+    label_count: 108
 - dataset: EvTTC
   sequence_id: CCRs-side-low
   local_path: datasets/evttc/CCRs-side/low
   event_hdf5: data.hdf5
   gt_hdf5: null
   ttc_csv: ttc.csv
-  label_dir: null
+  label_dir: bbox_segmentation
   scenario_family: CCRs-side
   speed_bucket: low
   target_type: car
@@ -124,14 +124,14 @@ sequences:
     relative_parts:
     - CCRs-side
     - low
-    label_count: 0
+    label_count: 149
 - dataset: EvTTC
   sequence_id: CCRs-side-medium
   local_path: datasets/evttc/CCRs-side/medium
   event_hdf5: data.hdf5
   gt_hdf5: null
   ttc_csv: ttc.csv
-  label_dir: null
+  label_dir: bbox_segmentation
   scenario_family: CCRs-side
   speed_bucket: medium
   target_type: car
@@ -148,17 +148,17 @@ sequences:
     relative_parts:
     - CCRs-side
     - medium
-    label_count: 0
+    label_count: 141
 - dataset: EvTTC
   sequence_id: CPLA-high
   local_path: datasets/evttc/CPLA/high
   event_hdf5: data.hdf5
   gt_hdf5: null
   ttc_csv: ttc.csv
-  label_dir: null
+  label_dir: bbox_segmentation
   scenario_family: CPLA
   speed_bucket: high
-  target_type: null
+  target_type: pedestrian
   split_group: CPLA-high
   size_bytes: 6998450625
   source_url: null
@@ -172,17 +172,17 @@ sequences:
     relative_parts:
     - CPLA
     - high
-    label_count: 0
+    label_count: 87
 - dataset: EvTTC
   sequence_id: CPLA-low
   local_path: datasets/evttc/CPLA/low
   event_hdf5: data.hdf5
   gt_hdf5: null
   ttc_csv: ttc.csv
-  label_dir: null
+  label_dir: bbox_segmentation
   scenario_family: CPLA
   speed_bucket: low
-  target_type: null
+  target_type: pedestrian
   split_group: CPLA-low
   size_bytes: 7530933704
   source_url: null
@@ -196,17 +196,17 @@ sequences:
     relative_parts:
     - CPLA
     - low
-    label_count: 0
+    label_count: 152
 - dataset: EvTTC
   sequence_id: CPLA-medium
   local_path: datasets/evttc/CPLA/medium
   event_hdf5: data.hdf5
   gt_hdf5: null
   ttc_csv: ttc.csv
-  label_dir: null
+  label_dir: bbox_segmentation
   scenario_family: CPLA
   speed_bucket: medium
-  target_type: null
+  target_type: pedestrian
   split_group: CPLA-medium
   size_bytes: 6585537003
   source_url: null
@@ -220,4 +220,4 @@ sequences:
     relative_parts:
     - CPLA
     - medium
-    label_count: 0
+    label_count: 89
