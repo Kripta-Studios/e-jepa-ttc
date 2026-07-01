@@ -221,3 +221,55 @@ Exploratory partial results:
 - Temporal JEPA partial 5% labels at LR 3e-4 gives test MAE 2.489 s, but validation MAE 2.040 s;
   this is diagnostic only and not a model one would select by validation.
 
+## 2026-07-01 Dense Motion JEPA And Available Starter
+
+Implemented dense temporal token JEPA with causal motion conditioning:
+
+- `TinyCNNEncoder.forward_tokens()` exposes dense spatial tokens before global pooling while keeping
+  supervised checkpoint compatibility.
+- `pretrain jepa` now defaults to `dense_temporal_token_motion_multihorizon` for temporal runs.
+- The dense predictor is horizon-conditioned and receives context-only motion proxy features:
+  event mass, temporal mass slope, centroid shift, and polarity balance.
+- `--global-latent` preserves the older pooled temporal JEPA objective.
+- `--no-motion-conditioning` disables the motion proxy path for ablations.
+
+Completed additional HDF5 downloads and validation:
+
+- `CCRs-side-medium/data.hdf5`
+- `CCRs-side-high/data.hdf5`
+- `CPLA-low/data.hdf5`
+
+Google Drive quota blocked:
+
+- `CPLA-medium/data.hdf5`
+- `CPLA-high/data.hdf5`
+
+Created and committed:
+
+- `data/manifests/evttc_available_starter_local.yaml`
+- `data/splits/evttc_available_starter_sealed.yaml`
+- `docs/available_starter_results.md`
+
+The available sealed split has 3030 windows: train 1957, validation 598, test 475.
+The sealed test is the newly added `CCRs-side-high` sequence.
+
+Key results:
+
+- Event-rate ridge: validation MAE 3.103 s, sealed-test MAE 2.406 s.
+- TinyCNN scratch full-label seed 7: validation MAE 1.171 s, sealed-test MAE 0.519 s.
+- Dense motion JEPA full-label seed 7: validation MAE 1.223 s, sealed-test MAE 0.945 s.
+- Dense motion JEPA frozen probe seed 7: validation MAE 1.002 s, sealed-test MAE 1.197 s.
+- 5% labels, three seeds: scratch validation/test 2.413 +/- 0.480 / 2.241 +/- 0.350 s;
+  dense JEPA validation/test 1.694 +/- 0.174 / 1.149 +/- 0.119 s.
+- 10% labels, three seeds: scratch validation/test 1.814 +/- 0.152 / 1.400 +/- 0.035 s;
+  dense JEPA validation/test 1.420 +/- 0.075 / 1.111 +/- 0.370 s.
+
+Conclusion:
+
+- Dense motion JEPA is now clearly useful for low-label TTC estimation on a newly sealed test:
+  5% labels improves validation MAE by 29.8% and sealed-test MAE by 48.7%; 10% labels improves
+  validation MAE by 21.7% and sealed-test MAE by 20.6%.
+- With 100% labels, supervised scratch remains best on sealed test.
+- The full-starter protocol is still pending only because Drive blocked the remaining two CPLA HDF5
+  files; the committed full-starter split should be used once they are available.
+

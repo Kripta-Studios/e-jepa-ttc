@@ -6,7 +6,7 @@ The current repository implements the first engineering milestones from `AGENTS.
 bootstrap, typed data contracts, synthetic event data with known TTC, EvTTC dataset discovery,
 manifest validation, temporal indexing, sequence-level splits, dense event representations,
 classical TTC baselines, voxel-cache materialization, a supervised TinyCNN TTC regressor,
-temporal multi-horizon JEPA pretraining, and low-label probes.
+dense motion-conditioned temporal JEPA pretraining, and low-label probes.
 
 Experimental numbers must be generated from reproducible runs before being promoted to project
 claims. The bundled local EvTTC data is a three-sequence mini subset, so local results are smoke and
@@ -69,13 +69,13 @@ $env:PYTHONPATH='src'
 
 ## Local Results
 
-Current local results are summarized in [docs/local_results.md](docs/local_results.md). The strongest
-leakage-safe local result is the causal detection-assisted geometry model: validation MAE `0.439s`
-and test MAE `0.188s` on labeled frames, with train-only calibration and no future boxes/events.
-For pure event-window models, temporal JEPA is now positive in low-label mode: with 5% train labels
-it improves validation MAE from `2.909 +/- 0.743s` to `1.548 +/- 0.176s` across three seeds and
-modestly improves the repeatedly inspected mini-test mean. Event-rate ridge remains the strongest
-full-label held-out event-window baseline on this mini split.
+Current mini-subset results are summarized in [docs/local_results.md](docs/local_results.md).
+Available-starter sealed results are summarized in
+[docs/available_starter_results.md](docs/available_starter_results.md). On that newly sealed
+available-starter protocol, dense motion JEPA is clearly positive in low-label mode: with 5% train
+labels it improves validation MAE from `2.413 +/- 0.480s` to `1.694 +/- 0.174s` and sealed-test MAE
+from `2.241 +/- 0.350s` to `1.149 +/- 0.119s`. With 100% labels, supervised scratch still wins on
+sealed-test MAE (`0.519s` vs `0.945s` for dense JEPA fine-tune).
 
 ## Script Wrappers
 
@@ -106,8 +106,9 @@ uv run --no-sync python scripts/download_evttc_starter.py --manifest data/manife
 - Mean/median, geometric bbox-expansion, and event-rate ridge TTC baselines.
 - Causal detection-assisted geometry baseline with explicit anti-lookahead audit.
 - Voxel tensor cache builder for supervised and representation-learning experiments.
-- JEPA-style self-supervised pretraining with online encoder, EMA target encoder, temporal
-  multi-horizon future embedding prediction, masked context views, and leakage audit metadata.
+- JEPA-style self-supervised pretraining with online encoder, EMA target encoder, dense temporal
+  token future prediction, causal context-motion conditioning, masked context views, and leakage
+  audit metadata.
 - Supervised TinyCNN log-TTC regressor with CUDA AMP, checkpoints, history, metrics, and predictions.
 - Frozen-encoder probes and low-label supervised runs via `--freeze-encoder` and `--train-fraction`.
 - Unit and integration tests for data contracts, representations, synthetic data, manifests, splits,
@@ -115,7 +116,7 @@ uv run --no-sync python scripts/download_evttc_starter.py --manifest data/manife
 
 ## Not Implemented Yet
 
-- Larger-scale multi-sequence JEPA pretraining on the EvTTC starter subset.
+- Final full-starter run after `CPLA-medium/data.hdf5` and `CPLA-high/data.hdf5` become available.
 - Robustness suite, ONNX export, streaming demo, and project-level final report generation.
 
 These remain in the milestone order defined in `AGENTS.md`; they should be added after the
@@ -130,14 +131,19 @@ The handoff contains an EvTTC mini subset under `datasets/evttc/CCRs-1` with thr
 
 `data/manifests/evttc_starter_downloads.yaml` records public official links for the six starter
 sequences missing from the handoff. `scripts/download_evttc_starter.py` prints a dry-run plan by
-default and only calls `gdown` when `--execute` is passed.
+default and only calls `gdown` when `--execute` is passed; it also supports `--continue` and
+`--quiet`.
 
-One extra HDF5 sequence, `CCRs-side-low`, was downloaded and scanned into
-`data/manifests/evttc_partial_starter.yaml` with split
-`data/splits/evttc_partial_starter.yaml`. This partial starter split is exploratory only; remaining
-starter HDF5 downloads hit Google Drive/gdown public-link limits during this run.
+The locally complete available-starter manifest is
+`data/manifests/evttc_available_starter_local.yaml`, with split
+`data/splits/evttc_available_starter_sealed.yaml`. It contains the three original `CCRs-1`
+sequences, all three `CCRs-side` sequences, and `CPLA-low`. Google Drive quota blocked
+`CPLA-medium/data.hdf5` and `CPLA-high/data.hdf5`; the intended full-starter split is already fixed
+in `data/splits/evttc_full_starter_sealed.yaml` for when those files are available.
 
-See [docs/datasets_local.md](docs/datasets_local.md), [docs/progress.md](docs/progress.md), and [docs/local_results.md](docs/local_results.md).
+See [docs/datasets_local.md](docs/datasets_local.md), [docs/progress.md](docs/progress.md),
+[docs/local_results.md](docs/local_results.md), and
+[docs/available_starter_results.md](docs/available_starter_results.md).
 
 
 
