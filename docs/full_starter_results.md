@@ -67,6 +67,7 @@ for model or hyperparameter selection in this protocol.
 | Token JEPA + fine-tune | 100% | 7 | 0.350 | 0.422 |
 | Deep Token JEPA + fine-tune | 100% | 7 | 0.491 | 0.594 |
 | Deep layer-aware Token JEPA + fine-tune | 100% | 7 | 0.472 | 0.505 |
+| Large Token JEPA + fine-tune | 100% | 7 | 0.504 | 0.529 |
 | Token transformer scratch | 5% | 7,13,21 | 1.226 +/- 0.031 | 1.382 +/- 0.044 |
 | Token JEPA + fine-tune | 5% | 7,13,21 | 0.524 +/- 0.047 | 0.636 +/- 0.109 |
 | Token transformer scratch | 10% | 7,13,21 | 1.178 +/- 0.056 | 1.327 +/- 0.104 |
@@ -105,6 +106,13 @@ Both deep variants beat the scratch token transformer, and the layer-aware
 variant roughly matches TinyCNN scratch, but neither beats the simpler final-layer
 Token JEPA. For the current local dataset and model size, deep supervision is an
 implemented negative ablation rather than a new best result.
+
+Backbone scaling was also tested with `token-transformer-large`
+(`embed_dim=256`, `depth=6`, `heads=8`). SSL best loss was `0.003237`, close to
+but worse than the base token transformer's `0.003049`; fine-tune reached
+`0.529 s` sealed-test MAE. This suggests the current full-starter data size and
+objective do not yet benefit from a larger encoder without additional
+regularization, data, or a stronger predictor.
 
 This is not an official SOTA claim. The run is a local starter protocol, not a
 published EvTTC leaderboard comparison. It is, however, the first local result

@@ -142,6 +142,11 @@ reached `0.594 s` sealed-test MAE, and the layer-aware deep variant reached
 adding intermediate-layer prediction is not enough at the current model/data
 scale.
 
+A larger token transformer was also tested. It reached `0.529 s` sealed-test MAE,
+behind the base Token JEPA result. This suggests that the next SOTA move should
+not be parameter scaling alone; it needs more data, stronger conditioning,
+better layer-specific predictors, or a direct benchmark-aligned baseline.
+
 ## Next Alignment Steps
 
 1. Add richer motion/action conditioning suitable for TTC: ego speed if

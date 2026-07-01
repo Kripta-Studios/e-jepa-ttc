@@ -359,3 +359,25 @@ Conclusion:
   stronger layer-specific predictor, larger token backbone, richer motion/action conditioning, or
   direct reproduction of the official Event-Aided TTC benchmark baselines.
 
+## 2026-07-01 Large Token Transformer Ablation
+
+Added `token-transformer-large`:
+
+- embedding dim 256 instead of 192;
+- 6 transformer layers instead of 4;
+- 8 attention heads instead of 6.
+
+Full-starter seed 7:
+
+- Large Token JEPA pretraining: best SSL epoch 6, best SSL loss 0.003237.
+- Large Token JEPA fine-tune: validation MAE 0.504 s, sealed-test MAE 0.529 s.
+- Base Token JEPA remains better: validation MAE 0.350 s, sealed-test MAE 0.422 s.
+
+Conclusion:
+
+- Scaling the token backbone alone did not improve TTC on the full-starter split.
+- The likely issue is data/objective balance: the larger encoder overfits SSL validation after early
+  epochs and does not transfer better to supervised TTC.
+- Keep `token-transformer-large` as an available ablation/model variant, but do not promote it as
+  the default result.
+
