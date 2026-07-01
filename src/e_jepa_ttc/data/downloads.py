@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import subprocess
 import sys
+import time
 import urllib.parse
 import urllib.request
 from pathlib import Path, PurePosixPath
@@ -125,6 +126,8 @@ def download_gdown_listing(
     output_dir: str | Path,
     skip_existing: bool = True,
     suffixes: tuple[str, ...] = (),
+    retries: int = 3,
+    retry_delay_s: float = 2.0,
 ) -> list[dict[str, str]]:
     """Download files from a `gdown --json` folder listing via direct HTTP URLs."""
 
@@ -148,6 +151,32 @@ def download_gdown_listing(
             records.append({"status": "skipped", "path": output_path.as_posix(), "url": url})
             continue
         output_path.parent.mkdir(parents=True, exist_ok=True)
-        urllib.request.urlretrieve(download_url, output_path)
+        _urlretrieve_with_retries(
+            download_url,
+            output_path,
+            retries=retries,
+            retry_delay_s=retry_delay_s,
+        )
         records.append({"status": "downloaded", "path": output_path.as_posix(), "url": url})
     return records
+
+
+def _urlretrieve_with_retries(
+    url: str,
+    output_path: Path,
+    *,
+    retries: int,
+    retry_delay_s: float,
+) -> None:
+    if retries < 0:
+        raise ValueError("retries must be non-negative")
+    for attempt in range(retries + 1):
+        try:
+            urllib.request.urlretrieve(url, output_path)
+            return
+        except Exception:
+            if output_path.exists() and output_path.stat().st_size == 0:
+                output_path.unlink()
+            if attempt >= retries:
+                raise
+            time.sleep(retry_delay_s)

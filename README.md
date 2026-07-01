@@ -145,6 +145,7 @@ default and only calls `gdown` when `--execute` is passed; it also supports `--c
 If `gdown --folder` can list a Google Drive folder but cannot resolve per-file public download URLs,
 save the listing with `gdown --folder --json ...` and recover the files with
 `scripts/download_gdown_listing.py --listing <listing.json> --output-dir <folder> --suffix .json`.
+The listing downloader skips existing files and supports `--retries` for transient Drive failures.
 
 The locally complete full-starter manifest is
 `data/manifests/evttc_full_starter_local.yaml`, with split

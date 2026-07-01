@@ -130,6 +130,36 @@ def test_download_gdown_listing_skips_existing_and_downloads_missing(tmp_path, m
     ]
 
 
+def test_download_gdown_listing_retries_transient_download_errors(tmp_path, monkeypatch) -> None:
+    listing_path = tmp_path / "listing.json"
+    listing_path.write_text(
+        json.dumps([{"url": "https://drive.google.com/uc?id=file-id", "path": "0001.json"}]),
+        encoding="utf-8",
+    )
+    output_dir = tmp_path / "out"
+    calls = []
+
+    def fake_urlretrieve(url: str, output_path: Path) -> None:
+        calls.append(url)
+        if len(calls) == 1:
+            output_path.write_text("", encoding="utf-8")
+            raise RuntimeError("temporary disconnect")
+        output_path.write_text('{"ok": true}', encoding="utf-8")
+
+    monkeypatch.setattr("urllib.request.urlretrieve", fake_urlretrieve)
+    monkeypatch.setattr("time.sleep", lambda _: None)
+
+    records = download_gdown_listing(
+        listing_path=listing_path,
+        output_dir=output_dir,
+        retries=1,
+    )
+
+    assert records[0]["status"] == "downloaded"
+    assert len(calls) == 2
+    assert (output_dir / "0001.json").read_text(encoding="utf-8") == '{"ok": true}'
+
+
 def test_download_gdown_listing_rejects_unsafe_paths(tmp_path: Path) -> None:
     listing_path = tmp_path / "listing.json"
     listing_path.write_text(

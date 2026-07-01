@@ -20,6 +20,8 @@ def main() -> int:
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--overwrite", action="store_true")
     parser.add_argument("--suffix", action="append", default=[])
+    parser.add_argument("--retries", type=int, default=3)
+    parser.add_argument("--retry-delay-s", type=float, default=2.0)
     args = parser.parse_args()
 
     records = download_gdown_listing(
@@ -27,6 +29,8 @@ def main() -> int:
         output_dir=args.output_dir,
         skip_existing=not args.overwrite,
         suffixes=tuple(args.suffix),
+        retries=args.retries,
+        retry_delay_s=args.retry_delay_s,
     )
     print(json.dumps({"count": len(records), "records": records}, indent=2, sort_keys=True))
     return 0
