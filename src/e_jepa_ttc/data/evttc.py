@@ -39,6 +39,19 @@ class HDF5EventLayout:
     height: int | None = None
 
 
+NAVIGATION_FEATURE_NAMES = (
+    "ego_speed",
+    "ego_velocity_x",
+    "ego_velocity_y",
+    "ego_velocity_z",
+    "ego_acceleration_x",
+    "ego_acceleration_y",
+    "ego_acceleration_z",
+    "ego_yaw_rate",
+    "ego_navigation_valid",
+)
+
+
 def _sequence_id_from_path(root: Path, sequence_dir: Path) -> str:
     parts = sequence_dir.relative_to(root).parts
     return "-".join(part.replace("%", "") for part in parts)
@@ -376,6 +389,56 @@ def count_events_window(
         timestamps = h5[layout.t][rough_start:rough_end]
     start, end = _refine_bounds(timestamps, rough_start, t_start_us, t_end_us)
     return max(0, int(end - start))
+
+
+def read_navigation_window_features(
+    path: str | Path,
+    *,
+    t_start_us: int,
+    t_end_us: int,
+) -> np.ndarray:
+    """Read causal integrated-navigation features for a context window.
+
+    The feature vector uses only navigation samples within
+    ``[t_start_us, t_end_us]``. If the HDF5 file does not contain EvTTC
+    integrated-navigation datasets, a zero vector is returned so synthetic
+    fixtures and older caches remain supported.
+    """
+
+    import h5py
+
+    features = np.zeros((len(NAVIGATION_FEATURE_NAMES),), dtype=np.float32)
+    with h5py.File(path, "r") as h5:
+        base = "integratedNavigation/data"
+        required = [f"{base}/ts", f"{base}/velocity", f"{base}/attitude"]
+        if any(name not in h5 for name in required):
+            return features
+        ts = h5[f"{base}/ts"]
+        if len(ts) == 0:
+            return features
+        start = int(np.searchsorted(ts, int(t_start_us), side="left"))
+        end = int(np.searchsorted(ts, int(t_end_us), side="right"))
+        if end <= start:
+            causal_end = int(np.searchsorted(ts, int(t_end_us), side="right"))
+            if causal_end <= 0:
+                return features
+            start = max(0, causal_end - 1)
+            end = causal_end
+        times = ts[start:end].astype(np.int64)
+        velocity = h5[f"{base}/velocity"][start:end].astype(np.float32)
+        attitude = h5[f"{base}/attitude"][start:end].astype(np.float32)
+
+    if velocity.size == 0:
+        return features
+    last_velocity = velocity[-1]
+    features[0] = np.float32(np.linalg.norm(last_velocity))
+    features[1:4] = last_velocity
+    if velocity.shape[0] >= 2:
+        duration_s = max(float(times[-1] - times[0]) / 1_000_000.0, 1e-6)
+        features[4:7] = (velocity[-1] - velocity[0]) / duration_s
+        features[7] = (attitude[-1, 2] - attitude[0, 2]) / duration_s
+    features[8] = 1.0
+    return features
 
 
 def validate_manifest(path: str | Path) -> dict[str, Any]:

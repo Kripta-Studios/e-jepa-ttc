@@ -91,15 +91,20 @@ def test_scan_validate_index_and_split(tmp_path: Path) -> None:
         bins=2,
         normalize=False,
         metadata_channels=True,
+        navigation_channels=True,
         limit=3,
     )
-    assert summary["shape"] == [3, 6, 12, 16]
+    assert summary["shape"] == [3, 15, 12, 16]
     assert summary["normalize"] is False
     assert summary["metadata_channels"] is True
+    assert summary["navigation_channels"] is True
+    assert len(summary["navigation_feature_names"]) == 9
     cache = np.load(cache_path, allow_pickle=False)
     assert bool(cache["normalize"]) is False
     assert bool(cache["metadata_channels"]) is True
-    assert np.all(cache["x"][:, -2:].astype(np.float32) > 0.0)
+    assert bool(cache["navigation_channels"]) is True
+    assert np.all(cache["x"][:, -11:-9].astype(np.float32) > 0.0)
+    assert np.all(cache["x"][:, -9:].astype(np.float32) == 0.0)
 
 
 def test_discover_event_layout_on_fixture(tmp_path: Path) -> None:

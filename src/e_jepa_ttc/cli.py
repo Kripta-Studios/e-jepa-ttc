@@ -137,6 +137,7 @@ def _cmd_cache_voxel(args: argparse.Namespace) -> int:
         bins=args.bins,
         normalize=args.normalize,
         metadata_channels=args.metadata_channels,
+        navigation_channels=args.navigation_channels,
         limit=args.limit,
     )
     _print_json(payload)
@@ -294,6 +295,11 @@ def build_parser() -> argparse.ArgumentParser:
         "--metadata-channels",
         action="store_true",
         help="Append log event-count and log event-rate channels to each voxel grid.",
+    )
+    cache_voxel.add_argument(
+        "--navigation-channels",
+        action="store_true",
+        help="Append causal integrated-navigation motion channels when available.",
     )
     cache_voxel.add_argument("--limit", type=int)
     cache_voxel.set_defaults(func=_cmd_cache_voxel)

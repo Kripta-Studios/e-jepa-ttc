@@ -8,7 +8,12 @@ from typing import Any
 
 import numpy as np
 
-from e_jepa_ttc.data.evttc import read_events_window, read_manifest
+from e_jepa_ttc.data.evttc import (
+    NAVIGATION_FEATURE_NAMES,
+    read_events_window,
+    read_manifest,
+    read_navigation_window_features,
+)
 from e_jepa_ttc.data.types import EventBatch
 from e_jepa_ttc.representations.voxel_grid import encode_voxel_grid
 from e_jepa_ttc.utils.io import ensure_parent, read_structured, write_structured
@@ -61,6 +66,13 @@ def _metadata_channels(events: EventBatch, *, width: int, height: int) -> np.nda
     return meta
 
 
+def _constant_channels(values: np.ndarray, *, width: int, height: int) -> np.ndarray:
+    channels = np.empty((int(values.shape[0]), height, width), dtype=np.float32)
+    for idx, value in enumerate(values.astype(np.float32, copy=False)):
+        channels[idx].fill(value)
+    return channels
+
+
 def build_voxel_cache(
     *,
     manifest_path: str | Path,
@@ -72,6 +84,7 @@ def build_voxel_cache(
     bins: int = 5,
     normalize: bool = True,
     metadata_channels: bool = False,
+    navigation_channels: bool = False,
     limit: int | None = None,
 ) -> dict[str, Any]:
     """Build an `.npz` cache with voxel tensors and labels."""
@@ -94,7 +107,11 @@ def build_voxel_cache(
     windows = _load_windows(index_path)
     if limit is not None:
         windows = windows[:limit]
-    channels = bins * 2 + (2 if metadata_channels else 0)
+    channels = (
+        bins * 2
+        + (2 if metadata_channels else 0)
+        + (len(NAVIGATION_FEATURE_NAMES) if navigation_channels else 0)
+    )
     x_out = np.empty((len(windows), channels, height, width), dtype=np.float16)
     y_ttc = np.empty((len(windows),), dtype=np.float32)
     timestamps = np.empty((len(windows),), dtype=np.int64)
@@ -120,6 +137,15 @@ def build_voxel_cache(
         voxel = encode_voxel_grid(small, bins=bins, normalize=normalize)
         if metadata_channels:
             voxel = np.concatenate([voxel, _metadata_channels(events, width=width, height=height)])
+        if navigation_channels:
+            navigation = read_navigation_window_features(
+                event_hdf5,
+                t_start_us=int(window["context_start_us"]),
+                t_end_us=int(window["context_end_us"]),
+            )
+            voxel = np.concatenate(
+                [voxel, _constant_channels(navigation, width=width, height=height)]
+            )
         x_out[idx] = voxel.astype(np.float16)
         y_ttc[idx] = float(window["ttc_seconds"])
         timestamps[idx] = int(window["timestamp_us"])
@@ -141,6 +167,8 @@ def build_voxel_cache(
         bins=np.array(bins, dtype=np.int32),
         normalize=np.array(normalize, dtype=np.bool_),
         metadata_channels=np.array(metadata_channels, dtype=np.bool_),
+        navigation_channels=np.array(navigation_channels, dtype=np.bool_),
+        navigation_feature_names=np.array(NAVIGATION_FEATURE_NAMES),
     )
     summary = {
         "output": output.as_posix(),
@@ -152,6 +180,8 @@ def build_voxel_cache(
         "bins": bins,
         "normalize": normalize,
         "metadata_channels": metadata_channels,
+        "navigation_channels": navigation_channels,
+        "navigation_feature_names": list(NAVIGATION_FEATURE_NAMES),
         "seconds": time.perf_counter() - start_time,
         "mean_events_per_window": float(np.mean(event_counts)) if len(event_counts) else 0.0,
     }
