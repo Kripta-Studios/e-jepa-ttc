@@ -77,6 +77,8 @@ for model or hyperparameter selection in this protocol.
 | Token JEPA + fine-tune | 5% | 7,13,21 | 0.524 +/- 0.047 | 0.636 +/- 0.109 |
 | Token transformer scratch | 10% | 7,13,21 | 1.178 +/- 0.056 | 1.327 +/- 0.104 |
 | Token JEPA + fine-tune | 10% | 7,13,21 | 0.437 +/- 0.039 | 0.460 +/- 0.029 |
+| Token transformer + navigation scratch | 10% | 7,13,21 | 0.578 +/- 0.026 | 0.756 +/- 0.018 |
+| Token JEPA + navigation fine-tune | 10% | 7,13,21 | 0.406 +/- 0.019 | 0.543 +/- 0.010 |
 
 Percent improvements over matching scratch runs:
 
@@ -90,6 +92,10 @@ Percent improvements over matching scratch runs:
   validation MAE improves 27.1%; sealed-test MAE improves 25.9%.
 - Navigation token JEPA versus event-only token scratch over three seeds:
   validation MAE improves 62.8%; sealed-test MAE improves 57.8%.
+- 10% labels with navigation: navigation improves scratch sealed-test MAE by
+  43.0%, and navigation JEPA improves over navigation scratch by 28.1%. However,
+  event-only JEPA remains better than navigation JEPA at 10% labels on sealed
+  test (`0.460 s` vs `0.543 s`).
 - 100% labels versus TinyCNN scratch seed 7: three-seed Token JEPA validation
   MAE improves 34.7%; sealed-test MAE improves 6.2%. Three-seed navigation Token
   JEPA improves sealed-test MAE by 30.5%.
@@ -113,6 +119,8 @@ The low-label result is the clearest JEPA signal. With only 10% of train labels,
 Token JEPA reaches `0.460 s` test MAE, which is better than the full-label
 TinyCNN scratch baseline (`0.513 s`). With 5% labels it remains much better than
 the matching scratch token model, but does not beat the full-label TinyCNN.
+Navigation channels help the 10% scratch model strongly, but do not improve the
+10% JEPA result on this split; the best low-label JEPA result remains event-only.
 
 Deep self-supervision was implemented and tested as a SOTA-alignment ablation:
 

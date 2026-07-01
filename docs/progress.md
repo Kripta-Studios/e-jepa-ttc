@@ -415,6 +415,13 @@ Full-starter 100% label results, seeds 7/13/21:
 - Navigation token scratch: validation/test `0.440 +/- 0.020 / 0.465 +/- 0.021 s`.
 - Navigation Token JEPA: validation/test `0.261 +/- 0.021 / 0.356 +/- 0.022 s`.
 
+Full-starter 10% label results, seeds 7/13/21:
+
+- Event-only token scratch: validation/test `1.178 +/- 0.056 / 1.327 +/- 0.104 s`.
+- Event-only Token JEPA: validation/test `0.437 +/- 0.039 / 0.460 +/- 0.029 s`.
+- Navigation token scratch: validation/test `0.578 +/- 0.026 / 0.756 +/- 0.018 s`.
+- Navigation Token JEPA: validation/test `0.406 +/- 0.019 / 0.543 +/- 0.010 s`.
+
 Conclusion:
 
 - Causal navigation channels are the strongest improvement so far.
@@ -422,4 +429,6 @@ Conclusion:
 - Navigation Token JEPA improves sealed-test MAE by 25.9% versus event-only Token JEPA and by
   23.3% versus navigation scratch.
 - The new best local result is `0.356 +/- 0.022 s` sealed-test MAE over three seeds.
+- At 10% labels, navigation helps scratch but not JEPA transfer; event-only Token JEPA remains the
+  better low-label model on sealed test.
 
