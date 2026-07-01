@@ -58,14 +58,39 @@ def build_download_plan(
     return plan
 
 
-def run_gdown_plan(plan: list[dict[str, Any]], *, python: str | Path | None = None) -> None:
-    """Execute a download plan with gdown."""
+def build_gdown_command(
+    item: dict[str, Any],
+    *,
+    python: str | Path | None = None,
+    quiet: bool = False,
+    resume: bool = False,
+) -> list[str]:
+    """Build the gdown command for one planned download."""
 
     python_executable = str(python or sys.executable)
+    output = Path(str(item["output"]))
+    command = [python_executable, "-m", "gdown"]
+    if quiet:
+        command.append("-q")
+    if resume:
+        command.append("--continue")
+    if item["kind"] == "folder":
+        command.append("--folder")
+    command.extend([str(item["url"]), "-O", output.as_posix()])
+    return command
+
+
+def run_gdown_plan(
+    plan: list[dict[str, Any]],
+    *,
+    python: str | Path | None = None,
+    quiet: bool = False,
+    resume: bool = False,
+) -> None:
+    """Execute a download plan with gdown."""
+
     for item in plan:
         output = Path(str(item["output"]))
         output.parent.mkdir(parents=True, exist_ok=True)
-        command = [python_executable, "-m", "gdown", str(item["url"]), "-O", output.as_posix()]
-        if item["kind"] == "folder":
-            command.insert(3, "--folder")
+        command = build_gdown_command(item, python=python, quiet=quiet, resume=resume)
         subprocess.run(command, check=True)

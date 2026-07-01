@@ -21,6 +21,8 @@ def main() -> int:
     parser.add_argument("--sequence", action="append", default=[])
     parser.add_argument("--kind", action="append", default=[])
     parser.add_argument("--execute", action="store_true")
+    parser.add_argument("--quiet", action="store_true")
+    parser.add_argument("--continue", dest="resume", action="store_true")
     args = parser.parse_args()
 
     plan = build_download_plan(
@@ -31,7 +33,7 @@ def main() -> int:
     )
     print(json.dumps({"count": len(plan), "plan": plan}, indent=2, sort_keys=True))
     if args.execute:
-        run_gdown_plan(plan, python=sys.executable)
+        run_gdown_plan(plan, python=sys.executable, quiet=args.quiet, resume=args.resume)
     return 0
 
 

@@ -2,7 +2,7 @@ from pathlib import Path
 
 import yaml
 
-from e_jepa_ttc.data.downloads import build_download_plan
+from e_jepa_ttc.data.downloads import build_download_plan, build_gdown_command
 
 
 def test_build_download_plan_filters_sequence_and_kind(tmp_path: Path) -> None:
@@ -56,4 +56,29 @@ def test_build_download_plan_filters_sequence_and_kind(tmp_path: Path) -> None:
             "output": (tmp_path / "datasets/seq-a/bbox").as_posix(),
             "size_gb": None,
         }
+    ]
+
+
+def test_build_gdown_command_supports_quiet_resume_and_folders() -> None:
+    command = build_gdown_command(
+        {
+            "kind": "folder",
+            "url": "https://example.com/folder-a",
+            "output": "datasets/seq-a/bbox",
+        },
+        python="python",
+        quiet=True,
+        resume=True,
+    )
+
+    assert command == [
+        "python",
+        "-m",
+        "gdown",
+        "-q",
+        "--continue",
+        "--folder",
+        "https://example.com/folder-a",
+        "-O",
+        "datasets/seq-a/bbox",
     ]
