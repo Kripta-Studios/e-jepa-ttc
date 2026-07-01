@@ -98,6 +98,8 @@ What is now closer to SOTA after the full-starter pass:
   supervised TTC via `--model token-transformer`.
 - The default temporal objective is dense token prediction with causal
   motion-conditioning, not only pooled global prediction.
+- Deep token supervision is implemented for selected transformer layers, with
+  optional predictor layer-id conditioning.
 - The full-starter protocol reports sealed validation/test results and
   low-label transfer for the token JEPA model.
 
@@ -106,8 +108,9 @@ What is still not SOTA:
 - Backbone scale: the token transformer is small and local; it is not a
   large-scale ViT trained on broad video data.
 - Dense feature learning: the loss is now dense over spatial tokens, but not
-  full V-JEPA 2.1-style deep multi-layer supervision.
-- Deep self-supervision: intermediate encoder layers are not supervised.
+  full V-JEPA 2.1 scale or tokenizer depth.
+- Deep self-supervision: intermediate encoder layers can be supervised, but the
+  current two-layer ablations underperform final-layer-only Token JEPA.
 - Action conditioning: the predictor uses event-derived causal motion proxies,
   but there is no ego-action, control, trajectory, optical-flow, or
   planner-conditioned predictor.
@@ -123,8 +126,9 @@ What is still not SOTA:
 
 The implementation is now a stronger small-scale JEPA prototype for event-based
 TTC: it is using latent prediction, future horizons, dense token loss,
-event-motion conditioning, low-label evaluation, and anti-leakage discipline. It
-should not be called a SOTA world model yet.
+event-motion conditioning, optional deep token supervision, low-label
+evaluation, and anti-leakage discipline. It should not be called a SOTA world
+model yet.
 
 The strongest current evidence for JEPA in this repo is the full-starter sealed
 run. With 100% labels, token JEPA improves sealed-test MAE from `0.854 s` to
@@ -132,12 +136,19 @@ run. With 100% labels, token JEPA improves sealed-test MAE from `0.854 s` to
 JEPA improves sealed-test MAE from `1.327 +/- 0.104 s` to
 `0.460 +/- 0.029 s`.
 
+Deep-supervision ablations did not improve this result: the plain deep variant
+reached `0.594 s` sealed-test MAE, and the layer-aware deep variant reached
+`0.505 s`. These are useful negative results because they show that simply
+adding intermediate-layer prediction is not enough at the current model/data
+scale.
+
 ## Next Alignment Steps
 
-1. Add deep self-supervision from intermediate encoder stages.
-2. Add richer motion/action conditioning suitable for TTC: ego speed if
+1. Add richer motion/action conditioning suitable for TTC: ego speed if
    available, event-flow proxy, bbox scale derivative, or horizon-conditioned
    relative approach features.
+2. Scale or redesign the token backbone/predictor before relying on
+   intermediate-layer supervision as a performance path.
 3. Add multi-modal ablations using RGB, depth, boxes, or segmentation without
    leaking TTC labels into SSL.
 4. Reproduce or reimplement the Event-Aided TTC/EvTTC reference protocol for

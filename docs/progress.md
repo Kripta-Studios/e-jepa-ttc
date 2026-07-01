@@ -321,3 +321,41 @@ Conclusion:
   compared on a published leaderboard or reproduced against the exact Event-Aided TTC baseline
   protocol.
 
+## 2026-07-01 Deep Token JEPA Ablations
+
+Implemented deep token supervision for the token-transformer JEPA path:
+
+- `EventTokenTransformerEncoder.forward_intermediate_tokens()` exposes selected transformer layer
+  token grids.
+- `pretrain jepa --deep-supervision-layers ...` predicts dense future tokens for multiple selected
+  layers.
+- A second pass added layer-id conditioning to the dense predictor so intermediate and final layer
+  targets are not conflated.
+
+Verification:
+
+```text
+.\.venv\Scripts\python.exe -m pytest tests\unit\test_models.py tests\unit\test_jepa_training.py
+.\.venv\Scripts\python.exe -m ruff check src\e_jepa_ttc\models\token_transformer.py src\e_jepa_ttc\training\jepa.py src\e_jepa_ttc\cli.py tests\unit\test_models.py tests\unit\test_jepa_training.py
+```
+
+Result: 4 tests passed; lint clean.
+
+Full-starter ablations, seed 7:
+
+- Base final-layer Token JEPA: SSL best loss 0.003049; validation MAE 0.350 s; sealed-test MAE
+  0.422 s.
+- Deep Token JEPA, layers 1 and 3: SSL best loss 0.003523; validation MAE 0.491 s; sealed-test MAE
+  0.594 s.
+- Deep layer-aware Token JEPA, layers 1 and 3: SSL best loss 0.003933; validation MAE 0.472 s;
+  sealed-test MAE 0.505 s.
+
+Conclusion:
+
+- Deep self-supervision is now implemented and audited, but it is not the best current model.
+- The layer-aware predictor recovers much of the deep-supervision penalty and nearly matches
+  TinyCNN scratch on sealed test, but it remains behind final-layer Token JEPA.
+- The likely next SOTA-alignment step is not simply "more intermediate layers"; it should be a
+  stronger layer-specific predictor, larger token backbone, richer motion/action conditioning, or
+  direct reproduction of the official Event-Aided TTC benchmark baselines.
+

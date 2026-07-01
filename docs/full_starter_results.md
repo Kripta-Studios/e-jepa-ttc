@@ -65,6 +65,8 @@ for model or hyperparameter selection in this protocol.
 | TinyCNN scratch | 100% | 7 | 0.549 | 0.513 |
 | Token transformer scratch | 100% | 7 | 0.709 | 0.854 |
 | Token JEPA + fine-tune | 100% | 7 | 0.350 | 0.422 |
+| Deep Token JEPA + fine-tune | 100% | 7 | 0.491 | 0.594 |
+| Deep layer-aware Token JEPA + fine-tune | 100% | 7 | 0.472 | 0.505 |
 | Token transformer scratch | 5% | 7,13,21 | 1.226 +/- 0.031 | 1.382 +/- 0.044 |
 | Token JEPA + fine-tune | 5% | 7,13,21 | 0.524 +/- 0.047 | 0.636 +/- 0.109 |
 | Token transformer scratch | 10% | 7,13,21 | 1.178 +/- 0.056 | 1.327 +/- 0.104 |
@@ -92,6 +94,18 @@ Token JEPA reaches `0.460 s` test MAE, which is better than the full-label
 TinyCNN scratch baseline (`0.513 s`). With 5% labels it remains much better than
 the matching scratch token model, but does not beat the full-label TinyCNN.
 
+Deep self-supervision was implemented and tested as a SOTA-alignment ablation:
+
+- `Deep Token JEPA`: supervised transformer layers 1 and 3 with the same dense
+  predictor. SSL best loss `0.003523`; fine-tune test MAE `0.594 s`.
+- `Deep layer-aware Token JEPA`: added a predictor layer-id embedding for layers
+  1 and 3. SSL best loss `0.003933`; fine-tune test MAE `0.505 s`.
+
+Both deep variants beat the scratch token transformer, and the layer-aware
+variant roughly matches TinyCNN scratch, but neither beats the simpler final-layer
+Token JEPA. For the current local dataset and model size, deep supervision is an
+implemented negative ablation rather than a new best result.
+
 This is not an official SOTA claim. The run is a local starter protocol, not a
 published EvTTC leaderboard comparison. It is, however, the first local result
 that is both sealed-protocol positive and directionally aligned with current
@@ -104,8 +118,8 @@ Compared with current JEPA/world-model SOTA as of 2026-07-01:
 - Aligned: latent prediction, EMA target encoder, future multi-horizon
   prediction, dense token loss, motion conditioning, no TTC-label leakage,
   low-label transfer evaluation.
-- Still below SOTA: small local training scale, shallow token transformer, no
-  deep self-supervision across intermediate layers, event-only input, no
+- Still below SOTA: small local training scale, shallow token transformer, deep
+  self-supervision currently negative in ablation, event-only input, no
   RGB/LiDAR/depth/box fusion, no action-conditioned planning or closed-loop
   evaluation, and no official benchmark replication.
 
@@ -114,4 +128,3 @@ Practical claim:
 > On the local full-starter sealed EvTTC protocol, dense motion-conditioned
 > token JEPA substantially improves label efficiency and gives the best local
 > TTC MAE. It is a strong starter result, not yet a SOTA world-model result.
-
