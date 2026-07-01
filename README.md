@@ -73,9 +73,11 @@ Current mini-subset results are summarized in [docs/local_results.md](docs/local
 Full-starter sealed results are summarized in
 [docs/full_starter_results.md](docs/full_starter_results.md). On the full local starter protocol,
 the token-transformer dense JEPA model is the strongest result so far: with 100% labels it reaches
-`0.350s` validation MAE and `0.422s` sealed-test MAE, beating TinyCNN scratch (`0.549s` /
-`0.513s`) and the same token transformer trained from scratch (`0.709s` / `0.854s`). With 10%
-labels, token JEPA improves sealed-test MAE from `1.327 +/- 0.104s` to `0.460 +/- 0.029s`.
+`0.358 +/- 0.007s` validation MAE and `0.481 +/- 0.042s` sealed-test MAE over three fine-tuning
+seeds, beating the same token transformer trained from scratch (`0.702 +/- 0.052s` /
+`0.844 +/- 0.008s`). The best single seed reaches `0.350s` validation MAE and `0.422s`
+sealed-test MAE. With 10% labels, token JEPA improves sealed-test MAE from
+`1.327 +/- 0.104s` to `0.460 +/- 0.029s`.
 
 Earlier available-starter sealed results are kept in
 [docs/available_starter_results.md](docs/available_starter_results.md).

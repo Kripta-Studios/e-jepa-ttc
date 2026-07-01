@@ -63,8 +63,8 @@ for model or hyperparameter selection in this protocol.
 | --- | ---: | --- | ---: | ---: |
 | Event-rate ridge | 100% | deterministic | 2.303 | 2.489 |
 | TinyCNN scratch | 100% | 7 | 0.549 | 0.513 |
-| Token transformer scratch | 100% | 7 | 0.709 | 0.854 |
-| Token JEPA + fine-tune | 100% | 7 | 0.350 | 0.422 |
+| Token transformer scratch | 100% | 7,13,21 | 0.702 +/- 0.052 | 0.844 +/- 0.008 |
+| Token JEPA + fine-tune | 100% | 7,13,21 | 0.358 +/- 0.007 | 0.481 +/- 0.042 |
 | Deep Token JEPA + fine-tune | 100% | 7 | 0.491 | 0.594 |
 | Deep layer-aware Token JEPA + fine-tune | 100% | 7 | 0.472 | 0.505 |
 | Large Token JEPA + fine-tune | 100% | 7 | 0.504 | 0.529 |
@@ -77,18 +77,22 @@ Percent improvements over matching scratch runs:
 
 - 5% labels: validation MAE improves 57.3%; sealed-test MAE improves 53.9%.
 - 10% labels: validation MAE improves 62.9%; sealed-test MAE improves 65.4%.
-- 100% labels, same token backbone: validation MAE improves 50.7%;
-  sealed-test MAE improves 50.6%.
-- 100% labels versus TinyCNN scratch: validation MAE improves 36.2%;
-  sealed-test MAE improves 17.8%.
+- 100% labels, same token backbone over three seeds: validation MAE improves
+  49.0%; sealed-test MAE improves 43.0%.
+- 100% labels versus TinyCNN scratch seed 7: three-seed Token JEPA validation
+  MAE improves 34.7%; sealed-test MAE improves 6.2%. The best Token JEPA seed
+  improves sealed-test MAE by 17.8%.
 - 100% labels versus event-rate ridge: validation MAE improves 84.8%;
   sealed-test MAE improves 83.1%.
 
 ## Interpretation
 
 The strongest local result is now `Token JEPA + fine-tune` with full labels:
-`0.350 s` validation MAE and `0.422 s` sealed-test MAE. It beats the supervised
-TinyCNN full-label baseline and the same token transformer trained from scratch.
+`0.358 +/- 0.007 s` validation MAE and `0.481 +/- 0.042 s` sealed-test MAE over
+three fine-tuning seeds. The best single seed reaches `0.350 s` validation MAE
+and `0.422 s` sealed-test MAE. It beats the same token transformer trained from
+scratch robustly, and the three-seed mean is slightly better than the supervised
+TinyCNN full-label seed-7 baseline.
 
 The low-label result is the clearest JEPA signal. With only 10% of train labels,
 Token JEPA reaches `0.460 s` test MAE, which is better than the full-label

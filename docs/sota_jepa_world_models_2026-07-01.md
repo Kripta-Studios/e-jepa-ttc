@@ -132,9 +132,10 @@ model yet.
 
 The strongest current evidence for JEPA in this repo is the full-starter sealed
 run. With 100% labels, token JEPA improves sealed-test MAE from `0.854 s` to
-`0.422 s` versus the matching scratch token backbone. With 10% labels, token
-JEPA improves sealed-test MAE from `1.327 +/- 0.104 s` to
-`0.460 +/- 0.029 s`.
+`0.422 s` for the best seed, and from `0.844 +/- 0.008 s` to
+`0.481 +/- 0.042 s` over three fine-tuning seeds, versus the matching scratch
+token backbone. With 10% labels, token JEPA improves sealed-test MAE from
+`1.327 +/- 0.104 s` to `0.460 +/- 0.029 s`.
 
 Deep-supervision ablations did not improve this result: the plain deep variant
 reached `0.594 s` sealed-test MAE, and the layer-aware deep variant reached
