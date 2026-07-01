@@ -107,6 +107,20 @@ def test_scan_validate_index_and_split(tmp_path: Path) -> None:
     assert np.all(cache["x"][:, -9:].astype(np.float32) == 0.0)
 
 
+def test_scan_uses_bbox_segmentation_when_leftlabel_is_missing(tmp_path: Path) -> None:
+    root = tmp_path / "evttc"
+    _write_sequence(root, "CPLA", "high")
+    sequence_dir = root / "CPLA" / "high" / "overlap-100"
+    (sequence_dir / "leftlabel").rename(sequence_dir / "bbox_segmentation")
+
+    sequences = scan_evttc_root(root)
+
+    assert len(sequences) == 1
+    assert sequences[0].label_dir == "bbox_segmentation"
+    assert sequences[0].target_type == "pedestrian"
+    assert sequences[0].extra["label_count"] == 1
+
+
 def test_discover_event_layout_on_fixture(tmp_path: Path) -> None:
     sequence = generate_synthetic_sequence(windows=4, seed=1)
     path = tmp_path / "events.hdf5"

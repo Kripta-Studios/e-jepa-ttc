@@ -69,6 +69,17 @@ def _speed_bucket(parts: tuple[str, ...]) -> str | None:
     return None
 
 
+def _target_type(parts: tuple[str, ...]) -> str | None:
+    if not parts:
+        return None
+    family = parts[0]
+    if family.startswith("CC"):
+        return "car"
+    if family.startswith("CP"):
+        return "pedestrian"
+    return None
+
+
 def scan_evttc_root(root: str | Path) -> list[DatasetSequence]:
     """Scan an EvTTC root for local sequence folders."""
 
@@ -86,7 +97,9 @@ def scan_evttc_root(root: str | Path) -> list[DatasetSequence]:
             continue
         event_hdf5 = max(event_candidates, key=lambda path: path.stat().st_size)
         gt_hdf5 = sequence_dir / "gt.hdf5"
-        label_dir = sequence_dir / "leftlabel"
+        left_label_dir = sequence_dir / "leftlabel"
+        bbox_label_dir = sequence_dir / "bbox_segmentation"
+        label_dir = left_label_dir if left_label_dir.exists() else bbox_label_dir
         rel_parts = sequence_dir.relative_to(root_path).parts
         sequence_id = _sequence_id_from_path(root_path, sequence_dir)
         size_bytes = sum(path.stat().st_size for path in hdf5_files)
@@ -101,7 +114,7 @@ def scan_evttc_root(root: str | Path) -> list[DatasetSequence]:
                 label_dir=label_dir.name if label_dir.exists() else None,
                 scenario_family=rel_parts[0] if rel_parts else None,
                 speed_bucket=_speed_bucket(rel_parts),
-                target_type="car" if rel_parts and rel_parts[0].startswith("CCRs") else None,
+                target_type=_target_type(rel_parts),
                 split_group=sequence_id,
                 size_bytes=size_bytes,
                 original_filename=event_hdf5.name,

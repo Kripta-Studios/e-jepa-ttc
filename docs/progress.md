@@ -432,3 +432,33 @@ Conclusion:
 - At 10% labels, navigation helps scratch but not JEPA transfer; event-only Token JEPA remains the
   better low-label model on sealed test.
 
+## 2026-07-01 Partial BBox-Assisted Reference
+
+Attempted to download `CPLA-high/bbox_segmentation` for benchmark-aligned
+detection-assisted baselines. Google Drive downloaded 76 JSON labels
+(`0308.json` through `0383.json`) and then failed at `0384.json` with a public
+link/access error. The local folder is partial.
+
+Implemented scanner support for `bbox_segmentation` as an ISAT label directory
+fallback when `leftlabel` is absent, and updated target-type inference so `CP*`
+families are marked as `pedestrian`.
+
+Using a temporary scan manifest with partial `CPLA-high` labels:
+
+```text
+.\.venv\Scripts\python.exe -m e_jepa_ttc baseline causal-geometry --manifest artifacts\metrics\evttc_scan_with_partial_bbox.yaml --split data\splits\evttc_full_starter_sealed.yaml --output artifacts\metrics\causal_geometry_full_starter_partial_bbox.json --derivative-window 15
+```
+
+Result:
+
+- train: 426 labels, 417 predictions, MAE 0.392 s, RMSE 0.713 s;
+- validation: no labels available;
+- partial sealed test: 76 labels, 74 predictions, MAE 0.142 s, RMSE 0.311 s.
+
+Interpretation:
+
+- This is detection-assisted and frame-label-only, not event-only and not all-window evaluation.
+- It is useful evidence that official CMax/STRTTC-style comparisons need complete bbox assets and
+  benchmark-aligned frame protocols.
+- It is not a replacement for the all-window Token JEPA + navigation result.
+

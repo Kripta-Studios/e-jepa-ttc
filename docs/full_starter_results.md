@@ -141,6 +141,31 @@ but worse than the base token transformer's `0.003049`; fine-tune reached
 objective do not yet benefit from a larger encoder without additional
 regularization, data, or a stronger predictor.
 
+## Detection-Assisted Reference
+
+A partial `CPLA-high/bbox_segmentation` download was attempted to move toward
+the official bbox-assisted TTC baselines. Google Drive failed at `0384.json`,
+leaving 76 JSON labels (`0308.json` through `0383.json`) locally available.
+
+Using a temporary manifest that detects those partial labels, the causal
+geometry baseline gives:
+
+| Method | Split | Labels | Predictions | MAE | RMSE |
+| --- | --- | ---: | ---: | ---: | ---: |
+| Causal bbox geometry | train | 426 | 417 | 0.392 | 0.713 |
+| Causal bbox geometry | partial test | 76 | 74 | 0.142 | 0.311 |
+
+This is detection-assisted and evaluated only on labeled frames, not on all 478
+sealed test windows. It should not be compared as an event-only model result.
+It does show that reproducing CMax/STRTTC-style SOTA fairly requires complete
+bbox/segmentation assets and a benchmark-aligned frame protocol.
+
+Run:
+
+```powershell
+.\.venv\Scripts\python.exe -m e_jepa_ttc baseline causal-geometry --manifest artifacts\metrics\evttc_scan_with_partial_bbox.yaml --split data\splits\evttc_full_starter_sealed.yaml --output artifacts\metrics\causal_geometry_full_starter_partial_bbox.json --derivative-window 15
+```
+
 This is not an official SOTA claim. The run is a local starter protocol, not a
 published EvTTC leaderboard comparison. It is, however, the first local result
 that is both sealed-protocol positive and directionally aligned with current
