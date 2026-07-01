@@ -476,3 +476,36 @@ Interpretation:
   benchmark-aligned frame protocols.
 - It is not a replacement for the all-window Token JEPA + navigation result.
 
+## 2026-07-01 Tubelet/V-JEPA-Like Backbone
+
+Added `event-tubelet-transformer` and `event-tubelet-transformer-large` model
+names for JEPA pretraining and supervised fine-tuning.
+
+Design:
+
+- first `2 * bins` channels are treated as positive/negative event bins;
+- event bins are embedded with a 3D tubelet convolution over
+  polarity-by-time-by-space tensors;
+- remaining metadata/navigation channels are embedded as causal auxiliary
+  spatial patches and added to each temporal tubelet;
+- dense spatio-temporal tokens support the existing JEPA future-token objective
+  and intermediate-layer supervision;
+- default full-starter token count is 250 tokens at 90x160 with 5 event bins and
+  `patch_size=16`, keeping it feasible on the 12 GB GPU.
+
+SOTA alignment:
+
+- V-JEPA 2 motivates actionless pretraining followed by action-conditioned
+  predictor training.
+- LeWorldModel motivates latent next-state prediction conditioned on actions and
+  explicit anti-collapse regularization.
+- For EvTTC, integrated navigation is treated as causal ego-action context, not
+  a label. Future events remain SSL targets only, and TTC labels remain reserved
+  for fine-tuning.
+
+Next empirical step:
+
+```text
+.\.venv\Scripts\e-jepa-ttc.exe pretrain jepa --cache artifacts\features\evttc_full_starter_voxel_160x90_b5_raw_meta_nav.npz --output-dir artifacts\runs\jepa_event_tubelet_nav_full_starter_seed7 --epochs 120 --batch-size 24 --learning-rate 0.0003 --seed 7 --device auto --model event-tubelet-transformer --pretrain-splits train --validation-splits validation --temporal-horizons-ms 20 60 100 240 500 --max-target-slop-ms 10 --variance-weight 1.0 --min-std 0.05 --deep-supervision-layers 1 5
+```
+

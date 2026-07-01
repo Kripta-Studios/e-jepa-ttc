@@ -33,7 +33,15 @@ research alignment note, not a benchmark claim.
    features, not just global embeddings.
    Source: https://arxiv.org/html/2603.14482v2
 
-5. Autonomous-driving JEPA work now exists. AD-L-JEPA applies JEPA to LiDAR BEV
+5. LeWorldModel is the cleanest 2026 JEPA world-model recipe for
+   action-conditioned prediction. It predicts next latent embeddings conditioned
+   on actions and uses a Gaussian-distribution regularizer to fight collapse,
+   with control/planning evaluation rather than only representation evaluation.
+   Sources:
+   - https://arxiv.org/abs/2603.19312
+   - https://le-wm.github.io/
+
+6. Autonomous-driving JEPA work now exists. AD-L-JEPA applies JEPA to LiDAR BEV
    embeddings and reports label-efficiency and speed advantages versus masked
    occupancy/generative baselines. Drive-JEPA adapts V-JEPA-style video
    pretraining to end-to-end driving and combines it with multimodal trajectory
@@ -42,7 +50,7 @@ research alignment note, not a benchmark claim.
    - https://arxiv.org/html/2501.04969v1
    - https://arxiv.org/html/2601.22032
 
-6. World models have split into several active tracks:
+7. World models have split into several active tracks:
    - Latent predictive models for representation, planning, and control.
    - Generative interactive simulators, e.g. Genie/Genie 3.
    - Physical-AI platforms, e.g. NVIDIA Cosmos.
@@ -54,7 +62,7 @@ research alignment note, not a benchmark claim.
    - https://research.nvidia.com/publication/2025-01_cosmos-world-foundation-model-platform-physical-ai
    - https://waymo.com/blog/2026/02/the-waymo-world-model-a-new-frontier-for-autonomous-driving-simulation/
 
-7. The broader world-model literature still treats evaluation as unsettled.
+8. The broader world-model literature still treats evaluation as unsettled.
    Useful metrics now include downstream task performance, physical consistency,
    long-horizon temporal consistency, closed-loop control, and data efficiency.
    Pixel fidelity alone is not sufficient.
@@ -62,7 +70,7 @@ research alignment note, not a benchmark claim.
    - https://arxiv.org/html/2510.16732v3
    - https://arxiv.org/html/2502.10498v2
 
-8. Event-camera SSL is still relatively early compared with RGB/video/LiDAR.
+9. Event-camera SSL is still relatively early compared with RGB/video/LiDAR.
    Current event work emphasizes sparse asynchronous representations, dense
    event pretraining, low-latency perception, and TTC-specific datasets.
    Sources:
@@ -96,6 +104,10 @@ What is now closer to SOTA after the full-starter pass:
 
 - The repo includes a token-transformer backbone for `pretrain jepa` and
   supervised TTC via `--model token-transformer`.
+- The repo now also includes `--model event-tubelet-transformer`, a V-JEPA-like
+  tubelet tokenizer that embeds the polarity-by-time event bins with 3D
+  tubelet patches and adds metadata/navigation channels as causal auxiliary
+  context.
 - The default temporal objective is dense token prediction with causal
   motion-conditioning, not only pooled global prediction.
 - Deep token supervision is implemented for selected transformer layers, with
@@ -115,8 +127,8 @@ What is still not SOTA:
   current two-layer ablations underperform final-layer-only Token JEPA.
 - Action conditioning: the predictor uses event-derived causal motion proxies,
   and the cache can include causal integrated-navigation motion channels, but
-  there is no control, trajectory, optical-flow, or planner-conditioned
-  predictor.
+  there is no learned action-token predictor, counterfactual action rollout, or
+  planner-conditioned objective yet.
 - Multi-modal fusion: the current event plus ego-motion path does not use RGB,
   LiDAR, depth, boxes, or segmentation during JEPA pretraining.
 - Closed-loop planning: the model estimates TTC; it does not simulate futures for
@@ -161,15 +173,17 @@ event-only all-window proxy.
 
 ## Next Alignment Steps
 
-1. Add richer motion/action conditioning suitable for TTC: event-flow proxy,
-   bbox scale derivative, relative approach features, or planner/control
-   conditioning.
-2. Scale or redesign the token backbone/predictor before relying on
-   intermediate-layer supervision as a performance path.
-3. Add multi-modal ablations using RGB, depth, boxes, or segmentation without
+1. Train the new `event-tubelet-transformer` under the sealed full-starter
+   protocol with the same seed discipline used for the current best model.
+2. Add a LeWorldModel-inspired predictor variant that conditions on causal
+   action/ego-motion tokens, not only six global motion summary features.
+3. Add a collapse-regularization ablation, e.g. SIGReg-style distribution
+   matching or a stronger covariance/variance regularizer, while tuning only on
+   validation.
+4. Add multi-modal ablations using RGB, depth, boxes, or segmentation without
    leaking TTC labels into SSL.
-4. Reproduce or reimplement the Event-Aided TTC/EvTTC reference protocol for
+5. Reproduce or reimplement the Event-Aided TTC/EvTTC reference protocol for
    direct benchmark comparison.
-5. Keep low-label and frozen-probe evaluations as first-class metrics.
-6. Report final claims only on a new held-out test split that was not used during
+6. Keep low-label and frozen-probe evaluations as first-class metrics.
+7. Report final claims only on a new held-out test split that was not used during
    architecture or hyperparameter selection.

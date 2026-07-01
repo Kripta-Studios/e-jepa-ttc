@@ -6,9 +6,17 @@ from e_jepa_ttc.models.tiny_cnn import TinyCNNEncoder, TinyCNNRegressor
 from e_jepa_ttc.models.token_transformer import (
     EventTokenTransformerEncoder,
     EventTokenTransformerRegressor,
+    EventTubeletTransformerEncoder,
+    EventTubeletTransformerRegressor,
 )
 
-MODEL_NAMES = ("tiny-cnn", "token-transformer", "token-transformer-large")
+MODEL_NAMES = (
+    "tiny-cnn",
+    "token-transformer",
+    "token-transformer-large",
+    "event-tubelet-transformer",
+    "event-tubelet-transformer-large",
+)
 
 
 def build_encoder(name: str, *, in_channels: int) -> nn.Module:
@@ -23,6 +31,15 @@ def build_encoder(name: str, *, in_channels: int) -> nn.Module:
             in_channels=in_channels,
             embed_dim=256,
             depth=6,
+            num_heads=8,
+        )
+    if name == "event-tubelet-transformer":
+        return EventTubeletTransformerEncoder(in_channels=in_channels)
+    if name == "event-tubelet-transformer-large":
+        return EventTubeletTransformerEncoder(
+            in_channels=in_channels,
+            embed_dim=256,
+            depth=8,
             num_heads=8,
         )
     msg = f"Unknown model {name!r}; expected one of {MODEL_NAMES}."
@@ -43,12 +60,23 @@ def build_regressor(name: str, *, in_channels: int) -> nn.Module:
             depth=6,
             num_heads=8,
         )
+    if name == "event-tubelet-transformer":
+        return EventTubeletTransformerRegressor(in_channels=in_channels)
+    if name == "event-tubelet-transformer-large":
+        return EventTubeletTransformerRegressor(
+            in_channels=in_channels,
+            embed_dim=256,
+            depth=8,
+            num_heads=8,
+        )
     msg = f"Unknown model {name!r}; expected one of {MODEL_NAMES}."
     raise ValueError(msg)
 
 
 __all__ = [
     "MODEL_NAMES",
+    "EventTubeletTransformerEncoder",
+    "EventTubeletTransformerRegressor",
     "EventTokenTransformerEncoder",
     "EventTokenTransformerRegressor",
     "TinyCNNEncoder",

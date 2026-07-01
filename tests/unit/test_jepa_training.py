@@ -25,6 +25,25 @@ def _write_cache(path: Path) -> None:
     )
 
 
+def _write_tubelet_cache(path: Path) -> None:
+    rng = np.random.default_rng(11)
+    x = rng.normal(size=(12, 12, 32, 32)).astype(np.float16)
+    y_ttc = np.linspace(1.0, 6.0, num=12, dtype=np.float32)
+    split = np.array(["train"] * 6 + ["validation"] * 3 + ["test"] * 3)
+    np.savez(
+        path,
+        x=x,
+        y_ttc=y_ttc,
+        split=split,
+        timestamp_us=np.arange(12, dtype=np.int64) * 20_000,
+        sequence_id=np.array(["fixture"] * 12),
+        event_count=np.arange(12, dtype=np.int32),
+        width=np.array(32, dtype=np.int32),
+        height=np.array(32, dtype=np.int32),
+        bins=np.array(5, dtype=np.int32),
+    )
+
+
 def test_jepa_checkpoint_loads_into_supervised_trainer(tmp_path: Path) -> None:
     cache_path = tmp_path / "cache.npz"
     _write_cache(cache_path)
@@ -87,3 +106,27 @@ def test_token_jepa_deep_supervision(tmp_path: Path) -> None:
     assert pretrain_summary["deep_supervision_layers"] == [1, 3]
     assert pretrain_summary["deep_supervision_layer_conditioning"] is True
     assert pretrain_summary["last"]["train"]["deep_supervision_layer_count"] == 2.0
+
+
+def test_event_tubelet_jepa_pretraining_smoke(tmp_path: Path) -> None:
+    cache_path = tmp_path / "tubelet_cache.npz"
+    _write_tubelet_cache(cache_path)
+
+    pretrain_summary = pretrain_jepa(
+        cache_path=cache_path,
+        output_dir=tmp_path / "tubelet_jepa",
+        epochs=1,
+        batch_size=2,
+        seed=5,
+        device_name="cpu",
+        pretrain_splits=("train",),
+        validation_splits=("validation",),
+        model_name="event-tubelet-transformer",
+        deep_supervision_layers=(1, 5),
+    )
+
+    assert pretrain_summary["model_name"] == "event-tubelet-transformer"
+    assert pretrain_summary["objective"] == "deep_dense_temporal_token_motion_multihorizon"
+    assert pretrain_summary["dense_tokens"] is True
+    assert pretrain_summary["deep_supervision"] is True
+    assert (tmp_path / "tubelet_jepa" / "jepa_encoder_best.pt").exists()

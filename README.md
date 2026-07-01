@@ -116,6 +116,8 @@ uv run --no-sync python scripts/download_evttc_starter.py --manifest data/manife
 - JEPA-style self-supervised pretraining with online encoder, EMA target encoder, dense temporal
   token future prediction, causal context-motion conditioning, masked context views, and leakage
   audit metadata.
+- V-JEPA-like event tubelet transformer backbones via `--model event-tubelet-transformer` and
+  `--model event-tubelet-transformer-large`.
 - Optional causal integrated-navigation cache channels for ego speed, velocity, acceleration,
   yaw-rate, and validity.
 - Supervised TinyCNN log-TTC regressor with CUDA AMP, checkpoints, history, metrics, and predictions.
