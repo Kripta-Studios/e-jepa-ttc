@@ -12,8 +12,11 @@ validation is `CCRs-side-high`, and the sealed test sequence is `CPLA-high`.
 - Split: `data/splits/evttc_full_starter_sealed.yaml`
 - Index: `data/cache/evttc_full_starter_index.json` (ignored generated file)
 - Cache: `artifacts/features/evttc_full_starter_voxel_160x90_b5_raw_meta.npz`
+- Navigation cache:
+  `artifacts/features/evttc_full_starter_voxel_160x90_b5_raw_meta_nav.npz`
 - Windows: 3972 total; train 3019, validation 475, test 478.
 - Cache shape: `[3972, 12, 90, 160]`
+- Navigation cache shape: `[3972, 21, 90, 160]`
 - Mean events/window: 950477.998
 
 Split:
@@ -65,6 +68,8 @@ for model or hyperparameter selection in this protocol.
 | TinyCNN scratch | 100% | 7 | 0.549 | 0.513 |
 | Token transformer scratch | 100% | 7,13,21 | 0.702 +/- 0.052 | 0.844 +/- 0.008 |
 | Token JEPA + fine-tune | 100% | 7,13,21 | 0.358 +/- 0.007 | 0.481 +/- 0.042 |
+| Token transformer + navigation scratch | 100% | 7,13,21 | 0.440 +/- 0.020 | 0.465 +/- 0.021 |
+| Token JEPA + navigation fine-tune | 100% | 7,13,21 | 0.261 +/- 0.021 | 0.356 +/- 0.022 |
 | Deep Token JEPA + fine-tune | 100% | 7 | 0.491 | 0.594 |
 | Deep layer-aware Token JEPA + fine-tune | 100% | 7 | 0.472 | 0.505 |
 | Large Token JEPA + fine-tune | 100% | 7 | 0.504 | 0.529 |
@@ -79,20 +84,30 @@ Percent improvements over matching scratch runs:
 - 10% labels: validation MAE improves 62.9%; sealed-test MAE improves 65.4%.
 - 100% labels, same token backbone over three seeds: validation MAE improves
   49.0%; sealed-test MAE improves 43.0%.
+- 100% labels, navigation token JEPA versus navigation token scratch over three
+  seeds: validation MAE improves 40.6%; sealed-test MAE improves 23.3%.
+- Navigation token JEPA versus event-only token JEPA over three seeds:
+  validation MAE improves 27.1%; sealed-test MAE improves 25.9%.
+- Navigation token JEPA versus event-only token scratch over three seeds:
+  validation MAE improves 62.8%; sealed-test MAE improves 57.8%.
 - 100% labels versus TinyCNN scratch seed 7: three-seed Token JEPA validation
-  MAE improves 34.7%; sealed-test MAE improves 6.2%. The best Token JEPA seed
-  improves sealed-test MAE by 17.8%.
+  MAE improves 34.7%; sealed-test MAE improves 6.2%. Three-seed navigation Token
+  JEPA improves sealed-test MAE by 30.5%.
 - 100% labels versus event-rate ridge: validation MAE improves 84.8%;
   sealed-test MAE improves 83.1%.
 
 ## Interpretation
 
-The strongest local result is now `Token JEPA + fine-tune` with full labels:
-`0.358 +/- 0.007 s` validation MAE and `0.481 +/- 0.042 s` sealed-test MAE over
-three fine-tuning seeds. The best single seed reaches `0.350 s` validation MAE
-and `0.422 s` sealed-test MAE. It beats the same token transformer trained from
-scratch robustly, and the three-seed mean is slightly better than the supervised
-TinyCNN full-label seed-7 baseline.
+The strongest local result is now `Token JEPA + navigation fine-tune` with full
+labels: `0.261 +/- 0.021 s` validation MAE and `0.356 +/- 0.022 s` sealed-test
+MAE over three fine-tuning seeds. It beats the same token transformer trained
+from scratch robustly, improves on event-only Token JEPA, and is clearly better
+than the supervised TinyCNN full-label seed-7 baseline.
+
+The navigation channels are causal integrated-navigation features from the
+current context window only: ego speed, velocity components, acceleration
+components, yaw-rate, and a validity flag. They do not use TTC labels or future
+target windows.
 
 The low-label result is the clearest JEPA signal. With only 10% of train labels,
 Token JEPA reaches `0.460 s` test MAE, which is better than the full-label
@@ -131,12 +146,13 @@ Compared with current JEPA/world-model SOTA as of 2026-07-01:
   prediction, dense token loss, motion conditioning, no TTC-label leakage,
   low-label transfer evaluation.
 - Still below SOTA: small local training scale, shallow token transformer, deep
-  self-supervision currently negative in ablation, event-only input, no
-  RGB/LiDAR/depth/box fusion, no action-conditioned planning or closed-loop
+  self-supervision currently negative in ablation, event plus ego-motion only,
+  no RGB/LiDAR/depth/box fusion, no action-conditioned planning or closed-loop
   evaluation, and no official benchmark replication.
 
 Practical claim:
 
 > On the local full-starter sealed EvTTC protocol, dense motion-conditioned
-> token JEPA substantially improves label efficiency and gives the best local
-> TTC MAE. It is a strong starter result, not yet a SOTA world-model result.
+> token JEPA with causal integrated-navigation channels substantially improves
+> TTC MAE and is the best local result. It is a strong starter result, not yet a
+> SOTA world-model result.

@@ -384,3 +384,42 @@ Conclusion:
 - Keep `token-transformer-large` as an available ablation/model variant, but do not promote it as
   the default result.
 
+## 2026-07-01 Causal Navigation Conditioning
+
+Implemented optional causal integrated-navigation channels in the voxel cache:
+
+- `ego_speed`
+- `ego_velocity_x/y/z`
+- `ego_acceleration_x/y/z`
+- `ego_yaw_rate`
+- `ego_navigation_valid`
+
+The features are read only from the context window `[context_start_us, context_end_us]`, so they do
+not use future target windows or TTC labels. Synthetic fixtures and files without
+`integratedNavigation/data` receive zero-filled navigation channels.
+
+Created ignored generated cache:
+
+- `artifacts/features/evttc_full_starter_voxel_160x90_b5_raw_meta_nav.npz`
+
+Cache summary:
+
+- shape `[3972, 21, 90, 160]`
+- train 3019, validation 475, test 478
+- all full-starter windows have valid navigation channels
+
+Full-starter 100% label results, seeds 7/13/21:
+
+- Event-only token scratch: validation/test `0.702 +/- 0.052 / 0.844 +/- 0.008 s`.
+- Event-only Token JEPA: validation/test `0.358 +/- 0.007 / 0.481 +/- 0.042 s`.
+- Navigation token scratch: validation/test `0.440 +/- 0.020 / 0.465 +/- 0.021 s`.
+- Navigation Token JEPA: validation/test `0.261 +/- 0.021 / 0.356 +/- 0.022 s`.
+
+Conclusion:
+
+- Causal navigation channels are the strongest improvement so far.
+- Navigation alone improves token scratch sealed-test MAE by 44.9% versus event-only scratch.
+- Navigation Token JEPA improves sealed-test MAE by 25.9% versus event-only Token JEPA and by
+  23.3% versus navigation scratch.
+- The new best local result is `0.356 +/- 0.022 s` sealed-test MAE over three seeds.
+

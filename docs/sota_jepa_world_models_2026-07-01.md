@@ -100,6 +100,8 @@ What is now closer to SOTA after the full-starter pass:
   motion-conditioning, not only pooled global prediction.
 - Deep token supervision is implemented for selected transformer layers, with
   optional predictor layer-id conditioning.
+- Causal integrated-navigation channels provide ego-motion conditioning from the
+  current context window.
 - The full-starter protocol reports sealed validation/test results and
   low-label transfer for the token JEPA model.
 
@@ -112,10 +114,11 @@ What is still not SOTA:
 - Deep self-supervision: intermediate encoder layers can be supervised, but the
   current two-layer ablations underperform final-layer-only Token JEPA.
 - Action conditioning: the predictor uses event-derived causal motion proxies,
-  but there is no ego-action, control, trajectory, optical-flow, or
-  planner-conditioned predictor.
-- Multi-modal fusion: the current event-only path does not use RGB, LiDAR,
-  depth, boxes, or segmentation during JEPA pretraining.
+  and the cache can include causal integrated-navigation motion channels, but
+  there is no control, trajectory, optical-flow, or planner-conditioned
+  predictor.
+- Multi-modal fusion: the current event plus ego-motion path does not use RGB,
+  LiDAR, depth, boxes, or segmentation during JEPA pretraining.
 - Closed-loop planning: the model estimates TTC; it does not simulate futures for
   planning, counterfactual rollout, or control.
 - Benchmark maturity: current results are local and exploratory because the
@@ -131,11 +134,11 @@ evaluation, and anti-leakage discipline. It should not be called a SOTA world
 model yet.
 
 The strongest current evidence for JEPA in this repo is the full-starter sealed
-run. With 100% labels, token JEPA improves sealed-test MAE from `0.854 s` to
-`0.422 s` for the best seed, and from `0.844 +/- 0.008 s` to
-`0.481 +/- 0.042 s` over three fine-tuning seeds, versus the matching scratch
-token backbone. With 10% labels, token JEPA improves sealed-test MAE from
-`1.327 +/- 0.104 s` to `0.460 +/- 0.029 s`.
+run. With 100% labels and event-only input, token JEPA improves sealed-test MAE
+from `0.844 +/- 0.008 s` to `0.481 +/- 0.042 s` over three fine-tuning seeds.
+With causal integrated-navigation channels, token JEPA improves further to
+`0.356 +/- 0.022 s`. With 10% labels and event-only input, token JEPA improves
+sealed-test MAE from `1.327 +/- 0.104 s` to `0.460 +/- 0.029 s`.
 
 Deep-supervision ablations did not improve this result: the plain deep variant
 reached `0.594 s` sealed-test MAE, and the layer-aware deep variant reached
@@ -144,15 +147,14 @@ adding intermediate-layer prediction is not enough at the current model/data
 scale.
 
 A larger token transformer was also tested. It reached `0.529 s` sealed-test MAE,
-behind the base Token JEPA result. This suggests that the next SOTA move should
-not be parameter scaling alone; it needs more data, stronger conditioning,
-better layer-specific predictors, or a direct benchmark-aligned baseline.
+behind the base Token JEPA result. The navigation result suggests that stronger
+conditioning is currently more valuable than parameter scaling alone.
 
 ## Next Alignment Steps
 
-1. Add richer motion/action conditioning suitable for TTC: ego speed if
-   available, event-flow proxy, bbox scale derivative, or horizon-conditioned
-   relative approach features.
+1. Add richer motion/action conditioning suitable for TTC: event-flow proxy,
+   bbox scale derivative, relative approach features, or planner/control
+   conditioning.
 2. Scale or redesign the token backbone/predictor before relying on
    intermediate-layer supervision as a performance path.
 3. Add multi-modal ablations using RGB, depth, boxes, or segmentation without
