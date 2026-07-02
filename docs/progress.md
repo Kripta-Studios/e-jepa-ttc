@@ -1110,3 +1110,96 @@ probe predicted multi-step latent rollouts, not only frozen context latents, and
 should keep all tuning on multi-domain validation before any final sealed-test
 check.
 
+## 2026-07-02 Tubelet Mask JEPA
+
+Implemented a more V-JEPA-like masking path for the event-tubelet backbone:
+
+- new CLI flag: `pretrain jepa --mask-mode {spatial,tubelet}`;
+- default remains `spatial`, preserving previous runs;
+- `tubelet` masks random spatio-temporal event-channel blocks
+  `[polarity, time, y, x]`;
+- metadata and navigation channels are preserved during tubelet masking;
+- metrics/checkpoints record `mask_mode`;
+- leakage audit records:
+  `tubelet_masking_uses_context_event_channels_only=true` and
+  `tubelet_masking_preserves_auxiliary_channels=true`.
+
+Unit coverage:
+
+- direct tubelet masking test verifies event channels are masked and auxiliary
+  channels are unchanged;
+- pretraining smoke verifies objective
+  `tubeletmask_transformer_dense_temporal_token_motion_multihorizon`.
+
+Dev multi-validation pretraining:
+
+- run:
+  `artifacts/runs/jepa_event_tubelet_tubeletmask_transformerpred_nav_dev_multival_seed7_30e`
+- model: `event-tubelet-transformer`
+- predictor: `transformer`
+- `mask_mode=tubelet`
+- `mask_ratio=0.45`
+- no all-token context loss
+- best SSL validation epoch: 18
+- best SSL validation loss: `0.001370`
+- last SSL validation loss: `0.001652`
+
+Negative tubelet ablations:
+
+- tubelet plus all-token weight `0.05`, seed 7 fine-tune:
+  validation_car `0.312 s`, validation_pedestrian `0.993 s`, weighted `0.649 s`;
+- tubelet mask ratio `0.20`, LR `1e-4`, seed 7 fine-tune:
+  validation_car `0.315 s`, validation_pedestrian `0.833 s`;
+- tubelet mask ratio `0.20`, LR `3e-5`, seed 7 fine-tune:
+  validation_car `0.319 s`, validation_pedestrian `0.643 s`, weighted about
+  `0.479 s`.
+
+The selected dev variant uses tubelet mask ratio `0.45`, no all-token context
+loss, and supervised fine-tuning LR `3e-5`.
+
+Dev multi-validation fine-tune from SSL-last:
+
+| Seed | validation_car MAE | validation_pedestrian MAE | Weighted MAE |
+| ---: | ---: | ---: | ---: |
+| 7 | `0.240 s` | `0.580 s` | `0.408 s` |
+| 13 | `0.192 s` | `0.533 s` | `0.360 s` |
+| 21 | `0.293 s` | `0.626 s` | `0.457 s` |
+
+Mean dev result:
+
+- weighted multival MAE: `0.409 +/- 0.040 s`;
+- validation_car MAE: `0.242 +/- 0.041 s`;
+- validation_pedestrian MAE: `0.580 +/- 0.038 s`.
+
+This improves over the previous best dev result, all-token transformer JEPA
+weight `0.05` (`0.450 +/- 0.032 s` weighted), and over the transformer predictor
+without all-token context loss (`0.466 +/- 0.004 s` weighted).
+
+Full-starter validation-only pretraining:
+
+- run:
+  `artifacts/runs/jepa_event_tubelet_tubeletmask_transformerpred_nav_full_starter_seed7_30e`
+- best SSL validation epoch: 26
+- best SSL validation loss: `0.001338`
+- last SSL validation loss: `0.001344`
+
+Full-starter validation-only fine-tune, evaluation restricted to
+`train validation`:
+
+| Seed | Validation MAE | Validation relative error | Best epoch |
+| ---: | ---: | ---: | ---: |
+| 7 | `0.250 s` | `8.17%` | 7 |
+| 13 | `0.208 s` | `7.55%` | 27 |
+| 21 | `0.237 s` | `8.86%` | 29 |
+
+Mean full-starter validation result:
+
+- validation MAE: `0.231478 +/- 0.017632 s`;
+- validation relative error: `8.192429 +/- 0.533708%`.
+
+This is the best validation MAE so far on the full-starter validation split, but
+it is not a new sealed-test claim. `CPLA-high` was not evaluated for this
+branch. The next valid step is either a clean final protocol with additional
+unopened sequences or an official bbox/ROI comparison using the complete
+official sequence set.
+

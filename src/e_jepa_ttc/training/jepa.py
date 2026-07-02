@@ -401,6 +401,84 @@ def _masked_context(x: torch.Tensor, *, mask_ratio: float, block_count: int) -> 
     return out
 
 
+def _tubelet_masked_context(
+    x: torch.Tensor,
+    *,
+    mask_ratio: float,
+    block_count: int,
+    event_bins: int,
+) -> torch.Tensor:
+    """Mask causal event channels with spatio-temporal event-tubelet blocks."""
+
+    if not 0.0 <= mask_ratio < 1.0:
+        msg = "mask_ratio must be in [0, 1)."
+        raise ValueError(msg)
+    if block_count <= 0:
+        msg = "block_count must be positive."
+        raise ValueError(msg)
+    if event_bins <= 0:
+        msg = "event_bins must be positive."
+        raise ValueError(msg)
+    if mask_ratio == 0.0:
+        return x
+
+    event_channel_count = event_bins * 2
+    if x.shape[1] < event_channel_count:
+        msg = (
+            f"Tubelet masking expects at least {event_channel_count} event channels "
+            f"for {event_bins} bins, got {x.shape[1]}."
+        )
+        raise ValueError(msg)
+
+    out = x.clone()
+    batch, _channels, height, width = out.shape
+    event = out[:, :event_channel_count].view(batch, 2, event_bins, height, width)
+    block_volume = max(1, int(event_bins * height * width * mask_ratio / block_count))
+    max_t = max(1, min(event_bins, block_volume))
+
+    for batch_idx in range(batch):
+        for _ in range(block_count):
+            block_t = int(torch.randint(1, max_t + 1, ()).item())
+            spatial_area = max(1, block_volume // block_t)
+            block_side = max(1, int(spatial_area**0.5))
+            max_h = max(1, min(height, block_side))
+            max_w = max(1, min(width, block_side))
+            block_h = int(torch.randint(max(1, max_h // 2), max_h + 1, ()).item())
+            block_w = int(torch.randint(max(1, max_w // 2), max_w + 1, ()).item())
+            t0 = int(torch.randint(0, event_bins - block_t + 1, ()).item())
+            y0 = int(torch.randint(0, height - block_h + 1, ()).item())
+            x0 = int(torch.randint(0, width - block_w + 1, ()).item())
+            event[
+                batch_idx,
+                :,
+                t0 : t0 + block_t,
+                y0 : y0 + block_h,
+                x0 : x0 + block_w,
+            ] = 0.0
+    return out
+
+
+def _mask_context(
+    x: torch.Tensor,
+    *,
+    mask_ratio: float,
+    block_count: int,
+    mask_mode: str,
+    event_bins: int,
+) -> torch.Tensor:
+    if mask_mode == "spatial":
+        return _masked_context(x, mask_ratio=mask_ratio, block_count=block_count)
+    if mask_mode == "tubelet":
+        return _tubelet_masked_context(
+            x,
+            mask_ratio=mask_ratio,
+            block_count=block_count,
+            event_bins=event_bins,
+        )
+    msg = "mask_mode must be one of {'spatial', 'tubelet'}."
+    raise ValueError(msg)
+
+
 @torch.no_grad()
 def _update_ema(target: nn.Module, online: nn.Module, *, momentum: float) -> None:
     for target_param, online_param in zip(target.parameters(), online.parameters(), strict=True):
@@ -640,14 +718,16 @@ def _objective_name(
     dense_predictor: str,
     context_token_weight: float,
     regularizer: str,
+    mask_mode: str,
 ) -> str:
     if not use_temporal:
         return "masked_same_window"
     regularizer_prefix = "visreg_" if regularizer == "visreg" else ""
+    mask_prefix = "tubeletmask_" if mask_mode == "tubelet" else ""
     deep_prefix = "deep_" if deep_supervision and dense_tokens else ""
     context_prefix = "alltoken_" if dense_tokens and context_token_weight > 0.0 else ""
     predictor_prefix = "transformer_" if dense_tokens and dense_predictor == "transformer" else ""
-    prefix = f"{regularizer_prefix}{deep_prefix}{context_prefix}{predictor_prefix}"
+    prefix = f"{regularizer_prefix}{mask_prefix}{deep_prefix}{context_prefix}{predictor_prefix}"
     if dense_tokens and action_conditioning:
         return f"{prefix}dense_temporal_token_action_multihorizon"
     if dense_tokens and motion_conditioning:
@@ -796,6 +876,7 @@ def _jepa_loss(
     horizon_ids: torch.Tensor | None,
     mask_ratio: float,
     block_count: int,
+    mask_mode: str,
     regularizer: str,
     variance_weight: float,
     min_std: float,
@@ -813,7 +894,13 @@ def _jepa_loss(
     action_feature_std: torch.Tensor | None,
     context_token_weight: float,
 ) -> tuple[torch.Tensor, dict[str, float]]:
-    context = _masked_context(x, mask_ratio=mask_ratio, block_count=block_count)
+    context = _mask_context(
+        x,
+        mask_ratio=mask_ratio,
+        block_count=block_count,
+        mask_mode=mask_mode,
+        event_bins=bins,
+    )
     context_token_loss = torch.tensor(0.0, device=x.device)
     temporal_straightening_loss = torch.tensor(0.0, device=x.device)
     context_token_target_count = 0
@@ -1001,6 +1088,7 @@ def _run_epoch(
     horizon_ids: torch.Tensor | None,
     mask_ratio: float,
     block_count: int,
+    mask_mode: str,
     ema_momentum: float,
     regularizer: str,
     variance_weight: float,
@@ -1049,6 +1137,7 @@ def _run_epoch(
                 horizon_ids=horizon_ids,
                 mask_ratio=mask_ratio,
                 block_count=block_count,
+                mask_mode=mask_mode,
                 regularizer=regularizer,
                 variance_weight=variance_weight,
                 min_std=min_std,
@@ -1108,6 +1197,7 @@ def pretrain_jepa(
     max_target_slop_ms: int = 10,
     mask_ratio: float = 0.45,
     block_count: int = 4,
+    mask_mode: str = "spatial",
     ema_momentum: float = 0.99,
     regularizer: str = "variance",
     variance_weight: float = 1.0,
@@ -1136,6 +1226,9 @@ def pretrain_jepa(
         raise ValueError(msg)
     if regularizer not in {"variance", "visreg"}:
         msg = "regularizer must be one of {'variance', 'visreg'}."
+        raise ValueError(msg)
+    if mask_mode not in {"spatial", "tubelet"}:
+        msg = "mask_mode must be one of {'spatial', 'tubelet'}."
         raise ValueError(msg)
     if context_token_weight < 0.0:
         msg = "context_token_weight must be non-negative."
@@ -1189,6 +1282,7 @@ def pretrain_jepa(
         dense_predictor=dense_predictor,
         context_token_weight=context_token_weight if use_context_token_loss else 0.0,
         regularizer=regularizer,
+        mask_mode=mask_mode,
     )
     model_tag = model_name.replace("-", "_")
     train_pair_stats = None
@@ -1354,6 +1448,7 @@ def pretrain_jepa(
                 horizon_ids=horizon_ids,
                 mask_ratio=mask_ratio,
                 block_count=block_count,
+                mask_mode=mask_mode,
                 ema_momentum=ema_momentum,
                 regularizer=regularizer,
                 variance_weight=variance_weight,
@@ -1386,6 +1481,7 @@ def pretrain_jepa(
                         horizon_ids=horizon_ids,
                         mask_ratio=mask_ratio,
                         block_count=block_count,
+                        mask_mode=mask_mode,
                         ema_momentum=ema_momentum,
                         regularizer=regularizer,
                         variance_weight=variance_weight,
@@ -1440,6 +1536,7 @@ def pretrain_jepa(
                         "validation_splits": list(validation_splits),
                         "temporal_horizons_ms": list(temporal_horizons_ms),
                         "max_target_slop_ms": max_target_slop_ms,
+                        "mask_mode": mask_mode,
                         "dense_tokens": use_dense_tokens,
                         "dense_predictor": dense_predictor if use_dense_tokens else None,
                         "context_token_weight": context_token_weight
@@ -1484,6 +1581,7 @@ def pretrain_jepa(
             "validation_splits": list(validation_splits),
             "temporal_horizons_ms": list(temporal_horizons_ms),
             "max_target_slop_ms": max_target_slop_ms,
+            "mask_mode": mask_mode,
             "dense_tokens": use_dense_tokens,
             "dense_predictor": dense_predictor if use_dense_tokens else None,
             "context_token_weight": context_token_weight if use_context_token_loss else 0.0,
@@ -1539,6 +1637,7 @@ def pretrain_jepa(
         "validation_pair_stats": validation_pair_stats,
         "mask_ratio": mask_ratio,
         "block_count": block_count,
+        "mask_mode": mask_mode,
         "ema_momentum": ema_momentum,
         "regularizer": regularizer,
         "variance_weight": variance_weight,
@@ -1563,6 +1662,8 @@ def pretrain_jepa(
             "deep_supervision_uses_intermediate_target_layers": use_deep_supervision,
             "deep_supervision_layer_conditioning": use_deep_supervision,
             "context_token_loss_uses_current_context_only": use_context_token_loss,
+            "tubelet_masking_uses_context_event_channels_only": mask_mode == "tubelet",
+            "tubelet_masking_preserves_auxiliary_channels": mask_mode == "tubelet",
             "visreg_uses_batch_embeddings_only": regularizer == "visreg",
             "visreg_uses_ttc_labels": False,
             "temporal_straightening_uses_predictions_only": temporal_straightening_weight

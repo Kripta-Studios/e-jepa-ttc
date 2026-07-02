@@ -273,6 +273,51 @@ MAE (`0.241 +/- 0.004 s`, numerically `0.240904 s` versus `0.241284 s`), so the
 sealed CPLA-high test was not evaluated for the weight-0.05 all-token variant.
 The best local sealed model remains event-tubelet JEPA + navigation fine-tune.
 
+### Tubelet Masking
+
+V-JEPA-style masking should operate over spatio-temporal tubelets, not only
+over 2D image blocks. The pretraining path now supports `--mask-mode tubelet`,
+which masks random `[time, y, x]` event-channel blocks while preserving
+metadata/navigation channels. This keeps the causal ego-motion input available
+and prevents artificial corruption of navigation.
+
+Dev multi-validation, no sealed test:
+
+| Method | Weighted multival MAE | validation_car MAE | validation_pedestrian MAE |
+| --- | ---: | ---: | ---: |
+| Transformer-predictor JEPA | 0.466 +/- 0.004 s | 0.343 +/- 0.038 s | 0.592 +/- 0.044 s |
+| All-token transformer JEPA, weight 0.05 | 0.450 +/- 0.032 s | 0.325 +/- 0.071 s | 0.578 +/- 0.032 s |
+| Tubelet-mask transformer JEPA, LR 3e-5 | 0.409 +/- 0.040 s | 0.242 +/- 0.041 s | 0.580 +/- 0.038 s |
+
+Negative ablations on seed 7:
+
+- tubelet mask plus all-token weight 0.05: weighted MAE `0.649 s`, pedestrian
+  MAE `0.993 s`;
+- tubelet mask, mask ratio 0.20, LR `1e-4`: pedestrian MAE `0.833 s`;
+- tubelet mask, mask ratio 0.20, LR `3e-5`: weighted MAE about `0.479 s`.
+
+The validation-selected variant is therefore: event-tubelet transformer,
+transformer dense predictor, causal navigation/action conditioning, tubelet
+mask ratio `0.45`, no all-token context loss, and supervised fine-tuning LR
+`3e-5`.
+
+Full-starter validation-only result after freezing that choice:
+
+| Seed | Validation MAE | Validation relative error | Best epoch |
+| ---: | ---: | ---: | ---: |
+| 7 | 0.250 s | 8.17% | 7 |
+| 13 | 0.208 s | 7.55% | 27 |
+| 21 | 0.237 s | 8.86% | 29 |
+
+Mean full-starter validation result: `0.231 +/- 0.018 s`, `8.19 +/- 0.53%`.
+This improves validation MAE versus the previous transformer-predictor candidate
+(`0.241 +/- 0.004 s`) and the earlier event-tubelet navigation JEPA
+(`0.243 +/- 0.005 s`). It does not establish a new sealed-test result:
+`CPLA-high` was not evaluated for this branch, and prior CPLA-high results have
+already been inspected. The best local sealed-test result remains the earlier
+event-tubelet JEPA + navigation fine-tune unless a clean final protocol is
+frozen and run.
+
 ## Detection-Assisted Reference
 
 The missing official `bbox_segmentation` folders were recovered after

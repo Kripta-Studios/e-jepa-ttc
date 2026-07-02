@@ -283,6 +283,7 @@ def _cmd_pretrain_jepa(args: argparse.Namespace) -> int:
         max_target_slop_ms=args.max_target_slop_ms,
         mask_ratio=args.mask_ratio,
         block_count=args.block_count,
+        mask_mode=args.mask_mode,
         ema_momentum=args.ema_momentum,
         regularizer=args.regularizer,
         variance_weight=args.variance_weight,
@@ -570,6 +571,15 @@ def build_parser() -> argparse.ArgumentParser:
     pretrain_jepa.add_argument("--max-target-slop-ms", type=int, default=10)
     pretrain_jepa.add_argument("--mask-ratio", type=float, default=0.45)
     pretrain_jepa.add_argument("--block-count", type=int, default=4)
+    pretrain_jepa.add_argument(
+        "--mask-mode",
+        choices=["spatial", "tubelet"],
+        default="spatial",
+        help=(
+            "Context masking mode. 'tubelet' masks spatio-temporal event-channel "
+            "blocks while preserving metadata/navigation channels."
+        ),
+    )
     pretrain_jepa.add_argument("--ema-momentum", type=float, default=0.99)
     pretrain_jepa.add_argument(
         "--regularizer",

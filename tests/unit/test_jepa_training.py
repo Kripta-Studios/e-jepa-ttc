@@ -1,10 +1,11 @@
 from pathlib import Path
 
 import numpy as np
+import torch
 
 from e_jepa_ttc.data.evttc import NAVIGATION_FEATURE_NAMES
 from e_jepa_ttc.data.ml_cache import remap_cache_splits
-from e_jepa_ttc.training.jepa import pretrain_jepa
+from e_jepa_ttc.training.jepa import _tubelet_masked_context, pretrain_jepa
 from e_jepa_ttc.training.supervised import evaluate_supervised_checkpoint, train_tiny_cnn
 from e_jepa_ttc.utils.io import write_structured
 
@@ -421,6 +422,49 @@ def test_event_tubelet_rope_jepa_pretraining_smoke(tmp_path: Path) -> None:
     )
     assert pretrain_summary["dense_predictor"] == "transformer"
     assert (tmp_path / "tubelet_rope_jepa" / "jepa_encoder_best.pt").exists()
+
+
+def test_tubelet_mask_preserves_auxiliary_channels() -> None:
+    x = torch.ones(2, 14, 16, 16)
+    x[:, 10:] = 3.0
+
+    masked = _tubelet_masked_context(x, mask_ratio=0.4, block_count=4, event_bins=5)
+
+    assert torch.any(masked[:, :10] == 0.0)
+    assert torch.all(masked[:, 10:] == 3.0)
+
+
+def test_event_tubelet_jepa_tubelet_mask_smoke(tmp_path: Path) -> None:
+    cache_path = tmp_path / "tubelet_cache.npz"
+    _write_tubelet_cache(cache_path)
+
+    pretrain_summary = pretrain_jepa(
+        cache_path=cache_path,
+        output_dir=tmp_path / "tubelet_mask_jepa",
+        epochs=1,
+        batch_size=2,
+        seed=5,
+        device_name="cpu",
+        pretrain_splits=("train",),
+        validation_splits=("validation",),
+        model_name="event-tubelet-transformer",
+        dense_predictor="transformer",
+        mask_mode="tubelet",
+    )
+
+    assert pretrain_summary["objective"] == (
+        "tubeletmask_transformer_dense_temporal_token_motion_multihorizon"
+    )
+    assert pretrain_summary["mask_mode"] == "tubelet"
+    assert (
+        pretrain_summary["leakage_audit"]["tubelet_masking_uses_context_event_channels_only"]
+        is True
+    )
+    assert (
+        pretrain_summary["leakage_audit"]["tubelet_masking_preserves_auxiliary_channels"]
+        is True
+    )
+    assert (tmp_path / "tubelet_mask_jepa" / "jepa_encoder_best.pt").exists()
 
 
 def test_jepa_action_conditioning_uses_causal_navigation(tmp_path: Path) -> None:
