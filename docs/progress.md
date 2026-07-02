@@ -961,3 +961,87 @@ Interpretation:
 - Next valid work should try smaller context-token weights or scheduling on
   multi-domain validation only, or prioritize official CCRs2/CCRm bbox/ROI data.
 
+## 2026-07-02 Smaller All-Token Context Loss
+
+Ran the same transformer dense predictor with `context_token_weight=0.05`,
+chosen only on the dev multi-validation protocol.
+
+Dev multi-validation pretrain:
+
+- run:
+  `artifacts/runs/jepa_event_tubelet_alltoken_transformerpred_nav_dev_multival_w005_seed7_30e`
+- model: `event-tubelet-transformer`
+- predictor: `transformer`
+- `context_token_weight=0.05`
+- best SSL validation epoch: 2
+- best SSL validation loss: `0.000971`
+- last epoch SSL validation loss: `0.001971`
+
+Fine-tune from the SSL-last checkpoint, validation only:
+
+| Seed | Weighted multival MAE | validation_car MAE | validation_pedestrian MAE |
+| ---: | ---: | ---: | ---: |
+| 7 | 0.453 s | 0.287 s | 0.623 s |
+| 13 | 0.488 s | 0.424 s | 0.554 s |
+| 21 | 0.409 s | 0.263 s | 0.558 s |
+
+Mean dev result:
+
+- weighted multival MAE: `0.450 +/- 0.032 s`
+- validation_car MAE: `0.325 +/- 0.071 s`
+- validation_pedestrian MAE: `0.578 +/- 0.032 s`
+- validation_car relative error: `9.80 +/- 1.53%`
+- validation_pedestrian relative error: `17.15 +/- 1.01%`
+
+This improves weighted dev validation versus the transformer predictor without
+all-token context loss (`0.466 +/- 0.004 s`) and versus the weight-0.25
+ablation (`0.604 +/- 0.052 s`), so a full-starter validation-only run was
+allowed.
+
+Full-starter pretrain:
+
+- run:
+  `artifacts/runs/jepa_event_tubelet_alltoken_transformerpred_nav_full_starter_w005_seed7_30e`
+- best SSL validation epoch: 2
+- best SSL validation loss: `0.001283`
+- last epoch SSL validation loss: `0.001838`
+- last future alignment loss: `0.001775`
+- last context token loss: `0.001257`
+
+Full-starter fine-tune from SSL-last checkpoint, evaluation restricted to
+`train validation`:
+
+| Seed | Validation MAE | Validation relative error | Best epoch |
+| ---: | ---: | ---: | ---: |
+| 7 | 0.250 s | 8.85% | 28 |
+| 13 | 0.235 s | 6.89% | 7 |
+| 21 | 0.239 s | 7.02% | 3 |
+
+Mean full-starter validation result:
+
+- validation MAE: `0.241284 +/- 0.006477 s`
+- validation relative error: `7.59 +/- 0.90%`
+
+This is marginally worse than the selected transformer-predictor candidate
+(`0.240904 +/- 0.003912 s` validation MAE), so the sealed CPLA-high test was
+not evaluated. The useful conclusion is that a small all-token context loss can
+help multi-domain validation, but it is not yet a full-starter model-selection
+winner.
+
+## 2026-07-02 External Dataset Triage: Markov
+
+Checked Markov Studios / Markov AI datasets for possible world-model
+pretraining. The available Markov datasets are not a priority for EvTTC:
+
+- `markov-ai/computer-use-large`: GUI screen recordings for desktop software
+  computer-use agents.
+- `markov-ai/gaming-500-hours`: gameplay screen recordings with keyboard/mouse
+  actions.
+
+They are useful as conceptual examples of action-conditioned video/world-model
+data, but they lack event-camera data, TTC labels, vehicle ego-motion,
+EvTTC-compatible bbox/ROI labels, and driving-domain geometry. Do not download
+them for the current SOTA path. Finish official EvTTC bbox/ROI assets first;
+if external pretraining is needed later, prefer driving/world-model datasets
+with vehicles, pedestrians, and camera/ego metadata.
+

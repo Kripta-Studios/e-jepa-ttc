@@ -254,6 +254,25 @@ the current event context relative to cross-domain future dynamics. Future
 variants should tune this only on multi-domain validation, e.g. smaller
 context-token weights or a schedule, never on CPLA-high.
 
+A smaller all-token weight was then selected on the same dev multi-validation
+protocol, still without evaluating the sealed test:
+
+| Method | Weighted multival MAE | validation_car MAE | validation_pedestrian MAE |
+| --- | ---: | ---: | ---: |
+| Transformer-predictor JEPA | 0.466 +/- 0.004 s | 0.343 +/- 0.038 s | 0.592 +/- 0.044 s |
+| All-token transformer JEPA, weight 0.05 | 0.450 +/- 0.032 s | 0.325 +/- 0.071 s | 0.578 +/- 0.032 s |
+
+This lower context weight improves dev validation, so it was tried on the
+full-starter validation protocol. Fine-tuning the full-starter SSL-last
+checkpoint over seeds 7/13/21 gave validation MAE
+`0.241 +/- 0.006 s` and validation relative error `7.59 +/- 0.90%`.
+Per-seed validation MAEs were `0.250`, `0.235`, and `0.239 s`.
+
+This does not beat the selected full-starter transformer-predictor validation
+MAE (`0.241 +/- 0.004 s`, numerically `0.240904 s` versus `0.241284 s`), so the
+sealed CPLA-high test was not evaluated for the weight-0.05 all-token variant.
+The best local sealed model remains event-tubelet JEPA + navigation fine-tune.
+
 ## Detection-Assisted Reference
 
 The missing official `bbox_segmentation` folders were recovered after
@@ -352,3 +371,13 @@ Practical claim:
 > token JEPA with causal integrated-navigation channels substantially improves
 > TTC MAE and is the best local result. It is a strong starter result, not yet a
 > SOTA world-model result.
+
+## External Dataset Triage
+
+Markov Studios / Markov AI datasets were checked on 2026-07-02 and are not a
+priority for this TTC task. `markov-ai/computer-use-large` is a large GUI
+screen-recording dataset for desktop software agents, and
+`markov-ai/gaming-500-hours` is action-annotated gameplay screen recording.
+Both are useful conceptually for action-conditioned world models, but neither
+provides event-camera streams, TTC labels, vehicle ego-motion, depth, or EvTTC
+bbox/ROI labels. They should not be mixed into the EvTTC protocol.
