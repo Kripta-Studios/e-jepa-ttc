@@ -692,3 +692,58 @@ Interpretation:
 - A real next step needs a stronger validation/test design or more official
   sequences, not additional tuning against the now-opened sealed result.
 
+## 2026-07-02 Multi-Domain Validation Split
+
+Added a dev split that does not use `CPLA-high` for selection and exposes the
+car-to-pedestrian transfer problem before opening test:
+
+- split: `data/splits/evttc_full_starter_dev_multival.yaml`
+- train: CCRs-1 low/medium/high, CCRs-side low/medium, CPLA-low
+- `validation_car`: CCRs-side-high
+- `validation_pedestrian`: CPLA-medium
+- test: CPLA-high
+
+Added `cache remap-splits` so the existing full-starter tensor cache can be
+copied with new split labels without rereading HDF5:
+
+```text
+.\.venv\Scripts\python.exe -m e_jepa_ttc cache remap-splits --cache artifacts\features\evttc_full_starter_voxel_160x90_b5_raw_meta_nav.npz --split data\splits\evttc_full_starter_dev_multival.yaml --output artifacts\features\evttc_full_starter_voxel_160x90_b5_raw_meta_nav_dev_multival.npz
+```
+
+Resulting split counts:
+
+- train: 2555 windows
+- validation_car: 475 windows
+- validation_pedestrian: 464 windows
+- test: 478 windows
+
+Also generalized supervised training/evaluation to accept arbitrary split names
+and separate `--train-splits`, `--validation-splits`, and
+`--evaluation-splits`.
+
+Dev multi-validation JEPA pretrain:
+
+- run: `artifacts/runs/jepa_event_tubelet_actionnorm_nav_dev_multival_seed7_30e`
+- pretrain split: `train`
+- SSL validation splits: `validation_car validation_pedestrian`
+- best SSL epoch: 3
+- best SSL validation loss: `0.001549`
+
+Fine-tune seed 7 with LR `1e-4`, selected on the combined car+pedestrian
+validation set:
+
+| Method | Weighted multival MAE | validation_car MAE | validation_pedestrian MAE |
+| --- | ---: | ---: | ---: |
+| Scratch event-tubelet | 0.619 s | 0.420 s | 0.822 s |
+| Action-normalized JEPA | 0.613 s | 0.402 s | 0.828 s |
+
+Interpretation:
+
+- JEPA is only about 1% better than scratch under this harder dev split.
+- The previous single-validation split hid a real transfer gap: when CPLA-medium
+  is removed from train and used as pedestrian validation, MAE jumps above
+  `0.8 s`.
+- Further CPLA-high tuning is not valid. The next SOTA-oriented work should add
+  official bbox/ROI comparison assets or stronger pedestrian supervision/data,
+  not more architecture tweaks selected on the already-opened CPLA-high test.
+

@@ -178,6 +178,15 @@ protocol, the sealed test was evaluated once without retraining via
 mean `0.328 +/- 0.024 s`, so the best local result remains
 `Event tubelet JEPA + navigation fine-tune`.
 
+After this negative sealed result, a harder dev split was added to avoid using
+`CPLA-high` for further selection. It moves `CPLA-medium` out of train into a
+new `validation_pedestrian` split and keeps `CCRs-side-high` as
+`validation_car`. On this split, seed 7 action-normalized JEPA reaches
+`0.402 s` MAE on `validation_car` and `0.828 s` on `validation_pedestrian`;
+scratch reaches `0.420 s` and `0.822 s`. The weighted multi-validation MAE is
+`0.613 s` for JEPA versus `0.619 s` scratch, so the harder protocol exposes a
+pedestrian-transfer failure that architecture changes alone have not solved.
+
 ## Detection-Assisted Reference
 
 The missing official `bbox_segmentation` folders were recovered after
