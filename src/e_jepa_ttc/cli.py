@@ -210,6 +210,62 @@ def _cmd_train_evaluate(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_train_latent_prober(args: argparse.Namespace) -> int:
+    from e_jepa_ttc.training.prober import train_latent_ttc_prober
+
+    payload = train_latent_ttc_prober(
+        cache_path=args.cache,
+        encoder_checkpoint_path=args.encoder_checkpoint,
+        output_dir=args.output_dir,
+        epochs=args.epochs,
+        batch_size=args.batch_size,
+        learning_rate=args.learning_rate,
+        seed=args.seed,
+        device_name=args.device,
+        model_name=args.model,
+        token_summary=args.token_summary,
+        hidden_dim=args.hidden_dim,
+        dropout=args.dropout,
+        physics_prior=args.physics_prior,
+        ridge_alpha=args.ridge_alpha,
+        train_splits=tuple(args.train_splits),
+        validation_splits=tuple(args.validation_splits),
+        evaluation_splits=tuple(args.evaluation_splits),
+    )
+    _print_json(payload)
+    return 0
+
+
+def _cmd_train_roi_latent_prober(args: argparse.Namespace) -> int:
+    from e_jepa_ttc.training.prober import train_roi_latent_ttc_prober
+
+    payload = train_roi_latent_ttc_prober(
+        manifest_path=args.manifest,
+        split_path=args.split,
+        cache_path=args.cache,
+        encoder_checkpoint_path=args.encoder_checkpoint,
+        output_dir=args.output_dir,
+        context_ms=args.context_ms,
+        max_cache_slop_ms=args.max_cache_slop_ms,
+        epochs=args.epochs,
+        batch_size=args.batch_size,
+        learning_rate=args.learning_rate,
+        seed=args.seed,
+        device_name=args.device,
+        model_name=args.model,
+        token_summary=args.token_summary,
+        hidden_dim=args.hidden_dim,
+        dropout=args.dropout,
+        physics_prior=args.physics_prior,
+        ridge_alpha=args.ridge_alpha,
+        train_splits=tuple(args.train_splits),
+        validation_splits=tuple(args.validation_splits),
+        evaluation_splits=tuple(args.evaluation_splits),
+    )
+    _print_json(payload)
+    return 0
+
+
 def _cmd_pretrain_jepa(args: argparse.Namespace) -> int:
     from e_jepa_ttc.training.jepa import pretrain_jepa
 
@@ -425,6 +481,68 @@ def build_parser() -> argparse.ArgumentParser:
         help="Splits to evaluate from the saved checkpoint.",
     )
     train_eval.set_defaults(func=_cmd_train_evaluate)
+    train_prober = train_sub.add_parser(
+        "latent-prober",
+        help="Train a frozen JEPA-latent residual TTC prober.",
+    )
+    train_prober.add_argument("--cache", type=Path, required=True)
+    train_prober.add_argument("--encoder-checkpoint", type=Path, required=True)
+    train_prober.add_argument("--output-dir", type=Path, required=True)
+    train_prober.add_argument("--epochs", type=int, default=80)
+    train_prober.add_argument("--batch-size", type=int, default=64)
+    train_prober.add_argument("--learning-rate", type=float, default=3e-4)
+    train_prober.add_argument("--seed", type=int, default=42)
+    train_prober.add_argument("--device", type=str, default="auto")
+    train_prober.add_argument("--model", choices=MODEL_NAMES)
+    train_prober.add_argument("--token-summary", choices=["mean", "mean-std"], default="mean-std")
+    train_prober.add_argument("--hidden-dim", type=int, default=256)
+    train_prober.add_argument("--dropout", type=float, default=0.05)
+    train_prober.add_argument("--physics-prior", choices=["none", "ridge"], default="ridge")
+    train_prober.add_argument("--ridge-alpha", type=float, default=1.0)
+    train_prober.add_argument("--train-splits", nargs="+", default=["train"])
+    train_prober.add_argument("--validation-splits", nargs="+", default=["validation"])
+    train_prober.add_argument(
+        "--evaluation-splits",
+        nargs="+",
+        default=["train", "validation", "test"],
+        help="Splits to evaluate after validation-selected prober training.",
+    )
+    train_prober.set_defaults(func=_cmd_train_latent_prober)
+    train_roi_prober = train_sub.add_parser(
+        "roi-latent-prober",
+        help="Train a detection-assisted frozen JEPA-latent bbox/ROI TTC prober.",
+    )
+    train_roi_prober.add_argument("--manifest", type=Path, required=True)
+    train_roi_prober.add_argument("--split", type=Path, required=True)
+    train_roi_prober.add_argument("--cache", type=Path, required=True)
+    train_roi_prober.add_argument("--encoder-checkpoint", type=Path, required=True)
+    train_roi_prober.add_argument("--output-dir", type=Path, required=True)
+    train_roi_prober.add_argument("--context-ms", type=int, default=100)
+    train_roi_prober.add_argument("--max-cache-slop-ms", type=int, default=12)
+    train_roi_prober.add_argument("--epochs", type=int, default=160)
+    train_roi_prober.add_argument("--batch-size", type=int, default=64)
+    train_roi_prober.add_argument("--learning-rate", type=float, default=3e-4)
+    train_roi_prober.add_argument("--seed", type=int, default=42)
+    train_roi_prober.add_argument("--device", type=str, default="auto")
+    train_roi_prober.add_argument("--model", choices=MODEL_NAMES)
+    train_roi_prober.add_argument(
+        "--token-summary",
+        choices=["mean", "mean-std"],
+        default="mean-std",
+    )
+    train_roi_prober.add_argument("--hidden-dim", type=int, default=128)
+    train_roi_prober.add_argument("--dropout", type=float, default=0.05)
+    train_roi_prober.add_argument("--physics-prior", choices=["none", "ridge"], default="ridge")
+    train_roi_prober.add_argument("--ridge-alpha", type=float, default=1.0)
+    train_roi_prober.add_argument("--train-splits", nargs="+", default=["train"])
+    train_roi_prober.add_argument("--validation-splits", nargs="+", default=["validation"])
+    train_roi_prober.add_argument(
+        "--evaluation-splits",
+        nargs="+",
+        default=["train", "validation", "test"],
+        help="Splits to evaluate after validation-selected ROI prober training.",
+    )
+    train_roi_prober.set_defaults(func=_cmd_train_roi_latent_prober)
 
     pretrain = subparsers.add_parser("pretrain", help="Self-supervised pretraining commands.")
     pretrain_sub = pretrain.add_subparsers(dest="pretrain_command", required=True)

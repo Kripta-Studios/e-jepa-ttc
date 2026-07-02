@@ -351,6 +351,57 @@ bbox/ROI-assisted frame/event protocol over specific CCRs/CCRm/slider
 sequences. The current all-window JEPA results and the causal bbox geometry
 reference are not directly comparable to that table.
 
+## SkyJEPA-Style Latent Probers
+
+SkyJEPA (`https://arxiv.org/abs/2606.23444`) is highly relevant, but not as a
+drop-in method. Its transferable idea is a two-stage world model: learn
+action-conditioned latent dynamics first, then freeze the latent model and train
+a lightweight physics-inspired prober that converts latents into interpretable
+state. For EvTTC, the closest causal analog is:
+
+- state/action history -> event tubelet context plus causal integrated
+  navigation;
+- latent dynamics -> dense multi-horizon JEPA prediction;
+- physics prober -> bbox/ROI TTC head using current detection, causal event
+  history, and train-only priors;
+- no future boxes, future events, future navigation, or test labels for tuning.
+
+This is now implemented as two local tools:
+
+- `train latent-prober`: all-window frozen-latent residual TTC prober;
+- `train roi-latent-prober`: detection-assisted frozen-latent bbox/ROI TTC
+  prober with a train-only ridge physics prior.
+
+The all-window latent prober was negative on dev validation. The ROI prober is
+positive because the current bbox gives an object-local state estimate that is
+closer to SkyJEPA's physical state input.
+
+Dev multi-validation, no sealed test:
+
+| Method | Weighted multival MAE | validation_car MAE | validation_pedestrian MAE |
+| --- | ---: | ---: | ---: |
+| ROI event ridge prior | 0.759 s | 0.293 s | 1.342 s |
+| ROI latent prober, seeds 7/13/21 | 0.528 +/- 0.011 s | 0.340 +/- 0.003 s | 0.785 +/- 0.024 s |
+
+Full-starter validation only, no CPLA-high test:
+
+| Method | Validation MAE | Validation relative error |
+| --- | ---: | ---: |
+| ROI ridge prior inside latent prober | 0.344 s | 16.19% |
+| ROI latent prober, seeds 7/13/21 | 0.226 +/- 0.015 s | 10.78 +/- 0.53% |
+
+That is a 34.3% validation MAE reduction versus its train-only ROI/ridge prior.
+It also beats the earlier local ROI event ridge validation result (`0.293 s`),
+but the comparison is not exact because the latent prober matches 98/108
+validation bbox rows to cache windows. The sealed CPLA-high test remains closed
+for this branch.
+
+Conclusion: SkyJEPA is key for the next architecture direction, especially the
+frozen latent prober and action-conditioned rollout framing. It is not yet a
+SOTA claim because our prober currently maps frozen context latents to TTC; the
+paper's stronger version probes predicted multi-step latent rollouts through a
+structured physical integrator.
+
 ## SOTA Position
 
 Compared with current JEPA/world-model SOTA as of 2026-07-02:

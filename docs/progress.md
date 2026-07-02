@@ -1045,3 +1045,68 @@ them for the current SOTA path. Finish official EvTTC bbox/ROI assets first;
 if external pretraining is needed later, prefer driving/world-model datasets
 with vehicles, pedestrians, and camera/ego metadata.
 
+## 2026-07-02 SkyJEPA Paper Triage and Latent Probers
+
+Reviewed SkyJEPA, "Learning Long-Horizon World Models for Zero-Shot Sim-to-Real
+Control of Quadrotors" (`https://arxiv.org/abs/2606.23444`). The relevant
+pattern for EvTTC is not quadrotor MPPI itself, but the separation between:
+
+- action-conditioned latent dynamics;
+- anti-collapse latent regularization;
+- frozen latent rollout;
+- lightweight physics-inspired prober trained after the latent model is frozen.
+
+Implemented the matching EvTTC starter pieces:
+
+- `train latent-prober`: all-window frozen JEPA-latent residual TTC prober;
+- `train roi-latent-prober`: bbox/ROI frozen-latent residual TTC prober using
+  current boxes, causal event history, and a train-only ridge physics prior.
+
+Leakage controls recorded in metrics:
+
+- encoder frozen before prober training;
+- no future events, future boxes, or future navigation;
+- prober feature scaling and ridge prior fit use train split only;
+- test is evaluated only when explicitly requested.
+
+All-window frozen latent prober was negative on dev validation:
+
+- transformer-predictor checkpoint with ridge prior: weighted multival MAE
+  `0.571 s`;
+- same checkpoint without prior: weighted multival MAE `0.526 s`;
+- all-token checkpoint: car `0.349 s`, pedestrian `1.090 s`.
+
+ROI latent prober is positive on bbox/ROI validation. Dev multi-validation over
+seeds 7/13/21:
+
+| Split | MAE | Mean relative error |
+| --- | ---: | ---: |
+| validation_car | `0.340 +/- 0.003 s` | `14.88 +/- 0.15%` |
+| validation_pedestrian | `0.785 +/- 0.024 s` | `38.66 +/- 1.21%` |
+| weighted | `0.528 +/- 0.011 s` | - |
+
+Full-starter validation-only ROI prober, seeds 7/13/21:
+
+| Seed | Validation MAE | Validation relative error | Best epoch |
+| ---: | ---: | ---: | ---: |
+| 7 | `0.247 s` | `11.53%` | 13 |
+| 13 | `0.214 s` | `10.43%` | 22 |
+| 21 | `0.218 s` | `10.39%` | 12 |
+
+Mean full-starter validation result:
+
+- validation MAE: `0.226 +/- 0.015 s`;
+- validation relative error: `10.78 +/- 0.53%`;
+- train-only ROI/ridge prior inside the same prober: `0.344 s`, `16.19%`.
+
+This is a 34.3% validation MAE reduction versus the train-only ROI/ridge prior.
+It is also stronger than the earlier local ROI event ridge validation result
+(`0.293 s`), but it is still detection-assisted and matched to 98/108 validation
+bbox rows. The sealed CPLA-high test was not evaluated.
+
+Conclusion: SkyJEPA is key for the next serious architecture direction, but the
+current implementation is only a partial transfer. The next valid version should
+probe predicted multi-step latent rollouts, not only frozen context latents, and
+should keep all tuning on multi-domain validation before any final sealed-test
+check.
+
