@@ -792,3 +792,103 @@ Interpretation:
 - For official SOTA comparison, next required work is still to download CCRs2 and
   CCRm HDF5/TTC/bbox assets and wrap CMax/STRTTC on the same ROI adapter.
 
+## 2026-07-02 Dense Transformer JEPA Predictor
+
+Implemented `--dense-predictor transformer` for JEPA pretraining. This replaces
+the older per-token MLP dense predictor with a transformer predictor over all
+dense tokens for each future horizon. The predictor is conditioned on the same
+train-normalized causal event/navigation action vector, so it is closer to
+V-JEPA 2-AC/LeWorldModel-style latent action-conditioned prediction while
+keeping the no-TTC-label SSL protocol.
+
+Unit coverage:
+
+- `tests/unit/test_jepa_training.py::test_dense_transformer_jepa_predictor`
+- verifies objective name
+  `transformer_dense_temporal_token_motion_multihorizon`
+- verifies checkpoint creation and `dense_predictor=transformer` metadata
+
+Dev multi-validation pretrain:
+
+- run:
+  `artifacts/runs/jepa_event_tubelet_transformerpred_nav_dev_multival_seed7_30e`
+- model: `event-tubelet-transformer`
+- predictor: `transformer`
+- pretrain split: `train`
+- SSL validation splits: `validation_car validation_pedestrian`
+- best SSL epoch: 3
+- best SSL validation loss: `0.000862`
+- last epoch SSL validation loss: `0.001776`
+
+Fine-tune from the SSL-best checkpoint improved pedestrian validation but hurt
+car validation, so the SSL-last checkpoint was evaluated on validation only.
+Three fine-tune seeds from the SSL-last checkpoint:
+
+| Seed | Weighted multival MAE | validation_car MAE | validation_pedestrian MAE |
+| ---: | ---: | ---: | ---: |
+| 7 | 0.471 s | 0.312 s | 0.634 s |
+| 13 | 0.464 s | 0.320 s | 0.611 s |
+| 21 | 0.463 s | 0.397 s | 0.531 s |
+
+Mean dev result:
+
+- weighted multival MAE: `0.466 +/- 0.004 s`
+- validation_car MAE: `0.343 +/- 0.038 s`
+- validation_pedestrian MAE: `0.592 +/- 0.044 s`
+- validation_car relative error: `10.44 +/- 1.75%`
+- validation_pedestrian relative error: `18.89 +/- 0.46%`
+
+This improves the previous dev split substantially:
+
+- versus scratch event-tubelet weighted MAE `0.619 s`: 24.7% better
+- versus action-normalized JEPA weighted MAE `0.613 s`: 24.0% better
+- pedestrian validation improves from `0.828 s` to `0.592 s`
+
+The frozen dev-selected protocol was evaluated once on CPLA-high:
+
+- test MAE: `0.430 +/- 0.027 s`
+- test relative error: `8.50 +/- 1.36%`
+
+It did not beat the best previous sealed local result
+(`0.328 +/- 0.024 s`, `6.89 +/- 0.34%`).
+
+Full-starter pretrain with CPLA-medium back in train:
+
+- run:
+  `artifacts/runs/jepa_event_tubelet_transformerpred_nav_full_starter_seed7_30e`
+- best SSL validation epoch: 2
+- best SSL validation loss: `0.000966`
+- SSL-last epoch validation loss: `0.001535`
+
+The full-starter SSL-last checkpoint was selected based on dev behavior and
+fine-tuned on three seeds with evaluation restricted to `train validation`:
+
+| Seed | Validation MAE | Validation relative error |
+| ---: | ---: | ---: |
+| 7 | 0.242 s | 8.48% |
+| 13 | 0.236 s | 8.09% |
+| 21 | 0.245 s | 8.26% |
+
+Mean validation result: `0.241 +/- 0.004 s`, slightly better than the previous
+best validation MAE `0.243 +/- 0.005 s`. The protocol was frozen and evaluated
+once on CPLA-high:
+
+| Seed | Test MAE | Test relative error |
+| ---: | ---: | ---: |
+| 7 | 0.346 s | 7.98% |
+| 13 | 0.349 s | 7.75% |
+| 21 | 0.356 s | 6.96% |
+
+Mean sealed-test result: `0.351 +/- 0.004 s`, `7.56 +/- 0.44%`. This is worse
+than the current best event-tubelet navigation JEPA result, so the best local
+sealed model does not change.
+
+Interpretation:
+
+- Transformer dense prediction is the strongest dev-validation improvement so
+  far and is directionally aligned with V-JEPA 2.1/V-JEPA 2-AC.
+- The full-starter validation improvement still does not transfer to CPLA-high.
+- Do not tune further based on these sealed-test outcomes. The next valid route
+  is either official CCRs2/CCRm bbox/ROI comparison data or a validation design
+  with more pedestrian diversity before any new frozen test check.
+

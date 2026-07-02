@@ -276,6 +276,31 @@ def test_token_jepa_deep_supervision(tmp_path: Path) -> None:
     assert pretrain_summary["last"]["train"]["deep_supervision_layer_count"] == 2.0
 
 
+def test_dense_transformer_jepa_predictor(tmp_path: Path) -> None:
+    cache_path = tmp_path / "cache.npz"
+    _write_cache(cache_path)
+
+    pretrain_summary = pretrain_jepa(
+        cache_path=cache_path,
+        output_dir=tmp_path / "transformer_predictor_jepa",
+        epochs=1,
+        batch_size=3,
+        seed=5,
+        device_name="cpu",
+        pretrain_splits=("train",),
+        validation_splits=("validation",),
+        model_name="token-transformer",
+        dense_predictor="transformer",
+    )
+
+    assert pretrain_summary["objective"] == (
+        "transformer_dense_temporal_token_motion_multihorizon"
+    )
+    assert pretrain_summary["dense_predictor"] == "transformer"
+    assert pretrain_summary["dense_tokens"] is True
+    assert (tmp_path / "transformer_predictor_jepa" / "jepa_encoder_best.pt").exists()
+
+
 def test_event_tubelet_jepa_pretraining_smoke(tmp_path: Path) -> None:
     cache_path = tmp_path / "tubelet_cache.npz"
     _write_tubelet_cache(cache_path)

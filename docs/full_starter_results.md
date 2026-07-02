@@ -41,6 +41,9 @@ default objective, `dense_temporal_token_motion_multihorizon`:
   predictor-level action conditioning from causal ego-motion/navigation
   features; older rows in the table used navigation as input channels but not
   as an explicit predictor action vector;
+- runs created after 2026-07-02 can use `--dense-predictor transformer`,
+  replacing the per-token MLP predictor with a horizon/action-conditioned
+  transformer predictor over all dense tokens;
 - future horizons at 20, 60, 100, 240, and 500 ms;
 - train events only for SSL pretraining and validation events only for SSL
   checkpoint selection;
@@ -80,6 +83,7 @@ seeds 7/13/21.
 | Token transformer + navigation scratch | 100% | 7,13,21 | 0.440 +/- 0.020 | 0.465 +/- 0.021 |
 | Token JEPA + navigation fine-tune | 100% | 7,13,21 | 0.261 +/- 0.021 | 0.356 +/- 0.022 |
 | Event tubelet JEPA + navigation fine-tune | 100% | 7,13,21 | 0.243 +/- 0.007 | 0.328 +/- 0.030 |
+| Event tubelet JEPA + transformer predictor | 100% | 7,13,21 | 0.241 +/- 0.004 | 0.351 +/- 0.004 |
 | Deep Token JEPA + fine-tune | 100% | 7 | 0.491 | 0.594 |
 | Deep layer-aware Token JEPA + fine-tune | 100% | 7 | 0.472 | 0.505 |
 | Large Token JEPA + fine-tune | 100% | 7 | 0.504 | 0.529 |
@@ -192,6 +196,41 @@ scratch reaches `0.420 s` and `0.822 s`. The weighted multi-validation MAE is
 `0.613 s` for JEPA versus `0.619 s` scratch, so the harder protocol exposes a
 pedestrian-transfer failure that architecture changes alone have not solved.
 
+## Transformer Dense Predictor
+
+SOTA audit on 2026-07-02 found that V-JEPA 2.1 adds dense predictive loss across
+all tokens and deep self-supervision, while V-JEPA 2-AC and LeWorldModel push
+latent world models toward action-conditioned prediction. The repo already had
+dense token losses and causal action vectors; the missing predictor-side piece
+was token-token interaction. `--dense-predictor transformer` adds a transformer
+predictor over dense tokens for each future horizon, conditioned by the same
+train-normalized causal event/navigation action vector.
+
+Dev multi-validation result, selected without evaluating sealed test:
+
+| Method | Weighted multival MAE | validation_car MAE | validation_pedestrian MAE |
+| --- | ---: | ---: | ---: |
+| Scratch event-tubelet | 0.619 s | 0.420 s | 0.822 s |
+| Action-normalized JEPA | 0.613 s | 0.402 s | 0.828 s |
+| Transformer-predictor JEPA | 0.466 +/- 0.004 s | 0.343 +/- 0.038 s | 0.592 +/- 0.044 s |
+
+This is a 24.0% weighted multival improvement over scratch and a 24.0%
+improvement over the prior action-normalized JEPA on the same dev protocol.
+Pedestrian validation improves from `0.828 s` to `0.592 s`.
+
+Full-starter frozen check:
+
+| Method | Validation MAE | Validation relative error | Test MAE | Test relative error |
+| --- | ---: | ---: | ---: | ---: |
+| Event tubelet JEPA + navigation fine-tune | 0.243 +/- 0.005 s | 7.51 +/- 0.51% | 0.328 +/- 0.024 s | 6.89 +/- 0.34% |
+| Event tubelet JEPA + transformer predictor | 0.241 +/- 0.004 s | 8.28 +/- 0.16% | 0.351 +/- 0.004 s | 7.56 +/- 0.44% |
+
+The transformer predictor is a real validation/protocol improvement on the
+harder multi-domain split, but it does not beat the previous best sealed
+CPLA-high result. The current best local sealed model remains the earlier
+event-tubelet JEPA + navigation fine-tune. Do not use the frozen test result to
+tune the next variant.
+
 ## Detection-Assisted Reference
 
 The missing official `bbox_segmentation` folders were recovered after
@@ -272,14 +311,16 @@ reference are not directly comparable to that table.
 
 ## SOTA Position
 
-Compared with current JEPA/world-model SOTA as of 2026-07-01:
+Compared with current JEPA/world-model SOTA as of 2026-07-02:
 
 - Aligned: latent prediction, EMA target encoder, future multi-horizon
-  prediction, dense token loss, causal motion/action conditioning, no TTC-label
-  leakage, low-label transfer evaluation.
+  prediction, dense token loss, causal motion/action conditioning, optional
+  token-attention dense predictor, no TTC-label leakage, low-label transfer
+  evaluation.
 - Still below SOTA: small local training scale, shallow token transformer, deep
-  self-supervision currently negative in ablation, event plus ego-motion only,
-  no RGB/LiDAR/depth/box fusion, no action-conditioned planning or closed-loop
+  self-supervision currently negative in ablation, no V-JEPA 2.1 all-token
+  visible-plus-masked denoising path, event plus ego-motion only, no
+  RGB/LiDAR/depth/box fusion, no action-conditioned planning or closed-loop
   evaluation, and no official benchmark replication.
 
 Practical claim:

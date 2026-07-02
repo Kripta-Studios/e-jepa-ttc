@@ -233,6 +233,7 @@ def _cmd_pretrain_jepa(args: argparse.Namespace) -> int:
         dense_tokens=args.dense_tokens,
         motion_conditioning=args.motion_conditioning,
         deep_supervision_layers=tuple(args.deep_supervision_layers),
+        dense_predictor=args.dense_predictor,
         model_name=args.model,
     )
     _print_json(payload)
@@ -469,6 +470,12 @@ def build_parser() -> argparse.ArgumentParser:
             "0-based token-transformer layer indices to supervise with dense JEPA. "
             "Use an empty list for final-layer-only JEPA."
         ),
+    )
+    pretrain_jepa.add_argument(
+        "--dense-predictor",
+        choices=["mlp", "transformer"],
+        default="mlp",
+        help="Dense JEPA predictor type; transformer enables token-token predictor attention.",
     )
     pretrain_jepa.set_defaults(dense_tokens=True, motion_conditioning=True)
     pretrain_jepa.set_defaults(func=_cmd_pretrain_jepa)

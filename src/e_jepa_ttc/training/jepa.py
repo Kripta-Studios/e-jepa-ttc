@@ -198,6 +198,91 @@ class DenseTemporalJEPAPredictor(nn.Module):
         return self.net(torch.cat(pieces, dim=-1))
 
 
+class DenseTemporalTransformerJEPAPredictor(nn.Module):
+    """Transformer predictor for horizon/action-conditioned dense future tokens."""
+
+    def __init__(
+        self,
+        dim: int,
+        horizon_count: int,
+        *,
+        motion_dim: int = 0,
+        layer_count: int = 0,
+        depth: int = 2,
+        num_heads: int = 6,
+        mlp_ratio: float = 3.0,
+        dropout: float = 0.05,
+    ) -> None:
+        super().__init__()
+        if horizon_count <= 0:
+            msg = "horizon_count must be positive."
+            raise ValueError(msg)
+        if motion_dim < 0:
+            msg = "motion_dim must be non-negative."
+            raise ValueError(msg)
+        if layer_count < 0:
+            msg = "layer_count must be non-negative."
+            raise ValueError(msg)
+        if depth <= 0:
+            msg = "depth must be positive."
+            raise ValueError(msg)
+        if dim % num_heads != 0:
+            msg = "dim must be divisible by num_heads."
+            raise ValueError(msg)
+        self.motion_dim = motion_dim
+        self.horizon_embedding = nn.Embedding(horizon_count, dim)
+        self.motion_projection = nn.Linear(motion_dim, dim) if motion_dim else None
+        self.layer_embedding = nn.Embedding(layer_count, dim) if layer_count else None
+        self.input_norm = nn.LayerNorm(dim)
+        self.layers = nn.ModuleList(
+            [
+                nn.TransformerEncoderLayer(
+                    d_model=dim,
+                    nhead=num_heads,
+                    dim_feedforward=int(dim * mlp_ratio),
+                    dropout=dropout,
+                    activation="gelu",
+                    batch_first=True,
+                    norm_first=True,
+                )
+                for _ in range(depth)
+            ]
+        )
+        self.output_norm = nn.LayerNorm(dim)
+        self.output_projection = nn.Linear(dim, dim)
+
+    def forward(
+        self,
+        context_tokens: torch.Tensor,
+        horizon_ids: torch.Tensor,
+        motion_features: torch.Tensor | None,
+        layer_id: int | None = None,
+    ) -> torch.Tensor:
+        """Predict dense future tokens with token-token attention per horizon."""
+
+        batch, token_count, dim = context_tokens.shape
+        horizon_z = self.horizon_embedding(horizon_ids.to(device=context_tokens.device))
+        tokens = context_tokens[:, None, :, :] + horizon_z[None, :, None, :]
+        if self.motion_projection is not None:
+            if motion_features is None:
+                msg = "motion_features are required for motion-conditioned dense JEPA."
+                raise ValueError(msg)
+            motion_z = self.motion_projection(motion_features.to(device=context_tokens.device))
+            tokens = tokens + motion_z[:, None, None, :]
+        if self.layer_embedding is not None:
+            if layer_id is None:
+                msg = "layer_id is required for layer-conditioned dense JEPA."
+                raise ValueError(msg)
+            layer_idx = torch.tensor(layer_id, device=context_tokens.device, dtype=torch.long)
+            tokens = tokens + self.layer_embedding(layer_idx).view(1, 1, 1, dim)
+
+        flat_tokens = self.input_norm(tokens.reshape(batch * horizon_z.shape[0], token_count, dim))
+        for layer in self.layers:
+            flat_tokens = layer(flat_tokens)
+        flat_tokens = self.output_projection(self.output_norm(flat_tokens))
+        return flat_tokens.view(batch, horizon_z.shape[0], token_count, dim)
+
+
 def _set_seed(seed: int) -> None:
     random.seed(seed)
     np.random.seed(seed)
@@ -463,16 +548,18 @@ def _objective_name(
     motion_conditioning: bool,
     action_conditioning: bool,
     deep_supervision: bool,
+    dense_predictor: str,
 ) -> str:
     if not use_temporal:
         return "masked_same_window"
     prefix = "deep_" if deep_supervision and dense_tokens else ""
+    predictor_prefix = "transformer_" if dense_tokens and dense_predictor == "transformer" else ""
     if dense_tokens and action_conditioning:
-        return f"{prefix}dense_temporal_token_action_multihorizon"
+        return f"{prefix}{predictor_prefix}dense_temporal_token_action_multihorizon"
     if dense_tokens and motion_conditioning:
-        return f"{prefix}dense_temporal_token_motion_multihorizon"
+        return f"{prefix}{predictor_prefix}dense_temporal_token_motion_multihorizon"
     if dense_tokens:
-        return f"{prefix}dense_temporal_token_multihorizon"
+        return f"{prefix}{predictor_prefix}dense_temporal_token_multihorizon"
     return "temporal_multihorizon"
 
 
@@ -782,6 +869,7 @@ def pretrain_jepa(
     dense_tokens: bool = True,
     motion_conditioning: bool = True,
     deep_supervision_layers: tuple[int, ...] = (),
+    dense_predictor: str = "mlp",
     model_name: str = "tiny-cnn",
 ) -> dict[str, Any]:
     """Pretrain an encoder with a JEPA-style latent prediction objective."""
@@ -791,6 +879,9 @@ def pretrain_jepa(
         raise ValueError(msg)
     if batch_size <= 0:
         msg = "batch_size must be positive."
+        raise ValueError(msg)
+    if dense_predictor not in {"mlp", "transformer"}:
+        msg = "dense_predictor must be one of {'mlp', 'transformer'}."
         raise ValueError(msg)
     _set_seed(seed)
 
@@ -825,6 +916,7 @@ def pretrain_jepa(
         motion_conditioning=use_motion_conditioning,
         action_conditioning=use_action_conditioning,
         deep_supervision=use_deep_supervision,
+        dense_predictor=dense_predictor,
     )
     model_tag = model_name.replace("-", "_")
     train_pair_stats = None
@@ -918,12 +1010,16 @@ def pretrain_jepa(
         param.requires_grad_(False)
     predictor: nn.Module
     if use_dense_tokens:
-        predictor = DenseTemporalJEPAPredictor(
-            dim=encoder.output_dim,
-            horizon_count=len(temporal_horizons_ms),
-            motion_dim=action_feature_dim,
-            layer_count=max(deep_supervision_layers) + 1 if use_deep_supervision else 0,
-        ).to(device)
+        dense_predictor_kwargs = {
+            "dim": encoder.output_dim,
+            "horizon_count": len(temporal_horizons_ms),
+            "motion_dim": action_feature_dim,
+            "layer_count": max(deep_supervision_layers) + 1 if use_deep_supervision else 0,
+        }
+        if dense_predictor == "transformer":
+            predictor = DenseTemporalTransformerJEPAPredictor(**dense_predictor_kwargs).to(device)
+        else:
+            predictor = DenseTemporalJEPAPredictor(**dense_predictor_kwargs).to(device)
     elif use_temporal:
         predictor = TemporalJEPAPredictor(
             dim=encoder.output_dim,
@@ -1059,6 +1155,7 @@ def pretrain_jepa(
                         "temporal_horizons_ms": list(temporal_horizons_ms),
                         "max_target_slop_ms": max_target_slop_ms,
                         "dense_tokens": use_dense_tokens,
+                        "dense_predictor": dense_predictor if use_dense_tokens else None,
                         **conditioning_metadata,
                         "deep_supervision_layers": list(deep_supervision_layers)
                         if use_deep_supervision
@@ -1087,6 +1184,7 @@ def pretrain_jepa(
             "temporal_horizons_ms": list(temporal_horizons_ms),
             "max_target_slop_ms": max_target_slop_ms,
             "dense_tokens": use_dense_tokens,
+            "dense_predictor": dense_predictor if use_dense_tokens else None,
             **conditioning_metadata,
             "deep_supervision_layers": list(deep_supervision_layers)
             if use_deep_supervision
@@ -1119,6 +1217,7 @@ def pretrain_jepa(
         "temporal_horizons_ms": list(temporal_horizons_ms),
         "max_target_slop_ms": max_target_slop_ms,
         "dense_tokens": use_dense_tokens,
+        "dense_predictor": dense_predictor if use_dense_tokens else None,
         **conditioning_metadata,
         "deep_supervision": use_deep_supervision,
         "deep_supervision_layers": list(deep_supervision_layers) if use_deep_supervision else [],
