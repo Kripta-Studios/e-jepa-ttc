@@ -257,3 +257,15 @@ The actionable SkyJEPA-aligned path is therefore:
 4. add a SIGReg/VISReg-style anti-collapse regularization ablation;
 5. only then run the official bbox/ROI protocol on the complete EvTTC sequence
    set.
+
+The first implementation of step 1 and a flat version of step 2 is now done:
+`train roi-rollout-prober` probes frozen JEPA-predicted future token rollouts.
+It is a useful negative result rather than a new SOTA candidate:
+
+- full-starter validation: `0.226 +/- 0.013 s`, `11.15 +/- 0.79%`;
+- dev multi-validation weighted MAE: `0.613 +/- 0.017 s`;
+- dev pedestrian MAE: `1.000 +/- 0.055 s`.
+
+This confirms the next design refinement: preserve per-horizon rollout structure
+and use a kinematic/TTC head, instead of flattening all predicted horizons into a
+single residual MLP.

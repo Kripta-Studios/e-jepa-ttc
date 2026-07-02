@@ -286,6 +286,57 @@ def _cmd_evaluate_roi_latent_prober(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_train_roi_rollout_prober(args: argparse.Namespace) -> int:
+    from e_jepa_ttc.training.prober import train_roi_rollout_ttc_prober
+
+    payload = train_roi_rollout_ttc_prober(
+        manifest_path=args.manifest,
+        split_path=args.split,
+        cache_path=args.cache,
+        jepa_checkpoint_path=args.jepa_checkpoint,
+        output_dir=args.output_dir,
+        context_ms=args.context_ms,
+        max_cache_slop_ms=args.max_cache_slop_ms,
+        epochs=args.epochs,
+        batch_size=args.batch_size,
+        learning_rate=args.learning_rate,
+        seed=args.seed,
+        device_name=args.device,
+        model_name=args.model,
+        rollout_token_summary=args.rollout_token_summary,
+        rollout_include_context=not args.no_rollout_context,
+        hidden_dim=args.hidden_dim,
+        dropout=args.dropout,
+        physics_prior=args.physics_prior,
+        ridge_alpha=args.ridge_alpha,
+        train_splits=tuple(args.train_splits),
+        validation_splits=tuple(args.validation_splits),
+        evaluation_splits=tuple(args.evaluation_splits),
+    )
+    _print_json(payload)
+    return 0
+
+
+def _cmd_evaluate_roi_rollout_prober(args: argparse.Namespace) -> int:
+    from e_jepa_ttc.training.prober import evaluate_roi_rollout_ttc_prober_checkpoint
+
+    payload = evaluate_roi_rollout_ttc_prober_checkpoint(
+        manifest_path=args.manifest,
+        split_path=args.split,
+        cache_path=args.cache,
+        prober_checkpoint_path=args.checkpoint,
+        output_path=args.output,
+        context_ms=args.context_ms,
+        max_cache_slop_ms=args.max_cache_slop_ms,
+        batch_size=args.batch_size,
+        device_name=args.device,
+        model_name=args.model,
+        evaluation_splits=tuple(args.evaluation_splits),
+    )
+    _print_json(payload)
+    return 0
+
+
 def _cmd_pretrain_jepa(args: argparse.Namespace) -> int:
     from e_jepa_ttc.training.jepa import pretrain_jepa
 
@@ -585,6 +636,67 @@ def build_parser() -> argparse.ArgumentParser:
         help="Splits to evaluate from the saved ROI prober checkpoint.",
     )
     train_roi_eval.set_defaults(func=_cmd_evaluate_roi_latent_prober)
+    train_roi_rollout = train_sub.add_parser(
+        "roi-rollout-prober",
+        help="Train a detection-assisted TTC prober on frozen JEPA-predicted rollouts.",
+    )
+    train_roi_rollout.add_argument("--manifest", type=Path, required=True)
+    train_roi_rollout.add_argument("--split", type=Path, required=True)
+    train_roi_rollout.add_argument("--cache", type=Path, required=True)
+    train_roi_rollout.add_argument("--jepa-checkpoint", type=Path, required=True)
+    train_roi_rollout.add_argument("--output-dir", type=Path, required=True)
+    train_roi_rollout.add_argument("--context-ms", type=int, default=100)
+    train_roi_rollout.add_argument("--max-cache-slop-ms", type=int, default=12)
+    train_roi_rollout.add_argument("--epochs", type=int, default=160)
+    train_roi_rollout.add_argument("--batch-size", type=int, default=64)
+    train_roi_rollout.add_argument("--learning-rate", type=float, default=3e-4)
+    train_roi_rollout.add_argument("--seed", type=int, default=42)
+    train_roi_rollout.add_argument("--device", type=str, default="auto")
+    train_roi_rollout.add_argument("--model", choices=MODEL_NAMES)
+    train_roi_rollout.add_argument(
+        "--rollout-token-summary",
+        choices=["mean", "mean-std"],
+        default="mean-std",
+    )
+    train_roi_rollout.add_argument(
+        "--no-rollout-context",
+        action="store_true",
+        help="Use predicted future rollout features without the current context latent summary.",
+    )
+    train_roi_rollout.add_argument("--hidden-dim", type=int, default=128)
+    train_roi_rollout.add_argument("--dropout", type=float, default=0.10)
+    train_roi_rollout.add_argument("--physics-prior", choices=["none", "ridge"], default="ridge")
+    train_roi_rollout.add_argument("--ridge-alpha", type=float, default=1.0)
+    train_roi_rollout.add_argument("--train-splits", nargs="+", default=["train"])
+    train_roi_rollout.add_argument("--validation-splits", nargs="+", default=["validation"])
+    train_roi_rollout.add_argument(
+        "--evaluation-splits",
+        nargs="+",
+        default=["train", "validation"],
+        help="Splits to evaluate after validation-selected rollout prober training.",
+    )
+    train_roi_rollout.set_defaults(func=_cmd_train_roi_rollout_prober)
+    train_roi_rollout_eval = train_sub.add_parser(
+        "roi-rollout-prober-evaluate",
+        help="Evaluate a saved detection-assisted JEPA-rollout TTC prober.",
+    )
+    train_roi_rollout_eval.add_argument("--manifest", type=Path, required=True)
+    train_roi_rollout_eval.add_argument("--split", type=Path, required=True)
+    train_roi_rollout_eval.add_argument("--cache", type=Path, required=True)
+    train_roi_rollout_eval.add_argument("--checkpoint", type=Path, required=True)
+    train_roi_rollout_eval.add_argument("--output", type=Path)
+    train_roi_rollout_eval.add_argument("--context-ms", type=int, default=100)
+    train_roi_rollout_eval.add_argument("--max-cache-slop-ms", type=int, default=12)
+    train_roi_rollout_eval.add_argument("--batch-size", type=int, default=64)
+    train_roi_rollout_eval.add_argument("--device", type=str, default="auto")
+    train_roi_rollout_eval.add_argument("--model", choices=MODEL_NAMES)
+    train_roi_rollout_eval.add_argument(
+        "--evaluation-splits",
+        nargs="+",
+        default=["test"],
+        help="Splits to evaluate from the saved rollout prober checkpoint.",
+    )
+    train_roi_rollout_eval.set_defaults(func=_cmd_evaluate_roi_rollout_prober)
 
     pretrain = subparsers.add_parser("pretrain", help="Self-supervised pretraining commands.")
     pretrain_sub = pretrain.add_subparsers(dest="pretrain_command", required=True)

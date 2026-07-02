@@ -1317,3 +1317,67 @@ Project implications:
 This keeps the project aligned with SkyJEPA without claiming its quadrotor
 control results transfer to event-camera TTC.
 
+## 2026-07-02 ROI Predicted-Rollout Prober
+
+Implemented the next SkyJEPA-aligned prober step:
+
+- `train roi-rollout-prober` reconstructs the frozen JEPA encoder and predictor
+  from a JEPA checkpoint;
+- extracts causal context tokens and action/ego-motion features from the current
+  event window only;
+- predicts future dense latent token rollouts at the JEPA horizons;
+- summarizes those predicted future tokens and trains a lightweight bbox/ROI TTC
+  prober using train labels only;
+- `train roi-rollout-prober-evaluate` reloads a saved prober checkpoint and
+  evaluates requested splits without retraining.
+
+Validation-only full-starter run using
+`jepa_event_tubelet_tubeletmask_transformerpred_nav_full_starter_seed7_30e`:
+
+| Seed | Validation matched frames | Validation MAE | Validation relative error |
+| ---: | ---: | ---: | ---: |
+| 7 | 98/108 | `0.210 s` | `10.17%` |
+| 13 | 98/108 | `0.226 s` | `11.19%` |
+| 21 | 98/108 | `0.242 s` | `12.09%` |
+
+Aggregated full-starter validation:
+
+- validation MAE: `0.226000489 +/- 0.013070400 s`;
+- validation relative error: `11.148893 +/- 0.786129%`.
+
+This is only a marginal MAE tie with the ROI latent prober
+(`0.226443 s`) and is worse in relative error (`11.15%` versus `10.78%`), so
+CPLA-high was not evaluated for this branch.
+
+Checkpoint-only validation evaluation was verified with:
+
+```powershell
+.\.venv\Scripts\python.exe -m e_jepa_ttc train roi-rollout-prober-evaluate --manifest artifacts\metrics\evttc_scan_full_bbox.yaml --split data\splits\evttc_full_starter_sealed.yaml --cache artifacts\features\evttc_full_starter_voxel_160x90_b5_raw_meta_nav.npz --checkpoint artifacts\runs\roi_rollout_prober_tubeletmask_full_starter_seed7_160e\roi_rollout_prober_best.pt --output artifacts\metrics\roi_rollout_prober_tubeletmask_full_starter_seed7_eval_validation_only.json --context-ms 100 --max-cache-slop-ms 12 --batch-size 128 --device auto --evaluation-splits validation
+```
+
+It reproduced seed 7 validation MAE: `0.210115841 s`, with
+`retrained_during_evaluation=false`.
+
+Seed-7 ablations, validation only:
+
+| Variant | Validation MAE | Relative error |
+| --- | ---: | ---: |
+| mean-std rollout + context | `0.210 s` | `10.17%` |
+| mean rollout + context | `0.251 s` | `12.32%` |
+| mean-std rollout without context | `0.219 s` | `10.73%` |
+| mean rollout without context | `0.227 s` | `10.66%` |
+
+Harder dev multi-validation, no test:
+
+| Split | MAE | Mean relative error |
+| --- | ---: | ---: |
+| validation_car | `0.329 +/- 0.024 s` | `15.16 +/- 0.78%` |
+| validation_pedestrian | `1.000 +/- 0.055 s` | `47.49 +/- 1.82%` |
+| weighted | `0.613 +/- 0.017 s` | - |
+
+This is worse than the previous ROI latent prober on the same dev split
+(`0.528 +/- 0.011 s` weighted, `0.785 +/- 0.024 s` pedestrian), so the
+flat rollout-summary prober is a negative result. The next serious version
+should keep the per-horizon structure and use a kinematic/TTC head rather than
+flattening all predicted horizons into one MLP feature vector.
+

@@ -121,6 +121,8 @@ uv run --no-sync python scripts/download_evttc_starter.py --manifest data/manife
   `--model event-tubelet-transformer-large`.
 - Optional causal integrated-navigation cache channels for ego speed, velocity, acceleration,
   yaw-rate, and validity.
+- SkyJEPA-style frozen latent and predicted-rollout bbox/ROI TTC probers with checkpoint-only
+  evaluation commands; current rollout results are diagnostic and not an official SOTA claim.
 - Supervised TinyCNN log-TTC regressor with CUDA AMP, checkpoints, history, metrics, and predictions.
 - Frozen-encoder probes and low-label supervised runs via `--freeze-encoder` and `--train-fraction`.
 - Unit and integration tests for data contracts, representations, synthetic data, manifests, splits,

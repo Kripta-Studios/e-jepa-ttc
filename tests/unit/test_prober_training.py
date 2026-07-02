@@ -7,6 +7,7 @@ import torch
 from e_jepa_ttc.training.jepa import pretrain_jepa
 from e_jepa_ttc.training.prober import (
     evaluate_roi_latent_ttc_prober_checkpoint,
+    evaluate_roi_rollout_ttc_prober_checkpoint,
     train_latent_ttc_prober,
 )
 
@@ -76,6 +77,22 @@ def test_roi_latent_prober_checkpoint_evaluation_rejects_wrong_checkpoint(
 
     with pytest.raises(ValueError, match="roi_latent_ttc_prober"):
         evaluate_roi_latent_ttc_prober_checkpoint(
+            manifest_path=tmp_path / "missing_manifest.yaml",
+            split_path=tmp_path / "missing_split.yaml",
+            cache_path=tmp_path / "missing_cache.npz",
+            prober_checkpoint_path=checkpoint_path,
+            device_name="cpu",
+        )
+
+
+def test_roi_rollout_prober_checkpoint_evaluation_rejects_wrong_checkpoint(
+    tmp_path: Path,
+) -> None:
+    checkpoint_path = tmp_path / "wrong_rollout.pt"
+    torch.save({"model": "roi_latent_ttc_prober"}, checkpoint_path)
+
+    with pytest.raises(ValueError, match="roi_rollout_ttc_prober"):
+        evaluate_roi_rollout_ttc_prober_checkpoint(
             manifest_path=tmp_path / "missing_manifest.yaml",
             split_path=tmp_path / "missing_split.yaml",
             cache_path=tmp_path / "missing_cache.npz",

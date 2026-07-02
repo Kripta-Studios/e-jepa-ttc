@@ -449,7 +449,10 @@ This is now implemented as two local tools:
 
 - `train latent-prober`: all-window frozen-latent residual TTC prober;
 - `train roi-latent-prober`: detection-assisted frozen-latent bbox/ROI TTC
-  prober with a train-only ridge physics prior.
+  prober with a train-only ridge physics prior;
+- `train roi-rollout-prober`: detection-assisted TTC prober over frozen
+  JEPA-predicted future latent token rollouts, with checkpoint-only evaluation
+  via `train roi-rollout-prober-evaluate`.
 
 The all-window latent prober was negative on dev validation. The ROI prober is
 positive because the current bbox gives an object-local state estimate that is
@@ -461,6 +464,7 @@ Dev multi-validation, no sealed test:
 | --- | ---: | ---: | ---: |
 | ROI event ridge prior | 0.759 s | 0.293 s | 1.342 s |
 | ROI latent prober, seeds 7/13/21 | 0.528 +/- 0.011 s | 0.340 +/- 0.003 s | 0.785 +/- 0.024 s |
+| ROI rollout prober, seeds 7/13/21 | 0.613 +/- 0.017 s | 0.329 +/- 0.024 s | 1.000 +/- 0.055 s |
 
 Full-starter validation used for model selection:
 
@@ -468,6 +472,7 @@ Full-starter validation used for model selection:
 | --- | ---: | ---: |
 | ROI ridge prior inside latent prober | 0.344 s | 16.19% |
 | ROI latent prober, seeds 7/13/21 | 0.226 +/- 0.015 s | 10.78 +/- 0.53% |
+| ROI rollout prober, seeds 7/13/21 | 0.226 +/- 0.013 s | 11.15 +/- 0.79% |
 
 That is a 34.3% validation MAE reduction versus its train-only ROI/ridge prior.
 It also beats the earlier local ROI event ridge validation result (`0.293 s`),
@@ -489,11 +494,21 @@ test result (`6.42 +/- 0.45%`) or the simple causal bbox geometry reference
 (`0.157 s` MAE on 81 valid frames), so the current ROI prober is protocol
 plumbing and diagnostic evidence, not the SOTA path by itself.
 
+The first predicted-rollout prober was also negative. It reconstructs the frozen
+JEPA encoder and dense transformer predictor from
+`jepa_event_tubelet_tubeletmask_transformerpred_nav_full_starter_seed7_30e`,
+summarizes predicted future token rollouts at 20, 60, 100, 240, and 500 ms, and
+trains the ROI head only on train labels. It slightly matches the ROI latent
+prober on single-sequence validation MAE (`0.226 s`) but is worse in relative
+error and much worse on the harder pedestrian validation. Therefore the
+CPLA-high test was not evaluated for this rollout branch.
+
 Conclusion: SkyJEPA is key for the next architecture direction, especially the
-frozen latent prober and action-conditioned rollout framing. It is not yet a
-SOTA claim because our prober currently maps frozen context latents to TTC; the
-paper's stronger version probes predicted multi-step latent rollouts through a
-structured physical integrator.
+frozen latent prober and action-conditioned rollout framing. The current
+predicted-rollout prober is still too weak because it summarizes rollouts into a
+single MLP head. The next version should use a structured kinematic/TTC head
+that consumes per-horizon latent state rather than flattening all horizons into
+one feature vector.
 
 ## SOTA Position
 
