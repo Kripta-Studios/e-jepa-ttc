@@ -79,6 +79,10 @@ CPLA-high test MAE over three fine-tuning seeds. This is a local full-starter
 result, not an official EvTTC SOTA claim; official comparison still requires
 the benchmark bbox/ROI protocol and broader sequence set.
 
+The thesis-style paper for the current project state is
+[docs/e_jepa_ttc_paper.md](docs/e_jepa_ttc_paper.md). It records the method,
+protocol, final tests, results, negative ablations, and claim limits.
+
 With event-only inputs, token JEPA still improves sealed-test MAE from `1.327 +/- 0.104s` to
 `0.460 +/- 0.029s` at 10% labels.
 

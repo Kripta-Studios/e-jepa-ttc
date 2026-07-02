@@ -1381,3 +1381,44 @@ flat rollout-summary prober is a negative result. The next serious version
 should keep the per-horizon structure and use a kinematic/TTC head rather than
 flattening all predicted horizons into one MLP feature vector.
 
+## 2026-07-02 Final Local Package And Paper
+
+Created the thesis-style English paper:
+
+- `docs/e_jepa_ttc_paper.md`
+
+Updated:
+
+- `README.md`
+- `docs/technical_report.md`
+- `docs/model_card.md`
+- `docs/full_starter_results.md`
+- `docs/sota_jepa_world_models_2026-07-01.md`
+
+Final verification:
+
+```powershell
+.\.venv\Scripts\python.exe -m ruff check .
+$env:PYTHONPATH='src'
+.\.venv\Scripts\python.exe -m pytest
+```
+
+Results:
+
+- `ruff check .`: all checks passed;
+- `pytest`: `50 passed in 5.39 s`.
+
+Final local conclusion:
+
+- best local all-window model: event-tubelet transformer JEPA with tubelet
+  masking, dense transformer future-token prediction, and causal
+  integrated-navigation conditioning;
+- validation: `0.231477844 +/- 0.017632455 s` MAE,
+  `8.192429 +/- 0.533708%` relative error;
+- diagnostic CPLA-high: `0.312034689 +/- 0.044063632 s` MAE,
+  `6.416740 +/- 0.454934%` relative error;
+- ROI latent prober and ROI rollout prober are useful diagnostics but not
+  competitive SOTA paths in their current flat-head form;
+- no official EvTTC SOTA claim is justified until CCRs2/CCRm/slider assets and
+  official bbox/ROI baselines are reproduced.
+

@@ -1,24 +1,28 @@
 # Technical Report
 
-This report is a scaffold. It must be regenerated from metrics artifacts once experiments exist.
+Current thesis-style technical report:
 
-## Sections
+- [E-JEPA-TTC paper](e_jepa_ttc_paper.md)
 
-1. Summary
-2. Motivation
-3. Event Cameras And TTC
-4. Hypothesis
-5. Datasets And Splits
-6. Representations
-7. Architecture
-8. Training Objectives
-9. Baselines
-10. Experimental Protocol
-11. Results
-12. Ablations
-13. Robustness
-14. Latency
-15. Calibration
-16. Limitations
-17. Future Work
-18. Reproducibility
+The old scaffold has been replaced by the paper because reproducible
+experiments now exist. The paper records:
+
+1. dataset and split protocol;
+2. model architecture;
+3. JEPA/self-supervised objective;
+4. anti-leakage controls;
+5. full-starter all-window results;
+6. bbox/ROI diagnostic results;
+7. SkyJEPA-style latent and rollout prober ablations;
+8. final verification commands;
+9. official SOTA claim limits;
+10. next work required for a real EvTTC benchmark claim.
+
+Final local claim:
+
+> Tubelet-masked event-token JEPA with a dense transformer predictor and causal
+> integrated-navigation conditioning is the strongest local all-window result in
+> this repository: `0.231 +/- 0.018 s` validation MAE and `0.312 +/- 0.044 s`
+> diagnostic CPLA-high MAE over seeds 7/13/21.
+
+This is not an official EvTTC SOTA claim.
