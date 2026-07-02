@@ -892,3 +892,72 @@ Interpretation:
   is either official CCRs2/CCRm bbox/ROI comparison data or a validation design
   with more pedestrian diversity before any new frozen test check.
 
+## 2026-07-02 V-JEPA 2.1 All-Token Context Loss
+
+Implemented optional all-token context supervision for dense JEPA:
+
+- CLI flag: `--context-token-weight`
+- default: `0.0`, preserving all previous runs
+- objective name prefix when active: `alltoken_`
+- checkpoint metadata:
+  `context_token_loss=true`,
+  `context_token_weight=<value>`
+- metrics:
+  `future_alignment_loss`, `context_token_loss`,
+  `context_token_target_count`
+- leakage audit:
+  `context_token_loss_uses_current_context_only=true`
+
+This adds a same-window EMA target loss for all current context tokens in
+addition to future multi-horizon dense prediction. It is inspired by V-JEPA 2.1's
+all-token dense supervision, but it still uses only event context and causal
+navigation/action features.
+
+Unit coverage:
+
+- `tests/unit/test_jepa_training.py::test_dense_alltoken_jepa_context_loss`
+- verifies objective
+  `alltoken_transformer_dense_temporal_token_motion_multihorizon`
+- verifies context loss metrics and leakage audit
+
+Dev multi-validation pretrain:
+
+- run:
+  `artifacts/runs/jepa_event_tubelet_alltoken_transformerpred_nav_dev_multival_w025_seed7_30e`
+- model: `event-tubelet-transformer`
+- predictor: `transformer`
+- `context_token_weight=0.25`
+- best SSL validation epoch: 2
+- best SSL validation loss: `0.001287`
+- last epoch SSL validation loss: `0.002258`
+
+Fine-tune from the SSL-last checkpoint, validation only:
+
+| Seed | Weighted multival MAE | validation_car MAE | validation_pedestrian MAE |
+| ---: | ---: | ---: | ---: |
+| 7 | 0.530 s | 0.287 s | 0.779 s |
+| 13 | 0.638 s | 0.305 s | 0.979 s |
+| 21 | 0.644 s | 0.261 s | 1.037 s |
+
+Mean result:
+
+- weighted multival MAE: `0.604 +/- 0.052 s`
+- validation_car MAE: `0.284 +/- 0.018 s`
+- validation_pedestrian MAE: `0.932 +/- 0.111 s`
+- validation_car relative error: `9.06 +/- 1.12%`
+- validation_pedestrian relative error: `28.92 +/- 2.02%`
+
+One sanity check from the SSL-best checkpoint on seed 7 gave weighted multival
+MAE `0.636 s`, validation_car MAE `0.460 s`, and validation_pedestrian MAE
+`0.816 s`, so selecting SSL-best does not rescue the ablation.
+
+Interpretation:
+
+- The all-token context loss improves car validation relative to the transformer
+  predictor without context loss (`0.284 s` vs `0.343 s`).
+- It hurts pedestrian validation badly (`0.932 s` vs `0.592 s`).
+- Weighted multival MAE worsens from `0.466 s` to `0.604 s`.
+- The sealed CPLA-high test was not evaluated for this ablation.
+- Next valid work should try smaller context-token weights or scheduling on
+  multi-domain validation only, or prioritize official CCRs2/CCRm bbox/ROI data.
+

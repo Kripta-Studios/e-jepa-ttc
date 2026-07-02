@@ -231,6 +231,29 @@ CPLA-high result. The current best local sealed model remains the earlier
 event-tubelet JEPA + navigation fine-tune. Do not use the frozen test result to
 tune the next variant.
 
+### All-Token Context Loss
+
+V-JEPA 2.1 also emphasizes dense supervision over all context tokens, not only
+future/masked targets. The repo now supports this with
+`--context-token-weight`, which adds a same-window EMA target loss on all current
+context tokens while preserving the future multi-horizon objective. It uses no
+TTC labels and no future navigation.
+
+Dev multi-validation ablation with `--dense-predictor transformer` and
+`--context-token-weight 0.25`:
+
+| Method | Weighted multival MAE | validation_car MAE | validation_pedestrian MAE |
+| --- | ---: | ---: | ---: |
+| Transformer-predictor JEPA | 0.466 +/- 0.004 s | 0.343 +/- 0.038 s | 0.592 +/- 0.044 s |
+| All-token transformer JEPA, weight 0.25 | 0.604 +/- 0.052 s | 0.284 +/- 0.018 s | 0.932 +/- 0.111 s |
+
+The all-token loss improves car validation but substantially hurts pedestrian
+validation, so this ablation was stopped at validation and the sealed test was
+not evaluated. The likely issue is over-emphasizing reconstruction/identity of
+the current event context relative to cross-domain future dynamics. Future
+variants should tune this only on multi-domain validation, e.g. smaller
+context-token weights or a schedule, never on CPLA-high.
+
 ## Detection-Assisted Reference
 
 The missing official `bbox_segmentation` folders were recovered after
@@ -315,11 +338,11 @@ Compared with current JEPA/world-model SOTA as of 2026-07-02:
 
 - Aligned: latent prediction, EMA target encoder, future multi-horizon
   prediction, dense token loss, causal motion/action conditioning, optional
-  token-attention dense predictor, no TTC-label leakage, low-label transfer
-  evaluation.
+  token-attention dense predictor, optional all-token context loss, no TTC-label
+  leakage, low-label transfer evaluation.
 - Still below SOTA: small local training scale, shallow token transformer, deep
-  self-supervision currently negative in ablation, no V-JEPA 2.1 all-token
-  visible-plus-masked denoising path, event plus ego-motion only, no
+  self-supervision currently negative in ablation, all-token context loss
+  currently negative on pedestrian validation, event plus ego-motion only, no
   RGB/LiDAR/depth/box fusion, no action-conditioned planning or closed-loop
   evaluation, and no official benchmark replication.
 

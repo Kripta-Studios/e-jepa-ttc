@@ -234,6 +234,7 @@ def _cmd_pretrain_jepa(args: argparse.Namespace) -> int:
         motion_conditioning=args.motion_conditioning,
         deep_supervision_layers=tuple(args.deep_supervision_layers),
         dense_predictor=args.dense_predictor,
+        context_token_weight=args.context_token_weight,
         model_name=args.model,
     )
     _print_json(payload)
@@ -476,6 +477,15 @@ def build_parser() -> argparse.ArgumentParser:
         choices=["mlp", "transformer"],
         default="mlp",
         help="Dense JEPA predictor type; transformer enables token-token predictor attention.",
+    )
+    pretrain_jepa.add_argument(
+        "--context-token-weight",
+        type=float,
+        default=0.0,
+        help=(
+            "Optional V-JEPA 2.1-style dense loss weight for predicting all current "
+            "context tokens in addition to future tokens."
+        ),
     )
     pretrain_jepa.set_defaults(dense_tokens=True, motion_conditioning=True)
     pretrain_jepa.set_defaults(func=_cmd_pretrain_jepa)
