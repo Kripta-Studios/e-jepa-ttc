@@ -13,7 +13,7 @@ from e_jepa_ttc.baselines.geometric import run_geometric_baseline
 from e_jepa_ttc.baselines.trivial import run_trivial_baseline
 from e_jepa_ttc.data.evttc import scan_evttc_root, validate_manifest, write_manifest
 from e_jepa_ttc.data.index import build_temporal_index, write_index
-from e_jepa_ttc.data.ml_cache import build_voxel_cache
+from e_jepa_ttc.data.ml_cache import build_voxel_cache, remap_cache_splits
 from e_jepa_ttc.data.split import write_splits
 from e_jepa_ttc.data.synthetic import generate_synthetic_sequence, write_synthetic_hdf5
 from e_jepa_ttc.models import MODEL_NAMES
@@ -144,6 +144,16 @@ def _cmd_cache_voxel(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_cache_remap_splits(args: argparse.Namespace) -> int:
+    payload = remap_cache_splits(
+        cache_path=args.cache,
+        split_path=args.split,
+        output_path=args.output,
+    )
+    _print_json(payload)
+    return 0
+
+
 def _cmd_train_tiny_cnn(args: argparse.Namespace) -> int:
     from e_jepa_ttc.training.supervised import train_tiny_cnn
 
@@ -160,6 +170,8 @@ def _cmd_train_tiny_cnn(args: argparse.Namespace) -> int:
         train_fraction=args.train_fraction,
         model_name=args.model,
         evaluation_splits=tuple(args.evaluation_splits),
+        train_splits=tuple(args.train_splits),
+        validation_splits=tuple(args.validation_splits),
     )
     _print_json(payload)
     return 0
@@ -320,6 +332,14 @@ def build_parser() -> argparse.ArgumentParser:
     )
     cache_voxel.add_argument("--limit", type=int)
     cache_voxel.set_defaults(func=_cmd_cache_voxel)
+    cache_remap = cache_sub.add_parser(
+        "remap-splits",
+        help="Copy a tensor cache while assigning split labels from a split YAML.",
+    )
+    cache_remap.add_argument("--cache", type=Path, required=True)
+    cache_remap.add_argument("--split", type=Path, required=True)
+    cache_remap.add_argument("--output", type=Path, required=True)
+    cache_remap.set_defaults(func=_cmd_cache_remap_splits)
 
     train = subparsers.add_parser("train", help="Training commands.")
     train_sub = train.add_subparsers(dest="train_command", required=True)
@@ -334,11 +354,12 @@ def build_parser() -> argparse.ArgumentParser:
     train_tiny.add_argument("--model", choices=MODEL_NAMES, default="tiny-cnn")
     train_tiny.add_argument("--pretrained-encoder", type=Path)
     train_tiny.add_argument("--train-fraction", type=float, default=1.0)
+    train_tiny.add_argument("--train-splits", nargs="+", default=["train"])
+    train_tiny.add_argument("--validation-splits", nargs="+", default=["validation"])
     train_tiny.add_argument(
         "--evaluation-splits",
         nargs="+",
         default=["train", "validation", "test"],
-        choices=["train", "validation", "test"],
         help="Splits to evaluate after validation-selected training.",
     )
     train_tiny.add_argument(
@@ -361,7 +382,6 @@ def build_parser() -> argparse.ArgumentParser:
         "--evaluation-splits",
         nargs="+",
         default=["test"],
-        choices=["train", "validation", "test"],
         help="Splits to evaluate from the saved checkpoint.",
     )
     train_eval.set_defaults(func=_cmd_train_evaluate)

@@ -187,3 +187,52 @@ def build_voxel_cache(
     }
     write_structured(output.with_suffix(".summary.json"), summary)
     return summary
+
+
+def remap_cache_splits(
+    *,
+    cache_path: str | Path,
+    split_path: str | Path,
+    output_path: str | Path,
+) -> dict[str, Any]:
+    """Copy an NPZ cache while replacing split labels by sequence id."""
+
+    cache = np.load(cache_path, allow_pickle=False)
+    if "sequence_id" not in cache.files or "split" not in cache.files:
+        msg = "Cache must contain sequence_id and split arrays."
+        raise ValueError(msg)
+    split_data = read_structured(split_path).get("splits", {})
+    if not isinstance(split_data, dict):
+        msg = f"Split file {split_path} does not contain splits."
+        raise ValueError(msg)
+    split_for_sequence = {
+        str(sequence_id): str(split_name)
+        for split_name, sequence_ids in split_data.items()
+        for sequence_id in sequence_ids
+    }
+    sequence_ids = cache["sequence_id"].astype(str)
+    old_split = cache["split"].astype(str)
+    new_split = np.array(
+        [split_for_sequence.get(str(sequence_id), "unassigned") for sequence_id in sequence_ids],
+        dtype=str,
+    )
+    arrays = {key: cache[key] for key in cache.files if key != "split"}
+    output = ensure_parent(output_path)
+    np.savez(output, **arrays, split=new_split)
+    old_counts = {
+        str(name): int(np.sum(old_split == name)) for name in sorted(set(old_split.tolist()))
+    }
+    new_counts = {
+        str(name): int(np.sum(new_split == name)) for name in sorted(set(new_split.tolist()))
+    }
+    summary = {
+        "input": Path(cache_path).as_posix(),
+        "output": output.as_posix(),
+        "split": Path(split_path).as_posix(),
+        "window_count": int(new_split.shape[0]),
+        "old_split_counts": old_counts,
+        "new_split_counts": new_counts,
+        "unassigned_count": int(np.sum(new_split == "unassigned")),
+    }
+    write_structured(output.with_suffix(".summary.json"), summary)
+    return summary

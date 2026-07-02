@@ -47,6 +47,16 @@ def _split_indices(split: np.ndarray, name: str) -> np.ndarray:
     return np.flatnonzero(split.astype(str) == name).astype(np.int64)
 
 
+def _split_indices_any(split: np.ndarray, names: tuple[str, ...]) -> np.ndarray:
+    split_text = split.astype(str)
+    mask = np.isin(split_text, np.array(names, dtype=str))
+    return np.flatnonzero(mask).astype(np.int64)
+
+
+def _available_split_names(split: np.ndarray) -> set[str]:
+    return set(split.astype(str).tolist())
+
+
 def _evaluate_model(
     model: nn.Module,
     dataset: VoxelCacheDataset,
@@ -146,6 +156,8 @@ def train_tiny_cnn(
     train_fraction: float = 1.0,
     model_name: str = "tiny-cnn",
     evaluation_splits: tuple[str, ...] = ("train", "validation", "test"),
+    train_splits: tuple[str, ...] = ("train",),
+    validation_splits: tuple[str, ...] = ("validation",),
 ) -> dict[str, Any]:
     """Train a supervised TTC model on a materialized voxel cache."""
 
@@ -156,22 +168,33 @@ def train_tiny_cnn(
     if not evaluation_splits:
         msg = "evaluation_splits must contain at least one split."
         raise ValueError(msg)
-    unknown_eval_splits = set(evaluation_splits) - {"train", "validation", "test"}
-    if unknown_eval_splits:
-        msg = f"Unknown evaluation splits: {sorted(unknown_eval_splits)}."
+    if not train_splits:
+        msg = "train_splits must contain at least one split."
+        raise ValueError(msg)
+    if not validation_splits:
+        msg = "validation_splits must contain at least one split."
         raise ValueError(msg)
     cache = np.load(cache_path, allow_pickle=False)
     x = cache["x"]
     y_ttc = cache["y_ttc"].astype(np.float32)
     split = cache["split"].astype(str)
     y_log = np.log(np.clip(y_ttc, 1e-4, None)).astype(np.float32)
+    available_splits = _available_split_names(split)
+    missing_names = sorted(
+        (set(train_splits) | set(validation_splits) | set(evaluation_splits))
+        - available_splits
+    )
+    if missing_names:
+        msg = f"Requested split names are missing from cache: {missing_names}."
+        raise ValueError(msg)
 
-    train_idx = _split_indices(split, "train")
-    val_idx = _split_indices(split, "validation")
-    test_idx = _split_indices(split, "test")
-    split_indices = {"train": train_idx, "validation": val_idx, "test": test_idx}
+    train_idx = _split_indices_any(split, train_splits)
+    val_idx = _split_indices_any(split, validation_splits)
+    split_indices = {
+        split_name: _split_indices(split, split_name) for split_name in available_splits
+    }
     if train_idx.size == 0 or val_idx.size == 0:
-        msg = "Cache must contain train and validation splits."
+        msg = "Requested train and validation splits must be non-empty."
         raise ValueError(msg)
     missing_eval_splits = [
         split_name
@@ -198,10 +221,11 @@ def train_tiny_cnn(
     train_dataset = VoxelCacheDataset(x, y_log, train_idx)
     val_dataset = VoxelCacheDataset(x, y_log, val_idx)
     datasets = {
-        "train": train_dataset,
-        "validation": val_dataset,
-        "test": VoxelCacheDataset(x, y_log, test_idx),
+        split_name: VoxelCacheDataset(x, y_log, indices)
+        for split_name, indices in split_indices.items()
     }
+    datasets["__train_selection__"] = train_dataset
+    datasets["__validation_selection__"] = val_dataset
     train_loader = DataLoader(
         train_dataset,
         batch_size=batch_size,
@@ -332,6 +356,8 @@ def train_tiny_cnn(
         "pretrained_encoder": pretrained_encoder,
         "freeze_encoder": freeze_encoder,
         "train_fraction": train_fraction,
+        "train_splits": list(train_splits),
+        "validation_splits": list(validation_splits),
         "evaluation_splits": list(evaluation_splits),
         "full_train_count": full_train_count,
         "effective_train_count": int(train_idx.size),
@@ -371,10 +397,6 @@ def evaluate_supervised_checkpoint(
     if not evaluation_splits:
         msg = "evaluation_splits must contain at least one split."
         raise ValueError(msg)
-    unknown_eval_splits = set(evaluation_splits) - {"train", "validation", "test"}
-    if unknown_eval_splits:
-        msg = f"Unknown evaluation splits: {sorted(unknown_eval_splits)}."
-        raise ValueError(msg)
     if batch_size <= 0:
         msg = "batch_size must be positive."
         raise ValueError(msg)
@@ -384,10 +406,13 @@ def evaluate_supervised_checkpoint(
     y_ttc = cache["y_ttc"].astype(np.float32)
     split = cache["split"].astype(str)
     y_log = np.log(np.clip(y_ttc, 1e-4, None)).astype(np.float32)
+    available_splits = _available_split_names(split)
+    missing_names = sorted(set(evaluation_splits) - available_splits)
+    if missing_names:
+        msg = f"Requested split names are missing from cache: {missing_names}."
+        raise ValueError(msg)
     split_indices = {
-        "train": _split_indices(split, "train"),
-        "validation": _split_indices(split, "validation"),
-        "test": _split_indices(split, "test"),
+        split_name: _split_indices(split, split_name) for split_name in available_splits
     }
     missing_eval_splits = [
         split_name

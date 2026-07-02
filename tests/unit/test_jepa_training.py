@@ -3,8 +3,10 @@ from pathlib import Path
 import numpy as np
 
 from e_jepa_ttc.data.evttc import NAVIGATION_FEATURE_NAMES
+from e_jepa_ttc.data.ml_cache import remap_cache_splits
 from e_jepa_ttc.training.jepa import pretrain_jepa
 from e_jepa_ttc.training.supervised import evaluate_supervised_checkpoint, train_tiny_cnn
+from e_jepa_ttc.utils.io import write_structured
 
 
 def _write_cache(path: Path) -> None:
@@ -70,6 +72,30 @@ def _write_navigation_cache(path: Path) -> None:
     )
 
 
+def _write_multival_cache(path: Path) -> None:
+    rng = np.random.default_rng(17)
+    x = rng.normal(size=(16, 6, 12, 16)).astype(np.float16)
+    y_ttc = np.linspace(1.0, 6.0, num=16, dtype=np.float32)
+    split = np.array(
+        ["train"] * 8 + ["validation_car"] * 4 + ["validation_pedestrian"] * 2 + ["test"] * 2
+    )
+    sequence_id = np.array(
+        ["seq-train"] * 8 + ["seq-car"] * 4 + ["seq-ped"] * 2 + ["seq-test"] * 2
+    )
+    np.savez(
+        path,
+        x=x,
+        y_ttc=y_ttc,
+        split=split,
+        sequence_id=sequence_id,
+        timestamp_us=np.arange(16, dtype=np.int64) * 20_000,
+        event_count=np.arange(16, dtype=np.int32),
+        width=np.array(16, dtype=np.int32),
+        height=np.array(12, dtype=np.int32),
+        bins=np.array(3, dtype=np.int32),
+    )
+
+
 def test_jepa_checkpoint_loads_into_supervised_trainer(tmp_path: Path) -> None:
     cache_path = tmp_path / "cache.npz"
     _write_cache(cache_path)
@@ -129,6 +155,71 @@ def test_supervised_training_can_skip_test_evaluation(tmp_path: Path) -> None:
     predictions = np.load(tmp_path / "validation_only_finetune" / "predictions.npz")
     assert "test_pred" not in predictions.files
     assert "test_true" not in predictions.files
+
+
+def test_supervised_training_accepts_named_validation_splits(tmp_path: Path) -> None:
+    cache_path = tmp_path / "multival_cache.npz"
+    _write_multival_cache(cache_path)
+
+    train_summary = train_tiny_cnn(
+        cache_path=cache_path,
+        output_dir=tmp_path / "multival_finetune",
+        epochs=1,
+        batch_size=4,
+        seed=5,
+        device_name="cpu",
+        train_splits=("train",),
+        validation_splits=("validation_car", "validation_pedestrian"),
+        evaluation_splits=("train", "validation_car", "validation_pedestrian"),
+    )
+
+    assert train_summary["train_splits"] == ["train"]
+    assert train_summary["validation_splits"] == ["validation_car", "validation_pedestrian"]
+    assert sorted(train_summary["splits"]) == [
+        "train",
+        "validation_car",
+        "validation_pedestrian",
+    ]
+    assert train_summary["splits"]["validation_car"]["count"] == 4
+    assert train_summary["splits"]["validation_pedestrian"]["count"] == 2
+
+
+def test_cache_split_remap_uses_sequence_ids(tmp_path: Path) -> None:
+    cache_path = tmp_path / "multival_cache.npz"
+    _write_multival_cache(cache_path)
+    split_path = tmp_path / "split.yaml"
+    output_path = tmp_path / "remapped.npz"
+    write_structured(
+        split_path,
+        {
+            "splits": {
+                "train": ["seq-train"],
+                "validation_car": ["seq-car"],
+                "validation_pedestrian": ["seq-ped"],
+                "test": ["seq-test"],
+            }
+        },
+    )
+
+    summary = remap_cache_splits(
+        cache_path=cache_path,
+        split_path=split_path,
+        output_path=output_path,
+    )
+    remapped = np.load(output_path)
+
+    assert summary["new_split_counts"] == {
+        "test": 2,
+        "train": 8,
+        "validation_car": 4,
+        "validation_pedestrian": 2,
+    }
+    assert set(remapped["split"].astype(str)) == {
+        "train",
+        "validation_car",
+        "validation_pedestrian",
+        "test",
+    }
 
 
 def test_evaluate_supervised_checkpoint_without_retraining(tmp_path: Path) -> None:
