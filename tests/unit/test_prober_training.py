@@ -6,6 +6,7 @@ import torch
 
 from e_jepa_ttc.training.jepa import pretrain_jepa
 from e_jepa_ttc.training.prober import (
+    _compose_rollout_features,
     evaluate_roi_latent_ttc_prober_checkpoint,
     evaluate_roi_rollout_ttc_prober_checkpoint,
     train_latent_ttc_prober,
@@ -83,6 +84,37 @@ def test_roi_latent_prober_checkpoint_evaluation_rejects_wrong_checkpoint(
             prober_checkpoint_path=checkpoint_path,
             device_name="cpu",
         )
+
+
+def test_compose_rollout_dynamics_features_includes_temporal_terms() -> None:
+    context = torch.ones((2, 4), dtype=torch.float32)
+    pred = torch.stack(
+        [
+            torch.full((2, 4), 2.0),
+            torch.full((2, 4), 3.0),
+            torch.full((2, 4), 5.0),
+        ],
+        dim=1,
+    )
+
+    flat = _compose_rollout_features(
+        context_summary=context,
+        pred_summary=pred,
+        horizons_ms=(20, 60, 100),
+        include_context_latent=True,
+        feature_mode="flat",
+    )
+    dynamics = _compose_rollout_features(
+        context_summary=context,
+        pred_summary=pred,
+        horizons_ms=(20, 60, 100),
+        include_context_latent=True,
+        feature_mode="dynamics",
+    )
+
+    assert flat.shape == (2, 16)
+    assert dynamics.shape[0] == 2
+    assert dynamics.shape[1] > flat.shape[1]
 
 
 def test_roi_rollout_prober_checkpoint_evaluation_rejects_wrong_checkpoint(

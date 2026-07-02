@@ -1381,6 +1381,29 @@ flat rollout-summary prober is a negative result. The next serious version
 should keep the per-horizon structure and use a kinematic/TTC head rather than
 flattening all predicted horizons into one MLP feature vector.
 
+## 2026-07-02 Rollout Dynamics Feature Ablation
+
+Implemented `--rollout-feature-mode dynamics` for `train roi-rollout-prober`.
+This mode augments flat predicted future-token summaries with:
+
+- per-horizon latent deltas from the current context summary;
+- latent velocities normalized by horizon time;
+- consecutive-horizon latent velocities;
+- compact scalar norms/cosine similarities.
+
+Validation-only seed 7 result on the full-starter validation split:
+
+| Variant | Validation MAE | Relative error | Best epoch |
+| --- | ---: | ---: | ---: |
+| flat rollout, mean-std + context | `0.210 s` | `10.17%` | 31 |
+| dynamics rollout, mean-std + context | `0.248 s` | `11.93%` | 2 |
+
+The dynamics feature mode overfits almost immediately and is worse than the
+flat rollout prober. No CPLA-high test was run. This supports the same
+conclusion as the previous rollout experiment: useful SkyJEPA-style TTC probing
+needs a constrained per-horizon kinematic head, not just more flattened rollout
+features.
+
 ## 2026-07-02 Final Local Package And Paper
 
 Created the thesis-style English paper:

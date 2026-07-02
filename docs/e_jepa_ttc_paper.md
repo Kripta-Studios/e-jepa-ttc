@@ -309,6 +309,14 @@ The flat rollout prober is a negative result. It confirms that simply flattening
 future latent summaries into an MLP is not sufficient. The next version should
 preserve per-horizon structure and include a kinematic/TTC head.
 
+A second validation-only rollout ablation added explicit latent dynamics
+features: per-horizon deltas from the context summary, horizon-normalized
+latent velocities, consecutive-horizon latent velocities, and compact
+norm/cosine statistics. On seed 7, this `dynamics` feature mode reached
+`0.248 s` validation MAE and `11.93%` relative error, worse than the flat seed-7
+rollout prober (`0.210 s`, `10.17%`). Its best checkpoint occurred at epoch 2,
+indicating immediate overfitting. CPLA-high was not evaluated for this branch.
+
 ## 8. Reproducibility
 
 ### 8.1 Environment

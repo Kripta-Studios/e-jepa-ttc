@@ -268,4 +268,8 @@ It is a useful negative result rather than a new SOTA candidate:
 
 This confirms the next design refinement: preserve per-horizon rollout structure
 and use a kinematic/TTC head, instead of flattening all predicted horizons into a
-single residual MLP.
+single residual MLP. A follow-up `dynamics` feature mode that added flattened
+latent deltas and velocities also underperformed on validation (`0.248 s` MAE
+for seed 7 versus `0.210 s` for the flat rollout seed 7), reinforcing that the
+next step should be a constrained temporal head rather than more high-dimensional
+flattened features.

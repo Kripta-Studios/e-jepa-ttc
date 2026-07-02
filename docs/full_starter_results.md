@@ -503,6 +503,11 @@ prober on single-sequence validation MAE (`0.226 s`) but is worse in relative
 error and much worse on the harder pedestrian validation. Therefore the
 CPLA-high test was not evaluated for this rollout branch.
 
+An additional `--rollout-feature-mode dynamics` ablation added latent deltas and
+velocities by horizon. Seed 7 reached only `0.248 s` validation MAE and selected
+epoch 2, worse than the flat rollout seed 7 result (`0.210 s`). This branch was
+also stopped at validation.
+
 Conclusion: SkyJEPA is key for the next architecture direction, especially the
 frozen latent prober and action-conditioned rollout framing. The current
 predicted-rollout prober is still too weak because it summarizes rollouts into a

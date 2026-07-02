@@ -305,6 +305,7 @@ def _cmd_train_roi_rollout_prober(args: argparse.Namespace) -> int:
         model_name=args.model,
         rollout_token_summary=args.rollout_token_summary,
         rollout_include_context=not args.no_rollout_context,
+        rollout_feature_mode=args.rollout_feature_mode,
         hidden_dim=args.hidden_dim,
         dropout=args.dropout,
         physics_prior=args.physics_prior,
@@ -662,6 +663,12 @@ def build_parser() -> argparse.ArgumentParser:
         "--no-rollout-context",
         action="store_true",
         help="Use predicted future rollout features without the current context latent summary.",
+    )
+    train_roi_rollout.add_argument(
+        "--rollout-feature-mode",
+        choices=["flat", "dynamics"],
+        default="flat",
+        help="Rollout feature composition. 'dynamics' adds horizon deltas and velocities.",
     )
     train_roi_rollout.add_argument("--hidden-dim", type=int, default=128)
     train_roi_rollout.add_argument("--dropout", type=float, default=0.10)

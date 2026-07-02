@@ -276,6 +276,56 @@ def _token_summary_features(tokens: torch.Tensor, *, token_summary: str) -> torc
     raise ValueError(msg)
 
 
+def _compose_rollout_features(
+    *,
+    context_summary: torch.Tensor,
+    pred_summary: torch.Tensor,
+    horizons_ms: tuple[int, ...],
+    include_context_latent: bool,
+    feature_mode: str,
+) -> torch.Tensor:
+    if feature_mode not in {"flat", "dynamics"}:
+        msg = "feature_mode must be one of {'flat', 'dynamics'}."
+        raise ValueError(msg)
+    pieces: list[torch.Tensor] = []
+    if include_context_latent:
+        pieces.append(context_summary)
+    pieces.append(pred_summary.reshape(pred_summary.shape[0], -1))
+    if feature_mode == "flat":
+        return torch.cat(pieces, dim=1)
+
+    horizon_seconds = torch.tensor(
+        [max(horizon_ms, 1) / 1000.0 for horizon_ms in horizons_ms],
+        dtype=pred_summary.dtype,
+        device=pred_summary.device,
+    ).view(1, -1, 1)
+    deltas = pred_summary - context_summary[:, None, :]
+    velocities = deltas / horizon_seconds
+    dynamics_pieces = [
+        deltas.reshape(deltas.shape[0], -1),
+        velocities.reshape(velocities.shape[0], -1),
+    ]
+    if pred_summary.shape[1] > 1:
+        step_seconds = torch.diff(horizon_seconds, dim=1).clamp_min(1e-3)
+        step_velocity = (pred_summary[:, 1:, :] - pred_summary[:, :-1, :]) / step_seconds
+        dynamics_pieces.append(step_velocity.reshape(step_velocity.shape[0], -1))
+    scalar_features = [
+        torch.linalg.vector_norm(deltas, dim=2),
+        torch.linalg.vector_norm(velocities, dim=2),
+        torch.nn.functional.cosine_similarity(
+            pred_summary,
+            context_summary[:, None, :],
+            dim=2,
+            eps=1e-6,
+        ),
+    ]
+    if pred_summary.shape[1] > 1:
+        scalar_features.append(torch.linalg.vector_norm(step_velocity, dim=2))
+    dynamics_pieces.append(torch.cat(scalar_features, dim=1))
+    pieces.extend(dynamics_pieces)
+    return torch.cat(pieces, dim=1)
+
+
 def _build_frozen_jepa_predictor(
     checkpoint: dict[str, Any],
     *,
@@ -356,6 +406,7 @@ def _extract_predicted_rollout_features(
     action_feature_std: torch.Tensor | None,
     action_feature_dim: int,
     include_context_latent: bool,
+    feature_mode: str,
     deep_supervision_layers: tuple[int, ...] = (),
 ) -> np.ndarray:
     rows: list[np.ndarray] = []
@@ -396,26 +447,30 @@ def _extract_predicted_rollout_features(
                         pred_tokens.reshape(batch_size_actual * horizon_count, token_count, dim),
                         token_summary=token_summary,
                     ).view(batch_size_actual, horizon_count, -1)
-                    pieces = [pred_summary.reshape(batch_size_actual, -1)]
-                    if include_context_latent:
-                        pieces.insert(
-                            0,
-                            _token_summary_features(
-                                context_tokens,
-                                token_summary=token_summary,
-                            ),
-                        )
-                    features = torch.cat(pieces, dim=1)
+                    context_summary = _token_summary_features(
+                        context_tokens,
+                        token_summary=token_summary,
+                    )
+                    features = _compose_rollout_features(
+                        context_summary=context_summary,
+                        pred_summary=pred_summary,
+                        horizons_ms=horizons_ms,
+                        include_context_latent=include_context_latent,
+                        feature_mode=feature_mode,
+                    )
                 else:
                     if action_feature_dim:
                         msg = "Pooled JEPA rollout probing does not support action conditioning."
                         raise ValueError(msg)
                     context_z = encoder(batch)
                     pred_z = predictor(context_z, horizon_ids)
-                    pieces = [pred_z.reshape(pred_z.shape[0], -1)]
-                    if include_context_latent:
-                        pieces.insert(0, context_z)
-                    features = torch.cat(pieces, dim=1)
+                    features = _compose_rollout_features(
+                        context_summary=context_z,
+                        pred_summary=pred_z,
+                        horizons_ms=horizons_ms,
+                        include_context_latent=include_context_latent,
+                        feature_mode=feature_mode,
+                    )
             rows.append(features.detach().float().cpu().numpy())
     return np.concatenate(rows, axis=0).astype(np.float32)
 
@@ -1256,6 +1311,7 @@ def train_roi_rollout_ttc_prober(
     model_name: str | None = None,
     rollout_token_summary: str = "mean-std",
     rollout_include_context: bool = True,
+    rollout_feature_mode: str = "flat",
     hidden_dim: int = 128,
     dropout: float = 0.10,
     physics_prior: str = "ridge",
@@ -1281,6 +1337,9 @@ def train_roi_rollout_ttc_prober(
         raise ValueError(msg)
     if rollout_token_summary not in {"mean", "mean-std"}:
         msg = "rollout_token_summary must be one of {'mean', 'mean-std'}."
+        raise ValueError(msg)
+    if rollout_feature_mode not in {"flat", "dynamics"}:
+        msg = "rollout_feature_mode must be one of {'flat', 'dynamics'}."
         raise ValueError(msg)
     selected_split_names = tuple(
         dict.fromkeys((*train_splits, *validation_splits, *evaluation_splits))
@@ -1393,6 +1452,7 @@ def train_roi_rollout_ttc_prober(
         action_feature_std=action_feature_std,
         action_feature_dim=action_feature_dim,
         include_context_latent=rollout_include_context,
+        feature_mode=rollout_feature_mode,
         deep_supervision_layers=tuple(jepa_metadata["deep_supervision_layers"]),
     )
     rollout_features = all_rollout_features[cache_indices]
@@ -1465,6 +1525,7 @@ def train_roi_rollout_ttc_prober(
         "dropout": dropout,
         "rollout_token_summary": rollout_token_summary,
         "rollout_include_context": rollout_include_context,
+        "rollout_feature_mode": rollout_feature_mode,
         "physics_prior": physics_prior,
         "ridge_alpha": ridge_alpha,
         "feature_mean": feature_mean.tolist(),
@@ -1569,6 +1630,7 @@ def train_roi_rollout_ttc_prober(
         "max_cache_slop_ms": max_cache_slop_ms,
         "rollout_token_summary": rollout_token_summary,
         "rollout_include_context": rollout_include_context,
+        "rollout_feature_mode": rollout_feature_mode,
         "hidden_dim": hidden_dim,
         "dropout": dropout,
         "physics_prior": physics_prior,
@@ -1590,7 +1652,7 @@ def train_roi_rollout_ttc_prober(
         "elapsed_seconds": time.perf_counter() - start_time,
         "last": history[-1] if history else None,
         "feature_names": {
-            "rollout": f"frozen_jepa_predicted_{rollout_token_summary}",
+            "rollout": f"frozen_jepa_predicted_{rollout_token_summary}_{rollout_feature_mode}",
             "roi": list(ROI_EVENT_FEATURE_NAMES),
             "prior": physics_prior,
         },
@@ -1964,6 +2026,10 @@ def evaluate_roi_rollout_ttc_prober_checkpoint(
     )
     rollout_token_summary = str(checkpoint.get("rollout_token_summary", "mean-std"))
     rollout_include_context = bool(checkpoint.get("rollout_include_context", True))
+    rollout_feature_mode = str(checkpoint.get("rollout_feature_mode", "flat"))
+    if rollout_feature_mode not in {"flat", "dynamics"}:
+        msg = f"Unsupported rollout_feature_mode in checkpoint: {rollout_feature_mode!r}."
+        raise ValueError(msg)
     all_rollout_features = _extract_predicted_rollout_features(
         encoder=encoder,
         predictor=predictor,
@@ -1979,6 +2045,7 @@ def evaluate_roi_rollout_ttc_prober_checkpoint(
         action_feature_std=action_feature_std,
         action_feature_dim=action_feature_dim,
         include_context_latent=rollout_include_context,
+        feature_mode=rollout_feature_mode,
         deep_supervision_layers=tuple(jepa_metadata["deep_supervision_layers"]),
     )
     rollout_features = all_rollout_features[cache_indices]
@@ -2073,6 +2140,7 @@ def evaluate_roi_rollout_ttc_prober_checkpoint(
         "max_cache_slop_ms": max_cache_slop_ms,
         "rollout_token_summary": rollout_token_summary,
         "rollout_include_context": rollout_include_context,
+        "rollout_feature_mode": rollout_feature_mode,
         "physics_prior": physics_prior,
         "evaluation_splits": list(evaluation_splits),
         "loaded_roi_rows": int(len(all_rows)),
