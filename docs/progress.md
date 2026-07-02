@@ -636,3 +636,59 @@ slightly, but the three-seed validation result does not beat the previous local
 best. Therefore the sealed test remains unopened for this ablation, and the
 current empirical best remains the earlier event-tubelet navigation JEPA result.
 
+## 2026-07-02 Train-Only Action Normalization And Frozen Test Check
+
+The explicit action vector was then normalized with statistics estimated only
+from SSL train context windows. This is implemented in `pretrain_jepa` and
+recorded in checkpoints as:
+
+- `action_feature_normalization=true`
+- `action_feature_normalization_source=pretrain_context_indices_train_only`
+- `leakage_audit.action_feature_normalization_uses_train_only=true`
+
+Normalized action JEPA pretrain:
+
+- run: `artifacts/runs/jepa_event_tubelet_actionnorm_nav_full_starter_seed7_30e`
+- best SSL validation epoch: 29
+- best SSL validation loss: `0.0018199`
+
+Fine-tuning was first done validation-only. LR `3e-4` improved seeds 7/13 but
+remained noisy; LR `1e-4` was then selected on validation and frozen before the
+sealed test check.
+
+Validation-only MAE for the frozen LR `1e-4` protocol:
+
+| Run | Seed | Best epoch | Validation MAE |
+| --- | ---: | ---: | ---: |
+| Action-normalized tubelet JEPA, validation-only | 7 | 27 | 0.227108 s |
+| Action-normalized tubelet JEPA, validation-only | 13 | 8 | 0.217966 s |
+| Action-normalized tubelet JEPA, validation-only | 21 | 39 | 0.229651 s |
+
+Mean validation MAE: `0.224908 +/- 0.005018 s`, a 7.42% validation improvement
+over the previous tubelet navigation JEPA validation mean
+`0.242929 +/- 0.005325 s`.
+
+Because the protocol was selected by validation and then frozen, the sealed test
+was opened once with `train evaluate`, without retraining:
+
+| Run | Seed | Test MAE |
+| --- | ---: | ---: |
+| Action-normalized tubelet JEPA frozen test | 7 | 0.369874 s |
+| Action-normalized tubelet JEPA frozen test | 13 | 0.420796 s |
+| Action-normalized tubelet JEPA frozen test | 21 | 0.331366 s |
+
+Mean sealed-test MAE: `0.374012 +/- 0.036626 s`. This is 14.06% worse than the
+previous best event-tubelet navigation JEPA sealed-test mean
+`0.327904 +/- 0.024231 s`.
+
+Interpretation:
+
+- The normalized action predictor is a validation improvement but not a sealed
+  test improvement.
+- The current validation split (`CCRs-side-high`) is not fully predictive of the
+  sealed pedestrian test (`CPLA-high`).
+- Do not tune further on `CPLA-high`; the current best local sealed result
+  remains the earlier event-tubelet navigation JEPA result.
+- A real next step needs a stronger validation/test design or more official
+  sequences, not additional tuning against the now-opened sealed result.
+

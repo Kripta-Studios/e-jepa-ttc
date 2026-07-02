@@ -167,6 +167,17 @@ validation MAEs `0.236`, `0.247`, and `0.258 s`, for
 validation MAE. Because it did not beat validation, the sealed test was not run
 for this ablation.
 
+Adding train-only normalization for the 15-D action vector improved validation
+but did not improve the sealed test. With LR `1e-4`, the frozen
+action-normalized protocol reached validation MAEs `0.227`, `0.218`, and
+`0.230 s` over seeds 7/13/21, or `0.225 +/- 0.005 s`. This is 7.42% better than
+the previous tubelet navigation JEPA validation mean. After freezing that
+protocol, the sealed test was evaluated once without retraining via
+`train evaluate`; sealed-test MAEs were `0.370`, `0.421`, and `0.331 s`, or
+`0.374 +/- 0.037 s`. This is 14.06% worse than the previous best sealed-test
+mean `0.328 +/- 0.024 s`, so the best local result remains
+`Event tubelet JEPA + navigation fine-tune`.
+
 ## Detection-Assisted Reference
 
 The missing official `bbox_segmentation` folders were recovered after
