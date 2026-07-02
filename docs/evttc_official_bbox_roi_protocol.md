@@ -55,20 +55,25 @@ Current local bbox/ROI result:
 | Causal bbox geometry | train bbox frames | 871 | 856 | MAE 0.512 s, RMSE 1.007 s |
 | Causal bbox geometry | validation bbox frames | 108 | 106 | MAE 0.279 s, RMSE 0.538 s |
 | Causal bbox geometry | sealed CPLA-high bbox frames | 83 | 81 | MAE 0.157 s, RMSE 0.331 s |
+| ROI event ridge | train bbox frames | 871 | 871 | MAE 0.659 s, mean relative error 19.15% |
+| ROI event ridge | validation bbox frames | 108 | 108 | MAE 0.293 s, mean relative error 13.63% |
+| ROI event ridge | sealed CPLA-high bbox frames | 83 | 83 | MAE 0.829 s, mean relative error 47.12% |
 
-This is detection-assisted and frame-label-only. It uses current and past bbox
-scale, with train-only calibration, and reports TTC error in seconds. It is not
-the official CMax/STRTTC metric table and must not be compared as if it were.
+These are detection-assisted and frame-label-only. `causal-geometry` uses
+current and past bbox scale with train-only calibration. `roi-events` uses the
+current object box to crop only past/current events in a 100 ms window and fits a
+train-only ridge regressor. They are not the official CMax/STRTTC metric table
+and must not be compared as if they were.
 
 ## Compatibility Matrix
 
 | Requirement | Official CMax/STRTTC-style benchmark | Current repo status |
 | --- | --- | --- |
-| Inputs | Event stream cropped/selected by bbox or ROI | All-window JEPA exists; bbox geometry exists |
-| Baselines | STRTTC, CMax, ETTCM, FAITH, AEB-Tracker, Image FoE | Only causal bbox geometry is implemented locally |
+| Inputs | Event stream cropped/selected by bbox or ROI | All-window JEPA exists; bbox geometry and causal ROI event extraction exist |
+| Baselines | STRTTC, CMax, ETTCM, FAITH, AEB-Tracker, Image FoE | Causal bbox geometry and ROI event ridge are implemented locally |
 | Sequences | CCRs1/CCRs2/CCRm plus slider testbed in paper table | Full starter uses CCRs-side and CPLA validation/test |
-| Metrics | Published benchmark metric plus runtime, averaged over runs | MAE/RMSE seconds for local regression outputs |
-| Test discipline | Fixed benchmark sequences | Current test remains sealed; tuning only by validation |
+| Metrics | Relative TTC error plus runtime, averaged over runs | MAE/RMSE seconds and relative error % for local regression outputs |
+| Test discipline | Fixed benchmark sequences | Frozen final checks only; tuning only by validation |
 | Claim allowed now | No | No official SOTA or SOTSA claim yet |
 
 ## Required Next Work For A Real Comparison
@@ -79,8 +84,8 @@ the official CMax/STRTTC metric table and must not be compared as if it were.
    including `Slider-750` and `Slider-1000`.
 3. Implement or wrap the official STRTTC MATLAB code and a CMax baseline under a
    deterministic CLI, recording runtime and random seeds.
-4. Add an ROI event extractor that uses only current/past bbox information at
-   inference time and never future boxes.
+4. Promote the current `roi-events` extractor from ridge smoke baseline to a
+   shared official-protocol data adapter for CMax/STRTTC wrappers.
 5. Evaluate every method on the same frames/events, same sequence list, same TTC
    alignment, and same metric.
 6. Keep model selection on validation. Run the sealed test once per frozen
@@ -125,5 +130,6 @@ Until those items are done, the correct comparison is:
 
 > Our best local all-window JEPA result is strong on the sealed starter split,
 > but it is not directly comparable with EvTTC Table V CMax/STRTTC results.
-> The only bbox/ROI result currently implemented is a causal geometry reference,
-> useful for protocol plumbing, not for claiming official SOTA.
+> The local bbox/ROI results currently implemented are causal geometry and
+> ROI-event ridge references, useful for protocol plumbing, not for claiming
+> official SOTA.

@@ -27,6 +27,8 @@ class LabelMeasurement:
     bbox_area: float
     bbox_scale: float
     ttc_seconds: float
+    image_width: int | None = None
+    image_height: int | None = None
 
     def to_dict(self) -> dict[str, Any]:
         """Serialize measurement for JSON/YAML outputs."""
@@ -48,14 +50,34 @@ def _bbox_from_segmentation(segmentation: object) -> tuple[float, float, float, 
     return min(xs), min(ys), max(xs), max(ys)
 
 
-def parse_isat_label(path: str | Path) -> tuple[str, tuple[float, float, float, float]] | None:
-    """Parse the largest object bbox from an ISAT JSON label file."""
+@dataclass(frozen=True)
+class ParsedISATLabel:
+    """Largest labeled object and source image dimensions from one ISAT file."""
+
+    category: str
+    bbox_xyxy: tuple[float, float, float, float]
+    image_width: int | None
+    image_height: int | None
+
+
+def parse_isat_label_metadata(path: str | Path) -> ParsedISATLabel | None:
+    """Parse the largest object bbox and source image size from an ISAT JSON file."""
 
     label_path = Path(path)
     data = json.loads(label_path.read_text(encoding="utf-8"))
     objects = data.get("objects", [])
     if not isinstance(objects, list):
         return None
+    info = data.get("info", {})
+    image_width = None
+    image_height = None
+    if isinstance(info, dict):
+        raw_width = info.get("width")
+        raw_height = info.get("height")
+        if raw_width is not None:
+            image_width = int(raw_width)
+        if raw_height is not None:
+            image_height = int(raw_height)
 
     best: tuple[str, tuple[float, float, float, float], float] | None = None
     for item in objects:
@@ -74,7 +96,21 @@ def parse_isat_label(path: str | Path) -> tuple[str, tuple[float, float, float, 
             best = (category, bbox, area)
     if best is None:
         return None
-    return best[0], best[1]
+    return ParsedISATLabel(
+        category=best[0],
+        bbox_xyxy=best[1],
+        image_width=image_width,
+        image_height=image_height,
+    )
+
+
+def parse_isat_label(path: str | Path) -> tuple[str, tuple[float, float, float, float]] | None:
+    """Parse the largest object bbox from an ISAT JSON label file."""
+
+    parsed = parse_isat_label_metadata(path)
+    if parsed is None:
+        return None
+    return parsed.category, parsed.bbox_xyxy
 
 
 def load_label_measurements(sequence: DatasetSequence) -> list[LabelMeasurement]:
@@ -102,10 +138,10 @@ def load_label_measurements(sequence: DatasetSequence) -> list[LabelMeasurement]
             continue
         if frame_index < 0 or frame_index >= len(frame_ts):
             continue
-        parsed = parse_isat_label(label_path)
+        parsed = parse_isat_label_metadata(label_path)
         if parsed is None:
             continue
-        category, bbox = parsed
+        bbox = parsed.bbox_xyxy
         timestamp_us = int(frame_ts[frame_index])
         ttc_seconds = interpolate_ttc_seconds(table, timestamp_us)
         if ttc_seconds is None:
@@ -119,11 +155,13 @@ def load_label_measurements(sequence: DatasetSequence) -> list[LabelMeasurement]
                 sequence_id=sequence.sequence_id,
                 frame_index=frame_index,
                 timestamp_us=timestamp_us,
-                category=category,
+                category=parsed.category,
                 bbox_xyxy=bbox,
                 bbox_area=area,
                 bbox_scale=float(np.sqrt(area)),
                 ttc_seconds=float(ttc_seconds),
+                image_width=parsed.image_width,
+                image_height=parsed.image_height,
             )
         )
     return measurements

@@ -66,6 +66,11 @@ Leakage audit from the run:
 Lower MAE is better. Test is the sealed `CPLA-high` sequence and was not used
 for model or hyperparameter selection in this protocol.
 
+For a percentage-style reading, the current best
+`Event tubelet JEPA + navigation fine-tune` has mean absolute relative error
+`7.51 +/- 0.51%` on validation and `6.89 +/- 0.34%` on the sealed test over
+seeds 7/13/21.
+
 | Method | Train labels | Seeds | Validation MAE | Test MAE |
 | --- | ---: | --- | ---: | ---: |
 | Event-rate ridge | 100% | deterministic | 2.303 | 2.489 |
@@ -217,11 +222,40 @@ sealed test windows. It should not be compared as an event-only model result.
 It does show that reproducing CMax/STRTTC-style SOTA fairly requires complete
 bbox/segmentation assets and a benchmark-aligned frame protocol.
 
+Added after the official-protocol audit: `baseline roi-events`, a causal
+bbox/ROI event-feature ridge model. It scales RGB label boxes from `1920x1200`
+into the event plane (`1280x720`) and uses only events in
+`[timestamp - 100 ms, timestamp]`. It uses the current object box, so it is
+detection-assisted, not all-window event-only.
+
+Sealed full-starter result with fixed `context_ms=100` and `ridge_alpha=1.0`:
+
+| Method | Split | Labels | Predictions | MAE | Mean relative error |
+| --- | --- | ---: | ---: | ---: | ---: |
+| ROI event ridge | train bbox frames | 871 | 871 | 0.659 s | 19.15% |
+| ROI event ridge | validation bbox frames | 108 | 108 | 0.293 s | 13.63% |
+| ROI event ridge | sealed CPLA-high bbox frames | 83 | 83 | 0.829 s | 47.12% |
+
+Multi-domain validation without evaluating sealed test:
+
+| Method | Split | Labels | MAE | Mean relative error |
+| --- | --- | ---: | ---: | ---: |
+| ROI event ridge | validation_car (`CCRs-side-high`) | 108 | 0.293 s | 14.63% |
+| ROI event ridge | validation_pedestrian (`CPLA-medium`) | 85 | 1.342 s | 65.52% |
+
+Interpretation: the simple ROI feature model is closer to the official
+CMax/STRTTC input assumption than full-frame JEPA, but it is empirically much
+weaker on pedestrian transfer. The best all-window JEPA remains the best local
+sealed result (`6.89%` mean relative test error), while ROI event ridge is
+useful mainly as protocol plumbing for bbox/ROI comparison.
+
 Run:
 
 ```powershell
 $env:PYTHONPATH=(Resolve-Path src).Path
 .\.venv\Scripts\e-jepa-ttc.exe baseline causal-geometry --manifest artifacts\metrics\evttc_scan_full_bbox.yaml --split data\splits\evttc_full_starter_sealed.yaml --output artifacts\metrics\causal_geometry_full_starter_full_bbox.json --derivative-window 15
+.\.venv\Scripts\python.exe -m e_jepa_ttc baseline roi-events --manifest artifacts\metrics\evttc_scan_full_bbox.yaml --split data\splits\evttc_full_starter_sealed.yaml --output artifacts\metrics\roi_events_full_starter_full_bbox.json --context-ms 100 --ridge-alpha 1.0
+.\.venv\Scripts\python.exe -m e_jepa_ttc baseline roi-events --manifest artifacts\metrics\evttc_scan_full_bbox.yaml --split data\splits\evttc_full_starter_dev_multival.yaml --output artifacts\metrics\roi_events_full_starter_dev_multival.json --context-ms 100 --ridge-alpha 1.0 --evaluation-splits validation_car validation_pedestrian
 ```
 
 This is not an official SOTA claim. The run is a local starter protocol, not a

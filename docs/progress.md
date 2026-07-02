@@ -747,3 +747,48 @@ Interpretation:
   official bbox/ROI comparison assets or stronger pedestrian supervision/data,
   not more architecture tweaks selected on the already-opened CPLA-high test.
 
+## 2026-07-02 Causal ROI Event Baseline
+
+Implemented `baseline roi-events` as the first bbox/ROI event baseline aligned
+with the official CMax/STRTTC input assumption:
+
+- RGB bbox labels now retain source image dimensions, so boxes are scaled from
+  `1920x1200` into the event plane (`1280x720`) before ROI extraction.
+- Event features use only the causal window
+  `[timestamp - context_ms, timestamp]`; tests verify future events are ignored.
+- The regressor is train-only standardized ridge on log TTC. Validation/test TTC
+  labels are not used for fit or feature normalization.
+- Added `--evaluation-splits` so diagnostic runs can skip sealed test entirely.
+
+Fixed full-starter run (`context_ms=100`, `ridge_alpha=1.0`):
+
+| Split | Labels | MAE | Mean relative error |
+| --- | ---: | ---: | ---: |
+| train | 871 | 0.659 s | 19.15% |
+| validation | 108 | 0.293 s | 13.63% |
+| sealed CPLA-high test | 83 | 0.829 s | 47.12% |
+
+Dev multi-validation run without evaluating sealed test:
+
+| Split | Labels | MAE | Mean relative error |
+| --- | ---: | ---: | ---: |
+| validation_car | 108 | 0.293 s | 14.63% |
+| validation_pedestrian | 85 | 1.342 s | 65.52% |
+
+Computed percentage-style metrics for the current best all-window JEPA from
+stored predictions, without retraining:
+
+- validation mean absolute relative error:
+  `7.51 +/- 0.51%`
+- sealed test mean absolute relative error:
+  `6.89 +/- 0.34%`
+
+Interpretation:
+
+- The current best local result is still event-tubelet JEPA + causal navigation:
+  `0.328 +/- 0.024 s` sealed-test MAE and `6.89 +/- 0.34%` relative error.
+- ROI event ridge is protocol-useful but not competitive. Its pedestrian
+  validation failure is larger than the JEPA transfer gap.
+- For official SOTA comparison, next required work is still to download CCRs2 and
+  CCRm HDF5/TTC/bbox assets and wrap CMax/STRTTC on the same ROI adapter.
+
