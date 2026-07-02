@@ -332,6 +332,48 @@ def test_dense_alltoken_jepa_context_loss(tmp_path: Path) -> None:
     )
 
 
+def test_visreg_jepa_regularizer(tmp_path: Path) -> None:
+    cache_path = tmp_path / "cache.npz"
+    _write_cache(cache_path)
+
+    pretrain_summary = pretrain_jepa(
+        cache_path=cache_path,
+        output_dir=tmp_path / "visreg_jepa",
+        epochs=1,
+        batch_size=3,
+        seed=5,
+        device_name="cpu",
+        pretrain_splits=("train",),
+        validation_splits=("validation",),
+        model_name="token-transformer",
+        dense_predictor="transformer",
+        regularizer="visreg",
+        visreg_center_weight=0.3,
+        visreg_sketch_weight=0.2,
+        visreg_projection_count=8,
+        temporal_straightening_weight=0.05,
+    )
+
+    assert pretrain_summary["objective"] == (
+        "visreg_transformer_dense_temporal_token_motion_multihorizon"
+    )
+    assert pretrain_summary["regularizer"] == "visreg"
+    assert pretrain_summary["visreg_center_weight"] == 0.3
+    assert pretrain_summary["visreg_sketch_weight"] == 0.2
+    assert pretrain_summary["visreg_projection_count"] == 8
+    assert pretrain_summary["temporal_straightening_weight"] == 0.05
+    assert pretrain_summary["last"]["train"]["visreg_center_loss"] >= 0.0
+    assert pretrain_summary["last"]["train"]["visreg_sketch_loss"] > 0.0
+    assert pretrain_summary["last"]["train"]["visreg_projection_count"] == 8.0
+    assert pretrain_summary["last"]["train"]["temporal_straightening_loss"] >= 0.0
+    assert pretrain_summary["leakage_audit"]["visreg_uses_batch_embeddings_only"] is True
+    assert pretrain_summary["leakage_audit"]["visreg_uses_ttc_labels"] is False
+    assert (
+        pretrain_summary["leakage_audit"]["temporal_straightening_uses_predictions_only"]
+        is True
+    )
+
+
 def test_event_tubelet_jepa_pretraining_smoke(tmp_path: Path) -> None:
     cache_path = tmp_path / "tubelet_cache.npz"
     _write_tubelet_cache(cache_path)
@@ -354,6 +396,31 @@ def test_event_tubelet_jepa_pretraining_smoke(tmp_path: Path) -> None:
     assert pretrain_summary["dense_tokens"] is True
     assert pretrain_summary["deep_supervision"] is True
     assert (tmp_path / "tubelet_jepa" / "jepa_encoder_best.pt").exists()
+
+
+def test_event_tubelet_rope_jepa_pretraining_smoke(tmp_path: Path) -> None:
+    cache_path = tmp_path / "tubelet_cache.npz"
+    _write_tubelet_cache(cache_path)
+
+    pretrain_summary = pretrain_jepa(
+        cache_path=cache_path,
+        output_dir=tmp_path / "tubelet_rope_jepa",
+        epochs=1,
+        batch_size=2,
+        seed=5,
+        device_name="cpu",
+        pretrain_splits=("train",),
+        validation_splits=("validation",),
+        model_name="event-tubelet-rope-transformer",
+        dense_predictor="transformer",
+    )
+
+    assert pretrain_summary["model_name"] == "event-tubelet-rope-transformer"
+    assert pretrain_summary["objective"] == (
+        "transformer_dense_temporal_token_motion_multihorizon"
+    )
+    assert pretrain_summary["dense_predictor"] == "transformer"
+    assert (tmp_path / "tubelet_rope_jepa" / "jepa_encoder_best.pt").exists()
 
 
 def test_jepa_action_conditioning_uses_causal_navigation(tmp_path: Path) -> None:

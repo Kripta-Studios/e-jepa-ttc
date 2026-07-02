@@ -16,6 +16,8 @@ MODEL_NAMES = (
     "token-transformer-large",
     "event-tubelet-transformer",
     "event-tubelet-transformer-large",
+    "event-tubelet-rope-transformer",
+    "event-tubelet-rope-transformer-large",
 )
 
 
@@ -41,6 +43,19 @@ def build_encoder(name: str, *, in_channels: int) -> nn.Module:
             embed_dim=256,
             depth=8,
             num_heads=8,
+        )
+    if name == "event-tubelet-rope-transformer":
+        return EventTubeletTransformerEncoder(
+            in_channels=in_channels,
+            position_encoding="rope",
+        )
+    if name == "event-tubelet-rope-transformer-large":
+        return EventTubeletTransformerEncoder(
+            in_channels=in_channels,
+            embed_dim=256,
+            depth=8,
+            num_heads=8,
+            position_encoding="rope",
         )
     msg = f"Unknown model {name!r}; expected one of {MODEL_NAMES}."
     raise ValueError(msg)
@@ -68,6 +83,19 @@ def build_regressor(name: str, *, in_channels: int) -> nn.Module:
             embed_dim=256,
             depth=8,
             num_heads=8,
+        )
+    if name == "event-tubelet-rope-transformer":
+        return EventTubeletTransformerRegressor(
+            in_channels=in_channels,
+            position_encoding="rope",
+        )
+    if name == "event-tubelet-rope-transformer-large":
+        return EventTubeletTransformerRegressor(
+            in_channels=in_channels,
+            embed_dim=256,
+            depth=8,
+            num_heads=8,
+            position_encoding="rope",
         )
     msg = f"Unknown model {name!r}; expected one of {MODEL_NAMES}."
     raise ValueError(msg)

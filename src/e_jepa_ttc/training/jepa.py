@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import math
 import random
 import time
 from pathlib import Path
@@ -414,6 +415,94 @@ def _variance_loss(z: torch.Tensor, *, min_std: float) -> torch.Tensor:
     return torch.relu(min_std - std).mean()
 
 
+def _visreg_sketch_loss(z: torch.Tensor, *, projection_count: int) -> torch.Tensor:
+    """Approximate VISReg shape regularization with Gaussian SWD sketches."""
+
+    if projection_count <= 0:
+        msg = "projection_count must be positive."
+        raise ValueError(msg)
+    z = z.float().reshape(-1, z.shape[-1])
+    if z.shape[0] <= 1:
+        return z.sum() * 0.0
+    projections = torch.randn(
+        z.shape[-1],
+        projection_count,
+        device=z.device,
+        dtype=z.dtype,
+    )
+    projections = functional.normalize(projections, dim=0)
+    projected = torch.sort(z @ projections, dim=0).values
+    quantiles = (
+        torch.arange(z.shape[0], device=z.device, dtype=torch.float32) + 0.5
+    ) / z.shape[0]
+    gaussian = math.sqrt(2.0) * torch.special.erfinv(2.0 * quantiles - 1.0)
+    gaussian = gaussian[:, None].to(dtype=projected.dtype)
+    return torch.square(projected - gaussian.expand_as(projected)).mean()
+
+
+def _visreg_components(
+    z: torch.Tensor,
+    *,
+    projection_count: int,
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    """Return VISReg center, scale, and normalized-shape losses."""
+
+    z = z.float().reshape(-1, z.shape[-1])
+    if z.shape[0] <= 1:
+        zero = z.sum() * 0.0
+        return zero, zero, zero
+    mean = z.mean(dim=0, keepdim=True)
+    centered = z - mean
+    std = torch.sqrt(centered.var(dim=0, unbiased=False, keepdim=True) + 1e-4)
+    normalized = centered / std.detach().clamp_min(1e-4)
+    center_loss = torch.square(mean).mean()
+    scale_loss = torch.square(1.0 - std).mean()
+    shape_loss = _visreg_sketch_loss(normalized, projection_count=projection_count)
+    return center_loss, scale_loss, shape_loss
+
+
+def _embedding_regularization_loss(
+    context_z: torch.Tensor,
+    pred_z: torch.Tensor,
+    *,
+    regularizer: str,
+    variance_weight: float,
+    min_std: float,
+    visreg_center_weight: float,
+    visreg_sketch_weight: float,
+    visreg_projection_count: int,
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+    center_loss = context_z.sum() * 0.0
+    scale_loss = _variance_loss(context_z, min_std=min_std) + _variance_loss(
+        pred_z,
+        min_std=min_std,
+    )
+    sketch_loss = context_z.sum() * 0.0
+    if regularizer == "visreg":
+        context_center, context_scale, context_shape = _visreg_components(
+            context_z,
+            projection_count=visreg_projection_count,
+        )
+        pred_center, pred_scale, pred_shape = _visreg_components(
+            pred_z,
+            projection_count=visreg_projection_count,
+        )
+        center_loss = context_center + pred_center
+        scale_loss = context_scale + pred_scale
+        sketch_loss = context_shape + pred_shape
+    elif regularizer != "variance":
+        msg = "regularizer must be one of {'variance', 'visreg'}."
+        raise ValueError(msg)
+    return (
+        visreg_center_weight * center_loss
+        + variance_weight * scale_loss
+        + visreg_sketch_weight * sketch_loss,
+        center_loss,
+        scale_loss,
+        sketch_loss,
+    )
+
+
 def _context_motion_features(x: torch.Tensor, *, bins: int) -> torch.Tensor:
     """Extract causal motion proxy features from the context voxel window."""
 
@@ -550,18 +639,21 @@ def _objective_name(
     deep_supervision: bool,
     dense_predictor: str,
     context_token_weight: float,
+    regularizer: str,
 ) -> str:
     if not use_temporal:
         return "masked_same_window"
-    prefix = "deep_" if deep_supervision and dense_tokens else ""
+    regularizer_prefix = "visreg_" if regularizer == "visreg" else ""
+    deep_prefix = "deep_" if deep_supervision and dense_tokens else ""
     context_prefix = "alltoken_" if dense_tokens and context_token_weight > 0.0 else ""
     predictor_prefix = "transformer_" if dense_tokens and dense_predictor == "transformer" else ""
+    prefix = f"{regularizer_prefix}{deep_prefix}{context_prefix}{predictor_prefix}"
     if dense_tokens and action_conditioning:
-        return f"{prefix}{context_prefix}{predictor_prefix}dense_temporal_token_action_multihorizon"
+        return f"{prefix}dense_temporal_token_action_multihorizon"
     if dense_tokens and motion_conditioning:
-        return f"{prefix}{context_prefix}{predictor_prefix}dense_temporal_token_motion_multihorizon"
+        return f"{prefix}dense_temporal_token_motion_multihorizon"
     if dense_tokens:
-        return f"{prefix}{context_prefix}{predictor_prefix}dense_temporal_token_multihorizon"
+        return f"{prefix}dense_temporal_token_multihorizon"
     return "temporal_multihorizon"
 
 
@@ -578,6 +670,32 @@ def _forward_token_layers(
     return encoder.forward_intermediate_tokens(x, layer_indices)
 
 
+def _temporal_straightening_loss(
+    context_z: torch.Tensor,
+    pred_z: torch.Tensor,
+    future_mask: torch.Tensor,
+) -> torch.Tensor:
+    """Penalize curvature in predicted latent multi-horizon trajectories."""
+
+    if pred_z.shape[1] < 2:
+        return pred_z.sum() * 0.0
+    context_state = context_z.mean(dim=1) if context_z.ndim == 3 else context_z
+    pred_state = pred_z.mean(dim=2) if pred_z.ndim == 4 else pred_z
+    states = torch.cat([context_state[:, None, :], pred_state], dim=1)
+    velocities = states[:, 1:] - states[:, :-1]
+    curvature = 1.0 - functional.cosine_similarity(
+        velocities[:, :-1],
+        velocities[:, 1:],
+        dim=-1,
+        eps=1e-6,
+    )
+    valid = future_mask.to(device=curvature.device, dtype=torch.bool)
+    valid_curvature = valid[:, :-1] & valid[:, 1:]
+    if not bool(valid_curvature.any()):
+        return curvature.sum() * 0.0
+    return curvature[valid_curvature].mean()
+
+
 def _dense_temporal_alignment(
     *,
     predictor: nn.Module,
@@ -587,7 +705,7 @@ def _dense_temporal_alignment(
     motion_features: torch.Tensor | None,
     future_mask: torch.Tensor,
     layer_ids: tuple[int, ...],
-) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
     if len(context_layers) != len(target_layers):
         msg = "context_layers and target_layers must have the same length."
         raise ValueError(msg)
@@ -599,6 +717,7 @@ def _dense_temporal_alignment(
     valid_count = valid.sum().clamp_min(1.0)
     valid_bool = future_mask.to(dtype=torch.bool, device=future_mask.device)
     losses: list[torch.Tensor] = []
+    straightening_losses: list[torch.Tensor] = []
     pred_rows: list[torch.Tensor] = []
     target_rows: list[torch.Tensor] = []
     for layer_position, (context_z, flat_target) in enumerate(
@@ -616,10 +735,12 @@ def _dense_temporal_alignment(
             reduction="none",
         ).mean(dim=tuple(range(2, pred_norm.ndim)))
         losses.append((per_pair_loss * valid).sum() / valid_count)
+        straightening_losses.append(_temporal_straightening_loss(context_z, pred, future_mask))
         pred_rows.append(pred[valid_bool].reshape(-1, pred.shape[-1]))
         target_rows.append(target_z[valid_bool].reshape(-1, target_z.shape[-1]))
     return (
         torch.stack(losses).mean(),
+        torch.stack(straightening_losses).mean(),
         torch.cat(pred_rows, dim=0),
         torch.cat(target_rows, dim=0),
         torch.cat([layer.reshape(-1, layer.shape[-1]) for layer in context_layers], dim=0),
@@ -675,8 +796,13 @@ def _jepa_loss(
     horizon_ids: torch.Tensor | None,
     mask_ratio: float,
     block_count: int,
+    regularizer: str,
     variance_weight: float,
     min_std: float,
+    visreg_center_weight: float,
+    visreg_sketch_weight: float,
+    visreg_projection_count: int,
+    temporal_straightening_weight: float,
     dense_tokens: bool,
     motion_conditioning: bool,
     deep_supervision_layers: tuple[int, ...],
@@ -689,6 +815,7 @@ def _jepa_loss(
 ) -> tuple[torch.Tensor, dict[str, float]]:
     context = _masked_context(x, mask_ratio=mask_ratio, block_count=block_count)
     context_token_loss = torch.tensor(0.0, device=x.device)
+    temporal_straightening_loss = torch.tensor(0.0, device=x.device)
     context_token_target_count = 0
     if dense_tokens and future_x is not None:
         context_layers = _forward_token_layers(encoder, context, deep_supervision_layers)
@@ -734,16 +861,20 @@ def _jepa_loss(
                     future_x.flatten(0, 1),
                     deep_supervision_layers,
                 )
-            alignment_loss, pred_for_variance, target_for_metrics, context_for_variance = (
-                _dense_temporal_alignment(
-                    predictor=predictor,
-                    context_layers=context_layers,
-                    target_layers=flat_target_layers,
-                    horizon_ids=horizon_ids,
-                    motion_features=motion_features,
-                    future_mask=future_mask.to(device=context_z.device),
-                    layer_ids=deep_supervision_layers,
-                )
+            (
+                alignment_loss,
+                temporal_straightening_loss,
+                pred_for_variance,
+                target_for_metrics,
+                context_for_variance,
+            ) = _dense_temporal_alignment(
+                predictor=predictor,
+                context_layers=context_layers,
+                target_layers=flat_target_layers,
+                horizon_ids=horizon_ids,
+                motion_features=motion_features,
+                future_mask=future_mask.to(device=context_z.device),
+                layer_ids=deep_supervision_layers,
             )
             future_alignment_loss = alignment_loss
             if context_token_weight > 0.0:
@@ -789,6 +920,11 @@ def _jepa_loss(
             valid = future_mask.to(device=per_pair_loss.device, dtype=per_pair_loss.dtype)
             valid_count = valid.sum().clamp_min(1.0)
             alignment_loss = (per_pair_loss * valid).sum() / valid_count
+            temporal_straightening_loss = _temporal_straightening_loss(
+                context_z,
+                pred,
+                future_mask,
+            )
             future_alignment_loss = alignment_loss
             valid_bool = future_mask.to(device=pred.device, dtype=torch.bool)
             pred_for_variance = pred[valid_bool].reshape(-1, pred.shape[-1])
@@ -804,18 +940,39 @@ def _jepa_loss(
         pred_for_variance = pred.reshape(-1, pred.shape[-1])
     if target_for_metrics.shape[0] <= 1:
         target_for_metrics = target_z.reshape(-1, target_z.shape[-1])
-    variance = _variance_loss(context_for_variance, min_std=min_std) + _variance_loss(
+    if temporal_straightening_weight > 0.0:
+        alignment_loss = (
+            alignment_loss + temporal_straightening_weight * temporal_straightening_loss
+        )
+    regularization, visreg_center, variance, visreg_sketch = _embedding_regularization_loss(
+        context_for_variance,
         pred_for_variance,
+        regularizer=regularizer,
+        variance_weight=variance_weight,
         min_std=min_std,
+        visreg_center_weight=visreg_center_weight if regularizer == "visreg" else 0.0,
+        visreg_sketch_weight=visreg_sketch_weight if regularizer == "visreg" else 0.0,
+        visreg_projection_count=visreg_projection_count,
     )
-    loss = alignment_loss + variance_weight * variance
+    loss = alignment_loss + regularization
     metrics = {
         "alignment_loss": float(alignment_loss.detach().cpu()),
         "future_alignment_loss": float(future_alignment_loss.detach().cpu()),
         "context_token_loss": float(context_token_loss.detach().cpu()),
         "context_token_weight": float(context_token_weight),
         "context_token_target_count": float(context_token_target_count),
+        "temporal_straightening_loss": float(temporal_straightening_loss.detach().cpu()),
+        "temporal_straightening_weight": float(temporal_straightening_weight),
+        "regularization_loss": float(regularization.detach().cpu()),
+        "regularizer": 1.0 if regularizer == "visreg" else 0.0,
+        "visreg_center_loss": float(visreg_center.detach().cpu()),
+        "visreg_center_weight": float(visreg_center_weight if regularizer == "visreg" else 0.0),
         "variance_loss": float(variance.detach().cpu()),
+        "visreg_sketch_loss": float(visreg_sketch.detach().cpu()),
+        "visreg_sketch_weight": float(visreg_sketch_weight if regularizer == "visreg" else 0.0),
+        "visreg_projection_count": float(
+            visreg_projection_count if regularizer == "visreg" else 0
+        ),
         "context_embedding_std": float(
             context_for_variance.detach().float().std(dim=0).mean().cpu()
         ),
@@ -845,8 +1002,13 @@ def _run_epoch(
     mask_ratio: float,
     block_count: int,
     ema_momentum: float,
+    regularizer: str,
     variance_weight: float,
     min_std: float,
+    visreg_center_weight: float,
+    visreg_sketch_weight: float,
+    visreg_projection_count: int,
+    temporal_straightening_weight: float,
     dense_tokens: bool,
     motion_conditioning: bool,
     deep_supervision_layers: tuple[int, ...],
@@ -887,8 +1049,13 @@ def _run_epoch(
                 horizon_ids=horizon_ids,
                 mask_ratio=mask_ratio,
                 block_count=block_count,
+                regularizer=regularizer,
                 variance_weight=variance_weight,
                 min_std=min_std,
+                visreg_center_weight=visreg_center_weight,
+                visreg_sketch_weight=visreg_sketch_weight,
+                visreg_projection_count=visreg_projection_count,
+                temporal_straightening_weight=temporal_straightening_weight,
                 dense_tokens=dense_tokens,
                 motion_conditioning=motion_conditioning,
                 deep_supervision_layers=deep_supervision_layers,
@@ -942,8 +1109,13 @@ def pretrain_jepa(
     mask_ratio: float = 0.45,
     block_count: int = 4,
     ema_momentum: float = 0.99,
+    regularizer: str = "variance",
     variance_weight: float = 1.0,
     min_std: float = 0.05,
+    visreg_center_weight: float = 1.0,
+    visreg_sketch_weight: float = 1.0,
+    visreg_projection_count: int = 32,
+    temporal_straightening_weight: float = 0.0,
     dense_tokens: bool = True,
     motion_conditioning: bool = True,
     deep_supervision_layers: tuple[int, ...] = (),
@@ -962,8 +1134,23 @@ def pretrain_jepa(
     if dense_predictor not in {"mlp", "transformer"}:
         msg = "dense_predictor must be one of {'mlp', 'transformer'}."
         raise ValueError(msg)
+    if regularizer not in {"variance", "visreg"}:
+        msg = "regularizer must be one of {'variance', 'visreg'}."
+        raise ValueError(msg)
     if context_token_weight < 0.0:
         msg = "context_token_weight must be non-negative."
+        raise ValueError(msg)
+    if visreg_sketch_weight < 0.0:
+        msg = "visreg_sketch_weight must be non-negative."
+        raise ValueError(msg)
+    if visreg_center_weight < 0.0:
+        msg = "visreg_center_weight must be non-negative."
+        raise ValueError(msg)
+    if visreg_projection_count <= 0:
+        msg = "visreg_projection_count must be positive."
+        raise ValueError(msg)
+    if temporal_straightening_weight < 0.0:
+        msg = "temporal_straightening_weight must be non-negative."
         raise ValueError(msg)
     _set_seed(seed)
 
@@ -1001,6 +1188,7 @@ def pretrain_jepa(
         deep_supervision=use_deep_supervision,
         dense_predictor=dense_predictor,
         context_token_weight=context_token_weight if use_context_token_loss else 0.0,
+        regularizer=regularizer,
     )
     model_tag = model_name.replace("-", "_")
     train_pair_stats = None
@@ -1167,8 +1355,13 @@ def pretrain_jepa(
                 mask_ratio=mask_ratio,
                 block_count=block_count,
                 ema_momentum=ema_momentum,
+                regularizer=regularizer,
                 variance_weight=variance_weight,
                 min_std=min_std,
+                visreg_center_weight=visreg_center_weight,
+                visreg_sketch_weight=visreg_sketch_weight,
+                visreg_projection_count=visreg_projection_count,
+                temporal_straightening_weight=temporal_straightening_weight,
                 dense_tokens=use_dense_tokens,
                 motion_conditioning=use_motion_conditioning,
                 deep_supervision_layers=deep_supervision_layers if use_deep_supervision else (),
@@ -1194,8 +1387,13 @@ def pretrain_jepa(
                         mask_ratio=mask_ratio,
                         block_count=block_count,
                         ema_momentum=ema_momentum,
+                        regularizer=regularizer,
                         variance_weight=variance_weight,
                         min_std=min_std,
+                        visreg_center_weight=visreg_center_weight,
+                        visreg_sketch_weight=visreg_sketch_weight,
+                        visreg_projection_count=visreg_projection_count,
+                        temporal_straightening_weight=temporal_straightening_weight,
                         dense_tokens=use_dense_tokens,
                         motion_conditioning=use_motion_conditioning,
                         deep_supervision_layers=(
@@ -1248,6 +1446,17 @@ def pretrain_jepa(
                         if use_context_token_loss
                         else 0.0,
                         "context_token_loss": use_context_token_loss,
+                        "regularizer": regularizer,
+                        "visreg_center_weight": visreg_center_weight
+                        if regularizer == "visreg"
+                        else 0.0,
+                        "visreg_sketch_weight": visreg_sketch_weight
+                        if regularizer == "visreg"
+                        else 0.0,
+                        "visreg_projection_count": visreg_projection_count
+                        if regularizer == "visreg"
+                        else 0,
+                        "temporal_straightening_weight": temporal_straightening_weight,
                         **conditioning_metadata,
                         "deep_supervision_layers": list(deep_supervision_layers)
                         if use_deep_supervision
@@ -1279,6 +1488,13 @@ def pretrain_jepa(
             "dense_predictor": dense_predictor if use_dense_tokens else None,
             "context_token_weight": context_token_weight if use_context_token_loss else 0.0,
             "context_token_loss": use_context_token_loss,
+            "regularizer": regularizer,
+            "visreg_center_weight": visreg_center_weight if regularizer == "visreg" else 0.0,
+            "visreg_sketch_weight": visreg_sketch_weight if regularizer == "visreg" else 0.0,
+            "visreg_projection_count": visreg_projection_count
+            if regularizer == "visreg"
+            else 0,
+            "temporal_straightening_weight": temporal_straightening_weight,
             **conditioning_metadata,
             "deep_supervision_layers": list(deep_supervision_layers)
             if use_deep_supervision
@@ -1324,8 +1540,13 @@ def pretrain_jepa(
         "mask_ratio": mask_ratio,
         "block_count": block_count,
         "ema_momentum": ema_momentum,
+        "regularizer": regularizer,
         "variance_weight": variance_weight,
         "min_std": min_std,
+        "visreg_center_weight": visreg_center_weight if regularizer == "visreg" else 0.0,
+        "visreg_sketch_weight": visreg_sketch_weight if regularizer == "visreg" else 0.0,
+        "visreg_projection_count": visreg_projection_count if regularizer == "visreg" else 0,
+        "temporal_straightening_weight": temporal_straightening_weight,
         "best_epoch": best_epoch,
         "best_loss": best_score,
         "best_checkpoint": best_path.as_posix(),
@@ -1342,6 +1563,10 @@ def pretrain_jepa(
             "deep_supervision_uses_intermediate_target_layers": use_deep_supervision,
             "deep_supervision_layer_conditioning": use_deep_supervision,
             "context_token_loss_uses_current_context_only": use_context_token_loss,
+            "visreg_uses_batch_embeddings_only": regularizer == "visreg",
+            "visreg_uses_ttc_labels": False,
+            "temporal_straightening_uses_predictions_only": temporal_straightening_weight
+            > 0.0,
             "targets_cross_sequence_boundary": False,
             "targets_cross_split_boundary": False,
             "target_timestamps_are_after_context": use_temporal,

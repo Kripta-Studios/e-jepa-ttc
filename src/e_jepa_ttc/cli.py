@@ -228,8 +228,13 @@ def _cmd_pretrain_jepa(args: argparse.Namespace) -> int:
         mask_ratio=args.mask_ratio,
         block_count=args.block_count,
         ema_momentum=args.ema_momentum,
+        regularizer=args.regularizer,
         variance_weight=args.variance_weight,
         min_std=args.min_std,
+        visreg_center_weight=args.visreg_center_weight,
+        visreg_sketch_weight=args.visreg_sketch_weight,
+        visreg_projection_count=args.visreg_projection_count,
+        temporal_straightening_weight=args.temporal_straightening_weight,
         dense_tokens=args.dense_tokens,
         motion_conditioning=args.motion_conditioning,
         deep_supervision_layers=tuple(args.deep_supervision_layers),
@@ -448,8 +453,44 @@ def build_parser() -> argparse.ArgumentParser:
     pretrain_jepa.add_argument("--mask-ratio", type=float, default=0.45)
     pretrain_jepa.add_argument("--block-count", type=int, default=4)
     pretrain_jepa.add_argument("--ema-momentum", type=float, default=0.99)
+    pretrain_jepa.add_argument(
+        "--regularizer",
+        choices=["variance", "visreg"],
+        default="variance",
+        help=(
+            "Embedding regularizer for JEPA. 'variance' preserves the previous "
+            "scale-only anti-collapse term; 'visreg' adds Gaussian SWD sketching."
+        ),
+    )
     pretrain_jepa.add_argument("--variance-weight", type=float, default=1.0)
     pretrain_jepa.add_argument("--min-std", type=float, default=0.05)
+    pretrain_jepa.add_argument(
+        "--visreg-center-weight",
+        type=float,
+        default=1.0,
+        help="Centering loss weight used only with --regularizer visreg.",
+    )
+    pretrain_jepa.add_argument(
+        "--visreg-sketch-weight",
+        type=float,
+        default=1.0,
+        help="Sketching loss weight used only with --regularizer visreg.",
+    )
+    pretrain_jepa.add_argument(
+        "--visreg-projection-count",
+        type=int,
+        default=32,
+        help="Number of random Sliced-Wasserstein projections for VISReg sketching.",
+    )
+    pretrain_jepa.add_argument(
+        "--temporal-straightening-weight",
+        type=float,
+        default=0.0,
+        help=(
+            "Optional curvature penalty on predicted multi-horizon latent trajectories, "
+            "inspired by temporal straightening for training in imagination."
+        ),
+    )
     pretrain_jepa.add_argument(
         "--global-latent",
         dest="dense_tokens",
