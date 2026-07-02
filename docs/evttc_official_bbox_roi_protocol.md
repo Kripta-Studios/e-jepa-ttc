@@ -1,6 +1,6 @@
 # EvTTC Official BBox/ROI Comparison Protocol
 
-Checked on 2026-07-02. This is a protocol note, not a SOTA claim.
+Checked on 2026-07-03. This is a protocol note, not a SOTA claim.
 
 ## Official Reference
 
@@ -35,11 +35,23 @@ Current local sealed full-starter split:
 - Validation: `CCRs-side-high`
 - Sealed test: `CPLA-high`
 
-Local official-Table-V asset coverage:
+Local official-Table-V asset coverage is now checked by code:
+
+```powershell
+$env:PYTHONPATH='src'
+.\.venv\Scripts\e-jepa-ttc.exe data official-coverage --root datasets\evttc --output artifacts\metrics\evttc_official_table_v_coverage.json
+```
+
+Latest local coverage result from that command:
+
+- scanned local EvTTC sequences: `9`;
+- official real-world CCRs1/CCRs2/CCRm coverage: `3/8` complete, `37.5%`;
+- complete Table V coverage including slider rows: `3/10` complete, `30.0%`;
+- `official_sota_claim_allowed`: `false`.
 
 | Sequence family | Local status | Use in current sealed split |
 | --- | --- | --- |
-| `CCRs1-low/medium/high` | Present with HDF5, `ttc.csv`, `gt.hdf5`, and `leftlabel` | Train only |
+| `CCRs1-low/medium/high` | Present with HDF5, `ttc.csv`, `gt.hdf5`, and `leftlabel`; auto-check complete | Train only |
 | `CCRs2-low/medium/high` | Missing locally | Not available |
 | `CCRm-low/medium` | Missing locally | Not available |
 | `Slider-750/1000` | Missing locally | Not available |
@@ -134,6 +146,6 @@ Until those items are done, the correct comparison is:
 
 > Our best local all-window JEPA result is strong on the sealed starter split,
 > but it is not directly comparable with EvTTC Table V CMax/STRTTC results.
-> The local bbox/ROI results currently implemented are causal geometry and
-> ROI-event ridge references, useful for protocol plumbing, not for claiming
-> official SOTA.
+> The local bbox/ROI results currently implemented are causal geometry,
+> ROI-event ridge, and frozen JEPA ROI prober diagnostics, useful for protocol
+> plumbing, not for claiming official SOTA.

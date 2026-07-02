@@ -1445,3 +1445,39 @@ Final local conclusion:
 - no official EvTTC SOTA claim is justified until CCRs2/CCRm/slider assets and
   official bbox/ROI baselines are reproduced.
 
+## 2026-07-03 Official Protocol Coverage Gate
+
+Implemented `e_jepa_ttc.data.official_protocol` plus:
+
+```powershell
+$env:PYTHONPATH='src'
+.\.venv\Scripts\e-jepa-ttc.exe data official-coverage --root datasets\evttc --output artifacts\metrics\evttc_official_table_v_coverage.json
+```
+
+The checker encodes the published EvTTC Table V bbox/ROI sequence set:
+`CCRs-1-low/medium/high-100%`, `CCRs-2-low/medium/high-100%`,
+`CCRm-low/medium-100%`, `Slider-750`, and `Slider-1000`. It requires event
+HDF5, TTC labels, and nonempty bbox/ROI labels for each row.
+
+Latest local result:
+
+- scanned local EvTTC sequences: `9`;
+- complete real-world official rows: `3/8`, `37.5%`;
+- complete Table V rows including slider: `3/10`, `30.0%`;
+- missing real-world rows: `CCRs-2-low-100%`, `CCRs-2-medium-100%`,
+  `CCRs-2-high-100%`, `CCRm-low-100%`, `CCRm-medium-100%`;
+- missing slider rows: `Slider-750`, `Slider-1000`;
+- official SOTA claim allowed: `false`.
+
+This is the final protocol conclusion for the current local data: the best
+all-window JEPA result is strong locally, but official EvTTC SOTA comparison is
+blocked by asset coverage and missing reproduced STRTTC/CMax/ETTCM runtime
+baselines. More tuning on CPLA-high would be invalid; the next valid step is
+downloading CCRs2/CCRm/slider official assets and running the same checker
+before wrapping official baselines.
+
+Final verification after adding the coverage gate:
+
+- `ruff check .`: all checks passed;
+- `pytest`: `53 passed in 4.30 s`.
+

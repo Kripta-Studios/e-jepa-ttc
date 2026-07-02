@@ -15,9 +15,11 @@ from e_jepa_ttc.baselines.trivial import run_trivial_baseline
 from e_jepa_ttc.data.evttc import scan_evttc_root, validate_manifest, write_manifest
 from e_jepa_ttc.data.index import build_temporal_index, write_index
 from e_jepa_ttc.data.ml_cache import build_voxel_cache, remap_cache_splits
+from e_jepa_ttc.data.official_protocol import evaluate_official_evttc_coverage
 from e_jepa_ttc.data.split import write_splits
 from e_jepa_ttc.data.synthetic import generate_synthetic_sequence, write_synthetic_hdf5
 from e_jepa_ttc.models import MODEL_NAMES
+from e_jepa_ttc.utils.io import write_structured
 
 
 def _print_json(data: dict[str, Any]) -> None:
@@ -76,6 +78,18 @@ def _cmd_data_index(args: argparse.Namespace) -> int:
     )
     write_index(args.output, entries)
     _print_json({"output": str(args.output), "window_count": len(entries)})
+    return 0
+
+
+def _cmd_data_official_coverage(args: argparse.Namespace) -> int:
+    sequences = scan_evttc_root(args.root)
+    report = evaluate_official_evttc_coverage(
+        sequences,
+        include_slider=args.include_slider,
+    )
+    if args.output is not None:
+        write_structured(args.output, report)
+    _print_json(report)
     return 0
 
 
@@ -412,6 +426,19 @@ def build_parser() -> argparse.ArgumentParser:
     data_index.add_argument("--clip-ttc-min", type=float, default=0.1)
     data_index.add_argument("--clip-ttc-max", type=float, default=12.0)
     data_index.set_defaults(func=_cmd_data_index)
+    data_official = data_sub.add_parser(
+        "official-coverage",
+        help="Check local assets against the official EvTTC bbox/ROI Table V sequence list.",
+    )
+    data_official.add_argument("--root", type=Path, required=True)
+    data_official.add_argument("--output", type=Path)
+    data_official.add_argument(
+        "--include-slider",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Include Slider-750 and Slider-1000 rows required for complete Table V.",
+    )
+    data_official.set_defaults(func=_cmd_data_official_coverage)
 
     split = subparsers.add_parser("split", help="Split generation commands.")
     split_sub = split.add_subparsers(dest="split_command", required=True)

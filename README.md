@@ -79,6 +79,15 @@ CPLA-high test MAE over three fine-tuning seeds. This is a local full-starter
 result, not an official EvTTC SOTA claim; official comparison still requires
 the benchmark bbox/ROI protocol and broader sequence set.
 
+The official EvTTC bbox/ROI coverage checker currently finds only `3/8`
+real-world benchmark sequences complete locally (`37.5%`) and `3/10` complete
+Table V rows including slider (`30.0%`). Regenerate it with:
+
+```powershell
+$env:PYTHONPATH='src'
+.\.venv\Scripts\e-jepa-ttc.exe data official-coverage --root datasets\evttc --output artifacts\metrics\evttc_official_table_v_coverage.json
+```
+
 The thesis-style paper for the current project state is
 [docs/e_jepa_ttc_paper.md](docs/e_jepa_ttc_paper.md). It records the method,
 protocol, final tests, results, negative ablations, and claim limits.
@@ -127,6 +136,7 @@ uv run --no-sync python scripts/download_evttc_starter.py --manifest data/manife
   yaw-rate, and validity.
 - SkyJEPA-style frozen latent and predicted-rollout bbox/ROI TTC probers with checkpoint-only
   evaluation commands; current rollout results are diagnostic and not an official SOTA claim.
+- Official EvTTC Table V bbox/ROI asset coverage checker with an explicit claim blocker.
 - Supervised TinyCNN log-TTC regressor with CUDA AMP, checkpoints, history, metrics, and predictions.
 - Frozen-encoder probes and low-label supervised runs via `--freeze-encoder` and `--train-fraction`.
 - Unit and integration tests for data contracts, representations, synthetic data, manifests, splits,

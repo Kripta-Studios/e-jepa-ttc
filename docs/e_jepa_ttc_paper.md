@@ -119,8 +119,18 @@ sequences. The current local workspace has CCRs1 and several starter side/CPLA
 sequences, but not the complete CCRs2, CCRm, and slider set with all bbox/ROI
 assets. Therefore this project cannot honestly claim official EvTTC SOTA yet.
 
-The exact missing official-style assets are tracked in
-`docs/evttc_official_bbox_roi_protocol.md`.
+The gap is now enforced by an automated coverage gate:
+
+```powershell
+$env:PYTHONPATH='src'
+.\.venv\Scripts\e-jepa-ttc.exe data official-coverage --root datasets\evttc --output artifacts\metrics\evttc_official_table_v_coverage.json
+```
+
+On the local workspace, this checker scans 9 EvTTC sequences and finds 3/8
+complete real-world official rows (`37.5%`) and 3/10 complete Table V rows
+including slider (`30.0%`). Missing rows are CCRs2 low/medium/high, CCRm
+low/medium, `Slider-750`, and `Slider-1000`. The exact checklist and command
+are tracked in `docs/evttc_official_bbox_roi_protocol.md`.
 
 ## 4. Representations
 
@@ -400,15 +410,17 @@ The evidence supports the following conclusions:
    low-label settings.
 6. Detection-assisted ROI probers need more structure; flat latent probes and
    flat rollout probes are not enough.
-7. Official EvTTC SOTA remains unproven without the complete bbox/ROI benchmark
-   sequence set and exact baseline protocol.
+7. Official EvTTC SOTA remains unproven: local asset coverage is only 37.5% of
+   the real-world benchmark rows and 30.0% of complete Table V with slider, and
+   the exact official baseline runtime protocol is not reproduced.
 
 ## 10. Limitations
 
 The main limitations are:
 
 - CPLA-high has been inspected, so it is diagnostic rather than pristine;
-- official CCRs2, CCRm, and slider benchmark assets are missing locally;
+- official CCRs2, CCRm, and slider benchmark assets are missing locally, leaving
+  3/8 real-world rows and 3/10 complete Table V rows covered;
 - official STRTTC/CMax wrappers are not yet reproduced end-to-end;
 - the event-tubelet backbone is still small compared with V-JEPA 2.1 scale;
 - deep self-supervision and all-token context loss were negative at current

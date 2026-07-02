@@ -536,6 +536,14 @@ Practical claim:
 > `0.312 +/- 0.044 s` CPLA-high test MAE and is the best local all-window result.
 > It is a strong starter result, not yet an official EvTTC SOTA result.
 
+The official bbox/ROI coverage gate confirms why. Running
+`data official-coverage` on `datasets/evttc` scans `9` local sequences but finds
+only `3/8` complete official real-world rows (`37.5%`) and `3/10` complete
+Table V rows including slider (`30.0%`). Missing rows are CCRs2 low/medium/high,
+CCRm low/medium, `Slider-750`, and `Slider-1000`. Therefore any percentage
+improvement reported above is local-protocol performance, not an official
+CMax/STRTTC leaderboard comparison.
+
 ## External Dataset Triage
 
 Markov Studios / Markov AI datasets were checked on 2026-07-02 and are not a
