@@ -165,6 +165,22 @@ def _cmd_train_tiny_cnn(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_train_evaluate(args: argparse.Namespace) -> int:
+    from e_jepa_ttc.training.supervised import evaluate_supervised_checkpoint
+
+    payload = evaluate_supervised_checkpoint(
+        cache_path=args.cache,
+        checkpoint_path=args.checkpoint,
+        output_path=args.output,
+        batch_size=args.batch_size,
+        device_name=args.device,
+        evaluation_splits=tuple(args.evaluation_splits),
+        model_name=args.model,
+    )
+    _print_json(payload)
+    return 0
+
+
 def _cmd_pretrain_jepa(args: argparse.Namespace) -> int:
     from e_jepa_ttc.training.jepa import pretrain_jepa
 
@@ -331,6 +347,24 @@ def build_parser() -> argparse.ArgumentParser:
         help="Train only the TTC head after loading or initializing the encoder.",
     )
     train_tiny.set_defaults(func=_cmd_train_tiny_cnn)
+    train_eval = train_sub.add_parser(
+        "evaluate",
+        help="Evaluate a saved supervised checkpoint without retraining.",
+    )
+    train_eval.add_argument("--cache", type=Path, required=True)
+    train_eval.add_argument("--checkpoint", type=Path, required=True)
+    train_eval.add_argument("--output", type=Path)
+    train_eval.add_argument("--batch-size", type=int, default=64)
+    train_eval.add_argument("--device", type=str, default="auto")
+    train_eval.add_argument("--model", choices=MODEL_NAMES)
+    train_eval.add_argument(
+        "--evaluation-splits",
+        nargs="+",
+        default=["test"],
+        choices=["train", "validation", "test"],
+        help="Splits to evaluate from the saved checkpoint.",
+    )
+    train_eval.set_defaults(func=_cmd_train_evaluate)
 
     pretrain = subparsers.add_parser("pretrain", help="Self-supervised pretraining commands.")
     pretrain_sub = pretrain.add_subparsers(dest="pretrain_command", required=True)

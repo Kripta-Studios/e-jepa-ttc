@@ -354,3 +354,114 @@ def train_tiny_cnn(
         )
     np.savez(ensure_parent(output / "predictions.npz"), **prediction_arrays)
     return summary
+
+
+def evaluate_supervised_checkpoint(
+    *,
+    cache_path: str | Path,
+    checkpoint_path: str | Path,
+    output_path: str | Path | None = None,
+    batch_size: int = 64,
+    device_name: str = "auto",
+    evaluation_splits: tuple[str, ...] = ("test",),
+    model_name: str | None = None,
+) -> dict[str, Any]:
+    """Evaluate a saved supervised TTC checkpoint without retraining."""
+
+    if not evaluation_splits:
+        msg = "evaluation_splits must contain at least one split."
+        raise ValueError(msg)
+    unknown_eval_splits = set(evaluation_splits) - {"train", "validation", "test"}
+    if unknown_eval_splits:
+        msg = f"Unknown evaluation splits: {sorted(unknown_eval_splits)}."
+        raise ValueError(msg)
+    if batch_size <= 0:
+        msg = "batch_size must be positive."
+        raise ValueError(msg)
+
+    cache = np.load(cache_path, allow_pickle=False)
+    x = cache["x"]
+    y_ttc = cache["y_ttc"].astype(np.float32)
+    split = cache["split"].astype(str)
+    y_log = np.log(np.clip(y_ttc, 1e-4, None)).astype(np.float32)
+    split_indices = {
+        "train": _split_indices(split, "train"),
+        "validation": _split_indices(split, "validation"),
+        "test": _split_indices(split, "test"),
+    }
+    missing_eval_splits = [
+        split_name
+        for split_name in evaluation_splits
+        if split_indices[split_name].size == 0
+    ]
+    if missing_eval_splits:
+        msg = f"Requested evaluation splits are empty: {missing_eval_splits}."
+        raise ValueError(msg)
+
+    if device_name == "auto":
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    else:
+        device = torch.device(device_name)
+    checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)
+    checkpoint_model_name = str(checkpoint.get("model_name", "tiny-cnn"))
+    selected_model_name = model_name or checkpoint_model_name
+    if selected_model_name != checkpoint_model_name:
+        msg = (
+            f"Checkpoint model is {checkpoint_model_name!r}, but evaluation model is "
+            f"{selected_model_name!r}."
+        )
+        raise ValueError(msg)
+    model = build_regressor(selected_model_name, in_channels=int(x.shape[1])).to(device)
+    state = checkpoint.get("model_state_dict")
+    if state is None:
+        msg = f"Checkpoint {checkpoint_path} does not contain model_state_dict."
+        raise ValueError(msg)
+    model.load_state_dict(state)
+
+    split_results: dict[str, Any] = {}
+    predictions: dict[str, list[float]] = {}
+    targets: dict[str, list[float]] = {}
+    for split_name in evaluation_splits:
+        dataset = VoxelCacheDataset(x, y_log, split_indices[split_name])
+        y_true, y_pred, seconds = _evaluate_model(
+            model,
+            dataset,
+            device=device,
+            batch_size=batch_size,
+        )
+        split_results[split_name] = {
+            "count": int(y_true.shape[0]),
+            "metrics": regression_metrics(y_true, y_pred),
+            "seconds": seconds,
+        }
+        predictions[split_name] = y_pred.astype(float).tolist()
+        targets[split_name] = y_true.astype(float).tolist()
+
+    summary: dict[str, Any] = {
+        "checkpoint": Path(checkpoint_path).as_posix(),
+        "checkpoint_epoch": checkpoint.get("epoch"),
+        "cache": str(cache_path),
+        "device": str(device),
+        "torch_version": torch.__version__,
+        "cuda_available": bool(torch.cuda.is_available()),
+        "gpu_name": torch.cuda.get_device_name(0) if torch.cuda.is_available() else None,
+        "model_name": selected_model_name,
+        "batch_size": batch_size,
+        "evaluation_splits": list(evaluation_splits),
+        "splits": split_results,
+    }
+    if output_path is not None:
+        output = ensure_parent(output_path)
+        write_structured(output, summary)
+        prediction_arrays: dict[str, np.ndarray] = {}
+        for split_name in evaluation_splits:
+            prediction_arrays[f"{split_name}_pred"] = np.array(
+                predictions[split_name],
+                dtype=np.float32,
+            )
+            prediction_arrays[f"{split_name}_true"] = np.array(
+                targets[split_name],
+                dtype=np.float32,
+            )
+        np.savez(output.with_suffix(".predictions.npz"), **prediction_arrays)
+    return summary

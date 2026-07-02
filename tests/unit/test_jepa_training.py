@@ -4,7 +4,7 @@ import numpy as np
 
 from e_jepa_ttc.data.evttc import NAVIGATION_FEATURE_NAMES
 from e_jepa_ttc.training.jepa import pretrain_jepa
-from e_jepa_ttc.training.supervised import train_tiny_cnn
+from e_jepa_ttc.training.supervised import evaluate_supervised_checkpoint, train_tiny_cnn
 
 
 def _write_cache(path: Path) -> None:
@@ -129,6 +129,36 @@ def test_supervised_training_can_skip_test_evaluation(tmp_path: Path) -> None:
     predictions = np.load(tmp_path / "validation_only_finetune" / "predictions.npz")
     assert "test_pred" not in predictions.files
     assert "test_true" not in predictions.files
+
+
+def test_evaluate_supervised_checkpoint_without_retraining(tmp_path: Path) -> None:
+    cache_path = tmp_path / "cache.npz"
+    _write_cache(cache_path)
+
+    train_summary = train_tiny_cnn(
+        cache_path=cache_path,
+        output_dir=tmp_path / "validation_only_finetune",
+        epochs=1,
+        batch_size=3,
+        seed=5,
+        device_name="cpu",
+        evaluation_splits=("train", "validation"),
+    )
+    checkpoint = Path(train_summary["best_checkpoint"])
+    eval_summary = evaluate_supervised_checkpoint(
+        cache_path=cache_path,
+        checkpoint_path=checkpoint,
+        output_path=tmp_path / "test_eval.json",
+        batch_size=3,
+        device_name="cpu",
+        evaluation_splits=("test",),
+    )
+
+    assert eval_summary["evaluation_splits"] == ["test"]
+    assert sorted(eval_summary["splits"]) == ["test"]
+    assert eval_summary["splits"]["test"]["count"] == 3
+    predictions = np.load(tmp_path / "test_eval.predictions.npz")
+    assert sorted(predictions.files) == ["test_pred", "test_true"]
 
 
 def test_token_jepa_deep_supervision(tmp_path: Path) -> None:
