@@ -599,3 +599,40 @@ In that mode, the trainer does not evaluate `test` and does not write
 `test_pred`/`test_true` arrays. This lets action-conditioned JEPA fine-tuning
 iterate on validation only, preserving the sealed test for a final protocol run.
 
+## 2026-07-02 Action-Conditioned Tubelet Validation Ablation
+
+Ran a 30-epoch action-conditioned `event-tubelet-transformer` JEPA pretrain on
+the full starter `raw_meta_nav` cache:
+
+- run: `artifacts/runs/jepa_event_tubelet_action_nav_full_starter_seed7_30e`
+- objective: `deep_dense_temporal_token_action_multihorizon`
+- action features: 15 total, 6 event-motion plus 9 causal navigation features
+- best SSL validation epoch: 14
+- best SSL validation loss: `0.0017955`
+- leakage audit: no TTC labels and `uses_future_navigation=false`
+
+Fine-tuned the same SSL checkpoint with seeds 7/13/21 using
+`--evaluation-splits train validation`, so no test metrics or test predictions
+were produced:
+
+| Run | Seed | Best epoch | Validation MAE |
+| --- | ---: | ---: | ---: |
+| Action-conditioned tubelet JEPA, validation-only | 7 | 28 | 0.236276 s |
+| Action-conditioned tubelet JEPA, validation-only | 13 | 55 | 0.247274 s |
+| Action-conditioned tubelet JEPA, validation-only | 21 | 29 | 0.258325 s |
+
+Mean validation MAE: `0.247292 +/- 0.009001 s` across the three fine-tuning
+seeds.
+
+Validation comparison against the previous best tubelet navigation JEPA:
+
+- previous tubelet navigation JEPA validation mean: `0.242929 +/- 0.005325 s`;
+- action-conditioned explicit predictor validation mean: `0.247292 +/- 0.009001 s`;
+- action-conditioned explicit predictor is 1.8% worse by validation MAE.
+
+Interpretation: the action-conditioned predictor is architecturally closer to
+LeWorldModel/V-JEPA action-conditioned latent prediction, and seed 7 improved
+slightly, but the three-seed validation result does not beat the previous local
+best. Therefore the sealed test remains unopened for this ablation, and the
+current empirical best remains the earlier event-tubelet navigation JEPA result.
+

@@ -157,6 +157,16 @@ channels are added as auxiliary spatial patch context. SSL pretraining selected
 epoch 12 with validation loss `0.001577`. Fine-tuning seeds 7/13/21 reached
 sealed-test MAEs `0.323`, `0.301`, and `0.360 s`.
 
+After adding explicit predictor-level action conditioning, a validation-only
+ablation was run without evaluating the sealed test. The action-conditioned
+tubelet JEPA pretrain selected epoch 14 with SSL validation loss `0.0017955`.
+Fine-tuning seeds 7/13/21 with `--evaluation-splits train validation` reached
+validation MAEs `0.236`, `0.247`, and `0.258 s`, for
+`0.247 +/- 0.009 s`. The previous tubelet navigation JEPA validation mean was
+`0.243 +/- 0.005 s`, so the action-conditioned predictor is 1.8% worse by
+validation MAE. Because it did not beat validation, the sealed test was not run
+for this ablation.
+
 ## Detection-Assisted Reference
 
 The missing official `bbox_segmentation` folders were recovered after
