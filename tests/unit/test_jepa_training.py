@@ -247,6 +247,8 @@ def test_evaluate_supervised_checkpoint_without_retraining(tmp_path: Path) -> No
     )
 
     assert eval_summary["evaluation_splits"] == ["test"]
+    assert eval_summary["checkpoint_seed"] == 5
+    assert eval_summary["checkpoint_epoch"] == train_summary["best_epoch"]
     assert sorted(eval_summary["splits"]) == ["test"]
     assert eval_summary["splits"]["test"]["count"] == 3
     predictions = np.load(tmp_path / "test_eval.predictions.npz")

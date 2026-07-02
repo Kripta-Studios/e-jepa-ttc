@@ -72,11 +72,12 @@ $env:PYTHONPATH='src'
 Current mini-subset results are summarized in [docs/local_results.md](docs/local_results.md).
 Full-starter sealed results are summarized in
 [docs/full_starter_results.md](docs/full_starter_results.md). On the full local starter protocol,
-the strongest result so far is token-transformer JEPA with causal integrated-navigation channels:
-with 100% labels it reaches `0.261 +/- 0.021s` validation MAE and `0.356 +/- 0.022s` sealed-test
-MAE over three fine-tuning seeds. That improves over token JEPA without navigation
-(`0.481 +/- 0.042s` test MAE) and over token scratch with the same navigation channels
-(`0.465 +/- 0.021s` test MAE).
+the strongest all-window result so far is tubelet-masked token JEPA with causal
+integrated-navigation channels and a transformer dense predictor: with 100%
+labels it reaches `0.231 +/- 0.018s` validation MAE and `0.312 +/- 0.044s`
+CPLA-high test MAE over three fine-tuning seeds. This is a local full-starter
+result, not an official EvTTC SOTA claim; official comparison still requires
+the benchmark bbox/ROI protocol and broader sequence set.
 
 With event-only inputs, token JEPA still improves sealed-test MAE from `1.327 +/- 0.104s` to
 `0.460 +/- 0.029s` at 10% labels.

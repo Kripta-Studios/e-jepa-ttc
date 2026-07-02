@@ -84,6 +84,7 @@ seeds 7/13/21.
 | Token JEPA + navigation fine-tune | 100% | 7,13,21 | 0.261 +/- 0.021 | 0.356 +/- 0.022 |
 | Event tubelet JEPA + navigation fine-tune | 100% | 7,13,21 | 0.243 +/- 0.007 | 0.328 +/- 0.030 |
 | Event tubelet JEPA + transformer predictor | 100% | 7,13,21 | 0.241 +/- 0.004 | 0.351 +/- 0.004 |
+| Event tubelet JEPA + tubelet mask + transformer predictor | 100% | 7,13,21 | 0.231 +/- 0.018 | 0.312 +/- 0.044 |
 | Deep Token JEPA + fine-tune | 100% | 7 | 0.491 | 0.594 |
 | Deep layer-aware Token JEPA + fine-tune | 100% | 7 | 0.472 | 0.505 |
 | Large Token JEPA + fine-tune | 100% | 7 | 0.504 | 0.529 |
@@ -118,11 +119,12 @@ Percent improvements over matching scratch runs:
 
 ## Interpretation
 
-The strongest robust local result is now `Event tubelet JEPA + navigation
-fine-tune` with full labels: `0.243 +/- 0.007 s` validation MAE and
-`0.328 +/- 0.030 s` sealed-test MAE over three fine-tuning seeds. It improves
-sealed-test MAE by 7.9% versus the previous navigation Token JEPA mean
-(`0.356 s`) and by 29.5% versus navigation token scratch (`0.465 s`).
+The strongest robust local all-window result is now `Event tubelet JEPA +
+tubelet mask + transformer predictor` with full labels:
+`0.231 +/- 0.018 s` validation MAE and `0.312 +/- 0.044 s` CPLA-high test MAE
+over three fine-tuning seeds. It improves test MAE by 4.9% versus the previous
+event-tubelet navigation JEPA mean (`0.328 s`), by 12.4% versus navigation Token
+JEPA (`0.356 s`), and by 32.9% versus navigation token scratch (`0.465 s`).
 
 The previous best robust result was `Token JEPA + navigation fine-tune`:
 `0.261 +/- 0.021 s` validation MAE and `0.356 +/- 0.022 s` sealed-test MAE over
@@ -312,11 +314,26 @@ Full-starter validation-only result after freezing that choice:
 Mean full-starter validation result: `0.231 +/- 0.018 s`, `8.19 +/- 0.53%`.
 This improves validation MAE versus the previous transformer-predictor candidate
 (`0.241 +/- 0.004 s`) and the earlier event-tubelet navigation JEPA
-(`0.243 +/- 0.005 s`). It does not establish a new sealed-test result:
-`CPLA-high` was not evaluated for this branch, and prior CPLA-high results have
-already been inspected. The best local sealed-test result remains the earlier
-event-tubelet JEPA + navigation fine-tune unless a clean final protocol is
-frozen and run.
+(`0.243 +/- 0.005 s`).
+
+After freezing this validation-selected setup, the saved best checkpoints were
+evaluated without retraining on the full starter protocol, including CPLA-high:
+
+| Seed | CPLA-high test MAE | Test relative error | Best epoch |
+| ---: | ---: | ---: | ---: |
+| 7 | 0.365 s | 7.03% | 7 |
+| 13 | 0.314 s | 5.94% | 27 |
+| 21 | 0.257 s | 6.27% | 29 |
+
+Mean CPLA-high test result: `0.312 +/- 0.044 s`, `6.42 +/- 0.45%`. This is the
+best local all-window test result so far. It improves MAE by 4.9% versus the
+previous event-tubelet navigation JEPA (`0.328 s`) and improves relative error
+from `6.89%` to `6.42%`.
+
+This still is not an official SOTA claim. CPLA-high has been inspected in prior
+runs, and the official EvTTC comparison in Table V is a bbox/ROI-assisted
+protocol over a broader sequence set. Treat this as the strongest local
+full-starter result, not as a reproduced EvTTC leaderboard result.
 
 ## Detection-Assisted Reference
 
@@ -452,9 +469,9 @@ structured physical integrator.
 Compared with current JEPA/world-model SOTA as of 2026-07-02:
 
 - Aligned: latent prediction, EMA target encoder, future multi-horizon
-  prediction, dense token loss, causal motion/action conditioning, optional
-  token-attention dense predictor, optional all-token context loss, no TTC-label
-  leakage, low-label transfer evaluation.
+  prediction, spatio-temporal tubelet masking, dense token loss, causal
+  motion/action conditioning, token-attention dense predictor, optional
+  all-token context loss, no TTC-label leakage, low-label transfer evaluation.
 - Still below SOTA: small local training scale, shallow token transformer, deep
   self-supervision currently negative in ablation, all-token context loss
   currently negative on pedestrian validation, event plus ego-motion only, no
@@ -463,10 +480,10 @@ Compared with current JEPA/world-model SOTA as of 2026-07-02:
 
 Practical claim:
 
-> On the local full-starter sealed EvTTC protocol, dense motion-conditioned
-> token JEPA with causal integrated-navigation channels substantially improves
-> TTC MAE and is the best local result. It is a strong starter result, not yet a
-> SOTA world-model result.
+> On the local full-starter EvTTC protocol, tubelet-masked dense token JEPA with
+> causal integrated-navigation channels and a transformer dense predictor reaches
+> `0.312 +/- 0.044 s` CPLA-high test MAE and is the best local all-window result.
+> It is a strong starter result, not yet an official EvTTC SOTA result.
 
 ## External Dataset Triage
 

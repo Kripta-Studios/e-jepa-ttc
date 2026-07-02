@@ -1198,8 +1198,36 @@ Mean full-starter validation result:
 - validation relative error: `8.192429 +/- 0.533708%`.
 
 This is the best validation MAE so far on the full-starter validation split, but
-it is not a new sealed-test claim. `CPLA-high` was not evaluated for this
-branch. The next valid step is either a clean final protocol with additional
-unopened sequences or an official bbox/ROI comparison using the complete
-official sequence set.
+the CPLA-high test had already been inspected in earlier branches, so this is a
+local protocol result rather than a fresh sealed-test claim.
+
+Added a reproducible metric aggregator:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\aggregate_eval_metrics.py --split test --output artifacts\metrics\event_tubelet_tubeletmask_transformerpred_nav_full_starter_last_lr3e5_eval_full_protocol_test_summary.json artifacts\metrics\event_tubelet_tubeletmask_transformerpred_nav_full_starter_last_lr3e5_seed7_eval_full_protocol.json artifacts\metrics\event_tubelet_tubeletmask_transformerpred_nav_full_starter_last_lr3e5_seed13_eval_full_protocol.json artifacts\metrics\event_tubelet_tubeletmask_transformerpred_nav_full_starter_last_lr3e5_seed21_eval_full_protocol.json
+```
+
+Full protocol evaluation, no retraining:
+
+| Seed | CPLA-high test MAE | Test relative error | Best epoch |
+| ---: | ---: | ---: | ---: |
+| 7 | `0.365 s` | `7.03%` | 7 |
+| 13 | `0.314 s` | `5.94%` | 27 |
+| 21 | `0.257 s` | `6.27%` | 29 |
+
+Aggregated CPLA-high test result:
+
+- test MAE: `0.312034689 +/- 0.044063632 s`;
+- test mean absolute relative error: `6.416740 +/- 0.454934%`;
+- test RMSE: `0.485851757 +/- 0.090484582 s`.
+
+This is now the best local all-window full-starter result. It improves MAE by
+4.9% versus the previous event-tubelet navigation JEPA mean (`0.328 s`) and
+improves relative error from `6.89%` to `6.42%`. It is still not an official SOTA
+claim because the official EvTTC comparison is bbox/ROI-assisted and uses a
+broader sequence protocol.
+
+The next valid step is either a clean final protocol with additional unopened
+sequences or an official bbox/ROI comparison using the complete official
+sequence set.
 

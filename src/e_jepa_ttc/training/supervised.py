@@ -465,6 +465,8 @@ def evaluate_supervised_checkpoint(
     summary: dict[str, Any] = {
         "checkpoint": Path(checkpoint_path).as_posix(),
         "checkpoint_epoch": checkpoint.get("epoch"),
+        "checkpoint_seed": checkpoint.get("seed"),
+        "checkpoint_cache": checkpoint.get("cache_path"),
         "cache": str(cache_path),
         "device": str(device),
         "torch_version": torch.__version__,
