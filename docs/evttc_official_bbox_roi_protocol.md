@@ -86,6 +86,41 @@ the official CMax/STRTTC metric table and must not be compared as if it were.
 6. Keep model selection on validation. Run the sealed test once per frozen
    protocol and do not change hyperparameters after seeing it.
 
+## Exact Download Checklist
+
+Minimum assets for an official-style bbox/ROI reproduction:
+
+| Sequence | Required assets | Local status |
+| --- | --- | --- |
+| `CCRs-1-low-100%` | already local: `hdf5`, `gt-ttc`, `bbox/leftlabel` | present |
+| `CCRs-1-medium-100%` | already local: `hdf5`, `gt-ttc`, `bbox/leftlabel` | present |
+| `CCRs-1-high-100%` | already local: `hdf5`, `gt-ttc`, `bbox/leftlabel` | present |
+| `CCRs-2-low-100%` | `hdf5`, `gt-ttc`, `bbox-segmentation` | missing |
+| `CCRs-2-medium-100%` | `hdf5`, `gt-ttc`, `bbox-segmentation` | missing |
+| `CCRs-2-high-100%` | `hdf5`, `gt-ttc`, `bbox-segmentation` | missing |
+| `CCRm-low-100%` | `hdf5`, `gt-ttc`, `bbox-segmentation` | missing |
+| `CCRm-medium-100%` | `hdf5`, `gt-ttc`, `bbox-segmentation` | missing |
+
+Do not download these for the first official bbox/ROI pass unless a baseline
+explicitly needs them:
+
+- `video`
+- `raw bag`
+- `gt-depth`
+- `download-full-sequence`
+
+They are useful for visualization, ROS replay, or depth-supervised experiments,
+but STRTTC/CMax-style TTC reproduction needs event HDF5, TTC labels, and object
+ROI/bbox annotations first.
+
+Optional later assets:
+
+- `Slider-750`
+- `Slider-1000`
+
+Those are needed only for reproducing the complete Table V including the slider
+testbed. They are not part of the current local EvTTC starter folder.
+
 Until those items are done, the correct comparison is:
 
 > Our best local all-window JEPA result is strong on the sealed starter split,
