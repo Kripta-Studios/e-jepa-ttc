@@ -266,6 +266,26 @@ def _cmd_train_roi_latent_prober(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_evaluate_roi_latent_prober(args: argparse.Namespace) -> int:
+    from e_jepa_ttc.training.prober import evaluate_roi_latent_ttc_prober_checkpoint
+
+    payload = evaluate_roi_latent_ttc_prober_checkpoint(
+        manifest_path=args.manifest,
+        split_path=args.split,
+        cache_path=args.cache,
+        prober_checkpoint_path=args.checkpoint,
+        output_path=args.output,
+        context_ms=args.context_ms,
+        max_cache_slop_ms=args.max_cache_slop_ms,
+        batch_size=args.batch_size,
+        device_name=args.device,
+        model_name=args.model,
+        evaluation_splits=tuple(args.evaluation_splits),
+    )
+    _print_json(payload)
+    return 0
+
+
 def _cmd_pretrain_jepa(args: argparse.Namespace) -> int:
     from e_jepa_ttc.training.jepa import pretrain_jepa
 
@@ -544,6 +564,27 @@ def build_parser() -> argparse.ArgumentParser:
         help="Splits to evaluate after validation-selected ROI prober training.",
     )
     train_roi_prober.set_defaults(func=_cmd_train_roi_latent_prober)
+    train_roi_eval = train_sub.add_parser(
+        "roi-latent-prober-evaluate",
+        help="Evaluate a saved detection-assisted frozen JEPA-latent bbox/ROI TTC prober.",
+    )
+    train_roi_eval.add_argument("--manifest", type=Path, required=True)
+    train_roi_eval.add_argument("--split", type=Path, required=True)
+    train_roi_eval.add_argument("--cache", type=Path, required=True)
+    train_roi_eval.add_argument("--checkpoint", type=Path, required=True)
+    train_roi_eval.add_argument("--output", type=Path)
+    train_roi_eval.add_argument("--context-ms", type=int, default=100)
+    train_roi_eval.add_argument("--max-cache-slop-ms", type=int, default=12)
+    train_roi_eval.add_argument("--batch-size", type=int, default=64)
+    train_roi_eval.add_argument("--device", type=str, default="auto")
+    train_roi_eval.add_argument("--model", choices=MODEL_NAMES)
+    train_roi_eval.add_argument(
+        "--evaluation-splits",
+        nargs="+",
+        default=["test"],
+        help="Splits to evaluate from the saved ROI prober checkpoint.",
+    )
+    train_roi_eval.set_defaults(func=_cmd_evaluate_roi_latent_prober)
 
     pretrain = subparsers.add_parser("pretrain", help="Self-supervised pretraining commands.")
     pretrain_sub = pretrain.add_subparsers(dest="pretrain_command", required=True)

@@ -58,12 +58,16 @@ Current local bbox/ROI result:
 | ROI event ridge | train bbox frames | 871 | 871 | MAE 0.659 s, mean relative error 19.15% |
 | ROI event ridge | validation bbox frames | 108 | 108 | MAE 0.293 s, mean relative error 13.63% |
 | ROI event ridge | sealed CPLA-high bbox frames | 83 | 83 | MAE 0.829 s, mean relative error 47.12% |
+| ROI latent prober | validation bbox frames | 108 | 98 | MAE 0.226 +/- 0.015 s, mean relative error 10.78 +/- 0.53% |
+| ROI latent prober | sealed CPLA-high bbox frames | 83 | 73 | MAE 0.423 +/- 0.029 s, mean relative error 23.41 +/- 2.23% |
 
 These are detection-assisted and frame-label-only. `causal-geometry` uses
 current and past bbox scale with train-only calibration. `roi-events` uses the
 current object box to crop only past/current events in a 100 ms window and fits a
-train-only ridge regressor. They are not the official CMax/STRTTC metric table
-and must not be compared as if they were.
+train-only ridge regressor. `roi-latent-prober` loads frozen JEPA and prober
+checkpoints selected before test evaluation, then evaluates matched bbox/cache
+rows without retraining. They are not the official CMax/STRTTC metric table and
+must not be compared as if they were.
 
 ## Compatibility Matrix
 

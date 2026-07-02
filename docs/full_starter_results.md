@@ -70,9 +70,9 @@ Lower MAE is better. Test is the sealed `CPLA-high` sequence and was not used
 for model or hyperparameter selection in this protocol.
 
 For a percentage-style reading, the current best
-`Event tubelet JEPA + navigation fine-tune` has mean absolute relative error
-`7.51 +/- 0.51%` on validation and `6.89 +/- 0.34%` on the sealed test over
-seeds 7/13/21.
+`Event tubelet JEPA + tubelet mask + transformer predictor` has mean absolute
+relative error `8.19 +/- 0.53%` on validation and `6.42 +/- 0.45%` on the
+sealed CPLA-high test over seeds 7/13/21.
 
 | Method | Train labels | Seeds | Validation MAE | Test MAE |
 | --- | ---: | --- | ---: | ---: |
@@ -379,6 +379,23 @@ Sealed full-starter result with fixed `context_ms=100` and `ridge_alpha=1.0`:
 | ROI event ridge | validation bbox frames | 108 | 108 | 0.293 s | 13.63% |
 | ROI event ridge | sealed CPLA-high bbox frames | 83 | 83 | 0.829 s | 47.12% |
 
+Frozen ROI latent prober checkpoint evaluation was added after training the
+prober only from train labels and selecting by validation. This command loads
+the saved prober checkpoints and evaluates them without retraining. On
+CPLA-high it matches 73/83 bbox labels to cached event windows:
+
+| Method | Split | Seeds | Labels | Matched | MAE | Mean relative error |
+| --- | --- | --- | ---: | ---: | ---: | ---: |
+| ROI latent prober | validation bbox frames | 7,13,21 | 108 | 98 | 0.226 +/- 0.015 s | 10.78 +/- 0.53% |
+| ROI latent prober | CPLA-high bbox test | 7,13,21 | 83 | 73 | 0.423 +/- 0.029 s | 23.41 +/- 2.23% |
+
+This is a negative SOTA result: the frozen latent ROI prober improves strongly
+over its train-only ridge prior on validation, but it is worse than the simple
+causal bbox geometry reference on CPLA-high and worse than the current
+all-window JEPA relative error. It remains useful because it gives a reproducible
+SkyJEPA-style detection-assisted checkpoint evaluation path without changing
+weights after validation.
+
 Multi-domain validation without evaluating sealed test:
 
 | Method | Split | Labels | MAE | Mean relative error |
@@ -389,7 +406,7 @@ Multi-domain validation without evaluating sealed test:
 Interpretation: the simple ROI feature model is closer to the official
 CMax/STRTTC input assumption than full-frame JEPA, but it is empirically much
 weaker on pedestrian transfer. The best all-window JEPA remains the best local
-sealed result (`6.89%` mean relative test error), while ROI event ridge is
+sealed result (`6.42%` mean relative test error), while ROI event ridge is
 useful mainly as protocol plumbing for bbox/ROI comparison.
 
 Run:
@@ -445,7 +462,7 @@ Dev multi-validation, no sealed test:
 | ROI event ridge prior | 0.759 s | 0.293 s | 1.342 s |
 | ROI latent prober, seeds 7/13/21 | 0.528 +/- 0.011 s | 0.340 +/- 0.003 s | 0.785 +/- 0.024 s |
 
-Full-starter validation only, no CPLA-high test:
+Full-starter validation used for model selection:
 
 | Method | Validation MAE | Validation relative error |
 | --- | ---: | ---: |
@@ -455,8 +472,22 @@ Full-starter validation only, no CPLA-high test:
 That is a 34.3% validation MAE reduction versus its train-only ROI/ridge prior.
 It also beats the earlier local ROI event ridge validation result (`0.293 s`),
 but the comparison is not exact because the latent prober matches 98/108
-validation bbox rows to cache windows. The sealed CPLA-high test remains closed
-for this branch.
+validation bbox rows to cache windows.
+
+After freezing the ROI prober checkpoints, a checkpoint-only evaluation was run
+on the full protocol, including CPLA-high, with no retraining:
+
+| Seed | CPLA-high matched frames | CPLA-high MAE | CPLA-high relative error |
+| ---: | ---: | ---: | ---: |
+| 7 | 73/83 | 0.383 s | 20.46% |
+| 13 | 73/83 | 0.431 s | 23.91% |
+| 21 | 73/83 | 0.454 s | 25.85% |
+
+Mean CPLA-high ROI latent prober result: `0.423 +/- 0.029 s`,
+`23.41 +/- 2.23%`. This is not competitive with the current all-window JEPA
+test result (`6.42 +/- 0.45%`) or the simple causal bbox geometry reference
+(`0.157 s` MAE on 81 valid frames), so the current ROI prober is protocol
+plumbing and diagnostic evidence, not the SOTA path by itself.
 
 Conclusion: SkyJEPA is key for the next architecture direction, especially the
 frozen latent prober and action-conditioned rollout framing. It is not yet a

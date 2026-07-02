@@ -1,9 +1,14 @@
 from pathlib import Path
 
 import numpy as np
+import pytest
+import torch
 
 from e_jepa_ttc.training.jepa import pretrain_jepa
-from e_jepa_ttc.training.prober import train_latent_ttc_prober
+from e_jepa_ttc.training.prober import (
+    evaluate_roi_latent_ttc_prober_checkpoint,
+    train_latent_ttc_prober,
+)
 
 
 def _write_cache(path: Path) -> None:
@@ -61,3 +66,19 @@ def test_latent_ttc_prober_trains_from_frozen_jepa_encoder(tmp_path: Path) -> No
     assert prober_summary["leakage_audit"]["encoder_frozen"] is True
     assert prober_summary["leakage_audit"]["uses_validation_or_test_ttc_for_prior_fit"] is False
     assert (tmp_path / "prober" / "latent_prober_best.pt").exists()
+
+
+def test_roi_latent_prober_checkpoint_evaluation_rejects_wrong_checkpoint(
+    tmp_path: Path,
+) -> None:
+    checkpoint_path = tmp_path / "wrong.pt"
+    torch.save({"model": "latent_ttc_prober"}, checkpoint_path)
+
+    with pytest.raises(ValueError, match="roi_latent_ttc_prober"):
+        evaluate_roi_latent_ttc_prober_checkpoint(
+            manifest_path=tmp_path / "missing_manifest.yaml",
+            split_path=tmp_path / "missing_split.yaml",
+            cache_path=tmp_path / "missing_cache.npz",
+            prober_checkpoint_path=checkpoint_path,
+            device_name="cpu",
+        )

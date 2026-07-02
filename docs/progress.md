@@ -1231,3 +1231,89 @@ The next valid step is either a clean final protocol with additional unopened
 sequences or an official bbox/ROI comparison using the complete official
 sequence set.
 
+## 2026-07-02 ROI Latent Prober Checkpoint Evaluation
+
+Added a checkpoint-only evaluator for the SkyJEPA-style detection-assisted
+prober:
+
+```powershell
+.\.venv\Scripts\python.exe -m e_jepa_ttc train roi-latent-prober-evaluate --manifest artifacts\metrics\evttc_scan_full_bbox.yaml --split data\splits\evttc_full_starter_sealed.yaml --cache artifacts\features\evttc_full_starter_voxel_160x90_b5_raw_meta_nav.npz --checkpoint artifacts\runs\roi_latent_prober_event_tubelet_transformerpred_nav_full_starter_last_seed7_160e\roi_latent_prober_best.pt --output artifacts\metrics\roi_latent_prober_event_tubelet_transformerpred_nav_full_starter_last_seed7_eval_full_protocol.json --context-ms 100 --max-cache-slop-ms 12 --batch-size 64 --device auto --evaluation-splits train validation test
+```
+
+The evaluator reloads the saved ROI prober checkpoint, reloads the frozen JEPA
+encoder recorded in that checkpoint, applies the train-fitted ROI and latent
+feature normalization from the checkpoint, and evaluates requested splits
+without retraining. It writes JSON metrics plus prediction arrays.
+
+Full-starter validation, used for model selection before test evaluation:
+
+| Seed | Matched validation frames | Validation MAE | Validation relative error |
+| ---: | ---: | ---: | ---: |
+| 7 | 98/108 | `0.247 s` | `11.53%` |
+| 13 | 98/108 | `0.214 s` | `10.43%` |
+| 21 | 98/108 | `0.218 s` | `10.39%` |
+
+Aggregated validation: `0.226 +/- 0.015 s`, `10.78 +/- 0.53%`.
+
+Frozen full-protocol evaluation, no retraining:
+
+| Seed | Matched CPLA-high frames | Test MAE | Test relative error |
+| ---: | ---: | ---: | ---: |
+| 7 | 73/83 | `0.383 s` | `20.46%` |
+| 13 | 73/83 | `0.431 s` | `23.91%` |
+| 21 | 73/83 | `0.454 s` | `25.85%` |
+
+Aggregated CPLA-high ROI prober result:
+
+- test MAE: `0.422723691 +/- 0.029309195 s`;
+- test mean absolute relative error: `23.407466 +/- 2.229738%`;
+- test RMSE: `0.528156744 +/- 0.019810572 s`.
+
+This result is not competitive with the current all-window JEPA test result
+(`6.42 +/- 0.45%` relative error) and is also worse than the causal bbox
+geometry reference (`0.157 s` MAE on 81 valid CPLA-high bbox frames). The useful
+conclusion is negative and architectural: frozen context-latent probing is not
+enough. The SkyJEPA-like next step should probe predicted multi-step latent
+rollouts with a structured TTC/kinematic head, still selected only by
+validation.
+
+Artifacts:
+
+- `artifacts/metrics/roi_latent_prober_event_tubelet_transformerpred_nav_full_starter_last_seed7_eval_full_protocol.json`
+- `artifacts/metrics/roi_latent_prober_event_tubelet_transformerpred_nav_full_starter_last_seed13_eval_full_protocol.json`
+- `artifacts/metrics/roi_latent_prober_event_tubelet_transformerpred_nav_full_starter_last_seed21_eval_full_protocol.json`
+- `artifacts/metrics/roi_latent_prober_event_tubelet_transformerpred_nav_full_starter_last_eval_full_protocol_test_summary.json`
+- `artifacts/metrics/roi_latent_prober_event_tubelet_transformerpred_nav_full_starter_last_eval_full_protocol_validation_summary.json`
+
+## 2026-07-02 SkyJEPA Paper Reassessment
+
+SkyJEPA (`https://arxiv.org/abs/2606.23444`, v2 revised 2026-06-23) is key as
+an architecture guide, not as a directly transferable TTC benchmark. The paper
+targets quadrotor control, but the important pattern for this project is:
+
+- learn action-conditioned latent dynamics instead of reconstructing future
+  observations;
+- avoid autoregressive observation rollout drift by predicting latent dynamics;
+- map frozen latent rollouts through a physics-inspired prober into
+  interpretable state;
+- measure long-horizon stability explicitly, not just one-step loss;
+- treat data coverage as a first-class variable via a trajectory distribution
+  quality concept;
+- use compact anti-collapse regularization such as SIGReg/VISReg-style
+  distribution regularization rather than fragile reconstruction-heavy losses.
+
+Project implications:
+
+1. Keep the current tubelet/dense-token JEPA direction.
+2. Do not over-invest in current-frame ROI latent probing; the full-protocol
+   result above is negative.
+3. Implement the next prober against predicted future latents from the JEPA
+   predictor, not only current frozen context latents.
+4. Add validation-only diagnostics for compounding error across TTC horizons and
+   split/domain coverage, analogous to SkyJEPA's long-horizon and TDQ analyses.
+5. Treat VISReg/SIGReg as a serious next regularization ablation, tuned only on
+   multi-domain validation.
+
+This keeps the project aligned with SkyJEPA without claiming its quadrotor
+control results transfer to event-camera TTC.
+
