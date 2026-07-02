@@ -200,7 +200,17 @@ def test_jepa_action_conditioning_uses_causal_navigation(tmp_path: Path) -> None
     assert pretrain_summary["uses_navigation_action_conditioning"] is True
     assert pretrain_summary["action_feature_dim"] == 15
     assert pretrain_summary["motion_feature_dim"] == 15
+    assert pretrain_summary["action_feature_normalization"] is True
+    assert pretrain_summary["action_feature_normalization_source"] == (
+        "pretrain_context_indices_train_only"
+    )
+    assert len(pretrain_summary["action_feature_mean"]) == 15
+    assert len(pretrain_summary["action_feature_std"]) == 15
     assert pretrain_summary["navigation_feature_names"] == list(NAVIGATION_FEATURE_NAMES)
     assert pretrain_summary["action_feature_names"][-1] == "ego_navigation_valid"
     assert pretrain_summary["leakage_audit"]["action_conditioning_uses_context_only"] is True
+    assert (
+        pretrain_summary["leakage_audit"]["action_feature_normalization_uses_train_only"]
+        is True
+    )
     assert pretrain_summary["leakage_audit"]["uses_future_navigation"] is False

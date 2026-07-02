@@ -401,6 +401,49 @@ def _context_action_features(
     return torch.nan_to_num(torch.cat(pieces, dim=1), nan=0.0, posinf=0.0, neginf=0.0)
 
 
+def _normalize_action_features(
+    features: torch.Tensor,
+    *,
+    mean: torch.Tensor | None,
+    std: torch.Tensor | None,
+) -> torch.Tensor:
+    if mean is None or std is None:
+        return features
+    return (features - mean.to(device=features.device)) / std.to(device=features.device)
+
+
+def _estimate_action_feature_stats(
+    x: np.ndarray,
+    indices: np.ndarray,
+    *,
+    bins: int,
+    metadata_channels: bool,
+    navigation_feature_count: int,
+    batch_size: int = 128,
+) -> tuple[torch.Tensor, torch.Tensor]:
+    """Estimate action-feature normalization from train context windows only."""
+
+    if indices.size == 0:
+        msg = "Cannot estimate action feature stats without train context indices."
+        raise ValueError(msg)
+    rows: list[torch.Tensor] = []
+    for start in range(0, int(indices.size), batch_size):
+        batch_indices = indices[start : start + batch_size]
+        batch = torch.from_numpy(x[batch_indices].astype(np.float32, copy=False))
+        rows.append(
+            _context_action_features(
+                batch,
+                bins=bins,
+                metadata_channels=metadata_channels,
+                navigation_feature_count=navigation_feature_count,
+            )
+        )
+    features = torch.cat(rows, dim=0)
+    mean = features.mean(dim=0)
+    std = features.std(dim=0, unbiased=False).clamp_min(1e-6)
+    return mean, std
+
+
 def _cache_bool(cache: NpzFile, key: str) -> bool:
     if key not in cache.files:
         return False
@@ -513,6 +556,8 @@ def _jepa_loss(
     bins: int,
     metadata_channels: bool,
     navigation_feature_count: int,
+    action_feature_mean: torch.Tensor | None,
+    action_feature_std: torch.Tensor | None,
 ) -> tuple[torch.Tensor, dict[str, float]]:
     context = _masked_context(x, mask_ratio=mask_ratio, block_count=block_count)
     if dense_tokens and future_x is not None:
@@ -539,11 +584,15 @@ def _jepa_loss(
         batch, horizon_count = future_mask.shape
         if dense_tokens:
             motion_features = (
-                _context_action_features(
-                    x,
-                    bins=bins,
-                    metadata_channels=metadata_channels,
-                    navigation_feature_count=navigation_feature_count,
+                _normalize_action_features(
+                    _context_action_features(
+                        x,
+                        bins=bins,
+                        metadata_channels=metadata_channels,
+                        navigation_feature_count=navigation_feature_count,
+                    ),
+                    mean=action_feature_mean,
+                    std=action_feature_std,
                 )
                 if motion_conditioning
                 else None
@@ -641,6 +690,8 @@ def _run_epoch(
     bins: int,
     metadata_channels: bool,
     navigation_feature_count: int,
+    action_feature_mean: torch.Tensor | None,
+    action_feature_std: torch.Tensor | None,
 ) -> dict[str, float]:
     train_mode = optimizer is not None
     encoder.train(train_mode)
@@ -680,6 +731,8 @@ def _run_epoch(
                 bins=bins,
                 metadata_channels=metadata_channels,
                 navigation_feature_count=navigation_feature_count,
+                action_feature_mean=action_feature_mean,
+                action_feature_std=action_feature_std,
             )
         if optimizer is not None:
             if scaler is None:
@@ -764,6 +817,8 @@ def pretrain_jepa(
         else ()
     )
     action_feature_dim = len(action_feature_names)
+    action_feature_mean: torch.Tensor | None = None
+    action_feature_std: torch.Tensor | None = None
     objective = _objective_name(
         use_temporal=use_temporal,
         dense_tokens=use_dense_tokens,
@@ -803,6 +858,14 @@ def pretrain_jepa(
                 f"{pretrain_splits}; check horizons or target slop."
             )
             raise ValueError(msg)
+        if use_motion_conditioning:
+            action_feature_mean, action_feature_std = _estimate_action_feature_stats(
+                x,
+                train_idx,
+                bins=bins,
+                metadata_channels=metadata_channels,
+                navigation_feature_count=navigation_feature_count,
+            )
     else:
         train_idx = _split_indices(split, pretrain_splits)
         val_idx = _split_indices(split, validation_splits)
@@ -811,6 +874,14 @@ def pretrain_jepa(
         if train_idx.size == 0:
             msg = f"No samples found for pretrain splits {pretrain_splits}."
             raise ValueError(msg)
+        if use_motion_conditioning:
+            action_feature_mean, action_feature_std = _estimate_action_feature_stats(
+                x,
+                train_idx,
+                bins=bins,
+                metadata_channels=metadata_channels,
+                navigation_feature_count=navigation_feature_count,
+            )
 
     if device_name == "auto":
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -890,6 +961,16 @@ def pretrain_jepa(
         "action_feature_names": list(action_feature_names),
         "action_feature_dim": action_feature_dim,
         "motion_feature_dim": action_feature_dim,
+        "action_feature_normalization": use_motion_conditioning,
+        "action_feature_normalization_source": (
+            "pretrain_context_indices_train_only" if use_motion_conditioning else None
+        ),
+        "action_feature_mean": action_feature_mean.tolist()
+        if action_feature_mean is not None
+        else [],
+        "action_feature_std": action_feature_std.tolist()
+        if action_feature_std is not None
+        else [],
     }
 
     with history_path.open("w", encoding="utf-8") as history_file:
@@ -914,6 +995,8 @@ def pretrain_jepa(
                 bins=bins,
                 metadata_channels=metadata_channels,
                 navigation_feature_count=navigation_feature_count,
+                action_feature_mean=action_feature_mean,
+                action_feature_std=action_feature_std,
             )
             validation_metrics = None
             if val_loader is not None:
@@ -940,6 +1023,8 @@ def pretrain_jepa(
                         bins=bins,
                         metadata_channels=metadata_channels,
                         navigation_feature_count=navigation_feature_count,
+                        action_feature_mean=action_feature_mean,
+                        action_feature_std=action_feature_std,
                     )
             score = (
                 validation_metrics["loss"]
@@ -1057,6 +1142,7 @@ def pretrain_jepa(
             "uses_future_events_as_ssl_targets": use_temporal,
             "motion_conditioning_uses_context_only": use_motion_conditioning,
             "action_conditioning_uses_context_only": use_action_conditioning,
+            "action_feature_normalization_uses_train_only": use_motion_conditioning,
             "uses_future_navigation": False,
             "deep_supervision_uses_intermediate_target_layers": use_deep_supervision,
             "deep_supervision_layer_conditioning": use_deep_supervision,
