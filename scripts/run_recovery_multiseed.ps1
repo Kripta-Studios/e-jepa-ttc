@@ -28,28 +28,33 @@ foreach ($seed in $seeds) {
     $sslOut = "artifacts/runs/recovery_jepa_tubeletmask_transformer_seed${seed}_${suffix}"
     $sslStarted = Get-Date -Format o
     $sslCommand = "$python -m e_jepa_ttc pretrain jepa --cache $cache --output-dir $sslOut --epochs $sslEpochs --batch-size 24 --learning-rate 0.0003 --seed $seed --device auto --model event-tubelet-transformer --pretrain-splits train --validation-splits validation --temporal-horizons-ms 20 60 100 240 500 --max-target-slop-ms 10 --mask-ratio 0.45 --block-count 4 --mask-mode tubelet --ema-momentum 0.99 --variance-weight 1.0 --min-std 0.05 --dense-predictor transformer"
-    & $python -m e_jepa_ttc pretrain jepa `
-        --cache $cache `
-        --output-dir $sslOut `
-        --epochs $sslEpochs `
-        --batch-size 24 `
-        --learning-rate 0.0003 `
-        --seed $seed `
-        --device auto `
-        --model event-tubelet-transformer `
-        --pretrain-splits train `
-        --validation-splits validation `
-        --temporal-horizons-ms 20 60 100 240 500 `
-        --max-target-slop-ms 10 `
-        --mask-ratio 0.45 `
-        --block-count 4 `
-        --mask-mode tubelet `
-        --ema-momentum 0.99 `
-        --variance-weight 1.0 `
-        --min-std 0.05 `
-        --dense-predictor transformer
-    if ($LASTEXITCODE -ne 0) { throw "SSL seed $seed failed" }
-    $sslCompleted = Get-Date -Format o
+    if (Test-Path "$sslOut/jepa_encoder_best.pt") {
+        Write-Output "SSL pretraining for seed $seed already exists. Skipping pretraining."
+        $sslCompleted = Get-Date -Format o
+    } else {
+        & $python -m e_jepa_ttc pretrain jepa `
+            --cache $cache `
+            --output-dir $sslOut `
+            --epochs $sslEpochs `
+            --batch-size 24 `
+            --learning-rate 0.0003 `
+            --seed $seed `
+            --device auto `
+            --model event-tubelet-transformer `
+            --pretrain-splits train `
+            --validation-splits validation `
+            --temporal-horizons-ms 20 60 100 240 500 `
+            --max-target-slop-ms 10 `
+            --mask-ratio 0.45 `
+            --block-count 4 `
+            --mask-mode tubelet `
+            --ema-momentum 0.99 `
+            --variance-weight 1.0 `
+            --min-std 0.05 `
+            --dense-predictor transformer
+        if ($LASTEXITCODE -ne 0) { throw "SSL seed $seed failed" }
+        $sslCompleted = Get-Date -Format o
+    }
     $registerArgs = @(
         "scripts/register_recovery_run.py", "--run-id", "recovery-ssl-${seed}-${suffix}",
         "--stage", "ssl_pretrain", "--run-dir", $sslOut, "--pretrain-seed", $seed,
@@ -65,21 +70,26 @@ foreach ($seed in $seeds) {
         $downstreamOut = "artifacts/runs/recovery_downstream_ssl${seed}_seed${downstreamSeed}_${suffix}"
         $downstreamStarted = Get-Date -Format o
         $downstreamCommand = "$python -m e_jepa_ttc train tiny-cnn --cache $cache --output-dir $downstreamOut --epochs $downstreamEpochs --batch-size 32 --learning-rate 0.00003 --seed $downstreamSeed --device auto --model event-tubelet-transformer --pretrained-encoder $sslOut/jepa_encoder_best.pt --train-splits train --validation-splits validation --evaluation-splits train validation"
-        & $python -m e_jepa_ttc train tiny-cnn `
-            --cache $cache `
-            --output-dir $downstreamOut `
-            --epochs $downstreamEpochs `
-            --batch-size 32 `
-            --learning-rate 0.00003 `
-            --seed $downstreamSeed `
-            --device auto `
-            --model event-tubelet-transformer `
-            --pretrained-encoder "$sslOut/jepa_encoder_best.pt" `
-            --train-splits train `
-            --validation-splits validation `
-            --evaluation-splits train validation
-        if ($LASTEXITCODE -ne 0) { throw "Downstream SSL $seed seed $downstreamSeed failed" }
-        $downstreamCompleted = Get-Date -Format o
+        if (Test-Path "$downstreamOut/tiny_cnn_best.pt") {
+            Write-Output "Downstream training for pretrain seed $seed and downstream seed $downstreamSeed already exists. Skipping downstream training."
+            $downstreamCompleted = Get-Date -Format o
+        } else {
+            & $python -m e_jepa_ttc train tiny-cnn `
+                --cache $cache `
+                --output-dir $downstreamOut `
+                --epochs $downstreamEpochs `
+                --batch-size 32 `
+                --learning-rate 0.00003 `
+                --seed $downstreamSeed `
+                --device auto `
+                --model event-tubelet-transformer `
+                --pretrained-encoder "$sslOut/jepa_encoder_best.pt" `
+                --train-splits train `
+                --validation-splits validation `
+                --evaluation-splits train validation
+            if ($LASTEXITCODE -ne 0) { throw "Downstream SSL $seed seed $downstreamSeed failed" }
+            $downstreamCompleted = Get-Date -Format o
+        }
         $registerArgs = @(
             "scripts/register_recovery_run.py", "--run-id", "recovery-downstream-ssl${seed}-seed${downstreamSeed}-${suffix}",
             "--stage", "downstream_ttc", "--run-dir", $downstreamOut,
