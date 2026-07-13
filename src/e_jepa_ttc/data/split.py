@@ -12,6 +12,10 @@ from e_jepa_ttc.data.targets import load_ttc_csv
 from e_jepa_ttc.data.types import DatasetSequence
 from e_jepa_ttc.utils.io import read_structured, write_structured
 
+FINAL_CLAIM_LEVELS = frozenset({"official", "final"})
+REUSED_TEST_STATUS = "reused_test_diagnostic"
+LEGACY_REUSED_TEST_STATUSES = frozenset({"reused_test"})
+
 
 def create_sequence_splits(
     sequences: list[DatasetSequence],
@@ -136,3 +140,58 @@ def read_splits(path: str | Path) -> dict[str, list[str]]:
         msg = f"Split file {path} does not contain a split mapping."
         raise ValueError(msg)
     return {str(name): [str(value) for value in values] for name, values in splits.items()}
+
+
+def read_split_protocol(path: str | Path) -> dict[str, Any]:
+    """Read claim-relevant metadata from a sequence split definition.
+
+    Older split files did not declare a status. They remain usable for
+    development, but are deliberately not treated as pristine final holdouts.
+    """
+
+    data = read_structured(path)
+    status = str(data.get("status", "unspecified"))
+    if status in LEGACY_REUSED_TEST_STATUSES:
+        status = REUSED_TEST_STATUS
+    evaluation_role = str(data.get("evaluation_role", "development"))
+    raw_allowed = data.get("allowed_claim_levels")
+    if raw_allowed is None:
+        allowed = ("development", "diagnostic")
+    elif isinstance(raw_allowed, list) and all(isinstance(value, str) for value in raw_allowed):
+        allowed = tuple(raw_allowed)
+    else:
+        msg = f"Split file {path} has invalid allowed_claim_levels metadata."
+        raise ValueError(msg)
+    return {
+        "path": Path(path).as_posix(),
+        "protocol": data.get("protocol"),
+        "status": status,
+        "evaluation_role": evaluation_role,
+        "allowed_claim_levels": list(allowed),
+        "test_was_previously_inspected": bool(data.get("test_was_previously_inspected", False)),
+    }
+
+
+def assert_split_claim_allowed(path: str | Path, *, claim_level: str) -> dict[str, Any]:
+    """Fail closed when a split cannot support the requested result claim."""
+
+    claim = claim_level.strip().lower()
+    if claim not in {"development", "diagnostic", "official", "final"}:
+        msg = f"Unknown claim level {claim_level!r}."
+        raise ValueError(msg)
+    protocol = read_split_protocol(path)
+    allowed = set(protocol["allowed_claim_levels"])
+    if claim not in allowed:
+        msg = (
+            f"Split {path} has status={protocol['status']!r} and evaluation_role="
+            f"{protocol['evaluation_role']!r}; it cannot produce a {claim!r} result. "
+            f"Allowed claim levels: {sorted(allowed)}."
+        )
+        raise ValueError(msg)
+    if claim in FINAL_CLAIM_LEVELS and (
+        protocol["status"] == REUSED_TEST_STATUS
+        or protocol["test_was_previously_inspected"]
+    ):
+        msg = f"Reused/inspected test split {path} cannot produce {claim!r} results."
+        raise ValueError(msg)
+    return {**protocol, "requested_claim_level": claim, "claim_allowed": True}

@@ -40,7 +40,7 @@ Pretraining for Time-to-Collision Estimation}}
 \author{
 KriptaStudios Research Handoff\\
 \small Local reproducible report generated from the \texttt{e-jepa-ttc} repository\\
-\small Version: 2026-07-03
+\small Version: 2026-07-13 (post-audit protocol revision)
 }
 
 \date{}
@@ -61,7 +61,9 @@ and a transformer predictor over dense latent tokens. The best local
 all-window model, an event-tubelet transformer pretrained with tubelet masking
 and a dense transformer JEPA predictor, reaches
 $0.231 \pm 0.018$ s validation MAE and $0.312 \pm 0.044$ s diagnostic
-CPLA-high MAE over three fine-tuning seeds. Its mean absolute relative error is
+CPLA-high MAE over three fine-tuning seeds conditioned on one SSL pretraining
+seed. Thus the reported dispersion is downstream-only, not hierarchical. Its
+mean absolute relative error is
 $8.19 \pm 0.53\%$ on validation and $6.42 \pm 0.45\%$ on CPLA-high.
 Low-label experiments show the strongest self-supervised signal: at 10\%
 labels, token JEPA improves diagnostic CPLA-high MAE by 65.4\% over the
@@ -217,6 +219,10 @@ Diagnostic test & \texttt{CPLA-high} & 478 \\
 \bottomrule
 \end{tabularx}
 \end{table*}
+The split file now records \texttt{status: reused\_test\_diagnostic},
+\texttt{evaluation\_role: diagnostic}, and permits only development/diagnostic
+tables. The aggregation gate rejects this split for \texttt{official} or
+\texttt{final} output.
 
 The development multi-validation split was introduced after CPLA-high had been
 opened. It keeps \texttt{CCRs-side-high} as \texttt{validation\_car}, moves
@@ -700,7 +706,7 @@ $env:PYTHONPATH='src'
 After adding the official coverage gate, final verification was:
 \begin{itemize}
   \item \texttt{ruff check .}: all checks passed;
-  \item \texttt{pytest}: 53 passed in 4.30 s.
+  \item \texttt{pytest}: 57 passed in the 2026-07-13 recovery verification.
 \end{itemize}
 
 \subsection{Representative JEPA Command}
@@ -725,6 +731,12 @@ $env:PYTHONPATH='src'
   --mask-mode tubelet
   --dense-predictor transformer
 \end{lstlisting}
+Downstream runs should load the validation-selected
+\texttt{jepa\_encoder\_best.pt}. The historical best local row instead loaded
+the epoch-30 \texttt{last} checkpoint while SSL validation selected epoch 26;
+that choice is retained as a diagnostic and is not evidence that last is
+preferable. Main uncertainty claims require multiple SSL seeds with downstream
+seeds nested under each one.
 
 \section{Discussion}
 

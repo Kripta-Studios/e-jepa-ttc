@@ -8,6 +8,8 @@ from typing import Any
 
 import numpy as np
 
+from e_jepa_ttc.data.split import assert_split_claim_allowed
+
 DEFAULT_METRIC_NAMES = (
     "mae_s",
     "mean_abs_relative_error_pct",
@@ -32,9 +34,22 @@ def aggregate_metric_files(
     *,
     split: str,
     metric_names: tuple[str, ...] = DEFAULT_METRIC_NAMES,
+    split_protocol_path: str | Path | None = None,
+    claim_level: str = "diagnostic",
 ) -> dict[str, Any]:
     """Aggregate one split from saved evaluation metrics."""
 
+    if claim_level in {"official", "final"} and split_protocol_path is None:
+        raise ValueError("split_protocol_path is required for official/final result tables.")
+    claim_gate = (
+        assert_split_claim_allowed(split_protocol_path, claim_level=claim_level)
+        if split_protocol_path is not None
+        else {
+            "requested_claim_level": claim_level,
+            "claim_allowed": claim_level in {"development", "diagnostic"},
+            "status": "unverified_no_split_protocol",
+        }
+    )
     if not paths:
         msg = "At least one metrics path is required."
         raise ValueError(msg)
@@ -49,9 +64,21 @@ def aggregate_metric_files(
         if not isinstance(metrics, dict):
             msg = f"Split {split!r} in {path} has no metrics object."
             raise ValueError(msg)
+        pretrained = payload.get("pretrained_encoder")
+        if not isinstance(pretrained, dict):
+            pretrained = {}
+        downstream_seed = payload.get(
+            "downstream_seed",
+            payload.get("seed", payload.get("checkpoint_seed")),
+        )
+        pretrain_seed = payload.get("pretrain_seed", pretrained.get("source_seed"))
         row = {
             "path": path.as_posix(),
-            "seed": payload.get("seed", payload.get("checkpoint_seed")),
+            "seed": downstream_seed,
+            "downstream_seed": downstream_seed,
+            "pretrain_seed": pretrain_seed,
+            "pretrain_checkpoint_role": pretrained.get("checkpoint_role"),
+            "pretrain_checkpoint_selected_by": pretrained.get("checkpoint_selected_by"),
             "checkpoint": payload.get("checkpoint"),
             "checkpoint_epoch": payload.get("checkpoint_epoch"),
             "count": split_payload.get("count"),
@@ -72,10 +99,30 @@ def aggregate_metric_files(
                 "min": float(values.min()),
                 "max": float(values.max()),
             }
+    pretrain_seeds = sorted(
+        {row["pretrain_seed"] for row in rows if row["pretrain_seed"] is not None}
+    )
+    downstream_seeds = sorted(
+        {row["downstream_seed"] for row in rows if row["downstream_seed"] is not None}
+    )
+    if len(pretrain_seeds) == 1 and len(downstream_seeds) > 1:
+        uncertainty_scope = "downstream_only_conditional_on_single_pretrain_seed"
+    elif len(pretrain_seeds) > 1:
+        uncertainty_scope = "multiple_pretrain_and_downstream_seeds"
+    elif not pretrain_seeds:
+        uncertainty_scope = "pretrain_seed_not_recorded"
+    else:
+        uncertainty_scope = "single_run_or_single_seed"
     return {
         "split": split,
         "metric_names": list(metric_names),
         "count": len(rows),
+        "pretrain_seed_count": len(pretrain_seeds),
+        "pretrain_seeds": pretrain_seeds,
+        "downstream_seed_count": len(downstream_seeds),
+        "downstream_seeds": downstream_seeds,
+        "uncertainty_scope": uncertainty_scope,
+        "claim_gate": claim_gate,
         "rows": rows,
         "summary": summary,
     }

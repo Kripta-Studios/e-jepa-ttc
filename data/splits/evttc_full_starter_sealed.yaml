@@ -1,10 +1,14 @@
-version: 1
-protocol: evttc-full-starter-sealed-2026-07-01
+version: 2
+protocol: evttc-full-starter-diagnostic-2026-07-13
+status: reused_test_diagnostic
+evaluation_role: diagnostic
+allowed_claim_levels: [development, diagnostic]
+test_was_previously_inspected: true
 notes: >
-  Sequence-level split for the full local EvTTC starter protocol. Previously
-  inspected CCRs-1 sequences are assigned to train only. Validation and test use
-  newly added starter sequences; CPLA-high is the sealed final test sequence and
-  must not be used for architecture or hyperparameter selection.
+  Sequence-level split retained for diagnostic continuity with historical local
+  runs. CPLA-high was inspected in prior development branches, so it is a reused
+  diagnostic test and cannot support official or final claims. A new final split
+  requires sequences that remain uninspected until the model and protocol freeze.
 splits:
   train:
     - CCRs-1-low-100-overlap-100

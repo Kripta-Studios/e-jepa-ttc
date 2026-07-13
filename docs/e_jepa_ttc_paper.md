@@ -13,7 +13,9 @@ masking, causal ego-motion conditioning, and a transformer predictor. The best
 local all-window model, an event-tubelet transformer pretrained with tubelet
 masking and a dense transformer JEPA predictor, reaches `0.231 +/- 0.018 s`
 validation MAE and `0.312 +/- 0.044 s` CPLA-high diagnostic test MAE over three
-fine-tuning seeds. Its mean absolute relative error is `8.19 +/- 0.53%` on
+fine-tuning seeds conditioned on one SSL pretraining seed. The dispersion is
+therefore downstream-only rather than hierarchical over SSL and fine-tuning.
+Its mean absolute relative error is `8.19 +/- 0.53%` on
 validation and `6.42 +/- 0.45%` on CPLA-high.
 
 The result is the strongest local all-window model in this repository, but it is
@@ -110,7 +112,7 @@ avoid further tuning on it:
 | Test | `CPLA-high` |
 
 This split is used for architecture selection and negative ablations. It is not
-used to claim a new sealed CPLA-high result.
+used to claim a new pristine/final CPLA-high result.
 
 ### 3.3 Official EvTTC Protocol Gap
 
@@ -350,7 +352,7 @@ $env:PYTHONPATH='src'
 Final verification result:
 
 - `ruff check .`: all checks passed;
-- `pytest`: `50 passed`.
+- `pytest`: `57 passed` in the 2026-07-13 recovery verification.
 
 ### 8.3 Main Result Artifacts
 

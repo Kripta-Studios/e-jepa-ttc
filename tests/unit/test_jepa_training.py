@@ -112,6 +112,8 @@ def test_jepa_checkpoint_loads_into_supervised_trainer(tmp_path: Path) -> None:
         validation_splits=("validation",),
     )
     assert pretrain_summary["best_epoch"] == 1
+    assert pretrain_summary["pretrain_seed"] == 5
+    assert pretrain_summary["checkpoint_selection"]["recommended_role"] == "best"
     assert pretrain_summary["objective"] == "dense_temporal_token_motion_multihorizon"
     assert pretrain_summary["dense_tokens"] is True
     assert pretrain_summary["motion_conditioning"] is True
@@ -120,6 +122,9 @@ def test_jepa_checkpoint_loads_into_supervised_trainer(tmp_path: Path) -> None:
     assert pretrain_summary["train_pair_stats"]["target_pair_count"] > 0
     checkpoint = tmp_path / "jepa" / "jepa_encoder_best.pt"
     assert checkpoint.exists()
+    checkpoint_payload = torch.load(checkpoint, map_location="cpu", weights_only=False)
+    assert checkpoint_payload["checkpoint_role"] == "best"
+    assert checkpoint_payload["checkpoint_selected_by"] == "validation_loss"
 
     train_summary = train_tiny_cnn(
         cache_path=cache_path,
@@ -133,6 +138,10 @@ def test_jepa_checkpoint_loads_into_supervised_trainer(tmp_path: Path) -> None:
         train_fraction=0.5,
     )
     assert train_summary["pretrained_encoder"]["source_model"] == "tiny_cnn_jepa"
+    assert train_summary["pretrained_encoder"]["source_seed"] == 5
+    assert train_summary["pretrained_encoder"]["checkpoint_role"] == "best"
+    assert train_summary["pretrain_seed"] == 5
+    assert train_summary["downstream_seed"] == 5
     assert train_summary["freeze_encoder"] is True
     assert train_summary["effective_train_count"] == 3
 

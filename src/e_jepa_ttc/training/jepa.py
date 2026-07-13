@@ -1408,6 +1408,7 @@ def pretrain_jepa(
     metrics_path = output / "metrics.json"
     best_score = float("inf")
     best_epoch = -1
+    best_selected_by = "validation_loss" if val_loader is not None else "training_loss"
     start_time = time.perf_counter()
     history: list[dict[str, Any]] = []
     conditioning_metadata = {
@@ -1529,6 +1530,8 @@ def pretrain_jepa(
                         "target_encoder_state_dict": target_encoder.state_dict(),
                         "predictor_state_dict": predictor.state_dict(),
                         "epoch": epoch,
+                        "checkpoint_role": "best",
+                        "checkpoint_selected_by": best_selected_by,
                         "cache_path": str(cache_path),
                         "seed": seed,
                         "in_channels": int(x.shape[1]),
@@ -1574,6 +1577,8 @@ def pretrain_jepa(
             "target_encoder_state_dict": target_encoder.state_dict(),
             "predictor_state_dict": predictor.state_dict(),
             "epoch": epochs,
+            "checkpoint_role": "last",
+            "checkpoint_selected_by": "final_epoch",
             "cache_path": str(cache_path),
             "seed": seed,
             "in_channels": int(x.shape[1]),
@@ -1614,6 +1619,7 @@ def pretrain_jepa(
         "cuda_available": bool(torch.cuda.is_available()),
         "gpu_name": torch.cuda.get_device_name(0) if torch.cuda.is_available() else None,
         "seed": seed,
+        "pretrain_seed": seed,
         "epochs": epochs,
         "batch_size": batch_size,
         "learning_rate": learning_rate,
@@ -1650,6 +1656,13 @@ def pretrain_jepa(
         "best_loss": best_score,
         "best_checkpoint": best_path.as_posix(),
         "last_checkpoint": last_path.as_posix(),
+        "checkpoint_selection": {
+            "recommended_for_downstream": best_path.as_posix(),
+            "recommended_role": "best",
+            "selected_by": best_selected_by,
+            "last_checkpoint": last_path.as_posix(),
+            "last_role": "last",
+        },
         "elapsed_seconds": time.perf_counter() - start_time,
         "last": history[-1] if history else None,
         "leakage_audit": {

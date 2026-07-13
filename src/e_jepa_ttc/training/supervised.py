@@ -15,6 +15,7 @@ from torch.utils.data import DataLoader, Dataset
 
 from e_jepa_ttc.evaluation.metrics import regression_metrics
 from e_jepa_ttc.models import build_regressor
+from e_jepa_ttc.training.checkpoints import checkpoint_provenance
 from e_jepa_ttc.utils.io import ensure_parent, write_structured
 
 
@@ -134,8 +135,7 @@ def _load_pretrained_encoder(
         raise ValueError(msg)
     model.encoder.load_state_dict(state)
     return {
-        "path": Path(checkpoint_path).as_posix(),
-        "source_epoch": checkpoint.get("epoch"),
+        **checkpoint_provenance(checkpoint_path, checkpoint),
         "source_model": checkpoint.get("model"),
         "source_model_name": source_model_name,
     }
@@ -299,8 +299,11 @@ def train_tiny_cnn(
                         "model_state_dict": model.state_dict(),
                         "model_name": model_name,
                         "epoch": epoch,
+                        "checkpoint_role": "best",
+                        "checkpoint_selected_by": "validation_mae",
                         "cache_path": str(cache_path),
                         "seed": seed,
+                        "pretrained_encoder": pretrained_encoder,
                         "in_channels": int(x.shape[1]),
                     },
                     best_path,
@@ -311,8 +314,11 @@ def train_tiny_cnn(
             "model_state_dict": model.state_dict(),
             "model_name": model_name,
             "epoch": epochs,
+            "checkpoint_role": "last",
+            "checkpoint_selected_by": "final_epoch",
             "cache_path": str(cache_path),
             "seed": seed,
+            "pretrained_encoder": pretrained_encoder,
             "in_channels": int(x.shape[1]),
         },
         last_path,
@@ -349,6 +355,10 @@ def train_tiny_cnn(
         "cuda_available": bool(torch.cuda.is_available()),
         "gpu_name": torch.cuda.get_device_name(0) if torch.cuda.is_available() else None,
         "seed": seed,
+        "downstream_seed": seed,
+        "pretrain_seed": (
+            pretrained_encoder.get("source_seed") if pretrained_encoder is not None else None
+        ),
         "epochs": epochs,
         "batch_size": batch_size,
         "learning_rate": learning_rate,
@@ -466,6 +476,15 @@ def evaluate_supervised_checkpoint(
         "checkpoint": Path(checkpoint_path).as_posix(),
         "checkpoint_epoch": checkpoint.get("epoch"),
         "checkpoint_seed": checkpoint.get("seed"),
+        "downstream_seed": checkpoint.get("seed"),
+        "pretrained_encoder": checkpoint.get("pretrained_encoder"),
+        "pretrain_seed": (
+            checkpoint.get("pretrained_encoder", {}).get("source_seed")
+            if isinstance(checkpoint.get("pretrained_encoder"), dict)
+            else None
+        ),
+        "checkpoint_role": checkpoint.get("checkpoint_role"),
+        "checkpoint_selected_by": checkpoint.get("checkpoint_selected_by"),
         "checkpoint_cache": checkpoint.get("cache_path"),
         "cache": str(cache_path),
         "device": str(device),

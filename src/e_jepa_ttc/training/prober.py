@@ -23,6 +23,7 @@ from e_jepa_ttc.data.evttc import NAVIGATION_FEATURE_NAMES, read_manifest
 from e_jepa_ttc.data.split import read_splits
 from e_jepa_ttc.evaluation.metrics import regression_metrics
 from e_jepa_ttc.models import build_encoder
+from e_jepa_ttc.training.checkpoints import checkpoint_provenance
 from e_jepa_ttc.training.jepa import (
     EVENT_MOTION_FEATURE_NAMES,
     DenseTemporalJEPAPredictor,
@@ -166,8 +167,7 @@ def _load_frozen_encoder(
     for param in encoder.parameters():
         param.requires_grad_(False)
     metadata = {
-        "path": Path(checkpoint_path).as_posix(),
-        "source_epoch": checkpoint.get("epoch"),
+        **checkpoint_provenance(checkpoint_path, checkpoint),
         "source_model": checkpoint.get("model"),
         "source_model_name": checkpoint_model_name,
     }
@@ -205,13 +205,11 @@ def _load_frozen_jepa_rollout_components(
         device=device,
     )
     metadata = {
-        "path": Path(checkpoint_path).as_posix(),
-        "source_epoch": checkpoint.get("epoch"),
+        **checkpoint_provenance(checkpoint_path, checkpoint),
         "source_model": checkpoint.get("model"),
         "source_model_name": checkpoint_model_name,
         "objective": checkpoint.get("objective"),
         "mask_mode": checkpoint.get("mask_mode"),
-        "seed": checkpoint.get("seed"),
     }
     return encoder, predictor, checkpoint, {**metadata, **predictor_metadata}
 

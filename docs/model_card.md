@@ -16,6 +16,13 @@ Best local model:
 The artifact directories are local generated outputs and are not committed to
 git by default.
 
+The historical downstream run loaded the SSL `last` checkpoint at epoch 30,
+while validation selected an earlier `best` checkpoint (epoch 26). The reported
+row is therefore a diagnostic last-checkpoint result, not evidence that `last`
+is preferable. New downstream runs should load `jepa_encoder_best.pt`; any use
+of `last` requires a validation-only ablation and is recorded in checkpoint
+provenance.
+
 ## Intended Use
 
 Research use for event-camera Time-to-Contact / Time-to-Collision estimation on
@@ -38,7 +45,7 @@ The supervised model predicts log-TTC, converted to TTC seconds for metrics.
 
 ## Results
 
-Over seeds 7/13/21:
+Over fine-tuning seeds 7/13/21 conditioned on pretraining seed 7:
 
 | Split | MAE | Mean absolute relative error | RMSE |
 | --- | ---: | ---: | ---: |
@@ -61,6 +68,8 @@ official EvTTC SOTA model because:
 - target pairing does not cross sequence or split boundaries;
 - action/ego-motion conditioning uses current context only;
 - final summaries are aggregated over independent fine-tuning seeds.
+- the reported dispersion does not include SSL-seed variability; three SSL
+  seeds with nested downstream seeds remain required for a main uncertainty claim.
 
 ## Paper
 

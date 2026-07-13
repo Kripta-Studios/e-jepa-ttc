@@ -1,10 +1,12 @@
-# Full Starter Sealed Results
+# Full Starter Diagnostic Results
 
 Generated on 2026-07-01 after adding the two pending CPLA HDF5 files.
 
-This is the strongest local sealed protocol so far. The split was committed
-before these final runs: previously inspected CCRs-1 sequences are train-only,
-validation is `CCRs-side-high`, and the sealed test sequence is `CPLA-high`.
+This file preserves the strongest local diagnostic protocol so far. `CPLA-high`
+was inspected in earlier development branches, so the split now declares
+`status: reused_test_diagnostic`, `evaluation_role: diagnostic`, and cannot support an
+official/final table. Previously inspected CCRs-1 sequences are train-only,
+validation is `CCRs-side-high`, and the reused diagnostic test is `CPLA-high`.
 
 ## Dataset
 
@@ -26,7 +28,7 @@ Split:
   `CCRs-1-high-100-overlap-100`, `CCRs-side-low`,
   `CCRs-side-medium`, `CPLA-low`, `CPLA-medium`
 - Validation: `CCRs-side-high`
-- Sealed test: `CPLA-high`
+- Diagnostic test: `CPLA-high`
 
 ## Token JEPA
 
@@ -55,6 +57,12 @@ Pretraining result:
 | --- | ---: | ---: | ---: | ---: |
 | Token JEPA seed 7 | 56 | 0.003049 | 1.162 | 0.951 |
 
+The downstream table varies fine-tuning seeds 7/13/21 but conditions on a
+single SSL pretraining seed (7). Each reported `+/-` is therefore downstream-only
+dispersion, not total hierarchical uncertainty over pretraining and fine-tuning.
+Future main results require SSL seeds 7/13/21 with downstream seeds nested or an
+explicit hierarchical variance estimate.
+
 Leakage audit from the run:
 
 - `uses_ttc_labels=false`
@@ -66,13 +74,14 @@ Leakage audit from the run:
 
 ## Metrics
 
-Lower MAE is better. Test is the sealed `CPLA-high` sequence and was not used
-for model or hyperparameter selection in this protocol.
+Lower MAE is better. `CPLA-high` was not used for selection inside the frozen run
+that generated each row, but it had already been inspected across earlier
+branches. It is a reused diagnostic test, not a pristine holdout.
 
 For a percentage-style reading, the current best
 `Event tubelet JEPA + tubelet mask + transformer predictor` has mean absolute
 relative error `8.19 +/- 0.53%` on validation and `6.42 +/- 0.45%` on the
-sealed CPLA-high test over seeds 7/13/21.
+diagnostic CPLA-high test over seeds 7/13/21.
 
 | Method | Train labels | Seeds | Validation MAE | Test MAE |
 | --- | ---: | --- | ---: | ---: |
@@ -97,25 +106,25 @@ sealed CPLA-high test over seeds 7/13/21.
 
 Percent improvements over matching scratch runs:
 
-- 5% labels: validation MAE improves 57.3%; sealed-test MAE improves 53.9%.
-- 10% labels: validation MAE improves 62.9%; sealed-test MAE improves 65.4%.
+- 5% labels: validation MAE improves 57.3%; diagnostic-test MAE improves 53.9%.
+- 10% labels: validation MAE improves 62.9%; diagnostic-test MAE improves 65.4%.
 - 100% labels, same token backbone over three seeds: validation MAE improves
-  49.0%; sealed-test MAE improves 43.0%.
+  49.0%; diagnostic-test MAE improves 43.0%.
 - 100% labels, navigation token JEPA versus navigation token scratch over three
-  seeds: validation MAE improves 40.6%; sealed-test MAE improves 23.3%.
+  seeds: validation MAE improves 40.6%; diagnostic-test MAE improves 23.3%.
 - Navigation token JEPA versus event-only token JEPA over three seeds:
-  validation MAE improves 27.1%; sealed-test MAE improves 25.9%.
+  validation MAE improves 27.1%; diagnostic-test MAE improves 25.9%.
 - Navigation token JEPA versus event-only token scratch over three seeds:
-  validation MAE improves 62.8%; sealed-test MAE improves 57.8%.
-- 10% labels with navigation: navigation improves scratch sealed-test MAE by
+  validation MAE improves 62.8%; diagnostic-test MAE improves 57.8%.
+- 10% labels with navigation: navigation improves scratch diagnostic-test MAE by
   43.0%, and navigation JEPA improves over navigation scratch by 28.1%. However,
-  event-only JEPA remains better than navigation JEPA at 10% labels on sealed
+  event-only JEPA remains better than navigation JEPA at 10% labels on diagnostic
   test (`0.460 s` vs `0.543 s`).
 - 100% labels versus TinyCNN scratch seed 7: three-seed Token JEPA validation
-  MAE improves 34.7%; sealed-test MAE improves 6.2%. Three-seed navigation Token
-  JEPA improves sealed-test MAE by 30.5%.
+  MAE improves 34.7%; diagnostic-test MAE improves 6.2%. Three-seed navigation Token
+  JEPA improves diagnostic-test MAE by 30.5%.
 - 100% labels versus event-rate ridge: validation MAE improves 84.8%;
-  sealed-test MAE improves 83.1%.
+  diagnostic-test MAE improves 83.1%.
 
 ## Interpretation
 
@@ -127,7 +136,7 @@ event-tubelet navigation JEPA mean (`0.328 s`), by 12.4% versus navigation Token
 JEPA (`0.356 s`), and by 32.9% versus navigation token scratch (`0.465 s`).
 
 The previous best robust result was `Token JEPA + navigation fine-tune`:
-`0.261 +/- 0.021 s` validation MAE and `0.356 +/- 0.022 s` sealed-test MAE over
+`0.261 +/- 0.021 s` validation MAE and `0.356 +/- 0.022 s` diagnostic-test MAE over
 three fine-tuning seeds.
 
 The navigation channels are causal integrated-navigation features from the
@@ -157,7 +166,7 @@ implemented negative ablation rather than a new best result.
 Backbone scaling was also tested with `token-transformer-large`
 (`embed_dim=256`, `depth=6`, `heads=8`). SSL best loss was `0.003237`, close to
 but worse than the base token transformer's `0.003049`; fine-tune reached
-`0.529 s` sealed-test MAE. This suggests the current full-starter data size and
+`0.529 s` diagnostic-test MAE. This suggests the current full-starter data size and
 objective do not yet benefit from a larger encoder without additional
 regularization, data, or a stronger predictor.
 
@@ -166,30 +175,30 @@ scaling width/depth. It treats event bins as a polarity-by-time tensor and uses
 3D tubelet patching before the transformer, while causal metadata/navigation
 channels are added as auxiliary spatial patch context. SSL pretraining selected
 epoch 12 with validation loss `0.001577`. Fine-tuning seeds 7/13/21 reached
-sealed-test MAEs `0.323`, `0.301`, and `0.360 s`.
+diagnostic-test MAEs `0.323`, `0.301`, and `0.360 s`.
 
 After adding explicit predictor-level action conditioning, a validation-only
-ablation was run without evaluating the sealed test. The action-conditioned
+ablation was run without evaluating the diagnostic test. The action-conditioned
 tubelet JEPA pretrain selected epoch 14 with SSL validation loss `0.0017955`.
 Fine-tuning seeds 7/13/21 with `--evaluation-splits train validation` reached
 validation MAEs `0.236`, `0.247`, and `0.258 s`, for
 `0.247 +/- 0.009 s`. The previous tubelet navigation JEPA validation mean was
 `0.243 +/- 0.005 s`, so the action-conditioned predictor is 1.8% worse by
-validation MAE. Because it did not beat validation, the sealed test was not run
+validation MAE. Because it did not beat validation, the diagnostic test was not run
 for this ablation.
 
 Adding train-only normalization for the 15-D action vector improved validation
-but did not improve the sealed test. With LR `1e-4`, the frozen
+but did not improve the diagnostic test. With LR `1e-4`, the frozen
 action-normalized protocol reached validation MAEs `0.227`, `0.218`, and
 `0.230 s` over seeds 7/13/21, or `0.225 +/- 0.005 s`. This is 7.42% better than
 the previous tubelet navigation JEPA validation mean. After freezing that
-protocol, the sealed test was evaluated once without retraining via
-`train evaluate`; sealed-test MAEs were `0.370`, `0.421`, and `0.331 s`, or
-`0.374 +/- 0.037 s`. This is 14.06% worse than the previous best sealed-test
+protocol, the diagnostic test was evaluated once without retraining via
+`train evaluate`; diagnostic-test MAEs were `0.370`, `0.421`, and `0.331 s`, or
+`0.374 +/- 0.037 s`. This is 14.06% worse than the previous best diagnostic-test
 mean `0.328 +/- 0.024 s`, so the best local result remains
 `Event tubelet JEPA + navigation fine-tune`.
 
-After this negative sealed result, a harder dev split was added to avoid using
+After this negative diagnostic result, a harder dev split was added to avoid using
 `CPLA-high` for further selection. It moves `CPLA-medium` out of train into a
 new `validation_pedestrian` split and keeps `CCRs-side-high` as
 `validation_car`. On this split, seed 7 action-normalized JEPA reaches
@@ -208,7 +217,7 @@ was token-token interaction. `--dense-predictor transformer` adds a transformer
 predictor over dense tokens for each future horizon, conditioned by the same
 train-normalized causal event/navigation action vector.
 
-Dev multi-validation result, selected without evaluating sealed test:
+Dev multi-validation result, selected without evaluating diagnostic test:
 
 | Method | Weighted multival MAE | validation_car MAE | validation_pedestrian MAE |
 | --- | ---: | ---: | ---: |
@@ -228,8 +237,8 @@ Full-starter frozen check:
 | Event tubelet JEPA + transformer predictor | 0.241 +/- 0.004 s | 8.28 +/- 0.16% | 0.351 +/- 0.004 s | 7.56 +/- 0.44% |
 
 The transformer predictor is a real validation/protocol improvement on the
-harder multi-domain split, but it does not beat the previous best sealed
-CPLA-high result. The current best local sealed model remains the earlier
+harder multi-domain split, but it does not beat the previous best diagnostic
+CPLA-high result. The current best local diagnostic model remains the earlier
 event-tubelet JEPA + navigation fine-tune. Do not use the frozen test result to
 tune the next variant.
 
@@ -250,14 +259,14 @@ Dev multi-validation ablation with `--dense-predictor transformer` and
 | All-token transformer JEPA, weight 0.25 | 0.604 +/- 0.052 s | 0.284 +/- 0.018 s | 0.932 +/- 0.111 s |
 
 The all-token loss improves car validation but substantially hurts pedestrian
-validation, so this ablation was stopped at validation and the sealed test was
+validation, so this ablation was stopped at validation and the diagnostic test was
 not evaluated. The likely issue is over-emphasizing reconstruction/identity of
 the current event context relative to cross-domain future dynamics. Future
 variants should tune this only on multi-domain validation, e.g. smaller
 context-token weights or a schedule, never on CPLA-high.
 
 A smaller all-token weight was then selected on the same dev multi-validation
-protocol, still without evaluating the sealed test:
+protocol, still without evaluating the diagnostic test:
 
 | Method | Weighted multival MAE | validation_car MAE | validation_pedestrian MAE |
 | --- | ---: | ---: | ---: |
@@ -272,8 +281,8 @@ Per-seed validation MAEs were `0.250`, `0.235`, and `0.239 s`.
 
 This does not beat the selected full-starter transformer-predictor validation
 MAE (`0.241 +/- 0.004 s`, numerically `0.240904 s` versus `0.241284 s`), so the
-sealed CPLA-high test was not evaluated for the weight-0.05 all-token variant.
-The best local sealed model remains event-tubelet JEPA + navigation fine-tune.
+diagnostic CPLA-high test was not evaluated for the weight-0.05 all-token variant.
+The best local diagnostic model remains event-tubelet JEPA + navigation fine-tune.
 
 ### Tubelet Masking
 
@@ -283,7 +292,7 @@ which masks random `[time, y, x]` event-channel blocks while preserving
 metadata/navigation channels. This keeps the causal ego-motion input available
 and prevents artificial corruption of navigation.
 
-Dev multi-validation, no sealed test:
+Dev multi-validation, no diagnostic test:
 
 | Method | Weighted multival MAE | validation_car MAE | validation_pedestrian MAE |
 | --- | ---: | ---: | ---: |
@@ -361,7 +370,7 @@ After TTC alignment, the causal bbox geometry baseline gives:
 | Causal bbox geometry | CPLA-high bbox test | 83 | 81 | 0.157 | 0.331 |
 
 This is detection-assisted and evaluated only on labeled frames, not on all 478
-sealed test windows. It should not be compared as an event-only model result.
+diagnostic test windows. It should not be compared as an event-only model result.
 It does show that reproducing CMax/STRTTC-style SOTA fairly requires complete
 bbox/segmentation assets and a benchmark-aligned frame protocol.
 
@@ -371,13 +380,13 @@ into the event plane (`1280x720`) and uses only events in
 `[timestamp - 100 ms, timestamp]`. It uses the current object box, so it is
 detection-assisted, not all-window event-only.
 
-Sealed full-starter result with fixed `context_ms=100` and `ridge_alpha=1.0`:
+Diagnostic full-starter result with fixed `context_ms=100` and `ridge_alpha=1.0`:
 
 | Method | Split | Labels | Predictions | MAE | Mean relative error |
 | --- | --- | ---: | ---: | ---: | ---: |
 | ROI event ridge | train bbox frames | 871 | 871 | 0.659 s | 19.15% |
 | ROI event ridge | validation bbox frames | 108 | 108 | 0.293 s | 13.63% |
-| ROI event ridge | sealed CPLA-high bbox frames | 83 | 83 | 0.829 s | 47.12% |
+| ROI event ridge | diagnostic CPLA-high bbox frames | 83 | 83 | 0.829 s | 47.12% |
 
 Frozen ROI latent prober checkpoint evaluation was added after training the
 prober only from train labels and selecting by validation. This command loads
@@ -396,7 +405,7 @@ all-window JEPA relative error. It remains useful because it gives a reproducibl
 SkyJEPA-style detection-assisted checkpoint evaluation path without changing
 weights after validation.
 
-Multi-domain validation without evaluating sealed test:
+Multi-domain validation without evaluating diagnostic test:
 
 | Method | Split | Labels | MAE | Mean relative error |
 | --- | --- | ---: | ---: | ---: |
@@ -406,7 +415,7 @@ Multi-domain validation without evaluating sealed test:
 Interpretation: the simple ROI feature model is closer to the official
 CMax/STRTTC input assumption than full-frame JEPA, but it is empirically much
 weaker on pedestrian transfer. The best all-window JEPA remains the best local
-sealed result (`6.42%` mean relative test error), while ROI event ridge is
+diagnostic result (`6.42%` mean relative test error), while ROI event ridge is
 useful mainly as protocol plumbing for bbox/ROI comparison.
 
 Run:
@@ -420,7 +429,7 @@ $env:PYTHONPATH=(Resolve-Path src).Path
 
 This is not an official SOTA claim. The run is a local starter protocol, not a
 published EvTTC leaderboard comparison. It is, however, the first local result
-that is both sealed-protocol positive and directionally aligned with current
+that is both diagnostic-protocol positive and directionally aligned with current
 dense JEPA world-model practice.
 
 For official bbox/ROI comparison status, see
@@ -458,7 +467,7 @@ The all-window latent prober was negative on dev validation. The ROI prober is
 positive because the current bbox gives an object-local state estimate that is
 closer to SkyJEPA's physical state input.
 
-Dev multi-validation, no sealed test:
+Dev multi-validation, no diagnostic test:
 
 | Method | Weighted multival MAE | validation_car MAE | validation_pedestrian MAE |
 | --- | ---: | ---: | ---: |

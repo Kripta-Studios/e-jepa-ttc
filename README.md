@@ -70,13 +70,14 @@ $env:PYTHONPATH='src'
 ## Local Results
 
 Current mini-subset results are summarized in [docs/local_results.md](docs/local_results.md).
-Full-starter sealed results are summarized in
+Full-starter diagnostic results are summarized in
 [docs/full_starter_results.md](docs/full_starter_results.md). On the full local starter protocol,
 the strongest all-window result so far is tubelet-masked token JEPA with causal
 integrated-navigation channels and a transformer dense predictor: with 100%
 labels it reaches `0.231 +/- 0.018s` validation MAE and `0.312 +/- 0.044s`
-CPLA-high test MAE over three fine-tuning seeds. This is a local full-starter
-result, not an official EvTTC SOTA claim; official comparison still requires
+CPLA-high diagnostic MAE over three fine-tuning seeds conditioned on one SSL
+pretraining seed. This is a reused-test local result, not an official EvTTC SOTA
+claim; official comparison still requires
 the benchmark bbox/ROI protocol and broader sequence set.
 
 The official EvTTC bbox/ROI coverage checker currently finds only `3/8`
@@ -92,7 +93,15 @@ The thesis-style paper for the current project state is
 [docs/e_jepa_ttc_paper.md](docs/e_jepa_ttc_paper.md). It records the method,
 protocol, final tests, results, negative ablations, and claim limits.
 
-With event-only inputs, token JEPA still improves sealed-test MAE from `1.327 +/- 0.104s` to
+Aggregate tables must declare their claim level and split protocol. For the
+reused CPLA-high split, only `development` or `diagnostic` is accepted; the
+same command with `--claim-level official` or `final` fails closed:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\aggregate_eval_metrics.py --split test --split-protocol data\splits\evttc_full_starter_sealed.yaml --claim-level diagnostic <metrics.json...>
+```
+
+With event-only inputs, token JEPA improves diagnostic-test MAE from `1.327 +/- 0.104s` to
 `0.460 +/- 0.029s` at 10% labels.
 
 Earlier available-starter sealed results are kept in
@@ -169,8 +178,10 @@ The listing downloader skips existing files and supports `--retries` for transie
 The locally complete full-starter manifest is
 `data/manifests/evttc_full_starter_local.yaml`, with split
 `data/splits/evttc_full_starter_sealed.yaml`. It contains the three original `CCRs-1` sequences,
-all three `CCRs-side` sequences, and all three `CPLA` starter sequences. The sealed test sequence is
-`CPLA-high`.
+all three `CCRs-side` sequences, and all three `CPLA` starter sequences. The
+legacy filename is retained for artifact compatibility, but its machine-readable
+status is `reused_test_diagnostic`; `CPLA-high` cannot support final or
+official claims.
 
 The earlier available-starter manifest is
 `data/manifests/evttc_available_starter_local.yaml`, with split

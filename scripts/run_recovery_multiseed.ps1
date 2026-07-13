@@ -1,0 +1,99 @@
+param(
+    [switch]$Smoke
+)
+
+$ErrorActionPreference = "Stop"
+$repo = Split-Path -Parent $PSScriptRoot
+Set-Location $repo
+
+$dirty = git status --porcelain
+if ($dirty -and -not $Smoke) {
+    throw "Recovery runs require a clean committed worktree. Use -Smoke only for smoke_only diagnostics."
+}
+$baselineCommit = git rev-parse HEAD
+if (-not (Test-Path ".venv/Scripts/python.exe")) {
+    throw "Missing .venv/Scripts/python.exe"
+}
+
+$env:PYTHONPATH = (Join-Path $repo "src")
+$python = ".venv/Scripts/python.exe"
+$cache = "artifacts/features/evttc_full_starter_voxel_160x90_b5_raw_meta_nav.npz"
+$seeds = if ($Smoke) { @(7) } else { @(7, 13, 21) }
+$sslEpochs = if ($Smoke) { 2 } else { 30 }
+$downstreamEpochs = if ($Smoke) { 2 } else { 80 }
+$downstreamSeeds = if ($Smoke) { @(7) } else { @(7, 13, 21) }
+$suffix = if ($Smoke) { "smoke_only" } else { "post_fix" }
+
+foreach ($seed in $seeds) {
+    $sslOut = "artifacts/runs/recovery_jepa_tubeletmask_transformer_seed${seed}_${suffix}"
+    $sslStarted = Get-Date -Format o
+    $sslCommand = "$python -m e_jepa_ttc pretrain jepa --cache $cache --output-dir $sslOut --epochs $sslEpochs --batch-size 24 --learning-rate 0.0003 --seed $seed --device auto --model event-tubelet-transformer --pretrain-splits train --validation-splits validation --temporal-horizons-ms 20 60 100 240 500 --max-target-slop-ms 10 --mask-ratio 0.45 --block-count 4 --mask-mode tubelet --ema-momentum 0.99 --variance-weight 1.0 --min-std 0.05 --dense-predictor transformer"
+    & $python -m e_jepa_ttc pretrain jepa `
+        --cache $cache `
+        --output-dir $sslOut `
+        --epochs $sslEpochs `
+        --batch-size 24 `
+        --learning-rate 0.0003 `
+        --seed $seed `
+        --device auto `
+        --model event-tubelet-transformer `
+        --pretrain-splits train `
+        --validation-splits validation `
+        --temporal-horizons-ms 20 60 100 240 500 `
+        --max-target-slop-ms 10 `
+        --mask-ratio 0.45 `
+        --block-count 4 `
+        --mask-mode tubelet `
+        --ema-momentum 0.99 `
+        --variance-weight 1.0 `
+        --min-std 0.05 `
+        --dense-predictor transformer
+    if ($LASTEXITCODE -ne 0) { throw "SSL seed $seed failed" }
+    $sslCompleted = Get-Date -Format o
+    $registerArgs = @(
+        "scripts/register_recovery_run.py", "--run-id", "recovery-ssl-${seed}-${suffix}",
+        "--stage", "ssl_pretrain", "--run-dir", $sslOut, "--pretrain-seed", $seed,
+        "--requested-backbone", "event-tubelet-transformer", "--command", $sslCommand,
+        "--started-at", $sslStarted, "--completed-at", $sslCompleted,
+        "--expected-commit", $baselineCommit
+    )
+    if ($Smoke) { $registerArgs += "--smoke" }
+    & $python @registerArgs
+    if ($LASTEXITCODE -ne 0) { throw "SSL seed $seed registry append failed" }
+
+    foreach ($downstreamSeed in $downstreamSeeds) {
+        $downstreamOut = "artifacts/runs/recovery_downstream_ssl${seed}_seed${downstreamSeed}_${suffix}"
+        $downstreamStarted = Get-Date -Format o
+        $downstreamCommand = "$python -m e_jepa_ttc train tiny-cnn --cache $cache --output-dir $downstreamOut --epochs $downstreamEpochs --batch-size 32 --learning-rate 0.00003 --seed $downstreamSeed --device auto --model event-tubelet-transformer --pretrained-encoder $sslOut/jepa_encoder_best.pt --train-splits train --validation-splits validation --evaluation-splits train validation"
+        & $python -m e_jepa_ttc train tiny-cnn `
+            --cache $cache `
+            --output-dir $downstreamOut `
+            --epochs $downstreamEpochs `
+            --batch-size 32 `
+            --learning-rate 0.00003 `
+            --seed $downstreamSeed `
+            --device auto `
+            --model event-tubelet-transformer `
+            --pretrained-encoder "$sslOut/jepa_encoder_best.pt" `
+            --train-splits train `
+            --validation-splits validation `
+            --evaluation-splits train validation
+        if ($LASTEXITCODE -ne 0) { throw "Downstream SSL $seed seed $downstreamSeed failed" }
+        $downstreamCompleted = Get-Date -Format o
+        $registerArgs = @(
+            "scripts/register_recovery_run.py", "--run-id", "recovery-downstream-ssl${seed}-seed${downstreamSeed}-${suffix}",
+            "--stage", "downstream_ttc", "--run-dir", $downstreamOut,
+            "--pretrain-seed", $seed, "--downstream-seed", $downstreamSeed,
+            "--requested-backbone", "event-tubelet-transformer", "--command", $downstreamCommand,
+            "--started-at", $downstreamStarted, "--completed-at", $downstreamCompleted,
+            "--expected-commit", $baselineCommit
+        )
+        if ($Smoke) { $registerArgs += "--smoke" }
+        & $python @registerArgs
+        if ($LASTEXITCODE -ne 0) { throw "Downstream registry append failed" }
+    }
+}
+
+& $python scripts/validate_artifact_registry.py
+if ($LASTEXITCODE -ne 0) { throw "Final registry validation failed" }
+Write-Output "Completed 3x3 validation-only recovery runs. CPLA-high was not opened."

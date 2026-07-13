@@ -1,7 +1,11 @@
 from pathlib import Path
 
+import pytest
+
 from e_jepa_ttc.data.official_protocol import evaluate_official_evttc_coverage
+from e_jepa_ttc.data.split import assert_split_claim_allowed
 from e_jepa_ttc.data.types import DatasetSequence
+from e_jepa_ttc.utils.io import write_structured
 
 
 def _sequence(root: Path, family: str, speed_dir: str, *, labels: int = 1) -> DatasetSequence:
@@ -65,3 +69,42 @@ def test_official_evttc_coverage_requires_nonempty_bbox_labels(tmp_path: Path) -
     assert row["assets"]["bbox_roi"] is False
     assert row["missing_assets"] == ["bbox_roi"]
     assert row["status"] == "incomplete_assets"
+
+
+def test_reused_test_split_cannot_produce_official_or_final_table(tmp_path: Path) -> None:
+    split_path = tmp_path / "diagnostic.yaml"
+    write_structured(
+        split_path,
+        {
+            "protocol": "fixture-diagnostic",
+            "status": "reused_test_diagnostic",
+            "evaluation_role": "diagnostic",
+            "allowed_claim_levels": ["development", "diagnostic"],
+            "test_was_previously_inspected": True,
+            "splits": {"train": ["a"], "test": ["b"]},
+        },
+    )
+
+    diagnostic = assert_split_claim_allowed(split_path, claim_level="diagnostic")
+    assert diagnostic["claim_allowed"] is True
+    assert diagnostic["status"] == "reused_test_diagnostic"
+    for claim in ("official", "final"):
+        with pytest.raises(ValueError, match="cannot produce"):
+            assert_split_claim_allowed(split_path, claim_level=claim)
+
+
+def test_legacy_reused_test_status_is_normalized(tmp_path: Path) -> None:
+    path = tmp_path / "legacy_split.yaml"
+    path.write_text(
+        "status: reused_test\n"
+        "evaluation_role: diagnostic\n"
+        "allowed_claim_levels: [development, diagnostic]\n",
+        encoding="utf-8",
+    )
+
+    diagnostic = assert_split_claim_allowed(path, claim_level="diagnostic")
+
+    assert diagnostic["status"] == "reused_test_diagnostic"
+    for claim in ("official", "final"):
+        with pytest.raises(ValueError, match="cannot produce"):
+            assert_split_claim_allowed(path, claim_level=claim)
