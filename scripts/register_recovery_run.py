@@ -147,7 +147,8 @@ def main() -> int:
             if raw_line.strip():
                 existing_ids.add(str(json.loads(raw_line).get("run_id")))
     if args.run_id in existing_ids:
-        raise ValueError(f"Duplicate registry run_id: {args.run_id}")
+        print(f"Duplicate registry run_id (already registered): {args.run_id}")
+        return 0
     args.registry.parent.mkdir(parents=True, exist_ok=True)
     with args.registry.open("a", encoding="utf-8", newline="\n") as handle:
         handle.write(json.dumps(record, sort_keys=True, separators=(",", ":")) + "\n")
