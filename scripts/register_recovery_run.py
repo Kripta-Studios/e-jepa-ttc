@@ -23,7 +23,7 @@ def _sha256(path: Path | None) -> str | None:
 def _git(root: Path, *args: str) -> str:
     return subprocess.run(
         ["git", *args], cwd=root, check=True, capture_output=True, text=True
-    ).stdout.strip()
+    ).stdout.rstrip()
 
 
 def _read_json(path: Path) -> dict[str, Any]:
