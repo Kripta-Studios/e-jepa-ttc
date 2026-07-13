@@ -29,3 +29,7 @@ artifacts/metrics/*
 artifacts/figures/*
 !artifacts/metrics/.gitkeep
 !artifacts/figures/.gitkeep
+
+# Local scratch and temp folders
+scratch/
+tmp/
