@@ -466,12 +466,8 @@ class TestCacheFormatVersionEnforcement:
             future_window_semantics=np.asarray("endpoint_offset_disjoint_fixed_duration"),
         )
 
-    def test_v1_cache_is_loadable_but_flagged(self, tmp_path):
-        """Document current behavior: v1 caches load without version check.
-
-        The test records the current contract.  If we add a version check that
-        rejects v1 caches, this test should be updated to expect the rejection.
-        """
+    def test_v1_cache_is_rejected(self, tmp_path):
+        """The loader must reject caches with format version < 2."""
         self._write_v1_shard(tmp_path / "train.npz")
         manifest = tmp_path / "manifest.json"
         manifest.write_text(
@@ -490,5 +486,6 @@ class TestCacheFormatVersionEnforcement:
             ),
             encoding="utf-8",
         )
-        ds = EAPObjectCacheDataset(manifest, splits=("train",))
-        assert len(ds) == 2  # Documents that v1 is currently loadable
+        import pytest
+        with pytest.raises(ValueError, match="invalid cache_format_version"):
+            EAPObjectCacheDataset(manifest, splits=("train",))

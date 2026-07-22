@@ -669,6 +669,9 @@ class EAPObjectCacheDataset(Dataset[dict[str, torch.Tensor | str]]):
         self.counts: list[int] = []
         for path in selected:
             with np.load(path, allow_pickle=False) as shard:
+                if "cache_format_version" not in shard or int(shard["cache_format_version"]) < 2:
+                    msg = f"Shard {path} has invalid cache_format_version. Must be >= 2."
+                    raise ValueError(msg)
                 self.counts.append(int(shard["sample_token"].shape[0]))
         self.cumulative = np.cumsum(self.counts).astype(np.int64).tolist()
         self._open_index: int | None = None
