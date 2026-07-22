@@ -100,7 +100,7 @@ def main() -> int:
         "dataset_path": "datasets/evttc",
         "dataset_manifest_path": "data/manifests/evttc_full_starter_local.yaml",
         "dataset_manifest_hash": _sha256(root / "data/manifests/evttc_full_starter_local.yaml"),
-        "feature_schema_version": "voxel_160x90_b5_raw_meta_nav_recovery_v1",
+        "feature_schema_version": "voxel_160x90_b5_raw_meta_nav_recovery_v2",
         "input_view": "causal_event_and_navigation",
         "split_protocol": "evttc-full-starter-diagnostic-2026-07-13",
         "split_path": "data/splits/evttc_full_starter_sealed.yaml",

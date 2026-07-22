@@ -22,7 +22,7 @@ $seeds = if ($Smoke) { @(7) } else { @(7, 13, 21) }
 $sslEpochs = if ($Smoke) { 2 } else { 30 }
 $downstreamEpochs = if ($Smoke) { 2 } else { 80 }
 $downstreamSeeds = if ($Smoke) { @(7) } else { @(7, 13, 21) }
-$suffix = if ($Smoke) { "smoke_only" } else { "post_fix" }
+$suffix = if ($Smoke) { "smoke_only" } else { "post_fix_v2" }
 
 foreach ($seed in $seeds) {
     $sslOut = "artifacts/runs/recovery_jepa_tubeletmask_transformer_seed${seed}_${suffix}"
