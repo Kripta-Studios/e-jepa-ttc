@@ -17,7 +17,10 @@ from torch.nn import functional
 from torch.utils.data import DataLoader, Dataset
 
 from e_jepa_ttc.data.evttc import NAVIGATION_FEATURE_NAMES
-from e_jepa_ttc.models import build_encoder
+from e_jepa_ttc.data.ml_cache import validate_voxel_cache
+from e_jepa_ttc.evaluation.metrics import contrastive_metrics, regression_metrics
+from e_jepa_ttc.models import build_encoder, build_jepa
+from e_jepa_ttc.training.checkpoints import checkpoint_provenance
 from e_jepa_ttc.utils.io import ensure_parent, write_structured
 
 EVENT_MOTION_FEATURE_NAMES = (
@@ -1320,6 +1323,7 @@ def pretrain_jepa(
     _set_seed(seed)
 
     cache = np.load(cache_path, allow_pickle=False)
+    validate_voxel_cache(cache)
     x = cache["x"]
     split = cache["split"].astype(str)
     bins = int(cache["bins"]) if "bins" in cache.files else int(x.shape[1] // 2)

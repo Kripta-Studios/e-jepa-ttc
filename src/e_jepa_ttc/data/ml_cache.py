@@ -19,6 +19,15 @@ from e_jepa_ttc.representations.voxel_grid import encode_voxel_grid
 from e_jepa_ttc.utils.io import ensure_parent, read_structured, write_structured
 
 
+def validate_voxel_cache(cache: Any) -> None:
+    if "cache_format_version" not in cache.files or int(cache["cache_format_version"]) < 2:
+        msg = "Training requires cache_format_version >= 2."
+        raise ValueError(msg)
+    for key in ["normalization", "source_manifest_sha256", "split_manifest_sha256", "preprocessing_config_sha256"]:
+        if key not in cache.files:
+            msg = f"Cache missing required metadata field: {key}"
+            raise ValueError(msg)
+
 def _load_windows(index_path: str | Path) -> list[dict[str, Any]]:
     data = read_structured(index_path)
     windows = data.get("windows")
@@ -72,6 +81,14 @@ def _constant_channels(values: np.ndarray, *, width: int, height: int) -> np.nda
         channels[idx].fill(value)
     return channels
 
+
+def _hash_file(filepath: str | Path) -> str:
+    import hashlib
+    h = hashlib.sha256()
+    with open(filepath, "rb") as f:
+        for chunk in iter(lambda: f.read(8192 * 1024), b""):
+            h.update(chunk)
+    return h.hexdigest()
 
 def build_voxel_cache(
     *,
@@ -176,6 +193,11 @@ def build_voxel_cache(
         navigation_channels=np.array(navigation_channels, dtype=np.bool_),
         navigation_feature_names=np.array(NAVIGATION_FEATURE_NAMES),
         future_window_semantics=np.array("disjoint_window_start_after_context_plus_horizon"),
+        cache_format_version=np.array(2, dtype=np.int64),
+        normalization=np.array("non_centered_occupied_p95_scale" if normalize else "none"),
+        source_manifest_sha256=np.array(_hash_file(manifest_path)),
+        split_manifest_sha256=np.array(_hash_file(split_path)),
+        preprocessing_config_sha256=np.array(_hash_file(__file__)),
     )
     summary = {
         "output": output.as_posix(),

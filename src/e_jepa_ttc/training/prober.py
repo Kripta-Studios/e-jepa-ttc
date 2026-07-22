@@ -20,9 +20,10 @@ from e_jepa_ttc.baselines.roi_events import (
 )
 from e_jepa_ttc.data.annotations import load_measurements_from_manifest
 from e_jepa_ttc.data.evttc import NAVIGATION_FEATURE_NAMES, read_manifest
+from e_jepa_ttc.data.ml_cache import validate_voxel_cache
 from e_jepa_ttc.data.split import read_splits
 from e_jepa_ttc.evaluation.metrics import regression_metrics
-from e_jepa_ttc.models import build_encoder
+from e_jepa_ttc.models import build_encoder, build_regressor
 from e_jepa_ttc.training.checkpoints import checkpoint_provenance
 from e_jepa_ttc.training.jepa import (
     EVENT_MOTION_FEATURE_NAMES,
@@ -668,6 +669,7 @@ def train_latent_ttc_prober(
         raise ValueError(msg)
 
     cache = np.load(cache_path, allow_pickle=False)
+    validate_voxel_cache(cache)
     x = cache["x"]
     y_ttc = cache["y_ttc"].astype(np.float32)
     y_log = np.log(np.clip(y_ttc, 1e-4, None)).astype(np.float32)
@@ -1000,6 +1002,7 @@ def train_roi_latent_ttc_prober(
         raise ValueError(msg)
 
     cache = np.load(cache_path, allow_pickle=False)
+    validate_voxel_cache(cache)
     x = cache["x"]
     cache_sequence_id = cache["sequence_id"].astype(str)
     cache_timestamp_us = cache["timestamp_us"].astype(np.int64)
@@ -1348,6 +1351,7 @@ def train_roi_rollout_ttc_prober(
         raise ValueError(msg)
 
     cache = np.load(cache_path, allow_pickle=False)
+    validate_voxel_cache(cache)
     x = cache["x"]
     bins = int(cache["bins"]) if "bins" in cache.files else int(x.shape[1] // 2)
     metadata_channels = _cache_bool(cache, "metadata_channels")
@@ -1728,6 +1732,7 @@ def evaluate_roi_latent_ttc_prober_checkpoint(
         raise ValueError(msg)
 
     cache = np.load(cache_path, allow_pickle=False)
+    validate_voxel_cache(cache)
     x = cache["x"]
     cache_sequence_id = cache["sequence_id"].astype(str)
     cache_timestamp_us = cache["timestamp_us"].astype(np.int64)
@@ -1955,6 +1960,7 @@ def evaluate_roi_rollout_ttc_prober_checkpoint(
         raise ValueError(msg)
 
     cache = np.load(cache_path, allow_pickle=False)
+    validate_voxel_cache(cache)
     x = cache["x"]
     bins = int(cache["bins"]) if "bins" in cache.files else int(x.shape[1] // 2)
     metadata_channels = _cache_bool(cache, "metadata_channels")

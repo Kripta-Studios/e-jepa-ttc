@@ -22,7 +22,7 @@ $seeds = if ($Smoke) { @(7) } else { @(7, 13, 21) }
 $sslEpochs = if ($Smoke) { 2 } else { 30 }
 $downstreamEpochs = if ($Smoke) { 2 } else { 80 }
 $downstreamSeeds = if ($Smoke) { @(7) } else { @(7, 13, 21) }
-$suffix = if ($Smoke) { "smoke_only" } else { "post_fix_v2" }
+$suffix = if ($Smoke) { "smoke_only" } else { "post_fix_v3_cache_verified" }
 
 foreach ($seed in $seeds) {
     $sslOut = "artifacts/runs/recovery_jepa_tubeletmask_transformer_seed${seed}_${suffix}"
@@ -100,9 +100,47 @@ foreach ($seed in $seeds) {
         )
         if ($Smoke) { $registerArgs += "--smoke" }
         & $python @registerArgs
-        if ($LASTEXITCODE -ne 0) { throw "Downstream registry append failed" }
+        if ($LASTEXITCODE -ne 0) { throw "Downstream SSL $seed seed $downstreamSeed registry append failed" }
     }
 }
+
+foreach ($downstreamSeed in $downstreamSeeds) {
+    $scratchOut = "artifacts/runs/recovery_scratch_seed${downstreamSeed}_${suffix}"
+    $scratchStarted = Get-Date -Format o
+    $scratchCommand = "$python -m e_jepa_ttc train tiny-cnn --cache $cache --output-dir $scratchOut --epochs $downstreamEpochs --batch-size 32 --learning-rate 0.00003 --seed $downstreamSeed --device auto --model event-tubelet-transformer --train-splits train --validation-splits validation --evaluation-splits train validation"
+    if (Test-Path "$scratchOut/tiny_cnn_best.pt") {
+        Write-Output "Scratch training for seed $downstreamSeed already exists. Skipping."
+        $scratchCompleted = Get-Date -Format o
+    } else {
+        & $python -m e_jepa_ttc train tiny-cnn `
+            --cache $cache `
+            --output-dir $scratchOut `
+            --epochs $downstreamEpochs `
+            --batch-size 32 `
+            --learning-rate 0.00003 `
+            --seed $downstreamSeed `
+            --device auto `
+            --model event-tubelet-transformer `
+            --train-splits train `
+            --validation-splits validation `
+            --evaluation-splits train validation
+        if ($LASTEXITCODE -ne 0) { throw "Scratch seed $downstreamSeed failed" }
+        $scratchCompleted = Get-Date -Format o
+    }
+    $registerArgs = @(
+        "scripts/register_recovery_run.py", "--run-id", "recovery-scratch-seed${downstreamSeed}-${suffix}",
+        "--stage", "scratch_ttc", "--run-dir", $scratchOut,
+        "--downstream-seed", $downstreamSeed,
+        "--requested-backbone", "event-tubelet-transformer", "--command", $scratchCommand,
+        "--started-at", $scratchStarted, "--completed-at", $scratchCompleted,
+        "--expected-commit", $baselineCommit
+    )
+    if ($Smoke) { $registerArgs += "--smoke" }
+    & $python @registerArgs
+    if ($LASTEXITCODE -ne 0) { throw "Scratch seed $downstreamSeed registry append failed" }
+}
+
+Write-Output "All recovery runs and registrations complete."
 
 & $python scripts/validate_artifact_registry.py
 if ($LASTEXITCODE -ne 0) { throw "Final registry validation failed" }

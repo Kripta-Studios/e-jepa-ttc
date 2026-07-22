@@ -16,6 +16,7 @@ from torch.utils.data import DataLoader, Dataset
 from e_jepa_ttc.evaluation.metrics import regression_metrics
 from e_jepa_ttc.models import build_regressor
 from e_jepa_ttc.training.checkpoints import checkpoint_provenance
+from e_jepa_ttc.data.ml_cache import validate_voxel_cache
 from e_jepa_ttc.utils.io import ensure_parent, write_structured
 
 
@@ -175,6 +176,7 @@ def train_tiny_cnn(
         msg = "validation_splits must contain at least one split."
         raise ValueError(msg)
     cache = np.load(cache_path, allow_pickle=False)
+    validate_voxel_cache(cache)
     x = cache["x"]
     y_ttc = cache["y_ttc"].astype(np.float32)
     split = cache["split"].astype(str)
@@ -409,6 +411,7 @@ def evaluate_supervised_checkpoint(
         raise ValueError(msg)
 
     cache = np.load(cache_path, allow_pickle=False)
+    validate_voxel_cache(cache)
     x = cache["x"]
     y_ttc = cache["y_ttc"].astype(np.float32)
     split = cache["split"].astype(str)
