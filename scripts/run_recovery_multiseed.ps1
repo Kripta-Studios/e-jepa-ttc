@@ -101,6 +101,46 @@ foreach ($seed in $seeds) {
         if ($Smoke) { $registerArgs += "--smoke" }
         & $python @registerArgs
         if ($LASTEXITCODE -ne 0) { throw "Downstream SSL $seed seed $downstreamSeed registry append failed" }
+
+        # Low-label finetuning
+        foreach ($frac in @(0.1, 0.01)) {
+            $fracStr = "frac$($frac * 100)"
+            $lowLabelOut = "artifacts/runs/recovery_downstream_ssl${seed}_seed${downstreamSeed}_${fracStr}_${suffix}"
+            $lowLabelStarted = Get-Date -Format o
+            $lowLabelCommand = "$python -m e_jepa_ttc train tiny-cnn --cache $cache --output-dir $lowLabelOut --epochs $downstreamEpochs --batch-size 32 --learning-rate 0.00003 --seed $downstreamSeed --device auto --model event-tubelet-transformer --pretrained-encoder $sslOut/jepa_encoder_best.pt --train-splits train --validation-splits validation --evaluation-splits train validation --train-fraction $frac"
+            if (Test-Path "$lowLabelOut/tiny_cnn_best.pt") {
+                Write-Output "Low-label training ($fracStr) for pretrain seed $seed and downstream seed $downstreamSeed already exists. Skipping."
+                $lowLabelCompleted = Get-Date -Format o
+            } else {
+                & $python -m e_jepa_ttc train tiny-cnn `
+                    --cache $cache `
+                    --output-dir $lowLabelOut `
+                    --epochs $downstreamEpochs `
+                    --batch-size 32 `
+                    --learning-rate 0.00003 `
+                    --seed $downstreamSeed `
+                    --device auto `
+                    --model event-tubelet-transformer `
+                    --pretrained-encoder "$sslOut/jepa_encoder_best.pt" `
+                    --train-splits train `
+                    --validation-splits validation `
+                    --evaluation-splits train validation `
+                    --train-fraction $frac
+                if ($LASTEXITCODE -ne 0) { throw "Low-label SSL $seed seed $downstreamSeed frac $frac failed" }
+                $lowLabelCompleted = Get-Date -Format o
+            }
+            $registerArgs = @(
+                "scripts/register_recovery_run.py", "--run-id", "recovery-lowlabel-ssl${seed}-seed${downstreamSeed}-${fracStr}-${suffix}",
+                "--stage", "downstream_ttc", "--run-dir", $lowLabelOut,
+                "--pretrain-seed", $seed, "--downstream-seed", $downstreamSeed,
+                "--requested-backbone", "event-tubelet-transformer", "--command", $lowLabelCommand,
+                "--started-at", $lowLabelStarted, "--completed-at", $lowLabelCompleted,
+                "--expected-commit", $baselineCommit
+            )
+            if ($Smoke) { $registerArgs += "--smoke" }
+            & $python @registerArgs
+            if ($LASTEXITCODE -ne 0) { throw "Low-label SSL $seed seed $downstreamSeed frac $frac registry append failed" }
+        }
     }
 }
 
