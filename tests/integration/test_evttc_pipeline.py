@@ -159,5 +159,3 @@ def test_discover_event_layout_on_fixture(tmp_path: Path) -> None:
         t_end_us=60_000,
     )
     assert counted == window.num_events
-
-

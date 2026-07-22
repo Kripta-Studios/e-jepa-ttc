@@ -413,16 +413,14 @@ def _supervised_object_loss(
     inverse_target = torch.reciprocal(ttc_s[valid])
     residual = prediction.inverse_ttc_mean[valid] - inverse_target
     log_variance = prediction.inverse_ttc_log_variance[valid]
-    inverse_nll = (
-        0.5 * torch.exp(-log_variance) * residual.square() + 0.5 * log_variance
-    ).mean()
+    inverse_nll = (0.5 * torch.exp(-log_variance) * residual.square() + 0.5 * log_variance).mean()
     thresholds = prediction.risk_logits.new_tensor(risk_thresholds_s)
     if prediction.risk_logits.shape[-1] != thresholds.numel():
         msg = "Risk thresholds do not match the model risk-head width."
         raise ValueError(msg)
-    labels = (
-        (ttc_s[..., None] > 0.0) & (ttc_s[..., None] <= thresholds[None, None, :])
-    ).to(prediction.risk_logits.dtype)
+    labels = ((ttc_s[..., None] > 0.0) & (ttc_s[..., None] <= thresholds[None, None, :])).to(
+        prediction.risk_logits.dtype
+    )
     risk_bce = functional.binary_cross_entropy_with_logits(
         prediction.risk_logits[valid],
         labels[valid],
@@ -563,10 +561,9 @@ def _fit_calibrators(
     temperatures = [
         fit_temperature_scaler(
             predictions["risk_logits"][:, index],
-            (
-                (predictions["ttc_true"] > 0.0)
-                & (predictions["ttc_true"] <= threshold)
-            ).astype(np.int64),
+            ((predictions["ttc_true"] > 0.0) & (predictions["ttc_true"] <= threshold)).astype(
+                np.int64
+            ),
         )
         for index, threshold in enumerate(risk_thresholds_s)
     ]
@@ -854,17 +851,13 @@ def evaluate_object_ttc_checkpoint(
         batch_size=batch_size,
         use_ego_actions=use_ego_actions,
     )
-    raw_risk = 1.0 / (
-        1.0 + np.exp(-np.clip(predictions["risk_logits"], -30.0, 30.0))
-    )
+    raw_risk = 1.0 / (1.0 + np.exp(-np.clip(predictions["risk_logits"], -30.0, 30.0)))
     risk_probability = raw_risk
     calibration_payload: dict[str, Any] | None = None
     conformal: ConformalIntervalCalibrator | None = None
     if calibration_summary_path is not None:
         summary_source = Path(calibration_summary_path)
-        calibration_source = json.loads(summary_source.read_text(encoding="utf-8"))[
-            "calibration"
-        ]
+        calibration_source = json.loads(summary_source.read_text(encoding="utf-8"))["calibration"]
         temperature_values = calibration_source["temperatures"]
         if len(temperature_values) != len(config.risk_thresholds_s):
             msg = "Saved calibration temperatures do not match model risk thresholds."

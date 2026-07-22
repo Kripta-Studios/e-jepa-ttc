@@ -126,9 +126,7 @@ def _aggregate(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
             values = np.asarray([row[metric] for row in group], dtype=np.float64)
             finite = values[np.isfinite(values)]
             aggregate[f"{metric}_mean"] = float(np.mean(finite)) if finite.size else float("nan")
-            aggregate[f"{metric}_std"] = (
-                float(np.std(finite, ddof=1)) if finite.size > 1 else 0.0
-            )
+            aggregate[f"{metric}_std"] = float(np.std(finite, ddof=1)) if finite.size > 1 else 0.0
         payload.append(aggregate)
     return payload
 

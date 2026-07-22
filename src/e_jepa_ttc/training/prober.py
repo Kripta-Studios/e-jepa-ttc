@@ -683,8 +683,7 @@ def train_latent_ttc_prober(
     navigation_feature_count = len(navigation_feature_names)
     available_splits = _available_split_names(split)
     missing_names = sorted(
-        (set(train_splits) | set(validation_splits) | set(evaluation_splits))
-        - available_splits
+        (set(train_splits) | set(validation_splits) | set(evaluation_splits)) - available_splits
     )
     if missing_names:
         msg = f"Requested split names are missing from cache: {missing_names}."
@@ -698,9 +697,7 @@ def train_latent_ttc_prober(
         split_name: _split_indices(split, split_name) for split_name in available_splits
     }
     missing_eval_splits = [
-        split_name
-        for split_name in evaluation_splits
-        if split_indices[split_name].size == 0
+        split_name for split_name in evaluation_splits if split_indices[split_name].size == 0
     ]
     if missing_eval_splits:
         msg = f"Requested evaluation splits are empty: {missing_eval_splits}."
@@ -743,9 +740,7 @@ def train_latent_ttc_prober(
             y_log[train_idx].astype(np.float64),
             alpha=ridge_alpha,
         )
-        prior_log = _predict_ridge(physics_scaled.astype(np.float64), prior_beta).astype(
-            np.float32
-        )
+        prior_log = _predict_ridge(physics_scaled.astype(np.float64), prior_beta).astype(np.float32)
     else:
         prior_log = np.zeros_like(y_log, dtype=np.float32)
     raw_features = np.concatenate(

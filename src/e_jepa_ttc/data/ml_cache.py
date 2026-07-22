@@ -175,9 +175,7 @@ def build_voxel_cache(
         metadata_channels=np.array(metadata_channels, dtype=np.bool_),
         navigation_channels=np.array(navigation_channels, dtype=np.bool_),
         navigation_feature_names=np.array(NAVIGATION_FEATURE_NAMES),
-        future_window_semantics=np.array(
-            "disjoint_window_start_after_context_plus_horizon"
-        ),
+        future_window_semantics=np.array("disjoint_window_start_after_context_plus_horizon"),
     )
     summary = {
         "output": output.as_posix(),

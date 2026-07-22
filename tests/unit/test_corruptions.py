@@ -64,4 +64,3 @@ def test_dropout_and_polarity_corruption_have_expected_effect() -> None:
 
     assert dropped.num_events == 0
     assert np.all(positive_removed.polarity == -1)
-

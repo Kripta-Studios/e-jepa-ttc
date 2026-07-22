@@ -94,9 +94,7 @@ def _write_multival_cache(path: Path) -> None:
     split = np.array(
         ["train"] * 8 + ["validation_car"] * 4 + ["validation_pedestrian"] * 2 + ["test"] * 2
     )
-    sequence_id = np.array(
-        ["seq-train"] * 8 + ["seq-car"] * 4 + ["seq-ped"] * 2 + ["seq-test"] * 2
-    )
+    sequence_id = np.array(["seq-train"] * 8 + ["seq-car"] * 4 + ["seq-ped"] * 2 + ["seq-test"] * 2)
     np.savez(
         path,
         x=x,
@@ -319,9 +317,7 @@ def test_dense_transformer_jepa_predictor(tmp_path: Path) -> None:
         dense_predictor="transformer",
     )
 
-    assert pretrain_summary["objective"] == (
-        "transformer_dense_temporal_token_motion_multihorizon"
-    )
+    assert pretrain_summary["objective"] == ("transformer_dense_temporal_token_motion_multihorizon")
     assert pretrain_summary["dense_predictor"] == "transformer"
     assert pretrain_summary["dense_tokens"] is True
     assert (tmp_path / "transformer_predictor_jepa" / "jepa_encoder_best.pt").exists()
@@ -352,10 +348,7 @@ def test_dense_alltoken_jepa_context_loss(tmp_path: Path) -> None:
     assert pretrain_summary["context_token_weight"] == 0.25
     assert pretrain_summary["last"]["train"]["context_token_loss"] > 0.0
     assert pretrain_summary["last"]["train"]["context_token_target_count"] > 0.0
-    assert (
-        pretrain_summary["leakage_audit"]["context_token_loss_uses_current_context_only"]
-        is True
-    )
+    assert pretrain_summary["leakage_audit"]["context_token_loss_uses_current_context_only"] is True
 
 
 def test_visreg_jepa_regularizer(tmp_path: Path) -> None:
@@ -394,10 +387,7 @@ def test_visreg_jepa_regularizer(tmp_path: Path) -> None:
     assert pretrain_summary["last"]["train"]["temporal_straightening_loss"] >= 0.0
     assert pretrain_summary["leakage_audit"]["visreg_uses_batch_embeddings_only"] is True
     assert pretrain_summary["leakage_audit"]["visreg_uses_ttc_labels"] is False
-    assert (
-        pretrain_summary["leakage_audit"]["temporal_straightening_uses_predictions_only"]
-        is True
-    )
+    assert pretrain_summary["leakage_audit"]["temporal_straightening_uses_predictions_only"] is True
 
 
 def test_event_tubelet_jepa_pretraining_smoke(tmp_path: Path) -> None:
@@ -442,9 +432,7 @@ def test_event_tubelet_rope_jepa_pretraining_smoke(tmp_path: Path) -> None:
     )
 
     assert pretrain_summary["model_name"] == "event-tubelet-rope-transformer"
-    assert pretrain_summary["objective"] == (
-        "transformer_dense_temporal_token_motion_multihorizon"
-    )
+    assert pretrain_summary["objective"] == ("transformer_dense_temporal_token_motion_multihorizon")
     assert pretrain_summary["dense_predictor"] == "transformer"
     assert (tmp_path / "tubelet_rope_jepa" / "jepa_encoder_best.pt").exists()
 
@@ -485,10 +473,7 @@ def test_event_tubelet_jepa_tubelet_mask_smoke(tmp_path: Path) -> None:
         pretrain_summary["leakage_audit"]["tubelet_masking_uses_context_event_channels_only"]
         is True
     )
-    assert (
-        pretrain_summary["leakage_audit"]["tubelet_masking_preserves_auxiliary_channels"]
-        is True
-    )
+    assert pretrain_summary["leakage_audit"]["tubelet_masking_preserves_auxiliary_channels"] is True
     assert (tmp_path / "tubelet_mask_jepa" / "jepa_encoder_best.pt").exists()
 
 
@@ -522,15 +507,10 @@ def test_jepa_action_conditioning_uses_causal_navigation(tmp_path: Path) -> None
     assert pretrain_summary["navigation_feature_names"] == list(NAVIGATION_FEATURE_NAMES)
     assert pretrain_summary["action_feature_names"][-1] == "ego_navigation_valid"
     assert pretrain_summary["leakage_audit"]["action_conditioning_uses_context_only"] is True
-    assert (
-        pretrain_summary["leakage_audit"]["action_feature_normalization_uses_train_only"]
-        is True
-    )
+    assert pretrain_summary["leakage_audit"]["action_feature_normalization_uses_train_only"] is True
     assert pretrain_summary["leakage_audit"]["uses_future_navigation"] is False
     assert (
-        pretrain_summary["leakage_audit"][
-            "future_navigation_channels_zeroed_before_target_encoder"
-        ]
+        pretrain_summary["leakage_audit"]["future_navigation_channels_zeroed_before_target_encoder"]
         is True
     )
     assert pretrain_summary["leakage_audit"]["target_windows_are_disjoint"] is True

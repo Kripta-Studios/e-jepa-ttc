@@ -189,8 +189,7 @@ def assert_split_claim_allowed(path: str | Path, *, claim_level: str) -> dict[st
         )
         raise ValueError(msg)
     if claim in FINAL_CLAIM_LEVELS and (
-        protocol["status"] == REUSED_TEST_STATUS
-        or protocol["test_was_previously_inspected"]
+        protocol["status"] == REUSED_TEST_STATUS or protocol["test_was_previously_inspected"]
     ):
         msg = f"Reused/inspected test split {path} cannot produce {claim!r} results."
         raise ValueError(msg)

@@ -173,8 +173,7 @@ def multimodal_ttc_loss(
     nll = (0.5 * torch.exp(-log_variance) * residual.square() + 0.5 * log_variance).mean()
     thresholds = output.risk_logits.new_tensor(risk_thresholds_s)
     labels = (
-        (ttc_target_s[..., None] > 0)
-        & (ttc_target_s[..., None] <= thresholds[None, None, :])
+        (ttc_target_s[..., None] > 0) & (ttc_target_s[..., None] <= thresholds[None, None, :])
     ).to(output.risk_logits.dtype)
     risk = functional.binary_cross_entropy_with_logits(output.risk_logits[valid], labels[valid])
     student = functional.normalize(output.event_tokens[valid], dim=-1)
@@ -212,15 +211,11 @@ class DINOv3FeatureTeacher(nn.Module):
         )
         self.register_buffer(
             "image_mean",
-            torch.tensor(processor.get("image_mean", (0.485, 0.456, 0.406))).reshape(
-                1, 3, 1, 1
-            ),
+            torch.tensor(processor.get("image_mean", (0.485, 0.456, 0.406))).reshape(1, 3, 1, 1),
         )
         self.register_buffer(
             "image_std",
-            torch.tensor(processor.get("image_std", (0.229, 0.224, 0.225))).reshape(
-                1, 3, 1, 1
-            ),
+            torch.tensor(processor.get("image_std", (0.229, 0.224, 0.225))).reshape(1, 3, 1, 1),
         )
         self.backbone = AutoModel.from_pretrained(model_name)
         self.backbone.eval()

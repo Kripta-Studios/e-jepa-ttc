@@ -35,6 +35,7 @@ def sequence_bootstrap_interval(
         msg = "Sequence bootstrap has no finite samples."
         raise ValueError(msg)
     if metric is None:
+
         def mean_absolute_error(truth: np.ndarray, estimate: np.ndarray) -> float:
             return float(np.mean(np.abs(truth - estimate)))
 

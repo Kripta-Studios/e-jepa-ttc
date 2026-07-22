@@ -147,8 +147,7 @@ def evaluate_eap_geometry_baselines(
         "sequence_count": len(set(sequences)),
         "ttc_label_status": "reconstructed_public_3d_tracks_not_official_garlttc",
         "metrics": {
-            name: object_ttc_metrics(target, prediction)
-            for name, prediction in predictions.items()
+            name: object_ttc_metrics(target, prediction) for name, prediction in predictions.items()
         },
     }
     if output_path is not None:

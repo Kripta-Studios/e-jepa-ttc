@@ -25,8 +25,10 @@ def checkpoint_provenance(
             role = "unspecified"
     selected_by = checkpoint.get("checkpoint_selected_by")
     if selected_by is None:
-        selected_by = "validation_loss" if role == "best" else (
-            "final_epoch" if role == "last" else "unspecified"
+        selected_by = (
+            "validation_loss"
+            if role == "best"
+            else ("final_epoch" if role == "last" else "unspecified")
         )
     return {
         "path": path.as_posix(),

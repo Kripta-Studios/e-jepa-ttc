@@ -181,8 +181,7 @@ def train_tiny_cnn(
     y_log = np.log(np.clip(y_ttc, 1e-4, None)).astype(np.float32)
     available_splits = _available_split_names(split)
     missing_names = sorted(
-        (set(train_splits) | set(validation_splits) | set(evaluation_splits))
-        - available_splits
+        (set(train_splits) | set(validation_splits) | set(evaluation_splits)) - available_splits
     )
     if missing_names:
         msg = f"Requested split names are missing from cache: {missing_names}."
@@ -197,9 +196,7 @@ def train_tiny_cnn(
         msg = "Requested train and validation splits must be non-empty."
         raise ValueError(msg)
     missing_eval_splits = [
-        split_name
-        for split_name in evaluation_splits
-        if split_indices[split_name].size == 0
+        split_name for split_name in evaluation_splits if split_indices[split_name].size == 0
     ]
     if missing_eval_splits:
         msg = f"Requested evaluation splits are empty: {missing_eval_splits}."
@@ -208,9 +205,9 @@ def train_tiny_cnn(
     if train_fraction < 1.0:
         rng = np.random.default_rng(seed)
         subset_count = max(1, int(round(train_idx.size * train_fraction)))
-        train_idx = np.sort(
-            rng.choice(train_idx, size=subset_count, replace=False)
-        ).astype(np.int64)
+        train_idx = np.sort(rng.choice(train_idx, size=subset_count, replace=False)).astype(
+            np.int64
+        )
 
     if device_name == "auto":
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -425,9 +422,7 @@ def evaluate_supervised_checkpoint(
         split_name: _split_indices(split, split_name) for split_name in available_splits
     }
     missing_eval_splits = [
-        split_name
-        for split_name in evaluation_splits
-        if split_indices[split_name].size == 0
+        split_name for split_name in evaluation_splits if split_indices[split_name].size == 0
     ]
     if missing_eval_splits:
         msg = f"Requested evaluation splits are empty: {missing_eval_splits}."

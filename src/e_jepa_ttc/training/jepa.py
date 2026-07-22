@@ -550,9 +550,7 @@ def _visreg_sketch_loss(z: torch.Tensor, *, projection_count: int) -> torch.Tens
     )
     projections = functional.normalize(projections, dim=0)
     projected = torch.sort(z @ projections, dim=0).values
-    quantiles = (
-        torch.arange(z.shape[0], device=z.device, dtype=torch.float32) + 0.5
-    ) / z.shape[0]
+    quantiles = (torch.arange(z.shape[0], device=z.device, dtype=torch.float32) + 0.5) / z.shape[0]
     gaussian = math.sqrt(2.0) * torch.special.erfinv(2.0 * quantiles - 1.0)
     gaussian = gaussian[:, None].to(dtype=projected.dtype)
     return torch.square(projected - gaussian.expand_as(projected)).mean()
@@ -1095,9 +1093,7 @@ def _jepa_loss(
         valid_fraction = float(valid.mean().detach().cpu())
         target_pair_count = int(future_mask.sum().detach().cpu())
     if not (dense_tokens and future_x is not None):
-        context_for_variance = (
-            context_z.mean(dim=1) if context_z.ndim == 3 else context_z
-        )
+        context_for_variance = context_z.mean(dim=1) if context_z.ndim == 3 else context_z
     if pred_for_variance.shape[0] <= 1:
         pred_for_variance = pred.reshape(-1, pred.shape[-1])
     if target_for_metrics.shape[0] <= 1:
@@ -1132,9 +1128,7 @@ def _jepa_loss(
         "variance_loss": float(variance.detach().cpu()),
         "visreg_sketch_loss": float(visreg_sketch.detach().cpu()),
         "visreg_sketch_weight": float(visreg_sketch_weight if regularizer == "visreg" else 0.0),
-        "visreg_projection_count": float(
-            visreg_projection_count if regularizer == "visreg" else 0
-        ),
+        "visreg_projection_count": float(visreg_projection_count if regularizer == "visreg" else 0),
         "context_embedding_std": float(
             context_for_variance.detach().float().std(dim=0, unbiased=False).mean().cpu()
         ),
@@ -1344,9 +1338,7 @@ def pretrain_jepa(
     navigation_feature_count = len(navigation_feature_names) if use_motion_conditioning else 0
     use_action_conditioning = bool(navigation_feature_count)
     action_feature_names = (
-        (*EVENT_MOTION_FEATURE_NAMES, *navigation_feature_names)
-        if use_motion_conditioning
-        else ()
+        (*EVENT_MOTION_FEATURE_NAMES, *navigation_feature_names) if use_motion_conditioning else ()
     )
     action_feature_dim = len(action_feature_names)
     action_feature_mean: torch.Tensor | None = None
@@ -1520,9 +1512,7 @@ def pretrain_jepa(
         "action_feature_mean": action_feature_mean.tolist()
         if action_feature_mean is not None
         else [],
-        "action_feature_std": action_feature_std.tolist()
-        if action_feature_std is not None
-        else [],
+        "action_feature_std": action_feature_std.tolist() if action_feature_std is not None else [],
     }
 
     with history_path.open("w", encoding="utf-8") as history_file:
@@ -1683,9 +1673,7 @@ def pretrain_jepa(
             "regularizer": regularizer,
             "visreg_center_weight": visreg_center_weight if regularizer == "visreg" else 0.0,
             "visreg_sketch_weight": visreg_sketch_weight if regularizer == "visreg" else 0.0,
-            "visreg_projection_count": visreg_projection_count
-            if regularizer == "visreg"
-            else 0,
+            "visreg_projection_count": visreg_projection_count if regularizer == "visreg" else 0,
             "temporal_straightening_weight": temporal_straightening_weight,
             **conditioning_metadata,
             "deep_supervision_layers": list(deep_supervision_layers)
@@ -1771,8 +1759,7 @@ def pretrain_jepa(
             "tubelet_masking_preserves_auxiliary_channels": mask_mode == "tubelet",
             "visreg_uses_batch_embeddings_only": regularizer == "visreg",
             "visreg_uses_ttc_labels": False,
-            "temporal_straightening_uses_predictions_only": temporal_straightening_weight
-            > 0.0,
+            "temporal_straightening_uses_predictions_only": temporal_straightening_weight > 0.0,
             "targets_cross_sequence_boundary": False,
             "targets_cross_split_boundary": False,
             "target_timestamps_are_after_context": use_temporal,

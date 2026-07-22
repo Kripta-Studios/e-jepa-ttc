@@ -31,10 +31,13 @@ def audit_cache(manifest_path: Path, *, hash_shards: bool = False) -> dict[str, 
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     shards = manifest.get("shards", [])
     _require(bool(shards), "Cache manifest contains no shards.")
-    expected_horizons = np.asarray(
-        manifest["config"]["prediction_horizons_ms"],
-        dtype=np.float64,
-    ) / 1000.0
+    expected_horizons = (
+        np.asarray(
+            manifest["config"]["prediction_horizons_ms"],
+            dtype=np.float64,
+        )
+        / 1000.0
+    )
     split_sequences: dict[str, set[str]] = defaultdict(set)
     sequence_splits: dict[str, set[str]] = defaultdict(set)
     counts: Counter[str] = Counter()
@@ -92,10 +95,7 @@ def audit_cache(manifest_path: Path, *, hash_shards: bool = False) -> dict[str, 
                 f"Overlapping context windows in {path}",
             )
             _require(
-                np.all(
-                    (context_end[:, -1, None] <= future_start)
-                    | ~future_valid
-                ),
+                np.all((context_end[:, -1, None] <= future_start) | ~future_valid),
                 f"Future window overlaps context in {path}",
             )
             _require(

@@ -26,9 +26,7 @@ def _write_synthetic_eap(root: Path) -> None:
     # offset exercises causal truncation of a nominal 100 ms future window.
     frame_times = 1_000_000 + np.arange(11, dtype=np.int64) * 99_979
     tokens = [f"{sequence}:{timestamp}" for timestamp in frame_times]
-    intrinsic = np.asarray(
-        [[500.0, 0.0, 640.0], [0.0, 500.0, 360.0], [0.0, 0.0, 1.0]]
-    )
+    intrinsic = np.asarray([[500.0, 0.0, 640.0], [0.0, 500.0, 360.0], [0.0, 0.0, 1.0]])
     event_from_ego = np.asarray(
         [
             [0.0, -1.0, 0.0, 0.0],
@@ -124,9 +122,9 @@ def test_materialized_eap_object_cache_is_disjoint_and_loadable(tmp_path: Path) 
         sample["future_window_start_us"].numpy()[valid_future]
         >= sample["context_window_end_us"].numpy()[-1]
     )
-    assert sample["future_window_start_us"].numpy()[0] == sample[
-        "context_window_end_us"
-    ].numpy()[-1]
+    assert (
+        sample["future_window_start_us"].numpy()[0] == sample["context_window_end_us"].numpy()[-1]
+    )
     assert not sample["future_ego_action_mask"].any()
     assert sample["ttc_source"].startswith("reconstructed_public")
     order = list(ShardLocalSampler(dataset, seed=7))
@@ -164,9 +162,7 @@ def test_density_adaptive_roi_window_is_causal_and_bounded(tmp_path: Path) -> No
     assert manifest["event_window_policy"] == "roi_density_adaptive_trailing_count"
     dataset = EAPObjectCacheDataset(output / "manifest.json", splits=("test",))
     sample = dataset[0]
-    duration_us = (
-        sample["context_window_end_us"] - sample["context_window_start_us"]
-    ).numpy()
+    duration_us = (sample["context_window_end_us"] - sample["context_window_start_us"]).numpy()
     assert np.all(duration_us >= 10_000)
     assert np.all(duration_us < 100_000)
     valid_future = sample["future_object_mask"].squeeze(-1).numpy().astype(bool)

@@ -40,4 +40,3 @@ def test_multimodal_fusion_shapes_and_detached_rgb_distillation() -> None:
         if parameter.requires_grad
     ]
     assert any(gradient is not None for gradient in event_gradients)
-

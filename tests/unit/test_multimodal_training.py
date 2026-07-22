@@ -17,4 +17,3 @@ def test_dinov3_distillation_stops_teacher_gradient() -> None:
 
     assert student.grad is not None
     assert teacher.grad is None
-

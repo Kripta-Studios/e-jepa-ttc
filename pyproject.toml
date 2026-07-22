@@ -58,7 +58,7 @@ select = ["E", "F", "I", "B", "UP", "N", "ANN"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
-pythonpath = ["src"]
+pythonpath = ["src", "."]
 
 [tool.uv.sources]
 torch = [

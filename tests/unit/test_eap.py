@@ -66,8 +66,7 @@ def test_reconstructed_ttc_is_signed_depth_over_depth_velocity() -> None:
             "track_id": ["track"] * 4,
             "category": ["car"] * 4,
             "bbox_3d_ego": [
-                np.asarray([10.0 - index, 0.0, 0.0, 2.0, 2.0, 2.0, 0.0])
-                for index in range(4)
+                np.asarray([10.0 - index, 0.0, 0.0, 2.0, 2.0, 2.0, 0.0]) for index in range(4)
             ],
         }
     )

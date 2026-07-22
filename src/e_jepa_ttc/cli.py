@@ -217,9 +217,7 @@ def _parse_sequence_splits(assignments: list[str]) -> dict[str, str]:
     for assignment in assignments:
         sequence_id, separator, split_name = assignment.partition("=")
         if not separator or not sequence_id or not split_name:
-            msg = (
-                f"Invalid sequence split {assignment!r}; expected SEQUENCE_ID=SPLIT."
-            )
+            msg = f"Invalid sequence split {assignment!r}; expected SEQUENCE_ID=SPLIT."
             raise ValueError(msg)
         if sequence_id in sequence_splits:
             msg = f"Sequence {sequence_id!r} was assigned more than once."
@@ -1389,5 +1387,3 @@ def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
     return int(args.func(args))
-
-

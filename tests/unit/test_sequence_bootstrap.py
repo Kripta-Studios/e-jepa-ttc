@@ -40,4 +40,3 @@ def test_single_sequence_bootstrap_is_explicitly_degenerate() -> None:
 
     assert result["status"] == "degenerate_single_sequence"
     assert result["lower"] == result["upper"]
-

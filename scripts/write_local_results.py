@@ -133,22 +133,16 @@ def build_report(root: Path = ROOT) -> str:
         runs_dir / "jepa_temporal_voxel_160x90_b5_raw_meta_train_seed7" / "metrics.json"
     )
     jepa_temporal_ft = _load_json(
-        runs_dir
-        / "tiny_cnn_voxel_160x90_b5_raw_meta_temporal_jepa_seed7"
-        / "metrics.json"
+        runs_dir / "tiny_cnn_voxel_160x90_b5_raw_meta_temporal_jepa_seed7" / "metrics.json"
     )
     jepa_temporal_probe = _load_json(
-        runs_dir
-        / "tiny_cnn_voxel_160x90_b5_raw_meta_temporal_jepa_probe_seed7"
-        / "metrics.json"
+        runs_dir / "tiny_cnn_voxel_160x90_b5_raw_meta_temporal_jepa_probe_seed7" / "metrics.json"
     )
     lowlabel_10_scratch = _load_json(
         runs_dir / "tiny_cnn_voxel_160x90_b5_raw_meta_seed7_frac10" / "metrics.json"
     )
     lowlabel_10_jepa = _load_json(
-        runs_dir
-        / "tiny_cnn_voxel_160x90_b5_raw_meta_temporal_jepa_seed7_frac10"
-        / "metrics.json"
+        runs_dir / "tiny_cnn_voxel_160x90_b5_raw_meta_temporal_jepa_seed7_frac10" / "metrics.json"
     )
     partial_event_rate = _load_json(metrics_dir / "event_rate_partial_starter_baseline.json")
     partial_scratch = _load_json(

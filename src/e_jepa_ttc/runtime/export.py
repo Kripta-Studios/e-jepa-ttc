@@ -120,8 +120,7 @@ def export_object_ttc_onnx(
         providers=["CPUExecutionProvider"],
     )
     ort_inputs = {
-        name: tensor.detach().cpu().numpy()
-        for name, tensor in zip(required, tensors, strict=True)
+        name: tensor.detach().cpu().numpy() for name, tensor in zip(required, tensors, strict=True)
     }
     ort_outputs = session.run(list(output_names), ort_inputs)
     maximum_absolute_error: dict[str, float] = {}
@@ -157,8 +156,7 @@ def export_object_ttc_onnx(
         "non_batch_axes_fixed": True,
         "model_config": asdict(cpu_model.config),
         "input_shapes": {
-            name: list(tensor.shape)
-            for name, tensor in zip(required, tensors, strict=True)
+            name: list(tensor.shape) for name, tensor in zip(required, tensors, strict=True)
         },
         "output_shapes": {
             name: list(np.asarray(value).shape)

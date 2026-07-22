@@ -24,9 +24,9 @@ def _write_shard(path: Path, *, split: str, seed: int) -> None:
     )
     np.savez_compressed(
         path,
-        context_events=rng.normal(
-            size=(count, context_steps, channels, size, size)
-        ).astype(np.float16),
+        context_events=rng.normal(size=(count, context_steps, channels, size, size)).astype(
+            np.float16
+        ),
         context_boxes=context_boxes,
         context_sampling_boxes=np.tile(
             np.asarray([0.0, 0.0, 1.0, 1.0], dtype=np.float32),
@@ -36,9 +36,7 @@ def _write_shard(path: Path, *, split: str, seed: int) -> None:
         context_depth_m=np.full((count, 1), 10.0, dtype=np.float32),
         context_ego_actions=np.zeros((count, context_steps, 3), dtype=np.float32),
         context_ego_action_mask=np.zeros((count, context_steps), dtype=np.bool_),
-        future_events=rng.normal(size=(count, horizons, channels, size, size)).astype(
-            np.float16
-        ),
+        future_events=rng.normal(size=(count, horizons, channels, size, size)).astype(np.float16),
         future_boxes=future_boxes,
         future_sampling_boxes=np.tile(
             np.asarray([0.0, 0.0, 1.0, 1.0], dtype=np.float32),

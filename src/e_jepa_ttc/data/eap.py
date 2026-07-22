@@ -406,11 +406,7 @@ def build_eap_object_windows(
     if not horizons_ms or any(horizon <= 0 for horizon in horizons_ms):
         msg = "horizons_ms must contain positive values."
         raise ValueError(msg)
-    if (
-        maximum_slop_ms < 0
-        or maximum_history_gap_ms <= 0
-        or maximum_interpolation_gap_ms <= 0
-    ):
+    if maximum_slop_ms < 0 or maximum_history_gap_ms <= 0 or maximum_interpolation_gap_ms <= 0:
         msg = "Invalid window slop or history-gap threshold."
         raise ValueError(msg)
     windows: list[EAPObjectWindow] = []
@@ -437,9 +433,7 @@ def build_eap_object_windows(
                 desired = target.timestamp_us + horizon_ms * 1000
                 insertion = int(np.searchsorted(timestamps, desired, side="left"))
                 candidates = [
-                    index
-                    for index in (insertion - 1, insertion)
-                    if end_index < index < len(track)
+                    index for index in (insertion - 1, insertion) if end_index < index < len(track)
                 ]
                 if not candidates:
                     continue
@@ -498,8 +492,7 @@ def _interpolate_object_state(
 
     depth = float(left.nearest_depth_m + weight * (right.nearest_depth_m - left.nearest_depth_m))
     velocity = float(
-        left.depth_velocity_mps
-        + weight * (right.depth_velocity_mps - left.depth_velocity_mps)
+        left.depth_velocity_mps + weight * (right.depth_velocity_mps - left.depth_velocity_mps)
     )
     ttc = -depth / velocity if np.isfinite(velocity) and abs(velocity) >= 0.05 else float("nan")
     return EAPObjectState(
@@ -512,8 +505,7 @@ def _interpolate_object_state(
         bbox_3d_ego=interpolate_tuple(left.bbox_3d_ego, right.bbox_3d_ego),
         nearest_depth_m=depth,
         visible_height_px=float(
-            left.visible_height_px
-            + weight * (right.visible_height_px - left.visible_height_px)
+            left.visible_height_px + weight * (right.visible_height_px - left.visible_height_px)
         ),
         depth_velocity_mps=velocity,
         ttc_s=ttc,
@@ -649,12 +641,8 @@ def crop_events_to_roi(
         & (timestamps >= start_us)
         & (timestamps < end_us)
     )
-    resized_x = np.floor((x[inside] - crop_x_min) / source_width * output_width).astype(
-        np.int32
-    )
-    resized_y = np.floor((y[inside] - crop_y_min) / source_height * output_height).astype(
-        np.int32
-    )
+    resized_x = np.floor((x[inside] - crop_x_min) / source_width * output_width).astype(np.int32)
+    resized_y = np.floor((y[inside] - crop_y_min) / source_height * output_height).astype(np.int32)
     resized_x = np.clip(resized_x, 0, output_width - 1)
     resized_y = np.clip(resized_y, 0, output_height - 1)
     normalized_polarity = np.where(polarity[inside] > 0, 1, -1).astype(np.int8)

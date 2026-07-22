@@ -69,9 +69,7 @@ def main() -> int:
         raise RuntimeError("Repository commit changed during the recovery matrix")
     status_lines = _git(root, "status", "--porcelain").splitlines()
     unexpected_dirty = [
-        line
-        for line in status_lines
-        if line[3:].replace("\\", "/") != "artifacts/registry.jsonl"
+        line for line in status_lines if line[3:].replace("\\", "/") != "artifacts/registry.jsonl"
     ]
     if unexpected_dirty and not args.smoke:
         raise RuntimeError(

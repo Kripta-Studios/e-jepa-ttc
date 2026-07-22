@@ -332,9 +332,7 @@ def _states(sequence: DatasetSequence) -> list[_EvTTCState]:
         return []
     table = load_ttc_csv(ttc_path)
     event_path = sequence.resolve("event_hdf5")
-    calibration = (
-        _load_cross_camera_calibration(event_path) if event_path is not None else None
-    )
+    calibration = _load_cross_camera_calibration(event_path) if event_path is not None else None
     states: list[_EvTTCState] = []
     for measurement in load_label_measurements(sequence):
         depth = _depth_at(table, measurement.timestamp_us)

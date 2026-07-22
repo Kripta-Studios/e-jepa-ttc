@@ -124,9 +124,7 @@ def roi_sample(
         raise ValueError(msg)
     batch, object_count = boxes_xyxy.shape[:2]
     if object_count == 0:
-        return feature_map.new_empty(
-            (batch, 0, feature_map.shape[1], output_size, output_size)
-        )
+        return feature_map.new_empty((batch, 0, feature_map.shape[1], output_size, output_size))
     boxes = boxes_xyxy.clamp(0.0, 1.0)
     x_min, y_min, x_max, y_max = boxes.unbind(dim=-1)
     line = torch.linspace(0.0, 1.0, output_size, device=boxes.device, dtype=boxes.dtype)
@@ -249,9 +247,7 @@ class ObjectCentricRecurrentEncoder(nn.Module):
                 )
             roi_embedding = self.roi_projection(roi.mean(dim=(-1, -2)))
             if self.config.use_geometry:
-                geometry = self.geometry_projection(
-                    normalized_box_features(boxes_xyxy[:, step])
-                )
+                geometry = self.geometry_projection(normalized_box_features(boxes_xyxy[:, step]))
             else:
                 geometry = torch.zeros_like(roi_embedding)
             action_input = torch.cat(

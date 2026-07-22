@@ -57,28 +57,12 @@ def garl_ttc_metrics(
         # Match the public evaluator exactly: non-positive apparent height ratios
         # yield NaN MiD, but only NaN/Inf or |TTC| < 0.1 count as failures.
         failed = ~np.isfinite(estimate) | (np.abs(estimate) < 0.1)
-        valid_mid = (
-            np.isfinite(estimate_ratio)
-            & (estimate_ratio > 0)
-            & (truth_ratio > 0)
-        )
-        mid_residual = np.abs(
-            np.log(truth_ratio[valid_mid]) - np.log(estimate_ratio[valid_mid])
-        )
-        mid = (
-            float(np.mean(mid_residual) * 1e4)
-            if np.any(valid_mid)
-            else float("nan")
-        )
+        valid_mid = np.isfinite(estimate_ratio) & (estimate_ratio > 0) & (truth_ratio > 0)
+        mid_residual = np.abs(np.log(truth_ratio[valid_mid]) - np.log(estimate_ratio[valid_mid]))
+        mid = float(np.mean(mid_residual) * 1e4) if np.any(valid_mid) else float("nan")
         valid_rte = (~failed) & (truth != 0.0)
-        relative_error = np.abs(estimate[valid_rte] - truth[valid_rte]) / np.abs(
-            truth[valid_rte]
-        )
-        rte = (
-            float(np.mean(relative_error) * 100.0)
-            if np.any(valid_rte)
-            else float("nan")
-        )
+        relative_error = np.abs(estimate[valid_rte] - truth[valid_rte]) / np.abs(truth[valid_rte])
+        rte = float(np.mean(relative_error) * 100.0) if np.any(valid_rte) else float("nan")
         bins[name] = {
             "count": count,
             "mid": mid,
@@ -94,9 +78,7 @@ def garl_ttc_metrics(
     return {
         "delta_t_s": delta_t_s,
         "weighted_mid": weighted_mid if all_weighted_bins_available else float("nan"),
-        "weighted_rte_pct": (
-            weighted_rte if all_weighted_bins_available else float("nan")
-        ),
+        "weighted_rte_pct": (weighted_rte if all_weighted_bins_available else float("nan")),
         "bins": bins,
     }
 
@@ -187,9 +169,9 @@ def _binary_auroc(target: np.ndarray, scores: np.ndarray) -> float:
         ranks[order[start:stop]] = (start + 1 + stop) * 0.5
         start = stop
     positive_rank_sum = float(np.sum(ranks[target == 1]))
-    return (
-        positive_rank_sum - positive_count * (positive_count + 1) * 0.5
-    ) / (positive_count * negative_count)
+    return (positive_rank_sum - positive_count * (positive_count + 1) * 0.5) / (
+        positive_count * negative_count
+    )
 
 
 def _average_precision(target: np.ndarray, scores: np.ndarray) -> float:
@@ -218,8 +200,10 @@ def _expected_calibration_error(
         else:
             mask = (probabilities >= edges[index]) & (probabilities < edges[index + 1])
         if np.any(mask):
-            error += np.count_nonzero(mask) / total * abs(
-                float(np.mean(probabilities[mask])) - float(np.mean(target[mask]))
+            error += (
+                np.count_nonzero(mask)
+                / total
+                * abs(float(np.mean(probabilities[mask])) - float(np.mean(target[mask])))
             )
     return float(error)
 
