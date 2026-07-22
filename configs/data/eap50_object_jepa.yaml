@@ -1,0 +1,70 @@
+dataset:
+  name: eap_public_media
+  repository: NAIL-HNU/eAP-dataset
+  root: datasets/eap-50
+  public_train_metadata: data/train.parquet
+  official_test_labels_available: false
+  ttc_supervision: reconstructed_from_public_3d_tracks_not_official_garlttc
+
+# Sequence-disjoint development protocol. The public eAP test split cannot be used
+# because its labels are private to CodaBench. This internal test remains a public
+# train sequence and must never be presented as the official GarlTTC test result.
+sequence_splits:
+  2cyv0Oedzg: train
+  6h5yRW2LGc: train
+  pBqGOb2vYq: train
+  mHGFBekt7X: train
+  DGqicHUGWb: validation
+  OBneIVg4Cw: calibration
+  qoohcdtLDH: test
+  qGsgzl4Q8B: test
+
+sequence_attributes:
+  2cyv0Oedzg: {weather: sunny, road: urban, relative_motion: moderate_following}
+  6h5yRW2LGc: {weather: night, road: urban, relative_motion: moderate_following}
+  pBqGOb2vYq: {weather: cloudy, road: urban, relative_motion: moderate_following}
+  mHGFBekt7X: {weather: sunny, road: expressway, relative_motion: moderate_following}
+  DGqicHUGWb: {weather: night, road: dark_minor_road, relative_motion: slow_following}
+  OBneIVg4Cw: {weather: twilight, road: urban, relative_motion: moderate_following}
+  qoohcdtLDH: {weather: sunny, road: urban, relative_motion: moderate_following}
+  qGsgzl4Q8B: {weather: twilight, road: expressway, relative_motion: high_speed_hard_braking}
+  source: scratch/garl-ttc-reference/configs/dataset_info.json
+
+cache:
+  maximum_windows_per_sequence: 2048
+  subsampling: deterministic_uniform_after_global_timestamp_sort
+  history_frames: 3
+  context_event_window_ms: 100
+  adaptive_event_count: null
+  minimum_adaptive_window_ms: 10
+  prediction_horizons_ms: [100, 250, 500]
+  future_window_semantics: endpoint_aligned_disjoint
+  maximum_target_slop_ms: 25
+  maximum_history_gap_ms: 125
+  roi_size: [64, 64]
+  roi_expansion: 1.25
+  event_bins: 5
+  separate_polarity: true
+  occupied_voxel_normalization: noncentred_q95_magnitude
+  derivative_radius: 2
+  maximum_derivative_gap_s: 0.25
+  action_dim: 8
+  ego_action_status: unavailable_and_explicitly_masked
+
+download_budget:
+  target_gib: 52.6
+  event_sequences:
+    - 2cyv0Oedzg
+    - 6h5yRW2LGc
+    - pBqGOb2vYq
+    - mHGFBekt7X
+    - DGqicHUGWb
+    - OBneIVg4Cw
+    - qGsgzl4Q8B
+    - qoohcdtLDH
+  rgb_sequences_for_multimodal_ablation:
+    - 2cyv0Oedzg
+    - DGqicHUGWb
+  event_media_gib: 48.077
+  rgb_media_gib: 4.512
+  note: sizes_exclude_small_metadata_and_huggingface_cache

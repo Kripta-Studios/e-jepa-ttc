@@ -302,6 +302,8 @@ def _build_temporal_pairs(
     split: np.ndarray,
     sequence_id: np.ndarray,
     timestamp_us: np.ndarray,
+    context_start_us: np.ndarray,
+    context_end_us: np.ndarray,
     split_names: tuple[str, ...],
     horizons_ms: tuple[int, ...],
     max_target_slop_ms: int,
@@ -319,6 +321,18 @@ def _build_temporal_pairs(
     selected = _split_indices(split, split_names)
     sequence_text = sequence_id.astype(str)
     timestamps = timestamp_us.astype(np.int64)
+    context_starts = context_start_us.astype(np.int64)
+    context_ends = context_end_us.astype(np.int64)
+    expected_shape = timestamps.shape
+    if context_starts.shape != expected_shape or context_ends.shape != expected_shape:
+        msg = "timestamp_us, context_start_us and context_end_us must have identical shapes."
+        raise ValueError(msg)
+    if np.any(context_starts >= context_ends):
+        msg = "Every cached context window must have positive duration."
+        raise ValueError(msg)
+    if np.any(timestamps != context_ends):
+        msg = "Cached timestamp_us must equal context_end_us for causal pairing."
+        raise ValueError(msg)
     max_slop_us = int(max_target_slop_ms * 1000)
     contexts: list[int] = []
     targets: list[np.ndarray] = []
@@ -329,17 +343,25 @@ def _build_temporal_pairs(
         order = np.argsort(timestamps[sequence_indices], kind="stable")
         sequence_indices = sequence_indices[order]
         sequence_times = timestamps[sequence_indices]
-        for local_idx, context_idx in enumerate(sequence_indices):
+        sequence_starts = context_starts[sequence_indices]
+        for context_idx in sequence_indices:
             row = np.full((len(horizons_ms),), -1, dtype=np.int64)
-            context_time = int(sequence_times[local_idx])
+            context_end = int(context_ends[context_idx])
             for horizon_idx, horizon_ms in enumerate(horizons_ms):
-                target_time = context_time + int(horizon_ms * 1000)
-                target_pos = int(np.searchsorted(sequence_times, target_time, side="left"))
+                # Horizon denotes a gap after the causal context. The target
+                # is a complete cached window whose *start* is at or after
+                # context_end + horizon, never a window ending there.
+                target_start = context_end + int(horizon_ms * 1000)
+                target_pos = int(np.searchsorted(sequence_starts, target_start, side="left"))
                 if target_pos >= sequence_times.shape[0]:
                     continue
-                slop_us = int(sequence_times[target_pos] - target_time)
+                target_idx = int(sequence_indices[target_pos])
+                slop_us = int(context_starts[target_idx] - target_start)
                 if 0 <= slop_us <= max_slop_us:
-                    row[horizon_idx] = int(sequence_indices[target_pos])
+                    if context_starts[target_idx] < context_end:
+                        msg = "Temporal target overlaps its causal context."
+                        raise RuntimeError(msg)
+                    row[horizon_idx] = target_idx
                     slop_by_horizon[horizon_idx].append(slop_us / 1000.0)
             if np.any(row >= 0):
                 contexts.append(int(context_idx))
@@ -369,6 +391,8 @@ def _build_temporal_pairs(
         "target_pair_count": int((target_indices >= 0).sum()) if target_indices.size else 0,
         "horizons_ms": list(horizons_ms),
         "max_target_slop_ms": max_target_slop_ms,
+        "future_window_semantics": "disjoint_window_start_after_context_plus_horizon",
+        "target_windows_are_disjoint": True,
         "per_horizon": per_horizon,
     }
     return context_indices, target_indices, stats
@@ -491,6 +515,22 @@ def _variance_loss(z: torch.Tensor, *, min_std: float) -> torch.Tensor:
     z = z.float()
     std = torch.sqrt(z.var(dim=0, unbiased=False) + 1e-4)
     return torch.relu(min_std - std).mean()
+
+
+def _effective_rank(z: torch.Tensor) -> torch.Tensor:
+    """Return entropy effective rank across independent sample embeddings."""
+
+    rows = z.float().reshape(-1, z.shape[-1])
+    if rows.shape[0] <= 1:
+        return rows.sum() * 0.0
+    centered = rows - rows.mean(dim=0, keepdim=True)
+    singular_values = torch.linalg.svdvals(centered)
+    mass = singular_values.sum()
+    if bool(mass <= 1e-12):
+        return mass * 0.0
+    probability = singular_values / mass
+    entropy = -(probability * probability.clamp_min(1e-12).log()).sum()
+    return entropy.exp()
 
 
 def _visreg_sketch_loss(z: torch.Tensor, *, projection_count: int) -> torch.Tensor:
@@ -708,6 +748,30 @@ def _cache_string_tuple(cache: NpzFile, key: str, fallback: tuple[str, ...]) -> 
     return tuple(str(value) for value in np.asarray(cache[key]).astype(str).tolist())
 
 
+def _without_future_navigation(
+    future_x: torch.Tensor,
+    *,
+    bins: int,
+    metadata_channels: bool,
+    navigation_feature_count: int,
+) -> torch.Tensor:
+    """Remove future ego-navigation from target inputs while retaining future events."""
+
+    if navigation_feature_count <= 0:
+        return future_x
+    navigation_start = bins * 2 + (2 if metadata_channels else 0)
+    navigation_end = navigation_start + navigation_feature_count
+    if future_x.ndim != 5 or future_x.shape[2] < navigation_end:
+        msg = (
+            "Future target tensor does not contain the declared navigation channels at "
+            f"[{navigation_start}:{navigation_end}]."
+        )
+        raise ValueError(msg)
+    target = future_x.clone()
+    target[:, :, navigation_start:navigation_end] = 0.0
+    return target
+
+
 def _objective_name(
     *,
     use_temporal: bool,
@@ -816,14 +880,17 @@ def _dense_temporal_alignment(
         ).mean(dim=tuple(range(2, pred_norm.ndim)))
         losses.append((per_pair_loss * valid).sum() / valid_count)
         straightening_losses.append(_temporal_straightening_loss(context_z, pred, future_mask))
-        pred_rows.append(pred[valid_bool].reshape(-1, pred.shape[-1]))
-        target_rows.append(target_z[valid_bool].reshape(-1, target_z.shape[-1]))
+        # Collapse diagnostics and regularization operate across independent
+        # samples/pairs. Flattening spatial positions here allowed fixed
+        # positional embeddings to masquerade as content variance.
+        pred_rows.append(pred[valid_bool].mean(dim=1))
+        target_rows.append(target_z[valid_bool].mean(dim=1))
     return (
         torch.stack(losses).mean(),
         torch.stack(straightening_losses).mean(),
         torch.cat(pred_rows, dim=0),
         torch.cat(target_rows, dim=0),
-        torch.cat([layer.reshape(-1, layer.shape[-1]) for layer in context_layers], dim=0),
+        context_layers[-1].mean(dim=1),
     )
 
 
@@ -860,8 +927,8 @@ def _dense_context_alignment(
                 reduction="none",
             ).mean()
         )
-        pred_rows.append(pred.reshape(-1, pred.shape[-1]))
-        target_rows.append(target_z.reshape(-1, target_z.shape[-1]))
+        pred_rows.append(pred.mean(dim=1))
+        target_rows.append(target_z.mean(dim=1))
     return torch.stack(losses).mean(), torch.cat(pred_rows, dim=0), torch.cat(target_rows, dim=0)
 
 
@@ -927,6 +994,12 @@ def _jepa_loss(
             msg = "future_mask and horizon_ids are required for temporal JEPA."
             raise ValueError(msg)
         batch, horizon_count = future_mask.shape
+        target_future_x = _without_future_navigation(
+            future_x,
+            bins=bins,
+            metadata_channels=metadata_channels,
+            navigation_feature_count=navigation_feature_count,
+        )
         if dense_tokens:
             motion_features = (
                 _normalize_action_features(
@@ -945,7 +1018,7 @@ def _jepa_loss(
             with torch.no_grad():
                 flat_target_layers = _forward_token_layers(
                     target_encoder,
-                    future_x.flatten(0, 1),
+                    target_future_x.flatten(0, 1),
                     deep_supervision_layers,
                 )
             (
@@ -995,7 +1068,9 @@ def _jepa_loss(
         else:
             pred = predictor(context_z, horizon_ids)
             with torch.no_grad():
-                target_z = target_encoder(future_x.flatten(0, 1)).view(batch, horizon_count, -1)
+                target_z = target_encoder(target_future_x.flatten(0, 1)).view(
+                    batch, horizon_count, -1
+                )
             pred_norm = functional.normalize(pred, dim=-1)
             target_norm = functional.normalize(target_z, dim=-1)
             per_pair_loss = functional.smooth_l1_loss(
@@ -1014,14 +1089,14 @@ def _jepa_loss(
             )
             future_alignment_loss = alignment_loss
             valid_bool = future_mask.to(device=pred.device, dtype=torch.bool)
-            pred_for_variance = pred[valid_bool].reshape(-1, pred.shape[-1])
-            target_for_metrics = target_z[valid_bool].reshape(-1, target_z.shape[-1])
+            pred_for_variance = pred[valid_bool]
+            target_for_metrics = target_z[valid_bool]
         valid = future_mask.to(device=context_z.device, dtype=torch.float32)
         valid_fraction = float(valid.mean().detach().cpu())
         target_pair_count = int(future_mask.sum().detach().cpu())
     if not (dense_tokens and future_x is not None):
         context_for_variance = (
-            context_z.reshape(-1, context_z.shape[-1]) if context_z.ndim == 3 else context_z
+            context_z.mean(dim=1) if context_z.ndim == 3 else context_z
         )
     if pred_for_variance.shape[0] <= 1:
         pred_for_variance = pred.reshape(-1, pred.shape[-1])
@@ -1061,14 +1136,17 @@ def _jepa_loss(
             visreg_projection_count if regularizer == "visreg" else 0
         ),
         "context_embedding_std": float(
-            context_for_variance.detach().float().std(dim=0).mean().cpu()
+            context_for_variance.detach().float().std(dim=0, unbiased=False).mean().cpu()
         ),
         "pred_embedding_std": float(
-            pred_for_variance.detach().float().std(dim=0).mean().cpu()
+            pred_for_variance.detach().float().std(dim=0, unbiased=False).mean().cpu()
         ),
         "target_embedding_std": float(
-            target_for_metrics.detach().float().std(dim=0).mean().cpu()
+            target_for_metrics.detach().float().std(dim=0, unbiased=False).mean().cpu()
         ),
+        "context_effective_rank": float(_effective_rank(context_for_variance.detach()).cpu()),
+        "pred_effective_rank": float(_effective_rank(pred_for_variance.detach()).cpu()),
+        "target_effective_rank": float(_effective_rank(target_for_metrics.detach()).cpu()),
         "valid_target_fraction": valid_fraction,
         "target_pair_count": float(target_pair_count),
         "deep_supervision_layer_count": float(max(1, len(deep_supervision_layers))),
@@ -1288,16 +1366,25 @@ def pretrain_jepa(
     train_pair_stats = None
     validation_pair_stats = None
     if use_temporal:
-        missing = {"timestamp_us", "sequence_id"} - set(cache.files)
+        missing = {
+            "timestamp_us",
+            "context_start_us",
+            "context_end_us",
+            "sequence_id",
+        } - set(cache.files)
         if missing:
             msg = f"Temporal JEPA requires cache fields: {sorted(missing)}."
             raise ValueError(msg)
         timestamp_us = cache["timestamp_us"].astype(np.int64)
+        context_start_us = cache["context_start_us"].astype(np.int64)
+        context_end_us = cache["context_end_us"].astype(np.int64)
         sequence_id = cache["sequence_id"].astype(str)
         train_idx, train_target_idx, train_pair_stats = _build_temporal_pairs(
             split=split,
             sequence_id=sequence_id,
             timestamp_us=timestamp_us,
+            context_start_us=context_start_us,
+            context_end_us=context_end_us,
             split_names=pretrain_splits,
             horizons_ms=temporal_horizons_ms,
             max_target_slop_ms=max_target_slop_ms,
@@ -1306,6 +1393,8 @@ def pretrain_jepa(
             split=split,
             sequence_id=sequence_id,
             timestamp_us=timestamp_us,
+            context_start_us=context_start_us,
+            context_end_us=context_end_us,
             split_names=validation_splits,
             horizons_ms=temporal_horizons_ms,
             max_target_slop_ms=max_target_slop_ms,
@@ -1672,6 +1761,9 @@ def pretrain_jepa(
             "action_conditioning_uses_context_only": use_action_conditioning,
             "action_feature_normalization_uses_train_only": use_motion_conditioning,
             "uses_future_navigation": False,
+            "future_navigation_channels_zeroed_before_target_encoder": bool(
+                navigation_feature_count
+            ),
             "deep_supervision_uses_intermediate_target_layers": use_deep_supervision,
             "deep_supervision_layer_conditioning": use_deep_supervision,
             "context_token_loss_uses_current_context_only": use_context_token_loss,
@@ -1684,6 +1776,11 @@ def pretrain_jepa(
             "targets_cross_sequence_boundary": False,
             "targets_cross_split_boundary": False,
             "target_timestamps_are_after_context": use_temporal,
+            "target_windows_are_disjoint": use_temporal,
+            "target_window_semantics": (
+                "disjoint_window_start_after_context_plus_horizon" if use_temporal else None
+            ),
+            "collapse_statistics_mix_token_positions": False,
             "supervised_labels_reserved_for_finetune_only": True,
         },
     }

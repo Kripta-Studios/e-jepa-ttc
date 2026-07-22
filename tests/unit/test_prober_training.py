@@ -24,6 +24,8 @@ def _write_cache(path: Path) -> None:
         y_ttc=y_ttc,
         split=split,
         timestamp_us=np.arange(12, dtype=np.int64) * 20_000,
+        context_start_us=np.arange(12, dtype=np.int64) * 20_000 - 20_000,
+        context_end_us=np.arange(12, dtype=np.int64) * 20_000,
         sequence_id=np.array(["fixture"] * 12),
         event_count=np.arange(12, dtype=np.int32),
         width=np.array(16, dtype=np.int32),

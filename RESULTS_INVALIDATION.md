@@ -65,3 +65,16 @@ remain auditable through the exact files and SHA-256 values in
 
 Historical baselines, ROI probes, ablations, and test tables not explicitly
 registered remain non-promotable historical diagnostics.
+
+## 2026-07-22 object-cache normalization invalidation
+
+All eAP object-cache shards and Object-JEPA checkpoints created before cache
+format version 2 are invalid for scientific comparison. The earlier sparse
+voxel normalizer centred occupied values by their nonzero median. Although it
+kept empty voxels at zero, it could also map every occupied voxel to zero when
+their magnitudes were equal, erasing sparse event evidence. Version 2 uses a
+non-centred 95th-percentile magnitude scale, keeps empty voxels exactly zero,
+and preserves occupancy and sign. Pre-version-2 smoke losses, ONNX files and
+latency measurements remain engineering diagnostics only and must not appear
+as final experimental results. Caches, checkpoints, robustness results and
+deployment exports must be regenerated from version 2.

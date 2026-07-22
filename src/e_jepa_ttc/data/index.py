@@ -44,7 +44,11 @@ def build_temporal_index(
             context_start_us = timestamp_us - context_us
             if context_start_us < min_us:
                 continue
-            max_horizon_end = timestamp_us + max(horizons_us, default=0)
+            # A horizon is the gap between the end of the causal context and
+            # the start of a disjoint future window of the same duration.
+            # Previous versions paired against a cache entry ending at t+h,
+            # which overlapped the context for h < context_ms.
+            max_horizon_end = timestamp_us + max(horizons_us, default=0) + context_us
             if max_horizon_end > max_us:
                 continue
             interpolated = interpolate_ttc_seconds(table, timestamp_us)
@@ -56,7 +60,10 @@ def build_temporal_index(
                     continue
 
             horizons = {
-                int(horizon_ms): (timestamp_us, timestamp_us + horizon_us)
+                int(horizon_ms): (
+                    timestamp_us + horizon_us,
+                    timestamp_us + horizon_us + context_us,
+                )
                 for horizon_ms, horizon_us in zip(horizons_ms, horizons_us, strict=True)
             }
             entries.append(
@@ -83,7 +90,8 @@ def write_index(path: str | Path, entries: list[TemporalIndexEntry]) -> None:
     """Write a temporal index to JSON/YAML."""
 
     payload: dict[str, Any] = {
-        "version": 1,
+        "version": 2,
+        "future_window_semantics": "disjoint_window_start_after_context_plus_horizon",
         "window_count": len(entries),
         "windows": [entry.to_dict() for entry in entries],
     }

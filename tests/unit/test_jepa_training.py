@@ -5,9 +5,23 @@ import torch
 
 from e_jepa_ttc.data.evttc import NAVIGATION_FEATURE_NAMES
 from e_jepa_ttc.data.ml_cache import remap_cache_splits
-from e_jepa_ttc.training.jepa import _tubelet_masked_context, pretrain_jepa
+from e_jepa_ttc.training.jepa import (
+    _build_temporal_pairs,
+    _tubelet_masked_context,
+    _without_future_navigation,
+    pretrain_jepa,
+)
 from e_jepa_ttc.training.supervised import evaluate_supervised_checkpoint, train_tiny_cnn
 from e_jepa_ttc.utils.io import write_structured
+
+
+def _temporal_cache_fields(count: int) -> dict[str, np.ndarray]:
+    timestamp_us = np.arange(count, dtype=np.int64) * 20_000
+    return {
+        "timestamp_us": timestamp_us,
+        "context_start_us": timestamp_us - 20_000,
+        "context_end_us": timestamp_us.copy(),
+    }
 
 
 def _write_cache(path: Path) -> None:
@@ -20,7 +34,7 @@ def _write_cache(path: Path) -> None:
         x=x,
         y_ttc=y_ttc,
         split=split,
-        timestamp_us=np.arange(12, dtype=np.int64) * 20_000,
+        **_temporal_cache_fields(12),
         sequence_id=np.array(["fixture"] * 12),
         event_count=np.arange(12, dtype=np.int32),
         width=np.array(16, dtype=np.int32),
@@ -39,7 +53,7 @@ def _write_tubelet_cache(path: Path) -> None:
         x=x,
         y_ttc=y_ttc,
         split=split,
-        timestamp_us=np.arange(12, dtype=np.int64) * 20_000,
+        **_temporal_cache_fields(12),
         sequence_id=np.array(["fixture"] * 12),
         event_count=np.arange(12, dtype=np.int32),
         width=np.array(32, dtype=np.int32),
@@ -61,7 +75,7 @@ def _write_navigation_cache(path: Path) -> None:
         x=x,
         y_ttc=y_ttc,
         split=split,
-        timestamp_us=np.arange(12, dtype=np.int64) * 20_000,
+        **_temporal_cache_fields(12),
         sequence_id=np.array(["fixture"] * 12),
         event_count=np.arange(12, dtype=np.int32),
         width=np.array(32, dtype=np.int32),
@@ -89,7 +103,7 @@ def _write_multival_cache(path: Path) -> None:
         y_ttc=y_ttc,
         split=split,
         sequence_id=sequence_id,
-        timestamp_us=np.arange(16, dtype=np.int64) * 20_000,
+        **_temporal_cache_fields(16),
         event_count=np.arange(16, dtype=np.int32),
         width=np.array(16, dtype=np.int32),
         height=np.array(12, dtype=np.int32),
@@ -513,3 +527,48 @@ def test_jepa_action_conditioning_uses_causal_navigation(tmp_path: Path) -> None
         is True
     )
     assert pretrain_summary["leakage_audit"]["uses_future_navigation"] is False
+    assert (
+        pretrain_summary["leakage_audit"][
+            "future_navigation_channels_zeroed_before_target_encoder"
+        ]
+        is True
+    )
+    assert pretrain_summary["leakage_audit"]["target_windows_are_disjoint"] is True
+    assert pretrain_summary["leakage_audit"]["collapse_statistics_mix_token_positions"] is False
+
+
+def test_temporal_pairs_use_disjoint_future_window_starts() -> None:
+    timestamp_us = np.arange(12, dtype=np.int64) * 20_000 + 100_000
+    context_start_us = timestamp_us - 100_000
+    context_end_us = timestamp_us.copy()
+
+    context_idx, target_idx, stats = _build_temporal_pairs(
+        split=np.array(["train"] * 12),
+        sequence_id=np.array(["fixture"] * 12),
+        timestamp_us=timestamp_us,
+        context_start_us=context_start_us,
+        context_end_us=context_end_us,
+        split_names=("train",),
+        horizons_ms=(20,),
+        max_target_slop_ms=0,
+    )
+
+    assert context_idx[0] == 0
+    assert target_idx[0, 0] == 6
+    assert context_start_us[target_idx[0, 0]] == context_end_us[context_idx[0]] + 20_000
+    assert stats["target_windows_are_disjoint"] is True
+
+
+def test_future_navigation_is_zeroed_before_target_encoding() -> None:
+    future = torch.arange(2 * 21 * 4, dtype=torch.float32).reshape(1, 2, 21, 2, 2)
+
+    target = _without_future_navigation(
+        future,
+        bins=5,
+        metadata_channels=True,
+        navigation_feature_count=9,
+    )
+
+    assert torch.equal(target[:, :, :12], future[:, :, :12])
+    assert torch.all(target[:, :, 12:] == 0.0)
+    assert torch.any(future[:, :, 12:] != 0.0)

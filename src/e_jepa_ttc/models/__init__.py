@@ -2,6 +2,20 @@
 
 from torch import nn
 
+from e_jepa_ttc.models.multimodal import (
+    DINOv3FeatureTeacher,
+    ObjectEventRGBFusion,
+    RGBRecurrentObjectEncoder,
+    multimodal_ttc_loss,
+)
+from e_jepa_ttc.models.object_jepa import (
+    ObjectCentricEventJEPA,
+    ObjectCentricRecurrentEncoder,
+    ObjectJEPAConfig,
+    geometric_dynamics_targets,
+    inverse_ttc_distribution_to_seconds,
+    object_event_jepa_loss,
+)
 from e_jepa_ttc.models.tiny_cnn import TinyCNNEncoder, TinyCNNRegressor
 from e_jepa_ttc.models.token_transformer import (
     EventTokenTransformerEncoder,
@@ -103,6 +117,12 @@ def build_regressor(name: str, *, in_channels: int) -> nn.Module:
 
 __all__ = [
     "MODEL_NAMES",
+    "DINOv3FeatureTeacher",
+    "ObjectEventRGBFusion",
+    "RGBRecurrentObjectEncoder",
+    "ObjectCentricEventJEPA",
+    "ObjectCentricRecurrentEncoder",
+    "ObjectJEPAConfig",
     "EventTubeletTransformerEncoder",
     "EventTubeletTransformerRegressor",
     "EventTokenTransformerEncoder",
@@ -111,4 +131,8 @@ __all__ = [
     "TinyCNNRegressor",
     "build_encoder",
     "build_regressor",
+    "geometric_dynamics_targets",
+    "inverse_ttc_distribution_to_seconds",
+    "multimodal_ttc_loss",
+    "object_event_jepa_loss",
 ]

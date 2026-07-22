@@ -17,6 +17,7 @@ DEFAULT_METRIC_NAMES = (
     "median_abs_relative_error_pct",
     "rmse_s",
     "log_mae",
+    "signed_log1p_mae",
 )
 
 

@@ -20,13 +20,15 @@ def regression_metrics(y_true: np.ndarray, y_pred: np.ndarray) -> dict[str, floa
     err = pred[mask] - true[mask]
     abs_err = np.abs(err)
     abs_relative_error_pct = abs_err / np.maximum(np.abs(true[mask]), 1e-6) * 100.0
+    signed_log_true = np.sign(true[mask]) * np.log1p(np.abs(true[mask]))
+    signed_log_pred = np.sign(pred[mask]) * np.log1p(np.abs(pred[mask]))
+    signed_log_mae = float(np.mean(np.abs(signed_log_pred - signed_log_true)))
     return {
         "mae_s": float(np.mean(abs_err)),
         "median_abs_error_s": float(np.median(abs_err)),
         "rmse_s": float(np.sqrt(np.mean(err**2))),
         "mean_abs_relative_error_pct": float(np.mean(abs_relative_error_pct)),
         "median_abs_relative_error_pct": float(np.median(abs_relative_error_pct)),
-        "log_mae": float(
-            np.mean(np.abs(np.log(np.maximum(pred[mask], 1e-6)) - np.log(true[mask])))
-        ),
+        "log_mae": signed_log_mae,
+        "signed_log1p_mae": signed_log_mae,
     }

@@ -8,15 +8,22 @@ from e_jepa_ttc.data.types import EventBatch
 
 
 def robust_normalize(voxel: np.ndarray, *, eps: float = 1e-6) -> np.ndarray:
-    """Normalize nonzero values by robust per-window statistics."""
+    """Robustly scale occupied voxels while preserving occupancy and sign.
+
+    Centering sparse event counts by their nonzero median can erase every
+    event when occupied bins have equal magnitude. A non-centred high-quantile
+    magnitude scale keeps empty voxels exactly zero and isolated events
+    distinguishable from empty space.
+    """
 
     nonzero = voxel[np.abs(voxel) > eps]
     if nonzero.size == 0:
         return voxel.astype(np.float32)
-    median = np.median(nonzero)
-    mad = np.median(np.abs(nonzero - median))
-    scale = float(mad * 1.4826) if mad > eps else float(np.std(nonzero) + eps)
-    return ((voxel - median) / max(scale, eps)).astype(np.float32)
+    scale = float(np.quantile(np.abs(nonzero), 0.95))
+    normalized = np.zeros_like(voxel, dtype=np.float32)
+    occupied = np.abs(voxel) > eps
+    normalized[occupied] = voxel[occupied] / max(scale, eps)
+    return normalized
 
 
 def encode_voxel_grid(

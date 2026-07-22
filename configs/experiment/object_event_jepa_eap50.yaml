@@ -1,0 +1,76 @@
+experiment:
+  name: object_event_jepa_eap50
+  seeds: [17, 42, 73]
+  label_fractions: [0.01, 0.05, 0.10, 0.25, 1.0]
+  matched_initializations: [scratch, object_event_jepa]
+  ablations:
+    - no_recurrent_memory
+    - no_geometry_prediction
+    - fixed_100ms_window
+    - roi_density_adaptive_window
+    - no_dinov3_distillation
+    - uncalibrated
+
+model:
+  event_channels: 10
+  feature_dim: 128
+  embedding_dim: 192
+  pre_cropped_events: true
+  recurrent_memory: gru_per_tracked_object
+  predictor: object_horizon_transformer
+  predictor_depth: 3
+  predictor_heads: 6
+  horizon_encoding: fourier_seconds
+  ego_action_conditioning: masked_optional
+  uncertainty: heteroscedastic_inverse_ttc
+  risk_thresholds_s: [0.5, 1.0, 2.0, 4.0]
+
+pretraining:
+  epochs: 50
+  batch_size: 32
+  learning_rate: 0.0003
+  weight_decay: 0.05
+  ema_start: 0.99
+  ema_end: 0.9999
+  uses_ttc_labels: false
+  losses:
+    latent_cosine: 1.0
+    geometric_heteroscedastic: 1.0
+    vicreg_variance: 0.05
+    vicreg_covariance: 0.01
+    temporal_straightening: 0.02
+
+event_window_ablation:
+  fixed_duration_ms: 100
+  density_adaptive_target_events: 2000
+  density_adaptive_minimum_ms: 10
+  density_adaptive_maximum_ms: 100
+  status: causal_roi_local_not_claimed_as_astw_reimplementation
+
+rgb_distillation:
+  teacher: facebook/dinov3-convnext-tiny-pretrain-lvd1689m
+  teacher_parameters: 27820128
+  teacher_frozen: true
+  feature_dim: 768
+  epochs: 20
+  batch_size: 16
+  learning_rate: 0.0001
+  distillation_weight: 0.25
+  continues_event_jepa_world_loss: true
+  uses_ttc_labels: false
+
+fine_tuning:
+  epochs: 50
+  batch_size: 32
+  learning_rate: 0.0001
+  weight_decay: 0.01
+  selection_split: validation
+  calibration_split: calibration
+  evaluation_split: test
+  calibration:
+    risk: temperature_scaling
+    interval: split_conformal_standardized_90
+
+claims:
+  official_eap_garlttc_comparable: false
+  reason: public_media_has_no_official_ttc_annotations_or_test_labels

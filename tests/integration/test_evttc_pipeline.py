@@ -69,6 +69,9 @@ def test_scan_validate_index_and_split(tmp_path: Path) -> None:
         clip_ttc_seconds=(0.1, 10.0),
     )
     assert entries
+    first = entries[0]
+    assert first.horizons_us[20][0] == first.context_end_us + 20_000
+    assert first.horizons_us[20][1] == first.context_end_us + 40_000
 
     splits = create_sequence_splits(loaded, seed=42)
     validate_split_groups(loaded, splits)
@@ -103,6 +106,11 @@ def test_scan_validate_index_and_split(tmp_path: Path) -> None:
     assert bool(cache["normalize"]) is False
     assert bool(cache["metadata_channels"]) is True
     assert bool(cache["navigation_channels"]) is True
+    assert np.array_equal(cache["timestamp_us"], cache["context_end_us"])
+    assert np.all(cache["context_start_us"] < cache["context_end_us"])
+    assert str(cache["future_window_semantics"]) == (
+        "disjoint_window_start_after_context_plus_horizon"
+    )
     assert np.all(cache["x"][:, -11:-9].astype(np.float32) > 0.0)
     assert np.all(cache["x"][:, -9:].astype(np.float32) == 0.0)
 

@@ -48,6 +48,34 @@ def test_voxel_grid_preserves_event_weight_without_normalization() -> None:
     assert encoded.sum() == np.float32(4.0)
 
 
+def test_voxel_grid_robust_normalization_preserves_empty_voxels() -> None:
+    encoded = encode_voxel_grid(_events(), bins=3, normalize=True)
+    occupied = encode_voxel_grid(_events(), bins=3, normalize=False) != 0
+
+    assert np.all(encoded[~occupied] == 0.0)
+    assert np.any(encoded[occupied] != 0.0)
+
+
+def test_voxel_grid_robust_normalization_keeps_equal_occupied_voxels() -> None:
+    events = EventBatch(
+        x=np.array([1, 2], dtype=np.int32),
+        y=np.array([1, 2], dtype=np.int32),
+        t_us=np.array([0, 100], dtype=np.int64),
+        polarity=np.array([1, -1], dtype=np.int8),
+        width=4,
+        height=4,
+        sequence_id="equal",
+        t_start_us=0,
+        t_end_us=100,
+    )
+
+    encoded = encode_voxel_grid(events, bins=2, normalize=True)
+
+    assert encoded[0, 1, 1] == 1.0
+    assert encoded[3, 2, 2] == 1.0
+    assert np.count_nonzero(encoded) == 2
+
+
 def test_sparse_tokens_shape_and_bounds() -> None:
     tokens = encode_sparse_tokens(_events(), max_tokens=3, seed=1)
 

@@ -143,6 +143,26 @@ class TemporalIndexEntry:
     ttc_seconds: float | None
     metadata: dict[str, Any]
 
+    def __post_init__(self) -> None:
+        """Reject malformed or overlapping future-window contracts."""
+
+        if self.context_start_us >= self.context_end_us:
+            msg = "context_start_us must be strictly before context_end_us."
+            raise ValueError(msg)
+        if self.timestamp_us != self.context_end_us:
+            msg = "timestamp_us must identify the end of the causal context window."
+            raise ValueError(msg)
+        for horizon_ms, (future_start_us, future_end_us) in self.horizons_us.items():
+            if horizon_ms < 0:
+                msg = "Future horizons must be non-negative."
+                raise ValueError(msg)
+            if future_start_us < self.context_end_us:
+                msg = f"Future window at {horizon_ms} ms overlaps the causal context."
+                raise ValueError(msg)
+            if future_end_us <= future_start_us:
+                msg = f"Future window at {horizon_ms} ms must have positive duration."
+                raise ValueError(msg)
+
     def to_dict(self) -> dict[str, Any]:
         """Serialize to JSON/YAML-safe values."""
 

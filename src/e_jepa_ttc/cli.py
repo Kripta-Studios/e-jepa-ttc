@@ -19,6 +19,7 @@ from e_jepa_ttc.data.official_protocol import evaluate_official_evttc_coverage
 from e_jepa_ttc.data.split import write_splits
 from e_jepa_ttc.data.synthetic import generate_synthetic_sequence, write_synthetic_hdf5
 from e_jepa_ttc.models import MODEL_NAMES
+from e_jepa_ttc.representations.corruptions import CORRUPTION_KINDS
 from e_jepa_ttc.utils.io import write_structured
 
 
@@ -93,6 +94,20 @@ def _cmd_data_official_coverage(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_data_verify_files(args: argparse.Namespace) -> int:
+    from e_jepa_ttc.data.integrity import verify_file_manifest
+
+    payload = verify_file_manifest(
+        args.root,
+        args.file_manifest,
+        sha256=args.sha256,
+    )
+    if args.output is not None:
+        write_structured(args.output, payload)
+    _print_json(payload)
+    return 0 if payload["valid"] else 2
+
+
 def _cmd_split_create(args: argparse.Namespace) -> int:
     payload = write_splits(manifest_path=args.manifest, output_path=args.output, seed=args.seed)
     _print_json(payload)
@@ -157,6 +172,18 @@ def _cmd_baseline_roi_events(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_baseline_eap_geometry(args: argparse.Namespace) -> int:
+    from e_jepa_ttc.baselines.eap_geometry import evaluate_eap_geometry_baselines
+
+    payload = evaluate_eap_geometry_baselines(
+        cache_manifest_path=args.cache_manifest,
+        splits=tuple(args.splits),
+        output_path=args.output,
+    )
+    _print_json(payload)
+    return 0
+
+
 def _cmd_cache_voxel(args: argparse.Namespace) -> int:
     payload = build_voxel_cache(
         manifest_path=args.manifest,
@@ -180,6 +207,92 @@ def _cmd_cache_remap_splits(args: argparse.Namespace) -> int:
         cache_path=args.cache,
         split_path=args.split,
         output_path=args.output,
+    )
+    _print_json(payload)
+    return 0
+
+
+def _parse_sequence_splits(assignments: list[str]) -> dict[str, str]:
+    sequence_splits: dict[str, str] = {}
+    for assignment in assignments:
+        sequence_id, separator, split_name = assignment.partition("=")
+        if not separator or not sequence_id or not split_name:
+            msg = (
+                f"Invalid sequence split {assignment!r}; expected SEQUENCE_ID=SPLIT."
+            )
+            raise ValueError(msg)
+        if sequence_id in sequence_splits:
+            msg = f"Sequence {sequence_id!r} was assigned more than once."
+            raise ValueError(msg)
+        sequence_splits[sequence_id] = split_name
+    return sequence_splits
+
+
+def _cmd_cache_eap_object(args: argparse.Namespace) -> int:
+    from e_jepa_ttc.data.eap_cache import (
+        EAPObjectCacheConfig,
+        materialize_eap_object_cache,
+    )
+
+    config = EAPObjectCacheConfig(
+        history_frames=args.history_frames,
+        prediction_horizons_ms=tuple(args.prediction_horizons_ms),
+        event_window_ms=args.event_window_ms,
+        adaptive_event_count=args.adaptive_event_count,
+        minimum_adaptive_window_ms=args.minimum_adaptive_window_ms,
+        maximum_target_slop_ms=args.maximum_target_slop_ms,
+        maximum_history_gap_ms=args.maximum_history_gap_ms,
+        roi_width=args.roi_width,
+        roi_height=args.roi_height,
+        roi_expansion=args.roi_expansion,
+        event_bins=args.event_bins,
+        normalize_events=args.normalize_events,
+        derivative_radius=args.derivative_radius,
+        maximum_derivative_gap_s=args.maximum_derivative_gap_s,
+        shard_size=args.shard_size,
+        action_dim=args.action_dim,
+        corruption_kind=args.corruption_kind,
+        corruption_severity=args.corruption_severity,
+        corruption_seed=args.corruption_seed,
+        include_rgb=args.include_rgb,
+        rgb_width=args.rgb_width,
+        rgb_height=args.rgb_height,
+    )
+    payload = materialize_eap_object_cache(
+        eap_root=args.eap_root,
+        output_dir=args.output_dir,
+        sequence_splits=_parse_sequence_splits(args.sequence_split),
+        config=config,
+        max_windows_per_sequence=args.max_windows_per_sequence,
+        workers=args.workers,
+    )
+    _print_json(payload)
+    return 0
+
+
+def _cmd_cache_evttc_object(args: argparse.Namespace) -> int:
+    from e_jepa_ttc.data.evttc_object_cache import (
+        EvTTCObjectCacheConfig,
+        materialize_evttc_object_cache,
+    )
+
+    payload = materialize_evttc_object_cache(
+        manifest_path=args.manifest,
+        output_dir=args.output_dir,
+        sequence_splits=_parse_sequence_splits(args.sequence_split),
+        config=EvTTCObjectCacheConfig(
+            history_frames=args.history_frames,
+            prediction_horizons_ms=tuple(args.prediction_horizons_ms),
+            event_window_ms=args.event_window_ms,
+            maximum_target_slop_ms=args.maximum_target_slop_ms,
+            maximum_history_gap_ms=args.maximum_history_gap_ms,
+            width=args.width,
+            height=args.height,
+            event_bins=args.event_bins,
+            normalize_events=args.normalize_events,
+            shard_size=args.shard_size,
+        ),
+        max_windows_per_sequence=args.max_windows_per_sequence,
     )
     _print_json(payload)
     return 0
@@ -389,6 +502,178 @@ def _cmd_pretrain_jepa(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_pretrain_object_jepa(args: argparse.Namespace) -> int:
+    from e_jepa_ttc.training.object_jepa import pretrain_object_event_jepa
+
+    payload = pretrain_object_event_jepa(
+        cache_manifest_path=args.cache_manifest,
+        output_dir=args.output_dir,
+        epochs=args.epochs,
+        batch_size=args.batch_size,
+        learning_rate=args.learning_rate,
+        weight_decay=args.weight_decay,
+        seed=args.seed,
+        device_name=args.device,
+        embedding_dim=args.embedding_dim,
+        feature_dim=args.feature_dim,
+        predictor_depth=args.predictor_depth,
+        predictor_heads=args.predictor_heads,
+        ema_start=args.ema_start,
+        ema_end=args.ema_end,
+        use_ego_actions=args.use_ego_actions,
+        use_recurrence=args.use_recurrence,
+        use_geometry=args.use_geometry,
+    )
+    _print_json(payload)
+    return 0
+
+
+def _cmd_train_object_ttc(args: argparse.Namespace) -> int:
+    from e_jepa_ttc.training.object_jepa import fine_tune_object_ttc
+
+    payload = fine_tune_object_ttc(
+        cache_manifest_path=args.cache_manifest,
+        output_dir=args.output_dir,
+        pretrained_checkpoint_path=args.pretrained_checkpoint,
+        epochs=args.epochs,
+        batch_size=args.batch_size,
+        learning_rate=args.learning_rate,
+        weight_decay=args.weight_decay,
+        label_fraction=args.label_fraction,
+        seed=args.seed,
+        device_name=args.device,
+        use_ego_actions=args.use_ego_actions,
+    )
+    _print_json(payload)
+    return 0
+
+
+def _cmd_distill_object_jepa_dinov3(args: argparse.Namespace) -> int:
+    from e_jepa_ttc.training.multimodal import distill_object_event_jepa_from_dinov3
+
+    payload = distill_object_event_jepa_from_dinov3(
+        cache_manifest_path=args.cache_manifest,
+        event_checkpoint_path=args.event_checkpoint,
+        output_dir=args.output_dir,
+        teacher_model_name=args.teacher_model,
+        epochs=args.epochs,
+        batch_size=args.batch_size,
+        learning_rate=args.learning_rate,
+        weight_decay=args.weight_decay,
+        distillation_weight=args.distillation_weight,
+        ema_start=args.ema_start,
+        ema_end=args.ema_end,
+        seed=args.seed,
+        device_name=args.device,
+    )
+    _print_json(payload)
+    return 0
+
+
+def _cmd_evaluate_object_ttc(args: argparse.Namespace) -> int:
+    from e_jepa_ttc.training.object_jepa import evaluate_object_ttc_checkpoint
+
+    payload = evaluate_object_ttc_checkpoint(
+        cache_manifest_path=args.cache_manifest,
+        checkpoint_path=args.checkpoint,
+        output_path=args.output,
+        splits=tuple(args.splits),
+        calibration_summary_path=args.calibration_summary,
+        batch_size=args.batch_size,
+        device_name=args.device,
+        bootstrap_iterations=args.bootstrap_iterations,
+        seed=args.seed,
+        use_ego_actions=args.use_ego_actions,
+    )
+    _print_json(payload)
+    return 0
+
+
+def _load_object_runtime_example(
+    cache_manifest: Path,
+    checkpoint_path: Path,
+    *,
+    split: str,
+    sample_index: int,
+) -> tuple[Any, dict[str, Any]]:
+    import torch
+
+    from e_jepa_ttc.data.eap_cache import EAPObjectCacheDataset
+    from e_jepa_ttc.models.object_jepa import ObjectCentricEventJEPA, ObjectJEPAConfig
+
+    checkpoint = torch.load(checkpoint_path, map_location="cpu", weights_only=False)
+    model = ObjectCentricEventJEPA(ObjectJEPAConfig(**checkpoint["model_config"]))
+    model.load_state_dict(checkpoint["model_state_dict"], strict=True)
+    dataset = EAPObjectCacheDataset(cache_manifest, splits=(split,))
+    try:
+        sample = dataset[sample_index]
+        tensor_keys = (
+            "context_events",
+            "context_boxes",
+            "context_object_mask",
+            "context_sampling_boxes",
+            "context_ego_actions",
+            "context_ego_action_mask",
+        )
+        inputs = {
+            name: sample[name][None]
+            for name in tensor_keys
+            if isinstance(sample[name], torch.Tensor)
+        }
+    finally:
+        dataset.close()
+    return model, inputs
+
+
+def _cmd_runtime_export_object_ttc(args: argparse.Namespace) -> int:
+    from e_jepa_ttc.runtime.export import export_object_ttc_onnx
+
+    model, inputs = _load_object_runtime_example(
+        args.cache_manifest,
+        args.checkpoint,
+        split=args.split,
+        sample_index=args.sample_index,
+    )
+    payload = export_object_ttc_onnx(
+        model,
+        inputs,
+        output_dir=args.output_dir,
+        opset_version=args.opset_version,
+    )
+    _print_json(payload)
+    return 0
+
+
+def _cmd_runtime_benchmark_object_ttc(args: argparse.Namespace) -> int:
+    from e_jepa_ttc.runtime.benchmark import benchmark_object_ttc_model
+
+    model, inputs = _load_object_runtime_example(
+        args.cache_manifest,
+        args.checkpoint,
+        split=args.split,
+        sample_index=args.sample_index,
+    )
+    payload = benchmark_object_ttc_model(
+        model,
+        inputs,
+        device=args.device,
+        warmup_iterations=args.warmup_iterations,
+        measured_iterations=args.measured_iterations,
+    )
+    payload.update(
+        {
+            "checkpoint": args.checkpoint.as_posix(),
+            "cache_manifest": args.cache_manifest.as_posix(),
+            "split": args.split,
+            "sample_index": args.sample_index,
+            "scope": "model_only_cached_preprocessing",
+        }
+    )
+    write_structured(args.output, payload)
+    _print_json(payload)
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     """Build the root CLI parser."""
 
@@ -439,6 +724,15 @@ def build_parser() -> argparse.ArgumentParser:
         help="Include Slider-750 and Slider-1000 rows required for complete Table V.",
     )
     data_official.set_defaults(func=_cmd_data_official_coverage)
+    data_verify_files = data_sub.add_parser(
+        "verify-files",
+        help="Verify selective dataset files against pinned remote sizes and optional SHA-256.",
+    )
+    data_verify_files.add_argument("--root", type=Path, required=True)
+    data_verify_files.add_argument("--file-manifest", type=Path, required=True)
+    data_verify_files.add_argument("--sha256", action="store_true")
+    data_verify_files.add_argument("--output", type=Path)
+    data_verify_files.set_defaults(func=_cmd_data_verify_files)
 
     split = subparsers.add_parser("split", help="Split generation commands.")
     split_sub = split.add_subparsers(dest="split_command", required=True)
@@ -499,6 +793,14 @@ def build_parser() -> argparse.ArgumentParser:
         help="Only evaluate these splits, while always fitting on train.",
     )
     baseline_roi_events.set_defaults(func=_cmd_baseline_roi_events)
+    baseline_eap_geometry = baseline_sub.add_parser(
+        "eap-geometry",
+        help="Evaluate causal height/depth object-geometry baselines on an eAP object cache.",
+    )
+    baseline_eap_geometry.add_argument("--cache-manifest", type=Path, required=True)
+    baseline_eap_geometry.add_argument("--splits", nargs="+", default=["validation"])
+    baseline_eap_geometry.add_argument("--output", type=Path)
+    baseline_eap_geometry.set_defaults(func=_cmd_baseline_eap_geometry)
 
     cache = subparsers.add_parser("cache", help="Feature cache commands.")
     cache_sub = cache.add_subparsers(dest="cache_command", required=True)
@@ -536,6 +838,105 @@ def build_parser() -> argparse.ArgumentParser:
     cache_remap.add_argument("--split", type=Path, required=True)
     cache_remap.add_argument("--output", type=Path, required=True)
     cache_remap.set_defaults(func=_cmd_cache_remap_splits)
+    cache_eap = cache_sub.add_parser(
+        "eap-object",
+        help="Materialize causal object-ROI event histories and future targets from public eAP.",
+    )
+    cache_eap.add_argument("--eap-root", type=Path, required=True)
+    cache_eap.add_argument("--output-dir", type=Path, required=True)
+    cache_eap.add_argument(
+        "--sequence-split",
+        action="append",
+        required=True,
+        metavar="SEQUENCE_ID=SPLIT",
+        help=(
+            "Assign a complete eAP train sequence to train, validation, calibration or test; "
+            "repeat once per sequence."
+        ),
+    )
+    cache_eap.add_argument("--history-frames", type=int, default=3)
+    cache_eap.add_argument(
+        "--prediction-horizons-ms",
+        type=int,
+        nargs="+",
+        default=[100, 250, 500],
+    )
+    cache_eap.add_argument("--event-window-ms", type=int, default=100)
+    cache_eap.add_argument(
+        "--adaptive-event-count",
+        type=int,
+        help=(
+            "Use an ROI-local density-adaptive trailing window with approximately this "
+            "many events instead of an always-fixed temporal support."
+        ),
+    )
+    cache_eap.add_argument("--minimum-adaptive-window-ms", type=int, default=10)
+    cache_eap.add_argument("--maximum-target-slop-ms", type=int, default=25)
+    cache_eap.add_argument("--maximum-history-gap-ms", type=int, default=125)
+    cache_eap.add_argument("--roi-width", type=int, default=64)
+    cache_eap.add_argument("--roi-height", type=int, default=64)
+    cache_eap.add_argument("--roi-expansion", type=float, default=1.25)
+    cache_eap.add_argument("--event-bins", type=int, default=5)
+    cache_eap.add_argument("--derivative-radius", type=int, default=2)
+    cache_eap.add_argument("--maximum-derivative-gap-s", type=float, default=0.25)
+    cache_eap.add_argument("--shard-size", type=int, default=512)
+    cache_eap.add_argument("--action-dim", type=int, default=8)
+    cache_eap.add_argument("--corruption-kind", choices=CORRUPTION_KINDS, default="none")
+    cache_eap.add_argument("--corruption-severity", type=float, default=0.0)
+    cache_eap.add_argument("--corruption-seed", type=int, default=0)
+    cache_eap.add_argument(
+        "--include-rgb",
+        action="store_true",
+        help="Also materialize synchronized object RGB crops for fusion/distillation ablations.",
+    )
+    cache_eap.add_argument("--rgb-width", type=int, default=112)
+    cache_eap.add_argument("--rgb-height", type=int, default=112)
+    cache_eap.add_argument("--max-windows-per-sequence", type=int)
+    cache_eap.add_argument(
+        "--workers",
+        type=int,
+        default=1,
+        help="Materialize independent eAP sequences in parallel processes.",
+    )
+    cache_eap.add_argument(
+        "--no-normalize-events",
+        dest="normalize_events",
+        action="store_false",
+    )
+    cache_eap.set_defaults(normalize_events=True, func=_cmd_cache_eap_object)
+    cache_evttc = cache_sub.add_parser(
+        "evttc-object",
+        help="Materialize EvTTC object histories with causal integrated-navigation actions.",
+    )
+    cache_evttc.add_argument("--manifest", type=Path, required=True)
+    cache_evttc.add_argument("--output-dir", type=Path, required=True)
+    cache_evttc.add_argument(
+        "--sequence-split",
+        action="append",
+        required=True,
+        metavar="SEQUENCE_ID=SPLIT",
+    )
+    cache_evttc.add_argument("--history-frames", type=int, default=3)
+    cache_evttc.add_argument(
+        "--prediction-horizons-ms",
+        type=int,
+        nargs="+",
+        default=[100, 250, 500],
+    )
+    cache_evttc.add_argument("--event-window-ms", type=int, default=100)
+    cache_evttc.add_argument("--maximum-target-slop-ms", type=int, default=30)
+    cache_evttc.add_argument("--maximum-history-gap-ms", type=int, default=80)
+    cache_evttc.add_argument("--width", type=int, default=160)
+    cache_evttc.add_argument("--height", type=int, default=90)
+    cache_evttc.add_argument("--event-bins", type=int, default=5)
+    cache_evttc.add_argument("--shard-size", type=int, default=256)
+    cache_evttc.add_argument("--max-windows-per-sequence", type=int)
+    cache_evttc.add_argument(
+        "--no-normalize-events",
+        dest="normalize_events",
+        action="store_false",
+    )
+    cache_evttc.set_defaults(normalize_events=True, func=_cmd_cache_evttc_object)
 
     train = subparsers.add_parser("train", help="Training commands.")
     train_sub = train.add_subparsers(dest="train_command", required=True)
@@ -731,6 +1132,30 @@ def build_parser() -> argparse.ArgumentParser:
         help="Splits to evaluate from the saved rollout prober checkpoint.",
     )
     train_roi_rollout_eval.set_defaults(func=_cmd_evaluate_roi_rollout_prober)
+    train_object_ttc = train_sub.add_parser(
+        "object-ttc",
+        help=(
+            "Fine-tune and calibrate the object-centric TTC head with strict "
+            "train/validation/calibration/test roles."
+        ),
+    )
+    train_object_ttc.add_argument("--cache-manifest", type=Path, required=True)
+    train_object_ttc.add_argument("--output-dir", type=Path, required=True)
+    train_object_ttc.add_argument("--pretrained-checkpoint", type=Path)
+    train_object_ttc.add_argument("--epochs", type=int, default=50)
+    train_object_ttc.add_argument("--batch-size", type=int, default=32)
+    train_object_ttc.add_argument("--learning-rate", type=float, default=1e-4)
+    train_object_ttc.add_argument("--weight-decay", type=float, default=0.01)
+    train_object_ttc.add_argument("--label-fraction", type=float, default=1.0)
+    train_object_ttc.add_argument("--seed", type=int, default=42)
+    train_object_ttc.add_argument("--device", type=str, default="auto")
+    train_object_ttc.add_argument(
+        "--no-ego-actions",
+        dest="use_ego_actions",
+        action="store_false",
+        help="Ablate causal egoaction inputs for a matched downstream comparison.",
+    )
+    train_object_ttc.set_defaults(use_ego_actions=True, func=_cmd_train_object_ttc)
 
     pretrain = subparsers.add_parser("pretrain", help="Self-supervised pretraining commands.")
     pretrain_sub = pretrain.add_subparsers(dest="pretrain_command", required=True)
@@ -845,6 +1270,115 @@ def build_parser() -> argparse.ArgumentParser:
     )
     pretrain_jepa.set_defaults(dense_tokens=True, motion_conditioning=True)
     pretrain_jepa.set_defaults(func=_cmd_pretrain_jepa)
+    pretrain_object = pretrain_sub.add_parser(
+        "object-jepa",
+        help="Pretrain the recurrent object-centric Event-JEPA without TTC labels.",
+    )
+    pretrain_object.add_argument("--cache-manifest", type=Path, required=True)
+    pretrain_object.add_argument("--output-dir", type=Path, required=True)
+    pretrain_object.add_argument("--epochs", type=int, default=50)
+    pretrain_object.add_argument("--batch-size", type=int, default=32)
+    pretrain_object.add_argument("--learning-rate", type=float, default=3e-4)
+    pretrain_object.add_argument("--weight-decay", type=float, default=0.05)
+    pretrain_object.add_argument("--seed", type=int, default=42)
+    pretrain_object.add_argument("--device", type=str, default="auto")
+    pretrain_object.add_argument("--embedding-dim", type=int, default=192)
+    pretrain_object.add_argument("--feature-dim", type=int, default=128)
+    pretrain_object.add_argument("--predictor-depth", type=int, default=3)
+    pretrain_object.add_argument("--predictor-heads", type=int, default=6)
+    pretrain_object.add_argument("--ema-start", type=float, default=0.99)
+    pretrain_object.add_argument("--ema-end", type=float, default=0.9999)
+    pretrain_object.add_argument(
+        "--no-ego-actions",
+        dest="use_ego_actions",
+        action="store_false",
+        help="Ablate causal egoaction conditioning while keeping architecture matched.",
+    )
+    pretrain_object.add_argument(
+        "--no-recurrence",
+        dest="use_recurrence",
+        action="store_false",
+        help="Ablate recurrent object memory and encode each step independently.",
+    )
+    pretrain_object.add_argument(
+        "--no-geometry",
+        dest="use_geometry",
+        action="store_false",
+        help="Ablate box geometry both in the encoder and future predictor loss.",
+    )
+    pretrain_object.set_defaults(
+        use_ego_actions=True,
+        use_recurrence=True,
+        use_geometry=True,
+        func=_cmd_pretrain_object_jepa,
+    )
+    pretrain_dinov3 = pretrain_sub.add_parser(
+        "object-jepa-dinov3",
+        help="Continue Event-JEPA with frozen DINOv3 RGB feature distillation and no TTC labels.",
+    )
+    pretrain_dinov3.add_argument("--cache-manifest", type=Path, required=True)
+    pretrain_dinov3.add_argument("--event-checkpoint", type=Path, required=True)
+    pretrain_dinov3.add_argument("--output-dir", type=Path, required=True)
+    pretrain_dinov3.add_argument(
+        "--teacher-model",
+        default="facebook/dinov3-convnext-tiny-pretrain-lvd1689m",
+    )
+    pretrain_dinov3.add_argument("--epochs", type=int, default=20)
+    pretrain_dinov3.add_argument("--batch-size", type=int, default=16)
+    pretrain_dinov3.add_argument("--learning-rate", type=float, default=1e-4)
+    pretrain_dinov3.add_argument("--weight-decay", type=float, default=0.05)
+    pretrain_dinov3.add_argument("--distillation-weight", type=float, default=0.25)
+    pretrain_dinov3.add_argument("--ema-start", type=float, default=0.99)
+    pretrain_dinov3.add_argument("--ema-end", type=float, default=0.9999)
+    pretrain_dinov3.add_argument("--seed", type=int, default=42)
+    pretrain_dinov3.add_argument("--device", type=str, default="auto")
+    pretrain_dinov3.set_defaults(func=_cmd_distill_object_jepa_dinov3)
+
+    evaluate = subparsers.add_parser("evaluate", help="Fixed-checkpoint evaluation commands.")
+    evaluate_sub = evaluate.add_subparsers(dest="evaluate_command", required=True)
+    evaluate_object = evaluate_sub.add_parser(
+        "object-ttc",
+        help="Evaluate a fixed object TTC checkpoint without fitting on evaluation data.",
+    )
+    evaluate_object.add_argument("--cache-manifest", type=Path, required=True)
+    evaluate_object.add_argument("--checkpoint", type=Path, required=True)
+    evaluate_object.add_argument("--output", type=Path, required=True)
+    evaluate_object.add_argument("--calibration-summary", type=Path)
+    evaluate_object.add_argument("--splits", nargs="+", default=["test"])
+    evaluate_object.add_argument("--batch-size", type=int, default=32)
+    evaluate_object.add_argument("--bootstrap-iterations", type=int, default=2000)
+    evaluate_object.add_argument("--seed", type=int, default=42)
+    evaluate_object.add_argument("--device", type=str, default="auto")
+    evaluate_object.add_argument(
+        "--no-ego-actions",
+        dest="use_ego_actions",
+        action="store_false",
+    )
+    evaluate_object.set_defaults(use_ego_actions=True, func=_cmd_evaluate_object_ttc)
+
+    runtime = subparsers.add_parser("runtime", help="Deployment export and timing commands.")
+    runtime_sub = runtime.add_subparsers(dest="runtime_command", required=True)
+    runtime_export = runtime_sub.add_parser(
+        "export-object-ttc",
+        help="Export and numerically verify a batch-one ONNX TTC model.",
+    )
+    runtime_benchmark = runtime_sub.add_parser(
+        "benchmark-object-ttc",
+        help="Benchmark synchronized cached-input object TTC inference.",
+    )
+    for command in (runtime_export, runtime_benchmark):
+        command.add_argument("--cache-manifest", type=Path, required=True)
+        command.add_argument("--checkpoint", type=Path, required=True)
+        command.add_argument("--split", default="test")
+        command.add_argument("--sample-index", type=int, default=0)
+    runtime_export.add_argument("--output-dir", type=Path, required=True)
+    runtime_export.add_argument("--opset-version", type=int, default=18)
+    runtime_export.set_defaults(func=_cmd_runtime_export_object_ttc)
+    runtime_benchmark.add_argument("--output", type=Path, required=True)
+    runtime_benchmark.add_argument("--device", type=str, default="auto")
+    runtime_benchmark.add_argument("--warmup-iterations", type=int, default=20)
+    runtime_benchmark.add_argument("--measured-iterations", type=int, default=100)
+    runtime_benchmark.set_defaults(func=_cmd_runtime_benchmark_object_ttc)
 
     return parser
 

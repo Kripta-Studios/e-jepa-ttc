@@ -1,0 +1,37 @@
+experiment:
+  name: object_event_jepa_evttc_egoaction_ablation
+  purpose: isolate_causal_egoaction_conditioning_with_official_evttc_navigation
+  seeds: [17, 42, 73]
+  comparison: [egoactions_enabled, egoactions_masked]
+
+data:
+  manifest: data/manifests/evttc_full_starter_local.yaml
+  cache: artifacts/evttc_object_actions_calibrated_64/manifest.json
+  ttc_source: official_evttc_interpolated_ttc_table
+  bbox_alignment: depth_assisted_radtan_blackfly_to_prophesee_calibrated_projection
+  action_features:
+    - ego_speed
+    - ego_velocity_x
+    - ego_velocity_y
+    - ego_velocity_z
+    - ego_acceleration_x
+    - ego_acceleration_y
+    - ego_acceleration_z
+    - ego_yaw_rate
+  future_teacher_uses_actions: false
+
+sequence_splits:
+  train:
+    - CCRs-1-low-100-overlap-100
+    - CCRs-1-medium-100-overlap-100
+    - CCRs-1-high-100-overlap-100
+    - CCRs-side-low
+    - CPLA-low
+  validation: [CCRs-side-medium]
+  calibration: [CPLA-medium]
+  test: [CCRs-side-high, CPLA-high]
+
+claim_boundary:
+  official_sealed_test: false
+  reason: all_nine_local_sequences_were_previously_inspected
+  allowed_claim: supporting_action_conditioning_ablation_only

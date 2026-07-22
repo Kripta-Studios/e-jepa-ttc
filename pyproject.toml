@@ -3,22 +3,37 @@ name = "e-jepa-ttc"
 version = "0.1.0"
 description = "Multi-horizon JEPA scaffolding for TTC estimation from event camera streams."
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.11,<3.14"
 license = { text = "MIT" }
 authors = [{ name = "KriptaStudios" }]
 dependencies = [
     "gdown>=6.1",
     "h5py>=3.11",
+    "hdf5plugin>=7.0",
+    "huggingface-hub>=0.34",
     "numpy>=1.26",
+    "pandas>=2.2",
+    "pillow>=10.0",
+    "pyarrow>=17.0",
     "pydantic>=2.7",
     "pyyaml>=6.0",
+    "torch>=2.5,<2.12",
 ]
 
 [project.scripts]
 e-jepa-ttc = "e_jepa_ttc.cli:main"
 
+[project.optional-dependencies]
+multimodal = [
+    "transformers>=4.56,<6",
+]
+
 [dependency-groups]
 dev = [
+    "matplotlib>=3.9",
+    "onnx>=1.17",
+    "onnxruntime>=1.20",
+    "onnxscript>=0.5",
     "pytest>=8.2",
     "ruff>=0.5",
 ]
@@ -44,3 +59,13 @@ select = ["E", "F", "I", "B", "UP", "N", "ANN"]
 testpaths = ["tests"]
 addopts = "-q"
 pythonpath = ["src"]
+
+[tool.uv.sources]
+torch = [
+    { index = "pytorch-cu128", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+]
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true

@@ -115,6 +115,8 @@ def build_voxel_cache(
     x_out = np.empty((len(windows), channels, height, width), dtype=np.float16)
     y_ttc = np.empty((len(windows),), dtype=np.float32)
     timestamps = np.empty((len(windows),), dtype=np.int64)
+    context_start_us = np.empty((len(windows),), dtype=np.int64)
+    context_end_us = np.empty((len(windows),), dtype=np.int64)
     sequence_ids: list[str] = []
     splits: list[str] = []
     event_counts = np.empty((len(windows),), dtype=np.int32)
@@ -149,6 +151,8 @@ def build_voxel_cache(
         x_out[idx] = voxel.astype(np.float16)
         y_ttc[idx] = float(window["ttc_seconds"])
         timestamps[idx] = int(window["timestamp_us"])
+        context_start_us[idx] = int(window["context_start_us"])
+        context_end_us[idx] = int(window["context_end_us"])
         sequence_ids.append(sequence_id)
         splits.append(split_for_sequence.get(sequence_id, "unassigned"))
         event_counts[idx] = events.num_events
@@ -159,6 +163,8 @@ def build_voxel_cache(
         x=x_out,
         y_ttc=y_ttc,
         timestamp_us=timestamps,
+        context_start_us=context_start_us,
+        context_end_us=context_end_us,
         sequence_id=np.array(sequence_ids),
         split=np.array(splits),
         event_count=event_counts,
@@ -169,6 +175,9 @@ def build_voxel_cache(
         metadata_channels=np.array(metadata_channels, dtype=np.bool_),
         navigation_channels=np.array(navigation_channels, dtype=np.bool_),
         navigation_feature_names=np.array(NAVIGATION_FEATURE_NAMES),
+        future_window_semantics=np.array(
+            "disjoint_window_start_after_context_plus_horizon"
+        ),
     )
     summary = {
         "output": output.as_posix(),
@@ -182,6 +191,7 @@ def build_voxel_cache(
         "metadata_channels": metadata_channels,
         "navigation_channels": navigation_channels,
         "navigation_feature_names": list(NAVIGATION_FEATURE_NAMES),
+        "future_window_semantics": "disjoint_window_start_after_context_plus_horizon",
         "seconds": time.perf_counter() - start_time,
         "mean_events_per_window": float(np.mean(event_counts)) if len(event_counts) else 0.0,
     }
