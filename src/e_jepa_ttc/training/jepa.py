@@ -18,9 +18,7 @@ from torch.utils.data import DataLoader, Dataset
 
 from e_jepa_ttc.data.evttc import NAVIGATION_FEATURE_NAMES
 from e_jepa_ttc.data.ml_cache import validate_voxel_cache
-from e_jepa_ttc.evaluation.metrics import contrastive_metrics, regression_metrics
-from e_jepa_ttc.models import build_encoder, build_jepa
-from e_jepa_ttc.training.checkpoints import checkpoint_provenance
+from e_jepa_ttc.models import build_encoder
 from e_jepa_ttc.utils.io import ensure_parent, write_structured
 
 EVENT_MOTION_FEATURE_NAMES = (
