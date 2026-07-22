@@ -57,7 +57,7 @@ def _write_shard(path: Path, *, split: str, seed: int) -> None:
         split=np.asarray([split] * count),
         ttc_source=np.asarray(["synthetic"] * count),
         prediction_horizons_s=np.asarray([0.1, 0.25, 0.5], dtype=np.float32),
-        cache_format_version=np.asarray(1),
+        cache_format_version=np.asarray(2),
         future_window_semantics=np.asarray("endpoint_offset_disjoint_fixed_duration"),
     )
 

@@ -487,5 +487,6 @@ class TestCacheFormatVersionEnforcement:
             encoding="utf-8",
         )
         import pytest
+
         with pytest.raises(ValueError, match="invalid cache_format_version"):
             EAPObjectCacheDataset(manifest, splits=("train",))
