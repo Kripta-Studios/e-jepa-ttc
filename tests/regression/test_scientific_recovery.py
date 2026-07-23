@@ -62,7 +62,11 @@ def test_onnx_export_traces_batch_size_correctly(tmp_path) -> None:
 
     out = tmp_path / "model.onnx"
     cache_path = tmp_path / "cache.npz"
-    np.savez(cache_path, x=np.zeros((10, 21, 90, 160), dtype=np.float32), split=np.array(["validation"] * 10))
+    np.savez(
+        cache_path,
+        x=np.zeros((10, 21, 90, 160), dtype=np.float32),
+        split=np.array(["validation"] * 10),
+    )
 
     # This will execute torch.onnx.export and onnxruntime.InferenceSession.run with a real batch > 1
     # If the reshape is incorrectly traced as static, onnxruntime will crash here.
@@ -213,7 +217,11 @@ def test_export_onnx_saves_manifest(
     out = tmp_path / "model.onnx"
     out.write_bytes(b"dummy_onnx")
     cache_path = tmp_path / "cache.npz"
-    np.savez(cache_path, x=np.zeros((10, 21, 90, 160), dtype=np.float32), split=np.array(["validation"] * 10))
+    np.savez(
+        cache_path,
+        x=np.zeros((10, 21, 90, 160), dtype=np.float32),
+        split=np.array(["validation"] * 10),
+    )
     export_to_onnx(ckpt_path, out, "tiny_cnn", str(cache_path))
 
     assert (tmp_path / "model_manifest.json").exists()
@@ -242,7 +250,11 @@ def test_export_onnx_saves_equivalence(
     out = tmp_path / "model.onnx"
     out.write_bytes(b"dummy_onnx")
     cache_path = tmp_path / "cache.npz"
-    np.savez(cache_path, x=np.zeros((35, 21, 90, 160), dtype=np.float32), split=np.array(["validation"] * 35))
+    np.savez(
+        cache_path,
+        x=np.zeros((35, 21, 90, 160), dtype=np.float32),
+        split=np.array(["validation"] * 35),
+    )
     export_to_onnx(ckpt_path, out, "tiny_cnn", str(cache_path), sample_count=32)
     assert (tmp_path / "equivalence.json").exists()
 
@@ -270,7 +282,11 @@ def test_export_onnx_saves_benchmark(
     out = tmp_path / "model.onnx"
     out.write_bytes(b"dummy_onnx")
     cache_path = tmp_path / "cache.npz"
-    np.savez(cache_path, x=np.zeros((35, 21, 90, 160), dtype=np.float32), split=np.array(["validation"] * 35))
+    np.savez(
+        cache_path,
+        x=np.zeros((35, 21, 90, 160), dtype=np.float32),
+        split=np.array(["validation"] * 35),
+    )
     export_to_onnx(ckpt_path, out, "tiny_cnn", str(cache_path), sample_count=32)
     assert (tmp_path / "benchmark.json").exists()
 

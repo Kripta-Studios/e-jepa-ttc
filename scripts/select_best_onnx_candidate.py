@@ -7,8 +7,32 @@ from pathlib import Path
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--runs-dir", type=str, default="artifacts/runs")
-    parser.add_argument("--require-full-label", action="store_true", help="Only select models with train_fraction == 1.0")
-    parser.add_argument("--require-commit", type=str, default=None, help="Only select models matching this commit")
+    parser.add_argument(
+        "--require-full-label",
+        action="store_true",
+        help="Only select models with train_fraction == 1.0",
+    )
+    parser.add_argument(
+        "--require-commit", type=str, default=None, help="Only select models matching this commit"
+    )
+    parser.add_argument(
+        "--require-protocol",
+        type=str,
+        default="2.0",
+        help="Only select models matching this protocol version",
+    )
+    parser.add_argument(
+        "--require-navigation",
+        type=str,
+        default="enabled",
+        help="Only select models matching this navigation mode",
+    )
+    parser.add_argument(
+        "--require-model-name",
+        type=str,
+        default="tiny-cnn",
+        help="Only select models matching this name",
+    )
     args = parser.parse_args()
 
     runs_dir = Path(args.runs_dir)
@@ -34,6 +58,23 @@ def main() -> None:
                 if args.require_full_label and float(metrics.get("train_fraction", 0.0)) < 1.0:
                     continue
                 if args.require_commit and metrics.get("git_commit") != args.require_commit:
+                    continue
+                if (
+                    args.require_protocol
+                    and metrics.get("protocol_version") != args.require_protocol
+                ):
+                    continue
+                if (
+                    args.require_navigation
+                    and metrics.get("navigation_mode") != args.require_navigation
+                ):
+                    continue
+                if (
+                    args.require_model_name
+                    and metrics.get("model_name", "tiny-cnn") != args.require_model_name
+                ):
+                    continue
+                if metrics.get("final_test_opened") is True:
                     continue
 
                 # Ensure we only use validation split
@@ -63,7 +104,8 @@ def main() -> None:
         "best_checkpoint": best_checkpoint,
         "validation_mae": best_mae,
         "train_fraction": float(best_metrics.get("train_fraction", 1.0)),
-        "git_commit": best_metrics.get("git_commit", "unknown")
+        "git_commit": best_metrics.get("git_commit", "unknown"),
+        "run_fingerprint": best_metrics.get("run_fingerprint", "unknown"),
     }
     with open(best_run_path / "selection_manifest.json", "w", encoding="utf-8") as f:
         json.dump(selection_manifest, f, indent=2)

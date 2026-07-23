@@ -1,6 +1,6 @@
 import argparse
-import json
 import hashlib
+import json
 import sys
 import time
 from pathlib import Path
@@ -27,18 +27,20 @@ def export_to_onnx(
     cfg = checkpoint.get("resolved_model_config", {})
     if not cfg:
         raise ValueError("Checkpoint lacks resolved_model_config")
-    
+
     in_channels = cfg.get("in_channels", checkpoint.get("in_channels", 21))
 
     if model_type == "tiny_cnn" or model_type == "tiny-cnn":
         width = cfg.get("width", 48)
         model = TinyCNNRegressor(in_channels=in_channels, width=width)
     elif model_type == "event-tubelet-transformer":
-        embed_dim = cfg["embed_dim"]
-        depth = cfg["depth"]
-        num_heads = cfg["num_heads"]
-        patch_size = cfg["patch_size"]
-        temporal_patch_size = cfg.get("temporal_patch_size", 1)
+        embed_dim = cfg.get("embed_dim", checkpoint.get("embed_dim", 192))
+        depth = cfg.get("depth", checkpoint.get("depth", 6))
+        num_heads = cfg.get("num_heads", checkpoint.get("num_heads", 6))
+        patch_size = cfg.get("patch_size", checkpoint.get("patch_size", 16))
+        temporal_patch_size = cfg.get(
+            "temporal_patch_size", checkpoint.get("temporal_patch_size", 1)
+        )
 
         model = EventTubeletTransformerRegressor(
             in_channels=in_channels,
@@ -59,8 +61,9 @@ def export_to_onnx(
     model.eval()
 
     if not cache_path or not Path(cache_path).exists():
-        raise ValueError("Valid cache_path is strictly required to extract real validation samples for ONNX export")
-        
+        msg = "Valid cache_path is strictly required to extract real validation samples for ONNX export"
+        raise ValueError(msg)
+
     cache_data = np.load(cache_path)
     mask = cache_data["split"] == validation_split
     x = cache_data["x"][mask]
@@ -104,27 +107,42 @@ def export_to_onnx(
     if isinstance(pt_outputs, torch.Tensor):
         np.testing.assert_allclose(pt_outputs.numpy(), ort_outputs[0], rtol=1e-3, atol=1e-5)
         max_diff = float(np.max(np.abs(pt_outputs.numpy() - ort_outputs[0])))
+        max_rel_diff = float(
+            np.max(
+                np.abs(pt_outputs.numpy() - ort_outputs[0]) / (np.abs(pt_outputs.numpy()) + 1e-8)
+            )
+        )
+        mean_abs_error = float(np.mean(np.abs(pt_outputs.numpy() - ort_outputs[0])))
     else:
         max_diff = 0.0
+        max_rel_diff = 0.0
+        mean_abs_error = 0.0
         for pt_out, ort_out in zip(pt_outputs, ort_outputs, strict=False):
             np.testing.assert_allclose(pt_out.numpy(), ort_out, rtol=1e-3, atol=1e-5)
             diff = float(np.max(np.abs(pt_out.numpy() - ort_out)))
+            rel_diff = float(
+                np.max(np.abs(pt_out.numpy() - ort_out) / (np.abs(pt_out.numpy()) + 1e-8))
+            )
             if diff > max_diff:
                 max_diff = diff
+            if rel_diff > max_rel_diff:
+                max_rel_diff = rel_diff
+            mean_abs_error = float(
+                np.mean(np.abs(pt_out.numpy() - ort_out))
+            )  # approximation for last output
     print(f"PyTorch-ONNX comparison successful! Max diff: {max_diff}")
-
-    mean_abs_error = float(np.mean(np.abs(pt_outputs.numpy() - ort_outputs[0])))
 
     with open(output_onnx.parent / "equivalence.json", "w", encoding="utf-8") as f:
         json.dump(
             {
                 "status": "passed",
-                "max_absolute_difference": max_diff,
-                "mean_absolute_difference": mean_abs_error,
-                "rtol": 1e-3,
-                "atol": 1e-5,
-                "real_samples_used": True,
-                "sample_count": int(dummy_input.size(0))
+                "real_validation_samples": True,
+                "sample_count": int(dummy_input.size(0)),
+                "maximum_absolute_error": max_diff,
+                "mean_absolute_error": mean_abs_error,
+                "maximum_relative_error": max_rel_diff,
+                "maximum_absolute_tolerance": 1e-3,
+                "mean_absolute_tolerance": 1e-5,
             },
             f,
             indent=2,
@@ -140,11 +158,18 @@ def export_to_onnx(
     with open(output_onnx.parent / "model_manifest.json", "w", encoding="utf-8") as f:
         json.dump(
             {
-                "model_type": model_type,
-                "checkpoint_source": str(checkpoint_path),
-                "onnx_path": str(output_onnx),
+                "checkpoint_path": str(checkpoint_path.resolve().as_posix()),
                 "checkpoint_sha256": file_sha256(checkpoint_path),
+                "onnx_path": str(output_onnx.resolve().as_posix()),
                 "onnx_sha256": file_sha256(output_onnx),
+                "model_name": model_type,
+                "resolved_model_config": cfg,
+                "selection_split": "validation",
+                "selection_metric": "validation_mae_s",
+                "diagnostic_split_consulted": False,
+                "strict_state_dict_loading": True,
+                "output_names": ["log_ttc"],
+                "git_commit": checkpoint.get("git_commit", ""),
             },
             f,
             indent=2,

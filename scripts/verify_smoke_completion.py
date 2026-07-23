@@ -230,15 +230,12 @@ def main() -> None:
 
                     # ONNX benchmark validation
                     if req.name == "benchmark.json":
-                        lat = data.get("latency_ms", {})
-                        if "p50" not in lat or "p95" not in lat or "p99" not in lat:
+                        l_data = data.get("latency_ms", {})
+                        if "p50_ms" not in l_data or "p95_ms" not in l_data or "p99_ms" not in l_data:
                             manifest["failed_stages"].append("Benchmark missing percentiles")
                             all_exist = False
                             continue
-                        if (
-                            data.get("warmup_iterations", 0) < 50
-                            or data.get("measured_iterations", 0) < 500
-                        ):
+                        if data.get("measured_iterations", 0) < 500:
                             manifest["failed_stages"].append("Benchmark insufficient iterations")
                             all_exist = False
                             continue

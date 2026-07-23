@@ -1,0 +1,22 @@
+[
+  {
+    "commit": "f60b68a",
+    "message": "chore: Hardened run fingerprint, fixed script bugs, formatted with ruff",
+    "modified_files": [
+      "src/e_jepa_ttc/training/object_jepa.py",
+      "src/e_jepa_ttc/training/supervised.py",
+      "scripts/verify_checkpoint_provenance.py",
+      "scripts/select_best_onnx_candidate.py",
+      "scripts/generate_split_statistics.py",
+      "scripts/run_all.ps1",
+      "scripts/verify_full_completion.py",
+      "scripts/export_onnx.py",
+      "scripts/verify_smoke_completion.py",
+      "tests/regression/test_strict_smoke.py",
+      "tests/unit/test_jepa_training.py"
+    ],
+    "function": "Adds cryptographic payload-based run fingerprinting to prevent arbitrary flag injections. Fixes test suite assertions. Enforces strict provenance gates in run_all.ps1.",
+    "smoke_executed": true,
+    "ci_status": "pending"
+  }
+]

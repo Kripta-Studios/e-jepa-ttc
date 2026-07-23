@@ -32,7 +32,8 @@ if ($LASTEXITCODE -ne 0) { throw "eAP matrix failed" }
 
 Write-Output "=== PHASE 3: Checkpoint Selection ==="
 $runsDir = if ($Smoke) { "artifacts/smoke/current/evttc" } else { "artifacts/runs" }
-$cmd = "uv run --no-sync python scripts/select_best_onnx_candidate.py --runs-dir $runsDir"
+$currentCommit = (git rev-parse HEAD).Trim()
+$cmd = "uv run --no-sync python scripts/select_best_onnx_candidate.py --runs-dir $runsDir --require-full-label --require-commit $currentCommit"
 $onnxCheckpoint = Invoke-Expression $cmd
 if ($LASTEXITCODE -ne 0) { throw "Checkpoint selection failed" }
 
@@ -56,8 +57,12 @@ function Assert-CompletionGate {
         if ($LASTEXITCODE -ne 0) {
             throw "Smoke Completion Gate Failed!"
         }
+    } else {
+        Write-Output "Running full matrix completion verification..."
+        Invoke-Expression "uv run --no-sync python scripts/verify_full_completion.py"
+        if ($LASTEXITCODE -ne 0) {
+            throw "Full Matrix Completion Gate Failed!"
+        }
     }
 }
 Assert-CompletionGate
-
-Write-Output "=== ALL MATRICES COMPLETED SUCCESSFULLY ==="

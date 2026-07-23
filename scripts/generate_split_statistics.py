@@ -92,8 +92,15 @@ def main() -> None:
     sequence_splits = manifest.get("sequence_splits", {})
     shards = manifest.get("shards", [])
 
+    seen_shards = set()
+    for shard in shards:
+        if shard["path"] in seen_shards:
+            raise ValueError(f"Validation failed: Duplicate shard path detected: {shard['path']}")
+        seen_shards.add(shard["path"])
+
     seq_stats = defaultdict(_init_stats)
     split_stats = defaultdict(_init_stats)
+    split_tracks = defaultdict(set)
 
     for shard in shards:
         seq_id = shard["sequence_id"]
@@ -128,6 +135,7 @@ def main() -> None:
             for i in range(n_samples):
                 seq_stats[seq_id]["unique_tracks"].add(track_id[i])
                 split_stats[split]["unique_tracks"].add(track_id[i])
+                split_tracks[split].add(track_id[i])
                 seq_stats[seq_id]["categories"][category[i]] += 1
                 split_stats[split]["categories"][category[i]] += 1
 
@@ -172,8 +180,35 @@ def main() -> None:
             logging.error(f"Error reading {path}: {e}")
             raise
 
+    # Data Leakage checks
+    all_splits = list(split_tracks.keys())
+    for i in range(len(all_splits)):
+        for j in range(i + 1, len(all_splits)):
+            s1, s2 = all_splits[i], all_splits[j]
+            intersection = split_tracks[s1].intersection(split_tracks[s2])
+            if intersection:
+                msg = f"Validation failed: Data leakage detected! Track IDs {intersection} appear in both '{s1}' and '{s2}'."
+                raise ValueError(msg)
+
     final_seq_stats = {k: _finalize_stats(v) for k, v in seq_stats.items()}
     final_split_stats = {k: _finalize_stats(v) for k, v in split_stats.items()}
+
+    # Categorical completeness
+    for required_split in ["validation", "test", "calibration"]:
+        if (
+            required_split in final_split_stats
+            and final_split_stats[required_split]["windows"] == 0
+        ):
+            raise ValueError(f"Validation failed: Split '{required_split}' is empty.")
+
+    cal_stats = final_split_stats.get("calibration", None)
+    if cal_stats is not None:
+        for risk in [0.5, 1.0, 2.0, 4.0]:
+            k_pos = f"risk_{str(risk).replace('.', '_')}_s_pos"
+            k_neg = f"risk_{str(risk).replace('.', '_')}_s_neg"
+            if cal_stats[k_pos] == 0 or cal_stats[k_neg] == 0:
+                msg = f"Validation failed: Calibration split lacks positive/negative examples for risk threshold {risk}s."
+                raise ValueError(msg)
 
     output_data = {
         "sequences": final_seq_stats,

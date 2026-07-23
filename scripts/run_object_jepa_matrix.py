@@ -25,7 +25,10 @@ def _load(path: Path) -> dict[str, Any]:
 def _check_provenance(summary_path: Path) -> bool:
     try:
         import subprocess
-        expected_commit = subprocess.check_output(["git", "rev-parse", "HEAD"]).decode("ascii").strip()
+
+        expected_commit = (
+            subprocess.check_output(["git", "rev-parse", "HEAD"]).decode("ascii").strip()
+        )
         summary = _load(summary_path)
         return summary.get("git_commit") == expected_commit
     except Exception:

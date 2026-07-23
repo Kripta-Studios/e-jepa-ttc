@@ -285,6 +285,7 @@ def test_evaluate_supervised_checkpoint_without_retraining(tmp_path: Path) -> No
         batch_size=3,
         device_name="cpu",
         evaluation_splits=("test",),
+        allow_final_test_evaluation=True,
     )
 
     assert eval_summary["evaluation_splits"] == ["test"]

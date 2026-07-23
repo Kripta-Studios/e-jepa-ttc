@@ -13,26 +13,31 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader, Dataset
 
+from e_jepa_ttc.data.ml_cache import validate_voxel_cache
+from e_jepa_ttc.evaluation.metrics import regression_metrics
+from e_jepa_ttc.models import build_regressor
+from e_jepa_ttc.training.checkpoints import checkpoint_provenance
+from e_jepa_ttc.utils.io import ensure_parent, write_structured
+
+
 def _hash_file(filepath: str | Path) -> str:
     import hashlib
+
     h = hashlib.sha256()
     with open(filepath, "rb") as f:
         for chunk in iter(lambda: f.read(8192 * 1024), b""):
             h.update(chunk)
     return h.hexdigest()
 
+
 def _get_git_commit() -> str:
     import subprocess
+
     try:
         return subprocess.check_output(["git", "rev-parse", "HEAD"]).decode("ascii").strip()
     except Exception:
         return "unknown"
 
-from e_jepa_ttc.data.ml_cache import validate_voxel_cache
-from e_jepa_ttc.evaluation.metrics import regression_metrics
-from e_jepa_ttc.models import build_regressor
-from e_jepa_ttc.training.checkpoints import checkpoint_provenance
-from e_jepa_ttc.utils.io import ensure_parent, write_structured
 
 
 class VoxelCacheDataset(Dataset[tuple[torch.Tensor, torch.Tensor]]):
@@ -267,7 +272,9 @@ def train_tiny_cnn(
 
     commit = _get_git_commit()
     cache_sha256 = _hash_file(cache_path)
-    split_manifest_sha256 = str(cache["split_manifest_sha256"]) if "split_manifest_sha256" in cache else ""
+    split_manifest_sha256 = (
+        str(cache["split_manifest_sha256"]) if "split_manifest_sha256" in cache else ""
+    )
 
     if device_name == "auto":
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -300,6 +307,32 @@ def train_tiny_cnn(
             device=device,
             expected_model_name=model_name,
         )
+    import hashlib
+
+    run_fingerprint_payload = {
+        "git_commit": commit,
+        "protocol_version": "2.0",
+        "cache_sha256": cache_sha256,
+        "split_manifest_sha256": split_manifest_sha256,
+        "subset_manifest_sha256": subset_sha256,
+        "model_name": model_name,
+        "resolved_model_config": {
+            "in_channels": int(x.shape[1]),
+            "width": getattr(model, "width", 48) if hasattr(model, "width") else 48,
+        },
+        "navigation_mode": navigation_mode,
+        "label_fraction": train_fraction,
+        "seed": seed,
+        "pretraining_checkpoint_sha256": pretrained_encoder.get("checkpoint_sha256", "")
+        if pretrained_encoder
+        else "",
+        "optimizer_config": {"learning_rate": learning_rate, "weight_decay": weight_decay},
+        "training_steps": epochs,
+    }
+    run_fingerprint = hashlib.sha256(
+        json.dumps(run_fingerprint_payload, sort_keys=True).encode("utf-8")
+    ).hexdigest()
+
     if freeze_encoder:
         for param in model.encoder.parameters():
             param.requires_grad_(False)
@@ -371,8 +404,10 @@ def train_tiny_cnn(
                         "git_commit": commit,
                         "resolved_model_config": {
                             "in_channels": int(x.shape[1]),
-                            "width": getattr(model, "width", 48) if hasattr(model, "width") else 48
+                            "width": getattr(model, "width", 48) if hasattr(model, "width") else 48,
                         },
+                        "run_fingerprint": run_fingerprint,
+                        "run_fingerprint_payload": run_fingerprint_payload,
                     },
                     best_path,
                 )
@@ -397,8 +432,10 @@ def train_tiny_cnn(
             "git_commit": commit,
             "resolved_model_config": {
                 "in_channels": int(x.shape[1]),
-                "width": getattr(model, "width", 48) if hasattr(model, "width") else 48
+                "width": getattr(model, "width", 48) if hasattr(model, "width") else 48,
             },
+            "run_fingerprint": run_fingerprint,
+            "run_fingerprint_payload": run_fingerprint_payload,
         },
         last_path,
     )
@@ -461,6 +498,8 @@ def train_tiny_cnn(
         "navigation_mode": navigation_mode,
         "protocol_version": "2.0",
         "git_commit": commit,
+        "run_fingerprint": run_fingerprint,
+        "run_fingerprint_payload": run_fingerprint_payload,
         "final_test_opened": False,
     }
     write_structured(metrics_path, summary)
@@ -494,7 +533,9 @@ def evaluate_supervised_checkpoint(
     if not evaluation_splits:
         msg = "evaluation_splits must contain at least one split."
         raise ValueError(msg)
-    if not allow_final_test_evaluation and any("test" in s or "CPLA-high" in s for s in evaluation_splits):
+    if not allow_final_test_evaluation and any(
+        "test" in s or "CPLA-high" in s for s in evaluation_splits
+    ):
         raise ValueError(
             "Evaluation on test or CPLA-high splits requires allow_final_test_evaluation=True."
         )

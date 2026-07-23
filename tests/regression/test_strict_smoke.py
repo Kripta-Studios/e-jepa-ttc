@@ -111,7 +111,7 @@ def _setup_mock_smoke_dir(tmp_path: Path):
             {
                 "warmup_iterations": 50,
                 "measured_iterations": 500,
-                "latency_ms": {"p50": 1, "p95": 2, "p99": 3},
+                "latency_ms": {"p50_ms": 1, "p95_ms": 2, "p99_ms": 3},
             },
         ),
         (

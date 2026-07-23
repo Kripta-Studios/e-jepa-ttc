@@ -17,23 +17,6 @@ from torch import nn
 from torch.nn import functional as functional
 from torch.utils.data import DataLoader, Dataset, Subset
 
-def _hash_file(filepath: str | Path) -> str:
-    import hashlib
-    h = hashlib.sha256()
-    if not Path(filepath).exists():
-        return ""
-    with open(filepath, "rb") as f:
-        for chunk in iter(lambda: f.read(8192 * 1024), b""):
-            h.update(chunk)
-    return h.hexdigest()
-
-def _get_git_commit() -> str:
-    import subprocess
-    try:
-        return subprocess.check_output(["git", "rev-parse", "HEAD"]).decode("ascii").strip()
-    except Exception:
-        return "unknown"
-
 from e_jepa_ttc.data.eap_cache import EAPObjectCacheDataset, ShardLocalSampler
 from e_jepa_ttc.evaluation.bootstrap import sequence_bootstrap_interval
 from e_jepa_ttc.evaluation.calibration import (
@@ -53,6 +36,28 @@ from e_jepa_ttc.models.object_jepa import (
     object_event_jepa_loss,
 )
 from e_jepa_ttc.utils.io import write_structured
+
+
+def _hash_file(filepath: str | Path) -> str:
+    import hashlib
+
+    h = hashlib.sha256()
+    if not Path(filepath).exists():
+        return ""
+    with open(filepath, "rb") as f:
+        for chunk in iter(lambda: f.read(8192 * 1024), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def _get_git_commit() -> str:
+    import subprocess
+
+    try:
+        return subprocess.check_output(["git", "rev-parse", "HEAD"]).decode("ascii").strip()
+    except Exception:
+        return "unknown"
+
 
 
 def _set_seed(seed: int) -> None:
@@ -274,6 +279,27 @@ def pretrain_object_event_jepa(
     best_validation = float("inf")
     best_epoch = -1
     history: list[dict[str, Any]] = []
+    import hashlib
+
+    run_fingerprint_payload = {
+        "git_commit": _get_git_commit(),
+        "protocol_version": "2.0",
+        "cache_sha256": _hash_file(cache_manifest_path),
+        "split_manifest_sha256": _hash_file(cache_manifest_path),
+        "subset_manifest_sha256": "",
+        "model_name": "object_centric_event_jepa",
+        "resolved_model_config": asdict(config),
+        "navigation_mode": "enabled" if use_ego_actions else "disabled",
+        "label_fraction": 1.0,
+        "seed": seed,
+        "pretraining_checkpoint_sha256": "",
+        "optimizer_config": {"learning_rate": learning_rate, "weight_decay": weight_decay},
+        "training_steps": epochs,
+    }
+    run_fingerprint = hashlib.sha256(
+        json.dumps(run_fingerprint_payload, sort_keys=True).encode("utf-8")
+    ).hexdigest()
+
     start_time = time.perf_counter()
     total_steps = max(1, epochs * len(train_loader))
     global_step = 0
@@ -345,6 +371,8 @@ def pretrain_object_event_jepa(
                         "manifest_sha256": _hash_file(cache_manifest_path),
                         "git_commit": _get_git_commit(),
                         "protocol_version": "2.0",
+                        "run_fingerprint": run_fingerprint,
+                        "run_fingerprint_payload": run_fingerprint_payload,
                     },
                     best_path,
                 )
@@ -362,6 +390,8 @@ def pretrain_object_event_jepa(
             "manifest_sha256": _hash_file(cache_manifest_path),
             "git_commit": _get_git_commit(),
             "protocol_version": "2.0",
+            "run_fingerprint": run_fingerprint,
+            "run_fingerprint_payload": run_fingerprint_payload,
         },
         last_path,
     )
@@ -389,6 +419,8 @@ def pretrain_object_event_jepa(
         "manifest_sha256": _hash_file(cache_manifest_path),
         "git_commit": _get_git_commit(),
         "protocol_version": "2.0",
+        "run_fingerprint": run_fingerprint,
+        "run_fingerprint_payload": run_fingerprint_payload,
         "final_test_opened": False,
     }
     write_structured(output / "summary.json", summary)
@@ -697,6 +729,29 @@ def fine_tune_object_ttc(
     best_path = output / "object_ttc_best.pt"
     history_path = output / "history.jsonl"
     best_validation = float("inf")
+    import hashlib
+
+    run_fingerprint_payload = {
+        "git_commit": _get_git_commit(),
+        "protocol_version": "2.0",
+        "cache_sha256": _hash_file(cache_manifest_path),
+        "split_manifest_sha256": _hash_file(cache_manifest_path),
+        "subset_manifest_sha256": "",
+        "model_name": "object_ttc",
+        "resolved_model_config": asdict(config),
+        "navigation_mode": "enabled" if use_ego_actions else "disabled",
+        "label_fraction": label_fraction,
+        "seed": seed,
+        "pretraining_checkpoint_sha256": _hash_file(pretrained_checkpoint_path)
+        if pretrained_checkpoint_path
+        else "",
+        "optimizer_config": {"learning_rate": learning_rate, "weight_decay": weight_decay},
+        "training_steps": epochs,
+    }
+    run_fingerprint = hashlib.sha256(
+        json.dumps(run_fingerprint_payload, sort_keys=True).encode("utf-8")
+    ).hexdigest()
+
     best_epoch = -1
     start_time = time.perf_counter()
     with history_path.open("w", encoding="utf-8") as history_file:
@@ -767,6 +822,8 @@ def fine_tune_object_ttc(
                         "manifest_sha256": _hash_file(cache_manifest_path),
                         "git_commit": _get_git_commit(),
                         "protocol_version": "2.0",
+                        "run_fingerprint": run_fingerprint,
+                        "run_fingerprint_payload": run_fingerprint_payload,
                     },
                     best_path,
                 )
@@ -819,6 +876,8 @@ def fine_tune_object_ttc(
         "manifest_sha256": _hash_file(cache_manifest_path),
         "git_commit": _get_git_commit(),
         "protocol_version": "2.0",
+        "run_fingerprint": run_fingerprint,
+        "run_fingerprint_payload": run_fingerprint_payload,
     }
 
     if "calibration" in report_splits and conformal is not None:
