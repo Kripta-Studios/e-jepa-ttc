@@ -23,10 +23,28 @@ def validate_voxel_cache(cache: Any) -> None:
     if "cache_format_version" not in cache.files or int(cache["cache_format_version"]) < 2:
         msg = "Training requires cache_format_version >= 2."
         raise ValueError(msg)
-    for key in ["normalization", "source_manifest_sha256", "split_manifest_sha256", "preprocessing_config_sha256"]:
+    for key in [
+        "normalization",
+        "source_manifest_sha256",
+        "split_manifest_sha256",
+        "preprocessing_config_sha256",
+    ]:
         if key not in cache.files:
             msg = f"Cache missing required metadata field: {key}"
             raise ValueError(msg)
+
+    # Sparse occupancy audit (Requirement 4.4)
+    x = cache["x"]
+    if x.size > 0:
+        # Check a small random sample (up to 100 windows) to ensure it's not completely empty.
+        # Use a fixed seed for deterministic audit behaviour.
+        rng = np.random.default_rng(42)
+        idx = rng.choice(x.shape[0], size=min(x.shape[0], 100), replace=False)
+        sample = x[idx]
+        if np.count_nonzero(sample) == 0:
+            msg = "Sparse occupancy audit failed: Sampled cache tensors are completely zero (no events)."
+            raise ValueError(msg)
+
 
 def _load_windows(index_path: str | Path) -> list[dict[str, Any]]:
     data = read_structured(index_path)
@@ -84,11 +102,13 @@ def _constant_channels(values: np.ndarray, *, width: int, height: int) -> np.nda
 
 def _hash_file(filepath: str | Path) -> str:
     import hashlib
+
     h = hashlib.sha256()
     with open(filepath, "rb") as f:
         for chunk in iter(lambda: f.read(8192 * 1024), b""):
             h.update(chunk)
     return h.hexdigest()
+
 
 def build_voxel_cache(
     *,

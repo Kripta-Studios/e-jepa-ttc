@@ -584,6 +584,8 @@ def fine_tune_object_ttc(
     device_name: str = "auto",
     scratch_config: ObjectJEPAConfig | None = None,
     use_ego_actions: bool = True,
+    report_splits: tuple[str, ...] = ("validation",),
+    allow_final_test_evaluation: bool = False,
 ) -> dict[str, Any]:
     """Fine-tune a matched JEPA/scratch TTC model and calibrate on a held-out split."""
 
@@ -624,8 +626,23 @@ def fine_tune_object_ttc(
 
     train_dataset = EAPObjectCacheDataset(cache_manifest_path, splits=("train",))
     validation_dataset = EAPObjectCacheDataset(cache_manifest_path, splits=("validation",))
-    calibration_dataset = EAPObjectCacheDataset(cache_manifest_path, splits=("calibration",))
-    test_dataset = EAPObjectCacheDataset(cache_manifest_path, splits=("test",))
+
+    datasets = {
+        "train": train_dataset,
+        "validation": validation_dataset,
+    }
+
+    if "calibration" in report_splits:
+        datasets["calibration"] = EAPObjectCacheDataset(
+            cache_manifest_path, splits=("calibration",)
+        )
+
+    if "test" in report_splits:
+        if not allow_final_test_evaluation:
+            raise ValueError(
+                "Evaluation of the final test split requires allow_final_test_evaluation=True"
+            )
+        datasets["test"] = EAPObjectCacheDataset(cache_manifest_path, splits=("test",))
     selected_indices = _label_subset_indices(
         train_dataset,
         fraction=label_fraction,
@@ -732,53 +749,22 @@ def fine_tune_object_ttc(
         batch_size=batch_size,
         use_ego_actions=use_ego_actions,
     )
-    calibration_predictions = _collect_predictions(
-        model,
-        calibration_dataset,
-        device=device,
-        batch_size=batch_size,
-        use_ego_actions=use_ego_actions,
-    )
-    conformal, temperatures = _fit_calibrators(
-        calibration_predictions,
-        risk_thresholds_s=config.risk_thresholds_s,
-    )
-    test_predictions = _collect_predictions(
-        model,
-        test_dataset,
-        device=device,
-        batch_size=batch_size,
-        use_ego_actions=use_ego_actions,
-    )
-    calibrated_risk = np.column_stack(
-        [
-            temperature.probabilities(test_predictions["risk_logits"][:, index])
-            for index, temperature in enumerate(temperatures)
-        ]
-    )
-    test_metrics = object_ttc_metrics(
-        test_predictions["ttc_true"],
-        test_predictions["ttc_pred"],
-        calibrated_risk,
-        risk_thresholds_s=config.risk_thresholds_s,
-    )
-    lower, upper = conformal.interval(
-        test_predictions["ttc_pred"],
-        test_predictions["ttc_std"],
-    )
-    test_metrics["conformal_90"] = interval_metrics(
-        test_predictions["ttc_true"],
-        lower,
-        upper,
-    )
-    test_metrics["mae_sequence_bootstrap_95"] = sequence_bootstrap_interval(
-        test_predictions["ttc_true"],
-        test_predictions["ttc_pred"],
-        test_predictions["sequence_id"],
-        iterations=2000,
-        confidence=0.95,
-        seed=seed,
-    )
+    # Fit calibrators if calibration is provided, else use dummy/defaults (or fail if requested)
+    conformal = None
+    temperatures = []
+    if "calibration" in report_splits:
+        calibration_predictions = _collect_predictions(
+            model,
+            datasets["calibration"],
+            device=device,
+            batch_size=batch_size,
+            use_ego_actions=use_ego_actions,
+        )
+        conformal, temperatures = _fit_calibrators(
+            calibration_predictions,
+            risk_thresholds_s=config.risk_thresholds_s,
+        )
+
     summary: dict[str, Any] = {
         "method": "object_centric_event_jepa_ttc",
         "initialization": "jepa" if checkpoint is not None else "scratch",
@@ -796,21 +782,69 @@ def fine_tune_object_ttc(
         "best_epoch": best_epoch,
         "best_validation_inverse_ttc_mae": best_validation,
         "validation": _prediction_metrics(validation_predictions),
-        "calibration": {
+        "evaluation_split": report_splits[-1] if report_splits else "validation",
+        "final_test_opened": "test" in report_splits,
+        "elapsed_seconds": time.perf_counter() - start_time,
+        "best_checkpoint": best_path.as_posix(),
+    }
+
+    if "calibration" in report_splits and conformal is not None:
+        summary["calibration"] = {
             "split": "calibration",
             "count": int(calibration_predictions["ttc_true"].shape[0]),
             "conformal_coverage": conformal.coverage,
             "conformal_scale": conformal.scale,
             "temperatures": [temperature.temperature for temperature in temperatures],
-        },
-        "test": test_metrics,
-        "test_evaluated_after_model_selection_and_calibration": True,
-        "elapsed_seconds": time.perf_counter() - start_time,
-        "best_checkpoint": best_path.as_posix(),
-    }
+        }
+
+    if "test" in report_splits:
+        test_predictions = _collect_predictions(
+            model,
+            datasets["test"],
+            device=device,
+            batch_size=batch_size,
+            use_ego_actions=use_ego_actions,
+        )
+        calibrated_risk = (
+            np.column_stack(
+                [
+                    temperature.probabilities(test_predictions["risk_logits"][:, index])
+                    for index, temperature in enumerate(temperatures)
+                ]
+            )
+            if temperatures
+            else test_predictions["risk_logits"]
+        )
+        test_metrics = object_ttc_metrics(
+            test_predictions["ttc_true"],
+            test_predictions["ttc_pred"],
+            calibrated_risk,
+            risk_thresholds_s=config.risk_thresholds_s,
+        )
+        if conformal is not None:
+            lower, upper = conformal.interval(
+                test_predictions["ttc_pred"],
+                test_predictions["ttc_std"],
+            )
+            test_metrics["conformal_90"] = interval_metrics(
+                test_predictions["ttc_true"],
+                lower,
+                upper,
+            )
+        test_metrics["mae_sequence_bootstrap_95"] = sequence_bootstrap_interval(
+            test_predictions["ttc_true"],
+            test_predictions["ttc_pred"],
+            test_predictions["sequence_id"],
+            iterations=2000,
+            confidence=0.95,
+            seed=seed,
+        )
+        summary["test"] = test_metrics
+        summary["test_evaluated_after_model_selection_and_calibration"] = True
+        np.savez_compressed(output / "test_predictions.npz", **test_predictions)
+
     write_structured(output / "summary.json", summary)
-    np.savez_compressed(output / "test_predictions.npz", **test_predictions)
-    for dataset in (train_dataset, validation_dataset, calibration_dataset, test_dataset):
+    for dataset in datasets.values():
         dataset.close()
     return summary
 

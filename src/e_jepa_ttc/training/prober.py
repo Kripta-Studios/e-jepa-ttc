@@ -23,7 +23,7 @@ from e_jepa_ttc.data.evttc import NAVIGATION_FEATURE_NAMES, read_manifest
 from e_jepa_ttc.data.ml_cache import validate_voxel_cache
 from e_jepa_ttc.data.split import read_splits
 from e_jepa_ttc.evaluation.metrics import regression_metrics
-from e_jepa_ttc.models import build_encoder, build_regressor
+from e_jepa_ttc.models import build_encoder
 from e_jepa_ttc.training.checkpoints import checkpoint_provenance
 from e_jepa_ttc.training.jepa import (
     EVENT_MOTION_FEATURE_NAMES,

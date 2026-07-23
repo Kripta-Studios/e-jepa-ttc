@@ -77,26 +77,30 @@ def _run_or_resume_finetuning(
         device_name=args.device,
         scratch_config=scratch_config,
         use_ego_actions=args.use_ego_actions,
+        report_splits=tuple(args.report_splits),
+        allow_final_test_evaluation=args.allow_final_test_evaluation,
     )
 
 
 def _row(summary: dict[str, Any]) -> dict[str, Any]:
-    test = summary["test"]
-    regression = test["regression"]
-    garl = test["garl_ttc"]
+    eval_split = summary.get("evaluation_split", "test")
+    split_metrics = summary.get(eval_split, summary.get("validation", {}))
+    regression = split_metrics.get("regression", {})
+    garl = split_metrics.get("garl_ttc", {})
+    conformal = split_metrics.get("conformal_90", {"coverage": 0.0, "mean_width_s": 0.0})
     return {
         "initialization": summary["initialization"],
         "seed": int(summary["seed"]),
         "label_fraction": float(summary["label_fraction"]),
         "effective_label_count": int(summary["effective_label_count"]),
         "best_epoch": int(summary["best_epoch"]),
-        "mae_s": float(regression["mae_s"]),
-        "rmse_s": float(regression["rmse_s"]),
-        "median_abs_error_s": float(regression["median_abs_error_s"]),
-        "garl_weighted_mid": float(garl["weighted_mid"]),
-        "garl_weighted_rte_pct": float(garl["weighted_rte_pct"]),
-        "conformal_90_coverage": float(test["conformal_90"]["coverage"]),
-        "conformal_90_mean_width_s": float(test["conformal_90"]["mean_width_s"]),
+        "mae_s": float(regression.get("mae_s", 0.0)),
+        "rmse_s": float(regression.get("rmse_s", 0.0)),
+        "median_abs_error_s": float(regression.get("median_abs_error_s", 0.0)),
+        "garl_weighted_mid": float(garl.get("weighted_mid", 0.0)),
+        "garl_weighted_rte_pct": float(garl.get("weighted_rte_pct", 0.0)),
+        "conformal_90_coverage": float(conformal["coverage"]),
+        "conformal_90_mean_width_s": float(conformal["mean_width_s"]),
         "summary": str(summary["best_checkpoint"]).replace("object_ttc_best.pt", "summary.json"),
     }
 
@@ -158,6 +162,8 @@ def main() -> int:
     parser.add_argument("--no-ego-actions", dest="use_ego_actions", action="store_false")
     parser.add_argument("--no-recurrence", dest="use_recurrence", action="store_false")
     parser.add_argument("--no-geometry", dest="use_geometry", action="store_false")
+    parser.add_argument("--report-splits", nargs="+", default=["validation"])
+    parser.add_argument("--allow-final-test-evaluation", action="store_true")
     parser.set_defaults(use_ego_actions=True, use_recurrence=True, use_geometry=True)
     args = parser.parse_args()
 

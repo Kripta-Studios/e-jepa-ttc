@@ -1285,8 +1285,12 @@ def pretrain_jepa(
     dense_predictor: str = "mlp",
     context_token_weight: float = 0.0,
     model_name: str = "tiny-cnn",
+    navigation_mode: str = "enabled",
 ) -> dict[str, Any]:
     """Pretrain an encoder with a JEPA-style latent prediction objective."""
+
+    if navigation_mode not in ("enabled", "disabled"):
+        raise ValueError("navigation_mode must be 'enabled' or 'disabled'")
 
     if epochs <= 0:
         msg = "epochs must be positive."
@@ -1323,6 +1327,11 @@ def pretrain_jepa(
     cache = np.load(cache_path, allow_pickle=False)
     validate_voxel_cache(cache)
     x = cache["x"]
+    if navigation_mode == "disabled":
+        if bool(cache.get("navigation_channels", False)):
+            nav_count = len(cache["navigation_feature_names"])
+            x[:, -nav_count:, :, :] = 0.0
+
     split = cache["split"].astype(str)
     bins = int(cache["bins"]) if "bins" in cache.files else int(x.shape[1] // 2)
     metadata_channels = _cache_bool(cache, "metadata_channels")

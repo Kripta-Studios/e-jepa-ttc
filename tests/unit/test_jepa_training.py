@@ -31,6 +31,11 @@ def _write_cache(path: Path) -> None:
     split = np.array(["train"] * 6 + ["validation"] * 3 + ["test"] * 3)
     np.savez(
         path,
+        cache_format_version=np.array(2, dtype=np.int32),
+        source_manifest_sha256=np.array("mock"),
+        split_manifest_sha256=np.array("mock"),
+        preprocessing_config_sha256=np.array("mock"),
+        normalization=np.array("mock"),
         x=x,
         y_ttc=y_ttc,
         split=split,
@@ -50,6 +55,11 @@ def _write_tubelet_cache(path: Path) -> None:
     split = np.array(["train"] * 6 + ["validation"] * 3 + ["test"] * 3)
     np.savez(
         path,
+        cache_format_version=np.array(2, dtype=np.int32),
+        source_manifest_sha256=np.array("mock"),
+        split_manifest_sha256=np.array("mock"),
+        preprocessing_config_sha256=np.array("mock"),
+        normalization=np.array("mock"),
         x=x,
         y_ttc=y_ttc,
         split=split,
@@ -72,6 +82,11 @@ def _write_navigation_cache(path: Path) -> None:
     split = np.array(["train"] * 6 + ["validation"] * 3 + ["test"] * 3)
     np.savez(
         path,
+        cache_format_version=np.array(2, dtype=np.int32),
+        source_manifest_sha256=np.array("mock"),
+        split_manifest_sha256=np.array("mock"),
+        preprocessing_config_sha256=np.array("mock"),
+        normalization=np.array("mock"),
         x=x,
         y_ttc=y_ttc,
         split=split,
@@ -97,6 +112,11 @@ def _write_multival_cache(path: Path) -> None:
     sequence_id = np.array(["seq-train"] * 8 + ["seq-car"] * 4 + ["seq-ped"] * 2 + ["seq-test"] * 2)
     np.savez(
         path,
+        cache_format_version=np.array(2, dtype=np.int32),
+        source_manifest_sha256=np.array("mock"),
+        split_manifest_sha256=np.array("mock"),
+        preprocessing_config_sha256=np.array("mock"),
+        normalization=np.array("mock"),
         x=x,
         y_ttc=y_ttc,
         split=split,

@@ -310,7 +310,9 @@ def _cmd_train_tiny_cnn(args: argparse.Namespace) -> int:
         pretrained_encoder_path=args.pretrained_encoder,
         freeze_encoder=args.freeze_encoder,
         train_fraction=args.train_fraction,
+        subset_manifest_path=args.subset_manifest_path,
         model_name=args.model,
+        navigation_mode=args.navigation_mode,
         evaluation_splits=tuple(args.evaluation_splits),
         train_splits=tuple(args.train_splits),
         validation_splits=tuple(args.validation_splits),
@@ -495,6 +497,7 @@ def _cmd_pretrain_jepa(args: argparse.Namespace) -> int:
         dense_predictor=args.dense_predictor,
         context_token_weight=args.context_token_weight,
         model_name=args.model,
+        navigation_mode=args.navigation_mode,
     )
     _print_json(payload)
     return 0
@@ -947,8 +950,10 @@ def build_parser() -> argparse.ArgumentParser:
     train_tiny.add_argument("--seed", type=int, default=42)
     train_tiny.add_argument("--device", type=str, default="auto")
     train_tiny.add_argument("--model", choices=MODEL_NAMES, default="tiny-cnn")
+    train_tiny.add_argument("--navigation-mode", choices=["enabled", "disabled"], default="enabled")
     train_tiny.add_argument("--pretrained-encoder", type=Path)
     train_tiny.add_argument("--train-fraction", type=float, default=1.0)
+    train_tiny.add_argument("--subset-manifest-path", type=Path)
     train_tiny.add_argument("--train-splits", nargs="+", default=["train"])
     train_tiny.add_argument("--validation-splits", nargs="+", default=["validation"])
     train_tiny.add_argument(
@@ -1166,6 +1171,9 @@ def build_parser() -> argparse.ArgumentParser:
     pretrain_jepa.add_argument("--seed", type=int, default=42)
     pretrain_jepa.add_argument("--device", type=str, default="auto")
     pretrain_jepa.add_argument("--model", choices=MODEL_NAMES, default="tiny-cnn")
+    pretrain_jepa.add_argument(
+        "--navigation-mode", choices=["enabled", "disabled"], default="enabled"
+    )
     pretrain_jepa.add_argument("--pretrain-splits", nargs="+", default=["train"])
     pretrain_jepa.add_argument("--validation-splits", nargs="+", default=["validation"])
     pretrain_jepa.add_argument(

@@ -109,5 +109,5 @@ def test_object_jepa_pretrain_and_matched_finetune_smoke(tmp_path: Path) -> None
 
     assert finetune["initialization"] == "jepa"
     assert finetune["effective_label_count"] < finetune["full_train_count"]
-    assert finetune["test_evaluated_after_model_selection_and_calibration"] is True
+    assert finetune["final_test_opened"] is False
     assert Path(finetune["best_checkpoint"]).is_file()

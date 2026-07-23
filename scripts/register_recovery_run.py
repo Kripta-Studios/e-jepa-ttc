@@ -37,18 +37,21 @@ def _read_json(path: Path) -> dict[str, Any]:
 def _selection_criterion(stage: str) -> str:
     if stage == "ssl_pretrain":
         return "validation_loss"
-    if stage == "downstream_ttc":
-        return "validation_mae"
+    if stage in ("downstream_ttc", "scratch_ttc"):
+        return "validation_mae_s"
     raise ValueError(f"Unsupported recovery stage: {stage}")
 
 
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--run-id", required=True)
-    parser.add_argument("--stage", choices=("ssl_pretrain", "downstream_ttc"), required=True)
+    parser.add_argument(
+        "--stage", choices=("ssl_pretrain", "downstream_ttc", "scratch_ttc"), required=True
+    )
     parser.add_argument("--run-dir", type=Path, required=True)
-    parser.add_argument("--pretrain-seed", type=int, required=True)
+    parser.add_argument("--pretrain-seed", type=int)
     parser.add_argument("--downstream-seed", type=int)
+    parser.add_argument("--pretrained-checkpoint", type=Path)
     parser.add_argument("--requested-backbone", required=True)
     parser.add_argument("--command", required=True)
     parser.add_argument("--started-at", required=True)
@@ -57,6 +60,28 @@ def main() -> int:
     parser.add_argument("--smoke", action="store_true")
     parser.add_argument("--registry", type=Path, default=Path("artifacts/registry.jsonl"))
     args = parser.parse_args()
+
+    if args.stage == "ssl_pretrain":
+        if args.pretrain_seed is None:
+            raise ValueError("ssl_pretrain requires pretrain_seed")
+        if args.downstream_seed is not None:
+            raise ValueError("ssl_pretrain forbids downstream_seed")
+        if args.pretrained_checkpoint is not None:
+            raise ValueError("ssl_pretrain forbids pretrained_checkpoint")
+    elif args.stage == "downstream_ttc":
+        if args.pretrain_seed is None:
+            raise ValueError("downstream_ttc requires pretrain_seed")
+        if args.downstream_seed is None:
+            raise ValueError("downstream_ttc requires downstream_seed")
+        if args.pretrained_checkpoint is None:
+            raise ValueError("downstream_ttc requires pretrained_checkpoint")
+    elif args.stage == "scratch_ttc":
+        if args.pretrain_seed is not None:
+            raise ValueError("scratch_ttc forbids pretrain_seed")
+        if args.downstream_seed is None:
+            raise ValueError("scratch_ttc requires downstream_seed")
+        if args.pretrained_checkpoint is not None:
+            raise ValueError("scratch_ttc forbids pretrained_checkpoint")
 
     root = Path(__file__).resolve().parents[1]
     metrics_path = args.run_dir / "metrics.json"

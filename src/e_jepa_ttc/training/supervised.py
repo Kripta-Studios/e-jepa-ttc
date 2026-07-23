@@ -13,10 +13,10 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader, Dataset
 
+from e_jepa_ttc.data.ml_cache import validate_voxel_cache
 from e_jepa_ttc.evaluation.metrics import regression_metrics
 from e_jepa_ttc.models import build_regressor
 from e_jepa_ttc.training.checkpoints import checkpoint_provenance
-from e_jepa_ttc.data.ml_cache import validate_voxel_cache
 from e_jepa_ttc.utils.io import ensure_parent, write_structured
 
 
@@ -155,7 +155,9 @@ def train_tiny_cnn(
     pretrained_encoder_path: str | Path | None = None,
     freeze_encoder: bool = False,
     train_fraction: float = 1.0,
+    subset_manifest_path: str | Path | None = None,
     model_name: str = "tiny-cnn",
+    navigation_mode: str = "enabled",
     evaluation_splits: tuple[str, ...] = ("train", "validation", "test"),
     train_splits: tuple[str, ...] = ("train",),
     validation_splits: tuple[str, ...] = ("validation",),
@@ -166,6 +168,8 @@ def train_tiny_cnn(
     if not 0.0 < train_fraction <= 1.0:
         msg = "train_fraction must be in (0, 1]."
         raise ValueError(msg)
+    if navigation_mode not in ("enabled", "disabled"):
+        raise ValueError("navigation_mode must be 'enabled' or 'disabled'")
     if not evaluation_splits:
         msg = "evaluation_splits must contain at least one split."
         raise ValueError(msg)
@@ -178,6 +182,11 @@ def train_tiny_cnn(
     cache = np.load(cache_path, allow_pickle=False)
     validate_voxel_cache(cache)
     x = cache["x"]
+    if navigation_mode == "disabled":
+        if bool(cache.get("navigation_channels", False)):
+            nav_count = len(cache["navigation_feature_names"])
+            x[:, -nav_count:, :, :] = 0.0
+
     y_ttc = cache["y_ttc"].astype(np.float32)
     split = cache["split"].astype(str)
     y_log = np.log(np.clip(y_ttc, 1e-4, None)).astype(np.float32)
@@ -204,12 +213,39 @@ def train_tiny_cnn(
         msg = f"Requested evaluation splits are empty: {missing_eval_splits}."
         raise ValueError(msg)
     full_train_count = int(train_idx.size)
-    if train_fraction < 1.0:
+    if subset_manifest_path is not None and Path(subset_manifest_path).exists():
+        manifest_path = Path(subset_manifest_path)
+        with manifest_path.open("r", encoding="utf-8") as f:
+            manifest_data = json.load(f)
+        train_idx = np.array(manifest_data["global_indices"], dtype=np.int64)
+        print(f"Loaded subset manifest from {manifest_path} with {train_idx.size} samples.")
+    elif train_fraction < 1.0:
         rng = np.random.default_rng(seed)
         subset_count = max(1, int(round(train_idx.size * train_fraction)))
         train_idx = np.sort(rng.choice(train_idx, size=subset_count, replace=False)).astype(
             np.int64
         )
+        if subset_manifest_path is not None:
+            manifest_path = Path(subset_manifest_path)
+            ensure_parent(manifest_path)
+
+            import hashlib
+
+            payload = {
+                "global_indices": train_idx.tolist(),
+                "sequence_ids": split[train_idx].tolist() if "sequence_id" in cache else [],
+                "ttc_bins": [],  # Could compute bins here if needed
+                "source_split_hash": "",
+                "seed": seed,
+                "requested_fraction": train_fraction,
+                "effective_fraction": float(train_idx.size / full_train_count),
+            }
+            payload_bytes = json.dumps(payload, sort_keys=True).encode("utf-8")
+            payload["sha256"] = hashlib.sha256(payload_bytes).hexdigest()
+
+            with manifest_path.open("w", encoding="utf-8") as f:
+                json.dump(payload, f, indent=2)
+            print(f"Saved subset manifest to {manifest_path}")
 
     if device_name == "auto":
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
