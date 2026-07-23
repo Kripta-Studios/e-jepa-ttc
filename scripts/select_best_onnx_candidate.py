@@ -30,7 +30,7 @@ def main() -> None:
     parser.add_argument(
         "--require-model-name",
         type=str,
-        default="tiny-cnn",
+        default="event-tubelet-transformer",
         help="Only select models matching this name",
     )
     args = parser.parse_args()
@@ -71,7 +71,7 @@ def main() -> None:
                     continue
                 if (
                     args.require_model_name
-                    and metrics.get("model_name", "tiny-cnn") != args.require_model_name
+                    and metrics.get("model_name", "event-tubelet-transformer") != args.require_model_name
                 ):
                     continue
                 if metrics.get("final_test_opened") is True:
