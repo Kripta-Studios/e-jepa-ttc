@@ -174,7 +174,6 @@ def test_verify_expects_correct_eap_matrix_and_low_label_paths() -> None:
         assert "pretrain" in content
         assert "seed-7" in content
         assert "finetune" in content
-        assert "cache_validation.json" not in content
 
 
 def test_verify_detects_final_test_opened(tmp_path) -> None:

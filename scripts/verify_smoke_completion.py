@@ -4,6 +4,27 @@ import math
 from pathlib import Path
 
 
+def _check_nans(obj: dict | list | float | str, key: str = "", parent_dict: dict = None) -> bool:
+    if isinstance(obj, dict):
+        for k, v in obj.items():
+            if _check_nans(v, k, obj):
+                return True
+    elif isinstance(obj, list):
+        for v in obj:
+            if _check_nans(v, key, parent_dict):
+                return True
+    elif isinstance(obj, float):
+        if math.isnan(obj) or math.isinf(obj):
+            if key in ("auprc", "auroc"):
+                if parent_dict and "class_support" in parent_dict:
+                    pos = parent_dict["class_support"].get("positive", 1)
+                    neg = parent_dict["class_support"].get("negative", 1)
+                    if pos == 0 or neg == 0:
+                        return False
+            return True
+    return False
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--smoke-dir", type=Path, default=Path("artifacts/smoke/current"))
@@ -78,20 +99,21 @@ def main() -> None:
         smoke_dir / "onnx" / "model_manifest.json",
         smoke_dir / "onnx" / "equivalence.json",
         smoke_dir / "onnx" / "benchmark.json",
+        smoke_dir / "evttc" / "cache_validation.json",
     ]
 
     manifest = {
         "status": "failed",
         "exit_code": 1,
         "all_required_artifacts_exist": False,
+        "cache_v2_validation_passed": False,
+        "pytorch_onnx_equivalence_passed": False,
+        "final_test_opened": False,
         "required_artifact_count": len(required_files),
         "validated_artifact_count": 0,
-        "final_test_opened": False,
-        "cache_v2_validation_passed": True,
-        "pytorch_onnx_equivalence_passed": True,
         "completed_stages": [],
         "failed_stages": [],
-        "commit": "",
+        "commit": "unknown",
     }
 
     try:
@@ -100,7 +122,7 @@ def main() -> None:
         commit = subprocess.check_output(["git", "rev-parse", "HEAD"]).decode("utf-8").strip()
         manifest["commit"] = commit
     except Exception:
-        manifest["commit"] = "unknown"
+        pass
 
     all_exist = True
     validated_count = 0
@@ -108,64 +130,176 @@ def main() -> None:
         if not req.exists():
             manifest["failed_stages"].append(f"Missing required artifact: {req}")
             all_exist = False
-        else:
-            if req.suffix == ".json":
-                with open(req, encoding="utf-8") as f:
-                    try:
-                        data = json.load(f)
-                        if not data:
-                            manifest["failed_stages"].append(f"Empty JSON object: {req}")
-                            all_exist = False
-                        else:
-                            # Final test check
-                            if isinstance(data, dict):
-                                if data.get("final_test_opened") is True:
-                                    manifest["final_test_opened"] = True
-                                    manifest["failed_stages"].append(f"Final test opened in {req}")
-                                    all_exist = False
+            continue
 
-                            # Check NaNs
-                            def _check_nans(
-                                obj: dict | list | float | str,
-                                key: str = "",
-                                parent_dict: dict = None,
-                            ) -> bool:
-                                if isinstance(obj, dict):
-                                    for k, v in obj.items():
-                                        if _check_nans(v, k, obj):
-                                            return True
-                                elif isinstance(obj, list):
-                                    for v in obj:
-                                        if _check_nans(v, key, parent_dict):
-                                            return True
-                                elif isinstance(obj, float):
-                                    if math.isnan(obj) or math.isinf(obj):
-                                        if key in ("auprc", "auroc"):
-                                            if parent_dict and "class_support" in parent_dict:
-                                                if (
-                                                    parent_dict["class_support"].get("positive", 1)
-                                                    == 0
-                                                ):
-                                                    return False
-                                        return True
-                                return False
-
-                            if _check_nans(
-                                data, parent_dict=data if isinstance(data, dict) else None
-                            ):
-                                manifest["failed_stages"].append(f"NaN or Inf found in {req}")
-                                all_exist = False
-
-                            validated_count += 1
-                    except json.JSONDecodeError:
-                        manifest["failed_stages"].append(f"Invalid JSON: {req}")
+        if req.suffix == ".json":
+            with open(req, encoding="utf-8") as f:
+                try:
+                    data = json.load(f)
+                    if not data:
+                        manifest["failed_stages"].append(f"Empty JSON object: {req}")
                         all_exist = False
-            else:
+                        continue
+
+                    # Summary validations
+                    if req.name == "summary.json":
+                        if (
+                            "evaluation_split" not in data
+                            or data["evaluation_split"] != "validation"
+                        ):
+                            manifest["failed_stages"].append(
+                                f"Missing/invalid evaluation_split in {req}"
+                            )
+                            all_exist = False
+                            continue
+                        if "final_test_opened" not in data:
+                            manifest["failed_stages"].append(f"Missing final_test_opened in {req}")
+                            all_exist = False
+                            continue
+                        if data["final_test_opened"] is True:
+                            manifest["final_test_opened"] = True
+                            manifest["failed_stages"].append(f"Final test opened in {req}")
+                            all_exist = False
+                            continue
+
+                    # General NaN checking
+                    if _check_nans(data, parent_dict=data if isinstance(data, dict) else None):
+                        manifest["failed_stages"].append(f"NaN or Inf found in {req}")
+                        all_exist = False
+                        continue
+
+                    # Cache validation
+                    if req.name == "cache_validation.json":
+                        if (
+                            data.get("status") == "passed"
+                            and data.get("cache_format_version") == 2
+                            and data.get("normalize") is True
+                            and data.get("normalization") == "non_centered_occupied_p95_scale"
+                            and data.get("sidecar_sha256_matches") is True
+                            and data.get("sparse_event_audit_passed") is True
+                            and data.get("nonempty_samples_collapsed_to_zero") == 0
+                        ):
+                            manifest["cache_v2_validation_passed"] = True
+                        else:
+                            manifest["failed_stages"].append(
+                                f"Invalid cache validation payload: {data}"
+                            )
+                            all_exist = False
+                            continue
+
+                    # ONNX model manifest validation
+                    if req.name == "model_manifest.json":
+                        split = data.get("selection_split")
+                        if split in ("test", "CPLA-high"):
+                            manifest["failed_stages"].append(
+                                "ONNX model selected using forbidden split"
+                            )
+                            all_exist = False
+                            continue
+                        if not data.get("strict_state_dict_loading"):
+                            manifest["failed_stages"].append("ONNX strict loading not true")
+                            all_exist = False
+                            continue
+                        if data.get("output_names") != ["log_ttc"]:
+                            manifest["failed_stages"].append("ONNX output names invalid")
+                            all_exist = False
+                            continue
+                        if not data.get("checkpoint_sha256") or not data.get("onnx_sha256"):
+                            manifest["failed_stages"].append("Missing hashes in model manifest")
+                            all_exist = False
+                            continue
+                        if not data.get("resolved_model_config"):
+                            manifest["failed_stages"].append("Missing model config in manifest")
+                            all_exist = False
+                            continue
+
+                    # ONNX equivalence validation
+                    if req.name == "equivalence.json":
+                        if (
+                            data.get("status") == "passed"
+                            and data.get("real_validation_samples") is True
+                            and data.get("sample_count", 0) >= 32
+                            and data.get("maximum_absolute_error", 1.0) <= 1e-4
+                            and data.get("mean_absolute_error", 1.0) <= 1e-5
+                        ):
+                            manifest["pytorch_onnx_equivalence_passed"] = True
+                        else:
+                            manifest["failed_stages"].append("ONNX equivalence failed rules")
+                            all_exist = False
+                            continue
+
+                    # ONNX benchmark validation
+                    if req.name == "benchmark.json":
+                        lat = data.get("latency_ms", {})
+                        if "p50" not in lat or "p95" not in lat or "p99" not in lat:
+                            manifest["failed_stages"].append("Benchmark missing percentiles")
+                            all_exist = False
+                            continue
+                        if (
+                            data.get("warmup_iterations", 0) < 50
+                            or data.get("measured_iterations", 0) < 500
+                        ):
+                            manifest["failed_stages"].append("Benchmark insufficient iterations")
+                            all_exist = False
+                            continue
+
+                    validated_count += 1
+                except json.JSONDecodeError:
+                    manifest["failed_stages"].append(f"Invalid JSON: {req}")
+                    all_exist = False
+        elif req.suffix == ".onnx":
+            try:
+                import onnx
+                import onnxruntime
+
+                onnx_model = onnx.load(req)
+                onnx.checker.check_model(onnx_model)
+                if len(onnx_model.graph.input) != 1:
+                    manifest["failed_stages"].append("ONNX must have exactly 1 input")
+                    all_exist = False
+                    continue
+                if (
+                    len(onnx_model.graph.output) != 1
+                    or onnx_model.graph.output[0].name != "log_ttc"
+                ):
+                    manifest["failed_stages"].append(
+                        "ONNX must have exactly 1 output named log_ttc"
+                    )
+                    all_exist = False
+                    continue
+                if req.stat().st_size == 0:
+                    manifest["failed_stages"].append("ONNX file is empty")
+                    all_exist = False
+                    continue
+
+                # Check SHA256 matches manifest if manifest exists
+                manifest_path = req.parent / "model_manifest.json"
+                if manifest_path.exists():
+                    import hashlib
+
+                    h = hashlib.sha256(req.read_bytes()).hexdigest()
+                    with open(manifest_path, encoding="utf-8") as fm:
+                        if json.load(fm).get("onnx_sha256") != h:
+                            manifest["failed_stages"].append("ONNX SHA256 mismatch")
+                            all_exist = False
+                            continue
+
+                onnxruntime.InferenceSession(str(req))
                 validated_count += 1
+            except Exception as e:
+                manifest["failed_stages"].append(f"ONNX loading/checking failed: {e}")
+                all_exist = False
+        else:
+            validated_count += 1
 
     manifest["validated_artifact_count"] = validated_count
 
-    if all_exist and validated_count == len(required_files):
+    if (
+        all_exist
+        and validated_count == len(required_files)
+        and manifest["cache_v2_validation_passed"]
+        and manifest["pytorch_onnx_equivalence_passed"]
+    ):
         manifest["all_required_artifacts_exist"] = True
         manifest["status"] = "passed"
         manifest["exit_code"] = 0
