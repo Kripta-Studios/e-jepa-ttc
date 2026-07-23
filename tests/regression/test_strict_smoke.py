@@ -10,80 +10,80 @@ def _setup_mock_smoke_dir(tmp_path: Path):
     required = [
         (
             "evttc/ssl_navigation_enabled/summary.json",
-            {"evaluation_split": "validation", "final_test_opened": False},
+            {"evaluation_splits": ["validation"], "final_test_opened": False},
         ),
         (
             "evttc/ssl_navigation_disabled/summary.json",
-            {"evaluation_split": "validation", "final_test_opened": False},
+            {"evaluation_splits": ["validation"], "final_test_opened": False},
         ),
         (
             "evttc/jepa_navigation_enabled/summary.json",
-            {"evaluation_split": "validation", "final_test_opened": False},
+            {"evaluation_splits": ["validation"], "final_test_opened": False},
         ),
         (
             "evttc/jepa_navigation_disabled/summary.json",
-            {"evaluation_split": "validation", "final_test_opened": False},
+            {"evaluation_splits": ["validation"], "final_test_opened": False},
         ),
         (
             "evttc/scratch_navigation_enabled/summary.json",
-            {"evaluation_split": "validation", "final_test_opened": False},
+            {"evaluation_splits": ["validation"], "final_test_opened": False},
         ),
         (
             "evttc/scratch_navigation_disabled/summary.json",
-            {"evaluation_split": "validation", "final_test_opened": False},
+            {"evaluation_splits": ["validation"], "final_test_opened": False},
         ),
         (
             "evttc/low_label_05_jepa/summary.json",
-            {"evaluation_split": "validation", "final_test_opened": False},
+            {"evaluation_splits": ["validation"], "final_test_opened": False},
         ),
         (
             "evttc/low_label_05_scratch/summary.json",
-            {"evaluation_split": "validation", "final_test_opened": False},
+            {"evaluation_splits": ["validation"], "final_test_opened": False},
         ),
         (
             "evttc/low_label_010_jepa/summary.json",
-            {"evaluation_split": "validation", "final_test_opened": False},
+            {"evaluation_splits": ["validation"], "final_test_opened": False},
         ),
         (
             "evttc/low_label_010_scratch/summary.json",
-            {"evaluation_split": "validation", "final_test_opened": False},
+            {"evaluation_splits": ["validation"], "final_test_opened": False},
         ),
         ("eap/cache/manifest.json", {"evaluation_split": "validation", "final_test_opened": False}),
         (
             "eap/matrix/pretrain/seed-7/summary.json",
-            {"evaluation_split": "validation", "final_test_opened": False},
+            {"evaluation_splits": ["validation"], "final_test_opened": False},
         ),
         (
             "eap/matrix/finetune/jepa/fraction-1/seed-7/summary.json",
-            {"evaluation_split": "validation", "final_test_opened": False},
+            {"evaluation_splits": ["validation"], "final_test_opened": False},
         ),
         (
             "eap/matrix/finetune/scratch/fraction-1/seed-7/summary.json",
-            {"evaluation_split": "validation", "final_test_opened": False},
+            {"evaluation_splits": ["validation"], "final_test_opened": False},
         ),
         (
             "eap/matrix/finetune/jepa/fraction-0.1/seed-7/summary.json",
-            {"evaluation_split": "validation", "final_test_opened": False},
+            {"evaluation_splits": ["validation"], "final_test_opened": False},
         ),
         (
             "eap/matrix/finetune/scratch/fraction-0.1/seed-7/summary.json",
-            {"evaluation_split": "validation", "final_test_opened": False},
+            {"evaluation_splits": ["validation"], "final_test_opened": False},
         ),
         (
             "eap/matrix/finetune/jepa/fraction-0.05/seed-7/summary.json",
-            {"evaluation_split": "validation", "final_test_opened": False},
+            {"evaluation_splits": ["validation"], "final_test_opened": False},
         ),
         (
             "eap/matrix/finetune/scratch/fraction-0.05/seed-7/summary.json",
-            {"evaluation_split": "validation", "final_test_opened": False},
+            {"evaluation_splits": ["validation"], "final_test_opened": False},
         ),
         (
             "eap/matrix/matrix_summary.json",
-            {"evaluation_split": "validation", "final_test_opened": False},
+            {"evaluation_splits": ["validation"], "final_test_opened": False},
         ),
         (
             "eap/matrix/eap_split_statistics.json",
-            {"evaluation_split": "validation", "final_test_opened": False},
+            {"evaluation_splits": ["validation"], "final_test_opened": False},
         ),
         (
             "onnx/model_manifest.json",
@@ -110,12 +110,14 @@ def _setup_mock_smoke_dir(tmp_path: Path):
             "onnx/benchmark.json",
             {
                 "warmup_iterations": 50,
-                "measured_iterations": 500,
-                "latency_ms": {"p50_ms": 1, "p95_ms": 2, "p99_ms": 3},
+                "iterations": 500,
+                "p50_ms": 1,
+                "p95_ms": 2,
+                "p99_ms": 3,
             },
         ),
         (
-            "evttc/cache_validation.json",
+            "evttc/cache/cache_validation.json",
             {
                 "status": "passed",
                 "cache_format_version": 2,
@@ -215,7 +217,7 @@ def test_verify_detects_nan_in_auprc_with_support(mock_sess, mock_load, mock_che
     with open(tmp_path / "evttc" / "ssl_navigation_enabled" / "summary.json", "w") as f:
         json.dump(
             {
-                "evaluation_split": "validation",
+                "evaluation_splits": ["validation"],
                 "final_test_opened": False,
                 "auprc": float("nan"),
                 "class_support": {"positive": 10, "negative": 10},

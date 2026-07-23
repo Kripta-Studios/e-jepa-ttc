@@ -99,7 +99,7 @@ def main() -> None:
         smoke_dir / "onnx" / "model_manifest.json",
         smoke_dir / "onnx" / "equivalence.json",
         smoke_dir / "onnx" / "benchmark.json",
-        smoke_dir / "evttc" / "cache_validation.json",
+        smoke_dir / "evttc" / "cache" / "cache_validation.json",
     ]
 
     manifest = {
@@ -144,11 +144,11 @@ def main() -> None:
                     # Summary validations
                     if req.name == "summary.json":
                         if (
-                            "evaluation_split" not in data
-                            or data["evaluation_split"] != "validation"
+                            "evaluation_splits" not in data
+                            or "validation" not in data["evaluation_splits"]
                         ):
                             manifest["failed_stages"].append(
-                                f"Missing/invalid evaluation_split in {req}"
+                                f"Missing/invalid evaluation_splits in {req}"
                             )
                             all_exist = False
                             continue
@@ -230,12 +230,11 @@ def main() -> None:
 
                     # ONNX benchmark validation
                     if req.name == "benchmark.json":
-                        l_data = data.get("latency_ms", {})
-                        if "p50_ms" not in l_data or "p95_ms" not in l_data or "p99_ms" not in l_data:
+                        if "p50_ms" not in data or "p95_ms" not in data or "p99_ms" not in data:
                             manifest["failed_stages"].append("Benchmark missing percentiles")
                             all_exist = False
                             continue
-                        if data.get("measured_iterations", 0) < 500:
+                        if data.get("iterations", 0) < 500:
                             manifest["failed_stages"].append("Benchmark insufficient iterations")
                             all_exist = False
                             continue
