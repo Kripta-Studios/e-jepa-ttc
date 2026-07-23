@@ -24,10 +24,10 @@ def export_to_onnx(checkpoint_path: Path, output_onnx: Path, model_type: str) ->
     elif model_type == "event-tubelet-transformer":
         cfg = checkpoint.get("resolved_model_config", {})
         embed_dim = cfg.get("embed_dim", 192)
-        depth = cfg.get("depth", 12)
-        num_heads = cfg.get("num_heads", 3)
+        depth = cfg.get("depth", 6)
+        num_heads = cfg.get("num_heads", 6)
         patch_size = cfg.get("patch_size", 16)
-        temporal_patch_size = cfg.get("temporal_patch_size", 2)
+        temporal_patch_size = cfg.get("temporal_patch_size", 1)
 
         model = EventTubeletTransformerRegressor(
             in_channels=in_channels,
