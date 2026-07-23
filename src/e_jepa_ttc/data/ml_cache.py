@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any
 
 import numpy as np
+from numpy.lib.npyio import NpzFile
 
 from e_jepa_ttc.data.evttc import (
     NAVIGATION_FEATURE_NAMES,
@@ -19,7 +20,7 @@ from e_jepa_ttc.representations.voxel_grid import encode_voxel_grid
 from e_jepa_ttc.utils.io import ensure_parent, read_structured, write_structured
 
 
-def validate_voxel_cache(cache: Any) -> None:
+def validate_voxel_cache(cache: NpzFile) -> None:
     if "cache_format_version" not in cache.files or int(cache["cache_format_version"]) < 2:
         msg = "Training requires cache_format_version >= 2."
         raise ValueError(msg)
@@ -42,7 +43,10 @@ def validate_voxel_cache(cache: Any) -> None:
         idx = rng.choice(x.shape[0], size=min(x.shape[0], 100), replace=False)
         sample = x[idx]
         if np.count_nonzero(sample) == 0:
-            msg = "Sparse occupancy audit failed: Sampled cache tensors are completely zero (no events)."
+            msg = (
+                "Sparse occupancy audit failed: "
+                "Sampled cache tensors are completely zero (no events)."
+            )
             raise ValueError(msg)
 
 

@@ -4,7 +4,7 @@ import sys
 from pathlib import Path
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--runs-dir", type=str, default="artifacts/runs")
     args = parser.parse_args()

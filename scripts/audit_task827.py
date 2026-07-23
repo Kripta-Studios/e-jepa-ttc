@@ -3,7 +3,7 @@ import time
 from pathlib import Path
 
 
-def main():
+def main() -> None:
     runs_dir = Path("artifacts/runs")
     audit_dir = Path("artifacts/audit")
     audit_dir.mkdir(parents=True, exist_ok=True)

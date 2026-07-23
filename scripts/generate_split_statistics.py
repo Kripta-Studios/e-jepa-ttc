@@ -4,7 +4,7 @@ from collections import defaultdict
 from pathlib import Path
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(
         description="Generate split statistics from a dataset manifest"
     )

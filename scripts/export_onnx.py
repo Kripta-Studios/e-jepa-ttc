@@ -12,9 +12,8 @@ from e_jepa_ttc.models.tiny_cnn import TinyCNNRegressor
 from e_jepa_ttc.models.token_transformer import EventTubeletTransformerRegressor
 
 
-def export_to_onnx(checkpoint_path: Path, output_onnx: Path, model_type: str):
+def export_to_onnx(checkpoint_path: Path, output_onnx: Path, model_type: str) -> None:
     print(f"Exporting {model_type} from {checkpoint_path} to {output_onnx}")
-    device = torch.device("cpu")
     checkpoint = torch.load(checkpoint_path, map_location="cpu", weights_only=True)
     in_channels = checkpoint.get("in_channels", 21)
 
@@ -69,7 +68,7 @@ def export_to_onnx(checkpoint_path: Path, output_onnx: Path, model_type: str):
     if isinstance(pt_outputs, torch.Tensor):
         np.testing.assert_allclose(pt_outputs.numpy(), ort_outputs[0], rtol=1e-3, atol=1e-5)
     else:
-        for pt_out, ort_out in zip(pt_outputs, ort_outputs):
+        for pt_out, ort_out in zip(pt_outputs, ort_outputs, strict=False):
             np.testing.assert_allclose(pt_out.numpy(), ort_out, rtol=1e-3, atol=1e-5)
     print("PyTorch-ONNX comparison successful!")
 
@@ -86,7 +85,7 @@ def export_to_onnx(checkpoint_path: Path, output_onnx: Path, model_type: str):
     print(f"ONNX Validation successful. Average latency on CPU: {elapsed * 1000:.2f} ms")
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description="Export PyTorch models to ONNX")
     parser.add_argument(
         "--checkpoint", type=str, required=True, help="Path to the model checkpoint"
