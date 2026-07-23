@@ -65,8 +65,8 @@ def export_to_onnx(
     else:
         dummy_input = torch.randn(sample_count, in_channels, 90, 160)
 
-    # Export with batch size 1 for dummy
-    export_input = dummy_input[:1]
+    # Export with full batch to avoid static shape tracing issues
+    export_input = dummy_input
 
     torch.onnx.export(
         model,

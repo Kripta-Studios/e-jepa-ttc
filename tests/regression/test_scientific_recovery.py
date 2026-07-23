@@ -42,6 +42,31 @@ def test_onnx_exporter_single_output() -> None:
         assert kwargs["output_names"] == ["log_ttc"]
 
 
+def test_onnx_export_traces_batch_size_correctly(tmp_path) -> None:
+    from scripts.export_onnx import export_to_onnx
+
+    # Create a small transformer to speed up the test
+    model = EventTubeletTransformerRegressor(in_channels=21, embed_dim=32, depth=1, num_heads=1)
+    checkpoint = {
+        "resolved_model_config": {
+            "embed_dim": 32,
+            "depth": 1,
+            "num_heads": 1,
+            "patch_size": 16,
+            "temporal_patch_size": 1,
+        },
+        "model_state_dict": model.state_dict(),
+    }
+    ckpt_path = tmp_path / "dummy.pt"
+    torch.save(checkpoint, ckpt_path)
+
+    out = tmp_path / "model.onnx"
+    # This will execute torch.onnx.export and onnxruntime.InferenceSession.run with a real batch > 1
+    # If the reshape is incorrectly traced as static, onnxruntime will crash here.
+    export_to_onnx(ckpt_path, out, "event-tubelet-transformer", sample_count=2)
+    assert out.exists()
+
+
 def test_eap_fractions_are_5_and_10() -> None:
     ps1_path = Path("scripts/run_eap_matrix.ps1")
     if ps1_path.exists():
@@ -155,7 +180,9 @@ def test_verify_detects_final_test_opened(tmp_path) -> None:
 @patch("onnxruntime.InferenceSession")
 @patch("torch.onnx.export")
 @patch("torch.load")
-def test_export_onnx_saves_manifest(mock_load, mock_export, mock_session, mock_onnx_load, mock_onnx_check, mock_assert, tmp_path) -> None:
+def test_export_onnx_saves_manifest(
+    mock_load, mock_export, mock_session, mock_onnx_load, mock_onnx_check, mock_assert, tmp_path
+) -> None:
     from scripts.export_onnx import export_to_onnx
 
     mock_load.return_value = {
@@ -176,7 +203,9 @@ def test_export_onnx_saves_manifest(mock_load, mock_export, mock_session, mock_o
 @patch("onnxruntime.InferenceSession")
 @patch("torch.onnx.export")
 @patch("torch.load")
-def test_export_onnx_saves_equivalence(mock_load, mock_export, mock_session, mock_onnx_load, mock_onnx_check, mock_assert, tmp_path) -> None:
+def test_export_onnx_saves_equivalence(
+    mock_load, mock_export, mock_session, mock_onnx_load, mock_onnx_check, mock_assert, tmp_path
+) -> None:
     from scripts.export_onnx import export_to_onnx
 
     mock_load.return_value = {
@@ -196,7 +225,9 @@ def test_export_onnx_saves_equivalence(mock_load, mock_export, mock_session, moc
 @patch("onnxruntime.InferenceSession")
 @patch("torch.onnx.export")
 @patch("torch.load")
-def test_export_onnx_saves_benchmark(mock_load, mock_export, mock_session, mock_onnx_load, mock_onnx_check, mock_assert, tmp_path) -> None:
+def test_export_onnx_saves_benchmark(
+    mock_load, mock_export, mock_session, mock_onnx_load, mock_onnx_check, mock_assert, tmp_path
+) -> None:
     from scripts.export_onnx import export_to_onnx
 
     mock_load.return_value = {
