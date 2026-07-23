@@ -1,6 +1,16 @@
 [
   {
-    "commit": "f60b68a",
+    "commit": "2c428bb",
+    "message": "fix: resolve track ID data leakage false positive by adding seq prefix",
+    "modified_files": [
+      "scripts/generate_split_statistics.py"
+    ],
+    "function": "Fixes track ID collision across independent sequences during data leakage checks.",
+    "smoke_executed": true,
+    "ci_status": "pending"
+  },
+  {
+    "commit": "b34c3b3",
     "message": "chore: Hardened run fingerprint, fixed script bugs, formatted with ruff",
     "modified_files": [
       "src/e_jepa_ttc/training/object_jepa.py",
@@ -16,7 +26,7 @@
       "tests/unit/test_jepa_training.py"
     ],
     "function": "Adds cryptographic payload-based run fingerprinting to prevent arbitrary flag injections. Fixes test suite assertions. Enforces strict provenance gates in run_all.ps1.",
-    "smoke_executed": true,
+    "smoke_executed": false,
     "ci_status": "pending"
   }
 ]
