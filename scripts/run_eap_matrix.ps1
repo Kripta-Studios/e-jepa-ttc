@@ -59,7 +59,7 @@ $cmdArgs = @(
     "--output-dir", $matrixOut,
     "--seeds"
 ) + ($seedsStr -split " ") + @(
-    "--label-fractions", "1.0", "0.1", "0.01",
+    "--label-fractions", "1.0", "0.10", "0.05",
     "--pretrain-epochs", "$epochsPre",
     "--finetune-epochs", "$epochsFine",
     "--batch-size", "32",

@@ -61,6 +61,14 @@ function Assert-CompletionGate {
             throw "Completion Gate Failed: Missing required artifact $file"
         }
     }
+
+    if ($Smoke) {
+        Write-Output "Running robust smoke completion verification..."
+        Invoke-Expression "uv run --no-sync python scripts/verify_smoke_completion.py --smoke-dir artifacts/smoke/current"
+        if ($LASTEXITCODE -ne 0) {
+            throw "Smoke Completion Gate Failed!"
+        }
+    }
 }
 Assert-CompletionGate
 

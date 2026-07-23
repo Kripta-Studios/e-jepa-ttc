@@ -18,21 +18,34 @@ def export_to_onnx(checkpoint_path: Path, output_onnx: Path, model_type: str) ->
     in_channels = checkpoint.get("in_channels", 21)
 
     if model_type == "tiny_cnn" or model_type == "tiny-cnn":
-        model = TinyCNNRegressor(in_channels=in_channels, num_risk_thresholds=4)
+        width = checkpoint.get("resolved_model_config", {}).get("width", 48)
+        model = TinyCNNRegressor(in_channels=in_channels, width=width)
         dummy_input = torch.randn(1, in_channels, 90, 160)
     elif model_type == "event-tubelet-transformer":
-        model = EventTubeletTransformerRegressor(in_channels=in_channels)
+        cfg = checkpoint.get("resolved_model_config", {})
+        embed_dim = cfg.get("embed_dim", 192)
+        depth = cfg.get("depth", 12)
+        num_heads = cfg.get("num_heads", 3)
+        patch_size = cfg.get("patch_size", 16)
+        temporal_patch_size = cfg.get("temporal_patch_size", 2)
+
+        model = EventTubeletTransformerRegressor(
+            in_channels=in_channels,
+            embed_dim=embed_dim,
+            depth=depth,
+            num_heads=num_heads,
+            patch_size=patch_size,
+            temporal_patch_size=temporal_patch_size,
+        )
         dummy_input = torch.randn(1, in_channels, 90, 160)
     else:
         raise ValueError(f"Unknown model_type: {model_type}")
 
-    if "model_state_dict" in checkpoint:
-        model.load_state_dict(checkpoint["model_state_dict"], strict=True)
-    elif "model_state" in checkpoint:
-        model.load_state_dict(checkpoint["model_state"], strict=True)
-    else:
-        model.load_state_dict(checkpoint, strict=True)
+    state_dict = checkpoint.get("model_state_dict", checkpoint.get("model_state", None))
+    if state_dict is None:
+        raise ValueError("Checkpoint lacks model_state_dict")
 
+    model.load_state_dict(state_dict, strict=True)
     model.eval()
 
     torch.onnx.export(
@@ -43,12 +56,10 @@ def export_to_onnx(checkpoint_path: Path, output_onnx: Path, model_type: str) ->
         opset_version=17,
         do_constant_folding=True,
         input_names=["input"],
-        output_names=["ttc_mean", "log_variance", "risk_logits"],
+        output_names=["log_ttc"],
         dynamic_axes={
             "input": {0: "batch_size"},
-            "ttc_mean": {0: "batch_size"},
-            "log_variance": {0: "batch_size"},
-            "risk_logits": {0: "batch_size"},
+            "log_ttc": {0: "batch_size"},
         },
     )
     print("ONNX export completed.")
