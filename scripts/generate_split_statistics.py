@@ -133,9 +133,10 @@ def main() -> None:
             split_stats[split]["windows"] += n_samples
 
             for i in range(n_samples):
-                seq_stats[seq_id]["unique_tracks"].add(track_id[i])
-                split_stats[split]["unique_tracks"].add(track_id[i])
-                split_tracks[split].add(track_id[i])
+                global_track_id = f"{seq_id}_{track_id[i]}"
+                seq_stats[seq_id]["unique_tracks"].add(global_track_id)
+                split_stats[split]["unique_tracks"].add(global_track_id)
+                split_tracks[split].add(global_track_id)
                 seq_stats[seq_id]["categories"][category[i]] += 1
                 split_stats[split]["categories"][category[i]] += 1
 
