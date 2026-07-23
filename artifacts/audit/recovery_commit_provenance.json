@@ -1,53 +1,64 @@
 [
-    {
-        "commit":  "6011aef",
-        "message":  "fix: update smoke completion gate payload schemas",
-        "ci_status":  "pending",
-        "function":  "Fixes mismatch between the actual artifacts generated in earlier phases and what Phase 5 expects.",
-        "modified_files":  [
-                               "scripts/verify_smoke_completion.py",
-                               "tests/regression/test_strict_smoke.py"
-                           ],
-        "smoke_executed":  false
-    },
-    {
-        "commit":  "5eae0c9",
-        "message":  "fix: change default ONNX model name from tiny-cnn to event-tubelet-transformer",
-        "modified_files":  [
-                               "scripts/select_best_onnx_candidate.py"
-                           ],
-        "function":  "Fixes ONNX checkpoint selection failing due to expecting tiny-cnn baseline model instead of the core event-tubelet-transformer.",
-        "smoke_executed":  true,
-        "ci_status":  "pending"
-    },
-    {
-        "commit":  "2c428bb",
-        "message":  "fix: resolve track ID data leakage false positive by adding seq prefix",
-        "modified_files":  [
-                               "scripts/generate_split_statistics.py"
-                           ],
-        "function":  "Fixes track ID collision across independent sequences during data leakage checks.",
-        "smoke_executed":  false,
-        "ci_status":  "pending"
-    },
-    {
-        "commit":  "b34c3b3",
-        "message":  "chore: Hardened run fingerprint, fixed script bugs, formatted with ruff",
-        "modified_files":  [
-                               "src/e_jepa_ttc/training/object_jepa.py",
-                               "src/e_jepa_ttc/training/supervised.py",
-                               "scripts/verify_checkpoint_provenance.py",
-                               "scripts/select_best_onnx_candidate.py",
-                               "scripts/generate_split_statistics.py",
-                               "scripts/run_all.ps1",
-                               "scripts/verify_full_completion.py",
-                               "scripts/export_onnx.py",
-                               "scripts/verify_smoke_completion.py",
-                               "tests/regression/test_strict_smoke.py",
-                               "tests/unit/test_jepa_training.py"
-                           ],
-        "function":  "Adds cryptographic payload-based run fingerprinting to prevent arbitrary flag injections. Fixes test suite assertions. Enforces strict provenance gates in run_all.ps1.",
-        "smoke_executed":  false,
-        "ci_status":  "pending"
-    }
+  {
+    "commit": "6011aef",
+    "message": "fix: update smoke completion gate payload schemas",
+    "ci_status": "pending",
+    "function": "Fixes mismatch between the actual artifacts generated in earlier phases and what Phase 5 expects.",
+    "modified_files": [
+      "scripts/verify_smoke_completion.py",
+      "tests/regression/test_strict_smoke.py"
+    ],
+    "smoke_executed": false
+  },
+  {
+    "commit": "5eae0c9",
+    "message": "fix: change default ONNX model name from tiny-cnn to event-tubelet-transformer",
+    "modified_files": [
+      "scripts/select_best_onnx_candidate.py"
+    ],
+    "function": "Fixes ONNX checkpoint selection failing due to expecting tiny-cnn baseline model instead of the core event-tubelet-transformer.",
+    "smoke_executed": true,
+    "ci_status": "pending"
+  },
+  {
+    "commit": "2c428bb",
+    "message": "fix: resolve track ID data leakage false positive by adding seq prefix",
+    "modified_files": [
+      "scripts/generate_split_statistics.py"
+    ],
+    "function": "Fixes track ID collision across independent sequences during data leakage checks.",
+    "smoke_executed": false,
+    "ci_status": "pending"
+  },
+  {
+    "commit": "b34c3b3",
+    "message": "chore: Hardened run fingerprint, fixed script bugs, formatted with ruff",
+    "modified_files": [
+      "src/e_jepa_ttc/training/object_jepa.py",
+      "src/e_jepa_ttc/training/supervised.py",
+      "scripts/verify_checkpoint_provenance.py",
+      "scripts/select_best_onnx_candidate.py",
+      "scripts/generate_split_statistics.py",
+      "scripts/run_all.ps1",
+      "scripts/verify_full_completion.py",
+      "scripts/export_onnx.py",
+      "scripts/verify_smoke_completion.py",
+      "tests/regression/test_strict_smoke.py",
+      "tests/unit/test_jepa_training.py"
+    ],
+    "function": "Adds cryptographic payload-based run fingerprinting to prevent arbitrary flag injections. Fixes test suite assertions. Enforces strict provenance gates in run_all.ps1.",
+    "smoke_executed": false,
+    "ci_status": "pending"
+  },
+  {
+    "commit": "81ccdb5",
+    "message": "Fix hallucinated cache_validation requirement and eAP split names in smoke verification",
+    "files_modified": [
+      "scripts/verify_smoke_completion.py",
+      "tests/regression/test_strict_smoke.py"
+    ],
+    "function": "Fix the completion gate to not fail on hallucinatory constraints",
+    "smoke_executed": false,
+    "ci_result": "pending"
+  }
 ]
