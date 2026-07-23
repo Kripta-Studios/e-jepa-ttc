@@ -13,86 +13,130 @@ def main() -> None:
 
     required_files = [
         smoke_dir / "evttc" / "cache_validation.json",
-        smoke_dir / "evttc" / "ssl" / "summary.json",
-        smoke_dir / "evttc" / "jepa" / "summary.json",
-        smoke_dir / "evttc" / "scratch" / "summary.json",
-        smoke_dir / "evttc" / "low_label_jepa_005" / "summary.json",
-        smoke_dir / "evttc" / "low_label_scratch_005" / "summary.json",
-        smoke_dir / "evttc" / "navigation_enabled" / "summary.json",
-        smoke_dir / "evttc" / "navigation_disabled" / "summary.json",
+        smoke_dir / "evttc" / "ssl_navigation_enabled" / "summary.json",
+        smoke_dir / "evttc" / "ssl_navigation_disabled" / "summary.json",
+        smoke_dir / "evttc" / "jepa_navigation_enabled" / "summary.json",
+        smoke_dir / "evttc" / "jepa_navigation_disabled" / "summary.json",
+        smoke_dir / "evttc" / "scratch_navigation_enabled" / "summary.json",
+        smoke_dir / "evttc" / "scratch_navigation_disabled" / "summary.json",
+        smoke_dir / "evttc" / "low_label_005_jepa" / "summary.json",
+        smoke_dir / "evttc" / "low_label_005_scratch" / "summary.json",
+        smoke_dir / "evttc" / "low_label_010_jepa" / "summary.json",
+        smoke_dir / "evttc" / "low_label_010_scratch" / "summary.json",
         smoke_dir / "eap" / "cache" / "manifest.json",
-        smoke_dir / "eap" / "matrix" / "summary.json",  # Maybe specific eap paths?
+        smoke_dir / "eap" / "pretrain" / "summary.json",
+        smoke_dir / "eap" / "jepa_full" / "summary.json",
+        smoke_dir / "eap" / "scratch_full" / "summary.json",
+        smoke_dir / "eap" / "jepa_005" / "summary.json",
+        smoke_dir / "eap" / "scratch_005" / "summary.json",
+        smoke_dir / "eap" / "jepa_010" / "summary.json",
+        smoke_dir / "eap" / "scratch_010" / "summary.json",
+        smoke_dir / "eap" / "calibration" / "summary.json",
+        smoke_dir / "eap" / "split_statistics.json",
         smoke_dir / "onnx" / "model.onnx",
+        smoke_dir / "onnx" / "model_manifest.json",
         smoke_dir / "onnx" / "equivalence.json",
         smoke_dir / "onnx" / "benchmark.json",
     ]
 
     manifest = {
-        "status": "passed",
-        "exit_code": 0,
-        "all_required_artifacts_exist": True,
+        "status": "failed",
+        "exit_code": 1,
+        "all_required_artifacts_exist": False,
+        "required_artifact_count": len(required_files),
+        "validated_artifact_count": 0,
         "final_test_opened": False,
         "cache_v2_validation_passed": True,
         "pytorch_onnx_equivalence_passed": True,
         "completed_stages": [],
         "failed_stages": [],
+        "commit": "",
     }
 
-    # Since eAP creates specific summaries, we should search for them.
+    try:
+        import subprocess
+
+        commit = subprocess.check_output(["git", "rev-parse", "HEAD"]).decode("utf-8").strip()
+        manifest["commit"] = commit
+    except Exception:
+        manifest["commit"] = "unknown"
+
+    all_exist = True
+    validated_count = 0
     for req in required_files:
         if not req.exists():
-            # Wait, the prompt lists very specific names for eAP:
-            # eap/jepa/summary.json, eap/scratch/summary.json,
-            # eap/calibration/summary.json, eap/split_statistics.json
-            if "eap" in req.parts and "matrix" in req.parts:
-                continue  # We will check eap dynamically
+            manifest["failed_stages"].append(f"Missing required artifact: {req}")
+            all_exist = False
+        else:
+            if req.suffix == ".json":
+                with open(req, encoding="utf-8") as f:
+                    try:
+                        data = json.load(f)
+                        if not data:
+                            manifest["failed_stages"].append(f"Empty JSON object: {req}")
+                            all_exist = False
+                        else:
+                            # Final test check
+                            if isinstance(data, dict):
+                                if data.get("final_test_opened") is True:
+                                    manifest["final_test_opened"] = True
+                                    manifest["failed_stages"].append(f"Final test opened in {req}")
+                                    all_exist = False
 
-            # We skip exact path checking here and rely on reading the summaries directly below
-            # to be more flexible, except for some strict ones.
+                            # Check NaNs
+                            def _check_nans(
+                                obj: dict | list | float | str,
+                                key: str = "",
+                                parent_dict: dict = None,
+                            ) -> bool:
+                                if isinstance(obj, dict):
+                                    for k, v in obj.items():
+                                        if _check_nans(v, k, obj):
+                                            return True
+                                elif isinstance(obj, list):
+                                    for v in obj:
+                                        if _check_nans(v, key, parent_dict):
+                                            return True
+                                elif isinstance(obj, float):
+                                    if math.isnan(obj) or math.isinf(obj):
+                                        if key in ("auprc", "auroc"):
+                                            if parent_dict and "class_support" in parent_dict:
+                                                if (
+                                                    parent_dict["class_support"].get("positive", 1)
+                                                    == 0
+                                                ):
+                                                    return False
+                                        return True
+                                return False
 
-    summaries = list(smoke_dir.rglob("summary.json"))
+                            if _check_nans(
+                                data, parent_dict=data if isinstance(data, dict) else None
+                            ):
+                                manifest["failed_stages"].append(f"NaN or Inf found in {req}")
+                                all_exist = False
 
-    for s_path in summaries:
-        with open(s_path, encoding="utf-8") as f:
-            try:
-                data = json.load(f)
-            except Exception:
-                manifest["status"] = "failed"
-                manifest["failed_stages"].append(str(s_path))
-                continue
+                            validated_count += 1
+                    except json.JSONDecodeError:
+                        manifest["failed_stages"].append(f"Invalid JSON: {req}")
+                        all_exist = False
+            else:
+                validated_count += 1
 
-        if data.get("final_test_opened") is True:
-            manifest["final_test_opened"] = True
-            manifest["status"] = "failed"
+    manifest["validated_artifact_count"] = validated_count
 
-        # Check NaNs (allow for auprc/auroc when missing classes in smoke test)
-        def _check_nans(obj: dict | list | float | str, key: str = "") -> bool:
-            if isinstance(obj, dict):
-                for k, v in obj.items():
-                    if _check_nans(v, k):
-                        return True
-            elif isinstance(obj, list):
-                for v in obj:
-                    if _check_nans(v, key):
-                        return True
-            elif isinstance(obj, float):
-                if math.isnan(obj) or math.isinf(obj):
-                    if key in ("auprc", "auroc"):
-                        return False
-                    return True
-            return False
+    if all_exist and validated_count == len(required_files):
+        manifest["all_required_artifacts_exist"] = True
+        manifest["status"] = "passed"
+        manifest["exit_code"] = 0
+        manifest["completed_stages"] = [str(p) for p in required_files]
+        manifest["failed_stages"] = []
 
-        if _check_nans(data):
-            manifest["status"] = "failed"
-            manifest["failed_stages"].append(f"{s_path} has NaNs")
-
-    # Write out manifest
-    out_path = smoke_dir / "completion_manifest.json"
-    with open(out_path, "w", encoding="utf-8") as f:
+    with open(smoke_dir / "completion_manifest.json", "w", encoding="utf-8") as f:
         json.dump(manifest, f, indent=2)
 
-    if manifest["status"] != "passed":
-        raise RuntimeError("Smoke completion gate failed")
+    if manifest["status"] == "failed":
+        print(f"Smoke completion gate failed. Missing/invalid: {manifest['failed_stages']}")
+        exit(1)
 
 
 if __name__ == "__main__":

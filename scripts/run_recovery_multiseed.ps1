@@ -24,8 +24,8 @@ $sslEpochs = if ($Smoke) { 2 } else { 30 }
 $downstreamEpochs = if ($Smoke) { 2 } else { 80 }
 $downstreamSeeds = if ($Smoke) { @(7) } else { @(7, 13, 21) }
 $suffix = if ($Smoke) { "smoke_only" } else { "post_fix_v3_cache_verified" }
-$fractions = if ($Smoke) { @(0.10) } else { @(0.10, 0.05) }
-$navModes = if ($Smoke) { @("enabled") } else { @("enabled", "disabled") }
+$fractions = if ($Smoke) { @(0.05, 0.10) } else { @(0.10, 0.05) }
+$navModes = if ($Smoke) { @("enabled", "disabled") } else { @("enabled", "disabled") }
 
 $outRoot = if ($Smoke) { "artifacts/smoke/current/evttc" } else { "artifacts/runs" }
 
@@ -63,52 +63,67 @@ foreach ($navMode in $navModes) {
             "--started-at", $scratchStarted, "--completed-at", $scratchCompleted,
             "--expected-commit", $baselineCommit
         )
-        if ($Smoke) { $registerArgs += "--smoke" }
-        Invoke-Python @registerArgs
-        if ($LASTEXITCODE -ne 0) { throw "Scratch nav ${navMode} seed $downstreamSeed registry append failed" }
-
-        # Low-label Scratch finetuning
-        foreach ($frac in $fractions) {
-            $fracStr = "frac$([math]::Round($frac * 100))"
-            $manifestPath = "artifacts/subsets/evttc_${fracStr}_seed${downstreamSeed}.json"
-            $lowLabelScratchOut = "$outRoot/recovery_scratch_nav${navMode}_seed${downstreamSeed}_${fracStr}_${suffix}"
-            $lowLabelScratchStarted = Get-Date -Format o
-            $lowLabelScratchCommand = "$pythonCmdStr -m e_jepa_ttc train tiny-cnn --cache $cache --output-dir $lowLabelScratchOut --epochs $downstreamEpochs --batch-size 32 --learning-rate 0.00003 --seed $downstreamSeed --device auto --model event-tubelet-transformer --navigation-mode $navMode --train-splits train --validation-splits validation --evaluation-splits train validation --train-fraction $frac --subset-manifest-path $manifestPath"
-            
-            if (-not $Smoke -and (Test-Path "$lowLabelScratchOut/tiny_cnn_best.pt")) {
-                Write-Output "Scratch low-label training ($navMode, $fracStr) for seed $downstreamSeed already exists. Skipping."
-                $lowLabelScratchCompleted = Get-Date -Format o
-            } else {
-                Invoke-Python -m e_jepa_ttc train tiny-cnn `
-                    --cache $cache `
-                    --output-dir $lowLabelScratchOut `
-                    --epochs $downstreamEpochs `
-                    --batch-size 32 `
-                    --learning-rate 0.00003 `
-                    --seed $downstreamSeed `
-                    --device auto `
-                    --model event-tubelet-transformer `
-                    --navigation-mode $navMode `
-                    --train-splits train `
-                    --validation-splits validation `
-                    --evaluation-splits train validation `
-                    --train-fraction $frac `
-                    --subset-manifest-path $manifestPath
-                if ($LASTEXITCODE -ne 0) { throw "Low-label Scratch nav ${navMode} seed $downstreamSeed frac $frac failed" }
-                $lowLabelScratchCompleted = Get-Date -Format o
+            if ($Smoke) {
+                $registerArgs += "--smoke"
+                # Copy to canonical path
+                $canonicalDir = "$outRoot/scratch_navigation_${navMode}"
+                New-Item -ItemType Directory -Force -Path $canonicalDir | Out-Null
+                Copy-Item -Force "$scratchOut/metrics.json" "$canonicalDir/summary.json"
             }
-            $registerArgs = @(
-                "scripts/register_recovery_run.py", "--run-id", "recovery-lowlabel-scratch-nav${navMode}-seed${downstreamSeed}-${fracStr}-${suffix}",
-                "--stage", "scratch_ttc", "--run-dir", $lowLabelScratchOut,
-                "--downstream-seed", $downstreamSeed,
-                "--requested-backbone", "event-tubelet-transformer", "--command", $lowLabelScratchCommand,
-                "--started-at", $lowLabelScratchStarted, "--completed-at", $lowLabelScratchCompleted,
-                "--expected-commit", $baselineCommit
-            )
-            if ($Smoke) { $registerArgs += "--smoke" }
             Invoke-Python @registerArgs
-            if ($LASTEXITCODE -ne 0) { throw "Low-label Scratch nav ${navMode} seed $downstreamSeed frac $frac registry append failed" }
-        }
+            if ($LASTEXITCODE -ne 0) { throw "Scratch nav ${navMode} seed $downstreamSeed registry append failed" }
+
+            # Low-label Scratch finetuning
+            foreach ($frac in $fractions) {
+                $fracStr = "frac$([math]::Round($frac * 100))"
+                $manifestPath = "artifacts/subsets/evttc_${fracStr}_seed${downstreamSeed}.json"
+                $lowLabelScratchOut = "$outRoot/recovery_scratch_nav${navMode}_seed${downstreamSeed}_${fracStr}_${suffix}"
+                $lowLabelScratchStarted = Get-Date -Format o
+                $lowLabelScratchCommand = "$pythonCmdStr -m e_jepa_ttc train tiny-cnn --cache $cache --output-dir $lowLabelScratchOut --epochs $downstreamEpochs --batch-size 32 --learning-rate 0.00003 --seed $downstreamSeed --device auto --model event-tubelet-transformer --navigation-mode $navMode --train-splits train --validation-splits validation --evaluation-splits train validation --train-fraction $frac --subset-manifest-path $manifestPath"
+                
+                if (-not $Smoke -and (Test-Path "$lowLabelScratchOut/tiny_cnn_best.pt")) {
+                    Write-Output "Scratch low-label training ($navMode, $fracStr) for seed $downstreamSeed already exists. Skipping."
+                    $lowLabelScratchCompleted = Get-Date -Format o
+                } else {
+                    Invoke-Python -m e_jepa_ttc train tiny-cnn `
+                        --cache $cache `
+                        --output-dir $lowLabelScratchOut `
+                        --epochs $downstreamEpochs `
+                        --batch-size 32 `
+                        --learning-rate 0.00003 `
+                        --seed $downstreamSeed `
+                        --device auto `
+                        --model event-tubelet-transformer `
+                        --navigation-mode $navMode `
+                        --train-splits train `
+                        --validation-splits validation `
+                        --evaluation-splits train validation `
+                        --train-fraction $frac `
+                        --subset-manifest-path $manifestPath
+                    if ($LASTEXITCODE -ne 0) { throw "Low-label Scratch nav ${navMode} seed $downstreamSeed frac $frac failed" }
+                    $lowLabelScratchCompleted = Get-Date -Format o
+                }
+                $registerArgs = @(
+                    "scripts/register_recovery_run.py", "--run-id", "recovery-lowlabel-scratch-nav${navMode}-seed${downstreamSeed}-${fracStr}-${suffix}",
+                    "--stage", "scratch_ttc", "--run-dir", $lowLabelScratchOut,
+                    "--downstream-seed", $downstreamSeed,
+                    "--requested-backbone", "event-tubelet-transformer", "--command", $lowLabelScratchCommand,
+                    "--started-at", $lowLabelScratchStarted, "--completed-at", $lowLabelScratchCompleted,
+                    "--expected-commit", $baselineCommit
+                )
+                if ($Smoke) {
+                    $registerArgs += "--smoke"
+                    # Copy to canonical path
+                    $canonicalDir = "$outRoot/low_label_0$([math]::Round($frac * 100))_scratch"
+                    New-Item -ItemType Directory -Force -Path $canonicalDir | Out-Null
+                    # Only copy if navMode is enabled (to avoid overwriting with disabled if both ran, but we run both in smoke)
+                    if ($navMode -eq "enabled" -or -not (Test-Path "$canonicalDir/summary.json")) {
+                        Copy-Item -Force "$lowLabelScratchOut/metrics.json" "$canonicalDir/summary.json"
+                    }
+                }
+                Invoke-Python @registerArgs
+                if ($LASTEXITCODE -ne 0) { throw "Low-label Scratch nav ${navMode} seed $downstreamSeed frac $frac registry append failed" }
+            }
     }
 
     # 2. JEPA Pretraining and Fine-tuning
@@ -152,7 +167,12 @@ foreach ($navMode in $navModes) {
             "--started-at", $sslStarted, "--completed-at", $sslCompleted,
             "--expected-commit", $baselineCommit
         )
-        if ($Smoke) { $registerArgs += "--smoke" }
+        if ($Smoke) {
+            $registerArgs += "--smoke"
+            $canonicalDir = "$outRoot/ssl_navigation_${navMode}"
+            New-Item -ItemType Directory -Force -Path $canonicalDir | Out-Null
+            Copy-Item -Force "$sslOut/metrics.json" "$canonicalDir/summary.json"
+        }
         Invoke-Python @registerArgs
         if ($LASTEXITCODE -ne 0) { throw "SSL nav ${navMode} seed $seed registry append failed" }
 
@@ -191,7 +211,12 @@ foreach ($navMode in $navModes) {
                 "--started-at", $downstreamStarted, "--completed-at", $downstreamCompleted,
                 "--expected-commit", $baselineCommit
             )
-            if ($Smoke) { $registerArgs += "--smoke" }
+            if ($Smoke) {
+                $registerArgs += "--smoke"
+                $canonicalDir = "$outRoot/jepa_navigation_${navMode}"
+                New-Item -ItemType Directory -Force -Path $canonicalDir | Out-Null
+                Copy-Item -Force "$downstreamOut/metrics.json" "$canonicalDir/summary.json"
+            }
             Invoke-Python @registerArgs
             if ($LASTEXITCODE -ne 0) { throw "Downstream SSL $seed nav ${navMode} seed $downstreamSeed registry append failed" }
 
@@ -235,7 +260,14 @@ foreach ($navMode in $navModes) {
                     "--started-at", $lowLabelStarted, "--completed-at", $lowLabelCompleted,
                     "--expected-commit", $baselineCommit
                 )
-                if ($Smoke) { $registerArgs += "--smoke" }
+                if ($Smoke) {
+                    $registerArgs += "--smoke"
+                    $canonicalDir = "$outRoot/low_label_0$([math]::Round($frac * 100))_jepa"
+                    New-Item -ItemType Directory -Force -Path $canonicalDir | Out-Null
+                    if ($navMode -eq "enabled" -or -not (Test-Path "$canonicalDir/summary.json")) {
+                        Copy-Item -Force "$lowLabelOut/metrics.json" "$canonicalDir/summary.json"
+                    }
+                }
                 Invoke-Python @registerArgs
                 if ($LASTEXITCODE -ne 0) { throw "Low-label SSL $seed nav ${navMode} seed $downstreamSeed frac $frac registry append failed" }
             }

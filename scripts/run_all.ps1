@@ -41,27 +41,15 @@ if (-not (Test-Path $onnxCheckpoint)) {
     throw "Validation-selected ONNX checkpoint is missing: $onnxCheckpoint"
 }
 
-$onnxOut = if ($Smoke) { "artifacts/smoke/current/ttc_model.onnx" } else { "artifacts/runs/ttc_model.onnx" }
-$cmd = "uv run --no-sync python scripts/export_onnx.py --checkpoint $onnxCheckpoint --output $onnxOut"
+$onnxOut = if ($Smoke) { "artifacts/smoke/current/onnx/model.onnx" } else { "artifacts/onnx/final/model.onnx" }
+$onnxOutDir = Split-Path $onnxOut -Parent
+New-Item -ItemType Directory -Force -Path $onnxOutDir | Out-Null
+$cmd = "uv run --no-sync python scripts/export_onnx.py --checkpoint $onnxCheckpoint --output $onnxOut --cache artifacts/features/evttc_full_starter_voxel_160x90_b5_raw_meta_nav.npz --validation-split validation --sample-count 32"
 Invoke-Expression $cmd
 if ($LASTEXITCODE -ne 0) { throw "ONNX validation failed" }
 
 Write-Output "=== PHASE 5: Final Validation Gate ==="
 function Assert-CompletionGate {
-    $eapSplitStats = if ($Smoke) { "artifacts/smoke/current/eap/matrix/eap_split_statistics.json" } else { "artifacts/data_audit/eap_split_statistics.json" }
-    $manifestPath = if ($Smoke) { "artifacts/features/smoke_nav_voxel.summary.json" } else { "artifacts/features/evttc_full_starter_voxel_160x90_b5_raw_meta_nav.summary.json" }
-    
-    $requiredFiles = @(
-        $manifestPath,
-        $onnxOut,
-        $eapSplitStats
-    )
-    foreach ($file in $requiredFiles) {
-        if (-not (Test-Path $file)) {
-            throw "Completion Gate Failed: Missing required artifact $file"
-        }
-    }
-
     if ($Smoke) {
         Write-Output "Running robust smoke completion verification..."
         Invoke-Expression "uv run --no-sync python scripts/verify_smoke_completion.py --smoke-dir artifacts/smoke/current"

@@ -120,6 +120,10 @@ def binary_risk_metrics(labels: np.ndarray, probabilities: np.ndarray) -> dict[s
                 + (1 - target) * np.log(np.maximum(1.0 - probability, 1e-12))
             )
         ),
+        "class_support": {
+            "positive": int(np.count_nonzero(positive)),
+            "negative": int(np.count_nonzero(negative)),
+        },
     }
 
 
