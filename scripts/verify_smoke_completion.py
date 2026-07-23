@@ -12,27 +12,68 @@ def main() -> None:
     smoke_dir = args.smoke_dir
 
     required_files = [
-        smoke_dir / "evttc" / "cache_validation.json",
         smoke_dir / "evttc" / "ssl_navigation_enabled" / "summary.json",
         smoke_dir / "evttc" / "ssl_navigation_disabled" / "summary.json",
         smoke_dir / "evttc" / "jepa_navigation_enabled" / "summary.json",
         smoke_dir / "evttc" / "jepa_navigation_disabled" / "summary.json",
         smoke_dir / "evttc" / "scratch_navigation_enabled" / "summary.json",
         smoke_dir / "evttc" / "scratch_navigation_disabled" / "summary.json",
-        smoke_dir / "evttc" / "low_label_005_jepa" / "summary.json",
-        smoke_dir / "evttc" / "low_label_005_scratch" / "summary.json",
+        smoke_dir / "evttc" / "low_label_05_jepa" / "summary.json",
+        smoke_dir / "evttc" / "low_label_05_scratch" / "summary.json",
         smoke_dir / "evttc" / "low_label_010_jepa" / "summary.json",
         smoke_dir / "evttc" / "low_label_010_scratch" / "summary.json",
         smoke_dir / "eap" / "cache" / "manifest.json",
-        smoke_dir / "eap" / "pretrain" / "summary.json",
-        smoke_dir / "eap" / "jepa_full" / "summary.json",
-        smoke_dir / "eap" / "scratch_full" / "summary.json",
-        smoke_dir / "eap" / "jepa_005" / "summary.json",
-        smoke_dir / "eap" / "scratch_005" / "summary.json",
-        smoke_dir / "eap" / "jepa_010" / "summary.json",
-        smoke_dir / "eap" / "scratch_010" / "summary.json",
-        smoke_dir / "eap" / "calibration" / "summary.json",
-        smoke_dir / "eap" / "split_statistics.json",
+        smoke_dir / "eap" / "matrix" / "pretrain" / "seed-7" / "summary.json",
+        smoke_dir
+        / "eap"
+        / "matrix"
+        / "finetune"
+        / "jepa"
+        / "fraction-1"
+        / "seed-7"
+        / "summary.json",
+        smoke_dir
+        / "eap"
+        / "matrix"
+        / "finetune"
+        / "scratch"
+        / "fraction-1"
+        / "seed-7"
+        / "summary.json",
+        smoke_dir
+        / "eap"
+        / "matrix"
+        / "finetune"
+        / "jepa"
+        / "fraction-0.1"
+        / "seed-7"
+        / "summary.json",
+        smoke_dir
+        / "eap"
+        / "matrix"
+        / "finetune"
+        / "scratch"
+        / "fraction-0.1"
+        / "seed-7"
+        / "summary.json",
+        smoke_dir
+        / "eap"
+        / "matrix"
+        / "finetune"
+        / "jepa"
+        / "fraction-0.05"
+        / "seed-7"
+        / "summary.json",
+        smoke_dir
+        / "eap"
+        / "matrix"
+        / "finetune"
+        / "scratch"
+        / "fraction-0.05"
+        / "seed-7"
+        / "summary.json",
+        smoke_dir / "eap" / "matrix" / "matrix_summary.json",
+        smoke_dir / "eap" / "matrix" / "eap_split_statistics.json",
         smoke_dir / "onnx" / "model.onnx",
         smoke_dir / "onnx" / "model_manifest.json",
         smoke_dir / "onnx" / "equivalence.json",

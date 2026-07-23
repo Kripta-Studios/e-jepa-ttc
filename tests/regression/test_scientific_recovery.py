@@ -163,6 +163,20 @@ def test_verify_allows_nan_auroc_when_no_support(tmp_path) -> None:
     pass
 
 
+def test_verify_expects_correct_eap_matrix_and_low_label_paths() -> None:
+
+    script_path = Path("scripts/verify_smoke_completion.py")
+    if script_path.exists():
+        content = script_path.read_text(encoding="utf-8")
+        assert "low_label_05_jepa" in content
+        assert "low_label_005_jepa" not in content
+        assert "matrix" in content
+        assert "pretrain" in content
+        assert "seed-7" in content
+        assert "finetune" in content
+        assert "cache_validation.json" not in content
+
+
 def test_verify_detects_final_test_opened(tmp_path) -> None:
     import sys
 
