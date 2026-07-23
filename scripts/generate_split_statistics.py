@@ -98,6 +98,8 @@ def main() -> None:
     for shard in shards:
         seq_id = shard["sequence_id"]
         split = sequence_splits.get(seq_id, "unknown")
+        if split == "unknown":
+            raise ValueError(f"Validation failed: Sequence {seq_id} not assigned to any split.")
 
         path = manifest_dir / shard["path"]
         if not path.exists():
@@ -114,6 +116,8 @@ def main() -> None:
         try:
             data = np.load(path, allow_pickle=True)
             ttc_s = data["ttc_s"].squeeze(-1) if data["ttc_s"].ndim > 1 else data["ttc_s"]
+            if np.any(np.isnan(ttc_s)):
+                raise ValueError(f"Validation failed: NaN TTC values detected in shard {path}")
             track_id = data["track_id"]
             category = data["category"]
             n_samples = ttc_s.shape[0]
@@ -166,6 +170,7 @@ def main() -> None:
 
         except Exception as e:
             logging.error(f"Error reading {path}: {e}")
+            raise
 
     final_seq_stats = {k: _finalize_stats(v) for k, v in seq_stats.items()}
     final_split_stats = {k: _finalize_stats(v) for k, v in split_stats.items()}

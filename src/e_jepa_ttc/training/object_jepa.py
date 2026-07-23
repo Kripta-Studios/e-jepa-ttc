@@ -17,6 +17,23 @@ from torch import nn
 from torch.nn import functional as functional
 from torch.utils.data import DataLoader, Dataset, Subset
 
+def _hash_file(filepath: str | Path) -> str:
+    import hashlib
+    h = hashlib.sha256()
+    if not Path(filepath).exists():
+        return ""
+    with open(filepath, "rb") as f:
+        for chunk in iter(lambda: f.read(8192 * 1024), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+def _get_git_commit() -> str:
+    import subprocess
+    try:
+        return subprocess.check_output(["git", "rev-parse", "HEAD"]).decode("ascii").strip()
+    except Exception:
+        return "unknown"
+
 from e_jepa_ttc.data.eap_cache import EAPObjectCacheDataset, ShardLocalSampler
 from e_jepa_ttc.evaluation.bootstrap import sequence_bootstrap_interval
 from e_jepa_ttc.evaluation.calibration import (
@@ -325,6 +342,9 @@ def pretrain_object_event_jepa(
                         "uses_ttc_labels": False,
                         "uses_ego_actions": use_ego_actions,
                         "cache_manifest": str(cache_manifest_path),
+                        "manifest_sha256": _hash_file(cache_manifest_path),
+                        "git_commit": _get_git_commit(),
+                        "protocol_version": "2.0",
                     },
                     best_path,
                 )
@@ -339,6 +359,9 @@ def pretrain_object_event_jepa(
             "uses_ttc_labels": False,
             "uses_ego_actions": use_ego_actions,
             "cache_manifest": str(cache_manifest_path),
+            "manifest_sha256": _hash_file(cache_manifest_path),
+            "git_commit": _get_git_commit(),
+            "protocol_version": "2.0",
         },
         last_path,
     )
@@ -363,6 +386,10 @@ def pretrain_object_event_jepa(
         "validation_samples": len(validation_dataset),
         "elapsed_seconds": time.perf_counter() - start_time,
         "history": history,
+        "manifest_sha256": _hash_file(cache_manifest_path),
+        "git_commit": _get_git_commit(),
+        "protocol_version": "2.0",
+        "final_test_opened": False,
     }
     write_structured(output / "summary.json", summary)
     train_dataset.close()
@@ -737,6 +764,9 @@ def fine_tune_object_ttc(
                         "uses_ego_actions": use_ego_actions,
                         "checkpoint_role": "best",
                         "selected_by": "validation_inverse_ttc_mae",
+                        "manifest_sha256": _hash_file(cache_manifest_path),
+                        "git_commit": _get_git_commit(),
+                        "protocol_version": "2.0",
                     },
                     best_path,
                 )
@@ -786,6 +816,9 @@ def fine_tune_object_ttc(
         "final_test_opened": "test" in report_splits,
         "elapsed_seconds": time.perf_counter() - start_time,
         "best_checkpoint": best_path.as_posix(),
+        "manifest_sha256": _hash_file(cache_manifest_path),
+        "git_commit": _get_git_commit(),
+        "protocol_version": "2.0",
     }
 
     if "calibration" in report_splits and conformal is not None:
@@ -951,6 +984,7 @@ def evaluate_object_ttc_checkpoint(
         "fit_on_evaluation_data": False,
         "uses_ego_actions": use_ego_actions,
         "metrics": metrics,
+        "final_test_opened": "test" in splits or "CPLA-high" in splits,
     }
     destination = Path(output_path)
     write_structured(destination, payload)

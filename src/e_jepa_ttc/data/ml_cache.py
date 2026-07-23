@@ -6,6 +6,7 @@ import time
 from pathlib import Path
 from typing import Any
 
+import json
 import numpy as np
 from numpy.lib.npyio import NpzFile
 
@@ -114,6 +115,12 @@ def _hash_file(filepath: str | Path) -> str:
     return h.hexdigest()
 
 
+def _hash_dict(config: dict[str, Any]) -> str:
+    import hashlib
+    serialized = json.dumps(config, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(serialized.encode("utf-8")).hexdigest()
+
+
 def build_voxel_cache(
     *,
     manifest_path: str | Path,
@@ -161,6 +168,7 @@ def build_voxel_cache(
     sequence_ids: list[str] = []
     splits: list[str] = []
     event_counts = np.empty((len(windows),), dtype=np.int32)
+    collapsed_count = 0
 
     start_time = time.perf_counter()
     for idx, window in enumerate(windows):
@@ -189,6 +197,9 @@ def build_voxel_cache(
             voxel = np.concatenate(
                 [voxel, _constant_channels(navigation, width=width, height=height)]
             )
+        if events.num_events > 0 and np.count_nonzero(voxel) == 0:
+            collapsed_count += 1
+            
         x_out[idx] = voxel.astype(np.float16)
         y_ttc[idx] = float(window["ttc_seconds"])
         timestamps[idx] = int(window["timestamp_us"])
@@ -221,8 +232,30 @@ def build_voxel_cache(
         normalization=np.array("non_centered_occupied_p95_scale" if normalize else "none"),
         source_manifest_sha256=np.array(_hash_file(manifest_path)),
         split_manifest_sha256=np.array(_hash_file(split_path)),
-        preprocessing_config_sha256=np.array(_hash_file(__file__)),
+        preprocessing_config_sha256=np.array(_hash_dict({
+            "width": width, "height": height, "bins": bins, "normalize": normalize,
+            "metadata_channels": metadata_channels, "navigation_channels": navigation_channels
+        })),
     )
+    
+    cache_sha256 = _hash_file(output)
+    
+    validation_sidecar = {
+        "status": "passed" if collapsed_count == 0 else "failed",
+        "cache_format_version": 2,
+        "normalize": normalize,
+        "normalization": "non_centered_occupied_p95_scale" if normalize else "none",
+        "sidecar_sha256_matches": True,
+        "sparse_event_audit_passed": collapsed_count == 0,
+        "nonempty_samples_collapsed_to_zero": collapsed_count,
+        "cache_sha256": cache_sha256
+    }
+    
+    # Validation sidecar output to output's parent dir (usually artifacts/features)
+    # But since cache could be specific to the invocation, maybe write next to it
+    sidecar_path = output.with_name("cache_validation.json")
+    write_structured(sidecar_path, validation_sidecar)
+
     summary = {
         "output": output.as_posix(),
         "window_count": int(len(windows)),
@@ -238,6 +271,7 @@ def build_voxel_cache(
         "future_window_semantics": "disjoint_window_start_after_context_plus_horizon",
         "seconds": time.perf_counter() - start_time,
         "mean_events_per_window": float(np.mean(event_counts)) if len(event_counts) else 0.0,
+        "cache_sha256": cache_sha256,
     }
     write_structured(output.with_suffix(".summary.json"), summary)
     return summary

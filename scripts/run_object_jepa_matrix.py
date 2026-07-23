@@ -22,6 +22,16 @@ def _load(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def _check_provenance(summary_path: Path) -> bool:
+    try:
+        import subprocess
+        expected_commit = subprocess.check_output(["git", "rev-parse", "HEAD"]).decode("ascii").strip()
+        summary = _load(summary_path)
+        return summary.get("git_commit") == expected_commit
+    except Exception:
+        return False
+
+
 def _run_or_resume_pretraining(
     *,
     cache: Path,
@@ -30,7 +40,7 @@ def _run_or_resume_pretraining(
     args: argparse.Namespace,
 ) -> dict[str, Any]:
     summary_path = output / "summary.json"
-    if args.resume and summary_path.is_file():
+    if args.resume and summary_path.is_file() and _check_provenance(summary_path):
         return _load(summary_path)
     return pretrain_object_event_jepa(
         cache_manifest_path=cache,
@@ -62,7 +72,7 @@ def _run_or_resume_finetuning(
     args: argparse.Namespace,
 ) -> dict[str, Any]:
     summary_path = output / "summary.json"
-    if args.resume and summary_path.is_file():
+    if args.resume and summary_path.is_file() and _check_provenance(summary_path):
         return _load(summary_path)
     return fine_tune_object_ttc(
         cache_manifest_path=cache,

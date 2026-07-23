@@ -13,6 +13,21 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader, Dataset
 
+def _hash_file(filepath: str | Path) -> str:
+    import hashlib
+    h = hashlib.sha256()
+    with open(filepath, "rb") as f:
+        for chunk in iter(lambda: f.read(8192 * 1024), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+def _get_git_commit() -> str:
+    import subprocess
+    try:
+        return subprocess.check_output(["git", "rev-parse", "HEAD"]).decode("ascii").strip()
+    except Exception:
+        return "unknown"
+
 from e_jepa_ttc.data.ml_cache import validate_voxel_cache
 from e_jepa_ttc.evaluation.metrics import regression_metrics
 from e_jepa_ttc.models import build_regressor
@@ -213,11 +228,13 @@ def train_tiny_cnn(
         msg = f"Requested evaluation splits are empty: {missing_eval_splits}."
         raise ValueError(msg)
     full_train_count = int(train_idx.size)
+    subset_sha256 = ""
     if subset_manifest_path is not None and Path(subset_manifest_path).exists():
         manifest_path = Path(subset_manifest_path)
         with manifest_path.open("r", encoding="utf-8") as f:
             manifest_data = json.load(f)
         train_idx = np.array(manifest_data["global_indices"], dtype=np.int64)
+        subset_sha256 = manifest_data.get("sha256", _hash_file(manifest_path))
         print(f"Loaded subset manifest from {manifest_path} with {train_idx.size} samples.")
     elif train_fraction < 1.0:
         rng = np.random.default_rng(seed)
@@ -241,11 +258,16 @@ def train_tiny_cnn(
                 "effective_fraction": float(train_idx.size / full_train_count),
             }
             payload_bytes = json.dumps(payload, sort_keys=True).encode("utf-8")
-            payload["sha256"] = hashlib.sha256(payload_bytes).hexdigest()
+            subset_sha256 = hashlib.sha256(payload_bytes).hexdigest()
+            payload["sha256"] = subset_sha256
 
             with manifest_path.open("w", encoding="utf-8") as f:
                 json.dump(payload, f, indent=2)
             print(f"Saved subset manifest to {manifest_path}")
+
+    commit = _get_git_commit()
+    cache_sha256 = _hash_file(cache_path)
+    split_manifest_sha256 = str(cache["split_manifest_sha256"]) if "split_manifest_sha256" in cache else ""
 
     if device_name == "auto":
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -340,6 +362,17 @@ def train_tiny_cnn(
                         "seed": seed,
                         "pretrained_encoder": pretrained_encoder,
                         "in_channels": int(x.shape[1]),
+                        "cache_sha256": cache_sha256,
+                        "split_manifest_sha256": split_manifest_sha256,
+                        "subset_manifest_sha256": subset_sha256,
+                        "navigation_mode": navigation_mode,
+                        "label_fraction": train_fraction,
+                        "protocol_version": "2.0",
+                        "git_commit": commit,
+                        "resolved_model_config": {
+                            "in_channels": int(x.shape[1]),
+                            "width": getattr(model, "width", 48) if hasattr(model, "width") else 48
+                        },
                     },
                     best_path,
                 )
@@ -355,6 +388,17 @@ def train_tiny_cnn(
             "seed": seed,
             "pretrained_encoder": pretrained_encoder,
             "in_channels": int(x.shape[1]),
+            "cache_sha256": cache_sha256,
+            "split_manifest_sha256": split_manifest_sha256,
+            "subset_manifest_sha256": subset_sha256,
+            "navigation_mode": navigation_mode,
+            "label_fraction": train_fraction,
+            "protocol_version": "2.0",
+            "git_commit": commit,
+            "resolved_model_config": {
+                "in_channels": int(x.shape[1]),
+                "width": getattr(model, "width", 48) if hasattr(model, "width") else 48
+            },
         },
         last_path,
     )
@@ -411,6 +455,13 @@ def train_tiny_cnn(
         "last_checkpoint": last_path.as_posix(),
         "elapsed_seconds": time.perf_counter() - start_time,
         "splits": split_results,
+        "cache_sha256": cache_sha256,
+        "split_manifest_sha256": split_manifest_sha256,
+        "subset_manifest_sha256": subset_sha256,
+        "navigation_mode": navigation_mode,
+        "protocol_version": "2.0",
+        "git_commit": commit,
+        "final_test_opened": False,
     }
     write_structured(metrics_path, summary)
     prediction_arrays: dict[str, np.ndarray] = {}
@@ -434,14 +485,19 @@ def evaluate_supervised_checkpoint(
     output_path: str | Path | None = None,
     batch_size: int = 64,
     device_name: str = "auto",
-    evaluation_splits: tuple[str, ...] = ("test",),
+    evaluation_splits: tuple[str, ...] = ("validation",),
     model_name: str | None = None,
+    allow_final_test_evaluation: bool = False,
 ) -> dict[str, Any]:
     """Evaluate a saved supervised TTC checkpoint without retraining."""
 
     if not evaluation_splits:
         msg = "evaluation_splits must contain at least one split."
         raise ValueError(msg)
+    if not allow_final_test_evaluation and any("test" in s or "CPLA-high" in s for s in evaluation_splits):
+        raise ValueError(
+            "Evaluation on test or CPLA-high splits requires allow_final_test_evaluation=True."
+        )
     if batch_size <= 0:
         msg = "batch_size must be positive."
         raise ValueError(msg)
@@ -529,6 +585,7 @@ def evaluate_supervised_checkpoint(
         "batch_size": batch_size,
         "evaluation_splits": list(evaluation_splits),
         "splits": split_results,
+        "final_test_opened": allow_final_test_evaluation,
     }
     if output_path is not None:
         output = ensure_parent(output_path)

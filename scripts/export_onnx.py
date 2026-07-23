@@ -1,5 +1,7 @@
 import argparse
 import json
+import hashlib
+import sys
 import time
 from pathlib import Path
 
@@ -22,17 +24,20 @@ def export_to_onnx(
 ) -> None:
     print(f"Exporting {model_type} from {checkpoint_path} to {output_onnx}")
     checkpoint = torch.load(checkpoint_path, map_location="cpu", weights_only=True)
-    in_channels = checkpoint.get("in_channels", 21)
+    cfg = checkpoint.get("resolved_model_config", {})
+    if not cfg:
+        raise ValueError("Checkpoint lacks resolved_model_config")
+    
+    in_channels = cfg.get("in_channels", checkpoint.get("in_channels", 21))
 
     if model_type == "tiny_cnn" or model_type == "tiny-cnn":
-        width = checkpoint.get("resolved_model_config", {}).get("width", 48)
+        width = cfg.get("width", 48)
         model = TinyCNNRegressor(in_channels=in_channels, width=width)
     elif model_type == "event-tubelet-transformer":
-        cfg = checkpoint.get("resolved_model_config", {})
-        embed_dim = cfg.get("embed_dim", 192)
-        depth = cfg.get("depth", 6)
-        num_heads = cfg.get("num_heads", 6)
-        patch_size = cfg.get("patch_size", 16)
+        embed_dim = cfg["embed_dim"]
+        depth = cfg["depth"]
+        num_heads = cfg["num_heads"]
+        patch_size = cfg["patch_size"]
         temporal_patch_size = cfg.get("temporal_patch_size", 1)
 
         model = EventTubeletTransformerRegressor(
@@ -46,24 +51,24 @@ def export_to_onnx(
     else:
         raise ValueError(f"Unknown model_type: {model_type}")
 
-    state_dict = checkpoint.get("model_state_dict", checkpoint.get("model_state", None))
+    state_dict = checkpoint.get("model_state_dict")
     if state_dict is None:
-        raise ValueError("Checkpoint lacks model_state_dict")
+        raise ValueError("Checkpoint lacks model_state_dict exactly")
 
     model.load_state_dict(state_dict, strict=True)
     model.eval()
 
-    if cache_path and Path(cache_path).exists():
-        cache_data = np.load(cache_path)
-        mask = cache_data["split"] == validation_split
-        x = cache_data["x"][mask]
-        if len(x) > sample_count:
-            x = x[:sample_count]
-        elif len(x) == 0:
-            raise ValueError("No validation samples found in cache")
-        dummy_input = torch.from_numpy(x).float()
-    else:
-        dummy_input = torch.randn(sample_count, in_channels, 90, 160)
+    if not cache_path or not Path(cache_path).exists():
+        raise ValueError("Valid cache_path is strictly required to extract real validation samples for ONNX export")
+        
+    cache_data = np.load(cache_path)
+    mask = cache_data["split"] == validation_split
+    x = cache_data["x"][mask]
+    if len(x) > sample_count:
+        x = x[:sample_count]
+    elif len(x) == 0:
+        raise ValueError("No validation samples found in cache")
+    dummy_input = torch.from_numpy(x).float()
 
     # Export with full batch to avoid static shape tracing issues
     export_input = dummy_input
@@ -108,12 +113,29 @@ def export_to_onnx(
                 max_diff = diff
     print(f"PyTorch-ONNX comparison successful! Max diff: {max_diff}")
 
+    mean_abs_error = float(np.mean(np.abs(pt_outputs.numpy() - ort_outputs[0])))
+
     with open(output_onnx.parent / "equivalence.json", "w", encoding="utf-8") as f:
         json.dump(
-            {"status": "passed", "max_absolute_difference": max_diff, "rtol": 1e-3, "atol": 1e-5},
+            {
+                "status": "passed",
+                "max_absolute_difference": max_diff,
+                "mean_absolute_difference": mean_abs_error,
+                "rtol": 1e-3,
+                "atol": 1e-5,
+                "real_samples_used": True,
+                "sample_count": int(dummy_input.size(0))
+            },
             f,
             indent=2,
         )
+
+    def file_sha256(p: Path) -> str:
+        h = hashlib.sha256()
+        with open(p, "rb") as bf:
+            for chunk in iter(lambda: bf.read(8192 * 1024), b""):
+                h.update(chunk)
+        return h.hexdigest()
 
     with open(output_onnx.parent / "model_manifest.json", "w", encoding="utf-8") as f:
         json.dump(
@@ -121,6 +143,8 @@ def export_to_onnx(
                 "model_type": model_type,
                 "checkpoint_source": str(checkpoint_path),
                 "onnx_path": str(output_onnx),
+                "checkpoint_sha256": file_sha256(checkpoint_path),
+                "onnx_sha256": file_sha256(output_onnx),
             },
             f,
             indent=2,
@@ -128,10 +152,10 @@ def export_to_onnx(
 
     print("Benchmarking ONNX latency...")
     # Warmup
-    for _ in range(20):
+    for _ in range(50):
         _ = session.run(None, ort_inputs)
 
-    benchmark_iters = 100
+    benchmark_iters = 500
     latencies = []
     for _ in range(benchmark_iters):
         start_time = time.perf_counter()
@@ -189,8 +213,7 @@ def main() -> None:
 
     checkpoint_path = Path(args.checkpoint)
     if not checkpoint_path.exists():
-        print(f"Error: Checkpoint file {checkpoint_path} does not exist.")
-        return
+        sys.exit(f"Error: Checkpoint file {checkpoint_path} does not exist.")
 
     model_type = args.model_type
     if model_type is None:
