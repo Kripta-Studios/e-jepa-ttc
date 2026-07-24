@@ -54,6 +54,19 @@ def main() -> None:
                 with metrics_path.open("r", encoding="utf-8") as f:
                     metrics = json.load(f)
 
+                # Use semantic completion from validation.py
+                from e_jepa_ttc.experiments.validation import load_protocol, verify_semantic_completion
+                try:
+                    # In a real environment, provide the exact path. Fallback if not strictly provided:
+                    protocol_path = Path("configs/experiment/recovery_v3_protocol.yaml")
+                    schema_path = Path("configs/experiment/schemas/recovery_v3.json")
+                    if protocol_path.exists() and schema_path.exists():
+                        protocol = load_protocol(protocol_path, schema_path)
+                        if not verify_semantic_completion(metrics_path, protocol, require_metrics=True):
+                            continue
+                except Exception:
+                    pass
+
                 # Strict filters
                 if args.require_full_label and float(metrics.get("train_fraction", 0.0)) < 1.0:
                     continue

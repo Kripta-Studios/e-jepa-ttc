@@ -200,6 +200,20 @@ def export_to_onnx(
         f"P50: {p50:.2f}ms, P95: {p95:.2f}ms, P99: {p99:.2f}ms"
     )
 
+    import platform
+    import psutil
+
+    hardware_info = {
+        "cpu_name": platform.processor(),
+        "logical_cores": psutil.cpu_count(logical=True),
+        "physical_cores": psutil.cpu_count(logical=False),
+        "ram_gb": round(psutil.virtual_memory().total / (1024**3), 2),
+    }
+    if torch.cuda.is_available():
+        hardware_info["gpu_name"] = torch.cuda.get_device_name(0)
+    else:
+        hardware_info["gpu_name"] = None
+
     with open(output_onnx.parent / "benchmark.json", "w", encoding="utf-8") as f:
         json.dump(
             {
@@ -210,6 +224,7 @@ def export_to_onnx(
                 "p50_ms": p50,
                 "p95_ms": p95,
                 "p99_ms": p99,
+                "hardware": hardware_info,
             },
             f,
             indent=2,
