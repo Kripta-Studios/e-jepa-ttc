@@ -1,0 +1,11 @@
+protocol_version: "3.0"
+matrix:
+  ssl_seeds: [7, 13, 21]
+  downstream_seeds: [7, 13, 21]
+  nav_modes: ["enabled", "disabled"]
+  label_fractions: [1.0, 0.10, 0.05]
+requirements:
+  primary_metrics: ["mae_s", "rmse_s", "median_abs_error_s", "auroc", "auprc", "calibration_error"]
+  allowed_split_roles: ["train", "validation", "diagnostic_test"]
+  min_train_support: 25
+  min_val_support: 25

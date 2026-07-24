@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "E-JEPA-TTC Recovery V3 Protocol",
+  "type": "object",
+  "properties": {
+    "protocol_version": {
+      "type": "string",
+      "const": "3.0"
+    },
+    "matrix": {
+      "type": "object",
+      "properties": {
+        "ssl_seeds": { "type": "array", "items": { "type": "integer" } },
+        "downstream_seeds": { "type": "array", "items": { "type": "integer" } },
+        "nav_modes": { "type": "array", "items": { "type": "string", "enum": ["enabled", "disabled"] } },
+        "label_fractions": { "type": "array", "items": { "type": "number", "minimum": 0, "maximum": 1.0 } }
+      },
+      "required": ["ssl_seeds", "downstream_seeds", "nav_modes", "label_fractions"]
+    },
+    "requirements": {
+      "type": "object",
+      "properties": {
+        "primary_metrics": { "type": "array", "items": { "type": "string" } },
+        "allowed_split_roles": { "type": "array", "items": { "type": "string" } },
+        "min_train_support": { "type": "integer", "minimum": 1 },
+        "min_val_support": { "type": "integer", "minimum": 1 }
+      },
+      "required": ["primary_metrics", "allowed_split_roles", "min_train_support", "min_val_support"]
+    }
+  },
+  "required": ["protocol_version", "matrix", "requirements"]
+}
