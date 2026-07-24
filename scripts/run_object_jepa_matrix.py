@@ -156,7 +156,7 @@ def _row(summary: dict[str, Any]) -> dict[str, Any]:
     split_metrics = summary.get(eval_split, summary.get("validation", {}))
     regression = split_metrics["regression"]
     garl = split_metrics["garl_ttc"]
-    conformal = split_metrics["conformal_90"]
+    conformal = split_metrics.get("conformal_90", {"coverage": np.nan, "mean_width_s": np.nan})
     return {
         "initialization": summary["initialization"],
         "seed": int(summary["seed"]),
@@ -295,6 +295,7 @@ def main() -> int:
         "uses_recurrence": args.use_recurrence,
         "uses_geometry": args.use_geometry,
         "test_used_for_selection": False,
+        "final_test_opened": False,
         "runs": rows,
         "aggregate": _aggregate(rows),
     }
