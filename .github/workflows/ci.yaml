@@ -13,4 +13,6 @@ jobs:
       - run: uv sync --all-groups --no-editable
       - run: uv run --no-sync ruff check .
       - run: uv run --no-sync ruff format --check .
+      - run: uv run --no-sync python scripts/validate_artifact_registry.py
       - run: uv run --no-sync pytest
+      - run: uv run --no-sync pytest tests/integration/test_synthetic_pipeline_smoke.py
