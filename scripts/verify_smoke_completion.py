@@ -3,6 +3,16 @@ import json
 import math
 from pathlib import Path
 
+import jsonschema
+
+
+def _load_schema(name: str) -> dict:
+    schema_path = Path(__file__).resolve().parent.parent / "schemas" / name
+    if not schema_path.exists():
+        raise FileNotFoundError(f"Missing schema: {schema_path}")
+    with open(schema_path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
 
 def _check_nans(obj: dict | list | float | str, key: str = "", parent_dict: dict = None) -> bool:
     if isinstance(obj, dict):
@@ -141,7 +151,15 @@ def main() -> None:
                         all_exist = False
                         continue
 
-                    # Summary validations
+                    # Summary validations (Training Run)
+                    if req.name == "summary.json" or req.name == "matrix_summary.json":
+                        try:
+                            jsonschema.validate(instance=data, schema=_load_schema("training_run_v3.schema.json"))
+                        except Exception as e:
+                            manifest["failed_stages"].append(f"Schema validation failed for {req}: {e}")
+                            all_exist = False
+                            continue
+
                     if req.name == "summary.json":
                         valid_splits = (
                             data.get("evaluation_splits") or data.get("validation_splits") or []
@@ -173,6 +191,13 @@ def main() -> None:
                         continue
 
                     if req.name == "cache_validation.json":
+                        try:
+                            jsonschema.validate(instance=data, schema=_load_schema("cache_audit_v3.schema.json"))
+                        except Exception as e:
+                            manifest["failed_stages"].append(f"Schema validation failed for {req}: {e}")
+                            all_exist = False
+                            continue
+
                         if (
                             data.get("status") == "passed"
                             and data.get("cache_format_version") == 2
@@ -193,6 +218,13 @@ def main() -> None:
 
                     # ONNX model manifest validation
                     if req.name == "model_manifest.json":
+                        try:
+                            jsonschema.validate(instance=data, schema=_load_schema("onnx_manifest_v3.schema.json"))
+                        except Exception as e:
+                            manifest["failed_stages"].append(f"Schema validation failed for {req}: {e}")
+                            all_exist = False
+                            continue
+                            
                         split = data.get("selection_split")
                         if split in ("test", "CPLA-high"):
                             manifest["failed_stages"].append(
@@ -219,6 +251,13 @@ def main() -> None:
 
                     # ONNX equivalence validation
                     if req.name == "equivalence.json":
+                        try:
+                            jsonschema.validate(instance=data, schema=_load_schema("onnx_equivalence_v3.schema.json"))
+                        except Exception as e:
+                            manifest["failed_stages"].append(f"Schema validation failed for {req}: {e}")
+                            all_exist = False
+                            continue
+                            
                         if (
                             data.get("status") == "passed"
                             and data.get("real_validation_samples") is True
@@ -234,6 +273,13 @@ def main() -> None:
 
                     # ONNX benchmark validation
                     if req.name == "benchmark.json":
+                        try:
+                            jsonschema.validate(instance=data, schema=_load_schema("onnx_benchmark_v3.schema.json"))
+                        except Exception as e:
+                            manifest["failed_stages"].append(f"Schema validation failed for {req}: {e}")
+                            all_exist = False
+                            continue
+                            
                         if "p50_ms" not in data or "p95_ms" not in data or "p99_ms" not in data:
                             manifest["failed_stages"].append("Benchmark missing percentiles")
                             all_exist = False

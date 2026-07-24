@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ONNX Equivalence V3",
+  "type": "object",
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["passed", "failed"]
+    },
+    "real_validation_samples": {
+      "type": "boolean"
+    },
+    "sample_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "maximum_absolute_error": {
+      "type": "number"
+    },
+    "mean_absolute_error": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "status",
+    "real_validation_samples",
+    "sample_count",
+    "maximum_absolute_error",
+    "mean_absolute_error"
+  ],
+  "additionalProperties": true
+}

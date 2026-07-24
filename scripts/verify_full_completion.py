@@ -4,6 +4,16 @@ import logging
 import sys
 from pathlib import Path
 
+import jsonschema
+
+
+def _load_schema(name: str) -> dict:
+    schema_path = Path(__file__).resolve().parent.parent / "schemas" / name
+    if not schema_path.exists():
+        raise FileNotFoundError(f"Missing schema: {schema_path}")
+    with open(schema_path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
 
@@ -13,10 +23,19 @@ def verify_dir_exists(path: Path) -> None:
         sys.exit(1)
 
 
-def verify_file_exists(path: Path) -> None:
+def verify_file_exists(path: Path, schema_name: str = None) -> None:
     if not path.exists():
         logging.error(f"Missing required file: {path}")
         sys.exit(1)
+        
+    if schema_name and path.suffix == ".json":
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            jsonschema.validate(instance=data, schema=_load_schema(schema_name))
+        except Exception as e:
+            logging.error(f"Schema validation failed for {path} against {schema_name}: {e}")
+            sys.exit(1)
 
 
 def main() -> None:
@@ -42,13 +61,13 @@ def main() -> None:
             verify_file_exists(
                 runs_dir
                 / f"recovery_scratch_nav{nav}_seed{seed}_post_fix_v3_cache_verified"
-                / "metrics.json"
+                / "metrics.json", "training_run_v3.schema.json"
             )
             for frac in fractions:
                 verify_file_exists(
                     runs_dir
                     / f"recovery_scratch_nav{nav}_seed{seed}_{frac}_post_fix_v3_cache_verified"
-                    / "metrics.json"
+                    / "metrics.json", "training_run_v3.schema.json"
                 )
 
         # Check JEPA Pretrain
@@ -56,7 +75,7 @@ def main() -> None:
             verify_file_exists(
                 runs_dir
                 / f"recovery_jepa_nav{nav}_seed{seed}_post_fix_v3_cache_verified"
-                / "metrics.json"
+                / "metrics.json", "training_run_v3.schema.json"
             )
             # Check JEPA downstream
             for downstream in seeds:
@@ -66,7 +85,7 @@ def main() -> None:
                         f"recovery_downstream_ssl{seed}_nav{nav}_seed{downstream}"
                         "_post_fix_v3_cache_verified"
                     )
-                    / "metrics.json"
+                    / "metrics.json", "training_run_v3.schema.json"
                 )
                 for frac in fractions:
                     verify_file_exists(
@@ -75,7 +94,7 @@ def main() -> None:
                             f"recovery_downstream_ssl{seed}_nav{nav}_seed{downstream}_{frac}"
                             "_post_fix_v3_cache_verified"
                         )
-                        / "metrics.json"
+                        / "metrics.json", "training_run_v3.schema.json"
                     )
 
     logging.info("EvTTC matrix verification passed.")
@@ -84,9 +103,9 @@ def main() -> None:
     eap_runs_dir = runs_dir / "eap_object_jepa_matrix"
     verify_dir_exists(eap_runs_dir)
 
-    verify_file_exists(eap_runs_dir / "eap_split_statistics.json")
+    verify_file_exists(eap_runs_dir / "eap_split_statistics.json", "training_run_v3.schema.json")
     for seed in seeds:
-        verify_file_exists(eap_runs_dir / "pretrain" / f"seed-{seed}" / "summary.json")
+        verify_file_exists(eap_runs_dir / "pretrain" / f"seed-{seed}" / "summary.json", "training_run_v3.schema.json")
         for frac in ["1", "0.1", "0.05"]:
             verify_file_exists(
                 eap_runs_dir
@@ -94,7 +113,7 @@ def main() -> None:
                 / "jepa"
                 / f"fraction-{frac}"
                 / f"seed-{seed}"
-                / "summary.json"
+                / "summary.json", "training_run_v3.schema.json"
             )
             verify_file_exists(
                 eap_runs_dir
@@ -102,7 +121,7 @@ def main() -> None:
                 / "scratch"
                 / f"fraction-{frac}"
                 / f"seed-{seed}"
-                / "summary.json"
+                / "summary.json", "training_run_v3.schema.json"
             )
 
     logging.info("eAP matrix verification passed.")
@@ -110,8 +129,12 @@ def main() -> None:
     # 3. Verify ONNX Output
     verify_dir_exists(onnx_dir)
     verify_file_exists(onnx_dir / "model.onnx")
-    verify_file_exists(onnx_dir / "model_manifest.json")
-    verify_file_exists(onnx_dir / "equivalence.json")
+    verify_file_exists(onnx_dir / "model_manifest.json", "onnx_manifest_v3.schema.json")
+    verify_file_exists(onnx_dir / "equivalence.json", "onnx_equivalence_v3.schema.json")
+    
+    # We might not have benchmark checked here initially, but if it exists we should check it
+    if (onnx_dir / "benchmark.json").exists():
+        verify_file_exists(onnx_dir / "benchmark.json", "onnx_benchmark_v3.schema.json")
 
     # Load equivalence.json
     with open(onnx_dir / "equivalence.json") as f:

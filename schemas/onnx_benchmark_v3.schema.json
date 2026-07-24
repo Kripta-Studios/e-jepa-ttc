@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ONNX Benchmark V3",
+  "type": "object",
+  "properties": {
+    "iterations": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "p50_ms": {
+      "type": "number"
+    },
+    "p95_ms": {
+      "type": "number"
+    },
+    "p99_ms": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "iterations",
+    "p50_ms",
+    "p95_ms",
+    "p99_ms"
+  ],
+  "additionalProperties": true
+}

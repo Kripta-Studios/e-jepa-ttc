@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Training Run V3",
+  "type": "object",
+  "properties": {
+    "status": {
+      "type": "string"
+    },
+    "evaluation_split": {
+      "type": ["string", "null"]
+    },
+    "evaluation_splits": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "validation_splits": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "validation_samples": {
+      "type": "integer"
+    },
+    "final_test_opened": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "final_test_opened"
+  ],
+  "additionalProperties": true
+}
