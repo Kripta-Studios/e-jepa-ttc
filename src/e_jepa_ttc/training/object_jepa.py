@@ -311,6 +311,8 @@ def pretrain_object_event_jepa(
             model.train()
             train_sum = 0.0
             train_count = 0
+            divergence_sum = 0.0
+            divergence_count = 0
             for batch in train_loader:
                 optimizer.zero_grad(set_to_none=True)
                 with torch.autocast(
@@ -338,7 +340,9 @@ def pretrain_object_event_jepa(
                 momentum = ema_end - (ema_end - ema_start) * 0.5 * (
                     1.0 + math.cos(math.pi * progress)
                 )
-                model.update_target_encoder(momentum)
+                divergence = model.update_target_encoder(momentum)
+                divergence_sum += divergence
+                divergence_count += 1
                 global_step += 1
                 train_sum += float(losses["total"].detach()) * valid_count
                 train_count += valid_count
@@ -353,6 +357,7 @@ def pretrain_object_event_jepa(
                 "train_total": train_sum / max(train_count, 1),
                 "validation": validation,
                 "ema_momentum": momentum,
+                "target_encoder_divergence_l2": divergence_sum / max(divergence_count, 1),
             }
             history.append(row)
             history_file.write(json.dumps(row, sort_keys=True) + "\n")
