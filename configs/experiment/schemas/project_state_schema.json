@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "E-JEPA-TTC Project State",
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Scientific recovery protocol version"
+    },
+    "current_stage": {
+      "type": "string",
+      "enum": ["A", "B", "C", "D"],
+      "description": "Current execution stage"
+    },
+    "phases": {
+      "type": "object",
+      "properties": {
+        "P0": {"type": "boolean"},
+        "P1": {"type": "boolean"},
+        "P2": {"type": "boolean"},
+        "P3": {"type": "boolean"}
+      },
+      "required": ["P0", "P1", "P2", "P3"]
+    },
+    "completed_tasks": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "List of completed task IDs"
+    }
+  },
+  "required": ["version", "current_stage", "phases", "completed_tasks"],
+  "additionalProperties": false
+}
