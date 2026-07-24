@@ -1,0 +1,10 @@
+{
+  "status": "passed",
+  "real_validation_samples": true,
+  "sample_count": 32,
+  "maximum_absolute_error": 1.1920928955078125e-06,
+  "mean_absolute_error": 3.203749656677246e-07,
+  "maximum_relative_error": 5.381977530305448e-07,
+  "maximum_absolute_tolerance": 0.001,
+  "mean_absolute_tolerance": 1e-05
+}
