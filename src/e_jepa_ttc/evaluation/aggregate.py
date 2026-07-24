@@ -89,17 +89,34 @@ def aggregate_metric_files(
 
     summary: dict[str, dict[str, float]] = {}
     for metric_name in metric_names:
-        values = np.array(
-            [row["metrics"][metric_name] for row in rows if metric_name in row["metrics"]],
-            dtype=np.float64,
-        )
-        if values.size:
-            summary[metric_name] = {
-                "mean": float(values.mean()),
-                "std": float(values.std(ddof=0)),
-                "min": float(values.min()),
-                "max": float(values.max()),
-            }
+        # Hierarchical grouping: group by pretrain_seed first
+        groups: dict[Any, list[float]] = {}
+        for row in rows:
+            if metric_name in row["metrics"]:
+                pt_seed = row.get("pretrain_seed")
+                # If no pretrain seed, fallback to downstream seed (scratch models)
+                if pt_seed is None:
+                    pt_seed = row.get("downstream_seed")
+                groups.setdefault(pt_seed, []).append(row["metrics"][metric_name])
+                
+        if not groups:
+            continue
+            
+        group_means = [float(np.mean(vals)) for vals in groups.values()]
+        group_means_arr = np.array(group_means, dtype=np.float64)
+        all_values = np.array([v for vals in groups.values() for v in vals], dtype=np.float64)
+        
+        std = float(group_means_arr.std(ddof=1)) if group_means_arr.size > 1 else 0.0
+        sem = std / np.sqrt(group_means_arr.size) if group_means_arr.size > 1 else 0.0
+        
+        summary[metric_name] = {
+            "mean": float(group_means_arr.mean()),
+            "std": std,
+            "sem": sem,
+            "min": float(all_values.min()),
+            "max": float(all_values.max()),
+            "pooled_std": float(all_values.std(ddof=1)) if all_values.size > 1 else 0.0,
+        }
     pretrain_seeds = sorted(
         {row["pretrain_seed"] for row in rows if row["pretrain_seed"] is not None}
     )

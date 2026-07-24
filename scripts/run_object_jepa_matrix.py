@@ -198,8 +198,16 @@ def _aggregate(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
         for metric in metrics:
             values = np.asarray([row[metric] for row in group], dtype=np.float64)
             finite = values[np.isfinite(values)]
-            aggregate[f"{metric}_mean"] = float(np.mean(finite)) if finite.size else float("nan")
-            aggregate[f"{metric}_std"] = float(np.std(finite, ddof=1)) if finite.size > 1 else 0.0
+            if finite.size > 0:
+                std = float(np.std(finite, ddof=1)) if finite.size > 1 else 0.0
+                sem = std / np.sqrt(finite.size) if finite.size > 1 else 0.0
+                aggregate[f"{metric}_mean"] = float(np.mean(finite))
+                aggregate[f"{metric}_std"] = std
+                aggregate[f"{metric}_sem"] = sem
+            else:
+                aggregate[f"{metric}_mean"] = float("nan")
+                aggregate[f"{metric}_std"] = 0.0
+                aggregate[f"{metric}_sem"] = 0.0
         payload.append(aggregate)
     return payload
 
