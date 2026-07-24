@@ -1,0 +1,26 @@
+name: smoke-train
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  smoke-train-matrix:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11"]
+        pytorch-mode: ["cpu"]
+    
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v4
+      
+      - name: Install dependencies
+        run: uv sync --all-groups --no-editable
+        
+      - name: Run synthetic smoke test
+        run: uv run --no-sync pytest tests/unit/test_synthetic_smoke.py
+        
+      - name: Run Object-JEPA training smoke tests
+        run: uv run --no-sync pytest tests/unit/test_object_jepa_training.py
