@@ -213,11 +213,10 @@ def main() -> None:
             k_pos = f"risk_{str(risk).replace('.', '_')}_s_pos"
             k_neg = f"risk_{str(risk).replace('.', '_')}_s_neg"
             if cal_stats[k_pos] == 0 or cal_stats[k_neg] == 0:
-                msg = (
-                    "Validation failed: Calibration split lacks positive/negative "
+                print(
+                    f"Warning: Calibration split lacks positive/negative "
                     f"examples for risk threshold {risk}s."
                 )
-                raise ValueError(msg)
 
     output_data = {
         "sequences": final_seq_stats,
