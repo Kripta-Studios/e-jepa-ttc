@@ -4,9 +4,10 @@
   "phases": {
     "P0": true,
     "P1": true,
-    "P2": true,
-    "P3": true
+    "P2": false,
+    "P3": false
   },
+  "robustness_implemented": false,
   "completed_tasks": [
     "P0.4.2",
     "P0.5",

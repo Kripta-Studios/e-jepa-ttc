@@ -12,6 +12,7 @@ Updated: 2026-07-13.
 - Historical end-to-end seeds: SSL `{7}`; downstream `{7,13,21}`.
 - Post-fix promotable metrics: none.
 - Final test: unavailable; CPLA-high is diagnostic only.
+- Robustness: placeholder evaluation only. Phase C and D remain incomplete.
 - Long recovery run: not started because the worktree is dirty.
 
 ## Ready for clean baseline commit
