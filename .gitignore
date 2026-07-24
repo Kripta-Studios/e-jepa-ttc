@@ -3,33 +3,36 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 .ruff_cache/
-.tmp/
-pytest_tmp/
 .mypy_cache/
+.pyright/
 dist/
 build/
 *.egg-info/
 
-# Large local datasets and generated artifacts.
 datasets/
 data/cache/*
-artifacts/*
-!artifacts/registry.jsonl
-*.bag
-*.mp4
-*.hdf5
-*.h5
-
-# Keep empty directories tracked through .gitkeep files.
 !data/cache/
 !data/cache/.gitkeep
+
+artifacts/*
+!artifacts/registry.jsonl
 !artifacts/metrics/
-artifacts/metrics/*
-!artifacts/figures/
-artifacts/figures/*
 !artifacts/metrics/.gitkeep
+!artifacts/figures/
 !artifacts/figures/.gitkeep
 
-# Local scratch and temp folders
+debug_test_dir/
+test_empty/
+audit.json
+master_smoke.log
+*.onnx
+*.npz
+*.h5
+*.hdf5
+*.bag
+*.mp4
+
 scratch/
 tmp/
+pytest_tmp/
+.tmp/

@@ -10,6 +10,8 @@ from typing import Any
 import jsonschema
 import numpy as np
 
+from e_jepa_ttc.experiments.test_lock import check_final_test_lock
+
 
 def compute_sha256(path: Path) -> str:
     sha256_hash = hashlib.sha256()
@@ -220,6 +222,11 @@ def main() -> None:
         # 9. Validate sequence/split disjointness
         # 10. Validate allowed split names
         allowed_splits = {"train", "validation", "calibration", "test"}
+        if args.evidence_type not in ("final_test", "real_smoke"):
+            allowed_splits.remove("test")
+        elif args.evidence_type == "final_test":
+            if not check_final_test_lock("final"):
+                failures.append("final_test requested but no valid unlock found")
 
         seq_to_split = {}
         for s, sp in zip(seqs, splits):

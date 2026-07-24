@@ -65,7 +65,8 @@ New-Item -ItemType Directory -Force -Path $matrixOut | Out-Null
 
 Write-Output "Generating eAP Split Statistics..."
 $eapSplitStats = "$matrixOut/eap_split_statistics.json"
-Invoke-Python scripts/generate_split_statistics.py --manifest $cacheManifest --output $eapSplitStats
+$evidenceType = if ($Smoke) { "real_smoke" } else { "validation_matrix" }
+Invoke-Python scripts/generate_split_statistics.py --manifest $cacheManifest --output $eapSplitStats --evidence-type $evidenceType
 if ($LASTEXITCODE -ne 0) { throw "eAP split statistics generation failed (possible data corruption)" }
 
 $seedsStr = if ($Smoke) { "7" } else { "7 13 21" }

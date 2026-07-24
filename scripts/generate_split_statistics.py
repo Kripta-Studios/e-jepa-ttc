@@ -79,6 +79,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Generate detailed split statistics.")
     parser.add_argument("--manifest", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--evidence-type", type=str, default="validation_matrix", choices=["synthetic_ci", "real_smoke", "validation_pilot", "validation_matrix", "final_test"])
     args = parser.parse_args()
 
     if not args.manifest.exists():
@@ -213,10 +214,15 @@ def main() -> None:
             k_pos = f"risk_{str(risk).replace('.', '_')}_s_pos"
             k_neg = f"risk_{str(risk).replace('.', '_')}_s_neg"
             if cal_stats[k_pos] == 0 or cal_stats[k_neg] == 0:
-                print(
-                    f"Warning: Calibration split lacks positive/negative "
-                    f"examples for risk threshold {risk}s."
-                )
+                if args.evidence_type in ["synthetic_ci", "real_smoke"]:
+                    # Just mark unsupported for smoke
+                    final_split_stats["calibration"][f"risk_{str(risk).replace('.', '_')}_s_unsupported"] = True
+                else:
+                    msg = (
+                        "Validation failed: Calibration split lacks positive/negative "
+                        f"examples for risk threshold {risk}s."
+                    )
+                    raise ValueError(msg)
 
     output_data = {
         "sequences": final_seq_stats,

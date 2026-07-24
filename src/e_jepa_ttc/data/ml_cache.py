@@ -135,6 +135,7 @@ def build_voxel_cache(
     metadata_channels: bool = False,
     navigation_channels: bool = False,
     limit: int | None = None,
+    exclude_splits: list[str] | None = None,
 ) -> dict[str, Any]:
     """Build an `.npz` cache with voxel tensors and labels."""
 

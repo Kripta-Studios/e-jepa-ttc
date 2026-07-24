@@ -190,6 +190,7 @@ def _cmd_cache_voxel(args: argparse.Namespace) -> int:
         split_path=args.split,
         index_path=args.index,
         output_path=args.output,
+        exclude_splits=args.exclude_split,
         width=args.width,
         height=args.height,
         bins=args.bins,
@@ -278,6 +279,7 @@ def _cmd_cache_evttc_object(args: argparse.Namespace) -> int:
         manifest_path=args.manifest,
         output_dir=args.output_dir,
         sequence_splits=_parse_sequence_splits(args.sequence_split),
+        exclude_splits=args.exclude_split,
         config=EvTTCObjectCacheConfig(
             history_frames=args.history_frames,
             prediction_horizons_ms=tuple(args.prediction_horizons_ms),
@@ -815,9 +817,12 @@ def build_parser() -> argparse.ArgumentParser:
 
     cache = subparsers.add_parser("cache", help="Feature cache commands.")
     cache_sub = cache.add_subparsers(dest="cache_command", required=True)
-    cache_voxel = cache_sub.add_parser("voxel", help="Build compact voxel-grid tensor cache.")
+    cache_voxel = cache_sub.add_parser(
+        "voxel", help="Materialize sliding-window EvTTC voxel caches."
+    )
     cache_voxel.add_argument("--manifest", type=Path, required=True)
     cache_voxel.add_argument("--split", type=Path, required=True)
+    cache_voxel.add_argument("--exclude-split", action="append", help="Exclude specific splits")
     cache_voxel.add_argument("--index", type=Path, required=True)
     cache_voxel.add_argument("--output", type=Path, required=True)
     cache_voxel.add_argument("--width", type=int, default=160)
@@ -926,6 +931,11 @@ def build_parser() -> argparse.ArgumentParser:
         action="append",
         required=True,
         metavar="SEQUENCE_ID=SPLIT",
+    )
+    cache_evttc.add_argument(
+        "--exclude-split",
+        action="append",
+        help="Split names to exclude from the generated cache",
     )
     cache_evttc.add_argument("--history-frames", type=int, default=3)
     cache_evttc.add_argument(
