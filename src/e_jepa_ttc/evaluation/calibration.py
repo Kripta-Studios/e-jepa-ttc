@@ -38,6 +38,7 @@ def fit_conformal_interval(
     standard_deviation: np.ndarray,
     *,
     coverage: float = 0.9,
+    min_support: int = 10,
 ) -> ConformalIntervalCalibrator:
     """Fit a finite-sample split-conformal standardized residual quantile."""
 
@@ -53,9 +54,16 @@ def fit_conformal_interval(
     valid = np.isfinite(target) & np.isfinite(prediction) & np.isfinite(uncertainty)
     valid &= uncertainty > 0
     scores = np.abs(target[valid] - prediction[valid]) / np.maximum(uncertainty[valid], 1e-6)
-    if scores.size == 0:
-        msg = "No finite positive-uncertainty calibration samples."
-        raise ValueError(msg)
+    
+    import logging
+    if scores.size < min_support:
+        logging.warning(f"Insufficient support for conformal calibration ({scores.size} < {min_support}). Falling back to scale=1.0.")
+        return ConformalIntervalCalibrator(
+            coverage=coverage,
+            scale=1.0,
+            calibration_count=int(scores.size),
+        )
+
     rank = min(scores.size, math.ceil((scores.size + 1) * coverage))
     scale = float(np.partition(scores, rank - 1)[rank - 1])
     return ConformalIntervalCalibrator(
@@ -85,6 +93,7 @@ def fit_temperature_scaler(
     minimum: float = 0.05,
     maximum: float = 10.0,
     grid_size: int = 400,
+    min_support: int = 10,
 ) -> TemperatureScaler:
     """Fit a robust scalar temperature using a deterministic logarithmic grid."""
 
@@ -99,7 +108,13 @@ def fit_temperature_scaler(
     valid = np.isfinite(values) & np.isfinite(target)
     values = values[valid]
     target = target[valid]
-    if values.size == 0 or np.any((target < 0) | (target > 1)):
+    
+    import logging
+    if values.size < min_support:
+        logging.warning(f"Insufficient support for temperature scaling ({values.size} < {min_support}). Falling back to T=1.0.")
+        return TemperatureScaler(temperature=1.0)
+        
+    if np.any((target < 0) | (target > 1)):
         msg = "Temperature scaling requires finite binary labels."
         raise ValueError(msg)
     temperatures = np.geomspace(minimum, maximum, grid_size)
