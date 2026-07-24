@@ -17,20 +17,29 @@ $cacheManifest = "$cacheOut/manifest.json"
 
 if (-not (Test-Path $cacheManifest)) {
     Write-Output "Building eAP object cache..."
-    $argsArray = @(
-        "-m", "e_jepa_ttc", "cache", "eap-object",
-        "--eap-root", $eapRoot,
-        "--output-dir", $cacheOut,
-        "--sequence-split", "2cyv0Oedzg=train",
-        "--sequence-split", "6h5yRW2LGc=train",
-        "--sequence-split", "DGqicHUGWb=train",
-        "--sequence-split", "OBneIVg4Cw=train",
-        "--sequence-split", "mHGFBekt7X=validation",
-        "--sequence-split", "pBqGOb2vYq=calibration"
-    )
-    if (-not $Smoke) {
-        $argsArray += "--sequence-split", "qGsgzl4Q8B=test"
-        $argsArray += "--sequence-split", "qoohcdtLDH=test"
+    if ($Smoke) {
+        $argsArray = @(
+            "-m", "e_jepa_ttc", "cache", "eap-object",
+            "--eap-root", $eapRoot,
+            "--output-dir", $cacheOut,
+            "--sequence-split", "2cyv0Oedzg=train",
+            "--sequence-split", "mHGFBekt7X=validation",
+            "--sequence-split", "pBqGOb2vYq=calibration"
+        )
+    } else {
+        $argsArray = @(
+            "-m", "e_jepa_ttc", "cache", "eap-object",
+            "--eap-root", $eapRoot,
+            "--output-dir", $cacheOut,
+            "--sequence-split", "2cyv0Oedzg=train",
+            "--sequence-split", "6h5yRW2LGc=train",
+            "--sequence-split", "DGqicHUGWb=train",
+            "--sequence-split", "OBneIVg4Cw=train",
+            "--sequence-split", "mHGFBekt7X=validation",
+            "--sequence-split", "pBqGOb2vYq=calibration",
+            "--sequence-split", "qGsgzl4Q8B=test",
+            "--sequence-split", "qoohcdtLDH=test"
+        )
     }
     Invoke-Python @argsArray `
         --history-frames 5 `
