@@ -181,6 +181,7 @@ def main() -> None:
                             and data.get("sidecar_sha256_matches") is True
                             and data.get("sparse_event_audit_passed") is True
                             and data.get("nonempty_samples_collapsed_to_zero") == 0
+                            and data.get("sample_count_total", float("inf")) <= 200
                         ):
                             manifest["cache_v2_validation_passed"] = True
                         else:

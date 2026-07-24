@@ -24,7 +24,8 @@ if (-not (Test-Path $cacheManifest)) {
             "--output-dir", $cacheOut,
             "--sequence-split", "2cyv0Oedzg=train",
             "--sequence-split", "mHGFBekt7X=validation",
-            "--sequence-split", "pBqGOb2vYq=calibration"
+            "--sequence-split", "pBqGOb2vYq=calibration",
+            "--max-windows-per-sequence", "50"
         )
     } else {
         $argsArray = @(
