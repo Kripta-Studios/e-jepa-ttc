@@ -8,6 +8,7 @@ if ($Smoke) {
 
 # Ensure execution policy is set correctly (only needed if running standalone, but good practice)
 $ErrorActionPreference = "Stop"
+Set-StrictMode -Version Latest
 $env:PYTHONUTF8 = "1"
 
 function Invoke-Python {
@@ -332,7 +333,7 @@ foreach ($navMode in $navModes) {
                     $canonicalDir = "$outRoot/low_label_0$([math]::Round($frac * 100))_jepa"
                     New-Item -ItemType Directory -Force -Path $canonicalDir | Out-Null
                     if ($navMode -eq "enabled" -or -not (Test-Path "$canonicalDir/summary.json")) {
-                        Copy-Item -Force "$lowLabelOut/metrics.json" "$canonicalDir/summary.json"
+                        Copy-Item -Force "$lowLabelDownstreamOut/metrics.json" "$canonicalDir/summary.json"
                     }
                 }
                 Invoke-Python @registerArgs
