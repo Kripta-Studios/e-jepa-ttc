@@ -168,6 +168,11 @@ def main() -> None:
         total_samples = x.shape[0]
         if total_samples == 0:
             failures.append("Empty cache")
+            
+        if failures:
+            audit_record["failures"] = failures
+            _write_output(output_path, audit_record)
+            sys.exit(1)
         
         if mode == "sampled":
             # 20. Fixed audit seed in sampled mode
