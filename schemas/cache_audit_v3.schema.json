@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "E-JEPA-TTC Cache Audit V3",
+  "type": "object",
+  "properties": {
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "npz_path": {
+      "type": "string"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "mode": {
+      "type": "string",
+      "enum": ["sampled", "exhaustive"]
+    },
+    "total_samples": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "scanned_samples": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "valid_nan_inf": {
+      "type": "boolean"
+    },
+    "valid_tensor_shapes": {
+      "type": "boolean"
+    },
+    "split_disjointness": {
+      "type": "boolean"
+    },
+    "normalizer_origins_verified": {
+      "type": "boolean"
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "timestamp",
+    "npz_path",
+    "sha256",
+    "mode",
+    "total_samples",
+    "scanned_samples",
+    "valid_nan_inf",
+    "valid_tensor_shapes",
+    "split_disjointness",
+    "normalizer_origins_verified"
+  ],
+  "additionalProperties": false
+}
