@@ -153,6 +153,8 @@ def _run_or_resume_finetuning(
 
 def _row(summary: dict[str, Any]) -> dict[str, Any]:
     eval_split = summary.get("evaluation_split", "test")
+    if eval_split == "calibration":
+        eval_split = "validation"
     split_metrics = summary.get(eval_split, summary.get("validation", {}))
     regression = split_metrics["regression"]
     garl = split_metrics["garl_ttc"]
