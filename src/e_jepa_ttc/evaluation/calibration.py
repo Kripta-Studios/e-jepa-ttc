@@ -54,10 +54,13 @@ def fit_conformal_interval(
     valid = np.isfinite(target) & np.isfinite(prediction) & np.isfinite(uncertainty)
     valid &= uncertainty > 0
     scores = np.abs(target[valid] - prediction[valid]) / np.maximum(uncertainty[valid], 1e-6)
-    
+
     import logging
+
     if scores.size < min_support:
-        logging.warning(f"Insufficient support for conformal calibration ({scores.size} < {min_support}). Falling back to scale=1.0.")
+        logging.warning(
+            f"Insufficient support for conformal calibration ({scores.size} < {min_support}). Falling back to scale=1.0."
+        )
         return ConformalIntervalCalibrator(
             coverage=coverage,
             scale=1.0,
@@ -108,12 +111,15 @@ def fit_temperature_scaler(
     valid = np.isfinite(values) & np.isfinite(target)
     values = values[valid]
     target = target[valid]
-    
+
     import logging
+
     if values.size < min_support:
-        logging.warning(f"Insufficient support for temperature scaling ({values.size} < {min_support}). Falling back to T=1.0.")
+        logging.warning(
+            f"Insufficient support for temperature scaling ({values.size} < {min_support}). Falling back to T=1.0."
+        )
         return TemperatureScaler(temperature=1.0)
-        
+
     if np.any((target < 0) | (target > 1)):
         msg = "Temperature scaling requires finite binary labels."
         raise ValueError(msg)

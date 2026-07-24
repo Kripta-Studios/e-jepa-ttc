@@ -52,7 +52,7 @@ def main(argv: list[str] | None = None) -> int:
         split_protocol_path=args.split_protocol,
         claim_level=args.claim_level,
     )
-    
+
     if args.baseline:
         baseline_payload = aggregate_metric_files(
             args.baseline,
@@ -61,13 +61,13 @@ def main(argv: list[str] | None = None) -> int:
             split_protocol_path=args.split_protocol,
             claim_level=args.claim_level,
         )
-        
+
         # Paired hierarchical bootstrap
         import numpy as np
-        
+
         iterations = 2000
         rng = np.random.default_rng(0)
-        
+
         # Group experimental rows
         exp_groups = {}
         for row in payload["rows"]:
@@ -75,7 +75,7 @@ def main(argv: list[str] | None = None) -> int:
             if pt_seed is None:
                 pt_seed = row.get("downstream_seed")
             exp_groups.setdefault(pt_seed, []).append(row)
-            
+
         # Group baseline rows
         base_groups = {}
         for row in baseline_payload["rows"]:
@@ -83,10 +83,10 @@ def main(argv: list[str] | None = None) -> int:
             if pt_seed is None:
                 pt_seed = row.get("downstream_seed")
             base_groups.setdefault(pt_seed, []).append(row)
-            
+
         # Find common pretrain seeds
         common_pt = sorted(set(exp_groups.keys()) & set(base_groups.keys()))
-        
+
         if common_pt:
             diff_summary = {}
             for metric in metrics:
@@ -104,7 +104,7 @@ def main(argv: list[str] | None = None) -> int:
                         ds = row.get("downstream_seed")
                         if metric in row["metrics"]:
                             base_vals[pt][ds] = row["metrics"][metric]
-                            
+
                 valid_pt = []
                 for pt in common_pt:
                     common_ds = sorted(set(exp_vals[pt].keys()) & set(base_vals[pt].keys()))
@@ -113,12 +113,12 @@ def main(argv: list[str] | None = None) -> int:
                         exp_vals[pt] = [exp_vals[pt][ds] for ds in common_ds]
                         base_vals[pt] = [base_vals[pt][ds] for ds in common_ds]
                         valid_pt.append(pt)
-                
+
                 if not valid_pt:
                     continue
-                    
+
                 bootstrap_diffs = np.empty(iterations, dtype=np.float64)
-                
+
                 for i in range(iterations):
                     sampled_pt = rng.choice(valid_pt, size=len(valid_pt), replace=True)
                     sampled_means_exp = []
@@ -129,13 +129,13 @@ def main(argv: list[str] | None = None) -> int:
                         ds_indices = rng.choice(n_ds, size=n_ds, replace=True)
                         sampled_means_exp.append(np.mean(np.array(exp_vals[pt])[ds_indices]))
                         sampled_means_base.append(np.mean(np.array(base_vals[pt])[ds_indices]))
-                        
+
                     bootstrap_diffs[i] = np.mean(sampled_means_exp) - np.mean(sampled_means_base)
-                    
+
                 mean_diff = float(np.mean(bootstrap_diffs))
                 lower = float(np.quantile(bootstrap_diffs, 0.025))
                 upper = float(np.quantile(bootstrap_diffs, 0.975))
-                
+
                 diff_summary[metric] = {
                     "mean_difference": mean_diff,
                     "ci_lower_95": lower,
@@ -143,7 +143,7 @@ def main(argv: list[str] | None = None) -> int:
                     "significant": (upper < 0) if mean_diff < 0 else (lower > 0),
                     "iterations": iterations,
                 }
-            
+
             payload["paired_bootstrap_vs_baseline"] = diff_summary
 
     text = json.dumps(payload, indent=2, sort_keys=True)

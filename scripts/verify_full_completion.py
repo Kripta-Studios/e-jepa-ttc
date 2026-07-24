@@ -11,14 +11,17 @@ def _load_schema(name: str) -> dict:
     schema_path = Path(__file__).resolve().parent.parent / "schemas" / name
     if not schema_path.exists():
         raise FileNotFoundError(f"Missing schema: {schema_path}")
-    with open(schema_path, "r", encoding="utf-8") as f:
+    with open(schema_path, encoding="utf-8") as f:
         return json.load(f)
+
 
 def _load_protocol() -> dict:
     import yaml
+
     protocol_path = Path(__file__).resolve().parent.parent / "configs" / "recovery_v3_protocol.yaml"
-    with open(protocol_path, "r", encoding="utf-8") as f:
+    with open(protocol_path, encoding="utf-8") as f:
         return yaml.safe_load(f)
+
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
@@ -33,10 +36,10 @@ def verify_file_exists(path: Path, schema_name: str = None) -> None:
     if not path.exists():
         logging.error(f"Missing required file: {path}")
         sys.exit(1)
-        
+
     if schema_name and path.suffix == ".json":
         try:
-            with open(path, "r", encoding="utf-8") as f:
+            with open(path, encoding="utf-8") as f:
                 data = json.load(f)
             jsonschema.validate(instance=data, schema=_load_schema(schema_name))
         except Exception as e:
@@ -56,14 +59,14 @@ def main() -> None:
     verify_dir_exists(runs_dir)
 
     protocol = _load_protocol()
-    
+
     # 1. Verify EvTTC Matrix
     # We expect scratch, jepa, and downstream runs for configured seeds and nav modes.
     evttc_matrix = protocol.get("matrix", {})
     seeds = evttc_matrix.get("downstream_seeds", [7, 13, 21])
     ssl_seeds = evttc_matrix.get("ssl_seeds", [7, 13, 21])
     nav_modes = evttc_matrix.get("nav_modes", ["enabled", "disabled"])
-    
+
     # Convert label fractions to frac strings (e.g., 0.10 -> frac10)
     # Skipping 1.0 because the full run is implicit in scratch full
     fractions_float = [f for f in evttc_matrix.get("label_fractions", []) if f < 1.0]
@@ -74,17 +77,23 @@ def main() -> None:
     for nav in nav_modes:
         # Check scratch full
         for seed in seeds:
-            scratch_ckpt = runs_dir / f"recovery_scratch_nav{nav}_seed{seed}_post_fix_v3_cache_verified" / "tiny_cnn_best.pt"
+            scratch_ckpt = (
+                runs_dir
+                / f"recovery_scratch_nav{nav}_seed{seed}_post_fix_v3_cache_verified"
+                / "tiny_cnn_best.pt"
+            )
             verify_file_exists(
                 runs_dir
                 / f"recovery_scratch_nav{nav}_seed{seed}_post_fix_v3_cache_verified"
-                / "metrics.json", "training_run_v3.schema.json"
+                / "metrics.json",
+                "training_run_v3.schema.json",
             )
             for frac in fractions:
                 verify_file_exists(
                     runs_dir
                     / f"recovery_scratch_nav{nav}_seed{seed}_{frac}_post_fix_v3_cache_verified"
-                    / "metrics.json", "training_run_v3.schema.json"
+                    / "metrics.json",
+                    "training_run_v3.schema.json",
                 )
 
         # Check JEPA Pretrain
@@ -92,49 +101,72 @@ def main() -> None:
             verify_file_exists(
                 runs_dir
                 / f"recovery_jepa_nav{nav}_seed{seed}_post_fix_v3_cache_verified"
-                / "metrics.json", "training_run_v3.schema.json"
+                / "metrics.json",
+                "training_run_v3.schema.json",
             )
             # Check JEPA downstream
             for downstream in seeds:
-                jepa_ckpt = runs_dir / (
-                    f"recovery_downstream_ssl{seed}_nav{nav}_seed{downstream}"
-                    "_post_fix_v3_cache_verified"
-                ) / "tiny_cnn_best.pt"
+                jepa_ckpt = (
+                    runs_dir
+                    / (
+                        f"recovery_downstream_ssl{seed}_nav{nav}_seed{downstream}"
+                        "_post_fix_v3_cache_verified"
+                    )
+                    / "tiny_cnn_best.pt"
+                )
                 verify_file_exists(
                     runs_dir
                     / (
                         f"recovery_downstream_ssl{seed}_nav{nav}_seed{downstream}"
                         "_post_fix_v3_cache_verified"
                     )
-                    / "metrics.json", "training_run_v3.schema.json"
+                    / "metrics.json",
+                    "training_run_v3.schema.json",
                 )
-                
+
                 # Check architecture parity for the full downstream run
-                scratch_ckpt = runs_dir / f"recovery_scratch_nav{nav}_seed{downstream}_post_fix_v3_cache_verified" / "tiny_cnn_best.pt"
+                scratch_ckpt = (
+                    runs_dir
+                    / f"recovery_scratch_nav{nav}_seed{downstream}_post_fix_v3_cache_verified"
+                    / "tiny_cnn_best.pt"
+                )
                 if scratch_ckpt.exists() and jepa_ckpt.exists():
                     if not verify_architecture_parity(scratch_ckpt, jepa_ckpt):
-                        logging.error(f"Architecture parity failed for full downstream seed {downstream} nav {nav}")
+                        logging.error(
+                            f"Architecture parity failed for full downstream seed {downstream} nav {nav}"
+                        )
                         sys.exit(1)
-                
+
                 for frac in fractions:
-                    jepa_low_ckpt = runs_dir / (
-                        f"recovery_downstream_ssl{seed}_nav{nav}_seed{downstream}_{frac}"
-                        "_post_fix_v3_cache_verified"
-                    ) / "tiny_cnn_best.pt"
-                    
+                    jepa_low_ckpt = (
+                        runs_dir
+                        / (
+                            f"recovery_downstream_ssl{seed}_nav{nav}_seed{downstream}_{frac}"
+                            "_post_fix_v3_cache_verified"
+                        )
+                        / "tiny_cnn_best.pt"
+                    )
+
                     verify_file_exists(
                         runs_dir
                         / (
                             f"recovery_downstream_ssl{seed}_nav{nav}_seed{downstream}_{frac}"
                             "_post_fix_v3_cache_verified"
                         )
-                        / "metrics.json", "training_run_v3.schema.json"
+                        / "metrics.json",
+                        "training_run_v3.schema.json",
                     )
-                    
-                    scratch_low_ckpt = runs_dir / f"recovery_scratch_nav{nav}_seed{downstream}_{frac}_post_fix_v3_cache_verified" / "tiny_cnn_best.pt"
+
+                    scratch_low_ckpt = (
+                        runs_dir
+                        / f"recovery_scratch_nav{nav}_seed{downstream}_{frac}_post_fix_v3_cache_verified"
+                        / "tiny_cnn_best.pt"
+                    )
                     if scratch_low_ckpt.exists() and jepa_low_ckpt.exists():
                         if not verify_architecture_parity(scratch_low_ckpt, jepa_low_ckpt):
-                            logging.error(f"Architecture parity failed for frac {frac} downstream seed {downstream} nav {nav}")
+                            logging.error(
+                                f"Architecture parity failed for frac {frac} downstream seed {downstream} nav {nav}"
+                            )
                             sys.exit(1)
 
     logging.info("EvTTC matrix verification passed.")
@@ -144,13 +176,16 @@ def main() -> None:
     verify_dir_exists(eap_runs_dir)
 
     verify_file_exists(eap_runs_dir / "eap_split_statistics.json", "training_run_v3.schema.json")
-    
+
     eap_matrix = protocol.get("eap_matrix", {})
     eap_ssl_seeds = eap_matrix.get("ssl_seeds", [17, 42, 73])
     eap_fractions = eap_matrix.get("label_fractions", [1.0, 0.1, 0.05])
-    
+
     for seed in eap_ssl_seeds:
-        verify_file_exists(eap_runs_dir / "pretrain" / f"seed-{seed}" / "summary.json", "training_run_v3.schema.json")
+        verify_file_exists(
+            eap_runs_dir / "pretrain" / f"seed-{seed}" / "summary.json",
+            "training_run_v3.schema.json",
+        )
         for frac in eap_fractions:
             verify_file_exists(
                 eap_runs_dir
@@ -158,7 +193,8 @@ def main() -> None:
                 / "jepa"
                 / f"fraction-{frac}"
                 / f"seed-{seed}"
-                / "summary.json", "training_run_v3.schema.json"
+                / "summary.json",
+                "training_run_v3.schema.json",
             )
             verify_file_exists(
                 eap_runs_dir
@@ -166,9 +202,10 @@ def main() -> None:
                 / "scratch"
                 / f"fraction-{frac}"
                 / f"seed-{seed}"
-                / "summary.json", "training_run_v3.schema.json"
+                / "summary.json",
+                "training_run_v3.schema.json",
             )
-            
+
             # Note: Parity check for eAP matrix is already built into run_object_jepa_matrix.py,
             # but we can optionally re-run it here if needed.
 
@@ -179,7 +216,7 @@ def main() -> None:
     verify_file_exists(onnx_dir / "model.onnx")
     verify_file_exists(onnx_dir / "model_manifest.json", "onnx_manifest_v3.schema.json")
     verify_file_exists(onnx_dir / "equivalence.json", "onnx_equivalence_v3.schema.json")
-    
+
     # We might not have benchmark checked here initially, but if it exists we should check it
     if (onnx_dir / "benchmark.json").exists():
         verify_file_exists(onnx_dir / "benchmark.json", "onnx_benchmark_v3.schema.json")

@@ -33,7 +33,8 @@ $outRoot = if ($Smoke) { "artifacts/smoke/current/evttc" } else { "artifacts/run
 # Audit the cache first
 Write-Output "Auditing Cache..."
 $cacheValidation = "$outRoot/cache_validation.json"
-Invoke-Python scripts/audit_cache.py --npz-path $cache --output $cacheValidation
+$evidenceType = if ($Smoke) { "real_smoke" } else { "validation_matrix" }
+Invoke-Python scripts/audit_cache.py --npz-path $cache --output $cacheValidation --evidence-type $evidenceType
 if ($LASTEXITCODE -ne 0) { throw "Cache audit failed." }
 
 foreach ($navMode in $navModes) {

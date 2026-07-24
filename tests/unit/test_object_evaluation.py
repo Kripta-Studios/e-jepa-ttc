@@ -34,14 +34,14 @@ def test_risk_metrics_rank_perfect_predictions() -> None:
 
 
 def test_conformal_intervals_and_temperature_are_calibration_only() -> None:
-    target = np.asarray([1.0, 2.0, 3.0, 4.0])
-    mean = np.asarray([1.1, 1.8, 3.2, 3.8])
-    standard_deviation = np.full(4, 0.1)
+    target = np.asarray([1.0, 2.0, 3.0, 4.0] * 3)
+    mean = np.asarray([1.1, 1.8, 3.2, 3.8] * 3)
+    standard_deviation = np.full(12, 0.1)
     calibrator = fit_conformal_interval(target, mean, standard_deviation, coverage=0.75)
     lower, upper = calibrator.interval(mean, standard_deviation)
     metrics = interval_metrics(target, lower, upper)
 
-    assert calibrator.calibration_count == 4
+    assert calibrator.calibration_count == 12
     assert metrics["coverage"] >= 0.75
     scaler = fit_temperature_scaler(
         np.asarray([-2.0, -1.0, 1.0, 2.0]),

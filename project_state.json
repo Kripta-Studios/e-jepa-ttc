@@ -7,7 +7,12 @@
     "P2": false,
     "P3": false
   },
-  "robustness_implemented": false,
+  "integrity_note": "f96bc35 prepares the real Master Smoke orchestrator. It is not evidence that the Master Smoke passed.",
+  "features_status": {
+    "onnx_export": "implemented_pending_real_smoke",
+    "streaming_inference": "implemented_pending_real_smoke",
+    "robustness": "placeholder"
+  },
   "completed_tasks": [
     "P0.4.2",
     "P0.5",

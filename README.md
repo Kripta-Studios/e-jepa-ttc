@@ -151,9 +151,13 @@ uv run --no-sync python scripts/download_evttc_starter.py --manifest data/manife
 - Unit and integration tests for data contracts, representations, synthetic data, manifests, splits,
   and EvTTC window reads.
 
+- ONNX export and validation (implemented, pending reproducible real-smoke/benchmark validation).
+- Streaming inference demo (implemented, pending reproducible real-smoke/benchmark validation).
+
 ## Not Implemented Yet
 
-- Robustness suite, ONNX export, streaming demo, and project-level final report generation.
+- Robustness suite (currently placeholder evaluation only).
+- Project-level final report generation.
 
 These remain in the milestone order defined in `AGENTS.md`; they should be added after the
 supervised baseline is established against the local data.

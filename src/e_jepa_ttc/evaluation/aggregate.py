@@ -103,17 +103,17 @@ def aggregate_metric_files(
                 if pt_seed is None:
                     pt_seed = row.get("downstream_seed")
                 groups.setdefault(pt_seed, []).append(row["metrics"][metric_name])
-                
+
         if not groups:
             continue
-            
+
         group_means = [float(np.mean(vals)) for vals in groups.values()]
         group_means_arr = np.array(group_means, dtype=np.float64)
         all_values = np.array([v for vals in groups.values() for v in vals], dtype=np.float64)
-        
+
         std = float(group_means_arr.std(ddof=1)) if group_means_arr.size > 1 else 0.0
         sem = std / np.sqrt(group_means_arr.size) if group_means_arr.size > 1 else 0.0
-        
+
         summary[metric_name] = {
             "mean": float(group_means_arr.mean()),
             "std": std,

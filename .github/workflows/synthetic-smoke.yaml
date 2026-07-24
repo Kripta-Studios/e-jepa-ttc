@@ -1,11 +1,11 @@
-name: smoke-train
+name: synthetic-smoke
 
 on:
   push:
   pull_request:
 
 jobs:
-  smoke-train-matrix:
+  synthetic-smoke-matrix:
     runs-on: ubuntu-latest
     strategy:
       matrix:

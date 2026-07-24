@@ -55,14 +55,20 @@ def main() -> None:
                     metrics = json.load(f)
 
                 # Use semantic completion from validation.py
-                from e_jepa_ttc.experiments.validation import load_protocol, verify_semantic_completion
+                from e_jepa_ttc.experiments.validation import (
+                    load_protocol,
+                    verify_semantic_completion,
+                )
+
                 try:
                     # In a real environment, provide the exact path. Fallback if not strictly provided:
                     protocol_path = Path("configs/experiment/recovery_v3_protocol.yaml")
                     schema_path = Path("configs/experiment/schemas/recovery_v3.json")
                     if protocol_path.exists() and schema_path.exists():
                         protocol = load_protocol(protocol_path, schema_path)
-                        if not verify_semantic_completion(metrics_path, protocol, require_metrics=True):
+                        if not verify_semantic_completion(
+                            metrics_path, protocol, require_metrics=True
+                        ):
                             continue
                 except Exception:
                     pass
@@ -113,18 +119,32 @@ def main() -> None:
         print("Error: Could not find any valid trained checkpoint in validation.", file=sys.stderr)
         sys.exit(1)
 
-    selection_manifest = {
-        "status": "passed",
-        "best_checkpoint": best_checkpoint,
-        "validation_mae": best_mae,
-        "train_fraction": float(best_metrics.get("train_fraction", 1.0)),
-        "git_commit": best_metrics.get("git_commit", "unknown"),
-        "run_fingerprint": best_metrics.get("run_fingerprint", "unknown"),
-    }
-    with open(best_run_path / "selection_manifest.json", "w", encoding="utf-8") as f:
-        json.dump(selection_manifest, f, indent=2)
+    import hashlib
 
-    print(best_checkpoint)
+    def hash_file(path):
+        if not path or not Path(path).exists():
+            return "missing"
+        h = hashlib.sha256()
+        with open(path, "rb") as f:
+            for b in iter(lambda: f.read(4096), b""):
+                h.update(b)
+        return h.hexdigest()
+
+    cache_path = best_metrics.get("cache_path", "unknown")
+    cfg_path = best_metrics.get("model_config_path", "unknown")
+
+    selection_record = {
+        "checkpoint_path": best_checkpoint,
+        "checkpoint_sha256": hash_file(best_checkpoint),
+        "cache_path": cache_path,
+        "cache_sha256": best_metrics.get("cache_sha256", "unknown"),
+        "model_config_path": cfg_path,
+        "model_config_sha256": best_metrics.get("model_config_sha256", "unknown"),
+        "protocol_hash": best_metrics.get("protocol_hash", "unknown"),
+        "code_commit": best_metrics.get("git_commit", "unknown"),
+    }
+
+    print(json.dumps(selection_record, indent=2))
 
 
 if __name__ == "__main__":

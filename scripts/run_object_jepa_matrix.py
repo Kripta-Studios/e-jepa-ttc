@@ -280,12 +280,16 @@ def main() -> int:
                 ckpt_paths[initialization] = Path(summary["best_checkpoint"])
                 rows.append(_row(summary))
                 write_structured(args.output_dir / "runs.json", {"runs": rows})
-            
+
             # Enforce Architecture Parity (P1.9)
             import sys
+
             from e_jepa_ttc.experiments.validation import verify_architecture_parity
+
             if not verify_architecture_parity(ckpt_paths["scratch"], ckpt_paths["jepa"]):
-                sys.exit(f"FATAL: Architecture parity failed for fraction {fraction} seed {seed}. Aborting matrix.")
+                sys.exit(
+                    f"FATAL: Architecture parity failed for fraction {fraction} seed {seed}. Aborting matrix."
+                )
     result = {
         "protocol": "pre_registered_matched_low_label_object_jepa_v1",
         "cache_manifest": args.cache_manifest.as_posix(),

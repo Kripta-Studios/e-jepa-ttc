@@ -84,7 +84,7 @@ def export_to_onnx(
         export_input,
         output_onnx.as_posix(),
         export_params=True,
-        opset_version=17,
+        opset_version=18,
         do_constant_folding=True,
         input_names=["input"],
         output_names=["log_ttc"],
@@ -201,6 +201,7 @@ def export_to_onnx(
     )
 
     import platform
+
     import psutil
 
     hardware_info = {
@@ -233,18 +234,10 @@ def export_to_onnx(
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Export PyTorch models to ONNX")
-    parser.add_argument(
-        "--checkpoint", type=str, required=True, help="Path to the model checkpoint"
-    )
     parser.add_argument("--output", type=str, required=True, help="Path to save the ONNX model")
     parser.add_argument(
-        "--model-type",
-        type=str,
-        required=False,
-        choices=["tiny_cnn", "event-tubelet-transformer"],
-        help="Type of the model to export",
+        "--selection-record", type=str, required=True, help="Path to the JSON selection record"
     )
-    parser.add_argument("--cache", type=str, required=False, help="Path to the features cache NPZ")
     parser.add_argument(
         "--validation-split", type=str, default="validation", help="Name of the validation split"
     )
@@ -254,25 +247,66 @@ def main() -> None:
 
     args = parser.parse_args()
 
-    checkpoint_path = Path(args.checkpoint)
+    record_path = Path(args.selection_record)
+    if not record_path.exists():
+        sys.exit(f"Error: Selection record {record_path} does not exist.")
+
+    with open(record_path, encoding="utf-8") as f:
+        try:
+            # Handle possible string if powershell Out-File appended newlines or it's wrapped
+            content = f.read().strip()
+            # Powershell Out-File with utf8 might add BOM, let's handle that
+            if content.startswith("\ufeff"):
+                content = content[1:]
+            record = json.loads(content)
+        except Exception as e:
+            sys.exit(f"Error parsing selection record: {e}")
+
+    checkpoint_path = Path(record["checkpoint_path"])
     if not checkpoint_path.exists():
         sys.exit(f"Error: Checkpoint file {checkpoint_path} does not exist.")
 
-    model_type = args.model_type
+    # Verification checks
+    import hashlib
+
+    def hash_file(p):
+        if not p or not Path(p).exists():
+            return "missing"
+        h = hashlib.sha256()
+        with open(p, "rb") as bf:
+            for chunk in iter(lambda: bf.read(4096), b""):
+                h.update(chunk)
+        return h.hexdigest()
+
+    actual_chk_hash = hash_file(checkpoint_path)
+    if actual_chk_hash != record.get("checkpoint_sha256"):
+        sys.exit("Error: Checkpoint hash mismatch.")
+
+    cache_path = record.get("cache_path")
+    if not cache_path or cache_path == "unknown" or not Path(cache_path).exists():
+        sys.exit(
+            "Error: Valid cache_path is strictly required to extract real validation samples for ONNX export"
+        )
+
+    actual_cache_hash = hash_file(cache_path)
+    if actual_cache_hash != record.get("cache_sha256"):
+        sys.exit(
+            f"Error: Cache hash mismatch. Expected {record.get('cache_sha256')} got {actual_cache_hash}"
+        )
+
+    metrics_path = checkpoint_path.parent / "metrics.json"
+    model_type = None
+    if metrics_path.exists():
+        with open(metrics_path, encoding="utf-8") as f:
+            metrics = json.load(f)
+            model_type = metrics.get("model_name")
+            if metrics.get("final_test_opened") is True:
+                sys.exit("Error: Selected checkpoint was exposed to final test.")
+
     if model_type is None:
-        metrics_path = checkpoint_path.parent / "metrics.json"
-        if metrics_path.exists():
-            with open(metrics_path, encoding="utf-8") as f:
-                metrics = json.load(f)
-                if "model_name" in metrics:
-                    model_type = metrics["model_name"]
+        model_type = "tiny_cnn"
 
-        if model_type is None:
-            raise ValueError(
-                "--model-type is required if metrics.json is not found in the checkpoint directory"
-            )
-
-    if model_type == "tiny_cnn" or model_type == "tiny-cnn":
+    if model_type == "tiny-cnn":
         model_type = "tiny_cnn"
 
     output_onnx = Path(args.output)
@@ -282,7 +316,7 @@ def main() -> None:
         checkpoint_path,
         output_onnx,
         model_type,
-        args.cache,
+        cache_path,
         args.validation_split,
         args.sample_count,
     )

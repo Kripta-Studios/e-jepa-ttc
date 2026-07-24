@@ -52,9 +52,10 @@ def test_aggregate_metric_files(tmp_path: Path) -> None:
     assert payload["pretrain_seeds"] == [5]
     assert payload["downstream_seeds"] == [7, 13]
     assert payload["uncertainty_scope"] == "downstream_only_conditional_on_single_pretrain_seed"
-    assert payload["summary"]["mae_s"]["mean"] == 0.30000000000000004
-    assert payload["summary"]["mae_s"]["std"] == 0.1
-    assert payload["summary"]["mean_abs_relative_error_pct"]["mean"] == 6.0
+    assert payload["summary"]["mae_s"]["mean"] == pytest.approx(0.3)
+    assert payload["summary"]["mae_s"]["std"] == 0.0
+    assert payload["summary"]["mae_s"]["pooled_std"] == pytest.approx(0.14142135623730951)
+    assert payload["summary"]["mean_abs_relative_error_pct"]["mean"] == pytest.approx(6.0)
 
 
 def test_aggregate_rejects_official_table_from_reused_test_split(tmp_path: Path) -> None:

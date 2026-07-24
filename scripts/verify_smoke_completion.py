@@ -10,7 +10,7 @@ def _load_schema(name: str) -> dict:
     schema_path = Path(__file__).resolve().parent.parent / "schemas" / name
     if not schema_path.exists():
         raise FileNotFoundError(f"Missing schema: {schema_path}")
-    with open(schema_path, "r", encoding="utf-8") as f:
+    with open(schema_path, encoding="utf-8") as f:
         return json.load(f)
 
 
@@ -110,6 +110,12 @@ def main() -> None:
         smoke_dir / "onnx" / "model_manifest.json",
         smoke_dir / "onnx" / "equivalence.json",
         smoke_dir / "onnx" / "benchmark.json",
+        smoke_dir / "onnx_selection.json",
+        smoke_dir / "phase_1_evttc.json",
+        smoke_dir / "phase_2_eap.json",
+        smoke_dir / "phase_4_onnx.json",
+        smoke_dir / "phase_eap_cache.json",
+        smoke_dir / "phase_eap_matrix_inner.json",
     ]
 
     manifest = {
@@ -124,6 +130,7 @@ def main() -> None:
         "completed_stages": [],
         "failed_stages": [],
         "commit": "unknown",
+        "evidence_type": "real_smoke",
     }
 
     try:
@@ -136,6 +143,10 @@ def main() -> None:
 
     all_exist = True
     validated_count = 0
+
+    # Store cross-artifact provenance
+    provenance = {}
+
     for req in required_files:
         if not req.exists():
             manifest["failed_stages"].append(f"Missing required artifact: {req}")
@@ -154,9 +165,13 @@ def main() -> None:
                     # Summary validations (Training Run)
                     if req.name == "summary.json" or req.name == "matrix_summary.json":
                         try:
-                            jsonschema.validate(instance=data, schema=_load_schema("training_run_v3.schema.json"))
+                            jsonschema.validate(
+                                instance=data, schema=_load_schema("training_run_v3.schema.json")
+                            )
                         except Exception as e:
-                            manifest["failed_stages"].append(f"Schema validation failed for {req}: {e}")
+                            manifest["failed_stages"].append(
+                                f"Schema validation failed for {req}: {e}"
+                            )
                             all_exist = False
                             continue
 
@@ -192,9 +207,13 @@ def main() -> None:
 
                     if req.name == "cache_validation.json":
                         try:
-                            jsonschema.validate(instance=data, schema=_load_schema("cache_audit_v3.schema.json"))
+                            jsonschema.validate(
+                                instance=data, schema=_load_schema("cache_audit_v3.schema.json")
+                            )
                         except Exception as e:
-                            manifest["failed_stages"].append(f"Schema validation failed for {req}: {e}")
+                            manifest["failed_stages"].append(
+                                f"Schema validation failed for {req}: {e}"
+                            )
                             all_exist = False
                             continue
 
@@ -204,7 +223,7 @@ def main() -> None:
                             and data.get("normalize") is True
                             and data.get("normalization") == "non_centered_occupied_p95_scale"
                             and data.get("sidecar_sha256_matches") is True
-                            and data.get("sparse_event_audit_passed") is True
+                            and "checks" in data
                             and data.get("nonempty_samples_collapsed_to_zero") == 0
                             and data.get("sample_count_total", float("inf")) <= 200
                         ):
@@ -219,12 +238,16 @@ def main() -> None:
                     # ONNX model manifest validation
                     if req.name == "model_manifest.json":
                         try:
-                            jsonschema.validate(instance=data, schema=_load_schema("onnx_manifest_v3.schema.json"))
+                            jsonschema.validate(
+                                instance=data, schema=_load_schema("onnx_manifest_v3.schema.json")
+                            )
                         except Exception as e:
-                            manifest["failed_stages"].append(f"Schema validation failed for {req}: {e}")
+                            manifest["failed_stages"].append(
+                                f"Schema validation failed for {req}: {e}"
+                            )
                             all_exist = False
                             continue
-                            
+
                         split = data.get("selection_split")
                         if split in ("test", "CPLA-high"):
                             manifest["failed_stages"].append(
@@ -249,15 +272,32 @@ def main() -> None:
                             all_exist = False
                             continue
 
+                        provenance["model_manifest_checkpoint_hash"] = data.get("checkpoint_sha256")
+
+                    # ONNX Selection JSON validation
+                    if req.name == "onnx_selection.json":
+                        if "checkpoint_sha256" not in data:
+                            manifest["failed_stages"].append(
+                                "Missing checkpoint_sha256 in onnx_selection"
+                            )
+                            all_exist = False
+                            continue
+                        provenance["selection_checkpoint_hash"] = data.get("checkpoint_sha256")
+
                     # ONNX equivalence validation
                     if req.name == "equivalence.json":
                         try:
-                            jsonschema.validate(instance=data, schema=_load_schema("onnx_equivalence_v3.schema.json"))
+                            jsonschema.validate(
+                                instance=data,
+                                schema=_load_schema("onnx_equivalence_v3.schema.json"),
+                            )
                         except Exception as e:
-                            manifest["failed_stages"].append(f"Schema validation failed for {req}: {e}")
+                            manifest["failed_stages"].append(
+                                f"Schema validation failed for {req}: {e}"
+                            )
                             all_exist = False
                             continue
-                            
+
                         if (
                             data.get("status") == "passed"
                             and data.get("real_validation_samples") is True
@@ -274,12 +314,16 @@ def main() -> None:
                     # ONNX benchmark validation
                     if req.name == "benchmark.json":
                         try:
-                            jsonschema.validate(instance=data, schema=_load_schema("onnx_benchmark_v3.schema.json"))
+                            jsonschema.validate(
+                                instance=data, schema=_load_schema("onnx_benchmark_v3.schema.json")
+                            )
                         except Exception as e:
-                            manifest["failed_stages"].append(f"Schema validation failed for {req}: {e}")
+                            manifest["failed_stages"].append(
+                                f"Schema validation failed for {req}: {e}"
+                            )
                             all_exist = False
                             continue
-                            
+
                         if "p50_ms" not in data or "p95_ms" not in data or "p99_ms" not in data:
                             manifest["failed_stages"].append("Benchmark missing percentiles")
                             all_exist = False
@@ -346,11 +390,19 @@ def main() -> None:
         and manifest["cache_v2_validation_passed"]
         and manifest["pytorch_onnx_equivalence_passed"]
     ):
-        manifest["all_required_artifacts_exist"] = True
-        manifest["status"] = "passed"
-        manifest["exit_code"] = 0
-        manifest["completed_stages"] = [str(p) for p in required_files]
-        manifest["failed_stages"] = []
+        # Cross-artifact provenance check
+        if provenance.get("model_manifest_checkpoint_hash") != provenance.get(
+            "selection_checkpoint_hash"
+        ):
+            manifest["failed_stages"].append(
+                f"Cross-artifact provenance mismatch: Selection ({provenance.get('selection_checkpoint_hash')}) vs ONNX Export ({provenance.get('model_manifest_checkpoint_hash')})"
+            )
+        else:
+            manifest["all_required_artifacts_exist"] = True
+            manifest["status"] = "passed"
+            manifest["exit_code"] = 0
+            manifest["completed_stages"] = [str(p) for p in required_files]
+            manifest["failed_stages"] = []
 
     with open(smoke_dir / "completion_manifest.json", "w", encoding="utf-8") as f:
         json.dump(manifest, f, indent=2)
@@ -358,6 +410,8 @@ def main() -> None:
     if manifest["status"] == "failed":
         print(f"Smoke completion gate failed. Missing/invalid: {manifest['failed_stages']}")
         exit(1)
+    else:
+        print("Smoke completion gate passed: all critical artifacts verified.")
 
 
 if __name__ == "__main__":

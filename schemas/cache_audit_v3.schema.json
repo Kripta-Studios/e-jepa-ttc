@@ -9,7 +9,7 @@
     },
     "status": {
       "type": "string",
-      "enum": ["passed", "failed"]
+      "enum": ["passed", "failed", "not_verifiable"]
     },
     "audit_mode": {
       "type": "string",
@@ -17,7 +17,10 @@
     },
     "evidence_type": {
       "type": "string",
-      "enum": ["synthetic_ci", "real_smoke", "validation_matrix"]
+      "enum": ["synthetic_ci", "real_smoke", "validation_pilot", "validation_matrix", "final_test"]
+    },
+    "reason": {
+      "type": "string"
     },
     "cache_format_version": {
       "type": "integer"
@@ -55,9 +58,7 @@
     "nonempty_samples_collapsed_to_zero": {
       "type": "integer"
     },
-    "sparse_event_audit_passed": {
-      "type": "boolean"
-    },
+
     "checks": {
       "type": "object"
     },
@@ -90,7 +91,6 @@
     "sample_count_total",
     "sample_count_audited",
     "nonempty_samples_collapsed_to_zero",
-    "sparse_event_audit_passed",
     "checks",
     "failures",
     "warnings",

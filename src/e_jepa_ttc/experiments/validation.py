@@ -101,13 +101,15 @@ def verify_architecture_parity(scratch_ckpt_path: Path, jepa_finetuned_ckpt_path
                 f"Shape mismatch for {k}: scratch={scratch_sd[k].shape}, jepa={jepa_sd[k].shape}"
             )
             return False
-            
+
         # Ensure that the actual tensor values diverge (they shouldn't be identically 0 or equal)
         if torch.equal(scratch_sd[k], jepa_sd[k]):
-            # Biases or certain BN stats might legitimately be identical if unupdated, 
+            # Biases or certain BN stats might legitimately be identical if unupdated,
             # but weights should diverge.
             if "weight" in k:
-                logging.error(f"Tensor values for {k} are identical between scratch and JEPA models. This violates weight divergence expectations.")
+                logging.error(
+                    f"Tensor values for {k} are identical between scratch and JEPA models. This violates weight divergence expectations."
+                )
                 return False
 
     logging.info("Architecture parity verified.")

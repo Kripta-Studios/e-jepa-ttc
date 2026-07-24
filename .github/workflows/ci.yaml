@@ -14,5 +14,7 @@ jobs:
       - run: uv run --no-sync ruff check .
       - run: uv run --no-sync ruff format --check .
       - run: uv run --no-sync python scripts/validate_artifact_registry.py
-      - run: uv run --no-sync pytest
-      - run: uv run --no-sync pytest tests/integration/test_synthetic_pipeline_smoke.py
+      - run: pwsh -Command "Get-ChildItem scripts/*.ps1 | ForEach-Object { `$errors = `$null; `$tokens = `$null; `$ast = [System.Management.Automation.Language.Parser]::ParseFile(`$_.FullName, [ref]`$tokens, [ref]`$errors); if (`$errors) { Write-Error `"Syntax error in `$(`$_.Name)`"; exit 1 } }"
+      - run: uv run --no-sync pytest tests/unit
+      - run: uv run --no-sync pytest tests/integration
+      - run: uv run --no-sync pytest tests/regression

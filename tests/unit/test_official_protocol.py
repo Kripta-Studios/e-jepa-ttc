@@ -71,7 +71,9 @@ def test_official_evttc_coverage_requires_nonempty_bbox_labels(tmp_path: Path) -
     assert row["status"] == "incomplete_assets"
 
 
-def test_reused_test_split_cannot_produce_official_or_final_table(tmp_path: Path) -> None:
+def test_reused_test_split_cannot_produce_official_or_final_table(tmp_path: Path, monkeypatch) -> None:
+    import e_jepa_ttc.experiments.test_lock
+    monkeypatch.setattr(e_jepa_ttc.experiments.test_lock, "check_final_test_lock", lambda claim: True)
     split_path = tmp_path / "diagnostic.yaml"
     write_structured(
         split_path,
@@ -93,7 +95,9 @@ def test_reused_test_split_cannot_produce_official_or_final_table(tmp_path: Path
             assert_split_claim_allowed(split_path, claim_level=claim)
 
 
-def test_legacy_reused_test_status_is_normalized(tmp_path: Path) -> None:
+def test_legacy_reused_test_status_is_normalized(tmp_path: Path, monkeypatch) -> None:
+    import e_jepa_ttc.experiments.test_lock
+    monkeypatch.setattr(e_jepa_ttc.experiments.test_lock, "check_final_test_lock", lambda claim: True)
     path = tmp_path / "legacy_split.yaml"
     path.write_text(
         "status: reused_test\n"

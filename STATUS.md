@@ -12,7 +12,13 @@ Updated: 2026-07-13.
 - Historical end-to-end seeds: SSL `{7}`; downstream `{7,13,21}`.
 - Post-fix promotable metrics: none.
 - Final test: unavailable; CPLA-high is diagnostic only.
+- ONNX Export: implemented, requires reproducible real-smoke validation.
+- Streaming Inference: implemented, requires reproducible real-smoke validation.
 - Robustness: placeholder evaluation only. Phase C and D remain incomplete.
+
+> **Integrity Note**: Commit `f96bc35` prepares the real Master Smoke orchestrator. It is not evidence that the Master Smoke passed.
+
+## Core Progress
 - Long recovery run: not started because the worktree is dirty.
 
 ## Ready for clean baseline commit

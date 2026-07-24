@@ -508,19 +508,19 @@ def _mask_context(
 def _update_ema(target: nn.Module, online: nn.Module, *, momentum: float) -> float:
     if not 0.0 <= momentum <= 1.0:
         raise ValueError("EMA momentum must lie in [0, 1].")
-        
+
     divergence_sq = 0.0
     for target_param, online_param in zip(target.parameters(), online.parameters(), strict=True):
         delta = target_param.data - online_param.data
         divergence_sq += delta.pow(2).sum().item()
         if momentum < 1.0:
             target_param.data.mul_(momentum).add_(online_param.data, alpha=1.0 - momentum)
-            
+
     for target_buffer, online_buffer in zip(target.buffers(), online.buffers(), strict=True):
         if momentum < 1.0:
             target_buffer.copy_(online_buffer)
-            
-    return float(divergence_sq ** 0.5)
+
+    return float(divergence_sq**0.5)
 
 
 def _variance_loss(z: torch.Tensor, *, min_std: float) -> torch.Tensor:

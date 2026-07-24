@@ -46,6 +46,7 @@ def test_onnx_export_traces_batch_size_correctly(tmp_path) -> None:
     from scripts.export_onnx import export_to_onnx
 
     # Create a small transformer to speed up the test
+    from e_jepa_ttc.models.token_transformer import EventTubeletTransformerRegressor
     model = EventTubeletTransformerRegressor(in_channels=21, embed_dim=32, depth=1, num_heads=1)
     checkpoint = {
         "resolved_model_config": {

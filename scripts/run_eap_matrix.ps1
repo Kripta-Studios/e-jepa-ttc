@@ -56,6 +56,10 @@ if (-not (Test-Path $cacheManifest)) {
     Write-Output "eAP object cache already exists at $cacheManifest"
 }
 
+$baseDir = if ($Smoke) { "artifacts/smoke/current" } else { "artifacts/runs" }
+$dateStr = (Get-Date).ToString("o")
+@{ phase = "eap_cache"; status = "passed"; timestamp = $dateStr } | ConvertTo-Json | Out-File -FilePath "$baseDir/phase_eap_cache.json" -Encoding utf8
+
 $matrixOut = if ($Smoke) { "artifacts/smoke/current/eap/matrix" } else { "artifacts/runs/eap_object_jepa_matrix" }
 New-Item -ItemType Directory -Force -Path $matrixOut | Out-Null
 
@@ -82,19 +86,13 @@ $cmdArgs = @(
     "--device", "auto"
 )
 
-if ($Smoke) {
-    $cmdArgs += "--report-splits"
-    $cmdArgs += "validation"
-    $cmdArgs += "calibration"
-} else {
-    $cmdArgs += "--report-splits"
-    $cmdArgs += "validation"
-    $cmdArgs += "calibration"
-    $cmdArgs += "test"
-    $cmdArgs += "--allow-final-test-evaluation"
-}
+$cmdArgs += "--report-splits"
+$cmdArgs += "validation"
+$cmdArgs += "calibration"
+
 Invoke-Python @cmdArgs
 if ($LASTEXITCODE -ne 0) { throw "eAP matrix execution failed" }
 
+@{ phase = "eap_matrix_inner"; status = "passed"; timestamp = $dateStr } | ConvertTo-Json | Out-File -FilePath "$baseDir/phase_eap_matrix_inner.json" -Encoding utf8
 
 Write-Output "eAP matrix and ablations completed successfully!"

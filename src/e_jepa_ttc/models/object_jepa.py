@@ -464,7 +464,7 @@ class ObjectCentricEventJEPA(nn.Module):
         if not 0.0 <= momentum <= 1.0:
             msg = "EMA momentum must lie in [0, 1]."
             raise ValueError(msg)
-            
+
         divergence_sq = 0.0
         for target, context in zip(
             self.target_encoder.parameters(),
@@ -475,7 +475,7 @@ class ObjectCentricEventJEPA(nn.Module):
             divergence_sq += delta.pow(2).sum().item()
             if momentum < 1.0:
                 target.mul_(momentum).add_(context.detach(), alpha=1.0 - momentum)
-                
+
         for target, context in zip(
             self.target_encoder.buffers(),
             self.context_encoder.buffers(),
@@ -483,8 +483,8 @@ class ObjectCentricEventJEPA(nn.Module):
         ):
             if momentum < 1.0:
                 target.copy_(context)
-                
-        return float(divergence_sq ** 0.5)
+
+        return float(divergence_sq**0.5)
 
     def train(self, mode: bool = True) -> ObjectCentricEventJEPA:
         """Keep the EMA teacher in evaluation mode."""

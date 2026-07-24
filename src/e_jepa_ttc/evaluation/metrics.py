@@ -46,5 +46,5 @@ def regression_metrics(y_true: np.ndarray, y_pred: np.ndarray) -> dict[str, floa
         signed_log_err_15s = signed_log_pred[valid_15s[mask]] - signed_log_true[valid_15s[mask]]
         metrics["log_mae_15s"] = float(np.mean(np.abs(signed_log_err_15s)))
         metrics["log_rmse_15s"] = float(np.sqrt(np.mean(signed_log_err_15s**2)))
-    
+
     return metrics
