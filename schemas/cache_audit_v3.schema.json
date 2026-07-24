@@ -1,61 +1,99 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "E-JEPA-TTC Cache Audit V3",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Cache Audit V3",
   "type": "object",
   "properties": {
-    "timestamp": {
+    "schema_version": {
       "type": "string",
-      "format": "date-time"
+      "const": "3.0"
     },
-    "npz_path": {
-      "type": "string"
-    },
-    "sha256": {
+    "status": {
       "type": "string",
-      "pattern": "^[a-f0-9]{64}$"
+      "enum": ["passed", "failed"]
     },
-    "mode": {
+    "audit_mode": {
       "type": "string",
       "enum": ["sampled", "exhaustive"]
     },
-    "total_samples": {
-      "type": "integer",
-      "minimum": 0
+    "evidence_type": {
+      "type": "string",
+      "enum": ["synthetic_ci", "real_smoke", "validation_matrix"]
     },
-    "scanned_samples": {
-      "type": "integer",
-      "minimum": 0
+    "cache_format_version": {
+      "type": "integer"
     },
-    "valid_nan_inf": {
+    "cache_path": {
+      "type": "string"
+    },
+    "cache_sha256_computed": {
+      "type": "string"
+    },
+    "cache_sha256_declared": {
+      "type": "string"
+    },
+    "sidecar_sha256_matches": {
       "type": "boolean"
     },
-    "valid_tensor_shapes": {
+    "normalize": {
       "type": "boolean"
     },
-    "split_disjointness": {
-      "type": "boolean"
+    "normalization": {
+      "type": "string"
+    },
+    "normalizer_source_split": {
+      "type": "string"
     },
     "normalizer_origins_verified": {
       "type": "boolean"
     },
-    "errors": {
+    "sample_count_total": {
+      "type": "integer"
+    },
+    "sample_count_audited": {
+      "type": "integer"
+    },
+    "nonempty_samples_collapsed_to_zero": {
+      "type": "integer"
+    },
+    "sparse_event_audit_passed": {
+      "type": "boolean"
+    },
+    "checks": {
+      "type": "object"
+    },
+    "failures": {
       "type": "array",
-      "items": {
-        "type": "string"
-      }
+      "items": { "type": "string" }
+    },
+    "warnings": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "provenance": {
+      "type": "object"
     }
   },
   "required": [
-    "timestamp",
-    "npz_path",
-    "sha256",
-    "mode",
-    "total_samples",
-    "scanned_samples",
-    "valid_nan_inf",
-    "valid_tensor_shapes",
-    "split_disjointness",
-    "normalizer_origins_verified"
-  ],
-  "additionalProperties": false
+    "schema_version",
+    "status",
+    "audit_mode",
+    "evidence_type",
+    "cache_format_version",
+    "cache_path",
+    "cache_sha256_computed",
+    "cache_sha256_declared",
+    "sidecar_sha256_matches",
+    "normalize",
+    "normalization",
+    "normalizer_source_split",
+    "normalizer_origins_verified",
+    "sample_count_total",
+    "sample_count_audited",
+    "nonempty_samples_collapsed_to_zero",
+    "sparse_event_audit_passed",
+    "checks",
+    "failures",
+    "warnings",
+    "provenance"
+  ]
 }
