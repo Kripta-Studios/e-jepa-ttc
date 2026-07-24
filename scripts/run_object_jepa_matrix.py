@@ -251,6 +251,7 @@ def main() -> int:
         scratch_config = ObjectJEPAConfig(**checkpoint_payload["model_config"])
         for fraction in args.label_fractions:
             fraction_name = f"{fraction:.4f}".rstrip("0").rstrip(".")
+            ckpt_paths = {}
             for initialization, pretrained in (("scratch", None), ("jepa", checkpoint)):
                 run_dir = (
                     args.output_dir
@@ -268,8 +269,15 @@ def main() -> int:
                     scratch_config=scratch_config if pretrained is None else None,
                     args=args,
                 )
+                ckpt_paths[initialization] = Path(summary["best_checkpoint"])
                 rows.append(_row(summary))
                 write_structured(args.output_dir / "runs.json", {"runs": rows})
+            
+            # Enforce Architecture Parity (P1.9)
+            import sys
+            from e_jepa_ttc.experiments.validation import verify_architecture_parity
+            if not verify_architecture_parity(ckpt_paths["scratch"], ckpt_paths["jepa"]):
+                sys.exit(f"FATAL: Architecture parity failed for fraction {fraction} seed {seed}. Aborting matrix.")
     result = {
         "protocol": "pre_registered_matched_low_label_object_jepa_v1",
         "cache_manifest": args.cache_manifest.as_posix(),
