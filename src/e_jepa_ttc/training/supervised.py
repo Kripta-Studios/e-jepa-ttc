@@ -243,10 +243,21 @@ def train_tiny_cnn(
         print(f"Loaded subset manifest from {manifest_path} with {train_idx.size} samples.")
     elif train_fraction < 1.0:
         rng = np.random.default_rng(seed)
-        subset_count = max(1, int(round(train_idx.size * train_fraction)))
-        train_idx = np.sort(rng.choice(train_idx, size=subset_count, replace=False)).astype(
-            np.int64
-        )
+        if "sequence_id" in cache:
+            seqs = cache["sequence_id"][train_idx]
+            unique_seqs = np.sort(np.unique(seqs))
+            subset_idx = []
+            for seq in unique_seqs:
+                seq_idx = train_idx[seqs == seq]
+                shuffled = rng.permutation(seq_idx)
+                subset_count = max(1, int(round(seq_idx.size * train_fraction)))
+                subset_idx.append(shuffled[:subset_count])
+            train_idx = np.sort(np.concatenate(subset_idx)).astype(np.int64)
+        else:
+            shuffled = rng.permutation(train_idx)
+            subset_count = max(1, int(round(train_idx.size * train_fraction)))
+            train_idx = np.sort(shuffled[:subset_count]).astype(np.int64)
+
         if subset_manifest_path is not None:
             manifest_path = Path(subset_manifest_path)
             ensure_parent(manifest_path)

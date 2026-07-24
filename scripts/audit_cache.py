@@ -3,7 +3,7 @@ import hashlib
 import json
 import logging
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 import numpy as np
@@ -38,7 +38,7 @@ def main() -> None:
     npz_sha256 = sha256_hash.hexdigest()
 
     errors = []
-    
+
     with open(sidecar_path, encoding="utf-8") as f:
         sidecar = json.load(f)
 
@@ -47,7 +47,7 @@ def main() -> None:
     valid_tensor_shapes = True
     split_disjointness = True
     normalizer_origins_verified = True
-    
+
     try:
         with np.load(npz_path, mmap_mode="r") as data:
             if "x" not in data:
@@ -70,7 +70,7 @@ def main() -> None:
                 else:
                     x_scan = x
                     scanned_samples = total_samples
-                
+
                 if np.isnan(x_scan).any():
                     errors.append("NaN values found in 'x' array")
                     valid_nan_inf = False
@@ -83,7 +83,7 @@ def main() -> None:
                 seqs = np.array(data["sequence_id"])
                 splits = np.array(data["split"])
                 seq_to_split = {}
-                for s, sp in zip(seqs, splits):
+                for s, sp in zip(seqs, splits, strict=True):
                     if s in seq_to_split and seq_to_split[s] != sp:
                         errors.append(f"Sequence {s} belongs to multiple splits")
                         split_disjointness = False
@@ -100,17 +100,17 @@ def main() -> None:
         scanned_samples = 0
 
     validation = {
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         "npz_path": str(npz_path),
         "sha256": npz_sha256,
         "mode": mode,
-        "total_samples": int(total_samples) if 'total_samples' in locals() else 0,
-        "scanned_samples": int(scanned_samples) if 'scanned_samples' in locals() else 0,
+        "total_samples": int(total_samples) if "total_samples" in locals() else 0,
+        "scanned_samples": int(scanned_samples) if "scanned_samples" in locals() else 0,
         "valid_nan_inf": valid_nan_inf,
         "valid_tensor_shapes": valid_tensor_shapes,
         "split_disjointness": split_disjointness,
         "normalizer_origins_verified": normalizer_origins_verified,
-        "errors": errors
+        "errors": errors,
     }
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -123,6 +123,7 @@ def main() -> None:
     else:
         logging.info(f"Cache validation written to {output_path}")
         sys.exit(0)
+
 
 if __name__ == "__main__":
     main()

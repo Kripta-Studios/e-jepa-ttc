@@ -519,9 +519,11 @@ def _label_subset_indices(
         strata.setdefault((sequence_id, bin_index), []).append(index)
     rng = np.random.default_rng(seed)
     selected: list[int] = []
-    for indices in strata.values():
+    for key in sorted(strata.keys()):
+        indices = strata[key]
+        shuffled = rng.permutation(indices)
         count = max(1, int(round(len(indices) * fraction)))
-        selected.extend(rng.choice(indices, size=min(count, len(indices)), replace=False).tolist())
+        selected.extend(shuffled[: min(count, len(indices))].tolist())
     return sorted(set(int(index) for index in selected))
 
 
