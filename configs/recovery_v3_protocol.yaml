@@ -4,6 +4,18 @@ matrix:
   downstream_seeds: [7, 13, 21]
   nav_modes: ["enabled", "disabled"]
   label_fractions: [1.0, 0.10, 0.05]
+eap_matrix:
+  ssl_seeds: [17, 42, 73]
+  downstream_seeds: [17, 42, 73]
+  label_fractions: [1.0, 0.10, 0.05]
+architecture:
+  use_ego_actions: true
+  use_recurrence: true
+  use_geometry: true
+smoke:
+  max_windows_per_sequence: 50
+  sample_count_total_limit: 200
+  iterations_limit: 50
 requirements:
   primary_metrics: ["mae_s", "rmse_s", "median_abs_error_s", "auroc", "auprc", "calibration_error"]
   allowed_split_roles: ["train", "validation", "diagnostic_test"]
