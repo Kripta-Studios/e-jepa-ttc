@@ -22,13 +22,29 @@ def regression_metrics(y_true: np.ndarray, y_pred: np.ndarray) -> dict[str, floa
     abs_relative_error_pct = abs_err / np.maximum(np.abs(true[mask]), 1e-6) * 100.0
     signed_log_true = np.sign(true[mask]) * np.log1p(np.abs(true[mask]))
     signed_log_pred = np.sign(pred[mask]) * np.log1p(np.abs(pred[mask]))
-    signed_log_mae = float(np.mean(np.abs(signed_log_pred - signed_log_true)))
-    return {
+    signed_log_err = signed_log_pred - signed_log_true
+    signed_log_mae = float(np.mean(np.abs(signed_log_err)))
+    signed_log_rmse = float(np.sqrt(np.mean(signed_log_err**2)))
+
+    metrics = {
         "mae_s": float(np.mean(abs_err)),
         "median_abs_error_s": float(np.median(abs_err)),
         "rmse_s": float(np.sqrt(np.mean(err**2))),
         "mean_abs_relative_error_pct": float(np.mean(abs_relative_error_pct)),
         "median_abs_relative_error_pct": float(np.median(abs_relative_error_pct)),
         "log_mae": signed_log_mae,
+        "log_rmse": signed_log_rmse,
         "signed_log1p_mae": signed_log_mae,
     }
+
+    # Bounded 15s subset metrics (literature constraint)
+    valid_15s = mask & (np.abs(true) <= 15.0)
+    if np.any(valid_15s):
+        err_15s = pred[valid_15s] - true[valid_15s]
+        metrics["mae_s_15s"] = float(np.mean(np.abs(err_15s)))
+        metrics["rmse_s_15s"] = float(np.sqrt(np.mean(err_15s**2)))
+        signed_log_err_15s = signed_log_pred[valid_15s[mask]] - signed_log_true[valid_15s[mask]]
+        metrics["log_mae_15s"] = float(np.mean(np.abs(signed_log_err_15s)))
+        metrics["log_rmse_15s"] = float(np.sqrt(np.mean(signed_log_err_15s**2)))
+    
+    return metrics
