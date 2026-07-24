@@ -29,15 +29,39 @@ $navModes = if ($Smoke) { @("enabled", "disabled") } else { @("enabled", "disabl
 
 $outRoot = if ($Smoke) { "artifacts/smoke/current/evttc" } else { "artifacts/runs" }
 
+# Audit the cache first
+Write-Output "Auditing Cache..."
+$cacheValidation = "$outRoot/cache_validation.json"
+Invoke-Python scripts/audit_cache.py --npz-path $cache --output $cacheValidation
+if ($LASTEXITCODE -ne 0) { throw "Cache audit failed." }
+
 foreach ($navMode in $navModes) {
     # 1. Scratch Training
     foreach ($downstreamSeed in $downstreamSeeds) {
         $scratchOut = "$outRoot/recovery_scratch_nav${navMode}_seed${downstreamSeed}_${suffix}"
         $scratchStarted = Get-Date -Format o
-        $scratchCommand = "$pythonCmdStr -m e_jepa_ttc train tiny-cnn --cache $cache --output-dir $scratchOut --epochs $downstreamEpochs --batch-size 32 --learning-rate 0.00003 --seed $downstreamSeed --device auto --model event-tubelet-transformer --navigation-mode $navMode --train-splits train --validation-splits validation --evaluation-splits train validation"
+
+        $scratchArgs = @(
+            "-m", "e_jepa_ttc", "train", "tiny-cnn",
+            "--cache", $cache,
+            "--output-dir", $scratchOut,
+            "--epochs", $downstreamEpochs,
+            "--batch-size", "32",
+            "--learning-rate", "0.00003",
+            "--seed", $downstreamSeed,
+            "--device", "auto",
+            "--model", "event-tubelet-transformer",
+            "--navigation-mode", $navMode,
+            "--train-splits", "train",
+            "--validation-splits", "validation",
+            "--evaluation-splits", "train", "validation"
+        )
+        $scratchCommand = "$pythonCmdStr " + ($scratchArgs -join " ")
+
         $skipScratch = $false
         if (-not $Smoke -and (Test-Path "$scratchOut/tiny_cnn_best.pt")) {
-            Invoke-Python scripts/verify_checkpoint_provenance.py "$scratchOut/tiny_cnn_best.pt" $baselineCommit
+            $expectedFingerprint = Invoke-Python @scratchArgs --dry-run-fingerprint
+            Invoke-Python scripts/verify_checkpoint_provenance.py "$scratchOut/tiny_cnn_best.pt" $baselineCommit $expectedFingerprint
             if ($LASTEXITCODE -eq 0) {
                 $skipScratch = $true
             }
@@ -46,19 +70,7 @@ foreach ($navMode in $navModes) {
             Write-Output "Scratch full training ($navMode) for seed $downstreamSeed already exists. Skipping."
             $scratchCompleted = Get-Date -Format o
         } else {
-            Invoke-Python -m e_jepa_ttc train tiny-cnn `
-                --cache $cache `
-                --output-dir $scratchOut `
-                --epochs $downstreamEpochs `
-                --batch-size 32 `
-                --learning-rate 0.00003 `
-                --seed $downstreamSeed `
-                --device auto `
-                --model event-tubelet-transformer `
-                --navigation-mode $navMode `
-                --train-splits train `
-                --validation-splits validation `
-                --evaluation-splits train validation
+            Invoke-Python @scratchArgs
             if ($LASTEXITCODE -ne 0) { throw "Scratch seed $downstreamSeed failed" }
             $scratchCompleted = Get-Date -Format o
         }
@@ -86,34 +98,39 @@ foreach ($navMode in $navModes) {
                 $manifestPath = "artifacts/subsets/evttc_${fracStr}_seed${downstreamSeed}.json"
                 $lowLabelScratchOut = "$outRoot/recovery_scratch_nav${navMode}_seed${downstreamSeed}_${fracStr}_${suffix}"
                 $lowLabelScratchStarted = Get-Date -Format o
-                $lowLabelScratchCommand = "$pythonCmdStr -m e_jepa_ttc train tiny-cnn --cache $cache --output-dir $lowLabelScratchOut --epochs $downstreamEpochs --batch-size 32 --learning-rate 0.00003 --seed $downstreamSeed --device auto --model event-tubelet-transformer --navigation-mode $navMode --train-splits train --validation-splits validation --evaluation-splits train validation --train-fraction $frac --subset-manifest-path $manifestPath"
+
+                $lowLabelScratchArgs = @(
+                    "-m", "e_jepa_ttc", "train", "tiny-cnn",
+                    "--cache", $cache,
+                    "--output-dir", $lowLabelScratchOut,
+                    "--epochs", $downstreamEpochs,
+                    "--batch-size", "32",
+                    "--learning-rate", "0.00003",
+                    "--seed", $downstreamSeed,
+                    "--device", "auto",
+                    "--model", "event-tubelet-transformer",
+                    "--navigation-mode", $navMode,
+                    "--train-splits", "train",
+                    "--validation-splits", "validation",
+                    "--evaluation-splits", "train", "validation",
+                    "--train-fraction", $frac,
+                    "--subset-manifest-path", $manifestPath
+                )
+                $lowLabelScratchCommand = "$pythonCmdStr " + ($lowLabelScratchArgs -join " ")
                 
                 $skipLowLabelScratch = $false
                 if (-not $Smoke -and (Test-Path "$lowLabelScratchOut/tiny_cnn_best.pt")) {
-                    Invoke-Python scripts/verify_checkpoint_provenance.py "$lowLabelScratchOut/tiny_cnn_best.pt" $baselineCommit
+                    $expectedFingerprint = Invoke-Python @lowLabelScratchArgs --dry-run-fingerprint
+                    Invoke-Python scripts/verify_checkpoint_provenance.py "$lowLabelScratchOut/tiny_cnn_best.pt" $baselineCommit $expectedFingerprint
                     if ($LASTEXITCODE -eq 0) {
                         $skipLowLabelScratch = $true
                     }
                 }
                 if ($skipLowLabelScratch) {
-                    Write-Output "Scratch low-label training ($navMode, $fracStr) for seed $downstreamSeed already exists. Skipping."
+                    Write-Output "Low-label Scratch ($navMode, $frac) for seed $downstreamSeed already exists. Skipping."
                     $lowLabelScratchCompleted = Get-Date -Format o
                 } else {
-                    Invoke-Python -m e_jepa_ttc train tiny-cnn `
-                        --cache $cache `
-                        --output-dir $lowLabelScratchOut `
-                        --epochs $downstreamEpochs `
-                        --batch-size 32 `
-                        --learning-rate 0.00003 `
-                        --seed $downstreamSeed `
-                        --device auto `
-                        --model event-tubelet-transformer `
-                        --navigation-mode $navMode `
-                        --train-splits train `
-                        --validation-splits validation `
-                        --evaluation-splits train validation `
-                        --train-fraction $frac `
-                        --subset-manifest-path $manifestPath
+                    Invoke-Python @lowLabelScratchArgs
                     if ($LASTEXITCODE -ne 0) { throw "Low-label Scratch nav ${navMode} seed $downstreamSeed frac $frac failed" }
                     $lowLabelScratchCompleted = Get-Date -Format o
                 }
@@ -144,11 +161,36 @@ foreach ($navMode in $navModes) {
     foreach ($seed in $seeds) {
         $sslOut = "$outRoot/recovery_jepa_nav${navMode}_seed${seed}_${suffix}"
         $sslStarted = Get-Date -Format o
-        $sslCommand = "$pythonCmdStr -m e_jepa_ttc pretrain jepa --cache $cache --output-dir $sslOut --epochs $sslEpochs --batch-size 128 --learning-rate 0.0005 --seed $seed --device auto --model event-tubelet-transformer --navigation-mode $navMode --pretrain-splits train --validation-splits validation"
+
+        $sslArgs = @(
+            "-m", "e_jepa_ttc", "pretrain", "jepa",
+            "--cache", $cache,
+            "--output-dir", $sslOut,
+            "--epochs", $sslEpochs,
+            "--batch-size", "24",
+            "--learning-rate", "0.0003",
+            "--seed", $seed,
+            "--device", "auto",
+            "--model", "event-tubelet-transformer",
+            "--navigation-mode", $navMode,
+            "--pretrain-splits", "train",
+            "--validation-splits", "validation",
+            "--temporal-horizons-ms", "20", "60", "100", "240", "500",
+            "--max-target-slop-ms", "10",
+            "--mask-ratio", "0.45",
+            "--block-count", "4",
+            "--mask-mode", "tubelet",
+            "--ema-momentum", "0.99",
+            "--variance-weight", "1.0",
+            "--min-std", "0.05",
+            "--dense-predictor", "transformer"
+        )
+        $sslCommand = "$pythonCmdStr " + ($sslArgs -join " ")
         
         $skipSSL = $false
         if (-not $Smoke -and (Test-Path "$sslOut/jepa_encoder_best.pt")) {
-            Invoke-Python scripts/verify_checkpoint_provenance.py "$sslOut/jepa_encoder_best.pt" $baselineCommit
+            $expectedFingerprint = Invoke-Python @sslArgs --dry-run-fingerprint
+            Invoke-Python scripts/verify_checkpoint_provenance.py "$sslOut/jepa_encoder_best.pt" $baselineCommit $expectedFingerprint
             if ($LASTEXITCODE -eq 0) {
                 $skipSSL = $true
             }
@@ -157,27 +199,7 @@ foreach ($navMode in $navModes) {
             Write-Output "SSL pretraining ($navMode) for seed $seed already exists. Skipping."
             $sslCompleted = Get-Date -Format o
         } else {
-            Invoke-Python -m e_jepa_ttc pretrain jepa `
-                --cache $cache `
-                --output-dir $sslOut `
-                --epochs $sslEpochs `
-                --batch-size 24 `
-                --learning-rate 0.0003 `
-                --seed $seed `
-                --device auto `
-                --model event-tubelet-transformer `
-                --navigation-mode $navMode `
-                --pretrain-splits train `
-                --validation-splits validation `
-                --temporal-horizons-ms 20 60 100 240 500 `
-                --max-target-slop-ms 10 `
-                --mask-ratio 0.45 `
-                --block-count 4 `
-                --mask-mode tubelet `
-                --ema-momentum 0.99 `
-                --variance-weight 1.0 `
-                --min-std 0.05 `
-                --dense-predictor transformer
+            Invoke-Python @sslArgs
             if ($LASTEXITCODE -ne 0) { throw "SSL nav ${navMode} seed $seed failed" }
             $sslCompleted = Get-Date -Format o
         }
@@ -200,11 +222,29 @@ foreach ($navMode in $navModes) {
         foreach ($downstreamSeed in $downstreamSeeds) {
             $downstreamOut = "$outRoot/recovery_downstream_ssl${seed}_nav${navMode}_seed${downstreamSeed}_${suffix}"
             $downstreamStarted = Get-Date -Format o
-            $downstreamCommand = "$pythonCmdStr -m e_jepa_ttc train tiny-cnn --cache $cache --output-dir $downstreamOut --epochs $downstreamEpochs --batch-size 32 --learning-rate 0.00003 --seed $downstreamSeed --device auto --model event-tubelet-transformer --navigation-mode $navMode --pretrained-encoder $sslOut/jepa_encoder_best.pt --train-splits train --validation-splits validation --evaluation-splits train validation"
+
+            $downstreamArgs = @(
+                "-m", "e_jepa_ttc", "train", "tiny-cnn",
+                "--cache", $cache,
+                "--output-dir", $downstreamOut,
+                "--epochs", $downstreamEpochs,
+                "--batch-size", "32",
+                "--learning-rate", "0.00003",
+                "--seed", $downstreamSeed,
+                "--device", "auto",
+                "--model", "event-tubelet-transformer",
+                "--navigation-mode", $navMode,
+                "--pretrained-encoder", "$sslOut/jepa_encoder_best.pt",
+                "--train-splits", "train",
+                "--validation-splits", "validation",
+                "--evaluation-splits", "train", "validation"
+            )
+            $downstreamCommand = "$pythonCmdStr " + ($downstreamArgs -join " ")
 
             $skipDownstream = $false
             if (-not $Smoke -and (Test-Path "$downstreamOut/tiny_cnn_best.pt")) {
-                Invoke-Python scripts/verify_checkpoint_provenance.py "$downstreamOut/tiny_cnn_best.pt" $baselineCommit
+                $expectedFingerprint = Invoke-Python @downstreamArgs --dry-run-fingerprint
+                Invoke-Python scripts/verify_checkpoint_provenance.py "$downstreamOut/tiny_cnn_best.pt" $baselineCommit $expectedFingerprint
                 if ($LASTEXITCODE -eq 0) {
                     $skipDownstream = $true
                 }
@@ -213,20 +253,7 @@ foreach ($navMode in $navModes) {
                 Write-Output "Downstream full training ($navMode) for pretrain seed $seed and downstream seed $downstreamSeed already exists. Skipping."
                 $downstreamCompleted = Get-Date -Format o
             } else {
-                Invoke-Python -m e_jepa_ttc train tiny-cnn `
-                    --cache $cache `
-                    --output-dir $downstreamOut `
-                    --epochs $downstreamEpochs `
-                    --batch-size 32 `
-                    --learning-rate 0.00003 `
-                    --seed $downstreamSeed `
-                    --device auto `
-                    --model event-tubelet-transformer `
-                    --navigation-mode $navMode `
-                    --pretrained-encoder "$sslOut/jepa_encoder_best.pt" `
-                    --train-splits train `
-                    --validation-splits validation `
-                    --evaluation-splits train validation
+                Invoke-Python @downstreamArgs
                 if ($LASTEXITCODE -ne 0) { throw "Downstream SSL $seed nav ${navMode} seed $downstreamSeed failed" }
                 $downstreamCompleted = Get-Date -Format o
             }
@@ -252,47 +279,52 @@ foreach ($navMode in $navModes) {
             foreach ($frac in $fractions) {
                 $fracStr = "frac$([math]::Round($frac * 100))"
                 $manifestPath = "artifacts/subsets/evttc_${fracStr}_seed${downstreamSeed}.json"
-                $lowLabelOut = "$outRoot/recovery_downstream_ssl${seed}_nav${navMode}_seed${downstreamSeed}_${fracStr}_${suffix}"
-                $lowLabelStarted = Get-Date -Format o
-                $lowLabelCommand = "$pythonCmdStr -m e_jepa_ttc train tiny-cnn --cache $cache --output-dir $lowLabelOut --epochs $downstreamEpochs --batch-size 32 --learning-rate 0.00003 --seed $downstreamSeed --device auto --model event-tubelet-transformer --navigation-mode $navMode --pretrained-encoder $sslOut/jepa_encoder_best.pt --train-splits train --validation-splits validation --evaluation-splits train validation --train-fraction $frac --subset-manifest-path $manifestPath"
+                $lowLabelDownstreamOut = "$outRoot/recovery_downstream_ssl${seed}_nav${navMode}_seed${downstreamSeed}_${fracStr}_${suffix}"
+                $lowLabelDownstreamStarted = Get-Date -Format o
 
-                $skipLowLabel = $false
-                if (-not $Smoke -and (Test-Path "$lowLabelOut/tiny_cnn_best.pt")) {
-                    Invoke-Python scripts/verify_checkpoint_provenance.py "$lowLabelOut/tiny_cnn_best.pt" $baselineCommit
+                $lowLabelDownstreamArgs = @(
+                    "-m", "e_jepa_ttc", "train", "tiny-cnn",
+                    "--cache", $cache,
+                    "--output-dir", $lowLabelDownstreamOut,
+                    "--epochs", $downstreamEpochs,
+                    "--batch-size", "32",
+                    "--learning-rate", "0.00003",
+                    "--seed", $downstreamSeed,
+                    "--device", "auto",
+                    "--model", "event-tubelet-transformer",
+                    "--navigation-mode", $navMode,
+                    "--pretrained-encoder", "$sslOut/jepa_encoder_best.pt",
+                    "--train-splits", "train",
+                    "--validation-splits", "validation",
+                    "--evaluation-splits", "train", "validation",
+                    "--train-fraction", $frac,
+                    "--subset-manifest-path", $manifestPath
+                )
+                $lowLabelDownstreamCommand = "$pythonCmdStr " + ($lowLabelDownstreamArgs -join " ")
+
+                $skipLowLabelDownstream = $false
+                if (-not $Smoke -and (Test-Path "$lowLabelDownstreamOut/tiny_cnn_best.pt")) {
+                    $expectedFingerprint = Invoke-Python @lowLabelDownstreamArgs --dry-run-fingerprint
+                    Invoke-Python scripts/verify_checkpoint_provenance.py "$lowLabelDownstreamOut/tiny_cnn_best.pt" $baselineCommit $expectedFingerprint
                     if ($LASTEXITCODE -eq 0) {
-                        $skipLowLabel = $true
+                        $skipLowLabelDownstream = $true
                     }
                 }
-                if ($skipLowLabel) {
-                    Write-Output "Downstream low-label ($navMode, $fracStr) for pretrain seed $seed and downstream seed $downstreamSeed already exists. Skipping."
-                    $lowLabelCompleted = Get-Date -Format o
+                if ($skipLowLabelDownstream) {
+                    Write-Output "Low-label Downstream ($navMode, $frac) for pretrain seed $seed and downstream seed $downstreamSeed already exists. Skipping."
+                    $lowLabelDownstreamCompleted = Get-Date -Format o
                 } else {
-                    Invoke-Python -m e_jepa_ttc train tiny-cnn `
-                        --cache $cache `
-                        --output-dir $lowLabelOut `
-                        --epochs $downstreamEpochs `
-                        --batch-size 32 `
-                        --learning-rate 0.00003 `
-                        --seed $downstreamSeed `
-                        --device auto `
-                        --model event-tubelet-transformer `
-                        --navigation-mode $navMode `
-                        --pretrained-encoder "$sslOut/jepa_encoder_best.pt" `
-                        --train-splits train `
-                        --validation-splits validation `
-                        --evaluation-splits train validation `
-                        --train-fraction $frac `
-                        --subset-manifest-path $manifestPath
-                    if ($LASTEXITCODE -ne 0) { throw "Low-label SSL $seed nav ${navMode} seed $downstreamSeed frac $frac failed" }
-                    $lowLabelCompleted = Get-Date -Format o
+                    Invoke-Python @lowLabelDownstreamArgs
+                    if ($LASTEXITCODE -ne 0) { throw "Low-label Downstream SSL $seed nav ${navMode} seed $downstreamSeed frac $frac failed" }
+                    $lowLabelDownstreamCompleted = Get-Date -Format o
                 }
                 $registerArgs = @(
                     "scripts/register_recovery_run.py", "--run-id", "recovery-lowlabel-ssl${seed}-nav${navMode}-seed${downstreamSeed}-${fracStr}-${suffix}",
-                    "--stage", "downstream_ttc", "--run-dir", $lowLabelOut,
+                    "--stage", "downstream_ttc", "--run-dir", $lowLabelDownstreamOut,
                     "--pretrain-seed", $seed, "--downstream-seed", $downstreamSeed,
                     "--pretrained-checkpoint", "$sslOut/jepa_encoder_best.pt",
-                    "--requested-backbone", "event-tubelet-transformer", "--command", $lowLabelCommand,
-                    "--started-at", $lowLabelStarted, "--completed-at", $lowLabelCompleted,
+                    "--requested-backbone", "event-tubelet-transformer", "--command", $lowLabelDownstreamCommand,
+                    "--started-at", $lowLabelDownstreamStarted, "--completed-at", $lowLabelDownstreamCompleted,
                     "--expected-commit", $baselineCommit
                 )
                 if ($Smoke) {

@@ -33,6 +33,7 @@ def main() -> None:
     smoke_dir = args.smoke_dir
 
     required_files = [
+        smoke_dir / "evttc" / "cache_validation.json",
         smoke_dir / "evttc" / "ssl_navigation_enabled" / "summary.json",
         smoke_dir / "evttc" / "ssl_navigation_disabled" / "summary.json",
         smoke_dir / "evttc" / "jepa_navigation_enabled" / "summary.json",
@@ -105,6 +106,7 @@ def main() -> None:
         "status": "failed",
         "exit_code": 1,
         "all_required_artifacts_exist": False,
+        "cache_v2_validation_passed": False,
         "pytorch_onnx_equivalence_passed": False,
         "final_test_opened": False,
         "required_artifact_count": len(required_files),
@@ -141,18 +143,26 @@ def main() -> None:
 
                     # Summary validations
                     if req.name == "summary.json":
-                        valid_splits = data.get("evaluation_splits") or data.get("validation_splits") or []
+                        valid_splits = (
+                            data.get("evaluation_splits") or data.get("validation_splits") or []
+                        )
                         valid_split = data.get("evaluation_split")
                         has_validation_samples = data.get("validation_samples", 0) > 0
-                        if "validation" not in valid_splits and valid_split != "validation" and not has_validation_samples:
+                        if (
+                            "validation" not in valid_splits
+                            and valid_split != "validation"
+                            and not has_validation_samples
+                        ):
                             manifest["failed_stages"].append(
                                 f"Missing/invalid evaluation/validation splits in {req}"
                             )
                             all_exist = False
                             continue
-                        if data.get("final_test_opened") is True:
-                            manifest["final_test_opened"] = True
-                            manifest["failed_stages"].append(f"Final test opened in {req}")
+                        if data.get("final_test_opened") is not False:
+                            manifest["final_test_opened"] = data.get("final_test_opened")
+                            manifest["failed_stages"].append(
+                                f"final_test_opened is not explicitly False in {req}"
+                            )
                             all_exist = False
                             continue
 
@@ -161,6 +171,24 @@ def main() -> None:
                         manifest["failed_stages"].append(f"NaN or Inf found in {req}")
                         all_exist = False
                         continue
+
+                    if req.name == "cache_validation.json":
+                        if (
+                            data.get("status") == "passed"
+                            and data.get("cache_format_version") == 2
+                            and data.get("normalize") is True
+                            and data.get("normalization") == "non_centered_occupied_p95_scale"
+                            and data.get("sidecar_sha256_matches") is True
+                            and data.get("sparse_event_audit_passed") is True
+                            and data.get("nonempty_samples_collapsed_to_zero") == 0
+                        ):
+                            manifest["cache_v2_validation_passed"] = True
+                        else:
+                            manifest["failed_stages"].append(
+                                f"Invalid cache validation payload: {data}"
+                            )
+                            all_exist = False
+                            continue
 
                     # ONNX model manifest validation
                     if req.name == "model_manifest.json":
@@ -268,6 +296,7 @@ def main() -> None:
     if (
         all_exist
         and validated_count == len(required_files)
+        and manifest["cache_v2_validation_passed"]
         and manifest["pytorch_onnx_equivalence_passed"]
     ):
         manifest["all_required_artifacts_exist"] = True

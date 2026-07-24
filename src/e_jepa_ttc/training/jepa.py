@@ -1286,7 +1286,8 @@ def pretrain_jepa(
     context_token_weight: float = 0.0,
     model_name: str = "tiny-cnn",
     navigation_mode: str = "enabled",
-) -> dict[str, Any]:
+    dry_run_fingerprint: bool = False,
+) -> dict[str, Any] | str:
     """Pretrain an encoder with a JEPA-style latent prediction objective."""
 
     if navigation_mode not in ("enabled", "disabled"):
@@ -1460,6 +1461,32 @@ def pretrain_jepa(
         if val_dataset is not None
         else None
     )
+    import hashlib
+    import subprocess
+
+    try:
+        commit = subprocess.check_output(["git", "rev-parse", "HEAD"]).decode("ascii").strip()
+    except Exception:
+        commit = "unknown"
+    run_fingerprint_payload = {
+        "git_commit": commit,
+        "protocol_version": "2.0",
+        "cache_path": str(cache_path),
+        "model_name": model_name,
+        "navigation_mode": navigation_mode,
+        "seed": seed,
+        "optimizer_config": {"learning_rate": learning_rate, "weight_decay": weight_decay},
+        "training_steps": epochs,
+        "temporal_horizons_ms": list(temporal_horizons_ms),
+        "mask_mode": mask_mode,
+        "dense_tokens": use_dense_tokens,
+    }
+    run_fingerprint = hashlib.sha256(
+        json.dumps(run_fingerprint_payload, sort_keys=True).encode("utf-8")
+    ).hexdigest()
+
+    if dry_run_fingerprint:
+        return run_fingerprint
 
     encoder = build_encoder(model_name, in_channels=int(x.shape[1])).to(device)
     target_encoder = build_encoder(model_name, in_channels=int(x.shape[1])).to(device)
@@ -1654,6 +1681,8 @@ def pretrain_jepa(
                         "deep_supervision_layer_conditioning": use_deep_supervision,
                         "bins": bins,
                         "encoder_name": encoder.__class__.__name__,
+                        "run_fingerprint": run_fingerprint,
+                        "run_fingerprint_payload": run_fingerprint_payload,
                     },
                     best_path,
                 )
@@ -1693,6 +1722,8 @@ def pretrain_jepa(
             "deep_supervision_layer_conditioning": use_deep_supervision,
             "bins": bins,
             "encoder_name": encoder.__class__.__name__,
+            "run_fingerprint": run_fingerprint,
+            "run_fingerprint_payload": run_fingerprint_payload,
         },
         last_path,
     )

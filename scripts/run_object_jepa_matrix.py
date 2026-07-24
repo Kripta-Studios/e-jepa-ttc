@@ -22,7 +22,7 @@ def _load(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def _check_provenance(summary_path: Path) -> bool:
+def _check_provenance(summary_path: Path, expected_fingerprint: str | None = None) -> bool:
     try:
         import subprocess
 
@@ -30,7 +30,14 @@ def _check_provenance(summary_path: Path) -> bool:
             subprocess.check_output(["git", "rev-parse", "HEAD"]).decode("ascii").strip()
         )
         summary = _load(summary_path)
-        return summary.get("git_commit") == expected_commit
+        if summary.get("git_commit") != expected_commit:
+            return False
+
+        if expected_fingerprint is not None:
+            if summary.get("run_fingerprint") != expected_fingerprint:
+                return False
+
+        return True
     except Exception:
         return False
 
@@ -42,8 +49,32 @@ def _run_or_resume_pretraining(
     seed: int,
     args: argparse.Namespace,
 ) -> dict[str, Any]:
+    expected_fingerprint = pretrain_object_event_jepa(
+        cache_manifest_path=cache,
+        output_dir=output,
+        epochs=args.pretrain_epochs,
+        batch_size=args.batch_size,
+        learning_rate=args.pretrain_learning_rate,
+        weight_decay=args.pretrain_weight_decay,
+        seed=seed,
+        device_name=args.device,
+        embedding_dim=args.embedding_dim,
+        feature_dim=args.feature_dim,
+        predictor_depth=args.predictor_depth,
+        predictor_heads=args.predictor_heads,
+        use_ego_actions=args.use_ego_actions,
+        use_recurrence=args.use_recurrence,
+        use_geometry=args.use_geometry,
+        dry_run_fingerprint=True,
+    )
+    assert isinstance(expected_fingerprint, str)
+
     summary_path = output / "summary.json"
-    if args.resume and summary_path.is_file() and _check_provenance(summary_path):
+    if (
+        args.resume
+        and summary_path.is_file()
+        and _check_provenance(summary_path, expected_fingerprint)
+    ):
         return _load(summary_path)
     return pretrain_object_event_jepa(
         cache_manifest_path=cache,
@@ -61,6 +92,7 @@ def _run_or_resume_pretraining(
         use_ego_actions=args.use_ego_actions,
         use_recurrence=args.use_recurrence,
         use_geometry=args.use_geometry,
+        dry_run_fingerprint=False,
     )
 
 
@@ -74,8 +106,31 @@ def _run_or_resume_finetuning(
     scratch_config: ObjectJEPAConfig | None,
     args: argparse.Namespace,
 ) -> dict[str, Any]:
+    expected_fingerprint = fine_tune_object_ttc(
+        cache_manifest_path=cache,
+        output_dir=output,
+        pretrained_checkpoint_path=pretrained,
+        epochs=args.finetune_epochs,
+        batch_size=args.batch_size,
+        learning_rate=args.finetune_learning_rate,
+        weight_decay=args.finetune_weight_decay,
+        label_fraction=fraction,
+        seed=seed,
+        device_name=args.device,
+        scratch_config=scratch_config,
+        use_ego_actions=args.use_ego_actions,
+        report_splits=tuple(args.report_splits),
+        allow_final_test_evaluation=args.allow_final_test_evaluation,
+        dry_run_fingerprint=True,
+    )
+    assert isinstance(expected_fingerprint, str)
+
     summary_path = output / "summary.json"
-    if args.resume and summary_path.is_file() and _check_provenance(summary_path):
+    if (
+        args.resume
+        and summary_path.is_file()
+        and _check_provenance(summary_path, expected_fingerprint)
+    ):
         return _load(summary_path)
     return fine_tune_object_ttc(
         cache_manifest_path=cache,
@@ -92,26 +147,27 @@ def _run_or_resume_finetuning(
         use_ego_actions=args.use_ego_actions,
         report_splits=tuple(args.report_splits),
         allow_final_test_evaluation=args.allow_final_test_evaluation,
+        dry_run_fingerprint=False,
     )
 
 
 def _row(summary: dict[str, Any]) -> dict[str, Any]:
     eval_split = summary.get("evaluation_split", "test")
     split_metrics = summary.get(eval_split, summary.get("validation", {}))
-    regression = split_metrics.get("regression", {})
-    garl = split_metrics.get("garl_ttc", {})
-    conformal = split_metrics.get("conformal_90", {"coverage": 0.0, "mean_width_s": 0.0})
+    regression = split_metrics["regression"]
+    garl = split_metrics["garl_ttc"]
+    conformal = split_metrics["conformal_90"]
     return {
         "initialization": summary["initialization"],
         "seed": int(summary["seed"]),
         "label_fraction": float(summary["label_fraction"]),
         "effective_label_count": int(summary["effective_label_count"]),
         "best_epoch": int(summary["best_epoch"]),
-        "mae_s": float(regression.get("mae_s", 0.0)),
-        "rmse_s": float(regression.get("rmse_s", 0.0)),
-        "median_abs_error_s": float(regression.get("median_abs_error_s", 0.0)),
-        "garl_weighted_mid": float(garl.get("weighted_mid", 0.0)),
-        "garl_weighted_rte_pct": float(garl.get("weighted_rte_pct", 0.0)),
+        "mae_s": float(regression["mae_s"]),
+        "rmse_s": float(regression["rmse_s"]),
+        "median_abs_error_s": float(regression["median_abs_error_s"]),
+        "garl_weighted_mid": float(garl["weighted_mid"]),
+        "garl_weighted_rte_pct": float(garl["weighted_rte_pct"]),
         "conformal_90_coverage": float(conformal["coverage"]),
         "conformal_90_mean_width_s": float(conformal["mean_width_s"]),
         "summary": str(summary["best_checkpoint"]).replace("object_ttc_best.pt", "summary.json"),

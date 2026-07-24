@@ -62,14 +62,20 @@ def main() -> None:
             for downstream in seeds:
                 verify_file_exists(
                     runs_dir
-                    / f"recovery_downstream_ssl{seed}_nav{nav}_seed{downstream}"
-                    / "post_fix_v3_cache_verified/metrics.json"
+                    / (
+                        f"recovery_downstream_ssl{seed}_nav{nav}_seed{downstream}"
+                        "_post_fix_v3_cache_verified"
+                    )
+                    / "metrics.json"
                 )
                 for frac in fractions:
                     verify_file_exists(
                         runs_dir
-                        / f"recovery_downstream_ssl{seed}_nav{nav}_seed{downstream}_{frac}"
-                        / "post_fix_v3_cache_verified/metrics.json"
+                        / (
+                            f"recovery_downstream_ssl{seed}_nav{nav}_seed{downstream}_{frac}"
+                            "_post_fix_v3_cache_verified"
+                        )
+                        / "metrics.json"
                     )
 
     logging.info("EvTTC matrix verification passed.")
@@ -80,14 +86,23 @@ def main() -> None:
 
     verify_file_exists(eap_runs_dir / "eap_split_statistics.json")
     for seed in seeds:
-        verify_file_exists(eap_runs_dir / f"pretrain_seed_{seed}" / "metrics.json")
-        for frac in ["1.0", "0.1", "0.05"]:
-            frac_str = frac.replace(".", "_")
+        verify_file_exists(eap_runs_dir / "pretrain" / f"seed-{seed}" / "summary.json")
+        for frac in ["1", "0.1", "0.05"]:
             verify_file_exists(
-                eap_runs_dir / f"finetune_ssl_{seed}_label_{frac_str}" / "metrics.json"
+                eap_runs_dir
+                / "finetune"
+                / "jepa"
+                / f"fraction-{frac}"
+                / f"seed-{seed}"
+                / "summary.json"
             )
             verify_file_exists(
-                eap_runs_dir / f"finetune_scratch_{seed}_label_{frac_str}" / "metrics.json"
+                eap_runs_dir
+                / "finetune"
+                / "scratch"
+                / f"fraction-{frac}"
+                / f"seed-{seed}"
+                / "summary.json"
             )
 
     logging.info("eAP matrix verification passed.")
@@ -101,7 +116,7 @@ def main() -> None:
     # Load equivalence.json
     with open(onnx_dir / "equivalence.json") as f:
         equiv = json.load(f)
-        mae = equiv.get("max_absolute_error", float("inf"))
+        mae = equiv.get("maximum_absolute_error", float("inf"))
         if mae > 1e-4:
             logging.error(f"ONNX export equivalence failed: Max absolute error {mae} > 1e-4")
             sys.exit(1)

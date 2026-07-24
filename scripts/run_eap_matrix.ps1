@@ -47,6 +47,12 @@ if (-not (Test-Path $cacheManifest)) {
 }
 
 $matrixOut = if ($Smoke) { "artifacts/smoke/current/eap/matrix" } else { "artifacts/runs/eap_object_jepa_matrix" }
+New-Item -ItemType Directory -Force -Path $matrixOut | Out-Null
+
+Write-Output "Generating eAP Split Statistics..."
+$eapSplitStats = "$matrixOut/eap_split_statistics.json"
+Invoke-Python scripts/generate_split_statistics.py --manifest $cacheManifest --output $eapSplitStats
+if ($LASTEXITCODE -ne 0) { throw "eAP split statistics generation failed (possible data corruption)" }
 
 $seedsStr = if ($Smoke) { "7" } else { "7 13 21" }
 $epochsPre = if ($Smoke) { 2 } else { 30 }
@@ -65,11 +71,20 @@ $cmdArgs = @(
     "--batch-size", "32",
     "--device", "auto"
 )
+
+if ($Smoke) {
+    $cmdArgs += "--report-splits"
+    $cmdArgs += "validation"
+    $cmdArgs += "calibration"
+} else {
+    $cmdArgs += "--report-splits"
+    $cmdArgs += "validation"
+    $cmdArgs += "calibration"
+    $cmdArgs += "test"
+    $cmdArgs += "--allow-final-test-evaluation"
+}
 Invoke-Python @cmdArgs
 if ($LASTEXITCODE -ne 0) { throw "eAP matrix execution failed" }
 
-Write-Output "Generating eAP Split Statistics..."
-$eapSplitStats = "$matrixOut/eap_split_statistics.json"
-Invoke-Python scripts/generate_split_statistics.py --manifest $cacheManifest --output $eapSplitStats
 
 Write-Output "eAP matrix and ablations completed successfully!"

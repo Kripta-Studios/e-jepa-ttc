@@ -110,8 +110,10 @@ def main() -> None:
 
         path = manifest_dir / shard["path"]
         if not path.exists():
-            logging.warning(f"Shard not found: {path}")
-            continue
+            import sys
+
+            logging.error(f"Validation failed: Shard not found: {path}")
+            sys.exit(1)
 
         size = path.stat().st_size
 
@@ -188,7 +190,10 @@ def main() -> None:
             s1, s2 = all_splits[i], all_splits[j]
             intersection = split_tracks[s1].intersection(split_tracks[s2])
             if intersection:
-                msg = f"Validation failed: Data leakage detected! Track IDs {intersection} appear in both '{s1}' and '{s2}'."
+                msg = (
+                    f"Validation failed: Data leakage detected! Track IDs "
+                    f"{intersection} appear in both '{s1}' and '{s2}'."
+                )
                 raise ValueError(msg)
 
     final_seq_stats = {k: _finalize_stats(v) for k, v in seq_stats.items()}
@@ -208,7 +213,10 @@ def main() -> None:
             k_pos = f"risk_{str(risk).replace('.', '_')}_s_pos"
             k_neg = f"risk_{str(risk).replace('.', '_')}_s_neg"
             if cal_stats[k_pos] == 0 or cal_stats[k_neg] == 0:
-                msg = f"Validation failed: Calibration split lacks positive/negative examples for risk threshold {risk}s."
+                msg = (
+                    "Validation failed: Calibration split lacks positive/negative "
+                    f"examples for risk threshold {risk}s."
+                )
                 raise ValueError(msg)
 
     output_data = {

@@ -61,7 +61,10 @@ def export_to_onnx(
     model.eval()
 
     if not cache_path or not Path(cache_path).exists():
-        msg = "Valid cache_path is strictly required to extract real validation samples for ONNX export"
+        msg = (
+            "Valid cache_path is strictly required to extract real validation "
+            "samples for ONNX export"
+        )
         raise ValueError(msg)
 
     cache_data = np.load(cache_path)

@@ -59,7 +59,6 @@ def _get_git_commit() -> str:
         return "unknown"
 
 
-
 def _set_seed(seed: int) -> None:
     random.seed(seed)
     np.random.seed(seed)
@@ -219,7 +218,8 @@ def pretrain_object_event_jepa(
     use_ego_actions: bool = True,
     use_recurrence: bool = True,
     use_geometry: bool = True,
-) -> dict[str, Any]:
+    dry_run_fingerprint: bool = False,
+) -> dict[str, Any] | str:
     """Pretrain the object world model without consuming TTC labels."""
 
     if epochs <= 0 or batch_size <= 0 or learning_rate <= 0:
@@ -299,6 +299,9 @@ def pretrain_object_event_jepa(
     run_fingerprint = hashlib.sha256(
         json.dumps(run_fingerprint_payload, sort_keys=True).encode("utf-8")
     ).hexdigest()
+
+    if dry_run_fingerprint:
+        return run_fingerprint
 
     start_time = time.perf_counter()
     total_steps = max(1, epochs * len(train_loader))
@@ -645,8 +648,16 @@ def fine_tune_object_ttc(
     use_ego_actions: bool = True,
     report_splits: tuple[str, ...] = ("validation",),
     allow_final_test_evaluation: bool = False,
-) -> dict[str, Any]:
+    dry_run_fingerprint: bool = False,
+) -> dict[str, Any] | str:
     """Fine-tune a matched JEPA/scratch TTC model and calibrate on a held-out split."""
+
+    if "test" in report_splits and not allow_final_test_evaluation:
+        raise ValueError(
+            "Test split evaluation requested, but allow_final_test_evaluation is False. "
+            "Pass --allow-final-test-evaluation if you are absolutely sure you are ready "
+            "to burn the test split."
+        )
 
     _set_seed(seed)
     device = _device(device_name)
@@ -751,6 +762,9 @@ def fine_tune_object_ttc(
     run_fingerprint = hashlib.sha256(
         json.dumps(run_fingerprint_payload, sort_keys=True).encode("utf-8")
     ).hexdigest()
+
+    if dry_run_fingerprint:
+        return run_fingerprint
 
     best_epoch = -1
     start_time = time.perf_counter()

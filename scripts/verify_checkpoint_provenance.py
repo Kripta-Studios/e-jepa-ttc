@@ -4,12 +4,16 @@ import torch
 
 
 def main() -> None:
-    if len(sys.argv) != 3:
-        print("Usage: python verify_checkpoint_provenance.py <checkpoint_path> <expected_commit>")
+    if len(sys.argv) not in (3, 4):
+        print(
+            "Usage: python verify_checkpoint_provenance.py <checkpoint_path> "
+            "<expected_commit> [<expected_fingerprint>]"
+        )
         sys.exit(1)
 
     checkpoint_path = sys.argv[1]
     expected_commit = sys.argv[2]
+    expected_fingerprint = sys.argv[3] if len(sys.argv) == 4 else None
 
     import hashlib
     import json
@@ -36,6 +40,13 @@ def main() -> None:
         if computed_fingerprint != fingerprint:
             msg = f"Fingerprint mismatch: expected {fingerprint}, got {computed_fingerprint}."
             print(f"{msg} Checkpoint has been tampered with or corrupted.")
+            sys.exit(1)
+
+        if expected_fingerprint and fingerprint != expected_fingerprint:
+            msg = (
+                f"Fingerprint mismatch: runtime expected {expected_fingerprint}, got {fingerprint}."
+            )
+            print(f"{msg} Checkpoint does not match the requested training parameters.")
             sys.exit(1)
 
         sys.exit(0)

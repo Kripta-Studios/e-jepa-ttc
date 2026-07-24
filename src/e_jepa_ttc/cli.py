@@ -316,7 +316,11 @@ def _cmd_train_tiny_cnn(args: argparse.Namespace) -> int:
         evaluation_splits=tuple(args.evaluation_splits),
         train_splits=tuple(args.train_splits),
         validation_splits=tuple(args.validation_splits),
+        dry_run_fingerprint=args.dry_run_fingerprint,
     )
+    if args.dry_run_fingerprint:
+        print(payload)
+        return 0
     _print_json(payload)
     return 0
 
@@ -498,7 +502,11 @@ def _cmd_pretrain_jepa(args: argparse.Namespace) -> int:
         context_token_weight=args.context_token_weight,
         model_name=args.model,
         navigation_mode=args.navigation_mode,
+        dry_run_fingerprint=args.dry_run_fingerprint,
     )
+    if args.dry_run_fingerprint:
+        print(payload)
+        return 0
     _print_json(payload)
     return 0
 
@@ -544,6 +552,8 @@ def _cmd_train_object_ttc(args: argparse.Namespace) -> int:
         seed=args.seed,
         device_name=args.device,
         use_ego_actions=args.use_ego_actions,
+        report_splits=tuple(args.report_splits),
+        allow_final_test_evaluation=args.allow_final_test_evaluation,
     )
     _print_json(payload)
     return 0
@@ -967,6 +977,11 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Train only the TTC head after loading or initializing the encoder.",
     )
+    train_tiny.add_argument(
+        "--dry-run-fingerprint",
+        action="store_true",
+        help="Compute and return run fingerprint without training",
+    )
     train_tiny.set_defaults(func=_cmd_train_tiny_cnn)
     train_eval = train_sub.add_parser(
         "evaluate",
@@ -1158,6 +1173,8 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_false",
         help="Ablate causal egoaction inputs for a matched downstream comparison.",
     )
+    train_object_ttc.add_argument("--report-splits", nargs="+", default=["validation"])
+    train_object_ttc.add_argument("--allow-final-test-evaluation", action="store_true")
     train_object_ttc.set_defaults(use_ego_actions=True, func=_cmd_train_object_ttc)
 
     pretrain = subparsers.add_parser("pretrain", help="Self-supervised pretraining commands.")
@@ -1273,6 +1290,11 @@ def build_parser() -> argparse.ArgumentParser:
             "Optional V-JEPA 2.1-style dense loss weight for predicting all current "
             "context tokens in addition to future tokens."
         ),
+    )
+    pretrain_jepa.add_argument(
+        "--dry-run-fingerprint",
+        action="store_true",
+        help="Compute and return run fingerprint without training",
     )
     pretrain_jepa.set_defaults(dense_tokens=True, motion_conditioning=True)
     pretrain_jepa.set_defaults(func=_cmd_pretrain_jepa)

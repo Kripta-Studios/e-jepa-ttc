@@ -115,7 +115,18 @@ def _setup_mock_smoke_dir(tmp_path: Path):
                 "p95_ms": 2,
                 "p99_ms": 3,
             },
-
+        ),
+        (
+            "evttc/cache_validation.json",
+            {
+                "status": "passed",
+                "cache_format_version": 2,
+                "normalize": True,
+                "normalization": "non_centered_occupied_p95_scale",
+                "sidecar_sha256_matches": True,
+                "sparse_event_audit_passed": True,
+                "nonempty_samples_collapsed_to_zero": 0,
+            },
         ),
     ]
     for path, data in required:

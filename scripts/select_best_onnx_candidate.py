@@ -71,7 +71,8 @@ def main() -> None:
                     continue
                 if (
                     args.require_model_name
-                    and metrics.get("model_name", "event-tubelet-transformer") != args.require_model_name
+                    and metrics.get("model_name", "event-tubelet-transformer")
+                    != args.require_model_name
                 ):
                     continue
                 if metrics.get("final_test_opened") is True:

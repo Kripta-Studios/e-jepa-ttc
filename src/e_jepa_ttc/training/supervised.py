@@ -39,7 +39,6 @@ def _get_git_commit() -> str:
         return "unknown"
 
 
-
 class VoxelCacheDataset(Dataset[tuple[torch.Tensor, torch.Tensor]]):
     """Dataset backed by arrays from an `.npz` voxel cache."""
 
@@ -181,7 +180,8 @@ def train_tiny_cnn(
     evaluation_splits: tuple[str, ...] = ("train", "validation", "test"),
     train_splits: tuple[str, ...] = ("train",),
     validation_splits: tuple[str, ...] = ("validation",),
-) -> dict[str, Any]:
+    dry_run_fingerprint: bool = False,
+) -> dict[str, Any] | str:
     """Train a supervised TTC model on a materialized voxel cache."""
 
     _set_seed(seed)
@@ -332,6 +332,9 @@ def train_tiny_cnn(
     run_fingerprint = hashlib.sha256(
         json.dumps(run_fingerprint_payload, sort_keys=True).encode("utf-8")
     ).hexdigest()
+
+    if dry_run_fingerprint:
+        return run_fingerprint
 
     if freeze_encoder:
         for param in model.encoder.parameters():
