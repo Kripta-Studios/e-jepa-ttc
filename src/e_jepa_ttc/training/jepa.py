@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import math
 import random
@@ -31,6 +32,14 @@ EVENT_MOTION_FEATURE_NAMES = (
     "event_centroid_dy",
     "event_polarity_balance",
 )
+
+
+def _hash_file(filepath: str | Path) -> str:
+    hasher = hashlib.sha256()
+    with Path(filepath).open("rb") as file:
+        for chunk in iter(lambda: file.read(8192 * 1024), b""):
+            hasher.update(chunk)
+    return hasher.hexdigest()
 
 
 class VoxelOnlyDataset(Dataset[torch.Tensor]):
@@ -1653,26 +1662,49 @@ def pretrain_jepa(
         if val_dataset is not None
         else None
     )
-    import hashlib
     import subprocess
 
     try:
         commit = subprocess.check_output(["git", "rev-parse", "HEAD"]).decode("ascii").strip()
     except Exception:
         commit = "unknown"
+    cache_sha256 = _hash_file(cache_path)
+    split_manifest_sha256 = (
+        str(np.asarray(cache["split_manifest_sha256"]).item())
+        if "split_manifest_sha256" in cache.files
+        else ""
+    )
     run_fingerprint_payload = {
         "git_commit": commit,
         "protocol_version": get_current_protocol_identity()[0],
         "protocol_sha256": get_current_protocol_identity()[1],
+        "cache_sha256": cache_sha256,
+        "split_manifest_sha256": split_manifest_sha256,
         "cache_path": str(cache_path),
+        "objective": objective,
         "model_name": model_name,
         "navigation_mode": navigation_mode,
         "seed": seed,
+        "batch_size": batch_size,
         "optimizer_config": {"learning_rate": learning_rate, "weight_decay": weight_decay},
         "training_steps": epochs,
+        "pretrain_splits": list(pretrain_splits),
+        "validation_splits": list(validation_splits),
         "temporal_horizons_ms": list(temporal_horizons_ms),
+        "max_target_slop_ms": max_target_slop_ms,
+        "mask_ratio": mask_ratio,
+        "block_count": block_count,
         "mask_mode": mask_mode,
+        "ema_momentum": ema_momentum,
+        "regularizer": regularizer,
+        "variance_weight": variance_weight,
+        "min_std": min_std,
+        "temporal_straightening_weight": temporal_straightening_weight,
         "dense_tokens": use_dense_tokens,
+        "motion_conditioning": use_motion_conditioning,
+        "deep_supervision_layers": list(deep_supervision_layers),
+        "dense_predictor": dense_predictor,
+        "context_token_weight": context_token_weight,
         "flowmimic": {
             "alignment_weight": flowmimic_alignment_weight,
             "inverse_ttc_weight": flowmimic_inverse_ttc_weight,
@@ -1892,6 +1924,11 @@ def pretrain_jepa(
                         "checkpoint_role": "best",
                         "checkpoint_selected_by": best_selected_by,
                         "cache_path": str(cache_path),
+                        "cache_sha256": cache_sha256,
+                        "split_manifest_sha256": split_manifest_sha256,
+                        "git_commit": commit,
+                        "protocol_version": get_current_protocol_identity()[0],
+                        "protocol_sha256": get_current_protocol_identity()[1],
                         "seed": seed,
                         "in_channels": int(x.shape[1]),
                         "pretrain_splits": list(pretrain_splits),
@@ -1947,6 +1984,11 @@ def pretrain_jepa(
             "checkpoint_role": "last",
             "checkpoint_selected_by": "final_epoch",
             "cache_path": str(cache_path),
+            "cache_sha256": cache_sha256,
+            "split_manifest_sha256": split_manifest_sha256,
+            "git_commit": commit,
+            "protocol_version": get_current_protocol_identity()[0],
+            "protocol_sha256": get_current_protocol_identity()[1],
             "seed": seed,
             "in_channels": int(x.shape[1]),
             "pretrain_splits": list(pretrain_splits),
@@ -1981,6 +2023,13 @@ def pretrain_jepa(
         "model_name": model_name,
         "objective": objective,
         "cache": str(cache_path),
+        "cache_sha256": cache_sha256,
+        "split_manifest_sha256": split_manifest_sha256,
+        "git_commit": commit,
+        "protocol_version": get_current_protocol_identity()[0],
+        "protocol_sha256": get_current_protocol_identity()[1],
+        "run_fingerprint": run_fingerprint,
+        "run_fingerprint_payload": run_fingerprint_payload,
         "output_dir": output.as_posix(),
         "device": str(device),
         "torch_version": torch.__version__,

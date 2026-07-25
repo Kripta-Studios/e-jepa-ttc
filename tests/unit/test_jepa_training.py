@@ -147,6 +147,13 @@ def test_jepa_checkpoint_loads_into_supervised_trainer(tmp_path: Path) -> None:
     assert pretrain_summary["best_epoch"] == 1
     assert pretrain_summary["pretrain_seed"] == 5
     assert pretrain_summary["checkpoint_selection"]["recommended_role"] == "best"
+    assert len(pretrain_summary["cache_sha256"]) == 64
+    assert len(pretrain_summary["run_fingerprint"]) == 64
+    assert (
+        pretrain_summary["run_fingerprint_payload"]["cache_sha256"]
+        == (pretrain_summary["cache_sha256"])
+    )
+    assert pretrain_summary["git_commit"]
     assert pretrain_summary["objective"] == "dense_temporal_token_motion_multihorizon"
     assert pretrain_summary["dense_tokens"] is True
     assert pretrain_summary["motion_conditioning"] is True
@@ -158,6 +165,8 @@ def test_jepa_checkpoint_loads_into_supervised_trainer(tmp_path: Path) -> None:
     checkpoint_payload = torch.load(checkpoint, map_location="cpu", weights_only=False)
     assert checkpoint_payload["checkpoint_role"] == "best"
     assert checkpoint_payload["checkpoint_selected_by"] == "validation_loss"
+    assert checkpoint_payload["cache_sha256"] == pretrain_summary["cache_sha256"]
+    assert checkpoint_payload["run_fingerprint"] == pretrain_summary["run_fingerprint"]
 
     train_summary = train_tiny_cnn(
         cache_path=cache_path,

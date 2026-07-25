@@ -217,3 +217,23 @@ mean, which maps to neutral zero after normalization. Add a finite-loss guard
 that raises `FloatingPointError` instead of writing a false successful run, and
 test navigation neutrality explicitly. S0 is infrastructure evidence only, not
 an accuracy result.
+
+### Accepted GPU smoke S1
+
+S0 was repeated from correction commit `07f7736` with the same seed, batch and
+architecture. It completed without OOM or non-finite values:
+
+- training elapsed: `90.779 s`;
+- real validation SSL loss: `0.018911`;
+- total train loss: `0.019014`;
+- synthetic alignment loss: `0.001925`;
+- synthetic inverse-TTC loss: `0.144244`;
+- context/prediction/target effective rank: `4.193 / 9.972 / 12.216`;
+- synthetic navigation conditioning: `train_mean_neutral_train_only`;
+- real TTC labels used in SSL: false.
+
+S1 establishes numerical viability for batch 12. It is not a TTC accuracy
+result and its checkpoint will not be promoted. The main E0/E1/E2 runs will use
+the subsequent provenance commit that places the physical cache hash, complete
+resolved configuration, commit and run fingerprint in both checkpoint and
+`metrics.json`.

@@ -37,6 +37,9 @@ Updated: 2026-07-25.
   synthetic navigation combined with a near-constant validity channel caused
   AMP overflow and NaN synthetic loss. Navigation is now neutralized from the
   train-only mean and non-finite JEPA loss aborts explicitly.
+- Corrected GPU smoke S1 passed at batch 12 with finite total, synthetic
+  alignment and inverse-TTC losses. It is a numerical gate only; E0/E1/E2 TTC
+  accuracy remains unmeasured.
 
 The complete audit, SOTA comparison, and MVA/FlowMimic architecture proposal are in
 `docs/scientific_audit_2026-07-25.md`.
