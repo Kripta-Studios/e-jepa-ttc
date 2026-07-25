@@ -43,7 +43,7 @@ function Write-StageRecord {
     $commit = (& git rev-parse HEAD).Trim()
     
     $cleanStatus = (& git status --short)
-    $clean = $cleanStatus.Trim() -eq ""
+    $clean = ($null -eq $cleanStatus) -or ($cleanStatus.Trim() -eq "")
     
     $duration = ($end - $start).TotalSeconds
     $evidence = if ($Smoke) { "synthetic_smoke" } else { "real_smoke" }
