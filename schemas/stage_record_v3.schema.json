@@ -1,5 +1,5 @@
 {
-  "": "http://json-schema.org/draft-07/schema#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
   "properties": {
     "artifact_type": {
@@ -49,6 +49,11 @@
         "null"
       ]
     },
+    "environment_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "working_tree_clean": {"type": "boolean"},
     "schema_version": {
       "type": "string"
     },
@@ -82,6 +87,8 @@
     "command",
     "inputs",
     "outputs",
+    "environment_hash",
+    "working_tree_clean",
     "schema_version",
     "evidence_type",
     "code_commit",

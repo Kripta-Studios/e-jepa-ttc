@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 from pathlib import Path
@@ -68,6 +69,97 @@ REQUIRED_FIELDS = {
 }
 SHA256 = re.compile(r"^[0-9a-f]{64}$")
 GIT_SHA = re.compile(r"^[0-9a-f]{40}$")
+PATH_HASH_FIELDS = (
+    ("config_path", "config_hash"),
+    ("dataset_manifest_path", "dataset_manifest_hash"),
+    ("split_path", "split_hash"),
+    ("checkpoint_path", "checkpoint_sha256"),
+    ("metrics_path", "metrics_sha256"),
+    ("predictions_path", "predictions_sha256"),
+)
+EXISTENCE_ONLY_FIELDS = (
+    "best_checkpoint",
+    "last_checkpoint",
+    "best_checkpoint_path",
+    "last_checkpoint_path",
+)
+
+
+def _sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for block in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def _resolve_artifact_path(repo_root: Path, raw_path: str) -> Path:
+    path = Path(raw_path)
+    resolved = (path if path.is_absolute() else repo_root / path).resolve()
+    try:
+        resolved.relative_to(repo_root.resolve())
+    except ValueError as exc:
+        raise ValueError(f"path escapes repository: {raw_path}") from exc
+    return resolved
+
+
+def _validate_physical_artifacts(
+    record: dict[str, Any],
+    *,
+    line_number: int,
+    repo_root: Path,
+    digest_cache: dict[Path, str],
+) -> list[str]:
+    prefix = f"line {line_number} ({record.get('run_id', 'unknown')})"
+    errors: list[str] = []
+    asserted_to_exist = record.get("artifact_exists") is True
+    for path_field, hash_field in PATH_HASH_FIELDS:
+        raw_path = record.get(path_field)
+        declared_hash = record.get(hash_field)
+        if raw_path in (None, ""):
+            if declared_hash is not None:
+                errors.append(f"{prefix}: {hash_field} exists without {path_field}")
+            continue
+        if not isinstance(raw_path, str):
+            errors.append(f"{prefix}: {path_field} must be a string or null")
+            continue
+        try:
+            path = _resolve_artifact_path(repo_root, raw_path)
+        except ValueError as exc:
+            errors.append(f"{prefix}: {exc}")
+            continue
+        if not path.is_file():
+            if asserted_to_exist or declared_hash is not None:
+                errors.append(f"{prefix}: referenced file is missing: {raw_path}")
+            continue
+        if declared_hash is None:
+            errors.append(f"{prefix}: existing {path_field} lacks {hash_field}")
+            continue
+        actual_hash = digest_cache.get(path)
+        if actual_hash is None:
+            actual_hash = _sha256(path)
+            digest_cache[path] = actual_hash
+        if actual_hash != declared_hash:
+            errors.append(
+                f"{prefix}: {hash_field} mismatch for {raw_path}: "
+                f"declared={declared_hash}, actual={actual_hash}"
+            )
+    if asserted_to_exist:
+        for path_field in EXISTENCE_ONLY_FIELDS:
+            raw_path = record.get(path_field)
+            if raw_path in (None, ""):
+                continue
+            if not isinstance(raw_path, str):
+                errors.append(f"{prefix}: {path_field} must be a string or null")
+                continue
+            try:
+                path = _resolve_artifact_path(repo_root, raw_path)
+            except ValueError as exc:
+                errors.append(f"{prefix}: {exc}")
+                continue
+            if not path.is_file():
+                errors.append(f"{prefix}: referenced file is missing: {raw_path}")
+    return errors
 
 
 def _validate_record(record: dict[str, Any], *, line_number: int) -> list[str]:
@@ -131,10 +223,18 @@ def _validate_record(record: dict[str, Any], *, line_number: int) -> list[str]:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("registry", nargs="?", type=Path, default=Path("artifacts/registry.jsonl"))
+    parser.add_argument(
+        "--metadata-only",
+        action="store_true",
+        help="Skip filesystem existence and SHA-256 verification.",
+    )
+    parser.add_argument("--report", type=Path, help="Optional JSON audit report path.")
     args = parser.parse_args()
     errors: list[str] = []
     seen: set[str] = set()
     count = 0
+    digest_cache: dict[Path, str] = {}
+    repo_root = args.registry.resolve().parent.parent
     with args.registry.open("r", encoding="utf-8") as handle:
         for line_number, raw_line in enumerate(handle, start=1):
             if not raw_line.strip():
@@ -154,6 +254,27 @@ def main() -> int:
             elif isinstance(run_id, str):
                 seen.add(run_id)
             errors.extend(_validate_record(record, line_number=line_number))
+            if not args.metadata_only:
+                errors.extend(
+                    _validate_physical_artifacts(
+                        record,
+                        line_number=line_number,
+                        repo_root=repo_root,
+                        digest_cache=digest_cache,
+                    )
+                )
+    report = {
+        "registry": args.registry.as_posix(),
+        "record_count": count,
+        "physical_verification": not args.metadata_only,
+        "unique_files_hashed": len(digest_cache),
+        "error_count": len(errors),
+        "status": "passed" if not errors else "failed",
+        "errors": errors,
+    }
+    if args.report is not None:
+        args.report.parent.mkdir(parents=True, exist_ok=True)
+        args.report.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     if errors:
         raise SystemExit("\n".join(errors))
     print(f"validated {count} records from {args.registry}")

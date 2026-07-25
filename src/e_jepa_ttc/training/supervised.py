@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import random
 import time
@@ -22,8 +23,6 @@ from e_jepa_ttc.utils.io import ensure_parent, write_structured
 
 
 def _hash_file(filepath: str | Path) -> str:
-    import hashlib
-
     h = hashlib.sha256()
     with open(filepath, "rb") as f:
         for chunk in iter(lambda: f.read(8192 * 1024), b""):
@@ -239,8 +238,34 @@ def train_tiny_cnn(
         manifest_path = Path(subset_manifest_path)
         with manifest_path.open("r", encoding="utf-8") as f:
             manifest_data = json.load(f)
-        train_idx = np.array(manifest_data["global_indices"], dtype=np.int64)
-        subset_sha256 = manifest_data.get("sha256", _hash_file(manifest_path))
+        unsigned_manifest = dict(manifest_data)
+        declared_subset_sha256 = unsigned_manifest.pop("sha256", None)
+        canonical_manifest = json.dumps(
+            unsigned_manifest,
+            sort_keys=True,
+            separators=(",", ":"),
+            ensure_ascii=False,
+        ).encode("utf-8")
+        computed_subset_sha256 = hashlib.sha256(canonical_manifest).hexdigest()
+        if declared_subset_sha256 != computed_subset_sha256:
+            raise ValueError(
+                f"Subset manifest signature mismatch: {manifest_path}. "
+                "Regenerate it rather than editing indices by hand."
+            )
+        requested_train_idx = np.array(manifest_data["global_indices"], dtype=np.int64)
+        if requested_train_idx.ndim != 1 or requested_train_idx.size == 0:
+            raise ValueError("Subset manifest global_indices must be a non-empty vector.")
+        if np.unique(requested_train_idx).size != requested_train_idx.size:
+            raise ValueError("Subset manifest contains duplicate global indices.")
+        if not np.isin(requested_train_idx, train_idx).all():
+            raise ValueError("Subset manifest contains indices outside the requested train split.")
+        train_idx = np.sort(requested_train_idx)
+        if "sequence_id" in cache:
+            declared_sequences = np.asarray(manifest_data.get("sequence_ids", [])).astype(str)
+            actual_sequences = cache["sequence_id"][train_idx].astype(str)
+            if not np.array_equal(declared_sequences, actual_sequences):
+                raise ValueError("Subset manifest sequence_ids do not match cache indices.")
+        subset_sha256 = computed_subset_sha256
         print(f"Loaded subset manifest from {manifest_path} with {train_idx.size} samples.")
     elif train_fraction < 1.0:
         rng = np.random.default_rng(seed)
@@ -263,18 +288,25 @@ def train_tiny_cnn(
             manifest_path = Path(subset_manifest_path)
             ensure_parent(manifest_path)
 
-            import hashlib
-
             payload = {
                 "global_indices": train_idx.tolist(),
-                "sequence_ids": split[train_idx].tolist() if "sequence_id" in cache else [],
+                "sequence_ids": (
+                    cache["sequence_id"][train_idx].astype(str).tolist()
+                    if "sequence_id" in cache
+                    else []
+                ),
                 "ttc_bins": [],  # Could compute bins here if needed
                 "source_split_hash": "",
                 "seed": seed,
                 "requested_fraction": train_fraction,
                 "effective_fraction": float(train_idx.size / full_train_count),
             }
-            payload_bytes = json.dumps(payload, sort_keys=True).encode("utf-8")
+            payload_bytes = json.dumps(
+                payload,
+                sort_keys=True,
+                separators=(",", ":"),
+                ensure_ascii=False,
+            ).encode("utf-8")
             subset_sha256 = hashlib.sha256(payload_bytes).hexdigest()
             payload["sha256"] = subset_sha256
 
@@ -319,8 +351,6 @@ def train_tiny_cnn(
             device=device,
             expected_model_name=model_name,
         )
-    import hashlib
-
     run_fingerprint_payload = {
         "git_commit": commit,
         "protocol_version": get_current_protocol_identity()[0],

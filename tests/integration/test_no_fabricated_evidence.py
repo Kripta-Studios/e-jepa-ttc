@@ -12,6 +12,8 @@ def test_no_fabricated_evidence_in_scripts():
     scripts_dir = repo_root / "scripts"
 
     suspicious_patterns = [
+        re.compile(r"fake[_ -]?(?:hash|sha|metric|data|evidence)", re.IGNORECASE),
+        re.compile(r"pseudo[_ -]?hash", re.IGNORECASE),
         re.compile(r"\{\s*['\"]status['\"]\s*:\s*['\"]success['\"]\s*\}", re.IGNORECASE),
         re.compile(r"dummy\s*=\s*\{", re.IGNORECASE),
         re.compile(r"['\"]summary\.json['\"]", re.IGNORECASE),

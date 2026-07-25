@@ -144,7 +144,8 @@ def main() -> None:
                 if scratch_ckpt.exists() and jepa_ckpt.exists():
                     if not verify_architecture_parity(scratch_ckpt, jepa_ckpt):
                         logging.error(
-                            f"Architecture parity failed for full downstream seed {downstream} nav {nav}"
+                            "Architecture parity failed for full downstream "
+                            f"seed {downstream} nav {nav}"
                         )
                         sys.exit(1)
 
@@ -171,13 +172,17 @@ def main() -> None:
 
                     scratch_low_ckpt = (
                         runs_dir
-                        / f"recovery_scratch_nav{nav}_seed{downstream}_{frac}_post_fix_v3_cache_verified"
+                        / (
+                            f"recovery_scratch_nav{nav}_seed{downstream}_{frac}_"
+                            "post_fix_v3_cache_verified"
+                        )
                         / "tiny_cnn_best.pt"
                     )
                     if scratch_low_ckpt.exists() and jepa_low_ckpt.exists():
                         if not verify_architecture_parity(scratch_low_ckpt, jepa_low_ckpt):
                             logging.error(
-                                f"Architecture parity failed for frac {frac} downstream seed {downstream} nav {nav}"
+                                "Architecture parity failed for "
+                                f"frac {frac} downstream seed {downstream} nav {nav}"
                             )
                             sys.exit(1)
 

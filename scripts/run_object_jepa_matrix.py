@@ -297,7 +297,8 @@ def main() -> int:
 
             if not verify_architecture_parity(ckpt_paths["scratch"], ckpt_paths["jepa"]):
                 sys.exit(
-                    f"FATAL: Architecture parity failed for fraction {fraction} seed {seed}. Aborting matrix."
+                    "FATAL: Architecture parity failed for "
+                    f"fraction {fraction} seed {seed}. Aborting matrix."
                 )
     result = {
         "protocol": "pre_registered_matched_low_label_object_jepa_v1",

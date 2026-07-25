@@ -1,5 +1,5 @@
 {
-  "": "http://json-schema.org/draft-07/schema#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
   "properties": {
     "artifact_type": {
@@ -39,7 +39,8 @@
       "type": "string"
     },
     "status": {
-      "type": "string"
+      "type": "string",
+      "enum": ["passed", "failed"]
     },
     "exit_code": {
       "type": "integer"
@@ -57,10 +58,12 @@
       "type": "boolean"
     },
     "required_artifact_count": {
-      "type": "integer"
+      "type": "integer",
+      "minimum": 0
     },
     "validated_artifact_count": {
-      "type": "integer"
+      "type": "integer",
+      "minimum": 0
     },
     "completed_stages": {
       "type": "array"
@@ -78,6 +81,19 @@
     "protocol_sha256",
     "created_at",
     "artifact_sha256"
+    ,"status"
+    ,"exit_code"
+    ,"all_required_artifacts_exist"
+    ,"cache_v2_validation_passed"
+    ,"pytorch_onnx_equivalence_passed"
+    ,"final_test_opened"
+    ,"required_artifact_count"
+    ,"validated_artifact_count"
+    ,"completed_stages"
+    ,"failed_stages"
+    ,"smoke_completed"
+    ,"full_completed"
+    ,"failures"
   ],
   "additionalProperties": false
 }

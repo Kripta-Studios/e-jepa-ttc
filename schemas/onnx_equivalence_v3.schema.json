@@ -23,6 +23,10 @@
     "mean_absolute_error": {
       "type": "number"
     },
+    "maximum_relative_error": {"type": "number"},
+    "absolute_tolerance": {"type": "number", "exclusiveMinimum": 0},
+    "relative_tolerance": {"type": "number", "exclusiveMinimum": 0},
+    "sample_id_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
     "schema_version": {
       "type": "string"
     },
@@ -54,6 +58,10 @@
     "sample_count",
     "maximum_absolute_error",
     "mean_absolute_error",
+    "maximum_relative_error",
+    "absolute_tolerance",
+    "relative_tolerance",
+    "sample_id_hash",
     "artifact_type",
     "schema_version",
     "evidence_type",

@@ -4,6 +4,9 @@ import subprocess
 from pathlib import Path
 from unittest.mock import patch
 
+from e_jepa_ttc.artifacts.hashing import compute_artifact_hash
+from scripts.verify_smoke_completion import main as verify_main
+
 
 def _get_git_commit() -> str:
     try:
@@ -12,12 +15,8 @@ def _get_git_commit() -> str:
         return "unknown"
 
 
-from e_jepa_ttc.artifacts.hashing import compute_artifact_hash
-from scripts.verify_smoke_completion import main as verify_main
-
-
 def _setup_mock_smoke_dir(tmp_path: Path):
-    from e_jepa_ttc.artifacts.protocol import get_repo_root
+    from e_jepa_ttc.artifacts.protocol import load_frozen_protocol
 
     required = [
         (
@@ -101,6 +100,8 @@ def _setup_mock_smoke_dir(tmp_path: Path):
             "onnx/model_manifest.json",
             {
                 "selection_split": "validation",
+                "diagnostic_split_consulted": False,
+                "final_test_opened": False,
                 "strict_state_dict_loading": True,
                 "output_names": ["log_ttc"],
                 "checkpoint_sha256": "c" * 64,
@@ -120,25 +121,9 @@ def _setup_mock_smoke_dir(tmp_path: Path):
                 "schema_version": "3.0",
                 "sample_id_hash": "dummy_hash",
                 "evidence_type": "onnx_equivalence",
-                "code_commit": json.load(
-                    open(
-                        get_repo_root()
-                        / "artifacts"
-                        / "audit"
-                        / "recovery_v3"
-                        / "frozen_protocol.json"
-                    )
-                )["code_commit"],
+                "code_commit": load_frozen_protocol()["code_commit"],
                 "protocol_version": "recovery_v3",
-                "protocol_sha256": json.load(
-                    open(
-                        get_repo_root()
-                        / "artifacts"
-                        / "audit"
-                        / "recovery_v3"
-                        / "frozen_protocol.json"
-                    )
-                )["protocol_sha256"],
+                "protocol_sha256": load_frozen_protocol()["protocol_sha256"],
                 "created_at": "2026-07-25",
             },
         ),
@@ -147,6 +132,8 @@ def _setup_mock_smoke_dir(tmp_path: Path):
             {
                 "warmup_iterations": 50,
                 "iterations": 500,
+                "batch_size": 32,
+                "mean_ms": 1.2,
                 "p50_ms": 1,
                 "p95_ms": 2,
                 "p99_ms": 3,
@@ -177,18 +164,22 @@ def _setup_mock_smoke_dir(tmp_path: Path):
                 "provenance": {},
             },
         ),
-        ("onnx_selection.json", {"status": "passed", "checkpoint_sha256": "c" * 64}),
+        (
+            "onnx_selection.json",
+            {
+                "status": "passed",
+                "checkpoint_sha256": "c" * 64,
+                "selection_split": "validation",
+                "final_test_opened": False,
+            },
+        ),
         ("phase_1_evttc.json", {"status": "passed"}),
         ("phase_2_eap.json", {"status": "passed"}),
         ("phase_4_onnx.json", {"status": "passed"}),
         ("phase_eap_cache.json", {"status": "passed"}),
         ("phase_eap_matrix_inner.json", {"status": "passed"}),
     ]
-    from e_jepa_ttc.artifacts.protocol import get_repo_root
-
-    frozen_protocol = json.load(
-        open(get_repo_root() / "artifacts" / "audit" / "recovery_v3" / "frozen_protocol.json")
-    )
+    frozen_protocol = load_frozen_protocol()
     expected_commit = frozen_protocol["code_commit"]
     expected_protocol_hash = frozen_protocol["protocol_sha256"]
 

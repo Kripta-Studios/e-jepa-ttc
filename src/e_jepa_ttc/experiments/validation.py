@@ -91,7 +91,8 @@ def verify_architecture_parity(scratch_ckpt_path: Path, jepa_finetuned_ckpt_path
         missing_in_jepa = scratch_keys - jepa_keys
         missing_in_scratch = jepa_keys - scratch_keys
         logging.error(
-            f"Architecture mismatch. Missing in JEPA: {missing_in_jepa}. Missing in Scratch: {missing_in_scratch}"
+            "Architecture mismatch. "
+            f"Missing in JEPA: {missing_in_jepa}. Missing in Scratch: {missing_in_scratch}"
         )
         return False
 
@@ -108,7 +109,8 @@ def verify_architecture_parity(scratch_ckpt_path: Path, jepa_finetuned_ckpt_path
             # but weights should diverge.
             if "weight" in k:
                 logging.error(
-                    f"Tensor values for {k} are identical between scratch and JEPA models. This violates weight divergence expectations."
+                    f"Tensor values for {k} are identical between scratch and JEPA models. "
+                    "This violates weight divergence expectations."
                 )
                 return False
 

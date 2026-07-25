@@ -1,19 +1,25 @@
+"""Shared pytest fixtures that preserve production provenance checks."""
+
+import json
+
 import pytest
-import os
-import e_jepa_ttc.artifacts.protocol as protocol_module
+
+from e_jepa_ttc.artifacts.hashing import sign_artifact
+
 
 @pytest.fixture(autouse=True)
-def mock_frozen_protocol(monkeypatch):
-    """
-    Mock the frozen protocol globally for unit tests so they don't depend on pipeline outputs.
-    Tests that actually test the protocol logic should override this.
-    """
-    def mock_load():
-        return {
+def isolated_frozen_protocol(tmp_path, monkeypatch) -> None:
+    """Point tests and their subprocesses at a signed isolated protocol."""
+
+    protocol_path = tmp_path / "frozen_protocol.json"
+    protocol = sign_artifact(
+        {
+            "artifact_type": "frozen_protocol_v3",
             "protocol_version": "3.0",
-            "protocol_sha256": "mock_protocol_hash",
-            "code_commit": "mock_commit",
-            "artifact_sha256": "mock_hash"
+            "protocol_sha256": "a" * 64,
+            "code_commit": "b" * 40,
+            "claim_level": "test_fixture",
         }
-    
-    monkeypatch.setattr(protocol_module, "load_frozen_protocol", mock_load)
+    )
+    protocol_path.write_text(json.dumps(protocol), encoding="utf-8")
+    monkeypatch.setenv("E_JEPA_TTC_FROZEN_PROTOCOL", str(protocol_path))

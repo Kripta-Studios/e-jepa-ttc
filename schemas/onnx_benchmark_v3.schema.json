@@ -3,6 +3,8 @@
   "title": "ONNX Benchmark V3",
   "type": "object",
   "properties": {
+    "device": {"type": "string"},
+    "batch_size": {"type": "integer", "minimum": 1},
     "iterations": {
       "type": "integer",
       "minimum": 0
@@ -15,6 +17,19 @@
     },
     "p99_ms": {
       "type": "number"
+    },
+    "mean_ms": {"type": "number", "minimum": 0},
+    "hardware": {
+      "type": "object",
+      "properties": {
+        "cpu_name": {"type": "string"},
+        "logical_cores": {"type": ["integer", "null"]},
+        "physical_cores": {"type": ["integer", "null"]},
+        "ram_gb": {"type": "number"},
+        "gpu_name": {"type": ["string", "null"]}
+      },
+      "required": ["cpu_name", "logical_cores", "physical_cores", "ram_gb", "gpu_name"],
+      "additionalProperties": false
     },
     "schema_version": {
       "type": "string"
@@ -43,6 +58,10 @@
   },
   "required": [
     "iterations",
+    "device",
+    "batch_size",
+    "mean_ms",
+    "hardware",
     "p50_ms",
     "p95_ms",
     "p99_ms",

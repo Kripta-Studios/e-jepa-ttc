@@ -3,6 +3,14 @@
   "title": "ONNX Manifest V3",
   "type": "object",
   "properties": {
+    "checkpoint_path": {"type": "string"},
+    "onnx_path": {"type": "string"},
+    "model_name": {"type": "string"},
+    "model_config_sha256": {"type": "string"},
+    "cache_sha256": {"type": "string"},
+    "navigation_mode": {"type": "string"},
+    "normalization_sha256": {"type": "string"},
+    "in_channels": {"type": "integer", "minimum": 1},
     "selection_split": {
       "type": "string"
     },
@@ -26,6 +34,10 @@
     "resolved_model_config": {
       "type": "object"
     },
+    "selection_metric": {"type": "string"},
+    "selected_checkpoint_code_commit": {"type": "string"},
+    "diagnostic_split_consulted": {"type": "boolean"},
+    "final_test_opened": {"type": "boolean"},
     "schema_version": {
       "type": "string"
     },
@@ -53,6 +65,13 @@
   },
   "required": [
     "selection_split",
+    "checkpoint_path",
+    "onnx_path",
+    "model_name",
+    "in_channels",
+    "selection_metric",
+    "diagnostic_split_consulted",
+    "final_test_opened",
     "strict_state_dict_loading",
     "output_names",
     "checkpoint_sha256",

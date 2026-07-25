@@ -1,4 +1,5 @@
 import argparse
+import hashlib
 import json
 import logging
 import sys
@@ -9,17 +10,14 @@ import numpy as np
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
 
-def _hash_file(path: Path) -> str:
-    import hashlib
-
-    h = hashlib.sha256()
-    with path.open("rb") as f:
-        while chunk := f.read(8192):
-            h.update(chunk)
-    return h.hexdigest()
+def _hash_payload(payload: dict[str, object]) -> str:
+    encoded = json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode(
+        "utf-8"
+    )
+    return hashlib.sha256(encoded).hexdigest()
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--cache", type=Path, required=True, help="Path to npz cache")
     parser.add_argument("--output-dir", type=Path, default=Path("artifacts/subsets"))
@@ -74,7 +72,10 @@ def main():
             if previous_indices is not None:
                 if not current_set.issubset(previous_indices):
                     logging.error(
-                        f"Nesting failure: fraction {fraction} is not a strict subset of {previous_frac} for seed {seed}"
+                        "Nesting failure: fraction %s is not a strict subset of %s for seed %s",
+                        fraction,
+                        previous_frac,
+                        seed,
                     )
                     sys.exit(1)
 
@@ -86,19 +87,20 @@ def main():
 
             payload = {
                 "global_indices": current_indices.tolist(),
-                "sequence_ids": split[current_indices].tolist() if has_sequence_id else [],
+                "sequence_ids": (
+                    cache["sequence_id"][current_indices].astype(str).tolist()
+                    if has_sequence_id
+                    else []
+                ),
                 "ttc_bins": [],
                 "fraction": fraction,
                 "seed": seed,
             }
+            # The embedded digest signs the canonical payload excluding the
+            # digest field itself; hashing the final file would be recursive.
+            payload["sha256"] = _hash_payload(payload)
             with manifest_path.open("w", encoding="utf-8") as f:
-                json.dump(payload, f)
-
-            # Compute hash and update
-            sha256 = _hash_file(manifest_path)
-            payload["sha256"] = sha256
-            with manifest_path.open("w", encoding="utf-8") as f:
-                json.dump(payload, f, indent=2)
+                json.dump(payload, f, indent=2, sort_keys=True)
 
             logging.info(f"Generated {manifest_path} (n={current_indices.size})")
 

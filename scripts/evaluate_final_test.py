@@ -9,7 +9,7 @@ sys.path.insert(0, str(Path("src").absolute()))
 from e_jepa_ttc.experiments.test_lock import check_final_test_lock
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description="Evaluate on the final test split.")
     parser.add_argument(
         "--checkpoint", type=str, required=True, help="Path to the model checkpoint to evaluate"

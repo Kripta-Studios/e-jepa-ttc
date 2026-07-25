@@ -43,7 +43,8 @@ def check_final_test_lock(
 
         if target_hash is not None and unlock_data["target_hash"] != target_hash:
             logging.error(
-                f"Unlock file target_hash {unlock_data['target_hash']} does not match requested {target_hash}"
+                f"Unlock target_hash {unlock_data['target_hash']} "
+                f"does not match requested {target_hash}"
             )
             return False
 
@@ -63,7 +64,8 @@ def check_final_test_lock(
                     entry = json.loads(line)
                     if entry.get("authorization_hash") == auth_hash:
                         logging.error(
-                            f"Final test lock token {auth_hash} has already been burned. It is strictly single-use."
+                            f"Final test lock token {auth_hash} has already been burned; "
+                            "tokens are strictly single-use."
                         )
                         return False
         except Exception as e:

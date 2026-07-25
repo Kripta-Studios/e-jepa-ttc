@@ -1,7 +1,8 @@
 import json
-import pytest
-import jsonschema
 from pathlib import Path
+
+import jsonschema
+import pytest
 
 REQUIRED_ROOT_FIELDS = [
     "artifact_type",
@@ -11,32 +12,39 @@ REQUIRED_ROOT_FIELDS = [
     "protocol_version",
     "protocol_sha256",
     "created_at",
-    "artifact_sha256"
+    "artifact_sha256",
 ]
+
 
 def get_schemas():
     repo_root = Path(__file__).resolve().parent.parent.parent
     schemas_dir = repo_root / "schemas"
-    return [p for p in schemas_dir.glob("*.schema.json") if p.name != "recovery_v3_protocol.schema.json"]
+    return [
+        p for p in schemas_dir.glob("*.schema.json") if p.name != "recovery_v3_protocol.schema.json"
+    ]
+
 
 @pytest.mark.parametrize("schema_path", get_schemas())
 def test_schema_requires_scientific_metadata(schema_path):
-    with open(schema_path, "r", encoding="utf-8") as f:
+    with open(schema_path, encoding="utf-8") as f:
         schema = json.load(f)
 
-    assert schema.get("additionalProperties") is False, f"{schema_path.name} allows additionalProperties"
-    
+    assert schema.get("additionalProperties") is False, (
+        f"{schema_path.name} allows additionalProperties"
+    )
+
     required = set(schema.get("required", []))
     for field in REQUIRED_ROOT_FIELDS:
         assert field in required, f"{schema_path.name} is missing required field {field}"
 
+
 def test_schema_mutation_fails():
     repo_root = Path(__file__).resolve().parent.parent.parent
     schema_path = repo_root / "schemas" / "completion_manifest_v3.schema.json"
-    
-    with open(schema_path, "r", encoding="utf-8") as f:
+
+    with open(schema_path, encoding="utf-8") as f:
         schema = json.load(f)
-        
+
     valid_instance = {
         "artifact_type": "completion_manifest_v3",
         "schema_version": "3.0",
@@ -58,12 +66,12 @@ def test_schema_mutation_fails():
         "failed_stages": [],
         "smoke_completed": True,
         "full_completed": False,
-        "failures": []
+        "failures": [],
     }
-    
+
     # Should pass
     jsonschema.validate(instance=valid_instance, schema=schema)
-    
+
     # Mutation tests
     for field in REQUIRED_ROOT_FIELDS:
         mutated = valid_instance.copy()

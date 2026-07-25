@@ -91,8 +91,8 @@ def main(argv: list[str] | None = None) -> int:
             diff_summary = {}
             for metric in metrics:
                 # Build matrices of values: [pt_seed][downstream_seed]
-                # To pair them, we just align by downstream seed if possible, or just sample the same indices.
-                # Actually, a strict paired bootstrap pairs by exact (pretrain_seed, downstream_seed).
+                # Align by downstream seed where possible and sample identical indices.
+                # Strict pairing uses the exact (pretrain_seed, downstream_seed) pair.
                 exp_vals = {pt: {} for pt in common_pt}
                 base_vals = {pt: {} for pt in common_pt}
                 for pt in common_pt:
@@ -124,7 +124,7 @@ def main(argv: list[str] | None = None) -> int:
                     sampled_means_exp = []
                     sampled_means_base = []
                     for pt in sampled_pt:
-                        # For paired bootstrap within the cluster, sample the SAME indices for both exp and base
+                        # Within each cluster, sample identical indices for both arms.
                         n_ds = len(exp_vals[pt])
                         ds_indices = rng.choice(n_ds, size=n_ds, replace=True)
                         sampled_means_exp.append(np.mean(np.array(exp_vals[pt])[ds_indices]))

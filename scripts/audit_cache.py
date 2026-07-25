@@ -158,9 +158,8 @@ def main() -> None:
                     else:
                         failures.append("Normalization provenance is incomplete (missing hashes).")
                 else:
-                    failures.append(
-                        f"Normalizer fitted with non-train split: {audit_record['normalizer_source_split']}"
-                    )
+                    source_split = audit_record["normalizer_source_split"]
+                    failures.append(f"Normalizer fitted with non-train split: {source_split}")
 
         expected_total = sidecar.get("window_count", sidecar.get("total_samples", 0))
         audit_record["sample_count_total"] = expected_total
@@ -197,7 +196,8 @@ def main() -> None:
         # 6. Validate sample-axis consistency
         if not (x.shape[0] == seqs.shape[0] == splits.shape[0]):
             failures.append(
-                f"Sample axis inconsistency: x={x.shape[0]}, seq={seqs.shape[0]}, split={splits.shape[0]}"
+                "Sample axis inconsistency: "
+                f"x={x.shape[0]}, seq={seqs.shape[0]}, split={splits.shape[0]}"
             )
 
         # 19. Validate sample count against sidecar
@@ -252,7 +252,7 @@ def main() -> None:
 
         seq_to_split = {}
         test_present_without_lock = False
-        for s, sp in zip(seqs, splits):
+        for s, sp in zip(seqs, splits, strict=True):
             if sp == "test" and not has_lock:
                 test_present_without_lock = True
             elif sp not in allowed_splits:

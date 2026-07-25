@@ -9,8 +9,10 @@ classical TTC baselines, voxel-cache materialization, a supervised TinyCNN TTC r
 dense motion-conditioned temporal JEPA pretraining, and low-label probes.
 
 Experimental numbers must be generated from reproducible runs before being promoted to project
-claims. The bundled local EvTTC data is a three-sequence mini subset, so local results are smoke and
-sanity evidence rather than a broad benchmark.
+claims. The local workspace currently contains nine EvTTC starter sequences, but its historical
+cache and artifact registry fail the physical provenance audit. Existing numbers are diagnostic,
+not official benchmark evidence. See the
+[2026-07-25 scientific audit](docs/scientific_audit_2026-07-25.md).
 
 ## Quickstart
 
@@ -72,13 +74,15 @@ $env:PYTHONPATH='src'
 Current mini-subset results are summarized in [docs/local_results.md](docs/local_results.md).
 Full-starter diagnostic results are summarized in
 [docs/full_starter_results.md](docs/full_starter_results.md). On the full local starter protocol,
-the strongest all-window result so far is tubelet-masked token JEPA with causal
+the strongest historical all-window result is tubelet-masked token JEPA with causal
 integrated-navigation channels and a transformer dense predictor: with 100%
 labels it reaches `0.231 +/- 0.018s` validation MAE and `0.312 +/- 0.044s`
 CPLA-high diagnostic MAE over three fine-tuning seeds conditioned on one SSL
-pretraining seed. This is a reused-test local result, not an official EvTTC SOTA
-claim; official comparison still requires
-the benchmark bbox/ROI protocol and broader sequence set.
+pretraining seed. The cache sidecar disagrees with the physical array shape and
+the registry references missing or hash-mismatched artifacts. This figure is a
+research lead only: it is neither a promotable result nor an official EvTTC SOTA
+claim. Official comparison still requires the benchmark bbox/ROI protocol and
+broader sequence set.
 
 The official EvTTC bbox/ROI coverage checker currently finds only `3/8`
 real-world benchmark sequences complete locally (`37.5%`) and `3/10` complete
@@ -157,6 +161,7 @@ uv run --no-sync python scripts/download_evttc_starter.py --manifest data/manife
 ## Not Implemented Yet
 
 - Robustness suite (currently placeholder evaluation only).
+- Final-test evaluator (the guarded entry point intentionally fails closed).
 - Project-level final report generation.
 
 These remain in the milestone order defined in `AGENTS.md`; they should be added after the

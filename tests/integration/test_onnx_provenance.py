@@ -1,8 +1,12 @@
 import json
 import subprocess
 from pathlib import Path
-import torch
+
 import numpy as np
+import torch
+
+from e_jepa_ttc.artifacts.hashing import sign_artifact
+from e_jepa_ttc.artifacts.protocol import get_current_protocol_identity
 
 
 def test_onnx_export_rejects_altered_record(tmp_path):
@@ -13,11 +17,12 @@ def test_onnx_export_rejects_altered_record(tmp_path):
     # Create structurally valid files so hash checks actually run
     chk_path = tmp_path / "model.pt"
     torch.save({"model_state_dict": {}, "resolved_model_config": {}}, chk_path)
-    
+
     cache_path = tmp_path / "cache.npz"
     np.savez(cache_path, x=np.zeros((1, 1), dtype=np.float32))
 
-    # Write a record with deliberate hash mismatch
+    protocol_version, protocol_sha256 = get_current_protocol_identity()
+    # Write a signed record with a deliberate physical hash mismatch.
     record = {
         "artifact_type": "onnx_candidate_v3",
         "schema_version": "3.0",
@@ -27,8 +32,8 @@ def test_onnx_export_rejects_altered_record(tmp_path):
         "cache_sha256": "wronghash",
         "model_config_path": "unknown",
         "model_config_sha256": "unknown",
-        "protocol_hash": "unknown",
-        "protocol_sha256": "unknown",
+        "protocol_version": protocol_version,
+        "protocol_sha256": protocol_sha256,
         "code_commit": "unknown",
         "selection_split": "validation",
         "evidence_type": "validation_matrix",
@@ -47,10 +52,10 @@ def test_onnx_export_rejects_altered_record(tmp_path):
         "label_fraction": 1.0,
         "train_sample_count": 0,
         "validation_sample_count": 0,
-        "final_test_opened": False
+        "final_test_opened": False,
     }
 
-    record_path.write_text(json.dumps(record))
+    record_path.write_text(json.dumps(sign_artifact(record)))
 
     cmd = [
         "uv",
@@ -84,7 +89,7 @@ def test_onnx_export_rejects_final_test_checkpoint(tmp_path):
 
     chk_path = tmp_path / "model.pt"
     torch.save({"model_state_dict": {}, "resolved_model_config": {}}, chk_path)
-    
+
     cache_path = tmp_path / "cache.npz"
     np.savez(cache_path, x=np.zeros((1, 1), dtype=np.float32))
 
@@ -92,6 +97,7 @@ def test_onnx_export_rejects_final_test_checkpoint(tmp_path):
     metrics_path = tmp_path / "metrics.json"
     metrics_path.write_text(json.dumps({"final_test_opened": True}))
 
+    protocol_version, protocol_sha256 = get_current_protocol_identity()
     # Realistic fallback values for required fields
     empty_sha256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     record = {
@@ -103,8 +109,8 @@ def test_onnx_export_rejects_final_test_checkpoint(tmp_path):
         "cache_sha256": get_hash(cache_path),
         "model_config_path": "configs/model/tiny_cnn.yaml",
         "model_config_sha256": empty_sha256,
-        "protocol_hash": empty_sha256,
-        "protocol_sha256": empty_sha256,
+        "protocol_version": protocol_version,
+        "protocol_sha256": protocol_sha256,
         "code_commit": "d88f571",
         "selection_split": "validation",
         "evidence_type": "validation_matrix",
@@ -123,10 +129,10 @@ def test_onnx_export_rejects_final_test_checkpoint(tmp_path):
         "label_fraction": 1.0,
         "train_sample_count": 0,
         "validation_sample_count": 0,
-        "final_test_opened": False
+        "final_test_opened": False,
     }
 
-    record_path.write_text(json.dumps(record))
+    record_path.write_text(json.dumps(sign_artifact(record)))
 
     cmd = [
         "uv",

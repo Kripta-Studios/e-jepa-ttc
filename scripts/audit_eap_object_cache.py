@@ -44,6 +44,8 @@ def audit_cache(manifest_path: Path, *, hash_shards: bool = False) -> dict[str, 
     ttc_values: list[np.ndarray] = []
     shard_records: list[dict[str, Any]] = []
     total_bytes = 0
+    history_overlap_interval_count = 0
+    history_valid_interval_pair_count = 0
     required = {
         "context_events",
         "context_boxes",
@@ -87,13 +89,19 @@ def audit_cache(manifest_path: Path, *, hash_shards: bool = False) -> dict[str, 
                 np.all(future_start[future_valid] < future_end[future_valid]),
                 f"Empty valid future interval in {path}",
             )
+            adjacent_context_valid = context_valid[:, :-1] & context_valid[:, 1:]
             _require(
-                np.all(
-                    (context_end[:, :-1] <= context_start[:, 1:])
-                    | ~(context_valid[:, :-1] & context_valid[:, 1:])
-                ),
-                f"Overlapping context windows in {path}",
+                np.all((context_start[:, :-1] < context_start[:, 1:]) | ~adjacent_context_valid),
+                f"Context history is not chronological in {path}",
             )
+            # Historical accumulation windows may overlap deliberately (for
+            # example, a 100 ms event window sampled every 50 ms). This is
+            # redundancy inside the causal context, not target leakage. Count
+            # it explicitly; only context-to-future overlap is prohibited.
+            history_overlap_interval_count += int(
+                np.sum((context_end[:, :-1] > context_start[:, 1:]) & adjacent_context_valid)
+            )
+            history_valid_interval_pair_count += int(np.sum(adjacent_context_valid))
             _require(
                 np.all((context_end[:, -1, None] <= future_start) | ~future_valid),
                 f"Future window overlaps context in {path}",
@@ -154,7 +162,11 @@ def audit_cache(manifest_path: Path, *, hash_shards: bool = False) -> dict[str, 
             key: sorted(value) for key, value in sorted(split_sequences.items())
         },
         "sequence_split_overlap": leaking,
-        "temporal_overlap_count": 0,
+        "context_to_future_overlap_count": 0,
+        "future_target_overlap_count": 0,
+        "history_overlap_interval_count": history_overlap_interval_count,
+        "history_valid_interval_pair_count": history_valid_interval_pair_count,
+        "history_overlap_is_causal_context_only": True,
         "ttc_s": {
             "minimum": float(np.min(all_ttc)),
             "median": float(np.median(all_ttc)),

@@ -46,13 +46,18 @@ function Write-StageRecord {
     $clean = ($null -eq $cleanStatus) -or ($cleanStatus.Trim() -eq "")
     
     $duration = ($end - $start).TotalSeconds
-    $evidence = if ($Smoke) { "synthetic_smoke" } else { "real_smoke" }
+    # Both paths consume real EvTTC/eAP files. Smoke limits epochs and support;
+    # it is not synthetic evidence.
+    $evidence = if ($Smoke) { "real_smoke" } else { "validation_matrix" }
     
     # Evaluate hashes for outputs right before signing
     $processedOutputs = @()
     foreach ($out in $outputs) {
         $outPath = $out.path
         $outHash = Get-ArtifactHash $outPath
+        if ($status -eq "passed" -and $outHash -eq "missing") {
+            throw "Cannot mark stage '$stage' passed: required output missing: $outPath"
+        }
         $processedOutputs += @{
             path = $outPath
             sha256 = $outHash
@@ -80,7 +85,7 @@ function Write-StageRecord {
         inputs = $inputs
         outputs = $processedOutputs
         failure = $failure
-        environment_hash = "env_fake_hash_for_now"
+        environment_hash = Get-ArtifactHash "uv.lock"
         working_tree_clean = $clean
     }
     
@@ -113,7 +118,19 @@ if ($Smoke) { $evttcArgs += "-Smoke" }
 $exit1 = $LASTEXITCODE
 $end1 = Get-Date
 
-$expectedOutputs1 = @()
+$expectedOutputs1 = if ($Smoke) {
+    @(
+        @{ path = "$baseDir/evttc/cache_validation.json"; artifact_type = "audit_cache" },
+        @{ path = "$baseDir/evttc/scratch_navigation_enabled/summary.json"; artifact_type = "supervised_run_v3" },
+        @{ path = "$baseDir/evttc/scratch_navigation_disabled/summary.json"; artifact_type = "supervised_run_v3" },
+        @{ path = "$baseDir/evttc/jepa_navigation_enabled/summary.json"; artifact_type = "supervised_run_v3" },
+        @{ path = "$baseDir/evttc/jepa_navigation_disabled/summary.json"; artifact_type = "supervised_run_v3" }
+    )
+} else {
+    @(
+        @{ path = "artifacts/registry.jsonl"; artifact_type = "artifact_registry" }
+    )
+}
 if ($exit1 -ne 0) { 
     Write-StageRecord -baseDir $baseDir -stage "evttc_matrix" -status "failed" -start $start1 -end $end1 -exit_code $exit1 -command $evttcArgs -failure "EvTTC matrix failed"
     throw "EvTTC matrix failed" 
@@ -127,7 +144,17 @@ if ($Smoke) { $eapArgs += "-Smoke" }
 & powershell @eapArgs
 $exit2 = $LASTEXITCODE
 $end2 = Get-Date
-$expectedOutputs2 = @()
+$expectedOutputs2 = if ($Smoke) {
+    @(
+        @{ path = "$baseDir/eap/cache/manifest.json"; artifact_type = "object_cache_manifest" },
+        @{ path = "$baseDir/eap/matrix/matrix_summary.json"; artifact_type = "matrix_summary_v3" },
+        @{ path = "$baseDir/eap/matrix/eap_split_statistics.json"; artifact_type = "split_statistics" }
+    )
+} else {
+    @(
+        @{ path = "artifacts/runs/eap_object_jepa_matrix/matrix_summary.json"; artifact_type = "matrix_summary_v3" }
+    )
+}
 if ($exit2 -ne 0) { 
     Write-StageRecord -baseDir $baseDir -stage "eap_matrix" -status "failed" -start $start2 -end $end2 -exit_code $exit2 -command $eapArgs -failure "eAP matrix failed"
     throw "eAP matrix failed" 

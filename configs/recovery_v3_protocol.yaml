@@ -1,4 +1,13 @@
 protocol_version: "3.0"
+claim_level: diagnostic
+test_status: reused_test_diagnostic
+cache_format_version: 1
+resources:
+  evttc_dataset_manifest: data/manifests/evttc_full_starter_local.yaml
+  evttc_split_manifest: data/splits/evttc_full_starter_sealed.yaml
+  evttc_cache: artifacts/features/evttc_full_starter_voxel_160x90_b5_raw_meta_nav.npz
+  eap_remote_manifest: data/manifests/eap50_remote_files.json
+  eap_split_manifest: data/splits/eap_object_jepa_v2.yaml
 matrix:
   ssl_seeds: [7, 13, 21]
   downstream_seeds: [7, 13, 21]
@@ -33,10 +42,10 @@ requirements:
   dataset:
     name: "evttc"
     version: "2025-03-02"
-    manifest_hash: "deterministically_generated_at_runtime"
+    manifest_hash: "b694e32bd895e74128a3d4db4f88cefc7a7d775324fa4df57b14e71e89122dc4"
 onnx_policies:
   strict_state_dict_loading: true
   output_names: ["log_ttc"]
-  maximum_absolute_error_tolerance: 1e-4
-  mean_absolute_error_tolerance: 1e-5
+  maximum_absolute_error_tolerance: 0.0001
+  mean_absolute_error_tolerance: 0.00001
   real_validation_samples: true

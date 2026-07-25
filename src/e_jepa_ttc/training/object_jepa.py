@@ -864,7 +864,7 @@ def fine_tune_object_ttc(
         batch_size=batch_size,
         use_ego_actions=use_ego_actions,
     )
-    # Fit calibrators if calibration is provided, else use dummy/defaults (or fail if requested)
+    # Fit calibrators only when a dedicated calibration split is requested.
     conformal = None
     temperatures = []
     if "calibration" in report_splits:
@@ -926,7 +926,7 @@ def fine_tune_object_ttc(
         summary["calibration"] = {
             "artifact_type": "calibration_metrics_v3",
             "schema_version": "3.0",
-            "evidence_type": "synthetic_smoke",  # Or real_smoke depending on pipeline, but will be injected by caller or static for now
+            "evidence_type": "synthetic_smoke",
             "code_commit": _get_git_commit(),
             "protocol_version": protocol_version,
             "protocol_sha256": protocol_sha256,
