@@ -114,18 +114,14 @@ latency. SSL loss alone cannot establish TTC improvement.
 - Simulator unit tests: passing.
 - FlowMimic/JEPA integration smoke: passing.
 - Existing JEPA/prober focused suite: 21 tests passing.
-- Full repository QA: Ruff passing and 196 tests passing.
-- Cache v2 train+validation rebuild: first attempt rejected; corrected rebuild
-  pending.
+- Full repository QA: Ruff passing and 197 tests passing.
+- Cache v2 train+validation rebuild and exhaustive audit: passed.
 - E0/E1/E2 validation results: pending; no result should be filled in manually.
 
 ## Continuation checklist
 
-1. Commit and push the tested FlowMimic implementation.
-2. Build a train+validation-only cache format v2 from source manifests.
-3. Audit physical array shape, sidecar counts and hashes.
-4. Run E0/E1/E2 without evaluating CPLA-high.
-5. Append exact commands, commit hashes, artifact hashes and generated metrics
+1. Run E0/E1/E2 without evaluating CPLA-high.
+2. Append exact commands, commit hashes, artifact hashes and generated metrics
    paths below.
 
 ## Experiment ledger
@@ -161,3 +157,41 @@ physically absent.
 
 No training run has been completed yet. No metric in this section is a model
 accuracy result.
+
+### Accepted cache build C1
+
+The same build command was repeated from the corrected split-filter commit
+`f62b268`. Generated facts:
+
+- input index windows: `3972`;
+- physical output windows: `3494`;
+- shape: `[3494, 21, 90, 160]`, dtype `float16`;
+- split counts: train `3019`, validation `475`, test `0`;
+- sequence counts: seven train, one validation;
+- explicitly excluded splits: `["test"]`;
+- elapsed: `689.082 s`;
+- cache SHA-256:
+  `22d3ef27018925aae62825f0a7f51d1420ae93cacf59aeb18b04758f5a35e88a`.
+
+The cache audit was hardened and published as `80ff992`, then rerun from that
+commit. Exhaustive audit artifact:
+
+```text
+artifacts/metrics/flowmimic_cache_trainval_v2_audit.json
+```
+
+Audit facts:
+
+- status: `passed`;
+- code commit: `80ff9923d085381d6a08644686cfe3cdf4a23bd3`;
+- audited samples: `3494/3494`;
+- cache format: v2;
+- hash match: true;
+- nonempty windows collapsed to zero: `0`;
+- encoded all-zero samples: `0`;
+- normalization: `none`;
+- audit artifact SHA-256:
+  `02f3f633b13f413c4bf6b49176c3e70d373af52d63ac1602e119402af3a819c2`.
+
+This cache is eligible for E0/E1/E2 validation-only training. It is not itself
+an accuracy result.
