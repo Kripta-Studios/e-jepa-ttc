@@ -502,6 +502,10 @@ def _cmd_pretrain_jepa(args: argparse.Namespace) -> int:
         deep_supervision_layers=tuple(args.deep_supervision_layers),
         dense_predictor=args.dense_predictor,
         context_token_weight=args.context_token_weight,
+        flowmimic_alignment_weight=args.flowmimic_alignment_weight,
+        flowmimic_inverse_ttc_weight=args.flowmimic_inverse_ttc_weight,
+        flowmimic_minimum_ttc_s=args.flowmimic_minimum_ttc_s,
+        flowmimic_maximum_ttc_s=args.flowmimic_maximum_ttc_s,
         model_name=args.model,
         navigation_mode=args.navigation_mode,
         dry_run_fingerprint=args.dry_run_fingerprint,
@@ -1301,6 +1305,26 @@ def build_parser() -> argparse.ArgumentParser:
             "context tokens in addition to future tokens."
         ),
     )
+    pretrain_jepa.add_argument(
+        "--flowmimic-alignment-weight",
+        type=float,
+        default=0.0,
+        help=(
+            "Weight for causal synthetic context-to-future latent alignment. Synthetic "
+            "intensity is rendered before contrast-threshold event simulation."
+        ),
+    )
+    pretrain_jepa.add_argument(
+        "--flowmimic-inverse-ttc-weight",
+        type=float,
+        default=0.0,
+        help=(
+            "Weight for an auxiliary inverse-TTC head trained only with analytic "
+            "synthetic TTC; real TTC labels remain excluded from pretraining."
+        ),
+    )
+    pretrain_jepa.add_argument("--flowmimic-minimum-ttc-s", type=float, default=0.8)
+    pretrain_jepa.add_argument("--flowmimic-maximum-ttc-s", type=float, default=4.0)
     pretrain_jepa.add_argument(
         "--dry-run-fingerprint",
         action="store_true",

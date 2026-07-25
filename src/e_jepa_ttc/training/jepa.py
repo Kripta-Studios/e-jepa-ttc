@@ -20,6 +20,7 @@ from e_jepa_ttc.artifacts.protocol import get_current_protocol_identity
 from e_jepa_ttc.data.evttc import NAVIGATION_FEATURE_NAMES
 from e_jepa_ttc.data.ml_cache import validate_voxel_cache
 from e_jepa_ttc.models import build_encoder
+from e_jepa_ttc.representations.flowmimic import generate_physical_event_approach_batch
 from e_jepa_ttc.utils.io import ensure_parent, write_structured
 
 EVENT_MOTION_FEATURE_NAMES = (
@@ -90,6 +91,25 @@ class JEPAPredictor(nn.Module):
         """Predict target latent vectors from context latents."""
 
         return self.net(x)
+
+
+class FlowMimicInverseTTCHead(nn.Module):
+    """Auxiliary inverse-TTC head trained only on analytic synthetic motion."""
+
+    def __init__(self, dim: int) -> None:
+        super().__init__()
+        hidden_dim = max(32, dim // 2)
+        self.net = nn.Sequential(
+            nn.LayerNorm(dim),
+            nn.Linear(dim, hidden_dim),
+            nn.GELU(),
+            nn.Linear(hidden_dim, 1),
+        )
+
+    def forward(self, context_embedding: torch.Tensor) -> torch.Tensor:
+        """Predict a positive inverse TTC from a pooled context embedding."""
+
+        return functional.softplus(self.net(context_embedding).squeeze(-1))
 
 
 class TemporalJEPAPredictor(nn.Module):
@@ -1165,6 +1185,7 @@ def _run_epoch(
     encoder: nn.Module,
     target_encoder: nn.Module,
     predictor: nn.Module,
+    flowmimic_inverse_ttc_head: nn.Module | None,
     loader: DataLoader[Any],
     optimizer: torch.optim.Optimizer | None,
     *,
@@ -1191,10 +1212,19 @@ def _run_epoch(
     action_feature_mean: torch.Tensor | None,
     action_feature_std: torch.Tensor | None,
     context_token_weight: float,
+    flowmimic_alignment_weight: float,
+    flowmimic_inverse_ttc_weight: float,
+    flowmimic_horizons_ms: tuple[int, ...],
+    flowmimic_context_ms: float,
+    flowmimic_minimum_ttc_s: float,
+    flowmimic_maximum_ttc_s: float,
+    normalize_events: bool,
 ) -> dict[str, float]:
     train_mode = optimizer is not None
     encoder.train(train_mode)
     predictor.train(train_mode)
+    if flowmimic_inverse_ttc_head is not None:
+        flowmimic_inverse_ttc_head.train(train_mode)
     target_encoder.eval()
     use_amp = scaler is not None and device.type == "cuda"
     rows: list[dict[str, float]] = []
@@ -1240,21 +1270,100 @@ def _run_epoch(
                 action_feature_std=action_feature_std,
                 context_token_weight=context_token_weight,
             )
+            flowmimic_alignment_loss = loss.new_zeros(())
+            flowmimic_inverse_ttc_loss = loss.new_zeros(())
+            flowmimic_enabled = (
+                flowmimic_alignment_weight > 0.0 or flowmimic_inverse_ttc_weight > 0.0
+            )
+            if train_mode and flowmimic_enabled:
+                if horizon_ids is None or not flowmimic_horizons_ms:
+                    raise RuntimeError("FlowMimic requires temporal JEPA horizons.")
+                synthetic = generate_physical_event_approach_batch(
+                    batch_size=int(x.shape[0]),
+                    output_channels=int(x.shape[1]),
+                    height=int(x.shape[2]),
+                    width=int(x.shape[3]),
+                    bins=bins,
+                    horizons_ms=flowmimic_horizons_ms,
+                    context_ms=flowmimic_context_ms,
+                    device=device,
+                    metadata_channels=metadata_channels,
+                    normalize_events=normalize_events,
+                    minimum_ttc_s=flowmimic_minimum_ttc_s,
+                    maximum_ttc_s=flowmimic_maximum_ttc_s,
+                )
+                if flowmimic_alignment_weight > 0.0:
+                    synthetic_mask = torch.ones(
+                        int(x.shape[0]),
+                        len(flowmimic_horizons_ms),
+                        dtype=torch.bool,
+                        device=device,
+                    )
+                    flowmimic_alignment_loss, _ = _jepa_loss(
+                        encoder,
+                        target_encoder,
+                        predictor,
+                        synthetic.context,
+                        future_x=synthetic.future,
+                        future_mask=synthetic_mask,
+                        horizon_ids=horizon_ids,
+                        mask_ratio=mask_ratio,
+                        block_count=block_count,
+                        mask_mode=mask_mode,
+                        regularizer="variance",
+                        variance_weight=0.0,
+                        min_std=min_std,
+                        visreg_center_weight=0.0,
+                        visreg_sketch_weight=0.0,
+                        visreg_projection_count=visreg_projection_count,
+                        temporal_straightening_weight=0.0,
+                        dense_tokens=dense_tokens,
+                        motion_conditioning=motion_conditioning,
+                        deep_supervision_layers=deep_supervision_layers,
+                        bins=bins,
+                        metadata_channels=metadata_channels,
+                        navigation_feature_count=navigation_feature_count,
+                        action_feature_mean=action_feature_mean,
+                        action_feature_std=action_feature_std,
+                        context_token_weight=0.0,
+                    )
+                if flowmimic_inverse_ttc_weight > 0.0:
+                    if flowmimic_inverse_ttc_head is None:
+                        raise RuntimeError("FlowMimic inverse-TTC head was not initialized.")
+                    synthetic_embedding = encoder(synthetic.context)
+                    if synthetic_embedding.ndim == 3:
+                        synthetic_embedding = synthetic_embedding.mean(dim=1)
+                    inverse_ttc_prediction = flowmimic_inverse_ttc_head(synthetic_embedding)
+                    flowmimic_inverse_ttc_loss = functional.smooth_l1_loss(
+                        inverse_ttc_prediction,
+                        synthetic.inverse_ttc_at_context_end,
+                        beta=0.1,
+                    )
+                loss = (
+                    loss
+                    + flowmimic_alignment_weight * flowmimic_alignment_loss
+                    + flowmimic_inverse_ttc_weight * flowmimic_inverse_ttc_loss
+                )
+            metrics.update(
+                {
+                    "flowmimic_alignment_loss": float(flowmimic_alignment_loss.detach().cpu()),
+                    "flowmimic_alignment_weight": float(flowmimic_alignment_weight),
+                    "flowmimic_inverse_ttc_loss": float(flowmimic_inverse_ttc_loss.detach().cpu()),
+                    "flowmimic_inverse_ttc_weight": float(flowmimic_inverse_ttc_weight),
+                }
+            )
         if optimizer is not None:
+            optimized_parameters = [*encoder.parameters(), *predictor.parameters()]
+            if flowmimic_inverse_ttc_head is not None:
+                optimized_parameters.extend(flowmimic_inverse_ttc_head.parameters())
             if scaler is None:
                 loss.backward()
-                torch.nn.utils.clip_grad_norm_(
-                    [*encoder.parameters(), *predictor.parameters()],
-                    1.0,
-                )
+                torch.nn.utils.clip_grad_norm_(optimized_parameters, 1.0)
                 optimizer.step()
             else:
                 scaler.scale(loss).backward()
                 scaler.unscale_(optimizer)
-                torch.nn.utils.clip_grad_norm_(
-                    [*encoder.parameters(), *predictor.parameters()],
-                    1.0,
-                )
+                torch.nn.utils.clip_grad_norm_(optimized_parameters, 1.0)
                 scaler.step(optimizer)
                 scaler.update()
             divergence = _update_ema(target_encoder, encoder, momentum=ema_momentum)
@@ -1297,6 +1406,10 @@ def pretrain_jepa(
     deep_supervision_layers: tuple[int, ...] = (),
     dense_predictor: str = "mlp",
     context_token_weight: float = 0.0,
+    flowmimic_alignment_weight: float = 0.0,
+    flowmimic_inverse_ttc_weight: float = 0.0,
+    flowmimic_minimum_ttc_s: float = 0.8,
+    flowmimic_maximum_ttc_s: float = 4.0,
     model_name: str = "tiny-cnn",
     navigation_mode: str = "enabled",
     dry_run_fingerprint: bool = False,
@@ -1336,6 +1449,12 @@ def pretrain_jepa(
     if temporal_straightening_weight < 0.0:
         msg = "temporal_straightening_weight must be non-negative."
         raise ValueError(msg)
+    if flowmimic_alignment_weight < 0.0 or flowmimic_inverse_ttc_weight < 0.0:
+        raise ValueError("FlowMimic loss weights must be non-negative.")
+    if flowmimic_minimum_ttc_s <= 0.0:
+        raise ValueError("flowmimic_minimum_ttc_s must be positive.")
+    if flowmimic_maximum_ttc_s <= flowmimic_minimum_ttc_s:
+        raise ValueError("FlowMimic maximum TTC must exceed its minimum TTC.")
     _set_seed(seed)
 
     cache = np.load(cache_path, allow_pickle=False)
@@ -1348,6 +1467,7 @@ def pretrain_jepa(
 
     split = cache["split"].astype(str)
     bins = int(cache["bins"]) if "bins" in cache.files else int(x.shape[1] // 2)
+    normalize_events = _cache_bool(cache, "normalize")
     metadata_channels = _cache_bool(cache, "metadata_channels")
     navigation_channels = _cache_bool(cache, "navigation_channels")
     navigation_feature_names = (
@@ -1360,6 +1480,9 @@ def pretrain_jepa(
     use_motion_conditioning = bool(motion_conditioning and use_dense_tokens)
     use_deep_supervision = bool(deep_supervision_layers and use_dense_tokens)
     use_context_token_loss = bool(use_dense_tokens and context_token_weight > 0.0)
+    use_flowmimic = bool(flowmimic_alignment_weight > 0.0 or flowmimic_inverse_ttc_weight > 0.0)
+    if use_flowmimic and not use_temporal:
+        raise ValueError("FlowMimic regularization requires temporal JEPA horizons.")
     navigation_feature_count = len(navigation_feature_names) if use_motion_conditioning else 0
     use_action_conditioning = bool(navigation_feature_count)
     action_feature_names = (
@@ -1379,6 +1502,8 @@ def pretrain_jepa(
         regularizer=regularizer,
         mask_mode=mask_mode,
     )
+    if use_flowmimic:
+        objective = f"flowmimic_{objective}"
     model_tag = model_name.replace("-", "_")
     train_pair_stats = None
     validation_pair_stats = None
@@ -1395,6 +1520,9 @@ def pretrain_jepa(
         timestamp_us = cache["timestamp_us"].astype(np.int64)
         context_start_us = cache["context_start_us"].astype(np.int64)
         context_end_us = cache["context_end_us"].astype(np.int64)
+        context_durations_us = context_end_us - context_start_us
+        if bool(np.any(context_durations_us <= 0)):
+            raise ValueError("FlowMimic requires positive cached context durations.")
         sequence_id = cache["sequence_id"].astype(str)
         train_idx, train_target_idx, train_pair_stats = _build_temporal_pairs(
             split=split,
@@ -1422,6 +1550,17 @@ def pretrain_jepa(
                 f"{pretrain_splits}; check horizons or target slop."
             )
             raise ValueError(msg)
+        flowmimic_context_ms = float(np.median(context_durations_us[train_idx])) / 1000.0
+        if use_flowmimic:
+            latest_future_end_s = max(temporal_horizons_ms) / 1000.0 + (
+                flowmimic_context_ms / 1000.0
+            )
+            safe_minimum_ttc_s = max(flowmimic_minimum_ttc_s, latest_future_end_s + 0.2)
+            if flowmimic_maximum_ttc_s <= safe_minimum_ttc_s:
+                raise ValueError(
+                    "FlowMimic TTC range reaches the synthetic collision boundary; "
+                    "increase --flowmimic-maximum-ttc-s."
+                )
         if use_motion_conditioning:
             action_feature_mean, action_feature_std = _estimate_action_feature_stats(
                 x,
@@ -1431,6 +1570,7 @@ def pretrain_jepa(
                 navigation_feature_count=navigation_feature_count,
             )
     else:
+        flowmimic_context_ms = 0.0
         train_idx = _split_indices(split, pretrain_splits)
         val_idx = _split_indices(split, validation_splits)
         train_target_idx = np.empty((0, 0), dtype=np.int64)
@@ -1494,6 +1634,12 @@ def pretrain_jepa(
         "temporal_horizons_ms": list(temporal_horizons_ms),
         "mask_mode": mask_mode,
         "dense_tokens": use_dense_tokens,
+        "flowmimic": {
+            "alignment_weight": flowmimic_alignment_weight,
+            "inverse_ttc_weight": flowmimic_inverse_ttc_weight,
+            "minimum_ttc_s": flowmimic_minimum_ttc_s,
+            "maximum_ttc_s": flowmimic_maximum_ttc_s,
+        },
     }
     run_fingerprint = hashlib.sha256(
         json.dumps(run_fingerprint_payload, sort_keys=True).encode("utf-8")
@@ -1526,8 +1672,16 @@ def pretrain_jepa(
         ).to(device)
     else:
         predictor = JEPAPredictor(dim=encoder.output_dim).to(device)
+    flowmimic_inverse_ttc_head = (
+        FlowMimicInverseTTCHead(encoder.output_dim).to(device)
+        if flowmimic_inverse_ttc_weight > 0.0
+        else None
+    )
+    optimizer_parameters = [*encoder.parameters(), *predictor.parameters()]
+    if flowmimic_inverse_ttc_head is not None:
+        optimizer_parameters.extend(flowmimic_inverse_ttc_head.parameters())
     optimizer = torch.optim.AdamW(
-        [*encoder.parameters(), *predictor.parameters()],
+        optimizer_parameters,
         lr=learning_rate,
         weight_decay=weight_decay,
     )
@@ -1566,6 +1720,17 @@ def pretrain_jepa(
         else [],
         "action_feature_std": action_feature_std.tolist() if action_feature_std is not None else [],
     }
+    flowmimic_metadata = {
+        "flowmimic_enabled": use_flowmimic,
+        "flowmimic_render_then_simulate_events": use_flowmimic,
+        "flowmimic_alignment_weight": flowmimic_alignment_weight,
+        "flowmimic_inverse_ttc_weight": flowmimic_inverse_ttc_weight,
+        "flowmimic_minimum_ttc_s": flowmimic_minimum_ttc_s,
+        "flowmimic_maximum_ttc_s": flowmimic_maximum_ttc_s,
+        "flowmimic_context_ms": flowmimic_context_ms if use_flowmimic else None,
+        "flowmimic_uses_analytic_synthetic_ttc": flowmimic_inverse_ttc_weight > 0.0,
+        "flowmimic_uses_real_ttc_labels": False,
+    }
 
     with history_path.open("w", encoding="utf-8") as history_file:
         for epoch in range(1, epochs + 1):
@@ -1573,6 +1738,7 @@ def pretrain_jepa(
                 encoder,
                 target_encoder,
                 predictor,
+                flowmimic_inverse_ttc_head,
                 train_loader,
                 optimizer,
                 device=device,
@@ -1598,6 +1764,13 @@ def pretrain_jepa(
                 action_feature_mean=action_feature_mean,
                 action_feature_std=action_feature_std,
                 context_token_weight=context_token_weight if use_context_token_loss else 0.0,
+                flowmimic_alignment_weight=flowmimic_alignment_weight,
+                flowmimic_inverse_ttc_weight=flowmimic_inverse_ttc_weight,
+                flowmimic_horizons_ms=temporal_horizons_ms,
+                flowmimic_context_ms=flowmimic_context_ms,
+                flowmimic_minimum_ttc_s=flowmimic_minimum_ttc_s,
+                flowmimic_maximum_ttc_s=flowmimic_maximum_ttc_s,
+                normalize_events=normalize_events,
             )
             validation_metrics = None
             if val_loader is not None:
@@ -1606,6 +1779,7 @@ def pretrain_jepa(
                         encoder,
                         target_encoder,
                         predictor,
+                        flowmimic_inverse_ttc_head,
                         val_loader,
                         None,
                         device=device,
@@ -1635,6 +1809,13 @@ def pretrain_jepa(
                         context_token_weight=(
                             context_token_weight if use_context_token_loss else 0.0
                         ),
+                        flowmimic_alignment_weight=flowmimic_alignment_weight,
+                        flowmimic_inverse_ttc_weight=flowmimic_inverse_ttc_weight,
+                        flowmimic_horizons_ms=temporal_horizons_ms,
+                        flowmimic_context_ms=flowmimic_context_ms,
+                        flowmimic_minimum_ttc_s=flowmimic_minimum_ttc_s,
+                        flowmimic_maximum_ttc_s=flowmimic_maximum_ttc_s,
+                        normalize_events=normalize_events,
                     )
             score = (
                 validation_metrics["loss"]
@@ -1660,6 +1841,11 @@ def pretrain_jepa(
                         "encoder_state_dict": encoder.state_dict(),
                         "target_encoder_state_dict": target_encoder.state_dict(),
                         "predictor_state_dict": predictor.state_dict(),
+                        "flowmimic_inverse_ttc_head_state_dict": (
+                            flowmimic_inverse_ttc_head.state_dict()
+                            if flowmimic_inverse_ttc_head is not None
+                            else None
+                        ),
                         "epoch": epoch,
                         "checkpoint_role": "best",
                         "checkpoint_selected_by": best_selected_by,
@@ -1688,6 +1874,7 @@ def pretrain_jepa(
                         if regularizer == "visreg"
                         else 0,
                         "temporal_straightening_weight": temporal_straightening_weight,
+                        **flowmimic_metadata,
                         **conditioning_metadata,
                         "deep_supervision_layers": list(deep_supervision_layers)
                         if use_deep_supervision
@@ -1709,6 +1896,11 @@ def pretrain_jepa(
             "encoder_state_dict": encoder.state_dict(),
             "target_encoder_state_dict": target_encoder.state_dict(),
             "predictor_state_dict": predictor.state_dict(),
+            "flowmimic_inverse_ttc_head_state_dict": (
+                flowmimic_inverse_ttc_head.state_dict()
+                if flowmimic_inverse_ttc_head is not None
+                else None
+            ),
             "epoch": epochs,
             "checkpoint_role": "last",
             "checkpoint_selected_by": "final_epoch",
@@ -1729,6 +1921,7 @@ def pretrain_jepa(
             "visreg_sketch_weight": visreg_sketch_weight if regularizer == "visreg" else 0.0,
             "visreg_projection_count": visreg_projection_count if regularizer == "visreg" else 0,
             "temporal_straightening_weight": temporal_straightening_weight,
+            **flowmimic_metadata,
             **conditioning_metadata,
             "deep_supervision_layers": list(deep_supervision_layers)
             if use_deep_supervision
@@ -1785,6 +1978,7 @@ def pretrain_jepa(
         "visreg_sketch_weight": visreg_sketch_weight if regularizer == "visreg" else 0.0,
         "visreg_projection_count": visreg_projection_count if regularizer == "visreg" else 0,
         "temporal_straightening_weight": temporal_straightening_weight,
+        **flowmimic_metadata,
         "best_epoch": best_epoch,
         "best_loss": best_score,
         "best_checkpoint": best_path.as_posix(),
@@ -1816,6 +2010,9 @@ def pretrain_jepa(
             "visreg_uses_batch_embeddings_only": regularizer == "visreg",
             "visreg_uses_ttc_labels": False,
             "temporal_straightening_uses_predictions_only": temporal_straightening_weight > 0.0,
+            "flowmimic_rendered_before_event_simulation": use_flowmimic,
+            "flowmimic_uses_analytic_synthetic_ttc": flowmimic_inverse_ttc_weight > 0.0,
+            "flowmimic_uses_real_ttc_labels": False,
             "targets_cross_sequence_boundary": False,
             "targets_cross_split_boundary": False,
             "target_timestamps_are_after_context": use_temporal,

@@ -20,9 +20,14 @@ Updated: 2026-07-25.
 - Streaming Inference: implemented, requires reproducible real-smoke validation.
 - Robustness: placeholder evaluation only. Phase C and D remain incomplete.
 - QA after hardening: 191 tests pass; Ruff passes; Pyright/mypy is not installed.
+- Scientific hardening was committed and pushed as `416b498` on
+  `scientific-recovery-v3-hardening`.
+- Physics-constrained FlowMimic implementation is complete; Ruff and 196 tests
+  pass. Cache v2 rebuild and E0/E1/E2 validation runs are pending.
 
 The complete audit, SOTA comparison, and MVA/FlowMimic architecture proposal are in
 `docs/scientific_audit_2026-07-25.md`.
+The active experiment handoff is `docs/flowmimic_experiment_2026-07-25.md`.
 
 > **Integrity Note**: Commit `f96bc35` prepares the real Master Smoke orchestrator. It is not evidence that the Master Smoke passed.
 

@@ -239,3 +239,14 @@ Gates recomendados para seguir invirtiendo:
 5. Completar robustness, final evaluator, ONNX real y reporte regenerable.
 6. Ejecutar tres seeds de pretraining, no solo tres fine-tunings de un encoder.
 7. Publicar predicciones por muestra y artefactos firmados con hashes físicos.
+
+## Continuación FlowMimic
+
+La adaptación física propuesta ya se está implementando y tiene un protocolo
+separado en `docs/flowmimic_experiment_2026-07-25.md`. Esa bitácora distingue
+explícitamente error TTC de latencia: `0.312 s` es MAE de estimación, mientras
+que los `13 ms` de Garl-TTC son tiempo de inferencia. No se puede dividir una
+magnitud por la otra para ordenar modelos.
+
+El gate inmediato es una ablación E0/E1/E2 solo en validación, sobre cache v2 y
+con control emparejado. No hay todavía resultados FlowMimic que reportar.

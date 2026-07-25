@@ -435,6 +435,41 @@ def test_event_tubelet_jepa_pretraining_smoke(tmp_path: Path) -> None:
     assert (tmp_path / "tubelet_jepa" / "jepa_encoder_best.pt").exists()
 
 
+def test_flowmimic_auxiliary_pretraining_is_synthetic_only(tmp_path: Path) -> None:
+    cache_path = tmp_path / "tubelet_cache.npz"
+    _write_tubelet_cache(cache_path)
+
+    pretrain_summary = pretrain_jepa(
+        cache_path=cache_path,
+        output_dir=tmp_path / "flowmimic_jepa",
+        epochs=1,
+        batch_size=2,
+        seed=5,
+        device_name="cpu",
+        pretrain_splits=("train",),
+        validation_splits=("validation",),
+        temporal_horizons_ms=(20,),
+        flowmimic_alignment_weight=0.2,
+        flowmimic_inverse_ttc_weight=0.1,
+        flowmimic_minimum_ttc_s=0.8,
+        flowmimic_maximum_ttc_s=1.6,
+    )
+
+    assert pretrain_summary["objective"].startswith("flowmimic_")
+    assert pretrain_summary["flowmimic_enabled"] is True
+    assert pretrain_summary["last"]["train"]["flowmimic_alignment_loss"] > 0.0
+    assert pretrain_summary["last"]["train"]["flowmimic_inverse_ttc_loss"] > 0.0
+    assert pretrain_summary["last"]["validation"]["flowmimic_alignment_loss"] == 0.0
+    assert pretrain_summary["leakage_audit"]["flowmimic_uses_real_ttc_labels"] is False
+    assert pretrain_summary["leakage_audit"]["flowmimic_uses_analytic_synthetic_ttc"] is True
+    checkpoint = torch.load(
+        tmp_path / "flowmimic_jepa" / "jepa_encoder_best.pt",
+        map_location="cpu",
+        weights_only=False,
+    )
+    assert checkpoint["flowmimic_inverse_ttc_head_state_dict"] is not None
+
+
 def test_event_tubelet_rope_jepa_pretraining_smoke(tmp_path: Path) -> None:
     cache_path = tmp_path / "tubelet_cache.npz"
     _write_tubelet_cache(cache_path)
