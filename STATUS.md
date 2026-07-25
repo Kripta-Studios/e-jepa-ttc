@@ -24,6 +24,10 @@ Updated: 2026-07-25.
   `scientific-recovery-v3-hardening`.
 - Physics-constrained FlowMimic implementation is complete; Ruff and 196 tests
   pass. Cache v2 rebuild and E0/E1/E2 validation runs are pending.
+- The first train+validation cache build was rejected because a dormant
+  `exclude_splits` parameter left 478 test windows in the physical NPZ. The
+  filtering path and its regression test are now corrected; no model was
+  trained on the rejected cache.
 
 The complete audit, SOTA comparison, and MVA/FlowMimic architecture proposal are in
 `docs/scientific_audit_2026-07-25.md`.

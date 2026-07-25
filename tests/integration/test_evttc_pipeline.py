@@ -114,6 +114,24 @@ def test_scan_validate_index_and_split(tmp_path: Path) -> None:
     assert np.all(cache["x"][:, -11:-9].astype(np.float32) > 0.0)
     assert np.all(cache["x"][:, -9:].astype(np.float32) == 0.0)
 
+    trainval_cache_path = tmp_path / "trainval_voxel_cache.npz"
+    trainval_summary = build_voxel_cache(
+        manifest_path=manifest,
+        split_path=split_path,
+        index_path=index_path,
+        output_path=trainval_cache_path,
+        width=16,
+        height=12,
+        bins=2,
+        normalize=False,
+        exclude_splits=["test"],
+    )
+    trainval_cache = np.load(trainval_cache_path, allow_pickle=False)
+    assert set(trainval_cache["split"].astype(str)) == {"train", "validation"}
+    assert trainval_summary["excluded_splits"] == ["test"]
+    assert trainval_summary["window_count"] < trainval_summary["input_window_count"]
+    assert trainval_cache["excluded_splits"].astype(str).tolist() == ["test"]
+
 
 def test_scan_uses_bbox_segmentation_when_leftlabel_is_missing(tmp_path: Path) -> None:
     root = tmp_path / "evttc"

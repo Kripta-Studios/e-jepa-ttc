@@ -155,8 +155,22 @@ def build_voxel_cache(
     }
 
     windows = _load_windows(index_path)
+    input_window_count = len(windows)
+    excluded_split_names = sorted(set(exclude_splits or []))
+    unknown_exclusions = set(excluded_split_names) - ({*split_data, "unassigned"})
+    if unknown_exclusions:
+        raise ValueError(f"Unknown excluded splits: {sorted(unknown_exclusions)}.")
+    if excluded_split_names:
+        excluded = set(excluded_split_names)
+        windows = [
+            window
+            for window in windows
+            if split_for_sequence.get(str(window["sequence_id"]), "unassigned") not in excluded
+        ]
     if limit is not None:
         windows = windows[:limit]
+    if not windows:
+        raise ValueError("No cache windows remain after split exclusion and limit filtering.")
     channels = (
         bins * 2
         + (2 if metadata_channels else 0)
@@ -232,6 +246,7 @@ def build_voxel_cache(
         future_window_semantics=np.array("disjoint_window_start_after_context_plus_horizon"),
         cache_format_version=np.array(2, dtype=np.int64),
         normalization=np.array("non_centered_occupied_p95_scale" if normalize else "none"),
+        excluded_splits=np.array(excluded_split_names),
         source_manifest_sha256=np.array(_hash_file(manifest_path)),
         split_manifest_sha256=np.array(_hash_file(split_path)),
         preprocessing_config_sha256=np.array(
@@ -243,6 +258,7 @@ def build_voxel_cache(
                     "normalize": normalize,
                     "metadata_channels": metadata_channels,
                     "navigation_channels": navigation_channels,
+                    "excluded_splits": excluded_split_names,
                 }
             )
         ),
@@ -259,6 +275,7 @@ def build_voxel_cache(
         "sparse_event_audit_passed": collapsed_count == 0,
         "nonempty_samples_collapsed_to_zero": collapsed_count,
         "cache_sha256": cache_sha256,
+        "excluded_splits": excluded_split_names,
     }
 
     # Validation sidecar output to output's parent dir (usually artifacts/features)
@@ -269,6 +286,8 @@ def build_voxel_cache(
     summary = {
         "output": output.as_posix(),
         "window_count": int(len(windows)),
+        "input_window_count": int(input_window_count),
+        "excluded_splits": excluded_split_names,
         "shape": list(x_out.shape),
         "dtype": str(x_out.dtype),
         "width": width,
