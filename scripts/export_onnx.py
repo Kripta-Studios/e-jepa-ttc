@@ -144,9 +144,11 @@ def export_to_onnx(
             
     print(f"PyTorch-ONNX comparison successful! Max diff: {max_diff}")
 
+    actual_protocol_version, actual_protocol_hash = get_current_protocol_identity()
+
     with open(output_onnx.parent / "equivalence.json", "w", encoding="utf-8") as f:
         json.dump(
-            {
+            sign_artifact({
                 "artifact_type": "onnx_equivalence_v3",
                 "schema_version": "3.0",
                 "status": "passed",
@@ -158,7 +160,12 @@ def export_to_onnx(
                 "maximum_relative_error": max_rel_diff,
                 "maximum_absolute_tolerance": 1e-3,
                 "mean_absolute_tolerance": 1e-5,
-            },
+                "evidence_type": record.get("evidence_type", "real_smoke"),
+                "code_commit": record.get("git_commit", record.get("code_commit")),
+                "protocol_version": actual_protocol_version,
+                "protocol_sha256": actual_protocol_hash,
+                "created_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            }),
             f,
             indent=2,
         )
@@ -225,7 +232,7 @@ def export_to_onnx(
 
     with open(output_onnx.parent / "benchmark.json", "w", encoding="utf-8") as f:
         json.dump(
-            {
+            sign_artifact({
                 "artifact_type": "onnx_benchmark_v3",
                 "schema_version": "3.0",
                 "device": "CPU",
@@ -236,7 +243,12 @@ def export_to_onnx(
                 "p95_ms": p95,
                 "p99_ms": p99,
                 "hardware": hardware_info,
-            },
+                "evidence_type": record.get("evidence_type", "real_smoke"),
+                "code_commit": record.get("git_commit", record.get("code_commit")),
+                "protocol_version": actual_protocol_version,
+                "protocol_sha256": actual_protocol_hash,
+                "created_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            }),
             f,
             indent=2,
         )

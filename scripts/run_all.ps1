@@ -94,7 +94,7 @@ function Write-StageRecord {
     $signScript = "
 import json
 from e_jepa_ttc.artifacts.hashing import sign_artifact
-with open('$outPath', 'r', encoding='utf-8') as f:
+with open('$outPath', 'r', encoding='utf-8-sig') as f:
     data = json.load(f)
 data = sign_artifact(data)
 with open('$outPath', 'w', encoding='utf-8') as f:

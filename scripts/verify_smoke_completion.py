@@ -116,7 +116,7 @@ def main() -> None:
             continue
 
         if req.suffix == ".json":
-            with open(req, encoding="utf-8") as f:
+            with open(req, encoding="utf-8-sig") as f:
                 try:
                     data = json.load(f)
                     if not data:
