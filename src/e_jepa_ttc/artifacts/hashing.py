@@ -18,6 +18,8 @@ def compute_artifact_hash(data: Dict[str, Any]) -> str:
     canonical_bytes = canonical_json(temp_data)
     return hashlib.sha256(canonical_bytes).hexdigest()
 
+hash_dict = compute_artifact_hash
+
 def sign_artifact(data: Dict[str, Any]) -> Dict[str, Any]:
     """
     Computes the hash of the artifact and assigns it to 'artifact_sha256'.
