@@ -37,10 +37,47 @@
     },
     "artifact_sha256": {
       "type": "string"
+    },
+    "status": {
+      "type": "string"
+    },
+    "exit_code": {
+      "type": "integer"
+    },
+    "all_required_artifacts_exist": {
+      "type": "boolean"
+    },
+    "cache_v2_validation_passed": {
+      "type": "boolean"
+    },
+    "pytorch_onnx_equivalence_passed": {
+      "type": "boolean"
+    },
+    "final_test_opened": {
+      "type": "boolean"
+    },
+    "required_artifact_count": {
+      "type": "integer"
+    },
+    "validated_artifact_count": {
+      "type": "integer"
+    },
+    "completed_stages": {
+      "type": "array"
+    },
+    "failed_stages": {
+      "type": "array"
     }
   },
   "required": [
-    "artifact_type"
+    "artifact_type",
+    "schema_version",
+    "evidence_type",
+    "code_commit",
+    "protocol_version",
+    "protocol_sha256",
+    "created_at",
+    "artifact_sha256"
   ],
-  "additionalProperties": true
+  "additionalProperties": false
 }

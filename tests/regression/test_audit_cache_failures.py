@@ -9,7 +9,7 @@ import numpy as np
 def test_audit_cache_fails_on_malformed_sidecar(tmp_path):
     npz_path = tmp_path / "cache.npz"
     np.savez(npz_path, x=np.zeros((1,)), sequence_id=np.array(["seq1"]), split=np.array(["train"]))
-    
+
     sha256_hash = hashlib.sha256()
     with open(npz_path, "rb") as f:
         for byte_block in iter(lambda: f.read(4096), b""):
@@ -59,7 +59,7 @@ def test_audit_cache_fails_test_split(tmp_path):
         for byte_block in iter(lambda: f.read(4096), b""):
             sha256_hash.update(byte_block)
     actual_sha = sha256_hash.hexdigest()
-    
+
     sidecar = tmp_path / "cache.summary.json"
     sidecar.write_text(json.dumps({"format_version": 2, "sha256": actual_sha, "total_samples": 1}))
 
@@ -84,4 +84,6 @@ def test_audit_cache_fails_test_split(tmp_path):
 
     data = json.loads(audit_out.read_text())
     assert data["status"] == "failed"
-    assert any("Unknown or illegal split name: test" in f for f in data["failures"]), f"Failures were: {data['failures']}"
+    assert any("Final test split is present" in f for f in data["failures"]), (
+        f"Failures were: {data['failures']}"
+    )

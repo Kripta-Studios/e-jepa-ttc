@@ -100,12 +100,12 @@ def binary_risk_metrics(
     valid = np.isfinite(probability) & ((target == 0) | (target == 1))
     target = target[valid]
     probability = np.clip(probability[valid], 0.0, 1.0)
-    
+
     positive = target == 1
     negative = ~positive
     pos_count = int(np.count_nonzero(positive))
     neg_count = int(np.count_nonzero(negative))
-    
+
     is_supported = (pos_count >= min_positive_support) and (neg_count >= min_negative_support)
     support_status = "supported" if is_supported else "unsupported"
 
@@ -145,8 +145,15 @@ def binary_risk_metrics(
         **base_payload,
         "calibration_fitted": True,
         "reportable_metrics": [
-            "auroc", "auprc", "precision_at_0_5", "recall_at_0_5", 
-            "f1_at_0_5", "false_negative_rate_at_0_5", "brier", "ece_10", "nll"
+            "auroc",
+            "auprc",
+            "precision_at_0_5",
+            "recall_at_0_5",
+            "f1_at_0_5",
+            "false_negative_rate_at_0_5",
+            "brier",
+            "ece_10",
+            "nll",
         ],
         "auroc": _binary_auroc(target, probability),
         "auprc": _average_precision(target, probability),
@@ -187,7 +194,7 @@ def object_ttc_metrics(
         if probability.shape != (target.shape[0], len(risk_thresholds_s)):
             msg = "risk_probabilities has an incompatible shape."
             raise ValueError(msg)
-        
+
         risk_payload = {}
         for index, threshold in enumerate(risk_thresholds_s):
             threshold_metrics = binary_risk_metrics(

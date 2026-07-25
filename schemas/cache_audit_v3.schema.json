@@ -103,6 +103,9 @@
     },
     "artifact_sha256": {
       "type": "string"
+    },
+    "artifact_type": {
+      "type": "string"
     }
   },
   "required": [
@@ -125,7 +128,13 @@
     "checks",
     "failures",
     "warnings",
-    "provenance"
+    "provenance",
+    "artifact_type",
+    "code_commit",
+    "protocol_version",
+    "protocol_sha256",
+    "created_at",
+    "artifact_sha256"
   ],
-  "additionalProperties": true
+  "additionalProperties": false
 }

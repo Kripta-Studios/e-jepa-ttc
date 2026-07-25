@@ -13,6 +13,7 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader, Dataset
 
+from e_jepa_ttc.artifacts.protocol import get_current_protocol_identity
 from e_jepa_ttc.data.ml_cache import validate_voxel_cache
 from e_jepa_ttc.evaluation.metrics import regression_metrics
 from e_jepa_ttc.models import build_regressor
@@ -322,7 +323,8 @@ def train_tiny_cnn(
 
     run_fingerprint_payload = {
         "git_commit": commit,
-        "protocol_version": "2.0",
+        "protocol_version": get_current_protocol_identity()[0],
+        "protocol_sha256": get_current_protocol_identity()[1],
         "cache_sha256": cache_sha256,
         "split_manifest_sha256": split_manifest_sha256,
         "subset_manifest_sha256": subset_sha256,
@@ -414,7 +416,8 @@ def train_tiny_cnn(
                         "subset_manifest_sha256": subset_sha256,
                         "navigation_mode": navigation_mode,
                         "label_fraction": train_fraction,
-                        "protocol_version": "2.0",
+                        "protocol_version": get_current_protocol_identity()[0],
+                        "protocol_sha256": get_current_protocol_identity()[1],
                         "git_commit": commit,
                         "resolved_model_config": {
                             "in_channels": int(x.shape[1]),
@@ -442,7 +445,8 @@ def train_tiny_cnn(
             "subset_manifest_sha256": subset_sha256,
             "navigation_mode": navigation_mode,
             "label_fraction": train_fraction,
-            "protocol_version": "2.0",
+            "protocol_version": get_current_protocol_identity()[0],
+            "protocol_sha256": get_current_protocol_identity()[1],
             "git_commit": commit,
             "resolved_model_config": {
                 "in_channels": int(x.shape[1]),
@@ -510,7 +514,8 @@ def train_tiny_cnn(
         "split_manifest_sha256": split_manifest_sha256,
         "subset_manifest_sha256": subset_sha256,
         "navigation_mode": navigation_mode,
-        "protocol_version": "2.0",
+        "protocol_version": get_current_protocol_identity()[0],
+        "protocol_sha256": get_current_protocol_identity()[1],
         "git_commit": commit,
         "run_fingerprint": run_fingerprint,
         "run_fingerprint_payload": run_fingerprint_payload,

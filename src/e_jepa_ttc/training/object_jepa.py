@@ -17,6 +17,7 @@ from torch import nn
 from torch.nn import functional as functional
 from torch.utils.data import DataLoader, Dataset, Subset
 
+from e_jepa_ttc.artifacts.protocol import get_current_protocol_identity
 from e_jepa_ttc.data.eap_cache import EAPObjectCacheDataset, ShardLocalSampler
 from e_jepa_ttc.evaluation.bootstrap import sequence_bootstrap_interval
 from e_jepa_ttc.evaluation.calibration import (
@@ -283,7 +284,8 @@ def pretrain_object_event_jepa(
 
     run_fingerprint_payload = {
         "git_commit": _get_git_commit(),
-        "protocol_version": "2.0",
+        "protocol_version": get_current_protocol_identity()[0],
+        "protocol_sha256": get_current_protocol_identity()[1],
         "cache_sha256": _hash_file(cache_manifest_path),
         "split_manifest_sha256": _hash_file(cache_manifest_path),
         "subset_manifest_sha256": "",
@@ -378,7 +380,8 @@ def pretrain_object_event_jepa(
                         "cache_manifest": str(cache_manifest_path),
                         "manifest_sha256": _hash_file(cache_manifest_path),
                         "git_commit": _get_git_commit(),
-                        "protocol_version": "2.0",
+                        "protocol_version": get_current_protocol_identity()[0],
+                        "protocol_sha256": get_current_protocol_identity()[1],
                         "run_fingerprint": run_fingerprint,
                         "run_fingerprint_payload": run_fingerprint_payload,
                     },
@@ -397,7 +400,8 @@ def pretrain_object_event_jepa(
             "cache_manifest": str(cache_manifest_path),
             "manifest_sha256": _hash_file(cache_manifest_path),
             "git_commit": _get_git_commit(),
-            "protocol_version": "2.0",
+            "protocol_version": get_current_protocol_identity()[0],
+            "protocol_sha256": get_current_protocol_identity()[1],
             "run_fingerprint": run_fingerprint,
             "run_fingerprint_payload": run_fingerprint_payload,
         },
@@ -426,7 +430,8 @@ def pretrain_object_event_jepa(
         "history": history,
         "manifest_sha256": _hash_file(cache_manifest_path),
         "git_commit": _get_git_commit(),
-        "protocol_version": "2.0",
+        "protocol_version": get_current_protocol_identity()[0],
+        "protocol_sha256": get_current_protocol_identity()[1],
         "run_fingerprint": run_fingerprint,
         "run_fingerprint_payload": run_fingerprint_payload,
         "final_test_opened": False,
@@ -751,7 +756,8 @@ def fine_tune_object_ttc(
 
     run_fingerprint_payload = {
         "git_commit": _get_git_commit(),
-        "protocol_version": "2.0",
+        "protocol_version": get_current_protocol_identity()[0],
+        "protocol_sha256": get_current_protocol_identity()[1],
         "cache_sha256": _hash_file(cache_manifest_path),
         "split_manifest_sha256": _hash_file(cache_manifest_path),
         "subset_manifest_sha256": "",
@@ -842,7 +848,8 @@ def fine_tune_object_ttc(
                         "selected_by": "validation_inverse_ttc_mae",
                         "manifest_sha256": _hash_file(cache_manifest_path),
                         "git_commit": _get_git_commit(),
-                        "protocol_version": "2.0",
+                        "protocol_version": get_current_protocol_identity()[0],
+                        "protocol_sha256": get_current_protocol_identity()[1],
                         "run_fingerprint": run_fingerprint,
                         "run_fingerprint_payload": run_fingerprint_payload,
                     },
@@ -896,36 +903,67 @@ def fine_tune_object_ttc(
         "best_checkpoint": best_path.as_posix(),
         "manifest_sha256": _hash_file(cache_manifest_path),
         "git_commit": _get_git_commit(),
-        "protocol_version": "2.0",
+        "protocol_version": get_current_protocol_identity()[0],
+        "protocol_sha256": get_current_protocol_identity()[1],
         "run_fingerprint": run_fingerprint,
         "run_fingerprint_payload": run_fingerprint_payload,
     }
 
     if "calibration" in report_splits and conformal is not None:
         calibration_metrics = _prediction_metrics(calibration_predictions)
-        
-        sample_ids = calibration_predictions.get("sample_id", np.arange(int(calibration_predictions["ttc_true"].shape[0])))
+
+        sample_ids = calibration_predictions.get(
+            "sample_id", np.arange(int(calibration_predictions["ttc_true"].shape[0]))
+        )
         import hashlib
+
         sample_id_hash = hashlib.sha256(sample_ids.tobytes()).hexdigest()
-        
+
+        import datetime
+
+        protocol_version, protocol_sha256 = get_current_protocol_identity()
+
         summary["calibration"] = {
             "artifact_type": "calibration_metrics_v3",
             "schema_version": "3.0",
+            "evidence_type": "synthetic_smoke",  # Or real_smoke depending on pipeline, but will be injected by caller or static for now
+            "code_commit": _get_git_commit(),
+            "protocol_version": protocol_version,
+            "protocol_sha256": protocol_sha256,
+            "created_at": datetime.datetime.now(datetime.UTC).isoformat(),
+            "cache_sha256": _hash_file(cache_manifest_path),
+            "split_manifest_sha256": _hash_file(
+                cache_manifest_path
+            ),  # usually they are the same in this setup
             "evaluation_split": "calibration",
             "sample_count": int(calibration_predictions["ttc_true"].shape[0]),
             "sample_id_hash": sample_id_hash,
             "regression": {
-                "mae_s": float(calibration_metrics.get("mae_s", 0.0)),
-                "rmse_s": float(calibration_metrics.get("rmse_s", 0.0)),
-                "median_abs_error_s": float(calibration_metrics.get("median_abs_error_s", 0.0)),
+                "mae_s": float(calibration_metrics["regression"]["mae_s"]),
+                "rmse_s": float(calibration_metrics["regression"]["rmse_s"]),
+                "median_abs_error_s": float(
+                    calibration_metrics["regression"]["median_abs_error_s"]
+                ),
             },
-            "risk_support": calibration_metrics.get("risk_support", []),
+            "risk_support": [
+                {
+                    "threshold_s": float(t),
+                    "positive": int(metrics["positive_count"]),
+                    "negative": int(metrics["negative_count"]),
+                }
+                for t, metrics in calibration_metrics["risk"].items()
+            ]
+            if "risk" in calibration_metrics
+            else [],
             "calibration": {
                 "conformal_coverage": conformal.coverage,
                 "conformal_scale": conformal.scale,
                 "temperatures": [temperature.temperature for temperature in temperatures],
-            }
+            },
         }
+        from e_jepa_ttc.artifacts.hashing import sign_artifact
+
+        summary["calibration"] = sign_artifact(summary["calibration"])
 
     if "test" in report_splits:
         test_predictions = _collect_predictions(

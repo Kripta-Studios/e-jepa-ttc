@@ -36,13 +36,24 @@
     },
     "artifact_sha256": {
       "type": "string"
+    },
+    "artifact_type": {
+      "type": "string"
     }
   },
   "required": [
     "iterations",
     "p50_ms",
     "p95_ms",
-    "p99_ms"
+    "p99_ms",
+    "artifact_type",
+    "schema_version",
+    "evidence_type",
+    "code_commit",
+    "protocol_version",
+    "protocol_sha256",
+    "created_at",
+    "artifact_sha256"
   ],
-  "additionalProperties": true
+  "additionalProperties": false
 }

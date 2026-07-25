@@ -28,10 +28,35 @@
     },
     "artifact_sha256": {
       "type": "string"
+    },
+    "status": {
+      "type": "string"
+    },
+    "real_validation_samples": {
+      "type": "boolean"
+    },
+    "sample_count": {
+      "type": "integer"
+    },
+    "maximum_absolute_error": {
+      "type": "number"
+    },
+    "mean_absolute_error": {
+      "type": "number"
+    },
+    "sample_id_hash": {
+      "type": "string"
     }
   },
   "required": [
-    "artifact_type"
+    "artifact_type",
+    "schema_version",
+    "evidence_type",
+    "code_commit",
+    "protocol_version",
+    "protocol_sha256",
+    "created_at",
+    "artifact_sha256"
   ],
-  "additionalProperties": true
+  "additionalProperties": false
 }

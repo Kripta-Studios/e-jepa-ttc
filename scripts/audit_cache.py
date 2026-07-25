@@ -61,8 +61,21 @@ def main() -> None:
         logging.error(f"Sidecar file not found: {sidecar_path}")
         sys.exit(1)
 
+    from e_jepa_ttc.artifacts.protocol import get_current_protocol_identity
+
+    protocol_version, protocol_hash = get_current_protocol_identity()
+
+    def _get_git_commit() -> str:
+        import subprocess
+
+        try:
+            return subprocess.check_output(["git", "rev-parse", "HEAD"]).decode("ascii").strip()
+        except Exception:
+            return "unknown"
+
     # Output dictionary building
     audit_record: dict[str, Any] = {
+        "artifact_type": "audit_cache",
         "schema_version": "3.0",
         "status": "failed",
         "audit_mode": mode,
@@ -82,7 +95,12 @@ def main() -> None:
         "checks": {},
         "failures": [],
         "warnings": [],
+        "code_commit": _get_git_commit(),
+        "protocol_version": protocol_version,
+        "protocol_sha256": protocol_hash,
         "provenance": {"timestamp": datetime.now(UTC).isoformat()},
+        "created_at": datetime.now(UTC).isoformat(),
+        "artifact_sha256": "",  # will be signed
     }
 
     failures = []
@@ -106,7 +124,9 @@ def main() -> None:
     else:
         audit_record["cache_format_version"] = sidecar.get("format_version", 1)
         # 2. Read declared SHA256
-        audit_record["cache_sha256_declared"] = sidecar.get("cache_sha256", sidecar.get("sha256", ""))
+        audit_record["cache_sha256_declared"] = sidecar.get(
+            "cache_sha256", sidecar.get("sha256", "")
+        )
         # 3. Compare both
         if audit_record["cache_sha256_computed"] == audit_record["cache_sha256_declared"]:
             audit_record["sidecar_sha256_matches"] = True
@@ -242,7 +262,7 @@ def main() -> None:
                     f"Sequence {s} belongs to multiple splits (e.g. {seq_to_split[s]} and {sp})"
                 )
             seq_to_split[s] = sp
-            
+
         if test_present_without_lock:
             failures.append("Final test split is present in cache but lock check failed")
 
@@ -323,15 +343,19 @@ def main() -> None:
 
 def _write_output(output_path: Path, record: dict[str, Any]) -> None:
     output_path.parent.mkdir(parents=True, exist_ok=True)
+    from e_jepa_ttc.artifacts.hashing import sign_artifact
+
+    record = sign_artifact(record)
     try:
         schema = _get_audit_schema()
         jsonschema.validate(instance=record, schema=schema)
     except Exception as e:
         record["status"] = "failed"
         record["failures"].append(f"Schema validation failed: {e}")
+        record = sign_artifact(record)
 
     with open(output_path, "w", encoding="utf-8") as f:
-        json.dump(record, f, indent=2)
+        json.dump(record, f, indent=2, sort_keys=True)
 
 
 if __name__ == "__main__":

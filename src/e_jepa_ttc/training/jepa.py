@@ -16,6 +16,7 @@ from torch import nn
 from torch.nn import functional
 from torch.utils.data import DataLoader, Dataset
 
+from e_jepa_ttc.artifacts.protocol import get_current_protocol_identity
 from e_jepa_ttc.data.evttc import NAVIGATION_FEATURE_NAMES
 from e_jepa_ttc.data.ml_cache import validate_voxel_cache
 from e_jepa_ttc.models import build_encoder
@@ -1482,7 +1483,8 @@ def pretrain_jepa(
         commit = "unknown"
     run_fingerprint_payload = {
         "git_commit": commit,
-        "protocol_version": "2.0",
+        "protocol_version": get_current_protocol_identity()[0],
+        "protocol_sha256": get_current_protocol_identity()[1],
         "cache_path": str(cache_path),
         "model_name": model_name,
         "navigation_mode": navigation_mode,

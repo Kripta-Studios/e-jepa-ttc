@@ -43,10 +43,10 @@ def test_onnx_exporter_single_output() -> None:
 
 
 def test_onnx_export_traces_batch_size_correctly(tmp_path) -> None:
-    from scripts.export_onnx import export_to_onnx
-
     # Create a small transformer to speed up the test
     from e_jepa_ttc.models.token_transformer import EventTubeletTransformerRegressor
+    from scripts.export_onnx import export_to_onnx
+
     model = EventTubeletTransformerRegressor(in_channels=21, embed_dim=32, depth=1, num_heads=1)
     checkpoint = {
         "resolved_model_config": {
@@ -71,7 +71,9 @@ def test_onnx_export_traces_batch_size_correctly(tmp_path) -> None:
 
     # This will execute torch.onnx.export and onnxruntime.InferenceSession.run with a real batch > 1
     # If the reshape is incorrectly traced as static, onnxruntime will crash here.
-    export_to_onnx(ckpt_path, out, "event-tubelet-transformer", str(cache_path), sample_count=2)
+    export_to_onnx(
+        ckpt_path, out, "event-tubelet-transformer", {"cache_path": str(cache_path)}, sample_count=2
+    )
     assert out.exists()
 
 
@@ -223,7 +225,7 @@ def test_export_onnx_saves_manifest(
         x=np.zeros((10, 21, 90, 160), dtype=np.float32),
         split=np.array(["validation"] * 10),
     )
-    export_to_onnx(ckpt_path, out, "tiny_cnn", str(cache_path))
+    export_to_onnx(ckpt_path, out, "tiny_cnn", {"cache_path": str(cache_path)})
 
     assert (tmp_path / "model_manifest.json").exists()
 
@@ -256,7 +258,7 @@ def test_export_onnx_saves_equivalence(
         x=np.zeros((35, 21, 90, 160), dtype=np.float32),
         split=np.array(["validation"] * 35),
     )
-    export_to_onnx(ckpt_path, out, "tiny_cnn", str(cache_path), sample_count=32)
+    export_to_onnx(ckpt_path, out, "tiny_cnn", {"cache_path": str(cache_path)}, sample_count=32)
     assert (tmp_path / "equivalence.json").exists()
 
 
@@ -288,7 +290,7 @@ def test_export_onnx_saves_benchmark(
         x=np.zeros((35, 21, 90, 160), dtype=np.float32),
         split=np.array(["validation"] * 35),
     )
-    export_to_onnx(ckpt_path, out, "tiny_cnn", str(cache_path), sample_count=32)
+    export_to_onnx(ckpt_path, out, "tiny_cnn", {"cache_path": str(cache_path)}, sample_count=32)
     assert (tmp_path / "benchmark.json").exists()
 
 
@@ -303,4 +305,9 @@ def test_export_onnx_raises_on_empty_cache(tmp_path) -> None:
             "model_state_dict": TinyCNNRegressor(21, 48).state_dict(),
         }
         with pytest.raises(ValueError, match="No validation samples found"):
-            export_to_onnx(Path("dummy.pt"), tmp_path / "model.onnx", "tiny_cnn", str(cache_path))
+            export_to_onnx(
+                Path("dummy.pt"),
+                tmp_path / "model.onnx",
+                "tiny_cnn",
+                {"cache_path": str(cache_path)},
+            )

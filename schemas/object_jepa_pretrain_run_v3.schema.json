@@ -91,7 +91,14 @@
     "selection_split",
     "selection_metric",
     "checkpoint_sha256",
-    "final_test_opened"
+    "final_test_opened",
+    "schema_version",
+    "evidence_type",
+    "code_commit",
+    "protocol_version",
+    "protocol_sha256",
+    "created_at",
+    "artifact_sha256"
   ],
-  "additionalProperties": true
+  "additionalProperties": false
 }

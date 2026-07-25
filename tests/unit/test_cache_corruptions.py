@@ -42,7 +42,7 @@ def clean_cache(tmp_path: Path):
                 "train_split_manifest_hash": "dummy_hash",
                 "normalizer_statistics_hash": "dummy_hash",
                 "cache_builder_config_hash": "dummy_hash",
-            }
+            },
         },
     }
     with open(sidecar_path, "w") as f:
@@ -73,6 +73,8 @@ def run_audit(cache_dir, mode="exhaustive"):
         with open(out_path) as f:
             out = json.load(f)
     else:
+        print("STDOUT:", res.stdout)
+        print("STDERR:", res.stderr)
         out = {}
     return res.returncode, out
 

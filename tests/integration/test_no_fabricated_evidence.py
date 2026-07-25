@@ -28,6 +28,7 @@ def test_no_fabricated_evidence_in_scripts():
         "audit_cache.py",
         "aggregate_results.py",
         "run_object_jepa_matrix.py",
+        "select_best_onnx_candidate.py",
     ]
 
     failures = []
@@ -61,6 +62,7 @@ def test_no_fabricated_evidence_in_scripts():
         failures
     )
 
+
 def test_no_debug_artifacts_in_root():
     repo_root = Path(__file__).resolve().parent.parent.parent
     forbidden_items = [
@@ -68,20 +70,27 @@ def test_no_debug_artifacts_in_root():
         "test_empty",
         "audit.json",
         "master_smoke.log",
-        "completion_manifest.json"
+        "completion_manifest.json",
     ]
-    
+
     failures = []
-    
+
     # Check exact forbidden names in root
     for item in forbidden_items:
         path = repo_root / item
         if path.exists():
             failures.append(f"Forbidden artifact found in root: {item}")
-            
+
     # Check for unauthorized generated files in root
     for file in os.listdir(repo_root):
-        if file.endswith(".onnx") or file.endswith(".npz") or file.endswith(".h5") or file.endswith(".hdf5") or file.endswith(".bag") or file.endswith(".mp4"):
+        if (
+            file.endswith(".onnx")
+            or file.endswith(".npz")
+            or file.endswith(".h5")
+            or file.endswith(".hdf5")
+            or file.endswith(".bag")
+            or file.endswith(".mp4")
+        ):
             failures.append(f"Unauthorized generated file in root: {file}")
-            
+
     assert not failures, "Found debug or untracked artifacts: " + "\n".join(failures)

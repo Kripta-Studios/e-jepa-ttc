@@ -31,7 +31,14 @@
     }
   },
   "required": [
-    "artifact_type"
+    "artifact_type",
+    "schema_version",
+    "evidence_type",
+    "code_commit",
+    "protocol_version",
+    "protocol_sha256",
+    "created_at",
+    "artifact_sha256"
   ],
-  "additionalProperties": true
+  "additionalProperties": false
 }

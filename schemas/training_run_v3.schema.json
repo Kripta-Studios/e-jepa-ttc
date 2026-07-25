@@ -92,6 +92,9 @@
     },
     "checkpoint_sha256": {
       "type": "string"
+    },
+    "artifact_type": {
+      "type": "string"
     }
   },
   "required": [
@@ -109,7 +112,15 @@
     "validation_sample_count",
     "selection_split",
     "selection_metric",
-    "checkpoint_sha256"
+    "checkpoint_sha256",
+    "artifact_type",
+    "schema_version",
+    "evidence_type",
+    "code_commit",
+    "protocol_version",
+    "protocol_sha256",
+    "created_at",
+    "artifact_sha256"
   ],
-  "additionalProperties": true
+  "additionalProperties": false
 }

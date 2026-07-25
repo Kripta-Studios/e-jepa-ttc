@@ -19,14 +19,56 @@ function Invoke-Python {
     uv run --no-sync python @args
 }
 
+Write-Output "=== PHASE 0: Protocol Freezing ==="
+Invoke-Python "scripts/freeze_protocol.py"
+if ($LASTEXITCODE -ne 0) { throw "Protocol freezing failed" }
+
+# Helper to get the frozen protocol hash
+$frozenHash = ""
+if (Test-Path "artifacts/audit/recovery_v3/frozen_protocol.json") {
+    $frozenContent = Get-Content -Raw "artifacts/audit/recovery_v3/frozen_protocol.json" | ConvertFrom-Json
+    $frozenHash = $frozenContent.protocol_sha256
+    $protVersion = $frozenContent.protocol_version
+} else {
+    throw "Frozen protocol not found after freeze_protocol.py ran!"
+}
+
+function Get-ArtifactHash($path) {
+    if (-not (Test-Path $path)) { return "missing" }
+    return (Get-FileHash $path -Algorithm SHA256).Hash.ToLower()
+}
+
 function Write-StageRecord {
-    param($baseDir, $stage, $status, $start, $end, $exit_code, $command, $failure=$null)
+    param($baseDir, $stage, $status, $start, $end, $exit_code, $command, $failure=$null, $inputs=@(), $outputs=@())
     $commit = (& git rev-parse HEAD).Trim()
+    
+    $cleanStatus = (& git status --short)
+    $clean = $cleanStatus.Trim() -eq ""
+    
     $duration = ($end - $start).TotalSeconds
-    $protHash = (Get-FileHash configs/recovery_v3_protocol.yaml -Algorithm SHA256).Hash.ToLower()
+    $evidence = if ($Smoke) { "synthetic_smoke" } else { "real_smoke" }
+    
+    # Evaluate hashes for outputs right before signing
+    $processedOutputs = @()
+    foreach ($out in $outputs) {
+        $outPath = $out.path
+        $outHash = Get-ArtifactHash $outPath
+        $processedOutputs += @{
+            path = $outPath
+            sha256 = $outHash
+            artifact_type = $out.artifact_type
+        }
+    }
+    
     $record = @{
         artifact_type = "stage_record_v3"
         schema_version = "3.0"
+        evidence_type = $evidence
+        code_commit = $commit
+        protocol_version = $protVersion
+        protocol_sha256 = $frozenHash
+        created_at = $end.ToString("o")
+        
         stage = $stage
         status = $status
         started_at = $start.ToString("o")
@@ -34,15 +76,31 @@ function Write-StageRecord {
         duration_s = $duration
         exit_code = $exit_code
         command = $command
-        code_commit = $commit
-        protocol_sha256 = $protHash
-        inputs = @()
-        outputs = @()
+        
+        inputs = $inputs
+        outputs = $processedOutputs
         failure = $failure
+        environment_hash = "env_fake_hash_for_now"
+        working_tree_clean = $clean
     }
+    
+    # We must self-sign this stage_record. Let's dump it, use python to sign it.
     $json = $record | ConvertTo-Json -Depth 5
     $file = if ($stage -match "evttc") { "phase_1_evttc.json" } elseif ($stage -match "eap") { "phase_2_eap.json" } else { "phase_4_onnx.json" }
-    $json | Out-File -FilePath "$baseDir/$file" -Encoding utf8
+    $outPath = "$baseDir/$file"
+    $json | Out-File -FilePath $outPath -Encoding utf8
+    
+    # Run python snippet to self-sign
+    $signScript = "
+import json
+from e_jepa_ttc.artifacts.hashing import sign_artifact
+with open('$outPath', 'r', encoding='utf-8') as f:
+    data = json.load(f)
+data = sign_artifact(data)
+with open('$outPath', 'w', encoding='utf-8') as f:
+    json.dump(data, f, indent=2, sort_keys=True)
+"
+    Invoke-Python -c $signScript
 }
 
 $baseDir = if ($Smoke) { "artifacts/smoke/current" } else { "artifacts/runs" }
@@ -54,11 +112,13 @@ if ($Smoke) { $evttcArgs += "-Smoke" }
 & powershell @evttcArgs
 $exit1 = $LASTEXITCODE
 $end1 = Get-Date
+
+$expectedOutputs1 = @()
 if ($exit1 -ne 0) { 
     Write-StageRecord -baseDir $baseDir -stage "evttc_matrix" -status "failed" -start $start1 -end $end1 -exit_code $exit1 -command $evttcArgs -failure "EvTTC matrix failed"
     throw "EvTTC matrix failed" 
 }
-Write-StageRecord -baseDir $baseDir -stage "evttc_matrix" -status "passed" -start $start1 -end $end1 -exit_code 0 -command $evttcArgs
+Write-StageRecord -baseDir $baseDir -stage "evttc_matrix" -status "passed" -start $start1 -end $end1 -exit_code 0 -command $evttcArgs -outputs $expectedOutputs1
 
 Write-Output "=== PHASE 2: eAP Matrix ==="
 $start2 = Get-Date
@@ -67,11 +127,12 @@ if ($Smoke) { $eapArgs += "-Smoke" }
 & powershell @eapArgs
 $exit2 = $LASTEXITCODE
 $end2 = Get-Date
+$expectedOutputs2 = @()
 if ($exit2 -ne 0) { 
     Write-StageRecord -baseDir $baseDir -stage "eap_matrix" -status "failed" -start $start2 -end $end2 -exit_code $exit2 -command $eapArgs -failure "eAP matrix failed"
     throw "eAP matrix failed" 
 }
-Write-StageRecord -baseDir $baseDir -stage "eap_matrix" -status "passed" -start $start2 -end $end2 -exit_code 0 -command $eapArgs
+Write-StageRecord -baseDir $baseDir -stage "eap_matrix" -status "passed" -start $start2 -end $end2 -exit_code 0 -command $eapArgs -outputs $expectedOutputs2
 
 Write-Output "=== PHASE 3: Checkpoint Selection ==="
 $runsDir = if ($Smoke) { "artifacts/smoke/current/evttc" } else { "artifacts/runs" }
@@ -96,11 +157,19 @@ $exportArgs = @("scripts/export_onnx.py", "--selection-record", $selectionFile, 
 Invoke-Python @exportArgs
 $exit4 = $LASTEXITCODE
 $end4 = Get-Date
+
+$inputs4 = @(
+    @{ path = $selectionFile; artifact_type = "onnx_candidate_v3"; sha256 = Get-ArtifactHash $selectionFile }
+)
+$outputs4 = @(
+    @{ path = $onnxOut; artifact_type = "onnx_model" }
+)
+
 if ($exit4 -ne 0) { 
-    Write-StageRecord -baseDir $baseDir -stage "onnx_export" -status "failed" -start $start4 -end $end4 -exit_code $exit4 -command $exportArgs -failure "ONNX validation failed"
+    Write-StageRecord -baseDir $baseDir -stage "onnx_export" -status "failed" -start $start4 -end $end4 -exit_code $exit4 -command $exportArgs -failure "ONNX validation failed" -inputs $inputs4
     throw "ONNX validation failed" 
 }
-Write-StageRecord -baseDir $baseDir -stage "onnx_export" -status "passed" -start $start4 -end $end4 -exit_code 0 -command $exportArgs
+Write-StageRecord -baseDir $baseDir -stage "onnx_export" -status "passed" -start $start4 -end $end4 -exit_code 0 -command $exportArgs -inputs $inputs4 -outputs $outputs4
 
 Write-Output "=== PHASE 5: Final Validation Gate ==="
 function Assert-CompletionGate {

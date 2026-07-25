@@ -42,9 +42,10 @@ def verify_file_exists(path: Path, schema_name: str = None, protocol: dict = Non
             with open(path, encoding="utf-8") as f:
                 data = json.load(f)
             jsonschema.validate(instance=data, schema=_load_schema(schema_name))
-            
+
             if schema_name == "training_run_v3.schema.json" and protocol:
                 from e_jepa_ttc.experiments.validation import verify_semantic_completion
+
                 if not verify_semantic_completion(path, protocol, require_metrics=True):
                     logging.error(f"Semantic validation against protocol failed for {path}")
                     sys.exit(1)
@@ -186,7 +187,9 @@ def main() -> None:
     eap_runs_dir = runs_dir / "eap_object_jepa_matrix"
     verify_dir_exists(eap_runs_dir)
 
-    verify_file_exists(eap_runs_dir / "eap_split_statistics.json", "training_run_v3.schema.json", protocol=protocol)
+    verify_file_exists(
+        eap_runs_dir / "eap_split_statistics.json", "training_run_v3.schema.json", protocol=protocol
+    )
 
     eap_matrix = protocol.get("eap_matrix", {})
     eap_ssl_seeds = eap_matrix.get("ssl_seeds", [17, 42, 73])

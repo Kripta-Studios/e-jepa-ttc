@@ -48,6 +48,27 @@
         "string",
         "null"
       ]
+    },
+    "schema_version": {
+      "type": "string"
+    },
+    "evidence_type": {
+      "type": "string"
+    },
+    "code_commit": {
+      "type": "string"
+    },
+    "protocol_version": {
+      "type": "string"
+    },
+    "protocol_sha256": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string"
+    },
+    "artifact_sha256": {
+      "type": "string"
     }
   },
   "required": [
@@ -60,7 +81,14 @@
     "exit_code",
     "command",
     "inputs",
-    "outputs"
+    "outputs",
+    "schema_version",
+    "evidence_type",
+    "code_commit",
+    "protocol_version",
+    "protocol_sha256",
+    "created_at",
+    "artifact_sha256"
   ],
-  "additionalProperties": true
+  "additionalProperties": false
 }

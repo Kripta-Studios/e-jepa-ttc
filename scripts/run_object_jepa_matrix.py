@@ -155,8 +155,17 @@ def _row(summary: dict[str, Any]) -> dict[str, Any]:
     eval_split = summary.get("evaluation_split", "test")
     split_metrics = summary.get(eval_split, summary.get("validation", {}))
     regression = split_metrics.get("regression", {})
-    garl = split_metrics.get("garl_ttc", {})
-    conformal = split_metrics.get("conformal_90", {"coverage": np.nan, "mean_width_s": np.nan})
+    garl = split_metrics.get("garl_ttc", summary.get("validation", {}).get("garl_ttc", {}))
+    if "conformal_90" in split_metrics:
+        conformal = split_metrics["conformal_90"]
+    elif "calibration" in split_metrics:
+        cal = split_metrics["calibration"]
+        conformal = {
+            "coverage": cal.get("conformal_coverage", np.nan),
+            "mean_width_s": 2.0 * cal.get("conformal_scale", np.nan),
+        }
+    else:
+        conformal = {"coverage": np.nan, "mean_width_s": np.nan}
     return {
         "initialization": summary["initialization"],
         "seed": int(summary["seed"]),

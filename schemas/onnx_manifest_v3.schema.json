@@ -46,6 +46,9 @@
     },
     "artifact_sha256": {
       "type": "string"
+    },
+    "artifact_type": {
+      "type": "string"
     }
   },
   "required": [
@@ -54,7 +57,15 @@
     "output_names",
     "checkpoint_sha256",
     "onnx_sha256",
-    "resolved_model_config"
+    "resolved_model_config",
+    "artifact_type",
+    "schema_version",
+    "evidence_type",
+    "code_commit",
+    "protocol_version",
+    "protocol_sha256",
+    "created_at",
+    "artifact_sha256"
   ],
-  "additionalProperties": true
+  "additionalProperties": false
 }

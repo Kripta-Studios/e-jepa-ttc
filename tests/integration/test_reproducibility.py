@@ -14,9 +14,9 @@ def test_completion_manifest_v3_schema():
         schema = json.load(f)
         
     # Verify it can reject an empty/mocked manifest
-    empty_manifest = {}
+    mocked_manifest = {}
     try:
-        jsonschema.validate(instance=empty_manifest, schema=schema)
+        jsonschema.validate(instance=mocked_manifest, schema=schema)
         assert False, "Schema allowed an empty dict"
     except jsonschema.ValidationError:
         pass
