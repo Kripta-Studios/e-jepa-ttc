@@ -237,3 +237,24 @@ result and its checkpoint will not be promoted. The main E0/E1/E2 runs will use
 the subsequent provenance commit that places the physical cache hash, complete
 resolved configuration, commit and run fingerprint in both checkpoint and
 `metrics.json`.
+
+### Rejected downstream provenance attempt D0/D1
+
+Scratch and E0 were initially fine-tuned for 30 epochs, seed 7, batch 24 and LR
+`3e-5`. Both used only train/validation. Diagnostic values were:
+
+| Initializer | Validation MAE | MARE | RMSE |
+| --- | ---: | ---: | ---: |
+| scratch | `0.395920 s` | `12.8135%` | `0.499095 s` |
+| E0 JEPA | `0.342204 s` | `9.8381%` | `0.498136 s` |
+
+E0 was 13.6% lower in MAE, but both runs incorrectly received the same
+`run_fingerprint`. Root cause: `checkpoint_provenance()` recorded path, role,
+seed and epoch but not physical checkpoint SHA-256, while the supervised
+fingerprint defaulted the missing hash to an empty string.
+
+These two runs are rejected from the promotable matrix and will be repeated.
+The correction hashes every pretrained checkpoint and includes batch size,
+freeze state and requested train/validation/evaluation splits in the supervised
+fingerprint. A regression assertion requires scratch and pretrained
+fingerprints to differ.

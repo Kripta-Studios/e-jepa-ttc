@@ -2,9 +2,18 @@
 
 from __future__ import annotations
 
+import hashlib
 from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
+
+
+def _file_sha256(path: Path) -> str:
+    hasher = hashlib.sha256()
+    with path.open("rb") as checkpoint_file:
+        for chunk in iter(lambda: checkpoint_file.read(8192 * 1024), b""):
+            hasher.update(chunk)
+    return hasher.hexdigest()
 
 
 def checkpoint_provenance(
@@ -32,6 +41,7 @@ def checkpoint_provenance(
         )
     return {
         "path": path.as_posix(),
+        "checkpoint_sha256": _file_sha256(path),
         "source_epoch": checkpoint.get("epoch"),
         "source_seed": checkpoint.get("seed"),
         "checkpoint_role": str(role),

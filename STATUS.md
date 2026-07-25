@@ -40,6 +40,11 @@ Updated: 2026-07-25.
 - Corrected GPU smoke S1 passed at batch 12 with finite total, synthetic
   alignment and inverse-TTC losses. It is a numerical gate only; E0/E1/E2 TTC
   accuracy remains unmeasured.
+- First scratch/E0 downstream attempt was rejected from the promotable matrix:
+  the checkpoint SHA was absent from provenance, causing identical run
+  fingerprints. Diagnostic MAE was 0.3959 s scratch vs 0.3422 s E0. Physical
+  checkpoint hashing and fingerprint coverage are now corrected; both runs
+  must be repeated.
 
 The complete audit, SOTA comparison, and MVA/FlowMimic architecture proposal are in
 `docs/scientific_audit_2026-07-25.md`.

@@ -366,6 +366,11 @@ def train_tiny_cnn(
         "navigation_mode": navigation_mode,
         "label_fraction": train_fraction,
         "seed": seed,
+        "batch_size": batch_size,
+        "freeze_encoder": freeze_encoder,
+        "train_splits": list(train_splits),
+        "validation_splits": list(validation_splits),
+        "evaluation_splits": list(evaluation_splits),
         "pretraining_checkpoint_sha256": pretrained_encoder.get("checkpoint_sha256", "")
         if pretrained_encoder
         else "",

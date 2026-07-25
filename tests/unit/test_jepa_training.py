@@ -182,10 +182,27 @@ def test_jepa_checkpoint_loads_into_supervised_trainer(tmp_path: Path) -> None:
     assert train_summary["pretrained_encoder"]["source_model"] == "tiny_cnn_jepa"
     assert train_summary["pretrained_encoder"]["source_seed"] == 5
     assert train_summary["pretrained_encoder"]["checkpoint_role"] == "best"
+    assert len(train_summary["pretrained_encoder"]["checkpoint_sha256"]) == 64
+    assert (
+        train_summary["run_fingerprint_payload"]["pretraining_checkpoint_sha256"]
+        == (train_summary["pretrained_encoder"]["checkpoint_sha256"])
+    )
     assert train_summary["pretrain_seed"] == 5
     assert train_summary["downstream_seed"] == 5
     assert train_summary["freeze_encoder"] is True
     assert train_summary["effective_train_count"] == 3
+    scratch_fingerprint = train_tiny_cnn(
+        cache_path=cache_path,
+        output_dir=tmp_path / "scratch_fingerprint",
+        epochs=1,
+        batch_size=3,
+        seed=5,
+        device_name="cpu",
+        freeze_encoder=True,
+        train_fraction=0.5,
+        dry_run_fingerprint=True,
+    )
+    assert scratch_fingerprint != train_summary["run_fingerprint"]
 
 
 def test_supervised_training_can_skip_test_evaluation(tmp_path: Path) -> None:
