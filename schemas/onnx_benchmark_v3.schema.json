@@ -15,6 +15,27 @@
     },
     "p99_ms": {
       "type": "number"
+    },
+    "schema_version": {
+      "type": "string"
+    },
+    "evidence_type": {
+      "type": "string"
+    },
+    "code_commit": {
+      "type": "string"
+    },
+    "protocol_version": {
+      "type": "string"
+    },
+    "protocol_sha256": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string"
+    },
+    "artifact_sha256": {
+      "type": "string"
     }
   },
   "required": [

@@ -7,9 +7,91 @@
       "enum": [
         "supervised_run_v3"
       ]
+    },
+    "schema_version": {
+      "type": "string"
+    },
+    "evidence_type": {
+      "type": "string"
+    },
+    "code_commit": {
+      "type": "string"
+    },
+    "protocol_version": {
+      "type": "string"
+    },
+    "protocol_sha256": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string"
+    },
+    "artifact_sha256": {
+      "type": "string"
+    },
+    "run_id": {
+      "type": "string"
+    },
+    "model_name": {
+      "type": "string"
+    },
+    "model_config": {
+      "type": "object"
+    },
+    "model_config_sha256": {
+      "type": "string"
+    },
+    "cache_sha256": {
+      "type": "string"
+    },
+    "split_manifest_sha256": {
+      "type": "string"
+    },
+    "seed": {
+      "type": "integer"
+    },
+    "navigation_mode": {
+      "type": "string"
+    },
+    "label_fraction": {
+      "type": "number"
+    },
+    "train_sample_count": {
+      "type": "integer"
+    },
+    "validation_sample_count": {
+      "type": "integer"
+    },
+    "selection_split": {
+      "type": "string"
+    },
+    "selection_metric": {
+      "type": "string"
+    },
+    "checkpoint_sha256": {
+      "type": "string"
+    },
+    "final_test_opened": {
+      "type": "boolean"
     }
   },
   "required": [
-    "artifact_type"
-  ]
+    "artifact_type",
+    "run_id",
+    "model_name",
+    "model_config",
+    "model_config_sha256",
+    "cache_sha256",
+    "split_manifest_sha256",
+    "seed",
+    "navigation_mode",
+    "label_fraction",
+    "train_sample_count",
+    "validation_sample_count",
+    "selection_split",
+    "selection_metric",
+    "checkpoint_sha256",
+    "final_test_opened"
+  ],
+  "additionalProperties": true
 }

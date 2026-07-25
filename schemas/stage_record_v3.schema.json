@@ -7,9 +7,60 @@
       "enum": [
         "stage_record_v3"
       ]
+    },
+    "stage": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "started",
+        "passed",
+        "failed"
+      ]
+    },
+    "started_at": {
+      "type": "string"
+    },
+    "completed_at": {
+      "type": "string"
+    },
+    "duration_s": {
+      "type": "number"
+    },
+    "exit_code": {
+      "type": "integer"
+    },
+    "command": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "inputs": {
+      "type": "array"
+    },
+    "outputs": {
+      "type": "array"
+    },
+    "failure": {
+      "type": [
+        "string",
+        "null"
+      ]
     }
   },
   "required": [
-    "artifact_type"
-  ]
+    "artifact_type",
+    "stage",
+    "status",
+    "started_at",
+    "completed_at",
+    "duration_s",
+    "exit_code",
+    "command",
+    "inputs",
+    "outputs"
+  ],
+  "additionalProperties": true
 }

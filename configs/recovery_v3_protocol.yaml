@@ -18,14 +18,22 @@ smoke:
   iterations_limit: 50
 requirements:
   primary_metrics: ["mae_s", "rmse_s", "median_abs_error_s", "auroc", "auprc", "calibration_error"]
-  allowed_split_roles: ["train", "validation", "diagnostic_test"]
+  allowed_training_splits:
+    - train
+  allowed_selection_splits:
+    - validation
+  allowed_calibration_splits:
+    - calibration
+  forbidden_ordinary_splits:
+    - test
+    - CPLA-high
   min_train_support: 25
   min_val_support: 25
   checkpoint_selection_metric: "validation_mae_s"
   dataset:
     name: "evttc"
     version: "2025-03-02"
-    manifest_hash: "expected_hash_here_if_known"
+    manifest_hash: "deterministically_generated_at_runtime"
 onnx_policies:
   strict_state_dict_loading: true
   output_names: ["log_ttc"]

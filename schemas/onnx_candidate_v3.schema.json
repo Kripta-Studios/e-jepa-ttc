@@ -7,9 +7,66 @@
       "enum": [
         "onnx_candidate_v3"
       ]
+    },
+    "checkpoint_path": {
+      "type": "string"
+    },
+    "checkpoint_sha256": {
+      "type": "string"
+    },
+    "cache_path": {
+      "type": "string"
+    },
+    "cache_sha256": {
+      "type": "string"
+    },
+    "cache_sidecar_sha256": {
+      "type": "string"
+    },
+    "model_config": {
+      "type": "object"
+    },
+    "model_config_sha256": {
+      "type": "string"
+    },
+    "protocol_version": {
+      "type": "string"
+    },
+    "protocol_sha256": {
+      "type": "string"
+    },
+    "split_manifest_sha256": {
+      "type": "string"
+    },
+    "normalization_sha256": {
+      "type": "string"
+    },
+    "navigation_mode": {
+      "type": "string"
+    },
+    "selection_split": {
+      "type": "string"
+    },
+    "selection_metric": {
+      "type": "string"
+    },
+    "selection_metric_value": {
+      "type": "number"
+    },
+    "code_commit": {
+      "type": "string"
     }
   },
   "required": [
-    "artifact_type"
-  ]
+    "artifact_type",
+    "checkpoint_path",
+    "checkpoint_sha256",
+    "cache_path",
+    "cache_sha256",
+    "model_config_sha256",
+    "protocol_sha256",
+    "selection_split",
+    "code_commit"
+  ],
+  "additionalProperties": true
 }

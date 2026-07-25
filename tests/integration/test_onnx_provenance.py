@@ -19,6 +19,8 @@ def test_onnx_export_rejects_altered_record(tmp_path):
 
     # Write a record with deliberate hash mismatch
     record = {
+        "artifact_type": "onnx_candidate_v3",
+        "schema_version": "3.0",
         "checkpoint_path": str(chk_path),
         "checkpoint_sha256": "wronghash",
         "cache_path": str(cache_path),
@@ -26,7 +28,26 @@ def test_onnx_export_rejects_altered_record(tmp_path):
         "model_config_path": "unknown",
         "model_config_sha256": "unknown",
         "protocol_hash": "unknown",
+        "protocol_sha256": "unknown",
         "code_commit": "unknown",
+        "selection_split": "validation",
+        "evidence_type": "validation_matrix",
+        "created_at": "2026-07-25",
+        "artifact_sha256": "unknown",
+        "cache_sidecar_sha256": "unknown",
+        "model_config": {},
+        "split_manifest_sha256": "unknown",
+        "normalization_sha256": "unknown",
+        "navigation_mode": "disabled",
+        "selection_metric": "mae_s",
+        "selection_metric_value": 0.0,
+        "run_id": "fake",
+        "model_name": "fake",
+        "seed": 7,
+        "label_fraction": 1.0,
+        "train_sample_count": 0,
+        "validation_sample_count": 0,
+        "final_test_opened": False
     }
 
     record_path.write_text(json.dumps(record))
@@ -74,6 +95,8 @@ def test_onnx_export_rejects_final_test_checkpoint(tmp_path):
     # Realistic fallback values for required fields
     empty_sha256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     record = {
+        "artifact_type": "onnx_candidate_v3",
+        "schema_version": "3.0",
         "checkpoint_path": str(chk_path),
         "checkpoint_sha256": get_hash(chk_path),
         "cache_path": str(cache_path),
@@ -81,7 +104,26 @@ def test_onnx_export_rejects_final_test_checkpoint(tmp_path):
         "model_config_path": "configs/model/tiny_cnn.yaml",
         "model_config_sha256": empty_sha256,
         "protocol_hash": empty_sha256,
-        "code_commit": "d88f571"
+        "protocol_sha256": empty_sha256,
+        "code_commit": "d88f571",
+        "selection_split": "validation",
+        "evidence_type": "validation_matrix",
+        "created_at": "2026-07-25",
+        "artifact_sha256": empty_sha256,
+        "cache_sidecar_sha256": empty_sha256,
+        "model_config": {},
+        "split_manifest_sha256": empty_sha256,
+        "normalization_sha256": empty_sha256,
+        "navigation_mode": "disabled",
+        "selection_metric": "mae_s",
+        "selection_metric_value": 0.0,
+        "run_id": "fake",
+        "model_name": "fake",
+        "seed": 7,
+        "label_fraction": 1.0,
+        "train_sample_count": 0,
+        "validation_sample_count": 0,
+        "final_test_opened": False
     }
 
     record_path.write_text(json.dumps(record))

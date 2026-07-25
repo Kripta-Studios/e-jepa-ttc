@@ -224,19 +224,27 @@ def main() -> None:
         allowed_splits = {"train", "validation", "calibration", "test"}
         if args.evidence_type != "final_test":
             allowed_splits.remove("test")
+            has_lock = False
         else:
-            if not check_final_test_lock("final"):
+            has_lock = check_final_test_lock("final")
+            if not has_lock:
                 failures.append("final_test requested but no valid unlock found")
 
         seq_to_split = {}
+        test_present_without_lock = False
         for s, sp in zip(seqs, splits):
-            if sp not in allowed_splits:
+            if sp == "test" and not has_lock:
+                test_present_without_lock = True
+            elif sp not in allowed_splits:
                 failures.append(f"Unknown or illegal split name: {sp}")
             if s in seq_to_split and seq_to_split[s] != sp:
                 failures.append(
                     f"Sequence {s} belongs to multiple splits (e.g. {seq_to_split[s]} and {sp})"
                 )
             seq_to_split[s] = sp
+            
+        if test_present_without_lock:
+            failures.append("Final test split is present in cache but lock check failed")
 
         # 16. Detect broken all-zero channels
         if x_scan.ndim >= 2:

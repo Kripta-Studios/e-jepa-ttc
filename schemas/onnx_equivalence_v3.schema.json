@@ -5,7 +5,10 @@
   "properties": {
     "status": {
       "type": "string",
-      "enum": ["passed", "failed"]
+      "enum": [
+        "passed",
+        "failed"
+      ]
     },
     "real_validation_samples": {
       "type": "boolean"
@@ -19,6 +22,27 @@
     },
     "mean_absolute_error": {
       "type": "number"
+    },
+    "schema_version": {
+      "type": "string"
+    },
+    "evidence_type": {
+      "type": "string"
+    },
+    "code_commit": {
+      "type": "string"
+    },
+    "protocol_version": {
+      "type": "string"
+    },
+    "protocol_sha256": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string"
+    },
+    "artifact_sha256": {
+      "type": "string"
     }
   },
   "required": [

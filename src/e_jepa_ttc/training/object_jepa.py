@@ -903,14 +903,29 @@ def fine_tune_object_ttc(
 
     if "calibration" in report_splits and conformal is not None:
         calibration_metrics = _prediction_metrics(calibration_predictions)
-        calibration_metrics.update({
-            "split": "calibration",
-            "count": int(calibration_predictions["ttc_true"].shape[0]),
-            "conformal_coverage": conformal.coverage,
-            "conformal_scale": conformal.scale,
-            "temperatures": [temperature.temperature for temperature in temperatures],
-        })
-        summary["calibration"] = calibration_metrics
+        
+        sample_ids = calibration_predictions.get("sample_id", np.arange(int(calibration_predictions["ttc_true"].shape[0])))
+        import hashlib
+        sample_id_hash = hashlib.sha256(sample_ids.tobytes()).hexdigest()
+        
+        summary["calibration"] = {
+            "artifact_type": "calibration_metrics_v3",
+            "schema_version": "3.0",
+            "evaluation_split": "calibration",
+            "sample_count": int(calibration_predictions["ttc_true"].shape[0]),
+            "sample_id_hash": sample_id_hash,
+            "regression": {
+                "mae_s": float(calibration_metrics.get("mae_s", 0.0)),
+                "rmse_s": float(calibration_metrics.get("rmse_s", 0.0)),
+                "median_abs_error_s": float(calibration_metrics.get("median_abs_error_s", 0.0)),
+            },
+            "risk_support": calibration_metrics.get("risk_support", []),
+            "calibration": {
+                "conformal_coverage": conformal.coverage,
+                "conformal_scale": conformal.scale,
+                "temperatures": [temperature.temperature for temperature in temperatures],
+            }
+        }
 
     if "test" in report_splits:
         test_predictions = _collect_predictions(

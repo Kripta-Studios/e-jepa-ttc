@@ -13,12 +13,20 @@ import torch
 from e_jepa_ttc.models.tiny_cnn import TinyCNNRegressor
 from e_jepa_ttc.models.token_transformer import EventTubeletTransformerRegressor
 
+def hash_file(p: Path) -> str:
+    if not p or not Path(p).exists():
+        return "missing"
+    h = hashlib.sha256()
+    with open(p, "rb") as bf:
+        for chunk in iter(lambda: bf.read(8192 * 1024), b""):
+            h.update(chunk)
+    return h.hexdigest()
 
 def export_to_onnx(
     checkpoint_path: Path,
     output_onnx: Path,
     model_type: str,
-    cache_path: str = None,
+    record: dict,
     validation_split: str = "validation",
     sample_count: int = 32,
 ) -> None:
@@ -60,24 +68,26 @@ def export_to_onnx(
     model.load_state_dict(state_dict, strict=True)
     model.eval()
 
+    cache_path = record.get("cache_path")
     if not cache_path or not Path(cache_path).exists():
-        msg = (
-            "Valid cache_path is strictly required to extract real validation "
-            "samples for ONNX export"
-        )
+        msg = "Valid cache_path is strictly required to extract real validation samples for ONNX export"
         raise ValueError(msg)
 
     cache_data = np.load(cache_path)
     mask = cache_data["split"] == validation_split
     x = cache_data["x"][mask]
+    sample_ids = cache_data["sample_id"][mask] if "sample_id" in cache_data else np.arange(len(x))
+    
     if len(x) > sample_count:
         x = x[:sample_count]
+        sample_ids = sample_ids[:sample_count]
     elif len(x) == 0:
         raise ValueError("No validation samples found in cache")
+        
     dummy_input = torch.from_numpy(x).float()
-
-    # Export with full batch to avoid static shape tracing issues
     export_input = dummy_input
+
+    sample_id_hash = hashlib.sha256(sample_ids.tobytes()).hexdigest()
 
     torch.onnx.export(
         model,
@@ -130,17 +140,19 @@ def export_to_onnx(
                 max_diff = diff
             if rel_diff > max_rel_diff:
                 max_rel_diff = rel_diff
-            mean_abs_error = float(
-                np.mean(np.abs(pt_out.numpy() - ort_out))
-            )  # approximation for last output
+            mean_abs_error = float(np.mean(np.abs(pt_out.numpy() - ort_out)))
+            
     print(f"PyTorch-ONNX comparison successful! Max diff: {max_diff}")
 
     with open(output_onnx.parent / "equivalence.json", "w", encoding="utf-8") as f:
         json.dump(
             {
+                "artifact_type": "onnx_equivalence_v3",
+                "schema_version": "3.0",
                 "status": "passed",
                 "real_validation_samples": True,
                 "sample_count": int(dummy_input.size(0)),
+                "sample_id_hash": sample_id_hash,
                 "maximum_absolute_error": max_diff,
                 "mean_absolute_error": mean_abs_error,
                 "maximum_relative_error": max_rel_diff,
@@ -151,35 +163,36 @@ def export_to_onnx(
             indent=2,
         )
 
-    def file_sha256(p: Path) -> str:
-        h = hashlib.sha256()
-        with open(p, "rb") as bf:
-            for chunk in iter(lambda: bf.read(8192 * 1024), b""):
-                h.update(chunk)
-        return h.hexdigest()
-
     with open(output_onnx.parent / "model_manifest.json", "w", encoding="utf-8") as f:
         json.dump(
             {
+                "artifact_type": "onnx_manifest_v3",
+                "schema_version": "3.0",
                 "checkpoint_path": str(checkpoint_path.resolve().as_posix()),
                 "checkpoint_sha256": file_sha256(checkpoint_path),
                 "onnx_path": str(output_onnx.resolve().as_posix()),
                 "onnx_sha256": file_sha256(output_onnx),
                 "model_name": model_type,
+                "model_config_sha256": record.get("model_config_sha256"),
+                "protocol_sha256": record.get("protocol_sha256", record.get("protocol_hash")),
+                "cache_sha256": record.get("cache_sha256"),
+                "navigation_mode": record.get("navigation_mode", "unknown"),
+                "normalization_sha256": record.get("normalization_sha256", "unknown"),
+                "in_channels": in_channels,
                 "resolved_model_config": cfg,
                 "selection_split": "validation",
                 "selection_metric": "validation_mae_s",
                 "diagnostic_split_consulted": False,
                 "strict_state_dict_loading": True,
                 "output_names": ["log_ttc"],
-                "git_commit": checkpoint.get("git_commit", ""),
+                "code_commit": record.get("code_commit", ""),
+                "final_test_opened": False
             },
             f,
             indent=2,
         )
 
     print("Benchmarking ONNX latency...")
-    # Warmup
     for _ in range(50):
         _ = session.run(None, ort_inputs)
 
@@ -195,15 +208,10 @@ def export_to_onnx(
     p99 = np.percentile(latencies, 99) * 1000
     mean_lat = np.mean(latencies) * 1000
 
-    print(
-        f"ONNX Benchmark -> Mean: {mean_lat:.2f}ms, "
-        f"P50: {p50:.2f}ms, P95: {p95:.2f}ms, P99: {p99:.2f}ms"
-    )
+    print(f"ONNX Benchmark -> Mean: {mean_lat:.2f}ms, P50: {p50:.2f}ms, P95: {p95:.2f}ms, P99: {p99:.2f}ms")
 
     import platform
-
     import psutil
-
     hardware_info = {
         "cpu_name": platform.processor(),
         "logical_cores": psutil.cpu_count(logical=True),
@@ -218,6 +226,8 @@ def export_to_onnx(
     with open(output_onnx.parent / "benchmark.json", "w", encoding="utf-8") as f:
         json.dump(
             {
+                "artifact_type": "onnx_benchmark_v3",
+                "schema_version": "3.0",
                 "device": "CPU",
                 "batch_size": sample_count,
                 "iterations": benchmark_iters,
@@ -231,20 +241,12 @@ def export_to_onnx(
             indent=2,
         )
 
-
 def main() -> None:
     parser = argparse.ArgumentParser(description="Export PyTorch models to ONNX")
     parser.add_argument("--output", type=str, required=True, help="Path to save the ONNX model")
-    parser.add_argument(
-        "--selection-record", type=str, required=True, help="Path to the JSON selection record"
-    )
-    parser.add_argument(
-        "--validation-split", type=str, default="validation", help="Name of the validation split"
-    )
-    parser.add_argument(
-        "--sample-count", type=int, default=32, help="Number of real samples to use"
-    )
-
+    parser.add_argument("--selection-record", type=str, required=True, help="Path to the JSON selection record")
+    parser.add_argument("--validation-split", type=str, default="validation", help="Name of the validation split")
+    parser.add_argument("--sample-count", type=int, default=32, help="Number of real samples to use")
     args = parser.parse_args()
 
     record_path = Path(args.selection_record)
@@ -253,30 +255,27 @@ def main() -> None:
 
     with open(record_path, encoding="utf-8") as f:
         try:
-            # Handle possible string if powershell Out-File appended newlines or it's wrapped
             content = f.read().strip()
-            # Powershell Out-File with utf8 might add BOM, let's handle that
             if content.startswith("\ufeff"):
                 content = content[1:]
             record = json.loads(content)
         except Exception as e:
             sys.exit(f"Error parsing selection record: {e}")
 
+    # Explicit JSON schema check for the record
+    try:
+        import jsonschema
+        schema_path = Path("schemas/onnx_candidate_v3.schema.json")
+        if schema_path.exists():
+            with open(schema_path, "r", encoding="utf-8") as fs:
+                schema = json.load(fs)
+                jsonschema.validate(instance=record, schema=schema)
+    except Exception as e:
+        sys.exit(f"Error: Selection record schema validation failed: {e}")
+
     checkpoint_path = Path(record["checkpoint_path"])
     if not checkpoint_path.exists():
         sys.exit(f"Error: Checkpoint file {checkpoint_path} does not exist.")
-
-    # Verification checks
-    import hashlib
-
-    def hash_file(p):
-        if not p or not Path(p).exists():
-            return "missing"
-        h = hashlib.sha256()
-        with open(p, "rb") as bf:
-            for chunk in iter(lambda: bf.read(4096), b""):
-                h.update(chunk)
-        return h.hexdigest()
 
     actual_chk_hash = hash_file(checkpoint_path)
     if actual_chk_hash != record.get("checkpoint_sha256"):
@@ -284,19 +283,16 @@ def main() -> None:
 
     cache_path = record.get("cache_path")
     if not cache_path or cache_path == "unknown" or not Path(cache_path).exists():
-        sys.exit(
-            "Error: Valid cache_path is strictly required to extract real validation samples for ONNX export"
-        )
+        sys.exit("Error: Valid cache_path is strictly required to extract real validation samples for ONNX export")
 
-    actual_cache_hash = hash_file(cache_path)
+    actual_cache_hash = hash_file(Path(cache_path))
     if actual_cache_hash != record.get("cache_sha256"):
-        sys.exit(
-            f"Error: Cache hash mismatch. Expected {record.get('cache_sha256')} got {actual_cache_hash}"
-        )
+        sys.exit(f"Error: Cache hash mismatch. Expected {record.get('cache_sha256')} got {actual_cache_hash}")
 
-    protocol_hash = record.get("protocol_hash")
+    protocol_hash = record.get("protocol_sha256", record.get("protocol_hash"))
     if not protocol_hash or protocol_hash == "unknown":
         sys.exit("Error: Selection record missing protocol_hash.")
+    
     code_commit = record.get("code_commit")
     if not code_commit or code_commit == "unknown":
         sys.exit("Error: Selection record missing code_commit.")
@@ -311,7 +307,7 @@ def main() -> None:
                 sys.exit("Error: Selected checkpoint was exposed to final test.")
 
     if model_type is None:
-        model_type = "tiny_cnn"
+        sys.exit("Error: model_name not found in metrics, implicit fallback to tiny_cnn is prohibited.")
 
     if model_type == "tiny-cnn":
         model_type = "tiny_cnn"
@@ -323,11 +319,10 @@ def main() -> None:
         checkpoint_path,
         output_onnx,
         model_type,
-        cache_path,
+        record,
         args.validation_split,
         args.sample_count,
     )
-
 
 if __name__ == "__main__":
     main()

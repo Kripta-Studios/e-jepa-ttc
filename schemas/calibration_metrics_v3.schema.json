@@ -7,9 +7,50 @@
       "enum": [
         "calibration_metrics_v3"
       ]
+    },
+    "evaluation_split": {
+      "type": "string"
+    },
+    "sample_count": {
+      "type": "integer"
+    },
+    "sample_id_hash": {
+      "type": "string"
+    },
+    "regression": {
+      "type": "object",
+      "properties": {
+        "mae_s": {
+          "type": "number"
+        },
+        "rmse_s": {
+          "type": "number"
+        },
+        "median_abs_error_s": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "mae_s",
+        "rmse_s",
+        "median_abs_error_s"
+      ]
+    },
+    "risk_support": {
+      "type": "array"
+    },
+    "calibration": {
+      "type": "object"
     }
   },
   "required": [
-    "artifact_type"
-  ]
+    "artifact_type",
+    "evaluation_split",
+    "sample_count",
+    "sample_id_hash",
+    "regression",
+    "risk_support",
+    "calibration"
+  ],
+  "additionalProperties": true
 }

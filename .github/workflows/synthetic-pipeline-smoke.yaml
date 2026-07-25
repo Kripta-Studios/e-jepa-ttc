@@ -1,4 +1,4 @@
-name: synthetic-smoke
+name: synthetic-pipeline-smoke
 
 on:
   push:
@@ -19,13 +19,5 @@ jobs:
       - name: Install dependencies
         run: uv sync --all-groups --no-editable
         
-      - name: Run Master Smoke Pipeline
-        shell: pwsh
-        run: ./scripts/run_all.ps1 -Smoke
-        
-      - name: Upload Completion Manifest
-        uses: actions/upload-artifact@v4
-        with:
-          name: completion-manifest
-          path: artifacts/smoke/current/completion_manifest.json
-          if-no-files-found: error
+      - name: Run Synthetic Pipeline Smoke Test
+        run: uv run --no-sync pytest tests/integration/test_synthetic_pipeline_smoke.py -v

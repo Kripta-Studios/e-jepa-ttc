@@ -9,15 +9,28 @@
     },
     "status": {
       "type": "string",
-      "enum": ["passed", "failed", "not_verifiable"]
+      "enum": [
+        "passed",
+        "failed",
+        "not_verifiable"
+      ]
     },
     "audit_mode": {
       "type": "string",
-      "enum": ["sampled", "exhaustive"]
+      "enum": [
+        "sampled",
+        "exhaustive"
+      ]
     },
     "evidence_type": {
       "type": "string",
-      "enum": ["synthetic_ci", "real_smoke", "validation_pilot", "validation_matrix", "final_test"]
+      "enum": [
+        "synthetic_ci",
+        "real_smoke",
+        "validation_pilot",
+        "validation_matrix",
+        "final_test"
+      ]
     },
     "reason": {
       "type": "string"
@@ -58,20 +71,38 @@
     "nonempty_samples_collapsed_to_zero": {
       "type": "integer"
     },
-
     "checks": {
       "type": "object"
     },
     "failures": {
       "type": "array",
-      "items": { "type": "string" }
+      "items": {
+        "type": "string"
+      }
     },
     "warnings": {
       "type": "array",
-      "items": { "type": "string" }
+      "items": {
+        "type": "string"
+      }
     },
     "provenance": {
       "type": "object"
+    },
+    "code_commit": {
+      "type": "string"
+    },
+    "protocol_version": {
+      "type": "string"
+    },
+    "protocol_sha256": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string"
+    },
+    "artifact_sha256": {
+      "type": "string"
     }
   },
   "required": [
@@ -95,5 +126,6 @@
     "failures",
     "warnings",
     "provenance"
-  ]
+  ],
+  "additionalProperties": true
 }
