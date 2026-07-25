@@ -285,6 +285,7 @@ def build_voxel_cache(
 
     summary = {
         "output": output.as_posix(),
+        "cache_format_version": 2,
         "window_count": int(len(windows)),
         "input_window_count": int(input_window_count),
         "excluded_splits": excluded_split_names,
@@ -294,6 +295,7 @@ def build_voxel_cache(
         "height": height,
         "bins": bins,
         "normalize": normalize,
+        "normalization": "non_centered_occupied_p95_scale" if normalize else "none",
         "metadata_channels": metadata_channels,
         "navigation_channels": navigation_channels,
         "navigation_feature_names": list(NAVIGATION_FEATURE_NAMES),

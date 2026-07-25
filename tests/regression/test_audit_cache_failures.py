@@ -87,3 +87,52 @@ def test_audit_cache_fails_test_split(tmp_path):
     assert any("Final test split is present" in f for f in data["failures"]), (
         f"Failures were: {data['failures']}"
     )
+
+
+def test_audit_cache_reads_current_builder_metadata_without_float16_overflow(tmp_path):
+    npz_path = tmp_path / "cache.npz"
+    np.savez(
+        npz_path,
+        x=np.full((2, 2, 2, 2), 60_000, dtype=np.float16),
+        sequence_id=np.array(["seq1", "seq1"]),
+        split=np.array(["train", "train"]),
+        event_count=np.array([10, 10]),
+        cache_format_version=np.array(2),
+        normalize=np.array(False),
+        normalization=np.array("none"),
+    )
+    actual_sha = hashlib.sha256(npz_path.read_bytes()).hexdigest()
+    sidecar = tmp_path / "cache.summary.json"
+    sidecar.write_text(
+        json.dumps(
+            {
+                "cache_sha256": actual_sha,
+                "window_count": 2,
+            }
+        )
+    )
+    audit_out = tmp_path / "audit.json"
+    repo_root = Path(__file__).resolve().parent.parent.parent
+    cmd = [
+        "uv",
+        "run",
+        "--no-sync",
+        "python",
+        str(repo_root / "scripts" / "audit_cache.py"),
+        "--npz-path",
+        str(npz_path),
+        "--output",
+        str(audit_out),
+        "--evidence-type",
+        "validation_matrix",
+    ]
+
+    result = subprocess.run(cmd, capture_output=True, text=True)
+
+    assert result.returncode == 0, result.stderr
+    assert "overflow" not in result.stderr.lower()
+    audit = json.loads(audit_out.read_text())
+    assert audit["cache_format_version"] == 2
+    assert audit["normalization"] == "none"
+    assert audit["normalizer_source_split"] == "not_applicable"
+    assert audit["normalizer_origins_verified"] is True

@@ -122,7 +122,9 @@ def main() -> None:
     if not isinstance(sidecar, dict):
         failures.append("Sidecar must be a JSON object")
     else:
-        audit_record["cache_format_version"] = sidecar.get("format_version", 1)
+        audit_record["cache_format_version"] = sidecar.get(
+            "cache_format_version", sidecar.get("format_version", 1)
+        )
         # 2. Read declared SHA256
         audit_record["cache_sha256_declared"] = sidecar.get(
             "cache_sha256", sidecar.get("sha256", "")
@@ -160,6 +162,12 @@ def main() -> None:
                 else:
                     source_split = audit_record["normalizer_source_split"]
                     failures.append(f"Normalizer fitted with non-train split: {source_split}")
+        else:
+            audit_record["normalize"] = bool(sidecar.get("normalize", False))
+            audit_record["normalization"] = str(norm_config)
+            if not audit_record["normalize"]:
+                audit_record["normalizer_source_split"] = "not_applicable"
+                audit_record["normalizer_origins_verified"] = True
 
         expected_total = sidecar.get("window_count", sidecar.get("total_samples", 0))
         audit_record["sample_count_total"] = expected_total
@@ -192,6 +200,34 @@ def main() -> None:
         x = data["x"]
         seqs = data["sequence_id"]
         splits = data["split"]
+
+        # Reconcile summary metadata with the physical cache. Older summaries
+        # omitted these fields even when the NPZ carried the current schema.
+        if "cache_format_version" in data:
+            physical_format_version = int(np.asarray(data["cache_format_version"]).item())
+            sidecar_has_version = "cache_format_version" in sidecar or "format_version" in sidecar
+            if (
+                sidecar_has_version
+                and physical_format_version != audit_record["cache_format_version"]
+            ):
+                failures.append("Sidecar cache format version does not match physical NPZ metadata")
+            audit_record["cache_format_version"] = physical_format_version
+        if "normalize" in data:
+            physical_normalize = bool(np.asarray(data["normalize"]).item())
+            if "normalize" in sidecar and physical_normalize != bool(sidecar["normalize"]):
+                failures.append("Sidecar normalize flag does not match physical NPZ metadata")
+            audit_record["normalize"] = physical_normalize
+        if "normalization" in data:
+            physical_normalization = str(np.asarray(data["normalization"]).item())
+            if "normalization" in sidecar and isinstance(sidecar["normalization"], str):
+                if physical_normalization != sidecar["normalization"]:
+                    failures.append(
+                        "Sidecar normalization strategy does not match physical NPZ metadata"
+                    )
+            audit_record["normalization"] = physical_normalization
+        if not audit_record["normalize"] and audit_record["normalization"] == "none":
+            audit_record["normalizer_source_split"] = "not_applicable"
+            audit_record["normalizer_origins_verified"] = True
 
         # 6. Validate sample-axis consistency
         if not (x.shape[0] == seqs.shape[0] == splits.shape[0]):
@@ -270,11 +306,13 @@ def main() -> None:
         if x_scan.ndim >= 2:
             # Assuming channel is axis 1 if shape is (N, C, ...)
             channel_sums = np.sum(
-                np.abs(x_scan), axis=tuple(range(2, x_scan.ndim)) if x_scan.ndim > 2 else (0,)
+                np.abs(x_scan),
+                axis=tuple(range(2, x_scan.ndim)) if x_scan.ndim > 2 else (0,),
+                dtype=np.float64,
             )
             # Sum over samples as well
             if channel_sums.ndim > 1:
-                channel_sums = np.sum(channel_sums, axis=0)
+                channel_sums = np.sum(channel_sums, axis=0, dtype=np.float64)
 
             if np.any(channel_sums == 0) and total_samples > 0:
                 failures.append("Detected broken all-zero channel across all audited samples")
@@ -284,7 +322,11 @@ def main() -> None:
             source_counts = (
                 data["event_count"] if "event_count" in data else data["source_event_count"]
             )
-            sample_sums = np.sum(np.abs(x_scan).reshape(x_scan.shape[0], -1), axis=1)
+            sample_sums = np.sum(
+                np.abs(x_scan).reshape(x_scan.shape[0], -1),
+                axis=1,
+                dtype=np.float64,
+            )
 
             if mode == "sampled":
                 source_counts_scan = source_counts[indices]
@@ -312,7 +354,11 @@ def main() -> None:
                 channel_occ = np.sum(x_scan != 0, axis=0)
             audit_record["checks"]["channel_occupancy"] = channel_occ.tolist()
 
-            sample_sums = np.sum(np.abs(x_scan).reshape(x_scan.shape[0], -1), axis=1)
+            sample_sums = np.sum(
+                np.abs(x_scan).reshape(x_scan.shape[0], -1),
+                axis=1,
+                dtype=np.float64,
+            )
             all_zero_samples = int(np.sum(sample_sums == 0))
             audit_record["checks"]["encoded_all_zero_samples"] = all_zero_samples
 
