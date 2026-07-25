@@ -153,11 +153,9 @@ def _run_or_resume_finetuning(
 
 def _row(summary: dict[str, Any]) -> dict[str, Any]:
     eval_split = summary.get("evaluation_split", "test")
-    if eval_split == "calibration":
-        eval_split = "validation"
     split_metrics = summary.get(eval_split, summary.get("validation", {}))
-    regression = split_metrics["regression"]
-    garl = split_metrics["garl_ttc"]
+    regression = split_metrics.get("regression", {})
+    garl = split_metrics.get("garl_ttc", {})
     conformal = split_metrics.get("conformal_90", {"coverage": np.nan, "mean_width_s": np.nan})
     return {
         "initialization": summary["initialization"],

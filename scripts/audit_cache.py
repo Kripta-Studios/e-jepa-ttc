@@ -222,9 +222,9 @@ def main() -> None:
         # 9. Validate sequence/split disjointness
         # 10. Validate allowed split names
         allowed_splits = {"train", "validation", "calibration", "test"}
-        if args.evidence_type not in ("final_test", "real_smoke"):
+        if args.evidence_type != "final_test":
             allowed_splits.remove("test")
-        elif args.evidence_type == "final_test":
+        else:
             if not check_final_test_lock("final"):
                 failures.append("final_test requested but no valid unlock found")
 

@@ -1,6 +1,8 @@
 import json
 import subprocess
 from pathlib import Path
+import torch
+import numpy as np
 
 
 def test_onnx_export_rejects_altered_record(tmp_path):
@@ -8,11 +10,12 @@ def test_onnx_export_rejects_altered_record(tmp_path):
     record_path = tmp_path / "selection.json"
     onnx_out = tmp_path / "model.onnx"
 
-    # Create fake files so hash checks actually run
+    # Create structurally valid files so hash checks actually run
     chk_path = tmp_path / "model.pt"
-    chk_path.write_text("fake_chk")
+    torch.save({"model_state_dict": {}, "resolved_model_config": {}}, chk_path)
+    
     cache_path = tmp_path / "cache.npz"
-    cache_path.write_text("fake_cache")
+    np.savez(cache_path, x=np.zeros((1, 1), dtype=np.float32))
 
     # Write a record with deliberate hash mismatch
     record = {
@@ -50,7 +53,7 @@ def test_onnx_export_rejects_final_test_checkpoint(tmp_path):
     record_path = tmp_path / "selection.json"
     onnx_out = tmp_path / "model.onnx"
 
-    # Create fake files with correct hashes
+    # Create structurally valid files with correct hashes
     import hashlib
 
     def get_hash(p):
@@ -59,23 +62,26 @@ def test_onnx_export_rejects_final_test_checkpoint(tmp_path):
         return h.hexdigest()
 
     chk_path = tmp_path / "model.pt"
-    chk_path.write_text("fake_chk")
+    torch.save({"model_state_dict": {}, "resolved_model_config": {}}, chk_path)
+    
     cache_path = tmp_path / "cache.npz"
-    cache_path.write_text("fake_cache")
+    np.savez(cache_path, x=np.zeros((1, 1), dtype=np.float32))
 
     # Simulate final_test_opened = True
     metrics_path = tmp_path / "metrics.json"
     metrics_path.write_text(json.dumps({"final_test_opened": True}))
 
+    # Realistic fallback values for required fields
+    empty_sha256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     record = {
         "checkpoint_path": str(chk_path),
         "checkpoint_sha256": get_hash(chk_path),
         "cache_path": str(cache_path),
         "cache_sha256": get_hash(cache_path),
-        "model_config_path": "unknown",
-        "model_config_sha256": "unknown",
-        "protocol_hash": "unknown",
-        "code_commit": "unknown",
+        "model_config_path": "configs/model/tiny_cnn.yaml",
+        "model_config_sha256": empty_sha256,
+        "protocol_hash": empty_sha256,
+        "code_commit": "d88f571"
     }
 
     record_path.write_text(json.dumps(record))

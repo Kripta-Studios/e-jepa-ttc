@@ -294,6 +294,13 @@ def main() -> None:
             f"Error: Cache hash mismatch. Expected {record.get('cache_sha256')} got {actual_cache_hash}"
         )
 
+    protocol_hash = record.get("protocol_hash")
+    if not protocol_hash or protocol_hash == "unknown":
+        sys.exit("Error: Selection record missing protocol_hash.")
+    code_commit = record.get("code_commit")
+    if not code_commit or code_commit == "unknown":
+        sys.exit("Error: Selection record missing code_commit.")
+
     metrics_path = checkpoint_path.parent / "metrics.json"
     model_type = None
     if metrics_path.exists():

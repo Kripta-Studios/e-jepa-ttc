@@ -27,7 +27,7 @@ if ($LASTEXITCODE -ne 0) { throw "EvTTC matrix failed" }
 
 $baseDir = if ($Smoke) { "artifacts/smoke/current" } else { "artifacts/runs" }
 $dateStr = (Get-Date).ToString("o")
-@{ phase = "evttc_matrix"; status = "passed"; timestamp = $dateStr } | ConvertTo-Json | Out-File -FilePath "$baseDir/phase_1_evttc.json" -Encoding utf8
+@{ artifact_type = "stage_record_v3"; phase = "evttc_matrix"; status = "passed"; timestamp = $dateStr } | ConvertTo-Json | Out-File -FilePath "$baseDir/phase_1_evttc.json" -Encoding utf8
 
 Write-Output "=== PHASE 2: eAP Matrix ==="
 $eapArgs = @("-ExecutionPolicy", "Bypass", "-File", "scripts\run_eap_matrix.ps1")
@@ -35,7 +35,7 @@ if ($Smoke) { $eapArgs += "-Smoke" }
 & powershell @eapArgs
 if ($LASTEXITCODE -ne 0) { throw "eAP matrix failed" }
 
-@{ phase = "eap_matrix"; status = "passed"; timestamp = $dateStr } | ConvertTo-Json | Out-File -FilePath "$baseDir/phase_2_eap.json" -Encoding utf8
+@{ artifact_type = "stage_record_v3"; phase = "eap_matrix"; status = "passed"; timestamp = $dateStr } | ConvertTo-Json | Out-File -FilePath "$baseDir/phase_2_eap.json" -Encoding utf8
 
 Write-Output "=== PHASE 3: Checkpoint Selection ==="
 $runsDir = if ($Smoke) { "artifacts/smoke/current/evttc" } else { "artifacts/runs" }
@@ -59,7 +59,7 @@ $exportArgs = @("scripts/export_onnx.py", "--selection-record", $selectionFile, 
 Invoke-Python @exportArgs
 if ($LASTEXITCODE -ne 0) { throw "ONNX validation failed" }
 
-@{ phase = "onnx_export"; status = "passed"; timestamp = $dateStr } | ConvertTo-Json | Out-File -FilePath "$baseDir/phase_4_onnx.json" -Encoding utf8
+@{ artifact_type = "stage_record_v3"; phase = "onnx_export"; status = "passed"; timestamp = $dateStr } | ConvertTo-Json | Out-File -FilePath "$baseDir/phase_4_onnx.json" -Encoding utf8
 
 Write-Output "=== PHASE 5: Final Validation Gate ==="
 function Assert-CompletionGate {

@@ -19,8 +19,13 @@ jobs:
       - name: Install dependencies
         run: uv sync --all-groups --no-editable
         
-      - name: Run synthetic smoke test
-        run: uv run --no-sync pytest tests/unit/test_synthetic_smoke.py
+      - name: Run Master Smoke Pipeline
+        shell: pwsh
+        run: ./scripts/run_all.ps1 -Smoke
         
-      - name: Run Object-JEPA training smoke tests
-        run: uv run --no-sync pytest tests/unit/test_object_jepa_training.py
+      - name: Upload Completion Manifest
+        uses: actions/upload-artifact@v4
+        with:
+          name: completion-manifest
+          path: artifacts/smoke/current/completion_manifest.json
+          if-no-files-found: error

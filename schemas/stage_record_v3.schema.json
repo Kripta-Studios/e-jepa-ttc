@@ -1,0 +1,15 @@
+{
+  "": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "artifact_type": {
+      "type": "string",
+      "enum": [
+        "stage_record_v3"
+      ]
+    }
+  },
+  "required": [
+    "artifact_type"
+  ]
+}

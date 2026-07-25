@@ -21,3 +21,14 @@ requirements:
   allowed_split_roles: ["train", "validation", "diagnostic_test"]
   min_train_support: 25
   min_val_support: 25
+  checkpoint_selection_metric: "validation_mae_s"
+  dataset:
+    name: "evttc"
+    version: "2025-03-02"
+    manifest_hash: "expected_hash_here_if_known"
+onnx_policies:
+  strict_state_dict_loading: true
+  output_names: ["log_ttc"]
+  maximum_absolute_error_tolerance: 1e-4
+  mean_absolute_error_tolerance: 1e-5
+  real_validation_samples: true

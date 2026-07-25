@@ -60,18 +60,14 @@ def main() -> None:
                     verify_semantic_completion,
                 )
 
-                try:
-                    # In a real environment, provide the exact path. Fallback if not strictly provided:
-                    protocol_path = Path("configs/experiment/recovery_v3_protocol.yaml")
-                    schema_path = Path("configs/experiment/schemas/recovery_v3.json")
-                    if protocol_path.exists() and schema_path.exists():
-                        protocol = load_protocol(protocol_path, schema_path)
-                        if not verify_semantic_completion(
-                            metrics_path, protocol, require_metrics=True
-                        ):
-                            continue
-                except Exception:
-                    pass
+                protocol_path = Path("configs/recovery_v3_protocol.yaml")
+                schema_path = Path("schemas/recovery_v3_protocol.schema.json")
+                if protocol_path.exists() and schema_path.exists():
+                    protocol = load_protocol(protocol_path, schema_path)
+                    if not verify_semantic_completion(
+                        metrics_path, protocol, require_metrics=True
+                    ):
+                        continue
 
                 # Strict filters
                 if args.require_full_label and float(metrics.get("train_fraction", 0.0)) < 1.0:
@@ -130,18 +126,34 @@ def main() -> None:
                 h.update(b)
         return h.hexdigest()
 
-    cache_path = best_metrics.get("cache_path", "unknown")
-    cfg_path = best_metrics.get("model_config_path", "unknown")
+    cache_path = best_metrics.get("cache", best_metrics.get("cache_path"))
+    cfg_path = best_metrics.get("model", best_metrics.get("model_config_path", "unknown"))
+    cache_sha256 = best_metrics.get("cache_sha256")
+    cfg_sha256 = best_metrics.get("run_fingerprint", best_metrics.get("model_config_sha256", "unknown"))
+    protocol_hash = best_metrics.get("protocol_version", best_metrics.get("protocol_hash", "unknown"))
+    git_commit = best_metrics.get("git_commit")
+
+    for name, val in [
+        ("cache_path", cache_path), 
+        ("cfg_path", cfg_path),
+        ("cache_sha256", cache_sha256), 
+        ("cfg_sha256", cfg_sha256), 
+        ("protocol_hash", protocol_hash), 
+        ("git_commit", git_commit)
+    ]:
+        if not val or val == "unknown":
+            print(f"Error: Required provenance {name} is missing or unknown.", file=sys.stderr)
+            sys.exit(1)
 
     selection_record = {
         "checkpoint_path": best_checkpoint,
         "checkpoint_sha256": hash_file(best_checkpoint),
         "cache_path": cache_path,
-        "cache_sha256": best_metrics.get("cache_sha256", "unknown"),
+        "cache_sha256": cache_sha256,
         "model_config_path": cfg_path,
-        "model_config_sha256": best_metrics.get("model_config_sha256", "unknown"),
-        "protocol_hash": best_metrics.get("protocol_hash", "unknown"),
-        "code_commit": best_metrics.get("git_commit", "unknown"),
+        "model_config_sha256": cfg_sha256,
+        "protocol_hash": protocol_hash,
+        "code_commit": git_commit,
     }
 
     print(json.dumps(selection_record, indent=2))

@@ -1,0 +1,24 @@
+{
+  "": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "artifact_type": {
+      "type": "string",
+      "enum": [
+        "completion_manifest_v3"
+      ]
+    },
+    "smoke_completed": {
+      "type": "boolean"
+    },
+    "full_completed": {
+      "type": "boolean"
+    },
+    "failures": {
+      "type": "array"
+    }
+  },
+  "required": [
+    "artifact_type"
+  ]
+}

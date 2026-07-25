@@ -35,11 +35,7 @@ def main():
 
     logging.info("Final test lock successfully validated.")
     logging.info(f"Evaluating checkpoint {args.checkpoint} on final test splits...")
-    # NOTE: Actual evaluation logic would go here.
-    # We exit zero for now as this script is a stub for the gate mechanism.
-
-    logging.info("Final test evaluation completed successfully.")
-    sys.exit(0)
+    sys.exit("FINAL_TEST_EVALUATOR_NOT_IMPLEMENTED")
 
 
 if __name__ == "__main__":

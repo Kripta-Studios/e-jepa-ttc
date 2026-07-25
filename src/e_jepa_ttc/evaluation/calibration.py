@@ -15,6 +15,8 @@ class ConformalIntervalCalibrator:
     coverage: float
     scale: float
     calibration_count: int
+    minimum_support: int
+    support_status: str
 
     def interval(
         self,
@@ -55,16 +57,16 @@ def fit_conformal_interval(
     valid &= uncertainty > 0
     scores = np.abs(target[valid] - prediction[valid]) / np.maximum(uncertainty[valid], 1e-6)
 
-    import logging
+    is_supported = scores.size >= min_support
+    support_status = "supported" if is_supported else "unsupported"
 
-    if scores.size < min_support:
-        logging.warning(
-            f"Insufficient support for conformal calibration ({scores.size} < {min_support}). Falling back to scale=1.0."
-        )
+    if not is_supported:
         return ConformalIntervalCalibrator(
             coverage=coverage,
             scale=1.0,
             calibration_count=int(scores.size),
+            minimum_support=min_support,
+            support_status=support_status,
         )
 
     rank = min(scores.size, math.ceil((scores.size + 1) * coverage))
@@ -73,6 +75,8 @@ def fit_conformal_interval(
         coverage=coverage,
         scale=scale,
         calibration_count=int(scores.size),
+        minimum_support=min_support,
+        support_status=support_status,
     )
 
 
@@ -81,6 +85,9 @@ class TemperatureScaler:
     """Scalar post-hoc logit temperature selected on calibration data."""
 
     temperature: float
+    calibration_count: int
+    minimum_support: int
+    support_status: str
 
     def probabilities(self, logits: np.ndarray) -> np.ndarray:
         """Apply temperature and return sigmoid probabilities."""
@@ -112,13 +119,16 @@ def fit_temperature_scaler(
     values = values[valid]
     target = target[valid]
 
-    import logging
+    is_supported = values.size >= min_support
+    support_status = "supported" if is_supported else "unsupported"
 
-    if values.size < min_support:
-        logging.warning(
-            f"Insufficient support for temperature scaling ({values.size} < {min_support}). Falling back to T=1.0."
+    if not is_supported:
+        return TemperatureScaler(
+            temperature=1.0,
+            calibration_count=int(values.size),
+            minimum_support=min_support,
+            support_status=support_status,
         )
-        return TemperatureScaler(temperature=1.0)
 
     if np.any((target < 0) | (target > 1)):
         msg = "Temperature scaling requires finite binary labels."
@@ -129,7 +139,12 @@ def fit_temperature_scaler(
         scaled = values / temperature
         losses.append(float(np.mean(np.logaddexp(0.0, scaled) - target * scaled)))
     best = int(np.argmin(losses))
-    return TemperatureScaler(temperature=float(temperatures[best]))
+    return TemperatureScaler(
+        temperature=float(temperatures[best]),
+        calibration_count=int(values.size),
+        minimum_support=min_support,
+        support_status=support_status,
+    )
 
 
 def interval_metrics(

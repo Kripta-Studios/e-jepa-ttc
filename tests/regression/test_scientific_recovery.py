@@ -122,17 +122,17 @@ def test_object_ttc_returns_class_support() -> None:
     target = np.array([1.0, 0.0])
     prob = np.array([0.9, 0.1])
     metrics = binary_risk_metrics(target, prob)
-    assert "class_support" in metrics
-    assert metrics["class_support"]["positive"] == 1
-    assert metrics["class_support"]["negative"] == 1
+    assert "positive_count" in metrics
+    assert "negative_count" in metrics
+    assert metrics["positive_count"] == 1
 
 
 def test_object_ttc_auroc_handles_zero_support() -> None:
     target = np.array([0.0, 0.0])
     prob = np.array([0.1, 0.2])
     metrics = binary_risk_metrics(target, prob)
-    assert "class_support" in metrics
-    assert metrics["class_support"]["positive"] == 0
+    assert "positive_count" in metrics
+    assert metrics["positive_count"] == 0
 
 
 def test_verify_detects_missing_file(tmp_path) -> None:

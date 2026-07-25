@@ -902,13 +902,15 @@ def fine_tune_object_ttc(
     }
 
     if "calibration" in report_splits and conformal is not None:
-        summary["calibration"] = {
+        calibration_metrics = _prediction_metrics(calibration_predictions)
+        calibration_metrics.update({
             "split": "calibration",
             "count": int(calibration_predictions["ttc_true"].shape[0]),
             "conformal_coverage": conformal.coverage,
             "conformal_scale": conformal.scale,
             "temperatures": [temperature.temperature for temperature in temperatures],
-        }
+        })
+        summary["calibration"] = calibration_metrics
 
     if "test" in report_splits:
         test_predictions = _collect_predictions(

@@ -273,6 +273,8 @@ def main() -> None:
                             continue
 
                         provenance["model_manifest_checkpoint_hash"] = data.get("checkpoint_sha256")
+                        provenance["model_manifest_protocol_hash"] = data.get("protocol_hash")
+                        provenance["model_manifest_git_commit"] = data.get("git_commit")
 
                     # ONNX Selection JSON validation
                     if req.name == "onnx_selection.json":
@@ -283,6 +285,24 @@ def main() -> None:
                             all_exist = False
                             continue
                         provenance["selection_checkpoint_hash"] = data.get("checkpoint_sha256")
+                        provenance["selection_protocol_hash"] = data.get("protocol_hash")
+                        provenance["selection_git_commit"] = data.get("code_commit")
+
+                    # Track data for downstream vs scratch parity
+                    if req.name == "summary.json":
+                        run_type = "scratch" if "scratch" in req.parent.name else "jepa" if "jepa" in req.parent.name or "ssl" in req.parent.name else "unknown"
+                        if run_type != "unknown":
+                            resolved = data.get("resolved_model_config", {})
+                            arch_fingerprint = {k: v for k, v in resolved.items() if k not in ("pretrained_encoder",)}
+                            train_hash = data.get("splits", {}).get("train", {}).get("manifest_sha256")
+                            val_hash = data.get("splits", {}).get("validation", {}).get("manifest_sha256")
+                            
+                            key = f"{run_type}_{req.parent.name}"
+                            provenance[key] = {
+                                "arch": arch_fingerprint,
+                                "train_hash": train_hash,
+                                "val_hash": val_hash
+                            }
 
                     # ONNX equivalence validation
                     if req.name == "equivalence.json":
@@ -397,12 +417,50 @@ def main() -> None:
             manifest["failed_stages"].append(
                 f"Cross-artifact provenance mismatch: Selection ({provenance.get('selection_checkpoint_hash')}) vs ONNX Export ({provenance.get('model_manifest_checkpoint_hash')})"
             )
+        elif (
+            provenance.get("model_manifest_protocol_hash") 
+            and provenance.get("selection_protocol_hash")
+            and provenance.get("model_manifest_protocol_hash") != provenance.get("selection_protocol_hash")
+        ):
+            manifest["failed_stages"].append("Protocol hash mismatch between Selection and ONNX manifest")
+        elif (
+            provenance.get("model_manifest_git_commit") 
+            and provenance.get("selection_git_commit")
+            and provenance.get("model_manifest_git_commit") != provenance.get("selection_git_commit")
+        ):
+            manifest["failed_stages"].append("Git commit mismatch between Selection and ONNX manifest")
         else:
-            manifest["all_required_artifacts_exist"] = True
-            manifest["status"] = "passed"
-            manifest["exit_code"] = 0
-            manifest["completed_stages"] = [str(p) for p in required_files]
-            manifest["failed_stages"] = []
+            # Check parity if we collected them
+            parity_ok = True
+            if "jepa_jepa_navigation_enabled" in provenance and "scratch_scratch_navigation_enabled" in provenance:
+                j = provenance["jepa_jepa_navigation_enabled"]
+                s = provenance["scratch_scratch_navigation_enabled"]
+                if j["arch"] != s["arch"]:
+                    manifest["failed_stages"].append("Architecture parity mismatch between JEPA and Scratch")
+                    parity_ok = False
+                if j["train_hash"] != s["train_hash"] or j["val_hash"] != s["val_hash"]:
+                    manifest["failed_stages"].append("Data hash mismatch between JEPA and Scratch splits")
+                    parity_ok = False
+            
+            if parity_ok:
+                manifest["all_required_artifacts_exist"] = True
+                manifest["status"] = "passed"
+                manifest["exit_code"] = 0
+                manifest["completed_stages"] = [str(p) for p in required_files]
+                manifest["failed_stages"] = []
+
+    # Final Schema check for completion manifest itself
+    manifest["artifact_type"] = "completion_manifest_v3"
+    manifest["smoke_completed"] = (manifest["status"] == "passed")
+    manifest["full_completed"] = False
+    manifest["failures"] = manifest["failed_stages"]
+
+    try:
+        jsonschema.validate(instance=manifest, schema=_load_schema("completion_manifest_v3.schema.json"))
+    except Exception as e:
+        manifest["status"] = "failed"
+        manifest["exit_code"] = 1
+        manifest["failed_stages"].append(f"Internal error: Verification manifest failed schema validation: {e}")
 
     with open(smoke_dir / "completion_manifest.json", "w", encoding="utf-8") as f:
         json.dump(manifest, f, indent=2)

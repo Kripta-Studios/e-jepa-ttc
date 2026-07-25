@@ -24,8 +24,8 @@ def test_garl_metrics_are_zero_for_exact_predictions() -> None:
 
 
 def test_risk_metrics_rank_perfect_predictions() -> None:
-    labels = np.asarray([0, 0, 1, 1])
-    probabilities = np.asarray([0.1, 0.2, 0.8, 0.9])
+    labels = np.tile(np.asarray([0, 0, 1, 1]), 15)
+    probabilities = np.tile(np.asarray([0.1, 0.2, 0.8, 0.9]), 15)
     metrics = binary_risk_metrics(labels, probabilities)
 
     assert metrics["auroc"] == 1.0

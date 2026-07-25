@@ -37,9 +37,7 @@ if (-not (Test-Path $cacheManifest)) {
             "--sequence-split", "DGqicHUGWb=train",
             "--sequence-split", "OBneIVg4Cw=train",
             "--sequence-split", "mHGFBekt7X=validation",
-            "--sequence-split", "pBqGOb2vYq=calibration",
-            "--sequence-split", "qGsgzl4Q8B=test",
-            "--sequence-split", "qoohcdtLDH=test"
+            "--sequence-split", "pBqGOb2vYq=calibration"
         )
     }
     Invoke-Python @argsArray `
@@ -58,7 +56,7 @@ if (-not (Test-Path $cacheManifest)) {
 
 $baseDir = if ($Smoke) { "artifacts/smoke/current" } else { "artifacts/runs" }
 $dateStr = (Get-Date).ToString("o")
-@{ phase = "eap_cache"; status = "passed"; timestamp = $dateStr } | ConvertTo-Json | Out-File -FilePath "$baseDir/phase_eap_cache.json" -Encoding utf8
+@{ artifact_type = "stage_record_v3"; phase = "eap_cache"; status = "passed"; timestamp = $dateStr } | ConvertTo-Json | Out-File -FilePath "$baseDir/phase_eap_cache.json" -Encoding utf8
 
 $matrixOut = if ($Smoke) { "artifacts/smoke/current/eap/matrix" } else { "artifacts/runs/eap_object_jepa_matrix" }
 New-Item -ItemType Directory -Force -Path $matrixOut | Out-Null
@@ -94,6 +92,6 @@ $cmdArgs += "calibration"
 Invoke-Python @cmdArgs
 if ($LASTEXITCODE -ne 0) { throw "eAP matrix execution failed" }
 
-@{ phase = "eap_matrix_inner"; status = "passed"; timestamp = $dateStr } | ConvertTo-Json | Out-File -FilePath "$baseDir/phase_eap_matrix_inner.json" -Encoding utf8
+@{ artifact_type = "stage_record_v3"; phase = "eap_matrix_inner"; status = "passed"; timestamp = $dateStr } | ConvertTo-Json | Out-File -FilePath "$baseDir/phase_eap_matrix_inner.json" -Encoding utf8
 
 Write-Output "eAP matrix and ablations completed successfully!"

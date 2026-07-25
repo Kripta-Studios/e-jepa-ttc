@@ -83,8 +83,14 @@ def garl_ttc_metrics(
     }
 
 
-def binary_risk_metrics(labels: np.ndarray, probabilities: np.ndarray) -> dict[str, float]:
-    """Compute threshold-free, thresholded and calibration metrics."""
+def binary_risk_metrics(
+    labels: np.ndarray,
+    probabilities: np.ndarray,
+    *,
+    min_positive_support: int = 25,
+    min_negative_support: int = 25,
+) -> dict[str, object]:
+    """Compute threshold-free, thresholded and calibration metrics with strict support limits."""
 
     target = np.asarray(labels, dtype=np.int64).reshape(-1)
     probability = np.asarray(probabilities, dtype=np.float64).reshape(-1)
@@ -94,24 +100,60 @@ def binary_risk_metrics(labels: np.ndarray, probabilities: np.ndarray) -> dict[s
     valid = np.isfinite(probability) & ((target == 0) | (target == 1))
     target = target[valid]
     probability = np.clip(probability[valid], 0.0, 1.0)
-    if target.size == 0:
-        msg = "No valid samples for risk metrics."
-        raise ValueError(msg)
-    predicted = probability >= 0.5
+    
     positive = target == 1
     negative = ~positive
+    pos_count = int(np.count_nonzero(positive))
+    neg_count = int(np.count_nonzero(negative))
+    
+    is_supported = (pos_count >= min_positive_support) and (neg_count >= min_negative_support)
+    support_status = "supported" if is_supported else "unsupported"
+
+    base_payload = {
+        "positive_count": pos_count,
+        "negative_count": neg_count,
+        "minimum_positive_support": min_positive_support,
+        "minimum_negative_support": min_negative_support,
+        "support_status": support_status,
+        "calibration_fitted": False,
+        "reportable_metrics": [],
+    }
+
+    if not is_supported:
+        # Fill with NaNs for unsupported metrics
+        return {
+            **base_payload,
+            "auroc": float("nan"),
+            "auprc": float("nan"),
+            "precision_at_0_5": float("nan"),
+            "recall_at_0_5": float("nan"),
+            "f1_at_0_5": float("nan"),
+            "false_negative_rate_at_0_5": float("nan"),
+            "brier": float("nan"),
+            "ece_10": float("nan"),
+            "nll": float("nan"),
+        }
+
+    predicted = probability >= 0.5
     true_positive = int(np.count_nonzero(predicted & positive))
     false_positive = int(np.count_nonzero(predicted & negative))
     false_negative = int(np.count_nonzero((~predicted) & positive))
     precision = true_positive / max(true_positive + false_positive, 1)
     recall = true_positive / max(true_positive + false_negative, 1)
+
     return {
+        **base_payload,
+        "calibration_fitted": True,
+        "reportable_metrics": [
+            "auroc", "auprc", "precision_at_0_5", "recall_at_0_5", 
+            "f1_at_0_5", "false_negative_rate_at_0_5", "brier", "ece_10", "nll"
+        ],
         "auroc": _binary_auroc(target, probability),
         "auprc": _average_precision(target, probability),
         "precision_at_0_5": float(precision),
         "recall_at_0_5": float(recall),
         "f1_at_0_5": float(2.0 * precision * recall / max(precision + recall, 1e-12)),
-        "false_negative_rate_at_0_5": float(false_negative / max(np.count_nonzero(positive), 1)),
+        "false_negative_rate_at_0_5": float(false_negative / max(pos_count, 1)),
         "brier": float(np.mean((probability - target) ** 2)),
         "ece_10": _expected_calibration_error(target, probability, bins=10),
         "nll": float(
@@ -120,10 +162,6 @@ def binary_risk_metrics(labels: np.ndarray, probabilities: np.ndarray) -> dict[s
                 + (1 - target) * np.log(np.maximum(1.0 - probability, 1e-12))
             )
         ),
-        "class_support": {
-            "positive": int(np.count_nonzero(positive)),
-            "negative": int(np.count_nonzero(negative)),
-        },
     }
 
 
@@ -133,6 +171,8 @@ def object_ttc_metrics(
     risk_probabilities: np.ndarray | None = None,
     *,
     risk_thresholds_s: tuple[float, ...] = (0.5, 1.0, 2.0, 4.0),
+    min_positive_support: int = 25,
+    min_negative_support: int = 25,
 ) -> dict[str, object]:
     """Combine conventional regression, GarlTTC and per-threshold risk metrics."""
 
@@ -147,13 +187,19 @@ def object_ttc_metrics(
         if probability.shape != (target.shape[0], len(risk_thresholds_s)):
             msg = "risk_probabilities has an incompatible shape."
             raise ValueError(msg)
-        payload["risk"] = {
-            str(threshold): binary_risk_metrics(
+        
+        risk_payload = {}
+        for index, threshold in enumerate(risk_thresholds_s):
+            threshold_metrics = binary_risk_metrics(
                 ((target > 0.0) & (target <= threshold)).astype(np.int64),
                 probability[:, index],
+                min_positive_support=min_positive_support,
+                min_negative_support=min_negative_support,
             )
-            for index, threshold in enumerate(risk_thresholds_s)
-        }
+            # Inject the threshold directly to match protocol
+            threshold_metrics["threshold_s"] = threshold
+            risk_payload[str(threshold)] = threshold_metrics
+        payload["risk"] = risk_payload
     return payload
 
 
