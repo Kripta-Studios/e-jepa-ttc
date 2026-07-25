@@ -22,7 +22,7 @@ Updated: 2026-07-25.
 - QA after hardening: 191 tests pass; Ruff passes; Pyright/mypy is not installed.
 - Scientific hardening was committed and pushed as `416b498` on
   `scientific-recovery-v3-hardening`.
-- Physics-constrained FlowMimic implementation is complete; Ruff and 197 tests
+- Physics-constrained FlowMimic implementation is complete; Ruff and 198 tests
   pass. The train+validation-only cache v2 rebuild and exhaustive audit pass;
   E0/E1/E2 validation runs are pending.
 - The first train+validation cache build was rejected because a dormant
@@ -33,6 +33,10 @@ Updated: 2026-07-25.
   `22d3ef27018925aae62825f0a7f51d1420ae93cacf59aeb18b04758f5a35e88a`.
 - Exhaustive cache audit: `passed` at commit `80ff992`, artifact SHA-256
   `02f3f633b13f413c4bf6b49176c3e70d373af52d63ac1602e119402af3a819c2`.
+- First FlowMimic GPU smoke S0 was rejected before downstream evaluation: zero
+  synthetic navigation combined with a near-constant validity channel caused
+  AMP overflow and NaN synthetic loss. Navigation is now neutralized from the
+  train-only mean and non-finite JEPA loss aborts explicitly.
 
 The complete audit, SOTA comparison, and MVA/FlowMimic architecture proposal are in
 `docs/scientific_audit_2026-07-25.md`.

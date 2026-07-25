@@ -803,6 +803,31 @@ def _without_future_navigation(
     return target
 
 
+def _neutralize_synthetic_navigation(
+    x: torch.Tensor,
+    *,
+    bins: int,
+    metadata_channels: bool,
+    navigation_feature_count: int,
+    action_feature_mean: torch.Tensor | None,
+) -> None:
+    """Set synthetic navigation to the train mean (zero after normalization)."""
+
+    if navigation_feature_count <= 0:
+        return
+    if action_feature_mean is None or action_feature_mean.numel() < navigation_feature_count:
+        raise ValueError("Train-only action means are required to neutralize navigation.")
+    navigation_start = bins * 2 + (2 if metadata_channels else 0)
+    navigation_end = navigation_start + navigation_feature_count
+    if x.ndim != 4 or x.shape[1] < navigation_end:
+        raise ValueError("Synthetic tensor does not contain the declared navigation channels.")
+    navigation_mean = action_feature_mean[-navigation_feature_count:].to(
+        device=x.device,
+        dtype=x.dtype,
+    )
+    x[:, navigation_start:navigation_end] = navigation_mean.view(1, -1, 1, 1)
+
+
 def _objective_name(
     *,
     use_temporal: bool,
@@ -1292,6 +1317,13 @@ def _run_epoch(
                     minimum_ttc_s=flowmimic_minimum_ttc_s,
                     maximum_ttc_s=flowmimic_maximum_ttc_s,
                 )
+                _neutralize_synthetic_navigation(
+                    synthetic.context,
+                    bins=bins,
+                    metadata_channels=metadata_channels,
+                    navigation_feature_count=navigation_feature_count,
+                    action_feature_mean=action_feature_mean,
+                )
                 if flowmimic_alignment_weight > 0.0:
                     synthetic_mask = torch.ones(
                         int(x.shape[0]),
@@ -1351,6 +1383,13 @@ def _run_epoch(
                     "flowmimic_inverse_ttc_loss": float(flowmimic_inverse_ttc_loss.detach().cpu()),
                     "flowmimic_inverse_ttc_weight": float(flowmimic_inverse_ttc_weight),
                 }
+            )
+        if not bool(torch.isfinite(loss)):
+            nonfinite_metrics = {
+                key: value for key, value in metrics.items() if not math.isfinite(value)
+            }
+            raise FloatingPointError(
+                f"JEPA produced a non-finite loss; non-finite metrics={nonfinite_metrics}."
             )
         if optimizer is not None:
             optimized_parameters = [*encoder.parameters(), *predictor.parameters()]
@@ -1730,6 +1769,9 @@ def pretrain_jepa(
         "flowmimic_context_ms": flowmimic_context_ms if use_flowmimic else None,
         "flowmimic_uses_analytic_synthetic_ttc": flowmimic_inverse_ttc_weight > 0.0,
         "flowmimic_uses_real_ttc_labels": False,
+        "flowmimic_navigation_conditioning": (
+            "train_mean_neutral_train_only" if use_flowmimic and use_action_conditioning else None
+        ),
     }
 
     with history_path.open("w", encoding="utf-8") as history_file:
@@ -2013,6 +2055,9 @@ def pretrain_jepa(
             "flowmimic_rendered_before_event_simulation": use_flowmimic,
             "flowmimic_uses_analytic_synthetic_ttc": flowmimic_inverse_ttc_weight > 0.0,
             "flowmimic_uses_real_ttc_labels": False,
+            "flowmimic_navigation_uses_train_mean_only": bool(
+                use_flowmimic and use_action_conditioning
+            ),
             "targets_cross_sequence_boundary": False,
             "targets_cross_split_boundary": False,
             "target_timestamps_are_after_context": use_temporal,

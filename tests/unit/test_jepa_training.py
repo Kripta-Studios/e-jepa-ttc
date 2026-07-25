@@ -7,6 +7,7 @@ from e_jepa_ttc.data.evttc import NAVIGATION_FEATURE_NAMES
 from e_jepa_ttc.data.ml_cache import remap_cache_splits
 from e_jepa_ttc.training.jepa import (
     _build_temporal_pairs,
+    _neutralize_synthetic_navigation,
     _tubelet_masked_context,
     _without_future_navigation,
     pretrain_jepa,
@@ -501,6 +502,26 @@ def test_tubelet_mask_preserves_auxiliary_channels() -> None:
 
     assert torch.any(masked[:, :10] == 0.0)
     assert torch.all(masked[:, 10:] == 3.0)
+
+
+def test_flowmimic_navigation_is_neutral_after_train_normalization() -> None:
+    synthetic = torch.zeros(2, 21, 8, 8)
+    action_mean = torch.tensor([0.0] * 6 + [8.0, -4.0, 2.0, -0.1, 0.04, -0.2, 0.01, 0.02, 1.0])
+
+    _neutralize_synthetic_navigation(
+        synthetic,
+        bins=5,
+        metadata_channels=True,
+        navigation_feature_count=9,
+        action_feature_mean=action_mean,
+    )
+
+    expected = action_mean[-9:].view(1, 9, 1, 1).expand(2, -1, 8, 8)
+    torch.testing.assert_close(synthetic[:, 12:21], expected)
+    normalized = (synthetic[:, 12:21].mean(dim=(2, 3)) - action_mean[-9:]) / torch.tensor(
+        [4.0, 2.0, 7.0, 0.2, 0.9, 1.4, 0.4, 0.4, 1e-6]
+    )
+    assert float(normalized.abs().max()) < 1e-6
 
 
 def test_event_tubelet_jepa_tubelet_mask_smoke(tmp_path: Path) -> None:

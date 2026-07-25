@@ -114,7 +114,8 @@ latency. SSL loss alone cannot establish TTC improvement.
 - Simulator unit tests: passing.
 - FlowMimic/JEPA integration smoke: passing.
 - Existing JEPA/prober focused suite: 21 tests passing.
-- Full repository QA: Ruff passing and 197 tests passing.
+- Full repository QA after the numerical guard: Ruff passing and 198 tests
+  passing, including navigation neutrality.
 - Cache v2 train+validation rebuild and exhaustive audit: passed.
 - E0/E1/E2 validation results: pending; no result should be filled in manually.
 
@@ -194,4 +195,25 @@ Audit facts:
   `02f3f633b13f413c4bf6b49176c3e70d373af52d63ac1602e119402af3a819c2`.
 
 This cache is eligible for E0/E1/E2 validation-only training. It is not itself
+an accuracy result.
+
+### Rejected GPU smoke S0
+
+E2 was executed for one pretraining epoch with seed 7, batch 12, event-tubelet
+encoder, transformer predictor, tubelet mask, alignment weight 0.25 and
+inverse-TTC weight 0.10. Runtime was `118.977 s`; CUDA did not run out of
+memory, but aggregate synthetic alignment and total train loss were `NaN`.
+
+This run is rejected and no downstream model was trained. Root cause:
+
+- real train navigation has `ego_navigation_valid=1` with near-zero standard
+  deviation;
+- the synthetic generator padded navigation with zero;
+- train normalization mapped synthetic validity to approximately `-1e6`;
+- AMP overflow propagated into the synthetic predictor.
+
+Correction: set synthetic navigation channels to the train-only navigation
+mean, which maps to neutral zero after normalization. Add a finite-loss guard
+that raises `FloatingPointError` instead of writing a false successful run, and
+test navigation neutrality explicitly. S0 is infrastructure evidence only, not
 an accuracy result.
