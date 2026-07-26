@@ -18,6 +18,7 @@ CORRUPTION_KINDS = (
     "polarity_drop_positive",
     "polarity_drop_negative",
     "temporal_window_fraction",
+    "temporal_window_scale",
     "spatial_crop_fraction",
 )
 
@@ -51,6 +52,8 @@ class EventCorruptionSpec:
         if self.kind in positive_fraction and self.severity <= 0:
             msg = f"{self.kind} severity must be in (0, 1]."
             raise ValueError(msg)
+        if self.kind == "temporal_window_scale" and self.severity <= 0:
+            raise ValueError("temporal_window_scale severity must be positive.")
 
 
 def corrupt_event_batch(
@@ -117,6 +120,15 @@ def corrupt_event_batch(
         keep = polarity > 0
         x, y, timestamps, polarity = x[keep], y[keep], timestamps[keep], polarity[keep]
     elif spec.kind == "temporal_window_fraction":
+        duration = max(1, int(round(events.duration_us * spec.severity)))
+        start_us = end_us - duration
+        keep = timestamps >= start_us
+        x, y, timestamps, polarity = x[keep], y[keep], timestamps[keep], polarity[keep]
+    elif spec.kind == "temporal_window_scale":
+        if spec.severity > 1.0:
+            raise ValueError(
+                "temporal_window_scale above one requires rereading a longer source window."
+            )
         duration = max(1, int(round(events.duration_us * spec.severity)))
         start_us = end_us - duration
         keep = timestamps >= start_us

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import time
+import zlib
 from pathlib import Path
 from typing import Any
 
@@ -17,6 +18,7 @@ from e_jepa_ttc.data.evttc import (
     read_navigation_window_features,
 )
 from e_jepa_ttc.data.types import EventBatch
+from e_jepa_ttc.representations.corruptions import EventCorruptionSpec, corrupt_event_batch
 from e_jepa_ttc.representations.voxel_grid import encode_voxel_grid
 from e_jepa_ttc.utils.io import ensure_parent, read_structured, write_structured
 
@@ -136,6 +138,8 @@ def build_voxel_cache(
     navigation_channels: bool = False,
     limit: int | None = None,
     exclude_splits: list[str] | None = None,
+    include_splits: list[str] | None = None,
+    corruption: EventCorruptionSpec | None = None,
 ) -> dict[str, Any]:
     """Build an `.npz` cache with voxel tensors and labels."""
 
@@ -154,12 +158,26 @@ def build_voxel_cache(
         for sequence_id in sequence_ids
     }
 
+    corruption_spec = corruption or EventCorruptionSpec()
     windows = _load_windows(index_path)
     input_window_count = len(windows)
     excluded_split_names = sorted(set(exclude_splits or []))
-    unknown_exclusions = set(excluded_split_names) - ({*split_data, "unassigned"})
-    if unknown_exclusions:
-        raise ValueError(f"Unknown excluded splits: {sorted(unknown_exclusions)}.")
+    included_split_names = sorted(set(include_splits or []))
+    known_split_names = {*split_data, "unassigned"}
+    unknown_exclusions = set(excluded_split_names) - known_split_names
+    unknown_inclusions = set(included_split_names) - known_split_names
+    if unknown_exclusions or unknown_inclusions:
+        unknown = sorted(unknown_exclusions | unknown_inclusions)
+        raise ValueError(f"Unknown included/excluded splits: {unknown}.")
+    if set(excluded_split_names) & set(included_split_names):
+        raise ValueError("The same split cannot be both included and excluded.")
+    if included_split_names:
+        included = set(included_split_names)
+        windows = [
+            window
+            for window in windows
+            if split_for_sequence.get(str(window["sequence_id"]), "unassigned") in included
+        ]
     if excluded_split_names:
         excluded = set(excluded_split_names)
         windows = [
@@ -184,6 +202,9 @@ def build_voxel_cache(
     sequence_ids: list[str] = []
     splits: list[str] = []
     event_counts = np.empty((len(windows),), dtype=np.int32)
+    source_event_counts = np.empty((len(windows),), dtype=np.int32)
+    source_context_start_us = np.empty((len(windows),), dtype=np.int64)
+    source_context_end_us = np.empty((len(windows),), dtype=np.int64)
     collapsed_count = 0
 
     start_time = time.perf_counter()
@@ -194,12 +215,32 @@ def build_voxel_cache(
         if event_hdf5 is None:
             msg = f"Sequence {sequence_id} has no event_hdf5."
             raise ValueError(msg)
+        requested_start_us = int(window["context_start_us"])
+        requested_end_us = int(window["context_end_us"])
+        read_start_us = requested_start_us
+        if corruption_spec.kind == "temporal_window_scale":
+            source_duration_us = requested_end_us - requested_start_us
+            scaled_duration_us = max(
+                1,
+                int(round(source_duration_us * corruption_spec.severity)),
+            )
+            read_start_us = max(0, requested_end_us - scaled_duration_us)
         events = read_events_window(
             event_hdf5,
-            t_start_us=int(window["context_start_us"]),
-            t_end_us=int(window["context_end_us"]),
+            t_start_us=read_start_us,
+            t_end_us=requested_end_us,
             sequence_id=sequence_id,
         )
+        source_event_counts[idx] = events.num_events
+        source_context_start_us[idx] = requested_start_us
+        source_context_end_us[idx] = requested_end_us
+        if corruption_spec.kind not in {"none", "temporal_window_scale"}:
+            identity = f"{sequence_id}:{window['timestamp_us']}".encode()
+            events = corrupt_event_batch(
+                events,
+                corruption_spec,
+                seed_offset=zlib.crc32(identity),
+            )
         small = _downsample_events(events, width=width, height=height)
         voxel = encode_voxel_grid(small, bins=bins, normalize=normalize)
         if metadata_channels:
@@ -207,8 +248,8 @@ def build_voxel_cache(
         if navigation_channels:
             navigation = read_navigation_window_features(
                 event_hdf5,
-                t_start_us=int(window["context_start_us"]),
-                t_end_us=int(window["context_end_us"]),
+                t_start_us=events.t_start_us,
+                t_end_us=events.t_end_us,
             )
             voxel = np.concatenate(
                 [voxel, _constant_channels(navigation, width=width, height=height)]
@@ -219,8 +260,8 @@ def build_voxel_cache(
         x_out[idx] = voxel.astype(np.float16)
         y_ttc[idx] = float(window["ttc_seconds"])
         timestamps[idx] = int(window["timestamp_us"])
-        context_start_us[idx] = int(window["context_start_us"])
-        context_end_us[idx] = int(window["context_end_us"])
+        context_start_us[idx] = events.t_start_us
+        context_end_us[idx] = events.t_end_us
         sequence_ids.append(sequence_id)
         splits.append(split_for_sequence.get(sequence_id, "unassigned"))
         event_counts[idx] = events.num_events
@@ -233,9 +274,12 @@ def build_voxel_cache(
         timestamp_us=timestamps,
         context_start_us=context_start_us,
         context_end_us=context_end_us,
+        source_context_start_us=source_context_start_us,
+        source_context_end_us=source_context_end_us,
         sequence_id=np.array(sequence_ids),
         split=np.array(splits),
         event_count=event_counts,
+        source_event_count=source_event_counts,
         width=np.array(width, dtype=np.int32),
         height=np.array(height, dtype=np.int32),
         bins=np.array(bins, dtype=np.int32),
@@ -247,6 +291,10 @@ def build_voxel_cache(
         cache_format_version=np.array(2, dtype=np.int64),
         normalization=np.array("non_centered_occupied_p95_scale" if normalize else "none"),
         excluded_splits=np.array(excluded_split_names),
+        included_splits=np.array(included_split_names),
+        corruption_kind=np.array(corruption_spec.kind),
+        corruption_severity=np.array(corruption_spec.severity, dtype=np.float64),
+        corruption_seed=np.array(corruption_spec.seed, dtype=np.int64),
         source_manifest_sha256=np.array(_hash_file(manifest_path)),
         split_manifest_sha256=np.array(_hash_file(split_path)),
         preprocessing_config_sha256=np.array(
@@ -259,6 +307,12 @@ def build_voxel_cache(
                     "metadata_channels": metadata_channels,
                     "navigation_channels": navigation_channels,
                     "excluded_splits": excluded_split_names,
+                    "included_splits": included_split_names,
+                    "corruption": {
+                        "kind": corruption_spec.kind,
+                        "severity": corruption_spec.severity,
+                        "seed": corruption_spec.seed,
+                    },
                 }
             )
         ),
@@ -267,7 +321,15 @@ def build_voxel_cache(
     cache_sha256 = _hash_file(output)
 
     validation_sidecar = {
-        "status": "passed" if collapsed_count == 0 else "failed",
+        "status": (
+            "passed"
+            if collapsed_count == 0
+            else (
+                "passed_with_expected_corruption_empty_samples"
+                if corruption_spec.kind != "none"
+                else "failed"
+            )
+        ),
         "cache_format_version": 2,
         "normalize": normalize,
         "normalization": "non_centered_occupied_p95_scale" if normalize else "none",
@@ -276,6 +338,12 @@ def build_voxel_cache(
         "nonempty_samples_collapsed_to_zero": collapsed_count,
         "cache_sha256": cache_sha256,
         "excluded_splits": excluded_split_names,
+        "included_splits": included_split_names,
+        "corruption": {
+            "kind": corruption_spec.kind,
+            "severity": corruption_spec.severity,
+            "seed": corruption_spec.seed,
+        },
     }
 
     # Validation sidecar output to output's parent dir (usually artifacts/features)
@@ -289,6 +357,7 @@ def build_voxel_cache(
         "window_count": int(len(windows)),
         "input_window_count": int(input_window_count),
         "excluded_splits": excluded_split_names,
+        "included_splits": included_split_names,
         "shape": list(x_out.shape),
         "dtype": str(x_out.dtype),
         "width": width,
@@ -300,8 +369,16 @@ def build_voxel_cache(
         "navigation_channels": navigation_channels,
         "navigation_feature_names": list(NAVIGATION_FEATURE_NAMES),
         "future_window_semantics": "disjoint_window_start_after_context_plus_horizon",
+        "corruption": {
+            "kind": corruption_spec.kind,
+            "severity": corruption_spec.severity,
+            "seed": corruption_spec.seed,
+        },
         "seconds": time.perf_counter() - start_time,
         "mean_events_per_window": float(np.mean(event_counts)) if len(event_counts) else 0.0,
+        "mean_source_events_per_window": (
+            float(np.mean(source_event_counts)) if len(source_event_counts) else 0.0
+        ),
         "cache_sha256": cache_sha256,
     }
     write_structured(output.with_suffix(".summary.json"), summary)

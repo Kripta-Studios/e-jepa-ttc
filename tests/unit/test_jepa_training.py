@@ -320,8 +320,23 @@ def test_evaluate_supervised_checkpoint_without_retraining(tmp_path: Path) -> No
     assert eval_summary["checkpoint_epoch"] == train_summary["best_epoch"]
     assert sorted(eval_summary["splits"]) == ["test"]
     assert eval_summary["splits"]["test"]["count"] == 3
+    assert eval_summary["splits"]["test"]["sequence_count"] == 1
+    assert (
+        eval_summary["splits"]["test"]["mae_sequence_bootstrap_95"]["status"]
+        == "degenerate_single_sequence"
+    )
     predictions = np.load(tmp_path / "test_eval.predictions.npz")
-    assert sorted(predictions.files) == ["test_pred", "test_true"]
+    assert sorted(predictions.files) == [
+        "test_context_end_us",
+        "test_context_start_us",
+        "test_global_index",
+        "test_pred",
+        "test_sequence_id",
+        "test_timestamp_us",
+        "test_true",
+    ]
+    assert predictions["test_sequence_id"].astype(str).tolist() == ["fixture"] * 3
+    assert predictions["test_global_index"].tolist() == [9, 10, 11]
 
 
 def test_token_jepa_deep_supervision(tmp_path: Path) -> None:

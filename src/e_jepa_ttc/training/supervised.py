@@ -11,11 +11,13 @@ from typing import Any
 
 import numpy as np
 import torch
+from numpy.lib.npyio import NpzFile
 from torch import nn
 from torch.utils.data import DataLoader, Dataset
 
 from e_jepa_ttc.artifacts.protocol import get_current_protocol_identity
 from e_jepa_ttc.data.ml_cache import validate_voxel_cache
+from e_jepa_ttc.evaluation.bootstrap import sequence_bootstrap_interval
 from e_jepa_ttc.evaluation.metrics import regression_metrics
 from e_jepa_ttc.models import build_regressor
 from e_jepa_ttc.training.checkpoints import checkpoint_provenance
@@ -100,6 +102,86 @@ def _evaluate_model(
     if not predictions:
         return np.empty(0), np.empty(0), elapsed
     return np.concatenate(targets), np.concatenate(predictions), elapsed
+
+
+def _prediction_metadata(
+    cache: NpzFile,
+    indices: np.ndarray,
+) -> dict[str, np.ndarray]:
+    """Return sample-level identity arrays aligned with saved predictions."""
+
+    metadata: dict[str, np.ndarray] = {
+        "global_index": indices.astype(np.int64, copy=False),
+    }
+    optional_fields = (
+        "sequence_id",
+        "timestamp_us",
+        "context_start_us",
+        "context_end_us",
+    )
+    for field in optional_fields:
+        if field in cache.files:
+            metadata[field] = np.asarray(cache[field])[indices]
+    return metadata
+
+
+def _split_evaluation(
+    *,
+    y_true: np.ndarray,
+    y_pred: np.ndarray,
+    seconds: float,
+    metadata: dict[str, np.ndarray],
+) -> dict[str, Any]:
+    """Build aggregate and sequence-aware metrics for one evaluation split."""
+
+    payload: dict[str, Any] = {
+        "count": int(y_true.shape[0]),
+        "metrics": regression_metrics(y_true, y_pred),
+        "seconds": seconds,
+    }
+    sequence_ids = metadata.get("sequence_id")
+    if sequence_ids is None:
+        payload["sequence_metrics_status"] = "unavailable_missing_sequence_id"
+        return payload
+
+    sequence_text = sequence_ids.astype(str)
+    per_sequence: dict[str, Any] = {}
+    for sequence_id in np.unique(sequence_text):
+        selected = sequence_text == sequence_id
+        per_sequence[str(sequence_id)] = {
+            "count": int(np.sum(selected)),
+            "metrics": regression_metrics(y_true[selected], y_pred[selected]),
+        }
+    payload["sequence_count"] = len(per_sequence)
+    payload["per_sequence"] = per_sequence
+    payload["mae_sequence_bootstrap_95"] = sequence_bootstrap_interval(
+        y_true,
+        y_pred,
+        sequence_text,
+        iterations=2000,
+        confidence=0.95,
+        seed=0,
+    )
+    return payload
+
+
+def _save_prediction_artifact(
+    path: Path,
+    *,
+    evaluation_splits: tuple[str, ...],
+    predictions: dict[str, np.ndarray],
+    targets: dict[str, np.ndarray],
+    metadata: dict[str, dict[str, np.ndarray]],
+) -> None:
+    """Save predictions together with the identities required for clustered analysis."""
+
+    arrays: dict[str, np.ndarray] = {}
+    for split_name in evaluation_splits:
+        arrays[f"{split_name}_pred"] = predictions[split_name].astype(np.float32, copy=False)
+        arrays[f"{split_name}_true"] = targets[split_name].astype(np.float32, copy=False)
+        for field, values in metadata[split_name].items():
+            arrays[f"{split_name}_{field}"] = np.asarray(values)
+    np.savez(ensure_parent(path), **arrays)
 
 
 def _train_one_epoch(
@@ -496,8 +578,9 @@ def train_tiny_cnn(
     model.load_state_dict(checkpoint["model_state_dict"])
 
     split_results: dict[str, Any] = {}
-    predictions: dict[str, list[float]] = {}
-    targets: dict[str, list[float]] = {}
+    predictions: dict[str, np.ndarray] = {}
+    targets: dict[str, np.ndarray] = {}
+    prediction_metadata: dict[str, dict[str, np.ndarray]] = {}
     for split_name in evaluation_splits:
         dataset = datasets[split_name]
         y_true, y_pred, seconds = _evaluate_model(
@@ -506,14 +589,18 @@ def train_tiny_cnn(
             device=device,
             batch_size=batch_size,
         )
-        split_results[split_name] = {
-            "count": int(y_true.shape[0]),
-            "metrics": regression_metrics(y_true, y_pred),
-            "seconds": seconds,
-        }
-        predictions[split_name] = y_pred.astype(float).tolist()
-        targets[split_name] = y_true.astype(float).tolist()
+        metadata = _prediction_metadata(cache, split_indices[split_name])
+        split_results[split_name] = _split_evaluation(
+            y_true=y_true,
+            y_pred=y_pred,
+            seconds=seconds,
+            metadata=metadata,
+        )
+        predictions[split_name] = y_pred
+        targets[split_name] = y_true
+        prediction_metadata[split_name] = metadata
 
+    predictions_path = output / "predictions.npz"
     summary: dict[str, Any] = {
         "model": f"{model_tag}_voxel_supervised",
         "model_name": model_name,
@@ -555,19 +642,19 @@ def train_tiny_cnn(
         "run_fingerprint": run_fingerprint,
         "run_fingerprint_payload": run_fingerprint_payload,
         "final_test_opened": False,
+        "predictions_path": predictions_path.as_posix(),
+        "prediction_identity_fields": sorted(
+            {field for split_metadata in prediction_metadata.values() for field in split_metadata}
+        ),
     }
+    _save_prediction_artifact(
+        predictions_path,
+        evaluation_splits=evaluation_splits,
+        predictions=predictions,
+        targets=targets,
+        metadata=prediction_metadata,
+    )
     write_structured(metrics_path, summary)
-    prediction_arrays: dict[str, np.ndarray] = {}
-    for split_name in evaluation_splits:
-        prediction_arrays[f"{split_name}_pred"] = np.array(
-            predictions[split_name],
-            dtype=np.float32,
-        )
-        prediction_arrays[f"{split_name}_true"] = np.array(
-            targets[split_name],
-            dtype=np.float32,
-        )
-    np.savez(ensure_parent(output / "predictions.npz"), **prediction_arrays)
     return summary
 
 
@@ -639,8 +726,9 @@ def evaluate_supervised_checkpoint(
     model.load_state_dict(state)
 
     split_results: dict[str, Any] = {}
-    predictions: dict[str, list[float]] = {}
-    targets: dict[str, list[float]] = {}
+    predictions: dict[str, np.ndarray] = {}
+    targets: dict[str, np.ndarray] = {}
+    prediction_metadata: dict[str, dict[str, np.ndarray]] = {}
     for split_name in evaluation_splits:
         dataset = VoxelCacheDataset(x, y_log, split_indices[split_name])
         y_true, y_pred, seconds = _evaluate_model(
@@ -649,13 +737,16 @@ def evaluate_supervised_checkpoint(
             device=device,
             batch_size=batch_size,
         )
-        split_results[split_name] = {
-            "count": int(y_true.shape[0]),
-            "metrics": regression_metrics(y_true, y_pred),
-            "seconds": seconds,
-        }
-        predictions[split_name] = y_pred.astype(float).tolist()
-        targets[split_name] = y_true.astype(float).tolist()
+        metadata = _prediction_metadata(cache, split_indices[split_name])
+        split_results[split_name] = _split_evaluation(
+            y_true=y_true,
+            y_pred=y_pred,
+            seconds=seconds,
+            metadata=metadata,
+        )
+        predictions[split_name] = y_pred
+        targets[split_name] = y_true
+        prediction_metadata[split_name] = metadata
 
     summary: dict[str, Any] = {
         "checkpoint": Path(checkpoint_path).as_posix(),
@@ -681,19 +772,20 @@ def evaluate_supervised_checkpoint(
         "evaluation_splits": list(evaluation_splits),
         "splits": split_results,
         "final_test_opened": allow_final_test_evaluation,
+        "prediction_identity_fields": sorted(
+            {field for split_metadata in prediction_metadata.values() for field in split_metadata}
+        ),
     }
     if output_path is not None:
         output = ensure_parent(output_path)
+        predictions_path = output.with_suffix(".predictions.npz")
+        summary["predictions_path"] = predictions_path.as_posix()
+        _save_prediction_artifact(
+            predictions_path,
+            evaluation_splits=evaluation_splits,
+            predictions=predictions,
+            targets=targets,
+            metadata=prediction_metadata,
+        )
         write_structured(output, summary)
-        prediction_arrays: dict[str, np.ndarray] = {}
-        for split_name in evaluation_splits:
-            prediction_arrays[f"{split_name}_pred"] = np.array(
-                predictions[split_name],
-                dtype=np.float32,
-            )
-            prediction_arrays[f"{split_name}_true"] = np.array(
-                targets[split_name],
-                dtype=np.float32,
-            )
-        np.savez(output.with_suffix(".predictions.npz"), **prediction_arrays)
     return summary

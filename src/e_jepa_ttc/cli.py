@@ -19,7 +19,10 @@ from e_jepa_ttc.data.official_protocol import evaluate_official_evttc_coverage
 from e_jepa_ttc.data.split import write_splits
 from e_jepa_ttc.data.synthetic import generate_synthetic_sequence, write_synthetic_hdf5
 from e_jepa_ttc.models import MODEL_NAMES
-from e_jepa_ttc.representations.corruptions import CORRUPTION_KINDS
+from e_jepa_ttc.representations.corruptions import (
+    CORRUPTION_KINDS,
+    EventCorruptionSpec,
+)
 from e_jepa_ttc.utils.io import write_structured
 
 
@@ -191,6 +194,7 @@ def _cmd_cache_voxel(args: argparse.Namespace) -> int:
         index_path=args.index,
         output_path=args.output,
         exclude_splits=args.exclude_split,
+        include_splits=args.include_split,
         width=args.width,
         height=args.height,
         bins=args.bins,
@@ -198,6 +202,11 @@ def _cmd_cache_voxel(args: argparse.Namespace) -> int:
         metadata_channels=args.metadata_channels,
         navigation_channels=args.navigation_channels,
         limit=args.limit,
+        corruption=EventCorruptionSpec(
+            kind=args.corruption_kind,
+            severity=args.corruption_severity,
+            seed=args.corruption_seed,
+        ),
     )
     _print_json(payload)
     return 0
@@ -338,6 +347,7 @@ def _cmd_train_evaluate(args: argparse.Namespace) -> int:
         device_name=args.device,
         evaluation_splits=tuple(args.evaluation_splits),
         model_name=args.model,
+        allow_final_test_evaluation=args.allow_final_test_evaluation,
     )
     _print_json(payload)
     return 0
@@ -827,6 +837,11 @@ def build_parser() -> argparse.ArgumentParser:
     cache_voxel.add_argument("--manifest", type=Path, required=True)
     cache_voxel.add_argument("--split", type=Path, required=True)
     cache_voxel.add_argument("--exclude-split", action="append", help="Exclude specific splits")
+    cache_voxel.add_argument(
+        "--include-split",
+        action="append",
+        help="Materialize only these splits; repeat for multiple split names.",
+    )
     cache_voxel.add_argument("--index", type=Path, required=True)
     cache_voxel.add_argument("--output", type=Path, required=True)
     cache_voxel.add_argument("--width", type=int, default=160)
@@ -848,6 +863,9 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Append causal integrated-navigation motion channels when available.",
     )
+    cache_voxel.add_argument("--corruption-kind", choices=CORRUPTION_KINDS, default="none")
+    cache_voxel.add_argument("--corruption-severity", type=float, default=0.0)
+    cache_voxel.add_argument("--corruption-seed", type=int, default=0)
     cache_voxel.add_argument("--limit", type=int)
     cache_voxel.set_defaults(func=_cmd_cache_voxel)
     cache_remap = cache_sub.add_parser(
@@ -1012,6 +1030,11 @@ def build_parser() -> argparse.ArgumentParser:
         nargs="+",
         default=["test"],
         help="Splits to evaluate from the saved checkpoint.",
+    )
+    train_eval.add_argument(
+        "--allow-final-test-evaluation",
+        action="store_true",
+        help="Explicitly acknowledge and record evaluation of a final test split.",
     )
     train_eval.set_defaults(func=_cmd_train_evaluate)
     train_prober = train_sub.add_parser(

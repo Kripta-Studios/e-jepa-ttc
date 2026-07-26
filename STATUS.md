@@ -1,6 +1,6 @@
 # Recovery status
 
-Updated: 2026-07-25.
+Updated: 2026-07-26.
 
 ## Current state
 
@@ -18,12 +18,14 @@ Updated: 2026-07-25.
 - Final test: unavailable; CPLA-high is diagnostic only.
 - ONNX Export: implemented, requires reproducible real-smoke validation.
 - Streaming Inference: implemented, requires reproducible real-smoke validation.
-- Robustness: placeholder evaluation only. Phase C and D remain incomplete.
+- Robustness: raw-event validation runner implemented; full E0/E1 matrix has not
+  yet been executed. Phase C remains incomplete until its signed artifact exists.
 - QA after hardening: 191 tests pass; Ruff passes; Pyright/mypy is not installed.
 - Scientific hardening was committed and pushed as `416b498` on
   `scientific-recovery-v3-hardening`.
-- Physics-constrained FlowMimic implementation is complete; Ruff and 200 tests
-  pass. The train+validation-only cache v2 rebuild and exhaustive audit pass.
+- Physics-constrained FlowMimic and multiseed/robustness infrastructure are
+  complete; Ruff/format checks and 208 tests pass. The
+  train+validation-only cache v2 rebuild and exhaustive audit pass.
 - The first train+validation cache build was rejected because a dormant
   `exclude_splits` parameter left 478 test windows in the physical NPZ. The
   filtering path and its regression test are now corrected; no model was
@@ -64,7 +66,8 @@ The active experiment handoff is `docs/flowmimic_experiment_2026-07-25.md`.
 > **Integrity Note**: Commit `f96bc35` prepares the real Master Smoke orchestrator. It is not evidence that the Master Smoke passed.
 
 ## Core Progress
-- Long recovery run: not started because the worktree is dirty.
+- Long recovery run: infrastructure is being reviewed and committed before the
+  clean-tree E0/E1 execution.
 
 ## Ready for clean baseline commit
 
@@ -72,6 +75,16 @@ The repository has a claim gate, a registry validator, an immutable rerun
 configuration, a clean-tree runner, explicit best/last handling, and a measured
 runtime estimate. After review and commit, execute the validation-only
 multi-seed plan. Do not open CPLA-high until all choices are frozen.
+
+The active frozen gate is documented in
+`docs/flowmimic_multiseed_protocol_2026-07-26.md`. New supervised prediction
+artifacts preserve sequence/timestamp identity, the aggregator performs paired
+seed and sequence bootstrap, and robustness rebuilds validation voxels from
+corrupted raw events. Because validation contains exactly one sequence, the
+sequence bootstrap is necessarily degenerate and cannot by itself promote E1.
+A real one-window EvTTC smoke confirmed the complete raw-event dropout and CUDA
+evaluation path with only `CCRs-side-high` present and
+`final_test_opened=false`; its single-window MAE is not a scientific result.
 
 ## Verification commands
 

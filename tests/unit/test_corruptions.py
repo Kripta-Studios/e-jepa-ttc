@@ -35,6 +35,7 @@ def _events() -> EventBatch:
         ("polarity_drop_positive", 1.0),
         ("polarity_drop_negative", 1.0),
         ("temporal_window_fraction", 0.5),
+        ("temporal_window_scale", 0.5),
         ("spatial_crop_fraction", 0.75),
     ],
 )
@@ -64,3 +65,11 @@ def test_dropout_and_polarity_corruption_have_expected_effect() -> None:
 
     assert dropped.num_events == 0
     assert np.all(positive_removed.polarity == -1)
+
+
+def test_longer_temporal_scale_requires_source_reread() -> None:
+    with pytest.raises(ValueError, match="rereading a longer source window"):
+        corrupt_event_batch(
+            _events(),
+            EventCorruptionSpec(kind="temporal_window_scale", severity=1.5),
+        )

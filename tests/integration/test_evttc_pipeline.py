@@ -15,6 +15,7 @@ from e_jepa_ttc.data.index import build_temporal_index, write_index
 from e_jepa_ttc.data.ml_cache import build_voxel_cache
 from e_jepa_ttc.data.split import create_sequence_splits, validate_split_groups
 from e_jepa_ttc.data.synthetic import generate_synthetic_sequence, write_synthetic_hdf5
+from e_jepa_ttc.representations.corruptions import EventCorruptionSpec
 from e_jepa_ttc.utils.io import write_structured
 
 
@@ -131,6 +132,30 @@ def test_scan_validate_index_and_split(tmp_path: Path) -> None:
     assert trainval_summary["excluded_splits"] == ["test"]
     assert trainval_summary["window_count"] < trainval_summary["input_window_count"]
     assert trainval_cache["excluded_splits"].astype(str).tolist() == ["test"]
+
+    corrupted_cache_path = tmp_path / "validation_dropout_voxel_cache.npz"
+    corrupted_summary = build_voxel_cache(
+        manifest_path=manifest,
+        split_path=split_path,
+        index_path=index_path,
+        output_path=corrupted_cache_path,
+        width=16,
+        height=12,
+        bins=2,
+        normalize=False,
+        include_splits=["validation"],
+        corruption=EventCorruptionSpec(
+            kind="event_dropout",
+            severity=0.5,
+            seed=7,
+        ),
+    )
+    corrupted_cache = np.load(corrupted_cache_path, allow_pickle=False)
+    assert set(corrupted_cache["split"].astype(str)) == {"validation"}
+    assert str(corrupted_cache["corruption_kind"]) == "event_dropout"
+    assert float(corrupted_cache["corruption_severity"]) == 0.5
+    assert np.all(corrupted_cache["event_count"] <= corrupted_cache["source_event_count"])
+    assert corrupted_summary["included_splits"] == ["validation"]
 
 
 def test_scan_uses_bbox_segmentation_when_leftlabel_is_missing(tmp_path: Path) -> None:

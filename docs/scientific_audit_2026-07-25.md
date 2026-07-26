@@ -263,3 +263,88 @@ la RTX 5070 Ti: media `2.201 ms`, mediana `2.096 ms` y p95 `2.779 ms` en FP32
 sin voxelización. Esto confirma que `0.255 s` es error TTC y no tiempo de
 inferencia. Aún no es comparable directamente con los `13 ms` de Garl-TTC por
 hardware y fronteras de preprocessing distintos.
+
+## Actualización SOTA y decisión de continuación — 2026-07-26
+
+### Qué significa la latencia E1
+
+`2.201 ms model-only` significa que una inferencia batch-1 del checkpoint E1
+tarda en promedio 2.201 milisegundos en la RTX 5070 Ti Laptop, después de que el
+tensor `[1,21,90,160]` ya está disponible. Equivale a unas 454 ventanas/s para
+ese tramo. Es rápido, no lento. Falta medir el recorrido end-to-end —lectura de
+eventos, mantenimiento del buffer, voxelización, copia al dispositivo y
+postprocesado—, por lo que no representa todavía la latencia del producto.
+
+Garl-TTC informa fronteras distintas según tabla/plataforma: su comparación
+EvTTC cita aproximadamente `13 ms`, mientras su análisis detallado separa
+encoders RGB/evento y despliegue ONNX. Solo una medición común de ambos métodos,
+en el mismo hardware y con igual preprocessing, permite compararlos.
+
+### Calidad del `0.2552 s`
+
+Es un buen resultado de validación local porque:
+
+- reduce E0 de `0.3416` a `0.2552 s` MAE (`25.29%`);
+- reduce scratch de `0.3893` a `0.2552 s` (`34.44%`);
+- mejora también MARE y RMSE, no solo una métrica aislada;
+- E2 demuestra un control negativo útil: menor loss SSL no implica mejor TTC.
+
+No permite decir bueno/malo frente a SOTA en términos absolutos. La
+[arquitectura Garl-TTC](https://arxiv.org/html/2603.16303v1) no es la misma:
+usa ROI de objeto 128x128, RGB+eventos, dos ResNet-50, estimación geométrica por
+ratio de alturas y supervisión de silueta/foreground durante entrenamiento. E1
+es full-frame, event-only, 2.88M parámetros y usa otra secuencia. Su `8.3999%`
+MARE está en una escala numérica prometedora frente al `10.60%` RTE que Garl
+reporta en tres secuencias EvTTC distintas, pero comparar esos dos porcentajes
+para ordenar modelos sería científicamente inválido.
+
+### Estado de los datos
+
+Los datos actuales bastan para ingeniería, smoke, el gate E0/E1 y generación de
+hipótesis. No bastan para demostrar estabilidad entre escenarios:
+
+- cache aceptado: siete secuencias train y una sola secuencia validation;
+- `CPLA-high`: test diagnóstico reutilizado, no final;
+- EvTTC local: nueve secuencias starter, sin las filas oficiales CCRs-2/CCRm
+  sobre las que Garl publica su comparación;
+- eAP local: ocho secuencias de train, frente a 46 train/12 test y unas 174k
+  anotaciones en el [dataset eAP oficial](https://nail-hnu.github.io/eAP_dataset/).
+
+Hace falta más diversidad etiquetada y, sobre todo, más unidades independientes
+de validación/test. DSEC o más eAP sin etiquetas pueden ampliar SSL, pero no
+sustituyen un holdout TTC etiquetado.
+
+### Vía más prometedora
+
+La evidencia 2026 favorece una arquitectura híbrida y pequeña:
+
+```text
+eventos full-frame -> tubelet JEPA + FlowMimic físico
+                           |
+ROI causal opcional -> tokens de objeto/borde -> altura/área/looming
+                           |
+IMU causal -> compensación de rotación
+                           v
+fusión tardía -> TTC + riesgo + incertidumbre calibrable
+```
+
+Orden recomendado:
+
+1. cerrar el gate E0/E1 30 épocas y tres semillas;
+2. adquirir validaciones completas adicionales antes de abrir un test;
+3. añadir una rama object-centric geométrica emparejada, no reemplazar sin
+   control la rama event-only;
+4. probar fusión RGB tardía como modalidad asistida separada;
+5. incorporar compensación de rotación, limitación reconocida por Garl;
+6. solo entonces entrenar incertidumbre y evaluar si aumenta bajo corrupción.
+
+[FlowMimic](https://arxiv.org/abs/2607.18227),
+[SkyJEPA](https://arxiv.org/abs/2606.23444) y
+[MVA](https://arxiv.org/abs/2607.19343) aportan ideas de alineamiento físico,
+predicción espaciotemporal y acciones visuales, respectivamente, pero ninguno
+es un benchmark de TTC con eventos. El avance más probable procede de combinar
+el alineamiento que ya funcionó con geometría de objeto y mejores datos, no de
+escalar el backbone.
+
+El gate y su robustez raw-event quedan congelados en
+`docs/flowmimic_multiseed_protocol_2026-07-26.md`.

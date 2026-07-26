@@ -1,6 +1,6 @@
 # FlowMimic physical-approach experiment
 
-Updated: 2026-07-25.
+Updated: 2026-07-26.
 
 ## Research question
 
@@ -114,20 +114,26 @@ latency. SSL loss alone cannot establish TTC improvement.
 - Simulator unit tests: passing.
 - FlowMimic/JEPA integration smoke: passing.
 - Existing JEPA/prober focused suite: 21 tests passing.
-- Full repository QA: Ruff passing and 200 tests passing, including navigation
-  neutrality, signed-summary validation and latency benchmarking.
+- Full repository QA after the multiseed/robustness hardening: Ruff and format
+  checks passing; 208 tests passing, including sequence identity, paired
+  bootstrap, raw-event cache corruptions and frozen-gate command guards.
 - Cache v2 train+validation rebuild and exhaustive audit: passed.
 - Single-seed E0/E1/E2 validation pilot: complete; E1 selected for the
   three-seed/full-schedule gate, but not yet promotable.
 
 ## Continuation checklist
 
-1. Repeat E0 and E1 with independent SSL/downstream seeds 7, 13 and 21 at the
-   full schedule; the eight-epoch pilot selected both best checkpoints at the
-   schedule boundary.
-2. Add bootstrap-by-sequence and robustness only after the three-seed result.
+1. Execute the now-frozen E0/E1 gate with independent paired SSL/downstream
+   seeds 7, 13 and 21 at 30 SSL epochs; the eight-epoch pilot selected both best
+   checkpoints at the schedule boundary.
+2. Generate sequence-aware predictions, paired bootstrap and raw-event
+   robustness with the committed gate tooling.
 3. Keep CPLA-high closed; obtain a genuinely unopened holdout or complete the
    official EvTTC protocol after architecture freeze.
+
+Exact settings, failure conditions and artifact fields are frozen in
+`docs/flowmimic_multiseed_protocol_2026-07-26.md` and
+`configs/experiment/flowmimic_e0_e1_multiseed.yaml`.
 
 ## Experiment ledger
 
@@ -339,3 +345,64 @@ cannot be compared directly with Garl-TTC's reported 13 ms without matching
 hardware, precision, synchronization and preprocessing. It does establish that
 the local `0.255 s` number is TTC error, not runtime: the selected neural model
 itself runs in roughly 2.2 ms on this GPU.
+
+## 2026 SOTA interpretation and next architecture
+
+The selected E1 pilot is good local evidence: `0.2552 s` MAE and `8.3999%` MARE
+on `CCRs-side-high` are materially better than the paired E0 and scratch
+controls. They are not an official benchmark result. The current model is a
+2.88M-parameter full-frame event-only tubelet transformer. Garl-TTC instead
+uses object ROIs resized to 128x128, separate RGB/event ResNet-50 encoders,
+explicit height-ratio TTC geometry and foreground-mask supervision during
+training. Calling E1 “the SOTA architecture applied to our dataset” would
+therefore be incorrect.
+
+The primary [Garl-TTC/eAP paper](https://arxiv.org/html/2603.16303v1) reports
+`10.60%` average RTE on three different EvTTC sequences without fine-tuning,
+using RGB+events and object assistance. The numerical scale makes E1 an
+encouraging diagnostic, but the metric aggregation, sequences, input modality,
+assistance and hardware all differ. No ordering is valid until both methods run
+on the same samples and protocol.
+
+The most promising continuation is not a larger generic backbone. It is:
+
+1. finish the E0/E1 stability gate;
+2. retain physical future alignment;
+3. add an object-centric causal branch with apparent-height/area expansion,
+   foreground-boundary supervision available only during training and a
+   differentiable height-ratio/looming head;
+4. add ego-rotation compensation from causal IMU/navigation;
+5. compare event-only and late RGB+event fusion as explicitly different
+   operating points;
+6. add a heteroscedastic or conformal head only after the deterministic
+   robustness behavior is known.
+
+This follows the useful inductive biases in Garl-TTC while preserving a fair
+full-frame event-only branch. FlowMimic supplies synthetic physical motion but
+is not itself a TTC benchmark
+([FlowMimic](https://arxiv.org/abs/2607.18227)); SkyJEPA supports
+spatiotemporal JEPA pretraining for driving but likewise does not establish
+event-TTC accuracy ([SkyJEPA](https://arxiv.org/abs/2606.23444)).
+
+## Data sufficiency
+
+The current nine EvTTC starter sequences are sufficient for pipeline QA and
+this local paired gate. They are not sufficient for a SOTA/generalization
+claim: the accepted cache has seven train sequences and exactly one validation
+sequence, while CPLA-high is already a reused diagnostic test. The eight local
+eAP train sequences are useful for SSL and domain-shift pilots, but do not
+reproduce the official eAP split, which contains 46 train and 12 test sequences
+and roughly 174k annotated frames.
+
+Priority data acquisition after the gate:
+
+1. complete the official EvTTC evaluation sequences used by its published
+   tables, especially the absent CCRs-2/CCRm families;
+2. expand eAP from eight local train sequences toward the official 46-sequence
+   train set and freeze its official 12-sequence test;
+3. use a few DSEC sequences only as unlabeled SSL/domain-shift data;
+4. reserve at least two or three complete, never-inspected sequences for model
+   selection and a separate final holdout.
+
+More independent scenarios are currently more valuable than increasing model
+size.
