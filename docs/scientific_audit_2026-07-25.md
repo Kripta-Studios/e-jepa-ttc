@@ -250,3 +250,10 @@ magnitud por la otra para ordenar modelos.
 
 El gate inmediato es una ablación E0/E1/E2 solo en validación, sobre cache v2 y
 con control emparejado. No hay todavía resultados FlowMimic que reportar.
+
+Actualización posterior: el piloto de una semilla ya terminó. E0 obtuvo
+`0.3416 s` MAE, E1 con alineamiento físico `0.2552 s` y E2 con inverse-TTC
+adicional `0.3256 s`; scratch fue `0.3893 s`. E1 mejora E0 un 25.29%, mientras
+que inverse-TTC empeora E1 pese a reducir la loss SSL. El artefacto firmado es
+`artifacts/metrics/flowmimic_validation_pilot_seed7_summary.json`. Sigue siendo
+evidencia de piloto, no SOTA: falta el calendario completo y tres semillas.

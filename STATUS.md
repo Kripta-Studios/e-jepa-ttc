@@ -22,9 +22,8 @@ Updated: 2026-07-25.
 - QA after hardening: 191 tests pass; Ruff passes; Pyright/mypy is not installed.
 - Scientific hardening was committed and pushed as `416b498` on
   `scientific-recovery-v3-hardening`.
-- Physics-constrained FlowMimic implementation is complete; Ruff and 198 tests
-  pass. The train+validation-only cache v2 rebuild and exhaustive audit pass;
-  E0/E1/E2 validation runs are pending.
+- Physics-constrained FlowMimic implementation is complete; Ruff and 199 tests
+  pass. The train+validation-only cache v2 rebuild and exhaustive audit pass.
 - The first train+validation cache build was rejected because a dormant
   `exclude_splits` parameter left 478 test windows in the physical NPZ. The
   filtering path and its regression test are now corrected; no model was
@@ -45,6 +44,15 @@ Updated: 2026-07-25.
   fingerprints. Diagnostic MAE was 0.3959 s scratch vs 0.3422 s E0. Physical
   checkpoint hashing and fingerprint coverage are now corrected; both runs
   must be repeated.
+- Valid single-seed pilot P1 is complete and signed. Validation MAE: scratch
+  0.3893 s, E0 0.3416 s, E1 physical alignment 0.2552 s, E2 alignment plus
+  inverse-TTC 0.3256 s. E1 improves E0 by 25.29%; E2 shows that the auxiliary
+  inverse-TTC head hurts downstream despite lowering SSL loss.
+- P1 artifact: `artifacts/metrics/flowmimic_validation_pilot_seed7_summary.json`,
+  SHA-256 `5d8dbf26dc378601bb495dae2f86676565d25605bac5aa2a054cfc33dd0a93c3`.
+- P1 is not promotable evidence: one seed, CUDA non-bit-determinism, and SSL best
+  epoch at the eight-epoch boundary. Next gate is full-schedule E0 vs E1 with
+  independent SSL/downstream seeds 7, 13 and 21; test remains closed.
 
 The complete audit, SOTA comparison, and MVA/FlowMimic architecture proposal are in
 `docs/scientific_audit_2026-07-25.md`.

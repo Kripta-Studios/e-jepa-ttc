@@ -114,16 +114,20 @@ latency. SSL loss alone cannot establish TTC improvement.
 - Simulator unit tests: passing.
 - FlowMimic/JEPA integration smoke: passing.
 - Existing JEPA/prober focused suite: 21 tests passing.
-- Full repository QA after the numerical guard: Ruff passing and 198 tests
-  passing, including navigation neutrality.
+- Full repository QA: Ruff passing and 199 tests passing, including navigation
+  neutrality and signed-summary validation.
 - Cache v2 train+validation rebuild and exhaustive audit: passed.
-- E0/E1/E2 validation results: pending; no result should be filled in manually.
+- Single-seed E0/E1/E2 validation pilot: complete; E1 selected for the
+  three-seed/full-schedule gate, but not yet promotable.
 
 ## Continuation checklist
 
-1. Run E0/E1/E2 without evaluating CPLA-high.
-2. Append exact commands, commit hashes, artifact hashes and generated metrics
-   paths below.
+1. Repeat E0 and E1 with independent SSL/downstream seeds 7, 13 and 21 at the
+   full schedule; the eight-epoch pilot selected both best checkpoints at the
+   schedule boundary.
+2. Add bootstrap-by-sequence and robustness only after the three-seed result.
+3. Keep CPLA-high closed; obtain a genuinely unopened holdout or complete the
+   official EvTTC protocol after architecture freeze.
 
 ## Experiment ledger
 
@@ -156,8 +160,8 @@ unknown split names, includes exclusions in the preprocessing hash and records
 them in NPZ/summary/sidecar metadata. A regression test verifies that `test` is
 physically absent.
 
-No training run has been completed yet. No metric in this section is a model
-accuracy result.
+No model was trained from C0. Its numbers are infrastructure facts, not model
+accuracy results.
 
 ### Accepted cache build C1
 
@@ -258,3 +262,49 @@ The correction hashes every pretrained checkpoint and includes batch size,
 freeze state and requested train/validation/evaluation splits in the supervised
 fingerprint. A regression assertion requires scratch and pretrained
 fingerprints to differ.
+
+### Accepted single-seed validation pilot P1
+
+The pretraining matrix ran from commit `943f53f`; downstream runs with complete
+checkpoint hashing ran from `810a935`. Fixed settings:
+
+- seed 7 for SSL and downstream;
+- cache SHA-256 `22d3ef...e88a`, physically train+validation only;
+- event-tubelet transformer, dense transformer predictor, tubelet mask 0.45;
+- horizons `[20, 60, 100, 240, 500] ms`;
+- SSL: 8 epochs, batch 12, LR `3e-4`;
+- downstream: full fine-tune, 30 epochs, batch 24, LR `3e-5`;
+- selection: best real validation SSL checkpoint, then best validation TTC MAE;
+- CPLA-high/final test: not present and not opened.
+
+Generated signed result:
+
+```text
+artifacts/metrics/flowmimic_validation_pilot_seed7_summary.json
+```
+
+Summary code commit: `116a704`. Artifact SHA-256:
+`5d8dbf26dc378601bb495dae2f86676565d25605bac5aa2a054cfc33dd0a93c3`.
+
+| Variant | Synthetic alignment | Inverse-TTC | SSL val loss | Val MAE | MARE | RMSE | MAE vs E0 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| scratch | 0 | 0 | - | `0.389290 s` | `11.8730%` | `0.507569 s` | `-13.95%` |
+| E0 JEPA | 0 | 0 | `0.012680` | `0.341637 s` | `9.8127%` | `0.497757 s` | reference |
+| E1 alignment | 0.25 | 0 | `0.011522` | **`0.255227 s`** | **`8.3999%`** | **`0.332191 s`** | **`+25.29%`** |
+| E2 alignment + inverse | 0.25 | 0.10 | `0.008622` | `0.325621 s` | `9.6676%` | `0.436310 s` | `+4.69%` |
+
+Interpretation:
+
+- clean JEPA E0 improves scratch by 12.24% MAE;
+- physical FlowMimic alignment E1 improves E0 by 25.29% and scratch by 34.44%;
+- inverse-TTC E2 achieves the best SSL loss but is 27.58% worse in TTC MAE than
+  E1, showing that SSL loss is not a sufficient selection metric;
+- the useful idea is synthetic physical future alignment, not the current
+  inverse-TTC auxiliary head/weight;
+- E1 costs `1050.4 s` of SSL versus `532.9 s` for E0, about 1.97x in this pilot;
+  it does not increase inference cost because the synthetic branch is removed.
+
+This is strong validation-pilot evidence, not a SOTA or final claim. It has one
+SSL/downstream seed, CUDA is not bit-deterministic in this environment, and
+both E0/E1 selected SSL epoch 8 at the pilot boundary. Promote only the E1
+hypothesis to a full-schedule three-seed comparison against E0.

@@ -1481,3 +1481,29 @@ Final verification after adding the coverage gate:
 - `ruff check .`: all checks passed;
 - `pytest`: `53 passed in 4.30 s`.
 
+## 2026-07-25 Physics-constrained FlowMimic pilot
+
+Implemented render-then-simulate FlowMimic event generation and optional
+synthetic future-alignment/inverse-TTC SSL losses. Hardened split exclusion,
+cache auditing, non-finite loss handling and physical checkpoint fingerprints.
+Rejected and documented one cache-exclusion failure, one AMP-navigation NaN
+smoke and one downstream fingerprint collision before accepting results.
+
+Accepted cache: format v2, 3,019 train + 475 validation, zero test, SHA-256
+`22d3ef27018925aae62825f0a7f51d1420ae93cacf59aeb18b04758f5a35e88a`.
+
+Seed-7 validation pilot:
+
+| Variant | MAE | MARE | RMSE |
+| --- | ---: | ---: | ---: |
+| scratch | `0.3893 s` | `11.87%` | `0.5076 s` |
+| E0 JEPA | `0.3416 s` | `9.81%` | `0.4978 s` |
+| E1 physical alignment | **`0.2552 s`** | **`8.40%`** | **`0.3322 s`** |
+| E2 alignment + inverse-TTC | `0.3256 s` | `9.67%` | `0.4363 s` |
+
+E1 improves E0 by 25.29% MAE. The inverse-TTC auxiliary hurts downstream even
+though it gives the best SSL loss, so it is not promoted. Signed artifact:
+`artifacts/metrics/flowmimic_validation_pilot_seed7_summary.json`. Next gate:
+full-schedule E0 vs E1 with independent SSL/downstream seeds 7, 13 and 21,
+without opening CPLA-high.
+
