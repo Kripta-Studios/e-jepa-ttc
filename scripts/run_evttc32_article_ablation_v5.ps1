@@ -14,21 +14,22 @@ $ErrorActionPreference = "Stop"
 $ProgressPreference = "SilentlyContinue"
 
 # ---------------------------------------------------------------------------
-# E-JEPA-TTC EvTTC-32 article ablation pipeline v4 (Windows PowerShell 5.1)
+# E-JEPA-TTC EvTTC-32 article ablation pipeline v5 (Windows PowerShell 5.1)
 # Compatible with Windows PowerShell 5.1.
 #
 # It performs:
 #   1. Fail-fast preflight.
 #   2. Validation of 32 EvTTC sequences.
 #   3. Reversible promotion of evttc_complete_staging -> evttc.
-#   4. Manifest, diagnostic 19/5/8 split, temporal index.
-#   5. Train/validation and diagnostic-holdout voxel caches.
+#   4. Manifest, preregistered 19/5/8 family split, temporal index.
+#   5. Separate train/validation and family-holdout voxel caches.
 #   6. Protocol/config regeneration and protocol freeze.
-#   7. One-epoch E0/E1 smoke tests.
-#   8. Local git commit required by the frozen runner.
-#   9. Full E0/E1 seeds 7/13/21.
-#  10. Optional validation robustness.
-#  11. One-time diagnostic holdout evaluation on 8 sequences.
+#   7. One-epoch smoke tests for all 11 ablation arms.
+#   8. Local Git commit of the preregistered protocol.
+#   9. 33 JEPA pretrainings and 33 downstream fine-tunings.
+#  10. Validation-only ranking and selection.
+#  11. Optional robustness for BASE and the selected arm.
+#  12. One-time family-holdout evaluation for BASE and the selected arm.
 #
 # It does NOT:
 #   - push to GitHub;
@@ -1157,7 +1158,7 @@ protocol["resources"]["evttc_split_manifest"] = split_path.as_posix()
 protocol["resources"]["evttc_cache"] = cache_path.as_posix()
 protocol["requirements"]["forbidden_ordinary_splits"] = ["test"]
 protocol["requirements"]["dataset"]["name"] = "evttc"
-protocol["requirements"]["dataset"]["version"] = "EvTTC-32-local-article-v4"
+protocol["requirements"]["dataset"]["version"] = "EvTTC-32-local-article-v5"
 protocol["requirements"]["dataset"]["manifest_hash"] = file_hash(manifest_path)
 
 protocol_path.write_text(
@@ -1292,7 +1293,7 @@ arms = {
 matrix = {
     "schema_version": "1.0",
     "experiment": {
-        "id": "evttc32-article-ablation-v4-2026-07-27",
+        "id": "evttc32-article-ablation-v5-2026-07-27",
         "claim_level": "diagnostic",
         "seeds": [7, 13, 21],
         "selection_metric": "validation_mae_s_mean",
@@ -1369,7 +1370,7 @@ print("CONFIG_PREPARED")
     Invoke-NativeStreaming `
         -FilePath $Python `
         -Arguments @("scripts\freeze_protocol.py") `
-        -Label "Congelar protocolo EvTTC-32 article-v4" | Out-Null
+        -Label "Congelar protocolo EvTTC-32 article-v5" | Out-Null
 
     Assert-Path -Path $FrozenProtocolPath -Description "artefacto de protocolo congelado"
 
@@ -2548,11 +2549,11 @@ print("FAMILY_HOLDOUT_COMPLETE")
     Write-Status `
         -Status "completed" `
         -Stage "finished" `
-        -Message "Article-v4 completo. Revisa FINAL_REPORT y los resúmenes."
+        -Message "Article-v5 completo. Revisa FINAL_REPORT y los resúmenes."
 
     "SUCCESS" | Set-Content -LiteralPath $SuccessMarker -Encoding UTF8
-    Write-Log "ARTICLE-V4 COMPLETADO." "PASS"
-
+    Write-Log "ARTICLE-V5 COMPLETADO." "PASS"
+}
 catch {
     $HadFatalError = $true
     $message = $_.Exception.Message
