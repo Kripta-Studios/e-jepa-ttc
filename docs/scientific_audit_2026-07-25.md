@@ -257,3 +257,9 @@ adicional `0.3256 s`; scratch fue `0.3893 s`. E1 mejora E0 un 25.29%, mientras
 que inverse-TTC empeora E1 pese a reducir la loss SSL. El artefacto firmado es
 `artifacts/metrics/flowmimic_validation_pilot_seed7_summary.json`. Sigue siendo
 evidencia de piloto, no SOTA: falta el calendario completo y tres semillas.
+
+La latencia batch-1 model-only del E1 seleccionado se midió posteriormente en
+la RTX 5070 Ti: media `2.201 ms`, mediana `2.096 ms` y p95 `2.779 ms` en FP32
+sin voxelización. Esto confirma que `0.255 s` es error TTC y no tiempo de
+inferencia. Aún no es comparable directamente con los `13 ms` de Garl-TTC por
+hardware y fronteras de preprocessing distintos.

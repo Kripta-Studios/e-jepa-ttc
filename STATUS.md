@@ -22,7 +22,7 @@ Updated: 2026-07-25.
 - QA after hardening: 191 tests pass; Ruff passes; Pyright/mypy is not installed.
 - Scientific hardening was committed and pushed as `416b498` on
   `scientific-recovery-v3-hardening`.
-- Physics-constrained FlowMimic implementation is complete; Ruff and 199 tests
+- Physics-constrained FlowMimic implementation is complete; Ruff and 200 tests
   pass. The train+validation-only cache v2 rebuild and exhaustive audit pass.
 - The first train+validation cache build was rejected because a dormant
   `exclude_splits` parameter left 478 test windows in the physical NPZ. The
@@ -53,6 +53,9 @@ Updated: 2026-07-25.
 - P1 is not promotable evidence: one seed, CUDA non-bit-determinism, and SSL best
   epoch at the eight-epoch boundary. Next gate is full-schedule E0 vs E1 with
   independent SSL/downstream seeds 7, 13 and 21; test remains closed.
+- Selected E1 batch-1 FP32 model-only latency on the local RTX 5070 Ti Laptop is
+  2.201 ms mean / 2.096 ms median / 2.779 ms p95 across 300 synchronized runs.
+  This excludes voxelization and is not an official Garl-TTC runtime comparison.
 
 The complete audit, SOTA comparison, and MVA/FlowMimic architecture proposal are in
 `docs/scientific_audit_2026-07-25.md`.

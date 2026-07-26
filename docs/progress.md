@@ -1507,3 +1507,8 @@ though it gives the best SSL loss, so it is not promoted. Signed artifact:
 full-schedule E0 vs E1 with independent SSL/downstream seeds 7, 13 and 21,
 without opening CPLA-high.
 
+Selected E1 batch-1 FP32 model-only latency on the RTX 5070 Ti Laptop GPU:
+`2.201 ms` mean, `2.096 ms` median and `2.779 ms` p95 over 300 synchronized
+iterations. This excludes voxelization and is not an official Garl-TTC runtime
+comparison; it separates runtime from the `0.255 s` TTC MAE.
+

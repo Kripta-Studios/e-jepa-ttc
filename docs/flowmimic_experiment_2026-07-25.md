@@ -114,8 +114,8 @@ latency. SSL loss alone cannot establish TTC improvement.
 - Simulator unit tests: passing.
 - FlowMimic/JEPA integration smoke: passing.
 - Existing JEPA/prober focused suite: 21 tests passing.
-- Full repository QA: Ruff passing and 199 tests passing, including navigation
-  neutrality and signed-summary validation.
+- Full repository QA: Ruff passing and 200 tests passing, including navigation
+  neutrality, signed-summary validation and latency benchmarking.
 - Cache v2 train+validation rebuild and exhaustive audit: passed.
 - Single-seed E0/E1/E2 validation pilot: complete; E1 selected for the
   three-seed/full-schedule gate, but not yet promotable.
@@ -308,3 +308,34 @@ This is strong validation-pilot evidence, not a SOTA or final claim. It has one
 SSL/downstream seed, CUDA is not bit-deterministic in this environment, and
 both E0/E1 selected SSL epoch 8 at the pilot boundary. Promote only the E1
 hypothesis to a full-schedule three-seed comparison against E0.
+
+### Batch-1 model latency for selected E1
+
+A signed synchronous benchmark was run from commit `c103dd9` with 50 warmups
+and 300 measured iterations on the RTX 5070 Ti Laptop GPU. It loads the real E1
+downstream checkpoint at epoch 22 and one real cache tensor `[1,21,90,160]`.
+
+Artifact:
+
+```text
+artifacts/metrics/flowmimic_e1_seed7_batch1_model_latency.json
+```
+
+Artifact signature:
+`b9e2ac55c69854603f1c418a21e760c7ff1475f71509777c64617c7403d31d28`.
+
+Results:
+
+- FP32 synchronous mean: `2.201 ms`;
+- median: `2.096 ms`;
+- p95 / p99: `2.779 / 3.411 ms`;
+- maximum: `6.000 ms`;
+- throughput derived from mean: `454.2 windows/s`;
+- parameters: `2,884,417`;
+- peak allocated device memory: `36,947,968 bytes`.
+
+This is model-only latency and excludes HDF5/event reading and voxelization. It
+cannot be compared directly with Garl-TTC's reported 13 ms without matching
+hardware, precision, synchronization and preprocessing. It does establish that
+the local `0.255 s` number is TTC error, not runtime: the selected neural model
+itself runs in roughly 2.2 ms on this GPU.
