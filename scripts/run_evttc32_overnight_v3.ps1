@@ -14,7 +14,7 @@ $ErrorActionPreference = "Stop"
 $ProgressPreference = "SilentlyContinue"
 
 # ---------------------------------------------------------------------------
-# E-JEPA-TTC EvTTC-32 overnight pipeline
+# E-JEPA-TTC EvTTC-32 overnight pipeline v3 (Windows PowerShell 5.1)
 # Compatible with Windows PowerShell 5.1.
 #
 # It performs:
@@ -378,7 +378,7 @@ function Get-DatasetAudit {
     Write-Log "IDs canónicos únicos: $($detectedCanonical.Count)"
     Write-Log "HDF5 de eventos: $(($rows | Measure-Object EventHDF5Count -Sum).Sum)"
     Write-Log "gt.hdf5 adicionales: $(($rows | Measure-Object GTHDF5Count -Sum).Sum)"
-    Write-Log "Secuencias sin JSON de bbox/segmentación: $(($rows | Where-Object { $_.LabelCount -eq 0 }).Count)"
+    Write-Log "Secuencias sin JSON de bbox/segmentación: $(@($rows | Where-Object { $_.LabelCount -eq 0 }).Count)"
 
     if ($missing.Count -gt 0) {
         Write-Host "FALTAN:" -ForegroundColor Red
