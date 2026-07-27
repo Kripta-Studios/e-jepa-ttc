@@ -1,0 +1,51 @@
+version: 2
+protocol: evttc-32-article-family-holdout-2026-07-27
+status: predeclared_family_holdout_diagnostic
+evaluation_role: article_ablation_and_family_generalization
+allowed_claim_levels:
+- development
+- diagnostic
+test_was_previously_used_for_model_selection: false
+notes: Predeclared 19/5/8 sequence split. All 32 sequences participate in the protocol.
+  Train fits weights, validation selects among the ablations, and the complete CCRs-2,
+  CCRs-3 and CPNAO families remain physically outside all fitting and selection caches.
+  The family holdout is opened once for BASE and the validation-selected best arm.
+  It is not the official ten-sequence EvTTC benchmark because Slider-750/1000 are
+  absent.
+manifest: data/manifests/evttc_all32_local.yaml
+splits:
+  train:
+  - CCRm-low-0-overlap-0
+  - CCRm-low-100-overlap-100
+  - CCRm-low-50-overlap-50
+  - CCRm-medium-100-overlap-100
+  - CCRm-medium-50-overlap-50
+  - CCRs-1-high-100-overlap-100
+  - CCRs-1-high-50-overlap-50
+  - CCRs-1-low-0-overlap-0
+  - CCRs-1-low-100-overlap-100
+  - CCRs-1-low-50-overlap-50
+  - CCRs-1-medium-0-overlap-0
+  - CCRs-1-medium-100-overlap-100
+  - CCRs-1-medium-50-overlap-50
+  - CCRs-side-low
+  - CCRs-side-medium
+  - CPLA-low
+  - CPLA-medium
+  - CPNA-low
+  - CPNA-medium
+  validation:
+  - CCRm-medium-0-overlap-0
+  - CCRs-1-high-0-overlap-0
+  - CCRs-side-high
+  - CPLA-high
+  - CPNA-high
+  test:
+  - CCRs-2-high-100-overlap-100
+  - CCRs-2-low-100-overlap-100
+  - CCRs-2-medium-100-overlap-100
+  - CCRs-3-low-100-overlap-100
+  - CCRs-3-medium-100-overlap-100
+  - CPNAO-high
+  - CPNAO-low
+  - CPNAO-medium

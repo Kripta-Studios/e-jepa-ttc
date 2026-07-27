@@ -1,22 +1,42 @@
-protocol_version: "3.0"
+protocol_version: '3.0'
 claim_level: diagnostic
 test_status: reused_test_diagnostic
-cache_format_version: 1
+cache_format_version: 2
 resources:
-  evttc_dataset_manifest: data/manifests/evttc_full_starter_local.yaml
-  evttc_split_manifest: data/splits/evttc_full_starter_sealed.yaml
-  evttc_cache: artifacts/features/evttc_full_starter_voxel_160x90_b5_raw_meta_nav.npz
+  evttc_dataset_manifest: data/manifests/evttc_all32_local.yaml
+  evttc_split_manifest: data/splits/evttc_all32_article_family_holdout.yaml
+  evttc_cache: artifacts/features/evttc32_trainval/cache.npz
   eap_remote_manifest: data/manifests/eap50_remote_files.json
   eap_split_manifest: data/splits/eap_object_jepa_v2.yaml
 matrix:
-  ssl_seeds: [7, 13, 21]
-  downstream_seeds: [7, 13, 21]
-  nav_modes: ["enabled", "disabled"]
-  label_fractions: [1.0, 0.10, 0.05]
+  ssl_seeds:
+  - 7
+  - 13
+  - 21
+  downstream_seeds:
+  - 7
+  - 13
+  - 21
+  nav_modes:
+  - enabled
+  - disabled
+  label_fractions:
+  - 1.0
+  - 0.1
+  - 0.05
 eap_matrix:
-  ssl_seeds: [17, 42, 73]
-  downstream_seeds: [17, 42, 73]
-  label_fractions: [1.0, 0.10, 0.05]
+  ssl_seeds:
+  - 17
+  - 42
+  - 73
+  downstream_seeds:
+  - 17
+  - 42
+  - 73
+  label_fractions:
+  - 1.0
+  - 0.1
+  - 0.05
 architecture:
   use_ego_actions: true
   use_recurrence: true
@@ -26,26 +46,32 @@ smoke:
   sample_count_total_limit: 200
   iterations_limit: 50
 requirements:
-  primary_metrics: ["mae_s", "rmse_s", "median_abs_error_s", "auroc", "auprc", "calibration_error"]
+  primary_metrics:
+  - mae_s
+  - rmse_s
+  - median_abs_error_s
+  - auroc
+  - auprc
+  - calibration_error
   allowed_training_splits:
-    - train
+  - train
   allowed_selection_splits:
-    - validation
+  - validation
   allowed_calibration_splits:
-    - calibration
+  - calibration
   forbidden_ordinary_splits:
-    - test
-    - CPLA-high
+  - test
   min_train_support: 25
   min_val_support: 25
-  checkpoint_selection_metric: "validation_mae_s"
+  checkpoint_selection_metric: validation_mae_s
   dataset:
-    name: "evttc"
-    version: "2025-03-02"
-    manifest_hash: "b694e32bd895e74128a3d4db4f88cefc7a7d775324fa4df57b14e71e89122dc4"
+    name: evttc
+    version: EvTTC-32-local-article-v5
+    manifest_hash: f555067ad2e8a1556b45095d98287582f4fccd4afa7fed6784b7aa8d4c938bc3
 onnx_policies:
   strict_state_dict_loading: true
-  output_names: ["log_ttc"]
+  output_names:
+  - log_ttc
   maximum_absolute_error_tolerance: 0.0001
-  mean_absolute_error_tolerance: 0.00001
+  mean_absolute_error_tolerance: 1.0e-05
   real_validation_samples: true

@@ -14,7 +14,7 @@ $ErrorActionPreference = "Stop"
 $ProgressPreference = "SilentlyContinue"
 
 # ---------------------------------------------------------------------------
-# E-JEPA-TTC EvTTC-32 article ablation pipeline v5 (Windows PowerShell 5.1)
+# E-JEPA-TTC EvTTC-32 article ablation pipeline v6 (Windows PowerShell 5.1)
 # Compatible with Windows PowerShell 5.1.
 #
 # It performs:
@@ -417,6 +417,8 @@ function Get-DatasetAudit {
 function Get-UnexpectedGitChanges {
     $allowed = @(
         "scripts/run_evttc32_article_ablation_v4.ps1",
+        "scripts/run_evttc32_article_ablation_v5.ps1",
+        "scripts/run_evttc32_article_ablation_v6.ps1",
         "configs/recovery_v3_protocol.yaml",
         "configs/experiment/evttc32_article_ablation_matrix.yaml",
         "data/manifests/evttc_all32_local.yaml",
@@ -996,44 +998,60 @@ for sequence_id in sorted(counts):
     New-Item -ItemType Directory -Force -Path $TrainValDir | Out-Null
     New-Item -ItemType Directory -Force -Path $HoldoutDir | Out-Null
 
-    Invoke-NativeStreaming `
-        -FilePath $Python `
-        -Arguments @(
-            "-m", "e_jepa_ttc",
-            "cache", "voxel",
-            "--manifest", "data\manifests\evttc_all32_local.yaml",
-            "--split", "data\splits\evttc_all32_article_family_holdout.yaml",
-            "--index", "data\cache\evttc_all32_index.json",
-            "--output", "artifacts\features\evttc32_trainval\cache.npz",
-            "--width", "160",
-            "--height", "90",
-            "--bins", "5",
-            "--no-normalize",
-            "--metadata-channels",
-            "--navigation-channels",
-            "--include-split", "train",
-            "--include-split", "validation"
-        ) `
-        -Label "Construir caché train+validation" | Out-Null
+    if (Test-Path -LiteralPath $TrainValCache) {
+        Write-Log (
+            "REUSE: ya existe artifacts\features\evttc32_trainval\cache.npz; " +
+            "se validará antes de continuar."
+        )
+    }
+    else {
+        Invoke-NativeStreaming `
+            -FilePath $Python `
+            -Arguments @(
+                "-m", "e_jepa_ttc",
+                "cache", "voxel",
+                "--manifest", "data\manifests\evttc_all32_local.yaml",
+                "--split", "data\splits\evttc_all32_article_family_holdout.yaml",
+                "--index", "data\cache\evttc_all32_index.json",
+                "--output", "artifacts\features\evttc32_trainval\cache.npz",
+                "--width", "160",
+                "--height", "90",
+                "--bins", "5",
+                "--no-normalize",
+                "--metadata-channels",
+                "--navigation-channels",
+                "--include-split", "train",
+                "--include-split", "validation"
+            ) `
+            -Label "Construir caché train+validation" | Out-Null
+    }
 
-    Invoke-NativeStreaming `
-        -FilePath $Python `
-        -Arguments @(
-            "-m", "e_jepa_ttc",
-            "cache", "voxel",
-            "--manifest", "data\manifests\evttc_all32_local.yaml",
-            "--split", "data\splits\evttc_all32_article_family_holdout.yaml",
-            "--index", "data\cache\evttc_all32_index.json",
-            "--output", "artifacts\features\evttc32_family_holdout\cache.npz",
-            "--width", "160",
-            "--height", "90",
-            "--bins", "5",
-            "--no-normalize",
-            "--metadata-channels",
-            "--navigation-channels",
-            "--include-split", "test"
-        ) `
-        -Label "Construir caché holdout diagnóstico" | Out-Null
+    if (Test-Path -LiteralPath $HoldoutCache) {
+        Write-Log (
+            "REUSE: ya existe artifacts\features\evttc32_family_holdout\cache.npz; " +
+            "se validará antes de continuar."
+        )
+    }
+    else {
+        Invoke-NativeStreaming `
+            -FilePath $Python `
+            -Arguments @(
+                "-m", "e_jepa_ttc",
+                "cache", "voxel",
+                "--manifest", "data\manifests\evttc_all32_local.yaml",
+                "--split", "data\splits\evttc_all32_article_family_holdout.yaml",
+                "--index", "data\cache\evttc_all32_index.json",
+                "--output", "artifacts\features\evttc32_family_holdout\cache.npz",
+                "--width", "160",
+                "--height", "90",
+                "--bins", "5",
+                "--no-normalize",
+                "--metadata-channels",
+                "--navigation-channels",
+                "--include-split", "test"
+            ) `
+            -Label "Construir caché holdout diagnóstico" | Out-Null
+    }
 
     $CacheCheck = Join-Path $RunAuditDir "check_caches.py"
     @'
@@ -1771,12 +1789,28 @@ if __name__ == "__main__":
         }
     }
 
-    & git ls-files --error-unmatch "artifacts/audit/recovery_v3/frozen_protocol.json" 2>$null | Out-Null
-    if ($LASTEXITCODE -eq 0) {
+    # frozen_protocol.json suele estar ignorado y no necesita formar parte del
+    # commit. `git ls-files --error-unmatch` escribe en stderr y Windows
+    # PowerShell 5.1 puede convertirlo en una excepción con ErrorAction=Stop.
+    # Se consulta sin error-unmatch y solo se añade si Git ya lo rastrea.
+    $trackedFrozen = @(
+        & git ls-files -- "artifacts/audit/recovery_v3/frozen_protocol.json"
+    )
+    if ($LASTEXITCODE -ne 0) {
+        throw "No se pudo consultar si frozen_protocol.json está rastreado."
+    }
+
+    if ($trackedFrozen.Count -gt 0) {
         & git add -- "artifacts/audit/recovery_v3/frozen_protocol.json"
         if ($LASTEXITCODE -ne 0) {
             throw "git add falló para frozen_protocol.json"
         }
+    }
+    else {
+        Write-Log (
+            "frozen_protocol.json existe como artefacto local/ignorado; " +
+            "no se añade al commit."
+        )
     }
 
     $staged = (& git diff --cached --name-only)
@@ -2549,7 +2583,7 @@ print("FAMILY_HOLDOUT_COMPLETE")
     Write-Status `
         -Status "completed" `
         -Stage "finished" `
-        -Message "Article-v5 completo. Revisa FINAL_REPORT y los resúmenes."
+        -Message "Article-v6 completo. Revisa FINAL_REPORT y los resúmenes."
 
     "SUCCESS" | Set-Content -LiteralPath $SuccessMarker -Encoding UTF8
     Write-Log "ARTICLE-V5 COMPLETADO." "PASS"
