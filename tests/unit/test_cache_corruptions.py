@@ -1,6 +1,7 @@
 import hashlib
 import json
 import subprocess
+import sys
 from pathlib import Path
 
 import numpy as np
@@ -55,9 +56,7 @@ def run_audit(cache_dir, mode="exhaustive"):
     npz_path = cache_dir / "cache.npz"
     out_path = cache_dir / "audit.json"
     cmd = [
-        "uv",
-        "run",
-        "python",
+        sys.executable,
         "scripts/audit_cache.py",
         "--npz-path",
         str(npz_path),
@@ -68,7 +67,13 @@ def run_audit(cache_dir, mode="exhaustive"):
         "--mode",
         mode,
     ]
-    res = subprocess.run(cmd, capture_output=True, text=True)
+    res = subprocess.run(
+        cmd,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+    )
     if out_path.exists():
         with open(out_path) as f:
             out = json.load(f)

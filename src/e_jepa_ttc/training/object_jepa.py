@@ -60,6 +60,12 @@ def _get_git_commit() -> str:
         return "unknown"
 
 
+def _atomic_torch_save(payload: dict[str, Any], path: Path) -> None:
+    temporary = path.with_suffix(path.suffix + ".tmp")
+    torch.save(payload, temporary)
+    temporary.replace(path)
+
+
 def _set_seed(seed: int) -> None:
     random.seed(seed)
     np.random.seed(seed)
@@ -219,6 +225,11 @@ def pretrain_object_event_jepa(
     use_ego_actions: bool = True,
     use_recurrence: bool = True,
     use_geometry: bool = True,
+    num_workers: int = 4,
+    early_stopping_patience: int = 6,
+    early_stopping_min_epochs: int = 10,
+    early_stopping_min_delta_relative: float = 0.003,
+    resume: bool = False,
     dry_run_fingerprint: bool = False,
 ) -> dict[str, Any] | str:
     """Pretrain the object world model without consuming TTC labels."""
@@ -226,6 +237,10 @@ def pretrain_object_event_jepa(
     if epochs <= 0 or batch_size <= 0 or learning_rate <= 0:
         msg = "epochs, batch_size and learning_rate must be positive."
         raise ValueError(msg)
+    if num_workers < 0 or early_stopping_patience < 0:
+        raise ValueError("num_workers and early_stopping_patience must be non-negative.")
+    if early_stopping_min_epochs <= 0 or early_stopping_min_delta_relative < 0:
+        raise ValueError("Early-stopping minimums are invalid.")
     _set_seed(seed)
     device = _device(device_name)
     train_dataset = EAPObjectCacheDataset(cache_manifest_path, splits=("train",))
@@ -251,19 +266,23 @@ def pretrain_object_event_jepa(
         use_geometry=use_geometry,
     )
     model = ObjectCentricEventJEPA(config).to(device)
+    loader_options: dict[str, Any] = {
+        "num_workers": num_workers,
+        "pin_memory": device.type == "cuda",
+    }
+    if num_workers > 0:
+        loader_options.update(persistent_workers=True, prefetch_factor=2)
     train_loader = DataLoader(
         train_dataset,
         batch_size=batch_size,
         sampler=ShardLocalSampler(train_dataset, seed=seed),
-        num_workers=0,
-        pin_memory=device.type == "cuda",
+        **loader_options,
     )
     validation_loader = DataLoader(
         validation_dataset,
         batch_size=batch_size,
         shuffle=False,
-        num_workers=0,
-        pin_memory=device.type == "cuda",
+        **loader_options,
     )
     trainable = [parameter for parameter in model.parameters() if parameter.requires_grad]
     optimizer = torch.optim.AdamW(
@@ -276,6 +295,7 @@ def pretrain_object_event_jepa(
     output.mkdir(parents=True, exist_ok=True)
     best_path = output / "object_jepa_best.pt"
     last_path = output / "object_jepa_last.pt"
+    resume_path = output / "resume.pt"
     history_path = output / "history.jsonl"
     best_validation = float("inf")
     best_epoch = -1
@@ -297,6 +317,12 @@ def pretrain_object_event_jepa(
         "pretraining_checkpoint_sha256": "",
         "optimizer_config": {"learning_rate": learning_rate, "weight_decay": weight_decay},
         "training_steps": epochs,
+        "num_workers": num_workers,
+        "early_stopping": {
+            "patience": early_stopping_patience,
+            "min_epochs": early_stopping_min_epochs,
+            "min_delta_relative": early_stopping_min_delta_relative,
+        },
     }
     run_fingerprint = hashlib.sha256(
         json.dumps(run_fingerprint_payload, sort_keys=True).encode("utf-8")
@@ -308,8 +334,59 @@ def pretrain_object_event_jepa(
     start_time = time.perf_counter()
     total_steps = max(1, epochs * len(train_loader))
     global_step = 0
-    with history_path.open("w", encoding="utf-8") as history_file:
-        for epoch in range(1, epochs + 1):
+    start_epoch = 1
+    no_improvement = 0
+    completed_epoch = 0
+    stopped_early = False
+
+    def checkpoint(epoch: int, role: str, selected_by: str) -> dict[str, Any]:
+        return {
+            "model_state_dict": model.state_dict(),
+            "model_config": asdict(config),
+            "epoch": epoch,
+            "seed": seed,
+            "checkpoint_role": role,
+            "selected_by": selected_by,
+            "uses_ttc_labels": False,
+            "uses_ego_actions": use_ego_actions,
+            "cache_manifest": str(cache_manifest_path),
+            "manifest_sha256": _hash_file(cache_manifest_path),
+            "git_commit": _get_git_commit(),
+            "protocol_version": get_current_protocol_identity()[0],
+            "protocol_sha256": get_current_protocol_identity()[1],
+            "run_fingerprint": run_fingerprint,
+            "run_fingerprint_payload": run_fingerprint_payload,
+        }
+
+    if resume:
+        if not resume_path.is_file():
+            raise FileNotFoundError(f"Resume checkpoint does not exist: {resume_path}")
+        state = torch.load(resume_path, map_location=device, weights_only=False)
+        if state["run_fingerprint"] != run_fingerprint:
+            raise ValueError("JEPA resume fingerprint differs from current data/config/code.")
+        model.load_state_dict(state["model_state_dict"])
+        optimizer.load_state_dict(state["optimizer_state_dict"])
+        if scaler is not None and state.get("scaler_state_dict") is not None:
+            scaler.load_state_dict(state["scaler_state_dict"])
+        start_epoch = int(state["epoch"]) + 1
+        completed_epoch = int(state["epoch"])
+        global_step = int(state["global_step"])
+        best_validation = float(state["best_validation"])
+        best_epoch = int(state["best_epoch"])
+        no_improvement = int(state["no_improvement"])
+        if history_path.is_file():
+            history = [
+                json.loads(line)
+                for line in history_path.read_text(encoding="utf-8").splitlines()
+                if line.strip()
+            ]
+    elif resume_path.exists():
+        raise FileExistsError(
+            f"{resume_path} exists; pass resume=True or select a new output directory."
+        )
+
+    with history_path.open("a" if resume else "w", encoding="utf-8") as history_file:
+        for epoch in range(start_epoch, epochs + 1):
             model.train()
             train_sum = 0.0
             train_count = 0
@@ -364,47 +441,47 @@ def pretrain_object_event_jepa(
             history.append(row)
             history_file.write(json.dumps(row, sort_keys=True) + "\n")
             history_file.flush()
-            if validation["total"] < best_validation:
+            improvement_threshold = (
+                best_validation * (1.0 - early_stopping_min_delta_relative)
+                if np.isfinite(best_validation)
+                else float("inf")
+            )
+            if validation["total"] < improvement_threshold:
                 best_validation = validation["total"]
                 best_epoch = epoch
-                torch.save(
-                    {
-                        "model_state_dict": model.state_dict(),
-                        "model_config": asdict(config),
-                        "epoch": epoch,
-                        "seed": seed,
-                        "checkpoint_role": "best",
-                        "selected_by": "validation_object_jepa_total",
-                        "uses_ttc_labels": False,
-                        "uses_ego_actions": use_ego_actions,
-                        "cache_manifest": str(cache_manifest_path),
-                        "manifest_sha256": _hash_file(cache_manifest_path),
-                        "git_commit": _get_git_commit(),
-                        "protocol_version": get_current_protocol_identity()[0],
-                        "protocol_sha256": get_current_protocol_identity()[1],
-                        "run_fingerprint": run_fingerprint,
-                        "run_fingerprint_payload": run_fingerprint_payload,
-                    },
+                no_improvement = 0
+                _atomic_torch_save(
+                    checkpoint(epoch, "best", "validation_object_jepa_total"),
                     best_path,
                 )
-    torch.save(
-        {
-            "model_state_dict": model.state_dict(),
-            "model_config": asdict(config),
-            "epoch": epochs,
-            "seed": seed,
-            "checkpoint_role": "last",
-            "selected_by": "final_epoch",
-            "uses_ttc_labels": False,
-            "uses_ego_actions": use_ego_actions,
-            "cache_manifest": str(cache_manifest_path),
-            "manifest_sha256": _hash_file(cache_manifest_path),
-            "git_commit": _get_git_commit(),
-            "protocol_version": get_current_protocol_identity()[0],
-            "protocol_sha256": get_current_protocol_identity()[1],
-            "run_fingerprint": run_fingerprint,
-            "run_fingerprint_payload": run_fingerprint_payload,
-        },
+            else:
+                no_improvement += 1
+            completed_epoch = epoch
+            resume_state = checkpoint(epoch, "resume", "latest_completed_epoch")
+            resume_state.update(
+                {
+                    "optimizer_state_dict": optimizer.state_dict(),
+                    "scaler_state_dict": scaler.state_dict() if scaler is not None else None,
+                    "global_step": global_step,
+                    "best_validation": best_validation,
+                    "best_epoch": best_epoch,
+                    "no_improvement": no_improvement,
+                }
+            )
+            _atomic_torch_save(resume_state, resume_path)
+            if (
+                early_stopping_patience > 0
+                and epoch >= early_stopping_min_epochs
+                and no_improvement >= early_stopping_patience
+            ):
+                stopped_early = True
+                break
+    _atomic_torch_save(
+        checkpoint(
+            completed_epoch,
+            "last",
+            "early_stopping" if stopped_early else "final_epoch",
+        ),
         last_path,
     )
     summary: dict[str, Any] = {
@@ -414,7 +491,10 @@ def pretrain_object_event_jepa(
         "seed": seed,
         "device": str(device),
         "epochs": epochs,
+        "epochs_completed": completed_epoch,
+        "stopped_early": stopped_early,
         "batch_size": batch_size,
+        "num_workers": num_workers,
         "learning_rate": learning_rate,
         "weight_decay": weight_decay,
         "uses_ttc_labels": False,
@@ -424,6 +504,7 @@ def pretrain_object_event_jepa(
         "best_validation_total": best_validation,
         "best_checkpoint": best_path.as_posix(),
         "last_checkpoint": last_path.as_posix(),
+        "resume_checkpoint": resume_path.as_posix(),
         "train_samples": len(train_dataset),
         "validation_samples": len(validation_dataset),
         "elapsed_seconds": time.perf_counter() - start_time,

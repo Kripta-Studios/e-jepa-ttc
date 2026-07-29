@@ -10,7 +10,9 @@ from e_jepa_ttc.evaluation.calibration import (
 from e_jepa_ttc.evaluation.object_ttc import (
     binary_risk_metrics,
     garl_ttc_metrics,
+    grouped_ttc_selection_components,
     object_ttc_metrics,
+    ttc_selection_components,
 )
 
 
@@ -59,3 +61,20 @@ def test_combined_object_metrics_reports_all_risk_horizons() -> None:
     assert set(metrics) == {"regression", "garl_ttc", "risk"}
     assert set(metrics["risk"]) == {"0.5", "1.0", "2.0", "4.0"}
     assert np.isfinite(metrics["regression"]["signed_log1p_mae"])
+
+
+def test_ttc_checkpoint_selection_is_dimensionless_and_sequence_macro() -> None:
+    target = np.asarray([1.0, 2.0, 6.0, 8.0])
+    prediction = np.asarray([1.1, 1.8, 6.6, 7.2])
+    components = ttc_selection_components(target, prediction)
+    assert components["low_ttc_support"] == 2
+    assert components["high_ttc_support"] == 2
+    assert components["selection_score"] > components["mean_relative_error"]
+
+    grouped = grouped_ttc_selection_components(
+        target,
+        prediction,
+        np.asarray(["short", "short", "long", "long"]),
+    )
+    assert grouped["sequence_macro_selection_score"] > 0.0
+    assert set(grouped["per_sequence_checkpoint_selection"]) == {"short", "long"}

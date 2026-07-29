@@ -29,6 +29,7 @@ class LabelMeasurement:
     ttc_seconds: float
     image_width: int | None = None
     image_height: int | None = None
+    segmentation_xy: tuple[tuple[float, float], ...] | None = None
 
     def to_dict(self) -> dict[str, Any]:
         """Serialize measurement for JSON/YAML outputs."""
@@ -58,6 +59,7 @@ class ParsedISATLabel:
     bbox_xyxy: tuple[float, float, float, float]
     image_width: int | None
     image_height: int | None
+    segmentation_xy: tuple[tuple[float, float], ...] | None
 
 
 def parse_isat_label_metadata(path: str | Path) -> ParsedISATLabel | None:
@@ -79,11 +81,31 @@ def parse_isat_label_metadata(path: str | Path) -> ParsedISATLabel | None:
         if raw_height is not None:
             image_height = int(raw_height)
 
-    best: tuple[str, tuple[float, float, float, float], float] | None = None
+    best: (
+        tuple[
+            str,
+            tuple[float, float, float, float],
+            float,
+            tuple[tuple[float, float], ...] | None,
+        ]
+        | None
+    ) = None
     for item in objects:
         if not isinstance(item, dict):
             continue
-        bbox = _bbox_from_segmentation(item.get("segmentation"))
+        raw_segmentation = item.get("segmentation")
+        bbox = _bbox_from_segmentation(raw_segmentation)
+        segmentation = (
+            tuple(
+                (float(point[0]), float(point[1]))
+                for point in raw_segmentation
+                if isinstance(point, list) and len(point) >= 2
+            )
+            if isinstance(raw_segmentation, list)
+            else None
+        )
+        if not segmentation:
+            segmentation = None
         raw_bbox = item.get("bbox")
         if bbox is None and isinstance(raw_bbox, list) and len(raw_bbox) >= 4:
             bbox = (float(raw_bbox[0]), float(raw_bbox[1]), float(raw_bbox[2]), float(raw_bbox[3]))
@@ -93,7 +115,7 @@ def parse_isat_label_metadata(path: str | Path) -> ParsedISATLabel | None:
         area = max(0.0, x1 - x0) * max(0.0, y1 - y0)
         category = str(item.get("category", "unknown"))
         if best is None or area > best[2]:
-            best = (category, bbox, area)
+            best = (category, bbox, area, segmentation)
     if best is None:
         return None
     return ParsedISATLabel(
@@ -101,6 +123,7 @@ def parse_isat_label_metadata(path: str | Path) -> ParsedISATLabel | None:
         bbox_xyxy=best[1],
         image_width=image_width,
         image_height=image_height,
+        segmentation_xy=best[3],
     )
 
 
@@ -162,6 +185,7 @@ def load_label_measurements(sequence: DatasetSequence) -> list[LabelMeasurement]
                 ttc_seconds=float(ttc_seconds),
                 image_width=parsed.image_width,
                 image_height=parsed.image_height,
+                segmentation_xy=parsed.segmentation_xy,
             )
         )
     return measurements

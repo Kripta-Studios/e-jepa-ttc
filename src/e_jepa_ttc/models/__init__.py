@@ -2,12 +2,14 @@
 
 from torch import nn
 
+from e_jepa_ttc.models.garl_ttc_replica import GarlTTCConfig, GarlTTCReplica
 from e_jepa_ttc.models.multimodal import (
     DINOv3FeatureTeacher,
     ObjectEventRGBFusion,
     RGBRecurrentObjectEncoder,
     multimodal_ttc_loss,
 )
+from e_jepa_ttc.models.object_geo_jepa_ttc import ObjectGeometryJEPATTC, OGEConfig
 from e_jepa_ttc.models.object_jepa import (
     ObjectCentricEventJEPA,
     ObjectCentricRecurrentEncoder,
@@ -118,11 +120,15 @@ def build_regressor(name: str, *, in_channels: int) -> nn.Module:
 __all__ = [
     "MODEL_NAMES",
     "DINOv3FeatureTeacher",
+    "GarlTTCConfig",
+    "GarlTTCReplica",
     "ObjectEventRGBFusion",
     "RGBRecurrentObjectEncoder",
     "ObjectCentricEventJEPA",
     "ObjectCentricRecurrentEncoder",
     "ObjectJEPAConfig",
+    "ObjectGeometryJEPATTC",
+    "OGEConfig",
     "EventTubeletTransformerEncoder",
     "EventTubeletTransformerRegressor",
     "EventTokenTransformerEncoder",

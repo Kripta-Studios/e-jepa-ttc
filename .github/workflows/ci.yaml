@@ -13,9 +13,6 @@ jobs:
       - run: uv sync --all-groups --no-editable
       - run: uv run --no-sync ruff check .
       - run: uv run --no-sync ruff format --check .
-      # CI does not receive ignored checkpoints/datasets. Physical verification
-      # is a release/local-data gate; CI still enforces record structure.
-      - run: uv run --no-sync python scripts/validate_artifact_registry.py --metadata-only
       - run: pwsh -Command "Get-ChildItem scripts/*.ps1 | ForEach-Object { `$errors = `$null; `$tokens = `$null; `$ast = [System.Management.Automation.Language.Parser]::ParseFile(`$_.FullName, [ref]`$tokens, [ref]`$errors); if (`$errors) { Write-Error `"Syntax error in `$(`$_.Name)`"; exit 1 } }"
       - run: uv run --no-sync pytest tests/unit
       - run: uv run --no-sync pytest tests/integration

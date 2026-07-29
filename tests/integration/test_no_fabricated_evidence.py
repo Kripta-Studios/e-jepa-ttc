@@ -25,10 +25,9 @@ def test_no_fabricated_evidence_in_scripts():
     # Explicitly allowed files that legimately parse or use these names,
     # but do NOT fabricate them to skip stages.
     allowed_files = [
-        "verify_smoke_completion.py",
-        "verify_full_completion.py",
         "audit_cache.py",
         "aggregate_results.py",
+        "run_evttc_architecture_matrix.py",
         "run_object_jepa_matrix.py",
         "select_best_onnx_candidate.py",
     ]

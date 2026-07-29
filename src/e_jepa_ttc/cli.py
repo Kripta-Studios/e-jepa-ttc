@@ -302,6 +302,7 @@ def _cmd_cache_evttc_object(args: argparse.Namespace) -> int:
             shard_size=args.shard_size,
         ),
         max_windows_per_sequence=args.max_windows_per_sequence,
+        workers=args.workers,
     )
     _print_json(payload)
     return 0
@@ -327,6 +328,11 @@ def _cmd_train_tiny_cnn(args: argparse.Namespace) -> int:
         evaluation_splits=tuple(args.evaluation_splits),
         train_splits=tuple(args.train_splits),
         validation_splits=tuple(args.validation_splits),
+        num_workers=args.num_workers,
+        early_stopping_patience=args.early_stopping_patience,
+        early_stopping_min_epochs=args.early_stopping_min_epochs,
+        early_stopping_min_delta_relative=args.early_stopping_min_delta_relative,
+        resume=args.resume,
         dry_run_fingerprint=args.dry_run_fingerprint,
     )
     if args.dry_run_fingerprint:
@@ -512,10 +518,6 @@ def _cmd_pretrain_jepa(args: argparse.Namespace) -> int:
         deep_supervision_layers=tuple(args.deep_supervision_layers),
         dense_predictor=args.dense_predictor,
         context_token_weight=args.context_token_weight,
-        flowmimic_alignment_weight=args.flowmimic_alignment_weight,
-        flowmimic_inverse_ttc_weight=args.flowmimic_inverse_ttc_weight,
-        flowmimic_minimum_ttc_s=args.flowmimic_minimum_ttc_s,
-        flowmimic_maximum_ttc_s=args.flowmimic_maximum_ttc_s,
         model_name=args.model,
         navigation_mode=args.navigation_mode,
         dry_run_fingerprint=args.dry_run_fingerprint,
@@ -548,6 +550,11 @@ def _cmd_pretrain_object_jepa(args: argparse.Namespace) -> int:
         use_ego_actions=args.use_ego_actions,
         use_recurrence=args.use_recurrence,
         use_geometry=args.use_geometry,
+        num_workers=args.num_workers,
+        early_stopping_patience=args.early_stopping_patience,
+        early_stopping_min_epochs=args.early_stopping_min_epochs,
+        early_stopping_min_delta_relative=args.early_stopping_min_delta_relative,
+        resume=args.resume,
     )
     _print_json(payload)
     return 0
@@ -975,6 +982,12 @@ def build_parser() -> argparse.ArgumentParser:
     cache_evttc.add_argument("--shard-size", type=int, default=256)
     cache_evttc.add_argument("--max-windows-per-sequence", type=int)
     cache_evttc.add_argument(
+        "--workers",
+        type=int,
+        default=4,
+        help="Process independent EvTTC sequences in parallel; 4 is safe for 32 GB RAM.",
+    )
+    cache_evttc.add_argument(
         "--no-normalize-events",
         dest="normalize_events",
         action="store_false",
@@ -998,6 +1011,30 @@ def build_parser() -> argparse.ArgumentParser:
     train_tiny.add_argument("--subset-manifest-path", type=Path)
     train_tiny.add_argument("--train-splits", nargs="+", default=["train"])
     train_tiny.add_argument("--validation-splits", nargs="+", default=["validation"])
+    train_tiny.add_argument(
+        "--num-workers",
+        type=int,
+        default=4,
+        help="DataLoader workers. Four is a safe default for the 32 GB Windows host.",
+    )
+    train_tiny.add_argument(
+        "--early-stopping-patience",
+        type=int,
+        default=8,
+        help="Stop after this many non-improving validation epochs; zero disables it.",
+    )
+    train_tiny.add_argument("--early-stopping-min-epochs", type=int, default=12)
+    train_tiny.add_argument(
+        "--early-stopping-min-delta-relative",
+        type=float,
+        default=0.003,
+        help="Relative sequence-macro MAE improvement required to reset patience.",
+    )
+    train_tiny.add_argument(
+        "--resume",
+        action="store_true",
+        help="Resume atomically from OUTPUT_DIR/resume.pt after fingerprint validation.",
+    )
     train_tiny.add_argument(
         "--evaluation-splits",
         nargs="+",
@@ -1329,26 +1366,6 @@ def build_parser() -> argparse.ArgumentParser:
         ),
     )
     pretrain_jepa.add_argument(
-        "--flowmimic-alignment-weight",
-        type=float,
-        default=0.0,
-        help=(
-            "Weight for causal synthetic context-to-future latent alignment. Synthetic "
-            "intensity is rendered before contrast-threshold event simulation."
-        ),
-    )
-    pretrain_jepa.add_argument(
-        "--flowmimic-inverse-ttc-weight",
-        type=float,
-        default=0.0,
-        help=(
-            "Weight for an auxiliary inverse-TTC head trained only with analytic "
-            "synthetic TTC; real TTC labels remain excluded from pretraining."
-        ),
-    )
-    pretrain_jepa.add_argument("--flowmimic-minimum-ttc-s", type=float, default=0.8)
-    pretrain_jepa.add_argument("--flowmimic-maximum-ttc-s", type=float, default=4.0)
-    pretrain_jepa.add_argument(
         "--dry-run-fingerprint",
         action="store_true",
         help="Compute and return run fingerprint without training",
@@ -1373,6 +1390,15 @@ def build_parser() -> argparse.ArgumentParser:
     pretrain_object.add_argument("--predictor-heads", type=int, default=6)
     pretrain_object.add_argument("--ema-start", type=float, default=0.99)
     pretrain_object.add_argument("--ema-end", type=float, default=0.9999)
+    pretrain_object.add_argument("--num-workers", type=int, default=4)
+    pretrain_object.add_argument("--early-stopping-patience", type=int, default=6)
+    pretrain_object.add_argument("--early-stopping-min-epochs", type=int, default=10)
+    pretrain_object.add_argument(
+        "--early-stopping-min-delta-relative",
+        type=float,
+        default=0.003,
+    )
+    pretrain_object.add_argument("--resume", action="store_true")
     pretrain_object.add_argument(
         "--no-ego-actions",
         dest="use_ego_actions",

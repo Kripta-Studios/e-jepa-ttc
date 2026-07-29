@@ -1,0 +1,75 @@
+protocol: evttc_architecture_selection_v4_stage_isolated
+dataset: EvTTC-32
+external_pretraining: disabled
+sealed_benchmark:
+  allowed: false
+  path_marker: evttc_official_benchmark_sealed
+
+profiles:
+  smoke:
+    epochs: 2
+    batch_size: 4
+    gradient_accumulation: 1
+    max_windows_per_sequence: 2
+    max_train_samples: 38
+    max_validation_samples: 10
+    early_stopping_patience: 0
+    early_stopping_min_epochs: 1
+    garl_backbone: compact
+  screen:
+    epochs: 8
+    # The dense arm used only ~0.42 GiB at batch 4 in the CUDA smoke. Batch 24
+    # leaves a broad safety margin on the 12.8 GB laptop GPU while reducing
+    # Python/DataLoader overhead to roughly 13 optimizer steps per epoch.
+    batch_size: 24
+    gradient_accumulation: 1
+    max_windows_per_sequence: 16
+    max_train_samples: 304
+    max_validation_samples: 80
+    early_stopping_patience: 2
+    early_stopping_min_epochs: 3
+    garl_backbone: resnet50
+  confirm:
+    epochs: 40
+    # Confirmation keeps a smaller microbatch because 64 windows/sequence
+    # produce more heterogeneous shards and longer validation phases.
+    batch_size: 16
+    gradient_accumulation: 2
+    # Architecture confirmation remains bounded. Full 32/32 training must use
+    # an on-demand HDF5 loader; a global voxel cache is forbidden.
+    max_windows_per_sequence: 64
+    max_train_samples: null
+    max_validation_samples: null
+    early_stopping_patience: 6
+    early_stopping_min_epochs: 10
+    garl_backbone: resnet50
+
+hardware:
+  precision: bf16
+  # Match the audited historical BASE downstream optimizer for the controlled
+  # A0/A1/A2/K1 comparison.
+  learning_rate: 0.00003
+  weight_decay: 0.001
+  gradient_accumulation: 2
+  garl_batch_size: 8
+  # Official effective batch is 128.  Microbatch 8 x accumulation 16 fits the
+  # 12.8 GB GPU while preserving that optimization scale.
+  garl_gradient_accumulation: 16
+  # The source decoder is much wider than the TTC head. Microbatch one keeps
+  # G7 within 12.8 GiB while retaining effective batch 128.
+  garl_foreground_batch_size: 1
+  garl_foreground_gradient_accumulation: 128
+  dataloader_workers: 4
+  cache_build_workers: 4
+  cache_resolution: [160, 90]
+  event_bins: 5
+  checkpoint_policy: [best, last, weights_only]
+  maximum_cache_gib: 8
+  minimum_free_gib: 100
+
+selection:
+  monitor: validation_sequence_macro_selection_score
+  first_seed: 7
+  confirmation_seeds: [7, 13, 21]
+  benchmark10_opened: false
+  no_cartesian_product: true

@@ -7,6 +7,115 @@ import numpy as np
 from e_jepa_ttc.evaluation.metrics import regression_metrics
 
 
+def ttc_selection_components(
+    y_true_ttc_s: np.ndarray,
+    y_pred_ttc_s: np.ndarray,
+    *,
+    low_ttc_max_s: float = 2.0,
+    high_ttc_min_s: float = 6.0,
+) -> dict[str, float | int]:
+    """Return the dimensionless validation score frozen by PLAN_v6.
+
+    Empty low/high TTC bins fall back to the overall relative error. This keeps
+    every grouped sequence in the macro average without making its score depend
+    on another sequence's target distribution.
+    """
+
+    target = np.asarray(y_true_ttc_s, dtype=np.float64).reshape(-1)
+    prediction = np.asarray(y_pred_ttc_s, dtype=np.float64).reshape(-1)
+    if target.shape != prediction.shape or target.size == 0:
+        raise ValueError("TTC target and prediction must be non-empty and shape matched.")
+    if not np.all(np.isfinite(target)) or not np.all(np.isfinite(prediction)):
+        raise ValueError("Checkpoint selection rejects non-finite TTC values.")
+    if np.any(target <= 0.0):
+        raise ValueError("Checkpoint selection requires positive TTC ground truth.")
+    if low_ttc_max_s <= 0.0 or high_ttc_min_s <= low_ttc_max_s:
+        raise ValueError("TTC selection bin limits are invalid.")
+
+    absolute_error = np.abs(prediction - target)
+    relative_error = absolute_error / np.maximum(target, 1e-6)
+    mean_relative_error = float(np.mean(relative_error))
+    normalized_rmse = float(
+        np.sqrt(np.mean(np.square(prediction - target)))
+        / np.maximum(np.mean(np.abs(target)), 1e-6)
+    )
+    low_mask = target <= low_ttc_max_s
+    high_mask = target >= high_ttc_min_s
+    low_relative_error = (
+        float(np.mean(relative_error[low_mask]))
+        if np.any(low_mask)
+        else mean_relative_error
+    )
+    high_relative_error = (
+        float(np.mean(relative_error[high_mask]))
+        if np.any(high_mask)
+        else mean_relative_error
+    )
+    selection_score = (
+        mean_relative_error
+        + 0.25 * normalized_rmse
+        + 0.25 * high_relative_error
+        + 0.25 * low_relative_error
+    )
+    return {
+        "selection_score": selection_score,
+        "mean_relative_error": mean_relative_error,
+        "normalized_rmse": normalized_rmse,
+        "low_ttc_relative_error": low_relative_error,
+        "high_ttc_relative_error": high_relative_error,
+        "low_ttc_support": int(np.count_nonzero(low_mask)),
+        "high_ttc_support": int(np.count_nonzero(high_mask)),
+        "low_ttc_max_s": low_ttc_max_s,
+        "high_ttc_min_s": high_ttc_min_s,
+    }
+
+
+def grouped_ttc_selection_components(
+    y_true_ttc_s: np.ndarray,
+    y_pred_ttc_s: np.ndarray,
+    groups: np.ndarray,
+) -> dict[str, object]:
+    """Compute the validation score with equal weight for every sequence."""
+
+    target = np.asarray(y_true_ttc_s, dtype=np.float64).reshape(-1)
+    prediction = np.asarray(y_pred_ttc_s, dtype=np.float64).reshape(-1)
+    group_ids = np.asarray(groups).astype(str).reshape(-1)
+    if target.shape != prediction.shape or target.shape != group_ids.shape:
+        raise ValueError("Targets, predictions and sequence groups must be shape matched.")
+    unique_groups = np.unique(group_ids)
+    if unique_groups.size == 0:
+        raise ValueError("Grouped checkpoint selection requires at least one sequence.")
+
+    per_group: dict[str, dict[str, float | int]] = {}
+    for group in unique_groups:
+        selected = group_ids == group
+        per_group[str(group)] = ttc_selection_components(
+            target[selected],
+            prediction[selected],
+        )
+    scores = np.asarray(
+        [float(values["selection_score"]) for values in per_group.values()],
+        dtype=np.float64,
+    )
+    macro_fields = (
+        "mean_relative_error",
+        "normalized_rmse",
+        "low_ttc_relative_error",
+        "high_ttc_relative_error",
+    )
+    return {
+        "sequence_macro_selection_score": float(np.mean(scores)),
+        "worst_sequence_selection_score": float(np.max(scores)),
+        **{
+            f"sequence_macro_{field}": float(
+                np.mean([float(values[field]) for values in per_group.values()])
+            )
+            for field in macro_fields
+        },
+        "per_sequence_checkpoint_selection": per_group,
+    }
+
+
 def garl_ttc_metrics(
     y_true_ttc_s: np.ndarray,
     y_pred_ttc_s: np.ndarray,
@@ -189,6 +298,8 @@ def object_ttc_metrics(
         "regression": regression_metrics(target, prediction),
         "garl_ttc": garl_ttc_metrics(target, prediction),
     }
+    if np.all(target > 0.0):
+        payload["checkpoint_selection"] = ttc_selection_components(target, prediction)
     if risk_probabilities is not None:
         probability = np.asarray(risk_probabilities, dtype=np.float64)
         if probability.shape != (target.shape[0], len(risk_thresholds_s)):
@@ -265,4 +376,10 @@ def _expected_calibration_error(
     return float(error)
 
 
-__all__ = ["binary_risk_metrics", "garl_ttc_metrics", "object_ttc_metrics"]
+__all__ = [
+    "binary_risk_metrics",
+    "garl_ttc_metrics",
+    "grouped_ttc_selection_components",
+    "object_ttc_metrics",
+    "ttc_selection_components",
+]

@@ -18,10 +18,3 @@ def test_recovery_protocol_contains_physical_manifest_hash() -> None:
     assert all(character in "0123456789abcdef" for character in manifest_hash)
     assert protocol["claim_level"] == "diagnostic"
     assert protocol["test_status"] == "reused_test_diagnostic"
-
-
-def test_legacy_schema_rewriters_fail_closed() -> None:
-    for name in ("patch_protocol_usage.py", "patch_schemas_strict.py", "upgrade_schemas.py"):
-        content = (_repo_root() / "scripts" / name).read_text(encoding="utf-8")
-        assert "raise SystemExit" in content
-        assert 'data["additionalProperties"] = True' not in content

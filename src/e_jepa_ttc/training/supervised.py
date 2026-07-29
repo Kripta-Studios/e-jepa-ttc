@@ -86,8 +86,17 @@ def _evaluate_model(
     *,
     device: torch.device,
     batch_size: int,
+    num_workers: int = 0,
 ) -> tuple[np.ndarray, np.ndarray, float]:
-    loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, num_workers=0)
+    loader_kwargs: dict[str, Any] = {
+        "batch_size": batch_size,
+        "shuffle": False,
+        "num_workers": num_workers,
+        "pin_memory": device.type == "cuda",
+    }
+    if num_workers > 0:
+        loader_kwargs.update(persistent_workers=True, prefetch_factor=2)
+    loader = DataLoader(dataset, **loader_kwargs)
     predictions: list[np.ndarray] = []
     targets: list[np.ndarray] = []
     start = time.perf_counter()
@@ -123,6 +132,35 @@ def _prediction_metadata(
         if field in cache.files:
             metadata[field] = np.asarray(cache[field])[indices]
     return metadata
+
+
+def _sequence_macro_mae(
+    y_true: np.ndarray,
+    y_pred: np.ndarray,
+    sequence_ids: np.ndarray | None,
+) -> float:
+    """Return sequence-macro MAE, falling back to sample-micro MAE."""
+
+    if sequence_ids is None:
+        return float(np.mean(np.abs(y_true - y_pred)))
+    sequence_text = np.asarray(sequence_ids).astype(str)
+    values = [
+        float(
+            np.mean(
+                np.abs(y_true[sequence_text == sequence_id] - y_pred[sequence_text == sequence_id])
+            )
+        )
+        for sequence_id in np.unique(sequence_text)
+    ]
+    return float(np.mean(values))
+
+
+def _atomic_torch_save(payload: dict[str, Any], path: Path) -> None:
+    """Write a checkpoint atomically so interruption cannot corrupt the previous state."""
+
+    temporary_path = path.with_suffix(path.suffix + ".tmp")
+    torch.save(payload, temporary_path)
+    temporary_path.replace(path)
 
 
 def _split_evaluation(
@@ -262,6 +300,11 @@ def train_tiny_cnn(
     evaluation_splits: tuple[str, ...] = ("train", "validation", "test"),
     train_splits: tuple[str, ...] = ("train",),
     validation_splits: tuple[str, ...] = ("validation",),
+    num_workers: int = 0,
+    early_stopping_patience: int = 8,
+    early_stopping_min_epochs: int = 12,
+    early_stopping_min_delta_relative: float = 0.003,
+    resume: bool = False,
     dry_run_fingerprint: bool = False,
 ) -> dict[str, Any] | str:
     """Train a supervised TTC model on a materialized voxel cache."""
@@ -281,6 +324,14 @@ def train_tiny_cnn(
     if not validation_splits:
         msg = "validation_splits must contain at least one split."
         raise ValueError(msg)
+    if num_workers < 0:
+        raise ValueError("num_workers must be non-negative.")
+    if early_stopping_patience < 0:
+        raise ValueError("early_stopping_patience must be non-negative.")
+    if early_stopping_min_epochs <= 0:
+        raise ValueError("early_stopping_min_epochs must be positive.")
+    if early_stopping_min_delta_relative < 0.0:
+        raise ValueError("early_stopping_min_delta_relative must be non-negative.")
     cache = np.load(cache_path, allow_pickle=False)
     validate_voxel_cache(cache)
     x = cache["x"]
@@ -416,13 +467,15 @@ def train_tiny_cnn(
     }
     datasets["__train_selection__"] = train_dataset
     datasets["__validation_selection__"] = val_dataset
-    train_loader = DataLoader(
-        train_dataset,
-        batch_size=batch_size,
-        shuffle=True,
-        num_workers=0,
-        pin_memory=device.type == "cuda",
-    )
+    train_loader_kwargs: dict[str, Any] = {
+        "batch_size": batch_size,
+        "shuffle": True,
+        "num_workers": num_workers,
+        "pin_memory": device.type == "cuda",
+    }
+    if num_workers > 0:
+        train_loader_kwargs.update(persistent_workers=True, prefetch_factor=2)
+    train_loader = DataLoader(train_dataset, **train_loader_kwargs)
 
     model = build_regressor(model_name, in_channels=int(x.shape[1])).to(device)
     pretrained_encoder: dict[str, Any] | None = None
@@ -458,6 +511,13 @@ def train_tiny_cnn(
         else "",
         "optimizer_config": {"learning_rate": learning_rate, "weight_decay": weight_decay},
         "training_steps": epochs,
+        "num_workers": num_workers,
+        "early_stopping": {
+            "patience": early_stopping_patience,
+            "min_epochs": early_stopping_min_epochs,
+            "min_delta_relative": early_stopping_min_delta_relative,
+            "monitor": "validation_sequence_macro_mae",
+        },
     }
     run_fingerprint = hashlib.sha256(
         json.dumps(run_fingerprint_payload, sort_keys=True).encode("utf-8")
@@ -481,15 +541,89 @@ def train_tiny_cnn(
     output.mkdir(parents=True, exist_ok=True)
     best_path = output / "tiny_cnn_best.pt"
     last_path = output / "tiny_cnn_last.pt"
+    resume_path = output / "resume.pt"
     metrics_path = output / "metrics.json"
     history_path = output / "history.jsonl"
     best_val_mae = float("inf")
     best_epoch = -1
+    epochs_without_improvement = 0
+    start_epoch = 1
+    completed_epoch = 0
+    stopped_early = False
     history: list[dict[str, Any]] = []
     start_time = time.perf_counter()
 
-    with history_path.open("w", encoding="utf-8") as history_file:
-        for epoch in range(1, epochs + 1):
+    resolved_model_config = {
+        "in_channels": int(x.shape[1]),
+        "width": getattr(model, "width", 48) if hasattr(model, "width") else 48,
+    }
+
+    def checkpoint_payload(
+        *,
+        epoch: int,
+        role: str,
+        selected_by: str,
+    ) -> dict[str, Any]:
+        return {
+            "model_state_dict": model.state_dict(),
+            "model_name": model_name,
+            "epoch": epoch,
+            "checkpoint_role": role,
+            "checkpoint_selected_by": selected_by,
+            "cache_path": str(cache_path),
+            "seed": seed,
+            "pretrained_encoder": pretrained_encoder,
+            "in_channels": int(x.shape[1]),
+            "cache_sha256": cache_sha256,
+            "split_manifest_sha256": split_manifest_sha256,
+            "subset_manifest_sha256": subset_sha256,
+            "navigation_mode": navigation_mode,
+            "label_fraction": train_fraction,
+            "protocol_version": get_current_protocol_identity()[0],
+            "protocol_sha256": get_current_protocol_identity()[1],
+            "git_commit": commit,
+            "resolved_model_config": resolved_model_config,
+            "run_fingerprint": run_fingerprint,
+            "run_fingerprint_payload": run_fingerprint_payload,
+        }
+
+    if resume:
+        if not resume_path.is_file():
+            raise FileNotFoundError(f"Resume checkpoint does not exist: {resume_path}")
+        resume_state = torch.load(resume_path, map_location=device, weights_only=False)
+        if resume_state.get("run_fingerprint") != run_fingerprint:
+            raise ValueError(
+                "Resume fingerprint differs from the current data/config/code fingerprint."
+            )
+        model.load_state_dict(resume_state["model_state_dict"])
+        optimizer.load_state_dict(resume_state["optimizer_state_dict"])
+        if scaler is not None and resume_state.get("scaler_state_dict") is not None:
+            scaler.load_state_dict(resume_state["scaler_state_dict"])
+        completed_epoch = int(resume_state["epoch"])
+        start_epoch = completed_epoch + 1
+        best_val_mae = float(resume_state["best_validation_sequence_macro_mae"])
+        best_epoch = int(resume_state["best_epoch"])
+        epochs_without_improvement = int(resume_state["epochs_without_improvement"])
+        rng_state = resume_state["rng_state"]
+        random.setstate(rng_state["python"])
+        np.random.set_state(rng_state["numpy"])
+        torch.set_rng_state(rng_state["torch"])
+        if device.type == "cuda" and rng_state.get("cuda"):
+            torch.cuda.set_rng_state_all(rng_state["cuda"])
+        if history_path.is_file():
+            history = [
+                json.loads(line)
+                for line in history_path.read_text(encoding="utf-8").splitlines()
+                if line.strip()
+            ]
+    elif resume_path.exists():
+        raise FileExistsError(
+            f"{resume_path} already exists. Pass resume=True or choose a new output directory."
+        )
+
+    history_mode = "a" if resume else "w"
+    with history_path.open(history_mode, encoding="utf-8") as history_file:
+        for epoch in range(start_epoch, epochs + 1):
             train_loss = _train_one_epoch(
                 model,
                 train_loader,
@@ -503,75 +637,84 @@ def train_tiny_cnn(
                 val_dataset,
                 device=device,
                 batch_size=batch_size,
+                num_workers=num_workers,
             )
             val_metrics = regression_metrics(val_true, val_pred)
+            validation_sequence_ids = (
+                np.asarray(cache["sequence_id"])[val_idx] if "sequence_id" in cache.files else None
+            )
+            validation_sequence_macro_mae = _sequence_macro_mae(
+                val_true,
+                val_pred,
+                validation_sequence_ids,
+            )
             row = {
                 "epoch": epoch,
                 "train_loss": train_loss,
                 "validation": val_metrics,
+                "validation_sequence_macro_mae": validation_sequence_macro_mae,
                 "validation_seconds": val_seconds,
             }
             history.append(row)
             history_file.write(json.dumps(row, sort_keys=True) + "\n")
             history_file.flush()
-            if val_metrics["mae_s"] < best_val_mae:
-                best_val_mae = val_metrics["mae_s"]
+            improvement_threshold = (
+                best_val_mae * (1.0 - early_stopping_min_delta_relative)
+                if np.isfinite(best_val_mae)
+                else float("inf")
+            )
+            if validation_sequence_macro_mae < improvement_threshold:
+                best_val_mae = validation_sequence_macro_mae
                 best_epoch = epoch
-                torch.save(
-                    {
-                        "model_state_dict": model.state_dict(),
-                        "model_name": model_name,
-                        "epoch": epoch,
-                        "checkpoint_role": "best",
-                        "checkpoint_selected_by": "validation_mae",
-                        "cache_path": str(cache_path),
-                        "seed": seed,
-                        "pretrained_encoder": pretrained_encoder,
-                        "in_channels": int(x.shape[1]),
-                        "cache_sha256": cache_sha256,
-                        "split_manifest_sha256": split_manifest_sha256,
-                        "subset_manifest_sha256": subset_sha256,
-                        "navigation_mode": navigation_mode,
-                        "label_fraction": train_fraction,
-                        "protocol_version": get_current_protocol_identity()[0],
-                        "protocol_sha256": get_current_protocol_identity()[1],
-                        "git_commit": commit,
-                        "resolved_model_config": {
-                            "in_channels": int(x.shape[1]),
-                            "width": getattr(model, "width", 48) if hasattr(model, "width") else 48,
-                        },
-                        "run_fingerprint": run_fingerprint,
-                        "run_fingerprint_payload": run_fingerprint_payload,
-                    },
+                epochs_without_improvement = 0
+                _atomic_torch_save(
+                    checkpoint_payload(
+                        epoch=epoch,
+                        role="best",
+                        selected_by="validation_sequence_macro_mae",
+                    ),
                     best_path,
                 )
+            else:
+                epochs_without_improvement += 1
 
-    torch.save(
-        {
-            "model_state_dict": model.state_dict(),
-            "model_name": model_name,
-            "epoch": epochs,
-            "checkpoint_role": "last",
-            "checkpoint_selected_by": "final_epoch",
-            "cache_path": str(cache_path),
-            "seed": seed,
-            "pretrained_encoder": pretrained_encoder,
-            "in_channels": int(x.shape[1]),
-            "cache_sha256": cache_sha256,
-            "split_manifest_sha256": split_manifest_sha256,
-            "subset_manifest_sha256": subset_sha256,
-            "navigation_mode": navigation_mode,
-            "label_fraction": train_fraction,
-            "protocol_version": get_current_protocol_identity()[0],
-            "protocol_sha256": get_current_protocol_identity()[1],
-            "git_commit": commit,
-            "resolved_model_config": {
-                "in_channels": int(x.shape[1]),
-                "width": getattr(model, "width", 48) if hasattr(model, "width") else 48,
-            },
-            "run_fingerprint": run_fingerprint,
-            "run_fingerprint_payload": run_fingerprint_payload,
-        },
+            completed_epoch = epoch
+            resume_payload = checkpoint_payload(
+                epoch=epoch,
+                role="resume",
+                selected_by="latest_completed_epoch",
+            )
+            resume_payload.update(
+                {
+                    "optimizer_state_dict": optimizer.state_dict(),
+                    "scaler_state_dict": scaler.state_dict() if scaler is not None else None,
+                    "best_validation_sequence_macro_mae": best_val_mae,
+                    "best_epoch": best_epoch,
+                    "epochs_without_improvement": epochs_without_improvement,
+                    "rng_state": {
+                        "python": random.getstate(),
+                        "numpy": np.random.get_state(),
+                        "torch": torch.get_rng_state(),
+                        "cuda": torch.cuda.get_rng_state_all() if device.type == "cuda" else [],
+                    },
+                }
+            )
+            _atomic_torch_save(resume_payload, resume_path)
+
+            if (
+                early_stopping_patience > 0
+                and epoch >= early_stopping_min_epochs
+                and epochs_without_improvement >= early_stopping_patience
+            ):
+                stopped_early = True
+                break
+
+    _atomic_torch_save(
+        checkpoint_payload(
+            epoch=completed_epoch,
+            role="last",
+            selected_by="early_stopping" if stopped_early else "final_epoch",
+        ),
         last_path,
     )
     checkpoint = torch.load(best_path, map_location=device, weights_only=False)
@@ -588,6 +731,7 @@ def train_tiny_cnn(
             dataset,
             device=device,
             batch_size=batch_size,
+            num_workers=num_workers,
         )
         metadata = _prediction_metadata(cache, split_indices[split_name])
         split_results[split_name] = _split_evaluation(
@@ -616,9 +760,20 @@ def train_tiny_cnn(
             pretrained_encoder.get("source_seed") if pretrained_encoder is not None else None
         ),
         "epochs": epochs,
+        "epochs_completed": completed_epoch,
+        "stopped_early": stopped_early,
         "batch_size": batch_size,
+        "num_workers": num_workers,
         "learning_rate": learning_rate,
         "weight_decay": weight_decay,
+        "early_stopping": {
+            "monitor": "validation_sequence_macro_mae",
+            "patience": early_stopping_patience,
+            "min_epochs": early_stopping_min_epochs,
+            "min_delta_relative": early_stopping_min_delta_relative,
+            "best_value": best_val_mae,
+        },
+        "resume_checkpoint": resume_path.as_posix(),
         "pretrained_encoder": pretrained_encoder,
         "freeze_encoder": freeze_encoder,
         "train_fraction": train_fraction,

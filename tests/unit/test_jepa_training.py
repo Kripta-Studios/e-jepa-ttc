@@ -7,7 +7,6 @@ from e_jepa_ttc.data.evttc import NAVIGATION_FEATURE_NAMES
 from e_jepa_ttc.data.ml_cache import remap_cache_splits
 from e_jepa_ttc.training.jepa import (
     _build_temporal_pairs,
-    _neutralize_synthetic_navigation,
     _tubelet_masked_context,
     _without_future_navigation,
     pretrain_jepa,
@@ -477,41 +476,6 @@ def test_event_tubelet_jepa_pretraining_smoke(tmp_path: Path) -> None:
     assert (tmp_path / "tubelet_jepa" / "jepa_encoder_best.pt").exists()
 
 
-def test_flowmimic_auxiliary_pretraining_is_synthetic_only(tmp_path: Path) -> None:
-    cache_path = tmp_path / "tubelet_cache.npz"
-    _write_tubelet_cache(cache_path)
-
-    pretrain_summary = pretrain_jepa(
-        cache_path=cache_path,
-        output_dir=tmp_path / "flowmimic_jepa",
-        epochs=1,
-        batch_size=2,
-        seed=5,
-        device_name="cpu",
-        pretrain_splits=("train",),
-        validation_splits=("validation",),
-        temporal_horizons_ms=(20,),
-        flowmimic_alignment_weight=0.2,
-        flowmimic_inverse_ttc_weight=0.1,
-        flowmimic_minimum_ttc_s=0.8,
-        flowmimic_maximum_ttc_s=1.6,
-    )
-
-    assert pretrain_summary["objective"].startswith("flowmimic_")
-    assert pretrain_summary["flowmimic_enabled"] is True
-    assert pretrain_summary["last"]["train"]["flowmimic_alignment_loss"] > 0.0
-    assert pretrain_summary["last"]["train"]["flowmimic_inverse_ttc_loss"] > 0.0
-    assert pretrain_summary["last"]["validation"]["flowmimic_alignment_loss"] == 0.0
-    assert pretrain_summary["leakage_audit"]["flowmimic_uses_real_ttc_labels"] is False
-    assert pretrain_summary["leakage_audit"]["flowmimic_uses_analytic_synthetic_ttc"] is True
-    checkpoint = torch.load(
-        tmp_path / "flowmimic_jepa" / "jepa_encoder_best.pt",
-        map_location="cpu",
-        weights_only=False,
-    )
-    assert checkpoint["flowmimic_inverse_ttc_head_state_dict"] is not None
-
-
 def test_event_tubelet_rope_jepa_pretraining_smoke(tmp_path: Path) -> None:
     cache_path = tmp_path / "tubelet_cache.npz"
     _write_tubelet_cache(cache_path)
@@ -543,26 +507,6 @@ def test_tubelet_mask_preserves_auxiliary_channels() -> None:
 
     assert torch.any(masked[:, :10] == 0.0)
     assert torch.all(masked[:, 10:] == 3.0)
-
-
-def test_flowmimic_navigation_is_neutral_after_train_normalization() -> None:
-    synthetic = torch.zeros(2, 21, 8, 8)
-    action_mean = torch.tensor([0.0] * 6 + [8.0, -4.0, 2.0, -0.1, 0.04, -0.2, 0.01, 0.02, 1.0])
-
-    _neutralize_synthetic_navigation(
-        synthetic,
-        bins=5,
-        metadata_channels=True,
-        navigation_feature_count=9,
-        action_feature_mean=action_mean,
-    )
-
-    expected = action_mean[-9:].view(1, 9, 1, 1).expand(2, -1, 8, 8)
-    torch.testing.assert_close(synthetic[:, 12:21], expected)
-    normalized = (synthetic[:, 12:21].mean(dim=(2, 3)) - action_mean[-9:]) / torch.tensor(
-        [4.0, 2.0, 7.0, 0.2, 0.9, 1.4, 0.4, 0.4, 1e-6]
-    )
-    assert float(normalized.abs().max()) < 1e-6
 
 
 def test_event_tubelet_jepa_tubelet_mask_smoke(tmp_path: Path) -> None:

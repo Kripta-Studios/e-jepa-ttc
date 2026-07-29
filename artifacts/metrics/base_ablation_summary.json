@@ -1,0 +1,114 @@
+{
+  "artifact_type": "evttc32_base_ablation_summary",
+  "created_at": "2026-07-29",
+  "evidence_type": "validation_multiseed",
+  "final_test_opened": false,
+  "validation": {
+    "sample_count_per_seed": 2040,
+    "sequence_count": 5,
+    "sequences": [
+      "CCRm-medium-0-overlap-0",
+      "CCRs-1-high-0-overlap-0",
+      "CCRs-side-high",
+      "CPLA-high",
+      "CPNA-high"
+    ]
+  },
+  "variants": {
+    "BASE": {
+      "mae_s_by_seed": {
+        "7": 0.32289176872547937,
+        "13": 0.35168668730001823,
+        "21": 0.3235668360602622
+      },
+      "mae_s_mean": 0.33271509736191995,
+      "mae_s_sample_std": 0.016433345598542527,
+      "rmse_s_mean": 0.6211027592432055
+    },
+    "ALIGN": {
+      "mae_s_by_seed": {
+        "7": 0.37509278912170263,
+        "13": 0.352426931466542,
+        "21": 0.3812917576701033
+      },
+      "mae_s_mean": 0.36960382608611597,
+      "mae_s_sample_std": 0.015195100669129408,
+      "rmse_s_mean": 0.6324391504744182,
+      "relative_mae_change_vs_base_pct": 11.087182101649361
+    },
+    "INVERSE": {
+      "mae_s_by_seed": {
+        "7": 0.47973692837883447,
+        "13": 0.41768880886774434,
+        "21": 0.40130004798080404
+      },
+      "mae_s_mean": 0.43290859507579427,
+      "mae_s_sample_std": 0.041374115951978874,
+      "rmse_s_mean": 0.7026954471383654,
+      "relative_mae_change_vs_base_pct": 30.11390180617084
+    },
+    "BOTH": {
+      "mae_s_by_seed": {
+        "7": 0.4418154444764642,
+        "13": 0.41968338755415935,
+        "21": 0.44610883278005264
+      },
+      "mae_s_mean": 0.43586922160355873,
+      "mae_s_sample_std": 0.014180769150062694,
+      "rmse_s_mean": 0.7458925300389967,
+      "relative_mae_change_vs_base_pct": 31.003740154727645
+    },
+    "NO_MOTION": {
+      "mae_s_by_seed": {
+        "7": 0.34581984860055587,
+        "13": 0.2909160967843205,
+        "21": 0.3650826131304105
+      },
+      "mae_s_mean": 0.33393951950509565,
+      "mae_s_sample_std": 0.0384840837397883,
+      "rmse_s_mean": 0.5600477579140203,
+      "interpretation": "Not an isolated motion ablation because other losses also changed."
+    },
+    "NO_NAV_INCOMPLETE": {
+      "mae_s_by_seed": {
+        "13": 0.5370857342201121,
+        "21": 0.5188476548183198
+      },
+      "mae_s_mean_two_seeds": 0.527966694519216,
+      "rmse_s_mean_two_seeds": 0.9001138231519297,
+      "complete": false
+    },
+    "NO_VARIANCE": {
+      "mae_s_by_seed": {
+        "7": 0.3134132423529438,
+        "13": 0.3538119967077293,
+        "21": 0.4327118632255816
+      },
+      "mae_s_mean": 0.3666457007620849,
+      "mae_s_sample_std": 0.060675927725453264,
+      "rmse_s_mean": 0.6325829352669595
+    }
+  },
+  "historical_pilot": {
+    "validation_sequence_count": 1,
+    "seed": 7,
+    "scratch_mae_s": 0.38928985457671317,
+    "jepa_without_flowmimic_mae_s": 0.34163723757392483,
+    "flowmimic_alignment_mae_s": 0.2552268379612973,
+    "alignment_plus_inverse_ttc_mae_s": 0.3256210207939148,
+    "promotable_claim": false,
+    "reason": "Single sequence and seed; later robustness gate failed and broader validation reversed the gain."
+  },
+  "decision": {
+    "promoted_model": "BASE",
+    "flowmimic_removed": true,
+    "inverse_ttc_synthetic_auxiliary_removed": true,
+    "benchmark10_opened": false
+  },
+  "limitations": [
+    "This is validation evidence, not an official Benchmark-10 result.",
+    "NO_NAV is incomplete and cannot support a final claim.",
+    "NO_MOTION changed more than one factor.",
+    "Raw historical artifacts remain recoverable from Git history."
+  ]
+}

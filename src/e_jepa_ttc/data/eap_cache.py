@@ -787,6 +787,13 @@ class ShardLocalSampler(Sampler[int]):
             rng.shuffle(positions)
             yield from positions
 
+    def set_epoch(self, epoch: int) -> None:
+        """Select the deterministic epoch order, including after resume."""
+
+        if epoch < 0:
+            raise ValueError("epoch must be non-negative.")
+        self.epoch = int(epoch)
+
 
 __all__ = [
     "EAPObjectCacheConfig",
