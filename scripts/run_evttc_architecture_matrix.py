@@ -331,7 +331,7 @@ def _prepare_cache(
     cache_manifest = cache_dir / "manifest.json"
     if cache_manifest.is_file():
         payload = json.loads(cache_manifest.read_text(encoding="utf-8"))
-        if payload.get("format") != "evttc_object_event_jepa_cache_v5":
+        if payload.get("format") != "evttc_object_event_jepa_cache_v6":
             raise ValueError(
                 f"{cache_manifest} is a stale cache. Use a new --cache-dir; "
                 "historical artifacts are not overwritten."
