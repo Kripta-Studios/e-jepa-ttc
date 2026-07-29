@@ -1,80 +1,92 @@
 # Results invalidation and claim boundary
 
-Snapshot: 2026-07-13. Historical code commit: `d29339d4093e9ba7e306eb45a35daad1d976efc8`.
-The recovery worktree is intentionally not a result-producing state until it is committed cleanly.
+Updated: 2026-07-30.
 
-## Allowed registry states
+## Valid evidence classes
 
-The only result states are `invalid_pre_fix`, `reused_test_diagnostic`,
-`smoke_only`, and `valid_post_fix`. The legacy spelling `reused_test` is accepted
-only while reading old split metadata and is normalized to
-`reused_test_diagnostic`.
+```text
+historical_exact
+integration_only
+screen_candidate
+grouped_cv_valid
+multiseed_valid
+official_external
+invalid
+```
 
-`valid_post_fix` requires a full commit SHA, a clean worktree, immutable hashes,
-an exact command, timestamps, hardware, and saved metrics. No current run has
-that status.
+## Historical exact
 
-## Local data inventory
+`B0_HISTORICAL_BASE_EXACT` is numerically valid on its historical split because
+the checkpoint, cache, metrics and prediction arrays have been reproduced
+exactly. It is not a matched ablation against the new object-cache models.
 
-| Item | Verified value |
-|---|---:|
-| EvTTC source sequences | 9 |
-| Source files | 1,121 |
-| Source bytes | 58,137,313,248 |
-| Full navigation cache | 2,402,953,055 bytes |
-| Cache windows | 3,972 |
-| Split windows used by the historical trainer | 3,012 train / 474 validation / 478 test |
+## Integration only
 
-The available sequences are the three `CCRs-1`, the three `CCRs-side`, and the
-three `CPLA` speed variants. There is no additional locally available sequence
-that has remained uninspected and can serve as a final test.
+All runs with:
 
-## Historical run decision
+- compact Garl backbone;
+- two smoke epochs;
+- 38/10 samples;
+- cache format earlier than v6;
+- output protocol earlier than architecture v4;
 
-The strongest all-window row (`0.312034689 +/- 0.044063632 s` CPLA-high MAE)
-is retained only as `reused_test_diagnostic`:
+remain engineering diagnostics. They cannot promote modules or appear as final
+paper results.
 
-- SSL pretraining used seed 7 only;
-- downstream fine-tuning used seeds 7, 13, and 21;
-- the downstream models were initialized from SSL `last` at epoch 30, although
-  validation selected SSL `best` at epoch 26;
-- downstream evaluation used the validation-selected `best` checkpoints;
-- CPLA-high had already been inspected in prior development branches;
-- old checkpoints and metric JSON files do not contain all post-fix provenance
-  fields now required by the registry.
+## Current comparison boundary
 
-The three diagnostic CPLA-high MAEs are `0.365196984`, `0.313609060`, and
-`0.257298023 s`. Their spread measures downstream randomness conditional on a
-single SSL seed; it is not end-to-end multi-seed uncertainty.
+A learned candidate can become `screen_candidate` only when:
 
-The historical SSL artifact itself is `invalid_pre_fix` for promotion because
-it lacks the new checkpoint provenance schema. Its numerical diagnostic outputs
-remain auditable through the exact files and SHA-256 values in
-`artifacts/registry.jsonl`.
+- code and configuration belong to a committed revision;
+- Core/Garl output stage is isolated;
+- cache format is v6;
+- sample selection and initialization hashes are present;
+- early stopping and checkpoint policy are recorded;
+- Benchmark-10 remains unopened.
 
-## Gates
+`grouped_cv_valid` requires five complete folds. `multiseed_valid` requires the
+predeclared seeds 7, 13 and 21 for BASE and máximo dos finalistas.
 
-- Development: train and select on `train`/`validation` only.
-- Diagnostic: CPLA-high may be evaluated only after a complete freeze and must
-  be labelled `reused_test_diagnostic`.
-- Official/final: the aggregator fails closed without `--split-protocol` and
-  rejects this split even when the protocol is supplied.
-- Final recovery: blocked until an independently sourced, uninspected
-  sequence-level holdout exists. Repartitioning these same nine sequences does
-  not create a new final test.
+## Oracle boundary
 
-Historical baselines, ROI probes, ablations, and test tables not explicitly
-registered remain non-promotable historical diagnostics.
+Allowed as diagnostic oracle:
 
-## 2026-07-22 object-cache normalization invalidation
+- bbox GT;
+- segmentación GT;
+- distancia oficial EvTTC para estudiar compensación traslacional.
 
-All eAP object-cache shards and Object-JEPA checkpoints created before cache
-format version 2 are invalid for scientific comparison. The earlier sparse
-voxel normalizer centred occupied values by their nonzero median. Although it
-kept empty voxels at zero, it could also map every occupied voxel to zero when
-their magnitudes were equal, erasing sparse event evidence. Version 2 uses a
-non-centred 95th-percentile magnitude scale, keeps empty voxels exactly zero,
-and preserves occupancy and sign. Pre-version-2 smoke losses, ONNX files and
-latency measurements remain engineering diagnostics only and must not appear
-as final experimental results. Caches, checkpoints, robustness results and
-deployment exports must be regenerated from version 2.
+Not allowed as final model input:
+
+- distance/depth ground truth;
+- TTC ground truth;
+- future navigation;
+- sequence ID;
+- Benchmark-10 labels.
+
+`translation_compensated_box_mixture_oracle` must never be compared as a
+deployable candidate unless depth is replaced by a predicted causal value and
+the experiment is rerun.
+
+## Historical invalidations
+
+- FlowMimic global, inverse-TTC sintético y su combinación no fueron promovidos
+  porque empeoraron BASE.
+- eAP pseudo-TTC no es oficial y usa contexto futuro.
+- caches eAP anteriores a la corrección de normalización sparse no son
+  comparables.
+- smokes con resúmenes Core/Garl sobrescritos se conservan solo mediante sus
+  `summary.json` individuales.
+
+## Official claim
+
+`official_external` exige:
+
+- configuración congelada antes de abrir Benchmark-10;
+- commit limpio;
+- freeze manifest;
+- checkpoint hash;
+- formato de submission validado;
+- runtime end-to-end del candidato real;
+- registro del número de submissions.
+
+No existe actualmente ningún resultado `official_external` ni claim SOTA.

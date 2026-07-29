@@ -2,10 +2,10 @@
 
 **Estado:** implementación v6 en verificación: BASE histórico reproducido exactamente, matriz Core/Garl aislada por etapa, screens comparables pendientes y Benchmark-10 sellado
 **Fecha:** 30 de julio de 2026
-**Repositorio base:** `Kripta-Studios/e-jepa-ttc`  
-**Rama de referencia:** `scientific-recovery-v3-hardening`  
+**Repositorio base:** `Kripta-Studios/e-jepa-ttc`
+**Rama de referencia:** `scientific-recovery-v3-hardening`
 **Commit histórico de referencia:** `574c4c898866d1ef9c1e03be2e3b8d6e885a95ac`; la implementación v6 se versiona en commits posteriores
-**Restricción principal:** no descargar ni incorporar nuevos datasets; solo se permiten eAP Hugging Face train-40 ya iniciado, EvTTC-32 etiquetado, Benchmark-10 sellado y los teachers DINO/SAM ya descargados; el pseudo-TTC nunca es ground truth  
+**Restricción principal:** no descargar ni incorporar nuevos datasets; solo se permiten eAP Hugging Face train-40 ya iniciado, EvTTC-32 etiquetado, Benchmark-10 sellado y los teachers DINO/SAM ya descargados; el pseudo-TTC nunca es ground truth
 **Objetivo:** construir una baseline Garl-TTC reproducible usando exclusivamente los datos ya disponibles, fine-tunearla con TTC oficial de EvTTC-32 y después demostrar, módulo a módulo, que OGE-JEPA-TTC mejora precisión, robustez a ego-motion y capacidad bbox-free.
 
 ---
@@ -4044,293 +4044,39 @@ Garl se supervisa con TTC de EvTTC-32.
 eAP-40 solo preentrena o aporta pseudo-TTC experimental.
 ```
 
-# 26. Anexo operativo para el hardware local
+# 26. Estado de implementación verificable — 30 de julio de 2026
 
-Este anexo no reduce el alcance de las fases anteriores. Define cómo
-implementarlas sin convertir el roadmap completo en una matriz simultánea que
-no cabe en la RTX 5070 Ti Laptop de 12 GB ni en 32 GB de RAM.
-
-## 26.1 Correcciones derivadas de la auditoría local
-
-Inventario verificado el 29 de julio de 2026:
-
-```text
-datasets/evttc
-  32 secuencias públicas
-  ~191 GiB
-  fuente única de TTC oficial durante desarrollo
-
-datasets/evttc_official_benchmark_sealed
-  existe
-  no fue enumerado ni leído durante la auditoría
-
-E:\eAP_dataset\data\train
-  40 sequence_ids en train.parquet
-  descarga todavía activa
-  6 secuencias completas con events + RGB + labels en el momento de la auditoría
-  sin TTC oficial
-```
-
-El derivado `pseudo_ttc_track_v1` contiene 804.510 filas, pero solo 195.024
-(24,24 %) pasan todos los filtros finales. Todas sus etiquetas usan contexto
-futuro offline y el 28,68 % de las válidas representa movimiento
-receding/negativo. Por tanto:
-
-```text
-EAP40_SSL_GARL y EAP SSL object-centric se mantienen.
-EAP40_PSEUDO_GARL/G9 se conserva como fase opcional del roadmap.
-G9 no se ejecuta hasta que G8 gane a G7.
-G9 nunca se presenta como ground truth, zero-shot cuantitativo o reproducción eAP.
-```
-
-## 26.2 Regla de implementación completa por gates
-
-Todas las fases G0–G9, E0–E4 y 0–10 permanecen en el plan. Se implementan en
-este orden operativo:
-
-```text
-Bloque A
-  infraestructura eficiente + CV + BASE reproducible
-
-Bloque B
-  Garl G0–G7 exclusivamente con EvTTC
-
-Bloque C
-  oracle geométrico + dense patches + AttnRes
-
-Bloque D
-  completar eAP + proyección + teachers offline + G8
-
-Bloque E
-  TargetQuery + SC-RGMTD + refiner + geometría + router + uncertainty
-
-Bloque F
-  RGBE + KDA + bbox-free multi-object
-
-Bloque G
-  tres seeds, freeze, 32/32, ONNX y Benchmark-10
-```
-
-Un bloque no se borra si no pasa un gate. Se conserva como implementación y
-ablation negativa, pero no se combina automáticamente con los bloques
-siguientes.
-
-## 26.3 Early stopping obligatorio
-
-Fine-tuning TTC:
-
-```yaml
-max_epochs: 60
-min_epochs: 12
-monitor: validation_sequence_macro_mae
-mode: min
-patience: 8
-min_delta_relative: 0.003
-validate_every: 1
-restore_best: true
-```
-
-Pretraining:
-
-```yaml
-max_epochs: 80
-min_epochs: 15
-monitor: validation_ssl_loss
-mode: min
-patience: 10
-min_delta_relative: 0.002
-validate_every: 2
-collapse_patience: 3
-```
-
-La parada supervisada usa macro por secuencia, no micro por ventana. El
-pretraining requiere simultáneamente pérdida finita y salud de embeddings. En
-el entrenamiento final 32/32 no se consulta Benchmark-10: las épocas se fijan
-con la mediana de `best_epoch` de los folds.
-
-## 26.4 Checkpoint y reanudación
-
-Cada trainer debe producir:
-
-```text
-best.pt
-last.pt
-resume.pt
-history.jsonl
-metrics.json
-```
-
-`resume.pt` guarda modelo, target encoder, predictor, optimizer, scheduler,
-GradScaler, epoch, global step, estado de early stopping, RNG
-Python/NumPy/PyTorch/CUDA, sampler y hashes de datos/split/config. Se escribe a
-`resume.pt.tmp` y se reemplaza atómicamente al terminar una época.
-
-Política:
-
-```text
-output existente + hashes iguales -> resume automático
-output existente + hashes distintos -> abortar
---restart -> nuevo run_id
-rotación -> best, last, resume y dos snapshots periódicos
-```
-
-## 26.5 Utilización de 12 GB VRAM y 32 GB RAM
-
-DataLoader:
-
-```yaml
-num_workers_probe: [4, 6, 8, 10]
-default_num_workers: 6
-pin_memory: true
-persistent_workers: true
-prefetch_factor: 2
-```
-
-No se usan 32 workers. Cada worker puede abrir HDF5, descomprimir y duplicar
-buffers; el gate es throughput y RAM pico <26 GB.
-
-Cache de entrenamiento:
-
-```text
-un shard .npy memmap FP16 por secuencia
-targets/índice separados
-Parquet para metadata
-manifest con shape, dtype y SHA-256
-```
-
-Los `.npz` comprimidos se conservan por compatibilidad histórica, pero no son
-el formato final porque impiden un memmap eficiente.
-
-Probe de batch por arquitectura:
-
-```text
-16 -> 24 -> 32 -> 48 -> 64
-```
-
-Se elige el mayor batch con throughput creciente y 1–1,5 GB de margen. No se
-maximiza VRAM si `samples/s` deja de mejorar.
-
-GPU:
-
-- BF16 si `torch.cuda.is_bf16_supported()`, FP16 en otro caso;
-- TF32 y `channels_last` para CNN de shape fija;
-- `cudnn.benchmark=True` con resoluciones congeladas;
-- gradient checkpointing solo en transformers que lo necesiten;
-- `torch.compile` solo después de pasar equivalencia y export;
-- métricas acumuladas sin sincronizar CUDA por batch;
-- un único trainer GPU a la vez.
-
-Teachers:
-
-```text
-cargar SAM o DINO
-procesar una secuencia
-guardar máscara RLE o tokens FP16 128–256D
-liberar teacher
-```
-
-SAM/DINO no se cargan durante el training del student. La descarga eAP, el
-hashing y la preparación CPU pueden solaparse con un trainer GPU, siempre que la
-RAM se mantenga dentro del límite.
-
-## 26.6 Matriz escalonada
-
-```text
-Nivel A: un fold, seed 7, 10–20 epochs
-         prueba funcional y descarte de variantes claramente inviables
-
-Nivel B: cinco folds, seed 7, early stopping
-         selección OOF
-
-Nivel C: BASE y máximo dos finalistas
-         cinco folds, seeds 7/13/21
-
-Nivel D: 32/32
-         epochs y seeds fijados por CV antes del benchmark
-```
-
-Esto implementa todas las piezas del roadmap sin ejecutar desde el principio
-el producto cartesiano de módulos, folds y seeds.
-
-## 26.7 Transferencia eAP
-
-La terminología queda fijada:
-
-```text
-eAP no-TTC pretraining -> EvTTC TTC fine-tuning
-= transfer learning
-
-EvTTC train -> inferencia eAP sin TTC oficial
-= zero-shot cualitativo, no benchmark cuantitativo
-```
-
-La primera arquitectura se construye y selecciona solo con EvTTC. eAP se
-incorpora después para medir si el pretraining externo mejora el mismo modelo y
-protocolo OOF. No se mezcla una arquitectura nueva y un dataset nuevo en la
-misma comparación.
-
-## 26.8 Resultado negativo FlowMimic
-
-FlowMimic permanece rechazado como rama activa, de acuerdo con la sección 1.2.
-La validación posterior sobre cinco secuencias y tres seeds obtuvo:
-
-| Variante | MAE medio |
-|---|---:|
-| BASE | 0,332715 s |
-| ALIGN | 0,369604 s |
-| INVERSE | 0,432909 s |
-| BOTH | 0,435869 s |
-
-Esta decisión no elimina ninguna de las fases Garl, object-centric JEPA,
-Patch Policy, AttnRes, KDA, TargetQuery, geometría, uncertainty o bbox-free
-descritas en el plan.
-
-# 27. Estado de implementación verificable — 30 de julio de 2026
-
-## 27.1 Controles cerrados
+## 26.1 Controles cerrados
 
 `B0_HISTORICAL_BASE_EXACT` reproduce el checkpoint histórico sobre su cache
-original. Las predicciones son equivalentes byte a byte y todas las diferencias
-de métricas son cero a tolerancia `1e-12`:
+original. Las predicciones son equivalentes byte a byte y las métricas de
+validation son MAE `0,3228917687 s`, RMSE `0,5844324448 s` y error relativo
+medio `8,1553575311 %`. El checkpoint downstream corresponde a la época 26/30
+y el encoder SSL a la época 6/30.
 
-```text
-validation MAE                  0,3228917687 s
-validation RMSE                 0,5844324448 s
-validation mean relative error  8,1553575311 %
-best downstream epoch           26/30
-best SSL epoch                   6/30
-```
+El control histórico se reporta por separado. `A0_MATCHED_GLOBAL` es el control
+justo de la matriz object-cache y comparte muestras, inicialización, cabeza,
+optimizador, épocas y early stopping con Dense Patch, AttnRes y Object-KDA.
 
-Este control no se mezcla con la matriz object-cache. La comparación de
-arquitectura usa `A0_MATCHED_GLOBAL`, que comparte selección de muestras,
-inicialización, cabeza, optimizador, épocas y regla de early stopping con A1,
-A2 y K1.
+## 26.2 Implementación corregida
 
-## 27.2 Implementación corregida
+- Dense Patch preserva interacción espacial por instante antes del mezclador
+  temporal.
+- AttnRes RMS-normaliza las claves y mezcla valores originales por tarea.
+- Object-KDA implementa recurrencia delta solo sobre el eje temporal.
+- Garl G0–G7 replica el protocolo público de tres instantes, dos intervalos de
+  eventos, ROI 128x128, ResNet-50, LHR, late fusion y foreground training-only.
+- Height/area/affine estiman inverse-TTC en el endpoint actual; event contrast
+  usa eventos object-centric.
+- La navegación NEU/heading se transforma a la cámara de eventos mediante la
+  cadena calibrada navegación–LiDAR–RGB–evento.
+- La compensación traslacional física exige profundidad. Cuando usa la
+  distancia oficial EvTTC se etiqueta como oracle/teacher y no como entrada de
+  inferencia.
 
-- `A1_MATCHED_DENSE_BLOCK`: mezcla espacial bidireccional por instante y
-  atención temporal block-causal antes del pooling.
-- `A2_MATCHED_DENSE_ATTNRES`: claves RMS-normalizadas y mezcla de valores
-  originales por tarea.
-- `K1_OBJECT_KDA`: recurrencia delta temporal posterior a la interacción
-  espacial; no impone orden causal entre patches co-temporales.
-- Garl G0–G7: protocolo de tres timestamps a 100 ms, dos event volumes de 20
-  planos, ROI 128x128, ResNet-50, direct/LHR, early/late fusion y decoder
-  foreground solo durante training.
-- Geometría: height, area y affine calculan inverse-TTC en el endpoint actual;
-  event contrast usa únicamente canales de eventos y máscara object-centric.
-- Navegación: velocidad NEU y heading GNSS se convierten a velocidad en la
-  cámara de eventos mediante la cadena calibrada navegación–LiDAR–RGB–evento.
-  El warp traslacional incluye el desplazamiento rígido del sensor y exige una
-  profundidad causal declarada.
+## 26.3 Matrices y gates
 
-La compensación traslacional con distancia oficial EvTTC es un
-`oracle/teacher`: no es una entrada permitida en inferencia final. Una variante
-desplegable necesita profundidad predicha y deberá compararse sin ground truth.
-
-## 27.3 Salidas y almacenamiento
-
-Core y Garl no comparten ya `matrix_summary.json`:
+Core y Garl escriben en árboles independientes:
 
 ```text
 artifacts/runs/evttc32_architecture_v4_<split>_<mode>/
@@ -4338,22 +4084,8 @@ artifacts/runs/evttc32_architecture_v4_<split>_<mode>/
 └── garl/fold-<n>/matrix_summary.json
 ```
 
-Los caches usan formato v6 y también se separan por rol. Se prohíben caches
-globales de voxels, logits SAM densos y hidden states DINO de todas las capas.
-Cada run conserva como máximo `best`, `last` y `weights_only`.
-
-## 27.4 Estado de evidencia
-
-Los smokes de 38/10 ventanas y dos épocas demuestran integración, no mejora.
-No se promueve ningún módulo por esos resultados. La siguiente decisión procede
-exclusivamente de:
-
-1. Screen histórico de 304/80 ventanas y hasta ocho épocas.
-2. Grouped CV de cinco folds para los brazos que pasen el screen.
-3. Seeds 7, 13 y 21 únicamente para BASE y máximo dos finalistas.
-4. Benchmark-10 una sola vez tras freeze.
-
-TargetQuery, máscara predicha, high-resolution refiner, router, residual e
-incertidumbre permanecen bloqueados hasta que la geometría con bbox GT supere a
-BASE bajo el gate predeclarado. eAP, DINO y SAM quedan fuera de la selección
-arquitectónica EvTTC.
+Los smokes de dos épocas solo validan integración. La promoción requiere screen
+304/80, grouped CV de cinco folds y tres seeds únicamente para BASE y máximo
+dos finalistas. TargetQuery, máscaras predichas, refiner, router, residual e
+incertidumbre permanecen bloqueados hasta que la geometría bbox-GT supere el
+gate frente a BASE.

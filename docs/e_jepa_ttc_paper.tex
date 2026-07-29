@@ -1,6 +1,6 @@
 \documentclass[10pt,twocolumn]{article}
 
-\usepackage[margin=0.74in]{geometry}
+\usepackage[margin=0.72in]{geometry}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
@@ -8,16 +8,16 @@
 \usepackage{booktabs}
 \usepackage{array}
 \usepackage{tabularx}
+\usepackage{xcolor}
 \usepackage{listings}
 \usepackage{url}
 \usepackage[hidelinks]{hyperref}
 
 \newcolumntype{Y}{>{\raggedright\arraybackslash}X}
-\newcommand{\mae}{\operatorname{MAE}}
-\newcommand{\rmse}{\operatorname{RMSE}}
-\newcommand{\mre}{\operatorname{MRE}}
-\newcommand{\sg}{\operatorname{sg}}
-\newcommand{\R}{\mathbb{R}}
+\newcommand{\ttc}{\mathrm{TTC}}
+\newcommand{\mae}{\mathrm{MAE}}
+\newcommand{\rmse}{\mathrm{RMSE}}
+\newcommand{\sg}{\mathrm{sg}}
 \Urlmuskip=0mu plus 2mu
 \def\UrlBreaks{\do\/\do\-\do\_\do\.}
 \emergencystretch=2em
@@ -25,883 +25,271 @@
 \lstset{
   basicstyle=\ttfamily\scriptsize,
   breaklines=true,
-  breakatwhitespace=false,
   columns=fullflexible,
-  keepspaces=true,
   frame=single,
   framerule=0.2pt,
-  xleftmargin=0.5em,
-  xrightmargin=0.5em
+  xleftmargin=0.4em,
+  xrightmargin=0.4em
 }
 
-\title{\textbf{E-JEPA-TTC: Dense Event-Token Joint-Embedding Predictive
-Pretraining for Time-to-Collision Estimation}}
-
+\title{\textbf{OGE-JEPA-TTC v6: Auditable Dense Event Prediction, Object Geometry,
+and a Local Garl-TTC Baseline}}
 \author{
 KriptaStudios Research Handoff\\
-\small Local reproducible report generated from the \texttt{e-jepa-ttc} repository\\
-\small Version: 2026-07-13 (post-audit protocol revision)
+\small Reproducible local report from the \texttt{e-jepa-ttc} repository\\
+\small Protocol revision: 30 July 2026
 }
-
 \date{}
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
-Event cameras provide asynchronous measurements with high temporal resolution,
-making them attractive for time-to-collision (TTC) estimation in fast driving
-scenarios. This paper presents E-JEPA-TTC, a self-supervised event-camera
-representation-learning system for TTC estimation on a local EvTTC
-full-starter protocol. The system replaces an initial TinyCNN baseline with
-tokenized event transformers and then moves toward a V-JEPA-like objective:
-dense temporal token prediction, spatio-temporal event tubelet masking, causal
-ego-motion/action conditioning, an exponential-moving-average target encoder,
-and a transformer predictor over dense latent tokens. The best local
-all-window model, an event-tubelet transformer pretrained with tubelet masking
-and a dense transformer JEPA predictor, reaches
-$0.231 \pm 0.018$ s validation MAE and $0.312 \pm 0.044$ s diagnostic
-CPLA-high MAE over three fine-tuning seeds conditioned on one SSL pretraining
-seed. Thus the reported dispersion is downstream-only, not hierarchical. Its
-mean absolute relative error is
-$8.19 \pm 0.53\%$ on validation and $6.42 \pm 0.45\%$ on CPLA-high.
-Low-label experiments show the strongest self-supervised signal: at 10\%
-labels, token JEPA improves diagnostic CPLA-high MAE by 65.4\% over the
-matching scratch token transformer.
+This report describes version 6 of an event-camera time-to-collision research
+pipeline. The revision does not claim state of the art. It first reconstructs
+the historical Event-JEPA baseline exactly, separates that historical anchor
+from a matched architecture control, and implements staged tests for dense
+patch interaction, task-specific Attention Residuals, temporal delta memory,
+object geometry, ego-motion, and a local Garl-TTC replica. The historical
+checkpoint is reproduced byte-for-byte on its original cache and obtains
+$0.322892$~s validation MAE, $0.584432$~s RMSE, and $8.1554\%$ mean relative
+error. FlowMimic-style global auxiliary losses are retained only as a negative
+result because they degrade multi-seed MAE.
 
-The result is the strongest local all-window result in this repository, but it
-is not an official EvTTC state-of-the-art claim. The official EvTTC benchmark
-uses a bbox/ROI-assisted Table V protocol over CCRs1, CCRs2, CCRm, and slider
-sequences. An automated coverage gate implemented in the repository finds only
-3/8 complete real-world official rows (37.5\%) and 3/10 complete Table V rows
-including slider (30.0\%). Detection-assisted ROI probers and predicted latent
-rollout probers were implemented to align with recent SkyJEPA and world-model
-practice, but their current flat-head forms are diagnostic rather than
-competitive. The contribution is therefore a rigorous, reproducible
-engineering path toward dense event-token JEPA for TTC, including anti-leakage
-discipline, negative ablations, and explicit claim boundaries.
+The new components have passed unit and integration tests, but their small
+smokes are explicitly non-promotable. Version 6 therefore defines a staged
+screen, five-fold grouped cross-validation, and three-seed confirmation before
+any external evaluation. The official Benchmark-10 remains sealed. The main
+contribution at this stage is an auditable experimental basis rather than a
+performance claim.
 \end{abstract}
 
-\textbf{Keywords:} event cameras; time-to-collision; time-to-contact; JEPA;
-self-supervised learning; V-JEPA; world models; dense tokens; autonomous
-driving.
+\section{Scope and claim boundary}
 
-\section{Introduction}
+The project estimates continuous TTC from asynchronous event streams and,
+conditionally, RGB and causal navigation. The long-term hypothesis is that
+preserving dense spatial evidence, isolating the target object, and embedding
+physical expansion in the output path can outperform regression from a pooled
+scene embedding. This hypothesis is not yet accepted by the evidence.
 
-Time-to-collision (TTC), also called time-to-contact in some geometric
-settings, is a direct measure of collision risk. For a target at range
-$d(t)$ with closing speed $v_c(t)>0$, a first-order TTC estimate is
-\begin{equation}
-  \tau(t) = \frac{d(t)}{v_c(t)}.
-  \label{eq:ttc_basic}
-\end{equation}
-In real driving scenes, direct access to $d(t)$ and $v_c(t)$ may require
-calibrated depth, ego-motion, object localization, and robust temporal
-association. Event cameras offer a complementary sensor modality: instead of
-frame intensity, they report asynchronous brightness-change events at high
-temporal resolution. A single event stream can be represented as
-\begin{equation}
-  \mathcal{E} =
-  \{e_i\}_{i=1}^{N},
-  \qquad
-  e_i = (x_i,y_i,t_i,p_i),
-  \quad
-  p_i \in \{-1,+1\}.
-  \label{eq:event_stream}
-\end{equation}
-This representation is naturally suited to fast motion and temporal geometry,
-but it also creates a learning problem: the useful signal is sparse,
-asynchronous, and strongly dependent on motion.
-
-The hypothesis explored here is that a predictive latent model can learn
-event dynamics without TTC labels and that those representations can improve
-TTC regression after supervised fine-tuning. The work follows the
-Joint-Embedding Predictive Architecture (JEPA) principle: predict target
-representations in latent space rather than reconstructing raw pixels or event
-tensors. This choice is attractive for event streams because it encourages
-predictive abstractions while avoiding the burden of reconstructing sparse
-high-frequency event noise.
-
-The project described in this paper is deliberately conservative about claims.
-It contains strong local results on an EvTTC full-starter subset, but it does
-not reproduce the official EvTTC Table V benchmark. The paper therefore
-separates: (i) local all-window event-model performance, (ii) local
-detection-assisted bbox/ROI diagnostics, and (iii) official SOTA eligibility.
-Only the first two are supported by the current workspace.
-
-\subsection{Contributions}
-
-This paper makes the following concrete contributions:
-\begin{enumerate}
-  \item A reproducible dense event-token JEPA pipeline for TTC estimation,
-  including event voxelization, token-transformer backbones, event-tubelet
-  tokenization, EMA target encoders, dense future-token prediction, and
-  supervised log-TTC fine-tuning.
-  \item A V-JEPA-like event objective with spatio-temporal tubelet masking and
-  a transformer dense predictor conditioned on causal ego-motion/action
-  features.
-  \item A strict anti-leakage protocol: no TTC labels in self-supervised
-  pretraining, sequence-level splits, context-only navigation/action features,
-  train-only normalization, and checkpoint-only evaluation.
-  \item Extensive local experiments over scratch baselines, token JEPA,
-  navigation-conditioned JEPA, event-tubelet JEPA, deep/self-supervision
-  variants, all-token context losses, ROI latent probers, and predicted
-  rollout probers.
-  \item An automated official EvTTC coverage gate that prevents unsupported
-  SOTA claims until the required bbox/ROI benchmark assets and baseline
-  wrappers are present.
-\end{enumerate}
-
-\section{Related Work}
-
-\paragraph{Joint-embedding predictive learning.}
-I-JEPA introduced non-generative representation prediction for images:
-representations of visible context regions are trained to predict target
-representations of masked regions. V-JEPA extended this idea to video through
-masked spatio-temporal latent prediction. V-JEPA 2 and V-JEPA 2.1 further
-emphasize world-model behavior, dense features, temporal consistency, and
-scaling. The present work adapts these ideas to event-camera TTC by replacing
-image/video patches with event voxel/tubelet tokens and by predicting future
-event-window embeddings at multiple horizons.
-
-\paragraph{Action-conditioned world models.}
-LeWorldModel and related latent world-model approaches motivate conditioning
-future latent prediction on causal action or ego-motion. SkyJEPA motivates a
-two-stage recipe: learn action-conditioned latent dynamics, freeze the latent
-model, and train a lightweight physics-inspired prober. In E-JEPA-TTC, the
-driving analogue of action is the causal integrated-navigation vector and
-event-derived context-motion summary. The repo therefore implements
-action-conditioned JEPA prediction, frozen latent TTC probers, and
-predicted-rollout ROI probers.
-
-\paragraph{Event-camera TTC.}
-EvTTC is the core dataset target in this project. It provides event-camera
-streams, TTC labels, and benchmark comparisons against methods including
-STRTTC, CMax, ETTCM, FAITH, AEB-Tracker, and Image FoE. However, the published
-EvTTC benchmark is not simply an all-window event-only regression task. Its
-Table V comparison is bbox/ROI-assisted and evaluates specific CCRs/CCRm/slider
-sequences. This distinction is central to the claim boundary in this paper.
-
-\section{Dataset and Protocol}
-
-\subsection{Local Full-Starter Protocol}
-
-The local full-starter protocol uses recovered EvTTC sequences under
-\texttt{datasets/evttc}. The main cache is the full-starter navigation voxel
-cache under \texttt{artifacts/features}. It contains 3972 windows with shape
-$[3972,21,90,160]$:
+The data inventory is closed:
 \begin{itemize}
-  \item 10 event channels from 5 temporal bins and 2 polarities;
-  \item 2 metadata channels;
-  \item 9 causal integrated-navigation channels.
+  \item EvTTC-32 is the only official TTC supervision source;
+  \item eAP train-40 is reserved for later non-TTC pretraining;
+  \item Benchmark-10 is an external sealed evaluation set;
+  \item pseudo-TTC is never treated as ground truth.
 \end{itemize}
 
-\begin{table*}[t]
-\centering
-\caption{Local full-starter sequence-level split. CPLA-high is diagnostic
-because it had been inspected in previous branches before the final paper.}
-\label{tab:split}
-\begin{tabularx}{\textwidth}{lYr}
-\toprule
-Split & Sequences & Windows \\
-\midrule
-Train &
-\texttt{CCRs-1-low-100-overlap-100},
-\texttt{CCRs-1-medium-100-overlap-100},
-\texttt{CCRs-1-high-100-overlap-100},
-\texttt{CCRs-side-low},
-\texttt{CCRs-side-medium},
-\texttt{CPLA-low},
-\texttt{CPLA-medium}
-& 3019 \\
-Validation & \texttt{CCRs-side-high} & 475 \\
-Diagnostic test & \texttt{CPLA-high} & 478 \\
-\bottomrule
-\end{tabularx}
-\end{table*}
-The split file now records \texttt{status: reused\_test\_diagnostic},
-\texttt{evaluation\_role: diagnostic}, and permits only development/diagnostic
-tables. The aggregation gate rejects this split for \texttt{official} or
-\texttt{final} output.
+\section{Historical evidence}
 
-The development multi-validation split was introduced after CPLA-high had been
-opened. It keeps \texttt{CCRs-side-high} as \texttt{validation\_car}, moves
-\texttt{CPLA-medium} into \texttt{validation\_pedestrian}, and reserves
-\texttt{CPLA-high} only for frozen diagnostic checks. This split is used for
-architecture selection and negative ablations.
+\subsection{Exact BASE reconstruction}
 
-\subsection{Official EvTTC Coverage Gate}
-
-The official EvTTC Table V benchmark reports CCRs1, CCRs2, CCRm, and slider
-rows. The local workspace has CCRs1 plus side/CPLA starter sequences, but not
-the full CCRs2, CCRm, and slider set with bbox/ROI assets. This is enforced by
-a repository command:
-\begin{lstlisting}
-$env:PYTHONPATH='src'
-.\.venv\Scripts\e-jepa-ttc.exe data official-coverage
-  --root datasets\evttc
-  --output artifacts\metrics\evttc_official_table_v_coverage.json
-\end{lstlisting}
-The latest local result is:
-\begin{equation}
-  C_{\mathrm{real}} = \frac{3}{8}=37.5\%,
-  \qquad
-  C_{\mathrm{TableV}} = \frac{3}{10}=30.0\%.
-  \label{eq:coverage}
-\end{equation}
-Missing real-world rows are CCRs2 low/medium/high and CCRm low/medium.
-Missing slider rows are \texttt{Slider-750} and \texttt{Slider-1000}. Therefore
-\texttt{official\_sota\_claim\_allowed=false}.
-
-\section{Event Representation}
-
-\subsection{Voxelization}
-
-For each anchor time $t$, the model consumes a causal context window
-$[t-\Delta_c,t]$. The event stream in the window is discretized into $B=5$
-temporal bins, two polarities, and a spatial grid of height $H=90$ and width
-$W=160$. Let $\pi_x$ and $\pi_y$ map sensor coordinates into the grid, and let
-\begin{equation}
-  b_i =
-  \left\lfloor
-  B \frac{t_i-(t-\Delta_c)}{\Delta_c+\epsilon}
-  \right\rfloor
-  \in \{0,\ldots,B-1\}.
-\end{equation}
-The raw voxel tensor is computed by accumulating causal event indicators:
-\begin{align}
-  V_{b,p,y,x}
-  &=
-  \sum_{i: e_i \in [t-\Delta_c,t]}
-  I^b_i I^p_i I^y_i I^x_i,
-  \label{eq:voxel}\\
-  I^b_i &= \mathbf{1}[b_i=b],
-  \quad
-  I^p_i = \mathbf{1}[p_i=p], \nonumber\\
-  I^y_i &= \mathbf{1}[\pi_y(y_i)=y],
-  \quad
-  I^x_i = \mathbf{1}[\pi_x(x_i)=x]. \nonumber
-\end{align}
-The event channels are optionally concatenated with metadata channels and
-causal navigation channels:
-\begin{equation}
-  X_t =
-  \operatorname{concat}(V_t, M_t, N_t)
-  \in \R^{C \times H \times W}.
-\end{equation}
-For the navigation cache, $C=21$.
-
-\subsection{Causal Navigation and Action Features}
-
-The navigation vector uses only samples in the current context window:
-\begin{equation}
-  n_t =
-  [
-  \|v_t\|_2,\,
-  v_{x,t},v_{y,t},v_{z,t},\,
-  a_{x,t},a_{y,t},a_{z,t},\,
-  \dot{\psi}_t,\,
-  q_t
-  ]^\top,
-  \label{eq:navigation}
-\end{equation}
-where $v_t$ is the most recent velocity vector, $a_t$ is a finite-difference
-acceleration estimate, $\dot{\psi}_t$ is yaw-rate, and $q_t$ is a validity flag.
-The predictor also receives an event-motion summary $m_t$ containing causal
-event mass, temporal mass slope, centroid shift, and polarity balance. The
-action-conditioning vector is
-\begin{equation}
-  a_t = \operatorname{LN} \left(
-  W_a [m_t;n_t] + b_a
-  \right),
-  \label{eq:action}
-\end{equation}
-with normalization statistics estimated from train context windows only.
-
-\section{Model}
-
-\subsection{Event-Tubelet Encoder}
-
-The final backbone treats event channels as a polarity-by-time tensor rather
-than a flat channel stack. Let $X^{\mathrm{ev}}_t \in
-\R^{2 \times B \times H \times W}$ be the event component. A 3D tubelet
-embedding partitions it into local blocks
-\begin{equation}
-  u_j =
-  X^{\mathrm{ev}}_t
-  [:,\,b_j:b_j+\delta_b,\,
-      y_j:y_j+\delta_y,\,
-      x_j:x_j+\delta_x],
-\end{equation}
-and maps each tubelet to a token:
-\begin{equation}
-  z^{(0)}_j = W_{\mathrm{tube}}\operatorname{vec}(u_j)
-  + E^{\mathrm{pos}}_j + E^{\mathrm{aux}}_j.
-  \label{eq:tubelet}
-\end{equation}
-$E^{\mathrm{aux}}_j$ injects spatially aligned metadata/navigation context.
-The transformer encoder then computes
-\begin{equation}
-  Z_t = f_\theta(X_t) =
-  \operatorname{Transformer}_\theta
-  \left(\{z^{(0)}_j\}_{j=1}^{P}\right)
-  \in \R^{P \times d}.
-  \label{eq:encoder}
-\end{equation}
-The supervised TTC head predicts log-TTC from a token summary:
-\begin{equation}
-  \hat{y}_t =
-  h_\phi\left(\operatorname{pool}(Z_t)\right),
-  \qquad
-  \hat{\tau}_t = \exp(\hat{y}_t)-\epsilon.
-  \label{eq:supervised_head}
-\end{equation}
-
-\subsection{Dense Temporal JEPA}
-
-Self-supervised pretraining uses an online encoder $f_\theta$, an EMA target
-encoder $f_{\bar{\theta}}$, and a predictor $g_\psi$. Given context window
-$X_t$ and future target windows $X_{t+\delta}$ for horizons
-\begin{equation}
-  \mathcal{H}=\{20,60,100,240,500\}\ \mathrm{ms},
-\end{equation}
-the target tokens are stop-gradient EMA outputs:
-\begin{equation}
-  Y_{t,\delta} =
-  \sg\left(f_{\bar{\theta}}(X_{t+\delta})\right).
-\end{equation}
-The online context tokens are
-\begin{equation}
-  Z_t = f_\theta(\tilde{X}_t),
-\end{equation}
-where $\tilde{X}_t$ is a masked context view. The dense predictor estimates
-future token representations:
-\begin{equation}
-  \hat{Y}_{t,\delta} =
-  g_\psi(Z_t, a_t, e_\delta),
-  \label{eq:predictor}
-\end{equation}
-where $e_\delta$ is a learned horizon embedding. The dense JEPA loss is
-\begin{equation}
-  \mathcal{L}_{\mathrm{JEPA}}
-  =
-  \frac{1}{|\mathcal{B}|\,|\mathcal{H}|\,P}
-  \sum_{t \in \mathcal{B}}
-  \sum_{\delta \in \mathcal{H}}
-  \sum_{j=1}^{P}
-  \left\|
-    \hat{Y}_{t,\delta,j} - Y_{t,\delta,j}
-  \right\|_2^2.
-  \label{eq:jepa_loss}
-\end{equation}
-The target encoder is updated by EMA:
-\begin{equation}
-  \bar{\theta} \leftarrow
-  \mu \bar{\theta} + (1-\mu)\theta,
-  \qquad \mu=0.99.
-  \label{eq:ema}
-\end{equation}
-
-\subsection{Tubelet Masking}
-
-The final pretraining variant masks spatio-temporal event tubelets while
-preserving metadata and navigation. For a mask set $\mathcal{M}$ sampled over
-event tubelets,
-\begin{equation}
-  \tilde{X}^{\mathrm{ev}}_{t,j} =
-  \begin{cases}
-    0, & j \in \mathcal{M},\\
-    X^{\mathrm{ev}}_{t,j}, & j \notin \mathcal{M},
-  \end{cases}
-  \qquad
-  \frac{|\mathcal{M}|}{P_{\mathrm{ev}}} \approx 0.45.
-  \label{eq:masking}
-\end{equation}
-This matches the event structure better than purely spatial masking: the model
-must infer future latent dynamics from partially removed temporal event
-evidence, while still receiving causal ego-motion context.
-
-\subsection{Regularization and Negative Variants}
-
-Several SOTA-inspired variants were implemented:
-\begin{itemize}
-  \item deep supervision on intermediate transformer layers;
-  \item layer-aware prediction using predictor layer embeddings;
-  \item larger token transformer backbones;
-  \item all-token context loss;
-  \item VISReg-style variance/sketching hooks;
-  \item predicted-rollout feature modes.
-\end{itemize}
-The optional all-token context loss has the form
-\begin{equation}
-  \mathcal{L}_{\mathrm{ctx}}
-  =
-  \frac{1}{|\mathcal{B}|P}
-  \sum_{t \in \mathcal{B}}
-  \sum_{j=1}^{P}
-  \left\|
-    q_\psi(Z_t,a_t)_j -
-    \sg(f_{\bar{\theta}}(X_t))_j
-  \right\|_2^2,
-  \label{eq:context_loss}
-\end{equation}
-and the total objective is
-\begin{equation}
-  \mathcal{L}
-  =
-  \mathcal{L}_{\mathrm{JEPA}}
-  + \lambda_{\mathrm{ctx}}\mathcal{L}_{\mathrm{ctx}}
-  + \lambda_{\mathrm{reg}}\mathcal{L}_{\mathrm{reg}}.
-\end{equation}
-On the current local data, all-token context loss and deep supervision were
-negative or neutral in the final selection protocol.
-
-\section{Supervised Fine-Tuning and Metrics}
-
-After self-supervised pretraining, the TTC head is trained on labels from the
-training split. The model predicts log-TTC:
-\begin{equation}
-  y_t = \log(\tau_t+\epsilon),
-  \qquad
-  \hat{y}_t = h_\phi(f_\theta(X_t)).
-\end{equation}
-The supervised loss is
-\begin{equation}
-  \mathcal{L}_{\mathrm{sup}}
-  =
-  \frac{1}{|\mathcal{B}|}
-  \sum_{t \in \mathcal{B}}
-  \ell(\hat{y}_t,y_t),
-  \label{eq:supervised_loss}
-\end{equation}
-where $\ell$ is a robust regression loss in log-TTC space in the implementation
-family. Evaluation reports TTC-space metrics:
-\begin{align}
-  \mae &= \frac{1}{N}\sum_{i=1}^{N}
-  |\hat{\tau}_i-\tau_i|, \\
-  \rmse &= \sqrt{
-  \frac{1}{N}\sum_{i=1}^{N}
-  (\hat{\tau}_i-\tau_i)^2
-  },\\
-  \mre &= 100
-  \frac{1}{N}\sum_{i=1}^{N}
-  \frac{|\hat{\tau}_i-\tau_i|}{\max(\tau_i,\epsilon)}.
-  \label{eq:metrics}
-\end{align}
-When users ask for a percentage-style interpretation, $100-\mre$ is an
-intuitive but informal accuracy-like number. It is not the benchmark metric.
-For the best CPLA-high diagnostic result, $\mre=6.42\%$, which corresponds to
-approximately $93.58\%$ in this informal reading.
-
-\section{Detection-Assisted ROI Probers}
-
-The repository also implements bbox/ROI diagnostics. These are closer to the
-official CMax/STRTTC input assumption, but they are frame-label-only and not
-comparable to all-window metrics. For a bounding box with width $w_t$ and
-height $h_t$, a simple area-scale geometry reference uses
-\begin{equation}
-  s_t = \sqrt{w_t h_t}.
-\end{equation}
-If image-plane scale grows approximately as inverse depth, then TTC can be
-estimated from scale expansion:
-\begin{equation}
-  \hat{\tau}_t
-  \approx
-  \frac{s_t}{\dot{s}_t+\epsilon},
-  \qquad
-  \dot{s}_t \approx \frac{s_t-s_{t-\Delta}}{\Delta}.
-  \label{eq:bbox_ttc}
-\end{equation}
-The ROI event ridge and ROI latent prober use only events in
-$[t-\Delta_c,t]$ and the current object box. The prober form is
-\begin{equation}
-  \hat{\tau}_t =
-  r_\omega
-  \left(
-    \rho_{\mathrm{ROI}}(E_{[t-\Delta_c,t]},B_t),
-    \operatorname{pool}(f_\theta(X_t)),
-    \hat{\tau}^{\mathrm{ridge}}_t
-  \right),
-  \label{eq:roi_prober}
-\end{equation}
-where $B_t$ is the current box, $\rho_{\mathrm{ROI}}$ are causal ROI event
-features, and $\hat{\tau}^{\mathrm{ridge}}_t$ is a train-only ridge prior.
-
-The rollout prober uses frozen predicted future tokens:
-\begin{equation}
-  \hat{Z}_{t+\delta}=g_\psi(f_\theta(X_t),a_t,e_\delta),
-  \qquad
-  \delta \in \mathcal{H},
-\end{equation}
-and trains a lightweight head over $\{\hat{Z}_{t+\delta}\}_{\delta\in
-\mathcal{H}}$. The current flat-summary version is a negative result,
-indicating that future work should use a constrained horizon-structured
-kinematic TTC head.
-
-\section{Anti-Leakage Discipline}
-
-The project explicitly separates self-supervised pretraining, validation
-selection, and diagnostic testing. The main controls are:
-\begin{enumerate}
-  \item splits are sequence-level;
-  \item JEPA pretraining uses no TTC labels;
-  \item future event windows are self-supervised targets only;
-  \item target pairs do not cross sequence boundaries;
-  \item target pairs do not cross split boundaries;
-  \item navigation/action features are extracted from the current context only;
-  \item action normalization is fit on train context windows only;
-  \item ROI event features use $[t-\Delta_c,t]$ only;
-  \item no future boxes, future events, or future navigation enter ROI probers;
-  \item checkpoint-only evaluators reload saved checkpoints and do not retrain.
-\end{enumerate}
-This discipline is why CPLA-high is treated as diagnostic: it had been
-inspected in earlier branches, so more tuning against it would be data snooping.
-
-\section{Experiments}
-
-\subsection{Main All-Window Results}
-
-\begin{table*}[t]
-\centering
-\caption{Main full-starter all-window results. Lower MAE is better. Values are
-seconds unless noted. CPLA-high is diagnostic, not an official leaderboard
-test.}
-\label{tab:main_results}
-\begin{tabularx}{\textwidth}{Yccll}
-\toprule
-Method & Labels & Seeds & Validation MAE & Diagnostic CPLA-high MAE \\
-\midrule
-Event-rate ridge & 100\% & det. & 2.303 & 2.489 \\
-TinyCNN scratch & 100\% & 7 & 0.549 & 0.513 \\
-Token transformer scratch & 100\% & 7,13,21 & $0.702 \pm 0.052$ & $0.844 \pm 0.008$ \\
-Token JEPA + fine-tune & 100\% & 7,13,21 & $0.358 \pm 0.007$ & $0.481 \pm 0.042$ \\
-Token transformer + navigation scratch & 100\% & 7,13,21 & $0.440 \pm 0.020$ & $0.465 \pm 0.021$ \\
-Token JEPA + navigation fine-tune & 100\% & 7,13,21 & $0.261 \pm 0.021$ & $0.356 \pm 0.022$ \\
-Event tubelet JEPA + navigation fine-tune & 100\% & 7,13,21 & $0.243 \pm 0.007$ & $0.328 \pm 0.030$ \\
-Event tubelet JEPA + transformer predictor & 100\% & 7,13,21 & $0.241 \pm 0.004$ & $0.351 \pm 0.004$ \\
-\textbf{Event tubelet JEPA + tubelet mask + transformer predictor} & 100\% & 7,13,21 & $\mathbf{0.231 \pm 0.018}$ & $\mathbf{0.312 \pm 0.044}$ \\
-\bottomrule
-\end{tabularx}
-\end{table*}
-
-The strongest all-window model reaches:
-\begin{align}
-  \mae_{\mathrm{val}} &= 0.231477844 \pm 0.017632455\ \mathrm{s},\\
-  \mre_{\mathrm{val}} &= 8.192429 \pm 0.533708\%,\\
-  \mae_{\mathrm{CPLA}} &= 0.312034689 \pm 0.044063632\ \mathrm{s},\\
-  \mre_{\mathrm{CPLA}} &= 6.416740 \pm 0.454934\%,\\
-  \rmse_{\mathrm{CPLA}} &= 0.485851757 \pm 0.090484582\ \mathrm{s}.
-\end{align}
-It improves CPLA-high MAE by 4.9\% over the previous event-tubelet navigation
-JEPA mean (0.328 s), by 12.4\% over navigation token JEPA (0.356 s), and by
-32.9\% over navigation token scratch (0.465 s).
-
-\subsection{Label Efficiency}
+The audited baseline consumes 10 event channels and 11 causal auxiliary
+channels. Its EventTubeletTransformer uses dimension 192, depth 6, six heads,
+and patch size 16. Final dense tokens are mean-pooled and passed through
+LayerNorm, a 192-to-96 MLP, GELU, dropout 0.1, and a scalar log-TTC output.
 
 \begin{table}[t]
 \centering
-\caption{Low-label evidence. Token JEPA gives the clearest benefit when TTC
-labels are scarce.}
-\label{tab:label_efficiency}
-\begin{tabularx}{\columnwidth}{Yccc}
+\caption{Exact historical BASE validation reproduction, seed 7.}
+\begin{tabular}{lr}
 \toprule
-Method & Labels & Val. MAE & CPLA MAE \\
+Quantity & Value\\
 \midrule
-Token transformer scratch & 5\% & $1.226 \pm 0.031$ & $1.382 \pm 0.044$ \\
-Token JEPA + fine-tune & 5\% & $0.524 \pm 0.047$ & $0.636 \pm 0.109$ \\
-Token transformer scratch & 10\% & $1.178 \pm 0.056$ & $1.327 \pm 0.104$ \\
-Token JEPA + fine-tune & 10\% & $0.437 \pm 0.039$ & $0.460 \pm 0.029$ \\
+Train windows & 7,835\\
+Validation windows & 2,040\\
+Downstream checkpoint & epoch 26/30\\
+SSL checkpoint & epoch 6/30\\
+MAE & 0.322892 s\\
+RMSE & 0.584432 s\\
+Mean relative error & 8.1554\%\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Prediction arrays are byte-equivalent to the original stored predictions, and
+all audited metric differences are zero at tolerance $10^{-12}$. This model is
+named \texttt{B0\_HISTORICAL\_BASE\_EXACT}. It is not reused as if it had been
+trained under the new object-cache protocol.
+
+\subsection{Negative FlowMimic result}
+
+\begin{table}[t]
+\centering
+\caption{Historical multi-seed MAE. Lower is better.}
+\begin{tabular}{lrr}
+\toprule
+Arm & MAE (s) & Change\\
+\midrule
+BASE & 0.332715 & --\\
+Global alignment & 0.369604 & +11.1\%\\
+Synthetic inverse-TTC & 0.432909 & +30.1\%\\
+Both losses & 0.435869 & +31.0\%\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+These losses are removed from the active architecture. Their summary remains
+versioned to preserve negative evidence.
+
+\section{Matched architecture protocol}
+
+The learned Core arms are:
+\begin{itemize}
+  \item \texttt{A0\_MATCHED\_GLOBAL}, the object-cache global control;
+  \item \texttt{A1\_MATCHED\_DENSE\_BLOCK}, delayed pooling;
+  \item \texttt{A2\_MATCHED\_DENSE\_ATTNRES}, depth routing by task;
+  \item \texttt{K1\_OBJECT\_KDA}, temporal delta memory.
+\end{itemize}
+
+The fairness audit requires identical sample IDs, backbone hash, common head
+hash, train and validation counts, optimizer, learning rate, weight decay,
+maximum epochs, log-TTC loss, and early stopping. Actual completed epochs may
+differ only through the shared stopping rule.
+
+Core and Garl write separate stage roots:
+\begin{lstlisting}
+artifacts/runs/evttc32_architecture_v4_<split>_<mode>/
+  core/fold-<n>/matrix_summary.json
+  garl/fold-<n>/matrix_summary.json
+\end{lstlisting}
+This prevents the previous summary collision while retaining individual run
+directories.
+
+\section{Dense spatial and temporal design}
+
+\subsection{Patch Policy}
+
+Patches from one timestamp communicate bidirectionally before any temporal
+compression. Causality exists between time blocks, not between arbitrary
+patches inside a frame. Pooling before target localization is forbidden in the
+dense arm. This implements the dense representation principle motivated by
+Patch Policy~\cite{patchpolicy2026}.
+
+\subsection{Attention Residuals}
+
+Mask, motion, geometry, and risk tasks independently retrieve features from
+embedding and block outputs. Keys are RMS-normalized so a layer cannot dominate
+by scale; the mixed values remain the original features. A permanent
+greater-than-90\% weight on one layer is treated as collapse.
+
+\subsection{Temporal delta memory}
+
+The KDA candidate follows the delta-recurrence principle described by Kimi
+K3~\cite{kimik32026}, but is restricted to the temporal axis. Spatial
+interaction is resolved first. KDA is optional and must show either a precision
+gain, a material memory reduction, or a longer effective horizon.
+
+\section{Local Garl-TTC baseline}
+
+Garl-TTC is implemented from the public source associated with the eAP
+work~\cite{eapgarl2026}. The audited local contract uses three timestamps at
+100~ms cadence, RGB endpoints, two event intervals, 20 time planes per
+interval, and a common 128-by-128 endpoint square crop. RGB and event ResNet-50
+branches can be trained for direct regression or learned height ratio (LHR).
+Late fusion initializes its branches from the corresponding unimodal LHR
+checkpoints. A foreground decoder produces four 256-by-256 logits during
+training and is absent from inference.
+
+EvTTC does not expose the original eAP 3D visible-height target. The local
+adapter therefore supervises visible box height after the shared crop. Results
+must be reported as a local architectural replica, not official eAP parity.
+
+\section{Object geometry}
+
+For apparent scale $s$, inverse-TTC at the current endpoint is
+\begin{equation}
+q_t = \frac{s_t/s_{t-\Delta t}-1}{\Delta t}.
+\end{equation}
+Height, square-root area, and affine expansion all use the latest valid pair.
+The affine solver separates translation, radial expansion, and in-plane
+rotation through weighted least squares. Event contrast evaluates a bounded
+constant-approach warp only inside the object support. Auxiliary metadata
+channels are excluded from the event calculation.
+
+The training-free bbox oracle reports each expert and a deterministic
+confidence mixture. It is an upper-bound diagnostic and not a bbox-free model.
+
+\section{Ego-motion}
+
+The EvTTC format states that integrated navigation attitude, position, and
+velocity live in a world coordinate system~\cite{evttc2024}. Local auditing
+shows velocity components ordered north, east, up and heading in degrees. The
+heading agrees with geodetic displacement. Velocity is transformed through the
+documented rigid chain
+\begin{equation}
+T_{\mathrm{event}\leftarrow\mathrm{nav}} =
+T_{\mathrm{event}\leftarrow\mathrm{RGB}}
+T_{\mathrm{RGB}\leftarrow\mathrm{LiDAR}}
+T_{\mathrm{LiDAR}\leftarrow\mathrm{nav}}.
+\end{equation}
+The lever-arm velocity of the event-camera origin is included when heading
+changes.
+
+For a past point with causal depth, full planar camera-pose compensation uses
+\begin{equation}
+P_c = R_{c\leftarrow p}P_p - \Delta C_c.
+\end{equation}
+The boxes are reprojected with event-camera intrinsics. Ego closing contributes
+$q_{\mathrm{ego}}=v_z/Z$. Translation is not observable from velocity alone:
+depth is required. Consequently, official EvTTC distance is allowed only for
+an oracle or teacher. A deployable arm must replace it with causal predicted
+depth and be re-evaluated.
+
+\section{Experimental stages}
+
+\begin{table}[t]
+\centering
+\caption{Evidence hierarchy.}
+\begin{tabularx}{\columnwidth}{lY}
+\toprule
+Stage & Purpose\\
+\midrule
+Smoke & Integration only, never promotion\\
+Screen & 304/80 windows, seed 7, up to 8 epochs\\
+Grouped CV & Five folds, seed 7\\
+Multi-seed & Seeds 7, 13, 21 for at most two finalists\\
+External & Frozen Benchmark-10 inference\\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-At 10\% labels, token JEPA improves diagnostic CPLA-high MAE by 65.4\% over
-the matching scratch transformer. It also beats the full-label TinyCNN seed-7
-baseline on diagnostic CPLA-high MAE (0.460 s versus 0.513 s).
+The checkpoint score combines sequence-macro relative error, normalized RMSE,
+high-TTC error, and low-TTC safety error. Ties are resolved by worst sequence,
+RMSE, seed variance, and latency. A smoke with 38/10 windows and two epochs has
+already exercised all current paths, but its numerical ranking is not
+scientific evidence.
 
-\subsection{Negative Architecture Ablations}
+TargetQuery, predicted masks, high-resolution refinement, learned routing,
+bounded residual, and uncertainty remain behind a hard gate: bbox-GT geometry
+must first outperform BASE under the declared protocol.
 
-\begin{table}[t]
-\centering
-\caption{SOTA-inspired ablations that did not become the selected local model.}
-\label{tab:negative_ablations}
-\begin{tabularx}{\columnwidth}{Y Y}
-\toprule
-Ablation & Result \\
-\midrule
-Deep token JEPA & CPLA-high MAE 0.594 s \\
-Deep layer-aware token JEPA & CPLA-high MAE 0.505 s \\
-Large token transformer JEPA & CPLA-high MAE 0.529 s \\
-All-token context loss, weight 0.25 & Better car validation, worse pedestrian validation \\
-All-token context loss, weight 0.05 & Improved dev validation, did not beat full-starter validation \\
-Tubelet mask plus all-token weight 0.05 & Dev MAE 0.649 s \\
-\bottomrule
-\end{tabularx}
-\end{table}
+\section{Efficiency and storage}
 
-The successful change was not simply larger scale or deeper supervision. The
-best local result came from matching the event structure with tubelet masking
-and preserving causal action/ego-motion conditioning.
+The consumer hardware target has approximately 12.8~GB VRAM and 32~GB RAM.
+Training uses BF16, pinned memory, persistent workers, prefetch, and gradient
+accumulation. The Garl ResNet-50 screen uses microbatch 8 with accumulation 16;
+the foreground arm uses microbatch 1 with accumulation 128. The geometric
+solver remains FP32.
 
-\subsection{Detection-Assisted Diagnostics}
+No full eAP voxel cache, full-resolution SAM logits, all-layer DINO cache, or
+bulk TAR extraction is permitted. A run retains at most \texttt{best},
+\texttt{last}, and \texttt{weights\_only}. Core and Garl caches are compressed
+and stage-specific.
 
-\begin{table*}[t]
-\centering
-\caption{Detection-assisted bbox/ROI results. These are frame-label-only
-diagnostics and are not directly comparable with all-window metrics.}
-\label{tab:roi_results}
-\begin{tabularx}{\textwidth}{Y Y r r l l}
-\toprule
-Method & Split & Labels & Predictions & MAE & Relative error \\
-\midrule
-Causal bbox geometry & validation bbox frames & 108 & 106 & 0.279 & -- \\
-Causal bbox geometry & CPLA-high bbox frames & 83 & 81 & 0.157 & -- \\
-ROI event ridge & validation bbox frames & 108 & 108 & 0.293 & 13.63\% \\
-ROI event ridge & CPLA-high bbox frames & 83 & 83 & 0.829 & 47.12\% \\
-ROI latent prober & validation bbox frames & 108 & 98 & $0.226 \pm 0.015$ & $10.78 \pm 0.53\%$ \\
-ROI latent prober & CPLA-high bbox frames & 83 & 73 & $0.423 \pm 0.029$ & $23.41 \pm 2.23\%$ \\
-\bottomrule
-\end{tabularx}
-\end{table*}
+\section{Limitations and next steps}
 
-The causal bbox geometry reference is strong on CPLA-high bbox frames, showing
-that current bounding-box scale contains powerful TTC information. The frozen
-ROI latent prober improves strongly over its train-only ridge prior on
-validation, but it is worse than causal bbox geometry on CPLA-high and worse
-than the all-window JEPA relative error.
+No new component has a valid Screen or grouped-CV improvement yet. The Garl
+ResNet-50 topology is tested, but its real screen remains pending. Translation
+compensation is not deployable until depth is predicted. eAP is incomplete and
+has no official TTC labels. Benchmark-10 has not been opened.
 
-\subsection{Predicted-Rollout Probers}
+The next actions are: execute Core Screen, execute Garl Screen, promote only
+arms passing their gates, run five-fold CV, repeat at most two finalists over
+three seeds, and freeze before any external inference. These restrictions
+preclude a current SOTA or safety claim.
 
-The predicted-rollout prober tests the SkyJEPA idea more directly: probe
-frozen predicted future latents rather than only current context latents.
-Full-starter validation results are:
-\begin{align}
-  \mae_{\mathrm{ROI\ latent}} &= 0.226 \pm 0.015\ \mathrm{s},\\
-  \mre_{\mathrm{ROI\ latent}} &= 10.78 \pm 0.53\%,\\
-  \mae_{\mathrm{ROI\ rollout}} &= 0.226 \pm 0.013\ \mathrm{s},\\
-  \mre_{\mathrm{ROI\ rollout}} &= 11.15 \pm 0.79\%.
-\end{align}
-On the harder multi-validation split, ROI rollout is worse than ROI latent:
-weighted MAE $0.613 \pm 0.017$ s versus $0.528 \pm 0.011$ s. A dynamics
-feature mode with latent deltas and velocities reached only 0.248 s validation
-MAE on seed 7, worse than the flat seed-7 rollout prober at 0.210 s. These are
-negative results for the current flat-head prober.
-
-\section{Reproducibility}
-
-\subsection{Environment}
-
-The final local verification used Windows, Python virtualenv \texttt{.venv},
-PyTorch \texttt{2.11.0+cu128}, CUDA, an NVIDIA GeForce RTX 5070 Ti Laptop GPU,
-32 GB RAM, and 32 CPU threads.
-
-\subsection{Final Commands}
-
-The repository state was verified with:
-\begin{lstlisting}
-.\.venv\Scripts\python.exe -m ruff check .
-$env:PYTHONPATH='src'
-.\.venv\Scripts\python.exe -m pytest
-\end{lstlisting}
-After adding the official coverage gate, final verification was:
-\begin{itemize}
-  \item \texttt{ruff check .}: all checks passed;
-  \item \texttt{pytest}: 57 passed in the 2026-07-13 recovery verification.
-\end{itemize}
-
-\subsection{Representative JEPA Command}
-
-The final JEPA pretraining family used the event-tubelet transformer with
-tubelet masking and a transformer dense predictor:
-\begin{lstlisting}
-$env:PYTHONPATH='src'
-.\.venv\Scripts\python.exe -m e_jepa_ttc pretrain jepa
-  --cache <full-starter-nav-cache.npz>
-  --output-dir <tubelet-mask-jepa-run-dir>
-  --epochs 30
-  --batch-size 64
-  --learning-rate 5e-4
-  --seed 7
-  --device auto
-  --model event-tubelet-transformer
-  --pretrain-splits train
-  --validation-splits validation
-  --temporal-horizons-ms 20 60 100 240 500
-  --max-target-slop-ms 10
-  --mask-mode tubelet
-  --dense-predictor transformer
-\end{lstlisting}
-Downstream runs should load the validation-selected
-\texttt{jepa\_encoder\_best.pt}. The historical best local row instead loaded
-the epoch-30 \texttt{last} checkpoint while SSL validation selected epoch 26;
-that choice is retained as a diagnostic and is not evidence that last is
-preferable. Main uncertainty claims require multiple SSL seeds with downstream
-seeds nested under each one.
-
-\section{Discussion}
-
-The evidence supports seven conclusions. First, JEPA pretraining helps
-event-based TTC in the local protocol. Second, the strongest benefits appear in
-label efficiency. Third, tokenization and dense prediction matter more than
-scaling a small encoder. Fourth, tubelet masking is the most successful
-V-JEPA-like modification tested locally. Fifth, causal navigation/action
-conditioning is useful, but not always positive in low-label settings. Sixth,
-detection-assisted ROI probers need more structure: flat latent probes and flat
-rollout probes are not enough. Seventh, official EvTTC SOTA remains unproven
-because only 37.5\% of real-world official rows and 30.0\% of complete Table V
-rows are locally covered, and the official baseline runtime protocol is not
-reproduced.
-
-The strongest defensible local claim is:
-\begin{quote}
-On the local EvTTC full-starter all-window protocol, event-tubelet transformer
-JEPA with tubelet masking, dense transformer future-token prediction, and
-causal integrated-navigation conditioning achieves the best local result in
-this repository: $0.231 \pm 0.018$ s validation MAE and $0.312 \pm 0.044$ s
-diagnostic CPLA-high MAE over three fine-tuning seeds.
-\end{quote}
-The strongest forbidden claim is:
-\begin{quote}
-This is official EvTTC SOTA.
-\end{quote}
-That claim is not supported by the current evidence.
-
-\section{Limitations}
-
-The main limitations are:
-\begin{itemize}
-  \item CPLA-high has been inspected and is diagnostic rather than pristine;
-  \item official CCRs2, CCRm, and slider benchmark assets are missing locally;
-  \item official STRTTC/CMax/ETTCM wrappers are not yet reproduced
-  end-to-end;
-  \item the event-tubelet backbone is small compared with V-JEPA-scale
-  systems;
-  \item deep self-supervision and all-token context loss were negative at the
-  current data/model scale;
-  \item no RGB, LiDAR, depth, or segmentation fusion is used during JEPA
-  pretraining;
-  \item no closed-loop planning or counterfactual action rollout is evaluated;
-  \item ROI rollout probing currently flattens horizons instead of enforcing
-  TTC dynamics structurally.
-\end{itemize}
-
-\section{Future Work}
-
-The next valid steps are not additional tuning on CPLA-high. They are:
-\begin{enumerate}
-  \item download official CCRs2 and CCRm HDF5, TTC, and bbox/segmentation
-  assets;
-  \item add the slider sequences if reproducing complete EvTTC Table V;
-  \item wrap or reimplement STRTTC, CMax, and ETTCM under deterministic CLIs;
-  \item evaluate every method on the same frames/events, sequence list, TTC
-  alignment, metric, and runtime protocol;
-  \item build a horizon-structured TTC head over predicted latent rollouts;
-  \item tune VISReg/SIGReg-style regularization only on multi-domain
-  validation;
-  \item run one final official benchmark once all assets and baselines are
-  present.
-\end{enumerate}
-
-\section{Conclusion}
-
-E-JEPA-TTC demonstrates that dense event-token JEPA is a promising path for
-event-camera TTC estimation. The best local model combines event-tubelet
-tokenization, tubelet masking, dense transformer future-token prediction, EMA
-targets, and causal navigation/action conditioning. It reaches
-$0.312 \pm 0.044$ s diagnostic CPLA-high MAE and $6.42 \pm 0.45\%$ relative
-error, while low-label experiments show a 65.4\% MAE improvement at 10\%
-labels over the matching scratch token transformer. At the same time, the work
-is careful not to overclaim: the official EvTTC bbox/ROI benchmark is not yet
-covered locally, and current ROI probers are diagnostic rather than SOTA. The
-project is therefore best viewed as a reproducible, anti-leakage foundation for
-a future official EvTTC benchmark submission.
-
-\appendix
-
-\section{Official Coverage Rows}
-
-\begin{table*}[t]
-\centering
-\caption{Official EvTTC bbox/ROI coverage encoded by the repository gate.}
-\label{tab:coverage_rows}
-\begin{tabularx}{\textwidth}{YccY}
-\toprule
-Row & Required assets complete & Local status & Notes \\
-\midrule
-\texttt{CCRs-1-low-100\%} & yes & present & HDF5, TTC, bbox/leftlabel, gt.hdf5 \\
-\texttt{CCRs-1-medium-100\%} & yes & present & HDF5, TTC, bbox/leftlabel, gt.hdf5 \\
-\texttt{CCRs-1-high-100\%} & yes & present & HDF5, TTC, bbox/leftlabel, gt.hdf5 \\
-\texttt{CCRs-2-low-100\%} & no & missing & required for official real-world benchmark \\
-\texttt{CCRs-2-medium-100\%} & no & missing & required for official real-world benchmark \\
-\texttt{CCRs-2-high-100\%} & no & missing & required for official real-world benchmark \\
-\texttt{CCRm-low-100\%} & no & missing & required for official real-world benchmark \\
-\texttt{CCRm-medium-100\%} & no & missing & required for official real-world benchmark \\
-\texttt{Slider-750} & no & missing & required for complete Table V reproduction \\
-\texttt{Slider-1000} & no & missing & required for complete Table V reproduction \\
-\bottomrule
-\end{tabularx}
-\end{table*}
-
-\section{Main Artifact Pointers}
-
-Main all-window summaries live under \texttt{artifacts/metrics} with prefix
-\emph{event tubelet, tubelet mask, transformer predictor, navigation,
-full-starter}. The key outputs are the validation and test
-\texttt{eval\_full\_protocol} summary JSON files.
-
-ROI latent summaries use the prefix
-\emph{ROI latent prober with event-tubelet transformer predictor and
-navigation}. ROI rollout summaries use the shorter
-\texttt{roi\_rollout\_prober\_tubeletmask} family for both full-starter
-validation and dev multi-validation outputs.
-
-\section{Repository Commit Context}
-
-The official coverage gate was added in commit:
-\begin{center}
-\texttt{2f7103a eval(protocol): add official evttc coverage gate}.
-\end{center}
-The present \LaTeX{} article is derived from the validated markdown report and
-the committed protocol gate.
-
-\begin{thebibliography}{99}
-
-\bibitem{evttc}
-EvTTC: An Event Camera Dataset for Time-to-Collision Estimation.
-\url{https://arxiv.org/html/2412.05053v1}
-
-\bibitem{evttc_project}
-EvTTC benchmark project page.
-\url{https://nail-hnu.github.io/EvTTC/}
-
-\bibitem{ijepa}
-I-JEPA: Self-Supervised Learning from Images with a Joint-Embedding Predictive
-Architecture.
-\url{https://arxiv.org/abs/2301.08243}
-
-\bibitem{vjepa}
-V-JEPA: Revisiting Feature Prediction for Learning Visual Representations from
-Video.
-\url{https://ai.meta.com/research/publications/revisiting-feature-prediction-for-learning-visual-representations-from-video/}
-
-\bibitem{vjepa21}
-V-JEPA 2.1: Unlocking Dense Features in Video Self-Supervised Learning.
-\url{https://arxiv.org/abs/2603.14482}
-
-\bibitem{leworldmodel}
-LeWorldModel: Stable End-to-End Joint-Embedding Predictive Architecture from
-Pixels.
-\url{https://arxiv.org/abs/2603.19312}
-
-\bibitem{skyjepa}
-SkyJEPA: Learning Long-Horizon World Models for Zero-Shot Sim-to-Real Control
-of Quadrotors.
-\url{https://arxiv.org/abs/2606.23444}
-
-\bibitem{eventaidedttc}
-Event-Aided Time-to-Collision Estimation / STRTTC project.
-\url{https://nail-hnu.github.io/EventAidedTTC/}
-
-\end{thebibliography}
+\bibliographystyle{plain}
+\bibliography{references}
 
 \end{document}

@@ -1,204 +1,218 @@
-# E-JEPA-TTC
+# E-JEPA-TTC / OGE-JEPA-TTC
 
-Research MVP for Time-to-Contact / Time-to-Collision estimation from event camera streams.
+Investigación reproducible de Time-to-Collision con cámaras de eventos. La ruta
+activa compara un Event-JEPA global auditado, representación densa causal,
+geometría object-centric y una réplica local de Garl-TTC sobre EvTTC-32.
 
-The current repository implements the first engineering milestones from `AGENTS.md`: project
-bootstrap, typed data contracts, synthetic event data with known TTC, EvTTC dataset discovery,
-manifest validation, temporal indexing, sequence-level splits, dense event representations,
-classical TTC baselines, voxel-cache materialization, a supervised TinyCNN TTC regressor,
-dense motion-conditioned temporal JEPA pretraining, and low-label probes.
+Estado al 30 de julio de 2026:
 
-Experimental numbers must be generated from reproducible runs before being promoted to project
-claims. The local workspace currently contains nine EvTTC starter sequences, but its historical
-cache and artifact registry fail the physical provenance audit. Existing numbers are diagnostic,
-not official benchmark evidence. See the
-[2026-07-25 scientific audit](docs/scientific_audit_2026-07-25.md).
+- `BASE` histórico reproducido con predicciones idénticas byte a byte;
+- FlowMimic e inverse-TTC global rechazados por resultados negativos;
+- Dense Patch, AttnRes, Object-KDA, geometría y Garl implementados;
+- screens comparables Core/Garl pendientes de promoción científica;
+- eAP train-40 reservado para una fase posterior de pretraining sin TTC;
+- Benchmark-10 sellado y no abierto.
 
-## Quickstart
+Documentación:
 
-```bash
-make setup
-make smoke-data
-make test
-```
+- [estado verificable](STATUS.md);
+- [plan completo v6](PLAN.md);
+- [informe técnico](docs/technical_report.md);
+- [informe PDF](docs/e_jepa_ttc_paper.pdf);
+- [protocolo de datos](docs/dataset_card.md);
+- [model card](docs/model_card.md).
 
-To scan the local EvTTC subset placed under `datasets/evttc`:
+## Resultado de referencia
 
-```bash
-make scan-data
-make validate-data
-make index-data
-make split-data
-```
+`B0_HISTORICAL_BASE_EXACT`, seed 7, checkpoint downstream de época 26/30:
 
-Equivalent direct CLI calls:
+| Split | MAE | RMSE | Error relativo medio |
+|---|---:|---:|---:|
+| validation histórica | 0,322892 s | 0,584432 s | 8,1554 % |
 
-```bash
+La reproducción está en
+`artifacts/audit/oge_sota/historical_base_reproduction.json` y demuestra
+paridad exacta con el artefacto original. Este resultado es un ancla histórica:
+la comparación de arquitectura usa `A0_MATCHED_GLOBAL`, no reutiliza esta fila
+como si hubiera sido entrenada con la matriz nueva.
+
+No existe todavía un claim SOTA ni un resultado oficial de Benchmark-10.
+
+## Instalación
+
+Requisitos principales:
+
+- Windows o Linux;
+- Python 3.11;
+- PyTorch con CUDA;
+- `uv`.
+
+```powershell
 uv sync --all-groups --no-editable
-uv run --no-sync e-jepa-ttc data scan --root datasets/evttc --output data/manifests/evttc_local.yaml
-uv run --no-sync e-jepa-ttc data validate --manifest data/manifests/evttc_local.yaml
-uv run --no-sync e-jepa-ttc data index --manifest data/manifests/evttc_local.yaml --output data/cache/evttc_index.json
-uv run --no-sync e-jepa-ttc split create --manifest data/manifests/evttc_local.yaml --output data/splits/evttc_local.yaml
+uv run --no-sync python -m e_jepa_ttc --help
 ```
 
-On Windows paths containing non-ASCII characters, `--no-editable` and `--no-sync` avoid an editable
-install `.pth` encoding issue observed with CPython 3.11.
+En el host auditado:
 
-## GPU Training
+```text
+GPU       NVIDIA GeForce RTX 5070 Ti Laptop, ~12,8 GB VRAM
+RAM       32 GB
+CPU       Ryzen 9, 32 threads lógicos
+PyTorch   2.11.0+cu128
+```
 
-The base project dependencies stay lightweight. Install PyTorch into the existing virtualenv before
-using `train tiny-cnn`:
+El entrenamiento usa BF16, workers persistentes, memoria fijada, prefetch,
+microbatch y acumulación. Usar 32 workers no es recomendable en Windows:
+multiplica procesos y RAM sin garantizar más throughput.
+
+## Inventario cerrado de datos
+
+```text
+datasets/evttc
+    EvTTC-32 etiquetado: desarrollo, grouped CV y entrenamiento final
+
+datasets/evttc_official_benchmark_sealed
+    Benchmark-10: una inferencia final después del freeze
+
+E:\eAP_dataset\data\train
+    eAP Hugging Face train-40: descarga ya iniciada, sin TTC oficial
+```
+
+No se añaden nuevos datasets, no se descarga eAP test y el pseudo-TTC no se
+considera ground truth.
+
+## Auditoría exacta de BASE
 
 ```powershell
-uv pip install --python .\.venv\Scripts\python.exe torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128
+.\.venv\Scripts\python.exe scripts\audit_historical_base.py `
+  --checkpoint artifacts\runs\evttc32_article_ablation\base\seed7\ft30\tiny_cnn_best.pt `
+  --cache artifacts\features\evttc32_trainval\cache.npz `
+  --output artifacts\audit\oge_sota\historical_base_reproduction.json `
+  --batch-size 24
 ```
 
-Then build a voxel cache and train the supervised CNN:
+La auditoría comprueba arquitectura, checkpoint, cache, hashes, métricas y
+predicciones.
+
+## Selección rápida de arquitectura
+
+Validar código:
 
 ```powershell
-$env:PYTHONPATH='src'
-.\.venv\Scripts\python.exe -m e_jepa_ttc cache voxel --manifest data/manifests/evttc_local.yaml --split data/splits/evttc_local.yaml --index data/cache/evttc_index.json --output artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz --width 160 --height 90 --bins 5 --no-normalize --metadata-channels
-.\.venv\Scripts\python.exe -m e_jepa_ttc train tiny-cnn --cache artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz --output-dir artifacts/runs/tiny_cnn_voxel_160x90_b5_raw_meta_seed7 --epochs 80 --batch-size 96 --learning-rate 0.0003 --seed 7 --device auto
+powershell -ExecutionPolicy Bypass -File `
+  .\scripts\run_evttc_architecture_selection.ps1 `
+  -Mode Validate
 ```
 
-To pretrain the encoder without TTC labels and then fine-tune the supervised head:
+Screen Core:
 
 ```powershell
-$env:PYTHONPATH='src'
-.\.venv\Scripts\python.exe -m e_jepa_ttc pretrain jepa --cache artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz --output-dir artifacts/runs/jepa_temporal_voxel_160x90_b5_raw_meta_train_seed7 --epochs 160 --batch-size 64 --learning-rate 0.0005 --seed 7 --device auto --pretrain-splits train --validation-splits validation --temporal-horizons-ms 20 60 100 240 500 --max-target-slop-ms 10 --variance-weight 1.0 --min-std 0.05
-.\.venv\Scripts\python.exe -m e_jepa_ttc train tiny-cnn --cache artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz --output-dir artifacts/runs/tiny_cnn_voxel_160x90_b5_raw_meta_temporal_jepa_seed7 --epochs 80 --batch-size 96 --learning-rate 0.0003 --seed 7 --device auto --pretrained-encoder artifacts/runs/jepa_temporal_voxel_160x90_b5_raw_meta_train_seed7/jepa_encoder_best.pt
+powershell -ExecutionPolicy Bypass -File `
+  .\scripts\run_evttc_architecture_selection.ps1 `
+  -Mode Screen `
+  -Stage Core `
+  -Protocol HistoricalBase `
+  -Resume
 ```
 
-## Local Results
-
-Current mini-subset results are summarized in [docs/local_results.md](docs/local_results.md).
-Full-starter diagnostic results are summarized in
-[docs/full_starter_results.md](docs/full_starter_results.md). On the full local starter protocol,
-the strongest historical all-window result is tubelet-masked token JEPA with causal
-integrated-navigation channels and a transformer dense predictor: with 100%
-labels it reaches `0.231 +/- 0.018s` validation MAE and `0.312 +/- 0.044s`
-CPLA-high diagnostic MAE over three fine-tuning seeds conditioned on one SSL
-pretraining seed. The cache sidecar disagrees with the physical array shape and
-the registry references missing or hash-mismatched artifacts. This figure is a
-research lead only: it is neither a promotable result nor an official EvTTC SOTA
-claim. Official comparison still requires the benchmark bbox/ROI protocol and
-broader sequence set.
-
-The official EvTTC bbox/ROI coverage checker currently finds only `3/8`
-real-world benchmark sequences complete locally (`37.5%`) and `3/10` complete
-Table V rows including slider (`30.0%`). Regenerate it with:
+Screen Garl con ResNet-50:
 
 ```powershell
-$env:PYTHONPATH='src'
-.\.venv\Scripts\e-jepa-ttc.exe data official-coverage --root datasets\evttc --output artifacts\metrics\evttc_official_table_v_coverage.json
+powershell -ExecutionPolicy Bypass -File `
+  .\scripts\run_evttc_architecture_selection.ps1 `
+  -Mode Screen `
+  -Stage Garl `
+  -Protocol HistoricalBase `
+  -Resume
 ```
 
-The thesis-style paper for the current project state is
-[docs/e_jepa_ttc_paper.md](docs/e_jepa_ttc_paper.md). It records the method,
-protocol, final tests, results, negative ablations, and claim limits.
+El perfil Screen utiliza hasta ocho épocas, 304 ventanas train y 80 validation.
+Core y Garl escriben resúmenes separados:
 
-Aggregate tables must declare their claim level and split protocol. For the
-reused CPLA-high split, only `development` or `diagnostic` is accepted; the
-same command with `--claim-level official` or `final` fails closed:
+```text
+artifacts/runs/evttc32_architecture_v4_historical_base_screen/
+├── core/fold-0/matrix_summary.json
+└── garl/fold-0/matrix_summary.json
+```
+
+Un smoke solo comprueba integración. No promueve componentes.
+
+## Grouped CV y semillas
+
+Después del screen se pasan explícitamente solo los candidatos promovidos:
 
 ```powershell
-.\.venv\Scripts\python.exe scripts\aggregate_eval_metrics.py --split test --split-protocol data\splits\evttc_full_starter_sealed.yaml --claim-level diagnostic <metrics.json...>
+powershell -ExecutionPolicy Bypass -File `
+  .\scripts\run_evttc_architecture_selection.ps1 `
+  -Mode Confirm `
+  -Stage Core `
+  -Protocol GroupedCV `
+  -AllFolds `
+  -Seed 7 `
+  -Resume `
+  -Variants A0_MATCHED_GLOBAL,K1_OBJECT_KDA
 ```
 
-With event-only inputs, token JEPA improves diagnostic-test MAE from `1.327 +/- 0.104s` to
-`0.460 +/- 0.029s` at 10% labels.
+Solo BASE y un máximo de dos finalistas se repiten con:
 
-Earlier available-starter sealed results are kept in
-[docs/available_starter_results.md](docs/available_starter_results.md).
-
-## Script Wrappers
-
-Implemented script wrappers mirror the CLI for current milestones:
-
-```bash
-uv run --no-sync python scripts/scan_evttc_manifest.py --root datasets/evttc --output data/manifests/evttc_local.yaml
-uv run --no-sync python scripts/validate_dataset.py --manifest data/manifests/evttc_local.yaml
-uv run --no-sync python scripts/build_index.py --manifest data/manifests/evttc_local.yaml --output data/cache/evttc_index.json
-uv run --no-sync python scripts/make_splits.py --manifest data/manifests/evttc_local.yaml --output data/splits/evttc_local.yaml
-uv run --no-sync python scripts/train_baseline.py --manifest data/manifests/evttc_local.yaml --split data/splits/evttc_local.yaml --output artifacts/metrics/trivial_baseline.json
-uv run --no-sync python scripts/build_voxel_cache.py --manifest data/manifests/evttc_local.yaml --split data/splits/evttc_local.yaml --index data/cache/evttc_index.json --output artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz --no-normalize --metadata-channels
-uv run --no-sync python scripts/pretrain_jepa.py --cache artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz --output-dir artifacts/runs/jepa_temporal_voxel_160x90_b5_raw_meta_train_seed7 --temporal-horizons-ms 20 60 100 240 500
-uv run --no-sync python scripts/train_tiny_cnn.py --cache artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz --output-dir artifacts/runs/tiny_cnn_voxel_160x90_b5_raw_meta_seed7 --seed 7
-uv run --no-sync python scripts/download_evttc_starter.py --manifest data/manifests/evttc_starter_downloads.yaml --root .
+```powershell
+-AllFolds -AllSeeds
 ```
 
-## Implemented
+No se ejecuta el producto cartesiano de módulos, folds y seeds.
 
-- Synthetic expanding-object event generator with monotonic timestamps and known TTC labels.
-- EvTTC local scanner for sequence folders with event HDF5, `gt.hdf5`, `ttc.csv`, and ISAT labels.
-- Lazy HDF5 event-field discovery for common separate-field and compound-event layouts.
-- EvTTC window reads using `ms_map_idx` when available, validated on the local HDF5 files.
-- Dataset manifest validation without loading full event streams into memory.
-- Temporal window index generation from TTC timestamps.
-- Sequence-level split generation and validation.
-- Event count, time surface, voxel grid, and sparse token representations.
-- Mean/median, geometric bbox-expansion, and event-rate ridge TTC baselines.
-- Causal detection-assisted geometry baseline with explicit anti-lookahead audit.
-- Voxel tensor cache builder for supervised and representation-learning experiments.
-- JEPA-style self-supervised pretraining with online encoder, EMA target encoder, dense temporal
-  token future prediction, causal context-motion conditioning, masked context views, and leakage
-  audit metadata.
-- V-JEPA-like event tubelet transformer backbones via `--model event-tubelet-transformer` and
-  `--model event-tubelet-transformer-large`.
-- Optional causal integrated-navigation cache channels for ego speed, velocity, acceleration,
-  yaw-rate, and validity.
-- SkyJEPA-style frozen latent and predicted-rollout bbox/ROI TTC probers with checkpoint-only
-  evaluation commands; current rollout results are diagnostic and not an official SOTA claim.
-- Official EvTTC Table V bbox/ROI asset coverage checker with an explicit claim blocker.
-- Supervised TinyCNN log-TTC regressor with CUDA AMP, checkpoints, history, metrics, and predictions.
-- Frozen-encoder probes and low-label supervised runs via `--freeze-encoder` and `--train-fraction`.
-- Unit and integration tests for data contracts, representations, synthetic data, manifests, splits,
-  and EvTTC window reads.
+## Arquitecturas bajo gate
 
-- ONNX export and validation (implemented, pending reproducible real-smoke/benchmark validation).
-- Streaming inference demo (implemented, pending reproducible real-smoke/benchmark validation).
+- `A0_MATCHED_GLOBAL`: control object-cache global.
+- `A1_MATCHED_DENSE_BLOCK`: patches espaciales antes de atención temporal
+  block-causal.
+- `A2_MATCHED_DENSE_ATTNRES`: recuperación por tarea a través de profundidad.
+- `K1_OBJECT_KDA`: memoria delta temporal posterior a la mezcla espacial.
+- `A4_GT_GEOMETRY`: oracle de bbox GT con height/area/affine/event contrast.
+- `G0`–`G7`: direct, LHR, early/late fusion y foreground de Garl-TTC.
 
-## Not Implemented Yet
+TargetQuery, máscara predicha, refiner, router, residual e incertidumbre no se
+promueven hasta que la geometría bbox-GT supere el gate frente a BASE.
 
-- Robustness suite (currently placeholder evaluation only).
-- Final-test evaluator (the guarded entry point intentionally fails closed).
-- Project-level final report generation.
+## Ego-motion
 
-These remain in the milestone order defined in `AGENTS.md`; they should be added after the
-supervised baseline is established against the local data.
+El HDF5 EvTTC almacena velocidad norte/este/arriba y heading en grados. El
+loader convierte esa señal a la cámara de eventos mediante:
 
-## Local Dataset Notes
+```text
+navegación → LiDAR → Blackfly izquierda → Prophesee izquierda
+```
 
-The handoff contains an EvTTC mini subset under `datasets/evttc/CCRs-1` with three speed buckets:
-`low-100`, `medium-100`, and `high-100`. Each sequence includes `ttc.csv`, one large event HDF5,
-`gt.hdf5`, ISAT JSON labels, and video/bag files. The current pipeline uses only HDF5 metadata,
-`ttc.csv`, and label metadata; video and bag files are intentionally ignored for the MVP.
+La de-rotación por yaw no utiliza datos futuros. El warp traslacional usa
+velocidad de cámara, brazo rígido, intrínsecos y profundidad causal. Si la
+profundidad procede de la distancia oficial EvTTC, el resultado se etiqueta
+obligatoriamente como oracle/teacher y no puede usarse como inferencia final.
 
-`data/manifests/evttc_starter_downloads.yaml` records public official links for the six starter
-sequences missing from the handoff. `scripts/download_evttc_starter.py` prints a dry-run plan by
-default and only calls `gdown` when `--execute` is passed; it also supports `--continue` and
-`--quiet`.
+## Almacenamiento
 
-If `gdown --folder` can list a Google Drive folder but cannot resolve per-file public download URLs,
-save the listing with `gdown --folder --json ...` and recover the files with
-`scripts/download_gdown_listing.py --listing <listing.json> --output-dir <folder> --suffix .json`.
-The listing downloader skips existing files and supports `--retries` for transient Drive failures.
+- caches EvTTC separados por rol y perfil;
+- máximo `best`, `last` y `weights_only` por run;
+- sin voxel cache global de eAP;
+- sin extracción masiva de TAR RGB;
+- sin logits SAM full-resolution;
+- sin hidden states DINO de todas las capas.
 
-The locally complete full-starter manifest is
-`data/manifests/evttc_full_starter_local.yaml`, with split
-`data/splits/evttc_full_starter_sealed.yaml`. It contains the three original `CCRs-1` sequences,
-all three `CCRs-side` sequences, and all three `CPLA` starter sequences. The
-legacy filename is retained for artifact compatibility, but its machine-readable
-status is `reused_test_diagnostic`; `CPLA-high` cannot support final or
-official claims.
+Los datos, caches y checkpoints no se versionan en Git.
 
-The earlier available-starter manifest is
-`data/manifests/evttc_available_starter_local.yaml`, with split
-`data/splits/evttc_available_starter_sealed.yaml`.
+## Integridad científica
 
-See [docs/datasets_local.md](docs/datasets_local.md), [docs/progress.md](docs/progress.md),
-[docs/local_results.md](docs/local_results.md), and
-[docs/full_starter_results.md](docs/full_starter_results.md).
+- splits completos por secuencia;
+- selección por validación macro de secuencia;
+- sin TTC durante SSL;
+- sin tuning sobre Benchmark-10;
+- resultados negativos conservados;
+- latencia medida con el candidato realmente evaluado;
+- ningún claim SOTA sin evaluación oficial reproducible.
 
+Este repositorio es investigación. No es un sistema certificado de seguridad ni
+debe controlar un vehículo.
 
+## Licencia
 
+Consulta [LICENSE](LICENSE) y las licencias de EvTTC, eAP, Garl-TTC y los
+teachers antes de redistribuir datos, pesos o derivados.
