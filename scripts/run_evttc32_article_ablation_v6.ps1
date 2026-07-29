@@ -620,10 +620,6 @@ try {
         }
     }
 
-    if (Test-PendingReboot) {
-        throw "Windows tiene un reinicio pendiente. Reinicia antes de lanzar el run nocturno."
-    }
-
     $repoDrive = (Get-Item -LiteralPath $RepoRoot).PSDrive
     $freeGB = [math]::Round($repoDrive.Free / 1GB, 2)
     Write-Log "Espacio libre en $($repoDrive.Name): $freeGB GB"
