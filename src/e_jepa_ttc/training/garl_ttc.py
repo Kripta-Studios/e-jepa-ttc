@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import time
 from dataclasses import asdict
 from pathlib import Path
@@ -578,6 +579,16 @@ def train_garl_ttc(
         },
         "effective_batch_size": trainer.batch_size * trainer.gradient_accumulation,
         "train_batches_per_epoch": len(train_loader),
+        "optimizer_steps_per_epoch": math.ceil(
+            len(train_loader) / trainer.gradient_accumulation
+        ),
+        "completed_optimizer_steps": (
+            math.ceil(len(train_loader) / trainer.gradient_accumulation) * completed
+        ),
+        "maximum_optimizer_steps": (
+            math.ceil(len(train_loader) / trainer.gradient_accumulation)
+            * trainer.epochs
+        ),
         "epochs_completed": completed,
         "best_epoch": best_epoch,
         "stopped_early": stopped_early,

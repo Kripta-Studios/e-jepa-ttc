@@ -556,6 +556,82 @@ def _matched_fairness_audit(
     return audit
 
 
+def _garl_fairness_audit(
+    summaries: dict[str, dict[str, Any]],
+) -> dict[str, Any]:
+    """Audit equal data and optimizer budgets across the Garl screen.
+
+    Late fusion follows the source protocol and therefore loads the separately
+    trained RGB and event branches.  That extra branch pretraining is declared
+    explicitly instead of being hidden as equal total training compute.
+    """
+
+    selected = {
+        name: summary
+        for name, summary in summaries.items()
+        if name.startswith("G")
+    }
+    if len(selected) < 2:
+        return {"status": "not_applicable", "arms": list(selected)}
+    invariant_fields = (
+        "sample_selection_sha256",
+        "train_samples",
+        "validation_samples",
+        "effective_batch_size",
+        "optimizer_steps_per_epoch",
+        "maximum_optimizer_steps",
+    )
+    checks = {
+        field: len(
+            {
+                json.dumps(summary.get(field), sort_keys=True)
+                for summary in selected.values()
+            }
+        )
+        == 1
+        for field in invariant_fields
+    }
+    trainer_fields = (
+        "epochs",
+        "learning_rate",
+        "weight_decay",
+        "precision",
+        "early_stopping_patience",
+        "early_stopping_min_epochs",
+        "early_stopping_min_delta_relative",
+    )
+    trainer_checks = {
+        field: len(
+            {
+                json.dumps(summary["trainer"].get(field), sort_keys=True)
+                for summary in selected.values()
+            }
+        )
+        == 1
+        for field in trainer_fields
+    }
+    passed = all(checks.values()) and all(trainer_checks.values())
+    audit = {
+        "status": "passed_with_declared_source_branch_pretraining" if passed else "failed",
+        "arms": list(selected),
+        "invariant_checks": checks,
+        "trainer_checks": trainer_checks,
+        "actual_epochs_may_differ_only_by_shared_early_stopping_rule": True,
+        "late_fusion_branch_pretraining": {
+            name: bool(summary.get("branch_initialization"))
+            for name, summary in selected.items()
+        },
+        "scientific_scope": (
+            "Equal downstream sample/effective-batch/update budgets. G6/G7 "
+            "add source-required G3/G4 branch pretraining, so total training "
+            "compute is reported but not claimed equal."
+        ),
+    }
+    if not passed:
+        raise ValueError(f"Garl comparison invariants failed: {audit}")
+    return audit
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--mode", choices=("smoke", "screen", "confirm"), default="screen")
@@ -918,6 +994,7 @@ def main() -> int:
         "ranking": ranking,
         "gates": _gate_rows(summaries, mode=args.mode),
         "matched_fairness_audit": _matched_fairness_audit(summaries),
+        "garl_fairness_audit": _garl_fairness_audit(summaries),
         "benchmark10_opened": False,
         "selection_split": (
             "historical_validation_sequences"

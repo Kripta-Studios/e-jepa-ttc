@@ -16,6 +16,10 @@ profiles:
     early_stopping_patience: 0
     early_stopping_min_epochs: 1
     garl_backbone: compact
+    garl_batch_size: 4
+    garl_gradient_accumulation: 1
+    garl_foreground_batch_size: 4
+    garl_foreground_gradient_accumulation: 1
   screen:
     epochs: 8
     # The dense arm used only ~0.42 GiB at batch 4 in the CUDA smoke. Batch 24
@@ -29,6 +33,13 @@ profiles:
     early_stopping_patience: 2
     early_stopping_min_epochs: 3
     garl_backbone: resnet50
+    # Match Core's effective batch 24 and its 13 optimizer updates per epoch.
+    # G7 uses a smaller microbatch for its training-only decoder, compensated
+    # by accumulation so its optimization budget remains identical.
+    garl_batch_size: 24
+    garl_gradient_accumulation: 1
+    garl_foreground_batch_size: 4
+    garl_foreground_gradient_accumulation: 6
   confirm:
     epochs: 40
     # Confirmation keeps a smaller microbatch because 64 windows/sequence
@@ -43,6 +54,13 @@ profiles:
     early_stopping_patience: 6
     early_stopping_min_epochs: 10
     garl_backbone: resnet50
+    # Core confirmation uses 16 x accumulation 2 = effective batch 32.
+    # These values give every Garl arm the same effective batch and the same
+    # number of optimizer updates per epoch.
+    garl_batch_size: 16
+    garl_gradient_accumulation: 2
+    garl_foreground_batch_size: 4
+    garl_foreground_gradient_accumulation: 8
 
 hardware:
   precision: bf16
@@ -51,12 +69,10 @@ hardware:
   learning_rate: 0.00003
   weight_decay: 0.001
   gradient_accumulation: 2
+  # Fallbacks only. Every active profile overrides these values to match the
+  # Core effective batch and optimizer-step budget.
   garl_batch_size: 8
-  # Official effective batch is 128.  Microbatch 8 x accumulation 16 fits the
-  # 12.8 GB GPU while preserving that optimization scale.
   garl_gradient_accumulation: 16
-  # The source decoder is much wider than the TTC head. Microbatch one keeps
-  # G7 within 12.8 GiB while retaining effective batch 128.
   garl_foreground_batch_size: 1
   garl_foreground_gradient_accumulation: 128
   dataloader_workers: 4
