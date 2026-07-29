@@ -1,0 +1,122 @@
+{
+  "baseline": "causal_detection_assisted_geometry",
+  "calibration": {
+    "beta": [
+      -0.142175836065071,
+      0.9348510424612799
+    ],
+    "train_prediction_count": 2322,
+    "type": "train_only_log_affine"
+  },
+  "derivative_window": 15,
+  "leakage_audit": {
+    "bbox_protocol": "Detection-assisted: requires current/past object boxes at inference; do not compare as event-only.",
+    "uses_future_bboxes": false,
+    "uses_future_events": false,
+    "uses_validation_or_test_ttc_for_fit": false
+  },
+  "manifest": "data/manifests/evttc_all32_local.yaml",
+  "max_ttc_seconds": 60.0,
+  "split": "data/splits/evttc_all32_article_family_holdout.yaml",
+  "splits": {
+    "test": {
+      "invalid_prediction_count": 29,
+      "label_count": 898,
+      "metrics": {
+        "log_mae": 0.14235909485856216,
+        "log_mae_15s": 0.14235909485856216,
+        "log_rmse": 0.25737860657378925,
+        "log_rmse_15s": 0.25737860657378925,
+        "mae_s": 0.6012389698401831,
+        "mae_s_15s": 0.6012389698401831,
+        "mean_abs_relative_error_pct": 21.647349159606225,
+        "median_abs_error_s": 0.2713137883037249,
+        "median_abs_relative_error_pct": 10.036686004492884,
+        "rmse_s": 1.252559660068645,
+        "rmse_s_15s": 1.252559660068645,
+        "signed_log1p_mae": 0.14235909485856216
+      },
+      "prediction_count": 869,
+      "raw_metrics": {
+        "log_mae": 0.21199995323597978,
+        "log_mae_15s": 0.21199995323597978,
+        "log_rmse": 0.30482952919619727,
+        "log_rmse_15s": 0.30482952919619727,
+        "mae_s": 0.9822371809366853,
+        "mae_s_15s": 0.9822371809366853,
+        "mean_abs_relative_error_pct": 37.05723669528894,
+        "median_abs_error_s": 0.5950069700421459,
+        "median_abs_relative_error_pct": 25.915884851371935,
+        "rmse_s": 1.8637986509675486,
+        "rmse_s_15s": 1.8637986509675486,
+        "signed_log1p_mae": 0.21199995323597978
+      }
+    },
+    "train": {
+      "invalid_prediction_count": 63,
+      "label_count": 2385,
+      "metrics": {
+        "log_mae": 0.14700326374451056,
+        "log_mae_15s": 0.14428083337462536,
+        "log_rmse": 0.2408529046285659,
+        "log_rmse_15s": 0.2348783929396109,
+        "mae_s": 0.8369098183129033,
+        "mae_s_15s": 0.7903673431223298,
+        "mean_abs_relative_error_pct": 22.09523651841419,
+        "median_abs_error_s": 0.34374295336172744,
+        "median_abs_relative_error_pct": 13.293564335386359,
+        "rmse_s": 2.0912865498924336,
+        "rmse_s_15s": 1.9238183448371957,
+        "signed_log1p_mae": 0.14700326374451056
+      },
+      "prediction_count": 2322,
+      "raw_metrics": {
+        "log_mae": 0.2149472638533377,
+        "log_mae_15s": 0.2124997239833567,
+        "log_rmse": 0.2999217460758428,
+        "log_rmse_15s": 0.2953763485055686,
+        "mae_s": 1.3134199374854036,
+        "mae_s_15s": 1.2504821255860568,
+        "mean_abs_relative_error_pct": 37.99850477637893,
+        "median_abs_error_s": 0.7029660277971516,
+        "median_abs_relative_error_pct": 26.35792617497583,
+        "rmse_s": 3.2595528758915044,
+        "rmse_s_15s": 2.9980750138291796,
+        "signed_log1p_mae": 0.2149472638533377
+      }
+    },
+    "validation": {
+      "invalid_prediction_count": 19,
+      "label_count": 515,
+      "metrics": {
+        "log_mae": 0.1110186870762317,
+        "log_mae_15s": 0.1076090248905582,
+        "log_rmse": 0.16660870546622664,
+        "log_rmse_15s": 0.15946223575743498,
+        "mae_s": 0.6371033683518397,
+        "mae_s_15s": 0.5371082061378588,
+        "mean_abs_relative_error_pct": 17.3472111789534,
+        "median_abs_error_s": 0.2313700702459307,
+        "median_abs_relative_error_pct": 12.315764864361489,
+        "rmse_s": 1.9287167661421127,
+        "rmse_s_15s": 1.4631818959949383,
+        "signed_log1p_mae": 0.1110186870762317
+      },
+      "prediction_count": 496,
+      "raw_metrics": {
+        "log_mae": 0.21042050697450798,
+        "log_mae_15s": 0.20477266438058023,
+        "log_rmse": 0.25617899669895056,
+        "log_rmse_15s": 0.24325485790550863,
+        "mae_s": 1.3101748688098351,
+        "mae_s_15s": 1.101767000979136,
+        "mean_abs_relative_error_pct": 36.990256027058365,
+        "median_abs_error_s": 0.571155120345938,
+        "median_abs_relative_error_pct": 32.280795324024595,
+        "rmse_s": 3.699074934735138,
+        "rmse_s_15s": 2.6837630206696286,
+        "signed_log1p_mae": 0.21042050697450798
+      }
+    }
+  }
+}

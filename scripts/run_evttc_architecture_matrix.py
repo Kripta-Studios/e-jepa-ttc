@@ -894,6 +894,7 @@ def main() -> int:
                 config=model_config,
                 batch_size=active_trainer.batch_size,
                 num_workers=active_trainer.num_workers,
+                max_train_samples=active_trainer.max_train_samples,
                 max_validation_samples=active_trainer.max_validation_samples,
                 device_name=args.device,
                 dry_run_fingerprint=True,
@@ -937,6 +938,7 @@ def main() -> int:
                 config=model_config,
                 batch_size=active_trainer.batch_size,
                 num_workers=active_trainer.num_workers,
+                max_train_samples=active_trainer.max_train_samples,
                 max_validation_samples=active_trainer.max_validation_samples,
                 device_name=args.device,
             )

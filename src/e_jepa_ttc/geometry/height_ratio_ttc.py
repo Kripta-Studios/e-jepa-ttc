@@ -49,14 +49,17 @@ def height_ratio_inverse_ttc(
     *,
     valid_mask: torch.Tensor | None = None,
 ) -> tuple[torch.Tensor, torch.Tensor]:
-    """Estimate inverse TTC with the exact adjacent height-ratio identity.
+    """Estimate inverse TTC with the exact causal height-ratio identity.
 
     For a rigid object under constant translational approach, inverse TTC at
     the current endpoint is
-    ``q_current = (h_current / h_previous - 1) / delta_t``.
+    ``q_current = (h_current / h_previous - 1) / delta_t``.  The earliest
+    and latest valid observations are used so annotation jitter is not
+    amplified by a single short adjacent interval.  This remains an exact
+    current-endpoint identity under the constant-velocity looming model.
     The commonly quoted ``(1 - h_previous/h_current)/delta_t`` refers to the
-    previous endpoint. The latest valid pair supplies the current estimate;
-    disagreement with older pairs reduces confidence.
+    previous endpoint. Disagreement among adjacent estimates only reduces
+    confidence.
     """
 
     return _causal_pair_ratio_rate(
@@ -116,10 +119,9 @@ def _causal_pair_ratio_rate(
     disagreement = (
         (pair_rate - mean_rate.unsqueeze(-2)).abs() * weights
     ).sum(dim=-2) / count.clamp_min(1.0)
-    # Every adjacent identity estimates inverse TTC at that pair's *current*
-    # endpoint.  Averaging them biases the prediction toward earlier TTCs.
-    # Select the most recent valid causal pair and use earlier pairs only to
-    # score consistency.
+    # Adjacent identities are useful for consistency, but a single interval
+    # amplifies box jitter. Use the widest valid causal span and evaluate the
+    # exact ratio at its current endpoint.
     pair_axis = pair_rate.shape[-2]
     pair_indices = torch.arange(pair_axis, device=values.device)
     pair_indices = pair_indices.view(
@@ -132,15 +134,44 @@ def _causal_pair_ratio_rate(
         pair_indices,
         torch.full_like(pair_indices, -1),
     ).amax(dim=-2)
-    gather_index = latest_index.clamp_min(0).unsqueeze(-2)
-    latest_rate = pair_rate.gather(-2, gather_index).squeeze(-2)
-    latest_rate = torch.where(latest_index >= 0, latest_rate, torch.zeros_like(latest_rate))
-    relative_disagreement = disagreement / latest_rate.abs().clamp_min(0.05)
+    earliest_index = torch.where(
+        valid,
+        pair_indices,
+        torch.full_like(pair_indices, pair_axis),
+    ).amin(dim=-2)
+    first_value = values.gather(
+        -2,
+        earliest_index.clamp(0, values.shape[-2] - 1).unsqueeze(-2),
+    ).squeeze(-2)
+    last_value = values.gather(
+        -2,
+        (latest_index + 1).clamp(0, values.shape[-2] - 1).unsqueeze(-2),
+    ).squeeze(-2)
+    if times_s.ndim == 1:
+        first_time = times_s[earliest_index.clamp(0, times_s.shape[0] - 1)]
+        last_time = times_s[(latest_index + 1).clamp(0, times_s.shape[0] - 1)]
+    else:
+        first_time = times_s.gather(
+            1,
+            earliest_index.clamp(0, times_s.shape[1] - 1),
+        )
+        last_time = times_s.gather(
+            1,
+            (latest_index + 1).clamp(0, times_s.shape[1] - 1),
+        )
+    span_dt = (last_time - first_time).clamp_min(1e-6)
+    span_rate = (
+        (last_value.clamp_min(1e-6) / first_value.clamp_min(1e-6)).pow(ratio_power)
+        - 1.0
+    ) / span_dt
+    has_span = (latest_index >= 0) & (earliest_index < pair_axis)
+    span_rate = torch.where(has_span, span_rate, torch.zeros_like(span_rate))
+    relative_disagreement = disagreement / span_rate.abs().clamp_min(0.05)
     support = (count / 2.0).clamp(0.0, 1.0)
-    approaching = latest_rate > 0
+    approaching = span_rate > 0
     confidence = torch.exp(-relative_disagreement) * support
     confidence = confidence * approaching.to(confidence.dtype)
-    return latest_rate.clamp_min(0.0), confidence
+    return span_rate.clamp_min(0.0), confidence
 
 
 __all__ = ["height_ratio_inverse_ttc"]

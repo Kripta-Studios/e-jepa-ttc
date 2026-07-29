@@ -41,6 +41,7 @@ class GTGeometryOracleConfig:
 
     evaluate_yaw_derotation: bool = True
     evaluate_translation_compensation: bool = True
+    fit_train_only_log_calibration: bool = True
     action_dim: int = 8
     maximum_ttc_s: float = 12.0
 
@@ -181,6 +182,74 @@ def _metrics(
     return metrics
 
 
+def _fit_log_calibration(
+    truth: np.ndarray,
+    prediction: np.ndarray,
+) -> tuple[float, float]:
+    """Fit log(TTC_gt) = beta0 + beta1*log(TTC_geometry) on train only."""
+
+    valid = (
+        np.isfinite(truth)
+        & np.isfinite(prediction)
+        & (truth > 0.0)
+        & (prediction > 0.0)
+    )
+    if int(valid.sum()) < 3:
+        raise ValueError("At least three finite positive train rows are required.")
+    x = np.log(prediction[valid].astype(np.float64))
+    y = np.log(truth[valid].astype(np.float64))
+    design = np.column_stack((np.ones_like(x), x))
+    beta, *_ = np.linalg.lstsq(design, y, rcond=None)
+    return float(beta[0]), float(beta[1])
+
+
+def _apply_log_calibration(
+    prediction: np.ndarray,
+    beta: tuple[float, float],
+    *,
+    maximum_ttc_s: float,
+) -> np.ndarray:
+    calibrated = np.exp(
+        beta[0] + beta[1] * np.log(np.clip(prediction.astype(np.float64), 1e-4, None))
+    )
+    return np.clip(calibrated, 1e-4, maximum_ttc_s)
+
+
+def _standard_predictions(
+    loader: DataLoader[Any],
+    *,
+    device: torch.device,
+    maximum_ttc_s: float,
+) -> tuple[dict[str, np.ndarray], np.ndarray]:
+    """Collect uncalibrated causal geometry predictions for one split."""
+
+    predictions: dict[str, list[np.ndarray]] = {}
+    truths: list[np.ndarray] = []
+    with torch.inference_mode():
+        for batch in loader:
+            events = _tensor(batch, "context_events", device, dtype=torch.float32)
+            boxes = _tensor(batch, "context_boxes", device, dtype=torch.float32)
+            valid = _tensor(batch, "context_object_mask", device).bool()
+            end_us = _tensor(
+                batch,
+                "context_window_end_us",
+                device,
+                dtype=torch.float32,
+            )
+            times_s = (end_us - end_us[:, :1]) * 1e-6
+            current = _experts(boxes, valid, events, times_s)
+            for name, inverse_ttc in current.items():
+                ttc = inverse_ttc.clamp_min(1e-4).reciprocal().clamp_max(
+                    maximum_ttc_s
+                )
+                predictions.setdefault(name, []).append(ttc.cpu().numpy())
+            truths.append(_tensor(batch, "ttc_s", device).reshape(-1).cpu().numpy())
+    return (
+        {name: np.concatenate(values) for name, values in predictions.items()},
+        np.concatenate(truths),
+    )
+
+
 def evaluate_gt_geometry_oracle(
     *,
     cache_manifest_path: str | Path,
@@ -188,6 +257,7 @@ def evaluate_gt_geometry_oracle(
     config: GTGeometryOracleConfig | None = None,
     batch_size: int = 64,
     num_workers: int = 4,
+    max_train_samples: int | None = None,
     max_validation_samples: int | None = None,
     device_name: str = "auto",
     dry_run_fingerprint: bool = False,
@@ -201,6 +271,7 @@ def evaluate_gt_geometry_oracle(
     fingerprint_payload = {
         "cache_manifest_sha256": _hash_file(cache_manifest_path),
         "config": asdict(resolved),
+        "max_train_samples": max_train_samples,
         "max_validation_samples": max_validation_samples,
     }
     fingerprint = hashlib.sha256(
@@ -224,6 +295,33 @@ def evaluate_gt_geometry_oracle(
     if num_workers:
         loader_kwargs.update(persistent_workers=True, prefetch_factor=2)
     loader = DataLoader(Subset(dataset, indices), **loader_kwargs)
+    calibration: dict[str, dict[str, float | int]] = {}
+    calibration_sample_count = 0
+    calibration_seconds = 0.0
+    if resolved.fit_train_only_log_calibration:
+        calibration_started = time.perf_counter()
+        train_dataset = EAPObjectCacheDataset(cache_manifest_path, splits=("train",))
+        train_indices = _indices(len(train_dataset), max_train_samples)
+        train_loader = DataLoader(
+            Subset(train_dataset, train_indices),
+            **loader_kwargs,
+        )
+        train_predictions, train_truth = _standard_predictions(
+            train_loader,
+            device=device,
+            maximum_ttc_s=resolved.maximum_ttc_s,
+        )
+        calibration_sample_count = int(train_truth.shape[0])
+        for name, prediction in train_predictions.items():
+            beta = _fit_log_calibration(train_truth, prediction)
+            calibration[name] = {
+                "beta0": beta[0],
+                "beta1": beta[1],
+                "train_rows": calibration_sample_count,
+            }
+        del train_loader
+        train_dataset.close()
+        calibration_seconds = time.perf_counter() - calibration_started
     yaw_derotator = CameraYawDerotator(resolved.action_dim).to(device)
     ego_compensator = CameraEgoMotionCompensator(resolved.action_dim).to(device)
     predictions: dict[str, list[np.ndarray]] = {}
@@ -323,6 +421,12 @@ def evaluate_gt_geometry_oracle(
     prediction_arrays = {
         name: np.concatenate(values) for name, values in predictions.items()
     }
+    for name, parameters in calibration.items():
+        prediction_arrays[f"{name}_train_calibrated"] = _apply_log_calibration(
+            prediction_arrays[name],
+            (float(parameters["beta0"]), float(parameters["beta1"])),
+            maximum_ttc_s=resolved.maximum_ttc_s,
+        )
     variants = {
         name: _metrics(truth, prediction, sequences)
         for name, prediction in prediction_arrays.items()
@@ -343,11 +447,18 @@ def evaluate_gt_geometry_oracle(
     )
     summary: dict[str, Any] = {
         "architecture": asdict(resolved),
-        "evaluation_kind": "training_free_gt_geometry_oracle",
+        "evaluation_kind": (
+            "gt_geometry_oracle_with_train_only_log_calibration"
+            if resolved.fit_train_only_log_calibration
+            else "training_free_gt_geometry_oracle"
+        ),
         "run_fingerprint": fingerprint,
         "git_commit": _git_commit(),
         "cache_manifest": Path(cache_manifest_path).as_posix(),
         "validation_samples": len(indices),
+        "train_calibration_samples": calibration_sample_count,
+        "train_calibration_seconds": calibration_seconds,
+        "train_only_calibration": calibration,
         "epochs_completed": 0,
         "best_epoch": 0,
         "stopped_early": False,

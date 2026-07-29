@@ -2,8 +2,13 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import numpy as np
 import torch
 
+from e_jepa_ttc.evaluation.oracle_geometry import (
+    _apply_log_calibration,
+    _fit_log_calibration,
+)
 from e_jepa_ttc.geometry import (
     affine_expansion_inverse_ttc,
     area_rate_inverse_ttc,
@@ -54,11 +59,23 @@ def test_geometry_closed_forms_recover_exponential_scale_rate() -> None:
         dim=-1,
     )
     affine_value, _ = affine_expansion_inverse_ttc(boxes, times, valid_mask=valid)
+    exact_span_rate = (torch.exp(torch.tensor(rate * 0.3)) - 1.0) / 0.3
     exact_pair_rate = (torch.exp(torch.tensor(rate * 0.1)) - 1.0) / 0.1
-    expected = torch.full_like(height_value, exact_pair_rate)
-    assert torch.allclose(height_value, expected, atol=1e-5)
-    assert torch.allclose(area_value, expected, atol=1e-5)
-    assert torch.allclose(affine_value, expected, atol=5e-4)
+    assert torch.allclose(
+        height_value,
+        torch.full_like(height_value, exact_span_rate),
+        atol=1e-5,
+    )
+    assert torch.allclose(
+        area_value,
+        torch.full_like(area_value, exact_span_rate),
+        atol=1e-5,
+    )
+    assert torch.allclose(
+        affine_value,
+        torch.full_like(affine_value, exact_pair_rate),
+        atol=5e-4,
+    )
 
 
 def test_geometry_closed_forms_estimate_ttc_at_latest_endpoint() -> None:
@@ -84,6 +101,15 @@ def test_geometry_closed_forms_estimate_ttc_at_latest_endpoint() -> None:
     assert torch.allclose(height_value, expected, atol=1e-5)
     assert torch.allclose(area_value, expected, atol=1e-5)
     assert torch.allclose(affine_value, expected, atol=5e-4)
+
+
+def test_geometry_log_calibration_is_fit_from_supplied_train_rows() -> None:
+    raw = np.array([1.0, 2.0, 4.0, 8.0])
+    truth = 1.5 * raw**0.8
+    beta = _fit_log_calibration(truth, raw)
+    calibrated = _apply_log_calibration(raw, beta, maximum_ttc_s=12.0)
+
+    assert np.allclose(calibrated, truth)
 
 
 def test_camera_translation_compensation_aligns_static_object_and_recovers_ego_ttc() -> None:
