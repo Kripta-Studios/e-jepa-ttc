@@ -19,6 +19,9 @@ param(
     [switch]$AllFolds,
     [switch]$AllSeeds,
     [switch]$RandomControl,
+    [switch]$ExternalPretraining,
+    [string]$BaseEncoderCheckpoint = "",
+    [string]$ExternalPretrainingSplit = "data/splits/carla_dvs_looming_blocked_v1.json",
     [switch]$SkipUnitTests,
     [switch]$DryRun
 )
@@ -73,6 +76,12 @@ try {
     }
     if ($IncludeDiagnosticTestCache -and $Protocol -ne "HistoricalBase") {
         throw "IncludeDiagnosticTestCache solo está permitido con HistoricalBase."
+    }
+    if ($RandomControl -and $ExternalPretraining) {
+        throw "RandomControl y ExternalPretraining son mutuamente excluyentes."
+    }
+    if ($ExternalPretraining -and [string]::IsNullOrWhiteSpace($BaseEncoderCheckpoint)) {
+        throw "ExternalPretraining requiere -BaseEncoderCheckpoint."
     }
     $ProtocolArg = if ($Protocol -eq "HistoricalBase") {
         "historical_base"
@@ -131,6 +140,16 @@ try {
             }
             if ($RandomControl) {
                 $RunnerArgs += @("--base-initialization", "random_control")
+            }
+            if ($ExternalPretraining) {
+                $RunnerArgs += @(
+                    "--base-initialization", "external_ssl",
+                    "--base-encoder-checkpoint", $BaseEncoderCheckpoint,
+                    "--external-pretraining-split", $ExternalPretrainingSplit
+                )
+            }
+            elseif (-not [string]::IsNullOrWhiteSpace($BaseEncoderCheckpoint)) {
+                $RunnerArgs += @("--base-encoder-checkpoint", $BaseEncoderCheckpoint)
             }
             if ($BatchSize -gt 0) {
                 $RunnerArgs += @("--batch-size", "$BatchSize")

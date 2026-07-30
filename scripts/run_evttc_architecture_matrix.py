@@ -29,6 +29,7 @@ from e_jepa_ttc.evaluation.oracle_geometry import (
 )
 from e_jepa_ttc.models.garl_ttc_replica import GarlTTCConfig
 from e_jepa_ttc.models.object_geo_jepa_ttc import OGEConfig
+from e_jepa_ttc.training.checkpoints import validate_external_ssl_checkpoint
 from e_jepa_ttc.training.garl_ttc import train_garl_ttc
 from e_jepa_ttc.training.object_geo_trainer import OGETrainerConfig, train_object_geo_ttc
 from e_jepa_ttc.utils.io import write_structured
@@ -680,13 +681,20 @@ def main() -> int:
     parser.add_argument("--base-encoder-checkpoint", type=Path)
     parser.add_argument(
         "--base-initialization",
-        choices=("audited_ssl", "random_control"),
+        choices=("audited_ssl", "random_control", "external_ssl"),
         default="audited_ssl",
         help=(
             "Use the audited SSL checkpoint or a disclosed random EventTubelet "
             "control. random_control is intended for leakage-free grouped CV when "
-            "fold-specific SSL checkpoints do not yet exist."
+            "fold-specific SSL checkpoints do not yet exist. external_ssl accepts "
+            "only a provenance-checked CARLA checkpoint with no EvTTC exposure."
         ),
+    )
+    parser.add_argument(
+        "--external-pretraining-split",
+        type=Path,
+        default=Path("data/splits/carla_dvs_looming_blocked_v1.json"),
+        help="Signed source split required when --base-initialization=external_ssl.",
     )
     parser.add_argument("--cache-dir", type=Path)
     parser.add_argument("--output-dir", type=Path)
@@ -722,6 +730,7 @@ def main() -> int:
             args.cv_protocol,
             args.historical_split,
             args.config,
+            args.external_pretraining_split,
         )
     )
     if args.base_initialization == "random_control":
@@ -730,6 +739,10 @@ def main() -> int:
                 "--base-encoder-checkpoint conflicts with random_control initialization."
             )
         base_encoder_checkpoint = None
+    elif args.base_initialization == "external_ssl":
+        if args.base_encoder_checkpoint is None:
+            raise ValueError("external_ssl requires --base-encoder-checkpoint.")
+        base_encoder_checkpoint = args.base_encoder_checkpoint
     else:
         base_encoder_checkpoint = args.base_encoder_checkpoint or Path(
             "artifacts/runs/evttc32_article_ablation/"
@@ -837,17 +850,24 @@ def main() -> int:
             map_location="cpu",
             weights_only=False,
         )
-        expected_split_hash = (
-            _sha256(args.historical_split)
-            if args.split_protocol == "historical_base"
-            else _sha256(args.cv_protocol)
-        )
-        if checkpoint.get("split_manifest_sha256") != expected_split_hash:
-            raise ValueError(
-                "BASE initialization was pretrained on a different split. "
-                "Use historical_base for the audited checkpoint or provide a "
-                "fold-specific grouped-CV SSL checkpoint."
+        if args.base_initialization == "external_ssl":
+            validate_external_ssl_checkpoint(
+                base_encoder_checkpoint,
+                checkpoint,
+                source_split_path=args.external_pretraining_split,
             )
+        else:
+            expected_split_hash = (
+                _sha256(args.historical_split)
+                if args.split_protocol == "historical_base"
+                else _sha256(args.cv_protocol)
+            )
+            if checkpoint.get("split_manifest_sha256") != expected_split_hash:
+                raise ValueError(
+                    "BASE initialization was pretrained on a different split. "
+                    "Use historical_base for the audited checkpoint or provide a "
+                    "fold-specific grouped-CV SSL checkpoint."
+                )
     probe = EAPObjectCacheDataset(cache_manifest, splits=("train",))
     sample = probe[0]
     garl_channels = None

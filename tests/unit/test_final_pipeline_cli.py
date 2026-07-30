@@ -73,3 +73,28 @@ def test_diagnostic_test_requires_matching_selection_manifest(tmp_path: Path) ->
     )
     assert mismatch.returncode != 0
     assert "Checkpoint hash" in mismatch.stderr
+
+
+def test_external_ssl_compare_requires_checkpoint() -> None:
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(SCRIPT),
+            "compare",
+            "--folds",
+            "0",
+            "--seeds",
+            "7",
+            "--variants",
+            "A0_MATCHED_GLOBAL",
+            "--base-initialization",
+            "external_ssl",
+            "--dry-run",
+        ],
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    assert result.returncode != 0
+    assert "requires --base-encoder-checkpoint" in result.stderr

@@ -89,6 +89,8 @@ def _execution_args(profile: str, batch_size: int, accumulation: int) -> list[st
 
 def compare(args: argparse.Namespace) -> int:
     execution = _execution_args(args.execution_profile, args.batch_size, args.accumulation)
+    if args.base_initialization == "external_ssl" and args.base_encoder_checkpoint is None:
+        raise ValueError("external_ssl requires --base-encoder-checkpoint.")
     for seed in args.seeds:
         for fold in args.folds:
             command = [
@@ -109,11 +111,22 @@ def compare(args: argparse.Namespace) -> int:
                 "--output-dir",
                 str(args.run_root / f"fold-{fold}"),
                 "--base-initialization",
-                "random_control",
+                args.base_initialization,
                 "--variants",
                 *args.variants,
                 *execution,
             ]
+            if args.base_encoder_checkpoint is not None:
+                command.extend(
+                    ["--base-encoder-checkpoint", str(args.base_encoder_checkpoint)]
+                )
+            if args.base_initialization == "external_ssl":
+                command.extend(
+                    [
+                        "--external-pretraining-split",
+                        str(args.external_pretraining_split),
+                    ]
+                )
             if args.resume:
                 command.append("--resume")
             _run(command, dry_run=args.dry_run)
@@ -436,6 +449,21 @@ def build_parser() -> argparse.ArgumentParser:
         "--variants", nargs="+", choices=CORE_VARIANTS, default=list(CORE_VARIANTS[:2])
     )
     compare_parser.add_argument("--run-root", type=Path, default=DEFAULT_RUN_ROOT)
+    compare_parser.add_argument(
+        "--base-initialization",
+        choices=("random_control", "external_ssl"),
+        default="random_control",
+        help=(
+            "random_control reproduces the closed A0/A1 comparison; external_ssl "
+            "loads a provenance-checked CARLA encoder without EvTTC pretraining."
+        ),
+    )
+    compare_parser.add_argument("--base-encoder-checkpoint", type=Path)
+    compare_parser.add_argument(
+        "--external-pretraining-split",
+        type=Path,
+        default=Path("data/splits/carla_dvs_looming_blocked_v1.json"),
+    )
     _common_execution(compare_parser)
     compare_parser.set_defaults(func=compare)
 
