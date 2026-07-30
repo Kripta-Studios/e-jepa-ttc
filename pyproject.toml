@@ -30,6 +30,9 @@ e-jepa-ttc = "e_jepa_ttc.cli:main"
 multimodal = [
     "transformers>=4.56,<6",
 ]
+geometry = [
+    "opencv-python-headless>=4.10,<5",
+]
 
 [dependency-groups]
 dev = [
