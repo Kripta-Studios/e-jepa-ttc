@@ -1,11 +1,11 @@
 # PLAN_v6.md — OGE-JEPA-TTC: baseline Garl-TTC con datos locales, pretraining eAP-40 y evaluación EvTTC sellada
 
-**Estado:** implementación v6 en selección: BASE histórico reproducido exactamente, A1 Dense promovido tras confirmación matched, AttnRes/KDA/geometría rechazados por sus gates actuales, grouped CV A0/A1 en curso y Benchmark-10 sellado
+**Estado:** gate v6 cerrado: BASE histórico reproducido exactamente, grouped CV 5 folds × 3 seeds selecciona A0 global, A1/AttnRes/KDA/geometría rechazados por sus gates actuales, diagnóstico family-OOD ejecutado tras freeze y Benchmark-10 sellado
 **Fecha:** 30 de julio de 2026
 **Repositorio base:** `Kripta-Studios/e-jepa-ttc`  
 **Rama de referencia:** `scientific-recovery-v3-hardening`  
 **Commit histórico de referencia:** `574c4c898866d1ef9c1e03be2e3b8d6e885a95ac`; la implementación v6 se versiona en commits posteriores
-**Restricción principal:** no descargar ni incorporar nuevos datasets; solo se permiten eAP Hugging Face train-40 ya iniciado, EvTTC-32 etiquetado, Benchmark-10 sellado y los teachers DINO/SAM ya descargados; el pseudo-TTC nunca es ground truth  
+**Restricción principal:** no descargar ni incorporar nuevos datasets; solo se permiten eAP Hugging Face train-40 ya completo, EvTTC-32 etiquetado, Benchmark-10 sellado y los teachers DINO/SAM ya descargados; el pseudo-TTC nunca es ground truth
 **Objetivo:** construir una baseline Garl-TTC reproducible usando exclusivamente los datos ya disponibles, fine-tunearla con TTC oficial de EvTTC-32 y después demostrar, módulo a módulo, que OGE-JEPA-TTC mejora precisión, robustez a ego-motion y capacidad bbox-free.
 
 ---
@@ -4269,6 +4269,12 @@ incorpora después para medir si el pretraining externo mejora el mismo modelo y
 protocolo OOF. No se mezcla una arquitectura nueva y un dataset nuevo en la
 misma comparación.
 
+El inventario local está completo: 40 secuencias, 216 archivos y 536,64 GiB.
+No contiene TTC oficial. El pseudo-TTC cubre 195.024/804.510 filas (24,24 %) y
+no participa en selección ni evaluación TTC. El primer gate será un piloto SSL
+de 2–4 secuencias; solo una mejora bajo fine-tuning EvTTC idéntico justifica
+escalar a las 40.
+
 ## 26.8 Resultado negativo FlowMimic
 
 FlowMimic permanece rechazado como rama activa, de acuerdo con la sección 1.2.
@@ -4370,10 +4376,10 @@ ventanas, batch efectivo 32, LR, weight decay y early stopping:
 | A2 AttnRes | 10 | 16 | 16,136 % | 0,32503 | 0,653 s |
 | K1 Object-KDA | 7 | 13 | 16,960 % | 0,34139 | 0,731 s |
 
-A1 es el único brazo promocionado. El screen de ocho épocas era demasiado
-corto: su mejor checkpoint aparece en la época 20. A0 no tuvo más cómputo; A1
-completó más épocas bajo la regla común. AttnRes y KDA no se añaden a la
-arquitectura final en su formulación actual.
+A1 es el único brazo promovido desde este gate histórico al grouped CV. El
+screen de ocho épocas era demasiado corto: su mejor checkpoint aparece en la
+época 20. A0 no tuvo más cómputo; A1 completó más épocas bajo la regla común.
+AttnRes y KDA no se añaden a la arquitectura final en su formulación actual.
 
 ## 27.6 Resultado geométrico y Garl
 
@@ -4389,9 +4395,27 @@ El screen Garl G0–G7 encuentra G5 RGBE-LHR early como mejor brazo corto
 (36,52 %), pero no reproduce aún las 50 épocas ni el pretraining por ramas del
 repositorio oficial. No se declara paridad.
 
-## 27.7 Siguiente decisión
+## 27.7 Decisión final A0/A1 y diagnóstico OOD
 
-Grouped CV compara únicamente A0/A1. Usa una inicialización EventTubelet común
-desde cero (`-RandomControl`) para que el checkpoint SSL histórico no contamine
-folds cuya validación ya apareció en su pretraining. Si A1 mantiene la mejora
-en cinco folds, se repiten seeds 13 y 21; si no, se conserva A0.
+Grouped CV completó los 30 runs predeclarados con inicialización EventTubelet
+común desde cero (`-RandomControl`): cinco folds, seeds 7/13/21 y A0/A1.
+
+| Brazo | Score ± sd seeds | Error rel. ± sd | MAE ± sd | Latencia |
+|---|---:|---:|---:|---:|
+| **A0 global** | **0,58452 ± 0,00853** | **30,25 % ± 0,52** | 1,011 ± 0,039 s | 4,54 ms |
+| A1 Dense | 0,59312 ± 0,00349 | 30,55 % ± 0,06 | **1,007 ± 0,013 s** | 9,82 ms |
+
+A1 empeora el score un 1,47 % y el error relativo un 0,99 %; solo mejora el
+MAE un 0,41 %. A0 gana 10/15 pares en score/error relativo y 8/15 en MAE. Los
+bootstrap OOF pareados cruzan cero. A0 queda seleccionado.
+
+Tres seeds posteriores fijan `matched` como perfil de precisión y validation
+selecciona seed 13 antes de abrir el diagnóstico familiar:
+
+| Split | Secuencias / ventanas | Score | Error rel. macro | MAE macro |
+|---|---:|---:|---:|---:|
+| validation | 5 / 314 | 0,28992 | 14,46 % | 0,541 s |
+| family-OOD reutilizado | 8 / 481 | 0,53784 | 30,56 % | 0,805 s |
+
+Family-OOD degrada 85,5 % el score, 111,4 % el error relativo y 48,8 % el MAE.
+No es un test virgen y no habilita un claim SOTA. Benchmark-10 sigue sellado.

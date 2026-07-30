@@ -14,8 +14,10 @@ El BASE reproducido obtiene `0,322892 s` MAE, `0,584432 s` RMSE y `8,1554 %`
 de error relativo en la validación histórica. Las predicciones coinciden byte a
 byte. En una confirmación matched de hasta 40 épocas, Dense Patch reduce el
 error relativo macro de `16,129 %` a `15,210 %`; AttnRes (`16,136 %`) y
-Object-KDA (`16,960 %`) no mejoran Dense. A1 está promovido a grouped CV,
-todavía sin claim SOTA.
+Object-KDA (`16,960 %`) no mejoran Dense. Sin embargo, en grouped CV de cinco
+folds y tres semillas, A1 empeora el score un `1,47 %` y el error relativo un
+`0,99 %`, mientras que solo mejora el MAE un `0,41 %`. A0 es la arquitectura
+final; no existe claim SOTA.
 
 ## Motivación
 
@@ -28,7 +30,7 @@ antes de cualquier residual.
 
 - EvTTC-32: única supervisión TTC oficial.
 - Benchmark-10: inferencia final sellada.
-- eAP train-40: pretraining no-TTC posterior.
+- eAP train-40: 40 secuencias completas, exclusivamente SSL/probes no-TTC.
 
 No existe split aleatorio por ventanas. La selección final usa grouped CV de
 cinco folds y bootstrap por secuencia.
@@ -49,6 +51,18 @@ muestras, backbone, cabeza, trainer y early stopping.
 El máximo de épocas no favoreció a A0: A1 completó 26 épocas frente a 23 de
 A0 bajo la misma regla de parada. El screen de ocho épocas era demasiado corto
 para observar el mejor checkpoint de A1 en la época 20.
+
+La promoción histórica se sometió después al gate predeclarado:
+
+| Brazo | Score CV ± sd seeds | Error rel. CV ± sd | MAE CV ± sd |
+|---|---:|---:|---:|
+| **A0 global** | **0,58452 ± 0,00853** | **30,25 % ± 0,52** | 1,011 ± 0,039 s |
+| A1 Dense | 0,59312 ± 0,00349 | 30,55 % ± 0,06 | **1,007 ± 0,013 s** |
+
+A0 gana 10/15 comparaciones pareadas en score/error relativo y 8/15 en MAE.
+A1 cuesta 1,58× entrenamiento y 2,16× latencia. Los intervalos bootstrap OOF
+pareados por secuencia cruzan cero, por lo que la mejora de un split no se
+generaliza.
 
 ## Arquitectura
 
@@ -92,20 +106,35 @@ El screen Garl G0–G7 y la confirmación Core están ejecutados. El mejor Garl
 local corto es G5 RGBE-LHR early con 36,52 % de error relativo macro; todavía
 no reproduce las 50 épocas del protocolo oficial.
 
+Tras seleccionar A0 por grouped CV, tres seeds compararon perfiles de ejecución.
+`matched` obtiene score medio `0,30400` frente a `0,34139` de `throughput`, a
+cambio de 4,02× tiempo de entrenamiento. Validation selecciona el checkpoint
+A0 matched seed 13 antes de abrir el diagnóstico familiar:
+
+| Split | Secuencias / ventanas | Score | Error rel. macro | MAE macro |
+|---|---:|---:|---:|---:|
+| validation | 5 / 314 | 0,28992 | 14,46 % | 0,541 s |
+| family-OOD reutilizado | 8 / 481 | 0,53784 | 30,56 % | 0,805 s |
+
+Family-OOD degrada el score un 85,5 %, el error relativo un 111,4 % y el MAE
+un 48,8 %. Es disjunto respecto al ajuste actual, pero no es un test virgen del
+proyecto. Benchmark-10 permanece sellado.
+
 Los próximos pasos son:
 
-1. grouped CV A0/A1;
-2. tres seeds si A1 mantiene la mejora;
-3. Garl con 50 épocas y pretraining por ramas;
-4. Benchmark-10 después del freeze.
+1. piloto SSL eAP con 2–4 secuencias y fine-tuning EvTTC idéntico;
+2. Garl con 50 épocas y pretraining por ramas;
+3. reabrir A1 solo con una hipótesis object-centric predeclarada;
+4. Benchmark-10 únicamente mediante el manifest congelado.
 
 TargetQuery, máscaras predichas, refiner, router, residual e incertidumbre
-permanecen bloqueados hasta que la geometría bbox-GT supere BASE.
+permanecen bloqueados hasta que la geometría bbox-GT supere su gate.
 
 ## Limitaciones
 
-No hay grouped CV cerrado, bbox-free promovido, profundidad predicha ni
-evaluación externa. El sistema no es apto para control de seguridad.
+No hay bbox-free promovido, profundidad predicha ni evaluación sobre el
+Benchmark-10. Family-OOD muestra una degradación grande y eAP no incluye TTC
+oficial. El sistema no es apto para control de seguridad.
 
 ## Referencias
 

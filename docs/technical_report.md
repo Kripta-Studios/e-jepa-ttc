@@ -12,9 +12,10 @@ Garl-TTC.
 
 Conclusión actual:
 
-> Dense Patch supera al control A0 cuando ambos convergen bajo el mismo
-> presupuesto. AttnRes y Object-KDA no añaden valor sobre Dense en la
-> formulación probada. La mejora todavía debe sobrevivir grouped CV.
+> Dense Patch supera a A0 en la confirmación histórica de un split, pero no
+> sobrevive grouped CV de cinco folds y tres seeds. A0 es la arquitectura
+> final; A1 conserva valor como hipótesis para pretraining object-centric, no
+> como ganador actual. AttnRes y Object-KDA permanecen rechazados.
 
 ## 2. Evidencia histórica
 
@@ -250,7 +251,33 @@ Se ejecutaron 38 ventanas train, 10 validation y dos épocas. El smoke confirmó
 
 Los errores del smoke son demasiado inestables para promoción. El screen Core
 de ocho épocas también fue insuficiente para Dense. La confirmación larga
-promueve A1 y rechaza A2/K1.
+promovió A1 únicamente a grouped CV y rechazó A2/K1.
+
+El grouped CV cerró 30/30 runs A0/A1. La desviación se calcula entre las tres
+medias por seed, no tratando ventanas como réplicas independientes:
+
+| Variante | Score ± sd | Error rel. ± sd | MAE ± sd | ms/ventana |
+|---|---:|---:|---:|---:|
+| **A0** | **0,58452 ± 0,00853** | **30,25 % ± 0,52** | 1,011 ± 0,039 s | 4,54 |
+| A1 | 0,59312 ± 0,00349 | 30,55 % ± 0,06 | **1,007 ± 0,013 s** | 9,82 |
+
+A1 empeora 1,47 % el score y 0,99 % el error relativo, mejora solo 0,41 % el
+MAE, consume 1,58× entrenamiento y 2,16× latencia. Los bootstrap OOF pareados
+por secuencia cruzan cero para las tres seeds. A0 queda seleccionado.
+
+Después del freeze de arquitectura se compararon dos perfiles A0 sobre el
+mismo cache 19/5/8. `matched` mejoró el score medio un 10,95 % frente a
+`throughput`, con 4,02× tiempo. El checkpoint matched seed 13 fue el mejor en
+validation y se congeló antes de abrir family-OOD.
+
+| Evaluación | Secuencias / ventanas | Score | Error rel. macro | MAE macro |
+|---|---:|---:|---:|---:|
+| validation | 5 / 314 | 0,28992 | 14,46 % | 0,541 s |
+| family-OOD reutilizado | 8 / 481 | 0,53784 | 30,56 % | 0,805 s |
+
+La degradación OOD es 85,5 % en score, 111,4 % en error relativo y 48,8 % en
+MAE. El intervalo bootstrap 95 % de MAE OOD es 0,593–1,128 s. No es un test
+externo virgen ni Benchmark-10.
 
 El screen Garl ResNet-50 ejecutó G0–G7 con batch efectivo 24. G5 RGBE-LHR early
 fue el mejor brazo local con 36,52 % de error relativo macro. No se declara
@@ -273,9 +300,9 @@ Garl effective batch   24
 Orden:
 
 1. Core y Garl en split histórico: completado.
-2. Confirmación larga Core: completada; A1 promovido.
-3. Grouped CV A0/A1 cinco folds, seed 7: en ejecución.
-4. Tres seeds para A0/A1 solo si A1 gana CV.
+2. Confirmación larga Core: completada; A1 promovido a grouped CV.
+3. Grouped CV A0/A1 cinco folds × tres seeds: completado; gana A0.
+4. Ajuste final A0 matched/throughput y family-OOD: completado.
 5. Repetición Garl con presupuesto oficial antes de cualquier claim.
 
 TargetQuery, máscara predicha, refiner, router, residual e incertidumbre quedan
@@ -283,7 +310,9 @@ bloqueados hasta que `A4_GT_GEOMETRY` supere el gate frente a BASE.
 
 ## 10. Datos externos
 
-eAP train-40 no interviene en la selección arquitectónica actual. Después de
+eAP train-40 está completo (40 secuencias, 216 archivos, 536,64 GiB) y no
+interviene en la selección arquitectónica actual. Su pseudo-TTC produce
+195.024 filas válidas de 804.510 (24,24 %), pero no es ground truth. Después de
 congelar el mejor modelo EvTTC se podrá comparar:
 
 ```text
@@ -309,14 +338,15 @@ pseudo-TTC nunca se denomina ground truth.
 
 ## 12. Limitaciones actuales
 
-- A1 solo gana en un split histórico; grouped CV está en ejecución;
+- A1 solo gana en un split histórico y pierde grouped CV multisemilla;
 - Garl ResNet-50 tiene screen corto, no la reproducción de 50 épocas;
 - la geometría bbox no pasa el score compuesto y STRTTC tiene cobertura
   incompleta;
 - compensación traslacional final depende de profundidad predicha;
 - bbox-free no está promocionado;
-- eAP continúa descargándose;
-- no existe evaluación oficial ni claim SOTA.
+- eAP está completo pero aún no pasó el piloto SSL contra EvTTC;
+- family-OOD muestra degradación material;
+- no existe evaluación Benchmark-10 oficial ni claim SOTA.
 
 ## 13. Fuentes primarias
 

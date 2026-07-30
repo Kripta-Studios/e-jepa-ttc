@@ -4,10 +4,12 @@ Actualizado: 2026-07-30.
 
 ## Estado
 
-El único modelo con resultado local reproducido exactamente es
-`B0_HISTORICAL_BASE_EXACT`. A1 Dense es el único módulo nuevo promovido a
-grouped CV. Garl-TTC local sigue siendo una réplica arquitectónica en
-selección; no existe aún configuración final ni claim SOTA.
+`B0_HISTORICAL_BASE_EXACT` conserva paridad exacta con el resultado histórico.
+El grouped CV de cinco folds × tres seeds selecciona `A0_MATCHED_GLOBAL` como
+arquitectura final y rechaza A1 Dense para promoción. El perfil final de
+precisión es `matched`; validation selecciona seed 13 antes del diagnóstico
+family-OOD. Garl-TTC local sigue siendo una réplica arquitectónica y no existe
+claim SOTA.
 
 ## BASE histórico
 
@@ -48,6 +50,18 @@ Confirmación matched:
 | A1 Dense | **15,210 %** | **0,628 s** | promover |
 | A2 AttnRes | 16,136 % | 0,653 s | rechazar |
 | K1 Object-KDA | 16,960 % | 0,731 s | rechazar |
+
+Decisión final tras grouped CV multisemilla:
+
+| Candidato | Score ± sd seeds | Error relativo ± sd | MAE ± sd | Decisión |
+|---|---:|---:|---:|---|
+| **A0 global** | **0,58452 ± 0,00853** | **30,25 % ± 0,52** | 1,011 ± 0,039 s | seleccionar |
+| A1 Dense | 0,59312 ± 0,00349 | 30,55 % ± 0,06 | **1,007 ± 0,013 s** | rechazar |
+
+El checkpoint operativo congelado es A0 matched seed 13. Obtiene score
+`0,28992`, error relativo macro `14,46 %` y MAE macro `0,541 s` en validation.
+En family-OOD reutilizado obtiene `0,53784`, `30,56 %` y `0,805 s`,
+respectivamente. Benchmark-10 permanece sin abrir.
 
 ## Réplica Garl-TTC
 
@@ -115,12 +129,13 @@ No usar para:
 - EvTTC tiene pocas secuencias para routers complejos;
 - el bbox-assisted no demuestra detección bbox-free;
 - la navegación puede convertirse en shortcut;
-- Dense Patch solo está confirmado en un split; KDA y AttnRes fallaron ese
-  gate;
+- Dense Patch gana un split histórico, pero pierde grouped CV multisemilla;
+  A0 global es el candidato final y KDA/AttnRes permanecen rechazados;
 - STRTTC tiene cobertura incompleta y la geometría bbox usa más contexto que
   el neural;
 - Garl local no reproduce el ground truth eAP privado/no disponible;
 - latencia p95 end-to-end no está cerrada;
+- family-OOD duplica aproximadamente el error relativo de validation;
 - Benchmark-10 permanece sin evaluar.
 
 ## Reproducibilidad

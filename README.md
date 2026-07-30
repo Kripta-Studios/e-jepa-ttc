@@ -8,12 +8,15 @@ Estado al 30 de julio de 2026:
 
 - `BASE` histórico reproducido con predicciones idénticas byte a byte;
 - FlowMimic e inverse-TTC global rechazados por resultados negativos;
-- confirmación matched de hasta 40 épocas: Dense Patch supera a A0;
+- confirmación histórica matched: Dense Patch supera a A0 en ese split;
+- grouped CV cerrado (5 folds × 3 seeds): A0 supera a A1 en score y error
+  relativo, por lo que A0 es la arquitectura final;
 - AttnRes y Object-KDA no pasan el gate y no se combinan con el finalista;
 - geometría bbox causal y port STRTTC evaluados sin superar todavía el gate;
 - screen local Garl G0–G7 ejecutado, aún sin paridad con el protocolo de 50
   épocas y pretraining por ramas del repositorio oficial;
-- eAP train-40 reservado para una fase posterior de pretraining sin TTC;
+- eAP train-40 completo (536,64 GiB), reservado para un piloto posterior de
+  pretraining sin TTC oficial;
 - Benchmark-10 sellado y no abierto.
 
 Documentación:
@@ -61,6 +64,38 @@ error relativo frente a A0 un 5,70 % y el MAE un 10,45 %, a costa de una
 latencia 1,91 veces mayor. AttnRes y KDA no se promocionan en su formulación
 actual.
 
+## Grouped CV final y diagnóstico OOD
+
+La selección predeclarada usa cinco folds completos y seeds 7/13/21 desde una
+inicialización aleatoria común, sin reutilizar SSL que hubiera visto las
+secuencias OOF.
+
+| Brazo | Score (media ± sd seeds) | Error rel. | MAE | ms/ventana |
+|---|---:|---:|---:|---:|
+| **A0 global** | **0,58452 ± 0,00853** | **30,25 % ± 0,52** | 1,011 ± 0,039 s | 4,54 |
+| A1 Dense | 0,59312 ± 0,00349 | 30,55 % ± 0,06 | **1,007 ± 0,013 s** | 9,82 |
+
+A1 mejora el MAE agregado solo un 0,41 %, pero empeora un 0,99 % el error
+relativo y un 1,47 % el score; gana 5/15 parejas en score/error relativo y
+7/15 en MAE. Usa 1,58× tiempo de entrenamiento y 2,16× latencia. Los tres
+bootstrap OOF pareados por secuencia cruzan cero. Conclusión: Dense Patch
+conserva señal positiva, pero no pasa el gate de consistencia/coste y no se
+promociona.
+
+El A0 final se ajustó con seeds 7/13/21. El perfil `matched` mejora el score
+medio un 10,95 % frente a `throughput`, aunque tarda 4,02× más. Validation
+seleccionó seed 13 antes de abrir el diagnóstico familiar.
+
+| Evaluación | Secuencias / ventanas | Score | Error rel. macro | MAE macro |
+|---|---:|---:|---:|---:|
+| validation | 5 / 314 | 0,28992 | 14,46 % | 0,541 s |
+| family-OOD reutilizado | 8 / 481 | 0,53784 | 30,56 % | 0,805 s |
+
+El salto OOD es +85,5 % en score, +111,4 % en error relativo y +48,8 % en
+MAE. Este holdout es disjunto del ajuste, pero ya era un diagnóstico reutilizado
+en el proyecto; no es Benchmark-10 ni prueba SOTA. Benchmark-10 continúa sin
+abrir.
+
 ## Instalación
 
 Requisitos principales:
@@ -71,9 +106,14 @@ Requisitos principales:
 - `uv`.
 
 ```powershell
-uv sync --all-groups --no-editable
+uv sync --locked --all-groups --no-editable
 uv run --no-sync python -m e_jepa_ttc --help
 ```
+
+`--no-editable` evita que Python tenga que decodificar un archivo `.pth` con
+la ruta absoluta del repo; es el modo robusto en Windows cuando el nombre de
+usuario contiene caracteres Unicode. Los scripts del pipeline también añaden
+`src` de forma explícita.
 
 En el host auditado:
 
@@ -98,7 +138,8 @@ datasets/evttc_official_benchmark_sealed
     Benchmark-10: una inferencia final después del freeze
 
 E:\eAP_dataset\data\train
-    eAP Hugging Face train-40: descarga ya iniciada, sin TTC oficial
+    eAP Hugging Face train-40: 40 secuencias / 216 archivos / 536,64 GiB,
+    sin TTC oficial
 ```
 
 No se añaden nuevos datasets, no se descarga eAP test y el pseudo-TTC no se
@@ -217,18 +258,29 @@ El cache contiene los tres roles, pero el trainer solo abre `train` y
 ```powershell
 uv run --no-sync python scripts/run_evttc_final_pipeline.py fit-holdout `
   --variant A0_MATCHED_GLOBAL `
-  --seeds 7 `
+  --seeds 7 13 21 `
   --resume
+```
+
+Si se comparan los perfiles `matched` y `throughput`, la selección se regenera
+sin leer test:
+
+```powershell
+uv run --no-sync python scripts/run_evttc_final_pipeline.py select-final `
+  --variant A0_MATCHED_GLOBAL `
+  --matched-root artifacts/runs/evttc32_final_family_holdout_matched/core/fold-0/A0_MATCHED_GLOBAL `
+  --throughput-root artifacts/runs/evttc32_final_family_holdout/core/fold-0/A0_MATCHED_GLOBAL `
+  --output artifacts/metrics/evttc_final_a0_profile_selection.json
 ```
 
 Evaluación de validation, sin abrir test:
 
 ```powershell
 uv run --no-sync python scripts/run_evttc_final_pipeline.py evaluate-holdout `
-  --checkpoint artifacts/runs/evttc32_final_family_holdout/core/fold-0/A0_MATCHED_GLOBAL/seed-7/best.pt `
+  --checkpoint artifacts/runs/evttc32_final_family_holdout_matched/core/fold-0/A0_MATCHED_GLOBAL/seed-13/best.pt `
   --cache-manifest artifacts/features/evttc32_final_family_holdout_core/manifest.json `
   --splits validation `
-  --output-dir artifacts/metrics/evttc32_final_validation
+  --output-dir artifacts/metrics/evttc_final_a0_seed13_validation
 ```
 
 El test familiar OOD exige una apertura explícita y se etiqueta siempre como
@@ -236,14 +288,17 @@ diagnóstico, nunca como Benchmark-10 oficial:
 
 ```powershell
 uv run --no-sync python scripts/run_evttc_final_pipeline.py evaluate-holdout `
-  --checkpoint artifacts/runs/evttc32_final_family_holdout/core/fold-0/A0_MATCHED_GLOBAL/seed-7/best.pt `
+  --checkpoint artifacts/runs/evttc32_final_family_holdout_matched/core/fold-0/A0_MATCHED_GLOBAL/seed-13/best.pt `
   --cache-manifest artifacts/features/evttc32_final_family_holdout_core/manifest.json `
+  --selection-manifest artifacts/metrics/evttc_final_a0_profile_selection.json `
   --splits test `
   --allow-diagnostic-test `
-  --output-dir artifacts/metrics/evttc32_final_family_ood
+  --output-dir artifacts/metrics/evttc_final_a0_seed13_family_ood
 ```
 
-El freeze del ensemble CV se hace desde un árbol Git limpio:
+El manifest de selección anterior congela el SHA-256 del checkpoint operativo
+y es obligatorio para abrir el test familiar. El freeze del ensemble CV se
+hace desde un árbol Git limpio:
 
 ```powershell
 uv run --no-sync python scripts/run_evttc_final_pipeline.py freeze `
@@ -280,7 +335,8 @@ de 2–4 secuencias y comparar contra el mismo fine-tuning EvTTC.
 
 Estado de promoción:
 
-- A1 Dense/Patch Policy: promovido a grouped CV;
+- A0 global: seleccionado por grouped CV multisemilla;
+- A1 Dense/Patch Policy: señal histórica positiva, rechazado por grouped CV;
 - A2 AttnRes y K1 Object-KDA: rechazados por la confirmación larga;
 - TargetQuery, máscara predicha, refiner, router, residual e incertidumbre:
   bloqueados.

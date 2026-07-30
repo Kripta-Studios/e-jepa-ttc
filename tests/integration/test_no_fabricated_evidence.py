@@ -28,6 +28,7 @@ def test_no_fabricated_evidence_in_scripts():
         "audit_cache.py",
         "aggregate_results.py",
         "run_evttc_architecture_matrix.py",
+        "run_evttc_final_pipeline.py",
         "run_object_jepa_matrix.py",
         "select_best_onnx_candidate.py",
     ]

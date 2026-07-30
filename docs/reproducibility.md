@@ -26,6 +26,17 @@ latencia y peak VRAM
 estado de Benchmark-10
 ```
 
+Instalación determinista, incluida la alternativa segura para rutas Windows
+con caracteres Unicode:
+
+```powershell
+uv sync --locked --all-groups --no-editable
+uv run --no-sync python -m e_jepa_ttc --help
+```
+
+No ejecutar `uv run` sin `--no-sync` dentro de los tests o pipelines: podría
+recrear una instalación editable y modificar el entorno durante una corrida.
+
 ## Checkpoints
 
 Solo se conservan:
@@ -51,6 +62,9 @@ uv run --no-sync python scripts/run_evttc_final_pipeline.py compare --resume
 `compare` usa por defecto folds `0..4`, seeds `7/13/21`, A0/A1 y el perfil
 frozen `matched`. El agregador exige 15 runs por variante antes del freeze.
 Cada pareja fold/seed debe compartir hash de samples, backbone y cabeza común.
+También registra victorias pareadas, coste, dispersión entre medias por seed y
+bootstrap OOF por secuencia. El resultado cerrado es
+`artifacts/metrics/evttc_a0_a1_grouped_cv_5fold_3seed.json`.
 
 Validación:
 
@@ -85,7 +99,13 @@ Entrenamiento del candidato ya fijado y evaluación separada:
 
 ```powershell
 uv run --no-sync python scripts/run_evttc_final_pipeline.py fit-holdout `
-  --variant A0_MATCHED_GLOBAL --seeds 7 --resume
+  --variant A0_MATCHED_GLOBAL --seeds 7 13 21 --resume
+
+uv run --no-sync python scripts/run_evttc_final_pipeline.py select-final `
+  --variant A0_MATCHED_GLOBAL `
+  --matched-root artifacts/runs/evttc32_final_family_holdout_matched/core/fold-0/A0_MATCHED_GLOBAL `
+  --throughput-root artifacts/runs/evttc32_final_family_holdout/core/fold-0/A0_MATCHED_GLOBAL `
+  --output artifacts/metrics/evttc_final_a0_profile_selection.json
 
 uv run --no-sync python scripts/run_evttc_final_pipeline.py evaluate-holdout `
   --checkpoint <best.pt> `
@@ -100,13 +120,15 @@ Para abrir el holdout familiar:
 uv run --no-sync python scripts/run_evttc_final_pipeline.py evaluate-holdout `
   --checkpoint <best.pt> `
   --cache-manifest artifacts/features/evttc32_final_family_holdout_core/manifest.json `
+  --selection-manifest artifacts/metrics/evttc_final_a0_profile_selection.json `
   --splits test --allow-diagnostic-test `
   --output-dir artifacts/metrics/final_family_ood
 ```
 
 Este `test` es el holdout diagnóstico CCRs-2/CCRs-3/CPNAO. No es el
 Benchmark-10 sellado. El JSON de salida registra splits, secuencias, hashes,
-checkpoint, commit, métricas macro y `diagnostic_test_opened=true`.
+checkpoint, commit, métricas macro, bootstrap por secuencia y
+`diagnostic_test_opened=true`.
 
 ## Perfiles de recursos
 
@@ -119,9 +141,14 @@ checkpoint, commit, métricas macro y `diagnostic_test_opened=true`.
 No se cambia de perfil a mitad de una matriz. Una optimización de ejecución se
 aplica a todos los brazos o se reporta como protocolo distinto.
 
+En la ejecución final, throughput redujo el tiempo agregado de tres seeds de
+1.653 s a 411 s (4,02×), pero empeoró el score medio de 0,30400 a 0,34139.
+Por ello se conserva para iteración y matched para el candidato de precisión.
+
 ## eAP sin TTC
 
-eAP train-40 puede usarse en una etapa posterior de SSL sin etiquetas. No
+eAP train-40 está completo: 40 secuencias, 216 archivos y 536,64 GiB. Puede
+usarse en una etapa posterior de SSL sin etiquetas. No
 puede producir MAE TTC, seleccionar arquitectura ni sustituir EvTTC. El gate
 recomendado es 2–4 secuencias, presupuesto fijo y fine-tuning EvTTC idéntico
 antes de ampliar a 40.

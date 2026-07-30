@@ -5,15 +5,16 @@ Actualizado: 2026-07-30.
 Compatibilidad histórica: CPLA-high is diagnostic only; no se utiliza como
 test final ni como sustituto del Benchmark-10 sellado.
 
-Validación local del 30 de julio de 2026: `210 passed`, Ruff sin errores,
+Validación local del 30 de julio de 2026: `224 passed` en el árbol versionado,
+Ruff sin errores,
 validación del orquestador superada y export ONNX de OGE verificado
 numéricamente.
 
 ## Conclusión ejecutiva
 
-La confirmación matched demuestra que Dense Patch sí supera al control A0
-cuando se permite converger. No demuestra todavía superioridad sobre el
-resultado histórico completo ni SOTA oficial. Lo cerrado es:
+La confirmación histórica demuestra que Dense Patch puede superar a A0 en un
+split cuando converge, pero grouped CV multisemilla selecciona A0. No existe
+todavía SOTA oficial. Lo cerrado es:
 
 1. reproducción exacta del checkpoint histórico;
 2. separación entre el ancla histórica y el control matched;
@@ -21,7 +22,10 @@ resultado histórico completo ni SOTA oficial. Lo cerrado es:
 4. réplica Garl-TTC alineada con el código público;
 5. navegación transformada al frame de la cámara de eventos;
 6. orquestación Core/Garl sin colisión de resúmenes;
-7. early stopping y checkpointing acotado.
+7. early stopping y checkpointing acotado;
+8. grouped CV de 5 folds × 3 seeds para A0/A1;
+9. freeze de A0 antes del diagnóstico familiar OOD;
+10. evaluación separada validation/family-OOD con bootstrap por secuencia.
 
 El screen de ocho épocas era insuficiente para Dense: A1 alcanzó su mejor
 checkpoint en la época 20. AttnRes y KDA no mejoraron con el presupuesto largo.
@@ -105,9 +109,44 @@ idéntico, máximo 40 épocas, batch 16 x acumulación 2, LR `3e-5`, weight deca
 | A2 AttnRes | 10 | 16 | 16,136 % | 0,32503 | 0,653 s | 16,70 |
 | K1 Object-KDA | 7 | 13 | 16,960 % | 0,34139 | 0,731 s | 16,99 |
 
-Decisión: promover A1; no promover A2 ni K1. A1 mejora frente a A0 un 5,70 %
+Decisión de ese gate histórico: promover A1 a grouped CV; no promover A2 ni
+K1. A1 mejora frente a A0 un 5,70 %
 en error relativo macro, 6,09 % en score y 10,45 % en MAE, pero cuesta 1,91
 veces la latencia.
+
+Esta decisión histórica queda supersedida para la arquitectura final por el
+grouped CV, no borrada como resultado positivo de un split.
+
+## Grouped CV A0/A1 cerrado
+
+Los 30 runs esperados están completos. Cada pareja fold/seed pasó la auditoría
+de cache, samples, backbone, cabeza y trainer.
+
+| Variante | Score ± sd seeds | Error rel. ± sd | MAE ± sd | ms/ventana |
+|---|---:|---:|---:|---:|
+| **A0 global** | **0,58452 ± 0,00853** | **30,25 % ± 0,52** | 1,011 ± 0,039 s | 4,54 |
+| A1 Dense | 0,59312 ± 0,00349 | 30,55 % ± 0,06 | **1,007 ± 0,013 s** | 9,82 |
+
+A1 empeora 1,47 % el score y 0,99 % el error relativo; solo mejora 0,41 % el
+MAE. A0 gana 10/15 pares en score/error relativo y 8/15 en MAE. A1 cuesta
+1,58× entrenamiento y 2,16× latencia. Ningún bootstrap pareado por secuencia
+demuestra una diferencia distinta de cero. Decisión final de arquitectura:
+`A0_MATCHED_GLOBAL`.
+
+## Ajuste final y OOD
+
+El perfil matched gana al throughput un 10,95 % en score medio de tres seeds,
+a cambio de 4,02× tiempo. Validation seleccionó A0 matched seed 13 antes de
+abrir family-OOD.
+
+| Split | Secuencias / ventanas | Score | Error rel. macro | MAE macro |
+|---|---:|---:|---:|---:|
+| validation | 5 / 314 | 0,28992 | 14,46 % | 0,541 s |
+| family-OOD reutilizado | 8 / 481 | 0,53784 | 30,56 % | 0,805 s |
+
+El OOD degrada 85,5 % el score, 111,4 % el error relativo y 48,8 % el MAE. Su
+bootstrap 95 % de MAE es 0,593–1,128 s. El holdout es disjunto del ajuste pero
+no virgen para el proyecto. Benchmark-10 no se abrió.
 
 ## Screen Garl local
 
@@ -147,9 +186,10 @@ La cobertura incompleta se registra y el brazo queda rechazado.
 
 - `datasets/evttc`: 32 secuencias públicas etiquetadas.
 - `datasets/evttc_official_benchmark_sealed`: no inspeccionado.
-- `E:\eAP_dataset\data\train`: descarga train-40 ya iniciada.
+- `E:\eAP_dataset\data\train`: train-40 completo, 216 archivos y 536,64 GiB.
 - eAP no contiene TTC oficial en el release local.
-- pseudo-TTC eAP: no oficial y fuera de la selección de arquitectura.
+- pseudo-TTC eAP: 195.024/804.510 filas válidas (24,24 %), no oficial y fuera
+  de la selección de arquitectura.
 
 ## Almacenamiento y hardware
 
@@ -163,11 +203,13 @@ La cobertura incompleta se registra y el brazo queda rechazado.
 
 ## Próximos gates
 
-1. Completar grouped CV de A0/A1, seed 7.
-2. Si A1 gana el CV, repetir A0/A1 con seeds 13 y 21.
+1. Mantener A0 como final y A1 como hipótesis, no como ganador.
+2. Ejecutar un piloto eAP SSL de 2–4 secuencias sin pseudo-TTC y repetir el
+   mismo fine-tuning EvTTC; escalar a 40 solo si mejora.
 3. Repetir Garl con el presupuesto y pretraining por ramas del código oficial.
 4. Mantener módulos bbox-free bloqueados: la geometría no pasó su gate.
-5. Freeze y una inferencia final sobre Benchmark-10.
+5. Abrir Benchmark-10 solo bajo una decisión explícita posterior; este trabajo
+   no lo consumió ni afirma SOTA.
 
 ## Estado Git
 

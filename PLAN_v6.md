@@ -1,11 +1,11 @@
 # PLAN_v6.md — OGE-JEPA-TTC: baseline Garl-TTC con datos locales, pretraining eAP-40 y evaluación EvTTC sellada
 
-**Estado:** implementación v6 en selección: BASE histórico reproducido exactamente, A1 Dense promovido tras confirmación matched, AttnRes/KDA/geometría rechazados por sus gates actuales, grouped CV A0/A1 en curso y Benchmark-10 sellado
+**Estado:** gate v6 cerrado: BASE histórico reproducido exactamente, grouped CV 5 folds × 3 seeds selecciona A0 global, A1/AttnRes/KDA/geometría rechazados por sus gates actuales, diagnóstico family-OOD ejecutado tras freeze y Benchmark-10 sellado
 **Fecha:** 30 de julio de 2026
 **Repositorio base:** `Kripta-Studios/e-jepa-ttc`
 **Rama de referencia:** `scientific-recovery-v3-hardening`
 **Commit histórico de referencia:** `574c4c898866d1ef9c1e03be2e3b8d6e885a95ac`; la implementación v6 se versiona en commits posteriores
-**Restricción principal:** no descargar ni incorporar nuevos datasets; solo se permiten eAP Hugging Face train-40 ya iniciado, EvTTC-32 etiquetado, Benchmark-10 sellado y los teachers DINO/SAM ya descargados; el pseudo-TTC nunca es ground truth
+**Restricción principal:** no descargar ni incorporar nuevos datasets; solo se permiten eAP Hugging Face train-40 ya completo, EvTTC-32 etiquetado, Benchmark-10 sellado y los teachers DINO/SAM ya descargados; el pseudo-TTC nunca es ground truth
 **Objetivo:** construir una baseline Garl-TTC reproducible usando exclusivamente los datos ya disponibles, fine-tunearla con TTC oficial de EvTTC-32 y después demostrar, módulo a módulo, que OGE-JEPA-TTC mejora precisión, robustez a ego-motion y capacidad bbox-free.
 
 ---
@@ -4150,3 +4150,39 @@ pesos EventTubelet aleatorios mediante `-RandomControl`. Esto evita que un
 checkpoint SSL histórico haya visto eventos de una secuencia usada como
 validation. La confirmación con el BASE auditado y el CV desde cero responden a
 preguntas distintas y se reportan por separado.
+
+## 26.7 Cierre ejecutado del gate A0/A1
+
+Se completaron los 30 runs predeclarados: cinco folds, seeds 7/13/21 y dos
+arquitecturas. Todas las parejas pasaron la auditoría de selección de muestras,
+backbone, cabeza y trainer.
+
+| Brazo | Score ± sd seeds | Error rel. ± sd | MAE ± sd | Latencia |
+|---|---:|---:|---:|---:|
+| **A0 global** | **0,58452 ± 0,00853** | **30,25 % ± 0,52** | 1,011 ± 0,039 s | 4,54 ms |
+| A1 Dense | 0,59312 ± 0,00349 | 30,55 % ± 0,06 | **1,007 ± 0,013 s** | 9,82 ms |
+
+A1 empeora el score un 1,47 % y el error relativo un 0,99 %; su mejora de MAE
+es solo 0,41 %. A0 gana 10/15 pares en score/error relativo y 8/15 en MAE. Los
+bootstrap OOF pareados por secuencia cruzan cero. A1 requiere 1,58× tiempo de
+entrenamiento y 2,16× latencia. Por tanto, A0 es la arquitectura final y A1 se
+conserva únicamente como hipótesis object-centric.
+
+Con A0 fijo, tres seeds compararon los perfiles `matched` y `throughput`.
+`matched` mejora el score validation medio un 10,95 %, aunque tarda 4,02× más,
+y selecciona seed 13. El checkpoint se congeló antes de abrir family-OOD:
+
+| Split | Secuencias / ventanas | Score | Error rel. macro | MAE macro |
+|---|---:|---:|---:|---:|
+| validation | 5 / 314 | 0,28992 | 14,46 % | 0,541 s |
+| family-OOD reutilizado | 8 / 481 | 0,53784 | 30,56 % | 0,805 s |
+
+El diagnóstico OOD degrada 85,5 % el score, 111,4 % el error relativo y 48,8 %
+el MAE. No es un test virgen del proyecto y no habilita un claim SOTA.
+Benchmark-10 permanece sellado.
+
+eAP train-40 está completo (40 secuencias, 216 archivos, 536,64 GiB), pero no
+incluye TTC oficial. Su uso aprobado es un piloto SSL de 2–4 secuencias y el
+mismo fine-tuning EvTTC; solo se escala a 40 si el piloto mejora ese gate. El
+pseudo-TTC local cubre 195.024/804.510 filas (24,24 %) y no participa en
+selección, calibración ni métricas TTC oficiales.

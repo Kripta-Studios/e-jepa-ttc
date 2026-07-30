@@ -22,10 +22,13 @@ Confirmación matched
   1.208/314 ventanas, hasta 40 épocas, early stopping compartido
 
 Grouped CV
-  cinco folds completos, seed 7
+  cinco folds completos × seeds 7/13/21, A0/A1
 
-Multisemilla
-  folds completos, seeds 7/13/21, máximo dos finalistas
+Freeze final
+  arquitectura por OOF; perfil y seed por validation familiar
+
+Family-OOD
+  una inferencia diagnóstica después del freeze
 
 Benchmark-10
   una inferencia después del freeze
@@ -56,6 +59,15 @@ comparar en grouped CV desde una inicialización aleatoria común explícita par
 no reutilizar un checkpoint SSL que haya visto eventos de las secuencias
 validadas. Esa prueba responde a la arquitectura; la confirmación histórica
 separada responde a la inicialización BASE.
+
+El resultado cerrado de 5 folds × 3 seeds selecciona A0: A1 empeora el score
+medio un 1,47 % y el error relativo un 0,99 %, aunque reduce el MAE un 0,41 %.
+La pequeña ganancia histórica de A1 no es suficientemente consistente para
+promoción ni para un claim SOTA.
+
+Con A0 fijo, el perfil `matched` mejora el score medio de validation un
+10,95 % frente a `throughput` y selecciona seed 13. El checkpoint y su hash se
+congelan antes de abrir `family test/OOD`.
 
 ## Comparación Garl
 

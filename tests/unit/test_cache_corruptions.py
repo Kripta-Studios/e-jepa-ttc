@@ -201,9 +201,7 @@ def test_empty_cache(clean_cache):
 def test_missing_sidecar(clean_cache):
     (clean_cache / "cache.summary.json").unlink()
     cmd = [
-        "uv",
-        "run",
-        "python",
+        sys.executable,
         "scripts/audit_cache.py",
         "--npz-path",
         str(clean_cache / "cache.npz"),

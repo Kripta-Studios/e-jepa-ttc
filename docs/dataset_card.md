@@ -8,7 +8,7 @@ Actualizado: 2026-07-30.
 |---|---|---|---|
 | `EVTTC32_LABELLED` | `datasets/evttc` | train, grouped CV, calibración | sí |
 | `BENCHMARK10_SEALED` | `datasets/evttc_official_benchmark_sealed` | inferencia final | no consumido |
-| `EAP_HF_TRAIN40` | `E:\eAP_dataset\data\train` | pretraining no-TTC futuro | no |
+| `EAP_HF_TRAIN40` | `E:\eAP_dataset\data\train` | SSL/probes no-TTC | no |
 
 No se incorporan nuevos datasets, eAP test ni un segundo release eAP.
 
@@ -82,7 +82,9 @@ manifest y checkpoint hash.
 
 ## eAP train-40
 
-El release local previsto contiene por secuencia:
+El release local está completo: 40 secuencias, 216 archivos y 536,64 GiB.
+Incluye 40 `events.h5`, 40 tablas Parquet y 136 TAR RGB. Cada secuencia
+contiene:
 
 ```text
 events.h5
@@ -91,7 +93,8 @@ rgb_shards/*.tar
 ```
 
 Las anotaciones incluyen tracks y cajas 3D, pero no una columna TTC oficial. El
-pseudo-TTC track-derived:
+pseudo-TTC track-derived local contiene 804.510 filas, de las que 195.024
+(24,24 %) son válidas. Este derivado:
 
 - declara `official_ground_truth=false`;
 - usa contexto temporal y no es causal para inferencia;
@@ -99,7 +102,8 @@ pseudo-TTC track-derived:
 - solo puede evaluarse como ablación posterior.
 
 Sin TTC oficial, eAP sí conserva valor para SSL sobre eventos/objetos, probes
-de representación y perturbaciones de dominio. La primera ejecución debe usar
+de representación y perturbaciones de dominio. No puede seleccionar A0/A1 ni
+producir un MAE TTC comparable. La primera ejecución debe usar
 2–4 secuencias y un cache derivado acotado; las 40 solo se justifican si ese
 piloto mejora un fine-tuning EvTTC idéntico.
 

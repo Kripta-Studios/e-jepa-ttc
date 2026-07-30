@@ -1,9 +1,9 @@
 # Limitaciones
 
-- El resultado BASE pertenece a un split histórico; grouped CV v6 está
-  ejecutándose.
-- Dense Patch gana en una confirmación matched de un solo split; aún necesita
-  cinco folds y tres seeds.
+- El resultado BASE pertenece a un split histórico y no se mezcla con grouped
+  CV.
+- Dense Patch gana en una confirmación matched de un solo split, pero pierde
+  grouped CV de cinco folds × tres seeds frente a A0.
 - AttnRes y KDA no mejoran A1 en la confirmación larga actual.
 - Garl local adapta la altura visible EvTTC y no reproduce los targets eAP
   originales.
@@ -17,7 +17,12 @@
 - La compensación traslacional necesita profundidad; distancia GT implica
   oracle.
 - El router puede memorizar familias con solo 32 secuencias.
-- eAP local no ofrece TTC oficial.
+- eAP train-40 está completo, pero no ofrece TTC oficial; su pseudo-TTC solo
+  cubre el 24,24 % de las filas y no es ground truth.
+- Family-OOD degrada el score un 85,5 %, el error relativo un 111,4 % y el MAE
+  un 48,8 % frente a validation.
+- El perfil throughput es 4,02× más rápido en entrenamiento, pero empeora el
+  score medio un 10,95 %; no es el perfil final de precisión.
 - Benchmark-10 no se ha ejecutado.
 - No existe validación para uso de seguridad real.
 

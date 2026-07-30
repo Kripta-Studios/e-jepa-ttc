@@ -1,7 +1,7 @@
 .PHONY: setup lint test check smoke-data scan-data validate-data index-data split-data cache-voxel train-base pretrain-jepa architecture-validate architecture-smoke architecture-screen
 
 setup:
-	uv sync --all-groups --no-editable
+	uv sync --locked --all-groups --no-editable
 
 lint:
 	uv run --no-sync ruff check .
