@@ -18,6 +18,10 @@ from e_jepa_ttc.data.carla_looming import (
     write_carla_looming_manifest,
     write_carla_looming_splits,
 )
+from e_jepa_ttc.training.carla_jepa import (
+    CarlaJEPATrainerConfig,
+    inspect_carla_jepa_pairs,
+)
 
 
 def _write_sequence(
@@ -203,6 +207,42 @@ def test_manifest_roundtrip_and_grouped_splits_are_disjoint(tmp_path: Path) -> N
     assert groups["train"].isdisjoint(groups["test"])
     assert groups["validation"].isdisjoint(groups["test"])
     assert set().union(*assignments.values()) == {sequence.sequence_id for sequence in sequences}
+
+
+def test_signed_split_survives_manifest_line_ending_conversion(tmp_path: Path) -> None:
+    labels = ("car", "pedestrian", "none", "none_with_traffic")
+    sequences = [_manifest_sequence(index, labels[index % len(labels)]) for index in range(18)]
+    manifest_path = tmp_path / "manifest.json"
+    split_path = tmp_path / "split.json"
+    write_carla_looming_manifest(manifest_path, sequences, root_hint="portable/root")
+    split = write_carla_looming_splits(
+        split_path,
+        manifest_path=manifest_path,
+        sequences=sequences,
+        seed=7,
+        folds=3,
+    )
+    manifest_path.write_bytes(manifest_path.read_bytes().replace(b"\n", b"\r\n"))
+
+    inspection = inspect_carla_jepa_pairs(
+        root=tmp_path,
+        manifest_path=manifest_path,
+        split_path=split_path,
+        config=CarlaJEPATrainerConfig(
+            context_ms=100,
+            stride_ms=100,
+            horizons_ms=(50,),
+            future_window_ms=100,
+            max_windows_per_sequence=1,
+        ),
+    )
+
+    assert split["format_version"] == 2
+    assert split["manifest_artifact_sha256"]
+    assert all(
+        inspection["roles"][role]["pair_count"] > 0
+        for role in ("train", "validation", "test")
+    )
 
 
 def test_split_builder_is_reproducible() -> None:

@@ -27,7 +27,7 @@
 - medido el perfil de hardware: batch 24/acumulación 2/8 workers es el más
   rápido de los probes, aunque usa menos VRAM que perfiles más lentos;
 - smoke CARLA `0,02563→0,02247`, sin colapso; transferencia full pendiente.
-- suite completa `244 passed`, Ruff limpio y manuscrito PDF recompilado.
+- suite completa `245 passed`, Ruff limpio y manuscrito PDF recompilado.
 
 El screen corto había dado un orden engañoso: A1 necesitó 20 épocas para su
 mejor checkpoint. La geometría bbox mejora algo el error relativo, pero no el

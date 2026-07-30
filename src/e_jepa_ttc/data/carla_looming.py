@@ -15,6 +15,7 @@ from typing import Any
 
 import numpy as np
 
+from e_jepa_ttc.artifacts.hashing import verify_artifact_hash
 from e_jepa_ttc.data.types import EventBatch, TTCWindowSample
 from e_jepa_ttc.data.validation import validate_event_batch
 from e_jepa_ttc.utils.io import read_structured, write_structured
@@ -729,12 +730,16 @@ def write_carla_looming_splits(
     """Write signed CARLA blocked splits tied to an exact manifest file."""
 
     split = create_carla_looming_splits(sequences, seed=seed, folds=folds)
+    manifest = read_structured(manifest_path)
+    if not verify_artifact_hash(manifest):
+        raise ValueError("CARLA manifest artifact signature is invalid.")
     payload: dict[str, Any] = {
         "artifact_type": "carla_dvs_looming_split",
-        "format_version": 1,
+        "format_version": 2,
         "dataset_id": CARLA_LOOMING_DATASET_ID,
         "manifest": Path(manifest_path).as_posix(),
         "manifest_sha256": _sha256(manifest_path),
+        "manifest_artifact_sha256": manifest["artifact_sha256"],
         "benchmark10_opened": False,
         **split,
     }

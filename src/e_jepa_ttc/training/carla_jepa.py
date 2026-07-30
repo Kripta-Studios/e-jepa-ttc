@@ -17,6 +17,7 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader, Dataset, Subset
 
+from e_jepa_ttc.artifacts.hashing import verify_artifact_hash
 from e_jepa_ttc.data.benchmark10_guard import assert_no_sealed_benchmark_paths
 from e_jepa_ttc.data.carla_looming import (
     CARLA_LOOMING_DATASET_ID,
@@ -114,6 +115,13 @@ def _hash_file(path: str | Path) -> str:
         for chunk in iter(lambda: source.read(8 * 1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def _artifact_hash(path: str | Path) -> str:
+    payload = read_structured(path)
+    if not verify_artifact_hash(payload):
+        raise ValueError(f"Structured artifact signature is invalid: {path}.")
+    return str(payload["artifact_sha256"])
 
 
 def _source_tree_hash() -> str:
@@ -273,9 +281,12 @@ def _sequences_for_role(
     split = read_structured(split_path)
     if split.get("dataset_id") != CARLA_LOOMING_DATASET_ID:
         raise ValueError(f"Split {split_path} is not CARLA DVS Looming.")
-    expected_manifest_hash = str(split.get("manifest_sha256", ""))
-    if expected_manifest_hash != _hash_file(manifest_path):
-        raise ValueError("CARLA manifest hash does not match the signed split.")
+    expected_manifest_hash = split.get("manifest_artifact_sha256")
+    if expected_manifest_hash is not None:
+        if str(expected_manifest_hash) != _artifact_hash(manifest_path):
+            raise ValueError("CARLA manifest artifact does not match the signed split.")
+    elif str(split.get("manifest_sha256", "")) != _hash_file(manifest_path):
+        raise ValueError("Legacy CARLA manifest file hash does not match the signed split.")
     assignments = split.get("assignments")
     if not isinstance(assignments, dict) or not isinstance(assignments.get(role), list):
         raise ValueError(f"CARLA split does not define role {role!r}.")
@@ -498,8 +509,8 @@ def _run_fingerprint(
 ) -> str:
     payload = {
         "config": asdict(config),
-        "manifest_sha256": _hash_file(manifest_path),
-        "split_manifest_sha256": _hash_file(split_path),
+        "manifest_artifact_sha256": _artifact_hash(manifest_path),
+        "split_artifact_sha256": _artifact_hash(split_path),
         "source_tree_sha256": source_tree_sha256,
     }
     return hashlib.sha256(
@@ -561,8 +572,10 @@ def _checkpoint(
         "external_pretraining": True,
         "manifest_path": manifest_path.as_posix(),
         "manifest_sha256": _hash_file(manifest_path),
+        "manifest_artifact_sha256": _artifact_hash(manifest_path),
         "split_manifest_path": split_path.as_posix(),
         "split_manifest_sha256": _hash_file(split_path),
+        "split_artifact_sha256": _artifact_hash(split_path),
         "pretrain_splits": ["train"],
         "validation_splits": ["validation"],
         "temporal_horizons_ms": list(config.horizons_ms),
@@ -821,7 +834,9 @@ def pretrain_carla_jepa(
         "artifact_type": "carla_dvs_looming_jepa_pretraining_v1",
         "pretraining_dataset_id": CARLA_LOOMING_DATASET_ID,
         "manifest_sha256": _hash_file(manifest),
+        "manifest_artifact_sha256": _artifact_hash(manifest),
         "split_manifest_sha256": _hash_file(split),
+        "split_artifact_sha256": _artifact_hash(split),
         "train_sequence_count": len(train_sequences),
         "validation_sequence_count": len(validation_sequences),
         "train_pair_count": len(train_dataset),
@@ -883,7 +898,9 @@ def inspect_carla_jepa_pairs(
     return {
         "artifact_type": "carla_dvs_looming_jepa_pair_inspection_v1",
         "manifest_sha256": _hash_file(manifest),
+        "manifest_artifact_sha256": _artifact_hash(manifest),
         "split_manifest_sha256": _hash_file(split),
+        "split_artifact_sha256": _artifact_hash(split),
         "trainer_config": asdict(config),
         "roles": roles,
         "benchmark10_opened": False,
@@ -916,10 +933,21 @@ def evaluate_carla_jepa(
     checkpoint = torch.load(checkpoint_file, map_location="cpu", weights_only=False)
     if checkpoint.get("checkpoint_role") != "best":
         raise ValueError("CARLA holdout evaluation requires the validation-selected best.pt.")
-    if checkpoint.get("split_manifest_sha256") != _hash_file(split):
-        raise ValueError("CARLA evaluation split differs from checkpoint provenance.")
-    if checkpoint.get("manifest_sha256") != _hash_file(manifest):
-        raise ValueError("CARLA evaluation manifest differs from checkpoint provenance.")
+    checkpoint_split_artifact = checkpoint.get("split_artifact_sha256")
+    if checkpoint_split_artifact is not None:
+        if checkpoint_split_artifact != _artifact_hash(split):
+            raise ValueError("CARLA evaluation split differs from checkpoint provenance.")
+    elif checkpoint.get("split_manifest_sha256") not in {
+        _hash_file(split),
+        read_structured(split).get("legacy_file_sha256"),
+    }:
+        raise ValueError("CARLA evaluation legacy split hash differs from the checkpoint.")
+    checkpoint_manifest_artifact = checkpoint.get("manifest_artifact_sha256")
+    if checkpoint_manifest_artifact is not None:
+        if checkpoint_manifest_artifact != _artifact_hash(manifest):
+            raise ValueError("CARLA evaluation manifest differs from checkpoint provenance.")
+    elif checkpoint.get("manifest_sha256") != _hash_file(manifest):
+        raise ValueError("CARLA evaluation legacy manifest hash differs from the checkpoint.")
     trainer_payload = checkpoint.get("trainer_config")
     if not isinstance(trainer_payload, dict):
         raise ValueError("CARLA JEPA checkpoint has no trainer_config.")
@@ -999,7 +1027,9 @@ def evaluate_carla_jepa(
         "checkpoint_epoch": int(checkpoint["epoch"]),
         "checkpoint_selected_by": checkpoint.get("checkpoint_selected_by"),
         "manifest_sha256": _hash_file(manifest),
+        "manifest_artifact_sha256": _artifact_hash(manifest),
         "split_manifest_sha256": _hash_file(split),
+        "split_artifact_sha256": _artifact_hash(split),
         "evaluation_config": asdict(config),
         "uses_ttc_labels": False,
         "uses_collision_labels": False,

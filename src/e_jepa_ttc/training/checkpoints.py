@@ -7,7 +7,9 @@ from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
 
+from e_jepa_ttc.artifacts.hashing import verify_artifact_hash
 from e_jepa_ttc.data.carla_looming import CARLA_LOOMING_DATASET_ID
+from e_jepa_ttc.utils.io import read_structured
 
 
 def _file_sha256(path: Path) -> str:
@@ -92,8 +94,18 @@ def validate_external_ssl_checkpoint(
     source_split = Path(source_split_path)
     if not source_split.is_file():
         raise FileNotFoundError(f"External SSL source split is missing: {source_split}.")
-    if checkpoint.get("split_manifest_sha256") != _file_sha256(source_split):
-        raise ValueError("External SSL checkpoint source split hash does not match.")
+    source_split_payload = read_structured(source_split)
+    if not verify_artifact_hash(source_split_payload):
+        raise ValueError("External SSL source split artifact signature is invalid.")
+    checkpoint_split_artifact = checkpoint.get("split_artifact_sha256")
+    if checkpoint_split_artifact is not None:
+        if checkpoint_split_artifact != source_split_payload["artifact_sha256"]:
+            raise ValueError("External SSL checkpoint source split artifact does not match.")
+    elif checkpoint.get("split_manifest_sha256") not in {
+        _file_sha256(source_split),
+        source_split_payload.get("legacy_file_sha256"),
+    }:
+        raise ValueError("External SSL checkpoint legacy source split hash does not match.")
     provenance = checkpoint_provenance(path, checkpoint)
     if provenance["recommended_for_downstream"] is not True:
         raise ValueError("External SSL checkpoint must be the validation-selected best encoder.")
@@ -102,6 +114,7 @@ def validate_external_ssl_checkpoint(
         "pretraining_dataset_id": checkpoint["pretraining_dataset_id"],
         "source_split": source_split.as_posix(),
         "source_split_sha256": checkpoint["split_manifest_sha256"],
+        "source_split_artifact_sha256": source_split_payload["artifact_sha256"],
         "uses_evttc_pretraining_events": False,
         "benchmark10_opened": False,
     }

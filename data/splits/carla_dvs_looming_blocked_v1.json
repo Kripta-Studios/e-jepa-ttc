@@ -1,5 +1,5 @@
 {
-  "artifact_sha256": "a496a32a154b447143496a19535652cc7f0c6edcc9a723b2d3444dbdde4516de",
+  "artifact_sha256": "a5176d0aa74fc0f771702d2f232f900466007eebc9de3af970182ea9b615cf00",
   "artifact_type": "carla_dvs_looming_split",
   "assignments": {
     "test": [
@@ -1420,7 +1420,7 @@
     "example_1216"
   ],
   "fold_count": 5,
-  "format_version": 1,
+  "format_version": 2,
   "grouping": "contiguous example_index blocks declared by manifest",
   "groups": {
     "test": [
@@ -1487,7 +1487,9 @@
       "generation_block_0048"
     ]
   },
+  "legacy_file_sha256": "ff6add316100412324375a3f37fc6af7542adc513097cc4fbd2b2ad937780d11",
   "manifest": "data/manifests/carla_dvs_looming_v1.json",
+  "manifest_artifact_sha256": "797d440683c55980b6858b96fc665db1bdbd5cc527ff5b44bba7053d8fb0bbf9",
   "manifest_sha256": "dab05daa3629ae72fd00d76c93bcc2d8ce70854c3213b6d1b682980534f076e6",
   "protocol": "carla_dvs_looming_blocked_v1",
   "scientific_role": "synthetic pretraining and blocked out-of-sample diagnostics; EvTTC remains the real-domain supervised benchmark",

@@ -5,7 +5,7 @@ Actualizado: 2026-07-30.
 Compatibilidad histórica: CPLA-high is diagnostic only; no se utiliza como
 test final ni como sustituto del Benchmark-10 sellado.
 
-Validación local del 30 de julio de 2026: `244 passed` en el árbol de trabajo,
+Validación local del 30 de julio de 2026: `245 passed` en el árbol de trabajo,
 Ruff sin errores,
 validación real/dry-run del orquestador superada, PDF recompilado y export ONNX
 de OGE verificado numéricamente.
@@ -220,6 +220,8 @@ La cobertura incompleta se registra y el brazo queda rechazado.
 - BF16, `pin_memory`, prefetch y workers persistentes;
 - perfil CARLA medido: batch 24 × acumulación 2, 8 workers, 8,46 pares/s;
 - CARLA guarda best/last/resume, historial JSONL, logs y evaluaciones firmadas;
+- firmas CARLA v2 canónicas entre LF/CRLF, con compatibilidad de checkpoints
+  legacy;
 - batch 24 para Garl ResNet-50 en Screen;
 - microbatch 4 x acumulación 6 para G7 foreground, batch efectivo 24;
 - teachers no cargados durante los screens.

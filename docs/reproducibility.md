@@ -230,6 +230,11 @@ eventos válidos             7.692.294.635
 allow_pickle                false
 ```
 
+Manifest y split se enlazan mediante el `artifact_sha256` de JSON canónico,
+no por los bytes LF/CRLF del checkout. El split v2 conserva además el hash
+legacy para poder leer checkpoints smoke anteriores. Así un mismo commit
+valida igual en Windows y en un worktree limpio.
+
 La validación exhaustiva de los 7.692 millones de eventos es opcional porque
 lee los 71,64 GiB completos:
 

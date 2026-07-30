@@ -8,9 +8,11 @@ import torch
 
 from e_jepa_ttc.data.carla_looming import CARLA_LOOMING_DATASET_ID
 from e_jepa_ttc.training.checkpoints import validate_external_ssl_checkpoint
+from e_jepa_ttc.utils.io import read_structured, write_structured
 
 
 def _checkpoint(split: Path) -> dict[str, object]:
+    split_payload = read_structured(split)
     return {
         "checkpoint_role": "best",
         "checkpoint_selected_by": "validation_loss",
@@ -22,6 +24,7 @@ def _checkpoint(split: Path) -> dict[str, object]:
         "bins": 5,
         "encoder_state_dict": {"event_embed.weight": torch.zeros(2, 2)},
         "split_manifest_sha256": hashlib.sha256(split.read_bytes()).hexdigest(),
+        "split_artifact_sha256": split_payload["artifact_sha256"],
         "uses_ttc_labels": False,
         "uses_collision_labels": False,
         "uses_velocity_feature": False,
@@ -32,7 +35,7 @@ def _checkpoint(split: Path) -> dict[str, object]:
 
 def test_external_ssl_checkpoint_accepts_signed_label_free_carla(tmp_path: Path) -> None:
     split = tmp_path / "carla_split.json"
-    split.write_text('{"split_version":"test"}\n', encoding="utf-8")
+    write_structured(split, {"artifact_type": "test_split", "split_version": "test"})
     path = tmp_path / "best.pt"
     path.write_bytes(b"checkpoint identity")
 
@@ -57,7 +60,7 @@ def test_external_ssl_checkpoint_rejects_label_or_test_exposure(
     value: bool,
 ) -> None:
     split = tmp_path / "carla_split.json"
-    split.write_text('{"split_version":"test"}\n', encoding="utf-8")
+    write_structured(split, {"artifact_type": "test_split", "split_version": "test"})
     path = tmp_path / "best.pt"
     path.write_bytes(b"checkpoint identity")
     checkpoint = _checkpoint(split)
@@ -69,11 +72,11 @@ def test_external_ssl_checkpoint_rejects_label_or_test_exposure(
 
 def test_external_ssl_checkpoint_rejects_split_mismatch(tmp_path: Path) -> None:
     split = tmp_path / "carla_split.json"
-    split.write_text('{"split_version":"test"}\n', encoding="utf-8")
+    write_structured(split, {"artifact_type": "test_split", "split_version": "test"})
     path = tmp_path / "best.pt"
     path.write_bytes(b"checkpoint identity")
     checkpoint = _checkpoint(split)
-    split.write_text('{"split_version":"changed"}\n', encoding="utf-8")
+    write_structured(split, {"artifact_type": "test_split", "split_version": "changed"})
 
-    with pytest.raises(ValueError, match="source split hash"):
+    with pytest.raises(ValueError, match="source split artifact"):
         validate_external_ssl_checkpoint(path, checkpoint, source_split_path=split)
