@@ -2,7 +2,28 @@ from pathlib import Path
 
 import pytest
 
-from e_jepa_ttc.training.object_geo_trainer import evaluate_object_geo_ttc_checkpoint
+from e_jepa_ttc.models.object_geo_jepa_ttc import OGEConfig
+from e_jepa_ttc.training.object_geo_trainer import (
+    _oge_config_from_checkpoint,
+    evaluate_object_geo_ttc_checkpoint,
+)
+
+
+def test_checkpoint_config_accepts_known_non_init_audit_field() -> None:
+    payload = {
+        "in_channels": 21,
+        "head_mode": "global",
+        "sequence_embedding_forbidden": True,
+    }
+    restored = _oge_config_from_checkpoint(payload)
+    assert isinstance(restored, OGEConfig)
+    assert restored.head_mode == "global"
+    assert restored.sequence_embedding_forbidden is True
+
+
+def test_checkpoint_config_rejects_unknown_fields() -> None:
+    with pytest.raises(ValueError, match="unknown fields"):
+        _oge_config_from_checkpoint({"invented_architecture_flag": True})
 
 
 def test_family_holdout_test_requires_explicit_authorization(tmp_path: Path) -> None:

@@ -7,7 +7,7 @@ import json
 import random
 import subprocess
 import time
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, fields
 from pathlib import Path
 from typing import Any
 
@@ -124,6 +124,21 @@ def _state_dict_hash(module: nn.Module) -> str:
         digest.update(np.asarray(tensor.shape, dtype=np.int64).tobytes())
         digest.update(tensor.numpy().tobytes())
     return digest.hexdigest()
+
+
+def _oge_config_from_checkpoint(payload: dict[str, Any]) -> OGEConfig:
+    """Rebuild a config while preserving known ``init=False`` audit fields."""
+
+    definitions = {definition.name: definition for definition in fields(OGEConfig)}
+    unknown = sorted(set(payload) - set(definitions))
+    if unknown:
+        raise ValueError(f"Checkpoint model_config contains unknown fields: {unknown}.")
+    arguments = {
+        name: value
+        for name, value in payload.items()
+        if definitions[name].init
+    }
+    return OGEConfig(**arguments)
 
 
 def _selection_hash(
@@ -491,7 +506,10 @@ def evaluate_object_geo_ttc_checkpoint(
     checkpoint = torch.load(checkpoint_source, map_location=device, weights_only=False)
     if "model_config" not in checkpoint or "model_state_dict" not in checkpoint:
         raise ValueError("Checkpoint is missing model_config or model_state_dict.")
-    model = ObjectGeometryJEPATTC(OGEConfig(**checkpoint["model_config"])).to(device)
+    model_config = checkpoint["model_config"]
+    if not isinstance(model_config, dict):
+        raise TypeError("Checkpoint model_config must be a mapping.")
+    model = ObjectGeometryJEPATTC(_oge_config_from_checkpoint(model_config)).to(device)
     model.load_state_dict(checkpoint["model_state_dict"], strict=True)
     dataset = EAPObjectCacheDataset(cache_source, splits=requested_splits)
     if len(dataset) == 0:
