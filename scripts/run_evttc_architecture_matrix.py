@@ -149,6 +149,10 @@ def _variants(
             "oge",
             oge(head_mode="dense"),
         ),
+        "R1_MATCHED_BBOX_ROI": lambda channels: (
+            "oge",
+            oge(head_mode="bbox_roi"),
+        ),
         "A2_MATCHED_DENSE_ATTNRES": lambda channels: (
             "oge",
             oge(
@@ -244,6 +248,7 @@ DEFAULT_VARIANTS = (
     "G7_RGBE_LHR_LATE_FOREGROUND",
     "A0_MATCHED_GLOBAL",
     "A1_MATCHED_DENSE_BLOCK",
+    "R1_MATCHED_BBOX_ROI",
     "A2_MATCHED_DENSE_ATTNRES",
     "K1_OBJECT_KDA",
     "A4_GT_GEOMETRY",

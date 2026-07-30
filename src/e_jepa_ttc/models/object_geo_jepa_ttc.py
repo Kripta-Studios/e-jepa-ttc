@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 
 import torch
 from torch import nn
+from torch.nn import functional
 
 from e_jepa_ttc.geometry.ego_motion_compensation import CameraYawDerotator
 from e_jepa_ttc.models.attention_residual_router import TaskSpecificAttentionResiduals
@@ -39,6 +40,8 @@ class OGEConfig:
     heads: int = 4
     temporal_depth: int = 3
     head_mode: str = "global"
+    bbox_roi_grid_size: int = 3
+    bbox_roi_expansion: float = 1.0
     use_attention_residuals: bool = False
     temporal_mixer: str = "block_causal"
     use_target_query: bool = False
@@ -56,9 +59,7 @@ class OGEConfig:
     def __post_init__(self) -> None:
         event_channels = self.resolved_event_channels
         if event_channels < 4 or event_channels % 2 or event_channels > self.in_channels:
-            raise ValueError(
-                "event_channels must be even, >=4 and no greater than in_channels."
-            )
+            raise ValueError("event_channels must be even, >=4 and no greater than in_channels.")
         if self.backbone not in {"compact_dense", "base_event_tubelet"}:
             raise ValueError("backbone must be compact_dense or base_event_tubelet.")
         if (
@@ -75,8 +76,10 @@ class OGEConfig:
             self.in_channels != 21 or self.dim != 192 or self.backbone_depth != 6
         ):
             raise ValueError("Audited BASE requires 21 channels, dim=192 and depth=6.")
-        if self.head_mode not in {"global", "dense"}:
-            raise ValueError("head_mode must be global or dense.")
+        if self.head_mode not in {"global", "dense", "bbox_roi"}:
+            raise ValueError("head_mode must be global, dense or bbox_roi.")
+        if self.bbox_roi_grid_size <= 0 or self.bbox_roi_expansion <= 0.0:
+            raise ValueError("BBox ROI grid size and expansion must be positive.")
         if self.temporal_mixer not in {
             "block_causal",
             "object_kda",
@@ -198,9 +201,7 @@ class ObjectGeometryJEPATTC(nn.Module):
             if config.use_attention_residuals
             else None
         )
-        self.target_query = (
-            TargetBackgroundQuery(config.dim) if config.use_target_query else None
-        )
+        self.target_query = TargetBackgroundQuery(config.dim) if config.use_target_query else None
         self.highres_refiner = (
             HighResolutionMaskRefiner(config.in_channels) if config.use_highres_refiner else None
         )
@@ -222,9 +223,7 @@ class ObjectGeometryJEPATTC(nn.Module):
         self.uncertainty_head = TTCUncertaintyHead(config.dim) if config.use_uncertainty else None
         self.risk_selector = RiskSelector(config.dim, config.risk_thresholds_s)
         self.yaw_derotator = (
-            CameraYawDerotator(config.action_dim)
-            if config.use_yaw_derotation
-            else None
+            CameraYawDerotator(config.action_dim) if config.use_yaw_derotation else None
         )
 
     def _query_history(
@@ -252,6 +251,92 @@ class ObjectGeometryJEPATTC(nn.Module):
         # A0/A1 comparison the location of this same reduction (before or
         # after temporal patch mixing) is the factor under test.
         return tokens.mean(dim=2)
+
+    def _bbox_roi_pool_history(
+        self,
+        tokens: torch.Tensor,
+        boxes: torch.Tensor,
+        object_mask: torch.Tensor,
+        spatial_shape: tuple[int, int],
+    ) -> torch.Tensor:
+        """Pool dense tokens inside each causal ground-truth object box.
+
+        ``grid_sample`` keeps small boxes useful even when no coarse patch
+        centre lies strictly inside the ROI. Multiple valid objects are
+        averaged; frames without a valid object fall back to global pooling.
+        The boxes are normalized ``xyxy`` coordinates supplied by the
+        benchmark and are never predicted from future information.
+        """
+
+        if tokens.ndim != 4:
+            raise ValueError("tokens must have shape [B,T,P,D].")
+        if boxes.ndim != 4 or boxes.shape[-1] != 4:
+            raise ValueError("boxes must have shape [B,T,O,4].")
+        if object_mask.shape != boxes.shape[:-1]:
+            raise ValueError("object_mask must match boxes [B,T,O].")
+        batch, steps, patches, dim = tokens.shape
+        grid_height, grid_width = spatial_shape
+        if patches != grid_height * grid_width:
+            raise ValueError("Token count does not match the backbone spatial grid.")
+        if boxes.shape[:2] != (batch, steps):
+            raise ValueError("Box history must match token batch and time dimensions.")
+
+        box_values = boxes.to(dtype=tokens.dtype).clamp(0.0, 1.0)
+        center = 0.5 * (box_values[..., :2] + box_values[..., 2:])
+        half_size = (
+            0.5
+            * (box_values[..., 2:] - box_values[..., :2]).clamp_min(1e-6)
+            * self.config.bbox_roi_expansion
+        )
+        lower = (center - half_size).clamp(0.0, 1.0)
+        upper = (center + half_size).clamp(0.0, 1.0)
+
+        samples = self.config.bbox_roi_grid_size
+        fractions = (
+            torch.arange(samples, device=tokens.device, dtype=tokens.dtype) + 0.5
+        ) / samples
+        x = lower[..., 0, None] + (upper - lower)[..., 0, None] * fractions
+        y = lower[..., 1, None] + (upper - lower)[..., 1, None] * fractions
+        sample_y, sample_x = torch.meshgrid(
+            torch.arange(samples, device=tokens.device),
+            torch.arange(samples, device=tokens.device),
+            indexing="ij",
+        )
+        grid = torch.stack(
+            (
+                x[..., sample_x] * 2.0 - 1.0,
+                y[..., sample_y] * 2.0 - 1.0,
+            ),
+            dim=-1,
+        )
+
+        objects = boxes.shape[2]
+        feature_maps = (
+            tokens.reshape(batch * steps, grid_height, grid_width, dim)
+            .permute(0, 3, 1, 2)
+            .contiguous()
+        )
+        feature_maps = (
+            feature_maps[:, None]
+            .expand(-1, objects, -1, -1, -1)
+            .reshape(batch * steps * objects, dim, grid_height, grid_width)
+        )
+        sampled = functional.grid_sample(
+            feature_maps,
+            grid.reshape(batch * steps * objects, samples, samples, 2),
+            mode="bilinear",
+            padding_mode="border",
+            align_corners=False,
+        )
+        object_tokens = sampled.mean(dim=(-1, -2)).reshape(batch, steps, objects, dim)
+        valid = object_mask.to(dtype=tokens.dtype)
+        pooled = (object_tokens * valid[..., None]).sum(dim=2) / valid.sum(
+            dim=2,
+            keepdim=True,
+        ).clamp_min(1.0)
+        fallback = self._dense_pool_history(tokens)
+        has_object = object_mask.bool().any(dim=2, keepdim=True)
+        return torch.where(has_object, pooled, fallback)
 
     def forward(
         self,
@@ -311,6 +396,26 @@ class ObjectGeometryJEPATTC(nn.Module):
             assert self.global_temporal is not None
             global_history = self.global_temporal(features.global_token[:, :, None, :])
             object_token = global_history[:, -1, 0]
+        elif self.config.head_mode == "bbox_roi":
+            if context_boxes is None or context_object_mask is None:
+                raise ValueError("BBox ROI pooling requires boxes and object mask.")
+            object_history = self._bbox_roi_pool_history(
+                mixed_tokens,
+                context_boxes,
+                context_object_mask.bool(),
+                features.spatial_shape,
+            )
+            object_token = object_history[:, -1]
+            diagnostics["bbox_roi_valid_fraction"] = (
+                context_object_mask.bool().any(dim=2).float().mean()
+            )
+            roi_area = (context_boxes[..., 2] - context_boxes[..., 0]).clamp_min(0.0) * (
+                context_boxes[..., 3] - context_boxes[..., 1]
+            ).clamp_min(0.0)
+            roi_valid = context_object_mask.to(dtype=roi_area.dtype)
+            diagnostics["bbox_roi_mean_area"] = (
+                roi_area * roi_valid
+            ).sum() / roi_valid.sum().clamp_min(1.0)
         else:
             object_token = mixed_tokens[:, -1].mean(dim=1)
         direct_log_ttc = self.direct_log_ttc_head(object_token).squeeze(-1)
@@ -321,9 +426,7 @@ class ObjectGeometryJEPATTC(nn.Module):
         geometry_weights: torch.Tensor | None = None
         router_balance = direct_inverse.new_zeros(())
         router_entropy = direct_inverse.new_zeros(direct_inverse.shape)
-        ego_angle = direct_inverse.new_zeros(
-            (direct_inverse.shape[0], context_events.shape[1])
-        )
+        ego_angle = direct_inverse.new_zeros((direct_inverse.shape[0], context_events.shape[1]))
         if self.geometry is not None:
             if self.config.bbox_source == "predicted":
                 if predicted_boxes is None:

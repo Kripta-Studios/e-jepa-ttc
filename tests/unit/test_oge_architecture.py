@@ -314,6 +314,7 @@ def test_matched_global_dense_and_attnres_share_common_initialization() -> None:
     for overrides in (
         {"head_mode": "global"},
         {"head_mode": "dense"},
+        {"head_mode": "bbox_roi"},
         {"head_mode": "dense", "use_attention_residuals": True},
     ):
         torch.manual_seed(17)
@@ -335,6 +336,57 @@ def test_matched_global_dense_and_attnres_share_common_initialization() -> None:
         dense_temporal = dense_model.mixer.temporal.state_dict()
         for name, value in global_temporal.items():
             assert torch.equal(value, dense_temporal[name])
+
+
+def test_bbox_roi_pooling_uses_official_object_box_and_fallback() -> None:
+    model = ObjectGeometryJEPATTC(
+        OGEConfig(
+            in_channels=4,
+            dim=32,
+            backbone_depth=3,
+            heads=4,
+            temporal_depth=1,
+            head_mode="bbox_roi",
+        )
+    )
+    tokens = torch.full((1, 2, 6, 32), 5.0)
+    tokens[:, :, [0, 3]] = 1.0
+    tokens[:, :, [2, 5]] = 9.0
+    left_box = torch.tensor([[[[0.0, 0.0, 0.45, 1.0]], [[0.0, 0.0, 0.45, 1.0]]]])
+    right_box = torch.tensor([[[[0.55, 0.0, 1.0, 1.0]], [[0.55, 0.0, 1.0, 1.0]]]])
+    valid = torch.ones(1, 2, 1, dtype=torch.bool)
+
+    left = model._bbox_roi_pool_history(tokens, left_box, valid, (2, 3))
+    right = model._bbox_roi_pool_history(tokens, right_box, valid, (2, 3))
+    fallback = model._bbox_roi_pool_history(tokens, left_box, ~valid, (2, 3))
+
+    assert left.shape == (1, 2, 32)
+    assert torch.all(left < right)
+    assert torch.allclose(fallback, tokens.mean(dim=2))
+
+
+def test_bbox_roi_forward_requires_causal_boxes() -> None:
+    model = ObjectGeometryJEPATTC(
+        OGEConfig(
+            in_channels=4,
+            dim=32,
+            backbone_depth=3,
+            heads=4,
+            temporal_depth=1,
+            head_mode="bbox_roi",
+        )
+    )
+    inputs = _inputs()
+    output = model(**inputs)
+    assert output.ttc_seconds.shape == (2,)
+    assert output.diagnostics["bbox_roi_valid_fraction"] == 1.0
+    del inputs["context_boxes"]
+    try:
+        model(**inputs)
+    except ValueError as error:
+        assert "BBox ROI pooling requires" in str(error)
+    else:
+        raise AssertionError("BBox ROI model accepted a missing official box.")
 
 
 def test_matched_global_control_uses_early_causal_frames() -> None:
