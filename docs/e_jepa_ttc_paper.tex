@@ -56,12 +56,13 @@ $0.322892$~s validation MAE, $0.584432$~s RMSE, and $8.1554\%$ mean relative
 error. FlowMimic-style global auxiliary losses are retained only as a negative
 result because they degrade multi-seed MAE.
 
-The new components have passed unit and integration tests, but their small
-smokes are explicitly non-promotable. Version 6 therefore defines a staged
-screen, five-fold grouped cross-validation, and three-seed confirmation before
-any external evaluation. The official Benchmark-10 remains sealed. The main
-contribution at this stage is an auditable experimental basis rather than a
-performance claim.
+A matched confirmation gives every Core arm the same checkpoint, samples,
+optimizer, maximum 40 epochs, and stopping rule. Dense Patch improves
+sequence-macro relative error from $16.129\%$ to $15.210\%$ and macro MAE from
+$0.701$ to $0.628$~s. Attention Residuals and Object-KDA do not improve the
+dense arm. Dense Patch is therefore the only promoted candidate, pending
+five-fold grouped cross-validation. The official Benchmark-10 remains sealed;
+these local results are not a state-of-the-art claim.
 \end{abstract}
 
 \section{Scope and claim boundary}
@@ -156,6 +157,28 @@ artifacts/runs/evttc32_architecture_v4_<split>_<mode>/
 This prevents the previous summary collision while retaining individual run
 directories.
 
+\begin{table}[t]
+\centering
+\caption{Matched Core confirmation on 1,208/314 train/validation windows.
+All arms share a 40-epoch maximum and one early-stopping rule.}
+\begin{tabular}{lrrrr}
+\toprule
+Arm & Best & Rel. & MAE & ms\\
+\midrule
+A0 global & 17 & 16.129\% & 0.701 & 8.98\\
+\textbf{A1 Dense} & \textbf{20} & \textbf{15.210\%} & \textbf{0.628} & 17.15\\
+A2 AttnRes & 10 & 16.136\% & 0.653 & 16.70\\
+K1 Object-KDA & 7 & 16.960\% & 0.731 & 16.99\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The eight-epoch screen ranked A1 incorrectly because its best checkpoint
+appears at epoch 20. A1 completed 26 epochs while A0 completed 23 under the
+same rule; A0 did not receive more optimization. A1 improves relative error
+by 5.70\% and MAE by 10.45\%, with a 1.91-fold latency cost. A2 and K1 are not
+promoted in their current forms.
+
 \section{Dense spatial and temporal design}
 
 \subsection{Patch Policy}
@@ -194,6 +217,10 @@ training and is absent from inference.
 EvTTC does not expose the original eAP 3D visible-height target. The local
 adapter therefore supervises visible box height after the shared crop. Results
 must be reported as a local architectural replica, not official eAP parity.
+In the bounded local screen, RGBE-LHR early fusion is best at 36.52\%
+sequence-macro relative error. This is a discard screen, not parity evidence:
+the public configuration trains for 50 epochs and constructs late fusion from
+pretrained unimodal LHR branches.
 
 \section{Object geometry}
 
@@ -209,6 +236,19 @@ channels are excluded from the event calculation.
 
 The training-free bbox oracle reports each expert and a deterministic
 confidence mixture. It is an upper-bound diagnostic and not a bbox-free model.
+
+A separate causal bbox-scale estimator fits a local derivative over at most 21
+past detections and a train-only log-affine calibration. It covers 311 of 314
+validation windows. Using A1 only for the three invalid rows changes macro
+relative error from 15.210\% to 14.790\%, but worsens the composite selection
+score from 0.30543 to 0.31144 because of RMSE. It therefore fails the declared
+5\% gate and also uses more history than the three-frame neural control.
+
+We also ported the public STRTTC chain: nearest linear time surface, contour
+gradients, local event-plane normal flow, RANSAC, and the three-parameter
+solver~\cite{eventaidedttc2024}. The bounded causal screen solves only 27/40 samples;
+its successful rows have 112.96\% sequence-macro relative error. Failures are
+reported as missing coverage, not silently removed from a full-set claim.
 
 \section{Ego-motion}
 
@@ -247,6 +287,7 @@ Stage & Purpose\\
 \midrule
 Smoke & Integration only, never promotion\\
 Screen & 304/80 windows, seed 7, up to 8 epochs\\
+Confirm & 1,208/314 windows, up to 40 epochs\\
 Grouped CV & Five folds, seed 7\\
 Multi-seed & Seeds 7, 13, 21 for at most two finalists\\
 External & Frozen Benchmark-10 inference\\
@@ -256,9 +297,11 @@ External & Frozen Benchmark-10 inference\\
 
 The checkpoint score combines sequence-macro relative error, normalized RMSE,
 high-TTC error, and low-TTC safety error. Ties are resolved by worst sequence,
-RMSE, seed variance, and latency. A smoke with 38/10 windows and two epochs has
-already exercised all current paths, but its numerical ranking is not
-scientific evidence.
+RMSE, seed variance, and latency. Smoke and Screen are closed; Confirm promotes
+A1 only. Grouped CV compares A0/A1 from a common random EventTubelet
+initialization because reusing the historical SSL checkpoint would expose
+some validation sequences during pretraining. The checkpoint-initialized
+historical Confirm remains a separate experiment.
 
 TargetQuery, predicted masks, high-resolution refinement, learned routing,
 bounded residual, and uncertainty remain behind a hard gate: bbox-GT geometry
@@ -268,8 +311,8 @@ must first outperform BASE under the declared protocol.
 
 The consumer hardware target has approximately 12.8~GB VRAM and 32~GB RAM.
 Training uses BF16, pinned memory, persistent workers, prefetch, and gradient
-accumulation. The Garl ResNet-50 screen uses microbatch 8 with accumulation 16;
-the foreground arm uses microbatch 1 with accumulation 128. The geometric
+accumulation. The Garl ResNet-50 screen uses batch 24; the foreground arm uses
+microbatch 4 with accumulation 6 for the same effective batch. The geometric
 solver remains FP32.
 
 No full eAP voxel cache, full-resolution SAM logits, all-layer DINO cache, or
@@ -279,16 +322,19 @@ and stage-specific.
 
 \section{Limitations and next steps}
 
-No new component has a valid Screen or grouped-CV improvement yet. The Garl
-ResNet-50 topology is tested, but its real screen remains pending. Translation
-compensation is not deployable until depth is predicted. eAP is incomplete and
-has no official TTC labels. Benchmark-10 has not been opened.
+Dense Patch has one matched-split improvement, not grouped-CV or three-seed
+evidence. The local Garl screen is shorter than the official 50-epoch,
+branch-pretrained recipe. Bbox geometry uses more causal observations than the
+neural arms; STRTTC has incomplete coverage. Translation compensation is not
+deployable until depth is predicted. eAP is incomplete and has no official TTC
+labels. Benchmark-10 has not been opened.
 
-The next actions are: execute Core Screen, execute Garl Screen, promote only
-arms passing their gates, run five-fold CV, repeat at most two finalists over
-three seeds, and freeze before any external inference. These restrictions
-preclude a current SOTA or safety claim.
+The next actions are: complete five-fold A0/A1 CV, repeat seeds 13 and 21 only
+if A1 wins, reproduce Garl with the public optimization budget, and freeze
+before external inference. These restrictions preclude a current SOTA or
+safety claim.
 
+\enlargethispage{4\baselineskip}
 \bibliographystyle{plain}
 \bibliography{references}
 

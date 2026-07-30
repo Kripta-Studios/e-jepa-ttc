@@ -12,8 +12,10 @@ que impiden promover componentes usando smokes o el benchmark externo.
 
 El BASE reproducido obtiene `0,322892 s` MAE, `0,584432 s` RMSE y `8,1554 %`
 de error relativo en la validación histórica. Las predicciones coinciden byte a
-byte. Dense Patch, AttnRes, Object-KDA y la geometría multi-experto están
-implementados, pero sus screens comparables siguen pendientes.
+byte. En una confirmación matched de hasta 40 épocas, Dense Patch reduce el
+error relativo macro de `16,129 %` a `15,210 %`; AttnRes (`16,136 %`) y
+Object-KDA (`16,960 %`) no mejoran Dense. A1 está promovido a grouped CV,
+todavía sin claim SOTA.
 
 ## Motivación
 
@@ -36,6 +38,17 @@ cinco folds y bootstrap por secuencia.
 `B0_HISTORICAL_BASE_EXACT` es una reproducción, mientras que
 `A0_MATCHED_GLOBAL` es el control de la nueva matriz. A0/A1/A2/K1 comparten
 muestras, backbone, cabeza, trainer y early stopping.
+
+| Brazo | Mejor época | Error relativo macro | MAE macro |
+|---|---:|---:|---:|
+| A0 global | 17 | 16,129 % | 0,701 s |
+| **A1 Dense** | **20** | **15,210 %** | **0,628 s** |
+| A2 AttnRes | 10 | 16,136 % | 0,653 s |
+| K1 Object-KDA | 7 | 16,960 % | 0,731 s |
+
+El máximo de épocas no favoreció a A0: A1 completó 26 épocas frente a 23 de
+A0 bajo la misma regla de parada. El screen de ocho épocas era demasiado corto
+para observar el mejor checkpoint de A1 en la época 20.
 
 ## Arquitectura
 
@@ -63,28 +76,36 @@ reproducción del MiD eAP oficial.
 
 ## Geometría y ego-motion
 
-Height, area y affine se evalúan en el endpoint actual. La navegación se
+Height, area y affine se evalúan en el endpoint actual. La geometría bbox
+causal cubre 311/314 ventanas; con fallback A1 mejora ligeramente el error
+relativo, pero empeora el score compuesto y no pasa el gate. El port causal
+STRTTC cubre 27/40 muestras y falla el gate de cobertura y precisión.
+
+La navegación se
 convierte desde norte/este/arriba a la cámara de eventos mediante extrínsecas.
 El warp traslacional necesita profundidad; si usa distancia EvTTC se etiqueta
 como oracle.
 
 ## Evidencia actual
 
-Los smokes ejecutados validan integración, no precisión. Los próximos pasos son:
+El screen Garl G0–G7 y la confirmación Core están ejecutados. El mejor Garl
+local corto es G5 RGBE-LHR early con 36,52 % de error relativo macro; todavía
+no reproduce las 50 épocas del protocolo oficial.
 
-1. screen Core 304/80;
-2. screen Garl ResNet-50;
-3. grouped CV de los promovidos;
-4. tres seeds para máximo dos finalistas;
-5. Benchmark-10 después del freeze.
+Los próximos pasos son:
+
+1. grouped CV A0/A1;
+2. tres seeds si A1 mantiene la mejora;
+3. Garl con 50 épocas y pretraining por ramas;
+4. Benchmark-10 después del freeze.
 
 TargetQuery, máscaras predichas, refiner, router, residual e incertidumbre
 permanecen bloqueados hasta que la geometría bbox-GT supere BASE.
 
 ## Limitaciones
 
-No hay resultado Screen, grouped CV v6, bbox-free promovido, profundidad
-predicha ni evaluación externa. El sistema no es apto para control de seguridad.
+No hay grouped CV cerrado, bbox-free promovido, profundidad predicha ni
+evaluación externa. El sistema no es apto para control de seguridad.
 
 ## Referencias
 

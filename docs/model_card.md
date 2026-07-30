@@ -5,8 +5,9 @@ Actualizado: 2026-07-30.
 ## Estado
 
 El único modelo con resultado local reproducido exactamente es
-`B0_HISTORICAL_BASE_EXACT`. OGE-JEPA-TTC y Garl-TTC local son candidatos en
-selección; no existe aún una configuración final ni un claim SOTA.
+`B0_HISTORICAL_BASE_EXACT`. A1 Dense es el único módulo nuevo promovido a
+grouped CV. Garl-TTC local sigue siendo una réplica arquitectónica en
+selección; no existe aún configuración final ni claim SOTA.
 
 ## BASE histórico
 
@@ -38,6 +39,15 @@ Predicciones y métricas tienen paridad exacta con el checkpoint original.
 
 Los cuatro candidatos aprendidos comparten inicialización, cabeza común,
 selección de muestras y trainer. El oracle geométrico se reporta separado.
+
+Confirmación matched:
+
+| Candidato | Error relativo macro | MAE macro | Decisión |
+|---|---:|---:|---|
+| A0 global | 16,129 % | 0,701 s | control |
+| A1 Dense | **15,210 %** | **0,628 s** | promover |
+| A2 AttnRes | 16,136 % | 0,653 s | rechazar |
+| K1 Object-KDA | 16,960 % | 0,731 s | rechazar |
 
 ## Réplica Garl-TTC
 
@@ -105,7 +115,10 @@ No usar para:
 - EvTTC tiene pocas secuencias para routers complejos;
 - el bbox-assisted no demuestra detección bbox-free;
 - la navegación puede convertirse en shortcut;
-- KDA, AttnRes y Dense Patch aún necesitan screen/CV;
+- Dense Patch solo está confirmado en un split; KDA y AttnRes fallaron ese
+  gate;
+- STRTTC tiene cobertura incompleta y la geometría bbox usa más contexto que
+  el neural;
 - Garl local no reproduce el ground truth eAP privado/no disponible;
 - latencia p95 end-to-end no está cerrada;
 - Benchmark-10 permanece sin evaluar.

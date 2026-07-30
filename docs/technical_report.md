@@ -12,8 +12,9 @@ Garl-TTC.
 
 Conclusión actual:
 
-> La infraestructura está preparada para una selección justa, pero ningún
-> módulo nuevo ha demostrado todavía una mejora válida sobre BASE.
+> Dense Patch supera al control A0 cuando ambos convergen bajo el mismo
+> presupuesto. AttnRes y Object-KDA no añaden valor sobre Dense en la
+> formulación probada. La mejora todavía debe sobrevivir grouped CV.
 
 ## 2. Evidencia histórica
 
@@ -55,6 +56,20 @@ El experimento multisemilla histórico no justifica sus pérdidas globales:
 
 El resultado negativo se conserva, pero el código FlowMimic de uso único se
 retira del pipeline activo.
+
+### 2.3 Confirmación matched
+
+| Brazo | Best epoch | Error rel. macro | Score | MAE macro | ms/ventana |
+|---|---:|---:|---:|---:|---:|
+| A0 global | 17 | 16,129 % | 0,32523 | 0,701 s | 8,98 |
+| **A1 Dense** | **20** | **15,210 %** | **0,30543** | **0,628 s** | 17,15 |
+| A2 AttnRes | 10 | 16,136 % | 0,32503 | 0,653 s | 16,70 |
+| K1 Object-KDA | 7 | 16,960 % | 0,34139 | 0,731 s | 16,99 |
+
+El máximo fue 40 épocas para todos, con mínimo 10 y paciencia 6. A1 completó
+26 épocas; A0, 23; A2, 16; K1, 13. El screen de ocho épocas subestimó A1
+porque su mejor checkpoint aparece en la época 20. A1 mejora el error relativo
+un 5,70 % frente a A0, pero aproximadamente duplica la latencia.
 
 ## 3. Protocolo de comparación
 
@@ -164,6 +179,19 @@ Se implementan:
 Los expertos usan el último par válido. Promediar TTC de pares que representan
 endpoints distintos queda prohibido.
 
+También se implementó un baseline de expansión causal de bbox con hasta 21
+observaciones pasadas y calibración log-afín ajustada solo en train. Cubre
+311/314 ventanas. Al usar A1 únicamente en las tres filas inválidas obtiene
+14,790 % de error relativo macro, pero el score empeora de 0,30543 a 0,31144
+por RMSE; no pasa el gate del 5 %. Además, usa más contexto que A1 y debe
+reportarse como track bbox-assisted.
+
+El port source-traceable de STRTTC implementa NLTS, contornos, ajuste local de
+planos, normal flow, RANSAC y el solver lineal de tres parámetros. En 40
+muestras del split histórico solo resuelve 27; sus éxitos tienen 112,96 % de
+error relativo macro. Los 13 fallos se conservan, por lo que la métrica
+success-only no es comparable con un candidato de cobertura completa.
+
 ## 7. Compensación ego
 
 ### 7.1 Contrato del HDF5
@@ -209,7 +237,7 @@ La profundidad \(Z\) es imprescindible. Usar la distancia oficial EvTTC crea un
 oracle, no una entrada de inferencia. Una versión desplegable requiere
 profundidad predicha y un gate separado.
 
-## 8. Smoke ejecutado
+## 8. Evidencia ejecutada
 
 Se ejecutaron 38 ventanas train, 10 validation y dos épocas. El smoke confirmó:
 
@@ -220,8 +248,14 @@ Se ejecutaron 38 ventanas train, 10 validation y dos épocas. El smoke confirmó
 - ejecución de Garl G0–G7;
 - ejecución de expertos geométricos.
 
-Los errores del smoke son demasiado inestables para promoción. En particular,
-la señal favorable de KDA y LHR debe repetirse en Screen.
+Los errores del smoke son demasiado inestables para promoción. El screen Core
+de ocho épocas también fue insuficiente para Dense. La confirmación larga
+promueve A1 y rechaza A2/K1.
+
+El screen Garl ResNet-50 ejecutó G0–G7 con batch efectivo 24. G5 RGBE-LHR early
+fue el mejor brazo local con 36,52 % de error relativo macro. No se declara
+paridad: el repositorio oficial usa 50 épocas y late fusion parte de ramas LHR
+preentrenadas.
 
 ## 9. Screens y gates
 
@@ -233,16 +267,16 @@ train/validation       304 / 80 ventanas
 early stopping         patience 2, mínimo 3 épocas
 precision              BF16
 Core batch             24
-Garl effective batch   128
+Garl effective batch   24
 ```
 
 Orden:
 
-1. Core en split histórico.
-2. Garl ResNet-50 en split histórico.
-3. Descartar brazos que no superen su referencia.
-4. Grouped CV cinco folds, seed 7.
-5. Tres seeds para BASE y máximo dos finalistas.
+1. Core y Garl en split histórico: completado.
+2. Confirmación larga Core: completada; A1 promovido.
+3. Grouped CV A0/A1 cinco folds, seed 7: en ejecución.
+4. Tres seeds para A0/A1 solo si A1 gana CV.
+5. Repetición Garl con presupuesto oficial antes de cualquier claim.
 
 TargetQuery, máscara predicha, refiner, router, residual e incertidumbre quedan
 bloqueados hasta que `A4_GT_GEOMETRY` supere el gate frente a BASE.
@@ -275,9 +309,10 @@ pseudo-TTC nunca se denomina ground truth.
 
 ## 12. Limitaciones actuales
 
-- no hay resultado Screen todavía;
-- no hay grouped CV del pipeline v6;
-- Garl ResNet-50 solo tiene verificación de topología y smoke compacto;
+- A1 solo gana en un split histórico; grouped CV está en ejecución;
+- Garl ResNet-50 tiene screen corto, no la reproducción de 50 épocas;
+- la geometría bbox no pasa el score compuesto y STRTTC tiene cobertura
+  incompleta;
 - compensación traslacional final depende de profundidad predicha;
 - bbox-free no está promocionado;
 - eAP continúa descargándose;
@@ -292,3 +327,5 @@ pseudo-TTC nunca se denomina ground truth.
 - Patch Policy: https://arxiv.org/abs/2607.18236
 - Kimi K3: https://arxiv.org/abs/2607.24653
 - Event-Aided TTC: https://arxiv.org/abs/2407.07324
+- Código Event-Aided TTC/STRTTC:
+  https://github.com/NAIL-HNU/event_aided_ttc

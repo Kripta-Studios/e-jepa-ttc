@@ -1,6 +1,6 @@
 # PLAN_v6.md — OGE-JEPA-TTC: baseline Garl-TTC con datos locales, pretraining eAP-40 y evaluación EvTTC sellada
 
-**Estado:** implementación v6 en verificación: BASE histórico reproducido exactamente, matriz Core/Garl aislada por etapa, screens comparables pendientes y Benchmark-10 sellado
+**Estado:** implementación v6 en selección: BASE histórico reproducido exactamente, A1 Dense promovido tras confirmación matched, AttnRes/KDA/geometría rechazados por sus gates actuales, grouped CV A0/A1 en curso y Benchmark-10 sellado
 **Fecha:** 30 de julio de 2026
 **Repositorio base:** `Kripta-Studios/e-jepa-ttc`  
 **Rama de referencia:** `scientific-recovery-v3-hardening`  
@@ -4357,3 +4357,41 @@ TargetQuery, máscara predicha, high-resolution refiner, router, residual e
 incertidumbre permanecen bloqueados hasta que la geometría con bbox GT supere a
 BASE bajo el gate predeclarado. eAP, DINO y SAM quedan fuera de la selección
 arquitectónica EvTTC.
+
+## 27.5 Resultado confirmado de Core
+
+La comparación justa de hasta 40 épocas usa el mismo checkpoint BASE, 1.208/314
+ventanas, batch efectivo 32, LR, weight decay y early stopping:
+
+| Brazo | Mejor época | Épocas | Error rel. macro | Score | MAE macro |
+|---|---:|---:|---:|---:|---:|
+| A0 global | 17 | 23 | 16,129 % | 0,32523 | 0,701 s |
+| **A1 Dense** | **20** | 26 | **15,210 %** | **0,30543** | **0,628 s** |
+| A2 AttnRes | 10 | 16 | 16,136 % | 0,32503 | 0,653 s |
+| K1 Object-KDA | 7 | 13 | 16,960 % | 0,34139 | 0,731 s |
+
+A1 es el único brazo promocionado. El screen de ocho épocas era demasiado
+corto: su mejor checkpoint aparece en la época 20. A0 no tuvo más cómputo; A1
+completó más épocas bajo la regla común. AttnRes y KDA no se añaden a la
+arquitectura final en su formulación actual.
+
+## 27.6 Resultado geométrico y Garl
+
+La geometría bbox causal train-only cubre 311/314 ventanas. Combinada con A1
+solo como fallback obtiene 14,790 % de error relativo macro, pero empeora el
+score compuesto de 0,30543 a 0,31144. No pasa el gate del 5 % y usa más contexto
+causal que A1.
+
+El port causal STRTTC resuelve 27/40 muestras y falla 13; las exitosas obtienen
+112,96 % de error relativo macro. La cobertura incompleta impide promoción.
+
+El screen Garl G0–G7 encuentra G5 RGBE-LHR early como mejor brazo corto
+(36,52 %), pero no reproduce aún las 50 épocas ni el pretraining por ramas del
+repositorio oficial. No se declara paridad.
+
+## 27.7 Siguiente decisión
+
+Grouped CV compara únicamente A0/A1. Usa una inicialización EventTubelet común
+desde cero (`-RandomControl`) para que el checkpoint SSL histórico no contamine
+folds cuya validación ya apareció en su pretraining. Si A1 mantiene la mejora
+en cinco folds, se repiten seeds 13 y 21; si no, se conserva A0.

@@ -5,14 +5,15 @@ Actualizado: 2026-07-30.
 Compatibilidad histórica: CPLA-high is diagnostic only; no se utiliza como
 test final ni como sustituto del Benchmark-10 sellado.
 
-Validación local del 30 de julio de 2026: `202 passed`, Ruff sin errores,
+Validación local del 30 de julio de 2026: `210 passed`, Ruff sin errores,
 validación del orquestador superada y export ONNX de OGE verificado
 numéricamente.
 
 ## Conclusión ejecutiva
 
-La implementación v6 ya permite una comparación justa, pero todavía no existe
-una mejora científicamente demostrada sobre `BASE`. Lo cerrado es:
+La confirmación matched demuestra que Dense Patch sí supera al control A0
+cuando se permite converger. No demuestra todavía superioridad sobre el
+resultado histórico completo ni SOTA oficial. Lo cerrado es:
 
 1. reproducción exacta del checkpoint histórico;
 2. separación entre el ancla histórica y el control matched;
@@ -22,8 +23,8 @@ una mejora científicamente demostrada sobre `BASE`. Lo cerrado es:
 6. orquestación Core/Garl sin colisión de resúmenes;
 7. early stopping y checkpointing acotado.
 
-Los resultados smoke son diagnósticos de integración. Los screens de 304/80
-ventanas y hasta ocho épocas son la próxima evidencia de promoción.
+El screen de ocho épocas era insuficiente para Dense: A1 alcanzó su mejor
+checkpoint en la época 20. AttnRes y KDA no mejoraron con el presupuesto largo.
 
 ## BASE histórico exacto
 
@@ -91,6 +92,31 @@ La comparación Garl incluye G0–G7: direct, LHR, early/late fusion y foregroun
 El backbone del screen es ResNet-50. El backbone compacto queda limitado a
 smoke.
 
+## Confirmación Core comparable
+
+Todos los brazos usaron 1.208 ventanas train y 314 validation, checkpoint BASE
+idéntico, máximo 40 épocas, batch 16 x acumulación 2, LR `3e-5`, weight decay
+`1e-3` y early stopping con mínimo 10 épocas y paciencia 6.
+
+| Variante | Mejor época | Completadas | Error rel. macro | Score | MAE macro | ms |
+|---|---:|---:|---:|---:|---:|---:|
+| A0 global | 17 | 23 | 16,129 % | 0,32523 | 0,701 s | 8,98 |
+| **A1 Dense** | **20** | 26 | **15,210 %** | **0,30543** | **0,628 s** | 17,15 |
+| A2 AttnRes | 10 | 16 | 16,136 % | 0,32503 | 0,653 s | 16,70 |
+| K1 Object-KDA | 7 | 13 | 16,960 % | 0,34139 | 0,731 s | 16,99 |
+
+Decisión: promover A1; no promover A2 ni K1. A1 mejora frente a A0 un 5,70 %
+en error relativo macro, 6,09 % en score y 10,45 % en MAE, pero cuesta 1,91
+veces la latencia.
+
+## Screen Garl local
+
+El screen ResNet-50 usa el mismo batch efectivo y las mismas actualizaciones
+por época que Core. El mejor brazo local fue G5 RGBE-LHR early con 36,52 % de
+error relativo macro. Ningún brazo se promueve aún: el protocolo público Garl
+entrena 50 épocas y construye late fusion desde ramas LHR preentrenadas; el
+screen corto solo sirve para descarte, no para afirmar paridad con el paper.
+
 ## Geometría y ego-motion
 
 Corregido:
@@ -107,6 +133,16 @@ La traslación necesita profundidad. La evaluación con distancia oficial EvTTC
 se etiqueta `translation_compensated_box_mixture_oracle`; no puede alimentar el
 modelo final. La variante desplegable necesitará profundidad predicha.
 
+La geometría causal de escala bbox, calibrada solo con train, cubre 311/314
+ventanas. El híbrido determinista geometría + fallback A1 obtiene 14,790 % de
+error relativo macro frente a 15,210 % de A1, pero su score empeora de 0,30543
+a 0,31144 por RMSE. No pasa el gate predeclarado del 5 %.
+
+El port causal trazable a STRTTC implementa NLTS, contornos, normal flow local,
+RANSAC y solver de tres parámetros. En el screen 200 ms resuelve 27/40 muestras
+y falla 13; las métricas de las exitosas son 112,96 % de error relativo macro.
+La cobertura incompleta se registra y el brazo queda rechazado.
+
 ## Datos
 
 - `datasets/evttc`: 32 secuencias públicas etiquetadas.
@@ -121,19 +157,17 @@ modelo final. La variante desplegable necesitará profundidad predicha.
 - no se materializa un cache global de voxels;
 - `best`, `last` y `weights_only` por run;
 - BF16, `pin_memory`, prefetch y workers persistentes;
-- microbatch 8 x acumulación 16 para Garl ResNet-50;
-- microbatch 1 x acumulación 128 para G7 foreground;
+- batch 24 para Garl ResNet-50 en Screen;
+- microbatch 4 x acumulación 6 para G7 foreground, batch efectivo 24;
 - teachers no cargados durante los screens.
 
 ## Próximos gates
 
-1. Screen Core histórico.
-2. Screen Garl ResNet-50.
-3. Promoción solo de brazos que superen el gate.
-4. Grouped CV de cinco folds, seed 7.
-5. Seeds 7, 13 y 21 para BASE y máximo dos finalistas.
-6. Módulos bbox-free solo si geometría bbox-GT supera BASE.
-7. Freeze y una inferencia final sobre Benchmark-10.
+1. Completar grouped CV de A0/A1, seed 7.
+2. Si A1 gana el CV, repetir A0/A1 con seeds 13 y 21.
+3. Repetir Garl con el presupuesto y pretraining por ramas del código oficial.
+4. Mantener módulos bbox-free bloqueados: la geometría no pasó su gate.
+5. Freeze y una inferencia final sobre Benchmark-10.
 
 ## Estado Git
 

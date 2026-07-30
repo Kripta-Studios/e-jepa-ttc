@@ -18,6 +18,9 @@ Smoke
 Screen
   304/80 ventanas, seed 7, hasta 8 épocas
 
+Confirmación matched
+  1.208/314 ventanas, hasta 40 épocas, early stopping compartido
+
 Grouped CV
   cinco folds completos, seed 7
 
@@ -34,10 +37,19 @@ Benchmark-10
 `A2_MATCHED_DENSE_ATTNRES` y `K1_OBJECT_KDA` comparten samples, inicialización,
 trainer y criterio de checkpoint.
 
+La confirmación histórica promueve únicamente A1. A0 y A1 se vuelven a
+comparar en grouped CV desde una inicialización aleatoria común explícita para
+no reutilizar un checkpoint SSL que haya visto eventos de las secuencias
+validadas. Esa prueba responde a la arquitectura; la confirmación histórica
+separada responde a la inicialización BASE.
+
 ## Comparación Garl
 
-G0–G7 usan el mismo cache Garl y un batch efectivo de 128. G6/G7 inicializan
+G0–G7 usan el mismo cache Garl y batch efectivo 24 en Screen. G6/G7 inicializan
 sus ramas desde los mejores checkpoints G3/G4 del mismo fold y seed.
+
+El screen local no reproduce todavía las 50 épocas del repositorio público y
+no se usa como claim de paridad.
 
 ## Métrica de selección
 
@@ -57,4 +69,6 @@ Desempate: peor secuencia, RMSE, variación entre seeds y latencia.
 - ninguna decisión se toma con Benchmark-10;
 - resultados smoke se etiquetan `integration_only`;
 - el oracle con distancia GT no compite como modelo desplegable;
+- una métrica calculada solo sobre éxitos debe informar también cobertura y
+  no puede compararse con candidatos de cobertura completa;
 - todo resultado debe señalar commit, config hash y manifest hash.

@@ -26,6 +26,16 @@ Height, area, affine y event contrast estiman inverse-TTC por objeto. La
 confianza depende de validez del track, soporte de eventos y condición del
 solver.
 
+Se distinguen dos familias:
+
+- escala bbox causal: regresión local sobre hasta 21 detecciones pasadas,
+  calibrada solo en train;
+- STRTTC event-only: NLTS, gradientes de contorno, normal flow por planos
+  locales, RANSAC y solver de tres parámetros.
+
+Los fallos geométricos se cuentan como falta de cobertura. No se eliminan para
+crear una métrica aparentemente mejor.
+
 ## Navegación
 
 La señal GNSS se transforma mediante extrínsecas calibradas. No se usa
@@ -36,3 +46,8 @@ La señal GNSS se transforma mediante extrínsecas calibradas. No se usa
 Toda promoción se decide por métricas macro de secuencia y gates predeclarados.
 Módulos complejos permanecen apagados hasta que el oracle anterior los
 justifique.
+
+La confirmación larga cambió la decisión del screen: A1 Dense se promueve
+porque su mejor época fue la 20, mientras A2 y K1 se detuvieron en 10 y 7 sin
+superarlo. Más épocas son útiles cuando la curva sigue mejorando, no como
+presupuesto uniforme ciego.

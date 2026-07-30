@@ -8,8 +8,11 @@ Estado al 30 de julio de 2026:
 
 - `BASE` histórico reproducido con predicciones idénticas byte a byte;
 - FlowMimic e inverse-TTC global rechazados por resultados negativos;
-- Dense Patch, AttnRes, Object-KDA, geometría y Garl implementados;
-- screens comparables Core/Garl pendientes de promoción científica;
+- confirmación matched de hasta 40 épocas: Dense Patch supera a A0;
+- AttnRes y Object-KDA no pasan el gate y no se combinan con el finalista;
+- geometría bbox causal y port STRTTC evaluados sin superar todavía el gate;
+- screen local Garl G0–G7 ejecutado, aún sin paridad con el protocolo de 50
+  épocas y pretraining por ramas del repositorio oficial;
 - eAP train-40 reservado para una fase posterior de pretraining sin TTC;
 - Benchmark-10 sellado y no abierto.
 
@@ -37,6 +40,26 @@ la comparación de arquitectura usa `A0_MATCHED_GLOBAL`, no reutiliza esta fila
 como si hubiera sido entrenada con la matriz nueva.
 
 No existe todavía un claim SOTA ni un resultado oficial de Benchmark-10.
+
+## Confirmación matched Core
+
+Los cuatro brazos recibieron el mismo checkpoint BASE, las mismas 1.208/314
+ventanas, máximo de 40 épocas, batch efectivo 32, optimizador y regla de early
+stopping. El número de épocas completadas puede variar únicamente por esa regla
+común.
+
+| Brazo | Mejor época | Épocas | Error rel. macro | MAE macro | ms/ventana |
+|---|---:|---:|---:|---:|---:|
+| A0 global | 17 | 23 | 16,129 % | 0,701 s | 8,98 |
+| **A1 Dense/Patch Policy** | **20** | 26 | **15,210 %** | **0,628 s** | 17,15 |
+| A2 + AttnRes | 10 | 16 | 16,136 % | 0,653 s | 16,70 |
+| K1 Object-KDA | 7 | 13 | 16,960 % | 0,731 s | 16,99 |
+
+El screen de ocho épocas produjo un falso orden para A1: la representación
+densa converge más lentamente. Con entrenamiento suficiente, A1 mejora el
+error relativo frente a A0 un 5,70 % y el MAE un 10,45 %, a costa de una
+latencia 1,91 veces mayor. AttnRes y KDA no se promocionan en su formulación
+actual.
 
 ## Instalación
 
@@ -149,9 +172,15 @@ powershell -ExecutionPolicy Bypass -File `
   -Protocol GroupedCV `
   -AllFolds `
   -Seed 7 `
+  -RandomControl `
   -Resume `
-  -Variants A0_MATCHED_GLOBAL,K1_OBJECT_KDA
+  -Variants A0_MATCHED_GLOBAL,A1_MATCHED_DENSE_BLOCK
 ```
+
+`-RandomControl` evita reutilizar en CV un checkpoint SSL histórico que ya vio
+eventos de algunas secuencias de validación. Es un control de arquitectura
+desde inicialización común; la confirmación anterior conserva por separado el
+resultado inicializado desde BASE.
 
 Solo BASE y un máximo de dos finalistas se repiten con:
 
@@ -171,8 +200,19 @@ No se ejecuta el producto cartesiano de módulos, folds y seeds.
 - `A4_GT_GEOMETRY`: oracle de bbox GT con height/area/affine/event contrast.
 - `G0`–`G7`: direct, LHR, early/late fusion y foreground de Garl-TTC.
 
-TargetQuery, máscara predicha, refiner, router, residual e incertidumbre no se
-promueven hasta que la geometría bbox-GT supere el gate frente a BASE.
+Estado de promoción:
+
+- A1 Dense/Patch Policy: promovido a grouped CV;
+- A2 AttnRes y K1 Object-KDA: rechazados por la confirmación larga;
+- TargetQuery, máscara predicha, refiner, router, residual e incertidumbre:
+  bloqueados.
+
+La geometría bbox causal produce predicción válida en 311/314 ventanas y baja
+el error relativo macro de A1 de 15,210 % a 14,790 % al usar A1 como fallback,
+pero empeora el score compuesto de 0,3054 a 0,3114. No alcanza el gate del 5 %.
+El port causal, trazable al código público STRTTC, solo resuelve 27/40 muestras
+del screen y obtiene 112,96 % de error relativo macro en las exitosas; tampoco
+se promociona.
 
 ## Ego-motion
 

@@ -1,6 +1,6 @@
 # PLAN_v6.md — OGE-JEPA-TTC: baseline Garl-TTC con datos locales, pretraining eAP-40 y evaluación EvTTC sellada
 
-**Estado:** implementación v6 en verificación: BASE histórico reproducido exactamente, matriz Core/Garl aislada por etapa, screens comparables pendientes y Benchmark-10 sellado
+**Estado:** implementación v6 en selección: BASE histórico reproducido exactamente, A1 Dense promovido tras confirmación matched, AttnRes/KDA/geometría rechazados por sus gates actuales, grouped CV A0/A1 en curso y Benchmark-10 sellado
 **Fecha:** 30 de julio de 2026
 **Repositorio base:** `Kripta-Studios/e-jepa-ttc`
 **Rama de referencia:** `scientific-recovery-v3-hardening`
@@ -4089,3 +4089,64 @@ Los smokes de dos épocas solo validan integración. La promoción requiere scre
 dos finalistas. TargetQuery, máscaras predichas, refiner, router, residual e
 incertidumbre permanecen bloqueados hasta que la geometría bbox-GT supere el
 gate frente a BASE.
+
+## 26.4 Resultado de los screens y confirmación larga
+
+El screen Core de ocho épocas no se usa ya para decidir Dense porque fue
+demasiado corto. La confirmación mantiene idénticos checkpoint inicial,
+muestras, batch efectivo, optimizador, máximo de 40 épocas y early stopping:
+
+| Brazo | Mejor época | Épocas completadas | Error rel. macro | Score | MAE macro |
+|---|---:|---:|---:|---:|---:|
+| A0 global | 17 | 23 | 16,129 % | 0,32523 | 0,701 s |
+| **A1 Dense** | **20** | 26 | **15,210 %** | **0,30543** | **0,628 s** |
+| A2 AttnRes | 10 | 16 | 16,136 % | 0,32503 | 0,653 s |
+| K1 Object-KDA | 7 | 13 | 16,960 % | 0,34139 | 0,731 s |
+
+Decisión:
+
+```text
+A1 Dense/Patch Policy  → promover a grouped CV
+A2 AttnRes             → no combinar; no mejora A1
+K1 Object-KDA          → no combinar; no mejora A1
+```
+
+A1 necesita 20 épocas para alcanzar su mejor checkpoint; por eso podía parecer
+peor a ocho épocas. A0 no recibió más cómputo: A1 completó tres épocas más por
+la misma regla de early stopping. A1 mejora 5,70 % el error relativo y 10,45 %
+el MAE frente a A0, con una latencia 1,91 veces mayor.
+
+El screen Garl ResNet-50 G0–G7 se ejecutó con batch efectivo 24. G5 RGBE-LHR
+early fue el mejor brazo local con 36,52 % de error relativo macro. No es
+paridad Garl: el repositorio público usa 50 épocas y late fusion inicializada
+desde ramas LHR unimodales preentrenadas.
+
+## 26.5 Gate geométrico
+
+La expansión causal de bbox con ventana 21 y calibración log-afín train-only
+produce 311/314 predicciones. El fallback determinista a A1 en las tres filas
+inválidas obtiene:
+
+```text
+A1 Dense                       rel 15,210 %   score 0,30543
+geometría causal + fallback    rel 14,790 %   score 0,31144
+```
+
+Mejora ligeramente el error relativo, pero no alcanza el 5 % y empeora el
+score por RMSE. Además usa hasta 21 cajas pasadas frente a tres frames de A1.
+No desbloquea TargetQuery, máscaras predichas, refiner, router, residual o
+uncertainty.
+
+El port causal trazable al código público STRTTC implementa NLTS, contornos,
+normal flow local, RANSAC y solver de tres parámetros. En el screen de 40
+muestras resuelve 27 y falla 13; las exitosas tienen 112,96 % de error relativo
+macro. La cobertura y los fallos se conservan, por lo que tampoco se promociona.
+
+## 26.6 Grouped CV sin contaminación SSL
+
+Solo A0 y A1 pasan al CV. Mientras no existan checkpoints SSL entrenados
+exclusivamente con el train de cada fold, ambos se inicializan desde los mismos
+pesos EventTubelet aleatorios mediante `-RandomControl`. Esto evita que un
+checkpoint SSL histórico haya visto eventos de una secuencia usada como
+validation. La confirmación con el BASE auditado y el CV desde cero responden a
+preguntas distintas y se reportan por separado.

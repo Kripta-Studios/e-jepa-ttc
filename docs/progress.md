@@ -13,6 +13,18 @@
 - añadida compensación traslacional oracle con profundidad declarada;
 - separados los outputs Core/Garl;
 - actualizado el protocolo de almacenamiento;
-- screens reales pendientes.
+- ejecutado screen Garl ResNet-50 G0–G7;
+- ejecutada confirmación Core de hasta 40 épocas;
+- promovido A1 Dense/Patch Policy: 15,210 % frente a 16,129 % de A0;
+- rechazados A2 AttnRes y K1 Object-KDA en su forma actual;
+- implementado y probado un port causal trazable al código STRTTC;
+- evaluada geometría bbox causal con calibración train-only y fallback A1;
+- iniciada la confirmación grouped-CV A0/A1 desde inicialización común sin
+  contaminación SSL entre folds;
+- `210 passed` y Ruff limpio.
+
+El screen corto había dado un orden engañoso: A1 necesitó 20 épocas para su
+mejor checkpoint. La geometría bbox mejora algo el error relativo, pero no el
+score compuesto; STRTTC tiene cobertura 27/40 y no se promueve.
 
 El Benchmark-10 permanece sellado.
