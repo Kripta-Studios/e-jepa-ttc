@@ -1154,6 +1154,15 @@ def _jepa_loss(
         "context_embedding_std": float(
             context_for_variance.detach().float().std(dim=0, unbiased=False).mean().cpu()
         ),
+        "context_collapsed_dimension_fraction": float(
+            (
+                context_for_variance.detach().float().std(dim=0, unbiased=False)
+                < 1e-3
+            )
+            .float()
+            .mean()
+            .cpu()
+        ),
         "pred_embedding_std": float(
             pred_for_variance.detach().float().std(dim=0, unbiased=False).mean().cpu()
         ),

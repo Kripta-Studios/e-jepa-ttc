@@ -292,8 +292,29 @@ def read_carla_event_window(
         raise ValueError("CARLA event windows require 0 <= start_us < end_us.")
     events_path, _ = resolve_carla_sequence_paths(root, sequence)
     events = np.load(events_path, mmap_mode="r", allow_pickle=False)
+    return _carla_event_window_from_array(
+        events,
+        sequence,
+        start_us=start_us,
+        end_us=end_us,
+        source=events_path,
+    )
+
+
+def _carla_event_window_from_array(
+    events: np.ndarray,
+    sequence: CarlaLoomingSequence,
+    *,
+    start_us: int,
+    end_us: int,
+    source: Path,
+) -> EventBatch:
+    """Slice an already-open CARLA mmap without reopening it per horizon."""
+
+    if start_us < 0 or end_us <= start_us:
+        raise ValueError("CARLA event windows require 0 <= start_us < end_us.")
     if events.ndim != 1 or events.dtype != CARLA_LOOMING_EVENT_DTYPE:
-        raise ValueError(f"Unexpected CARLA event array in {events_path}.")
+        raise ValueError(f"Unexpected CARLA event array in {source}.")
     timestamps_ms = events["t"]
     left = int(np.searchsorted(timestamps_ms, start_us / 1000.0, side="left"))
     right = int(np.searchsorted(timestamps_ms, end_us / 1000.0, side="left"))
@@ -380,12 +401,15 @@ def build_carla_window_sample(
         raise ValueError("Context and future window durations must be positive.")
     if any(horizon < 0 for horizon in horizons_ms):
         raise ValueError("Future horizons must be non-negative.")
+    events_path, _ = resolve_carla_sequence_paths(root, sequence)
+    events = np.load(events_path, mmap_mode="r", allow_pickle=False)
     reference_us = int(reference_ms) * 1000
-    context = read_carla_event_window(
-        root,
+    context = _carla_event_window_from_array(
+        events,
         sequence,
         start_us=reference_us - context_ms * 1000,
         end_us=reference_us,
+        source=events_path,
     )
     available_end_ms = _coverage_end_ms(sequence)
     future: dict[int, EventBatch] = {}
@@ -393,11 +417,12 @@ def build_carla_window_sample(
         future_start_ms = int(reference_ms) + int(horizon_ms)
         future_end_ms = future_start_ms + future_window_ms
         if future_end_ms <= available_end_ms:
-            future[horizon_ms] = read_carla_event_window(
-                root,
+            future[horizon_ms] = _carla_event_window_from_array(
+                events,
                 sequence,
                 start_us=future_start_ms * 1000,
                 end_us=future_end_ms * 1000,
+                source=events_path,
             )
     ttc_seconds = (
         (sequence.metadata.t_end_ms - reference_ms) / 1000.0

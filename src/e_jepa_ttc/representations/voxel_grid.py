@@ -57,8 +57,22 @@ def encode_voxel_grid(
 
     lower_channels = lower + polarity_offset
     upper_channels = upper + polarity_offset
-    np.add.at(voxel, (lower_channels, events.y, events.x), signed_value * lower_weight)
-    np.add.at(voxel, (upper_channels, events.y, events.x), signed_value * upper_weight)
+    # ``np.add.at`` serializes repeated-index updates and dominates on dense
+    # real event windows. A single flattened ``bincount`` is exactly the same
+    # weighted histogram while using NumPy's optimized reduction path.
+    pixels = events.height * events.width
+    spatial_indices = events.y.astype(np.int64) * events.width + events.x.astype(np.int64)
+    lower_indices = lower_channels.astype(np.int64) * pixels + spatial_indices
+    upper_indices = upper_channels.astype(np.int64) * pixels + spatial_indices
+    flat_indices = np.concatenate((lower_indices, upper_indices))
+    flat_weights = np.concatenate(
+        (signed_value * lower_weight, signed_value * upper_weight)
+    )
+    voxel = np.bincount(
+        flat_indices,
+        weights=flat_weights,
+        minlength=channels * pixels,
+    ).reshape(channels, events.height, events.width)
 
     if normalize:
         voxel = robust_normalize(voxel)
