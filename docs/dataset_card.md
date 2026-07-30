@@ -152,8 +152,20 @@ El adaptador:
 - interpreta el `diameter_object=None` inseguro como campo ausente;
 - usa mmap y búsqueda binaria para ventanas half-open;
 - convierte milisegundos a microsegundos y polaridad 0/1 a -1/+1;
-- limita por defecto a 64 ventanas por secuencia;
+- limita el perfil SSL full a 16 ventanas espaciadas por secuencia;
 - nunca usa `vel` o `diameter_object` como entrada EvTTC-incompatible.
+
+Con contexto 100 ms, stride 50 ms y horizontes 50/100/250 ms, el perfil full
+materializa de forma lazy 12.020/4.457/4.297 pares
+train/validation/test. No existe una segunda copia de los eventos ni un cache
+voxel global. Los 11 canales auxiliares de BASE son ceros explícitos durante
+CARLA para conservar compatibilidad de shape sin inventar navegación o
+geometría.
+
+El test CARLA evalúa predicción latente sobre secuencias sintéticas no vistas;
+no contiene una cabeza TTC supervisada y no se reporta como error TTC. El
+destino cross-domain se mide con grouped CV EvTTC mediante
+`scripts/run_carla_evttc_complete.py`.
 
 CARLA es útil para pretraining de eventos, expansión y riesgo, pero no para
 entrenar directamente una cabeza bbox-ROI: no contiene cajas temporales. Su

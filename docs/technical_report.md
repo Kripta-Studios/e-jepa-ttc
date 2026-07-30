@@ -344,11 +344,26 @@ solo hasta aproximadamente 3,85 s. Por tanto sirve para pretraining de
 percepción, expansión y riesgo, no para sustituir la supervisión o el benchmark
 EvTTC.
 
+El loader JEPA lazy genera 12.020 pares train, 4.457 validation y 4.297 test
+con un máximo de 16 ventanas por secuencia. Un smoke de dos épocas redujo la
+loss de validation de 0,02563 a 0,02247 sin dimensiones colapsadas. La
+evaluación de contrato sobre 16 pares del test sintético dio loss 0,02195;
+esta cifra no es TTC y no se usa para seleccionar arquitectura EvTTC.
+
+En probes de 640–960 observaciones, batch 24/acumulación 2/ocho workers fue el
+perfil más rápido (8,46 observaciones/s, ~688 MiB peak VRAM). Batch
+16/32/48/96 y perfiles de 6/12 workers no lo superaron por contención de
+lectura/voxelización.
+El full usa BF16, AdamW fused, warm-up/cosine, EMA, clipping y early stopping
+8/6 con máximo 30 épocas. Se proyectan 32,5 min por época y un máximo de
+16,2 h. La transferencia grouped-CV a EvTTC aún no tiene resultado.
+
 ## 11. Eficiencia y almacenamiento
 
 - caches comprimidos y acotados;
 - sin cache global de voxels;
 - CARLA leído por ventanas mmap, sin cache voxel ni segunda copia;
+- logs JSONL, best/last y resume atómico para evitar repetir épocas CARLA;
 - sin extracción completa de TAR RGB;
 - SAM almacenado como máscara comprimida;
 - DINO reducido a tokens objeto/borde;
@@ -367,6 +382,7 @@ EvTTC.
 - compensación traslacional final depende de profundidad predicha;
 - bbox-free no está promocionado;
 - eAP está completo pero aún no pasó el piloto SSL contra EvTTC;
+- CARLA SSL aún no ha demostrado mejora TTC cross-domain;
 - family-OOD muestra degradación material;
 - no existe evaluación Benchmark-10 oficial ni claim SOTA.
 

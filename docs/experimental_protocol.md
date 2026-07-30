@@ -7,7 +7,8 @@ Actualizado: 2026-07-30.
 - desarrollo: EvTTC-32;
 - selección: split histórico para screen y grouped CV para confirmación;
 - externo: Benchmark-10 sellado;
-- pretraining futuro: eAP train-40 sin TTC.
+- pretraining externo activo: CARLA DVS Looming sin usar TTC/velocidad/diámetro;
+- pretraining futuro condicionado a gate: eAP train-40 sin TTC.
 
 ## Jerarquía de evidencia
 
@@ -23,6 +24,9 @@ Confirmación matched
 
 Grouped CV
   cinco folds completos × seeds 7/13/21, A0/A1
+
+CARLA SSL transfer
+  pretrain train/validation CARLA; A0 EvTTC en los mismos 5 folds × 3 seeds
 
 Freeze final
   arquitectura por OOF; perfil y seed por validation familiar
@@ -47,6 +51,25 @@ Roles que no deben mezclarse:
 El holdout familiar ya figura como diagnóstico reutilizado en el protocolo de
 recovery; es out-of-family respecto a su entrenamiento, pero no debe llamarse
 test oficial virgen. Benchmark-10 conserva esa función externa.
+
+Grouped CV agrupa secuencias completas, no ventanas. Cada una de las 32
+secuencias aparece OOF una vez por seed; ningún fragmento de esa secuencia
+entra en el entrenamiento del fold que la evalúa. La incertidumbre se resume
+entre seeds y el bootstrap se agrupa por secuencia.
+
+## Protocolo CARLA → EvTTC
+
+CARLA usa 803/298/294 secuencias train/validation/test con bloques de IDs
+disjuntos. El encoder JEPA se selecciona por loss de validation, con máximo 30
+épocas y early stopping mínimo 8/paciencia 6. El test CARLA se abre una vez
+después de elegir `best` y solo mide predicción latente sintética.
+
+La prueba científica es la transferencia: el `best` CARLA inicializa A0 y se
+fine-tunea sobre cada fold EvTTC exactamente como el control aleatorio. Ambos
+brazos comparten muestras, cabeza común, trainer, folds y seeds. No se ajusta
+ningún hiperparámetro con el test CARLA ni con Benchmark-10. El gate requiere
+mejora OOF consistente y bootstrap pareado por secuencia; loss SSL CARLA no es
+una métrica TTC.
 
 ## Comparación Core
 

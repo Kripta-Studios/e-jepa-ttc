@@ -134,9 +134,15 @@ superan el requisito de contexto de 100 ms. El split bloqueado usa 803/298/294
 secuencias train/validation/test. Es out-of-sample dentro del simulador, no OOD
 real; su utilidad se decidirá por transferencia CARLA→EvTTC.
 
+El smoke JEPA de dos épocas redujo validation loss de 0,02563 a 0,02247, sin
+colapso. Un holdout de contrato de 16 pares sintéticos obtuvo 0,02195. Son
+métricas de predicción latente e integración, no error TTC. El perfil full
+genera 12.020/4.457/4.297 pares, usa BF16, batch 24, acumulación 2, ocho
+workers y early stopping 8/6; la transferencia EvTTC permanece pendiente.
+
 Los próximos pasos son:
 
-1. smoke SSL de CARLA y fine-tuning EvTTC idéntico por fold;
+1. completar CARLA SSL y fine-tuning EvTTC idéntico por fold;
 2. implementar expansión/FoE explícita y un residual acotado sobre A0;
 3. piloto SSL eAP solo si añade información a la transferencia CARLA;
 4. Garl con 50 épocas y pretraining por ramas;

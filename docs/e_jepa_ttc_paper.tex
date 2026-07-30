@@ -336,6 +336,15 @@ at most \texttt{best},
 \texttt{last}, and \texttt{weights\_only}. Core and Garl caches are compressed
 and stage-specific.
 
+The CARLA full profile creates 12,020/4,457/4,297 lazy train/validation/test
+pairs, uses BF16, batch 24 with accumulation 2, eight persistent workers,
+fused AdamW, warm-up/cosine decay, EMA, clipping, and 8/6 early stopping with
+a 30-epoch maximum. The measured best probe processed 8.46 pair observations
+per second; batch 16/32/48/96 and 6/12-worker profiles did not improve it
+because CPU/SSD
+voxelization, rather than VRAM, was limiting. This projects to 32.5 minutes per
+epoch and 16.2 hours at the hard maximum.
+
 \section{Limitations and next steps}
 
 Dense Patch improves one matched split but loses completed grouped-CV
@@ -347,8 +356,11 @@ official TTC labels. CARLA is synthetic, quantized at 10~ms, lacks temporal
 boxes, and provides positive TTC only to approximately 3.85~s. Benchmark-10
 has not been opened.
 
-The next actions are a CARLA SSL smoke followed by identical fold-local EvTTC
-fine-tuning, an explicit expansion/FoE path with a bounded residual, and only
+The two-epoch CARLA SSL smoke reduced validation loss from 0.02563 to 0.02247
+without collapsed dimensions. A 16-pair synthetic test contract produced
+0.02195. These are latent prediction diagnostics, not TTC metrics. The next
+actions are full CARLA SSL followed by identical fold-local EvTTC fine-tuning,
+an explicit expansion/FoE path with a bounded residual, and only
 then a frozen external inference if the OOF gate is passed. These restrictions
 preclude a current SOTA or safety claim.
 

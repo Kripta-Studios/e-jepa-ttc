@@ -21,6 +21,8 @@ Estado al 30 de julio de 2026:
   pretraining sin TTC oficial;
 - CARLA DVS Looming verificado: 1.406 secuencias, 1.395 utilizables con contexto
   de 100 ms y loader mmap sin duplicar los 71,64 GiB extraídos;
+- smoke JEPA CARLA completado: validation loss `0,02563 → 0,02247`, sin
+  dimensiones colapsadas; la transferencia TTC a EvTTC todavía está pendiente;
 - Benchmark-10 sellado y no abierto.
 
 Documentación:
@@ -47,6 +49,13 @@ la comparación de arquitectura usa `A0_MATCHED_GLOBAL`, no reutiliza esta fila
 como si hubiera sido entrenada con la matriz nueva.
 
 No existe todavía un claim SOTA ni un resultado oficial de Benchmark-10.
+
+`Grouped CV` significa validación cruzada agrupada: cada fold retiene
+secuencias/grupos completos, entrena con los restantes y produce predicciones
+OOF exclusivamente para el grupo no visto. Los cinco folds cubren EvTTC-32 sin
+partir ventanas correlacionadas de una secuencia entre train y validation. Las
+tres seeds miden variación de optimización; las ventanas no se tratan como
+réplicas estadísticas independientes.
 
 ## Confirmación matched Core
 
@@ -331,6 +340,51 @@ todos los brazos de una comparación. Los workers se autodetectan con máximo
 El wrapper PowerShell anterior sigue disponible y acepta
 `-ExecutionProfile Throughput`; su default continúa siendo `Matched`.
 
+## Pipeline completo CARLA → EvTTC
+
+El punto de entrada recomendado organiza el pretraining SSL, sus holdouts, el
+control EvTTC y la transferencia sobre los mismos cinco folds y tres seeds:
+
+```powershell
+# Revisa rutas, conteos y comandos; no entrena.
+.\scripts\run_carla_evttc_complete.ps1 -Profile Full -DryRun
+
+# Entrenamiento completo, evaluación y transferencia; reanuda lo ya terminado.
+.\scripts\run_carla_evttc_complete.ps1 -Profile Full -Resume
+```
+
+Alternativa Python portable:
+
+```powershell
+.\.venv\Scripts\python.exe scripts/run_carla_evttc_complete.py `
+  --profile full --stages all --resume
+```
+
+El flujo no abre Benchmark-10. Produce:
+
+```text
+artifacts/runs/carla_jepa_full_seed42_v1/
+  history.jsonl
+  metrics.json
+  carla_jepa_encoder_best.pt
+  carla_jepa_encoder_last.pt
+  resume.pt                         # solo mientras la corrida está incompleta
+  validation_evaluation.json
+  test_evaluation.json
+artifacts/runs/evttc32_carla_ssl_transfer_v1/core/
+  fold-*/A0_MATCHED_GLOBAL/seed-*/
+  aggregate.json
+artifacts/runs/carla_evttc_complete_v1/
+  logs/*.log
+  orchestration_status.json
+artifacts/metrics/evttc_a0_carla_ssl_transfer_v1.json
+```
+
+El comparador final falla si control y transferencia no comparten samples,
+cabeza común, trainer, folds y seeds. Reporta victorias pareadas y bootstrap
+OOF por secuencia. Un test CARLA favorable solo demuestra predicción latente
+dentro del simulador; la mejora TTC debe aparecer en grouped CV EvTTC.
+
 ## Papel de eAP-40
 
 `E:\eAP_dataset\data\train` no contiene TTC oficial. Por tanto, eAP-40 solo
@@ -367,6 +421,51 @@ CARLA no reemplaza EvTTC: su reloj efectivo está cuantizado a 10 ms, el TTC
 positivo llega solo hasta unos 3,85 s y no ofrece bbox temporales. Se usará para
 pretraining de percepción/looming y clasificación de riesgo; las secuencias
 negativas llevan TTC censurado y nunca una etiqueta de regresión inventada.
+
+Comandos directos para depurar cada fase:
+
+```powershell
+# Conteo exacto, sin leer los 71,64 GiB ni reservar GPU.
+.\.venv\Scripts\python.exe scripts/pretrain_carla_jepa.py `
+  --profile full --dry-run
+
+# Smoke de contrato.
+.\.venv\Scripts\python.exe scripts/pretrain_carla_jepa.py `
+  --profile smoke --output artifacts/runs/carla_jepa_smoke_seed42_v1
+
+# Full; repetir con --resume después de una interrupción.
+.\.venv\Scripts\python.exe scripts/pretrain_carla_jepa.py `
+  --profile full --output artifacts/runs/carla_jepa_full_seed42_v1
+
+# Holdout CARLA sintético con el best seleccionado solo por validation.
+.\.venv\Scripts\python.exe scripts/evaluate_carla_jepa.py `
+  --checkpoint artifacts/runs/carla_jepa_full_seed42_v1/carla_jepa_encoder_best.pt `
+  --role test `
+  --output artifacts/runs/carla_jepa_full_seed42_v1/test_evaluation.json
+
+# Transferencia aislada a EvTTC-32, 5 folds × 3 seeds.
+.\.venv\Scripts\python.exe scripts/run_evttc_final_pipeline.py compare `
+  --variants A0_MATCHED_GLOBAL --folds 0 1 2 3 4 --seeds 7 13 21 `
+  --base-initialization external_ssl `
+  --base-encoder-checkpoint artifacts/runs/carla_jepa_full_seed42_v1/carla_jepa_encoder_best.pt `
+  --run-root artifacts/runs/evttc32_carla_ssl_transfer_v1/core --resume
+```
+
+El perfil full usa BF16, batch 24, acumulación 2, ocho workers persistentes,
+prefetch 2, AdamW fused, warm-up + cosine decay, clipping, EMA y early stopping
+(mínimo 8 épocas, paciencia 6, máximo 30). Mantiene 16 ventanas espaciadas
+por secuencia: 12.020 pares train, 4.457 validation y 4.297 test. Guarda `best`
+por loss de validation, `last` y un `resume` atómico con optimizador, scheduler,
+scaler y RNG.
+
+En este host el mejor probe fue batch 24/acumulación 2/8 workers: `8,46`
+observaciones de pares/s y unos 688 MiB de VRAM. Batch 16/32/48/96 y perfiles
+de 6/12 workers fueron iguales o más lentos por contención CPU/SSD; llenar la
+VRAM no maximiza throughput.
+La proyección es 32,5 min/época, hasta 16,2 h si consume las 30 épocas y
+aproximadamente 8,5 min para el test CARLA completo. El smoke observado redujo
+validation loss de `0,02563` a `0,02247`; su test de contrato sobre 16 pares dio
+`0,02195`, sin colapso. Es verificación de integración, no métrica TTC.
 
 ## Arquitecturas bajo gate
 

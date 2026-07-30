@@ -4229,3 +4229,66 @@ uv run --no-sync python scripts/prepare_carla_looming.py `
   --manifest data/manifests/carla_dvs_looming_v1.json `
   --split data/splits/carla_dvs_looming_blocked_v1.json
 ```
+
+## 26.9 Enmienda ejecutada: entrenamiento y transferencia CARLA reanudables
+
+El brazo externo ya tiene una ruta cerrada de ejecución. El encoder
+EventTubelet de 21 canales se preentrena con predicción JEPA densa futura; los
+diez canales de eventos son reales y los once auxiliares se fijan a cero para
+no inventar navegación o geometría. No se lee ninguna etiqueta TTC, clase de
+colisión, velocidad ni diámetro.
+
+Perfil full congelado para el primer gate:
+
+```text
+contexto / stride                   100 / 50 ms
+horizontes                          50, 100, 250 ms
+ventana target                      100 ms
+máximo ventanas por secuencia       16
+pares train / validation / test     12.020 / 4.457 / 4.297
+resolución / bins                   160x90 / 5
+batch / acumulación                24 / 2
+workers / prefetch                  8 / 2
+precisión                           BF16
+optimización                        AdamW fused, warm-up + cosine, clip 1,0
+target encoder                      EMA 0,99 → 0,9999
+early stopping                      mínimo 8, paciencia 6, máximo 30
+```
+
+Los probes medidos seleccionan batch 24/acumulación 2/ocho workers con 8,46
+observaciones/s. Batch 16/32/48/96 y seis/doce workers no lo superaron porque el
+cuello está en lectura/voxelización CPU/SSD, no en capacidad VRAM. La
+proyección es 32,5 min por época y 16,2 h al máximo. El smoke de dos épocas
+bajó validation loss de 0,02563 a 0,02247 sin colapso. Un test de contrato de
+16 pares produjo 0,02195; ambas son losses SSL, no error TTC.
+
+Artefactos obligatorios:
+
+```text
+history.jsonl
+metrics.json firmado
+carla_jepa_encoder_best.pt
+carla_jepa_encoder_last.pt
+resume.pt atómico durante ejecución
+validation_evaluation.json
+test_evaluation.json
+logs por etapa
+orchestration_status.json
+```
+
+El checkpoint externo solo se acepta en EvTTC si coincide el hash del split,
+usa EventTubelet/21 canales/5 bins, fue seleccionado por validation y declara
+falso para TTC, colisión, velocidad, diámetro y Benchmark-10. La comparación
+CARLA→EvTTC usa A0 en los mismos cinco folds y seeds 7/13/21 que el control.
+Se auditan samples, cache, cabeza común y trainer; la inferencia se agrega OOF
+y el bootstrap se agrupa por secuencia.
+
+Comando canónico:
+
+```powershell
+.\scripts\run_carla_evttc_complete.ps1 -Profile Full -Resume
+```
+
+El pipeline completo no autoriza abrir Benchmark-10. El siguiente gate solo
+pregunta si la inicialización CARLA mejora A0 OOF de manera consistente; un
+buen test sintético CARLA por sí solo no promueve el modelo.

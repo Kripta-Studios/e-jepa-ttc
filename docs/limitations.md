@@ -19,6 +19,11 @@
 - El router puede memorizar familias con solo 32 secuencias.
 - eAP train-40 está completo, pero no ofrece TTC oficial; su pseudo-TTC solo
   cubre el 24,24 % de las filas y no es ground truth.
+- CARLA es sintético, está cuantizado a 10 ms, carece de bbox temporales y su
+  TTC positivo llega solo a ~3,85 s. El smoke SSL aprende sin colapso, pero no
+  demuestra mejora TTC hasta completar la transferencia grouped-CV a EvTTC.
+- La preparación CARLA está limitada por lectura/voxelización CPU/SSD; aumentar
+  batch o workers llenó más VRAM pero redujo el throughput medido.
 - Family-OOD degrada el score un 85,5 %, el error relativo un 111,4 % y el MAE
   un 48,8 % frente a validation.
 - El perfil throughput es 4,02× más rápido en entrenamiento, pero empeora el

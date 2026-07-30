@@ -51,6 +51,31 @@ weights_only.pt
 
 ## Comandos
 
+### Orquestador completo CARLA → EvTTC
+
+```powershell
+# Plan exacto sin entrenamiento.
+.\scripts\run_carla_evttc_complete.ps1 -Profile Full -DryRun
+
+# CARLA SSL + validation/test sintéticos + A0 control + transferencia OOF.
+.\scripts\run_carla_evttc_complete.ps1 -Profile Full -Resume
+```
+
+`--resume`/`-Resume` omite etapas con artefactos completos y restaura CARLA
+desde `resume.pt` cuando existe. Cada subprocess escribe un `.log`; el estado,
+comandos, hardware y duraciones quedan en
+`artifacts/runs/carla_evttc_complete_v1/orchestration_status.json`. Los runs
+EvTTC guardan su propio `summary.json`, predicciones OOF y checkpoints. El
+pipeline compara solamente `A0_MATCHED_GLOBAL` para medir el efecto de la
+inicialización; no reabre la búsqueda arquitectónica.
+
+El resultado final se regenera con
+`scripts/compare_evttc_initializations.py`. Ese comparador exige igualdad de
+fold/seed, selección de muestras, cache, cabeza común y trainer, y calcula
+bootstrap por secuencia. Benchmark-10 permanece sellado.
+
+### EvTTC
+
 Ruta automatizada y cross-platform:
 
 ```powershell
@@ -160,6 +185,21 @@ En la ejecución final, throughput redujo el tiempo agregado de tres seeds de
 1.653 s a 411 s (4,02×), pero empeoró el score medio de 0,30400 a 0,34139.
 Por ello se conserva para iteración y matched para el candidato de precisión.
 
+Tiempos medidos, no estimaciones del artículo:
+
+```text
+EvTTC A0 grouped CV, 5 folds × 3 seeds     1,324 h
+EvTTC A1 grouped CV, 5 folds × 3 seeds     2,095 h
+A0 + A1, 30 runs                              3,419 h
+CARLA JEPA full, por época (proyección)       32,5 min
+CARLA JEPA full, máximo 30 épocas            16,2 h
+CARLA test sintético completo (proyección)     8,5 min
+```
+
+La transferencia A0 de una seed sobre cinco folds requiere aproximadamente
+0,4–0,7 h; las tres seeds son del orden de 1,3 h si se ejecutan. CARLA puede
+terminar antes por early stopping; el intervalo operativo prudente es 8–16 h.
+
 ## eAP sin TTC
 
 eAP train-40 está completo: 40 secuencias, 216 archivos y 536,64 GiB. Puede
@@ -207,10 +247,39 @@ Get-FileHash `
 # 21A3E72A1C1D9C441A7426393F4E545F
 ```
 
-La etapa de entrenamiento CARLA debe consumir el loader mmap, respetar el
-split anterior y registrar por separado TTC positivo y riesgo de negativos.
-No debe usar `vel` ni `diameter_object` como features, materializar un cache
-voxel global ni presentar el test sintético como OOD real.
+Entrenamiento y evaluación directa:
+
+```powershell
+.\.venv\Scripts\python.exe scripts/pretrain_carla_jepa.py `
+  --profile full --dry-run
+
+.\.venv\Scripts\python.exe scripts/pretrain_carla_jepa.py `
+  --profile full --output artifacts/runs/carla_jepa_full_seed42_v1
+
+# Solo si existe resume.pt de una interrupción:
+.\.venv\Scripts\python.exe scripts/pretrain_carla_jepa.py `
+  --profile full --output artifacts/runs/carla_jepa_full_seed42_v1 --resume
+
+.\.venv\Scripts\python.exe scripts/evaluate_carla_jepa.py `
+  --checkpoint artifacts/runs/carla_jepa_full_seed42_v1/carla_jepa_encoder_best.pt `
+  --role test `
+  --output artifacts/runs/carla_jepa_full_seed42_v1/test_evaluation.json
+```
+
+El perfil auditado consume mmap, respeta el split, no usa TTC, colisión,
+`vel` ni `diameter_object` como features y no materializa un cache voxel
+global. Usa 12.020/4.457/4.297 pares train/validation/test; BF16, batch 24,
+acumulación 2, ocho workers, prefetch 2, AdamW fused, clipping, EMA,
+warm-up/cosine y early stopping 8/6 con máximo 30 épocas. Guarda best, last,
+resume atómico, `history.jsonl`, `metrics.json` y evaluaciones separadas.
+
+Los probes de hardware mostraron `8,46` observaciones/s con batch 24 y ocho
+workers. Batch 16 (`8,20/s`), 32 (`7,83/s`), 48 (`7,63/s`) y 96 (`6,45/s`)
+fueron peores; seis workers quedó prácticamente empatado (`8,45/s`) y 12 bajó
+a `6,69/s`. El cuello de botella es voxelización/SSD. El smoke bajó
+validation loss `0,02563→0,02247`; un test de contrato de 16 pares obtuvo
+`0,02195` y cero dimensiones colapsadas. No se presenta como error TTC ni OOD
+real.
 
 La reproducción del híbrido bbox causal usa:
 

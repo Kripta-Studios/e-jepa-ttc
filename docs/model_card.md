@@ -137,9 +137,17 @@ No usar para:
 - latencia p95 end-to-end no está cerrada;
 - family-OOD duplica aproximadamente el error relativo de validation;
 - Benchmark-10 permanece sin evaluar.
+- CARLA JEPA solo ha superado smoke/contrato; su mejora TTC cross-domain no se
+  conoce hasta completar la transferencia grouped-CV.
 
 ## Reproducibilidad
 
 Cada run guarda configuración, seed, hashes, commit, selección de muestras,
 época, latencia, VRAM, `best`, `last` y `weights_only`. Las métricas smoke no
 son promocionables.
+
+El pretraining CARLA guarda `best` por validation loss, `last`, `resume.pt`
+atómico, optimizador/scheduler/scaler/RNG, `history.jsonl` y evaluaciones de
+validation/test. El cargador EvTTC rechaza el checkpoint si declara uso de TTC,
+colisión, velocidad, diámetro, Benchmark-10, un split distinto o una
+arquitectura incompatible de 21 canales.

@@ -5,10 +5,10 @@ Actualizado: 2026-07-30.
 Compatibilidad histórica: CPLA-high is diagnostic only; no se utiliza como
 test final ni como sustituto del Benchmark-10 sellado.
 
-Validación local del 30 de julio de 2026: `224 passed` en el árbol versionado,
+Validación local del 30 de julio de 2026: `244 passed` en el árbol de trabajo,
 Ruff sin errores,
-validación del orquestador superada y export ONNX de OGE verificado
-numéricamente.
+validación real/dry-run del orquestador superada, PDF recompilado y export ONNX
+de OGE verificado numéricamente.
 
 ## Conclusión ejecutiva
 
@@ -209,6 +209,8 @@ La cobertura incompleta se registra y el brazo queda rechazado.
   de la selección de arquitectura.
 - CARLA: 412 colisiones con coche, 347 con peatón y 636 negativos; manifest y
   split bloqueado firmados, lectura mmap con `allow_pickle=False`.
+- CARLA JEPA smoke: validation loss `0,02563→0,02247`, cero dimensiones
+  colapsadas; test de contrato de 16 pares `0,02195` (loss SSL, no TTC).
 
 ## Almacenamiento y hardware
 
@@ -216,6 +218,8 @@ La cobertura incompleta se registra y el brazo queda rechazado.
 - no se materializa un cache global de voxels;
 - `best`, `last` y `weights_only` por run;
 - BF16, `pin_memory`, prefetch y workers persistentes;
+- perfil CARLA medido: batch 24 × acumulación 2, 8 workers, 8,46 pares/s;
+- CARLA guarda best/last/resume, historial JSONL, logs y evaluaciones firmadas;
 - batch 24 para Garl ResNet-50 en Screen;
 - microbatch 4 x acumulación 6 para G7 foreground, batch efectivo 24;
 - teachers no cargados durante los screens.
@@ -223,11 +227,13 @@ La cobertura incompleta se registra y el brazo queda rechazado.
 ## Próximos gates
 
 1. Mantener A0 como final y A1 como hipótesis, no como ganador.
-2. Ejecutar un piloto eAP SSL de 2–4 secuencias sin pseudo-TTC y repetir el
+2. Completar CARLA SSL y su transferencia A0 sobre 5 folds × 3 seeds EvTTC;
+   no interpretar su test sintético como TTC real.
+3. Ejecutar un piloto eAP SSL de 2–4 secuencias sin pseudo-TTC y repetir el
    mismo fine-tuning EvTTC; escalar a 40 solo si mejora.
-3. Repetir Garl con el presupuesto y pretraining por ramas del código oficial.
-4. Mantener módulos bbox-free bloqueados: la geometría no pasó su gate.
-5. Abrir Benchmark-10 solo bajo una decisión explícita posterior; este trabajo
+4. Repetir Garl con el presupuesto y pretraining por ramas del código oficial.
+5. Mantener módulos bbox-free bloqueados: la geometría no pasó su gate.
+6. Abrir Benchmark-10 solo bajo una decisión explícita posterior; este trabajo
    no lo consumió ni afirma SOTA.
 
 ## Estado Git
