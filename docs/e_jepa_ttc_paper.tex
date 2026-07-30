@@ -355,9 +355,34 @@ apparent expansion, and patch objectness. Neither arm uses reconstructed TTC as
 a target. Both use the same EventTubelet encoder, seed, windows, batch, and
 optimization budget. The full profile uses BF16, batch 24 with accumulation 2,
 eight persistent workers, fused AdamW, TF32, clipping, EMA, cosine decay, and
-8/6 early stopping up to 30 epochs. The real SSL smoke selected epoch one with
-validation loss 0.06474 and no collapse; this is a latent diagnostic, not a TTC
-metric. Utility is measured only by matched transfer to A0 and A1 on EvTTC.
+8/6 early stopping up to 30 epochs. It switches to a signed, label-independent
+32/8 split over all 40 sequences (16,384/4,096 windows). The three pilot
+validation sequences remain held out; five more are selected by a salted hash
+of sequence ID. Utility is measured only by matched transfer to A0 and A1 on
+EvTTC.
+
+The three-epoch pilot selected epoch three for both arms. SSL obtained latent
+validation loss 0.002358 in 11.84 minutes; Geo obtained total loss 0.087108,
+JEPA loss 0.007624, and patch IoU 0.2867 in 13.06 minutes. Table~\ref{tab:eap}
+reports relative improvements over each architecture's paired random control on
+folds 0/1, seed 7.
+
+\begin{table}[t]
+\centering
+\caption{eAP-12 transfer screen (positive means lower error/score).}
+\label{tab:eap}
+\small
+\begin{tabular}{llrrr}
+\toprule
+Init & Model & $\Delta$RTE & $\Delta$MAE & $\Delta$score \\
+\midrule
+SSL & A0 & -2.58\% & -1.13\% & -3.43\% \\
+SSL & A1 & +0.54\% & +6.33\% & -0.02\% \\
+Geo & A0 & +3.66\% & +4.30\% & +2.36\% \\
+Geo & A1 & +6.57\% & +7.95\% & +6.47\% \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \section{Limitations and next steps}
 
@@ -374,11 +399,12 @@ The two-epoch CARLA SSL smoke reduced validation loss from 0.02563 to 0.02247
 without collapsed dimensions. A 16-pair synthetic test contract produced
 0.02195. However, matched fold-0 transfer worsens A0 relative error by 1.72\%
 for SSL and by 17.3\% for the synthetic-TTC auxiliary arm. CARLA is therefore
-retained as negative evidence rather than promoted. The next action is paired
-eAP-SSL/eAP-Geo transfer; scaling from 12 to 40 sequences requires simultaneous
-RTE and MAE improvement on at least two EvTTC folds. An explicit expansion/FoE
-path remains a later candidate. These restrictions preclude a current SOTA or
-safety claim.
+retained as negative evidence rather than promoted. Geo improves A0 RTE and MAE
+on both screened folds, opening the predeclared 12-to-40 scaling gate. A1 Geo
+improves RTE on both folds but MAE on only one. The RTE cluster-bootstrap
+intervals still cross zero; full eAP-40 pretraining and five-fold, three-seed
+EvTTC confirmation remain outstanding. An explicit expansion/FoE path remains
+a later candidate. These restrictions preclude a current SOTA or safety claim.
 
 \enlargethispage{4\baselineskip}
 \bibliographystyle{plain}

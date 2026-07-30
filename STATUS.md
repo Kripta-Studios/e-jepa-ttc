@@ -5,10 +5,9 @@ Actualizado: 2026-07-30.
 Compatibilidad histórica: CPLA-high is diagnostic only; no se utiliza como
 test final ni como sustituto del Benchmark-10 sellado.
 
-Validación local del 30 de julio de 2026: `252 passed` en el árbol de trabajo,
-Ruff sin errores, smokes reales SSL/Geo y dry-run del orquestador eAP→EvTTC
-superados, PDF recompilado/revisado y export ONNX de OGE verificado
-numéricamente.
+Validación local del 30 de julio de 2026: `255 passed` y Ruff check superado, smokes reales
+SSL/Geo, dry-run Full-40 y ejecución pareada de dos folds eAP→EvTTC cerrados;
+PDF recompilado/revisado y export ONNX de OGE verificado numéricamente.
 
 ## Conclusión ejecutiva
 
@@ -27,7 +26,9 @@ todavía SOTA oficial. Lo cerrado es:
 9. freeze de A0 antes del diagnóstico familiar OOD;
 10. evaluación separada validation/family-OOD con bootstrap por secuencia;
 11. pilotos CARLA→EvTTC negativos conservados;
-12. piloto eAP-12 SSL/Geo y orquestador A0/A1 reproducibles.
+12. piloto eAP-12 SSL/Geo y orquestador A0/A1 reproducibles;
+13. eAP-Geo mejora A0 en RTE y MAE en 2/2 folds y habilita el full-40;
+14. split eAP-40 firmado 32/8, independiente de etiquetas y de EvTTC.
 
 El screen de ocho épocas era insuficiente para Dense: A1 alcanzó su mejor
 checkpoint en la época 20. AttnRes y KDA no mejoraron con el presupuesto largo.
@@ -215,7 +216,10 @@ La cobertura incompleta se registra y el brazo queda rechazado.
   colapsadas; la transferencia empeora A0 en RTE 1,72 % (SSL) y 17,3 %
   (auxiliar TTC sintético), por lo que no se promociona.
 - eAP piloto: inventario firmado de 40, split fijo de 12 en 9 train/3
-  validation, solo eventos; smoke SSL validation loss `0,06474` (no TTC).
+  validation, solo eventos; SSL eligió época 3 con loss latente `0,002358` y
+  Geo época 3 con loss total `0,087108` e IoU patch `0,2867`.
+- eAP full: split firmado de las 40 secuencias en 32/8, 16.384/4.096 ventanas;
+  conserva las tres validation piloto y añade cinco por hash de ID sin labels.
 
 ## Almacenamiento y hardware
 
@@ -230,17 +234,35 @@ La cobertura incompleta se registra y el brazo queda rechazado.
 - batch 24 para Garl ResNet-50 en Screen;
 - microbatch 4 x acumulación 6 para G7 foreground, batch efectivo 24;
 - teachers no cargados durante los screens.
+- eAP piloto medido: 11,84 min SSL y 13,06 min Geo; pico PyTorch 688/940 MiB.
+  Ocho workers ya consumen aproximadamente 10 GiB entre procesos y page cache;
+  el límite es HDF5/CPU, mientras EvTTC alcanza 77–93 % de uso GPU y ~7 GiB.
+
+## Transferencia eAP-12 → EvTTC, folds 0/1
+
+Mejora relativa agregada sobre controles pareados propios, seed 7:
+
+| Init | Modelo | RTE | MAE | Score | Victorias RTE/MAE |
+|---|---|---:|---:|---:|---:|
+| SSL | A0 | −2,58 % | −1,13 % | −3,43 % | 1/2 · 1/2 |
+| SSL | A1 | +0,54 % | +6,33 % | −0,02 % | 2/2 · 1/2 |
+| **Geo** | **A0** | **+3,66 %** | **+4,30 %** | **+2,36 %** | **2/2 · 2/2** |
+| **Geo** | **A1** | **+6,57 %** | **+7,95 %** | **+6,47 %** | **2/2 · 1/2** |
+
+A0-Geo pasa el gate de dos folds. A1-Geo mejora RTE en ambos, pero pierde MAE
+en fold 0 (−2,07 %) y lo recupera ampliamente en fold 1 (+16,30 %). El IC 95 %
+bootstrap de RTE aún cruza cero; el de MAE A1 es `[-0,2060,-0,0028] s`. Son 14
+secuencias/160 ventanas, no grouped CV completo ni Benchmark-10.
 
 ## Próximos gates
 
-1. Mantener A0 como final y A1 como hipótesis, no como ganador.
-2. Cerrar eAP-SSL/eAP-Geo sobre A0/A1 en fold 0/seed 7; repetir únicamente si
-   mejoran simultáneamente RTE y MAE.
-3. Escalar eAP de 12 a 40 solo tras repetir la mejora en al menos dos folds.
+1. Ejecutar eAP-Geo Full-40 con early stopping sobre el split 32/8 firmado.
+2. Confirmar A0/A1-Geo en cinco folds × seeds 7/13/21; no elegir entre ellos con
+   los dos folds del screen.
+3. Mantener eAP-SSL como control negativo/inconsistente y CARLA como ablación.
 4. Repetir Garl con el presupuesto y pretraining por ramas del código oficial.
-5. Mantener CARLA como ablación negativa hasta formular un objetivo distinto.
-6. Mantener módulos bbox-free bloqueados: la geometría no pasó su gate.
-7. Abrir Benchmark-10 solo bajo una decisión explícita posterior; este trabajo
+5. Mantener módulos bbox-free bloqueados: la geometría EvTTC no pasó su gate.
+6. Abrir Benchmark-10 solo bajo una decisión explícita posterior; este trabajo
    no lo consumió ni afirma SOTA.
 
 ## Estado Git

@@ -139,8 +139,8 @@ No usar para:
 - Benchmark-10 permanece sin evaluar.
 - CARLA JEPA aprende la loss latente, pero sus pilotos cross-domain empeoran
   A0: RTE +1,72 % con SSL y +17,3 % con TTC sintético; no se promociona.
-- eAP-SSL/eAP-Geo usan un piloto event-only de 12 secuencias y aún deben cerrar
-  la transferencia pareada A0/A1 antes de cualquier escalado o claim.
+- eAP-Geo mejora A0 en RTE/MAE en dos folds y habilita eAP-40, pero aún falta
+  pretraining full y grouped CV 5×3; A1 mejora RTE 2/2 y MAE solo 1/2.
 
 ## Reproducibilidad
 
@@ -155,6 +155,6 @@ colisión, velocidad, diámetro, Benchmark-10, un split distinto o una
 arquitectura incompatible de 21 canales.
 
 El pretraining eAP usa el mismo contrato de checkpointing, pero añade hashes
-del inventario train-40 y split 9/3. El validador rechaza TTC, RGB, EvTTC,
+del inventario train-40 y del split 9/3 o 32/8. El validador rechaza TTC, RGB, EvTTC,
 Benchmark-10, un régimen SSL/Geo inconsistente o un checkpoint no seleccionado
 por validation.

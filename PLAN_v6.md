@@ -4323,9 +4323,10 @@ A1. El checkpoint debe ser `best` por validation y firmar inventario/split.
 Perfiles canónicos:
 
 ```text
-Analysis: eAP máximo 3 épocas, early stop 2/1, 1.024/256; EvTTC fold 0/seed 7
-Full:     eAP máximo 30, early stop 8/6; EvTTC 5 folds × 3 seeds,
-          máximo 40 y early stop 10/6
+Analysis: eAP-12 máximo 3 épocas, early stop 2/1, 1.024/256;
+          EvTTC fold 0/seed 7 por defecto
+Full:     eAP-40 32/8, 16.384/4.096, máximo 30, early stop 8/6;
+          EvTTC 5 folds × 3 seeds, máximo 40 y early stop 10/6
 Hardware: BF16, batch 24/accum 2, 8 workers eAP, 12 workers EvTTC,
           pinned memory, persistent workers, prefetch 2, TF32, AdamW fused
 ```
@@ -4340,6 +4341,15 @@ Comandos únicos:
 
 El orquestador guarda logs, estado, best/last/resume, métricas y predicciones
 OOF; compara A0 y A1 por separado y falla si control/transferencia no comparten
-folds, seeds, samples, cache, cabeza y trainer. El smoke eAP-SSL real completa
-el contrato con validation loss 0,06474 y sin colapso; no es una métrica TTC.
-Solo se escala 12→40 si RTE y MAE mejoran simultáneamente en al menos dos folds.
+folds, seeds, samples, cache, cabeza y trainer. `--resume` exige además el
+conjunto exacto de pares solicitado. El piloto real terminó tres épocas sin
+colapso: SSL seleccionó loss `0,002358`; Geo loss total `0,087108` e IoU patch
+`0,2867`. Son pérdidas eAP, no métricas TTC.
+
+El screen se amplió a folds 0/1, seed 7. Geo mejora A0 en RTE/MAE en 2/2
+(+3,66 %/+4,30 % agregado) y A1 en RTE en 2/2 (+6,57 %), aunque MAE de A1
+queda 1/2 (+7,95 % agregado). SSL no es consistente. A0-Geo satisface el gate
+12→40; el full usa el split firmado `eap_train40_v1.json` con las 40 secuencias
+en 32/8, conservando validation piloto y completándola solo mediante hash de ID.
+Los bootstrap RTE aún cruzan cero: no existe claim SOTA ni autorización para
+abrir Benchmark-10.

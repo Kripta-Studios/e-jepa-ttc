@@ -320,11 +320,12 @@ folds, seeds, samples, cache, cabeza y trainer:
 .\scripts\run_eap_evttc_complete.ps1 -Profile Full -Resume
 ```
 
-`Analysis` usa 1.024/256 muestras eAP, máximo tres épocas y early stopping 2/1,
-más EvTTC screen en fold 0/seed 7. `Full` usa las 4.608/1.536 ventanas
-disponibles del split de 12
-secuencias, máximo 30 épocas con early stopping 8/6, y EvTTC confirm con máximo
-40 épocas y early stopping 10/6. Los perfiles eAP usan BF16, batch 24,
+`Analysis` usa el split piloto 9/3, 1.024/256 muestras eAP, máximo tres épocas y
+early stopping 2/1, más EvTTC screen en fold 0/seed 7. Se pueden añadir folds
+con `-Folds 0,1`. `Full` cambia automáticamente a
+`data/splits/eap_train40_v1.json`: 32/8 secuencias, 16.384/4.096 ventanas,
+máximo 30 épocas con early stopping 8/6, y EvTTC confirm con máximo 40 épocas y
+early stopping 10/6. Los perfiles eAP usan BF16, batch 24,
 acumulación 2, ocho workers persistentes, pinned memory, prefetch 2, AdamW
 fused si CUDA lo soporta, TF32, clipping, EMA y warm-up/cosine.
 
@@ -334,9 +335,23 @@ métricas firmadas y un `resume.pt` atómico solo mientras está incompleto. EvT
 conserva checkpoints, `summary.json`, predicciones OOF y `aggregate.json`.
 `compare_evttc_initializations.py` acepta `--variant` y emite comparaciones
 firmadas separadas para A0 y A1 con bootstrap agrupado por secuencia.
+Al reanudar, el orquestador no acepta un agregado meramente marcado completo:
+comprueba que cada variante contiene exactamente todos los pares fold/seed
+solicitados. Así un Analysis anterior no puede omitir accidentalmente Full.
 
 El split `data/splits/eap_pilot12_v1.json` firma nueve secuencias train y tres
 validation contra `data/manifests/eap_train40_inventory_v1.json`. El loader
 usa `ms_to_idx` y no abre RGB ni construye otra copia/cache global de eventos.
 El validador de transferencia rechaza checkpoints con TTC, RGB, EvTTC,
 Benchmark-10, un split distinto o un checkpoint `last` no seleccionado.
+
+El split full se regenera sin datos crudos:
+
+```powershell
+.\.venv\Scripts\python.exe scripts/make_eap_full_split.py
+```
+
+Conserva las tres validation del piloto y añade cinco mediante el hash estable
+`sha256("eap_full40_validation_v1:" + sequence_id)`. No lee labels, RGB ni
+resultados EvTTC. El hash firmado esperado del split v1 es
+`3713f5fd24295cf90029982bbd896726604e519f731c17e854c82c35224dd5a2`.

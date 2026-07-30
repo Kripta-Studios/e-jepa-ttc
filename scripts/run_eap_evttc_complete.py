@@ -88,16 +88,37 @@ def _run_logged(
         raise subprocess.CalledProcessError(return_code, command)
 
 
-def _aggregate_complete(path: Path, variants: tuple[str, ...]) -> bool:
+def _aggregate_complete(
+    path: Path,
+    variants: tuple[str, ...],
+    *,
+    folds: list[int],
+    seeds: list[int],
+) -> bool:
     if not path.is_file():
         return False
     payload = json.loads(path.read_text(encoding="utf-8"))
-    complete = {
-        str(row.get("variant"))
-        for row in payload.get("ranking", [])
-        if row.get("complete_for_final_selection") is True
+    expected_pairs = {(fold, seed) for fold in folds for seed in seeds}
+    rows = {
+        str(row.get("variant")): row for row in payload.get("ranking", []) if isinstance(row, dict)
     }
-    return payload.get("all_variants_complete") is True and set(variants) <= complete
+    if payload.get("all_variants_complete") is not True or not set(variants) <= rows.keys():
+        return False
+    for variant in variants:
+        row = rows[variant]
+        actual_pairs = {
+            (int(run["fold"]), int(run["seed"]))
+            for run in row.get("runs", [])
+            if isinstance(run, dict) and "fold" in run and "seed" in run
+        }
+        if (
+            row.get("complete_for_final_selection") is not True
+            or actual_pairs != expected_pairs
+            or int(row.get("run_count", -1)) != len(expected_pairs)
+            or int(row.get("required_run_count", -1)) != len(expected_pairs)
+        ):
+            return False
+    return True
 
 
 def _hardware() -> dict[str, Any]:
@@ -165,7 +186,7 @@ def main() -> int:
     parser.add_argument(
         "--eap-split",
         type=Path,
-        default=Path("data/splits/eap_pilot12_v1.json"),
+        help="Signed split override; defaults to pilot-12 for analysis and train-40 for full.",
     )
     parser.add_argument("--folds", type=int, nargs="+")
     parser.add_argument("--seeds", type=int, nargs="+")
@@ -208,6 +229,11 @@ def main() -> int:
         raise ValueError("Worker, batch, and accumulation controls must be positive.")
     pretrain_profile = "pilot" if args.profile == "analysis" else "full"
     evttc_mode = "screen" if args.profile == "analysis" else "confirm"
+    eap_split = args.eap_split or Path(
+        "data/splits/eap_pilot12_v1.json"
+        if args.profile == "analysis"
+        else "data/splits/eap_train40_v1.json"
+    )
     orchestration_dir = args.orchestration_dir or (args.run_root / f"eap_evttc_{args.profile}_v1")
     log_dir = orchestration_dir / "logs"
     status_path = orchestration_dir / "orchestration_status.json"
@@ -223,6 +249,7 @@ def main() -> int:
         "folds": folds,
         "seeds": seeds,
         "pretrain_seed": args.pretrain_seed,
+        "eap_split": eap_split.as_posix(),
         "hardware": _hardware(),
         "resource_profile": {
             "eap_workers": args.eap_workers,
@@ -249,9 +276,12 @@ def main() -> int:
     _write_json(status_path, status)
     try:
         for objective in objectives:
-            pretrain_run = (
-                args.run_root / f"eap_{objective}_{pretrain_profile}_seed{args.pretrain_seed}_v1"
+            pretrain_name = (
+                f"eap_{objective}_{pretrain_profile}_seed{args.pretrain_seed}_v1"
+                if args.profile == "analysis"
+                else f"eap_{objective}_train40_full_seed{args.pretrain_seed}_v1"
             )
+            pretrain_run = args.run_root / pretrain_name
             checkpoint = pretrain_run / "eap_jepa_encoder_best.pt"
             metrics = pretrain_run / "metrics.json"
             if "pretrain" in requested:
@@ -275,7 +305,7 @@ def main() -> int:
                         "--inventory",
                         str(args.eap_inventory),
                         "--split",
-                        str(args.eap_split),
+                        str(eap_split),
                         "--output",
                         str(pretrain_run),
                         "--device",
@@ -313,7 +343,12 @@ def main() -> int:
         if args.resume:
             common.append("--resume")
         if "evttc-control" in requested:
-            if args.resume and _aggregate_complete(control_aggregate, VARIANTS):
+            if args.resume and _aggregate_complete(
+                control_aggregate,
+                VARIANTS,
+                folds=folds,
+                seeds=seeds,
+            ):
                 stages.append({"name": "02_evttc_random_control", "status": "skipped_complete"})
             else:
                 _run_logged(
@@ -333,9 +368,12 @@ def main() -> int:
                     dry_run=args.dry_run,
                 )
         for objective in objectives:
-            pretrain_run = (
-                args.run_root / f"eap_{objective}_{pretrain_profile}_seed{args.pretrain_seed}_v1"
+            pretrain_name = (
+                f"eap_{objective}_{pretrain_profile}_seed{args.pretrain_seed}_v1"
+                if args.profile == "analysis"
+                else f"eap_{objective}_train40_full_seed{args.pretrain_seed}_v1"
             )
+            pretrain_run = args.run_root / pretrain_name
             checkpoint = pretrain_run / "eap_jepa_encoder_best.pt"
             transfer_root = (
                 args.run_root / f"evttc32_eap_{objective}_transfer_{args.profile}_v1" / "core"
@@ -346,7 +384,12 @@ def main() -> int:
                     raise FileNotFoundError(
                         f"eAP {objective} best checkpoint is missing: {checkpoint}."
                     )
-                if args.resume and _aggregate_complete(transfer_aggregate, VARIANTS):
+                if args.resume and _aggregate_complete(
+                    transfer_aggregate,
+                    VARIANTS,
+                    folds=folds,
+                    seeds=seeds,
+                ):
                     stages.append(
                         {
                             "name": f"03_evttc_eap_{objective}_transfer",
@@ -366,7 +409,7 @@ def main() -> int:
                             "--base-encoder-checkpoint",
                             str(checkpoint),
                             "--external-pretraining-split",
-                            str(args.eap_split),
+                            str(eap_split),
                             "--run-root",
                             str(transfer_root),
                         ],

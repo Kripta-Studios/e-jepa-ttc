@@ -23,8 +23,9 @@ Estado al 30 de julio de 2026:
   de 100 ms y loader mmap sin duplicar los 71,64 GiB extraídos;
 - pilotos CARLA→EvTTC completados: SSL empeora A0 en RTE un 1,72 % y TTC
   sintético un 17,3 % en el screen pareado; CARLA queda como ablación negativa;
-- smoke eAP event-only completado: checkpoint best/last, lectura HDF5 bajo
-  demanda y sin colapso; la transferencia eAP→EvTTC está en ejecución;
+- eAP-SSL/eAP-Geo completados sobre el piloto-12 y transferidos de forma
+  pareada a dos folds EvTTC: Geo mejora RTE en 2/2 para A0 y A1, mientras SSL
+  no ofrece una mejora consistente; el full-40 queda habilitado, no confirmado;
 - Benchmark-10 sellado y no abierto.
 
 Documentación:
@@ -405,8 +406,14 @@ comparaciones OOF:
 # Análisis rápido: eAP máximo 3 épocas/1.024+256 y EvTTC fold 0/seed 7.
 .\scripts\run_eap_evttc_complete.ps1 -Profile Analysis -Resume
 
-# Confirmación completa: eAP hasta 30 épocas y EvTTC 5 folds × 3 seeds.
+# Ampliar el mismo análisis a dos folds; --resume exige ahora los pares exactos.
+.\scripts\run_eap_evttc_complete.ps1 -Profile Analysis -Folds 0,1 -Seeds 7 -Resume
+
+# Confirmación completa: eAP-40 32/8 y EvTTC 5 folds × 3 seeds.
 .\scripts\run_eap_evttc_complete.ps1 -Profile Full -Resume
+
+# Ruta recomendada tras el gate piloto: ejecutar solo el candidato Geo.
+.\scripts\run_eap_evttc_complete.ps1 -Profile Full -Objectives geo -Resume
 ```
 
 En hosts con `make`, los equivalentes son `make eap-analysis` y
@@ -430,30 +437,52 @@ Los brazos son:
 - `eAP-Geo`: el mismo JEPA más posición/tamaño de bbox proyectada, cierre
   radial, expansión aparente y objectness por patch, todavía sin target TTC.
 
-Ambos usan el mismo seed, ventanas, batch y presupuesto. El perfil `Analysis`
-es diagnóstico y no permite promoción. `Full` usa BF16, batch 24/acumulación 2,
-ocho workers HDF5 persistentes, pinned memory, prefetch 2, AdamW fused, TF32,
-warm-up/cosine, clipping y EMA. eAP guarda `best` por validation loss, `last`,
-`history.jsonl`, `metrics.json` firmado y `resume.pt` atómico; el full aplica
-early stopping 2/1/máximo 3 en Analysis y 8/6/máximo 30 en Full. EvTTC conserva
-el protocolo
+Ambos usan el mismo seed, ventanas, batch y presupuesto. `Analysis` usa el split
+piloto 9/3 y es diagnóstico. `Full` cambia automáticamente al split firmado
+`eap_train40_v1.json`: 32 secuencias train, ocho validation y 16.384/4.096
+ventanas, incluidas las dos secuencias HDF5 grandes. La asignación conserva las
+tres validaciones del piloto y elige las otras cinco solo por hash de ID; no usa
+labels ni métricas EvTTC. El split se regenera con
+`python scripts/make_eap_full_split.py`.
+
+El entrenamiento usa BF16, batch 24/acumulación 2, ocho workers HDF5
+persistentes, pinned memory, prefetch 2, AdamW fused, TF32, warm-up/cosine,
+clipping y EMA. eAP guarda `best` por validation loss, `last`, `history.jsonl`,
+`metrics.json` firmado y `resume.pt` atómico; aplica early stopping
+2/1/máximo 3 en Analysis y 8/6/máximo 30 en Full. EvTTC conserva el protocolo
 matched: screen 8 épocas con paciencia 2 o confirmación hasta 40 con paciencia
 6, además de checkpoints, logs, predicciones OOF y aggregate firmado.
 
 Artefactos principales:
 
 ```text
-artifacts/runs/eap_{ssl,geo}_{pilot|full}_seed42_v1/
+artifacts/runs/eap_{ssl,geo}_pilot_seed42_v1/
+artifacts/runs/eap_{ssl,geo}_train40_full_seed42_v1/
 artifacts/runs/evttc32_eap_{ssl,geo}_transfer_{analysis|full}_v1/core/
 artifacts/runs/eap_evttc_{analysis|full}_v1/logs/
 artifacts/metrics/evttc_<a0|a1>_*_eap_<ssl|geo>_<profile>_v1.json
 ```
 
 El comparador falla si control y transferencia no comparten folds, seeds,
-samples, cache, cabeza común y trainer. Solo se escalará 12→40 si una variante
-mejora simultáneamente RTE y MAE en al menos dos folds. El smoke real SSL pasó
-el contrato en 4,5 s efectivos con validation loss `0,06474`; esta loss no es
-TTC ni evidencia de mejora. Benchmark-10 permanece sellado.
+samples, cache, cabeza común y trainer. `--resume` también comprueba que el
+agregado contiene exactamente todos los folds/seeds solicitados.
+
+Resultado del screen extendido a folds 0/1, seed 7 (160 ventanas OOF, 14
+secuencias; mejora relativa frente a su propio control aleatorio):
+
+| Inicialización | Modelo | Δ RTE | Δ MAE | Δ score | Victorias RTE/MAE |
+|---|---|---:|---:|---:|---:|
+| eAP-SSL | A0 | −2,58 % | −1,13 % | −3,43 % | 1/2 · 1/2 |
+| eAP-SSL | A1 | +0,54 % | +6,33 % | −0,02 % | 2/2 · 1/2 |
+| **eAP-Geo** | **A0** | **+3,66 %** | **+4,30 %** | **+2,36 %** | **2/2 · 2/2** |
+| **eAP-Geo** | **A1** | **+6,57 %** | **+7,95 %** | **+6,47 %** | **2/2 · 1/2** |
+
+Geo habilita el escalado 12→40 porque A0 mejora simultáneamente RTE y MAE en
+dos folds. A1 presenta la mayor mejora agregada, pero empeora MAE en fold 0. El
+bootstrap de RTE todavía cruza cero en ambos modelos; solo el MAE de A1 queda
+por debajo de cero al 95 %. Por tanto esto no prueba SOTA ni autoriza abrir
+Benchmark-10. El pretraining piloto tardó 11,84 min (SSL) y 13,06 min (Geo);
+la GPU EvTTC alcanzó 77–93 %, mientras eAP quedó limitado por HDF5/voxelización.
 
 ## CARLA DVS Looming
 

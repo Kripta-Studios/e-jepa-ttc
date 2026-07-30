@@ -22,9 +22,9 @@
 - CARLA es sintético, está cuantizado a 10 ms, carece de bbox temporales y su
   TTC positivo llega solo a ~3,85 s. Aunque el smoke aprende sin colapso, los
   pilotos SSL y TTC sintético empeoran la transferencia EvTTC.
-- eAP-12 aporta cajas 3D proyectables y muchos eventos, pero el cambio de
-  dominio puede hacer que su SSL/Geo empeore A0/A1; todavía no hay resultado
-  TTC transferido ni justificación para escalar a las 40 secuencias.
+- eAP-Geo aporta señal transferible: A0 mejora RTE/MAE en 2/2 folds y A1 mejora
+  RTE en 2/2. Sin embargo son solo 14 secuencias OOF/una seed; los IC de RTE
+  cruzan cero y falta eAP-40 más grouped CV 5×3.
 - La preparación CARLA está limitada por lectura/voxelización CPU/SSD; aumentar
   batch o workers llenó más VRAM pero redujo el throughput medido.
 - Family-OOD degrada el score un 85,5 %, el error relativo un 111,4 % y el MAE

@@ -329,11 +329,25 @@ eAP-Geo con bbox proyectada, expansión/cierre y objectness, sin target TTC
 ```
 
 Los dos brazos usan el mismo encoder EventTubelet, seed, ventanas y presupuesto.
-El análisis usa 1.024/256 muestras, máximo tres épocas y early stopping 2/1;
-después entrena A0/A1 en fold 0/seed 7. Se escala de 12 a 40 solo si mejora RTE
-y MAE en al menos dos folds.
-El smoke SSL real completó best/last en 4,9 s efectivos con validation loss
-0,06474 y sin colapso; es una loss latente, no error TTC.
+El piloto usa 1.024/256 muestras, máximo tres épocas y early stopping 2/1. SSL
+seleccionó época 3 con loss `0,002358` en 11,84 min; Geo época 3 con loss total
+`0,087108`, JEPA `0,007624` e IoU patch `0,2867` en 13,06 min. No hubo colapso
+y ninguna de estas cifras es error TTC.
+
+La transferencia pareada se amplió a folds 0/1, seed 7:
+
+| Inicialización | Modelo | Δ RTE | Δ MAE | Δ score | Victorias RTE/MAE |
+|---|---|---:|---:|---:|---:|
+| eAP-SSL | A0 | −2,58 % | −1,13 % | −3,43 % | 1/2 · 1/2 |
+| eAP-SSL | A1 | +0,54 % | +6,33 % | −0,02 % | 2/2 · 1/2 |
+| **eAP-Geo** | **A0** | **+3,66 %** | **+4,30 %** | **+2,36 %** | **2/2 · 2/2** |
+| **eAP-Geo** | **A1** | **+6,57 %** | **+7,95 %** | **+6,47 %** | **2/2 · 1/2** |
+
+A0-Geo cumple el gate de escalado. El IC 95 % de RTE sigue cruzando cero en
+ambos modelos; el único intervalo completamente favorable es MAE de A1,
+`[-0,2060,-0,0028] s`. El full usa las 40 secuencias en 32/8 y
+16.384/4.096 ventanas, máximo 30 épocas con early stopping 8/6. No se decide
+entre A0/A1 ni se abre Benchmark-10 con este screen.
 
 CARLA DVS Looming se añadió como fuente sintética explícita. El archivo local
 coincide con el MD5 oficial y contiene 1.406 secuencias/7.692 millones de
@@ -388,7 +402,7 @@ cambie la hipótesis.
   incompleta;
 - compensación traslacional final depende de profundidad predicha;
 - bbox-free no está promocionado;
-- eAP está completo y su piloto SSL/Geo→EvTTC está en curso;
+- eAP-Geo pasa el gate de dos folds, pero falta el full-40 y grouped CV 5×3;
 - CARLA SSL y TTC sintético empeoran el screen cross-domain;
 - family-OOD muestra degradación material;
 - no existe evaluación Benchmark-10 oficial ni claim SOTA.

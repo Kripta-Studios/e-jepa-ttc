@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from e_jepa_ttc.data.eap_pilot import select_eap_pilot_sequences
+from e_jepa_ttc.data.eap_pilot import select_eap_full_sequences, select_eap_pilot_sequences
 
 
 def _row(index: int, *, gib: float = 1.0) -> dict[str, object]:
@@ -48,3 +48,27 @@ def test_eap_pilot_selection_is_disjoint_deterministic_and_bounded() -> None:
     assert set(first["train"]).isdisjoint(first["validation"])
     assert "sequence-13" not in first["selected"]
     assert "sequence-13" in first["excluded_large_outliers"]
+
+
+def test_eap_full_selection_uses_every_sequence_without_moving_pilot_validation() -> None:
+    rows = [_row(index) for index in range(40)]
+    preserved = ("sequence-01", "sequence-07", "sequence-13")
+
+    first = select_eap_full_sequences(
+        rows,
+        validation_count=8,
+        preserved_validation_ids=preserved,
+    )
+    second = select_eap_full_sequences(
+        rows,
+        validation_count=8,
+        preserved_validation_ids=preserved,
+    )
+
+    assert first == second
+    assert len(first["train"]) == 32
+    assert len(first["validation"]) == 8
+    assert len(first["selected"]) == 40
+    assert set(preserved) <= set(first["validation"])
+    assert set(first["train"]).isdisjoint(first["validation"])
+    assert not first["excluded_large_outliers"]

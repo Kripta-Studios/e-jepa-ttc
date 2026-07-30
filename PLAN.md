@@ -4423,7 +4423,7 @@ No es un test virgen y no habilita un claim SOTA. Benchmark-10 sigue sellado.
 ## 27.8 Piloto eAP-12 reproducible
 
 CARLA queda como ablación negativa tras empeorar el screen EvTTC tanto con SSL
-como con TTC sintético. El siguiente experimento usa 12 secuencias eAP firmadas
+como con TTC sintético. El piloto ejecutado usa 12 secuencias eAP firmadas
 en 9 train/3 validation, solo eventos y acceso HDF5 bajo demanda por
 `ms_to_idx`. No abre RGB, no crea cache masivo y no usa pseudo-TTC como target.
 
@@ -4437,7 +4437,15 @@ fine-tuning matched, evaluación OOF y comparación firmada:
 .\scripts\run_eap_evttc_complete.ps1 -Profile Full -Resume
 ```
 
-`Analysis` usa máximo tres épocas, early stopping eAP 2/1 y fold 0/seed 7;
-`Full` usa early stopping eAP 8/6
-hasta 30 épocas y EvTTC 10/6 hasta 40 épocas en cinco folds y tres seeds. Solo
-se escala de 12 a 40 si mejora RTE y MAE en al menos dos folds.
+`Analysis` usa máximo tres épocas, early stopping eAP 2/1 y por defecto fold
+0/seed 7. El screen se amplió de forma predeclarada a folds 0/1. eAP-Geo mejora
+A0 en RTE y MAE en ambos: +3,66 % y +4,30 % agregados. En A1 mejora RTE en 2/2
+y +6,57 % agregado, pero MAE solo en 1/2 (+7,95 % agregado). SSL es
+inconsistente. Los IC de RTE cruzan cero, por lo que no hay confirmación final.
+
+El gate 12→40 queda abierto por A0-Geo. `Full` selecciona automáticamente
+`eap_train40_v1.json`, split 32/8 de todas las secuencias y 16.384/4.096
+ventanas; usa early stopping eAP 8/6 hasta 30 épocas y EvTTC 10/6 hasta 40
+épocas en cinco folds y tres seeds. La asignación full conserva la validation
+piloto y completa ocho IDs por SHA-256 salado, sin labels ni resultados EvTTC.
+Benchmark-10 sigue sellado.

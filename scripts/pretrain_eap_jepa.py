@@ -1,4 +1,4 @@
-"""Pretrain EvTTC BASE on 12 public eAP event sequences without TTC labels."""
+"""Pretrain EvTTC BASE on public eAP events without TTC labels."""
 
 from __future__ import annotations
 
@@ -64,7 +64,7 @@ def main() -> int:
     parser.add_argument(
         "--split",
         type=Path,
-        default=Path("data/splits/eap_pilot12_v1.json"),
+        help="Signed split override; defaults to pilot-12 or train-40 by profile.",
     )
     parser.add_argument("--output", type=Path)
     parser.add_argument("--device", default="auto")
@@ -88,6 +88,11 @@ def main() -> int:
     args = parser.parse_args()
 
     config = _profile(args.profile, args.objective)
+    split = args.split or Path(
+        "data/splits/eap_train40_v1.json"
+        if args.profile == "full"
+        else "data/splits/eap_pilot12_v1.json"
+    )
     overrides = {
         "epochs": args.epochs,
         "batch_size": args.batch_size,
@@ -116,14 +121,14 @@ def main() -> int:
         result = inspect_eap_jepa_windows(
             root=args.root,
             inventory_path=args.inventory,
-            split_path=args.split,
+            split_path=split,
             config=config,
         )
     else:
         result = pretrain_eap_jepa(
             root=args.root,
             inventory_path=args.inventory,
-            split_path=args.split,
+            split_path=split,
             output_dir=output,
             config=config,
             device_name=args.device,

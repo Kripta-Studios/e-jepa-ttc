@@ -151,3 +151,11 @@ pasa a un segundo fold solo si
 mejoran simultáneamente RTE y MAE frente al control en el primero. Se escala de
 12 a 40 secuencias solo si la mejora se repite en al menos dos folds. Una
 confirmación publicable exige los cinco folds y seeds 7/13/21.
+
+El gate se ejecutó también en fold 1. eAP-Geo mejora A0 simultáneamente en RTE
+y MAE en 2/2 folds (+3,66 %/+4,30 % agregado), por lo que habilita el escalado.
+A1-Geo mejora RTE en 2/2 (+6,57 %), pero MAE en 1/2. Los bootstrap RTE aún
+cruzan cero. El protocolo `Full` usa un segundo split firmado con las 40
+secuencias en 32 train/8 validation; preserva las tres validation piloto y
+selecciona las otras cinco solo por SHA-256 salado del ID. Benchmark-10 sigue
+sellado.

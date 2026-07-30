@@ -7,8 +7,13 @@ param(
     [ValidateSet("all", "pretrain", "evttc-control", "transfer", "compare")]
     [string[]]$Stages = @("all"),
     [string]$EapRoot = "E:\eAP_dataset",
+    [string]$EapSplit = "",
+    [int[]]$Folds = @(),
+    [int[]]$Seeds = @(),
     [int]$EapWorkers = 8,
     [int]$EvttcWorkers = 12,
+    [int]$EapBatchSize = 24,
+    [int]$EapGradientAccumulation = 2,
     [switch]$Resume,
     [switch]$DryRun
 )
@@ -33,8 +38,13 @@ try {
     $Arguments += @(
         "--eap-root", $EapRoot,
         "--eap-workers", "$EapWorkers",
-        "--evttc-workers", "$EvttcWorkers"
+        "--evttc-workers", "$EvttcWorkers",
+        "--eap-batch-size", "$EapBatchSize",
+        "--eap-gradient-accumulation", "$EapGradientAccumulation"
     )
+    if ($EapSplit) { $Arguments += @("--eap-split", $EapSplit) }
+    if ($Folds.Count -gt 0) { $Arguments += @("--folds") + $Folds }
+    if ($Seeds.Count -gt 0) { $Arguments += @("--seeds") + $Seeds }
     if ($Resume) { $Arguments += "--resume" }
     if ($DryRun) { $Arguments += "--dry-run" }
     $env:PYTHONPATH = Join-Path $RepoRoot "src"

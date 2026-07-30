@@ -30,7 +30,7 @@ antes de cualquier residual.
 
 - EvTTC-32: única supervisión TTC oficial.
 - Benchmark-10: inferencia final sellada.
-- eAP train-40: 40 secuencias completas; piloto firmado 9/3 sobre 12
+- eAP train-40: 40 secuencias completas; piloto firmado 9/3 sobre 12 y full 32/8
   secuencias, exclusivamente pretraining no-TTC.
 - CARLA DVS Looming: 1.395 secuencias sintéticas utilizables para SSL,
   expansión y riesgo; TTC positivo y negativos censurados.
@@ -146,15 +146,20 @@ mejora TTC cross-domain.
 El piloto eAP usa eventos HDF5 bajo demanda mediante `ms_to_idx`, sin abrir RGB
 ni construir cache masivo. eAP-SSL predice embeddings futuros; eAP-Geo añade
 bbox 3D proyectada, cierre/expansión y objectness por patch, pero nunca target
-TTC. El smoke SSL real produjo validation loss 0,06474, best/last y cero
-colapso. La utilidad se decide transfiriendo el encoder a A0 y A1 con el mismo
-fold, seed, cabeza, trainer y early stopping que el control aleatorio.
+TTC. En tres épocas, SSL obtuvo loss `0,002358` y Geo loss `0,087108` e IoU
+patch `0,2867`, sin colapso. La utilidad se decide transfiriendo el encoder a A0
+y A1 con el mismo fold, seed, cabeza, trainer y early stopping que el control.
+
+En folds 0/1, seed 7, Geo mejora A0 en RTE/MAE en 2/2
+(+3,66 %/+4,30 % agregado) y A1 en RTE en 2/2 (+6,57 %), aunque MAE solo 1/2.
+SSL es inconsistente. A0-Geo abre el gate al split full de las 40 secuencias en
+32/8 (16.384/4.096 ventanas), pero los bootstrap RTE aún cruzan cero.
 
 Los próximos pasos son:
 
-1. cerrar eAP-SSL/eAP-Geo→EvTTC en fold 0 y repetir solo las mejoras;
-2. implementar expansión/FoE explícita y un residual acotado sobre A0;
-3. escalar eAP de 12 a 40 solo tras mejorar RTE y MAE en dos folds;
+1. ejecutar eAP-Geo full-40 con early stopping;
+2. confirmar A0/A1-Geo en cinco folds × tres seeds;
+3. implementar expansión/FoE explícita y un residual acotado sobre A0;
 4. Garl con 50 épocas y pretraining por ramas;
 5. Benchmark-10 únicamente tras congelar una candidata que pase OOF.
 

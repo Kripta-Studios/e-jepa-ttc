@@ -1,0 +1,76 @@
+{
+  "artifact_sha256": "078ad2783e8d2f56dc6aa05138a020a87bb2b26be1065677959fc33a6bbf35e7",
+  "artifact_type": "evttc_external_pretraining_transfer_comparison_v2",
+  "benchmark10_opened": false,
+  "candidate_label": "eap_geo",
+  "comparisons": {
+    "sequence_macro_mae_s": {
+      "candidate_pair_wins": 1,
+      "candidate_relative_improvement_pct": 7.94635037430116,
+      "candidate_transfer_mean": 1.1163825254355157,
+      "control_mean": 1.2127520527158464,
+      "control_pair_wins": 1,
+      "pair_count": 2
+    },
+    "sequence_macro_mean_relative_error": {
+      "candidate_pair_wins": 2,
+      "candidate_relative_improvement_pct": 6.56843397039414,
+      "candidate_transfer_mean": 0.2893916606059249,
+      "control_mean": 0.3097364979564024,
+      "control_pair_wins": 0,
+      "pair_count": 2
+    },
+    "sequence_macro_selection_score": {
+      "candidate_pair_wins": 2,
+      "candidate_relative_improvement_pct": 6.47247235863725,
+      "candidate_transfer_mean": 0.5596914774401887,
+      "control_mean": 0.5984243265644327,
+      "control_pair_wins": 0,
+      "pair_count": 2
+    }
+  },
+  "control_aggregate": "C:/Users/\u00c1lvaro Schwiedop/Desktop/KriptaStudios/EVOCON_JEPA_Codex_Handoff/e-jepa-ttc/artifacts/runs/evttc32_eap_random_control_analysis_v1/core/aggregate.json",
+  "control_aggregate_sha256": "737551b3b733b2eca80a544155593613795a7fbacda48301e0e2dafd047ba75d",
+  "fold_seed_pairs": [
+    {
+      "fold": 0,
+      "seed": 7
+    },
+    {
+      "fold": 1,
+      "seed": 7
+    }
+  ],
+  "matched_control_audit_passed": true,
+  "paired_oof_sequence_bootstrap_by_seed": [
+    {
+      "candidate_minus_control_mae_s": {
+        "candidate_better": true,
+        "confidence": 0.95,
+        "estimate": -0.09483181908726679,
+        "iterations": 2000,
+        "lower": -0.20602626040628347,
+        "sequence_count": 14,
+        "status": "paired_sequence_cluster_bootstrap",
+        "upper": -0.002756121740908796
+      },
+      "candidate_minus_control_mean_abs_relative_error": {
+        "candidate_better": false,
+        "confidence": 0.95,
+        "estimate": -0.019973297305624527,
+        "iterations": 2000,
+        "lower": -0.04306183651279641,
+        "sequence_count": 14,
+        "status": "paired_sequence_cluster_bootstrap",
+        "upper": 0.0039307952973012955
+      },
+      "sample_count": 160,
+      "seed": 7,
+      "sequence_count": 14
+    }
+  ],
+  "test_used_for_selection": false,
+  "transfer_aggregate": "C:/Users/\u00c1lvaro Schwiedop/Desktop/KriptaStudios/EVOCON_JEPA_Codex_Handoff/e-jepa-ttc/artifacts/runs/evttc32_eap_geo_transfer_analysis_v1/core/aggregate.json",
+  "transfer_aggregate_sha256": "3a447c705ca6ecd2ff30e535ed8bd7930359a6ef168b580e813521c8cceebc11",
+  "variant": "A1_MATCHED_DENSE_BLOCK"
+}

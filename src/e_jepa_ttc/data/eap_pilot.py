@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import math
 from collections.abc import Mapping, Sequence
 from typing import Any
@@ -156,9 +157,55 @@ def select_eap_pilot_sequences(
     }
 
 
+def select_eap_full_sequences(
+    rows: Sequence[Mapping[str, Any]],
+    *,
+    validation_count: int = 8,
+    preserved_validation_ids: Sequence[str] = (),
+    selection_salt: str = "eap_full40_validation_v1",
+) -> dict[str, list[str]]:
+    """Create a label-independent train/validation split over every sequence.
+
+    Previously used pilot-validation sequences remain in validation. Additional
+    validation IDs are selected solely by a stable salted hash of the sequence
+    ID, so neither eAP annotations nor downstream EvTTC metrics affect the full
+    split.
+    """
+
+    sequence_ids = sorted(str(row["sequence_id"]) for row in rows)
+    if len(set(sequence_ids)) != len(sequence_ids):
+        raise ValueError("eAP inventory contains duplicate sequence IDs.")
+    if not 0 < validation_count < len(sequence_ids):
+        raise ValueError("Full eAP validation count must define non-empty splits.")
+    preserved = list(dict.fromkeys(str(value) for value in preserved_validation_ids))
+    unknown = sorted(set(preserved) - set(sequence_ids))
+    if unknown:
+        raise ValueError(f"Unknown preserved eAP validation IDs: {unknown}.")
+    if len(preserved) > validation_count:
+        raise ValueError("Preserved eAP validation IDs exceed validation_count.")
+    candidates = sorted(
+        (sequence_id for sequence_id in sequence_ids if sequence_id not in preserved),
+        key=lambda sequence_id: (
+            hashlib.sha256(f"{selection_salt}:{sequence_id}".encode()).hexdigest(),
+            sequence_id,
+        ),
+    )
+    validation = sorted(preserved + candidates[: validation_count - len(preserved)])
+    validation_set = set(validation)
+    return {
+        "train": sorted(
+            sequence_id for sequence_id in sequence_ids if sequence_id not in validation_set
+        ),
+        "validation": validation,
+        "selected": sequence_ids,
+        "excluded_large_outliers": [],
+    }
+
+
 __all__ = [
     "EAP_PILOT_CATEGORIES",
     "EAP_PILOT_TTC_BUCKETS",
     "eap_pilot_feature_vector",
+    "select_eap_full_sequences",
     "select_eap_pilot_sequences",
 ]

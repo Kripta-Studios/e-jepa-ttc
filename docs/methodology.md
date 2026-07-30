@@ -70,3 +70,10 @@ La utilidad no se mide por la loss eAP, sino por una comparación pareada contra
 inicialización aleatoria en EvTTC. Control y transferencia comparten fold,
 seed, ventanas, cabeza TTC, optimizador, máximo de épocas y early stopping. Se
 reportan RTE y MAE macro, victorias por pareja y bootstrap OOF por secuencia.
+
+El piloto de tres épocas se amplió a folds 0/1 con seed 7 después de que fold 0
+fuera favorable. eAP-SSL fue inconsistente. eAP-Geo mejoró A0 en RTE y MAE en
+2/2 folds (+3,66 % y +4,30 % agregados) y A1 en RTE en 2/2 (+6,57 %), aunque el
+MAE de A1 quedó 1/2. Esto abre el gate de datos, no el de SOTA: el siguiente
+entrenamiento usa las 40 secuencias con split 32/8 y la decisión final exige
+cinco folds × tres seeds.
