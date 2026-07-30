@@ -9,8 +9,12 @@ param(
     [int]$Fold = 0,
     [int]$Seed = 7,
     [string[]]$Variants = @(),
-    [int]$Workers = 4,
+    [int]$Workers = 0,
     [int]$BatchSize = 0,
+    [int]$GradientAccumulation = 0,
+    [ValidateSet("Matched", "Throughput")]
+    [string]$ExecutionProfile = "Matched",
+    [switch]$IncludeDiagnosticTestCache,
     [switch]$Resume,
     [switch]$AllFolds,
     [switch]$AllSeeds,
@@ -29,6 +33,16 @@ if (-not (Test-Path -LiteralPath $Python -PathType Leaf)) {
 
 Push-Location $RepoRoot
 try {
+    # Direct script execution must work even when an editable installation is
+    # unavailable (notably on Windows user paths containing non-ASCII text).
+    $env:PYTHONPATH = Join-Path $RepoRoot "src"
+    if ($Workers -le 0) {
+        $Workers = [Math]::Min(12, [Math]::Max(4, [int]([Environment]::ProcessorCount / 2)))
+    }
+    if ($ExecutionProfile -eq "Throughput") {
+        if ($BatchSize -le 0) { $BatchSize = 32 }
+        if ($GradientAccumulation -le 0) { $GradientAccumulation = 1 }
+    }
     if (-not $SkipUnitTests) {
         & $Python -m pytest `
             tests/unit/test_oge_architecture.py `
@@ -56,6 +70,9 @@ try {
 
     if ($Protocol -eq "HistoricalBase" -and $AllFolds) {
         throw "HistoricalBase tiene un único split. Usa GroupedCV con -AllFolds."
+    }
+    if ($IncludeDiagnosticTestCache -and $Protocol -ne "HistoricalBase") {
+        throw "IncludeDiagnosticTestCache solo está permitido con HistoricalBase."
     }
     $ProtocolArg = if ($Protocol -eq "HistoricalBase") {
         "historical_base"
@@ -116,6 +133,12 @@ try {
             }
             if ($BatchSize -gt 0) {
                 $RunnerArgs += @("--batch-size", "$BatchSize")
+            }
+            if ($GradientAccumulation -gt 0) {
+                $RunnerArgs += @("--gradient-accumulation", "$GradientAccumulation")
+            }
+            if ($IncludeDiagnosticTestCache) {
+                $RunnerArgs += "--include-diagnostic-test-cache"
             }
             $RunnerArgs += "--variants"
             $RunnerArgs += $SelectedVariants

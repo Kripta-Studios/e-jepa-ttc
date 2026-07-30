@@ -70,6 +70,10 @@ Se incluye el movimiento del brazo rígido entre el origen GNSS y la cámara.
 El split histórico se conserva únicamente para reproducir `BASE` y ejecutar el
 screen inicial comparable.
 
+El protocolo familiar 19/5/8 mantiene CCRs-2, CCRs-3 y CPNAO fuera del ajuste
+y del early stopping. Es un diagnóstico OOD por familia, pero su estado local
+es `reused_test_diagnostic`; no equivale a un test externo no inspeccionado.
+
 ## Benchmark-10
 
 La raíz sellada no se enumera, no se usa para early stopping y no produce
@@ -93,6 +97,11 @@ pseudo-TTC track-derived:
 - usa contexto temporal y no es causal para inferencia;
 - no sustituye el fine-tuning EvTTC;
 - solo puede evaluarse como ablación posterior.
+
+Sin TTC oficial, eAP sí conserva valor para SSL sobre eventos/objetos, probes
+de representación y perturbaciones de dominio. La primera ejecución debe usar
+2–4 secuencias y un cache derivado acotado; las 40 solo se justifican si ese
+piloto mejora un fine-tuning EvTTC idéntico.
 
 ## Política de derivados
 

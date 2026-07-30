@@ -190,6 +190,84 @@ Solo BASE y un máximo de dos finalistas se repiten con:
 
 No se ejecuta el producto cartesiano de módulos, folds y seeds.
 
+## Pipeline final reproducible
+
+La interfaz cross-platform recomendada es `run_evttc_final_pipeline.py`. El
+flujo por defecto completa cinco folds, tres seeds y únicamente A0/A1:
+
+```powershell
+uv run --no-sync python scripts/run_evttc_final_pipeline.py validate
+
+uv run --no-sync python scripts/run_evttc_final_pipeline.py compare `
+  --folds 0 1 2 3 4 `
+  --seeds 7 13 21 `
+  --variants A0_MATCHED_GLOBAL A1_MATCHED_DENSE_BLOCK `
+  --resume
+```
+
+El ranking se escribe en
+`artifacts/runs/evttc32_architecture_v4_grouped_cv_confirm/core/aggregate.json`.
+No se congela ningún candidato hasta que su fila indique
+`complete_for_final_selection=true`.
+
+Una vez fijada la arquitectura, se entrena en el protocolo familiar 19/5/8.
+El cache contiene los tres roles, pero el trainer solo abre `train` y
+`validation`:
+
+```powershell
+uv run --no-sync python scripts/run_evttc_final_pipeline.py fit-holdout `
+  --variant A0_MATCHED_GLOBAL `
+  --seeds 7 `
+  --resume
+```
+
+Evaluación de validation, sin abrir test:
+
+```powershell
+uv run --no-sync python scripts/run_evttc_final_pipeline.py evaluate-holdout `
+  --checkpoint artifacts/runs/evttc32_final_family_holdout/core/fold-0/A0_MATCHED_GLOBAL/seed-7/best.pt `
+  --cache-manifest artifacts/features/evttc32_final_family_holdout_core/manifest.json `
+  --splits validation `
+  --output-dir artifacts/metrics/evttc32_final_validation
+```
+
+El test familiar OOD exige una apertura explícita y se etiqueta siempre como
+diagnóstico, nunca como Benchmark-10 oficial:
+
+```powershell
+uv run --no-sync python scripts/run_evttc_final_pipeline.py evaluate-holdout `
+  --checkpoint artifacts/runs/evttc32_final_family_holdout/core/fold-0/A0_MATCHED_GLOBAL/seed-7/best.pt `
+  --cache-manifest artifacts/features/evttc32_final_family_holdout_core/manifest.json `
+  --splits test `
+  --allow-diagnostic-test `
+  --output-dir artifacts/metrics/evttc32_final_family_ood
+```
+
+El freeze del ensemble CV se hace desde un árbol Git limpio:
+
+```powershell
+uv run --no-sync python scripts/run_evttc_final_pipeline.py freeze `
+  --aggregate artifacts/runs/evttc32_architecture_v4_grouped_cv_confirm/core/aggregate.json `
+  --output artifacts/checkpoints/final_freeze_manifest.json
+```
+
+Los comandos admiten `--dry-run`. El perfil `matched` es obligatorio para
+reproducir las tablas. `--execution-profile throughput` usa microbatch 32 y
+acumulación 1, conserva batch efectivo 32 y debe emplearse simétricamente para
+todos los brazos de una comparación. Los workers se autodetectan con máximo
+12 para evitar presión excesiva de RAM en Windows.
+
+El wrapper PowerShell anterior sigue disponible y acepta
+`-ExecutionProfile Throughput`; su default continúa siendo `Matched`.
+
+## Papel de eAP-40
+
+`E:\eAP_dataset\data\train` no contiene TTC oficial. Por tanto, eAP-40 solo
+puede alimentar pretraining autosupervisado, probes sin TTC o análisis de
+domain shift. No participa en selección A0/A1, fine-tuning TTC, calibración ni
+métricas EvTTC. Antes de usar las 40 secuencias debe hacerse un piloto acotado
+de 2–4 secuencias y comparar contra el mismo fine-tuning EvTTC.
+
 ## Arquitecturas bajo gate
 
 - `A0_MATCHED_GLOBAL`: control object-cache global.

@@ -352,6 +352,7 @@ def _evaluate(
     center_error: list[np.ndarray] = []
     embeddings: list[np.ndarray] = []
     sequences: list[str] = []
+    sample_tokens: list[str] = []
     if device.type == "cuda":
         torch.cuda.synchronize(device)
     started = time.perf_counter()
@@ -382,11 +383,16 @@ def _evaluate(
             if not isinstance(batch_sequences, list):
                 raise TypeError("sequence_id must collate to a list.")
             sequences.extend(str(value) for value in batch_sequences)
+            batch_tokens = batch["sample_token"]
+            if not isinstance(batch_tokens, list):
+                raise TypeError("sample_token must collate to a list.")
+            sample_tokens.extend(str(value) for value in batch_tokens)
     arrays = {
         "ttc_true": np.concatenate(true),
         "ttc_pred": np.concatenate(predicted),
         "risk_probability": np.concatenate(risk),
         "sequence_id": np.asarray(sequences),
+        "sample_token": np.asarray(sample_tokens),
     }
     if device.type == "cuda":
         torch.cuda.synchronize(device)
@@ -433,6 +439,106 @@ def _evaluate(
         arrays["center_error_fraction_diagonal"] = error
         metrics["center_error_fraction_diagonal"] = float(error.mean() / np.sqrt(2.0))
     return metrics, arrays
+
+
+def evaluate_object_geo_ttc_checkpoint(
+    *,
+    checkpoint_path: str | Path,
+    cache_manifest_path: str | Path,
+    output_dir: str | Path,
+    splits: tuple[str, ...] = ("validation",),
+    device_name: str = "auto",
+    batch_size: int = 32,
+    num_workers: int = 4,
+    allow_diagnostic_test: bool = False,
+) -> dict[str, Any]:
+    """Evaluate a frozen OGE checkpoint on explicit sequence-level splits.
+
+    ``test`` refers only to the labelled EvTTC family-holdout diagnostic. The
+    official Benchmark-10 uses a separate guarded inference path and is never
+    accepted by this function.
+    """
+
+    checkpoint_source = Path(checkpoint_path)
+    cache_source = Path(cache_manifest_path)
+    output = Path(output_dir)
+    assert_no_sealed_benchmark_paths((checkpoint_source, cache_source, output))
+    requested_splits = tuple(dict.fromkeys(splits))
+    allowed_splits = {"train", "validation", "calibration", "test"}
+    invalid = sorted(set(requested_splits) - allowed_splits)
+    if not requested_splits or invalid:
+        raise ValueError(f"Invalid evaluation splits: {invalid or requested_splits}.")
+    if "test" in requested_splits and not allow_diagnostic_test:
+        raise PermissionError(
+            "The labelled EvTTC family holdout requires --allow-diagnostic-test."
+        )
+    if batch_size <= 0 or num_workers < 0:
+        raise ValueError("batch_size must be positive and num_workers non-negative.")
+
+    device = (
+        torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        if device_name == "auto"
+        else torch.device(device_name)
+    )
+    checkpoint = torch.load(checkpoint_source, map_location=device, weights_only=False)
+    if "model_config" not in checkpoint or "model_state_dict" not in checkpoint:
+        raise ValueError("Checkpoint is missing model_config or model_state_dict.")
+    model = ObjectGeometryJEPATTC(OGEConfig(**checkpoint["model_config"])).to(device)
+    model.load_state_dict(checkpoint["model_state_dict"], strict=True)
+    dataset = EAPObjectCacheDataset(cache_source, splits=requested_splits)
+    if len(dataset) == 0:
+        dataset.close()
+        raise ValueError(f"No samples found for splits {requested_splits}.")
+    indices = list(range(len(dataset)))
+    loader = _loader(
+        dataset,
+        indices,
+        batch_size=batch_size,
+        num_workers=num_workers,
+        device=device,
+        train=False,
+        seed=int(checkpoint.get("trainer_config", {}).get("seed", 0)),
+    )
+    try:
+        metrics, predictions = _evaluate(model, loader, device)
+        unique, counts = np.unique(predictions["sequence_id"], return_counts=True)
+        sequence_counts = {
+            str(sequence): int(count) for sequence, count in zip(unique, counts, strict=True)
+        }
+        output.mkdir(parents=True, exist_ok=True)
+        predictions_path = output / "predictions.npz"
+        np.savez_compressed(predictions_path, **predictions)
+        payload: dict[str, Any] = {
+            "artifact_type": "evttc_oge_split_evaluation_v1",
+            "checkpoint": checkpoint_source.as_posix(),
+            "checkpoint_sha256": _hash_file(checkpoint_source),
+            "checkpoint_epoch": int(checkpoint.get("epoch", -1)),
+            "checkpoint_role": checkpoint.get("role"),
+            "run_fingerprint": checkpoint.get("run_fingerprint"),
+            "cache_manifest": cache_source.as_posix(),
+            "cache_manifest_sha256": _hash_file(cache_source),
+            "git_commit": _git_commit(),
+            "device": str(device),
+            "gpu_name": torch.cuda.get_device_name(0) if device.type == "cuda" else None,
+            "splits": list(requested_splits),
+            "sample_count": len(dataset),
+            "sequence_counts": sequence_counts,
+            "metrics": metrics,
+            "predictions": predictions_path.as_posix(),
+            "diagnostic_test_opened": "test" in requested_splits,
+            "scientific_scope": (
+                "Sequence-disjoint EvTTC family-holdout diagnostic; not the sealed "
+                "official Benchmark-10 and not an official leaderboard result."
+                if "test" in requested_splits
+                else "Development evaluation; no test split was consumed."
+            ),
+            "benchmark10_opened": False,
+        }
+        write_structured(output / "summary.json", payload)
+        return payload
+    finally:
+        _shutdown_loader(loader)
+        dataset.close()
 
 
 def train_object_geo_ttc(
@@ -717,4 +823,9 @@ def train_object_geo_ttc(
     return summary
 
 
-__all__ = ["OGETrainerConfig", "object_geo_loss", "train_object_geo_ttc"]
+__all__ = [
+    "OGETrainerConfig",
+    "evaluate_object_geo_ttc_checkpoint",
+    "object_geo_loss",
+    "train_object_geo_ttc",
+]

@@ -31,6 +31,20 @@ Benchmark-10
   una inferencia después del freeze
 ```
 
+Roles que no deben mezclarse:
+
+| Rol | Secuencias | Uso |
+|---|---|---|
+| grouped-CV validation | cada secuencia una vez OOF | selección de arquitectura |
+| family train | 19 | ajuste supervisado del candidato fijo |
+| family validation | 5 | early stopping del candidato fijo |
+| family test/OOD | 8; CCRs-2, CCRs-3, CPNAO | diagnóstico explícito por familia |
+| Benchmark-10 | 10 secuencias selladas | una inferencia externa tras freeze |
+
+El holdout familiar ya figura como diagnóstico reutilizado en el protocolo de
+recovery; es out-of-family respecto a su entrenamiento, pero no debe llamarse
+test oficial virgen. Benchmark-10 conserva esa función externa.
+
 ## Comparación Core
 
 `A0_MATCHED_GLOBAL`, `A1_MATCHED_DENSE_BLOCK`,
@@ -72,3 +86,6 @@ Desempate: peor secuencia, RMSE, variación entre seeds y latencia.
 - una métrica calculada solo sobre éxitos debe informar también cobertura y
   no puede compararse con candidatos de cobertura completa;
 - todo resultado debe señalar commit, config hash y manifest hash.
+- el cache puede materializar `test`, pero el trainer abre exclusivamente
+  `train`/`validation`; la evaluación de `test` requiere un flag explícito;
+- el perfil de recursos no cambia dentro de una comparación.

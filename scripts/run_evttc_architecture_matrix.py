@@ -286,14 +286,20 @@ def _prepare_cache(
     need_oge: bool,
     need_garl: bool,
     need_rgb: bool,
+    include_diagnostic_test: bool,
 ) -> Path:
     if split_protocol == "historical_base":
         if fold != 0:
             raise ValueError("The historical BASE split has a single fold numbered zero.")
         split_payload = yaml.safe_load(historical_split_path.read_text(encoding="utf-8"))
+        split_names = (
+            ("train", "validation", "test")
+            if include_diagnostic_test
+            else ("train", "validation")
+        )
         assignments = {
             sequence_id: split
-            for split in ("train", "validation")
+            for split in split_names
             for sequence_id in split_payload["splits"][split]
         }
         selection_protocol_sha256 = _sha256(historical_split_path)
@@ -686,6 +692,15 @@ def main() -> int:
     parser.add_argument("--device", default="auto")
     parser.add_argument("--workers", type=int)
     parser.add_argument("--batch-size", type=int)
+    parser.add_argument("--gradient-accumulation", type=int)
+    parser.add_argument(
+        "--include-diagnostic-test-cache",
+        action="store_true",
+        help=(
+            "Materialize the labelled family-holdout test sequences in a historical-split "
+            "cache. Training still opens train/validation only."
+        ),
+    )
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument(
         "--config",
@@ -723,6 +738,14 @@ def main() -> int:
         if args.batch_size <= 0:
             raise ValueError("batch-size must be positive.")
         profile["batch_size"] = args.batch_size
+    if args.gradient_accumulation is not None:
+        if args.gradient_accumulation <= 0:
+            raise ValueError("gradient-accumulation must be positive.")
+        profile["gradient_accumulation"] = args.gradient_accumulation
+    if args.include_diagnostic_test_cache and args.split_protocol != "historical_base":
+        raise ValueError(
+            "--include-diagnostic-test-cache is only valid with historical_base."
+        )
     selected_variants = tuple(args.variants or DEFAULT_VARIANTS)
     oge_selected = any(not variant.startswith("G") for variant in selected_variants)
     needs_base_encoder = any(
@@ -778,6 +801,7 @@ def main() -> int:
                         if base_encoder_checkpoint is not None
                         else None
                     ),
+                    "include_diagnostic_test_cache": args.include_diagnostic_test_cache,
                     "benchmark10_opened": False,
                 },
                 indent=2,
@@ -796,6 +820,7 @@ def main() -> int:
         need_oge=oge_selected,
         need_garl=garl_selected,
         need_rgb=rgb_selected,
+        include_diagnostic_test=args.include_diagnostic_test_cache,
     )
     if needs_base_encoder and base_encoder_checkpoint is not None:
         if not base_encoder_checkpoint.is_file():

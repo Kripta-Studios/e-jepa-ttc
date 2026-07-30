@@ -40,6 +40,18 @@ weights_only.pt
 
 ## Comandos
 
+Ruta automatizada y cross-platform:
+
+```powershell
+uv run --no-sync python scripts/run_evttc_final_pipeline.py --help
+uv run --no-sync python scripts/run_evttc_final_pipeline.py validate
+uv run --no-sync python scripts/run_evttc_final_pipeline.py compare --resume
+```
+
+`compare` usa por defecto folds `0..4`, seeds `7/13/21`, A0/A1 y el perfil
+frozen `matched`. El agregador exige 15 runs por variante antes del freeze.
+Cada pareja fold/seed debe compartir hash de samples, backbone y cabeza común.
+
 Validación:
 
 ```powershell
@@ -68,6 +80,51 @@ Confirmación grouped-CV de la comparación promovida:
 preentrenados exclusivamente con el train de cada fold. Impide reutilizar el
 checkpoint histórico en folds cuyas secuencias de validación ya aparecieron en
 su pretraining.
+
+Entrenamiento del candidato ya fijado y evaluación separada:
+
+```powershell
+uv run --no-sync python scripts/run_evttc_final_pipeline.py fit-holdout `
+  --variant A0_MATCHED_GLOBAL --seeds 7 --resume
+
+uv run --no-sync python scripts/run_evttc_final_pipeline.py evaluate-holdout `
+  --checkpoint <best.pt> `
+  --cache-manifest artifacts/features/evttc32_final_family_holdout_core/manifest.json `
+  --splits validation `
+  --output-dir artifacts/metrics/final_validation
+```
+
+Para abrir el holdout familiar:
+
+```powershell
+uv run --no-sync python scripts/run_evttc_final_pipeline.py evaluate-holdout `
+  --checkpoint <best.pt> `
+  --cache-manifest artifacts/features/evttc32_final_family_holdout_core/manifest.json `
+  --splits test --allow-diagnostic-test `
+  --output-dir artifacts/metrics/final_family_ood
+```
+
+Este `test` es el holdout diagnóstico CCRs-2/CCRs-3/CPNAO. No es el
+Benchmark-10 sellado. El JSON de salida registra splits, secuencias, hashes,
+checkpoint, commit, métricas macro y `diagnostic_test_opened=true`.
+
+## Perfiles de recursos
+
+- `matched`: batch 16 × acumulación 2; reproduce la evidencia.
+- `throughput`: batch 32 × acumulación 1; mismo batch efectivo, menor overhead.
+- workers: autodetección `min(12, logical_cpus/2)`; ajustar hacia abajo si otro
+  proceso intensivo comparte RAM o disco.
+- BF16, `pin_memory`, workers persistentes y prefetch permanecen activos.
+
+No se cambia de perfil a mitad de una matriz. Una optimización de ejecución se
+aplica a todos los brazos o se reporta como protocolo distinto.
+
+## eAP sin TTC
+
+eAP train-40 puede usarse en una etapa posterior de SSL sin etiquetas. No
+puede producir MAE TTC, seleccionar arquitectura ni sustituir EvTTC. El gate
+recomendado es 2–4 secuencias, presupuesto fijo y fine-tuning EvTTC idéntico
+antes de ampliar a 40.
 
 La reproducción del híbrido bbox causal usa:
 
