@@ -19,6 +19,7 @@ from torch.utils.data import DataLoader, Subset
 
 from e_jepa_ttc.data.benchmark10_guard import assert_no_sealed_benchmark_paths
 from e_jepa_ttc.data.eap_cache import EAPObjectCacheDataset, ShardLocalSampler
+from e_jepa_ttc.evaluation.bootstrap import sequence_bootstrap_interval
 from e_jepa_ttc.evaluation.object_ttc import (
     grouped_ttc_selection_components,
     object_ttc_metrics,
@@ -83,7 +84,14 @@ def _set_seed(seed: int) -> None:
 
 def _git_commit() -> str:
     try:
-        return subprocess.check_output(["git", "rev-parse", "HEAD"]).decode("ascii").strip()
+        repository_root = Path(__file__).resolve().parents[3]
+        return (
+            subprocess.check_output(
+                ["git", "-C", str(repository_root), "rev-parse", "HEAD"]
+            )
+            .decode("ascii")
+            .strip()
+        )
     except Exception:
         return "unknown"
 
@@ -505,6 +513,27 @@ def evaluate_object_geo_ttc_checkpoint(
         sequence_counts = {
             str(sequence): int(count) for sequence, count in zip(unique, counts, strict=True)
         }
+        bootstrap = {
+            "mae_s": sequence_bootstrap_interval(
+                predictions["ttc_true"],
+                predictions["ttc_pred"],
+                predictions["sequence_id"],
+                iterations=2000,
+                confidence=0.95,
+                seed=0,
+            ),
+            "mean_abs_relative_error": sequence_bootstrap_interval(
+                predictions["ttc_true"],
+                predictions["ttc_pred"],
+                predictions["sequence_id"],
+                metric=lambda truth, estimate: float(
+                    np.mean(np.abs(estimate - truth) / np.maximum(np.abs(truth), 1e-6))
+                ),
+                iterations=2000,
+                confidence=0.95,
+                seed=0,
+            ),
+        }
         output.mkdir(parents=True, exist_ok=True)
         predictions_path = output / "predictions.npz"
         np.savez_compressed(predictions_path, **predictions)
@@ -524,6 +553,7 @@ def evaluate_object_geo_ttc_checkpoint(
             "sample_count": len(dataset),
             "sequence_counts": sequence_counts,
             "metrics": metrics,
+            "sequence_bootstrap_95": bootstrap,
             "predictions": predictions_path.as_posix(),
             "diagnostic_test_opened": "test" in requested_splits,
             "scientific_scope": (
@@ -781,7 +811,8 @@ def train_object_geo_ttc(
         "cache_manifest": Path(cache_manifest_path).as_posix(),
         "cache_manifest_sha256": _hash_file(cache_manifest_path),
         "run_fingerprint": fingerprint,
-        "git_commit": _git_commit(),
+        "source_tree_sha256": fingerprint_payload["source_tree_sha256"],
+        "git_commit": fingerprint_payload["git_commit"],
         "device": str(device),
         "gpu_name": torch.cuda.get_device_name(0) if torch.cuda.is_available() else None,
         "peak_vram_bytes": (

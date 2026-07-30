@@ -45,6 +45,10 @@ def main() -> int:
     if status and not args.allow_dirty:
         raise RuntimeError("Final freeze requires a clean Git worktree.")
     aggregate = json.loads(args.aggregate.read_text(encoding="utf-8"))
+    if not aggregate.get("all_variants_complete"):
+        raise ValueError("Architecture aggregate is incomplete.")
+    if aggregate.get("matched_control_audit_passed") is not True:
+        raise ValueError("A0/A1 matched-control audit did not pass.")
     row = next(
         (candidate for candidate in aggregate["ranking"] if candidate["variant"] == args.variant),
         None,

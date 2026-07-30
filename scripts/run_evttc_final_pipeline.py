@@ -9,9 +9,8 @@ import subprocess
 import sys
 from pathlib import Path
 
-from e_jepa_ttc.training.object_geo_trainer import evaluate_object_geo_ttc_checkpoint
-
 ROOT = Path(__file__).resolve().parents[1]
+SOURCE_ROOT = ROOT / "src"
 RUNNER = ROOT / "scripts" / "run_evttc_architecture_matrix.py"
 AGGREGATOR = ROOT / "scripts" / "aggregate_evttc_architecture_selection.py"
 FREEZER = ROOT / "scripts" / "freeze_final_architecture.py"
@@ -34,11 +33,22 @@ def _auto_workers() -> int:
 def _run(command: list[str], *, dry_run: bool = False) -> None:
     print(subprocess.list2cmdline(command), flush=True)
     if not dry_run:
-        subprocess.run(command, cwd=ROOT, check=True)
+        environment = os.environ.copy()
+        existing_pythonpath = environment.get("PYTHONPATH")
+        environment["PYTHONPATH"] = os.pathsep.join(
+            part
+            for part in (str(SOURCE_ROOT), str(ROOT), existing_pythonpath)
+            if part
+        )
+        subprocess.run(command, cwd=ROOT, env=environment, check=True)
 
 
 def _winner(aggregate_path: Path, requested: str | None) -> dict[str, object]:
     payload = json.loads(aggregate_path.read_text(encoding="utf-8"))
+    if not payload.get("all_variants_complete"):
+        raise ValueError("The aggregate is incomplete; no architecture can be frozen.")
+    if payload.get("matched_control_audit_passed") is not True:
+        raise ValueError("The A0/A1 matched-control audit did not pass.")
     complete = [row for row in payload["ranking"] if row["complete_for_final_selection"]]
     if requested is not None:
         row = next((item for item in complete if item["variant"] == requested), None)
@@ -154,6 +164,11 @@ def fit_holdout(args: argparse.Namespace) -> int:
 
 
 def evaluate_holdout(args: argparse.Namespace) -> int:
+    sys.path.insert(0, str(SOURCE_ROOT))
+    from e_jepa_ttc.training.object_geo_trainer import (
+        evaluate_object_geo_ttc_checkpoint,
+    )
+
     result = evaluate_object_geo_ttc_checkpoint(
         checkpoint_path=args.checkpoint,
         cache_manifest_path=args.cache_manifest,
@@ -175,11 +190,27 @@ def freeze(args: argparse.Namespace) -> int:
     if not isinstance(runs, list):
         raise TypeError("Aggregate winner is missing its run list.")
     checkpoints = sorted(
-        (Path(str(run["summary"])).parent / "best.pt" for run in runs),
+        (
+            args.run_root
+            / f"fold-{int(run['fold'])}"
+            / variant
+            / f"seed-{int(run['seed'])}"
+            / "best.pt"
+            for run in runs
+        ),
         key=lambda path: path.as_posix(),
     )
+    if args.candidate_role == "SINGLE_REALTIME":
+        if args.single_checkpoint is None:
+            raise ValueError("SINGLE_REALTIME requires --single-checkpoint.")
+        checkpoints = [args.single_checkpoint]
+    elif args.single_checkpoint is not None:
+        raise ValueError("--single-checkpoint is only valid for SINGLE_REALTIME.")
     if not checkpoints:
         raise FileNotFoundError(f"No checkpoints found for {variant} under {args.run_root}.")
+    missing = [path for path in checkpoints if not path.is_file()]
+    if missing:
+        raise FileNotFoundError(f"Aggregate-selected checkpoints are missing: {missing}")
     command = [
         sys.executable,
         str(FREEZER),
@@ -211,6 +242,7 @@ def validate(_: argparse.Namespace) -> int:
         "tests/unit/test_training_controls.py",
         "tests/unit/test_oge_split_evaluation.py",
         "tests/unit/test_architecture_aggregate.py",
+        "tests/unit/test_final_pipeline_cli.py",
     )
     _run([sys.executable, "-m", "pytest", *tests, "-q"])
     _run([sys.executable, "-m", "ruff", "check", "src", "scripts", "tests"])
@@ -286,6 +318,7 @@ def build_parser() -> argparse.ArgumentParser:
     freeze_parser.add_argument("--run-root", type=Path, default=DEFAULT_RUN_ROOT)
     freeze_parser.add_argument("--variant", choices=CORE_VARIANTS)
     freeze_parser.add_argument("--candidate-name")
+    freeze_parser.add_argument("--single-checkpoint", type=Path)
     freeze_parser.add_argument(
         "--candidate-role",
         choices=("SINGLE_REALTIME", "ENSEMBLE_ACCURACY"),
