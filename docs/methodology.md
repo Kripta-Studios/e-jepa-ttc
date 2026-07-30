@@ -51,3 +51,22 @@ La confirmación larga cambió la decisión del screen: A1 Dense se promueve
 porque su mejor época fue la 20, mientras A2 y K1 se detuvieron en 10 y 7 sin
 superarlo. Más épocas son útiles cuando la curva sigue mejorando, no como
 presupuesto uniforme ciego.
+
+## Transferencia eAP event-only
+
+El eAP público aporta eventos, calibración y tracks 3D, pero no TTC oficial. Se
+usa un piloto fijo de 12 secuencias: nueve para optimización y tres para elegir
+el checkpoint. El acceso HDF5 es causal y bajo demanda mediante `ms_to_idx`.
+No se decodifican los TAR RGB ni se materializa un voxel cache global.
+
+`eAP-SSL` predice embeddings densos futuros a 100/250/500 ms. `eAP-Geo` añade
+seis auxiliares débiles normalizados —centro y tamaño de bbox, cierre radial y
+expansión de altura— más una máscara objectness por patch. Las cajas 3D se
+proyectan con la calibración de la cámara de eventos. La cabeza geométrica es
+desechable: solo el encoder EventTubelet compatible de 21 canales se transfiere
+a A0/A1.
+
+La utilidad no se mide por la loss eAP, sino por una comparación pareada contra
+inicialización aleatoria en EvTTC. Control y transferencia comparten fold,
+seed, ventanas, cabeza TTC, optimizador, máximo de épocas y early stopping. Se
+reportan RTE y MAE macro, victorias por pareja y bootstrap OOF por secuencia.

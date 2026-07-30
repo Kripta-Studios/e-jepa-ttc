@@ -17,12 +17,14 @@ Estado al 30 de julio de 2026:
 - geometría bbox causal y port STRTTC evaluados sin superar todavía el gate;
 - screen local Garl G0–G7 ejecutado, aún sin paridad con el protocolo de 50
   épocas y pretraining por ramas del repositorio oficial;
-- eAP train-40 completo (536,64 GiB), reservado para un piloto posterior de
-  pretraining sin TTC oficial;
+- eAP train-40 completo (536,64 GiB); piloto firmado de 12 secuencias cerrado
+  en 9 train/3 validation para pretraining event-only SSL y geometría débil;
 - CARLA DVS Looming verificado: 1.406 secuencias, 1.395 utilizables con contexto
   de 100 ms y loader mmap sin duplicar los 71,64 GiB extraídos;
-- smoke JEPA CARLA completado: validation loss `0,02563 → 0,02247`, sin
-  dimensiones colapsadas; la transferencia TTC a EvTTC todavía está pendiente;
+- pilotos CARLA→EvTTC completados: SSL empeora A0 en RTE un 1,72 % y TTC
+  sintético un 17,3 % en el screen pareado; CARLA queda como ablación negativa;
+- smoke eAP event-only completado: checkpoint best/last, lectura HDF5 bajo
+  demanda y sin colapso; la transferencia eAP→EvTTC está en ejecución;
 - Benchmark-10 sellado y no abierto.
 
 Documentación:
@@ -385,13 +387,73 @@ cabeza común, trainer, folds y seeds. Reporta victorias pareadas y bootstrap
 OOF por secuencia. Un test CARLA favorable solo demuestra predicción latente
 dentro del simulador; la mejora TTC debe aparecer en grouped CV EvTTC.
 
-## Papel de eAP-40
+## Pipeline completo eAP → EvTTC
 
-`E:\eAP_dataset\data\train` no contiene TTC oficial. Por tanto, eAP-40 solo
-puede alimentar pretraining autosupervisado, probes sin TTC o análisis de
-domain shift. No participa en selección A0/A1, fine-tuning TTC, calibración ni
-métricas EvTTC. Antes de usar las 40 secuencias debe hacerse un piloto acotado
-de 2–4 secuencias y comparar contra el mismo fine-tuning EvTTC.
+`E:\eAP_dataset\data\train` no contiene TTC oficial. El protocolo usa 12 de
+las 40 secuencias, seleccionadas sin mirar EvTTC y firmadas en
+`data/splits/eap_pilot12_v1.json`: nueve son train y tres validation. Los
+eventos se leen bajo demanda mediante `ms_to_idx`; no se abren los 118 GiB RGB,
+no se materializa otra copia y no se crea un voxel cache masivo.
+
+Un solo comando ejecuta los dos brazos pareados, el fine-tuning A0/A1 y las
+comparaciones OOF:
+
+```powershell
+# Inspección: muestra todos los comandos y no entrena.
+.\scripts\run_eap_evttc_complete.ps1 -Profile Analysis -DryRun
+
+# Análisis rápido: eAP máximo 3 épocas/1.024+256 y EvTTC fold 0/seed 7.
+.\scripts\run_eap_evttc_complete.ps1 -Profile Analysis -Resume
+
+# Confirmación completa: eAP hasta 30 épocas y EvTTC 5 folds × 3 seeds.
+.\scripts\run_eap_evttc_complete.ps1 -Profile Full -Resume
+```
+
+En hosts con `make`, los equivalentes son `make eap-analysis` y
+`make eap-full`.
+
+Alternativa portable y ejecución por etapas:
+
+```powershell
+.\.venv\Scripts\python.exe scripts/run_eap_evttc_complete.py `
+  --profile analysis --objectives ssl geo --stages all --resume
+
+# Solo reanudar transferencias y comparaciones usando checkpoints existentes.
+.\.venv\Scripts\python.exe scripts/run_eap_evttc_complete.py `
+  --profile full --objectives ssl geo `
+  --stages transfer compare --resume
+```
+
+Los brazos son:
+
+- `eAP-SSL`: JEPA denso futuro, sin TTC, cajas, RGB ni etiquetas de colisión;
+- `eAP-Geo`: el mismo JEPA más posición/tamaño de bbox proyectada, cierre
+  radial, expansión aparente y objectness por patch, todavía sin target TTC.
+
+Ambos usan el mismo seed, ventanas, batch y presupuesto. El perfil `Analysis`
+es diagnóstico y no permite promoción. `Full` usa BF16, batch 24/acumulación 2,
+ocho workers HDF5 persistentes, pinned memory, prefetch 2, AdamW fused, TF32,
+warm-up/cosine, clipping y EMA. eAP guarda `best` por validation loss, `last`,
+`history.jsonl`, `metrics.json` firmado y `resume.pt` atómico; el full aplica
+early stopping 2/1/máximo 3 en Analysis y 8/6/máximo 30 en Full. EvTTC conserva
+el protocolo
+matched: screen 8 épocas con paciencia 2 o confirmación hasta 40 con paciencia
+6, además de checkpoints, logs, predicciones OOF y aggregate firmado.
+
+Artefactos principales:
+
+```text
+artifacts/runs/eap_{ssl,geo}_{pilot|full}_seed42_v1/
+artifacts/runs/evttc32_eap_{ssl,geo}_transfer_{analysis|full}_v1/core/
+artifacts/runs/eap_evttc_{analysis|full}_v1/logs/
+artifacts/metrics/evttc_<a0|a1>_*_eap_<ssl|geo>_<profile>_v1.json
+```
+
+El comparador falla si control y transferencia no comparten folds, seeds,
+samples, cache, cabeza común y trainer. Solo se escalará 12→40 si una variante
+mejora simultáneamente RTE y MAE en al menos dos folds. El smoke real SSL pasó
+el contrato en 4,5 s efectivos con validation loss `0,06474`; esta loss no es
+TTC ni evidencia de mejora. Benchmark-10 permanece sellado.
 
 ## CARLA DVS Looming
 

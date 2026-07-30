@@ -1,4 +1,4 @@
-.PHONY: setup lint test check smoke-data scan-data validate-data index-data split-data cache-voxel train-base pretrain-jepa architecture-validate architecture-smoke architecture-screen
+.PHONY: setup lint test check smoke-data scan-data validate-data index-data split-data cache-voxel train-base pretrain-jepa architecture-validate architecture-smoke architecture-screen eap-analysis eap-full
 
 setup:
 	uv sync --locked --all-groups --no-editable
@@ -44,3 +44,9 @@ architecture-smoke:
 
 architecture-screen:
 	powershell -ExecutionPolicy Bypass -File scripts/run_evttc_architecture_selection.ps1 -Mode Screen -Resume
+
+eap-analysis:
+	uv run --no-sync python scripts/run_eap_evttc_complete.py --profile analysis --objectives both --stages all --resume
+
+eap-full:
+	uv run --no-sync python scripts/run_eap_evttc_complete.py --profile full --objectives both --stages all --resume

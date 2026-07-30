@@ -106,9 +106,12 @@ pseudo-TTC track-derived local contiene 804.510 filas, de las que 195.024
 
 Sin TTC oficial, eAP sí conserva valor para SSL sobre eventos/objetos, probes
 de representación y perturbaciones de dominio. No puede seleccionar A0/A1 ni
-producir un MAE TTC comparable. La primera ejecución debe usar
-2–4 secuencias y un cache derivado acotado; las 40 solo se justifican si ese
-piloto mejora un fine-tuning EvTTC idéntico.
+producir un MAE TTC comparable. La primera ejecución usa 12 secuencias fijadas
+antes de consultar EvTTC: nueve train y tres validation en
+`data/splits/eap_pilot12_v1.json`. El loader abre ventanas HDF5 bajo demanda
+mediante `ms_to_idx`, no RGB ni un cache derivado masivo. Las 40 solo se
+justifican si el piloto mejora RTE y MAE en al menos dos folds de un
+fine-tuning EvTTC idéntico.
 
 ## CARLA DVS Looming
 

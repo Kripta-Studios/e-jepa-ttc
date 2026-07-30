@@ -79,7 +79,8 @@ scene embedding. This hypothesis is not yet accepted by the evidence.
 The data inventory is closed:
 \begin{itemize}
   \item EvTTC-32 is the only official TTC supervision source;
-  \item eAP train-40 is reserved for later non-TTC pretraining;
+  \item eAP train-40 supplies a signed 12-sequence, 9/3 train/validation
+        pilot for non-TTC event-only pretraining;
   \item CARLA DVS Looming~\cite{carladvslooming2025} supplies synthetic positive
         TTC and censored negatives for pretraining and cross-domain transfer;
   \item Benchmark-10 is an external sealed evaluation set;
@@ -345,6 +346,19 @@ because CPU/SSD
 voxelization, rather than VRAM, was limiting. This projects to 32.5 minutes per
 epoch and 16.2 hours at the hard maximum.
 
+The eAP pilot reads HDF5 event windows on demand through \texttt{ms\_to\_idx};
+it neither opens the 118~GiB RGB payload nor materializes a global voxel cache.
+The signed selection contains nine training and three validation sequences.
+\texttt{eAP-SSL} predicts dense future embeddings, whereas
+\texttt{eAP-Geo} adds projected 3-D-box position and size, radial closing,
+apparent expansion, and patch objectness. Neither arm uses reconstructed TTC as
+a target. Both use the same EventTubelet encoder, seed, windows, batch, and
+optimization budget. The full profile uses BF16, batch 24 with accumulation 2,
+eight persistent workers, fused AdamW, TF32, clipping, EMA, cosine decay, and
+8/6 early stopping up to 30 epochs. The real SSL smoke selected epoch one with
+validation loss 0.06474 and no collapse; this is a latent diagnostic, not a TTC
+metric. Utility is measured only by matched transfer to A0 and A1 on EvTTC.
+
 \section{Limitations and next steps}
 
 Dense Patch improves one matched split but loses completed grouped-CV
@@ -358,11 +372,13 @@ has not been opened.
 
 The two-epoch CARLA SSL smoke reduced validation loss from 0.02563 to 0.02247
 without collapsed dimensions. A 16-pair synthetic test contract produced
-0.02195. These are latent prediction diagnostics, not TTC metrics. The next
-actions are full CARLA SSL followed by identical fold-local EvTTC fine-tuning,
-an explicit expansion/FoE path with a bounded residual, and only
-then a frozen external inference if the OOF gate is passed. These restrictions
-preclude a current SOTA or safety claim.
+0.02195. However, matched fold-0 transfer worsens A0 relative error by 1.72\%
+for SSL and by 17.3\% for the synthetic-TTC auxiliary arm. CARLA is therefore
+retained as negative evidence rather than promoted. The next action is paired
+eAP-SSL/eAP-Geo transfer; scaling from 12 to 40 sequences requires simultaneous
+RTE and MAE improvement on at least two EvTTC folds. An explicit expansion/FoE
+path remains a later candidate. These restrictions preclude a current SOTA or
+safety claim.
 
 \enlargethispage{4\baselineskip}
 \bibliographystyle{plain}

@@ -317,19 +317,23 @@ bloqueados hasta que `A4_GT_GEOMETRY` supere el gate frente a BASE.
 
 ## 10. Datos externos
 
-eAP train-40 está completo (40 secuencias, 216 archivos, 536,64 GiB) y no
-interviene en la selección arquitectónica actual. Su pseudo-TTC produce
-195.024 filas válidas de 804.510 (24,24 %), pero no es ground truth. Después de
-congelar el mejor modelo EvTTC se podrá comparar:
+eAP train-40 está completo (40 secuencias, 216 archivos, 536,64 GiB). El
+inventario firmado selecciona 12 secuencias sin consultar EvTTC: nueve train y
+tres validation. El loader usa `ms_to_idx`, lee solo eventos bajo demanda y no
+abre los 118 GiB RGB. Se comparan:
 
 ```text
 sin eAP
-eAP SSL sin TTC
-eAP SSL + pseudo-TTC 0,05
+eAP-SSL sin TTC
+eAP-Geo con bbox proyectada, expansión/cierre y objectness, sin target TTC
 ```
 
-El último brazo solo se conserva si mejora OOF de forma reproducible. El
-pseudo-TTC nunca se denomina ground truth.
+Los dos brazos usan el mismo encoder EventTubelet, seed, ventanas y presupuesto.
+El análisis usa 1.024/256 muestras, máximo tres épocas y early stopping 2/1;
+después entrena A0/A1 en fold 0/seed 7. Se escala de 12 a 40 solo si mejora RTE
+y MAE en al menos dos folds.
+El smoke SSL real completó best/last en 4,9 s efectivos con validation loss
+0,06474 y sin colapso; es una loss latente, no error TTC.
 
 CARLA DVS Looming se añadió como fuente sintética explícita. El archivo local
 coincide con el MD5 oficial y contiene 1.406 secuencias/7.692 millones de
@@ -356,12 +360,15 @@ perfil más rápido (8,46 observaciones/s, ~688 MiB peak VRAM). Batch
 lectura/voxelización.
 El full usa BF16, AdamW fused, warm-up/cosine, EMA, clipping y early stopping
 8/6 con máximo 30 épocas. Se proyectan 32,5 min por época y un máximo de
-16,2 h. La transferencia grouped-CV a EvTTC aún no tiene resultado.
+16,2 h. Los pilotos pareados EvTTC muestran que CARLA-SSL empeora A0 en RTE un
+1,72 % y el auxiliar TTC sintético un 17,3 %; no se ejecuta el full mientras no
+cambie la hipótesis.
 
 ## 11. Eficiencia y almacenamiento
 
 - caches comprimidos y acotados;
 - sin cache global de voxels;
+- eAP leído por `ms_to_idx`, sin abrir RGB ni duplicar sus 418 GiB de eventos;
 - CARLA leído por ventanas mmap, sin cache voxel ni segunda copia;
 - logs JSONL, best/last y resume atómico para evitar repetir épocas CARLA;
 - sin extracción completa de TAR RGB;
@@ -381,8 +388,8 @@ El full usa BF16, AdamW fused, warm-up/cosine, EMA, clipping y early stopping
   incompleta;
 - compensación traslacional final depende de profundidad predicha;
 - bbox-free no está promocionado;
-- eAP está completo pero aún no pasó el piloto SSL contra EvTTC;
-- CARLA SSL aún no ha demostrado mejora TTC cross-domain;
+- eAP está completo y su piloto SSL/Geo→EvTTC está en curso;
+- CARLA SSL y TTC sintético empeoran el screen cross-domain;
 - family-OOD muestra degradación material;
 - no existe evaluación Benchmark-10 oficial ni claim SOTA.
 

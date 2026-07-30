@@ -26,11 +26,26 @@
   grouped CV EvTTC mediante un orquestador único;
 - medido el perfil de hardware: batch 24/acumulación 2/8 workers es el más
   rápido de los probes, aunque usa menos VRAM que perfiles más lentos;
-- smoke CARLA `0,02563→0,02247`, sin colapso; transferencia full pendiente.
-- suite completa `245 passed`, Ruff limpio y manuscrito PDF recompilado.
+- pilotos CARLA→EvTTC cerrados: CARLA-SSL empeora A0 en RTE un 1,72 % y el
+  auxiliar TTC sintético un 17,3 % en fold 0/seed 7; no se promocionan;
+- inventariado eAP train-40 y seleccionado un piloto firmado de 12 secuencias
+  (9 train/3 validation) sin usar EvTTC;
+- implementados eAP-SSL/eAP-Geo event-only, HDF5 bajo demanda, checkpointing,
+  resume y orquestación completa hacia A0/A1;
+- smoke real eAP-SSL completado con validation loss 0,06474, best/last y cero
+  exposición a TTC/RGB/EvTTC/Benchmark-10;
+- Ruff, 252 pruebas y los smokes eAP SSL/Geo pasan; el PDF fue recompilado y
+  revisado visualmente antes del commit.
 
 El screen corto había dado un orden engañoso: A1 necesitó 20 épocas para su
 mejor checkpoint. La geometría bbox mejora algo el error relativo, pero no el
 score compuesto; STRTTC tiene cobertura 27/40 y no se promueve.
+
+CARLA queda como evidencia negativa: su full no se justifica con el mismo
+objetivo mientras ambos pilotos empeoren la transferencia. eAP train-40 está
+completo (40 secuencias, 536,64 GiB), pero el piloto usa solo 12 secuencias y
+eventos. Compara SSL puro con geometría débil de cajas 3D proyectadas; no usa el
+pseudo-TTC derivado como target. Se escala a 40 únicamente si mejora RTE y MAE
+en al menos dos folds EvTTC.
 
 El Benchmark-10 permanece sellado. No existe claim SOTA.

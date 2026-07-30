@@ -4292,3 +4292,54 @@ Comando canónico:
 El pipeline completo no autoriza abrir Benchmark-10. El siguiente gate solo
 pregunta si la inicialización CARLA mejora A0 OOF de manera consistente; un
 buen test sintético CARLA por sí solo no promueve el modelo.
+
+## 26.10 Enmienda ejecutada: piloto eAP-12 y pipeline eAP→EvTTC
+
+Los pilotos pareados posteriores rechazan CARLA bajo el presupuesto corto:
+CARLA-SSL empeora A0 en fold 0/seed 7 un 1,72 % de RTE y 3,60 % de MAE; el
+brazo JEPA+TTC sintético empeora RTE un 17,3 %. A1 tampoco rescata estas
+inicializaciones. El full CARLA se detiene: no se elimina la evidencia, pero no
+se gasta el presupuesto largo sin una hipótesis nueva.
+
+El camino activo usa 12 secuencias eAP elegidas sin consultar EvTTC. El
+inventario firmado `eap_train40_inventory_v1.json` describe las 40 secuencias;
+`eap_pilot12_v1.json` fija nueve train y tres validation. Solo se abren eventos
+HDF5 bajo demanda mediante `ms_to_idx`; RGB, pseudo-TTC, EvTTC y Benchmark-10
+quedan fuera del pretraining.
+
+Dos brazos comparten encoder, seed, ventanas y optimización:
+
+```text
+eAP-SSL = JEPA denso a 100/250/500 ms
+eAP-Geo = eAP-SSL + centro/tamaño bbox + cierre radial + expansión
+          + objectness por patch
+```
+
+Las cajas 3D se proyectan con `K_event` y `T_event_ego`. Geo usa derivadas
+locales como señal geométrica débil, no `TTC = -depth/velocity` como etiqueta.
+La cabeza auxiliar no se transfiere; solo se inicializa el EventTubelet de A0 o
+A1. El checkpoint debe ser `best` por validation y firmar inventario/split.
+
+Perfiles canónicos:
+
+```text
+Analysis: eAP máximo 3 épocas, early stop 2/1, 1.024/256; EvTTC fold 0/seed 7
+Full:     eAP máximo 30, early stop 8/6; EvTTC 5 folds × 3 seeds,
+          máximo 40 y early stop 10/6
+Hardware: BF16, batch 24/accum 2, 8 workers eAP, 12 workers EvTTC,
+          pinned memory, persistent workers, prefetch 2, TF32, AdamW fused
+```
+
+Comandos únicos:
+
+```powershell
+.\scripts\run_eap_evttc_complete.ps1 -Profile Analysis -DryRun
+.\scripts\run_eap_evttc_complete.ps1 -Profile Analysis -Resume
+.\scripts\run_eap_evttc_complete.ps1 -Profile Full -Resume
+```
+
+El orquestador guarda logs, estado, best/last/resume, métricas y predicciones
+OOF; compara A0 y A1 por separado y falla si control/transferencia no comparten
+folds, seeds, samples, cache, cabeza y trainer. El smoke eAP-SSL real completa
+el contrato con validation loss 0,06474 y sin colapso; no es una métrica TTC.
+Solo se escala 12→40 si RTE y MAE mejoran simultáneamente en al menos dos folds.

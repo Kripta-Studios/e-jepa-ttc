@@ -7,7 +7,11 @@ import pytest
 import torch
 
 from e_jepa_ttc.data.carla_looming import CARLA_LOOMING_DATASET_ID
-from e_jepa_ttc.training.checkpoints import validate_external_ssl_checkpoint
+from e_jepa_ttc.training.checkpoints import (
+    validate_external_eap_checkpoint,
+    validate_external_ssl_checkpoint,
+    validate_external_ttc_checkpoint,
+)
 from e_jepa_ttc.utils.io import read_structured, write_structured
 
 
@@ -80,3 +84,84 @@ def test_external_ssl_checkpoint_rejects_split_mismatch(tmp_path: Path) -> None:
 
     with pytest.raises(ValueError, match="source split artifact"):
         validate_external_ssl_checkpoint(path, checkpoint, source_split_path=split)
+
+
+def test_external_ttc_checkpoint_accepts_disclosed_carla_auxiliary(
+    tmp_path: Path,
+) -> None:
+    split = tmp_path / "carla_split.json"
+    write_structured(split, {"artifact_type": "test_split", "split_version": "test"})
+    path = tmp_path / "best.pt"
+    path.write_bytes(b"checkpoint identity")
+    checkpoint = _checkpoint(split)
+    checkpoint.update(
+        {
+            "pretraining_regime": "ssl_plus_synthetic_ttc",
+            "uses_ttc_labels": True,
+            "uses_collision_labels": True,
+            "synthetic_ttc_definition": (
+                "collision_end_timestamp_minus_causal_reference_timestamp"
+            ),
+        }
+    )
+
+    result = validate_external_ttc_checkpoint(
+        path,
+        checkpoint,
+        source_split_path=split,
+    )
+
+    assert result["uses_ttc_labels"] is True
+    assert result["pretraining_regime"] == "ssl_plus_synthetic_ttc"
+
+
+@pytest.mark.parametrize("regime", ("eap_ssl", "eap_geo"))
+def test_external_eap_checkpoint_accepts_train_only_pretraining(
+    tmp_path: Path,
+    regime: str,
+) -> None:
+    inventory_hash = "a" * 64
+    split = tmp_path / "eap_split.json"
+    write_structured(
+        split,
+        {
+            "artifact_type": "eap_pilot12_sequence_split_v1",
+            "inventory_artifact_sha256": inventory_hash,
+        },
+    )
+    split_payload = read_structured(split)
+    path = tmp_path / "best.pt"
+    path.write_bytes(b"eap checkpoint identity")
+    geometry = regime == "eap_geo"
+    checkpoint = {
+        "checkpoint_role": "best",
+        "checkpoint_selected_by": "validation_loss",
+        "seed": 42,
+        "external_pretraining": True,
+        "pretraining_dataset_id": "EAP_PUBLIC_TRAIN40",
+        "pretraining_regime": regime,
+        "model_name": "event-tubelet-transformer",
+        "in_channels": 21,
+        "bins": 5,
+        "encoder_state_dict": {"event_embed.weight": torch.zeros(2, 2)},
+        "split_artifact_sha256": split_payload["artifact_sha256"],
+        "inventory_artifact_sha256": inventory_hash,
+        "uses_ttc_labels": False,
+        "uses_collision_labels": False,
+        "uses_object_bboxes": geometry,
+        "uses_depth_track_derivatives": geometry,
+        "uses_labels_for_window_sampling": False,
+        "uses_rgb": False,
+        "uses_evttc_pretraining_events": False,
+        "benchmark10_opened": False,
+    }
+
+    result = validate_external_eap_checkpoint(
+        path,
+        checkpoint,
+        source_split_path=split,
+        expected_regime=regime,
+    )
+
+    assert result["pretraining_regime"] == regime
+    assert result["uses_object_bboxes"] is geometry

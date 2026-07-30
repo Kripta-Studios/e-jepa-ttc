@@ -20,8 +20,11 @@
 - eAP train-40 está completo, pero no ofrece TTC oficial; su pseudo-TTC solo
   cubre el 24,24 % de las filas y no es ground truth.
 - CARLA es sintético, está cuantizado a 10 ms, carece de bbox temporales y su
-  TTC positivo llega solo a ~3,85 s. El smoke SSL aprende sin colapso, pero no
-  demuestra mejora TTC hasta completar la transferencia grouped-CV a EvTTC.
+  TTC positivo llega solo a ~3,85 s. Aunque el smoke aprende sin colapso, los
+  pilotos SSL y TTC sintético empeoran la transferencia EvTTC.
+- eAP-12 aporta cajas 3D proyectables y muchos eventos, pero el cambio de
+  dominio puede hacer que su SSL/Geo empeore A0/A1; todavía no hay resultado
+  TTC transferido ni justificación para escalar a las 40 secuencias.
 - La preparación CARLA está limitada por lectura/voxelización CPU/SSD; aumentar
   batch o workers llenó más VRAM pero redujo el throughput medido.
 - Family-OOD degrada el score un 85,5 %, el error relativo un 111,4 % y el MAE

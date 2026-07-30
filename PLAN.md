@@ -4419,3 +4419,25 @@ selecciona seed 13 antes de abrir el diagnóstico familiar:
 
 Family-OOD degrada 85,5 % el score, 111,4 % el error relativo y 48,8 % el MAE.
 No es un test virgen y no habilita un claim SOTA. Benchmark-10 sigue sellado.
+
+## 27.8 Piloto eAP-12 reproducible
+
+CARLA queda como ablación negativa tras empeorar el screen EvTTC tanto con SSL
+como con TTC sintético. El siguiente experimento usa 12 secuencias eAP firmadas
+en 9 train/3 validation, solo eventos y acceso HDF5 bajo demanda por
+`ms_to_idx`. No abre RGB, no crea cache masivo y no usa pseudo-TTC como target.
+
+Se comparan eAP-SSL y eAP-Geo con presupuesto idéntico. Geo añade bbox 3D
+proyectada, cierre, expansión y objectness por patch; ambos transfieren solo el
+encoder EventTubelet a A0/A1. El comando canónico ejecuta pretraining,
+fine-tuning matched, evaluación OOF y comparación firmada:
+
+```powershell
+.\scripts\run_eap_evttc_complete.ps1 -Profile Analysis -Resume
+.\scripts\run_eap_evttc_complete.ps1 -Profile Full -Resume
+```
+
+`Analysis` usa máximo tres épocas, early stopping eAP 2/1 y fold 0/seed 7;
+`Full` usa early stopping eAP 8/6
+hasta 30 épocas y EvTTC 10/6 hasta 40 épocas en cinco folds y tres seeds. Solo
+se escala de 12 a 40 si mejora RTE y MAE en al menos dos folds.

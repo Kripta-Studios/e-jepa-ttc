@@ -15,9 +15,7 @@ SOURCE_ROOT = ROOT / "src"
 RUNNER = ROOT / "scripts" / "run_evttc_architecture_matrix.py"
 AGGREGATOR = ROOT / "scripts" / "aggregate_evttc_architecture_selection.py"
 FREEZER = ROOT / "scripts" / "freeze_final_architecture.py"
-DEFAULT_RUN_ROOT = Path(
-    "artifacts/runs/evttc32_architecture_v4_grouped_cv_confirm/core"
-)
+DEFAULT_RUN_ROOT = Path("artifacts/runs/evttc32_architecture_v4_grouped_cv_confirm/core")
 DEFAULT_CACHE_ROOT = Path("artifacts/features")
 CORE_VARIANTS = (
     "A0_MATCHED_GLOBAL",
@@ -25,6 +23,14 @@ CORE_VARIANTS = (
     "R1_MATCHED_BBOX_ROI",
     "A2_MATCHED_DENSE_ATTNRES",
     "K1_OBJECT_KDA",
+)
+EXTERNAL_INITIALIZATIONS = frozenset(
+    {
+        "external_ssl",
+        "external_ttc",
+        "external_eap_ssl",
+        "external_eap_geo",
+    }
 )
 
 
@@ -46,9 +52,7 @@ def _run(command: list[str], *, dry_run: bool = False) -> None:
         environment = os.environ.copy()
         existing_pythonpath = environment.get("PYTHONPATH")
         environment["PYTHONPATH"] = os.pathsep.join(
-            part
-            for part in (str(SOURCE_ROOT), str(ROOT), existing_pythonpath)
-            if part
+            part for part in (str(SOURCE_ROOT), str(ROOT), existing_pythonpath) if part
         )
         subprocess.run(command, cwd=ROOT, env=environment, check=True)
 
@@ -89,15 +93,18 @@ def _execution_args(profile: str, batch_size: int, accumulation: int) -> list[st
 
 def compare(args: argparse.Namespace) -> int:
     execution = _execution_args(args.execution_profile, args.batch_size, args.accumulation)
-    if args.base_initialization == "external_ssl" and args.base_encoder_checkpoint is None:
-        raise ValueError("external_ssl requires --base-encoder-checkpoint.")
+    if (
+        args.base_initialization in EXTERNAL_INITIALIZATIONS
+        and args.base_encoder_checkpoint is None
+    ):
+        raise ValueError(f"{args.base_initialization} requires --base-encoder-checkpoint.")
     for seed in args.seeds:
         for fold in args.folds:
             command = [
                 sys.executable,
                 str(RUNNER),
                 "--mode",
-                "confirm",
+                args.mode,
                 "--stage-role",
                 "core",
                 "--split-protocol",
@@ -117,10 +124,8 @@ def compare(args: argparse.Namespace) -> int:
                 *execution,
             ]
             if args.base_encoder_checkpoint is not None:
-                command.extend(
-                    ["--base-encoder-checkpoint", str(args.base_encoder_checkpoint)]
-                )
-            if args.base_initialization == "external_ssl":
+                command.extend(["--base-encoder-checkpoint", str(args.base_encoder_checkpoint)])
+            if args.base_initialization in EXTERNAL_INITIALIZATIONS:
                 command.extend(
                     [
                         "--external-pretraining-split",
@@ -239,9 +244,7 @@ def select_final(args: argparse.Namespace) -> int:
             trainer = summary["trainer"]
             checkpoint_path = Path(summary["best_checkpoint"])
             if not checkpoint_path.is_file():
-                raise FileNotFoundError(
-                    f"Missing final-fit checkpoint: {checkpoint_path}"
-                )
+                raise FileNotFoundError(f"Missing final-fit checkpoint: {checkpoint_path}")
             run = {
                 "seed": seed,
                 "summary": summary_path.as_posix(),
@@ -251,9 +254,7 @@ def select_final(args: argparse.Namespace) -> int:
                 "best_epoch": summary["best_epoch"],
                 "epochs_completed": summary["epochs_completed"],
                 "selection_score": validation["sequence_macro_selection_score"],
-                "mean_relative_error": validation[
-                    "sequence_macro_mean_relative_error"
-                ],
+                "mean_relative_error": validation["sequence_macro_mean_relative_error"],
                 "mae_s": validation["sequence_macro_mae_s"],
                 "milliseconds_per_window": validation["milliseconds_per_window"],
                 "elapsed_seconds": summary["elapsed_seconds"],
@@ -295,9 +296,7 @@ def select_final(args: argparse.Namespace) -> int:
             )
             aggregate[f"{metric}_mean"] = mean
             aggregate[f"{metric}_std"] = variance**0.5
-        aggregate["elapsed_seconds_sum"] = sum(
-            float(run["elapsed_seconds"]) for run in runs
-        )
+        aggregate["elapsed_seconds_sum"] = sum(float(run["elapsed_seconds"]) for run in runs)
         aggregate["milliseconds_per_window_mean"] = sum(
             float(run["milliseconds_per_window"]) for run in runs
         ) / len(runs)
@@ -335,9 +334,7 @@ def select_final(args: argparse.Namespace) -> int:
         "selected_seed": selected_run["seed"],
         "selected_checkpoint": selected_run["checkpoint"],
         "selected_checkpoint_sha256": selected_run["checkpoint_sha256"],
-        "matched_over_throughput_time_ratio": float(
-            profile_map["matched"]["elapsed_seconds_sum"]
-        )
+        "matched_over_throughput_time_ratio": float(profile_map["matched"]["elapsed_seconds_sum"])
         / float(profile_map["throughput"]["elapsed_seconds_sum"]),
         "matched_relative_score_improvement_pct": 100.0
         * (
@@ -450,12 +447,26 @@ def build_parser() -> argparse.ArgumentParser:
     )
     compare_parser.add_argument("--run-root", type=Path, default=DEFAULT_RUN_ROOT)
     compare_parser.add_argument(
+        "--mode",
+        choices=("screen", "confirm"),
+        default="confirm",
+        help="screen is a quick diagnostic; confirm is the full early-stopped protocol.",
+    )
+    compare_parser.add_argument(
         "--base-initialization",
-        choices=("random_control", "external_ssl"),
+        choices=(
+            "random_control",
+            "external_ssl",
+            "external_ttc",
+            "external_eap_ssl",
+            "external_eap_geo",
+        ),
         default="random_control",
         help=(
             "random_control reproduces the closed A0/A1 comparison; external_ssl "
-            "loads a provenance-checked CARLA encoder without EvTTC pretraining."
+            "loads label-free CARLA pretraining; external_ttc loads the separate "
+            "CARLA JEPA+synthetic-TTC ablation; the external_eap arms load public "
+            "eAP train-only SSL or weak geometry pretraining."
         ),
     )
     compare_parser.add_argument("--base-encoder-checkpoint", type=Path)

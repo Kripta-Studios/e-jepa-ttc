@@ -60,6 +60,7 @@ class CarlaJEPATrainerConfig:
     mask_ratio: float = 0.45
     mask_blocks: int = 4
     context_token_weight: float = 0.25
+    synthetic_ttc_loss_weight: float = 0.0
     variance_weight: float = 1.0
     minimum_std: float = 0.05
     ema_start: float = 0.99
@@ -103,6 +104,8 @@ class CarlaJEPATrainerConfig:
             raise ValueError("warmup_fraction must lie in [0, 1).")
         if not 0.0 <= self.mask_ratio < 1.0:
             raise ValueError("mask_ratio must lie in [0, 1).")
+        if self.synthetic_ttc_loss_weight < 0.0:
+            raise ValueError("synthetic_ttc_loss_weight must be non-negative.")
         if not 0.0 < self.ema_start <= self.ema_end < 1.0:
             raise ValueError("EMA momentum must satisfy 0 < start <= end < 1.")
         if not 0.0 <= self.collapse_dimension_fraction <= 1.0:
@@ -207,7 +210,17 @@ def _coverage_end_ms(sequence: CarlaLoomingSequence) -> int:
     )
 
 
-class CarlaJEPAVoxelDataset(Dataset[tuple[torch.Tensor, torch.Tensor, torch.Tensor]]):
+class CarlaJEPAVoxelDataset(
+    Dataset[
+        tuple[
+            torch.Tensor,
+            torch.Tensor,
+            torch.Tensor,
+            torch.Tensor,
+            torch.Tensor,
+        ]
+    ]
+):
     """Build context/future voxel pairs directly from memory-mapped events."""
 
     def __init__(
@@ -239,7 +252,15 @@ class CarlaJEPAVoxelDataset(Dataset[tuple[torch.Tensor, torch.Tensor, torch.Tens
     def __len__(self) -> int:
         return len(self.samples)
 
-    def __getitem__(self, index: int) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    def __getitem__(
+        self, index: int
+    ) -> tuple[
+        torch.Tensor,
+        torch.Tensor,
+        torch.Tensor,
+        torch.Tensor,
+        torch.Tensor,
+    ]:
         sequence, reference_ms = self.samples[index]
         sample = build_carla_window_sample(
             self.root,
@@ -270,7 +291,15 @@ class CarlaJEPAVoxelDataset(Dataset[tuple[torch.Tensor, torch.Tensor, torch.Tens
                 if events is not None
                 else torch.zeros_like(context)
             )
-        return context, torch.stack(targets), torch.tensor(valid, dtype=torch.bool)
+        has_synthetic_ttc = sample.ttc_seconds is not None
+        synthetic_ttc = float(sample.ttc_seconds or 0.0)
+        return (
+            context,
+            torch.stack(targets),
+            torch.tensor(valid, dtype=torch.bool),
+            torch.tensor(synthetic_ttc, dtype=torch.float32),
+            torch.tensor(has_synthetic_ttc, dtype=torch.bool),
+        )
 
 
 def _sequences_for_role(
@@ -292,8 +321,7 @@ def _sequences_for_role(
         raise ValueError(f"CARLA split does not define role {role!r}.")
     selected_ids = set(str(value) for value in assignments[role])
     by_id = {
-        sequence.sequence_id: sequence
-        for sequence in read_carla_looming_manifest(manifest_path)
+        sequence.sequence_id: sequence for sequence in read_carla_looming_manifest(manifest_path)
     }
     missing = sorted(selected_ids - set(by_id))
     if missing:
@@ -322,7 +350,7 @@ def _loader(
     config: CarlaJEPATrainerConfig,
     device: torch.device,
     train: bool,
-) -> DataLoader[tuple[torch.Tensor, torch.Tensor, torch.Tensor]]:
+) -> DataLoader[tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]]:
     indices = _bounded_indices(len(dataset), maximum)
     generator = torch.Generator().manual_seed(config.seed + int(not train))
     kwargs: dict[str, Any] = {
@@ -368,7 +396,8 @@ def _run_epoch(
     encoder: nn.Module,
     target_encoder: nn.Module,
     predictor: nn.Module,
-    loader: DataLoader[tuple[torch.Tensor, torch.Tensor, torch.Tensor]],
+    ttc_head: nn.Module | None,
+    loader: DataLoader[tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]],
     *,
     config: CarlaJEPATrainerConfig,
     device: torch.device,
@@ -382,15 +411,19 @@ def _run_epoch(
     train = optimizer is not None
     encoder.train(train)
     predictor.train(train)
+    if ttc_head is not None:
+        ttc_head.train(train)
     target_encoder.eval()
     if optimizer is not None:
         optimizer.zero_grad(set_to_none=True)
     rows: list[dict[str, float]] = []
     batch_count = len(loader)
-    for batch_index, (context, future, valid) in enumerate(loader):
+    for batch_index, (context, future, valid, synthetic_ttc, has_ttc) in enumerate(loader):
         context = context.to(device=device, non_blocking=True)
         future = future.to(device=device, non_blocking=True)
         valid = valid.to(device=device, non_blocking=True)
+        synthetic_ttc = synthetic_ttc.to(device=device, non_blocking=True)
+        has_ttc = has_ttc.to(device=device, non_blocking=True)
         group_start = (batch_index // config.gradient_accumulation) * config.gradient_accumulation
         group_size = min(config.gradient_accumulation, batch_count - group_start)
         with _autocast(device, config.precision):
@@ -422,6 +455,37 @@ def _run_epoch(
                 action_feature_std=None,
                 context_token_weight=config.context_token_weight,
             )
+            if ttc_head is not None:
+                predicted_log_ttc = ttc_head(encoder(context)).squeeze(-1)
+                ttc_support = int(has_ttc.sum().detach().cpu())
+                if ttc_support:
+                    target_log_ttc = torch.log(synthetic_ttc[has_ttc].clamp_min(1e-3))
+                    synthetic_ttc_loss = torch.nn.functional.smooth_l1_loss(
+                        predicted_log_ttc[has_ttc],
+                        target_log_ttc,
+                        beta=0.1,
+                    )
+                    predicted_ttc = torch.exp(predicted_log_ttc[has_ttc]).clamp_max(30.0)
+                    synthetic_ttc_mae = torch.mean(
+                        torch.abs(predicted_ttc - synthetic_ttc[has_ttc])
+                    )
+                else:
+                    synthetic_ttc_loss = predicted_log_ttc.sum() * 0.0
+                    synthetic_ttc_mae = predicted_log_ttc.detach().sum() * 0.0
+                loss = loss + config.synthetic_ttc_loss_weight * synthetic_ttc_loss
+                metrics.update(
+                    {
+                        "jepa_loss": float(
+                            (loss - config.synthetic_ttc_loss_weight * synthetic_ttc_loss)
+                            .detach()
+                            .cpu()
+                        ),
+                        "synthetic_ttc_log_huber": float(synthetic_ttc_loss.detach().cpu()),
+                        "synthetic_ttc_mae_s": float(synthetic_ttc_mae.detach().cpu()),
+                        "synthetic_ttc_support": float(ttc_support),
+                        "synthetic_ttc_loss_weight": config.synthetic_ttc_loss_weight,
+                    }
+                )
         if not bool(torch.isfinite(loss)):
             raise FloatingPointError(f"CARLA JEPA produced non-finite loss: {metrics}.")
         if train:
@@ -433,6 +497,8 @@ def _run_epoch(
             end_group = (batch_index + 1) % config.gradient_accumulation == 0
             if end_group or batch_index + 1 == batch_count:
                 parameters = [*encoder.parameters(), *predictor.parameters()]
+                if ttc_head is not None:
+                    parameters.extend(ttc_head.parameters())
                 if scaler is None:
                     torch.nn.utils.clip_grad_norm_(parameters, 1.0)
                     optimizer.step()
@@ -446,9 +512,12 @@ def _run_epoch(
                     scheduler.step()
                 optimizer_step += 1
                 progress = min(optimizer_step / max(total_optimizer_steps, 1), 1.0)
-                momentum = config.ema_end - (
-                    config.ema_end - config.ema_start
-                ) * (math.cos(math.pi * progress) + 1.0) / 2.0
+                momentum = (
+                    config.ema_end
+                    - (config.ema_end - config.ema_start)
+                    * (math.cos(math.pi * progress) + 1.0)
+                    / 2.0
+                )
                 metrics["target_encoder_divergence_l2"] = _update_ema(
                     target_encoder,
                     encoder,
@@ -475,6 +544,17 @@ def _optimizer(
     except (RuntimeError, TypeError):
         kwargs.pop("fused", None)
         return torch.optim.AdamW(parameters, **kwargs)
+
+
+def _build_ttc_head(output_dim: int) -> nn.Sequential:
+    """Build the disposable synthetic-TTC auxiliary head."""
+
+    return nn.Sequential(
+        nn.LayerNorm(output_dim),
+        nn.Linear(output_dim, output_dim // 2),
+        nn.GELU(),
+        nn.Linear(output_dim // 2, 1),
+    )
 
 
 def _scheduler(
@@ -547,6 +627,7 @@ def _checkpoint(
     encoder: nn.Module,
     target_encoder: nn.Module,
     predictor: nn.Module,
+    ttc_head: nn.Module | None,
     epoch: int,
     role: str,
     config: CarlaJEPATrainerConfig,
@@ -555,13 +636,19 @@ def _checkpoint(
     source_tree_sha256: str,
     git_commit: str,
 ) -> dict[str, Any]:
+    uses_synthetic_ttc = ttc_head is not None
     return {
         "model": "event_tubelet_transformer_carla_jepa",
         "model_name": "event-tubelet-transformer",
-        "objective": "tubeletmask_dense_temporal_token_multihorizon",
+        "objective": (
+            "tubeletmask_dense_temporal_token_multihorizon_plus_synthetic_ttc"
+            if uses_synthetic_ttc
+            else "tubeletmask_dense_temporal_token_multihorizon"
+        ),
         "encoder_state_dict": encoder.state_dict(),
         "target_encoder_state_dict": target_encoder.state_dict(),
         "predictor_state_dict": predictor.state_dict(),
+        "ttc_head_state_dict": ttc_head.state_dict() if ttc_head is not None else None,
         "epoch": epoch,
         "checkpoint_role": role,
         "checkpoint_selected_by": "validation_loss" if role == "best" else "final_epoch",
@@ -570,6 +657,7 @@ def _checkpoint(
         "bins": config.bins,
         "pretraining_dataset_id": CARLA_LOOMING_DATASET_ID,
         "external_pretraining": True,
+        "pretraining_regime": ("ssl_plus_synthetic_ttc" if uses_synthetic_ttc else "ssl"),
         "manifest_path": manifest_path.as_posix(),
         "manifest_sha256": _hash_file(manifest_path),
         "manifest_artifact_sha256": _artifact_hash(manifest_path),
@@ -579,11 +667,14 @@ def _checkpoint(
         "pretrain_splits": ["train"],
         "validation_splits": ["validation"],
         "temporal_horizons_ms": list(config.horizons_ms),
-        "auxiliary_channel_semantics": (
-            "eleven_zero_channels_for_evttc_base_shape_compatibility"
+        "auxiliary_channel_semantics": ("eleven_zero_channels_for_evttc_base_shape_compatibility"),
+        "uses_ttc_labels": uses_synthetic_ttc,
+        "uses_collision_labels": uses_synthetic_ttc,
+        "synthetic_ttc_definition": (
+            "collision_end_timestamp_minus_causal_reference_timestamp"
+            if uses_synthetic_ttc
+            else None
         ),
-        "uses_ttc_labels": False,
-        "uses_collision_labels": False,
         "uses_velocity_feature": False,
         "uses_object_diameter_feature": False,
         "benchmark10_opened": False,
@@ -603,7 +694,7 @@ def pretrain_carla_jepa(
     device_name: str = "auto",
     resume: bool = False,
 ) -> dict[str, Any]:
-    """Pretrain the exact 21-channel BASE encoder without TTC supervision."""
+    """Pretrain BASE with JEPA and an optional disclosed synthetic-TTC auxiliary."""
 
     assert_no_sealed_benchmark_paths([root, manifest_path, split_path, output_dir])
     _set_seed(config.seed)
@@ -645,7 +736,15 @@ def pretrain_carla_jepa(
         dim=int(encoder.output_dim),
         horizon_count=len(config.horizons_ms) + int(config.context_token_weight > 0.0),
     ).to(device)
-    optimizer = _optimizer([*encoder.parameters(), *predictor.parameters()], config, device)
+    ttc_head = (
+        _build_ttc_head(int(encoder.output_dim)).to(device)
+        if config.synthetic_ttc_loss_weight > 0.0
+        else None
+    )
+    optimized_parameters = [*encoder.parameters(), *predictor.parameters()]
+    if ttc_head is not None:
+        optimized_parameters.extend(ttc_head.parameters())
+    optimizer = _optimizer(optimized_parameters, config, device)
     steps_per_epoch = math.ceil(len(train_loader) / config.gradient_accumulation)
     total_optimizer_steps = steps_per_epoch * config.epochs
     scheduler = _scheduler(
@@ -691,6 +790,11 @@ def pretrain_carla_jepa(
         encoder.load_state_dict(state["encoder_state_dict"])
         target_encoder.load_state_dict(state["target_encoder_state_dict"])
         predictor.load_state_dict(state["predictor_state_dict"])
+        if ttc_head is not None:
+            head_state = state.get("ttc_head_state_dict")
+            if not isinstance(head_state, dict):
+                raise ValueError("CARLA TTC resume checkpoint has no TTC head state.")
+            ttc_head.load_state_dict(head_state)
         optimizer.load_state_dict(state["optimizer_state_dict"])
         scheduler.load_state_dict(state["scheduler_state_dict"])
         if scaler is not None and state.get("scaler_state_dict") is not None:
@@ -714,6 +818,7 @@ def pretrain_carla_jepa(
                     encoder,
                     target_encoder,
                     predictor,
+                    ttc_head,
                     train_loader,
                     config=config,
                     device=device,
@@ -729,6 +834,7 @@ def pretrain_carla_jepa(
                         encoder,
                         target_encoder,
                         predictor,
+                        ttc_head,
                         validation_loader,
                         config=config,
                         device=device,
@@ -748,9 +854,7 @@ def pretrain_carla_jepa(
                 history.append(row)
                 history_file.write(json.dumps(row, sort_keys=True) + "\n")
                 history_file.flush()
-                collapse_fraction = validation_metrics[
-                    "context_collapsed_dimension_fraction"
-                ]
+                collapse_fraction = validation_metrics["context_collapsed_dimension_fraction"]
                 collapsed_epochs = (
                     collapsed_epochs + 1
                     if collapse_fraction > config.collapse_dimension_fraction
@@ -771,6 +875,7 @@ def pretrain_carla_jepa(
                             encoder=encoder,
                             target_encoder=target_encoder,
                             predictor=predictor,
+                            ttc_head=ttc_head,
                             epoch=epoch,
                             role="best",
                             config=config,
@@ -791,6 +896,9 @@ def pretrain_carla_jepa(
                         "encoder_state_dict": encoder.state_dict(),
                         "target_encoder_state_dict": target_encoder.state_dict(),
                         "predictor_state_dict": predictor.state_dict(),
+                        "ttc_head_state_dict": (
+                            ttc_head.state_dict() if ttc_head is not None else None
+                        ),
                         "optimizer_state_dict": optimizer.state_dict(),
                         "scheduler_state_dict": scheduler.state_dict(),
                         "scaler_state_dict": scaler.state_dict() if scaler is not None else None,
@@ -819,6 +927,7 @@ def pretrain_carla_jepa(
             encoder=encoder,
             target_encoder=target_encoder,
             predictor=predictor,
+            ttc_head=ttc_head,
             epoch=epochs_completed,
             role="last",
             config=config,
@@ -831,7 +940,11 @@ def pretrain_carla_jepa(
     )
     resume_path.unlink(missing_ok=True)
     summary: dict[str, Any] = {
-        "artifact_type": "carla_dvs_looming_jepa_pretraining_v1",
+        "artifact_type": (
+            "carla_dvs_looming_jepa_ttc_pretraining_v1"
+            if ttc_head is not None
+            else "carla_dvs_looming_jepa_pretraining_v1"
+        ),
         "pretraining_dataset_id": CARLA_LOOMING_DATASET_ID,
         "manifest_sha256": _hash_file(manifest),
         "manifest_artifact_sha256": _artifact_hash(manifest),
@@ -862,8 +975,13 @@ def pretrain_carla_jepa(
         "run_fingerprint": run_fingerprint,
         "history": history,
         "leakage_audit": {
-            "uses_ttc_labels": False,
-            "uses_collision_labels": False,
+            "uses_ttc_labels": ttc_head is not None,
+            "uses_collision_labels": ttc_head is not None,
+            "synthetic_ttc_definition": (
+                "collision_end_timestamp_minus_causal_reference_timestamp"
+                if ttc_head is not None
+                else None
+            ),
             "uses_velocity_feature": False,
             "uses_object_diameter_feature": False,
             "uses_future_events_as_ssl_targets": True,
@@ -986,9 +1104,19 @@ def evaluate_carla_jepa(
         dim=int(encoder.output_dim),
         horizon_count=len(config.horizons_ms) + int(config.context_token_weight > 0.0),
     ).to(device)
+    ttc_head = (
+        _build_ttc_head(int(encoder.output_dim)).to(device)
+        if bool(checkpoint.get("uses_ttc_labels"))
+        else None
+    )
     encoder.load_state_dict(checkpoint["encoder_state_dict"])
     target_encoder.load_state_dict(checkpoint["target_encoder_state_dict"])
     predictor.load_state_dict(checkpoint["predictor_state_dict"])
+    if ttc_head is not None:
+        head_state = checkpoint.get("ttc_head_state_dict")
+        if not isinstance(head_state, dict):
+            raise ValueError("CARLA TTC checkpoint has no TTC head state.")
+        ttc_head.load_state_dict(head_state)
     horizon_ids = torch.arange(len(config.horizons_ms), device=device, dtype=torch.long)
     start_time = time.perf_counter()
     try:
@@ -997,6 +1125,7 @@ def evaluate_carla_jepa(
                 encoder,
                 target_encoder,
                 predictor,
+                ttc_head,
                 loader,
                 config=config,
                 device=device,
@@ -1031,12 +1160,10 @@ def evaluate_carla_jepa(
         "split_manifest_sha256": _hash_file(split),
         "split_artifact_sha256": _artifact_hash(split),
         "evaluation_config": asdict(config),
-        "uses_ttc_labels": False,
-        "uses_collision_labels": False,
+        "uses_ttc_labels": ttc_head is not None,
+        "uses_collision_labels": ttc_head is not None,
         "used_for_model_selection": role == "validation",
-        "out_of_sample_scope": (
-            "synthetic_carla_sequence_holdout" if role == "test" else role
-        ),
+        "out_of_sample_scope": ("synthetic_carla_sequence_holdout" if role == "test" else role),
         "benchmark10_opened": False,
     }
     write_structured(output_path, summary)

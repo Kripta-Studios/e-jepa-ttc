@@ -137,8 +137,10 @@ No usar para:
 - latencia p95 end-to-end no está cerrada;
 - family-OOD duplica aproximadamente el error relativo de validation;
 - Benchmark-10 permanece sin evaluar.
-- CARLA JEPA solo ha superado smoke/contrato; su mejora TTC cross-domain no se
-  conoce hasta completar la transferencia grouped-CV.
+- CARLA JEPA aprende la loss latente, pero sus pilotos cross-domain empeoran
+  A0: RTE +1,72 % con SSL y +17,3 % con TTC sintético; no se promociona.
+- eAP-SSL/eAP-Geo usan un piloto event-only de 12 secuencias y aún deben cerrar
+  la transferencia pareada A0/A1 antes de cualquier escalado o claim.
 
 ## Reproducibilidad
 
@@ -151,3 +153,8 @@ atómico, optimizador/scheduler/scaler/RNG, `history.jsonl` y evaluaciones de
 validation/test. El cargador EvTTC rechaza el checkpoint si declara uso de TTC,
 colisión, velocidad, diámetro, Benchmark-10, un split distinto o una
 arquitectura incompatible de 21 canales.
+
+El pretraining eAP usa el mismo contrato de checkpointing, pero añade hashes
+del inventario train-40 y split 9/3. El validador rechaza TTC, RGB, EvTTC,
+Benchmark-10, un régimen SSL/Geo inconsistente o un checkpoint no seleccionado
+por validation.

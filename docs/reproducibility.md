@@ -302,3 +302,41 @@ La reproducción del híbrido bbox causal usa:
 Los JSON bajo `artifacts/runs` son artefactos locales ignorados por Git. Solo
 los resúmenes pequeños seleccionados se copian a `artifacts/metrics` cuando el
 run está cerrado y auditado.
+
+## Orquestador eAP → EvTTC
+
+La ruta canónica ejecuta eAP-SSL y eAP-Geo con un presupuesto pareado, vuelve a
+entrenar el control aleatorio y fine-tunea A0/A1 sobre exactamente los mismos
+folds, seeds, samples, cache, cabeza y trainer:
+
+```powershell
+# Plan sin mutar checkpoints.
+.\scripts\run_eap_evttc_complete.ps1 -Profile Analysis -DryRun
+
+# Piloto reproducible y reanudable.
+.\scripts\run_eap_evttc_complete.ps1 -Profile Analysis -Resume
+
+# Confirmación 5 folds × 3 seeds.
+.\scripts\run_eap_evttc_complete.ps1 -Profile Full -Resume
+```
+
+`Analysis` usa 1.024/256 muestras eAP, máximo tres épocas y early stopping 2/1,
+más EvTTC screen en fold 0/seed 7. `Full` usa las 4.608/1.536 ventanas
+disponibles del split de 12
+secuencias, máximo 30 épocas con early stopping 8/6, y EvTTC confirm con máximo
+40 épocas y early stopping 10/6. Los perfiles eAP usan BF16, batch 24,
+acumulación 2, ocho workers persistentes, pinned memory, prefetch 2, AdamW
+fused si CUDA lo soporta, TF32, clipping, EMA y warm-up/cosine.
+
+Cada etapa transmite stdout a `logs/*.log` y guarda comando, hardware, tiempos
+y estado en `orchestration_status.json`. eAP conserva `best`, `last`, historial,
+métricas firmadas y un `resume.pt` atómico solo mientras está incompleto. EvTTC
+conserva checkpoints, `summary.json`, predicciones OOF y `aggregate.json`.
+`compare_evttc_initializations.py` acepta `--variant` y emite comparaciones
+firmadas separadas para A0 y A1 con bootstrap agrupado por secuencia.
+
+El split `data/splits/eap_pilot12_v1.json` firma nueve secuencias train y tres
+validation contra `data/manifests/eap_train40_inventory_v1.json`. El loader
+usa `ms_to_idx` y no abre RGB ni construye otra copia/cache global de eventos.
+El validador de transferencia rechaza checkpoints con TTC, RGB, EvTTC,
+Benchmark-10, un split distinto o un checkpoint `last` no seleccionado.

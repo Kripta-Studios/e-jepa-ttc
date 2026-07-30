@@ -30,7 +30,8 @@ antes de cualquier residual.
 
 - EvTTC-32: única supervisión TTC oficial.
 - Benchmark-10: inferencia final sellada.
-- eAP train-40: 40 secuencias completas, exclusivamente SSL/probes no-TTC.
+- eAP train-40: 40 secuencias completas; piloto firmado 9/3 sobre 12
+  secuencias, exclusivamente pretraining no-TTC.
 - CARLA DVS Looming: 1.395 secuencias sintéticas utilizables para SSL,
   expansión y riesgo; TTC positivo y negativos censurados.
 
@@ -132,19 +133,28 @@ CARLA DVS Looming fue auditado sin pickle ni duplicación de eventos. El
 manifest contiene 1.406 secuencias y 7.692 millones de eventos; 1.395 secuencias
 superan el requisito de contexto de 100 ms. El split bloqueado usa 803/298/294
 secuencias train/validation/test. Es out-of-sample dentro del simulador, no OOD
-real; su utilidad se decidirá por transferencia CARLA→EvTTC.
+real. En el screen pareado, CARLA-SSL empeora el RTE de A0 un 1,72 % y el
+brazo con TTC sintético lo empeora un 17,3 %; no se promocionan.
 
 El smoke JEPA de dos épocas redujo validation loss de 0,02563 a 0,02247, sin
 colapso. Un holdout de contrato de 16 pares sintéticos obtuvo 0,02195. Son
 métricas de predicción latente e integración, no error TTC. El perfil full
 genera 12.020/4.457/4.297 pares, usa BF16, batch 24, acumulación 2, ocho
-workers y early stopping 8/6; la transferencia EvTTC permanece pendiente.
+workers y early stopping 8/6. Esos diagnósticos latentes no predijeron una
+mejora TTC cross-domain.
+
+El piloto eAP usa eventos HDF5 bajo demanda mediante `ms_to_idx`, sin abrir RGB
+ni construir cache masivo. eAP-SSL predice embeddings futuros; eAP-Geo añade
+bbox 3D proyectada, cierre/expansión y objectness por patch, pero nunca target
+TTC. El smoke SSL real produjo validation loss 0,06474, best/last y cero
+colapso. La utilidad se decide transfiriendo el encoder a A0 y A1 con el mismo
+fold, seed, cabeza, trainer y early stopping que el control aleatorio.
 
 Los próximos pasos son:
 
-1. completar CARLA SSL y fine-tuning EvTTC idéntico por fold;
+1. cerrar eAP-SSL/eAP-Geo→EvTTC en fold 0 y repetir solo las mejoras;
 2. implementar expansión/FoE explícita y un residual acotado sobre A0;
-3. piloto SSL eAP solo si añade información a la transferencia CARLA;
+3. escalar eAP de 12 a 40 solo tras mejorar RTE y MAE en dos folds;
 4. Garl con 50 épocas y pretraining por ramas;
 5. Benchmark-10 únicamente tras congelar una candidata que pase OOF.
 

@@ -1,4 +1,4 @@
-"""Compare random and external-SSL A0 runs on identical EvTTC grouped folds."""
+"""Compare random and externally pretrained runs on identical EvTTC grouped folds."""
 
 from __future__ import annotations
 
@@ -20,7 +20,7 @@ from e_jepa_ttc.evaluation.bootstrap import (  # noqa: E402
 )
 from e_jepa_ttc.utils.io import write_structured  # noqa: E402
 
-VARIANT = "A0_MATCHED_GLOBAL"
+DEFAULT_VARIANT = "A0_MATCHED_GLOBAL"
 METRICS = (
     "sequence_macro_selection_score",
     "sequence_macro_mean_relative_error",
@@ -36,15 +36,15 @@ def _sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
-def _variant_row(payload: dict[str, Any], source: Path) -> dict[str, Any]:
+def _variant_row(payload: dict[str, Any], source: Path, *, variant: str) -> dict[str, Any]:
     if payload.get("benchmark10_opened") is not False:
         raise ValueError(f"Aggregate is not sealed from Benchmark-10: {source}.")
     row = next(
-        (item for item in payload.get("ranking", []) if item.get("variant") == VARIANT),
+        (item for item in payload.get("ranking", []) if item.get("variant") == variant),
         None,
     )
     if row is None or row.get("complete_for_final_selection") is not True:
-        raise ValueError(f"{source} has no complete {VARIANT} grouped-CV row.")
+        raise ValueError(f"{source} has no complete {variant} grouped-CV row.")
     return row
 
 
@@ -61,17 +61,19 @@ def main() -> int:
     parser.add_argument("--control", type=Path, required=True)
     parser.add_argument("--transfer", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--variant", default=DEFAULT_VARIANT)
+    parser.add_argument("--candidate-label", default="external_pretraining")
     parser.add_argument("--bootstrap-iterations", type=int, default=2000)
     args = parser.parse_args()
     assert_no_sealed_benchmark_paths((args.control, args.transfer, args.output))
     control_payload = json.loads(args.control.read_text(encoding="utf-8"))
     transfer_payload = json.loads(args.transfer.read_text(encoding="utf-8"))
-    control = _variant_row(control_payload, args.control)
-    transfer = _variant_row(transfer_payload, args.transfer)
+    control = _variant_row(control_payload, args.control, variant=args.variant)
+    transfer = _variant_row(transfer_payload, args.transfer, variant=args.variant)
     control_runs = {(run["fold"], run["seed"]): run for run in control["runs"]}
     transfer_runs = {(run["fold"], run["seed"]): run for run in transfer["runs"]}
     if set(control_runs) != set(transfer_runs):
-        raise ValueError("Control and CARLA transfer do not contain identical fold/seed pairs.")
+        raise ValueError("Control and transfer do not contain identical fold/seed pairs.")
     control_fields = (
         "cache_manifest_sha256",
         "sample_selection_sha256",
@@ -94,11 +96,11 @@ def main() -> int:
         transfer_mean = float(transfer[f"{metric}_mean"])
         comparisons[metric] = {
             "control_mean": control_mean,
-            "carla_transfer_mean": transfer_mean,
-            "carla_relative_improvement_pct": 100.0
+            "candidate_transfer_mean": transfer_mean,
+            "candidate_relative_improvement_pct": 100.0
             * (control_mean - transfer_mean)
             / control_mean,
-            "carla_pair_wins": sum(
+            "candidate_pair_wins": sum(
                 float(transfer_runs[pair][metric]) < float(control_runs[pair][metric])
                 for pair in control_runs
             ),
@@ -136,7 +138,7 @@ def main() -> int:
                 "seed": seed,
                 "sample_count": int(truth.shape[0]),
                 "sequence_count": int(np.unique(sequences).shape[0]),
-                "carla_minus_control_mae_s": paired_sequence_bootstrap_difference(
+                "candidate_minus_control_mae_s": paired_sequence_bootstrap_difference(
                     truth,
                     baseline_prediction,
                     transfer_prediction,
@@ -145,17 +147,14 @@ def main() -> int:
                     confidence=0.95,
                     seed=seed,
                 ),
-                "carla_minus_control_mean_abs_relative_error": (
+                "candidate_minus_control_mean_abs_relative_error": (
                     paired_sequence_bootstrap_difference(
                         truth,
                         baseline_prediction,
                         transfer_prediction,
                         sequences,
                         metric=lambda target, estimate: float(
-                            np.mean(
-                                np.abs(estimate - target)
-                                / np.maximum(np.abs(target), 1e-6)
-                            )
+                            np.mean(np.abs(estimate - target) / np.maximum(np.abs(target), 1e-6))
                         ),
                         iterations=args.bootstrap_iterations,
                         confidence=0.95,
@@ -165,16 +164,15 @@ def main() -> int:
             }
         )
     payload = {
-        "artifact_type": "evttc_a0_carla_ssl_transfer_comparison_v1",
-        "variant": VARIANT,
+        "artifact_type": "evttc_external_pretraining_transfer_comparison_v2",
+        "variant": args.variant,
+        "candidate_label": args.candidate_label,
         "control_aggregate": args.control.as_posix(),
         "control_aggregate_sha256": _sha256(args.control),
         "transfer_aggregate": args.transfer.as_posix(),
         "transfer_aggregate_sha256": _sha256(args.transfer),
         "matched_control_audit_passed": True,
-        "fold_seed_pairs": [
-            {"fold": fold, "seed": seed} for fold, seed in sorted(control_runs)
-        ],
+        "fold_seed_pairs": [{"fold": fold, "seed": seed} for fold, seed in sorted(control_runs)],
         "comparisons": comparisons,
         "paired_oof_sequence_bootstrap_by_seed": bootstrap,
         "test_used_for_selection": False,

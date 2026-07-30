@@ -29,7 +29,11 @@ from e_jepa_ttc.evaluation.oracle_geometry import (
 )
 from e_jepa_ttc.models.garl_ttc_replica import GarlTTCConfig
 from e_jepa_ttc.models.object_geo_jepa_ttc import OGEConfig
-from e_jepa_ttc.training.checkpoints import validate_external_ssl_checkpoint
+from e_jepa_ttc.training.checkpoints import (
+    validate_external_eap_checkpoint,
+    validate_external_ssl_checkpoint,
+    validate_external_ttc_checkpoint,
+)
 from e_jepa_ttc.training.garl_ttc import train_garl_ttc
 from e_jepa_ttc.training.object_geo_trainer import OGETrainerConfig, train_object_geo_ttc
 from e_jepa_ttc.utils.io import write_structured
@@ -299,9 +303,7 @@ def _prepare_cache(
             raise ValueError("The historical BASE split has a single fold numbered zero.")
         split_payload = yaml.safe_load(historical_split_path.read_text(encoding="utf-8"))
         split_names = (
-            ("train", "validation", "test")
-            if include_diagnostic_test
-            else ("train", "validation")
+            ("train", "validation", "test") if include_diagnostic_test else ("train", "validation")
         )
         assignments = {
             sequence_id: split
@@ -479,9 +481,7 @@ def _gate_rows(
         # neural arm.
         oracle_variants = summaries["A4_GT_GEOMETRY"].get("oracle_variants", {})
         for expert, expert_metrics in oracle_variants.items():
-            candidate_error = float(
-                expert_metrics["sequence_macro_mean_relative_error"]
-            )
+            candidate_error = float(expert_metrics["sequence_macro_mean_relative_error"])
             rows.append(
                 {
                     "component": f"gt_geometry_{expert}",
@@ -521,10 +521,7 @@ def _matched_fairness_audit(
     )
     checks = {
         field: len(
-            {
-                json.dumps(summary.get(field), sort_keys=True)
-                for summary in selected.values()
-            }
+            {json.dumps(summary.get(field), sort_keys=True) for summary in selected.values()}
         )
         == 1
         for field in invariant_fields
@@ -580,11 +577,7 @@ def _garl_fairness_audit(
     explicitly instead of being hidden as equal total training compute.
     """
 
-    selected = {
-        name: summary
-        for name, summary in summaries.items()
-        if name.startswith("G")
-    }
+    selected = {name: summary for name, summary in summaries.items() if name.startswith("G")}
     if len(selected) < 2:
         return {"status": "not_applicable", "arms": list(selected)}
     invariant_fields = (
@@ -597,10 +590,7 @@ def _garl_fairness_audit(
     )
     checks = {
         field: len(
-            {
-                json.dumps(summary.get(field), sort_keys=True)
-                for summary in selected.values()
-            }
+            {json.dumps(summary.get(field), sort_keys=True) for summary in selected.values()}
         )
         == 1
         for field in invariant_fields
@@ -632,8 +622,7 @@ def _garl_fairness_audit(
         "trainer_checks": trainer_checks,
         "actual_epochs_may_differ_only_by_shared_early_stopping_rule": True,
         "late_fusion_branch_pretraining": {
-            name: bool(summary.get("branch_initialization"))
-            for name, summary in selected.items()
+            name: bool(summary.get("branch_initialization")) for name, summary in selected.items()
         },
         "scientific_scope": (
             "Equal downstream sample/effective-batch/update budgets. G6/G7 "
@@ -681,20 +670,29 @@ def main() -> int:
     parser.add_argument("--base-encoder-checkpoint", type=Path)
     parser.add_argument(
         "--base-initialization",
-        choices=("audited_ssl", "random_control", "external_ssl"),
+        choices=(
+            "audited_ssl",
+            "random_control",
+            "external_ssl",
+            "external_ttc",
+            "external_eap_ssl",
+            "external_eap_geo",
+        ),
         default="audited_ssl",
         help=(
             "Use the audited SSL checkpoint or a disclosed random EventTubelet "
             "control. random_control is intended for leakage-free grouped CV when "
             "fold-specific SSL checkpoints do not yet exist. external_ssl accepts "
-            "only a provenance-checked CARLA checkpoint with no EvTTC exposure."
+            "a label-free CARLA checkpoint; external_ttc is the separately disclosed "
+            "CARLA synthetic-TTC ablation. external_eap_ssl and external_eap_geo "
+            "accept the paired public eAP train-only arms. None may have EvTTC exposure."
         ),
     )
     parser.add_argument(
         "--external-pretraining-split",
         type=Path,
         default=Path("data/splits/carla_dvs_looming_blocked_v1.json"),
-        help="Signed source split required when --base-initialization=external_ssl.",
+        help="Signed source split required by every external initialization.",
     )
     parser.add_argument("--cache-dir", type=Path)
     parser.add_argument("--output-dir", type=Path)
@@ -739,9 +737,14 @@ def main() -> int:
                 "--base-encoder-checkpoint conflicts with random_control initialization."
             )
         base_encoder_checkpoint = None
-    elif args.base_initialization == "external_ssl":
+    elif args.base_initialization in {
+        "external_ssl",
+        "external_ttc",
+        "external_eap_ssl",
+        "external_eap_geo",
+    }:
         if args.base_encoder_checkpoint is None:
-            raise ValueError("external_ssl requires --base-encoder-checkpoint.")
+            raise ValueError(f"{args.base_initialization} requires --base-encoder-checkpoint.")
         base_encoder_checkpoint = args.base_encoder_checkpoint
     else:
         base_encoder_checkpoint = args.base_encoder_checkpoint or Path(
@@ -761,14 +764,11 @@ def main() -> int:
             raise ValueError("gradient-accumulation must be positive.")
         profile["gradient_accumulation"] = args.gradient_accumulation
     if args.include_diagnostic_test_cache and args.split_protocol != "historical_base":
-        raise ValueError(
-            "--include-diagnostic-test-cache is only valid with historical_base."
-        )
+        raise ValueError("--include-diagnostic-test-cache is only valid with historical_base.")
     selected_variants = tuple(args.variants or DEFAULT_VARIANTS)
     oge_selected = any(not variant.startswith("G") for variant in selected_variants)
     needs_base_encoder = any(
-        not variant.startswith("G") and variant != "A4_GT_GEOMETRY"
-        for variant in selected_variants
+        not variant.startswith("G") and variant != "A4_GT_GEOMETRY" for variant in selected_variants
     )
     garl_selected = any(variant.startswith("G") for variant in selected_variants)
     rgb_garl_variants = {
@@ -781,9 +781,7 @@ def main() -> int:
     }
     rgb_selected = bool(set(selected_variants) & rgb_garl_variants)
     inferred_stage_role = (
-        "all"
-        if oge_selected and garl_selected
-        else ("core" if oge_selected else "garl")
+        "all" if oge_selected and garl_selected else ("core" if oge_selected else "garl")
     )
     stage_role = args.stage_role or inferred_stage_role
     if stage_role != inferred_stage_role:
@@ -840,6 +838,10 @@ def main() -> int:
         need_rgb=rgb_selected,
         include_diagnostic_test=args.include_diagnostic_test_cache,
     )
+    external_pretraining_audit: dict[str, Any] = {
+        "enabled": False,
+        "pretraining_regime": None,
+    }
     if needs_base_encoder and base_encoder_checkpoint is not None:
         if not base_encoder_checkpoint.is_file():
             raise FileNotFoundError(
@@ -851,11 +853,36 @@ def main() -> int:
             weights_only=False,
         )
         if args.base_initialization == "external_ssl":
-            validate_external_ssl_checkpoint(
-                base_encoder_checkpoint,
-                checkpoint,
-                source_split_path=args.external_pretraining_split,
+            external_pretraining_audit = {
+                "enabled": True,
+                **validate_external_ssl_checkpoint(
+                    base_encoder_checkpoint,
+                    checkpoint,
+                    source_split_path=args.external_pretraining_split,
+                ),
+            }
+        elif args.base_initialization == "external_ttc":
+            external_pretraining_audit = {
+                "enabled": True,
+                **validate_external_ttc_checkpoint(
+                    base_encoder_checkpoint,
+                    checkpoint,
+                    source_split_path=args.external_pretraining_split,
+                ),
+            }
+        elif args.base_initialization in {"external_eap_ssl", "external_eap_geo"}:
+            expected_regime = (
+                "eap_ssl" if args.base_initialization == "external_eap_ssl" else "eap_geo"
             )
+            external_pretraining_audit = {
+                "enabled": True,
+                **validate_external_eap_checkpoint(
+                    base_encoder_checkpoint,
+                    checkpoint,
+                    source_split_path=args.external_pretraining_split,
+                    expected_regime=expected_regime,
+                ),
+            }
         else:
             expected_split_hash = (
                 _sha256(args.historical_split)
@@ -897,9 +924,7 @@ def main() -> int:
     factories = _variants(
         garl_backbone=str(profile["garl_backbone"]),
         base_encoder_checkpoint=(
-            base_encoder_checkpoint.as_posix()
-            if base_encoder_checkpoint is not None
-            else None
+            base_encoder_checkpoint.as_posix() if base_encoder_checkpoint is not None else None
         ),
         allow_random_base_initialization=args.base_initialization == "random_control",
     )
@@ -1077,12 +1102,13 @@ def main() -> int:
         "matched_fairness_audit": _matched_fairness_audit(summaries),
         "garl_fairness_audit": _garl_fairness_audit(summaries),
         "benchmark10_opened": False,
+        "base_initialization": args.base_initialization,
         "selection_split": (
             "historical_validation_sequences"
             if args.split_protocol == "historical_base"
             else "validation_grouped_fold"
         ),
-        "external_pretraining": "disabled",
+        "external_pretraining": external_pretraining_audit,
     }
     write_structured(output_dir / "matrix_summary.json", matrix)
     print(json.dumps(matrix, indent=2))

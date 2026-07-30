@@ -5,10 +5,10 @@ Actualizado: 2026-07-30.
 Compatibilidad histórica: CPLA-high is diagnostic only; no se utiliza como
 test final ni como sustituto del Benchmark-10 sellado.
 
-Validación local del 30 de julio de 2026: `245 passed` en el árbol de trabajo,
-Ruff sin errores,
-validación real/dry-run del orquestador superada, PDF recompilado y export ONNX
-de OGE verificado numéricamente.
+Validación local del 30 de julio de 2026: `252 passed` en el árbol de trabajo,
+Ruff sin errores, smokes reales SSL/Geo y dry-run del orquestador eAP→EvTTC
+superados, PDF recompilado/revisado y export ONNX de OGE verificado
+numéricamente.
 
 ## Conclusión ejecutiva
 
@@ -25,7 +25,9 @@ todavía SOTA oficial. Lo cerrado es:
 7. early stopping y checkpointing acotado;
 8. grouped CV de 5 folds × 3 seeds para A0/A1;
 9. freeze de A0 antes del diagnóstico familiar OOD;
-10. evaluación separada validation/family-OOD con bootstrap por secuencia.
+10. evaluación separada validation/family-OOD con bootstrap por secuencia;
+11. pilotos CARLA→EvTTC negativos conservados;
+12. piloto eAP-12 SSL/Geo y orquestador A0/A1 reproducibles.
 
 El screen de ocho épocas era insuficiente para Dense: A1 alcanzó su mejor
 checkpoint en la época 20. AttnRes y KDA no mejoraron con el presupuesto largo.
@@ -210,7 +212,10 @@ La cobertura incompleta se registra y el brazo queda rechazado.
 - CARLA: 412 colisiones con coche, 347 con peatón y 636 negativos; manifest y
   split bloqueado firmados, lectura mmap con `allow_pickle=False`.
 - CARLA JEPA smoke: validation loss `0,02563→0,02247`, cero dimensiones
-  colapsadas; test de contrato de 16 pares `0,02195` (loss SSL, no TTC).
+  colapsadas; la transferencia empeora A0 en RTE 1,72 % (SSL) y 17,3 %
+  (auxiliar TTC sintético), por lo que no se promociona.
+- eAP piloto: inventario firmado de 40, split fijo de 12 en 9 train/3
+  validation, solo eventos; smoke SSL validation loss `0,06474` (no TTC).
 
 ## Almacenamiento y hardware
 
@@ -229,13 +234,13 @@ La cobertura incompleta se registra y el brazo queda rechazado.
 ## Próximos gates
 
 1. Mantener A0 como final y A1 como hipótesis, no como ganador.
-2. Completar CARLA SSL y su transferencia A0 sobre 5 folds × 3 seeds EvTTC;
-   no interpretar su test sintético como TTC real.
-3. Ejecutar un piloto eAP SSL de 2–4 secuencias sin pseudo-TTC y repetir el
-   mismo fine-tuning EvTTC; escalar a 40 solo si mejora.
+2. Cerrar eAP-SSL/eAP-Geo sobre A0/A1 en fold 0/seed 7; repetir únicamente si
+   mejoran simultáneamente RTE y MAE.
+3. Escalar eAP de 12 a 40 solo tras repetir la mejora en al menos dos folds.
 4. Repetir Garl con el presupuesto y pretraining por ramas del código oficial.
-5. Mantener módulos bbox-free bloqueados: la geometría no pasó su gate.
-6. Abrir Benchmark-10 solo bajo una decisión explícita posterior; este trabajo
+5. Mantener CARLA como ablación negativa hasta formular un objetivo distinto.
+6. Mantener módulos bbox-free bloqueados: la geometría no pasó su gate.
+7. Abrir Benchmark-10 solo bajo una decisión explícita posterior; este trabajo
    no lo consumió ni afirma SOTA.
 
 ## Estado Git

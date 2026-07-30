@@ -16,6 +16,10 @@ from e_jepa_ttc.data.eap_cache import (
     ShardLocalSampler,
     materialize_eap_object_cache,
 )
+from e_jepa_ttc.training.eap_jepa import (
+    EAPJEPATrainerConfig,
+    EAPOnDemandJEPADataset,
+)
 
 
 def _write_synthetic_eap(root: Path) -> None:
@@ -170,4 +174,70 @@ def test_density_adaptive_roi_window_is_causal_and_bounded(tmp_path: Path) -> No
         sample["future_window_start_us"].numpy()[valid_future]
         >= sample["context_window_end_us"].numpy()[-1]
     )
+    dataset.close()
+
+
+def test_eap_jepa_dataset_reads_full_frame_events_on_demand(tmp_path: Path) -> None:
+    root = tmp_path / "eap"
+    _write_synthetic_eap(root)
+    dataset = EAPOnDemandJEPADataset(
+        root,
+        ["synthetic"],
+        EAPJEPATrainerConfig(
+            epochs=1,
+            batch_size=1,
+            gradient_accumulation=1,
+            num_workers=0,
+            horizons_ms=(100,),
+            max_windows_per_sequence=1,
+            width=32,
+            height=32,
+            geometry_loss_weight=0.25,
+        ),
+    )
+
+    context, future, valid, geometry, geometry_valid, objectness = dataset[0]
+
+    assert context.shape == (21, 32, 32)
+    assert future.shape == (1, 21, 32, 32)
+    assert valid.tolist() == [True]
+    assert geometry.shape == (6,)
+    assert geometry_valid.all()
+    assert objectness.shape == (2, 2)
+    assert objectness.any()
+    assert len(dataset._readers) == 1
+    assert len(dataset._voxel_cache) == 2
+    dataset.close()
+    assert not dataset._readers
+
+
+def test_eap_ssl_window_selection_does_not_open_object_labels(tmp_path: Path) -> None:
+    root = tmp_path / "eap"
+    _write_synthetic_eap(root)
+    (root / "data" / "train" / "synthetic" / "labels.parquet").unlink()
+
+    dataset = EAPOnDemandJEPADataset(
+        root,
+        ["synthetic"],
+        EAPJEPATrainerConfig(
+            epochs=1,
+            batch_size=1,
+            gradient_accumulation=1,
+            num_workers=0,
+            horizons_ms=(100,),
+            max_windows_per_sequence=1,
+            width=32,
+            height=32,
+            geometry_loss_weight=0.0,
+        ),
+    )
+
+    context, future, valid, geometry, geometry_valid, objectness = dataset[0]
+
+    assert context.shape == (21, 32, 32)
+    assert future.shape == (1, 21, 32, 32)
+    assert valid.all()
+    assert not geometry.any()
+    assert not geometry_valid.any()
+    assert not objectness.any()
     dataset.close()

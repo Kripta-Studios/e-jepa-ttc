@@ -124,3 +124,30 @@ Desempate: peor secuencia, RMSE, variación entre seeds y latencia.
 - el cache puede materializar `test`, pero el trainer abre exclusivamente
   `train`/`validation`; la evaluación de `test` requiere un flag explícito;
 - el perfil de recursos no cambia dentro de una comparación.
+
+## Pretraining externo eAP-12
+
+La selección de secuencias se realiza sin métricas EvTTC. El inventario público
+train-40 excluye únicamente dos HDF5 mayores de 20 GiB y selecciona 12
+secuencias por anclas documentadas más farthest-point sampling estandarizado.
+El split fijo contiene 9 train/3 validation y ninguna secuencia compartida.
+
+Se comparan dos brazos con idéntico presupuesto:
+
+```text
+eAP-SSL = JEPA denso futuro event-only
+eAP-Geo = eAP-SSL + bbox 2D proyectada + expansión/cierre + objectness patch
+```
+
+Geo usa `K_event` y `T_event_ego` para proyectar las cajas 3D y derivadas
+locales de profundidad/altura, pero no optimiza TTC reconstruido. Ningún brazo
+abre RGB, EvTTC o Benchmark-10 durante pretraining. La entrada compatible usa
+diez bins de eventos, dos canales causales de densidad/rate y nueve canales de
+navegación/acción a cero; no se inventa metadata eAP ausente.
+
+El análisis inicial usa máximo 3 épocas con early stopping 2/1, 1.024/256
+muestras, fold 0 y seed 7. Es un screen de descarte, nunca evidencia final. Se
+pasa a un segundo fold solo si
+mejoran simultáneamente RTE y MAE frente al control en el primero. Se escala de
+12 a 40 secuencias solo si la mejora se repite en al menos dos folds. Una
+confirmación publicable exige los cinco folds y seeds 7/13/21.

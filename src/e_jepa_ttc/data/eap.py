@@ -397,6 +397,7 @@ def build_eap_object_windows(
     maximum_history_gap_ms: int = 125,
     maximum_interpolation_gap_ms: int = 150,
     ttc_range_s: tuple[float, float] | None = (-10.0, 10.0),
+    require_finite_ttc: bool = True,
 ) -> list[EAPObjectWindow]:
     """Build causal histories and future geometry targets by object track."""
 
@@ -424,9 +425,13 @@ def build_eap_object_windows(
             if np.any(gaps_ms > maximum_history_gap_ms):
                 continue
             target = history[-1]
-            if not np.isfinite(target.ttc_s):
+            if require_finite_ttc and not np.isfinite(target.ttc_s):
                 continue
-            if ttc_range_s is not None and not ttc_range_s[0] <= target.ttc_s <= ttc_range_s[1]:
+            if (
+                ttc_range_s is not None
+                and np.isfinite(target.ttc_s)
+                and not ttc_range_s[0] <= target.ttc_s <= ttc_range_s[1]
+            ):
                 continue
             future: list[tuple[int, EAPObjectState]] = []
             for horizon_ms in horizons_ms:

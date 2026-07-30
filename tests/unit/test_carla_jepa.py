@@ -57,7 +57,7 @@ def test_carla_jepa_voxels_match_evttc_base_contract(tmp_path: Path) -> None:
     )
 
     dataset = CarlaJEPAVoxelDataset(tmp_path, sequences, config)
-    context, future, valid = dataset[0]
+    context, future, valid, synthetic_ttc, has_ttc = dataset[0]
 
     assert context.shape == (EVTTC_BASE_INPUT_CHANNELS, 24, 32)
     assert future.shape == (2, EVTTC_BASE_INPUT_CHANNELS, 24, 32)
@@ -66,8 +66,15 @@ def test_carla_jepa_voxels_match_evttc_base_contract(tmp_path: Path) -> None:
     assert bool(future[:, :EVTTC_BASE_EVENT_CHANNELS].abs().sum() > 0)
     assert bool((context[EVTTC_BASE_EVENT_CHANNELS:] == 0).all())
     assert bool((future[:, EVTTC_BASE_EVENT_CHANNELS:] == 0).all())
+    assert synthetic_ttc.item() == 0.0
+    assert has_ttc.item() is False
 
 
 def test_carla_jepa_rejects_non_base_event_bin_count() -> None:
     with pytest.raises(ValueError, match="exactly five event bins"):
         CarlaJEPATrainerConfig(bins=4)
+
+
+def test_carla_jepa_rejects_negative_synthetic_ttc_weight() -> None:
+    with pytest.raises(ValueError, match="synthetic_ttc_loss_weight"):
+        CarlaJEPATrainerConfig(synthetic_ttc_loss_weight=-1.0)

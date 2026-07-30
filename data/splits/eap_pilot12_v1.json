@@ -1,0 +1,104 @@
+{
+  "artifact_sha256": "f01fa622daea60ea0c184f35595486a4e19ccd32ed161c4ffcaec0cbceec89b1",
+  "artifact_type": "eap_pilot12_sequence_split_v1",
+  "assignments": {
+    "train": [
+      "2cyv0Oedzg",
+      "5ilM1PX2vz",
+      "6h5yRW2LGc",
+      "OBneIVg4Cw",
+      "OYgB6RGWcq",
+      "WbCh1DRerJ",
+      "mHGFBekt7X",
+      "qGsgzl4Q8B",
+      "t79dBxj1WS"
+    ],
+    "validation": [
+      "DGqicHUGWb",
+      "pBqGOb2vYq",
+      "qoohcdtLDH"
+    ]
+  },
+  "benchmark10_opened": false,
+  "dataset": "NAIL-HNU/eAP-dataset-public-train40",
+  "documented_sequence_attributes": {
+    "2cyv0Oedzg": {
+      "relative_motion": "moderate_following",
+      "road": "urban",
+      "weather": "sunny"
+    },
+    "6h5yRW2LGc": {
+      "relative_motion": "moderate_following",
+      "road": "urban",
+      "weather": "night"
+    },
+    "DGqicHUGWb": {
+      "relative_motion": "slow_following",
+      "road": "dark_minor_road",
+      "weather": "night"
+    },
+    "OBneIVg4Cw": {
+      "relative_motion": "moderate_following",
+      "road": "urban",
+      "weather": "twilight"
+    },
+    "mHGFBekt7X": {
+      "relative_motion": "moderate_following",
+      "road": "expressway",
+      "weather": "sunny"
+    },
+    "pBqGOb2vYq": {
+      "relative_motion": "moderate_following",
+      "road": "urban",
+      "weather": "cloudy"
+    },
+    "qGsgzl4Q8B": {
+      "relative_motion": "high_speed_hard_braking",
+      "road": "expressway",
+      "weather": "twilight"
+    },
+    "qoohcdtLDH": {
+      "relative_motion": "moderate_following",
+      "road": "urban",
+      "weather": "sunny"
+    }
+  },
+  "evttc_used_for_selection": false,
+  "excluded_large_outliers": [
+    "q2k6O0X6JY",
+    "rhYxPcU29n"
+  ],
+  "inventory_artifact_sha256": "193c53580ff4ddb906af87aa79b112697bf6b71a08fc18e4afcdc73b50cf15ba",
+  "rgb_opened": false,
+  "selected": [
+    "2cyv0Oedzg",
+    "5ilM1PX2vz",
+    "6h5yRW2LGc",
+    "DGqicHUGWb",
+    "OBneIVg4Cw",
+    "OYgB6RGWcq",
+    "WbCh1DRerJ",
+    "mHGFBekt7X",
+    "pBqGOb2vYq",
+    "qGsgzl4Q8B",
+    "qoohcdtLDH",
+    "t79dBxj1WS"
+  ],
+  "selection_method": "documented_attribute_anchors_plus_standardized_farthest_point; validation_medoid_plus_farthest_points",
+  "selection_parameters": {
+    "anchor_sequence_ids": [
+      "2cyv0Oedzg",
+      "6h5yRW2LGc",
+      "DGqicHUGWb",
+      "OBneIVg4Cw",
+      "mHGFBekt7X",
+      "pBqGOb2vYq",
+      "qGsgzl4Q8B",
+      "qoohcdtLDH"
+    ],
+    "maximum_event_gib": 20.0,
+    "sequence_count": 12,
+    "validation_sequence_count": 3
+  },
+  "train_validation_disjoint": true
+}
