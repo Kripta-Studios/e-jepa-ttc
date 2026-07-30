@@ -20,7 +20,28 @@ def main() -> int:
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--expected-folds", type=int, default=5)
     parser.add_argument("--expected-seeds", type=int, default=3)
+    parser.add_argument(
+        "--folds",
+        type=int,
+        nargs="+",
+        help="Exact fold IDs to aggregate; other run directories are ignored.",
+    )
+    parser.add_argument(
+        "--seeds",
+        type=int,
+        nargs="+",
+        help="Exact seed IDs to aggregate; other run directories are ignored.",
+    )
     args = parser.parse_args()
+    if args.folds is not None and len(set(args.folds)) != args.expected_folds:
+        raise ValueError("--folds must contain exactly --expected-folds unique IDs.")
+    if args.seeds is not None and len(set(args.seeds)) != args.expected_seeds:
+        raise ValueError("--seeds must contain exactly --expected-seeds unique IDs.")
+    expected_pairs = (
+        {(fold, seed) for fold in args.folds for seed in args.seeds}
+        if args.folds is not None and args.seeds is not None
+        else None
+    )
     assert_no_sealed_benchmark_paths((args.root, args.output))
     grouped: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for summary_path in sorted(args.root.glob("fold-*/*/seed-*/summary.json")):
@@ -28,6 +49,10 @@ def main() -> int:
         variant = summary_path.parents[1].name
         fold = int(summary_path.parents[2].name.split("-")[-1])
         seed = int(summary_path.parent.name.split("-")[-1])
+        if args.folds is not None and fold not in args.folds:
+            continue
+        if args.seeds is not None and seed not in args.seeds:
+            continue
         grouped[variant].append(
             {
                 "fold": fold,
@@ -57,12 +82,17 @@ def main() -> int:
         )
         mae = np.asarray([run["sequence_macro_mae_s"] for run in runs])
         run_pairs = {(run["fold"], run["seed"]) for run in runs}
+        complete = (
+            run_pairs == expected_pairs
+            if expected_pairs is not None
+            else len(run_pairs) == required_runs
+        )
         rows.append(
             {
                 "variant": variant,
                 "run_count": len(runs),
                 "required_run_count": required_runs,
-                "complete_for_final_selection": len(run_pairs) == required_runs,
+                "complete_for_final_selection": complete,
                 "folds": sorted({run["fold"] for run in runs}),
                 "seeds": sorted({run["seed"] for run in runs}),
                 "sequence_macro_selection_score_mean": float(selection.mean()),
@@ -91,6 +121,8 @@ def main() -> int:
         "protocol": "evttc_architecture_grouped_cv_multiseed_aggregate_v2",
         "expected_folds": args.expected_folds,
         "expected_seeds": args.expected_seeds,
+        "expected_fold_ids": args.folds,
+        "expected_seed_ids": args.seeds,
         "required_runs_per_variant": required_runs,
         "all_variants_complete": bool(rows)
         and all(bool(row["complete_for_final_selection"]) for row in rows),

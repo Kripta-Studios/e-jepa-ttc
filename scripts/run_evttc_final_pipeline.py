@@ -37,17 +37,17 @@ def _run(command: list[str], *, dry_run: bool = False) -> None:
         subprocess.run(command, cwd=ROOT, check=True)
 
 
-def _winner(aggregate_path: Path, requested: str | None) -> str:
+def _winner(aggregate_path: Path, requested: str | None) -> dict[str, object]:
     payload = json.loads(aggregate_path.read_text(encoding="utf-8"))
     complete = [row for row in payload["ranking"] if row["complete_for_final_selection"]]
     if requested is not None:
         row = next((item for item in complete if item["variant"] == requested), None)
         if row is None:
             raise ValueError(f"Variant {requested!r} is absent or incomplete.")
-        return requested
+        return row
     if not complete:
         raise ValueError("No CV-complete architecture is available to freeze.")
-    return str(complete[0]["variant"])
+    return complete[0]
 
 
 def _execution_args(profile: str, batch_size: int, accumulation: int) -> list[str]:
@@ -86,6 +86,8 @@ def compare(args: argparse.Namespace) -> int:
                 str(seed),
                 "--workers",
                 str(args.workers),
+                "--output-dir",
+                str(args.run_root / f"fold-{fold}"),
                 "--base-initialization",
                 "random_control",
                 "--variants",
@@ -108,6 +110,10 @@ def compare(args: argparse.Namespace) -> int:
             str(len(args.folds)),
             "--expected-seeds",
             str(len(args.seeds)),
+            "--folds",
+            *(str(fold) for fold in args.folds),
+            "--seeds",
+            *(str(seed) for seed in args.seeds),
         ],
         dry_run=args.dry_run,
     )
@@ -163,9 +169,13 @@ def evaluate_holdout(args: argparse.Namespace) -> int:
 
 
 def freeze(args: argparse.Namespace) -> int:
-    variant = _winner(args.aggregate, args.variant)
+    row = _winner(args.aggregate, args.variant)
+    variant = str(row["variant"])
+    runs = row.get("runs")
+    if not isinstance(runs, list):
+        raise TypeError("Aggregate winner is missing its run list.")
     checkpoints = sorted(
-        args.run_root.glob(f"fold-*/{variant}/seed-*/best.pt"),
+        (Path(str(run["summary"])).parent / "best.pt" for run in runs),
         key=lambda path: path.as_posix(),
     )
     if not checkpoints:
@@ -199,6 +209,8 @@ def validate(_: argparse.Namespace) -> int:
         "tests/unit/test_grouped_cv.py",
         "tests/unit/test_benchmark10_guard.py",
         "tests/unit/test_training_controls.py",
+        "tests/unit/test_oge_split_evaluation.py",
+        "tests/unit/test_architecture_aggregate.py",
     )
     _run([sys.executable, "-m", "pytest", *tests, "-q"])
     _run([sys.executable, "-m", "ruff", "check", "src", "scripts", "tests"])
