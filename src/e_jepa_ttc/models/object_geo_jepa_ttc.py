@@ -33,6 +33,7 @@ class OGEConfig:
     event_channels: int | None = None
     backbone: str = "compact_dense"
     base_encoder_checkpoint: str | None = None
+    allow_random_base_initialization: bool = False
     dim: int = 128
     backbone_depth: int = 4
     heads: int = 4
@@ -60,8 +61,16 @@ class OGEConfig:
             )
         if self.backbone not in {"compact_dense", "base_event_tubelet"}:
             raise ValueError("backbone must be compact_dense or base_event_tubelet.")
-        if self.backbone == "base_event_tubelet" and self.base_encoder_checkpoint is None:
+        if (
+            self.backbone == "base_event_tubelet"
+            and self.base_encoder_checkpoint is None
+            and not self.allow_random_base_initialization
+        ):
             raise ValueError("BASE EventTubelet backbone requires its audited SSL checkpoint.")
+        if self.base_encoder_checkpoint is not None and self.allow_random_base_initialization:
+            raise ValueError(
+                "Select either an audited BASE checkpoint or explicit random initialization."
+            )
         if self.backbone == "base_event_tubelet" and (
             self.in_channels != 21 or self.dim != 192 or self.backbone_depth != 6
         ):
@@ -122,7 +131,10 @@ class ObjectGeometryJEPATTC(nn.Module):
         super().__init__()
         self.config = config
         self.backbone = (
-            BaseEventTubeletBackbone(config.base_encoder_checkpoint)
+            BaseEventTubeletBackbone(
+                config.base_encoder_checkpoint,
+                allow_random_initialization=config.allow_random_base_initialization,
+            )
             if config.backbone == "base_event_tubelet"
             else DensePatchEventBackbone(
                 config.in_channels,

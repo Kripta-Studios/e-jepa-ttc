@@ -43,12 +43,14 @@ def _variants(
     *,
     garl_backbone: str = "resnet50",
     base_encoder_checkpoint: str | None = None,
+    allow_random_base_initialization: bool = False,
 ) -> dict[str, VariantFactory]:
     oge = partial(
         OGEConfig,
         in_channels=21,
         backbone="base_event_tubelet",
         base_encoder_checkpoint=base_encoder_checkpoint,
+        allow_random_base_initialization=allow_random_base_initialization,
         dim=192,
         backbone_depth=6,
         heads=6,
@@ -665,6 +667,16 @@ def main() -> int:
         default=Path("data/splits/evttc_all32_article_family_holdout.yaml"),
     )
     parser.add_argument("--base-encoder-checkpoint", type=Path)
+    parser.add_argument(
+        "--base-initialization",
+        choices=("audited_ssl", "random_control"),
+        default="audited_ssl",
+        help=(
+            "Use the audited SSL checkpoint or a disclosed random EventTubelet "
+            "control. random_control is intended for leakage-free grouped CV when "
+            "fold-specific SSL checkpoints do not yet exist."
+        ),
+    )
     parser.add_argument("--cache-dir", type=Path)
     parser.add_argument("--output-dir", type=Path)
     parser.add_argument("--fold", type=int, default=0)
@@ -692,10 +704,17 @@ def main() -> int:
             args.config,
         )
     )
-    base_encoder_checkpoint = args.base_encoder_checkpoint or Path(
-        "artifacts/runs/evttc32_article_ablation/"
-        f"base/seed{args.seed}/ssl30/jepa_encoder_best.pt"
-    )
+    if args.base_initialization == "random_control":
+        if args.base_encoder_checkpoint is not None:
+            raise ValueError(
+                "--base-encoder-checkpoint conflicts with random_control initialization."
+            )
+        base_encoder_checkpoint = None
+    else:
+        base_encoder_checkpoint = args.base_encoder_checkpoint or Path(
+            "artifacts/runs/evttc32_article_ablation/"
+            f"base/seed{args.seed}/ssl30/jepa_encoder_best.pt"
+        )
     profile = _profile(args.config, args.mode)
     if args.workers is not None:
         profile["dataloader_workers"] = args.workers
@@ -753,7 +772,12 @@ def main() -> int:
                     "profile": profile,
                     "cache_dir": cache_dir.as_posix(),
                     "output_dir": output_dir.as_posix(),
-                    "base_encoder_checkpoint": base_encoder_checkpoint.as_posix(),
+                    "base_initialization": args.base_initialization,
+                    "base_encoder_checkpoint": (
+                        base_encoder_checkpoint.as_posix()
+                        if base_encoder_checkpoint is not None
+                        else None
+                    ),
                     "benchmark10_opened": False,
                 },
                 indent=2,
@@ -773,7 +797,7 @@ def main() -> int:
         need_garl=garl_selected,
         need_rgb=rgb_selected,
     )
-    if needs_base_encoder:
+    if needs_base_encoder and base_encoder_checkpoint is not None:
         if not base_encoder_checkpoint.is_file():
             raise FileNotFoundError(
                 f"Audited BASE encoder checkpoint is missing: {base_encoder_checkpoint}"
@@ -822,7 +846,12 @@ def main() -> int:
     summaries: dict[str, dict[str, Any]] = {}
     factories = _variants(
         garl_backbone=str(profile["garl_backbone"]),
-        base_encoder_checkpoint=base_encoder_checkpoint.as_posix(),
+        base_encoder_checkpoint=(
+            base_encoder_checkpoint.as_posix()
+            if base_encoder_checkpoint is not None
+            else None
+        ),
+        allow_random_base_initialization=args.base_initialization == "random_control",
     )
     for variant in selected_variants:
         kind, model_config = factories[variant](int(garl_channels or 0))

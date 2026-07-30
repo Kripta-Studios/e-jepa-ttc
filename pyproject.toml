@@ -19,6 +19,7 @@ dependencies = [
     "pyarrow>=17.0",
     "pydantic>=2.7",
     "pyyaml>=6.0",
+    "scipy>=1.14",
     "torch>=2.5,<2.12",
 ]
 

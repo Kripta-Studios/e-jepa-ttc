@@ -14,6 +14,7 @@ param(
     [switch]$Resume,
     [switch]$AllFolds,
     [switch]$AllSeeds,
+    [switch]$RandomControl,
     [switch]$SkipUnitTests,
     [switch]$DryRun
 )
@@ -109,6 +110,9 @@ try {
             }
             if ($DryRun) {
                 $RunnerArgs += "--dry-run"
+            }
+            if ($RandomControl) {
+                $RunnerArgs += @("--base-initialization", "random_control")
             }
             if ($BatchSize -gt 0) {
                 $RunnerArgs += @("--batch-size", "$BatchSize")

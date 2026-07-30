@@ -214,6 +214,23 @@ def test_audited_base_backbone_exposes_dense_intermediate_tokens(tmp_path: Path)
     assert output.global_token.shape == (1, 2, 192)
 
 
+def test_random_base_control_requires_explicit_authorization() -> None:
+    try:
+        BaseEventTubeletBackbone(None)
+    except ValueError as error:
+        assert "explicit authorization" in str(error)
+    else:
+        raise AssertionError("Random BASE initialization was accepted implicitly.")
+
+    backbone = BaseEventTubeletBackbone(
+        None,
+        allow_random_initialization=True,
+    )
+    output = backbone(torch.randn(1, 2, 21, 32, 32))
+    assert output.dense_tokens.shape == (1, 2, 20, 192)
+    assert backbone.initialization == "random_grouped_cv_control"
+
+
 def test_target_query_is_dense_and_differentiable() -> None:
     query = TargetBackgroundQuery(32)
     tokens = torch.randn(2, 12, 32, requires_grad=True)

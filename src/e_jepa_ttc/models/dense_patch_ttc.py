@@ -106,8 +106,36 @@ class DensePatchEventBackbone(nn.Module):
 class BaseEventTubeletBackbone(nn.Module):
     """Expose dense/intermediate tokens from the audited BASE SSL encoder."""
 
-    def __init__(self, checkpoint_path: str | Path) -> None:
+    def __init__(
+        self,
+        checkpoint_path: str | Path | None,
+        *,
+        allow_random_initialization: bool = False,
+    ) -> None:
         super().__init__()
+        if checkpoint_path is None:
+            if not allow_random_initialization:
+                raise ValueError(
+                    "Random BASE initialization requires explicit authorization."
+                )
+            self.encoder = EventTubeletTransformerEncoder(
+                21,
+                embed_dim=192,
+                event_bins=5,
+                patch_size=16,
+                temporal_patch_size=1,
+                depth=6,
+                num_heads=6,
+                position_encoding="additive",
+            )
+            self.output_dim = 192
+            self.depth = 6
+            self.in_channels = 21
+            self.event_bins = 5
+            self.patch_size = 16
+            self.checkpoint_path = None
+            self.initialization = "random_grouped_cv_control"
+            return
         checkpoint = torch.load(checkpoint_path, map_location="cpu", weights_only=False)
         if checkpoint.get("model_name") != "event-tubelet-transformer":
             raise ValueError("BASE checkpoint must contain an event-tubelet-transformer.")
@@ -149,6 +177,7 @@ class BaseEventTubeletBackbone(nn.Module):
         self.event_bins = event_bins
         self.patch_size = patch_size
         self.checkpoint_path = Path(checkpoint_path)
+        self.initialization = "audited_ssl_checkpoint"
 
     def forward(self, events: torch.Tensor) -> DenseEventFeatures:
         """Encode ``[B,T,21,H,W]`` without discarding BASE patch tokens."""
