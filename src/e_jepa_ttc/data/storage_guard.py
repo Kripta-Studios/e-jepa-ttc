@@ -14,6 +14,7 @@ GIB = 1024**3
 class DatasetId(StrEnum):
     """Only dataset identities admitted by the closed v6 protocol."""
 
+    CARLA_DVS_LOOMING_1406 = "CARLA_DVS_LOOMING_1406"
     EAP_HF_TRAIN40 = "EAP_HF_TRAIN40"
     EVTTC32_LABELLED = "EVTTC32_LABELLED"
     BENCHMARK10_SEALED = "BENCHMARK10_SEALED"

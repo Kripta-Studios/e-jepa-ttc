@@ -11,12 +11,16 @@ Estado al 30 de julio de 2026:
 - confirmación histórica matched: Dense Patch supera a A0 en ese split;
 - grouped CV cerrado (5 folds × 3 seeds): A0 supera a A1 en score y error
   relativo, por lo que A0 es la arquitectura final;
+- `R1_MATCHED_BBOX_ROI` completó cinco folds con seed 7 y fue rechazado: usar
+  la bbox solo para pooling empeora A0 en score, error relativo y MAE;
 - AttnRes y Object-KDA no pasan el gate y no se combinan con el finalista;
 - geometría bbox causal y port STRTTC evaluados sin superar todavía el gate;
 - screen local Garl G0–G7 ejecutado, aún sin paridad con el protocolo de 50
   épocas y pretraining por ramas del repositorio oficial;
 - eAP train-40 completo (536,64 GiB), reservado para un piloto posterior de
   pretraining sin TTC oficial;
+- CARLA DVS Looming verificado: 1.406 secuencias, 1.395 utilizables con contexto
+  de 100 ms y loader mmap sin duplicar los 71,64 GiB extraídos;
 - Benchmark-10 sellado y no abierto.
 
 Documentación:
@@ -82,6 +86,14 @@ bootstrap OOF pareados por secuencia cruzan cero. Conclusión: Dense Patch
 conserva señal positiva, pero no pasa el gate de consistencia/coste y no se
 promociona.
 
+La ablación posterior `R1_MATCHED_BBOX_ROI` mantiene el backbone, cabeza común,
+batch efectivo y optimización de A0/A1, y cambia únicamente el pooling final
+para usar la bbox GT. En los cinco folds de seed 7 obtiene score `0,59814`,
+error relativo `30,99 %` y MAE `1,0100 s`. Frente a A0 de la misma seed
+empeora respectivamente `2,90 %`, `2,74 %` y `4,55 %`. No se repite en otras
+seeds: una bbox usada como selector de tokens no sustituye una medición
+explícita de expansión/FoE.
+
 El A0 final se ajustó con seeds 7/13/21. El perfil `matched` mejora el score
 medio un 10,95 % frente a `throughput`, aunque tarda 4,02× más. Validation
 seleccionó seed 13 antes de abrir el diagnóstico familiar.
@@ -140,10 +152,14 @@ datasets/evttc_official_benchmark_sealed
 E:\eAP_dataset\data\train
     eAP Hugging Face train-40: 40 secuencias / 216 archivos / 536,64 GiB,
     sin TTC oficial
+
+datasets/CARLA_DVS_Looming_Dataset/random_spawn
+    CARLA DVS Looming: 1.406 secuencias sintéticas / 71,64 GiB extraídos;
+    1.395 válidas para contexto de 100 ms; TTC positivo o negativos censurados
 ```
 
-No se añaden nuevos datasets, no se descarga eAP test y el pseudo-TTC no se
-considera ground truth.
+El inventario queda cerrado a estos cuatro IDs más Benchmark-10 sellado. No se
+descarga eAP test y el pseudo-TTC de eAP no se considera ground truth.
 
 ## Auditoría exacta de BASE
 
@@ -323,11 +339,42 @@ domain shift. No participa en selección A0/A1, fine-tuning TTC, calibración ni
 métricas EvTTC. Antes de usar las 40 secuencias debe hacerse un piloto acotado
 de 2–4 secuencias y comparar contra el mismo fine-tuning EvTTC.
 
+## CARLA DVS Looming
+
+La distribución de Figshare/University of Sussex contiene 1.406 secuencias
+sintéticas a 640×480 con colisiones contra coches o peatones, conducción sin
+colisión y negativos difíciles con tráfico/cruces. El ZIP y el TAR locales
+coinciden con el MD5 oficial `21a3e72a1c1d9c441a7426393f4e545f`; licencia
+CC BY 4.0 y DOI `10.25377/sussex.29114609.v1`.
+
+Preparación reproducible, sin crear un segundo cache de eventos:
+
+```powershell
+uv run --no-sync python scripts/prepare_carla_looming.py `
+  --root datasets/CARLA_DVS_Looming_Dataset/random_spawn `
+  --manifest data/manifests/carla_dvs_looming_v1.json `
+  --split data/splits/carla_dvs_looming_blocked_v1.json
+```
+
+El manifest está firmado, conserva rutas relativas y fuerza
+`numpy_allow_pickle=false`. Se excluyen diez secuencias vacías/con tiempo final
+negativo y `example_392`, que dura menos de 100 ms. El split bloqueado contiene
+803 secuencias train, 298 validation y 294 test; ningún bloque de 25 IDs
+contiguos cruza roles. Este test es out-of-sample dentro del simulador, no OOD
+real. La transferencia CARLA→EvTTC es la prueba cross-domain relevante.
+
+CARLA no reemplaza EvTTC: su reloj efectivo está cuantizado a 10 ms, el TTC
+positivo llega solo hasta unos 3,85 s y no ofrece bbox temporales. Se usará para
+pretraining de percepción/looming y clasificación de riesgo; las secuencias
+negativas llevan TTC censurado y nunca una etiqueta de regresión inventada.
+
 ## Arquitecturas bajo gate
 
 - `A0_MATCHED_GLOBAL`: control object-cache global.
 - `A1_MATCHED_DENSE_BLOCK`: patches espaciales antes de atención temporal
   block-causal.
+- `R1_MATCHED_BBOX_ROI`: bbox GT aplicada solo al pooling denso; descartado en
+  cinco folds seed 7.
 - `A2_MATCHED_DENSE_ATTNRES`: recuperación por tarea a través de profundidad.
 - `K1_OBJECT_KDA`: memoria delta temporal posterior a la mezcla espacial.
 - `A4_GT_GEOMETRY`: oracle de bbox GT con height/area/affine/event contrast.
@@ -337,6 +384,7 @@ Estado de promoción:
 
 - A0 global: seleccionado por grouped CV multisemilla;
 - A1 Dense/Patch Policy: señal histórica positiva, rechazado por grouped CV;
+- R1 bbox-ROI: rechazado; confirma que falta geometría de expansión explícita;
 - A2 AttnRes y K1 Object-KDA: rechazados por la confirmación larga;
 - TargetQuery, máscara predicha, refiner, router, residual e incertidumbre:
   bloqueados.
@@ -367,6 +415,7 @@ obligatoriamente como oracle/teacher y no puede usarse como inferencia final.
 - caches EvTTC separados por rol y perfil;
 - máximo `best`, `last` y `weights_only` por run;
 - sin voxel cache global de eAP;
+- CARLA leído por mmap y ventanas; sin segunda copia ni cache voxel global;
 - sin extracción masiva de TAR RGB;
 - sin logits SAM full-resolution;
 - sin hidden states DINO de todas las capas.
@@ -388,5 +437,5 @@ debe controlar un vehículo.
 
 ## Licencia
 
-Consulta [LICENSE](LICENSE) y las licencias de EvTTC, eAP, Garl-TTC y los
-teachers antes de redistribuir datos, pesos o derivados.
+Consulta [LICENSE](LICENSE) y las licencias de EvTTC, eAP, CARLA DVS Looming,
+Garl-TTC y los teachers antes de redistribuir datos, pesos o derivados.

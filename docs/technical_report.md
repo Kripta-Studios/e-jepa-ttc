@@ -265,6 +265,13 @@ A1 empeora 1,47 % el score y 0,99 % el error relativo, mejora solo 0,41 % el
 MAE, consume 1,58× entrenamiento y 2,16× latencia. Los bootstrap OOF pareados
 por secuencia cruzan cero para las tres seeds. A0 queda seleccionado.
 
+Una ablación posterior probó si la localización resolvía por sí sola la
+debilidad de A1. `R1_MATCHED_BBOX_ROI` aplica la bbox GT al pooling de tokens,
+sin añadir geometría. En cinco folds seed 7 obtiene score 0,59814, error
+relativo 30,99 % y MAE 1,0100 s. Frente al A0 de la misma seed empeora 2,90 %,
+2,74 % y 4,55 %, con 1,67× tiempo. Se descarta: la región correcta no aporta
+TTC si la cabeza no mide explícitamente la expansión.
+
 Después del freeze de arquitectura se compararon dos perfiles A0 sobre el
 mismo cache 19/5/8. `matched` mejoró el score medio un 10,95 % frente a
 `throughput`, con 4,02× tiempo. El checkpoint matched seed 13 fue el mejor en
@@ -324,10 +331,24 @@ eAP SSL + pseudo-TTC 0,05
 El último brazo solo se conserva si mejora OOF de forma reproducible. El
 pseudo-TTC nunca se denomina ground truth.
 
+CARLA DVS Looming se añadió como fuente sintética explícita. El archivo local
+coincide con el MD5 oficial y contiene 1.406 secuencias/7.692 millones de
+eventos. Con 100 ms de contexto se aceptan 1.395: 759 colisiones con TTC
+positivo y 636 negativos censurados. El loader usa mmap y nunca habilita
+pickle. Los bloques de 25 IDs producen 803/298/294 secuencias
+train/validation/test. Este holdout solo es out-of-sample dentro de CARLA; la
+transferencia a EvTTC mide el cambio de dominio real.
+
+CARLA no contiene bbox temporales, está cuantizado a 10 ms y cubre TTC positivo
+solo hasta aproximadamente 3,85 s. Por tanto sirve para pretraining de
+percepción, expansión y riesgo, no para sustituir la supervisión o el benchmark
+EvTTC.
+
 ## 11. Eficiencia y almacenamiento
 
 - caches comprimidos y acotados;
 - sin cache global de voxels;
+- CARLA leído por ventanas mmap, sin cache voxel ni segunda copia;
 - sin extracción completa de TAR RGB;
 - SAM almacenado como máscara comprimida;
 - DINO reducido a tokens objeto/borde;
@@ -339,6 +360,7 @@ pseudo-TTC nunca se denomina ground truth.
 ## 12. Limitaciones actuales
 
 - A1 solo gana en un split histórico y pierde grouped CV multisemilla;
+- R1 demuestra que bbox-ROI sin geometría explícita tampoco mejora A0;
 - Garl ResNet-50 tiene screen corto, no la reproducción de 50 épocas;
 - la geometría bbox no pasa el score compuesto y STRTTC tiene cobertura
   incompleta;

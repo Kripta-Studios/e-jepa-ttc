@@ -95,6 +95,21 @@ preentrenados exclusivamente con el train de cada fold. Impide reutilizar el
 checkpoint histórico en folds cuyas secuencias de validación ya aparecieron en
 su pretraining.
 
+La ablación bbox-ROI reproducible se lanza de forma aislada para no repetir
+brazos cerrados:
+
+```powershell
+.\scripts\run_evttc_architecture_selection.ps1 `
+  -Mode Confirm -Stage Core -Protocol GroupedCV `
+  -AllFolds -Seed 7 -RandomControl -Resume `
+  -Workers 8 -ExecutionProfile Matched `
+  -Variants R1_MATCHED_BBOX_ROI
+```
+
+Sus cinco folds terminaron en el commit `42a90e0`: score 0,59814, error
+relativo 30,99 % y MAE 1,0100 s. Frente a A0 seed 7 empeora 2,90 %, 2,74 % y
+4,55 %, respectivamente; por el gate secuencial no se ejecutan seeds 13/21.
+
 Entrenamiento del candidato ya fijado y evaluación separada:
 
 ```powershell
@@ -152,6 +167,50 @@ usarse en una etapa posterior de SSL sin etiquetas. No
 puede producir MAE TTC, seleccionar arquitectura ni sustituir EvTTC. El gate
 recomendado es 2–4 secuencias, presupuesto fijo y fine-tuning EvTTC idéntico
 antes de ampliar a 40.
+
+## Preparación CARLA DVS Looming
+
+El adapter no descarga ni duplica el dataset. Audita la extracción existente,
+crea un manifest firmado y separa bloques completos:
+
+```powershell
+uv run --no-sync python scripts/prepare_carla_looming.py `
+  --root datasets/CARLA_DVS_Looming_Dataset/random_spawn `
+  --manifest data/manifests/carla_dvs_looming_v1.json `
+  --split data/splits/carla_dvs_looming_blocked_v1.json `
+  --context-ms 100 --group-size 25 --folds 5 --seed 42
+```
+
+Salida esperada de la versión auditada:
+
+```text
+total / válido / inválido   1.406 / 1.395 / 11
+train / validation / test   803 / 298 / 294
+eventos válidos             7.692.294.635
+allow_pickle                false
+```
+
+La validación exhaustiva de los 7.692 millones de eventos es opcional porque
+lee los 71,64 GiB completos:
+
+```powershell
+uv run --no-sync python scripts/prepare_carla_looming.py `
+  --full-event-validation
+```
+
+Para comprobar el artefacto de distribución sin confiar en el manifest:
+
+```powershell
+Get-FileHash `
+  datasets/CARLA_DVS_Looming_Dataset/random_spawn.tar.gz `
+  -Algorithm MD5
+# 21A3E72A1C1D9C441A7426393F4E545F
+```
+
+La etapa de entrenamiento CARLA debe consumir el loader mmap, respetar el
+split anterior y registrar por separado TTC positivo y riesgo de negativos.
+No debe usar `vel` ni `diameter_object` como features, materializar un cache
+voxel global ni presentar el test sintético como OOD real.
 
 La reproducción del híbrido bbox causal usa:
 

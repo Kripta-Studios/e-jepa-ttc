@@ -9,8 +9,11 @@ Actualizado: 2026-07-30.
 | `EVTTC32_LABELLED` | `datasets/evttc` | train, grouped CV, calibración | sí |
 | `BENCHMARK10_SEALED` | `datasets/evttc_official_benchmark_sealed` | inferencia final | no consumido |
 | `EAP_HF_TRAIN40` | `E:\eAP_dataset\data\train` | SSL/probes no-TTC | no |
+| `CARLA_DVS_LOOMING_1406` | `datasets/CARLA_DVS_Looming_Dataset/random_spawn` | SSL/looming/riesgo sintético | TTC sintético positivo; negativos censurados |
 
-No se incorporan nuevos datasets, eAP test ni un segundo release eAP.
+Este inventario fue ampliado explícitamente con CARLA DVS Looming. No se
+incorporan eAP test, un segundo release eAP ni otros datasets sin revisar el
+protocolo.
 
 ## EvTTC-32
 
@@ -107,12 +110,62 @@ producir un MAE TTC comparable. La primera ejecución debe usar
 2–4 secuencias y un cache derivado acotado; las 40 solo se justifican si ese
 piloto mejora un fine-tuning EvTTC idéntico.
 
+## CARLA DVS Looming
+
+Fuente: University of Sussex Figshare, DOI
+`10.25377/sussex.29114609.v1`, licencia CC BY 4.0. El TAR oficial tiene
+15.096.280.525 bytes y MD5 `21a3e72a1c1d9c441a7426393f4e545f`;
+el archivo local auditado coincide.
+
+Inventario extraído:
+
+```text
+secuencias totales                 1.406
+eventos totales                    7.692.448.155
+resolución                         640 x 480
+eventos por secuencia (mediana)    5.027.925
+reloj observado                    pasos de 10 ms
+```
+
+Con contexto causal de 100 ms son válidas 1.395 secuencias:
+
+| Clase normalizada | Válidas | Rol |
+|---|---:|---|
+| `car` | 412 | colisión, TTC positivo |
+| `pedestrian` | 347 | colisión, TTC positivo |
+| `none` | 294 | negativo, TTC censurado |
+| `none_with_traffic` | 167 | negativo difícil, TTC censurado |
+| `none_with_crossing` | 175 | negativo difícil no documentado en el README original |
+
+Diez secuencias están vacías y tienen `t_end <= 0`; `example_392` contiene
+eventos pero no alcanza 100 ms. Ninguna se oculta: sus IDs y causas están en
+`data/manifests/carla_dvs_looming_v1.json`.
+
+`data/splits/carla_dvs_looming_blocked_v1.json` usa seed 42 y mantiene bloques
+contiguos de 25 IDs completos: 803 train, 298 validation y 294 test. Es un
+holdout sintético out-of-sample, no evidencia OOD real. EvTTC constituye el
+destino cross-domain.
+
+El adaptador:
+
+- abre NumPy siempre con `allow_pickle=False`;
+- interpreta el `diameter_object=None` inseguro como campo ausente;
+- usa mmap y búsqueda binaria para ventanas half-open;
+- convierte milisegundos a microsegundos y polaridad 0/1 a -1/+1;
+- limita por defecto a 64 ventanas por secuencia;
+- nunca usa `vel` o `diameter_object` como entrada EvTTC-incompatible.
+
+CARLA es útil para pretraining de eventos, expansión y riesgo, pero no para
+entrenar directamente una cabeza bbox-ROI: no contiene cajas temporales. Su
+TTC positivo cubre solo el régimen cercano (máximo aproximado 3,85 s).
+
 ## Política de derivados
 
 - raw data inmutable;
 - caches EvTTC comprimidos y acotados;
 - TAR RGB leídos sin extracción masiva;
 - sin voxel cache global de eAP;
+- sin voxel cache global ni segunda copia de eventos CARLA;
 - máscaras SAM RLE/bit-packed;
 - tokens DINO compactados, nunca todas las capas;
 - presupuesto eAP derived máximo 55 GiB;
@@ -125,7 +178,7 @@ piloto mejora un fine-tuning EvTTC idéntico.
 - una compensación traslacional que use esa distancia es exclusivamente
   oracle/teacher;
 - bbox GT separa calidad de geometría de calidad de localización;
-- diferencias de dominio impiden tratar eAP como validación TTC.
+- diferencias de dominio impiden tratar eAP o CARLA como validación TTC real.
 
 No se redistribuyen datos crudos. Deben respetarse las licencias y términos de
-EvTTC y eAP.
+EvTTC, eAP y CARLA DVS Looming.

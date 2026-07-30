@@ -4186,3 +4186,46 @@ incluye TTC oficial. Su uso aprobado es un piloto SSL de 2–4 secuencias y el
 mismo fine-tuning EvTTC; solo se escala a 40 si el piloto mejora ese gate. El
 pseudo-TTC local cubre 195.024/804.510 filas (24,24 %) y no participa en
 selección, calibración ni métricas TTC oficiales.
+
+## 26.8 Enmienda ejecutada: bbox-ROI y CARLA DVS Looming
+
+La hipótesis de que bastaba con localizar el objeto se probó mediante
+`R1_MATCHED_BBOX_ROI`. Mantiene backbone, cabeza, ventanas, batch y optimizador
+de A0, y cambia solo el pooling por una selección de tokens dentro de la bbox
+GT. Los cinco folds seed 7 obtuvieron:
+
+| Brazo | Score | Error rel. | MAE | Tiempo |
+|---|---:|---:|---:|---:|
+| A0 seed 7 | 0,58125 | 30,16 % | 0,966 s | 1.443 s |
+| R1 bbox-ROI | 0,59814 | 30,99 % | 1,010 s | 2.410 s |
+
+R1 empeora 2,90 % el score, 2,74 % el error relativo y 4,55 % el MAE, con
+1,67× tiempo. Queda rechazado sin seeds 13/21. La próxima hipótesis debe medir
+expansión/FoE explícitamente; no basta con pasar tokens localizados a la misma
+cabeza global.
+
+Se incorpora `CARLA_DVS_LOOMING_1406` como fuente sintética autorizada para SSL,
+looming y riesgo. No reemplaza EvTTC ni desbloquea Benchmark-10. El archivo
+local coincide con el MD5 oficial `21a3e72a1c1d9c441a7426393f4e545f`. El
+manifest audita 1.406 secuencias y 7.692.448.155 eventos; 1.395 secuencias son
+válidas con 100 ms de contexto. Los splits bloqueados contienen 803 train, 298
+validation y 294 test, sin compartir bloques contiguos de 25 IDs.
+
+Restricciones obligatorias:
+
+1. leer `events.npy` mediante mmap y `allow_pickle=False`;
+2. no crear un cache voxel global ni una segunda copia de los 71,64 GiB;
+3. tratar negativos como TTC censurado, nunca asignarles un TTC inventado;
+4. no usar `vel` ni `diameter_object` como features;
+5. considerar el test CARLA solo out-of-sample sintético;
+6. medir utilidad por transferencia CARLA→EvTTC con fine-tuning fold-local;
+7. mantener Benchmark-10 sellado hasta superar el gate OOF.
+
+Preparación reproducible:
+
+```powershell
+uv run --no-sync python scripts/prepare_carla_looming.py `
+  --root datasets/CARLA_DVS_Looming_Dataset/random_spawn `
+  --manifest data/manifests/carla_dvs_looming_v1.json `
+  --split data/splits/carla_dvs_looming_blocked_v1.json
+```

@@ -31,6 +31,8 @@ antes de cualquier residual.
 - EvTTC-32: única supervisión TTC oficial.
 - Benchmark-10: inferencia final sellada.
 - eAP train-40: 40 secuencias completas, exclusivamente SSL/probes no-TTC.
+- CARLA DVS Looming: 1.395 secuencias sintéticas utilizables para SSL,
+  expansión y riesgo; TTC positivo y negativos censurados.
 
 No existe split aleatorio por ventanas. La selección final usa grouped CV de
 cinco folds y bootstrap por secuencia.
@@ -63,6 +65,12 @@ A0 gana 10/15 comparaciones pareadas en score/error relativo y 8/15 en MAE.
 A1 cuesta 1,58× entrenamiento y 2,16× latencia. Los intervalos bootstrap OOF
 pareados por secuencia cruzan cero, por lo que la mejora de un split no se
 generaliza.
+
+La ablación `R1_MATCHED_BBOX_ROI` comprueba si basta con seleccionar tokens
+dentro de la bbox GT. En cinco folds de seed 7 obtiene score `0,59814`, error
+relativo `30,99 %` y MAE `1,0100 s`; frente a A0 de la misma seed empeora
+`2,90 %`, `2,74 %` y `4,55 %`, respectivamente, con `1,67×` tiempo. Se
+rechaza: localizar la región no equivale a medir su expansión.
 
 ## Arquitectura
 
@@ -120,12 +128,19 @@ Family-OOD degrada el score un 85,5 %, el error relativo un 111,4 % y el MAE
 un 48,8 %. Es disjunto respecto al ajuste actual, pero no es un test virgen del
 proyecto. Benchmark-10 permanece sellado.
 
+CARLA DVS Looming fue auditado sin pickle ni duplicación de eventos. El
+manifest contiene 1.406 secuencias y 7.692 millones de eventos; 1.395 secuencias
+superan el requisito de contexto de 100 ms. El split bloqueado usa 803/298/294
+secuencias train/validation/test. Es out-of-sample dentro del simulador, no OOD
+real; su utilidad se decidirá por transferencia CARLA→EvTTC.
+
 Los próximos pasos son:
 
-1. piloto SSL eAP con 2–4 secuencias y fine-tuning EvTTC idéntico;
-2. Garl con 50 épocas y pretraining por ramas;
-3. reabrir A1 solo con una hipótesis object-centric predeclarada;
-4. Benchmark-10 únicamente mediante el manifest congelado.
+1. smoke SSL de CARLA y fine-tuning EvTTC idéntico por fold;
+2. implementar expansión/FoE explícita y un residual acotado sobre A0;
+3. piloto SSL eAP solo si añade información a la transferencia CARLA;
+4. Garl con 50 épocas y pretraining por ramas;
+5. Benchmark-10 únicamente tras congelar una candidata que pase OOF.
 
 TargetQuery, máscaras predichas, refiner, router, residual e incertidumbre
 permanecen bloqueados hasta que la geometría bbox-GT supere su gate.
@@ -133,8 +148,9 @@ permanecen bloqueados hasta que la geometría bbox-GT supere su gate.
 ## Limitaciones
 
 No hay bbox-free promovido, profundidad predicha ni evaluación sobre el
-Benchmark-10. Family-OOD muestra una degradación grande y eAP no incluye TTC
-oficial. El sistema no es apto para control de seguridad.
+Benchmark-10. Family-OOD muestra una degradación grande; eAP no incluye TTC
+oficial y CARLA tiene cambio de dominio, reloj de 10 ms y TTC positivo limitado
+a aproximadamente 3,85 s. El sistema no es apto para control de seguridad.
 
 ## Referencias
 

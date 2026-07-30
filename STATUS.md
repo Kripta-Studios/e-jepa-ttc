@@ -133,6 +133,21 @@ MAE. A0 gana 10/15 pares en score/error relativo y 8/15 en MAE. A1 cuesta
 demuestra una diferencia distinta de cero. Decisión final de arquitectura:
 `A0_MATCHED_GLOBAL`.
 
+## Ablación R1 bbox-ROI
+
+`R1_MATCHED_BBOX_ROI` usa la bbox GT únicamente para seleccionar los tokens
+densos que alimentan la misma cabeza TTC. Los cinco folds de seed 7 terminaron
+con la misma configuración matched:
+
+| Variante | Score | Error rel. | MAE | Tiempo total |
+|---|---:|---:|---:|---:|
+| A0 seed 7 | 0,58125 | 30,16 % | 0,966 s | 1.443 s |
+| R1 seed 7 | 0,59814 | 30,99 % | 1,010 s | 2.410 s |
+
+R1 empeora 2,90 % el score, 2,74 % el error relativo y 4,55 % el MAE, con
+1,67× tiempo. Se rechaza sin gastar seeds 13/21. La bbox como pooling no
+reemplaza una estimación explícita de expansión/FoE.
+
 ## Ajuste final y OOD
 
 El perfil matched gana al throughput un 10,95 % en score medio de tres seeds,
@@ -187,9 +202,13 @@ La cobertura incompleta se registra y el brazo queda rechazado.
 - `datasets/evttc`: 32 secuencias públicas etiquetadas.
 - `datasets/evttc_official_benchmark_sealed`: no inspeccionado.
 - `E:\eAP_dataset\data\train`: train-40 completo, 216 archivos y 536,64 GiB.
+- `datasets/CARLA_DVS_Looming_Dataset/random_spawn`: 1.406 secuencias y
+  71,64 GiB extraídos; 1.395 válidas con contexto de 100 ms.
 - eAP no contiene TTC oficial en el release local.
 - pseudo-TTC eAP: 195.024/804.510 filas válidas (24,24 %), no oficial y fuera
   de la selección de arquitectura.
+- CARLA: 412 colisiones con coche, 347 con peatón y 636 negativos; manifest y
+  split bloqueado firmados, lectura mmap con `allow_pickle=False`.
 
 ## Almacenamiento y hardware
 
