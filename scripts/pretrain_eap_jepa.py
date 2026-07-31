@@ -1,4 +1,4 @@
-"""Pretrain EvTTC BASE on public eAP events without TTC labels."""
+"""Pretrain EvTTC-compatible encoders on public eAP events and geometry."""
 
 from __future__ import annotations
 
@@ -19,7 +19,7 @@ from e_jepa_ttc.training.eap_jepa import (  # noqa: E402
 
 
 def _profile(name: str, objective: str) -> EAPJEPATrainerConfig:
-    geometry_weight = 0.25 if objective == "geo" else 0.0
+    geometry_weight = 0.25 if objective in {"geo", "geo2"} else 0.0
     ttc_weight = 0.5 if objective == "ttc" else 0.0
     if name == "smoke":
         return EAPJEPATrainerConfig(
@@ -34,6 +34,10 @@ def _profile(name: str, objective: str) -> EAPJEPATrainerConfig:
             early_stopping_min_epochs=1,
             early_stopping_patience=0,
             geometry_loss_weight=geometry_weight,
+            geometry_target_version="v2" if objective == "geo2" else "v1",
+            geometry_sampling_strategy=(
+                "balanced_tracks" if objective == "geo2" else "nearest"
+            ),
             ttc_loss_weight=ttc_weight,
         )
     if name == "pilot":
@@ -47,16 +51,25 @@ def _profile(name: str, objective: str) -> EAPJEPATrainerConfig:
             early_stopping_min_epochs=2,
             early_stopping_patience=1,
             geometry_loss_weight=geometry_weight,
+            geometry_target_version="v2" if objective == "geo2" else "v1",
+            geometry_sampling_strategy=(
+                "balanced_tracks" if objective == "geo2" else "nearest"
+            ),
             ttc_loss_weight=ttc_weight,
         )
-    return EAPJEPATrainerConfig(geometry_loss_weight=geometry_weight, ttc_loss_weight=ttc_weight)
+    return EAPJEPATrainerConfig(
+        geometry_loss_weight=geometry_weight,
+        geometry_target_version="v2" if objective == "geo2" else "v1",
+        geometry_sampling_strategy="balanced_tracks" if objective == "geo2" else "nearest",
+        ttc_loss_weight=ttc_weight,
+    )
 
 
 def main() -> int:
     """Run a resource-aware, sequence-disjoint eAP SSL or geometry pilot."""
 
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--objective", choices=("ssl", "geo", "ttc"), required=True)
+    parser.add_argument("--objective", choices=("ssl", "geo", "geo2", "ttc"), required=True)
     parser.add_argument("--profile", choices=("smoke", "pilot", "full"), default="smoke")
     parser.add_argument("--root", type=Path, default=Path(r"E:\eAP_dataset"))
     parser.add_argument("--garlttc-root", type=Path, default=Path(r"E:\GarlTTC_dataset"))
@@ -82,6 +95,12 @@ def main() -> int:
     parser.add_argument("--max-train-samples", type=int)
     parser.add_argument("--max-validation-samples", type=int)
     parser.add_argument("--geometry-loss-weight", type=float)
+    parser.add_argument("--geometry-target-version", choices=("v1", "v2"))
+    parser.add_argument(
+        "--geometry-sampling-strategy",
+        choices=("nearest", "balanced_tracks"),
+    )
+    parser.add_argument("--corridor-half-width", type=float)
     parser.add_argument("--patch-objectness-weight", type=float)
     parser.add_argument("--ttc-loss-weight", type=float)
     parser.add_argument(
@@ -122,6 +141,12 @@ def main() -> int:
         overrides["max_validation_samples"] = args.max_validation_samples
     if args.geometry_loss_weight is not None:
         overrides["geometry_loss_weight"] = args.geometry_loss_weight
+    if args.geometry_target_version is not None:
+        overrides["geometry_target_version"] = args.geometry_target_version
+    if args.geometry_sampling_strategy is not None:
+        overrides["geometry_sampling_strategy"] = args.geometry_sampling_strategy
+    if args.corridor_half_width is not None:
+        overrides["corridor_half_width"] = args.corridor_half_width
     if args.patch_objectness_weight is not None:
         overrides["patch_objectness_weight"] = args.patch_objectness_weight
     if args.ttc_loss_weight is not None:
@@ -136,8 +161,13 @@ def main() -> int:
     )
     if args.objective == "ssl" and config.geometry_loss_weight != 0.0:
         raise ValueError("The SSL control must keep geometry-loss-weight at zero.")
-    if args.objective == "geo" and config.geometry_loss_weight <= 0.0:
+    if args.objective in {"geo", "geo2"} and config.geometry_loss_weight <= 0.0:
         raise ValueError("The Geo objective requires a positive geometry-loss-weight.")
+    if args.objective == "geo2" and (
+        config.geometry_target_version != "v2"
+        or config.geometry_sampling_strategy != "balanced_tracks"
+    ):
+        raise ValueError("geo2 requires v2 targets and balanced track sampling.")
     if args.objective == "ttc" and config.ttc_loss_weight <= 0.0:
         raise ValueError("The TTC objective requires a positive ttc-loss-weight.")
     output = args.output or Path(

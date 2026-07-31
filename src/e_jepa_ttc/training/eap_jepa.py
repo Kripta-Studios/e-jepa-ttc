@@ -26,6 +26,12 @@ from e_jepa_ttc.data.eap import (
     load_eap_sequence_labels,
     reconstruct_eap_object_states,
 )
+from e_jepa_ttc.data.eap_geometry_v2 import (
+    EAP_GEOMETRY_V1_NAMES,
+    EAP_GEOMETRY_V2_DIM,
+    EAP_GEOMETRY_V2_NAMES,
+    geometry_v2_targets,
+)
 from e_jepa_ttc.data.eap_representation import base_compatible_voxel, downsample_full_frame
 from e_jepa_ttc.models import build_encoder
 from e_jepa_ttc.training.carla_jepa import (
@@ -48,6 +54,14 @@ from e_jepa_ttc.utils.io import read_structured, write_structured
 
 EAP_PRETRAINING_DATASET_ID = "EAP_PUBLIC_TRAIN40"
 EAP_GEOMETRY_TARGET_DIM = 6
+
+
+def _geometry_target_names(version: str) -> tuple[str, ...]:
+    if version == "v1":
+        return EAP_GEOMETRY_V1_NAMES
+    if version == "v2":
+        return EAP_GEOMETRY_V2_NAMES
+    raise ValueError(f"Unsupported eAP geometry target version: {version!r}.")
 
 
 @dataclass(frozen=True)
@@ -75,6 +89,9 @@ class EAPJEPATrainerConfig:
     variance_weight: float = 1.0
     minimum_std: float = 0.05
     geometry_loss_weight: float = 0.0
+    geometry_target_version: str = "v1"
+    geometry_sampling_strategy: str = "nearest"
+    corridor_half_width: float = 0.18
     patch_objectness_weight: float = 0.25
     ttc_loss_weight: float = 0.25
     ema_start: float = 0.99
@@ -118,6 +135,11 @@ class EAPJEPATrainerConfig:
             raise ValueError("precision must be fp32, fp16 or bf16.")
         if self.geometry_loss_weight < 0.0 or self.patch_objectness_weight < 0.0:
             raise ValueError("eAP geometry weights must be non-negative.")
+        _geometry_target_names(self.geometry_target_version)
+        if self.geometry_sampling_strategy not in {"nearest", "balanced_tracks"}:
+            raise ValueError("geometry_sampling_strategy must be nearest or balanced_tracks.")
+        if not 0.0 < self.corridor_half_width <= 0.5:
+            raise ValueError("corridor_half_width must lie in (0, 0.5].")
         if not 0.0 <= self.mask_ratio < 1.0:
             raise ValueError("mask_ratio must lie in [0, 1).")
 
@@ -128,6 +150,7 @@ class _EAPJEPASample:
     timestamp_us: int
     geometry_state: EAPObjectState | None = None
     previous_geometry_state: EAPObjectState | None = None
+    sampling_group: str = "unlabelled"
 
 
 def _uniform(items: list[int], maximum: int) -> list[int]:
@@ -142,49 +165,62 @@ def _geometry_targets(
     *,
     patch_height: int,
     patch_width: int,
+    config: EAPJEPATrainerConfig,
 ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    target_names = _geometry_target_names(config.geometry_target_version)
     state = sample.geometry_state
     if state is None:
         return (
-            torch.zeros(EAP_GEOMETRY_TARGET_DIM, dtype=torch.float32),
-            torch.zeros(EAP_GEOMETRY_TARGET_DIM, dtype=torch.bool),
+            torch.zeros(len(target_names), dtype=torch.float32),
+            torch.zeros(len(target_names), dtype=torch.bool),
             torch.zeros((patch_height, patch_width), dtype=torch.bool),
         )
     image_width, image_height = EAP_IMAGE_SIZE
     x0, y0, x1, y1 = state.bbox_xyxy
+    if config.geometry_target_version == "v2":
+        target = geometry_v2_targets(
+            state,
+            sample.previous_geometry_state,
+            corridor_half_width=config.corridor_half_width,
+        )
+        values = target.values
+        valid = target.valid
+    else:
+        center_x = (x0 + x1) * 0.5 / image_width
+        center_y = (y0 + y1) * 0.5 / image_height
+        width = (x1 - x0) / image_width
+        height = (y1 - y0) / image_height
+        closing = -state.depth_velocity_mps / 20.0
+        previous = sample.previous_geometry_state
+        if previous is None:
+            expansion = float("nan")
+        else:
+            delta_s = (state.timestamp_us - previous.timestamp_us) * 1e-6
+            expansion = (
+                (
+                    math.log(max(state.visible_height_px, 1e-3))
+                    - math.log(max(previous.visible_height_px, 1e-3))
+                )
+                / max(delta_s, 1e-6)
+                / 5.0
+                if 0.0 < delta_s <= 0.25
+                else float("nan")
+            )
+        values = np.asarray(
+            [
+                center_x,
+                center_y,
+                width,
+                height,
+                np.clip(closing, -1.0, 1.0),
+                np.clip(expansion, -1.0, 1.0),
+            ],
+            dtype=np.float32,
+        )
+        valid = np.isfinite(values)
+        values[~valid] = 0.0
     center_x = (x0 + x1) * 0.5 / image_width
     center_y = (y0 + y1) * 0.5 / image_height
-    width = (x1 - x0) / image_width
-    height = (y1 - y0) / image_height
-    closing = -state.depth_velocity_mps / 20.0
-    previous = sample.previous_geometry_state
-    if previous is None:
-        expansion = float("nan")
-    else:
-        delta_s = (state.timestamp_us - previous.timestamp_us) * 1e-6
-        expansion = (
-            (
-                math.log(max(state.visible_height_px, 1e-3))
-                - math.log(max(previous.visible_height_px, 1e-3))
-            )
-            / max(delta_s, 1e-6)
-            / 5.0
-            if 0.0 < delta_s <= 0.25
-            else float("nan")
-        )
-    values = np.asarray(
-        [
-            center_x,
-            center_y,
-            width,
-            height,
-            np.clip(closing, -1.0, 1.0),
-            np.clip(expansion, -1.0, 1.0),
-        ],
-        dtype=np.float32,
-    )
-    valid = np.isfinite(values)
-    values[~valid] = 0.0
     x_centers = (np.arange(patch_width, dtype=np.float32) + 0.5) / patch_width
     y_centers = (np.arange(patch_height, dtype=np.float32) + 0.5) / patch_height
     objectness = (
@@ -202,6 +238,7 @@ def _geometry_targets(
         torch.from_numpy(valid),
         torch.from_numpy(objectness),
     )
+
 
 
 class EAPOnDemandJEPADataset(
@@ -244,47 +281,82 @@ class EAPOnDemandJEPADataset(
                 int(timestamp) for timestamp in frame_times if earliest <= int(timestamp) <= latest
             ]
             selected = _uniform(eligible, config.max_windows_per_sequence)
-            geometry_lookup: dict[
-                int,
-                tuple[EAPObjectState, EAPObjectState | None],
-            ] = {}
-            if config.geometry_loss_weight > 0.0:
-                labels = load_eap_sequence_labels(self.root, sequence_id, split="train")
-                states = reconstruct_eap_object_states(sequence_media, labels)
-                previous_by_state: dict[
-                    tuple[str, int],
-                    EAPObjectState | None,
-                ] = {}
-                by_track: dict[str, list[EAPObjectState]] = {}
-                for state in states:
-                    by_track.setdefault(state.track_id, []).append(state)
-                for track in by_track.values():
-                    for index, state in enumerate(track):
-                        previous_by_state[(state.track_id, state.timestamp_us)] = (
-                            track[index - 1] if index else None
-                        )
+            if config.geometry_loss_weight <= 0.0:
+                self.samples.extend(
+                    _EAPJEPASample(sequence_id=sequence_id, timestamp_us=timestamp)
+                    for timestamp in selected
+                )
+                continue
+            labels = load_eap_sequence_labels(self.root, sequence_id, split="train")
+            states = reconstruct_eap_object_states(sequence_media, labels)
+            by_track: dict[str, list[EAPObjectState]] = {}
+            for state in states:
+                by_track.setdefault(state.track_id, []).append(state)
+            previous_by_state: dict[tuple[str, int], EAPObjectState | None] = {}
+            for track in by_track.values():
+                track.sort(key=lambda value: value.timestamp_us)
+                for index, state in enumerate(track):
+                    previous_by_state[(state.track_id, state.timestamp_us)] = (
+                        track[index - 1] if index else None
+                    )
+            eligible_set = set(eligible)
+            if config.geometry_sampling_strategy == "nearest":
                 candidates: dict[int, list[EAPObjectState]] = {}
                 for state in states:
-                    candidates.setdefault(state.timestamp_us, []).append(state)
-                for timestamp, timestamp_states in candidates.items():
+                    if state.timestamp_us in eligible_set:
+                        candidates.setdefault(state.timestamp_us, []).append(state)
+                geometry_samples = []
+                for timestamp in selected:
+                    timestamp_states = candidates.get(timestamp, [])
+                    if not timestamp_states:
+                        continue
                     state = min(timestamp_states, key=lambda value: value.nearest_depth_m)
-                    geometry_lookup[timestamp] = (
-                        state,
-                        previous_by_state[(state.track_id, state.timestamp_us)],
+                    previous = previous_by_state[(state.track_id, state.timestamp_us)]
+                    geometry_samples.append(
+                        _EAPJEPASample(
+                            sequence_id=sequence_id,
+                            timestamp_us=timestamp,
+                            geometry_state=state,
+                            previous_geometry_state=previous,
+                        )
                     )
-            self.samples.extend(
-                _EAPJEPASample(
-                    sequence_id=sequence_id,
-                    timestamp_us=timestamp,
-                    geometry_state=(
-                        geometry_lookup[timestamp][0] if timestamp in geometry_lookup else None
-                    ),
-                    previous_geometry_state=(
-                        geometry_lookup[timestamp][1] if timestamp in geometry_lookup else None
-                    ),
-                )
-                for timestamp in selected
-            )
+            else:
+                grouped: dict[str, list[_EAPJEPASample]] = {}
+                for state in states:
+                    if state.timestamp_us not in eligible_set:
+                        continue
+                    previous = previous_by_state[(state.track_id, state.timestamp_us)]
+                    target = geometry_v2_targets(
+                        state,
+                        previous,
+                        corridor_half_width=config.corridor_half_width,
+                    )
+                    grouped.setdefault(target.sampling_group, []).append(
+                        _EAPJEPASample(
+                            sequence_id=sequence_id,
+                            timestamp_us=state.timestamp_us,
+                            geometry_state=state,
+                            previous_geometry_state=previous,
+                            sampling_group=target.sampling_group,
+                        )
+                    )
+                geometry_samples = []
+                ordered_groups = sorted(grouped)
+                cursors = {group: 0 for group in ordered_groups}
+                while ordered_groups and len(geometry_samples) < config.max_windows_per_sequence:
+                    next_groups: list[str] = []
+                    for group in ordered_groups:
+                        index = cursors[group]
+                        rows = grouped[group]
+                        if index < len(rows):
+                            geometry_samples.append(rows[index])
+                            cursors[group] += 1
+                        if cursors[group] < len(rows):
+                            next_groups.append(group)
+                        if len(geometry_samples) >= config.max_windows_per_sequence:
+                            break
+                    ordered_groups = next_groups
+            self.samples.extend(geometry_samples)
         if not self.samples:
             raise ValueError("No eAP object windows satisfy the on-demand JEPA protocol.")
         self._readers: dict[str, EAPEventReader] = {}
@@ -350,6 +422,7 @@ class EAPOnDemandJEPADataset(
             window,
             patch_height=self.config.height // 16,
             patch_width=self.config.width // 16,
+            config=self.config,
         )
         return (
             context,
@@ -380,13 +453,13 @@ class EAPOnDemandJEPADataset(
 
 
 class _GeometryHeads(nn.Module):
-    def __init__(self, dim: int) -> None:
+    def __init__(self, dim: int, target_dim: int) -> None:
         super().__init__()
         self.geometry = nn.Sequential(
             nn.LayerNorm(dim),
             nn.Linear(dim, dim // 2),
             nn.GELU(),
-            nn.Linear(dim // 2, EAP_GEOMETRY_TARGET_DIM),
+            nn.Linear(dim // 2, target_dim),
         )
         self.objectness = nn.Linear(dim, 1)
 
@@ -796,7 +869,13 @@ def _checkpoint(
         "uses_collision_labels": False,
         "uses_object_bboxes": geometry_heads is not None,
         "uses_depth_track_derivatives": geometry_heads is not None,
-        "uses_labels_for_window_sampling": False,
+        "uses_labels_for_window_sampling": (
+            geometry_heads is not None
+            and config.geometry_sampling_strategy == "balanced_tracks"
+        ),
+        "geometry_target_version": config.geometry_target_version,
+        "geometry_target_names": list(_geometry_target_names(config.geometry_target_version)),
+        "geometry_sampling_strategy": config.geometry_sampling_strategy,
         "uses_rgb": False,
         "uses_evttc_pretraining_events": False,
         "benchmark10_opened": False,
@@ -901,7 +980,10 @@ def pretrain_eap_jepa(
     target_encoder = models.target_encoder
     predictor = models.predictor
     geometry_heads = (
-        _GeometryHeads(int(encoder.output_dim)).to(device)
+        _GeometryHeads(
+            int(encoder.output_dim),
+            len(_geometry_target_names(config.geometry_target_version)),
+        ).to(device)
         if config.geometry_loss_weight > 0.0
         else None
     )
@@ -1113,7 +1195,13 @@ def pretrain_eap_jepa(
             "uses_ttc_labels": False,
             "uses_object_bboxes": geometry_heads is not None,
             "uses_depth_track_derivatives": geometry_heads is not None,
-            "uses_labels_for_window_sampling": False,
+            "uses_labels_for_window_sampling": (
+                config.geometry_loss_weight > 0.0
+                and config.geometry_sampling_strategy == "balanced_tracks"
+            ),
+            "geometry_target_version": config.geometry_target_version,
+            "geometry_target_names": list(_geometry_target_names(config.geometry_target_version)),
+            "geometry_sampling_strategy": config.geometry_sampling_strategy,
             "uses_rgb": False,
             "uses_evttc_pretraining_events": False,
             "materialized_event_cache": False,

@@ -1,0 +1,2269 @@
+diff --git a/docs/eap_geo_v2_lhr_protocol.md b/docs/eap_geo_v2_lhr_protocol.md
+new file mode 100644
+index 0000000..a0deeea
+--- /dev/null
++++ b/docs/eap_geo_v2_lhr_protocol.md
+@@ -0,0 +1,96 @@
++# eAP-Geo v2 and EAP-LHR-JEPA-TTC protocol
++
++This branch separates two hypotheses that must not be conflated.
++
++## G2: richer transferable representation
++
++`pretrain_eap_geo_v2.py` keeps a 21-channel full-frame EventTubelet encoder for
++A0/A1 transfer and adds a 128x128 object ROI path. Auxiliary targets include
++2-D center velocity, radiality, visibility/truncation, track age, visible-area
++change, collision-corridor overlap/entry and category. Sampling is balanced by
++track-derived strata instead of choosing the nearest object at every timestamp.
++
++Because labels influence sampling, checkpoints use the distinct audited regime
++`eap_geo_v2` and declare `uses_labels_for_window_sampling=true`.
++
++### Pilot
++
++```powershell
++.\.venv\Scripts\python.exe .\scripts\pretrain_eap_geo_v2.py `
++  --root E:\eAP_dataset `
++  --inventory .\data\manifests\eap_train40_inventory_v1.json `
++  --split .\data\splits\eap_pilot12_v1.json `
++  --output .\artifacts\runs\eap_geo_v2_pilot_seed42_v1 `
++  --epochs 3 --batch-size 24 --workers 10
++```
++
++Transfer the validation-selected full-frame encoder:
++
++```powershell
++.\.venv\Scripts\python.exe .\scripts\run_evttc_architecture_matrix.py `
++  --mode screen --stage-role core --split-protocol grouped_cv `
++  --fold 0 --seed 7 --workers 10 `
++  --output-dir .\artifacts\runs\evttc32_eap_geo_v2_analysis_v1\core\fold-0 `
++  --base-initialization external_eap_geo_v2 `
++  --base-encoder-checkpoint .\artifacts\runs\eap_geo_v2_pilot_seed42_v1\eap_geo_v2_encoder_best.pt `
++  --external-pretraining-split .\data\splits\eap_pilot12_v1.json `
++  --variants A0_MATCHED_GLOBAL A1_MATCHED_DENSE_BLOCK
++```
++
++Run both folds and aggregate with the existing repository scripts. Promotion
++requires improvement in MAE, relative error and selection score versus a newly
++matched random control under the same source tree and cache manifest.
++
++## L1: deployable full-head TTC estimator
++
++`pretrain_eap_lhr_jepa_ttc.py` uses the same 40-plane, two-interval, 128x128
++object representation already materialized for EvTTC Garl arms. It predicts
++positive visible heights, applies the height-ratio equation, retains the full
++model in the checkpoint, and uses direct signed-log TTC only as secondary
++supervision. A low-weight latent predictor uses an EMA target ROI tower, while the bbox
++foreground proxy remains a training-only head.
++
++Garl labels are loaded through the repository's audited five-key join. The Geo encoder may initialize the shared EventTubelet encoder. The learned
++20-to-21 channel adapter is trained on object ROIs; no incompatible ResNet
++weight transfer is claimed.
++
++```powershell
++.\.venv\Scripts\python.exe .\scripts\pretrain_eap_lhr_jepa_ttc.py `
++  --eap-root E:\eAP_dataset `
++  --garlttc-root E:\GarlTTC_dataset `
++  --inventory .\data\manifests\eap_train40_inventory_v1.json `
++  --split .\data\splits\eap_pilot12_v1.json `
++  --geo-checkpoint .\artifacts\runs\eap_geo_v2_pilot_seed42_v1\eap_geo_v2_encoder_best.pt `
++  --output .\artifacts\runs\eap_lhr_jepa_ttc_pilot_seed42_v1 `
++  --epochs 3 --batch-size 24 --workers 10
++```
++
++Evaluate the unchanged full model zero-shot on an EvTTC cache containing
++`garl_event_roi`, `garl_delta_t_s` and `ttc_s`:
++
++```powershell
++.\.venv\Scripts\python.exe .\scripts\evaluate_eap_lhr_zero_shot.py `
++  --checkpoint .\artifacts\runs\eap_lhr_jepa_ttc_pilot_seed42_v1\eap_lhr_jepa_ttc_best.pt `
++  --cache-manifest .\artifacts\features\evttc32_paper_v6_grouped_cv_screen_core_fold0\manifest.json `
++  --splits validation `
++  --output .\artifacts\metrics\eap_lhr_zero_shot_fold0.json
++```
++
++Evaluate every held-out fold and aggregate only disjoint OOF rows before applying
++promotion gates:
++
++```powershell
++.\.venv\Scripts\python.exe .\scripts\aggregate_eap_lhr_zero_shot.py `
++  --inputs `
++    .\artifacts\metrics\eap_lhr_zero_shot_fold0.json `
++    .\artifacts\metrics\eap_lhr_zero_shot_fold1.json `
++  --output .\artifacts\metrics\eap_lhr_zero_shot_oof_analysis_v1.json
++```
++
++## Claims deliberately excluded
++
++* Public eAP 3-D reconstruction is not claimed to equal private official TTC.
++* The foreground target is a bbox proxy, not fine segmentation.
++* No RGB branch is added by this patch.
++* No SOTA claim is allowed until the protocol is frozen and benchmark-10 is
++  opened only for the final selected model.
+diff --git a/scripts/aggregate_eap_lhr_zero_shot.py b/scripts/aggregate_eap_lhr_zero_shot.py
+new file mode 100644
+index 0000000..0986fab
+--- /dev/null
++++ b/scripts/aggregate_eap_lhr_zero_shot.py
+@@ -0,0 +1,79 @@
++#!/usr/bin/env python
++"""Aggregate disjoint grouped-fold zero-shot predictions for eAP LHR."""
++
++from __future__ import annotations
++
++import argparse
++import json
++from pathlib import Path
++from typing import Any
++
++import numpy as np
++
++from e_jepa_ttc.utils.io import write_structured
++
++
++def _load(path: str | Path) -> dict[str, Any]:
++    return json.loads(Path(path).read_text(encoding="utf-8"))
++
++
++def aggregate_payloads(payloads: list[dict[str, Any]]) -> dict[str, Any]:
++    if not payloads:
++        raise ValueError("At least one zero-shot payload is required.")
++    rows: list[dict[str, Any]] = []
++    seen: set[tuple[str, str, str]] = set()
++    manifests: list[str] = []
++    for payload in payloads:
++        if payload.get("artifact_type") != "eap_lhr_zero_shot_evttc_v1":
++            raise ValueError("Unexpected zero-shot artifact type.")
++        manifests.append(str(payload.get("cache_manifest")))
++        for raw in payload.get("predictions", []):
++            row = dict(raw)
++            identity = (
++                str(row.get("sequence_id")),
++                str(row.get("sample_token")),
++                str(row.get("track_id", "")),
++            )
++            if identity in seen:
++                raise ValueError(f"Duplicate OOF prediction: {identity}")
++            seen.add(identity)
++            rows.append(row)
++    if not rows:
++        raise ValueError("Zero-shot payloads contain no predictions.")
++    errors = np.asarray([float(row["absolute_error_s"]) for row in rows], dtype=np.float64)
++    relative = np.asarray(
++        [
++            float(row["absolute_error_s"])
++            / max(abs(float(row["target_ttc_s"])), 0.25)
++            for row in rows
++        ],
++        dtype=np.float64,
++    )
++    mae = float(errors.mean())
++    mre = float(relative.mean())
++    return {
++        "artifact_type": "eap_lhr_zero_shot_evttc_oof_aggregate_v1",
++        "cache_manifests": manifests,
++        "fold_count": len(payloads),
++        "sample_count": len(rows),
++        "mae_s": mae,
++        "mean_relative_error": mre,
++        "selection_score": mre + 0.25 * mae,
++        "benchmark10_opened": False,
++        "predictions": rows,
++    }
++
++
++def main() -> int:
++    parser = argparse.ArgumentParser()
++    parser.add_argument("--inputs", nargs="+", required=True)
++    parser.add_argument("--output", required=True)
++    args = parser.parse_args()
++    payload = aggregate_payloads([_load(path) for path in args.inputs])
++    write_structured(args.output, payload)
++    print(json.dumps({k: v for k, v in payload.items() if k != "predictions"}, indent=2))
++    return 0
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+diff --git a/scripts/analyze_eap_geo_v2_lhr.py b/scripts/analyze_eap_geo_v2_lhr.py
+new file mode 100644
+index 0000000..a11c8cd
+--- /dev/null
++++ b/scripts/analyze_eap_geo_v2_lhr.py
+@@ -0,0 +1,98 @@
++#!/usr/bin/env python
++"""Create explicit pass/fail gates for Geo-v2 transfer and LHR zero-shot."""
++
++from __future__ import annotations
++
++import argparse
++import json
++from pathlib import Path
++from typing import Any
++
++
++def _load(path: str) -> dict[str, Any]:
++    return json.loads(Path(path).read_text(encoding="utf-8"))
++
++
++def _control_mae(control: dict[str, Any], variant: str) -> float:
++    """Read a control MAE from an aggregate or comparison artifact."""
++
++    direct = control.get("sequence_macro_mae_s_mean")
++    if direct is not None:
++        return float(direct)
++
++    for record in control.get("ranking", []):
++        if str(record.get("variant")) == variant:
++            value = record.get("sequence_macro_mae_s_mean")
++            if value is None:
++                raise ValueError(f"Control record for {variant} has no mean MAE.")
++            return float(value)
++
++    comparison = control.get("comparisons", {}).get("sequence_macro_mae_s", {})
++    if comparison.get("control_mean") is not None:
++        return float(comparison["control_mean"])
++
++    raise ValueError(
++        f"Could not find a control MAE for variant {variant!r} in {control.get('artifact_type')!r}."
++    )
++
++
++def build_gate_payload(
++    *,
++    control: dict[str, Any],
++    geo: dict[str, Any],
++    lhr: dict[str, Any],
++    variant: str,
++) -> dict[str, Any]:
++    comparisons = geo.get("comparisons", {})
++    mae = comparisons.get("sequence_macro_mae_s", {})
++    mre = comparisons.get("sequence_macro_mean_relative_error", {})
++    score = comparisons.get("sequence_macro_selection_score", {})
++    geo_passed = all(
++        float(metric.get("candidate_relative_improvement_pct", -1.0)) > 0.0
++        for metric in (mae, mre, score)
++    )
++    control_mae = _control_mae(control, variant)
++    lhr_mae = float(lhr.get("mae_s", float("inf")))
++    lhr_passed = lhr_mae < control_mae
++    return {
++        "artifact_type": "eap_geo_v2_lhr_gate_v1",
++        "control_variant": variant,
++        "geo_v2_gate": {
++            "mae_improvement_pct": mae.get("candidate_relative_improvement_pct"),
++            "mre_improvement_pct": mre.get("candidate_relative_improvement_pct"),
++            "score_improvement_pct": score.get("candidate_relative_improvement_pct"),
++            "passed": geo_passed,
++        },
++        "lhr_zero_shot_gate": {
++            "mae_s": lhr.get("mae_s"),
++            "mean_relative_error": lhr.get("mean_relative_error"),
++            "control_mae_s": control_mae,
++            "beats_random_control": lhr_passed,
++            "passed": lhr_passed,
++        },
++        "passed": geo_passed and lhr_passed,
++        "decision": "promote" if geo_passed and lhr_passed else "do_not_promote",
++    }
++
++
++def main() -> int:
++    parser = argparse.ArgumentParser()
++    parser.add_argument("--random-control", required=True)
++    parser.add_argument("--geo-v2-transfer", required=True)
++    parser.add_argument("--lhr-zero-shot", required=True)
++    parser.add_argument("--variant", default="A0_MATCHED_GLOBAL")
++    parser.add_argument("--output", required=True)
++    args = parser.parse_args()
++    payload = build_gate_payload(
++        control=_load(args.random_control),
++        geo=_load(args.geo_v2_transfer),
++        lhr=_load(args.lhr_zero_shot),
++        variant=args.variant,
++    )
++    Path(args.output).write_text(json.dumps(payload, indent=2, sort_keys=True), encoding="utf-8")
++    print(json.dumps(payload, indent=2, sort_keys=True))
++    return 0
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+diff --git a/scripts/evaluate_eap_lhr_zero_shot.py b/scripts/evaluate_eap_lhr_zero_shot.py
+new file mode 100644
+index 0000000..be667f8
+--- /dev/null
++++ b/scripts/evaluate_eap_lhr_zero_shot.py
+@@ -0,0 +1,82 @@
++#!/usr/bin/env python
++"""Zero-shot evaluation of the preserved eAP LHR model on an EvTTC object cache."""
++
++from __future__ import annotations
++
++import argparse
++import json
++from pathlib import Path
++
++import numpy as np
++import torch
++from torch.utils.data import DataLoader
++
++from e_jepa_ttc.data.eap_cache import EAPObjectCacheDataset
++from e_jepa_ttc.models.eap_lhr_jepa_ttc import EAPLHRJEPATTC
++from e_jepa_ttc.utils.io import write_structured
++
++
++def main() -> int:
++    parser = argparse.ArgumentParser()
++    parser.add_argument("--checkpoint", required=True)
++    parser.add_argument("--cache-manifest", required=True)
++    parser.add_argument("--splits", nargs="+", default=["validation"])
++    parser.add_argument("--batch-size", type=int, default=24)
++    parser.add_argument("--workers", type=int, default=4)
++    parser.add_argument("--device", default="auto")
++    parser.add_argument("--output", required=True)
++    args = parser.parse_args()
++    device = torch.device("cuda" if args.device == "auto" and torch.cuda.is_available() else args.device if args.device != "auto" else "cpu")
++    checkpoint = torch.load(args.checkpoint, map_location="cpu", weights_only=False)
++    if checkpoint.get("full_model_transferable_to_evttc") is not True:
++        raise ValueError("Checkpoint does not declare full-head EvTTC transferability.")
++    model = EAPLHRJEPATTC().to(device)
++    model.load_state_dict(checkpoint["model_state_dict"])
++    model.eval()
++    dataset = EAPObjectCacheDataset(args.cache_manifest, splits=tuple(args.splits))
++    loader = DataLoader(dataset, batch_size=args.batch_size, num_workers=args.workers)
++    errors: list[float] = []
++    relative: list[float] = []
++    rows: list[dict[str, object]] = []
++    with torch.no_grad():
++        for batch in loader:
++            event_roi = batch["garl_event_roi"].to(device=device, dtype=torch.float32)
++            elapsed = batch["garl_delta_t_s"].to(device=device, dtype=torch.float32).reshape(-1)
++            target = batch["ttc_s"].to(device=device, dtype=torch.float32).reshape(-1)
++            prediction = model(event_roi, elapsed).ttc_seconds.clamp(-100.0, 100.0)
++            absolute = (prediction - target).abs()
++            errors.extend(absolute.cpu().tolist())
++            relative.extend((absolute / target.abs().clamp_min(0.25)).cpu().tolist())
++            for idx in range(target.shape[0]):
++                rows.append(
++                    {
++                        "sample_token": batch["sample_token"][idx],
++                        "sequence_id": batch["sequence_id"][idx],
++                        "track_id": (
++                            batch["track_id"][idx]
++                            if "track_id" in batch
++                            else ""
++                        ),
++                        "target_ttc_s": float(target[idx].cpu()),
++                        "predicted_ttc_s": float(prediction[idx].cpu()),
++                        "absolute_error_s": float(absolute[idx].cpu()),
++                    }
++                )
++    payload = {
++        "artifact_type": "eap_lhr_zero_shot_evttc_v1",
++        "checkpoint": Path(args.checkpoint).as_posix(),
++        "cache_manifest": Path(args.cache_manifest).as_posix(),
++        "sample_count": len(errors),
++        "mae_s": float(np.mean(errors)),
++        "mean_relative_error": float(np.mean(relative)),
++        "selection_score": float(np.mean(relative) + 0.25 * np.mean(errors)),
++        "benchmark10_opened": False,
++        "predictions": rows,
++    }
++    write_structured(args.output, payload)
++    print(json.dumps({key: value for key, value in payload.items() if key != "predictions"}, indent=2))
++    return 0
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+diff --git a/scripts/pretrain_eap_geo_v2.py b/scripts/pretrain_eap_geo_v2.py
+new file mode 100644
+index 0000000..7d61e7b
+--- /dev/null
++++ b/scripts/pretrain_eap_geo_v2.py
+@@ -0,0 +1,47 @@
++#!/usr/bin/env python
++"""CLI for balanced eAP-Geo-v2 pretraining."""
++
++from __future__ import annotations
++
++import argparse
++import json
++
++from e_jepa_ttc.training.eap_geo_v2 import EAPGeoV2Config, train_eap_geo_v2
++
++
++def main() -> int:
++    parser = argparse.ArgumentParser()
++    parser.add_argument("--root", required=True)
++    parser.add_argument("--inventory", required=True)
++    parser.add_argument("--split", required=True)
++    parser.add_argument("--output", required=True)
++    parser.add_argument("--epochs", type=int, default=30)
++    parser.add_argument("--batch-size", type=int, default=24)
++    parser.add_argument("--workers", type=int, default=8)
++    parser.add_argument("--learning-rate", type=float, default=3e-4)
++    parser.add_argument("--max-samples-per-sequence", type=int, default=512)
++    parser.add_argument("--device", default="auto")
++    parser.add_argument("--seed", type=int, default=42)
++    args = parser.parse_args()
++    config = EAPGeoV2Config(
++        epochs=args.epochs,
++        batch_size=args.batch_size,
++        workers=args.workers,
++        learning_rate=args.learning_rate,
++        max_samples_per_sequence=args.max_samples_per_sequence,
++        seed=args.seed,
++    )
++    result = train_eap_geo_v2(
++        root=args.root,
++        inventory_path=args.inventory,
++        split_path=args.split,
++        output_dir=args.output,
++        config=config,
++        device=args.device,
++    )
++    print(json.dumps(result, indent=2, sort_keys=True))
++    return 0
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+diff --git a/scripts/pretrain_eap_lhr_jepa_ttc.py b/scripts/pretrain_eap_lhr_jepa_ttc.py
+new file mode 100644
+index 0000000..eb98c88
+--- /dev/null
++++ b/scripts/pretrain_eap_lhr_jepa_ttc.py
+@@ -0,0 +1,51 @@
++#!/usr/bin/env python
++"""CLI for full-head eAP LHR-JEPA-TTC training."""
++
++from __future__ import annotations
++
++import argparse
++import json
++
++from e_jepa_ttc.training.eap_lhr_jepa_ttc import EAPLHRConfig, train_eap_lhr_jepa_ttc
++
++
++def main() -> int:
++    parser = argparse.ArgumentParser()
++    parser.add_argument("--eap-root", required=True)
++    parser.add_argument("--garlttc-root", required=True)
++    parser.add_argument("--inventory", required=True)
++    parser.add_argument("--split", required=True)
++    parser.add_argument("--output", required=True)
++    parser.add_argument("--geo-checkpoint")
++    parser.add_argument("--epochs", type=int, default=30)
++    parser.add_argument("--batch-size", type=int, default=24)
++    parser.add_argument("--workers", type=int, default=8)
++    parser.add_argument("--learning-rate", type=float, default=3e-4)
++    parser.add_argument("--max-samples-per-sequence", type=int, default=512)
++    parser.add_argument("--device", default="auto")
++    parser.add_argument("--seed", type=int, default=42)
++    args = parser.parse_args()
++    config = EAPLHRConfig(
++        epochs=args.epochs,
++        batch_size=args.batch_size,
++        workers=args.workers,
++        learning_rate=args.learning_rate,
++        max_samples_per_sequence=args.max_samples_per_sequence,
++        seed=args.seed,
++    )
++    result = train_eap_lhr_jepa_ttc(
++        eap_root=args.eap_root,
++        garlttc_root=args.garlttc_root,
++        inventory_path=args.inventory,
++        split_path=args.split,
++        output_dir=args.output,
++        config=config,
++        geo_checkpoint=args.geo_checkpoint,
++        device=args.device,
++    )
++    print(json.dumps(result, indent=2, sort_keys=True))
++    return 0
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+diff --git a/scripts/run_evttc_architecture_matrix.py b/scripts/run_evttc_architecture_matrix.py
+index f1a06fd..b5af8ea 100644
+--- a/scripts/run_evttc_architecture_matrix.py
++++ b/scripts/run_evttc_architecture_matrix.py
+@@ -681,6 +681,7 @@ def main() -> int:
+             "external_ttc",
+             "external_eap_ssl",
+             "external_eap_geo",
++            "external_eap_geo_v2",
+             "external_eap_ttc",
+         ),
+         default="audited_ssl",
+@@ -689,7 +690,8 @@ def main() -> int:
+             "control. random_control is intended for leakage-free grouped CV when "
+             "fold-specific SSL checkpoints do not yet exist. external_ssl accepts "
+             "a label-free CARLA checkpoint; external_ttc is the separately disclosed "
+-            "CARLA synthetic-TTC ablation. external_eap_ssl, external_eap_geo, and "
++            "CARLA synthetic-TTC ablation. external_eap_ssl, external_eap_geo, "
++            "external_eap_geo_v2, and "
+             "external_eap_ttc accept the paired public eAP train-only arms. None may "
+             "have EvTTC exposure."
+         ),
+@@ -771,6 +773,7 @@ def main() -> int:
+         "external_ttc",
+         "external_eap_ssl",
+         "external_eap_geo",
++        "external_eap_geo_v2",
+         "external_eap_ttc",
+     }:
+         if args.base_encoder_checkpoint is None:
+@@ -900,10 +903,16 @@ def main() -> int:
+                     source_split_path=args.external_pretraining_split,
+                 ),
+             }
+-        elif args.base_initialization in {"external_eap_ssl", "external_eap_geo"}:
+-            expected_regime = (
+-                "eap_ssl" if args.base_initialization == "external_eap_ssl" else "eap_geo"
+-            )
++        elif args.base_initialization in {
++            "external_eap_ssl",
++            "external_eap_geo",
++            "external_eap_geo_v2",
++        }:
++            expected_regime = {
++                "external_eap_ssl": "eap_ssl",
++                "external_eap_geo": "eap_geo",
++                "external_eap_geo_v2": "eap_geo_v2",
++            }[args.base_initialization]
+             external_pretraining_audit = {
+                 "enabled": True,
+                 **validate_external_eap_checkpoint(
+diff --git a/src/e_jepa_ttc/data/eap.py b/src/e_jepa_ttc/data/eap.py
+index fc2e6c9..4255c31 100644
+--- a/src/e_jepa_ttc/data/eap.py
++++ b/src/e_jepa_ttc/data/eap.py
+@@ -71,6 +71,7 @@ class EAPObjectState:
+     visible_height_px: float
+     depth_velocity_mps: float
+     ttc_s: float
++    unclipped_bbox_xyxy: tuple[float, float, float, float] | None = None
+     ttc_source: str = "reconstructed_public_3d_track_local_linear"
+ 
+     @property
+@@ -219,29 +220,33 @@ def box_corners_ego(bbox_3d_ego: object) -> np.ndarray:
+     return local @ rotation.T + center[None, :]
+ 
+ 
+-def project_box_3d_to_event(
++def project_box_3d_to_event_with_visibility(
+     bbox_3d_ego: object,
+     intrinsic: object,
+     event_from_ego: object,
+     *,
+     image_size: tuple[int, int] = EAP_IMAGE_SIZE,
+     minimum_depth_m: float = 0.1,
+-) -> tuple[np.ndarray, tuple[float, float, float, float], float, float]:
+-    """Project an ego-frame 3-D box into the event camera.
+-
+-    Returns camera-frame corners, a clipped 2-D box, nearest camera depth and
+-    the projected vertical extent. Boxes crossing or behind the camera fail
+-    closed instead of silently producing infinities.
++) -> tuple[
++    np.ndarray,
++    tuple[float, float, float, float],
++    tuple[float, float, float, float],
++    float,
++    float,
++]:
++    """Project a 3-D box while preserving unclipped visibility geometry.
++
++    Returns camera-frame corners, clipped bbox, raw/unclipped bbox, nearest
++    depth and clipped visible height.  The raw box is required to distinguish
++    genuinely small objects from objects truncated by the image boundary.
+     """
+ 
+     if minimum_depth_m <= 0:
+-        msg = "minimum_depth_m must be positive."
+-        raise ValueError(msg)
++        raise ValueError("minimum_depth_m must be positive.")
+     k_event = _numeric_array(intrinsic)
+     transform = _numeric_array(event_from_ego)
+     if k_event.shape != (3, 3) or transform.shape != (4, 4):
+-        msg = "K_event must be 3x3 and T_event_ego must be 4x4."
+-        raise ValueError(msg)
++        raise ValueError("K_event must be 3x3 and T_event_ego must be 4x4.")
+     corners_ego = box_corners_ego(bbox_3d_ego)
+     homogeneous = np.concatenate(
+         [corners_ego, np.ones((corners_ego.shape[0], 1), dtype=np.float64)],
+@@ -251,21 +256,50 @@ def project_box_3d_to_event(
+     depth = corners_camera[:, 2]
+     nearest_depth = float(np.min(depth))
+     if nearest_depth <= minimum_depth_m:
+-        msg = f"3-D box is not fully in front of the event camera (depth={nearest_depth:.3f}m)."
+-        raise ValueError(msg)
++        raise ValueError(
++            f"3-D box is not fully in front of the event camera (depth={nearest_depth:.3f}m)."
++        )
+     projected_homogeneous = (k_event @ corners_camera.T).T
+     pixels = projected_homogeneous[:, :2] / projected_homogeneous[:, 2:3]
++    raw = (
++        float(np.min(pixels[:, 0])),
++        float(np.min(pixels[:, 1])),
++        float(np.max(pixels[:, 0])),
++        float(np.max(pixels[:, 1])),
++    )
+     width, height = image_size
+-    x_min = float(np.clip(np.min(pixels[:, 0]), 0.0, float(width - 1)))
+-    y_min = float(np.clip(np.min(pixels[:, 1]), 0.0, float(height - 1)))
+-    x_max = float(np.clip(np.max(pixels[:, 0]), 0.0, float(width - 1)))
+-    y_max = float(np.clip(np.max(pixels[:, 1]), 0.0, float(height - 1)))
+-    if x_max <= x_min or y_max <= y_min:
+-        msg = "Projected 3-D box does not intersect the event image."
+-        raise ValueError(msg)
+-    return corners_camera, (x_min, y_min, x_max, y_max), nearest_depth, y_max - y_min
++    clipped = (
++        float(np.clip(raw[0], 0.0, float(width - 1))),
++        float(np.clip(raw[1], 0.0, float(height - 1))),
++        float(np.clip(raw[2], 0.0, float(width - 1))),
++        float(np.clip(raw[3], 0.0, float(height - 1))),
++    )
++    if clipped[2] <= clipped[0] or clipped[3] <= clipped[1]:
++        raise ValueError("Projected 3-D box does not intersect the event image.")
++    return corners_camera, clipped, raw, nearest_depth, clipped[3] - clipped[1]
+ 
+ 
++def project_box_3d_to_event(
++    bbox_3d_ego: object,
++    intrinsic: object,
++    event_from_ego: object,
++    *,
++    image_size: tuple[int, int] = EAP_IMAGE_SIZE,
++    minimum_depth_m: float = 0.1,
++) -> tuple[np.ndarray, tuple[float, float, float, float], float, float]:
++    """Backward-compatible projection returning the clipped box only."""
++
++    corners, clipped, _raw, nearest, visible_height = (
++        project_box_3d_to_event_with_visibility(
++            bbox_3d_ego,
++            intrinsic,
++            event_from_ego,
++            image_size=image_size,
++            minimum_depth_m=minimum_depth_m,
++        )
++    )
++    return corners, clipped, nearest, visible_height
++
+ def _numeric_array(value: object) -> np.ndarray:
+     """Decode Arrow nested arrays, including one-dimensional object wrappers."""
+ 
+@@ -352,7 +386,13 @@ def reconstruct_eap_object_states(
+             )
+         )
+         try:
+-            _corners, bbox_xyxy, nearest_depth, visible_height = project_box_3d_to_event(
++            (
++                _corners,
++                bbox_xyxy,
++                unclipped_bbox_xyxy,
++                nearest_depth,
++                visible_height,
++            ) = project_box_3d_to_event_with_visibility(
+                 row.bbox_3d_ego,
+                 media["K_event"],
+                 media["T_event_ego"],
+@@ -367,6 +407,7 @@ def reconstruct_eap_object_states(
+                 "category": str(row.category),
+                 "timestamp_us": timestamp_us,
+                 "bbox_xyxy": bbox_xyxy,
++                "unclipped_bbox_xyxy": unclipped_bbox_xyxy,
+                 "bbox_3d_ego": tuple(float(value) for value in row.bbox_3d_ego),
+                 "nearest_depth_m": nearest_depth,
+                 "visible_height_px": visible_height,
+@@ -413,6 +454,7 @@ def reconstruct_eap_object_states(
+                     visible_height_px=float(row["visible_height_px"]),
+                     depth_velocity_mps=float(slope),
+                     ttc_s=ttc,
++                    unclipped_bbox_xyxy=tuple(row["unclipped_bbox_xyxy"]),
+                 )
+             )
+     return sorted(states, key=lambda state: (state.sequence_id, state.track_id, state.timestamp_us))
+@@ -538,6 +580,12 @@ def _interpolate_object_state(
+         timestamp_us=timestamp_us,
+         bbox_xyxy=interpolate_tuple(left.bbox_xyxy, right.bbox_xyxy),
+         bbox_3d_ego=interpolate_tuple(left.bbox_3d_ego, right.bbox_3d_ego),
++        unclipped_bbox_xyxy=(
++            interpolate_tuple(left.unclipped_bbox_xyxy, right.unclipped_bbox_xyxy)
++            if left.unclipped_bbox_xyxy is not None
++            and right.unclipped_bbox_xyxy is not None
++            else None
++        ),
+         nearest_depth_m=depth,
+         visible_height_px=float(
+             left.visible_height_px + weight * (right.visible_height_px - left.visible_height_px)
+diff --git a/src/e_jepa_ttc/data/eap_motion_risk.py b/src/e_jepa_ttc/data/eap_motion_risk.py
+new file mode 100644
+index 0000000..9b09a9b
+--- /dev/null
++++ b/src/e_jepa_ttc/data/eap_motion_risk.py
+@@ -0,0 +1,206 @@
++"""Motion, visibility and collision-corridor targets for eAP-Geo v2.
++
++The feature vector intentionally separates observable image-plane quantities
++from reconstructed depth dynamics.  It is suitable for auxiliary pretraining;
++it is not presented as an official eAP TTC annotation.
++"""
++
++from __future__ import annotations
++
++import math
++from dataclasses import dataclass
++from typing import Iterable
++
++import numpy as np
++
++from e_jepa_ttc.data.eap import EAP_IMAGE_SIZE, EAPObjectState
++
++GEO_V2_TARGET_NAMES = (
++    "center_x",
++    "center_y",
++    "width",
++    "height",
++    "depth_closing",
++    "log_height_rate",
++    "center_velocity_x",
++    "center_velocity_y",
++    "radiality_log",
++    "visible_fraction",
++    "truncated_left",
++    "truncated_right",
++    "track_age",
++    "log_visible_area_rate",
++    "corridor_center_distance",
++    "corridor_overlap",
++    "corridor_entry_direction",
++    "category_vehicle",
++    "category_pedestrian",
++    "category_cyclist",
++    "category_other",
++)
++GEO_V2_TARGET_DIM = len(GEO_V2_TARGET_NAMES)
++
++
++@dataclass(frozen=True)
++class MotionRiskTarget:
++    values: np.ndarray
++    valid: np.ndarray
++    stratum: tuple[str, ...]
++
++
++def _box_area(box: tuple[float, float, float, float]) -> float:
++    return max(0.0, box[2] - box[0]) * max(0.0, box[3] - box[1])
++
++
++def _category_group(category: str) -> str:
++    value = category.lower()
++    if any(token in value for token in ("car", "vehicle", "truck", "bus", "van")):
++        return "vehicle"
++    if any(token in value for token in ("pedestrian", "person", "human")):
++        return "pedestrian"
++    if any(token in value for token in ("cyclist", "bicycle", "bike", "motorcycle")):
++        return "cyclist"
++    return "other"
++
++
++def motion_risk_target(
++    state: EAPObjectState,
++    previous: EAPObjectState | None,
++    first: EAPObjectState | None,
++    *,
++    corridor_center_x: float = 0.5,
++    corridor_width: float = 0.24,
++    epsilon: float = 1e-4,
++) -> MotionRiskTarget:
++    """Create normalized 2-D motion, visibility and trajectory-risk targets."""
++
++    if not 0.0 < corridor_width <= 1.0:
++        raise ValueError("corridor_width must lie in (0, 1].")
++    image_width, image_height = EAP_IMAGE_SIZE
++    x0, y0, x1, y1 = state.bbox_xyxy
++    cx = 0.5 * (x0 + x1) / image_width
++    cy = 0.5 * (y0 + y1) / image_height
++    width = (x1 - x0) / image_width
++    height = (y1 - y0) / image_height
++    raw = state.unclipped_bbox_xyxy or state.bbox_xyxy
++    visible_fraction = _box_area(state.bbox_xyxy) / max(_box_area(raw), epsilon)
++    truncated_left = float(raw[0] < 0.0)
++    truncated_right = float(raw[2] > image_width - 1)
++
++    vx = vy = log_height_rate = log_area_rate = float("nan")
++    previous_distance = float("nan")
++    if previous is not None:
++        dt = (state.timestamp_us - previous.timestamp_us) * 1e-6
++        if 0.0 < dt <= 0.5:
++            pcx, pcy = previous.center_xy
++            vx = ((0.5 * (x0 + x1)) - pcx) / image_width / dt
++            vy = ((0.5 * (y0 + y1)) - pcy) / image_height / dt
++            log_height_rate = (
++                math.log(max(state.visible_height_px, epsilon))
++                - math.log(max(previous.visible_height_px, epsilon))
++            ) / dt
++            log_area_rate = (
++                math.log(max(_box_area(state.bbox_xyxy), epsilon))
++                - math.log(max(_box_area(previous.bbox_xyxy), epsilon))
++            ) / dt
++            previous_distance = abs(previous.center_xy[0] / image_width - corridor_center_x)
++
++    radiality = (
++        (abs(vx) + abs(vy)) / (abs(log_height_rate) + epsilon)
++        if np.isfinite(vx) and np.isfinite(vy) and np.isfinite(log_height_rate)
++        else float("nan")
++    )
++    radiality_log = math.log1p(radiality) / math.log(11.0) if np.isfinite(radiality) else float("nan")
++    age_s = (
++        max(0.0, (state.timestamp_us - first.timestamp_us) * 1e-6)
++        if first is not None
++        else float("nan")
++    )
++
++    corridor_left = corridor_center_x - 0.5 * corridor_width
++    corridor_right = corridor_center_x + 0.5 * corridor_width
++    object_left = x0 / image_width
++    object_right = x1 / image_width
++    overlap = max(0.0, min(object_right, corridor_right) - max(object_left, corridor_left))
++    corridor_overlap = overlap / max(width, epsilon)
++    corridor_distance = abs(cx - corridor_center_x) / max(0.5, epsilon)
++    current_distance = abs(cx - corridor_center_x)
++    entry_direction = (
++        np.clip((previous_distance - current_distance) * 4.0, -1.0, 1.0)
++        if np.isfinite(previous_distance)
++        else float("nan")
++    )
++    category = _category_group(state.category)
++    one_hot = [float(category == name) for name in ("vehicle", "pedestrian", "cyclist", "other")]
++
++    values = np.asarray(
++        [
++            cx,
++            cy,
++            width,
++            height,
++            np.clip(-state.depth_velocity_mps / 20.0, -1.0, 1.0),
++            np.clip(log_height_rate / 5.0, -1.0, 1.0),
++            np.clip(vx / 2.0, -1.0, 1.0),
++            np.clip(vy / 2.0, -1.0, 1.0),
++            np.clip(radiality_log, 0.0, 1.0),
++            np.clip(visible_fraction, 0.0, 1.0),
++            truncated_left,
++            truncated_right,
++            np.clip(age_s / 5.0, 0.0, 1.0),
++            np.clip(log_area_rate / 5.0, -1.0, 1.0),
++            np.clip(corridor_distance, 0.0, 1.0),
++            np.clip(corridor_overlap, 0.0, 1.0),
++            entry_direction,
++            *one_hot,
++        ],
++        dtype=np.float32,
++    )
++    valid = np.isfinite(values)
++    values[~valid] = 0.0
++    motion = "lateral" if np.isfinite(radiality) and radiality >= 1.0 else "radial"
++    visibility = "partial" if visible_fraction < 0.9 else "full"
++    axis = "transverse" if np.isfinite(vx) and abs(vx) > abs(log_height_rate) * 0.15 else "longitudinal"
++    corridor = "entering" if np.isfinite(entry_direction) and entry_direction > 0.05 else "not_entering"
++    return MotionRiskTarget(values=values, valid=valid, stratum=(category, motion, visibility, axis, corridor))
++
++
++def balanced_round_robin_indices(
++    strata: Iterable[tuple[str, ...]],
++    maximum: int,
++    *,
++    seed: int,
++) -> list[int]:
++    """Select deterministically while preventing large strata from dominating."""
++
++    if maximum <= 0:
++        raise ValueError("maximum must be positive.")
++    groups: dict[tuple[str, ...], list[int]] = {}
++    for index, key in enumerate(strata):
++        groups.setdefault(tuple(key), []).append(index)
++    rng = np.random.default_rng(seed)
++    for values in groups.values():
++        rng.shuffle(values)
++    keys = sorted(groups)
++    selected: list[int] = []
++    cursor = 0
++    while keys and len(selected) < maximum:
++        key = keys[cursor % len(keys)]
++        values = groups[key]
++        if values:
++            selected.append(values.pop())
++        if not values:
++            keys.remove(key)
++            cursor = 0
++        else:
++            cursor += 1
++    return selected
++
++
++__all__ = [
++    "GEO_V2_TARGET_DIM",
++    "GEO_V2_TARGET_NAMES",
++    "MotionRiskTarget",
++    "balanced_round_robin_indices",
++    "motion_risk_target",
++]
+diff --git a/src/e_jepa_ttc/data/eap_roi.py b/src/e_jepa_ttc/data/eap_roi.py
+new file mode 100644
+index 0000000..1e3cd85
+--- /dev/null
++++ b/src/e_jepa_ttc/data/eap_roi.py
+@@ -0,0 +1,110 @@
++"""Object-centric eAP event representations shared by Geo-v2 and LHR-TTC."""
++
++from __future__ import annotations
++
++import numpy as np
++import torch
++from torch.nn import functional
++
++from e_jepa_ttc.data.eap import EAPEventReader, EAPObjectState
++
++
++def _common_square(states: tuple[EAPObjectState, EAPObjectState]) -> int:
++    boxes = np.asarray([state.bbox_xyxy for state in states], dtype=np.float64)
++    return max(1, int(np.ceil(np.maximum(boxes[:, 2] - boxes[:, 0], boxes[:, 3] - boxes[:, 1]).max())))
++
++
++def garl_time_surface_volume(
++    events: dict[str, np.ndarray],
++    square_xyxy: tuple[int, int, int, int],
++    *,
++    planes: int = 20,
++    target_size: int = 128,
++) -> np.ndarray:
++    """Mirror the repository's EvTTC Garl time-volume transform for eAP."""
++
++    x0, y0, x1, y1 = square_xyxy
++    width, height = max(1, x1 - x0), max(1, y1 - y0)
++    volume = np.zeros((planes, height, width), dtype=np.float32)
++    t = np.asarray(events["t"], dtype=np.int64)
++    if t.size:
++        x = np.asarray(events["x"], dtype=np.int64)
++        y = np.asarray(events["y"], dtype=np.int64)
++        relative_s = (t - t[0]).astype(np.float64) * 1e-6
++        duration_s = 0.1
++        bin_duration = duration_s / planes
++        selected = (
++            (x >= x0) & (x < x1) & (y >= y0) & (y < y1) & (relative_s < duration_s - 1e-5)
++        )
++        x, y = x[selected] - x0, y[selected] - y0
++        times = relative_s[selected].astype(np.float32)
++        if times.size:
++            time_index = np.clip((times / bin_duration).astype(np.int64), 0, planes - 1)
++            plane_size = height * width
++            flat_index = time_index * plane_size + y * width + x
++            order = np.argsort(flat_index, kind="stable")
++            sorted_flat = flat_index[order]
++            starts = np.r_[0, np.flatnonzero(sorted_flat[1:] != sorted_flat[:-1]) + 1]
++            counts = np.diff(np.r_[starts, len(sorted_flat)])
++            last_position = starts + counts - 1
++            last_event = order[last_position]
++            previous_event = order[np.maximum(last_position - 1, starts)]
++            plane_start = (sorted_flat[last_position] // plane_size) * bin_duration
++            previous_time = np.where(counts > 1, times[previous_event], plane_start)
++            values = np.exp(-((times[last_event] - previous_time) / bin_duration)).astype(np.float32)
++            volume.reshape(-1)[sorted_flat[last_position]] = values
++    tensor = torch.from_numpy(volume)[None]
++    return functional.interpolate(
++        tensor, size=(target_size, target_size), mode="bilinear", align_corners=True
++    )[0].numpy().astype(np.float32)
++
++
++def build_garl_eap_pair(
++    reader: EAPEventReader,
++    history: tuple[EAPObjectState, EAPObjectState, EAPObjectState],
++    *,
++    planes: int = 20,
++    target_size: int = 128,
++) -> tuple[np.ndarray, np.ndarray, float]:
++    """Return 40-plane ROI, resized visible-height targets and elapsed time."""
++
++    if len(history) != 3:
++        raise ValueError("Garl-compatible eAP preprocessing requires three states.")
++    endpoints = history[1:]
++    common_edge = _common_square(endpoints)
++    volumes: list[np.ndarray] = []
++    heights: list[float] = []
++    for interval_index, endpoint_index in ((0, 1), (1, 2)):
++        state = history[endpoint_index]
++        box = history[interval_index].bbox_xyxy
++        center_x = 0.5 * (box[0] + box[2])
++        center_y = 0.5 * (box[1] + box[3])
++        square = (
++            int(np.ceil(center_x - 0.5 * common_edge)),
++            int(np.ceil(center_y - 0.5 * common_edge)),
++            int(np.ceil(center_x + 0.5 * common_edge)),
++            int(np.ceil(center_y + 0.5 * common_edge)),
++        )
++        events = reader.read_window(history[interval_index].timestamp_us, state.timestamp_us)
++        volumes.append(garl_time_surface_volume(events, square, planes=planes, target_size=target_size))
++        heights.append((state.bbox_xyxy[3] - state.bbox_xyxy[1]) * target_size / common_edge)
++    elapsed_s = (history[2].timestamp_us - history[1].timestamp_us) * 1e-6
++    return np.concatenate(volumes).astype(np.float32), np.asarray(heights, np.float32), float(elapsed_s)
++
++
++def bbox_foreground_proxy(state: EAPObjectState, *, target_size: int = 32) -> np.ndarray:
++    """Rasterize a bbox-only foreground target; no segmentation is claimed."""
++
++    mask = np.zeros((target_size, target_size), dtype=np.float32)
++    # The object crop is square and centered on the bbox, so the bbox occupies
++    # the central region while preserving its aspect ratio.
++    w = max(1.0, state.bbox_xyxy[2] - state.bbox_xyxy[0])
++    h = max(1.0, state.bbox_xyxy[3] - state.bbox_xyxy[1])
++    scale = target_size / max(w, h)
++    rw, rh = max(1, int(round(w * scale))), max(1, int(round(h * scale)))
++    x0, y0 = (target_size - rw) // 2, (target_size - rh) // 2
++    mask[y0 : y0 + rh, x0 : x0 + rw] = 1.0
++    return mask
++
++
++__all__ = ["bbox_foreground_proxy", "build_garl_eap_pair", "garl_time_surface_volume"]
+diff --git a/src/e_jepa_ttc/models/eap_geo_v2.py b/src/e_jepa_ttc/models/eap_geo_v2.py
+new file mode 100644
+index 0000000..cb71f73
+--- /dev/null
++++ b/src/e_jepa_ttc/models/eap_geo_v2.py
+@@ -0,0 +1,68 @@
++"""Dual-path full-frame + ROI encoder for eAP-Geo v2."""
++
++from __future__ import annotations
++
++from dataclasses import dataclass
++
++import torch
++from torch import nn
++
++from e_jepa_ttc.data.eap_motion_risk import GEO_V2_TARGET_DIM
++from e_jepa_ttc.models import build_encoder
++
++
++@dataclass(frozen=True)
++class EAPGeoV2Output:
++    full_embedding: torch.Tensor
++    roi_embedding: torch.Tensor
++    fused_embedding: torch.Tensor
++    geometry: torch.Tensor
++    foreground_logits: torch.Tensor
++
++
++class EAPGeoV2Model(nn.Module):
++    """Preserve an EvTTC-compatible full encoder while adding an ROI teacher path."""
++
++    def __init__(self, *, in_channels: int = 21, foreground_size: int = 32) -> None:
++        super().__init__()
++        self.encoder = build_encoder("event-tubelet-transformer", in_channels=in_channels)
++        self.roi_encoder = build_encoder("event-tubelet-transformer", in_channels=in_channels)
++        dim = int(self.encoder.output_dim)
++        self.fusion = nn.Sequential(
++            nn.LayerNorm(dim * 3),
++            nn.Linear(dim * 3, dim),
++            nn.GELU(),
++            nn.Dropout(0.1),
++        )
++        self.geometry_head = nn.Sequential(
++            nn.LayerNorm(dim),
++            nn.Linear(dim, dim // 2),
++            nn.GELU(),
++            nn.Linear(dim // 2, GEO_V2_TARGET_DIM),
++        )
++        self.foreground_size = foreground_size
++        self.foreground_head = nn.Sequential(
++            nn.LayerNorm(dim),
++            nn.Linear(dim, foreground_size * foreground_size),
++        )
++
++    def forward(self, full_frame: torch.Tensor, roi_pair: torch.Tensor) -> EAPGeoV2Output:
++        if roi_pair.ndim != 5 or roi_pair.shape[1] != 2:
++            raise ValueError("roi_pair must have shape [B,2,C,H,W].")
++        full = self.encoder(full_frame)
++        batch = roi_pair.shape[0]
++        roi = self.roi_encoder(roi_pair.flatten(0, 1)).reshape(batch, 2, -1)
++        fused = self.fusion(torch.cat((full, roi[:, 0], roi[:, 1] - roi[:, 0]), dim=-1))
++        foreground = self.foreground_head(roi[:, 1]).reshape(
++            batch, self.foreground_size, self.foreground_size
++        )
++        return EAPGeoV2Output(
++            full_embedding=full,
++            roi_embedding=roi,
++            fused_embedding=fused,
++            geometry=self.geometry_head(fused),
++            foreground_logits=foreground,
++        )
++
++
++__all__ = ["EAPGeoV2Model", "EAPGeoV2Output"]
+diff --git a/src/e_jepa_ttc/models/eap_lhr_jepa_ttc.py b/src/e_jepa_ttc/models/eap_lhr_jepa_ttc.py
+new file mode 100644
+index 0000000..5291000
+--- /dev/null
++++ b/src/e_jepa_ttc/models/eap_lhr_jepa_ttc.py
+@@ -0,0 +1,105 @@
++"""Deployable event-only LHR-JEPA-TTC model with a preserved geometric head."""
++
++from __future__ import annotations
++
++from dataclasses import dataclass
++from typing import Mapping
++
++import torch
++from torch import nn
++
++from e_jepa_ttc.models import build_encoder
++from e_jepa_ttc.models.height_ratio_head import LearnedHeightRatioHead
++
++
++@dataclass(frozen=True)
++class EAPLHRJEPATTCOutput:
++    inverse_ttc: torch.Tensor
++    ttc_seconds: torch.Tensor
++    height_ratio: torch.Tensor
++    visible_heights: torch.Tensor
++    direct_ttc_seconds: torch.Tensor
++    first_embedding: torch.Tensor
++    second_embedding: torch.Tensor
++    predicted_second_embedding: torch.Tensor
++    foreground_logits: torch.Tensor
++
++
++class EAPLHRJEPATTC(nn.Module):
++    """Use the same 40-plane ROI input and full head for eAP and EvTTC."""
++
++    def __init__(self, *, roi_planes: int = 20, foreground_size: int = 32) -> None:
++        super().__init__()
++        self.roi_planes = roi_planes
++        # A learned channel adapter permits exact reuse of the 21-channel Geo
++        # transformer while accepting each 20-plane Garl interval.
++        self.roi_adapter = nn.Conv2d(roi_planes, 21, kernel_size=1, bias=False)
++        self.encoder = build_encoder("event-tubelet-transformer", in_channels=21)
++        dim = int(self.encoder.output_dim)
++        self.pair_fusion = nn.Sequential(
++            nn.LayerNorm(dim * 4),
++            nn.Linear(dim * 4, dim),
++            nn.GELU(),
++            nn.Dropout(0.1),
++        )
++        self.height_ratio_head = LearnedHeightRatioHead(dim)
++        self.direct_ttc_head = nn.Sequential(
++            nn.LayerNorm(dim), nn.Linear(dim, dim // 2), nn.GELU(), nn.Linear(dim // 2, 1)
++        )
++        self.jepa_predictor = nn.Sequential(
++            nn.LayerNorm(dim), nn.Linear(dim, dim), nn.GELU(), nn.Linear(dim, dim)
++        )
++        self.foreground_size = foreground_size
++        self.foreground_head = nn.Linear(dim, foreground_size * foreground_size)
++
++    def _encode(self, volume: torch.Tensor) -> torch.Tensor:
++        return self.encoder(self.roi_adapter(volume))
++
++    def forward(self, event_roi: torch.Tensor, elapsed_s: torch.Tensor) -> EAPLHRJEPATTCOutput:
++        if event_roi.ndim != 4 or event_roi.shape[1] != self.roi_planes * 2:
++            raise ValueError(
++                f"event_roi must have shape [B,{self.roi_planes * 2},H,W]."
++            )
++        first, second = event_roi.split(self.roi_planes, dim=1)
++        z1, z2 = self._encode(first), self._encode(second)
++        fused = self.pair_fusion(torch.cat((z1, z2, z2 - z1, z1 * z2), dim=-1))
++        raw_heights = self.height_ratio_head.height_regressor(fused)
++        heights = torch.nn.functional.softplus(raw_heights) + 1e-3
++        ratio = heights[:, 0] / heights[:, 1].clamp_min(1e-6)
++        inverse_ttc = (1.0 - ratio) / elapsed_s.clamp_min(1e-6)
++        safe_inverse = torch.where(
++            inverse_ttc.abs() >= 1e-5,
++            inverse_ttc,
++            torch.where(
++                inverse_ttc < 0,
++                torch.full_like(inverse_ttc, -1e-5),
++                torch.full_like(inverse_ttc, 1e-5),
++            ),
++        )
++        ttc = safe_inverse.reciprocal()
++        direct_raw = self.direct_ttc_head(fused).squeeze(-1)
++        direct = torch.sign(direct_raw) * torch.expm1(direct_raw.abs())
++        foreground = self.foreground_head(z2).reshape(
++            z2.shape[0], self.foreground_size, self.foreground_size
++        )
++        return EAPLHRJEPATTCOutput(
++            inverse_ttc=inverse_ttc,
++            ttc_seconds=ttc,
++            height_ratio=ratio,
++            visible_heights=heights,
++            direct_ttc_seconds=direct,
++            first_embedding=z1,
++            second_embedding=z2,
++            predicted_second_embedding=self.jepa_predictor(z1),
++            foreground_logits=foreground,
++        )
++
++    def initialize_encoder_from_geo(self, checkpoint: Mapping[str, object]) -> tuple[list[str], list[str]]:
++        state = checkpoint.get("encoder_state_dict")
++        if not isinstance(state, Mapping):
++            raise ValueError("Geo checkpoint has no encoder_state_dict.")
++        result = self.encoder.load_state_dict(state, strict=False)
++        return list(result.missing_keys), list(result.unexpected_keys)
++
++
++__all__ = ["EAPLHRJEPATTC", "EAPLHRJEPATTCOutput"]
+diff --git a/src/e_jepa_ttc/training/checkpoints.py b/src/e_jepa_ttc/training/checkpoints.py
+index 6410350..2178f3c 100644
+--- a/src/e_jepa_ttc/training/checkpoints.py
++++ b/src/e_jepa_ttc/training/checkpoints.py
+@@ -193,8 +193,10 @@ def validate_external_eap_checkpoint(
+ ) -> dict[str, Any]:
+     """Validate a public eAP train-only SSL or weak-geometry encoder."""
+ 
+-    if expected_regime not in {"eap_ssl", "eap_geo"}:
+-        raise ValueError("Expected eAP regime must be eap_ssl or eap_geo.")
++    if expected_regime not in {"eap_ssl", "eap_geo", "eap_geo_v2"}:
++        raise ValueError(
++            "Expected eAP regime must be eap_ssl, eap_geo or eap_geo_v2."
++        )
+     if checkpoint.get("external_pretraining") is not True:
+         raise ValueError("eAP checkpoint must declare external_pretraining=true.")
+     if checkpoint.get("pretraining_dataset_id") != "EAP_PUBLIC_TRAIN40":
+@@ -218,9 +220,23 @@ def validate_external_eap_checkpoint(
+     violations = [field for field in forbidden_truthy if checkpoint.get(field) is not False]
+     if violations:
+         raise ValueError(f"eAP checkpoint violates provenance fields: {violations}.")
+-    if checkpoint.get("uses_labels_for_window_sampling") is not False:
+-        raise ValueError("eAP checkpoint must use label-independent window sampling.")
+-    geometry_expected = expected_regime == "eap_geo"
++    label_balanced = expected_regime == "eap_geo_v2"
++    if checkpoint.get("uses_labels_for_window_sampling") is not label_balanced:
++        raise ValueError(
++            "eAP checkpoint label-sampling provenance differs from its declared regime."
++        )
++    if label_balanced:
++        required_v2 = (
++            "uses_balanced_track_sampling",
++            "uses_visibility_targets",
++            "uses_collision_corridor_targets",
++            "uses_object_categories",
++            "uses_object_roi",
++        )
++        missing_v2 = [field for field in required_v2 if checkpoint.get(field) is not True]
++        if missing_v2:
++            raise ValueError(f"eAP Geo-v2 checkpoint lacks provenance fields: {missing_v2}.")
++    geometry_expected = expected_regime in {"eap_geo", "eap_geo_v2"}
+     for field in ("uses_object_bboxes", "uses_depth_track_derivatives"):
+         if checkpoint.get(field) is not geometry_expected:
+             raise ValueError(f"eAP checkpoint has inconsistent {field} provenance.")
+@@ -250,7 +266,7 @@ def validate_external_eap_checkpoint(
+         "uses_ttc_labels": False,
+         "uses_object_bboxes": geometry_expected,
+         "uses_depth_track_derivatives": geometry_expected,
+-        "uses_labels_for_window_sampling": False,
++        "uses_labels_for_window_sampling": label_balanced,
+         "uses_rgb": False,
+         "uses_evttc_pretraining_events": False,
+         "benchmark10_opened": False,
+diff --git a/src/e_jepa_ttc/training/eap_geo_v2.py b/src/e_jepa_ttc/training/eap_geo_v2.py
+new file mode 100644
+index 0000000..c060110
+--- /dev/null
++++ b/src/e_jepa_ttc/training/eap_geo_v2.py
+@@ -0,0 +1,345 @@
++"""Train eAP-Geo v2 with balanced object sampling and a full-frame/ROI path."""
++
++from __future__ import annotations
++
++import copy
++import math
++import time
++from dataclasses import asdict, dataclass
++from pathlib import Path
++from typing import Any
++
++import numpy as np
++import torch
++from torch import nn
++from torch.nn import functional as F
++from torch.utils.data import DataLoader, Dataset
++
++from e_jepa_ttc.data.eap import (
++    EAPEventReader,
++    EAPObjectState,
++    crop_events_to_roi,
++    load_eap_media_table,
++    load_eap_sequence_labels,
++    reconstruct_eap_object_states,
++)
++from e_jepa_ttc.data.eap_motion_risk import (
++    GEO_V2_TARGET_DIM,
++    balanced_round_robin_indices,
++    motion_risk_target,
++)
++from e_jepa_ttc.data.eap_representation import base_compatible_voxel, downsample_full_frame
++from e_jepa_ttc.models.eap_geo_v2 import EAPGeoV2Model
++from e_jepa_ttc.training.carla_jepa import (
++    EVTTC_BASE_INPUT_CHANNELS,
++    _artifact_hash,
++    _atomic_torch_save,
++    _git_commit,
++    _set_seed,
++    _source_tree_hash,
++)
++from e_jepa_ttc.training.jepa import _update_ema
++from e_jepa_ttc.utils.io import read_structured, write_structured
++
++
++@dataclass(frozen=True)
++class EAPGeoV2Config:
++    epochs: int = 30
++    batch_size: int = 24
++    learning_rate: float = 3e-4
++    weight_decay: float = 0.05
++    workers: int = 8
++    event_window_ms: int = 100
++    horizons_ms: tuple[int, ...] = (100, 250, 500)
++    max_samples_per_sequence: int = 512
++    full_width: int = 160
++    full_height: int = 90
++    roi_size: int = 128
++    bins: int = 5
++    geometry_weight: float = 0.5
++    foreground_weight: float = 0.1
++    roi_alignment_weight: float = 0.1
++    jepa_weight: float = 1.0
++    ema_momentum: float = 0.996
++    early_stopping_patience: int = 6
++    early_stopping_min_epochs: int = 8
++    seed: int = 42
++
++
++@dataclass(frozen=True)
++class _Sample:
++    sequence_id: str
++    state: EAPObjectState
++    previous: EAPObjectState
++    first: EAPObjectState
++
++
++class EAPGeoV2Dataset(Dataset[tuple[torch.Tensor, ...]]):
++    def __init__(self, root: str | Path, sequence_ids: list[str], config: EAPGeoV2Config) -> None:
++        self.root, self.config = Path(root), config
++        media = load_eap_media_table(self.root, split="train")
++        self.samples: list[_Sample] = []
++        for sequence_id in sorted(sequence_ids):
++            sequence_media = media[media["sequence_id"].astype(str) == sequence_id].copy()
++            labels = load_eap_sequence_labels(self.root, sequence_id, split="train")
++            states = reconstruct_eap_object_states(sequence_media, labels)
++            candidates: list[_Sample] = []
++            strata: list[tuple[str, ...]] = []
++            by_track: dict[str, list[EAPObjectState]] = {}
++            for state in states:
++                by_track.setdefault(state.track_id, []).append(state)
++            for track in by_track.values():
++                track.sort(key=lambda value: value.timestamp_us)
++                for index in range(1, len(track)):
++                    state, previous = track[index], track[index - 1]
++                    gap_s = (state.timestamp_us - previous.timestamp_us) * 1e-6
++                    if not 0.0 < gap_s <= 0.5:
++                        continue
++                    target = motion_risk_target(state, previous, track[0])
++                    candidates.append(_Sample(sequence_id, state, previous, track[0]))
++                    strata.append(target.stratum)
++            if candidates:
++                chosen = balanced_round_robin_indices(
++                    strata, min(len(candidates), config.max_samples_per_sequence), seed=config.seed
++                )
++                self.samples.extend(candidates[index] for index in chosen)
++        if not self.samples:
++            raise ValueError("No balanced eAP-Geo-v2 samples were found.")
++        self._readers: dict[str, EAPEventReader] = {}
++
++    def __len__(self) -> int:
++        return len(self.samples)
++
++    def _reader(self, sequence_id: str) -> EAPEventReader:
++        reader = self._readers.get(sequence_id)
++        if reader is None:
++            reader = EAPEventReader(self.root / "data" / "train" / sequence_id / "events.h5")
++            reader.open()
++            self._readers[sequence_id] = reader
++        return reader
++
++    def _full(self, sequence_id: str, end_us: int) -> torch.Tensor:
++        start_us = end_us - self.config.event_window_ms * 1000
++        events = self._reader(sequence_id).read_window(start_us, end_us)
++        return base_compatible_voxel(
++            downsample_full_frame(
++                events,
++                sequence_id=sequence_id,
++                start_us=start_us,
++                end_us=end_us,
++                width=self.config.full_width,
++                height=self.config.full_height,
++            ),
++            bins=self.config.bins,
++        )
++
++    def _roi(self, sample: _Sample, state: EAPObjectState) -> torch.Tensor:
++        end_us = state.timestamp_us
++        start_us = end_us - self.config.event_window_ms * 1000
++        events = self._reader(sample.sequence_id).read_window(start_us, end_us)
++        cropped = crop_events_to_roi(
++            events,
++            state.bbox_xyxy,
++            sequence_id=sample.sequence_id,
++            start_us=start_us,
++            end_us=end_us,
++            output_size=(self.config.roi_size, self.config.roi_size),
++        )
++        return base_compatible_voxel(cropped, bins=self.config.bins)
++
++    def __getitem__(self, index: int) -> tuple[torch.Tensor, ...]:
++        sample = self.samples[index]
++        target = motion_risk_target(sample.state, sample.previous, sample.first)
++        full = self._full(sample.sequence_id, sample.state.timestamp_us)
++        futures = torch.stack(
++            [self._full(sample.sequence_id, sample.state.timestamp_us + h * 1000) for h in self.config.horizons_ms]
++        )
++        roi_pair = torch.stack((self._roi(sample, sample.previous), self._roi(sample, sample.state)))
++        from e_jepa_ttc.data.eap_roi import bbox_foreground_proxy
++
++        foreground = torch.from_numpy(bbox_foreground_proxy(sample.state))
++        return (
++            full,
++            futures,
++            roi_pair,
++            torch.from_numpy(target.values),
++            torch.from_numpy(target.valid),
++            foreground,
++        )
++
++    def close(self) -> None:
++        for reader in self._readers.values():
++            reader.close()
++        self._readers.clear()
++
++    def __del__(self) -> None:
++        self.close()
++
++
++def _split_sequences(split_path: Path, role: str) -> list[str]:
++    payload = read_structured(split_path)
++    assignments = payload.get("assignments", {})
++    values = assignments.get(role)
++    if not isinstance(values, list) or not values:
++        raise ValueError(f"Split has no non-empty {role!r} assignment.")
++    return sorted(str(value) for value in values)
++
++
++def _epoch(
++    *,
++    model: EAPGeoV2Model,
++    target_encoder: nn.Module,
++    future_predictors: nn.ModuleList,
++    loader: DataLoader,
++    config: EAPGeoV2Config,
++    device: torch.device,
++    optimizer: torch.optim.Optimizer | None,
++) -> dict[str, float]:
++    train = optimizer is not None
++    model.train(train)
++    future_predictors.train(train)
++    target_encoder.eval()
++    totals: dict[str, float] = {}
++    count = 0
++    for full, futures, roi_pair, geometry, valid, foreground in loader:
++        full, futures, roi_pair = full.to(device), futures.to(device), roi_pair.to(device)
++        geometry, valid, foreground = geometry.to(device), valid.to(device), foreground.to(device)
++        output = model(full, roi_pair)
++        with torch.no_grad():
++            future_embeddings = torch.stack(
++                [target_encoder(futures[:, horizon]) for horizon in range(futures.shape[1])], dim=1
++            )
++        predicted = torch.stack(
++            [future_predictors[h](output.full_embedding) for h in range(futures.shape[1])], dim=1
++        )
++        jepa = F.smooth_l1_loss(F.normalize(predicted.float(), dim=-1), F.normalize(future_embeddings.float(), dim=-1), beta=0.1)
++        per_geometry = F.smooth_l1_loss(output.geometry, geometry, beta=0.1, reduction="none")
++        geometry_loss = (per_geometry * valid).sum() / valid.sum().clamp_min(1)
++        foreground_loss = F.binary_cross_entropy_with_logits(output.foreground_logits, foreground)
++        roi_alignment = 1.0 - F.cosine_similarity(
++            output.full_embedding.float(), output.roi_embedding[:, 1].float(), dim=-1
++        ).mean()
++        loss = (
++            config.jepa_weight * jepa
++            + config.geometry_weight * geometry_loss
++            + config.foreground_weight * foreground_loss
++            + config.roi_alignment_weight * roi_alignment
++        )
++        if train:
++            optimizer.zero_grad(set_to_none=True)
++            loss.backward()
++            torch.nn.utils.clip_grad_norm_(
++                [*model.parameters(), *future_predictors.parameters()], 1.0
++            )
++            optimizer.step()
++            _update_ema(target_encoder, model.encoder, momentum=config.ema_momentum)
++        values = {
++            "loss": loss,
++            "loss_jepa": jepa,
++            "loss_geometry": geometry_loss,
++            "loss_foreground": foreground_loss,
++            "loss_roi_alignment": roi_alignment,
++        }
++        for name, value in values.items():
++            totals[name] = totals.get(name, 0.0) + float(value.detach().cpu())
++        count += 1
++    return {name: value / max(count, 1) for name, value in totals.items()}
++
++
++def train_eap_geo_v2(
++    *,
++    root: str | Path,
++    inventory_path: str | Path,
++    split_path: str | Path,
++    output_dir: str | Path,
++    config: EAPGeoV2Config,
++    device: str = "auto",
++) -> dict[str, Any]:
++    """Train and save a validation-selected Geo-v2 encoder checkpoint."""
++
++    _set_seed(config.seed)
++    resolved_device = torch.device("cuda" if device == "auto" and torch.cuda.is_available() else device if device != "auto" else "cpu")
++    output = Path(output_dir)
++    output.mkdir(parents=True, exist_ok=True)
++    split = Path(split_path)
++    train_data = EAPGeoV2Dataset(root, _split_sequences(split, "train"), config)
++    val_data = EAPGeoV2Dataset(root, _split_sequences(split, "validation"), config)
++    loader_args = dict(batch_size=config.batch_size, num_workers=config.workers, pin_memory=resolved_device.type == "cuda")
++    train_loader = DataLoader(train_data, shuffle=True, **loader_args)
++    val_loader = DataLoader(val_data, shuffle=False, **loader_args)
++    model = EAPGeoV2Model().to(resolved_device)
++    target_encoder = copy.deepcopy(model.encoder).to(resolved_device).eval().requires_grad_(False)
++    dim = int(model.encoder.output_dim)
++    predictors = nn.ModuleList(
++        [nn.Sequential(nn.LayerNorm(dim), nn.Linear(dim, dim), nn.GELU(), nn.Linear(dim, dim)) for _ in config.horizons_ms]
++    ).to(resolved_device)
++    optimizer = torch.optim.AdamW(
++        [*model.parameters(), *predictors.parameters()], lr=config.learning_rate, weight_decay=config.weight_decay
++    )
++    best, best_epoch, stale, history = float("inf"), 0, 0, []
++    started = time.perf_counter()
++    for epoch in range(1, config.epochs + 1):
++        train_metrics = _epoch(model=model, target_encoder=target_encoder, future_predictors=predictors, loader=train_loader, config=config, device=resolved_device, optimizer=optimizer)
++        with torch.no_grad():
++            val_metrics = _epoch(model=model, target_encoder=target_encoder, future_predictors=predictors, loader=val_loader, config=config, device=resolved_device, optimizer=None)
++        history.append({"epoch": epoch, "train": train_metrics, "validation": val_metrics})
++        checkpoint = {
++            "external_pretraining": True,
++            "pretraining_regime": "eap_geo_v2",
++            "pretraining_dataset_id": "EAP_PUBLIC_TRAIN40",
++            "model_name": "event-tubelet-transformer",
++            "in_channels": EVTTC_BASE_INPUT_CHANNELS,
++            "bins": config.bins,
++            "encoder_state_dict": model.encoder.state_dict(),
++            "roi_encoder_state_dict": model.roi_encoder.state_dict(),
++            "geo_v2_state_dict": model.state_dict(),
++            "target_encoder_state_dict": target_encoder.state_dict(),
++            "predictor_state_dict": predictors.state_dict(),
++            "epoch": epoch,
++            "checkpoint_role": "last",
++            "checkpoint_selected_by": "final_epoch",
++            "uses_ttc_labels": False,
++            "uses_collision_labels": False,
++            "uses_object_bboxes": True,
++            "uses_depth_track_derivatives": True,
++            "uses_labels_for_window_sampling": True,
++            "uses_balanced_track_sampling": True,
++            "uses_visibility_targets": True,
++            "uses_collision_corridor_targets": True,
++            "uses_object_categories": True,
++            "uses_object_roi": True,
++            "uses_rgb": False,
++            "uses_evttc_pretraining_events": False,
++            "benchmark10_opened": False,
++            "inventory_artifact_sha256": _artifact_hash(Path(inventory_path)),
++            "split_artifact_sha256": _artifact_hash(split),
++            "trainer_config": asdict(config),
++            "git_commit": _git_commit(),
++            "source_tree_sha256": _source_tree_hash(),
++        }
++        _atomic_torch_save(checkpoint, output / "eap_geo_v2_encoder_last.pt")
++        if val_metrics["loss"] < best:
++            best, best_epoch, stale = val_metrics["loss"], epoch, 0
++            checkpoint["checkpoint_role"] = "best"
++            checkpoint["checkpoint_selected_by"] = "validation_loss"
++            _atomic_torch_save(checkpoint, output / "eap_geo_v2_encoder_best.pt")
++        else:
++            stale += 1
++        if epoch >= config.early_stopping_min_epochs and stale >= config.early_stopping_patience:
++            break
++    result = {
++        "artifact_type": "eap_geo_v2_pretraining_v1",
++        "best_epoch": best_epoch,
++        "best_validation_loss": best,
++        "epochs_completed": len(history),
++        "elapsed_seconds": time.perf_counter() - started,
++        "selected_train_samples": len(train_data),
++        "selected_validation_samples": len(val_data),
++        "history": history,
++    }
++    write_structured(output / "summary.json", result)
++    train_data.close(); val_data.close()
++    return result
++
++
++__all__ = ["EAPGeoV2Config", "EAPGeoV2Dataset", "train_eap_geo_v2"]
+diff --git a/src/e_jepa_ttc/training/eap_lhr_jepa_ttc.py b/src/e_jepa_ttc/training/eap_lhr_jepa_ttc.py
+new file mode 100644
+index 0000000..f0b68ed
+--- /dev/null
++++ b/src/e_jepa_ttc/training/eap_lhr_jepa_ttc.py
+@@ -0,0 +1,395 @@
++"""Train a deployable eAP LHR-JEPA-TTC model and preserve its complete head."""
++
++from __future__ import annotations
++
++import copy
++import math
++import time
++from dataclasses import asdict, dataclass
++from pathlib import Path
++from typing import Any
++
++import numpy as np
++import torch
++from torch.nn import functional as F
++from torch.utils.data import DataLoader, Dataset
++
++from e_jepa_ttc.data.eap import (
++    EAPEventReader,
++    EAPObjectState,
++    load_eap_media_table,
++    load_eap_sequence_labels,
++    reconstruct_eap_object_states,
++)
++from e_jepa_ttc.data.eap_motion_risk import balanced_round_robin_indices, motion_risk_target
++from e_jepa_ttc.data.garlttc_eap import load_garlttc_train_index
++from e_jepa_ttc.data.eap_roi import bbox_foreground_proxy, build_garl_eap_pair
++from e_jepa_ttc.models.eap_lhr_jepa_ttc import EAPLHRJEPATTC, EAPLHRJEPATTCOutput
++from e_jepa_ttc.training.carla_jepa import (
++    _artifact_hash,
++    _atomic_torch_save,
++    _git_commit,
++    _set_seed,
++    _source_tree_hash,
++)
++from e_jepa_ttc.training.jepa import _update_ema
++from e_jepa_ttc.utils.io import read_structured, write_structured
++
++
++@dataclass(frozen=True)
++class EAPLHRConfig:
++    epochs: int = 30
++    batch_size: int = 24
++    learning_rate: float = 3e-4
++    weight_decay: float = 1e-3
++    workers: int = 8
++    max_samples_per_sequence: int = 512
++    maximum_history_gap_ms: int = 150
++    height_weight: float = 0.5
++    ratio_weight: float = 1.0
++    ttc_weight: float = 0.25
++    jepa_weight: float = 0.1
++    jepa_ema_momentum: float = 0.996
++    foreground_weight: float = 0.1
++    early_stopping_patience: int = 6
++    early_stopping_min_epochs: int = 8
++    seed: int = 42
++
++
++@dataclass(frozen=True)
++class _LHRWindow:
++    sequence_id: str
++    history: tuple[EAPObjectState, EAPObjectState, EAPObjectState]
++    target_ttc_s: float
++
++
++def signed_log1p(value: torch.Tensor) -> torch.Tensor:
++    return torch.sign(value) * torch.log1p(value.abs())
++
++
++def _garl_lookup(
++    root: str | Path,
++    sequence_ids: list[str],
++) -> tuple[dict[tuple[str, str, str], float], dict[str, object]]:
++    """Load the repository-audited five-key GarlTTC/eAP join."""
++
++    index = load_garlttc_train_index(Path(root), sequence_ids)
++    lookup: dict[tuple[str, str, str], float] = {}
++    for row in index.merged.itertuples(index=False):
++        value = float(row.ttc)
++        if np.isfinite(value):
++            lookup[(str(row.sequence_id), str(row.sample_token), str(row.track_id))] = value
++    provenance = {
++        "garlttc_data_sha256": index.data_sha256,
++        "garlttc_annotations_sha256": index.annotations_sha256,
++        "garlttc_join_keys_sha256": index.join_keys_sha256,
++        "garlttc_full_joined_row_count": index.source_merged_row_count,
++        "garlttc_selected_row_count": index.selected_row_count,
++    }
++    return lookup, provenance
++
++
++
++class EAPLHRDataset(Dataset[tuple[torch.Tensor, ...]]):
++    def __init__(
++        self,
++        eap_root: str | Path,
++        garlttc_root: str | Path,
++        sequence_ids: list[str],
++        config: EAPLHRConfig,
++    ) -> None:
++        self.root, self.config = Path(eap_root), config
++        media = load_eap_media_table(self.root, split="train")
++        lookup, self.garlttc_provenance = _garl_lookup(garlttc_root, sequence_ids)
++        self.samples: list[_LHRWindow] = []
++        for sequence_id in sorted(sequence_ids):
++            sequence_media = media[media["sequence_id"].astype(str) == sequence_id].copy()
++            labels = load_eap_sequence_labels(self.root, sequence_id, split="train")
++            states = reconstruct_eap_object_states(sequence_media, labels)
++            candidates: list[_LHRWindow] = []
++            strata: list[tuple[str, ...]] = []
++            by_track: dict[str, list[EAPObjectState]] = {}
++            for state in states:
++                by_track.setdefault(state.track_id, []).append(state)
++            for track in by_track.values():
++                track.sort(key=lambda value: value.timestamp_us)
++                for index in range(2, len(track)):
++                    history = tuple(track[index - 2 : index + 1])
++                    gaps_ms = np.diff([state.timestamp_us for state in history]) * 1e-3
++                    if np.any(gaps_ms <= 0) or np.any(gaps_ms > config.maximum_history_gap_ms):
++                        continue
++                    target = history[-1]
++                    key = (target.sequence_id, target.sample_token, target.track_id)
++                    ttc = lookup.get(key)
++                    if ttc is None:
++                        continue
++                    feature = motion_risk_target(target, history[-2], track[0])
++                    candidates.append(_LHRWindow(sequence_id, history, float(ttc)))
++                    strata.append(feature.stratum)
++            if candidates:
++                selected = balanced_round_robin_indices(
++                    strata,
++                    min(len(candidates), config.max_samples_per_sequence),
++                    seed=config.seed,
++                )
++                self.samples.extend(candidates[index] for index in selected)
++        if not self.samples:
++            raise ValueError("No Garl-labelled eAP LHR windows were found.")
++        self._readers: dict[str, EAPEventReader] = {}
++
++    def __len__(self) -> int:
++        return len(self.samples)
++
++    def _reader(self, sequence_id: str) -> EAPEventReader:
++        reader = self._readers.get(sequence_id)
++        if reader is None:
++            reader = EAPEventReader(self.root / "data" / "train" / sequence_id / "events.h5")
++            reader.open()
++            self._readers[sequence_id] = reader
++        return reader
++
++    def __getitem__(self, index: int) -> tuple[torch.Tensor, ...]:
++        sample = self.samples[index]
++        event_roi, heights, elapsed_s = build_garl_eap_pair(
++            self._reader(sample.sequence_id), sample.history
++        )
++        foreground = bbox_foreground_proxy(sample.history[-1])
++        return (
++            torch.from_numpy(event_roi),
++            torch.tensor(elapsed_s, dtype=torch.float32),
++            torch.from_numpy(heights),
++            torch.tensor(sample.target_ttc_s, dtype=torch.float32),
++            torch.from_numpy(foreground),
++        )
++
++    def close(self) -> None:
++        for reader in self._readers.values():
++            reader.close()
++        self._readers.clear()
++
++    def __del__(self) -> None:
++        self.close()
++
++
++def lhr_loss(
++    output: EAPLHRJEPATTCOutput,
++    *,
++    target_heights: torch.Tensor,
++    target_ttc_s: torch.Tensor,
++    foreground: torch.Tensor,
++    config: EAPLHRConfig,
++    target_second_embedding: torch.Tensor | None = None,
++) -> tuple[torch.Tensor, dict[str, torch.Tensor]]:
++    target_ratio = target_heights[:, 0] / target_heights[:, 1].clamp_min(1e-6)
++    height = F.smooth_l1_loss(
++        output.visible_heights.log(), target_heights.clamp_min(1e-3).log(), beta=0.1
++    )
++    ratio = F.smooth_l1_loss(
++        output.height_ratio.clamp_min(1e-6).log(), target_ratio.clamp_min(1e-6).log(), beta=0.1
++    )
++    ttc = F.smooth_l1_loss(
++        signed_log1p(output.ttc_seconds.clamp(-100.0, 100.0)),
++        signed_log1p(target_ttc_s),
++        beta=0.1,
++    )
++    direct_ttc = F.smooth_l1_loss(
++        signed_log1p(output.direct_ttc_seconds.clamp(-100.0, 100.0)),
++        signed_log1p(target_ttc_s),
++        beta=0.1,
++    )
++    target_embedding = (
++        output.second_embedding.detach()
++        if target_second_embedding is None
++        else target_second_embedding.detach()
++    )
++    jepa = F.smooth_l1_loss(
++        F.normalize(output.predicted_second_embedding.float(), dim=-1),
++        F.normalize(target_embedding.float(), dim=-1),
++        beta=0.1,
++    )
++    fg = F.binary_cross_entropy_with_logits(output.foreground_logits, foreground)
++    total = (
++        config.ratio_weight * ratio
++        + config.height_weight * height
++        + config.ttc_weight * (0.75 * ttc + 0.25 * direct_ttc)
++        + config.jepa_weight * jepa
++        + config.foreground_weight * fg
++    )
++    return total, {
++        "height": height,
++        "ratio": ratio,
++        "ttc": ttc,
++        "direct_ttc": direct_ttc,
++        "jepa": jepa,
++        "foreground": fg,
++    }
++
++
++def _sequence_ids(split_path: Path, role: str) -> list[str]:
++    values = read_structured(split_path).get("assignments", {}).get(role)
++    if not isinstance(values, list) or not values:
++        raise ValueError(f"Split has no {role!r} sequences.")
++    return sorted(str(value) for value in values)
++
++
++def _run_epoch(
++    model: EAPLHRJEPATTC,
++    loader: DataLoader,
++    config: EAPLHRConfig,
++    device: torch.device,
++    optimizer: torch.optim.Optimizer | None,
++    target_tower: torch.nn.Module | None = None,
++) -> dict[str, float]:
++    train = optimizer is not None
++    model.train(train)
++    totals: dict[str, float] = {}
++    errors: list[float] = []
++    relative: list[float] = []
++    batches = 0
++    for event_roi, elapsed, heights, ttc, foreground in loader:
++        event_roi, elapsed = event_roi.to(device), elapsed.to(device)
++        heights, ttc, foreground = heights.to(device), ttc.to(device), foreground.to(device)
++        output = model(event_roi, elapsed)
++        target_second_embedding = None
++        if target_tower is not None:
++            with torch.no_grad():
++                second_interval = event_roi[:, model.roi_planes :]
++                target_second_embedding = target_tower(second_interval)
++        loss, pieces = lhr_loss(
++            output,
++            target_heights=heights,
++            target_ttc_s=ttc,
++            foreground=foreground,
++            config=config,
++            target_second_embedding=target_second_embedding,
++        )
++        if train:
++            optimizer.zero_grad(set_to_none=True)
++            loss.backward()
++            torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
++            optimizer.step()
++            if target_tower is not None:
++                _update_ema(target_tower[0], model.roi_adapter, momentum=config.jepa_ema_momentum)
++                _update_ema(target_tower[1], model.encoder, momentum=config.jepa_ema_momentum)
++        prediction = output.ttc_seconds.detach().clamp(-100.0, 100.0)
++        absolute = (prediction - ttc).abs()
++        errors.extend(absolute.cpu().tolist())
++        relative.extend((absolute / ttc.abs().clamp_min(0.25)).cpu().tolist())
++        totals["loss"] = totals.get("loss", 0.0) + float(loss.detach().cpu())
++        for name, value in pieces.items():
++            totals[f"loss_{name}"] = totals.get(f"loss_{name}", 0.0) + float(value.detach().cpu())
++        batches += 1
++    metrics = {name: value / max(batches, 1) for name, value in totals.items()}
++    metrics["mae_s"] = float(np.mean(errors)) if errors else float("nan")
++    metrics["mean_relative_error"] = float(np.mean(relative)) if relative else float("nan")
++    metrics["selection_score"] = metrics["mean_relative_error"] + 0.25 * metrics["mae_s"]
++    return metrics
++
++
++def train_eap_lhr_jepa_ttc(
++    *,
++    eap_root: str | Path,
++    garlttc_root: str | Path,
++    inventory_path: str | Path,
++    split_path: str | Path,
++    output_dir: str | Path,
++    config: EAPLHRConfig,
++    geo_checkpoint: str | Path | None = None,
++    device: str = "auto",
++) -> dict[str, Any]:
++    _set_seed(config.seed)
++    resolved = torch.device("cuda" if device == "auto" and torch.cuda.is_available() else device if device != "auto" else "cpu")
++    output = Path(output_dir); output.mkdir(parents=True, exist_ok=True)
++    split = Path(split_path)
++    train_data = EAPLHRDataset(eap_root, garlttc_root, _sequence_ids(split, "train"), config)
++    val_data = EAPLHRDataset(eap_root, garlttc_root, _sequence_ids(split, "validation"), config)
++    args = dict(batch_size=config.batch_size, num_workers=config.workers, pin_memory=resolved.type == "cuda")
++    train_loader = DataLoader(train_data, shuffle=True, **args)
++    val_loader = DataLoader(val_data, shuffle=False, **args)
++    model = EAPLHRJEPATTC().to(resolved)
++    geo_init: dict[str, Any] | None = None
++    if geo_checkpoint is not None:
++        checkpoint = torch.load(geo_checkpoint, map_location="cpu", weights_only=False)
++        missing, unexpected = model.initialize_encoder_from_geo(checkpoint)
++        geo_init = {"path": Path(geo_checkpoint).as_posix(), "missing": missing, "unexpected": unexpected}
++    target_tower = torch.nn.Sequential(
++        copy.deepcopy(model.roi_adapter),
++        copy.deepcopy(model.encoder),
++    ).to(resolved).eval().requires_grad_(False)
++    optimizer = torch.optim.AdamW(model.parameters(), lr=config.learning_rate, weight_decay=config.weight_decay)
++    best, best_epoch, stale, history = float("inf"), 0, 0, []
++    started = time.perf_counter()
++    for epoch in range(1, config.epochs + 1):
++        train_metrics = _run_epoch(
++            model, train_loader, config, resolved, optimizer, target_tower=target_tower
++        )
++        with torch.no_grad():
++            validation = _run_epoch(
++                model, val_loader, config, resolved, None, target_tower=target_tower
++            )
++        history.append({"epoch": epoch, "train": train_metrics, "validation": validation})
++        checkpoint = {
++            "artifact_type": "eap_lhr_jepa_ttc_checkpoint_v1",
++            "external_pretraining": True,
++            "pretraining_regime": "eap_lhr_jepa_ttc",
++            "pretraining_dataset_id": "EAP_PUBLIC_TRAIN40_PLUS_GARLTTC_TRAIN_LABELS",
++            "model_name": "eap-lhr-jepa-ttc-event-tubelet",
++            "model_state_dict": model.state_dict(),
++            "encoder_state_dict": model.encoder.state_dict(),
++            "height_ratio_head_state_dict": model.height_ratio_head.state_dict(),
++            "target_tower_state_dict": target_tower.state_dict(),
++            "checkpoint_role": "last",
++            "checkpoint_selected_by": "final_epoch",
++            "epoch": epoch,
++            "seed": config.seed,
++            "full_model_transferable_to_evttc": True,
++            "transferred_components": ["roi_adapter", "encoder", "pair_fusion", "height_ratio_head", "direct_ttc_head"],
++            "discarded_pretraining_heads": ["jepa_predictor", "foreground_head"],
++            "uses_ttc_labels": True,
++            "uses_object_bboxes": True,
++            "uses_object_roi": True,
++            "uses_labels_for_window_sampling": True,
++            "uses_ttc_value_for_sampling": False,
++            "uses_rgb": False,
++            "uses_evttc_pretraining_events": False,
++            "benchmark10_opened": False,
++            **train_data.garlttc_provenance,
++            "inventory_artifact_sha256": _artifact_hash(Path(inventory_path)),
++            "split_artifact_sha256": _artifact_hash(split),
++            "trainer_config": asdict(config),
++            "geo_initialization": geo_init,
++            "git_commit": _git_commit(),
++            "source_tree_sha256": _source_tree_hash(),
++        }
++        _atomic_torch_save(checkpoint, output / "eap_lhr_jepa_ttc_last.pt")
++        if validation["selection_score"] < best:
++            best, best_epoch, stale = validation["selection_score"], epoch, 0
++            checkpoint["checkpoint_role"] = "best"
++            checkpoint["checkpoint_selected_by"] = "validation_selection_score"
++            _atomic_torch_save(checkpoint, output / "eap_lhr_jepa_ttc_best.pt")
++        else:
++            stale += 1
++        if epoch >= config.early_stopping_min_epochs and stale >= config.early_stopping_patience:
++            break
++    result = {
++        "artifact_type": "eap_lhr_jepa_ttc_training_v1",
++        "best_epoch": best_epoch,
++        "best_validation_selection_score": best,
++        "epochs_completed": len(history),
++        "elapsed_seconds": time.perf_counter() - started,
++        "train_samples": len(train_data),
++        "validation_samples": len(val_data),
++        "history": history,
++    }
++    write_structured(output / "summary.json", result)
++    train_data.close(); val_data.close()
++    return result
++
++
++__all__ = [
++    "EAPLHRConfig",
++    "EAPLHRDataset",
++    "lhr_loss",
++    "signed_log1p",
++    "train_eap_lhr_jepa_ttc",
++]
+diff --git a/tests/unit/test_eap_geo_v2_analysis.py b/tests/unit/test_eap_geo_v2_analysis.py
+new file mode 100644
+index 0000000..8e55e9c
+--- /dev/null
++++ b/tests/unit/test_eap_geo_v2_analysis.py
+@@ -0,0 +1,46 @@
++from scripts.analyze_eap_geo_v2_lhr import _control_mae, build_gate_payload
++
++
++def test_control_mae_reads_variant_from_aggregate():
++    aggregate = {
++        "ranking": [
++            {
++                "variant": "A0_MATCHED_GLOBAL",
++                "sequence_macro_mae_s_mean": 1.25,
++            }
++        ]
++    }
++    assert _control_mae(aggregate, "A0_MATCHED_GLOBAL") == 1.25
++
++
++def test_gate_rejects_lhr_that_does_not_beat_control():
++    control = {
++        "ranking": [
++            {
++                "variant": "A0_MATCHED_GLOBAL",
++                "sequence_macro_mae_s_mean": 1.0,
++            }
++        ]
++    }
++    geo = {
++        "comparisons": {
++            "sequence_macro_mae_s": {"candidate_relative_improvement_pct": 2.0},
++            "sequence_macro_mean_relative_error": {
++                "candidate_relative_improvement_pct": 1.0
++            },
++            "sequence_macro_selection_score": {
++                "candidate_relative_improvement_pct": 1.5
++            },
++        }
++    }
++    lhr = {"mae_s": 1.1, "mean_relative_error": 0.3}
++    payload = build_gate_payload(
++        control=control,
++        geo=geo,
++        lhr=lhr,
++        variant="A0_MATCHED_GLOBAL",
++    )
++    assert payload["geo_v2_gate"]["passed"] is True
++    assert payload["lhr_zero_shot_gate"]["passed"] is False
++    assert payload["passed"] is False
++    assert payload["decision"] == "do_not_promote"
+diff --git a/tests/unit/test_eap_lhr_jepa_ttc.py b/tests/unit/test_eap_lhr_jepa_ttc.py
+new file mode 100644
+index 0000000..0e9503c
+--- /dev/null
++++ b/tests/unit/test_eap_lhr_jepa_ttc.py
+@@ -0,0 +1,43 @@
++from __future__ import annotations
++
++import torch
++
++from e_jepa_ttc.models.eap_lhr_jepa_ttc import EAPLHRJEPATTC
++from e_jepa_ttc.training.eap_lhr_jepa_ttc import EAPLHRConfig, lhr_loss
++
++
++def test_lhr_model_keeps_geometric_head_and_is_finite():
++    model = EAPLHRJEPATTC()
++    model.eval()
++    event_roi = torch.randn(2, 40, 128, 128)
++    elapsed = torch.tensor([0.1, 0.1])
++    with torch.no_grad():
++        output = model(event_roi, elapsed)
++    assert output.ttc_seconds.shape == (2,)
++    assert output.visible_heights.shape == (2, 2)
++    assert bool((output.visible_heights > 0).all())
++    assert bool(torch.isfinite(output.ttc_seconds).all())
++
++
++def test_lhr_loss_is_finite_and_backpropagates():
++    model = EAPLHRJEPATTC()
++    output = model(torch.randn(2, 40, 128, 128), torch.tensor([0.1, 0.1]))
++    total, metrics = lhr_loss(
++        output,
++        target_heights=torch.tensor([[40.0, 44.0], [30.0, 32.0]]),
++        target_ttc_s=torch.tensor([1.1, 1.6]),
++        foreground=torch.zeros(2, 32, 32),
++        config=EAPLHRConfig(),
++    )
++    assert bool(torch.isfinite(total))
++    total.backward()
++    assert model.height_ratio_head.height_regressor.weight.grad is not None
++    assert set(metrics) == {"height", "ratio", "ttc", "direct_ttc", "jepa", "foreground"}
++
++
++def test_full_model_checkpoint_roundtrip():
++    source = EAPLHRJEPATTC()
++    target = EAPLHRJEPATTC()
++    target.load_state_dict(source.state_dict())
++    for left, right in zip(source.parameters(), target.parameters(), strict=True):
++        assert torch.equal(left, right)
+diff --git a/tests/unit/test_eap_lhr_zero_shot_aggregate.py b/tests/unit/test_eap_lhr_zero_shot_aggregate.py
+new file mode 100644
+index 0000000..4e4fd1f
+--- /dev/null
++++ b/tests/unit/test_eap_lhr_zero_shot_aggregate.py
+@@ -0,0 +1,36 @@
++import pytest
++
++from scripts.aggregate_eap_lhr_zero_shot import aggregate_payloads
++
++
++def _payload(sequence: str, sample: str, target: float, prediction: float):
++    return {
++        "artifact_type": "eap_lhr_zero_shot_evttc_v1",
++        "cache_manifest": f"{sequence}.json",
++        "predictions": [
++            {
++                "sequence_id": sequence,
++                "sample_token": sample,
++                "track_id": "track",
++                "target_ttc_s": target,
++                "predicted_ttc_s": prediction,
++                "absolute_error_s": abs(prediction - target),
++            }
++        ],
++    }
++
++
++def test_aggregate_zero_shot_combines_disjoint_folds():
++    result = aggregate_payloads(
++        [_payload("a", "1", 2.0, 1.0), _payload("b", "2", 4.0, 3.0)]
++    )
++    assert result["fold_count"] == 2
++    assert result["sample_count"] == 2
++    assert result["mae_s"] == pytest.approx(1.0)
++    assert result["mean_relative_error"] == pytest.approx(0.375)
++
++
++def test_aggregate_zero_shot_rejects_duplicate_oof_rows():
++    row = _payload("a", "1", 2.0, 1.0)
++    with pytest.raises(ValueError, match="Duplicate OOF"):
++        aggregate_payloads([row, row])
+diff --git a/tests/unit/test_eap_motion_risk.py b/tests/unit/test_eap_motion_risk.py
+new file mode 100644
+index 0000000..c21d1aa
+--- /dev/null
++++ b/tests/unit/test_eap_motion_risk.py
+@@ -0,0 +1,52 @@
++from __future__ import annotations
++
++import numpy as np
++
++from e_jepa_ttc.data.eap import EAPObjectState
++from e_jepa_ttc.data.eap_motion_risk import (
++    GEO_V2_TARGET_NAMES,
++    balanced_round_robin_indices,
++    motion_risk_target,
++)
++
++
++def _state(timestamp: int, box, *, category="car", raw=None, depth_velocity=-2.0):
++    return EAPObjectState(
++        sample_token=str(timestamp),
++        sequence_id="s",
++        track_id="t",
++        category=category,
++        timestamp_us=timestamp,
++        bbox_xyxy=box,
++        bbox_3d_ego=(0, 0, 10, 4, 2, 2, 0),
++        nearest_depth_m=10.0,
++        visible_height_px=box[3] - box[1],
++        depth_velocity_mps=depth_velocity,
++        ttc_s=5.0,
++        unclipped_bbox_xyxy=raw,
++    )
++
++
++def test_motion_risk_detects_lateral_partial_object():
++    previous = _state(0, (100, 200, 200, 400))
++    current = _state(
++        100_000,
++        (300, 200, 400, 400),
++        raw=(-50, 200, 400, 400),
++        category="pedestrian",
++    )
++    target = motion_risk_target(current, previous, previous)
++    values = dict(zip(GEO_V2_TARGET_NAMES, target.values, strict=True))
++    assert values["center_velocity_x"] > 0
++    assert values["visible_fraction"] < 1
++    assert values["truncated_left"] == 1
++    assert values["category_pedestrian"] == 1
++    assert "lateral" in target.stratum
++    assert target.valid.dtype == np.bool_
++
++
++def test_balanced_round_robin_does_not_take_only_majority():
++    strata = [("vehicle",)] * 20 + [("pedestrian",)] * 2 + [("cyclist",)] * 2
++    selected = balanced_round_robin_indices(strata, 6, seed=7)
++    observed = {strata[index][0] for index in selected}
++    assert observed == {"vehicle", "pedestrian", "cyclist"}
+diff --git a/tests/unit/test_eap_projection_visibility.py b/tests/unit/test_eap_projection_visibility.py
+new file mode 100644
+index 0000000..8cc34f9
+--- /dev/null
++++ b/tests/unit/test_eap_projection_visibility.py
+@@ -0,0 +1,17 @@
++from __future__ import annotations
++
++import numpy as np
++
++from e_jepa_ttc.data.eap import project_box_3d_to_event_with_visibility
++
++
++def test_projection_retains_unclipped_box():
++    intrinsic = np.asarray([[100.0, 0.0, 20.0], [0.0, 100.0, 20.0], [0.0, 0.0, 1.0]])
++    transform = np.eye(4)
++    box = (-2.0, 0.0, 10.0, 4.0, 2.0, 2.0, 0.0)
++    _corners, clipped, raw, depth, visible_height = project_box_3d_to_event_with_visibility(
++        box, intrinsic, transform, image_size=(64, 64)
++    )
++    assert raw[0] < clipped[0] or raw[2] > clipped[2]
++    assert depth > 0
++    assert visible_height > 0
+diff --git a/tests/unit/test_eap_roi.py b/tests/unit/test_eap_roi.py
+new file mode 100644
+index 0000000..7caa71d
+--- /dev/null
++++ b/tests/unit/test_eap_roi.py
+@@ -0,0 +1,19 @@
++from __future__ import annotations
++
++import numpy as np
++
++from e_jepa_ttc.data.eap_roi import garl_time_surface_volume
++
++
++def test_garl_time_surface_shape_and_range():
++    events = {
++        "x": np.asarray([5, 5, 7], dtype=np.int32),
++        "y": np.asarray([5, 5, 8], dtype=np.int32),
++        "t": np.asarray([0, 10_000, 20_000], dtype=np.int64),
++        "p": np.asarray([1, -1, 1], dtype=np.int8),
++    }
++    volume = garl_time_surface_volume(events, (0, 0, 16, 16), planes=20, target_size=32)
++    assert volume.shape == (20, 32, 32)
++    assert np.isfinite(volume).all()
++    assert 0.0 <= float(volume.min()) <= float(volume.max()) <= 1.0
++    assert float(volume.sum()) > 0.0

@@ -72,6 +72,9 @@ class EAPObjectState:
     depth_velocity_mps: float
     ttc_s: float
     ttc_source: str = "reconstructed_public_3d_track_local_linear"
+    unclipped_bbox_xyxy: tuple[float, float, float, float] | None = None
+    visibility_fraction: float = 1.0
+    first_seen_timestamp_us: int | None = None
 
     @property
     def center_xy(self) -> tuple[float, float]:
@@ -256,14 +259,58 @@ def project_box_3d_to_event(
     projected_homogeneous = (k_event @ corners_camera.T).T
     pixels = projected_homogeneous[:, :2] / projected_homogeneous[:, 2:3]
     width, height = image_size
-    x_min = float(np.clip(np.min(pixels[:, 0]), 0.0, float(width - 1)))
-    y_min = float(np.clip(np.min(pixels[:, 1]), 0.0, float(height - 1)))
-    x_max = float(np.clip(np.max(pixels[:, 0]), 0.0, float(width - 1)))
-    y_max = float(np.clip(np.max(pixels[:, 1]), 0.0, float(height - 1)))
+    raw_x_min = float(np.min(pixels[:, 0]))
+    raw_y_min = float(np.min(pixels[:, 1]))
+    raw_x_max = float(np.max(pixels[:, 0]))
+    raw_y_max = float(np.max(pixels[:, 1]))
+    x_min = float(np.clip(raw_x_min, 0.0, float(width - 1)))
+    y_min = float(np.clip(raw_y_min, 0.0, float(height - 1)))
+    x_max = float(np.clip(raw_x_max, 0.0, float(width - 1)))
+    y_max = float(np.clip(raw_y_max, 0.0, float(height - 1)))
     if x_max <= x_min or y_max <= y_min:
         msg = "Projected 3-D box does not intersect the event image."
         raise ValueError(msg)
     return corners_camera, (x_min, y_min, x_max, y_max), nearest_depth, y_max - y_min
+
+
+def _project_box_with_visibility(
+    bbox_3d_ego: object,
+    intrinsic: object,
+    event_from_ego: object,
+) -> tuple[tuple[float, float, float, float], tuple[float, float, float, float], float, float, float]:
+    """Project a box while retaining pre-clipping visibility information."""
+
+    k_event = _numeric_array(intrinsic)
+    transform = _numeric_array(event_from_ego)
+    corners_ego = box_corners_ego(bbox_3d_ego)
+    homogeneous = np.concatenate(
+        [corners_ego, np.ones((corners_ego.shape[0], 1), dtype=np.float64)],
+        axis=1,
+    )
+    corners_camera = (transform @ homogeneous.T).T[:, :3]
+    if float(np.min(corners_camera[:, 2])) <= 0.1:
+        raise ValueError("3-D box is not fully in front of the event camera.")
+    projected = (k_event @ corners_camera.T).T
+    pixels = projected[:, :2] / projected[:, 2:3]
+    raw = (
+        float(np.min(pixels[:, 0])),
+        float(np.min(pixels[:, 1])),
+        float(np.max(pixels[:, 0])),
+        float(np.max(pixels[:, 1])),
+    )
+    width, height = EAP_IMAGE_SIZE
+    clipped = (
+        float(np.clip(raw[0], 0.0, width - 1)),
+        float(np.clip(raw[1], 0.0, height - 1)),
+        float(np.clip(raw[2], 0.0, width - 1)),
+        float(np.clip(raw[3], 0.0, height - 1)),
+    )
+    if clipped[2] <= clipped[0] or clipped[3] <= clipped[1]:
+        raise ValueError("Projected 3-D box does not intersect the event image.")
+    raw_area = max((raw[2] - raw[0]) * (raw[3] - raw[1]), 1e-6)
+    clipped_area = (clipped[2] - clipped[0]) * (clipped[3] - clipped[1])
+    visibility = float(np.clip(clipped_area / raw_area, 0.0, 1.0))
+    return clipped, raw, float(np.min(corners_camera[:, 2])), clipped[3] - clipped[1], visibility
 
 
 def _numeric_array(value: object) -> np.ndarray:
@@ -352,10 +399,12 @@ def reconstruct_eap_object_states(
             )
         )
         try:
-            _corners, bbox_xyxy, nearest_depth, visible_height = project_box_3d_to_event(
-                row.bbox_3d_ego,
-                media["K_event"],
-                media["T_event_ego"],
+            bbox_xyxy, raw_bbox_xyxy, nearest_depth, visible_height, visibility_fraction = (
+                _project_box_with_visibility(
+                    row.bbox_3d_ego,
+                    media["K_event"],
+                    media["T_event_ego"],
+                )
             )
         except ValueError:
             continue
@@ -370,6 +419,8 @@ def reconstruct_eap_object_states(
                 "bbox_3d_ego": tuple(float(value) for value in row.bbox_3d_ego),
                 "nearest_depth_m": nearest_depth,
                 "visible_height_px": visible_height,
+                "unclipped_bbox_xyxy": raw_bbox_xyxy,
+                "visibility_fraction": visibility_fraction,
             }
         )
 
@@ -394,6 +445,7 @@ def reconstruct_eap_object_states(
             radius=derivative_radius,
             maximum_gap_s=maximum_gap_s,
         )
+        first_seen_timestamp_us = int(timestamps[0])
         for row, slope in zip(track, slopes, strict=True):
             ttc = (
                 -float(row["nearest_depth_m"]) / float(slope)
@@ -413,6 +465,9 @@ def reconstruct_eap_object_states(
                     visible_height_px=float(row["visible_height_px"]),
                     depth_velocity_mps=float(slope),
                     ttc_s=ttc,
+                    unclipped_bbox_xyxy=tuple(row["unclipped_bbox_xyxy"]),
+                    visibility_fraction=float(row["visibility_fraction"]),
+                    first_seen_timestamp_us=first_seen_timestamp_us,
                 )
             )
     return sorted(states, key=lambda state: (state.sequence_id, state.track_id, state.timestamp_us))
@@ -545,6 +600,15 @@ def _interpolate_object_state(
         depth_velocity_mps=velocity,
         ttc_s=ttc,
         ttc_source="interpolated_public_3d_track_local_linear",
+        unclipped_bbox_xyxy=(
+            interpolate_tuple(left.unclipped_bbox_xyxy, right.unclipped_bbox_xyxy)
+            if left.unclipped_bbox_xyxy is not None and right.unclipped_bbox_xyxy is not None
+            else None
+        ),
+        visibility_fraction=float(
+            left.visibility_fraction + weight * (right.visibility_fraction - left.visibility_fraction)
+        ),
+        first_seen_timestamp_us=left.first_seen_timestamp_us,
     )
 
 
