@@ -125,6 +125,9 @@ class OGEOutput:
     residual: torch.Tensor
     object_token: torch.Tensor
     diagnostics: dict[str, torch.Tensor]
+    # Raw backbone tokens are exposed only for optional training-time latent
+    # regularization. Inference heads and serialized weights remain unchanged.
+    backbone_dense_tokens: torch.Tensor | None = None
 
 
 class ObjectGeometryJEPATTC(nn.Module):
@@ -516,6 +519,7 @@ class ObjectGeometryJEPATTC(nn.Module):
             residual=residual,
             object_token=object_token,
             diagnostics=diagnostics,
+            backbone_dense_tokens=features.dense_tokens,
         )
 
 

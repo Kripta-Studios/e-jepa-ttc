@@ -540,6 +540,9 @@ def _matched_fairness_audit(
         "log_ttc_loss_weight",
         "inverse_nll_loss_weight",
         "risk_loss_weight",
+        "backbone_learning_rate_scale",
+        "latent_anchor_weight",
+        "latent_anchor_ema_momentum",
     )
     trainer_checks = {
         field: len(
@@ -707,6 +710,29 @@ def main() -> int:
     parser.add_argument("--workers", type=int)
     parser.add_argument("--batch-size", type=int)
     parser.add_argument("--gradient-accumulation", type=int)
+    parser.add_argument(
+        "--backbone-learning-rate-scale",
+        type=float,
+        default=1.0,
+        help=(
+            "Multiply the OGE backbone learning rate while keeping downstream "
+            "mixers and TTC heads at the configured base learning rate."
+        ),
+    )
+    parser.add_argument(
+        "--latent-anchor-weight",
+        type=float,
+        default=0.0,
+        help=(
+            "Training-only EMA latent-anchor weight. Zero preserves the "
+            "published f4c87df behavior."
+        ),
+    )
+    parser.add_argument(
+        "--latent-anchor-ema-momentum",
+        type=float,
+        default=0.996,
+    )
     parser.add_argument(
         "--include-diagnostic-test-cache",
         action="store_true",
@@ -931,6 +957,9 @@ def main() -> int:
         early_stopping_min_epochs=int(profile["early_stopping_min_epochs"]),
         max_train_samples=profile["max_train_samples"],
         max_validation_samples=profile["max_validation_samples"],
+        backbone_learning_rate_scale=args.backbone_learning_rate_scale,
+        latent_anchor_weight=args.latent_anchor_weight,
+        latent_anchor_ema_momentum=args.latent_anchor_ema_momentum,
         seed=args.seed,
     )
     summaries: dict[str, dict[str, Any]] = {}

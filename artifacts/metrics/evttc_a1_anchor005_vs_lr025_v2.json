@@ -1,0 +1,96 @@
+{
+  "allowed_trainer_differences": [
+    "latent_anchor_weight"
+  ],
+  "artifact_sha256": "87ec43fc5d3cba166544b116719f81f6153e07ed52f75bbf666aadd9c10476cd",
+  "artifact_type": "evttc_external_pretraining_transfer_comparison_v2",
+  "benchmark10_opened": false,
+  "candidate_label": "latent_anchor_005",
+  "comparisons": {
+    "sequence_macro_mae_s": {
+      "candidate_pair_wins": 2,
+      "candidate_relative_improvement_pct": 0.06100956432147432,
+      "candidate_transfer_mean": 1.0402380669755595,
+      "control_mean": 1.0408730991184711,
+      "control_pair_wins": 0,
+      "pair_count": 2
+    },
+    "sequence_macro_mean_relative_error": {
+      "candidate_pair_wins": 1,
+      "candidate_relative_improvement_pct": -0.1140154329495639,
+      "candidate_transfer_mean": 0.2957856298872312,
+      "control_mean": 0.29544877268990466,
+      "control_pair_wins": 1,
+      "pair_count": 2
+    },
+    "sequence_macro_selection_score": {
+      "candidate_pair_wins": 1,
+      "candidate_relative_improvement_pct": -0.11981102824606496,
+      "candidate_transfer_mean": 0.581401053158335,
+      "control_mean": 0.5807053041623387,
+      "control_pair_wins": 1,
+      "pair_count": 2
+    }
+  },
+  "control_aggregate": "artifacts/runs/evttc32_eap_geo_low_backbone_lr_analysis_v2/core/aggregate.json",
+  "control_aggregate_sha256": "8d6af0a44d9a48e010593c4741b8ddd3738e0e2f66fa343ec43337d3120e2e68",
+  "fold_seed_pairs": [
+    {
+      "fold": 0,
+      "seed": 7
+    },
+    {
+      "fold": 1,
+      "seed": 7
+    }
+  ],
+  "matched_control_audit_passed": true,
+  "observed_trainer_differences": [
+    {
+      "candidate": 0.05,
+      "control": 0.0,
+      "field": "trainer.latent_anchor_weight",
+      "fold": 0,
+      "seed": 7
+    },
+    {
+      "candidate": 0.05,
+      "control": 0.0,
+      "field": "trainer.latent_anchor_weight",
+      "fold": 1,
+      "seed": 7
+    }
+  ],
+  "paired_oof_sequence_bootstrap_by_seed": [
+    {
+      "candidate_minus_control_mae_s": {
+        "candidate_better": false,
+        "confidence": 0.95,
+        "estimate": -0.0005876678973437688,
+        "iterations": 2000,
+        "lower": -0.0026894948186894914,
+        "sequence_count": 14,
+        "status": "paired_sequence_cluster_bootstrap",
+        "upper": 0.001106542651170055
+      },
+      "candidate_minus_control_mean_abs_relative_error": {
+        "candidate_better": false,
+        "confidence": 0.95,
+        "estimate": 0.0003709534185770136,
+        "iterations": 2000,
+        "lower": -0.0005624575371783359,
+        "sequence_count": 14,
+        "status": "paired_sequence_cluster_bootstrap",
+        "upper": 0.0013557897378882477
+      },
+      "sample_count": 160,
+      "seed": 7,
+      "sequence_count": 14
+    }
+  ],
+  "same_initial_backbone_required": true,
+  "test_used_for_selection": false,
+  "transfer_aggregate": "artifacts/runs/evttc32_eap_geo_latent_anchor_analysis_v2/core/aggregate.json",
+  "transfer_aggregate_sha256": "23c7e9f59204de72886dead95cae69c8cd430fcb1bc0ab0a5ea972112e19eb51",
+  "variant": "A1_MATCHED_DENSE_BLOCK"
+}

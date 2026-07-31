@@ -1,0 +1,108 @@
+--- a/scripts/compare_evttc_initializations.py
++++ b/scripts/compare_evttc_initializations.py
+@@ -26,6 +26,11 @@
+     "sequence_macro_mean_relative_error",
+     "sequence_macro_mae_s",
+ )
++TRAINER_DEFAULTS = {
++    "backbone_learning_rate_scale": 1.0,
++    "latent_anchor_weight": 0.0,
++    "latent_anchor_ema_momentum": 0.996,
++}
+ 
+ 
+ def _sha256(path: Path) -> str:
+@@ -48,6 +53,13 @@
+     return row
+ 
+ 
++def _normalized_trainer(run: dict[str, Any]) -> dict[str, Any]:
++    trainer = dict(run.get("trainer") or {})
++    for field, default in TRAINER_DEFAULTS.items():
++        trainer.setdefault(field, default)
++    return trainer
++
++
+ def _prediction_arrays(summary: str | Path) -> dict[str, np.ndarray]:
+     path = Path(summary).parent / "validation_predictions.npz"
+     if not path.is_file():
+@@ -64,6 +76,20 @@
+     parser.add_argument("--variant", default=DEFAULT_VARIANT)
+     parser.add_argument("--candidate-label", default="external_pretraining")
+     parser.add_argument("--bootstrap-iterations", type=int, default=2000)
++    parser.add_argument(
++        "--allow-trainer-difference",
++        action="append",
++        default=[],
++        help=(
++            "Trainer field intentionally changed by a controlled ablation. "
++            "May be supplied more than once."
++        ),
++    )
++    parser.add_argument(
++        "--require-same-initial-backbone",
++        action="store_true",
++        help="Require identical initial_backbone_sha256 across paired runs.",
++    )
+     args = parser.parse_args()
+     assert_no_sealed_benchmark_paths((args.control, args.transfer, args.output))
+     control_payload = json.loads(args.control.read_text(encoding="utf-8"))
+@@ -74,20 +100,45 @@
+     transfer_runs = {(run["fold"], run["seed"]): run for run in transfer["runs"]}
+     if set(control_runs) != set(transfer_runs):
+         raise ValueError("Control and transfer do not contain identical fold/seed pairs.")
+-    control_fields = (
++    control_fields = [
+         "cache_manifest_sha256",
+         "sample_selection_sha256",
+         "initial_common_head_sha256",
+         "train_samples",
+         "validation_samples",
+-        "trainer",
+-    )
++    ]
++    if args.require_same_initial_backbone:
++        control_fields.append("initial_backbone_sha256")
++
+     mismatches = [
+         {"fold": fold, "seed": seed, "field": field}
+         for (fold, seed), baseline in sorted(control_runs.items())
+         for field in control_fields
+         if baseline.get(field) != transfer_runs[(fold, seed)].get(field)
+     ]
++
++    allowed_trainer_differences = set(args.allow_trainer_difference)
++    observed_trainer_differences: list[dict[str, Any]] = []
++    for (fold, seed), baseline in sorted(control_runs.items()):
++        candidate = transfer_runs[(fold, seed)]
++        baseline_trainer = _normalized_trainer(baseline)
++        candidate_trainer = _normalized_trainer(candidate)
++        for field in sorted(set(baseline_trainer) | set(candidate_trainer)):
++            control_value = baseline_trainer.get(field)
++            candidate_value = candidate_trainer.get(field)
++            if control_value == candidate_value:
++                continue
++            difference = {
++                "fold": fold,
++                "seed": seed,
++                "field": f"trainer.{field}",
++                "control": control_value,
++                "candidate": candidate_value,
++            }
++            observed_trainer_differences.append(difference)
++            if field not in allowed_trainer_differences:
++                mismatches.append(difference)
++
+     if mismatches:
+         raise ValueError(f"Transfer matched-control audit failed: {mismatches[:10]}.")
+     comparisons: dict[str, Any] = {}
+@@ -172,6 +223,9 @@
+         "transfer_aggregate": args.transfer.as_posix(),
+         "transfer_aggregate_sha256": _sha256(args.transfer),
+         "matched_control_audit_passed": True,
++        "same_initial_backbone_required": args.require_same_initial_backbone,
++        "allowed_trainer_differences": sorted(allowed_trainer_differences),
++        "observed_trainer_differences": observed_trainer_differences,
+         "fold_seed_pairs": [{"fold": fold, "seed": seed} for fold, seed in sorted(control_runs)],
+         "comparisons": comparisons,
+         "paired_oof_sequence_bootstrap_by_seed": bootstrap,
