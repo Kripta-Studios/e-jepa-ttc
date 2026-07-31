@@ -1,36 +1,36 @@
 {
-  "artifact_sha256": "bf96a6a64f3f9a3271ec7a17d7125043082faba5b0def9d6bfa20b5c930d6bb7",
+  "artifact_sha256": "db1510f0884e65001c8b4c4020a81c313ba99f82dbbc1d7f1267d79bc9ecd490",
   "artifact_type": "evttc_external_pretraining_transfer_comparison_v2",
   "benchmark10_opened": false,
   "candidate_label": "eap_ssl",
   "comparisons": {
     "sequence_macro_mae_s": {
       "candidate_pair_wins": 1,
-      "candidate_relative_improvement_pct": -1.128275650480699,
-      "candidate_transfer_mean": 1.141180713794061,
-      "control_mean": 1.1284487018627778,
+      "candidate_relative_improvement_pct": -0.6584912360990014,
+      "candidate_transfer_mean": 1.0782725140452385,
+      "control_mean": 1.0712186332259859,
       "control_pair_wins": 1,
       "pair_count": 2
     },
     "sequence_macro_mean_relative_error": {
       "candidate_pair_wins": 1,
-      "candidate_relative_improvement_pct": -2.583870754209354,
-      "candidate_transfer_mean": 0.3117302243612744,
-      "control_mean": 0.3038783992740721,
+      "candidate_relative_improvement_pct": -5.894174612885578,
+      "candidate_transfer_mean": 0.3141598912172472,
+      "control_mean": 0.29667344059832645,
       "control_pair_wins": 1,
       "pair_count": 2
     },
     "sequence_macro_selection_score": {
       "candidate_pair_wins": 0,
-      "candidate_relative_improvement_pct": -3.428105076691176,
-      "candidate_transfer_mean": 0.6122277986517308,
-      "control_mean": 0.5919356234920561,
+      "candidate_relative_improvement_pct": -6.187762480836542,
+      "candidate_transfer_mean": 0.6138957998010396,
+      "control_mean": 0.5781229262758295,
       "control_pair_wins": 2,
       "pair_count": 2
     }
   },
-  "control_aggregate": "C:/Users/\u00c1lvaro Schwiedop/Desktop/KriptaStudios/EVOCON_JEPA_Codex_Handoff/e-jepa-ttc/artifacts/runs/evttc32_eap_random_control_analysis_v1/core/aggregate.json",
-  "control_aggregate_sha256": "737551b3b733b2eca80a544155593613795a7fbacda48301e0e2dafd047ba75d",
+  "control_aggregate": "artifacts/runs/evttc32_eap_random_control_analysis_v1/core/aggregate.json",
+  "control_aggregate_sha256": "8121cb5194498ef5092744d46b5a0179b57c8ff31dffe1efe12e3b6303ceeddd",
   "fold_seed_pairs": [
     {
       "fold": 0,
@@ -47,22 +47,22 @@
       "candidate_minus_control_mae_s": {
         "candidate_better": false,
         "confidence": 0.95,
-        "estimate": 0.012917164340615184,
+        "estimate": 0.007474732398986772,
         "iterations": 2000,
-        "lower": -0.06461803400975806,
+        "lower": -0.06735396161675451,
         "sequence_count": 14,
         "status": "paired_sequence_cluster_bootstrap",
-        "upper": 0.09832623125568771
+        "upper": 0.08735831032501407
       },
       "candidate_minus_control_mean_abs_relative_error": {
         "candidate_better": false,
         "confidence": 0.95,
-        "estimate": 0.008332146799694073,
+        "estimate": 0.017921312091566,
         "iterations": 2000,
-        "lower": -0.008181166377379043,
+        "lower": -0.004538052780398586,
         "sequence_count": 14,
         "status": "paired_sequence_cluster_bootstrap",
-        "upper": 0.02355908218515089
+        "upper": 0.04631138297804109
       },
       "sample_count": 160,
       "seed": 7,
@@ -70,7 +70,7 @@
     }
   ],
   "test_used_for_selection": false,
-  "transfer_aggregate": "C:/Users/\u00c1lvaro Schwiedop/Desktop/KriptaStudios/EVOCON_JEPA_Codex_Handoff/e-jepa-ttc/artifacts/runs/evttc32_eap_ssl_transfer_analysis_v1/core/aggregate.json",
-  "transfer_aggregate_sha256": "ba942be84847782940fb7bee487b17f0c60a8e945a65d3b24229bee9f9c420b9",
+  "transfer_aggregate": "artifacts/runs/evttc32_eap_ssl_transfer_analysis_v1/core/aggregate.json",
+  "transfer_aggregate_sha256": "a4abf4a803fa7e5dc2d9c184ea15e552234884426af779659b8bcc8e2044e8b2",
   "variant": "A0_MATCHED_GLOBAL"
 }
