@@ -66,6 +66,10 @@ select = ["E", "F", "I", "B", "UP", "N", "ANN"]
 testpaths = ["tests"]
 addopts = "-q"
 pythonpath = ["src", "."]
+markers = [
+    "cuda_fp32: ejecuta el runtime TTC real en CUDA FP32",
+    "cuda_amp: ejecuta el runtime TTC real en CUDA con AMP FP16",
+]
 
 [tool.uv.sources]
 torch = [

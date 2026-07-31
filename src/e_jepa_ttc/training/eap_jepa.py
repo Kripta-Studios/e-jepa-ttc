@@ -26,9 +26,8 @@ from e_jepa_ttc.data.eap import (
     load_eap_sequence_labels,
     reconstruct_eap_object_states,
 )
-from e_jepa_ttc.data.types import EventBatch
+from e_jepa_ttc.data.eap_representation import base_compatible_voxel, downsample_full_frame
 from e_jepa_ttc.models import build_encoder
-from e_jepa_ttc.representations.voxel_grid import encode_voxel_grid
 from e_jepa_ttc.training.carla_jepa import (
     EVTTC_BASE_EVENT_CHANNELS,
     EVTTC_BASE_INPUT_CHANNELS,
@@ -77,6 +76,7 @@ class EAPJEPATrainerConfig:
     minimum_std: float = 0.05
     geometry_loss_weight: float = 0.0
     patch_objectness_weight: float = 0.25
+    ttc_loss_weight: float = 0.25
     ema_start: float = 0.99
     ema_end: float = 0.9999
     early_stopping_patience: int = 6
@@ -86,6 +86,8 @@ class EAPJEPATrainerConfig:
     max_train_samples: int | None = None
     max_validation_samples: int | None = None
     seed: int = 42
+    expected_garlttc_train_rows: int = 88_744
+    allow_garlttc_version_change: bool = False
 
     def __post_init__(self) -> None:
         integers = (
@@ -133,50 +135,6 @@ def _uniform(items: list[int], maximum: int) -> list[int]:
         return items
     indices = np.linspace(0, len(items) - 1, maximum, dtype=np.int64)
     return [items[int(index)] for index in np.unique(indices)]
-
-
-def _downsample_full_frame(
-    events: dict[str, np.ndarray],
-    *,
-    sequence_id: str,
-    start_us: int,
-    end_us: int,
-    width: int,
-    height: int,
-) -> EventBatch:
-    source_width, source_height = EAP_IMAGE_SIZE
-    x = np.minimum(
-        np.asarray(events["x"], dtype=np.int64) * width // source_width,
-        width - 1,
-    ).astype(np.int32)
-    y = np.minimum(
-        np.asarray(events["y"], dtype=np.int64) * height // source_height,
-        height - 1,
-    ).astype(np.int32)
-    return EventBatch(
-        x=x,
-        y=y,
-        t_us=np.asarray(events["t"], dtype=np.int64),
-        polarity=np.where(np.asarray(events["p"]) > 0, 1, -1).astype(np.int8),
-        width=width,
-        height=height,
-        sequence_id=sequence_id,
-        t_start_us=start_us,
-        t_end_us=end_us,
-    )
-
-
-def _base_compatible_voxel(events: EventBatch, *, bins: int) -> torch.Tensor:
-    voxel = encode_voxel_grid(events, bins=bins, normalize=True)
-    tensor = np.zeros(
-        (EVTTC_BASE_INPUT_CHANNELS, events.height, events.width),
-        dtype=np.float32,
-    )
-    tensor[:EVTTC_BASE_EVENT_CHANNELS] = voxel
-    duration_s = max((events.t_end_us - events.t_start_us) * 1e-6, 1e-6)
-    tensor[10] = np.log1p(events.num_events)
-    tensor[11] = np.log1p(events.num_events / duration_s)
-    return torch.from_numpy(tensor)
 
 
 def _geometry_targets(
@@ -352,8 +310,8 @@ class EAPOnDemandJEPADataset(
             return cached.clone()
         start_us = end_us - self.config.event_window_ms * 1000
         events = self._reader(sequence_id).read_window(start_us, end_us)
-        voxel = _base_compatible_voxel(
-            _downsample_full_frame(
+        voxel = base_compatible_voxel(
+            downsample_full_frame(
                 events,
                 sequence_id=sequence_id,
                 start_us=start_us,
@@ -439,6 +397,120 @@ def _bounded_indices(length: int, maximum: int | None) -> list[int]:
     if maximum <= 0:
         raise ValueError("Sample limits must be positive.")
     return np.linspace(0, length - 1, maximum, dtype=np.int64).tolist()
+
+
+@dataclass
+class EAPJEPAModels:
+    online_encoder: nn.Module
+    target_encoder: nn.Module
+    predictor: nn.Module
+
+
+@dataclass(frozen=True)
+class EAPJEPALossOutput:
+    loss: torch.Tensor
+    metrics: dict[str, float]
+
+
+def build_eap_jepa_models(
+    *,
+    config: EAPJEPATrainerConfig,
+    device: torch.device,
+) -> EAPJEPAModels:
+
+    encoder = build_encoder("event-tubelet-transformer", in_channels=21).to(device)
+    target_encoder = build_encoder("event-tubelet-transformer", in_channels=21).to(device)
+    target_encoder.load_state_dict(encoder.state_dict())
+    target_encoder.requires_grad_(False)
+    target_encoder.eval()
+    predictor = DenseTemporalJEPAPredictor(
+        dim=int(encoder.output_dim),
+        horizon_count=len(config.horizons_ms) + int(config.context_token_weight > 0.0),
+    ).to(device)
+    return EAPJEPAModels(
+        online_encoder=encoder,
+        target_encoder=target_encoder,
+        predictor=predictor,
+    )
+
+
+def compute_eap_jepa_objective(
+    *,
+    online_encoder: nn.Module,
+    target_encoder: nn.Module,
+    predictor: nn.Module,
+    context: torch.Tensor,
+    futures: torch.Tensor,
+    future_valid: torch.Tensor,
+    config: EAPJEPATrainerConfig,
+) -> EAPJEPALossOutput:
+    horizon_ids = torch.arange(
+        len(config.horizons_ms),
+        device=context.device,
+        dtype=torch.long,
+    )
+
+    loss, metrics = _jepa_loss(
+        online_encoder,
+        target_encoder,
+        predictor,
+        context,
+        future_x=futures,
+        future_mask=future_valid,
+        horizon_ids=horizon_ids,
+        mask_ratio=config.mask_ratio,
+        block_count=config.mask_blocks,
+        mask_mode="tubelet",
+        regularizer="variance",
+        variance_weight=config.variance_weight,
+        min_std=config.minimum_std,
+        visreg_center_weight=0.0,
+        visreg_sketch_weight=0.0,
+        visreg_projection_count=1,
+        temporal_straightening_weight=0.0,
+        dense_tokens=True,
+        motion_conditioning=False,
+        deep_supervision_layers=(),
+        bins=config.bins,
+        metadata_channels=True,
+        navigation_feature_count=0,
+        action_feature_mean=None,
+        action_feature_std=None,
+        context_token_weight=config.context_token_weight,
+    )
+    return EAPJEPALossOutput(loss=loss, metrics=metrics)
+
+
+def update_eap_jepa_ema(
+    *,
+    target_encoder: nn.Module,
+    online_encoder: nn.Module,
+    optimizer_step: int,
+    total_optimizer_steps: int,
+    config: EAPJEPATrainerConfig,
+) -> tuple[float, float]:
+    """Update target encoder using the shared cosine EMA schedule."""
+
+    if total_optimizer_steps <= 0:
+        raise ValueError(f"total_optimizer_steps must be positive, got {total_optimizer_steps}")
+
+    progress = min(
+        max(optimizer_step, 0) / float(total_optimizer_steps),
+        1.0,
+    )
+
+    momentum = (
+        config.ema_end
+        - (config.ema_end - config.ema_start) * (math.cos(math.pi * progress) + 1.0) / 2.0
+    )
+
+    divergence = _update_ema(
+        target_encoder,
+        online_encoder,
+        momentum=momentum,
+    )
+
+    return float(divergence), float(momentum)
 
 
 def _loader(
@@ -534,34 +606,17 @@ def _run_epoch(
         group_start = (batch_index // config.gradient_accumulation) * config.gradient_accumulation
         group_size = min(config.gradient_accumulation, batch_count - group_start)
         with _autocast(device, config.precision):
-            loss, metrics = _jepa_loss(
-                encoder,
-                target_encoder,
-                predictor,
-                context,
-                future_x=future,
-                future_mask=valid,
-                horizon_ids=horizon_ids,
-                mask_ratio=config.mask_ratio,
-                block_count=config.mask_blocks,
-                mask_mode="tubelet",
-                regularizer="variance",
-                variance_weight=config.variance_weight,
-                min_std=config.minimum_std,
-                visreg_center_weight=0.0,
-                visreg_sketch_weight=0.0,
-                visreg_projection_count=1,
-                temporal_straightening_weight=0.0,
-                dense_tokens=True,
-                motion_conditioning=False,
-                deep_supervision_layers=(),
-                bins=config.bins,
-                metadata_channels=True,
-                navigation_feature_count=0,
-                action_feature_mean=None,
-                action_feature_std=None,
-                context_token_weight=config.context_token_weight,
+            jepa_output = compute_eap_jepa_objective(
+                online_encoder=encoder,
+                target_encoder=target_encoder,
+                predictor=predictor,
+                context=context,
+                futures=future,
+                future_valid=valid,
+                config=config,
             )
+            loss = jepa_output.loss
+            metrics = jepa_output.metrics
             if geometry_heads is not None:
                 tokens = encoder.forward_tokens(context)
                 predicted_geometry = geometry_heads.geometry(tokens.mean(dim=1))
@@ -629,19 +684,16 @@ def _run_epoch(
                 if scheduler is not None:
                     scheduler.step()
                 optimizer_step += 1
-                progress = min(optimizer_step / max(total_optimizer_steps, 1), 1.0)
-                momentum = (
-                    config.ema_end
-                    - (config.ema_end - config.ema_start)
-                    * (math.cos(math.pi * progress) + 1.0)
-                    / 2.0
+                divergence, ema_momentum = update_eap_jepa_ema(
+                    target_encoder=target_encoder,
+                    online_encoder=encoder,
+                    optimizer_step=optimizer_step,
+                    total_optimizer_steps=total_optimizer_steps,
+                    config=config,
                 )
-                metrics["target_encoder_divergence_l2"] = _update_ema(
-                    target_encoder,
-                    encoder,
-                    momentum=momentum,
-                )
-                metrics["ema_momentum"] = momentum
+
+                metrics["target_encoder_divergence_l2"] = divergence
+                metrics["ema_momentum"] = ema_momentum
         rows.append({"loss": float(loss.detach().cpu()), **metrics})
     return _aggregate(rows), optimizer_step
 
@@ -844,14 +896,10 @@ def pretrain_eap_jepa(
         device=device,
         train=False,
     )
-    encoder = build_encoder("event-tubelet-transformer", in_channels=21).to(device)
-    target_encoder = build_encoder("event-tubelet-transformer", in_channels=21).to(device)
-    target_encoder.load_state_dict(encoder.state_dict())
-    target_encoder.requires_grad_(False)
-    predictor = DenseTemporalJEPAPredictor(
-        dim=int(encoder.output_dim),
-        horizon_count=len(config.horizons_ms) + int(config.context_token_weight > 0.0),
-    ).to(device)
+    models = build_eap_jepa_models(config=config, device=device)
+    encoder = models.online_encoder
+    target_encoder = models.target_encoder
+    predictor = models.predictor
     geometry_heads = (
         _GeometryHeads(int(encoder.output_dim)).to(device)
         if config.geometry_loss_weight > 0.0

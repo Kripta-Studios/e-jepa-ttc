@@ -31,6 +31,7 @@ from e_jepa_ttc.models.garl_ttc_replica import GarlTTCConfig
 from e_jepa_ttc.models.object_geo_jepa_ttc import OGEConfig
 from e_jepa_ttc.training.checkpoints import (
     validate_external_eap_checkpoint,
+    validate_external_eap_ttc_checkpoint,
     validate_external_ssl_checkpoint,
     validate_external_ttc_checkpoint,
 )
@@ -677,6 +678,7 @@ def main() -> int:
             "external_ttc",
             "external_eap_ssl",
             "external_eap_geo",
+            "external_eap_ttc",
         ),
         default="audited_ssl",
         help=(
@@ -684,8 +686,9 @@ def main() -> int:
             "control. random_control is intended for leakage-free grouped CV when "
             "fold-specific SSL checkpoints do not yet exist. external_ssl accepts "
             "a label-free CARLA checkpoint; external_ttc is the separately disclosed "
-            "CARLA synthetic-TTC ablation. external_eap_ssl and external_eap_geo "
-            "accept the paired public eAP train-only arms. None may have EvTTC exposure."
+            "CARLA synthetic-TTC ablation. external_eap_ssl, external_eap_geo, and "
+            "external_eap_ttc accept the paired public eAP train-only arms. None may "
+            "have EvTTC exposure."
         ),
     )
     parser.add_argument(
@@ -742,6 +745,7 @@ def main() -> int:
         "external_ttc",
         "external_eap_ssl",
         "external_eap_geo",
+        "external_eap_ttc",
     }:
         if args.base_encoder_checkpoint is None:
             raise ValueError(f"{args.base_initialization} requires --base-encoder-checkpoint.")
@@ -881,6 +885,15 @@ def main() -> int:
                     checkpoint,
                     source_split_path=args.external_pretraining_split,
                     expected_regime=expected_regime,
+                ),
+            }
+        elif args.base_initialization == "external_eap_ttc":
+            external_pretraining_audit = {
+                "enabled": True,
+                **validate_external_eap_ttc_checkpoint(
+                    base_encoder_checkpoint,
+                    checkpoint,
+                    source_split_path=args.external_pretraining_split,
                 ),
             }
         else:

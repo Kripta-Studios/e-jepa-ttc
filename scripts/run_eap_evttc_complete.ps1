@@ -2,11 +2,12 @@
 param(
     [ValidateSet("Analysis", "Full")]
     [string]$Profile = "Analysis",
-    [ValidateSet("both", "ssl", "geo")]
+    [ValidateSet("all", "both", "ssl", "geo", "ttc")]
     [string[]]$Objectives = @("both"),
     [ValidateSet("all", "pretrain", "evttc-control", "transfer", "compare")]
     [string[]]$Stages = @("all"),
     [string]$EapRoot = "E:\eAP_dataset",
+    [string]$GarlTtcRoot = "E:\GarlTTC_dataset",
     [string]$EapSplit = "",
     [int[]]$Folds = @(),
     [int[]]$Seeds = @(),
@@ -37,6 +38,7 @@ try {
     $Arguments += $Stages
     $Arguments += @(
         "--eap-root", $EapRoot,
+        "--garlttc-root", $GarlTtcRoot,
         "--eap-workers", "$EapWorkers",
         "--evttc-workers", "$EvttcWorkers",
         "--eap-batch-size", "$EapBatchSize",

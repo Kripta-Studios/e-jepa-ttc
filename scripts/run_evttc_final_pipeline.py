@@ -30,6 +30,7 @@ EXTERNAL_INITIALIZATIONS = frozenset(
         "external_ttc",
         "external_eap_ssl",
         "external_eap_geo",
+        "external_eap_ttc",
     }
 )
 
@@ -460,13 +461,14 @@ def build_parser() -> argparse.ArgumentParser:
             "external_ttc",
             "external_eap_ssl",
             "external_eap_geo",
+            "external_eap_ttc",
         ),
         default="random_control",
         help=(
             "random_control reproduces the closed A0/A1 comparison; external_ssl "
             "loads label-free CARLA pretraining; external_ttc loads the separate "
             "CARLA JEPA+synthetic-TTC ablation; the external_eap arms load public "
-            "eAP train-only SSL or weak geometry pretraining."
+            "eAP train-only SSL, weak geometry, or TTC pretraining."
         ),
     )
     compare_parser.add_argument("--base-encoder-checkpoint", type=Path)

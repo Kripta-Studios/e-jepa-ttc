@@ -20,6 +20,7 @@ from e_jepa_ttc.training.eap_jepa import (  # noqa: E402
 
 def _profile(name: str, objective: str) -> EAPJEPATrainerConfig:
     geometry_weight = 0.25 if objective == "geo" else 0.0
+    ttc_weight = 0.25 if objective == "ttc" else 0.0
     if name == "smoke":
         return EAPJEPATrainerConfig(
             epochs=1,
@@ -33,6 +34,7 @@ def _profile(name: str, objective: str) -> EAPJEPATrainerConfig:
             early_stopping_min_epochs=1,
             early_stopping_patience=0,
             geometry_loss_weight=geometry_weight,
+            ttc_loss_weight=ttc_weight,
         )
     if name == "pilot":
         return EAPJEPATrainerConfig(
@@ -45,17 +47,19 @@ def _profile(name: str, objective: str) -> EAPJEPATrainerConfig:
             early_stopping_min_epochs=2,
             early_stopping_patience=1,
             geometry_loss_weight=geometry_weight,
+            ttc_loss_weight=ttc_weight,
         )
-    return EAPJEPATrainerConfig(geometry_loss_weight=geometry_weight)
+    return EAPJEPATrainerConfig(geometry_loss_weight=geometry_weight, ttc_loss_weight=ttc_weight)
 
 
 def main() -> int:
     """Run a resource-aware, sequence-disjoint eAP SSL or geometry pilot."""
 
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--objective", choices=("ssl", "geo"), required=True)
+    parser.add_argument("--objective", choices=("ssl", "geo", "ttc"), required=True)
     parser.add_argument("--profile", choices=("smoke", "pilot", "full"), default="smoke")
     parser.add_argument("--root", type=Path, default=Path(r"E:\eAP_dataset"))
+    parser.add_argument("--garlttc-root", type=Path, default=Path(r"E:\GarlTTC_dataset"))
     parser.add_argument(
         "--inventory",
         type=Path,
@@ -79,6 +83,16 @@ def main() -> int:
     parser.add_argument("--max-validation-samples", type=int)
     parser.add_argument("--geometry-loss-weight", type=float)
     parser.add_argument("--patch-objectness-weight", type=float)
+    parser.add_argument("--ttc-loss-weight", type=float)
+    parser.add_argument(
+        "--expected-garlttc-train-rows",
+        type=int,
+        default=88_744,
+    )
+    parser.add_argument(
+        "--allow-garlttc-version-change",
+        action="store_true",
+    )
     parser.add_argument("--resume", action="store_true")
     parser.add_argument(
         "--dry-run",
@@ -101,11 +115,21 @@ def main() -> int:
         "prefetch_factor": args.prefetch_factor,
         "seed": args.seed,
         "max_windows_per_sequence": args.max_windows_per_sequence,
-        "max_train_samples": args.max_train_samples,
-        "max_validation_samples": args.max_validation_samples,
-        "geometry_loss_weight": args.geometry_loss_weight,
-        "patch_objectness_weight": args.patch_objectness_weight,
     }
+    if args.max_train_samples is not None:
+        overrides["max_train_samples"] = args.max_train_samples
+    if args.max_validation_samples is not None:
+        overrides["max_validation_samples"] = args.max_validation_samples
+    if args.geometry_loss_weight is not None:
+        overrides["geometry_loss_weight"] = args.geometry_loss_weight
+    if args.patch_objectness_weight is not None:
+        overrides["patch_objectness_weight"] = args.patch_objectness_weight
+    if args.ttc_loss_weight is not None:
+        overrides["ttc_loss_weight"] = args.ttc_loss_weight
+
+    overrides["expected_garlttc_train_rows"] = args.expected_garlttc_train_rows
+    overrides["allow_garlttc_version_change"] = args.allow_garlttc_version_change
+
     config = replace(
         config,
         **{key: value for key, value in overrides.items() if value is not None},
@@ -114,6 +138,8 @@ def main() -> int:
         raise ValueError("The SSL control must keep geometry-loss-weight at zero.")
     if args.objective == "geo" and config.geometry_loss_weight <= 0.0:
         raise ValueError("The Geo objective requires a positive geometry-loss-weight.")
+    if args.objective == "ttc" and config.ttc_loss_weight <= 0.0:
+        raise ValueError("The TTC objective requires a positive ttc-loss-weight.")
     output = args.output or Path(
         f"artifacts/runs/eap_{args.objective}_{args.profile}_seed{config.seed}"
     )
@@ -125,15 +151,47 @@ def main() -> int:
             config=config,
         )
     else:
-        result = pretrain_eap_jepa(
-            root=args.root,
-            inventory_path=args.inventory,
-            split_path=split,
-            output_dir=output,
-            config=config,
-            device_name=args.device,
-            resume=args.resume,
-        )
+        if args.objective == "ttc":
+            from e_jepa_ttc.data.garlttc_audit import audit
+
+            audit_res = audit(
+                eap_root=args.root,
+                garlttc_root=args.garlttc_root,
+                eap_split_path=split,
+                expected_train_rows=(args.expected_garlttc_train_rows),
+                allow_dataset_version_change=(args.allow_garlttc_version_change),
+            )
+            audit_path = output / "garlttc_eap_audit.json"
+            output.mkdir(parents=True, exist_ok=True)
+            audit_path.write_text(json.dumps(audit_res, indent=2), encoding="utf-8")
+            if audit_res.get("result") != "PASS":
+                err_msg = json.dumps(audit_res, indent=2)
+                raise ValueError(f"Mandatory GarlTTC ↔ eAP linkage audit FAILED:\n{err_msg}")
+
+            from e_jepa_ttc.training.eap_ttc import pretrain_eap_jepa_ttc
+
+            result = pretrain_eap_jepa_ttc(
+                eap_root=args.root,
+                garlttc_root=args.garlttc_root,
+                inventory_path=args.inventory,
+                split_path=split,
+                output_dir=output,
+                config=config,
+                audit_json_path=audit_path,
+                audit_result=audit_res.get("result", "FAIL"),
+                device_name=args.device,
+                resume=args.resume,
+            )
+        else:
+            result = pretrain_eap_jepa(
+                root=args.root,
+                inventory_path=args.inventory,
+                split_path=split,
+                output_dir=output,
+                config=config,
+                device_name=args.device,
+                resume=args.resume,
+            )
     print(json.dumps(result, indent=2, sort_keys=True))
     return 0
 

@@ -155,6 +155,8 @@ def _hardware() -> dict[str, Any]:
 
 
 def _objectives(requested: list[str]) -> tuple[str, ...]:
+    if "all" in requested:
+        return ("ssl", "geo", "ttc")
     if "both" in requested:
         return ("ssl", "geo")
     return tuple(dict.fromkeys(requested))
@@ -168,7 +170,7 @@ def main() -> int:
     parser.add_argument(
         "--objectives",
         nargs="+",
-        choices=("both", "ssl", "geo"),
+        choices=("all", "both", "ssl", "geo", "ttc"),
         default=["both"],
     )
     parser.add_argument(
@@ -178,6 +180,7 @@ def main() -> int:
         default=["all"],
     )
     parser.add_argument("--eap-root", type=Path, default=Path(r"E:\eAP_dataset"))
+    parser.add_argument("--garlttc-root", type=Path, default=Path(r"E:\GarlTTC_dataset"))
     parser.add_argument(
         "--eap-inventory",
         type=Path,
@@ -319,6 +322,8 @@ def main() -> int:
                         "--seed",
                         str(args.pretrain_seed),
                     ]
+                    if objective == "ttc":
+                        command.extend(["--garlttc-root", str(args.garlttc_root)])
                     if args.resume and (pretrain_run / "resume.pt").is_file():
                         command.append("--resume")
                     _run_logged(

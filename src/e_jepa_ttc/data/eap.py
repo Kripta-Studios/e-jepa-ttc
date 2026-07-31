@@ -97,6 +97,36 @@ class EAPObjectWindow:
         return self.history[-1]
 
 
+@dataclass(frozen=True)
+class EAPTemporalWindows:
+    context_start_us: int
+    context_end_us: int
+    future_windows_us: tuple[tuple[int, int], ...]
+
+
+def build_eap_temporal_windows(
+    *,
+    reference_end_us: int,
+    event_window_ms: int,
+    horizons_ms: tuple[int, ...],
+) -> EAPTemporalWindows:
+    window_us = int(event_window_ms * 1000)
+    context_start_us = reference_end_us - window_us
+    context_end_us = reference_end_us
+
+    future_windows: list[tuple[int, int]] = []
+    for h in horizons_ms:
+        f_end = reference_end_us + int(h * 1000)
+        f_start = f_end - window_us
+        future_windows.append((f_start, f_end))
+
+    return EAPTemporalWindows(
+        context_start_us=context_start_us,
+        context_end_us=context_end_us,
+        future_windows_us=tuple(future_windows),
+    )
+
+
 def _require_pandas() -> ModuleType:
     try:
         import pandas as pd
@@ -549,6 +579,49 @@ class EAPEventReader:
         if self._handle is not None:
             self._handle.close()
             self._handle = None
+
+    def _require_open_handle(self) -> h5py.File:
+        if self._handle is not None:
+            return self._handle
+        _require_hdf5plugin()
+        self.open()
+        return self._handle
+
+    @property
+    def t_start_us(self) -> int:
+        """Return the start timestamp in microseconds of the event stream."""
+        handle = self._require_open_handle()
+        events = handle["events"]
+
+        if "t_start_us" in handle.attrs:
+            return int(handle.attrs["t_start_us"])
+
+        if "t_start_us" in events.attrs:
+            return int(events.attrs["t_start_us"])
+
+        timestamps = events["t"]
+        if len(timestamps) == 0:
+            return 0
+
+        return int(timestamps[0])
+
+    @property
+    def t_end_us(self) -> int:
+        """Return the end timestamp in microseconds of the event stream."""
+        handle = self._require_open_handle()
+        events = handle["events"]
+
+        if "t_end_us" in handle.attrs:
+            return int(handle.attrs["t_end_us"])
+
+        if "t_end_us" in events.attrs:
+            return int(events.attrs["t_end_us"])
+
+        timestamps = events["t"]
+        if len(timestamps) == 0:
+            return 0
+
+        return int(timestamps[-1]) + 1
 
     def read_window(self, start_us: int, end_us: int) -> dict[str, np.ndarray]:
         """Read events in the half-open interval ``[start_us, end_us)``."""
