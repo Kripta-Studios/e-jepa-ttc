@@ -43,6 +43,17 @@ def checkpoint_provenance(
             if role == "best"
             else ("final_epoch" if role == "last" else "unspecified")
         )
+        
+    validation_selection_criteria = {
+        "validation_loss",
+        "validation_macro_track_mae",
+    }
+
+    recommended_for_downstream = (
+        role == "best"
+        and selected_by in validation_selection_criteria
+    )
+    
     return {
         "path": path.as_posix(),
         "checkpoint_sha256": _file_sha256(path),
@@ -50,7 +61,7 @@ def checkpoint_provenance(
         "source_seed": checkpoint.get("seed"),
         "checkpoint_role": str(role),
         "checkpoint_selected_by": str(selected_by),
-        "recommended_for_downstream": role == "best" and selected_by == "validation_loss",
+        "recommended_for_downstream": recommended_for_downstream,
         "selection_warning": (
             "last checkpoint is not validation-selected; justify it with a frozen ablation"
             if role == "last"

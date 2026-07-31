@@ -363,17 +363,25 @@ def test_checkpoint_validates_itself(tmp_path):
             scheduler_state_dict={},
             scaler_state_dict={},
             optimizer_step=1,
-            best_validation_loss=0.1,
+            best_validation_macro_track_mae=0.1,
+            best_validation_joint_loss=0.2,
         )
 
         cp_path = tmp_path / "cp.pt"
         torch.save(cp, cp_path)
+        assert cp["checkpoint_selected_by"] == "validation_macro_track_mae"
+        assert cp["best_validation_macro_track_mae"] == pytest.approx(0.1)
+        assert cp["best_validation_joint_loss"] == pytest.approx(0.2)
 
         validated = validate_external_eap_ttc_checkpoint(
             checkpoint_path=cp_path,
             checkpoint=cp,
             source_split_path=split_path,
         )
+        
+        
+        assert validated["checkpoint_selected_by"] == "validation_macro_track_mae"
+        assert validated["recommended_for_downstream"] is True
 
         assert validated["pretraining_regime"] == "eap_ttc"
     finally:

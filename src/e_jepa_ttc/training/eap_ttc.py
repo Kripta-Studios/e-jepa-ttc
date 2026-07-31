@@ -453,7 +453,8 @@ def _checkpoint(
     scheduler_state_dict: dict[str, Any] | None = None,
     scaler_state_dict: dict[str, Any] | None = None,
     optimizer_step: int | None = None,
-    best_validation_loss: float | None = None,
+    best_validation_macro_track_mae: float | None = None,
+    best_validation_joint_loss: float | None = None,
 ) -> dict[str, Any]:
     if audit_result != "PASS":
         raise ValueError("Cannot build TTC checkpoint without PASS audit")
@@ -479,7 +480,7 @@ def _checkpoint(
         "in_channels": EVTTC_BASE_INPUT_CHANNELS,
         "event_bins": config.bins,
         "checkpoint_role": role,
-        "checkpoint_selected_by": "validation_loss" if role == "best" else "final_epoch",
+        "checkpoint_selected_by": ("validation_macro_track_mae" if role == "best" else "final_epoch"),
         "encoder_state_dict": encoder.state_dict(),
         "target_encoder_state_dict": target_encoder.state_dict(),
         "predictor_state_dict": predictor.state_dict(),
@@ -526,7 +527,8 @@ def _checkpoint(
         "scheduler_state_dict": scheduler_state_dict,
         "scaler_state_dict": scaler_state_dict,
         "optimizer_step": optimizer_step,
-        "best_validation_loss": best_validation_loss,
+        "best_validation_macro_track_mae": best_validation_macro_track_mae,
+        "best_validation_joint_loss": best_validation_joint_loss,
     }
 
 
@@ -695,7 +697,8 @@ def pretrain_eap_jepa_ttc(
     last_path = output / "resume.pt"
     start_epoch = 1
     optimizer_step = 0
-    best_val_loss = float("inf")
+    best_val_ttc_mae = float("inf")
+    best_val_joint_loss = float("inf")
     history: list[dict[str, Any]] = []
     train_median_ttc = None
 
@@ -733,7 +736,8 @@ def pretrain_eap_jepa_ttc(
             scheduler_state_dict=scheduler.state_dict() if scheduler else None,
             scaler_state_dict=scaler.state_dict() if scaler else None,
             optimizer_step=optimizer_step,
-            best_validation_loss=best_val_loss,
+            best_validation_macro_track_mae=best_val_ttc_mae,
+            best_validation_joint_loss=best_val_joint_loss,
         )
         return cp
 
@@ -789,12 +793,22 @@ def pretrain_eap_jepa_ttc(
         }
         history.append(record)
 
-        val_loss = val_metrics.get("loss_total", float("inf"))
-        if val_loss < best_val_loss:
-            best_val_loss = val_loss
-            _atomic_torch_save(_get_cp("best", epoch), output / "eap_jepa_encoder_best.pt")
+        val_ttc_mae = val_metrics.get("macro_track_mae", float("inf"))
+        val_joint_loss = val_metrics.get("loss_total", float("inf"))
+        best_val_joint_loss = min(best_val_joint_loss, val_joint_loss,)
+        
+        if val_ttc_mae < best_val_ttc_mae:
+            best_val_ttc_mae = val_ttc_mae
 
-        _atomic_torch_save(_get_cp("last", epoch), last_path)
+            _atomic_torch_save(
+                _get_cp("best", epoch),
+                output / "eap_jepa_encoder_best.pt",
+            )
+
+        _atomic_torch_save(
+            _get_cp("last", epoch),
+            last_path,
+        )
 
     _atomic_torch_save(_get_cp("final", config.epochs), output / "checkpoint_final.pt")
 
@@ -804,7 +818,9 @@ def pretrain_eap_jepa_ttc(
     summary = {
         "output_dir": output.as_posix(),
         "epochs_completed": config.epochs,
-        "best_validation_loss": best_val_loss,
+        "checkpoint_selected_by": "validation_macro_track_mae",
+        "best_validation_macro_track_mae": best_val_ttc_mae,
+        "best_validation_joint_loss": best_val_joint_loss,
         "history": history,
     }
     write_structured(output / "summary.json", summary)

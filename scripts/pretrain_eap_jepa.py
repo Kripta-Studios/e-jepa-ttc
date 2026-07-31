@@ -20,7 +20,7 @@ from e_jepa_ttc.training.eap_jepa import (  # noqa: E402
 
 def _profile(name: str, objective: str) -> EAPJEPATrainerConfig:
     geometry_weight = 0.25 if objective == "geo" else 0.0
-    ttc_weight = 0.25 if objective == "ttc" else 0.0
+    ttc_weight = 0.5 if objective == "ttc" else 0.0
     if name == "smoke":
         return EAPJEPATrainerConfig(
             epochs=1,
