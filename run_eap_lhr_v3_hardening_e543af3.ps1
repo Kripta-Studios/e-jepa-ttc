@@ -22,7 +22,7 @@ $ErrorActionPreference = "Stop"
 $ProgressPreference = "SilentlyContinue"
 
 $LauncherVersion = "3.0-hardening"
-$ExpectedCommit = "e543af3f81888d8a0fa87b6f1295753e7bb02605"
+$ExpectedCommit = "d5c4765a1b73f041cfd0dad5c8ef1a184e84613a"
 $PatchFileName = "eap_lhr_v3_hardening_e543af3.patch"
 
 if ([string]::IsNullOrWhiteSpace($PatchPath)) {
