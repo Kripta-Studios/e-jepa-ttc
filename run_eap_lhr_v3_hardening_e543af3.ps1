@@ -4,7 +4,7 @@ param(
     [string]$EapRoot = "E:\eAP_dataset",
     [string]$GarlTtcRoot = "E:\GarlTTC_dataset",
     [string]$SplitPath = "data\splits\eap_pilot12_v1.json",
-    [string]$EvTtcValidationManifest = "",
+    [string[]]$EvTtcValidationManifests = @(),
     [string]$PatchPath = "",
     [int]$Workers = 10,
     [int]$CacheSamplesPerSplit = 4096,
@@ -21,8 +21,9 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 $ProgressPreference = "SilentlyContinue"
 
-$ExpectedCommit = "16feff38a1bf5746c32d84935ace6c3bad225b5c"
-$PatchFileName = "eap_geometry_v2_lhr_jepa_ttc_16feff38_v2.patch"
+$LauncherVersion = "3.0-hardening"
+$ExpectedCommit = "e543af3f81888d8a0fa87b6f1295753e7bb02605"
+$PatchFileName = "eap_lhr_v3_hardening_e543af3.patch"
 
 if ([string]::IsNullOrWhiteSpace($PatchPath)) {
     $Candidate = Join-Path $PSScriptRoot $PatchFileName
@@ -38,7 +39,7 @@ $RepoPath = (Resolve-Path $RepoPath).Path
 Set-Location $RepoPath
 
 $Timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
-$RunRoot = Join-Path $RepoPath "artifacts\runs\eap_lhr_v2_unattended_$Timestamp"
+$RunRoot = Join-Path $RepoPath "artifacts\runs\eap_lhr_v3_hardening_$Timestamp"
 $Logs = Join-Path $RunRoot "logs"
 $Metrics = Join-Path $RunRoot "metrics"
 $Experiments = Join-Path $RunRoot "experiments"
@@ -115,10 +116,42 @@ function Invoke-NativeLogged {
     )
     $LogPath = Join-Path $Logs "$Name.log"
     Write-Host "[$Name] $Executable $($Arguments -join ' ')"
-    & $Executable @Arguments 2>&1 | Tee-Object -FilePath $LogPath
-    $Code = $LASTEXITCODE
+
+    # PowerShell 5.1 turns native stderr into ErrorRecord objects. With the
+    # script-wide Stop preference, the first traceback line can terminate the
+    # pipeline before Python finishes writing the real exception. Temporarily
+    # use Continue, merge both streams, and decide success only from the native
+    # process exit code.
+    $PreviousErrorActionPreference = $ErrorActionPreference
+    try {
+        $ErrorActionPreference = "Continue"
+        & $Executable @Arguments 2>&1 |
+            ForEach-Object {
+                $Text = $_.ToString()
+                $Text
+            } |
+            Tee-Object -FilePath $LogPath
+        $Code = $LASTEXITCODE
+    }
+    finally {
+        $ErrorActionPreference = $PreviousErrorActionPreference
+    }
+
     if ($Code -ne 0) {
-        throw "Step '$Name' failed with exit code $Code. See $LogPath"
+        $Tail = @()
+        if (Test-Path $LogPath) {
+            $Tail = @(Get-Content $LogPath -Tail 80 -ErrorAction SilentlyContinue)
+        }
+        $TailText = if ($Tail.Count -gt 0) {
+            "`n--- last 80 log lines ---`n" + ($Tail -join "`n")
+        }
+        else {
+            ""
+        }
+        throw (
+            "Step '$Name' failed with exit code $Code. See $LogPath" +
+            $TailText
+        )
     }
 }
 
@@ -127,8 +160,22 @@ function Test-NativeSuccess {
         [string]$Executable,
         [string[]]$Arguments
     )
-    & $Executable @Arguments *> $null
-    return ($LASTEXITCODE -eq 0)
+
+    # Some expected probe commands (notably `git apply --reverse --check`
+    # when a patch is not yet applied) write to stderr and return non-zero.
+    # Under PowerShell 5.1 with $ErrorActionPreference = "Stop", that stderr
+    # can become a terminating NativeCommandError before we inspect
+    # $LASTEXITCODE. Run probes with Continue and suppress both native streams.
+    $PreviousErrorActionPreference = $ErrorActionPreference
+    try {
+        $ErrorActionPreference = "Continue"
+        & $Executable @Arguments 1>$null 2>$null
+        $Code = $LASTEXITCODE
+    }
+    finally {
+        $ErrorActionPreference = $PreviousErrorActionPreference
+    }
+    return ($Code -eq 0)
 }
 
 try {
@@ -191,6 +238,7 @@ try {
     $Drive = Get-PSDrive -Name $DriveName
     $Preflight = [ordered]@{
         timestamp = (Get-Date).ToString("o")
+        launcher_version = $LauncherVersion
         expected_commit = $ExpectedCommit
         actual_commit = $Head
         repo_path = $RepoPath
@@ -205,6 +253,7 @@ try {
         batch_size = $BatchSize
         seeds = $Seeds
         include_rgb = [bool]$IncludeRgb
+        evttc_validation_manifests = $EvTtcValidationManifests
     }
     $Preflight | ConvertTo-Json -Depth 10 |
         Set-Content -Encoding UTF8 (Join-Path $RunRoot "run_manifest.json")
@@ -231,7 +280,10 @@ try {
         "scripts\evaluate_eap_lhr_zero_shot.py",
         "scripts\audit_garlttc_lhr_v2.py",
         "scripts\analyze_eap_geometry_v2.py",
-        "scripts\summarize_eap_lhr_v2.py"
+        "scripts\summarize_eap_lhr_v2.py",
+        "scripts\aggregate_eap_lhr_zero_shot.py",
+        "scripts\compare_eap_lhr_zero_shot.py",
+        "scripts\repair_eap_geo2_provenance.py"
     )
     Invoke-NativeLogged "py_compile" $Python (@("-m", "py_compile") + $CompileFiles)
     Invoke-NativeLogged "pytest_targeted" $Python @(
@@ -240,6 +292,9 @@ try {
         "tests\unit\test_eap_geo2_config.py",
         "tests\unit\test_eap_lhr_jepa_ttc.py",
         "tests\unit\test_garlttc_lhr_cache_v2.py",
+        "tests\unit\test_eap_lhr_v3_hardening.py",
+        "tests\unit\test_eap_lhr_zero_shot_oof_v3.py",
+        "tests\unit\test_eap_geo2_provenance_v3.py",
         "-q"
     )
     Invoke-NativeLogged "pytest_unit" $Python @("-m", "pytest", "tests\unit", "-q")
@@ -262,7 +317,7 @@ try {
             "--workers", "0",
             "--seed", "42"
         )
-        Invoke-NativeLogged "geo2_pilot" $Python @(
+        $Geo2PilotBaseArgs = @(
             "scripts\pretrain_eap_jepa.py",
             "--objective", "geo2",
             "--profile", "pilot",
@@ -270,16 +325,66 @@ try {
             "--inventory", "data\manifests\eap_train40_inventory_v1.json",
             "--split", $SplitPath,
             "--output", $Geo2Run,
-            "--workers", "$Workers",
             "--batch-size", "24",
             "--gradient-accumulation", "2",
-            "--seed", "42",
-            "--resume"
+            "--seed", "42"
         )
+
+        # pretrain_eap_jepa.py treats --resume as a strict request and raises if
+        # resume.pt does not exist. Add it only when a prior partial epoch has
+        # actually produced the resumable checkpoint.
+        $Geo2ResumePath = Join-Path $Geo2Run "resume.pt"
+        $Geo2PilotArgs = $Geo2PilotBaseArgs + @("--workers", "$Workers")
+        if (Test-Path -LiteralPath $Geo2ResumePath) {
+            $Geo2PilotArgs += "--resume"
+            Write-Host "Geo2 resumable checkpoint detected: $Geo2ResumePath"
+        }
+        else {
+            Write-Host "Geo2 pilot starts fresh; no resume.pt is present."
+        }
+
+        try {
+            Invoke-NativeLogged "geo2_pilot_workers$Workers" $Python $Geo2PilotArgs
+        }
+        catch {
+            $ParallelFailure = $_.Exception.Message
+            Write-Warning (
+                "Geo2 pilot failed with workers=$Workers. " +
+                "Retrying with workers=0. If resume.pt was written before the failure, " +
+                "the fallback will resume it; otherwise it starts clean. " +
+                "The original traceback remains in logs\geo2_pilot_workers$Workers.log."
+            )
+            $FallbackRecord = [ordered]@{
+                attempted_workers = $Workers
+                fallback_workers = 0
+                original_failure = $ParallelFailure
+                output_directory = $Geo2Run
+                resume_checkpoint_present = (Test-Path -LiteralPath $Geo2ResumePath)
+                timestamp_utc = (Get-Date).ToUniversalTime().ToString("o")
+            }
+            $FallbackRecord | ConvertTo-Json -Depth 10 |
+                Set-Content -Encoding UTF8 (
+                    Join-Path $RunRoot "geo2_worker_fallback.json"
+                )
+
+            $Geo2FallbackArgs = $Geo2PilotBaseArgs + @("--workers", "0")
+            if (Test-Path -LiteralPath $Geo2ResumePath) {
+                $Geo2FallbackArgs += "--resume"
+                Write-Host "Geo2 fallback will resume from: $Geo2ResumePath"
+            }
+            else {
+                Write-Host "Geo2 fallback starts fresh; no resume.pt was produced."
+            }
+            Invoke-NativeLogged "geo2_pilot_workers0_fallback" $Python $Geo2FallbackArgs
+        }
         $GeoCheckpoint = Join-Path $Geo2Run "eap_jepa_encoder_best.pt"
         if (-not (Test-Path $GeoCheckpoint)) {
             throw "Geo2 checkpoint not produced: $GeoCheckpoint"
         }
+        Invoke-NativeLogged "repair_geo2_provenance" $Python @(
+            "scripts\repair_eap_geo2_provenance.py",
+            "--output-dir", $Geo2Run
+        )
     }
 
     Write-Stage "5/10 - Official-label smoke cache and audit"
@@ -366,12 +471,13 @@ try {
 
     $Arms = @(
         [ordered]@{
-            Name = "L0_LHR_ONLY"
+            Name = "L0_LHR_ONLY_NO_MOTION"
             Residual = "0"
             TTC = "0"
             JEPA = "0"
             Geometry = "0"
             Category = "0"
+            DisableMotion = $true
         },
         [ordered]@{
             Name = "L1_LHR_TTC"
@@ -380,6 +486,7 @@ try {
             JEPA = "0"
             Geometry = "0"
             Category = "0"
+            DisableMotion = $false
         },
         [ordered]@{
             Name = "L2_LHR_TTC_GEO2"
@@ -388,6 +495,7 @@ try {
             JEPA = "0"
             Geometry = "0.1"
             Category = "0.05"
+            DisableMotion = $false
         },
         [ordered]@{
             Name = "L3_LHR_TTC_GEO2_JEPA"
@@ -396,6 +504,7 @@ try {
             JEPA = "0.1"
             Geometry = "0.1"
             Category = "0.05"
+            DisableMotion = $false
         }
     )
 
@@ -430,51 +539,68 @@ try {
             if ($IncludeRgb) {
                 $Arguments += "--use-rgb"
             }
+            if ($Arm.DisableMotion) {
+                $Arguments += "--disable-observable-motion"
+            }
             Invoke-NativeLogged "train_$($Arm.Name)_seed$Seed" $Python $Arguments
         }
     }
 
-    Write-Stage "8/10 - Zero-shot validation, when a compatible target cache is supplied"
+    Write-Stage "8/10 - Strict zero-shot OOF evaluation"
 
-    if (-not [string]::IsNullOrWhiteSpace($EvTtcValidationManifest)) {
-        if (-not (Test-Path $EvTtcValidationManifest)) {
-            throw "EvTTC validation manifest does not exist: $EvTtcValidationManifest"
+    if ($EvTtcValidationManifests.Count -gt 0) {
+        foreach ($ManifestPath in $EvTtcValidationManifests) {
+            if (-not (Test-Path $ManifestPath)) {
+                throw "EvTTC validation manifest does not exist: $ManifestPath"
+            }
         }
-        $ZeroShotFailures = @()
         foreach ($Arm in $Arms) {
             foreach ($Seed in $Seeds) {
                 $Checkpoint = Join-Path $Experiments "$($Arm.Name)\seed-$Seed\weights_only.pt"
-                $MetricOutput = Join-Path $Metrics "$($Arm.Name)_seed${Seed}_zero_shot.json"
-                try {
-                    Invoke-NativeLogged "zero_shot_$($Arm.Name)_seed$Seed" $Python @(
+                $FoldOutputs = @()
+                for ($FoldIndex = 0; $FoldIndex -lt $EvTtcValidationManifests.Count; $FoldIndex++) {
+                    $ManifestPath = $EvTtcValidationManifests[$FoldIndex]
+                    $MetricOutput = Join-Path $Metrics "$($Arm.Name)_seed${Seed}_fold${FoldIndex}_zero_shot.json"
+                    Invoke-NativeLogged "zero_shot_$($Arm.Name)_seed${Seed}_fold${FoldIndex}" $Python @(
                         "scripts\evaluate_eap_lhr_zero_shot.py",
                         "--checkpoint", $Checkpoint,
-                        "--manifest", $EvTtcValidationManifest,
+                        "--manifest", $ManifestPath,
                         "--splits", "validation",
                         "--output", $MetricOutput,
                         "--batch-size", "$BatchSize",
                         "--workers", "$Workers"
                     )
+                    $FoldOutputs += $MetricOutput
                 }
-                catch {
-                    $ZeroShotFailures += [ordered]@{
-                        arm = $Arm.Name
-                        seed = $Seed
-                        checkpoint = $Checkpoint
-                        manifest = $EvTtcValidationManifest
-                        message = $_.Exception.Message
-                    }
-                    Write-Warning "Zero-shot failed for $($Arm.Name), seed $Seed; continuing."
-                }
+                $OOFOutput = Join-Path $Metrics "$($Arm.Name)_seed${Seed}_oof.json"
+                $AggregateArgs = @(
+                    "scripts\aggregate_eap_lhr_zero_shot.py",
+                    "--inputs"
+                ) + $FoldOutputs + @(
+                    "--output", $OOFOutput,
+                    "--bootstrap-iterations", "2000",
+                    "--seed", "$Seed"
+                )
+                Invoke-NativeLogged "aggregate_$($Arm.Name)_seed$Seed" $Python $AggregateArgs
             }
         }
-        if ($ZeroShotFailures.Count -gt 0) {
-            $ZeroShotFailures | ConvertTo-Json -Depth 10 |
-                Set-Content -Encoding UTF8 (Join-Path $RunRoot "zero_shot_failures.json")
+        foreach ($Seed in $Seeds) {
+            $ControlOOF = Join-Path $Metrics "L0_LHR_ONLY_NO_MOTION_seed${Seed}_oof.json"
+            foreach ($CandidateName in @("L1_LHR_TTC", "L2_LHR_TTC_GEO2", "L3_LHR_TTC_GEO2_JEPA")) {
+                $CandidateOOF = Join-Path $Metrics "${CandidateName}_seed${Seed}_oof.json"
+                Invoke-NativeLogged "compare_${CandidateName}_seed$Seed" $Python @(
+                    "scripts\compare_eap_lhr_zero_shot.py",
+                    "--control", $ControlOOF,
+                    "--candidate", $CandidateOOF,
+                    "--output", (Join-Path $Metrics "${CandidateName}_vs_L0_seed${Seed}.json"),
+                    "--bootstrap-iterations", "2000",
+                    "--seed", "$Seed"
+                )
+            }
         }
     }
     else {
-        "EvTTC zero-shot skipped: no -EvTtcValidationManifest was supplied." |
+        "EvTTC zero-shot skipped: no -EvTtcValidationManifests were supplied." |
             Set-Content -Encoding UTF8 (Join-Path $Logs "zero_shot_skipped.log")
     }
 
