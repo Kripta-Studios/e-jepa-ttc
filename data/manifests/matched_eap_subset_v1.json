@@ -2,11 +2,11 @@
   "artifact_type": "matched_eap_subset_v1",
   "schema_version": "matched_eap_subset_v1",
   "evidence_type": "label_free_manifest_selection",
-  "code_commit": "a917a182270b9b5475645a0a2088f18c5f0f974d",
+  "code_commit": "238a6e58295a9c57f37d3b75f105c6c89e5ed416",
   "protocol_version": "matched_eap_subset_v1",
   "protocol_sha256": "6cf370abe3305cbf848ac7623009f91863edcd24c602cf49dae42abc03492e08",
   "created_at": "selection_time_not_recorded",
-  "matched_manifest_hash": "5f29b3752a8b54de97d07f2773222b2e70ed7f819294fefe88535d59adef9b8b",
+  "matched_manifest_hash": "e6ef2fec7092eec0c1cee0091158f94baaae70843a45281d4c52c75cae42fd44",
   "source": {
     "dataset": "GarlTTC/eAP",
     "parquet": "data/train.parquet",
@@ -26,7 +26,7 @@
   },
   "dataset_hashes": {
     "source_parquet_sha256": "9f6b190a1a3a84c10ab7ce2094372f490f2963122c7f4b9837c3b70b8ef23847",
-    "config_sha256": "c484755f7c49a43847623ff081efdbdfd51818de203bf748a4868151b4f84cd1",
+    "config_sha256": "9d2e6df2db7c1c55b5fd77d7be1aabf914186209eed70b1934bee459cc99a639",
     "split_sha256": "39bf3943c728a7455d025cf60ff7f1d6fa60d6c126faa4c8c79463813c24147f",
     "sampler_order_sha256": "6ae89e623325d62e4ae34efae850ae2bf2b0ccdbeeed78c48928bce2768aed00"
   },
@@ -2124,7 +2124,7 @@
     "ssl_height": 192,
     "bins": 5,
     "batch_size": 2,
-    "max_workers": 4,
+    "max_workers": 2,
     "update_budget": 1000,
     "calibration_mode": "focal",
     "signed_ttc_convention": "signed_seconds_future_minus_anchor"
@@ -2145,7 +2145,7 @@
       23
     ],
     "batch_size": 2,
-    "max_workers": 4,
+    "max_workers": 2,
     "update_budget": 1000
   },
   "selection_report": {
@@ -407601,6 +407601,6 @@
     "uses_evttc": false
   },
   "uses_dense_disk_cache": false,
-  "artifact_sha256": "5f29b3752a8b54de97d07f2773222b2e70ed7f819294fefe88535d59adef9b8b",
-  "signature": "75f64b1a806f9babdcaa32a23c92e7d57feae2f19325964d8787b3c17cce6e07"
+  "artifact_sha256": "e6ef2fec7092eec0c1cee0091158f94baaae70843a45281d4c52c75cae42fd44",
+  "signature": "55c792cd19bfcd13d0e0c9c59f566de72cc03dc7175149455fb34e58e0bb1d52"
 }
