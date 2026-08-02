@@ -259,7 +259,13 @@ class _ParsedRow:
 def _read_projected_parquet(source: Path) -> list[dict[str, Any]]:
     """Read exactly the allow-listed columns at Parquet projection time."""
 
-    if any(fragment in str(source).lower() for fragment in FORBIDDEN_FIELD_FRAGMENTS):
+    lowered_parts = {part.lower() for part in source.parts}
+    if source.name.lower() != "train.parquet" or lowered_parts & {
+        "annotation",
+        "annotations",
+        "label",
+        "labels",
+    }:
         raise ValueError(f"Forbidden annotation/label source path: {source}")
     try:
         import pandas as pd

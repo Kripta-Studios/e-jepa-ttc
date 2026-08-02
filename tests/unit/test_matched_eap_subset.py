@@ -142,3 +142,15 @@ def test_manifest_requires_exact_commit_binding(tmp_path: Path) -> None:
     split = _write_split(tmp_path)
     with pytest.raises(ValueError, match="code_commit"):
         build_matched_eap_subset(tmp_path, split, code_commit="abc")
+
+
+def test_dataset_root_name_may_contain_ttc(tmp_path: Path) -> None:
+    root = tmp_path / "GarlTTC_dataset"
+    _write_fixture(root)
+    manifest = build_matched_eap_subset(
+        root,
+        _write_split(root),
+        config=MatchedSubsetConfig(stage_sizes=(4,)),
+        code_commit=TEST_COMMIT,
+    )
+    assert manifest["stages"][0]["actual_row_count"] == 4
