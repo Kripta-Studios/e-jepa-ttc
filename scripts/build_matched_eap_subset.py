@@ -58,6 +58,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--stage-sizes", type=_ints, default=(256, 512, 1024, 2048))
     parser.add_argument("--seed", type=int, default=7)
     parser.add_argument("--update-budget", type=int, default=1_000)
+    parser.add_argument("--workers", type=int, default=4)
     parser.add_argument(
         "--allow-gate-failure",
         action="store_true",
@@ -109,6 +110,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             stage_sizes=tuple(args.stage_sizes),
             seed=args.seed,
             update_budget=args.update_budget,
+            max_workers=args.workers,
         )
         manifest = build_matched_eap_subset(
             args.garlttc_root,
