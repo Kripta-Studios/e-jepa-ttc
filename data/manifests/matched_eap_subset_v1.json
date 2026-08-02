@@ -2,11 +2,11 @@
   "artifact_type": "matched_eap_subset_v1",
   "schema_version": "matched_eap_subset_v1",
   "evidence_type": "label_free_manifest_selection",
-  "code_commit": "238a6e58295a9c57f37d3b75f105c6c89e5ed416",
+  "code_commit": "9a5cc5c78263904c24a19bce9fc6a79bd0b79282",
   "protocol_version": "matched_eap_subset_v1",
   "protocol_sha256": "6cf370abe3305cbf848ac7623009f91863edcd24c602cf49dae42abc03492e08",
   "created_at": "selection_time_not_recorded",
-  "matched_manifest_hash": "e6ef2fec7092eec0c1cee0091158f94baaae70843a45281d4c52c75cae42fd44",
+  "matched_manifest_hash": "375536081647fb84ddc80a2c89d363930fae35f05acb41e40d35313743a1009d",
   "source": {
     "dataset": "GarlTTC/eAP",
     "parquet": "data/train.parquet",
@@ -407601,6 +407601,6 @@
     "uses_evttc": false
   },
   "uses_dense_disk_cache": false,
-  "artifact_sha256": "e6ef2fec7092eec0c1cee0091158f94baaae70843a45281d4c52c75cae42fd44",
-  "signature": "55c792cd19bfcd13d0e0c9c59f566de72cc03dc7175149455fb34e58e0bb1d52"
+  "artifact_sha256": "375536081647fb84ddc80a2c89d363930fae35f05acb41e40d35313743a1009d",
+  "signature": "1316bb75d484dbcd548d628c1f3d35cfad1ace22d5de2e1e0a95da83ce721cc6"
 }
