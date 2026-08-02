@@ -288,7 +288,7 @@
     "r2_rate_dependence",
     "residual_r2"
   ],
-  "artifact_sha256": "a07630e8221bba229e0f2bef1f446771acc830402c0dbfe2dd6258c57e9c62df",
+  "artifact_sha256": "f87d202f30486f3176711c20db8b355c5e3b3eca83eed8ab2149e64148659c6b",
   "artifact_type": "jepa_semantic_shortcut_benchmark_v1",
   "config": {
     "batch_size": 128,
@@ -317,7 +317,7 @@
     "variance_floor": 0.35,
     "weight_decay": 0.0001
   },
-  "created_at": "2026-08-02T12:03:11.886808+00:00",
+  "created_at": "2026-08-02T13:35:53.395383+00:00",
   "decision": {
     "baseline_failure_gates": {
       "collapsed_fraction_at_most_0_20": true,
@@ -349,9 +349,9 @@
     "verdict": "inconclusive_synthetic_fixture_did_not_expose_predeclared_failure"
   },
   "device": "cuda",
-  "elapsed_seconds": 131.57581359997857,
+  "elapsed_seconds": 139.09574810002232,
   "evidence_scope": "synthetic_mechanistic_only",
-  "git_commit": "cbdf54c1fb7162b84cbd4441f06d9c4e084e7898",
+  "git_commit": "1d9e23a337407ae58b53cf3c997b22d33d1982b8",
   "gpu_name": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
   "runs": [
     {

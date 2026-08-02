@@ -1,5 +1,5 @@
 {
-  "artifact_sha256": "80a503e5d779a1c05a7619122a2354133d3756e6ec3cdb1002d96b09fcf3272d",
+  "artifact_sha256": "7f90c85947a3474818996408e716b8069bb3f63b68d42530486534ef7a98af8b",
   "artifact_type": "jepa_semantic_capacity_audit_v1",
   "controlled_results": {
     "frame_control": {
@@ -627,7 +627,7 @@
       }
     }
   },
-  "created_at": "2026-08-02T12:05:36.778926+00:00",
+  "created_at": "2026-08-02T13:35:56.588101+00:00",
   "decision": {
     "full_r2_status": "rejected_for_production",
     "intact_status": "not_applicable_without_expert_actions",
@@ -663,11 +663,11 @@
     },
     "frame_control": {
       "path": "artifacts/metrics/jepa_semantic_shortcut_frame_control_v1.json",
-      "sha256": "ac496d937b5c3b1be9b7fd35802c2bd368d0d1d2973c258fec266614e21e0f4d"
+      "sha256": "f33dc9abbad8fd08a6366b6e692679023b42e92d69fe3ffbf150f1ecdeb934c4"
     },
     "sequence_shortcut": {
       "path": "artifacts/metrics/jepa_semantic_shortcut_benchmark_v1.json",
-      "sha256": "edf8efa639a845d1d228ac43ddf778ff5c0b573de72fc0a5685e5dee74c18368"
+      "sha256": "27ee1c9a21cca0ecf6bd4b259211d728fdf81c766b717de6cefa839a94419d77"
     }
   },
   "status": "complete"

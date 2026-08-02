@@ -64,8 +64,10 @@ A learned candidate can become `screen_candidate` only when:
 - early stopping and checkpoint policy are recorded;
 - Benchmark-10 remains unopened.
 
-`grouped_cv_valid` requires five complete folds. `multiseed_valid` requires the
-predeclared seeds 7, 13 and 21 for BASE and máximo dos finalistas.
+`grouped_cv_valid` requires five complete folds. Para el programa Level–Dynamics
+vigente, `multiseed_valid` requiere los seeds predeclarados 7, 13 y 23 para BASE y
+máximo dos finalistas. La mención histórica 7/13/21 queda sustituida por la orden
+explícita actual y no debe reaparecer en manifests nuevos.
 
 `full_candidate` for the Garl high-resolution path requires all valid rows, a
 clean committed tree, seeds 7/13/23, comparable hashes and a freeze artifact.

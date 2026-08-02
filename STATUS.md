@@ -4,9 +4,10 @@ Actualizado: 2026-08-02.
 
 Branch activa: `scientific-recovery-v3-hardening`.
 
-Último commit operativo publicado: `7d33989` (`Add falsifiable JEPA semantic
-shortcut audit`). `cbdf54c` contiene el runner cache-free full y `7ec2b90` el
-saneamiento principal y el trainer high-resolution raw.
+Último commit publicado: `1d9e23a` (`Document JEPA capacity audit and current
+research status`). `7d33989` contiene el auditor de shortcuts, `cbdf54c` el runner
+cache-free full y `7ec2b90` el saneamiento principal y el trainer high-resolution
+raw.
 
 ## Objetivo
 
@@ -49,6 +50,27 @@ No funciona todavía o está bloqueado:
 - full multisemilla, robustez/calibración reales, export y demo del checkpoint
   final.
 
+### Preflight y commitment boundary Level–Dynamics
+
+El 2026-08-02 se completó el preflight Sol Advisor sobre el árbol real:
+
+- sesión primaria observada `gpt-5.6-sol`, esfuerzo `high`;
+- agentes companion byte-exactos y los tres roles nativos expuestos;
+- host observado: RTX 5070 Ti Laptop 12 GiB, 31,18 GiB RAM y Ryzen 9 16C/32T;
+- un primer reviewer exigió corregir NCE degenerado, geometría post-merge,
+  transferencia de backbone, residual target-only, límites de memoria, frontera
+  Parquet label-free, ROI downstream y el conflicto de seeds;
+- la especificación corregida está en
+  `docs/dense_level_dynamics_jepa_spec_v1.md`, SHA-256
+  `D9E0BAAADEA9EAB52193EC9293C5F22D9983B7CF132B149DD8CEFE21ADE52C6A`;
+- un segundo Sol fresco devolvió `proceed`. El reviewer fue observado como
+  `sol_advisor_sol_reviewer`, `gpt-5.6-sol`, esfuerzo `high`, sandbox efectivo
+  `danger-full-access` y permiso `disabled`; hashes de repo/artefactos idénticos
+  antes/después prueban que permaneció conductualmente read-only.
+
+La implementación aún no está hecha: este veredicto autoriza delegar Phase 1, no
+promociona ninguna arm ni checkpoint.
+
 ## Evidencia válida y resultados negativos
 
 ### Anclas EvTTC históricas
@@ -80,6 +102,15 @@ RTX 5070 Ti Laptop:
 Este run prueba el flujo end-to-end y el contrato del checkpoint, no calidad. Está
 marcado `claim_eligible=false`; su error está órdenes de magnitud por encima del
 objetivo y no es comparable con un entrenamiento completo.
+
+El rerun Phase-0 sobre el HEAD `1d9e23a`, conservado en
+`artifacts/metrics/e_jepa_tubelet_lhr_phase0_head1d9e23a_v1.json`, completó también
+16/16, una época, seed 7 y BF16 en `17,99 s`. Su MiD validation macro fue
+`2117,5968`, peor que el smoke histórico, con config hash
+`ac153d62e0fad81cb7a47958f879bd290b427e06e79d584c3527bb1c02ab67ec` y checkpoint
+hash `fb39f4f4028e824f2aea9dbd348d3d5b775f59f0520c22742fef2d5ff7506488`.
+Sigue siendo `integration_only`, `claim_eligible=false`; la diferencia respecto al
+smoke previo no puede atribuirse a una sola causa porque cambió el commit/config.
 
 ### Colapso de rango y shortcut semántico
 

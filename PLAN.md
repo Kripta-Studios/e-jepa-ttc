@@ -48,6 +48,22 @@ La infraestructura crítica está saneada y publicada en el commit `7ec2b90`:
   robustez reales, EvTTC Tabla VI, export del checkpoint final, demo real y
   CodaBench.
 
+Phase 0 se revalidó sobre `1d9e23a` antes de implementar Level–Dynamics:
+
+- Ruff check/format, Pyright (`0` errores/warnings), Pytest completo y
+  `git diff --check` terminaron con código cero;
+- el dry-run full produjo exactamente seeds `7/13/23` y freeze sin entrenar;
+- el auditor semántico regeneró sus tres JSON y conservó el veredicto: residual
+  condicional, VISReg solo insuficiente y R²-lite rechazado;
+- el smoke GPU 16/16 actual terminó en `17,99 s` con MiD validation macro
+  `2117,5968`; continúa como evidencia de integración negativa, no calidad;
+- la arquitectura de cinco partes quedó predeclarada en
+  `docs/dense_level_dynamics_jepa_spec_v1.md`; tras incorporar siete blockers de
+  un primer review, un segundo Sol fresco emitió `proceed`.
+
+Este commitment no cambia ningún checkbox experimental ni autoriza pilotos antes de
+que pasen los tests mecanísticos y el manifest label-free firmado.
+
 Este estado valida contratos y ejecutabilidad con coste acotado. No valida la
 hipótesis científica ni autoriza un claim SOTA.
 
