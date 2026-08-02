@@ -16,5 +16,5 @@ seed_policy:
   status: plan_only
 update_budget: 1000
 batch_size: 2
-workers: 4
+workers: 2
 dry_run: true

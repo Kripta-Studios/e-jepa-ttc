@@ -33,5 +33,5 @@ input_policy:
   auxiliary_channels: base_compatible_voxel
 resource_policy:
   batch_size: 2
-  max_workers: 4
+  max_workers: 2
   max_resident_raw_volumes: 4

@@ -205,7 +205,7 @@ class MatchedSubsetConfig:
     ssl_height: int = 192
     bins: int = 5
     batch_size: int = 2
-    max_workers: int = 4
+    max_workers: int = 2
     update_budget: int = 1_000
     calibration_mode: str = "focal"
     signed_ttc_convention: str = "signed_seconds_future_minus_anchor"

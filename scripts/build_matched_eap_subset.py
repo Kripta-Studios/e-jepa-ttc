@@ -58,7 +58,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--stage-sizes", type=_ints, default=(256, 512, 1024, 2048))
     parser.add_argument("--seed", type=int, default=7)
     parser.add_argument("--update-budget", type=int, default=1_000)
-    parser.add_argument("--workers", type=int, default=4)
+    parser.add_argument("--workers", type=int, default=2)
     parser.add_argument(
         "--allow-gate-failure",
         action="store_true",
