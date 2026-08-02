@@ -135,9 +135,7 @@ def warp_strttc_events(
     normalized[:, 0] = (coordinates[:, 0] - cx) / fx
     normalized[:, 1] = (coordinates[:, 1] - cy) / fy
     delta = (timestamps - float(reference_time_s))[:, None]
-    warped = (
-        -theta[0] * normalized + theta[1:3][None]
-    ) * delta + normalized
+    warped = (-theta[0] * normalized + theta[1:3][None]) * delta + normalized
     warped[:, 0] = fx * warped[:, 0] + cx
     warped[:, 1] = fy * warped[:, 1] + cy
     return warped

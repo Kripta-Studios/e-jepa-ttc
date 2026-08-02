@@ -22,15 +22,16 @@ def validate_checkpoint() -> None:
 
     # Load and validate
     state_dict = torch.load(ckpt_path, map_location="cpu", weights_only=True)
-    
+
     if "audit_json_sha256" in state_dict:
         print(f"Internal audit_json_sha256: {state_dict['audit_json_sha256']}")
         print(f"Internal audit_result: {state_dict.get('audit_result')}")
         print(f"Internal garlttc_data_sha256: {state_dict.get('garlttc_data_sha256')}")
     else:
         print("Internal audit_json_sha256 NOT FOUND")
-        
+
     print("Validation: PASS")
+
 
 if __name__ == "__main__":
     validate_checkpoint()

@@ -1,0 +1,11 @@
+dataset: dsec
+root: ${DSEC_ROOT}
+labels_used_for_sampling: false
+uses_ttc_labels: false
+uses_boxes: false
+uses_depth: false
+uses_rgb: false
+context_ms: 100
+horizons_ms: [50, 100, 250]
+event_layout: generic_hdf5_discovery
+notes: SSL-Pure only; labels may be opened in separate probe artifacts

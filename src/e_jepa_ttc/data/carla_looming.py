@@ -27,9 +27,7 @@ CARLA_LOOMING_SOURCE_URL = "https://doi.org/10.25377/sussex.29114609.v1"
 CARLA_LOOMING_LICENSE = "CC BY 4.0"
 CARLA_LOOMING_ARCHIVE_MD5 = "21a3e72a1c1d9c441a7426393f4e545f"
 CARLA_LOOMING_ARCHIVE_BYTES = 15_096_280_525
-CARLA_LOOMING_EVENT_DTYPE = np.dtype(
-    [("t", "<u4"), ("x", "<u2"), ("y", "<u2"), ("p", "<u2")]
-)
+CARLA_LOOMING_EVENT_DTYPE = np.dtype([("t", "<u4"), ("x", "<u2"), ("y", "<u2"), ("p", "<u2")])
 
 _COLLISION_TYPE_ALIASES = {
     "cars": "car",
@@ -503,9 +501,7 @@ def summarize_carla_sequences(sequences: list[CarlaLoomingSequence]) -> dict[str
     valid = [sequence for sequence in sequences if sequence.valid]
     invalid = [sequence for sequence in sequences if not sequence.valid]
     class_counts = Counter(
-        sequence.metadata.collision_type
-        for sequence in valid
-        if sequence.metadata is not None
+        sequence.metadata.collision_type for sequence in valid if sequence.metadata is not None
     )
     return {
         "sequence_count": len(sequences),
@@ -570,9 +566,7 @@ def _split_statistics(
 ) -> dict[str, Any]:
     entries = [by_id[sequence_id] for sequence_id in sequence_ids]
     classes = Counter(
-        entry.metadata.collision_type
-        for entry in entries
-        if entry.metadata is not None
+        entry.metadata.collision_type for entry in entries if entry.metadata is not None
     )
     return {
         "sequence_count": len(entries),
@@ -607,11 +601,7 @@ def create_carla_looming_splits(
     if len(grouped) < folds:
         raise ValueError("The number of CARLA split groups must cover every fold.")
     labels = sorted(
-        {
-            sequence.metadata.collision_type
-            for sequence in valid
-            if sequence.metadata is not None
-        }
+        {sequence.metadata.collision_type for sequence in valid if sequence.metadata is not None}
     )
     label_index = {label: index for index, label in enumerate(labels)}
     total_counts = np.zeros(len(labels), dtype=np.float64)
@@ -657,18 +647,12 @@ def create_carla_looming_splits(
     test_fold = folds - 1
     role_by_fold = {
         fold: (
-            "validation"
-            if fold == validation_fold
-            else "test"
-            if fold == test_fold
-            else "train"
+            "validation" if fold == validation_fold else "test" if fold == test_fold else "train"
         )
         for fold in range(folds)
     }
     assignments: dict[str, list[str]] = {role: [] for role in ("train", "validation", "test")}
-    groups_by_role: dict[str, list[str]] = {
-        role: [] for role in ("train", "validation", "test")
-    }
+    groups_by_role: dict[str, list[str]] = {role: [] for role in ("train", "validation", "test")}
     for fold, groups in enumerate(fold_groups):
         role = role_by_fold[fold]
         groups_by_role[role].extend(sorted(groups))
@@ -702,9 +686,7 @@ def create_carla_looming_splits(
         ),
         "assignments": assignments,
         "groups": groups_by_role,
-        "statistics": {
-            role: _split_statistics(ids, by_id) for role, ids in assignments.items()
-        },
+        "statistics": {role: _split_statistics(ids, by_id) for role, ids in assignments.items()},
         "excluded_invalid_sequence_ids": [
             sequence.sequence_id for sequence in sequences if not sequence.valid
         ],

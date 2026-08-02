@@ -21,6 +21,13 @@ from e_jepa_ttc.artifacts.protocol import get_current_protocol_identity
 from e_jepa_ttc.data.evttc import NAVIGATION_FEATURE_NAMES
 from e_jepa_ttc.data.ml_cache import validate_voxel_cache
 from e_jepa_ttc.models import build_encoder
+from e_jepa_ttc.reproducibility import (
+    cuda_device_count,
+    cuda_device_name,
+    cuda_is_usable,
+    resolve_device,
+    seed_torch_cpu,
+)
 from e_jepa_ttc.utils.io import ensure_parent, write_structured
 
 EVENT_MOTION_FEATURE_NAMES = (
@@ -298,8 +305,9 @@ class DenseTemporalTransformerJEPAPredictor(nn.Module):
 def _set_seed(seed: int) -> None:
     random.seed(seed)
     np.random.seed(seed)
-    torch.manual_seed(seed)
-    torch.cuda.manual_seed_all(seed)
+    seed_torch_cpu(seed)
+    if cuda_is_usable():
+        torch.cuda.manual_seed_all(seed)
 
 
 def _split_indices(split: np.ndarray, names: tuple[str, ...]) -> np.ndarray:
@@ -1155,10 +1163,7 @@ def _jepa_loss(
             context_for_variance.detach().float().std(dim=0, unbiased=False).mean().cpu()
         ),
         "context_collapsed_dimension_fraction": float(
-            (
-                context_for_variance.detach().float().std(dim=0, unbiased=False)
-                < 1e-3
-            )
+            (context_for_variance.detach().float().std(dim=0, unbiased=False) < 1e-3)
             .float()
             .mean()
             .cpu()
@@ -1470,10 +1475,7 @@ def pretrain_jepa(
                 navigation_feature_count=navigation_feature_count,
             )
 
-    if device_name == "auto":
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    else:
-        device = torch.device(device_name)
+    device = resolve_device(device_name)
 
     if use_temporal:
         train_dataset: Dataset[Any] = TemporalVoxelPairDataset(x, train_idx, train_target_idx)
@@ -1812,8 +1814,9 @@ def pretrain_jepa(
         "output_dir": output.as_posix(),
         "device": str(device),
         "torch_version": torch.__version__,
-        "cuda_available": bool(torch.cuda.is_available()),
-        "gpu_name": torch.cuda.get_device_name(0) if torch.cuda.is_available() else None,
+        "cuda_available": cuda_is_usable(),
+        "cuda_device_count": cuda_device_count(),
+        "gpu_name": cuda_device_name(device),
         "seed": seed,
         "pretrain_seed": seed,
         "epochs": epochs,

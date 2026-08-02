@@ -1,0 +1,6 @@
+experiment: e_jepa_garl_sota_v1
+data: configs/data/garlttc_public_train_v4.yaml
+model: configs/model/e_jepa_tubelet_lhr_rgbe.yaml
+pretraining: configs/train/eap_jepa_pretrain_v4.yaml
+finetuning: configs/train/garl_supervised_v4.yaml
+evttc_selection_allowed: false

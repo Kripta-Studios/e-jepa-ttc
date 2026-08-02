@@ -1,0 +1,15 @@
+{
+  "artifact_type": "eap_jepa_artifact_migration_v4",
+  "changes": [
+    "canonical metrics.json artifact consumed",
+    "schema_version added",
+    "artifact_contract added"
+  ],
+  "dry_run": false,
+  "input_artifact": "artifacts/runs/eap_ssl_smoke_current_seed7/metrics.json",
+  "migration_version": "jepa_pretrain_run_v4",
+  "output_artifact": "artifacts/metrics/eap_ssl_smoke_current_seed7_migrated_v4.json",
+  "output_sha256": "f282b3804982e36fd6e31ead82cea3085d9862f6ffba9f43de21a3e8b2f38ac3",
+  "source_sha256": "2c25d67a96e50ccd997c2ca7c00b7ce39cdd5e1a7d85a6dd1721eb513ad234cf",
+  "status": "migrated"
+}

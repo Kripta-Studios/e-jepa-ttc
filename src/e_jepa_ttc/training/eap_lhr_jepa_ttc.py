@@ -4,29 +4,34 @@ from __future__ import annotations
 
 import json
 import math
+import random
 import time
+from collections.abc import Iterator, Sized
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 import torch
 from torch import nn
 from torch.nn import functional
-from torch.utils.data import DataLoader, WeightedRandomSampler
+from torch.utils.data import DataLoader, Dataset, Sampler, Subset
 
 from e_jepa_ttc.data.eap_cache import EAPObjectCacheDataset
+from e_jepa_ttc.data.garl_input_contract import validate_cache_manifest_input_schema
 from e_jepa_ttc.data.garlttc_lhr_cache import (
     FORBIDDEN_MODEL_INPUT_KEYS,
     GarlTTCLHRCacheDataset,
     observable_motion_from_boxes_torch,
 )
-from e_jepa_ttc.evaluation.object_ttc import grouped_ttc_selection_components, object_ttc_metrics
+from e_jepa_ttc.evaluation.garl_ttc_protocol import sequence_macro_signed_metrics
+from e_jepa_ttc.evaluation.object_ttc import object_ttc_metrics
 from e_jepa_ttc.models.eap_lhr_jepa_ttc import (
     EAPLHRJEPATTC,
     EAPLHRJEPATTCConfig,
     EAPLHRJEPATTCOutput,
 )
+from e_jepa_ttc.reproducibility import cuda_is_usable, resolve_device
 from e_jepa_ttc.utils.io import read_structured, write_structured
 
 
@@ -50,10 +55,18 @@ class EAPLHRTrainerConfig:
     minimum_epochs: int = 8
     seed: int = 42
     balanced_sampling: bool = True
+    max_train_samples: int | None = None
+    max_validation_samples: int | None = None
 
     def __post_init__(self) -> None:
         if min(self.epochs, self.batch_size, self.num_workers + 1) <= 0:
             raise ValueError("Trainer integer controls must be positive.")
+        for name, value in (
+            ("max_train_samples", self.max_train_samples),
+            ("max_validation_samples", self.max_validation_samples),
+        ):
+            if value is not None and value <= 0:
+                raise ValueError(f"{name} must be positive when provided.")
         if self.precision not in {"fp32", "fp16", "bf16"}:
             raise ValueError("precision must be fp32, fp16 or bf16.")
         if not 0.0 <= self.ema_momentum < 1.0:
@@ -72,12 +85,10 @@ class EAPLHRTrainerConfig:
 
 
 def _device(name: str) -> torch.device:
-    if name == "auto":
-        return torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    return torch.device(name)
+    return resolve_device(name)
 
 
-def _autocast(device: torch.device, precision: str):
+def _autocast(device: torch.device, precision: str) -> torch.autocast:
     dtype = {"fp16": torch.float16, "bf16": torch.bfloat16}.get(precision)
     return torch.autocast(device_type=device.type, dtype=dtype, enabled=dtype is not None)
 
@@ -118,6 +129,11 @@ def _model_inputs(
         delta = _tensor(batch, "garl_delta_t_s", device, dtype=torch.float32)
         motion = observable_motion_from_boxes_torch(boxes, delta)
         used_keys.add("context_boxes")
+    jepa_context_motion = (
+        _tensor(batch, "jepa_context_motion", device, dtype=torch.float32)
+        if "jepa_context_motion" in batch
+        else torch.zeros_like(motion)
+    )
     rgb = None
     if "garl_rgb_pair" in batch:
         rgb = _tensor(batch, "garl_rgb_pair", device, dtype=torch.float32)
@@ -128,6 +144,7 @@ def _model_inputs(
         "event_roi_pair": _tensor(batch, "garl_event_roi", device, dtype=torch.float32),
         "delta_t_s": _tensor(batch, "garl_delta_t_s", device, dtype=torch.float32),
         "observable_motion": motion,
+        "jepa_context_motion": jepa_context_motion,
         "rgb_pair": rgb,
     }
 
@@ -176,11 +193,18 @@ def _losses(
         _signed_log1p(truth),
         beta=0.05,
     )
-    jepa_loss = functional.smooth_l1_loss(
-        functional.normalize(output.jepa_prediction.float(), dim=-1),
-        functional.normalize(output.jepa_target.float(), dim=-1),
-        beta=0.1,
+    jepa_pair_valid = (
+        _tensor(batch, "jepa_pair_valid", device).bool().reshape(-1)
+        if "jepa_pair_valid" in batch
+        else torch.ones_like(truth, dtype=torch.bool)
     )
+    jepa_loss = truth.new_zeros(())
+    if jepa_pair_valid.any():
+        jepa_loss = functional.smooth_l1_loss(
+            functional.normalize(output.jepa_prediction[jepa_pair_valid].float(), dim=-1),
+            functional.normalize(output.jepa_target[jepa_pair_valid].float(), dim=-1),
+            beta=0.1,
+        )
 
     geometry_target = _tensor(batch, "geometry_v2_target", device, dtype=torch.float32)
     geometry_valid = _tensor(batch, "geometry_v2_valid", device).bool()
@@ -235,34 +259,175 @@ def _losses(
         "category": config.category_loss_weight * raw["category"],
         "foreground": config.foreground_loss_weight * raw["foreground"],
     }
-    weighted["total"] = sum(weighted.values())
+    weighted["total"] = torch.stack(list(weighted.values())).sum()
     for key, value in raw.items():
         weighted[f"raw_{key}"] = value
     return weighted
 
 
-def _balanced_sampler(dataset: GarlTTCLHRCacheDataset) -> WeightedRandomSampler:
-    groups = [str(dataset[index].get("sampling_group", "unlabelled")) for index in range(len(dataset))]
-    counts = {group: groups.count(group) for group in set(groups)}
-    weights = torch.as_tensor([1.0 / counts[group] for group in groups], dtype=torch.double)
-    return WeightedRandomSampler(weights, num_samples=len(weights), replacement=True)
+def _source_shard_key(dataset: Dataset[dict[str, Any]], index: int) -> str:
+    """Resolve a local index to its compressed shard without loading it."""
+
+    current: Dataset[dict[str, Any]] = dataset
+    source_index = index
+    while isinstance(current, Subset):
+        source_index = int(current.indices[source_index])
+        current = cast(Dataset[dict[str, Any]], current.dataset)
+    entries = getattr(current, "entries", None)
+    if isinstance(entries, list) and 0 <= source_index < len(entries):
+        entry = entries[source_index]
+        if isinstance(entry, tuple) and entry:
+            return str(entry[0])
+    return "__single_shard__"
+
+
+def _balanced_sampling_metadata(
+    dataset: Dataset[dict[str, Any]],
+) -> tuple[list[str], list[tuple[str, str]], list[str]]:
+    """Extract lightweight metadata once and reuse it across training epochs."""
+
+    base: Dataset[dict[str, Any]] = dataset
+    source_indices = list(range(len(cast(Sized, dataset))))
+    while isinstance(base, Subset):
+        source_indices = [int(base.indices[index]) for index in source_indices]
+        base = cast(Dataset[dict[str, Any]], base.dataset)
+    cache_key = tuple(source_indices)
+    cache: dict[tuple[int, ...], tuple[list[str], list[tuple[str, str]], list[str]]] = getattr(
+        base, "_e_jepa_ttc_balanced_metadata", {}
+    )
+    cached = cache.get(cache_key)
+    if cached is not None:
+        return cached
+
+    groups: list[str] = []
+    tracks: list[tuple[str, str]] = []
+    shard_keys: list[str] = []
+    for local_index, source_index in enumerate(source_indices):
+        row = base[source_index]
+        groups.append(str(row.get("sampling_group", "unlabelled")))
+        tracks.append((str(row.get("sequence_id", "")), str(row.get("track_id", ""))))
+        shard_keys.append(_source_shard_key(dataset, local_index))
+        del row
+    cached = (groups, tracks, shard_keys)
+    cache[cache_key] = cached
+    base.__dict__["_e_jepa_ttc_balanced_metadata"] = cache
+    return cached
+
+
+class _ShardLocalWeightedBatchSampler(Sampler[list[int]]):
+    """Hierarchically balance rows while keeping compressed-shard locality."""
+
+    def __init__(
+        self,
+        dataset: Dataset[dict[str, Any]],
+        *,
+        batch_size: int,
+        seed: int,
+    ) -> None:
+        if batch_size <= 0:
+            raise ValueError("batch_size must be positive")
+        dataset_length = len(cast(Sized, dataset))
+        if dataset_length <= 0:
+            raise ValueError("Balanced sampling requires a non-empty dataset")
+        # Do not retain sample dictionaries: one sample can contain several
+        # high-resolution tensors and retaining all rows recreates the full cache in RAM.
+        groups, tracks, shard_keys = _balanced_sampling_metadata(dataset)
+
+        group_tracks: dict[str, set[tuple[str, str]]] = {}
+        track_counts: dict[tuple[str, tuple[str, str]], int] = {}
+        for group, track in zip(groups, tracks, strict=True):
+            group_tracks.setdefault(group, set()).add(track)
+            key = (group, track)
+            track_counts[key] = track_counts.get(key, 0) + 1
+        group_count = max(len(group_tracks), 1)
+        weights = [
+            1.0
+            / (
+                group_count
+                * max(len(group_tracks[group]), 1)
+                * max(track_counts[(group, track)], 1)
+            )
+            for group, track in zip(groups, tracks, strict=True)
+        ]
+        generator = torch.Generator().manual_seed(seed)
+        sampled = torch.multinomial(
+            torch.tensor(weights, dtype=torch.float64),
+            dataset_length,
+            replacement=True,
+            generator=generator,
+        ).tolist()
+        by_shard: dict[str, list[int]] = {}
+        for index in sampled:
+            by_shard.setdefault(shard_keys[index], []).append(index)
+        shard_order = list(by_shard)
+        permutation = torch.randperm(len(shard_order), generator=generator).tolist()
+        self._batches = [
+            indices[start : start + batch_size]
+            for shard_position in permutation
+            for indices in (by_shard[shard_order[shard_position]],)
+            for start in range(0, len(indices), batch_size)
+        ]
+
+    def __iter__(self) -> Iterator[list[int]]:
+        yield from self._batches
+
+    def __len__(self) -> int:
+        return len(self._batches)
+
+
+def _balanced_sampler(
+    dataset: Dataset[dict[str, Any]],
+    *,
+    batch_size: int,
+    seed: int,
+) -> _ShardLocalWeightedBatchSampler:
+    """Balance strata/tracks/states without random access across shards."""
+
+    return _ShardLocalWeightedBatchSampler(dataset, batch_size=batch_size, seed=seed)
+
+
+def _deterministic_indices(length: int, maximum: int | None) -> list[int] | None:
+    """Select a bounded prefix to preserve locality in shard-cached datasets."""
+
+    if maximum is None or maximum >= length:
+        return None
+    if maximum <= 0:
+        raise ValueError("maximum must be positive when provided.")
+    return list(range(maximum))
 
 
 def _loader(
-    dataset: GarlTTCLHRCacheDataset,
+    dataset: Dataset[dict[str, Any]],
     config: EAPLHRTrainerConfig,
     *,
     train: bool,
+    epoch: int = 0,
+    indices: list[int] | None = None,
 ) -> DataLoader[dict[str, Any]]:
-    sampler = _balanced_sampler(dataset) if train and config.balanced_sampling else None
+    selected_dataset: Dataset[dict[str, Any]] = (
+        dataset if indices is None else Subset(dataset, indices)
+    )
+    batch_sampler = (
+        _balanced_sampler(
+            selected_dataset,
+            batch_size=config.batch_size,
+            seed=config.seed + epoch,
+        )
+        if train and config.balanced_sampling
+        else None
+    )
+    common = {
+        "num_workers": config.num_workers,
+        "pin_memory": cuda_is_usable(),
+        "persistent_workers": config.num_workers > 0,
+    }
+    if batch_sampler is not None:
+        return DataLoader(selected_dataset, batch_sampler=batch_sampler, **common)
     return DataLoader(
-        dataset,
+        selected_dataset,
         batch_size=config.batch_size,
-        sampler=sampler,
-        shuffle=train and sampler is None,
-        num_workers=config.num_workers,
-        pin_memory=torch.cuda.is_available(),
-        persistent_workers=config.num_workers > 0,
+        shuffle=train,
+        **common,
     )
 
 
@@ -275,6 +440,11 @@ def _evaluate(
     truth_rows: list[np.ndarray] = []
     prediction_rows: list[np.ndarray] = []
     sequences: list[str] = []
+    sample_tokens: list[str] = []
+    track_ids: list[str] = []
+    timestamps: list[int] = []
+    categories: list[str] = []
+    sampling_groups: list[str] = []
     with torch.inference_mode():
         for batch in loader:
             output = _forward(model, batch, device)
@@ -284,15 +454,36 @@ def _evaluate(
             if not isinstance(sequence_values, list):
                 raise TypeError("sequence_id must collate to a list.")
             sequences.extend(str(value) for value in sequence_values)
+            sample_tokens.extend(
+                str(value) for value in batch.get("sample_token", [""] * len(sequence_values))
+            )
+            track_ids.extend(
+                str(value) for value in batch.get("track_id", [""] * len(sequence_values))
+            )
+            timestamps.extend(
+                int(value) for value in batch.get("timestamp_us", [0] * len(sequence_values))
+            )
+            categories.extend(
+                str(value) for value in batch.get("category", ["unknown"] * len(sequence_values))
+            )
+            sampling_groups.extend(
+                str(value)
+                for value in batch.get("sampling_group", ["unknown"] * len(sequence_values))
+            )
     truth = np.concatenate(truth_rows)
     prediction = np.concatenate(prediction_rows)
     sequence_array = np.asarray(sequences)
     metrics = object_ttc_metrics(truth, prediction)
-    metrics.update(grouped_ttc_selection_components(truth, prediction, sequence_array))
+    metrics.update(sequence_macro_signed_metrics(truth, prediction, sequence_array))
     return metrics, {
         "ttc_true": truth,
         "ttc_pred": prediction,
         "sequence_id": sequence_array,
+        "sample_token": np.asarray(sample_tokens),
+        "track_id": np.asarray(track_ids),
+        "timestamp_us": np.asarray(timestamps, dtype=np.int64),
+        "category": np.asarray(categories),
+        "sampling_group": np.asarray(sampling_groups),
     }
 
 
@@ -304,12 +495,24 @@ def _checkpoint_payload(
     model_config: EAPLHRJEPATTCConfig,
     trainer_config: EAPLHRTrainerConfig,
     manifest: dict[str, Any],
+    scaler: Any | None = None,  # noqa: ANN401
+    stale: int = 0,
+    best_score: float = math.inf,
+    best_epoch: int = 0,
 ) -> dict[str, Any]:
     return {
         "model_state_dict": model.state_dict(),
         "optimizer_state_dict": optimizer.state_dict(),
+        "scaler_state_dict": scaler.state_dict() if scaler is not None else None,
+        "python_random_state": random.getstate(),
+        "numpy_random_state": np.random.get_state(),
+        "torch_rng_state": torch.get_rng_state(),
+        "cuda_rng_state_all": torch.cuda.get_rng_state_all() if cuda_is_usable() else None,
+        "early_stopping_stale": stale,
+        "best_score": best_score,
+        "best_epoch": best_epoch,
         "epoch": epoch,
-        "selected_by": "validation_sequence_macro_selection_score",
+        "selected_by": "validation_sequence_macro_paper_MiD_overall_signed_v1",
         "model_config": asdict(model_config),
         "trainer_config": asdict(trainer_config),
         "uses_reconstructed_public_eap_ttc": False,
@@ -319,6 +522,8 @@ def _checkpoint_payload(
         "official_garlttc_join_keys_sha256": manifest["garlttc_join_keys_sha256"],
         "ttc_head_transferable_to_evttc": True,
         "privileged_inputs_forbidden": sorted(FORBIDDEN_MODEL_INPUT_KEYS),
+        "jepa_predictor_is_strictly_causal": True,
+        "hierarchical_track_balancing": trainer_config.balanced_sampling,
     }
 
 
@@ -334,6 +539,7 @@ def train_eap_lhr_jepa_ttc(
 ) -> dict[str, Any]:
     """Train on official GarlTTC labels while preserving the complete TTC head."""
 
+    random.seed(trainer_config.seed)
     torch.manual_seed(trainer_config.seed)
     np.random.seed(trainer_config.seed)
     device = _device(device_name)
@@ -345,8 +551,16 @@ def train_eap_lhr_jepa_ttc(
 
     train_dataset = GarlTTCLHRCacheDataset(manifest_path, splits=("train",))
     validation_dataset = GarlTTCLHRCacheDataset(manifest_path, splits=("validation",))
-    train_loader = _loader(train_dataset, trainer_config, train=True)
-    validation_loader = _loader(validation_dataset, trainer_config, train=False)
+    train_indices = _deterministic_indices(len(train_dataset), trainer_config.max_train_samples)
+    validation_indices = _deterministic_indices(
+        len(validation_dataset), trainer_config.max_validation_samples
+    )
+    validation_loader = _loader(
+        validation_dataset,
+        trainer_config,
+        train=False,
+        indices=validation_indices,
+    )
     model = EAPLHRJEPATTC(model_config).to(device)
     if geo_checkpoint is not None:
         checkpoint = torch.load(geo_checkpoint, map_location="cpu", weights_only=False)
@@ -364,6 +578,9 @@ def train_eap_lhr_jepa_ttc(
         lr=trainer_config.learning_rate,
         weight_decay=trainer_config.weight_decay,
     )
+    scaler = torch.amp.GradScaler(  # type: ignore[reportPrivateImportUsage]
+        "cuda", enabled=(device.type == "cuda" and trainer_config.precision == "fp16")
+    )
     output = Path(output_dir)
     output.mkdir(parents=True, exist_ok=True)
     history_path = output / "history.jsonl"
@@ -375,6 +592,19 @@ def train_eap_lhr_jepa_ttc(
         saved = torch.load(output / "last.pt", map_location="cpu", weights_only=False)
         model.load_state_dict(saved["model_state_dict"], strict=True)
         optimizer.load_state_dict(saved["optimizer_state_dict"])
+        if saved.get("scaler_state_dict") is not None:
+            scaler.load_state_dict(saved["scaler_state_dict"])
+        if saved.get("python_random_state") is not None:
+            random.setstate(saved["python_random_state"])
+        if saved.get("numpy_random_state") is not None:
+            np.random.set_state(saved["numpy_random_state"])
+        if saved.get("torch_rng_state") is not None:
+            torch.set_rng_state(saved["torch_rng_state"])
+        if cuda_is_usable() and saved.get("cuda_rng_state_all") is not None:
+            torch.cuda.set_rng_state_all(saved["cuda_rng_state_all"])
+        stale = int(saved.get("early_stopping_stale", 0))
+        best_score = float(saved.get("best_score", best_score))
+        best_epoch = int(saved.get("best_epoch", best_epoch))
         start_epoch = int(saved["epoch"]) + 1
         if (output / "best.pt").exists():
             best = torch.load(output / "best.pt", map_location="cpu", weights_only=False)
@@ -384,6 +614,13 @@ def train_eap_lhr_jepa_ttc(
     history: list[dict[str, Any]] = []
     started = time.perf_counter()
     for epoch in range(start_epoch, trainer_config.epochs + 1):
+        train_loader = _loader(
+            train_dataset,
+            trainer_config,
+            train=True,
+            epoch=epoch,
+            indices=train_indices,
+        )
         model.train()
         model.target_roi_encoder.eval()
         train_rows: list[dict[str, float]] = []
@@ -392,23 +629,19 @@ def train_eap_lhr_jepa_ttc(
             with _autocast(device, trainer_config.precision):
                 prediction = _forward(model, batch, device)
                 losses = _losses(prediction, batch, device, trainer_config)
-            losses["total"].backward()
+            scaler.scale(losses["total"]).backward()
+            scaler.unscale_(optimizer)
             nn.utils.clip_grad_norm_(parameters, 1.0)
-            optimizer.step()
+            scaler.step(optimizer)
+            scaler.update()
             model.update_target(trainer_config.ema_momentum)
-            train_rows.append(
-                {
-                    key: float(value.detach().cpu())
-                    for key, value in losses.items()
-                }
-            )
+            train_rows.append({key: float(value.detach().cpu()) for key, value in losses.items()})
         validation, _arrays = _evaluate(model, validation_loader, device)
-        score = float(validation["sequence_macro_selection_score"])
+        score = float(validation["sequence_macro_paper_MiD_overall"])
         row = {
             "epoch": epoch,
             "train": {
-                key: float(np.mean([values[key] for values in train_rows]))
-                for key in train_rows[0]
+                key: float(np.mean([values[key] for values in train_rows])) for key in train_rows[0]
             },
             "validation": validation,
         }
@@ -423,6 +656,10 @@ def train_eap_lhr_jepa_ttc(
             model_config=model_config,
             trainer_config=trainer_config,
             manifest=manifest,
+            scaler=scaler,
+            stale=(0 if score < best_score else stale + 1),
+            best_score=min(best_score, score),
+            best_epoch=(epoch if score < best_score else best_epoch),
         )
         payload["validation_score"] = score
         torch.save(payload, output / "last.pt")
@@ -446,7 +683,7 @@ def train_eap_lhr_jepa_ttc(
             "model_state_dict": model.inference_state_dict(),
             "model_config": asdict(model_config),
             "role": "weights_only",
-            "selected_by": "validation_sequence_macro_selection_score",
+            "selected_by": "validation_sequence_macro_paper_MiD_overall_signed_v1",
             "uses_reconstructed_public_eap_ttc": False,
             "uses_official_garl_ttc_labels": True,
             "official_garlttc_annotations_sha256": manifest["garlttc_annotations_sha256"],
@@ -471,13 +708,15 @@ def train_eap_lhr_jepa_ttc(
             "ttc_head_transferable_to_evttc": True,
             "same_head_required_for_zero_shot": True,
             "privileged_inputs_forbidden": sorted(FORBIDDEN_MODEL_INPUT_KEYS),
+            "jepa_predictor_is_strictly_causal": True,
+            "hierarchical_track_balancing": trainer_config.balanced_sampling,
         },
         output / "weights_only.pt",
     )
     summary = {
-        "artifact_type": "eap_lhr_object_jepa_ttc_training_v2",
+        "artifact_type": "eap_lhr_object_jepa_ttc_training_v3",
         "best_epoch": best_epoch,
-        "best_validation_sequence_macro_selection_score": best_score,
+        "best_validation_sequence_macro_paper_MiD_overall": best_score,
         "epochs_completed_this_invocation": len(history),
         "elapsed_seconds": time.perf_counter() - started,
         "model_config": asdict(model_config),
@@ -504,6 +743,8 @@ def evaluate_eap_lhr_zero_shot(
 ) -> dict[str, Any]:
     """Evaluate the same TTC estimator without any target-dataset updates."""
 
+    manifest = read_structured(manifest_path)
+    validate_cache_manifest_input_schema(manifest)
     device = _device(device_name)
     checkpoint = torch.load(checkpoint_path, map_location="cpu", weights_only=False)
     if checkpoint.get("uses_official_garl_ttc_labels") is not True:
@@ -512,9 +753,7 @@ def evaluate_eap_lhr_zero_shot(
     model = EAPLHRJEPATTC(model_config).to(device)
     missing, unexpected = model.load_state_dict(checkpoint["model_state_dict"], strict=False)
     allowed_missing = {
-        name
-        for name in missing
-        if name.startswith(("target_roi_encoder.", "jepa_predictor."))
+        name for name in missing if name.startswith(("target_roi_encoder.", "jepa_predictor."))
     }
     if set(missing) != allowed_missing or unexpected:
         raise ValueError(
@@ -530,11 +769,28 @@ def evaluate_eap_lhr_zero_shot(
         dataset,
         batch_size=batch_size,
         num_workers=num_workers,
-        pin_memory=torch.cuda.is_available(),
+        pin_memory=cuda_is_usable(),
     )
     metrics, arrays = _evaluate(model, loader, device)
+    predictions = []
+    for index in range(arrays["ttc_true"].shape[0]):
+        truth = float(arrays["ttc_true"][index])
+        predicted = float(arrays["ttc_pred"][index])
+        predictions.append(
+            {
+                "sequence_id": str(arrays["sequence_id"][index]),
+                "sample_token": str(arrays["sample_token"][index]),
+                "track_id": str(arrays["track_id"][index]),
+                "timestamp_us": int(arrays["timestamp_us"][index]),
+                "category": str(arrays["category"][index]),
+                "sampling_group": str(arrays["sampling_group"][index]),
+                "target_ttc_s": truth,
+                "predicted_ttc_s": predicted,
+                "absolute_error_s": abs(predicted - truth),
+            }
+        )
     result = {
-        "artifact_type": "eap_lhr_object_jepa_ttc_zero_shot_v2",
+        "artifact_type": "eap_lhr_object_jepa_ttc_zero_shot_v3",
         "training_updates_on_target_dataset": 0,
         "same_ttc_head_as_eap_training": True,
         "checkpoint": str(checkpoint_path),
@@ -543,6 +799,7 @@ def evaluate_eap_lhr_zero_shot(
         "metrics": metrics,
         "sample_count": int(arrays["ttc_true"].shape[0]),
         "no_privileged_model_inputs": True,
+        "predictions": predictions,
     }
     write_structured(output_path, result)
     return result

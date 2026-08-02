@@ -65,6 +65,7 @@ def _run_or_resume_pretraining(
         use_ego_actions=args.use_ego_actions,
         use_recurrence=args.use_recurrence,
         use_geometry=args.use_geometry,
+        num_workers=args.workers,
         dry_run_fingerprint=True,
     )
     assert isinstance(expected_fingerprint, str)
@@ -76,7 +77,7 @@ def _run_or_resume_pretraining(
         and _check_provenance(summary_path, expected_fingerprint)
     ):
         return _load(summary_path)
-    return pretrain_object_event_jepa(
+    result = pretrain_object_event_jepa(
         cache_manifest_path=cache,
         output_dir=output,
         epochs=args.pretrain_epochs,
@@ -92,8 +93,12 @@ def _run_or_resume_pretraining(
         use_ego_actions=args.use_ego_actions,
         use_recurrence=args.use_recurrence,
         use_geometry=args.use_geometry,
+        num_workers=args.workers,
         dry_run_fingerprint=False,
     )
+    if isinstance(result, str):
+        raise TypeError("Object-JEPA pretraining returned a fingerprint instead of a summary.")
+    return result
 
 
 def _run_or_resume_finetuning(
@@ -132,7 +137,7 @@ def _run_or_resume_finetuning(
         and _check_provenance(summary_path, expected_fingerprint)
     ):
         return _load(summary_path)
-    return fine_tune_object_ttc(
+    result = fine_tune_object_ttc(
         cache_manifest_path=cache,
         output_dir=output,
         pretrained_checkpoint_path=pretrained,
@@ -149,6 +154,9 @@ def _run_or_resume_finetuning(
         allow_final_test_evaluation=args.allow_final_test_evaluation,
         dry_run_fingerprint=False,
     )
+    if isinstance(result, str):
+        raise TypeError("Object-TTC fine-tuning returned a fingerprint instead of a summary.")
+    return result
 
 
 def _row(summary: dict[str, Any]) -> dict[str, Any]:
@@ -244,6 +252,12 @@ def main() -> int:
     parser.add_argument("--predictor-depth", type=int, default=3)
     parser.add_argument("--predictor-heads", type=int, default=6)
     parser.add_argument("--device", default="auto")
+    parser.add_argument(
+        "--workers",
+        type=int,
+        default=0,
+        help="Pretraining DataLoader workers; zero is the safe Windows/CI default.",
+    )
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--no-ego-actions", dest="use_ego_actions", action="store_false")
     parser.add_argument("--no-recurrence", dest="use_recurrence", action="store_false")

@@ -69,9 +69,9 @@ def _run_logged(
         )
         assert process.stdout is not None
         for line in process.stdout:
-            printable = line.encode(
-                sys.stdout.encoding or "utf-8", errors="replace"
-            ).decode(sys.stdout.encoding or "utf-8")
+            printable = line.encode(sys.stdout.encoding or "utf-8", errors="replace").decode(
+                sys.stdout.encoding or "utf-8"
+            )
             print(printable, end="", flush=True)
             log_file.write(line)
             log_file.flush()
@@ -153,18 +153,24 @@ def main() -> int:
         default=Path("data/splits/carla_dvs_looming_blocked_v1.json"),
     )
     parser.add_argument("--carla-run-dir", type=Path)
-    parser.add_argument("--control-root", type=Path, default=Path(
-        "artifacts/runs/evttc32_architecture_v4_grouped_cv_confirm/core"
-    ))
-    parser.add_argument("--transfer-root", type=Path, default=Path(
-        "artifacts/runs/evttc32_carla_ssl_transfer_v1/core"
-    ))
-    parser.add_argument("--orchestration-dir", type=Path, default=Path(
-        "artifacts/runs/carla_evttc_complete_v1"
-    ))
-    parser.add_argument("--comparison-output", type=Path, default=Path(
-        "artifacts/metrics/evttc_a0_carla_ssl_transfer_v1.json"
-    ))
+    parser.add_argument(
+        "--control-root",
+        type=Path,
+        default=Path("artifacts/runs/evttc32_architecture_v4_grouped_cv_confirm/core"),
+    )
+    parser.add_argument(
+        "--transfer-root",
+        type=Path,
+        default=Path("artifacts/runs/evttc32_carla_ssl_transfer_v1/core"),
+    )
+    parser.add_argument(
+        "--orchestration-dir", type=Path, default=Path("artifacts/runs/carla_evttc_complete_v1")
+    )
+    parser.add_argument(
+        "--comparison-output",
+        type=Path,
+        default=Path("artifacts/metrics/evttc_a0_carla_ssl_transfer_v1.json"),
+    )
     parser.add_argument("--folds", type=int, nargs="+", default=list(range(5)))
     parser.add_argument("--seeds", type=int, nargs="+", default=[7, 13, 21])
     parser.add_argument("--carla-workers", type=int, default=8)
@@ -177,9 +183,7 @@ def main() -> int:
     requested = set(args.stages)
     if "all" in requested:
         requested = {"carla", "evttc-control", "transfer", "compare"}
-    carla_run = args.carla_run_dir or Path(
-        f"artifacts/runs/carla_jepa_{args.profile}_seed42_v1"
-    )
+    carla_run = args.carla_run_dir or Path(f"artifacts/runs/carla_jepa_{args.profile}_seed42_v1")
     best_checkpoint = carla_run / "carla_jepa_encoder_best.pt"
     carla_metrics = carla_run / "metrics.json"
     control_aggregate = args.control_root / "aggregate.json"
@@ -311,9 +315,7 @@ def main() -> int:
                     dry_run=False,
                 )
             else:
-                stages.append(
-                    {"name": "04_evttc_random_control", "status": "skipped_complete"}
-                )
+                stages.append({"name": "04_evttc_random_control", "status": "skipped_complete"})
         if "transfer" in requested:
             if not args.dry_run and not best_checkpoint.is_file():
                 raise FileNotFoundError(f"CARLA best checkpoint is missing: {best_checkpoint}.")
@@ -339,9 +341,7 @@ def main() -> int:
                     dry_run=False,
                 )
             else:
-                stages.append(
-                    {"name": "05_evttc_carla_transfer", "status": "skipped_complete"}
-                )
+                stages.append({"name": "05_evttc_carla_transfer", "status": "skipped_complete"})
         if "compare" in requested:
             if args.dry_run:
                 stages.append({"name": "06_compare_transfer", "status": "planned"})

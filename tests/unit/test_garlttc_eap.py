@@ -429,7 +429,6 @@ def test_collate_garlttc_metadata(mock_garlttc_dir: Path, tmp_path: Path):
     ds.close()
 
 
-
 @dataclass
 class ValidGarlTTCFixture:
     eap_root: Path

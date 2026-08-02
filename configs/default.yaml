@@ -1,0 +1,6 @@
+experiment: configs/experiment/smoke.yaml
+data: configs/data/synthetic_events.yaml
+representation: configs/representation/voxel_grid.yaml
+model: configs/model/tiny_cnn.yaml
+train: configs/train/finetune.yaml
+claim_level: diagnostic

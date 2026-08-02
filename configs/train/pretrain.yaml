@@ -1,0 +1,13 @@
+objective: ssl_pure
+uses_ttc_labels: false
+uses_boxes: false
+uses_categories: false
+uses_depth: false
+uses_future_labels_for_sampling: false
+epochs: 30
+batch_size: 24
+gradient_accumulation: 2
+precision: bf16
+optimizer: adamw
+learning_rate: 0.0003
+weight_decay: 0.05

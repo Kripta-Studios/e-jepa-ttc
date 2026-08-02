@@ -1,0 +1,20 @@
+name: smoke-train
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "src/**"
+      - "scripts/**"
+      - "tests/**"
+      - "configs/**"
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v4
+      - run: uv sync --all-groups --no-editable
+      - run: uv run --no-sync pytest -q tests/unit/test_synthetic_smoke.py tests/unit/test_generic_api_contracts.py
+      - run: uv run --no-sync python scripts/run_plan_phase12_smoke.py --help

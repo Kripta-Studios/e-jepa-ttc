@@ -24,6 +24,7 @@ from e_jepa_ttc.evaluation.object_ttc import (
     object_ttc_metrics,
 )
 from e_jepa_ttc.models.garl_ttc_replica import GarlTTCConfig, GarlTTCOutput, GarlTTCReplica
+from e_jepa_ttc.reproducibility import cuda_device_name, resolve_device
 from e_jepa_ttc.training.object_geo_trainer import (
     OGETrainerConfig,
     _atomic_save,
@@ -49,12 +50,16 @@ def _garl_forward(
 ) -> GarlTTCOutput:
     if "garl_delta_t_s" not in batch:
         raise ValueError("Source-audited Garl cache requires garl_delta_t_s.")
-    elapsed_s = _tensor(
-        batch,
-        "garl_delta_t_s",
-        device,
-        dtype=torch.float32,
-    ).reshape(-1).clamp_min(1e-6)
+    elapsed_s = (
+        _tensor(
+            batch,
+            "garl_delta_t_s",
+            device,
+            dtype=torch.float32,
+        )
+        .reshape(-1)
+        .clamp_min(1e-6)
+    )
     rgb_pair = (
         _tensor(batch, "garl_rgb_pair", device, dtype=torch.float32)
         if "garl_rgb_pair" in batch
@@ -63,9 +68,7 @@ def _garl_forward(
     if rgb_pair is not None and rgb_pair.max() > 1.5:
         rgb_pair = rgb_pair / 255.0
     if "garl_event_roi" not in batch:
-        raise ValueError(
-            "Paper-aligned Garl requires garl_event_roi from cache format v2."
-        )
+        raise ValueError("Paper-aligned Garl requires garl_event_roi from cache format v2.")
     return model(
         _tensor(batch, "garl_event_roi", device, dtype=torch.float32),
         elapsed_s,
@@ -119,14 +122,8 @@ def _loss(
             )
             if valid.any():
                 losses["mid"] = (
-                    (
-                        output.predicted_height_ratio[valid].log()
-                        - target_ratio[valid].log()
-                    )
-                    .abs()
-                    .mean()
-                    * 1e4
-                )
+                    output.predicted_height_ratio[valid].log() - target_ratio[valid].log()
+                ).abs().mean() * 1e4
     if output.foreground_logits is not None:
         if "garl_foreground_mask" not in batch:
             raise ValueError("Foreground Garl requires a cached polygon/SAM target.")
@@ -289,9 +286,7 @@ def _load_local_lhr_branches(
     )
     paths = {
         "rgb": Path(rgb_branch_checkpoint) if rgb_branch_checkpoint is not None else None,
-        "event": (
-            Path(event_branch_checkpoint) if event_branch_checkpoint is not None else None
-        ),
+        "event": (Path(event_branch_checkpoint) if event_branch_checkpoint is not None else None),
     }
     if requires_branches and any(path is None for path in paths.values()):
         raise ValueError(
@@ -347,11 +342,7 @@ def train_garl_ttc(
     trainer = trainer_config or OGETrainerConfig()
     assert_no_sealed_benchmark_paths((cache_manifest_path, output_dir))
     _set_seed(trainer.seed)
-    device = (
-        torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        if device_name == "auto"
-        else torch.device(device_name)
-    )
+    device = resolve_device(device_name)
     train_dataset = EAPObjectCacheDataset(cache_manifest_path, splits=("train",))
     validation_dataset = EAPObjectCacheDataset(cache_manifest_path, splits=("validation",))
     train_indices = _indices(len(train_dataset), trainer.max_train_samples)
@@ -384,7 +375,8 @@ def train_garl_ttc(
     initial_model_sha256 = _state_dict_hash(model)
     sample_selection_sha256 = _selection_hash(train_indices, validation_indices)
     if device.type == "cuda":
-        torch.cuda.reset_peak_memory_stats(device)
+        torch.cuda.set_device(device)
+        torch.cuda.reset_peak_memory_stats()
     optimizer = torch.optim.Adam(
         model.parameters(),
         lr=trainer.learning_rate,
@@ -404,7 +396,7 @@ def train_garl_ttc(
         "git_commit": _git_commit(),
         "source_tree_sha256": _source_tree_hash(),
         "device": str(device),
-        "gpu_name": torch.cuda.get_device_name(0) if torch.cuda.is_available() else None,
+        "gpu_name": cuda_device_name(device),
         "peak_vram_bytes": (
             int(torch.cuda.max_memory_allocated(device)) if device.type == "cuda" else 0
         ),
@@ -579,15 +571,12 @@ def train_garl_ttc(
         },
         "effective_batch_size": trainer.batch_size * trainer.gradient_accumulation,
         "train_batches_per_epoch": len(train_loader),
-        "optimizer_steps_per_epoch": math.ceil(
-            len(train_loader) / trainer.gradient_accumulation
-        ),
+        "optimizer_steps_per_epoch": math.ceil(len(train_loader) / trainer.gradient_accumulation),
         "completed_optimizer_steps": (
             math.ceil(len(train_loader) / trainer.gradient_accumulation) * completed
         ),
         "maximum_optimizer_steps": (
-            math.ceil(len(train_loader) / trainer.gradient_accumulation)
-            * trainer.epochs
+            math.ceil(len(train_loader) / trainer.gradient_accumulation) * trainer.epochs
         ),
         "epochs_completed": completed,
         "best_epoch": best_epoch,

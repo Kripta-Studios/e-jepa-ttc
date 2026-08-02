@@ -6,6 +6,19 @@ import torch
 from torch import nn
 
 from e_jepa_ttc.models.garl_ttc_replica import GarlTTCConfig, GarlTTCReplica
+from e_jepa_ttc.models.highres_factorized import (
+    EJEPATubeletLHR,
+    EJEPATubeletLHRConfig,
+    EJEPATubeletLHROutput,
+    HighResFeatures,
+    PatchGeometry,
+    TheoreticalOOMError,
+)
+from e_jepa_ttc.models.highres_token_pyramid import (
+    HighResolutionTokenPyramid,
+    PyramidTaps,
+    SpaceToDepthPatchMerge,
+)
 from e_jepa_ttc.models.multimodal import (
     DINOv3FeatureTeacher,
     ObjectEventRGBFusion,
@@ -258,6 +271,15 @@ __all__ = [
     "DINOv3FeatureTeacher",
     "GarlTTCConfig",
     "GarlTTCReplica",
+    "EJEPATubeletLHR",
+    "EJEPATubeletLHRConfig",
+    "EJEPATubeletLHROutput",
+    "HighResFeatures",
+    "PatchGeometry",
+    "TheoreticalOOMError",
+    "HighResolutionTokenPyramid",
+    "PyramidTaps",
+    "SpaceToDepthPatchMerge",
     "ObjectEventRGBFusion",
     "RGBRecurrentObjectEncoder",
     "ObjectCentricEventJEPA",

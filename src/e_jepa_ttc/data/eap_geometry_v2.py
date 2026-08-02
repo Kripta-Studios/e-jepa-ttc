@@ -66,9 +66,7 @@ def coarse_category(category: str) -> str:
 
 
 def category_index(category: str) -> int:
-    return {"vehicle": 0, "pedestrian": 1, "two_wheeler": 2, "other": 3}[
-        coarse_category(category)
-    ]
+    return {"vehicle": 0, "pedestrian": 1, "two_wheeler": 2, "other": 3}[coarse_category(category)]
 
 
 def _normalized_box(state: EAPObjectState) -> tuple[float, float, float, float]:
@@ -149,9 +147,7 @@ def geometry_v2_targets(
         else float("nan")
     )
 
-    visibility_fraction = float(
-        np.clip(getattr(current, "visibility_fraction", 1.0), 0.0, 1.0)
-    )
+    visibility_fraction = float(np.clip(getattr(current, "visibility_fraction", 1.0), 0.0, 1.0))
     raw_box = getattr(current, "unclipped_bbox_xyxy", None)
     image_width, _image_height = EAP_IMAGE_SIZE
     truncated_left = float(raw_box is not None and raw_box[0] < 0.0)
@@ -171,7 +167,9 @@ def geometry_v2_targets(
     overlap = max(0.0, min(x1, corridor_right) - max(x0, corridor_left))
     corridor_overlap = overlap / max(width, 1e-6)
     corridor_center_distance = abs(center_x - 0.5) / corridor_half_width
-    corridor_velocity = -math.copysign(1.0, center_x - 0.5) * dcx if np.isfinite(dcx) else float("nan")
+    corridor_velocity = (
+        -math.copysign(1.0, center_x - 0.5) * dcx if np.isfinite(dcx) else float("nan")
+    )
     entry_direction = (
         float(np.sign(corridor_velocity)) if np.isfinite(corridor_velocity) else float("nan")
     )
@@ -205,7 +203,11 @@ def geometry_v2_targets(
     values[~valid] = 0.0
 
     category = coarse_category(current.category)
-    motion = "transverse" if np.isfinite(lateral_speed_raw) and lateral_speed_raw > 0.25 else "longitudinal"
+    motion = (
+        "transverse"
+        if np.isfinite(lateral_speed_raw) and lateral_speed_raw > 0.25
+        else "longitudinal"
+    )
     visibility = "partial" if visibility_fraction < 0.95 else "visible"
     corridor = "intersecting" if corridor_overlap >= 0.25 else "off_corridor"
     return EAPGeometryV2(

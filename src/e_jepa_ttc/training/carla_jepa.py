@@ -29,6 +29,12 @@ from e_jepa_ttc.data.carla_looming import (
 from e_jepa_ttc.data.types import EventBatch
 from e_jepa_ttc.models import build_encoder
 from e_jepa_ttc.representations.voxel_grid import encode_voxel_grid
+from e_jepa_ttc.reproducibility import (
+    cuda_device_name,
+    cuda_is_usable,
+    resolve_device,
+    seed_torch_cpu,
+)
 from e_jepa_ttc.training.jepa import DenseTemporalJEPAPredictor, _jepa_loss, _update_ema
 from e_jepa_ttc.utils.io import read_structured, write_structured
 
@@ -151,8 +157,9 @@ def _git_commit() -> str:
 def _set_seed(seed: int) -> None:
     random.seed(seed)
     np.random.seed(seed)
-    torch.manual_seed(seed)
-    torch.cuda.manual_seed_all(seed)
+    seed_torch_cpu(seed)
+    if cuda_is_usable():
+        torch.cuda.manual_seed_all(seed)
 
 
 def _downsample_events(events: EventBatch, *, width: int, height: int) -> EventBatch:
@@ -604,7 +611,7 @@ def _rng_state(loader: DataLoader[Any]) -> dict[str, Any]:
         "python": random.getstate(),
         "numpy": np.random.get_state(),
         "torch": torch.random.get_rng_state(),
-        "cuda": torch.cuda.get_rng_state_all() if torch.cuda.is_available() else [],
+        "cuda": torch.cuda.get_rng_state_all() if cuda_is_usable() else [],
         "loader_generator": generator.get_state() if generator is not None else None,
     }
 
@@ -614,7 +621,7 @@ def _restore_rng_state(payload: dict[str, Any], loader: DataLoader[Any]) -> None
     np.random.set_state(payload["numpy"])
     torch.random.set_rng_state(payload["torch"])
     cuda_state = payload.get("cuda", [])
-    if torch.cuda.is_available() and cuda_state:
+    if cuda_is_usable() and cuda_state:
         torch.cuda.set_rng_state_all(cuda_state)
     generator = getattr(loader, "generator", None)
     loader_state = payload.get("loader_generator")
@@ -698,10 +705,7 @@ def pretrain_carla_jepa(
 
     assert_no_sealed_benchmark_paths([root, manifest_path, split_path, output_dir])
     _set_seed(config.seed)
-    if device_name == "auto":
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    else:
-        device = torch.device(device_name)
+    device = resolve_device(device_name)
     if device.type == "cuda":
         torch.set_float32_matmul_precision("high")
         torch.backends.cuda.matmul.allow_tf32 = True
@@ -965,7 +969,7 @@ def pretrain_carla_jepa(
         "last_checkpoint_sha256": _hash_file(last_path),
         "elapsed_seconds": time.perf_counter() - start_time,
         "device": str(device),
-        "gpu_name": torch.cuda.get_device_name(device) if device.type == "cuda" else None,
+        "gpu_name": cuda_device_name(device),
         "peak_vram_bytes": (
             int(torch.cuda.max_memory_allocated(device)) if device.type == "cuda" else 0
         ),
@@ -1080,15 +1084,13 @@ def evaluate_carla_jepa(
         max_validation_samples=None,
     )
     _set_seed(config.seed)
-    if device_name == "auto":
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    else:
-        device = torch.device(device_name)
+    device = resolve_device(device_name)
     if device.type == "cuda":
         torch.set_float32_matmul_precision("high")
         torch.backends.cuda.matmul.allow_tf32 = True
         torch.backends.cudnn.allow_tf32 = True
-        torch.cuda.reset_peak_memory_stats(device)
+        torch.cuda.set_device(device)
+        torch.cuda.reset_peak_memory_stats()
     sequences = _sequences_for_role(manifest, split, role)
     dataset = CarlaJEPAVoxelDataset(root, sequences, config)
     loader = _loader(
@@ -1147,7 +1149,7 @@ def evaluate_carla_jepa(
         "metrics": metrics,
         "elapsed_seconds": time.perf_counter() - start_time,
         "device": str(device),
-        "gpu_name": torch.cuda.get_device_name(device) if device.type == "cuda" else None,
+        "gpu_name": cuda_device_name(device),
         "peak_vram_bytes": (
             int(torch.cuda.max_memory_allocated(device)) if device.type == "cuda" else 0
         ),

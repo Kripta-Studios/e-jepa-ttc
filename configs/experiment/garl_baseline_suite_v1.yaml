@@ -1,0 +1,106 @@
+suite:
+  artifact_type: garl_baseline_suite_v1
+  phase: 3
+  track: official_garl_local
+  execution_mode: plan_only
+  seeds: [7, 13, 23]
+  variants: [event_only, visual_only, rgbe_late_fusion]
+  selection_metric: validation_sequence_macro_paper_MiD_overall_signed_v1
+  test_labels_available: false
+  test_used_for_selection: false
+
+execution:
+  execute_training: false
+  description: validate gates and emit commands; never start training
+  checkpoint_snapshot_epochs: [50]
+  checkpoint_retention_note: "Retain only the final snapshot in materialized configs; training behavior is unchanged."
+
+protocol:
+  id: garlttc_official_v1
+  path: configs/protocol/garlttc_official_v1.yaml
+
+paths:
+  eap_root: ${EAP_ROOT}
+  garlttc_root: ${GARLTTC_DATA_ROOT}
+  release_root: ${GARLTTC_RELEASE_ROOT}
+  cache_manifest: ${GARLTTC_FULL_CACHE_MANIFEST}
+  cache_audit: ${GARLTTC_FULL_CACHE_AUDIT}
+
+gates:
+  readiness: artifacts/audits/recovery_v4/readiness.json
+  release_audit: artifacts/audits/garl_release_v1/audit.json
+  preprocessing_parity: artifacts/parity/garl_preprocessing_v1/parity.json
+  model_parity: artifacts/parity/garl_model_v1/parity.json
+
+required_readiness_gates:
+  names:
+    - ci_green
+    - artifact_contract_green
+    - cache_smoke_green
+    - cache_gzip_smoke_green
+    - signed_metrics_green
+    - official_release_audit_green
+    - official_preprocessing_parity_green
+    - official_model_parity_green
+    - cache_pilot_green
+    - full_train40_cache_gzip_green
+    - long_training_authorized
+
+cache:
+  expected_train_count: 71047
+  expected_validation_count: 17697
+  expected_candidate_count: 88744
+  allowed_compression: [gzip, none]
+
+release:
+  official_commit: 256661242b8a7f5e56aa3c1c02348b30f6e89de6
+  entrypoint: tools/train.py
+  config: configs/garl_ttc_eventdecoder.yaml
+  variant_configs:
+    event_only: configs/ablation/event_lhr.yaml
+    visual_only: configs/ablation/visual_lhr.yaml
+    rgbe_late_fusion: configs/garl_ttc_eventdecoder.yaml
+  checkpoints:
+    event_only:
+      path: checkpoints/paper_event_only_lhr.pth
+      sha256: fcaf9be47e2dafc6f73c6c3ebd102595ae06119dcae78aea698a42627b2b4fef
+    visual_only:
+      path: checkpoints/paper_visual_only_lhr.pth
+      sha256: 02d900d0ddf81086f4176b63663f952a7c753eeb033b13acc5030a892a88cf70
+    rgbe_late_fusion:
+      path: checkpoints/paper_ours_full.pth
+      sha256: e96a613a4fb877a1969d57ab562cadba89961fb202f5f2f2f0658f333a0d443e
+
+training:
+  epochs: 50
+  batch_size: 128
+  workers: 16
+  optimizer: adam
+  learning_rate: 0.001
+  milestones: [10, 20, 30, 40]
+  gamma: 0.5
+  selection_source: validation_eap_only
+  selection_rule: signed_validation_sequence_macro_mid_then_fr_then_rte
+  test_selection: false
+
+variant_specs:
+  event_only:
+    official_dataset_mode: event_only
+    requires_branch_pretraining: true
+    config_overrides:
+      dataset.mode: event_only
+      model.pretrained_ckpt_event: checkpoints/paper_event_only_lhr.pth
+  visual_only:
+    official_dataset_mode: image_only
+    requires_branch_pretraining: true
+    config_overrides:
+      dataset.mode: image_only
+      model.pretrained_ckpt_rgb: checkpoints/paper_visual_only_lhr.pth
+  rgbe_late_fusion:
+    official_dataset_mode: image_event
+    requires_branch_pretraining: true
+    config_overrides:
+      dataset.mode: image_event
+      model.fusion_style: late_fusion
+      model.pretrained_ckpt_rgb: checkpoints/paper_visual_only_lhr.pth
+      model.pretrained_ckpt_event: checkpoints/paper_event_only_lhr.pth

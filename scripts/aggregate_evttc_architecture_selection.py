@@ -89,9 +89,7 @@ def main() -> int:
     required_runs = args.expected_folds * args.expected_seeds
     for variant, runs in sorted(grouped.items()):
         selection = np.asarray([run["sequence_macro_selection_score"] for run in runs])
-        relative_error = np.asarray(
-            [run["sequence_macro_mean_relative_error"] for run in runs]
-        )
+        relative_error = np.asarray([run["sequence_macro_mean_relative_error"] for run in runs])
         mae = np.asarray([run["sequence_macro_mae_s"] for run in runs])
         run_pairs = {(run["fold"], run["seed"]) for run in runs}
         per_seed: list[dict[str, Any]] = []
@@ -103,25 +101,16 @@ def main() -> int:
                     "folds": sorted(int(run["fold"]) for run in seed_runs),
                     "run_count": len(seed_runs),
                     "sequence_macro_selection_score_mean": float(
-                        np.mean(
-                            [run["sequence_macro_selection_score"] for run in seed_runs]
-                        )
+                        np.mean([run["sequence_macro_selection_score"] for run in seed_runs])
                     ),
                     "sequence_macro_mean_relative_error_mean": float(
-                        np.mean(
-                            [run["sequence_macro_mean_relative_error"] for run in seed_runs]
-                        )
+                        np.mean([run["sequence_macro_mean_relative_error"] for run in seed_runs])
                     ),
                     "sequence_macro_mae_s_mean": float(
                         np.mean([run["sequence_macro_mae_s"] for run in seed_runs])
                     ),
                     "elapsed_seconds_sum": float(
-                        np.sum(
-                            [
-                                float(run.get("elapsed_seconds") or 0.0)
-                                for run in seed_runs
-                            ]
-                        )
+                        np.sum([float(run.get("elapsed_seconds") or 0.0) for run in seed_runs])
                     ),
                 }
             )
@@ -157,40 +146,28 @@ def main() -> int:
                 "seeds": sorted({run["seed"] for run in runs}),
                 "sequence_macro_selection_score_mean": float(selection.mean()),
                 "sequence_macro_selection_score_std": (
-                    float(seed_selection.std(ddof=1))
-                    if seed_selection.shape[0] > 1
-                    else 0.0
+                    float(seed_selection.std(ddof=1)) if seed_selection.shape[0] > 1 else 0.0
                 ),
                 "fold_seed_selection_score_std": (
                     float(selection.std(ddof=1)) if selection.shape[0] > 1 else 0.0
                 ),
                 "sequence_macro_mean_relative_error_mean": float(relative_error.mean()),
                 "sequence_macro_mean_relative_error_std": (
-                    float(seed_relative.std(ddof=1))
-                    if seed_relative.shape[0] > 1
-                    else 0.0
+                    float(seed_relative.std(ddof=1)) if seed_relative.shape[0] > 1 else 0.0
                 ),
                 "fold_seed_mean_relative_error_std": (
-                    float(relative_error.std(ddof=1))
-                    if relative_error.shape[0] > 1
-                    else 0.0
+                    float(relative_error.std(ddof=1)) if relative_error.shape[0] > 1 else 0.0
                 ),
                 "sequence_macro_mae_s_mean": float(mae.mean()),
                 "sequence_macro_mae_s_std": (
                     float(seed_mae.std(ddof=1)) if seed_mae.shape[0] > 1 else 0.0
                 ),
-                "fold_seed_mae_s_std": (
-                    float(mae.std(ddof=1)) if mae.shape[0] > 1 else 0.0
-                ),
+                "fold_seed_mae_s_std": (float(mae.std(ddof=1)) if mae.shape[0] > 1 else 0.0),
                 "worst_run_sequence_selection_score": float(
                     max(run["worst_sequence_selection_score"] for run in runs)
                 ),
-                "worst_run_sequence_mae_s": float(
-                    max(run["worst_sequence_mae_s"] for run in runs)
-                ),
-                "milliseconds_per_window_mean": (
-                    float(latency.mean()) if latency.size else None
-                ),
+                "worst_run_sequence_mae_s": float(max(run["worst_sequence_mae_s"] for run in runs)),
+                "milliseconds_per_window_mean": (float(latency.mean()) if latency.size else None),
                 "milliseconds_per_window_std": (
                     float(latency.std(ddof=1)) if latency.size > 1 else 0.0
                 ),
@@ -226,9 +203,7 @@ def main() -> int:
             candidate = run_maps[matched_variants[1]].get(pair)
             missing_variants = [
                 variant
-                for variant, run in zip(
-                    matched_variants, (baseline, candidate), strict=True
-                )
+                for variant, run in zip(matched_variants, (baseline, candidate), strict=True)
                 if run is None
             ]
             mismatches = (
@@ -260,12 +235,8 @@ def main() -> int:
             "mean_relative_error": "sequence_macro_mean_relative_error",
             "mae_s": "sequence_macro_mae_s",
         }
-        baseline_runs = {
-            (run["fold"], run["seed"]): run for run in baseline_row["runs"]
-        }
-        candidate_runs = {
-            (run["fold"], run["seed"]): run for run in candidate_row["runs"]
-        }
+        baseline_runs = {(run["fold"], run["seed"]): run for run in baseline_row["runs"]}
+        candidate_runs = {(run["fold"], run["seed"]): run for run in candidate_row["runs"]}
         metric_comparisons: dict[str, Any] = {}
         for label, field in metric_fields.items():
             baseline_mean = float(baseline_row[f"{field}_mean"])
@@ -349,15 +320,9 @@ def main() -> int:
                         raise ValueError(
                             f"A0/A1 prediction tokens differ for fold={fold}, seed={seed}."
                         )
-                    if not np.array_equal(
-                        baseline_true, candidate_prediction["ttc_true"]
-                    ):
-                        raise ValueError(
-                            f"A0/A1 targets differ for fold={fold}, seed={seed}."
-                        )
-                    if not np.array_equal(
-                        baseline_sequences, candidate_prediction["sequence_id"]
-                    ):
+                    if not np.array_equal(baseline_true, candidate_prediction["ttc_true"]):
+                        raise ValueError(f"A0/A1 targets differ for fold={fold}, seed={seed}.")
+                    if not np.array_equal(baseline_sequences, candidate_prediction["sequence_id"]):
                         raise ValueError(
                             f"A0/A1 sequence order differs for fold={fold}, seed={seed}."
                         )
@@ -401,10 +366,7 @@ def main() -> int:
                             candidate_prediction,
                             sequences,
                             metric=lambda truth, estimate: float(
-                                np.mean(
-                                    np.abs(estimate - truth)
-                                    / np.maximum(np.abs(truth), 1e-6)
-                                )
+                                np.mean(np.abs(estimate - truth) / np.maximum(np.abs(truth), 1e-6))
                             ),
                             iterations=2000,
                             confidence=0.95,

@@ -11,6 +11,7 @@ import hashlib
 import math
 import time
 from collections import defaultdict
+from collections.abc import Mapping
 from dataclasses import asdict
 from pathlib import Path
 from typing import Any
@@ -27,6 +28,7 @@ from e_jepa_ttc.models import (
     infer_tubelet_token_geometry,
     pool_object_embeddings,
 )
+from e_jepa_ttc.reproducibility import resolve_device
 from e_jepa_ttc.training.carla_jepa import (
     _atomic_torch_save,
 )
@@ -480,7 +482,9 @@ def _checkpoint(
         "in_channels": EVTTC_BASE_INPUT_CHANNELS,
         "event_bins": config.bins,
         "checkpoint_role": role,
-        "checkpoint_selected_by": ("validation_macro_track_mae" if role == "best" else "final_epoch"),
+        "checkpoint_selected_by": (
+            "validation_macro_track_mae" if role == "best" else "final_epoch"
+        ),
         "encoder_state_dict": encoder.state_dict(),
         "target_encoder_state_dict": target_encoder.state_dict(),
         "predictor_state_dict": predictor.state_dict(),
@@ -563,6 +567,96 @@ def limit_dataset_contexts(
     dataset.selected_context_ids_hash = hash_context_ids(dataset.selected_context_ids)
 
 
+def _restore_ttc_checkpoint(
+    checkpoint_path: Path,
+    *,
+    encoder: nn.Module,
+    target_encoder: nn.Module,
+    predictor: nn.Module,
+    ttc_head: nn.Module,
+    optimizer: torch.optim.Optimizer,
+    scheduler: torch.optim.lr_scheduler.LRScheduler | None,
+    scaler: torch.amp.GradScaler | None,
+    device: torch.device,
+    expected_metadata: Mapping[str, object],
+    expected_trainer_config: Mapping[str, object],
+) -> tuple[int, int, float, float, list[dict[str, Any]]]:
+    """Restore an epoch-boundary TTC checkpoint after provenance validation.
+
+    The checkpoint is written atomically as ``resume.pt``. Resuming from a
+    partially completed epoch would make the optimizer trajectory ambiguous,
+    so this helper always resumes at ``saved_epoch + 1``.
+    """
+
+    if not checkpoint_path.is_file():
+        raise FileNotFoundError(
+            f"Cannot resume TTC pretraining: checkpoint is missing: {checkpoint_path}"
+        )
+    payload = torch.load(checkpoint_path, map_location="cpu", weights_only=False)
+    if not isinstance(payload, Mapping):
+        raise ValueError("TTC resume checkpoint must contain a mapping.")
+
+    for key, expected in expected_metadata.items():
+        actual = payload.get(key)
+        if actual != expected:
+            raise ValueError(
+                f"TTC resume provenance mismatch for {key!r}: "
+                f"expected {expected!r}, got {actual!r}."
+            )
+    saved_config = payload.get("trainer_config")
+    if not isinstance(saved_config, Mapping) or dict(saved_config) != dict(expected_trainer_config):
+        raise ValueError("TTC resume trainer_config does not match the requested config.")
+
+    state_specs = (
+        (encoder, "encoder_state_dict"),
+        (target_encoder, "target_encoder_state_dict"),
+        (predictor, "predictor_state_dict"),
+        (ttc_head, "ttc_head_state_dict"),
+    )
+    for module, key in state_specs:
+        state = payload.get(key)
+        if not isinstance(state, Mapping):
+            raise ValueError(f"TTC resume checkpoint is missing {key}.")
+        module.load_state_dict(state, strict=True)
+
+    optimizer_state = payload.get("optimizer_state_dict")
+    if not isinstance(optimizer_state, Mapping):
+        raise ValueError("TTC resume checkpoint is missing optimizer_state_dict.")
+    optimizer.load_state_dict(optimizer_state)
+    for state in optimizer.state.values():
+        for key, value in list(state.items()):
+            if isinstance(value, torch.Tensor):
+                state[key] = value.to(device=device)
+
+    scheduler_state = payload.get("scheduler_state_dict")
+    if scheduler is not None:
+        if not isinstance(scheduler_state, Mapping):
+            raise ValueError("TTC resume checkpoint is missing scheduler_state_dict.")
+        scheduler.load_state_dict(scheduler_state)
+
+    scaler_state = payload.get("scaler_state_dict")
+    if scaler is not None and scaler_state is not None:
+        if not isinstance(scaler_state, Mapping):
+            raise ValueError("TTC resume scaler_state_dict is malformed.")
+        scaler.load_state_dict(scaler_state)
+
+    epoch = int(payload.get("epoch", 0))
+    if epoch <= 0:
+        raise ValueError("TTC resume checkpoint must represent a completed positive epoch.")
+    optimizer_step = int(payload.get("optimizer_step", 0))
+    best_ttc = float(payload.get("best_validation_macro_track_mae", float("inf")))
+    best_joint = float(payload.get("best_validation_joint_loss", float("inf")))
+    if not math.isfinite(best_ttc) and best_ttc != float("inf"):
+        raise ValueError("TTC resume best_validation_macro_track_mae is not finite.")
+    if not math.isfinite(best_joint) and best_joint != float("inf"):
+        raise ValueError("TTC resume best_validation_joint_loss is not finite.")
+    history_payload = payload.get("history", {})
+    records = history_payload.get("records", []) if isinstance(history_payload, Mapping) else []
+    if not isinstance(records, list) or not all(isinstance(record, dict) for record in records):
+        raise ValueError("TTC resume history.records must be a list of mappings.")
+    return epoch + 1, optimizer_step, best_ttc, best_joint, list(records)
+
+
 def pretrain_eap_jepa_ttc(
     *,
     eap_root: str | Path,
@@ -576,11 +670,6 @@ def pretrain_eap_jepa_ttc(
     device_name: str = "auto",
     resume: bool = False,
 ) -> dict[str, Any]:
-    if resume:
-        raise NotImplementedError(
-            "Safe resume for eap_ttc is not implemented yet. Run without --resume."
-        )
-
     if audit_result != "PASS":
         raise ValueError("TTC pretraining requires a PASS audit")
 
@@ -598,7 +687,7 @@ def pretrain_eap_jepa_ttc(
         load_garlttc_train_index,
         validate_garlttc_train_index,
     )
-    from e_jepa_ttc.training.carla_jepa import _scheduler, _set_seed
+    from e_jepa_ttc.training.carla_jepa import _artifact_hash, _scheduler, _set_seed
     from e_jepa_ttc.utils.io import read_structured, write_structured
 
     eap_root = Path(eap_root).resolve()
@@ -611,10 +700,7 @@ def pretrain_eap_jepa_ttc(
     assert_no_sealed_benchmark_paths((eap_root, garlttc_root, inventory, split, output))
     _set_seed(config.seed)
 
-    if device_name == "auto":
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    else:
-        device = torch.device(device_name)
+    device = resolve_device(device_name)
 
     split_payload = read_structured(split)
     assignments = split_payload.get("assignments", {})
@@ -712,6 +798,41 @@ def pretrain_eap_jepa_ttc(
     if len(val_ctx_hash) != 64:
         raise RuntimeError("Invalid validation context SHA256")
 
+    if resume:
+        (
+            start_epoch,
+            optimizer_step,
+            best_val_ttc_mae,
+            best_val_joint_loss,
+            history,
+        ) = _restore_ttc_checkpoint(
+            last_path,
+            encoder=encoder,
+            target_encoder=target_encoder,
+            predictor=predictor,
+            ttc_head=ttc_head,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            scaler=scaler,
+            device=device,
+            expected_metadata={
+                "seed": config.seed,
+                "inventory_artifact_sha256": _artifact_hash(inventory),
+                "split_artifact_sha256": _artifact_hash(split),
+                "audit_json_sha256": audit_json_sha256,
+                "garlttc_data_sha256": index.data_sha256,
+                "garlttc_annotations_sha256": index.annotations_sha256,
+                "garlttc_join_keys_sha256": index.join_keys_sha256,
+                "train_context_ids_sha256": train_ctx_hash,
+                "validation_context_ids_sha256": val_ctx_hash,
+            },
+            expected_trainer_config=asdict(config),
+        )
+        if start_epoch > config.epochs:
+            raise ValueError(
+                "TTC resume checkpoint is already at or beyond the requested epoch budget."
+            )
+
     def _get_cp(role_name: str, current_epoch: int) -> dict[str, Any]:
         cp = _checkpoint(
             encoder=encoder,
@@ -795,8 +916,11 @@ def pretrain_eap_jepa_ttc(
 
         val_ttc_mae = val_metrics.get("macro_track_mae", float("inf"))
         val_joint_loss = val_metrics.get("loss_total", float("inf"))
-        best_val_joint_loss = min(best_val_joint_loss, val_joint_loss,)
-        
+        best_val_joint_loss = min(
+            best_val_joint_loss,
+            val_joint_loss,
+        )
+
         if val_ttc_mae < best_val_ttc_mae:
             best_val_ttc_mae = val_ttc_mae
 

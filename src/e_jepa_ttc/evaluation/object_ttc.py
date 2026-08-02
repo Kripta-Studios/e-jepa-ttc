@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import numpy as np
 
+from e_jepa_ttc.evaluation.garl_ttc_protocol import signed_garl_metrics
 from e_jepa_ttc.evaluation.metrics import regression_metrics
 
 
@@ -36,20 +37,15 @@ def ttc_selection_components(
     relative_error = absolute_error / np.maximum(target, 1e-6)
     mean_relative_error = float(np.mean(relative_error))
     normalized_rmse = float(
-        np.sqrt(np.mean(np.square(prediction - target)))
-        / np.maximum(np.mean(np.abs(target)), 1e-6)
+        np.sqrt(np.mean(np.square(prediction - target))) / np.maximum(np.mean(np.abs(target)), 1e-6)
     )
     low_mask = target <= low_ttc_max_s
     high_mask = target >= high_ttc_min_s
     low_relative_error = (
-        float(np.mean(relative_error[low_mask]))
-        if np.any(low_mask)
-        else mean_relative_error
+        float(np.mean(relative_error[low_mask])) if np.any(low_mask) else mean_relative_error
     )
     high_relative_error = (
-        float(np.mean(relative_error[high_mask]))
-        if np.any(high_mask)
-        else mean_relative_error
+        float(np.mean(relative_error[high_mask])) if np.any(high_mask) else mean_relative_error
     )
     selection_score = (
         mean_relative_error
@@ -123,6 +119,28 @@ def garl_ttc_metrics(
     delta_t_s: float = 0.1,
 ) -> dict[str, object]:
     """Reproduce the public GarlTTC MiD/RTE bin definitions and weights."""
+
+    signed = signed_garl_metrics(
+        y_true_ttc_s,
+        y_pred_ttc_s,
+        delta_t_s=delta_t_s,
+    )
+    bins = {}
+    for name, values in signed["bins"].items():
+        bins[name] = {
+            **values,
+            "failure_ratio": (
+                float(values["failure_rate_pct"]) / 100.0
+                if np.isfinite(float(values["failure_rate_pct"]))
+                else float("nan")
+            ),
+        }
+    return {
+        **signed,
+        "weighted_mid": signed["paper_MiD_overall"],
+        "weighted_rte_pct": signed["weighted_RTE_pct"],
+        "bins": bins,
+    }
 
     if delta_t_s <= 0:
         msg = "delta_t_s must be positive."

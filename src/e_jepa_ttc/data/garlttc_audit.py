@@ -366,8 +366,8 @@ def audit(
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--eap-root", type=Path, default=Path(r"E:\eAP_dataset"))
-    parser.add_argument("--garlttc-root", type=Path, default=Path(r"E:\GarlTTC_dataset"))
+    parser.add_argument("--eap-root", type=Path, required=True)
+    parser.add_argument("--garlttc-root", type=Path, required=True)
     parser.add_argument(
         "--eap-split",
         type=Path,

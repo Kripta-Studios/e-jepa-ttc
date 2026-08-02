@@ -122,9 +122,7 @@ class CameraEgoMotionCompensator(nn.Module):
         intervals = (times[:, 1:] - times[:, :-1]).clamp_min(0.0)
         interval_valid = valid_mask[:, 1:] & valid_mask[:, :-1]
         increments = (
-            actions[:, 1:, 1:4]
-            * intervals[..., None]
-            * interval_valid[..., None].to(actions.dtype)
+            actions[:, 1:, 1:4] * intervals[..., None] * interval_valid[..., None].to(actions.dtype)
         )
         increments_current = _rotate_optical_yaw(increments, angle[:, 1:])
         reverse_translation = torch.flip(
@@ -164,11 +162,7 @@ class CameraEgoMotionCompensator(nn.Module):
             dim=-1,
         ).clamp(0.0, 1.0)
         depth_valid = torch.isfinite(depth_history_m) & (depth_history_m > 1e-4)
-        valid_boxes = (
-            valid_mask[:, :, None]
-            & depth_valid
-            & positive_depth.all(dim=-1)
-        )[..., None]
+        valid_boxes = (valid_mask[:, :, None] & depth_valid & positive_depth.all(dim=-1))[..., None]
         aligned = torch.where(valid_boxes, aligned, boxes_xyxy)
         current_depth = depth_history_m[:, -1].to(actions).clamp_min(1e-4)
         ego_inverse_ttc = actions[:, -1, 3:4] / current_depth

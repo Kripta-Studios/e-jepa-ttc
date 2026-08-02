@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "e-jepa-ttc/patch_resolution_audit_v1",
+  "type": "object",
+  "required": [
+    "artifact_type",
+    "schema_version",
+    "evidence_type",
+    "code_commit",
+    "protocol_version",
+    "protocol_sha256",
+    "created_at",
+    "artifact_sha256",
+    "status",
+    "source_resolution",
+    "cache_resolution",
+    "resolutions"
+  ],
+  "properties": {
+    "artifact_type": {"const": "patch_resolution_audit_v1"},
+    "schema_version": {"const": "v1"},
+    "evidence_type": {"type": "string"},
+    "code_commit": {"type": "string"},
+    "protocol_version": {"type": "string"},
+    "protocol_sha256": {"type": "string"},
+    "created_at": {"type": "string"},
+    "artifact_sha256": {"type": "string"},
+    "status": {"enum": ["pass", "fail"]},
+    "data_root": {"type": "string"},
+    "garl_root": {"type": "string"},
+    "source_resolution": {"type": "array", "items": {"type": "integer"}, "minItems": 2, "maxItems": 2},
+    "cache_resolution": {"type": "array", "items": {"type": "integer"}, "minItems": 2, "maxItems": 2},
+    "highres_is_not_cache_upsample": {"type": "boolean"},
+    "cache_manifest_sha256": {"type": "string"},
+    "split_sha256": {"type": "string"},
+    "selected_sequence_count": {"type": "integer"},
+    "resolutions": {"type": "array"},
+    "errors": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": false
+}

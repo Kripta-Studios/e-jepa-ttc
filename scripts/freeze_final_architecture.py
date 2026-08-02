@@ -23,6 +23,33 @@ def _sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def _resource_record(path: Path, label: str) -> dict[str, Any]:
+    """Return a reproducible file record for a frozen resource."""
+
+    if not path.is_file():
+        raise FileNotFoundError(f"{label} does not exist: {path}")
+    return {
+        "path": path.resolve().as_posix(),
+        "sha256": _sha256(path),
+        "size_bytes": path.stat().st_size,
+    }
+
+
+def _load_selection_audit(path: Path) -> dict[str, Any]:
+    """Load the explicit audit that proves EvTTC was not used for selection."""
+
+    if not path.is_file():
+        raise FileNotFoundError(f"Selection audit does not exist: {path}")
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise ValueError("Selection audit must be a JSON object.")
+    if payload.get("evttc_used_for_selection") is not False:
+        raise ValueError("Selection audit must explicitly set evttc_used_for_selection=false.")
+    if payload.get("benchmark10_opened") is True:
+        raise ValueError("Final freeze cannot be created after benchmark10 was opened.")
+    return payload
+
+
 def _git(*arguments: str) -> str:
     return subprocess.check_output(
         ["git", *arguments],
@@ -37,7 +64,20 @@ def main() -> int:
     parser.add_argument("--variant", required=True)
     parser.add_argument("--checkpoints", type=Path, nargs="+", required=True)
     parser.add_argument("--candidate-name", required=True)
-    parser.add_argument("--candidate-role", choices=("SINGLE_REALTIME", "ENSEMBLE_ACCURACY"))
+    parser.add_argument(
+        "--candidate-role",
+        choices=("SINGLE_REALTIME", "ENSEMBLE_ACCURACY"),
+        required=True,
+    )
+    parser.add_argument("--config", type=Path, required=True)
+    parser.add_argument("--preprocessing", type=Path, required=True)
+    parser.add_argument("--protocol", type=Path, required=True)
+    parser.add_argument("--selection-audit", type=Path, required=True)
+    parser.add_argument(
+        "--ensemble-rule",
+        type=Path,
+        help="Hashable ensemble rule; required for ENSEMBLE_ACCURACY.",
+    )
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--allow-dirty", action="store_true")
     args = parser.parse_args()
@@ -57,6 +97,17 @@ def main() -> int:
         raise ValueError(f"Variant {args.variant!r} is absent from the aggregate.")
     if not row["complete_for_final_selection"]:
         raise ValueError("Variant is not complete across the required folds and seeds.")
+    if args.candidate_role == "ENSEMBLE_ACCURACY" and args.ensemble_rule is None:
+        raise ValueError("ENSEMBLE_ACCURACY requires --ensemble-rule.")
+    _load_selection_audit(args.selection_audit)
+    frozen_resources = {
+        "config": _resource_record(args.config, "Config"),
+        "preprocessing": _resource_record(args.preprocessing, "Preprocessing"),
+        "protocol": _resource_record(args.protocol, "Protocol mapping"),
+        "selection_audit": _resource_record(args.selection_audit, "Selection audit"),
+    }
+    if args.ensemble_rule is not None:
+        frozen_resources["ensemble_rule"] = _resource_record(args.ensemble_rule, "Ensemble rule")
     checkpoints: list[dict[str, Any]] = []
     reference_config: dict[str, Any] | None = None
     for path in args.checkpoints:
@@ -90,22 +141,30 @@ def main() -> int:
         "aggregate_sha256": _sha256(args.aggregate),
         "aggregate_protocol": aggregate["protocol"],
         "cv_run_count": row["run_count"],
-        "cv_sequence_macro_selection_score_mean": row[
-            "sequence_macro_selection_score_mean"
-        ],
-        "cv_sequence_macro_selection_score_std": row[
-            "sequence_macro_selection_score_std"
-        ],
+        "cv_sequence_macro_selection_score_mean": row["sequence_macro_selection_score_mean"],
+        "cv_sequence_macro_selection_score_std": row["sequence_macro_selection_score_std"],
         "cv_sequence_macro_mean_relative_error_mean": row[
             "sequence_macro_mean_relative_error_mean"
         ],
-        "cv_sequence_macro_mean_relative_error_std": row[
-            "sequence_macro_mean_relative_error_std"
-        ],
+        "cv_sequence_macro_mean_relative_error_std": row["sequence_macro_mean_relative_error_std"],
         "cv_sequence_macro_mae_s_mean": row["sequence_macro_mae_s_mean"],
         "cv_sequence_macro_mae_s_std": row["sequence_macro_mae_s_std"],
         "model_config": reference_config,
         "checkpoints": checkpoints,
+        "frozen_resources": frozen_resources,
+        "evttc_used_for_selection": False,
+        "selection_audit": {
+            "path": args.selection_audit.resolve().as_posix(),
+            "sha256": frozen_resources["selection_audit"]["sha256"],
+        },
+        "ensemble_rule": (
+            {
+                "path": args.ensemble_rule.resolve().as_posix(),
+                "sha256": frozen_resources["ensemble_rule"]["sha256"],
+            }
+            if args.ensemble_rule is not None
+            else None
+        ),
         "benchmark10_opened": False,
         "predictions_frozen_before_benchmark": True,
     }

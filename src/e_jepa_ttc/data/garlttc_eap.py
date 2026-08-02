@@ -381,9 +381,6 @@ def load_garlttc_train_index(
         if col not in ann_df.columns:
             raise ValueError(f"Missing column '{col}' in ann_df")
 
-    print(f"DEBUG: data_df columns: {data_df.columns.tolist()}")
-    print(f"DEBUG: ann_df columns: {ann_df.columns.tolist()}")
-
     if "boxes_xyxy" not in ann_df.columns and "boxes_xyxy" not in data_df.columns:
         raise ValueError("Missing column 'boxes_xyxy' in both data_df and ann_df")
 
@@ -799,7 +796,7 @@ class GarlTTCEAPDataset(
                     track_ids=tracks,
                     future_valid=future_valid,
                 )
-                
+
                 context_identifier = canonical_context_id(
                     resolved_events_path=resolved_path,
                     sequence_id=seq_id,

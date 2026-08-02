@@ -654,7 +654,7 @@ def main() -> int:
     parser.add_argument(
         "--manifest",
         type=Path,
-        default=Path("data/manifests/evttc32_local.yaml"),
+        default=Path("data/manifests/evttc_all32_local.yaml"),
     )
     parser.add_argument(
         "--cv-protocol",
@@ -724,8 +724,7 @@ def main() -> int:
         type=float,
         default=0.0,
         help=(
-            "Training-only EMA latent-anchor weight. Zero preserves the "
-            "published f4c87df behavior."
+            "Training-only EMA latent-anchor weight. Zero preserves the published f4c87df behavior."
         ),
     )
     parser.add_argument(

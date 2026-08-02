@@ -23,6 +23,7 @@ class EAPLHRJEPATTCConfig:
     use_rgb: bool = False
     ttc_residual_scale_s: float = 0.25
     foreground_size: int = 128
+    use_observable_motion: bool = True
 
 
 @dataclass
@@ -101,10 +102,10 @@ class EAPLHRJEPATTC(nn.Module):
         )
         self.rgb_encoder = _RGBPairEncoder(config.dim) if config.use_rgb else None
 
-        # first ROI + global state + global change + 2-D motion + time gap
+        # Strictly causal JEPA: ROI(t1) + full-frame(t1) + motion(t0->t1) + dt.
         self.jepa_predictor = nn.Sequential(
-            nn.LayerNorm(config.dim * 5),
-            nn.Linear(config.dim * 5, config.dim * 2),
+            nn.LayerNorm(config.dim * 4),
+            nn.Linear(config.dim * 4, config.dim * 2),
             nn.GELU(),
             nn.Linear(config.dim * 2, config.dim),
         )
@@ -152,10 +153,10 @@ class EAPLHRJEPATTC(nn.Module):
             if not key.startswith(("target_roi_encoder.", "jepa_predictor."))
         }
 
-    def _full_tokens(self, values: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
+    def _full_tokens(self, values: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         if values.ndim == 4:
             tokens = self.full_projection(self.full_encoder.forward_tokens(values).mean(1))
-            return tokens, torch.zeros_like(tokens)
+            return tokens, tokens, torch.zeros_like(tokens)
         if values.ndim != 5 or values.shape[1] < 2:
             raise ValueError("full_frame_events must be [B,21,H,W] or [B,T,21,H,W].")
         first = values[:, -2]
@@ -163,7 +164,7 @@ class EAPLHRJEPATTC(nn.Module):
         joined = torch.cat((first, second), dim=0)
         encoded = self.full_projection(self.full_encoder.forward_tokens(joined).mean(1))
         first_token, second_token = encoded.chunk(2, dim=0)
-        return second_token, second_token - first_token
+        return first_token, second_token, second_token - first_token
 
     def forward(
         self,
@@ -172,6 +173,7 @@ class EAPLHRJEPATTC(nn.Module):
         event_roi_pair: torch.Tensor,
         delta_t_s: torch.Tensor,
         observable_motion: torch.Tensor,
+        jepa_context_motion: torch.Tensor | None = None,
         rgb_pair: torch.Tensor | None = None,
     ) -> EAPLHRJEPATTCOutput:
         if event_roi_pair.ndim != 4:
@@ -179,25 +181,35 @@ class EAPLHRJEPATTC(nn.Module):
         expected = self.config.endpoint_event_channels * 2
         if event_roi_pair.shape[1] != expected:
             raise ValueError(f"Expected {expected} ROI channels, got {event_roi_pair.shape[1]}.")
-        if observable_motion.ndim != 2 or observable_motion.shape[1] != self.config.observable_motion_dim:
+        if (
+            observable_motion.ndim != 2
+            or observable_motion.shape[1] != self.config.observable_motion_dim
+        ):
             raise ValueError(
-                "observable_motion must have shape "
-                f"[B,{self.config.observable_motion_dim}]."
+                f"observable_motion must have shape [B,{self.config.observable_motion_dim}]."
             )
 
-        full_token, full_delta = self._full_tokens(full_frame_events)
+        first_full_token, full_token, full_delta = self._full_tokens(full_frame_events)
         first_values, second_values = event_roi_pair.chunk(2, dim=1)
         first_token, _first_dense, _shape = self.roi_encoder(first_values)
         second_token, second_dense, spatial_shape = self.roi_encoder(second_values)
         with torch.no_grad():
             target_token, _target_dense, _target_shape = self.target_roi_encoder(second_values)
 
-        motion_token = self.motion_encoder(observable_motion)
+        effective_motion = (
+            observable_motion
+            if self.config.use_observable_motion
+            else torch.zeros_like(observable_motion)
+        )
+        motion_token = self.motion_encoder(effective_motion)
+        if jepa_context_motion is None:
+            jepa_context_motion = torch.zeros_like(observable_motion)
+        jepa_motion_token = self.motion_encoder(jepa_context_motion)
         elapsed = delta_t_s.reshape(-1, 1).clamp_min(1e-6)
         delta_token = self.delta_encoder(torch.log1p(elapsed))
 
         jepa_condition = torch.cat(
-            (first_token, full_token, full_delta, motion_token, delta_token),
+            (first_token, first_full_token, jepa_motion_token, delta_token),
             dim=-1,
         )
         jepa_prediction = self.jepa_predictor(jepa_condition)

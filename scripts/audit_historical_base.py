@@ -37,10 +37,7 @@ def _metric_differences(
         "log_mae",
         "log_rmse",
     )
-    return {
-        name: abs(float(recorded[name]) - float(reproduced[name]))
-        for name in names
-    }
+    return {name: abs(float(recorded[name]) - float(reproduced[name])) for name in names}
 
 
 def main() -> int:
@@ -101,9 +98,7 @@ def main() -> int:
     )
     model.load_state_dict(checkpoint["model_state_dict"], strict=True)
     parameter_count = sum(parameter.numel() for parameter in model.parameters())
-    encoder_parameter_count = sum(
-        parameter.numel() for parameter in model.encoder.parameters()
-    )
+    encoder_parameter_count = sum(parameter.numel() for parameter in model.encoder.parameters())
 
     reproduced = evaluate_supervised_checkpoint(
         cache_path=args.cache,

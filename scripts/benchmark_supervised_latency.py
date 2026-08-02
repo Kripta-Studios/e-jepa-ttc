@@ -63,7 +63,8 @@ def benchmark_supervised_latency(
     parameter_count = sum(parameter.numel() for parameter in model.parameters())
 
     if device.type == "cuda":
-        torch.cuda.reset_peak_memory_stats(device)
+        torch.cuda.set_device(device)
+        torch.cuda.reset_peak_memory_stats()
     with torch.inference_mode():
         for _ in range(warmup_iterations):
             model(x)

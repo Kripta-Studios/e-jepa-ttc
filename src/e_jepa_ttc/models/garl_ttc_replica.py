@@ -152,14 +152,12 @@ class GarlTTCReplica(nn.Module):
         early_channels = config.event_channels + config.rgb_channels
         self.event_encoder = (
             _encoder(config.backbone, config.event_channels, config.dim)
-            if config.modality == "event"
-            or (config.modality == "rgbe" and config.fusion == "late")
+            if config.modality == "event" or (config.modality == "rgbe" and config.fusion == "late")
             else None
         )
         self.rgb_encoder = (
             _encoder(config.backbone, config.rgb_channels, config.dim)
-            if config.modality == "rgb"
-            or (config.modality == "rgbe" and config.fusion == "late")
+            if config.modality == "rgb" or (config.modality == "rgbe" and config.fusion == "late")
             else None
         )
         self.early_encoder = (
@@ -177,13 +175,9 @@ class GarlTTCReplica(nn.Module):
         # linear layers.
         self.middle_layer = nn.Linear(fusion_width, config.dim)
         self.height_head = (
-            LearnedHeightRatioHead(config.dim)
-            if config.objective == "height_ratio"
-            else None
+            LearnedHeightRatioHead(config.dim) if config.objective == "height_ratio" else None
         )
-        self.direct_ttc_head = (
-            nn.Linear(config.dim, 1) if config.objective == "direct" else None
-        )
+        self.direct_ttc_head = nn.Linear(config.dim, 1) if config.objective == "direct" else None
         # The source constructs an unused RGB decoder in late fusion.  Omitting
         # that branch is prediction/loss equivalent and materially lowers VRAM.
         self.foreground = (

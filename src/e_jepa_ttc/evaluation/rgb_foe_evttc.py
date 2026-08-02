@@ -123,15 +123,11 @@ def _evaluate_dataset(
         residual_rmse_px.append(
             float(result.fit.residual_rmse_px) if result.fit is not None else float("nan")
         )
-        inlier_fraction.append(
-            float(result.fit.inlier_fraction) if result.fit is not None else 0.0
-        )
+        inlier_fraction.append(float(result.fit.inlier_fraction) if result.fit is not None else 0.0)
         condition_number.append(
             float(result.fit.condition_number) if result.fit is not None else float("inf")
         )
-        flow_sample_count.append(
-            int(result.fit.sample_count) if result.fit is not None else 0
-        )
+        flow_sample_count.append(int(result.fit.sample_count) if result.fit is not None else 0)
         sequence = sample["sequence_id"]
         token = sample["sample_token"]
         if not isinstance(sequence, str) or not isinstance(token, str):
@@ -155,12 +151,7 @@ def _evaluate_dataset(
 
 
 def _fit_log_calibration(truth: np.ndarray, prediction: np.ndarray) -> tuple[float, float]:
-    valid = (
-        np.isfinite(truth)
-        & np.isfinite(prediction)
-        & (truth > 0.0)
-        & (prediction > 0.0)
-    )
+    valid = np.isfinite(truth) & np.isfinite(prediction) & (truth > 0.0) & (prediction > 0.0)
     if int(np.count_nonzero(valid)) < 3:
         raise ValueError("RGB/FoE calibration requires at least three valid train estimates.")
     x = np.log(prediction[valid])

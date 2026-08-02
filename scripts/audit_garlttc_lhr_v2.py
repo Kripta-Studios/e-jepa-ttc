@@ -10,6 +10,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
+from e_jepa_ttc.data.garl_input_contract import validate_cache_manifest_input_schema  # noqa: E402
 from e_jepa_ttc.data.garlttc_lhr_cache import (  # noqa: E402
     FORBIDDEN_MODEL_INPUT_KEYS,
     GarlTTCLHRCacheDataset,
@@ -32,6 +33,10 @@ def main() -> int:
         errors.append("uses_reconstructed_public_eap_ttc is not false")
     if manifest.get("no_label_fallback") is not True:
         errors.append("no_label_fallback is not true")
+    try:
+        validate_cache_manifest_input_schema(manifest)
+    except ValueError as exc:
+        errors.append(f"invalid v4 input schema: {exc}")
     model_inputs = set(manifest.get("model_input_fields", []))
     leaked = sorted(model_inputs & FORBIDDEN_MODEL_INPUT_KEYS)
     if leaked:
@@ -43,10 +48,17 @@ def main() -> int:
         count = min(len(dataset), args.max_samples)
         for index in range(count):
             sample = dataset[index]
-            if sample.get("ttc_label_source") != "official_garlttc_annotations_train_parquet":
+            if not str(sample.get("ttc_label_source", "")).startswith(
+                "official_garlttc_annotations_train_parquet.frame_ttc[t2]"
+            ):
                 errors.append(f"{split}[{index}] has wrong TTC provenance")
                 break
-            for key in ("full_frame_events", "garl_event_roi", "garl_delta_t_s", "observable_motion"):
+            for key in (
+                "full_frame_events",
+                "garl_event_roi",
+                "garl_delta_t_s",
+                "observable_motion",
+            ):
                 if key not in sample:
                     errors.append(f"{split}[{index}] missing model input {key}")
             for key in ("ttc_s", "garl_visible_heights_px", "geometry_v2_target"):

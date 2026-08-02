@@ -1,0 +1,8 @@
+objective: garl_lhr_supervised
+protocol: garlttc_official_v1
+seeds: [7, 13, 23]
+batch_size: 24
+epochs: 30
+precision: bf16
+selection_metric: validation_sequence_macro_paper_MiD_overall_signed_v1
+uses_official_garl_ttc_labels: true

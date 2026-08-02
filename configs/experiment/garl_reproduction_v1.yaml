@@ -1,0 +1,6 @@
+experiment: garl_reproduction_v1
+data: configs/data/garlttc_public_train_v4.yaml
+model: configs/model/garl_official_reference.yaml
+train: configs/train/garl_supervised_v4.yaml
+seeds: [7, 13, 23]
+test_labels_available: false

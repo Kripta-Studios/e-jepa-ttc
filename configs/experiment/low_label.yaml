@@ -1,0 +1,5 @@
+name: low_label
+fractions: [0.01, 0.05, 0.10, 0.25, 1.0]
+sequence_ids_reused_across_fractions: true
+sampling_seed: 7
+test_selection: forbidden

@@ -100,17 +100,11 @@ def nearest_linear_time_surface(
 def _filtered_gradients(surface: np.ndarray) -> tuple[np.ndarray, ...]:
     tensor = torch.from_numpy(surface).float()[None, None]
     padded = functional.pad(tensor, (1, 1, 1, 1), mode="reflect")
-    median = padded.unfold(2, 3, 1).unfold(3, 3, 1).median(dim=-1).values.median(
-        dim=-1
-    ).values
-    kernel = torch.tensor(
-        [[1.0, 2.0, 1.0], [2.0, 4.0, 2.0], [1.0, 2.0, 1.0]]
-    )
+    median = padded.unfold(2, 3, 1).unfold(3, 3, 1).median(dim=-1).values.median(dim=-1).values
+    kernel = torch.tensor([[1.0, 2.0, 1.0], [2.0, 4.0, 2.0], [1.0, 2.0, 1.0]])
     kernel = (kernel / kernel.sum())[None, None]
     smooth = functional.conv2d(functional.pad(median, (1, 1, 1, 1), mode="reflect"), kernel)
-    sobel_x = torch.tensor(
-        [[-1.0, 0.0, 1.0], [-2.0, 0.0, 2.0], [-1.0, 0.0, 1.0]]
-    )[None, None] / 8.0
+    sobel_x = torch.tensor([[-1.0, 0.0, 1.0], [-2.0, 0.0, 2.0], [-1.0, 0.0, 1.0]])[None, None] / 8.0
     sobel_y = sobel_x.transpose(-1, -2)
 
     def gradient(value: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
@@ -123,10 +117,7 @@ def _filtered_gradients(surface: np.ndarray) -> tuple[np.ndarray, ...]:
     gx, gy = gradient(smooth)
     gxx, gxy = gradient(gx)
     gyx, gyy = gradient(gy)
-    return tuple(
-        value[0, 0].numpy()
-        for value in (smooth, gx, gy, gxx, gxy, gyx, gyy)
-    )
+    return tuple(value[0, 0].numpy() for value in (smooth, gx, gy, gxx, gxy, gyx, gyy))
 
 
 def select_time_surface_contours(
@@ -144,9 +135,7 @@ def select_time_surface_contours(
     first = gx * gx + gy * gy
     second = gxx * gxx + gxy * gxy + gyx * gyx + gyy * gyy
     y, x = np.nonzero(
-        (first > first_gradient_threshold)
-        & (second < second_gradient_threshold)
-        & valid_pixels
+        (first > first_gradient_threshold) & (second < second_gradient_threshold) & valid_pixels
     )
     if y.size == 0:
         return np.empty((0, 3), dtype=np.float64)
@@ -162,9 +151,7 @@ def select_time_surface_contours(
     for mask in signs:
         indices = np.flatnonzero(mask)
         if indices.size:
-            chosen.append(
-                rng.choice(indices, size=min(per_quadrant, indices.size), replace=False)
-            )
+            chosen.append(rng.choice(indices, size=min(per_quadrant, indices.size), replace=False))
     if not chosen:
         return np.empty((0, 3), dtype=np.float64)
     indices = np.concatenate(chosen)[:maximum_points]
@@ -205,12 +192,7 @@ def estimate_plane_normal_flow(
     contours = np.asarray(contour_txy, dtype=np.float64)
     index = _pixel_event_index(events, width=width, height=height)
     half = config.spatial_window_size // 2
-    minimum_events = int(
-        round(
-            config.spatial_window_size**2
-            * config.minimum_neighbour_fraction
-        )
-    )
+    minimum_events = int(round(config.spatial_window_size**2 * config.minimum_neighbour_fraction))
     accepted_points: list[np.ndarray] = []
     accepted_flow: list[np.ndarray] = []
     for point_index, point in enumerate(contours):

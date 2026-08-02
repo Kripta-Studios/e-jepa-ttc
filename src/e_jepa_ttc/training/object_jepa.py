@@ -36,6 +36,7 @@ from e_jepa_ttc.models.object_jepa import (
     inverse_ttc_distribution_to_seconds,
     object_event_jepa_loss,
 )
+from e_jepa_ttc.reproducibility import cuda_is_usable, resolve_device, seed_torch_cpu
 from e_jepa_ttc.utils.io import write_structured
 
 
@@ -69,15 +70,13 @@ def _atomic_torch_save(payload: dict[str, Any], path: Path) -> None:
 def _set_seed(seed: int) -> None:
     random.seed(seed)
     np.random.seed(seed)
-    torch.manual_seed(seed)
-    if torch.cuda.is_available():
+    seed_torch_cpu(seed)
+    if cuda_is_usable():
         torch.cuda.manual_seed_all(seed)
 
 
 def _device(name: str) -> torch.device:
-    if name == "auto":
-        return torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    return torch.device(name)
+    return resolve_device(name)
 
 
 def _tensor_batch(

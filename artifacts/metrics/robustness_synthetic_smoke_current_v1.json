@@ -1,0 +1,108 @@
+{
+  "artifact_type": "synthetic_robustness_smoke_v1",
+  "corruptions_tested": 6,
+  "dataset": "synthetic_events_fixture",
+  "metrics_are_not_real_dataset_results": true,
+  "model": "TinyCNNRegressor_random_initialization",
+  "results": {
+    "background_event_rate_0.1": {
+      "finite_prediction_count": 4,
+      "mae": 1.0423323918133973,
+      "mean_event_count": 70.0,
+      "prediction_mean": 0.10766760818660259,
+      "prediction_std": 3.915215858735202e-06,
+      "rmse": 1.048311392721401,
+      "sample_count": 4,
+      "spec": {
+        "kind": "background_event_rate",
+        "seed": 0,
+        "severity": 0.1
+      },
+      "status": "completed",
+      "target_count": 4
+    },
+    "dead_pixel_fraction_0.1": {
+      "finite_prediction_count": 4,
+      "mae": 1.0423330642282962,
+      "mean_event_count": 58.25,
+      "prediction_mean": 0.10766693577170372,
+      "prediction_std": 3.197425582499799e-06,
+      "rmse": 1.0483119983110698,
+      "sample_count": 4,
+      "spec": {
+        "kind": "dead_pixel_fraction",
+        "seed": 0,
+        "severity": 0.1
+      },
+      "status": "completed",
+      "target_count": 4
+    },
+    "event_dropout_0.5": {
+      "finite_prediction_count": 4,
+      "mae": 1.04233342371881,
+      "mean_event_count": 33.75,
+      "prediction_mean": 0.10766657628118992,
+      "prediction_std": 1.9640893159056327e-06,
+      "rmse": 1.0483123391351192,
+      "sample_count": 4,
+      "spec": {
+        "kind": "event_dropout",
+        "seed": 0,
+        "severity": 0.5
+      },
+      "status": "completed",
+      "target_count": 4
+    },
+    "none_0.0": {
+      "finite_prediction_count": 4,
+      "mae": 1.0423327773809432,
+      "mean_event_count": 64.0,
+      "prediction_mean": 0.1076672226190567,
+      "prediction_std": 4.107740297382021e-06,
+      "rmse": 1.0483117138136138,
+      "sample_count": 4,
+      "spec": {
+        "kind": "none",
+        "seed": 0,
+        "severity": 0.0
+      },
+      "status": "completed",
+      "target_count": 4
+    },
+    "temporal_window_fraction_0.8": {
+      "finite_prediction_count": 4,
+      "mae": 1.0423333156853913,
+      "mean_event_count": 51.0,
+      "prediction_mean": 0.10766668431460857,
+      "prediction_std": 3.3037691383005147e-06,
+      "rmse": 1.0483122265684903,
+      "sample_count": 4,
+      "spec": {
+        "kind": "temporal_window_fraction",
+        "seed": 0,
+        "severity": 0.8
+      },
+      "status": "completed",
+      "target_count": 4
+    },
+    "timestamp_jitter_us_1000.0": {
+      "finite_prediction_count": 4,
+      "mae": 1.0423327568918466,
+      "mean_event_count": 64.0,
+      "prediction_mean": 0.10766724310815334,
+      "prediction_std": 4.148195222076686e-06,
+      "rmse": 1.0483116862454747,
+      "sample_count": 4,
+      "spec": {
+        "kind": "timestamp_jitter_us",
+        "seed": 0,
+        "severity": 1000.0
+      },
+      "status": "completed",
+      "target_count": 4
+    }
+  },
+  "sample_count": 4,
+  "seed": 7,
+  "status": "completed"
+}

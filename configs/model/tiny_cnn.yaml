@@ -1,0 +1,5 @@
+name: tiny-cnn
+in_channels: 10
+parameters_target: 5000000
+uncertainty: false
+notes: supervised voxel/event-count baseline

@@ -68,7 +68,8 @@ def benchmark_object_ttc_model(
         synchronize()
         durations: list[float] = []
         if target.type == "cuda":
-            torch.cuda.reset_peak_memory_stats(target)
+            torch.cuda.set_device(target)
+            torch.cuda.reset_peak_memory_stats()
         for _ in range(measured_iterations):
             synchronize()
             start = time.perf_counter()

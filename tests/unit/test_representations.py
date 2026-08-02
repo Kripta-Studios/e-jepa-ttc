@@ -48,6 +48,41 @@ def test_voxel_grid_preserves_event_weight_without_normalization() -> None:
     assert encoded.sum() == np.float32(4.0)
 
 
+def test_voxel_grid_matches_reference_histogram() -> None:
+    rng = np.random.default_rng(7)
+    width, height, bins = 11, 7, 4
+    count = 128
+    t_us = np.sort(rng.integers(10, 991, size=count, dtype=np.int64))
+    events = EventBatch(
+        x=rng.integers(0, width, size=count, dtype=np.int32),
+        y=rng.integers(0, height, size=count, dtype=np.int32),
+        t_us=t_us,
+        polarity=rng.choice(np.asarray([-1, 1], dtype=np.int8), size=count),
+        width=width,
+        height=height,
+        sequence_id="reference",
+        t_start_us=10,
+        t_end_us=991,
+    )
+    reference = np.zeros((bins * 2, height, width), dtype=np.float32)
+    scaled = (t_us - 10) / 981.0 * (bins - 1)
+    lower = np.floor(scaled).astype(np.int64)
+    upper = np.ceil(scaled).astype(np.int64)
+    upper_weight = scaled - lower
+    for index in range(count):
+        offset = 0 if events.polarity[index] > 0 else bins
+        value = 1.0
+        reference[offset + lower[index], events.y[index], events.x[index]] += value * (
+            1.0 - upper_weight[index]
+        )
+        reference[offset + upper[index], events.y[index], events.x[index]] += (
+            value * (upper_weight[index])
+        )
+
+    encoded = encode_voxel_grid(events, bins=bins, normalize=False)
+    assert np.allclose(encoded, reference, atol=1e-6)
+
+
 def test_voxel_grid_robust_normalization_preserves_empty_voxels() -> None:
     encoded = encode_voxel_grid(_events(), bins=3, normalize=True)
     occupied = encode_voxel_grid(_events(), bins=3, normalize=False) != 0
@@ -82,3 +117,10 @@ def test_sparse_tokens_shape_and_bounds() -> None:
     assert tokens.shape == (3, 6)
     assert np.all(tokens[:, :3] >= 0)
     assert np.all(tokens[:, :3] <= 1)
+
+
+def test_sparse_tokens_use_local_event_density() -> None:
+    tokens = encode_sparse_tokens(_events(), max_tokens=4)
+
+    assert tokens[:, 4].max() > tokens[:, 4].min()
+    assert np.all(tokens[:, 4] > 0)

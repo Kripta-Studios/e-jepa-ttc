@@ -62,3 +62,4 @@ def test_synthetic_smoke_pipeline():
 
     assert "corruptions_tested" in robustness_results
     assert robustness_results["corruptions_tested"] > 0
+    assert all(result["status"] == "completed" for result in robustness_results["results"].values())

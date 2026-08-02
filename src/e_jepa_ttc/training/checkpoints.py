@@ -11,6 +11,38 @@ from e_jepa_ttc.artifacts.hashing import verify_artifact_hash
 from e_jepa_ttc.data.carla_looming import CARLA_LOOMING_DATASET_ID
 from e_jepa_ttc.utils.io import read_structured
 
+EAP_SAMPLING_PROVENANCE_FIELDS: tuple[str, ...] = (
+    "uses_ttc_for_sampling",
+    "uses_boxes_for_sampling",
+    "uses_category_for_sampling",
+    "uses_depth_for_sampling",
+    "uses_masks_for_sampling",
+    "uses_3d_for_sampling",
+    "uses_future_labels_for_sampling",
+)
+
+
+def _validate_eap_sampling_provenance(
+    checkpoint: Mapping[str, Any],
+    *,
+    ssl_pure: bool,
+) -> dict[str, bool]:
+    """Require explicit sampling provenance and reject SSL-Pure leakage."""
+
+    invalid = [
+        field for field in EAP_SAMPLING_PROVENANCE_FIELDS if type(checkpoint.get(field)) is not bool
+    ]
+    if invalid:
+        raise ValueError(
+            f"eAP checkpoint sampling provenance must contain explicit booleans: {invalid}."
+        )
+    provenance = {field: bool(checkpoint[field]) for field in EAP_SAMPLING_PROVENANCE_FIELDS}
+    if ssl_pure:
+        violations = [field for field, value in provenance.items() if value]
+        if violations:
+            raise ValueError(f"eAP SSL-Pure checkpoint uses labels for sampling: {violations}.")
+    return provenance
+
 
 def _file_sha256(path: Path) -> str:
     hasher = hashlib.sha256()
@@ -43,17 +75,14 @@ def checkpoint_provenance(
             if role == "best"
             else ("final_epoch" if role == "last" else "unspecified")
         )
-        
+
     validation_selection_criteria = {
         "validation_loss",
         "validation_macro_track_mae",
     }
 
-    recommended_for_downstream = (
-        role == "best"
-        and selected_by in validation_selection_criteria
-    )
-    
+    recommended_for_downstream = role == "best" and selected_by in validation_selection_criteria
+
     return {
         "path": path.as_posix(),
         "checkpoint_sha256": _file_sha256(path),
@@ -193,8 +222,8 @@ def validate_external_eap_checkpoint(
 ) -> dict[str, Any]:
     """Validate a public eAP train-only SSL or weak-geometry encoder."""
 
-    if expected_regime not in {"eap_ssl", "eap_geo"}:
-        raise ValueError("Expected eAP regime must be eap_ssl or eap_geo.")
+    if expected_regime not in {"eap_ssl", "eap_geo", "eap_geo_v2"}:
+        raise ValueError("Expected eAP regime must be eap_ssl, eap_geo or eap_geo_v2.")
     if checkpoint.get("external_pretraining") is not True:
         raise ValueError("eAP checkpoint must declare external_pretraining=true.")
     if checkpoint.get("pretraining_dataset_id") != "EAP_PUBLIC_TRAIN40":
@@ -218,9 +247,17 @@ def validate_external_eap_checkpoint(
     violations = [field for field in forbidden_truthy if checkpoint.get(field) is not False]
     if violations:
         raise ValueError(f"eAP checkpoint violates provenance fields: {violations}.")
-    if checkpoint.get("uses_labels_for_window_sampling") is not False:
-        raise ValueError("eAP checkpoint must use label-independent window sampling.")
-    geometry_expected = expected_regime == "eap_geo"
+    ssl_pure = expected_regime == "eap_ssl"
+    sampling_provenance = _validate_eap_sampling_provenance(
+        checkpoint,
+        ssl_pure=ssl_pure,
+    )
+    legacy_sampling_flag = checkpoint.get("uses_labels_for_window_sampling")
+    if type(legacy_sampling_flag) is not bool:
+        raise ValueError("eAP checkpoint must explicitly declare uses_labels_for_window_sampling.")
+    if ssl_pure and legacy_sampling_flag is not False:
+        raise ValueError("eAP SSL-Pure checkpoint must use label-independent window sampling.")
+    geometry_expected = expected_regime in {"eap_geo", "eap_geo_v2"}
     for field in ("uses_object_bboxes", "uses_depth_track_derivatives"):
         if checkpoint.get(field) is not geometry_expected:
             raise ValueError(f"eAP checkpoint has inconsistent {field} provenance.")
@@ -250,7 +287,8 @@ def validate_external_eap_checkpoint(
         "uses_ttc_labels": False,
         "uses_object_bboxes": geometry_expected,
         "uses_depth_track_derivatives": geometry_expected,
-        "uses_labels_for_window_sampling": False,
+        "uses_labels_for_window_sampling": legacy_sampling_flag,
+        **sampling_provenance,
         "uses_rgb": False,
         "uses_evttc_pretraining_events": False,
         "benchmark10_opened": False,

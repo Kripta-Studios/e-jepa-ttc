@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 
 
-def _load(path: Path):
+def _load(path: Path) -> dict[str, object] | None:
     if not path.exists():
         return None
     return json.loads(path.read_text(encoding="utf-8"))
@@ -26,10 +26,11 @@ def main() -> int:
             summary = _load(summary_path)
             if summary is not None:
                 arms[relative] = summary
-    zero_shot = {
-        path.stem: _load(path)
-        for path in sorted((args.root / "metrics").glob("*.json"))
-    } if (args.root / "metrics").exists() else {}
+    zero_shot = (
+        {path.stem: _load(path) for path in sorted((args.root / "metrics").glob("*.json"))}
+        if (args.root / "metrics").exists()
+        else {}
+    )
     result = {
         "artifact_type": "eap_lhr_v2_unattended_handoff",
         "run_root": args.root.as_posix(),

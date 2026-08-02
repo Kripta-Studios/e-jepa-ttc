@@ -96,10 +96,7 @@ def _causal_object_events(
     boxes = np.asarray([state.bbox_event_xyxy for state in history], dtype=np.float64)
     event_times = raw[:, 0]
     interpolated = np.column_stack(
-        [
-            np.interp(event_times, state_times, boxes[:, coordinate])
-            for coordinate in range(4)
-        ]
+        [np.interp(event_times, state_times, boxes[:, coordinate]) for coordinate in range(4)]
     )
     widths = interpolated[:, 2] - interpolated[:, 0]
     heights = interpolated[:, 3] - interpolated[:, 1]

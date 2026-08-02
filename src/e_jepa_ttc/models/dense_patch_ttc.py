@@ -115,9 +115,7 @@ class BaseEventTubeletBackbone(nn.Module):
         super().__init__()
         if checkpoint_path is None:
             if not allow_random_initialization:
-                raise ValueError(
-                    "Random BASE initialization requires explicit authorization."
-                )
+                raise ValueError("Random BASE initialization requires explicit authorization.")
             self.encoder = EventTubeletTransformerEncoder(
                 21,
                 embed_dim=192,
@@ -184,8 +182,7 @@ class BaseEventTubeletBackbone(nn.Module):
 
         if events.ndim != 5 or events.shape[2] != self.in_channels:
             raise ValueError(
-                "BASE EventTubelet input must have shape "
-                f"[B,T,{self.in_channels},H,W]."
+                f"BASE EventTubelet input must have shape [B,T,{self.in_channels},H,W]."
             )
         batch, steps, channels, height, width = events.shape
         flat = events.reshape(batch * steps, channels, height, width)
@@ -194,8 +191,7 @@ class BaseEventTubeletBackbone(nn.Module):
             tuple(range(self.depth)),
         )
         layers = tuple(
-            value.reshape(batch, steps, value.shape[1], self.output_dim)
-            for value in outputs
+            value.reshape(batch, steps, value.shape[1], self.output_dim) for value in outputs
         )
         grid_width = width // self.patch_size
         if grid_width <= 0 or layers[-1].shape[2] % grid_width:

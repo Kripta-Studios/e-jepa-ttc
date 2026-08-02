@@ -27,6 +27,12 @@ from e_jepa_ttc.evaluation.object_ttc import (
 )
 from e_jepa_ttc.models.mask_decoder import boxes_to_soft_masks, foreground_mask_loss
 from e_jepa_ttc.models.object_geo_jepa_ttc import ObjectGeometryJEPATTC, OGEConfig, OGEOutput
+from e_jepa_ttc.reproducibility import (
+    cuda_device_name,
+    cuda_is_usable,
+    resolve_device,
+    seed_torch_cpu,
+)
 from e_jepa_ttc.training.health_monitor import embedding_health
 from e_jepa_ttc.utils.io import write_structured
 
@@ -90,17 +96,16 @@ class OGETrainerConfig:
 def _set_seed(seed: int) -> None:
     random.seed(seed)
     np.random.seed(seed)
-    torch.manual_seed(seed)
-    torch.cuda.manual_seed_all(seed)
+    seed_torch_cpu(seed)
+    if cuda_is_usable():
+        torch.cuda.manual_seed_all(seed)
 
 
 def _git_commit() -> str:
     try:
         repository_root = Path(__file__).resolve().parents[3]
         return (
-            subprocess.check_output(
-                ["git", "-C", str(repository_root), "rev-parse", "HEAD"]
-            )
+            subprocess.check_output(["git", "-C", str(repository_root), "rev-parse", "HEAD"])
             .decode("ascii")
             .strip()
         )
@@ -145,11 +150,7 @@ def _oge_config_from_checkpoint(payload: dict[str, Any]) -> OGEConfig:
     unknown = sorted(set(payload) - set(definitions))
     if unknown:
         raise ValueError(f"Checkpoint model_config contains unknown fields: {unknown}.")
-    arguments = {
-        name: value
-        for name, value in payload.items()
-        if definitions[name].init
-    }
+    arguments = {name: value for name, value in payload.items() if definitions[name].init}
     return OGEConfig(**arguments)
 
 
@@ -256,9 +257,7 @@ def _prepare_forward_inputs(
             device,
             dtype=torch.float32,
         )
-        action_valid = _tensor(batch, "context_ego_action_mask", device).to(
-            dtype=torch.float32
-        )
+        action_valid = _tensor(batch, "context_ego_action_mask", device).to(dtype=torch.float32)
         auxiliary = torch.cat((metadata, actions, action_valid[..., None]), dim=-1)
         auxiliary = auxiliary[..., None, None].expand(
             -1,
@@ -289,9 +288,7 @@ def _prepare_forward_inputs(
             device,
             dtype=torch.float32,
         ),
-        "context_ego_action_mask": _tensor(
-            batch, "context_ego_action_mask", device
-        ).bool(),
+        "context_ego_action_mask": _tensor(batch, "context_ego_action_mask", device).bool(),
         "context_intrinsics_normalized": intrinsics,
     }
 
@@ -317,13 +314,9 @@ def _ema_update(
         target.parameters(), online.parameters(), strict=True
     ):
         target_parameter.mul_(momentum).add_(online_parameter.detach(), alpha=1.0 - momentum)
-    for target_buffer, online_buffer in zip(
-        target.buffers(), online.buffers(), strict=True
-    ):
+    for target_buffer, online_buffer in zip(target.buffers(), online.buffers(), strict=True):
         if target_buffer.is_floating_point():
-            target_buffer.mul_(momentum).add_(
-                online_buffer.detach(), alpha=1.0 - momentum
-            )
+            target_buffer.mul_(momentum).add_(online_buffer.detach(), alpha=1.0 - momentum)
         else:
             target_buffer.copy_(online_buffer)
 
@@ -540,17 +533,11 @@ def evaluate_object_geo_ttc_checkpoint(
     if not requested_splits or invalid:
         raise ValueError(f"Invalid evaluation splits: {invalid or requested_splits}.")
     if "test" in requested_splits and not allow_diagnostic_test:
-        raise PermissionError(
-            "The labelled EvTTC family holdout requires --allow-diagnostic-test."
-        )
+        raise PermissionError("The labelled EvTTC family holdout requires --allow-diagnostic-test.")
     if batch_size <= 0 or num_workers < 0:
         raise ValueError("batch_size must be positive and num_workers non-negative.")
 
-    device = (
-        torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        if device_name == "auto"
-        else torch.device(device_name)
-    )
+    device = resolve_device(device_name)
     checkpoint = torch.load(checkpoint_source, map_location=device, weights_only=False)
     if "model_config" not in checkpoint or "model_state_dict" not in checkpoint:
         raise ValueError("Checkpoint is missing model_config or model_state_dict.")
@@ -614,7 +601,7 @@ def evaluate_object_geo_ttc_checkpoint(
             "cache_manifest_sha256": _hash_file(cache_source),
             "git_commit": _git_commit(),
             "device": str(device),
-            "gpu_name": torch.cuda.get_device_name(0) if device.type == "cuda" else None,
+            "gpu_name": cuda_device_name(device),
             "splits": list(requested_splits),
             "sample_count": len(dataset),
             "sequence_counts": sequence_counts,
@@ -656,11 +643,7 @@ def train_object_geo_ttc(
         Path(cache_manifest_path).parent / shard["path"] for shard in manifest["shards"]
     )
     _set_seed(trainer.seed)
-    device = (
-        torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        if device_name == "auto"
-        else torch.device(device_name)
-    )
+    device = resolve_device(device_name)
     train_dataset = EAPObjectCacheDataset(cache_manifest_path, splits=("train",))
     validation_dataset = EAPObjectCacheDataset(cache_manifest_path, splits=("validation",))
     train_indices = _indices(len(train_dataset), trainer.max_train_samples)
@@ -701,13 +684,12 @@ def train_object_geo_ttc(
     initial_common_head_sha256 = _state_dict_hash(model.direct_log_ttc_head)
     sample_selection_sha256 = _selection_hash(train_indices, validation_indices)
     if device.type == "cuda":
-        torch.cuda.reset_peak_memory_stats(device)
+        torch.cuda.set_device(device)
+        torch.cuda.reset_peak_memory_stats()
     backbone_parameters = list(model.backbone.parameters())
     backbone_parameter_ids = {id(parameter) for parameter in backbone_parameters}
     task_parameters = [
-        parameter
-        for parameter in model.parameters()
-        if id(parameter) not in backbone_parameter_ids
+        parameter for parameter in model.parameters() if id(parameter) not in backbone_parameter_ids
     ]
     if anchor_predictor is not None:
         task_parameters.extend(anchor_predictor.parameters())
@@ -835,17 +817,14 @@ def train_object_geo_ttc(
                             target_tokens = target_backbone(
                                 forward_inputs["context_events"]
                             ).dense_tokens
-                        predicted_tokens = anchor_predictor(
-                            prediction.backbone_dense_tokens
-                        )
+                        predicted_tokens = anchor_predictor(prediction.backbone_dense_tokens)
                         latent_anchor = functional.smooth_l1_loss(
                             functional.normalize(predicted_tokens.float(), dim=-1),
                             functional.normalize(target_tokens.float(), dim=-1),
                             beta=0.1,
                         )
                         losses["total"] = (
-                            losses["total"]
-                            + trainer.latent_anchor_weight * latent_anchor
+                            losses["total"] + trainer.latent_anchor_weight * latent_anchor
                         )
                     losses["latent_anchor"] = latent_anchor
                     scaled_loss = losses["total"] / trainer.gradient_accumulation
@@ -951,7 +930,7 @@ def train_object_geo_ttc(
         "source_tree_sha256": fingerprint_payload["source_tree_sha256"],
         "git_commit": fingerprint_payload["git_commit"],
         "device": str(device),
-        "gpu_name": torch.cuda.get_device_name(0) if torch.cuda.is_available() else None,
+        "gpu_name": cuda_device_name(device),
         "peak_vram_bytes": (
             int(torch.cuda.max_memory_allocated(device)) if device.type == "cuda" else 0
         ),
@@ -962,13 +941,11 @@ def train_object_geo_ttc(
         "initial_common_head_sha256": initial_common_head_sha256,
         "train_batches_per_epoch": len(train_loader),
         "maximum_optimizer_steps": (
-            (len(train_loader) + trainer.gradient_accumulation - 1)
-            // trainer.gradient_accumulation
+            (len(train_loader) + trainer.gradient_accumulation - 1) // trainer.gradient_accumulation
         )
         * trainer.epochs,
         "completed_optimizer_steps": (
-            (len(train_loader) + trainer.gradient_accumulation - 1)
-            // trainer.gradient_accumulation
+            (len(train_loader) + trainer.gradient_accumulation - 1) // trainer.gradient_accumulation
         )
         * completed_epoch,
         "epochs_completed": completed_epoch,

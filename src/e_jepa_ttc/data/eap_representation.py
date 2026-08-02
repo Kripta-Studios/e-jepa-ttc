@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
+from collections.abc import Iterable, Sequence
+
 import numpy as np
 import torch
 
 from e_jepa_ttc.data.eap import EAP_IMAGE_SIZE
 from e_jepa_ttc.data.types import EventBatch
-from e_jepa_ttc.representations.voxel_grid import encode_voxel_grid
+from e_jepa_ttc.representations.voxel_grid import encode_voxel_grid, robust_normalize
 from e_jepa_ttc.training.carla_jepa import (
     EVTTC_BASE_EVENT_CHANNELS,
     EVTTC_BASE_INPUT_CHANNELS,
@@ -56,3 +58,82 @@ def base_compatible_voxel(events: EventBatch, *, bins: int) -> torch.Tensor:
     tensor[10] = np.log1p(events.num_events)
     tensor[11] = np.log1p(events.num_events / duration_s)
     return torch.from_numpy(tensor)
+
+
+def base_compatible_voxel_chunks(
+    chunks: Iterable[dict[str, np.ndarray]],
+    *,
+    sequence_id: str,
+    start_us: int,
+    end_us: int,
+    width: int,
+    height: int,
+    bins: int,
+) -> torch.Tensor:
+    """Voxelize an iterable of raw event chunks with bounded temporary memory."""
+
+    return base_compatible_voxel_windows_chunks(
+        chunks,
+        windows=((start_us, end_us),),
+        sequence_id=sequence_id,
+        width=width,
+        height=height,
+        bins=bins,
+    )[0]
+
+
+def base_compatible_voxel_windows_chunks(
+    chunks: Iterable[dict[str, np.ndarray]],
+    *,
+    windows: Sequence[tuple[int, int]],
+    sequence_id: str,
+    width: int,
+    height: int,
+    bins: int,
+) -> torch.Tensor:
+    """Voxelize several disjoint or overlapping windows from one chunk stream.
+
+    The raw event stream is read once over the enclosing interval while each
+    requested window gets an independent accumulator and event count. This
+    preserves per-window normalization and avoids four separate HDF5 reads for
+    a JEPA context/future tuple.
+    """
+
+    if not windows:
+        raise ValueError("At least one event window is required.")
+    if any(end_us <= start_us for start_us, end_us in windows):
+        raise ValueError("All event windows require positive duration.")
+    raw = [np.zeros((EVTTC_BASE_EVENT_CHANNELS, height, width), dtype=np.float32) for _ in windows]
+    event_counts = [0] * len(windows)
+    for chunk in chunks:
+        timestamps = np.asarray(chunk["t"], dtype=np.int64)
+        for index, (start_us, end_us) in enumerate(windows):
+            selected = (timestamps >= start_us) & (timestamps < end_us)
+            if not np.any(selected):
+                continue
+            selected_events = {key: np.asarray(values)[selected] for key, values in chunk.items()}
+            event_batch = downsample_full_frame(
+                selected_events,
+                sequence_id=sequence_id,
+                start_us=start_us,
+                end_us=end_us,
+                width=width,
+                height=height,
+            )
+            raw[index] += encode_voxel_grid(event_batch, bins=bins, normalize=False)
+            event_counts[index] += event_batch.num_events
+
+    tensors: list[torch.Tensor] = []
+    for (start_us, end_us), values, event_count in zip(
+        windows,
+        raw,
+        event_counts,
+        strict=True,
+    ):
+        tensor = np.zeros((EVTTC_BASE_INPUT_CHANNELS, height, width), dtype=np.float32)
+        tensor[:EVTTC_BASE_EVENT_CHANNELS] = robust_normalize(values)
+        duration_s = max((end_us - start_us) * 1e-6, 1e-6)
+        tensor[10] = np.log1p(event_count)
+        tensor[11] = np.log1p(event_count / duration_s)
+        tensors.append(torch.from_numpy(tensor))
+    return torch.stack(tensors)

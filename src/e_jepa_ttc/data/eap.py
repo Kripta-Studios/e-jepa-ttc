@@ -13,7 +13,7 @@ import io
 import math
 import tarfile
 from collections import OrderedDict
-from collections.abc import Iterable
+from collections.abc import Iterable, Iterator
 from dataclasses import dataclass
 from pathlib import Path
 from types import ModuleType
@@ -277,7 +277,9 @@ def _project_box_with_visibility(
     bbox_3d_ego: object,
     intrinsic: object,
     event_from_ego: object,
-) -> tuple[tuple[float, float, float, float], tuple[float, float, float, float], float, float, float]:
+) -> tuple[
+    tuple[float, float, float, float], tuple[float, float, float, float], float, float, float
+]:
     """Project a box while retaining pre-clipping visibility information."""
 
     k_event = _numeric_array(intrinsic)
@@ -606,7 +608,8 @@ def _interpolate_object_state(
             else None
         ),
         visibility_fraction=float(
-            left.visibility_fraction + weight * (right.visibility_fraction - left.visibility_fraction)
+            left.visibility_fraction
+            + weight * (right.visibility_fraction - left.visibility_fraction)
         ),
         first_seen_timestamp_us=left.first_seen_timestamp_us,
     )
@@ -698,6 +701,46 @@ class EAPEventReader:
         _require_hdf5plugin()
         with h5py.File(self.path, "r") as handle:
             return self._read_from_handle(handle, start_us=start_us, end_us=end_us)
+
+    def iter_window_chunks(
+        self,
+        start_us: int,
+        end_us: int,
+        *,
+        chunk_events: int = 250_000,
+    ) -> Iterator[dict[str, np.ndarray]]:
+        """Yield exact-boundary event slices without allocating a whole window.
+
+        Large eAP windows can contain millions of events. This iterator keeps the
+        HDF5 index semantics of :meth:`read_window` while bounding temporary NumPy
+        allocations to ``chunk_events`` rows.
+        """
+
+        if start_us < 0 or end_us <= start_us:
+            raise ValueError("Event window requires 0 <= start_us < end_us.")
+        if chunk_events <= 0:
+            raise ValueError("chunk_events must be positive.")
+        handle = self._require_open_handle()
+        required = {"events/x", "events/y", "events/t", "events/p", "ms_to_idx"}
+        missing = sorted(name for name in required if name not in handle)
+        if missing:
+            raise ValueError(f"{self.path} is missing eAP event datasets: {missing}.")
+        millisecond_index = handle["ms_to_idx"]
+        maximum_ms = int(millisecond_index.shape[0] - 1)
+        start_ms = min(maximum_ms, max(0, start_us // 1000))
+        end_ms = min(maximum_ms, max(0, math.ceil(end_us / 1000)))
+        first = int(millisecond_index[start_ms])
+        last = int(millisecond_index[end_ms])
+        for cursor in range(first, last, chunk_events):
+            stop = min(last, cursor + chunk_events)
+            timestamps = np.asarray(handle["events/t"][cursor:stop], dtype=np.int64)
+            exact = (timestamps >= start_us) & (timestamps < end_us)
+            yield {
+                "x": np.asarray(handle["events/x"][cursor:stop], dtype=np.int32)[exact],
+                "y": np.asarray(handle["events/y"][cursor:stop], dtype=np.int32)[exact],
+                "t": timestamps[exact],
+                "p": np.asarray(handle["events/p"][cursor:stop], dtype=np.int8)[exact],
+            }
 
     def _read_from_handle(
         self,

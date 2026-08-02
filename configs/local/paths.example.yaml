@@ -1,0 +1,4 @@
+eap_root: "${EAP_ROOT}"
+garlttc_data_root: "${GARLTTC_DATA_ROOT}"
+garlttc_release_root: "${GARLTTC_RELEASE_ROOT}"
+evttc_manifests: []

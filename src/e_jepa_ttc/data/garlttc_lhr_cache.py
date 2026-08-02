@@ -8,15 +8,21 @@ audited five-key loader, and never falls back to reconstructed TTC labels.
 from __future__ import annotations
 
 import ast
+import gzip
 import hashlib
 import io
 import json
 import math
+import os
+import subprocess
 import tarfile
-from collections import OrderedDict
+from collections import Counter, OrderedDict
+from collections.abc import Mapping
+from concurrent.futures import ProcessPoolExecutor
 from dataclasses import asdict, dataclass
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 import torch
@@ -30,6 +36,18 @@ from e_jepa_ttc.data.eap_geometry_v2 import (
     coarse_category,
 )
 from e_jepa_ttc.data.eap_representation import base_compatible_voxel, downsample_full_frame
+from e_jepa_ttc.data.garl_input_contract import (
+    EVENT_CHANNEL_NAMES,
+    INPUT_SCHEMA_VERSION,
+    NORMALIZATION_ID,
+    validate_cache_manifest_input_schema,
+)
+from e_jepa_ttc.data.garl_official_preprocessing import (
+    official_resize_feature,
+    official_square_box,
+    official_timevolume_roi_np,
+)
+from e_jepa_ttc.data.garlttc_calibration import CalibrationResolver
 from e_jepa_ttc.data.garlttc_eap import (
     GARLTTC_JOIN_KEYS,
     load_garlttc_train_index,
@@ -38,8 +56,7 @@ from e_jepa_ttc.data.garlttc_eap import (
     resolve_eap_events_path,
     validate_garlttc_train_index,
 )
-from e_jepa_ttc.data.types import EventBatch
-from e_jepa_ttc.representations.voxel_grid import encode_voxel_grid
+from e_jepa_ttc.data.garlttc_sampling import select_balanced_cache_rows, signed_ttc_bucket
 from e_jepa_ttc.utils.io import read_structured, write_structured
 
 OBSERVABLE_MOTION_NAMES: tuple[str, ...] = (
@@ -92,6 +109,17 @@ class GarlTTCLHRCacheConfig:
     include_rgb: bool = False
     expected_train_rows: int = 88_744
     allow_dataset_version_change: bool = False
+    target_delta_t_s: float = 0.1
+    delta_t_tolerance_s: float = 0.025
+    jepa_context_delta_t_s: float = 0.1
+    jepa_context_tolerance_s: float = 0.05
+    calibration_mode: str = "official_constant_fy"
+    selection_seed: int = 7
+    event_pixel_diff: int = 5
+    preprocessing_device: str = "cpu"
+    workers: int = 1
+    compression: str = "none"
+    compression_level: int = 1
 
     def __post_init__(self) -> None:
         positive = (
@@ -105,6 +133,173 @@ class GarlTTCLHRCacheConfig:
         )
         if min(positive) <= 0:
             raise ValueError("Cache dimensions and counts must be positive.")
+        if self.roi_bins != 10:
+            raise ValueError("Official Garl-TTC input v4 requires exactly 10 ROI bins.")
+        temporal = (
+            self.target_delta_t_s,
+            self.delta_t_tolerance_s,
+            self.jepa_context_delta_t_s,
+            self.jepa_context_tolerance_s,
+        )
+        if min(temporal) <= 0:
+            raise ValueError("Temporal pairing controls must be positive.")
+        if self.calibration_mode not in {
+            "official_constant_fy",
+            "per_sample_eap_intrinsics",
+        }:
+            raise ValueError(f"Unsupported calibration mode: {self.calibration_mode!r}.")
+        if self.preprocessing_device not in {"cpu", "cuda"}:
+            raise ValueError("preprocessing_device must be 'cpu' or 'cuda'.")
+        if self.preprocessing_device == "cuda" and not torch.cuda.is_available():
+            raise ValueError("preprocessing_device='cuda' requires an available CUDA device.")
+        if self.workers <= 0:
+            raise ValueError("workers must be positive.")
+        if self.compression not in {"none", "gzip"}:
+            raise ValueError("compression must be 'none' or 'gzip'.")
+        if not 0 <= self.compression_level <= 9:
+            raise ValueError("compression_level must lie in [0, 9].")
+        if self.include_rgb and self.workers > 1:
+            raise ValueError("include_rgb with workers > 1 is not supported by the tar reader.")
+
+
+_CACHE_WORKER_EAP_ROOT: Path | None = None
+_CACHE_WORKER_CONFIG: GarlTTCLHRCacheConfig | None = None
+_CACHE_WORKER_EVENT_READERS: dict[Path, EAPEventReader] | None = None
+_CACHE_WORKER_RGB_READER: _RGBTarReader | None = None
+_CACHE_WORKER_CALIBRATION: CalibrationResolver | None = None
+
+
+def _atomic_json(path: Path, data: dict[str, Any]) -> None:
+    """Write a JSON control artifact without exposing a half-written file."""
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_name(f".{path.name}.tmp")
+    temporary.write_text(json.dumps(data, indent=2, sort_keys=True), encoding="utf-8")
+    os.replace(temporary, path)
+
+
+def _atomic_torch_save(
+    value: object,
+    path: Path,
+    *,
+    compression: str = "none",
+    compression_level: int = 1,
+) -> None:
+    """Write a torch shard atomically, optionally with lossless gzip."""
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    if compression == "none":
+        temporary = path.with_name(f".{path.name}.tmp")
+        torch.save(value, temporary)
+        os.replace(temporary, path)
+        return
+    if compression != "gzip":
+        raise ValueError(f"Unsupported shard compression: {compression!r}.")
+    raw_temporary = path.with_name(f".{path.name}.raw.tmp")
+    compressed_temporary = path.with_name(f".{path.name}.tmp")
+    try:
+        torch.save(value, raw_temporary)
+        with (
+            raw_temporary.open("rb") as source,
+            gzip.open(
+                compressed_temporary,
+                "wb",
+                compresslevel=compression_level,
+            ) as target,
+        ):
+            while chunk := source.read(8 * 1024 * 1024):
+                target.write(chunk)
+        os.replace(compressed_temporary, path)
+    finally:
+        raw_temporary.unlink(missing_ok=True)
+        compressed_temporary.unlink(missing_ok=True)
+
+
+def _load_torch_records(path: Path) -> list[dict[str, Any]]:
+    """Load a raw or gzip-compressed cache shard without changing its values."""
+
+    if path.suffix == ".gz":
+        with gzip.open(path, "rb") as handle:
+            records = torch.load(cast(Any, handle), map_location="cpu", weights_only=False)
+    else:
+        records = torch.load(path, map_location="cpu", weights_only=False)
+    if not isinstance(records, list):
+        raise TypeError(f"Shard {path} is not a list.")
+    return records
+
+
+def _cache_row_identity(row: Mapping[str, object]) -> tuple[str, ...]:
+    """Return the stable annotation identity used by cache fingerprints."""
+
+    return tuple(
+        str(row.get(key, ""))
+        for key in (
+            "sequence_id",
+            "sample_token",
+            "track_id",
+            "public_track_id",
+            "timestamp_us",
+        )
+    )
+
+
+def _cache_fingerprint(value: object) -> str:
+    payload = json.dumps(value, sort_keys=True, separators=(",", ":"), default=str)
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
+def _init_cache_worker(eap_root: str, config: GarlTTCLHRCacheConfig) -> None:
+    """Initialize one process-local reader/calibration set.
+
+    The official preprocessing remains unchanged. Only ownership and scheduling
+    move into the worker so HDF5 handles and calibration indexes are reused.
+    """
+
+    global _CACHE_WORKER_CONFIG
+    global _CACHE_WORKER_EAP_ROOT
+    global _CACHE_WORKER_EVENT_READERS
+    global _CACHE_WORKER_RGB_READER
+    global _CACHE_WORKER_CALIBRATION
+
+    _CACHE_WORKER_EAP_ROOT = Path(eap_root)
+    _CACHE_WORKER_CONFIG = config
+    _CACHE_WORKER_EVENT_READERS = {}
+    _CACHE_WORKER_CALIBRATION = CalibrationResolver(config.calibration_mode, eap_root=eap_root)
+    _CACHE_WORKER_RGB_READER = _RGBTarReader(_CACHE_WORKER_EAP_ROOT) if config.include_rgb else None
+    torch.set_num_threads(1)
+    try:
+        torch.set_num_interop_threads(1)
+    except RuntimeError:
+        # PyTorch only allows this before its first parallel operation.
+        pass
+
+
+def _materialize_cache_worker(
+    task: tuple[int, dict[str, object], int],
+) -> tuple[int, dict[str, Any] | None, str | None]:
+    """Materialize one row in a process with persistent local readers."""
+
+    order, row, first_track_timestamp_us = task
+    if (
+        _CACHE_WORKER_EAP_ROOT is None
+        or _CACHE_WORKER_CONFIG is None
+        or _CACHE_WORKER_EVENT_READERS is None
+        or _CACHE_WORKER_CALIBRATION is None
+    ):
+        raise RuntimeError("Cache worker was not initialized.")
+    try:
+        sample = _materialize_row(
+            row,
+            eap_root=_CACHE_WORKER_EAP_ROOT,
+            config=_CACHE_WORKER_CONFIG,
+            event_readers=_CACHE_WORKER_EVENT_READERS,
+            rgb_reader=_CACHE_WORKER_RGB_READER,
+            calibration=_CACHE_WORKER_CALIBRATION,
+            first_track_timestamp_us=first_track_timestamp_us,
+        )
+    except Exception as exc:  # explicit accounting; never silently substitute labels
+        return order, None, f"{type(exc).__name__}:{str(exc)[:120]}"
+    return order, sample, None
 
 
 def _sha256_file(path: Path) -> str:
@@ -113,6 +308,27 @@ def _sha256_file(path: Path) -> str:
         for chunk in iter(lambda: handle.read(8 * 1024 * 1024), b""):
             hasher.update(chunk)
     return hasher.hexdigest()
+
+
+def _repository_provenance() -> dict[str, str | None]:
+    root = Path(__file__).resolve().parents[3]
+    commit = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=root,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    diff = subprocess.run(
+        ["git", "diff", "--binary"],
+        cwd=root,
+        check=False,
+        capture_output=True,
+    )
+    return {
+        "code_commit": commit.stdout.strip() if commit.returncode == 0 else None,
+        "dirty_diff_sha256": hashlib.sha256(diff.stdout).hexdigest(),
+    }
 
 
 def _as_list(value: object) -> list[Any]:
@@ -131,11 +347,12 @@ def _as_list(value: object) -> list[Any]:
     return list(value)
 
 
-def _nested_float(value: object) -> Any:
-    if hasattr(value, "as_py"):
-        value = value.as_py()
+def _nested_float(value: object) -> object:
+    as_py = getattr(value, "as_py", None)
+    if callable(as_py):
+        value = as_py()
     if isinstance(value, np.ndarray):
-        return value.astype(float).tolist()
+        value = value.tolist()
     if isinstance(value, (list, tuple)):
         return [_nested_float(item) for item in value]
     return float(value)
@@ -172,11 +389,12 @@ def _box_features(
     lateral = float(np.abs(velocity).sum())
     radiality = float(np.tanh(abs(float(log_size_rate[1])) / (lateral + 1e-3)))
 
-    image_width, _image_height = EAP_IMAGE_SIZE
-    x0, _y0, x1, _y1 = (float(item) for item in second_box)
+    image_width, image_height = EAP_IMAGE_SIZE
+    x0, y0, x1, y1 = (float(item) for item in second_box)
     clipped_width = max(0.0, min(x1, image_width) - max(x0, 0.0))
-    raw_width = max(x1 - x0, 1e-6)
-    visibility = float(np.clip(clipped_width / raw_width, 0.0, 1.0))
+    clipped_height = max(0.0, min(y1, image_height) - max(y0, 0.0))
+    raw_area = max((x1 - x0) * (y1 - y0), 1e-6)
+    visibility = float(np.clip((clipped_width * clipped_height) / raw_area, 0.0, 1.0))
     truncated_left = float(x0 <= 0.0)
     truncated_right = float(x1 >= image_width - 1.0)
 
@@ -256,13 +474,11 @@ def observable_motion_from_boxes_torch(
     return torch.stack(rows).to(device=boxes.device, dtype=torch.float32)
 
 
-def _square_box(boxes: list[tuple[float, float, float, float]], index: int) -> tuple[float, float, float, float]:
-    max_edge = max(max(box[2] - box[0], box[3] - box[1]) for box in boxes)
-    x0, y0, x1, y1 = boxes[index]
-    cx = 0.5 * (x0 + x1)
-    cy = 0.5 * (y0 + y1)
-    half = max(max_edge, 2.0) * 0.5
-    return (cx - half, cy - half, cx + half, cy + half)
+def _square_box(
+    boxes: list[tuple[float, float, float, float]],
+    index: int,
+) -> tuple[int, int, int, int]:
+    return official_square_box(boxes, index)
 
 
 def _roi_voxel(
@@ -274,28 +490,23 @@ def _roi_voxel(
     sequence_id: str,
     start_us: int,
     end_us: int,
+    event_pixel_diff: int,
+    preprocessing_device: str,
 ) -> torch.Tensor:
-    x0, y0, x1, y1 = square
-    x = np.asarray(events["x"], dtype=np.float32)
-    y = np.asarray(events["y"], dtype=np.float32)
-    t = np.asarray(events["t"], dtype=np.int64)
-    p = np.asarray(events["p"])
-    inside = (x >= x0) & (x < x1) & (y >= y0) & (y < y1)
-    edge = max(x1 - x0, y1 - y0, 1e-6)
-    rx = np.clip(((x[inside] - x0) * size / edge).astype(np.int32), 0, size - 1)
-    ry = np.clip(((y[inside] - y0) * size / edge).astype(np.int32), 0, size - 1)
-    event_batch = EventBatch(
-        x=rx,
-        y=ry,
-        t_us=t[inside],
-        polarity=np.where(p[inside] > 0, 1, -1).astype(np.int8),
-        width=size,
-        height=size,
-        sequence_id=sequence_id,
-        t_start_us=start_us,
-        t_end_us=end_us,
+    del sequence_id, start_us, end_us
+    source_width, source_height = EAP_IMAGE_SIZE
+    x = np.asarray(events["x"], dtype=np.int64) + event_pixel_diff
+    y = np.asarray(events["y"], dtype=np.int64)
+    timestamps = np.asarray(events["t"], dtype=np.int64)
+    valid = (x >= 0) & (x < source_width) & (y >= 0) & (y < source_height)
+    feature, _ = official_timevolume_roi_np(
+        square,
+        x[valid],
+        y[valid],
+        timestamps[valid],
+        number_of_planes=bins * 2,
     )
-    return torch.from_numpy(encode_voxel_grid(event_batch, bins=bins, normalize=True))
+    return official_resize_feature(feature, (size, size), device=preprocessing_device)
 
 
 class _RGBTarReader:
@@ -336,24 +547,37 @@ class _RGBTarReader:
         return torch.from_numpy(array)
 
 
-def _visible_heights(row: Any, endpoint_indices: tuple[int, int], boxes: list[tuple[float, float, float, float]], roi_size: int) -> np.ndarray:
-    if "box3d_h" not in row or "box3d_Fcam" not in row or "K_event" not in row:
-        raise ValueError("Official LHR targets require box3d_h, box3d_Fcam, and K_event.")
+def _visible_heights(
+    row: Mapping[str, object],
+    endpoint_indices: tuple[int, int],
+    boxes: list[tuple[float, float, float, float]],
+    roi_size: int,
+    *,
+    calibration: CalibrationResolver | None = None,
+) -> np.ndarray:
+    if "box3d_h" not in row or "box3d_Fcam" not in row:
+        raise ValueError("Official LHR targets require box3d_h and box3d_Fcam.")
     height_3d = float(row["box3d_h"])
     corners_per_frame = _as_list(row["box3d_Fcam"])
-    intrinsics = np.asarray(_nested_float(row["K_event"]), dtype=np.float64)
-    if intrinsics.size != 9:
-        raise ValueError("K_event must contain a 3x3 intrinsic matrix.")
-    fy = float(intrinsics.reshape(3, 3)[1, 1])
-    max_edge = max(max(box[2] - box[0], box[3] - box[1]) for box in boxes)
+    resolver = calibration or CalibrationResolver()
+    max_edge = max(
+        official_square_box(boxes, index)[3] - official_square_box(boxes, index)[1]
+        for index in range(len(boxes))
+    )
     scaling = roi_size / max(max_edge, 1e-6)
     output = []
-    for index in endpoint_indices:
-        corners = np.asarray(_nested_float(corners_per_frame[index]), dtype=np.float64).reshape(-1, 3)
+    for index, resolved in zip(
+        endpoint_indices,
+        resolver.resolve_pair(row, endpoint_indices),
+        strict=True,
+    ):
+        corners = np.asarray(_nested_float(corners_per_frame[index]), dtype=np.float64).reshape(
+            -1, 3
+        )
         min_depth = float(np.min(corners[:, 2]))
         if min_depth <= 0:
             raise ValueError("box3d_Fcam contains non-positive depth.")
-        output.append(fy * height_3d / min_depth * scaling)
+        output.append(resolved.fy * height_3d / min_depth * scaling)
     return np.asarray(output, dtype=np.float32)
 
 
@@ -363,6 +587,7 @@ def _geometry_target(
     *,
     depths: tuple[float, float] | None,
     delta_t_s: float,
+    track_age_s: float | None,
 ) -> tuple[np.ndarray, np.ndarray]:
     values = np.zeros(EAP_GEOMETRY_V2_DIM, dtype=np.float32)
     valid = np.zeros(EAP_GEOMETRY_V2_DIM, dtype=np.bool_)
@@ -371,12 +596,16 @@ def _geometry_target(
     values[5] = observable[7]
     values[6:10] = observable[4:6].tolist() + [observable[8], observable[9]]
     values[10:13] = observable[10:13]
-    values[13] = observable[17]
+    track_age_valid = bool(
+        track_age_s is not None and math.isfinite(track_age_s) and track_age_s >= 0.0
+    )
+    values[13] = np.clip(float(track_age_s) / 2.0, 0.0, 1.0) if track_age_valid else 0.0
     values[14] = np.clip(metadata["log_area_rate_raw"] / 5.0, -1.0, 1.0)
     values[15] = float(abs(metadata["log_area_rate_raw"]) > 3.0)
     values[16:20] = observable[13:17]
     valid[:] = True
     valid[4] = False
+    valid[13] = track_age_valid
     if depths is not None:
         closing = -(depths[1] - depths[0]) / max(delta_t_s, 1e-6)
         values[4] = np.clip(closing / 20.0, -1.0, 1.0)
@@ -391,20 +620,91 @@ def _sampling_group(category: str, metadata: dict[str, float]) -> str:
     return f"{coarse_category(category)}:{motion}:{visibility}:{corridor}"
 
 
+def _nearest_index(timestamps_us: list[int], target_us: int) -> tuple[int, int]:
+    distances = [abs(int(value) - int(target_us)) for value in timestamps_us]
+    index = int(np.argmin(np.asarray(distances, dtype=np.int64)))
+    return index, int(distances[index])
+
+
+def select_temporal_indices(
+    timestamps_us: list[int],
+    *,
+    anchor_timestamp_us: int,
+    target_delta_t_s: float,
+    tolerance_s: float,
+    context_delta_t_s: float,
+    context_tolerance_s: float,
+) -> tuple[int, int, int | None]:
+    """Select t1/t2 near the declared horizon and an optional causal t0."""
+    if len(timestamps_us) < 2:
+        raise ValueError("At least two frame timestamps are required.")
+    second_index, second_error = _nearest_index(timestamps_us, anchor_timestamp_us)
+    first_target = int(anchor_timestamp_us - target_delta_t_s * 1_000_000.0)
+    first_index, first_error = _nearest_index(timestamps_us, first_target)
+    endpoint_tolerance_us = int(tolerance_s * 1_000_000.0)
+    if (
+        first_index >= second_index
+        or first_error > endpoint_tolerance_us
+        or second_error > endpoint_tolerance_us
+    ):
+        raise ValueError("No causal LHR endpoint pair lies within the requested tolerance.")
+    context_target = int(timestamps_us[first_index] - context_delta_t_s * 1_000_000.0)
+    context_index, context_error = _nearest_index(timestamps_us, context_target)
+    if context_index >= first_index or context_error > int(context_tolerance_s * 1_000_000.0):
+        context_index = None
+    return first_index, second_index, context_index
+
+
+def _official_ttc_at_endpoint(
+    row: Mapping[str, object],
+    second_index: int,
+    *,
+    allow_row_ttc_compatibility: bool = False,
+) -> float:
+    try:
+        values = _as_list(row["frame_ttc"])
+        value = float(values[second_index])
+        if math.isfinite(value):
+            return value
+    except (KeyError, TypeError, ValueError, IndexError) as exc:
+        if not allow_row_ttc_compatibility:
+            raise ValueError(
+                "Official GarlTTC requires frame_ttc[t2]; enable the explicit "
+                "compatibility mode only for a version-checked annotation."
+            ) from exc
+    if not allow_row_ttc_compatibility:
+        raise ValueError("Official GarlTTC frame_ttc[t2] is not finite.")
+    value = float(row["ttc"])
+    if not math.isfinite(value):
+        raise ValueError("Official GarlTTC target is not finite.")
+    return value
+
+
 def _materialize_row(
-    row: Any,
+    row: Mapping[str, object],
     *,
     eap_root: Path,
     config: GarlTTCLHRCacheConfig,
     event_readers: dict[Path, EAPEventReader],
     rgb_reader: _RGBTarReader | None,
+    first_track_timestamp_us: int | None,
+    calibration: CalibrationResolver,
 ) -> dict[str, Any]:
     boxes = normalize_boxes_xyxy(row["boxes_xyxy"])
     windows = normalize_event_windows_us(row["event_windows_us"])
     frame_timestamps = [int(value) for value in _as_list(row["frame_timestamps_us"])]
     if min(len(boxes), len(windows), len(frame_timestamps)) < 2:
         raise ValueError("LHR sample requires at least two aligned frames.")
-    first_index, second_index = 0, min(len(boxes), len(windows), len(frame_timestamps)) - 1
+    usable = min(len(boxes), len(windows), len(frame_timestamps))
+    boxes, windows, frame_timestamps = boxes[:usable], windows[:usable], frame_timestamps[:usable]
+    first_index, second_index, context_index = select_temporal_indices(
+        frame_timestamps,
+        anchor_timestamp_us=int(row["timestamp_us"]),
+        target_delta_t_s=config.target_delta_t_s,
+        tolerance_s=config.delta_t_tolerance_s,
+        context_delta_t_s=config.jepa_context_delta_t_s,
+        context_tolerance_s=config.jepa_context_tolerance_s,
+    )
     delta_t_s = (frame_timestamps[second_index] - frame_timestamps[first_index]) * 1e-6
     if delta_t_s <= 0:
         raise ValueError("Frame timestamps must increase.")
@@ -428,6 +728,8 @@ def _materialize_row(
                 sequence_id=str(row["sequence_id"]),
                 start_us=start_us,
                 end_us=end_us,
+                event_pixel_diff=config.event_pixel_diff,
+                preprocessing_device=config.preprocessing_device,
             )
         )
         full_batch = downsample_full_frame(
@@ -441,12 +743,22 @@ def _materialize_row(
         full_frames.append(base_compatible_voxel(full_batch, bins=config.full_bins))
 
     observable, metadata = _box_features(boxes[first_index], boxes[second_index], delta_t_s)
-    visible_heights = _visible_heights(row, (first_index, second_index), boxes, config.roi_size)
+    visible_heights = _visible_heights(
+        row,
+        (first_index, second_index),
+        boxes,
+        config.roi_size,
+        calibration=calibration,
+    )
     depths = None
     try:
         corners = _as_list(row["box3d_Fcam"])
-        first_corners = np.asarray(_nested_float(corners[first_index]), dtype=np.float64).reshape(-1, 3)
-        second_corners = np.asarray(_nested_float(corners[second_index]), dtype=np.float64).reshape(-1, 3)
+        first_corners = np.asarray(_nested_float(corners[first_index]), dtype=np.float64).reshape(
+            -1, 3
+        )
+        second_corners = np.asarray(_nested_float(corners[second_index]), dtype=np.float64).reshape(
+            -1, 3
+        )
         depths = (float(first_corners[:, 2].min()), float(second_corners[:, 2].min()))
     except (KeyError, TypeError, ValueError, IndexError):
         depths = None
@@ -455,17 +767,35 @@ def _materialize_row(
         metadata,
         depths=depths,
         delta_t_s=delta_t_s,
+        track_age_s=(
+            (int(row["timestamp_us"]) - int(first_track_timestamp_us)) * 1e-6
+            if first_track_timestamp_us is not None
+            else None
+        ),
     )
     category = str(row.get("category", row.get("category_name", "unknown")))
+    if context_index is not None:
+        context_dt_s = (frame_timestamps[first_index] - frame_timestamps[context_index]) * 1e-6
+        jepa_context_motion, _ = _box_features(
+            boxes[context_index], boxes[first_index], context_dt_s
+        )
+        precontext_motion_valid = True
+    else:
+        jepa_context_motion = np.zeros(OBSERVABLE_MOTION_DIM, dtype=np.float32)
+        precontext_motion_valid = False
+    jepa_pair_valid = bool(first_index < second_index and math.isfinite(delta_t_s))
     sample = {
         "full_frame_events": torch.stack(full_frames).numpy().astype(np.float32),
         "garl_event_roi": torch.cat(endpoint_events, dim=0).numpy().astype(np.float32),
         "garl_delta_t_s": np.float32(delta_t_s),
         "observable_motion": observable,
+        "jepa_context_motion": jepa_context_motion,
+        "jepa_pair_valid": np.bool_(jepa_pair_valid),
+        "precontext_motion_valid": np.bool_(precontext_motion_valid),
         "geometry_v2_target": geometry,
         "geometry_v2_valid": geometry_valid,
         "garl_visible_heights_px": visible_heights,
-        "ttc_s": np.float32(float(row["ttc"])),
+        "ttc_s": np.float32(_official_ttc_at_endpoint(row, second_index)),
         "category_index": np.int64(category_index(category)),
         "category_valid": np.bool_(category != "unknown"),
         "sampling_group": _sampling_group(category, metadata),
@@ -475,29 +805,38 @@ def _materialize_row(
         "track_id": str(row["track_id"]),
         "public_track_id": str(row["public_track_id"]),
         "timestamp_us": np.int64(row["timestamp_us"]),
-        "ttc_label_source": "official_garlttc_annotations_train_parquet",
+        "endpoint_first_timestamp_us": np.int64(frame_timestamps[first_index]),
+        "endpoint_second_timestamp_us": np.int64(frame_timestamps[second_index]),
+        "endpoint_delta_error_s": np.float32(abs(delta_t_s - config.target_delta_t_s)),
+        "ttc_label_index": np.int64(second_index),
+        "ttc_label_timestamp_us": np.int64(frame_timestamps[second_index]),
+        "ttc_label_source": "official_garlttc_annotations_train_parquet.frame_ttc[t2]",
     }
     if config.include_rgb:
         if rgb_reader is None:
             raise RuntimeError("RGB reader is unavailable.")
         shards = _as_list(row["rgb_shard_paths"])
         members = _as_list(row["rgb_member_paths"])
-        sample["garl_rgb_pair"] = torch.stack(
-            [
-                rgb_reader.read(
-                    shards[first_index],
-                    members[first_index],
-                    square=_square_box(boxes, first_index),
-                    size=config.roi_size,
-                ),
-                rgb_reader.read(
-                    shards[second_index],
-                    members[second_index],
-                    square=_square_box(boxes, second_index),
-                    size=config.roi_size,
-                ),
-            ]
-        ).numpy().astype(np.float32)
+        sample["garl_rgb_pair"] = (
+            torch.stack(
+                [
+                    rgb_reader.read(
+                        shards[first_index],
+                        members[first_index],
+                        square=_square_box(boxes, first_index),
+                        size=config.roi_size,
+                    ),
+                    rgb_reader.read(
+                        shards[second_index],
+                        members[second_index],
+                        square=_square_box(boxes, second_index),
+                        size=config.roi_size,
+                    ),
+                ]
+            )
+            .numpy()
+            .astype(np.float32)
+        )
     return sample
 
 
@@ -509,6 +848,7 @@ def materialize_garlttc_lhr_cache(
     output_dir: str | Path,
     config: GarlTTCLHRCacheConfig,
     max_samples_per_split: int | None = None,
+    resume: bool = False,
 ) -> dict[str, Any]:
     """Build an auditable cache using official public GarlTTC train labels only."""
 
@@ -529,44 +869,123 @@ def materialize_garlttc_lhr_cache(
         expected_rows=config.expected_train_rows,
         allow_version_change=config.allow_dataset_version_change,
     )
-    output = Path(output_dir)
-    output.mkdir(parents=True, exist_ok=True)
-    event_readers: dict[Path, EAPEventReader] = {}
-    rgb_reader = _RGBTarReader(eap_root) if config.include_rgb else None
-    shard_records: dict[str, list[dict[str, Any]]] = {"train": [], "validation": []}
-    shard_meta: list[dict[str, Any]] = []
-    discard_reasons: dict[str, int] = {}
-    split_counts = {"train": 0, "validation": 0}
-
-    def flush(role: str) -> None:
-        records = shard_records[role]
-        if not records:
-            return
-        role_dir = output / role
-        role_dir.mkdir(parents=True, exist_ok=True)
-        shard_index = sum(1 for item in shard_meta if item["split"] == role)
-        path = role_dir / f"shard-{shard_index:05d}.pt"
-        torch.save(records, path)
-        shard_meta.append(
-            {
-                "split": role,
-                "path": path.relative_to(output).as_posix(),
-                "count": len(records),
-                "sha256": _sha256_file(path),
-            }
-        )
-        records.clear()
-
+    track_start_lookup = (
+        index.merged.groupby(["sequence_id", "track_id"], dropna=False)["timestamp_us"]
+        .min()
+        .to_dict()
+    )
     rows = index.merged.sort_values(
         ["sequence_id", "timestamp_us", "track_id", "sample_token"],
         kind="mergesort",
     )
-    for _, row in rows.iterrows():
+    selected_rows, selection_report = select_balanced_cache_rows(
+        rows,
+        sequence_role,
+        seed=config.selection_seed,
+        max_samples_per_split=max_samples_per_split,
+    )
+    role_rows: dict[str, list[dict[str, object]]] = {"train": [], "validation": []}
+    for _, row in selected_rows.iterrows():
         role = sequence_role.get(str(row["sequence_id"]))
-        if role not in shard_records:
-            continue
-        if max_samples_per_split is not None and split_counts[role] >= max_samples_per_split:
-            continue
+        if role in role_rows:
+            role_rows[role].append(dict(row))
+
+    selection_fingerprint = _cache_fingerprint(
+        {
+            role: [_cache_row_identity(row) for row in role_rows[role]]
+            for role in ("train", "validation")
+        }
+    )
+    config_fingerprint = _cache_fingerprint(asdict(config))
+    split_path = Path(split_path).resolve()
+    split_sha256 = _sha256_file(split_path)
+    output = Path(output_dir).resolve()
+    output.mkdir(parents=True, exist_ok=True)
+    state_path = output / "build_state.json"
+    manifest_path = output / "manifest.json"
+    if resume:
+        if not state_path.is_file():
+            raise FileNotFoundError(
+                f"Cannot resume {output}: build_state.json is missing; "
+                "refusing to adopt old shards."
+            )
+        state = read_structured(state_path)
+        expected_state = {
+            "selection_fingerprint": selection_fingerprint,
+            "config_fingerprint": config_fingerprint,
+            "split_sha256": split_sha256,
+        }
+        mismatches = {
+            key: (state.get(key), value)
+            for key, value in expected_state.items()
+            if state.get(key) != value
+        }
+        if mismatches:
+            raise RuntimeError(
+                f"Resume state does not match this selection/configuration: {mismatches}"
+            )
+        if state.get("status") == "completed" and manifest_path.is_file():
+            return read_structured(manifest_path)
+    else:
+        existing = [path.name for path in output.iterdir()]
+        if existing:
+            raise FileExistsError(
+                f"Refusing to overwrite non-empty cache output {output}; "
+                "use a new path or --resume."
+            )
+        state = {}
+
+    if config.preprocessing_device == "cuda" and config.workers != 1:
+        raise ValueError(
+            "CUDA preprocessing must use exactly one worker to avoid competing for the 12 GB GPU."
+        )
+    _atomic_json(
+        state_path,
+        {
+            "artifact_type": "garlttc_lhr_cache_build_state_v1",
+            "status": "running",
+            "selection_fingerprint": selection_fingerprint,
+            "config_fingerprint": config_fingerprint,
+            "split_sha256": split_sha256,
+            "workers": config.workers,
+            "preprocessing_device": config.preprocessing_device,
+            "selected_count": int(selection_report["selected_count"]),
+            "selection_report": selection_report,
+        },
+    )
+
+    shard_meta: list[dict[str, Any]] = []
+    discard_reasons: Counter[str] = Counter()
+    split_counts = {"train": 0, "validation": 0}
+    jepa_pair_valid_count = 0
+    precontext_motion_valid_count = 0
+    ttc_bucket_counts: Counter[str] = Counter()
+    ttc_positive_negative_counts: Counter[str] = Counter()
+    calibration = CalibrationResolver(config.calibration_mode, eap_root=eap_root)
+    rgb_reader = _RGBTarReader(eap_root) if config.include_rgb else None
+    event_readers: dict[Path, EAPEventReader] = {}
+    executor: ProcessPoolExecutor | None = None
+
+    def consume(
+        role: str,
+        records: list[dict[str, Any]],
+        errors: Mapping[str, int],
+    ) -> None:
+        nonlocal jepa_pair_valid_count, precontext_motion_valid_count
+        split_counts[role] += len(records)
+        for error, count in errors.items():
+            discard_reasons[error] += int(count)
+        for sample in records:
+            jepa_pair_valid_count += int(sample["jepa_pair_valid"])
+            precontext_motion_valid_count += int(sample["precontext_motion_valid"])
+            ttc_value = float(sample["ttc_s"])
+            ttc_bucket_counts[signed_ttc_bucket(ttc_value)] += 1
+            ttc_positive_negative_counts["positive" if ttc_value > 0.0 else "negative"] += 1
+
+    def direct_task(
+        task: tuple[int, dict[str, object], int],
+    ) -> tuple[int, dict[str, Any] | None, str | None]:
+        order, row, first_timestamp = task
         try:
             sample = _materialize_row(
                 row,
@@ -574,32 +993,156 @@ def materialize_garlttc_lhr_cache(
                 config=config,
                 event_readers=event_readers,
                 rgb_reader=rgb_reader,
+                calibration=calibration,
+                first_track_timestamp_us=first_timestamp,
             )
         except Exception as exc:  # explicit accounting; never silently substitute labels
-            key = f"{type(exc).__name__}:{str(exc)[:120]}"
-            discard_reasons[key] = discard_reasons.get(key, 0) + 1
-            continue
-        shard_records[role].append(sample)
-        split_counts[role] += 1
-        if len(shard_records[role]) >= config.shard_size:
-            flush(role)
-    flush("train")
-    flush("validation")
+            return order, None, f"{type(exc).__name__}:{str(exc)[:120]}"
+        return order, sample, None
+
+    try:
+        if config.workers > 1:
+            executor = ProcessPoolExecutor(
+                max_workers=config.workers,
+                initializer=_init_cache_worker,
+                initargs=(eap_root.as_posix(), config),
+            )
+        for role in ("train", "validation"):
+            rows_for_role = role_rows[role]
+            for shard_index, start in enumerate(range(0, len(rows_for_role), config.shard_size)):
+                chunk_rows = rows_for_role[start : start + config.shard_size]
+                chunk_hash = _cache_fingerprint(
+                    {
+                        "role": role,
+                        "shard_index": shard_index,
+                        "rows": [_cache_row_identity(row) for row in chunk_rows],
+                    }
+                )
+                role_dir = output / role
+                role_dir.mkdir(parents=True, exist_ok=True)
+                shard_suffix = ".pt.gz" if config.compression == "gzip" else ".pt"
+                path = role_dir / f"shard-{shard_index:05d}{shard_suffix}"
+                sidecar_path = role_dir / f"shard-{shard_index:05d}.meta.json"
+
+                if resume:
+                    if not path.is_file() or not sidecar_path.is_file():
+                        if path.exists() or sidecar_path.exists():
+                            raise RuntimeError(
+                                f"Incomplete shard pair for {role}/{shard_index}; "
+                                "refusing to overwrite it."
+                            )
+                    else:
+                        metadata = read_structured(sidecar_path)
+                        valid_metadata = (
+                            metadata.get("selection_fingerprint") == chunk_hash
+                            and metadata.get("config_fingerprint") == config_fingerprint
+                            and metadata.get("split_sha256") == split_sha256
+                            and metadata.get("sha256") == _sha256_file(path)
+                        )
+                        if not valid_metadata:
+                            raise RuntimeError(
+                                f"Shard integrity metadata does not match {path}; "
+                                "refusing to overwrite it."
+                            )
+                        records = _load_torch_records(path)
+                        consume(role, records, metadata.get("discard_reasons", {}))
+                        shard_meta.append(metadata)
+                        continue
+                elif path.exists() or sidecar_path.exists():
+                    raise FileExistsError(f"Refusing to overwrite existing shard {path}.")
+
+                tasks = [
+                    (
+                        order,
+                        row,
+                        int(
+                            track_start_lookup.get(
+                                (row["sequence_id"], row["track_id"]), row["timestamp_us"]
+                            )
+                        ),
+                    )
+                    for order, row in enumerate(chunk_rows)
+                ]
+                if executor is None:
+                    results = [direct_task(task) for task in tasks]
+                else:
+                    results = list(executor.map(_materialize_cache_worker, tasks, chunksize=1))
+                results.sort(key=lambda item: item[0])
+                records = [sample for _, sample, error in results if sample is not None]
+                errors = Counter(error for _, sample, error in results if sample is None and error)
+                _atomic_torch_save(
+                    records,
+                    path,
+                    compression=config.compression,
+                    compression_level=config.compression_level,
+                )
+                metadata = {
+                    "split": role,
+                    "path": path.relative_to(output).as_posix(),
+                    "count": len(records),
+                    "requested_count": len(chunk_rows),
+                    "sha256": _sha256_file(path),
+                    "selection_fingerprint": chunk_hash,
+                    "config_fingerprint": config_fingerprint,
+                    "split_sha256": split_sha256,
+                    "discard_count": int(sum(errors.values())),
+                    "discard_reasons": dict(sorted(errors.items())),
+                }
+                _atomic_json(sidecar_path, metadata)
+                consume(role, records, errors)
+                shard_meta.append(metadata)
+    except BaseException as exc:
+        failed_state = {
+            "artifact_type": "garlttc_lhr_cache_build_state_v1",
+            "status": "failed",
+            "selection_fingerprint": selection_fingerprint,
+            "config_fingerprint": config_fingerprint,
+            "split_sha256": split_sha256,
+            "workers": config.workers,
+            "preprocessing_device": config.preprocessing_device,
+            "error": f"{type(exc).__name__}: {exc}",
+        }
+        _atomic_json(state_path, failed_state)
+        _atomic_json(
+            output / "FAILURE.json",
+            {
+                **failed_state,
+                "output_dir": output.as_posix(),
+                "completed_shards": len(shard_meta),
+                "shards": shard_meta,
+            },
+        )
+        raise
+    finally:
+        if executor is not None:
+            executor.shutdown(wait=True, cancel_futures=False)
+
     if min(split_counts.values()) <= 0:
         raise RuntimeError(f"Official cache produced an empty split: {split_counts}")
 
     data_path = garlttc_root / "data" / "train.parquet"
     annotations_path = garlttc_root / "annotations" / "train.parquet"
+    provenance = _repository_provenance()
+    protocol_path = (
+        Path(__file__).resolve().parents[3] / "configs/protocol/garlttc_official_v1.yaml"
+    )
     manifest = {
-        "artifact_type": "garlttc_official_lhr_object_cache_v2",
+        "artifact_type": "garlttc_official_lhr_object_cache_v4",
+        "schema_version": "garlttc_cache_v4",
+        "created_at": datetime.now(UTC).isoformat(),
+        **provenance,
         "format": "torch_sharded_list_v1",
+        "shard_compression": config.compression,
+        "shard_compression_level": config.compression_level,
         "config": asdict(config),
         "eap_root": eap_root.as_posix(),
         "garlttc_root": garlttc_root.as_posix(),
-        "split_path": Path(split_path).as_posix(),
-        "split_sha256": _sha256_file(Path(split_path)),
+        "split_path": split_path.as_posix(),
+        "split_sha256": split_sha256,
         "garlttc_data_sha256": _sha256_file(data_path),
         "garlttc_annotations_sha256": _sha256_file(annotations_path),
+        "eap_data_parquet_sha256": _sha256_file(eap_root / "data" / "train.parquet"),
+        "protocol_sha256": _sha256_file(protocol_path) if protocol_path.is_file() else None,
         "garlttc_join_keys_sha256": index.join_keys_sha256,
         "join_keys": GARLTTC_JOIN_KEYS,
         "ttc_label_source": "official_garlttc_annotations_train_parquet",
@@ -611,6 +1154,9 @@ def materialize_garlttc_lhr_cache(
             "garl_event_roi",
             "garl_delta_t_s",
             "observable_motion",
+            "jepa_context_motion",
+            "jepa_pair_valid",
+            "precontext_motion_valid",
             *([] if not config.include_rgb else ["garl_rgb_pair"]),
         ],
         "supervision_only_fields": [
@@ -624,11 +1170,57 @@ def materialize_garlttc_lhr_cache(
         "forbidden_model_input_fields": sorted(FORBIDDEN_MODEL_INPUT_KEYS),
         "observable_motion_names": list(OBSERVABLE_MOTION_NAMES),
         "geometry_target_dim": EAP_GEOMETRY_V2_DIM,
+        "input_schema": {
+            "version": INPUT_SCHEMA_VERSION,
+            "event_roi_shape": [2, config.roi_bins * 2, config.roi_size, config.roi_size],
+            "channel_names": list(EVENT_CHANNEL_NAMES),
+            "normalization": NORMALIZATION_ID,
+        },
+        "calibration_mode": config.calibration_mode,
+        "bbox_protocol": "official_gt_square_roi_p0",
+        "temporal_pairing": {
+            "target_delta_t_s": config.target_delta_t_s,
+            "delta_t_tolerance_s": config.delta_t_tolerance_s,
+            "jepa_context_delta_t_s": config.jepa_context_delta_t_s,
+            "jepa_context_tolerance_s": config.jepa_context_tolerance_s,
+            "jepa_predictor_is_strictly_causal": True,
+        },
+        "visibility_definition": "clipped_bbox_area_over_raw_bbox_area",
         "split_counts": split_counts,
+        "selection": selection_report,
+        "jepa_pair_valid_fraction": float(
+            jepa_pair_valid_count / max(sum(split_counts.values()), 1)
+        ),
+        "precontext_motion_valid_fraction": float(
+            precontext_motion_valid_count / max(sum(split_counts.values()), 1)
+        ),
+        "ttc_positive_negative_counts": dict(sorted(ttc_positive_negative_counts.items())),
+        "ttc_bucket_counts": dict(sorted(ttc_bucket_counts.items())),
+        "discard_count": int(sum(discard_reasons.values())),
+        "discard_fraction": float(
+            sum(discard_reasons.values()) / max(selection_report["selected_count"], 1)
+        ),
         "discard_reasons": dict(sorted(discard_reasons.items())),
         "shards": shard_meta,
+        "materialization_backend": "process_pool" if config.workers > 1 else "single_process",
+        "workers": config.workers,
+        "resumable": True,
     }
     write_structured(output / "manifest.json", manifest)
+    _atomic_json(
+        state_path,
+        {
+            "artifact_type": "garlttc_lhr_cache_build_state_v1",
+            "status": "completed",
+            "selection_fingerprint": selection_fingerprint,
+            "config_fingerprint": config_fingerprint,
+            "split_sha256": split_sha256,
+            "workers": config.workers,
+            "preprocessing_device": config.preprocessing_device,
+            "manifest_sha256": _sha256_file(output / "manifest.json"),
+            "shard_count": len(shard_meta),
+        },
+    )
     return manifest
 
 
@@ -641,6 +1233,7 @@ class GarlTTCLHRCacheDataset(Dataset[dict[str, Any]]):
         self.manifest = read_structured(self.manifest_path)
         if self.manifest.get("uses_official_garl_ttc_labels") is not True:
             raise ValueError("LHR-v2 training requires an official-label cache.")
+        validate_cache_manifest_input_schema(self.manifest)
         self.entries: list[tuple[Path, int]] = []
         for shard in self.manifest.get("shards", []):
             if shard.get("split") not in splits:
@@ -659,9 +1252,7 @@ class GarlTTCLHRCacheDataset(Dataset[dict[str, Any]]):
     def __getitem__(self, index: int) -> dict[str, Any]:
         path, local_index = self.entries[index]
         if self._cached_path != path:
-            records = torch.load(path, map_location="cpu", weights_only=False)
-            if not isinstance(records, list):
-                raise TypeError(f"Shard {path} is not a list.")
+            records = _load_torch_records(path)
             self._cached_path = path
             self._cached_records = records
         assert self._cached_records is not None

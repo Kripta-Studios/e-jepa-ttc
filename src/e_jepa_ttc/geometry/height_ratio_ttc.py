@@ -97,28 +97,20 @@ def _causal_pair_ratio_rate(
         raise ValueError("times_s must have shape [T] or [B,T].")
     previous = values[..., :-1, :]
     current = values[..., 1:, :]
-    valid = (
-        previous.isfinite()
-        & current.isfinite()
-        & (previous > 0)
-        & (current > 0)
-        & (dt > 1e-6)
-    )
+    valid = previous.isfinite() & current.isfinite() & (previous > 0) & (current > 0) & (dt > 1e-6)
     if valid_mask is not None:
         if valid_mask.shape != values.shape:
             raise ValueError("valid_mask must match values.")
         valid = valid & valid_mask[..., :-1, :].bool() & valid_mask[..., 1:, :].bool()
-    scale_growth = (current.clamp_min(1e-6) / previous.clamp_min(1e-6)).pow(
-        ratio_power
-    )
+    scale_growth = (current.clamp_min(1e-6) / previous.clamp_min(1e-6)).pow(ratio_power)
     pair_rate = (scale_growth - 1.0) / dt.clamp_min(1e-6)
     pair_rate = torch.where(valid, pair_rate, torch.zeros_like(pair_rate))
     weights = valid.to(values.dtype)
     count = weights.sum(dim=-2)
     mean_rate = (pair_rate * weights).sum(dim=-2) / count.clamp_min(1.0)
-    disagreement = (
-        (pair_rate - mean_rate.unsqueeze(-2)).abs() * weights
-    ).sum(dim=-2) / count.clamp_min(1.0)
+    disagreement = ((pair_rate - mean_rate.unsqueeze(-2)).abs() * weights).sum(
+        dim=-2
+    ) / count.clamp_min(1.0)
     # Adjacent identities are useful for consistency, but a single interval
     # amplifies box jitter. Use the widest valid causal span and evaluate the
     # exact ratio at its current endpoint.
@@ -161,8 +153,7 @@ def _causal_pair_ratio_rate(
         )
     span_dt = (last_time - first_time).clamp_min(1e-6)
     span_rate = (
-        (last_value.clamp_min(1e-6) / first_value.clamp_min(1e-6)).pow(ratio_power)
-        - 1.0
+        (last_value.clamp_min(1e-6) / first_value.clamp_min(1e-6)).pow(ratio_power) - 1.0
     ) / span_dt
     has_span = (latest_index >= 0) & (earliest_index < pair_axis)
     span_rate = torch.where(has_span, span_rate, torch.zeros_like(span_rate))

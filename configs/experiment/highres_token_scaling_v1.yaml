@@ -1,0 +1,29 @@
+artifact_type: highres_token_scaling_config_v1
+input_channels: 21
+temporal_steps: 5
+spatial_window: 8
+heads: 4
+embed_dim: 32
+temporal_depth: 1
+memory_budget_gb: 12.0
+resolutions:
+  - name: R1
+    width: 256
+    height: 144
+    patch_size: 16
+    merge_2x2: false
+  - name: R2
+    width: 320
+    height: 192
+    patch_size: 16
+    merge_2x2: false
+  - name: R3
+    width: 160
+    height: 96
+    patch_size: 8
+    merge_2x2: false
+  - name: R4
+    width: 320
+    height: 192
+    patch_size: 8
+    merge_2x2: false

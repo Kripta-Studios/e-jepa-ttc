@@ -1,0 +1,7 @@
+name: ablations
+axes:
+  representation: [event_count, time_surface, voxel_grid, sparse_tokens]
+  objective: [single_horizon, multi_horizon]
+  anti_collapse: [none, vicreg, gaussian]
+  geometry_loss: [false, true]
+select_one_axis_at_a_time: true

@@ -1,4 +1,13 @@
-.PHONY: setup lint test check smoke-data scan-data validate-data index-data split-data cache-voxel train-base pretrain-jepa architecture-validate architecture-smoke architecture-screen eap-analysis eap-full
+.PHONY: setup lint test check smoke-data scan-data validate-data index-data split-data cache-voxel train-base train-baseline pretrain-jepa finetune-ttc evaluate demo architecture-validate architecture-smoke architecture-screen eap-analysis eap-full report
+
+EAP_ROOT ?=
+GARLTTC_ROOT ?=
+GARL_SPLIT ?= data/splits/eap_pilot12_v1.json
+TUBELET_CONFIG ?= configs/experiment/e_jepa_garl_event_screen_v1.yaml
+FINETUNE_OUTPUT ?= artifacts/runs/e_jepa_tubelet_lhr_event
+FINETUNE_MAX_SAMPLES ?= 2048
+METRICS_JSON ?=
+SPLIT ?= validation
 
 setup:
 	uv sync --locked --all-groups --no-editable
@@ -33,8 +42,21 @@ cache-voxel:
 train-base:
 	uv run --no-sync e-jepa-ttc train tiny-cnn --cache artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz --output-dir artifacts/runs/base_seed7 --epochs 60 --batch-size 32 --learning-rate 0.0003 --seed 7 --device auto
 
+train-baseline: train-base
+
 pretrain-jepa:
 	uv run --no-sync e-jepa-ttc pretrain jepa --cache artifacts/features/evttc_voxel_160x90_b5_raw_meta.npz --output-dir artifacts/runs/jepa_seed7 --epochs 80 --batch-size 32 --learning-rate 0.0005 --seed 7 --device auto --pretrain-splits train --validation-splits validation --temporal-horizons-ms 20 60 100 240 500
+
+finetune-ttc:
+	@test -n "$(EAP_ROOT)" || (echo "EAP_ROOT is required" && exit 2)
+	@test -n "$(GARLTTC_ROOT)" || (echo "GARLTTC_ROOT is required" && exit 2)
+	uv run --no-sync python scripts/train_e_jepa_tubelet_lhr.py --eap-root "$(EAP_ROOT)" --garlttc-root "$(GARLTTC_ROOT)" --split "$(GARL_SPLIT)" --config "$(TUBELET_CONFIG)" --output-dir "$(FINETUNE_OUTPUT)" --max-samples-per-split "$(FINETUNE_MAX_SAMPLES)" --device auto
+
+evaluate:
+	uv run --no-sync python scripts/evaluate.py --split $(SPLIT) $(METRICS_JSON)
+
+demo:
+	uv run --no-sync python scripts/run_demo.py
 
 architecture-validate:
 	powershell -ExecutionPolicy Bypass -File scripts/run_evttc_architecture_selection.ps1 -Mode Validate
@@ -50,3 +72,6 @@ eap-analysis:
 
 eap-full:
 	uv run --no-sync python scripts/run_eap_evttc_complete.py --profile full --objectives both --stages all --resume
+
+report:
+	uv run --no-sync python scripts/build_report.py --repo-root . --output-dir artifacts/tables/regenerable_report

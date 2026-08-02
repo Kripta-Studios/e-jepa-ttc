@@ -8,6 +8,7 @@ import math
 import time
 from collections import OrderedDict
 from dataclasses import asdict, dataclass
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -28,12 +29,15 @@ from e_jepa_ttc.data.eap import (
 )
 from e_jepa_ttc.data.eap_geometry_v2 import (
     EAP_GEOMETRY_V1_NAMES,
-    EAP_GEOMETRY_V2_DIM,
     EAP_GEOMETRY_V2_NAMES,
     geometry_v2_targets,
 )
-from e_jepa_ttc.data.eap_representation import base_compatible_voxel, downsample_full_frame
+from e_jepa_ttc.data.eap_representation import (
+    base_compatible_voxel_chunks,
+    base_compatible_voxel_windows_chunks,
+)
 from e_jepa_ttc.models import build_encoder
+from e_jepa_ttc.reproducibility import cuda_device_name, resolve_device
 from e_jepa_ttc.training.carla_jepa import (
     EVTTC_BASE_EVENT_CHANNELS,
     EVTTC_BASE_INPUT_CHANNELS,
@@ -54,6 +58,15 @@ from e_jepa_ttc.utils.io import read_structured, write_structured
 
 EAP_PRETRAINING_DATASET_ID = "EAP_PUBLIC_TRAIN40"
 EAP_GEOMETRY_TARGET_DIM = 6
+EAP_SAMPLING_PROVENANCE_FIELDS: tuple[str, ...] = (
+    "uses_ttc_for_sampling",
+    "uses_boxes_for_sampling",
+    "uses_category_for_sampling",
+    "uses_depth_for_sampling",
+    "uses_masks_for_sampling",
+    "uses_3d_for_sampling",
+    "uses_future_labels_for_sampling",
+)
 
 
 def _geometry_target_names(version: str) -> tuple[str, ...]:
@@ -62,6 +75,30 @@ def _geometry_target_names(version: str) -> tuple[str, ...]:
     if version == "v2":
         return EAP_GEOMETRY_V2_NAMES
     raise ValueError(f"Unsupported eAP geometry target version: {version!r}.")
+
+
+def _sampling_provenance(
+    config: EAPJEPATrainerConfig,
+    *,
+    geometry_enabled: bool,
+) -> dict[str, bool]:
+    """Describe annotation families that can affect sampled sample identities."""
+
+    if not geometry_enabled:
+        return dict.fromkeys(EAP_SAMPLING_PROVENANCE_FIELDS, False)
+    balanced_v2 = (
+        config.geometry_target_version == "v2"
+        and config.geometry_sampling_strategy == "balanced_tracks"
+    )
+    return {
+        "uses_ttc_for_sampling": False,
+        "uses_boxes_for_sampling": True,
+        "uses_category_for_sampling": balanced_v2,
+        "uses_depth_for_sampling": config.geometry_sampling_strategy == "nearest",
+        "uses_masks_for_sampling": False,
+        "uses_3d_for_sampling": True,
+        "uses_future_labels_for_sampling": False,
+    }
 
 
 @dataclass(frozen=True)
@@ -77,12 +114,21 @@ class EAPJEPATrainerConfig:
     precision: str = "bf16"
     num_workers: int = 8
     prefetch_factor: int = 2
+    progress_interval_batches: int = 32
     event_window_ms: int = 100
     horizons_ms: tuple[int, ...] = (100, 250, 500)
     max_windows_per_sequence: int = 512
     width: int = 160
     height: int = 90
     bins: int = 5
+    # Keep the bounded HDF5 read size aligned with the signed memory-budget
+    # audit.  This is an upper bound for one raw event slice, not a sampling
+    # or label-dependent selection rule.
+    event_chunk_size: int = 250_000
+    reuse_temporal_voxel_cache: bool = True
+    # Keep the historical default for reproducibility while allowing long
+    # SSL-Pure runs to retain enough temporal endpoints per worker.
+    temporal_voxel_cache_size: int = 16
     mask_ratio: float = 0.45
     mask_blocks: int = 4
     context_token_weight: float = 0.25
@@ -113,11 +159,14 @@ class EAPJEPATrainerConfig:
             self.gradient_accumulation,
             self.num_workers + 1,
             self.prefetch_factor,
+            self.progress_interval_batches,
             self.event_window_ms,
             self.max_windows_per_sequence,
             self.width,
             self.height,
             self.bins,
+            self.event_chunk_size,
+            self.temporal_voxel_cache_size,
             self.mask_blocks,
             self.collapse_patience,
         )
@@ -238,7 +287,6 @@ def _geometry_targets(
         torch.from_numpy(valid),
         torch.from_numpy(objectness),
     )
-
 
 
 class EAPOnDemandJEPADataset(
@@ -374,28 +422,42 @@ class EAPOnDemandJEPADataset(
             self._readers[sequence_id] = reader
         return reader
 
-    def _voxel(self, sequence_id: str, end_us: int) -> torch.Tensor:
-        key = (sequence_id, end_us)
+    def _cache_get(self, key: tuple[str, int]) -> torch.Tensor | None:
+        """Return an endpoint and mark it as recently used in the worker LRU."""
+
         cached = self._voxel_cache.pop(key, None)
         if cached is not None:
             self._voxel_cache[key] = cached
+        return cached
+
+    def _cache_put(self, key: tuple[str, int], tensor: torch.Tensor) -> None:
+        """Insert one endpoint while enforcing the configured worker-local bound."""
+
+        self._voxel_cache.pop(key, None)
+        self._voxel_cache[key] = tensor
+        while len(self._voxel_cache) > self.config.temporal_voxel_cache_size:
+            self._voxel_cache.popitem(last=False)
+
+    def _voxel(self, sequence_id: str, end_us: int) -> torch.Tensor:
+        key = (sequence_id, end_us)
+        cached = self._cache_get(key)
+        if cached is not None:
             return cached.clone()
         start_us = end_us - self.config.event_window_ms * 1000
-        events = self._reader(sequence_id).read_window(start_us, end_us)
-        voxel = base_compatible_voxel(
-            downsample_full_frame(
-                events,
-                sequence_id=sequence_id,
-                start_us=start_us,
-                end_us=end_us,
-                width=self.config.width,
-                height=self.config.height,
+        voxel = base_compatible_voxel_chunks(
+            self._reader(sequence_id).iter_window_chunks(
+                start_us,
+                end_us,
+                chunk_events=self.config.event_chunk_size,
             ),
+            sequence_id=sequence_id,
+            start_us=start_us,
+            end_us=end_us,
+            width=self.config.width,
+            height=self.config.height,
             bins=self.config.bins,
         )
-        self._voxel_cache[key] = voxel
-        while len(self._voxel_cache) > 16:
-            self._voxel_cache.popitem(last=False)
+        self._cache_put(key, voxel)
         return voxel.clone()
 
     def __getitem__(
@@ -409,15 +471,51 @@ class EAPOnDemandJEPADataset(
         torch.Tensor,
     ]:
         window = self.samples[index]
-        context = self._voxel(window.sequence_id, window.timestamp_us)
-        future: list[torch.Tensor] = []
-        for horizon in self.config.horizons_ms:
-            future.append(
-                self._voxel(
-                    window.sequence_id,
-                    window.timestamp_us + horizon * 1000,
-                )
+        end_times = [
+            window.timestamp_us,
+            *(window.timestamp_us + horizon * 1000 for horizon in self.config.horizons_ms),
+        ]
+        windows = [
+            (
+                end_us - self.config.event_window_ms * 1000,
+                end_us,
             )
+            for end_us in end_times
+        ]
+        cache = self._voxel_cache if self.config.reuse_temporal_voxel_cache else None
+        missing = [
+            index
+            for index, end_us in enumerate(end_times)
+            if cache is None or (window.sequence_id, end_us) not in cache
+        ]
+        if missing:
+            missing_windows = [windows[index] for index in missing]
+            computed = base_compatible_voxel_windows_chunks(
+                self._reader(window.sequence_id).iter_window_chunks(
+                    min(start_us for start_us, _ in missing_windows),
+                    max(end_us for _, end_us in missing_windows),
+                    chunk_events=self.config.event_chunk_size,
+                ),
+                windows=missing_windows,
+                sequence_id=window.sequence_id,
+                width=self.config.width,
+                height=self.config.height,
+                bins=self.config.bins,
+            )
+            if cache is not None:
+                for index, tensor in zip(missing, computed, strict=True):
+                    self._cache_put((window.sequence_id, end_times[index]), tensor)
+                tensors = [self._cache_get((window.sequence_id, end_us)) for end_us in end_times]
+            else:
+                tensors = list(computed)
+        else:
+            assert cache is not None
+            tensors = [self._cache_get((window.sequence_id, end_us)) for end_us in end_times]
+        if any(tensor is None for tensor in tensors):
+            raise RuntimeError("eAP temporal voxel cache lost an endpoint unexpectedly.")
+        tensors = [tensor for tensor in tensors if tensor is not None]
+        context = tensors[0]
+        future = tensors[1:]
         geometry, geometry_valid, objectness = _geometry_targets(
             window,
             patch_height=self.config.height // 16,
@@ -597,7 +695,10 @@ def _loader(
     generator = torch.Generator().manual_seed(config.seed + int(not train))
     kwargs: dict[str, Any] = {
         "batch_size": config.batch_size,
-        "shuffle": train,
+        # The on-demand representation has no stochastic augmentation.  Keep
+        # temporal locality so the per-worker endpoint cache can reuse windows;
+        # the choice is recorded in the trainer fingerprint.
+        "shuffle": train and not config.reuse_temporal_voxel_cache,
         "num_workers": config.num_workers,
         "pin_memory": device.type == "cuda",
         "drop_last": False,
@@ -642,6 +743,49 @@ def _aggregate(rows: list[dict[str, float]]) -> dict[str, float]:
     return {key: float(np.mean([row[key] for row in rows])) for key in rows[0]}
 
 
+def _write_training_progress(
+    path: Path | None,
+    *,
+    status: str,
+    stage: str,
+    epoch: int,
+    batch_index: int,
+    batch_count: int,
+    samples_processed: int,
+    sample_count: int,
+    started: float,
+    error: str | None = None,
+) -> None:
+    """Atomically expose bounded progress for long on-demand eAP runs.
+
+    Epoch summaries are intentionally written only after train and validation
+    finish.  This sidecar makes a long raw-HDF5 run observable without turning
+    partial batches into metrics or checkpoints.
+    """
+
+    if path is None:
+        return
+    payload: dict[str, Any] = {
+        "artifact_type": "eap_jepa_progress_v1",
+        "status": status,
+        "stage": stage,
+        "epoch": int(epoch),
+        "batch_index": int(batch_index),
+        "batch_count": int(batch_count),
+        "samples_processed": int(samples_processed),
+        "sample_count": int(sample_count),
+        "fraction": float(samples_processed / max(sample_count, 1)),
+        "elapsed_seconds": float(max(time.perf_counter() - started, 0.0)),
+        "updated_at": datetime.now(UTC).isoformat(),
+    }
+    if error is not None:
+        payload["error"] = error
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_name(f".{path.name}.tmp")
+    temporary.write_text(json.dumps(payload, indent=2, sort_keys=True), encoding="utf-8")
+    temporary.replace(path)
+
+
 def _run_epoch(
     encoder: nn.Module,
     target_encoder: nn.Module,
@@ -657,6 +801,10 @@ def _run_epoch(
     horizon_ids: torch.Tensor,
     optimizer_step: int,
     total_optimizer_steps: int,
+    epoch: int,
+    progress_path: Path | None,
+    epoch_started: float,
+    progress_stage: str,
 ) -> tuple[dict[str, float], int]:
     train = optimizer is not None
     encoder.train(train)
@@ -668,6 +816,18 @@ def _run_epoch(
         optimizer.zero_grad(set_to_none=True)
     rows: list[dict[str, float]] = []
     batch_count = len(loader)
+    sample_count = len(loader.dataset)
+    _write_training_progress(
+        progress_path,
+        status="running",
+        stage=progress_stage,
+        epoch=epoch,
+        batch_index=0,
+        batch_count=batch_count,
+        samples_processed=0,
+        sample_count=sample_count,
+        started=epoch_started,
+    )
     for batch_index, batch in enumerate(loader):
         context, future, valid, geometry, geometry_valid, objectness = batch
         context = context.to(device=device, non_blocking=True)
@@ -768,6 +928,23 @@ def _run_epoch(
                 metrics["target_encoder_divergence_l2"] = divergence
                 metrics["ema_momentum"] = ema_momentum
         rows.append({"loss": float(loss.detach().cpu()), **metrics})
+        completed_batches = batch_index + 1
+        if (
+            completed_batches == 1
+            or completed_batches == batch_count
+            or completed_batches % config.progress_interval_batches == 0
+        ):
+            _write_training_progress(
+                progress_path,
+                status="running",
+                stage=progress_stage,
+                epoch=epoch,
+                batch_index=completed_batches,
+                batch_count=batch_count,
+                samples_processed=min(completed_batches * config.batch_size, sample_count),
+                sample_count=sample_count,
+                started=epoch_started,
+            )
     return _aggregate(rows), optimizer_step
 
 
@@ -838,6 +1015,10 @@ def _checkpoint(
     split_path: Path,
 ) -> dict[str, Any]:
     regime = "eap_geo" if geometry_heads is not None else "eap_ssl"
+    sampling_provenance = _sampling_provenance(
+        config,
+        geometry_enabled=geometry_heads is not None,
+    )
     return {
         "model": "event_tubelet_transformer_eap_jepa",
         "model_name": "event-tubelet-transformer",
@@ -870,9 +1051,9 @@ def _checkpoint(
         "uses_object_bboxes": geometry_heads is not None,
         "uses_depth_track_derivatives": geometry_heads is not None,
         "uses_labels_for_window_sampling": (
-            geometry_heads is not None
-            and config.geometry_sampling_strategy == "balanced_tracks"
+            geometry_heads is not None and config.geometry_sampling_strategy == "balanced_tracks"
         ),
+        **sampling_provenance,
         "geometry_target_version": config.geometry_target_version,
         "geometry_target_names": list(_geometry_target_names(config.geometry_target_version)),
         "geometry_sampling_strategy": config.geometry_sampling_strategy,
@@ -944,16 +1125,13 @@ def pretrain_eap_jepa(
 
     assert_no_sealed_benchmark_paths((root, inventory_path, split_path, output_dir))
     _set_seed(config.seed)
-    device = (
-        torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        if device_name == "auto"
-        else torch.device(device_name)
-    )
+    device = resolve_device(device_name)
     if device.type == "cuda":
         torch.set_float32_matmul_precision("high")
         torch.backends.cuda.matmul.allow_tf32 = True
         torch.backends.cudnn.allow_tf32 = True
-        torch.cuda.reset_peak_memory_stats(device)
+        torch.cuda.set_device(device)
+        torch.cuda.reset_peak_memory_stats()
     inventory = Path(inventory_path)
     split = Path(split_path)
     _validate_protocol(inventory, split)
@@ -1011,6 +1189,7 @@ def pretrain_eap_jepa(
     resume_path = output / "resume.pt"
     history_path = output / "history.jsonl"
     metrics_path = output / "metrics.json"
+    progress_path = output / "progress.json"
     fingerprint = _run_fingerprint(config, inventory, split)
     start_epoch = 1
     optimizer_step = 0
@@ -1041,9 +1220,25 @@ def pretrain_eap_jepa(
         history = list(state["history"])
         _restore_rng_state(state["rng_state"], train_loader)
     started = time.perf_counter()
+    current_epoch = start_epoch
+    current_stage = "initializing"
+    _write_training_progress(
+        progress_path,
+        status="running",
+        stage=current_stage,
+        epoch=start_epoch,
+        batch_index=0,
+        batch_count=0,
+        samples_processed=0,
+        sample_count=len(train_loader.dataset),
+        started=started,
+    )
     try:
         with history_path.open("a" if resume else "w", encoding="utf-8") as stream:
             for epoch in range(start_epoch, config.epochs + 1):
+                current_epoch = epoch
+                current_stage = "train"
+                epoch_started = time.perf_counter()
                 train_metrics, optimizer_step = _run_epoch(
                     encoder,
                     target_encoder,
@@ -1058,7 +1253,12 @@ def pretrain_eap_jepa(
                     horizon_ids=horizons,
                     optimizer_step=optimizer_step,
                     total_optimizer_steps=total_steps,
+                    epoch=epoch,
+                    progress_path=progress_path,
+                    epoch_started=epoch_started,
+                    progress_stage="train",
                 )
+                current_stage = "validation"
                 with torch.no_grad():
                     validation_metrics, _ = _run_epoch(
                         encoder,
@@ -1074,6 +1274,10 @@ def pretrain_eap_jepa(
                         horizon_ids=horizons,
                         optimizer_step=optimizer_step,
                         total_optimizer_steps=total_steps,
+                        epoch=epoch,
+                        progress_path=progress_path,
+                        epoch_started=epoch_started,
+                        progress_stage="validation",
                     )
                 row = {
                     "epoch": epoch,
@@ -1139,6 +1343,31 @@ def pretrain_eap_jepa(
                     and no_improvement >= config.early_stopping_patience
                 ):
                     break
+            _write_training_progress(
+                progress_path,
+                status="completed",
+                stage="epoch_complete",
+                epoch=max(current_epoch, start_epoch - 1),
+                batch_index=len(validation_loader),
+                batch_count=len(validation_loader),
+                samples_processed=len(validation_loader.dataset),
+                sample_count=len(validation_loader.dataset),
+                started=started,
+            )
+    except BaseException as exc:
+        _write_training_progress(
+            progress_path,
+            status="failed",
+            stage=current_stage,
+            epoch=current_epoch,
+            batch_index=0,
+            batch_count=0,
+            samples_processed=0,
+            sample_count=len(train_loader.dataset),
+            started=started,
+            error=f"{type(exc).__name__}: {exc}",
+        )
+        raise
     finally:
         _shutdown_loader(train_loader)
         _shutdown_loader(validation_loader)
@@ -1159,6 +1388,10 @@ def pretrain_eap_jepa(
         last_path,
     )
     resume_path.unlink(missing_ok=True)
+    sampling_provenance = _sampling_provenance(
+        config,
+        geometry_enabled=geometry_heads is not None,
+    )
     summary = {
         "artifact_type": (
             "eap_geo_on_demand_pretraining_v1"
@@ -1182,9 +1415,10 @@ def pretrain_eap_jepa(
         "best_checkpoint_sha256": _hash_file(best_path),
         "last_checkpoint": last_path.as_posix(),
         "last_checkpoint_sha256": _hash_file(last_path),
+        "progress_path": progress_path.as_posix(),
         "elapsed_seconds": time.perf_counter() - started,
         "device": str(device),
-        "gpu_name": torch.cuda.get_device_name(device) if device.type == "cuda" else None,
+        "gpu_name": cuda_device_name(device),
         "peak_vram_bytes": (
             int(torch.cuda.max_memory_allocated(device)) if device.type == "cuda" else 0
         ),
@@ -1199,6 +1433,7 @@ def pretrain_eap_jepa(
                 config.geometry_loss_weight > 0.0
                 and config.geometry_sampling_strategy == "balanced_tracks"
             ),
+            **sampling_provenance,
             "geometry_target_version": config.geometry_target_version,
             "geometry_target_names": list(_geometry_target_names(config.geometry_target_version)),
             "geometry_sampling_strategy": config.geometry_sampling_strategy,
@@ -1209,11 +1444,23 @@ def pretrain_eap_jepa(
         },
     }
     write_structured(metrics_path, summary)
+    _write_training_progress(
+        progress_path,
+        status="completed",
+        stage="completed",
+        epoch=len(history),
+        batch_index=len(validation_loader),
+        batch_count=len(validation_loader),
+        samples_processed=len(validation_loader.dataset),
+        sample_count=len(validation_loader.dataset),
+        started=started,
+    )
     return summary
 
 
 __all__ = [
     "EAP_GEOMETRY_TARGET_DIM",
+    "EAP_SAMPLING_PROVENANCE_FIELDS",
     "EAP_PRETRAINING_DATASET_ID",
     "EAPJEPATrainerConfig",
     "EAPOnDemandJEPADataset",

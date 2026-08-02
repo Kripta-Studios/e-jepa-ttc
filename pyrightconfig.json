@@ -1,0 +1,15 @@
+{
+  "include": [
+    "src/e_jepa_ttc/data/garl_input_contract.py",
+    "src/e_jepa_ttc/data/garlttc_calibration.py",
+    "src/e_jepa_ttc/data/garlttc_sampling.py",
+    "src/e_jepa_ttc/evaluation/garl_ttc_protocol.py",
+    "scripts/repair_eap_geo2_provenance.py"
+  ],
+  "exclude": ["artifacts", "data/cache", "scratch", "tmp"],
+  "typeCheckingMode": "basic",
+  "reportMissingImports": "error",
+  "reportMissingTypeStubs": "none",
+  "venvPath": ".",
+  "venv": ".venv"
+}

@@ -7,7 +7,7 @@ from torch import nn
 
 from e_jepa_ttc.models.block_causal_transformer import BlockCausalTransformer
 from e_jepa_ttc.models.spatial_patch_mixer import SpatialPatchMixer
-from e_jepa_ttc.models.temporal_kda import KimiDeltaAttention
+from e_jepa_ttc.models.temporal_kda import KDALayoutMetadata, KimiDeltaAttention
 
 
 class HybridSpatiotemporalMixer(nn.Module):
@@ -51,8 +51,14 @@ class HybridSpatiotemporalMixer(nn.Module):
         if self.mode == "block_causal":
             return self.temporal(value)
         refresh_index = 0
+        metadata = KDALayoutMetadata(
+            batch_size=value.shape[0],
+            temporal_steps=value.shape[1],
+            patch_count=value.shape[2],
+            embedding_dim=value.shape[3],
+        )
         for index, layer in enumerate(self.kda_layers, start=1):
-            value = layer(value)
+            value = layer(value, metadata=metadata)
             if self.mode == "aligned_patch_kda" and index % 2 == 0:
                 value = self.global_refresh[refresh_index](value)
                 refresh_index += 1

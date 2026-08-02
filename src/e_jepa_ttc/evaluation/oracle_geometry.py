@@ -32,6 +32,7 @@ from e_jepa_ttc.geometry.ego_motion_compensation import (
     CameraEgoMotionCompensator,
     CameraYawDerotator,
 )
+from e_jepa_ttc.reproducibility import cuda_device_name, resolve_device
 from e_jepa_ttc.utils.io import write_structured
 
 
@@ -188,12 +189,7 @@ def _fit_log_calibration(
 ) -> tuple[float, float]:
     """Fit log(TTC_gt) = beta0 + beta1*log(TTC_geometry) on train only."""
 
-    valid = (
-        np.isfinite(truth)
-        & np.isfinite(prediction)
-        & (truth > 0.0)
-        & (prediction > 0.0)
-    )
+    valid = np.isfinite(truth) & np.isfinite(prediction) & (truth > 0.0) & (prediction > 0.0)
     if int(valid.sum()) < 3:
         raise ValueError("At least three finite positive train rows are required.")
     x = np.log(prediction[valid].astype(np.float64))
@@ -239,9 +235,7 @@ def _standard_predictions(
             times_s = (end_us - end_us[:, :1]) * 1e-6
             current = _experts(boxes, valid, events, times_s)
             for name, inverse_ttc in current.items():
-                ttc = inverse_ttc.clamp_min(1e-4).reciprocal().clamp_max(
-                    maximum_ttc_s
-                )
+                ttc = inverse_ttc.clamp_min(1e-4).reciprocal().clamp_max(maximum_ttc_s)
                 predictions.setdefault(name, []).append(ttc.cpu().numpy())
             truths.append(_tensor(batch, "ttc_s", device).reshape(-1).cpu().numpy())
     return (
@@ -280,11 +274,7 @@ def evaluate_gt_geometry_oracle(
     if dry_run_fingerprint:
         return fingerprint
 
-    device = (
-        torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        if device_name == "auto"
-        else torch.device(device_name)
-    )
+    device = resolve_device(device_name)
     dataset = EAPObjectCacheDataset(cache_manifest_path, splits=("validation",))
     indices = _indices(len(dataset), max_validation_samples)
     loader_kwargs: dict[str, Any] = {
@@ -328,7 +318,8 @@ def evaluate_gt_geometry_oracle(
     truths: list[np.ndarray] = []
     sequence_ids: list[str] = []
     if device.type == "cuda":
-        torch.cuda.reset_peak_memory_stats(device)
+        torch.cuda.set_device(device)
+        torch.cuda.reset_peak_memory_stats()
         torch.cuda.synchronize(device)
     started = time.perf_counter()
     with torch.inference_mode():
@@ -404,9 +395,7 @@ def evaluate_gt_geometry_oracle(
                     residual_inverse_ttc + ego_inverse_ttc[:, 0]
                 ).clamp_min(1e-4)
             for name, inverse_ttc in current.items():
-                ttc = inverse_ttc.clamp_min(1e-4).reciprocal().clamp_max(
-                    resolved.maximum_ttc_s
-                )
+                ttc = inverse_ttc.clamp_min(1e-4).reciprocal().clamp_max(resolved.maximum_ttc_s)
                 predictions.setdefault(name, []).append(ttc.cpu().numpy())
             truths.append(_tensor(batch, "ttc_s", device).reshape(-1).cpu().numpy())
             values = batch["sequence_id"]
@@ -418,9 +407,7 @@ def evaluate_gt_geometry_oracle(
     elapsed = time.perf_counter() - started
     truth = np.concatenate(truths)
     sequences = np.asarray(sequence_ids)
-    prediction_arrays = {
-        name: np.concatenate(values) for name, values in predictions.items()
-    }
+    prediction_arrays = {name: np.concatenate(values) for name, values in predictions.items()}
     for name, parameters in calibration.items():
         prediction_arrays[f"{name}_train_calibrated"] = _apply_log_calibration(
             prediction_arrays[name],
@@ -434,9 +421,7 @@ def evaluate_gt_geometry_oracle(
     primary = "deterministic_mixture"
     primary_metrics = variants[primary]
     primary_metrics["evaluation_seconds"] = elapsed
-    primary_metrics["milliseconds_per_window"] = (
-        1000.0 * elapsed / max(truth.shape[0], 1)
-    )
+    primary_metrics["milliseconds_per_window"] = 1000.0 * elapsed / max(truth.shape[0], 1)
     output = Path(output_dir)
     output.mkdir(parents=True, exist_ok=True)
     np.savez_compressed(
@@ -471,7 +456,7 @@ def evaluate_gt_geometry_oracle(
         "oracle_variants": variants,
         "elapsed_seconds": elapsed,
         "device": str(device),
-        "gpu_name": torch.cuda.get_device_name(0) if torch.cuda.is_available() else None,
+        "gpu_name": cuda_device_name(device),
         "peak_vram_bytes": (
             int(torch.cuda.max_memory_allocated(device)) if device.type == "cuda" else 0
         ),

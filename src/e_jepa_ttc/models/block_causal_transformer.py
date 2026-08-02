@@ -18,12 +18,7 @@ def block_causal_attention_mask(
         raise ValueError("steps and patches must be positive.")
     # ``expand`` + ``reshape`` has stable ONNX lowering, unlike
     # ``repeat_interleave`` in the PyTorch 2.11 exporter.
-    time_index = (
-        torch.arange(steps, device=device)
-        .unsqueeze(1)
-        .expand(steps, patches)
-        .reshape(-1)
-    )
+    time_index = torch.arange(steps, device=device).unsqueeze(1).expand(steps, patches).reshape(-1)
     return time_index[None, :] > time_index[:, None]
 
 
@@ -73,9 +68,7 @@ class BlockCausalTransformer(nn.Module):
         # ``is_causal=False`` prevents PyTorch from trying to infer standard
         # causality by converting a symbolic tensor to ``bool`` during ONNX
         # export while still applying our explicit attention mask.
-        return self.encoder(flat, mask=mask, is_causal=False).reshape(
-            batch, steps, patches, dim
-        )
+        return self.encoder(flat, mask=mask, is_causal=False).reshape(batch, steps, patches, dim)
 
 
 __all__ = ["BlockCausalTransformer", "block_causal_attention_mask"]

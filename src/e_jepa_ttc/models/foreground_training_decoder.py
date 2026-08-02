@@ -104,9 +104,7 @@ class ForegroundTrainingDecoder(nn.Module):
         self.output_size = output_size
         self.output_channels = output_channels
         self.official_resnet50 = official_resnet50
-        self.official_decoder = (
-            _OfficialResNet50Decoder() if official_resnet50 else None
-        )
+        self.official_decoder = _OfficialResNet50Decoder() if official_resnet50 else None
         self.token_norm = nn.LayerNorm(dim)
         self.compact_decoder = (
             None
@@ -136,11 +134,15 @@ class ForegroundTrainingDecoder(nn.Module):
         height, width = spatial_shape
         if height * width != tokens.shape[1]:
             raise ValueError("spatial_shape does not match tokens.")
-        feature_map = self.token_norm(tokens).transpose(1, 2).reshape(
-            tokens.shape[0],
-            tokens.shape[-1],
-            height,
-            width,
+        feature_map = (
+            self.token_norm(tokens)
+            .transpose(1, 2)
+            .reshape(
+                tokens.shape[0],
+                tokens.shape[-1],
+                height,
+                width,
+            )
         )
         assert self.compact_decoder is not None
         logits = self.compact_decoder(feature_map)

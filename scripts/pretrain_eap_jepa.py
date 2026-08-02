@@ -5,7 +5,9 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+import traceback
 from dataclasses import replace
+from datetime import UTC, datetime
 from pathlib import Path
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
@@ -16,6 +18,28 @@ from e_jepa_ttc.training.eap_jepa import (  # noqa: E402
     inspect_eap_jepa_windows,
     pretrain_eap_jepa,
 )
+
+
+def _write_failure_artifact(output: Path, error: BaseException) -> Path:
+    """Persist a failed training transition without overwriting prior evidence."""
+
+    output.mkdir(parents=True, exist_ok=True)
+    failure_path = output / "FAILURE.json"
+    if failure_path.exists():
+        stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
+        failure_path = output / f"FAILURE_{stamp}.json"
+    payload = {
+        "artifact_type": "eap_jepa_training_failure_v1",
+        "status": "failed",
+        "error_type": type(error).__name__,
+        "error_message": str(error),
+        "traceback": traceback.format_exc(),
+        "argv": sys.argv,
+        "output": output.as_posix(),
+        "timestamp_utc": datetime.now(UTC).isoformat(),
+    }
+    failure_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    return failure_path
 
 
 def _profile(name: str, objective: str) -> EAPJEPATrainerConfig:
@@ -35,9 +59,7 @@ def _profile(name: str, objective: str) -> EAPJEPATrainerConfig:
             early_stopping_patience=0,
             geometry_loss_weight=geometry_weight,
             geometry_target_version="v2" if objective == "geo2" else "v1",
-            geometry_sampling_strategy=(
-                "balanced_tracks" if objective == "geo2" else "nearest"
-            ),
+            geometry_sampling_strategy=("balanced_tracks" if objective == "geo2" else "nearest"),
             ttc_loss_weight=ttc_weight,
         )
     if name == "pilot":
@@ -52,9 +74,7 @@ def _profile(name: str, objective: str) -> EAPJEPATrainerConfig:
             early_stopping_patience=1,
             geometry_loss_weight=geometry_weight,
             geometry_target_version="v2" if objective == "geo2" else "v1",
-            geometry_sampling_strategy=(
-                "balanced_tracks" if objective == "geo2" else "nearest"
-            ),
+            geometry_sampling_strategy=("balanced_tracks" if objective == "geo2" else "nearest"),
             ttc_loss_weight=ttc_weight,
         )
     return EAPJEPATrainerConfig(
@@ -92,6 +112,16 @@ def main() -> int:
     parser.add_argument("--prefetch-factor", type=int)
     parser.add_argument("--seed", type=int)
     parser.add_argument("--max-windows-per-sequence", type=int)
+    parser.add_argument(
+        "--event-chunk-size",
+        type=int,
+        help="Maximum raw events read per HDF5 chunk (default: 250000).",
+    )
+    parser.add_argument(
+        "--temporal-voxel-cache-size",
+        type=int,
+        help="Worker-local endpoint cache capacity (default: 16).",
+    )
     parser.add_argument("--max-train-samples", type=int)
     parser.add_argument("--max-validation-samples", type=int)
     parser.add_argument("--geometry-loss-weight", type=float)
@@ -134,6 +164,8 @@ def main() -> int:
         "prefetch_factor": args.prefetch_factor,
         "seed": args.seed,
         "max_windows_per_sequence": args.max_windows_per_sequence,
+        "event_chunk_size": args.event_chunk_size,
+        "temporal_voxel_cache_size": args.temporal_voxel_cache_size,
     }
     if args.max_train_samples is not None:
         overrides["max_train_samples"] = args.max_train_samples
@@ -181,47 +213,52 @@ def main() -> int:
             config=config,
         )
     else:
-        if args.objective == "ttc":
-            from e_jepa_ttc.data.garlttc_audit import audit
+        try:
+            if args.objective == "ttc":
+                from e_jepa_ttc.data.garlttc_audit import audit
 
-            audit_res = audit(
-                eap_root=args.root,
-                garlttc_root=args.garlttc_root,
-                eap_split_path=split,
-                expected_train_rows=(args.expected_garlttc_train_rows),
-                allow_dataset_version_change=(args.allow_garlttc_version_change),
-            )
-            audit_path = output / "garlttc_eap_audit.json"
-            output.mkdir(parents=True, exist_ok=True)
-            audit_path.write_text(json.dumps(audit_res, indent=2), encoding="utf-8")
-            if audit_res.get("result") != "PASS":
-                err_msg = json.dumps(audit_res, indent=2)
-                raise ValueError(f"Mandatory GarlTTC ↔ eAP linkage audit FAILED:\n{err_msg}")
+                audit_res = audit(
+                    eap_root=args.root,
+                    garlttc_root=args.garlttc_root,
+                    eap_split_path=split,
+                    expected_train_rows=(args.expected_garlttc_train_rows),
+                    allow_dataset_version_change=(args.allow_garlttc_version_change),
+                )
+                audit_path = output / "garlttc_eap_audit.json"
+                output.mkdir(parents=True, exist_ok=True)
+                audit_path.write_text(json.dumps(audit_res, indent=2), encoding="utf-8")
+                if audit_res.get("result") != "PASS":
+                    err_msg = json.dumps(audit_res, indent=2)
+                    raise ValueError(f"Mandatory GarlTTC ↔ eAP linkage audit FAILED:\n{err_msg}")
 
-            from e_jepa_ttc.training.eap_ttc import pretrain_eap_jepa_ttc
+                from e_jepa_ttc.training.eap_ttc import pretrain_eap_jepa_ttc
 
-            result = pretrain_eap_jepa_ttc(
-                eap_root=args.root,
-                garlttc_root=args.garlttc_root,
-                inventory_path=args.inventory,
-                split_path=split,
-                output_dir=output,
-                config=config,
-                audit_json_path=audit_path,
-                audit_result=audit_res.get("result", "FAIL"),
-                device_name=args.device,
-                resume=args.resume,
-            )
-        else:
-            result = pretrain_eap_jepa(
-                root=args.root,
-                inventory_path=args.inventory,
-                split_path=split,
-                output_dir=output,
-                config=config,
-                device_name=args.device,
-                resume=args.resume,
-            )
+                result = pretrain_eap_jepa_ttc(
+                    eap_root=args.root,
+                    garlttc_root=args.garlttc_root,
+                    inventory_path=args.inventory,
+                    split_path=split,
+                    output_dir=output,
+                    config=config,
+                    audit_json_path=audit_path,
+                    audit_result=audit_res.get("result", "FAIL"),
+                    device_name=args.device,
+                    resume=args.resume,
+                )
+            else:
+                result = pretrain_eap_jepa(
+                    root=args.root,
+                    inventory_path=args.inventory,
+                    split_path=split,
+                    output_dir=output,
+                    config=config,
+                    device_name=args.device,
+                    resume=args.resume,
+                )
+        except BaseException as exc:
+            failure_path = _write_failure_artifact(output, exc)
+            print(f"Training failure preserved at {failure_path}", file=sys.stderr)
+            raise
     print(json.dumps(result, indent=2, sort_keys=True))
     return 0
 

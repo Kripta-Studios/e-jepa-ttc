@@ -50,9 +50,7 @@ def _row(run_dir: Path) -> dict[str, Any]:
         "peak_vram_bytes": int(payload["peak_vram_bytes"]),
         "best_validation_loss": float(payload["best_validation_loss"]),
         "collapsed_dimension_fraction": float(
-            payload["history"][-1]["validation"][
-                "context_collapsed_dimension_fraction"
-            ]
+            payload["history"][-1]["validation"]["context_collapsed_dimension_fraction"]
         ),
     }
     evaluations: dict[str, Any] = {}
@@ -106,9 +104,7 @@ def main() -> int:
             "batch_size": selected["batch_size"],
             "gradient_accumulation": selected["gradient_accumulation"],
             "workers": selected["workers"],
-            "pair_observations_per_second": selected[
-                "pair_observations_per_second"
-            ],
+            "pair_observations_per_second": selected["pair_observations_per_second"],
             "source_run_dir": selected["run_dir"],
         },
         "benchmark10_opened": False,

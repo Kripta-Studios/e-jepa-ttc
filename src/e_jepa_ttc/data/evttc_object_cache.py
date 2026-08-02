@@ -61,11 +61,7 @@ class EvTTCObjectCacheConfig:
     garl_time_surface_planes: int = 20
 
     def __post_init__(self) -> None:
-        if (
-            self.history_frames < 2
-            or self.history_stride_frames <= 0
-            or self.event_window_ms <= 0
-        ):
+        if self.history_frames < 2 or self.history_stride_frames <= 0 or self.event_window_ms <= 0:
             msg = "history_frames must be >=2 and event_window_ms positive."
             raise ValueError(msg)
         if any(horizon < self.event_window_ms for horizon in self.prediction_horizons_ms):
@@ -74,15 +70,18 @@ class EvTTCObjectCacheConfig:
         if tuple(sorted(set(self.prediction_horizons_ms))) != self.prediction_horizons_ms:
             msg = "prediction_horizons_ms must be unique and increasing."
             raise ValueError(msg)
-        if min(
-            self.width,
-            self.height,
-            self.event_bins,
-            self.shard_size,
-            self.rgb_width,
-            self.rgb_height,
-            self.garl_time_surface_planes,
-        ) <= 0:
+        if (
+            min(
+                self.width,
+                self.height,
+                self.event_bins,
+                self.shard_size,
+                self.rgb_width,
+                self.rgb_height,
+                self.garl_time_surface_planes,
+            )
+            <= 0
+        ):
             msg = "Spatial, bin and shard dimensions must be positive."
             raise ValueError(msg)
         if self.action_dim != 8:
@@ -372,9 +371,7 @@ def _garl_rgb_pair_targets(
     )
     for state in endpoints:
         measurement = state.measurement
-        frame = Image.fromarray(
-            np.asarray(handle[source][measurement.frame_index], dtype=np.uint8)
-        )
+        frame = Image.fromarray(np.asarray(handle[source][measurement.frame_index], dtype=np.uint8))
         rgb_pair.append(
             np.asarray(
                 frame.crop(shared_square).resize(
@@ -428,9 +425,7 @@ def _garl_visible_height_targets(
             ).max()
         ),
     )
-    return (
-        (boxes[:, 3] - boxes[:, 1]) * float(target_size) / common_edge
-    ).astype(np.float32)
+    return ((boxes[:, 3] - boxes[:, 1]) * float(target_size) / common_edge).astype(np.float32)
 
 
 def _event_mask(state: _EvTTCState, *, config: EvTTCObjectCacheConfig) -> np.ndarray:
@@ -698,9 +693,9 @@ def _garl_time_surface_volume(
                 times[previous_event],
                 plane_start,
             )
-            values = np.exp(
-                -((times[last_event] - previous_time) / bin_duration)
-            ).astype(np.float32)
+            values = np.exp(-((times[last_event] - previous_time) / bin_duration)).astype(
+                np.float32
+            )
             volume.reshape(-1)[sorted_flat[last_position]] = values
     tensor = torch.from_numpy(volume)[None]
     return (
@@ -757,9 +752,7 @@ def _actions(
         [_world_from_navigation_rfu(yaw) for yaw in yaw_rad],
     )
     event_from_navigation = navigation_to_event[:3, :3]
-    navigation_from_event_offset = (
-        -event_from_navigation.T @ navigation_to_event[:3, 3]
-    )
+    navigation_from_event_offset = -event_from_navigation.T @ navigation_to_event[:3, 3]
     event_offset_world = np.einsum(
         "nij,j->ni",
         world_from_navigation,
@@ -771,9 +764,7 @@ def _actions(
         # Add the rigid lever-arm velocity of the event-camera origin. This is
         # the finite displacement of the calibrated camera offset while the
         # vehicle heading changes, not a learned correction.
-        mean_velocity_world += (
-            event_offset_world[-1] - event_offset_world[0]
-        ) / duration_s
+        mean_velocity_world += (event_offset_world[-1] - event_offset_world[0]) / duration_s
     event_from_world_current = event_from_navigation @ world_from_navigation[-1].T
     mean_velocity_event = event_from_world_current @ mean_velocity_world
     features[0] = np.float32(np.linalg.norm(mean_velocity_event))
@@ -785,9 +776,7 @@ def _actions(
                 for index, value in enumerate(velocity)
             ],
         )
-        features[4:7] = (
-            (velocity_event[-1] - velocity_event[0]) / duration_s
-        ).astype(np.float32)
+        features[4:7] = ((velocity_event[-1] - velocity_event[0]) / duration_s).astype(np.float32)
         # Local UG005 attitude values are Euler angles in degrees (e.g. a
         # heading around 40, not 0.7 radians). Unwrap in radians before the
         # finite difference so crossing 0/360 cannot create a false spike.
@@ -1081,16 +1070,10 @@ def _sample(
             sample["garl_rgb_pair"] = garl_rgb
             sample["garl_foreground_mask"] = garl_masks
             sample["garl_visible_heights_px"] = garl_visible_heights
-            sample["garl_foreground_source"] = (
-                "two_endpoint_isat_polygons_or_bbox_fallback_not_sam"
-            )
+            sample["garl_foreground_source"] = "two_endpoint_isat_polygons_or_bbox_fallback_not_sam"
     if config.include_segmentation_masks:
-        sample["context_masks"] = np.stack(
-            [_event_mask(state, config=config) for state in history]
-        )
-        sample["mask_source"] = (
-            "projected_isat_polygon_or_projected_bbox_fallback"
-        )
+        sample["context_masks"] = np.stack([_event_mask(state, config=config) for state in history])
+        sample["mask_source"] = "projected_isat_polygon_or_projected_bbox_fallback"
     return sample
 
 
@@ -1187,13 +1170,8 @@ def materialize_evttc_object_cache(
         raise ValueError("workers must be positive.")
     output = Path(output_dir)
     estimated_samples = len(sequence_splits) * bounded_windows
-    dense_frames = (
-        (config.history_frames if config.include_context_events else 0)
-        + (
-            len(config.prediction_horizons_ms)
-            if config.include_future_events
-            else 0
-        )
+    dense_frames = (config.history_frames if config.include_context_events else 0) + (
+        len(config.prediction_horizons_ms) if config.include_future_events else 0
     )
     estimated_bytes = (
         estimate_dense_voxel_cache_bytes(
@@ -1208,20 +1186,10 @@ def materialize_evttc_object_cache(
     )
     if config.include_rgb:
         estimated_bytes += (
-            estimated_samples
-            * config.history_frames
-            * 3
-            * config.rgb_height
-            * config.rgb_width
+            estimated_samples * config.history_frames * 3 * config.rgb_height * config.rgb_width
         )
         estimated_bytes += estimated_samples * 256 * 256
-        estimated_bytes += (
-            estimated_samples
-            * 2
-            * 3
-            * config.rgb_height
-            * config.rgb_width
-        )
+        estimated_bytes += estimated_samples * 2 * 3 * config.rgb_height * config.rgb_width
     if config.include_garl_pair:
         estimated_bytes += (
             estimated_samples
@@ -1234,9 +1202,7 @@ def materialize_evttc_object_cache(
     if config.include_context_events:
         estimated_bytes += estimated_samples * config.history_frames * 2 * 4
     if config.include_segmentation_masks:
-        estimated_bytes += (
-            estimated_samples * config.history_frames * config.height * config.width
-        )
+        estimated_bytes += estimated_samples * config.history_frames * config.height * config.width
     budget = StorageBudget(
         maximum_cache_gib=maximum_cache_gib,
         minimum_free_gib=minimum_free_gib,
@@ -1281,9 +1247,7 @@ def materialize_evttc_object_cache(
         "base_metadata_status": "causal_log_event_count_and_log_event_rate_scalars",
         "future_teacher_uses_ego_actions": False,
         "bbox_alignment": "depth_assisted_radtan_blackfly_to_prophesee_calibrated_projection",
-        "rgb_cache": (
-            "blackfly_object_roi_uint8_128x128" if config.include_rgb else "disabled"
-        ),
+        "rgb_cache": ("blackfly_object_roi_uint8_128x128" if config.include_rgb else "disabled"),
         "garl_pair_cache": (
             "two_rgb_endpoint_rois_plus_two_20_plane_event_time_surfaces_128x128"
             if config.include_garl_pair

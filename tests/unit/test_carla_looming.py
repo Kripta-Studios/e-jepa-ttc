@@ -240,8 +240,7 @@ def test_signed_split_survives_manifest_line_ending_conversion(tmp_path: Path) -
     assert split["format_version"] == 2
     assert split["manifest_artifact_sha256"]
     assert all(
-        inspection["roles"][role]["pair_count"] > 0
-        for role in ("train", "validation", "test")
+        inspection["roles"][role]["pair_count"] > 0 for role in ("train", "validation", "test")
     )
 
 

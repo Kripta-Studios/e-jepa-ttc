@@ -155,9 +155,7 @@ def evaluate_geometry_fusion(
         config=settings,
     )
     safe_geometry = np.where(valid, geometry_ttc, neural_ttc)
-    oracle_uses_geometry = valid & (
-        np.abs(safe_geometry - truth) < np.abs(neural_ttc - truth)
-    )
+    oracle_uses_geometry = valid & (np.abs(safe_geometry - truth) < np.abs(neural_ttc - truth))
     oracle = np.where(oracle_uses_geometry, safe_geometry, neural_ttc)
     payload: dict[str, Any] = {
         "method": "DETERMINISTIC_RELIABILITY_GATED_INVERSE_TTC_FUSION",

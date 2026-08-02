@@ -72,9 +72,7 @@ def affine_expansion_inverse_ttc(
     condition = torch.linalg.cond(normal).clamp_min(1.0)
     pair_confidence = torch.exp(-residual / signal) / (1.0 + condition.log())
     kappa = parameters[..., 2]
-    pair_rate = kappa / (
-        dt.float().clamp_min(1e-6) * (1.0 - kappa).clamp_min(1e-4)
-    )
+    pair_rate = kappa / (dt.float().clamp_min(1e-6) * (1.0 - kappa).clamp_min(1e-4))
     widths = boxes_xyxy[..., 2] - boxes_xyxy[..., 0]
     heights = boxes_xyxy[..., 3] - boxes_xyxy[..., 1]
     valid = (
@@ -92,9 +90,9 @@ def affine_expansion_inverse_ttc(
     valid_float = valid.float()
     count = valid_float.sum(dim=1)
     mean_rate = (pair_rate * valid_float).sum(dim=1) / count.clamp_min(1.0)
-    disagreement = (
-        (pair_rate - mean_rate[:, None]).abs() * valid_float
-    ).sum(dim=1) / count.clamp_min(1.0)
+    disagreement = ((pair_rate - mean_rate[:, None]).abs() * valid_float).sum(
+        dim=1
+    ) / count.clamp_min(1.0)
     pair_axis = pair_rate.shape[1]
     pair_indices = torch.arange(pair_axis, device=boxes_xyxy.device).view(1, -1, 1)
     latest_index = torch.where(

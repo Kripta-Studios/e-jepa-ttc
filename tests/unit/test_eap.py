@@ -5,6 +5,7 @@ from pathlib import Path
 import h5py
 import numpy as np
 import pandas as pd
+import torch
 
 from e_jepa_ttc.data.eap import (
     EAPEventReader,
@@ -13,6 +14,16 @@ from e_jepa_ttc.data.eap import (
     project_box_3d_to_event,
     reconstruct_eap_object_states,
 )
+from e_jepa_ttc.data.eap_representation import (
+    base_compatible_voxel_chunks,
+    base_compatible_voxel_windows_chunks,
+)
+from e_jepa_ttc.training import eap_jepa as eap_jepa_module
+from e_jepa_ttc.training.eap_jepa import EAPJEPATrainerConfig
+
+
+def test_eap_ssl_default_chunk_size_matches_memory_audit() -> None:
+    assert EAPJEPATrainerConfig().event_chunk_size == 250_000
 
 
 def test_box_projection_returns_camera_geometry() -> None:
@@ -110,3 +121,133 @@ def test_eap_event_reader_applies_exact_half_open_boundaries(tmp_path: Path) -> 
     assert events["t"].tolist() == [1500, 1999, 2000]
     assert events["x"].tolist() == [2, 3, 4]
     assert all(array.shape == (3,) for array in events.values())
+
+
+def test_eap_event_reader_chunks_match_whole_window(tmp_path: Path) -> None:
+    source = tmp_path / "events.h5"
+    with h5py.File(source, "w") as handle:
+        events = handle.create_group("events")
+        values = np.arange(10, dtype=np.int32)
+        events.create_dataset("x", data=values)
+        events.create_dataset("y", data=values + 10)
+        events.create_dataset("t", data=np.arange(1000, 2000, 100, dtype=np.int64))
+        events.create_dataset("p", data=np.ones(10, dtype=np.int8))
+        handle.create_dataset("ms_to_idx", data=np.arange(0, 11, dtype=np.uint64))
+
+    reader = EAPEventReader(source)
+    whole = reader.read_window(1100, 1800)
+    chunks = list(reader.iter_window_chunks(1100, 1800, chunk_events=2))
+    combined = {key: np.concatenate([chunk[key] for chunk in chunks]) for key in whole}
+    assert all(np.array_equal(combined[key], whole[key]) for key in whole)
+
+
+def test_multiwindow_voxelization_matches_separate_windows() -> None:
+    events = {
+        "x": np.asarray([10, 20, 30, 40, 50], dtype=np.int32),
+        "y": np.asarray([10, 20, 30, 40, 50], dtype=np.int32),
+        "t": np.asarray([5, 15, 25, 35, 45], dtype=np.int64),
+        "p": np.asarray([1, -1, 1, -1, 1], dtype=np.int8),
+    }
+    windows = ((0, 20), (20, 40), (40, 60))
+    separate = torch.stack(
+        [
+            base_compatible_voxel_chunks(
+                [events],
+                sequence_id="multi",
+                start_us=start_us,
+                end_us=end_us,
+                width=32,
+                height=32,
+                bins=5,
+            )
+            for start_us, end_us in windows
+        ]
+    )
+    combined = base_compatible_voxel_windows_chunks(
+        [events],
+        windows=windows,
+        sequence_id="multi",
+        width=32,
+        height=32,
+        bins=5,
+    )
+    assert torch.equal(separate, combined)
+
+
+def test_ssl_temporal_voxel_cache_reuses_endpoint_tensors(monkeypatch) -> None:
+    config = EAPJEPATrainerConfig(
+        horizons_ms=(100,),
+        max_windows_per_sequence=1,
+        reuse_temporal_voxel_cache=True,
+    )
+    dataset = object.__new__(eap_jepa_module.EAPOnDemandJEPADataset)
+    dataset.config = config
+    dataset.samples = [eap_jepa_module._EAPJEPASample(sequence_id="seq", timestamp_us=1_000_000)]
+    dataset._readers = {}
+    dataset._voxel_cache = eap_jepa_module.OrderedDict()
+
+    class Reader:
+        def iter_window_chunks(self, start_us, end_us, *, chunk_events):
+            yield {
+                "x": np.asarray([0], dtype=np.int32),
+                "y": np.asarray([0], dtype=np.int32),
+                "t": np.asarray([start_us], dtype=np.int64),
+                "p": np.asarray([1], dtype=np.int8),
+            }
+
+        def close(self):
+            return None
+
+    dataset._readers["seq"] = Reader()
+    calls: list[tuple[tuple[int, int], ...]] = []
+
+    def fake_voxelizer(chunks, *, windows, **_kwargs):
+        calls.append(tuple(windows))
+        list(chunks)
+        return torch.zeros(len(windows), 21, 90, 160)
+
+    monkeypatch.setattr(eap_jepa_module, "base_compatible_voxel_windows_chunks", fake_voxelizer)
+    dataset[0]
+    dataset[0]
+
+    assert calls == [((900_000, 1_000_000), (1_000_000, 1_100_000))]
+
+
+def test_ssl_temporal_voxel_cache_can_be_disabled(monkeypatch) -> None:
+    config = EAPJEPATrainerConfig(
+        horizons_ms=(100,),
+        max_windows_per_sequence=1,
+        reuse_temporal_voxel_cache=False,
+    )
+    dataset = object.__new__(eap_jepa_module.EAPOnDemandJEPADataset)
+    dataset.config = config
+    dataset.samples = [eap_jepa_module._EAPJEPASample(sequence_id="seq", timestamp_us=1_000_000)]
+    dataset._readers = {}
+    dataset._voxel_cache = eap_jepa_module.OrderedDict()
+
+    class Reader:
+        def iter_window_chunks(self, start_us, end_us, *, chunk_events):
+            yield {
+                "x": np.asarray([0], dtype=np.int32),
+                "y": np.asarray([0], dtype=np.int32),
+                "t": np.asarray([start_us], dtype=np.int64),
+                "p": np.asarray([1], dtype=np.int8),
+            }
+
+        def close(self):
+            return None
+
+    dataset._readers["seq"] = Reader()
+    calls = 0
+
+    def fake_voxelizer(chunks, *, windows, **_kwargs):
+        nonlocal calls
+        calls += 1
+        list(chunks)
+        return torch.zeros(len(windows), 21, 90, 160)
+
+    monkeypatch.setattr(eap_jepa_module, "base_compatible_voxel_windows_chunks", fake_voxelizer)
+    dataset[0]
+    dataset[0]
+
+    assert calls == 2

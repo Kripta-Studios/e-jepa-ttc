@@ -98,10 +98,22 @@ def fit_affine_flow(
     zeros = np.zeros(points.shape[0], dtype=np.float64)
     design = np.block(
         [
-            [one[:, None], normalized[:, :1], normalized[:, 1:2], zeros[:, None],
-             zeros[:, None], zeros[:, None]],
-            [zeros[:, None], zeros[:, None], zeros[:, None], one[:, None],
-             normalized[:, :1], normalized[:, 1:2]],
+            [
+                one[:, None],
+                normalized[:, :1],
+                normalized[:, 1:2],
+                zeros[:, None],
+                zeros[:, None],
+                zeros[:, None],
+            ],
+            [
+                zeros[:, None],
+                zeros[:, None],
+                zeros[:, None],
+                one[:, None],
+                normalized[:, :1],
+                normalized[:, 1:2],
+            ],
         ]
     )
     target = np.concatenate((flow[:, 0], flow[:, 1]))
@@ -123,9 +135,7 @@ def fit_affine_flow(
             vector_residual[: points.shape[0]],
             vector_residual[points.shape[0] :],
         )
-        robust_scale = 1.4826 * np.median(
-            np.abs(paired_residual - np.median(paired_residual))
-        )
+        robust_scale = 1.4826 * np.median(np.abs(paired_residual - np.median(paired_residual)))
         robust_scale = max(float(robust_scale), 1e-6)
         normalized_residual = paired_residual / robust_scale
         robust = np.ones_like(normalized_residual)

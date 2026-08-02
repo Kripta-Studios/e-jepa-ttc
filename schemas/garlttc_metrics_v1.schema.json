@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "garlttc_metrics_v1.schema.json",
+  "title": "Signed GarlTTC metrics",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["artifact_type", "schema_version", "evidence_type", "code_commit", "protocol_version", "protocol_sha256", "created_at", "artifact_sha256", "protocol", "num_samples", "paper_MiD_overall", "weighted_RTE_pct", "failure_rate_pct"],
+  "properties": {
+    "artifact_type": {"type": "string"},
+    "schema_version": {"type": "string"},
+    "evidence_type": {"type": "string"},
+    "code_commit": {"type": "string"},
+    "protocol_version": {"type": "string"},
+    "protocol_sha256": {"type": "string"},
+    "created_at": {"type": "string"},
+    "artifact_sha256": {"type": "string"},
+    "protocol": {"const": "garl_signed_v1"},
+    "num_samples": {"type": "integer", "minimum": 1},
+    "paper_MiD_overall": {"type": "number"},
+    "weighted_RTE_pct": {"type": "number"},
+    "failure_rate_pct": {"type": "number", "minimum": 0}
+  }
+}

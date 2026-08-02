@@ -1,0 +1,19 @@
+protocol_id: garl_evttc_table_vi_v1
+protocol_version: 1
+status: blocked_preflight_missing_verified_assets
+zero_shot_completed: false
+predict_score_separation: true
+labels_used_by_predict: false
+selection_uses_evttc: false
+score_stage: separate_process
+bbox_protocol: P0_oracle_bbox_roi
+token_schema: [sequence_id, sample_token, track_id, timestamp_us]
+preflight:
+  ready_for_zero_shot: false
+  requires_explicit_inference_config: true
+  requires_verified_label_free_input_manifest: true
+  requires_explicit_targets_at_score: true
+  blockers:
+    - No portable inference config or checkpoint is frozen in this protocol.
+    - No verified EvTTC Table VI input manifest is frozen in this protocol.
+    - No target payload path is stored in this portable protocol.

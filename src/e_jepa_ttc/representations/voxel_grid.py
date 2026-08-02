@@ -45,12 +45,18 @@ def encode_voxel_grid(
 
     t_norm = (events.t_us.astype(np.float64) - float(events.t_start_us)) / float(events.duration_us)
     t_scaled = np.clip(t_norm * (bins - 1), 0.0, bins - 1)
-    lower = np.floor(t_scaled).astype(np.int64)
-    upper = np.ceil(t_scaled).astype(np.int64)
+    # Spatial/channel indices fit in int32 for the dense grids used here.
+    # Keeping them narrow matters for high-rate eAP windows: the previous
+    # int64 + concatenated-index implementation could transiently allocate
+    # several additional arrays per DataLoader worker.
+    lower = np.floor(t_scaled).astype(np.int32)
+    upper = np.ceil(t_scaled).astype(np.int32)
     upper_weight = t_scaled - lower
     lower_weight = 1.0 - upper_weight
 
-    polarity_offset = np.where(events.polarity > 0, 0, bins) if separate_polarity else 0
+    polarity_offset = (
+        np.where(events.polarity > 0, 0, bins).astype(np.int32) if separate_polarity else 0
+    )
     signed_value = np.ones(events.num_events, dtype=np.float32)
     if not separate_polarity:
         signed_value = events.polarity.astype(np.float32)
@@ -61,18 +67,23 @@ def encode_voxel_grid(
     # real event windows. A single flattened ``bincount`` is exactly the same
     # weighted histogram while using NumPy's optimized reduction path.
     pixels = events.height * events.width
-    spatial_indices = events.y.astype(np.int64) * events.width + events.x.astype(np.int64)
-    lower_indices = lower_channels.astype(np.int64) * pixels + spatial_indices
-    upper_indices = upper_channels.astype(np.int64) * pixels + spatial_indices
-    flat_indices = np.concatenate((lower_indices, upper_indices))
-    flat_weights = np.concatenate(
-        (signed_value * lower_weight, signed_value * upper_weight)
-    )
-    voxel = np.bincount(
-        flat_indices,
-        weights=flat_weights,
+    spatial_indices = events.y.astype(np.int32) * events.width + events.x.astype(np.int32)
+    lower_indices = (lower_channels * pixels + spatial_indices).astype(np.int32)
+    upper_indices = (upper_channels * pixels + spatial_indices).astype(np.int32)
+    # Reduce the two temporal contributions independently. This avoids the
+    # 2*N concatenated index and weight buffers while preserving the exact
+    # weighted-histogram semantics.
+    voxel_flat = np.bincount(
+        lower_indices,
+        weights=signed_value * lower_weight,
         minlength=channels * pixels,
-    ).reshape(channels, events.height, events.width)
+    )
+    voxel_flat += np.bincount(
+        upper_indices,
+        weights=signed_value * upper_weight,
+        minlength=channels * pixels,
+    )
+    voxel = voxel_flat.reshape(channels, events.height, events.width)
 
     if normalize:
         voxel = robust_normalize(voxel)

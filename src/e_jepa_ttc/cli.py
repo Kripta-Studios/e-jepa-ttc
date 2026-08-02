@@ -23,10 +23,10 @@ from e_jepa_ttc.representations.corruptions import (
     CORRUPTION_KINDS,
     EventCorruptionSpec,
 )
-from e_jepa_ttc.utils.io import write_structured
+from e_jepa_ttc.utils.io import read_structured, write_structured
 
 
-def _print_json(data: dict[str, Any]) -> None:
+def _print_json(data: object) -> None:
     print(json.dumps(data, indent=2, sort_keys=True))
 
 
@@ -67,7 +67,16 @@ def _cmd_data_scan(args: argparse.Namespace) -> int:
 
 
 def _cmd_data_validate(args: argparse.Namespace) -> int:
-    report = validate_manifest(args.manifest)
+    manifest = args.manifest
+    if manifest is None:
+        if args.config is None:
+            raise ValueError("data validate requires --manifest or --config")
+        config = read_structured(args.config)
+        configured_manifest = config.get("manifest")
+        if not isinstance(configured_manifest, str) or not configured_manifest:
+            raise ValueError(f"Config has no usable manifest: {args.config}")
+        manifest = Path(configured_manifest)
+    report = validate_manifest(manifest)
     _print_json(report)
     return 0
 
@@ -284,11 +293,15 @@ def _cmd_cache_evttc_object(args: argparse.Namespace) -> int:
         materialize_evttc_object_cache,
     )
 
+    sequence_splits = {
+        sequence: split
+        for sequence, split in _parse_sequence_splits(args.sequence_split).items()
+        if split not in set(args.exclude_split)
+    }
     payload = materialize_evttc_object_cache(
         manifest_path=args.manifest,
         output_dir=args.output_dir,
-        sequence_splits=_parse_sequence_splits(args.sequence_split),
-        exclude_splits=args.exclude_split,
+        sequence_splits=sequence_splits,
         config=EvTTCObjectCacheConfig(
             history_frames=args.history_frames,
             prediction_horizons_ms=tuple(args.prediction_horizons_ms),
@@ -649,11 +662,11 @@ def _load_object_runtime_example(
             "context_ego_actions",
             "context_ego_action_mask",
         )
-        inputs = {
-            name: sample[name][None]
-            for name in tensor_keys
-            if isinstance(sample[name], torch.Tensor)
-        }
+        inputs = {}
+        for name in tensor_keys:
+            value = sample[name]
+            if isinstance(value, torch.Tensor):
+                inputs[name] = value[None]
     finally:
         dataset.close()
     return model, inputs
@@ -708,6 +721,67 @@ def _cmd_runtime_benchmark_object_ttc(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_robustness_smoke(args: argparse.Namespace) -> int:
+    from e_jepa_ttc.smokes import run_robustness_smoke
+
+    payload = run_robustness_smoke(output=args.output, samples=args.samples, seed=args.seed)
+    _print_json(payload)
+    return 0
+
+
+def _cmd_demo_smoke(args: argparse.Namespace) -> int:
+    from e_jepa_ttc.smokes import run_runtime_smoke
+
+    payload = run_runtime_smoke(output_dir=args.output_dir, seed=args.seed)
+    _print_json(
+        {
+            "output_dir": args.output_dir.as_posix(),
+            "status": payload["status"],
+            "synthetic_fixture": payload["synthetic_fixture"],
+            "metrics_are_not_real_dataset_results": payload["metrics_are_not_real_dataset_results"],
+        }
+    )
+    return 0
+
+
+def _cmd_report_build(args: argparse.Namespace) -> int:
+    from e_jepa_ttc.report import build_report
+
+    payload = build_report(args.repo_root.resolve(), args.output_dir.resolve())
+    _print_json(
+        {
+            "output_dir": args.output_dir.as_posix(),
+            "artifact_count": payload["artifact_count"],
+            "status_counts": payload["status_counts"],
+        }
+    )
+    return 0
+
+
+def _add_object_finetune_arguments(parser: argparse.ArgumentParser) -> None:
+    """Add the matched object-TTC fine-tuning contract to an alias parser."""
+
+    parser.add_argument("--cache-manifest", type=Path, required=True)
+    parser.add_argument("--output-dir", type=Path, required=True)
+    parser.add_argument("--pretrained-checkpoint", type=Path)
+    parser.add_argument("--epochs", type=int, default=50)
+    parser.add_argument("--batch-size", type=int, default=32)
+    parser.add_argument("--learning-rate", type=float, default=1e-4)
+    parser.add_argument("--weight-decay", type=float, default=0.01)
+    parser.add_argument("--label-fraction", type=float, default=1.0)
+    parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--device", type=str, default="auto")
+    parser.add_argument(
+        "--no-ego-actions",
+        dest="use_ego_actions",
+        action="store_false",
+        help="Ablate causal egoaction inputs for a matched downstream comparison.",
+    )
+    parser.add_argument("--report-splits", nargs="+", default=["validation"])
+    parser.add_argument("--allow-final-test-evaluation", action="store_true")
+    parser.set_defaults(use_ego_actions=True, func=_cmd_train_object_ttc)
+
+
 def build_parser() -> argparse.ArgumentParser:
     """Build the root CLI parser."""
 
@@ -734,7 +808,12 @@ def build_parser() -> argparse.ArgumentParser:
     data_scan.add_argument("--output", type=Path, required=True)
     data_scan.set_defaults(func=_cmd_data_scan)
     data_validate = data_sub.add_parser("validate", help="Validate a dataset manifest.")
-    data_validate.add_argument("--manifest", type=Path, required=True)
+    data_validate.add_argument("--manifest", type=Path)
+    data_validate.add_argument(
+        "--config",
+        type=Path,
+        help="Dataset YAML config containing a manifest path (alternative to --manifest).",
+    )
     data_validate.set_defaults(func=_cmd_data_validate)
     data_index = data_sub.add_parser("index", help="Create a temporal window index.")
     data_index.add_argument("--manifest", type=Path, required=True)
@@ -1231,25 +1310,12 @@ def build_parser() -> argparse.ArgumentParser:
             "train/validation/calibration/test roles."
         ),
     )
-    train_object_ttc.add_argument("--cache-manifest", type=Path, required=True)
-    train_object_ttc.add_argument("--output-dir", type=Path, required=True)
-    train_object_ttc.add_argument("--pretrained-checkpoint", type=Path)
-    train_object_ttc.add_argument("--epochs", type=int, default=50)
-    train_object_ttc.add_argument("--batch-size", type=int, default=32)
-    train_object_ttc.add_argument("--learning-rate", type=float, default=1e-4)
-    train_object_ttc.add_argument("--weight-decay", type=float, default=0.01)
-    train_object_ttc.add_argument("--label-fraction", type=float, default=1.0)
-    train_object_ttc.add_argument("--seed", type=int, default=42)
-    train_object_ttc.add_argument("--device", type=str, default="auto")
-    train_object_ttc.add_argument(
-        "--no-ego-actions",
-        dest="use_ego_actions",
-        action="store_false",
-        help="Ablate causal egoaction inputs for a matched downstream comparison.",
+    _add_object_finetune_arguments(train_object_ttc)
+    train_finetune = train_sub.add_parser(
+        "finetune",
+        help="Alias for the object-centric TTC fine-tuning contract.",
     )
-    train_object_ttc.add_argument("--report-splits", nargs="+", default=["validation"])
-    train_object_ttc.add_argument("--allow-final-test-evaluation", action="store_true")
-    train_object_ttc.set_defaults(use_ego_actions=True, func=_cmd_train_object_ttc)
+    _add_object_finetune_arguments(train_finetune)
 
     pretrain = subparsers.add_parser("pretrain", help="Self-supervised pretraining commands.")
     pretrain_sub = pretrain.add_subparsers(dest="pretrain_command", required=True)
@@ -1490,6 +1556,56 @@ def build_parser() -> argparse.ArgumentParser:
     runtime_benchmark.add_argument("--warmup-iterations", type=int, default=20)
     runtime_benchmark.add_argument("--measured-iterations", type=int, default=100)
     runtime_benchmark.set_defaults(func=_cmd_runtime_benchmark_object_ttc)
+
+    robustness = subparsers.add_parser(
+        "robustness",
+        help="Run the bounded synthetic robustness smoke; it is not a real-dataset result.",
+    )
+    robustness.add_argument(
+        "--output",
+        type=Path,
+        default=Path("artifacts/metrics/robustness_synthetic_smoke_current_v1.json"),
+    )
+    robustness.add_argument("--samples", type=int, default=4)
+    robustness.add_argument("--seed", type=int, default=7)
+    robustness.set_defaults(func=_cmd_robustness_smoke)
+
+    export = subparsers.add_parser("export", help="Deployment export commands.")
+    export_sub = export.add_subparsers(dest="export_command", required=True)
+    export_onnx = export_sub.add_parser(
+        "onnx",
+        help="Export and verify a batch-one object TTC ONNX model.",
+    )
+    export_onnx.add_argument("--cache-manifest", type=Path, required=True)
+    export_onnx.add_argument("--checkpoint", type=Path, required=True)
+    export_onnx.add_argument("--split", default="validation")
+    export_onnx.add_argument("--sample-index", type=int, default=0)
+    export_onnx.add_argument("--output-dir", type=Path, required=True)
+    export_onnx.add_argument("--opset-version", type=int, default=18)
+    export_onnx.set_defaults(func=_cmd_runtime_export_object_ttc)
+
+    demo = subparsers.add_parser(
+        "demo",
+        help="Run the bounded synthetic offline streaming demo; it is not a real sequence.",
+    )
+    demo.add_argument(
+        "--output-dir",
+        type=Path,
+        default=Path("artifacts/demos/runtime_smoke_current_v1"),
+    )
+    demo.add_argument("--seed", type=int, default=7)
+    demo.set_defaults(func=_cmd_demo_smoke)
+
+    report = subparsers.add_parser("report", help="Regenerable report commands.")
+    report_sub = report.add_subparsers(dest="report_command", required=True)
+    report_build = report_sub.add_parser("build", help="Index current regenerable artifacts.")
+    report_build.add_argument("--repo-root", type=Path, default=Path("."))
+    report_build.add_argument(
+        "--output-dir",
+        type=Path,
+        default=Path("artifacts/tables/regenerable_report"),
+    )
+    report_build.set_defaults(func=_cmd_report_build)
 
     return parser
 

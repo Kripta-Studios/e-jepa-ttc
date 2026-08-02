@@ -20,6 +20,13 @@ from e_jepa_ttc.data.ml_cache import validate_voxel_cache
 from e_jepa_ttc.evaluation.bootstrap import sequence_bootstrap_interval
 from e_jepa_ttc.evaluation.metrics import regression_metrics
 from e_jepa_ttc.models import build_regressor
+from e_jepa_ttc.reproducibility import (
+    cuda_device_count,
+    cuda_device_name,
+    cuda_is_usable,
+    resolve_device,
+    seed_torch_cpu,
+)
 from e_jepa_ttc.training.checkpoints import checkpoint_provenance
 from e_jepa_ttc.utils.io import ensure_parent, write_structured
 
@@ -62,8 +69,9 @@ class VoxelCacheDataset(Dataset[tuple[torch.Tensor, torch.Tensor]]):
 def _set_seed(seed: int) -> None:
     random.seed(seed)
     np.random.seed(seed)
-    torch.manual_seed(seed)
-    torch.cuda.manual_seed_all(seed)
+    seed_torch_cpu(seed)
+    if cuda_is_usable():
+        torch.cuda.manual_seed_all(seed)
 
 
 def _split_indices(split: np.ndarray, name: str) -> np.ndarray:
@@ -453,10 +461,7 @@ def train_tiny_cnn(
         str(cache["split_manifest_sha256"]) if "split_manifest_sha256" in cache else ""
     )
 
-    if device_name == "auto":
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    else:
-        device = torch.device(device_name)
+    device = resolve_device(device_name)
     model_tag = model_name.replace("-", "_")
 
     train_dataset = VoxelCacheDataset(x, y_log, train_idx)
@@ -752,8 +757,9 @@ def train_tiny_cnn(
         "output_dir": output.as_posix(),
         "device": str(device),
         "torch_version": torch.__version__,
-        "cuda_available": bool(torch.cuda.is_available()),
-        "gpu_name": torch.cuda.get_device_name(0) if torch.cuda.is_available() else None,
+        "cuda_available": cuda_is_usable(),
+        "cuda_device_count": cuda_device_count(),
+        "gpu_name": cuda_device_name(device),
         "seed": seed,
         "downstream_seed": seed,
         "pretrain_seed": (
@@ -860,10 +866,7 @@ def evaluate_supervised_checkpoint(
         msg = f"Requested evaluation splits are empty: {missing_eval_splits}."
         raise ValueError(msg)
 
-    if device_name == "auto":
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    else:
-        device = torch.device(device_name)
+    device = resolve_device(device_name)
     checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)
     checkpoint_model_name = str(checkpoint.get("model_name", "tiny-cnn"))
     selected_model_name = model_name or checkpoint_model_name
@@ -920,8 +923,9 @@ def evaluate_supervised_checkpoint(
         "cache": str(cache_path),
         "device": str(device),
         "torch_version": torch.__version__,
-        "cuda_available": bool(torch.cuda.is_available()),
-        "gpu_name": torch.cuda.get_device_name(0) if torch.cuda.is_available() else None,
+        "cuda_available": cuda_is_usable(),
+        "cuda_device_count": cuda_device_count(),
+        "gpu_name": cuda_device_name(device),
         "model_name": selected_model_name,
         "batch_size": batch_size,
         "evaluation_splits": list(evaluation_splits),

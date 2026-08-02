@@ -5,7 +5,7 @@ experiment:
   comparison: [egoactions_enabled, egoactions_masked]
 
 data:
-  manifest: data/manifests/evttc_full_starter_local.yaml
+  manifest: data/manifests/evttc_all32_local.yaml
   cache: artifacts/evttc_object_actions_calibrated_64/manifest.json
   ttc_source: official_evttc_interpolated_ttc_table
   bbox_alignment: depth_assisted_radtan_blackfly_to_prophesee_calibrated_projection

@@ -41,4 +41,6 @@ scratch/
 tmp/
 pytest_tmp/
 .tmp/
-run_eap_lhr_v3_hardening_e543af3.ps1
+# Local dataset roots are machine-specific; keep only the example template.
+configs/local/*.yaml
+!configs/local/paths.example.yaml

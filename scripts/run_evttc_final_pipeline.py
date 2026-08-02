@@ -397,9 +397,19 @@ def freeze(args: argparse.Namespace) -> int:
         args.candidate_name or variant.lower(),
         "--candidate-role",
         args.candidate_role,
+        "--config",
+        str(args.config),
+        "--preprocessing",
+        str(args.preprocessing),
+        "--protocol",
+        str(args.protocol),
+        "--selection-audit",
+        str(args.selection_audit),
         "--output",
         str(args.output),
     ]
+    if args.ensemble_rule is not None:
+        command.extend(["--ensemble-rule", str(args.ensemble_rule)])
     if args.allow_dirty:
         command.append("--allow-dirty")
     _run(command, dry_run=args.dry_run)
@@ -542,6 +552,11 @@ def build_parser() -> argparse.ArgumentParser:
         choices=("SINGLE_REALTIME", "ENSEMBLE_ACCURACY"),
         default="ENSEMBLE_ACCURACY",
     )
+    freeze_parser.add_argument("--config", type=Path, required=True)
+    freeze_parser.add_argument("--preprocessing", type=Path, required=True)
+    freeze_parser.add_argument("--protocol", type=Path, required=True)
+    freeze_parser.add_argument("--selection-audit", type=Path, required=True)
+    freeze_parser.add_argument("--ensemble-rule", type=Path)
     freeze_parser.add_argument("--output", type=Path, required=True)
     freeze_parser.add_argument("--allow-dirty", action="store_true")
     freeze_parser.add_argument("--dry-run", action="store_true")

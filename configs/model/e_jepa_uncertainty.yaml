@@ -1,0 +1,6 @@
+name: event-tubelet-transformer
+in_channels: 10
+embedding_dim: 192
+uncertainty: true
+uncertainty_space: log_ttc
+log_variance_bounds: [-8.0, 5.0]

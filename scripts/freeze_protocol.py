@@ -1,3 +1,4 @@
+import argparse
 import datetime
 import json
 import subprocess
@@ -9,17 +10,24 @@ from jsonschema import validate
 from e_jepa_ttc.artifacts.hashing import compute_file_hash, sign_artifact
 
 
-def get_git_commit() -> str:
+def get_git_commit(repo_root: Path) -> str:
     try:
-        return subprocess.check_output(["git", "rev-parse", "HEAD"]).decode("utf-8").strip()
+        return subprocess.check_output(
+            ["git", "rev-parse", "HEAD"], cwd=repo_root, encoding="utf-8"
+        ).strip()
     except subprocess.CalledProcessError:
         return "unknown"
 
 
-def get_dirty_worktree() -> bool:
+def get_dirty_worktree(repo_root: Path) -> bool:
     """Return whether tracked or untracked files differ from the commit."""
 
-    status = subprocess.check_output(["git", "status", "--porcelain"], text=True, encoding="utf-8")
+    status = subprocess.check_output(
+        ["git", "status", "--porcelain"],
+        cwd=repo_root,
+        text=True,
+        encoding="utf-8",
+    )
     return bool(status.strip())
 
 
@@ -45,9 +53,8 @@ def _hash_resources(repo_root: Path, resources: object) -> dict[str, dict[str, o
     return hashed
 
 
-def main() -> None:
-    repo_root = Path(__file__).resolve().parent.parent
-    protocol_yaml = repo_root / "configs" / "recovery_v3_protocol.yaml"
+def freeze_protocol(repo_root: Path, protocol_yaml: Path, out_path: Path) -> dict[str, object]:
+    """Validate and freeze one protocol without implicit path discovery."""
 
     if not protocol_yaml.exists():
         raise FileNotFoundError(f"Missing protocol YAML: {protocol_yaml}")
@@ -72,8 +79,8 @@ def main() -> None:
         "artifact_type": "frozen_protocol_v3",
         "schema_version": "3.0",
         "evidence_type": "protocol_definition",
-        "code_commit": get_git_commit(),
-        "dirty_worktree": get_dirty_worktree(),
+        "code_commit": get_git_commit(repo_root),
+        "dirty_worktree": get_dirty_worktree(repo_root),
         "protocol_version": str(protocol_data.get("protocol_version", "3.0")),
         "claim_level": protocol_data["claim_level"],
         "test_status": protocol_data["test_status"],
@@ -90,10 +97,7 @@ def main() -> None:
     # Self-sign the artifact
     frozen_artifact = sign_artifact(frozen_artifact)
 
-    out_dir = repo_root / "artifacts" / "audit" / "recovery_v3"
-    out_dir.mkdir(parents=True, exist_ok=True)
-
-    out_path = out_dir / "frozen_protocol.json"
+    out_path.parent.mkdir(parents=True, exist_ok=True)
     with out_path.open("w", encoding="utf-8") as f:
         json.dump(frozen_artifact, f, indent=2, sort_keys=True)
 
@@ -101,7 +105,32 @@ def main() -> None:
         f"Protocol frozen successfully at {out_path} with SHA-256: "
         f"{frozen_artifact['artifact_sha256']}"
     )
+    return frozen_artifact
+
+
+def main(argv: list[str] | None = None) -> int:
+    """Freeze the recovery protocol after explicit CLI argument parsing."""
+
+    repo_root = Path(__file__).resolve().parent.parent
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--protocol",
+        type=Path,
+        default=repo_root / "configs" / "recovery_v3_protocol.yaml",
+        help="Protocol YAML to validate and freeze.",
+    )
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=repo_root / "artifacts" / "audit" / "recovery_v3" / "frozen_protocol.json",
+        help="Output JSON artifact.",
+    )
+    args = parser.parse_args(argv)
+    protocol_yaml = args.protocol if args.protocol.is_absolute() else repo_root / args.protocol
+    output = args.output if args.output.is_absolute() else repo_root / args.output
+    freeze_protocol(repo_root, protocol_yaml.resolve(), output.resolve())
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

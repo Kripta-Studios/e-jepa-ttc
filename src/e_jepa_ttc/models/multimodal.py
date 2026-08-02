@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 from dataclasses import dataclass
 from pathlib import Path
+from typing import cast
 
 import torch
 from torch import nn
@@ -88,7 +89,9 @@ class RGBRecurrentObjectEncoder(nn.Module):
             image = context_rgb[:, step].to(dtype=torch.float32)
             if context_rgb.dtype == torch.uint8:
                 image = image / 255.0
-            image = (image - self.image_mean) / self.image_std
+            image_mean = cast(torch.Tensor, self.image_mean)
+            image_std = cast(torch.Tensor, self.image_std)
+            image = (image - image_mean) / image_std
             visual = self.spatial(image).mean(dim=(-1, -2))
             visual = self.visual_projection(visual)
             geometry = self.geometry_projection(
@@ -198,11 +201,23 @@ class DINOv3FeatureTeacher(nn.Module):
         super().__init__()
         try:
             from huggingface_hub import hf_hub_download
-            from transformers import AutoModel
+            from transformers import AutoModel  # type: ignore[reportMissingImports]
         except ImportError as error:
             msg = "Install the optional 'multimodal' dependency group for DINOv3 distillation."
             raise RuntimeError(msg) from error
-        processor_path = hf_hub_download(model_name, "preprocessor_config.json")
+        local_model = Path(model_name).expanduser()
+        if local_model.exists():
+            if not local_model.is_dir():
+                raise ValueError("A local DINOv3 model path must be a directory.")
+            processor_path = local_model / "preprocessor_config.json"
+            if not processor_path.is_file():
+                raise FileNotFoundError(
+                    f"Local DINOv3 directory lacks {processor_path.name}: {local_model}"
+                )
+            model_source = str(local_model)
+        else:
+            processor_path = Path(hf_hub_download(model_name, "preprocessor_config.json"))
+            model_source = model_name
         processor = json.loads(Path(processor_path).read_text(encoding="utf-8"))
         size = processor.get("size", {"height": 224, "width": 224})
         self.input_size = (
@@ -217,7 +232,11 @@ class DINOv3FeatureTeacher(nn.Module):
             "image_std",
             torch.tensor(processor.get("image_std", (0.229, 0.224, 0.225))).reshape(1, 3, 1, 1),
         )
-        self.backbone = AutoModel.from_pretrained(model_name)
+        self.backbone = AutoModel.from_pretrained(
+            model_source,
+            local_files_only=local_model.exists(),
+        )
+        self.model_source = model_source
         self.backbone.eval()
         for parameter in self.backbone.parameters():
             parameter.requires_grad_(False)
@@ -245,7 +264,9 @@ class DINOv3FeatureTeacher(nn.Module):
             align_corners=False,
             antialias=True,
         )
-        output = self.backbone(pixel_values=(images - self.image_mean) / self.image_std)
+        image_mean = cast(torch.Tensor, self.image_mean)
+        image_std = cast(torch.Tensor, self.image_std)
+        output = self.backbone(pixel_values=(images - image_mean) / image_std)
         features = output.last_hidden_state
         if features.ndim == 4:
             features = features.mean(dim=(-1, -2))

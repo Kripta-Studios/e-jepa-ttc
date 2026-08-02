@@ -91,9 +91,9 @@ def event_contrast_inverse_ttc(
     image_of_warped_events = warped.sum(dim=2)
     expanded_mask = mask[:, None]
     mean = (image_of_warped_events * expanded_mask).sum(dim=(-1, -2)) / mask_weight[:, None]
-    contrast = (
-        (image_of_warped_events - mean[..., None, None]).square() * expanded_mask
-    ).sum(dim=(-1, -2)) / mask_weight[:, None]
+    contrast = ((image_of_warped_events - mean[..., None, None]).square() * expanded_mask).sum(
+        dim=(-1, -2)
+    ) / mask_weight[:, None]
     standardized = (contrast - contrast.mean(dim=-1, keepdim=True)) / contrast.std(
         dim=-1,
         keepdim=True,

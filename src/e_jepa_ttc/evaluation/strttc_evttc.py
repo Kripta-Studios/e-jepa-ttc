@@ -77,9 +77,9 @@ def _sample_indices(
     ]
     if len(eligible) <= maximum:
         return eligible
-    positions = (
-        (np.arange(maximum, dtype=np.float64) + 0.5) * len(eligible) / maximum
-    ).astype(np.int64)
+    positions = ((np.arange(maximum, dtype=np.float64) + 0.5) * len(eligible) / maximum).astype(
+        np.int64
+    )
     return [eligible[int(position)] for position in positions]
 
 
@@ -148,12 +148,7 @@ def _event_array_in_roi(
         height=sensor_height,
     )
     x0, y0, x1, y1 = roi
-    selected = (
-        (events.x >= x0)
-        & (events.x < x1)
-        & (events.y >= y0)
-        & (events.y < y1)
-    )
+    selected = (events.x >= x0) & (events.x < x1) & (events.y >= y0) & (events.y < y1)
     return np.column_stack(
         (
             events.t_us[selected].astype(np.float64) * 1e-6,
@@ -302,19 +297,13 @@ def evaluate_evttc_strttc(
     if y_true.size == 0:
         raise RuntimeError(f"Every STRTTC sample failed: {failures[:3]}")
     successful_sample_metrics = object_ttc_metrics(y_true, y_pred)
-    successful_sample_metrics.update(
-        grouped_ttc_selection_components(y_true, y_pred, groups)
-    )
+    successful_sample_metrics.update(grouped_ttc_selection_components(y_true, y_pred, groups))
     per_sequence_mae = [
         float(np.mean(np.abs(y_true[groups == group] - y_pred[groups == group])))
         for group in np.unique(groups)
     ]
-    successful_sample_metrics["sequence_macro_mae_s"] = float(
-        np.mean(per_sequence_mae)
-    )
-    successful_sample_metrics["worst_sequence_mae_s"] = float(
-        np.max(per_sequence_mae)
-    )
+    successful_sample_metrics["sequence_macro_mae_s"] = float(np.mean(per_sequence_mae))
+    successful_sample_metrics["worst_sequence_mae_s"] = float(np.max(per_sequence_mae))
     output = Path(output_dir)
     output.mkdir(parents=True, exist_ok=True)
     np.savez_compressed(

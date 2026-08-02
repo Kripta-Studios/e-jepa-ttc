@@ -22,7 +22,7 @@ from e_jepa_ttc.models.residual_ttc import BoundedInverseTTCResidual
 from e_jepa_ttc.models.risk_selector import RiskSelector
 from e_jepa_ttc.models.spatial_patch_mixer import SpatialPatchMixer
 from e_jepa_ttc.models.target_query import TargetBackgroundQuery
-from e_jepa_ttc.models.temporal_kda import TemporalKDAStack
+from e_jepa_ttc.models.temporal_kda import KDALayoutMetadata, TemporalKDAStack
 from e_jepa_ttc.models.uncertainty_head import TTCUncertaintyHead
 
 
@@ -381,7 +381,16 @@ class ObjectGeometryJEPATTC(nn.Module):
                 )
             else:
                 object_history = self._dense_pool_history(spatial)
-            object_history = self.object_kda(object_history[:, :, None])[:, :, 0]
+            k1_tokens = object_history[:, :, None]
+            object_history = self.object_kda(
+                k1_tokens,
+                metadata=KDALayoutMetadata(
+                    batch_size=k1_tokens.shape[0],
+                    temporal_steps=k1_tokens.shape[1],
+                    patch_count=1,
+                    embedding_dim=k1_tokens.shape[3],
+                ),
+            )[:, :, 0]
             mixed_tokens = spatial
         elif self.mixer is not None:
             mixed_tokens = self.mixer(base_tokens)

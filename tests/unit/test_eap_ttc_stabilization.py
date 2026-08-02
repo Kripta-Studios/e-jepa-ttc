@@ -16,8 +16,8 @@ from e_jepa_ttc.training.eap_jepa import (
 )
 from e_jepa_ttc.training.eap_ttc import (
     EAPSignedTTCHead,
+    _restore_ttc_checkpoint,
     gather_object_ttc_targets,
-    pretrain_eap_jepa_ttc,
 )
 from e_jepa_ttc.utils.hashing import sha256_file
 
@@ -378,8 +378,7 @@ def test_checkpoint_validates_itself(tmp_path):
             checkpoint=cp,
             source_split_path=split_path,
         )
-        
-        
+
         assert validated["checkpoint_selected_by"] == "validation_macro_track_mae"
         assert validated["recommended_for_downstream"] is True
 
@@ -392,28 +391,83 @@ def test_checkpoint_validates_itself(tmp_path):
         e_jepa_ttc.training.checkpoints.verify_artifact_hash = orig_verify_hash
 
 
-def test_resume_fails_with_not_implemented_error(tmp_path):
-    audit_file = tmp_path / "f.json"
-    audit_file.write_text("{}", encoding="utf-8")
+def test_resume_checkpoint_loader_rejects_missing_checkpoint(tmp_path):
+    module = torch.nn.Linear(2, 2)
+    optimizer = torch.optim.Adam(module.parameters())
 
-    split_file = tmp_path / "d.json"
-    split_file.write_text("{}", encoding="utf-8")
-
-    with pytest.raises(
-        NotImplementedError,
-        match="Safe resume",
-    ):
-        pretrain_eap_jepa_ttc(
-            eap_root="a",
-            garlttc_root="b",
-            inventory_path="c",
-            split_path=split_file,
-            output_dir="e",
-            config=EAPJEPATrainerConfig(),
-            audit_json_path=audit_file,
-            audit_result="PASS",
-            resume=True,
+    with pytest.raises(FileNotFoundError, match="checkpoint is missing"):
+        _restore_ttc_checkpoint(
+            tmp_path / "resume.pt",
+            encoder=module,
+            target_encoder=torch.nn.Linear(2, 2),
+            predictor=torch.nn.Linear(2, 2),
+            ttc_head=torch.nn.Linear(2, 1),
+            optimizer=optimizer,
+            scheduler=None,
+            scaler=None,
+            device=torch.device("cpu"),
+            expected_metadata={},
+            expected_trainer_config={},
         )
+
+
+def test_resume_checkpoint_loader_restores_epoch_and_state(tmp_path):
+    modules = [torch.nn.Linear(2, 2) for _ in range(3)] + [torch.nn.Linear(2, 1)]
+    optimizer = torch.optim.Adam(modules[0].parameters(), lr=0.01)
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=1)
+    for parameter in modules[0].parameters():
+        parameter.grad = torch.ones_like(parameter)
+    optimizer.step()
+    scheduler.step()
+    payload = {
+        "seed": 7,
+        "inventory_artifact_sha256": "a" * 64,
+        "split_artifact_sha256": "b" * 64,
+        "audit_json_sha256": "c" * 64,
+        "garlttc_data_sha256": "d" * 64,
+        "garlttc_annotations_sha256": "e" * 64,
+        "garlttc_join_keys_sha256": "f" * 64,
+        "train_context_ids_sha256": "1" * 64,
+        "validation_context_ids_sha256": "2" * 64,
+        "trainer_config": {"epochs": 5},
+        "encoder_state_dict": modules[0].state_dict(),
+        "target_encoder_state_dict": modules[1].state_dict(),
+        "predictor_state_dict": modules[2].state_dict(),
+        "ttc_head_state_dict": modules[3].state_dict(),
+        "optimizer_state_dict": optimizer.state_dict(),
+        "scheduler_state_dict": scheduler.state_dict(),
+        "scaler_state_dict": None,
+        "epoch": 3,
+        "optimizer_step": 12,
+        "best_validation_macro_track_mae": 0.4,
+        "best_validation_joint_loss": 0.7,
+        "history": {"records": [{"epoch": 1}]},
+    }
+    checkpoint = tmp_path / "resume.pt"
+    torch.save(payload, checkpoint)
+
+    restored = [torch.nn.Linear(2, 2) for _ in range(3)] + [torch.nn.Linear(2, 1)]
+    restored_optimizer = torch.optim.Adam(restored[0].parameters(), lr=0.01)
+    restored_scheduler = torch.optim.lr_scheduler.StepLR(restored_optimizer, step_size=1)
+    result = _restore_ttc_checkpoint(
+        checkpoint,
+        encoder=restored[0],
+        target_encoder=restored[1],
+        predictor=restored[2],
+        ttc_head=restored[3],
+        optimizer=restored_optimizer,
+        scheduler=restored_scheduler,
+        scaler=None,
+        device=torch.device("cpu"),
+        expected_metadata={
+            key: payload[key] for key in payload if key.endswith("sha256") or key == "seed"
+        },
+        expected_trainer_config={"epochs": 5},
+    )
+
+    assert result[:4] == (4, 12, 0.4, 0.7)
+    assert result[4] == [{"epoch": 1}]
+    assert torch.equal(restored[0].weight, modules[0].weight)
 
 
 def test_limit_dataset_contexts():

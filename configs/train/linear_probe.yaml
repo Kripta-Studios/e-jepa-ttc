@@ -1,0 +1,5 @@
+objective: frozen_encoder_linear_probe
+freeze_encoder: true
+head: ridge_or_linear_ttc
+split_by_sequence: true
+seeds: [7, 13, 23]

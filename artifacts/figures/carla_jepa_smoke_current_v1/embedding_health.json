@@ -1,0 +1,21 @@
+{
+  "artifact_type": "jepa_embedding_health_figure_v1",
+  "generated_at": "2026-08-01T16:06:11.317872+00:00",
+  "history": "artifacts/runs/carla_jepa_smoke_current_seed7/history.jsonl",
+  "history_sha256": "12f53b136181031ffd98acb7b21778d833e6996c1724c17e0d4e21ed519aef00",
+  "figure": "artifacts/figures/carla_jepa_smoke_current_v1/embedding_health.png",
+  "figure_sha256": "d8e21c2cf11fa69c8a9c68ed294c712af1607087886b353c7b064ef0cce8f5aa",
+  "status": "PASS",
+  "epochs": [
+    1,
+    2
+  ],
+  "last_validation": {
+    "loss": 0.02244375040754676,
+    "embedding_std": 0.1798191424459219,
+    "effective_rank": 2.2267441153526306,
+    "collapsed_dimension_fraction": 0.0
+  },
+  "collapse_guard_threshold": 0.8,
+  "metrics_source": "recorded_history_jsonl"
+}

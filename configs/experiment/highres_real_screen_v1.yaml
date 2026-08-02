@@ -1,0 +1,57 @@
+artifact_type: highres_real_architecture_screen_v1
+protocol_version: garl_eap_highres_fullframe_screen_v1
+description: >-
+  Short architecture screen on public Garl-TTC train/validation rows linked to
+  eAP sequences. Inputs are built directly from raw eAP HDF5 streams at the
+  declared high-resolution shapes; EvTTC is not opened or used.
+selection:
+  seed: 7
+  max_samples_per_split: 96
+  train_epochs: 2
+  batch_size: 2
+  num_workers: 4
+  learning_rate: 0.0003
+  weight_decay: 0.01
+  max_grad_norm: 1.0
+  temporal_steps: 5
+  window_partition: uniform_between_official_lhr_endpoints
+  target: official_garl_frame_ttc_at_second_endpoint
+  validation_metric: garl_signed_v1
+  selection_allowed: false
+arms:
+  S3_R4_WINDOW_TEMPORAL:
+    width: 320
+    height: 192
+    patch_size: 8
+    spatial_window: 8
+    merge_2x2: false
+    temporal_mixer: block_causal
+  S4_R4_WINDOW_MERGE_TEMPORAL:
+    width: 320
+    height: 192
+    patch_size: 8
+    spatial_window: 8
+    merge_2x2: true
+    temporal_mixer: block_causal
+  S5_R4_WINDOW_MERGE_KDA:
+    width: 320
+    height: 192
+    patch_size: 8
+    spatial_window: 8
+    merge_2x2: true
+    temporal_mixer: kda
+model:
+  in_channels: 21
+  embed_dim: 32
+  heads: 4
+  spatial_depth: 1
+  temporal_depth: 1
+  memory_budget_gb: 12.0
+  global_attention: false
+promotion_rule:
+  primary: validation_paper_MiD_overall
+  secondary: validation_weighted_RTE_pct
+  failure_rate_must_not_increase: true
+  latency_limit_relative: 1.25
+  requires_three_seeds: true
+  requires_eap_validation: true

@@ -6,7 +6,9 @@ from e_jepa_ttc.data.eap import EAPObjectState
 from e_jepa_ttc.data.eap_geometry_v2 import EAP_GEOMETRY_V2_DIM, geometry_v2_targets
 
 
-def _state(*, timestamp_us: int, box: tuple[float, float, float, float], height: float) -> EAPObjectState:
+def _state(
+    *, timestamp_us: int, box: tuple[float, float, float, float], height: float
+) -> EAPObjectState:
     return EAPObjectState(
         sample_token=str(timestamp_us),
         sequence_id="sequence",
