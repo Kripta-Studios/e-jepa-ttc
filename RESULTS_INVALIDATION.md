@@ -1,6 +1,6 @@
 # Results invalidation and claim boundary
 
-Updated: 2026-07-30.
+Updated: 2026-08-02.
 
 ## Valid evidence classes
 
@@ -8,6 +8,7 @@ Updated: 2026-07-30.
 historical_exact
 integration_only
 screen_candidate
+full_candidate
 grouped_cv_valid
 multiseed_valid
 official_external
@@ -33,6 +34,25 @@ All runs with:
 remain engineering diagnostics. They cannot promote modules or appear as final
 paper results.
 
+The real cache-free high-resolution run recorded in
+`artifacts/metrics/e_jepa_tubelet_lhr_trainer_smoke_current_v1.json` is also
+`integration_only`: it used 16/16 samples, one epoch and one seed, has
+`claim_eligible=false`, and obtained a validation sequence-macro MiD of
+`1868.3186`. It validates the data/model/checkpoint contract but provides no
+evidence of competitiveness.
+
+The semantic shortcut artifacts are `synthetic_diagnostic`, not
+`screen_candidate`. They establish that the current variance/VISReg family can
+encode a fixed-per-sequence shortcut while retaining apparently healthy latent
+statistics. They do not establish that the real eAP encoder encodes that shortcut.
+
+`r2_rate_dependence` and `residual_r2` are invalid as production promotions: the
+R²-lite arm failed the predeclared 15% log-TTC improvement gate, while adding
+optimization and estimator complexity. `temporal_residual` is only a conditional
+candidate because it passed the slow-shortcut fixture but regressed sharply in the
+frame-varying control. A real matched `level` vs `level+temporal_residual` eAP
+comparison is mandatory before any model change.
+
 ## Current comparison boundary
 
 A learned candidate can become `screen_candidate` only when:
@@ -46,6 +66,10 @@ A learned candidate can become `screen_candidate` only when:
 
 `grouped_cv_valid` requires five complete folds. `multiseed_valid` requires the
 predeclared seeds 7, 13 and 21 for BASE and máximo dos finalistas.
+
+`full_candidate` for the Garl high-resolution path requires all valid rows, a
+clean committed tree, seeds 7/13/23, comparable hashes and a freeze artifact.
+That class permits external evaluation; it is not itself an SOTA claim.
 
 ## Oracle boundary
 
@@ -76,6 +100,8 @@ the experiment is rerun.
   comparables.
 - smokes con resúmenes Core/Garl sobrescritos se conservan solo mediante sus
   `summary.json` individuales.
+- CARLA checkpoints/caches were removed after negative transfer; the compact
+  tracked metrics remain sufficient evidence of the rejected result.
 
 ## Official claim
 

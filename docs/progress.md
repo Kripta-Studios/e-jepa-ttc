@@ -1,51 +1,46 @@
 # Progreso
 
-## 2026-07-30
+## 2026-08-02
 
-- reproducido BASE histórico con paridad exacta;
-- separado `B0_HISTORICAL_BASE_EXACT` de `A0_MATCHED_GLOBAL`;
-- corregida la comparación A0/A1/A2/K1;
-- implementada recurrencia delta KDA;
-- corregidas fórmulas height/area/affine/event contrast;
-- auditado código público Garl-TTC;
-- implementados G0–G7 y verificada topología ResNet-50;
-- transformada navegación NEU al frame del evento;
-- añadida compensación traslacional oracle con profundidad declarada;
-- separados los outputs Core/Garl;
-- actualizado el protocolo de almacenamiento;
-- ejecutado screen Garl ResNet-50 G0–G7;
-- ejecutada confirmación Core de hasta 40 épocas;
-- promovido A1 Dense/Patch Policy: 15,210 % frente a 16,129 % de A0;
-- rechazados A2 AttnRes y K1 Object-KDA en su forma actual;
-- implementado y probado un port causal trazable al código STRTTC;
-- evaluada geometría bbox causal con calibración train-only y fallback A1;
-- completado grouped-CV 5 folds × 3 seeds: A0 seleccionado frente a A1;
-- auditado CARLA DVS Looming con loader mmap, manifest y split bloqueado;
-- implementado pretraining JEPA CARLA lazy, reanudable y compatible con BASE;
-- implementadas evaluaciones validation/test CARLA y transferencia validada a
-  grouped CV EvTTC mediante un orquestador único;
-- medido el perfil de hardware: batch 24/acumulación 2/8 workers es el más
-  rápido de los probes, aunque usa menos VRAM que perfiles más lentos;
-- pilotos CARLA→EvTTC cerrados: CARLA-SSL empeora A0 en RTE un 1,72 % y el
-  auxiliar TTC sintético un 17,3 % en fold 0/seed 7; no se promocionan;
-- inventariado eAP train-40 y seleccionado un piloto firmado de 12 secuencias
-  (9 train/3 validation) sin usar EvTTC;
-- implementados eAP-SSL/eAP-Geo event-only, HDF5 bajo demanda, checkpointing,
-  resume y orquestación completa hacia A0/A1;
-- smoke real eAP-SSL completado con validation loss 0,06474, best/last y cero
-  exposición a TTC/RGB/EvTTC/Benchmark-10;
-- Ruff, 252 pruebas y los smokes eAP SSL/Geo pasan; el PDF fue recompilado y
-  revisado visualmente antes del commit.
+- auditado el repositorio completo y preservados cambios ajenos;
+- corregidos contratos Garl, calibración, timestamps, sampling y métricas firmadas;
+- verificada paridad raw/resized y de salida de modelo;
+- corregido el pooling BF16 high-resolution;
+- implementados padding/máscaras, atención por ventanas, merge 2x2 y mixer temporal;
+- rechazado KDA por regresión;
+- implementado trainer event-only raw/on-demand sin cache global;
+- añadido gradient accumulation, orden determinista por época y perfil full con Git
+  limpio;
+- añadido runner `screen/full`, seeds 7/13/23, freeze, predict/score EvTTC y
+  validación local de submission;
+- completado smoke real 16/16; MiD macro `1868,3186`, no promocionable;
+- comprobado shard cache 256 y descartado 4.096 por presión de RAM;
+- eliminados launchers/aliases rotos, protocolos/manifests duplicados y código
+  engañoso;
+- eliminados CARLA local, `artifacts/runs` y `artifacts/features`; ~101 GiB
+  adicionales recuperados en esta pasada;
+- preservados resúmenes compactos de resultados negativos;
+- corregidos tests de evidencia para que un clon limpio omita artefactos locales
+  opcionales;
+- Ruff, Pyright y Pytest completo pasan sin los árboles generados;
+- implementada auditoría falsable de shortcut semántico, cinco brazos x tres seeds
+  y control frame-varying, sin dataset real;
+- demostrado que varianza/VISReg pueden estar sanos estadísticamente y conservar
+  el shortcut; R²-lite no supera el gate y queda rechazado;
+- residual temporal pasa el shortcut lento, pero falla el control frame-varying:
+  se conserva solo como canal `z_delta` candidato junto a `z_level`;
+- publicados `7ec2b90`, `cbdf54c` y `7d33989` en la branch activa.
 
-El screen corto había dado un orden engañoso: A1 necesitó 20 épocas para su
-mejor checkpoint. La geometría bbox mejora algo el error relativo, pero no el
-score compuesto; STRTTC tiene cobertura 27/40 y no se promueve.
+Pendiente prioritario:
 
-CARLA queda como evidencia negativa: su full no se justifica con el mismo
-objetivo mientras ambos pilotos empeoren la transferencia. eAP train-40 está
-completo (40 secuencias, 536,64 GiB), pero el piloto usa solo 12 secuencias y
-eventos. Compara SSL puro con geometría débil de cajas 3D proyectadas; no usa el
-pseudo-TTC derivado como target. Se escala a 40 únicamente si mejora RTE y MAE
-en al menos dos folds EvTTC.
+1. JEPA high-resolution compatible con salida de nivel y residual;
+2. `level` vs `level+temporal_residual` en screen pareado y probes reales;
+3. RGB-E causal como ablación separada;
+4. inputs EvTTC Tabla VI label-free;
+5. full 7/13/23 solo tras mejorar claramente el screen;
+6. evaluación oficial eAP/CodaBench.
 
-El Benchmark-10 permanece sellado. No existe claim SOTA.
+No implementar R²/HSIC/CMI ni INTACT antes de ese gate: el primero fue rechazado
+y el segundo requiere acciones expertas ausentes en este problema.
+
+No existe claim SOTA.

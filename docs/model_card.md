@@ -1,160 +1,123 @@
-# Model card — E-JEPA-TTC / OGE-JEPA-TTC
+# Model card — E-JEPA-TTC
 
-Actualizado: 2026-07-30.
+Actualizado: 2026-08-02.
 
 ## Estado
 
-`B0_HISTORICAL_BASE_EXACT` conserva paridad exacta con el resultado histórico.
-El grouped CV de cinco folds × tres seeds selecciona `A0_MATCHED_GLOBAL` como
-arquitectura final y rechaza A1 Dense para promoción. El perfil final de
-precisión es `matched`; validation selecciona seed 13 antes del diagnóstico
-family-OOD. Garl-TTC local sigue siendo una réplica arquitectónica y no existe
-claim SOTA.
+El modelo activo es un candidato event-only high-resolution, no un modelo SOTA ni
+un sistema de producción. `B0_HISTORICAL_BASE_EXACT` y `A0_MATCHED_GLOBAL` son
+anclas EvTTC históricas; no son el checkpoint del trainer Garl nuevo.
 
-## BASE histórico
+No hay checkpoint final promovido. El único run real del trainer nuevo es un smoke
+16/16 de integración con MiD macro `1868,3186`, marcado
+`claim_eligible=false`.
 
-Arquitectura:
+## Arquitectura activa
 
 ```text
-21 canales
-→ EventTubeletTransformer, dim 192, depth 6, 6 heads, patch 16
-→ mean pooling de tokens finales
-→ LN → Linear 192/96 → GELU → Dropout 0,1 → Linear 1
-→ log-TTC
+eventos causales [B,T,21,H,W]
+-> patch embedding
+-> atención espacial por ventanas con padding/máscara
+-> space-to-depth 2x2 opcional
+-> mixer temporal block-causal
+-> query pooling
+-> cabeza TTC firmada
 ```
 
-Resultado validation histórica, seed 7:
+Perfil screen:
 
-| MAE | RMSE | Error relativo |
-|---:|---:|---:|
-| 0,322892 s | 0,584432 s | 8,1554 % |
+```text
+320x192, patch 8, dim 32, 4 heads, profundidad 1+1, batch 2
+```
 
-Predicciones y métricas tienen paridad exacta con el checkpoint original.
+Perfil full candidate:
 
-## Candidatos Core
+```text
+320x192, patch 16, dim 192, 6 heads, profundidad 1+2,
+batch 4, acumulación 6, BF16, máximo 30 épocas
+```
 
-- `A0_MATCHED_GLOBAL`: control entrenado en la misma matriz.
-- `A1_MATCHED_DENSE_BLOCK`: interacción espacial antes de causalidad temporal.
-- `A2_MATCHED_DENSE_ATTNRES`: combinación por tarea a través de capas.
-- `K1_OBJECT_KDA`: recurrencia delta temporal de tokens de objeto/región.
-- `A4_GT_GEOMETRY`: oracle sin entrenamiento basado en bbox GT.
+El perfil full usa todas las filas válidas, seeds 7/13/23, exige Git limpio y
+congela el mejor checkpoint únicamente con validation Garl. Entrenamiento por sí
+solo no habilita un claim.
 
-Los cuatro candidatos aprendidos comparten inicialización, cabeza común,
-selección de muestras y trainer. El oracle geométrico se reporta separado.
+## Modalidades
 
-Confirmación matched:
+- Event-only: implementada en el trainer raw cache-free.
+- RGB-E: diseño/config presente, trainer no implementado; falla de forma explícita
+  para impedir que RGB sea descartado silenciosamente.
+- Bbox/máscaras/depth: solo supervisión u oracle en protocolos declarados; no inputs
+  del candidato raw.
 
-| Candidato | Error relativo macro | MAE macro | Decisión |
-|---|---:|---:|---|
-| A0 global | 16,129 % | 0,701 s | control |
-| A1 Dense | **15,210 %** | **0,628 s** | promover |
-| A2 AttnRes | 16,136 % | 0,653 s | rechazar |
-| K1 Object-KDA | 16,960 % | 0,731 s | rechazar |
+## Pretraining
 
-Decisión final tras grouped CV multisemilla:
+El pretraining JEPA high-resolution compatible todavía está bloqueado. El script
+`pretrain_eap_tubelet_jepa.py` rechaza el encoder pooled legacy porque sus tokens y
+resolución no son compatibles con el downstream actual. Por tanto el candidato
+high-resolution todavía se entrena desde cero salvo que se proporcione un
+checkpoint cuya arquitectura pase la comprobación estricta de claves/shapes.
 
-| Candidato | Score ± sd seeds | Error relativo ± sd | MAE ± sd | Decisión |
-|---|---:|---:|---:|---|
-| **A0 global** | **0,58452 ± 0,00853** | **30,25 % ± 0,52** | 1,011 ± 0,039 s | seleccionar |
-| A1 Dense | 0,59312 ± 0,00349 | 30,55 % ± 0,06 | **1,007 ± 0,013 s** | rechazar |
+Una auditoría sintética posterior demuestra que el regularizador de varianza y
+VISReg pueden conservar un shortcut lento aunque rango/varianza parezcan sanos.
+R²-lite no alcanzó el gate TTC y no forma parte del modelo. El residual temporal
+es solo una propuesta condicional para un canal `z_delta`; el control frame-varying
+demuestra que no debe reemplazar `z_level`. Ninguna de estas pruebas demuestra que
+el mismo shortcut exista en eAP.
 
-El checkpoint operativo congelado es A0 matched seed 13. Obtiene score
-`0,28992`, error relativo macro `14,46 %` y MAE macro `0,541 s` en validation.
-En family-OOD reutilizado obtiene `0,53784`, `30,56 %` y `0,805 s`,
-respectivamente. Benchmark-10 permanece sin abrir.
+## Salidas
 
-## Réplica Garl-TTC
+El contrato general permite:
 
-Implementa:
+- TTC medio firmado en segundos;
+- log-varianza opcional;
+- logits de colisión por horizonte;
+- embedding de contexto y embeddings futuros;
+- diagnósticos de salud latente.
 
-- tres timestamps a 100 ms;
-- dos RGB endpoints;
-- dos event volumes de 20 planos;
-- ROI 128x128;
-- ResNet-50 separados;
-- direct regression y Learned Height Ratio;
-- early/late fusion;
-- decoder foreground solo durante training.
+El trainer Garl nuevo optimiza actualmente la cabeza TTC mediante Smooth L1 sobre
+`sign(TTC) * log1p(abs(TTC))`. La selección usa MiD macro por secuencia con targets
+firmados.
 
-EvTTC no proporciona el target 3D de altura usado en eAP. La adaptación local
-supervisa altura visible en la ROI y se declara explícitamente.
+## Evidencia histórica
 
-## Geometría y navegación
+| Modelo | Protocolo | Resultado | Decisión |
+|---|---|---:|---|
+| B0 historical | validation histórica | 8,1554 % RTE | ancla exacta |
+| A0 global | grouped CV 5x3 | 30,25 % ± 0,52 RTE | seleccionado en esa matriz |
+| A1 Dense | grouped CV 5x3 | 30,55 % ± 0,06 RTE | rechazado |
+| R1 bbox-ROI | 5 folds, seed 7 | 30,99 % RTE | rechazado |
+| Object-KDA | confirmación matched | 16,960 % RTE | rechazado |
 
-Expertos:
-
-- height ratio;
-- area rate;
-- expansión afín;
-- event contrast.
-
-La navegación se transforma físicamente a la cámara de eventos. La de-rotación
-por yaw es causal. La compensación traslacional requiere profundidad:
-
-- distancia EvTTC → oracle/teacher;
-- profundidad predicha → candidata futura de inferencia.
-
-No se permite concatenar `velocity_x` directamente como closing speed.
-
-## Entradas y salidas previstas
-
-Entradas:
-
-- eventos causales;
-- RGB opcional en el track RGBE;
-- bbox GT en el track assisted;
-- navegación causal;
-- máscara/bbox predicha en el track FULL futuro.
-
-Salidas:
-
-- TTC continuo;
-- inverse-TTC geométrico y diagnósticos;
-- riesgo e incertidumbre solo si pasan sus gates;
-- máscara visualizable en la variante bbox-free.
+Estas cifras pertenecen a protocolos EvTTC previos y no deben compararse como si
+fueran el mismo entrenamiento que el modelo Garl high-resolution.
 
 ## Uso previsto
 
-Investigación de TTC object-centric y representación predictiva de eventos.
+- investigación TTC con cámaras de eventos;
+- screens de arquitectura y representación;
+- evaluación de transferencia JEPA;
+- preparación auditable de candidatos para EvTTC/eAP.
 
-No usar para:
-
-- control real de vehículos;
-- decisiones de seguridad;
-- afirmar SOTA antes del benchmark oficial;
-- inferencia con distancia ground truth.
+No usar para control de vehículos, decisiones de seguridad ni afirmaciones SOTA
+sin evaluación externa reproducida.
 
 ## Riesgos y limitaciones
 
-- EvTTC tiene pocas secuencias para routers complejos;
-- el bbox-assisted no demuestra detección bbox-free;
-- la navegación puede convertirse en shortcut;
-- Dense Patch gana un split histórico, pero pierde grouped CV multisemilla;
-  A0 global es el candidato final y KDA/AttnRes permanecen rechazados;
-- STRTTC tiene cobertura incompleta y la geometría bbox usa más contexto que
-  el neural;
-- Garl local no reproduce el ground truth eAP privado/no disponible;
-- latencia p95 end-to-end no está cerrada;
-- family-OOD duplica aproximadamente el error relativo de validation;
-- Benchmark-10 permanece sin evaluar.
-- CARLA JEPA aprende la loss latente, pero sus pilotos cross-domain empeoran
-  A0: RTE +1,72 % con SSL y +17,3 % con TTC sintético; no se promociona.
-- eAP-Geo mejora A0 en RTE/MAE en dos folds y habilita eAP-40, pero aún falta
-  pretraining full y grouped CV 5×3; A1 mejora RTE 2/2 y MAE solo 1/2.
+- el smoke high-resolution no aprende todavía una señal TTC competitiva;
+- falta JEPA denso compatible;
+- el predictor SSL real tiene rango efectivo ≈1,10 sin diagnóstico semántico real;
+- falta comparar nivel frente a nivel+residual con probes congelados sobre eAP;
+- falta RGB-E, modalidad fuerte en Garl-TTC;
+- la geometría causal bbox-free/expansión/FoE no supera A0;
+- family-OOD degrada materialmente frente a validation;
+- seis secuencias eAP y el protocolo oficial completo no están disponibles;
+- EvTTC Tabla VI carece aún de manifest label-free real;
+- no hay calibración, robustez, latencia end-to-end, ONNX o demo del checkpoint
+  final.
 
 ## Reproducibilidad
 
-Cada run guarda configuración, seed, hashes, commit, selección de muestras,
-época, latencia, VRAM, `best`, `last` y `weights_only`. Las métricas smoke no
-son promocionables.
-
-El pretraining CARLA guarda `best` por validation loss, `last`, `resume.pt`
-atómico, optimizador/scheduler/scaler/RNG, `history.jsonl` y evaluaciones de
-validation/test. El cargador EvTTC rechaza el checkpoint si declara uso de TTC,
-colisión, velocidad, diámetro, Benchmark-10, un split distinto o una
-arquitectura incompatible de 21 canales.
-
-El pretraining eAP usa el mismo contrato de checkpointing, pero añade hashes
-del inventario train-40 y del split 9/3 o 32/8. El validador rechaza TTC, RGB, EvTTC,
-Benchmark-10, un régimen SSL/Geo inconsistente o un checkpoint no seleccionado
-por validation.
+Cada run guarda commit, dirty flag, hashes de config/dataset/split, seed, entorno,
+GPU, timestamps, historial, criterio de selección y SHA del checkpoint. Los perfiles
+full requieren tres seeds comparables antes del freeze. Predict y score EvTTC son
+procesos separados.

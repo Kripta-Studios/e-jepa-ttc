@@ -1,161 +1,154 @@
-# Protocolo experimental v6
+# Protocolo experimental
 
-Actualizado: 2026-07-30.
+Actualizado: 2026-08-02.
 
-## Datos
+## Pregunta
 
-- desarrollo: EvTTC-32;
-- selección: split histórico para screen y grouped CV para confirmación;
-- externo: Benchmark-10 sellado;
-- pretraining externo activo: CARLA DVS Looming sin usar TTC/velocidad/diámetro;
-- pretraining futuro condicionado a gate: eAP train-40 sin TTC.
+¿Un encoder event-only high-resolution con pretraining JEPA multihorizonte mejora
+TTC frente a entrenamiento supervisado desde cero y frente a Garl-TTC bajo el
+mismo protocolo? RGB-E es una segunda comparación aislada, no una mezcla con el
+resultado event-only.
 
 ## Jerarquía de evidencia
 
 ```text
-Smoke
-  integración; nunca promoción
+unit/synthetic smoke
+  contrato matemático; nunca promoción
 
-Screen
-  304/80 ventanas, seed 7, hasta 8 épocas
+raw screen
+  datos reales, 256–2.048 muestras/split, una seed
 
-Confirmación matched
-  1.208/314 ventanas, hasta 40 épocas, early stopping compartido
+semantic representation gate
+  level vs level+residual, probes congelados, igual compute
 
-Grouped CV
-  cinco folds completos × seeds 7/13/21, A0/A1
+paired confirmation
+  random vs JEPA, mismo split/seed/trainer
 
-CARLA SSL transfer
-  pretrain train/validation CARLA; A0 EvTTC en los mismos 5 folds × 3 seeds
+full candidate
+  todas las filas válidas, seeds 7/13/23, commit limpio
 
-Freeze final
-  arquitectura por OOF; perfil y seed por validation familiar
+freeze
+  selección solo con validation Garl; EvTTC permanece cerrado
 
-Family-OOD
-  una inferencia diagnóstica después del freeze
+EvTTC Table VI predict
+  inferencia label-free, cero updates
 
-Benchmark-10
-  una inferencia después del freeze
+EvTTC Table VI score
+  targets abiertos en proceso separado
+
+eAP/CodaBench
+  submission congelada y número de intentos registrado
 ```
 
-Roles que no deben mezclarse:
+## Datos
 
-| Rol | Secuencias | Uso |
-|---|---|---|
-| grouped-CV validation | cada secuencia una vez OOF | selección de arquitectura |
-| family train | 19 | ajuste supervisado del candidato fijo |
-| family validation | 5 | early stopping del candidato fijo |
-| family test/OOD | 8; CCRs-2, CCRs-3, CPNAO | diagnóstico explícito por familia |
-| Benchmark-10 | 10 secuencias selladas | una inferencia externa tras freeze |
+- GarlTTC/eAP: train y validation del candidato; lectura raw bajo demanda.
+- EvTTC-32: evaluación grouped y Tabla VI; nunca selecciona el supuesto zero-shot.
+- Benchmark-10: sellado hasta freeze.
+- CARLA: resultado negativo histórico, fuera del camino activo.
 
-El holdout familiar ya figura como diagnóstico reutilizado en el protocolo de
-recovery; es out-of-family respecto a su entrenamiento, pero no debe llamarse
-test oficial virgen. Benchmark-10 conserva esa función externa.
+## Screen
 
-Grouped CV agrupa secuencias completas, no ventanas. Cada una de las 32
-secuencias aparece OOF una vez por seed; ningún fragmento de esa secuencia
-entra en el entrenamiento del fold que la evalúa. La incertidumbre se resume
-entre seeds y el bootstrap se agrupa por secuencia.
+El screen activo usa `configs/experiment/e_jepa_garl_event_screen_v1.yaml`:
 
-## Protocolo CARLA → EvTTC
+- event-only, 320x192, cinco pasos;
+- máximo 2.048 muestras por split;
+- seed 7;
+- hasta ocho épocas;
+- selección MiD macro por secuencia;
+- `claim_eligible=false`.
 
-CARLA usa 803/298/294 secuencias train/validation/test con bloques de IDs
-disjuntos. El encoder JEPA se selecciona por loss de validation, con máximo 30
-épocas y early stopping mínimo 8/paciencia 6. El test CARLA se abre una vez
-después de elegir `best` y solo mide predicción latente sintética.
+Antes de ampliar debe pasar:
 
-La prueba científica es la transferencia: el `best` CARLA inicializa A0 y se
-fine-tunea sobre cada fold EvTTC exactamente como el control aleatorio. Ambos
-brazos comparten muestras, cabeza común, trainer, folds y seeds. No se ajusta
-ningún hiperparámetro con el test CARLA ni con Benchmark-10. El gate requiere
-mejora OOF consistente y bootstrap pareado por secuencia; loss SSL CARLA no es
-una métrica TTC.
+1. loss finita y descenso respecto al inicio;
+2. ninguna fuga de target al input;
+3. cobertura de todas las secuencias del split;
+4. mejora pareada frente a random/control;
+5. coste compatible con el presupuesto del host.
 
-## Comparación Core
+## Gate semántico de representación
 
-`A0_MATCHED_GLOBAL`, `A1_MATCHED_DENSE_BLOCK`,
-`A2_MATCHED_DENSE_ATTNRES` y `K1_OBJECT_KDA` comparten samples, inicialización,
-trainer y criterio de checkpoint.
-
-La confirmación histórica promueve únicamente A1. A0 y A1 se vuelven a
-comparar en grouped CV desde una inicialización aleatoria común explícita para
-no reutilizar un checkpoint SSL que haya visto eventos de las secuencias
-validadas. Esa prueba responde a la arquitectura; la confirmación histórica
-separada responde a la inicialización BASE.
-
-El resultado cerrado de 5 folds × 3 seeds selecciona A0: A1 empeora el score
-medio un 1,47 % y el error relativo un 0,99 %, aunque reduce el MAE un 0,41 %.
-La pequeña ganancia histórica de A1 no es suficientemente consistente para
-promoción ni para un claim SOTA.
-
-Con A0 fijo, el perfil `matched` mejora el score medio de validation un
-10,95 % frente a `throughput` y selecciona seed 13. El checkpoint y su hash se
-congelan antes de abrir `family test/OOD`.
-
-## Comparación Garl
-
-G0–G7 usan el mismo cache Garl y batch efectivo 24 en Screen. G6/G7 inicializan
-sus ramas desde los mejores checkpoints G3/G4 del mismo fold y seed.
-
-El screen local no reproduce todavía las 50 épocas del repositorio público y
-no se usa como claim de paridad.
-
-## Métrica de selección
+El benchmark sintético fija la hipótesis, no promueve el modelo. En eAP se
+compararán únicamente:
 
 ```text
-score =
-mean_relative_error
-+ 0,25 normalized_RMSE
-+ 0,25 high_TTC_error
-+ 0,25 low_TTC_safety_error
+JEPA level
+JEPA level + temporal residual
 ```
 
-Desempate: peor secuencia, RMSE, variación entre seeds y latencia.
+Ambos deben compartir filas, inicialización del backbone, predictor, batch/accum,
+seeds y tiempo aproximado. Tras congelar el encoder se ajustan probes por secuencia
+para TTC/log-TTC, dirección/tasa de expansión, event rate e ID de secuencia. El
+residual solo se promociona si mejora señal dinámica/TTC sin aumentar memorización
+de secuencia y no empeora MiD macro. No se añaden rate, HSIC, CMI, MMD ni INTACT
+antes de superar esta comparación mínima.
 
-## Reglas
+## Full candidate
 
-- ninguna ventana cruza secuencia;
-- ninguna decisión se toma con Benchmark-10;
-- resultados smoke se etiquetan `integration_only`;
-- el oracle con distancia GT no compite como modelo desplegable;
-- una métrica calculada solo sobre éxitos debe informar también cobertura y
-  no puede compararse con candidatos de cobertura completa;
-- todo resultado debe señalar commit, config hash y manifest hash.
-- el cache puede materializar `test`, pero el trainer abre exclusivamente
-  `train`/`validation`; la evaluación de `test` requiere un flag explícito;
-- el perfil de recursos no cambia dentro de una comparación.
+`configs/experiment/e_jepa_garl_event_full_v1.yaml` congela:
 
-## Pretraining externo eAP-12
+- encoder event-only dim 192, patch 16 y block-causal;
+- todas las filas válidas del split 32/8;
+- seeds 7/13/23;
+- BF16, batch 4, acumulación 6;
+- máximo 30 épocas, mínimo 10, paciencia 6;
+- Git limpio obligatorio;
+- resume determinista por seed+época.
 
-La selección de secuencias se realiza sin métricas EvTTC. El inventario público
-train-40 excluye únicamente dos HDF5 mayores de 20 GiB y selecciona 12
-secuencias por anclas documentadas más farthest-point sampling estandarizado.
-El split fijo contiene 9 train/3 validation y ninguna secuencia compartida.
+El freeze exige que los tres runs compartan commit, config y dataset hashes. El
+seed elegido minimiza MiD macro en validation Garl. El freeze no convierte el run
+en resultado oficial.
 
-Se comparan dos brazos con idéntico presupuesto:
+## EvTTC Tabla VI
+
+`predict` recibe solo un checkpoint congelado y shards label-free con identidades:
 
 ```text
-eAP-SSL = JEPA denso futuro event-only
-eAP-Geo = eAP-SSL + bbox 2D proyectada + expansión/cierre + objectness patch
+sequence_id, sample_token, track_id, timestamp_us
 ```
 
-Geo usa `K_event` y `T_event_ego` para proyectar las cajas 3D y derivadas
-locales de profundidad/altura, pero no optimiza TTC reconstruido. Ningún brazo
-abre RGB, EvTTC o Benchmark-10 durante pretraining. La entrada compatible usa
-diez bins de eventos, dos canales causales de densidad/rate y nueve canales de
-navegación/acción a cero; no se inventa metadata eAP ausente.
+Se rechazan TTC, depth, category, bbox/masks privilegiadas o cobertura incompleta.
+El score recibe un payload de targets separado y no puede retroalimentar training,
+normalización o selección.
 
-El análisis inicial usa máximo 3 épocas con early stopping 2/1, 1.024/256
-muestras, fold 0 y seed 7. Es un screen de descarte, nunca evidencia final. Se
-pasa a un segundo fold solo si
-mejoran simultáneamente RTE y MAE frente al control en el primero. Se escala de
-12 a 40 secuencias solo si la mejora se repite en al menos dos folds. Una
-confirmación publicable exige los cinco folds y seeds 7/13/21.
+Protocolos bbox:
 
-El gate se ejecutó también en fold 1. eAP-Geo mejora A0 simultáneamente en RTE
-y MAE en 2/2 folds (+3,66 %/+4,30 % agregado), por lo que habilita el escalado.
-A1-Geo mejora RTE en 2/2 (+6,57 %), pero MAE en 1/2. Los bootstrap RTE aún
-cruzan cero. El protocolo `Full` usa un segundo split firmado con las 40
-secuencias en 32 train/8 validation; preserva las tres validation piloto y
-selecciona las otras cinco solo por SHA-256 salado del ID. Benchmark-10 sigue
-sellado.
+- `P0_oracle_bbox_roi`: diagnóstico asistido, nunca raw/bbox-free;
+- `P1_predicted_bbox_roi`: deployable solo si el detector es causal y congelado;
+- `P2_raw_fullframe`: candidato sin cajas GT.
+
+## Comparaciones mínimas
+
+1. trivial mean/median y geometría analítica;
+2. Garl event-only oficial/local comparable;
+3. high-res supervisado random;
+4. high-res con JEPA denso compatible, `level` vs `level+residual`;
+5. RGB-E como ablación posterior;
+6. geometría causal bbox-free solo si supera al control.
+
+No ejecutar el cartesiano completo. Se promociona un único finalista por gate.
+
+## Métricas
+
+- eAP/Garl: MiD firmado, RTE ponderado, failure rate y macro por secuencia;
+- EvTTC: RTE, MAE/RMSE y métricas declaradas de Tabla VI;
+- estadística: media/desviación entre seeds y bootstrap por secuencia;
+- eficiencia: preprocessing e inferencia separados, RAM, VRAM y throughput;
+- incertidumbre: NLL, ECE/cobertura y aumento bajo corrupción.
+
+No se hace bootstrap por ventanas correlacionadas.
+
+## Claim boundary
+
+Un claim SOTA requiere al menos:
+
+- protocolo igual al baseline;
+- modalidad declarada event-only o RGB-E;
+- tres seeds y freeze previo;
+- resultado EvTTC comparable;
+- submission oficial eAP/CodaBench;
+- hashes de commit/config/dataset/checkpoint;
+- latencia y memoria del candidato real;
+- resultados negativos y número de submissions visibles.
+
+Actualmente ninguno de esos gates externos está cerrado.

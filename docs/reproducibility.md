@@ -1,357 +1,167 @@
 # Reproducibilidad
 
+Actualizado: 2026-08-02.
+
 ## Entorno auditado
 
 ```text
 Python   3.11
 PyTorch  2.11.0+cu128
 GPU      NVIDIA GeForce RTX 5070 Ti Laptop
-VRAM     ~12,8 GB
-RAM      32 GB
+VRAM     ~12,8 GiB
+RAM      32 GiB
 ```
 
-## Registro mínimo por run
-
-```text
-git commit
-config y hash
-manifest y hash
-split y hash
-seed
-sample selection hash
-checkpoint hash
-mejor época
-historial de métricas
-latencia y peak VRAM
-estado de Benchmark-10
-```
-
-Instalación determinista, incluida la alternativa segura para rutas Windows
-con caracteres Unicode:
+Instalación:
 
 ```powershell
 uv sync --locked --all-groups --no-editable
 uv run --no-sync python -m e_jepa_ttc --help
 ```
 
-No ejecutar `uv run` sin `--no-sync` dentro de los tests o pipelines: podría
-recrear una instalación editable y modificar el entorno durante una corrida.
+Usar `--no-sync` dentro de tests/runs evita que `uv` cambie la instalación durante
+una ejecución.
 
-## Checkpoints
+## Registro mínimo
 
-Solo se conservan:
+Cada run debe incluir:
 
 ```text
-best.pt
-last.pt
-weights_only.pt
+experiment_id, run_name, git_commit, git_dirty
+config_hash, dataset_manifest_hash, split_version, seed
+host, Python, Torch, CUDA, GPU
+start_time, end_time, status
+checkpoint_path/hash, metrics_path
+selection metric, sample counts, provenance
 ```
 
-`resume.pt` es temporal y se elimina al completar.
-
-## Comandos
-
-### Orquestador completo CARLA → EvTTC
+## Validación del repositorio
 
 ```powershell
-# Plan exacto sin entrenamiento.
-.\scripts\run_carla_evttc_complete.ps1 -Profile Full -DryRun
-
-# CARLA SSL + validation/test sintéticos + A0 control + transferencia OOF.
-.\scripts\run_carla_evttc_complete.ps1 -Profile Full -Resume
+uv run --no-sync ruff check .
+uv run --no-sync ruff format --check .
+uv run --no-sync pyright
+uv run --no-sync pytest -q
+git diff --check
 ```
 
-`--resume`/`-Resume` omite etapas con artefactos completos y restaura CARLA
-desde `resume.pt` cuando existe. Cada subprocess escribe un `.log`; el estado,
-comandos, hardware y duraciones quedan en
-`artifacts/runs/carla_evttc_complete_v1/orchestration_status.json`. Los runs
-EvTTC guardan su propio `summary.json`, predicciones OOF y checkpoints. El
-pipeline compara solamente `A0_MATCHED_GLOBAL` para medir el efecto de la
-inicialización; no reabre la búsqueda arquitectónica.
+La suite completa pasa en un árbol sin `artifacts/runs` ni
+`artifacts/features`. Los tests que auditan artefactos reales ignorados se omiten si
+estos no existen; los contratos de formato siguen cubiertos con fixtures unitarios.
 
-El resultado final se regenera con
-`scripts/compare_evttc_initializations.py`. Ese comparador exige igualdad de
-fold/seed, selección de muestras, cache, cabeza común y trainer, y calcula
-bootstrap por secuencia. Benchmark-10 permanece sellado.
-
-### EvTTC
-
-Ruta automatizada y cross-platform:
+## Auditoría semántica sin dataset
 
 ```powershell
-uv run --no-sync python scripts/run_evttc_final_pipeline.py --help
-uv run --no-sync python scripts/run_evttc_final_pipeline.py validate
-uv run --no-sync python scripts/run_evttc_final_pipeline.py compare --resume
+make jepa-shortcut-audit
 ```
 
-`compare` usa por defecto folds `0..4`, seeds `7/13/21`, A0/A1 y el perfil
-frozen `matched`. El agregador exige 15 runs por variante antes del freeze.
-Cada pareja fold/seed debe compartir hash de samples, backbone y cabeza común.
-También registra victorias pareadas, coste, dispersión entre medias por seed y
-bootstrap OOF por secuencia. El resultado cerrado es
-`artifacts/metrics/evttc_a0_a1_grouped_cv_5fold_3seed.json`.
+El target ejecuta el benchmark de shortcut fijo, el control frame-varying y su
+agregación. No usa eAP/EvTTC ni etiquetas durante el entrenamiento de la
+representación. Artefactos versionados y SHA-256:
 
-Validación:
+```text
+jepa_semantic_shortcut_benchmark_v1.json
+  EDF8EFA639A845D1D228AC43DDF778FF5C0B573DE72FC0A5685E5DEE74C18368
+jepa_semantic_shortcut_frame_control_v1.json
+  AC496D937B5C3B1BE9B7FD35802C2BD368D0D1D2973C258FEC266614E21E0F4D
+jepa_semantic_capacity_audit_v1.json
+  393CA65AD8E4C1453F23985085E56EFC48DB89FAF77413334319EE8A3948C36E
+```
+
+La decisión reproducida es
+`reject_full_r2_prefer_temporal_residual_on_synthetic_gate`. No autoriza un
+cambio de producción: exige confirmación sobre filas eAP reales.
+
+## Entrenamiento event-only raw
+
+Dry-run full:
 
 ```powershell
-.\scripts\run_evttc_architecture_selection.ps1 -Mode Validate
+uv run --no-sync python scripts/run_e_jepa_garl_final.py `
+  --profile full --stages train freeze `
+  --eap-root 'E:\eAP_dataset' `
+  --garlttc-root 'E:\GarlTTC_dataset' `
+  --dry-run
 ```
 
 Screen:
 
 ```powershell
-.\scripts\run_evttc_architecture_selection.ps1 `
-  -Mode Screen -Stage Core -Protocol HistoricalBase -Resume
+uv run --no-sync python scripts/run_e_jepa_garl_final.py `
+  --profile screen --stages train `
+  --eap-root 'E:\eAP_dataset' `
+  --garlttc-root 'E:\GarlTTC_dataset' `
+  --output-root artifacts/runs/e_jepa_garl_event_screen_v1
 ```
 
-Los comandos equivalentes para Garl cambian `-Stage Core` por `-Stage Garl`.
-
-Confirmación grouped-CV de la comparación promovida:
+Full multisemilla:
 
 ```powershell
-.\scripts\run_evttc_architecture_selection.ps1 `
-  -Mode Confirm -Stage Core -Protocol GroupedCV `
-  -AllFolds -Seed 7 -RandomControl `
-  -Variants A0_MATCHED_GLOBAL,A1_MATCHED_DENSE_BLOCK
+uv run --no-sync python scripts/run_e_jepa_garl_final.py `
+  --profile full --stages train freeze `
+  --eap-root 'E:\eAP_dataset' `
+  --garlttc-root 'E:\GarlTTC_dataset' `
+  --output-root artifacts/runs/e_jepa_garl_event_full_v1 `
+  --resume
 ```
 
-`-RandomControl` es obligatorio mientras no existan checkpoints SSL
-preentrenados exclusivamente con el train de cada fold. Impide reutilizar el
-checkpoint histórico en folds cuyas secuencias de validación ya aparecieron en
-su pretraining.
+El full exige Git limpio, todas las filas válidas y seeds exactas 7/13/23. Cada
+época usa shuffle derivado de `seed + epoch`, por lo que resume no depende del
+estado interno previo del DataLoader.
 
-La ablación bbox-ROI reproducible se lanza de forma aislada para no repetir
-brazos cerrados:
-
-```powershell
-.\scripts\run_evttc_architecture_selection.ps1 `
-  -Mode Confirm -Stage Core -Protocol GroupedCV `
-  -AllFolds -Seed 7 -RandomControl -Resume `
-  -Workers 8 -ExecutionProfile Matched `
-  -Variants R1_MATCHED_BBOX_ROI
-```
-
-Sus cinco folds terminaron en el commit `42a90e0`: score 0,59814, error
-relativo 30,99 % y MAE 1,0100 s. Frente a A0 seed 7 empeora 2,90 %, 2,74 % y
-4,55 %, respectivamente; por el gate secuencial no se ejecutan seeds 13/21.
-
-Entrenamiento del candidato ya fijado y evaluación separada:
-
-```powershell
-uv run --no-sync python scripts/run_evttc_final_pipeline.py fit-holdout `
-  --variant A0_MATCHED_GLOBAL --seeds 7 13 21 --resume
-
-uv run --no-sync python scripts/run_evttc_final_pipeline.py select-final `
-  --variant A0_MATCHED_GLOBAL `
-  --matched-root artifacts/runs/evttc32_final_family_holdout_matched/core/fold-0/A0_MATCHED_GLOBAL `
-  --throughput-root artifacts/runs/evttc32_final_family_holdout/core/fold-0/A0_MATCHED_GLOBAL `
-  --output artifacts/metrics/evttc_final_a0_profile_selection.json
-
-uv run --no-sync python scripts/run_evttc_final_pipeline.py evaluate-holdout `
-  --checkpoint <best.pt> `
-  --cache-manifest artifacts/features/evttc32_final_family_holdout_core/manifest.json `
-  --splits validation `
-  --output-dir artifacts/metrics/final_validation
-```
-
-Para abrir el holdout familiar:
-
-```powershell
-uv run --no-sync python scripts/run_evttc_final_pipeline.py evaluate-holdout `
-  --checkpoint <best.pt> `
-  --cache-manifest artifacts/features/evttc32_final_family_holdout_core/manifest.json `
-  --selection-manifest artifacts/metrics/evttc_final_a0_profile_selection.json `
-  --splits test --allow-diagnostic-test `
-  --output-dir artifacts/metrics/final_family_ood
-```
-
-Este `test` es el holdout diagnóstico CCRs-2/CCRs-3/CPNAO. No es el
-Benchmark-10 sellado. El JSON de salida registra splits, secuencias, hashes,
-checkpoint, commit, métricas macro, bootstrap por secuencia y
-`diagnostic_test_opened=true`.
-
-## Perfiles de recursos
-
-- `matched`: batch 16 × acumulación 2; reproduce la evidencia.
-- `throughput`: batch 32 × acumulación 1; mismo batch efectivo, menor overhead.
-- workers: autodetección `min(12, logical_cpus/2)`; ajustar hacia abajo si otro
-  proceso intensivo comparte RAM o disco.
-- BF16, `pin_memory`, workers persistentes y prefetch permanecen activos.
-
-No se cambia de perfil a mitad de una matriz. Una optimización de ejecución se
-aplica a todos los brazos o se reporta como protocolo distinto.
-
-En la ejecución final, throughput redujo el tiempo agregado de tres seeds de
-1.653 s a 411 s (4,02×), pero empeoró el score medio de 0,30400 a 0,34139.
-Por ello se conserva para iteración y matched para el candidato de precisión.
-
-Tiempos medidos, no estimaciones del artículo:
+Checkpoints retenidos:
 
 ```text
-EvTTC A0 grouped CV, 5 folds × 3 seeds     1,324 h
-EvTTC A1 grouped CV, 5 folds × 3 seeds     2,095 h
-A0 + A1, 30 runs                              3,419 h
-CARLA JEPA full, por época (proyección)       32,5 min
-CARLA JEPA full, máximo 30 épocas            16,2 h
-CARLA test sintético completo (proyección)     8,5 min
+best.pt
+last.pt
+best_validation_predictions.csv
+summary.json
 ```
 
-La transferencia A0 de una seed sobre cinco folds requiere aproximadamente
-0,4–0,7 h; las tres seeds son del orden de 1,3 h si se ejecutan. CARLA puede
-terminar antes por early stopping; el intervalo operativo prudente es 8–16 h.
+## EvTTC predict/score
 
-## eAP sin TTC
-
-eAP train-40 está completo: 40 secuencias, 216 archivos y 536,64 GiB. Puede
-usarse en una etapa posterior de SSL sin etiquetas. No
-puede producir MAE TTC, seleccionar arquitectura ni sustituir EvTTC. El gate
-recomendado es 2–4 secuencias, presupuesto fijo y fine-tuning EvTTC idéntico
-antes de ampliar a 40.
-
-## Preparación CARLA DVS Looming
-
-El adapter no descarga ni duplica el dataset. Audita la extracción existente,
-crea un manifest firmado y separa bloques completos:
+Ejemplo después de crear un config de inferencia y manifest label-free válidos:
 
 ```powershell
-uv run --no-sync python scripts/prepare_carla_looming.py `
-  --root datasets/CARLA_DVS_Looming_Dataset/random_spawn `
-  --manifest data/manifests/carla_dvs_looming_v1.json `
-  --split data/splits/carla_dvs_looming_blocked_v1.json `
-  --context-ms 100 --group-size 25 --folds 5 --seed 42
+uv run --no-sync python scripts/run_e_jepa_garl_final.py `
+  --profile full --stages evttc-predict evttc-score `
+  --output-root artifacts/runs/e_jepa_garl_event_full_v1 `
+  --evttc-config configs/local/evttc_table_vi_inference.yaml `
+  --evttc-predictions artifacts/official/evttc_table_vi/predictions.json `
+  --evttc-targets configs/local/evttc_table_vi_targets.json `
+  --evttc-metrics artifacts/official/evttc_table_vi/metrics.json
 ```
 
-Salida esperada de la versión auditada:
+`evttc-predict` rechaza campos privilegiados antes de cargar checkpoint/GPU. El
+archivo de targets solo se abre en `evttc-score`.
 
-```text
-total / válido / inválido   1.406 / 1.395 / 11
-train / validation / test   803 / 298 / 294
-eventos válidos             7.692.294.635
-allow_pickle                false
-```
-
-Manifest y split se enlazan mediante el `artifact_sha256` de JSON canónico,
-no por los bytes LF/CRLF del checkout. El split v2 conserva además el hash
-legacy para poder leer checkpoints smoke anteriores. Así un mismo commit
-valida igual en Windows y en un worktree limpio.
-
-La validación exhaustiva de los 7.692 millones de eventos es opcional porque
-lee los 71,64 GiB completos:
+## Submission
 
 ```powershell
-uv run --no-sync python scripts/prepare_carla_looming.py `
-  --full-event-validation
+uv run --no-sync python scripts/run_e_jepa_garl_final.py `
+  --profile full --stages submission-validate `
+  --submission artifacts/official/candidate/submission.json `
+  --sample-submission configs/local/sample_submission.json `
+  --submission-validation artifacts/official/candidate/validation.json
 ```
 
-Para comprobar el artefacto de distribución sin confiar en el manifest:
+La validación es offline. El runner no autentica, no contacta CodaBench y no cuenta
+un upload inexistente como evaluación oficial.
 
-```powershell
-Get-FileHash `
-  datasets/CARLA_DVS_Looming_Dataset/random_spawn.tar.gz `
-  -Algorithm MD5
-# 21A3E72A1C1D9C441A7426393F4E545F
-```
+## Almacenamiento
 
-Entrenamiento y evaluación directa:
+- `artifacts/runs` y `artifacts/features`: locales, ignorados y regenerables;
+- `artifacts/metrics`: resúmenes compactos seleccionados y versionados;
+- datasets: fuera de Git y nunca modificados por los trainers;
+- no construir el cache high-resolution full (~455 GiB);
+- usar shards de 256–2.048 solo para diagnóstico;
+- conservar margen de disco antes de cada etapa.
 
-```powershell
-.\.venv\Scripts\python.exe scripts/pretrain_carla_jepa.py `
-  --profile full --dry-run
+El 2026-08-02 se eliminaron CARLA, runs, features y caches locales, dejando más
+de 315 GiB libres en C:.
 
-.\.venv\Scripts\python.exe scripts/pretrain_carla_jepa.py `
-  --profile full --output artifacts/runs/carla_jepa_full_seed42_v1
+## Claim boundary
 
-# Solo si existe resume.pt de una interrupción:
-.\.venv\Scripts\python.exe scripts/pretrain_carla_jepa.py `
-  --profile full --output artifacts/runs/carla_jepa_full_seed42_v1 --resume
-
-.\.venv\Scripts\python.exe scripts/evaluate_carla_jepa.py `
-  --checkpoint artifacts/runs/carla_jepa_full_seed42_v1/carla_jepa_encoder_best.pt `
-  --role test `
-  --output artifacts/runs/carla_jepa_full_seed42_v1/test_evaluation.json
-```
-
-El perfil auditado consume mmap, respeta el split, no usa TTC, colisión,
-`vel` ni `diameter_object` como features y no materializa un cache voxel
-global. Usa 12.020/4.457/4.297 pares train/validation/test; BF16, batch 24,
-acumulación 2, ocho workers, prefetch 2, AdamW fused, clipping, EMA,
-warm-up/cosine y early stopping 8/6 con máximo 30 épocas. Guarda best, last,
-resume atómico, `history.jsonl`, `metrics.json` y evaluaciones separadas.
-
-Los probes de hardware mostraron `8,46` observaciones/s con batch 24 y ocho
-workers. Batch 16 (`8,20/s`), 32 (`7,83/s`), 48 (`7,63/s`) y 96 (`6,45/s`)
-fueron peores; seis workers quedó prácticamente empatado (`8,45/s`) y 12 bajó
-a `6,69/s`. El cuello de botella es voxelización/SSD. El smoke bajó
-validation loss `0,02563→0,02247`; un test de contrato de 16 pares obtuvo
-`0,02195` y cero dimensiones colapsadas. No se presenta como error TTC ni OOD
-real.
-
-La reproducción del híbrido bbox causal usa:
-
-```powershell
-.\.venv\Scripts\python.exe scripts\evaluate_causal_geometry_hybrid.py `
-  --manifest data\manifests\evttc_all32_local.yaml `
-  --cache-manifest <manifest-del-cache-core> `
-  --neural-predictions <validation_predictions.npz> `
-  --derivative-window 21 `
-  --output artifacts\metrics\causal_geometry_dense_hybrid.json
-```
-
-## Resultados
-
-Los JSON bajo `artifacts/runs` son artefactos locales ignorados por Git. Solo
-los resúmenes pequeños seleccionados se copian a `artifacts/metrics` cuando el
-run está cerrado y auditado.
-
-## Orquestador eAP → EvTTC
-
-La ruta canónica ejecuta eAP-SSL y eAP-Geo con un presupuesto pareado, vuelve a
-entrenar el control aleatorio y fine-tunea A0/A1 sobre exactamente los mismos
-folds, seeds, samples, cache, cabeza y trainer:
-
-```powershell
-# Plan sin mutar checkpoints.
-.\scripts\run_eap_evttc_complete.ps1 -Profile Analysis -DryRun
-
-# Piloto reproducible y reanudable.
-.\scripts\run_eap_evttc_complete.ps1 -Profile Analysis -Resume
-
-# Confirmación 5 folds × 3 seeds.
-.\scripts\run_eap_evttc_complete.ps1 -Profile Full -Resume
-```
-
-`Analysis` usa el split piloto 9/3, 1.024/256 muestras eAP, máximo tres épocas y
-early stopping 2/1, más EvTTC screen en fold 0/seed 7. Se pueden añadir folds
-con `-Folds 0,1`. `Full` cambia automáticamente a
-`data/splits/eap_train40_v1.json`: 32/8 secuencias, 16.384/4.096 ventanas,
-máximo 30 épocas con early stopping 8/6, y EvTTC confirm con máximo 40 épocas y
-early stopping 10/6. Los perfiles eAP usan BF16, batch 24,
-acumulación 2, ocho workers persistentes, pinned memory, prefetch 2, AdamW
-fused si CUDA lo soporta, TF32, clipping, EMA y warm-up/cosine.
-
-Cada etapa transmite stdout a `logs/*.log` y guarda comando, hardware, tiempos
-y estado en `orchestration_status.json`. eAP conserva `best`, `last`, historial,
-métricas firmadas y un `resume.pt` atómico solo mientras está incompleto. EvTTC
-conserva checkpoints, `summary.json`, predicciones OOF y `aggregate.json`.
-`compare_evttc_initializations.py` acepta `--variant` y emite comparaciones
-firmadas separadas para A0 y A1 con bootstrap agrupado por secuencia.
-Al reanudar, el orquestador no acepta un agregado meramente marcado completo:
-comprueba que cada variante contiene exactamente todos los pares fold/seed
-solicitados. Así un Analysis anterior no puede omitir accidentalmente Full.
-
-El split `data/splits/eap_pilot12_v1.json` firma nueve secuencias train y tres
-validation contra `data/manifests/eap_train40_inventory_v1.json`. El loader
-usa `ms_to_idx` y no abre RGB ni construye otra copia/cache global de eventos.
-El validador de transferencia rechaza checkpoints con TTC, RGB, EvTTC,
-Benchmark-10, un split distinto o un checkpoint `last` no seleccionado.
-
-El split full se regenera sin datos crudos:
-
-```powershell
-.\.venv\Scripts\python.exe scripts/make_eap_full_split.py
-```
-
-Conserva las tres validation del piloto y añade cinco mediante el hash estable
-`sha256("eap_full40_validation_v1:" + sequence_id)`. No lee labels, RGB ni
-resultados EvTTC. El hash firmado esperado del split v1 es
-`3713f5fd24295cf90029982bbd896726604e519f731c17e854c82c35224dd5a2`.
+Un run local no es oficial. Para comparar con Garl-TTC deben coincidir modalidad,
+split, métrica, protocolo y presupuesto; el resultado final necesita freeze,
+evaluación externa y hashes verificables.

@@ -1,79 +1,87 @@
 # Metodología
 
-La metodología completa está en [PLAN.md](../PLAN.md). Este documento resume
-las decisiones implementadas.
+Actualizado: 2026-08-02.
 
-## Representación
+La especificación completa está en [PLAN.md](../PLAN.md). Este documento resume
+la ruta activa.
 
-Eventos causales se convierten en voxel grids de cinco bins y polaridad
-separada. BASE añade once canales auxiliares causales.
+## Entrada raw y representación
 
-## Backbone
+Las ventanas eAP se localizan mediante el índice HDF5 y se leen solo cuando el
+batch las necesita. Cada muestra se subdivide causalmente en cinco pasos y cada
+paso se codifica como voxel de cinco bins por polaridad más canales auxiliares
+observables, total 21 canales.
 
-El EventTubeletTransformer histórico expone ahora tokens densos e intermedios.
-La comparación matched no sustituye sus pesos: cambia el lugar del pooling y el
-mezclador posterior.
+No se materializa un cache global. La misma selección balanceada se aplica antes
+de abrir medios para evitar gasto y sesgo de I/O.
 
-## Temporalidad
+## Encoder high-resolution
 
-- block-causal preserva interacción completa dentro de cada frame;
-- Object-KDA actualiza memoria solo entre tiempos;
-- ningún target o acción futura entra al encoder de contexto.
+El encoder conserva tokens espaciales mediante atención local por ventanas,
+padding con máscara y merge 2x2 opcional. El mixer temporal block-causal opera
+sobre `[B,T,P,D]`; query pooling produce el embedding del readout TTC.
+
+KDA existe como ablación negativa y no es el default. El guard de memoria estima
+tokens/atención antes de reservar tensores incompatibles con la GPU.
+
+## Objetivo TTC
+
+El target Garl es firmado. La pérdida aplica Smooth L1 a:
+
+```text
+signed_log1p(x) = sign(x) * log(1 + abs(x))
+```
+
+La inferencia devuelve TTC firmado directamente; no se aplica `exp` ni clamp
+positivo que destruya el régimen negativo. El checkpoint se elige por MiD macro
+por secuencia, no por promedio de ventanas.
+
+## JEPA
+
+La ruta científica prevista usa encoder online, encoder target EMA y predicción
+multihorizonte de tokens futuros. Ningún target TTC/depth/categoría/máscara puede
+entrar al pretraining SSL.
+
+El pretrainer high-resolution aún no está implementado. El encoder pooled legacy
+se rechaza porque transferir sus pesos como si fueran equivalentes mezclaría
+arquitecturas y produciría una comparación inválida.
+
+## Auditoría de capacidad semántica
+
+La salud estadística no se usa como certificado semántico. El auditor
+`semantic_shortcuts.py` entrena cinco objetivos sin etiquetas TTC ni shortcut y
+después ajusta probes sobre encoders congelados. Ejecuta seeds 7/13/23 con un
+shortcut de 12 bits constante por secuencia y un control donde cambia por frame.
+
+En el caso lento, el objetivo repo de varianza conserva rango efectivo 11,41 y
+cero dimensiones colapsadas, pero solo alcanza R² dinámica 0,15 mientras el
+shortcut se decodifica con accuracy 0,84. VISReg no lo corrige. El residual
+temporal alcanza R² 0,72 y reduce MAE log-TTC de 0,39 a 0,29. R²-lite no supera el
+gate predeclarado y queda rechazado.
+
+El control frame-varying invierte el resultado: el residual cae a R² -0,05 frente
+a 0,74 del control. Por tanto no se sustituye el embedding de nivel. La propuesta
+mínima es mantener `z_level` para escala/contenido y añadir `z_delta` para
+expansión/movimiento. La única prueba real autorizada es
+`level` frente a `level+temporal_residual`, con igual encoder, filas, seeds y
+presupuesto. INTACT requiere acciones expertas y no aplica al dataset TTC actual.
 
 ## Geometría
 
-Height, area, affine y event contrast estiman inverse-TTC por objeto. La
-confianza depende de validez del track, soporte de eventos y condición del
-solver.
+Height ratio, area rate, affine expansion y event contrast se conservan como
+baselines/teachers. Los fallos cuentan como falta de cobertura. Bbox/depth GT son
+oracles; un candidato desplegable necesita localización y expansión causales
+predichas.
 
-Se distinguen dos familias:
+## Selección y evaluación
 
-- escala bbox causal: regresión local sobre hasta 21 detecciones pasadas,
-  calibrada solo en train;
-- STRTTC event-only: NLTS, gradientes de contorno, normal flow por planos
-  locales, RANSAC y solver de tres parámetros.
+- split por secuencia;
+- sampling determinista y balanceado;
+- screen barato antes de full;
+- random vs JEPA con idéntico trainer;
+- seeds full 7/13/23;
+- freeze con validation Garl;
+- predict EvTTC sin labels y score en proceso separado;
+- benchmark oficial solo después del freeze.
 
-Los fallos geométricos se cuentan como falta de cobertura. No se eliminan para
-crear una métrica aparentemente mejor.
-
-## Navegación
-
-La señal GNSS se transforma mediante extrínsecas calibradas. No se usa
-`velocity_x` como closing speed directo.
-
-## Selección
-
-Toda promoción se decide por métricas macro de secuencia y gates predeclarados.
-Módulos complejos permanecen apagados hasta que el oracle anterior los
-justifique.
-
-La confirmación larga cambió la decisión del screen: A1 Dense se promueve
-porque su mejor época fue la 20, mientras A2 y K1 se detuvieron en 10 y 7 sin
-superarlo. Más épocas son útiles cuando la curva sigue mejorando, no como
-presupuesto uniforme ciego.
-
-## Transferencia eAP event-only
-
-El eAP público aporta eventos, calibración y tracks 3D, pero no TTC oficial. Se
-usa un piloto fijo de 12 secuencias: nueve para optimización y tres para elegir
-el checkpoint. El acceso HDF5 es causal y bajo demanda mediante `ms_to_idx`.
-No se decodifican los TAR RGB ni se materializa un voxel cache global.
-
-`eAP-SSL` predice embeddings densos futuros a 100/250/500 ms. `eAP-Geo` añade
-seis auxiliares débiles normalizados —centro y tamaño de bbox, cierre radial y
-expansión de altura— más una máscara objectness por patch. Las cajas 3D se
-proyectan con la calibración de la cámara de eventos. La cabeza geométrica es
-desechable: solo el encoder EventTubelet compatible de 21 canales se transfiere
-a A0/A1.
-
-La utilidad no se mide por la loss eAP, sino por una comparación pareada contra
-inicialización aleatoria en EvTTC. Control y transferencia comparten fold,
-seed, ventanas, cabeza TTC, optimizador, máximo de épocas y early stopping. Se
-reportan RTE y MAE macro, victorias por pareja y bootstrap OOF por secuencia.
-
-El piloto de tres épocas se amplió a folds 0/1 con seed 7 después de que fold 0
-fuera favorable. eAP-SSL fue inconsistente. eAP-Geo mejoró A0 en RTE y MAE en
-2/2 folds (+3,66 % y +4,30 % agregados) y A1 en RTE en 2/2 (+6,57 %), aunque el
-MAE de A1 quedó 1/2. Esto abre el gate de datos, no el de SOTA: el siguiente
-entrenamiento usa las 40 secuencias con split 32/8 y la decisión final exige
-cinco folds × tres seeds.
+Los resultados smoke prueban implementación, nunca SOTA.

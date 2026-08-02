@@ -1,420 +1,172 @@
-# Informe técnico v6
+# Informe técnico
 
-Actualizado: 2026-07-30.
+Actualizado: 2026-08-02.
 
 ## 1. Resumen
 
-E-JEPA-TTC estudia representación predictiva de eventos para estimar
-Time-to-Collision. La revisión v6 elimina del camino activo las pérdidas
-FlowMimic globales, reconstruye exactamente `BASE`, implementa una comparación
-matched entre pooling global y tokens densos, y añade una réplica auditable de
-Garl-TTC.
+E-JEPA-TTC investiga TTC con eventos mediante tokens espaciales high-resolution y
+predicción temporal JEPA. La auditoría actual ha cerrado contratos de datos,
+causalidad, métricas firmadas, memoria y ejecución sin cache global. Todavía no ha
+demostrado mejora científica ni SOTA.
 
-Conclusión actual:
+El resultado nuevo más importante es negativo: el primer smoke raw 16/16 completa
+el pipeline, pero obtiene MiD macro `1868,3186`. El cuello de botella ya no es
+almacenamiento; es aprender una representación útil y comparable.
 
-> Dense Patch supera a A0 en la confirmación histórica de un split, pero no
-> sobrevive grouped CV de cinco folds y tres seeds. A0 es la arquitectura
-> final; A1 conserva valor como hipótesis para pretraining object-centric, no
-> como ganador actual. AttnRes y Object-KDA permanecen rechazados.
+## 2. Evidencia histórica EvTTC
 
-## 2. Evidencia histórica
+`B0_HISTORICAL_BASE_EXACT` reproduce byte a byte el checkpoint histórico:
 
-### 2.1 BASE exacto
+| MAE | RMSE | error relativo |
+|---:|---:|---:|
+| 0,322892 s | 0,584432 s | 8,1554 % |
 
-La auditoría carga el checkpoint y cache originales y reproduce todas las
-predicciones.
+En la comparación matched, Dense Patch ganó un split, pero grouped CV 5 folds x 3
+seeds seleccionó A0:
 
-| Propiedad | Valor |
-|---|---|
-| encoder | EventTubeletTransformer |
-| input | 21 canales |
-| dim/depth/heads | 192 / 6 / 6 |
-| patch | 16 |
-| salida | log-TTC |
-| train/validation | 7.835 / 2.040 |
-| best downstream | epoch 26/30 |
-| best SSL | epoch 6/30 |
+| Candidato | Score | RTE | MAE | Decisión |
+|---|---:|---:|---:|---|
+| A0 global | 0,58452 ± 0,00853 | 30,25 % ± 0,52 | 1,011 ± 0,039 s | seleccionar |
+| A1 Dense | 0,59312 ± 0,00349 | 30,55 % ± 0,06 | 1,007 ± 0,013 s | rechazar |
 
-| Métrica validation | Valor |
-|---|---:|
-| MAE | 0,3228917687 s |
-| RMSE | 0,5844324448 s |
-| error relativo medio | 8,1553575311 % |
+AttnRes, Object-KDA, bbox-ROI y FlowMimic tampoco pasaron sus gates. Estos
+resultados evitan reintroducir complejidad sin una hipótesis nueva.
 
-La equivalencia de arrays es byte a byte. Se conserva como
-`B0_HISTORICAL_BASE_EXACT`.
+## 3. Auditoría Garl/eAP
 
-### 2.2 FlowMimic
+Se corrigieron o verificaron:
 
-El experimento multisemilla histórico no justifica sus pérdidas globales:
+- join de cinco claves y selección previa a medios;
+- resolución de calibración y timestamps;
+- time volumes/event voxels y resize;
+- TTC firmado y métricas Garl;
+- separación train/validation por secuencia;
+- exclusión de TTC/depth/category/masks del encoder;
+- paridad raw/resized y paridad numérica de outputs;
+- checkpoint y provenance.
 
-| Variante | MAE medio | Degradación |
-|---|---:|---:|
-| BASE | 0,332715 s | - |
-| alignment | 0,369604 s | +11,1 % |
-| inverse-TTC | 0,432909 s | +30,1 % |
-| ambas | 0,435869 s | +31,0 % |
+La cobertura local eAP es 40/46 secuencias. Seis secuencias y el test oficial
+siguen ausentes.
 
-El resultado negativo se conserva, pero el código FlowMimic de uso único se
-retira del pipeline activo.
+## 4. Arquitectura high-resolution
 
-### 2.3 Confirmación matched
-
-| Brazo | Best epoch | Error rel. macro | Score | MAE macro | ms/ventana |
-|---|---:|---:|---:|---:|---:|
-| A0 global | 17 | 16,129 % | 0,32523 | 0,701 s | 8,98 |
-| **A1 Dense** | **20** | **15,210 %** | **0,30543** | **0,628 s** | 17,15 |
-| A2 AttnRes | 10 | 16,136 % | 0,32503 | 0,653 s | 16,70 |
-| K1 Object-KDA | 7 | 16,960 % | 0,34139 | 0,731 s | 16,99 |
-
-El máximo fue 40 épocas para todos, con mínimo 10 y paciencia 6. A1 completó
-26 épocas; A0, 23; A2, 16; K1, 13. El screen de ocho épocas subestimó A1
-porque su mejor checkpoint aparece en la época 20. A1 mejora el error relativo
-un 5,70 % frente a A0, pero aproximadamente duplica la latencia.
-
-## 3. Protocolo de comparación
-
-`BASE` histórico y `A0_MATCHED_GLOBAL` tienen roles distintos:
+El modelo factoriza espacio y tiempo:
 
 ```text
-B0 histórico
-    reproducción exacta del resultado anterior
-
-A0 matched
-    control entrenado con el mismo cache y trainer que A1/A2/K1
+[B,T,C,H,W]
+-> patches
+-> window spatial attention
+-> optional 2x2 merge
+-> block-causal temporal mixer [B,T,P,D]
+-> query pooling
+-> signed TTC head
 ```
 
-La auditoría matched exige igualdad en:
+Padding y máscaras impiden perder píxeles/tokens por divisibilidad. El guard OOM
+estima la atención antes de reservar. Se corrigió una incompatibilidad BF16 en
+query pooling. KDA temporal fue medido y rechazado por regresión.
 
-- IDs de ventanas;
-- hash del backbone inicial;
-- hash de la cabeza común;
-- train/validation count;
-- épocas máximas;
-- batch y acumulación;
-- learning rate y weight decay;
-- loss y early stopping.
+## 5. Trainer raw cache-free
 
-Core y Garl disponen de caches y resúmenes separados. Esta separación evita que
-una segunda ejecución reemplace `matrix_summary.json` de la primera.
+`scripts/train_e_jepa_tubelet_lhr.py` abre HDF5 por worker y materializa solo el
+batch activo. Implementa:
 
-## 4. Arquitecturas Core
+- sampling balanceado determinista;
+- BF16/FP16/FP32;
+- gradient accumulation;
+- clipping;
+- orden reproducible por seed+época;
+- resume best/last;
+- selección MiD macro por secuencia;
+- hashes de config, datos, split y checkpoint.
 
-### 4.1 A0 global
+El screen usa dim 32/patch 8. El full candidate usa dim 192/patch 16, batch 4,
+acumulación 6, hasta 30 épocas y seeds 7/13/23. Full exige un árbol Git limpio.
 
-Mantiene el encoder BASE y reduce tokens antes de la ruta temporal. Es el
-control matched, no el resultado histórico.
+## 6. Auditoría de representación semántica
 
-### 4.2 Dense Patch / Patch Policy
+El smoke SSL real de dimensión 192 registra rango efectivo de contexto 2,255,
+predictor 1,095 y target 5,105. Esto confirma un predictor casi unidimensional,
+pero no permite atribuir ese eje a TTC, expansión o ID de secuencia porque no se
+conservaron embeddings y etiquetas de nuisance compatibles.
 
-Cada instante ejecuta interacción espacial bidireccional entre patches. La
-causalidad se aplica únicamente entre instantes:
+Se añadió por ello un falsador sintético sin dataset real ni entrenamiento largo.
+Las cinco variantes usan las mismas observaciones y seeds 7/13/23; las etiquetas
+solo entran en probes posteriores sobre encoders congelados.
 
-```text
-patches del mismo frame  ↔  atención espacial
-frames pasados          →  frame actual
-frame futuro            ✕  frame pasado
-```
-
-El pooling se retrasa hasta después del mezclador temporal.
-
-### 4.3 Attention Residuals
-
-Cada tarea aprende pesos sobre las salidas de profundidad:
-
-```text
-mask, motion, geometry, risk
-```
-
-Las claves se RMS-normalizan para que una capa no gane por escala; los valores
-mezclados conservan su magnitud original. Se registra el peso máximo por tarea
-y se rechaza colapso persistente a una sola capa.
-
-### 4.4 Object-KDA
-
-La implementación usa recurrencia delta temporal. No aplana los patches de un
-frame como si fueran pasos causales. Primero resuelve el espacio y después
-actualiza memoria temporal de objeto/región.
-
-KDA se promociona solo si mejora precisión, reduce memoria de forma material o
-permite duplicar resolución/horizonte sin degradación relevante.
-
-## 5. Réplica Garl-TTC
-
-La implementación fue contrastada con el repositorio público
-`NAIL-HNU/Garl-TTC`, commit
-`256661242b8a7f5e56aa3c1c02348b30f6e89de6`.
-
-Contrato:
-
-```text
-t0, t1, t2 a 100 ms
-RGB: t0 y t2
-eventos: t0→t1 y t1→t2
-20 planos por intervalo, 40 canales
-ROI común de endpoint, 128x128
-ResNet-50 RGB y eventos
-direct o Learned Height Ratio
-early/late fusion
-foreground decoder training-only
-```
-
-La adaptación EvTTC usa altura visible después del crop común. No se presenta
-como reproducción del MiD oficial eAP.
-
-## 6. Geometría
-
-Para escala aparente \(s\), el inverse-TTC en el endpoint actual de un par es:
-
-\[
-q_t = \frac{s_t/s_{t-\Delta t}-1}{\Delta t}.
-\]
-
-Se implementan:
-
-1. height ratio;
-2. raíz/área;
-3. expansión afín con traslación y rotación separadas;
-4. alineamiento por contraste de eventos.
-
-Los expertos usan el último par válido. Promediar TTC de pares que representan
-endpoints distintos queda prohibido.
-
-También se implementó un baseline de expansión causal de bbox con hasta 21
-observaciones pasadas y calibración log-afín ajustada solo en train. Cubre
-311/314 ventanas. Al usar A1 únicamente en las tres filas inválidas obtiene
-14,790 % de error relativo macro, pero el score empeora de 0,30543 a 0,31144
-por RMSE; no pasa el gate del 5 %. Además, usa más contexto que A1 y debe
-reportarse como track bbox-assisted.
-
-El port source-traceable de STRTTC implementa NLTS, contornos, ajuste local de
-planos, normal flow, RANSAC y el solver lineal de tres parámetros. En 40
-muestras del split histórico solo resuelve 27; sus éxitos tienen 112,96 % de
-error relativo macro. Los 13 fallos se conservan, por lo que la métrica
-success-only no es comparable con un candidato de cobertura completa.
-
-## 7. Compensación ego
-
-### 7.1 Contrato del HDF5
-
-El formato oficial declara posición, actitud y velocidad en el mundo. La
-auditoría local confirma:
-
-```text
-velocity = [north, east, up]
-attitude = [roll, pitch, heading_degrees]
-```
-
-La velocidad se transforma al frame óptico del evento con:
-
-\[
-T_{\text{event}\leftarrow\text{nav}} =
-T_{\text{event}\leftarrow\text{RGB}}
-T_{\text{RGB}\leftarrow\text{LiDAR}}
-T_{\text{LiDAR}\leftarrow\text{nav}}.
-\]
-
-También se incluye la velocidad producida por el brazo rígido cuando cambia el
-heading.
-
-### 7.2 Warp físico
-
-Para un punto observado en el pasado:
-
-\[
-P_{\mathrm{current}} =
-R_{\mathrm{current}\leftarrow\mathrm{past}}P_{\mathrm{past}}
-- \Delta C_{\mathrm{current}}.
-\]
-
-Los puntos se reproyectan con intrínsecos de la cámara de eventos. El componente
-de cierre ego se expresa como:
-
-\[
-q_{\mathrm{ego}} = v_z / Z.
-\]
-
-La profundidad \(Z\) es imprescindible. Usar la distancia oficial EvTTC crea un
-oracle, no una entrada de inferencia. Una versión desplegable requiere
-profundidad predicha y un gate separado.
-
-## 8. Evidencia ejecutada
-
-Se ejecutaron 38 ventanas train, 10 validation y dos épocas. El smoke confirmó:
-
-- forward/backward;
-- causalidad;
-- paridad de inicialización;
-- checkpointing;
-- ejecución de Garl G0–G7;
-- ejecución de expertos geométricos.
-
-Los errores del smoke son demasiado inestables para promoción. El screen Core
-de ocho épocas también fue insuficiente para Dense. La confirmación larga
-promovió A1 únicamente a grouped CV y rechazó A2/K1.
-
-El grouped CV cerró 30/30 runs A0/A1. La desviación se calcula entre las tres
-medias por seed, no tratando ventanas como réplicas independientes:
-
-| Variante | Score ± sd | Error rel. ± sd | MAE ± sd | ms/ventana |
+| Objetivo, shortcut fijo | R² dinámica | MAE log-TTC | acc. shortcut | duplicación |
 |---|---:|---:|---:|---:|
-| **A0** | **0,58452 ± 0,00853** | **30,25 % ± 0,52** | 1,011 ± 0,039 s | 4,54 |
-| A1 | 0,59312 ± 0,00349 | 30,55 % ± 0,06 | **1,007 ± 0,013 s** | 9,82 |
+| varianza repo | 0,15 | 0,39 | 0,84 | 1,93 |
+| VISReg | 0,20 | 0,38 | 0,92 | 1,63 |
+| residual temporal | **0,72** | **0,29** | 0,65 | 1,06 |
+| R² rate+dependencia | 0,29 | 0,36 | 0,88 | 1,92 |
+| residual+R² | 0,48 | 0,34 | 0,68 | **0,68** |
 
-A1 empeora 1,47 % el score y 0,99 % el error relativo, mejora solo 0,41 % el
-MAE, consume 1,58× entrenamiento y 2,16× latencia. Los bootstrap OOF pareados
-por secuencia cruzan cero para las tres seeds. A0 queda seleccionado.
+La distribución puede parecer sana mientras el shortcut domina. R²-lite reduce
+alguna redundancia, pero no alcanza la mejora TTC predeclarada; se rechaza para
+producción. El residual temporal pasa el caso lento, pero en el control donde el
+shortcut cambia cada frame cae a R² -0,05 y MAE 0,40, frente a R² 0,74 y MAE 0,19
+del objetivo repo. Es una intervención condicional, no una solución universal.
 
-Una ablación posterior probó si la localización resolvía por sí sola la
-debilidad de A1. `R1_MATCHED_BBOX_ROI` aplica la bbox GT al pooling de tokens,
-sin añadir geometría. En cinco folds seed 7 obtiene score 0,59814, error
-relativo 30,99 % y MAE 1,0100 s. Frente al A0 de la misma seed empeora 2,90 %,
-2,74 % y 4,55 %, con 1,67× tiempo. Se descarta: la región correcta no aporta
-TTC si la cabeza no mide explícitamente la expansión.
+## 7. Almacenamiento
 
-Después del freeze de arquitectura se compararon dos perfiles A0 sobre el
-mismo cache 19/5/8. `matched` mejoró el score medio un 10,95 % frente a
-`throughput`, con 4,02× tiempo. El checkpoint matched seed 13 fue el mejor en
-validation y se congeló antes de abrir family-OOD.
+Una caché full se estimó en ~455 GiB. El shard de 256 muestras pasó SHA,
+consumo y borrado; 4.096 muestras llegaron a ~11 GiB RAM sin finalizar. La ruta de
+caché completa se retiró.
 
-| Evaluación | Secuencias / ventanas | Score | Error rel. macro | MAE macro |
-|---|---:|---:|---:|---:|
-| validation | 5 / 314 | 0,28992 | 14,46 % | 0,541 s |
-| family-OOD reutilizado | 8 / 481 | 0,53784 | 30,56 % | 0,805 s |
+El 2026-08-02 se eliminaron:
 
-La degradación OOD es 85,5 % en score, 111,4 % en error relativo y 48,8 % en
-MAE. El intervalo bootstrap 95 % de MAE OOD es 0,593–1,128 s. No es un test
-externo virgen ni Benchmark-10.
+- CARLA DVS Looming extraído (~71,64 GiB), tras resultado negativo;
+- `artifacts/runs` (~16,87 GiB);
+- `artifacts/features` (~12,81 GiB);
+- archivos/launchers/caches obsoletos adicionales de auditorías previas.
 
-El screen Garl ResNet-50 ejecutó G0–G7 con batch efectivo 24. G5 RGBE-LHR early
-fue el mejor brazo local con 36,52 % de error relativo macro. No se declara
-paridad: el repositorio oficial usa 50 épocas y late fusion parte de ramas LHR
-preentrenadas.
+Los resúmenes negativos compactos siguen versionados. C: quedó con más de 315 GiB
+libres.
 
-## 9. Screens y gates
+## 8. Orquestación final
 
-Perfil Screen:
+`scripts/run_e_jepa_garl_final.py` implementa una única ruta:
 
 ```text
-train/validation       304 / 80 ventanas
-épocas máximas         8
-early stopping         patience 2, mínimo 3 épocas
-precision              BF16
-Core batch             24
-Garl effective batch   24
+screen o full train
+-> multiseed freeze
+-> EvTTC label-free predict
+-> separate score
+-> offline submission validation
 ```
 
-Orden:
+El runner no construye la cache full, no abre labels durante predict y no sube
+submissions. El full dry-run ya verifica las tres seeds y rutas.
 
-1. Core y Garl en split histórico: completado.
-2. Confirmación larga Core: completada; A1 promovido a grouped CV.
-3. Grouped CV A0/A1 cinco folds × tres seeds: completado; gana A0.
-4. Ajuste final A0 matched/throughput y family-OOD: completado.
-5. Repetición Garl con presupuesto oficial antes de cualquier claim.
+## 9. Bloqueos científicos
 
-TargetQuery, máscara predicha, refiner, router, residual e incertidumbre quedan
-bloqueados hasta que `A4_GT_GEOMETRY` supere el gate frente a BASE.
+1. No existe pretraining JEPA high-resolution compatible. El alias legacy falla
+   explícitamente.
+2. El predictor SSL real es casi unidimensional y todavía no se sabe qué semántica
+   conserva; faltan probes reales de expansión, event rate, secuencia y TTC.
+3. RGB-E no está implementado en el trainer nuevo.
+4. La geometría causal bbox-free/expansión/FoE no supera A0.
+5. Falta materializar inputs EvTTC Tabla VI label-free.
+6. Faltan eAP oficial/CodaBench, tres seeds efectivas, robustez y calibración.
 
-## 10. Datos externos
+Estos son los cuellos de botella para superar tanto Garl-TTC como los métodos
+geométricos EvTTC; más épocas sobre la formulación actual no garantizan resolverlos.
 
-eAP train-40 está completo (40 secuencias, 216 archivos, 536,64 GiB). El
-inventario firmado selecciona 12 secuencias sin consultar EvTTC: nueve train y
-tres validation. El loader usa `ms_to_idx`, lee solo eventos bajo demanda y no
-abre los 118 GiB RGB. Se comparan:
+## 10. Ruta experimental recomendada
 
-```text
-sin eAP
-eAP-SSL sin TTC
-eAP-Geo con bbox proyectada, expansión/cierre y objectness, sin target TTC
-```
+1. JEPA denso compatible con dos canales: nivel y residual temporal.
+2. Comparar `level` frente a `level+temporal_residual` en 256/2.048 muestras con
+   probes congelados y mismo compute; no añadir R²/HSIC/CMI.
+3. Solo si mejora MiD/RTE macro, aumentar presupuesto.
+4. Añadir RGB-E como ablación aislada.
+5. Validar expansión/FoE causal contra A0 y geometría oracle.
+6. Construir EvTTC predict/score real.
+7. Ejecutar full 7/13/23 y congelar.
+8. Enviar a eAP/CodaBench con número de submissions registrado.
 
-Los dos brazos usan el mismo encoder EventTubelet, seed, ventanas y presupuesto.
-El piloto usa 1.024/256 muestras, máximo tres épocas y early stopping 2/1. SSL
-seleccionó época 3 con loss `0,002358` en 11,84 min; Geo época 3 con loss total
-`0,087108`, JEPA `0,007624` e IoU patch `0,2867` en 13,06 min. No hubo colapso
-y ninguna de estas cifras es error TTC.
+## 11. Integridad
 
-La transferencia pareada se amplió a folds 0/1, seed 7:
-
-| Inicialización | Modelo | Δ RTE | Δ MAE | Δ score | Victorias RTE/MAE |
-|---|---|---:|---:|---:|---:|
-| eAP-SSL | A0 | −2,58 % | −1,13 % | −3,43 % | 1/2 · 1/2 |
-| eAP-SSL | A1 | +0,54 % | +6,33 % | −0,02 % | 2/2 · 1/2 |
-| **eAP-Geo** | **A0** | **+3,66 %** | **+4,30 %** | **+2,36 %** | **2/2 · 2/2** |
-| **eAP-Geo** | **A1** | **+6,57 %** | **+7,95 %** | **+6,47 %** | **2/2 · 1/2** |
-
-A0-Geo cumple el gate de escalado. El IC 95 % de RTE sigue cruzando cero en
-ambos modelos; el único intervalo completamente favorable es MAE de A1,
-`[-0,2060,-0,0028] s`. El full usa las 40 secuencias en 32/8 y
-16.384/4.096 ventanas, máximo 30 épocas con early stopping 8/6. No se decide
-entre A0/A1 ni se abre Benchmark-10 con este screen.
-
-CARLA DVS Looming se añadió como fuente sintética explícita. El archivo local
-coincide con el MD5 oficial y contiene 1.406 secuencias/7.692 millones de
-eventos. Con 100 ms de contexto se aceptan 1.395: 759 colisiones con TTC
-positivo y 636 negativos censurados. El loader usa mmap y nunca habilita
-pickle. Los bloques de 25 IDs producen 803/298/294 secuencias
-train/validation/test. Este holdout solo es out-of-sample dentro de CARLA; la
-transferencia a EvTTC mide el cambio de dominio real.
-
-CARLA no contiene bbox temporales, está cuantizado a 10 ms y cubre TTC positivo
-solo hasta aproximadamente 3,85 s. Por tanto sirve para pretraining de
-percepción, expansión y riesgo, no para sustituir la supervisión o el benchmark
-EvTTC.
-
-El loader JEPA lazy genera 12.020 pares train, 4.457 validation y 4.297 test
-con un máximo de 16 ventanas por secuencia. Un smoke de dos épocas redujo la
-loss de validation de 0,02563 a 0,02247 sin dimensiones colapsadas. La
-evaluación de contrato sobre 16 pares del test sintético dio loss 0,02195;
-esta cifra no es TTC y no se usa para seleccionar arquitectura EvTTC.
-
-En probes de 640–960 observaciones, batch 24/acumulación 2/ocho workers fue el
-perfil más rápido (8,46 observaciones/s, ~688 MiB peak VRAM). Batch
-16/32/48/96 y perfiles de 6/12 workers no lo superaron por contención de
-lectura/voxelización.
-El full usa BF16, AdamW fused, warm-up/cosine, EMA, clipping y early stopping
-8/6 con máximo 30 épocas. Se proyectan 32,5 min por época y un máximo de
-16,2 h. Los pilotos pareados EvTTC muestran que CARLA-SSL empeora A0 en RTE un
-1,72 % y el auxiliar TTC sintético un 17,3 %; no se ejecuta el full mientras no
-cambie la hipótesis.
-
-## 11. Eficiencia y almacenamiento
-
-- caches comprimidos y acotados;
-- sin cache global de voxels;
-- eAP leído por `ms_to_idx`, sin abrir RGB ni duplicar sus 418 GiB de eventos;
-- CARLA leído por ventanas mmap, sin cache voxel ni segunda copia;
-- logs JSONL, best/last y resume atómico para evitar repetir épocas CARLA;
-- sin extracción completa de TAR RGB;
-- SAM almacenado como máscara comprimida;
-- DINO reducido a tokens objeto/borde;
-- máximo tres checkpoints por run;
-- BF16 y acumulación de gradiente;
-- solver geométrico en FP32;
-- Benchmark-10 sin teachers ni lectura de checkpoints durante la latencia.
-
-## 12. Limitaciones actuales
-
-- A1 solo gana en un split histórico y pierde grouped CV multisemilla;
-- R1 demuestra que bbox-ROI sin geometría explícita tampoco mejora A0;
-- Garl ResNet-50 tiene screen corto, no la reproducción de 50 épocas;
-- la geometría bbox no pasa el score compuesto y STRTTC tiene cobertura
-  incompleta;
-- compensación traslacional final depende de profundidad predicha;
-- bbox-free no está promocionado;
-- eAP-Geo pasa el gate de dos folds, pero falta el full-40 y grouped CV 5×3;
-- CARLA SSL y TTC sintético empeoran el screen cross-domain;
-- family-OOD muestra degradación material;
-- no existe evaluación Benchmark-10 oficial ni claim SOTA.
-
-## 13. Fuentes primarias
-
-- EvTTC: https://arxiv.org/abs/2412.05053
-- Formato EvTTC: https://nail-hnu.github.io/EvTTC/download/data_format/
-- Garl-TTC/eAP: https://arxiv.org/abs/2603.16303
-- Código Garl-TTC: https://github.com/NAIL-HNU/Garl-TTC
-- Patch Policy: https://arxiv.org/abs/2607.18236
-- Kimi K3: https://arxiv.org/abs/2607.24653
-- Event-Aided TTC: https://arxiv.org/abs/2407.07324
-- Código Event-Aided TTC/STRTTC:
-  https://github.com/NAIL-HNU/event_aided_ttc
+No se afirma SOTA desde smokes, validation local, una semilla o cifras del paper.
+Toda tabla final debe regenerarse desde artefactos firmados. El sistema no es apto
+para control de seguridad.

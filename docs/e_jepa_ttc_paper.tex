@@ -15,9 +15,6 @@
 
 \newcolumntype{Y}{>{\raggedright\arraybackslash}X}
 \newcommand{\ttc}{\mathrm{TTC}}
-\newcommand{\mae}{\mathrm{MAE}}
-\newcommand{\rmse}{\mathrm{RMSE}}
-\newcommand{\sg}{\mathrm{sg}}
 \Urlmuskip=0mu plus 2mu
 \def\UrlBreaks{\do\/\do\-\do\_\do\.}
 \emergencystretch=2em
@@ -32,12 +29,11 @@
   xrightmargin=0.4em
 }
 
-\title{\textbf{OGE-JEPA-TTC v6: Auditable Dense Event Prediction, Object Geometry,
-and a Local Garl-TTC Baseline}}
+\title{\textbf{E-JEPA-TTC: Cache-Free High-Resolution Event Prediction for Auditable TTC Research}}
 \author{
 KriptaStudios Research Handoff\\
 \small Reproducible local report from the \texttt{e-jepa-ttc} repository\\
-\small Protocol revision: 30 July 2026
+\small Protocol revision: 2 August 2026
 }
 \date{}
 
@@ -45,369 +41,245 @@ KriptaStudios Research Handoff\\
 \maketitle
 
 \begin{abstract}
-This report describes version 6 of an event-camera time-to-collision research
-pipeline. The revision does not claim state of the art. It first reconstructs
-the historical Event-JEPA baseline exactly, separates that historical anchor
-from a matched architecture control, and implements staged tests for dense
-patch interaction, task-specific Attention Residuals, temporal delta memory,
-object geometry, ego-motion, and a local Garl-TTC replica. The historical
-checkpoint is reproduced byte-for-byte on its original cache and obtains
-$0.322892$~s validation MAE, $0.584432$~s RMSE, and $8.1554\%$ mean relative
-error. FlowMimic-style global auxiliary losses are retained only as a negative
-result because they degrade multi-seed MAE.
-
-A matched confirmation gives every Core arm the same checkpoint, samples,
-optimizer, maximum 40 epochs, and stopping rule. Dense Patch improves
-sequence-macro relative error from $16.129\%$ to $15.210\%$ and macro MAE from
-$0.701$ to $0.628$~s. Attention Residuals and Object-KDA do not improve the
-dense arm. Five-fold, three-seed grouped cross-validation nevertheless selects
-A0: A1 degrades the composite score by $1.47\%$ and relative error by
-$0.99\%$, while improving MAE by only $0.41\%$ at $2.16\times$ latency. A
-subsequent bbox-ROI arm also fails its sequential gate. The official
-Benchmark-10 remains sealed; these local results are not a state-of-the-art
-claim.
+E-JEPA-TTC investigates time-to-contact estimation from event cameras using
+high-resolution dense tokens and multi-horizon joint-embedding prediction. This
+revision does not claim state of the art. It combines an exact historical EvTTC
+baseline reconstruction, grouped cross-validation, an audit of the public
+Garl-TTC/eAP contracts, and a raw on-demand trainer that avoids a projected
+455~GiB dense cache. It also adds a dataset-free, falsifiable audit of semantic
+shortcut allocation. The historical baseline obtains $0.322892$~s MAE and
+$8.1554\%$ relative error on its original validation split. Dense Patch improves
+one matched split but loses five-fold, three-seed grouped cross-validation to the
+global A0 control. A first real high-resolution 16/16-sample smoke completes the
+new pipeline but obtains sequence-macro MiD $1868.3186$; it is integration
+evidence, not evidence of accuracy. The current bottleneck is therefore the
+learned representation---a compatible dense JEPA pretrainer and RGB-event fusion
+are still missing---rather than storage or basic pipeline execution.
 \end{abstract}
 
 \section{Scope and claim boundary}
 
-The project estimates continuous TTC from asynchronous event streams and,
-conditionally, RGB and causal navigation. The long-term hypothesis is that
-preserving dense spatial evidence, isolating the target object, and embedding
-physical expansion in the output path can outperform regression from a pooled
-scene embedding. This hypothesis is not yet accepted by the evidence.
+The system targets signed continuous TTC from asynchronous events and later an
+RGB-event multimodal extension. EvTTC~\cite{evttc2024} supplies local supervised
+evaluation, whereas Garl-TTC/eAP~\cite{eapgarl2026} defines the principal external
+comparison. Event-only and RGB-E are separate protocols.
 
-The data inventory is closed:
-\begin{itemize}
-  \item EvTTC-32 is the only official TTC supervision source;
-  \item eAP train-40 supplies a signed 12-sequence, 9/3 train/validation
-        pilot for non-TTC event-only pretraining;
-  \item CARLA DVS Looming~\cite{carladvslooming2025} supplies synthetic positive
-        TTC and censored negatives for pretraining and cross-domain transfer;
-  \item Benchmark-10 is an external sealed evaluation set;
-  \item pseudo-TTC is never treated as ground truth.
-\end{itemize}
+A state-of-the-art claim requires matching modality, split, metric, and benchmark;
+three predeclared seeds; a frozen checkpoint; label-free EvTTC prediction; and an
+official eAP/CodaBench result. None of these external gates is currently closed.
 
-\section{Historical evidence}
+\section{Historical EvTTC evidence}
 
-\subsection{Exact BASE reconstruction}
-
-The audited baseline consumes 10 event channels and 11 causal auxiliary
-channels. Its EventTubeletTransformer uses dimension 192, depth 6, six heads,
-and patch size 16. Final dense tokens are mean-pooled and passed through
-LayerNorm, a 192-to-96 MLP, GELU, dropout 0.1, and a scalar log-TTC output.
+The historical EventTubelet baseline was reconstructed byte-for-byte on its
+original cache. Table~\ref{tab:history} separates that anchor from the later
+matched architecture matrix.
 
 \begin{table}[t]
 \centering
-\caption{Exact historical BASE validation reproduction, seed 7.}
-\begin{tabular}{lr}
+\caption{Audited historical and grouped-CV evidence.}
+\label{tab:history}
+\small
+\begin{tabular}{lrrr}
 \toprule
-Quantity & Value\\
+Model/protocol & Score & RTE & MAE (s) \\
 \midrule
-Train windows & 7,835\\
-Validation windows & 2,040\\
-Downstream checkpoint & epoch 26/30\\
-SSL checkpoint & epoch 6/30\\
-MAE & 0.322892 s\\
-RMSE & 0.584432 s\\
-Mean relative error & 8.1554\%\\
+BASE historical & -- & 8.1554\% & 0.3229 \\
+A0 grouped CV & 0.58452 & 30.25\% & 1.011 \\
+A1 Dense grouped CV & 0.59312 & 30.55\% & 1.007 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Prediction arrays are byte-equivalent to the original stored predictions, and
-all audited metric differences are zero at tolerance $10^{-12}$. This model is
-named \texttt{B0\_HISTORICAL\_BASE\_EXACT}. It is not reused as if it had been
-trained under the new object-cache protocol.
+Grouped-CV values are means across five folds and three seeds; their RTE standard
+deviations are $0.52$ and $0.06$ percentage points, respectively. A1 improves
+aggregate MAE by only $0.41\%$, worsens score and RTE, and costs approximately
+$2.16\times$ inference latency. Attention Residuals, Object-KDA inspired by
+delta-memory designs~\cite{kimik32026}, and bbox-ROI pooling also fail their
+sequential gates. These negative results prevent complexity from being reintroduced
+without a new predeclared hypothesis.
 
-\subsection{Negative FlowMimic result}
+\section{Data and leakage controls}
+
+EvTTC-32 uses indivisible sequence groups; no random window split is allowed. The
+sealed EvTTC benchmark remains unopened. The local eAP inventory covers 40 of 46
+expected sequences. A signed pilot uses 9/3 train/validation sequences and the full
+local split uses 32/8, selected without EvTTC metrics.
+
+The Garl join, timestamps, calibration, signed TTC metrics, and balanced sampling
+were audited. TTC, depth, 3-D height, category, and masks are supervision or audit
+metadata, never event-encoder inputs. CARLA was removed from the active inventory
+after negative cross-domain transfer; compact negative summaries remain tracked.
+
+\section{High-resolution model}
+
+The active event-only path is
+\begin{equation}
+\begin{aligned}
+X &\rightarrow \text{patches} \rightarrow \text{window attention}\\
+  &\rightarrow \text{temporal mixer} \rightarrow \hat{\ttc}.
+\end{aligned}
+\end{equation}
+Padding and validity masks preserve non-divisible borders. Optional $2\times2$
+space-to-depth merging reduces token count before the block-causal temporal mixer,
+which operates on $[B,T,P,D]$. Fixed learned queries pool retained patches for the
+TTC head. A memory guard estimates attention allocations before execution. A BF16
+query-pooling dtype defect found during the audit is now regression-tested.
+
+The target is signed. Training minimizes Smooth L1 after
+\begin{equation}
+f(x)=\operatorname{sign}(x)\log(1+|x|),
+\end{equation}
+so separating objects are not incorrectly mapped to positive TTC. Model selection
+uses sequence-macro MiD rather than a window-weighted average.
+
+\section{JEPA status}
+
+The intended objective predicts future dense target-encoder tokens at multiple
+horizons, with stop-gradient and EMA. It must not use TTC or future labels. The
+existing pooled legacy pretrainer is architecture-incompatible with the active
+high-resolution token grid, so its alias now fails explicitly. The current
+high-resolution candidate consequently starts from random initialization unless a
+strictly compatible checkpoint is supplied.
+
+This missing matched pretraining path is the principal scientific limitation. A
+latent loss decrease in another architecture would not establish downstream TTC
+transfer.
+
+\section{Semantic capacity audit}
+
+The real 192-dimensional SSL artifact has effective ranks 2.255, 1.095, and
+5.105 for context, predictor, and target. The predictor is nearly one-dimensional,
+but rank cannot identify whether that axis represents TTC, expansion, or sequence
+identity. Healthy variance is not a semantic certificate, consistent with the
+known slow-feature failure of predictive embeddings~\cite{slowfeatures2022}.
+
+We therefore added a dataset-free falsifier. Five representation objectives use
+identical observations and seeds 7/13/23; TTC and shortcut labels are withheld
+during representation training and used only by probes fitted after freezing.
+Table~\ref{tab:semantic} reports the fixed-per-sequence 12-bit shortcut.
 
 \begin{table}[t]
 \centering
-\caption{Historical multi-seed MAE. Lower is better.}
-\begin{tabular}{lrr}
-\toprule
-Arm & MAE (s) & Change\\
-\midrule
-BASE & 0.332715 & --\\
-Global alignment & 0.369604 & +11.1\%\\
-Synthetic inverse-TTC & 0.432909 & +30.1\%\\
-Both losses & 0.435869 & +31.0\%\\
-\bottomrule
-\end{tabular}
-\end{table}
-
-These losses are removed from the active architecture. Their summary remains
-versioned to preserve negative evidence.
-
-\section{Matched architecture protocol}
-
-The learned Core arms are:
-\begin{itemize}
-  \item \texttt{A0\_MATCHED\_GLOBAL}, the object-cache global control;
-  \item \texttt{A1\_MATCHED\_DENSE\_BLOCK}, delayed pooling;
-  \item \texttt{A2\_MATCHED\_DENSE\_ATTNRES}, depth routing by task;
-  \item \texttt{K1\_OBJECT\_KDA}, temporal delta memory.
-\end{itemize}
-
-The fairness audit requires identical sample IDs, backbone hash, common head
-hash, train and validation counts, optimizer, learning rate, weight decay,
-maximum epochs, log-TTC loss, and early stopping. Actual completed epochs may
-differ only through the shared stopping rule.
-
-Core and Garl write separate stage roots:
-\begin{lstlisting}
-artifacts/runs/evttc32_architecture_v4_<split>_<mode>/
-  core/fold-<n>/matrix_summary.json
-  garl/fold-<n>/matrix_summary.json
-\end{lstlisting}
-This prevents the previous summary collision while retaining individual run
-directories.
-
-\begin{table}[t]
-\centering
-\caption{Matched Core confirmation on 1,208/314 train/validation windows.
-All arms share a 40-epoch maximum and one early-stopping rule.}
+\caption{Synthetic semantic-shortcut audit, three-seed mean.}
+\label{tab:semantic}
+\scriptsize
 \begin{tabular}{lrrrr}
 \toprule
-Arm & Best & Rel. & MAE & ms\\
+Objective & Dyn. $R^2$ & MAE & Acc. & Dup. \\
 \midrule
-A0 global & 17 & 16.129\% & 0.701 & 8.98\\
-\textbf{A1 Dense} & \textbf{20} & \textbf{15.210\%} & \textbf{0.628} & 17.15\\
-A2 AttnRes & 10 & 16.136\% & 0.653 & 16.70\\
-K1 Object-KDA & 7 & 16.960\% & 0.731 & 16.99\\
+Repository variance & 0.15 & 0.39 & 0.84 & 1.93 \\
+VISReg-style & 0.20 & 0.38 & 0.92 & 1.63 \\
+Temporal residual & \textbf{0.72} & \textbf{0.29} & 0.65 & 1.06 \\
+R$^2$ rate+dependence & 0.29 & 0.36 & 0.88 & 1.92 \\
+Residual+R$^2$ & 0.48 & 0.34 & 0.68 & \textbf{0.68} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The eight-epoch screen ranked A1 incorrectly because its best checkpoint
-appears at epoch 20. A1 completed 26 epochs while A0 completed 23 under the
-same rule; A0 did not receive more optimization. A1 improves relative error
-by 5.70\% and MAE by 10.45\%, with a 1.91-fold latency cost. A2 and K1 are not
-promoted in their current forms.
+Variance and the VISReg-style distributional control~\cite{visreg2026} retain the
+slow shortcut. R$^2$-lite does not pass the predeclared TTC gate and is rejected
+for production. Temporal residual prediction passes the slow-nuisance gate, but
+in a frame-varying control its dynamic $R^2$ falls to $-0.05$, versus 0.74 for the
+repository objective. It is therefore conditional rather than universal. The
+minimal real candidate keeps a level channel for scale/content and adds a residual
+channel for expansion/motion; it does not introduce rate, HSIC, or conditional-MI
+estimators before a matched eAP screen.
 
-The predeclared grouped-CV gate completed all 30 A0/A1 runs. A0 obtains
-$0.58452\pm0.00853$ score and $30.25\%\pm0.52$ relative error, compared with
-$0.59312\pm0.00349$ and $30.55\%\pm0.06$ for A1. The later
-\texttt{R1\_MATCHED\_BBOX\_ROI} test uses ground-truth boxes only to pool dense
-tokens. Across five seed-7 folds it degrades A0 by 2.90\% in score, 2.74\% in
-relative error, and 4.55\% in MAE, so seeds 13 and 21 are not spent. Region
-selection alone does not measure apparent expansion.
+\section{Cache-free training}
 
-\section{Dense spatial and temporal design}
+The trainer indexes raw HDF5 windows and materializes only the active batch. It
+implements deterministic balanced sampling, BF16, gradient accumulation, clipping,
+epoch-derived shuffle for reproducible resume, macro validation, and atomic best/
+last checkpoints with provenance.
 
-\subsection{Patch Policy}
+The screen uses dimension 32 and patch size 8. The full candidate uses dimension
+192, patch size 16, batch 4 with accumulation 6, up to 30 epochs, and seeds
+7/13/23. Full runs require a clean Git tree and share commit, configuration, data,
+and split hashes before freezing.
 
-Patches from one timestamp communicate bidirectionally before any temporal
-compression. Causality exists between time blocks, not between arbitrary
-patches inside a frame. Pooling before target localization is forbidden in the
-dense arm. This implements the dense representation principle motivated by
-Patch Policy~\cite{patchpolicy2026}.
+\subsection{Storage audit}
 
-\subsection{Attention Residuals}
+A full dense cache was projected at approximately 455~GiB. A 256-sample shard was
+materialized, SHA-verified, consumed, and removed. A 4096-sample attempt approached
+11~GiB RAM without completing. The global-cache route is therefore excluded.
 
-Mask, motion, geometry, and risk tasks independently retrieve features from
-embedding and block outputs. Keys are RMS-normalized so a layer cannot dominate
-by scale; the mixed values remain the original features. A permanent
-greater-than-90\% weight on one layer is treated as collapse.
+On 2 August, the rejected CARLA extraction (71.64~GiB), generated runs
+(16.87~GiB), and feature caches (12.81~GiB) were deleted. Compact signed summaries
+were retained. This recovered approximately 101~GiB in that cleanup pass.
 
-\subsection{Temporal delta memory}
-
-The KDA candidate follows the delta-recurrence principle described by Kimi
-K3~\cite{kimik32026}, but is restricted to the temporal axis. Spatial
-interaction is resolved first. KDA is optional and must show either a precision
-gain, a material memory reduction, or a longer effective horizon.
-
-\section{Local Garl-TTC baseline}
-
-Garl-TTC is implemented from the public source associated with the eAP
-work~\cite{eapgarl2026}. The audited local contract uses three timestamps at
-100~ms cadence, RGB endpoints, two event intervals, 20 time planes per
-interval, and a common 128-by-128 endpoint square crop. RGB and event ResNet-50
-branches can be trained for direct regression or learned height ratio (LHR).
-Late fusion initializes its branches from the corresponding unimodal LHR
-checkpoints. A foreground decoder produces four 256-by-256 logits during
-training and is absent from inference.
-
-EvTTC does not expose the original eAP 3D visible-height target. The local
-adapter therefore supervises visible box height after the shared crop. Results
-must be reported as a local architectural replica, not official eAP parity.
-In the bounded local screen, RGBE-LHR early fusion is best at 36.52\%
-sequence-macro relative error. This is a discard screen, not parity evidence:
-the public configuration trains for 50 epochs and constructs late fusion from
-pretrained unimodal LHR branches.
-
-\section{Object geometry}
-
-For apparent scale $s$, inverse-TTC at the current endpoint is
-\begin{equation}
-q_t = \frac{s_t/s_{t-\Delta t}-1}{\Delta t}.
-\end{equation}
-Height, square-root area, and affine expansion all use the latest valid pair.
-The affine solver separates translation, radial expansion, and in-plane
-rotation through weighted least squares. Event contrast evaluates a bounded
-constant-approach warp only inside the object support. Auxiliary metadata
-channels are excluded from the event calculation.
-
-The training-free bbox oracle reports each expert and a deterministic
-confidence mixture. It is an upper-bound diagnostic and not a bbox-free model.
-
-A separate causal bbox-scale estimator fits a local derivative over at most 21
-past detections and a train-only log-affine calibration. It covers 311 of 314
-validation windows. Using A1 only for the three invalid rows changes macro
-relative error from 15.210\% to 14.790\%, but worsens the composite selection
-score from 0.30543 to 0.31144 because of RMSE. It therefore fails the declared
-5\% gate and also uses more history than the three-frame neural control.
-
-We also ported the public STRTTC chain: nearest linear time surface, contour
-gradients, local event-plane normal flow, RANSAC, and the three-parameter
-solver~\cite{eventaidedttc2024}. The bounded causal screen solves only 27/40 samples;
-its successful rows have 112.96\% sequence-macro relative error. Failures are
-reported as missing coverage, not silently removed from a full-set claim.
-
-\section{Ego-motion}
-
-The EvTTC format states that integrated navigation attitude, position, and
-velocity live in a world coordinate system~\cite{evttc2024}. Local auditing
-shows velocity components ordered north, east, up and heading in degrees. The
-heading agrees with geodetic displacement. Velocity is transformed through the
-documented rigid chain
-\begin{equation}
-T_{\mathrm{event}\leftarrow\mathrm{nav}} =
-T_{\mathrm{event}\leftarrow\mathrm{RGB}}
-T_{\mathrm{RGB}\leftarrow\mathrm{LiDAR}}
-T_{\mathrm{LiDAR}\leftarrow\mathrm{nav}}.
-\end{equation}
-The lever-arm velocity of the event-camera origin is included when heading
-changes.
-
-For a past point with causal depth, full planar camera-pose compensation uses
-\begin{equation}
-P_c = R_{c\leftarrow p}P_p - \Delta C_c.
-\end{equation}
-The boxes are reprojected with event-camera intrinsics. Ego closing contributes
-$q_{\mathrm{ego}}=v_z/Z$. Translation is not observable from velocity alone:
-depth is required. Consequently, official EvTTC distance is allowed only for
-an oracle or teacher. A deployable arm must replace it with causal predicted
-depth and be re-evaluated.
-
-\section{Experimental stages}
+\section{Current real smoke}
 
 \begin{table}[t]
 \centering
-\caption{Evidence hierarchy.}
-\begin{tabularx}{\columnwidth}{lY}
-\toprule
-Stage & Purpose\\
-\midrule
-Smoke & Integration only, never promotion\\
-Screen & 304/80 windows, seed 7, up to 8 epochs\\
-Confirm & 1,208/314 windows, up to 40 epochs\\
-Grouped CV & Five folds, seeds 7, 13, 21 for A0/A1\\
-Sequential ablation & Five folds, seed 7 before further seeds\\
-External & Frozen Benchmark-10 inference\\
-\bottomrule
-\end{tabularx}
-\end{table}
-
-The checkpoint score combines sequence-macro relative error, normalized RMSE,
-high-TTC error, and low-TTC safety error. Ties are resolved by worst sequence,
-RMSE, seed variance, and latency. Smoke and Screen are closed; historical
-Confirm promotes A1 only, while completed grouped CV selects A0. Grouped CV
-compares A0/A1 from a common random EventTubelet
-initialization because reusing the historical SSL checkpoint would expose
-some validation sequences during pretraining. The checkpoint-initialized
-historical Confirm remains a separate experiment.
-
-TargetQuery, predicted masks, high-resolution refinement, learned routing,
-bounded residual, and uncertainty remain behind a hard gate: bbox-GT geometry
-must first outperform BASE under the declared protocol.
-
-\section{Efficiency and storage}
-
-The consumer hardware target has approximately 12.8~GB VRAM and 32~GB RAM.
-Training uses BF16, pinned memory, persistent workers, prefetch, and gradient
-accumulation. The Garl ResNet-50 screen uses batch 24; the foreground arm uses
-microbatch 4 with accumulation 6 for the same effective batch. The geometric
-solver remains FP32.
-
-No full eAP or CARLA voxel cache, full-resolution SAM logits, all-layer DINO
-cache, or bulk TAR extraction is permitted. CARLA's 7.692 billion events are
-read by memory-mapped causal windows without a second raw copy. A run retains
-at most \texttt{best},
-\texttt{last}, and \texttt{weights\_only}. Core and Garl caches are compressed
-and stage-specific.
-
-The CARLA full profile creates 12,020/4,457/4,297 lazy train/validation/test
-pairs, uses BF16, batch 24 with accumulation 2, eight persistent workers,
-fused AdamW, warm-up/cosine decay, EMA, clipping, and 8/6 early stopping with
-a 30-epoch maximum. The measured best probe processed 8.46 pair observations
-per second; batch 16/32/48/96 and 6/12-worker profiles did not improve it
-because CPU/SSD
-voxelization, rather than VRAM, was limiting. This projects to 32.5 minutes per
-epoch and 16.2 hours at the hard maximum.
-
-The eAP pilot reads HDF5 event windows on demand through \texttt{ms\_to\_idx};
-it neither opens the 118~GiB RGB payload nor materializes a global voxel cache.
-The signed selection contains nine training and three validation sequences.
-\texttt{eAP-SSL} predicts dense future embeddings, whereas
-\texttt{eAP-Geo} adds projected 3-D-box position and size, radial closing,
-apparent expansion, and patch objectness. Neither arm uses reconstructed TTC as
-a target. Both use the same EventTubelet encoder, seed, windows, batch, and
-optimization budget. The full profile uses BF16, batch 24 with accumulation 2,
-eight persistent workers, fused AdamW, TF32, clipping, EMA, cosine decay, and
-8/6 early stopping up to 30 epochs. It switches to a signed, label-independent
-32/8 split over all 40 sequences (16,384/4,096 windows). The three pilot
-validation sequences remain held out; five more are selected by a salted hash
-of sequence ID. Utility is measured only by matched transfer to A0 and A1 on
-EvTTC.
-
-The three-epoch pilot selected epoch three for both arms. SSL obtained latent
-validation loss 0.002358 in 11.84 minutes; Geo obtained total loss 0.087108,
-JEPA loss 0.007624, and patch IoU 0.2867 in 13.06 minutes. Table~\ref{tab:eap}
-reports relative improvements over each architecture's paired random control on
-folds 0/1, seed 7.
-
-\begin{table}[t]
-\centering
-\caption{eAP-12 transfer screen (positive means lower error/score).}
-\label{tab:eap}
+\caption{Raw event-only integration smoke; not promotable.}
+\label{tab:smoke}
 \small
-\begin{tabular}{llrrr}
+\begin{tabular}{lr}
 \toprule
-Init & Model & $\Delta$RTE & $\Delta$MAE & $\Delta$score \\
+Quantity & Value \\
 \midrule
-SSL & A0 & -2.58\% & -1.13\% & -3.43\% \\
-SSL & A1 & +0.54\% & +6.33\% & -0.02\% \\
-Geo & A0 & +3.66\% & +4.30\% & +2.36\% \\
-Geo & A1 & +6.57\% & +7.95\% & +6.47\% \\
+Train / validation samples & 16 / 16 \\
+Epochs / seed & 1 / 7 \\
+Elapsed time & 17.16 s \\
+Sequence-macro MiD & 1868.3186 \\
+Global MiD & 1941.2832 \\
+Weighted RTE & 119.2892\% \\
+Failure rate & 0\% \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\section{Limitations and next steps}
+The zero failure rate shows that the poor metric is not hidden exception filtering.
+The run validates data flow, GPU execution, signed loss, metrics, and checkpoint
+compatibility only. Scaling this formulation immediately would be expensive and
+scientifically unjustified.
 
-Dense Patch improves one matched split but loses completed grouped-CV
-multi-seed evaluation. Bbox-ROI pooling also loses its five-fold seed-7 gate.
-The local Garl screen is shorter than the official 50-epoch, branch-pretrained
-recipe. STRTTC has incomplete coverage and translation compensation is not
-deployable until depth is predicted. eAP train-40 is complete but has no
-official TTC labels. CARLA is synthetic, quantized at 10~ms, lacks temporal
-boxes, and provides positive TTC only to approximately 3.85~s. Benchmark-10
-has not been opened.
+\section{Evaluation orchestration}
 
-The two-epoch CARLA SSL smoke reduced validation loss from 0.02563 to 0.02247
-without collapsed dimensions. A 16-pair synthetic test contract produced
-0.02195. However, matched fold-0 transfer worsens A0 relative error by 1.72\%
-for SSL and by 17.3\% for the synthetic-TTC auxiliary arm. CARLA is therefore
-retained as negative evidence rather than promoted. Geo improves A0 RTE and MAE
-on both screened folds, opening the predeclared 12-to-40 scaling gate. A1 Geo
-improves RTE on both folds but MAE on only one. The RTE cluster-bootstrap
-intervals still cross zero; full eAP-40 pretraining and five-fold, three-seed
-EvTTC confirmation remain outstanding. An explicit expansion/FoE path remains
-a later candidate. These restrictions preclude a current SOTA or safety claim.
+One runner separates the stages:
+\begin{lstlisting}
+train -> freeze -> evttc-predict
+      -> evttc-score -> submission-validate
+\end{lstlisting}
+The full freeze selects among seeds only on Garl validation. EvTTC prediction
+requires a hashed label-free manifest and rejects target-like fields before loading
+the checkpoint or GPU. Scoring receives targets in a separate process. Submission
+validation is offline and never counts as an official upload.
 
-\enlargethispage{4\baselineskip}
-\bibliographystyle{plain}
-\bibliography{references}
+\section{Limitations and next gates}
+
+Dense JEPA pretraining and RGB-E fusion remain unimplemented. The semantic audit
+is synthetic and does not prove real eAP shortcut allocation. Six eAP sequences,
+the real EvTTC Table-VI input manifest, full three-seed training, robustness,
+calibration, final ONNX export, and a real demo are missing. Causal bbox-free
+expansion/FoE has not surpassed A0, and ground-truth bbox/depth remain diagnostic
+oracles. The system is not suitable for safety control.
+
+The next economical sequence is: (1) overfit matched dense JEPA with level and
+residual channels on 256 samples; (2) paired level-versus-level+residual screens
+with frozen TTC, expansion, event-rate, and sequence-ID probes; (3) isolated RGB-E;
+(4) real EvTTC predict/score; and only then (5) full 7/13/23 and official
+eAP/CodaBench submission. These restrictions preclude a present SOTA claim.
+
+\begin{thebibliography}{5}
+\bibitem{evttc2024}
+J.~Li et al.\ ``EvTTC: An Event Camera Dataset for Time-to-Collision
+Estimation.'' arXiv:2412.05053, 2024.
+
+\bibitem{eapgarl2026}
+J.~Li et al.\ ``Toward Deep Representation Learning for Event-Enhanced Visual
+Autonomous Perception: the eAP Dataset.'' arXiv:2603.16303, 2026.
+
+\bibitem{kimik32026}
+Kimi Team.\ ``Kimi K3: Open Frontier Intelligence.'' arXiv:2607.24653, 2026.
+
+\bibitem{slowfeatures2022}
+V.~Sobal et al.\ ``Joint Embedding Predictive Architectures Focus on Slow
+Features.'' arXiv:2211.10831, 2022.
+
+\bibitem{visreg2026}
+``VISReg: Variance-Invariance-Sketching Regularization for JEPA Training.''
+arXiv:2606.02572, 2026.
+\end{thebibliography}
 
 \end{document}
