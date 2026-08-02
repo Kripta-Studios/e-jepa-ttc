@@ -1,6 +1,7 @@
 objective: garl_signed_supervised_screen
 epochs: 8
 batch_size: 2
+gradient_accumulation_steps: 1
 num_workers: 4
 learning_rate: 0.0003
 weight_decay: 0.01
@@ -13,3 +14,5 @@ width: 320
 height: 192
 max_samples_per_split: 2048
 seed: 7
+run_scope: bounded_screen
+require_clean_git: false

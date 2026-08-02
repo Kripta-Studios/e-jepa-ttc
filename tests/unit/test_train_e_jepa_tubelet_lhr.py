@@ -45,6 +45,15 @@ def test_event_screen_config_resolves_and_rgb_config_is_rejected() -> None:
     assert trainer.max_samples_per_split == 2048
     assert provenance["event_only"] is True
 
+    full_model, full_trainer, _ = load_training_spec(
+        Path("configs/experiment/e_jepa_garl_event_full_v1.yaml").resolve()
+    )
+    assert full_model.embed_dim == 192
+    assert full_trainer.max_samples_per_split is None
+    assert full_trainer.gradient_accumulation_steps == 6
+    assert full_trainer.run_scope == "full_candidate"
+    assert full_trainer.require_clean_git is True
+
     with pytest.raises(NotImplementedError, match="RGB-E fusion is not implemented"):
         load_training_spec(Path("configs/experiment/e_jepa_garl_sota_v1.yaml").resolve())
 

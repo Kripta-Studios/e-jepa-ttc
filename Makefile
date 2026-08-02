@@ -1,11 +1,9 @@
-.PHONY: setup lint test check smoke-data scan-data validate-data index-data split-data cache-voxel train-base train-baseline pretrain-jepa finetune-ttc evaluate demo architecture-validate architecture-smoke architecture-screen eap-analysis eap-full report
+.PHONY: setup lint test check smoke-data scan-data validate-data index-data split-data cache-voxel train-base train-baseline pretrain-jepa finetune-ttc garl-screen garl-full-dry-run garl-full evaluate demo architecture-validate architecture-smoke architecture-screen eap-analysis eap-full report
 
 EAP_ROOT ?=
 GARLTTC_ROOT ?=
 GARL_SPLIT ?= data/splits/eap_pilot12_v1.json
-TUBELET_CONFIG ?= configs/experiment/e_jepa_garl_event_screen_v1.yaml
 FINETUNE_OUTPUT ?= artifacts/runs/e_jepa_tubelet_lhr_event
-FINETUNE_MAX_SAMPLES ?= 2048
 METRICS_JSON ?=
 SPLIT ?= validation
 
@@ -50,7 +48,19 @@ pretrain-jepa:
 finetune-ttc:
 	@test -n "$(EAP_ROOT)" || (echo "EAP_ROOT is required" && exit 2)
 	@test -n "$(GARLTTC_ROOT)" || (echo "GARLTTC_ROOT is required" && exit 2)
-	uv run --no-sync python scripts/train_e_jepa_tubelet_lhr.py --eap-root "$(EAP_ROOT)" --garlttc-root "$(GARLTTC_ROOT)" --split "$(GARL_SPLIT)" --config "$(TUBELET_CONFIG)" --output-dir "$(FINETUNE_OUTPUT)" --max-samples-per-split "$(FINETUNE_MAX_SAMPLES)" --device auto
+	uv run --no-sync python scripts/run_e_jepa_garl_final.py --profile screen --stages train --eap-root "$(EAP_ROOT)" --garlttc-root "$(GARLTTC_ROOT)" --split "$(GARL_SPLIT)" --output-root "$(FINETUNE_OUTPUT)" --device auto
+
+garl-screen: finetune-ttc
+
+garl-full-dry-run:
+	@test -n "$(EAP_ROOT)" || (echo "EAP_ROOT is required" && exit 2)
+	@test -n "$(GARLTTC_ROOT)" || (echo "GARLTTC_ROOT is required" && exit 2)
+	uv run --no-sync python scripts/run_e_jepa_garl_final.py --profile full --stages train freeze --eap-root "$(EAP_ROOT)" --garlttc-root "$(GARLTTC_ROOT)" --output-root "$(FINETUNE_OUTPUT)" --device auto --dry-run
+
+garl-full:
+	@test -n "$(EAP_ROOT)" || (echo "EAP_ROOT is required" && exit 2)
+	@test -n "$(GARLTTC_ROOT)" || (echo "GARLTTC_ROOT is required" && exit 2)
+	uv run --no-sync python scripts/run_e_jepa_garl_final.py --profile full --stages train freeze --eap-root "$(EAP_ROOT)" --garlttc-root "$(GARLTTC_ROOT)" --output-root "$(FINETUNE_OUTPUT)" --device auto --resume
 
 evaluate:
 	uv run --no-sync python scripts/evaluate.py --split $(SPLIT) $(METRICS_JSON)

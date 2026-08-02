@@ -57,6 +57,7 @@ class TubeletTrainConfig:
 
     epochs: int = 8
     batch_size: int = 2
+    gradient_accumulation_steps: int = 1
     num_workers: int = 4
     learning_rate: float = 3e-4
     weight_decay: float = 0.01
@@ -69,11 +70,14 @@ class TubeletTrainConfig:
     height: int = 192
     max_samples_per_split: int | None = 2048
     seed: int = 7
+    run_scope: str = "bounded_screen"
+    require_clean_git: bool = False
 
     def __post_init__(self) -> None:
         integers = (
             self.epochs,
             self.batch_size,
+            self.gradient_accumulation_steps,
             self.num_workers + 1,
             self.minimum_epochs,
             self.early_stopping_patience + 1,
@@ -89,6 +93,10 @@ class TubeletTrainConfig:
             raise ValueError("max_samples_per_split must be positive when provided")
         if self.minimum_epochs > self.epochs:
             raise ValueError("minimum_epochs cannot exceed epochs")
+        if self.run_scope not in {"bounded_screen", "full_candidate"}:
+            raise ValueError("run_scope must be bounded_screen or full_candidate")
+        if self.run_scope == "full_candidate" and self.max_samples_per_split is not None:
+            raise ValueError("full_candidate cannot cap max_samples_per_split")
 
 
 def _read_yaml(path: Path) -> dict[str, Any]:
@@ -192,31 +200,41 @@ def train_epoch(
     device: torch.device,
     precision: str,
     max_grad_norm: float,
+    gradient_accumulation_steps: int = 1,
     scaler: Any | None = None,  # noqa: ANN401
 ) -> float:
     """Train one signed-TTC epoch without retaining dataset tensors."""
 
     model.train()
     losses: list[float] = []
-    for inputs, targets, _, _ in loader:
+    optimizer.zero_grad(set_to_none=True)
+    batch_count = len(loader)
+    for batch_index, (inputs, targets, _, _) in enumerate(loader):
         inputs = inputs.to(device=device, dtype=torch.float32, non_blocking=True)
         targets = targets.to(device=device, dtype=torch.float32, non_blocking=True)
-        optimizer.zero_grad(set_to_none=True)
         with _autocast(device, precision):
             prediction = model(inputs).ttc_mean_seconds
             loss = functional.smooth_l1_loss(
                 _signed_log1p(prediction), _signed_log1p(targets), beta=0.05
             )
+            backward_loss = loss / gradient_accumulation_steps
+        update = (
+            batch_index + 1
+        ) % gradient_accumulation_steps == 0 or batch_index + 1 == batch_count
         if scaler is None:
-            loss.backward()
-            torch.nn.utils.clip_grad_norm_(model.parameters(), max_grad_norm)
-            optimizer.step()
+            backward_loss.backward()
+            if update:
+                torch.nn.utils.clip_grad_norm_(model.parameters(), max_grad_norm)
+                optimizer.step()
+                optimizer.zero_grad(set_to_none=True)
         else:
-            scaler.scale(loss).backward()
-            scaler.unscale_(optimizer)
-            torch.nn.utils.clip_grad_norm_(model.parameters(), max_grad_norm)
-            scaler.step(optimizer)
-            scaler.update()
+            scaler.scale(backward_loss).backward()
+            if update:
+                scaler.unscale_(optimizer)
+                torch.nn.utils.clip_grad_norm_(model.parameters(), max_grad_norm)
+                scaler.step(optimizer)
+                scaler.update()
+                optimizer.zero_grad(set_to_none=True)
         losses.append(float(loss.detach().cpu()))
     if not losses:
         raise RuntimeError("Tubelet training epoch produced no batches")
@@ -315,6 +333,9 @@ def train_tubelet_garl(
     torch.manual_seed(train_config.seed)
     np.random.seed(train_config.seed)
     device = resolve_device(device_name)
+    dirty_at_start = _git_dirty()
+    if train_config.require_clean_git and dirty_at_start:
+        raise RuntimeError("full_candidate requires a clean committed Git worktree")
     split = json.loads(split_path.read_text(encoding="utf-8"))
     split_version = split.get("version", split.get("protocol", split.get("artifact_type")))
     roles = {
@@ -361,16 +382,13 @@ def train_tubelet_garl(
         )
         for role in ("train", "validation")
     }
-    loaders = {
-        role: _loader(
-            datasets[role],
-            batch_size=train_config.batch_size,
-            shuffle=role == "train",
-            seed=train_config.seed,
-            num_workers=train_config.num_workers,
-        )
-        for role in ("train", "validation")
-    }
+    validation_loader = _loader(
+        datasets["validation"],
+        batch_size=train_config.batch_size,
+        shuffle=False,
+        seed=train_config.seed,
+        num_workers=train_config.num_workers,
+    )
     model = EJEPATubeletLHR(model_config).to(device)
     transfer = _load_pretrained(model, pretrained)
     optimizer = torch.optim.AdamW(
@@ -406,16 +424,26 @@ def train_tubelet_garl(
 
     try:
         for epoch in range(start_epoch, train_config.epochs + 1):
+            # Epoch-derived ordering makes a resumed run reproduce the same
+            # sample order without serializing DataLoader worker state.
+            train_loader = _loader(
+                datasets["train"],
+                batch_size=train_config.batch_size,
+                shuffle=True,
+                seed=train_config.seed + epoch,
+                num_workers=train_config.num_workers,
+            )
             train_loss = train_epoch(
                 model,
-                loaders["train"],
+                train_loader,
                 optimizer,
                 device=device,
                 precision=train_config.precision,
                 max_grad_norm=train_config.max_grad_norm,
+                gradient_accumulation_steps=train_config.gradient_accumulation_steps,
                 scaler=scaler if scaler.is_enabled() else None,
             )
-            predictions = _predict(model, loaders["validation"], device=device)
+            predictions = _predict(model, validation_loader, device=device)
             metrics = _metrics(predictions)
             macro = metrics["sequence_macro"]["sequence_macro_paper_MiD_overall"]
             score = float(macro)
@@ -489,7 +517,7 @@ def train_tubelet_garl(
         "start_time": started_at.isoformat(),
         "end_time": ended_at.isoformat(),
         "git_commit": _git_commit(),
-        "git_dirty": _git_dirty(),
+        "git_dirty": dirty_at_start,
         "config_hash": config_hash,
         "dataset_manifest_hash": dataset_manifest_hash,
         "split_version": split_version,
@@ -522,8 +550,13 @@ def train_tubelet_garl(
         "uses_labels_for_encoder_input": False,
         "modality": "event_only",
         "claim_eligible": False,
+        "downstream_evaluation_eligible": (
+            train_config.run_scope == "full_candidate" and not dirty_at_start
+        ),
         "non_promotable_reason": (
             "bounded single-seed development screen; no official eAP test or EvTTC score"
+            if train_config.run_scope == "bounded_screen"
+            else "training-only candidate; requires multiseed freeze and external evaluation"
         ),
     }
     safe = cast(dict[str, Any], _json_safe(summary))
