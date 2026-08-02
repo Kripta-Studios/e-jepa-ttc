@@ -275,34 +275,40 @@ def _predict(
 
 
 def _load_pretrained(model: EJEPATubeletLHR, path: Path | None) -> dict[str, Any]:
+    """Load only an exact Dense Level--Dynamics backbone transfer payload.
+
+    SSL projection heads, EMA target state and the aligned-patch predictor are
+    intentionally not inference state.  Accepting a partial key intersection here
+    would make a random or incompatible initialization look pretrained.
+    """
+
     if path is None:
         return {"used": False, "transferred_keys": []}
     payload = torch.load(path, map_location="cpu", weights_only=False)
     if not isinstance(payload, Mapping):
         raise TypeError("Pretraining checkpoint must contain a mapping")
-    raw_state = payload.get("online_encoder_state_dict", payload.get("model_state_dict"))
+    if payload.get("artifact_type") != "dense_level_dynamics_jepa_checkpoint_v1":
+        raise ValueError(
+            "Pretraining checkpoint is not a Dense Level-Dynamics JEPA v1 artifact; "
+            "legacy pooled or generic model checkpoints cannot be transferred."
+        )
+    raw_state = payload.get("online_encoder_state_dict")
     if not isinstance(raw_state, Mapping):
-        raise ValueError("Pretraining checkpoint has no supported encoder/model state")
-    target = model.state_dict()
-    transferred = {
-        str(key): value
-        for key, value in raw_state.items()
-        if isinstance(value, torch.Tensor)
-        and key in target
-        and target[str(key)].shape == value.shape
-        and not str(key).startswith(("ttc_head.", "collision_head."))
-    }
-    if not any(key.startswith("patch_embed.") for key in transferred):
-        raise ValueError("Pretraining checkpoint is architecture-incompatible with Tubelet LHR")
-    missing, unexpected = model.load_state_dict(transferred, strict=False)
-    if unexpected:
-        raise RuntimeError(f"Unexpected transferred keys: {unexpected}")
+        raise ValueError("Pretraining checkpoint is missing online_encoder_state_dict")
+    structural_config = payload.get("online_encoder_config")
+    if not isinstance(structural_config, Mapping):
+        structural_config = payload.get("backbone_structural_config")
+    if not isinstance(structural_config, Mapping):
+        raise ValueError(
+            "Pretraining checkpoint is missing its exact online_encoder_config; "
+            "cannot validate a backbone-only transfer."
+        )
+    report = model.load_exact_backbone_state_dict(raw_state, structural_config)
     return {
         "used": True,
         "path": path.resolve().as_posix(),
         "sha256": _sha256(path),
-        "transferred_keys": sorted(transferred),
-        "missing_training_keys": sorted(missing),
+        **report,
     }
 
 

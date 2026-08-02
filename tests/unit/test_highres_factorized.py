@@ -9,6 +9,7 @@ from e_jepa_ttc.models.highres_factorized import (
     TemporalOnlyAttention,
     TheoreticalOOMError,
     make_patch_geometry,
+    normalized_patch_coordinates,
     pad_to_patch_grid,
     space_to_depth_2x2,
 )
@@ -48,6 +49,35 @@ def test_space_to_depth_zeroes_invalid_child_values_before_projection() -> None:
 
     assert torch.equal(merged[0, 0, 0, 0], torch.tensor([9.0, 0.0, 0.0, 0.0]))
     assert bool(merged_mask[0, 0, 0, 0])
+
+
+def test_post_merge_coordinates_follow_emitted_odd_grid_axis() -> None:
+    model = EJEPATubeletLHR(
+        EJEPATubeletLHRConfig(
+            in_channels=2,
+            embed_dim=16,
+            patch_size=8,
+            spatial_window=2,
+            heads=4,
+            temporal_depth=1,
+            merge_2x2=True,
+        )
+    ).eval()
+    with torch.inference_mode():
+        features = model.forward_features(torch.randn(1, 2, 2, 17, 19))
+
+    assert features.tokens.shape[2] == 4
+    assert (features.encoded_grid_height, features.encoded_grid_width) == (2, 2)
+    assert features.post_merge_patch_coordinates.shape == (4, 2)
+    assert torch.allclose(
+        features.post_merge_patch_coordinates,
+        torch.tensor([[0.25, 0.25], [0.75, 0.25], [0.25, 0.75], [0.75, 0.75]]),
+    )
+    assert torch.equal(features.patch_coordinates, features.post_merge_patch_coordinates)
+    assert torch.allclose(
+        normalized_patch_coordinates(2, 2, device=torch.device("cpu"), dtype=torch.float32),
+        features.post_merge_patch_coordinates,
+    )
 
 
 def test_r4_has_960_spatial_patches_and_no_global_attention() -> None:

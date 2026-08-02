@@ -9,7 +9,9 @@ patch grid; they are never cropped or upsampled from the 160x90 cache.
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass
+from collections.abc import Mapping
+from dataclasses import asdict, dataclass, field
+from typing import Any
 
 import torch
 from torch import nn
@@ -55,6 +57,17 @@ class HighResFeatures:
     valid_patch_mask: torch.Tensor
     geometry: PatchGeometry
     diagnostics: dict[str, torch.Tensor]
+    encoded_grid_height: int = 0
+    encoded_grid_width: int = 0
+    post_merge_patch_coordinates: torch.Tensor = field(
+        default_factory=lambda: torch.empty((0, 2), dtype=torch.float32)
+    )
+
+    @property
+    def patch_coordinates(self) -> torch.Tensor:
+        """Return normalized ``[x, y]`` coordinates aligned with the emitted patch axis."""
+
+        return self.post_merge_patch_coordinates
 
 
 @dataclass
@@ -317,6 +330,28 @@ def space_to_depth_2x2(
     )
 
 
+def normalized_patch_coordinates(
+    grid_height: int,
+    grid_width: int,
+    *,
+    device: torch.device,
+    dtype: torch.dtype,
+) -> torch.Tensor:
+    """Return raster-ordered post-merge patch centres in normalized ``[x, y]`` space.
+
+    The coordinates deliberately use the final encoded grid rather than the source
+    ``PatchGeometry`` grid.  This makes the output stable for odd source grids where
+    a 2x2 space-to-depth merge creates a partially populated final row or column.
+    """
+
+    if grid_height <= 0 or grid_width <= 0:
+        raise ValueError("grid_height and grid_width must be positive.")
+    rows = (torch.arange(grid_height, device=device, dtype=dtype) + 0.5) / grid_height
+    columns = (torch.arange(grid_width, device=device, dtype=dtype) + 0.5) / grid_width
+    y, x = torch.meshgrid(rows, columns, indexing="ij")
+    return torch.stack((x, y), dim=-1).reshape(grid_height * grid_width, 2)
+
+
 class TemporalOnlyAttention(nn.Module):
     """Causal attention independently per spatial patch."""
 
@@ -376,6 +411,133 @@ class EJEPATubeletLHRConfig:
     memory_budget_gb: float = 12.0
     pooling: str = "query"
     query_count: int = 8
+
+
+# This is intentionally narrower than ``state_dict()``.  Query pooling and task
+# readouts are downstream-only state and must never be mistaken for pretraining
+# transfer state.
+BACKBONE_STATE_PREFIXES: tuple[str, ...] = (
+    "patch_embed.",
+    "spatial.",
+    "merge.",
+    "temporal.",
+    "final_norm.",
+)
+BACKBONE_STRUCTURAL_CONFIG_FIELDS: tuple[str, ...] = (
+    "in_channels",
+    "embed_dim",
+    "patch_size",
+    "spatial_window",
+    "heads",
+    "spatial_depth",
+    "temporal_depth",
+    "temporal_mixer",
+    "merge_2x2",
+)
+
+
+def backbone_structural_config(config: EJEPATubeletLHRConfig) -> dict[str, Any]:
+    """Return the exact architecture fields that govern transferable backbone state."""
+
+    source = asdict(config)
+    return {key: source[key] for key in BACKBONE_STRUCTURAL_CONFIG_FIELDS}
+
+
+def _backbone_key_allowed(key: str) -> bool:
+    return key.startswith(BACKBONE_STATE_PREFIXES)
+
+
+def exact_backbone_state_dict(model: EJEPATubeletLHR) -> dict[str, torch.Tensor]:
+    """Extract only the state permitted to transfer into the downstream backbone."""
+
+    return {
+        key: value.detach().clone()
+        for key, value in model.state_dict().items()
+        if _backbone_key_allowed(key)
+    }
+
+
+def _normalize_backbone_config(
+    config: EJEPATubeletLHRConfig | Mapping[str, Any],
+) -> dict[str, Any]:
+    if isinstance(config, EJEPATubeletLHRConfig):
+        return backbone_structural_config(config)
+    received_keys = {str(key) for key in config}
+    expected_keys = set(BACKBONE_STRUCTURAL_CONFIG_FIELDS)
+    missing = sorted(expected_keys - received_keys)
+    extra = sorted(received_keys - expected_keys)
+    if missing or extra:
+        raise ValueError(
+            f"Backbone structural config must match exactly; missing={missing}, extra={extra}."
+        )
+    return {key: config[key] for key in BACKBONE_STRUCTURAL_CONFIG_FIELDS}
+
+
+def validate_exact_backbone_transfer(
+    model: EJEPATubeletLHR,
+    source_state: Mapping[str, Any],
+    source_config: EJEPATubeletLHRConfig | Mapping[str, Any],
+) -> dict[str, Any]:
+    """Fail closed unless a checkpoint exactly matches the downstream backbone.
+
+    No task state is filtered opportunistically: the supplied state dictionary must
+    contain *only* the exact backbone keys with their expected tensor shapes.  The
+    returned report is suitable for checkpoint provenance.
+    """
+
+    expected_config = backbone_structural_config(model.config)
+    received_config = _normalize_backbone_config(source_config)
+    config_mismatches = {
+        key: {"expected": expected_config[key], "received": received_config[key]}
+        for key in BACKBONE_STRUCTURAL_CONFIG_FIELDS
+        if expected_config[key] != received_config[key]
+    }
+    if config_mismatches:
+        raise ValueError(
+            "Backbone structural config mismatch: "
+            + ", ".join(
+                f"{key}={value['received']!r} (expected {value['expected']!r})"
+                for key, value in sorted(config_mismatches.items())
+            )
+        )
+
+    if any(not isinstance(key, str) for key in source_state):
+        raise ValueError("Exact backbone transfer rejected: state-dict keys must be strings.")
+    expected_state = exact_backbone_state_dict(model)
+    received_keys = set(source_state)
+    expected_keys = set(expected_state)
+    extra = sorted(received_keys - expected_keys)
+    missing = sorted(expected_keys - received_keys)
+    forbidden = sorted(key for key in received_keys if not _backbone_key_allowed(key))
+    shape_mismatches: list[str] = []
+    non_tensors: list[str] = []
+    for key in sorted(expected_keys & received_keys):
+        value = source_state[key]
+        if not isinstance(value, torch.Tensor):
+            non_tensors.append(key)
+        elif value.shape != expected_state[key].shape:
+            shape_mismatches.append(
+                f"{key}: checkpoint {tuple(value.shape)} != "
+                f"model {tuple(expected_state[key].shape)}"
+            )
+    if extra or missing or forbidden or shape_mismatches or non_tensors:
+        details: list[str] = []
+        if missing:
+            details.append("missing=" + repr(missing))
+        if extra:
+            details.append("extra=" + repr(extra))
+        if forbidden:
+            details.append("forbidden_non_backbone=" + repr(forbidden))
+        if shape_mismatches:
+            details.append("shape_mismatches=" + repr(shape_mismatches))
+        if non_tensors:
+            details.append("non_tensor=" + repr(non_tensors))
+        raise ValueError("Exact backbone transfer rejected: " + "; ".join(details))
+    return {
+        "structural_config": expected_config,
+        "transferred_keys": sorted(expected_keys),
+        "key_count": len(expected_keys),
+    }
 
 
 class EJEPATubeletLHR(nn.Module):
@@ -450,6 +612,36 @@ class EJEPATubeletLHR(nn.Module):
         else:
             self.register_parameter("query_tokens", None)
             self.query_attention = None
+
+    def backbone_state_dict(self) -> dict[str, torch.Tensor]:
+        """Return the exact state allowed to transfer from SSL into this backbone."""
+
+        return exact_backbone_state_dict(self)
+
+    def backbone_structural_config(self) -> dict[str, Any]:
+        """Return the architecture identity required for exact SSL transfer."""
+
+        return backbone_structural_config(self.config)
+
+    def load_exact_backbone_state_dict(
+        self,
+        source_state: Mapping[str, Any],
+        source_config: EJEPATubeletLHRConfig | Mapping[str, Any],
+    ) -> dict[str, Any]:
+        """Load a fully validated backbone-only state without touching task modules."""
+
+        report = validate_exact_backbone_transfer(self, source_state, source_config)
+        result = self.load_state_dict(
+            {key: source_state[key] for key in report["transferred_keys"]}, strict=False
+        )
+        if result.unexpected_keys:
+            raise RuntimeError(
+                f"Unexpected exact-backbone keys after validation: {result.unexpected_keys}"
+            )
+        return {
+            **report,
+            "missing_non_backbone_keys": sorted(result.missing_keys),
+        }
 
     def _patch_tokens(
         self,
@@ -565,7 +757,29 @@ class EJEPATubeletLHR(nn.Module):
                 False, device=inputs.device, dtype=torch.bool
             ),
         }
-        return HighResFeatures(flat, flat_valid, geometry, diagnostics)
+        encoded_grid_height = tokens.shape[2]
+        encoded_grid_width = tokens.shape[3]
+        coordinates = normalized_patch_coordinates(
+            encoded_grid_height,
+            encoded_grid_width,
+            device=flat.device,
+            dtype=flat.dtype,
+        )
+        diagnostics["encoded_grid_height"] = torch.tensor(
+            encoded_grid_height, device=inputs.device, dtype=torch.int64
+        )
+        diagnostics["encoded_grid_width"] = torch.tensor(
+            encoded_grid_width, device=inputs.device, dtype=torch.int64
+        )
+        return HighResFeatures(
+            tokens=flat,
+            valid_patch_mask=flat_valid,
+            geometry=geometry,
+            diagnostics=diagnostics,
+            encoded_grid_height=encoded_grid_height,
+            encoded_grid_width=encoded_grid_width,
+            post_merge_patch_coordinates=coordinates,
+        )
 
     def _pool_tokens(
         self,
@@ -622,6 +836,8 @@ class EJEPATubeletLHR(nn.Module):
 
 
 __all__ = [
+    "BACKBONE_STATE_PREFIXES",
+    "BACKBONE_STRUCTURAL_CONFIG_FIELDS",
     "EJEPATubeletLHR",
     "EJEPATubeletLHRConfig",
     "EJEPATubeletLHROutput",
@@ -629,10 +845,14 @@ __all__ = [
     "PatchGeometry",
     "TheoreticalOOMError",
     "WindowSpatialAttention",
+    "backbone_structural_config",
+    "exact_backbone_state_dict",
     "make_patch_geometry",
+    "normalized_patch_coordinates",
     "pad_to_patch_grid",
     "space_to_depth_2x2",
     "theoretical_attention_bytes",
     "theoretical_oom_guard",
     "theoretical_oom_guard_required",
+    "validate_exact_backbone_transfer",
 ]
