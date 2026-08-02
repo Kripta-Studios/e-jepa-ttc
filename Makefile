@@ -62,6 +62,11 @@ garl-full:
 	@test -n "$(GARLTTC_ROOT)" || (echo "GARLTTC_ROOT is required" && exit 2)
 	uv run --no-sync python scripts/run_e_jepa_garl_final.py --profile full --stages train freeze --eap-root "$(EAP_ROOT)" --garlttc-root "$(GARLTTC_ROOT)" --output-root "$(FINETUNE_OUTPUT)" --device auto --resume
 
+jepa-shortcut-audit:
+	uv run --no-sync python scripts/analyze_jepa_semantic_shortcuts.py
+	uv run --no-sync python scripts/analyze_jepa_semantic_shortcuts.py --shortcut-mode frame --output artifacts/metrics/jepa_semantic_shortcut_frame_control_v1.json
+	uv run --no-sync python scripts/aggregate_jepa_semantic_capacity_audit.py
+
 evaluate:
 	uv run --no-sync python scripts/evaluate.py --split $(SPLIT) $(METRICS_JSON)
 

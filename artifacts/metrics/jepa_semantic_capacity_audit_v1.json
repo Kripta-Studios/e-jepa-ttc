@@ -1,0 +1,674 @@
+{
+  "artifact_sha256": "80a503e5d779a1c05a7619122a2354133d3756e6ec3cdb1002d96b09fcf3272d",
+  "artifact_type": "jepa_semantic_capacity_audit_v1",
+  "controlled_results": {
+    "frame_control": {
+      "r2_rate_dependence": {
+        "collapsed_dimension_fraction": {
+          "maximum": 0.0,
+          "mean": 0.0,
+          "minimum": 0.0,
+          "std": 0.0
+        },
+        "dynamic_r2": {
+          "maximum": 0.7832148353289656,
+          "mean": 0.7490893008864988,
+          "minimum": 0.7070515467934314,
+          "std": 0.03159286886821426
+        },
+        "effective_rank": {
+          "maximum": 12.290689468383789,
+          "mean": 12.04986826578776,
+          "minimum": 11.88898754119873,
+          "std": 0.1734627137533945
+        },
+        "latent_tortuosity": {
+          "maximum": 13.235576953572727,
+          "mean": 12.666656976737004,
+          "minimum": 11.618992535255755,
+          "std": 0.7417247882280215
+        },
+        "log_ttc_mae": {
+          "maximum": 0.21187651319588968,
+          "mean": 0.18996529480169888,
+          "minimum": 0.17202060122965346,
+          "std": 0.016511075455354497
+        },
+        "mean_block_shortcut_accuracy": {
+          "maximum": 0.6861359126984127,
+          "mean": 0.6849578373015873,
+          "minimum": 0.6831597222222222,
+          "std": 0.0012917080019841036
+        },
+        "shortcut_bit_accuracy": {
+          "maximum": 0.9196428571428571,
+          "mean": 0.9069940476190476,
+          "minimum": 0.8973214285714286,
+          "std": 0.009352533549089655
+        },
+        "shortcut_duplication_ratio": {
+          "maximum": 1.8439450686641699,
+          "mean": 1.8185000861692762,
+          "minimum": 1.7742316784869976,
+          "std": 0.03141899843870978
+        },
+        "shortcut_to_dynamic_ratio": {
+          "maximum": 1.1870219619658307,
+          "mean": 1.0896764566751664,
+          "minimum": 1.014591171283281,
+          "std": 0.07213289788674239
+        }
+      },
+      "repo_variance": {
+        "collapsed_dimension_fraction": {
+          "maximum": 0.0,
+          "mean": 0.0,
+          "minimum": 0.0,
+          "std": 0.0
+        },
+        "dynamic_r2": {
+          "maximum": 0.8003511156692408,
+          "mean": 0.7416952360715395,
+          "minimum": 0.6932979457991577,
+          "std": 0.04430217666599377
+        },
+        "effective_rank": {
+          "maximum": 13.567169189453125,
+          "mean": 13.445140838623047,
+          "minimum": 13.262986183166504,
+          "std": 0.1312585354924077
+        },
+        "latent_tortuosity": {
+          "maximum": 13.72395035700062,
+          "mean": 13.435283006318572,
+          "minimum": 13.250992051724168,
+          "std": 0.20670947999172892
+        },
+        "log_ttc_mae": {
+          "maximum": 0.22680198511988123,
+          "mean": 0.19285153966116816,
+          "minimum": 0.17579975866533135,
+          "std": 0.02400667159078847
+        },
+        "mean_block_shortcut_accuracy": {
+          "maximum": 0.6820436507936508,
+          "mean": 0.6772900132275131,
+          "minimum": 0.6693948412698413,
+          "std": 0.005621389172455437
+        },
+        "shortcut_bit_accuracy": {
+          "maximum": 0.8499503968253969,
+          "mean": 0.8374669312169312,
+          "minimum": 0.8182043650793651,
+          "std": 0.013818340129281131
+        },
+        "shortcut_duplication_ratio": {
+          "maximum": 2.2883865939204986,
+          "mean": 2.1070479435664837,
+          "minimum": 1.9362154500354358,
+          "std": 0.143965072488017
+        },
+        "shortcut_to_dynamic_ratio": {
+          "maximum": 0.9412873507976466,
+          "mean": 0.9112411971790597,
+          "minimum": 0.8744921821787528,
+          "std": 0.027677847950223395
+        }
+      },
+      "repo_visreg": {
+        "collapsed_dimension_fraction": {
+          "maximum": 0.0,
+          "mean": 0.0,
+          "minimum": 0.0,
+          "std": 0.0
+        },
+        "dynamic_r2": {
+          "maximum": 0.781417907906794,
+          "mean": 0.7522647585439873,
+          "minimum": 0.7357153460878592,
+          "std": 0.020677228653972143
+        },
+        "effective_rank": {
+          "maximum": 14.088059425354004,
+          "mean": 14.02578035990397,
+          "minimum": 13.919207572937012,
+          "std": 0.07571520032563582
+        },
+        "latent_tortuosity": {
+          "maximum": 13.027038950471498,
+          "mean": 12.825960577557256,
+          "minimum": 12.589719789730324,
+          "std": 0.18025779438480174
+        },
+        "log_ttc_mae": {
+          "maximum": 0.22628936641524233,
+          "mean": 0.20538837077001174,
+          "minimum": 0.18343857584647935,
+          "std": 0.017509474540690274
+        },
+        "mean_block_shortcut_accuracy": {
+          "maximum": 0.7033730158730159,
+          "mean": 0.6952711640211641,
+          "minimum": 0.6904141865079365,
+          "std": 0.005766554241683005
+        },
+        "shortcut_bit_accuracy": {
+          "maximum": 0.9439484126984127,
+          "mean": 0.9193121693121693,
+          "minimum": 0.8943452380952381,
+          "std": 0.020251761215744152
+        },
+        "shortcut_duplication_ratio": {
+          "maximum": 1.9477987421383645,
+          "mean": 1.8650709323687353,
+          "minimum": 1.8150118203309695,
+          "std": 0.05892664654405909
+        },
+        "shortcut_to_dynamic_ratio": {
+          "maximum": 1.2004104575246954,
+          "mean": 1.116830799839881,
+          "minimum": 1.0093068871471906,
+          "std": 0.07983374041790071
+        }
+      },
+      "residual_r2": {
+        "collapsed_dimension_fraction": {
+          "maximum": 0.0,
+          "mean": 0.0,
+          "minimum": 0.0,
+          "std": 0.0
+        },
+        "dynamic_r2": {
+          "maximum": 0.19998604192947733,
+          "mean": 0.14734891066009792,
+          "minimum": 0.04929848514879309,
+          "std": 0.06939481446794497
+        },
+        "effective_rank": {
+          "maximum": 12.850703239440918,
+          "mean": 12.76874860127767,
+          "minimum": 12.686927795410156,
+          "std": 0.06686111201678112
+        },
+        "latent_tortuosity": {
+          "maximum": 14.016581600624152,
+          "mean": 13.41722545211428,
+          "minimum": 12.986625019766805,
+          "std": 0.437082378517636
+        },
+        "log_ttc_mae": {
+          "maximum": 0.3708006041252002,
+          "mean": 0.3612816870665803,
+          "minimum": 0.354762779939953,
+          "std": 0.006882489658220386
+        },
+        "mean_block_shortcut_accuracy": {
+          "maximum": 0.6760912698412699,
+          "mean": 0.6715236441798943,
+          "minimum": 0.6676587301587301,
+          "std": 0.003478245162086637
+        },
+        "shortcut_bit_accuracy": {
+          "maximum": 0.890625,
+          "mean": 0.8734292328042329,
+          "minimum": 0.8588789682539683,
+          "std": 0.013094570021973105
+        },
+        "shortcut_duplication_ratio": {
+          "maximum": 1.8686938493434695,
+          "mean": 1.8382259390221893,
+          "minimum": 1.8031746031746032,
+          "std": 0.026943753101606797
+        },
+        "shortcut_to_dynamic_ratio": {
+          "maximum": 14.559431883993872,
+          "mean": 7.437670975153154,
+          "minimum": 3.8470584038732185,
+          "std": 5.035903946051909
+        }
+      },
+      "temporal_residual": {
+        "collapsed_dimension_fraction": {
+          "maximum": 0.0,
+          "mean": 0.0,
+          "minimum": 0.0,
+          "std": 0.0
+        },
+        "dynamic_r2": {
+          "maximum": -0.015123969042042162,
+          "mean": -0.05131626373775866,
+          "minimum": -0.09541683496511788,
+          "std": 0.033252986911563816
+        },
+        "effective_rank": {
+          "maximum": 14.737455368041992,
+          "mean": 14.322839736938477,
+          "minimum": 14.091163635253906,
+          "std": 0.29385189527557987
+        },
+        "latent_tortuosity": {
+          "maximum": 13.23751481156286,
+          "mean": 13.07622671615234,
+          "minimum": 12.89925682860634,
+          "std": 0.138537731832375
+        },
+        "log_ttc_mae": {
+          "maximum": 0.40628608911874814,
+          "mean": 0.40181540507364105,
+          "minimum": 0.3991924556629633,
+          "std": 0.003177053284697386
+        },
+        "mean_block_shortcut_accuracy": {
+          "maximum": 0.6706349206349207,
+          "mean": 0.6629464285714286,
+          "minimum": 0.6575520833333333,
+          "std": 0.00558196442167753
+        },
+        "shortcut_bit_accuracy": {
+          "maximum": 0.8412698412698413,
+          "mean": 0.8291170634920636,
+          "minimum": 0.8201884920634921,
+          "std": 0.008903274716893292
+        },
+        "shortcut_duplication_ratio": {
+          "maximum": 2.0943683409436837,
+          "mean": 1.982665552578115,
+          "minimum": 1.8466569767441858,
+          "std": 0.10257780288391476
+        },
+        "shortcut_to_dynamic_ratio": {
+          "maximum": 682539.6825396826,
+          "mean": 658234.126984127,
+          "minimum": 640376.9841269843,
+          "std": 17806.54943378658
+        }
+      }
+    },
+    "frame_decision": {
+      "baseline_failure_gates": {
+        "collapsed_fraction_at_most_0_20": true,
+        "dynamic_r2_at_most_0_60": false,
+        "shortcut_accuracy_at_least_0_75": true
+      },
+      "benchmark_exposes_semantic_shortcut": false,
+      "combined_promotion_gates": {
+        "collapsed_fraction_at_most_0_20": true,
+        "dynamic_r2_gain_at_least_0_15": false,
+        "log_ttc_mae_reduction_at_least_15pct": false,
+        "shortcut_duplication_reduction_at_least_20pct": false
+      },
+      "r2_lite_passes_synthetic_gate": false,
+      "residual_simplicity_gate": {
+        "residual_ttc_mae_no_more_than_5pct_worse": false,
+        "residual_within_0_03_dynamic_r2_of_combined": false
+      },
+      "scope": "Synthetic mechanistic evidence only; not eAP/EvTTC or SOTA evidence.",
+      "temporal_residual_passes_synthetic_gate": false,
+      "temporal_residual_preferred_for_simplicity": false,
+      "temporal_residual_promotion_gates": {
+        "collapsed_fraction_at_most_0_20": true,
+        "dynamic_r2_gain_at_least_0_15": false,
+        "effective_rank_at_least_4": true,
+        "log_ttc_mae_reduction_at_least_15pct": false,
+        "shortcut_accuracy_reduction_at_least_0_10": false
+      },
+      "verdict": "inconclusive_synthetic_fixture_did_not_expose_predeclared_failure"
+    },
+    "sequence_decision": {
+      "baseline_failure_gates": {
+        "collapsed_fraction_at_most_0_20": true,
+        "dynamic_r2_at_most_0_60": true,
+        "shortcut_accuracy_at_least_0_75": true
+      },
+      "benchmark_exposes_semantic_shortcut": true,
+      "combined_promotion_gates": {
+        "collapsed_fraction_at_most_0_20": true,
+        "dynamic_r2_gain_at_least_0_15": true,
+        "log_ttc_mae_reduction_at_least_15pct": false,
+        "shortcut_duplication_reduction_at_least_20pct": true
+      },
+      "r2_lite_passes_synthetic_gate": false,
+      "residual_simplicity_gate": {
+        "residual_ttc_mae_no_more_than_5pct_worse": true,
+        "residual_within_0_03_dynamic_r2_of_combined": true
+      },
+      "scope": "Synthetic mechanistic evidence only; not eAP/EvTTC or SOTA evidence.",
+      "temporal_residual_passes_synthetic_gate": true,
+      "temporal_residual_preferred_for_simplicity": true,
+      "temporal_residual_promotion_gates": {
+        "collapsed_fraction_at_most_0_20": true,
+        "dynamic_r2_gain_at_least_0_15": true,
+        "effective_rank_at_least_4": true,
+        "log_ttc_mae_reduction_at_least_15pct": true,
+        "shortcut_accuracy_reduction_at_least_0_10": true
+      },
+      "verdict": "reject_full_r2_prefer_temporal_residual_on_synthetic_gate"
+    },
+    "sequence_shortcut": {
+      "r2_rate_dependence": {
+        "collapsed_dimension_fraction": {
+          "maximum": 0.0,
+          "mean": 0.0,
+          "minimum": 0.0,
+          "std": 0.0
+        },
+        "dynamic_r2": {
+          "maximum": 0.3904241915071711,
+          "mean": 0.2911200173665029,
+          "minimum": 0.21808444502536262,
+          "std": 0.07276801785917643
+        },
+        "effective_rank": {
+          "maximum": 11.272603034973145,
+          "mean": 10.82645575205485,
+          "minimum": 10.450851440429688,
+          "std": 0.3391667769528007
+        },
+        "latent_tortuosity": {
+          "maximum": 2.787887690468119,
+          "mean": 2.674875917576461,
+          "minimum": 2.4576328092700543,
+          "std": 0.15365589282667375
+        },
+        "log_ttc_mae": {
+          "maximum": 0.4020634560592985,
+          "mean": 0.3575358110350953,
+          "minimum": 0.332801636051258,
+          "std": 0.03155034093725663
+        },
+        "mean_block_shortcut_accuracy": {
+          "maximum": 0.6923983134920635,
+          "mean": 0.6836350859788359,
+          "minimum": 0.677765376984127,
+          "std": 0.006314535864394268
+        },
+        "shortcut_bit_accuracy": {
+          "maximum": 0.8918650793650794,
+          "mean": 0.8834325396825397,
+          "minimum": 0.8754960317460317,
+          "std": 0.006691834108746075
+        },
+        "shortcut_duplication_ratio": {
+          "maximum": 2.009715025906736,
+          "mean": 1.9165450880072934,
+          "minimum": 1.8145569620253161,
+          "std": 0.07991657235425909
+        },
+        "shortcut_to_dynamic_ratio": {
+          "maximum": 3.511818625046582,
+          "mean": 2.7849073154114845,
+          "minimum": 2.0073811402533535,
+          "std": 0.6152259394573022
+        }
+      },
+      "repo_variance": {
+        "collapsed_dimension_fraction": {
+          "maximum": 0.0,
+          "mean": 0.0,
+          "minimum": 0.0,
+          "std": 0.0
+        },
+        "dynamic_r2": {
+          "maximum": 0.24013910287399876,
+          "mean": 0.15406121392413738,
+          "minimum": 0.0942408780948828,
+          "std": 0.06238946129134031
+        },
+        "effective_rank": {
+          "maximum": 11.762535095214844,
+          "mean": 11.411304473876953,
+          "minimum": 11.008645057678223,
+          "std": 0.30991529797658235
+        },
+        "latent_tortuosity": {
+          "maximum": 3.922366702975809,
+          "mean": 3.54001374798128,
+          "minimum": 2.97692883168652,
+          "std": 0.4065802286499566
+        },
+        "log_ttc_mae": {
+          "maximum": 0.4002671464090226,
+          "mean": 0.38873772926067174,
+          "minimum": 0.3786487823815343,
+          "std": 0.008884241920524828
+        },
+        "mean_block_shortcut_accuracy": {
+          "maximum": 0.6728050595238094,
+          "mean": 0.6642691798941799,
+          "minimum": 0.6575520833333334,
+          "std": 0.006358422212848939
+        },
+        "shortcut_bit_accuracy": {
+          "maximum": 0.8571428571428571,
+          "mean": 0.8406911375661376,
+          "minimum": 0.8214285714285714,
+          "std": 0.014715144009078427
+        },
+        "shortcut_duplication_ratio": {
+          "maximum": 2.0216049382716053,
+          "mean": 1.930559548216488,
+          "minimum": 1.8346570397111917,
+          "std": 0.0763983982980794
+        },
+        "shortcut_to_dynamic_ratio": {
+          "maximum": 7.2898723159421825,
+          "mean": 5.098125269166996,
+          "minimum": 2.9744664893684587,
+          "std": 1.7624147962538075
+        }
+      },
+      "repo_visreg": {
+        "collapsed_dimension_fraction": {
+          "maximum": 0.0,
+          "mean": 0.0,
+          "minimum": 0.0,
+          "std": 0.0
+        },
+        "dynamic_r2": {
+          "maximum": 0.2345053524799856,
+          "mean": 0.20024465421219248,
+          "minimum": 0.182528152348157,
+          "std": 0.024230698976995032
+        },
+        "effective_rank": {
+          "maximum": 12.01511287689209,
+          "mean": 11.915121714274088,
+          "minimum": 11.807108879089355,
+          "std": 0.08510650660028242
+        },
+        "latent_tortuosity": {
+          "maximum": 2.4921923371704473,
+          "mean": 2.441678117788578,
+          "minimum": 2.3688066244310133,
+          "std": 0.052794534450532865
+        },
+        "log_ttc_mae": {
+          "maximum": 0.4063587958897357,
+          "mean": 0.37822989724187667,
+          "minimum": 0.3526058563000465,
+          "std": 0.022015908834731073
+        },
+        "mean_block_shortcut_accuracy": {
+          "maximum": 0.6786334325396826,
+          "mean": 0.6730324074074074,
+          "minimum": 0.666046626984127,
+          "std": 0.005231002385478111
+        },
+        "shortcut_bit_accuracy": {
+          "maximum": 0.9308035714285714,
+          "mean": 0.9245205026455027,
+          "minimum": 0.9203869047619048,
+          "std": 0.004516038453620243
+        },
+        "shortcut_duplication_ratio": {
+          "maximum": 1.6595870206489676,
+          "mean": 1.630237632646751,
+          "minimum": 1.5725190839694656,
+          "std": 0.04081513900063993
+        },
+        "shortcut_to_dynamic_ratio": {
+          "maximum": 4.720406862025865,
+          "mean": 4.301396651770022,
+          "minimum": 3.5853075447204015,
+          "std": 0.5087923729951072
+        }
+      },
+      "residual_r2": {
+        "collapsed_dimension_fraction": {
+          "maximum": 0.0,
+          "mean": 0.0,
+          "minimum": 0.0,
+          "std": 0.0
+        },
+        "dynamic_r2": {
+          "maximum": 0.5212476156292597,
+          "mean": 0.4785919294796588,
+          "minimum": 0.3958916468355419,
+          "std": 0.0584876454724092
+        },
+        "effective_rank": {
+          "maximum": 7.956299304962158,
+          "mean": 7.494051615397136,
+          "minimum": 7.103548526763916,
+          "std": 0.3518109703155704
+        },
+        "latent_tortuosity": {
+          "maximum": 5.74942650845448,
+          "mean": 5.427036741540424,
+          "minimum": 5.048326158910882,
+          "std": 0.28898033467657974
+        },
+        "log_ttc_mae": {
+          "maximum": 0.3867155795967764,
+          "mean": 0.3438559485182194,
+          "minimum": 0.28633258741880274,
+          "std": 0.04227256804157414
+        },
+        "mean_block_shortcut_accuracy": {
+          "maximum": 0.5343501984126984,
+          "mean": 0.5270130621693121,
+          "minimum": 0.5208333333333334,
+          "std": 0.005578596258527202
+        },
+        "shortcut_bit_accuracy": {
+          "maximum": 0.6924603174603174,
+          "mean": 0.675843253968254,
+          "minimum": 0.6674107142857143,
+          "std": 0.011750474523546382
+        },
+        "shortcut_duplication_ratio": {
+          "maximum": 0.8207407407407404,
+          "mean": 0.676076739318875,
+          "minimum": 0.5373711340206181,
+          "std": 0.11576185429997678
+        },
+        "shortcut_to_dynamic_ratio": {
+          "maximum": 0.972287841881482,
+          "mean": 0.7537219294610685,
+          "minimum": 0.6432978305572848,
+          "std": 0.1545522473917758
+        }
+      },
+      "temporal_residual": {
+        "collapsed_dimension_fraction": {
+          "maximum": 0.0,
+          "mean": 0.0,
+          "minimum": 0.0,
+          "std": 0.0
+        },
+        "dynamic_r2": {
+          "maximum": 0.7879693756917722,
+          "mean": 0.7181691122256476,
+          "minimum": 0.6331331246717948,
+          "std": 0.06412311919964797
+        },
+        "effective_rank": {
+          "maximum": 4.453364849090576,
+          "mean": 4.280090967814128,
+          "minimum": 4.126797199249268,
+          "std": 0.13406717509938745
+        },
+        "latent_tortuosity": {
+          "maximum": 4.333301099804058,
+          "mean": 4.186373827641759,
+          "minimum": 4.002465932726248,
+          "std": 0.1375709557240968
+        },
+        "log_ttc_mae": {
+          "maximum": 0.3069276340331828,
+          "mean": 0.2921181525130529,
+          "minimum": 0.27829407857552096,
+          "std": 0.011710348574790022
+        },
+        "mean_block_shortcut_accuracy": {
+          "maximum": 0.5458209325396826,
+          "mean": 0.5386491402116402,
+          "minimum": 0.5285838293650794,
+          "std": 0.007328427231256626
+        },
+        "shortcut_bit_accuracy": {
+          "maximum": 0.6857638888888888,
+          "mean": 0.6521164021164021,
+          "minimum": 0.6150793650793651,
+          "std": 0.028956199851864955
+        },
+        "shortcut_duplication_ratio": {
+          "maximum": 1.4439655172413794,
+          "mean": 1.0552871971087792,
+          "minimum": 0.7352472089314196,
+          "std": 0.2933755563478675
+        },
+        "shortcut_to_dynamic_ratio": {
+          "maximum": 0.49122671463940193,
+          "mean": 0.42551640170631216,
+          "minimum": 0.3138222149115825,
+          "std": 0.07938923781979465
+        }
+      }
+    }
+  },
+  "created_at": "2026-08-02T12:05:36.778926+00:00",
+  "decision": {
+    "full_r2_status": "rejected_for_production",
+    "intact_status": "not_applicable_without_expert_actions",
+    "next_required_experiment": "Implement the missing matched high-resolution JEPA level baseline, then compare level versus level+temporal-residual on the same raw eAP rows and three seeds with frozen probes for expansion, event rate, sequence ID, and TTC; do not add R2/HSIC/CMI before that gate.",
+    "production_change_authorized": false,
+    "real_eap_semantic_collapse_proven": false,
+    "reason": "R2-lite failed its TTC gate. Temporal residuals fixed the planted slow shortcut but harmed the frame-varying control. The existing eAP smoke proves rank deficiency, not which semantic variable occupies the latent.",
+    "temporal_residual_status": "conditional_candidate_for_slow_nuisances",
+    "visreg_alone_status": "does_not_fix_semantic_shortcut_in_controlled_test"
+  },
+  "real_eap_smoke_health": {
+    "context_collapsed_dimension_fraction": 0.03125,
+    "effective_rank": {
+      "context": 2.2552435398101807,
+      "pred": 1.0953665971755981,
+      "target": 5.105221271514893
+    },
+    "effective_rank_fraction": {
+      "context": 0.011746060103178024,
+      "pred": 0.005705034360289574,
+      "target": 0.0265896941224734
+    },
+    "embedding_dim": 192,
+    "rank_deficiency_warning": true,
+    "semantic_diagnosis": "Unavailable: the compact artifact has aggregate rank/std metrics but no embeddings paired with nuisance and dynamic labels.",
+    "semantic_shortcut_confirmed": false,
+    "statistical_collapse_guard_triggered": false
+  },
+  "sources": {
+    "eap_health": {
+      "path": "artifacts/metrics/eap_ssl_smoke_current_seed7_migrated_v4.json",
+      "sha256": "bb565fe9f2cf66aa6b4db94975278adcdd8e9c55ec1c0188fab44b3364c61a83"
+    },
+    "frame_control": {
+      "path": "artifacts/metrics/jepa_semantic_shortcut_frame_control_v1.json",
+      "sha256": "ac496d937b5c3b1be9b7fd35802c2bd368d0d1d2973c258fec266614e21e0f4d"
+    },
+    "sequence_shortcut": {
+      "path": "artifacts/metrics/jepa_semantic_shortcut_benchmark_v1.json",
+      "sha256": "edf8efa639a845d1d228ac43ddf778ff5c0b573de72fc0a5685e5dee74c18368"
+    }
+  },
+  "status": "complete"
+}

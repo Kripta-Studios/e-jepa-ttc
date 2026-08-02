@@ -1,0 +1,756 @@
+{
+  "aggregate": {
+    "r2_rate_dependence": {
+      "collapsed_dimension_fraction": {
+        "maximum": 0.0,
+        "mean": 0.0,
+        "minimum": 0.0,
+        "std": 0.0
+      },
+      "dynamic_r2": {
+        "maximum": 0.3904241915071711,
+        "mean": 0.2911200173665029,
+        "minimum": 0.21808444502536262,
+        "std": 0.07276801785917643
+      },
+      "effective_rank": {
+        "maximum": 11.272603034973145,
+        "mean": 10.82645575205485,
+        "minimum": 10.450851440429688,
+        "std": 0.3391667769528007
+      },
+      "latent_tortuosity": {
+        "maximum": 2.787887690468119,
+        "mean": 2.674875917576461,
+        "minimum": 2.4576328092700543,
+        "std": 0.15365589282667375
+      },
+      "log_ttc_mae": {
+        "maximum": 0.4020634560592985,
+        "mean": 0.3575358110350953,
+        "minimum": 0.332801636051258,
+        "std": 0.03155034093725663
+      },
+      "mean_block_shortcut_accuracy": {
+        "maximum": 0.6923983134920635,
+        "mean": 0.6836350859788359,
+        "minimum": 0.677765376984127,
+        "std": 0.006314535864394268
+      },
+      "shortcut_bit_accuracy": {
+        "maximum": 0.8918650793650794,
+        "mean": 0.8834325396825397,
+        "minimum": 0.8754960317460317,
+        "std": 0.006691834108746075
+      },
+      "shortcut_duplication_ratio": {
+        "maximum": 2.009715025906736,
+        "mean": 1.9165450880072934,
+        "minimum": 1.8145569620253161,
+        "std": 0.07991657235425909
+      },
+      "shortcut_to_dynamic_ratio": {
+        "maximum": 3.511818625046582,
+        "mean": 2.7849073154114845,
+        "minimum": 2.0073811402533535,
+        "std": 0.6152259394573022
+      }
+    },
+    "repo_variance": {
+      "collapsed_dimension_fraction": {
+        "maximum": 0.0,
+        "mean": 0.0,
+        "minimum": 0.0,
+        "std": 0.0
+      },
+      "dynamic_r2": {
+        "maximum": 0.24013910287399876,
+        "mean": 0.15406121392413738,
+        "minimum": 0.0942408780948828,
+        "std": 0.06238946129134031
+      },
+      "effective_rank": {
+        "maximum": 11.762535095214844,
+        "mean": 11.411304473876953,
+        "minimum": 11.008645057678223,
+        "std": 0.30991529797658235
+      },
+      "latent_tortuosity": {
+        "maximum": 3.922366702975809,
+        "mean": 3.54001374798128,
+        "minimum": 2.97692883168652,
+        "std": 0.4065802286499566
+      },
+      "log_ttc_mae": {
+        "maximum": 0.4002671464090226,
+        "mean": 0.38873772926067174,
+        "minimum": 0.3786487823815343,
+        "std": 0.008884241920524828
+      },
+      "mean_block_shortcut_accuracy": {
+        "maximum": 0.6728050595238094,
+        "mean": 0.6642691798941799,
+        "minimum": 0.6575520833333334,
+        "std": 0.006358422212848939
+      },
+      "shortcut_bit_accuracy": {
+        "maximum": 0.8571428571428571,
+        "mean": 0.8406911375661376,
+        "minimum": 0.8214285714285714,
+        "std": 0.014715144009078427
+      },
+      "shortcut_duplication_ratio": {
+        "maximum": 2.0216049382716053,
+        "mean": 1.930559548216488,
+        "minimum": 1.8346570397111917,
+        "std": 0.0763983982980794
+      },
+      "shortcut_to_dynamic_ratio": {
+        "maximum": 7.2898723159421825,
+        "mean": 5.098125269166996,
+        "minimum": 2.9744664893684587,
+        "std": 1.7624147962538075
+      }
+    },
+    "repo_visreg": {
+      "collapsed_dimension_fraction": {
+        "maximum": 0.0,
+        "mean": 0.0,
+        "minimum": 0.0,
+        "std": 0.0
+      },
+      "dynamic_r2": {
+        "maximum": 0.2345053524799856,
+        "mean": 0.20024465421219248,
+        "minimum": 0.182528152348157,
+        "std": 0.024230698976995032
+      },
+      "effective_rank": {
+        "maximum": 12.01511287689209,
+        "mean": 11.915121714274088,
+        "minimum": 11.807108879089355,
+        "std": 0.08510650660028242
+      },
+      "latent_tortuosity": {
+        "maximum": 2.4921923371704473,
+        "mean": 2.441678117788578,
+        "minimum": 2.3688066244310133,
+        "std": 0.052794534450532865
+      },
+      "log_ttc_mae": {
+        "maximum": 0.4063587958897357,
+        "mean": 0.37822989724187667,
+        "minimum": 0.3526058563000465,
+        "std": 0.022015908834731073
+      },
+      "mean_block_shortcut_accuracy": {
+        "maximum": 0.6786334325396826,
+        "mean": 0.6730324074074074,
+        "minimum": 0.666046626984127,
+        "std": 0.005231002385478111
+      },
+      "shortcut_bit_accuracy": {
+        "maximum": 0.9308035714285714,
+        "mean": 0.9245205026455027,
+        "minimum": 0.9203869047619048,
+        "std": 0.004516038453620243
+      },
+      "shortcut_duplication_ratio": {
+        "maximum": 1.6595870206489676,
+        "mean": 1.630237632646751,
+        "minimum": 1.5725190839694656,
+        "std": 0.04081513900063993
+      },
+      "shortcut_to_dynamic_ratio": {
+        "maximum": 4.720406862025865,
+        "mean": 4.301396651770022,
+        "minimum": 3.5853075447204015,
+        "std": 0.5087923729951072
+      }
+    },
+    "residual_r2": {
+      "collapsed_dimension_fraction": {
+        "maximum": 0.0,
+        "mean": 0.0,
+        "minimum": 0.0,
+        "std": 0.0
+      },
+      "dynamic_r2": {
+        "maximum": 0.5212476156292597,
+        "mean": 0.4785919294796588,
+        "minimum": 0.3958916468355419,
+        "std": 0.0584876454724092
+      },
+      "effective_rank": {
+        "maximum": 7.956299304962158,
+        "mean": 7.494051615397136,
+        "minimum": 7.103548526763916,
+        "std": 0.3518109703155704
+      },
+      "latent_tortuosity": {
+        "maximum": 5.74942650845448,
+        "mean": 5.427036741540424,
+        "minimum": 5.048326158910882,
+        "std": 0.28898033467657974
+      },
+      "log_ttc_mae": {
+        "maximum": 0.3867155795967764,
+        "mean": 0.3438559485182194,
+        "minimum": 0.28633258741880274,
+        "std": 0.04227256804157414
+      },
+      "mean_block_shortcut_accuracy": {
+        "maximum": 0.5343501984126984,
+        "mean": 0.5270130621693121,
+        "minimum": 0.5208333333333334,
+        "std": 0.005578596258527202
+      },
+      "shortcut_bit_accuracy": {
+        "maximum": 0.6924603174603174,
+        "mean": 0.675843253968254,
+        "minimum": 0.6674107142857143,
+        "std": 0.011750474523546382
+      },
+      "shortcut_duplication_ratio": {
+        "maximum": 0.8207407407407404,
+        "mean": 0.676076739318875,
+        "minimum": 0.5373711340206181,
+        "std": 0.11576185429997678
+      },
+      "shortcut_to_dynamic_ratio": {
+        "maximum": 0.972287841881482,
+        "mean": 0.7537219294610685,
+        "minimum": 0.6432978305572848,
+        "std": 0.1545522473917758
+      }
+    },
+    "temporal_residual": {
+      "collapsed_dimension_fraction": {
+        "maximum": 0.0,
+        "mean": 0.0,
+        "minimum": 0.0,
+        "std": 0.0
+      },
+      "dynamic_r2": {
+        "maximum": 0.7879693756917722,
+        "mean": 0.7181691122256476,
+        "minimum": 0.6331331246717948,
+        "std": 0.06412311919964797
+      },
+      "effective_rank": {
+        "maximum": 4.453364849090576,
+        "mean": 4.280090967814128,
+        "minimum": 4.126797199249268,
+        "std": 0.13406717509938745
+      },
+      "latent_tortuosity": {
+        "maximum": 4.333301099804058,
+        "mean": 4.186373827641759,
+        "minimum": 4.002465932726248,
+        "std": 0.1375709557240968
+      },
+      "log_ttc_mae": {
+        "maximum": 0.3069276340331828,
+        "mean": 0.2921181525130529,
+        "minimum": 0.27829407857552096,
+        "std": 0.011710348574790022
+      },
+      "mean_block_shortcut_accuracy": {
+        "maximum": 0.5458209325396826,
+        "mean": 0.5386491402116402,
+        "minimum": 0.5285838293650794,
+        "std": 0.007328427231256626
+      },
+      "shortcut_bit_accuracy": {
+        "maximum": 0.6857638888888888,
+        "mean": 0.6521164021164021,
+        "minimum": 0.6150793650793651,
+        "std": 0.028956199851864955
+      },
+      "shortcut_duplication_ratio": {
+        "maximum": 1.4439655172413794,
+        "mean": 1.0552871971087792,
+        "minimum": 0.7352472089314196,
+        "std": 0.2933755563478675
+      },
+      "shortcut_to_dynamic_ratio": {
+        "maximum": 0.49122671463940193,
+        "mean": 0.42551640170631216,
+        "minimum": 0.3138222149115825,
+        "std": 0.07938923781979465
+      }
+    }
+  },
+  "arms": [
+    "repo_variance",
+    "repo_visreg",
+    "temporal_residual",
+    "r2_rate_dependence",
+    "residual_r2"
+  ],
+  "artifact_sha256": "0725f0e690b6b6444f75d59afbe3cfbd151f42131dd4126acd474f81b408aec5",
+  "artifact_type": "jepa_semantic_shortcut_benchmark_v1",
+  "config": {
+    "batch_size": 128,
+    "block_size": 4,
+    "dependence_weight": 0.05,
+    "dynamic_strength": 1.0,
+    "ema_momentum": 0.99,
+    "epochs": 80,
+    "hidden_dim": 96,
+    "input_dim": 48,
+    "latent_dim": 16,
+    "learning_rate": 0.001,
+    "observation_noise_std": 0.08,
+    "process_noise_std": 0.004,
+    "rate_capacity_nats": 3.0,
+    "rate_weight": 0.02,
+    "regularizer_weight": 0.25,
+    "rff_features": 24,
+    "ridge_alpha": 0.01,
+    "shortcut_bits": 12,
+    "shortcut_mode": "sequence",
+    "shortcut_strength": 2.5,
+    "steps_per_sequence": 14,
+    "test_sequences": 24,
+    "train_sequences": 48,
+    "variance_floor": 0.35,
+    "weight_decay": 0.0001
+  },
+  "created_at": "2026-08-02T12:00:50.466346+00:00",
+  "decision": {
+    "baseline_failure_gates": {
+      "collapsed_fraction_at_most_0_20": true,
+      "dynamic_r2_at_most_0_60": true,
+      "shortcut_accuracy_at_least_0_75": true
+    },
+    "benchmark_exposes_semantic_shortcut": true,
+    "combined_promotion_gates": {
+      "collapsed_fraction_at_most_0_20": true,
+      "dynamic_r2_gain_at_least_0_15": true,
+      "log_ttc_mae_reduction_at_least_15pct": false,
+      "shortcut_duplication_reduction_at_least_20pct": true
+    },
+    "r2_lite_passes_synthetic_gate": false,
+    "residual_simplicity_gate": {
+      "residual_ttc_mae_no_more_than_5pct_worse": true,
+      "residual_within_0_03_dynamic_r2_of_combined": true
+    },
+    "scope": "Synthetic mechanistic evidence only; not eAP/EvTTC or SOTA evidence.",
+    "temporal_residual_passes_synthetic_gate": true,
+    "temporal_residual_preferred_for_simplicity": true,
+    "temporal_residual_promotion_gates": {
+      "collapsed_fraction_at_most_0_20": true,
+      "dynamic_r2_gain_at_least_0_15": true,
+      "effective_rank_at_least_4": true,
+      "log_ttc_mae_reduction_at_least_15pct": true,
+      "shortcut_accuracy_reduction_at_least_0_10": true
+    },
+    "verdict": "reject_full_r2_prefer_temporal_residual_on_synthetic_gate"
+  },
+  "device": "cuda",
+  "elapsed_seconds": 98.32189229998039,
+  "evidence_scope": "synthetic_mechanistic_only",
+  "git_commit": "cbdf54c1fb7162b84cbd4441f06d9c4e084e7898",
+  "gpu_name": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+  "runs": [
+    {
+      "arm": "repo_variance",
+      "epochs": 80,
+      "last_train": {
+        "dependence_loss": 0.0,
+        "loss": 0.0009808468457777053,
+        "mean_block_rate_nats": 0.0,
+        "prediction_loss": 0.00043305711975942057,
+        "rate_penalty": 0.0,
+        "regularization_loss": 0.0021911589428782463
+      },
+      "probes": {
+        "collapsed_dimension_fraction": 0.0,
+        "dynamic_r2": 0.0942408780948828,
+        "effective_rank": 11.462733268737793,
+        "latent_tortuosity": 3.922366702975809,
+        "log_ttc_mae": 0.3786487823815343,
+        "mean_block_shortcut_accuracy": 0.6575520833333334,
+        "shortcut_bit_accuracy": 0.8435019841269841,
+        "shortcut_duplication_ratio": 1.8346570397111917,
+        "shortcut_to_dynamic_ratio": 7.2898723159421825
+      },
+      "seed": 7,
+      "test_pair_count": 336,
+      "train_pair_count": 672
+    },
+    {
+      "arm": "repo_variance",
+      "epochs": 80,
+      "last_train": {
+        "dependence_loss": 0.0,
+        "loss": 0.0010414663605236758,
+        "mean_block_rate_nats": 0.0,
+        "prediction_loss": 0.000682077748933807,
+        "rate_penalty": 0.0,
+        "regularization_loss": 0.00143755452396969
+      },
+      "probes": {
+        "collapsed_dimension_fraction": 0.0,
+        "dynamic_r2": 0.24013910287399876,
+        "effective_rank": 11.762535095214844,
+        "latent_tortuosity": 2.97692883168652,
+        "log_ttc_mae": 0.38729725899145817,
+        "mean_block_shortcut_accuracy": 0.6728050595238094,
+        "shortcut_bit_accuracy": 0.8571428571428571,
+        "shortcut_duplication_ratio": 1.9354166666666663,
+        "shortcut_to_dynamic_ratio": 2.9744664893684587
+      },
+      "seed": 13,
+      "test_pair_count": 336,
+      "train_pair_count": 672
+    },
+    {
+      "arm": "repo_variance",
+      "epochs": 80,
+      "last_train": {
+        "dependence_loss": 0.0,
+        "loss": 0.0011070567027976115,
+        "mean_block_rate_nats": 0.0,
+        "prediction_loss": 0.0005467346830603977,
+        "rate_penalty": 0.0,
+        "regularization_loss": 0.0022412880013386407
+      },
+      "probes": {
+        "collapsed_dimension_fraction": 0.0,
+        "dynamic_r2": 0.12780366080353056,
+        "effective_rank": 11.008645057678223,
+        "latent_tortuosity": 3.7207457092815104,
+        "log_ttc_mae": 0.4002671464090226,
+        "mean_block_shortcut_accuracy": 0.6624503968253969,
+        "shortcut_bit_accuracy": 0.8214285714285714,
+        "shortcut_duplication_ratio": 2.0216049382716053,
+        "shortcut_to_dynamic_ratio": 5.030037002190347
+      },
+      "seed": 23,
+      "test_pair_count": 336,
+      "train_pair_count": 672
+    },
+    {
+      "arm": "repo_visreg",
+      "epochs": 80,
+      "last_train": {
+        "dependence_loss": 0.0,
+        "loss": 0.01805362105369568,
+        "mean_block_rate_nats": 0.0,
+        "prediction_loss": 0.0032352281656737127,
+        "rate_penalty": 0.0,
+        "regularization_loss": 0.05927357139686743
+      },
+      "probes": {
+        "collapsed_dimension_fraction": 0.0,
+        "dynamic_r2": 0.2345053524799856,
+        "effective_rank": 11.92314338684082,
+        "latent_tortuosity": 2.4921923371704473,
+        "log_ttc_mae": 0.3526058563000465,
+        "mean_block_shortcut_accuracy": 0.6744171626984127,
+        "shortcut_bit_accuracy": 0.9203869047619048,
+        "shortcut_duplication_ratio": 1.6595870206489676,
+        "shortcut_to_dynamic_ratio": 3.5853075447204015
+      },
+      "seed": 7,
+      "test_pair_count": 336,
+      "train_pair_count": 672
+    },
+    {
+      "arm": "repo_visreg",
+      "epochs": 80,
+      "last_train": {
+        "dependence_loss": 0.0,
+        "loss": 0.01856693361575405,
+        "mean_block_rate_nats": 0.0,
+        "prediction_loss": 0.003302396430323521,
+        "rate_penalty": 0.0,
+        "regularization_loss": 0.06105814812084039
+      },
+      "probes": {
+        "collapsed_dimension_fraction": 0.0,
+        "dynamic_r2": 0.1837004578084348,
+        "effective_rank": 11.807108879089355,
+        "latent_tortuosity": 2.3688066244310133,
+        "log_ttc_mae": 0.37572503953584774,
+        "mean_block_shortcut_accuracy": 0.666046626984127,
+        "shortcut_bit_accuracy": 0.9223710317460317,
+        "shortcut_duplication_ratio": 1.5725190839694656,
+        "shortcut_to_dynamic_ratio": 4.5984755485638
+      },
+      "seed": 13,
+      "test_pair_count": 336,
+      "train_pair_count": 672
+    },
+    {
+      "arm": "repo_visreg",
+      "epochs": 80,
+      "last_train": {
+        "dependence_loss": 0.0,
+        "loss": 0.01794822607189417,
+        "mean_block_rate_nats": 0.0,
+        "prediction_loss": 0.003344698886697491,
+        "rate_penalty": 0.0,
+        "regularization_loss": 0.058414107809464134
+      },
+      "probes": {
+        "collapsed_dimension_fraction": 0.0,
+        "dynamic_r2": 0.182528152348157,
+        "effective_rank": 12.01511287689209,
+        "latent_tortuosity": 2.464035391764273,
+        "log_ttc_mae": 0.4063587958897357,
+        "mean_block_shortcut_accuracy": 0.6786334325396826,
+        "shortcut_bit_accuracy": 0.9308035714285714,
+        "shortcut_duplication_ratio": 1.6586067933218196,
+        "shortcut_to_dynamic_ratio": 4.720406862025865
+      },
+      "seed": 23,
+      "test_pair_count": 336,
+      "train_pair_count": 672
+    },
+    {
+      "arm": "temporal_residual",
+      "epochs": 80,
+      "last_train": {
+        "dependence_loss": 0.0,
+        "loss": 0.04916541837155819,
+        "mean_block_rate_nats": 0.0,
+        "prediction_loss": 0.043464753155907,
+        "rate_penalty": 0.0,
+        "regularization_loss": 0.022802660862604778
+      },
+      "probes": {
+        "collapsed_dimension_fraction": 0.0,
+        "dynamic_r2": 0.6331331246717948,
+        "effective_rank": 4.260110855102539,
+        "latent_tortuosity": 4.223354450394971,
+        "log_ttc_mae": 0.291132744930455,
+        "mean_block_shortcut_accuracy": 0.5285838293650794,
+        "shortcut_bit_accuracy": 0.6555059523809523,
+        "shortcut_duplication_ratio": 0.7352472089314196,
+        "shortcut_to_dynamic_ratio": 0.49122671463940193
+      },
+      "seed": 7,
+      "test_pair_count": 336,
+      "train_pair_count": 672
+    },
+    {
+      "arm": "temporal_residual",
+      "epochs": 80,
+      "last_train": {
+        "dependence_loss": 0.0,
+        "loss": 0.050496517370144524,
+        "mean_block_rate_nats": 0.0,
+        "prediction_loss": 0.045575832948088646,
+        "rate_penalty": 0.0,
+        "regularization_loss": 0.019682742034395535
+      },
+      "probes": {
+        "collapsed_dimension_fraction": 0.0,
+        "dynamic_r2": 0.7334048363133758,
+        "effective_rank": 4.453364849090576,
+        "latent_tortuosity": 4.333301099804058,
+        "log_ttc_mae": 0.27829407857552096,
+        "mean_block_shortcut_accuracy": 0.5415426587301587,
+        "shortcut_bit_accuracy": 0.6150793650793651,
+        "shortcut_duplication_ratio": 1.4439655172413794,
+        "shortcut_to_dynamic_ratio": 0.3138222149115825
+      },
+      "seed": 13,
+      "test_pair_count": 336,
+      "train_pair_count": 672
+    },
+    {
+      "arm": "temporal_residual",
+      "epochs": 80,
+      "last_train": {
+        "dependence_loss": 0.0,
+        "loss": 0.04831845499575138,
+        "mean_block_rate_nats": 0.0,
+        "prediction_loss": 0.04262413705388705,
+        "rate_penalty": 0.0,
+        "regularization_loss": 0.022777273785322905
+      },
+      "probes": {
+        "collapsed_dimension_fraction": 0.0,
+        "dynamic_r2": 0.7879693756917722,
+        "effective_rank": 4.126797199249268,
+        "latent_tortuosity": 4.002465932726248,
+        "log_ttc_mae": 0.3069276340331828,
+        "mean_block_shortcut_accuracy": 0.5458209325396826,
+        "shortcut_bit_accuracy": 0.6857638888888888,
+        "shortcut_duplication_ratio": 0.9866488651535387,
+        "shortcut_to_dynamic_ratio": 0.471500275567952
+      },
+      "seed": 23,
+      "test_pair_count": 336,
+      "train_pair_count": 672
+    },
+    {
+      "arm": "r2_rate_dependence",
+      "epochs": 80,
+      "last_train": {
+        "dependence_loss": 4.8647786267489813e-05,
+        "loss": 0.04950574412941933,
+        "mean_block_rate_nats": 3.4170142809549966,
+        "prediction_loss": 0.03490098938345909,
+        "rate_penalty": 0.1850578859448433,
+        "regularization_loss": 0.04360466077923775
+      },
+      "probes": {
+        "collapsed_dimension_fraction": 0.0,
+        "dynamic_r2": 0.264851415566975,
+        "effective_rank": 10.755912780761719,
+        "latent_tortuosity": 2.77910725299121,
+        "log_ttc_mae": 0.33774234099472933,
+        "mean_block_shortcut_accuracy": 0.6807415674603176,
+        "shortcut_bit_accuracy": 0.8754960317460317,
+        "shortcut_duplication_ratio": 1.9253632760898285,
+        "shortcut_to_dynamic_ratio": 2.8355221809345186
+      },
+      "seed": 7,
+      "test_pair_count": 336,
+      "train_pair_count": 672
+    },
+    {
+      "arm": "r2_rate_dependence",
+      "epochs": 80,
+      "last_train": {
+        "dependence_loss": 4.289176225332388e-05,
+        "loss": 0.048925239592790604,
+        "mean_block_rate_nats": 3.4598953326543174,
+        "prediction_loss": 0.03402014449238777,
+        "rate_penalty": 0.22109526147445044,
+        "regularization_loss": 0.04192418201516072
+      },
+      "probes": {
+        "collapsed_dimension_fraction": 0.0,
+        "dynamic_r2": 0.21808444502536262,
+        "effective_rank": 10.450851440429688,
+        "latent_tortuosity": 2.4576328092700543,
+        "log_ttc_mae": 0.4020634560592985,
+        "mean_block_shortcut_accuracy": 0.6923983134920635,
+        "shortcut_bit_accuracy": 0.8829365079365079,
+        "shortcut_duplication_ratio": 2.009715025906736,
+        "shortcut_to_dynamic_ratio": 3.511818625046582
+      },
+      "seed": 13,
+      "test_pair_count": 336,
+      "train_pair_count": 672
+    },
+    {
+      "arm": "r2_rate_dependence",
+      "epochs": 80,
+      "last_train": {
+        "dependence_loss": 4.1559750267576114e-05,
+        "loss": 0.046389213452736534,
+        "mean_block_rate_nats": 3.432245413462321,
+        "prediction_loss": 0.03210111986845732,
+        "rate_penalty": 0.20137563099463782,
+        "regularization_loss": 0.0410340071345369
+      },
+      "probes": {
+        "collapsed_dimension_fraction": 0.0,
+        "dynamic_r2": 0.3904241915071711,
+        "effective_rank": 11.272603034973145,
+        "latent_tortuosity": 2.787887690468119,
+        "log_ttc_mae": 0.332801636051258,
+        "mean_block_shortcut_accuracy": 0.677765376984127,
+        "shortcut_bit_accuracy": 0.8918650793650794,
+        "shortcut_duplication_ratio": 1.8145569620253161,
+        "shortcut_to_dynamic_ratio": 2.0073811402533535
+      },
+      "seed": 23,
+      "test_pair_count": 336,
+      "train_pair_count": 672
+    },
+    {
+      "arm": "residual_r2",
+      "epochs": 80,
+      "last_train": {
+        "dependence_loss": 3.8998338823148515e-05,
+        "loss": 0.250686451792717,
+        "mean_block_rate_nats": 3.1407641172409058,
+        "prediction_loss": 0.2379078964392344,
+        "rate_penalty": 0.05643864053611954,
+        "regularization_loss": 0.046591345220804214
+      },
+      "probes": {
+        "collapsed_dimension_fraction": 0.0,
+        "dynamic_r2": 0.5186365259741749,
+        "effective_rank": 7.956299304962158,
+        "latent_tortuosity": 5.74942650845448,
+        "log_ttc_mae": 0.28633258741880274,
+        "mean_block_shortcut_accuracy": 0.5343501984126984,
+        "shortcut_bit_accuracy": 0.6674107142857143,
+        "shortcut_duplication_ratio": 0.8207407407407404,
+        "shortcut_to_dynamic_ratio": 0.6455801159444385
+      },
+      "seed": 7,
+      "test_pair_count": 336,
+      "train_pair_count": 672
+    },
+    {
+      "arm": "residual_r2",
+      "epochs": 80,
+      "last_train": {
+        "dependence_loss": 3.6203042024377886e-05,
+        "loss": 0.2640482907493909,
+        "mean_block_rate_nats": 3.292931079864502,
+        "prediction_loss": 0.25032762934764224,
+        "rate_penalty": 0.1140151210129261,
+        "regularization_loss": 0.04575416259467602
+      },
+      "probes": {
+        "collapsed_dimension_fraction": 0.0,
+        "dynamic_r2": 0.5212476156292597,
+        "effective_rank": 7.422307014465332,
+        "latent_tortuosity": 5.048326158910882,
+        "log_ttc_mae": 0.35851967853907896,
+        "mean_block_shortcut_accuracy": 0.5208333333333334,
+        "shortcut_bit_accuracy": 0.6676587301587301,
+        "shortcut_duplication_ratio": 0.6701183431952664,
+        "shortcut_to_dynamic_ratio": 0.6432978305572848
+      },
+      "seed": 13,
+      "test_pair_count": 336,
+      "train_pair_count": 672
+    },
+    {
+      "arm": "residual_r2",
+      "epochs": 80,
+      "last_train": {
+        "dependence_loss": 3.2848750682508886e-05,
+        "loss": 0.24434983730316162,
+        "mean_block_rate_nats": 3.230040947596232,
+        "prediction_loss": 0.23293292025725046,
+        "rate_penalty": 0.09722984147568543,
+        "regularization_loss": 0.037882727260390915
+      },
+      "probes": {
+        "collapsed_dimension_fraction": 0.0,
+        "dynamic_r2": 0.3958916468355419,
+        "effective_rank": 7.103548526763916,
+        "latent_tortuosity": 5.48335755725591,
+        "log_ttc_mae": 0.3867155795967764,
+        "mean_block_shortcut_accuracy": 0.5258556547619047,
+        "shortcut_bit_accuracy": 0.6924603174603174,
+        "shortcut_duplication_ratio": 0.5373711340206181,
+        "shortcut_to_dynamic_ratio": 0.972287841881482
+      },
+      "seed": 23,
+      "test_pair_count": 336,
+      "train_pair_count": 672
+    }
+  ],
+  "seeds": [
+    7,
+    13,
+    23
+  ],
+  "status": "complete",
+  "uses_real_dataset": false,
+  "uses_ttc_labels_for_representation_training": false
+}
