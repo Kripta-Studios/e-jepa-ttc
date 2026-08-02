@@ -80,6 +80,16 @@ def _provenance() -> LabelFreeManifestProvenance:
     )
 
 
+def test_seed_controls_complete_model_initialization() -> None:
+    config = EAPHighResJEPATrainerConfig(model=_model_config(), seed=7, total_updates=1)
+    torch.manual_seed(1234)
+    first = EAPHighResJEPATrainer(config)
+    torch.manual_seed(9876)
+    second = EAPHighResJEPATrainer(config)
+    for key, value in first.model.state_dict().items():
+        assert torch.equal(value, second.model.state_dict()[key]), key
+
+
 def test_label_key_rejection_and_nce_preflight_happen_before_optimizer_step() -> None:
     with pytest.raises(ValueError, match="prohibited label-family key"):
         LabelFreeBatch.from_mapping(

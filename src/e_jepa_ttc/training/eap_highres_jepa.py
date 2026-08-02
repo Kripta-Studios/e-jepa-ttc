@@ -464,6 +464,11 @@ class EAPHighResJEPATrainer:
     ) -> None:
         self.config = config or EAPHighResJEPATrainerConfig()
         self.device = torch.device(device)
+        random.seed(self.config.seed)
+        np.random.seed(self.config.seed)
+        torch.manual_seed(self.config.seed)
+        if torch.cuda.is_available():
+            torch.cuda.manual_seed_all(self.config.seed)
         self.autocast_enabled, self.autocast_dtype = _resolve_precision_runtime(
             self.config.precision,
             self.device,
