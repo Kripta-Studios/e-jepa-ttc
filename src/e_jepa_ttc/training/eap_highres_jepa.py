@@ -432,10 +432,12 @@ def _restore_rng_state(state: Mapping[str, Any], generator: torch.Generator) -> 
         raise ValueError(f"Resume checkpoint RNG state is incomplete: {missing}")
     random.setstate(cast(tuple[Any, ...], state["python"]))
     np.random.set_state(cast(tuple[Any, ...], state["numpy"]))
-    torch.set_rng_state(cast(torch.Tensor, state["torch"]))
-    generator.set_state(cast(torch.Tensor, state["visreg_generator"]))
+    torch.set_rng_state(cast(torch.Tensor, state["torch"]).cpu())
+    generator.set_state(cast(torch.Tensor, state["visreg_generator"]).cpu())
     if "cuda" in state and torch.cuda.is_available():
-        torch.cuda.set_rng_state_all(cast(list[torch.Tensor], state["cuda"]))
+        torch.cuda.set_rng_state_all(
+            [tensor.cpu() for tensor in cast(list[torch.Tensor], state["cuda"])]
+        )
 
 
 def _masked_patch_pool(

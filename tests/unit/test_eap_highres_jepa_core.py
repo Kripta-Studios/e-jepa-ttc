@@ -44,6 +44,18 @@ def _model_config() -> DenseLevelDynamicsConfig:
     )
 
 
+@pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA regression")
+def test_rng_restore_normalizes_cuda_mapped_checkpoint_tensors_to_cpu() -> None:
+    generator = torch.Generator(device="cuda")
+    generator.manual_seed(7)
+    state = eap_highres_jepa._capture_rng_state(generator)
+    mapped = dict(state)
+    mapped["torch"] = state["torch"].cuda()
+    mapped["visreg_generator"] = state["visreg_generator"].cuda()
+    mapped["cuda"] = [tensor.cuda() for tensor in state["cuda"]]
+    eap_highres_jepa._restore_rng_state(mapped, generator)
+
+
 def _batch() -> LabelFreeBatch:
     torch.manual_seed(99)
     return LabelFreeBatch(
