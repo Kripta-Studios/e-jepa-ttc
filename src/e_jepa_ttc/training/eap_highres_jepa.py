@@ -10,7 +10,8 @@ from __future__ import annotations
 import hashlib
 import json
 import random
-from collections.abc import Iterable, Iterator, Mapping, Sequence
+from collections.abc import Generator, Iterable, Iterator, Mapping, Sequence
+from contextlib import contextmanager
 from dataclasses import asdict, dataclass, field
 from itertools import islice
 from pathlib import Path
@@ -367,6 +368,51 @@ def _config_hash(config: EAPHighResJEPATrainerConfig) -> str:
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
 
+def _resolve_precision_runtime(
+    precision: str,
+    device: torch.device,
+) -> tuple[bool, torch.dtype | None]:
+    """Return a supported autocast policy or fail before model allocation.
+
+    CPU BF16 is supported for the bounded path. FP16 is deliberately CUDA-only
+    because its GradScaler contract is not portable to CPU or other backends.
+    Unsupported pairings fail closed rather than silently executing in FP32.
+    """
+
+    if precision == "fp32":
+        return False, None
+    if device.type == "cpu":
+        if precision == "bf16":
+            return True, torch.bfloat16
+        raise ValueError("FP16 Dense Level-Dynamics training requires a CUDA device.")
+    if device.type != "cuda":
+        raise ValueError(
+            f"Dense Level-Dynamics precision {precision!r} is unsupported on device type "
+            f"{device.type!r}; use fp32 or a supported CPU/CUDA pairing."
+        )
+    if not torch.cuda.is_available():
+        raise ValueError("CUDA precision was requested but CUDA is unavailable.")
+    if precision == "bf16":
+        if not torch.cuda.is_bf16_supported():
+            raise ValueError("BF16 Dense Level-Dynamics training requires CUDA BF16 support.")
+        return True, torch.bfloat16
+    if precision == "fp16":
+        return True, torch.float16
+    raise ValueError(f"Unsupported Dense Level-Dynamics precision: {precision!r}.")
+
+
+def _autocast_dtype_name(dtype: torch.dtype | None) -> str | None:
+    """Serialize the exact autocast dtype independently of device-specific reprs."""
+
+    if dtype is None:
+        return None
+    if dtype == torch.bfloat16:
+        return "bfloat16"
+    if dtype == torch.float16:
+        return "float16"
+    raise ValueError(f"Unsupported autocast dtype in checkpoint semantics: {dtype!r}.")
+
+
 def _capture_rng_state(generator: torch.Generator) -> dict[str, Any]:
     state: dict[str, Any] = {
         "python": random.getstate(),
@@ -416,6 +462,10 @@ class EAPHighResJEPATrainer:
     ) -> None:
         self.config = config or EAPHighResJEPATrainerConfig()
         self.device = torch.device(device)
+        self.autocast_enabled, self.autocast_dtype = _resolve_precision_runtime(
+            self.config.precision,
+            self.device,
+        )
         self.model = (model or DenseLevelDynamicsJEPA(self.config.model)).to(self.device)
         if self.model.config != self.config.model:
             raise ValueError("Trainer/model DenseLevelDynamicsConfig must match exactly.")
@@ -429,6 +479,11 @@ class EAPHighResJEPATrainer:
             self.optimizer,
             lr_lambda=lambda _: 1.0,
         )
+        self.grad_scaler = (
+            torch.amp.GradScaler(device=self.device.type, enabled=True)
+            if self.config.precision == "fp16"
+            else None
+        )
         self.visreg_generator = torch.Generator(device=self.device.type)
         self.visreg_generator.manual_seed(self.config.seed)
         self.epoch = 0
@@ -441,6 +496,53 @@ class EAPHighResJEPATrainer:
             "last_level_std": None,
             "last_dynamics_std": None,
         }
+
+    @contextmanager
+    def _autocast_context(self) -> Generator[None, None, None]:
+        """Apply the configured precision policy around forward and objective work."""
+
+        if not self.autocast_enabled:
+            yield
+            return
+        dtype = self.autocast_dtype
+        if dtype is None:  # pragma: no cover - guarded by _resolve_precision_runtime
+            raise RuntimeError("Enabled autocast requires an explicit supported dtype.")
+        with torch.autocast(device_type=self.device.type, dtype=dtype, enabled=True):
+            yield
+
+    def _precision_checkpoint_semantics(self) -> dict[str, Any]:
+        """Return resume-critical precision/device metadata for fail-closed loading."""
+
+        return {
+            "precision": self.config.precision,
+            "precision_device_type": self.device.type,
+            "autocast_dtype": _autocast_dtype_name(self.autocast_dtype),
+            "grad_scaler_enabled": self.grad_scaler is not None,
+        }
+
+    def _restore_precision_checkpoint_state(self, payload: Mapping[str, Any]) -> None:
+        """Restore only matching precision semantics and the FP16 scaler state."""
+
+        expected = self._precision_checkpoint_semantics()
+        mismatches = {
+            key: {"expected": expected[key], "received": payload.get(key)}
+            for key in expected
+            if payload.get(key) != expected[key]
+        }
+        if mismatches:
+            raise ValueError(
+                "Resume checkpoint precision/device semantics differ: " + repr(mismatches)
+            )
+        scaler_state = payload.get("grad_scaler_state_dict")
+        if self.grad_scaler is None:
+            if scaler_state is not None:
+                raise ValueError(
+                    "Resume checkpoint contains GradScaler state for a non-FP16 trainer."
+                )
+            return
+        if not isinstance(scaler_state, Mapping):
+            raise ValueError("FP16 resume checkpoint lacks grad_scaler_state_dict.")
+        self.grad_scaler.load_state_dict(dict(scaler_state))
 
     @staticmethod
     def coerce_batch(batch: LabelFreeBatchLike) -> LabelFreeBatch:
@@ -628,14 +730,15 @@ class EAPHighResJEPATrainer:
                 for value in islice(batches, max_batches):
                     seen_batches += 1
                     typed = self.coerce_batch(value).to(self.device)
-                    output = self.model(
-                        typed.context_events,
-                        typed.future_events,
-                        typed.horizon_delta_t_s,
-                        context_valid_temporal_mask=typed.context_valid,
-                        future_valid_temporal_mask=typed.future_valid,
-                    )
-                    nce = self._nce_output(output, typed)
+                    with self._autocast_context():
+                        output = self.model(
+                            typed.context_events,
+                            typed.future_events,
+                            typed.horizon_delta_t_s,
+                            context_valid_temporal_mask=typed.context_valid,
+                            future_valid_temporal_mask=typed.future_valid,
+                        )
+                        nce = self._nce_output(output, typed)
                     total_anchors += nce.valid_anchor_mask.numel()
                     total_valid += int(nce.valid_anchor_mask.sum().cpu())
                     if bool(nce.valid_anchor_mask.any()):
@@ -674,14 +777,15 @@ class EAPHighResJEPATrainer:
         typed = self.coerce_batch(batch).to(self.device)
         self.model.train()
         self.optimizer.zero_grad(set_to_none=True)
-        output = self.model(
-            typed.context_events,
-            typed.future_events,
-            typed.horizon_delta_t_s,
-            context_valid_temporal_mask=typed.context_valid,
-            future_valid_temporal_mask=typed.future_valid,
-        )
-        objective = self.assemble_objective(output, typed)
+        with self._autocast_context():
+            output = self.model(
+                typed.context_events,
+                typed.future_events,
+                typed.horizon_delta_t_s,
+                context_valid_temporal_mask=typed.context_valid,
+                future_valid_temporal_mask=typed.future_valid,
+            )
+            objective = self.assemble_objective(output, typed)
         if self.config.loss.objective.uses_dynamics_nce and not self.nce_preflight_passed:
             assert objective.nce is not None
             validate_nce_preflight(
@@ -692,12 +796,17 @@ class EAPHighResJEPATrainer:
             self.nce_preflight_passed = True
             self.health_state["nce_preflight_passed"] = True
         self._update_health(output, objective)
-        objective.loss.backward()
-        torch.nn.utils.clip_grad_norm_(
-            [parameter for parameter in self.model.parameters() if parameter.requires_grad],
-            self.config.max_grad_norm,
-        )
-        self.optimizer.step()
+        trainable = [parameter for parameter in self.model.parameters() if parameter.requires_grad]
+        if self.grad_scaler is None:
+            objective.loss.backward()
+            torch.nn.utils.clip_grad_norm_(trainable, self.config.max_grad_norm)
+            self.optimizer.step()
+        else:
+            self.grad_scaler.scale(objective.loss).backward()
+            self.grad_scaler.unscale_(self.optimizer)
+            torch.nn.utils.clip_grad_norm_(trainable, self.config.max_grad_norm)
+            self.grad_scaler.step(self.optimizer)
+            self.grad_scaler.update()
         self.scheduler.step()
         momentum = self.model.update_target_ema(
             self.update_count, total_updates=self.config.total_updates
@@ -720,6 +829,8 @@ class EAPHighResJEPATrainer:
             result["nce_negatives_per_anchor"] = [
                 int(value) for value in objective.nce.negatives_per_anchor.detach().cpu().tolist()
             ]
+        if self.grad_scaler is not None:
+            result["grad_scaler_scale"] = float(self.grad_scaler.get_scale())
         if objective.residual_target is not None:
             valid = objective.residual_target.valid_mask
             result["raw_residual_norm"] = float(
@@ -794,6 +905,10 @@ class EAPHighResJEPATrainer:
             "predictor_state_dict": self.model.predictor.state_dict(),
             "optimizer_state_dict": self.optimizer.state_dict(),
             "scheduler_state_dict": self.scheduler.state_dict(),
+            "grad_scaler_state_dict": (
+                self.grad_scaler.state_dict() if self.grad_scaler is not None else None
+            ),
+            **self._precision_checkpoint_semantics(),
             "rng_state": _capture_rng_state(self.visreg_generator),
             "epoch": self.epoch,
             "update_count": self.update_count,
@@ -844,6 +959,7 @@ class EAPHighResJEPATrainer:
             raise ValueError(
                 "Resume checkpoint objective arm differs from this trainer configuration."
             )
+        self._restore_precision_checkpoint_state(payload)
         encoder_state = payload.get("online_encoder_state_dict")
         encoder_config = payload.get("online_encoder_config")
         if not isinstance(encoder_state, Mapping) or not isinstance(encoder_config, Mapping):

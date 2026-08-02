@@ -1,0 +1,60 @@
+artifact_type: dense_level_dynamics_jepa_train_config_v1
+architecture:
+  encoder:
+    in_channels: 21
+    embed_dim: 192
+    patch_size: 16
+    spatial_window: 8
+    heads: 6
+    spatial_depth: 1
+    temporal_depth: 2
+    temporal_mixer: block_causal
+    merge_2x2: false
+    global_attention: false
+  projection_dim: 96
+  predictor_dim: 96
+  predictor_layers: 2
+  predictor_heads: 4
+  predictor_mlp_ratio: 2
+  patch_query_chunk_size: 60
+  max_batch_size: 2
+  max_temporal_steps: 5
+  max_patches: 240
+  max_horizons: 3
+  ema_start: 0.99
+  ema_end: 0.9999
+  ema_total_updates: 1000
+data:
+  stage: matched_256
+  modality: events
+  input_policy: full_frame_event_only_320x192_from_raw
+  sampler_policy: label_free_fixed_four_anchor_blocks_round_robin_v2
+  calibration_mode: focal
+  signed_ttc_convention: signed_seconds_future_minus_anchor
+  horizons_s: [0.1, 0.2, 0.3]
+  horizon_tolerance_s: 0.025
+  exclusion_window_s: 0.02
+  width: 320
+  height: 192
+  temporal_steps: 5
+  bins: 5
+training:
+  learning_rate: 0.0003
+  weight_decay: 0.05
+  max_grad_norm: 1.0
+  total_updates: 1000
+  batch_size: 2
+  workers: 8
+  precision: bf16
+  seeds: [7, 13, 23]
+objective:
+  name: level
+  level_weight: 1.0
+  temporal_residual_weight: 0.0
+  dynamics_nce_weight: 0.0
+  residual_visreg_weight: 0.0
+  nce_temperature: 0.12
+  nce_exclusion_window_s: 0.02
+  nce_min_negatives: 2
+  visreg_projections: 8
+  visreg_temperature: 0.12

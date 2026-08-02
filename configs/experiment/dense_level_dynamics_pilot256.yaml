@@ -1,0 +1,20 @@
+artifact_type: dense_level_dynamics_jepa_experiment_v1
+manifest_stage: matched_256
+manifest: data/manifests/matched_eap_subset_v1.json
+objective_configs:
+  - configs/train/dense_level_dynamics_level.yaml
+  - configs/train/dense_level_dynamics_temporal_residual.yaml
+  - configs/train/dense_level_dynamics_nce.yaml
+  - configs/train/dense_level_dynamics_nce_visreg.yaml
+seeds: [7, 13, 23]
+seed_policy:
+  active_seed: 7
+  confirmation_seeds: [13, 23]
+  execution_order: [7, 13, 23]
+  pre_promotion_requires_active_seed_pass: true
+  promotion_gate_requires_confirmation_seeds: true
+  status: plan_only
+update_budget: 1000
+batch_size: 2
+workers: 8
+dry_run: true

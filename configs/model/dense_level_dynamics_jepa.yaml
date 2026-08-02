@@ -1,0 +1,37 @@
+artifact_type: dense_level_dynamics_jepa_model_config_v1
+architecture:
+  encoder:
+    in_channels: 21
+    embed_dim: 192
+    patch_size: 16
+    spatial_window: 8
+    heads: 6
+    spatial_depth: 1
+    temporal_depth: 2
+    temporal_mixer: block_causal
+    merge_2x2: false
+    global_attention: false
+  projection_dim: 96
+  predictor_dim: 96
+  predictor_layers: 2
+  predictor_heads: 4
+  predictor_mlp_ratio: 2
+  patch_query_chunk_size: 60
+  max_batch_size: 2
+  max_temporal_steps: 5
+  max_patches: 240
+  max_horizons: 3
+  ema_start: 0.99
+  ema_end: 0.9999
+  ema_total_updates: 1000
+input_policy:
+  modality: events
+  width: 320
+  height: 192
+  temporal_steps: 5
+  bins: 5
+  auxiliary_channels: base_compatible_voxel
+resource_policy:
+  batch_size: 2
+  max_workers: 8
+  max_resident_raw_volumes: 4

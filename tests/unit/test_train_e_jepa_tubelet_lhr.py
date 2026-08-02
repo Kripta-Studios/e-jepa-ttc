@@ -1,13 +1,22 @@
 import json
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 import torch
+import yaml
 from torch.utils.data import DataLoader, Dataset
 
 from e_jepa_ttc.models.highres_factorized import EJEPATubeletLHR, EJEPATubeletLHRConfig
 from scripts.pretrain_eap_tubelet_jepa import (
+    _approved_trainer_config,
+    _cycling_batches,
     _load_label_free_config,
+    _metrics_history_hash,
+    _validate_manifest_config_compatibility,
+    _validate_metric_history,
+    _validate_resume_metrics,
+    _write_metrics_history,
 )
 from scripts.pretrain_eap_tubelet_jepa import (
     main as pretrain_tubelet_main,
@@ -99,6 +108,93 @@ def test_tubelet_pretraining_fails_closed_for_missing_manifest(tmp_path: Path) -
 
     assert result == 1
     assert not (tmp_path / "output").exists()
+
+
+def test_dense_level_dynamics_backbone_matches_frozen_lhr_small_contract() -> None:
+    config = _load_label_free_config(
+        Path("configs/train/dense_level_dynamics_level.yaml").resolve()
+    )
+    encoder = config["architecture"]["encoder"]
+    reference = yaml.safe_load(
+        Path("configs/model/e_jepa_tubelet_lhr_small.yaml").read_text(encoding="utf-8")
+    )
+    structural_keys = {
+        "in_channels",
+        "embed_dim",
+        "patch_size",
+        "spatial_window",
+        "heads",
+        "spatial_depth",
+        "temporal_depth",
+        "temporal_mixer",
+        "merge_2x2",
+        "global_attention",
+    }
+    assert {key: encoder[key] for key in structural_keys} == {
+        key: reference[key] for key in structural_keys
+    }
+    trainer_config = _approved_trainer_config(config, seed=7)
+    assert trainer_config.precision == "bf16"
+
+
+def test_metrics_history_resume_binding_preserves_complete_prefix(tmp_path: Path) -> None:
+    rows = [{"update": 1.0, "loss": 2.0}, {"update": 2.0, "loss": 1.0}]
+    _validate_metric_history(rows, 2)
+    assert len(_metrics_history_hash(rows)) == 64
+    checkpoint = tmp_path / "checkpoint.pt"
+    checkpoint.write_bytes(b"checkpoint")
+    provenance = SimpleNamespace(matched_manifest_hash="manifest", sampler_order_hash="sampler")
+    payload = {"update_count": 2, "config_hash": "config"}
+    metrics_path, metadata_path = _write_metrics_history(
+        tmp_path,
+        rows,
+        checkpoint,
+        payload,
+        provenance,
+    )
+    assert metrics_path.is_file() and metadata_path.is_file()
+    assert _validate_resume_metrics(tmp_path, checkpoint, payload, provenance) == rows
+    tampered = metrics_path.read_text(encoding="utf-8").replace('"loss":1.0', '"loss":9.0')
+    metrics_path.write_text(tampered, encoding="utf-8")
+    with pytest.raises(ValueError, match="binding mismatch"):
+        _validate_resume_metrics(tmp_path, checkpoint, payload, provenance)
+
+
+def test_manifest_config_parity_rejects_frozen_input_mutations() -> None:
+    config = _load_label_free_config(
+        Path("configs/train/dense_level_dynamics_level.yaml").resolve()
+    )
+    manifest = {
+        "config": {
+            "horizons_s": [0.1, 0.2, 0.3],
+            "horizon_tolerance_s": 0.025,
+            "exclusion_window_s": 0.02,
+            "ssl_width": 320,
+            "ssl_height": 192,
+            "temporal_steps": 5,
+            "bins": 5,
+            "batch_size": 2,
+            "max_workers": 8,
+            "update_budget": 1000,
+            "signed_ttc_convention": "signed_seconds_future_minus_anchor",
+        },
+        "freeze": {
+            "modalities": ["events"],
+            "ssl_input_policy": "full_frame_event_only_320x192_from_raw",
+            "calibration_mode": "focal",
+            "signed_ttc_convention": "signed_seconds_future_minus_anchor",
+            "batch_size": 2,
+            "max_workers": 8,
+            "update_budget": 1000,
+            "seeds": [7, 13, 23],
+        },
+        "selection_rule": "label_free_fixed_four_anchor_blocks_round_robin_v2",
+        "stages": [{"stage": "matched_256"}],
+    }
+    _validate_manifest_config_compatibility(manifest, config)
+    config["data"]["width"] = 319
+    with pytest.raises(ValueError, match="width"):
+        _validate_manifest_config_compatibility(manifest, config)
 
 
 @pytest.mark.parametrize("prohibited_key", ["ttc", "depth", "category", "boxes", "mask", "rgb"])
@@ -217,3 +313,8 @@ def test_exact_backbone_only_pretrained_load_rejects_partial_or_task_state(tmp_p
     torch.save(checkpoint, path)
     with pytest.raises(ValueError, match="structural config mismatch"):
         _load_pretrained(target, path)
+
+
+def test_cycling_batches_resumes_at_exact_sampler_offset() -> None:
+    stream = _cycling_batches([[0], [1], [2]], start_offset=2)
+    assert [next(stream) for _ in range(5)] == [[2], [0], [1], [2], [0]]

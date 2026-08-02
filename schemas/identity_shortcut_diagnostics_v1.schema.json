@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "identity_shortcut_diagnostics_v1",
+  "title": "Diagnostic identity shortcut probes",
+  "type": "object",
+  "required": [
+    "artifact_type",
+    "schema_version",
+    "evidence_type",
+    "code_commit",
+    "protocol_version",
+    "protocol_sha256",
+    "created_at",
+    "artifact_sha256",
+    "diagnostic_only",
+    "excluded_from_ssl_selection_and_promotion",
+    "ssl_labels_used",
+    "seed",
+    "hparams",
+    "checkpoint_hash",
+    "manifest_hash",
+    "config_hash",
+    "row_order_hash",
+    "fold_hash",
+    "row_order",
+    "folds",
+    "probes",
+    "signature"
+  ],
+  "properties": {
+    "artifact_type": {"const": "identity_shortcut_diagnostics_v1"},
+    "schema_version": {"const": "identity_shortcut_diagnostics_v1"},
+    "evidence_type": {"type": "string", "minLength": 1},
+    "code_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "protocol_version": {"type": "string", "minLength": 1},
+    "protocol_sha256": {"type": "string", "minLength": 1},
+    "created_at": {"type": "string", "minLength": 1},
+    "artifact_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "diagnostic_only": {"const": true},
+    "excluded_from_ssl_selection_and_promotion": {"const": true},
+    "ssl_labels_used": {"const": false},
+    "seed": {"type": "integer"},
+    "hparams": {
+      "type": "object",
+      "required": ["classifier", "context_s", "max_horizon_s", "guard_gap_s", "n_folds", "fold_type", "duplicate_identity"],
+      "properties": {
+        "classifier": {"const": "logistic_regression"},
+        "context_s": {"type": "number", "minimum": 0},
+        "max_horizon_s": {"type": "number", "minimum": 0},
+        "guard_gap_s": {"type": "number", "minimum": 0},
+        "n_folds": {"type": "integer", "minimum": 2},
+        "fold_type": {"const": "contiguous_temporal_blocks"},
+        "duplicate_identity": {"const": "events_path,event_windows_us"}
+      },
+      "additionalProperties": true
+    },
+    "checkpoint_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "manifest_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "config_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "row_order_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "fold_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "row_order": {"type": "array", "minItems": 1},
+    "folds": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "required": ["fold", "test_indices", "train_indices", "guard_gap_s"],
+        "properties": {
+          "fold": {"type": "integer", "minimum": 0},
+          "test_indices": {"type": "array", "items": {"type": "integer", "minimum": 0}},
+          "train_indices": {"type": "array", "items": {"type": "integer", "minimum": 0}},
+          "guard_gap_s": {"type": "number", "minimum": 0}
+        },
+        "additionalProperties": true
+      }
+    },
+    "probes": {"type": "object"},
+    "signature": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "additionalProperties": false
+}

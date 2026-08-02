@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from contextlib import contextmanager
 
 import pytest
 import torch
@@ -8,6 +9,7 @@ import torch
 from e_jepa_ttc.losses.level_dynamics_jepa import LevelDynamicsLossConfig, ObjectiveArm
 from e_jepa_ttc.models.dense_level_dynamics_jepa import DenseLevelDynamicsConfig
 from e_jepa_ttc.models.highres_factorized import EJEPATubeletLHRConfig
+from e_jepa_ttc.training import eap_highres_jepa
 from e_jepa_ttc.training.eap_highres_jepa import (
     LABEL_FAMILY_PROVENANCE_FIELDS,
     EAPHighResJEPATrainer,
@@ -120,6 +122,72 @@ def test_label_free_batch_preserves_timestamp_precision_and_rejects_invalid_time
                 **batch.__dict__,
                 "reference_timestamps_s": torch.tensor([float("inf")]),
             }
+        )
+
+
+@pytest.mark.parametrize(
+    ("precision", "expect_autocast", "expected_dtype"),
+    [
+        ("fp32", False, None),
+        ("bf16", True, torch.bfloat16),
+    ],
+)
+def test_cpu_precision_controls_autocast_for_nce_preflight_and_update(
+    monkeypatch: pytest.MonkeyPatch,
+    precision: str,
+    expect_autocast: bool,
+    expected_dtype: torch.dtype | None,
+) -> None:
+    real_autocast = torch.autocast
+    calls: list[tuple[str, torch.dtype | None, bool]] = []
+
+    @contextmanager
+    def recording_autocast(
+        device_type: str,
+        dtype: torch.dtype | None = None,
+        enabled: bool = True,
+        cache_enabled: bool | None = None,
+    ):
+        calls.append((device_type, dtype, enabled))
+        with real_autocast(
+            device_type=device_type,
+            dtype=dtype,
+            enabled=enabled,
+            cache_enabled=cache_enabled,
+        ):
+            yield
+
+    monkeypatch.setattr(eap_highres_jepa.torch, "autocast", recording_autocast)
+    trainer = EAPHighResJEPATrainer(
+        EAPHighResJEPATrainerConfig(
+            model=_model_config(),
+            loss=LevelDynamicsLossConfig(objective=ObjectiveArm.LEVEL_DYNAMICS_NCE),
+            total_updates=1,
+            precision=precision,
+        )
+    )
+    metrics = trainer.train_batches([_batch()])
+
+    assert torch.isfinite(torch.tensor(metrics[0]["loss"]))
+    assert trainer.grad_scaler is None
+    if expect_autocast:
+        assert len(calls) == 2  # Streaming NCE preflight plus the training update.
+        assert all(call == ("cpu", expected_dtype, True) for call in calls)
+    else:
+        assert calls == []
+
+
+def test_fp16_fails_closed_on_cpu_before_model_allocation() -> None:
+    with pytest.raises(
+        ValueError, match="FP16 Dense Level-Dynamics training requires a CUDA device"
+    ):
+        EAPHighResJEPATrainer(
+            EAPHighResJEPATrainerConfig(
+                model=_model_config(),
+                loss=LevelDynamicsLossConfig(objective=ObjectiveArm.LEVEL),
+                total_updates=1,
+                precision="fp16",
+            )
         )
 
 
@@ -289,6 +357,40 @@ def test_checkpoint_excludes_ssl_only_state_from_transfer_and_restores_core(tmp_
     assert not any(
         parameter.requires_grad for parameter in restored.model.target_representation.parameters()
     )
+
+
+@pytest.mark.parametrize(
+    ("field", "replacement"),
+    [
+        ("precision", "bf16"),
+        ("precision_device_type", "cuda"),
+        ("grad_scaler_state_dict", {"scale": 65536.0}),
+    ],
+)
+def test_checkpoint_precision_and_grad_scaler_semantics_fail_closed_on_mutation(
+    tmp_path,
+    field: str,
+    replacement: object,
+) -> None:
+    config = EAPHighResJEPATrainerConfig(
+        model=_model_config(),
+        loss=LevelDynamicsLossConfig(objective=ObjectiveArm.LEVEL),
+        total_updates=1,
+        precision="fp32",
+    )
+    trainer = EAPHighResJEPATrainer(config)
+    state = trainer.checkpoint_state(_provenance())
+    assert state["precision"] == "fp32"
+    assert state["precision_device_type"] == "cpu"
+    assert state["autocast_dtype"] is None
+    assert state["grad_scaler_enabled"] is False
+    assert state["grad_scaler_state_dict"] is None
+
+    state[field] = replacement
+    path = tmp_path / f"precision-{field}.pt"
+    torch.save(state, path)
+    with pytest.raises(ValueError, match="precision/device semantics|GradScaler state"):
+        EAPHighResJEPATrainer(config).load_checkpoint(path)
 
 
 @pytest.mark.parametrize(

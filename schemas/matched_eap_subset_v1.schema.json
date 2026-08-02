@@ -1,0 +1,174 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "matched_eap_subset_v1",
+  "title": "Signed label-free matched eAP subset",
+  "type": "object",
+  "required": [
+    "artifact_type",
+    "schema_version",
+    "evidence_type",
+    "code_commit",
+    "protocol_version",
+    "protocol_sha256",
+    "created_at",
+    "artifact_sha256",
+    "matched_manifest_hash",
+    "source",
+    "dataset_hashes",
+    "split_hash",
+    "sampler_order_hash",
+    "selection_rule",
+    "freeze",
+    "config",
+    "split_assignments",
+    "sampler_order",
+    "selection_report",
+    "stages",
+    "blocks",
+    "rows",
+    "label_family_provenance",
+    "signature"
+  ],
+  "properties": {
+    "artifact_type": {"const": "matched_eap_subset_v1"},
+    "schema_version": {"const": "matched_eap_subset_v1"},
+    "evidence_type": {"type": "string", "minLength": 1},
+    "code_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "protocol_version": {"type": "string", "minLength": 1},
+    "protocol_sha256": {"type": "string", "minLength": 1},
+    "created_at": {"type": "string", "minLength": 1},
+    "artifact_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "matched_manifest_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "signature": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "source": {
+      "type": "object",
+      "required": ["dataset", "parquet", "parquet_sha256", "projected_columns", "annotations_opened", "labels_path_opened"],
+      "properties": {
+        "dataset": {"type": "string"},
+        "parquet": {"const": "data/train.parquet"},
+        "parquet_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "projected_columns": {
+          "const": ["sequence_id", "sample_token", "track_id", "public_track_id", "timestamp_us", "frame_timestamps_us", "events_path", "event_windows_us"]
+        },
+        "annotations_opened": {"const": false},
+        "labels_path_opened": {"const": false}
+      },
+      "additionalProperties": true
+    },
+    "dataset_hashes": {"type": "object", "additionalProperties": {"type": "string", "pattern": "^[0-9a-f]{64}$"}},
+    "split_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "sampler_order_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "selection_rule": {"type": "string", "minLength": 1},
+    "uses_dense_disk_cache": {"const": false},
+    "config": {
+      "type": "object",
+      "required": ["horizons_s", "horizon_tolerance_s", "exclusion_window_s", "max_anchors_per_block", "stage_sizes", "batch_size", "temporal_steps", "ssl_width", "ssl_height", "bins"],
+      "properties": {
+        "horizons_s": {"type": "array", "items": {"type": "number", "exclusiveMinimum": 0}},
+        "horizon_tolerance_s": {"type": "number", "minimum": 0},
+        "exclusion_window_s": {"type": "number", "minimum": 0},
+        "max_anchors_per_block": {"const": 4},
+        "stage_sizes": {"type": "array", "items": {"type": "integer", "minimum": 4}},
+        "batch_size": {"const": 2},
+        "temporal_steps": {"const": 5},
+        "ssl_width": {"const": 320},
+        "ssl_height": {"const": 192},
+        "bins": {"const": 5}
+      },
+      "additionalProperties": true
+    },
+    "split_assignments": {
+      "type": "object",
+      "required": ["train", "validation"],
+      "properties": {
+        "train": {"type": "array", "items": {"type": "string"}},
+        "validation": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": false
+    },
+    "sampler_order": {"type": "array", "items": {"type": "string"}},
+    "freeze": {"type": "object", "required": ["modalities", "ssl_input_policy", "downstream_input_policy", "temporal_steps", "seeds"], "additionalProperties": true},
+    "selection_report": {
+      "type": "object",
+      "required": ["nce_anchor_coverage", "minimum_negatives", "rejected_reasons", "nce_by_stage", "unavailable_stages"],
+      "properties": {
+        "nce_anchor_coverage": {"type": "number", "minimum": 0, "maximum": 1},
+        "minimum_negatives": {"type": "integer", "minimum": 0},
+        "rejected_reasons": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 0}},
+        "unavailable_stages": {"type": "array", "items": {"type": "object", "required": ["nominal_row_count", "reason"]}},
+        "nce_by_stage": {"type": "object"}
+      },
+      "additionalProperties": true
+    },
+    "stages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["stage", "nominal_row_count", "actual_row_count", "block_ids", "row_ids"],
+        "properties": {
+          "stage": {"type": "string"},
+          "nominal_row_count": {"type": "integer", "minimum": 1},
+          "actual_row_count": {"type": "integer", "minimum": 1},
+          "block_ids": {"type": "array", "items": {"type": "string"}},
+          "row_ids": {"type": "array", "items": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+        },
+        "additionalProperties": true
+      },
+      "minItems": 1
+    },
+    "blocks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["block_id", "role", "sequence_id", "track_id", "anchor_count", "row_ids", "nce"],
+        "properties": {
+          "block_id": {"type": "string", "minLength": 1},
+          "role": {"enum": ["train", "validation"]},
+          "sequence_id": {"type": "string", "minLength": 1},
+          "track_id": {"type": "string", "minLength": 1},
+          "anchor_count": {"const": 4},
+          "row_ids": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"type": "string"}},
+          "nce": {"type": "object", "required": ["gate_passed", "valid_anchor_fraction", "minimum_negatives"]}
+        },
+        "additionalProperties": true
+      },
+      "minItems": 1
+    },
+    "rows": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["row_id", "sequence_id", "track_id", "sample_token", "timestamp_us", "events_path", "event_windows_us", "role", "endpoint_row_ids", "endpoint_timestamps_us", "future_endpoints", "candidate_row_ids"],
+        "properties": {
+          "row_id": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "sequence_id": {"type": "string", "minLength": 1},
+          "track_id": {"type": "string", "minLength": 1},
+          "sample_token": {"type": "string", "minLength": 1},
+          "timestamp_us": {"type": "integer"},
+          "events_path": {"type": "string", "minLength": 1},
+          "role": {"enum": ["train", "validation"]},
+          "endpoint_row_ids": {"type": "object", "additionalProperties": {"type": "string"}},
+          "endpoint_timestamps_us": {"type": "object", "additionalProperties": {"type": "integer"}},
+          "future_endpoints": {"type": "array", "items": {"type": "object"}},
+          "candidate_row_ids": {"type": "array", "items": {"type": "string"}}
+        },
+        "additionalProperties": true
+      }
+    },
+    "label_family_provenance": {
+      "type": "object",
+      "required": ["uses_ttc_labels", "uses_depth_or_3d", "uses_category_labels", "uses_boxes", "uses_masks", "uses_rgb", "uses_evttc"],
+      "properties": {
+        "uses_ttc_labels": {"const": false},
+        "uses_depth_or_3d": {"const": false},
+        "uses_category_labels": {"const": false},
+        "uses_boxes": {"const": false},
+        "uses_masks": {"const": false},
+        "uses_rgb": {"const": false},
+        "uses_evttc": {"const": false}
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}
