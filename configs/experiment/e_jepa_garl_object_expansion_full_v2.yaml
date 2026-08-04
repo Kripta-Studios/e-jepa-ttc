@@ -1,0 +1,4 @@
+model: ../model/e_jepa_object_expansion_event_v2.yaml
+finetuning: ../train/garl_object_expansion_full_v2.yaml
+protocol: object_roi_inverse_ttc_v2
+selection: gated_validation_sequence_macro_paper_MiD_overall

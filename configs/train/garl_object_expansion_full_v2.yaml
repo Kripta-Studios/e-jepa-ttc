@@ -1,0 +1,11 @@
+base: garl_object_expansion_screen_v2.yaml
+epochs: 50
+precision: bf16
+selection_start_epoch: 6
+minimum_epochs: 20
+early_stopping_patience: 8
+collapse_patience: 8
+lr_milestones: [10, 20, 30, 40]
+lr_gamma: 0.1
+run_scope: full_candidate
+require_clean_git: true
