@@ -1,0 +1,4 @@
+model: ../model/e_jepa_object_lhr_event_v1.yaml
+finetuning: ../train/garl_object_lhr_full_v1.yaml
+protocol: object_roi_visible_height_ratio_v1
+selection: validation_sequence_macro_paper_MiD_overall

@@ -56,6 +56,7 @@ from e_jepa_ttc.data.garlttc_eap import (
     resolve_eap_events_path,
     validate_garlttc_train_index,
 )
+from e_jepa_ttc.data.types import EventBatch
 from e_jepa_ttc.data.garlttc_sampling import select_balanced_cache_rows, signed_ttc_bucket
 from e_jepa_ttc.utils.io import read_structured, write_structured
 
@@ -106,7 +107,13 @@ class GarlTTCLHRCacheConfig:
     roi_size: int = 128
     roi_bins: int = 10
     shard_size: int = 256
+    store_full_frame_events: bool = True
+    store_garl_event_roi: bool = True
+    store_jepa_event_roi: bool = True
     include_rgb: bool = False
+    include_masks: bool = False
+    mask_required: bool = False
+    jepa_roi_bins: int = 5
     expected_train_rows: int = 88_744
     allow_dataset_version_change: bool = False
     target_delta_t_s: float = 0.1
@@ -128,6 +135,7 @@ class GarlTTCLHRCacheConfig:
             self.full_bins,
             self.roi_size,
             self.roi_bins,
+            self.jepa_roi_bins,
             self.shard_size,
             self.expected_train_rows,
         )
@@ -135,6 +143,14 @@ class GarlTTCLHRCacheConfig:
             raise ValueError("Cache dimensions and counts must be positive.")
         if self.roi_bins != 10:
             raise ValueError("Official Garl-TTC input v4 requires exactly 10 ROI bins.")
+        if not any(
+            (
+                self.store_full_frame_events,
+                self.store_garl_event_roi,
+                self.store_jepa_event_roi,
+            )
+        ):
+            raise ValueError("At least one event representation must be materialized.")
         temporal = (
             self.target_delta_t_s,
             self.delta_t_tolerance_s,
@@ -160,12 +176,15 @@ class GarlTTCLHRCacheConfig:
             raise ValueError("compression_level must lie in [0, 9].")
         if self.include_rgb and self.workers > 1:
             raise ValueError("include_rgb with workers > 1 is not supported by the tar reader.")
+        if self.mask_required and not self.include_masks:
+            raise ValueError("mask_required=True requires include_masks=True.")
 
 
 _CACHE_WORKER_EAP_ROOT: Path | None = None
 _CACHE_WORKER_CONFIG: GarlTTCLHRCacheConfig | None = None
 _CACHE_WORKER_EVENT_READERS: dict[Path, EAPEventReader] | None = None
 _CACHE_WORKER_RGB_READER: _RGBTarReader | None = None
+_CACHE_WORKER_MASK_READER: _MaskReader | None = None
 _CACHE_WORKER_CALIBRATION: CalibrationResolver | None = None
 
 
@@ -218,11 +237,22 @@ def _atomic_torch_save(
 def _load_torch_records(path: Path) -> list[dict[str, Any]]:
     """Load a raw or gzip-compressed cache shard without changing its values."""
 
-    if path.suffix == ".gz":
-        with gzip.open(path, "rb") as handle:
-            records = torch.load(cast(Any, handle), map_location="cpu", weights_only=False)
-    else:
-        records = torch.load(path, map_location="cpu", weights_only=False)
+    try:
+        if path.suffix == ".gz":
+            with gzip.open(path, "rb") as handle:
+                records = torch.load(
+                    cast(Any, handle), map_location="cpu", weights_only=False
+                )
+        else:
+            records = torch.load(path, map_location="cpu", weights_only=False)
+    except Exception as exc:
+        size = path.stat().st_size if path.is_file() else None
+        raise RuntimeError(
+            f"Unable to read cache shard {path} (size_bytes={size}). "
+            "Rebuild the cache with the object_lhr_minimal storage profile "
+            "and a small shard size; oversized multi-gigabyte torch archives "
+            "are not reliable on all Windows/PyTorch readers."
+        ) from exc
     if not isinstance(records, list):
         raise TypeError(f"Shard {path} is not a list.")
     return records
@@ -259,6 +289,7 @@ def _init_cache_worker(eap_root: str, config: GarlTTCLHRCacheConfig) -> None:
     global _CACHE_WORKER_EAP_ROOT
     global _CACHE_WORKER_EVENT_READERS
     global _CACHE_WORKER_RGB_READER
+    global _CACHE_WORKER_MASK_READER
     global _CACHE_WORKER_CALIBRATION
 
     _CACHE_WORKER_EAP_ROOT = Path(eap_root)
@@ -266,6 +297,9 @@ def _init_cache_worker(eap_root: str, config: GarlTTCLHRCacheConfig) -> None:
     _CACHE_WORKER_EVENT_READERS = {}
     _CACHE_WORKER_CALIBRATION = CalibrationResolver(config.calibration_mode, eap_root=eap_root)
     _CACHE_WORKER_RGB_READER = _RGBTarReader(_CACHE_WORKER_EAP_ROOT) if config.include_rgb else None
+    _CACHE_WORKER_MASK_READER = (
+        _MaskReader(_CACHE_WORKER_EAP_ROOT) if config.include_masks else None
+    )
     torch.set_num_threads(1)
     try:
         torch.set_num_interop_threads(1)
@@ -294,6 +328,7 @@ def _materialize_cache_worker(
             config=_CACHE_WORKER_CONFIG,
             event_readers=_CACHE_WORKER_EVENT_READERS,
             rgb_reader=_CACHE_WORKER_RGB_READER,
+            mask_reader=_CACHE_WORKER_MASK_READER,
             calibration=_CACHE_WORKER_CALIBRATION,
             first_track_timestamp_us=first_track_timestamp_us,
         )
@@ -509,6 +544,113 @@ def _roi_voxel(
     return official_resize_feature(feature, (size, size), device=preprocessing_device)
 
 
+def _jepa_roi_voxel(
+    events: dict[str, np.ndarray],
+    square: tuple[float, float, float, float],
+    *,
+    size: int,
+    bins: int,
+    sequence_id: str,
+    start_us: int,
+    end_us: int,
+    event_pixel_diff: int,
+) -> torch.Tensor:
+    """Build the same 21-channel representation used by the JEPA backbone.
+
+    Coordinates are mapped inside the official square ROI, including zero
+    padding when the square extends outside the source image. This preserves the
+    pretraining channel contract while making the downstream sample object
+    specific.
+    """
+
+    source_width, source_height = EAP_IMAGE_SIZE
+    x = np.asarray(events["x"], dtype=np.float64) + event_pixel_diff
+    y = np.asarray(events["y"], dtype=np.float64)
+    t = np.asarray(events["t"], dtype=np.int64)
+    p = np.asarray(events["p"])
+    x0, y0, x1, y1 = (float(value) for value in square)
+    edge_x = max(x1 - x0, 1.0)
+    edge_y = max(y1 - y0, 1.0)
+    valid = (
+        (x >= 0)
+        & (x < source_width)
+        & (y >= 0)
+        & (y < source_height)
+        & (x >= x0)
+        & (x < x1)
+        & (y >= y0)
+        & (y < y1)
+    )
+    mapped_x = np.floor((x[valid] - x0) * size / edge_x).astype(np.int32)
+    mapped_y = np.floor((y[valid] - y0) * size / edge_y).astype(np.int32)
+    mapped_x = np.clip(mapped_x, 0, size - 1)
+    mapped_y = np.clip(mapped_y, 0, size - 1)
+    batch = EventBatch(
+        x=mapped_x,
+        y=mapped_y,
+        t_us=t[valid],
+        polarity=np.where(p[valid] > 0, 1, -1).astype(np.int8),
+        width=size,
+        height=size,
+        sequence_id=sequence_id,
+        t_start_us=start_us,
+        t_end_us=end_us,
+    )
+    return base_compatible_voxel(batch, bins=bins)
+
+
+class _MaskReader:
+    """Read optional direct mask paths without inventing rectangular masks."""
+
+    def __init__(self, root: Path) -> None:
+        self.root = root
+
+    def _resolve(self, value: object) -> Path | None:
+        as_py = getattr(value, "as_py", None)
+        if callable(as_py):
+            value = as_py()
+        if value is None or str(value).strip() in {"", "None", "nan"}:
+            return None
+        raw = Path(str(value))
+        candidates = (raw, self.root / raw, self.root / "data" / raw)
+        return next((candidate.resolve() for candidate in candidates if candidate.is_file()), None)
+
+    def read(
+        self,
+        value: object,
+        *,
+        square: tuple[float, float, float, float],
+        size: int,
+    ) -> tuple[torch.Tensor, bool]:
+        path = self._resolve(value)
+        if path is None:
+            return torch.zeros((1, size, size), dtype=torch.float32), False
+        if path.suffix.lower() == ".npy":
+            loaded = np.load(path, allow_pickle=True)
+            if isinstance(loaded, np.ndarray) and loaded.dtype == object and loaded.shape == ():
+                loaded = loaded.item()
+            if isinstance(loaded, Mapping):
+                loaded = loaded.get("mask")
+            array = np.asarray(loaded)
+        elif path.suffix.lower() == ".npz":
+            with np.load(path, allow_pickle=False) as archive:
+                key = "mask" if "mask" in archive.files else archive.files[0]
+                array = np.asarray(archive[key])
+        else:
+            array = np.asarray(Image.open(path).convert("L"))
+        if array.ndim == 3:
+            array = array[..., 0]
+        if array.ndim != 2:
+            raise ValueError(f"Mask {path} must be 2-D, got {array.shape}")
+        image = Image.fromarray((array > 0).astype(np.uint8) * 255)
+        x0, y0, x1, y1 = square
+        image = image.crop(
+            (int(math.floor(x0)), int(math.floor(y0)), int(math.ceil(x1)), int(math.ceil(y1)))
+        ).resize((size, size), resample=Image.Resampling.NEAREST)
+        tensor = torch.from_numpy((np.asarray(image) > 0).astype(np.float32)).unsqueeze(0)
+        return tensor, True
+
+
 class _RGBTarReader:
     def __init__(self, root: Path) -> None:
         self.root = root
@@ -687,6 +829,7 @@ def _materialize_row(
     config: GarlTTCLHRCacheConfig,
     event_readers: dict[Path, EAPEventReader],
     rgb_reader: _RGBTarReader | None,
+    mask_reader: _MaskReader | None,
     first_track_timestamp_us: int | None,
     calibration: CalibrationResolver,
 ) -> dict[str, Any]:
@@ -714,33 +857,50 @@ def _materialize_row(
     if reader is None:
         reader = EAPEventReader(events_path)
         event_readers[events_path] = reader
-    endpoint_events = []
-    full_frames = []
+    endpoint_events: list[torch.Tensor] = []
+    jepa_endpoint_events: list[torch.Tensor] = []
+    full_frames: list[torch.Tensor] = []
     for index in (first_index, second_index):
         start_us, end_us = windows[index]
         raw = reader.read_window(start_us, end_us)
-        endpoint_events.append(
-            _roi_voxel(
+        square = _square_box(boxes, index)
+        if config.store_garl_event_roi:
+            endpoint_events.append(
+                _roi_voxel(
+                    raw,
+                    square,
+                    size=config.roi_size,
+                    bins=config.roi_bins,
+                    sequence_id=str(row["sequence_id"]),
+                    start_us=start_us,
+                    end_us=end_us,
+                    event_pixel_diff=config.event_pixel_diff,
+                    preprocessing_device=config.preprocessing_device,
+                )
+            )
+        if config.store_jepa_event_roi:
+            jepa_endpoint_events.append(
+                _jepa_roi_voxel(
+                    raw,
+                    square,
+                    size=config.roi_size,
+                    bins=config.jepa_roi_bins,
+                    sequence_id=str(row["sequence_id"]),
+                    start_us=start_us,
+                    end_us=end_us,
+                    event_pixel_diff=config.event_pixel_diff,
+                )
+            )
+        if config.store_full_frame_events:
+            full_batch = downsample_full_frame(
                 raw,
-                _square_box(boxes, index),
-                size=config.roi_size,
-                bins=config.roi_bins,
                 sequence_id=str(row["sequence_id"]),
                 start_us=start_us,
                 end_us=end_us,
-                event_pixel_diff=config.event_pixel_diff,
-                preprocessing_device=config.preprocessing_device,
+                width=config.full_width,
+                height=config.full_height,
             )
-        )
-        full_batch = downsample_full_frame(
-            raw,
-            sequence_id=str(row["sequence_id"]),
-            start_us=start_us,
-            end_us=end_us,
-            width=config.full_width,
-            height=config.full_height,
-        )
-        full_frames.append(base_compatible_voxel(full_batch, bins=config.full_bins))
+            full_frames.append(base_compatible_voxel(full_batch, bins=config.full_bins))
 
     observable, metadata = _box_features(boxes[first_index], boxes[second_index], delta_t_s)
     visible_heights = _visible_heights(
@@ -785,8 +945,6 @@ def _materialize_row(
         precontext_motion_valid = False
     jepa_pair_valid = bool(first_index < second_index and math.isfinite(delta_t_s))
     sample = {
-        "full_frame_events": torch.stack(full_frames).numpy().astype(np.float32),
-        "garl_event_roi": torch.cat(endpoint_events, dim=0).numpy().astype(np.float32),
         "garl_delta_t_s": np.float32(delta_t_s),
         "observable_motion": observable,
         "jepa_context_motion": jepa_context_motion,
@@ -812,6 +970,39 @@ def _materialize_row(
         "ttc_label_timestamp_us": np.int64(frame_timestamps[second_index]),
         "ttc_label_source": "official_garlttc_annotations_train_parquet.frame_ttc[t2]",
     }
+    if config.store_full_frame_events:
+        sample["full_frame_events"] = (
+            torch.stack(full_frames).numpy().astype(np.float32)
+        )
+    if config.store_garl_event_roi:
+        sample["garl_event_roi"] = (
+            torch.cat(endpoint_events, dim=0).numpy().astype(np.float32)
+        )
+    if config.store_jepa_event_roi:
+        sample["jepa_event_roi"] = (
+            torch.stack(jepa_endpoint_events).numpy().astype(np.float32)
+        )
+
+    if config.include_masks:
+        if mask_reader is None:
+            raise RuntimeError("Mask reader is unavailable.")
+        mask_paths = _as_list(row.get("mask_paths", []))
+        mask_tensors: list[torch.Tensor] = []
+        mask_valid: list[bool] = []
+        for index in (first_index, second_index):
+            value = mask_paths[index] if index < len(mask_paths) else None
+            mask, valid = mask_reader.read(
+                value,
+                square=_square_box(boxes, index),
+                size=config.roi_size,
+            )
+            mask_tensors.append(mask)
+            mask_valid.append(valid)
+        if config.mask_required and not all(mask_valid):
+            raise ValueError("Required object masks are unavailable for one or both endpoints.")
+        sample["garl_mask_pair"] = torch.stack(mask_tensors).numpy().astype(np.float32)
+        sample["garl_mask_valid"] = np.asarray(mask_valid, dtype=np.bool_)
+
     if config.include_rgb:
         if rgb_reader is None:
             raise RuntimeError("RGB reader is unavailable.")
@@ -959,10 +1150,13 @@ def materialize_garlttc_lhr_cache(
     split_counts = {"train": 0, "validation": 0}
     jepa_pair_valid_count = 0
     precontext_motion_valid_count = 0
+    mask_valid_endpoint_count = 0
+    mask_endpoint_count = 0
     ttc_bucket_counts: Counter[str] = Counter()
     ttc_positive_negative_counts: Counter[str] = Counter()
     calibration = CalibrationResolver(config.calibration_mode, eap_root=eap_root)
     rgb_reader = _RGBTarReader(eap_root) if config.include_rgb else None
+    mask_reader = _MaskReader(eap_root) if config.include_masks else None
     event_readers: dict[Path, EAPEventReader] = {}
     executor: ProcessPoolExecutor | None = None
 
@@ -972,12 +1166,17 @@ def materialize_garlttc_lhr_cache(
         errors: Mapping[str, int],
     ) -> None:
         nonlocal jepa_pair_valid_count, precontext_motion_valid_count
+        nonlocal mask_valid_endpoint_count, mask_endpoint_count
         split_counts[role] += len(records)
         for error, count in errors.items():
             discard_reasons[error] += int(count)
         for sample in records:
             jepa_pair_valid_count += int(sample["jepa_pair_valid"])
             precontext_motion_valid_count += int(sample["precontext_motion_valid"])
+            if "garl_mask_valid" in sample:
+                mask_valid = np.asarray(sample["garl_mask_valid"], dtype=np.bool_)
+                mask_valid_endpoint_count += int(mask_valid.sum())
+                mask_endpoint_count += int(mask_valid.size)
             ttc_value = float(sample["ttc_s"])
             ttc_bucket_counts[signed_ttc_bucket(ttc_value)] += 1
             ttc_positive_negative_counts["positive" if ttc_value > 0.0 else "negative"] += 1
@@ -993,6 +1192,7 @@ def materialize_garlttc_lhr_cache(
                 config=config,
                 event_readers=event_readers,
                 rgb_reader=rgb_reader,
+                mask_reader=mask_reader,
                 calibration=calibration,
                 first_track_timestamp_us=first_timestamp,
             )
@@ -1076,12 +1276,20 @@ def materialize_garlttc_lhr_cache(
                     compression=config.compression,
                     compression_level=config.compression_level,
                 )
+                verified_records = _load_torch_records(path)
+                if len(verified_records) != len(records):
+                    raise RuntimeError(
+                        f"Shard verification count mismatch for {path}: "
+                        f"expected {len(records)}, loaded {len(verified_records)}."
+                    )
                 metadata = {
                     "split": role,
                     "path": path.relative_to(output).as_posix(),
                     "count": len(records),
                     "requested_count": len(chunk_rows),
+                    "size_bytes": path.stat().st_size,
                     "sha256": _sha256_file(path),
+                    "torch_load_verified": True,
                     "selection_fingerprint": chunk_hash,
                     "config_fingerprint": config_fingerprint,
                     "split_sha256": split_sha256,
@@ -1150,8 +1358,9 @@ def materialize_garlttc_lhr_cache(
         "uses_reconstructed_public_eap_ttc": False,
         "no_label_fallback": True,
         "model_input_fields": [
-            "full_frame_events",
-            "garl_event_roi",
+            *(["full_frame_events"] if config.store_full_frame_events else []),
+            *(["garl_event_roi"] if config.store_garl_event_roi else []),
+            *(["jepa_event_roi"] if config.store_jepa_event_roi else []),
             "garl_delta_t_s",
             "observable_motion",
             "jepa_context_motion",
@@ -1166,6 +1375,7 @@ def materialize_garlttc_lhr_cache(
             "geometry_v2_valid",
             "category_index",
             "category_valid",
+            *([] if not config.include_masks else ["garl_mask_pair", "garl_mask_valid"]),
         ],
         "forbidden_model_input_fields": sorted(FORBIDDEN_MODEL_INPUT_KEYS),
         "observable_motion_names": list(OBSERVABLE_MOTION_NAMES),
@@ -1175,6 +1385,32 @@ def materialize_garlttc_lhr_cache(
             "event_roi_shape": [2, config.roi_bins * 2, config.roi_size, config.roi_size],
             "channel_names": list(EVENT_CHANNEL_NAMES),
             "normalization": NORMALIZATION_ID,
+        },
+        "object_lhr_extension": {
+            "version": 2,
+            "storage_profile": (
+                "object_lhr_minimal"
+                if (
+                    not config.store_full_frame_events
+                    and not config.store_garl_event_roi
+                    and config.store_jepa_event_roi
+                )
+                else "custom"
+            ),
+            "jepa_event_roi_shape": [2, 21, config.roi_size, config.roi_size],
+            "jepa_event_representation": "base_compatible_voxel_roi_v1",
+            "jepa_roi_bins": config.jepa_roi_bins,
+            "object_identity_source": "official_boxes_xyxy_per_track",
+            "height_target_source": "official_box3d_projection_visible_height",
+            "mask_policy": (
+                "required"
+                if config.mask_required
+                else "optional"
+                if config.include_masks
+                else "disabled"
+            ),
+            "uses_boxes_for_cache_preprocessing": True,
+            "uses_boxes_for_model_input": False,
         },
         "calibration_mode": config.calibration_mode,
         "bbox_protocol": "official_gt_square_roi_p0",
@@ -1193,6 +1429,11 @@ def materialize_garlttc_lhr_cache(
         ),
         "precontext_motion_valid_fraction": float(
             precontext_motion_valid_count / max(sum(split_counts.values()), 1)
+        ),
+        "mask_valid_endpoint_fraction": (
+            float(mask_valid_endpoint_count / max(mask_endpoint_count, 1))
+            if config.include_masks
+            else None
         ),
         "ttc_positive_negative_counts": dict(sorted(ttc_positive_negative_counts.items())),
         "ttc_bucket_counts": dict(sorted(ttc_bucket_counts.items())),

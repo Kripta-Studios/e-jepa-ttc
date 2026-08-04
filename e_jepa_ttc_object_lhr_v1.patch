@@ -1,0 +1,2682 @@
+diff --git a/configs/experiment/e_jepa_garl_object_lhr_full_v1.yaml b/configs/experiment/e_jepa_garl_object_lhr_full_v1.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..fc09692682edde630181e5e7131d550a2c94dba3
+--- /dev/null
++++ b/configs/experiment/e_jepa_garl_object_lhr_full_v1.yaml
+@@ -0,0 +1,4 @@
++model: ../model/e_jepa_object_lhr_event_v1.yaml
++finetuning: ../train/garl_object_lhr_full_v1.yaml
++protocol: object_roi_visible_height_ratio_v1
++selection: validation_sequence_macro_paper_MiD_overall
+diff --git a/configs/experiment/e_jepa_garl_object_lhr_screen_v1.yaml b/configs/experiment/e_jepa_garl_object_lhr_screen_v1.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..1c153c3c176fde12daf106c04f070f17778c5320
+--- /dev/null
++++ b/configs/experiment/e_jepa_garl_object_lhr_screen_v1.yaml
+@@ -0,0 +1,4 @@
++model: ../model/e_jepa_object_lhr_event_v1.yaml
++finetuning: ../train/garl_object_lhr_screen_v1.yaml
++protocol: object_roi_visible_height_ratio_v1
++selection: validation_sequence_macro_paper_MiD_overall
+diff --git a/configs/model/e_jepa_object_lhr_event_v1.yaml b/configs/model/e_jepa_object_lhr_event_v1.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..517af6e5652463a8a34b4abffbbf1683859f5977
+--- /dev/null
++++ b/configs/model/e_jepa_object_lhr_event_v1.yaml
+@@ -0,0 +1,22 @@
++model: e_jepa_object_lhr_v1
++in_channels: 21
++embed_dim: 192
++patch_size: 16
++spatial_window: 8
++heads: 6
++spatial_depth: 1
++temporal_depth: 2
++temporal_mixer: block_causal
++merge_2x2: false
++global_attention: false
++memory_budget_gb: 12.0
++pooling: query
++query_count: 8
++head_hidden_dim: 192
++mask_decoder: true
++mask_size: 128
++initial_height_px: 96.0
++min_height_px: 1.0
++max_height_px: 1024.0
++ttc_clip_seconds: 60.0
++denominator_epsilon: 0.001
+diff --git a/configs/train/garl_object_lhr_full_v1.yaml b/configs/train/garl_object_lhr_full_v1.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..786f3121f8372319b8a5da44f2a05f437c775603
+--- /dev/null
++++ b/configs/train/garl_object_lhr_full_v1.yaml
+@@ -0,0 +1,12 @@
++base: garl_object_lhr_screen_v1.yaml
++epochs: 50
++batch_size: 8
++gradient_accumulation_steps: 4
++precision: bf16
++minimum_epochs: 20
++early_stopping_patience: 8
++collapse_patience: 8
++lr_milestones: [10, 20, 30, 40]
++lr_gamma: 0.1
++run_scope: full_candidate
++require_clean_git: true
+diff --git a/configs/train/garl_object_lhr_screen_v1.yaml b/configs/train/garl_object_lhr_screen_v1.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..5b6597f953c13543cc81393482feaa8dc98b9445
+--- /dev/null
++++ b/configs/train/garl_object_lhr_screen_v1.yaml
+@@ -0,0 +1,36 @@
++epochs: 30
++batch_size: 8
++gradient_accumulation_steps: 4
++num_workers: 2
++scratch_backbone_learning_rate: 0.0001
++pretrained_backbone_learning_rate: 0.00001
++pooling_learning_rate: 0.0001
++readout_learning_rate: 0.0003
++weight_decay: 0.01
++readout_weight_decay: 0.0
++pretrained_readout_warmup_epochs: 5
++lr_milestones: [15, 22, 27]
++lr_gamma: 0.2
++precision: fp32
++max_grad_norm: 1.0
++minimum_epochs: 15
++early_stopping_patience: 5
++min_prediction_std_ratio: 0.01
++min_log_ratio_std_ratio: 0.01
++collapse_patience: 5
++seed: 7
++run_scope: bounded_screen
++require_clean_git: false
++event_field: jepa_event_roi
++height_only_epochs: 5
++ratio_warmup_epochs: 10
++visible_height_weight: 1.0
++visible_ratio_weight: 10.0
++mid_weight: 1.0
++mid_scale: 10000.0
++mask_weight: 500.0
++direction_weight: 0.1
++signed_ttc_aux_weight: 0.0
++smooth_l1_beta: 0.05
++focal_alpha: 0.25
++focal_gamma: 2.0
+diff --git a/docs/object_lhr_training.md b/docs/object_lhr_training.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..183a2bd7a53c6feccbaef6f7eef0ab27a7889c49
+--- /dev/null
++++ b/docs/object_lhr_training.md
+@@ -0,0 +1,133 @@
++# Object-centric JEPA-LHR training
++
++## Why this route exists
++
++The historical raw-event trainer assigns one object-level TTC label to a
++full-frame event tensor. The audited local release contains 20,097 full-frame
++input signatures with multiple tracks and conflicting TTC labels (46,710 rows,
++up to seven tracks for one input). A deterministic regressor therefore has no
++well-defined target and can minimize its robust loss with a near-constant
++prediction.
++
++This route preserves object identity before learning:
++
++1. select the official `boxes_xyxy` endpoint pair for one `track_id`;
++2. create the official square ROI for each endpoint;
++3. materialize both the official 20-plane time-volume representation and a
++   21-channel ROI representation compatible with the existing JEPA backbone;
++4. predict positive visible heights `h1` and `h2`;
++5. derive signed TTC with `delta_t / (1 - h1/h2)`;
++6. select checkpoints only after the full geometric curriculum and reject
++   constant TTC or constant log-ratio predictions.
++
++Bounding boxes, 3-D geometry, TTC, category, and masks are never model inputs.
++The box and 3-D fields are cache-time/supervision-only data. Masks are optional;
++missing masks produce no segmentation loss and are never replaced by rectangle
++masks.
++
++## Curriculum
++
++- epochs 1-5: log-visible-height Smooth L1;
++- epochs 6-10: height + visible log-ratio + approaching/receding direction;
++- epoch 11 onward: previous terms + TTC-aligned MiD log-ratio term;
++- optional focal mask loss is applied only to endpoints whose real mask file was
++  successfully loaded.
++
++The direct signed-TTC auxiliary is disabled by default. It exists only as an
++explicit ablation and is not the primary objective.
++
++## Screen run
++
++```powershell
++uv run --no-sync python scripts/run_e_jepa_object_lhr.py `
++  --profile screen `
++  --stages cache train `
++  --eap-root "E:\eAP_dataset" `
++  --garlttc-root "E:\GarlTTC_dataset" `
++  --include-masks `
++  --device cuda
++```
++
++The cache stage is resumable:
++
++```powershell
++uv run --no-sync python scripts/run_e_jepa_object_lhr.py `
++  --profile screen `
++  --stages cache `
++  --eap-root "E:\eAP_dataset" `
++  --garlttc-root "E:\GarlTTC_dataset" `
++  --include-masks `
++  --resume
++```
++
++Then train from the completed cache:
++
++```powershell
++uv run --no-sync python scripts/run_e_jepa_object_lhr.py `
++  --profile screen `
++  --stages train `
++  --device cuda
++```
++
++## Exact JEPA transfer screen
++
++The object cache stores `jepa_event_roi` with the same 21-channel representation
++contract as the label-free encoder. Transfer remains exact and fails closed on
++any key, shape, or structural-config mismatch.
++
++```powershell
++uv run --no-sync python scripts/run_e_jepa_object_lhr.py `
++  --profile screen `
++  --stages train `
++  --pretrained "$ROOT\pretrain\level\seed-7\checkpoint.pt" `
++  --device cuda
++```
++
++The runner separates outputs automatically under `scratch/` and
++`level-transfer/`. During the first five epochs of a transferred run, the
++backbone LR is zero while pooling and object readouts learn the task. Scratch
++does not freeze its random backbone.
++
++## Full candidate
++
++Only run this after the screen demonstrates non-collapsed validation log-ratio
++and TTC predictions.
++
++```powershell
++uv run --no-sync python scripts/run_e_jepa_object_lhr.py `
++  --profile full `
++  --stages cache train `
++  --eap-root "E:\eAP_dataset" `
++  --garlttc-root "E:\GarlTTC_dataset" `
++  --include-masks `
++  --device cuda
++```
++
++By default the full profile runs seeds 7, 13, and 23 and requires a clean
++worktree. A seed-matched transfer run must pass exactly one `--seeds` value and
++its matching SSL checkpoint. It remains training-only until external
++eAP/CodaBench and EvTTC evaluation are frozen.
++
++## Tests
++
++```powershell
++uv run --no-sync pytest `
++  tests/unit/test_object_lhr.py `
++  tests/unit/test_object_lhr_data.py `
++  tests/unit/test_object_lhr_training.py `
++  tests/unit/test_garlttc_object_cache_extension.py `
++  tests/integration/test_object_lhr_step.py
++```
++
++## Expected artifacts
++
++- cache manifest: `artifacts/cache/garl_object_lhr_screen_v1/manifest.json`;
++- scratch summary: `artifacts/runs/e_jepa_garl_object_lhr_screen_v1/scratch/seed-7/summary.json`;
++- transfer summary: `artifacts/runs/e_jepa_garl_object_lhr_screen_v1/level-transfer/seed-7/summary.json`;
++- validation predictions: `best_validation_predictions.csv`;
++- best checkpoint: `best.pt`;
++- failure details: `FAILURE.json`.
++
++Do not compare this event-only route directly with the RGB+event SOTA. The fair
++first comparison is the official event-only height-ratio model under the same
++split and metric protocol.
+diff --git a/scripts/build_garlttc_object_lhr_cache.py b/scripts/build_garlttc_object_lhr_cache.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..686568e95cd52d23478b20a91e063729852aab56
+--- /dev/null
++++ b/scripts/build_garlttc_object_lhr_cache.py
+@@ -0,0 +1,64 @@
++#!/usr/bin/env python
++"""Build the official object-centric GarlTTC cache used by Object-LHR."""
++
++from __future__ import annotations
++
++import argparse
++import json
++import sys
++from pathlib import Path
++
++ROOT = Path(__file__).resolve().parents[1]
++sys.path.insert(0, str(ROOT / "src"))
++
++from e_jepa_ttc.data.garlttc_lhr_cache import (  # noqa: E402
++    GarlTTCLHRCacheConfig,
++    materialize_garlttc_lhr_cache,
++)
++
++
++def main() -> int:
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("--eap-root", type=Path, required=True)
++    parser.add_argument("--garlttc-root", type=Path, required=True)
++    parser.add_argument("--split", type=Path, required=True)
++    parser.add_argument("--output-dir", type=Path, required=True)
++    parser.add_argument("--max-samples-per-split", type=int)
++    parser.add_argument("--roi-size", type=int, default=128)
++    parser.add_argument("--shard-size", type=int, default=256)
++    parser.add_argument("--workers", type=int, default=2)
++    parser.add_argument("--preprocessing-device", choices=("cpu", "cuda"), default="cpu")
++    parser.add_argument("--compression", choices=("none", "gzip"), default="none")
++    parser.add_argument("--compression-level", type=int, default=1)
++    parser.add_argument("--include-rgb", action="store_true")
++    parser.add_argument("--include-masks", action="store_true")
++    parser.add_argument("--require-masks", action="store_true")
++    parser.add_argument("--resume", action="store_true")
++    args = parser.parse_args()
++
++    config = GarlTTCLHRCacheConfig(
++        roi_size=args.roi_size,
++        shard_size=args.shard_size,
++        workers=args.workers,
++        preprocessing_device=args.preprocessing_device,
++        compression=args.compression,
++        compression_level=args.compression_level,
++        include_rgb=args.include_rgb,
++        include_masks=args.include_masks or args.require_masks,
++        mask_required=args.require_masks,
++    )
++    manifest = materialize_garlttc_lhr_cache(
++        eap_root=args.eap_root.resolve(),
++        garlttc_root=args.garlttc_root.resolve(),
++        split_path=args.split.resolve(),
++        output_dir=args.output_dir.resolve(),
++        config=config,
++        max_samples_per_split=args.max_samples_per_split,
++        resume=args.resume,
++    )
++    print(json.dumps(manifest, indent=2, ensure_ascii=False, default=str))
++    return 0
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+diff --git a/scripts/run_e_jepa_object_lhr.py b/scripts/run_e_jepa_object_lhr.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..77265cec301d22d6b2aa55810e5c65a812d2f23c
+--- /dev/null
++++ b/scripts/run_e_jepa_object_lhr.py
+@@ -0,0 +1,158 @@
++#!/usr/bin/env python
++"""Build and train the object-centric JEPA-LHR candidate.
++
++Examples
++--------
++Screen from scratch::
++
++    python scripts/run_e_jepa_object_lhr.py --profile screen --stages cache train \
++      --eap-root E:/eAP_dataset --garlttc-root E:/GarlTTC_dataset --device cuda
++
++Transfer screen::
++
++    python scripts/run_e_jepa_object_lhr.py --profile screen --stages train \
++      --pretrained artifacts/pretrain/level/seed-7/checkpoint.pt --device cuda
++"""
++
++from __future__ import annotations
++
++import argparse
++import json
++import subprocess
++import sys
++from pathlib import Path
++
++ROOT = Path(__file__).resolve().parents[1]
++CACHE_BUILDER = ROOT / "scripts" / "build_garlttc_object_lhr_cache.py"
++TRAINER = ROOT / "scripts" / "train_e_jepa_object_lhr.py"
++
++PROFILES = {
++    "screen": {
++        "split": ROOT / "data" / "splits" / "eap_pilot12_v1.json",
++        "experiment": ROOT / "configs" / "experiment" / "e_jepa_garl_object_lhr_screen_v1.yaml",
++        "cache": ROOT / "artifacts" / "cache" / "garl_object_lhr_screen_v1",
++        "output": ROOT / "artifacts" / "runs" / "e_jepa_garl_object_lhr_screen_v1",
++        "max_samples": 2048,
++        "seeds": (7,),
++    },
++    "full": {
++        "split": ROOT / "data" / "splits" / "eap_train40_v1.json",
++        "experiment": ROOT / "configs" / "experiment" / "e_jepa_garl_object_lhr_full_v1.yaml",
++        "cache": ROOT / "artifacts" / "cache" / "garl_object_lhr_full_v1",
++        "output": ROOT / "artifacts" / "runs" / "e_jepa_garl_object_lhr_full_v1",
++        "max_samples": None,
++        "seeds": (7, 13, 23),
++    },
++}
++
++
++def _run(command: list[str], *, dry_run: bool) -> None:
++    print(json.dumps(command, ensure_ascii=False))
++    if not dry_run:
++        subprocess.run(command, cwd=ROOT, check=True)
++
++
++def main() -> int:
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("--profile", choices=sorted(PROFILES), default="screen")
++    parser.add_argument(
++        "--stages",
++        nargs="+",
++        choices=("cache", "train"),
++        default=["cache", "train"],
++    )
++    parser.add_argument("--eap-root", type=Path)
++    parser.add_argument("--garlttc-root", type=Path)
++    parser.add_argument("--split", type=Path)
++    parser.add_argument("--cache-dir", type=Path)
++    parser.add_argument("--output-root", type=Path)
++    parser.add_argument("--pretrained", type=Path)
++    parser.add_argument("--seeds", type=int, nargs="+")
++    parser.add_argument("--device", default="auto")
++    parser.add_argument("--cache-workers", type=int, default=2)
++    parser.add_argument("--train-workers", type=int)
++    parser.add_argument("--preprocessing-device", choices=("cpu", "cuda"), default="cpu")
++    parser.add_argument("--include-masks", action="store_true")
++    parser.add_argument("--require-masks", action="store_true")
++    parser.add_argument("--resume", action="store_true")
++    parser.add_argument("--dry-run", action="store_true")
++    args = parser.parse_args()
++
++    profile = PROFILES[args.profile]
++    split = (args.split or profile["split"]).resolve()
++    cache_dir = (args.cache_dir or profile["cache"]).resolve()
++    output_root = (args.output_root or profile["output"]).resolve()
++    seeds = tuple(args.seeds or profile["seeds"])
++    allowed_seeds = set(profile["seeds"])
++    if args.profile == "full" and not set(seeds).issubset(allowed_seeds):
++        raise ValueError(f"Full profile seeds must be a subset of {sorted(allowed_seeds)}")
++    if args.profile == "full" and args.pretrained is not None and len(seeds) != 1:
++        raise ValueError(
++            "Full transfer requires one seed-matched SSL checkpoint per run; "
++            "pass exactly one --seeds value."
++        )
++
++    if "cache" in args.stages:
++        if args.eap_root is None or args.garlttc_root is None:
++            raise ValueError("cache stage requires --eap-root and --garlttc-root")
++        command = [
++            sys.executable,
++            str(CACHE_BUILDER),
++            "--eap-root",
++            str(args.eap_root.resolve()),
++            "--garlttc-root",
++            str(args.garlttc_root.resolve()),
++            "--split",
++            str(split),
++            "--output-dir",
++            str(cache_dir),
++            "--workers",
++            str(args.cache_workers),
++            "--preprocessing-device",
++            args.preprocessing_device,
++        ]
++        max_samples = profile["max_samples"]
++        if max_samples is not None:
++            command.extend(("--max-samples-per-split", str(max_samples)))
++        if args.include_masks or args.require_masks:
++            command.append("--include-masks")
++        if args.require_masks:
++            command.append("--require-masks")
++        if args.resume:
++            command.append("--resume")
++        _run(command, dry_run=args.dry_run)
++
++    if "train" in args.stages:
++        manifest = cache_dir / "manifest.json"
++        if not args.dry_run and not manifest.is_file():
++            raise FileNotFoundError(
++                f"Missing cache manifest {manifest}; run the cache stage first."
++            )
++        arm = "level-transfer" if args.pretrained is not None else "scratch"
++        for seed in seeds:
++            command = [
++                sys.executable,
++                str(TRAINER),
++                "--cache-manifest",
++                str(manifest),
++                "--config",
++                str(profile["experiment"]),
++                "--output-dir",
++                str(output_root / arm / f"seed-{seed}"),
++                "--seed",
++                str(seed),
++                "--device",
++                args.device,
++            ]
++            if args.train_workers is not None:
++                command.extend(("--workers", str(args.train_workers)))
++            if args.pretrained is not None:
++                command.extend(("--pretrained", str(args.pretrained.resolve())))
++            if args.resume:
++                command.append("--resume")
++            _run(command, dry_run=args.dry_run)
++    return 0
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+diff --git a/scripts/train_e_jepa_object_lhr.py b/scripts/train_e_jepa_object_lhr.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..1899cf18ab86ff3634b6815f9a6e5532c958b968
+--- /dev/null
++++ b/scripts/train_e_jepa_object_lhr.py
+@@ -0,0 +1,765 @@
++#!/usr/bin/env python
++"""Train object-centric JEPA-LHR from an official GarlTTC cache.
++
++The historical full-frame direct-TTC trainer remains untouched. This trainer
++requires one tracked-object ROI per sample, predicts two visible heights, and
++derives signed TTC through the analytical LHR equation.
++"""
++
++from __future__ import annotations
++
++import argparse
++import hashlib
++import json
++import math
++import platform
++import subprocess
++import sys
++import time
++import traceback
++from collections.abc import Mapping
++from dataclasses import asdict, dataclass, fields, replace
++from datetime import UTC, datetime
++from functools import partial
++from pathlib import Path
++from typing import Any, cast
++
++import numpy as np
++import pandas as pd
++import torch
++import yaml
++from torch.utils.data import DataLoader
++
++ROOT = Path(__file__).resolve().parents[1]
++sys.path.insert(0, str(ROOT / "src"))
++sys.path.insert(0, str(ROOT))
++
++from e_jepa_ttc.data.garlttc_object_lhr import (  # noqa: E402
++    GarlTTCObjectLHRDataset,
++    ObjectLHRBatch,
++    collate_object_lhr,
++)
++from e_jepa_ttc.evaluation.garl_ttc_protocol import (  # noqa: E402
++    sequence_macro_signed_metrics,
++    signed_garl_metrics,
++)
++from e_jepa_ttc.models.object_lhr import (  # noqa: E402
++    ObjectCentricLHR,
++    ObjectCentricLHRConfig,
++)
++from e_jepa_ttc.reproducibility import resolve_device  # noqa: E402
++from e_jepa_ttc.training.object_lhr import (  # noqa: E402
++    ObjectLHRCurriculumConfig,
++    curriculum_phase,
++    mask_iou,
++    object_lhr_loss,
++    target_log_ratio_from_ttc,
++)
++from e_jepa_ttc.training.tubelet_finetuning import prediction_health  # noqa: E402
++
++
++def _sha256(path: Path) -> str:
++    digest = hashlib.sha256()
++    with path.open("rb") as handle:
++        for chunk in iter(lambda: handle.read(8 * 1024 * 1024), b""):
++            digest.update(chunk)
++    return digest.hexdigest()
++
++
++def _git_commit() -> str:
++    result = subprocess.run(
++        ["git", "rev-parse", "HEAD"],
++        cwd=ROOT,
++        check=False,
++        capture_output=True,
++        text=True,
++    )
++    return result.stdout.strip() if result.returncode == 0 else "unknown"
++
++
++def _json_safe(value: object) -> object:
++    if isinstance(value, np.generic):
++        return _json_safe(value.item())
++    if isinstance(value, float):
++        return value if math.isfinite(value) else None
++    if isinstance(value, Mapping):
++        return {str(key): _json_safe(item) for key, item in value.items()}
++    if isinstance(value, (list, tuple)):
++        return [_json_safe(item) for item in value]
++    return value
++
++
++def _metrics(predictions: pd.DataFrame) -> dict[str, Any]:
++    target = predictions["target_ttc_s"].to_numpy(dtype=np.float64)
++    prediction = predictions["prediction_ttc_s"].to_numpy(dtype=np.float64)
++    sequence = predictions["sequence_id"].astype(str).to_numpy()
++    signed = signed_garl_metrics(target, prediction)
++    signed["mae_s"] = float(np.mean(np.abs(target - prediction)))
++    signed["median_ae_s"] = float(np.median(np.abs(target - prediction)))
++    signed["sign_accuracy"] = float(np.mean(np.sign(target) == np.sign(prediction)))
++    signed["sequence_macro"] = sequence_macro_signed_metrics(
++        target, prediction, sequence
++    )
++    return signed
++
++
++@dataclass(frozen=True)
++class ObjectLHRTrainConfig:
++    """Reproducible supervised optimization controls."""
++
++    epochs: int = 30
++    batch_size: int = 8
++    gradient_accumulation_steps: int = 4
++    num_workers: int = 2
++    scratch_backbone_learning_rate: float = 1e-4
++    pretrained_backbone_learning_rate: float = 1e-5
++    pooling_learning_rate: float = 1e-4
++    readout_learning_rate: float = 3e-4
++    weight_decay: float = 0.01
++    readout_weight_decay: float = 0.0
++    pretrained_readout_warmup_epochs: int = 5
++    lr_milestones: tuple[int, ...] = (15, 22, 27)
++    lr_gamma: float = 0.2
++    precision: str = "fp32"
++    max_grad_norm: float = 1.0
++    minimum_epochs: int = 15
++    early_stopping_patience: int = 5
++    min_prediction_std_ratio: float = 0.01
++    min_log_ratio_std_ratio: float = 0.01
++    collapse_patience: int = 5
++    seed: int = 7
++    run_scope: str = "bounded_screen"
++    require_clean_git: bool = False
++    event_field: str = "jepa_event_roi"
++
++    def __post_init__(self) -> None:
++        positive = (
++            self.epochs,
++            self.batch_size,
++            self.gradient_accumulation_steps,
++            self.num_workers + 1,
++            self.minimum_epochs,
++            self.early_stopping_patience + 1,
++            self.collapse_patience + 1,
++        )
++        if min(positive) <= 0:
++            raise ValueError("Object-LHR integer controls must be positive")
++        if self.minimum_epochs > self.epochs:
++            raise ValueError("minimum_epochs cannot exceed epochs")
++        if self.precision not in {"fp32", "fp16", "bf16"}:
++            raise ValueError("precision must be fp32, fp16 or bf16")
++        if self.run_scope not in {"bounded_screen", "full_candidate"}:
++            raise ValueError("run_scope must be bounded_screen or full_candidate")
++        if not 0 < self.lr_gamma <= 1:
++            raise ValueError("lr_gamma must lie in (0,1]")
++        if any(value < 0 for value in self.lr_milestones):
++            raise ValueError("lr_milestones must be non-negative")
++
++
++def _read_yaml(path: Path) -> dict[str, Any]:
++    value = yaml.safe_load(path.read_text(encoding="utf-8"))
++    if not isinstance(value, dict):
++        raise ValueError(f"YAML must contain a mapping: {path}")
++    return cast(dict[str, Any], value)
++
++
++def _resolve(owner: Path, value: object) -> Path:
++    if not isinstance(value, str):
++        raise ValueError(f"Expected path reference in {owner}")
++    for candidate in (owner.parent / value, ROOT / value):
++        if candidate.is_file():
++            return candidate.resolve()
++    raise FileNotFoundError(f"Cannot resolve {value!r} from {owner}")
++
++
++def _inherited(path: Path) -> dict[str, Any]:
++    value = _read_yaml(path)
++    base = value.pop("base", None)
++    if base is None:
++        return value
++    merged = _inherited(_resolve(path, base))
++    merged.update(value)
++    return merged
++
++
++def _tuple_milestones(value: object) -> tuple[int, ...]:
++    if isinstance(value, (list, tuple)):
++        return tuple(int(item) for item in value)
++    raise ValueError("lr_milestones must be a YAML list")
++
++
++def load_spec(
++    experiment_path: Path,
++) -> tuple[ObjectCentricLHRConfig, ObjectLHRTrainConfig, ObjectLHRCurriculumConfig, dict[str, Any]]:
++    experiment = _read_yaml(experiment_path)
++    model_path = _resolve(experiment_path, experiment["model"])
++    train_path = _resolve(experiment_path, experiment["finetuning"])
++    model_value = _inherited(model_path)
++    train_value = _inherited(train_path)
++    if model_value.get("model") != "e_jepa_object_lhr_v1":
++        raise ValueError("Object-LHR trainer requires model=e_jepa_object_lhr_v1")
++    model_names = {field.name for field in fields(ObjectCentricLHRConfig)}
++    train_names = {field.name for field in fields(ObjectLHRTrainConfig)}
++    curriculum_names = {field.name for field in fields(ObjectLHRCurriculumConfig)}
++    if "lr_milestones" in train_value:
++        train_value["lr_milestones"] = _tuple_milestones(train_value["lr_milestones"])
++    return (
++        ObjectCentricLHRConfig(
++            **{key: value for key, value in model_value.items() if key in model_names}
++        ),
++        ObjectLHRTrainConfig(
++            **{key: value for key, value in train_value.items() if key in train_names}
++        ),
++        ObjectLHRCurriculumConfig(
++            **{key: value for key, value in train_value.items() if key in curriculum_names}
++        ),
++        {
++            "experiment_path": experiment_path.resolve().as_posix(),
++            "model_path": model_path.as_posix(),
++            "train_path": train_path.as_posix(),
++        },
++    )
++
++
++def _hash(value: Mapping[str, Any]) -> str:
++    payload = json.dumps(_json_safe(dict(value)), sort_keys=True, separators=(",", ":"))
++    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
++
++
++def _dirty() -> bool:
++    result = subprocess.run(
++        ["git", "status", "--porcelain"], cwd=ROOT, check=True, capture_output=True, text=True
++    )
++    return bool(result.stdout.strip())
++
++
++def _autocast(device: torch.device, precision: str) -> torch.autocast:
++    dtype = {"fp16": torch.float16, "bf16": torch.bfloat16}.get(precision)
++    return torch.autocast(device_type=device.type, dtype=dtype, enabled=dtype is not None)
++
++
++def _load_pretrained(model: ObjectCentricLHR, path: Path | None) -> dict[str, Any]:
++    if path is None:
++        return {"used": False, "transferred_keys": []}
++    payload = torch.load(path, map_location="cpu", weights_only=False)
++    if (
++        not isinstance(payload, Mapping)
++        or payload.get("artifact_type") != "dense_level_dynamics_jepa_checkpoint_v1"
++    ):
++        raise ValueError("Expected a dense_level_dynamics_jepa_checkpoint_v1 artifact")
++    state = payload.get("online_encoder_state_dict")
++    config = payload.get("online_encoder_config", payload.get("backbone_structural_config"))
++    if not isinstance(state, Mapping) or not isinstance(config, Mapping):
++        raise ValueError("Pretraining checkpoint lacks exact encoder state/config")
++    report = model.load_exact_backbone_state_dict(state, config)
++    return {"used": True, "path": path.resolve().as_posix(), "sha256": _sha256(path), **report}
++
++
++def _groups(
++    model: ObjectCentricLHR,
++    config: ObjectLHRTrainConfig,
++    *,
++    pretrained: bool,
++) -> tuple[torch.optim.Optimizer, list[dict[str, Any]]]:
++    backbone: list[torch.nn.Parameter] = []
++    pooling: list[torch.nn.Parameter] = []
++    for name, parameter in model.encoder.named_parameters():
++        if name == "query_tokens" or name.startswith("query_attention."):
++            pooling.append(parameter)
++        elif not name.startswith(("ttc_head.", "collision_head.")):
++            backbone.append(parameter)
++    task = [
++        parameter
++        for module in (
++            model.height_head,
++            model.pair_projector,
++            model.direction_head,
++            model.mask_decoder,
++        )
++        if module is not None
++        for parameter in module.parameters()
++    ]
++    backbone_lr = (
++        config.pretrained_backbone_learning_rate
++        if pretrained
++        else config.scratch_backbone_learning_rate
++    )
++    definitions = [
++        {
++            "name": "backbone",
++            "params": backbone,
++            "lr": backbone_lr,
++            "weight_decay": config.weight_decay,
++        },
++        {
++            "name": "pooling",
++            "params": pooling,
++            "lr": config.pooling_learning_rate,
++            "weight_decay": config.readout_weight_decay,
++        },
++        {
++            "name": "readout",
++            "params": task,
++            "lr": config.readout_learning_rate,
++            "weight_decay": config.readout_weight_decay,
++        },
++    ]
++    optimizer = torch.optim.AdamW(definitions)
++    manifest = [
++        {
++            "name": str(group["name"]),
++            "parameter_count": sum(parameter.numel() for parameter in group["params"]),
++            "base_lr": float(group["lr"]),
++            "weight_decay": float(group["weight_decay"]),
++        }
++        for group in definitions
++    ]
++    return optimizer, manifest
++
++
++def _set_epoch_lrs(
++    optimizer: torch.optim.Optimizer,
++    manifest: list[dict[str, Any]],
++    *,
++    epoch: int,
++    config: ObjectLHRTrainConfig,
++    pretrained: bool,
++) -> dict[str, float]:
++    reductions = sum(epoch > milestone for milestone in config.lr_milestones)
++    multiplier = config.lr_gamma**reductions
++    warmup = pretrained and epoch <= config.pretrained_readout_warmup_epochs
++    result: dict[str, float] = {}
++    for group, spec in zip(optimizer.param_groups, manifest, strict=True):
++        name = str(spec["name"])
++        lr = float(spec["base_lr"]) * multiplier
++        if warmup and name == "backbone":
++            lr = 0.0
++        group["lr"] = lr
++        result[name] = lr
++    return result
++
++
++def _loader(
++    dataset: GarlTTCObjectLHRDataset,
++    config: ObjectLHRTrainConfig,
++    *,
++    shuffle: bool,
++    epoch: int,
++) -> DataLoader[ObjectLHRBatch]:
++    generator = torch.Generator().manual_seed(config.seed + epoch)
++    return DataLoader(
++        dataset,
++        batch_size=config.batch_size,
++        shuffle=shuffle,
++        num_workers=config.num_workers,
++        pin_memory=True,
++        persistent_workers=config.num_workers > 0,
++        generator=generator,
++        collate_fn=partial(collate_object_lhr, event_field=config.event_field),
++    )
++
++
++def _train_epoch(
++    model: ObjectCentricLHR,
++    loader: DataLoader[ObjectLHRBatch],
++    optimizer: torch.optim.Optimizer,
++    *,
++    device: torch.device,
++    epoch: int,
++    train_config: ObjectLHRTrainConfig,
++    curriculum: ObjectLHRCurriculumConfig,
++    scaler: Any | None,
++) -> dict[str, Any]:
++    model.train()
++    optimizer.zero_grad(set_to_none=True)
++    totals: list[float] = []
++    components: dict[str, list[float]] = {}
++    steps = 0
++    for batch_index, raw_batch in enumerate(loader):
++        batch = raw_batch.to(device)
++        with _autocast(device, train_config.precision):
++            output = model(**batch.model_inputs())
++            loss = object_lhr_loss(output, batch, epoch=epoch, config=curriculum)
++            backward = loss.total / train_config.gradient_accumulation_steps
++        update = (
++            (batch_index + 1) % train_config.gradient_accumulation_steps == 0
++            or batch_index + 1 == len(loader)
++        )
++        if scaler is None:
++            backward.backward()
++            if update:
++                torch.nn.utils.clip_grad_norm_(model.parameters(), train_config.max_grad_norm)
++                optimizer.step()
++                optimizer.zero_grad(set_to_none=True)
++                steps += 1
++        else:
++            scaler.scale(backward).backward()
++            if update:
++                scaler.unscale_(optimizer)
++                torch.nn.utils.clip_grad_norm_(model.parameters(), train_config.max_grad_norm)
++                scaler.step(optimizer)
++                scaler.update()
++                optimizer.zero_grad(set_to_none=True)
++                steps += 1
++        totals.append(float(loss.total.detach().cpu()))
++        for name, value in loss.components.items():
++            components.setdefault(name, []).append(float(value.detach().cpu()))
++    if not totals:
++        raise RuntimeError("Object-LHR training produced no batches")
++    return {
++        "phase": curriculum_phase(epoch, curriculum),
++        "loss": float(np.mean(totals)),
++        "optimizer_steps": steps,
++        "components": {name: float(np.mean(values)) for name, values in components.items()},
++    }
++
++
++@torch.no_grad()
++def _evaluate(
++    model: ObjectCentricLHR,
++    loader: DataLoader[ObjectLHRBatch],
++    *,
++    device: torch.device,
++) -> tuple[pd.DataFrame, dict[str, Any]]:
++    model.eval()
++    rows: list[dict[str, Any]] = []
++    ratio_targets: list[np.ndarray] = []
++    ratio_predictions: list[np.ndarray] = []
++    height_errors: list[float] = []
++    mask_scores: list[float] = []
++    for raw_batch in loader:
++        batch = raw_batch.to(device)
++        output = model(**batch.model_inputs())
++        target_log_ratio = target_log_ratio_from_ttc(batch.delta_t_s, batch.target_ttc_s)
++        ratio_targets.append(target_log_ratio.cpu().numpy())
++        ratio_predictions.append(output.log_height_ratio.cpu().numpy())
++        height_errors.append(
++            float(
++                torch.abs(
++                    output.log_visible_heights - torch.log(batch.visible_heights_px)
++                )
++                .mean()
++                .cpu()
++            )
++        )
++        score = mask_iou(output.mask_logits, batch.masks, batch.mask_valid)
++        if score is not None:
++            mask_scores.append(score)
++        for index in range(len(batch.sample_tokens)):
++            rows.append(
++                {
++                    "sample_token": batch.sample_tokens[index],
++                    "sequence_id": batch.sequence_ids[index],
++                    "track_id": batch.track_ids[index],
++                    "target_ttc_s": float(batch.target_ttc_s[index].cpu()),
++                    "prediction_ttc_s": float(output.ttc_mean_seconds[index].cpu()),
++                    "target_log_height_ratio": float(target_log_ratio[index].cpu()),
++                    "prediction_log_height_ratio": float(output.log_height_ratio[index].cpu()),
++                    "target_height_t1_px": float(batch.visible_heights_px[index, 0].cpu()),
++                    "target_height_t2_px": float(batch.visible_heights_px[index, 1].cpu()),
++                    "prediction_height_t1_px": float(output.visible_heights_px[index, 0].cpu()),
++                    "prediction_height_t2_px": float(output.visible_heights_px[index, 1].cpu()),
++                }
++            )
++    frame = pd.DataFrame.from_records(rows)
++    ttc_health = prediction_health(
++        frame["target_ttc_s"].to_numpy(),
++        frame["prediction_ttc_s"].to_numpy(),
++    )
++    target_ratio = np.concatenate(ratio_targets)
++    prediction_ratio = np.concatenate(ratio_predictions)
++    ratio_health = prediction_health(target_ratio, prediction_ratio)
++    return frame, {
++        "metrics": _metrics(frame),
++        "ttc_health": ttc_health,
++        "log_ratio_health": ratio_health,
++        "log_height_mae": float(np.mean(height_errors)),
++        "mask_iou": float(np.mean(mask_scores)) if mask_scores else None,
++    }
++
++
++def _atomic_save(value: Mapping[str, Any], path: Path) -> None:
++    path.parent.mkdir(parents=True, exist_ok=True)
++    temporary = path.with_suffix(path.suffix + ".tmp")
++    torch.save(dict(value), temporary)
++    temporary.replace(path)
++
++
++def train(
++    *,
++    manifest_path: Path,
++    output_dir: Path,
++    model_config: ObjectCentricLHRConfig,
++    train_config: ObjectLHRTrainConfig,
++    curriculum: ObjectLHRCurriculumConfig,
++    provenance: Mapping[str, Any],
++    device_name: str,
++    pretrained: Path | None,
++    resume: bool,
++) -> dict[str, Any]:
++    started_at = datetime.now(UTC)
++    started = time.perf_counter()
++    torch.manual_seed(train_config.seed)
++    np.random.seed(train_config.seed)
++    device = resolve_device(device_name)
++    dirty = _dirty()
++    if train_config.require_clean_git and dirty:
++        raise RuntimeError("full_candidate requires a clean committed Git worktree")
++
++    datasets = {
++        split: GarlTTCObjectLHRDataset(
++            str(manifest_path), splits=(split,), event_field=train_config.event_field
++        )
++        for split in ("train", "validation")
++    }
++    model = ObjectCentricLHR(model_config).to(device)
++    transfer = _load_pretrained(model, pretrained)
++    optimizer, optimizer_manifest = _groups(model, train_config, pretrained=bool(transfer["used"]))
++    scaler = torch.amp.GradScaler(
++        "cuda", enabled=(device.type == "cuda" and train_config.precision == "fp16")
++    )
++
++    output_dir.mkdir(parents=True, exist_ok=True)
++    last_path = output_dir / "last.pt"
++    best_path = output_dir / "best.pt"
++    summary_path = output_dir / "summary.json"
++    predictions_path = output_dir / "best_validation_predictions.csv"
++    if not resume:
++        for path in (
++            last_path,
++            best_path,
++            summary_path,
++            predictions_path,
++            output_dir / "FAILURE.json",
++        ):
++            path.unlink(missing_ok=True)
++    start_epoch = 1
++    best_score = math.inf
++    best_epoch = 0
++    stale = 0
++    collapse_streak = 0
++    optimizer_steps = 0
++    history: list[dict[str, Any]] = []
++    if resume and last_path.is_file():
++        saved = torch.load(last_path, map_location="cpu", weights_only=False)
++        model.load_state_dict(saved["model_state_dict"], strict=True)
++        optimizer.load_state_dict(saved["optimizer_state_dict"])
++        start_epoch = int(saved["epoch"]) + 1
++        best_score = float(saved.get("best_score", math.inf))
++        best_epoch = int(saved.get("best_epoch", 0))
++        stale = int(saved.get("stale", 0))
++        collapse_streak = int(saved.get("collapse_streak", 0))
++        optimizer_steps = int(saved.get("optimizer_steps", 0))
++        history = list(saved.get("history", []))
++
++    validation_loader = _loader(datasets["validation"], train_config, shuffle=False, epoch=0)
++    final_evaluation: dict[str, Any] | None = None
++    for epoch in range(start_epoch, train_config.epochs + 1):
++        lrs = _set_epoch_lrs(
++            optimizer,
++            optimizer_manifest,
++            epoch=epoch,
++            config=train_config,
++            pretrained=bool(transfer["used"]),
++        )
++        train_result = _train_epoch(
++            model,
++            _loader(datasets["train"], train_config, shuffle=True, epoch=epoch),
++            optimizer,
++            device=device,
++            epoch=epoch,
++            train_config=train_config,
++            curriculum=curriculum,
++            scaler=scaler if scaler.is_enabled() else None,
++        )
++        optimizer_steps += int(train_result["optimizer_steps"])
++        predictions, evaluation = _evaluate(model, validation_loader, device=device)
++        final_evaluation = evaluation
++        metrics = evaluation["metrics"]
++        ttc_health = evaluation["ttc_health"]
++        ratio_health = evaluation["log_ratio_health"]
++        full_phase = curriculum_phase(epoch, curriculum) == "full_mid"
++        collapsed = (
++            float(ttc_health["prediction_std_ratio"]) < train_config.min_prediction_std_ratio
++            or float(ratio_health["prediction_std_ratio"]) < train_config.min_log_ratio_std_ratio
++        )
++        collapse_streak = collapse_streak + 1 if full_phase and collapsed else 0
++        score = float(metrics["sequence_macro"]["sequence_macro_paper_MiD_overall"])
++        eligible = full_phase and not collapsed and math.isfinite(score)
++        improved = eligible and score < best_score
++        if full_phase:
++            stale = 0 if improved else stale + 1
++        if improved:
++            best_score, best_epoch = score, epoch
++        row = {
++            "epoch": epoch,
++            "phase": train_result["phase"],
++            "train_loss": train_result["loss"],
++            "train_components": train_result["components"],
++            "optimizer_steps": optimizer_steps,
++            "learning_rates": lrs,
++            "validation_sequence_macro_paper_MiD_overall": score,
++            "validation_ttc_health": ttc_health,
++            "validation_log_ratio_health": ratio_health,
++            "validation_log_height_mae": evaluation["log_height_mae"],
++            "validation_mask_iou": evaluation["mask_iou"],
++            "collapsed": collapsed,
++            "checkpoint_selection_eligible": eligible,
++        }
++        history.append(cast(dict[str, Any], _json_safe(row)))
++        checkpoint = {
++            "artifact_type": "e_jepa_object_lhr_checkpoint_v1",
++            "architecture": "e_jepa_object_lhr_v1",
++            "modality": "event_only_object_roi",
++            "model_config": asdict(model_config),
++            "train_config": asdict(train_config),
++            "curriculum_config": asdict(curriculum),
++            "model_state_dict": model.state_dict(),
++            "optimizer_state_dict": optimizer.state_dict(),
++            "optimizer_manifest": optimizer_manifest,
++            "epoch": epoch,
++            "optimizer_steps": optimizer_steps,
++            "best_score": best_score,
++            "best_epoch": best_epoch,
++            "stale": stale,
++            "collapse_streak": collapse_streak,
++            "validation": evaluation,
++            "pretraining": transfer,
++            "cache_manifest": manifest_path.resolve().as_posix(),
++            "cache_manifest_sha256": _sha256(manifest_path),
++            "history": history,
++        }
++        _atomic_save(checkpoint, last_path)
++        if improved:
++            inference = dict(checkpoint)
++            inference.pop("optimizer_state_dict")
++            _atomic_save(inference, best_path)
++            predictions.to_csv(predictions_path, index=False)
++        if (
++            epoch >= train_config.minimum_epochs
++            and collapse_streak >= train_config.collapse_patience
++        ):
++            raise RuntimeError(
++                "Object-LHR remained collapsed after the full geometric curriculum; "
++                f"ttc_std_ratio={ttc_health['prediction_std_ratio']}, "
++                f"log_ratio_std_ratio={ratio_health['prediction_std_ratio']}"
++            )
++        if (
++            epoch >= train_config.minimum_epochs
++            and full_phase
++            and stale >= train_config.early_stopping_patience
++        ):
++            break
++
++    if not best_path.is_file():
++        raise RuntimeError("No non-collapsed full-curriculum Object-LHR checkpoint was selected")
++    ended_at = datetime.now(UTC)
++    summary = {
++        "artifact_type": "e_jepa_object_lhr_training_v1",
++        "status": "completed",
++        "created_at": ended_at.isoformat(),
++        "start_time": started_at.isoformat(),
++        "end_time": ended_at.isoformat(),
++        "elapsed_seconds": time.perf_counter() - started,
++        "git_commit": _git_commit(),
++        "git_dirty": dirty,
++        "host": platform.node(),
++        "python_version": platform.python_version(),
++        "torch_version": torch.__version__,
++        "cuda_version": torch.version.cuda,
++        "gpu_name": torch.cuda.get_device_name(device) if device.type == "cuda" else None,
++        "device": str(device),
++        "seed": train_config.seed,
++        "model_config": asdict(model_config),
++        "train_config": asdict(train_config),
++        "curriculum_config": asdict(curriculum),
++        "config_hash": _hash(
++            {
++                "model": asdict(model_config),
++                "train": asdict(train_config),
++                "curriculum": asdict(curriculum),
++                "provenance": dict(provenance),
++            }
++        ),
++        "cache_manifest": manifest_path.resolve().as_posix(),
++        "cache_manifest_sha256": _sha256(manifest_path),
++        "pretraining": transfer,
++        "best_epoch": best_epoch,
++        "best_score": best_score,
++        "best_checkpoint": best_path.resolve().as_posix(),
++        "best_checkpoint_sha256": _sha256(best_path),
++        "final_evaluation": final_evaluation,
++        "history": history,
++        "uses_object_roi": True,
++        "uses_boxes_for_model_input": False,
++        "predicts_visible_heights": True,
++        "derives_ttc_analytically": True,
++        "uses_direct_ttc_as_primary_loss": False,
++        "claim_eligible": False,
++        "downstream_evaluation_eligible": train_config.run_scope == "full_candidate" and not dirty,
++    }
++    summary_path.write_text(
++        json.dumps(_json_safe(summary), indent=2, ensure_ascii=False) + "\n",
++        encoding="utf-8",
++    )
++    return cast(dict[str, Any], _json_safe(summary))
++
++
++def main() -> int:
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("--cache-manifest", type=Path, required=True)
++    parser.add_argument("--config", type=Path, required=True)
++    parser.add_argument("--output-dir", type=Path, required=True)
++    parser.add_argument("--pretrained", type=Path)
++    parser.add_argument("--device", default="auto")
++    parser.add_argument("--seed", type=int)
++    parser.add_argument("--epochs", type=int)
++    parser.add_argument("--batch-size", type=int)
++    parser.add_argument("--workers", type=int)
++    parser.add_argument("--precision", choices=("fp32", "fp16", "bf16"))
++    parser.add_argument("--resume", action="store_true")
++    args = parser.parse_args()
++    try:
++        model_config, train_config, curriculum, provenance = load_spec(args.config.resolve())
++        overrides = {
++            "seed": args.seed,
++            "epochs": args.epochs,
++            "batch_size": args.batch_size,
++            "num_workers": args.workers,
++            "precision": args.precision,
++        }
++        train_config = replace(
++            train_config, **{key: value for key, value in overrides.items() if value is not None}
++        )
++        result = train(
++            manifest_path=args.cache_manifest.resolve(),
++            output_dir=args.output_dir.resolve(),
++            model_config=model_config,
++            train_config=train_config,
++            curriculum=curriculum,
++            provenance=provenance,
++            device_name=args.device,
++            pretrained=args.pretrained.resolve() if args.pretrained else None,
++            resume=args.resume,
++        )
++    except Exception as exc:
++        args.output_dir.mkdir(parents=True, exist_ok=True)
++        failure = {
++            "artifact_type": "e_jepa_object_lhr_training_failure_v1",
++            "status": "failed",
++            "created_at": datetime.now(UTC).isoformat(),
++            "error_type": type(exc).__name__,
++            "error_message": str(exc),
++            "traceback": traceback.format_exc(),
++        }
++        (args.output_dir / "FAILURE.json").write_text(
++            json.dumps(failure, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
++        )
++        print(json.dumps(failure, indent=2, ensure_ascii=False), file=sys.stderr)
++        return 1
++    print(json.dumps(result, indent=2, ensure_ascii=False))
++    return 0
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+diff --git a/src/e_jepa_ttc/data/garlttc_lhr_cache.py b/src/e_jepa_ttc/data/garlttc_lhr_cache.py
+index 70489a13e39abb7c145654267fcb993bb34ac4cf..bd87848663926e61aa96abca357d8c77fa4b3a7c 100644
+--- a/src/e_jepa_ttc/data/garlttc_lhr_cache.py
++++ b/src/e_jepa_ttc/data/garlttc_lhr_cache.py
+@@ -56,6 +56,7 @@ from e_jepa_ttc.data.garlttc_eap import (
+     resolve_eap_events_path,
+     validate_garlttc_train_index,
+ )
++from e_jepa_ttc.data.types import EventBatch
+ from e_jepa_ttc.data.garlttc_sampling import select_balanced_cache_rows, signed_ttc_bucket
+ from e_jepa_ttc.utils.io import read_structured, write_structured
+ 
+@@ -107,6 +108,9 @@ class GarlTTCLHRCacheConfig:
+     roi_bins: int = 10
+     shard_size: int = 256
+     include_rgb: bool = False
++    include_masks: bool = False
++    mask_required: bool = False
++    jepa_roi_bins: int = 5
+     expected_train_rows: int = 88_744
+     allow_dataset_version_change: bool = False
+     target_delta_t_s: float = 0.1
+@@ -128,6 +132,7 @@ class GarlTTCLHRCacheConfig:
+             self.full_bins,
+             self.roi_size,
+             self.roi_bins,
++            self.jepa_roi_bins,
+             self.shard_size,
+             self.expected_train_rows,
+         )
+@@ -160,12 +165,15 @@ class GarlTTCLHRCacheConfig:
+             raise ValueError("compression_level must lie in [0, 9].")
+         if self.include_rgb and self.workers > 1:
+             raise ValueError("include_rgb with workers > 1 is not supported by the tar reader.")
++        if self.mask_required and not self.include_masks:
++            raise ValueError("mask_required=True requires include_masks=True.")
+ 
+ 
+ _CACHE_WORKER_EAP_ROOT: Path | None = None
+ _CACHE_WORKER_CONFIG: GarlTTCLHRCacheConfig | None = None
+ _CACHE_WORKER_EVENT_READERS: dict[Path, EAPEventReader] | None = None
+ _CACHE_WORKER_RGB_READER: _RGBTarReader | None = None
++_CACHE_WORKER_MASK_READER: _MaskReader | None = None
+ _CACHE_WORKER_CALIBRATION: CalibrationResolver | None = None
+ 
+ 
+@@ -259,6 +267,7 @@ def _init_cache_worker(eap_root: str, config: GarlTTCLHRCacheConfig) -> None:
+     global _CACHE_WORKER_EAP_ROOT
+     global _CACHE_WORKER_EVENT_READERS
+     global _CACHE_WORKER_RGB_READER
++    global _CACHE_WORKER_MASK_READER
+     global _CACHE_WORKER_CALIBRATION
+ 
+     _CACHE_WORKER_EAP_ROOT = Path(eap_root)
+@@ -266,6 +275,9 @@ def _init_cache_worker(eap_root: str, config: GarlTTCLHRCacheConfig) -> None:
+     _CACHE_WORKER_EVENT_READERS = {}
+     _CACHE_WORKER_CALIBRATION = CalibrationResolver(config.calibration_mode, eap_root=eap_root)
+     _CACHE_WORKER_RGB_READER = _RGBTarReader(_CACHE_WORKER_EAP_ROOT) if config.include_rgb else None
++    _CACHE_WORKER_MASK_READER = (
++        _MaskReader(_CACHE_WORKER_EAP_ROOT) if config.include_masks else None
++    )
+     torch.set_num_threads(1)
+     try:
+         torch.set_num_interop_threads(1)
+@@ -294,6 +306,7 @@ def _materialize_cache_worker(
+             config=_CACHE_WORKER_CONFIG,
+             event_readers=_CACHE_WORKER_EVENT_READERS,
+             rgb_reader=_CACHE_WORKER_RGB_READER,
++            mask_reader=_CACHE_WORKER_MASK_READER,
+             calibration=_CACHE_WORKER_CALIBRATION,
+             first_track_timestamp_us=first_track_timestamp_us,
+         )
+@@ -509,6 +522,113 @@ def _roi_voxel(
+     return official_resize_feature(feature, (size, size), device=preprocessing_device)
+ 
+ 
++def _jepa_roi_voxel(
++    events: dict[str, np.ndarray],
++    square: tuple[float, float, float, float],
++    *,
++    size: int,
++    bins: int,
++    sequence_id: str,
++    start_us: int,
++    end_us: int,
++    event_pixel_diff: int,
++) -> torch.Tensor:
++    """Build the same 21-channel representation used by the JEPA backbone.
++
++    Coordinates are mapped inside the official square ROI, including zero
++    padding when the square extends outside the source image. This preserves the
++    pretraining channel contract while making the downstream sample object
++    specific.
++    """
++
++    source_width, source_height = EAP_IMAGE_SIZE
++    x = np.asarray(events["x"], dtype=np.float64) + event_pixel_diff
++    y = np.asarray(events["y"], dtype=np.float64)
++    t = np.asarray(events["t"], dtype=np.int64)
++    p = np.asarray(events["p"])
++    x0, y0, x1, y1 = (float(value) for value in square)
++    edge_x = max(x1 - x0, 1.0)
++    edge_y = max(y1 - y0, 1.0)
++    valid = (
++        (x >= 0)
++        & (x < source_width)
++        & (y >= 0)
++        & (y < source_height)
++        & (x >= x0)
++        & (x < x1)
++        & (y >= y0)
++        & (y < y1)
++    )
++    mapped_x = np.floor((x[valid] - x0) * size / edge_x).astype(np.int32)
++    mapped_y = np.floor((y[valid] - y0) * size / edge_y).astype(np.int32)
++    mapped_x = np.clip(mapped_x, 0, size - 1)
++    mapped_y = np.clip(mapped_y, 0, size - 1)
++    batch = EventBatch(
++        x=mapped_x,
++        y=mapped_y,
++        t_us=t[valid],
++        polarity=np.where(p[valid] > 0, 1, -1).astype(np.int8),
++        width=size,
++        height=size,
++        sequence_id=sequence_id,
++        t_start_us=start_us,
++        t_end_us=end_us,
++    )
++    return base_compatible_voxel(batch, bins=bins)
++
++
++class _MaskReader:
++    """Read optional direct mask paths without inventing rectangular masks."""
++
++    def __init__(self, root: Path) -> None:
++        self.root = root
++
++    def _resolve(self, value: object) -> Path | None:
++        as_py = getattr(value, "as_py", None)
++        if callable(as_py):
++            value = as_py()
++        if value is None or str(value).strip() in {"", "None", "nan"}:
++            return None
++        raw = Path(str(value))
++        candidates = (raw, self.root / raw, self.root / "data" / raw)
++        return next((candidate.resolve() for candidate in candidates if candidate.is_file()), None)
++
++    def read(
++        self,
++        value: object,
++        *,
++        square: tuple[float, float, float, float],
++        size: int,
++    ) -> tuple[torch.Tensor, bool]:
++        path = self._resolve(value)
++        if path is None:
++            return torch.zeros((1, size, size), dtype=torch.float32), False
++        if path.suffix.lower() == ".npy":
++            loaded = np.load(path, allow_pickle=True)
++            if isinstance(loaded, np.ndarray) and loaded.dtype == object and loaded.shape == ():
++                loaded = loaded.item()
++            if isinstance(loaded, Mapping):
++                loaded = loaded.get("mask")
++            array = np.asarray(loaded)
++        elif path.suffix.lower() == ".npz":
++            with np.load(path, allow_pickle=False) as archive:
++                key = "mask" if "mask" in archive.files else archive.files[0]
++                array = np.asarray(archive[key])
++        else:
++            array = np.asarray(Image.open(path).convert("L"))
++        if array.ndim == 3:
++            array = array[..., 0]
++        if array.ndim != 2:
++            raise ValueError(f"Mask {path} must be 2-D, got {array.shape}")
++        image = Image.fromarray((array > 0).astype(np.uint8) * 255)
++        x0, y0, x1, y1 = square
++        image = image.crop(
++            (int(math.floor(x0)), int(math.floor(y0)), int(math.ceil(x1)), int(math.ceil(y1)))
++        ).resize((size, size), resample=Image.Resampling.NEAREST)
++        tensor = torch.from_numpy((np.asarray(image) > 0).astype(np.float32)).unsqueeze(0)
++        return tensor, True
++
++
+ class _RGBTarReader:
+     def __init__(self, root: Path) -> None:
+         self.root = root
+@@ -687,6 +807,7 @@ def _materialize_row(
+     config: GarlTTCLHRCacheConfig,
+     event_readers: dict[Path, EAPEventReader],
+     rgb_reader: _RGBTarReader | None,
++    mask_reader: _MaskReader | None,
+     first_track_timestamp_us: int | None,
+     calibration: CalibrationResolver,
+ ) -> dict[str, Any]:
+@@ -715,14 +836,16 @@ def _materialize_row(
+         reader = EAPEventReader(events_path)
+         event_readers[events_path] = reader
+     endpoint_events = []
++    jepa_endpoint_events = []
+     full_frames = []
+     for index in (first_index, second_index):
+         start_us, end_us = windows[index]
+         raw = reader.read_window(start_us, end_us)
++        square = _square_box(boxes, index)
+         endpoint_events.append(
+             _roi_voxel(
+                 raw,
+-                _square_box(boxes, index),
++                square,
+                 size=config.roi_size,
+                 bins=config.roi_bins,
+                 sequence_id=str(row["sequence_id"]),
+@@ -732,6 +855,18 @@ def _materialize_row(
+                 preprocessing_device=config.preprocessing_device,
+             )
+         )
++        jepa_endpoint_events.append(
++            _jepa_roi_voxel(
++                raw,
++                square,
++                size=config.roi_size,
++                bins=config.jepa_roi_bins,
++                sequence_id=str(row["sequence_id"]),
++                start_us=start_us,
++                end_us=end_us,
++                event_pixel_diff=config.event_pixel_diff,
++            )
++        )
+         full_batch = downsample_full_frame(
+             raw,
+             sequence_id=str(row["sequence_id"]),
+@@ -787,6 +922,7 @@ def _materialize_row(
+     sample = {
+         "full_frame_events": torch.stack(full_frames).numpy().astype(np.float32),
+         "garl_event_roi": torch.cat(endpoint_events, dim=0).numpy().astype(np.float32),
++        "jepa_event_roi": torch.stack(jepa_endpoint_events).numpy().astype(np.float32),
+         "garl_delta_t_s": np.float32(delta_t_s),
+         "observable_motion": observable,
+         "jepa_context_motion": jepa_context_motion,
+@@ -812,6 +948,26 @@ def _materialize_row(
+         "ttc_label_timestamp_us": np.int64(frame_timestamps[second_index]),
+         "ttc_label_source": "official_garlttc_annotations_train_parquet.frame_ttc[t2]",
+     }
++    if config.include_masks:
++        if mask_reader is None:
++            raise RuntimeError("Mask reader is unavailable.")
++        mask_paths = _as_list(row.get("mask_paths", []))
++        mask_tensors: list[torch.Tensor] = []
++        mask_valid: list[bool] = []
++        for index in (first_index, second_index):
++            value = mask_paths[index] if index < len(mask_paths) else None
++            mask, valid = mask_reader.read(
++                value,
++                square=_square_box(boxes, index),
++                size=config.roi_size,
++            )
++            mask_tensors.append(mask)
++            mask_valid.append(valid)
++        if config.mask_required and not all(mask_valid):
++            raise ValueError("Required object masks are unavailable for one or both endpoints.")
++        sample["garl_mask_pair"] = torch.stack(mask_tensors).numpy().astype(np.float32)
++        sample["garl_mask_valid"] = np.asarray(mask_valid, dtype=np.bool_)
++
+     if config.include_rgb:
+         if rgb_reader is None:
+             raise RuntimeError("RGB reader is unavailable.")
+@@ -959,10 +1115,13 @@ def materialize_garlttc_lhr_cache(
+     split_counts = {"train": 0, "validation": 0}
+     jepa_pair_valid_count = 0
+     precontext_motion_valid_count = 0
++    mask_valid_endpoint_count = 0
++    mask_endpoint_count = 0
+     ttc_bucket_counts: Counter[str] = Counter()
+     ttc_positive_negative_counts: Counter[str] = Counter()
+     calibration = CalibrationResolver(config.calibration_mode, eap_root=eap_root)
+     rgb_reader = _RGBTarReader(eap_root) if config.include_rgb else None
++    mask_reader = _MaskReader(eap_root) if config.include_masks else None
+     event_readers: dict[Path, EAPEventReader] = {}
+     executor: ProcessPoolExecutor | None = None
+ 
+@@ -972,12 +1131,17 @@ def materialize_garlttc_lhr_cache(
+         errors: Mapping[str, int],
+     ) -> None:
+         nonlocal jepa_pair_valid_count, precontext_motion_valid_count
++        nonlocal mask_valid_endpoint_count, mask_endpoint_count
+         split_counts[role] += len(records)
+         for error, count in errors.items():
+             discard_reasons[error] += int(count)
+         for sample in records:
+             jepa_pair_valid_count += int(sample["jepa_pair_valid"])
+             precontext_motion_valid_count += int(sample["precontext_motion_valid"])
++            if "garl_mask_valid" in sample:
++                mask_valid = np.asarray(sample["garl_mask_valid"], dtype=np.bool_)
++                mask_valid_endpoint_count += int(mask_valid.sum())
++                mask_endpoint_count += int(mask_valid.size)
+             ttc_value = float(sample["ttc_s"])
+             ttc_bucket_counts[signed_ttc_bucket(ttc_value)] += 1
+             ttc_positive_negative_counts["positive" if ttc_value > 0.0 else "negative"] += 1
+@@ -993,6 +1157,7 @@ def materialize_garlttc_lhr_cache(
+                 config=config,
+                 event_readers=event_readers,
+                 rgb_reader=rgb_reader,
++                mask_reader=mask_reader,
+                 calibration=calibration,
+                 first_track_timestamp_us=first_timestamp,
+             )
+@@ -1152,6 +1317,7 @@ def materialize_garlttc_lhr_cache(
+         "model_input_fields": [
+             "full_frame_events",
+             "garl_event_roi",
++            "jepa_event_roi",
+             "garl_delta_t_s",
+             "observable_motion",
+             "jepa_context_motion",
+@@ -1166,6 +1332,7 @@ def materialize_garlttc_lhr_cache(
+             "geometry_v2_valid",
+             "category_index",
+             "category_valid",
++            *([] if not config.include_masks else ["garl_mask_pair", "garl_mask_valid"]),
+         ],
+         "forbidden_model_input_fields": sorted(FORBIDDEN_MODEL_INPUT_KEYS),
+         "observable_motion_names": list(OBSERVABLE_MOTION_NAMES),
+@@ -1176,6 +1343,23 @@ def materialize_garlttc_lhr_cache(
+             "channel_names": list(EVENT_CHANNEL_NAMES),
+             "normalization": NORMALIZATION_ID,
+         },
++        "object_lhr_extension": {
++            "version": 1,
++            "jepa_event_roi_shape": [2, 21, config.roi_size, config.roi_size],
++            "jepa_event_representation": "base_compatible_voxel_roi_v1",
++            "jepa_roi_bins": config.jepa_roi_bins,
++            "object_identity_source": "official_boxes_xyxy_per_track",
++            "height_target_source": "official_box3d_projection_visible_height",
++            "mask_policy": (
++                "required"
++                if config.mask_required
++                else "optional"
++                if config.include_masks
++                else "disabled"
++            ),
++            "uses_boxes_for_cache_preprocessing": True,
++            "uses_boxes_for_model_input": False,
++        },
+         "calibration_mode": config.calibration_mode,
+         "bbox_protocol": "official_gt_square_roi_p0",
+         "temporal_pairing": {
+@@ -1194,6 +1378,11 @@ def materialize_garlttc_lhr_cache(
+         "precontext_motion_valid_fraction": float(
+             precontext_motion_valid_count / max(sum(split_counts.values()), 1)
+         ),
++        "mask_valid_endpoint_fraction": (
++            float(mask_valid_endpoint_count / max(mask_endpoint_count, 1))
++            if config.include_masks
++            else None
++        ),
+         "ttc_positive_negative_counts": dict(sorted(ttc_positive_negative_counts.items())),
+         "ttc_bucket_counts": dict(sorted(ttc_bucket_counts.items())),
+         "discard_count": int(sum(discard_reasons.values())),
+diff --git a/src/e_jepa_ttc/data/garlttc_object_lhr.py b/src/e_jepa_ttc/data/garlttc_object_lhr.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..0c78cdad72bfad0804aa7a404e4fd5167876a91f
+--- /dev/null
++++ b/src/e_jepa_ttc/data/garlttc_object_lhr.py
+@@ -0,0 +1,180 @@
++"""Typed object-centric batches for the official GarlTTC LHR cache.
++
++The cache contains both supervision-only geometry and model inputs. This module
++creates an explicit boundary: only ROI event tensors and the measured temporal
++interval are returned by :meth:`ObjectLHRBatch.model_inputs`. TTC, visible
++heights, and masks remain supervision and can never be passed accidentally to
++the encoder.
++"""
++
++from __future__ import annotations
++
++from dataclasses import dataclass
++from typing import Any
++
++import torch
++
++from torch.utils.data import Dataset
++
++
++@dataclass
++class ObjectLHRBatch:
++    """One collated object-centric LHR batch."""
++
++    events: torch.Tensor
++    delta_t_s: torch.Tensor
++    visible_heights_px: torch.Tensor
++    target_ttc_s: torch.Tensor
++    masks: torch.Tensor
++    mask_valid: torch.Tensor
++    sequence_ids: list[str]
++    sample_tokens: list[str]
++    track_ids: list[str]
++
++    def to(self, device: torch.device, *, non_blocking: bool = True) -> ObjectLHRBatch:
++        """Move tensor members while preserving string provenance."""
++
++        return ObjectLHRBatch(
++            events=self.events.to(device=device, dtype=torch.float32, non_blocking=non_blocking),
++            delta_t_s=self.delta_t_s.to(
++                device=device, dtype=torch.float32, non_blocking=non_blocking
++            ),
++            visible_heights_px=self.visible_heights_px.to(
++                device=device, dtype=torch.float32, non_blocking=non_blocking
++            ),
++            target_ttc_s=self.target_ttc_s.to(
++                device=device, dtype=torch.float32, non_blocking=non_blocking
++            ),
++            masks=self.masks.to(device=device, dtype=torch.float32, non_blocking=non_blocking),
++            mask_valid=self.mask_valid.to(
++                device=device,
++                dtype=torch.bool,
++                non_blocking=non_blocking,
++            ),
++            sequence_ids=self.sequence_ids,
++            sample_tokens=self.sample_tokens,
++            track_ids=self.track_ids,
++        )
++
++    def model_inputs(self) -> dict[str, torch.Tensor]:
++        """Return the complete and only model-input mapping."""
++
++        return {"events": self.events, "delta_t_s": self.delta_t_s}
++
++
++class GarlTTCObjectLHRDataset(Dataset[dict[str, Any]]):
++    """Lazy official-cache view requiring the object-JEPA ROI extension.
++
++    The cache module is imported only when a dataset is instantiated. This keeps
++    lightweight geometry/loss unit tests independent from HDF5/plugin setup.
++    """
++
++    def __init__(
++        self,
++        manifest_path: str,
++        *,
++        splits: tuple[str, ...],
++        event_field: str = "jepa_event_roi",
++    ) -> None:
++        from e_jepa_ttc.data.garlttc_lhr_cache import GarlTTCLHRCacheDataset
++
++        self._dataset = GarlTTCLHRCacheDataset(manifest_path, splits=splits)
++        self.manifest = self._dataset.manifest
++        self.event_field = event_field
++        fields = set(self.manifest.get("model_input_fields", []))
++        if event_field not in fields:
++            raise ValueError(
++                f"Cache does not expose required model input {event_field!r}; "
++                "rebuild it with the object-LHR cache builder from this patch."
++            )
++        extension = self.manifest.get("object_lhr_extension")
++        if not isinstance(extension, dict) or int(extension.get("version", 0)) < 1:
++            raise ValueError("Cache is missing object_lhr_extension version 1 metadata.")
++
++    def __len__(self) -> int:
++        return len(self._dataset)
++
++    def __getitem__(self, index: int) -> dict[str, Any]:
++        record = self._dataset[index]
++        if self.event_field not in record:
++            raise KeyError(f"Cache record is missing {self.event_field!r}")
++        return record
++
++
++def _event_tensor(record: dict[str, Any], field: str) -> torch.Tensor:
++    value = torch.as_tensor(record[field], dtype=torch.float32)
++    if value.ndim != 4 or value.shape[0] != 2:
++        raise ValueError(f"{field} must have shape [2,C,H,W], got {tuple(value.shape)}")
++    if value.shape[-1] != value.shape[-2]:
++        raise ValueError(f"{field} ROI must be square, got {tuple(value.shape[-2:])}")
++    if not torch.isfinite(value).all():
++        raise ValueError(f"{field} contains non-finite values")
++    return value
++
++
++def collate_object_lhr(
++    records: list[dict[str, Any]],
++    *,
++    event_field: str = "jepa_event_roi",
++) -> ObjectLHRBatch:
++    """Collate cache records and fail closed on malformed geometry."""
++
++    if not records:
++        raise ValueError("Object-LHR collate received an empty batch")
++    events = torch.stack([_event_tensor(record, event_field) for record in records])
++    delta_t = torch.tensor([float(record["garl_delta_t_s"]) for record in records])
++    heights = torch.stack(
++        [
++            torch.as_tensor(record["garl_visible_heights_px"], dtype=torch.float32)
++            for record in records
++        ]
++    )
++    targets = torch.tensor([float(record["ttc_s"]) for record in records], dtype=torch.float32)
++    if heights.shape != (len(records), 2):
++        raise ValueError(
++            "garl_visible_heights_px must collate to [B,2], "
++            f"got {tuple(heights.shape)}"
++        )
++    if not torch.isfinite(heights).all() or bool((heights <= 0).any()):
++        raise ValueError("Visible-height supervision must be finite and strictly positive")
++    if not torch.isfinite(targets).all() or bool((targets == 0).any()):
++        raise ValueError("Official TTC supervision must be finite and non-zero")
++    ratio = 1.0 - delta_t / targets
++    if bool((ratio <= 0).any()) or not torch.isfinite(ratio).all():
++        raise ValueError("Official TTC implies a non-positive height ratio")
++
++    roi_size = events.shape[-1]
++    masks: list[torch.Tensor] = []
++    valids: list[torch.Tensor] = []
++    for record in records:
++        if "garl_mask_pair" in record:
++            mask = torch.as_tensor(record["garl_mask_pair"], dtype=torch.float32)
++            valid = torch.as_tensor(record.get("garl_mask_valid", [True, True]), dtype=torch.bool)
++        else:
++            mask = torch.zeros((2, 1, roi_size, roi_size), dtype=torch.float32)
++            valid = torch.zeros(2, dtype=torch.bool)
++        if mask.shape != (2, 1, roi_size, roi_size):
++            raise ValueError(f"garl_mask_pair has invalid shape {tuple(mask.shape)}")
++        if valid.shape != (2,):
++            raise ValueError(f"garl_mask_valid has invalid shape {tuple(valid.shape)}")
++        masks.append(mask.clamp(0.0, 1.0))
++        valids.append(valid)
++
++    return ObjectLHRBatch(
++        events=events,
++        delta_t_s=delta_t,
++        visible_heights_px=heights,
++        target_ttc_s=targets,
++        masks=torch.stack(masks),
++        mask_valid=torch.stack(valids),
++        sequence_ids=[str(record["sequence_id"]) for record in records],
++        sample_tokens=[str(record["sample_token"]) for record in records],
++        track_ids=[str(record["track_id"]) for record in records],
++    )
++
++
++__all__ = [
++    "GarlTTCObjectLHRDataset",
++    "ObjectLHRBatch",
++    "collate_object_lhr",
++]
+diff --git a/src/e_jepa_ttc/models/highres_factorized.py b/src/e_jepa_ttc/models/highres_factorized.py
+index 902e34ab81ff5b8986617f38d810fe0918d8a25f..4fe63ba8f7ea32ab6fccfeece5d5db239f06a89a 100644
+--- a/src/e_jepa_ttc/models/highres_factorized.py
++++ b/src/e_jepa_ttc/models/highres_factorized.py
+@@ -811,6 +811,31 @@ class EJEPATubeletLHR(nn.Module):
+             pooled[active] = attended.mean(dim=1).to(pooled.dtype)
+         return pooled
+ 
++    def pool_features(self, features: HighResFeatures) -> torch.Tensor:
++        """Pool all valid temporal/spatial tokens into one downstream embedding."""
++
++        return self._pool_tokens(features.tokens, features.valid_patch_mask)
++
++    def pool_temporal_steps(self, features: HighResFeatures) -> torch.Tensor:
++        """Pool every temporal endpoint independently with the configured readout.
++
++        Object-centric LHR must preserve the distinction between the two
++        observations. Pooling the complete sequence before predicting heights
++        would make the two height outputs exchangeable and reintroduce the
++        constant-ratio attractor.
++        """
++
++        if features.tokens.ndim != 4 or features.valid_patch_mask.shape != features.tokens.shape[:3]:
++            raise ValueError("HighResFeatures must contain [B,T,P,D] tokens and [B,T,P] mask.")
++        pooled = [
++            self._pool_tokens(
++                features.tokens[:, step : step + 1],
++                features.valid_patch_mask[:, step : step + 1],
++            )
++            for step in range(features.tokens.shape[1])
++        ]
++        return torch.stack(pooled, dim=1)
++
+     def forward(
+         self,
+         inputs: torch.Tensor,
+@@ -820,7 +845,7 @@ class EJEPATubeletLHR(nn.Module):
+         """Predict TTC and collision thresholds from dense causal tokens."""
+ 
+         features = self.forward_features(inputs, valid_temporal_mask=valid_temporal_mask)
+-        pooled = self._pool_tokens(features.tokens, features.valid_patch_mask)
++        pooled = self.pool_features(features)
+         # eAP/Garl-TTC is a signed protocol: receding objects have negative TTC.
+         # Exponentiating this head made the high-resolution candidate incapable
+         # of representing an entire official evaluation bucket.
+diff --git a/src/e_jepa_ttc/models/object_lhr.py b/src/e_jepa_ttc/models/object_lhr.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..37a217d5122960250a8ac0dcd9ddb61284b08fdd
+--- /dev/null
++++ b/src/e_jepa_ttc/models/object_lhr.py
+@@ -0,0 +1,269 @@
++"""Object-centric visible-height-ratio TTC model.
++
++The model consumes two ROI event representations for one tracked object. It
++predicts one positive visible height per endpoint and derives signed TTC through
++
++    tau = delta_t / (1 - h1 / h2).
++
++No TTC label, bounding box, 3-D geometry, or category enters the network.
++Bounding boxes are used only offline to construct the object ROI cache.
++"""
++
++from __future__ import annotations
++
++import math
++from collections.abc import Mapping
++from dataclasses import asdict, dataclass
++from typing import Any
++
++import torch
++from torch import nn
++from torch.nn import functional
++
++from e_jepa_ttc.models.highres_factorized import (
++    EJEPATubeletLHR,
++    EJEPATubeletLHRConfig,
++    HighResFeatures,
++)
++
++
++@dataclass(frozen=True)
++class ObjectCentricLHRConfig:
++    """Architecture controls for the object-centric LHR candidate."""
++
++    in_channels: int = 21
++    embed_dim: int = 192
++    patch_size: int = 16
++    spatial_window: int = 8
++    heads: int = 6
++    spatial_depth: int = 1
++    temporal_depth: int = 2
++    temporal_mixer: str = "block_causal"
++    merge_2x2: bool = False
++    global_attention: bool = False
++    memory_budget_gb: float = 12.0
++    pooling: str = "query"
++    query_count: int = 8
++    head_hidden_dim: int = 192
++    mask_decoder: bool = True
++    mask_size: int = 128
++    initial_height_px: float = 96.0
++    min_height_px: float = 1.0
++    max_height_px: float = 1024.0
++    ttc_clip_seconds: float = 60.0
++    denominator_epsilon: float = 1e-3
++
++    def __post_init__(self) -> None:
++        if self.in_channels <= 0 or self.embed_dim <= 0 or self.head_hidden_dim <= 0:
++            raise ValueError("Object-LHR channel and hidden dimensions must be positive")
++        if self.mask_size <= 0:
++            raise ValueError("mask_size must be positive")
++        if not 0 < self.min_height_px < self.max_height_px:
++            raise ValueError("Height bounds must satisfy 0 < min < max")
++        if not self.min_height_px <= self.initial_height_px <= self.max_height_px:
++            raise ValueError("initial_height_px must lie inside the configured bounds")
++        if self.ttc_clip_seconds <= 0 or self.denominator_epsilon <= 0:
++            raise ValueError("TTC clipping and denominator epsilon must be positive")
++
++    def backbone_config(self) -> EJEPATubeletLHRConfig:
++        """Return the exact transferable JEPA backbone configuration."""
++
++        return EJEPATubeletLHRConfig(
++            in_channels=self.in_channels,
++            embed_dim=self.embed_dim,
++            patch_size=self.patch_size,
++            spatial_window=self.spatial_window,
++            heads=self.heads,
++            spatial_depth=self.spatial_depth,
++            temporal_depth=self.temporal_depth,
++            temporal_mixer=self.temporal_mixer,
++            merge_2x2=self.merge_2x2,
++            global_attention=self.global_attention,
++            memory_budget_gb=self.memory_budget_gb,
++            pooling=self.pooling,
++            query_count=self.query_count,
++        )
++
++
++@dataclass
++class ObjectCentricLHROutput:
++    """Geometric predictions and dense diagnostics."""
++
++    log_visible_heights: torch.Tensor
++    visible_heights_px: torch.Tensor
++    log_height_ratio: torch.Tensor
++    height_ratio: torch.Tensor
++    ttc_mean_seconds: torch.Tensor
++    direction_logits: torch.Tensor
++    endpoint_embeddings: torch.Tensor
++    pair_embedding: torch.Tensor
++    mask_logits: torch.Tensor | None
++    features: HighResFeatures
++
++
++def stable_ttc_from_log_ratio(
++    log_ratio: torch.Tensor,
++    delta_t_s: torch.Tensor,
++    *,
++    denominator_epsilon: float,
++    clip_seconds: float,
++) -> torch.Tensor:
++    """Convert log(h1/h2) to signed TTC without division singularities."""
++
++    if log_ratio.shape != delta_t_s.shape:
++        raise ValueError("log_ratio and delta_t_s must have identical shapes")
++    ratio = torch.exp(log_ratio.clamp(-12.0, 12.0))
++    denominator = 1.0 - ratio
++    sign = torch.where(
++        denominator >= 0,
++        torch.ones_like(denominator),
++        -torch.ones_like(denominator),
++    )
++    safe = sign * denominator.abs().clamp_min(denominator_epsilon)
++    return (delta_t_s / safe).clamp(-clip_seconds, clip_seconds)
++
++
++class ObjectCentricLHR(nn.Module):
++    """JEPA-compatible object ROI encoder with a geometric LHR readout."""
++
++    def __init__(self, config: ObjectCentricLHRConfig | None = None) -> None:
++        super().__init__()
++        self.config = config or ObjectCentricLHRConfig()
++        self.encoder = EJEPATubeletLHR(self.config.backbone_config())
++        # The legacy direct-TTC/collision readouts belong to the historical
++        # full-frame model. They are intentionally frozen and never optimized
++        # by the object-centric route.
++        for legacy_head in (self.encoder.ttc_head, self.encoder.collision_head):
++            for parameter in legacy_head.parameters():
++                parameter.requires_grad_(False)
++        hidden = self.config.head_hidden_dim
++        self.height_head = nn.Sequential(
++            nn.LayerNorm(self.config.embed_dim),
++            nn.Linear(self.config.embed_dim, hidden),
++            nn.GELU(),
++            nn.Linear(hidden, 1),
++        )
++        pair_dim = self.config.embed_dim * 3
++        self.pair_projector = nn.Sequential(
++            nn.LayerNorm(pair_dim),
++            nn.Linear(pair_dim, hidden),
++            nn.GELU(),
++            nn.Dropout(0.1),
++        )
++        self.direction_head = nn.Linear(hidden, 2)
++        if self.config.mask_decoder:
++            self.mask_decoder: nn.Module | None = nn.Sequential(
++                nn.Conv2d(self.config.embed_dim, hidden, kernel_size=1),
++                nn.GELU(),
++                nn.Conv2d(hidden, 1, kernel_size=1),
++            )
++        else:
++            self.mask_decoder = None
++        self._initialize_height_head()
++
++    def _initialize_height_head(self) -> None:
++        final = self.height_head[-1]
++        if not isinstance(final, nn.Linear):
++            raise TypeError("height_head must end with a Linear layer")
++        nn.init.normal_(final.weight, mean=0.0, std=1e-3)
++        log_min = math.log(self.config.min_height_px)
++        log_max = math.log(self.config.max_height_px)
++        fraction = (math.log(self.config.initial_height_px) - log_min) / (log_max - log_min)
++        fraction = min(max(fraction, 1e-6), 1.0 - 1e-6)
++        nn.init.constant_(final.bias, math.log(fraction / (1.0 - fraction)))
++
++    def load_exact_backbone_state_dict(
++        self,
++        source_state: Mapping[str, Any],
++        source_config: EJEPATubeletLHRConfig | Mapping[str, Any],
++    ) -> dict[str, Any]:
++        """Load only an exact label-free JEPA encoder state."""
++
++        return self.encoder.load_exact_backbone_state_dict(source_state, source_config)
++
++    def backbone_structural_config(self) -> dict[str, Any]:
++        """Return the exact architecture identity required by SSL transfer."""
++
++        return self.encoder.backbone_structural_config()
++
++    def _decode_masks(self, features: HighResFeatures) -> torch.Tensor | None:
++        if self.mask_decoder is None:
++            return None
++        batch, steps, patches, dim = features.tokens.shape
++        grid_h = features.encoded_grid_height
++        grid_w = features.encoded_grid_width
++        if grid_h * grid_w != patches:
++            raise ValueError("Dense token count does not match encoded grid geometry")
++        grid = features.tokens.reshape(batch, steps, grid_h, grid_w, dim)
++        grid = grid.permute(0, 1, 4, 2, 3).reshape(batch * steps, dim, grid_h, grid_w)
++        logits = self.mask_decoder(grid)
++        logits = functional.interpolate(
++            logits,
++            size=(self.config.mask_size, self.config.mask_size),
++            mode="bilinear",
++            align_corners=False,
++        )
++        return logits.reshape(batch, steps, 1, self.config.mask_size, self.config.mask_size)
++
++    def forward(
++        self,
++        events: torch.Tensor,
++        delta_t_s: torch.Tensor,
++    ) -> ObjectCentricLHROutput:
++        """Predict endpoint heights and derive signed TTC."""
++
++        if events.ndim != 5 or events.shape[1] != 2:
++            raise ValueError("events must have shape [B,2,C,H,W]")
++        if events.shape[2] != self.config.in_channels:
++            raise ValueError(
++                f"events have {events.shape[2]} channels; expected {self.config.in_channels}"
++            )
++        if delta_t_s.shape != (events.shape[0],):
++            raise ValueError("delta_t_s must have shape [B]")
++        if bool((delta_t_s <= 0).any()) or not torch.isfinite(delta_t_s).all():
++            raise ValueError("delta_t_s must be finite and strictly positive")
++
++        features = self.encoder.forward_features(events)
++        endpoint_embeddings = self.encoder.pool_temporal_steps(features)
++        raw_height_logits = self.height_head(endpoint_embeddings).squeeze(-1)
++        log_min = math.log(self.config.min_height_px)
++        log_max = math.log(self.config.max_height_px)
++        # A sigmoid parameterization keeps heights positive and bounded without
++        # the zero-gradient saturation introduced by hard clamping.
++        log_heights = log_min + (log_max - log_min) * torch.sigmoid(raw_height_logits)
++        heights = torch.exp(log_heights)
++        log_ratio = log_heights[:, 0] - log_heights[:, 1]
++        ratio = torch.exp(log_ratio.clamp(-12.0, 12.0))
++        ttc = stable_ttc_from_log_ratio(
++            log_ratio,
++            delta_t_s,
++            denominator_epsilon=self.config.denominator_epsilon,
++            clip_seconds=self.config.ttc_clip_seconds,
++        )
++        first, second = endpoint_embeddings.unbind(dim=1)
++        pair_embedding = self.pair_projector(torch.cat([first, second, second - first], dim=-1))
++        return ObjectCentricLHROutput(
++            log_visible_heights=log_heights,
++            visible_heights_px=heights,
++            log_height_ratio=log_ratio,
++            height_ratio=ratio,
++            ttc_mean_seconds=ttc,
++            direction_logits=self.direction_head(pair_embedding),
++            endpoint_embeddings=endpoint_embeddings,
++            pair_embedding=pair_embedding,
++            mask_logits=self._decode_masks(features),
++            features=features,
++        )
++
++    def checkpoint_config(self) -> dict[str, Any]:
++        """Return a JSON-safe architecture record."""
++
++        return asdict(self.config)
++
++
++__all__ = [
++    "ObjectCentricLHR",
++    "ObjectCentricLHRConfig",
++    "ObjectCentricLHROutput",
++    "stable_ttc_from_log_ratio",
++]
+diff --git a/src/e_jepa_ttc/training/object_lhr.py b/src/e_jepa_ttc/training/object_lhr.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..d735f99de49c089a1851c526e72ad9884449b71b
+--- /dev/null
++++ b/src/e_jepa_ttc/training/object_lhr.py
+@@ -0,0 +1,207 @@
++"""Curriculum and losses for object-centric visible-height-ratio TTC."""
++
++from __future__ import annotations
++
++from dataclasses import dataclass
++
++import torch
++from torch import nn
++from torch.nn import functional
++
++from e_jepa_ttc.data.garlttc_object_lhr import ObjectLHRBatch
++from e_jepa_ttc.models.object_lhr import ObjectCentricLHROutput
++
++
++@dataclass(frozen=True)
++class ObjectLHRCurriculumConfig:
++    """Loss weights and phase boundaries.
++
++    Phase 1 learns the two observable heights. Phase 2 adds the visible-height
++    ratio and direction. Phase 3 adds the TTC-aligned MiD term. This mirrors the
++    official Garl-TTC curriculum while keeping each component auditable.
++    """
++
++    height_only_epochs: int = 5
++    ratio_warmup_epochs: int = 10
++    visible_height_weight: float = 1.0
++    visible_ratio_weight: float = 10.0
++    mid_weight: float = 1.0
++    mid_scale: float = 1.0e4
++    mask_weight: float = 500.0
++    direction_weight: float = 0.1
++    signed_ttc_aux_weight: float = 0.0
++    smooth_l1_beta: float = 0.05
++    focal_alpha: float = 0.25
++    focal_gamma: float = 2.0
++
++    def __post_init__(self) -> None:
++        if self.height_only_epochs < 0 or self.ratio_warmup_epochs < self.height_only_epochs:
++            raise ValueError("Curriculum epochs must satisfy 0 <= height_only <= ratio_warmup")
++        weights = (
++            self.visible_height_weight,
++            self.visible_ratio_weight,
++            self.mid_weight,
++            self.mid_scale,
++            self.mask_weight,
++            self.direction_weight,
++            self.signed_ttc_aux_weight,
++            self.smooth_l1_beta,
++        )
++        if min(weights) < 0:
++            raise ValueError("Object-LHR loss weights must be non-negative")
++        if self.smooth_l1_beta <= 0:
++            raise ValueError("smooth_l1_beta must be positive")
++
++
++@dataclass
++class ObjectLHRLossResult:
++    """Total differentiable loss plus detached component metrics."""
++
++    total: torch.Tensor
++    components: dict[str, torch.Tensor]
++    phase: str
++
++
++def curriculum_phase(epoch: int, config: ObjectLHRCurriculumConfig) -> str:
++    """Return the deterministic objective phase for a one-indexed epoch."""
++
++    if epoch <= 0:
++        raise ValueError("epoch must be one-indexed and positive")
++    if epoch <= config.height_only_epochs:
++        return "height_only"
++    if epoch <= config.ratio_warmup_epochs:
++        return "height_ratio"
++    return "full_mid"
++
++
++def target_log_ratio_from_ttc(delta_t_s: torch.Tensor, target_ttc_s: torch.Tensor) -> torch.Tensor:
++    """Compute log(1 - delta_t / TTC) and fail closed outside the LHR domain."""
++
++    if delta_t_s.shape != target_ttc_s.shape:
++        raise ValueError("delta_t_s and target_ttc_s must have identical shape")
++    ratio = 1.0 - delta_t_s / target_ttc_s
++    if not torch.isfinite(ratio).all() or bool((ratio <= 0).any()):
++        raise ValueError("Official TTC target produced a non-positive LHR ratio")
++    return torch.log(ratio)
++
++
++def signed_log1p(value: torch.Tensor) -> torch.Tensor:
++    """Signed logarithm used only by the optional direct-TTC auxiliary."""
++
++    return value.sign() * torch.log1p(value.abs())
++
++
++def binary_focal_loss_with_logits(
++    logits: torch.Tensor,
++    targets: torch.Tensor,
++    *,
++    alpha: float,
++    gamma: float,
++) -> torch.Tensor:
++    """Numerically stable binary focal loss."""
++
++    if logits.shape != targets.shape:
++        raise ValueError("Focal logits and targets must have identical shapes")
++    targets = targets.to(dtype=logits.dtype)
++    bce = functional.binary_cross_entropy_with_logits(logits, targets, reduction="none")
++    probability = torch.sigmoid(logits)
++    p_t = probability * targets + (1.0 - probability) * (1.0 - targets)
++    alpha_t = alpha * targets + (1.0 - alpha) * (1.0 - targets)
++    return (alpha_t * (1.0 - p_t).pow(gamma) * bce).mean()
++
++
++def object_lhr_loss(
++    output: ObjectCentricLHROutput,
++    batch: ObjectLHRBatch,
++    *,
++    epoch: int,
++    config: ObjectLHRCurriculumConfig,
++) -> ObjectLHRLossResult:
++    """Compute the phase-gated geometric training objective."""
++
++    phase = curriculum_phase(epoch, config)
++    target_log_heights = torch.log(batch.visible_heights_px.clamp_min(1e-6))
++    target_visible_log_ratio = target_log_heights[:, 0] - target_log_heights[:, 1]
++    target_ttc_log_ratio = target_log_ratio_from_ttc(batch.delta_t_s, batch.target_ttc_s)
++
++    components: dict[str, torch.Tensor] = {}
++    components["visible_height"] = functional.smooth_l1_loss(
++        output.log_visible_heights,
++        target_log_heights,
++        beta=config.smooth_l1_beta,
++    )
++    total = config.visible_height_weight * components["visible_height"]
++
++    if phase in {"height_ratio", "full_mid"}:
++        components["visible_ratio"] = functional.smooth_l1_loss(
++            output.log_height_ratio,
++            target_visible_log_ratio,
++            beta=config.smooth_l1_beta,
++        )
++        total = total + config.visible_ratio_weight * components["visible_ratio"]
++        direction_target = (batch.target_ttc_s < 0).to(dtype=torch.long)
++        components["direction"] = functional.cross_entropy(
++            output.direction_logits,
++            direction_target,
++        )
++        total = total + config.direction_weight * components["direction"]
++
++    if phase == "full_mid":
++        components["mid"] = torch.abs(output.log_height_ratio - target_ttc_log_ratio).mean()
++        total = total + config.mid_weight * config.mid_scale * components["mid"]
++        if config.signed_ttc_aux_weight > 0:
++            components["signed_ttc_aux"] = functional.smooth_l1_loss(
++                signed_log1p(output.ttc_mean_seconds),
++                signed_log1p(batch.target_ttc_s),
++                beta=config.smooth_l1_beta,
++            )
++            total = total + config.signed_ttc_aux_weight * components["signed_ttc_aux"]
++
++    if output.mask_logits is not None and bool(batch.mask_valid.any()):
++        valid = batch.mask_valid[:, :, None, None, None].expand_as(output.mask_logits)
++        components["mask_focal"] = binary_focal_loss_with_logits(
++            output.mask_logits[valid],
++            batch.masks[valid],
++            alpha=config.focal_alpha,
++            gamma=config.focal_gamma,
++        )
++        total = total + config.mask_weight * components["mask_focal"]
++
++    components["target_visible_log_ratio_mae"] = torch.abs(
++        output.log_height_ratio.detach() - target_visible_log_ratio.detach()
++    ).mean()
++    components["target_ttc_log_ratio_mae"] = torch.abs(
++        output.log_height_ratio.detach() - target_ttc_log_ratio.detach()
++    ).mean()
++    return ObjectLHRLossResult(total=total, components=components, phase=phase)
++
++
++def mask_iou(
++    logits: torch.Tensor | None,
++    targets: torch.Tensor,
++    valid: torch.Tensor,
++) -> float | None:
++    """Return endpoint-level foreground IoU for valid masks only."""
++
++    if logits is None or not bool(valid.any()):
++        return None
++    prediction = torch.sigmoid(logits) >= 0.5
++    truth = targets >= 0.5
++    valid_pixels = valid[:, :, None, None, None].expand_as(prediction)
++    prediction = prediction[valid_pixels]
++    truth = truth[valid_pixels]
++    intersection = torch.logical_and(prediction, truth).sum().float()
++    union = torch.logical_or(prediction, truth).sum().float()
++    return float((intersection / union.clamp_min(1.0)).detach().cpu())
++
++
++__all__ = [
++    "ObjectLHRCurriculumConfig",
++    "ObjectLHRLossResult",
++    "binary_focal_loss_with_logits",
++    "curriculum_phase",
++    "mask_iou",
++    "object_lhr_loss",
++    "signed_log1p",
++    "target_log_ratio_from_ttc",
++]
+diff --git a/tests/integration/test_object_lhr_step.py b/tests/integration/test_object_lhr_step.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..3e198969d340babc32f13c1d8cad43dfad6eccda
+--- /dev/null
++++ b/tests/integration/test_object_lhr_step.py
+@@ -0,0 +1,53 @@
++from __future__ import annotations
++
++import torch
++
++from e_jepa_ttc.data.garlttc_object_lhr import ObjectLHRBatch
++from e_jepa_ttc.models.object_lhr import ObjectCentricLHR, ObjectCentricLHRConfig
++from e_jepa_ttc.training.object_lhr import ObjectLHRCurriculumConfig, object_lhr_loss
++
++
++def test_object_lhr_optimizer_step_is_finite_and_updates_height_head() -> None:
++    torch.manual_seed(29)
++    model = ObjectCentricLHR(
++        ObjectCentricLHRConfig(
++            in_channels=2,
++            embed_dim=8,
++            patch_size=4,
++            spatial_window=2,
++            heads=2,
++            spatial_depth=1,
++            temporal_depth=1,
++            query_count=2,
++            head_hidden_dim=8,
++            mask_decoder=False,
++            mask_size=16,
++        )
++    )
++    batch = ObjectLHRBatch(
++        events=torch.randn(4, 2, 2, 16, 16),
++        delta_t_s=torch.full((4,), 0.1),
++        visible_heights_px=torch.tensor(
++            [[80.0, 84.0], [90.0, 99.0], [100.0, 95.0], [110.0, 100.0]]
++        ),
++        target_ttc_s=torch.tensor([2.0, 1.1, -2.0, -1.0]),
++        masks=torch.zeros(4, 2, 1, 16, 16),
++        mask_valid=torch.zeros(4, 2, dtype=torch.bool),
++        sequence_ids=["s"] * 4,
++        sample_tokens=[f"x{index}" for index in range(4)],
++        track_ids=["t"] * 4,
++    )
++    optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3)
++    before = model.height_head[-1].weight.detach().clone()
++    output = model(**batch.model_inputs())
++    loss = object_lhr_loss(
++        output,
++        batch,
++        epoch=1,
++        config=ObjectLHRCurriculumConfig(height_only_epochs=5, ratio_warmup_epochs=10),
++    )
++    optimizer.zero_grad(set_to_none=True)
++    loss.total.backward()
++    optimizer.step()
++    assert torch.isfinite(loss.total)
++    assert not torch.equal(before, model.height_head[-1].weight.detach())
+diff --git a/tests/unit/test_garlttc_object_cache_extension.py b/tests/unit/test_garlttc_object_cache_extension.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..21f262c42c3f900c62d485ecbdb11491ba80bde8
+--- /dev/null
++++ b/tests/unit/test_garlttc_object_cache_extension.py
+@@ -0,0 +1,57 @@
++from __future__ import annotations
++
++from pathlib import Path
++
++import numpy as np
++import torch
++from PIL import Image
++
++from e_jepa_ttc.data.garlttc_lhr_cache import _MaskReader, _jepa_roi_voxel
++
++
++def test_jepa_roi_voxel_is_object_specific_and_21_channel() -> None:
++    events = {
++        "x": np.asarray([10, 20, 90], dtype=np.int32),
++        "y": np.asarray([10, 20, 90], dtype=np.int32),
++        "t": np.asarray([0, 50_000, 99_999], dtype=np.int64),
++        "p": np.asarray([1, -1, 1], dtype=np.int8),
++    }
++    kwargs = {
++        "square": (0.0, 0.0, 40.0, 40.0),
++        "size": 32,
++        "bins": 5,
++        "sequence_id": "synthetic",
++        "start_us": 0,
++        "end_us": 100_000,
++        "event_pixel_diff": 0,
++    }
++    tensor = _jepa_roi_voxel(events, **kwargs)
++    without_outside = {key: value[:2] for key, value in events.items()}
++    reference = _jepa_roi_voxel(without_outside, **kwargs)
++    assert tensor.shape == (21, 32, 32)
++    assert torch.isfinite(tensor).all()
++    assert float(tensor.abs().sum()) > 0.0
++    # The event at (90, 90) lies outside the target ROI and must not contribute.
++    torch.testing.assert_close(tensor, reference)
++
++
++def test_mask_reader_never_invents_a_box_mask(tmp_path: Path) -> None:
++    reader = _MaskReader(tmp_path)
++    missing, valid = reader.read(
++        "does-not-exist.png",
++        square=(0.0, 0.0, 16.0, 16.0),
++        size=8,
++    )
++    assert not valid
++    assert missing.sum().item() == 0.0
++
++    raw = np.zeros((16, 16), dtype=np.uint8)
++    raw[4:8, 5:9] = 255
++    Image.fromarray(raw).save(tmp_path / "mask.png")
++    mask, valid = reader.read(
++        "mask.png",
++        square=(0.0, 0.0, 16.0, 16.0),
++        size=8,
++    )
++    assert valid
++    assert 0 < mask.sum().item() < 64
+diff --git a/tests/unit/test_object_lhr.py b/tests/unit/test_object_lhr.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..303849476089d55f2dcbf4662f78bdb78743ac32
+--- /dev/null
++++ b/tests/unit/test_object_lhr.py
+@@ -0,0 +1,87 @@
++from __future__ import annotations
++
++import pytest
++import torch
++
++from e_jepa_ttc.models.object_lhr import (
++    ObjectCentricLHR,
++    ObjectCentricLHRConfig,
++    stable_ttc_from_log_ratio,
++)
++
++
++def test_stable_ttc_preserves_approaching_and_receding_signs() -> None:
++    delta = torch.tensor([0.1, 0.1])
++    # h1/h2 < 1 -> approaching -> positive TTC.
++    # h1/h2 > 1 -> receding -> negative TTC.
++    log_ratio = torch.log(torch.tensor([0.9, 1.1]))
++    result = stable_ttc_from_log_ratio(
++        log_ratio,
++        delta,
++        denominator_epsilon=1e-3,
++        clip_seconds=60.0,
++    )
++    assert result[0].item() == pytest.approx(1.0, rel=1e-5)
++    assert result[1].item() == pytest.approx(-1.0, rel=1e-5)
++
++
++def test_stable_ttc_clamps_near_singular_ratio() -> None:
++    result = stable_ttc_from_log_ratio(
++        torch.tensor([0.0]),
++        torch.tensor([0.1]),
++        denominator_epsilon=1e-3,
++        clip_seconds=60.0,
++    )
++    assert result.item() == pytest.approx(60.0)
++
++
++def test_object_lhr_emits_two_positive_heights_and_masks() -> None:
++    torch.manual_seed(5)
++    model = ObjectCentricLHR(
++        ObjectCentricLHRConfig(
++            in_channels=4,
++            embed_dim=16,
++            patch_size=8,
++            spatial_window=2,
++            heads=4,
++            spatial_depth=1,
++            temporal_depth=1,
++            query_count=2,
++            head_hidden_dim=16,
++            mask_size=32,
++        )
++    ).eval()
++    events = torch.randn(2, 2, 4, 32, 32)
++    with torch.inference_mode():
++        output = model(events, torch.tensor([0.1, 0.1]))
++    assert output.visible_heights_px.shape == (2, 2)
++    assert bool((output.visible_heights_px > 0).all())
++    assert output.log_height_ratio.shape == (2,)
++    assert output.ttc_mean_seconds.shape == (2,)
++    assert output.endpoint_embeddings.shape == (2, 2, 16)
++    assert output.mask_logits is not None
++    assert output.mask_logits.shape == (2, 2, 1, 32, 32)
++
++
++def test_temporal_endpoint_pooling_keeps_endpoint_identity() -> None:
++    torch.manual_seed(17)
++    model = ObjectCentricLHR(
++        ObjectCentricLHRConfig(
++            in_channels=2,
++            embed_dim=8,
++            patch_size=4,
++            spatial_window=2,
++            heads=2,
++            spatial_depth=1,
++            temporal_depth=1,
++            query_count=2,
++            head_hidden_dim=8,
++            mask_decoder=False,
++            mask_size=16,
++        )
++    ).eval()
++    events = torch.zeros(1, 2, 2, 16, 16)
++    events[:, 1] = 3.0
++    with torch.inference_mode():
++        output = model(events, torch.tensor([0.1]))
++    assert not torch.equal(output.endpoint_embeddings[:, 0], output.endpoint_embeddings[:, 1])
+diff --git a/tests/unit/test_object_lhr_data.py b/tests/unit/test_object_lhr_data.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..2626e9c668c220bfccc0f7cc4d5f22e593316e7e
+--- /dev/null
++++ b/tests/unit/test_object_lhr_data.py
+@@ -0,0 +1,41 @@
++from __future__ import annotations
++
++import pytest
++import torch
++
++from e_jepa_ttc.data.garlttc_object_lhr import collate_object_lhr
++
++
++def _record(ttc: float = 2.0) -> dict[str, object]:
++    return {
++        "jepa_event_roi": torch.zeros(2, 21, 16, 16),
++        "garl_delta_t_s": 0.1,
++        "garl_visible_heights_px": torch.tensor([90.0, 94.736842]),
++        "ttc_s": ttc,
++        "sequence_id": "sequence",
++        "sample_token": "sample",
++        "track_id": "track",
++    }
++
++
++def test_collate_exposes_only_events_and_delta_as_model_inputs() -> None:
++    batch = collate_object_lhr([_record()])
++    assert set(batch.model_inputs()) == {"events", "delta_t_s"}
++    assert batch.events.shape == (1, 2, 21, 16, 16)
++    assert batch.visible_heights_px.shape == (1, 2)
++    assert not batch.mask_valid.any()
++
++
++def test_collate_rejects_nonpositive_lhr_ratio() -> None:
++    record = _record(ttc=0.05)
++    with pytest.raises(ValueError, match="non-positive height ratio"):
++        collate_object_lhr([record])
++
++
++def test_collate_accepts_optional_mask_supervision() -> None:
++    record = _record()
++    record["garl_mask_pair"] = torch.ones(2, 1, 16, 16)
++    record["garl_mask_valid"] = torch.tensor([True, False])
++    batch = collate_object_lhr([record])
++    assert batch.masks.shape == (1, 2, 1, 16, 16)
++    assert batch.mask_valid.tolist() == [[True, False]]
+diff --git a/tests/unit/test_object_lhr_training.py b/tests/unit/test_object_lhr_training.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..2da5367def8cd73e9a32d65b707f60b9bdc596ac
+--- /dev/null
++++ b/tests/unit/test_object_lhr_training.py
+@@ -0,0 +1,85 @@
++from __future__ import annotations
++
++import torch
++
++from e_jepa_ttc.data.garlttc_object_lhr import ObjectLHRBatch
++from e_jepa_ttc.models.object_lhr import ObjectCentricLHROutput
++from e_jepa_ttc.models.highres_factorized import HighResFeatures, make_patch_geometry
++from e_jepa_ttc.training.object_lhr import (
++    ObjectLHRCurriculumConfig,
++    curriculum_phase,
++    object_lhr_loss,
++    target_log_ratio_from_ttc,
++)
++
++
++def _batch() -> ObjectLHRBatch:
++    return ObjectLHRBatch(
++        events=torch.zeros(2, 2, 3, 8, 8),
++        delta_t_s=torch.tensor([0.1, 0.1]),
++        visible_heights_px=torch.tensor([[90.0, 94.73684], [100.0, 90.90909]]),
++        target_ttc_s=torch.tensor([2.0, -1.0]),
++        masks=torch.zeros(2, 2, 1, 8, 8),
++        mask_valid=torch.zeros(2, 2, dtype=torch.bool),
++        sequence_ids=["a", "b"],
++        sample_tokens=["a0", "b0"],
++        track_ids=["ta", "tb"],
++    )
++
++
++def _output(batch: ObjectLHRBatch) -> ObjectCentricLHROutput:
++    log_heights = torch.log(batch.visible_heights_px).clone().requires_grad_()
++    log_ratio = log_heights[:, 0] - log_heights[:, 1]
++    geometry = make_patch_geometry(8, 8, 4)
++    features = HighResFeatures(
++        tokens=torch.zeros(2, 2, 4, 4),
++        valid_patch_mask=torch.ones(2, 2, 4, dtype=torch.bool),
++        geometry=geometry,
++        diagnostics={},
++        encoded_grid_height=2,
++        encoded_grid_width=2,
++        post_merge_patch_coordinates=torch.zeros(4, 2),
++    )
++    return ObjectCentricLHROutput(
++        log_visible_heights=log_heights,
++        visible_heights_px=torch.exp(log_heights),
++        log_height_ratio=log_ratio,
++        height_ratio=torch.exp(log_ratio),
++        ttc_mean_seconds=batch.target_ttc_s.clone(),
++        direction_logits=torch.tensor([[5.0, -5.0], [-5.0, 5.0]], requires_grad=True),
++        endpoint_embeddings=torch.zeros(2, 2, 4),
++        pair_embedding=torch.zeros(2, 4),
++        mask_logits=None,
++        features=features,
++    )
++
++
++def test_curriculum_phase_boundaries() -> None:
++    config = ObjectLHRCurriculumConfig(height_only_epochs=5, ratio_warmup_epochs=10)
++    assert curriculum_phase(5, config) == "height_only"
++    assert curriculum_phase(6, config) == "height_ratio"
++    assert curriculum_phase(10, config) == "height_ratio"
++    assert curriculum_phase(11, config) == "full_mid"
++
++
++def test_full_loss_uses_ttc_aligned_log_ratio() -> None:
++    batch = _batch()
++    output = _output(batch)
++    config = ObjectLHRCurriculumConfig(height_only_epochs=0, ratio_warmup_epochs=0)
++    result = object_lhr_loss(output, batch, epoch=1, config=config)
++    assert result.phase == "full_mid"
++    assert "visible_height" in result.components
++    assert "visible_ratio" in result.components
++    assert "mid" in result.components
++    assert torch.isfinite(result.total)
++    result.total.backward()
++    assert output.log_visible_heights.grad is not None
++
++
++def test_target_ratio_supports_signed_ttc() -> None:
++    value = target_log_ratio_from_ttc(
++        torch.tensor([0.1, 0.1]),
++        torch.tensor([2.0, -1.0]),
++    )
++    assert value[0] < 0
++    assert value[1] > 0

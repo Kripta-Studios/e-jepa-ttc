@@ -811,6 +811,31 @@ class EJEPATubeletLHR(nn.Module):
             pooled[active] = attended.mean(dim=1).to(pooled.dtype)
         return pooled
 
+    def pool_features(self, features: HighResFeatures) -> torch.Tensor:
+        """Pool all valid temporal/spatial tokens into one downstream embedding."""
+
+        return self._pool_tokens(features.tokens, features.valid_patch_mask)
+
+    def pool_temporal_steps(self, features: HighResFeatures) -> torch.Tensor:
+        """Pool every temporal endpoint independently with the configured readout.
+
+        Object-centric LHR must preserve the distinction between the two
+        observations. Pooling the complete sequence before predicting heights
+        would make the two height outputs exchangeable and reintroduce the
+        constant-ratio attractor.
+        """
+
+        if features.tokens.ndim != 4 or features.valid_patch_mask.shape != features.tokens.shape[:3]:
+            raise ValueError("HighResFeatures must contain [B,T,P,D] tokens and [B,T,P] mask.")
+        pooled = [
+            self._pool_tokens(
+                features.tokens[:, step : step + 1],
+                features.valid_patch_mask[:, step : step + 1],
+            )
+            for step in range(features.tokens.shape[1])
+        ]
+        return torch.stack(pooled, dim=1)
+
     def forward(
         self,
         inputs: torch.Tensor,
@@ -820,7 +845,7 @@ class EJEPATubeletLHR(nn.Module):
         """Predict TTC and collision thresholds from dense causal tokens."""
 
         features = self.forward_features(inputs, valid_temporal_mask=valid_temporal_mask)
-        pooled = self._pool_tokens(features.tokens, features.valid_patch_mask)
+        pooled = self.pool_features(features)
         # eAP/Garl-TTC is a signed protocol: receding objects have negative TTC.
         # Exponentiating this head made the high-resolution candidate incapable
         # of representing an entire official evaluation bucket.
