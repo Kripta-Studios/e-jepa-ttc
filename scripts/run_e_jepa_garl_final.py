@@ -1,7 +1,7 @@
 """Run the cache-free event-only Garl candidate from screen to frozen evaluation.
 
 The runner deliberately separates training, freezing, label-free EvTTC
-prediction, scoring, and offline submission validation.  It never uploads a
+prediction, scoring, and offline submission validation. It never uploads a
 submission and it never opens EvTTC labels during prediction.
 """
 
@@ -22,16 +22,37 @@ TRAINER = ROOT / "scripts" / "train_e_jepa_tubelet_lhr.py"
 PREDICTOR = ROOT / "scripts" / "predict_garl_evttc_table_vi.py"
 SCORER = ROOT / "scripts" / "evaluate_garl_evttc_table_vi.py"
 SUBMISSION_VALIDATOR = ROOT / "scripts" / "validate_garlttc_submission.py"
-
 PROFILE_CONFIGS = {
     "screen": ROOT / "configs" / "experiment" / "e_jepa_garl_event_screen_v1.yaml",
+    "stable-screen": (
+        ROOT
+        / "configs"
+        / "experiment"
+        / "e_jepa_garl_event_dense_level_dynamics_stable_scratch_screen_v3.yaml"
+    ),
     "full": ROOT / "configs" / "experiment" / "e_jepa_garl_event_full_v1.yaml",
 }
+STABLE_TRANSFER_CONFIG = (
+    ROOT
+    / "configs"
+    / "experiment"
+    / "e_jepa_garl_event_dense_level_dynamics_stable_transfer_screen_v3.yaml"
+)
 PROFILE_SPLITS = {
     "screen": ROOT / "data" / "splits" / "eap_pilot12_v1.json",
+    "stable-screen": ROOT / "data" / "splits" / "eap_pilot12_v1.json",
     "full": ROOT / "data" / "splits" / "eap_train40_v1.json",
 }
-PROFILE_SEEDS = {"screen": (7,), "full": (7, 13, 23)}
+PROFILE_SEEDS = {
+    "screen": (7,),
+    "stable-screen": (7,),
+    "full": (7, 13, 23),
+}
+PROFILE_OUTPUT_NAMES = {
+    "screen": "e_jepa_garl_event_screen_v1",
+    "stable-screen": "e_jepa_garl_event_stable_screen_v3",
+    "full": "e_jepa_garl_event_full_v1",
+}
 STAGES = ("train", "freeze", "evttc-predict", "evttc-score", "submission-validate")
 
 
@@ -56,7 +77,8 @@ def _write_json(path: Path, value: Mapping[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_suffix(path.suffix + ".tmp")
     temporary.write_text(
-        json.dumps(dict(value), indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+        json.dumps(dict(value), indent=2, ensure_ascii=False) + "\n",
+        encoding="utf-8",
     )
     temporary.replace(path)
 
@@ -88,6 +110,7 @@ def training_command(
     output_root: Path,
     device: str,
     resume: bool,
+    pretrained: Path | None = None,
 ) -> list[str]:
     """Build one canonical trainer command without a dense-cache argument."""
 
@@ -101,7 +124,11 @@ def training_command(
         "--split",
         str(split),
         "--config",
-        str(PROFILE_CONFIGS[profile]),
+        str(
+            STABLE_TRANSFER_CONFIG
+            if profile == "stable-screen" and pretrained is not None
+            else PROFILE_CONFIGS[profile]
+        ),
         "--output-dir",
         str(output_root / f"seed-{seed}"),
         "--seed",
@@ -109,6 +136,8 @@ def training_command(
         "--device",
         device,
     ]
+    if pretrained is not None:
+        command.extend(("--pretrained", str(pretrained)))
     if resume:
         command.append("--resume")
     return command
@@ -134,7 +163,9 @@ def freeze_candidate(output_root: Path, seeds: Sequence[int]) -> dict[str, Any]:
         if int(summary.get("seed", -1)) != seed:
             raise ValueError(f"Seed mismatch in {summary_path}")
         checkpoint = Path(str(summary["best_checkpoint"]))
-        if not checkpoint.is_file() or _sha256(checkpoint) != summary.get("best_checkpoint_sha256"):
+        if not checkpoint.is_file() or _sha256(checkpoint) != summary.get(
+            "best_checkpoint_sha256"
+        ):
             raise ValueError(f"Checkpoint hash mismatch: {checkpoint}")
         commits.add(str(summary["git_commit"]))
         configs.add(str(summary["config_hash"]))
@@ -198,6 +229,11 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--device", default="auto")
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument(
+        "--pretrained",
+        type=Path,
+        help="Optional exact Dense Level-Dynamics checkpoint for a training-only profile.",
+    )
     parser.add_argument("--checkpoint", type=Path)
     parser.add_argument("--evttc-config", type=Path)
     parser.add_argument(
@@ -223,12 +259,17 @@ def main(argv: Sequence[str] | None = None) -> int:
         expected_seeds = PROFILE_SEEDS[args.profile]
         if args.profile == "full" and tuple(seeds) != expected_seeds:
             raise ValueError(f"Full profile requires predeclared seeds {list(expected_seeds)}")
+        if args.profile == "full" and args.pretrained is not None:
+            raise ValueError(
+                "Full multiseed transfer requires one seed-matched checkpoint per run; "
+                "do not pass one --pretrained checkpoint to all full seeds."
+            )
         output_root = (
-            args.output_root or ROOT / "artifacts" / "runs" / f"e_jepa_garl_event_{args.profile}_v1"
+            args.output_root
+            or ROOT / "artifacts" / "runs" / PROFILE_OUTPUT_NAMES[args.profile]
         ).resolve()
         args.output_root = output_root
         split = (args.split or PROFILE_SPLITS[args.profile]).resolve()
-
         if "train" in stages:
             if args.eap_root is None or args.garlttc_root is None:
                 raise ValueError("train requires --eap-root and --garlttc-root")
@@ -243,6 +284,9 @@ def main(argv: Sequence[str] | None = None) -> int:
                         output_root=output_root,
                         device=args.device,
                         resume=args.resume,
+                        pretrained=(
+                            args.pretrained.resolve() if args.pretrained is not None else None
+                        ),
                     ),
                     dry_run=args.dry_run,
                 )
@@ -278,7 +322,8 @@ def main(argv: Sequence[str] | None = None) -> int:
                 or args.evttc_metrics is None
             ):
                 raise ValueError(
-                    "evttc-score requires --evttc-predictions, --evttc-targets and --evttc-metrics"
+                    "evttc-score requires --evttc-predictions, --evttc-targets and "
+                    "--evttc-metrics"
                 )
             _run(
                 [

@@ -1,0 +1,7 @@
+experiment: e_jepa_garl_event_dense_level_dynamics_stable_transfer_screen_v3
+data: configs/data/garlttc_public_train_v4.yaml
+model: configs/model/e_jepa_tubelet_lhr_dense_level_dynamics_screen_v1.yaml
+finetuning: configs/train/garl_highres_stable_transfer_screen_v3.yaml
+protocol: configs/protocol/garlttc_official_v1.yaml
+evttc_selection_allowed: false
+evidence_scope: bounded_public_garl_validation_stable_transfer_screen_v3

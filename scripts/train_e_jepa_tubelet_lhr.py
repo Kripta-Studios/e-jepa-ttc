@@ -1,9 +1,13 @@
 """Train the event-only high-resolution Tubelet TTC model from raw eAP streams.
 
-This trainer intentionally bypasses the multi-hundred-GiB dense cache.  It joins
-the public Garl-TTC labels to raw eAP event windows, materializes only the active
+This trainer intentionally bypasses the multi-hundred-GiB dense cache. It joins
+public Garl-TTC labels to raw eAP event windows, materializes only the active
 batch, selects checkpoints on the sequence-disjoint validation split, and emits
 a checkpoint directly supported by the label-free Table-VI runner.
+
+The stable v2 path separates backbone, pooling, and TTC-head optimization,
+performs readout-only warm-up, and refuses to promote a near-constant predictor.
+Legacy YAML files remain valid and retain the historical single-LR behaviour.
 """
 
 from __future__ import annotations
@@ -41,6 +45,21 @@ from e_jepa_ttc.models.highres_factorized import (  # noqa: E402
     EJEPATubeletLHRConfig,
 )
 from e_jepa_ttc.reproducibility import resolve_device  # noqa: E402
+from e_jepa_ttc.training.tubelet_finetuning import (  # noqa: E402
+    PredictionCollapseError,
+    TrainEpochResult,
+    TubeletOptimizationConfig,
+    apply_optimizer_phase,
+    build_tubelet_optimizer,
+    checkpoint_is_eligible,
+    current_group_learning_rates,
+    is_prediction_collapsed,
+    optimization_phase,
+    prediction_health,
+    resolve_optimization_config,
+    suppress_warmup_backbone_gradients,
+    validate_optimizer_manifest,
+)
 from scripts.screen_highres_real_garl import (  # noqa: E402
     RawHighResGarlDataset,
     _git_commit,
@@ -61,6 +80,18 @@ class TubeletTrainConfig:
     num_workers: int = 4
     learning_rate: float = 3e-4
     weight_decay: float = 0.01
+
+    backbone_learning_rate: float | None = None
+    pooling_learning_rate: float | None = None
+    head_learning_rate: float | None = None
+    warmup_pooling_learning_rate: float | None = None
+    warmup_head_learning_rate: float | None = None
+    backbone_weight_decay: float | None = None
+    readout_weight_decay: float | None = None
+    readout_warmup_optimizer_steps: int = 0
+    min_prediction_std_ratio: float = 0.0
+    collapse_patience: int = 0
+
     precision: str = "bf16"
     max_grad_norm: float = 1.0
     minimum_epochs: int = 2
@@ -87,6 +118,12 @@ class TubeletTrainConfig:
         )
         if min(integers) <= 0:
             raise ValueError("Tubelet trainer integer controls must be positive")
+        if self.readout_warmup_optimizer_steps < 0:
+            raise ValueError("readout_warmup_optimizer_steps must be non-negative")
+        if self.collapse_patience < 0:
+            raise ValueError("collapse_patience must be non-negative")
+        if self.min_prediction_std_ratio < 0.0:
+            raise ValueError("min_prediction_std_ratio must be non-negative")
         if self.precision not in {"fp32", "fp16", "bf16"}:
             raise ValueError("precision must be fp32, fp16 or bf16")
         if self.max_samples_per_split is not None and self.max_samples_per_split <= 0:
@@ -97,6 +134,7 @@ class TubeletTrainConfig:
             raise ValueError("run_scope must be bounded_screen or full_candidate")
         if self.run_scope == "full_candidate" and self.max_samples_per_split is not None:
             raise ValueError("full_candidate cannot cap max_samples_per_split")
+        resolve_optimization_config(self)
 
 
 def _read_yaml(path: Path) -> dict[str, Any]:
@@ -163,7 +201,6 @@ def load_training_spec(
     model_config = EJEPATubeletLHRConfig(
         **{key: item for key, item in model_value.items() if key in model_fields}
     )
-
     train_value: dict[str, Any] = {}
     if experiment.get("finetuning") is not None:
         train_value = _load_inherited(_resolve_ref(experiment_path, experiment["finetuning"]))
@@ -192,6 +229,11 @@ def _autocast(device: torch.device, precision: str) -> torch.autocast:
     return torch.autocast(device_type=device.type, dtype=dtype, enabled=dtype is not None)
 
 
+def _clip_gradients(model: EJEPATubeletLHR, max_grad_norm: float) -> None:
+    if max_grad_norm > 0.0:
+        torch.nn.utils.clip_grad_norm_(model.parameters(), max_grad_norm)
+
+
 def train_epoch(
     model: EJEPATubeletLHR,
     loader: DataLoader[Any],
@@ -200,45 +242,83 @@ def train_epoch(
     device: torch.device,
     precision: str,
     max_grad_norm: float,
+    optimization_config: TubeletOptimizationConfig,
+    optimizer_step: int,
     gradient_accumulation_steps: int = 1,
     scaler: Any | None = None,  # noqa: ANN401
-) -> float:
-    """Train one signed-TTC epoch without retaining dataset tensors."""
+) -> TrainEpochResult:
+    """Train one signed-TTC epoch and preserve real optimizer-step semantics."""
 
     model.train()
     losses: list[float] = []
     optimizer.zero_grad(set_to_none=True)
     batch_count = len(loader)
+    epoch_optimizer_steps = 0
+    latest_phase, latest_lrs = apply_optimizer_phase(
+        optimizer,
+        optimizer_step,
+        optimization_config,
+    )
     for batch_index, (inputs, targets, _, _) in enumerate(loader):
         inputs = inputs.to(device=device, dtype=torch.float32, non_blocking=True)
         targets = targets.to(device=device, dtype=torch.float32, non_blocking=True)
         with _autocast(device, precision):
             prediction = model(inputs).ttc_mean_seconds
             loss = functional.smooth_l1_loss(
-                _signed_log1p(prediction), _signed_log1p(targets), beta=0.05
+                _signed_log1p(prediction),
+                _signed_log1p(targets),
+                beta=0.05,
             )
             backward_loss = loss / gradient_accumulation_steps
         update = (
-            batch_index + 1
-        ) % gradient_accumulation_steps == 0 or batch_index + 1 == batch_count
+            (batch_index + 1) % gradient_accumulation_steps == 0
+            or batch_index + 1 == batch_count
+        )
         if scaler is None:
             backward_loss.backward()
             if update:
-                torch.nn.utils.clip_grad_norm_(model.parameters(), max_grad_norm)
+                latest_phase, latest_lrs = apply_optimizer_phase(
+                    optimizer,
+                    optimizer_step,
+                    optimization_config,
+                )
+                suppress_warmup_backbone_gradients(optimizer, latest_phase)
+                _clip_gradients(model, max_grad_norm)
                 optimizer.step()
                 optimizer.zero_grad(set_to_none=True)
+                optimizer_step += 1
+                epoch_optimizer_steps += 1
         else:
             scaler.scale(backward_loss).backward()
             if update:
+                latest_phase, latest_lrs = apply_optimizer_phase(
+                    optimizer,
+                    optimizer_step,
+                    optimization_config,
+                )
                 scaler.unscale_(optimizer)
-                torch.nn.utils.clip_grad_norm_(model.parameters(), max_grad_norm)
+                suppress_warmup_backbone_gradients(optimizer, latest_phase)
+                _clip_gradients(model, max_grad_norm)
                 scaler.step(optimizer)
                 scaler.update()
                 optimizer.zero_grad(set_to_none=True)
+                optimizer_step += 1
+                epoch_optimizer_steps += 1
         losses.append(float(loss.detach().cpu()))
     if not losses:
         raise RuntimeError("Tubelet training epoch produced no batches")
-    return float(np.mean(losses))
+    next_phase, next_lrs = apply_optimizer_phase(
+        optimizer,
+        optimizer_step,
+        optimization_config,
+    )
+    return TrainEpochResult(
+        mean_loss=float(np.mean(losses)),
+        optimizer_steps=epoch_optimizer_steps,
+        final_optimizer_step=optimizer_step,
+        optimization_phase=next_phase if epoch_optimizer_steps else latest_phase,
+        group_learning_rates=next_lrs if epoch_optimizer_steps else latest_lrs,
+    )
 
 
 @torch.no_grad()
@@ -275,12 +355,7 @@ def _predict(
 
 
 def _load_pretrained(model: EJEPATubeletLHR, path: Path | None) -> dict[str, Any]:
-    """Load only an exact Dense Level--Dynamics backbone transfer payload.
-
-    SSL projection heads, EMA target state and the aligned-patch predictor are
-    intentionally not inference state.  Accepting a partial key intersection here
-    would make a random or incompatible initialization look pretrained.
-    """
+    """Load only an exact Dense Level--Dynamics backbone transfer payload."""
 
     if path is None:
         return {"used": False, "transferred_keys": []}
@@ -319,6 +394,67 @@ def _atomic_save(payload: Mapping[str, Any], path: Path) -> None:
     temporary.replace(path)
 
 
+def _prediction_health_from_frame(predictions: pd.DataFrame) -> dict[str, Any]:
+    return prediction_health(
+        predictions["target_ttc_s"].to_numpy(dtype=np.float64),
+        predictions["prediction_ttc_s"].to_numpy(dtype=np.float64),
+    )
+
+
+def _checkpoint_payload(
+    *,
+    model: EJEPATubeletLHR,
+    optimizer: torch.optim.Optimizer,
+    model_config: EJEPATubeletLHRConfig,
+    optimizer_manifest: Mapping[str, Any],
+    optimizer_step: int,
+    phase: str,
+    group_learning_rates: Mapping[str, float],
+    epoch: int,
+    best_score: float,
+    best_epoch: int,
+    stale: int,
+    collapse_streak: int,
+    health: Mapping[str, Any],
+    collapsed: bool,
+    config_hash: str,
+    dataset_manifest_hash: str,
+    split_version: object,
+    seed: int,
+    transfer: Mapping[str, Any],
+    history: list[dict[str, Any]],
+) -> dict[str, Any]:
+    return {
+        "artifact_type": "e_jepa_tubelet_lhr_checkpoint_v1",
+        "architecture": "e_jepa_tubelet_lhr",
+        "modality": "event_only",
+        "model_config": asdict(model_config),
+        "model_state_dict": model.state_dict(),
+        "optimizer_state_dict": optimizer.state_dict(),
+        "optimizer_manifest": dict(optimizer_manifest),
+        "optimizer_step": optimizer_step,
+        "optimization_phase": phase,
+        "group_learning_rates": dict(group_learning_rates),
+        "epoch": epoch,
+        "best_score": best_score,
+        "best_epoch": best_epoch,
+        "stale": stale,
+        "collapse_streak": collapse_streak,
+        "prediction_health": dict(health),
+        "prediction_collapsed": collapsed,
+        "selection_metric": "validation_sequence_macro_paper_MiD_overall_signed_v1",
+        "config_hash": config_hash,
+        "dataset_manifest_hash": dataset_manifest_hash,
+        "split_version": split_version,
+        "seed": seed,
+        "uses_evttc_for_selection": False,
+        "uses_raw_eap_on_demand": True,
+        "claim_eligible": False,
+        "pretraining": dict(transfer),
+        "history": history,
+    }
+
+
 def train_tubelet_garl(
     *,
     eap_root: Path,
@@ -342,6 +478,7 @@ def train_tubelet_garl(
     dirty_at_start = _git_dirty()
     if train_config.require_clean_git and dirty_at_start:
         raise RuntimeError("full_candidate requires a clean committed Git worktree")
+
     split = json.loads(split_path.read_text(encoding="utf-8"))
     split_version = split.get("version", split.get("protocol", split.get("artifact_type")))
     roles = {
@@ -351,6 +488,7 @@ def train_tubelet_garl(
     }
     if set(split["assignments"]["train"]) & set(split["assignments"]["validation"]):
         raise ValueError("Train and validation sequence assignments overlap")
+
     index = load_garlttc_train_index(garlttc_root, sorted(roles))
     dataset_manifest_hash = _canonical_hash(
         {
@@ -359,23 +497,28 @@ def train_tubelet_garl(
             "split_sha256": _sha256(split_path),
         }
     )
+    optimization_config = resolve_optimization_config(train_config)
     config_hash = _canonical_hash(
         {
             "model": asdict(model_config),
             "trainer": asdict(train_config),
+            "optimization": asdict(optimization_config),
             "provenance": dict(provenance),
         }
     )
     selected, selection_report = select_balanced_cache_rows(
         index.merged.sort_values(
-            ["sequence_id", "timestamp_us", "track_id", "sample_token"], kind="mergesort"
+            ["sequence_id", "timestamp_us", "track_id", "sample_token"],
+            kind="mergesort",
         ),
         roles,
         seed=train_config.seed,
         max_samples_per_split=train_config.max_samples_per_split,
     )
     rows = {
-        role: selected.loc[selected["sequence_id"].astype(str).map(roles.get) == role].copy()
+        role: selected.loc[
+            selected["sequence_id"].astype(str).map(roles.get) == role
+        ].copy()
         for role in ("train", "validation")
     }
     datasets = {
@@ -395,43 +538,52 @@ def train_tubelet_garl(
         seed=train_config.seed,
         num_workers=train_config.num_workers,
     )
+
     model = EJEPATubeletLHR(model_config).to(device)
     transfer = _load_pretrained(model, pretrained)
-    optimizer = torch.optim.AdamW(
-        model.parameters(),
-        lr=train_config.learning_rate,
-        weight_decay=train_config.weight_decay,
-    )
+    optimizer, optimizer_manifest = build_tubelet_optimizer(model, optimization_config)
     scaler = torch.amp.GradScaler(  # type: ignore[reportPrivateImportUsage]
-        "cuda", enabled=(device.type == "cuda" and train_config.precision == "fp16")
+        "cuda",
+        enabled=(device.type == "cuda" and train_config.precision == "fp16"),
     )
+
     output_dir.mkdir(parents=True, exist_ok=True)
     failure_path = output_dir / "FAILURE.json"
+    last_path = output_dir / "last.pt"
+    best_path = output_dir / "best.pt"
+    predictions_path = output_dir / "best_validation_predictions.csv"
+    summary_path = output_dir / "summary.json"
     if not resume:
-        failure_path.unlink(missing_ok=True)
+        for stale_path in (failure_path, last_path, best_path, predictions_path, summary_path):
+            stale_path.unlink(missing_ok=True)
     start_epoch = 1
     best_score = math.inf
     best_epoch = 0
     stale = 0
+    collapse_streak = 0
+    optimizer_step = 0
     history: list[dict[str, Any]] = []
-    last_path = output_dir / "last.pt"
     if resume and last_path.is_file():
         saved = torch.load(last_path, map_location="cpu", weights_only=False)
         model.load_state_dict(saved["model_state_dict"], strict=True)
+        validate_optimizer_manifest(optimizer_manifest, saved.get("optimizer_manifest"))
         optimizer.load_state_dict(saved["optimizer_state_dict"])
         start_epoch = int(saved["epoch"]) + 1
         best_score = float(saved.get("best_score", math.inf))
         best_epoch = int(saved.get("best_epoch", 0))
         stale = int(saved.get("stale", 0))
+        collapse_streak = int(saved.get("collapse_streak", 0))
+        optimizer_step = int(saved.get("optimizer_step", 0))
+        apply_optimizer_phase(optimizer, optimizer_step, optimization_config)
         saved_history = saved.get("history", [])
         if not isinstance(saved_history, list):
             raise ValueError("Resume checkpoint history must be a list")
         history = [dict(item) for item in saved_history if isinstance(item, Mapping)]
 
+    final_health: dict[str, Any] | None = None
+    collapse_detected = False
     try:
         for epoch in range(start_epoch, train_config.epochs + 1):
-            # Epoch-derived ordering makes a resumed run reproduce the same
-            # sample order without serializing DataLoader worker state.
             train_loader = _loader(
                 datasets["train"],
                 batch_size=train_config.batch_size,
@@ -439,65 +591,124 @@ def train_tubelet_garl(
                 seed=train_config.seed + epoch,
                 num_workers=train_config.num_workers,
             )
-            train_loss = train_epoch(
+            train_result = train_epoch(
                 model,
                 train_loader,
                 optimizer,
                 device=device,
                 precision=train_config.precision,
                 max_grad_norm=train_config.max_grad_norm,
+                optimization_config=optimization_config,
+                optimizer_step=optimizer_step,
                 gradient_accumulation_steps=train_config.gradient_accumulation_steps,
                 scaler=scaler if scaler.is_enabled() else None,
             )
+            optimizer_step = train_result.final_optimizer_step
             predictions = _predict(model, validation_loader, device=device)
             metrics = _metrics(predictions)
+            health = _prediction_health_from_frame(predictions)
+            final_health = health
+            collapsed = is_prediction_collapsed(health, optimization_config)
+            collapse_detected = collapse_detected or collapsed
             macro = metrics["sequence_macro"]["sequence_macro_paper_MiD_overall"]
             score = float(macro)
-            improved = math.isfinite(score) and score < best_score
-            if improved:
-                best_score = score
-                best_epoch = epoch
+            eligible = checkpoint_is_eligible(
+                score=score,
+                health=health,
+                optimizer_step=optimizer_step,
+                config=optimization_config,
+            )
+            improved = eligible and score < best_score
+            warmup_complete = (
+                optimization_config.readout_warmup_optimizer_steps == 0
+                or optimizer_step > optimization_config.readout_warmup_optimizer_steps
+            )
+            if not warmup_complete:
+                stale = 0
+                collapse_streak = 0
+            elif collapsed:
+                collapse_streak += 1
                 stale = 0
             else:
-                stale += 1
+                collapse_streak = 0
+                if improved:
+                    best_score = score
+                    best_epoch = epoch
+                    stale = 0
+                else:
+                    stale += 1
+
+            current_phase = optimization_phase(optimizer_step, optimization_config)
+            group_lrs = current_group_learning_rates(optimizer)
             row = {
                 "epoch": epoch,
-                "train_signed_log_smooth_l1": train_loss,
+                "train_signed_log_smooth_l1": train_result.mean_loss,
+                "epoch_optimizer_steps": train_result.optimizer_steps,
+                "optimizer_step": optimizer_step,
+                "optimization_phase": current_phase,
+                "backbone_lr": group_lrs.get("backbone"),
+                "pooling_lr": group_lrs.get("pooling"),
+                "head_lr": group_lrs.get("ttc_head"),
                 "validation_sequence_macro_paper_MiD_overall": score,
                 "validation_paper_MiD_overall": metrics["paper_MiD_overall"],
                 "validation_weighted_RTE_pct": metrics["weighted_RTE_pct"],
                 "validation_failure_rate_pct": metrics["failure_rate_pct"],
+                "validation_target_mean": health["target_mean"],
+                "validation_target_std": health["target_std"],
+                "validation_prediction_mean": health["prediction_mean"],
+                "validation_prediction_std": health["prediction_std"],
+                "validation_prediction_std_ratio": health["prediction_std_ratio"],
+                "validation_prediction_pearson": health["pearson"],
+                "validation_prediction_mae": health["mae"],
+                "validation_prediction_min": health["prediction_min"],
+                "validation_prediction_max": health["prediction_max"],
+                "validation_prediction_collapsed": collapsed,
+                "checkpoint_selection_eligible": eligible,
             }
             history.append(cast(dict[str, Any], _json_safe(row)))
-            checkpoint = {
-                "artifact_type": "e_jepa_tubelet_lhr_checkpoint_v1",
-                "architecture": "e_jepa_tubelet_lhr",
-                "modality": "event_only",
-                "model_config": asdict(model_config),
-                "model_state_dict": model.state_dict(),
-                "optimizer_state_dict": optimizer.state_dict(),
-                "epoch": epoch,
-                "best_score": best_score,
-                "best_epoch": best_epoch,
-                "stale": stale,
-                "selection_metric": "validation_sequence_macro_paper_MiD_overall_signed_v1",
-                "config_hash": config_hash,
-                "dataset_manifest_hash": dataset_manifest_hash,
-                "split_version": split_version,
-                "seed": train_config.seed,
-                "uses_evttc_for_selection": False,
-                "uses_raw_eap_on_demand": True,
-                "claim_eligible": False,
-                "pretraining": transfer,
-                "history": history,
-            }
+            checkpoint = _checkpoint_payload(
+                model=model,
+                optimizer=optimizer,
+                model_config=model_config,
+                optimizer_manifest=optimizer_manifest,
+                optimizer_step=optimizer_step,
+                phase=current_phase,
+                group_learning_rates=group_lrs,
+                epoch=epoch,
+                best_score=best_score,
+                best_epoch=best_epoch,
+                stale=stale,
+                collapse_streak=collapse_streak,
+                health=health,
+                collapsed=collapsed,
+                config_hash=config_hash,
+                dataset_manifest_hash=dataset_manifest_hash,
+                split_version=split_version,
+                seed=train_config.seed,
+                transfer=transfer,
+                history=history,
+            )
             _atomic_save(checkpoint, last_path)
             if improved:
                 inference_checkpoint = dict(checkpoint)
                 inference_checkpoint.pop("optimizer_state_dict")
                 inference_checkpoint["validation_metrics"] = _json_safe(metrics)
                 _atomic_save(inference_checkpoint, output_dir / "best.pt")
-                predictions.to_csv(output_dir / "best_validation_predictions.csv", index=False)
+                predictions.to_csv(
+                    predictions_path,
+                    index=False,
+                )
+            if (
+                epoch >= train_config.minimum_epochs
+                and optimization_config.collapse_patience > 0
+                and collapse_streak >= optimization_config.collapse_patience
+            ):
+                raise PredictionCollapseError(
+                    "Validation TTC predictions remained collapsed for "
+                    f"{collapse_streak} post-warm-up epochs; "
+                    f"std_ratio={health['prediction_std_ratio']!r} < "
+                    f"{optimization_config.min_prediction_std_ratio!r}."
+                )
             if (
                 epoch >= train_config.minimum_epochs
                 and stale >= train_config.early_stopping_patience
@@ -507,15 +718,17 @@ def train_tubelet_garl(
         for dataset in datasets.values():
             dataset.close()
 
-    best_path = output_dir / "best.pt"
     if not best_path.is_file():
-        raise RuntimeError(
-            "No checkpoint had finite sequence-macro MiD; increase validation coverage"
+        ratio = None if final_health is None else final_health.get("prediction_std_ratio")
+        raise PredictionCollapseError(
+            "No non-collapsed checkpoint passed the validation gate; "
+            f"last_prediction_std_ratio={ratio!r}, "
+            f"required={optimization_config.min_prediction_std_ratio!r}."
         )
+
     ended_at = datetime.now(UTC)
-    summary_path = output_dir / "summary.json"
     summary = {
-        "artifact_type": "e_jepa_tubelet_lhr_training_v1",
+        "artifact_type": "e_jepa_tubelet_lhr_training_v2",
         "experiment_id": f"{output_dir.name}-seed{train_config.seed}",
         "run_name": output_dir.name,
         "status": "completed",
@@ -537,6 +750,13 @@ def train_tubelet_garl(
         "elapsed_seconds": time.perf_counter() - started,
         "model_config": asdict(model_config),
         "train_config": asdict(train_config),
+        "optimization_config": asdict(optimization_config),
+        "optimizer_manifest": optimizer_manifest,
+        "optimizer_step": optimizer_step,
+        "optimization_phase": optimization_phase(optimizer_step, optimization_config),
+        "pretraining": transfer,
+        "final_prediction_health": final_health,
+        "collapse_detected_during_run": collapse_detected,
         "provenance": dict(provenance),
         "split_path": split_path.resolve().as_posix(),
         "split_sha256": _sha256(split_path),
@@ -566,7 +786,10 @@ def train_tubelet_garl(
         ),
     }
     safe = cast(dict[str, Any], _json_safe(summary))
-    summary_path.write_text(json.dumps(safe, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    summary_path.write_text(
+        json.dumps(safe, indent=2, ensure_ascii=False) + "\n",
+        encoding="utf-8",
+    )
     return safe
 
 
@@ -574,7 +797,11 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--eap-root", type=Path, required=True)
     parser.add_argument("--garlttc-root", type=Path, required=True)
-    parser.add_argument("--split", type=Path, default=Path("data/splits/eap_pilot12_v1.json"))
+    parser.add_argument(
+        "--split",
+        type=Path,
+        default=Path("data/splits/eap_pilot12_v1.json"),
+    )
     parser.add_argument(
         "--config",
         type=Path,
@@ -591,8 +818,15 @@ def main() -> int:
     parser.add_argument("--seed", type=int)
     parser.add_argument("--epochs", type=int)
     parser.add_argument("--batch-size", type=int)
+    parser.add_argument("--gradient-accumulation-steps", type=int)
     parser.add_argument("--workers", type=int)
     parser.add_argument("--max-samples-per-split", type=int)
+    parser.add_argument("--precision", choices=("fp32", "fp16", "bf16"))
+    parser.add_argument("--backbone-learning-rate", type=float)
+    parser.add_argument("--pooling-learning-rate", type=float)
+    parser.add_argument("--head-learning-rate", type=float)
+    parser.add_argument("--readout-warmup-optimizer-steps", type=int)
+    parser.add_argument("--min-prediction-std-ratio", type=float)
     parser.add_argument("--resume", action="store_true")
     args = parser.parse_args()
     try:
@@ -601,8 +835,15 @@ def main() -> int:
             "seed": args.seed,
             "epochs": args.epochs,
             "batch_size": args.batch_size,
+            "gradient_accumulation_steps": args.gradient_accumulation_steps,
             "num_workers": args.workers,
             "max_samples_per_split": args.max_samples_per_split,
+            "precision": args.precision,
+            "backbone_learning_rate": args.backbone_learning_rate,
+            "pooling_learning_rate": args.pooling_learning_rate,
+            "head_learning_rate": args.head_learning_rate,
+            "readout_warmup_optimizer_steps": args.readout_warmup_optimizer_steps,
+            "min_prediction_std_ratio": args.min_prediction_std_ratio,
         }
         if args.epochs is not None:
             overrides["minimum_epochs"] = min(train_config.minimum_epochs, args.epochs)
@@ -625,12 +866,13 @@ def main() -> int:
         if args.summary_output is not None:
             args.summary_output.parent.mkdir(parents=True, exist_ok=True)
             args.summary_output.write_text(
-                json.dumps(result, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+                json.dumps(result, indent=2, ensure_ascii=False) + "\n",
+                encoding="utf-8",
             )
     except Exception as exc:
         args.output.mkdir(parents=True, exist_ok=True)
         failure = {
-            "artifact_type": "e_jepa_tubelet_lhr_training_failure_v1",
+            "artifact_type": "e_jepa_tubelet_lhr_training_failure_v2",
             "status": "failed",
             "created_at": datetime.now(UTC).isoformat(),
             "error_type": type(exc).__name__,
@@ -638,7 +880,8 @@ def main() -> int:
             "traceback": traceback.format_exc(),
         }
         (args.output / "FAILURE.json").write_text(
-            json.dumps(failure, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+            json.dumps(failure, indent=2, ensure_ascii=False) + "\n",
+            encoding="utf-8",
         )
         print(json.dumps(failure, indent=2, ensure_ascii=False), file=sys.stderr)
         return 1

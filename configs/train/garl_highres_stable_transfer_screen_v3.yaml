@@ -1,0 +1,40 @@
+objective: garl_signed_supervised_stable_transfer_screen_v3
+
+epochs: 40
+batch_size: 2
+gradient_accumulation_steps: 8
+num_workers: 2
+
+learning_rate: 0.0001
+weight_decay: 0.01
+
+# Preserve a transferred JEPA backbone while teaching the random readout first.
+backbone_learning_rate: 0.00001
+pooling_learning_rate: 0.0001
+head_learning_rate: 0.0003
+warmup_pooling_learning_rate: 0.0003
+warmup_head_learning_rate: 0.001
+backbone_weight_decay: 0.01
+readout_weight_decay: 0.0
+
+# 256 rows / (batch 2 * accumulation 8) = 16 optimizer updates per epoch.
+# 128 updates therefore provide eight readout-only epochs before unfreezing.
+readout_warmup_optimizer_steps: 128
+
+precision: fp32
+max_grad_norm: 1.0
+
+minimum_epochs: 24
+early_stopping_patience: 6
+collapse_patience: 0
+
+temporal_steps: 5
+width: 320
+height: 192
+max_samples_per_split: 256
+
+min_prediction_std_ratio: 0.01
+
+seed: 7
+run_scope: bounded_screen
+require_clean_git: false

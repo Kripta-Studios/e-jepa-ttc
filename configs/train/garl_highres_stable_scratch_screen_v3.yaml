@@ -1,0 +1,38 @@
+objective: garl_signed_supervised_stable_scratch_screen_v3
+
+epochs: 40
+batch_size: 2
+gradient_accumulation_steps: 8
+num_workers: 2
+
+# Scratch must train its randomly initialized backbone from the first update.
+learning_rate: 0.0001
+weight_decay: 0.0
+backbone_learning_rate: 0.0001
+pooling_learning_rate: 0.0001
+head_learning_rate: 0.0001
+warmup_pooling_learning_rate: 0.0001
+warmup_head_learning_rate: 0.0001
+backbone_weight_decay: 0.0
+readout_weight_decay: 0.0
+readout_warmup_optimizer_steps: 0
+
+precision: fp32
+max_grad_norm: 1.0
+
+# Do not terminate merely because early epochs are constant. A checkpoint is
+# still ineligible until prediction_std / target_std reaches the gate.
+minimum_epochs: 20
+early_stopping_patience: 6
+collapse_patience: 0
+
+temporal_steps: 5
+width: 320
+height: 192
+max_samples_per_split: 256
+
+min_prediction_std_ratio: 0.01
+
+seed: 7
+run_scope: bounded_screen
+require_clean_git: false
