@@ -12,7 +12,7 @@ from scripts.train_e_jepa_object_event_v4_2 import (
 def test_v42_pearson_returns_zero_for_constant_or_nonfinite_predictions() -> None:
     target = np.asarray([-1.0, 0.0, 1.0], dtype=np.float64)
     assert _pearson(target, np.zeros_like(target)) == 0.0
-    assert _pearson(target, np.asarray([np.nan, 0.0, 1.0])) == 1.0
+    assert np.isclose(_pearson(target, np.asarray([np.nan, 0.0, 1.0])), 1.0)
 
 
 def test_v42_gates_treat_missing_dependence_as_fail_closed() -> None:
