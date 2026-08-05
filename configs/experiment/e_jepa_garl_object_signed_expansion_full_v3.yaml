@@ -1,0 +1,4 @@
+model: ../model/e_jepa_object_signed_expansion_event_v3.yaml
+finetuning: ../train/garl_object_signed_expansion_full_v3.yaml
+protocol: object_roi_geometry_conditioned_signed_expansion_v3
+selection: gated_macro_MiD_plus_negative_MiD_plus_MAE

@@ -1,0 +1,4 @@
+model: ../../model/e_jepa_object_signed_expansion_event_v3.yaml
+finetuning: ../../train/object_signed_expansion_v3_ablations/no_swap_aux.yaml
+protocol: object_signed_expansion_v3_ablation_no_swap_aux
+selection: same_gated_selection_as_v3
