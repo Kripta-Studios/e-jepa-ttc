@@ -36,6 +36,15 @@ from e_jepa_ttc.data.eap_geometry_v2 import (
     coarse_category,
 )
 from e_jepa_ttc.data.eap_representation import base_compatible_voxel, downsample_full_frame
+from e_jepa_ttc.data.event_v4_geometry import (
+    EVENT_V4_CHANNEL_COUNT,
+    EVENT_V4_CHANNEL_NAMES,
+    EVENT_V4_STEPS,
+    box_in_common_roi,
+    common_square_from_boxes,
+    select_active_event_channels,
+    shifted_precontext_window,
+)
 from e_jepa_ttc.data.garl_input_contract import (
     EVENT_CHANNEL_NAMES,
     INPUT_SCHEMA_VERSION,
@@ -110,6 +119,10 @@ class GarlTTCLHRCacheConfig:
     store_full_frame_events: bool = True
     store_garl_event_roi: bool = True
     store_jepa_event_roi: bool = True
+    store_event_v4_common_roi: bool = False
+    event_v4_margin_fraction: float = 0.25
+    event_v4_require_precontext: bool = True
+    event_v4_precontext_fallback: str = "shifted_event_window"
     include_rgb: bool = False
     include_masks: bool = False
     mask_required: bool = False
@@ -148,6 +161,7 @@ class GarlTTCLHRCacheConfig:
                 self.store_full_frame_events,
                 self.store_garl_event_roi,
                 self.store_jepa_event_roi,
+                self.store_event_v4_common_roi,
             )
         ):
             raise ValueError("At least one event representation must be materialized.")
@@ -159,6 +173,16 @@ class GarlTTCLHRCacheConfig:
         )
         if min(temporal) <= 0:
             raise ValueError("Temporal pairing controls must be positive.")
+        if self.event_v4_margin_fraction < 0.0:
+            raise ValueError("event_v4_margin_fraction must be non-negative.")
+        if self.event_v4_precontext_fallback not in {
+            "disabled",
+            "shifted_event_window",
+        }:
+            raise ValueError(
+                "event_v4_precontext_fallback must be 'disabled' or "
+                "'shifted_event_window'."
+            )
         if self.calibration_mode not in {
             "official_constant_fy",
             "per_sample_eap_intrinsics",
@@ -857,12 +881,41 @@ def _materialize_row(
     if reader is None:
         reader = EAPEventReader(events_path)
         event_readers[events_path] = reader
+    event_v4_context_window: tuple[int, int] | None = None
+    event_v4_context_box: tuple[float, float, float, float] | None = None
+    event_v4_precontext_source: str | None = None
+    if config.store_event_v4_common_roi:
+        if context_index is not None:
+            event_v4_context_window = windows[context_index]
+            event_v4_context_box = boxes[context_index]
+            event_v4_precontext_source = "annotated_frame_window"
+        elif config.event_v4_precontext_fallback == "shifted_event_window":
+            event_v4_context_window = shifted_precontext_window(
+                windows[first_index],
+                shift_s=config.jepa_context_delta_t_s,
+            )
+            # GarlTTC does not expose a t0 box in the same annotation row.
+            # Reusing B1 only defines the shared crop/diagnostic coordinate;
+            # the t0 tensor is read from the real earlier event interval.
+            event_v4_context_box = boxes[first_index]
+            event_v4_precontext_source = "shifted_event_window_t1_box_proxy"
+        elif config.event_v4_require_precontext:
+            raise ValueError(
+                "event_v4_common_roi requires causal precontext events, but the "
+                "row has no annotated t0 and fallback is disabled."
+            )
+        else:
+            raise ValueError("event_v4_common_roi cannot be built without t0 events.")
+
     endpoint_events: list[torch.Tensor] = []
     jepa_endpoint_events: list[torch.Tensor] = []
+    event_v4_frames: list[torch.Tensor] = []
     full_frames: list[torch.Tensor] = []
+    raw_by_index: dict[int, dict[str, np.ndarray]] = {}
     for index in (first_index, second_index):
         start_us, end_us = windows[index]
         raw = reader.read_window(start_us, end_us)
+        raw_by_index[index] = raw
         square = _square_box(boxes, index)
         if config.store_garl_event_roi:
             endpoint_events.append(
@@ -901,6 +954,53 @@ def _materialize_row(
                 height=config.full_height,
             )
             full_frames.append(base_compatible_voxel(full_batch, bins=config.full_bins))
+
+    event_v4_common_square: tuple[float, float, float, float] | None = None
+    event_v4_boxes: np.ndarray | None = None
+    if config.store_event_v4_common_roi:
+        if event_v4_context_window is None or event_v4_context_box is None:
+            raise RuntimeError("V4 precontext resolution was not completed.")
+        # The crop is defined by the labelled t1/t2 boxes only.  This keeps the
+        # supervised endpoint scale exact and applies that same coordinate frame
+        # to the real earlier t0 event window.
+        event_v4_common_square = common_square_from_boxes(
+            boxes,
+            (first_index, second_index),
+            margin_fraction=config.event_v4_margin_fraction,
+        )
+        event_v4_specs = (
+            (event_v4_context_window, event_v4_context_box, None),
+            (windows[first_index], boxes[first_index], first_index),
+            (windows[second_index], boxes[second_index], second_index),
+        )
+        for (start_us, end_us), _, source_index in event_v4_specs:
+            raw = raw_by_index.get(source_index) if source_index is not None else None
+            if raw is None:
+                raw = reader.read_window(start_us, end_us)
+                if source_index is not None:
+                    raw_by_index[source_index] = raw
+            voxel = _jepa_roi_voxel(
+                raw,
+                event_v4_common_square,
+                size=config.roi_size,
+                bins=config.jepa_roi_bins,
+                sequence_id=str(row["sequence_id"]),
+                start_us=start_us,
+                end_us=end_us,
+                event_pixel_diff=config.event_pixel_diff,
+            )
+            event_v4_frames.append(select_active_event_channels(voxel))
+        event_v4_boxes = np.stack(
+            [
+                box_in_common_roi(
+                    box,
+                    event_v4_common_square,
+                    roi_size=config.roi_size,
+                )
+                for _, box, _ in event_v4_specs
+            ],
+            axis=0,
+        ).astype(np.float32)
 
     observable, metadata = _box_features(boxes[first_index], boxes[second_index], delta_t_s)
     visible_heights = _visible_heights(
@@ -981,6 +1081,21 @@ def _materialize_row(
     if config.store_jepa_event_roi:
         sample["jepa_event_roi"] = (
             torch.stack(jepa_endpoint_events).numpy().astype(np.float32)
+        )
+    if config.store_event_v4_common_roi:
+        if event_v4_common_square is None or event_v4_boxes is None:
+            raise RuntimeError("V4 common-ROI materialization was not completed.")
+        sample["event_v4_common_roi"] = (
+            torch.stack(event_v4_frames).numpy().astype(np.float32)
+        )
+        sample["event_v4_boxes_xyxy"] = event_v4_boxes
+        sample["event_v4_common_square_xyxy"] = np.asarray(
+            event_v4_common_square, dtype=np.float32
+        )
+        sample["event_v4_precontext_valid"] = np.bool_(True)
+        sample["event_v4_precontext_source"] = str(event_v4_precontext_source)
+        sample["event_v4_t0_box_is_proxy"] = np.bool_(
+            event_v4_precontext_source == "shifted_event_window_t1_box_proxy"
         )
 
     if config.include_masks:
@@ -1150,6 +1265,8 @@ def materialize_garlttc_lhr_cache(
     split_counts = {"train": 0, "validation": 0}
     jepa_pair_valid_count = 0
     precontext_motion_valid_count = 0
+    event_v4_precontext_valid_count = 0
+    event_v4_precontext_sources: Counter[str] = Counter()
     mask_valid_endpoint_count = 0
     mask_endpoint_count = 0
     ttc_bucket_counts: Counter[str] = Counter()
@@ -1166,6 +1283,7 @@ def materialize_garlttc_lhr_cache(
         errors: Mapping[str, int],
     ) -> None:
         nonlocal jepa_pair_valid_count, precontext_motion_valid_count
+        nonlocal event_v4_precontext_valid_count
         nonlocal mask_valid_endpoint_count, mask_endpoint_count
         split_counts[role] += len(records)
         for error, count in errors.items():
@@ -1173,6 +1291,13 @@ def materialize_garlttc_lhr_cache(
         for sample in records:
             jepa_pair_valid_count += int(sample["jepa_pair_valid"])
             precontext_motion_valid_count += int(sample["precontext_motion_valid"])
+            if "event_v4_precontext_valid" in sample:
+                event_v4_precontext_valid_count += int(
+                    sample["event_v4_precontext_valid"]
+                )
+                event_v4_precontext_sources[
+                    str(sample.get("event_v4_precontext_source", "unknown"))
+                ] += 1
             if "garl_mask_valid" in sample:
                 mask_valid = np.asarray(sample["garl_mask_valid"], dtype=np.bool_)
                 mask_valid_endpoint_count += int(mask_valid.sum())
@@ -1326,7 +1451,22 @@ def materialize_garlttc_lhr_cache(
             executor.shutdown(wait=True, cancel_futures=False)
 
     if min(split_counts.values()) <= 0:
-        raise RuntimeError(f"Official cache produced an empty split: {split_counts}")
+        failure = {
+            "artifact_type": "garlttc_lhr_cache_build_failure_v2",
+            "status": "failed",
+            "error": "empty_split_after_materialization",
+            "split_counts": split_counts,
+            "selected_count": int(selection_report["selected_count"]),
+            "discard_count": int(sum(discard_reasons.values())),
+            "discard_reasons": dict(sorted(discard_reasons.items())),
+            "shards": shard_meta,
+        }
+        _atomic_json(output / "FAILURE.json", failure)
+        _atomic_json(state_path, failure)
+        raise RuntimeError(
+            "Official cache produced an empty split: "
+            f"{split_counts}; discard_reasons={dict(sorted(discard_reasons.items()))}"
+        )
 
     data_path = garlttc_root / "data" / "train.parquet"
     annotations_path = garlttc_root / "annotations" / "train.parquet"
@@ -1361,6 +1501,12 @@ def materialize_garlttc_lhr_cache(
             *(["full_frame_events"] if config.store_full_frame_events else []),
             *(["garl_event_roi"] if config.store_garl_event_roi else []),
             *(["jepa_event_roi"] if config.store_jepa_event_roi else []),
+            *(["event_v4_common_roi"] if config.store_event_v4_common_roi else []),
+            *(["event_v4_boxes_xyxy"] if config.store_event_v4_common_roi else []),
+            *(["event_v4_common_square_xyxy"] if config.store_event_v4_common_roi else []),
+            *(["event_v4_precontext_valid"] if config.store_event_v4_common_roi else []),
+            *(["event_v4_precontext_source"] if config.store_event_v4_common_roi else []),
+            *(["event_v4_t0_box_is_proxy"] if config.store_event_v4_common_roi else []),
             "garl_delta_t_s",
             "observable_motion",
             "jepa_context_motion",
@@ -1387,19 +1533,62 @@ def materialize_garlttc_lhr_cache(
             "normalization": NORMALIZATION_ID,
         },
         "object_lhr_extension": {
-            "version": 2,
+            "version": 3,
             "storage_profile": (
                 "object_lhr_minimal"
                 if (
                     not config.store_full_frame_events
                     and not config.store_garl_event_roi
                     and config.store_jepa_event_roi
+                    and not config.store_event_v4_common_roi
+                )
+                else "event_v4_common_roi"
+                if (
+                    not config.store_full_frame_events
+                    and not config.store_garl_event_roi
+                    and not config.store_jepa_event_roi
+                    and config.store_event_v4_common_roi
                 )
                 else "custom"
             ),
             "jepa_event_roi_shape": [2, 21, config.roi_size, config.roi_size],
             "jepa_event_representation": "base_compatible_voxel_roi_v1",
             "jepa_roi_bins": config.jepa_roi_bins,
+            "event_v4_common_roi_shape": (
+                [
+                    EVENT_V4_STEPS,
+                    EVENT_V4_CHANNEL_COUNT,
+                    config.roi_size,
+                    config.roi_size,
+                ]
+                if config.store_event_v4_common_roi
+                else None
+            ),
+            "event_v4_channel_names": (
+                list(EVENT_V4_CHANNEL_NAMES)
+                if config.store_event_v4_common_roi
+                else None
+            ),
+            "event_v4_coordinate_frame": (
+                "single_union_square_t1_t2_applied_to_real_t0_t1_t2_events"
+                if config.store_event_v4_common_roi
+                else None
+            ),
+            "event_v4_margin_fraction": (
+                config.event_v4_margin_fraction
+                if config.store_event_v4_common_roi
+                else None
+            ),
+            "event_v4_requires_precontext": config.event_v4_require_precontext,
+            "event_v4_precontext_fallback": config.event_v4_precontext_fallback,
+            "event_v4_precontext_is_real_events": True,
+            "event_v4_t0_box_policy": (
+                "annotated_when_available_else_t1_proxy_for_crop_diagnostics"
+                if config.store_event_v4_common_roi
+                else None
+            ),
+            "event_v4_independent_endpoint_resize": False,
+            "event_v4_preserves_absolute_scale_inside_common_roi": True,
             "object_identity_source": "official_boxes_xyxy_per_track",
             "height_target_source": "official_box3d_projection_visible_height",
             "mask_policy": (
@@ -1429,6 +1618,12 @@ def materialize_garlttc_lhr_cache(
         ),
         "precontext_motion_valid_fraction": float(
             precontext_motion_valid_count / max(sum(split_counts.values()), 1)
+        ),
+        "event_v4_precontext_valid_fraction": float(
+            event_v4_precontext_valid_count / max(sum(split_counts.values()), 1)
+        ),
+        "event_v4_precontext_source_counts": dict(
+            sorted(event_v4_precontext_sources.items())
         ),
         "mask_valid_endpoint_fraction": (
             float(mask_valid_endpoint_count / max(mask_endpoint_count, 1))
