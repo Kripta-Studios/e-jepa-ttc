@@ -1,0 +1,20 @@
+seeds: [7, 13, 23]
+input_size: 64
+geometry_batch_size: 64
+ridge_alphas: [0.01, 0.1, 1.0, 10.0, 100.0]
+sequence_sign_weight_cap: 10.0
+max_abs_expansion: 0.25
+hybrid_pearson_max_drop: 0.01
+hybrid_mid_relative_improvement_gate: 0.03
+hybrid_balanced_sign_improvement_gate: 0.02
+hybrid_negative_accuracy_improvement_gate: 0.05
+per_sequence_negative_min_count: 20
+hybrid_min_sequence_negative_accuracy_gate: 0.20
+hybrid_expansion_mae_tolerance: 0.002
+hybrid_saturation_gate: 0.08
+geometry_only_pearson_gate: 0.10
+sota_references:
+  eap_garl_full_weighted_mid: 45.0
+  eap_garl_event_only_lhr_weighted_mid: 66.2
+  evttc_garl_average_rte_percent: 10.60
+  evttc_strttc_average_rte_percent: 11.96

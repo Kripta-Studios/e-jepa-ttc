@@ -1,0 +1,16 @@
+fusion:
+  alpha: 0.50
+  alpha_sweep_points: 21
+  max_abs_expansion: 0.25
+  ttc_clip_seconds: 60.0
+  minimum_abs_expansion: 0.0001
+  per_sequence_negative_min_count: 20
+  pearson_improvement_gate: 0.015
+  mae_relative_improvement_gate: 0.03
+  weighted_mid_relative_improvement_gate: 0.03
+  balanced_sign_gate: 0.73
+  negative_accuracy_gate: 0.60
+  minimum_sequence_pearson_gate: 0.45
+  minimum_sequence_negative_accuracy_gate: 0.20
+  zero_event_pearson_drop_gate: 0.50
+  shuffled_event_pearson_drop_gate: 0.50
