@@ -1,0 +1,11 @@
+probe:
+  map_size: 16
+  epsilon: 1.0e-6
+
+# Decision criteria for whether box-affine pseudoflow is a valid geometric
+# supervision target. These never train or select a model.
+decision:
+  supported_train_abs_pearson: 0.35
+  supported_validation_abs_pearson: 0.25
+  supported_min_sequence_oriented_pearson: 0.10
+  sequence_shift_validation_abs_pearson: 0.18
