@@ -1,0 +1,50 @@
+model:
+  window_size: 12
+  sign_hidden_dim: 192
+  sign_bottleneck_dim: 96
+  magnitude_hidden_dim: 256
+  magnitude_bottleneck_dim: 128
+  magnitude_floor: 1.0e-4
+  maximum_magnitude: 0.25
+  maximum_log_ratio: 2.0
+  epsilon: 1.0e-6
+
+train:
+  seed: 1616
+  descriptor_batch_size: 12
+  head_batch_size: 64
+  overfit_samples: 96
+  overfit_epochs: 200
+  fold_count: 3
+  fold_epochs: 24
+  final_epochs: 24
+  learning_rate: 3.0e-4
+  weight_decay: 1.0e-4
+  max_grad_norm: 2.0
+  per_sequence_negative_min_count: 20
+
+loss:
+  final_sign_weight: 1.0
+  history_sign_weight: 0.35
+  magnitude_target_weight: 1.0
+  magnitude_teacher_weight: 0.25
+
+screen_gates:
+  oof_balanced_sign_gate: 0.75
+  oof_negative_accuracy_gate: 0.65
+  oof_min_sequence_negative_accuracy_gate: 0.30
+  oof_expansion_mae_gate: 0.018
+  validation_pearson_gate: 0.65
+  validation_expansion_mae_gate: 0.0175
+  validation_weighted_mid_gate: 220.0
+  validation_weighted_rte_relative_ceiling: 1.50
+  validation_saturation_max_increase: 0.05
+  validation_balanced_sign_gate: 0.77
+  validation_negative_accuracy_gate: 0.68
+  validation_min_sequence_pearson_gate: 0.57
+  validation_min_sequence_negative_accuracy_gate: 0.40
+  validation_positive_accuracy_gate: 0.84
+  zero_event_pearson_drop_gate: 0.40
+  shuffled_event_pearson_drop_gate: 0.40
+  exact_sign_oddness_ceiling: 1.0e-5
+  exact_magnitude_evenness_ceiling: 1.0e-6
