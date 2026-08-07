@@ -1,0 +1,44 @@
+meta:
+  fold_count: 3
+  seed: 2626
+  minimum_objective_gain_over_control: 0.001
+  minimum_track_samples: 8
+  minimum_negative_track_samples: 8
+
+# The anchor coefficient is fixed to exactly 1.0. These candidates learn only a
+# non-negative geometry residual from OOF predictions of the SAME v4.24 model
+# family used for final full-train inference. No v4.10 in-sample train anchor is
+# used during model selection.
+residuals:
+  - {name: anchor_control, features: [], ridge: 0.0}
+  - {name: residual_div_r0, features: [divergence], ridge: 0.0}
+  - {name: residual_div_r1e4, features: [divergence], ridge: 1.0e-4}
+  - {name: residual_div_r1e3, features: [divergence], ridge: 1.0e-3}
+  - {name: residual_div_r1e2, features: [divergence], ridge: 1.0e-2}
+  - {name: residual_vert_r0, features: [vertical], ridge: 0.0}
+  - {name: residual_vert_r1e4, features: [vertical], ridge: 1.0e-4}
+  - {name: residual_vert_r1e3, features: [vertical], ridge: 1.0e-3}
+  - {name: residual_vert_r1e2, features: [vertical], ridge: 1.0e-2}
+  - {name: residual_geom_r0, features: [divergence, vertical], ridge: 0.0}
+  - {name: residual_geom_r1e4, features: [divergence, vertical], ridge: 1.0e-4}
+  - {name: residual_geom_r1e3, features: [divergence, vertical], ridge: 1.0e-3}
+  - {name: residual_geom_r1e2, features: [divergence, vertical], ridge: 1.0e-2}
+
+selection:
+  minimum_positive_accuracy: 0.80
+  minimum_negative_accuracy: 0.55
+  minimum_sequence_pearson: 0.45
+  minimum_track_macro_pearson: 0.35
+  pearson_weight: 1.0
+  balanced_sign_weight: 0.20
+  minimum_sequence_pearson_weight: 0.12
+  minimum_sequence_negative_weight: 0.10
+  track_macro_pearson_weight: 0.10
+  minimum_negative_track_weight: 0.10
+  normalized_mae_penalty: 0.05
+
+final_decision:
+  minimum_pearson_gain_over_v410: 0.005
+  minimum_negative_accuracy_gain_over_v410: 0.02
+  minimum_balanced_sign_gain_over_v410: 0.01
+  tradeoff_pearson_tolerance: 0.01
