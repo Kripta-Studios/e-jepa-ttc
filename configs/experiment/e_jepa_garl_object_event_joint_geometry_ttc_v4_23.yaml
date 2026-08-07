@@ -1,0 +1,37 @@
+model:
+  search_radius: 4
+  correlation_temperature: 0.07
+  foreground_floor: 0.05
+  confidence_floor: 0.05
+  epsilon: 1.0e-6
+
+train:
+  seed: 2323
+  batch_size: 8
+  epochs: 6
+  geometry_learning_rate: 1.0e-5
+  motion_learning_rate: 5.0e-5
+  weight_decay: 1.0e-5
+  max_grad_norm: 1.0
+  last_geometry_parameter_tensors: 8
+
+joint_loss:
+  ttc_weight: 1.0
+  geometry_auxiliary_weight: 0.25
+  trainable_anchor_weight: 0.005
+  epsilon: 1.0e-6
+
+geometry_loss:
+  flow_weight: 1.0
+  divergence_weight: 1.0
+  vertical_scale_weight: 1.0
+  encoder_anchor_weight: 0.0
+  smooth_l1_beta: 0.10
+  epsilon: 1.0e-6
+
+# Development decisions only. Validation never selects epochs, weights, or seeds.
+decision:
+  baseline_pearson_tolerance: 0.01
+  minimum_negative_accuracy_gain: 0.02
+  minimum_sequence_negative_accuracy: 0.25
+  geometry_retention_floor: 0.24
