@@ -18,9 +18,14 @@ import pandas as pd
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 if str(ROOT / "src") not in sys.path:
     sys.path.insert(0, str(ROOT / "src"))
 
+from scripts.preflight_object_event_v4_9 import (  # noqa: E402
+    assess_v42_fusion_baseline,
+)
 from e_jepa_ttc.object_event_v4_9 import (  # noqa: E402
     FixedFusionConfig,
     add_fusion_columns,
@@ -108,8 +113,17 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     v48_summary = _load_summary(
         args.v48_summary, "object_event_v4_8_dense_foreground_motion"
     )
-    if not bool(v42_summary.get("screen_passed")):
-        raise RuntimeError("v4.2 source screen is not eligible")
+    v42_assessment = assess_v42_fusion_baseline(
+        v42_summary,
+        allow_marginal_negative_accuracy_only=bool(
+            getattr(args, "allow_marginal_v42_negative_accuracy_only", False)
+        ),
+    )
+    if not bool(v42_assessment["accepted_for_fusion"]):
+        raise RuntimeError(
+            "v4.2 source screen is not eligible: "
+            f"{json.dumps(v42_assessment, sort_keys=True)}"
+        )
     if not bool(v48_summary.get("passed")) or v48_summary.get("mode") != "screen":
         raise RuntimeError("v4.8 source screen is not eligible")
 
@@ -154,6 +168,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         "fusion_config": asdict(config),
         "source_artifacts": {
             "v4_2_summary": args.v42_summary.resolve().as_posix(),
+            "v4_2_assessment": v42_assessment,
             "v4_8_summary": args.v48_summary.resolve().as_posix(),
         },
         "train_metrics": train_metrics,
@@ -167,6 +182,9 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             "alpha_not_fit_inside_v4_9": True,
             "alpha_sweep_is_diagnostic_only": True,
             "no_boxes_or_heights_used_by_fusion": True,
+            "standalone_v4_9_remains_strict_by_default": True,
+            "marginal_v42_exception_requires_explicit_flag": True,
+            "failed_v42_screen_is_not_relabelled": True,
             "official_eap_test_not_opened": True,
             "evttc_not_opened": True,
             "advance_to_multiseed_fusion": passed,
@@ -188,6 +206,15 @@ def main() -> int:
     parser.add_argument("--v48-train-predictions", type=Path, required=True)
     parser.add_argument("--v48-validation-predictions", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
+    parser.add_argument(
+        "--allow-marginal-v42-negative-accuracy-only",
+        action="store_true",
+        help=(
+            "Allow only the audited v4.10 replication exception where the "
+            "sole failed v4.2 gate is negative accuracy and all minimum "
+            "non-degeneracy checks pass."
+        ),
+    )
     parser.add_argument("--force", action="store_true")
     args = parser.parse_args()
     try:

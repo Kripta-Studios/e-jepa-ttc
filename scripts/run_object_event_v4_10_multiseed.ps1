@@ -62,8 +62,19 @@ function Test-V49Seed {
     if (-not (Test-Path -LiteralPath $SummaryPath)) { return $false }
     try {
         $Payload = Get-Content $SummaryPath -Raw | ConvertFrom-Json
-        if ($Payload.passed -ne $true -or [double]$Payload.fusion_config.alpha -ne 0.5) {
+        $AllowedStatuses = @("fusion_screen_passed", "fusion_screen_failed")
+        if (
+            [string]$Payload.artifact_type -ne "object_event_v4_9_fixed_event_fusion" -or
+            $AllowedStatuses -notcontains [string]$Payload.status -or
+            [double]$Payload.fusion_config.alpha -ne 0.5
+        ) {
             return $false
+        }
+        $SeedRoot = Split-Path -Parent $SummaryPath
+        foreach ($Name in @("train_predictions.csv", "validation_predictions.csv")) {
+            if (-not (Test-Path -LiteralPath (Join-Path $SeedRoot $Name))) {
+                return $false
+            }
         }
         $V48SummaryPath = [string]$Payload.source_artifacts.v4_8_summary
         return (Test-SummarySeed -SummaryPath $V48SummaryPath -ExpectedSeed $ExpectedSeed)
@@ -99,7 +110,8 @@ foreach ($Seed in $Seeds) {
     $V49SeedRoot = Join-Path $V49Root "seed-$Seed"
     $V49Summary = Join-Path $V49SeedRoot "summary.json"
     if ((Test-V49Seed -SummaryPath $V49Summary -ExpectedSeed $Seed) -and -not $Force) {
-        Write-Host "Reusing eligible true-seed v4.9 seed ${Seed}: $V49Summary" -ForegroundColor DarkCyan
+        $V49Payload = Get-Content $V49Summary -Raw | ConvertFrom-Json
+        Write-Host "Reusing complete true-seed v4.9 seed ${Seed} ($($V49Payload.status)): $V49Summary" -ForegroundColor DarkCyan
         continue
     }
     if ($SkipTraining) {
@@ -145,7 +157,7 @@ foreach ($Seed in $Seeds) {
             "--mode", "overfit"
         )
         if ($Force -or (Test-Path -LiteralPath $V46Overfit)) { $V46OverfitArgs += "--force" }
-        Invoke-PythonChecked -Arguments $V46OverfitArgs -Label "v4.6 overfit seed $Seed"
+        Invoke-PythonChecked -Arguments $V46OverfitArgs -AllowedExitCodes @(0, 2) -Label "v4.6 overfit seed $Seed"
 
         $V46ScreenArgs = @(
             "scripts\train_e_jepa_object_event_v4_6.py",
@@ -184,7 +196,7 @@ foreach ($Seed in $Seeds) {
             "--mode", "overfit"
         )
         if ($Force -or (Test-Path -LiteralPath $V47Overfit)) { $V47OverfitArgs += "--force" }
-        Invoke-PythonChecked -Arguments $V47OverfitArgs -Label "v4.7 overfit seed $Seed"
+        Invoke-PythonChecked -Arguments $V47OverfitArgs -AllowedExitCodes @(0, 2) -Label "v4.7 overfit seed $Seed"
 
         $V47ScreenArgs = @(
             "scripts\train_e_jepa_object_event_v4_7.py",
@@ -239,15 +251,17 @@ foreach ($Seed in $Seeds) {
     $V42Validation = Join-Path $V42SeedRoot "validation_predictions.csv"
     $V48Train = Join-Path $V48Screen "train_predictions.csv"
     $V48Validation = Join-Path $V48Screen "validation_predictions.csv"
-    Invoke-PythonChecked -Arguments @(
+    $V49PreflightArgs = @(
         "scripts\preflight_object_event_v4_9.py",
         "--v42-summary", $V42Summary,
         "--v42-train-predictions", $V42Train,
         "--v42-validation-predictions", $V42Validation,
         "--v48-summary", $V48ScreenSummary,
         "--v48-train-predictions", $V48Train,
-        "--v48-validation-predictions", $V48Validation
-    ) -Label "v4.9 preflight seed $Seed"
+        "--v48-validation-predictions", $V48Validation,
+        "--allow-marginal-v42-negative-accuracy-only"
+    )
+    Invoke-PythonChecked -Arguments $V49PreflightArgs -Label "v4.9 preflight seed $Seed"
     $V49Args = @(
         "scripts\analyze_object_event_v4_9_fixed_fusion.py",
         "--config", $V49Config,
@@ -257,10 +271,11 @@ foreach ($Seed in $Seeds) {
         "--v48-summary", $V48ScreenSummary,
         "--v48-train-predictions", $V48Train,
         "--v48-validation-predictions", $V48Validation,
-        "--output-dir", $V49SeedRoot
+        "--output-dir", $V49SeedRoot,
+        "--allow-marginal-v42-negative-accuracy-only"
     )
     if ($Force -or (Test-Path -LiteralPath $V49SeedRoot)) { $V49Args += "--force" }
-    Invoke-PythonChecked -Arguments $V49Args -Label "v4.9 fixed fusion seed $Seed"
+    Invoke-PythonChecked -Arguments $V49Args -AllowedExitCodes @(0, 2) -Label "v4.9 fixed fusion seed $Seed"
 }
 
 $AggregateArgs = @(

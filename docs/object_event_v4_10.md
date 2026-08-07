@@ -36,3 +36,12 @@ bootstrap uncertainty and per-sequence sign robustness.
 Only a passing v4.10 result permits development of a single integrated dual-head
 model.  Failure means the v4.9 complementarity was seed-specific and the current
 architecture must not be promoted to official eAP or EvTTC evaluation.
+
+## v4.10.5: complete scientifically failed seed screens
+
+A v4.9 screen that exits with code 2 is a completed scientific result, not an
+operational failure. The multiseed runner now preserves and reuses its summary
+and prediction CSVs, then includes that seed in the robustness aggregate. The
+aggregate keeps `all_seed_screens=false` and therefore cannot relabel the
+experiment as passed when `require_all_seed_screens=true`; it simply produces
+the complete cross-seed diagnostics needed to decide the next architecture.

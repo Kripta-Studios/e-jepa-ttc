@@ -1,0 +1,26 @@
+router:
+  seeds: [7, 13, 23]
+  l2_grid: [0.001, 0.01, 0.1, 1.0]
+  negative_threshold_grid: [0.40, 0.45, 0.50, 0.55, 0.60, 0.65]
+  flip_scale_grid: [0.25, 0.50, 0.75, 1.00]
+  maximum_iterations: 80
+  convergence_tolerance: 1.0e-8
+  hessian_damping: 1.0e-6
+  minimum_flip_magnitude: 0.002
+  per_sequence_negative_min_count: 20
+  max_abs_expansion: 0.25
+  ttc_clip_seconds: 60.0
+  minimum_abs_expansion: 0.0001
+  cv_pearson_floor: 0.88
+  cv_expansion_mae_ceiling: 0.015
+  validation_pearson_floor: 0.64
+  validation_pearson_max_drop: 0.02
+  validation_expansion_mae_tolerance: 0.001
+  validation_balanced_sign_floor: 0.75
+  validation_negative_accuracy_floor: 0.65
+  validation_min_sequence_pearson_floor: 0.50
+  validation_min_sequence_negative_accuracy_floor: 0.30
+  validation_track_bootstrap_lower_floor: 0.55
+  zero_event_pearson_drop_floor: 0.55
+  shuffled_event_pearson_drop_floor: 0.55
+  track_bootstrap_repeats: 3000

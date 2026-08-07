@@ -64,8 +64,11 @@ def _load_seed(run_root: Path, seed: int, split: str) -> tuple[dict[str, Any], p
     summary = json.loads(summary_path.read_text(encoding="utf-8"))
     if summary.get("artifact_type") != "object_event_v4_9_fixed_event_fusion":
         raise RuntimeError(f"Unexpected v4.9 artifact for seed {seed}")
-    if not bool(summary.get("passed")):
-        raise RuntimeError(f"v4.9 seed {seed} did not pass its fixed-fusion screen")
+    status = str(summary.get("status", ""))
+    if status not in {"fusion_screen_passed", "fusion_screen_failed"}:
+        raise RuntimeError(
+            f"v4.9 seed {seed} is not a completed fixed-fusion screen: {status!r}"
+        )
     alpha = float(summary.get("fusion_config", {}).get("alpha", -1.0))
     if alpha != 0.5:
         raise RuntimeError(f"v4.9 seed {seed} used alpha={alpha}, expected 0.5")
@@ -82,7 +85,10 @@ def _fixed_config(summary: Mapping[str, object]) -> FixedFusionConfig:
 
 
 def _per_seed_metrics(
-    seed_frames: dict[int, pd.DataFrame], *, fixed_config: FixedFusionConfig
+    seed_frames: dict[int, pd.DataFrame],
+    *,
+    summaries: Mapping[int, Mapping[str, object]],
+    fixed_config: FixedFusionConfig,
 ) -> pd.DataFrame:
     rows: list[dict[str, object]] = []
     for seed in sorted(seed_frames):
@@ -90,9 +96,18 @@ def _per_seed_metrics(
             seed_frames[seed], "fused_prediction_expansion", config=fixed_config
         )
         official = cast(Mapping[str, object], metrics["official_eap"])
+        summary = summaries[seed]
+        gates_raw = summary.get("gates", {})
+        gates = gates_raw if isinstance(gates_raw, Mapping) else {}
+        failed_gates = sorted(
+            str(name) for name, passed in gates.items() if not bool(passed)
+        )
         rows.append(
             {
                 "seed": seed,
+                "v49_screen_passed": bool(summary.get("passed")),
+                "v49_status": str(summary.get("status", "unknown")),
+                "v49_failed_gates": ",".join(failed_gates),
                 "pearson": metrics["pearson"],
                 "expansion_mae": metrics["expansion_mae"],
                 "balanced_sign_accuracy": metrics["balanced_sign_accuracy"],
@@ -198,7 +213,11 @@ def aggregate(*, run_root: Path, config_path: Path, output_dir: Path) -> dict[st
     )
     train_dependence = dependence_metrics(aligned_train)
     validation_dependence = dependence_metrics(aligned_validation)
-    per_seed = _per_seed_metrics(validation_frames, fixed_config=fixed_config)
+    per_seed = _per_seed_metrics(
+        validation_frames,
+        summaries=summaries,
+        fixed_config=fixed_config,
+    )
     pairwise = pairwise_seed_metrics(validation_frames)
     bootstrap = track_cluster_bootstrap(
         aligned_validation,
@@ -243,6 +262,22 @@ def aggregate(*, run_root: Path, config_path: Path, output_dir: Path) -> dict[st
         "fixed_fusion_config": asdict(fixed_config),
         "seeds": list(config.seeds),
         "per_seed": per_seed.to_dict(orient="records"),
+        "seed_screen_status": {
+            str(seed): {
+                "passed": bool(summary.get("passed")),
+                "status": str(summary.get("status", "unknown")),
+                "failed_gates": sorted(
+                    str(name)
+                    for name, gate_passed in (
+                        summary.get("gates", {})
+                        if isinstance(summary.get("gates", {}), Mapping)
+                        else {}
+                    ).items()
+                    if not bool(gate_passed)
+                ),
+            }
+            for seed, summary in summaries.items()
+        },
         "seed_statistics": {
             "pearson_mean": float(pearsons.mean()),
             "pearson_std": float(pearsons.std(ddof=0)),
@@ -275,6 +310,7 @@ def aggregate(*, run_root: Path, config_path: Path, output_dir: Path) -> dict[st
             "prediction_alignment_by_identity": True,
             "event_only_inference": True,
             "no_validation_fitted_gate": True,
+            "completed_failed_seed_screens_are_aggregated_not_relabelled": True,
             "official_eap_test_not_opened": True,
             "evttc_not_opened": True,
             "advance_to_integrated_dual_head": passed,

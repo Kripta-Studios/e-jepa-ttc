@@ -16,9 +16,9 @@ import yaml
 REQUIRED_BASE = "488b433857090e525c447bf2974ac72639f25194"
 CRITICAL_V49_HASHES = {
     "src/e_jepa_ttc/object_event_v4_9.py": "d753582ddb8b54a537034237466c6b332b0b39f47e40128d549b794d837821af",
-    "scripts/analyze_object_event_v4_9_fixed_fusion.py": "0f2c9d8f5fd0aedb48e77e74df3a51fc10002d24809df3f2396eafbf3317c149",
+    "scripts/analyze_object_event_v4_9_fixed_fusion.py": "d7cfefc21c26d825ab5052a8e575a1c59a13ec2031eaae7da3d9c5f2adaeed7a",
     "scripts/run_object_event_v4_9_fixed_fusion.ps1": "d3f5bde365140821929491bd21e31ee4a808eaa40d21163427196ca958cb3ecd",
-    "scripts/preflight_object_event_v4_9.py": "dab86dca69b48e78ae6b7e54d8dbf04c8664a42ce0dc257c511609f9b485f462",
+    "scripts/preflight_object_event_v4_9.py": "52eb3738c0ca0bdcb663365fd114573b99a88bf7fcb7559ae38cf528a743780e",
     "configs/experiment/e_jepa_garl_object_event_fixed_fusion_v4_9.yaml": "b4f48abeec469cfa2940c4b188b143d2d6f0072b4271314ae96c954813501b21",
 }
 

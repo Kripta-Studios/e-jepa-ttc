@@ -1,0 +1,42 @@
+probe:
+  hidden_dim: 128
+  bottleneck_dim: 64
+  dropout: 0.0
+  foreground_floor: 0.05
+  activity_floor: 0.05
+  epsilon: 1.0e-6
+
+train:
+  batch_size: 32
+  maximum_epochs: 20
+  minimum_epochs: 6
+  patience_epochs: 6
+  learning_rate: 3.0e-4
+  weight_decay: 1.0e-4
+  max_grad_norm: 2.0
+  precision: fp32
+  seed: 7
+  overfit_samples: 64
+  overfit_maximum_epochs: 80
+  negative_threshold: 0.5
+  per_sequence_negative_min_count: 20
+  overfit_balanced_sign_gate: 0.95
+  overfit_negative_accuracy_gate: 0.95
+  overfit_reverse_accuracy_gate: 0.95
+  overfit_antisymmetry_ceiling: 0.35
+  screen_pearson_floor: 0.63
+  screen_pearson_max_drop: 0.025
+  screen_mae_tolerance: 0.0015
+  screen_balanced_sign_gate: 0.76
+  screen_negative_accuracy_gate: 0.66
+  screen_min_sequence_negative_accuracy_gate: 0.30
+  screen_reverse_accuracy_gate: 0.80
+  zero_event_pearson_drop_gate: 0.55
+  shuffled_event_pearson_drop_gate: 0.55
+
+loss:
+  original_bce_weight: 1.0
+  reversed_bce_weight: 1.0
+  antisymmetry_weight: 0.25
+  margin_weight: 0.10
+  margin: 1.0

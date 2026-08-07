@@ -1,0 +1,33 @@
+fusion:
+  base_blend: 0.20
+  override_blend: 0.51
+  negative_override_probability: 0.985
+
+aggregate:
+  seeds: [7, 13, 23]
+  minimum_seed_pass_count: 2
+  mean_seed_pearson_gate: 0.66
+  worst_seed_pearson_gate: 0.64
+  mean_seed_negative_accuracy_gate: 0.66
+  worst_seed_negative_accuracy_gate: 0.60
+  mean_seed_min_sequence_negative_accuracy_gate: 0.30
+  worst_seed_min_sequence_negative_accuracy_gate: 0.15
+  consensus_pearson_gate: 0.67
+  consensus_track_bootstrap_lower_gate: 0.58
+  consensus_weighted_mid_gate: 200.0
+  consensus_weighted_rte_relative_ceiling: 1.5
+  consensus_saturation_max_increase: 0.06
+  consensus_expansion_mae_gate: 0.0157
+  consensus_balanced_sign_gate: 0.765
+  consensus_negative_accuracy_gate: 0.68
+  consensus_min_sequence_pearson_gate: 0.57
+  consensus_min_sequence_negative_accuracy_gate: 0.35
+  consensus_positive_accuracy_gate: 0.83
+  consensus_override_rate_gate: 0.08
+  pairwise_selective_prediction_pearson_gate: 0.90
+  pairwise_negative_probability_pearson_gate: 0.45
+  mean_sample_prediction_std_gate: 0.008
+  zero_event_pearson_drop_gate: 0.55
+  shuffled_event_pearson_drop_gate: 0.55
+  per_sequence_negative_min_count: 20
+  track_bootstrap_repeats: 3000
