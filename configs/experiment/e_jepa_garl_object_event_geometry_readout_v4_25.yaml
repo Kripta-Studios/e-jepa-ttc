@@ -1,0 +1,30 @@
+meta:
+  fold_count: 3
+  seed: 2525
+  minimum_objective_gain_over_baseline: 0.002
+
+# Low-dimensional, non-negative, zero-bias readouts only. The baseline is
+# explicitly anchored by the ridge prior [1, 0, 0]. No hidden MLP/router.
+readouts:
+  - {name: baseline_control, features: [baseline], ridge: 0.0}
+  - {name: baseline_div_r0, features: [baseline, divergence], ridge: 0.0}
+  - {name: baseline_div_r1e4, features: [baseline, divergence], ridge: 1.0e-4}
+  - {name: baseline_div_r1e3, features: [baseline, divergence], ridge: 1.0e-3}
+  - {name: baseline_vert_r0, features: [baseline, vertical], ridge: 0.0}
+  - {name: baseline_vert_r1e4, features: [baseline, vertical], ridge: 1.0e-4}
+  - {name: baseline_vert_r1e3, features: [baseline, vertical], ridge: 1.0e-3}
+  - {name: baseline_geom_r0, features: [baseline, divergence, vertical], ridge: 0.0}
+  - {name: baseline_geom_r1e5, features: [baseline, divergence, vertical], ridge: 1.0e-5}
+  - {name: baseline_geom_r1e4, features: [baseline, divergence, vertical], ridge: 1.0e-4}
+  - {name: baseline_geom_r1e3, features: [baseline, divergence, vertical], ridge: 1.0e-3}
+  - {name: baseline_geom_r1e2, features: [baseline, divergence, vertical], ridge: 1.0e-2}
+
+selection:
+  minimum_positive_accuracy: 0.82
+  minimum_negative_accuracy: 0.55
+  minimum_sequence_pearson: 0.45
+  pearson_weight: 1.0
+  balanced_sign_weight: 0.20
+  minimum_sequence_pearson_weight: 0.12
+  minimum_sequence_negative_weight: 0.10
+  normalized_mae_penalty: 0.05
