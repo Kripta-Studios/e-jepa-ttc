@@ -2872,7 +2872,7 @@ Solo después de completar H6 se puede escribir que el modelo bate Garl-TTC. Has
 entonces, el lenguaje correcto es “candidato diseñado para superar Garl-TTC” y las
 conclusiones deben limitarse al gate más alto alcanzado.
 
-## Object Event v4.29 (preregistered, not executed)
+## Object Event v4.29 (executed; OOF gate failed)
 
 v4.29 is a train-only, event-only local-affine OOF phase following the recorded
 v4.28 OOF failure. Its two arms, seed-attribution factorial, loss weights and
@@ -2880,8 +2880,22 @@ fail-closed gates are fixed in `configs/experiment/e_jepa_garl_object_event_loca
 Development validation, official eAP and EvTTC remain sealed unless the fixed
 all-seed OOF champion clears every gate.
 
-Implementation acceptance is complete: Ruff/Pyright and targeted tests pass,
-the real preflight remains sealed, and train-only GPU/micro-overfit diagnostics
-show finite learning with one condition-number rejection. Next action is the
-unchanged 3x3 seed attribution followed by the two grouped OOF arms; no smoke
-metric may alter their configuration or gates.
+Implementation acceptance and the full run are complete. Both arms show strong
+valid-only OOF gains, but two aggregate rows per arm exceeded the fixed condition
+limit, so complete coverage failed and development stayed sealed. Seed attribution
+shows a larger backbone than matcher marginal range plus strong crossover; seed 13
+must not be selected.
+
+Before any new phase, diagnose the two ill-conditioned rows and the remaining
+magnitude/track failure without changing v4.29 retrospectively. Evidence currently
+supports three bounded directions for a separately preregistered next phase:
+
+1. a numerically stable local normal-flow/affine estimator that remains event-only
+   and returns finite uncertainty rather than a plausible fallback;
+2. motion-equivariant geometry representation stabilization/distillation across
+   checkpoint seeds;
+3. explicit multi-scale local correspondence for the `|g| >= .08` bucket while
+   preserving the observed sequence and sign gains.
+
+No development, official eAP or EvTTC evaluation may open until a new complete OOF
+protocol passes without post-hoc threshold relaxation.

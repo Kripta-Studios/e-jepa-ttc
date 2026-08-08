@@ -208,10 +208,11 @@ Si level no mejora scratch, la hipótesis JEPA no se promociona aunque ambos mod
 
 ## Object Event v4.29
 
-Implemented and ready for preregistered execution; full attribution/OOF has not run. The wrapper runs a
-sealed-state preflight and a train-only local-affine OOF analyzer. No promotion or
-performance claim has been made; development validation, eAP official and EvTTC are
-not opened unless its complete all-seed OOF champion passes every fixed gate.
+Full attribution and grouped OOF completed with status
+`completed_oof_gate_failed`. No development-validation, eAP official test or EvTTC
+data was materialized. Both arms had two aggregate invalid rows out of 2,048 due
+to condition number above the locked limit 100, so complete coverage failed and no
+arm was promoted.
 
 Current corrected verification passes the full Pytest suite, compilation, Ruff,
 Pyright, 14 targeted v4.29 tests, PowerShell parsing and the real sealed-state preflight. The corrected
@@ -219,3 +220,17 @@ fixed balanced 64-sample, six-epoch train-only diagnostic had 64/64 valid fits f
 both arms: LHR loss `1.7021 → 0.3224` (Pearson `0.9631`, peak `926.0 MiB`) and
 geometry-teacher loss `1.7453 → 0.3659` (Pearson `0.9623`, peak `930.4 MiB`).
 These diagnostics are not OOF evidence and cannot satisfy any promotion gate.
+
+Valid-only OOF diagnostics nevertheless establish a material architectural signal:
+`local_affine_lhr` reached Pearson `0.7628`, negative accuracy `0.8278`, balanced
+sign `0.8919`, minimum-sequence Pearson `0.4724`, std ratio `1.1860`; the geometry
+teacher reached `0.7671`, `0.8295`, `0.8901`, `0.4895`, and `1.1709`. Both would
+pass every frozen performance gate on valid rows, but that analysis is explicitly
+non-selectable. The teacher's high-magnitude ratio is `0.7363`, while the smallest
+bucket is overpredicted at `1.4658`; calibration remains magnitude-dependent.
+
+Seed attribution is `mixed_inconclusive`: backbone marginal Pearson range `0.0714`
+exceeds matcher-init range `0.0416`, but crossover interaction reaches about
+`0.059`. The result supports stabilizing the geometry representation and the local
+solver rather than selecting seed 13. Summary SHA-256:
+`6f9f59ab1dba0471c1be608d8acd270f6642dcbe4e10c3ed3cc0960eb96c86d8`.
