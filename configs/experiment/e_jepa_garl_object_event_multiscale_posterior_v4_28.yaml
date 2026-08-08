@@ -1,0 +1,71 @@
+arms:
+  profile_posterior:
+    matcher: profile
+    correlation_dim: 48
+    log_scale_min: -0.22
+    log_scale_max: 0.22
+    scale_bins: 45
+    correlation_temperature: 0.040
+    foreground_floor: 0.05
+    activity_floor: 0.05
+    rotation_degrees: [0.0]
+    pyramid_factors: [1]
+    batch_size: 8
+
+  spatial_rotation_posterior:
+    matcher: spatial_rotation
+    correlation_dim: 32
+    log_scale_min: -0.22
+    log_scale_max: 0.22
+    scale_bins: 37
+    correlation_temperature: 0.045
+    foreground_floor: 0.02
+    activity_floor: 0.05
+    rotation_degrees: [-6.0, -3.0, 0.0, 3.0, 6.0]
+    pyramid_factors: [1, 2]
+    batch_size: 6
+
+loss:
+  lhr_weight: 4.0
+  expansion_weight: 1.0
+  correlation_weight: 1.0
+  sign_weight: 1.0
+  posterior_weight: 0.75
+  entropy_weight: 0.0
+  smooth_l1_beta: 0.004
+  sign_temperature: 0.015
+  posterior_sigma: 0.015
+  max_abs_expansion: 0.25
+  epsilon: 1.0e-6
+
+train:
+  fold_count: 3
+  seeds: [7, 13, 23]
+  epochs: 10
+  final_epochs: 12
+  geometry_tail_tensors: 8
+  projection_learning_rate: 1.0e-4
+  geometry_learning_rate: 1.0e-5
+  weight_decay: 1.0e-4
+  geometry_anchor_weight: 0.01
+  max_grad_norm: 1.0
+  seed: 2828
+
+selection:
+  minimum_oof_pearson: 0.635
+  minimum_oof_negative_accuracy: 0.65
+  minimum_oof_balanced_sign: 0.775
+  minimum_oof_log_eta_pearson: 0.615
+  minimum_oof_negative_track_macro_accuracy: 0.69
+  minimum_oof_sequence_pearson: 0.43
+  minimum_prediction_std_ratio: 0.70
+  minimum_pearson_gain_over_v427: 0.025
+  minimum_log_eta_gain_over_v427: 0.015
+  minimum_negative_track_gain_over_v427: 0.010
+
+final_decision:
+  minimum_pearson_gain_over_v410: 0.005
+  minimum_negative_accuracy_gain_over_v410: 0.02
+  minimum_balanced_sign_gain_over_v410: 0.01
+  minimum_log_eta_pearson: 0.45
+  minimum_negative_track_macro_gain_over_v410: 0.02
