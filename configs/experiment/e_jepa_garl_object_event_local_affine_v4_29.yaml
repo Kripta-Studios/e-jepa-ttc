@@ -1,0 +1,78 @@
+# v4.29 preregistration: exactly two fixed arms; no sweeps or post-OOF changes.
+arms:
+  local_affine_lhr:
+    correlation_dim: 48
+    adjacent_radius: 4
+    direct_radius: 7
+    temperature: 0.07
+    ridge: 0.001
+    huber_delta: 0.08
+    foreground_floor: 0.05
+    activity_floor: 0.05
+    support_threshold: 0.02
+    min_effective_mass: 4.0
+    max_condition_number: 100.0
+    min_determinant: 0.05
+    batch_size: 8
+  local_affine_geom_teacher:
+    correlation_dim: 48
+    adjacent_radius: 4
+    direct_radius: 7
+    temperature: 0.07
+    ridge: 0.001
+    huber_delta: 0.08
+    foreground_floor: 0.05
+    activity_floor: 0.05
+    support_threshold: 0.02
+    min_effective_mass: 4.0
+    max_condition_number: 100.0
+    min_determinant: 0.05
+    batch_size: 8
+loss:
+  lhr_weight: 4.0
+  expansion_weight: 1.0
+  correlation_weight: 1.0
+  sign_weight: 1.0
+  confidence_weight: 0.05
+  composition_weight: 0.20
+  residual_weight: 0.05
+  invalid_weight: 2.0
+  geometry_teacher_weight: 0.50
+  smooth_l1_beta: 0.004
+  sign_temperature: 0.015
+  max_abs_expansion: 0.25
+train:
+  fold_count: 3
+  seeds: [7, 13, 23]
+  matcher_init_seeds: [7, 13, 23]
+  epochs: 10
+  final_epochs: 12
+  geometry_tail_tensors: 8
+  projection_learning_rate: 0.0001
+  geometry_learning_rate: 0.00001
+  weight_decay: 0.0001
+  geometry_anchor_weight: 0.01
+  max_grad_norm: 1.0
+  optimization_seed_by_fold: {0: 42900, 1: 42901, 2: 42902}
+  num_workers: 0
+selection:
+  objective: pearson
+  tie_break: [minimum_sequence_pearson, negative_accuracy, lexical_arm_name]
+  gates:
+    pearson: 0.635
+    negative_accuracy: 0.652021
+    balanced_sign_accuracy: 0.775
+    log_eta_pearson: 0.615
+    negative_track_macro_accuracy: 0.697674
+    minimum_sequence_pearson: 0.430
+    prediction_std_ratio: [0.75, 1.25]
+    calibration_slope_intercept: [0.70, 1.30]
+    invalid_affine_fraction: 0.02
+    high_magnitude_ratio: [0.70, 1.30]
+    gain_over_v428: {pearson: 0.025, log_eta_pearson: 0.015, negative_accuracy: 0.020, minimum_sequence_pearson: 0.100}
+final_decision:
+  minimum_pearson_gain_over_v410: 0.005
+  minimum_negative_accuracy_gain_over_v410: 0.020
+  minimum_balanced_sign_gain_over_v410: 0.010
+  minimum_log_eta_pearson: 0.450
+  minimum_negative_track_macro_gain_over_v410: 0.020

@@ -2871,3 +2871,17 @@ es combinar correctamente:
 Solo después de completar H6 se puede escribir que el modelo bate Garl-TTC. Hasta
 entonces, el lenguaje correcto es “candidato diseñado para superar Garl-TTC” y las
 conclusiones deben limitarse al gate más alto alcanzado.
+
+## Object Event v4.29 (preregistered, not executed)
+
+v4.29 is a train-only, event-only local-affine OOF phase following the recorded
+v4.28 OOF failure. Its two arms, seed-attribution factorial, loss weights and
+fail-closed gates are fixed in `configs/experiment/e_jepa_garl_object_event_local_affine_v4_29.yaml`.
+Development validation, official eAP and EvTTC remain sealed unless the fixed
+all-seed OOF champion clears every gate.
+
+Implementation acceptance is complete: Ruff/Pyright and targeted tests pass,
+the real preflight remains sealed, and train-only GPU/micro-overfit diagnostics
+show finite learning with one condition-number rejection. Next action is the
+unchanged 3x3 seed attribution followed by the two grouped OOF arms; no smoke
+metric may alter their configuration or gates.

@@ -191,6 +191,7 @@ se pueden regenerar. No deben subirse a Git.
 - [estado actual](STATUS.md)
 - [protocolo experimental](docs/experimental_protocol.md)
 - [Object Event TTC v4](docs/object_event_v4.md)
+- [Object Event TTC v4.29 preregistration](docs/object_event_v4_29.md)
 - [dataset card](docs/dataset_card.md)
 - [model card](docs/model_card.md)
 - [limitaciones](docs/limitations.md)

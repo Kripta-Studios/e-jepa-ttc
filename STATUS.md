@@ -10,6 +10,8 @@ Base experimental observada en los artefactos locales: commit `6e4ad4b29a805dc26
 
 Construir un estimador TTC por objeto que supere a Garl-TTC bajo protocolos eAP y EvTTC comparables, primero event-only y después RGB-E. Ningún checkpoint está promovido todavía: faltan evaluación multisemilla, test oficial eAP/CodaBench y EvTTC zero-shot sellado.
 
+CPLA-high is diagnostic only; it is never an official final test split.
+
 ## Estado ejecutivo
 
 Funciona y está validado:
@@ -203,3 +205,17 @@ No ejecutar `temporal_residual`, `nce_visreg`, seeds 13/23 ni full hasta que scr
 6. ventaja de `level` sobre scratch suficientemente grande para justificar más semillas.
 
 Si level no mejora scratch, la hipótesis JEPA no se promociona aunque ambos modelos dejen de colapsar.
+
+## Object Event v4.29
+
+Implemented and ready for preregistered execution; full attribution/OOF has not run. The wrapper runs a
+sealed-state preflight and a train-only local-affine OOF analyzer. No promotion or
+performance claim has been made; development validation, eAP official and EvTTC are
+not opened unless its complete all-seed OOF champion passes every fixed gate.
+
+Current corrected verification passes the full Pytest suite, compilation, Ruff,
+Pyright, 14 targeted v4.29 tests, PowerShell parsing and the real sealed-state preflight. The corrected
+fixed balanced 64-sample, six-epoch train-only diagnostic had 64/64 valid fits for
+both arms: LHR loss `1.7021 → 0.3224` (Pearson `0.9631`, peak `926.0 MiB`) and
+geometry-teacher loss `1.7453 → 0.3659` (Pearson `0.9623`, peak `930.4 MiB`).
+These diagnostics are not OOF evidence and cannot satisfy any promotion gate.

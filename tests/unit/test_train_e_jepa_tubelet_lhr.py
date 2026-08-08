@@ -8,6 +8,10 @@ import yaml
 from torch.utils.data import DataLoader, Dataset
 
 from e_jepa_ttc.models.highres_factorized import EJEPATubeletLHR, EJEPATubeletLHRConfig
+from e_jepa_ttc.training.tubelet_finetuning import (
+    TubeletOptimizationConfig,
+    build_tubelet_optimizer,
+)
 from scripts.pretrain_eap_tubelet_jepa import (
     _approved_trainer_config,
     _cycling_batches,
@@ -237,7 +241,19 @@ def test_train_epoch_updates_native_signed_ttc_head() -> None:
     inputs = torch.randn(2, 3, 4, 16, 16)
     targets = torch.tensor([-1.0, 1.0])
     loader = DataLoader(_TinyDataset(inputs, targets), batch_size=2)
-    optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3)
+    optimization_config = TubeletOptimizationConfig(
+        backbone_learning_rate=1e-3,
+        pooling_learning_rate=1e-3,
+        head_learning_rate=1e-3,
+        warmup_pooling_learning_rate=1e-3,
+        warmup_head_learning_rate=1e-3,
+        backbone_weight_decay=0.0,
+        readout_weight_decay=0.0,
+        readout_warmup_optimizer_steps=0,
+        min_prediction_std_ratio=0.0,
+        collapse_patience=0,
+    )
+    optimizer, _ = build_tubelet_optimizer(model, optimization_config)
     before = dict(model.named_parameters())["ttc_head.3.weight"].detach().clone()
 
     loss = train_epoch(
@@ -247,9 +263,11 @@ def test_train_epoch_updates_native_signed_ttc_head() -> None:
         device=torch.device("cpu"),
         precision="fp32",
         max_grad_norm=1.0,
+        optimization_config=optimization_config,
+        optimizer_step=0,
     )
 
-    assert torch.isfinite(torch.tensor(loss))
+    assert torch.isfinite(torch.tensor(loss.mean_loss))
     assert not torch.equal(before, dict(model.named_parameters())["ttc_head.3.weight"].detach())
 
 
