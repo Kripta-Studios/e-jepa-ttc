@@ -1,0 +1,50 @@
+{
+  "artifact_sha256": "eb3497fafad8a4d23284b263303628be8ad025fd61bac57ad5f54580d142ee82",
+  "artifact_type": "causal_scale_v7_diagnostic_comparison_v1",
+  "created_at": "2026-08-09T22:45:03.324875+00:00",
+  "evidence_scope": "synthetic_train_validation_diagnostics_only",
+  "real_data_opened": false,
+  "rows": [
+    {
+      "analytic_pearson": 0.9413700699806213,
+      "best_epoch": 34,
+      "elapsed_s": 282.8365149999736,
+      "foreground_iou": 0.8823535442352295,
+      "label": "blended_joint_loss",
+      "log_ratio_mae": 0.01924075558781624,
+      "ratio_80_coverage": 0.7994100451469421,
+      "sign_accuracy": 0.991150438785553,
+      "slope": 0.9745917320251465,
+      "source_artifact_identity": null,
+      "source_file_sha256": "0e8c79c859717eee5c9b2d7e2056513edf65498e29f52273efee2a1af4d60bf3",
+      "source_git_commit": "08f4babd496bb9c40a6fde381bc20493ca064baa",
+      "source_git_dirty": true,
+      "source_path": "artifacts/debug/causal_scale_v7_synth_diag1/summary.json",
+      "source_status": "diagnostic_nonselectable",
+      "translation_leakage_p95": 0.03548016399145126,
+      "ttc_symmetric_relative_error": 0.2662624716758728
+    },
+    {
+      "analytic_pearson": 0.9612550139427185,
+      "best_epoch": 17,
+      "elapsed_s": 288.070370899979,
+      "foreground_iou": 0.8926790952682495,
+      "label": "pair_supervision_gate_selection",
+      "log_ratio_mae": 0.016956545412540436,
+      "ratio_80_coverage": 0.7994100451469421,
+      "sign_accuracy": 0.991150438785553,
+      "slope": 0.9274405241012573,
+      "source_artifact_identity": null,
+      "source_file_sha256": "b5698e101de57362e02c667334627db00847c72689d11deb6ca905e54c51ffb5",
+      "source_git_commit": "08f4babd496bb9c40a6fde381bc20493ca064baa",
+      "source_git_dirty": true,
+      "source_path": "artifacts/debug/causal_scale_v7_synth_diag2/summary.json",
+      "source_status": "diagnostic_nonselectable",
+      "translation_leakage_p95": 0.003512732218950987,
+      "ttc_symmetric_relative_error": 0.2434549480676651
+    }
+  ],
+  "selectable": false,
+  "sota_claim_authorized": false,
+  "test_opened": false
+}

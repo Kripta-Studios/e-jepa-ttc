@@ -1,5 +1,19 @@
 # Estado del repositorio
 
+## Addendum v7 (2026-08-10)
+
+V7 combines the v6 equivariant foreground with parameter-free causal transport of the
+previous inverse-TTC estimate. The selected train/validation run passes every frozen
+validation gate: Pearson `.9612550`, slope `.9274405`, sign `.9911504`, IoU `.8926791`,
+ratio MAE `.0169565`, TTC symmetric relative error `.2434549`, 80% coverage `.7994100`
+and translation leakage `.0035127`. Test seed 603 and all real data remain closed.
+
+The signed diagnostic artifact is
+`artifacts/metrics/causal_scale_v7_diagnostic_comparison_v1.json`, identity
+`eb3497fafad8a4d23284b263303628be8ad025fd61bac57ad5f54580d142ee82`. Next action:
+publish the exact code/config after full verification, then run test 603 once from a
+clean detached worktree. No SOTA or Garl-TTC claim is authorized.
+
 ## Addendum v6 (2026-08-10)
 
 V6 preregisters new synthetic groups 401/502/603 and does not reuse consumed v5 test

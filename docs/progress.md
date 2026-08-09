@@ -1,5 +1,19 @@
 # Progreso
 
+## 2026-08-10 — Transporte temporal Causal Scale v7
+
+- implementado transporte físico del inverse TTC anterior al timestamp actual;
+- blend `.75/.25` sin parámetros aprendidos y fallback seguro ante denominador inválido;
+- corregidos controles para separar oddness T=2 y translation de la salida T=3;
+- selección validation penaliza explícitamente checkpoints que fallan gates;
+- validation 401/502: Pearson `.96126`, slope `.92744`, sign `.99115`, IoU `.89268`,
+  TTC `.24345`, coverage `.79941`, translation `.00351`; todos los gates pasan;
+- artefacto firmado: `artifacts/metrics/causal_scale_v7_diagnostic_comparison_v1.json`,
+  identidad `eb3497fafad8a4d23284b263303628be8ad025fd61bac57ad5f54580d142ee82`;
+- test 603 y todos los datos reales permanecen cerrados.
+
+Pendiente inmediato: suite completa, commit/push y un único test clean-tree 603.
+
 ## 2026-08-10 — Foreground equivariante Causal Scale v6
 
 - preregistrados grupos nuevos 401/502/603; no se reutilizó test v5 seed 303;

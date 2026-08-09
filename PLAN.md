@@ -1,5 +1,18 @@
 # PLAN.md — Recuperación científica y ruta ejecutable hacia E-JEPA-TTC frente a Garl-TTC
 
+## Addendum v7 causal temporal transport (2026-08-10)
+
+V7 adds a `.75/.25` physical blend of current inverse TTC and the previous estimate
+transported to the current timestamp. It introduces no learned parameters. The
+pair-supervised, gate-aware validation run passes all gates: Pearson `.96126`, slope
+`.92744`, sign `.99115`, IoU `.89268`, TTC error `.24345`, calibration `.79941` and
+translation `.00351`. Test 603 remains sealed.
+
+Freeze and publish the exact implementation, then execute seed 603 once from a clean
+detached worktree. Only a complete held-out pass may authorize a versioned eAP
+train-only event screen. Any failure closes v7 without changing thresholds or reusing
+603. See `docs/causal_scale_v7.md`.
+
 ## Addendum v6 equivariant foreground (2026-08-10)
 
 V6 uses new groups 401/502/603 and keeps test 603 sealed. Its selected separable,

@@ -23,6 +23,10 @@ El candidato espacial v6 usa una cabeza separable row/column sin strides. En nue
 validation sintética obtiene translation `.00462` e IoU `.89323`, pero Pearson
 `.92042`; permanece no promovido y test 603 está cerrado.
 
+V7 conserva esa máscara e incorpora transporte causal parameter-free entre tres
+endpoints. Validation alcanza Pearson `.96126`, TTC `.24345` y translation `.00351`;
+todos los gates validation pasan, pero test 603 todavía está sellado.
+
 ## Estado
 
 El modelo histórico activo era un candidato event-only high-resolution, no un modelo SOTA ni

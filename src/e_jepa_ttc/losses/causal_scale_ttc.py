@@ -29,6 +29,7 @@ class CausalScaleTTCLossConfig:
     residual_regularization_weight: float = 0.05
     temporal_consistency_weight: float = 0.1
     smooth_l1_beta: float = 0.02
+    supervise_pair_ratio_before_temporal_blend: bool = False
 
     def __post_init__(self) -> None:
         weights = (
@@ -188,11 +189,16 @@ def causal_scale_ttc_loss(
         physical_valid = physical_valid & target_valid.bool()
     valid_count = int(physical_valid.sum().item())
     if valid_count:
-        residual = output.log_height_ratio[:, -1][physical_valid] - target_ratio[physical_valid]
+        ratio_prediction = (
+            output.pair_log_height_ratio[:, -1]
+            if cfg.supervise_pair_ratio_before_temporal_blend
+            else output.log_height_ratio[:, -1]
+        )
+        residual = ratio_prediction[physical_valid] - target_ratio[physical_valid]
         log_variance = output.log_ratio_log_variance[:, -1][physical_valid]
         ratio_nll = (0.5 * torch.exp(-log_variance) * residual.square() + 0.5 * log_variance).mean()
         ratio_huber = functional.smooth_l1_loss(
-            output.log_height_ratio[:, -1][physical_valid],
+            ratio_prediction[physical_valid],
             target_ratio[physical_valid],
             beta=cfg.smooth_l1_beta,
         )

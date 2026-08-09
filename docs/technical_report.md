@@ -37,6 +37,11 @@ Pearson queda en `.92042`. Las ablations pair-ratio y height-correction empeoran
 correlación. Test 603 continúa sellado: la evidencia autoriza únicamente diseñar un
 protocolo sintético multigrupo que mejore estimación temporal de escala.
 
+V7 usa la identidad física de transporte de inverse TTC para combinar dos pares
+causales sin parámetros extra. Separar supervisión de pares y selección gate-aware
+eleva Pearson a `.96126` con TTC `.24345` y translation `.00351`; pasa todos los gates
+de validation. Test 603 continúa sellado hasta congelar el commit exacto.
+
 ## 1. Resumen
 
 E-JEPA-TTC investiga TTC con eventos mediante tokens espaciales high-resolution y

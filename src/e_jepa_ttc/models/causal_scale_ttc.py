@@ -44,6 +44,7 @@ class CausalScaleTTCConfig:
     foreground_temperature: float = 1.0
     max_abs_log_ratio_residual: float = 0.05
     max_abs_log_height_correction: float = 0.0
+    temporal_inverse_ttc_blend: float = 1.0
     min_abs_log_ratio: float = 2.0e-3
     min_sensor_support: float = 1.0e-4
     ttc_clip_seconds: float = 60.0
@@ -78,6 +79,8 @@ class CausalScaleTTCConfig:
             raise ValueError("max_abs_log_ratio_residual must lie in [0,0.25]")
         if not 0.0 <= self.max_abs_log_height_correction <= 0.5:
             raise ValueError("max_abs_log_height_correction must lie in [0,0.5]")
+        if not 0.0 <= self.temporal_inverse_ttc_blend <= 1.0:
+            raise ValueError("temporal_inverse_ttc_blend must lie in [0,1]")
         if self.min_abs_log_ratio <= 0.0 or self.min_sensor_support < 0.0:
             raise ValueError("physical support thresholds must be non-negative")
         if self.ttc_clip_seconds <= 0.0 or self.initial_log_ratio_std <= 0.0:
@@ -110,6 +113,7 @@ class CausalScaleTTCOutput:
     collision_logits: torch.Tensor
     known_mask: torch.Tensor
     log_height_ratio: torch.Tensor
+    pair_log_height_ratio: torch.Tensor
     analytic_log_height_ratio: torch.Tensor
     residual_log_height_ratio: torch.Tensor
     log_ratio_log_variance: torch.Tensor
@@ -207,6 +211,41 @@ def finite_ttc_from_inverse(
     )
     safe = sign * inverse_ttc.abs().clamp_min(minimum_abs_inverse_ttc)
     return torch.reciprocal(safe).clamp(-clip_seconds, clip_seconds)
+
+
+def blend_current_inverse_ttc(
+    pair_inverse_ttc: torch.Tensor,
+    pair_known: torch.Tensor,
+    current_delta_t_s: torch.Tensor,
+    *,
+    current_pair_weight: float,
+) -> tuple[torch.Tensor, torch.Tensor]:
+    """Transport the previous-pair estimate and blend it at the current endpoint."""
+
+    if pair_inverse_ttc.ndim != 2 or pair_known.shape != pair_inverse_ttc.shape:
+        raise ValueError("pair inverse TTC and known mask must share shape [B,P]")
+    if current_delta_t_s.shape != pair_inverse_ttc.shape[:1]:
+        raise ValueError("current delta_t_s must have shape [B]")
+    if not 0.0 <= current_pair_weight <= 1.0:
+        raise ValueError("current_pair_weight must lie in [0,1]")
+    current = pair_inverse_ttc[:, -1]
+    used = torch.zeros_like(current, dtype=torch.bool)
+    if pair_inverse_ttc.shape[1] < 2 or current_pair_weight >= 1.0:
+        return current, used
+    previous = pair_inverse_ttc[:, -2]
+    denominator = 1.0 - current_delta_t_s * previous
+    transported = previous / denominator.clamp_min(1.0e-4)
+    blended = current_pair_weight * current + (1.0 - current_pair_weight) * transported
+    ratio_argument = 1.0 + current_delta_t_s * blended
+    used = (
+        pair_known[:, -2]
+        & torch.isfinite(denominator)
+        & (denominator > 1.0e-4)
+        & torch.isfinite(blended)
+        & torch.isfinite(ratio_argument)
+        & (ratio_argument > 0.0)
+    )
+    return torch.where(used, blended, current), used
 
 
 class _ResidualBlock(nn.Module):
@@ -565,11 +604,24 @@ class CausalScaleTTC(nn.Module):
             & (pair_support >= self.config.min_sensor_support)
             & torch.isfinite(log_ratio)
         )
-        current_ratio = log_ratio[:, -1]
         current_dt = delta_t_s[:, -1]
-        inverse_ttc = pair_inverse_ttc[:, -1]
-        ttc = pair_ttc[:, -1]
-        known = pair_known[:, -1]
+        inverse_ttc, temporal_blend_used = blend_current_inverse_ttc(
+            pair_inverse_ttc,
+            pair_known,
+            current_dt,
+            current_pair_weight=self.config.temporal_inverse_ttc_blend,
+        )
+        current_ratio = torch.log1p((current_dt * inverse_ttc).clamp_min(-1.0 + 1.0e-6))
+        effective_log_ratio = torch.cat(
+            (log_ratio[:, :-1], current_ratio.unsqueeze(-1)),
+            dim=1,
+        )
+        ttc = finite_ttc_from_inverse(
+            inverse_ttc,
+            minimum_abs_inverse_ttc=minimum_inverse,
+            clip_seconds=self.config.ttc_clip_seconds,
+        )
+        known = pair_known[:, -1] & torch.isfinite(current_ratio)
         current_log_variance = log_ratio_log_variance[:, -1]
         inverse_log_variance = (
             current_log_variance + 2.0 * current_ratio.clamp(-12.0, 12.0) - 2.0 * current_dt.log()
@@ -602,7 +654,8 @@ class CausalScaleTTC(nn.Module):
             inverse_ttc_log_variance=inverse_log_variance,
             collision_logits=collision_logits,
             known_mask=known,
-            log_height_ratio=log_ratio,
+            log_height_ratio=effective_log_ratio,
+            pair_log_height_ratio=log_ratio,
             analytic_log_height_ratio=analytic,
             residual_log_height_ratio=residual,
             log_ratio_log_variance=log_ratio_log_variance,
@@ -622,6 +675,7 @@ class CausalScaleTTC(nn.Module):
                 "log_height_correction": log_height_correction,
                 "pair_sensor_support": pair_support,
                 "pair_known": pair_known,
+                "temporal_blend_used": temporal_blend_used,
             },
         )
 
@@ -636,6 +690,7 @@ __all__ = [
     "CausalScaleTTCConfig",
     "CausalScaleTTCOutput",
     "SoftScaleObservation",
+    "blend_current_inverse_ttc",
     "finite_ttc_from_inverse",
     "log_ratio_to_inverse_ttc",
     "soft_vertical_extent_from_logits",

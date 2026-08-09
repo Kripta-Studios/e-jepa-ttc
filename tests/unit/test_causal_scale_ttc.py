@@ -14,6 +14,7 @@ from e_jepa_ttc.losses.causal_scale_ttc import causal_scale_ttc_loss
 from e_jepa_ttc.models.causal_scale_ttc import (
     CausalScaleTTC,
     CausalScaleTTCConfig,
+    blend_current_inverse_ttc,
     log_ratio_to_inverse_ttc,
     soft_vertical_extent_from_logits,
     target_log_ratio_from_ttc,
@@ -146,6 +147,24 @@ def test_causal_scale_loss_is_finite_and_reaches_foreground_and_auxiliary_heads(
 def test_configuration_rejects_unsorted_risk_thresholds() -> None:
     with pytest.raises(ValueError, match="strictly increasing"):
         CausalScaleTTCConfig(risk_thresholds_s=(1.0, 0.5))
+
+
+def test_temporal_inverse_ttc_blend_transports_previous_pair_to_current_time() -> None:
+    pair_inverse = torch.tensor([[0.4, 0.5], [0.4, 0.5]])
+    pair_known = torch.tensor([[True, True], [False, True]])
+    delta = torch.tensor([0.1, 0.1])
+
+    blended, used = blend_current_inverse_ttc(
+        pair_inverse,
+        pair_known,
+        delta,
+        current_pair_weight=0.75,
+    )
+
+    transported = 0.4 / (1.0 - 0.1 * 0.4)
+    assert blended[0] == pytest.approx(0.75 * 0.5 + 0.25 * transported)
+    assert blended[1] == pytest.approx(0.5)
+    assert used.tolist() == [True, False]
 
 
 def test_stride_free_foreground_path_has_small_integer_translation_leakage() -> None:

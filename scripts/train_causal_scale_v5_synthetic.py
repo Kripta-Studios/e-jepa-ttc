@@ -99,6 +99,7 @@ def _model_config(path: Path) -> CausalScaleTTCConfig:
     if model_name not in {
         "e_jepa_causal_scale_event_v5",
         "e_jepa_causal_scale_event_v6",
+        "e_jepa_causal_scale_event_v7",
     }:
         raise ValueError("model config must declare a supported causal-scale event model")
     thresholds = raw.get("risk_thresholds_s")

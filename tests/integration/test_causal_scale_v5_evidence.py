@@ -13,6 +13,7 @@ LEARNING_ARTIFACT = (
     ROOT / "artifacts/metrics/causal_scale_v5_synthetic_learning_gate_v1.json"
 )
 V6_DIAGNOSTICS = ROOT / "artifacts/metrics/causal_scale_v6_diagnostic_comparison_v1.json"
+V7_DIAGNOSTICS = ROOT / "artifacts/metrics/causal_scale_v7_diagnostic_comparison_v1.json"
 
 
 def test_causal_scale_v5_evidence_is_signed_clean_and_synthetic_only() -> None:
@@ -84,3 +85,27 @@ def test_causal_scale_v6_diagnostics_keep_new_test_and_real_data_closed() -> Non
     assert {row["source_status"] for row in payload["rows"]} == {
         "diagnostic_nonselectable"
     }
+
+
+def test_causal_scale_v7_diagnostics_pass_validation_without_opening_test() -> None:
+    payload = cast(
+        dict[str, Any],
+        json.loads(V7_DIAGNOSTICS.read_text(encoding="utf-8")),
+    )
+    assert verify_artifact_hash(payload)
+    assert hashlib.sha256(V7_DIAGNOSTICS.read_bytes()).hexdigest() == (
+        "bd4b2a23968751616e455a5414b91c877a6ddba55893d3196181d4d144b26196"
+    )
+    assert payload["artifact_sha256"] == (
+        "eb3497fafad8a4d23284b263303628be8ad025fd61bac57ad5f54580d142ee82"
+    )
+    assert payload["selectable"] is False
+    assert payload["test_opened"] is False
+    assert payload["real_data_opened"] is False
+    assert payload["sota_claim_authorized"] is False
+    selected = next(
+        row for row in payload["rows"] if row["label"] == "pair_supervision_gate_selection"
+    )
+    assert selected["analytic_pearson"] >= 0.95
+    assert selected["translation_leakage_p95"] <= 0.02
+    assert selected["ttc_symmetric_relative_error"] <= 0.30

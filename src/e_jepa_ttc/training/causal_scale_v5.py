@@ -238,8 +238,9 @@ def evaluate_synthetic_causal_scale(
         if controls:
             pair_inputs = inputs[:, -2:]
             pair_delta = delta[:, -1:]
+            pair_forward = model(pair_inputs, pair_delta)
             reverse = model(pair_inputs.flip(1), pair_delta)
-            forward_ratio = output.log_height_ratio[:, -1]
+            forward_ratio = pair_forward.log_height_ratio[:, -1]
             reverse_ratio = reverse.log_height_ratio[:, -1]
             denominator = forward_ratio.abs() + reverse_ratio.abs()
             supported = denominator >= 2.0 * model.config.min_abs_log_ratio
@@ -255,7 +256,7 @@ def evaluate_synthetic_causal_scale(
                 translation.append(
                     (
                         shifted.log_height_ratio[:, -1][output.known_mask]
-                        - forward_ratio[output.known_mask]
+                        - output.log_height_ratio[:, -1][output.known_mask]
                     )
                     .abs()
                     .cpu()
@@ -327,6 +328,14 @@ def _selection_score(metrics: Mapping[str, float | None]) -> float:
         + abs(1.0 - float(cast(float, slope)))
         + (1.0 - float(cast(float, sign_accuracy)))
     )
+    gate_penalty = (
+        10.0 * max(0.0, 0.95 - float(cast(float, correlation)))
+        + 5.0 * max(0.0, 0.95 - float(cast(float, sign_accuracy)))
+        + 5.0 * max(0.0, 0.8 - float(cast(float, slope)))
+        + 5.0 * max(0.0, float(cast(float, slope)) - 1.2)
+        + 2.0 * max(0.0, 0.6 - float(cast(float, foreground_iou)))
+    )
+    score += gate_penalty
     if not math.isfinite(score):
         raise FloatingPointError("validation selection score is non-finite")
     return score
