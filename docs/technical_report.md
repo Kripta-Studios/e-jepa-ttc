@@ -1,6 +1,19 @@
 # Informe técnico
 
-Actualizado: 2026-08-02.
+Actualizado: 2026-08-09.
+
+## Addendum — cambio mecanístico Causal Scale v5
+
+La auditoría v4.31 rechazó el matcher congelado aunque su representación fuese
+estable. El reemplazo v5 liga la salida principal a foreground y razón de altura:
+`r=log(h_t/h_t-1)` e `inverse_TTC=expm1(r)/delta_t`. El mismo contrato se usará para
+event-only, RGB-only y fusión tardía, sin coordenadas bbox como features.
+
+El gate clean-tree sobre foreground sintético ideal pasó Pearson `1.0`, slope
+`.9999995`, sign `1.0`, oddness `0/0`, translation `0`, square-rotation `.0017103` y
+zero-event unknown `1.0`. Este control valida la matemática, no el aprendizaje visual;
+por tanto solo autoriza el siguiente experimento sintético con máscaras predichas. No
+modifica ninguna tabla eAP/EvTTC ni soporta un claim frente a Garl-TTC.
 
 ## 1. Resumen
 

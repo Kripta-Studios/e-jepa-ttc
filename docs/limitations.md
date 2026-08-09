@@ -1,8 +1,14 @@
 # Limitaciones
 
-Actualizado: 2026-08-02.
+Actualizado: 2026-08-09.
 
 - No existe un claim SOTA ni un checkpoint final promovido.
+- Causal Scale v5 solo ha pasado un gate con foreground analítico ideal. No se ha
+  entrenado ni medido la inferencia de foreground desde eventos.
+- El gate de rotación v5 usa un cuadrado controlado; no demuestra invariancia a la
+  rotación de objetos generales.
+- La propagación de incertidumbre v5 es una aproximación local y no es fiable cerca
+  de la singularidad de TTC sin respetar `known_mask`.
 - El único smoke raw high-resolution usa 16/16 muestras y obtiene MiD macro
   `1868,3186`; solo valida integración.
 - Falta pretraining JEPA denso compatible. El candidato actual parte de random.

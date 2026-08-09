@@ -1,5 +1,25 @@
 # PLAN.md — Recuperación científica y ruta ejecutable hacia E-JEPA-TTC frente a Garl-TTC
 
+## Addendum v5 causal scale core (2026-08-09)
+
+The v5 shared causal-scale core and event-only configuration are implemented at
+`7945e99`. The clean ideal-foreground synthetic artifact
+`artifacts/metrics/causal_scale_v5_synthetic_operator_gate_v1.json` has status
+`completed_passed`, artifact identity
+`7f604160094831598017ae5741860a0a0702a7095fd227af9950363a9ca4b1e1` and serialized
+SHA256 `3fd4d2a25b85173cf34bb8738f5b7e80190f31f26acc9ed9a4d3c818d10afb20`.
+Pearson is `1.0`, slope `.9999995232`, sign `1.0`, oddness `0/0`, identity and
+translation leakage `0`, square-rotation leakage `.00171029`, zero-event unknown
+`1.0`, and the default event model has 336,398 parameters. No real data or TTC label
+was opened.
+
+This pass validates only the physical observable and fail-safe algebra on ideal
+foreground. It does not show that the event CNN learns foreground or TTC, and it does
+not authorize Garl comparison, eAP test, EvTTC or a SOTA claim. The immediate gate is
+a held-out synthetic event-learning experiment on predicted masks. Only after that
+passes may a versioned train-only eAP development screen be specified. See
+`docs/causal_scale_v5.md` and `docs/decisions/ADR-0001-causal-scale-v5.md`.
+
 ## Addendum v4.31 (2026-08-09)
 
 v4.30 is now an authoritative negative result, not a pending full run. SHA256

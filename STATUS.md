@@ -1,5 +1,21 @@
 # Estado del repositorio
 
+## Addendum v5 (2026-08-09)
+
+Implemented and published: shared foreground-scale core, event-only v5 config,
+geometry-bound uncertainty/risk loss, synthetic gate runner and ADR. The clean run at
+commit `7945e99` passed its ideal-foreground algebra gates with Pearson `1.0`, slope
+`.9999995232`, sign `1.0`, oddness `0/0`, translation leakage `0`, controlled square
+rotation leakage `.00171029` and zero-event unknown `1.0`. The compact artifact is
+`artifacts/metrics/causal_scale_v5_synthetic_operator_gate_v1.json`; serialized SHA256
+is `3fd4d2a25b85173cf34bb8738f5b7e80190f31f26acc9ed9a4d3c818d10afb20`.
+
+Current authorization is `synthetic_event_learning_gate_only`. No learned-mask result,
+real TTC result, RGB arm, multimodal arm or benchmark improvement exists yet. eAP test,
+CodaBench and EvTTC remain closed. The next implementation must train and evaluate the
+event foreground/scale path on held-out synthetic dynamics, rather than opening real
+validation or attaching a free TTC readout.
+
 ## Addendum v4.31 (2026-08-09)
 
 The v4.30 full result is authoritative and negative: SHA256

@@ -1,0 +1,88 @@
+{
+  "artifact_sha256": "7f604160094831598017ae5741860a0a0702a7095fd227af9950363a9ca4b1e1",
+  "artifact_type": "causal_scale_v5_synthetic_operator_gate_v1",
+  "config": {
+    "path": "configs/experiment/e_jepa_garl_event_causal_scale_gate_v5.yaml",
+    "sha256": "41aa107bc1e7ef105921b8e1411b8fb3c76b7c349dd458e307c2b894e6215622"
+  },
+  "created_at": "2026-08-09T20:51:45.764979+00:00",
+  "data_access": {
+    "eap_opened": false,
+    "evttc_opened": false,
+    "real_data_opened": false,
+    "source": "analytic_foreground_rectangles",
+    "ttc_labels_opened": false
+  },
+  "decision": {
+    "pass_authorizes": "synthetic_event_learning_gate_only",
+    "pass_does_not_authorize": [
+      "eap_test",
+      "evttc",
+      "sota_claim",
+      "garl_ttc_comparison"
+    ]
+  },
+  "elapsed_s": 0.10469710000324994,
+  "environment": {
+    "cuda_available": true,
+    "cuda_device_count": 1,
+    "cuda_runtime_reported_available": true,
+    "cuda_version": "12.8",
+    "gpu_name": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "python_version": "3.11.15 (main, Mar 10 2026, 18:12:25) [MSC v.1944 64 bit (AMD64)]",
+    "torch_version": "2.11.0+cu128"
+  },
+  "evidence_scope": "synthetic_mechanistic_only",
+  "garl_ttc_comparison_performed": false,
+  "gates": {
+    "equivariance": true,
+    "finite": true,
+    "identity": true,
+    "oddness": true,
+    "passed": true,
+    "rotation": true,
+    "translation": true,
+    "zero": true
+  },
+  "git_commit": "7945e9936af7b6fa802ef2cca4172487adf0f2d6",
+  "git_dirty": false,
+  "metrics": {
+    "analytic_pearson": 1.0,
+    "identity_p95": 0.0,
+    "oddness_median": 0.0,
+    "oddness_p95": 0.0,
+    "parameter_count": 336398.0,
+    "rotation_leakage_p95": 0.0017102897400036454,
+    "sign_accuracy": 1.0,
+    "slope": 0.9999995231628418,
+    "translation_leakage_p95": 0.0,
+    "zero_unknown": 1.0
+  },
+  "metrics_are_not_real_dataset_results": true,
+  "model_config": {
+    "path": "configs/model/e_jepa_causal_scale_event_v5.yaml",
+    "sha256": "a682579ceefe586ba2e1fe715eceb4bffa1f2a813748bd148a22a2a52b1fd63b"
+  },
+  "protocol_version": "causal_scale_v5_synthetic_operator_gate_v1",
+  "seed": 7,
+  "sota_claim_authorized": false,
+  "status": "completed_passed",
+  "thresholds": {
+    "analytic_pearson_min": 0.95,
+    "identity_p95_max": 1e-05,
+    "oddness_median_max": 0.2,
+    "oddness_p95_max": 0.5,
+    "rotation_leakage_p95_max": 0.02,
+    "sign_accuracy_min": 0.95,
+    "slope_max": 1.2,
+    "slope_min": 0.8,
+    "translation_leakage_p95_max": 0.0001,
+    "zero_unknown_min": 1.0
+  },
+  "worktree": {
+    "tracked_dirty": false,
+    "untracked_code_paths": [],
+    "untracked_file_count": 0
+  }
+}

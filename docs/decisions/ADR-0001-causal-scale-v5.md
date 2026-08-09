@@ -95,3 +95,12 @@ Costs and open risks:
 The next implementation must train the event foreground/scale path on a synthetic
 expansion generator, then rerun the complete operator gate on predicted masks. Only a
 passing learned-mask result can authorize grouped train-only eAP development.
+
+## Recorded evidence
+
+The clean implementation at `7945e99` passed the ideal-foreground gate. The compact
+artifact is `artifacts/metrics/causal_scale_v5_synthetic_operator_gate_v1.json`, with
+artifact identity `7f604160094831598017ae5741860a0a0702a7095fd227af9950363a9ca4b1e1`
+and serialized SHA256
+`3fd4d2a25b85173cf34bb8738f5b7e80190f31f26acc9ed9a4d3c818d10afb20`.
+This evidence changes no limitation or authorization boundary stated above.

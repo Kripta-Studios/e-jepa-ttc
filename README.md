@@ -4,8 +4,9 @@ Pipeline reproducible para estimar Time-to-Contact/Time-to-Collision a partir de
 cámaras de eventos, con una ruta event-only high-resolution y una futura ablación
 RGB-E multimodal.
 
-Estado: infraestructura validada, hipótesis científica todavía no demostrada. No
-existe claim SOTA ni resultado oficial eAP/CodaBench. Consulta el
+Estado: núcleo causal-scale v5 validado solo sobre foreground sintético ideal; la
+hipótesis científica todavía no está demostrada. No existe claim SOTA ni resultado
+oficial eAP/CodaBench. Consulta el
 [estado operativo](STATUS.md) antes de ejecutar experimentos largos.
 
 ## Qué produce
@@ -87,6 +88,27 @@ uv run --no-sync python scripts/run_e_jepa_object_event_v4.py `
 Consulta [el contrato y los gates de v4](docs/object_event_v4.md) antes de
 escalar a full o abrir EvTTC.
 
+## Causal Scale TTC v5
+
+V4.31 falsó el matcher congelado. V5 reemplaza su mecanismo por un contrato común
+para event-only, RGB-only y fusión tardía RGB-E:
+
+```text
+foreground causal -> altura visible -> log-ratio firmado
+                   -> TTC + incertidumbre + riesgo derivados físicamente
+```
+
+El primer core event-only está implementado sin coordenadas bbox, categoría o ID de
+secuencia como inputs. Su residual es antisimétrico y acotado; la cabeza TTC libre es
+solo auxiliar. El gate ideal-foreground versionado pasó, pero todavía no prueba que
+el encoder aprenda foreground desde eventos.
+
+```powershell
+uv run --no-sync python scripts/evaluate_causal_scale_v5_operator.py --require-clean
+```
+
+Consulta [el contrato, resultado y siguiente gate](docs/causal_scale_v5.md).
+
 ## Entrenamiento high-resolution histórico
 
 Preflight del perfil full, sin reservar GPU:
@@ -136,6 +158,7 @@ eAP/CodaBench siguen pendientes.
 | high-res raw smoke 16/16 | MiD macro 1868,3186 | integración solamente |
 | Object Expansion v3 | usa casi exclusivamente motion | falsado como event-TTC |
 | Object Event v4 | v4.30 OOF negativo; v4.31 train-only estable pero no físicamente equivariante | no promocionado; full cerrado |
+| Causal Scale v5 | gate ideal: Pearson 1.0, slope 1.0, zero-unknown 1.0; 336k params | autoriza solo aprendizaje sintético event-only |
 
 El smoke high-resolution valida integración, no precisión. Los resultados v3
 muestran que la expansión firmada y la supervisión de ratio son útiles, pero
@@ -204,6 +227,8 @@ The following is superseded diagnostic history, not current v4.30 state. A 96-ro
 - [Object Event TTC v4.29 preregistration](docs/object_event_v4_29.md)
 - [Object Event TTC v4.30 stable similarity preregistration](docs/object_event_v4_30.md)
 - [Object Event TTC v4.31 causal audit handoff](docs/object_event_v4_31.md)
+- [Causal Scale TTC v5](docs/causal_scale_v5.md)
+- [ADR-0001: geometry-bound causal scale](docs/decisions/ADR-0001-causal-scale-v5.md)
 - [dataset card](docs/dataset_card.md)
 - [model card](docs/model_card.md)
 - [limitaciones](docs/limitations.md)

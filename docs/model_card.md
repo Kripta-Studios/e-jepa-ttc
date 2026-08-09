@@ -1,10 +1,24 @@
 # Model card — E-JEPA-TTC
 
-Actualizado: 2026-08-02.
+Actualizado: 2026-08-09.
+
+## Candidato v5
+
+El candidato arquitectónico vigente es `CausalScaleTTC`, primero event-only. Predice
+foreground y altura visible por endpoint, forma `r=log(h_actual/h_previo)` y deriva
+`1/TTC=expm1(r)/delta_t`. No acepta bbox, categoría, track o secuencia como inputs.
+Un residual aprendido es antisimétrico y acotado; el readout TTC directo es auxiliar
+y no alimenta la salida principal.
+
+El artefacto sintético ideal-foreground
+`causal_scale_v5_synthetic_operator_gate_v1.json` pasó los gates físicos en commit
+`7945e99`. Tiene 336.398 parámetros, pero no existe todavía un checkpoint entrenado
+ni una métrica TTC real. El estado es `synthetic_event_learning_gate_only`, no
+promovido.
 
 ## Estado
 
-El modelo activo es un candidato event-only high-resolution, no un modelo SOTA ni
+El modelo histórico activo era un candidato event-only high-resolution, no un modelo SOTA ni
 un sistema de producción. `B0_HISTORICAL_BASE_EXACT` y `A0_MATCHED_GLOBAL` son
 anclas EvTTC históricas; no son el checkpoint del trainer Garl nuevo.
 
@@ -44,6 +58,7 @@ solo no habilita un claim.
 ## Modalidades
 
 - Event-only: implementada en el trainer raw cache-free.
+- Event-only v5: core y loss implementados; aprendizaje foreground pendiente.
 - RGB-E: diseño/config presente, trainer no implementado; falla de forma explícita
   para impedir que RGB sea descartado silenciosamente.
 - Bbox/máscaras/depth: solo supervisión u oracle en protocolos declarados; no inputs
@@ -104,6 +119,8 @@ sin evaluación externa reproducida.
 ## Riesgos y limitaciones
 
 - el smoke high-resolution no aprende todavía una señal TTC competitiva;
+- el pass v5 usa foreground analítico ideal y no demuestra segmentación desde eventos;
+- la incertidumbre v5 usa delta method y es frágil cerca de expansión cero;
 - falta JEPA denso compatible;
 - el predictor SSL real tiene rango efectivo ≈1,10 sin diagnóstico semántico real;
 - falta comparar nivel frente a nivel+residual con probes congelados sobre eAP;

@@ -1,5 +1,24 @@
 # Progreso
 
+## 2026-08-09 — Causal Scale v5
+
+- preservado el resultado negativo v4.31 y descartado añadir otro readout al matcher;
+- implementado un core común de foreground/altura/log-ratio para eventos y futuro RGB;
+- eliminados bbox, categoría e ID de secuencia de la API del candidato v5;
+- añadido residual antisimétrico acotado, incertidumbre en ratio y riesgo derivado;
+- añadido loss con máscara training-only, NLL física, consistencia y auxiliar aislado;
+- añadidos config, ADR, runner fail-closed y nueve tests unitarios;
+- Pyright 0, Ruff focalizado limpio y Pytest completo aprobado con 7 skips;
+- publicados `cae7d1f`, `c58d07f` y `7945e99` en la rama activa;
+- ejecutado gate clean-tree ideal-foreground: Pearson `1.0`, slope `.9999995232`,
+  sign `1.0`, oddness `0/0`, translation `0`, rotation-square `.00171029`,
+  zero-unknown `1.0`, 336.398 parámetros;
+- no se abrió eAP, EvTTC, RGB ni ninguna etiqueta TTC real.
+
+Pendiente inmediato: implementar el generador/runner de aprendizaje event-only
+sintético y exigir los mismos gates sobre máscaras predichas held-out. Este resultado
+no autoriza real-data, comparación Garl ni claim SOTA.
+
 ## 2026-08-02
 
 - auditado el repositorio completo y preservados cambios ajenos;
