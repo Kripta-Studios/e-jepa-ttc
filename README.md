@@ -107,6 +107,11 @@ porque leakage de traslación `.02399` falla el gate `.02`. El test sintético s
 una vez desde el commit limpio `d9d20af` y confirmó el fallo: Pearson `.92135` y
 translation `.02749`. Todos los datos reales permanecen cerrados.
 
+V6 no reutiliza ese test: una cabeza foreground separable sin strides, evaluada solo
+en train/validation 401/502, reduce translation leakage a `.00462` y alcanza IoU
+`.89323`. Pearson `.92042` sigue por debajo de `.95`, por lo que test 603 no se abre.
+La comparación firmada está documentada en [Causal Scale v6](docs/causal_scale_v6.md).
+
 ```powershell
 uv run --no-sync python scripts/evaluate_causal_scale_v5_operator.py --require-clean
 ```
@@ -163,6 +168,7 @@ eAP/CodaBench siguen pendientes.
 | Object Expansion v3 | usa casi exclusivamente motion | falsado como event-TTC |
 | Object Event v4 | v4.30 OOF negativo; v4.31 train-only estable pero no físicamente equivariante | no promocionado; full cerrado |
 | Causal Scale v5 | test sintético: Pearson .92135, translation .02749; gates fallidos | no promovido; real-data cerrado |
+| Causal Scale v6 | validation: Pearson .92042, translation .00462, IoU .89323 | test 603 sellado; no promovido |
 
 El smoke high-resolution valida integración, no precisión. Los resultados v3
 muestran que la expansión firmada y la supervisión de ratio son útiles, pero
@@ -232,6 +238,7 @@ The following is superseded diagnostic history, not current v4.30 state. A 96-ro
 - [Object Event TTC v4.30 stable similarity preregistration](docs/object_event_v4_30.md)
 - [Object Event TTC v4.31 causal audit handoff](docs/object_event_v4_31.md)
 - [Causal Scale TTC v5](docs/causal_scale_v5.md)
+- [Causal Scale TTC v6](docs/causal_scale_v6.md)
 - [ADR-0001: geometry-bound causal scale](docs/decisions/ADR-0001-causal-scale-v5.md)
 - [dataset card](docs/dataset_card.md)
 - [model card](docs/model_card.md)

@@ -93,8 +93,14 @@ class _AtomicOutput(AbstractContextManager[Path]):
 
 def _model_config(path: Path) -> CausalScaleTTCConfig:
     raw = yaml.safe_load(path.read_text(encoding="utf-8"))
-    if not isinstance(raw, dict) or raw.pop("model", None) != "e_jepa_causal_scale_event_v5":
-        raise ValueError("model config must declare e_jepa_causal_scale_event_v5")
+    if not isinstance(raw, dict):
+        raise ValueError("model config must be a mapping")
+    model_name = raw.pop("model", None)
+    if model_name not in {
+        "e_jepa_causal_scale_event_v5",
+        "e_jepa_causal_scale_event_v6",
+    }:
+        raise ValueError("model config must declare a supported causal-scale event model")
     thresholds = raw.get("risk_thresholds_s")
     if not isinstance(thresholds, list):
         raise ValueError("risk_thresholds_s must be a list")
@@ -141,6 +147,15 @@ def run(
     if not isinstance(raw, dict):
         raise ValueError("experiment config must be a mapping")
     thresholds = _validate_protocol(raw)
+    experiment = raw.get("experiment")
+    if not isinstance(experiment, dict):
+        raise ValueError("experiment config must be a mapping")
+    artifact_type = experiment.get(
+        "artifact_type",
+        "causal_scale_v5_synthetic_learning_gate_v1",
+    )
+    if not isinstance(artifact_type, str) or not artifact_type.startswith("causal_scale_v"):
+        raise ValueError("experiment artifact_type is invalid")
     status_lines = _git(
         "-c",
         "core.quotepath=false",
@@ -226,8 +241,8 @@ def run(
             checkpoint_path,
         )
         payload: dict[str, Any] = {
-            "artifact_type": "causal_scale_v5_synthetic_learning_gate_v1",
-            "protocol_version": raw["experiment"]["protocol_version"],
+            "artifact_type": artifact_type,
+            "protocol_version": experiment["protocol_version"],
             "created_at": datetime.now(UTC).isoformat(),
             "status": (
                 "diagnostic_nonselectable"

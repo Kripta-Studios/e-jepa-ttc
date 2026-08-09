@@ -1,5 +1,21 @@
 # Estado del repositorio
 
+## Addendum v6 (2026-08-10)
+
+V6 preregisters new synthetic groups 401/502/603 and does not reuse consumed v5 test
+303. Four train/validation diagnostics are signed in
+`artifacts/metrics/causal_scale_v6_diagnostic_comparison_v1.json` (identity
+`e00a64a90aee5c302ad486763ed147a2af590a7d3575191395e0f0d374d6191f`). The selected
+stride-free separable row/column foreground head reaches validation Pearson `.92042`,
+slope `.94878`, sign `.99115`, IoU `.89323`, TTC symmetric relative error `.26628`,
+coverage `.79941` and translation leakage `.00462`. It solves the v5 translation
+failure but still misses Pearson `.95`; test 603 was not opened and v6 is not promoted.
+
+Pair-ratio mask supervision, learned height correction and frozen residual refinement
+did not improve correlation. The next event-only version must use multiple synthetic
+train/validation groups and macro/worst-group temporal-scale selection. All real data,
+RGB, EvTTC and CodaBench remain closed.
+
 ## Addendum v5 (2026-08-09)
 
 Implemented and published: shared foreground-scale core, event-only v5 config,

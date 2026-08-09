@@ -1,5 +1,20 @@
 # Progreso
 
+## 2026-08-10 — Foreground equivariante Causal Scale v6
+
+- preregistrados grupos nuevos 401/502/603; no se reutilizó test v5 seed 303;
+- implementadas ramas full-resolution y separable row/column sin strides;
+- la rama separable mejora IoU `.1824 -> .8932` y translation `.0279 -> .00462`;
+- validation seleccionada: Pearson `.9204`, slope `.9488`, sign `.9912`, TTC
+  simétrico `.2663`, cobertura `.7994`; falla solo Pearson `.95`;
+- pair-ratio mask loss (`.8717`), learned height correction (`.8586`) y refinamiento
+  residual congelado (`.9225`) no mejoran de forma material y quedan rechazados;
+- test seed 603, eAP, EvTTC, RGB y CodaBench no se abrieron;
+- comparación firmada: `artifacts/metrics/causal_scale_v6_diagnostic_comparison_v1.json`,
+  identidad `e00a64a90aee5c302ad486763ed147a2af590a7d3575191395e0f0d374d6191f`.
+
+Pendiente: v7 multigrupo/multiescala; no ampliar el decoder ni abrir real-data.
+
 ## 2026-08-09 — Gate held-out Causal Scale v5
 
 - publicado el protocolo exacto en `d9d20af` y ejecutado desde worktree detached limpio;

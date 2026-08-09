@@ -148,6 +148,32 @@ def test_configuration_rejects_unsorted_risk_thresholds() -> None:
         CausalScaleTTCConfig(risk_thresholds_s=(1.0, 0.5))
 
 
+def test_stride_free_foreground_path_has_small_integer_translation_leakage() -> None:
+    model = CausalScaleTTC(
+        CausalScaleTTCConfig(
+            in_channels=12,
+            hidden_dim=16,
+            geometry_dim=24,
+            residual_depth=1,
+            dropout=0.0,
+            foreground_decoder="equivariant_separable",
+            foreground_fullres_dim=8,
+        )
+    ).eval()
+    inputs = torch.zeros(2, 3, 12, 64, 64)
+    for endpoint, (top, bottom) in enumerate(((20, 40), (19, 41), (18, 42))):
+        inputs[:, endpoint, :, top:bottom, 20:44] = 1.0
+    shifted = torch.roll(inputs, shifts=(5, -4), dims=(-2, -1))
+    delta = torch.full((2, 2), 0.1)
+
+    with torch.inference_mode():
+        reference = model(inputs, delta)
+        translated = model(shifted, delta)
+
+    leakage = (reference.log_height_ratio - translated.log_height_ratio).abs().max()
+    assert float(leakage) < 1.0e-3
+
+
 def test_synthetic_operator_protocol_passes_only_mechanistic_gates() -> None:
     config = CausalScaleTTCConfig(
         in_channels=2,

@@ -33,9 +33,17 @@ class CausalScaleTTCConfig:
     geometry_dim: int = 128
     residual_depth: int = 2
     dropout: float = 0.05
-    foreground_decoder: Literal["bilinear", "deconv", "resize_conv"] = "bilinear"
+    foreground_decoder: Literal[
+        "bilinear",
+        "deconv",
+        "resize_conv",
+        "equivariant_fullres",
+        "equivariant_separable",
+    ] = "bilinear"
+    foreground_fullres_dim: int = 16
     foreground_temperature: float = 1.0
     max_abs_log_ratio_residual: float = 0.05
+    max_abs_log_height_correction: float = 0.0
     min_abs_log_ratio: float = 2.0e-3
     min_sensor_support: float = 1.0e-4
     ttc_clip_seconds: float = 60.0
@@ -51,14 +59,25 @@ class CausalScaleTTCConfig:
             raise ValueError("causal-scale dimensions and depth must be positive")
         if not 0.0 <= self.dropout < 1.0:
             raise ValueError("dropout must lie in [0,1)")
-        if self.foreground_decoder not in {"bilinear", "deconv", "resize_conv"}:
+        if self.foreground_decoder not in {
+            "bilinear",
+            "deconv",
+            "resize_conv",
+            "equivariant_fullres",
+            "equivariant_separable",
+        }:
             raise ValueError(
-                "foreground_decoder must be 'bilinear', 'deconv', or 'resize_conv'"
+                "foreground_decoder must be bilinear, deconv, resize_conv, "
+                "equivariant_fullres, or equivariant_separable"
             )
+        if self.foreground_fullres_dim <= 0:
+            raise ValueError("foreground_fullres_dim must be positive")
         if self.foreground_temperature <= 0.0:
             raise ValueError("foreground_temperature must be positive")
         if not 0.0 <= self.max_abs_log_ratio_residual <= 0.25:
             raise ValueError("max_abs_log_ratio_residual must lie in [0,0.25]")
+        if not 0.0 <= self.max_abs_log_height_correction <= 0.5:
+            raise ValueError("max_abs_log_height_correction must lie in [0,0.5]")
         if self.min_abs_log_ratio <= 0.0 or self.min_sensor_support < 0.0:
             raise ValueError("physical support thresholds must be non-negative")
         if self.ttc_clip_seconds <= 0.0 or self.initial_log_ratio_std <= 0.0:
@@ -208,6 +227,81 @@ class _ResidualBlock(nn.Module):
         return values + self.network(values)
 
 
+class _EquivariantForegroundHead(nn.Module):
+    """Stride-free depthwise foreground path with low compute and no phase aliasing."""
+
+    def __init__(self, in_channels: int, hidden: int, dropout: float) -> None:
+        super().__init__()
+        groups = math.gcd(hidden, 8)
+        self.network = nn.Sequential(
+            nn.Conv2d(in_channels, hidden, kernel_size=3, padding=1, bias=False),
+            nn.GroupNorm(groups, hidden),
+            nn.GELU(),
+            nn.Conv2d(hidden, hidden, kernel_size=5, padding=2, groups=hidden, bias=False),
+            nn.GroupNorm(groups, hidden),
+            nn.GELU(),
+            nn.Conv2d(hidden, hidden, kernel_size=1, bias=False),
+            nn.Dropout2d(dropout),
+            nn.Conv2d(hidden, hidden, kernel_size=5, padding=2, groups=hidden, bias=False),
+            nn.GroupNorm(groups, hidden),
+            nn.GELU(),
+            nn.Conv2d(hidden, 1, kernel_size=1),
+        )
+
+    def forward(self, values: torch.Tensor) -> torch.Tensor:
+        return self.network(values)
+
+
+class _DilatedAxisHead(nn.Module):
+    def __init__(self, channels: int) -> None:
+        super().__init__()
+        groups = math.gcd(channels, 8)
+        layers: list[nn.Module] = []
+        for dilation in (1, 2, 4, 8):
+            layers.extend(
+                (
+                    nn.Conv1d(
+                        channels,
+                        channels,
+                        kernel_size=3,
+                        padding=dilation,
+                        dilation=dilation,
+                        groups=channels,
+                        bias=False,
+                    ),
+                    nn.GroupNorm(groups, channels),
+                    nn.GELU(),
+                    nn.Conv1d(channels, channels, kernel_size=1, bias=False),
+                )
+            )
+        layers.append(nn.Conv1d(channels, 1, kernel_size=1))
+        self.network = nn.Sequential(*layers)
+
+    def forward(self, values: torch.Tensor) -> torch.Tensor:
+        return self.network(values)
+
+
+class _SeparableEquivariantForegroundHead(nn.Module):
+    """Infer filled row/column occupancy without striding or coordinate features."""
+
+    def __init__(self, in_channels: int, hidden: int) -> None:
+        super().__init__()
+        groups = math.gcd(hidden, 8)
+        self.stem = nn.Sequential(
+            nn.Conv2d(in_channels, hidden, kernel_size=3, padding=1, bias=False),
+            nn.GroupNorm(groups, hidden),
+            nn.GELU(),
+        )
+        self.row_head = _DilatedAxisHead(hidden)
+        self.column_head = _DilatedAxisHead(hidden)
+
+    def forward(self, values: torch.Tensor) -> torch.Tensor:
+        features = self.stem(values)
+        row_logits = self.row_head(features.amax(dim=-1)).unsqueeze(-1)
+        column_logits = self.column_head(features.amax(dim=-2)).unsqueeze(-2)
+        return row_logits + column_logits
+
+
 class _EndpointEncoder(nn.Module):
     def __init__(self, config: CausalScaleTTCConfig) -> None:
         super().__init__()
@@ -226,7 +320,23 @@ class _EndpointEncoder(nn.Module):
                 for _ in range(config.residual_depth)
             ],
         )
-        if config.foreground_decoder in {"deconv", "resize_conv"}:
+        self.foreground_from_input = config.foreground_decoder in {
+            "equivariant_fullres",
+            "equivariant_separable",
+        }
+        if self.foreground_from_input:
+            if config.foreground_decoder == "equivariant_separable":
+                self.foreground = _SeparableEquivariantForegroundHead(
+                    config.in_channels,
+                    config.foreground_fullres_dim,
+                )
+            else:
+                self.foreground = _EquivariantForegroundHead(
+                    config.in_channels,
+                    config.foreground_fullres_dim,
+                    config.dropout,
+                )
+        elif config.foreground_decoder in {"deconv", "resize_conv"}:
             decoder_channels = max(config.hidden_dim // 2, 8)
             decoder_groups = math.gcd(decoder_channels, 8)
             if config.foreground_decoder == "deconv":
@@ -266,7 +376,8 @@ class _EndpointEncoder(nn.Module):
 
     def forward(self, values: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
         features = self.features(values)
-        return self.foreground(features), self.token(features)
+        foreground_input = values if self.foreground_from_input else features
+        return self.foreground(foreground_input), self.token(features)
 
 
 class _AntisymmetricResidual(nn.Module):
@@ -308,6 +419,18 @@ class CausalScaleTTC(nn.Module):
             nn.Linear(endpoint_input, self.config.geometry_dim),
             nn.GELU(),
         )
+        if self.config.max_abs_log_height_correction > 0.0:
+            self.height_correction_head: nn.Module | None = nn.Sequential(
+                nn.LayerNorm(self.config.geometry_dim),
+                nn.Linear(self.config.geometry_dim, 1),
+            )
+            correction_final = self.height_correction_head[-1]
+            if not isinstance(correction_final, nn.Linear):
+                raise TypeError("height correction head must end with Linear")
+            nn.init.zeros_(correction_final.weight)
+            nn.init.zeros_(correction_final.bias)
+        else:
+            self.height_correction_head = None
         self.residual = _AntisymmetricResidual(
             self.config.geometry_dim,
             self.config.geometry_dim,
@@ -398,11 +521,19 @@ class CausalScaleTTC(nn.Module):
         geometry_tokens = self.endpoint_projector(
             torch.cat([base_tokens.reshape(batch, steps, -1), endpoint_scalars], dim=-1)
         )
+        raw_log_height = observation.height_normalized.clamp_min(1.0e-6).log()
+        if self.height_correction_head is None:
+            log_height_correction = torch.zeros_like(raw_log_height)
+        else:
+            log_height_correction = self.config.max_abs_log_height_correction * torch.tanh(
+                self.height_correction_head(geometry_tokens).squeeze(-1)
+            )
+        corrected_log_height = raw_log_height + log_height_correction
+        visible_height = corrected_log_height.exp()
         previous = geometry_tokens[:, :-1]
         current = geometry_tokens[:, 1:]
-        analytic = observation.height_normalized[:, 1:].clamp_min(1.0e-6).log() - (
-            observation.height_normalized[:, :-1].clamp_min(1.0e-6).log()
-        )
+        raw_foreground_ratio = raw_log_height[:, 1:] - raw_log_height[:, :-1]
+        analytic = corrected_log_height[:, 1:] - corrected_log_height[:, :-1]
         residual = self.residual(previous, current)
         log_ratio = analytic + residual
         pair_tokens = self.pair_projector(
@@ -477,7 +608,7 @@ class CausalScaleTTC(nn.Module):
             log_ratio_log_variance=log_ratio_log_variance,
             pair_ttc_seconds=pair_ttc,
             pair_inverse_ttc=pair_inverse_ttc,
-            visible_height_normalized=observation.height_normalized,
+            visible_height_normalized=visible_height,
             foreground_logits=foreground_logits,
             geometry_tokens=geometry_tokens,
             pair_tokens=pair_tokens,
@@ -486,6 +617,9 @@ class CausalScaleTTC(nn.Module):
             diagnostics={
                 "foreground_centroid_y": observation.centroid_y_normalized,
                 "foreground_fraction": observation.foreground_fraction,
+                "raw_foreground_height_normalized": observation.height_normalized,
+                "raw_foreground_log_height_ratio": raw_foreground_ratio,
+                "log_height_correction": log_height_correction,
                 "pair_sensor_support": pair_support,
                 "pair_known": pair_known,
             },

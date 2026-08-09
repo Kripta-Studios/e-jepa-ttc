@@ -31,6 +31,12 @@ El resultado completo firmado tiene identidad
 `ce42fe957c4944a72bf38b5b134df7dfd0809ccc1c87b6cff6a749662093ea29`. V5 queda
 cerrado como resultado negativo y no habilita eAP/EvTTC.
 
+V6 separó el problema espacial del temporal con nuevos grupos 401/502/603. La cabeza
+separable sin strides lleva translation leakage a `.00462` e IoU a `.89323`, pero
+Pearson queda en `.92042`. Las ablations pair-ratio y height-correction empeoran la
+correlación. Test 603 continúa sellado: la evidencia autoriza únicamente diseñar un
+protocolo sintético multigrupo que mejore estimación temporal de escala.
+
 ## 1. Resumen
 
 E-JEPA-TTC investiga TTC con eventos mediante tokens espaciales high-resolution y

@@ -23,6 +23,7 @@ class CausalScaleTTCLossConfig:
     foreground_bce_weight: float = 1.0
     foreground_dice_weight: float = 0.5
     foreground_extent_weight: float = 1.0
+    foreground_pair_ratio_weight: float = 0.0
     risk_weight: float = 0.25
     auxiliary_inverse_ttc_weight: float = 0.1
     residual_regularization_weight: float = 0.05
@@ -36,6 +37,7 @@ class CausalScaleTTCLossConfig:
             self.foreground_bce_weight,
             self.foreground_dice_weight,
             self.foreground_extent_weight,
+            self.foreground_pair_ratio_weight,
             self.risk_weight,
             self.auxiliary_inverse_ttc_weight,
             self.residual_regularization_weight,
@@ -115,6 +117,38 @@ def _foreground_extent_loss(
         beta=beta,
     )
     return extent, count
+
+
+def _foreground_pair_ratio_loss(
+    output: CausalScaleTTCOutput,
+    target_masks: torch.Tensor | None,
+    mask_valid: torch.Tensor | None,
+    *,
+    beta: float,
+) -> tuple[torch.Tensor, int]:
+    if target_masks is None or mask_valid is None:
+        return _zero(output.analytic_log_height_ratio), 0
+    nonempty = target_masks.flatten(-3).any(dim=-1)
+    endpoint_valid = mask_valid.bool() & nonempty
+    pair_valid = endpoint_valid[:, :-1] & endpoint_valid[:, 1:]
+    count = int(pair_valid.sum().item())
+    if count == 0:
+        return _zero(output.analytic_log_height_ratio), 0
+    target_logits = torch.where(
+        target_masks > 0.5,
+        target_masks.new_tensor(12.0),
+        target_masks.new_tensor(-12.0),
+    )
+    target_height = soft_vertical_extent_from_logits(target_logits).height_normalized
+    target_ratio = target_height[:, 1:].clamp_min(1.0e-6).log() - (
+        target_height[:, :-1].clamp_min(1.0e-6).log()
+    )
+    loss = functional.smooth_l1_loss(
+        output.analytic_log_height_ratio[pair_valid],
+        target_ratio[pair_valid],
+        beta=beta,
+    )
+    return loss, count
 
 
 def causal_scale_ttc_loss(
@@ -201,6 +235,12 @@ def causal_scale_ttc_loss(
         mask_valid,
         beta=cfg.smooth_l1_beta,
     )
+    foreground_pair_ratio, foreground_pair_ratio_count = _foreground_pair_ratio_loss(
+        output,
+        target_masks,
+        mask_valid,
+        beta=cfg.smooth_l1_beta,
+    )
     residual_regularization = output.residual_log_height_ratio.square().mean()
     pair_known = output.diagnostics["pair_known"].bool()
     if output.pair_ttc_seconds.shape[1] >= 2:
@@ -225,6 +265,7 @@ def causal_scale_ttc_loss(
         "foreground_bce": foreground_bce,
         "foreground_dice": foreground_dice,
         "foreground_extent": foreground_extent,
+        "foreground_pair_ratio": foreground_pair_ratio,
         "risk_bce": risk,
         "auxiliary_inverse_ttc": auxiliary,
         "residual_regularization": residual_regularization,
@@ -236,6 +277,7 @@ def causal_scale_ttc_loss(
         + cfg.foreground_bce_weight * foreground_bce
         + cfg.foreground_dice_weight * foreground_dice
         + cfg.foreground_extent_weight * foreground_extent
+        + cfg.foreground_pair_ratio_weight * foreground_pair_ratio
         + cfg.risk_weight * risk
         + cfg.auxiliary_inverse_ttc_weight * auxiliary
         + cfg.residual_regularization_weight * residual_regularization
@@ -249,6 +291,7 @@ def causal_scale_ttc_loss(
             "supervised_ttc": supervised_count,
             "foreground": foreground_count,
             "foreground_extent": foreground_extent_count,
+            "foreground_pair_ratio": foreground_pair_ratio_count,
             "temporal_consistency": consistency_count,
         },
     )

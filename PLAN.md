@@ -1,5 +1,20 @@
 # PLAN.md — Recuperación científica y ruta ejecutable hacia E-JEPA-TTC frente a Garl-TTC
 
+## Addendum v6 equivariant foreground (2026-08-10)
+
+V6 uses new groups 401/502/603 and keeps test 603 sealed. Its selected separable,
+stride-free row/column foreground head reduces validation translation leakage from
+v5's `.02399` to `.00462` and reaches IoU `.89323`, but Pearson `.92042` still fails
+the `.95` gate. Pair-ratio mask loss and bounded log-height correction regress
+correlation; do not promote them. The signed four-run comparison is
+`artifacts/metrics/causal_scale_v6_diagnostic_comparison_v1.json`.
+
+Next, preregister v7 with several train and validation seed groups, macro and
+worst-group gates, a new sealed test family and the v6 separable foreground frozen as
+the spatial baseline. Architecture work should target temporal scale representation
+or multi-timescale event evidence, not a larger mask decoder. Seed 303 is consumed;
+seed 603 remains sealed and must not be used for tuning. No real data is authorized.
+
 ## Addendum v5 causal scale core (2026-08-09)
 
 The v5 shared causal-scale core and event-only configuration are implemented at

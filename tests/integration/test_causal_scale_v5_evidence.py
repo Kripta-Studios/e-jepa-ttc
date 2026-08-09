@@ -12,6 +12,7 @@ ARTIFACT = ROOT / "artifacts/metrics/causal_scale_v5_synthetic_operator_gate_v1.
 LEARNING_ARTIFACT = (
     ROOT / "artifacts/metrics/causal_scale_v5_synthetic_learning_gate_v1.json"
 )
+V6_DIAGNOSTICS = ROOT / "artifacts/metrics/causal_scale_v6_diagnostic_comparison_v1.json"
 
 
 def test_causal_scale_v5_evidence_is_signed_clean_and_synthetic_only() -> None:
@@ -61,3 +62,25 @@ def test_causal_scale_v5_learning_evidence_preserves_clean_held_out_failure() ->
     assert payload["test_gates"]["passed"] is False
     assert payload["test_gates"]["equivariance"] is False
     assert payload["test_gates"]["translation"] is False
+
+
+def test_causal_scale_v6_diagnostics_keep_new_test_and_real_data_closed() -> None:
+    payload = cast(
+        dict[str, Any],
+        json.loads(V6_DIAGNOSTICS.read_text(encoding="utf-8")),
+    )
+    assert verify_artifact_hash(payload)
+    assert hashlib.sha256(V6_DIAGNOSTICS.read_bytes()).hexdigest() == (
+        "8b2037b7ef18f0430164bb10755e541206927d8000882b69a68b5e32e0e7b048"
+    )
+    assert payload["artifact_sha256"] == (
+        "e00a64a90aee5c302ad486763ed147a2af590a7d3575191395e0f0d374d6191f"
+    )
+    assert payload["selectable"] is False
+    assert payload["test_opened"] is False
+    assert payload["real_data_opened"] is False
+    assert payload["sota_claim_authorized"] is False
+    assert len(payload["rows"]) == 4
+    assert {row["source_status"] for row in payload["rows"]} == {
+        "diagnostic_nonselectable"
+    }

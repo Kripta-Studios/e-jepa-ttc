@@ -32,7 +32,11 @@ def _metric(metrics: dict[str, Any], key: str) -> float | None:
     return float(value) if isinstance(value, (int, float)) else None
 
 
-def build(runs: list[tuple[str, Path]]) -> dict[str, Any]:
+def build(
+    runs: list[tuple[str, Path]],
+    *,
+    artifact_type: str = "causal_scale_v5_diagnostic_comparison_v1",
+) -> dict[str, Any]:
     """Load source summaries and retain only audit and selected-validation fields."""
 
     rows: list[dict[str, Any]] = []
@@ -74,7 +78,7 @@ def build(runs: list[tuple[str, Path]]) -> dict[str, Any]:
             }
         )
     payload: dict[str, Any] = {
-        "artifact_type": "causal_scale_v5_diagnostic_comparison_v1",
+        "artifact_type": artifact_type,
         "created_at": datetime.now(UTC).isoformat(),
         "selectable": False,
         "evidence_scope": "synthetic_train_validation_diagnostics_only",
@@ -91,11 +95,17 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run", action="append", required=True, type=_parse_run)
     parser.add_argument("--output", required=True, type=Path)
+    parser.add_argument(
+        "--artifact-type",
+        default="causal_scale_v5_diagnostic_comparison_v1",
+    )
     args = parser.parse_args()
     output = args.output.resolve()
     if output.exists():
         parser.error(f"output exists: {output}")
-    payload = build(args.run)
+    if not args.artifact_type.startswith("causal_scale_v"):
+        parser.error("artifact type must start with causal_scale_v")
+    payload = build(args.run, artifact_type=args.artifact_type)
     output.parent.mkdir(parents=True, exist_ok=True)
     serialized = json.dumps(payload, allow_nan=False, indent=2, sort_keys=True) + "\n"
     with output.open("xb") as handle:

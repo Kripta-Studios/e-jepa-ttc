@@ -6,6 +6,8 @@ Actualizado: 2026-08-09.
 - Causal Scale v5 aprende foreground en datos sintéticos y alcanza IoU `.8640`, pero
   el test held-out falló: Pearson `.92135 < .95` y translation leakage
   `.02749 > .02`. Seed 303 está consumida y no hay evidencia real.
+- V6 corrige translation leakage (`.00462`) e IoU (`.89323`) en validation nueva,
+  pero Pearson `.92042` sigue bajo `.95`; test 603 permanece sellado.
 - El gate de rotación v5 usa un cuadrado controlado; no demuestra invariancia a la
   rotación de objetos generales.
 - La propagación de incertidumbre v5 es una aproximación local y no es fiable cerca

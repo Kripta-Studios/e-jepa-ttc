@@ -19,6 +19,10 @@ TTC symmetric relative error `.2639`. No se promueve porque translation leakage
 generalización: Pearson `.92135` y translation `.02749`; estado
 `completed_gate_failed`. No existe ninguna métrica TTC real.
 
+El candidato espacial v6 usa una cabeza separable row/column sin strides. En nueva
+validation sintética obtiene translation `.00462` e IoU `.89323`, pero Pearson
+`.92042`; permanece no promovido y test 603 está cerrado.
+
 ## Estado
 
 El modelo histórico activo era un candidato event-only high-resolution, no un modelo SOTA ni

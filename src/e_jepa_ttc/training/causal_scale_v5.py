@@ -381,6 +381,7 @@ def train_synthetic_causal_scale(
         auxiliary_inverse_ttc_weight=0.0,
         residual_regularization_weight=0.0,
         temporal_consistency_weight=0.0,
+        foreground_pair_ratio_weight=0.0,
     )
     for epoch in range(1, training_config.epochs + 1):
         epoch_learning_rate = float(optimizer.param_groups[0]["lr"])
