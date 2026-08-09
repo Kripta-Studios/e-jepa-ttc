@@ -12,7 +12,11 @@
   identidad `eb3497fafad8a4d23284b263303628be8ad025fd61bac57ad5f54580d142ee82`;
 - test 603 y todos los datos reales permanecen cerrados.
 
-Pendiente inmediato: suite completa, commit/push y un único test clean-tree 603.
+La suite completa, el commit/push y el único test clean-tree 603 se completaron.
+
+El test se ejecutó después desde `0bc781f` y falló solo Pearson: `.9201432 < .95`.
+Translation `.0033841`, IoU `.8896096`, TTC `.2457614`, slope `.9278544`, sign
+`.9911308` y coverage `.7827051` pasaron. Seed 603 queda consumida; v7 cerrado.
 
 ## 2026-08-10 — Foreground equivariante Causal Scale v6
 

@@ -10,9 +10,13 @@ and translation leakage `.0035127`. Test seed 603 and all real data remain close
 
 The signed diagnostic artifact is
 `artifacts/metrics/causal_scale_v7_diagnostic_comparison_v1.json`, identity
-`eb3497fafad8a4d23284b263303628be8ad025fd61bac57ad5f54580d142ee82`. Next action:
-publish the exact code/config after full verification, then run test 603 once from a
-clean detached worktree. No SOTA or Garl-TTC claim is authorized.
+`eb3497fafad8a4d23284b263303628be8ad025fd61bac57ad5f54580d142ee82`.
+
+The clean one-shot test at published commit `0bc781f` subsequently failed only
+correlation: Pearson `.9201432 < .95`. Translation `.0033841`, IoU `.8896096`, TTC
+`.2457614`, slope `.9278544`, sign `.9911308` and calibration `.7827051` passed.
+Artifact identity is `97e52b2a9d3463d6a2e57d12e9408f80bb6a3b8e0d491beeb3546c2d1586a52b`.
+V7 is closed, seed 603 consumed, and no SOTA/Garl-TTC claim is authorized.
 
 ## Addendum v6 (2026-08-10)
 

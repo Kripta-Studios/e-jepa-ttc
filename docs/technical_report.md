@@ -40,7 +40,9 @@ protocolo sintético multigrupo que mejore estimación temporal de escala.
 V7 usa la identidad física de transporte de inverse TTC para combinar dos pares
 causales sin parámetros extra. Separar supervisión de pares y selección gate-aware
 eleva Pearson a `.96126` con TTC `.24345` y translation `.00351`; pasa todos los gates
-de validation. Test 603 continúa sellado hasta congelar el commit exacto.
+de validation. El test limpio posterior obtiene Pearson `.92014`, aunque TTC `.24576`
+y translation `.00338` pasan. V7 se cierra; el fallo restante es generalización de
+correlación entre grupos sintéticos.
 
 ## 1. Resumen
 

@@ -1,6 +1,6 @@
 # Reproducibilidad
 
-Actualizado: 2026-08-09.
+Actualizado: 2026-08-10.
 
 ## Protocolo sintético Causal Scale v5
 
@@ -20,6 +20,13 @@ uv run --no-sync python scripts/train_causal_scale_v5_synthetic.py `
 La comparación compacta se regenera con
 `scripts/build_causal_scale_v5_diagnostic_comparison.py`; sus inputs son los summaries
 completos, nunca cifras copiadas a mano.
+
+V5/test 303 y V7/test 603 ya fueron consumidos una vez y son evidencia inmutable, no
+datos de desarrollo. El artefacto V7 está en
+`artifacts/metrics/causal_scale_v7_synthetic_learning_gate_v1.json`; su identidad es
+`97e52b2a9d3463d6a2e57d12e9408f80bb6a3b8e0d491beeb3546c2d1586a52b` y registra
+el fallo Pearson `.9201432`. Un nuevo intento requiere grupos y seeds nuevos
+prerregistrados; volver a ejecutar 303 o 603 no constituye replicación independiente.
 
 ## Entorno auditado
 

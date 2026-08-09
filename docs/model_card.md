@@ -25,7 +25,8 @@ validation sintética obtiene translation `.00462` e IoU `.89323`, pero Pearson
 
 V7 conserva esa máscara e incorpora transporte causal parameter-free entre tres
 endpoints. Validation alcanza Pearson `.96126`, TTC `.24345` y translation `.00351`;
-todos los gates validation pasan, pero test 603 todavía está sellado.
+todos los gates validation pasan. El test 603 posterior obtiene Pearson `.92014` y
+falla el gate `.95`; V7 queda no promovido.
 
 ## Estado
 

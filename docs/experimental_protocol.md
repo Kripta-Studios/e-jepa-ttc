@@ -1,6 +1,6 @@
 # Protocolo experimental
 
-Actualizado: 2026-08-09.
+Actualizado: 2026-08-10.
 
 ## Gate previo Causal Scale v5
 
@@ -14,6 +14,12 @@ autoriza diseñar un screen eAP train-only; no autoriza test, Garl-TTC ni claim 
 V5 consumió seed 303 una vez en `d9d20af` y falló correlación/traslación. Esa seed
 queda congelada para auditoría y no puede entrar en selección de v5 o sucesores. Un
 nuevo protocolo debe declarar grupos test nuevos antes de entrenar.
+
+V7 consumió seed 603 una vez desde el commit limpio publicado `0bc781f` y falló
+solo el gate de Pearson (`.9201432 < .95`). La seed 603 queda igualmente cerrada. El
+sucesor debe seleccionar sobre varios grupos train/validation, agregar por grupo y
+declarar nuevas seeds test antes de cualquier entrenamiento; no puede ajustar gates
+ni arquitectura con 303 o 603.
 
 ## Pregunta
 

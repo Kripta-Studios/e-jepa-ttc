@@ -14,6 +14,9 @@ LEARNING_ARTIFACT = (
 )
 V6_DIAGNOSTICS = ROOT / "artifacts/metrics/causal_scale_v6_diagnostic_comparison_v1.json"
 V7_DIAGNOSTICS = ROOT / "artifacts/metrics/causal_scale_v7_diagnostic_comparison_v1.json"
+V7_LEARNING_ARTIFACT = (
+    ROOT / "artifacts/metrics/causal_scale_v7_synthetic_learning_gate_v1.json"
+)
 
 
 def test_causal_scale_v5_evidence_is_signed_clean_and_synthetic_only() -> None:
@@ -109,3 +112,26 @@ def test_causal_scale_v7_diagnostics_pass_validation_without_opening_test() -> N
     assert selected["analytic_pearson"] >= 0.95
     assert selected["translation_leakage_p95"] <= 0.02
     assert selected["ttc_symmetric_relative_error"] <= 0.30
+
+
+def test_causal_scale_v7_held_out_result_preserves_single_clean_failure() -> None:
+    payload = cast(
+        dict[str, Any],
+        json.loads(V7_LEARNING_ARTIFACT.read_text(encoding="utf-8")),
+    )
+    assert verify_artifact_hash(payload)
+    assert hashlib.sha256(V7_LEARNING_ARTIFACT.read_bytes()).hexdigest() == (
+        "f947b32f05e655a116ef22e711fcd5df474b459f2d158b3096283bae55e2eff6"
+    )
+    assert payload["artifact_sha256"] == (
+        "97e52b2a9d3463d6a2e57d12e9408f80bb6a3b8e0d491beeb3546c2d1586a52b"
+    )
+    assert payload["git_commit"] == "0bc781f37c65e2c20861a87b9343a3ea8388bc03"
+    assert payload["git_dirty"] is False
+    assert payload["status"] == "completed_gate_failed"
+    assert payload["test_evaluation_count"] == 1
+    assert payload["test_gates"]["passed"] is False
+    assert payload["test_gates"]["equivariance"] is False
+    assert payload["test_gates"]["translation"] is True
+    assert payload["data_access"]["real_data_opened"] is False
+    assert payload["sota_claim_authorized"] is False

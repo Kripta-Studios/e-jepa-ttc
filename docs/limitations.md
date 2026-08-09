@@ -8,8 +8,8 @@ Actualizado: 2026-08-09.
   `.02749 > .02`. Seed 303 está consumida y no hay evidencia real.
 - V6 corrige translation leakage (`.00462`) e IoU (`.89323`) en validation nueva,
   pero Pearson `.92042` sigue bajo `.95`; test 603 permanece sellado.
-- V7 supera todos los gates en validation 502, pero aún no existe resultado held-out
-  603; no demuestra transferencia real ni superioridad sobre Garl-TTC/EvTTC.
+- V7 superó validation 502 pero falló held-out 603 en Pearson (`.92014 < .95`);
+  seed 603 está consumida y no demuestra transferencia real o superioridad externa.
 - El gate de rotación v5 usa un cuadrado controlado; no demuestra invariancia a la
   rotación de objetos generales.
 - La propagación de incertidumbre v5 es una aproximación local y no es fiable cerca

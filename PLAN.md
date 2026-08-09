@@ -8,10 +8,11 @@ pair-supervised, gate-aware validation run passes all gates: Pearson `.96126`, s
 `.92744`, sign `.99115`, IoU `.89268`, TTC error `.24345`, calibration `.79941` and
 translation `.00351`. Test 603 remains sealed.
 
-Freeze and publish the exact implementation, then execute seed 603 once from a clean
-detached worktree. Only a complete held-out pass may authorize a versioned eAP
-train-only event screen. Any failure closes v7 without changing thresholds or reusing
-603. See `docs/causal_scale_v7.md`.
+The clean test at published commit `0bc781f` completed and failed Pearson
+`.9201432 < .95`; every other gate passed. V7 is closed and seed 603 consumed. The
+next version must train and select across multiple independent groups, report macro
+and worst-group correlation, and preregister a new test seed before training. Real
+data remains unauthorized. See `docs/causal_scale_v7.md`.
 
 ## Addendum v6 equivariant foreground (2026-08-10)
 

@@ -114,7 +114,8 @@ La comparación firmada está documentada en [Causal Scale v6](docs/causal_scale
 
 V7 transporta causalmente el TTC del par anterior y lo combina con el par actual sin
 añadir parámetros. En validation 502 pasa todos los gates: Pearson `.96126`, TTC
-`.24345` y translation `.00351`. Test 603 permanece sellado hasta publicar el commit.
+`.24345` y translation `.00351`. El test limpio 603 posterior falló Pearson `.92014`;
+todos los demás gates pasaron. V7 queda cerrado y real-data continúa sellado.
 
 ```powershell
 uv run --no-sync python scripts/evaluate_causal_scale_v5_operator.py --require-clean
@@ -173,7 +174,7 @@ eAP/CodaBench siguen pendientes.
 | Object Event v4 | v4.30 OOF negativo; v4.31 train-only estable pero no físicamente equivariante | no promocionado; full cerrado |
 | Causal Scale v5 | test sintético: Pearson .92135, translation .02749; gates fallidos | no promovido; real-data cerrado |
 | Causal Scale v6 | validation: Pearson .92042, translation .00462, IoU .89323 | test 603 sellado; no promovido |
-| Causal Scale v7 | validation: Pearson .96126, TTC .24345, translation .00351 | todos los gates validation; test 603 sellado |
+| Causal Scale v7 | test: Pearson .92014 (falla), TTC .24576, translation .00338 | no promovido; seed 603 consumida |
 
 El smoke high-resolution valida integración, no precisión. Los resultados v3
 muestran que la expansión firmada y la supervisión de ratio son útiles, pero

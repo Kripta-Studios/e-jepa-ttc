@@ -57,3 +57,26 @@ This is validation-only evidence. It authorizes freezing code/configuration and 
 clean-tree evaluation of seed 603 after the exact commit is published. It does not
 authorize real data, an eAP screen, EvTTC scoring, comparison with Garl-TTC or a SOTA
 claim. A held-out failure closes v7 without threshold changes or test reuse.
+
+## Held-out result
+
+After commit `0bc781f` was published, seed 603 was opened exactly once from a clean
+detached worktree. The signed artifact is
+`artifacts/metrics/causal_scale_v7_synthetic_learning_gate_v1.json`, identity
+`97e52b2a9d3463d6a2e57d12e9408f80bb6a3b8e0d491beeb3546c2d1586a52b`, serialized
+SHA256 `f947b32f05e655a116ef22e711fcd5df474b459f2d158b3096283bae55e2eff6`.
+
+| Metric | Test | Frozen gate | Result |
+|---|---:|---:|:---:|
+| Pearson | .9201432 | >= .95 | fail |
+| slope | .9278544 | .8–1.2 | pass |
+| sign | .9911308 | >= .95 | pass |
+| foreground IoU | .8896096 | >= .60 | pass |
+| TTC symmetric relative error | .2457614 | <= .30 | pass |
+| ratio 80% coverage | .7827051 | .60–.95 | pass |
+| translation leakage p95 | .0033841 | <= .02 | pass |
+| empty unknown / false positive | 1.0 / 0 | >= 1.0 / <= .01 | pass |
+
+Status is `completed_gate_failed`. V7 closes without threshold relaxation; seed 603
+is consumed. The result isolates cross-group correlation as the remaining synthetic
+failure. A successor requires multiple train/validation groups and a new sealed test.
