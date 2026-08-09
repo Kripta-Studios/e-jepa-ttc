@@ -1,0 +1,46 @@
+audit_version: object_event_v4_31_operator_audit_v1
+source:
+  train_parquet: ${E_JEPA_TTC_SOURCE_PARQUET}
+  sha256: 03dd3022db4b5f43bb10244fc8778476d74351e764f73a90c8566af949c17fd6
+  projection: [sequence_id, sample_token, track_id, public_track_id, timestamp_us, frame_timestamps_us, events_path, event_windows_us, boxes_xyxy]
+event_root: ${E_JEPA_TTC_EVENT_ROOT}
+split: data/splits/object_event_v4_31_train_only_v1.json
+split_sha256: b02a5265ec079d91fc7aedf818af888f162cc70d4a45e35a97fe765e9018523a
+cache: artifacts/debug/object_event_v4_31_sanitized_cache
+seeds: [7, 13, 23]
+adaptation:
+  module: local_projection
+  epochs: 10
+  ema_epochs: [8, 9, 10]
+  shuffle_seed_offset: 43000
+  consensus_frozen_seeds: [7, 13, 23]
+  audit_in_optimizer: false
+  checkpoints: {7: artifacts/debug/object_event_v4_22_encoder_geometry/adapted_seed_7.pt, 13: artifacts/debug/object_event_v4_22_encoder_geometry/adapted_seed_13.pt, 23: artifacts/debug/object_event_v4_22_encoder_geometry/adapted_seed_23.pt}
+v430:
+  config: configs/experiment/e_jepa_garl_object_event_stable_similarity_v4_30.yaml
+  config_sha256: 413d3dd6022efc3aae91073bf8d3b99dbc76ef4d685cfe2d5ceb2c43e25d9342
+  summary: artifacts/debug/object_event_v4_30_stable_similarity/summary.json
+  summary_sha256: 9722202a4d33f6b5d1b933eeda1f9143e13e4e2fd64b21356e93783afaa1c689
+  v48_config: configs/experiment/e_jepa_garl_object_event_dense_motion_v4_8.yaml
+  v48_config_sha256: 621d4130591cfd8e99385312b0d16162fe0a3307f3860cb8ab84743298783839
+checkpoint_sha256:
+  7: f59cead06f5da7227cfd4aeaeac05ee35f3371cc1d60eef8101cae695bd0ef27
+  13: 8902908415b5c8d2d8ae5e24d3222c4c034486f0ab5531dd348e8089ae0b8364
+  23: 8448772769d55602a1d9de63cfec7af1edca4f954dbbb868a29ab37aa0b8fe4a
+thresholds:
+  js_median_max: 0.02
+  js_p95_max: 0.08
+  displacement_p95_max: 0.5
+  nonempty_min: 0.95
+  valid_energy_fraction: 1.0
+  high_band_cv_p95_max: 0.20
+  effective_rank_min: 0.25
+  analytic_pearson_min: 0.95
+  slope: [0.8, 1.2]
+  sign_min: 0.95
+  oddness_median_max: 0.20
+  oddness_p95_max: 0.50
+  identity_p95_max: 0.0001
+  leakage_p95_max: 0.20
+  swap: {corr_max: -0.80, flip_min: 0.90, coverage_min: 0.25}
+  sequence_swap: {corr_max: -0.50, flip_min: 0.75, coverage_min: 0.15}

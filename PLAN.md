@@ -20,6 +20,58 @@ event/ROI-only; exact physical reversal controls remain mandatory. Development,
 test and EvTTC remain closed. The direct full-frame v4.31 draft was rejected
 before execution and is not evidence.
 
+### v4.31 implementation handoff
+
+The v4.31 implementation and 512-row train-only diagnostic are complete.  The cache
+preflight passed and opened only the locked train parquet plus nine train HDF5 files.
+The non-selectable dirty-tree diagnostic is negative: stability passed
+(`JS=.00482/.05262`, displacement p95 `.18040`), but analytic Pearson `.29172`,
+slope `.00852`, sign `.59082`, oddness `1/1`, translation leakage `.28859` and swap
+coverage `.00391` reject physical equivariance.  Stage 2 was absent, so
+`evidence_complete=false`; full, development, test and EvTTC remain closed.  Do not
+add another TTC readout to this frozen matcher.  The next controlled architecture
+must use one common height-ratio/foreground contract for event-only, RGB-only and
+late-fused RGB-E arms, with reliability gating for sparse events and difficult
+exposure.  See `docs/object_event_v4_31.md` for hashes and exact limitations.
+
+### v5 architecture decision: three comparable modality arms
+
+The next increment is not v4.32 on the failed matcher. It is one shared,
+falsifiable object-scale program with three arms trained and evaluated on identical
+sequence groups and timestamps:
+
+1. **Event-only:** causal t0/t1/t2 event ROIs, a contour/foreground decoder and an
+   explicitly scale-equivariant temporal operator. Synthetic zoom/reverse controls
+   are training-time regularizers and hard validation gates. Box coordinates may
+   define the crop during data preparation but cannot enter the network as numeric
+   features.
+2. **RGB-only:** paired causal RGB ROIs with the same foreground, visible-height,
+   log-height-ratio, TTC and uncertainty heads. This is a real baseline, not an
+   ablation of the fusion model, and likewise receives no box-coordinate features.
+3. **RGB-E:** separate RGB and event encoders followed by late fusion of
+   modality-specific geometry tokens and predictions. Reliability inputs are
+   target-free sensor statistics (event support/rate and RGB exposure/blur), trained
+   with modality dropout. Early channel concatenation is excluded because the eAP
+   paper reports a material modality gap and better late-fusion performance.
+
+All arms predict signed log height ratio `r = log(h_t / h_{t-dt})` and derive the
+constant-velocity estimate `TTC = dt / expm1(r)` with a guarded unknown region around
+zero expansion. Direct log-TTC and inverse-TTC heads remain auxiliary and must not
+bypass the geometry gate. Foreground supervision is training-only; the eAP paper
+reports that it improves fine object boundaries and TTC. JEPA remains label-free
+pretraining over future geometry/dense tokens, followed by the same supervised heads
+in every arm.
+
+Before grouped TTC CV, every seed must pass analytic zoom Pearson `>= .95`, slope
+within `[.8,1.2]`, sign `>= .95`, oddness median/p95 `<= .2/.5`, identity and
+translation/rotation leakage, zero-event unknown behavior and real temporal reversal.
+Then compare macro-by-sequence MiD/RTE, negative-TTC behavior, calibration, latency
+and low-event/low-light buckets across three seeds. EvTTC remains zero-shot and
+closed until architecture/config/checkpoints are frozen; the private eAP test remains
+CodaBench-only. Existing `models/multimodal.py` is infrastructure, not the v5
+candidate, because its RGB path consumes normalized box geometry and its current
+fusion head does not enforce the shared height-ratio contract.
+
 ## Superseded historical v4.30 preregistration (2026-08-08)
 
 La siguiente fase event-only es `stable_multiscale_similarity` frente a

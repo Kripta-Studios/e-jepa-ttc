@@ -20,6 +20,20 @@ event/ROI-only; exact physical reversal controls remain mandatory. Development,
 test and EvTTC remain closed. The direct full-frame v4.31 draft was rejected
 before execution and is not evidence.
 
+### v4.31 handoff status
+
+The 512-row real-data train-only diagnostic completed after a passing sanitized-cache
+preflight.  It opened no TTC, development, test, EvTTC or RGB inputs.  It is
+non-selectable and dirty-tree/non-authoritative, and stage 2 is absent.  Stability
+passed, but physical behavior failed decisively: analytic Pearson `.29172`, slope
+`.00852`, sign `.59082`, oddness `1/1`, translation leakage `.28859`, and swap
+coverage `.00391`.  Status is `not_issued_diagnostic`; full remains closed and the
+frozen v4.30 operator must not be promoted.  Windows blockers fixed during execution
+were SHA case canonicalization, explicit memmap closure before atomic rename,
+jitter-safe non-overlapping t0, true one-record-per-line JSONL, UTF-8 child output,
+and orphan-child termination.  Exact hashes and limitations are in
+`docs/object_event_v4_31.md`.
+
 ## Superseded historical v4.30 preregistration (2026-08-08)
 
 La implementación v4.30 queda preregistrada y ejecuta como un único comando el

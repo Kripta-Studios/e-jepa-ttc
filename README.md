@@ -135,7 +135,7 @@ eAP/CodaBench siguen pendientes.
 | bbox-ROI / AttnRes / KDA | regresión o gate fallido | rechazados |
 | high-res raw smoke 16/16 | MiD macro 1868,3186 | integración solamente |
 | Object Expansion v3 | usa casi exclusivamente motion | falsado como event-TTC |
-| Object Event v4 | v4.30 autoritativo negativo: gates OOF fallidos; v4.31 en rediseño no ejecutable | no promocionado; rediseño TTC-label-free box-conditioned |
+| Object Event v4 | v4.30 OOF negativo; v4.31 train-only estable pero no físicamente equivariante | no promocionado; full cerrado |
 
 El smoke high-resolution valida integración, no precisión. Los resultados v3
 muestran que la expansión firmada y la supervisión de ratio son útiles, pero
@@ -191,6 +191,8 @@ se pueden regenerar. No deben subirse a Git.
 
 The authoritative full v4.30 SHA256 is `9722202A4D33F6B5D1B933EEDA1F9143E13E4E2FD64B21356E93783AFAA1C689`, status `completed_oof_gate_failed`. Stabilization passed `.0010116798/.0423071422/.1308624286`; rank-only winner `stable_multiscale_similarity` has no champion. Its best-arm Pearson `.4791568608`, negative accuracy `0`, balanced `.5`, std ratio `.3731916487`, slope `.1788173388`, high-bucket Pearson `-.1972577670`, and ratios `.92439/.58893/.48926/.30467` failed the frozen objective; both arms failed with no sealed data opened. The target-free saved-NPZ post-hoc audit (not preregistered) found forward-vs-swap `log_eta` correlation `+.53338`, zero sign flips, and 95.8% coverage at `|log_eta| >= .005`. The next action after Sol's rethink is a TTC-label-free but train-box-conditioned common-object-ROI v4.31 redesign: TTC/sign/bucket-independent selection, immutable sequence/time-disjoint train-only stabilization/audit pools, sanitized event/ROI-only artifacts, exact physical reversal controls, and no development/test/EvTTC. The direct full-frame v4.31 draft was rejected before execution and is not evidence.
 
+The v4.31 implementation and negative 512-row diagnostic are documented in [the causal-audit handoff](docs/object_event_v4_31.md).  Cache preflight passed and no sealed data were opened.  Stability passed, but the operator failed analytic zoom, slope, sign, oddness, translation leakage and swap coverage; stage 2 was absent and the recorded worktree was dirty, so the result is explicitly non-selectable and non-authoritative.  Full remains closed.
+
 ### Superseded historical v4.30 executable protocol
 
 The following is superseded diagnostic history, not current v4.30 state. A 96-row post-fix train-only diagnostic was `diagnostic_only`: JS median `.010237284936010838` passed; JS p95 `.19495552778244019` and BASE-pixel displacement p95 `.5500071191315064` failed. The earlier `D9DE07…` diagnostic is superseded. The authoritative completed v4.30 summary is the SHA and negative result stated above; historical diagnostics cannot modify it.
@@ -201,6 +203,7 @@ The following is superseded diagnostic history, not current v4.30 state. A 96-ro
 - [Object Event TTC v4](docs/object_event_v4.md)
 - [Object Event TTC v4.29 preregistration](docs/object_event_v4_29.md)
 - [Object Event TTC v4.30 stable similarity preregistration](docs/object_event_v4_30.md)
+- [Object Event TTC v4.31 causal audit handoff](docs/object_event_v4_31.md)
 - [dataset card](docs/dataset_card.md)
 - [model card](docs/model_card.md)
 - [limitaciones](docs/limitations.md)
