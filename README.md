@@ -187,11 +187,16 @@ se pueden regenerar. No deben subirse a Git.
 
 ## Documentación
 
+### v4.30 executable protocol
+
+`powershell -ExecutionPolicy Bypass -File scripts/run_object_event_v4_30_stable_similarity.ps1 -Device cuda` is the complete v4.30 command. The current 96-row post-fix train-only diagnostic is `diagnostic_only`: JS median `.010237284936010838` passed; JS p95 `.19495552778244019` and BASE-pixel displacement p95 `.5500071191315064` failed. It wrote `artifacts/debug/object_event_v4_30_diagnostic/summary.json` (SHA256 `CF9EC7D67EB421AA86304ABD4AB4582F6865CCEABD8D29F5CD7EC4EADBA06BD3`), with 9/9 decreasing KL histories and a 96-row/36-batch/one-build teacher cache in `4.1370828000363` s; rank/champion are null and all sealed flags remain false. The earlier `D9DE07…` diagnostic is superseded. `artifacts/debug/object_event_v4_30_stable_similarity` is empty: no authoritative 2,048-row OOF summary exists, and the interrupted run is not evidence. The four fixed blockers are the real t1/t2 height schema, signed endpoint anti-correlation gate, one support-weighted multiscale centre in base pixels, and truthful effective RNG seed. Verification: targeted 30/30, full Pytest 100% pass with 7 skipped and inherited UTF-8/PyTorch warnings, focused Ruff clean, Pyright 0; global Ruff still has 872 inherited findings. This diagnostic is nonselectable: only fixed-gate full 2,048-row stabilization is authoritative.
+
 - [plan de ejecución](PLAN.md)
 - [estado actual](STATUS.md)
 - [protocolo experimental](docs/experimental_protocol.md)
 - [Object Event TTC v4](docs/object_event_v4.md)
 - [Object Event TTC v4.29 preregistration](docs/object_event_v4_29.md)
+- [Object Event TTC v4.30 stable similarity preregistration](docs/object_event_v4_30.md)
 - [dataset card](docs/dataset_card.md)
 - [model card](docs/model_card.md)
 - [limitaciones](docs/limitations.md)

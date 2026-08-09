@@ -1,0 +1,91 @@
+# v4.30 is intentionally a locked, additive train-only protocol.  Do not tune
+# these values from OOF output; the analyzer validates this exact schema.
+arms:
+  stable_multiscale_similarity:
+    correlation_dim: 48
+    scales: [1, 2, 4]
+    temperature: 0.07
+    ridge: 0.01
+    huber_delta: 0.08
+    huber_passes: 3
+    tile_size: 4
+    batch_size: 8
+  stable_multiscale_similarity_normal_flow:
+    correlation_dim: 48
+    scales: [1, 2, 4]
+    temperature: 0.07
+    ridge: 0.01
+    huber_delta: 0.08
+    huber_passes: 3
+    tile_size: 4
+    batch_size: 8
+stabilization:
+  geometry_checkpoint_seeds: [7, 13, 23]
+  student_seeds: [7, 13, 23]
+  checkpoint_ema_epochs: [8, 9, 10]
+  whitening_shrinkage: 0.10
+  js_median_max: 0.02
+  js_p95_max: 0.08
+  displacement_disagreement_p95_max_feature_px: 0.5
+controls:
+  zero_event: true
+  temporal_shuffle_permutation: [2, 0, 1]
+  endpoint_swap_permutation: [0, 2, 1]
+train:
+  fold_count: 3
+  epochs: 10
+  final_epochs: 12
+  learning_rate: 0.0001
+  weight_decay: 0.0001
+  max_grad_norm: 1.0
+  num_workers: 0
+  optimization_seed_by_fold: {0: 43000, 1: 43001, 2: 43002}
+  final_training_seed_by_student: {7: 430107, 13: 430113, 23: 430123}
+  magnitude_buckets: [[0.01, 0.02], [0.02, 0.04], [0.04, 0.08], [0.08, .inf]]
+loss:
+  g_weight: 1.0
+  ell_weight: 1.0
+  bucket_ratio_weight: 0.5
+  sign_weight: 0.25
+  track_weight: 0.25
+  support_weight: 0.25
+  distill_weight: 0.25
+  cycle_weight: 0.1
+  normal_flow_weight: 0.25
+  smooth_l1_beta: 0.004
+  sign_temperature: 0.015
+  max_abs_g: 0.24975
+selection:
+  oof_rows_per_constituent: 2048
+  pearson: 0.777
+  log_eta_pearson: 0.758
+  minimum_sequence_pearson: 0.50
+  negative_accuracy: 0.84
+  balanced_sign_accuracy: 0.89
+  negative_track_macro_accuracy: 0.857
+  minimum_negative_track_accuracy: 0.50
+  eligible_negative_track_p10: 0.65
+  high_bucket_pearson: 0.45
+  seed_prediction_p95_range: 0.02
+  seed_prediction_max_range: 0.08
+  seed_sign_disagreement: 0.02
+  seed_pearson_range: 0.02
+  std_ratio: [0.90, 1.10]
+  calibration_slope: [0.90, 1.10]
+  magnitude_ratio: [0.85, 1.15]
+  shuffle_ratio_max: 0.50
+  endpoint_swap_pearson_max: 0.15
+  bottom_support_seed_p95_range: 0.05
+arm_b_margin:
+  paired_sequence_pearson: 0.01
+  high_bucket_pearson: 0.10
+  negative_track_macro_accuracy: 0.02
+  shuffle_ratio_reduction: 0.10
+development:
+  minimum_pearson_gain_over_v410: 0.005
+  minimum_negative_accuracy_gain_over_v410: 0.020
+  minimum_balanced_sign_gain_over_v410: 0.010
+  minimum_log_eta_pearson: 0.758
+  minimum_negative_track_macro_gain_over_v410: 0.020
+  minimum_relative_paper_weighted_mid_improvement_over_v410: 0.020
+  paper_mid_weights: {crucial: 0.5, small: 0.3, large: 0.1, negative: 0.1}

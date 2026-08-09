@@ -1,5 +1,48 @@
 # PLAN.md — Recuperación científica y ruta ejecutable hacia E-JEPA-TTC frente a Garl-TTC
 
+## Addendum v4.30 (2026-08-08)
+
+La siguiente fase event-only es `stable_multiscale_similarity` frente a
+`stable_multiscale_similarity_normal_flow`. Antes de cualquier OOF debe superar
+el gate de estabilización multisemilla con los tres checkpoints EMA bloqueados.
+No se abrirán development validation, eAP oficial ni EvTTC durante diagnóstico,
+estabilización fallida u OOF fallido. Solo un `promoted_champion` de OOF completo
+activa automáticamente una vez el full-train de 10+12 epochs y una materialización
+de validation; el resultado final es `development_validation_completed_passed` o
+`development_validation_completed_failed`. Diagnostic es no seleccionable y no hay
+resultado OOF autoritativo v4.30 todavía. eAP oficial y EvTTC permanecen cerrados siempre.
+
+Ejecución no seleccionable actual: el diagnóstico post-fix de 96 filas escribió
+`artifacts/debug/object_event_v4_30_diagnostic/summary.json` (SHA256
+`CF9EC7D67EB421AA86304ABD4AB4582F6865CCEABD8D29F5CD7EC4EADBA06BD3`) con
+status `diagnostic_only`. JS median `.010237284936010838` pasó; JS p95
+`.19495552778244019` falló; displacement p95 en píxeles BASE `.5500071191315064`
+falló. Las 9/9 historias KL descendieron; caché de profesores: 96 filas, 36
+batches, build count 1 y `4.1370828000363` s. Rank/champion son null y todos los
+flags sellados son false. No selecciona brazo ni relaja gates.
+
+El SHA `D9DE07…` es solo historia explícitamente superseded, anterior a los cuatro
+arreglos: schema real de alturas t1/t2, gate firmado de anti-correlación endpoint,
+un único centro multiescala ponderado por soporte en píxeles base y semilla RNG
+efectiva veraz. `artifacts/debug/object_event_v4_30_stable_similarity` está vacío:
+no existe summary OOF autoritario de 2.048 filas; el run interrumpido no es evidencia.
+
+Verificación actual: targeted v4.30 `30/30`; Pytest completo 100% pass con 7
+skipped y warnings heredados UTF-8/PyTorch; Ruff focalizado limpio; Pyright 0.
+No se declara Ruff global limpio: conserva 872 hallazgos heredados.
+
+La siguiente decisión sigue siendo estabilización completa autoritativa de 2.048
+filas con los gates fijados. Si falla, v4.30 queda falsado: el siguiente candidato
+es una auditoría train-only y target-free de desacuerdo espectral, no relajar gates.
+SPAE solo motiva esa auditoría y un bottleneck compacto/estructurado por canal si
+localiza la cola JS/displacement; INTACT-JEPA queda como ablation posterior, no
+como arreglo directo de la inestabilidad actual.
+
+Historial del hotfix: una invocación anterior con `-DiagnosticSamples 12` inició
+por error el OOF completo por un bug nullable de PowerShell y se terminó de forma
+segura tras unos 50 minutos antes de artefactos, validation o métricas. El wrapper
+ahora detecta presencia explícita con `PSBoundParameters`; no es un resultado.
+
 Estado del documento: especificación de implementación.
 
 Fecha de la auditoría de partida: 2026-08-01.

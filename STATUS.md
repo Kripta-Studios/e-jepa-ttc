@@ -1,5 +1,60 @@
 # Estado del repositorio
 
+## Addendum v4.30 (2026-08-08)
+
+La implementación v4.30 queda preregistrada y ejecuta como un único comando el
+OOF agrupado y, solo tras una promoción genuina, full-train seguido de una única
+development validation. No hay resultado OOF autoritativo, champion ni apertura de datos
+sellados. Diagnóstico, fallo de estabilización u OOF fallido no pueden leer los
+inputs development; el estado es no seleccionable. eAP oficial y EvTTC no se
+abren automáticamente, incluso tras development passed.
+
+El diagnóstico train-only v4.30 actual es no seleccionable: no existe resultado
+OOF autoritativo de 2.048 filas, champion ni development validation. Diagnóstico,
+fallo de estabilización u OOF fallido no pueden leer inputs development; eAP
+oficial y EvTTC no se abren automáticamente.
+
+Historial operativo y evidencia no seleccionable:
+
+- Antes del hotfix, `-DiagnosticSamples 12` sufrió un bug nullable de PowerShell
+  que omitió `--diagnostic-samples`; empezó el OOF completo de 2.048 filas y se
+  terminó de forma segura tras unos 50 minutos, antes de artefactos stage-1,
+  resumen, validation o métricas. Usó alrededor de 7 GiB de GPU y no abrió datos
+  sellados. El hotfix usa `PSBoundParameters` y muestra modo/output resueltos.
+- El diagnóstico real de 12 filas terminó en 24,7 s: JS median `.013007` y JS
+  p95 `.100864` (fallo `.08`) quedan como historia acotada. Su displacement p95
+  `.306892` no es un pass válido: offsets coarse estaban infraescalados.
+- El 96 filas previo (51,7 s; SHA256
+  `1A607311C140D7E8A063F139C1FFDCCF826A19D99CBD2BDFF3E6B74815F73C10`) sigue
+  inválido/superseded para displacement por offsets infraescalados.
+- El diagnóstico post-fix actual de 96 filas tiene status `diagnostic_only` y
+  resumen `artifacts/debug/object_event_v4_30_diagnostic/summary.json`, SHA256
+  `CF9EC7D67EB421AA86304ABD4AB4582F6865CCEABD8D29F5CD7EC4EADBA06BD3`. JS median
+  `.010237284936010838` pasó; JS p95 `.19495552778244019` falló; displacement p95
+  BASE `.5500071191315064` falló. Las 9/9 historias KL descendieron. Caché: 96
+  filas, 36 teacher batches, build count 1 y `4.1370828000363` s. Rank/champion
+  null y todos los flags sellados false; se detuvo antes de brazos.
+- El SHA `D9DE07…` es el diagnóstico pre-fix superseded, no evidencia actual.
+  Los cuatro blockers corregidos son schema real t1/t2, endpoint firmado,
+  centro multiescala único ponderado por soporte en píxeles base y `effective_seed`
+  veraz. `artifacts/debug/object_event_v4_30_stable_similarity` está vacío; no
+  existe summary OOF de 2.048 filas y el run interrumpido no es evidencia.
+
+Los diagnósticos no pueden debilitar ni satisfacer gates. La siguiente decisión
+es estabilización completa autoritativa de 2.048 filas: solo si sus gates fijos
+de JS median/p95 y displacement pasan se ejecutan brazos OOF; si no, se registra
+el fallo sin relajar umbrales.
+
+Verificación actual: targeted v4.30 `30/30`; Pytest completo 100% pass, 7 skipped
+y warnings heredados UTF-8/PyTorch; Ruff focalizado limpio; Pyright 0. Ruff global
+no está limpio: tiene 872 hallazgos heredados.
+
+Decisión de investigación: si el full fijo falla, v4.30 queda falsado y sigue una
+auditoría target-free/train-only de desacuerdo espectral, no gates relajados. SPAE
+solo justifica un bottleneck compacto/canal-estructurado si esa auditoría localiza
+la cola; INTACT-JEPA queda para una ablation posterior con gramática física común,
+likelihood y gradientes asimétricos, no como parche del matcher actual.
+
 Actualizado: 2026-08-03.
 
 Branch activa: `scientific-recovery-v3-hardening`.
