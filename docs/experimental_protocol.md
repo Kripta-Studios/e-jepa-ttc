@@ -21,6 +21,11 @@ sucesor debe seleccionar sobre varios grupos train/validation, agregar por grupo
 declarar nuevas seeds test antes de cualquier entrenamiento; no puede ajustar gates
 ni arquitectura con 303 o 603.
 
+V8 satisface ese requisito con train 701/702/703, validation 801/802/803 y test
+901/902/903. Mantiene 1536/384 muestras train/validation, selecciona con media macro
+y peor grupo, y exige pass individual de todos los tests. Los grupos test no se
+instancian durante `diagnostic`.
+
 ## Pregunta
 
 ¿Un encoder event-only high-resolution con pretraining JEPA multihorizonte mejora

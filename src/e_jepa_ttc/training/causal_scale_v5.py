@@ -4,18 +4,15 @@ from __future__ import annotations
 
 import copy
 import math
-from collections.abc import Mapping
+from collections.abc import Mapping, Sized
 from dataclasses import asdict, dataclass, replace
 from typing import Any, cast
 
 import torch
 from torch import nn
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Dataset
 
-from e_jepa_ttc.data.synthetic_causal_scale import (
-    SyntheticCausalScaleDataset,
-    SyntheticCausalScaleSample,
-)
+from e_jepa_ttc.data.synthetic_causal_scale import SyntheticCausalScaleSample
 from e_jepa_ttc.losses.causal_scale_ttc import (
     CausalScaleTTCLossConfig,
     causal_scale_ttc_loss,
@@ -64,6 +61,9 @@ class SyntheticTrainingResult:
     history: list[dict[str, float | int | None]]
     best_epoch: int
     best_selection_score: float
+    best_validation_macro_score: float
+    best_validation_worst_group_score: float
+    best_validation_group_scores: dict[str, float]
 
 
 def _tensor(batch: Mapping[str, Any], key: str, device: torch.device) -> torch.Tensor:
@@ -341,15 +341,44 @@ def _selection_score(metrics: Mapping[str, float | None]) -> float:
     return score
 
 
+def _validation_groups(
+    validation_dataset: Dataset[SyntheticCausalScaleSample]
+    | Mapping[str, Dataset[SyntheticCausalScaleSample]],
+) -> dict[str, Dataset[SyntheticCausalScaleSample]]:
+    if isinstance(validation_dataset, Mapping):
+        groups = dict(validation_dataset)
+    else:
+        groups = {"validation": validation_dataset}
+    if not groups:
+        raise ValueError("validation groups cannot be empty")
+    if any(not name or not name.replace("_", "").isalnum() for name in groups):
+        raise ValueError("validation group names must be non-empty alphanumeric identifiers")
+    if any(not isinstance(dataset, Sized) or len(dataset) <= 0 for dataset in groups.values()):
+        raise ValueError("validation groups cannot be empty")
+    return groups
+
+
+def _macro_metric(
+    group_metrics: Mapping[str, Mapping[str, float | None]],
+    key: str,
+) -> float | None:
+    values = [metrics.get(key) for metrics in group_metrics.values()]
+    if any(value is None or not math.isfinite(value) for value in values):
+        return None
+    numeric = [float(cast(float, value)) for value in values]
+    return sum(numeric) / len(numeric)
+
+
 def train_synthetic_causal_scale(
     model_config: CausalScaleTTCConfig,
     training_config: CausalScaleSyntheticTrainingConfig,
     loss_config: CausalScaleTTCLossConfig,
-    train_dataset: SyntheticCausalScaleDataset,
-    validation_dataset: SyntheticCausalScaleDataset,
+    train_dataset: Dataset[SyntheticCausalScaleSample],
+    validation_dataset: Dataset[SyntheticCausalScaleSample]
+    | Mapping[str, Dataset[SyntheticCausalScaleSample]],
     device: torch.device,
 ) -> SyntheticTrainingResult:
-    """Train on one seed group and select only by a disjoint validation group."""
+    """Train on synthetic groups and select by macro plus worst validation group."""
 
     seed_everything(training_config.seed, deterministic=True)
     generator = torch.Generator(device="cpu")
@@ -361,12 +390,16 @@ def train_synthetic_causal_scale(
         generator=generator,
         num_workers=training_config.num_workers,
     )
-    validation_loader: DataLoader[SyntheticCausalScaleSample] = DataLoader(
-        validation_dataset,
-        batch_size=training_config.batch_size,
-        shuffle=False,
-        num_workers=training_config.num_workers,
-    )
+    validation_groups = _validation_groups(validation_dataset)
+    validation_loaders: dict[str, DataLoader[SyntheticCausalScaleSample]] = {
+        name: DataLoader(
+            dataset,
+            batch_size=training_config.batch_size,
+            shuffle=False,
+            num_workers=training_config.num_workers,
+        )
+        for name, dataset in validation_groups.items()
+    }
     model = CausalScaleTTC(model_config).to(device)
     optimizer = torch.optim.AdamW(
         model.parameters(),
@@ -381,6 +414,9 @@ def train_synthetic_causal_scale(
     best_state: dict[str, torch.Tensor] | None = None
     best_score = math.inf
     best_epoch = 0
+    best_macro_score = math.inf
+    best_worst_group_score = math.inf
+    best_group_scores: dict[str, float] = {}
     history: list[dict[str, float | int | None]] = []
     warmup_loss_config = replace(
         loss_config,
@@ -408,29 +444,54 @@ def train_synthetic_causal_scale(
             grad_clip_norm=training_config.grad_clip_norm,
             spatial_translation_pixels=training_config.spatial_translation_pixels,
         )
-        validation_metrics = evaluate_synthetic_causal_scale(
-            model,
-            validation_loader,
-            device,
-            loss_config=loss_config,
-            controls=False,
-        )
-        score = _selection_score(validation_metrics)
+        validation_group_metrics = {
+            name: evaluate_synthetic_causal_scale(
+                model,
+                loader,
+                device,
+                loss_config=loss_config,
+                controls=False,
+            )
+            for name, loader in validation_loaders.items()
+        }
+        group_scores = {
+            name: _selection_score(metrics)
+            for name, metrics in validation_group_metrics.items()
+        }
+        macro_score = sum(group_scores.values()) / len(group_scores)
+        worst_group_score = max(group_scores.values())
+        score = 0.5 * (macro_score + worst_group_score)
         record: dict[str, float | int | None] = {
             "epoch": epoch,
             "learning_rate": epoch_learning_rate,
             "foreground_warmup": int(epoch <= training_config.foreground_warmup_epochs),
             "selection_eligible": int(epoch > training_config.foreground_warmup_epochs),
             "selection_score": score,
+            "validation_macro_selection_score": macro_score,
+            "validation_worst_group_selection_score": worst_group_score,
         }
         record.update({f"train_{key}": value for key, value in train_metrics.items()})
-        record.update(
-            {f"validation_{key}": value for key, value in validation_metrics.items()}
+        metric_keys = set().union(
+            *(metrics.keys() for metrics in validation_group_metrics.values())
         )
+        record.update(
+            {
+                f"validation_{key}": _macro_metric(validation_group_metrics, key)
+                for key in metric_keys
+            }
+        )
+        for name, metrics in validation_group_metrics.items():
+            record[f"validation_group_{name}_selection_score"] = group_scores[name]
+            record.update(
+                {f"validation_group_{name}_{key}": value for key, value in metrics.items()}
+            )
         history.append(record)
         if epoch > training_config.foreground_warmup_epochs and score < best_score:
             best_score = score
             best_epoch = epoch
+            best_macro_score = macro_score
+            best_worst_group_score = worst_group_score
+            best_group_scores = dict(group_scores)
             best_state = copy.deepcopy(model.state_dict())
         if epoch > training_config.foreground_warmup_epochs:
             scheduler.step()
@@ -442,6 +503,9 @@ def train_synthetic_causal_scale(
         history=history,
         best_epoch=best_epoch,
         best_selection_score=best_score,
+        best_validation_macro_score=best_macro_score,
+        best_validation_worst_group_score=best_worst_group_score,
+        best_validation_group_scores=best_group_scores,
     )
 
 
@@ -502,6 +566,9 @@ def checkpoint_payload(
         "loss_config": asdict(loss_config),
         "best_epoch": result.best_epoch,
         "best_selection_score": result.best_selection_score,
+        "best_validation_macro_score": result.best_validation_macro_score,
+        "best_validation_worst_group_score": result.best_validation_worst_group_score,
+        "best_validation_group_scores": result.best_validation_group_scores,
         "model_state_dict": result.model.state_dict(),
     }
 

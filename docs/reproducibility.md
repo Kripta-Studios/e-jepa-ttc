@@ -28,6 +28,11 @@ datos de desarrollo. El artefacto V7 está en
 el fallo Pearson `.9201432`. Un nuevo intento requiere grupos y seeds nuevos
 prerregistrados; volver a ejecutar 303 o 603 no constituye replicación independiente.
 
+V8 usa la configuración
+`configs/experiment/e_jepa_garl_event_causal_scale_synthetic_v8.yaml`. El modo
+diagnóstico abre solo 701–703 y 801–803. Los tests 901–903 solo pueden abrirse una vez
+por grupo en modo `full`, después de publicar el commit exacto y desde estado limpio.
+
 ## Entorno auditado
 
 ```text

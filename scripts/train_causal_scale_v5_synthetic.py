@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import os
 import shutil
 import sys
@@ -18,7 +19,7 @@ from typing import Any
 
 import torch
 import yaml
-from torch.utils.data import DataLoader
+from torch.utils.data import ConcatDataset, DataLoader, Dataset
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
@@ -109,7 +110,7 @@ def _model_config(path: Path) -> CausalScaleTTCConfig:
     return CausalScaleTTCConfig(**raw)
 
 
-def _dataset_config(raw: dict[str, Any], split: str) -> SyntheticCausalScaleConfig:
+def _dataset_configs(raw: dict[str, Any], split: str) -> dict[str, SyntheticCausalScaleConfig]:
     data = raw.get("data")
     if not isinstance(data, dict):
         raise ValueError("data config must be a mapping")
@@ -117,7 +118,62 @@ def _dataset_config(raw: dict[str, Any], split: str) -> SyntheticCausalScaleConf
     section = data.get(split)
     if not isinstance(common, dict) or not isinstance(section, dict):
         raise ValueError(f"synthetic split {split!r} is missing")
-    return SyntheticCausalScaleConfig(**{**common, **section})
+    groups = section.get("groups")
+    if groups is None:
+        return {split: SyntheticCausalScaleConfig(**{**common, **section})}
+    if set(section) != {"groups"} or not isinstance(groups, list) or not groups:
+        raise ValueError(f"synthetic split {split!r} groups must be a non-empty list")
+    parsed: dict[str, SyntheticCausalScaleConfig] = {}
+    for index, item in enumerate(groups):
+        if not isinstance(item, dict):
+            raise ValueError(f"synthetic split {split!r} group {index} must be a mapping")
+        group = dict(item)
+        name = group.pop("name", f"{split}_{index}")
+        if not isinstance(name, str) or not name or not name.replace("_", "").isalnum():
+            raise ValueError(f"synthetic split {split!r} group name is invalid")
+        if name in parsed:
+            raise ValueError(f"synthetic split {split!r} repeats group {name!r}")
+        parsed[name] = SyntheticCausalScaleConfig(**{**common, **group})
+    return parsed
+
+
+def _datasets(
+    configs: dict[str, SyntheticCausalScaleConfig],
+) -> dict[str, SyntheticCausalScaleDataset]:
+    return {name: SyntheticCausalScaleDataset(config) for name, config in configs.items()}
+
+
+def _concat(
+    datasets: dict[str, SyntheticCausalScaleDataset],
+) -> Dataset[SyntheticCausalScaleSample]:
+    if len(datasets) == 1:
+        return next(iter(datasets.values()))
+    return ConcatDataset(list(datasets.values()))
+
+
+def _macro_metrics(
+    groups: dict[str, dict[str, float | None]],
+) -> dict[str, float | None]:
+    keys = set().union(*(metrics.keys() for metrics in groups.values()))
+    result: dict[str, float | None] = {}
+    for key in keys:
+        values = [metrics.get(key) for metrics in groups.values()]
+        if any(value is None or not math.isfinite(value) for value in values):
+            result[key] = None
+        else:
+            numeric = [float(value) for value in values if value is not None]
+            result[key] = sum(numeric) / len(numeric)
+    return result
+
+
+def _dataset_identities(
+    configs: dict[str, SyntheticCausalScaleConfig] | None,
+) -> dict[str, str] | None:
+    if configs is None:
+        return None
+    return {
+        name: synthetic_scale_config_identity(config) for name, config in configs.items()
+    }
 
 
 def _validate_protocol(raw: dict[str, Any]) -> dict[str, float]:
@@ -176,22 +232,30 @@ def run(
         raise ValueError("training and loss configs must be mappings")
     training_config = CausalScaleSyntheticTrainingConfig(**training_raw)
     loss_config = CausalScaleTTCLossConfig(**loss_raw)
-    train_config = _dataset_config(raw, "train")
-    validation_config = _dataset_config(raw, "validation")
-    if train_config.seed == validation_config.seed:
+    train_configs = _dataset_configs(raw, "train")
+    validation_configs = _dataset_configs(raw, "validation")
+    train_seeds = {config.seed for config in train_configs.values()}
+    validation_seeds = {config.seed for config in validation_configs.values()}
+    if len(train_seeds) != len(train_configs) or len(validation_seeds) != len(
+        validation_configs
+    ):
+        raise ValueError("synthetic groups within a split must use unique seeds")
+    if train_seeds & validation_seeds:
         raise ValueError("train and validation synthetic seed groups must differ")
+    train_datasets = _datasets(train_configs)
+    validation_datasets = _datasets(validation_configs)
     device = resolve_device(device_name)
     started = time.perf_counter()
     result = train_synthetic_causal_scale(
         model_config,
         training_config,
         loss_config,
-        SyntheticCausalScaleDataset(train_config),
-        SyntheticCausalScaleDataset(validation_config),
+        _concat(train_datasets),
+        validation_datasets,
         device,
     )
     validation_loader: DataLoader[SyntheticCausalScaleSample] = DataLoader(
-        SyntheticCausalScaleDataset(validation_config),
+        _concat(validation_datasets),
         batch_size=training_config.batch_size,
         shuffle=False,
         num_workers=training_config.num_workers,
@@ -205,35 +269,58 @@ def run(
         device,
         target_coverage=float(calibration_raw["target_ratio_coverage"]),
     )
-    validation_metrics = evaluate_synthetic_causal_scale(
-        result.model,
-        validation_loader,
-        device,
-        loss_config=loss_config,
-        controls=True,
-    )
-    test_metrics: dict[str, float | None] | None = None
-    gates: dict[str, bool] | None = None
-    opened_splits = ["train", "validation"]
-    test_config: SyntheticCausalScaleConfig | None = None
-    if stage == "full":
-        test_config = _dataset_config(raw, "test")
-        if test_config.seed in {train_config.seed, validation_config.seed}:
-            raise ValueError("synthetic test seed group must be held out")
-        test_loader: DataLoader[SyntheticCausalScaleSample] = DataLoader(
-            SyntheticCausalScaleDataset(test_config),
-            batch_size=training_config.batch_size,
-            shuffle=False,
-            num_workers=training_config.num_workers,
-        )
-        test_metrics = evaluate_synthetic_causal_scale(
+    validation_group_metrics = {
+        name: evaluate_synthetic_causal_scale(
             result.model,
-            test_loader,
+            DataLoader(
+                dataset,
+                batch_size=training_config.batch_size,
+                shuffle=False,
+                num_workers=training_config.num_workers,
+            ),
             device,
             loss_config=loss_config,
             controls=True,
         )
+        for name, dataset in validation_datasets.items()
+    }
+    validation_metrics = _macro_metrics(validation_group_metrics)
+    test_metrics: dict[str, float | None] | None = None
+    test_group_metrics: dict[str, dict[str, float | None]] | None = None
+    gates: dict[str, bool] | None = None
+    test_group_gates: dict[str, dict[str, bool]] | None = None
+    opened_splits = ["train", "validation"]
+    test_configs: dict[str, SyntheticCausalScaleConfig] | None = None
+    if stage == "full":
+        test_configs = _dataset_configs(raw, "test")
+        test_seeds = {config.seed for config in test_configs.values()}
+        if len(test_seeds) != len(test_configs):
+            raise ValueError("synthetic test groups must use unique seeds")
+        if test_seeds & (train_seeds | validation_seeds):
+            raise ValueError("synthetic test seed group must be held out")
+        test_group_metrics = {}
+        for name, dataset in _datasets(test_configs).items():
+            test_group_metrics[name] = evaluate_synthetic_causal_scale(
+                result.model,
+                DataLoader(
+                    dataset,
+                    batch_size=training_config.batch_size,
+                    shuffle=False,
+                    num_workers=training_config.num_workers,
+                ),
+                device,
+                loss_config=loss_config,
+                controls=True,
+            )
+        test_metrics = _macro_metrics(test_group_metrics)
         gates = evaluate_synthetic_learning_gates(test_metrics, thresholds)
+        test_group_gates = {
+            name: evaluate_synthetic_learning_gates(metrics, thresholds)
+            for name, metrics in test_group_metrics.items()
+        }
+        gates["passed"] = gates["passed"] and all(
+            group["passed"] for group in test_group_gates.values()
+        )
         opened_splits.append("test")
     with _AtomicOutput(output_dir) as staging:
         checkpoint_path = staging / "best.pt"
@@ -268,12 +355,12 @@ def run(
                 "sha256": _sha256(model_path),
             },
             "dataset_groups": {
-                "train": synthetic_scale_config_identity(train_config),
-                "validation": synthetic_scale_config_identity(validation_config),
-                "test": synthetic_scale_config_identity(test_config) if test_config else None,
+                "train": _dataset_identities(train_configs),
+                "validation": _dataset_identities(validation_configs),
+                "test": _dataset_identities(test_configs),
             },
             "opened_splits": opened_splits,
-            "test_evaluation_count": 1 if stage == "full" else 0,
+            "test_evaluation_count": len(test_configs) if test_configs else 0,
             "data_access": raw["data"],
             "training_config": training_raw,
             "loss_config": loss_raw,
@@ -281,12 +368,18 @@ def run(
                 "split": "validation",
                 "best_epoch": result.best_epoch,
                 "best_score": result.best_selection_score,
+                "macro_score": result.best_validation_macro_score,
+                "worst_group_score": result.best_validation_worst_group_score,
+                "group_scores": result.best_validation_group_scores,
             },
             "validation_calibration": calibration,
             "history": result.history,
             "validation_metrics": validation_metrics,
+            "validation_group_metrics": validation_group_metrics,
             "test_metrics": test_metrics,
+            "test_group_metrics": test_group_metrics,
             "test_gates": gates,
+            "test_group_gates": test_group_gates,
             "thresholds": thresholds,
             "decision": raw["decision_contract"],
             "checkpoint": {"path": "best.pt", "sha256": _sha256(checkpoint_path)},

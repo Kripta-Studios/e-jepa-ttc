@@ -10,9 +10,11 @@ translation `.00351`. Test 603 remains sealed.
 
 The clean test at published commit `0bc781f` completed and failed Pearson
 `.9201432 < .95`; every other gate passed. V7 is closed and seed 603 consumed. The
-next version must train and select across multiple independent groups, report macro
-and worst-group correlation, and preregister a new test seed before training. Real
-data remains unauthorized. See `docs/causal_scale_v7.md`.
+V8 preregisters train 701/702/703, validation 801/802/803 and sealed test
+901/902/903 at equal train/validation sample budget. Selection is half macro plus
+half worst-group score, and full pass requires every test group. Freeze/publish the
+protocol, then run validation-only diagnostics. Real data remains unauthorized. See
+`docs/causal_scale_v8.md`.
 
 ## Addendum v6 equivariant foreground (2026-08-10)
 

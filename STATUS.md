@@ -18,6 +18,11 @@ correlation: Pearson `.9201432 < .95`. Translation `.0033841`, IoU `.8896096`, T
 Artifact identity is `97e52b2a9d3463d6a2e57d12e9408f80bb6a3b8e0d491beeb3546c2d1586a52b`.
 V7 is closed, seed 603 consumed, and no SOTA/Garl-TTC claim is authorized.
 
+V8 is preregistered but not yet trained. It keeps V7 architecture and equal total
+sample budget while selecting across train seeds 701/702/703 and validation seeds
+801/802/803. Tests 901/902/903 remain sealed. Selection combines macro and worst
+group, and a future full pass requires every group. No real data is authorized.
+
 ## Addendum v6 (2026-08-10)
 
 V6 preregisters new synthetic groups 401/502/603 and does not reuse consumed v5 test

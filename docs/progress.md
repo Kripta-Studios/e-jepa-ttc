@@ -18,6 +18,11 @@ El test se ejecutó después desde `0bc781f` y falló solo Pearson: `.9201432 < 
 Translation `.0033841`, IoU `.8896096`, TTC `.2457614`, slope `.9278544`, sign
 `.9911308` y coverage `.7827051` pasaron. Seed 603 queda consumida; v7 cerrado.
 
+Se preregistró V8 sin abrir datos: tres grupos train (701–703), tres validation
+(801–803) y tres tests sellados (901–903). La selección pondera por igual score macro
+y peor grupo manteniendo el presupuesto total V7. Pendiente: verificación, commit y
+diagnóstico validation-only.
+
 ## 2026-08-10 — Foreground equivariante Causal Scale v6
 
 - preregistrados grupos nuevos 401/502/603; no se reutilizó test v5 seed 303;

@@ -40,6 +40,7 @@ def _dataset(seed: int, samples: int) -> SyntheticCausalScaleDataset:
 def test_synthetic_training_returns_finite_validation_selected_checkpoint() -> None:
     train = _dataset(11, 8)
     validation = _dataset(22, 8)
+    validation_second = _dataset(23, 8)
     model_config = CausalScaleTTCConfig(
         in_channels=12,
         hidden_dim=8,
@@ -59,7 +60,7 @@ def test_synthetic_training_returns_finite_validation_selected_checkpoint() -> N
         training_config,
         loss_config,
         train,
-        validation,
+        {"validation_a": validation, "validation_b": validation_second},
         torch.device("cpu"),
     )
     calibration = calibrate_ratio_uncertainty(
@@ -78,6 +79,13 @@ def test_synthetic_training_returns_finite_validation_selected_checkpoint() -> N
 
     assert result.best_epoch == 1
     assert math.isfinite(result.best_selection_score)
+    assert set(result.best_validation_group_scores) == {"validation_a", "validation_b"}
+    assert result.best_selection_score == 0.5 * (
+        result.best_validation_macro_score + result.best_validation_worst_group_score
+    )
+    assert result.best_validation_worst_group_score == max(
+        result.best_validation_group_scores.values()
+    )
     assert metrics["analytic_pearson"] is not None
     for row in result.history:
         train_total = row["train_total"]
@@ -85,6 +93,7 @@ def test_synthetic_training_returns_finite_validation_selected_checkpoint() -> N
         assert math.isfinite(float(train_total))
     assert payload["artifact_type"] == "causal_scale_v5_synthetic_checkpoint_v1"
     assert payload["best_epoch"] == 1
+    assert payload["best_validation_group_scores"] == result.best_validation_group_scores
     assert calibration["valid_count"] > 0
     assert math.isfinite(float(calibration["log_variance_offset"]))
 
