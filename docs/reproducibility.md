@@ -196,3 +196,16 @@ de 315 GiB libres en C:.
 Un run local no es oficial. Para comparar con Garl-TTC deben coincidir modalidad,
 split, métrica, protocolo y presupuesto; el resultado final necesita freeze,
 evaluación externa y hashes verificables.
+
+## Causal-scale eAP screen v1
+
+El runner `scripts/train_causal_scale_eap_screen.py` valida antes de GPU el SHA del
+manifest, identidad de artifact, counts y secuencias congeladas. Guarda estado
+atómico cada época: modelo, optimizer, scheduler, RNG CPU/CUDA/Python/NumPy, estado
+del generador del DataLoader, historial, best y paciencia. `--resume` continúa desde
+la siguiente época y el límite de 6 h descuenta el tiempo previo.
+
+Antes de usarlo como evidencia debe añadirse un test end-to-end de resume. El output
+esperado es `summary.json`, `validation_predictions.csv`, `model_best.pt` y
+`state/{last,best}.pt`. El baseline oficial debe recibir exactamente los sample
+tokens guardados en el CSV; no se permiten filtros posteriores por error.

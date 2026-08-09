@@ -28,6 +28,19 @@ El diagnóstico base seleccionó epoch 16: Pearson macro `.80631` y por grupo
 Los mayores errores proceden de endpoints aislados con foreground inestable; se
 implementó consenso temporal simétrico `.10/.15` para entrenar dos brazos controlados.
 
+## 2026-08-10 — Adaptación causal-scale a eAP/Garl public validation
+
+- auditado `E:\Garl-TTC` release oficial y sus checkpoints event/visual/full;
+- auditados `E:\eAP_dataset` (~691,5 GiB) y `E:\GarlTTC_dataset` públicos;
+- congelado cache existente 2.048 train + 2.048 validation, 9/3 secuencias disjuntas;
+- confirmada cobertura de los cuatro buckets en cada secuencia validation;
+- implementado weak-box target explícito, excluyendo t0 proxy y sin cajas como input;
+- implementado trainer BF16, CVaR, early stopping, guard 6 h y resume atómico por época;
+- añadido runner fail-closed con hashes y config congelada;
+- benchmark 128+128: 5,289 s, 395,6 MiB VRAM; no es resultado eAP;
+- checks focalizados Ruff/Pyright/Pytest verdes;
+- pendiente: test resume end-to-end, run completo y Garl event-only mismos 2.048 tokens.
+
 CVaR 10% con `w=.15` seleccionó epoch 32: Pearson macro `.94621`, grupos
 `.94812/.94567/.94486`, TTC `.29547`. Es el mejor V8 pero no pasa; test sintético no
 se abrió. Se inicia diseño eAP train/validation limitado a menos de seis horas.

@@ -40,7 +40,7 @@ class ObjectEventV4Batch:
         device: torch.device,
         *,
         non_blocking: bool = True,
-    ) -> "ObjectEventV4Batch":
+    ) -> ObjectEventV4Batch:
         return ObjectEventV4Batch(
             events=self.events.to(
                 device=device, dtype=torch.float32, non_blocking=non_blocking
@@ -211,9 +211,47 @@ def collate_object_event_v4(records: list[dict[str, Any]]) -> ObjectEventV4Batch
     )
 
 
+def weak_box_masks(
+    boxes_xyxy: torch.Tensor,
+    *,
+    height: int,
+    width: int,
+    endpoint_valid: torch.Tensor | None = None,
+) -> tuple[torch.Tensor, torch.Tensor]:
+    """Rasterize disclosed weak bbox supervision in the cached ROI frame.
+
+    The returned rectangles are training targets only.  They must never enter the
+    estimator forward path and must not be described as segmentation ground truth.
+    Floating point boxes use half-open pixel-centre membership, which avoids
+    nondeterministic rounding while remaining differentiable only through the
+    estimator (not the target construction).
+    """
+
+    if boxes_xyxy.ndim != 3 or boxes_xyxy.shape[-1] != 4:
+        raise ValueError("boxes_xyxy must have shape [B,T,4]")
+    if min(height, width) <= 0:
+        raise ValueError("mask dimensions must be positive")
+    if not torch.isfinite(boxes_xyxy).all():
+        raise ValueError("boxes_xyxy must be finite")
+    x1, y1, x2, y2 = boxes_xyxy.unbind(dim=-1)
+    geometric_valid = (x2 > x1) & (y2 > y1)
+    if endpoint_valid is not None:
+        if endpoint_valid.shape != geometric_valid.shape:
+            raise ValueError("endpoint_valid must have shape [B,T]")
+        geometric_valid = geometric_valid & endpoint_valid.bool()
+    xs = torch.arange(width, device=boxes_xyxy.device, dtype=boxes_xyxy.dtype) + 0.5
+    ys = torch.arange(height, device=boxes_xyxy.device, dtype=boxes_xyxy.dtype) + 0.5
+    inside_x = (xs >= x1[..., None]) & (xs < x2[..., None])
+    inside_y = (ys >= y1[..., None]) & (ys < y2[..., None])
+    masks = inside_y[..., :, None] & inside_x[..., None, :]
+    masks = masks.unsqueeze(-3) & geometric_valid[..., None, None, None]
+    return masks.to(dtype=torch.float32), geometric_valid
+
+
 __all__ = [
     "GarlTTCObjectEventV4Dataset",
     "OBSERVABLE_MOTION_DIM",
     "ObjectEventV4Batch",
     "collate_object_event_v4",
+    "weak_box_masks",
 ]

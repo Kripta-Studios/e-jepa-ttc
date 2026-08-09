@@ -1,0 +1,62 @@
+experiment:
+  name: e_jepa_garl_event_causal_scale_eap_screen_v1
+  protocol_version: causal_scale_eap_public_validation_v1
+  evidence_scope: public_eap_garl_train_validation_only
+model_config: configs/model/e_jepa_causal_scale_event_v8_t015.yaml
+data:
+  cache_manifest: artifacts/cache/garl_object_event_common_roi_screen_v4/manifest.json
+  cache_manifest_sha256: bba9ff9b143bfd57760bd61d2b6f664202581b5dee54444f44c625975557eb72
+  cache_artifact_sha256: 36c12d75c91a243f4d712831cebcd3e82f896a76196b2a65b039e680f1fac309
+  train_sequence_ids:
+    - 2cyv0Oedzg
+    - 5ilM1PX2vz
+    - 6h5yRW2LGc
+    - OBneIVg4Cw
+    - OYgB6RGWcq
+    - WbCh1DRerJ
+    - mHGFBekt7X
+    - qGsgzl4Q8B
+    - t79dBxj1WS
+  validation_sequence_ids: [DGqicHUGWb, pBqGOb2vYq, qoohcdtLDH]
+  opened_splits: [train, validation]
+  official_test_opened: false
+  codabench_opened: false
+  evttc_test_opened: false
+training:
+  seed: 7
+  epochs: 18
+  minimum_epochs: 8
+  early_stopping_patience: 5
+  foreground_warmup_epochs: 3
+  batch_size: 32
+  gradient_accumulation_steps: 1
+  learning_rate: 0.0003
+  minimum_learning_rate: 0.00003
+  weight_decay: 0.0001
+  grad_clip_norm: 1.0
+  num_workers: 0
+  precision: bf16
+  maximum_runtime_hours: 6.0
+  mask_t0_as_proxy: true
+loss:
+  log_ratio_nll_weight: 1.0
+  log_ratio_huber_weight: 0.0
+  log_ratio_tail_weight: 2.0
+  log_ratio_tail_fraction: 0.10
+  foreground_bce_weight: 1.0
+  foreground_dice_weight: 1.0
+  foreground_extent_weight: 5.0
+  foreground_pair_ratio_weight: 0.0
+  risk_weight: 0.1
+  auxiliary_inverse_ttc_weight: 0.05
+  residual_regularization_weight: 0.1
+  temporal_consistency_weight: 0.0
+  smooth_l1_beta: 0.02
+  supervise_pair_ratio_before_temporal_blend: true
+decision_contract:
+  checkpoint_selection: validation_sequence_macro_MiD_then_failure_rate
+  comparison_target: official_Garl_TTC_event_only_LHR_same_validation_tokens
+  representation_difference_is_disclosed: true
+  maximum_runtime_hours: 6.0
+  public_validation_does_not_authorize_sota_claim: true
+  private_test_remains_closed: true

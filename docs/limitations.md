@@ -1,8 +1,15 @@
 # Limitaciones
 
-Actualizado: 2026-08-09.
+Actualizado: 2026-08-10.
 
 - No existe un claim SOTA ni un checkpoint final promovido.
+- El screen causal-scale eAP está implementado pero no ejecutado completo. El único
+  MiD real nuevo (`345.18`) procede de 128 validation tras un epoch de throughput y
+  no es seleccionable.
+- La comparación Garl event-only en los mismos 2.048 tokens está pendiente.
+- El screen depende de ROI con cajas GT y weak-box supervision; no es bbox-free y
+  sus rectángulos no son máscaras de segmentación.
+- Resume atómico está implementado, pero falta prueba end-to-end de interrupción.
 - Causal Scale v5 aprende foreground en datos sintéticos y alcanza IoU `.8640`, pero
   el test held-out falló: Pearson `.92135 < .95` y translation leakage
   `.02749 > .02`. Seed 303 está consumida y no hay evidencia real.
@@ -10,6 +17,8 @@ Actualizado: 2026-08-09.
   pero Pearson `.92042` sigue bajo `.95`; test 603 permanece sellado.
 - V7 superó validation 502 pero falló held-out 603 en Pearson (`.92014 < .95`);
   seed 603 está consumida y no demuestra transferencia real o superioridad externa.
+- V8 CVaR mejora Pearson macro a `.94621`, pero sigue bajo `.95`; test 901/902/903
+  permanece sin abrir.
 - El gate de rotación v5 usa un cuadrado controlado; no demuestra invariancia a la
   rotación de objetos generales.
 - La propagación de incertidumbre v5 es una aproximación local y no es fiable cerca

@@ -1,5 +1,27 @@
 # Estado del repositorio
 
+## Addendum eAP causal-scale screen v1 (2026-08-10)
+
+V8 CVaR cerró como fallo sintético honesto (`.94621 < .95`) sin abrir test
+901/902/903. Por autorización explícita del usuario se implementó un screen separado
+eAP/Garl exclusivamente train/validation. Usa un cache firmado de 2.048/2.048 filas,
+9/3 secuencias disjuntas y los cuatro buckets TTC. El modelo recibe solo eventos
+`[3,12,128,128]` y delta temporal; las cajas t1/t2 son supervisión débil declarada,
+nunca inputs, y t0 proxy queda inválido.
+
+El trainer real está en `src/e_jepa_ttc/training/causal_scale_eap.py`, el runner en
+`scripts/train_causal_scale_eap_screen.py` y el protocolo congelado en
+`configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_v1.yaml`. Implementa
+CVaR, BF16, early stopping, límite 6 h y `best/last` resumibles por época. Un benchmark
+128+128 tardó 5,289 s y 395,6 MiB de VRAM; no es resultado eAP. Falta un test resume
+end-to-end y el entrenamiento completo.
+
+La comparación primaria será contra
+`E:\Garl-TTC\checkpoints\paper_event_only_lhr.pth` sobre exactamente los mismos
+2.048 tokens. Aún no existe resultado comparable, freeze, test oficial ni claim SOTA.
+El plan operativo completo está en `CODEX_HANDOFF.md` y
+`docs/causal_scale_eap_screen.md`.
+
 ## Addendum v7 (2026-08-10)
 
 V7 combines the v6 equivariant foreground with parameter-free causal transport of the

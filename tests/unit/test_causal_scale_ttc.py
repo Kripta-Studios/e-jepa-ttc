@@ -6,6 +6,7 @@ import math
 import pytest
 import torch
 
+from e_jepa_ttc.data.object_event_v4 import weak_box_masks
 from e_jepa_ttc.evaluation.causal_scale_v5 import (
     evaluate_operator_gates,
     synthetic_operator_metrics,
@@ -50,6 +51,23 @@ def _small_model() -> CausalScaleTTC:
             dropout=0.0,
         )
     )
+
+
+def test_weak_box_masks_are_half_open_and_can_reject_proxy_endpoint() -> None:
+    boxes = torch.tensor([[[1.0, 2.0, 4.0, 6.0], [0.0, 0.0, 2.0, 2.0]]])
+    endpoint_valid = torch.tensor([[False, True]])
+
+    masks, valid = weak_box_masks(
+        boxes,
+        height=8,
+        width=8,
+        endpoint_valid=endpoint_valid,
+    )
+
+    assert masks.shape == (1, 2, 1, 8, 8)
+    assert valid.tolist() == [[False, True]]
+    assert masks[0, 0].sum() == 0
+    assert masks[0, 1].sum() == 4
 
 
 def test_scale_identity_recovers_signed_ttc_and_invalid_post_contact() -> None:

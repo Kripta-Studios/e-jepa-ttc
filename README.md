@@ -4,9 +4,11 @@ Pipeline reproducible para estimar Time-to-Contact/Time-to-Collision a partir de
 cámaras de eventos, con una ruta event-only high-resolution y una futura ablación
 RGB-E multimodal.
 
-Estado: núcleo causal-scale v5 validado solo sobre foreground sintético ideal; la
-hipótesis científica todavía no está demostrada. No existe claim SOTA ni resultado
-oficial eAP/CodaBench. Consulta el
+Estado: Causal Scale V8 alcanza Pearson sintético multigrupo `.94621` con CVaR pero
+falla el gate `.95`; sus tests permanecen sellados. Está implementado, aún no
+ejecutado, un screen eAP/Garl train/validation de 2.048/2.048 muestras. La hipótesis
+científica todavía no está demostrada. No existe claim SOTA ni resultado oficial
+eAP/CodaBench. Consulta el
 [estado operativo](STATUS.md) antes de ejecutar experimentos largos.
 
 ## Qué produce
@@ -128,6 +130,31 @@ uv run --no-sync python scripts/evaluate_causal_scale_v5_operator.py --require-c
 ```
 
 Consulta [el contrato, resultado y siguiente gate](docs/causal_scale_v5.md).
+
+## Screen eAP/Garl causal-scale event-only
+
+El protocolo autorizado abre solo train/validation públicos y compara modalidades
+event-only sobre los mismos tokens. Config, trainer y runner:
+
+```text
+configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_v1.yaml
+src/e_jepa_ttc/training/causal_scale_eap.py
+scripts/train_causal_scale_eap_screen.py
+```
+
+```powershell
+uv run python scripts/train_causal_scale_eap_screen.py `
+  --config configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_v1.yaml `
+  --output-dir artifacts/runs/causal_scale_eap_screen_v1_seed7 `
+  --device cuda
+```
+
+Usa early stopping validation-only, CVaR top 10%, límite 6 h y checkpoints atómicos.
+Para reanudar se repite el comando con `--resume`. Las cajas oficiales son
+supervisión weak-box y crop oracle, nunca entrada del modelo. El run completo y la
+comparación oficial Garl event-only siguen pendientes. Véase
+[el protocolo del screen](docs/causal_scale_eap_screen.md) y
+[el handoff](CODEX_HANDOFF.md).
 
 ## Entrenamiento high-resolution histórico
 

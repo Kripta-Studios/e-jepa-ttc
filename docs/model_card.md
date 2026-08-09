@@ -1,6 +1,6 @@
 # Model card — E-JEPA-TTC
 
-Actualizado: 2026-08-09.
+Actualizado: 2026-08-10.
 
 ## Candidato v5
 
@@ -30,7 +30,13 @@ falla el gate `.95`; V7 queda no promovido.
 
 V8 evalúa consenso temporal fijo sobre logits de foreground con kernel simétrico
 `[w,1-2w,w]`. Es reversible, no aumenta parámetros y el endpoint actual solo usa el
-contexto disponible. Sigue siendo experimental; aún no tiene evidencia held-out.
+contexto disponible. CVaR top 10% mejora Pearson validation multigrupo a `.94621`,
+pero falla el gate `.95`; test 901/902/903 permanece sellado.
+
+La adaptación eAP/Garl causal-scale v1 está implementada para un cache público
+2.048/2.048 y aún no se ha entrenado completa. Las cajas t1/t2 son weak supervision
+del foreground, no inputs ni máscaras GT; t0 proxy se excluye. El baseline comparable
+será Garl oficial event-only sobre los mismos sample tokens.
 
 ## Estado
 
@@ -134,6 +140,13 @@ No usar para control de vehículos, decisiones de seguridad ni afirmaciones SOTA
 sin evaluación externa reproducida.
 
 ## Riesgos y limitaciones
+
+- El brazo causal-scale eAP aún no tiene un run completo: solo existe un benchmark
+  de throughput 128+128. MiD `345.18` tras un epoch parcial no es resultado.
+- Su ROI usa cajas oficiales y rasteriza cajas t1/t2 como supervisión débil. No es
+  bbox-free ni segmentation-supervised.
+- El comparador Garl event-only en los mismos 2.048 tokens aún no se ha ejecutado.
+- La reanudación persistente está implementada, pero falta test end-to-end.
 
 - el smoke high-resolution no aprende todavía una señal TTC competitiva;
 - el gate ideal v5 usa foreground analítico; el aprendizaje sintético posterior

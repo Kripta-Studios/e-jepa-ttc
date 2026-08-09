@@ -31,6 +31,24 @@ un screen exploratorio train/validation aunque el gate sintético siga fallido. 
 excepción no permite ajustar con test, ejecutar CodaBench/EvTTC test ni afirmar
 superioridad sobre Garl-TTC. Toda comparación debe usar el mismo split y presupuesto.
 
+### Protocolo congelado del screen eAP causal-scale v1
+
+- cache identity `36c12d75...f1fac309`, file SHA256 `bba9ff9b...557eb72`;
+- 2.048 train de 9 secuencias y 2.048 validation de 3 secuencias disjuntas;
+- seed 7, máximo 18 épocas, BF16, batch 32, máximo total 6 h;
+- warm-up foreground 3 épocas;
+- pérdida física NLL + CVaR top 10% peso 2;
+- checkpoint selection: MiD macro por secuencia, desempate failure rate;
+- early stopping no antes de época 8, paciencia 5;
+- cajas t1/t2 solo como weak supervision; t0 proxy inválido; ninguna caja entra al
+  forward;
+- Garl primario: checkpoint oficial event-only sobre los mismos 2.048 tokens;
+- test privado, CodaBench, EvTTC test y seeds V8 901/902/903 permanecen cerrados;
+- una seed/validation local nunca autoriza claim SOTA.
+
+La ejecución completa no se había iniciado al congelar este documento. El benchmark
+128+128 es solo throughput (`5.289 s`, `395.6 MiB`), no métrica científica.
+
 ## Pregunta
 
 ¿Un encoder event-only high-resolution con pretraining JEPA multihorizonte mejora

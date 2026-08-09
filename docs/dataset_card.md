@@ -1,6 +1,6 @@
 # Dataset card
 
-Actualizado: 2026-08-02.
+Actualizado: 2026-08-10.
 
 ## Inventario activo
 
@@ -56,6 +56,18 @@ son targets o metadata de auditoría; no entran al encoder.
 eAP público no proporciona un target TTC oficial independiente. Las cifras TTC del
 dataset Garl se usan únicamente en entrenamiento/validation supervisados declarados.
 No se reconstruye pseudo-TTC para sustituirlas.
+
+### Cache causal-scale screen v1
+
+`artifacts/cache/garl_object_event_common_roi_screen_v4/manifest.json` materializa
+4.096 filas balanceadas del split piloto: 2.048 train y 2.048 validation. El cache
+ocupa shards locales regenerables, no se sube a Git, y evita recorrer los ~691,5 GiB
+de eAP durante cada época. Usa 9 secuencias train y 3 validation sin intersección.
+
+Cada muestra contiene tres endpoints event-only, doce canales y ROI común 128×128.
+No contiene RGB ni máscaras. Las cajas están disponibles como metadata/supervisión;
+t0 es proxy en este cache y no se usa como target de foreground. Los targets TTC son
+los labels públicos oficiales Garl, no pseudo-labels.
 
 ## Contrato de almacenamiento
 
