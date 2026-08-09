@@ -5,6 +5,11 @@ from dataclasses import dataclass
 import torch
 from torch import nn
 
+from e_jepa_ttc.models.causal_scale_ttc import (
+    CausalScaleTTC,
+    CausalScaleTTCConfig,
+    CausalScaleTTCOutput,
+)
 from e_jepa_ttc.models.garl_ttc_replica import GarlTTCConfig, GarlTTCReplica
 from e_jepa_ttc.models.highres_factorized import (
     EJEPATubeletLHR,
@@ -268,6 +273,9 @@ def build_regressor(name: str, *, in_channels: int) -> nn.Module:
 
 __all__ = [
     "MODEL_NAMES",
+    "CausalScaleTTC",
+    "CausalScaleTTCConfig",
+    "CausalScaleTTCOutput",
     "DINOv3FeatureTeacher",
     "GarlTTCConfig",
     "GarlTTCReplica",
