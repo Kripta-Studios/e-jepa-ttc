@@ -179,7 +179,9 @@ def main() -> int:
     except Exception as error:
         parser.exit(2, f"causal-scale gate failed to execute: {error}\n")
     output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(json.dumps(payload, allow_nan=False, indent=2, sort_keys=True) + "\n")
+    serialized = json.dumps(payload, allow_nan=False, indent=2, sort_keys=True) + "\n"
+    # Write bytes so the scientific file hash is identical on Windows and POSIX.
+    output.write_bytes(serialized.encode("utf-8"))
     print(_canonical(payload))
     return 0 if payload["gates"]["passed"] else 1
 
