@@ -1,5 +1,22 @@
 # Progreso
 
+## 2026-08-09 — Gate held-out Causal Scale v5
+
+- publicado el protocolo exacto en `d9d20af` y ejecutado desde worktree detached limpio;
+- abierto test sintético seed 303 exactamente una vez (`test_evaluation_count=1`);
+- resultado `completed_gate_failed`: Pearson `.9213532 < .95` y translation p95
+  `.0274930 > .02`;
+- pasaron slope `.9691788`, sign `.9941860`, IoU `.8724040`, TTC simétrico
+  `.2592012`, cobertura `.7761628`, oddness, known y controles de vacío;
+- artefacto completo firmado:
+  `artifacts/metrics/causal_scale_v5_synthetic_learning_gate_v1.json`, identidad
+  `ce42fe957c4944a72bf38b5b134df7dfd0809ccc1c87b6cff6a749662093ea29`;
+- seed 303 queda consumida; no se ajustarán umbrales ni se repetirá v5 como evidencia;
+- eAP, EvTTC, RGB, Garl-TTC y CodaBench siguieron cerrados.
+
+Pendiente: v6 con nuevos grupos sintéticos predeclarados y operador de geometría
+explícitamente translation-equivariant; no abrir real-data antes de un nuevo pass.
+
 ## 2026-08-09 — Aprendizaje sintético Causal Scale v5
 
 - implementado dataset causal event-only con seeds disjuntas 101/202/303;
@@ -17,8 +34,8 @@
   `27053c853b93b1ff14ec32f4db79e4e216c6a5c3929f385998b549c1dee2fe80`;
 - no se abrió eAP, EvTTC, RGB, CodaBench ni ninguna etiqueta TTC real.
 
-Pendiente inmediato: commit/push del protocolo exacto, suite completa y una única
-ejecución clean-tree sobre test sintético. No existe autorización SOTA ni real-data.
+Ese test clean-tree se ejecutó después y falló; véase la sección superior. No existe
+autorización SOTA ni real-data.
 
 ## 2026-08-09 — Causal Scale v5
 

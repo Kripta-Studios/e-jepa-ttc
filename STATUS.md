@@ -20,10 +20,18 @@ sign `.9956896`, IoU `.8639824`, ratio MAE `.0190324`, TTC symmetric relative er
 `.0239874`, so it missed the frozen `.02` gate and is not promoted. Test seed 303,
 all real TTC data, RGB, eAP, EvTTC and CodaBench remained closed.
 
-Current authorization remains `synthetic_event_learning_gate_only`. The implementation
-is ready for a clean-tree, one-shot synthetic test after commit; only a complete pass
-may authorize design of a train-only eAP screen. No real TTC result, RGB arm,
-multimodal arm or benchmark improvement exists yet.
+The one-shot clean-tree test subsequently ran at published commit `d9d20af` and
+failed. Test Pearson was `.9213532` and translation leakage p95 `.0274930`; the
+frozen gates require `.95` and `.02`. Slope `.9691788`, sign `.9941860`, IoU
+`.8724040`, TTC symmetric relative error `.2592012`, 80% coverage `.7761628`, empty
+unknown `1.0` and empty false positives `0` passed. Artifact identity is
+`ce42fe957c4944a72bf38b5b134df7dfd0809ccc1c87b6cff6a749662093ea29`; serialized
+SHA256 is `ac26c1b2ad87c6c991decd46b8fd2e478cd87dcd926f49edd492bcdf3214c7e8`.
+
+V5 is therefore `completed_gate_failed`; seed 303 is consumed and must not be used
+for tuning or rerun as new evidence. eAP, EvTTC, RGB and CodaBench remain closed. The
+next version must preregister new synthetic group splits and improve cross-seed
+equivariance before any train-only real-data screen. No benchmark improvement exists.
 
 ## Addendum v4.31 (2026-08-09)
 

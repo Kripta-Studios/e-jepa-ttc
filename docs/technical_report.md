@@ -24,6 +24,13 @@ validation logra cobertura 80% `.7974`. El candidato aún falla translation leak
 `.02399 > .02`, por lo que no se promovió ni abrió test sintético o datos reales.
 Huber adicional y resize-conv quedan como ablations negativas.
 
+Tras publicar `d9d20af`, el full se ejecutó desde un worktree limpio y abrió seed 303
+una vez. El test obtuvo Pearson `.9213532` y translation `.0274930`, por lo que falló
+los límites `.95/.02`. Los restantes gates pasaron, incluido error TTC `.2592012`.
+El resultado completo firmado tiene identidad
+`ce42fe957c4944a72bf38b5b134df7dfd0809ccc1c87b6cff6a749662093ea29`. V5 queda
+cerrado como resultado negativo y no habilita eAP/EvTTC.
+
 ## 1. Resumen
 
 E-JEPA-TTC investiga TTC con eventos mediante tokens espaciales high-resolution y

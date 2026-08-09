@@ -4,8 +4,8 @@ Actualizado: 2026-08-09.
 
 - No existe un claim SOTA ni un checkpoint final promovido.
 - Causal Scale v5 aprende foreground en datos sintéticos y alcanza IoU `.8640`, pero
-  el mejor diagnóstico sigue no promovido: translation leakage `.02399` falla el
-  gate `.02`. El test sintético sigue cerrado y no hay evidencia real.
+  el test held-out falló: Pearson `.92135 < .95` y translation leakage
+  `.02749 > .02`. Seed 303 está consumida y no hay evidencia real.
 - El gate de rotación v5 usa un cuadrado controlado; no demuestra invariancia a la
   rotación de objetos generales.
 - La propagación de incertidumbre v5 es una aproximación local y no es fiable cerca

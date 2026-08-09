@@ -15,8 +15,9 @@ El artefacto sintético ideal-foreground
 `7945e99`. El aprendizaje sintético posterior tiene un checkpoint local seleccionado
 solo por validation: Pearson `.9560`, slope `.9686`, sign `.9957`, IoU `.8640` y
 TTC symmetric relative error `.2639`. No se promueve porque translation leakage
-`.02399` supera el gate `.02`; no existe ninguna métrica TTC real. El estado sigue
-siendo `synthetic_event_learning_gate_only`.
+`.02399` supera el gate `.02`. El test limpio posterior confirmó falta de
+generalización: Pearson `.92135` y translation `.02749`; estado
+`completed_gate_failed`. No existe ninguna métrica TTC real.
 
 ## Estado
 

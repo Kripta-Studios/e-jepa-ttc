@@ -11,6 +11,10 @@ test se abre una sola vez desde Git limpio después de congelar código, configu
 gates. Fallar cualquier gate mantiene cerrados todos los datos reales. Un pass solo
 autoriza diseñar un screen eAP train-only; no autoriza test, Garl-TTC ni claim SOTA.
 
+V5 consumió seed 303 una vez en `d9d20af` y falló correlación/traslación. Esa seed
+queda congelada para auditoría y no puede entrar en selección de v5 o sucesores. Un
+nuevo protocolo debe declarar grupos test nuevos antes de entrenar.
+
 ## Pregunta
 
 ¿Un encoder event-only high-resolution con pretraining JEPA multihorizonte mejora

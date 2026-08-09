@@ -103,8 +103,9 @@ secuencia como inputs. Su residual es antisimétrico y acotado; la cabeza TTC li
 solo auxiliar. El gate ideal-foreground versionado pasó. Nueve diagnósticos de
 aprendizaje train/validation llevaron el candidato a Pearson `.9560`, pendiente
 `.9686`, signo `.9957`, IoU `.8640` y error TTC simétrico `.2639`; sigue no promovido
-porque leakage de traslación `.02399` falla el gate `.02`. El test sintético y todos
-los datos reales permanecen cerrados hasta versionar la configuración exacta.
+porque leakage de traslación `.02399` falla el gate `.02`. El test sintético se abrió
+una vez desde el commit limpio `d9d20af` y confirmó el fallo: Pearson `.92135` y
+translation `.02749`. Todos los datos reales permanecen cerrados.
 
 ```powershell
 uv run --no-sync python scripts/evaluate_causal_scale_v5_operator.py --require-clean
@@ -161,7 +162,7 @@ eAP/CodaBench siguen pendientes.
 | high-res raw smoke 16/16 | MiD macro 1868,3186 | integración solamente |
 | Object Expansion v3 | usa casi exclusivamente motion | falsado como event-TTC |
 | Object Event v4 | v4.30 OOF negativo; v4.31 train-only estable pero no físicamente equivariante | no promocionado; full cerrado |
-| Causal Scale v5 | gate ideal aprobado; mejor validation aprendida Pearson .9560, translation .02399 (falla) | test sintético y real-data cerrados |
+| Causal Scale v5 | test sintético: Pearson .92135, translation .02749; gates fallidos | no promovido; real-data cerrado |
 
 El smoke high-resolution valida integración, no precisión. Los resultados v3
 muestran que la expansión firmada y la supervisión de ratio son útiles, pero

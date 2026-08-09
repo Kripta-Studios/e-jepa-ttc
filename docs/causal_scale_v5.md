@@ -116,12 +116,34 @@ The useful interventions were foreground extent supervision, a mask-only warm-up
 learned decoder, translation augmentation, cosine decay and validation-only scalar
 variance calibration. The direct TTC auxiliary remains isolated from primary output.
 
+## Held-out test result
+
+After commit `d9d20af` was pushed, the full protocol ran from a detached clean
+worktree and instantiated held-out seed 303 once. The signed artifact is
+`artifacts/metrics/causal_scale_v5_synthetic_learning_gate_v1.json` with identity
+`ce42fe957c4944a72bf38b5b134df7dfd0809ccc1c87b6cff6a749662093ea29`.
+
+| Metric | Test | Frozen gate | Result |
+|---|---:|---:|:---:|
+| Pearson | .9213532 | >= .95 | fail |
+| slope | .9691788 | .8–1.2 | pass |
+| sign accuracy | .9941860 | >= .95 | pass |
+| foreground IoU | .8724040 | >= .60 | pass |
+| TTC symmetric relative error | .2592012 | <= .30 | pass |
+| ratio 80% coverage | .7761628 | .60–.95 | pass |
+| oddness median / p95 | .0000344 / .0001537 | <= .05 / .10 | pass |
+| translation leakage p95 | .0274930 | <= .02 | fail |
+| empty unknown / false positive | 1.0 / 0 | >= 1.0 / <= .01 | pass |
+
+Status is `completed_gate_failed`. Thresholds were not changed. Seed 303 is consumed
+and cannot be reused for model choice or a second v5 claim. The local binary
+checkpoint remains ignored; its SHA256 is recorded in the signed summary.
+
 ## Authorization boundary and next gate
 
-The diagnostics authorize only committing and verifying the exact synthetic protocol.
-The full runner may then open held-out synthetic seed 303 once from a clean worktree.
-Promotion requires every frozen learning gate; a failure returns to synthetic
-architecture work without opening real data.
+The failed full gate authorizes no real-data screen. A successor must preregister new
+synthetic train/validation/test groups, increase causal scenario diversity and use an
+explicitly translation-equivariant geometry path. It must not tune against seed 303.
 
 Only after that learned event path passes may a versioned train-only eAP development
 screen be designed. RGB-only must then implement an independent exposure/blur
