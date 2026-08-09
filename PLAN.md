@@ -1,6 +1,26 @@
 # PLAN.md — Recuperación científica y ruta ejecutable hacia E-JEPA-TTC frente a Garl-TTC
 
-## Addendum v4.30 (2026-08-08)
+## Addendum v4.31 (2026-08-09)
+
+v4.30 is now an authoritative negative result, not a pending full run. SHA256
+`9722202A4D33F6B5D1B933EEDA1F9143E13E4E2FD64B21356E93783AFAA1C689`, status
+`completed_oof_gate_failed`; stabilization passed `.0010116798/.0423071422/.1308624286`.
+The rank-only winner `stable_multiscale_similarity` has no champion: best-arm
+Pearson `.4791568608`, negative accuracy `0`, balanced `.5`, std ratio
+`.3731916487`, slope `.1788173388`, high-bucket Pearson `-.1972577670`, ratios
+`.92439/.58893/.48926/.30467`; both arms failed and sealed data stayed closed.
+The target-free saved-NPZ post-hoc audit (not preregistered) found forward-vs-swap
+`log_eta` correlation `+.53338`, zero sign flips, and 95.8% coverage at
+`|log_eta| >= .005`.
+Next action after Sol's rethink is a TTC-label-free but train-box-conditioned
+common-object-ROI v4.31 redesign, never a new supervised model. Selection is
+independent of TTC/sign/buckets; train-only stabilization and audit pools are
+immutable and sequence/time-disjoint; retained artifacts are sanitized
+event/ROI-only; exact physical reversal controls remain mandatory. Development,
+test and EvTTC remain closed. The direct full-frame v4.31 draft was rejected
+before execution and is not evidence.
+
+## Superseded historical v4.30 preregistration (2026-08-08)
 
 La siguiente fase event-only es `stable_multiscale_similarity` frente a
 `stable_multiscale_similarity_normal_flow`. Antes de cualquier OOF debe superar
@@ -10,9 +30,11 @@ estabilización fallida u OOF fallido. Solo un `promoted_champion` de OOF comple
 activa automáticamente una vez el full-train de 10+12 epochs y una materialización
 de validation; el resultado final es `development_validation_completed_passed` o
 `development_validation_completed_failed`. Diagnostic es no seleccionable y no hay
-resultado OOF autoritativo v4.30 todavía. eAP oficial y EvTTC permanecen cerrados siempre.
+resultado OOF autoritativo v4.30 todavía. This is superseded preregistration
+wording; v4.30 subsequently completed with the negative result above. eAP oficial
+y EvTTC permanecen cerrados siempre.
 
-Ejecución no seleccionable actual: el diagnóstico post-fix de 96 filas escribió
+Ejecución histórica no seleccionable: el diagnóstico post-fix de 96 filas escribió
 `artifacts/debug/object_event_v4_30_diagnostic/summary.json` (SHA256
 `CF9EC7D67EB421AA86304ABD4AB4582F6865CCEABD8D29F5CD7EC4EADBA06BD3`) con
 status `diagnostic_only`. JS median `.010237284936010838` pasó; JS p95
@@ -24,16 +46,16 @@ flags sellados son false. No selecciona brazo ni relaja gates.
 El SHA `D9DE07…` es solo historia explícitamente superseded, anterior a los cuatro
 arreglos: schema real de alturas t1/t2, gate firmado de anti-correlación endpoint,
 un único centro multiescala ponderado por soporte en píxeles base y semilla RNG
-efectiva veraz. `artifacts/debug/object_event_v4_30_stable_similarity` está vacío:
-no existe summary OOF autoritario de 2.048 filas; el run interrumpido no es evidencia.
+efectiva veraz. At the time of this superseded diagnostic, the v4.30 full
+directory was empty; this does not describe the completed authoritative summary.
 
 Verificación actual: targeted v4.30 `30/30`; Pytest completo 100% pass con 7
 skipped y warnings heredados UTF-8/PyTorch; Ruff focalizado limpio; Pyright 0.
 No se declara Ruff global limpio: conserva 872 hallazgos heredados.
 
-La siguiente decisión sigue siendo estabilización completa autoritativa de 2.048
-filas con los gates fijados. Si falla, v4.30 queda falsado: el siguiente candidato
-es una auditoría train-only y target-free de desacuerdo espectral, no relajar gates.
+The historical planned fixed full run has completed and v4.30 failed its frozen
+OOF gates. The replacement is the box-conditioned TTC-label-free v4.31 redesign
+stated above, not relaxed gates or a direct full-frame audit.
 SPAE solo motiva esa auditoría y un bottleneck compacto/estructurado por canal si
 localiza la cola JS/displacement; INTACT-JEPA queda como ablation posterior, no
 como arreglo directo de la inestabilidad actual.
@@ -211,8 +233,8 @@ dataset.
 
 Referencias primarias:
 
-- Garl-TTC/eAP: https://arxiv.org/abs/2603.16303
-- release oficial: https://github.com/NAIL-HNU/Garl-TTC
+- eAP paper/dataset: https://arxiv.org/abs/2603.16303
+- Garl-TTC release oficial: https://github.com/NAIL-HNU/Garl-TTC
 - JEPADepth: https://arxiv.org/abs/2607.26600
 - Patch Policy: https://arxiv.org/abs/2607.18236
 - INTACT: https://arxiv.org/abs/2607.26056

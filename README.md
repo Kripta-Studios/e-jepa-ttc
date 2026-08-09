@@ -135,7 +135,7 @@ eAP/CodaBench siguen pendientes.
 | bbox-ROI / AttnRes / KDA | regresión o gate fallido | rechazados |
 | high-res raw smoke 16/16 | MiD macro 1868,3186 | integración solamente |
 | Object Expansion v3 | usa casi exclusivamente motion | falsado como event-TTC |
-| Object Event v4 | pendiente de screen | candidato condicionado por gates |
+| Object Event v4 | v4.30 autoritativo negativo: gates OOF fallidos; v4.31 en rediseño no ejecutable | no promocionado; rediseño TTC-label-free box-conditioned |
 
 El smoke high-resolution valida integración, no precisión. Los resultados v3
 muestran que la expansión firmada y la supervisión de ratio son útiles, pero
@@ -187,9 +187,13 @@ se pueden regenerar. No deben subirse a Git.
 
 ## Documentación
 
-### v4.30 executable protocol
+### v4.30 authoritative negative result and v4.31 next action
 
-`powershell -ExecutionPolicy Bypass -File scripts/run_object_event_v4_30_stable_similarity.ps1 -Device cuda` is the complete v4.30 command. The current 96-row post-fix train-only diagnostic is `diagnostic_only`: JS median `.010237284936010838` passed; JS p95 `.19495552778244019` and BASE-pixel displacement p95 `.5500071191315064` failed. It wrote `artifacts/debug/object_event_v4_30_diagnostic/summary.json` (SHA256 `CF9EC7D67EB421AA86304ABD4AB4582F6865CCEABD8D29F5CD7EC4EADBA06BD3`), with 9/9 decreasing KL histories and a 96-row/36-batch/one-build teacher cache in `4.1370828000363` s; rank/champion are null and all sealed flags remain false. The earlier `D9DE07…` diagnostic is superseded. `artifacts/debug/object_event_v4_30_stable_similarity` is empty: no authoritative 2,048-row OOF summary exists, and the interrupted run is not evidence. The four fixed blockers are the real t1/t2 height schema, signed endpoint anti-correlation gate, one support-weighted multiscale centre in base pixels, and truthful effective RNG seed. Verification: targeted 30/30, full Pytest 100% pass with 7 skipped and inherited UTF-8/PyTorch warnings, focused Ruff clean, Pyright 0; global Ruff still has 872 inherited findings. This diagnostic is nonselectable: only fixed-gate full 2,048-row stabilization is authoritative.
+The authoritative full v4.30 SHA256 is `9722202A4D33F6B5D1B933EEDA1F9143E13E4E2FD64B21356E93783AFAA1C689`, status `completed_oof_gate_failed`. Stabilization passed `.0010116798/.0423071422/.1308624286`; rank-only winner `stable_multiscale_similarity` has no champion. Its best-arm Pearson `.4791568608`, negative accuracy `0`, balanced `.5`, std ratio `.3731916487`, slope `.1788173388`, high-bucket Pearson `-.1972577670`, and ratios `.92439/.58893/.48926/.30467` failed the frozen objective; both arms failed with no sealed data opened. The target-free saved-NPZ post-hoc audit (not preregistered) found forward-vs-swap `log_eta` correlation `+.53338`, zero sign flips, and 95.8% coverage at `|log_eta| >= .005`. The next action after Sol's rethink is a TTC-label-free but train-box-conditioned common-object-ROI v4.31 redesign: TTC/sign/bucket-independent selection, immutable sequence/time-disjoint train-only stabilization/audit pools, sanitized event/ROI-only artifacts, exact physical reversal controls, and no development/test/EvTTC. The direct full-frame v4.31 draft was rejected before execution and is not evidence.
+
+### Superseded historical v4.30 executable protocol
+
+The following is superseded diagnostic history, not current v4.30 state. A 96-row post-fix train-only diagnostic was `diagnostic_only`: JS median `.010237284936010838` passed; JS p95 `.19495552778244019` and BASE-pixel displacement p95 `.5500071191315064` failed. The earlier `D9DE07…` diagnostic is superseded. The authoritative completed v4.30 summary is the SHA and negative result stated above; historical diagnostics cannot modify it.
 
 - [plan de ejecución](PLAN.md)
 - [estado actual](STATUS.md)

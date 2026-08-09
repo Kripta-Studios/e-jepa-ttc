@@ -1,16 +1,36 @@
 # Estado del repositorio
 
-## Addendum v4.30 (2026-08-08)
+## Addendum v4.31 (2026-08-09)
+
+The v4.30 full result is authoritative and negative: SHA256
+`9722202A4D33F6B5D1B933EEDA1F9143E13E4E2FD64B21356E93783AFAA1C689`, status
+`completed_oof_gate_failed`. Stabilization passed `.0010116798/.0423071422/.1308624286`.
+`stable_multiscale_similarity` is only the rank winner; champion is null. Best-arm
+Pearson `.4791568608`, negative accuracy `0`, balanced `.5`, std ratio `.3731916487`,
+slope `.1788173388`, high-bucket Pearson `-.1972577670`, magnitude ratios
+`.92439/.58893/.48926/.30467`; both arms failed and no sealed data opened. The
+target-free saved-NPZ post-hoc audit (not preregistered) found forward-vs-swap
+`log_eta` correlation `+.53338`, zero sign flips, and 95.8% coverage at
+`|log_eta| >= .005`. The
+next action after Sol's rethink is a TTC-label-free but train-box-conditioned
+common-object-ROI v4.31 redesign, not supervised retraining. Selection is
+independent of TTC/sign/buckets; train-only stabilization and audit pools are
+immutable and sequence/time-disjoint; retained artifacts are sanitized
+event/ROI-only; exact physical reversal controls remain mandatory. Development,
+test and EvTTC remain closed. The direct full-frame v4.31 draft was rejected
+before execution and is not evidence.
+
+## Superseded historical v4.30 preregistration (2026-08-08)
 
 La implementación v4.30 queda preregistrada y ejecuta como un único comando el
 OOF agrupado y, solo tras una promoción genuina, full-train seguido de una única
-development validation. No hay resultado OOF autoritativo, champion ni apertura de datos
-sellados. Diagnóstico, fallo de estabilización u OOF fallido no pueden leer los
+development validation. The no-authoritative wording in this historical section
+is superseded by the completed v4.30 negative result above. Diagnóstico, fallo de estabilización u OOF fallido no pueden leer los
 inputs development; el estado es no seleccionable. eAP oficial y EvTTC no se
 abren automáticamente, incluso tras development passed.
 
-El diagnóstico train-only v4.30 actual es no seleccionable: no existe resultado
-OOF autoritativo de 2.048 filas, champion ni development validation. Diagnóstico,
+El diagnóstico train-only v4.30 de esta historia era no seleccionable; no es el
+resultado actual. Diagnóstico,
 fallo de estabilización u OOF fallido no pueden leer inputs development; eAP
 oficial y EvTTC no se abren automáticamente.
 
@@ -27,7 +47,7 @@ Historial operativo y evidencia no seleccionable:
 - El 96 filas previo (51,7 s; SHA256
   `1A607311C140D7E8A063F139C1FFDCCF826A19D99CBD2BDFF3E6B74815F73C10`) sigue
   inválido/superseded para displacement por offsets infraescalados.
-- El diagnóstico post-fix actual de 96 filas tiene status `diagnostic_only` y
+- El diagnóstico post-fix histórico de 96 filas tuvo status `diagnostic_only` y
   resumen `artifacts/debug/object_event_v4_30_diagnostic/summary.json`, SHA256
   `CF9EC7D67EB421AA86304ABD4AB4582F6865CCEABD8D29F5CD7EC4EADBA06BD3`. JS median
   `.010237284936010838` pasó; JS p95 `.19495552778244019` falló; displacement p95
@@ -37,20 +57,21 @@ Historial operativo y evidencia no seleccionable:
 - El SHA `D9DE07…` es el diagnóstico pre-fix superseded, no evidencia actual.
   Los cuatro blockers corregidos son schema real t1/t2, endpoint firmado,
   centro multiescala único ponderado por soporte en píxeles base y `effective_seed`
-  veraz. `artifacts/debug/object_event_v4_30_stable_similarity` está vacío; no
-  existe summary OOF de 2.048 filas y el run interrumpido no es evidencia.
+  veraz. At that historical point the directory was empty; this is superseded by
+  the completed authoritative summary SHA recorded above.
 
-Los diagnósticos no pueden debilitar ni satisfacer gates. La siguiente decisión
-es estabilización completa autoritativa de 2.048 filas: solo si sus gates fijos
-de JS median/p95 y displacement pasan se ejecutan brazos OOF; si no, se registra
-el fallo sin relajar umbrales.
+Los diagnósticos no pueden debilitar ni satisfacer gates. El siguiente texto es
+plan histórico ya resuelto: la estabilización/OOF autoritativa v4.30 se completó,
+falló sus gates congelados y no autoriza más ejecución v4.30. La acción vigente
+es el rediseño v4.31 box-conditioned y TTC-label-free descrito al inicio.
 
 Verificación actual: targeted v4.30 `30/30`; Pytest completo 100% pass, 7 skipped
 y warnings heredados UTF-8/PyTorch; Ruff focalizado limpio; Pyright 0. Ruff global
 no está limpio: tiene 872 hallazgos heredados.
 
-Decisión de investigación: si el full fijo falla, v4.30 queda falsado y sigue una
-auditoría target-free/train-only de desacuerdo espectral, no gates relajados. SPAE
+Decisión histórica ya resuelta: v4.30 failed its frozen OOF gates. The replacement
+is the box-conditioned TTC-label-free v4.31 redesign stated above, not a direct
+full-frame audit or relaxed gates. SPAE
 solo justifica un bottleneck compacto/canal-estructurado si esa auditoría localiza
 la cola; INTACT-JEPA queda para una ablation posterior con gramática física común,
 likelihood y gradientes asimétricos, no como parche del matcher actual.
