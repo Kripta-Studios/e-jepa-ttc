@@ -53,6 +53,39 @@ def _git(*arguments: str) -> str:
     return result.stdout.strip()
 
 
+def _classify_worktree_status(status: list[str]) -> dict[str, object]:
+    """Classify porcelain lines without treating unrelated root artifacts as code."""
+
+    tracked_dirty = any(not line.startswith("?? ") for line in status)
+    untracked = [line[3:] for line in status if line.startswith("?? ")]
+    protected_roots = (
+        "configs/",
+        "data/splits/",
+        "scripts/",
+        "src/",
+        "tests/",
+    )
+    untracked_code = [path for path in untracked if path.startswith(protected_roots)]
+    return {
+        "tracked_dirty": tracked_dirty,
+        "untracked_file_count": len(untracked),
+        "untracked_code_paths": untracked_code,
+    }
+
+
+def _worktree_state() -> dict[str, object]:
+    """Return the classified current Git worktree state."""
+
+    status = _git(
+        "-c",
+        "core.quotepath=false",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all",
+    ).splitlines()
+    return _classify_worktree_status(status)
+
+
 def _model_config(path: Path) -> CausalScaleTTCConfig:
     raw = yaml.safe_load(path.read_text(encoding="utf-8"))
     if not isinstance(raw, dict) or raw.pop("model", None) != "e_jepa_causal_scale_event_v5":
@@ -67,9 +100,10 @@ def _model_config(path: Path) -> CausalScaleTTCConfig:
 def run(config_path: Path, *, require_clean: bool) -> dict[str, Any]:
     """Execute the gate without reading any dataset or TTC annotation."""
 
-    dirty = bool(_git("status", "--porcelain"))
-    if require_clean and dirty:
-        raise RuntimeError("--require-clean refuses a dirty worktree")
+    worktree = _worktree_state()
+    code_dirty = bool(worktree["tracked_dirty"] or worktree["untracked_code_paths"])
+    if require_clean and code_dirty:
+        raise RuntimeError("--require-clean refuses tracked or untracked code changes")
     raw = yaml.safe_load(config_path.read_text(encoding="utf-8"))
     if not isinstance(raw, dict):
         raise ValueError("experiment config must be a mapping")
@@ -102,7 +136,8 @@ def run(config_path: Path, *, require_clean: bool) -> dict[str, Any]:
         "garl_ttc_comparison_performed": False,
         "sota_claim_authorized": False,
         "git_commit": _git("rev-parse", "HEAD"),
-        "git_dirty": dirty,
+        "git_dirty": code_dirty,
+        "worktree": worktree,
         "seed": seed,
         "config": {
             "path": config_path.relative_to(ROOT).as_posix(),
@@ -128,7 +163,11 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
-    parser.add_argument("--require-clean", action="store_true")
+    parser.add_argument(
+        "--require-clean",
+        action="store_true",
+        help="reject tracked changes and untracked files under code/config/test roots",
+    )
     parser.add_argument("--force", action="store_true")
     args = parser.parse_args()
     config = args.config.resolve()

@@ -18,6 +18,7 @@ from e_jepa_ttc.models.causal_scale_ttc import (
     soft_vertical_extent_from_logits,
     target_log_ratio_from_ttc,
 )
+from scripts.evaluate_causal_scale_v5_operator import _classify_worktree_status
 
 
 def _rectangle_logits(
@@ -169,3 +170,16 @@ def test_synthetic_operator_gate_fails_closed_on_missing_metric() -> None:
         "finite": False,
         "passed": False,
     }
+
+
+def test_clean_gate_ignores_root_handoffs_but_rejects_untracked_code() -> None:
+    root_only = _classify_worktree_status(["?? historical.patch", "?? results.zip"])
+    assert root_only == {
+        "tracked_dirty": False,
+        "untracked_file_count": 2,
+        "untracked_code_paths": [],
+    }
+    code = _classify_worktree_status(["?? src/e_jepa_ttc/new_model.py"])
+    assert code["untracked_code_paths"] == ["src/e_jepa_ttc/new_model.py"]
+    tracked = _classify_worktree_status([" M README.md"])
+    assert tracked["tracked_dirty"] is True
