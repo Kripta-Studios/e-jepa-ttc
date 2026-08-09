@@ -197,13 +197,14 @@ def run(
     stage: str,
     device_name: str,
     model_config_path: Path | None = None,
+    loss_override_path: Path | None = None,
 ) -> dict[str, Any]:
     """Train on train/validation and open the synthetic test group only in full stage."""
 
     if stage not in {"diagnostic", "full"}:
         raise ValueError("stage must be diagnostic or full")
-    if stage == "full" and model_config_path is not None:
-        raise ValueError("full synthetic gate forbids model overrides; freeze it in YAML")
+    if stage == "full" and (model_config_path is not None or loss_override_path is not None):
+        raise ValueError("full synthetic gate forbids overrides; freeze them in YAML")
     raw = yaml.safe_load(config_path.read_text(encoding="utf-8"))
     if not isinstance(raw, dict):
         raise ValueError("experiment config must be a mapping")
@@ -235,7 +236,16 @@ def run(
     if not isinstance(training_raw, dict) or not isinstance(loss_raw, dict):
         raise ValueError("training and loss configs must be mappings")
     training_config = CausalScaleSyntheticTrainingConfig(**training_raw)
-    loss_config = CausalScaleTTCLossConfig(**loss_raw)
+    effective_loss_raw = dict(loss_raw)
+    if loss_override_path is not None:
+        loss_override = yaml.safe_load(loss_override_path.read_text(encoding="utf-8"))
+        if not isinstance(loss_override, dict):
+            raise ValueError("loss override must be a mapping")
+        unknown = set(loss_override) - set(CausalScaleTTCLossConfig.__dataclass_fields__)
+        if unknown:
+            raise ValueError(f"loss override has unknown fields: {sorted(unknown)}")
+        effective_loss_raw.update(loss_override)
+    loss_config = CausalScaleTTCLossConfig(**effective_loss_raw)
     train_configs = _dataset_configs(raw, "train")
     validation_configs = _dataset_configs(raw, "validation")
     train_seeds = {config.seed for config in train_configs.values()}
@@ -368,6 +378,15 @@ def run(
             "data_access": raw["data"],
             "training_config": training_raw,
             "loss_config": loss_raw,
+            "effective_loss_config": effective_loss_raw,
+            "loss_override": (
+                {
+                    "path": loss_override_path.relative_to(ROOT).as_posix(),
+                    "sha256": _sha256(loss_override_path),
+                }
+                if loss_override_path is not None
+                else None
+            ),
             "selection": {
                 "split": "validation",
                 "best_epoch": result.best_epoch,
@@ -408,6 +427,11 @@ def main() -> int:
         type=Path,
         help="Validation-only architecture override recorded by exact path and hash.",
     )
+    parser.add_argument(
+        "--loss-override",
+        type=Path,
+        help="Validation-only loss overrides recorded by exact path and hash.",
+    )
     args = parser.parse_args()
     try:
         payload = run(
@@ -416,6 +440,7 @@ def main() -> int:
             stage=args.stage,
             device_name=args.device,
             model_config_path=args.model_config.resolve() if args.model_config else None,
+            loss_override_path=args.loss_override.resolve() if args.loss_override else None,
         )
     except Exception as error:
         parser.exit(2, f"synthetic causal-scale run failed: {type(error).__name__}: {error}\n")

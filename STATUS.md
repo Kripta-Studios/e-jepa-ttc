@@ -29,6 +29,11 @@ macro Pearson `.80631`, with groups 801/802/803 at `.64269/.89168/.88458`. Macro
 `.96612` on group 801, isolating rare endpoint-mask catastrophes. Parameter-free,
 reversal-equivariant temporal logit consensus arms `.10/.15` are next; test stays closed.
 
+Those arms improve macro Pearson to `.93388/.93804`; `.15` has balanced group
+Pearson `.94338/.93594/.93479` but TTC `.30191` narrowly fails. A frozen 10%-tail
+CVaR arm is the final synthetic ablation. The user explicitly authorized a separate
+eAP train/validation exploratory screen; official test/CodaBench/EvTTC remain closed.
+
 ## Addendum v6 (2026-08-10)
 
 V6 preregisters new synthetic groups 401/502/603 and does not reuse consumed v5 test

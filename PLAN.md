@@ -22,6 +22,12 @@ endpoint-mask failures dominate: group 801 becomes `.96612` only in a nonselecta
 on the same train/validation groups, compare every group without test, then either
 freeze one exact arm or close V8. Do not use trimmed metrics as a promotion gate.
 
+Temporal consensus reaches macro `.93388/.93804` for `.10/.15`; neither passes and
+`.15` also misses TTC by `.00191`. Run one preregistered 10%-tail CVaR arm. In
+parallel sequence after it, inventory existing eAP and design an explicitly
+exploratory train/validation-only event screen authorized by the user; keep every
+official test and SOTA claim closed.
+
 ## Addendum v6 equivariant foreground (2026-08-10)
 
 V6 uses new groups 401/502/603 and keeps test 603 sealed. Its selected separable,

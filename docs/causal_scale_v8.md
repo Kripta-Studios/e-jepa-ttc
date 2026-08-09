@@ -64,3 +64,12 @@ pesos `.10` y `.15`. El operador usa padding de borde y kernel
 `[w, 1-2w, w]`; por ello es equivariante a reversión temporal, no usa eventos
 posteriores al contexto actual y no añade parámetros. Sus resultados aún están
 pendientes y los tests 901–903 continúan sellados.
+
+Los brazos entrenados obtienen Pearson macro `.9338758` (`w=.10`) y `.9380405`
+(`w=.15`). El segundo equilibra los grupos en `.94338/.93594/.93479`, pero TTC
+`.3019122` falla por `.0019122`; ninguno se promueve. Como última ablation sintética
+se congela CVaR sobre el 10% de mayor error de ratio, peso `2.0`, junto a `w=.15`.
+
+Por autorización explícita del usuario, el fallo sintético ya no impide un screen
+exploratorio eAP train/validation. No autoriza eAP test, CodaBench, EvTTC test ni un
+claim frente a Garl-TTC. El resultado sintético permanece fallido y visible.

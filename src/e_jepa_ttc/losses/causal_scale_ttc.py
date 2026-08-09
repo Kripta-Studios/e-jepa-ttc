@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 
 import torch
@@ -20,6 +21,8 @@ class CausalScaleTTCLossConfig:
 
     log_ratio_nll_weight: float = 1.0
     log_ratio_huber_weight: float = 1.0
+    log_ratio_tail_weight: float = 0.0
+    log_ratio_tail_fraction: float = 0.1
     foreground_bce_weight: float = 1.0
     foreground_dice_weight: float = 0.5
     foreground_extent_weight: float = 1.0
@@ -35,6 +38,7 @@ class CausalScaleTTCLossConfig:
         weights = (
             self.log_ratio_nll_weight,
             self.log_ratio_huber_weight,
+            self.log_ratio_tail_weight,
             self.foreground_bce_weight,
             self.foreground_dice_weight,
             self.foreground_extent_weight,
@@ -48,6 +52,8 @@ class CausalScaleTTCLossConfig:
             raise ValueError("causal-scale loss weights must be non-negative")
         if self.smooth_l1_beta <= 0.0:
             raise ValueError("smooth_l1_beta must be positive")
+        if not 0.0 < self.log_ratio_tail_fraction <= 1.0:
+            raise ValueError("log_ratio_tail_fraction must lie in (0,1]")
 
 
 @dataclass
@@ -202,9 +208,19 @@ def causal_scale_ttc_loss(
             target_ratio[physical_valid],
             beta=cfg.smooth_l1_beta,
         )
+        per_sample_tail = functional.smooth_l1_loss(
+            ratio_prediction[physical_valid],
+            target_ratio[physical_valid],
+            beta=cfg.smooth_l1_beta,
+            reduction="none",
+        )
+        tail_count = max(1, math.ceil(cfg.log_ratio_tail_fraction * valid_count))
+        ratio_tail = torch.topk(per_sample_tail, k=tail_count).values.mean()
     else:
         ratio_nll = _zero(output.log_height_ratio)
         ratio_huber = _zero(output.log_height_ratio)
+        ratio_tail = _zero(output.log_height_ratio)
+        tail_count = 0
 
     finite_ttc = torch.isfinite(target_ttc_seconds) & (target_ttc_seconds.abs() > 1.0e-8)
     if target_valid is not None:
@@ -268,6 +284,7 @@ def causal_scale_ttc_loss(
     components = {
         "log_ratio_nll": ratio_nll,
         "log_ratio_huber": ratio_huber,
+        "log_ratio_tail": ratio_tail,
         "foreground_bce": foreground_bce,
         "foreground_dice": foreground_dice,
         "foreground_extent": foreground_extent,
@@ -280,6 +297,7 @@ def causal_scale_ttc_loss(
     total = (
         cfg.log_ratio_nll_weight * ratio_nll
         + cfg.log_ratio_huber_weight * ratio_huber
+        + cfg.log_ratio_tail_weight * ratio_tail
         + cfg.foreground_bce_weight * foreground_bce
         + cfg.foreground_dice_weight * foreground_dice
         + cfg.foreground_extent_weight * foreground_extent
@@ -294,6 +312,7 @@ def causal_scale_ttc_loss(
         components=components,
         counts={
             "physical_ratio": valid_count,
+            "physical_ratio_tail": tail_count,
             "supervised_ttc": supervised_count,
             "foreground": foreground_count,
             "foreground_extent": foreground_extent_count,

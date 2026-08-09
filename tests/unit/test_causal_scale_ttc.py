@@ -10,7 +10,10 @@ from e_jepa_ttc.evaluation.causal_scale_v5 import (
     evaluate_operator_gates,
     synthetic_operator_metrics,
 )
-from e_jepa_ttc.losses.causal_scale_ttc import causal_scale_ttc_loss
+from e_jepa_ttc.losses.causal_scale_ttc import (
+    CausalScaleTTCLossConfig,
+    causal_scale_ttc_loss,
+)
 from e_jepa_ttc.models.causal_scale_ttc import (
     CausalScaleTTC,
     CausalScaleTTCConfig,
@@ -135,6 +138,7 @@ def test_causal_scale_loss_is_finite_and_reaches_foreground_and_auxiliary_heads(
     )
     assert torch.isfinite(result.total)
     assert result.counts["physical_ratio"] == 2
+    assert result.counts["physical_ratio_tail"] == 1
     assert result.counts["supervised_ttc"] == 2
     assert result.counts["foreground"] == 6
     assert result.counts["temporal_consistency"] in {0, 2}
@@ -143,6 +147,27 @@ def test_causal_scale_loss_is_finite_and_reaches_foreground_and_auxiliary_heads(
     auxiliary = model.auxiliary_inverse_ttc_head[-1]
     assert isinstance(auxiliary, torch.nn.Linear)
     assert auxiliary.weight.grad is not None
+
+
+def test_ratio_tail_loss_targets_the_worst_configured_fraction() -> None:
+    model = _small_model().eval()
+    inputs = torch.randn(10, 3, 2, 32, 32)
+    delta = torch.full((10, 2), 0.1)
+    output = model(inputs, delta)
+
+    result = causal_scale_ttc_loss(
+        output,
+        target_ttc_seconds=torch.linspace(0.8, 2.0, 10),
+        delta_t_s=delta,
+        risk_thresholds_s=model.config.risk_thresholds_s,
+        config=CausalScaleTTCLossConfig(
+            log_ratio_tail_weight=1.0,
+            log_ratio_tail_fraction=0.2,
+        ),
+    )
+
+    assert result.counts["physical_ratio_tail"] == 2
+    assert torch.isfinite(result.components["log_ratio_tail"])
 
 
 def test_configuration_rejects_unsorted_risk_thresholds() -> None:

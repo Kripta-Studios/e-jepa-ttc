@@ -26,6 +26,11 @@ V8 satisface ese requisito con train 701/702/703, validation 801/802/803 y test
 y peor grupo, y exige pass individual de todos los tests. Los grupos test no se
 instancian durante `diagnostic`.
 
+Tras los diagnósticos `.10/.15`, el usuario autorizó abrir eAP exclusivamente para
+un screen exploratorio train/validation aunque el gate sintético siga fallido. Esta
+excepción no permite ajustar con test, ejecutar CodaBench/EvTTC test ni afirmar
+superioridad sobre Garl-TTC. Toda comparación debe usar el mismo split y presupuesto.
+
 ## Pregunta
 
 ¿Un encoder event-only high-resolution con pretraining JEPA multihorizonte mejora
