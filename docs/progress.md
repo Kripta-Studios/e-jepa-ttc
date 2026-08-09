@@ -28,6 +28,10 @@ El diagnóstico base seleccionó epoch 16: Pearson macro `.80631` y por grupo
 Los mayores errores proceden de endpoints aislados con foreground inestable; se
 implementó consenso temporal simétrico `.10/.15` para entrenar dos brazos controlados.
 
+CVaR 10% con `w=.15` seleccionó epoch 32: Pearson macro `.94621`, grupos
+`.94812/.94567/.94486`, TTC `.29547`. Es el mejor V8 pero no pasa; test sintético no
+se abrió. Se inicia diseño eAP train/validation limitado a menos de seis horas.
+
 ## 2026-08-10 — Foreground equivariante Causal Scale v6
 
 - preregistrados grupos nuevos 401/502/603; no se reutilizó test v5 seed 303;

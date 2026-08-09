@@ -70,6 +70,12 @@ Los brazos entrenados obtienen Pearson macro `.9338758` (`w=.10`) y `.9380405`
 `.3019122` falla por `.0019122`; ninguno se promueve. Como última ablation sintética
 se congela CVaR sobre el 10% de mayor error de ratio, peso `2.0`, junto a `w=.15`.
 
+CVaR selecciona epoch 32 y mejora Pearson macro a `.9462126`, score a `.3867027` y
+TTC macro a `.2954736`. Pearson por grupo es `.94812/.94567/.94486`; todos quedan
+ligeramente bajo `.95`, y TTC 801 queda `.30185`. V8 se cierra sin abrir 901–903.
+La comparación firmada tiene identidad
+`71bb1d8299141180ff964154e3440b971014e50953e174b9fb489ba9bbe1ef79`.
+
 Por autorización explícita del usuario, el fallo sintético ya no impide un screen
 exploratorio eAP train/validation. No autoriza eAP test, CodaBench, EvTTC test ni un
 claim frente a Garl-TTC. El resultado sintético permanece fallido y visible.

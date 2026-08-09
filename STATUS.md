@@ -34,6 +34,10 @@ Pearson `.94338/.93594/.93479` but TTC `.30191` narrowly fails. A frozen 10%-tai
 CVaR arm is the final synthetic ablation. The user explicitly authorized a separate
 eAP train/validation exploratory screen; official test/CodaBench/EvTTC remain closed.
 
+CVaR is the selected V8 arm: macro Pearson `.94621`, score `.38670`, TTC `.29547`;
+group Pearson `.94812/.94567/.94486`. It remains a gate failure and tests 901–903
+were never opened. Signed comparison identity: `71bb1d8299141180ff964154e3440b971014e50953e174b9fb489ba9bbe1ef79`.
+
 ## Addendum v6 (2026-08-10)
 
 V6 preregisters new synthetic groups 401/502/603 and does not reuse consumed v5 test

@@ -28,6 +28,11 @@ parallel sequence after it, inventory existing eAP and design an explicitly
 exploratory train/validation-only event screen authorized by the user; keep every
 official test and SOTA claim closed.
 
+CVaR reaches macro Pearson `.94621` but every group remains just below `.95`; close
+V8 without synthetic test. Proceed to the user-authorized eAP train/validation
+screen, capped below six hours, using the audited official event-only Garl checkpoint
+on the identical subset. Preserve RGB+event Garl as a separate modality reference.
+
 ## Addendum v6 equivariant foreground (2026-08-10)
 
 V6 uses new groups 401/502/603 and keeps test 603 sealed. Its selected separable,

@@ -120,7 +120,7 @@ todos los demás gates pasaron. V7 queda cerrado y real-data continúa sellado.
 V8 mantiene esa arquitectura y el presupuesto, pero selecciona checkpoints sobre
 tres grupos validation mediante media macro y peor grupo. Las seeds test 901/902/903
 están preregistradas y selladas. El primer diagnóstico da Pearson macro `.80631` y
-motiva brazos de consenso temporal `.10/.15`; no es un pass. Detalles en
+CVaR+consenso lo eleva a `.94621`; sigue sin ser pass y test no se abrió. Detalles en
 [Causal Scale v8](docs/causal_scale_v8.md).
 
 ```powershell
@@ -181,7 +181,7 @@ eAP/CodaBench siguen pendientes.
 | Causal Scale v5 | test sintético: Pearson .92135, translation .02749; gates fallidos | no promovido; real-data cerrado |
 | Causal Scale v6 | validation: Pearson .92042, translation .00462, IoU .89323 | test 603 sellado; no promovido |
 | Causal Scale v7 | test: Pearson .92014 (falla), TTC .24576, translation .00338 | no promovido; seed 603 consumida |
-| Causal Scale v8 | validation macro Pearson .80631; consenso temporal pendiente | test 901/902/903 sellado |
+| Causal Scale v8 | validation Pearson .94621 con CVaR; falla por .00379 | test 901/902/903 nunca abierto |
 
 El smoke high-resolution valida integración, no precisión. Los resultados v3
 muestran que la expansión firmada y la supervisión de ratio son útiles, pero
