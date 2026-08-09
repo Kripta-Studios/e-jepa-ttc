@@ -10,11 +10,20 @@ rotation leakage `.00171029` and zero-event unknown `1.0`. The compact artifact 
 `artifacts/metrics/causal_scale_v5_synthetic_operator_gate_v1.json`; serialized SHA256
 is `3fd4d2a25b85173cf34bb8738f5b7e80190f31f26acc9ed9a4d3c818d10afb20`.
 
-Current authorization is `synthetic_event_learning_gate_only`. No learned-mask result,
-real TTC result, RGB arm, multimodal arm or benchmark improvement exists yet. eAP test,
-CodaBench and EvTTC remain closed. The next implementation must train and evaluate the
-event foreground/scale path on held-out synthetic dynamics, rather than opening real
-validation or attaching a free TTC readout.
+The learned event-foreground runner is now implemented and nine train/validation-only
+diagnostics are preserved in the signed comparison artifact
+`artifacts/metrics/causal_scale_v5_diagnostic_comparison_v1.json` (identity
+`27053c853b93b1ff14ec32f4db79e4e216c6a5c3929f385998b549c1dee2fe80`). The selected
+deconvolutional candidate reached validation Pearson `.9559997`, slope `.9686489`,
+sign `.9956896`, IoU `.8639824`, ratio MAE `.0190324`, TTC symmetric relative error
+`.2638807` and calibrated 80% coverage `.7974138`. Translation leakage p95 was
+`.0239874`, so it missed the frozen `.02` gate and is not promoted. Test seed 303,
+all real TTC data, RGB, eAP, EvTTC and CodaBench remained closed.
+
+Current authorization remains `synthetic_event_learning_gate_only`. The implementation
+is ready for a clean-tree, one-shot synthetic test after commit; only a complete pass
+may authorize design of a train-only eAP screen. No real TTC result, RGB arm,
+multimodal arm or benchmark improvement exists yet.
 
 ## Addendum v4.31 (2026-08-09)
 

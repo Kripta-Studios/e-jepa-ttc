@@ -1,6 +1,15 @@
 # Protocolo experimental
 
-Actualizado: 2026-08-02.
+Actualizado: 2026-08-09.
+
+## Gate previo Causal Scale v5
+
+Antes de abrir eAP/EvTTC, el brazo event-only debe aprender foreground y razón de
+escala sobre dinámicas sintéticas con seeds 101/202/303 disjuntas. Train y validation
+pueden usarse para arquitectura, selección y una calibración escalar de varianza. El
+test se abre una sola vez desde Git limpio después de congelar código, configuración y
+gates. Fallar cualquier gate mantiene cerrados todos los datos reales. Un pass solo
+autoriza diseñar un screen eAP train-only; no autoriza test, Garl-TTC ni claim SOTA.
 
 ## Pregunta
 

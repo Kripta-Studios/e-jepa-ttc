@@ -12,9 +12,11 @@ y no alimenta la salida principal.
 
 El artefacto sintético ideal-foreground
 `causal_scale_v5_synthetic_operator_gate_v1.json` pasó los gates físicos en commit
-`7945e99`. Tiene 336.398 parámetros, pero no existe todavía un checkpoint entrenado
-ni una métrica TTC real. El estado es `synthetic_event_learning_gate_only`, no
-promovido.
+`7945e99`. El aprendizaje sintético posterior tiene un checkpoint local seleccionado
+solo por validation: Pearson `.9560`, slope `.9686`, sign `.9957`, IoU `.8640` y
+TTC symmetric relative error `.2639`. No se promueve porque translation leakage
+`.02399` supera el gate `.02`; no existe ninguna métrica TTC real. El estado sigue
+siendo `synthetic_event_learning_gate_only`.
 
 ## Estado
 
@@ -58,7 +60,8 @@ solo no habilita un claim.
 ## Modalidades
 
 - Event-only: implementada en el trainer raw cache-free.
-- Event-only v5: core y loss implementados; aprendizaje foreground pendiente.
+- Event-only v5: core, dataset, loss, aprendizaje foreground y calibración validation
+  implementados; test sintético y datos reales todavía cerrados.
 - RGB-E: diseño/config presente, trainer no implementado; falla de forma explícita
   para impedir que RGB sea descartado silenciosamente.
 - Bbox/máscaras/depth: solo supervisión u oracle en protocolos declarados; no inputs
@@ -119,7 +122,8 @@ sin evaluación externa reproducida.
 ## Riesgos y limitaciones
 
 - el smoke high-resolution no aprende todavía una señal TTC competitiva;
-- el pass v5 usa foreground analítico ideal y no demuestra segmentación desde eventos;
+- el gate ideal v5 usa foreground analítico; el aprendizaje sintético posterior
+  demuestra señal, pero falla todavía la equivariancia de traslación congelada;
 - la incertidumbre v5 usa delta method y es frágil cerca de expansión cero;
 - falta JEPA denso compatible;
 - el predictor SSL real tiene rango efectivo ≈1,10 sin diagnóstico semántico real;

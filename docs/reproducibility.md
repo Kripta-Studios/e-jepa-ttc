@@ -1,6 +1,25 @@
 # Reproducibilidad
 
-Actualizado: 2026-08-02.
+Actualizado: 2026-08-09.
+
+## Protocolo sintético Causal Scale v5
+
+El runner usa grupos deterministas disjuntos: train 101, validation 202 y test 303.
+`diagnostic` nunca instancia test; `full` exige código/config limpios y lo evalúa una
+sola vez. Cada summary conserva historial completo por época, commit/dirty flag,
+hashes de configs y checkpoint, snapshot de entorno, splits abiertos y contador de
+evaluaciones test. La calibración de varianza se ajusta solo en validation.
+
+```powershell
+uv run --no-sync python scripts/train_causal_scale_v5_synthetic.py `
+  --config configs/experiment/e_jepa_garl_event_causal_scale_synthetic_v5.yaml `
+  --output-dir artifacts/debug/causal_scale_v5_synth_diagnostic `
+  --stage diagnostic --device auto
+```
+
+La comparación compacta se regenera con
+`scripts/build_causal_scale_v5_diagnostic_comparison.py`; sus inputs son los summaries
+completos, nunca cifras copiadas a mano.
 
 ## Entorno auditado
 

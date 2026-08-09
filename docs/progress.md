@@ -1,5 +1,25 @@
 # Progreso
 
+## 2026-08-09 — Aprendizaje sintético Causal Scale v5
+
+- implementado dataset causal event-only con seeds disjuntas 101/202/303;
+- implementados trainer, selección post-warm-up, logs completos por época,
+  calibración de varianza solo en validation y runner full fail-closed;
+- ejecutados nueve diagnósticos train/validation; el test seed 303 no se construyó;
+- la secuencia de mejoras llevó Pearson `.2678 -> .5941 -> .9064 -> .9329 -> .9560`;
+- el candidato deconv+translation+cosine alcanza slope `.9686`, signo `.9957`, IoU
+  `.8640`, MAE ratio `.01903`, error TTC simétrico `.2639` y cobertura `.7974`;
+- solo falla translation leakage: `.02399` frente al gate congelado `.02`;
+- Huber adicional (`.8724`) y resize-conv (`.9430`, translation `.0320`) quedan
+  preservados como resultados negativos;
+- comparación firmada y regenerable:
+  `artifacts/metrics/causal_scale_v5_diagnostic_comparison_v1.json`, identidad
+  `27053c853b93b1ff14ec32f4db79e4e216c6a5c3929f385998b549c1dee2fe80`;
+- no se abrió eAP, EvTTC, RGB, CodaBench ni ninguna etiqueta TTC real.
+
+Pendiente inmediato: commit/push del protocolo exacto, suite completa y una única
+ejecución clean-tree sobre test sintético. No existe autorización SOTA ni real-data.
+
 ## 2026-08-09 — Causal Scale v5
 
 - preservado el resultado negativo v4.31 y descartado añadir otro readout al matcher;

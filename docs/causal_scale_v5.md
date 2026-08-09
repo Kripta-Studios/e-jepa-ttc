@@ -2,10 +2,11 @@
 
 ## Status
 
-The shared geometry core and event-only configuration are implemented. The clean
-synthetic ideal-foreground operator gate passed. This is mechanistic evidence only:
-the event encoder has not yet learned foreground, no real TTC split was evaluated,
-and no comparison with Garl-TTC was performed.
+The shared geometry core, event-only learning dataset and train/evaluation runner are
+implemented. The clean synthetic ideal-foreground operator gate passed. Nine later
+train/validation-only diagnostics learned foreground and scale, but the selected
+candidate remains unpromoted because one frozen validation gate still fails. No real
+TTC split was evaluated and no comparison with Garl-TTC was performed.
 
 Authoritative compact artifact:
 
@@ -87,13 +88,40 @@ Targets for which `1 + delta_t / TTC <= 0` are excluded from the scale-ratio NLL
 because a positive apparent scale cannot encode a post-contact interval under this
 model. They may still contribute valid negative risk and auxiliary supervision.
 
+## Learned event diagnostics
+
+The signed comparison artifact
+`artifacts/metrics/causal_scale_v5_diagnostic_comparison_v1.json` is generated from
+the nine complete diagnostic summaries. It is explicitly non-selectable and records
+dirty-tree train/validation development only. Test seed 303 and every real source
+remained closed.
+
+| Variant | Pearson | Slope | Sign | IoU | TTC sym. rel. | Translation p95 |
+|---|---:|---:|---:|---:|---:|---:|
+| initial joint | .2678 | .1932 | .6207 | .3619 | 1.2969 | .1157 |
+| extent + warm-up | .5941 | .6813 | .8534 | .6312 | .7577 | .1013 |
+| fixed selection | .9064 | .9119 | .9655 | .8493 | .3838 | .0577 |
+| translation + calibration | .9329 | .9608 | .9914 | .8528 | .2706 | .0296 |
+| deconv + scale + cosine | **.9560** | **.9686** | **.9957** | .8640 | **.2639** | .0240 |
+| resize-conv ablation | .9430 | .9759 | .9871 | **.8651** | .2794 | .0320 |
+
+The table is a rendering of the signed comparison artifact, not manually sourced
+benchmark evidence. The Huber arm reduced correlation to `.8724`; it is rejected.
+The resize-conv decoder also regressed correlation and translation. The selected
+deconvolutional candidate passes 11/12 validation gates; translation p95 misses the
+frozen `.02` bound by `.00399`. Thresholds were not relaxed.
+
+The useful interventions were foreground extent supervision, a mask-only warm-up,
+90 ms causal accumulation, validation selection after warm-up, a half-resolution
+learned decoder, translation augmentation, cosine decay and validation-only scalar
+variance calibration. The direct TTC auxiliary remains isolated from primary output.
+
 ## Authorization boundary and next gate
 
-This pass authorizes only a learned-mask synthetic event experiment. The next runner
-must generate causal event tensors from expanding, receding, translating and empty
-shapes, train only on its training split, and evaluate predicted foreground/scale on
-held-out seeds. Promotion requires all current operator gates plus non-trivial mask
-IoU, finite calibration and a small-batch overfit check.
+The diagnostics authorize only committing and verifying the exact synthetic protocol.
+The full runner may then open held-out synthetic seed 303 once from a clean worktree.
+Promotion requires every frozen learning gate; a failure returns to synthetic
+architecture work without opening real data.
 
 Only after that learned event path passes may a versioned train-only eAP development
 screen be designed. RGB-only must then implement an independent exposure/blur

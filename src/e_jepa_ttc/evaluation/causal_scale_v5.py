@@ -28,6 +28,23 @@ DEFAULT_THRESHOLDS: dict[str, float] = {
     "zero_unknown_min": 1.0,
 }
 
+SYNTHETIC_LEARNING_THRESHOLDS: dict[str, float] = {
+    "analytic_pearson_min": 0.95,
+    "slope_min": 0.8,
+    "slope_max": 1.2,
+    "sign_accuracy_min": 0.95,
+    "foreground_iou_min": 0.60,
+    "known_coverage_min": 0.90,
+    "empty_unknown_min": 1.0,
+    "empty_false_positive_fraction_max": 0.01,
+    "oddness_median_max": 0.05,
+    "oddness_p95_max": 0.10,
+    "translation_leakage_p95_max": 0.02,
+    "ttc_symmetric_relative_error_max": 0.30,
+    "ratio_80_coverage_min": 0.60,
+    "ratio_80_coverage_max": 0.95,
+}
+
 
 def _rectangle_logits(
     height: int,
@@ -204,9 +221,63 @@ def validate_thresholds(values: Mapping[str, Any]) -> dict[str, float]:
     return thresholds
 
 
+def evaluate_synthetic_learning_gates(
+    metrics: Mapping[str, float | None],
+    thresholds: Mapping[str, float] = SYNTHETIC_LEARNING_THRESHOLDS,
+) -> dict[str, bool]:
+    """Fail closed on learned foreground, scale, safety, controls, and calibration."""
+
+    required = {
+        "analytic_pearson",
+        "slope",
+        "sign_accuracy",
+        "foreground_iou",
+        "known_coverage",
+        "empty_unknown",
+        "empty_false_positive_fraction",
+        "oddness_median",
+        "oddness_p95",
+        "translation_leakage_p95",
+        "ttc_symmetric_relative_error",
+        "ratio_80_coverage",
+    }
+    finite = all(
+        isinstance(metrics.get(key), (int, float))
+        and math.isfinite(float(metrics[key]))  # type: ignore[arg-type]
+        for key in required
+    )
+    if not finite:
+        return {"finite": False, "passed": False}
+    values = {key: float(metrics[key]) for key in required}  # type: ignore[arg-type]
+    gates = {
+        "finite": True,
+        "equivariance": values["analytic_pearson"] >= thresholds["analytic_pearson_min"]
+        and thresholds["slope_min"] <= values["slope"] <= thresholds["slope_max"]
+        and values["sign_accuracy"] >= thresholds["sign_accuracy_min"],
+        "foreground": values["foreground_iou"] >= thresholds["foreground_iou_min"],
+        "known": values["known_coverage"] >= thresholds["known_coverage_min"],
+        "empty": values["empty_unknown"] >= thresholds["empty_unknown_min"]
+        and values["empty_false_positive_fraction"]
+        <= thresholds["empty_false_positive_fraction_max"],
+        "oddness": values["oddness_median"] <= thresholds["oddness_median_max"]
+        and values["oddness_p95"] <= thresholds["oddness_p95_max"],
+        "translation": values["translation_leakage_p95"]
+        <= thresholds["translation_leakage_p95_max"],
+        "ttc": values["ttc_symmetric_relative_error"]
+        <= thresholds["ttc_symmetric_relative_error_max"],
+        "calibration": thresholds["ratio_80_coverage_min"]
+        <= values["ratio_80_coverage"]
+        <= thresholds["ratio_80_coverage_max"],
+    }
+    gates["passed"] = all(value for key, value in gates.items() if key != "finite")
+    return gates
+
+
 __all__ = [
     "DEFAULT_THRESHOLDS",
+    "SYNTHETIC_LEARNING_THRESHOLDS",
     "evaluate_operator_gates",
+    "evaluate_synthetic_learning_gates",
     "synthetic_operator_metrics",
     "validate_thresholds",
 ]

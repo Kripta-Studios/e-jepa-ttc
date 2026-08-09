@@ -9,6 +9,7 @@ from torch.nn import functional
 
 from e_jepa_ttc.models.causal_scale_ttc import (
     CausalScaleTTCOutput,
+    soft_vertical_extent_from_logits,
     target_log_ratio_from_ttc,
 )
 
@@ -18,8 +19,10 @@ class CausalScaleTTCLossConfig:
     """Weights for supervised geometry without a direct-TTC primary bypass."""
 
     log_ratio_nll_weight: float = 1.0
+    log_ratio_huber_weight: float = 1.0
     foreground_bce_weight: float = 1.0
     foreground_dice_weight: float = 0.5
+    foreground_extent_weight: float = 1.0
     risk_weight: float = 0.25
     auxiliary_inverse_ttc_weight: float = 0.1
     residual_regularization_weight: float = 0.05
@@ -29,8 +32,10 @@ class CausalScaleTTCLossConfig:
     def __post_init__(self) -> None:
         weights = (
             self.log_ratio_nll_weight,
+            self.log_ratio_huber_weight,
             self.foreground_bce_weight,
             self.foreground_dice_weight,
+            self.foreground_extent_weight,
             self.risk_weight,
             self.auxiliary_inverse_ttc_weight,
             self.residual_regularization_weight,
@@ -84,6 +89,34 @@ def _foreground_losses(
     return bce, dice, count
 
 
+def _foreground_extent_loss(
+    output: CausalScaleTTCOutput,
+    target_masks: torch.Tensor | None,
+    mask_valid: torch.Tensor | None,
+    *,
+    beta: float,
+) -> tuple[torch.Tensor, int]:
+    if target_masks is None or mask_valid is None:
+        return _zero(output.visible_height_normalized), 0
+    nonempty = target_masks.flatten(-3).any(dim=-1)
+    valid = mask_valid.bool() & nonempty
+    count = int(valid.sum().item())
+    if count == 0:
+        return _zero(output.visible_height_normalized), 0
+    target_logits = torch.where(
+        target_masks > 0.5,
+        target_masks.new_tensor(12.0),
+        target_masks.new_tensor(-12.0),
+    )
+    target_extent = soft_vertical_extent_from_logits(target_logits).height_normalized
+    extent = functional.smooth_l1_loss(
+        output.visible_height_normalized[valid].clamp_min(1.0e-6).log(),
+        target_extent[valid].clamp_min(1.0e-6).log(),
+        beta=beta,
+    )
+    return extent, count
+
+
 def causal_scale_ttc_loss(
     output: CausalScaleTTCOutput,
     *,
@@ -124,8 +157,14 @@ def causal_scale_ttc_loss(
         residual = output.log_height_ratio[:, -1][physical_valid] - target_ratio[physical_valid]
         log_variance = output.log_ratio_log_variance[:, -1][physical_valid]
         ratio_nll = (0.5 * torch.exp(-log_variance) * residual.square() + 0.5 * log_variance).mean()
+        ratio_huber = functional.smooth_l1_loss(
+            output.log_height_ratio[:, -1][physical_valid],
+            target_ratio[physical_valid],
+            beta=cfg.smooth_l1_beta,
+        )
     else:
         ratio_nll = _zero(output.log_height_ratio)
+        ratio_huber = _zero(output.log_height_ratio)
 
     finite_ttc = torch.isfinite(target_ttc_seconds) & (target_ttc_seconds.abs() > 1.0e-8)
     if target_valid is not None:
@@ -156,6 +195,12 @@ def causal_scale_ttc_loss(
         target_masks,
         mask_valid,
     )
+    foreground_extent, foreground_extent_count = _foreground_extent_loss(
+        output,
+        target_masks,
+        mask_valid,
+        beta=cfg.smooth_l1_beta,
+    )
     residual_regularization = output.residual_log_height_ratio.square().mean()
     pair_known = output.diagnostics["pair_known"].bool()
     if output.pair_ttc_seconds.shape[1] >= 2:
@@ -176,8 +221,10 @@ def causal_scale_ttc_loss(
 
     components = {
         "log_ratio_nll": ratio_nll,
+        "log_ratio_huber": ratio_huber,
         "foreground_bce": foreground_bce,
         "foreground_dice": foreground_dice,
+        "foreground_extent": foreground_extent,
         "risk_bce": risk,
         "auxiliary_inverse_ttc": auxiliary,
         "residual_regularization": residual_regularization,
@@ -185,8 +232,10 @@ def causal_scale_ttc_loss(
     }
     total = (
         cfg.log_ratio_nll_weight * ratio_nll
+        + cfg.log_ratio_huber_weight * ratio_huber
         + cfg.foreground_bce_weight * foreground_bce
         + cfg.foreground_dice_weight * foreground_dice
+        + cfg.foreground_extent_weight * foreground_extent
         + cfg.risk_weight * risk
         + cfg.auxiliary_inverse_ttc_weight * auxiliary
         + cfg.residual_regularization_weight * residual_regularization
@@ -199,6 +248,7 @@ def causal_scale_ttc_loss(
             "physical_ratio": valid_count,
             "supervised_ttc": supervised_count,
             "foreground": foreground_count,
+            "foreground_extent": foreground_extent_count,
             "temporal_consistency": consistency_count,
         },
     )

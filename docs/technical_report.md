@@ -15,6 +15,15 @@ zero-event unknown `1.0`. Este control valida la matemática, no el aprendizaje 
 por tanto solo autoriza el siguiente experimento sintético con máscaras predichas. No
 modifica ninguna tabla eAP/EvTTC ni soporta un claim frente a Garl-TTC.
 
+El aprendizaje sintético event-only posterior ejecutó nueve diagnósticos únicamente
+sobre seeds train 101 y validation 202. El artefacto comparativo firmado
+`causal_scale_v5_diagnostic_comparison_v1.json` muestra la mejora de Pearson `.2678`
+a `.9560`, slope `.1932` a `.9686`, signo `.6207` a `.9957`, IoU `.3619` a `.8640`
+y error TTC simétrico `1.2969` a `.2639`. La calibración escalar ajustada solo en
+validation logra cobertura 80% `.7974`. El candidato aún falla translation leakage
+`.02399 > .02`, por lo que no se promovió ni abrió test sintético o datos reales.
+Huber adicional y resize-conv quedan como ablations negativas.
+
 ## 1. Resumen
 
 E-JEPA-TTC investiga TTC con eventos mediante tokens espaciales high-resolution y

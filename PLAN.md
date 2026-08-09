@@ -16,8 +16,18 @@ was opened.
 This pass validates only the physical observable and fail-safe algebra on ideal
 foreground. It does not show that the event CNN learns foreground or TTC, and it does
 not authorize Garl comparison, eAP test, EvTTC or a SOTA claim. The immediate gate is
-a held-out synthetic event-learning experiment on predicted masks. Only after that
-passes may a versioned train-only eAP development screen be specified. See
+a held-out synthetic event-learning experiment on predicted masks. Nine validation-only
+diagnostics are complete and signed in
+`artifacts/metrics/causal_scale_v5_diagnostic_comparison_v1.json`. The best candidate
+passes every frozen validation criterion except translation leakage (`.0239874` versus
+`.02`), while reaching Pearson `.9560`, slope `.9686`, sign `.9957`, foreground IoU
+`.8640` and TTC symmetric relative error `.2639`. The Huber and resize-conv variants
+are recorded negative results. Test seed 303 was never opened.
+
+After committing the exact deconv/cosine/translation-calibrated configuration, run the
+full synthetic protocol once from a clean worktree. Only a complete held-out pass may
+allow a versioned train-only eAP development screen; a failure returns to architecture
+work without opening real validation. See
 `docs/causal_scale_v5.md` and `docs/decisions/ADR-0001-causal-scale-v5.md`.
 
 ## Addendum v4.31 (2026-08-09)

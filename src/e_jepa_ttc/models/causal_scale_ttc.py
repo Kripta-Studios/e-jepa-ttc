@@ -33,6 +33,7 @@ class CausalScaleTTCConfig:
     geometry_dim: int = 128
     residual_depth: int = 2
     dropout: float = 0.05
+    foreground_decoder: Literal["bilinear", "deconv", "resize_conv"] = "bilinear"
     foreground_temperature: float = 1.0
     max_abs_log_ratio_residual: float = 0.05
     min_abs_log_ratio: float = 2.0e-3
@@ -50,6 +51,10 @@ class CausalScaleTTCConfig:
             raise ValueError("causal-scale dimensions and depth must be positive")
         if not 0.0 <= self.dropout < 1.0:
             raise ValueError("dropout must lie in [0,1)")
+        if self.foreground_decoder not in {"bilinear", "deconv", "resize_conv"}:
+            raise ValueError(
+                "foreground_decoder must be 'bilinear', 'deconv', or 'resize_conv'"
+            )
         if self.foreground_temperature <= 0.0:
             raise ValueError("foreground_temperature must be positive")
         if not 0.0 <= self.max_abs_log_ratio_residual <= 0.25:
@@ -221,7 +226,37 @@ class _EndpointEncoder(nn.Module):
                 for _ in range(config.residual_depth)
             ],
         )
-        self.foreground = nn.Conv2d(config.hidden_dim, 1, kernel_size=1)
+        if config.foreground_decoder in {"deconv", "resize_conv"}:
+            decoder_channels = max(config.hidden_dim // 2, 8)
+            decoder_groups = math.gcd(decoder_channels, 8)
+            if config.foreground_decoder == "deconv":
+                upsample: nn.Module = nn.ConvTranspose2d(
+                    config.hidden_dim,
+                    decoder_channels,
+                    kernel_size=4,
+                    stride=2,
+                    padding=1,
+                    bias=False,
+                )
+            else:
+                upsample = nn.Sequential(
+                    nn.Upsample(scale_factor=2.0, mode="bilinear", align_corners=False),
+                    nn.Conv2d(
+                        config.hidden_dim,
+                        decoder_channels,
+                        kernel_size=3,
+                        padding=1,
+                        bias=False,
+                    ),
+                )
+            self.foreground = nn.Sequential(
+                upsample,
+                nn.GroupNorm(decoder_groups, decoder_channels),
+                nn.GELU(),
+                nn.Conv2d(decoder_channels, 1, kernel_size=3, padding=1),
+            )
+        else:
+            self.foreground = nn.Conv2d(config.hidden_dim, 1, kernel_size=1)
         self.token = nn.Sequential(
             nn.AdaptiveAvgPool2d(1),
             nn.Flatten(),
@@ -304,6 +339,15 @@ class CausalScaleTTC(nn.Module):
             nn.LayerNorm(self.config.geometry_dim),
             nn.Linear(self.config.geometry_dim, 1),
         )
+        self.log_ratio_variance_offset: torch.Tensor
+        self.register_buffer("log_ratio_variance_offset", torch.tensor(0.0))
+
+    def set_log_ratio_variance_offset(self, value: float) -> None:
+        """Set a validation-fitted scalar variance offset without changing means."""
+
+        if not math.isfinite(value):
+            raise ValueError("log-ratio variance offset must be finite")
+        self.log_ratio_variance_offset[...] = value
 
     def _sensor_support(self, values: torch.Tensor) -> torch.Tensor:
         if self.config.modality == "event":
@@ -372,6 +416,7 @@ class CausalScaleTTC(nn.Module):
         log_ratio_log_variance = (
             self.uncertainty_head(symmetric)
             .squeeze(-1)
+            .add(self.log_ratio_variance_offset)
             .clamp(
                 self.config.log_ratio_log_variance_min,
                 self.config.log_ratio_log_variance_max,

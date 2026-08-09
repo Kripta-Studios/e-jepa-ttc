@@ -5,6 +5,7 @@ hidden_dim: 64
 geometry_dim: 128
 residual_depth: 2
 dropout: 0.05
+foreground_decoder: deconv
 foreground_temperature: 1.0
 max_abs_log_ratio_residual: 0.05
 min_abs_log_ratio: 0.002
