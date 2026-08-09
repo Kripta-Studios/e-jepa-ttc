@@ -44,6 +44,11 @@ de validation. El test limpio posterior obtiene Pearson `.92014`, aunque TTC `.2
 y translation `.00338` pasan. V7 se cierra; el fallo restante es generalización de
 correlación entre grupos sintéticos.
 
+V8 revela que el fallo se concentra en pocos endpoints de bajo soporte procesados de
+forma independiente. Se incorpora como ablation un consenso temporal fijo y
+simétrico sobre logits antes de medir extensión. El diseño conserva equivarianza de
+reversión y no introduce una cabeza TTC directa ni parámetros adicionales.
+
 ## 1. Resumen
 
 E-JEPA-TTC investiga TTC con eventos mediante tokens espaciales high-resolution y

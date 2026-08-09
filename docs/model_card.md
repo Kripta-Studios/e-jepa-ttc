@@ -28,6 +28,10 @@ endpoints. Validation alcanza Pearson `.96126`, TTC `.24345` y translation `.003
 todos los gates validation pasan. El test 603 posterior obtiene Pearson `.92014` y
 falla el gate `.95`; V7 queda no promovido.
 
+V8 evalúa consenso temporal fijo sobre logits de foreground con kernel simétrico
+`[w,1-2w,w]`. Es reversible, no aumenta parámetros y el endpoint actual solo usa el
+contexto disponible. Sigue siendo experimental; aún no tiene evidencia held-out.
+
 ## Estado
 
 El modelo histórico activo era un candidato event-only high-resolution, no un modelo SOTA ni

@@ -44,4 +44,23 @@ global exige que los tres pasen todos los gates congelados.
 - un pass sintético solo autoriza diseñar un screen eAP train-only.
 
 Configuración: `configs/experiment/e_jepa_garl_event_causal_scale_synthetic_v8.yaml`.
-Todavía no existen resultados V8 ni autorización para afirmar SOTA.
+Los resultados siguientes son solo diagnósticos validation; no autorizan SOTA.
+
+## Diagnóstico base
+
+El run publicado `46f9d61` seleccionó epoch 16 y mantuvo test cerrado. Macro Pearson
+fue `.8063141`; por grupo, 801/802/803 obtuvieron `.6426862/.8916795/.8845764`.
+IoU macro `.8901637`, slope `.9311736`, signo `.9886764`, TTC `.2820616` y
+translation `.0046902` sí pasaron sus umbrales.
+
+El análisis por muestra localizó 1–3 endpoints catastróficos por grupo. En 801, al
+retirar solo el 5% de mayor error para diagnóstico (no como métrica seleccionable),
+Pearson sube de `.6426` a `.9661`. El caso `synthetic-801-115` convierte una altura
+real `[20,21,22]` en extensiones blandas `[.308,.735,.331]`: el decoder aislado no
+puede estabilizar un endpoint de bajo soporte aunque los vecinos sean correctos.
+
+Se habilitan dos brazos validation-only con consenso temporal simétrico de logits,
+pesos `.10` y `.15`. El operador usa padding de borde y kernel
+`[w, 1-2w, w]`; por ello es equivariante a reversión temporal, no usa eventos
+posteriores al contexto actual y no añade parámetros. Sus resultados aún están
+pendientes y los tests 901–903 continúan sellados.

@@ -101,6 +101,7 @@ def _model_config(path: Path) -> CausalScaleTTCConfig:
         "e_jepa_causal_scale_event_v5",
         "e_jepa_causal_scale_event_v6",
         "e_jepa_causal_scale_event_v7",
+        "e_jepa_causal_scale_event_v8",
     }:
         raise ValueError("model config must declare a supported causal-scale event model")
     thresholds = raw.get("risk_thresholds_s")
@@ -195,11 +196,14 @@ def run(
     *,
     stage: str,
     device_name: str,
+    model_config_path: Path | None = None,
 ) -> dict[str, Any]:
     """Train on train/validation and open the synthetic test group only in full stage."""
 
     if stage not in {"diagnostic", "full"}:
         raise ValueError("stage must be diagnostic or full")
+    if stage == "full" and model_config_path is not None:
+        raise ValueError("full synthetic gate forbids model overrides; freeze it in YAML")
     raw = yaml.safe_load(config_path.read_text(encoding="utf-8"))
     if not isinstance(raw, dict):
         raise ValueError("experiment config must be a mapping")
@@ -224,7 +228,7 @@ def run(
     code_dirty = bool(worktree["tracked_dirty"] or worktree["untracked_code_paths"])
     if stage == "full" and code_dirty:
         raise RuntimeError("full synthetic gate requires clean tracked/code state")
-    model_path = ROOT / str(raw["model_config"])
+    model_path = model_config_path or (ROOT / str(raw["model_config"]))
     model_config = _model_config(model_path)
     training_raw = raw.get("training")
     loss_raw = raw.get("loss")
@@ -399,6 +403,11 @@ def main() -> int:
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--stage", choices=("diagnostic", "full"), default="diagnostic")
     parser.add_argument("--device", default="auto")
+    parser.add_argument(
+        "--model-config",
+        type=Path,
+        help="Validation-only architecture override recorded by exact path and hash.",
+    )
     args = parser.parse_args()
     try:
         payload = run(
@@ -406,6 +415,7 @@ def main() -> int:
             args.output_dir.resolve(),
             stage=args.stage,
             device_name=args.device,
+            model_config_path=args.model_config.resolve() if args.model_config else None,
         )
     except Exception as error:
         parser.exit(2, f"synthetic causal-scale run failed: {type(error).__name__}: {error}\n")

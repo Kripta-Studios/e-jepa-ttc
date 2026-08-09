@@ -16,6 +16,7 @@ from e_jepa_ttc.models.causal_scale_ttc import (
     CausalScaleTTCConfig,
     blend_current_inverse_ttc,
     log_ratio_to_inverse_ttc,
+    smooth_temporal_foreground_logits,
     soft_vertical_extent_from_logits,
     target_log_ratio_from_ttc,
 )
@@ -165,6 +166,28 @@ def test_temporal_inverse_ttc_blend_transports_previous_pair_to_current_time() -
     assert blended[0] == pytest.approx(0.75 * 0.5 + 0.25 * transported)
     assert blended[1] == pytest.approx(0.5)
     assert used.tolist() == [True, False]
+
+
+def test_temporal_foreground_consensus_is_reversal_equivariant() -> None:
+    logits = torch.arange(5, dtype=torch.float32).reshape(1, 5, 1, 1, 1)
+
+    smoothed = smooth_temporal_foreground_logits(logits, neighbor_weight=0.15)
+    reversed_smoothed = smooth_temporal_foreground_logits(
+        logits.flip(1), neighbor_weight=0.15
+    ).flip(1)
+
+    assert torch.allclose(smoothed, reversed_smoothed, atol=1.0e-6, rtol=0.0)
+    assert smoothed[0, 0, 0, 0, 0] == pytest.approx(0.15)
+    assert smoothed[0, 2, 0, 0, 0] == pytest.approx(2.0)
+    assert smoothed[0, -1, 0, 0, 0] == pytest.approx(3.85)
+    assert smooth_temporal_foreground_logits(logits, neighbor_weight=0.0) is logits
+
+
+def test_temporal_foreground_consensus_rejects_unsafe_weight() -> None:
+    with pytest.raises(ValueError, match="neighbor_weight"):
+        smooth_temporal_foreground_logits(
+            torch.zeros(1, 3, 1, 2, 2), neighbor_weight=0.41
+        )
 
 
 def test_stride_free_foreground_path_has_small_integer_translation_leakage() -> None:

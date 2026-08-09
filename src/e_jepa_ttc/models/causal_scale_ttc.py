@@ -42,6 +42,7 @@ class CausalScaleTTCConfig:
     ] = "bilinear"
     foreground_fullres_dim: int = 16
     foreground_temperature: float = 1.0
+    foreground_temporal_smoothing: float = 0.0
     max_abs_log_ratio_residual: float = 0.05
     max_abs_log_height_correction: float = 0.0
     temporal_inverse_ttc_blend: float = 1.0
@@ -75,6 +76,8 @@ class CausalScaleTTCConfig:
             raise ValueError("foreground_fullres_dim must be positive")
         if self.foreground_temperature <= 0.0:
             raise ValueError("foreground_temperature must be positive")
+        if not 0.0 <= self.foreground_temporal_smoothing <= 0.4:
+            raise ValueError("foreground_temporal_smoothing must lie in [0,0.4]")
         if not 0.0 <= self.max_abs_log_ratio_residual <= 0.25:
             raise ValueError("max_abs_log_ratio_residual must lie in [0,0.25]")
         if not 0.0 <= self.max_abs_log_height_correction <= 0.5:
@@ -246,6 +249,27 @@ def blend_current_inverse_ttc(
         & (ratio_argument > 0.0)
     )
     return torch.where(used, blended, current), used
+
+
+def smooth_temporal_foreground_logits(
+    logits: torch.Tensor,
+    *,
+    neighbor_weight: float,
+) -> torch.Tensor:
+    """Apply reversal-equivariant temporal consensus without future stream leakage."""
+
+    if logits.ndim != 5 or logits.shape[1] < 2:
+        raise ValueError("foreground logits must have shape [B,T>=2,1,H,W]")
+    if not 0.0 <= neighbor_weight <= 0.4:
+        raise ValueError("neighbor_weight must lie in [0,0.4]")
+    if neighbor_weight == 0.0:
+        return logits
+    padded = torch.cat((logits[:, :1], logits, logits[:, -1:]), dim=1)
+    return (
+        (1.0 - 2.0 * neighbor_weight) * padded[:, 1:-1]
+        + neighbor_weight * padded[:, :-2]
+        + neighbor_weight * padded[:, 2:]
+    )
 
 
 class _ResidualBlock(nn.Module):
@@ -543,6 +567,10 @@ class CausalScaleTTC(nn.Module):
             mode="bilinear",
             align_corners=False,
         ).reshape(batch, steps, 1, height, width)
+        foreground_logits = smooth_temporal_foreground_logits(
+            foreground_logits,
+            neighbor_weight=self.config.foreground_temporal_smoothing,
+        )
         observation = soft_vertical_extent_from_logits(
             foreground_logits,
             temperature=self.config.foreground_temperature,
@@ -676,6 +704,9 @@ class CausalScaleTTC(nn.Module):
                 "pair_sensor_support": pair_support,
                 "pair_known": pair_known,
                 "temporal_blend_used": temporal_blend_used,
+                "foreground_temporal_smoothing": foreground_logits.new_full(
+                    (batch,), self.config.foreground_temporal_smoothing
+                ),
             },
         )
 

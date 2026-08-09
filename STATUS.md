@@ -18,10 +18,16 @@ correlation: Pearson `.9201432 < .95`. Translation `.0033841`, IoU `.8896096`, T
 Artifact identity is `97e52b2a9d3463d6a2e57d12e9408f80bb6a3b8e0d491beeb3546c2d1586a52b`.
 V7 is closed, seed 603 consumed, and no SOTA/Garl-TTC claim is authorized.
 
-V8 is preregistered but not yet trained. It keeps V7 architecture and equal total
+V8 was preregistered before its validation-only diagnostic. It keeps equal total
 sample budget while selecting across train seeds 701/702/703 and validation seeds
 801/802/803. Tests 901/902/903 remain sealed. Selection combines macro and worst
 group, and a future full pass requires every group. No real data is authorized.
+
+The first V8 diagnostic at `46f9d61` selected epoch 16 but failed correlation:
+macro Pearson `.80631`, with groups 801/802/803 at `.64269/.89168/.88458`. Macro IoU
+`.89016`, TTC `.28206` and translation `.00469` pass. A 5%-trim diagnostic reaches
+`.96612` on group 801, isolating rare endpoint-mask catastrophes. Parameter-free,
+reversal-equivariant temporal logit consensus arms `.10/.15` are next; test stays closed.
 
 ## Addendum v6 (2026-08-10)
 

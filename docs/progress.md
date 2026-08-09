@@ -23,6 +23,11 @@ Se preregistró V8 sin abrir datos: tres grupos train (701–703), tres validati
 y peor grupo manteniendo el presupuesto total V7. Pendiente: verificación, commit y
 diagnóstico validation-only.
 
+El diagnóstico base seleccionó epoch 16: Pearson macro `.80631` y por grupo
+`.64269/.89168/.88458`. IoU `.89016`, TTC `.28206` y translation `.00469` pasaron.
+Los mayores errores proceden de endpoints aislados con foreground inestable; se
+implementó consenso temporal simétrico `.10/.15` para entrenar dos brazos controlados.
+
 ## 2026-08-10 — Foreground equivariante Causal Scale v6
 
 - preregistrados grupos nuevos 401/502/603; no se reutilizó test v5 seed 303;

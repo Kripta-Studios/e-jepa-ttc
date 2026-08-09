@@ -16,6 +16,12 @@ half worst-group score, and full pass requires every test group. Freeze/publish 
 protocol, then run validation-only diagnostics. Real data remains unauthorized. See
 `docs/causal_scale_v8.md`.
 
+The base multigroup diagnostic failed macro Pearson `.80631`. Rare independent
+endpoint-mask failures dominate: group 801 becomes `.96612` only in a nonselectable
+5%-trim analysis. Train the frozen `.10` and `.15` symmetric temporal-consensus arms
+on the same train/validation groups, compare every group without test, then either
+freeze one exact arm or close V8. Do not use trimmed metrics as a promotion gate.
+
 ## Addendum v6 equivariant foreground (2026-08-10)
 
 V6 uses new groups 401/502/603 and keeps test 603 sealed. Its selected separable,
