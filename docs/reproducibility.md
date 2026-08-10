@@ -7,6 +7,8 @@
 - Referencia: `artifacts/runs/garl_official_event_only_same2048/metrics.json`.
 - Comparación: `artifacts/metrics/causal_scale_eap_garl_event_only_comparison_v1.json`.
 - Cola: `artifacts/metrics/causal_scale_eap_garl_event_only_a0_top10pct_outliers_v1.csv`.
+- Matched subset: `artifacts/subsets/garl_event_only_matched_screen_v1/manifest.json`,
+  identidad `dd08ecc983f30e38a939204f9a2df09e4966bbe73bd764c972f7726e5d4e34d3`.
 
 El `--dataset-root` del evaluador debe ser `E:\eAP_dataset`, que resuelve
 `events_path`; `E:\GarlTTC_dataset` contiene los parquets, no los medios.

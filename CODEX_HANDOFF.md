@@ -19,6 +19,12 @@ La diferencia A0 menos release es `+264.4246879` MiD, IC95% por secuencia
 `[228.8007775, 302.7170041]`. Matched training continúa pendiente. La siguiente
 hipótesis única es A1 geometry-only con filas, seed, modelo y presupuesto fijos.
 
+El subset para matched training está materializado en
+`artifacts/subsets/garl_event_only_matched_screen_v1`, identidad firmada
+`dd08ecc983f30e38a939204f9a2df09e4966bbe73bd764c972f7726e5d4e34d3`.
+Contiene exactamente 2.048 train/9 secuencias y 2.048 validation/3 secuencias,
+con igualdad de tokens, join keys y TTC contra cache y parquets públicos.
+
 Rama: `scientific-recovery-v3-hardening`
 
 Remote publicado antes de este handoff: `origin/scientific-recovery-v3-hardening`

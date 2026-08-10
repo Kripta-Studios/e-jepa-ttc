@@ -10,6 +10,9 @@
   filas públicas pertenecen a ellas.
 - Comparador firmado: `9f2bebde05729b7ace6fdbc0a990e6b75bf180ec87220924219ed7095105281c`.
 - No hay promoción ni claim SOTA. Siguiente hipótesis única: A1 geometry-only.
+- Subset matched materializado y firmado: 2.048 train/9 secuencias y 2.048
+  validation/3 secuencias, identidad
+  `dd08ecc983f30e38a939204f9a2df09e4966bbe73bd764c972f7726e5d4e34d3`.
 
 ## Addendum eAP causal-scale screen v1 (2026-08-10)
 
