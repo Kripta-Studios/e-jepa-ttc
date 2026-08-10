@@ -61,6 +61,11 @@
 - A1-FR preregistrado, aún no ejecutado: config `7ceb1149…772c42e`, model config
   `97232184…96d39a`, 340.870 parámetros. Tests verifican que el único cambio del
   modelo es `foreground_decoder` y que data/training/loss son idénticos a A1.
+- Primer intento A1-FR invalidado y preservado: el checkpoint epoch 4 dejó una
+  secuencia con MiD NaN y el macro excluyó esa secuencia. Identidad de invalidación
+  `fd5bde50…c9be8f19b`; sus cifras no son evidencia comparable.
+- Selector endurecido: exige MiD finito para las tres secuencias antes de actualizar
+  best o stale. Debe ejecutarse A1-FR desde cero en un directorio nuevo.
 
 ## Addendum eAP causal-scale screen v1 (2026-08-10)
 

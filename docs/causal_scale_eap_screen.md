@@ -260,6 +260,13 @@ parámetros, menos que A1. Data, training y loss son idénticos. Experiment SHA2
 `7ceb114963e8aad8f4c7edeb70344759543d3ac58abc6a47b862d3acf772c42e`; model
 SHA256 `97232184d7fb00520136319f5e902c726e26766ddaae236459b6d42d9596d39a`.
 
+El primer proceso A1-FR completó nueve épocas, pero su best epoch 4 no es evidencia:
+`DGqicHUGWb` tenía MiD global NaN debido a todos los casos negative unknown y el
+macro omitió la secuencia no finita. El defecto era del selector, no una autorización
+para reportar un macro de dos secuencias. El run se conserva y queda invalidado por
+el artifact `fd5bde50328080975781a8fc2cdae1e0a198bb5a878430fde3e1f87c9be8f19b`.
+La repetición correcta exige cobertura finita 3/3 y parte desde cero.
+
 ## Estado
 
 A0, referencia release, Garl matched y A1 están terminados. El cache matched

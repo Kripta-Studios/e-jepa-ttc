@@ -49,6 +49,12 @@ El brazo recibe la identidad A1-FR, 340.870 parámetros y config firmada
 seleccionarse con el mismo criterio MiD macro/failure. No se usará su validation
 para alterar retrospectivamente pesos o definir otra ejecución bajo el mismo nombre.
 
+Corrección preregistrada del selector: un checkpoint solo es seleccionable si
+`paper_MiD_overall` es finito para cada una de las tres secuencias completas. Un
+macro calculado sobre un subconjunto finito no actualiza best ni stale. Esto no
+cambia A0/A1, cuyos checkpoints elegidos tenían cobertura 3/3, y evita premiar
+unknown/failures. El primer A1-FR queda invalidado y se repite desde cero.
+
 El diagnóstico de fallo no selecciona hiperparámetros ni abre test. Descompone el
 checkpoint ya seleccionado sobre la misma validation pública en bbox-ratio,
 extensión analítica, residual, ratio combinado y ratio efectivo. A1 queda

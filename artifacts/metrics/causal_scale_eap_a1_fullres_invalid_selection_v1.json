@@ -1,0 +1,169 @@
+{
+  "artifact_sha256": "fd5bde50328080975781a8fc2cdae1e0a198bb5a878430fde3e1f87c9be8f19b",
+  "artifact_type": "causal_scale_eap_run_invalidation_v1",
+  "created_at_utc": "2026-08-10T03:26:44.620401+00:00",
+  "inputs": {
+    "checkpoint": {
+      "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\causal_scale_eap_screen_a1_fullres_v1_seed7\\model_best.pt",
+      "sha256": "0cbee8f3fa9716cc39063cd9ada3b02e20b62b4bceb7d01ffcb819eee0c2cbe1"
+    },
+    "predictions": {
+      "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\causal_scale_eap_screen_a1_fullres_v1_seed7\\validation_predictions.csv",
+      "sha256": "e21f73c6505b8c74e21a37e5f78a3b4da7a17436b4fcdced2809153d51065140"
+    },
+    "summary": {
+      "artifact_sha256": "fa643be4eb25f792626c470ad69c37081fb7fdb1852ffc5a0f4597a4f3853dc1",
+      "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\causal_scale_eap_screen_a1_fullres_v1_seed7\\summary.json",
+      "sha256": "b9613e11ce8f2a98e99e9b01a4d45dfc5f9a0c8562c634b82867172b3307a981"
+    }
+  },
+  "root_cause": {
+    "checkpoint_selector_previously_did_not_require_all_sequences_finite": true,
+    "minimum_epochs_is_early_stopping_floor_not_selection_floor": true,
+    "selected_epoch_after_foreground_warmup": true,
+    "sequence_macro_reporting_excludes_nonfinite_sequence_values": true
+  },
+  "run": {
+    "epochs_completed": 9,
+    "git_commit": "4926981516d4e40c067a2e331a5db9bb6b799411",
+    "nonfinite_sequences": [
+      "DGqicHUGWb"
+    ],
+    "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\causal_scale_eap_screen_a1_fullres_v1_seed7",
+    "per_sequence": {
+      "DGqicHUGWb": {
+        "bins": {
+          "crucial": {
+            "count": 187,
+            "failure_count": 108,
+            "failure_rate_pct": 57.75401069518716,
+            "mid": 647.2177565801265,
+            "rte_pct": 1765.444479249689
+          },
+          "large": {
+            "count": 187,
+            "failure_count": 142,
+            "failure_rate_pct": 75.93582887700535,
+            "mid": 131.27021326490137,
+            "rte_pct": 461.90041301672437
+          },
+          "negative": {
+            "count": 28,
+            "failure_count": 28,
+            "failure_rate_pct": 100.0,
+            "mid": null,
+            "rte_pct": null
+          },
+          "small": {
+            "count": 281,
+            "failure_count": 205,
+            "failure_rate_pct": 72.95373665480427,
+            "mid": 230.8470278262684,
+            "rte_pct": 728.494663797837
+          }
+        },
+        "delta_t_s": 0.1,
+        "failure_count": 483,
+        "failure_rate_pct": 70.71742313323573,
+        "num_samples": 683,
+        "paper_MiD_overall": null,
+        "protocol": "garl_signed_v1",
+        "weighted_RTE_pct": null
+      },
+      "pBqGOb2vYq": {
+        "bins": {
+          "crucial": {
+            "count": 178,
+            "failure_count": 80,
+            "failure_rate_pct": 44.9438202247191,
+            "mid": 516.1164924992415,
+            "rte_pct": 1327.480628328466
+          },
+          "large": {
+            "count": 161,
+            "failure_count": 112,
+            "failure_rate_pct": 69.56521739130434,
+            "mid": 123.76464249714354,
+            "rte_pct": 406.4444346953771
+          },
+          "negative": {
+            "count": 128,
+            "failure_count": 77,
+            "failure_rate_pct": 60.15625,
+            "mid": 180.9173652205149,
+            "rte_pct": 619.589710807992
+          },
+          "small": {
+            "count": 216,
+            "failure_count": 137,
+            "failure_rate_pct": 63.42592592592593,
+            "mid": 252.09966815263877,
+            "rte_pct": 728.718799202969
+          }
+        },
+        "delta_t_s": 0.1,
+        "failure_count": 406,
+        "failure_rate_pct": 59.443631039531475,
+        "num_samples": 683,
+        "paper_MiD_overall": 364.1563474671782,
+        "protocol": "garl_signed_v1",
+        "weighted_RTE_pct": 984.9593684754606
+      },
+      "qoohcdtLDH": {
+        "bins": {
+          "crucial": {
+            "count": 148,
+            "failure_count": 98,
+            "failure_rate_pct": 66.21621621621621,
+            "mid": 589.0230902021103,
+            "rte_pct": 1540.6854169380351
+          },
+          "large": {
+            "count": 200,
+            "failure_count": 150,
+            "failure_rate_pct": 75.0,
+            "mid": 141.67280067953286,
+            "rte_pct": 412.43863814107
+          },
+          "negative": {
+            "count": 179,
+            "failure_count": 143,
+            "failure_rate_pct": 79.88826815642457,
+            "mid": 173.93919073477298,
+            "rte_pct": 499.1205682696879
+          },
+          "small": {
+            "count": 155,
+            "failure_count": 103,
+            "failure_rate_pct": 66.45161290322581,
+            "mid": 242.79663312645334,
+            "rte_pct": 670.1551797922928
+          }
+        },
+        "delta_t_s": 0.1,
+        "failure_count": 494,
+        "failure_rate_pct": 72.43401759530792,
+        "num_samples": 682,
+        "paper_MiD_overall": 398.9117341804218,
+        "protocol": "garl_signed_v1",
+        "weighted_RTE_pct": 1062.5451830477812
+      }
+    },
+    "reported_failure_rate_pct": 67.529296875,
+    "reported_sequence_macro_MiD": 381.53404082379996,
+    "selected_epoch": 4
+  },
+  "scientific_use": {
+    "metrics_are_comparable_evidence": false,
+    "promotion_authorized": false,
+    "rerun_from_scratch_required": true,
+    "run_preserved_not_deleted": true,
+    "sota_claim_authorized": false
+  },
+  "sealed_sources": {
+    "codabench_opened": false,
+    "evttc_test_opened": false,
+    "private_test_opened": false
+  },
+  "status": "invalidated_checkpoint_selection_incomplete_sequence_coverage"
+}

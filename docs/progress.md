@@ -39,6 +39,10 @@
   axial separable, sin introducir teachers, JEPA o pair-ratio.
 - preregistrado A1-FR con igualdad exacta de data/training/loss y un solo cambio
   de decoder; config `7ceb1149…772c42e`, 340.870 parámetros, pendiente del run GPU.
+- detectado selector que aceptaba macro con secuencia NaN durante el primer intento
+  A1-FR; run preservado/inválido (`fd5bde50…c9be8f19b`), sin usar sus métricas;
+- selector corregido y probado para exigir cobertura finita de todas las secuencias;
+  repetición A1-FR obligatoriamente desde cero.
 
 ## 2026-08-10 — Transporte temporal Causal Scale v7
 

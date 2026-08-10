@@ -77,6 +77,17 @@ Tiene 340.870 parámetros, 3.721 menos que A1. Fuera del decoder foreground, el
 model config es exactamente igual; data/training/loss son byte-semánticamente
 iguales a A1. Debe publicarse antes de ejecutar y correr una sola vez en CUDA.
 
+La primera ejecución de infraestructura A1-FR queda invalidada, no borrada. En su
+checkpoint elegido, `DGqicHUGWb` tenía MiD `NaN` (100% failure en negative) y el
+macro promedió solo las otras dos secuencias. El selector no exigía cobertura
+finita de todas las secuencias. Artifact de invalidación firmado
+`causal_scale_eap_a1_fullres_invalid_selection_v1.json`, identidad
+`fd5bde50328080975781a8fc2cdae1e0a198bb5a878430fde3e1f87c9be8f19b`.
+El selector ahora exige MiD finito en las tres secuencias y no cuenta candidatos
+incompletos para best/stale. `minimum_epochs=8` sigue significando suelo de early
+stopping; la selección comienza después del warm-up. Repetir desde cero en un output
+nuevo; no reanudar el estado contaminado.
+
 El subset para matched training está materializado en
 `artifacts/subsets/garl_event_only_matched_screen_v1`, identidad firmada
 `dd08ecc983f30e38a939204f9a2df09e4966bbe73bd764c972f7726e5d4e34d3`.

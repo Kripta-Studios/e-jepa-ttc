@@ -195,12 +195,29 @@ def _loss(
 def _selection(metrics: dict[str, Any]) -> dict[str, float]:
     macro = float(metrics["sequence_macro"]["sequence_macro_paper_MiD_overall"])
     failure = float(metrics["signed"]["failure_rate_pct"])
+    per_sequence = metrics["sequence_macro"].get("per_sequence")
+    if not isinstance(per_sequence, dict) or not per_sequence:
+        raise ValueError("validation selection requires per-sequence metrics")
+    finite_sequence_count = sum(
+        math.isfinite(float(value.get("paper_MiD_overall", float("nan"))))
+        for value in per_sequence.values()
+        if isinstance(value, dict)
+    )
+    complete_sequence_coverage = float(finite_sequence_count == len(per_sequence))
     if not math.isfinite(macro) or not math.isfinite(failure):
         raise FloatingPointError("validation selection metrics are non-finite")
-    return {"sequence_macro_MiD": macro, "failure_rate_pct": failure}
+    return {
+        "sequence_macro_MiD": macro,
+        "failure_rate_pct": failure,
+        "finite_sequence_count": float(finite_sequence_count),
+        "sequence_count": float(len(per_sequence)),
+        "complete_sequence_coverage": complete_sequence_coverage,
+    }
 
 
 def _is_better(candidate: dict[str, float], incumbent: dict[str, float] | None) -> bool:
+    if candidate.get("complete_sequence_coverage", 1.0) != 1.0:
+        return False
     if incumbent is None:
         return True
     return (candidate["sequence_macro_MiD"], candidate["failure_rate_pct"]) < (
@@ -865,13 +882,14 @@ def train_real_causal_scale(
         }
         history.append(record)
         eligible = epoch > training_config.foreground_warmup_epochs
-        if eligible and _is_better(selection, best_selection):
+        selectable = eligible and selection["complete_sequence_coverage"] == 1.0
+        if selectable and _is_better(selection, best_selection):
             best_state = copy.deepcopy(model.state_dict())
             best_selection = selection
             best_validation = validation
             best_epoch = epoch
             stale = 0
-        elif eligible:
+        elif selectable:
             stale += 1
         scheduler.step()
         last_completed_epoch = epoch

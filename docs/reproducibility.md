@@ -141,13 +141,17 @@ Preregistro y ejecución A1-FR:
 ```powershell
 uv run python scripts/train_causal_scale_eap_screen.py `
   --config configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a1_fullres_v1.yaml `
-  --output-dir artifacts/runs/causal_scale_eap_screen_a1_fullres_v1_seed7 `
+  --output-dir artifacts/runs/causal_scale_eap_screen_a1_fullres_v1_seed7_selection_fixed `
   --device cuda
 ```
 
 Si existe `state/last.pt`, añadir `--resume`. No borrar un run compatible. Config
 SHA256 `7ceb114963e8aad8f4c7edeb70344759543d3ac58abc6a47b862d3acf772c42e`;
 model SHA256 `97232184d7fb00520136319f5e902c726e26766ddaae236459b6d42d9596d39a`.
+No reanudar `causal_scale_eap_screen_a1_fullres_v1_seed7`: ese primer intento está
+invalidado por cobertura incompleta de secuencias y se conserva intacto. Artifact
+de invalidación `artifacts/metrics/causal_scale_eap_a1_fullres_invalid_selection_v1.json`,
+identidad `fd5bde50328080975781a8fc2cdae1e0a198bb5a878430fde3e1f87c9be8f19b`.
 
 Regeneración del diagnóstico:
 

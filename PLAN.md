@@ -51,6 +51,11 @@ SHA256 `97232184d7fb00520136319f5e902c726e26766ddaae236459b6d42d9596d39a`,
 340.870 parámetros. Ejecutar seed 7 una vez en GPU desde commit limpio; comparar
 geometría por endpoint/delta antes de decidir cualquier teacher o A1-R.
 
+El primer intento se considera infraestructura inválida porque el selector aceptó
+un macro con una de tres secuencias no finita. Se conserva con identidad
+`fd5bde50…c9be8f19b`. Tras endurecer la cobertura, repetir desde cero; no reanudar
+ni usar las cifras inválidas para decidir arquitectura.
+
 No se cambian `unknown`, support, clip, residual, consenso, optimizer, seed, filas
 o presupuesto durante A1. Correlaciones absolutas y diferenciales se reportan
 globales y macro por secuencia; `r_iso` es diagnóstico, no prediction path.
