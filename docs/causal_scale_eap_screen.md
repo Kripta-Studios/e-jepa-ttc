@@ -292,9 +292,16 @@ encoder. `resize_conv` es preferible a `deconv` para evitar checkerboard y ya ex
 en el código; se mantendrá la loss A1. No confundir este siguiente brazo con A2
 weak-box ligera, que sigue siendo otra hipótesis.
 
+El brazo se denomina A1-DF y está congelado con experiment SHA256
+`dddfb393bb0ce2c3245335cc459948c0830a435ffeaf5a76e710679a8180b284`, model
+SHA256 `265dbfd57e68d7a6aa385fbf31dc0ad41154b17afbd1d9454bbd8ddd80c6663f`
+y 355.118 parámetros. Conserva exactamente data, training y loss de A1; el único
+cambio de model config es `equivariant_separable -> resize_conv`.
+
 ## Estado
 
-A0, referencia release, Garl matched, A1 y A1-FR están terminados. El cache matched
+A0, referencia release, Garl matched, A1 y A1-FR están terminados; A1-DF está
+preregistrado y aún no ejecutado. El cache matched
 oficial tiene identidad `92af281030170733411ef9d65b19e88ebc8019c729dd6743e02ae9c40f564b52`,
 2.048/2.048 filas y preprocessing separado de `166.7501/155.3283 s`. Resume A0
 coincide exactamente con entrenamiento continuo y el runner matched liga resume a

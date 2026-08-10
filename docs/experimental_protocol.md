@@ -60,6 +60,10 @@ La repetición válida seleccionó epoch 11/16 con cobertura 3/3 y falló: macro
 El siguiente cambio aislado permitido es `foreground_decoder=resize_conv`, que usa
 features del encoder; todo lo demás debe permanecer igual a A1.
 
+A1-DF materializa ese cambio único. Su selección exige MiD finito en las tres
+secuencias; seed, filas, épocas, warm-up, optimizer, CVaR, loss geométrica, física,
+unknown y clip permanecen congelados. No usa RGB, SAM, DINO ni objetivo JEPA.
+
 El diagnóstico de fallo no selecciona hiperparámetros ni abre test. Descompone el
 checkpoint ya seleccionado sobre la misma validation pública en bbox-ratio,
 extensión analítica, residual, ratio combinado y ratio efectivo. A1 queda

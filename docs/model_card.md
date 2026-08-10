@@ -86,6 +86,8 @@ coverage `.7124` y Pearson log-ratio `-.0181`. Empeora A1 en `33.3908` MiD y
 eventos crudos; este resultado rechaza esa intervención superficial, no el uso de
 features 2-D profundas. El siguiente control aislado usará el decoder existente
 `resize_conv`, alimentado por `_EndpointEncoder.features`, con la misma loss A1.
+Este control se denomina A1-DF; está preregistrado con 355.118 parámetros y aún no
+tiene resultados. No es un checkpoint promovido.
 
 ## Estado
 

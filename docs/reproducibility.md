@@ -184,6 +184,19 @@ uv run python scripts/build_causal_scale_eap_garl_comparison.py `
 Identidad firmada:
 `b02518601497907ae2ca41a345c8719298f97047ee59e9b7fad8909bd53c3c35`.
 
+Preregistro y ejecución A1-DF:
+
+```powershell
+uv run python scripts/train_causal_scale_eap_screen.py `
+  --config configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a1_deep_features_v1.yaml `
+  --output-dir artifacts/runs/causal_scale_eap_screen_a1_deep_features_v1_seed7 `
+  --device cuda
+```
+
+Si existe un `state/last.pt` compatible, añadir `--resume`; no borrar un run válido.
+Experiment SHA256 `dddfb393bb0ce2c3245335cc459948c0830a435ffeaf5a76e710679a8180b284`;
+model SHA256 `265dbfd57e68d7a6aa385fbf31dc0ad41154b17afbd1d9454bbd8ddd80c6663f`.
+
 Regeneración del diagnóstico:
 
 ```powershell

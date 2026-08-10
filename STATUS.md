@@ -71,7 +71,10 @@
 - A1-FR es peor que A1 por `33.3908` MiD y `18.7988` puntos de failure. La cabeza
   2-D raw no arregla representación/dinámica; comparador firmado `b0251860…53c3c35`.
 - Siguiente hipótesis: `resize_conv` alimentado por features profundas del encoder,
-  con loss/protocolo A1 intactos; aún no preregistrada.
+  con loss/protocolo A1 intactos.
+- A1-DF preregistrado: experiment `dddfb393…0b284`, modelo `265dbfd5…c6663f`,
+  355.118 parámetros. Los tests prueban igualdad exacta de data/training/loss,
+  único cambio de decoder y logits finales 128x128. Pendiente run seed 7 en GPU.
 
 ## Addendum eAP causal-scale screen v1 (2026-08-10)
 

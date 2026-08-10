@@ -64,6 +64,11 @@ de representación debe cambiar solo a `resize_conv`, para que el foreground use
 features profundas en vez del input crudo. Si tampoco aprende geometría estática,
 entonces se justifica pretraining/teacher event-native; no antes.
 
+A1-DF queda preregistrado sin observar resultados: experiment SHA256
+`dddfb393bb0ce2c3245335cc459948c0830a435ffeaf5a76e710679a8180b284`, model
+SHA256 `265dbfd57e68d7a6aa385fbf31dc0ad41154b17afbd1d9454bbd8ddd80c6663f`,
+355.118 parámetros. Se ejecutará una vez con seed 7 y selección finita 3/3.
+
 No se cambian `unknown`, support, clip, residual, consenso, optimizer, seed, filas
 o presupuesto durante A1. Correlaciones absolutas y diferenciales se reportan
 globales y macro por secuencia; `r_iso` es diagnóstico, no prediction path.

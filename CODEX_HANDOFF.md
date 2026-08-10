@@ -102,6 +102,13 @@ features profundas de `_EndpointEncoder`. La siguiente hipótesis mínima es usa
 decoder existente `resize_conv`, que sí consume features aprendidas, manteniendo la
 loss A1. No introducir pretraining/teachers hasta probar ese control.
 
+Ese control queda preregistrado como A1-DF en
+`configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a1_deep_features_v1.yaml`.
+Experiment SHA256 `dddfb393bb0ce2c3245335cc459948c0830a435ffeaf5a76e710679a8180b284`;
+model SHA256 `265dbfd57e68d7a6aa385fbf31dc0ad41154b17afbd1d9454bbd8ddd80c6663f`;
+355.118 parámetros. Ejecutar una sola vez seed 7 en GPU y no tocar pair-ratio,
+teachers, unknown/clip ni loss A1.
+
 El subset para matched training está materializado en
 `artifacts/subsets/garl_event_only_matched_screen_v1`, identidad firmada
 `dd08ecc983f30e38a939204f9a2df09e4966bbe73bd764c972f7726e5d4e34d3`.

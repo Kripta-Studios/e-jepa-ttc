@@ -47,6 +47,8 @@
   `28.7598%`, ratio `-.0181`; peor que A1 y no promovida;
 - firmado comparador A1-FR/Garl (`b0251860…53c3c35`); la hipótesis fullres raw
   queda rechazada y el siguiente control propuesto usa features `resize_conv`.
+- preregistrado A1-DF (`dddfb393…0b284`) con un único cambio a `resize_conv`,
+  features profundas, misma loss A1 y sin teachers/pair-ratio.
 
 ## 2026-08-10 — Transporte temporal Causal Scale v7
 
