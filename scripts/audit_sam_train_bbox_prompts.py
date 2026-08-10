@@ -4,11 +4,14 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
+import io
 import json
 import math
 import os
 import statistics
 import subprocess
+import tarfile
 import tempfile
 import time
 from pathlib import Path
@@ -18,14 +21,62 @@ import numpy as np
 import pandas as pd
 import torch
 import yaml
+from PIL import Image
 
 from e_jepa_ttc.artifacts.hashing import sign_artifact
-from scripts.smoke_sam_hf_bbox_prompt import (
-    _as_list,
-    _read_rgb_member,
-    endpoint_box,
-    sha256_file,
-)
+
+
+def sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(8 * 1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _as_list(value: object) -> list[object]:
+    to_list = getattr(value, "tolist", None)
+    if callable(to_list):
+        value = to_list()
+    if not isinstance(value, (list, tuple)):
+        raise TypeError(f"expected list-like value, got {type(value).__name__}")
+    return list(value)
+
+
+def endpoint_box(value: object, *, endpoint_index: int, box_index: int) -> list[float]:
+    endpoints = _as_list(value)
+    if not 0 <= endpoint_index < len(endpoints):
+        raise IndexError("endpoint_index is outside boxes_xyxy")
+    boxes = _as_list(endpoints[endpoint_index])
+    if len(boxes) == 4 and all(isinstance(item, (int, float)) for item in boxes):
+        if box_index != 0:
+            raise IndexError("single-box endpoint only admits box_index=0")
+        box = boxes
+    else:
+        if not 0 <= box_index < len(boxes):
+            raise IndexError("box_index is outside endpoint boxes")
+        box = _as_list(boxes[box_index])
+    if len(box) != 4 or not all(isinstance(item, (int, float)) for item in box):
+        raise ValueError("bbox must contain four numeric coordinates")
+    result = [float(cast(int | float, item)) for item in box]
+    x1, y1, x2, y2 = result
+    if not (x2 > x1 and y2 > y1 and x1 >= 0 and y1 >= 0):
+        raise ValueError(f"invalid xyxy bbox: {result}")
+    return result
+
+
+def _read_rgb_member(eap_root: Path, shard_reference: str, member: str) -> tuple[Image.Image, str]:
+    shard_path = (eap_root / shard_reference).resolve()
+    if not shard_path.is_file():
+        raise FileNotFoundError(shard_path)
+    with tarfile.open(shard_path, mode="r:*") as archive:
+        extracted = archive.extractfile(member)
+        if extracted is None:
+            raise FileNotFoundError(f"member {member!r} absent from {shard_path}")
+        payload = extracted.read()
+    image = Image.open(io.BytesIO(payload)).convert("RGB")
+    image.load()
+    return image, hashlib.sha256(payload).hexdigest()
 
 
 def evenly_spaced_rows(frame: pd.DataFrame, count: int) -> pd.DataFrame:
