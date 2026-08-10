@@ -79,6 +79,8 @@ def _configs() -> tuple[SimpleNamespace, SimpleNamespace]:
     training = SimpleNamespace(
         representation_supervision="dinov3_local_relational",
         representation_temporal_delta_weight=0.0,
+        initialization_mode="none",
+        freeze_encoder=False,
     )
     model = SimpleNamespace(
         transport_enabled=True,
