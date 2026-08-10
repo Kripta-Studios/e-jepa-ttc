@@ -9,8 +9,10 @@
 3. **Completado, resultado negativo parcial:** A1 bbox geometry-only mejora A0 a
    MiD macro `346.8295`, pero sigue lejos de Garl matched (`203.6342`) y no aprende
    anchura/centros ni el cambio temporal de forma suficiente.
-4. **Siguiente hipótesis única:** sustituir/mejorar la representación densa
-   event-native manteniendo fijos geometry head, Causal Scale, filas y protocolo.
+4. **Siguiente hipótesis única:** reemplazar solo el decoder foreground
+   `equivariant_separable` (proyección axial por `amax`) por el decoder 2-D existente
+   `equivariant_fullres`; mantener loss A1, geometry head, Causal Scale, filas y
+   protocolo. Identidad experimental nueva, no reescritura de A1.
 5. EvTTC test y las demás fuentes selladas siguen cerradas.
 
 El diagnóstico posterior a A0 fijó el criterio de A1: debía mejorar directamente
@@ -38,6 +40,10 @@ Orden congelado de decisión:
 Los pasos 1–2 están cerrados. A1 cae en el paso 5: la siguiente ablation debe
 cambiar solo el encoder/representación densa event-native. Se conservará el mismo
 readout geométrico para distinguir mejora de representación de mejora de cabeza.
+La auditoría firmada `737a3663…f0aa635d` justifica el cambio mínimo: la actividad
+cruda es espacialmente difusa y la anchura objetivo varía, mientras el decoder
+separable no la recupera en ninguno de los endpoints. No introducir teachers RGB,
+JEPA, pair-ratio ni weak-box en este control.
 
 No se cambian `unknown`, support, clip, residual, consenso, optimizer, seed, filas
 o presupuesto durante A1. Correlaciones absolutas y diferenciales se reportan

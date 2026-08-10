@@ -28,6 +28,12 @@ Terminó best 18/18 con MiD `346,83`, failure `9,96%` y Pearson log-ratio `.111`
 contra bbox es `.059`. El siguiente control actuará sobre representación densa
 event-native, no sobre clipping ni la inversión TTC.
 
+La auditoría por endpoint confirma que la anchura bbox no es constante, pero el
+decoder separable no la sigue en t1/t2 (`r=.048/.105`). Como la masa absoluta de
+eventos es difusa en casi todo el ROI y el decoder actual usa `amax` por eje, el
+siguiente control cambia solo a convolución full-resolution 2-D. DINO, SAM, JEPA y
+pair-ratio permanecen fuera para no contaminar la ablation.
+
 Pipeline reproducible para estimar Time-to-Contact/Time-to-Collision a partir de
 cámaras de eventos, con una ruta event-only high-resolution y una futura ablación
 RGB-E multimodal.

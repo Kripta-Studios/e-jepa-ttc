@@ -121,6 +121,21 @@ uv run python scripts/build_causal_scale_eap_garl_comparison.py `
 La salida verifica 2.048 tokens/targets/secuencias exactos y tiene identidad
 `471fa106f4137f71ecfa4165abec696e5f83644830ded14a82abff8fb7ba485d`.
 
+Auditoría A1 geometry/observability por endpoint (siempre GPU):
+
+```powershell
+uv run python scripts/analyze_causal_scale_eap_geometry_observability.py `
+  --checkpoint artifacts/runs/causal_scale_eap_screen_a1_geometry_v1_seed7/model_best.pt `
+  --cache-manifest artifacts/cache/garl_object_event_common_roi_screen_v4/manifest.json `
+  --summary artifacts/runs/causal_scale_eap_screen_a1_geometry_v1_seed7/summary.json `
+  --output-json artifacts/metrics/causal_scale_eap_a1_geometry_observability_v1.json `
+  --device cuda --batch-size 64
+```
+
+Resultado: 2.048 filas, tres secuencias y 108 tracks, `12.678 s`, 161,54
+muestras/s y `934.62 MiB` peak VRAM. Identidad firmada
+`737a3663c13dc083b918e0101f4954bcfc22b23257255e0d183f8e09f0aa635d`.
+
 Regeneración del diagnóstico:
 
 ```powershell

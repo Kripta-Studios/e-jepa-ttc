@@ -32,6 +32,11 @@
   `delta log h`/bbox `.0591`, `delta log h`/física `.1048`; geometry-only no basta;
 - generado comparador A1/Garl exact-token firmado, identidad
   `471fa106…7ba485d`. No se promueve ni escala A1.
+- añadida auditoría GPU por endpoint y actividad event-only: anchura objetivo
+  variable pero predicción `r=.048/.105`; actividad cruda casi uniforme y sin
+  delta geométrico; artifact firmado `737a3663…f0aa635d`;
+- fijada siguiente hipótesis mínima: decoder full-resolution 2-D contra el `amax`
+  axial separable, sin introducir teachers, JEPA o pair-ratio.
 
 ## 2026-08-10 — Transporte temporal Causal Scale v7
 

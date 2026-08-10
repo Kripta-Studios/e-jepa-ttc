@@ -56,7 +56,7 @@ pero falla el gate `.95`; test 901/902/903 permanece sellado.
 La adaptación eAP/Garl causal-scale v1 completó A0 sobre un cache público
 2.048/2.048 y produjo el resultado negativo descrito arriba. Las cajas t1/t2 son weak supervision
 del foreground, no inputs ni máscaras GT; t0 proxy se excluye. El baseline comparable
-será Garl event-only entrenado desde cero con el mismo presupuesto; el release
+es Garl event-only entrenado desde cero con el mismo presupuesto; el release
 oficial expuesto se conserva en una tabla distinta.
 
 La métrica principal que un sucesor event-only debe batir en el screen 2.048 es
@@ -73,14 +73,20 @@ quedan en `<=.079`; el cambio temporal de altura correlaciona solo `.059` con el
 cambio bbox. Esto apunta a limitación de representación/localización event-native y
 coherencia temporal, no solo a ruido del target weak-box.
 
+La auditoría firmada por endpoint refuerza ese diagnóstico sin abrir test. La
+anchura target conserva std cercana a `.095`, pero su correlación predicha es solo
+`.048/.105` en t1/t2. La actividad absoluta de entrada ocupa casi todo el ROI y no
+reproduce el cambio de escala. El siguiente candidato es por tanto una ablation
+controlada del decoder foreground 2-D full-resolution, no un modelo promovido.
+
 ## Estado
 
 El modelo histórico activo era un candidato event-only high-resolution, no un modelo SOTA ni
 un sistema de producción. `B0_HISTORICAL_BASE_EXACT` y `A0_MATCHED_GLOBAL` son
 anclas EvTTC históricas; no son el checkpoint del trainer Garl nuevo.
 
-No hay checkpoint final promovido. El único run real del trainer nuevo es un smoke
-16/16 de integración con MiD macro `1868,3186`, marcado
+No hay checkpoint final promovido. A0 y A1 son screens reales completos pero
+negativos; el smoke 16/16 histórico sigue siendo solo integración y permanece
 `claim_eligible=false`.
 
 ## Arquitectura activa

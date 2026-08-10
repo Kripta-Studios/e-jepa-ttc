@@ -37,6 +37,13 @@ el siguiente protocolo debe modificar una sola vez la representación densa
 event-native conservando la cabeza geométrica. A1-R solo se reconsiderará si una
 representación futura mide bien los endpoints pero falla su diferencia temporal.
 
+La auditoría posterior es diagnóstica, no un sweep: mide por separado t1/t2 y los
+momentos de actividad derivados solo de events. Confirma target width variable y
+fallo en ambos endpoints. La siguiente identidad cambiará una sola línea del model
+config: `equivariant_separable -> equivariant_fullres`. Todos los pesos de loss,
+seed, filas, schedule, selección y conversiones físicas quedan iguales a A1. No se
+activará pair-ratio ni se usará RGB teacher en ese control.
+
 El diagnóstico de fallo no selecciona hiperparámetros ni abre test. Descompone el
 checkpoint ya seleccionado sobre la misma validation pública en bbox-ratio,
 extensión analítica, residual, ratio combinado y ratio efectivo. A1 queda

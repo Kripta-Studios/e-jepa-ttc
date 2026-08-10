@@ -232,6 +232,28 @@ Comparador exact-token firmado:
 `artifacts/metrics/causal_scale_eap_garl_event_only_a1_geometry_comparison_v1.json`,
 identidad `471fa106f4137f71ecfa4165abec696e5f83644830ded14a82abff8fb7ba485d`.
 
+### Auditoría por endpoint y observabilidad
+
+El diagnóstico firmado `causal_scale_eap_a1_geometry_observability_v1.json`
+repite inferencia BF16 en GPU sobre los mismos 2.048 tokens. Altura predicha frente
+a bbox obtiene Pearson `.4783/.4931` en t1/t2; anchura solo `.0484/.1055`. La
+anchura target tiene std `.0962/.0948`, luego su fracaso no se debe a target
+constante. Los centroides están cerca del centro por construcción del common ROI y
+tienen poca varianza, por lo que su correlación aislada es menos informativa.
+
+Como control label-free, los momentos de `abs(events)` dan extents medios
+`.9966/.9985` en t1 y `.9965/.9984` en t2, con std `~.003`: la actividad cruda es
+difusa en casi todo el crop. Sus deltas de altura/anchura correlacionan
+`-.0521/-.0777` con bbox. Esto no es una máscara ni un gate; demuestra que sumar
+actividad no localiza el objeto.
+
+El decoder actual aplica un stem 2-D al input y después `amax` por anchura/altura
+antes de cabezas 1-D. La hipótesis mecanística siguiente es que ese máximo axial
+retiene background/hot activity y pierde coocurrencia 2-D. Se probará el decoder
+`equivariant_fullres` ya existente, manteniendo toda la loss/protocolo A1. No se
+mezclará con pair-ratio, weak-box, teacher RGB o JEPA. Identidad del diagnóstico:
+`737a3663c13dc083b918e0101f4954bcfc22b23257255e0d183f8e09f0aa635d`.
+
 ## Estado
 
 A0, referencia release, Garl matched y A1 están terminados. El cache matched

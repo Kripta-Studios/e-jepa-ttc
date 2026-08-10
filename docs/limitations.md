@@ -13,6 +13,11 @@ dinámica siguen débiles. Por tanto el rectángulo era ruido parcial, no explic
 suficiente. Quedan por separar representación/aliasing event-native, capacidad del
 foreground head y coherencia temporal.
 
+La auditoría de actividad usa momentos de `abs(events)` como heurística, no como
+segmentación ni demostración causal. Que la actividad sea difusa y el decoder use
+`amax` axial justifica probar una cabeza 2-D, pero solo el experimento controlado
+puede confirmar que el colapso axial sea la causa.
+
 Actualizado: 2026-08-10.
 
 - No existe un claim SOTA ni un checkpoint final promovido.

@@ -57,6 +57,18 @@ La siguiente intervención debe actuar sobre representación densa event-native,
 manteniendo la cabeza geométrica y Causal Scale como controles; A1-R no es el
 siguiente paso porque A1 tampoco aprendió `w,cx,cy` de forma suficiente.
 
+Auditoría de observabilidad firmada
+`artifacts/metrics/causal_scale_eap_a1_geometry_observability_v1.json`, identidad
+`737a3663c13dc083b918e0101f4954bcfc22b23257255e0d183f8e09f0aa635d`:
+t1/t2 repiten el mismo fallo (`h r=.478/.493`, `w r=.048/.105`). La anchura bbox
+sí varía (`std=.096/.095`), por lo que no es un target constante. La masa absoluta
+de eventos cruda ocupa casi todo el ROI (`extent h=.9965`, `w=.9984`, std
+`~.003`) y su cambio no reproduce bbox (`r=-.052/-.078`). El decoder separable
+actual opera sobre el input full-resolution y colapsa cada eje con `amax`; la
+hipótesis siguiente, aún no demostrada, es que ese colapso pierde coocurrencia 2-D
+en un ROI con actividad difusa. El control mínimo es `equivariant_fullres` 2-D con
+la misma loss A1, no DINO/SAM/JEPA ni `pair_ratio` simultáneamente.
+
 El subset para matched training está materializado en
 `artifacts/subsets/garl_event_only_matched_screen_v1`, identidad firmada
 `dd08ecc983f30e38a939204f9a2df09e4966bbe73bd764c972f7726e5d4e34d3`.

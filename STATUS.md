@@ -53,6 +53,11 @@
   `471fa106f4137f71ecfa4165abec696e5f83644830ded14a82abff8fb7ba485d`.
   Siguiente hipótesis: mejorar representación densa event-native conservando
   geometry head; no activar A1-R mientras la geometría estática completa sea mala.
+- Diagnóstico A1 por endpoint firmado `737a3663…f0aa635d`: h t1/t2
+  `.478/.493`, w `.048/.105`; el target width no está colapsado (`std~.095`).
+  La actividad absoluta cruda tiene extent casi uniforme `.997/.998` y su delta
+  no correlaciona con bbox. Hipótesis siguiente: el `amax` axial del decoder
+  separable pierde estructura 2-D; probar solo `equivariant_fullres` con loss A1.
 
 ## Addendum eAP causal-scale screen v1 (2026-08-10)
 
