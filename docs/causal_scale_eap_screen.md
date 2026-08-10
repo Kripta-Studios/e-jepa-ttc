@@ -51,6 +51,8 @@ representación —Garl 2×20 canales frente a nuestro 3×12— debe permanecer 
 
 ## Estado
 
-Implementación terminada y checks focalizados verdes. Falta probar resume
-end-to-end, ejecutar el entrenamiento completo, construir los parquets filtrados para
-Garl, evaluar el checkpoint oficial y generar la comparación firmada.
+Implementación y checks verdes. Resume coincide exactamente con entrenamiento
+continuo en modelo, optimizer, scheduler, RNG, historial y best, y rechaza contratos
+distintos. `scripts/build_garl_validation_subset_from_predictions.py` construye y
+firma los parquets exactos, validando tokens, joins, targets y roundtrip. Falta ejecutar
+el entrenamiento completo, el checkpoint oficial y la comparación firmada.

@@ -146,7 +146,8 @@ sin evaluación externa reproducida.
 - Su ROI usa cajas oficiales y rasteriza cajas t1/t2 como supervisión débil. No es
   bbox-free ni segmentation-supervised.
 - El comparador Garl event-only en los mismos 2.048 tokens aún no se ha ejecutado.
-- La reanudación persistente está implementada, pero falta test end-to-end.
+- La reanudación persistente pasa equivalencia end-to-end, pero aún no se ha usado en
+  el run representativo real.
 
 - el smoke high-resolution no aprende todavía una señal TTC competitiva;
 - el gate ideal v5 usa foreground analítico; el aprendizaje sintético posterior

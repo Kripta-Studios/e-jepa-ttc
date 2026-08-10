@@ -13,8 +13,10 @@ El trainer real está en `src/e_jepa_ttc/training/causal_scale_eap.py`, el runne
 `scripts/train_causal_scale_eap_screen.py` y el protocolo congelado en
 `configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_v1.yaml`. Implementa
 CVaR, BF16, early stopping, límite 6 h y `best/last` resumibles por época. Un benchmark
-128+128 tardó 5,289 s y 395,6 MiB de VRAM; no es resultado eAP. Falta un test resume
-end-to-end y el entrenamiento completo.
+128+128 tardó 5,289 s y 395,6 MiB de VRAM; no es resultado eAP. Resume ya pasa un
+test end-to-end exacto, incluido optimizer/scheduler/RNG/historial/best. También está
+implementado el builder firmado del subset Garl por tokens. Falta el entrenamiento
+completo y ejecutar la comparación oficial.
 
 La comparación primaria será contra
 `E:\Garl-TTC\checkpoints\paper_event_only_lhr.pth` sobre exactamente los mismos

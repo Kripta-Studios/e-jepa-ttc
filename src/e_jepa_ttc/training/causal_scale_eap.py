@@ -321,11 +321,14 @@ def train_real_causal_scale(
     *,
     checkpoint_dir: Path | None = None,
     resume: bool = False,
+    stop_after_epoch: int | None = None,
 ) -> CausalScaleEAPTrainingResult:
     """Train under a hard wall-clock guard and select on validation only."""
 
     if not isinstance(train_dataset, Sized) or not isinstance(validation_dataset, Sized):
         raise TypeError("real causal-scale datasets must expose length")
+    if stop_after_epoch is not None and not 1 <= stop_after_epoch <= training_config.epochs:
+        raise ValueError("stop_after_epoch must lie within the configured epoch range")
     seed_everything(training_config.seed, deterministic=True)
     generator = torch.Generator().manual_seed(training_config.seed)
     train_loader = _loader(
@@ -371,6 +374,18 @@ def train_real_causal_scale(
         saved = torch.load(last_path, map_location="cpu", weights_only=False)
         if saved.get("artifact_type") != "causal_scale_eap_resume_state_v1":
             raise ValueError("last.pt has an incompatible artifact type")
+        expected_contract = {
+            "model_config": asdict(model_config),
+            "training_config": asdict(training_config),
+            "loss_config": asdict(loss_config),
+            "train_samples": len(train_dataset),
+            "validation_samples": len(validation_dataset),
+        }
+        actual_contract = {
+            key: saved.get(key) for key in expected_contract
+        }
+        if actual_contract != expected_contract:
+            raise ValueError("resume state differs from the current config/data contract")
         model.load_state_dict(saved["model_state_dict"], strict=True)
         optimizer.load_state_dict(saved["optimizer_state_dict"])
         scheduler.load_state_dict(saved["scheduler_state_dict"])
@@ -398,6 +413,11 @@ def train_real_causal_scale(
         payload = {
             "artifact_type": "causal_scale_eap_resume_state_v1",
             "epoch": epoch,
+            "model_config": asdict(model_config),
+            "training_config": asdict(training_config),
+            "loss_config": asdict(loss_config),
+            "train_samples": len(train_dataset),
+            "validation_samples": len(validation_dataset),
             "model_state_dict": model.state_dict(),
             "optimizer_state_dict": optimizer.state_dict(),
             "scheduler_state_dict": scheduler.state_dict(),
@@ -467,6 +487,8 @@ def train_real_causal_scale(
             save_state(last_path, epoch, elapsed)
         if best_path is not None and best_epoch == epoch:
             save_state(best_path, epoch, elapsed)
+        if stop_after_epoch is not None and epoch >= stop_after_epoch:
+            break
         if (
             epoch >= training_config.minimum_epochs
             and stale >= training_config.early_stopping_patience

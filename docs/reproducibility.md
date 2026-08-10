@@ -205,7 +205,13 @@ atómico cada época: modelo, optimizer, scheduler, RNG CPU/CUDA/Python/NumPy, e
 del generador del DataLoader, historial, best y paciencia. `--resume` continúa desde
 la siguiente época y el límite de 6 h descuenta el tiempo previo.
 
-Antes de usarlo como evidencia debe añadirse un test end-to-end de resume. El output
-esperado es `summary.json`, `validation_predictions.csv`, `model_best.pt` y
+`tests/integration/test_causal_scale_eap_resume.py` prueba equivalencia exacta de
+resume y rechazo de contratos distintos. El output esperado es `summary.json`,
+`validation_predictions.csv`, `model_best.pt` y
 `state/{last,best}.pt`. El baseline oficial debe recibir exactamente los sample
 tokens guardados en el CSV; no se permiten filtros posteriores por error.
+
+`scripts/build_garl_validation_subset_from_predictions.py` materializa ese conjunto
+exacto de manera atómica y firma fuentes, outputs, secuencias, counts, buckets y hash
+canónico de tokens. Falla ante duplicados, ausencia, join desigual, target diferente o
+roundtrip que cambie el orden.

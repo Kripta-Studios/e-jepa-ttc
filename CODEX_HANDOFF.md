@@ -233,10 +233,10 @@ uv run pytest tests/unit/test_causal_scale_ttc.py `
 uv run pytest -q
 ```
 
-Antes del full run, añadir y ejecutar un test pequeño de interrupción/reanudación que
-demuestre que `state/last.pt` continúa desde la siguiente época y conserva el best.
-La serialización está implementada, pero ese camino exacto no se ha probado end-to-end
-en este corte.
+El test `tests/integration/test_causal_scale_eap_resume.py` ya demuestra igualdad
+exacta entre cuatro épocas continuas y dos + resume: modelo, optimizer, scheduler,
+RNG Torch/Python/NumPy, generador del DataLoader, historial y best checkpoint. También
+demuestra rechazo fail-closed si cambia config o tamaño del dataset.
 
 ## 5. Ejecución siguiente: entrenamiento real event-only
 
@@ -283,13 +283,13 @@ Diagnóstico mínimo:
 
 ## 6. Comparación exacta con Garl-TTC oficial
 
-Falta implementar un builder de subset, sugerido:
+El builder exacto ya está implementado:
 
 ```text
 scripts/build_garl_validation_subset_from_predictions.py
 ```
 
-Debe:
+Valida y firma:
 
 1. leer `validation_predictions.csv` y extraer exactamente los 2,048 sample tokens;
 2. filtrar, sin modificar originales:
@@ -299,7 +299,18 @@ Debe:
 4. escribir parquets y asset list bajo
    `artifacts/subsets/garl_validation_common_roi_v1/`;
 5. guardar hashes de inputs/outputs, sequences, tokens y counts en manifest firmado;
-6. verificar que no se abre test privado.
+6. verificar que no se abre test privado;
+7. igualdad TTC cache/predictions frente al parquet público con tolerancia `1e-6`;
+8. orden exacto tras roundtrip Parquet y manifest con hash canónico de tokens.
+
+Ejecutarlo tras el entrenamiento:
+
+```powershell
+uv run python scripts/build_garl_validation_subset_from_predictions.py `
+  --predictions artifacts/runs/causal_scale_eap_screen_v1_seed7/validation_predictions.csv `
+  --output-dir artifacts/subsets/garl_validation_common_roi_v1 `
+  --expected-count 2048
+```
 
 Después ejecutar Garl event-only:
 
@@ -400,11 +411,54 @@ autoriza por sí mismo una apertura EvTTC test o un claim SOTA.
 
 Como mínimo:
 
-1. test resume end-to-end verde;
-2. entrenamiento seed 7 terminado y artefacto firmado;
+1. entrenamiento seed 7 terminado y artefacto firmado;
+2. subset exacto construido con el builder ya probado;
 3. baseline Garl event-only sobre los mismos 2,048 tokens;
 4. comparación y diagnóstico publicados en `.md` y JSON/CSV;
 5. decisión explícita: repetir seeds, ablation única o rechazar brazo;
 6. Ruff/Pyright/Pytest verdes;
 7. `git add` selectivo, commit y push;
 8. ningún test privado abierto y ningún claim inflado.
+
+## 11. Prompt listo para la siguiente sesión
+
+```text
+Trabaja en el repo
+C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc
+en la rama scientific-recovery-v3-hardening. Lee primero AGENTS.md y
+CODEX_HANDOFF.md completos y trata el estado actual del worktree como autoritativo.
+Usa Sol-Advisor conforme a su skill, sin sustituir sus roles si su lane no está
+disponible.
+
+Continúa la ruta honesta hacia superar Garl-TTC en eAP y después EvTTC. No abras
+test privado eAP, CodaBench, EvTTC test ni las seeds sintéticas V8 901/902/903. No
+reutilices 303/603. No afirmes SOTA con validation local o una seed.
+
+Primero inspecciona los cuatro borrados tracked ajenos que CODEX_HANDOFF.md registra;
+no los restaures ni los confirmes sin mi autorización. El runner exige código limpio,
+así que pregúntame qué hacer con ellos si siguen presentes. No toques otros cambios
+ajenos.
+
+Cuando el worktree esté limpio, ejecuta el entrenamiento event-only seed 7:
+uv run python scripts/train_causal_scale_eap_screen.py --config
+configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_v1.yaml --output-dir
+artifacts/runs/causal_scale_eap_screen_v1_seed7 --device cuda
+Usa --resume si existe state/last.pt. El trainer ya tiene early stopping, límite 6 h
+y resume determinista probado end-to-end.
+
+Analiza summary.json y validation_predictions.csv por secuencia, bucket, MiD, RTE,
+failure rate, known coverage, log-ratio, weak-box IoU y cola top 10%. Después construye
+el subset exacto con scripts/build_garl_validation_subset_from_predictions.py y evalúa
+el checkpoint oficial EVENT-ONLY de E:\Garl-TTC sobre exactamente esos 2.048 tokens
+mediante scripts/evaluate_official_garl_validation.py, usando
+E:\Garl-TTC\configs\ablation\event_lhr.yaml y
+E:\Garl-TTC\checkpoints\paper_event_only_lhr.pth. No uses el multimodal como baseline
+apples-to-apples; repórtalo solo como referencia separada.
+
+Implementa un comparador firmado por token/secuencia/bucket con bootstrap por
+secuencia, diagnostica los fallos y cambia una sola hipótesis por ablation si nuestro
+modelo no gana. Si gana consistentemente en validation, preregistra y ejecuta seeds
+13/23 antes de freeze. Después continúa RGB-only y fusión tardía RGB-E; EvTTC solo
+tras freeze label-free. Actualiza los .md y artefactos regenerables conforme avances,
+ejecuta Ruff/Pyright/Pytest, y haz git add selectivo, commit y push en hitos lógicos.
+```

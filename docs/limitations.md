@@ -9,7 +9,8 @@ Actualizado: 2026-08-10.
 - La comparación Garl event-only en los mismos 2.048 tokens está pendiente.
 - El screen depende de ROI con cajas GT y weak-box supervision; no es bbox-free y
   sus rectángulos no son máscaras de segmentación.
-- Resume atómico está implementado, pero falta prueba end-to-end de interrupción.
+- Resume atómico pasa su prueba end-to-end, pero el run real representativo sigue
+  pendiente.
 - Causal Scale v5 aprende foreground en datos sintéticos y alcanza IoU `.8640`, pero
   el test held-out falló: Pearson `.92135 < .95` y translation leakage
   `.02749 > .02`. Seed 303 está consumida y no hay evidencia real.

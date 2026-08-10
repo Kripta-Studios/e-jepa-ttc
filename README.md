@@ -150,9 +150,12 @@ uv run python scripts/train_causal_scale_eap_screen.py `
 ```
 
 Usa early stopping validation-only, CVaR top 10%, límite 6 h y checkpoints atómicos.
-Para reanudar se repite el comando con `--resume`. Las cajas oficiales son
-supervisión weak-box y crop oracle, nunca entrada del modelo. El run completo y la
-comparación oficial Garl event-only siguen pendientes. Véase
+Para reanudar se repite el comando con `--resume`; la equivalencia continua/resume
+está probada end-to-end. Tras el run,
+`scripts/build_garl_validation_subset_from_predictions.py` crea el subset Garl exacto
+y firmado por tokens. Las cajas oficiales son supervisión weak-box y crop oracle,
+nunca entrada del modelo. El run completo y la comparación oficial Garl event-only
+siguen pendientes. Véase
 [el protocolo del screen](docs/causal_scale_eap_screen.md) y
 [el handoff](CODEX_HANDOFF.md).
 

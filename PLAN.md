@@ -6,14 +6,16 @@ La ruta activa inmediata está descrita en `CODEX_HANDOFF.md` y
 `docs/causal_scale_eap_screen.md`:
 
 1. resolver cuatro borrados tracked ajenos sin asumir intención;
-2. añadir test end-to-end de resume;
-3. ejecutar seed 7 sobre cache 2.048/2.048 con límite 6 h;
-4. construir subset parquet de exactamente los tokens de validation;
-5. evaluar Garl oficial event-only con preprocessing/checkpoint inmutables;
-6. generar comparación firmada por secuencia/bucket;
-7. solo si hay mejora consistente, preregistrar seeds 13/23;
-8. después construir brazos RGB-only y fusión tardía RGB-E;
-9. EvTTC test y CodaBench siguen sellados hasta freeze.
+2. ejecutar seed 7 sobre cache 2.048/2.048 con límite 6 h;
+3. materializar con el builder ya probado exactamente los tokens de validation;
+4. evaluar Garl oficial event-only con preprocessing/checkpoint inmutables;
+5. generar comparación firmada por secuencia/bucket;
+6. solo si hay mejora consistente, preregistrar seeds 13/23;
+7. después construir brazos RGB-only y fusión tardía RGB-E;
+8. EvTTC test y CodaBench siguen sellados hasta freeze.
+
+El resume end-to-end y el builder exacto quedaron implementados y probados después
+del handoff inicial; ya no son blockers técnicos.
 
 V8 sintético queda cerrado en `.94621 < .95`; no se abren tests 901/902/903. La
 excepción eAP solo permite train/validation público y no cambia la frontera de claim.
