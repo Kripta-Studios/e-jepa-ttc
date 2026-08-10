@@ -1,0 +1,115 @@
+experiment:
+  name: e_jepa_garl_event_causal_scale_a4_lambda_cv_train8192_v1
+  protocol_version: causal_scale_a4_dinov3_lambda_group_cv_train8192_v1
+  evidence_scope: public_eap_garl_train_only
+  parent_code_commit: 9de1a7910f384af864c752b41e5785d6d7dcd0e6
+  purpose: select_representation_distillation_weight_before_a4_s1
+
+model_config: configs/model/e_jepa_causal_scale_event_v8_t015_resize_conv.yaml
+model_config_sha256: 265dbfd57e68d7a6aa385fbf31dc0ad41154b17afbd1d9454bbd8ddd80c6663f
+
+provenance:
+  source_a4_config: configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a4_dinov3_relational_v1.yaml
+  source_a4_config_sha256: aa20959e4b6aa25071fcab65f00b4c8ffeb053689633d6dbdd9ec5f955024885
+  original_calibration_artifact: artifacts/metrics/a4_dinov3_relational_weight_calibration_rgb_v2.json
+  original_calibration_file_sha256: 090fdece894cbe8c7fadfd23eecb90dd50d7cf876071dc69834d8be95a213697
+  original_calibration_artifact_sha256: b18fff4ed1c99df595be42f4ed5a646fbfb588645841b348a38adf311036ddba
+  original_calibration_lambda_raw: 10.34168332430836
+  original_calibration_selected_weight: 4.0
+  original_calibration_clamp_max: 4.0
+
+# This protocol opens only the public train partition. The expanded cache also
+# contains validation shards, but this selector never instantiates that split.
+data:
+  opened_splits: [train]
+  official_test_opened: false
+  codabench_opened: false
+  evttc_test_opened: false
+  cache_manifest: artifacts/cache/garl_object_event_common_roi_train8192_v1/manifest.json
+  cache_manifest_sha256: 063980fdae5fda0b2836befc662fdd1cd5659bf06f10d9760dfc0d566fac8e39
+  cache_artifact_sha256: f64b4348820b3ed83307413fd52c2cb39dae3c70deae8e65dc24996fe9ef25ec
+  expected_train_rows: 8192
+  train_sequence_ids:
+    - 2cyv0Oedzg
+    - 5ilM1PX2vz
+    - 6h5yRW2LGc
+    - OBneIVg4Cw
+    - OYgB6RGWcq
+    - WbCh1DRerJ
+    - mHGFBekt7X
+    - qGsgzl4Q8B
+    - t79dBxj1WS
+  dinov3_relational_teacher:
+    manifest: artifacts/cache/dinov3_convnext_large_relational_a4_train8192_rgb_v1/manifest.json
+    manifest_sha256: 6ee4b205d29a07d3aabf7137f2a312376711b5e5d9d7930ea36328390023eab3
+    artifact_sha256: 6511c684881f3360efb7c8718976ef6b37de36668a89d9ea2f8d4bdf6f620b20
+
+cv:
+  candidate_lambdas: [4.0, 6.0, 8.0, 10.34168332430836, 12.0]
+  selection_order:
+    - nine_sequence_macro_MiD
+    - sample_weighted_failure_rate_pct
+    - smaller_lambda
+  folds:
+    - name: fold_1
+      seed: 7
+      heldout_sequences: [2cyv0Oedzg, OBneIVg4Cw, mHGFBekt7X]
+    - name: fold_2
+      seed: 13
+      heldout_sequences: [5ilM1PX2vz, OYgB6RGWcq, qGsgzl4Q8B]
+    - name: fold_3
+      seed: 23
+      heldout_sequences: [6h5yRW2LGc, WbCh1DRerJ, t79dBxj1WS]
+
+training:
+  seed: 7
+  epochs: 18
+  minimum_epochs: 8
+  early_stopping_patience: 5
+  foreground_warmup_epochs: 3
+  batch_size: 32
+  gradient_accumulation_steps: 1
+  learning_rate: 0.0003
+  minimum_learning_rate: 0.00003
+  weight_decay: 0.0001
+  grad_clip_norm: 1.0
+  num_workers: 0
+  precision: bf16
+  maximum_runtime_hours: 6.0
+  mask_t0_as_proxy: true
+  foreground_supervision: bbox_geometry
+  representation_supervision: dinov3_local_relational
+  representation_teacher_cache_artifact_sha256: 6511c684881f3360efb7c8718976ef6b37de36668a89d9ea2f8d4bdf6f620b20
+  representation_distillation_weight: 4.0
+
+loss:
+  log_ratio_nll_weight: 1.0
+  log_ratio_huber_weight: 0.0
+  log_ratio_tail_weight: 2.0
+  log_ratio_tail_fraction: 0.10
+  foreground_bce_weight: 0.0
+  foreground_dice_weight: 0.0
+  foreground_extent_weight: 1.25
+  foreground_width_weight: 1.25
+  foreground_center_weight: 2.5
+  foreground_pair_ratio_weight: 0.0
+  risk_weight: 0.1
+  auxiliary_inverse_ttc_weight: 0.05
+  residual_regularization_weight: 0.1
+  temporal_consistency_weight: 0.0
+  smooth_l1_beta: 0.02
+  supervise_pair_ratio_before_temporal_blend: true
+
+decision_contract:
+  expected_parameter_count: 355118
+  lambda_selection_uses_only_train_sequences: true
+  public_validation_samples_opened: 0
+  private_test_samples_opened: 0
+  each_train_sequence_held_out_exactly_once: true
+  fold_checkpoint_selection: heldout_train_sequence_macro_MiD_then_failure_rate
+  final_lambda_selection: nine_sequence_macro_MiD_then_weighted_failure_then_smaller_lambda
+  lambda_4_control_must_be_present: true
+  raw_calibration_lambda_must_be_present: true
+  candidate_grid_extends_above_original_clamp: true
+  original_a4_result_is_not_rewritten: true
+  selected_lambda_applies_only_to_followup_experiments: true
