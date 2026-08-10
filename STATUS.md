@@ -20,6 +20,12 @@
   weak-box sigue siendo hipótesis hasta A1.
 - Smoke Garl matched desde cero, batch 32/8 workers, completó 2 batches y guardó
   checkpoint en 59.51 s sin OOM; es infraestructura, no métrica científica.
+- Cache oficial matched completado y firmado: 2.048/2.048 tensores FP32
+  `[40,128,128]`, identidad `92af281030170733411ef9d65b19e88ebc8019c729dd6743e02ae9c40f564b52`.
+  Preprocessing separado: train `166.7501 s`, validation `155.3283 s`; sin RGB
+  ni fuentes selladas y con crop bbox oracle declarado.
+- Runner cached matched implementado con pesos desde cero, selección validation
+  desde época 8, estado atómico y resume ligado al protocolo completo.
 
 ## Addendum eAP causal-scale screen v1 (2026-08-10)
 

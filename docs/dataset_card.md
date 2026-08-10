@@ -77,6 +77,14 @@ No contiene RGB ni máscaras. Las cajas están disponibles como metadata/supervi
 t0 es proxy en este cache y no se usa como target de foreground. Los targets TTC son
 los labels públicos oficiales Garl, no pseudo-labels.
 
+### Cache Garl matched oficial
+
+`garl_official_event_only_matched_preprocessing_v1` materializa los mismos 2.048
+train/2.048 validation con el preprocessing inmutable del release auditado. Cada
+entrada es FP32 `[40,128,128]` (`timevolume20` para dos endpoints). No guarda RGB,
+bbox ni TTC como input; sí usa y declara el crop bbox oracle del protocolo Garl.
+Su identidad es `92af281030170733411ef9d65b19e88ebc8019c729dd6743e02ae9c40f564b52`.
+
 ## Contrato de almacenamiento
 
 - datos raw inmutables y fuera de Git;

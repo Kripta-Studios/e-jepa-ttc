@@ -7,6 +7,10 @@ usa los mismos tokens de validation, pero queda separada porque el checkpoint vi
 las tres secuencias durante train y usó 88.744 filas/50 épocas. Los intervalos del
 comparador resamplean secuencias completas (10.000 iteraciones), nunca ventanas.
 La tabla matched desactivará la inicialización desde el checkpoint release.
+Usa el cache oficial firmado `92af2810…f564b52`, seed 7, batch 32, máximo 18
+épocas, selección elegible desde época 8 y desempate por failure. Preprocessing,
+training, validation e inferencia se cronometran por separado. Resume rechaza
+cualquier cambio de config, cache, seed, épocas, batch, paciencia o guard temporal.
 
 El diagnóstico de fallo no selecciona hiperparámetros ni abre test. Descompone el
 checkpoint ya seleccionado sobre la misma validation pública en bbox-ratio,

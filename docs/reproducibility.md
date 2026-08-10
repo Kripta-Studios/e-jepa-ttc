@@ -12,6 +12,21 @@
 - Failure decomposition:
   `artifacts/metrics/causal_scale_eap_a0_failure_decomposition_v1.json`, identidad
   `75918c58cd91258fac5aac11f8d6fca00ce6cf43014e5ee19ab3a30d7c91beb7`.
+- Matched official preprocessing cache:
+  `artifacts/cache/garl_official_event_only_matched_preprocessing_v1/manifest.json`,
+  identidad `92af281030170733411ef9d65b19e88ebc8019c729dd6743e02ae9c40f564b52`.
+
+Regeneración del cache matched (los shards locales no se versionan):
+
+```powershell
+uv run --extra geometry python scripts/build_garl_matched_preprocessing_cache.py `
+  --release-root E:\Garl-TTC `
+  --official-config E:\Garl-TTC\configs\ablation\event_lhr.yaml `
+  --subset-manifest artifacts/subsets/garl_event_only_matched_screen_v1/manifest.json `
+  --eap-root E:\eAP_dataset `
+  --output-dir artifacts/cache/garl_official_event_only_matched_preprocessing_v1 `
+  --batch-size 32 --num-workers 16 --shard-size 64 --seed 7
+```
 
 Regeneración del diagnóstico:
 

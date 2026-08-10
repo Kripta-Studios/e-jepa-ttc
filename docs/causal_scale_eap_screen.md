@@ -94,7 +94,8 @@ Runner: `scripts/train_causal_scale_eap_screen.py`.
 - checkpoint atómico por época y resume completo.
 
 El benchmark de throughput 128+128 con batch 8 tardó 5,289 s y usó 395,6 MiB de
-VRAM. La ejecución completa aún está pendiente.
+VRAM. Era una medición previa; A0 ya terminó y sus resultados seleccionables son
+los de la tabla de apertura.
 
 ## Comparación
 
@@ -111,8 +112,8 @@ representación —Garl 2×20 canales frente a nuestro 3×12— debe permanecer 
 
 ## Estado
 
-Implementación y checks verdes. Resume coincide exactamente con entrenamiento
-continuo en modelo, optimizer, scheduler, RNG, historial y best, y rechaza contratos
-distintos. `scripts/build_garl_validation_subset_from_predictions.py` construye y
-firma los parquets exactos, validando tokens, joins, targets y roundtrip. Falta ejecutar
-el entrenamiento completo, el checkpoint oficial y la comparación firmada.
+A0, referencia release y comparación firmada están terminados. El cache matched
+oficial tiene identidad `92af281030170733411ef9d65b19e88ebc8019c729dd6743e02ae9c40f564b52`,
+2.048/2.048 filas y preprocessing separado de `166.7501/155.3283 s`. Falta ejecutar
+Garl matched desde cero y después A1. Resume A0 coincide exactamente con entrenamiento
+continuo y el runner matched liga resume a todo el protocolo congelado.

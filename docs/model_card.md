@@ -47,10 +47,11 @@ V8 evalúa consenso temporal fijo sobre logits de foreground con kernel simétri
 contexto disponible. CVaR top 10% mejora Pearson validation multigrupo a `.94621`,
 pero falla el gate `.95`; test 901/902/903 permanece sellado.
 
-La adaptación eAP/Garl causal-scale v1 está implementada para un cache público
-2.048/2.048 y aún no se ha entrenado completa. Las cajas t1/t2 son weak supervision
+La adaptación eAP/Garl causal-scale v1 completó A0 sobre un cache público
+2.048/2.048 y produjo el resultado negativo descrito arriba. Las cajas t1/t2 son weak supervision
 del foreground, no inputs ni máscaras GT; t0 proxy se excluye. El baseline comparable
-será Garl oficial event-only sobre los mismos sample tokens.
+será Garl event-only entrenado desde cero con el mismo presupuesto; el release
+oficial expuesto se conserva en una tabla distinta.
 
 ## Estado
 

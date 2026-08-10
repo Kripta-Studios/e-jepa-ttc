@@ -5,7 +5,8 @@
 1. **Completado:** A0 seed 7, subset validation exacto, referencia release y
    comparador firmado, preservando el resultado negativo.
 2. **En curso:** Garl event-only matched con exactamente 2.048 train/2.048
-   validation, sin inicialización desde el checkpoint release expuesto.
+   validation, sin inicialización desde el checkpoint release expuesto. El cache
+   oficial inmutable ya está completo; falta el entrenamiento seed 7.
 3. **Siguiente hipótesis única:** A1 bbox geometry-only, desactivando BCE/Dice
    weak-box y manteniendo todo lo demás igual a A0.
 4. EvTTC test y las demás fuentes selladas siguen cerradas.
@@ -15,6 +16,23 @@ la correlación del ratio analítico con el bbox-ratio y con el ratio físico, n
 IoU o MiD. Si A1 mantiene Pearson analítico cerca de cero, se rechaza la explicación
 weak-box y el siguiente cambio deberá actuar sobre representación/operador, sin
 combinarlo con otra modificación.
+
+Orden congelado de decisión:
+
+1. cerrar Garl matched y firmar A0/Garl matched por token, secuencia y bucket;
+2. ejecutar A1 con el mismo CNN y supervisión exclusiva de `h,w,cx,cy`, sin
+   `foreground_pair_ratio` ni BCE/Dice;
+3. si geometría absoluta y diferencial mejoran, continuar Causal Scale;
+4. si `h,w,cx,cy` mejoran pero `delta log h/delta log w` no, probar A1-R como
+   ablation temporal mínima y Dense Event-JEPA solo si sigue faltando coherencia;
+5. si ni siquiera mejora la geometría absoluta, investigar representación densa
+   event-native/pretraining antes de JEPA;
+6. si el ratio predicho reproduce bbox pero no TTC, ampliar el operador físico a
+   escala anisótropa/divergencia, no seguir optimizando máscaras.
+
+No se cambian `unknown`, support, clip, residual, consenso, optimizer, seed, filas
+o presupuesto durante A1. Correlaciones absolutas y diferenciales se reportan
+globales y macro por secuencia; `r_iso` es diagnóstico, no prediction path.
 
 ## Addendum operativo: handoff causal-scale eAP screen v1 (2026-08-10)
 

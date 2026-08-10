@@ -10,6 +10,10 @@
 - descompuesto A0: la bbox sí contiene señal física, pero el foreground no aprende
   su extensión temporal; residual y consenso no la recuperan;
 - implementado runner Garl matched desde cero y completado smoke batch 32 sin OOM.
+- materializado preprocessing oficial matched exacto 2.048/2.048 en 322,08 s,
+  identidad firmada `92af2810…f564b52`;
+- implementado trainer sobre cache con selección validation-only, checkpoints
+  atómicos y resume fail-closed ante cambios de protocolo.
 
 ## 2026-08-10 — Transporte temporal Causal Scale v7
 

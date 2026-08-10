@@ -44,6 +44,14 @@ tienen soporte, pero el mapa no aprende una extensión temporal fiel. La inversi
 física amplifica ratios malos cerca de cero. La weak-box rectangular es la hipótesis
 principal, no una causa confirmada; A1 es el experimento que debe resolverlo.
 
+El preprocessing oficial del baseline matched ya está completo en
+`artifacts/cache/garl_official_event_only_matched_preprocessing_v1`, identidad
+`92af281030170733411ef9d65b19e88ebc8019c729dd6743e02ae9c40f564b52`.
+Contiene 2.048 train/2.048 validation, tensores FP32 `[40,128,128]`, sin RGB ni
+bbox como input. Declara el crop bbox oracle oficial. Train tardó `166.7501 s` y
+validation `155.3283 s`; el error máximo de target fue menor de `4.8e-7 s`.
+La prioridad es cerrar Garl matched desde cero antes de modificar A1.
+
 El runner `scripts/run_garl_matched_screen.py` desactiva explícitamente ambos
 pretrained checkpoints release y escribe todo fuera de `E:\Garl-TTC`. Su smoke de
 2 batches, batch 32/8 workers, terminó en 59.51 s sin OOM y dejó el release intacto.

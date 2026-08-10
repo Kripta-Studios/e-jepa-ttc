@@ -11,6 +11,11 @@ con bbox (`r=.015`) ni TTC (`r=.037`). La inversión TTC agrava ratios cercanos 
 cero, pero no crea el error. A1 probará, como ablation aislada, si la weak-box llena
 es la causa de esa mala extensión.
 
+El preprocessing oficial del baseline Garl matched ya está materializado y firmado
+(`92af2810…f564b52`): 2.048 train/2.048 validation, event-only FP32, sin pesos
+release ni fuentes selladas. La prioridad actual es terminar ese entrenamiento
+matched antes de tocar la arquitectura o ejecutar A1.
+
 Pipeline reproducible para estimar Time-to-Contact/Time-to-Collision a partir de
 cámaras de eventos, con una ruta event-only high-resolution y una futura ablación
 RGB-E multimodal.

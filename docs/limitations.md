@@ -16,10 +16,10 @@ foreground head y conflicto entre pérdidas. A1 solo prueba la primera explicaci
 Actualizado: 2026-08-10.
 
 - No existe un claim SOTA ni un checkpoint final promovido.
-- El screen causal-scale eAP está implementado pero no ejecutado completo. El único
-  MiD real nuevo (`345.18`) procede de 128 validation tras un epoch de throughput y
-  no es seleccionable.
-- La comparación Garl event-only en los mismos 2.048 tokens está pendiente.
+- A0 sí se ejecutó completo y fue negativo; el antiguo MiD parcial `345.18` queda
+  supersedido por MiD macro `382.19` del checkpoint seleccionable.
+- La referencia Garl release en los mismos 2.048 tokens está completa, pero la
+  comparación matched desde cero sigue pendiente.
 - El screen depende de ROI con cajas GT y weak-box supervision; no es bbox-free y
   sus rectángulos no son máscaras de segmentación.
 - Resume atómico pasa su prueba end-to-end, pero el run real representativo sigue
