@@ -210,8 +210,10 @@ RESULTS_INVALIDATION.md
 
 No asumir si deben restaurarse o eliminarse. Preguntar al usuario o confirmar su
 intención. El runner real exige tracked/code clean, así que estos cambios deben
-resolverse antes del run. También existen patches/ZIPs untracked del usuario que no
-deben borrarse ni añadirse; el clasificador actual los toleraba en gates previos.
+resolverse antes del run. Al inicio de esta sesión había siete patches y cuatro ZIPs
+untracked del usuario; ya no aparecen en el status ni en el directorio al cierre y
+este agente no los borró. No intentar reconstruirlos, restaurarlos o versionarlos sin
+una petición explícita.
 
 ## 4. Primeras verificaciones obligatorias
 
@@ -388,7 +390,8 @@ autoriza por sí mismo una apertura EvTTC test o un claim SOTA.
 - no llamar mask GT a los rectángulos weak-box;
 - no seleccionar con eAP test, EvTTC test o CodaBench;
 - no descargar/procesar los 691 GiB completos para este screen;
-- no borrar los patches/ZIPs untracked del usuario;
+- no reconstruir ni versionar los patches/ZIPs del usuario que desaparecieron fuera
+  de las acciones de este agente;
 - no resolver los cuatro borrados tracked ajenos sin confirmar intención;
 - no escribir “SOTA” hasta reproducir protocolos oficiales, tres seeds y evaluación
   externa comparable.
