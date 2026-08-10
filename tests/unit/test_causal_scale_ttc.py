@@ -120,7 +120,7 @@ def test_learned_residual_is_exactly_antisymmetric() -> None:
 
 def test_event_model_has_no_box_input_and_marks_zero_events_unknown() -> None:
     signature = inspect.signature(CausalScaleTTC.forward)
-    assert tuple(signature.parameters) == ("self", "inputs", "delta_t_s")
+    assert tuple(signature.parameters) == ("self", "inputs", "delta_t_s", "return_dense_features")
     model = _small_model().eval()
     inputs = torch.zeros(2, 3, 2, 32, 32)
     delta = torch.full((2, 2), 0.1)

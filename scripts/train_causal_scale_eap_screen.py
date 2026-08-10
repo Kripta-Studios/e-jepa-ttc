@@ -25,6 +25,9 @@ sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT))
 
 from e_jepa_ttc.artifacts.hashing import sign_artifact  # noqa: E402
+from e_jepa_ttc.data.dinov3_relational_teacher_cache import (  # noqa: E402
+    DINOv3RelationalTeacherDataset,
+)
 from e_jepa_ttc.data.object_event_v4 import GarlTTCObjectEventV4Dataset  # noqa: E402
 from e_jepa_ttc.data.sam_teacher_cache import SAMTeacherMaskDataset  # noqa: E402
 from e_jepa_ttc.losses.causal_scale_ttc import CausalScaleTTCLossConfig  # noqa: E402
@@ -255,6 +258,34 @@ def run(
             "scope": "public_train_only",
             "validation_teacher_loaded": False,
         }
+    # --- A4: DINO relational teacher ---
+    representation_teacher_metadata: dict[str, Any] | None = None
+    if training_config.representation_supervision == "dinov3_local_relational":
+        dino_teacher = data.get("dinov3_relational_teacher")
+        if not isinstance(dino_teacher, dict):
+            raise ValueError("A4 requires data.dinov3_relational_teacher")
+        dino_manifest = _resolve(dino_teacher["manifest"])
+        train_dataset = DINOv3RelationalTeacherDataset(
+            train_dataset,
+            manifest_path=dino_manifest,
+            expected_artifact_sha256=str(dino_teacher["artifact_sha256"]),
+            expected_manifest_sha256=str(dino_teacher["manifest_sha256"]),
+        )
+        if (
+            training_config.representation_teacher_cache_artifact_sha256
+            != dino_teacher["artifact_sha256"]
+        ):
+            raise ValueError(
+                "training and data representation teacher identities differ"
+            )
+        representation_teacher_metadata = {
+            "manifest": dino_manifest.relative_to(ROOT).as_posix(),
+            "manifest_sha256": str(dino_teacher["manifest_sha256"]),
+            "artifact_sha256": str(dino_teacher["artifact_sha256"]),
+            "scope": "public_train_only",
+            "validation_teacher_loaded": False,
+            "teacher_type": "dinov3_local_relational",
+        }
     device = resolve_device(device_name)
     _reset_peak_memory_stats(device)
     result = train_real_causal_scale(
@@ -335,8 +366,13 @@ def run(
             "sam_teacher_train_only": teacher_metadata is not None,
             "validation_teacher_loaded": False,
             "t0_proxy_box_excluded": training_config.mask_t0_as_proxy,
+            "representation_supervision": training_config.representation_supervision,
+            "dinov3_teacher_is_model_input": False,
+            "dinov3_teacher_train_only": representation_teacher_metadata is not None,
+            "validation_dinov3_teacher_loaded": False,
         },
         "sam_teacher": teacher_metadata,
+        "representation_teacher": representation_teacher_metadata,
         "parameter_count": parameter_count,
         "training_config": asdict(training_config),
         "loss_config": asdict(loss_config),

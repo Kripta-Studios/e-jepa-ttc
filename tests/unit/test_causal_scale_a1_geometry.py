@@ -131,6 +131,7 @@ def test_a1_targets_do_not_rasterize_or_enter_model_forward(
         "self",
         "inputs",
         "delta_t_s",
+        "return_dense_features",
     )
 
 

@@ -24,6 +24,9 @@ from e_jepa_ttc.data.object_event_v4 import (
     collate_object_event_v4,
     weak_box_masks,
 )
+from e_jepa_ttc.distillation.dinov3_relational import (
+    local_relational_distillation_loss,
+)
 from e_jepa_ttc.evaluation.garl_ttc_protocol import (
     sequence_macro_signed_metrics,
     signed_garl_metrics,
@@ -63,6 +66,11 @@ class CausalScaleEAPTrainingConfig:
         "weak_box", "bbox_geometry", "bbox_geometry_sam_teacher"
     ] = "weak_box"
     teacher_cache_artifact_sha256: str | None = None
+    representation_supervision: Literal[
+        "none", "dinov3_local_relational"
+    ] = "none"
+    representation_teacher_cache_artifact_sha256: str | None = None
+    representation_distillation_weight: float = 0.0
 
     def __post_init__(self) -> None:
         integers = (
@@ -94,6 +102,26 @@ class CausalScaleEAPTrainingConfig:
         uses_teacher = self.foreground_supervision == "bbox_geometry_sam_teacher"
         if uses_teacher != bool(self.teacher_cache_artifact_sha256):
             raise ValueError("SAM supervision and teacher cache identity must be declared together")
+        # --- A4: Representation distillation cross-validation ---
+        if self.representation_supervision not in {
+            "none",
+            "dinov3_local_relational",
+        }:
+            raise ValueError(f"unsupported representation_supervision: {self.representation_supervision}")
+
+        if self.representation_supervision == "dinov3_local_relational":
+            if not bool(self.representation_teacher_cache_artifact_sha256):
+                raise ValueError("representation_teacher_cache_artifact_sha256 must be provided")
+            if not math.isfinite(self.representation_distillation_weight):
+                raise ValueError("representation_distillation_weight must be finite")
+            if self.representation_distillation_weight <= 0.0:
+                raise ValueError("representation_distillation_weight must be > 0.0")
+        else:
+            if self.representation_distillation_weight != 0.0:
+                raise ValueError(
+                    "representation_distillation_weight must be 0.0 "
+                    "when representation_supervision is 'none'"
+                )
 
 
 @dataclass
@@ -192,13 +220,20 @@ def _loss(
     foreground_supervision: Literal[
         "weak_box", "bbox_geometry", "bbox_geometry_sam_teacher"
     ],
+    representation_supervision: Literal[
+        "none", "dinov3_local_relational"
+    ] = "none",
+    representation_distillation_weight: float = 0.0,
 ) -> tuple[torch.Tensor, dict[str, torch.Tensor], Any]:
     targets = _targets(
         batch,
         mask_t0_as_proxy=mask_t0_as_proxy,
         foreground_supervision=foreground_supervision,
     )
-    output = model(batch.events, targets.delta_t_s)
+    need_dense = representation_supervision != "none"
+    output = model(
+        batch.events, targets.delta_t_s, return_dense_features=need_dense,
+    )
     result = causal_scale_ttc_loss(
         output,
         target_ttc_seconds=batch.target_ttc_s,
@@ -210,7 +245,132 @@ def _loss(
         target_geometry=targets.geometry,
         config=loss_config,
     )
-    return result.total, result.components, output
+    total = result.total
+    components = dict(result.components)
+
+    # --- A4: DINOv3 relational distillation (train-only) ---
+    if (
+        representation_supervision == "dinov3_local_relational"
+        and batch.dinov3_relation_targets is not None
+        and batch.dinov3_relation_valid is not None
+    ):
+        if output.endpoint_dense_features is None:
+            raise RuntimeError(
+                "DINO relational distillation requires dense features but "
+                "the model did not return them"
+            )
+        # Use t1/t2 endpoints (indices 1 and 2 in the T-step sequence)
+        # The model produces [B,T,C,H,W]; we select the observation endpoints.
+        dense = output.endpoint_dense_features
+        if dense.shape[1] < 3:
+            raise ValueError(
+                f"DINO distillation requires at least 3 temporal endpoints, "
+                f"got {dense.shape[1]}"
+            )
+        # Select t1, t2 (not t0 which is the proxy reference)
+        student_features = dense[:, 1:3]  # [B, 2, C, H, W]
+
+        relational_loss = local_relational_distillation_loss(
+            student_features,
+            batch.dinov3_relation_targets,
+            batch.dinov3_relation_valid,
+        )
+        weighted_relational = representation_distillation_weight * relational_loss
+        total = total + weighted_relational
+        components["dinov3_relational_raw"] = relational_loss.detach()
+        components["dinov3_relational_weighted"] = weighted_relational.detach()
+
+        # --- Train-only fg/bg diagnostic (not used for selection) ---
+        _record_relational_fg_bg_diagnostic(
+            student_features,
+            batch.dinov3_relation_targets,
+            batch.dinov3_relation_valid,
+            batch.boxes_xyxy,
+            dense.shape[-2],
+            dense.shape[-1],
+            components,
+        )
+    elif representation_supervision == "dinov3_local_relational":
+        raise ValueError(
+            "DINO relational supervision is active but batch lacks "
+            "dinov3_relation_targets/dinov3_relation_valid"
+        )
+
+    return total, components, output
+
+
+def _record_relational_fg_bg_diagnostic(
+    student_features: torch.Tensor,
+    teacher_relations: torch.Tensor,
+    teacher_valid: torch.Tensor,
+    boxes_xyxy: torch.Tensor,
+    feat_h: int,
+    feat_w: int,
+    components: dict[str, torch.Tensor],
+) -> None:
+    """Record inside/outside bbox relational loss split as diagnostics.
+
+    A4 deliberately distills the complete target-specific common ROI without
+    bbox-masking.  These diagnostics let us understand whether background/other
+    objects inside the ROI dilute the teacher gradient, but they are NEVER
+    used for selection or training.
+    """
+
+    from e_jepa_ttc.distillation.dinov3_relational import (
+        local_cosine_relation_maps,
+    )
+
+    with torch.no_grad():
+        student_rels = local_cosine_relation_maps(student_features)
+        combined_valid = teacher_valid.bool() & student_rels.valid
+        error_map = (
+            (student_rels.values - teacher_relations.float()).abs()
+            * combined_valid.float()
+        )  # [B, 2, K, H, W]
+
+        # Build a coarse fg mask at feature resolution from the t1/t2 boxes
+        # boxes_xyxy is [B, T, 4]; we need endpoints 1,2
+        batch_size = student_features.shape[0]
+        fg_mask = torch.zeros(
+            batch_size, 2, feat_h, feat_w,
+            dtype=torch.bool, device=student_features.device,
+        )
+        input_h = boxes_xyxy.shape[-3] if boxes_xyxy.ndim > 2 else 1
+        for b in range(batch_size):
+            for ep_idx, t_idx in enumerate([1, 2]):
+                if t_idx >= boxes_xyxy.shape[1]:
+                    continue
+                box = boxes_xyxy[b, t_idx]  # [4] in pixel coords
+                # Map to feature grid (assume input ROI maps to full feat_h×feat_w)
+                x1 = int((box[0].clamp(0, 1) * feat_w).item())
+                y1 = int((box[1].clamp(0, 1) * feat_h).item())
+                x2 = int((box[2].clamp(0, 1) * feat_w).clamp_min(x1 + 1).item())
+                y2 = int((box[3].clamp(0, 1) * feat_h).clamp_min(y1 + 1).item())
+                fg_mask[b, ep_idx, y1:y2, x1:x2] = True
+
+        # Expand fg_mask to match error_map: [B,2,K,H,W]
+        fg_expanded = fg_mask.unsqueeze(2).expand_as(error_map)
+        valid_fg = combined_valid & fg_expanded
+        valid_bg = combined_valid & ~fg_expanded
+
+        fg_loss = (
+            error_map[valid_fg].mean()
+            if valid_fg.any()
+            else error_map.new_tensor(float("nan"))
+        )
+        bg_loss = (
+            error_map[valid_bg].mean()
+            if valid_bg.any()
+            else error_map.new_tensor(float("nan"))
+        )
+        fg_fraction = (
+            fg_expanded.float().mean()
+            if combined_valid.any()
+            else error_map.new_tensor(float("nan"))
+        )
+        components["dinov3_relational_fg_loss"] = fg_loss
+        components["dinov3_relational_bg_loss"] = bg_loss
+        components["dinov3_relational_fg_fraction"] = fg_fraction
 
 
 def _foreground_only_loss_config(
@@ -438,6 +598,8 @@ def train_one_real_epoch(
                 loss_config,
                 mask_t0_as_proxy=config.mask_t0_as_proxy,
                 foreground_supervision=config.foreground_supervision,
+                representation_supervision=config.representation_supervision,
+                representation_distillation_weight=config.representation_distillation_weight,
             )
             scaled = total / config.gradient_accumulation_steps
         if not bool(torch.isfinite(total)):
@@ -519,6 +681,16 @@ def evaluate_real_causal_scale(
     losses: list[tuple[float, int]] = []
     for host_batch in loader:
         batch = host_batch.to(device)
+        # --- A4: Validation must never see DINO teacher fields ---
+        if (
+            batch.dinov3_relation_targets is not None
+            or batch.dinov3_relation_valid is not None
+        ):
+            raise ValueError(
+                "DINO teacher fields must not appear in validation batches. "
+                "The DINOv3RelationalTeacherDataset wrapper must only be "
+                "applied to the train dataset."
+            )
         with _autocast(device, config.precision):
             total, _, output = _loss(
                 model,
@@ -526,6 +698,8 @@ def evaluate_real_causal_scale(
                 loss_config,
                 mask_t0_as_proxy=config.mask_t0_as_proxy,
                 foreground_supervision=config.foreground_supervision,
+                # representation_supervision is always "none" for validation:
+                # the DINO loss is train-only.
             )
         targets = _targets(
             batch,

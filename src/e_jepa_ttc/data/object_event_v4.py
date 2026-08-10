@@ -36,6 +36,8 @@ class ObjectEventV4Batch:
     track_ids: list[str]
     sam_teacher_masks: torch.Tensor | None = None
     sam_teacher_mask_valid: torch.Tensor | None = None
+    dinov3_relation_targets: torch.Tensor | None = None
+    dinov3_relation_valid: torch.Tensor | None = None
 
     def to(
         self,
@@ -80,6 +82,24 @@ class ObjectEventV4Batch:
                     device=device, dtype=torch.bool, non_blocking=non_blocking
                 )
                 if self.sam_teacher_mask_valid is not None
+                else None
+            ),
+            dinov3_relation_targets=(
+                self.dinov3_relation_targets.to(
+                    device=device,
+                    dtype=torch.float32,
+                    non_blocking=non_blocking,
+                )
+                if self.dinov3_relation_targets is not None
+                else None
+            ),
+            dinov3_relation_valid=(
+                self.dinov3_relation_valid.to(
+                    device=device,
+                    dtype=torch.bool,
+                    non_blocking=non_blocking,
+                )
+                if self.dinov3_relation_valid is not None
                 else None
             ),
         )
@@ -253,6 +273,31 @@ def collate_object_event_v4(records: list[dict[str, Any]]) -> ObjectEventV4Batch
         if teacher_valid.shape != (len(records), 2):
             raise ValueError("SAM teacher validity must have shape [B,2]")
 
+    dino_presence = ["dinov3_relation_targets" in record for record in records]
+    if any(dino_presence) and not all(dino_presence):
+        raise ValueError("DINO teacher fields must be present for the entire batch")
+    dino_targets = None
+    dino_valid = None
+    if all(dino_presence):
+        dino_targets = torch.stack(
+            [_tensor(record, "dinov3_relation_targets") for record in records]
+        )
+        dino_valid = torch.stack(
+            [
+                torch.as_tensor(record["dinov3_relation_valid"], dtype=torch.bool)
+                for record in records
+            ]
+        )
+        if dino_targets.shape != dino_valid.shape:
+            raise ValueError(
+                "DINO teacher targets and valid must share shape, "
+                f"got {tuple(dino_targets.shape)} and {tuple(dino_valid.shape)}"
+            )
+        if (
+            "dinov3_relation_valid" not in records[0]
+        ):
+            raise ValueError("DINO targets and valid must appear together")
+
     return ObjectEventV4Batch(
         events=events,
         delta_t_s=delta_t,
@@ -266,6 +311,8 @@ def collate_object_event_v4(records: list[dict[str, Any]]) -> ObjectEventV4Batch
         track_ids=[str(record["track_id"]) for record in records],
         sam_teacher_masks=teacher_masks,
         sam_teacher_mask_valid=teacher_valid,
+        dinov3_relation_targets=dino_targets,
+        dinov3_relation_valid=dino_valid,
     )
 
 

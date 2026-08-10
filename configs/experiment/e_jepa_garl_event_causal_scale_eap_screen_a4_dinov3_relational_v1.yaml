@@ -1,0 +1,125 @@
+experiment:
+  name: e_jepa_garl_event_causal_scale_eap_screen_a4_dinov3_relational_v1
+  protocol_version: causal_scale_eap_a4_dinov3_local_relational_distillation_v1
+  evidence_scope: public_eap_garl_train_validation_only
+  parent_arm: A1_DF_bbox_geometry_deep_features_seed7
+  single_scientific_difference: dinov3_convnext_large_local_relational_distillation_train_only
+  parent_config: configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a1_deep_features_v1.yaml
+model_config: configs/model/e_jepa_causal_scale_event_v8_t015_resize_conv.yaml
+data:
+  cache_manifest: artifacts/cache/garl_object_event_common_roi_screen_v4/manifest.json
+  cache_manifest_sha256: bba9ff9b143bfd57760bd61d2b6f664202581b5dee54444f44c625975557eb72
+  cache_artifact_sha256: 36c12d75c91a243f4d712831cebcd3e82f896a76196b2a65b039e680f1fac309
+  train_sequence_ids:
+    - 2cyv0Oedzg
+    - 5ilM1PX2vz
+    - 6h5yRW2LGc
+    - OBneIVg4Cw
+    - OYgB6RGWcq
+    - WbCh1DRerJ
+    - mHGFBekt7X
+    - qGsgzl4Q8B
+    - t79dBxj1WS
+  validation_sequence_ids: [DGqicHUGWb, pBqGOb2vYq, qoohcdtLDH]
+  opened_splits: [train, validation]
+  official_test_opened: false
+  codabench_opened: false
+  evttc_test_opened: false
+  dinov3_relational_teacher:
+    manifest: artifacts/cache/dinov3_convnext_large_relational_a4_v1/manifest.json
+    manifest_sha256: null
+    artifact_sha256: null
+training:
+  seed: 7
+  epochs: 18
+  minimum_epochs: 8
+  early_stopping_patience: 5
+  foreground_warmup_epochs: 3
+  batch_size: 32
+  gradient_accumulation_steps: 1
+  learning_rate: 0.0003
+  minimum_learning_rate: 0.00003
+  weight_decay: 0.0001
+  grad_clip_norm: 1.0
+  num_workers: 0
+  precision: bf16
+  maximum_runtime_hours: 6.0
+  mask_t0_as_proxy: true
+  foreground_supervision: bbox_geometry
+  representation_supervision: dinov3_local_relational
+  representation_teacher_cache_artifact_sha256: null
+  representation_distillation_weight: null
+loss:
+  log_ratio_nll_weight: 1.0
+  log_ratio_huber_weight: 0.0
+  log_ratio_tail_weight: 2.0
+  log_ratio_tail_fraction: 0.10
+  foreground_bce_weight: 0.0
+  foreground_dice_weight: 0.0
+  foreground_extent_weight: 1.25
+  foreground_width_weight: 1.25
+  foreground_center_weight: 2.5
+  foreground_pair_ratio_weight: 0.0
+  risk_weight: 0.1
+  auxiliary_inverse_ttc_weight: 0.05
+  residual_regularization_weight: 0.1
+  temporal_consistency_weight: 0.0
+  smooth_l1_beta: 0.02
+  supervise_pair_ratio_before_temporal_blend: true
+decision_contract:
+  checkpoint_selection: validation_sequence_macro_MiD_then_failure_rate
+  require_finite_metrics_for_all_validation_sequences: true
+  primary_baseline: Garl_event_only_matched_seed7_same_2048
+  baseline_sequence_macro_MiD: 203.6341709373319
+  baseline_failure_rate_pct: 0.0
+  parent_a1_df_sequence_macro_MiD: 350.30202027649585
+  parent_a1_df_failure_rate_pct: 21.09375
+  expected_parameter_count: 355118
+  bbox_is_training_supervision_only: true
+  bbox_is_never_forward_input: true
+  dense_weak_box_target_used: false
+  foreground_pair_ratio_weight_must_remain_zero: true
+  # A4 representation change
+  representation_change:
+    type: dinov3_local_relational_distillation
+    teacher_model: facebook/dinov3-convnext-large-pretrain-lvd1689m
+    teacher_input_size: 256
+    teacher_feature_grid: [32, 32]
+    relation_offsets_dy_dx: [[0,1],[1,0],[0,2],[2,0],[1,1],[1,-1]]
+    relation_type: local_cosine
+    loss_type: L1
+    train_only: true
+    teacher_is_model_input: false
+    no_bbox_mask_on_relational_loss: true
+    calibration_method: median_geometry_over_median_relation
+    calibration_geometry_loss_definition: 1.25_extent_plus_1.25_width_plus_2.5_center
+    calibration_clip_range: [0.25, 4.0]
+    calibration_samples: 64
+    calibration_seed: 7
+  # Mechanistic gates — preregistered before A4 validation
+  representation_gate:
+    parent_a1_df_absolute_height_pearson: 0.4823
+    parent_a1_df_absolute_width_pearson: 0.2428
+    absolute_height_pearson_min_gain_vs_a1_df: 0.05
+    absolute_width_pearson_min_gain_vs_a1_df: 0.05
+    gate_is_AND: true
+    gate_registered_before_validation: true
+  model_config_must_equal_a1_df: true
+  parent_model_config_sha256: 265dbfd57e68d7a6aa385fbf31dc0ad41154b17afbd1d9454bbd8ddd80c6663f
+  model_config_sha256: 265dbfd57e68d7a6aa385fbf31dc0ad41154b17afbd1d9454bbd8ddd80c6663f
+  no_sam_teacher: true
+  no_jepa_objective: true
+  no_pair_ratio: true
+  no_posthoc_diagnostic_threshold_is_a_promotion_gate: true
+  r_iso_is_diagnostic_only: true
+  diagnostic_reporting: global_and_macro_by_sequence
+  scaling_rule: competitive_with_garl_or_strong_distributed_causal_signal_and_learning_trend
+  maximum_runtime_hours: 6.0
+  public_validation_does_not_authorize_sota_claim: true
+  private_test_remains_closed: true
+  # Multi-object contract
+  multi_object_contract:
+    teacher_keyed_by_sample_token: true
+    track_id_verified_per_row: true
+    same_frame_multiple_tracks_not_deduplicated: true
+    rgb_crop_is_per_object_common_square: true

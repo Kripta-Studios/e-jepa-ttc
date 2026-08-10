@@ -132,6 +132,7 @@ class CausalScaleTTCOutput:
     auxiliary_inverse_ttc: torch.Tensor
     sensor_support: torch.Tensor
     diagnostics: dict[str, torch.Tensor]
+    endpoint_dense_features: torch.Tensor | None = None
 
 
 def soft_vertical_extent_from_logits(
@@ -459,10 +460,19 @@ class _EndpointEncoder(nn.Module):
             nn.LayerNorm(config.geometry_dim),
         )
 
-    def forward(self, values: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
+    def forward(
+        self,
+        values: torch.Tensor,
+        *,
+        return_dense_features: bool = False,
+    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor | None]:
         features = self.features(values)
         foreground_input = values if self.foreground_from_input else features
-        return self.foreground(foreground_input), self.token(features)
+        return (
+            self.foreground(foreground_input),
+            self.token(features),
+            features if return_dense_features else None,
+        )
 
 
 class _AntisymmetricResidual(nn.Module):
@@ -565,7 +575,13 @@ class CausalScaleTTC(nn.Module):
         exposure = (4.0 * mean.clamp(0.0, 1.0) * (1.0 - mean.clamp(0.0, 1.0))).sqrt()
         return (spatial_std / 0.1).clamp(0.0, 1.0) * exposure
 
-    def forward(self, inputs: torch.Tensor, delta_t_s: torch.Tensor) -> CausalScaleTTCOutput:
+    def forward(
+        self,
+        inputs: torch.Tensor,
+        delta_t_s: torch.Tensor,
+        *,
+        return_dense_features: bool = False,
+    ) -> CausalScaleTTCOutput:
         """Predict current TTC from causal endpoint tensors ``[B,T,C,H,W]``."""
 
         if inputs.ndim != 5 or inputs.shape[1] < 2:
@@ -580,7 +596,9 @@ class CausalScaleTTC(nn.Module):
         if bool((delta_t_s <= 0.0).any()) or not bool(torch.isfinite(delta_t_s).all()):
             raise ValueError("delta_t_s must be finite and strictly positive")
         flat = inputs.reshape(batch * steps, channels, height, width)
-        lowres_logits, base_tokens = self.encoder(flat)
+        lowres_logits, base_tokens, flat_dense = self.encoder(
+            flat, return_dense_features=return_dense_features,
+        )
         low_h, low_w = lowres_logits.shape[-2:]
         lowres_logits = lowres_logits.reshape(batch, steps, 1, low_h, low_w)
         foreground_logits = functional.interpolate(
@@ -699,6 +717,13 @@ class CausalScaleTTC(nn.Module):
             torch.zeros_like(collision_logits),
         )
         auxiliary_inverse_ttc = self.auxiliary_inverse_ttc_head(pair_tokens).squeeze(-1)
+        endpoint_dense_features = (
+            flat_dense.reshape(
+                batch, steps, flat_dense.shape[1], flat_dense.shape[2], flat_dense.shape[3]
+            )
+            if flat_dense is not None
+            else None
+        )
         return CausalScaleTTCOutput(
             ttc_mean_seconds=ttc,
             ttc_log_variance=ttc_log_variance,
@@ -736,6 +761,7 @@ class CausalScaleTTC(nn.Module):
                     (batch,), self.config.foreground_temporal_smoothing
                 ),
             },
+            endpoint_dense_features=endpoint_dense_features,
         )
 
     def checkpoint_config(self) -> dict[str, object]:

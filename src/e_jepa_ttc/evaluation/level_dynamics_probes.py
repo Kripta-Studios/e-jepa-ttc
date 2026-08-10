@@ -422,7 +422,6 @@ def _fit_predict_classifier(
         max_iter=500,
         random_state=int(seed),
         solver="lbfgs",
-        multi_class="auto",
     )
     model.fit(x_train, y_train)
     return model.classes_, model.predict(x_test), model.predict_proba(x_test)
