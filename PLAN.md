@@ -45,6 +45,12 @@ cruda es espacialmente difusa y la anchura objetivo varía, mientras el decoder
 separable no la recupera en ninguno de los endpoints. No introducir teachers RGB,
 JEPA, pair-ratio ni weak-box en este control.
 
+Preregistro A1-FR: experiment SHA256
+`7ceb114963e8aad8f4c7edeb70344759543d3ac58abc6a47b862d3acf772c42e`, model
+SHA256 `97232184d7fb00520136319f5e902c726e26766ddaae236459b6d42d9596d39a`,
+340.870 parámetros. Ejecutar seed 7 una vez en GPU desde commit limpio; comparar
+geometría por endpoint/delta antes de decidir cualquier teacher o A1-R.
+
 No se cambian `unknown`, support, clip, residual, consenso, optimizer, seed, filas
 o presupuesto durante A1. Correlaciones absolutas y diferenciales se reportan
 globales y macro por secuencia; `r_iso` es diagnóstico, no prediction path.

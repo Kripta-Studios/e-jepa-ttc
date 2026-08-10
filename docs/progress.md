@@ -37,6 +37,8 @@
   delta geométrico; artifact firmado `737a3663…f0aa635d`;
 - fijada siguiente hipótesis mínima: decoder full-resolution 2-D contra el `amax`
   axial separable, sin introducir teachers, JEPA o pair-ratio.
+- preregistrado A1-FR con igualdad exacta de data/training/loss y un solo cambio
+  de decoder; config `7ceb1149…772c42e`, 340.870 parámetros, pendiente del run GPU.
 
 ## 2026-08-10 — Transporte temporal Causal Scale v7
 

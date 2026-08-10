@@ -44,6 +44,11 @@ config: `equivariant_separable -> equivariant_fullres`. Todos los pesos de loss,
 seed, filas, schedule, selección y conversiones físicas quedan iguales a A1. No se
 activará pair-ratio ni se usará RGB teacher en ese control.
 
+El brazo recibe la identidad A1-FR, 340.870 parámetros y config firmada
+`7ceb1149…772c42e`. Debe ejecutarse una sola vez con seed 7 desde Git limpio y
+seleccionarse con el mismo criterio MiD macro/failure. No se usará su validation
+para alterar retrospectivamente pesos o definir otra ejecución bajo el mismo nombre.
+
 El diagnóstico de fallo no selecciona hiperparámetros ni abre test. Descompone el
 checkpoint ya seleccionado sobre la misma validation pública en bbox-ratio,
 extensión analítica, residual, ratio combinado y ratio efectivo. A1 queda

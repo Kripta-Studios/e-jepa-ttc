@@ -254,6 +254,12 @@ retiene background/hot activity y pierde coocurrencia 2-D. Se probará el decode
 mezclará con pair-ratio, weak-box, teacher RGB o JEPA. Identidad del diagnóstico:
 `737a3663c13dc083b918e0101f4954bcfc22b23257255e0d183f8e09f0aa635d`.
 
+A1-FR queda congelado antes de ejecución. Solo cambia
+`foreground_decoder: equivariant_separable -> equivariant_fullres`; tiene 340.870
+parámetros, menos que A1. Data, training y loss son idénticos. Experiment SHA256
+`7ceb114963e8aad8f4c7edeb70344759543d3ac58abc6a47b862d3acf772c42e`; model
+SHA256 `97232184d7fb00520136319f5e902c726e26766ddaae236459b6d42d9596d39a`.
+
 ## Estado
 
 A0, referencia release, Garl matched y A1 están terminados. El cache matched

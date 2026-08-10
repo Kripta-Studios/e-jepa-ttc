@@ -58,6 +58,9 @@
   La actividad absoluta cruda tiene extent casi uniforme `.997/.998` y su delta
   no correlaciona con bbox. Hipótesis siguiente: el `amax` axial del decoder
   separable pierde estructura 2-D; probar solo `equivariant_fullres` con loss A1.
+- A1-FR preregistrado, aún no ejecutado: config `7ceb1149…772c42e`, model config
+  `97232184…96d39a`, 340.870 parámetros. Tests verifican que el único cambio del
+  modelo es `foreground_decoder` y que data/training/loss son idénticos a A1.
 
 ## Addendum eAP causal-scale screen v1 (2026-08-10)
 

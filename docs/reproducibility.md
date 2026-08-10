@@ -136,6 +136,19 @@ Resultado: 2.048 filas, tres secuencias y 108 tracks, `12.678 s`, 161,54
 muestras/s y `934.62 MiB` peak VRAM. Identidad firmada
 `737a3663c13dc083b918e0101f4954bcfc22b23257255e0d183f8e09f0aa635d`.
 
+Preregistro y ejecución A1-FR:
+
+```powershell
+uv run python scripts/train_causal_scale_eap_screen.py `
+  --config configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a1_fullres_v1.yaml `
+  --output-dir artifacts/runs/causal_scale_eap_screen_a1_fullres_v1_seed7 `
+  --device cuda
+```
+
+Si existe `state/last.pt`, añadir `--resume`. No borrar un run compatible. Config
+SHA256 `7ceb114963e8aad8f4c7edeb70344759543d3ac58abc6a47b862d3acf772c42e`;
+model SHA256 `97232184d7fb00520136319f5e902c726e26766ddaae236459b6d42d9596d39a`.
+
 Regeneración del diagnóstico:
 
 ```powershell

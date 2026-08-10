@@ -69,6 +69,14 @@ hipótesis siguiente, aún no demostrada, es que ese colapso pierde coocurrencia
 en un ROI con actividad difusa. El control mínimo es `equivariant_fullres` 2-D con
 la misma loss A1, no DINO/SAM/JEPA ni `pair_ratio` simultáneamente.
 
+El control se denomina A1-FR y está preregistrado en
+`configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a1_fullres_v1.yaml`,
+SHA256 `7ceb114963e8aad8f4c7edeb70344759543d3ac58abc6a47b862d3acf772c42e`.
+Su model config SHA256 es `97232184d7fb00520136319f5e902c726e26766ddaae236459b6d42d9596d39a`.
+Tiene 340.870 parámetros, 3.721 menos que A1. Fuera del decoder foreground, el
+model config es exactamente igual; data/training/loss son byte-semánticamente
+iguales a A1. Debe publicarse antes de ejecutar y correr una sola vez en CUDA.
+
 El subset para matched training está materializado en
 `artifacts/subsets/garl_event_only_matched_screen_v1`, identidad firmada
 `dd08ecc983f30e38a939204f9a2df09e4966bbe73bd764c972f7726e5d4e34d3`.
