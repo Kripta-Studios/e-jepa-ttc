@@ -289,8 +289,19 @@ def _validate_a5_transport_change(
     payload = json.loads(artifact_path.read_text(encoding="utf-8"))
     if not isinstance(payload, dict) or not verify_artifact_hash(payload):
         raise ValueError("A5 preflight artifact signature is invalid")
-    if payload.get("artifact_type") != "a5_transport_preflight_train_only_v1":
+
+    artifact_type = payload.get("artifact_type")
+    expected_artifact_type = preflight.get("artifact_type")
+    if expected_artifact_type is not None and artifact_type != expected_artifact_type:
+        raise ValueError("A5 preflight artifact type differs from frozen contract")
+    supported_artifact_types = {
+        "a5_transport_preflight_train_only_v1",
+        "a5_transport_preflight_train_only_v2",
+        "a5_transport_preflight_train_only_v3_confirmation",
+    }
+    if artifact_type not in supported_artifact_types:
         raise ValueError("unexpected A5 preflight artifact type")
+
     scope = payload.get("scope")
     if not isinstance(scope, dict):
         raise ValueError("A5 preflight scope is malformed")
@@ -300,39 +311,130 @@ def _validate_a5_transport_change(
         raise ValueError("A5 preflight may not open validation/test")
     if int(scope.get("optimizer_steps", -1)) != 0:
         raise ValueError("A5 preflight may not take optimizer steps")
-    if list(scope.get("radii", [])) != list(preflight.get("radii", [])):
-        raise ValueError("A5 preflight radii differ from preregistration")
-    if payload.get("a5_corr_authorized") is not True:
-        raise ValueError("A5-CORR training is blocked because preflight did not pass")
 
-    thresholds = payload.get("decision_thresholds")
-    expected_thresholds = {
-        "teacher_r4_global_error_reduction_min": float(
-            preflight["teacher_r4_global_error_reduction_min"]
-        ),
-        "teacher_r4_foreground_error_reduction_min": float(
-            preflight["teacher_r4_foreground_error_reduction_min"]
-        ),
-        "student_r4_entropy_max": float(preflight["student_r4_entropy_max"]),
-        "student_r4_confidence_margin_min": float(
-            preflight["student_r4_confidence_margin_min"]
-        ),
-    }
-    if thresholds != expected_thresholds:
-        raise ValueError("A5 preflight thresholds differ from preregistration")
+    observed_file_sha = _sha256(artifact_path)
+    expected_file_sha = preflight.get("file_sha256")
+    if expected_file_sha is not None and observed_file_sha != expected_file_sha:
+        raise ValueError("A5 preflight file hash differs from frozen contract")
+    expected_signed_sha = preflight.get("artifact_sha256")
+    if expected_signed_sha is not None and payload.get("artifact_sha256") != expected_signed_sha:
+        raise ValueError("A5 preflight signed hash differs from frozen contract")
 
-    return {
-        "path": artifact_path.relative_to(ROOT).as_posix(),
-        "file_sha256": _sha256(artifact_path),
-        "artifact_sha256": payload.get("artifact_sha256"),
-        "a5_corr_authorized": True,
-        "scope": scope,
-        "decision_checks": payload.get("decision_checks"),
-        "teacher_transport_r4": (
+    decision_checks: object = None
+    teacher_transport_r4: object = None
+    selected_radius: int | None = None
+    selected_temperature: float | None = None
+
+    if artifact_type == "a5_transport_preflight_train_only_v1":
+        if list(scope.get("radii", [])) != list(preflight.get("radii", [])):
+            raise ValueError("A5 preflight radii differ from preregistration")
+        if payload.get("a5_corr_authorized") is not True:
+            raise ValueError("A5-CORR training is blocked because preflight did not pass")
+
+        thresholds = payload.get("decision_thresholds")
+        expected_thresholds = {
+            "teacher_r4_global_error_reduction_min": float(
+                preflight["teacher_r4_global_error_reduction_min"]
+            ),
+            "teacher_r4_foreground_error_reduction_min": float(
+                preflight["teacher_r4_foreground_error_reduction_min"]
+            ),
+            "student_r4_entropy_max": float(preflight["student_r4_entropy_max"]),
+            "student_r4_confidence_margin_min": float(
+                preflight["student_r4_confidence_margin_min"]
+            ),
+        }
+        if thresholds != expected_thresholds:
+            raise ValueError("A5 preflight thresholds differ from preregistration")
+        decision_checks = payload.get("decision_checks")
+        teacher_transport_r4 = (
             payload.get("teacher_transport", {}).get("4")
             if isinstance(payload.get("teacher_transport"), dict)
             else None
-        ),
+        )
+    else:
+        decision = payload.get("decision")
+        if not isinstance(decision, dict):
+            raise ValueError("A5 V2/V3 preflight decision is malformed")
+        if decision.get("a5_corr_authorized") is not True:
+            raise ValueError("A5-CORR training is blocked because preflight did not pass")
+
+        selected_radius = int(decision.get("selected_radius", -1))
+        selected_temperature = float(decision.get("selected_temperature", float("nan")))
+        if selected_radius not in (1, 2, 4):
+            raise ValueError("A5 preflight selected an invalid transport radius")
+        if not math.isfinite(selected_temperature) or selected_temperature not in (
+            0.02,
+            0.04,
+            0.07,
+            0.10,
+        ):
+            raise ValueError("A5 preflight selected an invalid transport temperature")
+        if selected_radius != model_config.transport_radius:
+            raise ValueError("A5 selected radius differs from runtime model config")
+        if not math.isclose(
+            selected_temperature,
+            model_config.transport_temperature,
+            rel_tol=0.0,
+            abs_tol=1.0e-12,
+        ):
+            raise ValueError("A5 selected temperature differs from runtime model config")
+        if int(preflight.get("selected_radius", -1)) != selected_radius:
+            raise ValueError("A5 selected radius differs from frozen preflight contract")
+        if not math.isclose(
+            float(preflight.get("selected_temperature", float("nan"))),
+            selected_temperature,
+            rel_tol=0.0,
+            abs_tol=1.0e-12,
+        ):
+            raise ValueError("A5 selected temperature differs from frozen preflight contract")
+
+        decision_checks = decision.get("checks")
+
+        if artifact_type == "a5_transport_preflight_train_only_v3_confirmation":
+            if int(scope.get("v2_v3_index_overlap", -1)) != 0:
+                raise ValueError("A5 V3 confirmation must be disjoint from V2 discovery rows")
+            if int(scope.get("v3_confirmation_rows", 0)) <= 0:
+                raise ValueError("A5 V3 confirmation must contain held-out train rows")
+            discovery = payload.get("discovery_contract")
+            if not isinstance(discovery, dict):
+                raise ValueError("A5 V3 discovery contract is malformed")
+            if int(discovery.get("candidate_radius", -1)) != selected_radius:
+                raise ValueError("A5 V3 candidate radius differs from authorized radius")
+            if not math.isclose(
+                float(discovery.get("candidate_temperature", float("nan"))),
+                selected_temperature,
+                rel_tol=0.0,
+                abs_tol=1.0e-12,
+            ):
+                raise ValueError("A5 V3 candidate temperature differs from authorized temperature")
+            if discovery.get("no_candidate_reselection_in_v3") is not True:
+                raise ValueError("A5 V3 must not reselect radius/temperature on confirmation rows")
+            interpretation = payload.get("interpretation_contract")
+            required_v3_flags = (
+                "no_radius_or_temperature_search_in_v3",
+                "no_training_or_optimizer_steps",
+                "ttc_labels_are_not_used",
+                "v2_rejection_is_preserved_and_not_overwritten",
+                "v3_candidate_was_selected_from_v2_train_only_discovery",
+                "v3_confirmation_indices_are_disjoint_from_v2_indices",
+            )
+            if not isinstance(interpretation, dict) or any(
+                interpretation.get(key) is not True for key in required_v3_flags
+            ):
+                raise ValueError("A5 V3 interpretation contract is incomplete")
+
+    return {
+        "path": artifact_path.relative_to(ROOT).as_posix(),
+        "file_sha256": observed_file_sha,
+        "artifact_sha256": payload.get("artifact_sha256"),
+        "artifact_type": artifact_type,
+        "a5_corr_authorized": True,
+        "scope": scope,
+        "decision_checks": decision_checks,
+        "teacher_transport_r4": teacher_transport_r4,
+        "selected_radius": selected_radius,
+        "selected_temperature": selected_temperature,
     }
 
 

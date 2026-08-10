@@ -224,7 +224,7 @@ function Finalize-Bundle {
         Write-CheckpointInventory (Join-Path $BundleStage "checkpoint_inventory.csv")
 
         $manifest = [ordered]@{
-            artifact_type = "a5_transport_suite_results_bundle_v2"
+            artifact_type = "a5_transport_suite_results_bundle_v3"
             created_at = (Get-Date).ToUniversalTime().ToString("o")
             suite_status = $script:SuiteStatus
             preregistered_base_head = $BaseHead
@@ -299,6 +299,7 @@ try {
             "-m", "pytest", "-q",
             "tests/unit/test_a5_transport_preflight_v2.py",
             "tests/unit/test_a5_transport_preflight_v3_confirm.py",
+            "tests/unit/test_a5_train_preflight_contract.py",
             "tests/unit/test_a5_freeze_transport_selection_v2.py",
             "tests/unit/test_a5_local_transport.py",
             "tests/unit/test_causal_scale_ttc.py",
