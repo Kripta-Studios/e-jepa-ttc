@@ -1,0 +1,51 @@
+artifact_type: sam_train_bbox_prompt_materialization_protocol_v1
+source:
+  expected_subset_manifest_sha256: dea74cdc610841e75ab8a827e9f01f3b2d660432cf5cadbc88d0cff46927d6ec
+  expected_train_data_sha256: 1f7884a09c509b46a218cd02a85a29c5e16b737ba031cb5f4bff8d77b1e1cb6c
+  expected_screen_cache_manifest_sha256: bba9ff9b143bfd57760bd61d2b6f664202581b5dee54444f44c625975557eb72
+  expected_rows: 2048
+  expected_sequences: 9
+  endpoints: [0, 1]
+  box_index: 0
+  public_train_only: true
+  validation_teacher_generation_allowed: false
+teacher:
+  repo_id: facebook/sam-vit-large
+  revision: 6851e0441005b0fb96f2cc4dfac472f3d1b14af1
+  expected_weights_sha256: a57e1b13cd1545938dfcbc9fb26df7f60de6650237a9383382a874a623564b81
+  selection: maximum_predicted_iou
+  full_frame_logit_threshold: 0.0
+  roi_binary_threshold: 0.5
+  bbox_prompt_training_only: true
+filter:
+  minimum_predicted_iou: 0.5
+  minimum_mask_fraction: 0.001
+  maximum_mask_fraction: 0.75
+  minimum_bbox_mask_iou: 0.25
+  minimum_mask_inside_bbox_fraction: 0.80
+  temporal_bbox_area_log_ratio_epsilon: 0.002
+  require_temporal_area_sign_consistency: true
+  rejected_rows_fallback: geometry_only
+output:
+  roi_size: 128
+  common_roi_margin_fraction: 0.25
+  common_roi_minimum_edge: 8.0
+  packbits_bitorder: little
+  shard_rows: 64
+runtime:
+  device: cuda
+  precision: bf16
+  maximum_total_seconds: 3600
+  maximum_mean_inference_seconds: 0.5
+  maximum_peak_vram_mib: 9216
+gate:
+  minimum_endpoint_valid_fraction: 0.75
+  minimum_pair_valid_fraction: 0.65
+  require_exact_tokens: true
+  require_all_outputs_finite: true
+claim_boundary:
+  modality: event-only inference with RGB distillation
+  official_masks: false
+  ttc_labels_read: false
+  validation_or_test_teacher_generation: false
+  architecture_selection_from_masks: false

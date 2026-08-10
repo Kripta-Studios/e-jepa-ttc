@@ -141,7 +141,7 @@ def decode_binary_mask(encoded: BinaryMaskRLE) -> np.ndarray:
 
 def square_crop_resize_mask(
     mask: np.ndarray,
-    square_xyxy: tuple[int, int, int, int],
+    square_xyxy: tuple[float, float, float, float],
     *,
     output_size: tuple[int, int] = (256, 256),
     quantization: Literal["official_truncate", "threshold"] = "official_truncate",
