@@ -27,7 +27,10 @@ sys.path.insert(0, str(ROOT))
 from e_jepa_ttc.artifacts.hashing import sign_artifact  # noqa: E402
 from e_jepa_ttc.data.object_event_v4 import GarlTTCObjectEventV4Dataset  # noqa: E402
 from e_jepa_ttc.losses.causal_scale_ttc import CausalScaleTTCLossConfig  # noqa: E402
-from e_jepa_ttc.models.causal_scale_ttc import CausalScaleTTCConfig  # noqa: E402
+from e_jepa_ttc.models.causal_scale_ttc import (  # noqa: E402
+    CausalScaleTTC,
+    CausalScaleTTCConfig,
+)
 from e_jepa_ttc.reproducibility import environment_snapshot, resolve_device  # noqa: E402
 from e_jepa_ttc.training.causal_scale_eap import (  # noqa: E402
     CausalScaleEAPTrainingConfig,
@@ -168,6 +171,30 @@ def run(
         raise ValueError("training and loss mappings are required")
     training_config = CausalScaleEAPTrainingConfig(**training_raw)
     loss_config = CausalScaleTTCLossConfig(**loss_raw)
+    if training_config.foreground_supervision == "bbox_geometry":
+        if loss_config.foreground_bce_weight != 0.0 or loss_config.foreground_dice_weight != 0.0:
+            raise ValueError("bbox_geometry supervision requires BCE/Dice weights to be zero")
+        if min(
+            loss_config.foreground_extent_weight,
+            loss_config.foreground_width_weight,
+            loss_config.foreground_center_weight,
+        ) <= 0.0:
+            raise ValueError("bbox_geometry supervision requires positive h/w/center weights")
+        if loss_config.foreground_pair_ratio_weight != 0.0:
+            raise ValueError("A1 bbox_geometry must not activate foreground_pair_ratio")
+    parameter_count = sum(
+        parameter.numel() for parameter in CausalScaleTTC(model_config).parameters()
+    )
+    decision_contract = raw.get("decision_contract")
+    if not isinstance(decision_contract, dict):
+        raise ValueError("decision_contract mapping is required")
+    expected_parameter_count = decision_contract.get("expected_parameter_count")
+    if expected_parameter_count is not None and parameter_count != int(
+        expected_parameter_count
+    ):
+        raise ValueError(
+            f"model parameter count changed: {parameter_count} != {expected_parameter_count}"
+        )
     output_dir.mkdir(parents=True, exist_ok=True)
     state_dir = output_dir / "state"
     train_dataset = GarlTTCObjectEventV4Dataset(
@@ -239,10 +266,21 @@ def run(
         },
         "model_input_contract": {
             "forward_inputs": ["event_v4_common_roi", "garl_delta_t_s"],
-            "weak_bbox_supervision_only": True,
+            "foreground_supervision": training_config.foreground_supervision,
+            "weak_bbox_supervision_only": (
+                training_config.foreground_supervision == "weak_box"
+            ),
+            "weak_bbox_rasterized_for_loss": (
+                training_config.foreground_supervision == "weak_box"
+            ),
+            "bbox_geometry_training_only": (
+                training_config.foreground_supervision == "bbox_geometry"
+            ),
             "bbox_is_not_segmentation_ground_truth": True,
+            "bbox_is_model_input": False,
             "t0_proxy_box_excluded": training_config.mask_t0_as_proxy,
         },
+        "parameter_count": parameter_count,
         "training_config": asdict(training_config),
         "loss_config": asdict(loss_config),
         "selection": {
@@ -262,7 +300,7 @@ def run(
         "predictions": {"path": predictions_path.name, "sha256": _sha256(predictions_path)},
         "environment": environment_snapshot(),
         "device": str(device),
-        "decision_contract": raw["decision_contract"],
+        "decision_contract": decision_contract,
     }
     payload = cast(dict[str, Any], _finite_json(payload))
     sign_artifact(payload)

@@ -24,6 +24,10 @@ Actualizado: 2026-08-10.
   arquitectura, no evidencia multisemilla ni resultado oficial. Su salida está
   colapsada al signo positivo: las 335 filas negative/receding reciben TTC positivo
   y MiD `437.60`. No debe promoverse ignorando esta limitación.
+- A1 está preregistrado pero no ejecutado. Supervisar bbox geometry no demuestra
+  que los eventos contengan bordes observables suficientes ni que medidas buenas
+  por endpoint sean temporalmente coherentes. La bbox sigue siendo supervisión
+  oracle training-only y el crop continúa siendo bbox oracle.
 - El screen depende de ROI con cajas GT y weak-box supervision; no es bbox-free y
   sus rectángulos no son máscaras de segmentación.
 - Resume atómico pasa su prueba end-to-end, pero el run real representativo sigue

@@ -33,6 +33,13 @@ No se cambian `unknown`, support, clip, residual, consenso, optimizer, seed, fil
 o presupuesto durante A1. Correlaciones absolutas y diferenciales se reportan
 globales y macro por secuencia; `r_iso` es diagnóstico, no prediction path.
 
+Preregistro A1 congelado: config SHA256
+`bc3fe3daabb8f205b1dda81f6da442c2d7452253330960d0c3ff65af7795ba28`;
+pesos geometry `h=1.25`, `w=1.25`, `center=2.5`, equivalentes a 1.25 por cada
+componente `h,w,cx,cy`. No se ajustarán tras ver validation. El escalado se autoriza
+si A1 es competitivo con Garl matched o muestra señal causal fuerte y distribuida
+más una tendencia clara de aprendizaje; no exige ganar MiD en 2.048 a toda costa.
+
 ## Addendum operativo: handoff causal-scale eAP screen v1 (2026-08-10)
 
 La ruta activa inmediata está descrita en `CODEX_HANDOFF.md` y

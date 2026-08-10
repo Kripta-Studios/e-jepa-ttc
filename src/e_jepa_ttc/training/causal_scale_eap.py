@@ -10,7 +10,7 @@ import time
 from collections.abc import Iterator, Sized
 from dataclasses import asdict, dataclass, replace
 from pathlib import Path
-from typing import Any, cast
+from typing import Any, Literal, cast
 
 import numpy as np
 import torch
@@ -18,7 +18,9 @@ from torch import nn
 from torch.utils.data import DataLoader, Dataset, Sampler
 
 from e_jepa_ttc.data.object_event_v4 import (
+    BoxGeometryTargets,
     ObjectEventV4Batch,
+    box_geometry_targets,
     collate_object_event_v4,
     weak_box_masks,
 )
@@ -57,6 +59,7 @@ class CausalScaleEAPTrainingConfig:
     precision: str = "bf16"
     maximum_runtime_hours: float = 6.0
     mask_t0_as_proxy: bool = True
+    foreground_supervision: Literal["weak_box", "bbox_geometry"] = "weak_box"
 
     def __post_init__(self) -> None:
         integers = (
@@ -82,6 +85,8 @@ class CausalScaleEAPTrainingConfig:
             raise ValueError("optimizer/runtime controls must be positive")
         if self.weight_decay < 0.0:
             raise ValueError("weight_decay must be non-negative")
+        if self.foreground_supervision not in {"weak_box", "bbox_geometry"}:
+            raise ValueError("foreground_supervision must be weak_box or bbox_geometry")
 
 
 @dataclass
@@ -94,6 +99,17 @@ class CausalScaleEAPTrainingResult:
     elapsed_seconds: float
 
 
+@dataclass(frozen=True)
+class CausalScaleEAPTargets:
+    """Training-only targets kept outside the model input contract."""
+
+    delta_t_s: torch.Tensor
+    target_valid: torch.Tensor
+    target_masks: torch.Tensor | None
+    mask_valid: torch.Tensor | None
+    geometry: BoxGeometryTargets | None
+
+
 def _autocast(device: torch.device, precision: str) -> torch.autocast:
     dtype = {"fp16": torch.float16, "bf16": torch.bfloat16}.get(precision)
     return torch.autocast(device_type=device.type, dtype=dtype, enabled=dtype is not None)
@@ -103,7 +119,8 @@ def _targets(
     batch: ObjectEventV4Batch,
     *,
     mask_t0_as_proxy: bool,
-) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    foreground_supervision: Literal["weak_box", "bbox_geometry"],
+) -> CausalScaleEAPTargets:
     """Create disclosed weak targets; none are returned as model inputs."""
 
     endpoint_valid = torch.ones(
@@ -111,15 +128,40 @@ def _targets(
     )
     if mask_t0_as_proxy:
         endpoint_valid[:, 0] = False
-    masks, mask_valid = weak_box_masks(
-        batch.boxes_xyxy,
-        height=int(batch.events.shape[-2]),
-        width=int(batch.events.shape[-1]),
-        endpoint_valid=endpoint_valid,
-    )
     delta = batch.delta_t_s[:, None].expand(-1, batch.events.shape[1] - 1)
     target_valid = torch.isfinite(batch.target_ttc_s) & (batch.target_ttc_s != 0.0)
-    return delta, masks, mask_valid & target_valid[:, None]
+    endpoint_valid = endpoint_valid & target_valid[:, None]
+    height = int(batch.events.shape[-2])
+    width = int(batch.events.shape[-1])
+    if foreground_supervision == "weak_box":
+        masks, mask_valid = weak_box_masks(
+            batch.boxes_xyxy,
+            height=height,
+            width=width,
+            endpoint_valid=endpoint_valid,
+        )
+        return CausalScaleEAPTargets(
+            delta_t_s=delta,
+            target_valid=target_valid,
+            target_masks=masks,
+            mask_valid=mask_valid,
+            geometry=None,
+        )
+    if foreground_supervision == "bbox_geometry":
+        geometry = box_geometry_targets(
+            batch.boxes_xyxy,
+            height=height,
+            width=width,
+            endpoint_valid=endpoint_valid,
+        )
+        return CausalScaleEAPTargets(
+            delta_t_s=delta,
+            target_valid=target_valid,
+            target_masks=None,
+            mask_valid=None,
+            geometry=geometry,
+        )
+    raise ValueError(f"unsupported foreground supervision: {foreground_supervision}")
 
 
 def _loss(
@@ -128,17 +170,23 @@ def _loss(
     loss_config: CausalScaleTTCLossConfig,
     *,
     mask_t0_as_proxy: bool,
+    foreground_supervision: Literal["weak_box", "bbox_geometry"],
 ) -> tuple[torch.Tensor, dict[str, torch.Tensor], Any]:
-    delta, masks, mask_valid = _targets(batch, mask_t0_as_proxy=mask_t0_as_proxy)
-    output = model(batch.events, delta)
+    targets = _targets(
+        batch,
+        mask_t0_as_proxy=mask_t0_as_proxy,
+        foreground_supervision=foreground_supervision,
+    )
+    output = model(batch.events, targets.delta_t_s)
     result = causal_scale_ttc_loss(
         output,
         target_ttc_seconds=batch.target_ttc_s,
-        delta_t_s=delta,
+        delta_t_s=targets.delta_t_s,
         risk_thresholds_s=model.config.risk_thresholds_s,
-        target_valid=torch.ones_like(batch.target_ttc_s, dtype=torch.bool),
-        target_masks=masks,
-        mask_valid=mask_valid,
+        target_valid=targets.target_valid,
+        target_masks=targets.target_masks,
+        mask_valid=targets.mask_valid,
+        target_geometry=targets.geometry,
         config=loss_config,
     )
     return result.total, result.components, output
@@ -159,6 +207,82 @@ def _is_better(candidate: dict[str, float], incumbent: dict[str, float] | None) 
         incumbent["sequence_macro_MiD"],
         incumbent["failure_rate_pct"],
     )
+
+
+def _relationship(target: np.ndarray, prediction: np.ndarray) -> dict[str, float | int]:
+    if target.shape != prediction.shape:
+        raise ValueError("diagnostic target and prediction shapes differ")
+    valid = np.isfinite(target) & np.isfinite(prediction)
+    x = target[valid].astype(np.float64, copy=False)
+    y = prediction[valid].astype(np.float64, copy=False)
+    target_std = float(np.std(x)) if x.size else float("nan")
+    prediction_std = float(np.std(y)) if y.size else float("nan")
+    pearson = (
+        float(np.corrcoef(x, y)[0, 1])
+        if x.size > 1 and target_std > 0.0 and prediction_std > 0.0
+        else float("nan")
+    )
+    centered = x - x.mean() if x.size else x
+    denominator = float(np.dot(centered, centered))
+    slope = (
+        float(np.dot(centered, y - y.mean()) / denominator)
+        if x.size > 1 and denominator > 0.0
+        else float("nan")
+    )
+    sign_valid = (x != 0.0) & (y != 0.0)
+    return {
+        "count": int(x.size),
+        "pearson": pearson,
+        "slope": slope,
+        "mae": float(np.mean(np.abs(y - x))) if x.size else float("nan"),
+        "sign_accuracy": (
+            float(np.mean(np.sign(y[sign_valid]) == np.sign(x[sign_valid])))
+            if np.any(sign_valid)
+            else float("nan")
+        ),
+        "target_std": target_std,
+        "prediction_std": prediction_std,
+        "prediction_target_std_ratio": (
+            prediction_std / target_std
+            if math.isfinite(target_std) and target_std > 0.0
+            else float("nan")
+        ),
+    }
+
+
+def _relationship_by_sequence(
+    target: np.ndarray,
+    prediction: np.ndarray,
+    sequences: np.ndarray,
+) -> dict[str, Any]:
+    if target.shape != prediction.shape or target.shape != sequences.shape:
+        raise ValueError("sequence diagnostic arrays must share shape")
+    per_sequence = {
+        str(sequence): _relationship(
+            target[sequences == sequence], prediction[sequences == sequence]
+        )
+        for sequence in sorted(set(sequences.astype(str).tolist()))
+    }
+    metric_names = (
+        "pearson",
+        "slope",
+        "mae",
+        "sign_accuracy",
+        "prediction_target_std_ratio",
+    )
+    macro: dict[str, float | int] = {"sequence_count": len(per_sequence)}
+    for name in metric_names:
+        values = np.asarray(
+            [float(metrics[name]) for metrics in per_sequence.values()], dtype=np.float64
+        )
+        finite = values[np.isfinite(values)]
+        macro[name] = float(np.mean(finite)) if finite.size else float("nan")
+        macro[f"{name}_sequence_count"] = int(finite.size)
+    return {
+        "global": _relationship(target, prediction),
+        "macro_by_sequence": macro,
+        "per_sequence": per_sequence,
+    }
 
 
 class ShardGroupedRandomSampler(Sampler[int]):
@@ -253,7 +377,11 @@ def train_one_real_epoch(
         batch = host_batch.to(device)
         with _autocast(device, config.precision):
             total, components, _ = _loss(
-                model, batch, loss_config, mask_t0_as_proxy=config.mask_t0_as_proxy
+                model,
+                batch,
+                loss_config,
+                mask_t0_as_proxy=config.mask_t0_as_proxy,
+                foreground_supervision=config.foreground_supervision,
             )
             scaled = total / config.gradient_accumulation_steps
         if not bool(torch.isfinite(total)):
@@ -294,6 +422,42 @@ def evaluate_real_causal_scale(
     ratios: list[torch.Tensor] = []
     ratio_targets: list[torch.Tensor] = []
     weak_iou: list[torch.Tensor] = []
+    endpoint_geometry: dict[str, list[torch.Tensor]] = {
+        key: []
+        for key in (
+            "log_height_target",
+            "log_height_prediction",
+            "log_width_target",
+            "log_width_prediction",
+            "centroid_x_target",
+            "centroid_x_prediction",
+            "centroid_y_target",
+            "centroid_y_prediction",
+        )
+    }
+    pair_geometry: dict[str, list[torch.Tensor]] = {
+        key: []
+        for key in (
+            "height_target",
+            "height_prediction",
+            "width_target",
+            "width_prediction",
+            "isotropic_target",
+            "isotropic_prediction",
+        )
+    }
+    physical_geometry: dict[str, list[torch.Tensor]] = {
+        key: []
+        for key in (
+            "target",
+            "height_prediction",
+            "width_prediction",
+            "isotropic_prediction",
+        )
+    }
+    endpoint_geometry_sequences: list[str] = []
+    pair_geometry_sequences: list[str] = []
+    physical_geometry_sequences: list[str] = []
     sequences: list[str] = []
     tokens: list[str] = []
     losses: list[tuple[float, int]] = []
@@ -301,19 +465,124 @@ def evaluate_real_causal_scale(
         batch = host_batch.to(device)
         with _autocast(device, config.precision):
             total, _, output = _loss(
-                model, batch, loss_config, mask_t0_as_proxy=config.mask_t0_as_proxy
+                model,
+                batch,
+                loss_config,
+                mask_t0_as_proxy=config.mask_t0_as_proxy,
+                foreground_supervision=config.foreground_supervision,
             )
-        delta, masks, mask_valid = _targets(
-            batch, mask_t0_as_proxy=config.mask_t0_as_proxy
+        targets = _targets(
+            batch,
+            mask_t0_as_proxy=config.mask_t0_as_proxy,
+            foreground_supervision=config.foreground_supervision,
         )
         target_ratio, valid_ratio = target_log_ratio_from_ttc(
-            batch.target_ttc_s, delta[:, -1]
+            batch.target_ttc_s, targets.delta_t_s[:, -1]
         )
-        predicted_masks = torch.sigmoid(output.foreground_logits) >= 0.5
-        selected_masks = mask_valid
-        intersection = (predicted_masks & masks.bool()).sum(dim=(-3, -2, -1)).float()
-        union = (predicted_masks | masks.bool()).sum(dim=(-3, -2, -1)).float().clamp_min(1)
-        weak_iou.append((intersection[selected_masks] / union[selected_masks]).cpu())
+        if targets.target_masks is not None and targets.mask_valid is not None:
+            predicted_masks = torch.sigmoid(output.foreground_logits) >= 0.5
+            selected_masks = targets.mask_valid
+            intersection = (
+                predicted_masks & targets.target_masks.bool()
+            ).sum(dim=(-3, -2, -1)).float()
+            union = (
+                predicted_masks | targets.target_masks.bool()
+            ).sum(dim=(-3, -2, -1)).float().clamp_min(1)
+            weak_iou.append(
+                (intersection[selected_masks] / union[selected_masks]).cpu()
+            )
+        if targets.geometry is not None:
+            geometry = targets.geometry
+            endpoint_valid = geometry.valid.bool()
+            endpoint_geometry["log_height_target"].append(
+                geometry.height_normalized[endpoint_valid].clamp_min(1.0e-6).log().cpu()
+            )
+            endpoint_geometry["log_height_prediction"].append(
+                output.visible_height_normalized[endpoint_valid]
+                .clamp_min(1.0e-6)
+                .log()
+                .float()
+                .cpu()
+            )
+            endpoint_geometry["log_width_target"].append(
+                geometry.width_normalized[endpoint_valid].clamp_min(1.0e-6).log().cpu()
+            )
+            endpoint_geometry["log_width_prediction"].append(
+                output.visible_width_normalized[endpoint_valid]
+                .clamp_min(1.0e-6)
+                .log()
+                .float()
+                .cpu()
+            )
+            endpoint_geometry["centroid_x_target"].append(
+                geometry.centroid_x_normalized[endpoint_valid].cpu()
+            )
+            endpoint_geometry["centroid_x_prediction"].append(
+                output.diagnostics["foreground_centroid_x"][endpoint_valid].float().cpu()
+            )
+            endpoint_geometry["centroid_y_target"].append(
+                geometry.centroid_y_normalized[endpoint_valid].cpu()
+            )
+            endpoint_geometry["centroid_y_prediction"].append(
+                output.diagnostics["foreground_centroid_y"][endpoint_valid].float().cpu()
+            )
+            endpoint_valid_cpu = endpoint_valid.cpu()
+            for sequence, row_valid in zip(
+                batch.sequence_ids, endpoint_valid_cpu, strict=True
+            ):
+                endpoint_geometry_sequences.extend(
+                    [sequence] * int(row_valid.sum().item())
+                )
+
+            pair_valid = endpoint_valid[:, -2] & endpoint_valid[:, -1]
+            target_height_ratio = (
+                geometry.height_normalized[:, -1].clamp_min(1.0e-6).log()
+                - geometry.height_normalized[:, -2].clamp_min(1.0e-6).log()
+            )
+            target_width_ratio = (
+                geometry.width_normalized[:, -1].clamp_min(1.0e-6).log()
+                - geometry.width_normalized[:, -2].clamp_min(1.0e-6).log()
+            )
+            predicted_height_ratio = (
+                output.visible_height_normalized[:, -1].clamp_min(1.0e-6).log()
+                - output.visible_height_normalized[:, -2].clamp_min(1.0e-6).log()
+            )
+            predicted_width_ratio = (
+                output.visible_width_normalized[:, -1].clamp_min(1.0e-6).log()
+                - output.visible_width_normalized[:, -2].clamp_min(1.0e-6).log()
+            )
+            target_isotropic_ratio = 0.5 * (target_height_ratio + target_width_ratio)
+            predicted_isotropic_ratio = 0.5 * (
+                predicted_height_ratio + predicted_width_ratio
+            )
+            pair_values = {
+                "height_target": target_height_ratio,
+                "height_prediction": predicted_height_ratio,
+                "width_target": target_width_ratio,
+                "width_prediction": predicted_width_ratio,
+                "isotropic_target": target_isotropic_ratio,
+                "isotropic_prediction": predicted_isotropic_ratio,
+            }
+            for key, value in pair_values.items():
+                pair_geometry[key].append(value[pair_valid].float().cpu())
+            for sequence, valid in zip(batch.sequence_ids, pair_valid.cpu(), strict=True):
+                if bool(valid):
+                    pair_geometry_sequences.append(sequence)
+
+            physical_valid = pair_valid & valid_ratio
+            physical_values = {
+                "target": target_ratio,
+                "height_prediction": predicted_height_ratio,
+                "width_prediction": predicted_width_ratio,
+                "isotropic_prediction": predicted_isotropic_ratio,
+            }
+            for key, value in physical_values.items():
+                physical_geometry[key].append(value[physical_valid].float().cpu())
+            for sequence, valid in zip(
+                batch.sequence_ids, physical_valid.cpu(), strict=True
+            ):
+                if bool(valid):
+                    physical_geometry_sequences.append(sequence)
         count = int(batch.events.shape[0])
         losses.append((float(total.detach().cpu()), count))
         truth.append(batch.target_ttc_s.cpu())
@@ -344,15 +613,90 @@ def evaluate_real_causal_scale(
     sequence_macro = sequence_macro_signed_metrics(
         target_np, prediction_np, np.asarray(sequences)
     )
+    geometry_diagnostics: dict[str, Any] | None = None
+    if endpoint_geometry["log_height_target"]:
+        endpoint_np = {
+            key: torch.cat(values).numpy().astype(np.float64)
+            for key, values in endpoint_geometry.items()
+        }
+        pair_np = {
+            key: torch.cat(values).numpy().astype(np.float64)
+            for key, values in pair_geometry.items()
+        }
+        physical_np = {
+            key: torch.cat(values).numpy().astype(np.float64)
+            for key, values in physical_geometry.items()
+        }
+        endpoint_sequence_np = np.asarray(endpoint_geometry_sequences)
+        pair_sequence_np = np.asarray(pair_geometry_sequences)
+        physical_sequence_np = np.asarray(physical_geometry_sequences)
+        geometry_diagnostics = {
+            "absolute_log_height": _relationship_by_sequence(
+                endpoint_np["log_height_target"],
+                endpoint_np["log_height_prediction"],
+                endpoint_sequence_np,
+            ),
+            "absolute_log_width": _relationship_by_sequence(
+                endpoint_np["log_width_target"],
+                endpoint_np["log_width_prediction"],
+                endpoint_sequence_np,
+            ),
+            "centroid_x": _relationship_by_sequence(
+                endpoint_np["centroid_x_target"],
+                endpoint_np["centroid_x_prediction"],
+                endpoint_sequence_np,
+            ),
+            "centroid_y": _relationship_by_sequence(
+                endpoint_np["centroid_y_target"],
+                endpoint_np["centroid_y_prediction"],
+                endpoint_sequence_np,
+            ),
+            "delta_log_height_vs_bbox": _relationship_by_sequence(
+                pair_np["height_target"],
+                pair_np["height_prediction"],
+                pair_sequence_np,
+            ),
+            "delta_log_width_vs_bbox": _relationship_by_sequence(
+                pair_np["width_target"],
+                pair_np["width_prediction"],
+                pair_sequence_np,
+            ),
+            "delta_log_isotropic_vs_bbox": _relationship_by_sequence(
+                pair_np["isotropic_target"],
+                pair_np["isotropic_prediction"],
+                pair_sequence_np,
+            ),
+            "delta_log_height_vs_physical": _relationship_by_sequence(
+                physical_np["target"],
+                physical_np["height_prediction"],
+                physical_sequence_np,
+            ),
+            "delta_log_width_vs_physical": _relationship_by_sequence(
+                physical_np["target"],
+                physical_np["width_prediction"],
+                physical_sequence_np,
+            ),
+            "delta_log_isotropic_vs_physical": _relationship_by_sequence(
+                physical_np["target"],
+                physical_np["isotropic_prediction"],
+                physical_sequence_np,
+            ),
+            "r_iso_is_diagnostic_only": True,
+            "bbox_used_as_model_input": False,
+        }
     return {
         "num_samples": int(target_np.size),
         "loss": sum(value * count for value, count in losses) / sum(count for _, count in losses),
         "signed": signed,
         "sequence_macro": sequence_macro,
         "known_coverage": float(torch.cat(known).float().mean()),
-        "weak_bbox_iou": float(torch.cat(weak_iou).mean()),
+        "weak_bbox_iou": (
+            float(torch.cat(weak_iou).mean()) if weak_iou else float("nan")
+        ),
+        "weak_bbox_iou_count": sum(int(value.numel()) for value in weak_iou),
         "log_ratio_mae": float((ratio - ratio_target).abs().mean()),
         "log_ratio_pearson": pearson,
+        "geometry_diagnostics": geometry_diagnostics,
         "sample_tokens": tokens,
         "target_ttc_s": target_np.tolist(),
         "prediction_ttc_s": prediction_np.tolist(),

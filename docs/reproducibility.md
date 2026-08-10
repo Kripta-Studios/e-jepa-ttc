@@ -73,6 +73,21 @@ uv run python scripts/build_causal_scale_eap_garl_comparison.py `
 El comparador verifica igualdad exacta de tokens, secuencia y target y remuestrea
 las tres secuencias completas, nunca ventanas.
 
+Preregistro y ejecución A1 geometry-only:
+
+```powershell
+uv run python scripts/train_causal_scale_eap_screen.py `
+  --config configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a1_geometry_v1.yaml `
+  --output-dir artifacts/runs/causal_scale_eap_screen_a1_geometry_v1_seed7 `
+  --device cuda
+```
+
+Si existe un `state/last.pt` compatible, añadir `--resume`; nunca borrar un estado
+válido. La config tiene SHA256
+`bc3fe3daabb8f205b1dda81f6da442c2d7452253330960d0c3ff65af7795ba28`.
+El runner exige Git limpio, cache firmado 2.048/2.048, 9/3 secuencias disjuntas,
+344.591 parámetros y fuentes test selladas. A1 no llama a `weak_box_masks`.
+
 Regeneración del diagnóstico:
 
 ```powershell

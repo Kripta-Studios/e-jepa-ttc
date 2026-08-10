@@ -20,6 +20,10 @@
   por secuencia: identidad `e6344713…c254de`;
 - A0 pierde en las tres secuencias y por `+180.7031` MiD macro; Garl matched
   conserva un fallo visible en receding/negative al predecir solo TTC positivo.
+- preregistrado e implementado A1 geometry-only sin cambiar parámetros ni forward;
+  tests prueban ausencia de rasterización weak-box y bbox como input;
+- añadidos diagnósticos por época de geometría absoluta/diferencial globales y
+  macro-secuencia. A1 seed 7 aún no se ha ejecutado.
 
 ## 2026-08-10 — Transporte temporal Causal Scale v7
 

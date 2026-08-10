@@ -96,6 +96,11 @@ Cada rol contiene 2.048 filas. Ninguna fila validation se usa para gradientes;
 validation solo selecciona checkpoint. No se abrió test privado, CodaBench ni
 EvTTC test.
 
+En A1, `event_v4_boxes_xyxy` se recorta al ROI visible y solo genera cuatro targets
+escalares normalizados `h,w,cx,cy`. No se rasteriza como target denso y no forma
+parte del esquema de inputs. El modelo sigue recibiendo exclusivamente
+`event_v4_common_roi` y `garl_delta_t_s`.
+
 ## Contrato de almacenamiento
 
 - datos raw inmutables y fuera de Git;

@@ -33,6 +33,12 @@
   secuencia `[131.7444284, 215.3146093]`; win rate pareado finito `35.6904%`.
   Garl matched falla cualitativamente en negative: predice siempre TTC positivo.
 - Comparador release/matched firmado: `e63447135e2b09c5c6a7e2afb996bb70cce8cbba4a112afc87069e2f60c254de`.
+- A1 geometry-only implementado y preregistrado, aún no ejecutado. Mismo modelo,
+  344.591 parámetros, mismas filas/seed/schedule; BCE/Dice `0`, pesos h/w/centro
+  `1.25/1.25/2.5`, pair-ratio `0`. El test prueba que no rasteriza weak-box ni
+  introduce bbox en `forward`.
+- Diagnósticos A1 por época: `log h/log w/cx/cy`, `delta log h`, `delta log w`,
+  `r_iso`, slope, MAE, signo y `std_pred/std_target`, global y macro-secuencia.
 
 ## Addendum eAP causal-scale screen v1 (2026-08-10)
 

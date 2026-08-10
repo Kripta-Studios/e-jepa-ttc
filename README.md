@@ -22,6 +22,11 @@ IC95% agrupado por secuencia de A0−Garl es `[131,74, 215,31]`. Garl matched,
 sin embargo, no modela receding: todas sus predicciones son positivas y su MiD
 negative es `437,60`. A1 debe mejorar la cadena geométrica sin perder ese régimen.
 
+A1 está congelado antes del run: mismo CNN y prediction path, sin weak-box densa,
+con supervisión training-only de `h,w,cx,cy`. No activa pair-ratio y no añade
+parámetros. Sus métricas causales primarias son geometría absoluta y diferencial;
+MiD sigue reportándose y selecciona checkpoint, pero no sustituye el diagnóstico.
+
 Pipeline reproducible para estimar Time-to-Contact/Time-to-Collision a partir de
 cámaras de eventos, con una ruta event-only high-resolution y una futura ablación
 RGB-E multimodal.

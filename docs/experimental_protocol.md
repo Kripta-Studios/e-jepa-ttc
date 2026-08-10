@@ -18,6 +18,16 @@ seleccionado es época 11 de 16 ejecutadas. La tabla release (`117.4282` macro)
 permanece separada por presupuesto desigual y exposición de validation. A1 se
 compara causalmente contra matched, no usa la release como gate.
 
+### A1 congelado antes de ejecución
+
+A1 cambia exclusivamente `weak_box -> bbox_geometry`. La bbox se transforma en
+`h,w,cx,cy` visibles sin crear una máscara. El model config/hash, 344.591 parámetros,
+prediction path y todo el protocolo de optimización son idénticos a A0. BCE/Dice y
+pair-ratio pesan cero; `h,w,cx,cy` pesan efectivamente 1.25 cada uno. Los diagnósticos
+se reportan por época, globales y macro por secuencia, pero no alteran selección.
+Un resultado distinto posterior requerirá una nueva identidad A1-R/A2; no se
+reescribirá A1 tras observar validation.
+
 El diagnóstico de fallo no selecciona hiperparámetros ni abre test. Descompone el
 checkpoint ya seleccionado sobre la misma validation pública en bbox-ratio,
 extensión analítica, residual, ratio combinado y ratio efectivo. A1 queda

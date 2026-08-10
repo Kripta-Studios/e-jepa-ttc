@@ -8,6 +8,7 @@ from dataclasses import dataclass
 import torch
 from torch.nn import functional
 
+from e_jepa_ttc.data.object_event_v4 import BoxGeometryTargets
 from e_jepa_ttc.models.causal_scale_ttc import (
     CausalScaleTTCOutput,
     soft_vertical_extent_from_logits,
@@ -26,6 +27,8 @@ class CausalScaleTTCLossConfig:
     foreground_bce_weight: float = 1.0
     foreground_dice_weight: float = 0.5
     foreground_extent_weight: float = 1.0
+    foreground_width_weight: float = 0.0
+    foreground_center_weight: float = 0.0
     foreground_pair_ratio_weight: float = 0.0
     risk_weight: float = 0.25
     auxiliary_inverse_ttc_weight: float = 0.1
@@ -42,6 +45,8 @@ class CausalScaleTTCLossConfig:
             self.foreground_bce_weight,
             self.foreground_dice_weight,
             self.foreground_extent_weight,
+            self.foreground_width_weight,
+            self.foreground_center_weight,
             self.foreground_pair_ratio_weight,
             self.risk_weight,
             self.auxiliary_inverse_ttc_weight,
@@ -104,7 +109,21 @@ def _foreground_extent_loss(
     mask_valid: torch.Tensor | None,
     *,
     beta: float,
+    target_geometry: BoxGeometryTargets | None = None,
 ) -> tuple[torch.Tensor, int]:
+    if target_geometry is not None:
+        valid = target_geometry.valid.bool()
+        count = int(valid.sum().item())
+        if count == 0:
+            return _zero(output.visible_height_normalized), 0
+        return (
+            functional.smooth_l1_loss(
+                output.visible_height_normalized[valid].clamp_min(1.0e-6).log(),
+                target_geometry.height_normalized[valid].clamp_min(1.0e-6).log(),
+                beta=beta,
+            ),
+            count,
+        )
     if target_masks is None or mask_valid is None:
         return _zero(output.visible_height_normalized), 0
     nonempty = target_masks.flatten(-3).any(dim=-1)
@@ -124,6 +143,47 @@ def _foreground_extent_loss(
         beta=beta,
     )
     return extent, count
+
+
+def _foreground_width_center_losses(
+    output: CausalScaleTTCOutput,
+    target_geometry: BoxGeometryTargets | None,
+    *,
+    beta: float,
+) -> tuple[torch.Tensor, torch.Tensor, int]:
+    if target_geometry is None:
+        zero = _zero(output.visible_width_normalized)
+        return zero, zero, 0
+    valid = target_geometry.valid.bool()
+    count = int(valid.sum().item())
+    if count == 0:
+        zero = _zero(output.visible_width_normalized)
+        return zero, zero, 0
+    width = functional.smooth_l1_loss(
+        output.visible_width_normalized[valid].clamp_min(1.0e-6).log(),
+        target_geometry.width_normalized[valid].clamp_min(1.0e-6).log(),
+        beta=beta,
+    )
+    predicted_center = torch.stack(
+        (
+            output.diagnostics["foreground_centroid_x"][valid],
+            output.diagnostics["foreground_centroid_y"][valid],
+        ),
+        dim=-1,
+    )
+    target_center = torch.stack(
+        (
+            target_geometry.centroid_x_normalized[valid],
+            target_geometry.centroid_y_normalized[valid],
+        ),
+        dim=-1,
+    )
+    center = functional.smooth_l1_loss(
+        predicted_center,
+        target_center,
+        beta=beta,
+    )
+    return width, center, count
 
 
 def _foreground_pair_ratio_loss(
@@ -167,6 +227,7 @@ def causal_scale_ttc_loss(
     target_valid: torch.Tensor | None = None,
     target_masks: torch.Tensor | None = None,
     mask_valid: torch.Tensor | None = None,
+    target_geometry: BoxGeometryTargets | None = None,
     config: CausalScaleTTCLossConfig | None = None,
 ) -> CausalScaleTTCLoss:
     """Train foreground scale, uncertainty, risk, and an auxiliary direct readout.
@@ -256,6 +317,14 @@ def causal_scale_ttc_loss(
         target_masks,
         mask_valid,
         beta=cfg.smooth_l1_beta,
+        target_geometry=target_geometry,
+    )
+    foreground_width, foreground_center, foreground_geometry_count = (
+        _foreground_width_center_losses(
+            output,
+            target_geometry,
+            beta=cfg.smooth_l1_beta,
+        )
     )
     foreground_pair_ratio, foreground_pair_ratio_count = _foreground_pair_ratio_loss(
         output,
@@ -288,6 +357,8 @@ def causal_scale_ttc_loss(
         "foreground_bce": foreground_bce,
         "foreground_dice": foreground_dice,
         "foreground_extent": foreground_extent,
+        "foreground_width": foreground_width,
+        "foreground_center": foreground_center,
         "foreground_pair_ratio": foreground_pair_ratio,
         "risk_bce": risk,
         "auxiliary_inverse_ttc": auxiliary,
@@ -301,6 +372,8 @@ def causal_scale_ttc_loss(
         + cfg.foreground_bce_weight * foreground_bce
         + cfg.foreground_dice_weight * foreground_dice
         + cfg.foreground_extent_weight * foreground_extent
+        + cfg.foreground_width_weight * foreground_width
+        + cfg.foreground_center_weight * foreground_center
         + cfg.foreground_pair_ratio_weight * foreground_pair_ratio
         + cfg.risk_weight * risk
         + cfg.auxiliary_inverse_ttc_weight * auxiliary
@@ -316,6 +389,7 @@ def causal_scale_ttc_loss(
             "supervised_ttc": supervised_count,
             "foreground": foreground_count,
             "foreground_extent": foreground_extent_count,
+            "foreground_geometry": foreground_geometry_count,
             "foreground_pair_ratio": foreground_pair_ratio_count,
             "temporal_consistency": consistency_count,
         },

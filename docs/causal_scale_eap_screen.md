@@ -145,6 +145,41 @@ comparador completo `e63447135e2b09c5c6a7e2afb996bb70cce8cbba4a112afc87069e2f60c
 Training+validation tardó `274.9784 s`; inferencia final `4.9803 s` (411,22/s),
 peak VRAM `1.317,58 MiB`, 24.674.178 parámetros.
 
+## A1 bbox geometry-only preregistrado
+
+A1 conserva exactamente el model config de A0 y 344.591 parámetros entrenables.
+No cambia encoder, foreground head, residual, consenso temporal, conversión física,
+optimizer, scheduler, seed, filas, batch, warm-up, CVaR, unknown gate o clip. El
+forward continúa siendo `forward(events, delta_t_s)`.
+
+La única diferencia es la supervisión foreground. Las bbox t1/t2 se recortan al
+ROI visible 128×128 y se convierten numéricamente, sin rasterización, en:
+
+```text
+h=(y2-y1)/H   w=(x2-x1)/W
+cx=(x1+x2)/(2W)   cy=(y1+y2)/(2H)
+```
+
+El mismo mapa foreground produce momentos 2-D diferenciables `h_hat,w_hat,cx_hat,
+cy_hat`. A1 usa Huber sobre `log h`, `log w` y centros. BCE y Dice son cero; el
+pair-ratio sigue en cero. Los pesos preregistrados son `1.25,1.25,2.5`; la loss de
+centro promedia x/y, dando peso efectivo 1.25 a cada una de las cuatro magnitudes y
+conservando suma nominal 5 del foreground geométrico A0. La bbox es target
+training-only, nunca input. t0 proxy permanece excluida.
+
+Cada época registra global y macro por secuencia:
+
+- Pearson, slope, MAE y `std_pred/std_target` de `log h` y `log w`;
+- MAE/correlación de `cx,cy`;
+- `delta log h`, `delta log w` y `r_iso=(r_h+r_w)/2` contra bbox;
+- los tres ratios diferenciales contra el ratio físico TTC;
+- sign accuracy y counts sin rellenar NaN con cero.
+
+`r_iso` es solo diagnóstico; no alimenta TTC. El checkpoint sigue seleccionándose
+por MiD macro y failure rate, como A0. No hay umbrales diagnósticos inventados
+post-hoc. Config SHA256:
+`bc3fe3daabb8f205b1dda81f6da442c2d7452253330960d0c3ff65af7795ba28`.
+
 ## Estado
 
 A0, referencia release y comparación firmada están terminados. El cache matched

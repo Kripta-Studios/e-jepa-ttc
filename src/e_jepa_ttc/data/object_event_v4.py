@@ -86,6 +86,17 @@ class ObjectEventV4Batch:
         }
 
 
+@dataclass(frozen=True)
+class BoxGeometryTargets:
+    """Training-only visible bbox geometry in the cached common ROI frame."""
+
+    height_normalized: torch.Tensor
+    width_normalized: torch.Tensor
+    centroid_x_normalized: torch.Tensor
+    centroid_y_normalized: torch.Tensor
+    valid: torch.Tensor
+
+
 class GarlTTCObjectEventV4Dataset(Dataset[dict[str, Any]]):
     """Lazy view over the v4 common-coordinate cache extension."""
 
@@ -253,10 +264,60 @@ def weak_box_masks(
     return masks.to(dtype=torch.float32), geometric_valid
 
 
+def box_geometry_targets(
+    boxes_xyxy: torch.Tensor,
+    *,
+    height: int,
+    width: int,
+    endpoint_valid: torch.Tensor | None = None,
+) -> BoxGeometryTargets:
+    """Derive visible height, width and centre without rasterizing a dense target.
+
+    Boxes are clipped to the common ROI because the event model cannot observe
+    geometry outside that crop. These values are supervision only and must never
+    be passed to ``CausalScaleTTC.forward``.
+    """
+
+    if boxes_xyxy.ndim != 3 or boxes_xyxy.shape[-1] != 4:
+        raise ValueError("boxes_xyxy must have shape [B,T,4]")
+    if min(height, width) <= 0:
+        raise ValueError("geometry dimensions must be positive")
+    if not torch.isfinite(boxes_xyxy).all():
+        raise ValueError("boxes_xyxy must be finite")
+    x1, y1, x2, y2 = boxes_xyxy.unbind(dim=-1)
+    x1 = x1.clamp(0.0, float(width))
+    x2 = x2.clamp(0.0, float(width))
+    y1 = y1.clamp(0.0, float(height))
+    y2 = y2.clamp(0.0, float(height))
+    target_width = x2 - x1
+    target_height = y2 - y1
+    valid = (target_width > 0.0) & (target_height > 0.0)
+    if endpoint_valid is not None:
+        if endpoint_valid.shape != valid.shape:
+            raise ValueError("endpoint_valid must have shape [B,T]")
+        valid = valid & endpoint_valid.bool()
+    zero = torch.zeros_like(target_width)
+    return BoxGeometryTargets(
+        height_normalized=torch.where(
+            valid, target_height / float(height), zero
+        ),
+        width_normalized=torch.where(valid, target_width / float(width), zero),
+        centroid_x_normalized=torch.where(
+            valid, 0.5 * (x1 + x2) / float(width), zero
+        ),
+        centroid_y_normalized=torch.where(
+            valid, 0.5 * (y1 + y2) / float(height), zero
+        ),
+        valid=valid,
+    )
+
+
 __all__ = [
+    "BoxGeometryTargets",
     "GarlTTCObjectEventV4Dataset",
     "OBSERVABLE_MOTION_DIM",
     "ObjectEventV4Batch",
     "collate_object_event_v4",
+    "box_geometry_targets",
     "weak_box_masks",
 ]

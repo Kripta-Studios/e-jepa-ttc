@@ -64,6 +64,11 @@ MiD macro `203.6341709`, con failure no mayor que `0%`. También debe abordar el
 defecto que esa cifra agregada oculta: el baseline matched emite solo TTC positivo
 y obtiene MiD `437.5957` en negative/receding.
 
+El candidato A1 no es una arquitectura nueva: amplía la observación matemática del
+mismo mapa para medir también anchura y centro, sin añadir parámetros ni inputs.
+Solo cambia la loss de supervisión foreground. Hasta ejecutar seed 7 no existe
+evidencia de que A1 mejore A0.
+
 ## Estado
 
 El modelo histórico activo era un candidato event-only high-resolution, no un modelo SOTA ni

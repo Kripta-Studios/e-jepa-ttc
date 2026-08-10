@@ -29,6 +29,15 @@ La comparación firmada completa tiene identidad
 La siguiente hipótesis única es A1 geometry-only con filas, seed, modelo y
 presupuesto fijos.
 
+A1 está preregistrado en
+`configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a1_geometry_v1.yaml`,
+SHA256 `bc3fe3daabb8f205b1dda81f6da442c2d7452253330960d0c3ff65af7795ba28`.
+Mantiene el mismo model config y 344.591 parámetros entrenables. La única diferencia
+científica es reemplazar BCE+Dice+extent contra la weak-box rasterizada por Huber
+sobre `log h`, `log w`, `cx`, `cy` derivados numéricamente de bbox. Pesos congelados:
+`1.25/1.25/2.5` (centro promedia x/y), suma nominal 5. `pair_ratio` permanece cero.
+El forward sigue aceptando solo eventos y delta; A1 no invoca el rasterizador.
+
 El subset para matched training está materializado en
 `artifacts/subsets/garl_event_only_matched_screen_v1`, identidad firmada
 `dd08ecc983f30e38a939204f9a2df09e4966bbe73bd764c972f7726e5d4e34d3`.

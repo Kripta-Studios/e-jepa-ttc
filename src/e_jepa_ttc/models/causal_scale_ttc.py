@@ -101,6 +101,8 @@ class SoftScaleObservation:
     """Differentiable foreground geometry for one or more endpoint maps."""
 
     height_normalized: torch.Tensor
+    width_normalized: torch.Tensor
+    centroid_x_normalized: torch.Tensor
     centroid_y_normalized: torch.Tensor
     foreground_fraction: torch.Tensor
 
@@ -123,6 +125,7 @@ class CausalScaleTTCOutput:
     pair_ttc_seconds: torch.Tensor
     pair_inverse_ttc: torch.Tensor
     visible_height_normalized: torch.Tensor
+    visible_width_normalized: torch.Tensor
     foreground_logits: torch.Tensor
     geometry_tokens: torch.Tensor
     pair_tokens: torch.Tensor
@@ -136,10 +139,10 @@ def soft_vertical_extent_from_logits(
     *,
     temperature: float = 1.0,
 ) -> SoftScaleObservation:
-    """Measure a translation-invariant soft vertical extent from foreground logits.
+    """Measure translation-invariant soft 2-D extent from foreground logits.
 
     The moment correction by one pixel squared makes the estimate exact for an
-    ideal discrete uniform rectangle: ``height = sqrt(12 * variance + dy**2)``.
+    ideal discrete uniform rectangle: ``extent = sqrt(12 * variance + pixel**2)``.
     Coordinates are normalized, so ratios are independent of input resolution.
     """
 
@@ -151,18 +154,37 @@ def soft_vertical_extent_from_logits(
         raise ValueError("temperature must be positive")
     probabilities = torch.sigmoid(foreground_logits / temperature)
     row_mass = probabilities.sum(dim=-1).squeeze(-2)
+    column_mass = probabilities.sum(dim=-2).squeeze(-2)
     total = row_mass.sum(dim=-1).clamp_min(torch.finfo(probabilities.dtype).eps)
     height = foreground_logits.shape[-2]
-    coordinates = (
+    width = foreground_logits.shape[-1]
+    y_coordinates = (
         torch.arange(height, device=foreground_logits.device, dtype=foreground_logits.dtype) + 0.5
     ) / float(height)
-    centroid = (row_mass * coordinates).sum(dim=-1) / total
-    variance = (row_mass * (coordinates - centroid.unsqueeze(-1)).square()).sum(dim=-1) / total
+    x_coordinates = (
+        torch.arange(width, device=foreground_logits.device, dtype=foreground_logits.dtype) + 0.5
+    ) / float(width)
+    centroid_y = (row_mass * y_coordinates).sum(dim=-1) / total
+    centroid_x = (column_mass * x_coordinates).sum(dim=-1) / total
+    variance_y = (
+        row_mass * (y_coordinates - centroid_y.unsqueeze(-1)).square()
+    ).sum(dim=-1) / total
+    variance_x = (
+        column_mass * (x_coordinates - centroid_x.unsqueeze(-1)).square()
+    ).sum(dim=-1) / total
     pixel_height = 1.0 / float(height)
-    extent = torch.sqrt((12.0 * variance + pixel_height**2).clamp_min(pixel_height**2))
+    pixel_width = 1.0 / float(width)
+    height_extent = torch.sqrt(
+        (12.0 * variance_y + pixel_height**2).clamp_min(pixel_height**2)
+    )
+    width_extent = torch.sqrt(
+        (12.0 * variance_x + pixel_width**2).clamp_min(pixel_width**2)
+    )
     return SoftScaleObservation(
-        height_normalized=extent,
-        centroid_y_normalized=centroid,
+        height_normalized=height_extent,
+        width_normalized=width_extent,
+        centroid_x_normalized=centroid_x,
+        centroid_y_normalized=centroid_y,
         foreground_fraction=probabilities.mean(dim=(-3, -2, -1)),
     )
 
@@ -600,6 +622,8 @@ class CausalScaleTTC(nn.Module):
         previous = geometry_tokens[:, :-1]
         current = geometry_tokens[:, 1:]
         raw_foreground_ratio = raw_log_height[:, 1:] - raw_log_height[:, :-1]
+        raw_log_width = observation.width_normalized.clamp_min(1.0e-6).log()
+        raw_foreground_width_ratio = raw_log_width[:, 1:] - raw_log_width[:, :-1]
         analytic = corrected_log_height[:, 1:] - corrected_log_height[:, :-1]
         residual = self.residual(previous, current)
         log_ratio = analytic + residual
@@ -690,6 +714,7 @@ class CausalScaleTTC(nn.Module):
             pair_ttc_seconds=pair_ttc,
             pair_inverse_ttc=pair_inverse_ttc,
             visible_height_normalized=visible_height,
+            visible_width_normalized=observation.width_normalized,
             foreground_logits=foreground_logits,
             geometry_tokens=geometry_tokens,
             pair_tokens=pair_tokens,
@@ -697,9 +722,12 @@ class CausalScaleTTC(nn.Module):
             sensor_support=sensor_support,
             diagnostics={
                 "foreground_centroid_y": observation.centroid_y_normalized,
+                "foreground_centroid_x": observation.centroid_x_normalized,
                 "foreground_fraction": observation.foreground_fraction,
                 "raw_foreground_height_normalized": observation.height_normalized,
+                "raw_foreground_width_normalized": observation.width_normalized,
                 "raw_foreground_log_height_ratio": raw_foreground_ratio,
+                "raw_foreground_log_width_ratio": raw_foreground_width_ratio,
                 "log_height_correction": log_height_correction,
                 "pair_sensor_support": pair_support,
                 "pair_known": pair_known,
