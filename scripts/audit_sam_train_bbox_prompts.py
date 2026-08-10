@@ -215,7 +215,7 @@ def _write_csv(path: Path, records: list[dict[str, Any]]) -> None:
     if not records:
         raise ValueError("cannot write an empty endpoint audit")
     with path.open("w", encoding="utf-8", newline="") as stream:
-        writer = csv.DictWriter(stream, fieldnames=list(records[0]))
+        writer = csv.DictWriter(stream, fieldnames=list(records[0]), lineterminator="\n")
         writer.writeheader()
         writer.writerows(records)
 
