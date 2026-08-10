@@ -37,7 +37,7 @@ _EXPECTED_GRID = (32, 32)
 
 
 def _find_32x32_feature(
-    model: Any,
+    model: Any,  # noqa: ANN401
     dummy_input: torch.Tensor,
 ) -> tuple[torch.Tensor, str, str]:
     """Find the unique 32×32 feature map from a ConvNeXt model.
@@ -81,12 +81,16 @@ def _find_32x32_feature(
 
     hooked_features: dict[str, torch.Tensor] = {}
 
-    def make_hook(module_name: str) -> Any:
-        def hook(module: Any, input: Any, output: Any) -> None:
+    def make_hook(module_name: str) -> Any:  # noqa: ANN401
+        def hook(  # noqa: ANN401
+            module: Any, input: Any, output: Any,  # noqa: ANN401
+        ) -> None:
             if isinstance(output, torch.Tensor) and output.ndim == 4:
                 hooked_features[module_name] = output
-            elif hasattr(output, "last_hidden_state"):
-                hooked_features[module_name] = output.last_hidden_state
+                return
+            last_hidden_state = getattr(output, "last_hidden_state", None)
+            if isinstance(last_hidden_state, torch.Tensor):
+                hooked_features[module_name] = last_hidden_state
 
         return hook
 
@@ -135,12 +139,16 @@ def audit(
 ) -> dict[str, Any]:
     """Run the smoke audit."""
 
-    from transformers import AutoImageProcessor, AutoModel  # type: ignore[import-untyped]
-    import pandas as pd
     import numpy as np
+    import pandas as pd
+    from transformers import AutoImageProcessor, AutoModel  # type: ignore[import-untyped]
 
-    # Import the RGB loader from the materializer
-    from scripts.materialize_dinov3_relational_teacher import _load_and_crop_rgb
+    # Reuse the exact scientific RGB binding/crop contract from the materializer.
+    from scripts.materialize_dinov3_relational_teacher import (
+        _extract_features,
+        _load_and_crop_rgb,
+        _resolve_rgb_endpoints,
+    )
 
     device = torch.device(device_name)
 
@@ -155,7 +163,6 @@ def audit(
     config_sha = hashlib.sha256(config_json.encode()).hexdigest()
 
     # Load dataset for real RGB
-    manifest = json.loads(event_cache_manifest.read_text(encoding="utf-8"))
     from src.e_jepa_ttc.data.object_event_v4 import GarlTTCObjectEventV4Dataset
     train_dataset = GarlTTCObjectEventV4Dataset(
         str(event_cache_manifest), splits=("train",)
@@ -169,15 +176,17 @@ def audit(
             "track_id",
             "rgb_shard_paths",
             "rgb_member_paths",
+            "frame_timestamps_us",
+            "event_windows_us",
+            "boxes_xyxy",
         ],
     )
-    rgb_lookup = {}
+    rgb_lookup: dict[tuple[str, str], Any] = {}
     for _idx, row in pq_df.iterrows():
-        token = str(row["sample_token"])
-        track = str(row["track_id"])
-        rgb_shards = list(row["rgb_shard_paths"])
-        rgb_members = list(row["rgb_member_paths"])
-        rgb_lookup[(token, track)] = (rgb_shards, rgb_members)
+        key = (str(row["sample_token"]), str(row["track_id"]))
+        if key in rgb_lookup:
+            raise ValueError(f"duplicate RGB lookup key in train.parquet: {key}")
+        rgb_lookup[key] = row
 
     image_mean = list(processor.image_mean)
     image_std = list(processor.image_std)
@@ -198,36 +207,45 @@ def audit(
     print(f"[audit] Testing {max_samples} real object crops...")
     valid_fraction = 0.0
 
+    endpoint_bindings_checked = 0
     for i in range(min(max_samples, len(train_dataset))):
         record = train_dataset[i]
         token = str(record["sample_token"])
         track_id = str(record["track_id"])
         square = np.asarray(record["event_v4_common_square_xyxy"], dtype=np.float32)
-        
-        rgb_shards, rgb_members = rgb_lookup[(token, track_id)]
-        
-        # Test just the t1 endpoint
-        tar_path = eap_root / rgb_shards[0]
-        member_path = rgb_members[0]
-        
-        sample_rgb, rgb_sha = _load_and_crop_rgb(
-            tar_path=tar_path,
-            member_path=member_path,
-            common_square_xyxy=square,
-            image_mean=image_mean,
-            image_std=image_std,
-            device=device,
-        )
-        
-        from scripts.materialize_dinov3_relational_teacher import _extract_features
-        feats = _extract_features(model, sample_rgb, selection_id, selection_method)
-        rels = local_cosine_relation_maps(feats)
-        assert torch.isfinite(rels.values[rels.valid]).all(), f"non-finite at sample {i}"
-        
-        vf = float(rels.valid.float().mean())
+
+        parquet_row = rgb_lookup[(token, track_id)]
+        endpoints = _resolve_rgb_endpoints(record, parquet_row)
+
+        sample_valid_fractions: list[float] = []
+        for ep, (shard_path, member_path) in enumerate(
+            zip(endpoints["rgb_shards"], endpoints["rgb_members"], strict=True)
+        ):
+            sample_rgb, rgb_sha = _load_and_crop_rgb(
+                tar_path=eap_root / shard_path,
+                member_path=member_path,
+                common_square_xyxy=square,
+                image_mean=image_mean,
+                image_std=image_std,
+                device=device,
+            )
+            feats = _extract_features(model, sample_rgb, selection_id, selection_method)
+            rels = local_cosine_relation_maps(feats)
+            assert torch.isfinite(rels.values[rels.valid]).all(), (
+                f"non-finite at sample {i}, endpoint {ep}"
+            )
+
+            vf = float(rels.valid.float().mean())
+            sample_valid_fractions.append(vf)
+            endpoint_bindings_checked += 1
+            print(
+                f"  sample {i} ep{ep + 1}: token={token}, "
+                f"source_index={endpoints['indices'][ep]}, channels={feats.shape[1]}, "
+                f"valid={vf:.4f}, rgb_sha={rgb_sha[:8]}"
+            )
+
         if i == 0:
-            valid_fraction = vf
-        print(f"  sample {i}: token={token}, channels={feats.shape[1]}, valid={vf:.4f}, rgb_sha={rgb_sha[:8]}")
+            valid_fraction = float(np.mean(sample_valid_fractions))
 
     # Verify no validation data was loaded
     result = {
@@ -241,11 +259,13 @@ def audit(
         "relation_offsets": [list(o) for o in A4_RELATION_OFFSETS],
         "relation_grid": list(_EXPECTED_GRID),
         "valid_fraction": valid_fraction,
-        "samples_checked": max_samples,
+        "samples_checked": min(max_samples, len(train_dataset)),
+        "endpoint_bindings_checked": endpoint_bindings_checked,
+        "rgb_source_verified": True,
         "validation_data_loaded": False,
         "test_data_loaded": False,
     }
-    
+
     if output_path is not None:
         output_path.parent.mkdir(parents=True, exist_ok=True)
         output_path.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
@@ -283,7 +303,7 @@ def main() -> int:
             device_name,
             output_path=args.output.resolve() if args.output else None,
         )
-    except Exception as error:
+    except Exception:
         import traceback
         traceback.print_exc()
         return 2

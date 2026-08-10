@@ -16,8 +16,9 @@ from __future__ import annotations
 
 import hashlib
 import json
+from collections.abc import Sized
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 import torch
@@ -71,6 +72,7 @@ class DINOv3RelationalTeacherDataset(Dataset[dict[str, Any]]):
         expected_manifest_sha256: str,
     ) -> None:
         self.dataset = dataset
+        self._dataset_size = len(cast(Sized, dataset))
         path = Path(manifest_path).resolve(strict=True)
 
         # --- Manifest file hash ---
@@ -106,6 +108,10 @@ class DINOv3RelationalTeacherDataset(Dataset[dict[str, Any]]):
             raise ValueError("DINO teacher must not be generated for validation")
         if claim.get("ttc_labels_read") is not False:
             raise ValueError("DINO teacher claim_boundary violates no-TTC constraint")
+        if claim.get("teacher_source_modality") != "rgb":
+            raise ValueError("DINO teacher must explicitly declare RGB source modality")
+        if claim.get("event_tensor_used_as_teacher_input") is not False:
+            raise ValueError("DINO teacher artifact may not use event tensors as teacher input")
 
         # --- Teacher model identity ---
         teacher = manifest.get("teacher", {})
@@ -114,6 +120,18 @@ class DINOv3RelationalTeacherDataset(Dataset[dict[str, Any]]):
                 f"DINO teacher model must be {_EXPECTED_MODEL_ID}, "
                 f"got {teacher.get('model_id')}"
             )
+        if teacher.get("source_modality") != "rgb":
+            raise ValueError("DINO teacher manifest does not prove RGB source modality")
+        source_rgb = manifest.get("source_rgb", {})
+        if source_rgb.get("endpoint_metadata_stored_in_shards") is not True:
+            raise ValueError("DINO teacher shards must store endpoint provenance metadata")
+        if source_rgb.get("raw_rgb_sha256_stored_per_endpoint") is not True:
+            raise ValueError("DINO teacher shards must store raw RGB SHA256 per endpoint")
+        code_identity = manifest.get("code_identity", {})
+        if code_identity.get("git_dirty") is not False:
+            raise ValueError("DINO teacher cache must be materialized from a clean Git worktree")
+        if not isinstance(code_identity.get("git_commit"), str) or not code_identity["git_commit"]:
+            raise ValueError("DINO teacher cache must record the materialization Git commit")
 
         # --- Relation config ---
         relations = manifest.get("relations", {})
@@ -157,6 +175,12 @@ class DINOv3RelationalTeacherDataset(Dataset[dict[str, Any]]):
                 relation_targets = arrays["relation_targets"]
                 relation_valid = arrays["relation_valid"]
                 squares = arrays["common_square_xyxy"].astype(np.float32, copy=False)
+                rgb_sha256 = arrays["rgb_sha256"].astype(str)
+                rgb_endpoint_indices = arrays["rgb_endpoint_indices"]
+                rgb_frame_timestamps_us = arrays["rgb_frame_timestamps_us"]
+                event_windows_us = arrays["event_windows_us"]
+                rgb_shard_paths = arrays["rgb_shard_paths"].astype(str)
+                rgb_member_paths = arrays["rgb_member_paths"].astype(str)
 
                 expected_rel_shape = (
                     len(tokens),
@@ -185,6 +209,47 @@ class DINOv3RelationalTeacherDataset(Dataset[dict[str, Any]]):
                     raise ValueError(
                         f"DINO teacher track_ids shape mismatch in {npz_path.name}"
                     )
+                expected_endpoint_shape = (len(tokens), _EXPECTED_ENDPOINTS)
+                provenance_shapes = {
+                    "rgb_sha256": rgb_sha256.shape,
+                    "rgb_endpoint_indices": rgb_endpoint_indices.shape,
+                    "rgb_frame_timestamps_us": rgb_frame_timestamps_us.shape,
+                    "rgb_shard_paths": rgb_shard_paths.shape,
+                    "rgb_member_paths": rgb_member_paths.shape,
+                }
+                for field, shape in provenance_shapes.items():
+                    if shape != expected_endpoint_shape:
+                        raise ValueError(
+                            f"DINO teacher {field} shape mismatch: "
+                            f"{shape} != {expected_endpoint_shape} in {npz_path.name}"
+                        )
+                if event_windows_us.shape != (len(tokens), _EXPECTED_ENDPOINTS, 2):
+                    raise ValueError(
+                        "DINO teacher event_windows_us shape mismatch: "
+                        f"{event_windows_us.shape} in {npz_path.name}"
+                    )
+                if (rgb_endpoint_indices < 0).any():
+                    raise ValueError(
+                        f"DINO teacher endpoint indices must be non-negative in {npz_path.name}"
+                    )
+                if not np.all(
+                    rgb_frame_timestamps_us[:, 1] > rgb_frame_timestamps_us[:, 0]
+                ):
+                    raise ValueError(
+                        f"DINO teacher endpoint timestamps must increase in {npz_path.name}"
+                    )
+                sha_lengths_ok = np.vectorize(
+                    lambda value: len(str(value)) == 64
+                    and all(c in "0123456789abcdef" for c in str(value).lower())
+                )(rgb_sha256)
+                if not bool(np.all(sha_lengths_ok)):
+                    raise ValueError(
+                        f"DINO teacher RGB SHA256 metadata is malformed in {npz_path.name}"
+                    )
+                if np.any(rgb_shard_paths == "") or np.any(rgb_member_paths == ""):
+                    raise ValueError(
+                        f"DINO teacher RGB path metadata is empty in {npz_path.name}"
+                    )
 
                 # Verify finiteness where valid
                 valid_bool = relation_valid.astype(bool)
@@ -211,14 +276,14 @@ class DINOv3RelationalTeacherDataset(Dataset[dict[str, Any]]):
                 f"DINO teacher has {len(self._teacher)} tokens, "
                 f"expected {expected_rows}"
             )
-        if len(self._teacher) != len(dataset):
+        if len(self._teacher) != self._dataset_size:
             raise ValueError(
                 f"DINO teacher ({len(self._teacher)} tokens) and "
-                f"event train dataset ({len(dataset)} rows) counts differ"
+                f"event train dataset ({self._dataset_size} rows) counts differ"
             )
 
     def __len__(self) -> int:
-        return len(self.dataset)
+        return self._dataset_size
 
     def shard_index_groups(self) -> tuple[tuple[int, ...], ...]:
         """Delegate to base dataset for deterministic sampling."""
@@ -226,7 +291,7 @@ class DINOv3RelationalTeacherDataset(Dataset[dict[str, Any]]):
         provider = getattr(self.dataset, "shard_index_groups", None)
         if not callable(provider):
             raise TypeError("wrapped event dataset does not expose shard groups")
-        return provider()
+        return cast(tuple[tuple[int, ...], ...], provider())
 
     def __getitem__(self, index: int) -> dict[str, Any]:
         record = dict(self.dataset[index])

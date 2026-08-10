@@ -11,7 +11,8 @@ Multiple objects from the same frame produce independent entries.
 
 Usage:
     python scripts/materialize_dinov3_relational_teacher.py \
-        --event-cache-manifest artifacts/cache/garl_object_event_common_roi_screen_v4/manifest.json \
+        --event-cache-manifest \
+        artifacts/cache/garl_object_event_common_roi_screen_v4/manifest.json \
         --model-path facebook/dinov3-convnext-large-pretrain-lvd1689m \
         --output-dir artifacts/cache/dinov3_relational_teacher_a4 \
         --device auto
@@ -23,6 +24,7 @@ import argparse
 import hashlib
 import json
 import os
+import subprocess
 import sys
 import tarfile
 from datetime import UTC, datetime
@@ -32,13 +34,17 @@ from typing import Any
 import numpy as np
 import torch
 from PIL import Image
-from torch.nn import functional as F
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT))
 
 from e_jepa_ttc.artifacts.hashing import sign_artifact  # noqa: E402
+from e_jepa_ttc.data.event_v4_geometry import box_in_common_roi  # noqa: E402
+from e_jepa_ttc.data.garlttc_eap import (  # noqa: E402
+    normalize_boxes_xyxy,
+    normalize_event_windows_us,
+)
 from e_jepa_ttc.data.object_event_v4 import GarlTTCObjectEventV4Dataset  # noqa: E402
 from e_jepa_ttc.distillation.dinov3_relational import (  # noqa: E402
     A4_RELATION_OFFSETS,
@@ -49,6 +55,7 @@ _INPUT_SIZE = 256
 _EXPECTED_GRID = (32, 32)
 _NUM_OFFSETS = len(A4_RELATION_OFFSETS)
 _SHARD_SIZE = 64
+_EXPECTED_MODEL_ID = "facebook/dinov3-convnext-large-pretrain-lvd1689m"
 
 
 def _sha256_file(path: Path) -> str:
@@ -63,7 +70,127 @@ def _sha256_bytes(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
-def _find_32x32_feature(model: Any, dummy: torch.Tensor) -> tuple[int | str, str]:
+def _git_identity() -> tuple[str, bool]:
+    head = subprocess.check_output(
+        ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True
+    ).strip()
+    status = subprocess.check_output(
+        ["git", "status", "--porcelain"], cwd=ROOT, text=True
+    )
+    return head, bool(status.strip())
+
+
+def _as_list(value: Any, *, field: str) -> list[Any]:  # noqa: ANN401
+    """Convert a parquet list-like value without silently flattening it."""
+    if hasattr(value, "as_py"):
+        value = value.as_py()
+    if isinstance(value, np.ndarray):
+        value = value.tolist()
+    if not isinstance(value, (list, tuple)):
+        raise ValueError(f"{field} must be list-like, got {type(value).__name__}")
+    return list(value)
+
+
+def _resolve_rgb_endpoints(
+    record: dict[str, Any],
+    parquet_row: Any,  # noqa: ANN401
+) -> dict[str, Any]:
+    """Bind DINO RGB endpoints to the exact t1/t2 event-cache endpoints.
+
+    The binding is derived from the already-materialized event cache rather than
+    assuming that the parquet has exactly two frames or that endpoints are
+    always stored at fixed list positions.  We require a unique pair of source
+    boxes that maps to event_v4_boxes_xyxy[1:3] under the same common ROI and
+    whose timestamp gap matches garl_delta_t_s.
+    """
+
+    rgb_shards = [
+        str(v)
+        for v in _as_list(parquet_row["rgb_shard_paths"], field="rgb_shard_paths")
+    ]
+    rgb_members = [
+        str(v)
+        for v in _as_list(parquet_row["rgb_member_paths"], field="rgb_member_paths")
+    ]
+    frame_timestamps = [
+        int(v) for v in _as_list(parquet_row["frame_timestamps_us"], field="frame_timestamps_us")
+    ]
+    event_windows = normalize_event_windows_us(parquet_row["event_windows_us"])
+    source_boxes = normalize_boxes_xyxy(parquet_row["boxes_xyxy"])
+
+    lengths = {
+        "rgb_shard_paths": len(rgb_shards),
+        "rgb_member_paths": len(rgb_members),
+        "frame_timestamps_us": len(frame_timestamps),
+        "event_windows_us": len(event_windows),
+        "boxes_xyxy": len(source_boxes),
+    }
+    if len(set(lengths.values())) != 1:
+        raise ValueError(f"FATAL: unaligned RGB/event metadata lengths: {lengths}")
+    frame_count = next(iter(lengths.values()))
+    if frame_count < 2:
+        raise ValueError(f"FATAL: endpoint binding needs >=2 aligned frames, got {frame_count}")
+
+    square = np.asarray(record["event_v4_common_square_xyxy"], dtype=np.float32)
+    event_boxes = np.asarray(record["event_v4_boxes_xyxy"], dtype=np.float32)
+    event_roi = np.asarray(record["event_v4_common_roi"])
+    if event_boxes.shape != (3, 4):
+        raise ValueError(f"FATAL: event_v4_boxes_xyxy must be [3,4], got {event_boxes.shape}")
+    if event_roi.ndim != 4 or event_roi.shape[0] != 3 or event_roi.shape[-2] != event_roi.shape[-1]:
+        raise ValueError(
+            "FATAL: event_v4_common_roi must be [3,C,H,W] with a square spatial ROI"
+        )
+    roi_size = int(event_roi.shape[-1])
+    square_tuple = tuple(float(v) for v in square.tolist())
+
+    mapped_boxes = np.asarray(
+        [
+            box_in_common_roi(box, square_tuple, roi_size=roi_size)
+            for box in source_boxes
+        ],
+        dtype=np.float32,
+    )
+    t1_candidates = np.flatnonzero(
+        np.all(np.isclose(mapped_boxes, event_boxes[1], rtol=0.0, atol=1.0e-3), axis=1)
+    ).tolist()
+    t2_candidates = np.flatnonzero(
+        np.all(np.isclose(mapped_boxes, event_boxes[2], rtol=0.0, atol=1.0e-3), axis=1)
+    ).tolist()
+
+    expected_dt_s = float(record["garl_delta_t_s"])
+    dt_tolerance_s = max(1.0e-6, abs(expected_dt_s) * 1.0e-5)
+    valid_pairs: list[tuple[int, int]] = []
+    for first in t1_candidates:
+        for second in t2_candidates:
+            if second <= first:
+                continue
+            dt_s = (frame_timestamps[second] - frame_timestamps[first]) * 1.0e-6
+            if abs(dt_s - expected_dt_s) <= dt_tolerance_s:
+                valid_pairs.append((first, second))
+
+    if len(valid_pairs) != 1:
+        raise ValueError(
+            "FATAL: could not uniquely bind RGB endpoints to event-cache t1/t2: "
+            f"t1_candidates={t1_candidates}, t2_candidates={t2_candidates}, "
+            f"dt={expected_dt_s:.9f}, valid_pairs={valid_pairs}"
+        )
+
+    first, second = valid_pairs[0]
+    selected_windows = np.asarray(
+        [event_windows[first], event_windows[second]], dtype=np.int64
+    )
+    return {
+        "indices": (first, second),
+        "rgb_shards": (rgb_shards[first], rgb_shards[second]),
+        "rgb_members": (rgb_members[first], rgb_members[second]),
+        "frame_timestamps_us": (frame_timestamps[first], frame_timestamps[second]),
+        "event_windows_us": selected_windows,
+    }
+
+
+def _find_32x32_feature(
+    model: Any, dummy: torch.Tensor  # noqa: ANN401
+) -> tuple[int | str, str]:
     """Find the unique 32×32 feature map. Returns (selection_id, method)."""
     with torch.no_grad():
         outputs = model(dummy, output_hidden_states=True)
@@ -80,8 +207,8 @@ def _find_32x32_feature(model: Any, dummy: torch.Tensor) -> tuple[int | str, str
     # Hook fallback
     hooked: dict[str, torch.Tensor] = {}
 
-    def make_hook(name: str) -> Any:
-        def hook(m: Any, inp: Any, out: Any) -> None:
+    def make_hook(name: str) -> Any:  # noqa: ANN401
+        def hook(m: Any, inp: Any, out: Any) -> None:  # noqa: ANN401
             if isinstance(out, torch.Tensor) and out.ndim == 4:
                 hooked[name] = out
         return hook
@@ -98,11 +225,12 @@ def _find_32x32_feature(model: Any, dummy: torch.Tensor) -> tuple[int | str, str
     candidates = [(n, f) for n, f in hooked.items() if f.shape[-2:] == _EXPECTED_GRID]
     if len(candidates) == 1:
         return candidates[0][0], "forward_hook"
-    raise RuntimeError(f"Cannot find unique 32×32 feature. Shapes: {dict((n, tuple(f.shape)) for n, f in hooked.items())}")
+    shapes = {name: tuple(feature.shape) for name, feature in hooked.items()}
+    raise RuntimeError(f"Cannot find unique 32×32 feature. Shapes: {shapes}")
 
 
 def _extract_features(
-    model: Any,
+    model: Any,  # noqa: ANN401
     rgb_tensor: torch.Tensor,
     selection_id: int | str,
     selection_method: str,
@@ -118,7 +246,7 @@ def _extract_features(
         return outputs.hidden_states[idx]  # type: ignore[index]
     else:
         result: list[torch.Tensor] = []
-        def hook(m: Any, inp: Any, out: Any) -> None:
+        def hook(m: Any, inp: Any, out: Any) -> None:  # noqa: ANN401
             if isinstance(out, torch.Tensor):
                 result.append(out)
         target_module = dict(model.named_modules())[str(selection_id)]
@@ -167,7 +295,7 @@ def _load_and_crop_rgb(
     crop = img.crop((x1, y1, x2, y2))
 
     # Resize to 256×256 — NO center crop, NO RandomResizedCrop
-    crop = crop.resize((_INPUT_SIZE, _INPUT_SIZE), Image.BILINEAR)
+    crop = crop.resize((_INPUT_SIZE, _INPUT_SIZE), Image.Resampling.BILINEAR)
 
     # Convert to tensor and normalize (manual, not AutoImageProcessor)
     arr = np.asarray(crop, dtype=np.float32) / 255.0  # [H,W,3]
@@ -188,11 +316,29 @@ def run(
 ) -> dict[str, Any]:
     """Materialize the full DINO relational teacher cache."""
 
-    from transformers import AutoImageProcessor, AutoModel  # type: ignore[import-untyped]
     import pandas as pd
+    from transformers import AutoImageProcessor, AutoModel  # type: ignore[import-untyped]
+
+    if train_parquet.name.lower() != "train.parquet":
+        raise ValueError("FATAL: A4 teacher may only read data/train.parquet")
+    if any(part.lower() == "test" for part in train_parquet.parts):
+        raise ValueError("FATAL: A4 teacher must never read a test parquet")
+    if model_path != _EXPECTED_MODEL_ID:
+        raise ValueError(
+            "FATAL: scientific A4 materialization requires the frozen ConvNeXt-Large "
+            f"teacher {_EXPECTED_MODEL_ID!r}; got {model_path!r}"
+        )
+    git_head, git_dirty = _git_identity()
+    if git_dirty:
+        raise ValueError(
+            "FATAL: scientific A4 materialization requires a clean Git worktree; "
+            "commit the hardening patch before building the cache"
+        )
 
     # --- Load event cache dataset (train only) ---
-    manifest = json.loads(event_cache_manifest.read_text(encoding="utf-8"))
+    event_manifest = json.loads(event_cache_manifest.read_text(encoding="utf-8"))
+    event_manifest_sha = _sha256_file(event_cache_manifest)
+    train_parquet_sha = _sha256_file(train_parquet)
     train_dataset = GarlTTCObjectEventV4Dataset(
         str(event_cache_manifest), splits=("train",)
     )
@@ -221,24 +367,23 @@ def run(
             "track_id",
             "rgb_shard_paths",
             "rgb_member_paths",
+            "frame_timestamps_us",
+            "event_windows_us",
+            "boxes_xyxy",
         ],
     )
-    # We need to map (sample_token, track_id) to RGB paths
-    # Create a fast lookup dict
     print("[materialize] Building RGB lookup index...")
-    rgb_lookup = {}
+    rgb_lookup: dict[tuple[str, str], Any] = {}
     for _idx, row in pq_df.iterrows():
         token = str(row["sample_token"])
         track = str(row["track_id"])
-        seq = str(row["sequence_id"])
-        rgb_shards = list(row["rgb_shard_paths"])
-        rgb_members = list(row["rgb_member_paths"])
-        if len(rgb_shards) != 2 or len(rgb_members) != 2:
-            raise ValueError(f"Expected 2 RGB endpoints for {token}/{track}")
         key = (token, track)
         if key in rgb_lookup:
-            raise ValueError(f"Duplicate parquet identity: {key}")
-        rgb_lookup[key] = (seq, rgb_shards, rgb_members)
+            raise ValueError(
+                "FATAL: duplicate (sample_token, track_id) key in train.parquet: "
+                f"{key}"
+            )
+        rgb_lookup[key] = row
 
     # --- Load DINO model ---
     print(f"[materialize] Loading DINO model: {model_path}")
@@ -251,9 +396,10 @@ def run(
     image_mean = list(processor.image_mean)
     image_std = list(processor.image_std)
 
-    # Record model identity
-    canonical_model_id = "facebook/dinov3-convnext-large-pretrain-lvd1689m"
-    resolved_snapshot_path = str(Path(model_path).resolve())
+    # Record model identity.  The exact state_dict hash is the authoritative
+    # weight identity; _commit_hash is recorded when Transformers exposes it.
+    canonical_model_id = _EXPECTED_MODEL_ID
+    resolved_revision = getattr(model.config, "_commit_hash", None)
 
     print("[materialize] Hashing model weights...")
     weights_sha256 = hashlib.sha256()
@@ -296,6 +442,11 @@ def run(
         shard_targets: list[np.ndarray] = []
         shard_valid: list[np.ndarray] = []
         shard_rgb_shas: list[np.ndarray] = []
+        shard_rgb_indices: list[np.ndarray] = []
+        shard_rgb_timestamps: list[np.ndarray] = []
+        shard_event_windows: list[np.ndarray] = []
+        shard_rgb_shards: list[np.ndarray] = []
+        shard_rgb_members: list[np.ndarray] = []
 
         for row_idx in range(start, end):
             record = train_dataset[row_idx]
@@ -319,9 +470,16 @@ def run(
                 )
             
             if (token, track_id) not in rgb_lookup:
-                raise ValueError(f"FATAL: (token, track_id) {token}/{track_id} not found in train.parquet")
+                raise ValueError(
+                    f"FATAL: (token, track_id) {token}/{track_id} "
+                    "not found in train.parquet"
+                )
 
-            parquet_sequence, rgb_shards, rgb_members = rgb_lookup[(token, track_id)]
+            parquet_row = rgb_lookup[(token, track_id)]
+            parquet_sequence = str(parquet_row["sequence_id"])
+            endpoints = _resolve_rgb_endpoints(record, parquet_row)
+            rgb_shards = endpoints["rgb_shards"]
+            rgb_members = endpoints["rgb_members"]
 
             if parquet_sequence != sequence:
                 raise ValueError(
@@ -369,6 +527,15 @@ def run(
             shard_targets.append(np.stack(endpoint_targets, axis=0))
             shard_valid.append(np.stack(endpoint_valid, axis=0))
             shard_rgb_shas.append(np.asarray(endpoint_rgb_shas, dtype="<U64"))
+            shard_rgb_indices.append(np.asarray(endpoints["indices"], dtype=np.int32))
+            shard_rgb_timestamps.append(
+                np.asarray(endpoints["frame_timestamps_us"], dtype=np.int64)
+            )
+            shard_event_windows.append(
+                np.asarray(endpoints["event_windows_us"], dtype=np.int64)
+            )
+            shard_rgb_shards.append(np.asarray(rgb_shards, dtype=str))
+            shard_rgb_members.append(np.asarray(rgb_members, dtype=str))
 
             if (row_idx + 1) % 100 == 0:
                 print(f"  processed {row_idx + 1}/{total_rows}")
@@ -385,6 +552,11 @@ def run(
             relation_targets=np.stack(shard_targets),
             relation_valid=np.stack(shard_valid),
             rgb_sha256=np.stack(shard_rgb_shas),
+            rgb_endpoint_indices=np.stack(shard_rgb_indices),
+            rgb_frame_timestamps_us=np.stack(shard_rgb_timestamps),
+            event_windows_us=np.stack(shard_event_windows),
+            rgb_shard_paths=np.stack(shard_rgb_shards),
+            rgb_member_paths=np.stack(shard_rgb_members),
         )
         shard_sha = _sha256_file(npz_path)
         shard_infos.append({
@@ -396,9 +568,14 @@ def run(
         print(f"  shard {shard_idx}: {end - start} rows, sha={shard_sha[:16]}...")
 
     # Final checks
-    observed_sequences = {rgb_lookup[k][0] for k in seen_pairs}
+    observed_sequences = {
+        str(rgb_lookup[key]["sequence_id"]) for key in seen_pairs
+    }
     if len(seen_pairs) != 2048:
-        raise ValueError(f"FATAL: Expected exactly 2048 unique (token, track_id) pairs, got {len(seen_pairs)}")
+        raise ValueError(
+            "FATAL: Expected exactly 2048 unique (token, track_id) pairs, "
+            f"got {len(seen_pairs)}"
+        )
     if len(seen_pairs) * 2 != 4096:
         raise ValueError(f"FATAL: Expected exactly 4096 endpoints, got {len(seen_pairs) * 2}")
     if observed_sequences != expected_train_sequences:
@@ -420,10 +597,14 @@ def run(
             "teacher_is_model_input": False,
             "validation_teacher_generation": False,
             "ttc_labels_read": False,
+            "teacher_source_modality": "rgb",
+            "event_tensor_used_as_teacher_input": False,
         },
         "teacher": {
             "model_id": canonical_model_id,
-            "resolved_snapshot_path": resolved_snapshot_path,
+            "source_modality": "rgb",
+            "model_path_argument": model_path,
+            "resolved_revision": resolved_revision,
             "weights_sha256": weights_sha,
             "config_sha256": config_sha,
             "preprocessor_sha256": preprocessor_sha,
@@ -433,6 +614,23 @@ def run(
             "selection_method": selection_method,
             "image_mean": image_mean,
             "image_std": image_std,
+            "preprocessing": {
+                "crop": "event_v4_common_square_xyxy_in_original_rgb_coordinates",
+                "resize": "bilinear_256x256",
+                "center_crop": False,
+                "random_augmentation": False,
+                "normalization": "teacher_image_mean_std",
+            },
+        },
+        "source_rgb": {
+            "metadata_parquet": str(train_parquet),
+            "metadata_parquet_sha256": train_parquet_sha,
+            "storage": "eap_tar_members",
+            "endpoint_binding": (
+                "unique_source_box_match_to_event_v4_t1_t2_plus_garl_delta_t"
+            ),
+            "endpoint_metadata_stored_in_shards": True,
+            "raw_rgb_sha256_stored_per_endpoint": True,
         },
         "relations": {
             "type": "local_cosine",
@@ -443,6 +641,12 @@ def run(
         },
         "source_event_cache": {
             "manifest_path": str(event_cache_manifest.relative_to(ROOT)),
+            "manifest_sha256": event_manifest_sha,
+            "artifact_sha256": event_manifest.get("artifact_sha256"),
+        },
+        "code_identity": {
+            "git_commit": git_head,
+            "git_dirty": False,
         },
         "shards": shard_infos,
         "multi_object_contract": {

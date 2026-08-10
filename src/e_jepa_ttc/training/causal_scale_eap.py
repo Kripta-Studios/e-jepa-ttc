@@ -107,7 +107,10 @@ class CausalScaleEAPTrainingConfig:
             "none",
             "dinov3_local_relational",
         }:
-            raise ValueError(f"unsupported representation_supervision: {self.representation_supervision}")
+            raise ValueError(
+                "unsupported representation_supervision: "
+                f"{self.representation_supervision}"
+            )
 
         if self.representation_supervision == "dinov3_local_relational":
             if not bool(self.representation_teacher_cache_artifact_sha256):
@@ -286,9 +289,11 @@ def _loss(
             batch.dinov3_relation_targets,
             batch.dinov3_relation_valid,
             batch.boxes_xyxy,
-            dense.shape[-2],
-            dense.shape[-1],
-            components,
+            source_height=batch.events.shape[-2],
+            source_width=batch.events.shape[-1],
+            feat_h=dense.shape[-2],
+            feat_w=dense.shape[-1],
+            components=components,
         )
     elif representation_supervision == "dinov3_local_relational":
         raise ValueError(
@@ -304,6 +309,8 @@ def _record_relational_fg_bg_diagnostic(
     teacher_relations: torch.Tensor,
     teacher_valid: torch.Tensor,
     boxes_xyxy: torch.Tensor,
+    source_height: int,
+    source_width: int,
     feat_h: int,
     feat_w: int,
     components: dict[str, torch.Tensor],
@@ -335,18 +342,21 @@ def _record_relational_fg_bg_diagnostic(
             batch_size, 2, feat_h, feat_w,
             dtype=torch.bool, device=student_features.device,
         )
-        input_h = boxes_xyxy.shape[-3] if boxes_xyxy.ndim > 2 else 1
+        if min(source_height, source_width, feat_h, feat_w) <= 0:
+            raise ValueError("relational fg/bg diagnostic dimensions must be positive")
+        scale_x = feat_w / float(source_width)
+        scale_y = feat_h / float(source_height)
         for b in range(batch_size):
             for ep_idx, t_idx in enumerate([1, 2]):
                 if t_idx >= boxes_xyxy.shape[1]:
                     continue
-                box = boxes_xyxy[b, t_idx]  # [4] in pixel coords
-                # Map to feature grid (assume input ROI maps to full feat_h×feat_w)
-                x1 = int((box[0].clamp(0, 1) * feat_w).item())
-                y1 = int((box[1].clamp(0, 1) * feat_h).item())
-                x2 = int((box[2].clamp(0, 1) * feat_w).clamp_min(x1 + 1).item())
-                y2 = int((box[3].clamp(0, 1) * feat_h).clamp_min(y1 + 1).item())
-                fg_mask[b, ep_idx, y1:y2, x1:x2] = True
+                box = boxes_xyxy[b, t_idx].float()  # common-ROI pixel coordinates
+                x1 = int(torch.floor(box[0] * scale_x).clamp(0, feat_w).item())
+                y1 = int(torch.floor(box[1] * scale_y).clamp(0, feat_h).item())
+                x2 = int(torch.ceil(box[2] * scale_x).clamp(0, feat_w).item())
+                y2 = int(torch.ceil(box[3] * scale_y).clamp(0, feat_h).item())
+                if x2 > x1 and y2 > y1:
+                    fg_mask[b, ep_idx, y1:y2, x1:x2] = True
 
         # Expand fg_mask to match error_map: [B,2,K,H,W]
         fg_expanded = fg_mask.unsqueeze(2).expand_as(error_map)
@@ -364,7 +374,7 @@ def _record_relational_fg_bg_diagnostic(
             else error_map.new_tensor(float("nan"))
         )
         fg_fraction = (
-            fg_expanded.float().mean()
+            valid_fg.float().sum() / combined_valid.float().sum()
             if combined_valid.any()
             else error_map.new_tensor(float("nan"))
         )

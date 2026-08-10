@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
+from dataclasses import replace
+
 import pytest
 import torch
-
-from dataclasses import replace
 
 from e_jepa_ttc.models.causal_scale_ttc import (
     CausalScaleTTC,
@@ -27,9 +27,9 @@ def test_a4_a1_df_parameter_count_and_identity() -> None:
 
     # 2. Inference identical with/without return_dense_features
     model.eval()
-    B, T = 2, 3
-    events = torch.randn(B, T, 12, 128, 128)
-    delta_t = torch.ones(B, T-1) * 0.1
+    batch_size, time_steps = 2, 3
+    events = torch.randn(batch_size, time_steps, 12, 128, 128)
+    delta_t = torch.ones(batch_size, time_steps - 1) * 0.1
 
     with torch.no_grad():
         out_parent = model(events, delta_t, return_dense_features=False)
@@ -37,7 +37,7 @@ def test_a4_a1_df_parameter_count_and_identity() -> None:
 
     assert out_parent.endpoint_dense_features is None
     assert out_dense.endpoint_dense_features is not None
-    assert out_dense.endpoint_dense_features.shape == (B, T, 64, 32, 32)
+    assert out_dense.endpoint_dense_features.shape == (batch_size, time_steps, 64, 32, 32)
 
     # Scientific outputs must be exactly equal
     assert torch.equal(out_parent.ttc_mean_seconds, out_dense.ttc_mean_seconds)
@@ -80,9 +80,13 @@ def test_training_config_rejection_rules() -> None:
 
 
 def test_a4_training_resume_parity(tmp_path) -> None:
-    from torch.utils.data import Dataset
     import numpy as np
-    from e_jepa_ttc.training.causal_scale_eap import train_real_causal_scale, CausalScaleTTCLossConfig
+    from torch.utils.data import Dataset
+
+    from e_jepa_ttc.training.causal_scale_eap import (
+        CausalScaleTTCLossConfig,
+        train_real_causal_scale,
+    )
 
     class MockDataset(Dataset):
         def __init__(self, has_dino: bool = True):
@@ -151,7 +155,7 @@ def test_a4_training_resume_parity(tmp_path) -> None:
     state_continuous = res_continuous.model.state_dict()
 
     # 2. 1 epoch + save + resume + 1 epoch
-    res_1 = train_real_causal_scale(
+    train_real_causal_scale(
         model_config,
         training_config,
         loss_config,
@@ -179,14 +183,56 @@ def test_a4_training_resume_parity(tmp_path) -> None:
         torch.testing.assert_close(state_continuous[k], state_resume[k])
 
     # Negative tests
-    bad_cfg1 = replace(training_config, representation_teacher_cache_artifact_sha256="different_sha")
+    bad_cfg1 = replace(
+        training_config,
+        representation_teacher_cache_artifact_sha256="different_sha",
+    )
     with pytest.raises(ValueError, match="resume state differs"):
         train_real_causal_scale(
-            model_config, bad_cfg1, loss_config, train_ds, val_ds, device, checkpoint_dir=tmp_path, resume=True
+            model_config,
+            bad_cfg1,
+            loss_config,
+            train_ds,
+            val_ds,
+            device,
+            checkpoint_dir=tmp_path,
+            resume=True,
         )
 
     bad_cfg2 = replace(training_config, representation_distillation_weight=2.0)
     with pytest.raises(ValueError, match="resume state differs"):
         train_real_causal_scale(
-            model_config, bad_cfg2, loss_config, train_ds, val_ds, device, checkpoint_dir=tmp_path, resume=True
+            model_config,
+            bad_cfg2,
+            loss_config,
+            train_ds,
+            val_ds,
+            device,
+            checkpoint_dir=tmp_path,
+            resume=True,
         )
+
+
+def test_relational_fg_bg_diagnostic_uses_roi_pixel_coordinates() -> None:
+    from e_jepa_ttc.distillation.dinov3_relational import local_cosine_relation_maps
+    from e_jepa_ttc.training.causal_scale_eap import _record_relational_fg_bg_diagnostic
+
+    features = torch.randn(1, 2, 8, 32, 32)
+    teacher = local_cosine_relation_maps(features)
+    boxes = torch.tensor(
+        [[[0.0, 0.0, 1.0, 1.0], [32.0, 32.0, 96.0, 96.0], [32.0, 32.0, 96.0, 96.0]]]
+    )
+    components: dict[str, torch.Tensor] = {}
+    _record_relational_fg_bg_diagnostic(
+        features,
+        teacher.values,
+        teacher.valid,
+        boxes,
+        source_height=128,
+        source_width=128,
+        feat_h=32,
+        feat_w=32,
+        components=components,
+    )
+    fraction = float(components["dinov3_relational_fg_fraction"])
+    assert 0.15 < fraction < 0.35
