@@ -86,6 +86,34 @@ def _model_config(path: Path) -> CausalScaleTTCConfig:
     return CausalScaleTTCConfig(**raw)
 
 
+def _validate_bbox_geometry_loss(
+    training_config: CausalScaleEAPTrainingConfig,
+    loss_config: CausalScaleTTCLossConfig,
+    decision_contract: dict[str, Any],
+) -> None:
+    if training_config.foreground_supervision != "bbox_geometry":
+        return
+    if loss_config.foreground_bce_weight != 0.0 or loss_config.foreground_dice_weight != 0.0:
+        raise ValueError("bbox_geometry supervision requires BCE/Dice weights to be zero")
+    if min(
+        loss_config.foreground_extent_weight,
+        loss_config.foreground_width_weight,
+        loss_config.foreground_center_weight,
+    ) <= 0.0:
+        raise ValueError("bbox_geometry supervision requires positive h/w/center weights")
+    pair_weight = loss_config.foreground_pair_ratio_weight
+    if pair_weight == 0.0:
+        return
+    if decision_contract.get("pair_ratio_target_source") != "numeric_bbox_height_training_only":
+        raise ValueError("bbox_geometry pair-ratio requires a numeric training-only target")
+    if decision_contract.get("pair_ratio_target_uses_dense_mask") is not False:
+        raise ValueError("bbox_geometry pair-ratio must declare dense-mask use false")
+    if float(decision_contract.get("pair_ratio_weight", float("nan"))) != pair_weight:
+        raise ValueError("bbox_geometry pair-ratio weight differs from decision contract")
+    if decision_contract.get("pair_ratio_disabled_during_three_epoch_geometry_warmup") is not True:
+        raise ValueError("bbox_geometry pair-ratio must remain disabled during warm-up")
+
+
 def _finite_json(value: object) -> object:
     if isinstance(value, np.generic):
         return _finite_json(value.item())
@@ -172,23 +200,13 @@ def run(
         raise ValueError("training and loss mappings are required")
     training_config = CausalScaleEAPTrainingConfig(**training_raw)
     loss_config = CausalScaleTTCLossConfig(**loss_raw)
-    if training_config.foreground_supervision == "bbox_geometry":
-        if loss_config.foreground_bce_weight != 0.0 or loss_config.foreground_dice_weight != 0.0:
-            raise ValueError("bbox_geometry supervision requires BCE/Dice weights to be zero")
-        if min(
-            loss_config.foreground_extent_weight,
-            loss_config.foreground_width_weight,
-            loss_config.foreground_center_weight,
-        ) <= 0.0:
-            raise ValueError("bbox_geometry supervision requires positive h/w/center weights")
-        if loss_config.foreground_pair_ratio_weight != 0.0:
-            raise ValueError("A1 bbox_geometry must not activate foreground_pair_ratio")
-    parameter_count = sum(
-        parameter.numel() for parameter in CausalScaleTTC(model_config).parameters()
-    )
     decision_contract = raw.get("decision_contract")
     if not isinstance(decision_contract, dict):
         raise ValueError("decision_contract mapping is required")
+    _validate_bbox_geometry_loss(training_config, loss_config, decision_contract)
+    parameter_count = sum(
+        parameter.numel() for parameter in CausalScaleTTC(model_config).parameters()
+    )
     expected_parameter_count = decision_contract.get("expected_parameter_count")
     if expected_parameter_count is not None and parameter_count != int(
         expected_parameter_count

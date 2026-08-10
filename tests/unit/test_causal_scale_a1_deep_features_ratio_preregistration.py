@@ -9,7 +9,10 @@ import yaml
 import scripts.train_causal_scale_eap_screen as runner
 from e_jepa_ttc.losses.causal_scale_ttc import CausalScaleTTCLossConfig
 from e_jepa_ttc.models.causal_scale_ttc import CausalScaleTTC
-from e_jepa_ttc.training.causal_scale_eap import _foreground_only_loss_config
+from e_jepa_ttc.training.causal_scale_eap import (
+    CausalScaleEAPTrainingConfig,
+    _foreground_only_loss_config,
+)
 
 ROOT = Path(__file__).resolve().parents[2]
 PARENT = (
@@ -59,6 +62,24 @@ def test_ratio_arm_hash_model_count_and_warmup_are_frozen() -> None:
     ]
     assert loss_config.foreground_pair_ratio_weight == 5.0
     assert warmup.foreground_pair_ratio_weight == 0.0
+    runner._validate_bbox_geometry_loss(
+        CausalScaleEAPTrainingConfig(**raw["training"]),
+        loss_config,
+        raw["decision_contract"],
+    )
+
+
+def test_ratio_arm_rejects_undeclared_dense_mask_target() -> None:
+    raw = _yaml(CANDIDATE)
+    contract = dict(raw["decision_contract"])
+    contract["pair_ratio_target_uses_dense_mask"] = True
+
+    with pytest.raises(ValueError, match="dense-mask use false"):
+        runner._validate_bbox_geometry_loss(
+            CausalScaleEAPTrainingConfig(**raw["training"]),
+            CausalScaleTTCLossConfig(**raw["loss"]),
+            contract,
+        )
 
 
 def test_ratio_weight_matches_preregistered_train_only_scale() -> None:
