@@ -95,6 +95,12 @@ Siguiente secuencia preregistrable, sin cartesian product:
 5. etiquetar el brazo A3 como `event-only inference with RGB distillation` y
    compararlo por separado con A1 puro y Garl matched.
 
+El paso 1 ya pasó en GPU: `0.4207 s` de inferencia y `1691.39 MiB` peak VRAM.
+Antes de materializar 4.096 endpoints, añadir un audit train-only pequeño y
+multisequence que mida score, área respecto a bbox, contacto con bordes y consistencia
+de cambio t1/t2. Sus filas y gates se congelarán antes de ejecutar; no se mirará
+validation ni TTC para aceptar/rechazar máscaras.
+
 No se cambian `unknown`, support, clip, residual, consenso, optimizer, seed, filas
 o presupuesto durante A1. Correlaciones absolutas y diferenciales se reportan
 globales y macro por secuencia; `r_iso` es diagnóstico, no prediction path.

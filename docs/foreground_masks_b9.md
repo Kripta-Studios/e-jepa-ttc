@@ -22,9 +22,11 @@ DINOv3 ConvNeXt-Tiny también está autocontenido y licenciado localmente. El JS
 firmado es `artifacts/metrics/garl_foreground_resource_audit_v2.json`, identidad
 `6e910ec2f389ea8b50c7f0230214217ce7bdcc5bef696712d766637b27f1e246`.
 
-El extra `multimodal` (`transformers`) todavía no está instalado en el entorno
-activo. La auditoría no importó Transformers ni cargó pesos; la siguiente acción es
-un smoke GPU separado, no evidencia de foreground todavía.
+La auditoría no importó Transformers ni cargó pesos. Posteriormente se materializó
+el extra `multimodal` desde `uv.lock` y se ejecutó un smoke bbox-prompt real en GPU,
+sin descargar pesos. Pasó con `0.4207 s` de inferencia, `1691.39 MiB` peak VRAM,
+máscara finita de fracción `.06630` e IoU interno `1.0`. El resultado firmado
+`be097e6c…2af5e9` demuestra factibilidad, no calidad de máscara ni mejora TTC.
 
 Por tanto, esto **no constituye una integración foreground ni evidencia de
 entrenamiento**. `OfficialMaskPathResolver.require()` falla explícitamente y exige

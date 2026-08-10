@@ -102,8 +102,14 @@
   incompleta de licencia/processor, respectivamente.
 - Artefacto firmado `garl_foreground_resource_audit_v2.json`, identidad
   `6e910ec2f389ea8b50c7f0230214217ce7bdcc5bef696712d766637b27f1e246`.
-  Siguiente intervención: preregistrar y medir un smoke SAM bbox-prompt train-only;
-  si procede, A3 se reportará separado como event-only inference con RGB distillation.
+- Smoke SAM bbox-prompt preregistrado en `e4969f1` y ejecutado sobre la fila train
+  `2cyv0Oedzg_000001_19317100000`, endpoint 1: todos los gates pasan, máscara
+  finita `6,6299%`, score IoU interno `1.0`, inferencia `0.4207 s`, carga modelo
+  `0.7487 s` y peak VRAM `1691.39 MiB` en BF16/CUDA.
+- Resultado firmado `sam_train_bbox_prompt_smoke_v1.json`, identidad
+  `be097e6c4173bedc06e228f85dbd541db41421ca894812f7d2a08e09fe2af5e9`.
+  Es factibilidad, no calidad de máscara/TTC. Siguiente: preregistrar una auditoría
+  train-only multisequence antes de materializar las 2.048×2 máscaras de A3.
 
 ## Addendum eAP causal-scale screen v1 (2026-08-10)
 

@@ -145,10 +145,12 @@ config/processor/licencia/pesos locales. Artefacto firmado
 `garl_foreground_resource_audit_v2.json`, identidad `6e910ec2…f1e246`, generado por
 el commit publicado `4f5cc46`. No se abrió test ni se cargaron teachers.
 
-El siguiente trabajo es preregistrar un smoke SAM bbox-prompt sobre una fila train,
-instalar únicamente el extra `multimodal` y medir CUDA/preprocessing/VRAM. Si pasa,
-precomputar solo train y declarar A3 como `event-only inference with RGB
-distillation`; validation no recibe pseudo-máscaras. No escalar 2.048 ni abrir test.
+El smoke SAM bbox-prompt sobre una fila train ya pasó desde `e4969f1`: BF16/CUDA,
+inferencia `.4207 s`, peak VRAM `1691.39 MiB`, máscara finita `6.63%` y score interno
+`1.0`. Artefacto `be097e6c…2af5e9`. No es evidencia de calidad ni TTC. El siguiente
+trabajo es preregistrar un audit train-only multisequence de scores/geometría y, si
+pasa, precomputar solo train para A3 `event-only inference with RGB distillation`;
+validation no recibe pseudo-máscaras. No escalar 2.048 ni abrir test.
 
 El subset para matched training está materializado en
 `artifacts/subsets/garl_event_only_matched_screen_v1`, identidad firmada

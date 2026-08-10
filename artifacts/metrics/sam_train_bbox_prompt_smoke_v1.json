@@ -1,0 +1,94 @@
+{
+  "artifact_claim_eligible": false,
+  "artifact_sha256": "be097e6c4173bedc06e228f85dbd541db41421ca894812f7d2a08e09fe2af5e9",
+  "artifact_type": "sam_train_bbox_prompt_smoke_v1",
+  "claim_boundary": {
+    "architecture_selection_allowed": false,
+    "modality": "event-only inference with RGB distillation",
+    "official_mask": false,
+    "ttc_labels_used": false,
+    "validation_teacher_generation_allowed": false
+  },
+  "code_commit": "e4969f1d59561aa59f7c87ac5e825882c8e1355e",
+  "config": {
+    "path": "C:/Users/Álvaro Schwiedop/Desktop/KriptaStudios/EVOCON_JEPA_Codex_Handoff/e-jepa-ttc/configs/experiment/sam_train_bbox_prompt_smoke_v1.yaml",
+    "sha256": "f426984ffe248ac89f3b21977e3aee4813310abcfcfc05c5da50961ac0e41417"
+  },
+  "gate": {
+    "all_pass": true,
+    "checks": {
+      "finite": true,
+      "inference_time": true,
+      "mask_fraction": true,
+      "peak_vram": true,
+      "predicted_iou": true
+    }
+  },
+  "git_clean_before_run": true,
+  "output": {
+    "iou_scores": [
+      0.99609375,
+      0.9921875,
+      1.0
+    ],
+    "iou_scores_shape": [
+      1,
+      1,
+      3
+    ],
+    "outputs_are_finite": true,
+    "pred_masks_shape": [
+      1,
+      1,
+      3,
+      256,
+      256
+    ],
+    "selected_mask_fraction": 0.06629882752895355,
+    "selected_mask_index": 2,
+    "selected_predicted_iou": 1.0
+  },
+  "runtime": {
+    "data_read_seconds": 0.18913660000180244,
+    "device": "cuda:0",
+    "gpu_name": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+    "inference_seconds": 0.4207170000008773,
+    "model_load_seconds": 0.7487175999995088,
+    "peak_vram_mib": 1691.39013671875,
+    "postprocessing_seconds": 0.012596799999300856,
+    "precision": "bf16",
+    "preprocessing_seconds": 0.024849499997799285,
+    "processor_load_seconds": 0.007273499999428168
+  },
+  "source": {
+    "bbox_xyxy": [
+      0.0,
+      392.0,
+      256.0,
+      712.0
+    ],
+    "box_index": 0,
+    "data_parquet_sha256": "03dd3022db4b5f43bb10244fc8778476d74351e764f73a90c8566af949c17fd6",
+    "endpoint_index": 1,
+    "image_size_wh": [
+      1280,
+      720
+    ],
+    "private_test_opened": false,
+    "public_train_only": true,
+    "rgb_member": "rgb/000000225_000912280.png",
+    "rgb_member_sha256": "390f0d2f75a548565785bac1b2010b2bb04b013d821ba9abb906e869263753ce",
+    "rgb_shard": "data/train/2cyv0Oedzg/rgb_shards/rgb-00000.tar",
+    "sample_token": "2cyv0Oedzg_000001_19317100000",
+    "sequence_id": "2cyv0Oedzg"
+  },
+  "status": "passed",
+  "teacher": {
+    "bbox_prompt_training_only": true,
+    "local_files_only": true,
+    "network_downloads": false,
+    "repo_id": "facebook/sam-vit-large",
+    "revision": "6851e0441005b0fb96f2cc4dfac472f3d1b14af1",
+    "weights_sha256": "a57e1b13cd1545938dfcbc9fb26df7f60de6650237a9383382a874a623564b81"
+  }
+}

@@ -57,6 +57,12 @@ event-only puro y no puede generar targets teacher en validation. Artefacto firm
 `artifacts/metrics/garl_foreground_resource_audit_v2.json`, identidad
 `6e910ec2…f1e246`.
 
+El smoke preregistrado posterior pasó en `cuda:0`: una bbox train real produjo tres
+máscaras finitas; la seleccionada ocupa `6,63%` de la imagen, con score IoU interno
+`1,0`, inferencia `0,421 s` y peak VRAM `1.691 MiB`. Es solo un gate de viabilidad,
+no una evaluación de calidad ni una métrica TTC. Identidad firmada
+`be097e6c…2af5e9`.
+
 Pipeline reproducible para estimar Time-to-Contact/Time-to-Collision a partir de
 cámaras de eventos, con una ruta event-only high-resolution y una futura ablación
 RGB-E multimodal.

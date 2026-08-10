@@ -90,6 +90,24 @@ no usa red. Verifica todos los TAR/members y calcula SHA-256 de config, processo
 licencia y pesos preferidos. Resultado desde commit `4f5cc46`: identidad
 `6e910ec2f389ea8b50c7f0230214217ce7bdcc5bef696712d766637b27f1e246`.
 
+Smoke SAM bbox-prompt train-only en GPU, desde preregistro `e4969f1`:
+
+```powershell
+$env:HF_HUB_OFFLINE='1'
+$env:TRANSFORMERS_OFFLINE='1'
+uv run --extra multimodal python scripts/smoke_sam_hf_bbox_prompt.py `
+  --config configs/experiment/sam_train_bbox_prompt_smoke_v1.yaml `
+  --data-parquet E:\GarlTTC_dataset\data\train.parquet `
+  --eap-root E:\eAP_dataset `
+  --model-path "$env:USERPROFILE\.cache\huggingface\hub\models--facebook--sam-vit-large\snapshots\6851e0441005b0fb96f2cc4dfac472f3d1b14af1" `
+  --repo-root . `
+  --output artifacts/metrics/sam_train_bbox_prompt_smoke_v1.json
+```
+
+El selector fija la primera fila lexicográfica de `2cyv0Oedzg`, token
+`2cyv0Oedzg_000001_19317100000`, endpoint 1. Resultado firmado
+`be097e6c4173bedc06e228f85dbd541db41421ca894812f7d2a08e09fe2af5e9`.
+
 Preregistro y ejecución A1 geometry-only:
 
 ```powershell

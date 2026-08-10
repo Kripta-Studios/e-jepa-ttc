@@ -65,6 +65,9 @@
   ConvNeXt-Tiny quedan utilizables; artefacto `6e910ec2…f1e246`;
 - siguiente intervención: smoke SAM bbox-prompt train-only en CUDA, con protocolo
   separado `event-only inference with RGB distillation`.
+- preregistrado el smoke en `e4969f1` y ejecutado sin pesos remotos: pasa todos los
+  gates (`.4207 s`, `1691.39 MiB`, máscara finita `.0663`), identidad
+  `be097e6c…2af5e9`; sigue sin ser evidencia TTC.
 
 ## 2026-08-10 — Transporte temporal Causal Scale v7
 
