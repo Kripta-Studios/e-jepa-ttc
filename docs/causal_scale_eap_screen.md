@@ -19,6 +19,47 @@ y 4 `negative`; DGq aporta 91, pBq 48 y qooh 41. La señal de escala es casi nul
 y la localización débil. A0 no se promueve; A1 geometry-only es la siguiente
 diferencia única.
 
+### Descomposición exacta del fallo
+
+El artifact firmado
+`artifacts/metrics/causal_scale_eap_a0_failure_decomposition_v1.json` (identidad
+`75918c58cd91258fac5aac11f8d6fca00ce6cf43014e5ee19ab3a30d7c91beb7`)
+evalúa el checkpoint seleccionado en BF16 y separa cada etapa:
+
+| Relación | Pearson | Pendiente | MAE log-ratio |
+|---|---:|---:|---:|
+| bbox expansion vs ratio físico TTC | 0.759753 | 0.862189 | 0.013785 |
+| altura predicha vs altura bbox (log) | 0.372040 | 0.170747 | 0.181595 |
+| ratio analítico del mapa vs bbox | 0.014517 | 0.019786 | 0.038536 |
+| ratio analítico del mapa vs TTC | 0.036820 | 0.056951 | 0.037289 |
+| residual aprendido vs TTC | -0.033979 | -0.023099 | 0.029725 |
+| analítico + residual vs TTC | 0.037676 | 0.033852 | 0.029968 |
+| ratio efectivo tras consenso vs TTC | 0.045641 | 0.035179 | 0.028937 |
+
+La expansión de las cajas sí es consistente con el target físico, por lo que el
+fallo no se explica por ausencia de señal en la supervisión. El encoder de
+foreground reproduce débilmente la altura absoluta y no reproduce su derivada
+temporal. El residual tampoco recupera la dinámica; el consenso solo deja el mismo
+ratio casi no correlacionado. Esto localiza el fallo observado en la etapa
+`eventos -> extensión foreground temporal`, antes de la conversión física.
+
+Los 252 `unknown` coinciden exactamente con 252 ratios de par bajo
+`|r| < 0.002`. No hubo ningún caso bajo el gate de soporte: support mínimo
+`0.168996`, frente al umbral `0.0001`. Por tanto no es falta de eventos. Entre las
+predicciones conocidas, 151 llegan al clip de ±60 s. Esto es el efecto esperado de
+invertir un ratio pequeño o erróneo: `TTC = 1 / (expm1(r) / dt)` amplifica el error
+cerca de `r=0`; la singularidad agrava el fallo, pero no lo origina.
+
+### Qué está demostrado y qué sigue siendo hipótesis
+
+Está demostrado en validation pública que el cuello de botella es la dinámica de
+extensión aprendida; no están demostradas todavía las causas internas de esa mala
+extensión. La hipótesis A1 es que BCE/Dice contra una weak-box rectangular —que
+incluye fondo interior— permite optimizar solapamiento sin aprender bordes y
+extensiones temporales estables. Solo una ablation A1, que quite BCE/Dice y
+supervise altura/anchura/centro con todo lo demás fijo, puede confirmar o refutar
+esa explicación. No se atribuye causalidad a A1 antes de ejecutar ese control.
+
 Este screen adapta el mejor brazo sintético V8 a datos públicos eAP/Garl-TTC sin
 abrir test privado, CodaBench ni EvTTC test. Es evidencia exploratoria de una seed y
 no autoriza un claim SOTA.

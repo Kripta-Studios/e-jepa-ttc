@@ -9,6 +9,20 @@
 - Cola: `artifacts/metrics/causal_scale_eap_garl_event_only_a0_top10pct_outliers_v1.csv`.
 - Matched subset: `artifacts/subsets/garl_event_only_matched_screen_v1/manifest.json`,
   identidad `dd08ecc983f30e38a939204f9a2df09e4966bbe73bd764c972f7726e5d4e34d3`.
+- Failure decomposition:
+  `artifacts/metrics/causal_scale_eap_a0_failure_decomposition_v1.json`, identidad
+  `75918c58cd91258fac5aac11f8d6fca00ce6cf43014e5ee19ab3a30d7c91beb7`.
+
+Regeneración del diagnóstico:
+
+```powershell
+uv run python scripts/analyze_causal_scale_eap_failure.py `
+  --checkpoint artifacts/runs/causal_scale_eap_screen_v1_seed7/model_best.pt `
+  --cache-manifest artifacts/cache/garl_object_event_common_roi_screen_v4/manifest.json `
+  --summary artifacts/runs/causal_scale_eap_screen_v1_seed7/summary.json `
+  --output-json artifacts/metrics/causal_scale_eap_a0_failure_decomposition_v1.json `
+  --device cuda --batch-size 32
+```
 
 El `--dataset-root` del evaluador debe ser `E:\eAP_dataset`, que resuelve
 `events_path`; `E:\GarlTTC_dataset` contiene los parquets, no los medios.

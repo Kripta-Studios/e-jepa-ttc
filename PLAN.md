@@ -10,6 +10,12 @@
    weak-box y manteniendo todo lo demás igual a A0.
 4. EvTTC test y las demás fuentes selladas siguen cerradas.
 
+El diagnóstico posterior a A0 fija el criterio de A1: debe mejorar directamente
+la correlación del ratio analítico con el bbox-ratio y con el ratio físico, no solo
+IoU o MiD. Si A1 mantiene Pearson analítico cerca de cero, se rechaza la explicación
+weak-box y el siguiente cambio deberá actuar sobre representación/operador, sin
+combinarlo con otra modificación.
+
 ## Addendum operativo: handoff causal-scale eAP screen v1 (2026-08-10)
 
 La ruta activa inmediata está descrita en `CODEX_HANDOFF.md` y

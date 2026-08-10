@@ -7,6 +7,12 @@ IoU ronda 0,50. La referencia release tampoco es causalmente comparable porque
 sus tres secuencias de evaluación estaban expuestas durante entrenamiento. Hasta
 completar un baseline matched, la tabla release no demuestra superioridad causal.
 
+La descomposición localiza el fallo en la extensión temporal del foreground, pero
+no demuestra todavía por qué esa extensión no se aprende. En particular, atribuir
+el defecto a la weak-box rectangular es una hipótesis plausible y preregistrada,
+no un resultado. También quedan por separar aliasing/representación, capacidad del
+foreground head y conflicto entre pérdidas. A1 solo prueba la primera explicación.
+
 Actualizado: 2026-08-10.
 
 - No existe un claim SOTA ni un checkpoint final promovido.

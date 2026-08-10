@@ -7,6 +7,9 @@
 - evaluada referencia event-only release y auditada exposición de secuencias;
 - generado comparador firmado con bootstrap por secuencia y cola de outliers;
 - preregistrado A1 geometry-only como siguiente hipótesis aislada.
+- descompuesto A0: la bbox sí contiene señal física, pero el foreground no aprende
+  su extensión temporal; residual y consenso no la recuperan;
+- implementado runner Garl matched desde cero y completado smoke batch 32 sin OOM.
 
 ## 2026-08-10 — Transporte temporal Causal Scale v7
 

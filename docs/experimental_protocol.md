@@ -8,6 +8,13 @@ las tres secuencias durante train y usó 88.744 filas/50 épocas. Los intervalos
 comparador resamplean secuencias completas (10.000 iteraciones), nunca ventanas.
 La tabla matched desactivará la inicialización desde el checkpoint release.
 
+El diagnóstico de fallo no selecciona hiperparámetros ni abre test. Descompone el
+checkpoint ya seleccionado sobre la misma validation pública en bbox-ratio,
+extensión analítica, residual, ratio combinado y ratio efectivo. A1 queda
+preregistrado antes de ejecutarse y solo cambia el tipo de supervisión bbox. Sus
+gates diagnósticos incluyen correlación analítica-bbox y analítica-TTC; las métricas
+recortadas/saturadas no pueden usarse como gate principal.
+
 Actualizado: 2026-08-10.
 
 ## Gate previo Causal Scale v5

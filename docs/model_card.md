@@ -7,6 +7,13 @@ validation sequence-macro MiD is 382.19, log-ratio Pearson is 0.046 and weak-box
 IoU is 0.500. It must not be described as competitive, production-ready or SOTA.
 The official release result is exposure-confounded until matched training exists.
 
+Failure decomposition shows that bbox scale change contains target signal
+(Pearson 0.760), while the model's analytic foreground extent change does not
+(Pearson 0.037 against physical ratio; 0.015 against bbox ratio). Event support is
+not limiting. The physical inverse is behaving as specified but magnifies bad
+near-zero ratios, yielding 252 unknown outputs and 151 known clipped outputs. This
+model should not be used where finite, calibrated TTC is required.
+
 Actualizado: 2026-08-10.
 
 ## Candidato v5

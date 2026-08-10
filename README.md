@@ -5,6 +5,12 @@
 > tokens, pero vio las tres secuencias y tuvo mucho más presupuesto. No existe
 > claim SOTA; el baseline matched y A1 geometry-only son los siguientes controles.
 
+El diagnóstico de A0 localiza el defecto antes de la física: la expansión bbox sí
+correlaciona con TTC (`r=.760`), pero la expansión extraída del mapa no correlaciona
+con bbox (`r=.015`) ni TTC (`r=.037`). La inversión TTC agrava ratios cercanos a
+cero, pero no crea el error. A1 probará, como ablation aislada, si la weak-box llena
+es la causa de esa mala extensión.
+
 Pipeline reproducible para estimar Time-to-Contact/Time-to-Collision a partir de
 cámaras de eventos, con una ruta event-only high-resolution y una futura ablación
 RGB-E multimodal.

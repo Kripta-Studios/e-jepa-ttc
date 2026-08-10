@@ -1,0 +1,86 @@
+{
+  "artifact_sha256": "2be80ea65ccc1250008e53f308fccd5ff4bd65d90feac6315c8f89317f59e0e2",
+  "artifact_type": "garl_event_only_matched_screen_run_v1",
+  "checkpoints": [
+    {
+      "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\garl_matched_event_only_seed7_smoke_b32\\release_output\\event_lhr_matched_screen\\20260810_033212\\event_lhr_matched_screen_1.pth",
+      "sha256": "d208a0c7d11b8789798a04cb3074121ef254f9551edc530ed3f350fee8914d82",
+      "size_bytes": 99019067
+    },
+    {
+      "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\garl_matched_event_only_seed7_smoke_b32\\release_output\\event_lhr_matched_screen\\20260810_033212\\ckpt.pth",
+      "sha256": "d208a0c7d11b8789798a04cb3074121ef254f9551edc530ed3f350fee8914d82",
+      "size_bytes": 99019067
+    }
+  ],
+  "command": [
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\.venv\\Scripts\\python.exe",
+    "E:\\Garl-TTC\\tools\\train.py",
+    "--config",
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\garl_matched_event_only_seed7_smoke_b32\\matched_event_lhr.yaml",
+    "--data-root",
+    "E:\\eAP_dataset",
+    "--output-dir",
+    "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\garl_matched_event_only_seed7_smoke_b32\\release_output",
+    "--device",
+    "cuda",
+    "--epochs",
+    "1",
+    "--batch-size",
+    "32",
+    "--num-workers",
+    "8",
+    "--seed",
+    "7",
+    "--max-batches",
+    "2"
+  ],
+  "created_at_utc": "2026-08-10T01:32:09.572309+00:00",
+  "execute": true,
+  "inputs": {
+    "materialized_config": {
+      "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\garl_matched_event_only_seed7_smoke_b32\\matched_event_lhr.yaml",
+      "sha256": "28c54db2645cbc1e703442635617da20435a0e45f76dd753cc288505a3cc4772"
+    },
+    "release_commit": "256661242b8a7f5e56aa3c1c02348b30f6e89de6",
+    "release_hashes": {
+      "dataset": "d21eaf3928528c2d5b9a7c2787a64e248bbf49bc60756a3156034b9d8ac5b592",
+      "model": "7927946d4b9af608f1ed2e57c6cc8b498d3c4be8b9c84305647199ef812d9c14",
+      "official_config": "2620bd5d21faf485d7ef10f2ef851e72693074ea78c3ef42aec24620a78c357a",
+      "train_entrypoint": "91bcbd7f6b26b38f15b8e6db32184a1c4eb5f619ad6428e756c262f67075fd10",
+      "trainer": "b22d170b339da5af016116e6da6d7d205f90821addb507ea9d656af1b60b001d"
+    },
+    "subset_manifest": {
+      "artifact_sha256": "dd08ecc983f30e38a939204f9a2df09e4966bbe73bd764c972f7726e5d4e34d3",
+      "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\subsets\\garl_event_only_matched_screen_v1\\manifest.json",
+      "sha256": "dea74cdc610841e75ab8a827e9f01f3b2d660432cf5cadbc88d0cff46927d6ec"
+    }
+  },
+  "protocol": {
+    "batch_size": 32,
+    "epochs": 1,
+    "from_scratch": true,
+    "max_batches": 2,
+    "minimum_selection_epoch": 1,
+    "num_workers": 8,
+    "pretrained_release_checkpoint_used": false,
+    "private_test_opened": false,
+    "seed": 7,
+    "timeout_hours": 0.5
+  },
+  "release_unchanged": true,
+  "smoke_only": true,
+  "status": "training_completed",
+  "training": {
+    "elapsed_seconds_including_online_preprocessing": 59.514446600000156,
+    "returncode": 0,
+    "stderr": {
+      "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\garl_matched_event_only_seed7_smoke_b32\\training_stderr.log",
+      "sha256": "c33d8e92028e4f3cf5eb062c8a6535002845245e5593a2e633692f8bf696f4f2"
+    },
+    "stdout": {
+      "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\garl_matched_event_only_seed7_smoke_b32\\training_stdout.log",
+      "sha256": "7e0f5e6c68c3d6cf1f9c0d22e93b1016d54c8bb25bb0b608a070819d6c7233c6"
+    }
+  }
+}

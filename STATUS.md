@@ -13,6 +13,13 @@
 - Subset matched materializado y firmado: 2.048 train/9 secuencias y 2.048
   validation/3 secuencias, identidad
   `dd08ecc983f30e38a939204f9a2df09e4966bbe73bd764c972f7726e5d4e34d3`.
+- Diagnóstico firmado A0: bbox-ratio/TTC-ratio correlaciona `0.759753`, pero el
+  ratio analítico del mapa/bbox solo `0.014517` y el ratio efectivo/TTC `0.045641`.
+  Los 252 unknown proceden exactamente del gate `|r| < .002`; ninguno de soporte.
+  El fallo está localizado en eventos → extensión foreground temporal. La causa
+  weak-box sigue siendo hipótesis hasta A1.
+- Smoke Garl matched desde cero, batch 32/8 workers, completó 2 batches y guardó
+  checkpoint en 59.51 s sin OOM; es infraestructura, no métrica científica.
 
 ## Addendum eAP causal-scale screen v1 (2026-08-10)
 

@@ -1,0 +1,119 @@
+name: event_lhr
+use_gpu: true
+gpu_id:
+- 0
+train: true
+save: true
+visualize: false
+evaluate: false
+exp_type: event_lhr_matched_screen
+dirs:
+  output: "C:\\Users\\\xC1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\\
+    e-jepa-ttc\\artifacts\\runs\\garl_matched_event_only_seed7_smoke_b32\\release_output"
+  debug: ./outputs/training_record/debug
+cudnn:
+  enabled: true
+  deterministic: true
+  benchmark: false
+dataset:
+  name: EventTTC
+  root: E:\eAP_dataset
+  data_blob_dir: E:\eAP_dataset\data_blobs
+  raw_data_tag: EnnTTC_v2
+  anno_tag: pse_lite
+  fillter_tag: 20250220_full
+  db_sample_size: 2048
+  sync: front
+  window_interval: 1
+  event_pixel_diff: 5
+  img_mean:
+  - 0.485
+  - 0.456
+  - 0.406
+  img_std:
+  - 0.229
+  - 0.224
+  - 0.225
+  fy: 1694.1323524131867
+  mode: event_only
+  train:
+    asset_path: "C:\\Users\\\xC1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\\
+      e-jepa-ttc\\artifacts\\subsets\\garl_event_only_matched_screen_v1\\train_assets.txt"
+    data_parquet: "C:\\Users\\\xC1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\\
+      e-jepa-ttc\\artifacts\\subsets\\garl_event_only_matched_screen_v1\\train_data.parquet"
+    labels_parquet: "C:\\Users\\\xC1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\\
+      e-jepa-ttc\\artifacts\\subsets\\garl_event_only_matched_screen_v1\\train_labels.parquet"
+    annotation_format: parquet
+  test:
+    asset_path: "C:\\Users\\\xC1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\\
+      e-jepa-ttc\\artifacts\\subsets\\garl_event_only_matched_screen_v1\\validation_assets.txt"
+    data_parquet: "C:\\Users\\\xC1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\\
+      e-jepa-ttc\\artifacts\\subsets\\garl_event_only_matched_screen_v1\\validation_data.parquet"
+    labels_parquet: "C:\\Users\\\xC1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\\
+      e-jepa-ttc\\artifacts\\subsets\\garl_event_only_matched_screen_v1\\validation_labels.parquet"
+    annotation_format: parquet
+  annotation_format: parquet
+model:
+  input_feat_num: 40
+  num_layers: 50
+  input_feat_size:
+  - 128
+  - 128
+  fc_features: 512
+  mode: height_ratio
+  fusion_style: early_fusion
+  pretrained_ckpt_rgb: ''
+  pretrained_ckpt_event: ''
+  input_feat_num_rgb: 6
+  input_feat_num_event: 40
+  frame_num: 2
+  visualize: false
+  with_decoder: false
+  decoder_layers:
+  - 2
+  - 2
+  - 2
+  - 2
+training_settings:
+  total_epochs: 1
+  report_every: 1
+  resume: false
+  ckpt_path: null
+  batch_size: 32
+  num_threads: 8
+  shuffle: true
+  pin_memory: false
+  visualize_training_process: false
+  gt_range:
+  - -10
+  - 10
+  snapshot_epochs:
+  - 1
+testing_settings:
+  batch_size: 8
+  num_threads: 0
+  shuffle: false
+  pin_memory: false
+  apply_dropout: false
+  unnormalize: false
+optimizer:
+  optim_type: adam
+  lr: 0.001
+  weight_decay: 0.0
+  momentum: 0.9
+  milestones:
+  - 10
+  - 20
+  - 30
+  - 40
+  gamma: 0.5
+matched_protocol:
+  subset_manifest: "C:\\Users\\\xC1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\\
+    e-jepa-ttc\\artifacts\\subsets\\garl_event_only_matched_screen_v1\\manifest.json"
+  subset_artifact_sha256: dd08ecc983f30e38a939204f9a2df09e4966bbe73bd764c972f7726e5d4e34d3
+  release_commit: 256661242b8a7f5e56aa3c1c02348b30f6e89de6
+  from_scratch: true
+  release_checkpoint_initialization: false
+  selection_source: public_validation_only
+  minimum_selection_epoch: 1
+  test_opened: false

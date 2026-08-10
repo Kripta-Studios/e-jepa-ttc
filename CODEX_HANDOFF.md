@@ -25,6 +25,30 @@ El subset para matched training está materializado en
 Contiene exactamente 2.048 train/9 secuencias y 2.048 validation/3 secuencias,
 con igualdad de tokens, join keys y TTC contra cache y parquets públicos.
 
+### Diagnóstico A0 reproducible
+
+`artifacts/metrics/causal_scale_eap_a0_failure_decomposition_v1.json`, identidad
+`75918c58cd91258fac5aac11f8d6fca00ce6cf43014e5ee19ab3a30d7c91beb7`:
+
+- bbox-ratio vs ratio físico: Pearson `.759753`, slope `.862189`;
+- altura predicha vs altura bbox: Pearson `.372040`, slope `.170747`;
+- ratio analítico vs bbox: Pearson `.014517`;
+- ratio analítico vs físico: Pearson `.036820`;
+- residual vs físico: Pearson `-.033979`;
+- ratio efectivo vs físico: Pearson `.045641`;
+- 252/2.048 unknown por `|pair_ratio| < .002`; cero por soporte bajo;
+- 151 predicciones conocidas saturadas en ±60 s.
+
+Conclusión observacional: las cajas contienen señal de escala útil y los eventos
+tienen soporte, pero el mapa no aprende una extensión temporal fiel. La inversión
+física amplifica ratios malos cerca de cero. La weak-box rectangular es la hipótesis
+principal, no una causa confirmada; A1 es el experimento que debe resolverlo.
+
+El runner `scripts/run_garl_matched_screen.py` desactiva explícitamente ambos
+pretrained checkpoints release y escribe todo fuera de `E:\Garl-TTC`. Su smoke de
+2 batches, batch 32/8 workers, terminó en 59.51 s sin OOM y dejó el release intacto.
+No usar el checkpoint smoke como resultado matched.
+
 Rama: `scientific-recovery-v3-hardening`
 
 Remote publicado antes de este handoff: `origin/scientific-recovery-v3-hardening`
