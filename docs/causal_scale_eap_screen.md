@@ -301,8 +301,39 @@ cambio de model config es `equivariant_separable -> resize_conv`.
 ## Estado
 
 A0, referencia release, Garl matched, A1 y A1-FR están terminados; A1-DF está
-preregistrado y aún no ejecutado. El cache matched
+terminado y no promovido. El cache matched
 oficial tiene identidad `92af281030170733411ef9d65b19e88ebc8019c729dd6743e02ae9c40f564b52`,
 2.048/2.048 filas y preprocessing separado de `166.7501/155.3283 s`. Resume A0
 coincide exactamente con entrenamiento continuo y el runner matched liga resume a
 todo el protocolo congelado. El siguiente brazo requiere un preregistro nuevo.
+
+## Resultado A1-DF deep features
+
+A1-DF completó 18 épocas en GPU y seleccionó epoch 14 con cobertura finita 3/3.
+
+| Métrica | A1 | A1-FR | A1-DF | Garl matched |
+|---|---:|---:|---:|---:|
+| MiD macro-secuencia | 346.8295 | 380.2202 | 350.3020 | 203.6342 |
+| failure | 9.9609% | 28.7598% | 21.0938% | 0% |
+| known coverage | .9004 | .7124 | .7891 | 1.0 |
+| Pearson log-ratio | .1108 | -.0181 | .1865 | .3722 |
+| Pearson altura absoluta | .4708 | .2714 | .4823 | n/a |
+| Pearson anchura absoluta | .0788 | .0903 | .2428 | n/a |
+| delta altura vs física | .1048 | -.0150 | .1704 | n/a |
+
+Por secuencia obtiene `365.5938/330.3846/354.9277`. Por bucket: crucial
+`493.7596` (failure `16.18%`), small `240.3005` (`19.79%`), large `137.5254`
+(`24.09%`) y negative `173.3600` (`26.27%`). La mejora temporal aparece en las
+tres secuencias, pero no basta para compensar 432 unknown en las predicciones
+canónicas. Runtime `705.54 s`, peak VRAM `1286.95 MiB`, 355.118 parámetros.
+
+La curva muestra inestabilidad multitarea: durante warm-up anchura alcanza `.554`;
+tras activar la loss completa oscila entre valores negativos y `.404`. En el best,
+el ratio analítico/físico tiene `r=.1703`, slope `.0848` y std ratio ~`.50`; el
+residual aporta solo `r=.0622`, slope `.0038`. La inversión no crea esta falta de
+amplitud, pero convierte ratios bajo `.002` en unknown. El siguiente experimento
+debe probar una sola supervisión pair-ratio directa sobre A1-DF, sin tocar el gate.
+
+Summary `56a459b718724e701923ec9e98f758166cfa56a649c8bcb7c6a8bbddee78f2c8`;
+comparador `003c38677f26ef25bd2a0455813d5783ea66dffb233b5058ba3c13c58e0a1d0c`;
+descomposición `5a9c42934f3335ddbe4fe679f3e53f4187926fa46749321fb27ac1e3775141da`.

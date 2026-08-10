@@ -49,6 +49,10 @@
   queda rechazada y el siguiente control propuesto usa features `resize_conv`.
 - preregistrado A1-DF (`dddfb393…0b284`) con un único cambio a `resize_conv`,
   features profundas, misma loss A1 y sin teachers/pair-ratio.
+- ejecutado A1-DF seed 7: macro `350.3020`, failure `21.0938%`, ratio `.1865`;
+  señal temporal mejor pero sin mejora principal, no promovido;
+- firmados comparador `003c3867…e0a1d0c` y descomposición candidate-aware
+  `5a9c4293…75141da`; siguiente hipótesis propuesta: pair-ratio directo único.
 
 ## 2026-08-10 — Transporte temporal Causal Scale v7
 

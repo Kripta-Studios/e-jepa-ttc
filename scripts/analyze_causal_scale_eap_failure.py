@@ -1,4 +1,4 @@
-"""Decompose the public A0 failure into bbox, foreground, residual, and TTC stages."""
+"""Decompose a public CausalScale failure into geometric and TTC stages."""
 
 from __future__ import annotations
 
@@ -67,11 +67,15 @@ def analyze(
     cache_manifest: Path,
     summary: Path,
     output_json: Path,
+    candidate_label: str = "causal_scale_a0",
     device: str = "cuda",
     batch_size: int = 32,
 ) -> dict[str, Any]:
     """Run deterministic public-validation decomposition and sign the result."""
 
+    candidate_label = candidate_label.strip()
+    if not candidate_label:
+        raise ValueError("candidate_label must not be empty")
     for path in (checkpoint, cache_manifest, summary):
         if not path.is_file():
             raise FileNotFoundError(f"Required failure-analysis input not found: {path}")
@@ -170,8 +174,31 @@ def analyze(
     pair_unknown = arrays["pair_known"] < 0.5
     low_support = arrays["support"] < support_threshold
     low_ratio = np.abs(arrays["pair_ratio"]) < ratio_threshold
+    legacy_a0 = candidate_label == "causal_scale_a0"
+    diagnosis: dict[str, Any] = {
+        "candidate_label": candidate_label,
+        "observed_failure_stage": "event_to_foreground_temporal_extent",
+        "bbox_scale_target_contains_physical_signal": True,
+        "sensor_support_is_limiting_factor": False,
+        "analytic_extent_tracks_bbox_expansion": False,
+        "learned_residual_recovers_physical_ratio": False,
+        "physical_inverse_amplifies_bad_near_zero_ratios": True,
+    }
+    if legacy_a0:
+        diagnosis.update(
+            {
+                "a1_geometry_only_is_causal_explanation_confirmed": False,
+                "a1_status": (
+                    "preregistered_ablation_required_to_test_weak_box_noise_hypothesis"
+                ),
+            }
+        )
     result: dict[str, Any] = {
-        "artifact_type": "causal_scale_eap_a0_failure_decomposition_v1",
+        "artifact_type": (
+            "causal_scale_eap_a0_failure_decomposition_v1"
+            if legacy_a0
+            else "causal_scale_eap_failure_decomposition_v2"
+        ),
         "created_at_utc": datetime.now(UTC).isoformat(),
         "status": "completed_public_validation_only",
         "sample_count": len(sequences),
@@ -227,16 +254,7 @@ def analyze(
             )["validation_metrics"]["weak_bbox_iou"],
             "weak_box_is_filled_rectangle_not_segmentation": True,
         },
-        "diagnosis": {
-            "observed_failure_stage": "event_to_foreground_temporal_extent",
-            "bbox_scale_target_contains_physical_signal": True,
-            "sensor_support_is_limiting_factor": False,
-            "analytic_extent_tracks_bbox_expansion": False,
-            "learned_residual_recovers_physical_ratio": False,
-            "physical_inverse_amplifies_bad_near_zero_ratios": True,
-            "a1_geometry_only_is_causal_explanation_confirmed": False,
-            "a1_status": "preregistered_ablation_required_to_test_weak_box_noise_hypothesis",
-        },
+        "diagnosis": diagnosis,
         "sealed_sources": {
             "private_test_opened": False,
             "codabench_opened": False,
@@ -256,6 +274,7 @@ def analyze(
     output_json.write_text(
         json.dumps(result, indent=2, ensure_ascii=False, sort_keys=True) + "\n",
         encoding="utf-8",
+        newline="\n",
     )
     return result
 
@@ -266,6 +285,7 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--cache-manifest", type=Path, required=True)
     parser.add_argument("--summary", type=Path, required=True)
     parser.add_argument("--output-json", type=Path, required=True)
+    parser.add_argument("--candidate-label", default="causal_scale_a0")
     parser.add_argument("--device", default="cuda")
     parser.add_argument("--batch-size", type=int, default=32)
     return parser.parse_args(argv)
@@ -279,11 +299,12 @@ def main(argv: Sequence[str] | None = None) -> int:
             cache_manifest=args.cache_manifest,
             summary=args.summary,
             output_json=args.output_json,
+            candidate_label=args.candidate_label,
             device=args.device,
             batch_size=args.batch_size,
         )
     except Exception as error:
-        print(f"A0 failure analysis failed: {type(error).__name__}: {error}", file=sys.stderr)
+        print(f"Failure analysis failed: {type(error).__name__}: {error}", file=sys.stderr)
         return 1
     print(json.dumps(result, indent=2, ensure_ascii=False, sort_keys=True))
     return 0

@@ -86,8 +86,13 @@ coverage `.7124` y Pearson log-ratio `-.0181`. Empeora A1 en `33.3908` MiD y
 eventos crudos; este resultado rechaza esa intervención superficial, no el uso de
 features 2-D profundas. El siguiente control aislado usará el decoder existente
 `resize_conv`, alimentado por `_EndpointEncoder.features`, con la misma loss A1.
-Este control se denomina A1-DF; está preregistrado con 355.118 parámetros y aún no
-tiene resultados. No es un checkpoint promovido.
+Este control se denomina A1-DF y fue preregistrado con 355.118 parámetros antes de
+observar resultados.
+
+A1-DF terminó con MiD macro `350.3020`, failure `21.0938%` y Pearson log-ratio
+`.1865`. Mejora la señal geométrica temporal frente a A1, pero empeora sus métricas
+de decisión y queda lejos de Garl matched. No es un checkpoint promovido ni apto
+para inferencia fiable: el `21.09%` de validation queda unknown.
 
 ## Estado
 

@@ -69,6 +69,13 @@ A1-DF queda preregistrado sin observar resultados: experiment SHA256
 SHA256 `265dbfd57e68d7a6aa385fbf31dc0ad41154b17afbd1d9454bbd8ddd80c6663f`,
 355.118 parámetros. Se ejecutará una vez con seed 7 y selección finita 3/3.
 
+A1-DF terminó como resultado mixto y no promovido: mejora la señal temporal, pero
+no MiD/failures. El ratio analítico sigue subescalado (slope `.0848`) y el residual
+no lo corrige. La siguiente hipótesis secuencial es A1-DF-R: conservar exactamente
+modelo/datos/schedule y activar solo la loss pair-ratio sobre el cambio foreground.
+Se congelará un peso único antes de ejecutar; no se hará sweep. Si no estabiliza
+ratio y failures, pasar a representación event-native preentrenada antes de JEPA.
+
 No se cambian `unknown`, support, clip, residual, consenso, optimizer, seed, filas
 o presupuesto durante A1. Correlaciones absolutas y diferenciales se reportan
 globales y macro por secuencia; `r_iso` es diagnóstico, no prediction path.

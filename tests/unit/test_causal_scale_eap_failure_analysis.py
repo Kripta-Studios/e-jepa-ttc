@@ -24,3 +24,22 @@ def test_relationship_preserves_nonfinite_exclusion() -> None:
 
     assert result["count"] == 2
     assert result["mae"] == 0.0
+
+
+def test_cli_accepts_candidate_label() -> None:
+    args = analysis.parse_args(
+        [
+            "--checkpoint",
+            "model.pt",
+            "--cache-manifest",
+            "manifest.json",
+            "--summary",
+            "summary.json",
+            "--output-json",
+            "analysis.json",
+            "--candidate-label",
+            "causal_scale_a1_deep_features",
+        ]
+    )
+
+    assert args.candidate_label == "causal_scale_a1_deep_features"

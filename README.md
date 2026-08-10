@@ -38,7 +38,11 @@ Ese control full-resolution ya terminó y fue negativo: MiD macro `380,22`, fail
 `28,76%` y Pearson log-ratio `-.018`. La estructura 2-D superficial sobre eventos
 crudos no basta. El siguiente paso probará si el foreground debe consumir features
 profundas del encoder (`resize_conv`) antes de recurrir a pretraining RGB/event.
-Ese brazo A1-DF ya está preregistrado, pero todavía no tiene métricas.
+Ese brazo A1-DF se preregistró antes de ejecutarse. Su run terminó con más señal
+temporal (`r=.186`) pero MiD macro `350,30` y
+`21,09%` failures: no supera A1 ni Garl matched. El ratio aprendido está
+subescalado, por lo que el siguiente control aislado será supervisarlo directamente
+sin cambiar arquitectura.
 
 Pipeline reproducible para estimar Time-to-Contact/Time-to-Collision a partir de
 cámaras de eventos, con una ruta event-only high-resolution y una futura ablación

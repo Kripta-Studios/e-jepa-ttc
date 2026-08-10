@@ -109,6 +109,19 @@ model SHA256 `265dbfd57e68d7a6aa385fbf31dc0ad41154b17afbd1d9454bbd8ddd80c6663f`;
 355.118 parámetros. Ejecutar una sola vez seed 7 en GPU y no tocar pair-ratio,
 teachers, unknown/clip ni loss A1.
 
+A1-DF terminó 18 épocas y seleccionó la 14: MiD global `350.0584595`, macro
+`350.3020204`, failure `21.09375%`, known `.7890625` y Pearson log-ratio
+`.1864874`. Mejora claramente la señal de A1 (ratio `.1108 -> .1865`, delta altura
+vs física `.1048 -> .1704`, anchura absoluta `.0788 -> .2428`), pero empeora MiD
+en `3.4726` y failure en `11.1328` puntos. No se promueve ni se escala.
+
+La descomposición firmada `5a9c42934f3335ddbe4fe679f3e53f4187926fa46749321fb27ac1e3775141da`
+muestra ratio analítico/físico `r=.1703`, slope `.0848`, residual/físico `r=.0622`,
+slope `.0038`, y 433 unknown por ratio bajo, cero por soporte. La representación
+profunda recupera señal, pero el cambio queda muy subescalado. El siguiente control
+mínimo justificable es A1-DF-R: mismo A1-DF y una única supervisión pair-ratio
+directa, preregistrada antes de ejecutarse. Teachers/JEPA siguen aplazados.
+
 El subset para matched training está materializado en
 `artifacts/subsets/garl_event_only_matched_screen_v1`, identidad firmada
 `dd08ecc983f30e38a939204f9a2df09e4966bbe73bd764c972f7726e5d4e34d3`.

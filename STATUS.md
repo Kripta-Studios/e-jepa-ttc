@@ -74,7 +74,16 @@
   con loss/protocolo A1 intactos.
 - A1-DF preregistrado: experiment `dddfb393…0b284`, modelo `265dbfd5…c6663f`,
   355.118 parámetros. Los tests prueban igualdad exacta de data/training/loss,
-  único cambio de decoder y logits finales 128x128. Pendiente run seed 7 en GPU.
+  único cambio de decoder y logits finales 128x128.
+- A1-DF seed 7 terminado: best 14/18, macro `350.3020`, failure `21.0938%`,
+  ratio `.1865`, altura `.4823`, anchura `.2428`, delta altura/física `.1704`.
+- No supera A1 en MiD/failure ni Garl matched. Comparador firmado
+  `003c3867…e0a1d0c`; diferencia bootstrap vs Garl `141.67`, IC95%
+  `[104.30,177.62]`, win rate finito `37.5%`.
+- Descomposición `5a9c4293…75141da`: ratio analítico subescalado (slope `.0848`),
+  residual no lo recupera; 433 unknown por ratio bajo y cero por soporte.
+- Siguiente hipótesis propuesta, aún no preregistrada: A1-DF-R con una única
+  activación de pair-ratio directo; sin teachers, JEPA ni cambios de unknown/clip.
 
 ## Addendum eAP causal-scale screen v1 (2026-08-10)
 

@@ -197,6 +197,49 @@ Si existe un `state/last.pt` compatible, añadir `--resume`; no borrar un run v�
 Experiment SHA256 `dddfb393bb0ce2c3245335cc459948c0830a435ffeaf5a76e710679a8180b284`;
 model SHA256 `265dbfd57e68d7a6aa385fbf31dc0ad41154b17afbd1d9454bbd8ddd80c6663f`.
 
+Resultado: best 14/18, global `350.0584595`, macro `350.3020204`, failure
+`21.09375%`; summary identity
+`56a459b718724e701923ec9e98f758166cfa56a649c8bcb7c6a8bbddee78f2c8`.
+Predictions SHA256 `da24b8a1e1be441ec509de13ee59bfb8db322b4566887818f6dad37a2ac030c2`;
+checkpoint SHA256 `4b25d97e20161d909910b163a8d1ccb30655476f729d17a7d37ac5e0166e6f48`.
+Comparador exact-token:
+
+```powershell
+uv run python scripts/build_causal_scale_eap_garl_comparison.py `
+  --causal-predictions artifacts/runs/causal_scale_eap_screen_a1_deep_features_v1_seed7/validation_predictions.csv `
+  --causal-summary artifacts/runs/causal_scale_eap_screen_a1_deep_features_v1_seed7/summary.json `
+  --release-predictions artifacts/runs/garl_official_event_only_same2048/predictions.parquet `
+  --release-metrics artifacts/runs/garl_official_event_only_same2048/metrics.json `
+  --matched-predictions artifacts/runs/garl_matched_event_only_cached_seed7/validation_predictions.parquet `
+  --matched-summary artifacts/runs/garl_matched_event_only_cached_seed7/summary.json `
+  --subset-data artifacts/subsets/garl_validation_common_roi_v1/data.parquet `
+  --subset-labels artifacts/subsets/garl_validation_common_roi_v1/labels.parquet `
+  --subset-manifest artifacts/subsets/garl_validation_common_roi_v1/manifest.json `
+  --official-train-assets E:\Garl-TTC\configs\splits\train.txt `
+  --official-train-labels E:\GarlTTC_dataset\annotations\train.parquet `
+  --official-config E:\Garl-TTC\configs\ablation\event_lhr.yaml `
+  --official-checkpoint E:\Garl-TTC\checkpoints\paper_event_only_lhr.pth `
+  --output-json artifacts/metrics/causal_scale_eap_garl_event_only_a1_deep_features_comparison_v1.json `
+  --outliers-csv artifacts/metrics/causal_scale_eap_garl_event_only_a1_deep_features_top10pct_outliers_v1.csv `
+  --bootstrap-iterations 10000 --bootstrap-seed 7 `
+  --candidate-label causal_scale_a1_deep_features
+```
+
+Identidad `003c38677f26ef25bd2a0455813d5783ea66dffb233b5058ba3c13c58e0a1d0c`.
+
+Descomposición candidate-aware:
+
+```powershell
+uv run python scripts/analyze_causal_scale_eap_failure.py `
+  --checkpoint artifacts/runs/causal_scale_eap_screen_a1_deep_features_v1_seed7/model_best.pt `
+  --cache-manifest artifacts/cache/garl_object_event_common_roi_screen_v4/manifest.json `
+  --summary artifacts/runs/causal_scale_eap_screen_a1_deep_features_v1_seed7/summary.json `
+  --output-json artifacts/metrics/causal_scale_eap_a1_deep_features_failure_decomposition_v1.json `
+  --candidate-label causal_scale_a1_deep_features --device cuda --batch-size 32
+```
+
+Identidad `5a9c42934f3335ddbe4fe679f3e53f4187926fa46749321fb27ac1e3775141da`.
+
 Regeneración del diagnóstico:
 
 ```powershell

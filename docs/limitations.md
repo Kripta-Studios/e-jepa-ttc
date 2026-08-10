@@ -24,8 +24,12 @@ preservado. Solo la repetición desde cero con cobertura 3/3 puede evaluar el br
 
 La repetición válida confirma un resultado negativo, no la causa completa: una
 cabeza 2-D superficial sobre inputs crudos empeora A1. Esto no demuestra que toda
-representación 2-D o pretraining falle; el encoder profundo aún no alimenta el
-foreground en los dos brazos evaluados.
+representación 2-D o pretraining falle; motivó el control profundo A1-DF posterior.
+
+A1-DF sí alimenta foreground desde features profundas y mejora correlaciones, pero
+no MiD/failure. La oscilación por época es compatible con interferencia entre
+objetivos, aunque no la demuestra causalmente. El siguiente pair-ratio es una
+ablation de esa hipótesis, no una reparación garantizada ni un gate revisado.
 
 Actualizado: 2026-08-10.
 

@@ -64,6 +64,11 @@ A1-DF materializa ese cambio único. Su selección exige MiD finito en las tres
 secuencias; seed, filas, épocas, warm-up, optimizer, CVaR, loss geométrica, física,
 unknown y clip permanecen congelados. No usa RGB, SAM, DINO ni objetivo JEPA.
 
+Resultado A1-DF: macro `350.3020`, failure `21.0938%`, ratio `.1865`; no se
+promueve. Como la señal temporal aumenta pero queda subescalada, el siguiente
+cambio permitido es activar una única loss pair-ratio directa sobre el mismo
+A1-DF. El peso debe preregistrarse sin sweep; unknown/clip permanecen inmutables.
+
 El diagnóstico de fallo no selecciona hiperparámetros ni abre test. Descompone el
 checkpoint ya seleccionado sobre la misma validation pública en bbox-ratio,
 extensión analítica, residual, ratio combinado y ratio efectivo. A1 queda
