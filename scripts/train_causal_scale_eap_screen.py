@@ -105,6 +105,15 @@ def _atomic_json(path: Path, payload: dict[str, Any]) -> None:
     os.replace(temporary, path)
 
 
+def _reset_peak_memory_stats(device: torch.device) -> None:
+    """Reset CUDA peak accounting without passing a device to the Windows API."""
+
+    if device.type != "cuda":
+        return
+    torch.cuda.set_device(device)
+    torch.cuda.reset_peak_memory_stats()
+
+
 def run(
     config_path: Path,
     output_dir: Path,
@@ -168,8 +177,7 @@ def run(
         str(manifest_path), splits=("validation",)
     )
     device = resolve_device(device_name)
-    if device.type == "cuda":
-        torch.cuda.reset_peak_memory_stats(device)
+    _reset_peak_memory_stats(device)
     result = train_real_causal_scale(
         model_config,
         training_config,
