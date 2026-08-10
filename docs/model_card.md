@@ -1,5 +1,12 @@
 # Model card — E-JEPA-TTC
 
+## CausalScale A0 public screen status
+
+The seed-7 event-only A0 screen is a negative result, not a promoted checkpoint:
+validation sequence-macro MiD is 382.19, log-ratio Pearson is 0.046 and weak-box
+IoU is 0.500. It must not be described as competitive, production-ready or SOTA.
+The official release result is exposure-confounded until matched training exists.
+
 Actualizado: 2026-08-10.
 
 ## Candidato v5

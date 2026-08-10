@@ -1,5 +1,13 @@
 # Dataset card
 
+## Exact public validation screen
+
+The signed subset `garl_validation_common_roi_v1` contains exactly 2,048 public
+rows from three complete validation sequences, with token and target equality
+checked against the Garl public parquets. It contains no private eAP, CodaBench or
+EvTTC test rows. The three sequences were present in the official release training
+asset list, so release-checkpoint metrics are not a matched-training comparison.
+
 Actualizado: 2026-08-10.
 
 ## Inventario activo

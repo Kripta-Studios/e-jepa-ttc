@@ -1,5 +1,12 @@
 # Limitaciones
 
+## Limitación observada del screen A0
+
+A0 no aprende una dinámica temporal útil (Pearson log-ratio 0,046) y su weak-box
+IoU ronda 0,50. La referencia release tampoco es causalmente comparable porque
+sus tres secuencias de evaluación estaban expuestas durante entrenamiento. Hasta
+completar un baseline matched, la tabla release no demuestra superioridad causal.
+
 Actualizado: 2026-08-10.
 
 - No existe un claim SOTA ni un checkpoint final promovido.

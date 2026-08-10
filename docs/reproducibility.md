@@ -1,5 +1,16 @@
 # Reproducibilidad
 
+## Artefactos A0 / Garl exact-2048
+
+- A0: `artifacts/runs/causal_scale_eap_screen_v1_seed7/summary.json`.
+- Subset: `artifacts/subsets/garl_validation_common_roi_v1/manifest.json`.
+- Referencia: `artifacts/runs/garl_official_event_only_same2048/metrics.json`.
+- Comparación: `artifacts/metrics/causal_scale_eap_garl_event_only_comparison_v1.json`.
+- Cola: `artifacts/metrics/causal_scale_eap_garl_event_only_a0_top10pct_outliers_v1.csv`.
+
+El `--dataset-root` del evaluador debe ser `E:\eAP_dataset`, que resuelve
+`events_path`; `E:\GarlTTC_dataset` contiene los parquets, no los medios.
+
 Actualizado: 2026-08-10.
 
 ## Protocolo sintético Causal Scale v5

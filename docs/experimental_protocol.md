@@ -1,5 +1,13 @@
 # Protocolo experimental
 
+## Event-only screen A0 / release reference (2026-08-10)
+
+A0 usa 2.048 train y 2.048 validation con secuencias disjuntas. La tabla release
+usa los mismos tokens de validation, pero queda separada porque el checkpoint vio
+las tres secuencias durante train y usó 88.744 filas/50 épocas. Los intervalos del
+comparador resamplean secuencias completas (10.000 iteraciones), nunca ventanas.
+La tabla matched desactivará la inicialización desde el checkpoint release.
+
 Actualizado: 2026-08-10.
 
 ## Gate previo Causal Scale v5

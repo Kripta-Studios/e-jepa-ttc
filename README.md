@@ -1,5 +1,10 @@
 # E-JEPA-TTC
 
+> Estado event-only (2026-08-10): A0 seed 7 fue negativo (MiD macro 382,19;
+> Pearson log-ratio 0,046). La referencia release obtiene 117,43 sobre los mismos
+> tokens, pero vio las tres secuencias y tuvo mucho más presupuesto. No existe
+> claim SOTA; el baseline matched y A1 geometry-only son los siguientes controles.
+
 Pipeline reproducible para estimar Time-to-Contact/Time-to-Collision a partir de
 cámaras de eventos, con una ruta event-only high-resolution y una futura ablación
 RGB-E multimodal.

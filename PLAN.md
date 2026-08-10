@@ -1,5 +1,15 @@
 # PLAN.md — Recuperación científica y ruta ejecutable hacia E-JEPA-TTC frente a Garl-TTC
 
+## Plan activo 2026-08-10
+
+1. **Completado:** A0 seed 7, subset validation exacto, referencia release y
+   comparador firmado, preservando el resultado negativo.
+2. **En curso:** Garl event-only matched con exactamente 2.048 train/2.048
+   validation, sin inicialización desde el checkpoint release expuesto.
+3. **Siguiente hipótesis única:** A1 bbox geometry-only, desactivando BCE/Dice
+   weak-box y manteniendo todo lo demás igual a A0.
+4. EvTTC test y las demás fuentes selladas siguen cerradas.
+
 ## Addendum operativo: handoff causal-scale eAP screen v1 (2026-08-10)
 
 La ruta activa inmediata está descrita en `CODEX_HANDOFF.md` y

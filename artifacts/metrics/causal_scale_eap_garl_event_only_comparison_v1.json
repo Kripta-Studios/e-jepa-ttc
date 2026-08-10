@@ -1,0 +1,538 @@
+{
+  "artifact_sha256": "9f2bebde05729b7ace6fdbc0a990e6b75bf180ec87220924219ed7095105281c",
+  "artifact_type": "causal_scale_eap_garl_event_only_comparison_v1",
+  "artifacts": {
+    "top_10pct_outliers": {
+      "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\metrics\\causal_scale_eap_garl_event_only_a0_top10pct_outliers_v1.csv",
+      "rows": 180,
+      "sha256": "182769dc39de7142052fc6d7ec542fce637f7e465f56edbec3246a6482a0f1a5"
+    }
+  },
+  "created_at_utc": "2026-08-10T01:16:22.860686+00:00",
+  "diagnosis": {
+    "a0_is_negative": true,
+    "classification": "weak-box IoU is low and temporal log-ratio correlation is near zero; the primary failures are foreground localization and scale dynamics.",
+    "foreground_localization_signal": "weak",
+    "next_single_hypothesis": "A1 bbox geometry-only supervision, holding rows, seed, model, optimizer, and budget fixed.",
+    "promotion_authorized": false,
+    "reported_log_ratio_pearson": 0.045629099011421204,
+    "sota_claim_authorized": false,
+    "temporal_scale_signal": "near_zero",
+    "weak_bbox_iou": 0.49978581070899963
+  },
+  "inputs": {
+    "data.parquet#4": {
+      "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\subsets\\garl_validation_common_roi_v1\\data.parquet",
+      "sha256": "97ab241da2995bfdad937f194864c79ede4f6baf2bfc2c952c9474917ac2cb25"
+    },
+    "event_lhr.yaml#9": {
+      "path": "E:\\Garl-TTC\\configs\\ablation\\event_lhr.yaml",
+      "sha256": "2620bd5d21faf485d7ef10f2ef851e72693074ea78c3ef42aec24620a78c357a"
+    },
+    "labels.parquet#5": {
+      "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\subsets\\garl_validation_common_roi_v1\\labels.parquet",
+      "sha256": "8580cc88bacaf62a8af560c865f6bb9763b9082af30a304924b79b6a3aa33b96"
+    },
+    "manifest.json#6": {
+      "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\subsets\\garl_validation_common_roi_v1\\manifest.json",
+      "sha256": "1e165344b8efcd7f6c1284d20562409b45d0bbeafc592397e6b20cf0c86bce42"
+    },
+    "metrics.json#3": {
+      "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\garl_official_event_only_same2048\\metrics.json",
+      "sha256": "838e2e755198ec9f8c48685ba6c6d883a06824e2d4f57a0a851ee21e9ecabd24"
+    },
+    "paper_event_only_lhr.pth#10": {
+      "path": "E:\\Garl-TTC\\checkpoints\\paper_event_only_lhr.pth",
+      "sha256": "fcaf9be47e2dafc6f73c6c3ebd102595ae06119dcae78aea698a42627b2b4fef"
+    },
+    "predictions.parquet#2": {
+      "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\garl_official_event_only_same2048\\predictions.parquet",
+      "sha256": "f40fa45d4d03a6ea34965111af77339de62db34fc960f0cb22da562d33983b53"
+    },
+    "summary.json#1": {
+      "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\causal_scale_eap_screen_v1_seed7\\summary.json",
+      "sha256": "04fa34e632391ca2313c1c47d1341e6515a8290663c32e558dd5825b7d67524e"
+    },
+    "train.parquet#8": {
+      "path": "E:\\GarlTTC_dataset\\annotations\\train.parquet",
+      "sha256": "64e9a81232643ecce1d2f66e906c7cff6ea1e9e6958f81588b95e112693b11ad"
+    },
+    "train.txt#7": {
+      "path": "E:\\Garl-TTC\\configs\\splits\\train.txt",
+      "sha256": "f2d3925f0fea9e6596788098838f8aef8ce512911eaa94a4ee2f22debe95e1a9"
+    },
+    "validation_predictions.csv#0": {
+      "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\causal_scale_eap_screen_v1_seed7\\validation_predictions.csv",
+      "sha256": "070d507b2d17533e61703e82070fa31b88bc5291ecf3c7798ddb36bbadf3881c"
+    }
+  },
+  "matched_training": {
+    "reason": "No official Garl run has yet been trained on the exact 2048/2048 sequence-disjoint screen rows.",
+    "required_protocol": {
+      "same_train_rows": 2048,
+      "same_train_sequences": 9,
+      "same_validation_rows": 2048,
+      "same_validation_sequences": 3,
+      "seed": 7,
+      "selection_source": "validation_only",
+      "validation_rows_used_for_training": false
+    },
+    "status": "pending"
+  },
+  "official_release": {
+    "checkpoint_sha256": "fcaf9be47e2dafc6f73c6c3ebd102595ae06119dcae78aea698a42627b2b4fef",
+    "config_sha256": "2620bd5d21faf485d7ef10f2ef851e72693074ea78c3ef42aec24620a78c357a"
+  },
+  "release_reference": {
+    "causal_scale_a0": {
+      "prediction_distribution": {
+        "abs_clip_s": 60.0,
+        "count": 2048,
+        "finite_count": 1796,
+        "infinite_count": 0,
+        "maximum_s": 59.999996185302734,
+        "mean_s": 0.8860326250703935,
+        "minimum_s": -59.999996185302734,
+        "nan_count": 252,
+        "saturation_count": 150,
+        "saturation_rate_pct": 8.351893095768375,
+        "std_s": 23.967465673333894
+      },
+      "ratio_diagnostics": {
+        "known_count": 1796,
+        "known_coverage": 0.876953125,
+        "log_ratio_mae": 0.029288236327676968,
+        "log_ratio_pearson": 0.05065599622336518,
+        "log_ratio_slope": 0.0422964010483525,
+        "ttc_sign_accuracy": 0.5334075723830735
+      },
+      "sequence_macro": {
+        "per_sequence": {
+          "DGqicHUGWb": {
+            "bins": {
+              "crucial": {
+                "count": 187,
+                "failure_count": 15,
+                "failure_rate_pct": 8.02139037433155,
+                "mid": 617.8479487931316,
+                "rte_pct": 1045.6569658269138
+              },
+              "large": {
+                "count": 187,
+                "failure_count": 20,
+                "failure_rate_pct": 10.695187165775401,
+                "mid": 215.87189661905597,
+                "rte_pct": 209.86439471907983
+              },
+              "negative": {
+                "count": 28,
+                "failure_count": 4,
+                "failure_rate_pct": 14.285714285714285,
+                "mid": 251.9119248189257,
+                "rte_pct": 419.8301010898637
+              },
+              "small": {
+                "count": 281,
+                "failure_count": 28,
+                "failure_rate_pct": 9.9644128113879,
+                "mid": 268.83767742346953,
+                "rte_pct": 410.09472857670625
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 67,
+            "failure_rate_pct": 9.809663250366032,
+            "num_samples": 683,
+            "paper_MiD_overall": 436.35365976740485,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 708.8263510673631
+          },
+          "pBqGOb2vYq": {
+            "bins": {
+              "crucial": {
+                "count": 178,
+                "failure_count": 16,
+                "failure_rate_pct": 8.98876404494382,
+                "mid": 467.92916698984294,
+                "rte_pct": 778.6971794221939
+              },
+              "large": {
+                "count": 161,
+                "failure_count": 12,
+                "failure_rate_pct": 7.453416149068323,
+                "mid": 156.34132899642228,
+                "rte_pct": 248.0296056987604
+              },
+              "negative": {
+                "count": 128,
+                "failure_count": 29,
+                "failure_rate_pct": 22.65625,
+                "mid": 208.80913891977426,
+                "rte_pct": 298.9047778900285
+              },
+              "small": {
+                "count": 216,
+                "failure_count": 30,
+                "failure_rate_pct": 13.88888888888889,
+                "mid": 257.81898689261556,
+                "rte_pct": 368.41656731760037
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 87,
+            "failure_rate_pct": 12.73792093704246,
+            "num_samples": 683,
+            "paper_MiD_overall": 347.82532635432574,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 554.566998265256
+          },
+          "qoohcdtLDH": {
+            "bins": {
+              "crucial": {
+                "count": 148,
+                "failure_count": 27,
+                "failure_rate_pct": 18.243243243243242,
+                "mid": 485.4110123329167,
+                "rte_pct": 967.1371567589756
+              },
+              "large": {
+                "count": 200,
+                "failure_count": 19,
+                "failure_rate_pct": 9.5,
+                "mid": 179.0020384663094,
+                "rte_pct": 267.2015900874649
+              },
+              "negative": {
+                "count": 179,
+                "failure_count": 34,
+                "failure_rate_pct": 18.994413407821227,
+                "mid": 204.1419344341603,
+                "rte_pct": 313.52671741882756
+              },
+              "small": {
+                "count": 155,
+                "failure_count": 18,
+                "failure_rate_pct": 11.612903225806452,
+                "mid": 271.242138094175,
+                "rte_pct": 375.00137259920695
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 98,
+            "failure_rate_pct": 14.369501466275661,
+            "num_samples": 682,
+            "paper_MiD_overall": 362.3925448847578,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 654.1418209098791
+          }
+        },
+        "protocol": "garl_signed_v1",
+        "sequence_macro_paper_MiD_overall": 382.1905103354961
+      },
+      "signed": {
+        "bins": {
+          "crucial": {
+            "count": 513,
+            "failure_count": 58,
+            "failure_rate_pct": 11.306042884990253,
+            "mid": 529.2507796418818,
+            "rte_pct": 929.7264552889245
+          },
+          "large": {
+            "count": 548,
+            "failure_count": 51,
+            "failure_rate_pct": 9.306569343065693,
+            "mid": 184.59725094215543,
+            "rte_pct": 242.18763173648446
+          },
+          "negative": {
+            "count": 335,
+            "failure_count": 67,
+            "failure_rate_pct": 20.0,
+            "mid": 210.1439232897952,
+            "rte_pct": 317.6450353096998
+          },
+          "small": {
+            "count": 652,
+            "failure_count": 76,
+            "failure_rate_pct": 11.65644171779141,
+            "mid": 265.8514528976845,
+            "rte_pct": 388.28929843241616
+          }
+        },
+        "delta_t_s": 0.1,
+        "failure_count": 252,
+        "failure_rate_pct": 12.3046875,
+        "num_samples": 2048,
+        "paper_MiD_overall": 383.8549431134413,
+        "protocol": "garl_signed_v1",
+        "weighted_RTE_pct": 637.3332838788054
+      }
+    },
+    "exposure_audit": {
+      "all_validation_sequences_exposed": true,
+      "exposed_public_train_rows": 4735,
+      "official_train_asset_sequence_count": 46,
+      "official_train_assets_sha256": "f2d3925f0fea9e6596788098838f8aef8ce512911eaa94a4ee2f22debe95e1a9",
+      "official_train_labels_sha256": "64e9a81232643ecce1d2f66e906c7cff6ea1e9e6958f81588b95e112693b11ad",
+      "public_train_parquet_row_count": 88744,
+      "public_train_parquet_sequence_count": 40,
+      "validation_sequences": [
+        "DGqicHUGWb",
+        "pBqGOb2vYq",
+        "qoohcdtLDH"
+      ],
+      "validation_sequences_in_official_train_assets": [
+        "DGqicHUGWb",
+        "pBqGOb2vYq",
+        "qoohcdtLDH"
+      ]
+    },
+    "label": "official release reference; unequal training budget and sequence exposure",
+    "official_garl_event_only": {
+      "prediction_distribution": {
+        "abs_clip_s": 60.0,
+        "count": 2048,
+        "finite_count": 2048,
+        "infinite_count": 0,
+        "maximum_s": 221.99750219104448,
+        "mean_s": 2.4919878226812653,
+        "minimum_s": -774.2004441154072,
+        "nan_count": 0,
+        "saturation_count": 17,
+        "saturation_rate_pct": 0.830078125,
+        "std_s": 23.152425765251706
+      },
+      "ratio_diagnostics": {
+        "known_count": 2048,
+        "known_coverage": 1.0,
+        "log_ratio_mae": 0.008205564185601623,
+        "log_ratio_pearson": 0.8366474391327074,
+        "log_ratio_slope": 0.6756212226987304,
+        "ttc_sign_accuracy": 0.9609375
+      },
+      "sequence_macro": {
+        "per_sequence": {
+          "DGqicHUGWb": {
+            "bins": {
+              "crucial": {
+                "count": 187,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 192.75197996611266,
+                "rte_pct": 68.29426261703972
+              },
+              "large": {
+                "count": 187,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 84.98884846608945,
+                "rte_pct": 90.1152279379429
+              },
+              "negative": {
+                "count": 28,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 88.41603472576253,
+                "rte_pct": 84.01574359774045
+              },
+              "small": {
+                "count": 281,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 58.83307670774007,
+                "rte_pct": 51.91966904658808
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 0,
+            "failure_rate_pct": 0.0,
+            "num_samples": 683,
+            "paper_MiD_overall": 131.36640131456355,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 67.13612917606463
+          },
+          "pBqGOb2vYq": {
+            "bins": {
+              "crucial": {
+                "count": 178,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 181.60597140268072,
+                "rte_pct": 225.80494628777345
+              },
+              "large": {
+                "count": 161,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 52.779085943354254,
+                "rte_pct": 51.96844777371572
+              },
+              "negative": {
+                "count": 128,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 45.9420557816068,
+                "rte_pct": 72.35149686848855
+              },
+              "small": {
+                "count": 216,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 58.754289337579785,
+                "rte_pct": 43.658558916402725
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 0,
+            "failure_rate_pct": 0.0,
+            "num_samples": 683,
+            "paper_MiD_overall": 118.30138667511041,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 138.43203528302797
+          },
+          "qoohcdtLDH": {
+            "bins": {
+              "crucial": {
+                "count": 148,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 158.8313027508519,
+                "rte_pct": 145.92708904272718
+              },
+              "large": {
+                "count": 200,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 44.28306693647176,
+                "rte_pct": 46.29102220407907
+              },
+              "negative": {
+                "count": 179,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 50.56097362480306,
+                "rte_pct": 61.8845177282378
+              },
+              "small": {
+                "count": 155,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 45.72210416651771,
+                "rte_pct": 29.637673882236825
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 0,
+            "failure_rate_pct": 0.0,
+            "num_samples": 682,
+            "paper_MiD_overall": 102.61668668150874,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 92.67240067926632
+          }
+        },
+        "protocol": "garl_signed_v1",
+        "sequence_macro_paper_MiD_overall": 117.42815822372756
+      },
+      "signed": {
+        "bins": {
+          "crucial": {
+            "count": 513,
+            "failure_count": 0,
+            "failure_rate_pct": 0.0,
+            "mid": 179.09847167732224,
+            "rte_pct": 145.3440871870053
+          },
+          "large": {
+            "count": 548,
+            "failure_count": 0,
+            "failure_rate_pct": 0.0,
+            "mid": 60.669636655717355,
+            "rte_pct": 62.91363532259008
+          },
+          "negative": {
+            "count": 335,
+            "failure_count": 0,
+            "failure_rate_pct": 0.0,
+            "mid": 51.96013848121424,
+            "rte_pct": 67.73361520375471
+          },
+          "small": {
+            "count": 652,
+            "failure_count": 0,
+            "failure_rate_pct": 0.0,
+            "mid": 55.69010306380742,
+            "rte_pct": 43.885759478191645
+          }
+        },
+        "delta_t_s": 0.1,
+        "failure_count": 0,
+        "failure_rate_pct": 0.0,
+        "num_samples": 2048,
+        "paper_MiD_overall": 117.5192442714965,
+        "protocol": "garl_signed_v1",
+        "weighted_RTE_pct": 98.90249648959463
+      }
+    },
+    "paired": {
+      "bootstrap_unit": "complete_sequence",
+      "causal_minus_release_sequence_bootstrap_paper_MiD": {
+        "candidate_better": false,
+        "confidence": 0.95,
+        "estimate": 264.4246879136798,
+        "iterations": 10000,
+        "lower": 228.8007775110342,
+        "sequence_count": 3,
+        "status": "paired_sequence_cluster_bootstrap",
+        "upper": 302.71700409584525
+      },
+      "causal_top_10pct_bucket_counts": {
+        "crucial": 140,
+        "large": 14,
+        "negative": 4,
+        "small": 22
+      },
+      "causal_top_10pct_count": 180,
+      "causal_top_10pct_mean_mid": 839.3032926396003,
+      "causal_top_10pct_sequence_counts": {
+        "DGqicHUGWb": 91,
+        "pBqGOb2vYq": 48,
+        "qoohcdtLDH": 41
+      },
+      "causal_win_count": 199,
+      "causal_win_rate": 0.11080178173719377,
+      "finite_paired_count": 1796,
+      "tie_count": 0,
+      "window_level_bootstrap_used": false
+    },
+    "release_report_artifact_type": "official_garl_validation_evaluation_v1",
+    "training_budget": {
+      "causal_scale_a0": {
+        "elapsed_seconds": 541.4937821000001,
+        "epochs_completed": 16,
+        "peak_vram_mb": 1557.73046875,
+        "selected_epoch": 11,
+        "train_rows": 2048,
+        "train_sequences": 9
+      },
+      "official_release": {
+        "checkpoint_size_bytes": 99018365,
+        "configured_epochs": 50,
+        "public_train_rows": 88744,
+        "validation_sequences_exposed": true
+      }
+    }
+  },
+  "scope": {
+    "codabench_opened": false,
+    "evttc_test_opened": false,
+    "exact_token_equality_verified": true,
+    "private_test_opened": false,
+    "public_validation_only": true,
+    "sample_count": 2048,
+    "sample_tokens_sha256": "c56257c219f8a441b6cb26da7c87944787c1f88ff66740775af4e4d733a394ef",
+    "sequence_count": 3,
+    "target_equality_verified": true
+  },
+  "status": "release_reference_complete_matched_training_pending"
+}

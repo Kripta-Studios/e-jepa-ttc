@@ -146,3 +146,53 @@ def test_main_returns_nonzero_when_validation_fails(tmp_path: Path) -> None:
         ]
     )
     assert exit_code != 0
+
+
+def test_validate_dataset_media_root_rejects_annotation_only_root(tmp_path: Path) -> None:
+    index = evaluator.ValidationIndex(
+        frame=pd.DataFrame(
+            {
+                "events_path": [
+                    "data/train/sequence-a/events.h5",
+                    "data/train/sequence-a/events.h5",
+                ]
+            }
+        ),
+        assets=("sequence-a",),
+    )
+    annotation_root = tmp_path / "annotations"
+    annotation_root.mkdir()
+
+    with pytest.raises(FileNotFoundError, match="eAP media root"):
+        evaluator.validate_dataset_media_root(index, annotation_root)
+
+
+def test_validate_dataset_media_root_accepts_resolved_events(tmp_path: Path) -> None:
+    relative = Path("data/train/sequence-a/events.h5")
+    media = tmp_path / relative
+    media.parent.mkdir(parents=True)
+    media.write_bytes(b"fixture")
+    index = evaluator.ValidationIndex(
+        frame=pd.DataFrame({"events_path": [relative.as_posix()]}),
+        assets=("sequence-a",),
+    )
+
+    evaluator.validate_dataset_media_root(index, tmp_path)
+
+
+def test_evaluate_rejects_empty_inference_with_actionable_error(tmp_path: Path) -> None:
+    release, config, checkpoint = _release(tmp_path)
+    data, labels, assets = _split(tmp_path)
+
+    with pytest.raises(RuntimeError, match="produced no rows"):
+        evaluator.evaluate(
+            release_root=release,
+            config_path=config,
+            checkpoint=checkpoint,
+            dataset_root=tmp_path,
+            data_parquet=data,
+            labels_parquet=labels,
+            asset_list=assets,
+            output_dir=tmp_path / "output",
+            inference_runner=lambda **_: pd.DataFrame(),
+        )

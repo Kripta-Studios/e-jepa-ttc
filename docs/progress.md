@@ -1,5 +1,13 @@
 # Progreso
 
+## 2026-08-10 — A0 y referencia release exact-2048
+
+- terminado A0 seed 7 como resultado negativo;
+- construido subset exacto Garl de 2.048 tokens;
+- evaluada referencia event-only release y auditada exposición de secuencias;
+- generado comparador firmado con bootstrap por secuencia y cola de outliers;
+- preregistrado A1 geometry-only como siguiente hipótesis aislada.
+
 ## 2026-08-10 — Transporte temporal Causal Scale v7
 
 - implementado transporte físico del inverse TTC anterior al timestamp actual;

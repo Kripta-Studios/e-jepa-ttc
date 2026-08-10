@@ -171,6 +171,26 @@ def load_validation_index(
     return ValidationIndex(frame=merged, assets=assets)
 
 
+def validate_dataset_media_root(index: ValidationIndex, dataset_root: Path) -> None:
+    """Fail before model setup when public event media cannot be resolved."""
+
+    if not dataset_root.is_dir():
+        raise FileNotFoundError(f"Dataset media root not found: {dataset_root}")
+    _require_columns(index.frame, {"events_path"}, Path("<validation data parquet>"))
+    relative_paths = tuple(
+        dict.fromkeys(str(value) for value in index.frame["events_path"] if str(value))
+    )
+    missing = [value for value in relative_paths if not (dataset_root / value).is_file()]
+    if missing:
+        examples = missing[:3]
+        raise FileNotFoundError(
+            "Dataset media root does not resolve validation events_path values: "
+            f"missing={len(missing)}/{len(relative_paths)}, examples={examples}. "
+            "Pass the eAP media root (for the audited local layout: E:\\eAP_dataset), "
+            "not the Garl annotation/parquet root."
+        )
+
+
 def _load_official_api(release_root: Path) -> OfficialAPI:
     if not release_root.is_dir():
         raise FileNotFoundError(f"Official Garl-TTC release root not found: {release_root}")
@@ -315,6 +335,8 @@ def evaluate(
         if not source.is_file():
             raise FileNotFoundError(f"Official release artifact not found: {source}")
     index = load_validation_index(data_parquet, labels_parquet, asset_list)
+    if inference_runner is None:
+        validate_dataset_media_root(index, dataset_root)
     tracked_release_files = {
         "config": config_path,
         "checkpoint": checkpoint,
@@ -340,6 +362,11 @@ def evaluate(
         batch_size=batch_size,
         num_workers=num_workers,
     )
+    if predictions.empty:
+        raise RuntimeError(
+            "Official inference produced no rows. Verify that --dataset-root resolves "
+            "the events_path entries in the validation data parquet."
+        )
     _require_columns(
         predictions,
         {"sample_token", "target_from_loader_ttc_s", "predicted_ttc_s"},
@@ -437,7 +464,12 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--release-root", type=Path, default=Path(r"E:\Garl-TTC"))
     parser.add_argument("--config", type=Path)
     parser.add_argument("--checkpoint", type=Path)
-    parser.add_argument("--dataset-root", type=Path, required=True)
+    parser.add_argument(
+        "--dataset-root",
+        type=Path,
+        required=True,
+        help="Root resolving events_path media (normally E:\\eAP_dataset), not parquet root.",
+    )
     parser.add_argument("--data-parquet", type=Path, required=True)
     parser.add_argument("--labels-parquet", type=Path, required=True)
     parser.add_argument("--asset-list", type=Path, required=True)

@@ -1,5 +1,24 @@
 # Causal Scale eAP public validation screen v1
 
+## Resultado A0 seed 7
+
+| Métrica validation pública | Valor |
+|---|---:|
+| MiD global | 383.8549432 |
+| MiD macro por secuencia | 382.1905104 |
+| failure rate | 12.3046875% |
+| known coverage | 0.876953125 |
+| log-ratio Pearson | 0.0456290990 |
+| log-ratio MAE | 0.0289358757 |
+| weak-box IoU | 0.4997858107 |
+| peak VRAM | 1557.73 MiB |
+| tiempo total | 541.49 s |
+
+La cola finita top 10% contiene 180 filas: 140 `crucial`, 22 `small`, 14 `large`
+y 4 `negative`; DGq aporta 91, pBq 48 y qooh 41. La señal de escala es casi nula
+y la localización débil. A0 no se promueve; A1 geometry-only es la siguiente
+diferencia única.
+
 Este screen adapta el mejor brazo sintético V8 a datos públicos eAP/Garl-TTC sin
 abrir test privado, CodaBench ni EvTTC test. Es evidencia exploratoria de una seed y
 no autoriza un claim SOTA.

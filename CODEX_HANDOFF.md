@@ -2,6 +2,23 @@
 
 Fecha de corte: 2026-08-10 (Europe/Madrid)
 
+## Resultado activo: A0 negativo y referencia release cerrada
+
+A0 seed 7 terminó en 16 épocas, seleccionó época 11 y no se promueve: MiD global
+`383.8549432`, MiD macro `382.1905104`, failure `12.3046875%`, weak-box IoU
+`0.4997858107` y Pearson log-ratio `0.0456290990`. La referencia release sobre los
+mismos 2.048 tokens obtuvo MiD macro `117.4281582` y cero failures, pero sus tres
+secuencias validation aparecen en train oficial y tuvo 88.744 filas/50 épocas.
+Etiquetar la tabla: **official release reference; unequal training budget and
+sequence exposure**.
+
+Comparador firmado:
+`artifacts/metrics/causal_scale_eap_garl_event_only_comparison_v1.json`, identidad
+`9f2bebde05729b7ace6fdbc0a990e6b75bf180ec87220924219ed7095105281c`.
+La diferencia A0 menos release es `+264.4246879` MiD, IC95% por secuencia
+`[228.8007775, 302.7170041]`. Matched training continúa pendiente. La siguiente
+hipótesis única es A1 geometry-only con filas, seed, modelo y presupuesto fijos.
+
 Rama: `scientific-recovery-v3-hardening`
 
 Remote publicado antes de este handoff: `origin/scientific-recovery-v3-hardening`
@@ -319,7 +336,7 @@ uv run python scripts/evaluate_official_garl_validation.py `
   --release-root 'E:\Garl-TTC' `
   --config 'E:\Garl-TTC\configs\ablation\event_lhr.yaml' `
   --checkpoint 'E:\Garl-TTC\checkpoints\paper_event_only_lhr.pth' `
-  --dataset-root 'E:\GarlTTC_dataset' `
+  --dataset-root 'E:\eAP_dataset' `
   --data-parquet artifacts/subsets/garl_validation_common_roi_v1/data.parquet `
   --labels-parquet artifacts/subsets/garl_validation_common_roi_v1/labels.parquet `
   --asset-list artifacts/subsets/garl_validation_common_roi_v1/assets.txt `

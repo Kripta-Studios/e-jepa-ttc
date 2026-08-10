@@ -1,5 +1,16 @@
 # Estado del repositorio
 
+## 2026-08-10 — screen causal-scale A0: negativo
+
+- A0 seed 7 terminó: época seleccionada 11/16, MiD macro `382.1905104`, failure
+  `12.3046875%`, weak-box IoU `0.4997858107`, Pearson log-ratio `0.0456290990`.
+- Referencia release sobre los mismos 2.048 tokens: MiD macro `117.4281582`, cero
+  failures. Es una referencia desigual y expuesta, no un baseline matched.
+- Las tres secuencias validation estaban en train oficial; 4.735 de las 88.744
+  filas públicas pertenecen a ellas.
+- Comparador firmado: `9f2bebde05729b7ace6fdbc0a990e6b75bf180ec87220924219ed7095105281c`.
+- No hay promoción ni claim SOTA. Siguiente hipótesis única: A1 geometry-only.
+
 ## Addendum eAP causal-scale screen v1 (2026-08-10)
 
 V8 CVaR cerró como fallo sintético honesto (`.94621 < .95`) sin abrir test
