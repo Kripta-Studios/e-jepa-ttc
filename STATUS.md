@@ -82,8 +82,9 @@
   `[104.30,177.62]`, win rate finito `37.5%`.
 - Descomposición `5a9c4293…75141da`: ratio analítico subescalado (slope `.0848`),
   residual no lo recupera; 433 unknown por ratio bajo y cero por soporte.
-- Siguiente hipótesis propuesta, aún no preregistrada: A1-DF-R con una única
-  activación de pair-ratio directo; sin teachers, JEPA ni cambios de unknown/clip.
+- A1-DF-R preregistrado `b3f9eb9e…de43f67`: único cambio pair-ratio `0 -> 5`,
+  target numérico bbox training-only, sin máscara, apagado durante warm-up. Peso
+  normalizado solo con train; sin teachers, JEPA ni cambios de unknown/clip.
 
 ## Addendum eAP causal-scale screen v1 (2026-08-10)
 

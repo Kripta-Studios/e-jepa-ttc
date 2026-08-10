@@ -177,6 +177,66 @@ def test_a1_geometry_loss_is_dense_mask_free_and_reaches_foreground() -> None:
     )
 
 
+def test_a1_pair_ratio_uses_numeric_geometry_without_dense_masks() -> None:
+    model = _model().train()
+    batch = _batch()
+    targets = training._targets(
+        batch,
+        mask_t0_as_proxy=True,
+        foreground_supervision="bbox_geometry",
+    )
+    delta = batch.delta_t_s[:, None].expand(-1, 2)
+    output = model(batch.events, delta)
+    result = causal_scale_ttc_loss(
+        output,
+        target_ttc_seconds=batch.target_ttc_s,
+        delta_t_s=delta,
+        risk_thresholds_s=model.config.risk_thresholds_s,
+        target_geometry=targets.geometry,
+        config=CausalScaleTTCLossConfig(
+            log_ratio_nll_weight=0.0,
+            log_ratio_huber_weight=0.0,
+            log_ratio_tail_weight=0.0,
+            foreground_bce_weight=0.0,
+            foreground_dice_weight=0.0,
+            foreground_extent_weight=0.0,
+            foreground_width_weight=0.0,
+            foreground_center_weight=0.0,
+            foreground_pair_ratio_weight=1.0,
+            risk_weight=0.0,
+            auxiliary_inverse_ttc_weight=0.0,
+            residual_regularization_weight=0.0,
+            temporal_consistency_weight=0.0,
+        ),
+    )
+
+    assert result.counts["foreground_pair_ratio"] == 2
+    assert result.components["foreground_pair_ratio"].item() > 0.0
+    assert result.total.item() == result.components["foreground_pair_ratio"].item()
+    result.total.backward()
+    gradients = [
+        parameter.grad
+        for parameter in model.encoder.foreground.parameters()
+        if parameter.requires_grad
+    ]
+    assert any(
+        gradient is not None and bool(torch.isfinite(gradient).all())
+        for gradient in gradients
+    )
+
+
+def test_pair_ratio_is_disabled_during_geometry_warmup() -> None:
+    configured = CausalScaleTTCLossConfig(
+        foreground_pair_ratio_weight=5.0,
+        log_ratio_nll_weight=1.0,
+    )
+
+    warmup = training._foreground_only_loss_config(configured)
+
+    assert warmup.foreground_pair_ratio_weight == 0.0
+    assert configured.foreground_pair_ratio_weight == 5.0
+
+
 def test_geometry_diagnostics_are_global_and_macro_sequence_without_nan_filling() -> None:
     target = np.asarray([0.0, 1.0, 0.0, 2.0])
     prediction = np.asarray([0.0, 2.0, 0.0, 4.0])

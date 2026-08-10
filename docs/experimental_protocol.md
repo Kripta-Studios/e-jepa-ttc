@@ -69,6 +69,11 @@ promueve. Como la señal temporal aumenta pero queda subescalada, el siguiente
 cambio permitido es activar una única loss pair-ratio directa sobre el mismo
 A1-DF. El peso debe preregistrarse sin sweep; unknown/clip permanecen inmutables.
 
+El preregistro A1-DF-R fija peso `5.0` usando únicamente magnitudes de train. La
+loss pair-ratio geometry-only se desactiva durante warm-up y después supervisa la
+altura analítica, no el residual ni una salida TTC directa. Todos los demás campos
+de data, training, model y loss son idénticos a A1-DF.
+
 El diagnóstico de fallo no selecciona hiperparámetros ni abre test. Descompone el
 checkpoint ya seleccionado sobre la misma validation pública en bbox-ratio,
 extensión analítica, residual, ratio combinado y ratio efectivo. A1 queda

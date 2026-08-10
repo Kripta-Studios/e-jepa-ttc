@@ -122,6 +122,14 @@ profunda recupera señal, pero el cambio queda muy subescalado. El siguiente con
 mínimo justificable es A1-DF-R: mismo A1-DF y una única supervisión pair-ratio
 directa, preregistrada antes de ejecutarse. Teachers/JEPA siguen aplazados.
 
+A1-DF-R queda congelado en
+`configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a1_deep_features_ratio_v1.yaml`,
+SHA256 `b3f9eb9eb05b028c57e578f0962701647dcc29b8708f7b5a0a8ac9870de43f67`.
+Único cambio experimental: pair-ratio `0 -> 5`. El target deriva de altura bbox
+numérica training-only, sin rasterización; warm-up lo mantiene en cero. El peso se
+fijó con 2.048 train: contribución `.09044`, comparable a width `.08547`, sin usar
+validation ni sweep.
+
 El subset para matched training está materializado en
 `artifacts/subsets/garl_event_only_matched_screen_v1`, identidad firmada
 `dd08ecc983f30e38a939204f9a2df09e4966bbe73bd764c972f7726e5d4e34d3`.

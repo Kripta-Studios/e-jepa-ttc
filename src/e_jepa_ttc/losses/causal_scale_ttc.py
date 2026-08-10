@@ -192,7 +192,22 @@ def _foreground_pair_ratio_loss(
     mask_valid: torch.Tensor | None,
     *,
     beta: float,
+    target_geometry: BoxGeometryTargets | None = None,
 ) -> tuple[torch.Tensor, int]:
+    if target_geometry is not None:
+        endpoint_valid = target_geometry.valid.bool()
+        pair_valid = endpoint_valid[:, :-1] & endpoint_valid[:, 1:]
+        count = int(pair_valid.sum().item())
+        if count == 0:
+            return _zero(output.analytic_log_height_ratio), 0
+        target_height = target_geometry.height_normalized.clamp_min(1.0e-6)
+        target_ratio = target_height[:, 1:].log() - target_height[:, :-1].log()
+        loss = functional.smooth_l1_loss(
+            output.analytic_log_height_ratio[pair_valid],
+            target_ratio[pair_valid],
+            beta=beta,
+        )
+        return loss, count
     if target_masks is None or mask_valid is None:
         return _zero(output.analytic_log_height_ratio), 0
     nonempty = target_masks.flatten(-3).any(dim=-1)
@@ -331,6 +346,7 @@ def causal_scale_ttc_loss(
         target_masks,
         mask_valid,
         beta=cfg.smooth_l1_beta,
+        target_geometry=target_geometry,
     )
     residual_regularization = output.residual_log_height_ratio.square().mean()
     pair_known = output.diagnostics["pair_known"].bool()

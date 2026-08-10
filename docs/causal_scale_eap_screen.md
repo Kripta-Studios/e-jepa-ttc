@@ -334,6 +334,12 @@ residual aporta solo `r=.0622`, slope `.0038`. La inversión no crea esta falta 
 amplitud, pero convierte ratios bajo `.002` en unknown. El siguiente experimento
 debe probar una sola supervisión pair-ratio directa sobre A1-DF, sin tocar el gate.
 
+A1-DF-R implementa ese control. El pair target usa directamente
+`log(h_bbox,t2/h_bbox,t1)` desde `BoxGeometryTargets`; no crea weak-box ni cambia
+`forward`. Peso `5.0`, elegido solo por escala de train: raw `.01809`, contribución
+`.09044`, comparable a width `.08547`. Durante las tres épocas de warm-up vale
+cero. Experiment SHA256 `b3f9eb9eb05b028c57e578f0962701647dcc29b8708f7b5a0a8ac9870de43f67`.
+
 Summary `56a459b718724e701923ec9e98f758166cfa56a649c8bcb7c6a8bbddee78f2c8`;
 comparador `003c38677f26ef25bd2a0455813d5783ea66dffb233b5058ba3c13c58e0a1d0c`;
 descomposición `5a9c42934f3335ddbe4fe679f3e53f4187926fa46749321fb27ac1e3775141da`.

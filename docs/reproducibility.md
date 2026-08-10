@@ -240,6 +240,21 @@ uv run python scripts/analyze_causal_scale_eap_failure.py `
 
 Identidad `5a9c42934f3335ddbe4fe679f3e53f4187926fa46749321fb27ac1e3775141da`.
 
+Preregistro y ejecución A1-DF-R:
+
+```powershell
+uv run python scripts/train_causal_scale_eap_screen.py `
+  --config configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a1_deep_features_ratio_v1.yaml `
+  --output-dir artifacts/runs/causal_scale_eap_screen_a1_deep_features_ratio_v1_seed7 `
+  --device cuda
+```
+
+Si existe `state/last.pt` compatible, añadir `--resume`. Experiment SHA256
+`b3f9eb9eb05b028c57e578f0962701647dcc29b8708f7b5a0a8ac9870de43f67`;
+model SHA256 `265dbfd57e68d7a6aa385fbf31dc0ad41154b17afbd1d9454bbd8ddd80c6663f`.
+El peso `5.0` produce contribución `.0904432` en 2.048 train rows, comparable a
+`.0854723` de width; validation no se usó para elegirlo y no se permite sweep.
+
 Regeneración del diagnóstico:
 
 ```powershell

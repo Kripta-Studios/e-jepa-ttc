@@ -192,6 +192,24 @@ def _loss(
     return result.total, result.components, output
 
 
+def _foreground_only_loss_config(
+    loss_config: CausalScaleTTCLossConfig,
+) -> CausalScaleTTCLossConfig:
+    """Disable temporal/TTC objectives during the endpoint-geometry warm-up."""
+
+    return replace(
+        loss_config,
+        log_ratio_nll_weight=0.0,
+        log_ratio_huber_weight=0.0,
+        log_ratio_tail_weight=0.0,
+        risk_weight=0.0,
+        auxiliary_inverse_ttc_weight=0.0,
+        residual_regularization_weight=0.0,
+        temporal_consistency_weight=0.0,
+        foreground_pair_ratio_weight=0.0,
+    )
+
+
 def _selection(metrics: dict[str, Any]) -> dict[str, float]:
     macro = float(metrics["sequence_macro"]["sequence_macro_paper_MiD_overall"])
     failure = float(metrics["signed"]["failure_rate_pct"])
@@ -756,16 +774,7 @@ def train_real_causal_scale(
         T_max=training_config.epochs,
         eta_min=training_config.minimum_learning_rate,
     )
-    foreground_only = replace(
-        loss_config,
-        log_ratio_nll_weight=0.0,
-        log_ratio_huber_weight=0.0,
-        log_ratio_tail_weight=0.0,
-        risk_weight=0.0,
-        auxiliary_inverse_ttc_weight=0.0,
-        residual_regularization_weight=0.0,
-        temporal_consistency_weight=0.0,
-    )
+    foreground_only = _foreground_only_loss_config(loss_config)
     best_state: dict[str, torch.Tensor] | None = None
     best_selection: dict[str, float] | None = None
     best_validation: dict[str, Any] | None = None

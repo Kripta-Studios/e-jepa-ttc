@@ -1,0 +1,100 @@
+experiment:
+  name: e_jepa_garl_event_causal_scale_eap_screen_a1_deep_features_ratio_v1
+  protocol_version: causal_scale_eap_a1_bbox_geometry_deep_features_ratio_v1
+  evidence_scope: public_eap_garl_train_validation_only
+  parent_arm: A1_deep_features_seed7
+  single_scientific_difference: foreground_pair_ratio_weight_zero_to_five
+model_config: configs/model/e_jepa_causal_scale_event_v8_t015_resize_conv.yaml
+data:
+  cache_manifest: artifacts/cache/garl_object_event_common_roi_screen_v4/manifest.json
+  cache_manifest_sha256: bba9ff9b143bfd57760bd61d2b6f664202581b5dee54444f44c625975557eb72
+  cache_artifact_sha256: 36c12d75c91a243f4d712831cebcd3e82f896a76196b2a65b039e680f1fac309
+  train_sequence_ids:
+    - 2cyv0Oedzg
+    - 5ilM1PX2vz
+    - 6h5yRW2LGc
+    - OBneIVg4Cw
+    - OYgB6RGWcq
+    - WbCh1DRerJ
+    - mHGFBekt7X
+    - qGsgzl4Q8B
+    - t79dBxj1WS
+  validation_sequence_ids: [DGqicHUGWb, pBqGOb2vYq, qoohcdtLDH]
+  opened_splits: [train, validation]
+  official_test_opened: false
+  codabench_opened: false
+  evttc_test_opened: false
+training:
+  seed: 7
+  epochs: 18
+  minimum_epochs: 8
+  early_stopping_patience: 5
+  foreground_warmup_epochs: 3
+  batch_size: 32
+  gradient_accumulation_steps: 1
+  learning_rate: 0.0003
+  minimum_learning_rate: 0.00003
+  weight_decay: 0.0001
+  grad_clip_norm: 1.0
+  num_workers: 0
+  precision: bf16
+  maximum_runtime_hours: 6.0
+  mask_t0_as_proxy: true
+  foreground_supervision: bbox_geometry
+loss:
+  log_ratio_nll_weight: 1.0
+  log_ratio_huber_weight: 0.0
+  log_ratio_tail_weight: 2.0
+  log_ratio_tail_fraction: 0.10
+  foreground_bce_weight: 0.0
+  foreground_dice_weight: 0.0
+  foreground_extent_weight: 1.25
+  foreground_width_weight: 1.25
+  foreground_center_weight: 2.5
+  foreground_pair_ratio_weight: 5.0
+  risk_weight: 0.1
+  auxiliary_inverse_ttc_weight: 0.05
+  residual_regularization_weight: 0.1
+  temporal_consistency_weight: 0.0
+  smooth_l1_beta: 0.02
+  supervise_pair_ratio_before_temporal_blend: true
+decision_contract:
+  checkpoint_selection: validation_sequence_macro_MiD_then_failure_rate
+  require_finite_metrics_for_all_validation_sequences: true
+  primary_baseline: Garl_event_only_matched_seed7_same_2048
+  baseline_sequence_macro_MiD: 203.6341709373319
+  baseline_failure_rate_pct: 0.0
+  parent_a1_deep_features_sequence_macro_MiD: 350.3020203514902
+  parent_a1_deep_features_failure_rate_pct: 21.09375
+  parent_experiment_sha256: dddfb393bb0ce2c3245335cc459948c0830a435ffeaf5a76e710679a8180b284
+  model_config_sha256: 265dbfd57e68d7a6aa385fbf31dc0ad41154b17afbd1d9454bbd8ddd80c6663f
+  expected_parameter_count: 355118
+  experiment_must_equal_parent_except_identity_and_pair_ratio_weight: true
+  pair_ratio_target_source: numeric_bbox_height_training_only
+  pair_ratio_target_uses_dense_mask: false
+  pair_ratio_weight: 5.0
+  pair_ratio_disabled_during_three_epoch_geometry_warmup: true
+  train_only_weight_normalization:
+    source_checkpoint_sha256: 4b25d97e20161d909910b163a8d1ccb30655476f729d17a7d37ac5e0166e6f48
+    rows: 2048
+    validation_used_to_choose_weight: false
+    raw_pair_ratio_loss: 0.018088648677803576
+    weighted_pair_ratio_contribution: 0.09044324338901788
+    raw_width_loss: 0.06837782659567893
+    weighted_width_contribution: 0.08547228324459866
+    rationale: pair_ratio_contribution_matches_one_existing_geometry_component
+    hyperparameter_sweep_permitted: false
+  bbox_is_training_supervision_only: true
+  bbox_is_never_forward_input: true
+  dense_weak_box_target_used: false
+  no_rgb_teacher: true
+  no_sam_teacher: true
+  no_dino_teacher: true
+  no_jepa_objective: true
+  r_iso_is_diagnostic_only: true
+  diagnostic_reporting: global_and_macro_by_sequence
+  no_posthoc_diagnostic_threshold_is_a_promotion_gate: true
+  scaling_rule: competitive_with_garl_or_strong_distributed_causal_signal_and_learning_trend
+  maximum_runtime_hours: 6.0
+  public_validation_does_not_authorize_sota_claim: true
+  private_test_remains_closed: true

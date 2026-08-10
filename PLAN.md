@@ -73,7 +73,8 @@ A1-DF terminó como resultado mixto y no promovido: mejora la señal temporal, p
 no MiD/failures. El ratio analítico sigue subescalado (slope `.0848`) y el residual
 no lo corrige. La siguiente hipótesis secuencial es A1-DF-R: conservar exactamente
 modelo/datos/schedule y activar solo la loss pair-ratio sobre el cambio foreground.
-Se congelará un peso único antes de ejecutar; no se hará sweep. Si no estabiliza
+Se congeló peso `5.0` por escala train-only: `.09044` de contribución, frente a
+`.08547` de width. No se hará sweep. Si no estabiliza
 ratio y failures, pasar a representación event-native preentrenada antes de JEPA.
 
 No se cambian `unknown`, support, clip, residual, consenso, optimizer, seed, filas

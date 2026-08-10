@@ -94,6 +94,10 @@ A1-DF terminó con MiD macro `350.3020`, failure `21.0938%` y Pearson log-ratio
 de decisión y queda lejos de Garl matched. No es un checkpoint promovido ni apto
 para inferencia fiable: el `21.09%` de validation queda unknown.
 
+El sucesor A1-DF-R no cambia arquitectura ni inputs. Añade una loss training-only
+sobre el cambio de altura bbox numérico después del warm-up; aún no tiene métricas
+ni está promovido.
+
 ## Estado
 
 El modelo histórico activo era un candidato event-only high-resolution, no un modelo SOTA ni
