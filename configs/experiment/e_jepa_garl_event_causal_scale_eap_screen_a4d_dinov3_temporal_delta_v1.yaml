@@ -50,8 +50,8 @@ training:
   representation_teacher_cache_artifact_sha256: "f175980d05c1d02a9aa743a74c78c0d5af9a826b2791760df5fbc00c548bd2a2"
   representation_distillation_weight: 4.0
   # Preregistered calibration must replace 0.0 before training; runner fails closed.
-  representation_temporal_delta_weight: 0.0
-  representation_temporal_delta_calibration_artifact_sha256: "REPLACE_AFTER_CALIBRATION"
+  representation_temporal_delta_weight: 3.1770514375447054
+  representation_temporal_delta_calibration_artifact_sha256: "cd666f2ff450471aff5c28aae56f28a7d96dcc514de54ac90e4a90f295e4c579"
 loss:
   log_ratio_nll_weight: 1.0
   log_ratio_huber_weight: 0.0
@@ -108,9 +108,8 @@ decision_contract:
       seed: 7
       clamp_range: [0.25, 4.0]
       artifact: artifacts/metrics/a4d_dinov3_temporal_delta_weight_calibration_v1.json
-      file_sha256: "REPLACE_AFTER_CALIBRATION"
-      artifact_sha256: "REPLACE_AFTER_CALIBRATION"
-
+      file_sha256: "3747d8eaa8e0f6cecab06a2cb86d4d85662e8c37a3840f0617c014095128699f"
+      artifact_sha256: "cd666f2ff450471aff5c28aae56f28a7d96dcc514de54ac90e4a90f295e4c579"
   # A4D mechanistic gate — frozen now, before opening A4D validation
   # A4 selected epoch 17 parent values are copied verbatim from the signed run.
   temporal_delta_gate:
