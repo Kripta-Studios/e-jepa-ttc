@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """Materialize DINOv3 relational teacher cache for A4 (train-only).
 
-Processes all 2048 train samples, computing per-object DINO features
+Processes the requested train rows, computing per-object DINO features
 and six local cosine relation maps.  Writes sharded NPZ files and a
 signed manifest.
 
@@ -313,12 +313,15 @@ def run(
     model_path: str,
     output_dir: Path,
     device_name: str,
+    expected_rows: int = 2048,
 ) -> dict[str, Any]:
-    """Materialize the full DINO relational teacher cache."""
+    """Materialize the DINO relational teacher cache for an exact train size."""
 
     import pandas as pd
     from transformers import AutoImageProcessor, AutoModel  # type: ignore[import-untyped]
 
+    if expected_rows <= 0:
+        raise ValueError("FATAL: expected_rows must be positive")
     if train_parquet.name.lower() != "train.parquet":
         raise ValueError("FATAL: A4 teacher may only read data/train.parquet")
     if any(part.lower() == "test" for part in train_parquet.parts):
@@ -345,8 +348,11 @@ def run(
     total_rows = len(train_dataset)
     print(f"[materialize] Train dataset: {total_rows} rows")
 
-    if total_rows != 2048:
-        raise ValueError(f"FATAL: Train dataset has {total_rows} rows, expected exactly 2048")
+    if total_rows != expected_rows:
+        raise ValueError(
+            f"FATAL: Train dataset has {total_rows} rows, "
+            f"expected exactly {expected_rows}"
+        )
 
     # Hard-fail on validation/test access
     validation_sequences = {"DGqicHUGWb", "pBqGOb2vYq", "qoohcdtLDH"}
@@ -571,13 +577,17 @@ def run(
     observed_sequences = {
         str(rgb_lookup[key]["sequence_id"]) for key in seen_pairs
     }
-    if len(seen_pairs) != 2048:
+    if len(seen_pairs) != expected_rows:
         raise ValueError(
-            "FATAL: Expected exactly 2048 unique (token, track_id) pairs, "
-            f"got {len(seen_pairs)}"
+            f"FATAL: Expected exactly {expected_rows} unique "
+            f"(token, track_id) pairs, got {len(seen_pairs)}"
         )
-    if len(seen_pairs) * 2 != 4096:
-        raise ValueError(f"FATAL: Expected exactly 4096 endpoints, got {len(seen_pairs) * 2}")
+    expected_endpoints = expected_rows * 2
+    if len(seen_pairs) * 2 != expected_endpoints:
+        raise ValueError(
+            f"FATAL: Expected exactly {expected_endpoints} endpoints, "
+            f"got {len(seen_pairs) * 2}"
+        )
     if observed_sequences != expected_train_sequences:
         raise ValueError("FATAL: Observed sequences mismatch with expected train sequences")
 
@@ -588,6 +598,7 @@ def run(
         "status": "passed",
         "scope": {
             "public_train_only": True,
+            "expected_row_count": expected_rows,
             "validation_or_test_opened": False,
             "ttc_labels_read": False,
             "row_count": total_rows,
@@ -684,6 +695,7 @@ def main() -> int:
     )
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--device", default="auto")
+    parser.add_argument("--expected-rows", type=int, default=2048)
     args = parser.parse_args()
 
     device = args.device
@@ -697,7 +709,8 @@ def main() -> int:
             args.eap_root.resolve(),
             args.model_path,
             args.output_dir.resolve(),
-            device
+            device,
+            args.expected_rows,
         )
     except Exception as e:
         print(f"\n[materialize] FAILED: {type(e).__name__}: {e}", file=sys.stderr)

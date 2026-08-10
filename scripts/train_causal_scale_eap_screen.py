@@ -188,8 +188,48 @@ def run(
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     if manifest.get("artifact_sha256") != data.get("cache_artifact_sha256"):
         raise ValueError("cache artifact identity differs from the frozen protocol")
-    if manifest.get("split_counts") != {"train": 2048, "validation": 2048}:
-        raise ValueError("frozen screen requires exactly 2048 train and validation rows")
+
+    expected_train_rows = int(data.get("expected_train_rows", 2048))
+    expected_validation_rows = int(data.get("expected_validation_rows", 2048))
+    if min(expected_train_rows, expected_validation_rows) <= 0:
+        raise ValueError("expected train/validation row counts must be positive")
+    split_counts = manifest.get("split_counts")
+    if not isinstance(split_counts, dict):
+        raise ValueError("cache manifest split_counts must be a mapping")
+    if int(split_counts.get("train", -1)) != expected_train_rows:
+        raise ValueError(
+            "train cache row count differs from frozen protocol: "
+            f"{split_counts.get('train')} != {expected_train_rows}"
+        )
+
+    validation_manifest_path = manifest_path
+    validation_manifest_hash = actual_manifest_hash
+    validation_manifest = manifest
+    if "validation_cache_manifest" in data:
+        validation_manifest_path = _resolve(data["validation_cache_manifest"])
+        validation_manifest_hash = _sha256(validation_manifest_path)
+        if validation_manifest_hash != str(data["validation_cache_manifest_sha256"]):
+            raise ValueError(
+                "validation cache manifest hash differs from the frozen protocol"
+            )
+        validation_manifest = json.loads(
+            validation_manifest_path.read_text(encoding="utf-8")
+        )
+        if validation_manifest.get("artifact_sha256") != data.get(
+            "validation_cache_artifact_sha256"
+        ):
+            raise ValueError(
+                "validation cache artifact identity differs from the frozen protocol"
+            )
+    validation_split_counts = validation_manifest.get("split_counts")
+    if not isinstance(validation_split_counts, dict):
+        raise ValueError("validation cache split_counts must be a mapping")
+    if int(validation_split_counts.get("validation", -1)) != expected_validation_rows:
+        raise ValueError(
+            "validation cache row count differs from frozen protocol: "
+            f"{validation_split_counts.get('validation')} != "
+            f"{expected_validation_rows}"
+        )
     train_sequences = {str(value) for value in data.get("train_sequence_ids", [])}
     validation_sequences = {
         str(value) for value in data.get("validation_sequence_ids", [])
@@ -235,7 +275,7 @@ def run(
         str(manifest_path), splits=("train",)
     )
     validation_dataset = GarlTTCObjectEventV4Dataset(
-        str(manifest_path), splits=("validation",)
+        str(validation_manifest_path), splits=("validation",)
     )
     teacher_metadata: dict[str, Any] | None = None
     if training_config.foreground_supervision == "bbox_geometry_sam_teacher":
@@ -344,6 +384,14 @@ def run(
             "manifest_sha256": actual_manifest_hash,
             "artifact_sha256": manifest["artifact_sha256"],
             "split_counts": manifest["split_counts"],
+            "effective_train_rows": expected_train_rows,
+            "validation_manifest_path": (
+                validation_manifest_path.relative_to(ROOT).as_posix()
+            ),
+            "validation_manifest_sha256": validation_manifest_hash,
+            "validation_artifact_sha256": validation_manifest["artifact_sha256"],
+            "validation_split_counts": validation_manifest["split_counts"],
+            "effective_validation_rows": expected_validation_rows,
             "train_sequence_ids": sorted(train_sequences),
             "validation_sequence_ids": sorted(validation_sequences),
         },
