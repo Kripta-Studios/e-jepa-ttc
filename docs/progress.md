@@ -70,7 +70,7 @@
   `be097e6c…2af5e9`; sigue sin ser evidencia TTC.
 - preregistrado/ejecutado audit SAM train-only 36 pares/72 endpoints: todos los
   gates pasan; área temporal `.6471`, signo `.8286`, bbox–mask IoU `.5761`, una
-  degenerada; artefacto `e413337b…b58138`.
+  degenerada; artefacto portable `0922d540…73dd44`.
 
 ## 2026-08-10 — Transporte temporal Causal Scale v7
 

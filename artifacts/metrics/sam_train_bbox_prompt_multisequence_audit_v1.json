@@ -1,6 +1,6 @@
 {
   "artifact_claim_eligible": false,
-  "artifact_sha256": "e413337bad7c78aae559bfa2b92c43a9ec07abf16694a8f8192c52e630b58138",
+  "artifact_sha256": "0922d54003b814735d05da556439b4582fe369dbd9cb06064dffef9a7673dd44",
   "artifact_type": "sam_train_bbox_prompt_multisequence_audit_v1",
   "claim_boundary": {
     "modality_if_promoted": "event-only inference with RGB distillation",
@@ -9,7 +9,7 @@
     "ttc_labels_used": false,
     "validation_teacher_generation_allowed": false
   },
-  "code_commit": "1a2008dc66c083c610542243922bd22a98bfec5f",
+  "code_commit": "4400dd7513a8b9103f9728f7c1797652a63bb4b3",
   "config": {
     "path": "C:/Users/Álvaro Schwiedop/Desktop/KriptaStudios/EVOCON_JEPA_Codex_Handoff/e-jepa-ttc/configs/experiment/sam_train_bbox_prompt_multisequence_audit_v1.yaml",
     "sha256": "37c3a9ead42a051a68b95df7ad1b34afbecc4879300ea84141b78742ed8fa0b2"
@@ -17,7 +17,7 @@
   "endpoint_csv": {
     "path": "C:/Users/Álvaro Schwiedop/Desktop/KriptaStudios/EVOCON_JEPA_Codex_Handoff/e-jepa-ttc/artifacts/metrics/sam_train_bbox_prompt_multisequence_audit_v1_endpoints.csv",
     "row_count": 72,
-    "sha256": "226532b54c8426dec6cac1ec4313e29b95794285cfb25ac95477988c5b3ccd65"
+    "sha256": "bf6594722729a2d8630615a3f931bee09492e472c3f6f8877c9912607384eaf2"
   },
   "gate": {
     "all_pass": true,
@@ -52,12 +52,12 @@
   "runtime": {
     "device": "cuda:0",
     "gpu_name": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
-    "mean_inference_seconds": 0.13578183472226454,
-    "model_load_seconds": 0.751383499999065,
-    "p95_inference_seconds": 0.14635917999967207,
+    "mean_inference_seconds": 0.13501732777780895,
+    "model_load_seconds": 0.7432975999981863,
+    "p95_inference_seconds": 0.1442108950008333,
     "peak_vram_mib": 1691.890625,
     "precision": "bf16",
-    "total_endpoint_loop_seconds": 15.971759800002474
+    "total_endpoint_loop_seconds": 15.85377840000001
   },
   "scope": {
     "network_downloads": false,

@@ -123,8 +123,10 @@ uv run --extra multimodal python scripts/audit_sam_train_bbox_prompts.py `
   --output-csv artifacts/metrics/sam_train_bbox_prompt_multisequence_audit_v1_endpoints.csv
 ```
 
-Resultado firmado `e413337bad7c78aae559bfa2b92c43a9ec07abf16694a8f8192c52e630b58138`;
-CSV SHA-256 `226532b54c8426dec6cac1ec4313e29b95794285cfb25ac95477988c5b3ccd65`.
+Resultado portable regenerado desde `4400dd7`:
+`0922d54003b814735d05da556439b4582fe369dbd9cb06064dffef9a7673dd44`;
+CSV LF SHA-256 `bf6594722729a2d8630615a3f931bee09492e472c3f6f8877c9912607384eaf2`.
+Supersede la primera serialización CRLF; las métricas y filas son idénticas.
 
 Preregistro y ejecución A1 geometry-only:
 

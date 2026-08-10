@@ -33,7 +33,7 @@ las nueve secuencias train: 36 pares/72 endpoints, sin leer TTC. Pasó todos los
 gates: bbox–mask IoU mediana `.5761`, cobertura bbox `.5960`, score interno p10
 `.9297`, una degenerada, correlación del cambio de área `.6471` y signo `.8286`.
 Esto justifica materialización train-only, pero sigue sin ser una comparación contra
-GT segmentation. Identidad `e413337b…b58138`; CSV `226532b5…3ccd65`.
+GT segmentation. Identidad `0922d540…73dd44`; CSV `bf659472…84eaf2`.
 
 Por tanto, esto **no constituye una integración foreground ni evidencia de
 entrenamiento**. `OfficialMaskPathResolver.require()` falla explícitamente y exige
