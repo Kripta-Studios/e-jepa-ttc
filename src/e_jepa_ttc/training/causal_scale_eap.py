@@ -751,9 +751,36 @@ def evaluate_real_causal_scale(
             "isotropic_prediction",
         )
     }
+    transport_geometry: dict[str, list[torch.Tensor]] = {
+        key: []
+        for key in (
+            "target",
+            "divergence_x",
+            "divergence_y",
+            "divergence_isotropic",
+            "foreground_divergence_x",
+            "foreground_divergence_y",
+            "foreground_divergence_isotropic",
+        )
+    }
+    transport_quality: dict[str, list[torch.Tensor]] = {
+        key: []
+        for key in (
+            "confidence_margin",
+            "entropy",
+            "cycle_error",
+            "foreground_confidence_margin",
+            "foreground_entropy",
+            "foreground_cycle_error",
+            "flow_magnitude",
+            "foreground_flow_magnitude",
+        )
+    }
     endpoint_geometry_sequences: list[str] = []
     pair_geometry_sequences: list[str] = []
     physical_geometry_sequences: list[str] = []
+    transport_geometry_sequences: list[str] = []
+    transport_quality_sequences: list[str] = []
     sequences: list[str] = []
     tokens: list[str] = []
     losses: list[tuple[float, int]] = []
@@ -891,6 +918,34 @@ def evaluate_real_causal_scale(
             ):
                 if bool(valid):
                     physical_geometry_sequences.append(sequence)
+
+        if "transport_divergence_isotropic" in output.diagnostics:
+            current_pair = -1
+            transport_valid = valid_ratio
+            transport_geometry["target"].append(target_ratio[transport_valid].float().cpu())
+            for name in (
+                "divergence_x",
+                "divergence_y",
+                "divergence_isotropic",
+                "foreground_divergence_x",
+                "foreground_divergence_y",
+                "foreground_divergence_isotropic",
+            ):
+                transport_geometry[name].append(
+                    output.diagnostics[f"transport_{name}"][:, current_pair][transport_valid]
+                    .float()
+                    .cpu()
+                )
+            for name in transport_quality:
+                transport_quality[name].append(
+                    output.diagnostics[f"transport_{name}"][:, current_pair].float().cpu()
+                )
+            for sequence, valid in zip(
+                batch.sequence_ids, transport_valid.cpu(), strict=True
+            ):
+                if bool(valid):
+                    transport_geometry_sequences.append(sequence)
+            transport_quality_sequences.extend(batch.sequence_ids)
         count = int(batch.events.shape[0])
         losses.append((float(total.detach().cpu()), count))
         truth.append(batch.target_ttc_s.cpu())
@@ -992,6 +1047,43 @@ def evaluate_real_causal_scale(
             "r_iso_is_diagnostic_only": True,
             "bbox_used_as_model_input": False,
         }
+    transport_diagnostics: dict[str, Any] | None = None
+    if transport_geometry["target"]:
+        transport_np = {
+            key: torch.cat(values).numpy().astype(np.float64)
+            for key, values in transport_geometry.items()
+        }
+        transport_sequence_np = np.asarray(transport_geometry_sequences)
+        quality_np = {
+            key: torch.cat(values).numpy().astype(np.float64)
+            for key, values in transport_quality.items()
+        }
+        quality_sequence_np = np.asarray(transport_quality_sequences)
+        transport_diagnostics = {
+            "against_physical_log_ratio": {
+                name: _relationship_by_sequence(
+                    transport_np["target"],
+                    transport_np[name],
+                    transport_sequence_np,
+                )
+                for name in transport_geometry
+                if name != "target"
+            },
+            "quality": {
+                name: {
+                    "global_mean": float(np.mean(values)),
+                    "global_median": float(np.median(values)),
+                    "per_sequence_mean": {
+                        str(sequence): float(np.mean(values[quality_sequence_np == sequence]))
+                        for sequence in sorted(set(quality_sequence_np.astype(str).tolist()))
+                    },
+                }
+                for name, values in quality_np.items()
+            },
+            "event_only_inference": True,
+            "bbox_used_for_transport": False,
+        }
+
     return {
         "num_samples": int(target_np.size),
         "loss": sum(value * count for value, count in losses) / sum(count for _, count in losses),
@@ -1005,6 +1097,7 @@ def evaluate_real_causal_scale(
         "log_ratio_mae": float((ratio - ratio_target).abs().mean()),
         "log_ratio_pearson": pearson,
         "geometry_diagnostics": geometry_diagnostics,
+        "transport_diagnostics": transport_diagnostics,
         "sample_tokens": tokens,
         "target_ttc_s": target_np.tolist(),
         "prediction_ttc_s": prediction_np.tolist(),

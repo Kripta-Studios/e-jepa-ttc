@@ -22,6 +22,12 @@ import torch
 from torch import nn
 from torch.nn import functional
 
+from e_jepa_ttc.models.local_transport import (
+    TRANSPORT_FEATURE_NAMES,
+    local_correlation_match,
+    transport_physical_features,
+)
+
 
 @dataclass(frozen=True)
 class CausalScaleTTCConfig:
@@ -53,6 +59,9 @@ class CausalScaleTTCConfig:
     log_ratio_log_variance_min: float = -12.0
     log_ratio_log_variance_max: float = 2.0
     risk_thresholds_s: tuple[float, ...] = (0.5, 1.0, 2.0, 4.0)
+    transport_enabled: bool = False
+    transport_radius: int = 4
+    transport_temperature: float = 0.07
 
     def __post_init__(self) -> None:
         if self.modality not in {"event", "rgb"}:
@@ -94,6 +103,10 @@ class CausalScaleTTCConfig:
             raise ValueError("risk thresholds must be non-empty and positive")
         if tuple(sorted(set(self.risk_thresholds_s))) != self.risk_thresholds_s:
             raise ValueError("risk thresholds must be unique and strictly increasing")
+        if self.transport_radius < 1 or self.transport_radius > 8:
+            raise ValueError("transport_radius must lie in [1,8]")
+        if not math.isfinite(self.transport_temperature) or self.transport_temperature <= 0.0:
+            raise ValueError("transport_temperature must be finite and positive")
 
 
 @dataclass
@@ -133,6 +146,8 @@ class CausalScaleTTCOutput:
     sensor_support: torch.Tensor
     diagnostics: dict[str, torch.Tensor]
     endpoint_dense_features: torch.Tensor | None = None
+    transport_tokens: torch.Tensor | None = None
+    transport_raw_features: torch.Tensor | None = None
 
 
 def soft_vertical_extent_from_logits(
@@ -476,12 +491,22 @@ class _EndpointEncoder(nn.Module):
 
 
 class _AntisymmetricResidual(nn.Module):
-    def __init__(self, dim: int, hidden: int, dropout: float, maximum: float) -> None:
+    def __init__(
+        self,
+        dim: int,
+        hidden: int,
+        dropout: float,
+        maximum: float,
+        *,
+        transport_dim: int = 0,
+    ) -> None:
         super().__init__()
         self.maximum = maximum
+        self.transport_dim = transport_dim
+        ordered_dim = dim * 3 + transport_dim
         self.scorer = nn.Sequential(
-            nn.LayerNorm(dim * 3),
-            nn.Linear(dim * 3, hidden),
+            nn.LayerNorm(ordered_dim),
+            nn.Linear(ordered_dim, hidden),
             nn.GELU(),
             nn.Dropout(dropout),
             nn.Linear(hidden, 1),
@@ -492,12 +517,28 @@ class _AntisymmetricResidual(nn.Module):
         nn.init.zeros_(final.weight)
         nn.init.zeros_(final.bias)
 
-    def _ordered(self, previous: torch.Tensor, current: torch.Tensor) -> torch.Tensor:
-        return self.scorer(torch.cat([previous, current, current - previous], dim=-1)).squeeze(-1)
+    def _ordered(
+        self,
+        previous: torch.Tensor,
+        current: torch.Tensor,
+        transport: torch.Tensor | None = None,
+    ) -> torch.Tensor:
+        values = [previous, current, current - previous]
+        if self.transport_dim:
+            if transport is None or transport.shape[-1] != self.transport_dim:
+                raise ValueError("transport-aware residual requires the frozen transport token")
+            values.append(transport)
+        return self.scorer(torch.cat(values, dim=-1)).squeeze(-1)
 
-    def forward(self, previous: torch.Tensor, current: torch.Tensor) -> torch.Tensor:
-        forward = self._ordered(previous, current)
-        reverse = self._ordered(current, previous)
+    def forward(
+        self,
+        previous: torch.Tensor,
+        current: torch.Tensor,
+        forward_transport: torch.Tensor | None = None,
+        reverse_transport: torch.Tensor | None = None,
+    ) -> torch.Tensor:
+        forward = self._ordered(previous, current, forward_transport)
+        reverse = self._ordered(current, previous, reverse_transport)
         return self.maximum * torch.tanh(0.5 * (forward - reverse))
 
 
@@ -526,13 +567,26 @@ class CausalScaleTTC(nn.Module):
             nn.init.zeros_(correction_final.bias)
         else:
             self.height_correction_head = None
+        transport_dim = self.config.geometry_dim if self.config.transport_enabled else 0
+        self.transport_projector: nn.Module | None
+        if self.config.transport_enabled:
+            self.transport_projector = nn.Sequential(
+                nn.LayerNorm(len(TRANSPORT_FEATURE_NAMES)),
+                nn.Linear(len(TRANSPORT_FEATURE_NAMES), self.config.geometry_dim),
+                nn.GELU(),
+                nn.Linear(self.config.geometry_dim, self.config.geometry_dim),
+                nn.LayerNorm(self.config.geometry_dim),
+            )
+        else:
+            self.transport_projector = None
         self.residual = _AntisymmetricResidual(
             self.config.geometry_dim,
             self.config.geometry_dim,
             self.config.dropout,
             self.config.max_abs_log_ratio_residual,
+            transport_dim=transport_dim,
         )
-        pair_input = self.config.geometry_dim * 3
+        pair_input = self.config.geometry_dim * (5 if self.config.transport_enabled else 3)
         self.pair_projector = nn.Sequential(
             nn.LayerNorm(pair_input),
             nn.Linear(pair_input, self.config.geometry_dim),
@@ -596,8 +650,9 @@ class CausalScaleTTC(nn.Module):
         if bool((delta_t_s <= 0.0).any()) or not bool(torch.isfinite(delta_t_s).all()):
             raise ValueError("delta_t_s must be finite and strictly positive")
         flat = inputs.reshape(batch * steps, channels, height, width)
+        need_dense_features = return_dense_features or self.config.transport_enabled
         lowres_logits, base_tokens, flat_dense = self.encoder(
-            flat, return_dense_features=return_dense_features,
+            flat, return_dense_features=need_dense_features,
         )
         low_h, low_w = lowres_logits.shape[-2:]
         lowres_logits = lowres_logits.reshape(batch, steps, 1, low_h, low_w)
@@ -643,11 +698,86 @@ class CausalScaleTTC(nn.Module):
         raw_log_width = observation.width_normalized.clamp_min(1.0e-6).log()
         raw_foreground_width_ratio = raw_log_width[:, 1:] - raw_log_width[:, :-1]
         analytic = corrected_log_height[:, 1:] - corrected_log_height[:, :-1]
-        residual = self.residual(previous, current)
+
+        transport_tokens: torch.Tensor | None = None
+        reverse_transport_tokens: torch.Tensor | None = None
+        transport_raw_features: torch.Tensor | None = None
+        if self.config.transport_enabled:
+            if flat_dense is None or self.transport_projector is None:
+                raise RuntimeError("A5 transport requires dense endpoint features")
+            dense = flat_dense.reshape(
+                batch, steps, flat_dense.shape[1], flat_dense.shape[2], flat_dense.shape[3]
+            )
+            pair_count = steps - 1
+            dense_previous = dense[:, :-1].reshape(
+                batch * pair_count, dense.shape[2], dense.shape[3], dense.shape[4]
+            )
+            dense_current = dense[:, 1:].reshape(
+                batch * pair_count, dense.shape[2], dense.shape[3], dense.shape[4]
+            )
+            forward_match = local_correlation_match(
+                dense_previous,
+                dense_current,
+                radius=self.config.transport_radius,
+                temperature=self.config.transport_temperature,
+            )
+            reverse_match = local_correlation_match(
+                dense_current,
+                dense_previous,
+                radius=self.config.transport_radius,
+                temperature=self.config.transport_temperature,
+            )
+            feature_size = (dense.shape[3], dense.shape[4])
+            foreground_probability = functional.interpolate(
+                torch.sigmoid(foreground_logits).reshape(batch * steps, 1, height, width),
+                size=feature_size,
+                mode="bilinear",
+                align_corners=False,
+            ).reshape(batch, steps, 1, *feature_size)
+            foreground_previous = foreground_probability[:, :-1].reshape(
+                batch * pair_count, 1, *feature_size
+            )
+            foreground_current = foreground_probability[:, 1:].reshape(
+                batch * pair_count, 1, *feature_size
+            )
+            raw_forward = transport_physical_features(
+                forward_match,
+                reverse_match,
+                foreground_weight=foreground_previous,
+                radius=self.config.transport_radius,
+            )
+            raw_reverse = transport_physical_features(
+                reverse_match,
+                forward_match,
+                foreground_weight=foreground_current,
+                radius=self.config.transport_radius,
+            )
+            transport_raw_features = raw_forward.reshape(batch, pair_count, -1)
+            transport_tokens = self.transport_projector(raw_forward).reshape(
+                batch, pair_count, self.config.geometry_dim
+            )
+            reverse_transport_tokens = self.transport_projector(raw_reverse).reshape(
+                batch, pair_count, self.config.geometry_dim
+            )
+            residual = self.residual(
+                previous,
+                current,
+                transport_tokens,
+                reverse_transport_tokens,
+            )
+            pair_input_values = [
+                previous,
+                current,
+                current - previous,
+                transport_tokens,
+                reverse_transport_tokens,
+            ]
+        else:
+            residual = self.residual(previous, current)
+            pair_input_values = [previous, current, current - previous]
+
         log_ratio = analytic + residual
-        pair_tokens = self.pair_projector(
-            torch.cat([previous, current, current - previous], dim=-1)
-        )
+        pair_tokens = self.pair_projector(torch.cat(pair_input_values, dim=-1))
         pair_support = torch.minimum(sensor_support[:, :-1], sensor_support[:, 1:])
         symmetric = torch.cat(
             [previous + current, (current - previous).abs(), pair_support.unsqueeze(-1)],
@@ -721,9 +851,29 @@ class CausalScaleTTC(nn.Module):
             flat_dense.reshape(
                 batch, steps, flat_dense.shape[1], flat_dense.shape[2], flat_dense.shape[3]
             )
-            if flat_dense is not None
+            if return_dense_features and flat_dense is not None
             else None
         )
+        diagnostics = {
+            "foreground_centroid_y": observation.centroid_y_normalized,
+            "foreground_centroid_x": observation.centroid_x_normalized,
+            "foreground_fraction": observation.foreground_fraction,
+            "raw_foreground_height_normalized": observation.height_normalized,
+            "raw_foreground_width_normalized": observation.width_normalized,
+            "raw_foreground_log_height_ratio": raw_foreground_ratio,
+            "raw_foreground_log_width_ratio": raw_foreground_width_ratio,
+            "log_height_correction": log_height_correction,
+            "pair_sensor_support": pair_support,
+            "pair_known": pair_known,
+            "temporal_blend_used": temporal_blend_used,
+            "foreground_temporal_smoothing": foreground_logits.new_full(
+                (batch,), self.config.foreground_temporal_smoothing
+            ),
+        }
+        if transport_raw_features is not None:
+            for index, name in enumerate(TRANSPORT_FEATURE_NAMES):
+                diagnostics[f"transport_{name}"] = transport_raw_features[..., index]
+
         return CausalScaleTTCOutput(
             ttc_mean_seconds=ttc,
             ttc_log_variance=ttc_log_variance,
@@ -745,23 +895,10 @@ class CausalScaleTTC(nn.Module):
             pair_tokens=pair_tokens,
             auxiliary_inverse_ttc=auxiliary_inverse_ttc,
             sensor_support=sensor_support,
-            diagnostics={
-                "foreground_centroid_y": observation.centroid_y_normalized,
-                "foreground_centroid_x": observation.centroid_x_normalized,
-                "foreground_fraction": observation.foreground_fraction,
-                "raw_foreground_height_normalized": observation.height_normalized,
-                "raw_foreground_width_normalized": observation.width_normalized,
-                "raw_foreground_log_height_ratio": raw_foreground_ratio,
-                "raw_foreground_log_width_ratio": raw_foreground_width_ratio,
-                "log_height_correction": log_height_correction,
-                "pair_sensor_support": pair_support,
-                "pair_known": pair_known,
-                "temporal_blend_used": temporal_blend_used,
-                "foreground_temporal_smoothing": foreground_logits.new_full(
-                    (batch,), self.config.foreground_temporal_smoothing
-                ),
-            },
+            diagnostics=diagnostics,
             endpoint_dense_features=endpoint_dense_features,
+            transport_tokens=transport_tokens,
+            transport_raw_features=transport_raw_features,
         )
 
     def checkpoint_config(self) -> dict[str, object]:

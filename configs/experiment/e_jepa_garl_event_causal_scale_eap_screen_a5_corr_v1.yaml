@@ -1,0 +1,172 @@
+experiment:
+  name: e_jepa_garl_event_causal_scale_eap_screen_a5_corr_v1
+  protocol_version: causal_scale_eap_a5_event_local_cross_time_transport_v1
+  evidence_scope: public_eap_garl_train_validation_only
+  parent_arm: A4_DINO_RELATIONAL_RGB_V2_seed7
+  single_scientific_difference: event_native_local_cross_time_transport_before_spatial_compression
+  parent_config: configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a4_dinov3_relational_v1.yaml
+model_config: configs/model/e_jepa_causal_scale_event_v9_transport_r4.yaml
+data:
+  cache_manifest: artifacts/cache/garl_object_event_common_roi_screen_v4/manifest.json
+  cache_manifest_sha256: bba9ff9b143bfd57760bd61d2b6f664202581b5dee54444f44c625975557eb72
+  cache_artifact_sha256: 36c12d75c91a243f4d712831cebcd3e82f896a76196b2a65b039e680f1fac309
+  train_sequence_ids:
+  - 2cyv0Oedzg
+  - 5ilM1PX2vz
+  - 6h5yRW2LGc
+  - OBneIVg4Cw
+  - OYgB6RGWcq
+  - WbCh1DRerJ
+  - mHGFBekt7X
+  - qGsgzl4Q8B
+  - t79dBxj1WS
+  validation_sequence_ids:
+  - DGqicHUGWb
+  - pBqGOb2vYq
+  - qoohcdtLDH
+  opened_splits:
+  - train
+  - validation
+  official_test_opened: false
+  codabench_opened: false
+  evttc_test_opened: false
+  dinov3_relational_teacher:
+    manifest: artifacts/cache/dinov3_convnext_large_relational_a4_rgb_v2/manifest.json
+    manifest_sha256: e885a2ea2f2df370a3d4a8270c082a095a735c13db0248521ce2f553b314cf86
+    artifact_sha256: f175980d05c1d02a9aa743a74c78c0d5af9a826b2791760df5fbc00c548bd2a2
+training:
+  seed: 7
+  epochs: 18
+  minimum_epochs: 8
+  early_stopping_patience: 5
+  foreground_warmup_epochs: 3
+  batch_size: 32
+  gradient_accumulation_steps: 1
+  learning_rate: 0.0003
+  minimum_learning_rate: 3.0e-05
+  weight_decay: 0.0001
+  grad_clip_norm: 1.0
+  num_workers: 0
+  precision: bf16
+  maximum_runtime_hours: 6.0
+  mask_t0_as_proxy: true
+  foreground_supervision: bbox_geometry
+  representation_supervision: dinov3_local_relational
+  representation_teacher_cache_artifact_sha256: f175980d05c1d02a9aa743a74c78c0d5af9a826b2791760df5fbc00c548bd2a2
+  representation_distillation_weight: 4.0
+loss:
+  log_ratio_nll_weight: 1.0
+  log_ratio_huber_weight: 0.0
+  log_ratio_tail_weight: 2.0
+  log_ratio_tail_fraction: 0.1
+  foreground_bce_weight: 0.0
+  foreground_dice_weight: 0.0
+  foreground_extent_weight: 1.25
+  foreground_width_weight: 1.25
+  foreground_center_weight: 2.5
+  foreground_pair_ratio_weight: 0.0
+  risk_weight: 0.1
+  auxiliary_inverse_ttc_weight: 0.05
+  residual_regularization_weight: 0.1
+  temporal_consistency_weight: 0.0
+  smooth_l1_beta: 0.02
+  supervise_pair_ratio_before_temporal_blend: true
+decision_contract:
+  checkpoint_selection: validation_sequence_macro_MiD_then_failure_rate
+  require_finite_metrics_for_all_validation_sequences: true
+  primary_baseline: Garl_event_only_matched_seed7_same_2048
+  baseline_sequence_macro_MiD: 203.6341709373319
+  baseline_failure_rate_pct: 0.0
+  parent_a4_sequence_macro_MiD: 322.6813364242674
+  parent_a4_failure_rate_pct: 11.083984375
+  expected_parameter_count: 424274
+  bbox_is_training_supervision_only: true
+  bbox_is_never_forward_input: true
+  dense_weak_box_target_used: false
+  foreground_pair_ratio_weight_must_remain_zero: true
+  representation_change:
+    type: a4_endpoint_dino_plus_event_native_local_cross_time_transport
+    dino_endpoint_teacher_unchanged_from_a4: true
+    dino_temporal_delta_removed: true
+    teacher_model: facebook/dinov3-convnext-large-pretrain-lvd1689m
+    teacher_feature_grid:
+    - 32
+    - 32
+    teacher_is_model_input: false
+    transport_model_input: event_dense_features_only
+    transport_pairs:
+    - t0_to_t1
+    - t1_to_t2
+    transport_grid:
+    - 32
+    - 32
+    transport_radius: 4
+    transport_candidates_per_position: 81
+    transport_similarity: l2_normalized_cosine
+    transport_matching: softmax_expected_displacement
+    physical_features:
+    - translation_x
+    - translation_y
+    - divergence_x
+    - divergence_y
+    - divergence_isotropic
+    - flow_magnitude
+    - confidence_margin
+    - entropy
+    - cycle_error
+    foreground_features_use_predicted_foreground_only: true
+    bbox_used_by_transport: false
+    rgb_used_at_inference: false
+    jepa_objective: false
+    direct_ttc_regressor_from_flow: false
+    analytic_height_ratio_remains_primary_backbone: true
+    max_abs_total_learned_log_ratio_residual: 0.05
+  transport_gate:
+    parent_a4_log_ratio_pearson: 0.26009801030158997
+    log_ratio_pearson_min_gain_vs_a4: 0.03
+    parent_a4_delta_log_height_vs_physical_pearson: 0.2476144314489911
+    delta_log_height_vs_physical_min_gain_vs_a4: 0.03
+    parent_a4_delta_log_height_vs_physical_macro_pearson: 0.2526319214906502
+    delta_log_height_vs_physical_macro_min_gain_vs_a4: 0.03
+    parent_a4_absolute_log_height_macro_pearson: 0.5469041860501996
+    absolute_log_height_macro_max_drop_vs_a4: 0.02
+    minimum_improved_validation_sequences_for_delta_height: 2
+    worst_sequence_delta_height_max_regression: 0.02
+    gate_is_AND: true
+    benchmark_metrics_remain_secondary_to_mechanism_gate: true
+    no_threshold_may_be_changed_after_a5_validation: true
+  preflight_contract:
+    radii:
+    - 1
+    - 2
+    - 4
+    public_train_only: true
+    optimizer_steps: 0
+    teacher_r4_global_error_reduction_min: 0.2
+    teacher_r4_foreground_error_reduction_min: 0.2
+    student_r4_entropy_max: 0.92
+    student_r4_confidence_margin_min: 0.005
+    a5_training_requires_preflight_pass: true
+    artifact: artifacts/metrics/a5_transport_preflight_v1/a5_transport_preflight.json
+  capacity_policy:
+    a5_corr_v1_must_keep_a4_encoder_width_depth: true
+    capacity_changes_are_separate_post_gate_arms: true
+    cap_s_parameter_count: 1106786
+    cap_m_parameter_count: 2250354
+    garl_event_lhr_reference_parameter_count: 24674178
+    larger_dino_grid_requires_new_teacher_cache_and_separate_preregistration: true
+  no_sam_teacher: true
+  no_jepa_objective: true
+  no_pair_ratio: true
+  no_posthoc_diagnostic_threshold_is_a_promotion_gate: true
+  r_iso_is_diagnostic_only: true
+  diagnostic_reporting: global_and_macro_by_sequence
+  scaling_rule: only_after_a5_transport_gate_then_seed_replication_then_data_scale
+  maximum_runtime_hours: 6.0
+  public_validation_does_not_authorize_sota_claim: true
+  private_test_remains_closed: true
+  multi_object_contract:
+    teacher_keyed_by_sample_token: true
+    track_id_verified_per_row: true
+    same_frame_multiple_tracks_not_deduplicated: true
+    rgb_crop_is_per_object_common_square: true

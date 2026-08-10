@@ -81,8 +81,9 @@ def _resolve(value: object) -> Path:
 
 def _model_config(path: Path) -> CausalScaleTTCConfig:
     raw = _read_yaml(path)
-    if raw.pop("model", None) != "e_jepa_causal_scale_event_v8":
-        raise ValueError("real screen requires the causal-scale event v8 model")
+    model_name = raw.pop("model", None)
+    if model_name not in {"e_jepa_causal_scale_event_v8", "e_jepa_causal_scale_event_v9_transport"}:
+        raise ValueError("real screen requires causal-scale event v8 or preregistered v9 transport")
     thresholds = raw.get("risk_thresholds_s")
     if not isinstance(thresholds, list):
         raise ValueError("risk_thresholds_s must be a list")
@@ -233,6 +234,108 @@ def _validate_representation_change(
     }
 
 
+
+def _validate_a5_transport_change(
+    training_config: CausalScaleEAPTrainingConfig,
+    model_config: CausalScaleTTCConfig,
+    decision_contract: dict[str, Any],
+) -> dict[str, Any] | None:
+    """Fail closed on A5 event-native transport and its train-only preflight."""
+
+    change = decision_contract.get("representation_change")
+    if not isinstance(change, dict) or change.get("type") != (
+        "a4_endpoint_dino_plus_event_native_local_cross_time_transport"
+    ):
+        if model_config.transport_enabled:
+            raise ValueError(
+                "transport-enabled models require the preregistered A5 representation_change"
+            )
+        return None
+
+    if not model_config.transport_enabled:
+        raise ValueError("A5 representation_change requires transport_enabled=true")
+    if training_config.representation_supervision != "dinov3_local_relational":
+        raise ValueError("A5 must keep A4 endpoint DINO and remove A4D temporal delta")
+    if training_config.representation_temporal_delta_weight != 0.0:
+        raise ValueError("A5 must not train the A4D temporal-delta objective")
+    if change.get("dino_endpoint_teacher_unchanged_from_a4") is not True:
+        raise ValueError("A5 must preserve the A4 endpoint DINO teacher")
+    if change.get("dino_temporal_delta_removed") is not True:
+        raise ValueError("A5 must explicitly remove the A4D temporal delta")
+    if change.get("transport_model_input") != "event_dense_features_only":
+        raise ValueError("A5 transport must consume event dense features only")
+    if change.get("bbox_used_by_transport") is not False:
+        raise ValueError("bbox may not enter A5 transport")
+    if change.get("rgb_used_at_inference") is not False:
+        raise ValueError("RGB may not enter A5 inference")
+    if change.get("jepa_objective") is not False:
+        raise ValueError("A5-CORR-V1 does not introduce a JEPA objective")
+    if change.get("direct_ttc_regressor_from_flow") is not False:
+        raise ValueError("A5-CORR-V1 may not regress TTC directly from flow")
+    if change.get("analytic_height_ratio_remains_primary_backbone") is not True:
+        raise ValueError("A5 must preserve the analytic height-ratio backbone")
+    if int(change.get("transport_radius", -1)) != model_config.transport_radius:
+        raise ValueError("A5 transport radius differs from model config")
+    if change.get("transport_pairs") != ["t0_to_t1", "t1_to_t2"]:
+        raise ValueError("A5 transport must cover both t0->t1 and t1->t2")
+
+    preflight = decision_contract.get("preflight_contract")
+    if not isinstance(preflight, dict):
+        raise ValueError("A5 requires decision_contract.preflight_contract")
+    artifact_ref = preflight.get("artifact")
+    if not isinstance(artifact_ref, str):
+        raise ValueError("A5 preflight contract must name its signed artifact")
+    artifact_path = _resolve(artifact_ref)
+    payload = json.loads(artifact_path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict) or not verify_artifact_hash(payload):
+        raise ValueError("A5 preflight artifact signature is invalid")
+    if payload.get("artifact_type") != "a5_transport_preflight_train_only_v1":
+        raise ValueError("unexpected A5 preflight artifact type")
+    scope = payload.get("scope")
+    if not isinstance(scope, dict):
+        raise ValueError("A5 preflight scope is malformed")
+    if scope.get("public_train_only") is not True:
+        raise ValueError("A5 preflight must be train-only")
+    if scope.get("validation_or_test_opened") is not False:
+        raise ValueError("A5 preflight may not open validation/test")
+    if int(scope.get("optimizer_steps", -1)) != 0:
+        raise ValueError("A5 preflight may not take optimizer steps")
+    if list(scope.get("radii", [])) != list(preflight.get("radii", [])):
+        raise ValueError("A5 preflight radii differ from preregistration")
+    if payload.get("a5_corr_authorized") is not True:
+        raise ValueError("A5-CORR training is blocked because preflight did not pass")
+
+    thresholds = payload.get("decision_thresholds")
+    expected_thresholds = {
+        "teacher_r4_global_error_reduction_min": float(
+            preflight["teacher_r4_global_error_reduction_min"]
+        ),
+        "teacher_r4_foreground_error_reduction_min": float(
+            preflight["teacher_r4_foreground_error_reduction_min"]
+        ),
+        "student_r4_entropy_max": float(preflight["student_r4_entropy_max"]),
+        "student_r4_confidence_margin_min": float(
+            preflight["student_r4_confidence_margin_min"]
+        ),
+    }
+    if thresholds != expected_thresholds:
+        raise ValueError("A5 preflight thresholds differ from preregistration")
+
+    return {
+        "path": artifact_path.relative_to(ROOT).as_posix(),
+        "file_sha256": _sha256(artifact_path),
+        "artifact_sha256": payload.get("artifact_sha256"),
+        "a5_corr_authorized": True,
+        "scope": scope,
+        "decision_checks": payload.get("decision_checks"),
+        "teacher_transport_r4": (
+            payload.get("teacher_transport", {}).get("4")
+            if isinstance(payload.get("teacher_transport"), dict)
+            else None
+        ),
+    }
+
+
 def _finite_json(value: object) -> object:
     if isinstance(value, np.generic):
         return _finite_json(value.item())
@@ -366,6 +469,9 @@ def run(
     representation_calibration = _validate_representation_change(
         training_config, decision_contract
     )
+    a5_preflight = _validate_a5_transport_change(
+        training_config, model_config, decision_contract
+    )
     parameter_count = sum(
         parameter.numel() for parameter in CausalScaleTTC(model_config).parameters()
     )
@@ -489,6 +595,7 @@ def run(
             "path": model_path.relative_to(ROOT).as_posix(),
             "sha256": _sha256(model_path),
         },
+        "model_architecture": asdict(model_config),
         "cache": {
             "manifest_path": manifest_path.relative_to(ROOT).as_posix(),
             "manifest_sha256": actual_manifest_hash,
@@ -528,10 +635,20 @@ def run(
             "dinov3_teacher_is_model_input": False,
             "dinov3_teacher_train_only": representation_teacher_metadata is not None,
             "validation_dinov3_teacher_loaded": False,
+            "cross_time_transport_enabled": model_config.transport_enabled,
+            "cross_time_transport_inputs": (
+                ["event_dense_features_t_previous", "event_dense_features_t_current"]
+                if model_config.transport_enabled
+                else []
+            ),
+            "bbox_is_transport_input": False,
+            "rgb_is_transport_input": False,
+            "dinov3_is_transport_input": False,
         },
         "sam_teacher": teacher_metadata,
         "representation_teacher": representation_teacher_metadata,
         "representation_temporal_delta_calibration": representation_calibration,
+        "a5_transport_preflight": a5_preflight,
         "parameter_count": parameter_count,
         "training_config": asdict(training_config),
         "loss_config": asdict(loss_config),
