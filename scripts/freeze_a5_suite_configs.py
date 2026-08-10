@@ -77,8 +77,13 @@ def _load_transport_selection(path: Path | None) -> dict[str, Any] | None:
     if path is None:
         return None
     payload = _read_json(path)
-    if payload.get("artifact_type") != "a5_transport_preflight_train_only_v2":
-        raise ValueError("--preflight-v2 must be an A5-PREFLIGHT-V2 artifact")
+    artifact_type = payload.get("artifact_type")
+    allowed_types = {
+        "a5_transport_preflight_train_only_v2",
+        "a5_transport_preflight_train_only_v3_confirmation",
+    }
+    if artifact_type not in allowed_types:
+        raise ValueError("--preflight-selection must be an authorized A5 transport preflight artifact")
     scope = payload.get("scope", {})
     decision = payload.get("decision", {})
     if (
@@ -86,9 +91,9 @@ def _load_transport_selection(path: Path | None) -> dict[str, Any] | None:
         or scope.get("validation_or_test_opened") is not False
         or int(scope.get("optimizer_steps", -1)) != 0
     ):
-        raise ValueError("A5-PREFLIGHT-V2 did not satisfy train-only zero-training contract")
+        raise ValueError("A5 preflight did not satisfy train-only zero-training contract")
     if decision.get("a5_corr_authorized") is not True:
-        raise ValueError("A5-PREFLIGHT-V2 did not authorize A5-CORR")
+        raise ValueError("A5 preflight did not authorize A5-CORR")
     radius = int(decision.get("selected_radius", -1))
     temperature = float(decision.get("selected_temperature", float("nan")))
     if radius not in (1, 2, 4):
@@ -102,6 +107,7 @@ def _load_transport_selection(path: Path | None) -> dict[str, Any] | None:
         "radius": radius,
         "temperature": temperature,
         "decision": decision,
+        "artifact_type": artifact_type,
     }
 
 
@@ -134,13 +140,17 @@ def _apply_transport_selection(
         change["transport_candidates_per_position"] = (2 * radius + 1) ** 2
         change["transport_temperature"] = float(selection["temperature"])
     contract["preflight_contract"] = {
-        "artifact_type": "a5_transport_preflight_train_only_v2",
+        "artifact_type": selection["artifact_type"],
         "artifact": _repo_path(selection["path"]),
         "artifact_sha256": selection.get("artifact_sha256"),
         "file_sha256": selection["file_sha256"],
         "selected_radius": int(selection["radius"]),
         "selected_temperature": float(selection["temperature"]),
-        "selection_rule": "smallest_physics_covered_radius_surviving_two_nulls_then_largest_safe_tau",
+        "selection_rule": (
+            "v3_disjoint_confirmation_of_v2_soft_epe_candidate"
+            if selection["artifact_type"] == "a5_transport_preflight_train_only_v3_confirmation"
+            else "smallest_physics_covered_radius_surviving_two_nulls_then_largest_safe_tau"
+        ),
         "public_train_only": True,
         "optimizer_steps": 0,
         "a5_training_requires_preflight_pass": True,
@@ -227,7 +237,7 @@ def run(
     output_dir: Path,
     scale_dino_lambda: float | None,
     include_scale: bool,
-    preflight_v2_path: Path | None = None,
+    preflight_selection_path: Path | None = None,
 ) -> dict[str, Any]:
     if include_scale and scale_dino_lambda is None:
         raise ValueError("--include-scale requires --scale-dino-lambda from the train-only A4 CV")
@@ -237,7 +247,7 @@ def run(
         raise ValueError("--scale-dino-lambda must be finite and positive")
 
     output_dir.mkdir(parents=True, exist_ok=True)
-    selection = _load_transport_selection(preflight_v2_path)
+    selection = _load_transport_selection(preflight_selection_path)
     written: dict[str, str] = {}
     frozen: dict[str, dict[str, Any]] = {}
     for name, template in TEMPLATES.items():
@@ -330,13 +340,13 @@ def main() -> int:
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--scale-dino-lambda", type=float)
     parser.add_argument("--include-scale", action="store_true")
-    parser.add_argument("--preflight-v2", type=Path)
+    parser.add_argument("--preflight-selection", type=Path)
     args = parser.parse_args()
     payload = run(
         args.output_dir.resolve(),
         args.scale_dino_lambda,
         args.include_scale,
-        args.preflight_v2.resolve() if args.preflight_v2 is not None else None,
+        args.preflight_selection.resolve() if args.preflight_selection is not None else None,
     )
     print(json.dumps(payload, sort_keys=True))
     return 0

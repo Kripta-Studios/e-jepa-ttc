@@ -82,3 +82,38 @@ def test_v2_selection_rewrites_runtime_model_and_contract(tmp_path: Path) -> Non
         assert payload["decision_contract"]["preflight_contract"]["selected_radius"] == 2
     finally:
         MODULE.ROOT = original_root
+
+
+def test_v3_confirmation_selection_is_accepted(tmp_path: Path) -> None:
+    repo = tmp_path / "repo"
+    preflight = repo / "artifacts" / "metrics" / "v3.json"
+    preflight.parent.mkdir(parents=True)
+    preflight.write_text(
+        json.dumps(
+            {
+                "artifact_type": "a5_transport_preflight_train_only_v3_confirmation",
+                "artifact_sha256": "def",
+                "scope": {
+                    "public_train_only": True,
+                    "validation_or_test_opened": False,
+                    "optimizer_steps": 0,
+                },
+                "decision": {
+                    "a5_corr_authorized": True,
+                    "selected_radius": 1,
+                    "selected_temperature": 0.02,
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    original_root = MODULE.ROOT
+    MODULE.ROOT = repo
+    try:
+        selection = MODULE._load_transport_selection(preflight)
+        assert selection is not None
+        assert selection["artifact_type"] == "a5_transport_preflight_train_only_v3_confirmation"
+        assert selection["radius"] == 1
+        assert selection["temperature"] == 0.02
+    finally:
+        MODULE.ROOT = original_root

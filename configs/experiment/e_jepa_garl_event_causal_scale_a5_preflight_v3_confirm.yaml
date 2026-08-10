@@ -1,0 +1,48 @@
+protocol:
+  artifact_type: a5_transport_preflight_train_only_v3_confirmation
+  public_train_only: true
+  validation_or_test_opened: false
+  optimizer_steps: 0
+  seed: 7
+  discovery_v2_sample_count: 512
+  confirmation_use_all_remaining_train: true
+
+  # Frozen from the V2 discovery grid before this confirmation is run.
+  # V2 found this pair had the lowest A4 soft physical EPE of the
+  # preregistered r x tau grid.  V3 does not search another radius/tau.
+  candidate:
+    radius: 1
+    temperature: 0.02
+
+  confirmation:
+    # Null specificity is measured on post-match absolute error.  V2 showed
+    # that relative reduction is biased by the much larger fixed null error.
+    teacher_real_vs_shuffled_best_error_improvement_min: 0.20
+    teacher_real_vs_spatial_null_best_error_improvement_min: 0.20
+    teacher_sequence_specificity_fraction_min: 0.75
+
+    # A5 consumes the differentiable expected (soft) displacement, not hard
+    # argmax flow.  Confirm a non-trivial physical benefit on unseen train rows.
+    student_soft_epe_improvement_over_zero_min: 0.05
+    student_soft_epe_advantage_over_random_min: 0.05
+    student_real_vs_shuffled_top1_cosine_min: 0.01
+    student_real_vs_spatial_null_top1_cosine_min: 0.03
+    student_confidence_margin_min: 0.01
+    student_sequence_temporal_specificity_fraction_min: 0.75
+
+    # r=1 is intentionally local/partial.  Require that it is not degenerate,
+    # but do not demand global 90% affine-flow coverage from a local residual.
+    bbox_physical_coverage_min: 0.50
+    hard_boundary_fraction_max: 0.70
+    divergence_y_vs_log_height_pearson_min: 0.15
+
+  interpretation:
+    v2_rejection_is_preserved_and_not_overwritten: true
+    v3_candidate_was_selected_from_v2_train_only_discovery: true
+    v3_confirmation_indices_are_disjoint_from_v2_indices: true
+    no_radius_or_temperature_search_in_v3: true
+    soft_flow_is_the_model_relevant_quantity: true
+    teacher_null_gate_uses_absolute_post_match_error_not_relative_reduction: true
+    bbox_is_diagnostic_only_and_never_a_model_input: true
+    ttc_labels_are_not_used: true
+    no_training_or_optimizer_steps: true
