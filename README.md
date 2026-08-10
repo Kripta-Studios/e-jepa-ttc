@@ -16,6 +16,12 @@ El preprocessing oficial del baseline Garl matched ya está materializado y firm
 release ni fuentes selladas. La prioridad actual es terminar ese entrenamiento
 matched antes de tocar la arquitectura o ejecutar A1.
 
+Ese baseline matched ya terminó: Garl obtiene MiD macro `203,63` y `0%` failures,
+frente a A0 `382,19` y `12,30%`. La ventaja aparece en las tres secuencias y el
+IC95% agrupado por secuencia de A0−Garl es `[131,74, 215,31]`. Garl matched,
+sin embargo, no modela receding: todas sus predicciones son positivas y su MiD
+negative es `437,60`. A1 debe mejorar la cadena geométrica sin perder ese régimen.
+
 Pipeline reproducible para estimar Time-to-Contact/Time-to-Collision a partir de
 cámaras de eventos, con una ruta event-only high-resolution y una futura ablación
 RGB-E multimodal.

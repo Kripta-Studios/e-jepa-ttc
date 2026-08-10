@@ -19,7 +19,11 @@ Actualizado: 2026-08-10.
 - A0 sí se ejecutó completo y fue negativo; el antiguo MiD parcial `345.18` queda
   supersedido por MiD macro `382.19` del checkpoint seleccionable.
 - La referencia Garl release en los mismos 2.048 tokens está completa, pero la
-  comparación matched desde cero sigue pendiente.
+  comparación matched desde cero ya está completa con una sola seed.
+- Garl matched (`203.63` MiD macro, cero failures) es una referencia controlada de
+  arquitectura, no evidencia multisemilla ni resultado oficial. Su salida está
+  colapsada al signo positivo: las 335 filas negative/receding reciben TTC positivo
+  y MiD `437.60`. No debe promoverse ignorando esta limitación.
 - El screen depende de ROI con cajas GT y weak-box supervision; no es bbox-free y
   sus rectángulos no son máscaras de segmentación.
 - Resume atómico pasa su prueba end-to-end, pero el run real representativo sigue

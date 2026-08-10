@@ -143,6 +143,13 @@ def _paired_tail(frame: pd.DataFrame) -> tuple[dict[str, Any], pd.DataFrame]:
     frame["causal_mid_per_sample"] = causal_error
     frame["release_mid_per_sample"] = release_error
     frame["causal_minus_release_mid"] = causal_error - release_error
+    if "matched_prediction_ttc_s" in frame:
+        matched_error = _mid_per_sample(
+            frame["target_ttc_s"].to_numpy(dtype=np.float64),
+            frame["matched_prediction_ttc_s"].to_numpy(dtype=np.float64),
+        )
+        frame["matched_mid_per_sample"] = matched_error
+        frame["causal_minus_matched_mid"] = causal_error - matched_error
     finite_pair = np.isfinite(causal_error) & np.isfinite(release_error)
     causal_wins = causal_error[finite_pair] < release_error[finite_pair]
     finite_causal = np.flatnonzero(np.isfinite(causal_error))
@@ -180,7 +187,44 @@ def _paired_tail(frame: pd.DataFrame) -> tuple[dict[str, Any], pd.DataFrame]:
         "release_mid_per_sample",
         "causal_minus_release_mid",
     ]
+    if "matched_prediction_ttc_s" in frame:
+        columns.extend(
+            [
+                "matched_prediction_ttc_s",
+                "matched_mid_per_sample",
+                "causal_minus_matched_mid",
+            ]
+        )
     return tail_summary, tail.sort_values("causal_mid_per_sample", ascending=False)[columns]
+
+
+def _paired_summary(
+    frame: pd.DataFrame, *, reference_prediction_column: str
+) -> dict[str, Any]:
+    target = frame["target_ttc_s"].to_numpy(dtype=np.float64)
+    causal_error = _mid_per_sample(
+        target, frame["causal_prediction_ttc_s"].to_numpy(dtype=np.float64)
+    )
+    reference_error = _mid_per_sample(
+        target, frame[reference_prediction_column].to_numpy(dtype=np.float64)
+    )
+    finite = np.isfinite(causal_error) & np.isfinite(reference_error)
+    return {
+        "finite_paired_count": int(finite.sum()),
+        "causal_win_count": int(np.count_nonzero(causal_error[finite] < reference_error[finite])),
+        "causal_win_rate": (
+            float(np.mean(causal_error[finite] < reference_error[finite]))
+            if np.any(finite)
+            else float("nan")
+        ),
+        "tie_count": int(np.count_nonzero(causal_error[finite] == reference_error[finite])),
+        "causal_minus_reference_mean_mid": (
+            float(np.mean(causal_error[finite] - reference_error[finite]))
+            if np.any(finite)
+            else float("nan")
+        ),
+        "window_level_bootstrap_used": False,
+    }
 
 
 def _exposure_audit(
@@ -225,11 +269,15 @@ def build_comparison(
     official_checkpoint: Path,
     output_json: Path,
     outliers_csv: Path,
+    matched_predictions: Path | None = None,
+    matched_summary: Path | None = None,
     bootstrap_iterations: int = 10_000,
     bootstrap_seed: int = 7,
 ) -> dict[str, Any]:
     """Validate exact rows and write the release/matched comparison tables."""
 
+    if (matched_predictions is None) != (matched_summary is None):
+        raise ValueError("matched predictions and summary must be supplied together.")
     inputs = (
         causal_predictions,
         causal_summary,
@@ -242,6 +290,8 @@ def build_comparison(
         official_train_labels,
         official_config,
         official_checkpoint,
+    ) + tuple(
+        path for path in (matched_predictions, matched_summary) if path is not None
     )
     for path in inputs:
         if not path.is_file():
@@ -251,6 +301,7 @@ def build_comparison(
 
     causal = pd.read_csv(causal_predictions)
     release = pd.read_parquet(release_predictions)
+    matched = pd.read_parquet(matched_predictions) if matched_predictions else None
     data = pd.read_parquet(subset_data)
     labels = pd.read_parquet(subset_labels)
     _require_columns(
@@ -263,6 +314,12 @@ def build_comparison(
         {"sample_token", "sequence_id", "target_ttc_s", "predicted_ttc_s"},
         "release predictions",
     )
+    if matched is not None:
+        _require_columns(
+            matched,
+            {"sample_token", "sequence_id", "target_ttc_s", "predicted_ttc_s"},
+            "matched predictions",
+        )
     metadata_columns = (
         "sample_token",
         "sequence_id",
@@ -272,7 +329,14 @@ def build_comparison(
     )
     _require_columns(data, set(metadata_columns), "subset data")
     _require_columns(labels, set(metadata_columns) | {"ttc"}, "subset labels")
-    named_frames = (("causal", causal), ("release", release), ("data", data), ("labels", labels))
+    named_frames = [
+        ("causal", causal),
+        ("release", release),
+        ("data", data),
+        ("labels", labels),
+    ]
+    if matched is not None:
+        named_frames.append(("matched", matched))
     for label, frame in named_frames:
         if frame["sample_token"].astype(str).duplicated().any():
             raise ValueError(f"{label} contains duplicate sample_token values.")
@@ -282,6 +346,8 @@ def build_comparison(
         "data": set(data["sample_token"].astype(str)),
         "labels": set(labels["sample_token"].astype(str)),
     }
+    if matched is not None:
+        token_sets["matched"] = set(matched["sample_token"].astype(str))
     if len({frozenset(value) for value in token_sets.values()}) != 1:
         counts = {key: len(value) for key, value in token_sets.items()}
         raise ValueError(f"Comparison token sets are not exactly equal: {counts}")
@@ -303,6 +369,15 @@ def build_comparison(
         validate="one_to_one",
     )
     release_columns = ["sample_token", "sequence_id", "target_ttc_s", "predicted_ttc_s"]
+    if matched is not None:
+        matched_aligned = matched[release_columns].copy()
+        matched_aligned.columns = [
+            "sample_token",
+            "matched_sequence_id",
+            "matched_target_ttc_s",
+            "matched_prediction_ttc_s",
+        ]
+        aligned = aligned.merge(matched_aligned, on="sample_token", validate="one_to_one")
     release_aligned = release[release_columns].copy()
     release_aligned.columns = [
         "sample_token",
@@ -321,14 +396,28 @@ def build_comparison(
         and (aligned["sequence_id"].astype(str) == aligned["release_sequence_id"].astype(str)).all()
     ):
         raise ValueError("Sequence IDs disagree after exact-token alignment.")
+    if matched is not None and not (
+        aligned["sequence_id"].astype(str) == aligned["matched_sequence_id"].astype(str)
+    ).all():
+        raise ValueError("Matched sequence IDs disagree after exact-token alignment.")
     target = aligned["target_ttc_s"].to_numpy(dtype=np.float64)
     for column in ("causal_target_ttc_s", "release_target_ttc_s"):
         if not np.allclose(target, aligned[column].to_numpy(dtype=np.float64), rtol=0.0, atol=1e-5):
             raise ValueError(f"Targets disagree after exact-token alignment: {column}")
+    if matched is not None and not np.allclose(
+        target,
+        aligned["matched_target_ttc_s"].to_numpy(dtype=np.float64),
+        rtol=0.0,
+        atol=1e-5,
+    ):
+        raise ValueError("Targets disagree after exact-token alignment: matched_target_ttc_s")
     aligned["bucket"] = _bucket_names(target)
 
     causal_arm = _arm_metrics(aligned, "causal_prediction_ttc_s")
     release_arm = _arm_metrics(aligned, "release_prediction_ttc_s")
+    matched_arm = (
+        _arm_metrics(aligned, "matched_prediction_ttc_s") if matched is not None else None
+    )
     def paper_mid(truth: np.ndarray, estimate: np.ndarray) -> float:
         return float(signed_garl_metrics(truth, estimate)["paper_MiD_overall"])
 
@@ -341,6 +430,19 @@ def build_comparison(
         iterations=bootstrap_iterations,
         seed=bootstrap_seed,
     )
+    matched_bootstrap = (
+        paired_sequence_bootstrap_difference(
+            target,
+            aligned["matched_prediction_ttc_s"].to_numpy(dtype=np.float64),
+            aligned["causal_prediction_ttc_s"].to_numpy(dtype=np.float64),
+            aligned["sequence_id"].astype(str).to_numpy(),
+            metric=paper_mid,
+            iterations=bootstrap_iterations,
+            seed=bootstrap_seed,
+        )
+        if matched is not None
+        else None
+    )
     tail, outliers = _paired_tail(aligned)
     output_json.parent.mkdir(parents=True, exist_ok=True)
     outliers_csv.parent.mkdir(parents=True, exist_ok=True)
@@ -348,6 +450,7 @@ def build_comparison(
 
     summary = _read_json(causal_summary)
     release_report = _read_json(release_metrics)
+    matched_report = _read_json(matched_summary) if matched_summary else None
     manifest = _read_json(subset_manifest)
     exposure = _exposure_audit(
         set(aligned["sequence_id"].astype(str)), official_train_assets, official_train_labels
@@ -355,7 +458,11 @@ def build_comparison(
     result: dict[str, Any] = {
         "artifact_type": "causal_scale_eap_garl_event_only_comparison_v1",
         "created_at_utc": datetime.now(UTC).isoformat(),
-        "status": "release_reference_complete_matched_training_pending",
+        "status": (
+            "release_reference_and_matched_training_complete"
+            if matched is not None
+            else "release_reference_complete_matched_training_pending"
+        ),
         "scope": {
             "public_validation_only": True,
             "private_test_opened": False,
@@ -395,22 +502,60 @@ def build_comparison(
             },
             "release_report_artifact_type": release_report.get("artifact_type"),
         },
-        "matched_training": {
-            "status": "pending",
-            "reason": (
-                "No official Garl run has yet been trained on the exact 2048/2048 "
-                "sequence-disjoint screen rows."
-            ),
-            "required_protocol": {
-                "same_train_rows": 2048,
-                "same_validation_rows": 2048,
-                "same_train_sequences": 9,
-                "same_validation_sequences": 3,
-                "validation_rows_used_for_training": False,
-                "seed": 7,
-                "selection_source": "validation_only",
-            },
-        },
+        "matched_training": (
+            {
+                "status": "complete",
+                "label": "matched 2048/2048 sequence-disjoint training from scratch",
+                "causal_scale_a0": causal_arm,
+                "garl_event_only_matched": matched_arm,
+                "paired": {
+                    **_paired_summary(
+                        aligned, reference_prediction_column="matched_prediction_ttc_s"
+                    ),
+                    "causal_minus_matched_sequence_bootstrap_paper_MiD": matched_bootstrap,
+                    "bootstrap_unit": "complete_sequence",
+                },
+                "training_budget": {
+                    "train_rows": 2048,
+                    "validation_rows": 2048,
+                    "train_sequences": 9,
+                    "validation_sequences": 3,
+                    "validation_rows_used_for_training": False,
+                    "seed": matched_report.get("protocol", {}).get("seed"),
+                    "epochs_completed": len(matched_report.get("history", [])),
+                    "selected_epoch": matched_report.get("selection", {}).get(
+                        "best_epoch"
+                    ),
+                    "elapsed_seconds": matched_report.get("timing", {}).get(
+                        "training_and_validation_elapsed_seconds"
+                    ),
+                    "peak_vram_mb": matched_report.get("resources", {}).get(
+                        "peak_vram_mb"
+                    ),
+                    "parameter_count": matched_report.get("resources", {}).get(
+                        "parameter_count"
+                    ),
+                    "pretrained_release_checkpoint_used": False,
+                },
+            }
+            if matched is not None and matched_report is not None
+            else {
+                "status": "pending",
+                "reason": (
+                    "No official Garl run has yet been trained on the exact 2048/2048 "
+                    "sequence-disjoint screen rows."
+                ),
+                "required_protocol": {
+                    "same_train_rows": 2048,
+                    "same_validation_rows": 2048,
+                    "same_train_sequences": 9,
+                    "same_validation_sequences": 3,
+                    "validation_rows_used_for_training": False,
+                    "seed": 7,
+                    "selection_source": "validation_only",
+                },
+            }
+        ),
         "diagnosis": {
             "a0_is_negative": True,
             "foreground_localization_signal": "weak",
@@ -469,6 +614,8 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--official-checkpoint", type=Path, required=True)
     parser.add_argument("--output-json", type=Path, required=True)
     parser.add_argument("--outliers-csv", type=Path, required=True)
+    parser.add_argument("--matched-predictions", type=Path)
+    parser.add_argument("--matched-summary", type=Path)
     parser.add_argument("--bootstrap-iterations", type=int, default=10_000)
     parser.add_argument("--bootstrap-seed", type=int, default=7)
     return parser.parse_args(argv)
@@ -491,6 +638,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             official_checkpoint=args.official_checkpoint,
             output_json=args.output_json,
             outliers_csv=args.outliers_csv,
+            matched_predictions=args.matched_predictions,
+            matched_summary=args.matched_summary,
             bootstrap_iterations=args.bootstrap_iterations,
             bootstrap_seed=args.bootstrap_seed,
         )

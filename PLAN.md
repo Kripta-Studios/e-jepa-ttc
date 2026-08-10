@@ -4,10 +4,9 @@
 
 1. **Completado:** A0 seed 7, subset validation exacto, referencia release y
    comparador firmado, preservando el resultado negativo.
-2. **En curso:** Garl event-only matched con exactamente 2.048 train/2.048
-   validation, sin inicialización desde el checkpoint release expuesto. El cache
-   oficial inmutable ya está completo; falta el entrenamiento seed 7.
-3. **Siguiente hipótesis única:** A1 bbox geometry-only, desactivando BCE/Dice
+2. **Completado:** Garl event-only matched con exactamente 2.048 train/2.048
+   validation, sin inicialización release: MiD macro `203.6342`, cero failures.
+3. **En curso, siguiente hipótesis única:** A1 bbox geometry-only, desactivando BCE/Dice
    weak-box y manteniendo todo lo demás igual a A0.
 4. EvTTC test y las demás fuentes selladas siguen cerradas.
 

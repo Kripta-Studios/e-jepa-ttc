@@ -7,6 +7,12 @@ validation sequence-macro MiD is 382.19, log-ratio Pearson is 0.046 and weak-box
 IoU is 0.500. It must not be described as competitive, production-ready or SOTA.
 The official release result is exposure-confounded until matched training exists.
 
+Matched training now exists and is the primary local baseline: official Garl
+event-only trained from scratch on exact 2,048/2,048 rows obtains sequence-macro
+MiD 203.63 with zero failures. A0 obtains 382.19 with 12.30% failures and loses on
+all three sequences. This does not make the local Garl run an official result or a
+SOTA result. It is a controlled single-seed architecture screen.
+
 Failure decomposition shows that bbox scale change contains target signal
 (Pearson 0.760), while the model's analytic foreground extent change does not
 (Pearson 0.037 against physical ratio; 0.015 against bbox ratio). Event support is
@@ -52,6 +58,11 @@ La adaptación eAP/Garl causal-scale v1 completó A0 sobre un cache público
 del foreground, no inputs ni máscaras GT; t0 proxy se excluye. El baseline comparable
 será Garl event-only entrenado desde cero con el mismo presupuesto; el release
 oficial expuesto se conserva en una tabla distinta.
+
+La métrica principal que un sucesor event-only debe batir en el screen 2.048 es
+MiD macro `203.6341709`, con failure no mayor que `0%`. También debe abordar el
+defecto que esa cifra agregada oculta: el baseline matched emite solo TTC positivo
+y obtiene MiD `437.5957` en negative/receding.
 
 ## Estado
 

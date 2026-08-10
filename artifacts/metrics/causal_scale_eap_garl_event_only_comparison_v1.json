@@ -1,14 +1,14 @@
 {
-  "artifact_sha256": "9f2bebde05729b7ace6fdbc0a990e6b75bf180ec87220924219ed7095105281c",
+  "artifact_sha256": "e63447135e2b09c5c6a7e2afb996bb70cce8cbba4a112afc87069e2f60c254de",
   "artifact_type": "causal_scale_eap_garl_event_only_comparison_v1",
   "artifacts": {
     "top_10pct_outliers": {
       "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\metrics\\causal_scale_eap_garl_event_only_a0_top10pct_outliers_v1.csv",
       "rows": 180,
-      "sha256": "182769dc39de7142052fc6d7ec542fce637f7e465f56edbec3246a6482a0f1a5"
+      "sha256": "a008fe210ebf4f2a0455273da289f54680806cca5aec00e877ca6e999de40d64"
     }
   },
-  "created_at_utc": "2026-08-10T01:16:22.860686+00:00",
+  "created_at_utc": "2026-08-10T02:14:42.762744+00:00",
   "diagnosis": {
     "a0_is_negative": true,
     "classification": "weak-box IoU is low and temporal log-ratio correlation is near zero; the primary failures are foreground localization and scale dynamics.",
@@ -53,6 +53,10 @@
       "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\causal_scale_eap_screen_v1_seed7\\summary.json",
       "sha256": "04fa34e632391ca2313c1c47d1341e6515a8290663c32e558dd5825b7d67524e"
     },
+    "summary.json#12": {
+      "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\garl_matched_event_only_cached_seed7\\summary.json",
+      "sha256": "be77bf23cdd63b062b2b53854e44a46a52a26ecfd84474efbda6d60cd00e1b11"
+    },
     "train.parquet#8": {
       "path": "E:\\GarlTTC_dataset\\annotations\\train.parquet",
       "sha256": "64e9a81232643ecce1d2f66e906c7cff6ea1e9e6958f81588b95e112693b11ad"
@@ -64,20 +68,418 @@
     "validation_predictions.csv#0": {
       "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\causal_scale_eap_screen_v1_seed7\\validation_predictions.csv",
       "sha256": "070d507b2d17533e61703e82070fa31b88bc5291ecf3c7798ddb36bbadf3881c"
+    },
+    "validation_predictions.parquet#11": {
+      "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\garl_matched_event_only_cached_seed7\\validation_predictions.parquet",
+      "sha256": "d547d9261a6a772fefa4b46fae44cbe264e21403d15cd6de6e61b5755852cdbf"
     }
   },
   "matched_training": {
-    "reason": "No official Garl run has yet been trained on the exact 2048/2048 sequence-disjoint screen rows.",
-    "required_protocol": {
-      "same_train_rows": 2048,
-      "same_train_sequences": 9,
-      "same_validation_rows": 2048,
-      "same_validation_sequences": 3,
-      "seed": 7,
-      "selection_source": "validation_only",
-      "validation_rows_used_for_training": false
+    "causal_scale_a0": {
+      "prediction_distribution": {
+        "abs_clip_s": 60.0,
+        "count": 2048,
+        "finite_count": 1796,
+        "infinite_count": 0,
+        "maximum_s": 59.999996185302734,
+        "mean_s": 0.8860326250703935,
+        "minimum_s": -59.999996185302734,
+        "nan_count": 252,
+        "saturation_count": 150,
+        "saturation_rate_pct": 8.351893095768375,
+        "std_s": 23.967465673333894
+      },
+      "ratio_diagnostics": {
+        "known_count": 1796,
+        "known_coverage": 0.876953125,
+        "log_ratio_mae": 0.029288236327676968,
+        "log_ratio_pearson": 0.05065599622336518,
+        "log_ratio_slope": 0.0422964010483525,
+        "ttc_sign_accuracy": 0.5334075723830735
+      },
+      "sequence_macro": {
+        "per_sequence": {
+          "DGqicHUGWb": {
+            "bins": {
+              "crucial": {
+                "count": 187,
+                "failure_count": 15,
+                "failure_rate_pct": 8.02139037433155,
+                "mid": 617.8479487931316,
+                "rte_pct": 1045.6569658269138
+              },
+              "large": {
+                "count": 187,
+                "failure_count": 20,
+                "failure_rate_pct": 10.695187165775401,
+                "mid": 215.87189661905597,
+                "rte_pct": 209.86439471907983
+              },
+              "negative": {
+                "count": 28,
+                "failure_count": 4,
+                "failure_rate_pct": 14.285714285714285,
+                "mid": 251.9119248189257,
+                "rte_pct": 419.8301010898637
+              },
+              "small": {
+                "count": 281,
+                "failure_count": 28,
+                "failure_rate_pct": 9.9644128113879,
+                "mid": 268.83767742346953,
+                "rte_pct": 410.09472857670625
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 67,
+            "failure_rate_pct": 9.809663250366032,
+            "num_samples": 683,
+            "paper_MiD_overall": 436.35365976740485,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 708.8263510673631
+          },
+          "pBqGOb2vYq": {
+            "bins": {
+              "crucial": {
+                "count": 178,
+                "failure_count": 16,
+                "failure_rate_pct": 8.98876404494382,
+                "mid": 467.92916698984294,
+                "rte_pct": 778.6971794221939
+              },
+              "large": {
+                "count": 161,
+                "failure_count": 12,
+                "failure_rate_pct": 7.453416149068323,
+                "mid": 156.34132899642228,
+                "rte_pct": 248.0296056987604
+              },
+              "negative": {
+                "count": 128,
+                "failure_count": 29,
+                "failure_rate_pct": 22.65625,
+                "mid": 208.80913891977426,
+                "rte_pct": 298.9047778900285
+              },
+              "small": {
+                "count": 216,
+                "failure_count": 30,
+                "failure_rate_pct": 13.88888888888889,
+                "mid": 257.81898689261556,
+                "rte_pct": 368.41656731760037
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 87,
+            "failure_rate_pct": 12.73792093704246,
+            "num_samples": 683,
+            "paper_MiD_overall": 347.82532635432574,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 554.566998265256
+          },
+          "qoohcdtLDH": {
+            "bins": {
+              "crucial": {
+                "count": 148,
+                "failure_count": 27,
+                "failure_rate_pct": 18.243243243243242,
+                "mid": 485.4110123329167,
+                "rte_pct": 967.1371567589756
+              },
+              "large": {
+                "count": 200,
+                "failure_count": 19,
+                "failure_rate_pct": 9.5,
+                "mid": 179.0020384663094,
+                "rte_pct": 267.2015900874649
+              },
+              "negative": {
+                "count": 179,
+                "failure_count": 34,
+                "failure_rate_pct": 18.994413407821227,
+                "mid": 204.1419344341603,
+                "rte_pct": 313.52671741882756
+              },
+              "small": {
+                "count": 155,
+                "failure_count": 18,
+                "failure_rate_pct": 11.612903225806452,
+                "mid": 271.242138094175,
+                "rte_pct": 375.00137259920695
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 98,
+            "failure_rate_pct": 14.369501466275661,
+            "num_samples": 682,
+            "paper_MiD_overall": 362.3925448847578,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 654.1418209098791
+          }
+        },
+        "protocol": "garl_signed_v1",
+        "sequence_macro_paper_MiD_overall": 382.1905103354961
+      },
+      "signed": {
+        "bins": {
+          "crucial": {
+            "count": 513,
+            "failure_count": 58,
+            "failure_rate_pct": 11.306042884990253,
+            "mid": 529.2507796418818,
+            "rte_pct": 929.7264552889245
+          },
+          "large": {
+            "count": 548,
+            "failure_count": 51,
+            "failure_rate_pct": 9.306569343065693,
+            "mid": 184.59725094215543,
+            "rte_pct": 242.18763173648446
+          },
+          "negative": {
+            "count": 335,
+            "failure_count": 67,
+            "failure_rate_pct": 20.0,
+            "mid": 210.1439232897952,
+            "rte_pct": 317.6450353096998
+          },
+          "small": {
+            "count": 652,
+            "failure_count": 76,
+            "failure_rate_pct": 11.65644171779141,
+            "mid": 265.8514528976845,
+            "rte_pct": 388.28929843241616
+          }
+        },
+        "delta_t_s": 0.1,
+        "failure_count": 252,
+        "failure_rate_pct": 12.3046875,
+        "num_samples": 2048,
+        "paper_MiD_overall": 383.8549431134413,
+        "protocol": "garl_signed_v1",
+        "weighted_RTE_pct": 637.3332838788054
+      }
     },
-    "status": "pending"
+    "garl_event_only_matched": {
+      "prediction_distribution": {
+        "abs_clip_s": 60.0,
+        "count": 2048,
+        "finite_count": 2048,
+        "infinite_count": 0,
+        "maximum_s": 6.508321285247803,
+        "mean_s": 3.4921327351476066,
+        "minimum_s": 1.0117239952087402,
+        "nan_count": 0,
+        "saturation_count": 0,
+        "saturation_rate_pct": 0.0,
+        "std_s": 1.055548373240954
+      },
+      "ratio_diagnostics": {
+        "known_count": 2048,
+        "known_coverage": 1.0,
+        "log_ratio_mae": 0.019717057729614518,
+        "log_ratio_pearson": 0.3722129160553754,
+        "log_ratio_slope": 0.20993774544634589,
+        "ttc_sign_accuracy": 0.83642578125
+      },
+      "sequence_macro": {
+        "per_sequence": {
+          "DGqicHUGWb": {
+            "bins": {
+              "crucial": {
+                "count": 187,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 251.97333152517174,
+                "rte_pct": 79.25928956556153
+              },
+              "large": {
+                "count": 187,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 180.63448461834977,
+                "rte_pct": 51.752588501739346
+              },
+              "negative": {
+                "count": 28,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 499.2839247437807,
+                "rte_pct": 187.01405489398954
+              },
+              "small": {
+                "count": 281,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 86.35529697278658,
+                "rte_pct": 25.735334160645554
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 0,
+            "failure_rate_pct": 0.0,
+            "num_samples": 683,
+            "paper_MiD_overall": 219.88509579063492,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 71.22690937054732
+          },
+          "pBqGOb2vYq": {
+            "bins": {
+              "crucial": {
+                "count": 178,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 203.28520261316228,
+                "rte_pct": 42.60004741357286
+              },
+              "large": {
+                "count": 161,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 224.63154289485868,
+                "rte_pct": 57.63901106129055
+              },
+              "negative": {
+                "count": 128,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 435.4317743082297,
+                "rte_pct": 174.28439935955862
+              },
+              "small": {
+                "count": 216,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 164.86400631388057,
+                "rte_pct": 34.247887774541056
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 0,
+            "failure_rate_pct": 0.0,
+            "num_samples": 683,
+            "paper_MiD_overall": 217.10813492105413,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 54.76673108123366
+          },
+          "qoohcdtLDH": {
+            "bins": {
+              "crucial": {
+                "count": 148,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 196.82336442947314,
+                "rte_pct": 62.26130518710985
+              },
+              "large": {
+                "count": 200,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 133.8041073840755,
+                "rte_pct": 45.69732948978403
+              },
+              "negative": {
+                "count": 179,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 429.4935221262726,
+                "rte_pct": 171.18660861094182
+              },
+              "small": {
+                "count": 155,
+                "failure_count": 0,
+                "failure_rate_pct": 0.0,
+                "mid": 63.89278978178431,
+                "rte_pct": 20.393081994319324
+              }
+            },
+            "delta_t_s": 0.1,
+            "failure_count": 0,
+            "failure_rate_pct": 0.0,
+            "num_samples": 682,
+            "paper_MiD_overall": 173.90928210030665,
+            "protocol": "garl_signed_v1",
+            "weighted_RTE_pct": 58.93697100192331
+          }
+        },
+        "protocol": "garl_signed_v1",
+        "sequence_macro_paper_MiD_overall": 203.6341709373319
+      },
+      "signed": {
+        "bins": {
+          "crucial": {
+            "count": 513,
+            "failure_count": 0,
+            "failure_rate_pct": 0.0,
+            "mid": 219.16888303296693,
+            "rte_pct": 61.635416678495574
+          },
+          "large": {
+            "count": 548,
+            "failure_count": 0,
+            "failure_rate_pct": 0.0,
+            "mid": 176.46924909948677,
+            "rte_pct": 51.27204512527344
+          },
+          "negative": {
+            "count": 335,
+            "failure_count": 0,
+            "failure_rate_pct": 0.0,
+            "mid": 437.59569392502107,
+            "rte_pct": 173.69313312362328
+          },
+          "small": {
+            "count": 652,
+            "failure_count": 0,
+            "failure_rate_pct": 0.0,
+            "mid": 107.02430403271134,
+            "rte_pct": 27.2854300115978
+          }
+        },
+        "delta_t_s": 0.1,
+        "failure_count": 0,
+        "failure_rate_pct": 0.0,
+        "num_samples": 2048,
+        "paper_MiD_overall": 203.09822702874763,
+        "protocol": "garl_signed_v1",
+        "weighted_RTE_pct": 61.4998551676168
+      }
+    },
+    "label": "matched 2048/2048 sequence-disjoint training from scratch",
+    "paired": {
+      "bootstrap_unit": "complete_sequence",
+      "causal_minus_matched_sequence_bootstrap_paper_MiD": {
+        "candidate_better": false,
+        "confidence": 0.95,
+        "estimate": 180.70313604133383,
+        "iterations": 10000,
+        "lower": 131.7444284306519,
+        "sequence_count": 3,
+        "status": "paired_sequence_cluster_bootstrap",
+        "upper": 215.3146092802587
+      },
+      "causal_minus_reference_mean_mid": 96.97117379561347,
+      "causal_win_count": 641,
+      "causal_win_rate": 0.3569042316258352,
+      "finite_paired_count": 1796,
+      "tie_count": 0,
+      "window_level_bootstrap_used": false
+    },
+    "status": "complete",
+    "training_budget": {
+      "elapsed_seconds": 274.9784161000007,
+      "epochs_completed": 16,
+      "parameter_count": 24674178,
+      "peak_vram_mb": 1317.58447265625,
+      "pretrained_release_checkpoint_used": false,
+      "seed": 7,
+      "selected_epoch": 11,
+      "train_rows": 2048,
+      "train_sequences": 9,
+      "validation_rows": 2048,
+      "validation_rows_used_for_training": false,
+      "validation_sequences": 3
+    }
   },
   "official_release": {
     "checkpoint_sha256": "fcaf9be47e2dafc6f73c6c3ebd102595ae06119dcae78aea698a42627b2b4fef",
@@ -534,5 +936,5 @@
     "sequence_count": 3,
     "target_equality_verified": true
   },
-  "status": "release_reference_complete_matched_training_pending"
+  "status": "release_reference_and_matched_training_complete"
 }

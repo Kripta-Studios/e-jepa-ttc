@@ -116,3 +116,42 @@ def test_build_comparison_rejects_nonidentical_token_sets(tmp_path: Path) -> Non
 
     with pytest.raises(ValueError, match="token sets are not exactly equal"):
         comparison.build_comparison(**paths, bootstrap_iterations=100)
+
+
+def test_build_comparison_adds_exact_matched_training_table(tmp_path: Path) -> None:
+    paths = _inputs(tmp_path)
+    matched_predictions = tmp_path / "matched.parquet"
+    matched_summary = tmp_path / "matched_summary.json"
+    matched = pd.read_parquet(paths["release_predictions"])
+    matched["predicted_ttc_s"] = matched["target_ttc_s"] * 1.2
+    matched.to_parquet(matched_predictions, index=False)
+    matched_summary.write_text(
+        json.dumps(
+            {
+                "history": [{}, {}, {}],
+                "protocol": {"seed": 7},
+                "selection": {"best_epoch": 2},
+                "timing": {"training_and_validation_elapsed_seconds": 12.0},
+                "resources": {"peak_vram_mb": 4.0, "parameter_count": 10},
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    result = comparison.build_comparison(
+        **paths,
+        matched_predictions=matched_predictions,
+        matched_summary=matched_summary,
+        bootstrap_iterations=100,
+        bootstrap_seed=3,
+    )
+
+    assert verify_artifact_hash(result)
+    assert result["status"] == "release_reference_and_matched_training_complete"
+    assert result["matched_training"]["status"] == "complete"
+    assert result["matched_training"]["training_budget"]["selected_epoch"] == 2
+    assert result["matched_training"]["paired"][
+        "causal_minus_matched_sequence_bootstrap_paper_MiD"
+    ]["sequence_count"] == 2
+    outliers = pd.read_csv(paths["outliers_csv"])
+    assert "matched_mid_per_sample" in outliers.columns

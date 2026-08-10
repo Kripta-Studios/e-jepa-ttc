@@ -26,6 +26,13 @@
   ni fuentes selladas y con crop bbox oracle declarado.
 - Runner cached matched implementado con pesos desde cero, selección validation
   desde época 8, estado atómico y resume ligado al protocolo completo.
+- Garl matched seed 7 terminado en GPU: best 11/16, MiD global `203.0982270`,
+  macro `203.6341709`, failure `0%`, Pearson log-ratio `.372213`, 274,98 s y
+  1.317,6 MiB peak VRAM.
+- A0 pierde en las tres secuencias: diferencia macro `+180.7031360`, IC95% por
+  secuencia `[131.7444284, 215.3146093]`; win rate pareado finito `35.6904%`.
+  Garl matched falla cualitativamente en negative: predice siempre TTC positivo.
+- Comparador release/matched firmado: `e63447135e2b09c5c6a7e2afb996bb70cce8cbba4a112afc87069e2f60c254de`.
 
 ## Addendum eAP causal-scale screen v1 (2026-08-10)
 

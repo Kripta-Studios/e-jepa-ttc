@@ -12,6 +12,12 @@ Usa el cache oficial firmado `92af2810…f564b52`, seed 7, batch 32, máximo 18
 training, validation e inferencia se cronometran por separado. Resume rechaza
 cualquier cambio de config, cache, seed, épocas, batch, paciencia o guard temporal.
 
+El resultado matched seed 7 es el baseline principal a batir en este screen: MiD
+global `203.0982270`, macro-secuencia `203.6341709`, failure `0%`. El checkpoint
+seleccionado es época 11 de 16 ejecutadas. La tabla release (`117.4282` macro)
+permanece separada por presupuesto desigual y exposición de validation. A1 se
+compara causalmente contra matched, no usa la release como gate.
+
 El diagnóstico de fallo no selecciona hiperparámetros ni abre test. Descompone el
 checkpoint ya seleccionado sobre la misma validation pública en bbox-ratio,
 extensión analítica, residual, ratio combinado y ratio efectivo. A1 queda

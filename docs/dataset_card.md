@@ -85,6 +85,17 @@ entrada es FP32 `[40,128,128]` (`timevolume20` para dos endpoints). No guarda RG
 bbox ni TTC como input; sí usa y declara el crop bbox oracle del protocolo Garl.
 Su identidad es `92af281030170733411ef9d65b19e88ebc8019c729dd6743e02ae9c40f564b52`.
 
+El split matched firmado `dd08ecc983f30e38a939204f9a2df09e4966bbe73bd764c972f7726e5d4e34d3`
+usa estas secuencias completas/disjuntas:
+
+- train: `2cyv0Oedzg`, `5ilM1PX2vz`, `6h5yRW2LGc`, `OBneIVg4Cw`,
+  `OYgB6RGWcq`, `WbCh1DRerJ`, `mHGFBekt7X`, `qGsgzl4Q8B`, `t79dBxj1WS`;
+- validation: `DGqicHUGWb`, `pBqGOb2vYq`, `qoohcdtLDH`.
+
+Cada rol contiene 2.048 filas. Ninguna fila validation se usa para gradientes;
+validation solo selecciona checkpoint. No se abrió test privado, CodaBench ni
+EvTTC test.
+
 ## Contrato de almacenamiento
 
 - datos raw inmutables y fuera de Git;

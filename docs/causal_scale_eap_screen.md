@@ -110,6 +110,41 @@ Debe evaluarse sobre exactamente los mismos 2.048 sample tokens de validation. E
 full multimodal se reportará aparte porque no comparte modalidad. La diferencia de
 representación —Garl 2×20 canales frente a nuestro 3×12— debe permanecer visible.
 
+### Garl event-only matched seed 7: baseline principal a batir
+
+Se entrenó desde cero el `TTCNetwork` y la loss/optimizer oficiales del release
+auditado `256661242b8a7f5e56aa3c1c02348b30f6e89de6`. No se cargó ningún checkpoint
+release. Usó exactamente las mismas 2.048 filas train y 2.048 validation que A0,
+con secuencias disjuntas, seed 7, batch 32, FP32, máximo 18 épocas y selección
+validation-only desde época 8 por MiD macro y failure rate. Early stopping terminó
+en época 16 y seleccionó época 11.
+
+| Métrica validation | Garl matched | A0 |
+|---|---:|---:|
+| MiD global | 203.0982270 | 383.8549431 |
+| MiD macro-secuencia | 203.6341709 | 382.1905103 |
+| failure rate | 0% | 12.3046875% |
+| known coverage | 1.0 | 0.876953125 |
+| log-ratio Pearson | 0.3722129 | 0.0506560 |
+| log-ratio slope | 0.2099377 | 0.0422964 |
+| sign accuracy | 0.8364258 | 0.5334076 |
+
+Garl matched por secuencia: `DGqicHUGWb=219.8851`, `pBqGOb2vYq=217.1081`,
+`qoohcdtLDH=173.9093`. A0 pierde en las tres. Por bucket, Garl obtiene crucial
+`219.1689`, small `107.0243`, large `176.4692` y negative `437.5957`, todos sin
+failure. A0 obtiene respectivamente `529.2508`, `265.8515`, `184.5973` y
+`210.1439`, pero negative tiene `20%` failures. Las 2.048 predicciones matched son
+positivas (`1.0117–6.5083 s`), de modo que Garl no resuelve receding pese a su mejor
+MiD general.
+
+La diferencia A0−Garl matched es `+180.7031360` MiD, IC95% bootstrap por
+secuencia `[131.7444284,215.3146093]`; A0 gana el `35.6904%` de los 1.796 pares
+finitos. La identidad firmada del run es
+`553904c18874b3509e10a71e5b46b33e0f5df6ddb4fec7a7e57b6abc34322937` y la del
+comparador completo `e63447135e2b09c5c6a7e2afb996bb70cce8cbba4a112afc87069e2f60c254de`.
+Training+validation tardó `274.9784 s`; inferencia final `4.9803 s` (411,22/s),
+peak VRAM `1.317,58 MiB`, 24.674.178 parámetros.
+
 ## Estado
 
 A0, referencia release y comparación firmada están terminados. El cache matched

@@ -14,6 +14,12 @@
   identidad firmada `92af2810…f564b52`;
 - implementado trainer sobre cache con selección validation-only, checkpoints
   atómicos y resume fail-closed ante cambios de protocolo.
+- terminado Garl matched seed 7: best 11/16, MiD macro `203.6342`, global
+  `203.0982`, cero failures, 274,98 s y 1.317,6 MiB VRAM;
+- actualizado comparador firmado con tabla matched, win rate pareado y bootstrap
+  por secuencia: identidad `e6344713…c254de`;
+- A0 pierde en las tres secuencias y por `+180.7031` MiD macro; Garl matched
+  conserva un fallo visible en receding/negative al predecir solo TTC positivo.
 
 ## 2026-08-10 — Transporte temporal Causal Scale v7
 

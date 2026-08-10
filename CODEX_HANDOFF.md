@@ -16,8 +16,18 @@ Comparador firmado:
 `artifacts/metrics/causal_scale_eap_garl_event_only_comparison_v1.json`, identidad
 `9f2bebde05729b7ace6fdbc0a990e6b75bf180ec87220924219ed7095105281c`.
 La diferencia A0 menos release es `+264.4246879` MiD, IC95% por secuencia
-`[228.8007775, 302.7170041]`. Matched training continúa pendiente. La siguiente
-hipótesis única es A1 geometry-only con filas, seed, modelo y presupuesto fijos.
+`[228.8007775, 302.7170041]`.
+
+Matched training terminó desde cero en GPU: época seleccionada 11/16, MiD global
+`203.0982270`, MiD macro `203.6341709`, failure `0%`, Pearson log-ratio `.372213`.
+A0 queda `+180.7031360` MiD por detrás, IC95% por secuencia
+`[131.7444284, 215.3146093]`, y gana solo el `35.6904%` de los pares finitos.
+Garl matched mejora las tres secuencias. Su punto débil es negative: MiD `437.5957`
+y predicciones siempre positivas; A0 obtiene `210.1439` ahí pero con `20%` failures.
+La comparación firmada completa tiene identidad
+`e63447135e2b09c5c6a7e2afb996bb70cce8cbba4a112afc87069e2f60c254de`.
+La siguiente hipótesis única es A1 geometry-only con filas, seed, modelo y
+presupuesto fijos.
 
 El subset para matched training está materializado en
 `artifacts/subsets/garl_event_only_matched_screen_v1`, identidad firmada

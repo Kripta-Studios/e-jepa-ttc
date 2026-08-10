@@ -28,6 +28,51 @@ uv run --extra geometry python scripts/build_garl_matched_preprocessing_cache.py
   --batch-size 32 --num-workers 16 --shard-size 64 --seed 7
 ```
 
+Entrenamiento Garl matched exacto, desde cero y en GPU:
+
+```powershell
+uv run --extra geometry python scripts/train_garl_matched_from_cache.py `
+  --release-root E:\Garl-TTC `
+  --cache-manifest artifacts/cache/garl_official_event_only_matched_preprocessing_v1/manifest.json `
+  --output-dir artifacts/runs/garl_matched_event_only_cached_seed7 `
+  --device cuda --seed 7 --epochs 18 --batch-size 32 `
+  --minimum-epochs 8 --early-stopping-patience 5 `
+  --maximum-runtime-hours 4.5
+```
+
+Si existe `state/last.pt`, repetir el mismo comando con `--resume`; el estado liga
+config, cache, release, seed, épocas, batch, selección y guard temporal y rechaza
+cambios. Resultado firmado:
+`artifacts/runs/garl_matched_event_only_cached_seed7/summary.json`, identidad
+`553904c18874b3509e10a71e5b46b33e0f5df6ddb4fec7a7e57b6abc34322937`.
+Predicciones exactas: `validation_predictions.parquet`, 2.048 filas, SHA256
+`d547d9261a6a772fefa4b46fae44cbe264e21403d15cd6de6e61b5755852cdbf`.
+
+Regeneración de las tablas release y matched firmadas:
+
+```powershell
+uv run python scripts/build_causal_scale_eap_garl_comparison.py `
+  --causal-predictions artifacts/runs/causal_scale_eap_screen_v1_seed7/validation_predictions.csv `
+  --causal-summary artifacts/runs/causal_scale_eap_screen_v1_seed7/summary.json `
+  --release-predictions artifacts/runs/garl_official_event_only_same2048/predictions.parquet `
+  --release-metrics artifacts/runs/garl_official_event_only_same2048/metrics.json `
+  --matched-predictions artifacts/runs/garl_matched_event_only_cached_seed7/validation_predictions.parquet `
+  --matched-summary artifacts/runs/garl_matched_event_only_cached_seed7/summary.json `
+  --subset-data artifacts/subsets/garl_validation_common_roi_v1/data.parquet `
+  --subset-labels artifacts/subsets/garl_validation_common_roi_v1/labels.parquet `
+  --subset-manifest artifacts/subsets/garl_validation_common_roi_v1/manifest.json `
+  --official-train-assets E:\Garl-TTC\configs\splits\train.txt `
+  --official-train-labels E:\GarlTTC_dataset\annotations\train.parquet `
+  --official-config E:\Garl-TTC\configs\ablation\event_lhr.yaml `
+  --official-checkpoint E:\Garl-TTC\checkpoints\paper_event_only_lhr.pth `
+  --output-json artifacts/metrics/causal_scale_eap_garl_event_only_comparison_v1.json `
+  --outliers-csv artifacts/metrics/causal_scale_eap_garl_event_only_a0_top10pct_outliers_v1.csv `
+  --bootstrap-iterations 10000 --bootstrap-seed 7
+```
+
+El comparador verifica igualdad exacta de tokens, secuencia y target y remuestrea
+las tres secuencias completas, nunca ventanas.
+
 Regeneración del diagnóstico:
 
 ```powershell
