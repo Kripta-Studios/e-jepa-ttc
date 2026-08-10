@@ -60,6 +60,10 @@ function Invoke-LoggedNative {
     )
     Ensure-Directory $Logs
     $LogPath = Join-Path $Logs ("{0}.log" -f $Name)
+    # Native commands such as `python -m py_compile` can succeed without
+    # emitting any stdout/stderr. Tee-Object does not create its destination
+    # in that case, so pre-create the log before invoking the command.
+    Set-Content -Path $LogPath -Value "" -Encoding utf8
     Write-Host "`n=== $Name ===" -ForegroundColor Cyan
     Write-Host "$Executable $($Arguments -join ' ')"
     $started = Get-Date
@@ -229,13 +233,19 @@ function Finalize-Bundle {
         }
         $manifest | ConvertTo-Json -Depth 8 | Out-File (Join-Path $BundleStage "suite_manifest.json") -Encoding utf8
 
-        Get-ChildItem $BundleStage -Recurse -File | ForEach-Object {
+        # Snapshot the file list before opening inventory.csv for writing.
+        # Otherwise lazy Get-ChildItem enumeration can discover inventory.csv
+        # after Export-Csv has opened it and then try to hash that locked file.
+        $inventoryPath = Join-Path $BundleStage "inventory.csv"
+        $inventoryFiles = @(Get-ChildItem $BundleStage -Recurse -File | Where-Object { $_.FullName -ne $inventoryPath })
+        $inventoryRows = foreach ($file in $inventoryFiles) {
             [pscustomobject]@{
-                path = $_.FullName.Substring($BundleStage.Length + 1)
-                bytes = $_.Length
-                sha256 = (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLower()
+                path = $file.FullName.Substring($BundleStage.Length + 1)
+                bytes = $file.Length
+                sha256 = (Get-FileHash $file.FullName -Algorithm SHA256).Hash.ToLower()
             }
-        } | Export-Csv (Join-Path $BundleStage "inventory.csv") -NoTypeInformation -Encoding utf8
+        }
+        $inventoryRows | Export-Csv $inventoryPath -NoTypeInformation -Encoding utf8
 
         if (Test-Path $BundleZip) { Remove-Item $BundleZip -Force }
         Compress-Archive -Path (Join-Path $BundleStage "*") -DestinationPath $BundleZip -Force
