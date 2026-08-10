@@ -77,6 +77,12 @@ Se congeló peso `5.0` por escala train-only: `.09044` de contribución, frente 
 `.08547` de width. No se hará sweep. Si no estabiliza
 ratio y failures, pasar a representación event-native preentrenada antes de JEPA.
 
+A1-DF-R terminó negativo/insuficiente: macro `349.8628`, failure `19.8242%`; la
+mejora de `.4392` sobre A1-DF procede solo de una secuencia y la correlación
+analítica baja. No variar el peso ni escalar. Siguiente: auditar máscaras oficiales
+y opciones de pretraining event-native/local; probar un solo backbone/teacher con
+el mismo geometry head y protocolo explícito puro vs RGB-distilled.
+
 No se cambian `unknown`, support, clip, residual, consenso, optimizer, seed, filas
 o presupuesto durante A1. Correlaciones absolutas y diferenciales se reportan
 globales y macro por secuencia; `r_iso` es diagnóstico, no prediction path.

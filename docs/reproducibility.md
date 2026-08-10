@@ -255,6 +255,17 @@ model SHA256 `265dbfd57e68d7a6aa385fbf31dc0ad41154b17afbd1d9454bbd8ddd80c6663f`.
 El peso `5.0` produce contribución `.0904432` en 2.048 train rows, comparable a
 `.0854723` de width; validation no se usó para elegirlo y no se permite sweep.
 
+Resultado: best 17/18, global `349.5329377`, macro `349.8628324`, failure
+`19.82421875%`; summary identity
+`9d858bf0802932e1af2fc34e4c3066d7909c86807a52e16095ceac43e31a785b`.
+Predictions SHA256 `fea69bb2401b5802558312ee7e6b8fc9d9c04863c404f410cc3f6971a521350c`;
+checkpoint SHA256 `d209e08dc15154caeefd6bec06b68f6a0f6ece9955ecb4db5dd5d87e8ff4b721`.
+El comparador se regenera con el comando A1-DF cambiando candidate paths/outputs a
+`a1_deep_features_ratio` y su label a `causal_scale_a1_deep_features_ratio`.
+Identidad `0560154542b06c12d20a24ed719ec9461ebaab9d7e4fa080afe964cda2dd6205`.
+La descomposición usa el mismo comando A1-DF con los paths/label ratio; identidad
+`0bc741a5f732f705e4862a2e40e45413027fa6b28f3e326468ed30cea49900e7`.
+
 Regeneración del diagnóstico:
 
 ```powershell

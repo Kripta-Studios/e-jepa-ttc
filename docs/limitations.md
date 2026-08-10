@@ -32,6 +32,8 @@ objetivos, aunque no la demuestra causalmente. El siguiente pair-ratio es una
 ablation de esa hipótesis, no una reparación garantizada ni un gate revisado.
 El peso `5.0` se normalizó con train, pero sigue siendo una única elección de diseño;
 un resultado negativo no descarta todos los pesos y no autoriza un sweep post-hoc.
+El resultado peso `5.0` no estabilizó la geometría y no debe reinterpretarse como
+evidencia contra toda supervisión temporal; sí cierra esta elección preregistrada.
 
 Actualizado: 2026-08-10.
 

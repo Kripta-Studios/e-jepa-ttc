@@ -85,6 +85,14 @@
 - A1-DF-R preregistrado `b3f9eb9e…de43f67`: único cambio pair-ratio `0 -> 5`,
   target numérico bbox training-only, sin máscara, apagado durante warm-up. Peso
   normalizado solo con train; sin teachers, JEPA ni cambios de unknown/clip.
+- A1-DF-R seed 7 cerrado: best 17/18, macro `349.8628`, failure `19.8242%`,
+  known `.8018`, ratio `.1703`. Mejora A1-DF marginalmente, pero sigue peor que A1.
+- Dos secuencias empeoran y una mejora; no cumple distribución. Comparador
+  `05601545…2dd6205`, bootstrap vs Garl `143.49` IC95% `[104.84,175.13]`.
+- Pair-ratio aumenta slope/amplitud pero reduce correlación analítica/física a
+  `.1499`; 406 unknown canónicos. No se permite sweep ni escalado.
+- Siguiente rama: representación event-native/pretraining. Auditar primero máscaras
+  públicas y teachers locales; mantener protocolos puro y RGB-distilled separados.
 
 ## Addendum eAP causal-scale screen v1 (2026-08-10)
 

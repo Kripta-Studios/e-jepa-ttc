@@ -74,6 +74,10 @@ loss pair-ratio geometry-only se desactiva durante warm-up y después supervisa 
 altura analítica, no el residual ni una salida TTC directa. Todos los demás campos
 de data, training, model y loss son idénticos a A1-DF.
 
+A1-DF-R terminó sin mejora distribuida. Queda prohibido ajustar otro peso mirando
+validation o escalar este brazo. La próxima rama cambia representación y conserva
+readout/protocolo; cualquier teacher RGB se declara RGB-distilled y usa solo train.
+
 El diagnóstico de fallo no selecciona hiperparámetros ni abre test. Descompone el
 checkpoint ya seleccionado sobre la misma validation pública en bbox-ratio,
 extensión analítica, residual, ratio combinado y ratio efectivo. A1 queda

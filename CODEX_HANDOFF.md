@@ -130,6 +130,19 @@ numérica training-only, sin rasterización; warm-up lo mantiene en cero. El pes
 fijó con 2.048 train: contribución `.09044`, comparable a width `.08547`, sin usar
 validation ni sweep.
 
+A1-DF-R terminó 18 épocas, best 17: global `349.5329377`, macro `349.8628324`,
+failure `19.82421875%`, known `.8017578`, ratio `.1702691`. Frente a A1-DF solo
+mejora `.4392` MiD y `1.2695` puntos de failure; DGq/pBq empeoran y únicamente
+qooh mejora, así que la ganancia está dominada por una secuencia. Analítico/físico
+baja de `.1703` a `.1499`; slope sube `.0848 -> .0893` y unknown canónico baja
+432 -> 406. Resultado negativo/insuficiente; no sweep ni escalado.
+
+Comparador firmado `0560154542b06c12d20a24ed719ec9461ebaab9d7e4fa080afe964cda2dd6205`;
+descomposición `0bc741a5f732f705e4862a2e40e45413027fa6b28f3e326468ed30cea49900e7`.
+El siguiente trabajo debe evaluar representación event-native/pretraining con el
+mismo readout geométrico. Antes de teachers RGB, auditar cobertura/licencia de las
+máscaras públicas; no escalar 2.048 ni abrir test con este brazo.
+
 El subset para matched training está materializado en
 `artifacts/subsets/garl_event_only_matched_screen_v1`, identidad firmada
 `dd08ecc983f30e38a939204f9a2df09e4966bbe73bd764c972f7726e5d4e34d3`.

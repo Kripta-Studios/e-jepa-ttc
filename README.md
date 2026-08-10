@@ -43,7 +43,8 @@ temporal (`r=.186`) pero MiD macro `350,30` y
 `21,09%` failures: no supera A1 ni Garl matched. El ratio aprendido está
 subescalado, por lo que el siguiente control aislado será supervisarlo directamente
 sin cambiar arquitectura. A1-DF-R está preregistrado con peso train-normalized
-`5.0`; todavía no tiene métricas.
+`5.0`. Terminó con macro `349,86` y `19,82%` failures: mejora marginalmente A1-DF,
+pero dos de tres secuencias empeoran y no supera A1. Se cierra sin sweep/escalado.
 
 Pipeline reproducible para estimar Time-to-Contact/Time-to-Collision a partir de
 cámaras de eventos, con una ruta event-only high-resolution y una futura ablación

@@ -95,8 +95,12 @@ de decisión y queda lejos de Garl matched. No es un checkpoint promovido ni apt
 para inferencia fiable: el `21.09%` de validation queda unknown.
 
 El sucesor A1-DF-R no cambia arquitectura ni inputs. Añade una loss training-only
-sobre el cambio de altura bbox numérico después del warm-up; aún no tiene métricas
-ni está promovido.
+sobre el cambio de altura bbox numérico después del warm-up y fue preregistrado
+antes de observar métricas.
+
+A1-DF-R terminó con macro `349.8628`, failure `19.8242%` y ratio `.1703`. La
+mejora frente a A1-DF es pequeña y concentrada en una secuencia; queda no promovido
+y no es adecuado para inferencia fiable.
 
 ## Estado
 

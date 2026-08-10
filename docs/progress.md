@@ -55,6 +55,10 @@
   `5a9c4293…75141da`; siguiente hipótesis propuesta: pair-ratio directo único.
 - implementado pair-ratio geometry-only sin máscaras y warm-up seguro;
   preregistrado A1-DF-R peso `5.0`, experimento `b3f9eb9e…de43f67`.
+- ejecutado A1-DF-R: macro `349.8628`, failure `19.8242%`; mejora marginal y
+  concentrada en qooh, no promovido ni escalado;
+- firmados comparador `05601545…2dd6205` y descomposición
+  `0bc741a5…49900e7`; siguiente rama representación/pretraining event-native.
 
 ## 2026-08-10 — Transporte temporal Causal Scale v7
 

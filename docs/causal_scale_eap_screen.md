@@ -340,6 +340,21 @@ A1-DF-R implementa ese control. El pair target usa directamente
 `.09044`, comparable a width `.08547`. Durante las tres épocas de warm-up vale
 cero. Experiment SHA256 `b3f9eb9eb05b028c57e578f0962701647dcc29b8708f7b5a0a8ac9870de43f67`.
 
+Resultado A1-DF-R: best 17/18, global `349.5329`, macro `349.8628`, failure
+`19.8242%`, known `.8018`, ratio `.1703`. Por secuencia
+`368.0768/331.0430/350.4687`: frente a A1-DF, las dos primeras empeoran y solo
+qooh mejora `4.4590`, por lo que la mejora macro de `.4392` está concentrada.
+Por bucket: crucial `489.4087` (failure `14.04%`), small `242.5233` (`16.87%`),
+large `142.9553` (`24.45%`) y negative `177.7608` (`26.87%`).
+
+Pair-ratio eleva std ratio pred/target `.498 -> .596` y slope `.0848 -> .0893`,
+pero baja Pearson analítico/físico `.1703 -> .1499` y anchura `.2428 -> .1916`.
+Los unknown canónicos bajan 432 -> 406; el diagnóstico BF16 por batches cuenta
+405, diferencia de umbral de una muestra. No es una mejora robusta ni distribuida.
+Summary `9d858bf0802932e1af2fc34e4c3066d7909c86807a52e16095ceac43e31a785b`;
+comparador `0560154542b06c12d20a24ed719ec9461ebaab9d7e4fa080afe964cda2dd6205`;
+descomposición `0bc741a5f732f705e4862a2e40e45413027fa6b28f3e326468ed30cea49900e7`.
+
 Summary `56a459b718724e701923ec9e98f758166cfa56a649c8bcb7c6a8bbddee78f2c8`;
 comparador `003c38677f26ef25bd2a0455813d5783ea66dffb233b5058ba3c13c58e0a1d0c`;
 descomposición `5a9c42934f3335ddbe4fe679f3e53f4187926fa46749321fb27ac1e3775141da`.
