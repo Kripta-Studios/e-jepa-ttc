@@ -153,6 +153,37 @@ invalidado por cobertura incompleta de secuencias y se conserva intacto. Artifac
 de invalidación `artifacts/metrics/causal_scale_eap_a1_fullres_invalid_selection_v1.json`,
 identidad `fd5bde50328080975781a8fc2cdae1e0a198bb5a878430fde3e1f87c9be8f19b`.
 
+Resultado válido: best 11/16, MiD global `380.3621495`, macro `380.2202364`,
+failure `28.7597656%`; summary identity
+`eb62ecba94a619a5b5b82250ce16d5e749fa3965de86efdbc5e9bbf20f2e0d47`.
+Predictions SHA256 `dbb48769d70b5ef9f286a5ea3e67fcc77db897cd2aa1232ee0a3d42a4a1fc832`;
+checkpoint SHA256 `942780976c465a108f5c516d1df2d17da4f5e3139ca599e652fe0a49e0d89272`.
+La comparación se regenera exactamente con:
+
+```powershell
+uv run python scripts/build_causal_scale_eap_garl_comparison.py `
+  --causal-predictions artifacts/runs/causal_scale_eap_screen_a1_fullres_v1_seed7_selection_fixed/validation_predictions.csv `
+  --causal-summary artifacts/runs/causal_scale_eap_screen_a1_fullres_v1_seed7_selection_fixed/summary.json `
+  --release-predictions artifacts/runs/garl_official_event_only_same2048/predictions.parquet `
+  --release-metrics artifacts/runs/garl_official_event_only_same2048/metrics.json `
+  --matched-predictions artifacts/runs/garl_matched_event_only_cached_seed7/validation_predictions.parquet `
+  --matched-summary artifacts/runs/garl_matched_event_only_cached_seed7/summary.json `
+  --subset-data artifacts/subsets/garl_validation_common_roi_v1/data.parquet `
+  --subset-labels artifacts/subsets/garl_validation_common_roi_v1/labels.parquet `
+  --subset-manifest artifacts/subsets/garl_validation_common_roi_v1/manifest.json `
+  --official-train-assets E:\Garl-TTC\configs\splits\train.txt `
+  --official-train-labels E:\GarlTTC_dataset\annotations\train.parquet `
+  --official-config E:\Garl-TTC\configs\ablation\event_lhr.yaml `
+  --official-checkpoint E:\Garl-TTC\checkpoints\paper_event_only_lhr.pth `
+  --output-json artifacts/metrics/causal_scale_eap_garl_event_only_a1_fullres_comparison_v1.json `
+  --outliers-csv artifacts/metrics/causal_scale_eap_garl_event_only_a1_fullres_top10pct_outliers_v1.csv `
+  --bootstrap-iterations 10000 --bootstrap-seed 7 `
+  --candidate-label causal_scale_a1_fullres
+```
+
+Identidad firmada:
+`b02518601497907ae2ca41a345c8719298f97047ee59e9b7fad8909bd53c3c35`.
+
 Regeneración del diagnóstico:
 
 ```powershell

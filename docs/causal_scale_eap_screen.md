@@ -267,9 +267,34 @@ para reportar un macro de dos secuencias. El run se conserva y queda invalidado 
 el artifact `fd5bde50328080975781a8fc2cdae1e0a198bb5a878430fde3e1f87c9be8f19b`.
 La repetición correcta exige cobertura finita 3/3 y parte desde cero.
 
+La repetición corregida completó 16 épocas y eligió epoch 11 con cobertura 3/3.
+
+| Métrica | A1 separable | A1-FR 2-D raw | Garl matched |
+|---|---:|---:|---:|
+| MiD global | 346.1117 | 380.3621 | 203.0982 |
+| MiD macro-secuencia | 346.8295 | 380.2202 | 203.6342 |
+| failure | 9.9609% | 28.7598% | 0% |
+| known coverage | .9004 | .7124 | 1.0 |
+| Pearson log-ratio | .1108 | -.0181 | .3722 |
+| Pearson altura absoluta | .4708 | .2714 | n/a |
+| Pearson anchura absoluta | .0788 | .0903 | n/a |
+
+A1-FR obtiene por secuencia `410.5105/362.7085/367.4417`; por bucket crucial
+`557.0744`, small `232.0525`, large `141.8209`, negative `180.2710`, con
+`589/2048` failures. Los deltas altura/anchura frente a bbox son `-.0196/-.0276`.
+Por tanto la mejora marginal de `1.9703` MiD sobre A0 no es una mejora científica:
+empeora failures, cobertura, correlación y A1. La hipótesis fullres raw se rechaza.
+Run identity `eb62ecba94a619a5b5b82250ce16d5e749fa3965de86efdbc5e9bbf20f2e0d47`;
+comparador `b02518601497907ae2ca41a345c8719298f97047ee59e9b7fad8909bd53c3c35`.
+
+El próximo control debe alimentar foreground desde las features profundas del
+encoder. `resize_conv` es preferible a `deconv` para evitar checkerboard y ya existe
+en el código; se mantendrá la loss A1. No confundir este siguiente brazo con A2
+weak-box ligera, que sigue siendo otra hipótesis.
+
 ## Estado
 
-A0, referencia release, Garl matched y A1 están terminados. El cache matched
+A0, referencia release, Garl matched, A1 y A1-FR están terminados. El cache matched
 oficial tiene identidad `92af281030170733411ef9d65b19e88ebc8019c729dd6743e02ae9c40f564b52`,
 2.048/2.048 filas y preprocessing separado de `166.7501/155.3283 s`. Resume A0
 coincide exactamente con entrenamiento continuo y el runner matched liga resume a

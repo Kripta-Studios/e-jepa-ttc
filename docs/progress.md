@@ -43,6 +43,10 @@
   A1-FR; run preservado/inválido (`fd5bde50…c9be8f19b`), sin usar sus métricas;
 - selector corregido y probado para exigir cobertura finita de todas las secuencias;
   repetición A1-FR obligatoriamente desde cero.
+- completada repetición A1-FR válida: best 11/16, macro `380.2202`, failure
+  `28.7598%`, ratio `-.0181`; peor que A1 y no promovida;
+- firmado comparador A1-FR/Garl (`b0251860…53c3c35`); la hipótesis fullres raw
+  queda rechazada y el siguiente control propuesto usa features `resize_conv`.
 
 ## 2026-08-10 — Transporte temporal Causal Scale v7
 

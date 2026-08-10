@@ -9,11 +9,13 @@
 3. **Completado, resultado negativo parcial:** A1 bbox geometry-only mejora A0 a
    MiD macro `346.8295`, pero sigue lejos de Garl matched (`203.6342`) y no aprende
    anchura/centros ni el cambio temporal de forma suficiente.
-4. **Siguiente hipótesis única:** reemplazar solo el decoder foreground
+4. **Completado, resultado negativo:** reemplazar solo el decoder foreground
    `equivariant_separable` (proyección axial por `amax`) por el decoder 2-D existente
    `equivariant_fullres`; mantener loss A1, geometry head, Causal Scale, filas y
    protocolo. Identidad experimental nueva, no reescritura de A1.
-5. EvTTC test y las demás fuentes selladas siguen cerradas.
+5. **Siguiente hipótesis única:** cambiar solo a `resize_conv`, para alimentar el
+   foreground desde features profundas del encoder manteniendo la loss A1.
+6. EvTTC test y las demás fuentes selladas siguen cerradas.
 
 El diagnóstico posterior a A0 fijó el criterio de A1: debía mejorar directamente
 la correlación del ratio analítico con el bbox-ratio y con el ratio físico, no solo
@@ -55,6 +57,12 @@ El primer intento se considera infraestructura inválida porque el selector acep
 un macro con una de tres secuencias no finita. Se conserva con identidad
 `fd5bde50…c9be8f19b`. Tras endurecer la cobertura, repetir desde cero; no reanudar
 ni usar las cifras inválidas para decidir arquitectura.
+
+La repetición corregida también es negativa: macro `380.2202`, failure `28.76%`,
+ratio `-.0181`. Se rechaza `raw 2-D fullres` como solución. El siguiente control
+de representación debe cambiar solo a `resize_conv`, para que el foreground use
+features profundas en vez del input crudo. Si tampoco aprende geometría estática,
+entonces se justifica pretraining/teacher event-native; no antes.
 
 No se cambian `unknown`, support, clip, residual, consenso, optimizer, seed, filas
 o presupuesto durante A1. Correlaciones absolutas y diferenciales se reportan

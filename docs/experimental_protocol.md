@@ -55,6 +55,11 @@ macro calculado sobre un subconjunto finito no actualiza best ni stale. Esto no
 cambia A0/A1, cuyos checkpoints elegidos tenían cobertura 3/3, y evita premiar
 unknown/failures. El primer A1-FR queda invalidado y se repite desde cero.
 
+La repetición válida seleccionó epoch 11/16 con cobertura 3/3 y falló: macro
+`380.2202`, failure `28.7598%`, ratio `-.0181`. Queda cerrada sin ajustar pesos.
+El siguiente cambio aislado permitido es `foreground_decoder=resize_conv`, que usa
+features del encoder; todo lo demás debe permanecer igual a A1.
+
 El diagnóstico de fallo no selecciona hiperparámetros ni abre test. Descompone el
 checkpoint ya seleccionado sobre la misma validation pública en bbox-ratio,
 extensión analítica, residual, ratio combinado y ratio efectivo. A1 queda

@@ -79,6 +79,14 @@ anchura target conserva std cercana a `.095`, pero su correlación predicha es s
 reproduce el cambio de escala. El siguiente candidato es por tanto una ablation
 controlada del decoder foreground 2-D full-resolution, no un modelo promovido.
 
+La repetición válida de esa ablation A1-FR seleccionó epoch 11/16 con cobertura
+finita 3/3 y también es negativa: MiD macro `380.2202`, failure `28.7598%`, known
+coverage `.7124` y Pearson log-ratio `-.0181`. Empeora A1 en `33.3908` MiD y
+`18.7988` puntos de failure. La cabeza full-resolution conserva 2-D, pero consume
+eventos crudos; este resultado rechaza esa intervención superficial, no el uso de
+features 2-D profundas. El siguiente control aislado usará el decoder existente
+`resize_conv`, alimentado por `_EndpointEncoder.features`, con la misma loss A1.
+
 ## Estado
 
 El modelo histórico activo era un candidato event-only high-resolution, no un modelo SOTA ni

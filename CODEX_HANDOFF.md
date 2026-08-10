@@ -88,6 +88,20 @@ incompletos para best/stale. `minimum_epochs=8` sigue significando suelo de earl
 stopping; la selección comienza después del warm-up. Repetir desde cero en un output
 nuevo; no reanudar el estado contaminado.
 
+La repetición válida A1-FR terminó 16 épocas y seleccionó la 11 con cobertura 3/3:
+MiD global `380.3621495`, macro `380.2202364`, failure `28.7597656%`, known
+`.7124023` y Pearson log-ratio `-.0181180`. Es peor que A1 por `+33.3908` MiD
+macro y `+18.7988` puntos de failure; solo mejora A0 en `1.9703` MiD, a costa de
+muchos más unknowns. Altura/anchura absolutas `.271/.090` y deltas contra bbox
+`-.020/-.028` rechazan la hipótesis de que conservar 2-D en una cabeza superficial
+raw fuese suficiente. Comparador firmado identidad
+`b02518601497907ae2ca41a345c8719298f97047ee59e9b7fad8909bd53c3c35`.
+
+Ambos decoders probados (`separable` y `fullres`) reciben el input crudo y no las
+features profundas de `_EndpointEncoder`. La siguiente hipótesis mínima es usar el
+decoder existente `resize_conv`, que sí consume features aprendidas, manteniendo la
+loss A1. No introducir pretraining/teachers hasta probar ese control.
+
 El subset para matched training está materializado en
 `artifacts/subsets/garl_event_only_matched_screen_v1`, identidad firmada
 `dd08ecc983f30e38a939204f9a2df09e4966bbe73bd764c972f7726e5d4e34d3`.

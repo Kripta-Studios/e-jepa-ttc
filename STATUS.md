@@ -65,7 +65,13 @@
   secuencia con MiD NaN y el macro excluyó esa secuencia. Identidad de invalidación
   `fd5bde50…c9be8f19b`; sus cifras no son evidencia comparable.
 - Selector endurecido: exige MiD finito para las tres secuencias antes de actualizar
-  best o stale. Debe ejecutarse A1-FR desde cero en un directorio nuevo.
+  best o stale. La repetición posterior partió desde cero en un directorio nuevo.
+- Repetición A1-FR válida cerrada: best 11/16, cobertura 3/3, MiD macro
+  `380.2202`, failure `28.7598%`, known `.7124`, ratio Pearson `-.0181`.
+- A1-FR es peor que A1 por `33.3908` MiD y `18.7988` puntos de failure. La cabeza
+  2-D raw no arregla representación/dinámica; comparador firmado `b0251860…53c3c35`.
+- Siguiente hipótesis: `resize_conv` alimentado por features profundas del encoder,
+  con loss/protocolo A1 intactos; aún no preregistrada.
 
 ## Addendum eAP causal-scale screen v1 (2026-08-10)
 

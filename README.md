@@ -34,6 +34,11 @@ eventos es difusa en casi todo el ROI y el decoder actual usa `amax` por eje, el
 siguiente control cambia solo a convolución full-resolution 2-D. DINO, SAM, JEPA y
 pair-ratio permanecen fuera para no contaminar la ablation.
 
+Ese control full-resolution ya terminó y fue negativo: MiD macro `380,22`, failure
+`28,76%` y Pearson log-ratio `-.018`. La estructura 2-D superficial sobre eventos
+crudos no basta. El siguiente paso probará si el foreground debe consumir features
+profundas del encoder (`resize_conv`) antes de recurrir a pretraining RGB/event.
+
 Pipeline reproducible para estimar Time-to-Contact/Time-to-Collision a partir de
 cámaras de eventos, con una ruta event-only high-resolution y una futura ablación
 RGB-E multimodal.

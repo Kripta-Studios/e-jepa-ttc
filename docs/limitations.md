@@ -22,6 +22,11 @@ El primer intento full-resolution no es evidencia negativa ni positiva: el selec
 aceptó una métrica macro que omitía una secuencia no finita. Está invalidado y
 preservado. Solo la repetición desde cero con cobertura 3/3 puede evaluar el brazo.
 
+La repetición válida confirma un resultado negativo, no la causa completa: una
+cabeza 2-D superficial sobre inputs crudos empeora A1. Esto no demuestra que toda
+representación 2-D o pretraining falle; el encoder profundo aún no alimenta el
+foreground en los dos brazos evaluados.
+
 Actualizado: 2026-08-10.
 
 - No existe un claim SOTA ni un checkpoint final promovido.
