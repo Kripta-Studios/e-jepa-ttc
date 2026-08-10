@@ -101,6 +101,11 @@ escalares normalizados `h,w,cx,cy`. No se rasteriza como target denso y no forma
 parte del esquema de inputs. El modelo sigue recibiendo exclusivamente
 `event_v4_common_roi` y `garl_delta_t_s`.
 
+A1 reutilizó exactamente las mismas 9 secuencias train y 3 validation anteriores,
+sin nuevas filas ni teacher RGB. Sus 2.048 predicciones validation tienen el mismo
+hash de tokens firmado (`c56257c2…a394ef`) que A0, release y Garl matched; por tanto
+las diferencias A0/A1 son de supervisión/modelo, no de composición del dataset.
+
 ## Contrato de almacenamiento
 
 - datos raw inmutables y fuera de Git;

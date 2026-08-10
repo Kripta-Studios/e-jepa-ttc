@@ -1,11 +1,11 @@
 # Model card — E-JEPA-TTC
 
-## CausalScale A0 public screen status
+## CausalScale A0/A1 public screen status
 
 The seed-7 event-only A0 screen is a negative result, not a promoted checkpoint:
 validation sequence-macro MiD is 382.19, log-ratio Pearson is 0.046 and weak-box
 IoU is 0.500. It must not be described as competitive, production-ready or SOTA.
-The official release result is exposure-confounded until matched training exists.
+The official release result remains exposure-confounded; it is not the matched baseline.
 
 Matched training now exists and is the primary local baseline: official Garl
 event-only trained from scratch on exact 2,048/2,048 rows obtains sequence-macro
@@ -66,8 +66,12 @@ y obtiene MiD `437.5957` en negative/receding.
 
 El candidato A1 no es una arquitectura nueva: amplía la observación matemática del
 mismo mapa para medir también anchura y centro, sin añadir parámetros ni inputs.
-Solo cambia la loss de supervisión foreground. Hasta ejecutar seed 7 no existe
-evidencia de que A1 mejore A0.
+Solo cambia la loss de supervisión foreground. Seed 7 mejora A0 (MiD macro
+`346.83` frente a `382.19`), pero sigue lejos de Garl matched (`203.63`) y no se
+promueve. La correlación de altura estática sube a `.471`, mientras anchura y centros
+quedan en `<=.079`; el cambio temporal de altura correlaciona solo `.059` con el
+cambio bbox. Esto apunta a limitación de representación/localización event-native y
+coherencia temporal, no solo a ruido del target weak-box.
 
 ## Estado
 
@@ -172,13 +176,13 @@ sin evaluación externa reproducida.
 
 ## Riesgos y limitaciones
 
-- El brazo causal-scale eAP aún no tiene un run completo: solo existe un benchmark
-  de throughput 128+128. MiD `345.18` tras un epoch parcial no es resultado.
-- Su ROI usa cajas oficiales y rasteriza cajas t1/t2 como supervisión débil. No es
-  bbox-free ni segmentation-supervised.
-- El comparador Garl event-only en los mismos 2.048 tokens aún no se ha ejecutado.
-- La reanudación persistente pasa equivalencia end-to-end, pero aún no se ha usado en
-  el run representativo real.
+- Los runs A0 y A1 son screens completos de una sola seed/2.048 filas, no resultados
+  multisemilla ni entrenamiento suficiente para promoción.
+- El ROI usa cajas oficiales. A0 rasteriza cajas t1/t2 como weak supervision; A1
+  usa `h,w,cx,cy` escalares. Ninguno es bbox-free ni segmentation-supervised.
+- Los comparadores A0/Garl y A1/Garl sobre los mismos 2.048 tokens están completos;
+  ambos favorecen claramente a Garl matched.
+- Resume pasa equivalencia end-to-end; los runs completos no necesitaron reanudarse.
 
 - el smoke high-resolution no aprende todavía una señal TTC competitiva;
 - el gate ideal v5 usa foreground analítico; el aprendizaje sintético posterior

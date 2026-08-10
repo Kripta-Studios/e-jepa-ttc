@@ -1,6 +1,6 @@
 # Estado del repositorio
 
-## 2026-08-10 — screen causal-scale A0: negativo
+## 2026-08-10 — Garl matched y A1 geometry-only cerrados
 
 - A0 seed 7 terminó: época seleccionada 11/16, MiD macro `382.1905104`, failure
   `12.3046875%`, weak-box IoU `0.4997858107`, Pearson log-ratio `0.0456290990`.
@@ -9,7 +9,7 @@
 - Las tres secuencias validation estaban en train oficial; 4.735 de las 88.744
   filas públicas pertenecen a ellas.
 - Comparador firmado: `9f2bebde05729b7ace6fdbc0a990e6b75bf180ec87220924219ed7095105281c`.
-- No hay promoción ni claim SOTA. Siguiente hipótesis única: A1 geometry-only.
+- No hay promoción ni claim SOTA.
 - Subset matched materializado y firmado: 2.048 train/9 secuencias y 2.048
   validation/3 secuencias, identidad
   `dd08ecc983f30e38a939204f9a2df09e4966bbe73bd764c972f7726e5d4e34d3`.
@@ -33,12 +33,26 @@
   secuencia `[131.7444284, 215.3146093]`; win rate pareado finito `35.6904%`.
   Garl matched falla cualitativamente en negative: predice siempre TTC positivo.
 - Comparador release/matched firmado: `e63447135e2b09c5c6a7e2afb996bb70cce8cbba4a112afc87069e2f60c254de`.
-- A1 geometry-only implementado y preregistrado, aún no ejecutado. Mismo modelo,
+- A1 geometry-only fue implementado, preregistrado y ejecutado una sola vez. Mismo modelo,
   344.591 parámetros, mismas filas/seed/schedule; BCE/Dice `0`, pesos h/w/centro
   `1.25/1.25/2.5`, pair-ratio `0`. El test prueba que no rasteriza weak-box ni
   introduce bbox en `forward`.
 - Diagnósticos A1 por época: `log h/log w/cx/cy`, `delta log h`, `delta log w`,
   `r_iso`, slope, MAE, signo y `std_pred/std_target`, global y macro-secuencia.
+- A1 seed 7: best 18/18, MiD global `346.1117485`, macro `346.8294571`,
+  failure `9.9609375%`, known `.900390625`, Pearson log-ratio `.1108212`,
+  `631.88 s` y `1558.48 MiB` peak VRAM.
+- Mejora A0 en las tres secuencias y `35.3611` MiD macro, pero pierde frente a
+  Garl matched por `143.1953`; IC95% de A1−Garl por secuencia
+  `[115.1042,166.6705]`. No es competitivo.
+- A1 mejora altura absoluta a Pearson `.470828`, pero no anchura (`.078759`) ni
+  centros (`.063569/.031956`). `delta log h` solo correlaciona `.059130` con bbox
+  y `.104778` con física; `r_iso`/física `-.000826`. Diagnóstico: representación
+  espacial y coherencia temporal insuficientes, no solo ruido de weak-box.
+- Comparador A1/Garl exact-token firmado:
+  `471fa106f4137f71ecfa4165abec696e5f83644830ded14a82abff8fb7ba485d`.
+  Siguiente hipótesis: mejorar representación densa event-native conservando
+  geometry head; no activar A1-R mientras la geometría estática completa sea mala.
 
 ## Addendum eAP causal-scale screen v1 (2026-08-10)
 

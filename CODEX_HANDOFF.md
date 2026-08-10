@@ -2,7 +2,7 @@
 
 Fecha de corte: 2026-08-10 (Europe/Madrid)
 
-## Resultado activo: A0 negativo y referencia release cerrada
+## Resultado activo: Garl matched fijado y A1 geometry-only negativo
 
 A0 seed 7 terminó en 16 épocas, seleccionó época 11 y no se promueve: MiD global
 `383.8549432`, MiD macro `382.1905104`, failure `12.3046875%`, weak-box IoU
@@ -26,10 +26,7 @@ Garl matched mejora las tres secuencias. Su punto débil es negative: MiD `437.5
 y predicciones siempre positivas; A0 obtiene `210.1439` ahí pero con `20%` failures.
 La comparación firmada completa tiene identidad
 `e63447135e2b09c5c6a7e2afb996bb70cce8cbba4a112afc87069e2f60c254de`.
-La siguiente hipótesis única es A1 geometry-only con filas, seed, modelo y
-presupuesto fijos.
-
-A1 está preregistrado en
+A1 fue preregistrado antes de ejecutarse en
 `configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a1_geometry_v1.yaml`,
 SHA256 `bc3fe3daabb8f205b1dda81f6da442c2d7452253330960d0c3ff65af7795ba28`.
 Mantiene el mismo model config y 344.591 parámetros entrenables. La única diferencia
@@ -37,6 +34,28 @@ científica es reemplazar BCE+Dice+extent contra la weak-box rasterizada por Hub
 sobre `log h`, `log w`, `cx`, `cy` derivados numéricamente de bbox. Pesos congelados:
 `1.25/1.25/2.5` (centro promedia x/y), suma nominal 5. `pair_ratio` permanece cero.
 El forward sigue aceptando solo eventos y delta; A1 no invoca el rasterizador.
+
+A1 seed 7 terminó las 18 épocas en GPU y seleccionó la época 18: MiD global
+`346.1117485`, MiD macro `346.8294571`, failure `9.9609375%`, known coverage
+`.900390625` y Pearson log-ratio `.1108212322`. Mejora A0 en `35.3610532` MiD
+macro y en las tres secuencias, pero sigue `143.1952862` por detrás de Garl
+matched. El IC95% por secuencia de A1−Garl es
+`[115.1041790, 166.6704803]`; A1 gana `39.0998%` de los 1.844 pares finitos.
+
+La geometría explica por qué no basta: `corr(log h_pred,log h_bbox)=.470828`,
+pero anchura `.078759`, centro x `.063569` y centro y `.031956` permanecen débiles.
+La dinámica de altura solo alcanza `.059130` frente a bbox-ratio y `.104778`
+frente al ratio físico; `r_iso` es esencialmente nulo (`-.000826` frente a física).
+Por tanto, quitar la weak-box ayuda parcialmente a altura y MiD, pero no confirma
+que el rectángulo fuese la causa principal: la representación espacial/temporal
+event-native sigue siendo el cuello de botella. No se promueve A1 ni se escala.
+
+Comparación A1/Garl firmada:
+`artifacts/metrics/causal_scale_eap_garl_event_only_a1_geometry_comparison_v1.json`,
+identidad `471fa106f4137f71ecfa4165abec696e5f83644830ded14a82abff8fb7ba485d`.
+La siguiente intervención debe actuar sobre representación densa event-native,
+manteniendo la cabeza geométrica y Causal Scale como controles; A1-R no es el
+siguiente paso porque A1 tampoco aprendió `w,cx,cy` de forma suficiente.
 
 El subset para matched training está materializado en
 `artifacts/subsets/garl_event_only_matched_screen_v1`, identidad firmada
@@ -69,7 +88,8 @@ El preprocessing oficial del baseline matched ya está completo en
 Contiene 2.048 train/2.048 validation, tensores FP32 `[40,128,128]`, sin RGB ni
 bbox como input. Declara el crop bbox oracle oficial. Train tardó `166.7501 s` y
 validation `155.3283 s`; el error máximo de target fue menor de `4.8e-7 s`.
-La prioridad es cerrar Garl matched desde cero antes de modificar A1.
+Garl matched y A1 están cerrados; no reinterpretar la referencia release como
+comparación causal ni reabrir A1 con pesos ajustados post-hoc.
 
 El runner `scripts/run_garl_matched_screen.py` desactiva explícitamente ambos
 pretrained checkpoints release y escribe todo fuera de `E:\Garl-TTC`. Su smoke de
@@ -242,7 +262,8 @@ known coverage: .421875 (diagnóstico, no resultado)
 
 La extrapolación lineal conservadora de batch 8 es aproximadamente 85 s por época
 completa train+validation y ~26 min para 18 épocas. Batch 32 debe ser más rápido. Hay
-margen muy amplio bajo 6 h, pero el run completo aún no se ha ejecutado.
+margen muy amplio bajo 6 h. Esta estimación histórica queda supersedida por los runs
+A0 (`541.49 s`) y A1 (`631.88 s`) completos.
 
 ## 2. Integridad científica y filosofía de trabajo
 

@@ -119,6 +119,11 @@ con secuencias disjuntas, seed 7, batch 32, FP32, máximo 18 épocas y selecció
 validation-only desde época 8 por MiD macro y failure rate. Early stopping terminó
 en época 16 y seleccionó época 11.
 
+Secuencias train exactas: `2cyv0Oedzg`, `5ilM1PX2vz`, `6h5yRW2LGc`,
+`OBneIVg4Cw`, `OYgB6RGWcq`, `WbCh1DRerJ`, `mHGFBekt7X`, `qGsgzl4Q8B` y
+`t79dBxj1WS`. Validation exacta: `DGqicHUGWb`, `pBqGOb2vYq` y `qoohcdtLDH`.
+El manifest firmado comprueba que los dos conjuntos de secuencias son disjuntos.
+
 | Métrica validation | Garl matched | A0 |
 |---|---:|---:|
 | MiD global | 203.0982270 | 383.8549431 |
@@ -145,7 +150,7 @@ comparador completo `e63447135e2b09c5c6a7e2afb996bb70cce8cbba4a112afc87069e2f60c
 Training+validation tardó `274.9784 s`; inferencia final `4.9803 s` (411,22/s),
 peak VRAM `1.317,58 MiB`, 24.674.178 parámetros.
 
-## A1 bbox geometry-only preregistrado
+## A1 bbox geometry-only: resultado seed 7
 
 A1 conserva exactamente el model config de A0 y 344.591 parámetros entrenables.
 No cambia encoder, foreground head, residual, consenso temporal, conversión física,
@@ -180,10 +185,57 @@ por MiD macro y failure rate, como A0. No hay umbrales diagnósticos inventados
 post-hoc. Config SHA256:
 `bc3fe3daabb8f205b1dda81f6da442c2d7452253330960d0c3ff65af7795ba28`.
 
+El run publicado desde commit `aec7b50c0595ef7715e14107921c254c2476d066`
+completó 18 épocas en `cuda:0` y seleccionó la 18. No se reconfiguró tras observar
+validation.
+
+| Métrica validation pública | A0 | A1 | Garl matched |
+|---|---:|---:|---:|
+| MiD global | 383.8549 | 346.1117 | 203.0982 |
+| MiD macro-secuencia | 382.1905 | 346.8295 | 203.6342 |
+| failure rate | 12.3047% | 9.9609% | 0% |
+| known coverage | .876953 | .900391 | 1.0 |
+| Pearson log-ratio | .045629 | .110821 | .372213 |
+
+A1 por secuencia obtiene `374.2571/327.7436/338.4877` en
+`DGqicHUGWb/pBqGOb2vYq/qoohcdtLDH`; mejora A0 en las tres, pero pierde frente a
+Garl en las tres. Por bucket obtiene crucial `481.5264`, small `224.9528`, large
+`164.0883` y negative `214.5390`, con failures `8.97/9.05/10.77/11.94%`.
+
+| Diagnóstico A1 | Pearson | slope | MAE |
+|---|---:|---:|---:|
+| `log h_pred` vs bbox | .470828 | .141804 | .233985 |
+| `log w_pred` vs bbox | .078759 | .035893 | .206415 |
+| `cx_pred` vs bbox | .063569 | .111446 | .044197 |
+| `cy_pred` vs bbox | .031956 | .123819 | .037424 |
+| `delta log h` vs bbox-ratio | .059130 | .041515 | .028481 |
+| `delta log h` vs ratio físico | .104778 | .083482 | .026817 |
+| `delta log w` vs ratio físico | -.039961 | -.085335 | .046023 |
+| `r_iso` vs ratio físico | -.000826 | -.000926 | .032220 |
+
+A1 reduce MiD macro en `35.3611` respecto de A0, pero queda `143.1953` por detrás
+de Garl matched. El bootstrap de tres secuencias completas para A1−Garl da IC95%
+`[115.1042,166.6705]`, siempre desfavorable; A1 gana `721/1844` pares finitos
+(`39.0998%`). Hubo 204 NaN/unknown y 1.844 predicciones finitas, sin sustituir
+unknown por cero. El run tardó `631.8786 s`, usó `1558.48 MiB` peak VRAM y conserva
+344.591 parámetros. Checkpoint SHA256
+`29ed410b39372e67cac87e5fb0e4be2b659f1a923ea1ebfff3f49e364e139e43`.
+
+Conclusión: eliminar BCE/Dice weak-box ayuda parcialmente, sobre todo a altura,
+pero no enseña anchura/centros ni cambio temporal fiable. La hipótesis de que la
+weak-box era la causa suficiente queda rechazada. Como la geometría estática
+completa sigue siendo mala, A1-R no es la siguiente intervención: primero se debe
+probar una representación densa event-native mejor, manteniendo la misma cabeza
+geométrica para aislar el cambio.
+
+Comparador exact-token firmado:
+`artifacts/metrics/causal_scale_eap_garl_event_only_a1_geometry_comparison_v1.json`,
+identidad `471fa106f4137f71ecfa4165abec696e5f83644830ded14a82abff8fb7ba485d`.
+
 ## Estado
 
-A0, referencia release y comparación firmada están terminados. El cache matched
+A0, referencia release, Garl matched y A1 están terminados. El cache matched
 oficial tiene identidad `92af281030170733411ef9d65b19e88ebc8019c729dd6743e02ae9c40f564b52`,
-2.048/2.048 filas y preprocessing separado de `166.7501/155.3283 s`. Falta ejecutar
-Garl matched desde cero y después A1. Resume A0 coincide exactamente con entrenamiento
-continuo y el runner matched liga resume a todo el protocolo congelado.
+2.048/2.048 filas y preprocessing separado de `166.7501/155.3283 s`. Resume A0
+coincide exactamente con entrenamiento continuo y el runner matched liga resume a
+todo el protocolo congelado. El siguiente brazo requiere un preregistro nuevo.

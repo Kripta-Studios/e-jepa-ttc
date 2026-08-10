@@ -7,11 +7,11 @@ IoU ronda 0,50. La referencia release tampoco es causalmente comparable porque
 sus tres secuencias de evaluación estaban expuestas durante entrenamiento. Hasta
 completar un baseline matched, la tabla release no demuestra superioridad causal.
 
-La descomposición localiza el fallo en la extensión temporal del foreground, pero
-no demuestra todavía por qué esa extensión no se aprende. En particular, atribuir
-el defecto a la weak-box rectangular es una hipótesis plausible y preregistrada,
-no un resultado. También quedan por separar aliasing/representación, capacidad del
-foreground head y conflicto entre pérdidas. A1 solo prueba la primera explicación.
+La descomposición localiza el fallo en la extensión temporal del foreground. A1 ya
+probó la hipótesis weak-box: retirarla mejora altura y MiD, pero anchura/centros y
+dinámica siguen débiles. Por tanto el rectángulo era ruido parcial, no explicación
+suficiente. Quedan por separar representación/aliasing event-native, capacidad del
+foreground head y coherencia temporal.
 
 Actualizado: 2026-08-10.
 
@@ -24,10 +24,11 @@ Actualizado: 2026-08-10.
   arquitectura, no evidencia multisemilla ni resultado oficial. Su salida está
   colapsada al signo positivo: las 335 filas negative/receding reciben TTC positivo
   y MiD `437.60`. No debe promoverse ignorando esta limitación.
-- A1 está preregistrado pero no ejecutado. Supervisar bbox geometry no demuestra
-  que los eventos contengan bordes observables suficientes ni que medidas buenas
-  por endpoint sean temporalmente coherentes. La bbox sigue siendo supervisión
-  oracle training-only y el crop continúa siendo bbox oracle.
+- A1 está ejecutado y es un resultado negativo parcial: mejora MiD macro a
+  `346.83`, pero queda `143.20` detrás de Garl matched, con `9.96%` failures.
+  Supervisar bbox geometry no produjo medidas buenas de anchura/centros ni una
+  dinámica temporal suficiente. La bbox sigue siendo supervisión oracle
+  training-only y el crop continúa siendo bbox oracle.
 - El screen depende de ROI con cajas GT y weak-box supervision; no es bbox-free y
   sus rectángulos no son máscaras de segmentación.
 - Resume atómico pasa su prueba end-to-end, pero el run real representativo sigue

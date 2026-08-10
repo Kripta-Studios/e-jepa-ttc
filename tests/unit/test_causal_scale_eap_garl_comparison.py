@@ -155,3 +155,31 @@ def test_build_comparison_adds_exact_matched_training_table(tmp_path: Path) -> N
     ]["sequence_count"] == 2
     outliers = pd.read_csv(paths["outliers_csv"])
     assert "matched_mid_per_sample" in outliers.columns
+    assert b"\r\n" not in paths["output_json"].read_bytes()
+    assert b"\r\n" not in paths["outliers_csv"].read_bytes()
+
+
+def test_build_comparison_uses_explicit_candidate_label(tmp_path: Path) -> None:
+    paths = _inputs(tmp_path)
+
+    result = comparison.build_comparison(
+        **paths,
+        bootstrap_iterations=100,
+        candidate_label="causal_scale_a1_geometry",
+    )
+
+    assert result["scope"]["candidate_label"] == "causal_scale_a1_geometry"
+    assert "causal_scale_a1_geometry" in result["release_reference"]
+    assert "causal_scale_a0" not in result["release_reference"]
+    assert result["diagnosis"]["candidate_label"] == "causal_scale_a1_geometry"
+
+
+def test_build_comparison_rejects_unsafe_candidate_label(tmp_path: Path) -> None:
+    paths = _inputs(tmp_path)
+
+    with pytest.raises(ValueError, match="candidate_label"):
+        comparison.build_comparison(
+            **paths,
+            bootstrap_iterations=100,
+            candidate_label="A1 geometry",
+        )

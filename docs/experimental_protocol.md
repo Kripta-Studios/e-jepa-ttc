@@ -6,7 +6,7 @@ A0 usa 2.048 train y 2.048 validation con secuencias disjuntas. La tabla release
 usa los mismos tokens de validation, pero queda separada porque el checkpoint vio
 las tres secuencias durante train y usó 88.744 filas/50 épocas. Los intervalos del
 comparador resamplean secuencias completas (10.000 iteraciones), nunca ventanas.
-La tabla matched desactivará la inicialización desde el checkpoint release.
+La tabla matched desactiva la inicialización desde el checkpoint release.
 Usa el cache oficial firmado `92af2810…f564b52`, seed 7, batch 32, máximo 18
 épocas, selección elegible desde época 8 y desempate por failure. Preprocessing,
 training, validation e inferencia se cronometran por separado. Resume rechaza
@@ -18,7 +18,7 @@ seleccionado es época 11 de 16 ejecutadas. La tabla release (`117.4282` macro)
 permanece separada por presupuesto desigual y exposición de validation. A1 se
 compara causalmente contra matched, no usa la release como gate.
 
-### A1 congelado antes de ejecución
+### A1 congelado antes de ejecución y resultado
 
 A1 cambia exclusivamente `weak_box -> bbox_geometry`. La bbox se transforma en
 `h,w,cx,cy` visibles sin crear una máscara. El model config/hash, 344.591 parámetros,
@@ -27,6 +27,15 @@ pair-ratio pesan cero; `h,w,cx,cy` pesan efectivamente 1.25 cada uno. Los diagn�
 se reportan por época, globales y macro por secuencia, pero no alteran selección.
 Un resultado distinto posterior requerirá una nueva identidad A1-R/A2; no se
 reescribirá A1 tras observar validation.
+
+A1 seed 7 completó 18 épocas y seleccionó la 18 bajo ese contrato inmutable:
+MiD macro `346.8294571`, failure `9.9609375%`, Pearson log-ratio `.1108212`.
+Frente a Garl matched queda `+143.1953` MiD y el IC95% de tres secuencias completas
+es `[115.1042,166.6705]`. El resultado no autoriza promoción ni escalado. Dado que
+anchura y centros permanecen en Pearson `<=.079` y `delta log h`/bbox en `.0591`,
+el siguiente protocolo debe modificar una sola vez la representación densa
+event-native conservando la cabeza geométrica. A1-R solo se reconsiderará si una
+representación futura mide bien los endpoints pero falla su diferencia temporal.
 
 El diagnóstico de fallo no selecciona hiperparámetros ni abre test. Descompone el
 checkpoint ya seleccionado sobre la misma validation pública en bbox-ratio,

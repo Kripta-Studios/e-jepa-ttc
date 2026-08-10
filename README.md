@@ -1,39 +1,40 @@
 # E-JEPA-TTC
 
-> Estado event-only (2026-08-10): A0 seed 7 fue negativo (MiD macro 382,19;
-> Pearson log-ratio 0,046). La referencia release obtiene 117,43 sobre los mismos
-> tokens, pero vio las tres secuencias y tuvo mucho más presupuesto. No existe
-> claim SOTA; el baseline matched y A1 geometry-only son los siguientes controles.
+> Estado event-only (2026-08-10): Garl matched desde cero fija la métrica a batir
+> en MiD macro 203,63. A0 obtuvo 382,19 y A1 geometry-only 346,83. A1 mejora A0,
+> pero no es competitivo y no existe claim SOTA.
 
 El diagnóstico de A0 localiza el defecto antes de la física: la expansión bbox sí
 correlaciona con TTC (`r=.760`), pero la expansión extraída del mapa no correlaciona
 con bbox (`r=.015`) ni TTC (`r=.037`). La inversión TTC agrava ratios cercanos a
-cero, pero no crea el error. A1 probará, como ablation aislada, si la weak-box llena
-es la causa de esa mala extensión.
+cero, pero no crea el error. A1 probó de forma aislada la hipótesis weak-box: la
+altura absoluta mejoró, pero anchura, centros y cambio temporal siguieron débiles.
+La weak-box no era la explicación suficiente.
 
 El preprocessing oficial del baseline Garl matched ya está materializado y firmado
 (`92af2810…f564b52`): 2.048 train/2.048 validation, event-only FP32, sin pesos
-release ni fuentes selladas. La prioridad actual es terminar ese entrenamiento
-matched antes de tocar la arquitectura o ejecutar A1.
+release ni fuentes selladas.
 
 Ese baseline matched ya terminó: Garl obtiene MiD macro `203,63` y `0%` failures,
 frente a A0 `382,19` y `12,30%`. La ventaja aparece en las tres secuencias y el
 IC95% agrupado por secuencia de A0−Garl es `[131,74, 215,31]`. Garl matched,
 sin embargo, no modela receding: todas sus predicciones son positivas y su MiD
-negative es `437,60`. A1 debe mejorar la cadena geométrica sin perder ese régimen.
+negative es `437,60`; esta limitación sigue visible.
 
-A1 está congelado antes del run: mismo CNN y prediction path, sin weak-box densa,
-con supervisión training-only de `h,w,cx,cy`. No activa pair-ratio y no añade
-parámetros. Sus métricas causales primarias son geometría absoluta y diferencial;
-MiD sigue reportándose y selecciona checkpoint, pero no sustituye el diagnóstico.
+A1 se congeló antes del run: mismo CNN y prediction path, sin weak-box densa, con
+supervisión training-only de `h,w,cx,cy`, pair-ratio cero y sin parámetros nuevos.
+Terminó best 18/18 con MiD `346,83`, failure `9,96%` y Pearson log-ratio `.111`.
+`log h` alcanza `.471`, pero `log w/cx/cy` solo `.079/.064/.032`; `delta log h`
+contra bbox es `.059`. El siguiente control actuará sobre representación densa
+event-native, no sobre clipping ni la inversión TTC.
 
 Pipeline reproducible para estimar Time-to-Contact/Time-to-Collision a partir de
 cámaras de eventos, con una ruta event-only high-resolution y una futura ablación
 RGB-E multimodal.
 
 Estado: Causal Scale V8 alcanza Pearson sintético multigrupo `.94621` con CVaR pero
-falla el gate `.95`; sus tests permanecen sellados. Está implementado, aún no
-ejecutado, un screen eAP/Garl train/validation de 2.048/2.048 muestras. La hipótesis
+falla el gate `.95`; sus tests permanecen sellados. El screen eAP/Garl
+train/validation de 2.048/2.048 completó A0, Garl matched y A1. La hipótesis
 científica todavía no está demostrada. No existe claim SOTA ni resultado oficial
 eAP/CodaBench. Consulta el
 [estado operativo](STATUS.md) antes de ejecutar experimentos largos.

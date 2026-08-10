@@ -1,15 +1,15 @@
 # Progreso
 
-## 2026-08-10 — A0 y referencia release exact-2048
+## 2026-08-10 — A0, Garl matched y A1 exact-2048
 
 - terminado A0 seed 7 como resultado negativo;
 - construido subset exacto Garl de 2.048 tokens;
 - evaluada referencia event-only release y auditada exposición de secuencias;
 - generado comparador firmado con bootstrap por secuencia y cola de outliers;
-- preregistrado A1 geometry-only como siguiente hipótesis aislada.
+- preregistrado A1 geometry-only como siguiente hipótesis aislada;
 - descompuesto A0: la bbox sí contiene señal física, pero el foreground no aprende
   su extensión temporal; residual y consenso no la recuperan;
-- implementado runner Garl matched desde cero y completado smoke batch 32 sin OOM.
+- implementado runner Garl matched desde cero y completado smoke batch 32 sin OOM;
 - materializado preprocessing oficial matched exacto 2.048/2.048 en 322,08 s,
   identidad firmada `92af2810…f564b52`;
 - implementado trainer sobre cache con selección validation-only, checkpoints
@@ -23,7 +23,15 @@
 - preregistrado e implementado A1 geometry-only sin cambiar parámetros ni forward;
   tests prueban ausencia de rasterización weak-box y bbox como input;
 - añadidos diagnósticos por época de geometría absoluta/diferencial globales y
-  macro-secuencia. A1 seed 7 aún no se ha ejecutado.
+  macro-secuencia;
+- ejecutado A1 seed 7 en GPU desde el preregistro publicado: best 18/18, MiD macro
+  `346.8295`, failure `9.9609%`, Pearson log-ratio `.110821`, 631,88 s;
+- A1 mejora A0 en las tres secuencias, pero pierde contra Garl matched por
+  `143.1953` MiD macro, IC95% por secuencia `[115.1042,166.6705]`;
+- localizado el remanente: altura absoluta `.4708`, anchura/centros `<=.079`,
+  `delta log h`/bbox `.0591`, `delta log h`/física `.1048`; geometry-only no basta;
+- generado comparador A1/Garl exact-token firmado, identidad
+  `471fa106…7ba485d`. No se promueve ni escala A1.
 
 ## 2026-08-10 — Transporte temporal Causal Scale v7
 
@@ -66,7 +74,8 @@ implementó consenso temporal simétrico `.10/.15` para entrenar dos brazos cont
 - checks focalizados Ruff/Pyright/Pytest verdes;
 - resume end-to-end exacto aprobado; cambios de contrato se rechazan fail-closed;
 - builder subset Garl exacto implementado y probado con manifest firmado;
-- pendiente: run completo y Garl event-only sobre los mismos 2.048 tokens.
+- este estado histórico quedó supersedido: A0, Garl matched y A1 están completos;
+  consultar el bloque superior de 2026-08-10.
 
 CVaR 10% con `w=.15` seleccionó epoch 32: Pearson macro `.94621`, grupos
 `.94812/.94567/.94486`, TTC `.29547`. Es el mejor V8 pero no pasa; test sintético no

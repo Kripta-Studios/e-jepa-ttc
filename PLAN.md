@@ -6,15 +6,21 @@
    comparador firmado, preservando el resultado negativo.
 2. **Completado:** Garl event-only matched con exactamente 2.048 train/2.048
    validation, sin inicialización release: MiD macro `203.6342`, cero failures.
-3. **En curso, siguiente hipótesis única:** A1 bbox geometry-only, desactivando BCE/Dice
-   weak-box y manteniendo todo lo demás igual a A0.
-4. EvTTC test y las demás fuentes selladas siguen cerradas.
+3. **Completado, resultado negativo parcial:** A1 bbox geometry-only mejora A0 a
+   MiD macro `346.8295`, pero sigue lejos de Garl matched (`203.6342`) y no aprende
+   anchura/centros ni el cambio temporal de forma suficiente.
+4. **Siguiente hipótesis única:** sustituir/mejorar la representación densa
+   event-native manteniendo fijos geometry head, Causal Scale, filas y protocolo.
+5. EvTTC test y las demás fuentes selladas siguen cerradas.
 
-El diagnóstico posterior a A0 fija el criterio de A1: debe mejorar directamente
+El diagnóstico posterior a A0 fijó el criterio de A1: debía mejorar directamente
 la correlación del ratio analítico con el bbox-ratio y con el ratio físico, no solo
 IoU o MiD. Si A1 mantiene Pearson analítico cerca de cero, se rechaza la explicación
 weak-box y el siguiente cambio deberá actuar sobre representación/operador, sin
-combinarlo con otra modificación.
+combinarlo con otra modificación. El resultado confirma precisamente esa rama:
+altura absoluta `.4708`, pero anchura/centros `<=.079`; `delta log h` solo `.0591`
+contra bbox y `.1048` contra física. A1-R queda aplazado porque supervisar el ratio
+no resuelve una representación espacial que aún no mide los endpoints completos.
 
 Orden congelado de decisión:
 
@@ -28,6 +34,10 @@ Orden congelado de decisión:
    event-native/pretraining antes de JEPA;
 6. si el ratio predicho reproduce bbox pero no TTC, ampliar el operador físico a
    escala anisótropa/divergencia, no seguir optimizando máscaras.
+
+Los pasos 1–2 están cerrados. A1 cae en el paso 5: la siguiente ablation debe
+cambiar solo el encoder/representación densa event-native. Se conservará el mismo
+readout geométrico para distinguir mejora de representación de mejora de cabeza.
 
 No se cambian `unknown`, support, clip, residual, consenso, optimizer, seed, filas
 o presupuesto durante A1. Correlaciones absolutas y diferenciales se reportan

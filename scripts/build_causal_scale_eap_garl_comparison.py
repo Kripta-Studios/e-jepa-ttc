@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import sys
 from collections.abc import Sequence
 from datetime import UTC, datetime
@@ -273,9 +274,14 @@ def build_comparison(
     matched_summary: Path | None = None,
     bootstrap_iterations: int = 10_000,
     bootstrap_seed: int = 7,
+    candidate_label: str = "causal_scale_a0",
 ) -> dict[str, Any]:
     """Validate exact rows and write the release/matched comparison tables."""
 
+    if re.fullmatch(r"[a-z][a-z0-9_]*", candidate_label) is None:
+        raise ValueError(
+            "candidate_label must be a lowercase JSON-key-safe identifier."
+        )
     if (matched_predictions is None) != (matched_summary is None):
         raise ValueError("matched predictions and summary must be supplied together.")
     inputs = (
@@ -446,7 +452,7 @@ def build_comparison(
     tail, outliers = _paired_tail(aligned)
     output_json.parent.mkdir(parents=True, exist_ok=True)
     outliers_csv.parent.mkdir(parents=True, exist_ok=True)
-    outliers.to_csv(outliers_csv, index=False)
+    outliers.to_csv(outliers_csv, index=False, lineterminator="\n")
 
     summary = _read_json(causal_summary)
     release_report = _read_json(release_metrics)
@@ -473,10 +479,11 @@ def build_comparison(
             "exact_token_equality_verified": True,
             "target_equality_verified": True,
             "sample_tokens_sha256": manifest.get("sample_tokens_sha256"),
+            "candidate_label": candidate_label,
         },
         "release_reference": {
             "label": "official release reference; unequal training budget and sequence exposure",
-            "causal_scale_a0": causal_arm,
+            candidate_label: causal_arm,
             "official_garl_event_only": release_arm,
             "paired": {
                 **tail,
@@ -485,7 +492,7 @@ def build_comparison(
             },
             "exposure_audit": exposure,
             "training_budget": {
-                "causal_scale_a0": {
+                candidate_label: {
                     "train_rows": 2048,
                     "train_sequences": 9,
                     "epochs_completed": len(summary.get("history", [])),
@@ -506,7 +513,7 @@ def build_comparison(
             {
                 "status": "complete",
                 "label": "matched 2048/2048 sequence-disjoint training from scratch",
-                "causal_scale_a0": causal_arm,
+                candidate_label: causal_arm,
                 "garl_event_only_matched": matched_arm,
                 "paired": {
                     **_paired_summary(
@@ -557,20 +564,21 @@ def build_comparison(
             }
         ),
         "diagnosis": {
-            "a0_is_negative": True,
-            "foreground_localization_signal": "weak",
-            "temporal_scale_signal": "near_zero",
+            "candidate_label": candidate_label,
+            "candidate_is_negative": (
+                matched_arm is not None
+                and causal_arm["sequence_macro"]["sequence_macro_paper_MiD_overall"]
+                > matched_arm["sequence_macro"]["sequence_macro_paper_MiD_overall"]
+            ),
+            "foreground_supervision": summary.get("training_config", {}).get(
+                "foreground_supervision"
+            ),
             "weak_bbox_iou": summary.get("validation_metrics", {}).get("weak_bbox_iou"),
             "reported_log_ratio_pearson": summary.get("validation_metrics", {}).get(
                 "log_ratio_pearson"
             ),
-            "classification": (
-                "weak-box IoU is low and temporal log-ratio correlation is near zero; "
-                "the primary failures are foreground localization and scale dynamics."
-            ),
-            "next_single_hypothesis": (
-                "A1 bbox geometry-only supervision, holding rows, seed, model, optimizer, "
-                "and budget fixed."
+            "geometry_diagnostics": summary.get("validation_metrics", {}).get(
+                "geometry_diagnostics"
             ),
             "promotion_authorized": False,
             "sota_claim_authorized": False,
@@ -595,6 +603,7 @@ def build_comparison(
     output_json.write_text(
         json.dumps(result, indent=2, ensure_ascii=False, sort_keys=True) + "\n",
         encoding="utf-8",
+        newline="\n",
     )
     return result
 
@@ -618,6 +627,7 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--matched-summary", type=Path)
     parser.add_argument("--bootstrap-iterations", type=int, default=10_000)
     parser.add_argument("--bootstrap-seed", type=int, default=7)
+    parser.add_argument("--candidate-label", default="causal_scale_a0")
     return parser.parse_args(argv)
 
 
@@ -642,6 +652,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             matched_summary=args.matched_summary,
             bootstrap_iterations=args.bootstrap_iterations,
             bootstrap_seed=args.bootstrap_seed,
+            candidate_label=args.candidate_label,
         )
     except Exception as error:
         print(f"comparison build failed: {type(error).__name__}: {error}", file=sys.stderr)

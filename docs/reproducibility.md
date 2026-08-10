@@ -88,6 +88,39 @@ válido. La config tiene SHA256
 El runner exige Git limpio, cache firmado 2.048/2.048, 9/3 secuencias disjuntas,
 344.591 parámetros y fuentes test selladas. A1 no llama a `weak_box_masks`.
 
+Resultado A1: best epoch 18/18, MiD global `346.1117485`, macro `346.8294571`,
+failure `9.9609375%`; summary identity
+`b8eca64e1f4c89fd224fd95031ab9bb8271b4d7c4189311238cde85a893026c3`.
+Predicciones SHA256 `70b30028e24124e7015ccbd39abc61523518fedf193fe073bfb657c9cb4f30d7`;
+checkpoint SHA256 `29ed410b39372e67cac87e5fb0e4be2b659f1a923ea1ebfff3f49e364e139e43`.
+
+Regeneración de la comparación firmada A1/Garl (el label explícito evita
+confundir A1 con A0):
+
+```powershell
+uv run python scripts/build_causal_scale_eap_garl_comparison.py `
+  --causal-predictions artifacts/runs/causal_scale_eap_screen_a1_geometry_v1_seed7/validation_predictions.csv `
+  --causal-summary artifacts/runs/causal_scale_eap_screen_a1_geometry_v1_seed7/summary.json `
+  --release-predictions artifacts/runs/garl_official_event_only_same2048/predictions.parquet `
+  --release-metrics artifacts/runs/garl_official_event_only_same2048/metrics.json `
+  --matched-predictions artifacts/runs/garl_matched_event_only_cached_seed7/validation_predictions.parquet `
+  --matched-summary artifacts/runs/garl_matched_event_only_cached_seed7/summary.json `
+  --subset-data artifacts/subsets/garl_validation_common_roi_v1/data.parquet `
+  --subset-labels artifacts/subsets/garl_validation_common_roi_v1/labels.parquet `
+  --subset-manifest artifacts/subsets/garl_validation_common_roi_v1/manifest.json `
+  --official-train-assets E:\Garl-TTC\configs\splits\train.txt `
+  --official-train-labels E:\GarlTTC_dataset\annotations\train.parquet `
+  --official-config E:\Garl-TTC\configs\ablation\event_lhr.yaml `
+  --official-checkpoint E:\Garl-TTC\checkpoints\paper_event_only_lhr.pth `
+  --output-json artifacts/metrics/causal_scale_eap_garl_event_only_a1_geometry_comparison_v1.json `
+  --outliers-csv artifacts/metrics/causal_scale_eap_garl_event_only_a1_geometry_top10pct_outliers_v1.csv `
+  --bootstrap-iterations 10000 --bootstrap-seed 7 `
+  --candidate-label causal_scale_a1_geometry
+```
+
+La salida verifica 2.048 tokens/targets/secuencias exactos y tiene identidad
+`471fa106f4137f71ecfa4165abec696e5f83644830ded14a82abff8fb7ba485d`.
+
 Regeneración del diagnóstico:
 
 ```powershell

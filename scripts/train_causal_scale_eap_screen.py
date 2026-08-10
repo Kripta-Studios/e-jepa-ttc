@@ -104,6 +104,7 @@ def _atomic_json(path: Path, payload: dict[str, Any]) -> None:
     temporary.write_text(
         json.dumps(_finite_json(payload), indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
+        newline="\n",
     )
     os.replace(temporary, path)
 
@@ -231,7 +232,7 @@ def run(
         }
     )
     predictions_path = output_dir / "validation_predictions.csv"
-    predictions.to_csv(predictions_path, index=False)
+    predictions.to_csv(predictions_path, index=False, lineterminator="\n")
     metrics = {
         key: value
         for key, value in validation.items()
