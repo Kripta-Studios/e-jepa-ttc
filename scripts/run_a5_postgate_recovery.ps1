@@ -22,14 +22,14 @@ function Reset-Path([string]$Path) {
         Remove-Item $Path -Recurse -Force
     }
 }
-function Invoke-Python([string]$Name,[string[]]$Args,[int[]]$Allowed=@(0)) {
+function Invoke-Python([string]$Name,[string[]]$PythonArgs,[int[]]$Allowed=@(0)) {
     New-Item -ItemType Directory -Force $LogDir | Out-Null
     $log = Join-Path $LogDir "$Name.log"
     if (Test-Path $log) { Remove-Item $log -Force }
     Write-Host "`n=== $Name ===" -ForegroundColor Cyan
-    Write-Host ("python " + ($Args -join " "))
+    Write-Host ("python " + ($PythonArgs -join " "))
     $started=Get-Date
-    & python @Args 2>&1 | Tee-Object -FilePath $log
+    & python @PythonArgs 2>&1 | Tee-Object -FilePath $log
     $code=$LASTEXITCODE
     if (-not (Test-Path $log)) { New-Item -ItemType File -Force $log | Out-Null }
     $script:Steps += [PSCustomObject]@{name=$Name;exit_code=$code;elapsed_seconds=((Get-Date)-$started).TotalSeconds;log=$log}
