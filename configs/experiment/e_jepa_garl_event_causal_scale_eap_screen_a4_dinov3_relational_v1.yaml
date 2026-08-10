@@ -26,9 +26,9 @@ data:
   codabench_opened: false
   evttc_test_opened: false
   dinov3_relational_teacher:
-    manifest: artifacts/cache/dinov3_convnext_large_relational_a4_v1/manifest.json
-    manifest_sha256: null
-    artifact_sha256: null
+    manifest: "artifacts/cache/dinov3_convnext_large_relational_a4_rgb_v2/manifest.json"
+    manifest_sha256: "e885a2ea2f2df370a3d4a8270c082a095a735c13db0248521ce2f553b314cf86"
+    artifact_sha256: "f175980d05c1d02a9aa743a74c78c0d5af9a826b2791760df5fbc00c548bd2a2"
 training:
   seed: 7
   epochs: 18
@@ -47,8 +47,8 @@ training:
   mask_t0_as_proxy: true
   foreground_supervision: bbox_geometry
   representation_supervision: dinov3_local_relational
-  representation_teacher_cache_artifact_sha256: null
-  representation_distillation_weight: null
+  representation_teacher_cache_artifact_sha256: "f175980d05c1d02a9aa743a74c78c0d5af9a826b2791760df5fbc00c548bd2a2"
+  representation_distillation_weight: 4.0
 loss:
   log_ratio_nll_weight: 1.0
   log_ratio_huber_weight: 0.0
