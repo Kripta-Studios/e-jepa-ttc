@@ -164,9 +164,11 @@ La materialización terminó en `6f9c92a`: 32 shards, 2.048 tokens exactos,
 4.096 endpoints; `.9492` válidos individualmente y `.7822` pares/`3204` máscaras
 usables tras filtro temporal. Tiempo `1784.63 s`, inferencia `.17110 s`, VRAM
 `1691.89 MiB`, cache ~2.18 MB. Manifest firmado `aaa60090…0426b0`; todos los NPZ,
-sidecars y orden de tokens fueron verificados. Próximo hito: integrar A3 como A1 +
-SAM BCE/Dice train-only en masks válidas, con fallback geometry-only y validation
-sin teacher.
+sidecars y orden de tokens fueron verificados. A3 ya está implementado y
+preregistrado (config SHA-256 `83e8c716…9b7754`) como A1 + SAM BCE `1.0`/Dice `.5`
+train-only en masks válidas, con fallback geometry-only. El wrapper valida firma,
+shards, token, secuencia y crop; validation no se envuelve ni carga teacher. Falta
+publicar este preregistro y ejecutar seed 7 en CUDA.
 
 El subset para matched training está materializado en
 `artifacts/subsets/garl_event_only_matched_screen_v1`, identidad firmada

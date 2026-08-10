@@ -74,6 +74,10 @@
 - materializadas 4.096 máscaras SAM para los 2.048 train exactos: `.9492` endpoint,
   `.7822` par, 32 shards, `1784.63 s`, `1691.89 MiB`; manifest
   `aaa60090…0426b0`. Validation permanece sin teacher.
+- implementado/preregistrado A3 sobre A1 sin cambiar arquitectura: SAM BCE `1.0` +
+  Dice `.5` solo en 3.204 endpoints aceptados; join exacto por token/secuencia/crop,
+  fallback geometry-only y validation sin campos teacher. Config SHA
+  `83e8c716…9b7754`; pendiente run seed 7 CUDA.
 
 ## 2026-08-10 — Transporte temporal Causal Scale v7
 

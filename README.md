@@ -74,7 +74,10 @@ válidos individualmente y `78,22%` de pares válidos después del filtro tempor
 El cache packbits ocupa ~2,18 MB, conserva cada rechazo y mantiene cobertura en las
 nueve secuencias. Preprocessing total `1.784,6 s`, inferencia media `.1711 s`, peak
 VRAM `1.691,9 MiB`. Manifest firmado `aaa60090…0426b0`; sigue siendo train-only y
-no es todavía un resultado A3.
+no es todavía un resultado A3. A3 ya está implementado/preregistrado sin cambiar
+la arquitectura A1: añade BCE `1.0` + Dice `.5` solo sobre las 3.204 máscaras
+aceptadas y mantiene geometry-only en las demás. Validation no carga el cache.
+Config SHA-256 `83e8c716…9b7754`; el checkpoint seed 7 aún no se ha ejecutado.
 
 Pipeline reproducible para estimar Time-to-Contact/Time-to-Collision a partir de
 cámaras de eventos, con una ruta event-only high-resolution y una futura ablación

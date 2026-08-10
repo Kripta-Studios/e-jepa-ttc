@@ -26,6 +26,7 @@ sys.path.insert(0, str(ROOT))
 
 from e_jepa_ttc.artifacts.hashing import sign_artifact  # noqa: E402
 from e_jepa_ttc.data.object_event_v4 import GarlTTCObjectEventV4Dataset  # noqa: E402
+from e_jepa_ttc.data.sam_teacher_cache import SAMTeacherMaskDataset  # noqa: E402
 from e_jepa_ttc.losses.causal_scale_ttc import CausalScaleTTCLossConfig  # noqa: E402
 from e_jepa_ttc.models.causal_scale_ttc import (  # noqa: E402
     CausalScaleTTC,
@@ -91,10 +92,21 @@ def _validate_bbox_geometry_loss(
     loss_config: CausalScaleTTCLossConfig,
     decision_contract: dict[str, Any],
 ) -> None:
-    if training_config.foreground_supervision != "bbox_geometry":
+    if training_config.foreground_supervision not in {
+        "bbox_geometry",
+        "bbox_geometry_sam_teacher",
+    }:
         return
-    if loss_config.foreground_bce_weight != 0.0 or loss_config.foreground_dice_weight != 0.0:
+    uses_sam = training_config.foreground_supervision == "bbox_geometry_sam_teacher"
+    if not uses_sam and (
+        loss_config.foreground_bce_weight != 0.0
+        or loss_config.foreground_dice_weight != 0.0
+    ):
         raise ValueError("bbox_geometry supervision requires BCE/Dice weights to be zero")
+    if uses_sam and min(
+        loss_config.foreground_bce_weight, loss_config.foreground_dice_weight
+    ) <= 0.0:
+        raise ValueError("SAM teacher supervision requires positive BCE/Dice weights")
     if min(
         loss_config.foreground_extent_weight,
         loss_config.foreground_width_weight,
@@ -222,6 +234,27 @@ def run(
     validation_dataset = GarlTTCObjectEventV4Dataset(
         str(manifest_path), splits=("validation",)
     )
+    teacher_metadata: dict[str, Any] | None = None
+    if training_config.foreground_supervision == "bbox_geometry_sam_teacher":
+        teacher = data.get("sam_teacher")
+        if not isinstance(teacher, dict):
+            raise ValueError("A3 requires data.sam_teacher")
+        teacher_manifest = _resolve(teacher["manifest"])
+        train_dataset = SAMTeacherMaskDataset(
+            train_dataset,
+            manifest_path=teacher_manifest,
+            expected_artifact_sha256=str(teacher["artifact_sha256"]),
+            expected_manifest_sha256=str(teacher["manifest_sha256"]),
+        )
+        if training_config.teacher_cache_artifact_sha256 != teacher["artifact_sha256"]:
+            raise ValueError("training and data teacher identities differ")
+        teacher_metadata = {
+            "manifest": teacher_manifest.relative_to(ROOT).as_posix(),
+            "manifest_sha256": str(teacher["manifest_sha256"]),
+            "artifact_sha256": str(teacher["artifact_sha256"]),
+            "scope": "public_train_only",
+            "validation_teacher_loaded": False,
+        }
     device = resolve_device(device_name)
     _reset_peak_memory_stats(device)
     result = train_real_causal_scale(
@@ -293,12 +326,17 @@ def run(
                 training_config.foreground_supervision == "weak_box"
             ),
             "bbox_geometry_training_only": (
-                training_config.foreground_supervision == "bbox_geometry"
+                training_config.foreground_supervision
+                in {"bbox_geometry", "bbox_geometry_sam_teacher"}
             ),
             "bbox_is_not_segmentation_ground_truth": True,
             "bbox_is_model_input": False,
+            "sam_teacher_is_model_input": False,
+            "sam_teacher_train_only": teacher_metadata is not None,
+            "validation_teacher_loaded": False,
             "t0_proxy_box_excluded": training_config.mask_t0_as_proxy,
         },
+        "sam_teacher": teacher_metadata,
         "parameter_count": parameter_count,
         "training_config": asdict(training_config),
         "loss_config": asdict(loss_config),

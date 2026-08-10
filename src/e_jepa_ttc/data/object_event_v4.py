@@ -34,6 +34,8 @@ class ObjectEventV4Batch:
     sequence_ids: list[str]
     sample_tokens: list[str]
     track_ids: list[str]
+    sam_teacher_masks: torch.Tensor | None = None
+    sam_teacher_mask_valid: torch.Tensor | None = None
 
     def to(
         self,
@@ -66,6 +68,20 @@ class ObjectEventV4Batch:
             sequence_ids=self.sequence_ids,
             sample_tokens=self.sample_tokens,
             track_ids=self.track_ids,
+            sam_teacher_masks=(
+                self.sam_teacher_masks.to(
+                    device=device, dtype=torch.float32, non_blocking=non_blocking
+                )
+                if self.sam_teacher_masks is not None
+                else None
+            ),
+            sam_teacher_mask_valid=(
+                self.sam_teacher_mask_valid.to(
+                    device=device, dtype=torch.bool, non_blocking=non_blocking
+                )
+                if self.sam_teacher_mask_valid is not None
+                else None
+            ),
         )
 
     def event_inputs(self) -> dict[str, torch.Tensor]:
@@ -213,6 +229,30 @@ def collate_object_event_v4(records: list[dict[str, Any]]) -> ObjectEventV4Batch
     if bool((heights <= 0).any()) or not torch.isfinite(heights).all():
         raise ValueError("Visible-height targets must be finite and positive")
 
+    teacher_presence = ["sam_teacher_masks" in record for record in records]
+    if any(teacher_presence) and not all(teacher_presence):
+        raise ValueError("SAM teacher fields must be present for the entire batch")
+    teacher_masks = None
+    teacher_valid = None
+    if all(teacher_presence):
+        teacher_masks = torch.stack(
+            [_tensor(record, "sam_teacher_masks") for record in records]
+        )
+        teacher_valid = torch.stack(
+            [
+                torch.as_tensor(record["sam_teacher_mask_valid"], dtype=torch.bool)
+                for record in records
+            ]
+        )
+        expected_masks = (len(records), 2, 1, events.shape[-2], events.shape[-1])
+        if teacher_masks.shape != expected_masks:
+            raise ValueError(
+                "SAM teacher masks must have shape "
+                f"{expected_masks}, got {tuple(teacher_masks.shape)}"
+            )
+        if teacher_valid.shape != (len(records), 2):
+            raise ValueError("SAM teacher validity must have shape [B,2]")
+
     return ObjectEventV4Batch(
         events=events,
         delta_t_s=delta_t,
@@ -224,6 +264,8 @@ def collate_object_event_v4(records: list[dict[str, Any]]) -> ObjectEventV4Batch
         sequence_ids=[str(record["sequence_id"]) for record in records],
         sample_tokens=[str(record["sample_token"]) for record in records],
         track_ids=[str(record["track_id"]) for record in records],
+        sam_teacher_masks=teacher_masks,
+        sam_teacher_mask_valid=teacher_valid,
     )
 
 

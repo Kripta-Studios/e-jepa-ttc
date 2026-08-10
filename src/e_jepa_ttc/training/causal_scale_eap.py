@@ -59,7 +59,10 @@ class CausalScaleEAPTrainingConfig:
     precision: str = "bf16"
     maximum_runtime_hours: float = 6.0
     mask_t0_as_proxy: bool = True
-    foreground_supervision: Literal["weak_box", "bbox_geometry"] = "weak_box"
+    foreground_supervision: Literal[
+        "weak_box", "bbox_geometry", "bbox_geometry_sam_teacher"
+    ] = "weak_box"
+    teacher_cache_artifact_sha256: str | None = None
 
     def __post_init__(self) -> None:
         integers = (
@@ -85,8 +88,12 @@ class CausalScaleEAPTrainingConfig:
             raise ValueError("optimizer/runtime controls must be positive")
         if self.weight_decay < 0.0:
             raise ValueError("weight_decay must be non-negative")
-        if self.foreground_supervision not in {"weak_box", "bbox_geometry"}:
-            raise ValueError("foreground_supervision must be weak_box or bbox_geometry")
+        allowed = {"weak_box", "bbox_geometry", "bbox_geometry_sam_teacher"}
+        if self.foreground_supervision not in allowed:
+            raise ValueError(f"foreground_supervision must be one of {sorted(allowed)}")
+        uses_teacher = self.foreground_supervision == "bbox_geometry_sam_teacher"
+        if uses_teacher != bool(self.teacher_cache_artifact_sha256):
+            raise ValueError("SAM supervision and teacher cache identity must be declared together")
 
 
 @dataclass
@@ -119,7 +126,9 @@ def _targets(
     batch: ObjectEventV4Batch,
     *,
     mask_t0_as_proxy: bool,
-    foreground_supervision: Literal["weak_box", "bbox_geometry"],
+    foreground_supervision: Literal[
+        "weak_box", "bbox_geometry", "bbox_geometry_sam_teacher"
+    ],
 ) -> CausalScaleEAPTargets:
     """Create disclosed weak targets; none are returned as model inputs."""
 
@@ -147,18 +156,28 @@ def _targets(
             mask_valid=mask_valid,
             geometry=None,
         )
-    if foreground_supervision == "bbox_geometry":
+    if foreground_supervision in {"bbox_geometry", "bbox_geometry_sam_teacher"}:
         geometry = box_geometry_targets(
             batch.boxes_xyxy,
             height=height,
             width=width,
             endpoint_valid=endpoint_valid,
         )
+        target_masks = None
+        mask_valid = None
+        if foreground_supervision == "bbox_geometry_sam_teacher":
+            if (batch.sam_teacher_masks is None) != (batch.sam_teacher_mask_valid is None):
+                raise ValueError("SAM teacher masks and validity must be provided together")
+            if batch.sam_teacher_masks is not None and batch.sam_teacher_mask_valid is not None:
+                zeros = torch.zeros_like(batch.sam_teacher_masks[:, :1])
+                target_masks = torch.cat((zeros, batch.sam_teacher_masks), dim=1)
+                invalid_t0 = torch.zeros_like(batch.sam_teacher_mask_valid[:, :1])
+                mask_valid = torch.cat((invalid_t0, batch.sam_teacher_mask_valid), dim=1)
         return CausalScaleEAPTargets(
             delta_t_s=delta,
             target_valid=target_valid,
-            target_masks=None,
-            mask_valid=None,
+            target_masks=target_masks,
+            mask_valid=mask_valid,
             geometry=geometry,
         )
     raise ValueError(f"unsupported foreground supervision: {foreground_supervision}")
@@ -170,7 +189,9 @@ def _loss(
     loss_config: CausalScaleTTCLossConfig,
     *,
     mask_t0_as_proxy: bool,
-    foreground_supervision: Literal["weak_box", "bbox_geometry"],
+    foreground_supervision: Literal[
+        "weak_box", "bbox_geometry", "bbox_geometry_sam_teacher"
+    ],
 ) -> tuple[torch.Tensor, dict[str, torch.Tensor], Any]:
     targets = _targets(
         batch,

@@ -127,8 +127,15 @@
   signo temporal inconsistente. Ningún NaN fue reparado ni sustituido.
 - Runtime separado: `1784.63 s`, inferencia media `.17110 s`, peak VRAM
   `1691.89 MiB`. Identidad firmada `aaa60090…0426b0`.
-- Siguiente: integrar el cache solo en train como una única diferencia sobre A1;
-  filas inválidas conservan geometry-only y validation permanece sin teacher.
+- A3 ya está implementado y preregistrado antes de entrenar en
+  `e_jepa_garl_event_causal_scale_eap_screen_a3_sam_teacher_v1.yaml` (SHA-256
+  `83e8c716…9b7754`). Conserva los 344.591 parámetros y todo A1; añade únicamente
+  BCE `1.0` + Dice `.5` (pesos históricos A0, sin sweep) en las 3.204 máscaras
+  válidas. Las 446 filas rechazadas continúan geometry-only.
+- El loader A3 verifica firma/hash de manifest y shards, une por token exacto y
+  comprueba secuencia/crop. El batch de validation carece físicamente de campos
+  teacher; ni SAM ni sus máscaras entran en `forward` o inferencia. Próximo hito:
+  publicar el preregistro limpio y ejecutar A3 seed 7 en CUDA.
 
 ## Addendum eAP causal-scale screen v1 (2026-08-10)
 

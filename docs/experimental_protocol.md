@@ -99,6 +99,14 @@ añadir loss densa únicamente en las 3.204 máscaras válidas; geometry A1 perm
 para todas las filas. El cache teacher nunca es input del forward ni se abre durante
 validation/inferencia. Runtime de materialización se reporta separado del training.
 
+El brazo A3 está congelado antes de su ejecución con SHA-256 de config
+`83e8c7166f2f1c42d50dc4da210b20b50e0172268a7214b75b177fe7ab9b7754`.
+La única diferencia frente a A1 es `BCE=1.0` y `Dice=.5` sobre los endpoints SAM
+filtrados; son los pesos densos históricos de A0 y no proceden de observar
+validation. Los endpoints inválidos contribuyen cero a la loss densa pero conservan
+la loss geometry A1. La selección continúa siendo MiD macro-secuencia y failure en
+validation pública sin teacher.
+
 El diagnóstico de fallo no selecciona hiperparámetros ni abre test. Descompone el
 checkpoint ya seleccionado sobre la misma validation pública en bbox-ratio,
 extensión analítica, residual, ratio combinado y ratio efectivo. A1 queda

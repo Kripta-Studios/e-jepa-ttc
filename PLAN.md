@@ -117,6 +117,13 @@ modelo separable A1, datos, seed, schedule, geometry loss, TTC path, unknown y c
 continuará geometry-only. Validation no cargará el cache SAM y no calculará una
 métrica contra pseudo-máscaras.
 
+A3 quedó implementado y congelado antes del run con config SHA-256
+`83e8c7166f2f1c42d50dc4da210b20b50e0172268a7214b75b177fe7ab9b7754`.
+Los pesos densos son exactamente los de A0 (`BCE=1.0`, `Dice=.5`), no una elección
+por validation. La unión exige token, secuencia y common-square exactos; el cache
+teacher solo envuelve train. Tras QA y commit/push, ejecutar una sola vez seed 7 en
+CUDA y comparar todos los 2.048 tokens contra A1 puro y Garl matched.
+
 No se cambian `unknown`, support, clip, residual, consenso, optimizer, seed, filas
 o presupuesto durante A1. Correlaciones absolutas y diferenciales se reportan
 globales y macro por secuencia; `r_iso` es diagnóstico, no prediction path.

@@ -149,6 +149,22 @@ Manifest `aaa600907702e84d12797dc8a96a20820c4e699e9513a2c0ec0b734710426b0e`.
 Un rerun completo verifica los 32 NPZ/sidecars y devuelve el mismo manifest sin
 sobrescribir timings; un run parcial reanuda solo shards ausentes o inválidos.
 
+Preregistro A3, a ejecutar únicamente después de publicar el commit limpio:
+
+```powershell
+uv run python scripts/train_causal_scale_eap_screen.py `
+  --config configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a3_sam_teacher_v1.yaml `
+  --output-dir artifacts/runs/causal_scale_eap_screen_a3_sam_teacher_v1_seed7 `
+  --device cuda
+```
+
+Si existe `state/last.pt`, añadir `--resume`. Config SHA-256
+`83e8c7166f2f1c42d50dc4da210b20b50e0172268a7214b75b177fe7ab9b7754`;
+teacher manifest file SHA-256 `1348f0bf49bb44b6018f76aa716d2348c3ca2c707fedb63ae72e52968d766588`
+e identidad firmada `aaa600907702e84d12797dc8a96a20820c4e699e9513a2c0ec0b734710426b0e`.
+El loader SAM se instancia solo para train y valida hash, token, secuencia y crop;
+validation usa el dataset event-only original sin cargar máscaras teacher.
+
 Preregistro y ejecución A1 geometry-only:
 
 ```powershell
