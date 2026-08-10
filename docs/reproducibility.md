@@ -165,6 +165,56 @@ e identidad firmada `aaa600907702e84d12797dc8a96a20820c4e699e9513a2c0ec0b7347104
 El loader SAM se instancia solo para train y valida hash, token, secuencia y crop;
 validation usa el dataset event-only original sin cargar máscaras teacher.
 
+Resultado A3: best 8/13, MiD global `354.2602474`, macro `353.6350866`, failure
+`10.888671875%`; summary `d6c99a1a…574af2`, checkpoint SHA-256
+`e7de29f2483cc1c9268de87699b22eafad9d5bfb5d38b55d706f28bdcb41ee09` y
+predicciones SHA-256 `c7b447919e243a310cb21ff3b4d242c5694db4d5847dec76a17be22b39af0be8`.
+
+Comparación pareada A3/A1:
+
+```powershell
+uv run python scripts/build_causal_scale_eap_arm_comparison.py `
+  --reference-predictions artifacts/runs/causal_scale_eap_screen_a1_geometry_v1_seed7/validation_predictions.csv `
+  --reference-summary artifacts/runs/causal_scale_eap_screen_a1_geometry_v1_seed7/summary.json `
+  --candidate-predictions artifacts/runs/causal_scale_eap_screen_a3_sam_teacher_v1_seed7/validation_predictions.csv `
+  --candidate-summary artifacts/runs/causal_scale_eap_screen_a3_sam_teacher_v1_seed7/summary.json `
+  --reference-label a1_event_only_pure `
+  --candidate-label a3_event_only_inference_with_rgb_distillation `
+  --output-json artifacts/metrics/causal_scale_eap_a3_sam_teacher_vs_a1_geometry_v1.json `
+  --bootstrap-iterations 10000 --bootstrap-seed 7
+```
+
+Identidad `ffa968a8b6086695dd813e583515d757a82992165f4f0dc2475805c1bb26ee63`.
+El comparador verifica igualdad exacta de 2.048 tokens/secuencias/targets y solo
+permite bootstrap por secuencias completas.
+
+Para regenerar la tabla A3/Garl, usar el comando completo de comparación A1/Garl
+documentado más abajo sustituyendo únicamente:
+
+```text
+--causal-predictions artifacts/runs/causal_scale_eap_screen_a3_sam_teacher_v1_seed7/validation_predictions.csv
+--causal-summary artifacts/runs/causal_scale_eap_screen_a3_sam_teacher_v1_seed7/summary.json
+--output-json artifacts/metrics/causal_scale_eap_garl_event_only_a3_sam_teacher_comparison_v1.json
+--outliers-csv artifacts/metrics/causal_scale_eap_garl_event_only_a3_sam_teacher_top10pct_outliers_v1.csv
+--candidate-label causal_scale_a3_sam_teacher
+```
+
+Los demás inputs release/matched/subset/checkpoint permanecen byte-idénticos. La
+salida resultante tiene identidad `5e24d9018ac5689ba055a9692d73cb9c55255638b71ca19ad97eae333d1bfcf0`.
+
+Descomposición A3 reproducible en GPU:
+
+```powershell
+uv run python scripts/analyze_causal_scale_eap_failure.py `
+  --checkpoint artifacts/runs/causal_scale_eap_screen_a3_sam_teacher_v1_seed7/model_best.pt `
+  --cache-manifest artifacts/cache/garl_object_event_common_roi_screen_v4/manifest.json `
+  --summary artifacts/runs/causal_scale_eap_screen_a3_sam_teacher_v1_seed7/summary.json `
+  --output-json artifacts/metrics/causal_scale_eap_a3_sam_teacher_failure_decomposition_v1.json `
+  --candidate-label causal_scale_a3_sam_teacher --device cuda --batch-size 32
+```
+
+Identidad `fd637354935bae794a168ce1b8e92f55825bae6bcbf50fdee5c46faf691c46d9`.
+
 Preregistro y ejecución A1 geometry-only:
 
 ```powershell

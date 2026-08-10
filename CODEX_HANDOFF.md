@@ -2,7 +2,7 @@
 
 Fecha de corte: 2026-08-10 (Europe/Madrid)
 
-## Resultado activo: Garl matched fijado y A1 geometry-only negativo
+## Resultado activo: Garl matched fijado; A1 y A3 negativos
 
 A0 seed 7 terminó en 16 épocas, seleccionó época 11 y no se promueve: MiD global
 `383.8549432`, MiD macro `382.1905104`, failure `12.3046875%`, weak-box IoU
@@ -167,8 +167,16 @@ usables tras filtro temporal. Tiempo `1784.63 s`, inferencia `.17110 s`, VRAM
 sidecars y orden de tokens fueron verificados. A3 ya está implementado y
 preregistrado (config SHA-256 `83e8c716…9b7754`) como A1 + SAM BCE `1.0`/Dice `.5`
 train-only en masks válidas, con fallback geometry-only. El wrapper valida firma,
-shards, token, secuencia y crop; validation no se envuelve ni carga teacher. Falta
-publicar este preregistro y ejecutar seed 7 en CUDA.
+shards, token, secuencia y crop; validation no se envuelve ni carga teacher.
+
+El preregistro se publicó en `ffb360f` y A3 terminó best 8/13: global `354.2602`,
+macro `353.6351`, failure `10.8887%`, known `.8911`, ratio `.1053`, `458.08 s` y
+`1561.73 MiB`. Pierde frente a A1 en las tres secuencias; A3−A1 bootstrap por
+secuencia `+7.5388`, IC95% `[1.5525,10.6383]`, win rate `48.23%`. Solo mejora el
+bucket negative, pero empeora crucial/small/large. Comparadores `ffa968a8…26ee63`
+y `5e24d901…1bfcf0`; descomposición `fd637354…1c46d9`. Es negativo: no sweep,
+seeds ni escalado. Próxima intervención: representación event-native, una hipótesis
+preregistrada, sin otra máscara RGB ni cambios de física/unknown.
 
 El subset para matched training está materializado en
 `artifacts/subsets/garl_event_only_matched_screen_v1`, identidad firmada

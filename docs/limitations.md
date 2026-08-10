@@ -44,8 +44,11 @@ están autocontenidos para la auditoría local de licencia/processor, respectiva
 
 El cache SAM conserva solo `.7822` de pares tras filtros; la cobertura mínima por
 secuencia es 146/228 en `OBneIVg4Cw`. Esta selección puede introducir sesgo de
-teacher. A3 debe reportar cobertura por secuencia y comparar contra A1 en todos los
+teacher. A3 reporta cobertura por secuencia y se comparó contra A1 en todos los
 tokens, no solo en filas aceptadas. El score IoU de SAM es interno, no IoU contra GT.
+A3 fue negativo: empeoró macro/failure y las tres secuencias; esto rechaza esta
+elección concreta de SAM+bbox prompts+filtros+pesos, no toda distillation RGB. No
+justifica un sweep post-hoc ni afirmar que SAM segmenta mal sin máscara GT.
 
 Actualizado: 2026-08-10.
 

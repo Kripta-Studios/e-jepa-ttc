@@ -124,6 +124,10 @@ packbits, validez, scores, bbox/common-square y filtro. Tiene 32 shards, 3.204
 máscaras utilizables y manifest `aaa60090…0426b0`. Los binarios locales son
 derivados reproducibles e ignorados por Git; el manifest firmado se versiona en
 `artifacts/metrics/sam_train_bbox_prompt_materialization_v1.json`.
+El único consumidor ejecutado fue A3 seed 7. Un join exacto por token, secuencia y
+common-square aplicó 3.204 máscaras en train; validation usó el cache event-only
+original sin campos SAM. Los resultados se comparan sobre los 2.048 tokens
+validation completos, no solo sobre filas cuyo teacher train pasó filtros.
 
 ## Contrato de almacenamiento
 

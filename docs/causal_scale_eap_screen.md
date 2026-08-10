@@ -1,5 +1,50 @@
 # Causal Scale eAP public validation screen v1
 
+## Resultado A3 SAM-distilled seed 7
+
+A3 se ejecutó una sola vez desde el preregistro publicado `ffb360f`, sobre las
+mismas 2.048 filas train/validation y las mismas 9/3 secuencias que A1. Conserva
+exactamente el modelo A1 de 344.591 parámetros; la única intervención es BCE `1.0`
++ Dice `.5` contra las 3.204 máscaras SAM train-only aceptadas. Validation no carga
+teacher. Por ello la modalidad correcta es **event-only inference with RGB
+distillation**, no event-only puro.
+
+| Métrica validation pública | A1 puro | A3 RGB-distilled | Garl matched |
+|---|---:|---:|---:|
+| MiD global | 346.1117 | 354.2602 | 203.0982 |
+| MiD macro-secuencia | 346.8295 | 353.6351 | 203.6342 |
+| failure rate | 9.9609% | 10.8887% | 0% |
+| known coverage | .9004 | .8911 | 1.0 |
+| log-ratio Pearson | .1108 | .1053 | .3722 |
+| log-ratio MAE | .02642 | .02674 | .00821 |
+| best/epochs | 18/18 | 8/13 | 11/16 |
+| training+validation | 631.88 s | 458.08 s | 274.98 s |
+| peak VRAM | 1558.48 MiB | 1561.73 MiB | 1317.58 MiB |
+
+A3 empeora las tres secuencias frente a A1: `DGqicHUGWb 374.2571→386.9484`,
+`pBqGOb2vYq 327.7436→328.8701`, `qoohcdtLDH 338.4877→345.0867`. Por bucket,
+solo mejora `negative` (`214.5390→199.5001`); empeora `crucial`
+(`481.5264→494.7484`), `small` (`224.9528→234.2894`) y `large`
+(`164.0883→166.4920`). No hay mejora distribuida.
+
+La comparación exact-token A3−A1 da `+7.5388` MiD macro, bootstrap por secuencia
+IC95% `[1.5525,10.6383]`; A3 gana 802/1.663 pares finitos (`48.2261%`). Frente a
+Garl matched queda `+148.3104`, IC95% `[111.5267,167.4671]`, con win rate
+`39.8904%`. El resultado es negativo y no se promueve, escala ni repite con otros
+pesos/seeds.
+
+El mecanismo también es negativo: altura absoluta `r .4708→.4158`, cambio de
+altura/bbox `.0591→.0542`, cambio de altura/física `.1048→.0917`, y width/física
+`-.1370`. El ratio efectivo/físico queda `.1053`; el residual es casi cero y no
+recupera señal. Hay 223 unknown canónicos y 139 predicciones conocidas saturadas a
+±60 s. La cola top 10% finita tiene 183 filas, 156 `crucial`; DGq/pBq/qooh aportan
+78/57/48. El fallo sigue en `eventos → extensión foreground temporal`, no en
+support ni en la inversión TTC.
+
+Artefactos firmados: resumen del run `d6c99a1a…574af2`, comparación Garl
+`5e24d901…1bfcf0`, comparación A3/A1 `ffa968a8…26ee63` y descomposición
+`fd637354…1c46d9`. No se abrió test privado, CodaBench ni EvTTC test.
+
 ## Resultado A0 seed 7
 
 | Métrica validation pública | Valor |

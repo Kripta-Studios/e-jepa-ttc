@@ -1,8 +1,8 @@
 # E-JEPA-TTC
 
 > Estado event-only (2026-08-10): Garl matched desde cero fija la métrica a batir
-> en MiD macro 203,63. A0 obtuvo 382,19 y A1 geometry-only 346,83. A1 mejora A0,
-> pero no es competitivo y no existe claim SOTA.
+> en MiD macro 203,63. A0 obtuvo 382,19, A1 geometry-only 346,83 y A3
+> SAM-distilled 353,64. A3 empeora A1; no existe claim SOTA.
 
 El diagnóstico de A0 localiza el defecto antes de la física: la expansión bbox sí
 correlaciona con TTC (`r=.760`), pero la expansión extraída del mapa no correlaciona
@@ -74,10 +74,14 @@ válidos individualmente y `78,22%` de pares válidos después del filtro tempor
 El cache packbits ocupa ~2,18 MB, conserva cada rechazo y mantiene cobertura en las
 nueve secuencias. Preprocessing total `1.784,6 s`, inferencia media `.1711 s`, peak
 VRAM `1.691,9 MiB`. Manifest firmado `aaa60090…0426b0`; sigue siendo train-only y
-no es todavía un resultado A3. A3 ya está implementado/preregistrado sin cambiar
+la materialización por sí sola no era evidencia TTC. A3 se implementó/preregistró sin cambiar
 la arquitectura A1: añade BCE `1.0` + Dice `.5` solo sobre las 3.204 máscaras
 aceptadas y mantiene geometry-only en las demás. Validation no carga el cache.
-Config SHA-256 `83e8c716…9b7754`; el checkpoint seed 7 aún no se ha ejecutado.
+Config SHA-256 `83e8c716…9b7754`. A3 terminó best 8/13 con MiD macro `353,64`,
+failure `10,89%` y ratio Pearson `.105`: peor que A1 en las tres secuencias. Solo
+mejora negative; su IC95% A3−A1 por secuencia es `[1,55,10,64]`. Se cierra sin
+sweep, escalado ni seeds adicionales. La siguiente rama será event-native y no
+añadirá otra dependencia de máscara RGB.
 
 Pipeline reproducible para estimar Time-to-Contact/Time-to-Collision a partir de
 cámaras de eventos, con una ruta event-only high-resolution y una futura ablación

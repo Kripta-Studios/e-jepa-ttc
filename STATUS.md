@@ -1,6 +1,6 @@
 # Estado del repositorio
 
-## 2026-08-10 — Garl matched y A1 geometry-only cerrados
+## 2026-08-10 — Garl matched, A1 y A3 cerrados
 
 - A0 seed 7 terminó: época seleccionada 11/16, MiD macro `382.1905104`, failure
   `12.3046875%`, weak-box IoU `0.4997858107`, Pearson log-ratio `0.0456290990`.
@@ -134,8 +134,17 @@
   válidas. Las 446 filas rechazadas continúan geometry-only.
 - El loader A3 verifica firma/hash de manifest y shards, une por token exacto y
   comprueba secuencia/crop. El batch de validation carece físicamente de campos
-  teacher; ni SAM ni sus máscaras entran en `forward` o inferencia. Próximo hito:
-  publicar el preregistro limpio y ejecutar A3 seed 7 en CUDA.
+  teacher; ni SAM ni sus máscaras entran en `forward` o inferencia.
+- Preregistro publicado `ffb360f`; A3 seed 7 terminó best 8/13: global `354.2602`,
+  macro `353.6351`, failure `10.8887%`, known `.8911`, ratio `.1053`, `458.08 s`,
+  `1561.73 MiB`. Es peor que A1 puro en macro, failure y las tres secuencias.
+- A3 solo mejora negative `214.5390→199.5001`; empeora crucial/small/large. La
+  comparación pareada A3−A1 es `+7.5388`, IC95% secuencia `[1.5525,10.6383]`;
+  identidad `ffa968a8…26ee63`. No promover, escalar, repetir pesos ni seeds.
+- Descomposición `fd637354…1c46d9`: altura absoluta `.4158`, delta altura/bbox
+  `.0543`, delta altura/física `.0917`; residual/física `-.0651`. SAM no arregla
+  representación/dinámica. Siguiente rama debe ser event-native y no otra máscara
+  RGB; preregistrar una sola intervención antes de ejecutarla.
 
 ## Addendum eAP causal-scale screen v1 (2026-08-10)
 

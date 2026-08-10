@@ -112,9 +112,10 @@ solo pueden intervenir durante train, nunca durante validation/test.
 
 El cache SAM train-only final conserva 3.204/4.096 máscaras y 1.602/2.048 pares.
 No cambia la modalidad de inferencia, pero sí la información usada para entrenar.
-A3 está preregistrado para reportar esta cobertura y usar geometry-only para las
+A3 reporta esta cobertura y usa geometry-only para las
 filas filtradas. Añade BCE `1.0` y Dice `.5` sin sweep sobre A1, sin cambiar sus
-344.591 parámetros. Ningún checkpoint A3 existe todavía; cuando exista se reportará
+344.591 parámetros. El checkpoint seed 7 existe pero no se promueve: macro
+`353.6351`, failure `10.8887%`, peor que A1 en las tres secuencias. Se reporta
 separado de event-only puro como `event-only inference with RGB distillation`.
 
 ## Estado

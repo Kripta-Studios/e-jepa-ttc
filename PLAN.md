@@ -124,6 +124,13 @@ por validation. La unión exige token, secuencia y common-square exactos; el cac
 teacher solo envuelve train. Tras QA y commit/push, ejecutar una sola vez seed 7 en
 CUDA y comparar todos los 2.048 tokens contra A1 puro y Garl matched.
 
+Resultado cerrado: A3 macro `353.6351`, failure `10.8887%`; pierde frente a A1 en
+las tres secuencias y su bootstrap A3−A1 es estrictamente positivo
+(`[1.5525,10.6383]`). Se cierra esta dependencia SAM: no hacer sweep de BCE/Dice,
+no ejecutar seeds adicionales y no escalar datos. La próxima hipótesis debe atacar
+representación event-native conservando el head geométrico y protocolo; por el árbol
+preregistrado, no introducir Dense JEPA hasta demostrar geometría estática adecuada.
+
 No se cambian `unknown`, support, clip, residual, consenso, optimizer, seed, filas
 o presupuesto durante A1. Correlaciones absolutas y diferenciales se reportan
 globales y macro por secuencia; `r_iso` es diagnóstico, no prediction path.

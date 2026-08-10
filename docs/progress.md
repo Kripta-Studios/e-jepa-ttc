@@ -77,7 +77,11 @@
 - implementado/preregistrado A3 sobre A1 sin cambiar arquitectura: SAM BCE `1.0` +
   Dice `.5` solo en 3.204 endpoints aceptados; join exacto por token/secuencia/crop,
   fallback geometry-only y validation sin campos teacher. Config SHA
-  `83e8c716…9b7754`; pendiente run seed 7 CUDA.
+  `83e8c716…9b7754`.
+- A3 seed 7 cerrado negativo: best 8/13, macro `353.6351`, failure `10.8887%`,
+  ratio `.1053`; pierde frente a A1 en las tres secuencias. Bootstrap A3−A1
+  `+7.5388`, IC95% `[1.5525,10.6383]`; artefactos `ffa968a8…26ee63`,
+  `5e24d901…1bfcf0`, `fd637354…1c46d9`. No sweep/escalado/seeds.
 
 ## 2026-08-10 — Transporte temporal Causal Scale v7
 

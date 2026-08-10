@@ -107,6 +107,12 @@ validation. Los endpoints inválidos contribuyen cero a la loss densa pero conse
 la loss geometry A1. La selección continúa siendo MiD macro-secuencia y failure en
 validation pública sin teacher.
 
+A3 terminó best 8/13 con macro `353.6351` y failure `10.8887%`. La comparación
+pareada exact-token contra A1 da A3−A1 `+7.5388`, IC95% por secuencia
+`[1.5525,10.6383]`; pierde en las tres secuencias. Se aplica el rechazo
+preregistrado: no sweep de teacher weights, no seeds 13/23 y no scaling. La próxima
+rama vuelve a event-only puro y cambia como máximo un componente de representación.
+
 El diagnóstico de fallo no selecciona hiperparámetros ni abre test. Descompone el
 checkpoint ya seleccionado sobre la misma validation pública en bbox-ratio,
 extensión analítica, residual, ratio combinado y ratio efectivo. A1 queda
