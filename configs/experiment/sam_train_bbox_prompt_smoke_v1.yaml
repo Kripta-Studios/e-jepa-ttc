@@ -1,0 +1,31 @@
+artifact_type: sam_train_bbox_prompt_smoke_protocol_v1
+dataset:
+  public_train_only: true
+  expected_parquet_sha256: 03dd3022db4b5f43bb10244fc8778476d74351e764f73a90c8566af949c17fd6
+  sequence_id: 2cyv0Oedzg
+  sample_selector: lexicographically_first_within_sequence
+  expected_sample_token: 2cyv0Oedzg_000001_19317100000
+  endpoint_index: 1
+  box_index: 0
+teacher:
+  repo_id: facebook/sam-vit-large
+  revision: 6851e0441005b0fb96f2cc4dfac472f3d1b14af1
+  expected_weights_sha256: a57e1b13cd1545938dfcbc9fb26df7f60de6650237a9383382a874a623564b81
+  local_files_only: true
+  bbox_prompt_training_only: true
+runtime:
+  device: cuda
+  precision: bf16
+  maximum_peak_vram_mib: 9216
+  maximum_inference_seconds: 60
+gate:
+  require_finite: true
+  minimum_predicted_iou: 0.5
+  minimum_mask_fraction: 0.001
+  maximum_mask_fraction: 0.75
+claim_boundary:
+  modality: event-only inference with RGB distillation
+  official_mask: false
+  validation_teacher_generation_allowed: false
+  ttc_labels_used: false
+  architecture_selection_allowed: false
