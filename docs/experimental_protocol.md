@@ -78,6 +78,15 @@ A1-DF-R terminó sin mejora distribuida. Queda prohibido ajustar otro peso miran
 validation o escalar este brazo. La próxima rama cambia representación y conserva
 readout/protocolo; cualquier teacher RGB se declara RGB-distilled y usa solo train.
 
+La auditoría firmada `garl_foreground_resource_audit_v2.json` abrió exclusivamente
+el parquet público de train (88.744 filas/40 secuencias) y no cargó pesos. Verificó
+177.488 referencias `mask_paths`, 64.629 únicas, pero resolvió cero bajo los seis
+roots locales. No existe un brazo de máscaras oficiales materialmente ejecutable.
+Los 64.629 RGB únicos sí tienen cobertura exacta en 135 TAR. SAM ViT-L y DINOv3
+ConvNeXt-Tiny están íntegros en caché. Cualquier máscara SAM se generará únicamente
+sobre train con bbox prompt preregistrado; validation/test no reciben pseudo-targets.
+Ese protocolo se denomina `event-only inference with RGB distillation`.
+
 El diagnóstico de fallo no selecciona hiperparámetros ni abre test. Descompone el
 checkpoint ya seleccionado sobre la misma validation pública en bbox-ratio,
 extensión analítica, residual, ratio combinado y ratio efectivo. A1 queda

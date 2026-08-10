@@ -102,6 +102,14 @@ A1-DF-R terminó con macro `349.8628`, failure `19.8242%` y ratio `.1703`. La
 mejora frente a A1-DF es pequeña y concentrada en una secuencia; queda no promovido
 y no es adecuado para inferencia fiable.
 
+No hay máscaras oficiales locales utilizables: una auditoría exhaustiva de train
+resolvió `0/64.629` rutas únicas declaradas. SAM ViT-L y DINOv3 ConvNeXt-Tiny sí
+están íntegros en caché, y todos los RGB públicos declarados están presentes. Si se
+usa SAM/DINO como teacher, el modelo deja el protocolo event-only puro aunque su
+inferencia solo reciba eventos; se etiquetará explícitamente como
+`event-only inference with RGB distillation`. Teacher RGB, bbox prompt y máscaras
+solo pueden intervenir durante train, nunca durante validation/test.
+
 ## Estado
 
 El modelo histórico activo era un candidato event-only high-resolution, no un modelo SOTA ni

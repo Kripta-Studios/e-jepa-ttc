@@ -139,9 +139,16 @@ baja de `.1703` a `.1499`; slope sube `.0848 -> .0893` y unknown canónico baja
 
 Comparador firmado `0560154542b06c12d20a24ed719ec9461ebaab9d7e4fa080afe964cda2dd6205`;
 descomposición `0bc741a5f732f705e4862a2e40e45413027fa6b28f3e326468ed30cea49900e7`.
-El siguiente trabajo debe evaluar representación event-native/pretraining con el
-mismo readout geométrico. Antes de teachers RGB, auditar cobertura/licencia de las
-máscaras públicas; no escalar 2.048 ni abrir test con este brazo.
+La auditoría de recursos ya terminó: 0/64.629 máscaras únicas son materiales; los
+64.629 RGB únicos sí existen en 135 TAR. SAM ViT-L y DINOv3 ConvNeXt-Tiny pasan
+config/processor/licencia/pesos locales. Artefacto firmado
+`garl_foreground_resource_audit_v2.json`, identidad `6e910ec2…f1e246`, generado por
+el commit publicado `4f5cc46`. No se abrió test ni se cargaron teachers.
+
+El siguiente trabajo es preregistrar un smoke SAM bbox-prompt sobre una fila train,
+instalar únicamente el extra `multimodal` y medir CUDA/preprocessing/VRAM. Si pasa,
+precomputar solo train y declarar A3 como `event-only inference with RGB
+distillation`; validation no recibe pseudo-máscaras. No escalar 2.048 ni abrir test.
 
 El subset para matched training está materializado en
 `artifacts/subsets/garl_event_only_matched_screen_v1`, identidad firmada

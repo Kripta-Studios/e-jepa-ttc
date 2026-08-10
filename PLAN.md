@@ -79,9 +79,21 @@ ratio y failures, pasar a representación event-native preentrenada antes de JEP
 
 A1-DF-R terminó negativo/insuficiente: macro `349.8628`, failure `19.8242%`; la
 mejora de `.4392` sobre A1-DF procede solo de una secuencia y la correlación
-analítica baja. No variar el peso ni escalar. Siguiente: auditar máscaras oficiales
-y opciones de pretraining event-native/local; probar un solo backbone/teacher con
-el mismo geometry head y protocolo explícito puro vs RGB-distilled.
+analítica baja. No variar el peso ni escalar. La auditoría posterior ya cerró el
+inventario: cero de 64.629 máscaras declaradas son materiales, pero los 64.629 RGB
+únicos están disponibles y SAM ViT-L/DINOv3 ConvNeXt-Tiny pasan integridad local.
+
+Siguiente secuencia preregistrable, sin cartesian product:
+
+1. materializar el extra `multimodal` sin descargar pesos y ejecutar un smoke SAM
+   ViT-L en CUDA con una imagen train y su bbox prompt;
+2. medir VRAM, tiempo de lectura/preprocessing e inferencia por separado;
+3. si pasa, definir filtros de score/consistencia temporal usando solo train y
+   precomputar targets solo para las 2.048 filas train del screen;
+4. mantener validation sin máscaras teacher y seleccionar el TTC checkpoint solo
+   con targets públicos TTC/geometry ya autorizados;
+5. etiquetar el brazo A3 como `event-only inference with RGB distillation` y
+   compararlo por separado con A1 puro y Garl matched.
 
 No se cambian `unknown`, support, clip, residual, consenso, optimizer, seed, filas
 o presupuesto durante A1. Correlaciones absolutas y diferenciales se reportan

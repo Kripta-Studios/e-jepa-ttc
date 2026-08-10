@@ -106,6 +106,18 @@ sin nuevas filas ni teacher RGB. Sus 2.048 predicciones validation tienen el mis
 hash de tokens firmado (`c56257c2…a394ef`) que A0, release y Garl matched; por tanto
 las diferencias A0/A1 son de supervisión/modelo, no de composición del dataset.
 
+### Inventario material de foreground/RGB público
+
+`E:\GarlTTC_dataset\data\train.parquet` (SHA-256 `03dd3022…17fd6`) contiene
+88.744 tokens/40 secuencias y declara 177.488 endpoints de máscara/RGB, 64.629
+únicos. Ninguna máscara `.npy` fue encontrada bajo los seis roots auditados; los
+64.629 miembros RGB sí existen en 135 TAR. El inventario firmado
+`garl_foreground_resource_audit_v2.json` no abre test ni extrae imágenes.
+
+La disponibilidad de RGB no modifica el cache event-only. Solo autoriza un teacher
+train-only bajo protocolo separado; `DGqicHUGWb`, `pBqGOb2vYq` y `qoohcdtLDH`
+no recibirán pseudo-máscaras de validation.
+
 ## Contrato de almacenamiento
 
 - datos raw inmutables y fuera de Git;

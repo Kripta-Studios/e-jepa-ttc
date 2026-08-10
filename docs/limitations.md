@@ -35,6 +35,13 @@ un resultado negativo no descarta todos los pesos y no autoriza un sweep post-ho
 El resultado peso `5.0` no estabilizó la geometría y no debe reinterpretarse como
 evidencia contra toda supervisión temporal; sí cierra esta elección preregistrada.
 
+Aunque el parquet declara 64.629 `mask_paths` únicos, la auditoría v2 no resolvió
+ninguno bajo los roots locales; no se puede afirmar uso de máscaras oficiales.
+SAM/DINO local habilita como máximo distillation RGB train-only. Un resultado así no
+es event-only puro y requiere declarar teacher, bbox prompts, filtros, hashes y
+ausencia total de pseudo-targets en validation/test. DINOv2-L y DINOv3 ViT-S no
+están autocontenidos para la auditoría local de licencia/processor, respectivamente.
+
 Actualizado: 2026-08-10.
 
 - No existe un claim SOTA ni un checkpoint final promovido.

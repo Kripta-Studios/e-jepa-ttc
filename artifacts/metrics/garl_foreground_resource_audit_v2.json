@@ -1,0 +1,454 @@
+{
+  "artifact_sha256": "6e910ec2f389ea8b50c7f0230214217ce7bdcc5bef696712d766637b27f1e246",
+  "artifact_type": "garl_foreground_resource_audit_v2",
+  "code_commit": "4f5cc46b649e8f6649f03267293e3bfe9b5085bd",
+  "decision": {
+    "dinov3_convnext_tiny_teacher_arm_feasible": true,
+    "next_action": "preregister a train-only SAM bbox-prompt materialization smoke",
+    "official_mask_arm_feasible": false,
+    "protocol_label_if_teacher_used": "event-only inference with RGB distillation",
+    "sam_bbox_prompt_train_only_arm_feasible": true,
+    "validation_teacher_generation_allowed": false
+  },
+  "local_teacher_snapshots": {
+    "facebook/dinov2-large": {
+      "config": {
+        "architectures": [
+          "Dinov2Model"
+        ],
+        "model_type": "dinov2",
+        "parse_error": null,
+        "present": true,
+        "sha256": "12df51c069a2dc1305e34ba71ef58bc2407ea553b75f4722a1715c1bce3bbed0"
+      },
+      "expected_revision": "47b73eefe95e8d44ec3623f8890bd894b6ea2d6c",
+      "license": {
+        "license_file_present": false,
+        "license_file_sha256": null,
+        "local_license_evidence_available": false,
+        "metadata_license": null,
+        "readme_present": false,
+        "readme_sha256": null
+      },
+      "processor": {
+        "image_processor_type": "BitImageProcessor",
+        "parse_error": null,
+        "present": true,
+        "processor_class": null,
+        "sha256": "14e780d86fa1861f8751f868d7f45425b5feb55c38ca26f152ca5097ab30f828"
+      },
+      "repo_id": "facebook/dinov2-large",
+      "revision": "47b73eefe95e8d44ec3623f8890bd894b6ea2d6c",
+      "revision_matches": true,
+      "self_contained_for_offline_loading_and_license_audit": false,
+      "snapshot_path": "C:/Users/Álvaro Schwiedop/.cache/huggingface/hub/models--facebook--dinov2-large/snapshots/47b73eefe95e8d44ec3623f8890bd894b6ea2d6c",
+      "snapshot_present": true,
+      "weights": {
+        "filename": "model.safetensors",
+        "selected_path": "C:/Users/Álvaro Schwiedop/.cache/huggingface/hub/models--facebook--dinov2-large/blobs/399fba97a95f22c36834418bc69373364a99af3a1153da1c0fb31db567c92e23",
+        "sha256": "399fba97a95f22c36834418bc69373364a99af3a1153da1c0fb31db567c92e23",
+        "size_bytes": 1217522888
+      }
+    },
+    "facebook/dinov3-convnext-tiny-pretrain-lvd1689m": {
+      "config": {
+        "architectures": [
+          "DINOv3ConvNextModel"
+        ],
+        "model_type": "dinov3_convnext",
+        "parse_error": null,
+        "present": true,
+        "sha256": "2ac7000b6f649e7c73e3cbcce0187eaa309af7993a550d3aa9bd84b1e74ac970"
+      },
+      "expected_revision": "10d30274b4d445111e2d5bf75ac93bbd94db274b",
+      "license": {
+        "license_file_present": true,
+        "license_file_sha256": "25d122eb8f5b880fd23c736fb6ea8018ee45c12237e00b8a86d14c653904999e",
+        "local_license_evidence_available": true,
+        "metadata_license": "other",
+        "readme_present": true,
+        "readme_sha256": "34016e50ef360f3aaeb44098a03fe6edb13ed92299c21d43c121df40efd3fcd1"
+      },
+      "processor": {
+        "image_processor_type": "DINOv3ViTImageProcessorFast",
+        "parse_error": null,
+        "present": true,
+        "processor_class": null,
+        "sha256": "960c41d1f3a7778b936365769a2d90550b318a6c0a53a0296957adacfe5e0dd7"
+      },
+      "repo_id": "facebook/dinov3-convnext-tiny-pretrain-lvd1689m",
+      "revision": "10d30274b4d445111e2d5bf75ac93bbd94db274b",
+      "revision_matches": true,
+      "self_contained_for_offline_loading_and_license_audit": true,
+      "snapshot_path": "C:/Users/Álvaro Schwiedop/.cache/huggingface/hub/models--facebook--dinov3-convnext-tiny-pretrain-lvd1689m/snapshots/10d30274b4d445111e2d5bf75ac93bbd94db274b",
+      "snapshot_present": true,
+      "weights": {
+        "filename": "model.safetensors",
+        "selected_path": "C:/Users/Álvaro Schwiedop/.cache/huggingface/hub/models--facebook--dinov3-convnext-tiny-pretrain-lvd1689m/blobs/bd30a9459d6149564ef53af6e8a1999980953b009b94cde836ac1bac4d339cb2",
+        "sha256": "bd30a9459d6149564ef53af6e8a1999980953b009b94cde836ac1bac4d339cb2",
+        "size_bytes": 111299216
+      }
+    },
+    "facebook/dinov3-vitl16-pretrain-lvd1689m": {
+      "config": {
+        "architectures": [
+          "DINOv3ViTModel"
+        ],
+        "model_type": "dinov3_vit",
+        "parse_error": null,
+        "present": true,
+        "sha256": "135ecd23e34a70b6fbed8b083fdecb319b7e3a54e3d849258bbe4ddcf1783bb5"
+      },
+      "expected_revision": "ea8dc2863c51be0a264bab82070e3e8836b02d51",
+      "license": {
+        "license_file_present": true,
+        "license_file_sha256": "25d122eb8f5b880fd23c736fb6ea8018ee45c12237e00b8a86d14c653904999e",
+        "local_license_evidence_available": true,
+        "metadata_license": "other",
+        "readme_present": true,
+        "readme_sha256": "5395522a8a611d0578b6036f47e60445381ee4b2c7508f0e93d9e4c1e876fa63"
+      },
+      "processor": {
+        "image_processor_type": "DINOv3ViTImageProcessorFast",
+        "parse_error": null,
+        "present": true,
+        "processor_class": null,
+        "sha256": "960c41d1f3a7778b936365769a2d90550b318a6c0a53a0296957adacfe5e0dd7"
+      },
+      "repo_id": "facebook/dinov3-vitl16-pretrain-lvd1689m",
+      "revision": "ea8dc2863c51be0a264bab82070e3e8836b02d51",
+      "revision_matches": true,
+      "self_contained_for_offline_loading_and_license_audit": true,
+      "snapshot_path": "C:/Users/Álvaro Schwiedop/.cache/huggingface/hub/models--facebook--dinov3-vitl16-pretrain-lvd1689m/snapshots/ea8dc2863c51be0a264bab82070e3e8836b02d51",
+      "snapshot_present": true,
+      "weights": {
+        "filename": "model.safetensors",
+        "selected_path": "C:/Users/Álvaro Schwiedop/.cache/huggingface/hub/models--facebook--dinov3-vitl16-pretrain-lvd1689m/blobs/dcb2e45127cccbf1601e5f42fef165eea275c8e5213197e8dcf3f48822718179",
+        "sha256": "dcb2e45127cccbf1601e5f42fef165eea275c8e5213197e8dcf3f48822718179",
+        "size_bytes": 1212559808
+      }
+    },
+    "facebook/dinov3-vitl16-pretrain-sat493m": {
+      "config": {
+        "architectures": [
+          "DINOv3ViTModel"
+        ],
+        "model_type": "dinov3_vit",
+        "parse_error": null,
+        "present": true,
+        "sha256": "135ecd23e34a70b6fbed8b083fdecb319b7e3a54e3d849258bbe4ddcf1783bb5"
+      },
+      "expected_revision": "f692fa42da72c6797b67cd73494a168d1120d3ee",
+      "license": {
+        "license_file_present": true,
+        "license_file_sha256": "25d122eb8f5b880fd23c736fb6ea8018ee45c12237e00b8a86d14c653904999e",
+        "local_license_evidence_available": true,
+        "metadata_license": "other",
+        "readme_present": true,
+        "readme_sha256": "63c999c66b0f4b0d240e096939809c702706d7dd4962458a36e89698288ce1bb"
+      },
+      "processor": {
+        "image_processor_type": "DINOv3ViTImageProcessorFast",
+        "parse_error": null,
+        "present": true,
+        "processor_class": null,
+        "sha256": "75df1d1f640a714fc160a5041554c5624e5d0cc4c81af2ca7695725f2c9d8c01"
+      },
+      "repo_id": "facebook/dinov3-vitl16-pretrain-sat493m",
+      "revision": "f692fa42da72c6797b67cd73494a168d1120d3ee",
+      "revision_matches": true,
+      "self_contained_for_offline_loading_and_license_audit": true,
+      "snapshot_path": "C:/Users/Álvaro Schwiedop/.cache/huggingface/hub/models--facebook--dinov3-vitl16-pretrain-sat493m/snapshots/f692fa42da72c6797b67cd73494a168d1120d3ee",
+      "snapshot_present": true,
+      "weights": {
+        "filename": "model.safetensors",
+        "selected_path": "C:/Users/Álvaro Schwiedop/.cache/huggingface/hub/models--facebook--dinov3-vitl16-pretrain-sat493m/blobs/4e6356d992c1301b5e7c275f465e47296c5c4ad17052e262b29fc21e82ccc698",
+        "sha256": "4e6356d992c1301b5e7c275f465e47296c5c4ad17052e262b29fc21e82ccc698",
+        "size_bytes": 1212559808
+      }
+    },
+    "facebook/dinov3-vits16-pretrain-lvd1689m": {
+      "config": {
+        "architectures": [
+          "DINOv3ViTModel"
+        ],
+        "model_type": "dinov3_vit",
+        "parse_error": null,
+        "present": true,
+        "sha256": "9481247be9f95a134a5599402b4bfc838eecdf9a7fffbf4debd1c70ec213898b"
+      },
+      "expected_revision": "114c1379950215c8b35dfcd4e90a5c251dde0d32",
+      "license": {
+        "license_file_present": false,
+        "license_file_sha256": null,
+        "local_license_evidence_available": false,
+        "metadata_license": null,
+        "readme_present": false,
+        "readme_sha256": null
+      },
+      "processor": {
+        "image_processor_type": null,
+        "parse_error": "missing",
+        "present": false,
+        "processor_class": null,
+        "sha256": null
+      },
+      "repo_id": "facebook/dinov3-vits16-pretrain-lvd1689m",
+      "revision": "114c1379950215c8b35dfcd4e90a5c251dde0d32",
+      "revision_matches": true,
+      "self_contained_for_offline_loading_and_license_audit": false,
+      "snapshot_path": "C:/Users/Álvaro Schwiedop/.cache/huggingface/hub/models--facebook--dinov3-vits16-pretrain-lvd1689m/snapshots/114c1379950215c8b35dfcd4e90a5c251dde0d32",
+      "snapshot_present": true,
+      "weights": {
+        "filename": "model.safetensors",
+        "selected_path": "C:/Users/Álvaro Schwiedop/.cache/huggingface/hub/models--facebook--dinov3-vits16-pretrain-lvd1689m/blobs/4610ad75edef83e75afdebf162d148dc628045ea6cbb83d67d4708c709c4f91d",
+        "sha256": "4610ad75edef83e75afdebf162d148dc628045ea6cbb83d67d4708c709c4f91d",
+        "size_bytes": 86406384
+      }
+    },
+    "facebook/sam-vit-large": {
+      "config": {
+        "architectures": [
+          "SamModel"
+        ],
+        "model_type": "sam",
+        "parse_error": null,
+        "present": true,
+        "sha256": "6233c14c4d2f51e0214161c1e27828949c3a6710588a0908a5651be4872c5592"
+      },
+      "expected_revision": "6851e0441005b0fb96f2cc4dfac472f3d1b14af1",
+      "license": {
+        "license_file_present": false,
+        "license_file_sha256": null,
+        "local_license_evidence_available": true,
+        "metadata_license": "apache-2.0",
+        "readme_present": true,
+        "readme_sha256": "a6396140081f4a7285050e5241f35d1eddacb02543c1ec06b58748b6662940e8"
+      },
+      "processor": {
+        "image_processor_type": "SamImageProcessor",
+        "parse_error": null,
+        "present": true,
+        "processor_class": "SamProcessor",
+        "sha256": "225545a743c654e3c495ec6f545a0eaba57c8ba3fbbd8483b3cb1c0fc58db517"
+      },
+      "repo_id": "facebook/sam-vit-large",
+      "revision": "6851e0441005b0fb96f2cc4dfac472f3d1b14af1",
+      "revision_matches": true,
+      "self_contained_for_offline_loading_and_license_audit": true,
+      "snapshot_path": "C:/Users/Álvaro Schwiedop/.cache/huggingface/hub/models--facebook--sam-vit-large/snapshots/6851e0441005b0fb96f2cc4dfac472f3d1b14af1",
+      "snapshot_present": true,
+      "weights": {
+        "filename": "model.safetensors",
+        "selected_path": "C:/Users/Álvaro Schwiedop/.cache/huggingface/hub/models--facebook--sam-vit-large/blobs/a57e1b13cd1545938dfcbc9fb26df7f60de6650237a9383382a874a623564b81",
+        "sha256": "a57e1b13cd1545938dfcbc9fb26df7f60de6650237a9383382a874a623564b81",
+        "size_bytes": 1249428136
+      }
+    }
+  },
+  "official_mask_references": {
+    "ambiguous_examples": [],
+    "ambiguous_unique_count": 0,
+    "endpoint_reference_count": 177488,
+    "missing_examples": [
+      {
+        "candidate_count": 12,
+        "reference": "image_blobs/000000292_000771070.npy",
+        "sequence_id": "2JkLL5W891"
+      },
+      {
+        "candidate_count": 12,
+        "reference": "image_blobs/000000292_000871071.npy",
+        "sequence_id": "2JkLL5W891"
+      },
+      {
+        "candidate_count": 12,
+        "reference": "image_blobs/000000292_000971073.npy",
+        "sequence_id": "2JkLL5W891"
+      },
+      {
+        "candidate_count": 12,
+        "reference": "image_blobs/000000293_000071075.npy",
+        "sequence_id": "2JkLL5W891"
+      },
+      {
+        "candidate_count": 12,
+        "reference": "image_blobs/000000293_000171076.npy",
+        "sequence_id": "2JkLL5W891"
+      },
+      {
+        "candidate_count": 12,
+        "reference": "image_blobs/000000293_000271078.npy",
+        "sequence_id": "2JkLL5W891"
+      },
+      {
+        "candidate_count": 12,
+        "reference": "image_blobs/000000293_000371080.npy",
+        "sequence_id": "2JkLL5W891"
+      },
+      {
+        "candidate_count": 12,
+        "reference": "image_blobs/000000293_000471081.npy",
+        "sequence_id": "2JkLL5W891"
+      },
+      {
+        "candidate_count": 12,
+        "reference": "image_blobs/000000293_000571083.npy",
+        "sequence_id": "2JkLL5W891"
+      },
+      {
+        "candidate_count": 12,
+        "reference": "image_blobs/000000293_000671084.npy",
+        "sequence_id": "2JkLL5W891"
+      },
+      {
+        "candidate_count": 12,
+        "reference": "image_blobs/000000293_000771086.npy",
+        "sequence_id": "2JkLL5W891"
+      },
+      {
+        "candidate_count": 12,
+        "reference": "image_blobs/000000293_000871088.npy",
+        "sequence_id": "2JkLL5W891"
+      },
+      {
+        "candidate_count": 12,
+        "reference": "image_blobs/000000293_000971089.npy",
+        "sequence_id": "2JkLL5W891"
+      },
+      {
+        "candidate_count": 12,
+        "reference": "image_blobs/000000294_000071091.npy",
+        "sequence_id": "2JkLL5W891"
+      },
+      {
+        "candidate_count": 12,
+        "reference": "image_blobs/000000294_000171093.npy",
+        "sequence_id": "2JkLL5W891"
+      },
+      {
+        "candidate_count": 12,
+        "reference": "image_blobs/000000294_000271094.npy",
+        "sequence_id": "2JkLL5W891"
+      },
+      {
+        "candidate_count": 12,
+        "reference": "image_blobs/000000294_000371096.npy",
+        "sequence_id": "2JkLL5W891"
+      },
+      {
+        "candidate_count": 12,
+        "reference": "image_blobs/000000294_000471098.npy",
+        "sequence_id": "2JkLL5W891"
+      },
+      {
+        "candidate_count": 12,
+        "reference": "image_blobs/000000294_000571099.npy",
+        "sequence_id": "2JkLL5W891"
+      },
+      {
+        "candidate_count": 12,
+        "reference": "image_blobs/000000294_000671101.npy",
+        "sequence_id": "2JkLL5W891"
+      }
+    ],
+    "missing_unique_count": 64629,
+    "official_masks_available": false,
+    "reference_lengths_by_row": {
+      "2": 88744
+    },
+    "resolved_unique_count": 0,
+    "roots": [
+      "E:/GarlTTC_dataset",
+      "E:/GarlTTC_dataset/data",
+      "E:/eAP_dataset",
+      "E:/eAP_dataset/data",
+      "E:/eAP_dataset/data/train",
+      "E:/Garl-TTC"
+    ],
+    "row_count": 88744,
+    "rows_with_nonempty_references": 88744,
+    "suffix_counts": {
+      ".npy": 177488
+    },
+    "unique_sequence_reference_count": 64629
+  },
+  "rgb_train_assets": {
+    "all_train_rgb_inputs_available": true,
+    "bad_pair_row_count": 0,
+    "eap_root": "E:/eAP_dataset",
+    "endpoint_reference_count": 177488,
+    "found_unique_member_count": 64629,
+    "missing_member_examples": [],
+    "missing_shard_count": 0,
+    "missing_shard_examples": [],
+    "missing_unique_member_count": 0,
+    "requested_unique_member_count": 64629,
+    "unique_shard_count": 135,
+    "unreadable_shard_count": 0,
+    "unreadable_shard_examples": []
+  },
+  "runtime_dependency": {
+    "note": "snapshot integrity audit does not import Transformers or load weights",
+    "transformers_declared_optional_extra": "multimodal",
+    "transformers_importable": false
+  },
+  "scope": {
+    "network_downloads": false,
+    "opened_codabench": false,
+    "opened_evttc_test": false,
+    "opened_private_test": false,
+    "opened_public_train_parquet": true,
+    "teacher_weights_loaded": false
+  },
+  "source": {
+    "data_parquet": "E:/GarlTTC_dataset/data/train.parquet",
+    "data_parquet_sha256": "03dd3022db4b5f43bb10244fc8778476d74351e764f73a90c8566af949c17fd6",
+    "row_count": 88744,
+    "sample_token_count": 88744,
+    "sequence_count": 40,
+    "sequence_ids": [
+      "2JkLL5W891",
+      "2Y46OkK3ff",
+      "2cyv0Oedzg",
+      "34K84TaN11",
+      "5ilM1PX2vz",
+      "6WCDpro5rE",
+      "6h5yRW2LGc",
+      "8SdieOgbva",
+      "8mNnrXjpVB",
+      "9ITOs4twfk",
+      "A1Nhv0KtmL",
+      "ClXqVoZOFu",
+      "CzyQ8HKP6X",
+      "DGqicHUGWb",
+      "EllUE6bwVp",
+      "EuFGqTcqIz",
+      "GjMYZjmSQb",
+      "JaGC4Q9pgU",
+      "L36QTEoVkB",
+      "LMHPShQkaU",
+      "OBneIVg4Cw",
+      "OYgB6RGWcq",
+      "Po6ePjWYAz",
+      "VLA3oBKFyX",
+      "WbCh1DRerJ",
+      "Z30i8WuL2N",
+      "eX8t2nGd6O",
+      "mHGFBekt7X",
+      "nRcwUlHyAd",
+      "pBqGOb2vYq",
+      "pakWgyPNTL",
+      "pzJcg1OCfc",
+      "q2k6O0X6JY",
+      "qGsgzl4Q8B",
+      "qoohcdtLDH",
+      "rhYxPcU29n",
+      "t79dBxj1WS",
+      "vWp9XNYQ9V",
+      "wE9MZUmiJP",
+      "xkiVthsGwf"
+    ]
+  },
+  "status": "completed"
+}

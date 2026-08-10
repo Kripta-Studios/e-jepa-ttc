@@ -150,6 +150,19 @@ comparador completo `e63447135e2b09c5c6a7e2afb996bb70cce8cbba4a112afc87069e2f60c
 Training+validation tardó `274.9784 s`; inferencia final `4.9803 s` (411,22/s),
 peak VRAM `1.317,58 MiB`, 24.674.178 parámetros.
 
+Estas son las métricas locales a batir para el screen exact-2048, no cifras copiadas
+del paper. Se reproducen con los manifests y comandos de
+`docs/reproducibility.md`; las secuencias train/validation están enumeradas arriba.
+La referencia release `117.4282` permanece separada por exposición y presupuesto
+desiguales y no sustituye este baseline matched.
+
+La auditoría posterior verificó las 88.744 filas públicas de train: las 177.488
+referencias de máscara corresponden a 64.629 rutas únicas, pero ninguna es material.
+Los 64.629 miembros RGB únicos sí están presentes en 135 TAR. La siguiente ablation
+no puede llamarse official-mask-supervised: será SAM bbox-prompt train-only y, si se
+ejecuta, `event-only inference with RGB distillation`. Validation conserva los mismos
+2.048 tokens sin máscaras teacher.
+
 ## A1 bbox geometry-only: resultado seed 7
 
 A1 conserva exactamente el model config de A0 y 344.591 parámetros entrenables.

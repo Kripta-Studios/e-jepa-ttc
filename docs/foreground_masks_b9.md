@@ -7,17 +7,24 @@ entrada del modelo ni forma parte de inferencia.
 
 ## Estado material auditado
 
-En la auditoría local del 2026-08-02, el release oficial estaba en el commit
-`256661242b8a7f5e56aa3c1c02348b30f6e89de6`. El parquet público de train contenía
-88.744 filas, 177.488 referencias `mask_paths` y 64.629 rutas únicas. Ninguna de
-esas rutas existía bajo los roots locales auditados (`E:\GarlTTC_dataset`,
-`E:\eAP_dataset`, `E:\Garl-TTC`). El release tampoco contiene el checkpoint SAM
-`.pth` que espera su utilidad `segment_anything`.
+La auditoría v2 del 2026-08-10, ejecutada desde el commit publicado `4f5cc46`,
+verificó el parquet público de train completo: 88.744 filas, 177.488 referencias
+`mask_paths` y 64.629 pares secuencia/ruta únicos. Resolvió cero ficheros bajo seis
+roots explícitos (`GarlTTC_dataset`, sus datos, `eAP_dataset`, `data`, `data/train`
+y el release). No hay máscaras oficiales materiales disponibles.
 
-Sí existe un snapshot SAM ViT-L descargado desde Hugging Face en la caché local.
-Se validó con un forward promptable de `transformers`, pero ese backend no es un
-generador automático de propuestas y no se conecta todavía a este módulo. No se
-debe presentar ese smoke como evidencia de foreground ni como soporte bbox-free.
+La misma auditoría comprobó sin extraer imágenes los 64.629 miembros RGB únicos en
+135 TAR: cobertura exacta, cero shards o members ausentes. SAM ViT-L revisión
+`6851e0441005b0fb96f2cc4dfac472f3d1b14af1` tiene config, SamImageProcessor,
+licencia Apache-2.0 y pesos SHA-256
+`a57e1b13cd1545938dfcbc9fb26df7f60de6650237a9383382a874a623564b81`.
+DINOv3 ConvNeXt-Tiny también está autocontenido y licenciado localmente. El JSON
+firmado es `artifacts/metrics/garl_foreground_resource_audit_v2.json`, identidad
+`6e910ec2f389ea8b50c7f0230214217ce7bdcc5bef696712d766637b27f1e246`.
+
+El extra `multimodal` (`transformers`) todavía no está instalado en el entorno
+activo. La auditoría no importó Transformers ni cargó pesos; la siguiente acción es
+un smoke GPU separado, no evidencia de foreground todavía.
 
 Por tanto, esto **no constituye una integración foreground ni evidencia de
 entrenamiento**. `OfficialMaskPathResolver.require()` falla explícitamente y exige
@@ -40,10 +47,11 @@ tracking/asociación, política de objetos múltiples y métricas de recall de o
 antes de medir TTC. Sus resultados no se mezclarán con P0.
 
 Los snapshots HF locales pueden usarse como teachers visuales congelados en una
-ablación documentada. No se usará SAM para convertir cajas GT en una falsa evidencia
-bbox-free, ni se usará DINOv3/SAM para seleccionar ventanas SSL-Pure con TTC, cajas,
-categorías, depth, 3D o labels futuros. Hasta ejecutar P2 con esas auditorías, no se
-afirmará que la integración sea SOTA.
+ablación documentada. Para A3 se permite bbox prompt **solo durante train**, porque
+las bbox ya son supervisión oracle declarada; esto no es bbox-free. El brazo se
+etiquetará `event-only inference with RGB distillation` y se comparará por separado
+con event-only puro. No se generarán pseudo-máscaras en validation/test ni se usará
+SAM/DINO para seleccionar ventanas, reparar outliers o ajustar TTC post-hoc.
 
 ## Contrato implementado
 

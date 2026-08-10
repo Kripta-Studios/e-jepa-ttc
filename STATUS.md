@@ -91,8 +91,19 @@
   `05601545…2dd6205`, bootstrap vs Garl `143.49` IC95% `[104.84,175.13]`.
 - Pair-ratio aumenta slope/amplitud pero reduce correlación analítica/física a
   `.1499`; 406 unknown canónicos. No se permite sweep ni escalado.
-- Siguiente rama: representación event-native/pretraining. Auditar primero máscaras
-  públicas y teachers locales; mantener protocolos puro y RGB-distilled separados.
+- Auditoría foreground v2 completada sobre `E:\GarlTTC_dataset\data\train.parquet`
+  (SHA-256 `03dd3022…17fd6`), sin abrir test: 88.744 filas, 177.488 referencias de
+  máscara, 64.629 únicas, cero resueltas bajo seis roots. No hay máscaras oficiales
+  materiales disponibles para A3.
+- Los 64.629 miembros RGB únicos sí existen en 135 TAR (cero shards/miembros
+  ausentes). SAM ViT-L `6851e044…b14af1` y DINOv3 ConvNeXt-Tiny
+  `10d30274…db274b` están autocontenidos localmente con licencia/config/processor y
+  pesos hasheados. DINOv2-L y DINOv3 ViT-S quedan bloqueados por evidencia local
+  incompleta de licencia/processor, respectivamente.
+- Artefacto firmado `garl_foreground_resource_audit_v2.json`, identidad
+  `6e910ec2f389ea8b50c7f0230214217ce7bdcc5bef696712d766637b27f1e246`.
+  Siguiente intervención: preregistrar y medir un smoke SAM bbox-prompt train-only;
+  si procede, A3 se reportará separado como event-only inference con RGB distillation.
 
 ## Addendum eAP causal-scale screen v1 (2026-08-10)
 

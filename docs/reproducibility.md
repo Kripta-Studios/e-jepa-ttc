@@ -73,6 +73,23 @@ uv run python scripts/build_causal_scale_eap_garl_comparison.py `
 El comparador verifica igualdad exacta de tokens, secuencia y target y remuestrea
 las tres secuencias completas, nunca ventanas.
 
+Auditoría reproducible de máscaras, RGB y teachers locales (solo train público):
+
+```powershell
+uv run python scripts/audit_garl_foreground_resources.py `
+  --data-parquet E:\GarlTTC_dataset\data\train.parquet `
+  --eap-root E:\eAP_dataset `
+  --garlttc-root E:\GarlTTC_dataset `
+  --release-root E:\Garl-TTC `
+  --repo-root . `
+  --output artifacts/metrics/garl_foreground_resource_audit_v2.json
+```
+
+La herramienta rechaza cualquier ruta `test`, no extrae imágenes, no carga pesos y
+no usa red. Verifica todos los TAR/members y calcula SHA-256 de config, processor,
+licencia y pesos preferidos. Resultado desde commit `4f5cc46`: identidad
+`6e910ec2f389ea8b50c7f0230214217ce7bdcc5bef696712d766637b27f1e246`.
+
 Preregistro y ejecución A1 geometry-only:
 
 ```powershell

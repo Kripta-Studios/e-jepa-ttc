@@ -58,7 +58,13 @@
 - ejecutado A1-DF-R: macro `349.8628`, failure `19.8242%`; mejora marginal y
   concentrada en qooh, no promovido ni escalado;
 - firmados comparador `05601545…2dd6205` y descomposición
-  `0bc741a5…49900e7`; siguiente rama representación/pretraining event-native.
+  `0bc741a5…49900e7`; siguiente rama representación/pretraining event-native;
+- auditadas 88.744 filas train: 177.488 referencias de máscara/64.629 únicas,
+  cero ficheros; 64.629 RGB únicos presentes en 135 TAR;
+- auditados seis snapshots HF sin red ni carga de pesos: SAM ViT-L y DINOv3
+  ConvNeXt-Tiny quedan utilizables; artefacto `6e910ec2…f1e246`;
+- siguiente intervención: smoke SAM bbox-prompt train-only en CUDA, con protocolo
+  separado `event-only inference with RGB distillation`.
 
 ## 2026-08-10 — Transporte temporal Causal Scale v7
 

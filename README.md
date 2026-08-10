@@ -46,6 +46,17 @@ sin cambiar arquitectura. A1-DF-R está preregistrado con peso train-normalized
 `5.0`. Terminó con macro `349,86` y `19,82%` failures: mejora marginalmente A1-DF,
 pero dos de tres secuencias empeoran y no supera A1. Se cierra sin sweep/escalado.
 
+La auditoría material posterior descarta el uso inmediato de máscaras oficiales:
+las 88.744 filas de train declaran 177.488 referencias `.npy` (64.629 únicas), pero
+ninguna existe bajo los seis roots locales auditados. En cambio, los 64.629 frames
+RGB únicos están presentes dentro de 135 TAR. Los snapshots locales SAM ViT-L y
+DINOv3 ConvNeXt-Tiny tienen config, processor, licencia y pesos verificados por hash.
+Esto permite preregistrar un smoke SAM con bbox prompts **solo sobre train**, pero el
+brazo resultante se llamará `event-only inference with RGB distillation`; no es
+event-only puro y no puede generar targets teacher en validation. Artefacto firmado:
+`artifacts/metrics/garl_foreground_resource_audit_v2.json`, identidad
+`6e910ec2…f1e246`.
+
 Pipeline reproducible para estimar Time-to-Contact/Time-to-Collision a partir de
 cámaras de eventos, con una ruta event-only high-resolution y una futura ablación
 RGB-E multimodal.
