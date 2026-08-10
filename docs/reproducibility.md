@@ -128,6 +128,27 @@ Resultado portable regenerado desde `4400dd7`:
 CSV LF SHA-256 `bf6594722729a2d8630615a3f931bee09492e472c3f6f8877c9912607384eaf2`.
 Supersede la primera serialización CRLF; las métricas y filas son idénticas.
 
+Materialización SAM exacta, resumible y train-only:
+
+```powershell
+$env:HF_HUB_OFFLINE='1'
+$env:TRANSFORMERS_OFFLINE='1'
+uv run --extra multimodal python scripts/materialize_sam_train_bbox_prompt_cache.py `
+  --config configs/experiment/sam_train_bbox_prompt_materialization_v1.yaml `
+  --subset-manifest artifacts/subsets/garl_event_only_matched_screen_v1/manifest.json `
+  --train-data artifacts/subsets/garl_event_only_matched_screen_v1/train_data.parquet `
+  --screen-cache-manifest artifacts/cache/garl_object_event_common_roi_screen_v4/manifest.json `
+  --eap-root E:\eAP_dataset `
+  --model-path "$env:USERPROFILE\.cache\huggingface\hub\models--facebook--sam-vit-large\snapshots\6851e0441005b0fb96f2cc4dfac472f3d1b14af1" `
+  --repo-root . `
+  --output-dir artifacts/cache/sam_train_bbox_prompt_screen_v1 `
+  --summary artifacts/metrics/sam_train_bbox_prompt_materialization_v1.json
+```
+
+Manifest `aaa600907702e84d12797dc8a96a20820c4e699e9513a2c0ec0b734710426b0e`.
+Un rerun completo verifica los 32 NPZ/sidecars y devuelve el mismo manifest sin
+sobrescribir timings; un run parcial reanuda solo shards ausentes o inválidos.
+
 Preregistro y ejecución A1 geometry-only:
 
 ```powershell

@@ -93,6 +93,12 @@ coherencia temporal, runtime y VRAM pasaron. Área SAM/bbox correlaciona `.6471`
 su signo acierta `.8286`; la mediana bbox–mask IoU es `.5761`. Estos datos solo
 pueden definir filtros de train y no autorizan tuning con validation.
 
+El cache completo usa exactamente `train_data.parquet` del subset matched y rechaza
+validation por contrato. Cobertura final `.9492` endpoint/`.7822` par. A3 podrá
+añadir loss densa únicamente en las 3.204 máscaras válidas; geometry A1 permanece
+para todas las filas. El cache teacher nunca es input del forward ni se abre durante
+validation/inferencia. Runtime de materialización se reporta separado del training.
+
 El diagnóstico de fallo no selecciona hiperparámetros ni abre test. Descompone el
 checkpoint ya seleccionado sobre la misma validation pública en bbox-ratio,
 extensión analítica, residual, ratio combinado y ratio efectivo. A1 queda

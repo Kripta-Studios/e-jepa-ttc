@@ -42,6 +42,11 @@ es event-only puro y requiere declarar teacher, bbox prompts, filtros, hashes y
 ausencia total de pseudo-targets en validation/test. DINOv2-L y DINOv3 ViT-S no
 están autocontenidos para la auditoría local de licencia/processor, respectivamente.
 
+El cache SAM conserva solo `.7822` de pares tras filtros; la cobertura mínima por
+secuencia es 146/228 en `OBneIVg4Cw`. Esta selección puede introducir sesgo de
+teacher. A3 debe reportar cobertura por secuencia y comparar contra A1 en todos los
+tokens, no solo en filas aceptadas. El score IoU de SAM es interno, no IoU contra GT.
+
 Actualizado: 2026-08-10.
 
 - No existe un claim SOTA ni un checkpoint final promovido.

@@ -118,8 +118,17 @@
   VRAM `1691.89 MiB`.
 - Artefacto firmado `0922d540…73dd44`, CSV endpoints SHA `bf659472…84eaf2`.
   Sigue siendo feasibility train-only, no GT segmentation ni TTC. Siguiente:
-  preregistrar la materialización exacta de 2.048 train/4.096 endpoints con filtros
-  derivados de este audit y sin generar máscaras validation.
+  materialización exacta de 2.048 train/4.096 endpoints.
+- Materialización SAM train-only completada en `6f9c92a`: 32 shards/2.048 tokens
+  exactos/4.096 endpoints, todas las firmas y hashes verificados, cache ~2,18 MB.
+- Cobertura: endpoints válidos `3888/4096 = .9492`; pares válidos
+  `1602/2048 = .7822`; máscaras aplicables `3204/4096`. Razones conservadas:
+  95 degeneradas, 113 bbox-IoU bajo, 29 fuera de bbox, 1 score bajo y 349 pares con
+  signo temporal inconsistente. Ningún NaN fue reparado ni sustituido.
+- Runtime separado: `1784.63 s`, inferencia media `.17110 s`, peak VRAM
+  `1691.89 MiB`. Identidad firmada `aaa60090…0426b0`.
+- Siguiente: integrar el cache solo en train como una única diferencia sobre A1;
+  filas inválidas conservan geometry-only y validation permanece sin teacher.
 
 ## Addendum eAP causal-scale screen v1 (2026-08-10)
 

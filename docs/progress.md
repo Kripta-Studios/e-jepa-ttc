@@ -71,6 +71,9 @@
 - preregistrado/ejecutado audit SAM train-only 36 pares/72 endpoints: todos los
   gates pasan; área temporal `.6471`, signo `.8286`, bbox–mask IoU `.5761`, una
   degenerada; artefacto portable `0922d540…73dd44`.
+- materializadas 4.096 máscaras SAM para los 2.048 train exactos: `.9492` endpoint,
+  `.7822` par, 32 shards, `1784.63 s`, `1691.89 MiB`; manifest
+  `aaa60090…0426b0`. Validation permanece sin teacher.
 
 ## 2026-08-10 — Transporte temporal Causal Scale v7
 

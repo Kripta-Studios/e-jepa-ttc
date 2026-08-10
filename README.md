@@ -69,6 +69,13 @@ y pasó los gates congelados: bbox–mask IoU mediana `.576`, cambio de área Pe
 2.048 filas train exactas, con filtros explícitos; no autoriza generar teachers en
 validation ni afirmar calidad de segmentación.
 
+La materialización exacta ya terminó: 4.096 endpoints en 32 shards, `94,92%`
+válidos individualmente y `78,22%` de pares válidos después del filtro temporal.
+El cache packbits ocupa ~2,18 MB, conserva cada rechazo y mantiene cobertura en las
+nueve secuencias. Preprocessing total `1.784,6 s`, inferencia media `.1711 s`, peak
+VRAM `1.691,9 MiB`. Manifest firmado `aaa60090…0426b0`; sigue siendo train-only y
+no es todavía un resultado A3.
+
 Pipeline reproducible para estimar Time-to-Contact/Time-to-Collision a partir de
 cámaras de eventos, con una ruta event-only high-resolution y una futura ablación
 RGB-E multimodal.

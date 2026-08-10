@@ -1,0 +1,398 @@
+{
+  "artifact_claim_eligible": false,
+  "artifact_sha256": "aaa600907702e84d12797dc8a96a20820c4e699e9513a2c0ec0b734710426b0e",
+  "artifact_type": "sam_train_bbox_prompt_cache_manifest_v1",
+  "cache": {
+    "output_dir": "C:/Users/Álvaro Schwiedop/Desktop/KriptaStudios/EVOCON_JEPA_Codex_Handoff/e-jepa-ttc/artifacts/cache/sam_train_bbox_prompt_screen_v1",
+    "packbits_bitorder": "little",
+    "roi_size": 128,
+    "shards": [
+      {
+        "npz_path": "shard-00000.npz",
+        "npz_sha256": "0cadfde0606a0719c61a3a5cbf1d5fdda8922be33753736ada354049928b2daa",
+        "row_count": 64,
+        "shard_index": 0,
+        "sidecar_sha256": "8587dd54aa205a144acb27102eca117bca3aec2b85506496d0cf576eea5451df",
+        "tokens_sha256": "44995d510e7ee407246d4f041d05e26c95b03e8e76484b9ae155fb2187435a8d"
+      },
+      {
+        "npz_path": "shard-00001.npz",
+        "npz_sha256": "14278d854b287ac678647268e2be2a03925f15f920efb471e241f5d2738a33f6",
+        "row_count": 64,
+        "shard_index": 1,
+        "sidecar_sha256": "959fc5994be15839ee83be57b0778af3153139dbb738872b5c76c7f0c8d8ab6c",
+        "tokens_sha256": "76b634cc5b6f13524d019e9395c318783c9a9e8985c13d2ec681bfeb054dc8d8"
+      },
+      {
+        "npz_path": "shard-00002.npz",
+        "npz_sha256": "234c385ca3a0d6f3251f893e3e952bca700bac73b1057190f45cad2e2551b857",
+        "row_count": 64,
+        "shard_index": 2,
+        "sidecar_sha256": "2492b571611424da1b5b8cad65561ab9221cd1f6ebb43586f1dffe6aaea9e29a",
+        "tokens_sha256": "0fc70a9ccf1007a999b9d7de37c8d2cdc0aa44a195bea1bca8ea36fbcd055aa1"
+      },
+      {
+        "npz_path": "shard-00003.npz",
+        "npz_sha256": "367393fdf7f8a85179b44dbba8f429c4a6aa7c6c03becaf63e9a7b58424b3d63",
+        "row_count": 64,
+        "shard_index": 3,
+        "sidecar_sha256": "c416610a4b14fb28b15bf82e494279dc074cf46d31206f9858536996ee3c406b",
+        "tokens_sha256": "fc55b5df90006fd42babb27c697a352a09ac6853c8702bf4182a13b84a2771af"
+      },
+      {
+        "npz_path": "shard-00004.npz",
+        "npz_sha256": "2690f145a58450de13db243654502b221988ce89b9cea69df74055279fff6846",
+        "row_count": 64,
+        "shard_index": 4,
+        "sidecar_sha256": "d6bddda7e1cbc28cb2ba764c99da1510745d017a20a1b59e44ee7b0abb583796",
+        "tokens_sha256": "3c9b1de54540febbab9229dea9b7c6ef36599ab090923c86246b76e7bf3a6695"
+      },
+      {
+        "npz_path": "shard-00005.npz",
+        "npz_sha256": "0f3272368df24a73356d25ae9b7366e7d16cde530ab670771ff3983436637462",
+        "row_count": 64,
+        "shard_index": 5,
+        "sidecar_sha256": "54390b1076d04882c6e3a8ebdc46b2c32dffa5d2436d24ad76e0cfdd00b7fb71",
+        "tokens_sha256": "3cd4c86f21a120d56a5465fa90e20b0eb08adab3687001febd0dbb671452dd83"
+      },
+      {
+        "npz_path": "shard-00006.npz",
+        "npz_sha256": "546ae17c66a6e5c25fcbdd410eaa6d3f13917e825d355bd454f68553d1f89260",
+        "row_count": 64,
+        "shard_index": 6,
+        "sidecar_sha256": "bccaaff756e2f6e3522475d8e565afe6b3a7f8735472beb2b1118e70bbc9cdb0",
+        "tokens_sha256": "67ef7812fca5679031cc17edfa6ed071bc2ab9446ca6079708f4acb9e9c536b7"
+      },
+      {
+        "npz_path": "shard-00007.npz",
+        "npz_sha256": "b43a3f2f1a9438268ab84ae6b554e67f406e98baec2eacab12bd4aa3bf3738c2",
+        "row_count": 64,
+        "shard_index": 7,
+        "sidecar_sha256": "256778ffbd97e92d2caf5c16fc647cf9a2818fa30fbce61d6b124b497166756d",
+        "tokens_sha256": "1aac6274f85f3cc8319c20d56feacbc95ba6fc73bfd32339231d01a68cf08c25"
+      },
+      {
+        "npz_path": "shard-00008.npz",
+        "npz_sha256": "21546348429548d9b23ccd36df69da501900e2d206794d141d77dd8c3244f267",
+        "row_count": 64,
+        "shard_index": 8,
+        "sidecar_sha256": "9b7bb0798d783c4db73c3cd9350bfacc85f99e1268ac227b03b52935546b926c",
+        "tokens_sha256": "c38de6ef50af791039c82cbb5f599a914989254d0c2223c488761358db409337"
+      },
+      {
+        "npz_path": "shard-00009.npz",
+        "npz_sha256": "02e71e8d7b4e0b35b28af8251fb00af308d17ab91538932d2195f0b87c1694b0",
+        "row_count": 64,
+        "shard_index": 9,
+        "sidecar_sha256": "1b3cd3846de903cbbbac19cd1da61154b6a57f0a3732e2a11ccfd1af3ae3fcbe",
+        "tokens_sha256": "86a41fa58f4829989a6819c440ef65099a2561a579aa0ab2a04c06ac83caa7c1"
+      },
+      {
+        "npz_path": "shard-00010.npz",
+        "npz_sha256": "ed9a4e69a9dd4a794d84d6ddf8fec163a4d6e544820f42e882973e089710bdf7",
+        "row_count": 64,
+        "shard_index": 10,
+        "sidecar_sha256": "451c905c8c278da8a70564fab3f8b08dcad4cc74a082b88c96e3201561d7f08e",
+        "tokens_sha256": "3cd44f2ecf487fcd7072adb86f0d8ada899dad23fd7d41dc83b563a6890c839c"
+      },
+      {
+        "npz_path": "shard-00011.npz",
+        "npz_sha256": "422b30d0d8e2404e9ebf62efc3cd663a51c394a1eb1e11c1fb95b146e6f03447",
+        "row_count": 64,
+        "shard_index": 11,
+        "sidecar_sha256": "9eb8f4698aa7939824d23a7e4be8541728bf20063fad6816e57324b0635d8aa8",
+        "tokens_sha256": "37cd9eae52488384c81d1d38e6f762ec157d85c936e413fc031e4752df4fbd4a"
+      },
+      {
+        "npz_path": "shard-00012.npz",
+        "npz_sha256": "0b2571a56d9dfc706a8f8b2343943fecf430ff4fdf8c11105dbaff392c656ef9",
+        "row_count": 64,
+        "shard_index": 12,
+        "sidecar_sha256": "63b5211937b16853edddb96e97a7b0d68e671f880fa3fb0d812ddadbca2cf9e3",
+        "tokens_sha256": "69381840af3645f542f60cb202f3cc4c603efd80e2a7b4f58132eb86490245e5"
+      },
+      {
+        "npz_path": "shard-00013.npz",
+        "npz_sha256": "be87746e001d88ccfbb4708b340e9bf16b069aa14d16c35ec0ace75d2f9f5d00",
+        "row_count": 64,
+        "shard_index": 13,
+        "sidecar_sha256": "45f8d92bbec75a83949a64eb07a241184442b48c711a2b9a177fde6d74dd6c39",
+        "tokens_sha256": "7c3cfda04fbc90f5ee74cb4e7534dd0d5e35e5b16cf24550bb43bb09959bbb76"
+      },
+      {
+        "npz_path": "shard-00014.npz",
+        "npz_sha256": "1b5e549aa01d9beda8cb50eebe4605b181ceb239996bb95ddb370571f7c590ac",
+        "row_count": 64,
+        "shard_index": 14,
+        "sidecar_sha256": "efacca44d582190e3214c9a9d1f73a3c012243cdf67dd5ac0ce6ed140eb0c1f4",
+        "tokens_sha256": "1aa1732d7433a0f86c923b80507b3e97dd1e2fec0dcbfaca8c03ae7dbeb8b977"
+      },
+      {
+        "npz_path": "shard-00015.npz",
+        "npz_sha256": "37bf65c2f9c4cb4576fae0688de7f92f578169cab09987769adb30a4a211f1c2",
+        "row_count": 64,
+        "shard_index": 15,
+        "sidecar_sha256": "9ff5b76337f3ea85b5e683e9ef1f465aaa801691682173f899bd3bcbf24a606f",
+        "tokens_sha256": "8872fa75b48b3f5c5cf7519f1c03232d204ea56d76cab4821fd403afa2b88d62"
+      },
+      {
+        "npz_path": "shard-00016.npz",
+        "npz_sha256": "1c60ce6f601657d2060533eea78124c81b27ec706e558501f748c087f77c1210",
+        "row_count": 64,
+        "shard_index": 16,
+        "sidecar_sha256": "fc35b67a3a6189796b976f53722a7ca6694130e095b1c756aa74d0e86d403509",
+        "tokens_sha256": "9a79bbb54b923ff503e065397e3ced1e83a7e0a8094b143f62a789d8b5aeb668"
+      },
+      {
+        "npz_path": "shard-00017.npz",
+        "npz_sha256": "37b4c5d9f356a482e9fd3a900788b529263cf58d35133b63e672a73127fd36a5",
+        "row_count": 64,
+        "shard_index": 17,
+        "sidecar_sha256": "5939e1a23cbc9664d68efbdd1a721bea6294ed20e3b095281f954066da503b30",
+        "tokens_sha256": "df41bcf774955689d2790ed597d06d1e33e80f0707afd9f4c743dbd8782f68c3"
+      },
+      {
+        "npz_path": "shard-00018.npz",
+        "npz_sha256": "e305805498e295c261717366bef93c75f5c201ebdf139a9457ce39e180be7bbd",
+        "row_count": 64,
+        "shard_index": 18,
+        "sidecar_sha256": "300eda50502df1571e963c6be010d7e7062a9a4205c8b81f2a127c78acd4655b",
+        "tokens_sha256": "15153b5b42cf5763157f6ab6a46f1b07622183365735732cd9d7f40586e41062"
+      },
+      {
+        "npz_path": "shard-00019.npz",
+        "npz_sha256": "c4dbda48495c878c1db31fdfb47854ed014daa8ab4a9d9d3d160fd6e144980cd",
+        "row_count": 64,
+        "shard_index": 19,
+        "sidecar_sha256": "f6d9bd3f3c2f6e65988a3828057bf536647cb1dab0ca3d371fb9cba849de99c1",
+        "tokens_sha256": "378515b455960af7c322221dab6ee671dbda2e7629fd4227cc9d1c651c2f396d"
+      },
+      {
+        "npz_path": "shard-00020.npz",
+        "npz_sha256": "b5d97c85775c681acbb406053f8ae0f34c5dcbd255f90053fa3e7f0e2be51419",
+        "row_count": 64,
+        "shard_index": 20,
+        "sidecar_sha256": "0c72dae4bff1e44ed17e81914ee8a7ab3ac1259e25ee77faac8e7c508f51c3e6",
+        "tokens_sha256": "9c3f0179623039ab7bd2c59a165fd20e0928e16a12c71192dd2ce0188da16a61"
+      },
+      {
+        "npz_path": "shard-00021.npz",
+        "npz_sha256": "289ed58545cfef5912a06e735968053eb4455195e2f52fa5512f53f830c1425a",
+        "row_count": 64,
+        "shard_index": 21,
+        "sidecar_sha256": "59045f84aa48dfca134403736fe1a762ef0316cb479cc0ce61261304a246afeb",
+        "tokens_sha256": "95260167ad084bce98d1b5441bafbe6f91969fa34617c1f118b6f3cc0ec6506b"
+      },
+      {
+        "npz_path": "shard-00022.npz",
+        "npz_sha256": "f8137c49dc38e7912c2f9894a971f1881875d3ef03bff604c67941f2ec325222",
+        "row_count": 64,
+        "shard_index": 22,
+        "sidecar_sha256": "bf24799322050fe03dbb4a857ddb6b316cd282c6bfa239ec0485fdd31dfb7cf6",
+        "tokens_sha256": "69e1c044eefc7e1b248f480e10bb7d75c00caa054b746ccd04e9e810288c5f65"
+      },
+      {
+        "npz_path": "shard-00023.npz",
+        "npz_sha256": "2a67fad08781d358efdd8ccf0c88b05369831dbe43cae832d13d189ab70af3b8",
+        "row_count": 64,
+        "shard_index": 23,
+        "sidecar_sha256": "ec70b9d5846dc9932a59bf5da99bacbbc6ad6767d65278053268f3941cfb7177",
+        "tokens_sha256": "0185f4eba63c31591996d301bd5af4d8e9294847c82ab9f8a6be94438d781019"
+      },
+      {
+        "npz_path": "shard-00024.npz",
+        "npz_sha256": "739501d1e5a60008f640d7c2284960fe955c3ab86d018054ab48a48092196801",
+        "row_count": 64,
+        "shard_index": 24,
+        "sidecar_sha256": "345407aa3af79d1a92c4a7d6f130ab629bfa5d703778d3802d4dd054554eaeb5",
+        "tokens_sha256": "46c266fe236ec33badff066a1a3e3124758ab2e66715c8209be6367592e4e430"
+      },
+      {
+        "npz_path": "shard-00025.npz",
+        "npz_sha256": "2fe16c16228948d39c416e6534ff2cf69652da5afecc2066a7373c530e9c251c",
+        "row_count": 64,
+        "shard_index": 25,
+        "sidecar_sha256": "342f20946b8704a591c56c883a2bdb80d9e71d8d0a2149daaac11e85893f230c",
+        "tokens_sha256": "dacce146feadf8bbcafedc4505f7885ca1c692a745011517730dba4754d15ca0"
+      },
+      {
+        "npz_path": "shard-00026.npz",
+        "npz_sha256": "cdb231d38f7cfc548ef01121f45515203343aacc00a5ebf4dba3e02895232098",
+        "row_count": 64,
+        "shard_index": 26,
+        "sidecar_sha256": "a0fa9f09295e5a445f7a52acaec8f0063a36f997442c7f61a22d0297b832e98e",
+        "tokens_sha256": "c39cecb5143c703df3087f3ee9a1ad3b667b435d2537fc56a43972f2709e9aba"
+      },
+      {
+        "npz_path": "shard-00027.npz",
+        "npz_sha256": "4674624dbf27088ca8b16a36b3d5567645573abc55c75866f17cd8bcfa0acaa3",
+        "row_count": 64,
+        "shard_index": 27,
+        "sidecar_sha256": "5759548a55c7694eddca76a570b034ba05552a7b7b2ed4ae697da112560f1495",
+        "tokens_sha256": "4c3909bd365b5ea9ec0540eb82913bd405022ec1b97b71a16e4f4c7450b80450"
+      },
+      {
+        "npz_path": "shard-00028.npz",
+        "npz_sha256": "6ddffa85c528ca72380de3d1d7fc8714afb719163ec5e609a7516078edbac341",
+        "row_count": 64,
+        "shard_index": 28,
+        "sidecar_sha256": "e4a27ad19722ba57b64b52d6af1c619b1460f9fa5ace9e87afde3418b50b1bc0",
+        "tokens_sha256": "2adee4e599aff57bda30b7d38abc96520ca5f35dc62ffef23c2b32ca5ad41705"
+      },
+      {
+        "npz_path": "shard-00029.npz",
+        "npz_sha256": "862715e0595880275f81096bdf82fc200c52e49ddf6204125b54539f34cb9367",
+        "row_count": 64,
+        "shard_index": 29,
+        "sidecar_sha256": "acf05d93782e7fcabaa686c05ac40100b9b16abcc638a2fea1b2a8549010f65f",
+        "tokens_sha256": "88b46f2a992c667acc2654a8dafd21592814752c629bed679467dd66232eb9b3"
+      },
+      {
+        "npz_path": "shard-00030.npz",
+        "npz_sha256": "5baa42b8f0007eeb507d50501608b291e186ad84f83e5404a19491b503fbee4f",
+        "row_count": 64,
+        "shard_index": 30,
+        "sidecar_sha256": "931278d165a2bc8e3f1add2694c4a4450974bb8d96eadf9f673ad2502fa981d5",
+        "tokens_sha256": "0fbfbbdf9bad9bc76d5f426e2ba3def6c1d1cd4a62fb785929ac9b3654518113"
+      },
+      {
+        "npz_path": "shard-00031.npz",
+        "npz_sha256": "3d4360506605fa59da07375886b53e4e554de8941e5949a46239c7dab8fa012d",
+        "row_count": 64,
+        "shard_index": 31,
+        "sidecar_sha256": "08b0bff18299c1081e952cc224dabf3bbee10b9a41255a38dc192b2d925f3e2a",
+        "tokens_sha256": "282ec513d2042b786ca09fea1689cae18068e3200cfe147136a954af9175b8d9"
+      }
+    ]
+  },
+  "claim_boundary": {
+    "architecture_selection_from_masks": false,
+    "modality": "event-only inference with RGB distillation",
+    "official_masks": false,
+    "ttc_labels_read": false,
+    "validation_or_test_teacher_generation": false
+  },
+  "code_commit": "6f9c92a8455d92774a681ebc286c1986fa13e541",
+  "config": {
+    "path": "C:/Users/Álvaro Schwiedop/Desktop/KriptaStudios/EVOCON_JEPA_Codex_Handoff/e-jepa-ttc/configs/experiment/sam_train_bbox_prompt_materialization_v1.yaml",
+    "sha256": "1c054e0c321ebdaa788702f9d6f6b5354b7817390768e231eaf48b2dc6b94a8d"
+  },
+  "coverage": {
+    "endpoint_valid_count": 3888,
+    "endpoint_valid_fraction": 0.94921875,
+    "pair_valid_count": 1602,
+    "pair_valid_fraction": 0.7822265625,
+    "per_sequence_pair_valid": {
+      "2cyv0Oedzg": {
+        "count": 179,
+        "total": 228
+      },
+      "5ilM1PX2vz": {
+        "count": 181,
+        "total": 228
+      },
+      "6h5yRW2LGc": {
+        "count": 159,
+        "total": 228
+      },
+      "OBneIVg4Cw": {
+        "count": 146,
+        "total": 228
+      },
+      "OYgB6RGWcq": {
+        "count": 193,
+        "total": 228
+      },
+      "WbCh1DRerJ": {
+        "count": 167,
+        "total": 227
+      },
+      "mHGFBekt7X": {
+        "count": 194,
+        "total": 227
+      },
+      "qGsgzl4Q8B": {
+        "count": 195,
+        "total": 227
+      },
+      "t79dBxj1WS": {
+        "count": 188,
+        "total": 227
+      }
+    },
+    "reason_counts": {
+      "degenerate_mask_fraction": 95,
+      "low_bbox_mask_iou": 113,
+      "low_inside_bbox_fraction": 29,
+      "low_predicted_iou": 1,
+      "temporal_area_sign_mismatch": 349
+    },
+    "training_mask_valid_count": 3204,
+    "training_mask_valid_fraction": 0.7822265625
+  },
+  "filter": {
+    "maximum_mask_fraction": 0.75,
+    "minimum_bbox_mask_iou": 0.25,
+    "minimum_mask_fraction": 0.001,
+    "minimum_mask_inside_bbox_fraction": 0.8,
+    "minimum_predicted_iou": 0.5,
+    "rejected_rows_fallback": "geometry_only",
+    "require_temporal_area_sign_consistency": true,
+    "temporal_bbox_area_log_ratio_epsilon": 0.002
+  },
+  "gate": {
+    "all_pass": true,
+    "checks": {
+      "endpoint_valid_fraction": true,
+      "exact_rows": true,
+      "mean_inference_seconds": true,
+      "pair_valid_fraction": true,
+      "peak_vram": true,
+      "runtime": true
+    }
+  },
+  "git_clean_before_run": true,
+  "runtime": {
+    "device": "cuda:0",
+    "gpu_name": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+    "materialization_seconds_this_invocation": 1784.6324080000013,
+    "materialized_shard_count": 32,
+    "mean_inference_seconds": 0.1711015356689698,
+    "model_load_seconds": 0.7374660000023141,
+    "peak_vram_mib_this_invocation": 1691.890625,
+    "precision": "bf16",
+    "resumed_shard_count": 0
+  },
+  "scope": {
+    "endpoint_count": 4096,
+    "network_downloads": false,
+    "public_train_only": true,
+    "row_count": 2048,
+    "ttc_labels_read": false,
+    "validation_or_test_opened": false
+  },
+  "source": {
+    "screen_cache_manifest_sha256": "bba9ff9b143bfd57760bd61d2b6f664202581b5dee54444f44c625975557eb72",
+    "sequence_ids": [
+      "2cyv0Oedzg",
+      "5ilM1PX2vz",
+      "6h5yRW2LGc",
+      "OBneIVg4Cw",
+      "OYgB6RGWcq",
+      "WbCh1DRerJ",
+      "mHGFBekt7X",
+      "qGsgzl4Q8B",
+      "t79dBxj1WS"
+    ],
+    "subset_manifest_sha256": "dea74cdc610841e75ab8a827e9f01f3b2d660432cf5cadbc88d0cff46927d6ec",
+    "tokens_sha256": "d30d1d0a97a7a14870be1f8b7017f9e62d561ea75437100ebbb5b19a57312319",
+    "train_data_sha256": "1f7884a09c509b46a218cd02a85a29c5e16b737ba031cb5f4bff8d77b1e1cb6c"
+  },
+  "status": "passed",
+  "teacher": {
+    "bbox_prompt_training_only": true,
+    "repo_id": "facebook/sam-vit-large",
+    "revision": "6851e0441005b0fb96f2cc4dfac472f3d1b14af1",
+    "weights_sha256": "a57e1b13cd1545938dfcbc9fb26df7f60de6650237a9383382a874a623564b81"
+  }
+}

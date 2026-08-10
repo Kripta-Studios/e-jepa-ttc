@@ -109,6 +109,14 @@ bbox–mask IoU `>=.25`, mask-inside-bbox `>=.8` y consistencia de signo tempora
 cuando `|delta log bbox area|` no sea casi cero. Las filas rechazadas conservarán
 geometry-only y no recibirán una máscara inventada.
 
+Materialización terminada: `.9492` endpoints y `.7822` pares pasan; 1.602/2.048
+filas pueden usar teacher denso. El siguiente brazo A3 conservará exactamente el
+modelo separable A1, datos, seed, schedule, geometry loss, TTC path, unknown y clip.
+Única intervención científica: añadir BCE/Dice contra SAM únicamente donde
+`training_mask_valid=true`. En las 446 filas restantes la loss densa será cero y
+continuará geometry-only. Validation no cargará el cache SAM y no calculará una
+métrica contra pseudo-máscaras.
+
 No se cambian `unknown`, support, clip, residual, consenso, optimizer, seed, filas
 o presupuesto durante A1. Correlaciones absolutas y diferenciales se reportan
 globales y macro por secuencia; `r_iso` es diagnóstico, no prediction path.

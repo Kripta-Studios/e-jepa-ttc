@@ -110,6 +110,11 @@ inferencia solo reciba eventos; se etiquetará explícitamente como
 `event-only inference with RGB distillation`. Teacher RGB, bbox prompt y máscaras
 solo pueden intervenir durante train, nunca durante validation/test.
 
+El cache SAM train-only final conserva 3.204/4.096 máscaras y 1.602/2.048 pares.
+No cambia la modalidad de inferencia, pero sí la información usada para entrenar.
+A3 deberá reportar esta cobertura y usar geometry-only para las filas filtradas;
+ningún checkpoint A3 existe todavía.
+
 ## Estado
 
 El modelo histórico activo era un candidato event-only high-resolution, no un modelo SOTA ni

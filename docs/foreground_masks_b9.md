@@ -35,6 +35,12 @@ gates: bbox–mask IoU mediana `.5761`, cobertura bbox `.5960`, score interno p1
 Esto justifica materialización train-only, pero sigue sin ser una comparación contra
 GT segmentation. Identidad `0922d540…73dd44`; CSV `bf659472…84eaf2`.
 
+La materialización exacta del subset matched train produjo 32 shards packbits:
+3.888/4.096 endpoints válidos y 1.602/2.048 pares válidos. Las 3.204 máscaras
+aceptadas pueden supervisar A3; el resto usa fallback geometry-only. El cache guarda
+razones por token, common ROI y hashes; ninguna máscara validation/test fue creada.
+Manifest `aaa600907702e84d12797dc8a96a20820c4e699e9513a2c0ec0b734710426b0e`.
+
 Por tanto, esto **no constituye una integración foreground ni evidencia de
 entrenamiento**. `OfficialMaskPathResolver.require()` falla explícitamente y exige
 mantener la supervisión desactivada cuando el fichero no es material o la resolución

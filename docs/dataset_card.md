@@ -118,6 +118,13 @@ La disponibilidad de RGB no modifica el cache event-only. Solo autoriza un teach
 train-only bajo protocolo separado; `DGqicHUGWb`, `pBqGOb2vYq` y `qoohcdtLDH`
 no recibirán pseudo-máscaras de validation.
 
+El cache derivado `sam_train_bbox_prompt_screen_v1` contiene solo los 2.048 tokens
+train del subset matched, en el mismo orden. Cada target 128×128 se guarda con
+packbits, validez, scores, bbox/common-square y filtro. Tiene 32 shards, 3.204
+máscaras utilizables y manifest `aaa60090…0426b0`. Los binarios locales son
+derivados reproducibles e ignorados por Git; el manifest firmado se versiona en
+`artifacts/metrics/sam_train_bbox_prompt_materialization_v1.json`.
+
 ## Contrato de almacenamiento
 
 - datos raw inmutables y fuera de Git;

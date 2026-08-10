@@ -160,6 +160,14 @@ signo `.8286`, una degenerada. Artefacto `0922d540…73dd44`, endpoints CSV
 hito: preregistrar/materializar solo esas 4.096 máscaras con filtros train-derived;
 no abrir `validation_data.parquet` para teacher generation.
 
+La materialización terminó en `6f9c92a`: 32 shards, 2.048 tokens exactos,
+4.096 endpoints; `.9492` válidos individualmente y `.7822` pares/`3204` máscaras
+usables tras filtro temporal. Tiempo `1784.63 s`, inferencia `.17110 s`, VRAM
+`1691.89 MiB`, cache ~2.18 MB. Manifest firmado `aaa60090…0426b0`; todos los NPZ,
+sidecars y orden de tokens fueron verificados. Próximo hito: integrar A3 como A1 +
+SAM BCE/Dice train-only en masks válidas, con fallback geometry-only y validation
+sin teacher.
+
 El subset para matched training está materializado en
 `artifacts/subsets/garl_event_only_matched_screen_v1`, identidad firmada
 `dd08ecc983f30e38a939204f9a2df09e4966bbe73bd764c972f7726e5d4e34d3`.
