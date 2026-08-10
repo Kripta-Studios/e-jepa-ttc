@@ -65,8 +65,8 @@ from e_jepa_ttc.data.garlttc_eap import (
     resolve_eap_events_path,
     validate_garlttc_train_index,
 )
-from e_jepa_ttc.data.types import EventBatch
 from e_jepa_ttc.data.garlttc_sampling import select_balanced_cache_rows, signed_ttc_bucket
+from e_jepa_ttc.data.types import EventBatch
 from e_jepa_ttc.utils.io import read_structured, write_structured
 
 OBSERVABLE_MOTION_NAMES: tuple[str, ...] = (
@@ -1684,6 +1684,14 @@ class GarlTTCLHRCacheDataset(Dataset[dict[str, Any]]):
 
     def __len__(self) -> int:
         return len(self.entries)
+
+    def shard_index_groups(self) -> tuple[tuple[int, ...], ...]:
+        """Return dataset indices grouped by backing shard in manifest order."""
+
+        groups: dict[Path, list[int]] = {}
+        for dataset_index, (path, _) in enumerate(self.entries):
+            groups.setdefault(path, []).append(dataset_index)
+        return tuple(tuple(indices) for indices in groups.values())
 
     def __getitem__(self, index: int) -> dict[str, Any]:
         path, local_index = self.entries[index]

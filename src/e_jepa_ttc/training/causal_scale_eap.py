@@ -7,7 +7,7 @@ import math
 import os
 import random
 import time
-from collections.abc import Sized
+from collections.abc import Iterator, Sized
 from dataclasses import asdict, dataclass, replace
 from pathlib import Path
 from typing import Any, cast
@@ -15,7 +15,7 @@ from typing import Any, cast
 import numpy as np
 import torch
 from torch import nn
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import DataLoader, Dataset, Sampler
 
 from e_jepa_ttc.data.object_event_v4 import (
     ObjectEventV4Batch,
@@ -161,6 +161,41 @@ def _is_better(candidate: dict[str, float], incumbent: dict[str, float] | None) 
     )
 
 
+class ShardGroupedRandomSampler(Sampler[int]):
+    """Shuffle shards and their records while keeping each shard I/O-contiguous."""
+
+    def __init__(
+        self,
+        groups: tuple[tuple[int, ...], ...],
+        *,
+        dataset_size: int,
+        generator: torch.Generator,
+    ) -> None:
+        flattened = [index for group in groups for index in group]
+        if not groups or any(not group for group in groups):
+            raise ValueError("shard sampler groups must be non-empty")
+        if sorted(flattened) != list(range(dataset_size)):
+            raise ValueError("shard sampler groups must partition the dataset exactly")
+        self.groups = groups
+        self.dataset_size = dataset_size
+        self.generator = generator
+
+    def __iter__(self) -> Iterator[int]:
+        shard_order = torch.randperm(
+            len(self.groups), generator=self.generator
+        ).tolist()
+        for shard_index in shard_order:
+            group = self.groups[shard_index]
+            record_order = torch.randperm(
+                len(group), generator=self.generator
+            ).tolist()
+            for record_index in record_order:
+                yield group[record_index]
+
+    def __len__(self) -> int:
+        return self.dataset_size
+
+
 def _loader(
     dataset: Dataset[dict[str, Any]],
     config: CausalScaleEAPTrainingConfig,
@@ -170,12 +205,26 @@ def _loader(
 ) -> DataLoader[ObjectEventV4Batch]:
     if train and generator is None:
         generator = torch.Generator().manual_seed(config.seed)
+    sampler: Sampler[int] | None = None
+    shuffle = train
+    group_provider = getattr(dataset, "shard_index_groups", None)
+    if train and generator is not None and callable(group_provider):
+        if not isinstance(dataset, Sized):
+            raise TypeError("shard-grouped datasets must expose length")
+        groups = cast(tuple[tuple[int, ...], ...], group_provider())
+        sampler = ShardGroupedRandomSampler(
+            groups,
+            dataset_size=len(dataset),
+            generator=generator,
+        )
+        shuffle = False
     return cast(
         DataLoader[ObjectEventV4Batch],
         DataLoader(
             dataset,
             batch_size=config.batch_size,
-            shuffle=train,
+            shuffle=shuffle,
+            sampler=sampler,
             generator=generator if train else None,
             num_workers=config.num_workers,
             pin_memory=torch.cuda.is_available(),
@@ -529,6 +578,7 @@ def checkpoint_payload(
 __all__ = [
     "CausalScaleEAPTrainingConfig",
     "CausalScaleEAPTrainingResult",
+    "ShardGroupedRandomSampler",
     "checkpoint_payload",
     "evaluate_real_causal_scale",
     "train_one_real_epoch",

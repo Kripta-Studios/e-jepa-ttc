@@ -138,6 +138,11 @@ class GarlTTCObjectEventV4Dataset(Dataset[dict[str, Any]]):
     def __len__(self) -> int:
         return len(self._dataset)
 
+    def shard_index_groups(self) -> tuple[tuple[int, ...], ...]:
+        """Expose cache-local groups for I/O-efficient deterministic sampling."""
+
+        return self._dataset.shard_index_groups()
+
     def __getitem__(self, index: int) -> dict[str, Any]:
         record = self._dataset[index]
         if not bool(record.get("event_v4_precontext_valid", False)):
