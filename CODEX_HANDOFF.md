@@ -152,6 +152,14 @@ trabajo es preregistrar un audit train-only multisequence de scores/geometría y
 pasa, precomputar solo train para A3 `event-only inference with RGB distillation`;
 validation no recibe pseudo-máscaras. No escalar 2.048 ni abrir test.
 
+El audit multisequence ya pasó desde `1a2008d`: 36 pares/72 endpoints, nueve
+secuencias, sin TTC; bbox–mask IoU mediana `.5761`, área temporal Pearson `.6471`,
+signo `.8286`, una degenerada. Artefacto `e413337b…b58138`, endpoints CSV
+`226532b5…3ccd65`. El subset exacto train ya expone las 2.048 filas y rutas RGB en
+`artifacts/subsets/garl_event_only_matched_screen_v1/train_data.parquet`. Próximo
+hito: preregistrar/materializar solo esas 4.096 máscaras con filtros train-derived;
+no abrir `validation_data.parquet` para teacher generation.
+
 El subset para matched training está materializado en
 `artifacts/subsets/garl_event_only_matched_screen_v1`, identidad firmada
 `dd08ecc983f30e38a939204f9a2df09e4966bbe73bd764c972f7726e5d4e34d3`.

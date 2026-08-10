@@ -68,6 +68,9 @@
 - preregistrado el smoke en `e4969f1` y ejecutado sin pesos remotos: pasa todos los
   gates (`.4207 s`, `1691.39 MiB`, máscara finita `.0663`), identidad
   `be097e6c…2af5e9`; sigue sin ser evidencia TTC.
+- preregistrado/ejecutado audit SAM train-only 36 pares/72 endpoints: todos los
+  gates pasan; área temporal `.6471`, signo `.8286`, bbox–mask IoU `.5761`, una
+  degenerada; artefacto `e413337b…b58138`.
 
 ## 2026-08-10 — Transporte temporal Causal Scale v7
 

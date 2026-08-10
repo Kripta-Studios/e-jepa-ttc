@@ -63,6 +63,12 @@ máscaras finitas; la seleccionada ocupa `6,63%` de la imagen, con score IoU int
 no una evaluación de calidad ni una métrica TTC. Identidad firmada
 `be097e6c…2af5e9`.
 
+El audit train-only posterior cubrió las nueve secuencias (36 pares/72 endpoints)
+y pasó los gates congelados: bbox–mask IoU mediana `.576`, cambio de área Pearson
+`.647`, signo `.829` y una máscara degenerada. Autoriza precomputar únicamente las
+2.048 filas train exactas, con filtros explícitos; no autoriza generar teachers en
+validation ni afirmar calidad de segmentación.
+
 Pipeline reproducible para estimar Time-to-Contact/Time-to-Collision a partir de
 cámaras de eventos, con una ruta event-only high-resolution y una futura ablación
 RGB-E multimodal.

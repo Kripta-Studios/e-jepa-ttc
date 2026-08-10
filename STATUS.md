@@ -108,8 +108,18 @@
   `0.7487 s` y peak VRAM `1691.39 MiB` en BF16/CUDA.
 - Resultado firmado `sam_train_bbox_prompt_smoke_v1.json`, identidad
   `be097e6c4173bedc06e228f85dbd541db41421ca894812f7d2a08e09fe2af5e9`.
-  Es factibilidad, no calidad de máscara/TTC. Siguiente: preregistrar una auditoría
-  train-only multisequence antes de materializar las 2.048×2 máscaras de A3.
+  Es factibilidad, no calidad de máscara/TTC.
+- Auditoría SAM train-only multisequence ejecutada desde `1a2008d`: 36 pares/72
+  endpoints, cuatro posiciones deterministas en cada una de las nueve secuencias
+  train, ninguna columna TTC. Todos los gates preregistrados pasan.
+- Resultados: IoU interno p10 `.9297`, bbox–mask IoU mediana `.5761`, cobertura bbox
+  `.5960`, degeneradas `1/72`; ratio temporal de área SAM/bbox Pearson `.6471` y
+  signo `.8286`. Altura `.7089`, anchura `.3783`. Media inferencia `.1358 s`, peak
+  VRAM `1691.89 MiB`.
+- Artefacto firmado `e413337b…b58138`, CSV endpoints SHA `226532b5…3ccd65`.
+  Sigue siendo feasibility train-only, no GT segmentation ni TTC. Siguiente:
+  preregistrar la materialización exacta de 2.048 train/4.096 endpoints con filtros
+  derivados de este audit y sin generar máscaras validation.
 
 ## Addendum eAP causal-scale screen v1 (2026-08-10)
 

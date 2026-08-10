@@ -108,6 +108,24 @@ El selector fija la primera fila lexicográfica de `2cyv0Oedzg`, token
 `2cyv0Oedzg_000001_19317100000`, endpoint 1. Resultado firmado
 `be097e6c4173bedc06e228f85dbd541db41421ca894812f7d2a08e09fe2af5e9`.
 
+Audit SAM train-only multisequence:
+
+```powershell
+$env:HF_HUB_OFFLINE='1'
+$env:TRANSFORMERS_OFFLINE='1'
+uv run --extra multimodal python scripts/audit_sam_train_bbox_prompts.py `
+  --config configs/experiment/sam_train_bbox_prompt_multisequence_audit_v1.yaml `
+  --data-parquet E:\GarlTTC_dataset\data\train.parquet `
+  --eap-root E:\eAP_dataset `
+  --model-path "$env:USERPROFILE\.cache\huggingface\hub\models--facebook--sam-vit-large\snapshots\6851e0441005b0fb96f2cc4dfac472f3d1b14af1" `
+  --repo-root . `
+  --output-json artifacts/metrics/sam_train_bbox_prompt_multisequence_audit_v1.json `
+  --output-csv artifacts/metrics/sam_train_bbox_prompt_multisequence_audit_v1_endpoints.csv
+```
+
+Resultado firmado `e413337bad7c78aae559bfa2b92c43a9ec07abf16694a8f8192c52e630b58138`;
+CSV SHA-256 `226532b54c8426dec6cac1ec4313e29b95794285cfb25ac95477988c5b3ccd65`.
+
 Preregistro y ejecución A1 geometry-only:
 
 ```powershell

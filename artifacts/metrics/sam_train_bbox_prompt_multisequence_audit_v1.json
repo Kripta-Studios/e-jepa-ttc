@@ -1,0 +1,129 @@
+{
+  "artifact_claim_eligible": false,
+  "artifact_sha256": "e413337bad7c78aae559bfa2b92c43a9ec07abf16694a8f8192c52e630b58138",
+  "artifact_type": "sam_train_bbox_prompt_multisequence_audit_v1",
+  "claim_boundary": {
+    "modality_if_promoted": "event-only inference with RGB distillation",
+    "private_test_opened": false,
+    "purpose": "train-only teacher feasibility, not architecture or TTC selection",
+    "ttc_labels_used": false,
+    "validation_teacher_generation_allowed": false
+  },
+  "code_commit": "1a2008dc66c083c610542243922bd22a98bfec5f",
+  "config": {
+    "path": "C:/Users/Álvaro Schwiedop/Desktop/KriptaStudios/EVOCON_JEPA_Codex_Handoff/e-jepa-ttc/configs/experiment/sam_train_bbox_prompt_multisequence_audit_v1.yaml",
+    "sha256": "37c3a9ead42a051a68b95df7ad1b34afbecc4879300ea84141b78742ed8fa0b2"
+  },
+  "endpoint_csv": {
+    "path": "C:/Users/Álvaro Schwiedop/Desktop/KriptaStudios/EVOCON_JEPA_Codex_Handoff/e-jepa-ttc/artifacts/metrics/sam_train_bbox_prompt_multisequence_audit_v1_endpoints.csv",
+    "row_count": 72,
+    "sha256": "226532b54c8426dec6cac1ec4313e29b95794285cfb25ac95477988c5b3ccd65"
+  },
+  "gate": {
+    "all_pass": true,
+    "checks": {
+      "all_finite": true,
+      "bbox_mask_iou_median": true,
+      "degenerate_endpoint_fraction": true,
+      "endpoint_count": true,
+      "iou_score_p10": true,
+      "mean_inference_time": true,
+      "pair_count": true,
+      "peak_vram": true,
+      "temporal_area_ratio_pearson": true,
+      "temporal_area_ratio_sign_accuracy": true
+    }
+  },
+  "git_clean_before_run": true,
+  "metrics": {
+    "bbox_coverage_median": 0.5959918796904315,
+    "bbox_mask_iou_median": 0.5761414177969937,
+    "border_touch_fraction": 0.09722222222222222,
+    "degenerate_endpoint_count": 1,
+    "degenerate_endpoint_fraction": 0.013888888888888888,
+    "mask_inside_bbox_fraction_median": 0.9964219566813473,
+    "predicted_iou_median": 0.984375,
+    "predicted_iou_p10": 0.9296875,
+    "temporal_area_ratio_pearson": 0.6471048662613726,
+    "temporal_area_ratio_sign_accuracy": 0.8285714285714286,
+    "temporal_height_ratio_pearson": 0.7088676614601077,
+    "temporal_width_ratio_pearson": 0.37834821112630485
+  },
+  "runtime": {
+    "device": "cuda:0",
+    "gpu_name": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+    "mean_inference_seconds": 0.13578183472226454,
+    "model_load_seconds": 0.751383499999065,
+    "p95_inference_seconds": 0.14635917999967207,
+    "peak_vram_mib": 1691.890625,
+    "precision": "bf16",
+    "total_endpoint_loop_seconds": 15.971759800002474
+  },
+  "scope": {
+    "network_downloads": false,
+    "private_test_opened": false,
+    "public_train_only": true,
+    "ttc_columns_read": false,
+    "validation_teacher_generation": false
+  },
+  "selection": {
+    "endpoint_count": 72,
+    "pair_count": 36,
+    "sample_tokens": [
+      "2cyv0Oedzg_000001_19317100000",
+      "2cyv0Oedzg_000490_19461500000",
+      "2cyv0Oedzg_001219_19468500000",
+      "2cyv0Oedzg_002968_19610800000",
+      "5ilM1PX2vz_000000_9744500000",
+      "5ilM1PX2vz_000818_9831900000",
+      "5ilM1PX2vz_002283_9928800000",
+      "5ilM1PX2vz_003007_10006800000",
+      "6h5yRW2LGc_000005_5119400000",
+      "6h5yRW2LGc_001124_5215100000",
+      "6h5yRW2LGc_002717_5274000000",
+      "6h5yRW2LGc_004795_5410500000",
+      "OBneIVg4Cw_000003_3049000000",
+      "OBneIVg4Cw_003290_3207000000",
+      "OBneIVg4Cw_005076_3269800000",
+      "OBneIVg4Cw_008060_3345700000",
+      "OYgB6RGWcq_000000_6272300000",
+      "OYgB6RGWcq_000005_6299400000",
+      "OYgB6RGWcq_000778_6449200000",
+      "OYgB6RGWcq_001965_6570200000",
+      "WbCh1DRerJ_000003_9414700000",
+      "WbCh1DRerJ_000387_9477200000",
+      "WbCh1DRerJ_001738_9584500000",
+      "WbCh1DRerJ_004756_9688400000",
+      "mHGFBekt7X_000000_1984700000",
+      "mHGFBekt7X_000319_2107200000",
+      "mHGFBekt7X_002469_2134100000",
+      "mHGFBekt7X_004836_2282800000",
+      "qGsgzl4Q8B_000000_10167600000",
+      "qGsgzl4Q8B_000127_10213600000",
+      "qGsgzl4Q8B_001336_10341700000",
+      "qGsgzl4Q8B_002861_10454000000",
+      "t79dBxj1WS_000000_7771700000",
+      "t79dBxj1WS_000757_7871900000",
+      "t79dBxj1WS_002363_8010500000",
+      "t79dBxj1WS_003466_8066100000"
+    ],
+    "samples_per_sequence": 4,
+    "sequence_ids": [
+      "2cyv0Oedzg",
+      "5ilM1PX2vz",
+      "6h5yRW2LGc",
+      "OBneIVg4Cw",
+      "OYgB6RGWcq",
+      "WbCh1DRerJ",
+      "mHGFBekt7X",
+      "qGsgzl4Q8B",
+      "t79dBxj1WS"
+    ]
+  },
+  "status": "passed",
+  "teacher": {
+    "repo_id": "facebook/sam-vit-large",
+    "revision": "6851e0441005b0fb96f2cc4dfac472f3d1b14af1",
+    "weights_sha256": "a57e1b13cd1545938dfcbc9fb26df7f60de6650237a9383382a874a623564b81"
+  }
+}

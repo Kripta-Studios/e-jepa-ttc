@@ -28,6 +28,13 @@ sin descargar pesos. Pasó con `0.4207 s` de inferencia, `1691.39 MiB` peak VRAM
 máscara finita de fracción `.06630` e IoU interno `1.0`. El resultado firmado
 `be097e6c…2af5e9` demuestra factibilidad, no calidad de máscara ni mejora TTC.
 
+Un segundo audit preregistrado usó cuatro posiciones deterministas por cada una de
+las nueve secuencias train: 36 pares/72 endpoints, sin leer TTC. Pasó todos los
+gates: bbox–mask IoU mediana `.5761`, cobertura bbox `.5960`, score interno p10
+`.9297`, una degenerada, correlación del cambio de área `.6471` y signo `.8286`.
+Esto justifica materialización train-only, pero sigue sin ser una comparación contra
+GT segmentation. Identidad `e413337b…b58138`; CSV `226532b5…3ccd65`.
+
 Por tanto, esto **no constituye una integración foreground ni evidencia de
 entrenamiento**. `OfficialMaskPathResolver.require()` falla explícitamente y exige
 mantener la supervisión desactivada cuando el fichero no es material o la resolución

@@ -87,6 +87,12 @@ ConvNeXt-Tiny están íntegros en caché. Cualquier máscara SAM se generará ú
 sobre train con bbox prompt preregistrado; validation/test no reciben pseudo-targets.
 Ese protocolo se denomina `event-only inference with RGB distillation`.
 
+Antes de A3 se ejecutó un audit train-only sin TTC sobre 36 pares/9 secuencias.
+Los gates preregistrados de finitud, score, solapamiento bbox, degeneración,
+coherencia temporal, runtime y VRAM pasaron. Área SAM/bbox correlaciona `.6471` y
+su signo acierta `.8286`; la mediana bbox–mask IoU es `.5761`. Estos datos solo
+pueden definir filtros de train y no autorizan tuning con validation.
+
 El diagnóstico de fallo no selecciona hiperparámetros ni abre test. Descompone el
 checkpoint ya seleccionado sobre la misma validation pública en bbox-ratio,
 extensión analítica, residual, ratio combinado y ratio efectivo. A1 queda

@@ -101,6 +101,14 @@ multisequence que mida score, área respecto a bbox, contacto con bordes y consi
 de cambio t1/t2. Sus filas y gates se congelarán antes de ejecutar; no se mirará
 validation ni TTC para aceptar/rechazar máscaras.
 
+Ese audit ya pasó sobre 36 pares: área Pearson `.6471`, signo `.8286`, bbox–mask
+IoU mediana `.5761` y una degenerada de 72. La materialización exacta queda
+autorizada solo para `train_data.parquet` del subset matched. Filtros derivados de
+train a congelar antes del run: score IoU `>=.5`, mask fraction `[.001,.75]`,
+bbox–mask IoU `>=.25`, mask-inside-bbox `>=.8` y consistencia de signo temporal
+cuando `|delta log bbox area|` no sea casi cero. Las filas rechazadas conservarán
+geometry-only y no recibirán una máscara inventada.
+
 No se cambian `unknown`, support, clip, residual, consenso, optimizer, seed, filas
 o presupuesto durante A1. Correlaciones absolutas y diferenciales se reportan
 globales y macro por secuencia; `r_iso` es diagnóstico, no prediction path.
