@@ -111,9 +111,9 @@ def run(child_path: Path, parent_path: Path, output_path: Path) -> dict[str, Any
         }
 
     signed = cm.get("signed") if isinstance(cm.get("signed"), dict) else {}
-    sequence_macro = cm.get("sequence_macro") if isinstance(cm.get("sequence_macro"), dict) else {}
     parent_signed = pm.get("signed") if isinstance(pm.get("signed"), dict) else {}
-    parent_sequence_macro = pm.get("sequence_macro") if isinstance(pm.get("sequence_macro"), dict) else {}
+    child_selection = child.get("selection") if isinstance(child.get("selection"), dict) else {}
+    parent_selection = parent.get("selection") if isinstance(parent.get("selection"), dict) else {}
     result: dict[str, Any] = {
         "artifact_type": "a5_corr_mechanistic_gate_v1",
         "passed": passed,
@@ -131,8 +131,8 @@ def run(child_path: Path, parent_path: Path, output_path: Path) -> dict[str, Any
             "per_sequence_delta_height_pearson_gain": per_delta,
             "improved_sequence_count": improved,
             "worst_sequence_gain": worst_regression,
-            "MiD_macro": sequence_macro.get("mean_interval_distance"),
-            "parent_MiD_macro": parent_sequence_macro.get("mean_interval_distance"),
+            "MiD_macro": child_selection.get("sequence_macro_MiD"),
+            "parent_MiD_macro": parent_selection.get("sequence_macro_MiD"),
             "failure_pct": signed.get("failure_rate_pct"),
             "parent_failure_pct": parent_signed.get("failure_rate_pct"),
         },

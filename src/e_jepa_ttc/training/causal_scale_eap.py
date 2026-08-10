@@ -76,6 +76,10 @@ class CausalScaleEAPTrainingConfig:
     representation_distillation_weight: float = 0.0
     representation_temporal_delta_weight: float = 0.0
     representation_temporal_delta_calibration_artifact_sha256: str | None = None
+    initialization_checkpoint: str | None = None
+    initialization_checkpoint_sha256: str | None = None
+    initialization_mode: Literal["none", "shape_compatible"] = "none"
+    freeze_encoder: bool = False
 
     def __post_init__(self) -> None:
         integers = (
@@ -164,6 +168,29 @@ class CausalScaleEAPTrainingConfig:
                     "temporal-delta calibration identity must be absent outside A4D"
                 )
 
+        uses_initialization = self.initialization_mode != "none"
+        if uses_initialization:
+            if self.initialization_mode != "shape_compatible":
+                raise ValueError("unsupported initialization_mode")
+            if not self.initialization_checkpoint or not self.initialization_checkpoint_sha256:
+                raise ValueError(
+                    "shape-compatible initialization requires checkpoint path and SHA256"
+                )
+            if len(self.initialization_checkpoint_sha256) != 64:
+                raise ValueError("initialization_checkpoint_sha256 must be a SHA256 hex digest")
+        else:
+            if self.initialization_checkpoint is not None or self.initialization_checkpoint_sha256 is not None:
+                raise ValueError(
+                    "initialization checkpoint metadata must be absent when initialization_mode=none"
+                )
+        if self.freeze_encoder:
+            if not uses_initialization:
+                raise ValueError("freeze_encoder requires a frozen initialization checkpoint")
+            if self.foreground_warmup_epochs != 0:
+                raise ValueError(
+                    "freeze_encoder requires foreground_warmup_epochs=0 because foreground-only warmup has no trainable path"
+                )
+
 
 @dataclass
 class CausalScaleEAPTrainingResult:
@@ -173,6 +200,7 @@ class CausalScaleEAPTrainingResult:
     best_selection: dict[str, float]
     best_validation: dict[str, Any]
     elapsed_seconds: float
+    initialization: dict[str, Any]
 
 
 @dataclass(frozen=True)
@@ -717,6 +745,12 @@ def evaluate_real_causal_scale(
     known: list[torch.Tensor] = []
     ratios: list[torch.Tensor] = []
     ratio_targets: list[torch.Tensor] = []
+    ratio_components: dict[str, list[torch.Tensor]] = {
+        "analytic": [],
+        "residual": [],
+        "final_pair": [],
+    }
+    ratio_component_sequences: list[str] = []
     weak_iou: list[torch.Tensor] = []
     endpoint_geometry: dict[str, list[torch.Tensor]] = {
         key: []
@@ -957,6 +991,18 @@ def evaluate_real_causal_scale(
         known.append(output.known_mask.cpu())
         ratios.append(output.log_height_ratio[:, -1][valid_ratio].float().cpu())
         ratio_targets.append(target_ratio[valid_ratio].float().cpu())
+        ratio_components["analytic"].append(
+            output.analytic_log_height_ratio[:, -1][valid_ratio].float().cpu()
+        )
+        ratio_components["residual"].append(
+            output.residual_log_height_ratio[:, -1][valid_ratio].float().cpu()
+        )
+        ratio_components["final_pair"].append(
+            output.pair_log_height_ratio[:, -1][valid_ratio].float().cpu()
+        )
+        for sequence, valid in zip(batch.sequence_ids, valid_ratio.cpu(), strict=True):
+            if bool(valid):
+                ratio_component_sequences.append(sequence)
         sequences.extend(batch.sequence_ids)
         tokens.extend(batch.sample_tokens)
     target_np = torch.cat(truth).numpy().astype(np.float64)
@@ -972,6 +1018,30 @@ def evaluate_real_causal_scale(
         )
         else float("nan")
     )
+    component_np = {
+        key: torch.cat(values).numpy().astype(np.float64)
+        for key, values in ratio_components.items()
+    }
+    component_sequences_np = np.asarray(ratio_component_sequences)
+    ratio_component_diagnostics = {
+        key: _relationship_by_sequence(
+            ratio_target.numpy().astype(np.float64), value, component_sequences_np
+        )
+        for key, value in component_np.items()
+    }
+    residual_values = component_np["residual"]
+    residual_bound = float(model.config.max_abs_log_ratio_residual)
+    ratio_component_diagnostics["residual_saturation"] = {
+        "absolute_mean": float(np.mean(np.abs(residual_values))),
+        "absolute_median": float(np.median(np.abs(residual_values))),
+        "fraction_above_80pct_bound": float(
+            np.mean(np.abs(residual_values) >= 0.8 * residual_bound)
+        ) if residual_bound > 0.0 else 0.0,
+        "fraction_above_95pct_bound": float(
+            np.mean(np.abs(residual_values) >= 0.95 * residual_bound)
+        ) if residual_bound > 0.0 else 0.0,
+        "bound": residual_bound,
+    }
     signed = signed_garl_metrics(target_np, prediction_np)
     sequence_macro = sequence_macro_signed_metrics(
         target_np, prediction_np, np.asarray(sequences)
@@ -1096,12 +1166,76 @@ def evaluate_real_causal_scale(
         "weak_bbox_iou_count": sum(int(value.numel()) for value in weak_iou),
         "log_ratio_mae": float((ratio - ratio_target).abs().mean()),
         "log_ratio_pearson": pearson,
+        "ratio_component_diagnostics": ratio_component_diagnostics,
         "geometry_diagnostics": geometry_diagnostics,
         "transport_diagnostics": transport_diagnostics,
         "sample_tokens": tokens,
         "target_ttc_s": target_np.tolist(),
         "prediction_ttc_s": prediction_np.tolist(),
         "sequence_ids": sequences,
+    }
+
+
+def _shape_compatible_initialize(
+    model: CausalScaleTTC,
+    checkpoint_path: str | Path,
+) -> dict[str, Any]:
+    """Load coherent A4 modules whose complete tensor schemas still match A5.
+
+    If any tensor under a top-level module changes shape (for example the A5
+    transport-expanded residual or pair projector), the *entire* module is left
+    at its preregistered A5 initialization.  This avoids incoherent hybrids such
+    as loading a trained output layer on top of a newly random input layer.
+    """
+
+    payload = torch.load(Path(checkpoint_path), map_location="cpu", weights_only=False)
+    if payload.get("artifact_type") != "causal_scale_eap_public_validation_checkpoint_v1":
+        raise ValueError("initialization checkpoint has an incompatible artifact type")
+    source_state = payload.get("model_state_dict")
+    if not isinstance(source_state, dict):
+        raise ValueError("initialization checkpoint is missing model_state_dict")
+    current = model.state_dict()
+
+    def group(name: str) -> str:
+        return name.split(".", 1)[0]
+
+    mismatched: list[str] = []
+    unexpected: list[str] = []
+    blocked_groups: set[str] = set()
+    for name, value in source_state.items():
+        if name not in current:
+            unexpected.append(str(name))
+            blocked_groups.add(group(str(name)))
+            continue
+        if not isinstance(value, torch.Tensor) or value.shape != current[name].shape:
+            mismatched.append(str(name))
+            blocked_groups.add(group(str(name)))
+
+    compatible: dict[str, torch.Tensor] = {}
+    for name, value in source_state.items():
+        name = str(name)
+        if group(name) in blocked_groups:
+            continue
+        if name in current and isinstance(value, torch.Tensor) and value.shape == current[name].shape:
+            compatible[name] = value
+    model.load_state_dict(compatible, strict=False)
+    missing = sorted(set(current) - set(compatible))
+    encoder_keys = [name for name in current if name.startswith("encoder.")]
+    loaded_encoder_keys = [name for name in compatible if name.startswith("encoder.")]
+    if encoder_keys and len(loaded_encoder_keys) != len(encoder_keys):
+        raise ValueError("shape-compatible initialization did not recover the complete endpoint encoder")
+    return {
+        "mode": "shape_compatible",
+        "source_artifact_type": payload.get("artifact_type"),
+        "source_model_config": payload.get("model_config"),
+        "loaded_tensor_count": len(compatible),
+        "missing_tensor_count": len(missing),
+        "mismatched_tensor_count": len(mismatched),
+        "unexpected_tensor_count": len(unexpected),
+        "blocked_top_level_groups": sorted(blocked_groups),
+        "mismatched_tensors": sorted(mismatched),
+        "unexpected_tensors": sorted(unexpected),
+        "complete_encoder_loaded": True,
     }
 
 
@@ -1130,8 +1264,36 @@ def train_real_causal_scale(
     )
     validation_loader = _loader(validation_dataset, training_config, train=False)
     model = CausalScaleTTC(model_config).to(device)
+    initialization: dict[str, Any] = {
+        "mode": "none",
+        "freeze_encoder": False,
+        "frozen_parameter_count": 0,
+        "trainable_parameter_count": sum(p.numel() for p in model.parameters()),
+    }
+    if training_config.initialization_mode == "shape_compatible":
+        if training_config.initialization_checkpoint is None:
+            raise ValueError("shape-compatible initialization checkpoint is unavailable")
+        initialization = _shape_compatible_initialize(
+            model, training_config.initialization_checkpoint
+        )
+        initialization["checkpoint"] = training_config.initialization_checkpoint
+        initialization["checkpoint_sha256"] = training_config.initialization_checkpoint_sha256
+    if training_config.freeze_encoder:
+        for parameter in model.encoder.parameters():
+            parameter.requires_grad_(False)
+        initialization["freeze_encoder"] = True
+    frozen_parameter_count = sum(
+        parameter.numel() for parameter in model.parameters() if not parameter.requires_grad
+    )
+    trainable_parameter_count = sum(
+        parameter.numel() for parameter in model.parameters() if parameter.requires_grad
+    )
+    if trainable_parameter_count <= 0:
+        raise RuntimeError("causal-scale run has no trainable parameters")
+    initialization["frozen_parameter_count"] = frozen_parameter_count
+    initialization["trainable_parameter_count"] = trainable_parameter_count
     optimizer = torch.optim.AdamW(
-        model.parameters(),
+        [parameter for parameter in model.parameters() if parameter.requires_grad],
         lr=training_config.learning_rate,
         weight_decay=training_config.weight_decay,
     )
@@ -1293,6 +1455,7 @@ def train_real_causal_scale(
         best_selection=best_selection,
         best_validation=best_validation,
         elapsed_seconds=elapsed_total,
+        initialization=initialization,
     )
 
 
@@ -1308,6 +1471,7 @@ def checkpoint_payload(
         "loss_config": asdict(loss_config),
         "best_epoch": result.best_epoch,
         "best_selection": result.best_selection,
+        "initialization": result.initialization,
         "model_state_dict": result.model.state_dict(),
     }
 
@@ -1317,6 +1481,7 @@ __all__ = [
     "CausalScaleEAPTrainingResult",
     "ShardGroupedRandomSampler",
     "checkpoint_payload",
+    "_shape_compatible_initialize",
     "evaluate_real_causal_scale",
     "train_one_real_epoch",
     "train_real_causal_scale",

@@ -243,12 +243,15 @@ def _validate_a5_transport_change(
     """Fail closed on A5 event-native transport and its train-only preflight."""
 
     change = decision_contract.get("representation_change")
-    if not isinstance(change, dict) or change.get("type") != (
-        "a4_endpoint_dino_plus_event_native_local_cross_time_transport"
-    ):
+    change_type = change.get("type") if isinstance(change, dict) else None
+    supported_a5_types = {
+        "a4_endpoint_dino_plus_event_native_local_cross_time_transport",
+        "a4_frozen_endpoint_plus_event_native_local_cross_time_transport",
+    }
+    if change_type not in supported_a5_types:
         if model_config.transport_enabled:
             raise ValueError(
-                "transport-enabled models require the preregistered A5 representation_change"
+                "transport-enabled models require a preregistered A5 representation_change"
             )
         return None
 
@@ -256,6 +259,28 @@ def _validate_a5_transport_change(
         raise ValueError("A5 representation_change requires transport_enabled=true")
     if training_config.representation_supervision != "dinov3_local_relational":
         raise ValueError("A5 must keep A4 endpoint DINO and remove A4D temporal delta")
+    if change_type == "a4_frozen_endpoint_plus_event_native_local_cross_time_transport":
+        anchor = decision_contract.get("anchor_contract")
+        if not isinstance(anchor, dict):
+            raise ValueError("A5-ANCHOR requires decision_contract.anchor_contract")
+        if training_config.initialization_mode != "shape_compatible":
+            raise ValueError("A5-ANCHOR requires shape-compatible A4 initialization")
+        if training_config.freeze_encoder is not True:
+            raise ValueError("A5-ANCHOR requires the inherited A4 endpoint encoder to remain frozen")
+        if training_config.foreground_warmup_epochs != 0:
+            raise ValueError("A5-ANCHOR requires foreground_warmup_epochs=0")
+        if anchor.get("parent_encoder_frozen_for_entire_run") is not True:
+            raise ValueError("A5-ANCHOR must freeze the parent endpoint encoder for the full run")
+        if anchor.get("geometry_must_equal_parent_by_construction") is not True:
+            raise ValueError("A5-ANCHOR geometry preservation contract is missing")
+        if anchor.get("initialization_mode") != "shape_compatible":
+            raise ValueError("A5-ANCHOR initialization mode differs from frozen contract")
+        if anchor.get("initialization_checkpoint") != training_config.initialization_checkpoint:
+            raise ValueError("A5-ANCHOR initialization checkpoint differs from training config")
+        if anchor.get("initialization_checkpoint_sha256") != training_config.initialization_checkpoint_sha256:
+            raise ValueError("A5-ANCHOR initialization checkpoint SHA256 differs from training config")
+    elif training_config.initialization_mode != "none" or training_config.freeze_encoder:
+        raise ValueError("baseline A5-CORR may not silently inherit/freeze an A4 checkpoint")
     if training_config.representation_temporal_delta_weight != 0.0:
         raise ValueError("A5 must not train the A4D temporal-delta objective")
     if change.get("dino_endpoint_teacher_unchanged_from_a4") is not True:
@@ -564,6 +589,32 @@ def run(
         raise ValueError("training and loss mappings are required")
     training_config = CausalScaleEAPTrainingConfig(**training_raw)
     loss_config = CausalScaleTTCLossConfig(**loss_raw)
+    initialization_metadata: dict[str, Any] | None = None
+    if training_config.initialization_mode == "shape_compatible":
+        if training_config.initialization_checkpoint is None:
+            raise ValueError("initialization checkpoint path is missing")
+        initialization_path = _resolve(training_config.initialization_checkpoint)
+        observed_initialization_sha = _sha256(initialization_path)
+        if observed_initialization_sha != training_config.initialization_checkpoint_sha256:
+            raise ValueError("initialization checkpoint SHA256 differs from frozen training config")
+        initialization_payload = torch.load(
+            initialization_path, map_location="cpu", weights_only=False
+        )
+        if initialization_payload.get("artifact_type") != (
+            "causal_scale_eap_public_validation_checkpoint_v1"
+        ):
+            raise ValueError("initialization checkpoint artifact type is incompatible")
+        source_model_config = initialization_payload.get("model_config")
+        if not isinstance(source_model_config, dict):
+            raise ValueError("initialization checkpoint model_config is malformed")
+        if bool(source_model_config.get("transport_enabled", False)):
+            raise ValueError("A5-ANCHOR must initialize from a transport-disabled A4 checkpoint")
+        initialization_metadata = {
+            "path": initialization_path.relative_to(ROOT).as_posix(),
+            "sha256": observed_initialization_sha,
+            "artifact_type": initialization_payload.get("artifact_type"),
+            "source_transport_enabled": False,
+        }
     decision_contract = raw.get("decision_contract")
     if not isinstance(decision_contract, dict):
         raise ValueError("decision_contract mapping is required")
@@ -752,6 +803,10 @@ def run(
         "representation_temporal_delta_calibration": representation_calibration,
         "a5_transport_preflight": a5_preflight,
         "parameter_count": parameter_count,
+        "initialization": {
+            **result.initialization,
+            "validated_source": initialization_metadata,
+        },
         "training_config": asdict(training_config),
         "loss_config": asdict(loss_config),
         "selection": {
