@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import subprocess
+import sys
 from pathlib import Path
 
 import pytest
@@ -12,6 +14,8 @@ from scripts.train_garl_matched_from_cache import (
     _collate,
     _prediction,
 )
+
+ROOT = Path(__file__).resolve().parents[2]
 
 
 def _write_cache(tmp_path: Path) -> Path:
@@ -74,3 +78,16 @@ def test_official_height_ratio_prediction_matches_physics() -> None:
     prediction = _prediction(raw_height, delta_t_s=0.1)
 
     assert torch.allclose(prediction, torch.tensor([1.0, -1.0]))
+
+
+def test_cached_training_script_is_directly_executable() -> None:
+    completed = subprocess.run(
+        [sys.executable, "scripts/train_garl_matched_from_cache.py", "--help"],
+        cwd=ROOT,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert completed.returncode == 0, completed.stderr
+    assert "--cache-manifest" in completed.stdout

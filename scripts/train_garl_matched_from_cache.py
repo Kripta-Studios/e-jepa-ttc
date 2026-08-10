@@ -24,6 +24,7 @@ from torch import nn
 from torch.utils.data import DataLoader, Dataset, Sampler
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "src"))
 
 from e_jepa_ttc.artifacts.hashing import sign_artifact  # noqa: E402
