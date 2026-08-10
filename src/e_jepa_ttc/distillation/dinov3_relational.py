@@ -212,9 +212,89 @@ def local_relational_distillation_loss(
     return error.mean()
 
 
+def local_relational_temporal_delta_loss(
+    student_features: torch.Tensor,
+    teacher_relations: torch.Tensor,
+    teacher_valid: torch.Tensor,
+    *,
+    offsets: tuple[tuple[int, int], ...] = A4_RELATION_OFFSETS,
+) -> torch.Tensor:
+    """Match the *change* in local relations between t1 and t2.
+
+    This is the post-A4 temporal probe.  The original A4 endpoint loss is left
+    untouched; this additional objective supervises only
+
+        (R_student(t2) - R_student(t1))
+            ~= (R_teacher(t2) - R_teacher(t1)).
+
+    Validity is the intersection of teacher/student validity at *both*
+    endpoints.  The loss is an L1 mean in float32.  No bbox mask, TTC label,
+    direct DINO feature alignment, or inference-time teacher input is used.
+    """
+
+    if student_features.ndim != 5:
+        raise ValueError(
+            f"student_features must have shape [B,2,C,H,W], got ndim={student_features.ndim}"
+        )
+    if student_features.shape[1] != 2:
+        raise ValueError(
+            f"student_features must have 2 endpoints (t1/t2), got {student_features.shape[1]}"
+        )
+    k = len(offsets)
+    expected_relation_shape = (
+        student_features.shape[0],
+        2,
+        k,
+        student_features.shape[3],
+        student_features.shape[4],
+    )
+    if teacher_relations.shape != expected_relation_shape:
+        raise ValueError(
+            f"teacher_relations shape {tuple(teacher_relations.shape)} "
+            f"does not match expected {expected_relation_shape}"
+        )
+    if teacher_valid.shape != expected_relation_shape:
+        raise ValueError(
+            f"teacher_valid shape {tuple(teacher_valid.shape)} "
+            f"does not match expected {expected_relation_shape}"
+        )
+
+    student_relations = local_cosine_relation_maps(
+        student_features, offsets=offsets,
+    )
+    endpoint_valid = teacher_valid.bool() & student_relations.valid
+    pair_valid = endpoint_valid[:, 0] & endpoint_valid[:, 1]
+    if not pair_valid.any():
+        return student_features.new_tensor(0.0, dtype=torch.float32)
+
+    teacher_float = teacher_relations.float()
+    teacher_t1 = teacher_float[:, 0]
+    teacher_t2 = teacher_float[:, 1]
+    student_t1 = student_relations.values[:, 0]
+    student_t2 = student_relations.values[:, 1]
+
+    if not torch.isfinite(teacher_t1[pair_valid]).all() or not torch.isfinite(
+        teacher_t2[pair_valid]
+    ).all():
+        raise ValueError(
+            "teacher relation values contain non-finite entries in temporal valid region"
+        )
+    if not torch.isfinite(student_t1[pair_valid]).all() or not torch.isfinite(
+        student_t2[pair_valid]
+    ).all():
+        raise ValueError(
+            "student relation values contain non-finite entries in temporal valid region"
+        )
+
+    teacher_delta = teacher_t2 - teacher_t1
+    student_delta = student_t2 - student_t1
+    return (student_delta[pair_valid] - teacher_delta[pair_valid]).abs().mean()
+
+
 __all__ = [
     "A4_RELATION_OFFSETS",
     "LocalRelationMaps",
     "local_cosine_relation_maps",
     "local_relational_distillation_loss",
+    "local_relational_temporal_delta_loss",
 ]

@@ -78,6 +78,39 @@ def test_training_config_rejection_rules() -> None:
     )
     assert valid_cfg.representation_supervision == "dinov3_local_relational"
 
+    # 5. Original A4 rejects a temporal-delta weight: the scientific arm is explicit.
+    with pytest.raises(ValueError, match="must be 0.0 unless"):
+        CausalScaleEAPTrainingConfig(
+            representation_supervision="dinov3_local_relational",
+            representation_teacher_cache_artifact_sha256="dummy_sha",
+            representation_distillation_weight=1.0,
+            representation_temporal_delta_weight=0.5,
+        )
+
+    # 6. A4D requires a strictly positive, separately bound temporal weight.
+    with pytest.raises(ValueError, match="must be > 0.0"):
+        CausalScaleEAPTrainingConfig(
+            representation_supervision="dinov3_local_relational_temporal_delta",
+            representation_teacher_cache_artifact_sha256="dummy_sha",
+            representation_distillation_weight=4.0,
+            representation_temporal_delta_weight=0.0,
+        )
+    with pytest.raises(ValueError, match="calibration artifact identity"):
+        CausalScaleEAPTrainingConfig(
+            representation_supervision="dinov3_local_relational_temporal_delta",
+            representation_teacher_cache_artifact_sha256="dummy_sha",
+            representation_distillation_weight=4.0,
+            representation_temporal_delta_weight=0.75,
+        )
+    a4d_cfg = CausalScaleEAPTrainingConfig(
+        representation_supervision="dinov3_local_relational_temporal_delta",
+        representation_teacher_cache_artifact_sha256="dummy_sha",
+        representation_distillation_weight=4.0,
+        representation_temporal_delta_weight=0.75,
+        representation_temporal_delta_calibration_artifact_sha256="calibration_sha",
+    )
+    assert a4d_cfg.representation_temporal_delta_weight == 0.75
+
 
 def test_a4_training_resume_parity(tmp_path) -> None:
     import numpy as np

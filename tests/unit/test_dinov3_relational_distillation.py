@@ -109,3 +109,58 @@ def test_relational_distillation_loss_mixed_precision() -> None:
     # The L1 loss should run in float32 internally and return float32
     loss = local_relational_distillation_loss(student, teacher_rels, valid_mask)
     assert loss.dtype == torch.float32
+
+
+def test_temporal_delta_loss_zero_for_matching_relations() -> None:
+    from e_jepa_ttc.distillation.dinov3_relational import (
+        local_relational_temporal_delta_loss,
+    )
+
+    student = torch.randn(2, 2, 5, 16, 16, requires_grad=True)
+    teacher = local_cosine_relation_maps(student.detach())
+    loss = local_relational_temporal_delta_loss(
+        student, teacher.values.detach(), teacher.valid
+    )
+    assert loss.dtype == torch.float32
+    torch.testing.assert_close(loss, torch.tensor(0.0), atol=1.0e-7, rtol=0.0)
+
+
+def test_temporal_delta_loss_ignores_equal_endpoint_bias() -> None:
+    from e_jepa_ttc.distillation.dinov3_relational import (
+        local_relational_distillation_loss,
+        local_relational_temporal_delta_loss,
+    )
+
+    student = torch.randn(1, 2, 6, 12, 12)
+    student_rel = local_cosine_relation_maps(student)
+    teacher = student_rel.values.detach() + 0.2
+
+    endpoint_loss = local_relational_distillation_loss(
+        student, teacher, student_rel.valid
+    )
+    temporal_loss = local_relational_temporal_delta_loss(
+        student, teacher, student_rel.valid
+    )
+    assert endpoint_loss > 0.19
+    torch.testing.assert_close(
+        temporal_loss, torch.tensor(0.0), atol=2.0e-7, rtol=0.0
+    )
+
+
+def test_temporal_delta_loss_detects_t2_change() -> None:
+    from e_jepa_ttc.distillation.dinov3_relational import (
+        local_relational_temporal_delta_loss,
+    )
+
+    student = torch.randn(1, 2, 6, 12, 12, requires_grad=True)
+    student_rel = local_cosine_relation_maps(student.detach())
+    teacher = student_rel.values.detach().clone()
+    teacher[:, 1] = teacher[:, 1] + 0.1
+
+    loss = local_relational_temporal_delta_loss(
+        student, teacher, student_rel.valid
+    )
+    assert float(loss.detach()) > 0.09
+    loss.backward()
+    assert student.grad is not None
+    assert torch.isfinite(student.grad).all()

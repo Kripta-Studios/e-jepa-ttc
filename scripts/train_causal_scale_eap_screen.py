@@ -24,7 +24,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT))
 
-from e_jepa_ttc.artifacts.hashing import sign_artifact  # noqa: E402
+from e_jepa_ttc.artifacts.hashing import sign_artifact, verify_artifact_hash  # noqa: E402
 from e_jepa_ttc.data.dinov3_relational_teacher_cache import (  # noqa: E402
     DINOv3RelationalTeacherDataset,
 )
@@ -127,6 +127,110 @@ def _validate_bbox_geometry_loss(
         raise ValueError("bbox_geometry pair-ratio weight differs from decision contract")
     if decision_contract.get("pair_ratio_disabled_during_three_epoch_geometry_warmup") is not True:
         raise ValueError("bbox_geometry pair-ratio must remain disabled during warm-up")
+
+
+def _validate_representation_change(
+    training_config: CausalScaleEAPTrainingConfig,
+    decision_contract: dict[str, Any],
+) -> dict[str, Any] | None:
+    """Fail closed on the post-A4 temporal-delta calibration contract."""
+
+    if (
+        training_config.representation_supervision
+        != "dinov3_local_relational_temporal_delta"
+    ):
+        return None
+
+    change = decision_contract.get("representation_change")
+    if not isinstance(change, dict):
+        raise ValueError("A4D requires decision_contract.representation_change")
+    if change.get("type") != "dinov3_local_relational_plus_temporal_delta":
+        raise ValueError("A4D representation_change.type is not frozen")
+    if float(change.get("parent_endpoint_distillation_weight", float("nan"))) != (
+        training_config.representation_distillation_weight
+    ):
+        raise ValueError("A4D must preserve the frozen A4 endpoint distillation weight")
+    if change.get("no_bbox_mask_on_temporal_delta_loss") is not True:
+        raise ValueError("A4D temporal delta must remain unmasked by bbox")
+    if change.get("same_cached_teacher_as_a4") is not True:
+        raise ValueError("A4D must reuse the exact A4 teacher cache")
+
+    calibration = change.get("temporal_delta_calibration")
+    if not isinstance(calibration, dict):
+        raise ValueError("A4D temporal_delta_calibration contract is required")
+    if calibration.get("method") != (
+        "quarter_weighted_endpoint_equivalence_on_random_init_train_only"
+    ):
+        raise ValueError("A4D temporal-delta calibration method differs from protocol")
+    if int(calibration.get("samples", -1)) != 64 or int(
+        calibration.get("seed", -1)
+    ) != 7:
+        raise ValueError("A4D temporal-delta calibration must use 64 samples and seed 7")
+    if float(calibration.get("target_fraction_of_weighted_endpoint", float("nan"))) != 0.25:
+        raise ValueError("A4D temporal-delta calibration target fraction must be 0.25")
+    if calibration.get("clamp_range") != [0.25, 4.0]:
+        raise ValueError("A4D temporal-delta calibration clamp must be [0.25, 4.0]")
+
+    artifact_path = _resolve(calibration.get("artifact"))
+    expected_file_sha = str(calibration.get("file_sha256", ""))
+    if len(expected_file_sha) != 64 or _sha256(artifact_path) != expected_file_sha:
+        raise ValueError("A4D temporal-delta calibration file hash differs from protocol")
+    payload = json.loads(artifact_path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict) or not verify_artifact_hash(payload):
+        raise ValueError("A4D temporal-delta calibration artifact signature is invalid")
+    if payload.get("artifact_type") != "a4d_dinov3_temporal_delta_weight_calibration_v1":
+        raise ValueError("unexpected A4D temporal-delta calibration artifact type")
+    expected_signed_sha = str(calibration.get("artifact_sha256", ""))
+    if payload.get("artifact_sha256") != expected_signed_sha:
+        raise ValueError("A4D temporal-delta calibration signed identity differs from protocol")
+    if (
+        training_config.representation_temporal_delta_calibration_artifact_sha256
+        != expected_signed_sha
+    ):
+        raise ValueError(
+            "A4D training config is not bound to the signed calibration artifact"
+        )
+    scope = payload.get("scope", {})
+    if not isinstance(scope, dict):
+        raise ValueError("A4D temporal-delta calibration scope is malformed")
+    if scope.get("public_train_only") is not True:
+        raise ValueError("A4D temporal-delta calibration must be public_train_only")
+    if scope.get("validation_or_test_opened") is not False:
+        raise ValueError("A4D temporal-delta calibration may not open validation/test")
+    if int(scope.get("optimizer_steps", -1)) != 0:
+        raise ValueError("A4D temporal-delta calibration may not take optimizer steps")
+    if int(payload.get("samples_collected", -1)) != 64 or int(
+        payload.get("seed", -1)
+    ) != 7:
+        raise ValueError("A4D temporal-delta calibration artifact sample contract differs")
+    if payload.get("teacher_artifact_sha256") != (
+        training_config.representation_teacher_cache_artifact_sha256
+    ):
+        raise ValueError("A4D calibration and training teacher identities differ")
+    selected = float(payload.get("selected_weight", float("nan")))
+    if not math.isfinite(selected) or not math.isclose(
+        selected,
+        training_config.representation_temporal_delta_weight,
+        rel_tol=0.0,
+        abs_tol=1.0e-12,
+    ):
+        raise ValueError("A4D temporal-delta weight differs from signed calibration")
+
+    return {
+        "path": artifact_path.relative_to(ROOT).as_posix(),
+        "file_sha256": expected_file_sha,
+        "artifact_sha256": expected_signed_sha,
+        "selected_weight": selected,
+        "teacher_artifact_sha256": payload.get("teacher_artifact_sha256"),
+        "scope": scope,
+        "median_endpoint_relation_error": payload.get(
+            "median_endpoint_relation_error"
+        ),
+        "median_temporal_delta_error": payload.get("median_temporal_delta_error"),
+        "median_teacher_temporal_delta_abs": payload.get(
+            "median_teacher_temporal_delta_abs"
+        ),
+    }
 
 
 def _finite_json(value: object) -> object:
@@ -259,6 +363,9 @@ def run(
     if not isinstance(decision_contract, dict):
         raise ValueError("decision_contract mapping is required")
     _validate_bbox_geometry_loss(training_config, loss_config, decision_contract)
+    representation_calibration = _validate_representation_change(
+        training_config, decision_contract
+    )
     parameter_count = sum(
         parameter.numel() for parameter in CausalScaleTTC(model_config).parameters()
     )
@@ -300,7 +407,10 @@ def run(
         }
     # --- A4: DINO relational teacher ---
     representation_teacher_metadata: dict[str, Any] | None = None
-    if training_config.representation_supervision == "dinov3_local_relational":
+    if training_config.representation_supervision in {
+        "dinov3_local_relational",
+        "dinov3_local_relational_temporal_delta",
+    }:
         dino_teacher = data.get("dinov3_relational_teacher")
         if not isinstance(dino_teacher, dict):
             raise ValueError("A4 requires data.dinov3_relational_teacher")
@@ -421,6 +531,7 @@ def run(
         },
         "sam_teacher": teacher_metadata,
         "representation_teacher": representation_teacher_metadata,
+        "representation_temporal_delta_calibration": representation_calibration,
         "parameter_count": parameter_count,
         "training_config": asdict(training_config),
         "loss_config": asdict(loss_config),

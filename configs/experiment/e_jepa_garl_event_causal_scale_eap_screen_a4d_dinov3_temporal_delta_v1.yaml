@@ -1,0 +1,150 @@
+experiment:
+  name: e_jepa_garl_event_causal_scale_eap_screen_a4d_dinov3_temporal_delta_v1
+  protocol_version: causal_scale_eap_a4d_dinov3_local_relational_temporal_delta_v1
+  evidence_scope: public_eap_garl_train_validation_only
+  parent_arm: A4_DINO_RELATIONAL_RGB_V2_seed7
+  single_scientific_difference: add_train_only_temporal_delta_on_same_cached_dinov3_relation_maps
+  parent_config: configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a4_dinov3_relational_v1.yaml
+model_config: configs/model/e_jepa_causal_scale_event_v8_t015_resize_conv.yaml
+data:
+  cache_manifest: artifacts/cache/garl_object_event_common_roi_screen_v4/manifest.json
+  cache_manifest_sha256: bba9ff9b143bfd57760bd61d2b6f664202581b5dee54444f44c625975557eb72
+  cache_artifact_sha256: 36c12d75c91a243f4d712831cebcd3e82f896a76196b2a65b039e680f1fac309
+  train_sequence_ids:
+    - 2cyv0Oedzg
+    - 5ilM1PX2vz
+    - 6h5yRW2LGc
+    - OBneIVg4Cw
+    - OYgB6RGWcq
+    - WbCh1DRerJ
+    - mHGFBekt7X
+    - qGsgzl4Q8B
+    - t79dBxj1WS
+  validation_sequence_ids: [DGqicHUGWb, pBqGOb2vYq, qoohcdtLDH]
+  opened_splits: [train, validation]
+  official_test_opened: false
+  codabench_opened: false
+  evttc_test_opened: false
+  dinov3_relational_teacher:
+    manifest: "artifacts/cache/dinov3_convnext_large_relational_a4_rgb_v2/manifest.json"
+    manifest_sha256: "e885a2ea2f2df370a3d4a8270c082a095a735c13db0248521ce2f553b314cf86"
+    artifact_sha256: "f175980d05c1d02a9aa743a74c78c0d5af9a826b2791760df5fbc00c548bd2a2"
+training:
+  seed: 7
+  epochs: 18
+  minimum_epochs: 8
+  early_stopping_patience: 5
+  foreground_warmup_epochs: 3
+  batch_size: 32
+  gradient_accumulation_steps: 1
+  learning_rate: 0.0003
+  minimum_learning_rate: 0.00003
+  weight_decay: 0.0001
+  grad_clip_norm: 1.0
+  num_workers: 0
+  precision: bf16
+  maximum_runtime_hours: 6.0
+  mask_t0_as_proxy: true
+  foreground_supervision: bbox_geometry
+  representation_supervision: dinov3_local_relational_temporal_delta
+  representation_teacher_cache_artifact_sha256: "f175980d05c1d02a9aa743a74c78c0d5af9a826b2791760df5fbc00c548bd2a2"
+  representation_distillation_weight: 4.0
+  # Preregistered calibration must replace 0.0 before training; runner fails closed.
+  representation_temporal_delta_weight: 0.0
+  representation_temporal_delta_calibration_artifact_sha256: "REPLACE_AFTER_CALIBRATION"
+loss:
+  log_ratio_nll_weight: 1.0
+  log_ratio_huber_weight: 0.0
+  log_ratio_tail_weight: 2.0
+  log_ratio_tail_fraction: 0.10
+  foreground_bce_weight: 0.0
+  foreground_dice_weight: 0.0
+  foreground_extent_weight: 1.25
+  foreground_width_weight: 1.25
+  foreground_center_weight: 2.5
+  foreground_pair_ratio_weight: 0.0
+  risk_weight: 0.1
+  auxiliary_inverse_ttc_weight: 0.05
+  residual_regularization_weight: 0.1
+  temporal_consistency_weight: 0.0
+  smooth_l1_beta: 0.02
+  supervise_pair_ratio_before_temporal_blend: true
+decision_contract:
+  checkpoint_selection: validation_sequence_macro_MiD_then_failure_rate
+  require_finite_metrics_for_all_validation_sequences: true
+  primary_baseline: Garl_event_only_matched_seed7_same_2048
+  baseline_sequence_macro_MiD: 203.6341709373319
+  baseline_failure_rate_pct: 0.0
+  parent_a1_df_sequence_macro_MiD: 350.30202027649585
+  parent_a1_df_failure_rate_pct: 21.09375
+  parent_a4_sequence_macro_MiD: 322.6813364242674
+  parent_a4_failure_rate_pct: 11.083984375
+  expected_parameter_count: 355118
+  bbox_is_training_supervision_only: true
+  bbox_is_never_forward_input: true
+  dense_weak_box_target_used: false
+  foreground_pair_ratio_weight_must_remain_zero: true
+  # A4D representation change — registered after observing A4, before A4D validation
+  representation_change:
+    type: dinov3_local_relational_plus_temporal_delta
+    teacher_model: facebook/dinov3-convnext-large-pretrain-lvd1689m
+    teacher_input_size: 256
+    teacher_feature_grid: [32, 32]
+    relation_offsets_dy_dx: [[0,1],[1,0],[0,2],[2,0],[1,1],[1,-1]]
+    relation_type: local_cosine
+    endpoint_loss_type: L1
+    temporal_delta_definition: R_t2_minus_R_t1
+    temporal_delta_loss_type: L1
+    train_only: true
+    teacher_is_model_input: false
+    same_cached_teacher_as_a4: true
+    no_bbox_mask_on_relational_loss: true
+    no_bbox_mask_on_temporal_delta_loss: true
+    parent_endpoint_distillation_weight: 4.0
+    temporal_delta_calibration:
+      method: quarter_weighted_endpoint_equivalence_on_random_init_train_only
+      target_fraction_of_weighted_endpoint: 0.25
+      samples: 64
+      seed: 7
+      clamp_range: [0.25, 4.0]
+      artifact: artifacts/metrics/a4d_dinov3_temporal_delta_weight_calibration_v1.json
+      file_sha256: "REPLACE_AFTER_CALIBRATION"
+      artifact_sha256: "REPLACE_AFTER_CALIBRATION"
+
+  # A4D mechanistic gate — frozen now, before opening A4D validation
+  # A4 selected epoch 17 parent values are copied verbatim from the signed run.
+  temporal_delta_gate:
+    parent_a4_log_ratio_pearson: 0.26009801030158997
+    log_ratio_pearson_min_gain_vs_a4: 0.03
+    parent_a4_delta_log_height_vs_physical_pearson: 0.2476144314489911
+    delta_log_height_vs_physical_min_gain_vs_a4: 0.03
+    parent_a4_delta_log_height_vs_physical_macro_pearson: 0.2526319214906502
+    delta_log_height_vs_physical_macro_min_gain_vs_a4: 0.03
+    parent_a4_absolute_log_height_macro_pearson: 0.5469041860501996
+    absolute_log_height_macro_max_drop_vs_a4: 0.02
+    gate_is_AND: true
+    gate_registered_after_a4_before_a4d_validation: true
+    benchmark_metrics_remain_secondary_to_mechanism_gate: true
+    no_threshold_may_be_changed_after_a4d_validation: true
+
+  model_config_must_equal_a4: true
+  parent_a4_model_config_sha256: 265dbfd57e68d7a6aa385fbf31dc0ad41154b17afbd1d9454bbd8ddd80c6663f
+  model_config_sha256: 265dbfd57e68d7a6aa385fbf31dc0ad41154b17afbd1d9454bbd8ddd80c6663f
+  no_sam_teacher: true
+  no_jepa_objective: true
+  no_new_model_parameters_vs_a4: true
+  no_new_teacher_cache_vs_a4: true
+  no_pair_ratio: true
+  no_unregistered_posthoc_diagnostic_threshold_is_a_promotion_gate: true
+  r_iso_is_diagnostic_only: true
+  diagnostic_reporting: global_and_macro_by_sequence
+  scaling_rule: only_after_a4d_gate_then_preregistered_seed_replication
+  maximum_runtime_hours: 6.0
+  public_validation_does_not_authorize_sota_claim: true
+  private_test_remains_closed: true
+  # Multi-object contract
+  multi_object_contract:
+    teacher_keyed_by_sample_token: true
+    track_id_verified_per_row: true
+    same_frame_multiple_tracks_not_deduplicated: true
+    rgb_crop_is_per_object_common_square: true

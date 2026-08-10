@@ -26,6 +26,7 @@ from e_jepa_ttc.data.object_event_v4 import (
 )
 from e_jepa_ttc.distillation.dinov3_relational import (
     local_relational_distillation_loss,
+    local_relational_temporal_delta_loss,
 )
 from e_jepa_ttc.evaluation.garl_ttc_protocol import (
     sequence_macro_signed_metrics,
@@ -67,10 +68,14 @@ class CausalScaleEAPTrainingConfig:
     ] = "weak_box"
     teacher_cache_artifact_sha256: str | None = None
     representation_supervision: Literal[
-        "none", "dinov3_local_relational"
+        "none",
+        "dinov3_local_relational",
+        "dinov3_local_relational_temporal_delta",
     ] = "none"
     representation_teacher_cache_artifact_sha256: str | None = None
     representation_distillation_weight: float = 0.0
+    representation_temporal_delta_weight: float = 0.0
+    representation_temporal_delta_calibration_artifact_sha256: str | None = None
 
     def __post_init__(self) -> None:
         integers = (
@@ -106,13 +111,15 @@ class CausalScaleEAPTrainingConfig:
         if self.representation_supervision not in {
             "none",
             "dinov3_local_relational",
+            "dinov3_local_relational_temporal_delta",
         }:
             raise ValueError(
                 "unsupported representation_supervision: "
                 f"{self.representation_supervision}"
             )
 
-        if self.representation_supervision == "dinov3_local_relational":
+        uses_dino = self.representation_supervision != "none"
+        if uses_dino:
             if not bool(self.representation_teacher_cache_artifact_sha256):
                 raise ValueError("representation_teacher_cache_artifact_sha256 must be provided")
             if not math.isfinite(self.representation_distillation_weight):
@@ -124,6 +131,37 @@ class CausalScaleEAPTrainingConfig:
                 raise ValueError(
                     "representation_distillation_weight must be 0.0 "
                     "when representation_supervision is 'none'"
+                )
+
+        if not math.isfinite(self.representation_temporal_delta_weight):
+            raise ValueError("representation_temporal_delta_weight must be finite")
+        uses_temporal_delta = (
+            self.representation_supervision
+            == "dinov3_local_relational_temporal_delta"
+        )
+        if uses_temporal_delta:
+            if self.representation_temporal_delta_weight <= 0.0:
+                raise ValueError(
+                    "representation_temporal_delta_weight must be > 0.0 "
+                    "for temporal-delta supervision"
+                )
+            if not bool(
+                self.representation_temporal_delta_calibration_artifact_sha256
+            ):
+                raise ValueError(
+                    "A4D temporal-delta supervision requires the signed "
+                    "calibration artifact identity"
+                )
+        else:
+            if self.representation_temporal_delta_weight != 0.0:
+                raise ValueError(
+                    "representation_temporal_delta_weight must be 0.0 unless "
+                    "representation_supervision is "
+                    "'dinov3_local_relational_temporal_delta'"
+                )
+            if self.representation_temporal_delta_calibration_artifact_sha256 is not None:
+                raise ValueError(
+                    "temporal-delta calibration identity must be absent outside A4D"
                 )
 
 
@@ -224,9 +262,12 @@ def _loss(
         "weak_box", "bbox_geometry", "bbox_geometry_sam_teacher"
     ],
     representation_supervision: Literal[
-        "none", "dinov3_local_relational"
+        "none",
+        "dinov3_local_relational",
+        "dinov3_local_relational_temporal_delta",
     ] = "none",
     representation_distillation_weight: float = 0.0,
+    representation_temporal_delta_weight: float = 0.0,
 ) -> tuple[torch.Tensor, dict[str, torch.Tensor], Any]:
     targets = _targets(
         batch,
@@ -253,7 +294,10 @@ def _loss(
 
     # --- A4: DINOv3 relational distillation (train-only) ---
     if (
-        representation_supervision == "dinov3_local_relational"
+        representation_supervision in {
+            "dinov3_local_relational",
+            "dinov3_local_relational_temporal_delta",
+        }
         and batch.dinov3_relation_targets is not None
         and batch.dinov3_relation_valid is not None
     ):
@@ -283,6 +327,24 @@ def _loss(
         components["dinov3_relational_raw"] = relational_loss.detach()
         components["dinov3_relational_weighted"] = weighted_relational.detach()
 
+        # --- A4D: temporal change in the same local relation maps ---
+        if representation_supervision == "dinov3_local_relational_temporal_delta":
+            temporal_delta_loss = local_relational_temporal_delta_loss(
+                student_features,
+                batch.dinov3_relation_targets,
+                batch.dinov3_relation_valid,
+            )
+            weighted_temporal_delta = (
+                representation_temporal_delta_weight * temporal_delta_loss
+            )
+            total = total + weighted_temporal_delta
+            components["dinov3_relational_temporal_delta_raw"] = (
+                temporal_delta_loss.detach()
+            )
+            components["dinov3_relational_temporal_delta_weighted"] = (
+                weighted_temporal_delta.detach()
+            )
+
         # --- Train-only fg/bg diagnostic (not used for selection) ---
         _record_relational_fg_bg_diagnostic(
             student_features,
@@ -295,7 +357,10 @@ def _loss(
             feat_w=dense.shape[-1],
             components=components,
         )
-    elif representation_supervision == "dinov3_local_relational":
+    elif representation_supervision in {
+        "dinov3_local_relational",
+        "dinov3_local_relational_temporal_delta",
+    }:
         raise ValueError(
             "DINO relational supervision is active but batch lacks "
             "dinov3_relation_targets/dinov3_relation_valid"
@@ -610,6 +675,9 @@ def train_one_real_epoch(
                 foreground_supervision=config.foreground_supervision,
                 representation_supervision=config.representation_supervision,
                 representation_distillation_weight=config.representation_distillation_weight,
+                representation_temporal_delta_weight=(
+                    config.representation_temporal_delta_weight
+                ),
             )
             scaled = total / config.gradient_accumulation_steps
         if not bool(torch.isfinite(total)):
