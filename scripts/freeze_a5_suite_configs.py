@@ -55,6 +55,13 @@ def _sha(path: Path) -> str:
     return h.hexdigest()
 
 
+def _repo_path(path: Path) -> str:
+    try:
+        return path.resolve().relative_to(ROOT).as_posix()
+    except ValueError:
+        return path.resolve().as_posix()
+
+
 def _write(path: Path, payload: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(
@@ -63,6 +70,84 @@ def _write(path: Path, payload: dict[str, Any]) -> None:
         newline="\n",
     )
 
+
+
+
+def _load_transport_selection(path: Path | None) -> dict[str, Any] | None:
+    if path is None:
+        return None
+    payload = _read_json(path)
+    if payload.get("artifact_type") != "a5_transport_preflight_train_only_v2":
+        raise ValueError("--preflight-v2 must be an A5-PREFLIGHT-V2 artifact")
+    scope = payload.get("scope", {})
+    decision = payload.get("decision", {})
+    if (
+        scope.get("public_train_only") is not True
+        or scope.get("validation_or_test_opened") is not False
+        or int(scope.get("optimizer_steps", -1)) != 0
+    ):
+        raise ValueError("A5-PREFLIGHT-V2 did not satisfy train-only zero-training contract")
+    if decision.get("a5_corr_authorized") is not True:
+        raise ValueError("A5-PREFLIGHT-V2 did not authorize A5-CORR")
+    radius = int(decision.get("selected_radius", -1))
+    temperature = float(decision.get("selected_temperature", float("nan")))
+    if radius not in (1, 2, 4):
+        raise ValueError(f"invalid selected transport radius: {radius}")
+    if temperature not in (0.02, 0.04, 0.07, 0.10):
+        raise ValueError(f"invalid selected transport temperature: {temperature}")
+    return {
+        "path": path,
+        "artifact_sha256": payload.get("artifact_sha256"),
+        "file_sha256": _sha(path),
+        "radius": radius,
+        "temperature": temperature,
+        "decision": decision,
+    }
+
+
+def _apply_transport_selection(
+    payload: dict[str, Any],
+    *,
+    output_dir: Path,
+    name: str,
+    selection: dict[str, Any] | None,
+) -> str | None:
+    if selection is None:
+        return None
+    model_path = (ROOT / str(payload["model_config"])).resolve(strict=True)
+    model_payload = _read_yaml(model_path)
+    if model_payload.get("transport_enabled") is not True:
+        raise ValueError(f"A5 runtime model must enable transport: {model_path}")
+    model_payload["transport_radius"] = int(selection["radius"])
+    model_payload["transport_temperature"] = float(selection["temperature"])
+    model_target = output_dir / f"model_{name}.yaml"
+    _write(model_target, model_payload)
+    payload["model_config"] = model_target.relative_to(ROOT).as_posix()
+
+    contract = payload.get("decision_contract")
+    if not isinstance(contract, dict):
+        raise ValueError("A5 template lacks decision_contract")
+    change = contract.get("representation_change")
+    if isinstance(change, dict):
+        radius = int(selection["radius"])
+        change["transport_radius"] = radius
+        change["transport_candidates_per_position"] = (2 * radius + 1) ** 2
+        change["transport_temperature"] = float(selection["temperature"])
+    contract["preflight_contract"] = {
+        "artifact_type": "a5_transport_preflight_train_only_v2",
+        "artifact": _repo_path(selection["path"]),
+        "artifact_sha256": selection.get("artifact_sha256"),
+        "file_sha256": selection["file_sha256"],
+        "selected_radius": int(selection["radius"]),
+        "selected_temperature": float(selection["temperature"]),
+        "selection_rule": "smallest_physics_covered_radius_surviving_two_nulls_then_largest_safe_tau",
+        "public_train_only": True,
+        "optimizer_steps": 0,
+        "a5_training_requires_preflight_pass": True,
+    }
+    contract["transport_radius_selected_before_a5_validation"] = True
+    contract["transport_temperature_selected_before_a5_validation"] = True
+    return model_target.relative_to(ROOT).as_posix()
 
 def _freeze_screen_lambda(payload: dict[str, Any]) -> None:
     training = payload.get("training")
@@ -138,7 +223,12 @@ def _scale_config(
     return payload
 
 
-def run(output_dir: Path, scale_dino_lambda: float | None, include_scale: bool) -> dict[str, Any]:
+def run(
+    output_dir: Path,
+    scale_dino_lambda: float | None,
+    include_scale: bool,
+    preflight_v2_path: Path | None = None,
+) -> dict[str, Any]:
     if include_scale and scale_dino_lambda is None:
         raise ValueError("--include-scale requires --scale-dino-lambda from the train-only A4 CV")
     if scale_dino_lambda is not None and (
@@ -147,11 +237,17 @@ def run(output_dir: Path, scale_dino_lambda: float | None, include_scale: bool) 
         raise ValueError("--scale-dino-lambda must be finite and positive")
 
     output_dir.mkdir(parents=True, exist_ok=True)
+    selection = _load_transport_selection(preflight_v2_path)
     written: dict[str, str] = {}
     frozen: dict[str, dict[str, Any]] = {}
     for name, template in TEMPLATES.items():
         payload = _read_yaml(template)
         _freeze_screen_lambda(payload)
+        model_runtime = _apply_transport_selection(
+            payload, output_dir=output_dir, name=name, selection=selection
+        )
+        if model_runtime is not None:
+            written[f"model_{name}"] = model_runtime
         target = output_dir / f"{name}.yaml"
         _write(target, payload)
         written[name] = target.relative_to(ROOT).as_posix()
@@ -212,6 +308,15 @@ def run(output_dir: Path, scale_dino_lambda: float | None, include_scale: bool) 
         ),
         "files": {name: {"path": path, "sha256": _sha(ROOT / path)} for name, path in written.items()},
         "scale_status": scale_status,
+        "transport_selection": (
+            {
+                "source": _repo_path(selection["path"]),
+                "source_file_sha256": selection["file_sha256"],
+                "source_artifact_sha256": selection.get("artifact_sha256"),
+                "radius": selection["radius"],
+                "temperature": selection["temperature"],
+            } if selection is not None else None
+        ),
         "private_test_opened": False,
     }
     (output_dir / "manifest.json").write_text(
@@ -225,8 +330,14 @@ def main() -> int:
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--scale-dino-lambda", type=float)
     parser.add_argument("--include-scale", action="store_true")
+    parser.add_argument("--preflight-v2", type=Path)
     args = parser.parse_args()
-    payload = run(args.output_dir.resolve(), args.scale_dino_lambda, args.include_scale)
+    payload = run(
+        args.output_dir.resolve(),
+        args.scale_dino_lambda,
+        args.include_scale,
+        args.preflight_v2.resolve() if args.preflight_v2 is not None else None,
+    )
     print(json.dumps(payload, sort_keys=True))
     return 0
 

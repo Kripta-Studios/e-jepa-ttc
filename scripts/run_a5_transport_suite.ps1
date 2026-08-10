@@ -17,13 +17,13 @@ $Root = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 Set-Location $Root
 
 $BaseHead = "2e2db3533081bf56b67cccbdc01e52c29f02bad0"
-$Logs = Join-Path $Root "artifacts\logs\a5_transport_suite_v1"
+$Logs = Join-Path $Root "artifacts\logs\a5_transport_suite_v2"
 $Metrics = Join-Path $Root "artifacts\metrics"
-$Frozen = Join-Path $Root "artifacts\configs\a5_transport_suite_v1"
-$Preflight = Join-Path $Root "artifacts\metrics\a5_transport_preflight_v1"
-$Audit = Join-Path $Root "artifacts\audit\a5_transport_suite_v1"
-$BundleStage = Join-Path $Root "artifacts\audit\a5_transport_suite_results_v1"
-$BundleZip = Join-Path $Root "artifacts\audit\a5_transport_suite_results_v1.zip"
+$Frozen = Join-Path $Root "artifacts\configs\a5_transport_suite_v2"
+$Preflight = Join-Path $Root "artifacts\metrics\a5_transport_preflight_v2"
+$Audit = Join-Path $Root "artifacts\audit\a5_transport_suite_v2"
+$BundleStage = Join-Path $Root "artifacts\audit\a5_transport_suite_results_v2"
+$BundleZip = Join-Path $Root "artifacts\audit\a5_transport_suite_results_v2.zip"
 
 $RunSeed7 = Join-Path $Root "artifacts\runs\causal_scale_eap_screen_a5_corr_v1_seed7"
 $RunSeed13 = Join-Path $Root "artifacts\runs\causal_scale_eap_screen_a5_corr_v1_seed13"
@@ -37,6 +37,8 @@ $script:Steps = [System.Collections.Generic.List[object]]::new()
 $script:SuiteStatus = "STARTED"
 $script:ResolvedScaleLambda = $null
 $script:ResolvedA4S1Summary = $null
+$script:ResolvedTransportRadius = $null
+$script:ResolvedTransportTemperature = $null
 
 function Ensure-Directory([string]$Path) {
     New-Item -ItemType Directory -Force -Path $Path | Out-Null
@@ -220,12 +222,14 @@ function Finalize-Bundle {
         Write-CheckpointInventory (Join-Path $BundleStage "checkpoint_inventory.csv")
 
         $manifest = [ordered]@{
-            artifact_type = "a5_transport_suite_results_bundle_v1"
+            artifact_type = "a5_transport_suite_results_bundle_v2"
             created_at = (Get-Date).ToUniversalTime().ToString("o")
             suite_status = $script:SuiteStatus
             preregistered_base_head = $BaseHead
             current_head = (git rev-parse HEAD).Trim()
             screen_dino_lambda = 4.0
+            selected_transport_radius = $script:ResolvedTransportRadius
+            selected_transport_temperature = $script:ResolvedTransportTemperature
             scale_dino_lambda = $script:ResolvedScaleLambda
             a4_s1_summary = $script:ResolvedA4S1Summary
             private_test_opened = $false
@@ -278,6 +282,7 @@ try {
             "src/e_jepa_ttc/models/causal_scale_ttc.py",
             "src/e_jepa_ttc/training/causal_scale_eap.py",
             "scripts/diagnose_a5_transport_preflight.py",
+            "scripts/diagnose_a5_transport_preflight_v2.py",
             "scripts/diagnose_a5_corr_transport.py",
             "scripts/freeze_a5_suite_configs.py",
             "scripts/audit_a5_capacity_resolution.py",
@@ -289,6 +294,8 @@ try {
         ) | Out-Null
         Invoke-Python "01_pytest_a5" @(
             "-m", "pytest", "-q",
+            "tests/unit/test_a5_transport_preflight_v2.py",
+            "tests/unit/test_a5_freeze_transport_selection_v2.py",
             "tests/unit/test_a5_local_transport.py",
             "tests/unit/test_causal_scale_ttc.py",
             "tests/unit/test_causal_scale_a4_dino_teacher.py",
@@ -300,42 +307,49 @@ try {
 
     Invoke-Python "02_capacity_resolution_audit" @(
         "scripts/audit_a5_capacity_resolution.py",
-        "--output", "artifacts/audit/a5_transport_suite_v1/capacity_resolution.json"
+        "--output", "artifacts/audit/a5_transport_suite_v2/capacity_resolution.json"
     ) | Out-Null
     Invoke-Python "03_scale_readiness" @(
         "scripts/audit_a5_scale_readiness.py",
-        "--output", "artifacts/audit/a5_transport_suite_v1/scale_readiness.json"
+        "--output", "artifacts/audit/a5_transport_suite_v2/scale_readiness.json"
     ) | Out-Null
 
-    # Freeze screen configs at lambda=4. Scale configs, if possible, use only a
-    # train-only CV lambda and are causally compared with A4-S1 at the same lambda.
+    # V2 is the preregistered falsification audit that resolves V1's best-of-K,
+    # radius and temperature ambiguity without opening validation or training.
+    Reset-Path $Preflight
+    Invoke-Python "04_preflight_v2" @(
+        "scripts/diagnose_a5_transport_preflight_v2.py",
+        "--output-dir", "artifacts/metrics/a5_transport_preflight_v2",
+        "--device", $Device,
+        "--samples", "512",
+        "--batch-size", "8"
+    ) | Out-Null
+    $preflightPayload = Read-Json (Join-Path $Preflight "a5_transport_preflight_v2.json")
+    if ($preflightPayload.decision.a5_corr_authorized -ne $true) {
+        $reason = [string]$preflightPayload.decision.next_action
+        throw "STOP::STOPPED_PREFLIGHT_V2_$reason"
+    }
+    $script:ResolvedTransportRadius = [int]$preflightPayload.decision.selected_radius
+    $script:ResolvedTransportTemperature = [double]$preflightPayload.decision.selected_temperature
+    Write-Host "A5-PREFLIGHT-V2 authorized radius=$script:ResolvedTransportRadius temperature=$script:ResolvedTransportTemperature" -ForegroundColor Green
+
+    # Freeze runtime configs only after V2, binding every screen/capacity/scale
+    # arm to the train-only selected radius/temperature. Screen lambda remains 4.
     $script:ResolvedScaleLambda = Find-ScaleLambda
     $freezeArgs = @(
         "scripts/freeze_a5_suite_configs.py",
-        "--output-dir", "artifacts/configs/a5_transport_suite_v1"
+        "--output-dir", "artifacts/configs/a5_transport_suite_v2",
+        "--preflight-v2", "artifacts/metrics/a5_transport_preflight_v2/a5_transport_preflight_v2.json"
     )
     if ($RunScale -and $null -ne $script:ResolvedScaleLambda) {
         $freezeArgs += @("--include-scale", "--scale-dino-lambda", ([string]$script:ResolvedScaleLambda))
     }
-    Invoke-Python "04_freeze_configs" $freezeArgs | Out-Null
-
-    Reset-Path $Preflight
-    $preflightCode = Invoke-Python "05_preflight" @(
-        "scripts/diagnose_a5_transport_preflight.py",
-        "--output-dir", "artifacts/metrics/a5_transport_preflight_v1",
-        "--device", $Device,
-        "--samples", "256",
-        "--batch-size", "8",
-        "--gradient-batches", "8"
-    ) @(0,3)
-    if ($preflightCode -ne 0) {
-        throw "STOP::STOPPED_PREFLIGHT_NOT_AUTHORIZED"
-    }
+    Invoke-Python "05_freeze_configs" $freezeArgs | Out-Null
 
     Reset-Path $RunSeed7
     Invoke-Python "10_train_a5_seed7" @(
         "scripts/train_causal_scale_eap_screen.py",
-        "--config", "artifacts/configs/a5_transport_suite_v1/seed7.yaml",
+        "--config", "artifacts/configs/a5_transport_suite_v2/seed7.yaml",
         "--output-dir", "artifacts/runs/causal_scale_eap_screen_a5_corr_v1_seed7",
         "--device", $Device
     ) | Out-Null
@@ -346,7 +360,7 @@ try {
         "scripts/diagnose_a5_corr_transport.py",
         "--child-summary", "artifacts/runs/causal_scale_eap_screen_a5_corr_v1_seed7/summary.json",
         "--parent-summary", $A4Parent,
-        "--output", "artifacts/audit/a5_transport_suite_v1/a5_seed7_gate.json"
+        "--output", "artifacts/audit/a5_transport_suite_v2/a5_seed7_gate.json"
     ) @(0,4)
     if ($gateCode -ne 0) {
         throw "STOP::STOPPED_A5_SEED7_MECHANISTIC_GATE"
@@ -356,14 +370,14 @@ try {
         Reset-Path $RunSeed13
         Invoke-Python "20_train_a5_seed13" @(
             "scripts/train_causal_scale_eap_screen.py",
-            "--config", "artifacts/configs/a5_transport_suite_v1/seed13.yaml",
+            "--config", "artifacts/configs/a5_transport_suite_v2/seed13.yaml",
             "--output-dir", "artifacts/runs/causal_scale_eap_screen_a5_corr_v1_seed13",
             "--device", $Device
         ) | Out-Null
         Reset-Path $RunSeed23
         Invoke-Python "21_train_a5_seed23" @(
             "scripts/train_causal_scale_eap_screen.py",
-            "--config", "artifacts/configs/a5_transport_suite_v1/seed23.yaml",
+            "--config", "artifacts/configs/a5_transport_suite_v2/seed23.yaml",
             "--output-dir", "artifacts/runs/causal_scale_eap_screen_a5_corr_v1_seed23",
             "--device", $Device
         ) | Out-Null
@@ -372,7 +386,7 @@ try {
             "--summary", "artifacts/runs/causal_scale_eap_screen_a5_corr_v1_seed7/summary.json",
             "--summary", "artifacts/runs/causal_scale_eap_screen_a5_corr_v1_seed13/summary.json",
             "--summary", "artifacts/runs/causal_scale_eap_screen_a5_corr_v1_seed23/summary.json",
-            "--output", "artifacts/audit/a5_transport_suite_v1/replication_summary.json"
+            "--output", "artifacts/audit/a5_transport_suite_v2/replication_summary.json"
         ) @(0,5)
         if ($repCode -ne 0) {
             throw "STOP::STOPPED_REPLICATION_GATE"
@@ -383,14 +397,14 @@ try {
         Reset-Path $RunCapS
         Invoke-Python "30_train_cap_s" @(
             "scripts/train_causal_scale_eap_screen.py",
-            "--config", "artifacts/configs/a5_transport_suite_v1/cap_s.yaml",
+            "--config", "artifacts/configs/a5_transport_suite_v2/cap_s.yaml",
             "--output-dir", "artifacts/runs/causal_scale_eap_screen_a5_cap_s_v1_seed7",
             "--device", $Device
         ) | Out-Null
         Reset-Path $RunCapM
         Invoke-Python "31_train_cap_m" @(
             "scripts/train_causal_scale_eap_screen.py",
-            "--config", "artifacts/configs/a5_transport_suite_v1/cap_m.yaml",
+            "--config", "artifacts/configs/a5_transport_suite_v2/cap_m.yaml",
             "--output-dir", "artifacts/runs/causal_scale_eap_screen_a5_cap_m_v1_seed7",
             "--device", $Device
         ) | Out-Null
@@ -399,7 +413,7 @@ try {
             "--base-summary", "artifacts/runs/causal_scale_eap_screen_a5_corr_v1_seed7/summary.json",
             "--cap-s-summary", "artifacts/runs/causal_scale_eap_screen_a5_cap_s_v1_seed7/summary.json",
             "--cap-m-summary", "artifacts/runs/causal_scale_eap_screen_a5_cap_m_v1_seed7/summary.json",
-            "--output", "artifacts/audit/a5_transport_suite_v1/capacity_summary.json"
+            "--output", "artifacts/audit/a5_transport_suite_v2/capacity_summary.json"
         ) | Out-Null
     }
 
@@ -422,7 +436,7 @@ try {
         Reset-Path $Run8k
         Invoke-Python "40_train_a5_8k" @(
             "scripts/train_causal_scale_eap_screen.py",
-            "--config", "artifacts/configs/a5_transport_suite_v1/scale_8192_seed7.yaml",
+            "--config", "artifacts/configs/a5_transport_suite_v2/scale_8192_seed7.yaml",
             "--output-dir", "artifacts/runs/causal_scale_eap_a5_corr_v1_train8192_seed7",
             "--device", $Device
         ) | Out-Null
@@ -430,7 +444,7 @@ try {
             "scripts/diagnose_a5_corr_transport.py",
             "--child-summary", "artifacts/runs/causal_scale_eap_a5_corr_v1_train8192_seed7/summary.json",
             "--parent-summary", $script:ResolvedA4S1Summary,
-            "--output", "artifacts/audit/a5_transport_suite_v1/a5_8k_vs_a4_s1_gate.json"
+            "--output", "artifacts/audit/a5_transport_suite_v2/a5_8k_vs_a4_s1_gate.json"
         ) @(0,4)
         if ($gate8 -ne 0) {
             throw "STOP::STOPPED_8K_TRANSPORT_GATE"
@@ -441,7 +455,7 @@ try {
             Reset-Path $Run16k
             Invoke-Python "50_train_a5_16k" @(
                 "scripts/train_causal_scale_eap_screen.py",
-                "--config", "artifacts/configs/a5_transport_suite_v1/scale_16384_seed7.yaml",
+                "--config", "artifacts/configs/a5_transport_suite_v2/scale_16384_seed7.yaml",
                 "--output-dir", "artifacts/runs/causal_scale_eap_a5_corr_v1_train16384_seed7",
                 "--device", $Device
             ) | Out-Null
@@ -449,7 +463,7 @@ try {
                 "scripts/summarize_a5_scale.py",
                 "--base-summary", "artifacts/runs/causal_scale_eap_a5_corr_v1_train8192_seed7/summary.json",
                 "--scaled-summary", "artifacts/runs/causal_scale_eap_a5_corr_v1_train16384_seed7/summary.json",
-                "--output", "artifacts/audit/a5_transport_suite_v1/scale_8k_to_16k_summary.json"
+                "--output", "artifacts/audit/a5_transport_suite_v2/scale_8k_to_16k_summary.json"
             ) | Out-Null
         } else {
             Write-Warning "16k event+DINO manifests do not exist yet; recorded as not ready and skipped."
