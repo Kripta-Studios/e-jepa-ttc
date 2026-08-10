@@ -13,6 +13,7 @@ from scripts.train_garl_matched_from_cache import (
     ShardGroupedSampler,
     _collate,
     _prediction,
+    _resolve_device,
 )
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -91,3 +92,9 @@ def test_cached_training_script_is_directly_executable() -> None:
 
     assert completed.returncode == 0, completed.stderr
     assert "--cache-manifest" in completed.stdout
+
+
+def test_cuda_device_gets_explicit_default_index() -> None:
+    assert _resolve_device("cuda") == torch.device("cuda:0")
+    assert _resolve_device("cuda:1") == torch.device("cuda:1")
+    assert _resolve_device("cpu") == torch.device("cpu")

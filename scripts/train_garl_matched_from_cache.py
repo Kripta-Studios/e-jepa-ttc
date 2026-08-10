@@ -294,6 +294,13 @@ def _restore_rng(payload: dict[str, Any], generator: torch.Generator) -> None:
     generator.set_state(payload["loader_generator"])
 
 
+def _resolve_device(device_name: str) -> torch.device:
+    device = torch.device(device_name)
+    if device.type == "cuda" and device.index is None:
+        return torch.device("cuda", 0)
+    return device
+
+
 def train(
     *,
     release_root: Path,
@@ -356,7 +363,7 @@ def train(
     protocol_identity = hashlib.sha256(
         json.dumps(protocol, sort_keys=True).encode("utf-8")
     ).hexdigest()
-    device = torch.device(device_name)
+    device = _resolve_device(device_name)
     trainer_api.seed_everything(seed)
     torch.backends.cudnn.benchmark = False
     torch.backends.cudnn.deterministic = True
