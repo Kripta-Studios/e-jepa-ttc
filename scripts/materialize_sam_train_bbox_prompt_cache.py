@@ -234,6 +234,58 @@ def _load_valid_sidecar(
     return payload
 
 
+def _load_complete_manifest(
+    *,
+    manifest_path: Path,
+    output_dir: Path,
+    frame: pd.DataFrame,
+    config_path: Path,
+    subset_manifest: Path,
+    train_data: Path,
+    screen_cache_manifest: Path,
+    shard_rows: int,
+) -> dict[str, Any] | None:
+    if not manifest_path.is_file():
+        return None
+    payload = json.loads(manifest_path.read_text(encoding="utf-8"))
+    if not verify_artifact_hash(payload) or payload.get("status") != "passed":
+        return None
+    expected_source = {
+        "subset_manifest_sha256": sha256_file(subset_manifest),
+        "train_data_sha256": sha256_file(train_data),
+        "screen_cache_manifest_sha256": sha256_file(screen_cache_manifest),
+        "tokens_sha256": canonical_tokens_hash(
+            [str(value) for value in frame["sample_token"].tolist()]
+        ),
+    }
+    observed_source = cast(dict[str, Any], payload.get("source", {}))
+    if any(observed_source.get(key) != value for key, value in expected_source.items()):
+        return None
+    observed_config = cast(dict[str, Any], payload.get("config", {}))
+    if observed_config.get("sha256") != sha256_file(config_path):
+        return None
+    shards = cast(dict[str, Any], payload.get("cache", {})).get("shards")
+    if not isinstance(shards, list):
+        return None
+    expected_shard_count = math.ceil(len(frame) / shard_rows)
+    if len(shards) != expected_shard_count:
+        return None
+    for shard_index, start in enumerate(range(0, len(frame), shard_rows)):
+        shard = cast(dict[str, Any], shards[shard_index])
+        if int(shard.get("shard_index", -1)) != shard_index:
+            return None
+        tokens = [
+            str(value)
+            for value in frame.iloc[start : start + shard_rows]["sample_token"].tolist()
+        ]
+        npz_path = output_dir / str(shard["npz_path"])
+        sidecar_path = output_dir / f"shard-{shard_index:05d}.json"
+        sidecar = _load_valid_sidecar(sidecar_path, npz_path, tokens)
+        if sidecar is None or sidecar.get("artifact_sha256") != shard.get("sidecar_sha256"):
+            return None
+    return payload
+
+
 def _materialize_shard(
     *,
     shard_frame: pd.DataFrame,
@@ -440,10 +492,22 @@ def run_materialization(
         "expected_weights_sha256"
     ]:
         raise ValueError("SAM snapshot mismatch")
-    if not torch.cuda.is_available():
-        raise RuntimeError("CUDA is required")
     output_dir.mkdir(parents=True, exist_ok=True)
     shard_rows = int(output["shard_rows"])
+    complete = _load_complete_manifest(
+        manifest_path=output_dir / "manifest.json",
+        output_dir=output_dir,
+        frame=frame,
+        config_path=config_path,
+        subset_manifest=subset_manifest,
+        train_data=train_data,
+        screen_cache_manifest=screen_cache_manifest,
+        shard_rows=shard_rows,
+    )
+    if complete is not None:
+        return complete
+    if not torch.cuda.is_available():
+        raise RuntimeError("CUDA is required")
     sidecars: list[dict[str, Any]] = []
     pending: list[tuple[int, pd.DataFrame, Path, Path]] = []
     for shard_index, start in enumerate(range(0, len(frame), shard_rows)):
