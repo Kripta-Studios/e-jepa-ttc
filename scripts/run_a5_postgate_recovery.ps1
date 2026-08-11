@@ -1,7 +1,8 @@
 param(
     [string]$Device = "cuda:0",
     [switch]$Force,
-    [switch]$SkipTests
+    [switch]$SkipTests,
+    [switch]$ResumeAfterDiagnosticReplication
 )
 $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
@@ -29,12 +30,12 @@ function Invoke-Python([string]$Name,[string[]]$PythonArgs,[int[]]$Allowed=@(0))
     Write-Host "`n=== $Name ===" -ForegroundColor Cyan
     Write-Host ("python " + ($PythonArgs -join " "))
     $started=Get-Date
-    & python @PythonArgs 2>&1 | Tee-Object -FilePath $log
+    & python @PythonArgs 2>&1 | Tee-Object -FilePath $log | ForEach-Object { Write-Host $_ }
     $code=$LASTEXITCODE
     if (-not (Test-Path $log)) { New-Item -ItemType File -Force $log | Out-Null }
     $script:Steps += [PSCustomObject]@{name=$Name;exit_code=$code;elapsed_seconds=((Get-Date)-$started).TotalSeconds;log=$log}
     if ($Allowed -notcontains $code) { throw "Step $Name failed with exit code $code" }
-    return $code
+    return [int]$code
 }
 function Copy-IfExists([string]$Source,[string]$DestRoot) {
     if (Test-Path $Source) {
@@ -106,9 +107,20 @@ try {
     Reset-Path $Frozen
     Invoke-Python "03_freeze_recovery_configs" @("scripts/freeze_a5_postgate_recovery_configs.py","--base-config-dir","artifacts/configs/a5_transport_suite_v3","--output-dir",$Frozen) | Out-Null
 
-    foreach($seed in @(13,23)){
-        $run="artifacts/runs/causal_scale_eap_screen_a5_corr_v1_seed$seed"; Reset-Path $run
-        Invoke-Python "10_train_diagnostic_seed$seed" @("scripts/train_causal_scale_eap_screen.py","--config","$Frozen/diagnostic_seed$seed.yaml","--output-dir",$run,"--device",$Device) | Out-Null
+    if ($ResumeAfterDiagnosticReplication) {
+        foreach($seed in @(7,13,23)){
+            $summary="artifacts/runs/causal_scale_eap_screen_a5_corr_v1_seed$seed/summary.json"
+            if (-not (Test-Path $summary)) {
+                throw "Cannot resume after diagnostic replication: missing $summary"
+            }
+        }
+        Write-Host "`n=== 10_reuse_diagnostic_runs ===" -ForegroundColor Cyan
+        Write-Host "Reusing existing A5 diagnostic seeds 7/13/23; the replication gate is recomputed from their summaries."
+    } else {
+        foreach($seed in @(13,23)){
+            $run="artifacts/runs/causal_scale_eap_screen_a5_corr_v1_seed$seed"; Reset-Path $run
+            Invoke-Python "10_train_diagnostic_seed$seed" @("scripts/train_causal_scale_eap_screen.py","--config","$Frozen/diagnostic_seed$seed.yaml","--output-dir",$run,"--device",$Device) | Out-Null
+        }
     }
     $rep=Invoke-Python "12_diagnostic_replication" @("scripts/summarize_a5_signal_replication.py","--protocol",$Protocol,"--summary","artifacts/runs/causal_scale_eap_screen_a5_corr_v1_seed7/summary.json","--summary","artifacts/runs/causal_scale_eap_screen_a5_corr_v1_seed13/summary.json","--summary","artifacts/runs/causal_scale_eap_screen_a5_corr_v1_seed23/summary.json","--output","$Audit/diagnostic_replication.json") @(0,6)
     if($rep -ne 0){$script:Status="STOPPED_DIAGNOSTIC_REPLICATION_NOT_CONFIRMED"; throw "STOP"}
