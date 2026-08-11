@@ -16,6 +16,30 @@ param(
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
+
+function Invoke-NativeExitCode {
+    param(
+        [Parameter(Mandatory=$true)][string]$FilePath,
+        [Parameter(Mandatory=$false)][string[]]$Arguments = @(),
+        [switch]$Quiet
+    )
+    $psi = [System.Diagnostics.ProcessStartInfo]::new()
+    $psi.FileName = $FilePath
+    $psi.UseShellExecute = $false
+    $psi.RedirectStandardOutput = [bool]$Quiet
+    $psi.RedirectStandardError = [bool]$Quiet
+    foreach ($arg in $Arguments) { [void]$psi.ArgumentList.Add([string]$arg) }
+    $proc = [System.Diagnostics.Process]::new()
+    $proc.StartInfo = $psi
+    [void]$proc.Start()
+    if ($Quiet) {
+        $null = $proc.StandardOutput.ReadToEnd()
+        $null = $proc.StandardError.ReadToEnd()
+    }
+    $proc.WaitForExit()
+    return [int]$proc.ExitCode
+}
+
 $Root = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 Set-Location $Root
 
@@ -257,8 +281,8 @@ Start-HardwareMonitor
 
 try {
     $head=(& git rev-parse HEAD).Trim()
-    & git merge-base --is-ancestor $ExpectedBase $head 2>$null
-    if($LASTEXITCODE -ne 0){throw "HEAD $head is not a descendant of expected hardening base $ExpectedBase"}
+    $mergeBaseCode = Invoke-NativeExitCode -FilePath ((Get-Command git).Source) -Arguments @("merge-base","--is-ancestor",$ExpectedBase,$head) -Quiet
+    if($mergeBaseCode -ne 0){throw "HEAD $head is not a descendant of expected hardening base $ExpectedBase"}
     (& git status --short) | Set-Content (Join-Path $Master "git_status_start.txt") -Encoding utf8
     (& git log -30 --oneline --decorate) | Set-Content (Join-Path $Master "git_log_30.txt") -Encoding utf8
     (& nvidia-smi) | Set-Content (Join-Path $Master "nvidia_smi_start.txt") -Encoding utf8
