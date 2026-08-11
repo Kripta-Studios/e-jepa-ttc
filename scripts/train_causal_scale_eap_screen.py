@@ -48,6 +48,50 @@ from scripts.evaluate_causal_scale_v5_operator import (  # noqa: E402
 DEFAULT_CONFIG = ROOT / "configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_v1.yaml"
 
 
+def _porcelain_path(line: str) -> str:
+    """Extract a normalized path from a Git porcelain-v1 status line."""
+
+    payload = line[3:] if len(line) >= 4 else line
+    if " -> " in payload:
+        payload = payload.split(" -> ", 1)[1]
+    return payload.strip().replace("\\", "/")
+
+
+def _is_ignored_operational_tracked_path(path: str) -> bool:
+    """Return True only for observer scripts that cannot affect model numerics.
+
+    The external progress monitor is intentionally allowed to be edited while a
+    long experiment is running (for example to change its refresh interval).
+    Training/orchestration/model/config code remains fail-closed.
+    """
+
+    normalized = path.replace("\\", "/")
+    name = Path(normalized).name
+    return (
+        normalized.startswith("scripts/")
+        and name.startswith("monitor_scientific_recovery_v")
+        and name.endswith(".ps1")
+    )
+
+
+def _blocking_worktree_state(status_lines: list[str]) -> dict[str, object]:
+    """Classify worktree state while allowing observer-only tracked edits."""
+
+    base = dict(_classify_worktree_status(status_lines))
+    tracked_dirty_paths = [
+        _porcelain_path(line) for line in status_lines if not line.startswith("?? ")
+    ]
+    ignored = [
+        path for path in tracked_dirty_paths if _is_ignored_operational_tracked_path(path)
+    ]
+    blocking = [path for path in tracked_dirty_paths if path not in ignored]
+    base["tracked_dirty_paths"] = tracked_dirty_paths
+    base["ignored_operational_dirty_paths"] = ignored
+    base["blocking_tracked_dirty_paths"] = blocking
+    base["science_code_dirty"] = bool(blocking or base["untracked_code_paths"])
+    return base
+
+
 def _sha256(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as handle:
@@ -612,10 +656,15 @@ def run(
     status_lines = _git(
         "-c", "core.quotepath=false", "status", "--porcelain=v1", "--untracked-files=all"
     ).splitlines()
-    worktree = _classify_worktree_status(status_lines)
-    code_dirty = bool(worktree["tracked_dirty"] or worktree["untracked_code_paths"])
+    worktree = _blocking_worktree_state(status_lines)
+    code_dirty = bool(worktree["science_code_dirty"])
     if code_dirty:
-        raise RuntimeError("representative real screen requires clean tracked/code state")
+        blocking = worktree.get("blocking_tracked_dirty_paths", [])
+        untracked_code = worktree.get("untracked_code_paths", [])
+        raise RuntimeError(
+            "representative real screen requires clean scientific code state; "
+            f"blocking_tracked={blocking}, untracked_code={untracked_code}"
+        )
 
     model_path = _resolve(raw["model_config"])
     model_config = _model_config(model_path)

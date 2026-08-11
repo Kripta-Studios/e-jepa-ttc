@@ -48,7 +48,7 @@ def _metrics(target: np.ndarray, pred: np.ndarray, sequence: np.ndarray) -> dict
     }
 
 
-def run(ejepa_path: Path, garl_path: Path, output: Path, resamples: int, seed: int) -> dict[str, Any]:
+def run(ejepa_path: Path, garl_path: Path, output: Path, resamples: int, seed: int, cluster_metadata: Path | None = None) -> dict[str, Any]:
     e = _normalize(_read(ejepa_path), "ejepa")
     g = _normalize(_read(garl_path), "garl")
     if set(e["sample_token"].astype(str)) != set(g["sample_token"].astype(str)):
@@ -71,9 +71,24 @@ def run(ejepa_path: Path, garl_path: Path, output: Path, resamples: int, seed: i
     elif "track_id_garl" in merged.columns:
         merged["track_id"] = merged["track_id_garl"].astype(str)
         clustering = "sequence_track_garl_only"
+    elif cluster_metadata is not None:
+        metadata = _read(cluster_metadata)
+        required_meta = {"sample_token", "sequence_id", "track_id"}
+        if not required_meta.issubset(metadata.columns):
+            raise ValueError("Cluster metadata lacks sample_token/sequence_id/track_id")
+        metadata = metadata[["sample_token", "sequence_id", "track_id"]].copy()
+        if metadata["sample_token"].astype(str).duplicated().any():
+            raise ValueError("Cluster metadata contains duplicate sample_token")
+        merged = merged.merge(metadata, on=["sample_token", "sequence_id"], validate="one_to_one")
+        if len(merged) != len(e):
+            raise ValueError("Cluster metadata did not cover all paired rows")
+        merged["track_id"] = merged["track_id"].astype(str)
+        clustering = "sequence_track_external_metadata"
     else:
-        merged["track_id"] = merged["sample_token"].astype(str)
-        clustering = "sequence_sample_fallback"
+        # Never use sample-level pseudo-clusters for temporally correlated windows.
+        # With no track metadata, sequence is the conservative clustering unit.
+        merged["track_id"] = "__sequence_only__"
+        clustering = "sequence_only_fallback"
     merged["cluster"] = merged["sequence_id"].astype(str) + "::" + merged["track_id"].astype(str)
     groups = [idx.to_numpy(dtype=np.int64) for _, idx in merged.groupby("cluster", sort=True).groups.items()]
     if len(groups) < 2:
@@ -133,9 +148,10 @@ def main() -> int:
     p.add_argument("--output", type=Path, required=True)
     p.add_argument("--resamples", type=int, default=5000)
     p.add_argument("--seed", type=int, default=20260811)
+    p.add_argument("--cluster-metadata", type=Path)
     args = p.parse_args()
     try:
-        report = run(args.ejepa_predictions.resolve(), args.garl_predictions.resolve(), args.output.resolve(), args.resamples, args.seed)
+        report = run(args.ejepa_predictions.resolve(), args.garl_predictions.resolve(), args.output.resolve(), args.resamples, args.seed, args.cluster_metadata.resolve() if args.cluster_metadata else None)
     except Exception as exc:
         print(f"paired bootstrap failed: {type(exc).__name__}: {exc}", file=sys.stderr)
         return 1
