@@ -247,6 +247,7 @@ def _validate_a5_transport_change(
     supported_a5_types = {
         "a4_endpoint_dino_plus_event_native_local_cross_time_transport",
         "a4_frozen_endpoint_plus_event_native_local_cross_time_transport",
+        "a4_frozen_endpoint_plus_adaptive_transport_adapter",
     }
     if change_type not in supported_a5_types:
         if model_config.transport_enabled:
@@ -259,26 +260,44 @@ def _validate_a5_transport_change(
         raise ValueError("A5 representation_change requires transport_enabled=true")
     if training_config.representation_supervision != "dinov3_local_relational":
         raise ValueError("A5 must keep A4 endpoint DINO and remove A4D temporal delta")
-    if change_type == "a4_frozen_endpoint_plus_event_native_local_cross_time_transport":
-        anchor = decision_contract.get("anchor_contract")
+    if change_type in {
+        "a4_frozen_endpoint_plus_event_native_local_cross_time_transport",
+        "a4_frozen_endpoint_plus_adaptive_transport_adapter",
+    }:
+        contract_name = (
+            "adapter_contract"
+            if change_type == "a4_frozen_endpoint_plus_adaptive_transport_adapter"
+            else "anchor_contract"
+        )
+        anchor = decision_contract.get(contract_name)
+        label = "A6-ADAPTER" if contract_name == "adapter_contract" else "A5-ANCHOR"
         if not isinstance(anchor, dict):
-            raise ValueError("A5-ANCHOR requires decision_contract.anchor_contract")
+            raise ValueError(f"{label} requires decision_contract.{contract_name}")
         if training_config.initialization_mode != "shape_compatible":
-            raise ValueError("A5-ANCHOR requires shape-compatible A4 initialization")
+            raise ValueError(f"{label} requires shape-compatible A4 initialization")
         if training_config.freeze_encoder is not True:
-            raise ValueError("A5-ANCHOR requires the inherited A4 endpoint encoder to remain frozen")
+            raise ValueError(f"{label} requires the inherited A4 endpoint encoder to remain frozen")
         if training_config.foreground_warmup_epochs != 0:
-            raise ValueError("A5-ANCHOR requires foreground_warmup_epochs=0")
+            raise ValueError(f"{label} requires foreground_warmup_epochs=0")
         if anchor.get("parent_encoder_frozen_for_entire_run") is not True:
-            raise ValueError("A5-ANCHOR must freeze the parent endpoint encoder for the full run")
+            raise ValueError(f"{label} must freeze the parent endpoint encoder for the full run")
         if anchor.get("geometry_must_equal_parent_by_construction") is not True:
-            raise ValueError("A5-ANCHOR geometry preservation contract is missing")
+            raise ValueError(f"{label} geometry preservation contract is missing")
         if anchor.get("initialization_mode") != "shape_compatible":
-            raise ValueError("A5-ANCHOR initialization mode differs from frozen contract")
+            raise ValueError(f"{label} initialization mode differs from frozen contract")
         if anchor.get("initialization_checkpoint") != training_config.initialization_checkpoint:
-            raise ValueError("A5-ANCHOR initialization checkpoint differs from training config")
+            raise ValueError(f"{label} initialization checkpoint differs from training config")
         if anchor.get("initialization_checkpoint_sha256") != training_config.initialization_checkpoint_sha256:
-            raise ValueError("A5-ANCHOR initialization checkpoint SHA256 differs from training config")
+            raise ValueError(f"{label} initialization checkpoint SHA256 differs from training config")
+        if contract_name == "adapter_contract":
+            if model_config.transport_adapter_enabled is not True:
+                raise ValueError("A6-ADAPTER requires transport_adapter_enabled=true")
+            if int(anchor.get("transport_adapter_depth", -1)) != model_config.transport_adapter_depth:
+                raise ValueError("A6-ADAPTER depth differs from frozen contract")
+            if anchor.get("adapter_is_transport_only") is not True:
+                raise ValueError("A6-ADAPTER may only adapt the cost-volume feature path")
+            if anchor.get("adapter_identity_initialized") is not True:
+                raise ValueError("A6-ADAPTER must be identity-initialized")
     elif training_config.initialization_mode != "none" or training_config.freeze_encoder:
         raise ValueError("baseline A5-CORR may not silently inherit/freeze an A4 checkpoint")
     if training_config.representation_temporal_delta_weight != 0.0:

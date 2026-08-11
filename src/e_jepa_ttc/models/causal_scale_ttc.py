@@ -62,6 +62,8 @@ class CausalScaleTTCConfig:
     transport_enabled: bool = False
     transport_radius: int = 4
     transport_temperature: float = 0.07
+    transport_adapter_enabled: bool = False
+    transport_adapter_depth: int = 1
 
     def __post_init__(self) -> None:
         if self.modality not in {"event", "rgb"}:
@@ -107,6 +109,10 @@ class CausalScaleTTCConfig:
             raise ValueError("transport_radius must lie in [1,8]")
         if not math.isfinite(self.transport_temperature) or self.transport_temperature <= 0.0:
             raise ValueError("transport_temperature must be finite and positive")
+        if self.transport_adapter_enabled and not self.transport_enabled:
+            raise ValueError("transport_adapter_enabled requires transport_enabled=true")
+        if self.transport_adapter_depth < 1 or self.transport_adapter_depth > 4:
+            raise ValueError("transport_adapter_depth must lie in [1,4]")
 
 
 @dataclass
@@ -490,6 +496,47 @@ class _EndpointEncoder(nn.Module):
         )
 
 
+class _TransportFeatureAdapter(nn.Module):
+    """Residual transport-only adaptation that leaves A4 geometry untouched.
+
+    The final convolution in each block is zero-initialized, so the adapter is
+    exactly the identity at initialization.  It is applied only to the dense
+    feature maps used by the event-to-event cost volume; foreground logits and
+    analytic height remain on the frozen A4 endpoint path.
+    """
+
+    def __init__(self, channels: int, depth: int, dropout: float) -> None:
+        super().__init__()
+        groups = math.gcd(channels, 8)
+        blocks: list[nn.Module] = []
+        for _ in range(depth):
+            final = nn.Conv2d(channels, channels, kernel_size=3, padding=1, bias=False)
+            nn.init.zeros_(final.weight)
+            blocks.append(
+                nn.ModuleDict(
+                    {
+                        "norm": nn.GroupNorm(groups, channels),
+                        "conv_in": nn.Conv2d(
+                            channels, channels, kernel_size=3, padding=1, bias=False
+                        ),
+                        "dropout": nn.Dropout2d(dropout),
+                        "conv_out": final,
+                    }
+                )
+            )
+        self.blocks = nn.ModuleList(blocks)
+
+    def forward(self, values: torch.Tensor) -> torch.Tensor:
+        output = values
+        for block in self.blocks:
+            residual = block["norm"](output)
+            residual = functional.gelu(block["conv_in"](residual))
+            residual = block["dropout"](residual)
+            residual = block["conv_out"](residual)
+            output = output + residual
+        return output
+
+
 class _AntisymmetricResidual(nn.Module):
     def __init__(
         self,
@@ -568,6 +615,15 @@ class CausalScaleTTC(nn.Module):
         else:
             self.height_correction_head = None
         transport_dim = self.config.geometry_dim if self.config.transport_enabled else 0
+        self.transport_adapter: nn.Module | None
+        if self.config.transport_adapter_enabled:
+            self.transport_adapter = _TransportFeatureAdapter(
+                self.config.hidden_dim,
+                self.config.transport_adapter_depth,
+                self.config.dropout,
+            )
+        else:
+            self.transport_adapter = None
         self.transport_projector: nn.Module | None
         if self.config.transport_enabled:
             self.transport_projector = nn.Sequential(
@@ -705,8 +761,13 @@ class CausalScaleTTC(nn.Module):
         if self.config.transport_enabled:
             if flat_dense is None or self.transport_projector is None:
                 raise RuntimeError("A5 transport requires dense endpoint features")
-            dense = flat_dense.reshape(
-                batch, steps, flat_dense.shape[1], flat_dense.shape[2], flat_dense.shape[3]
+            transport_dense = (
+                self.transport_adapter(flat_dense)
+                if self.transport_adapter is not None
+                else flat_dense
+            )
+            dense = transport_dense.reshape(
+                batch, steps, transport_dense.shape[1], transport_dense.shape[2], transport_dense.shape[3]
             )
             pair_count = steps - 1
             dense_previous = dense[:, :-1].reshape(
