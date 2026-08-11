@@ -17,6 +17,15 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
+# Force Unicode-safe native-process I/O on Windows. This repository path may
+# contain non-ASCII characters, so never rely on the active OEM code page.
+$script:Utf8NoBom = [System.Text.UTF8Encoding]::new($false)
+[Console]::OutputEncoding = $script:Utf8NoBom
+[Console]::InputEncoding = $script:Utf8NoBom
+$OutputEncoding = $script:Utf8NoBom
+$env:PYTHONUTF8 = "1"
+$env:PYTHONIOENCODING = "utf-8"
+
 function Invoke-NativeExitCode {
     param(
         [Parameter(Mandatory=$true)][string]$FilePath,
@@ -28,6 +37,10 @@ function Invoke-NativeExitCode {
     $psi.UseShellExecute = $false
     $psi.RedirectStandardOutput = [bool]$Quiet
     $psi.RedirectStandardError = [bool]$Quiet
+    if ($Quiet) {
+        $psi.StandardOutputEncoding = $script:Utf8NoBom
+        $psi.StandardErrorEncoding = $script:Utf8NoBom
+    }
     foreach ($arg in $Arguments) { [void]$psi.ArgumentList.Add([string]$arg) }
     $proc = [System.Diagnostics.Process]::new()
     $proc.StartInfo = $psi
@@ -64,7 +77,7 @@ $TeacherManifest = Join-Path $Root "artifacts\cache\dinov3_convnext_large_relati
 $PreflightV2 = Join-Path $Root "artifacts\metrics\a5_transport_preflight_v2\a5_transport_preflight_v2.json"
 $PreflightV3 = Join-Path $Root "artifacts\metrics\a5_transport_preflight_v3_confirm\a5_transport_preflight_v3_confirm.json"
 
-$script:Rows = New-Object System.Collections.Generic.List[object]
+$script:Rows = @()
 $script:HardwareProcess = $null
 $script:LegacyWinner = $null
 $script:CausalWinner = $null
@@ -75,11 +88,19 @@ $script:TransportBlocked = $false
 $script:CausalBlocked = $false
 
 function Write-Status {
+    # Snapshot into a true PowerShell Object[] rather than wrapping a generic
+    # List[object]. PowerShell 7.x can throw "Argument types do not match"
+    # when @($genericList) is embedded in an ordered dictionary.
+    $stepsSnapshot = [object[]]$script:Rows
+    $trackedDirtyCount = [int]((& git status --porcelain --untracked-files=no | Measure-Object).Count)
+    $untrackedCount = [int]((& git ls-files --others --exclude-standard | Measure-Object).Count)
     $payload = [ordered]@{
         artifact_type = "scientific_recovery_master_status_v1"
         updated_at = (Get-Date).ToString("o")
         git_head = ((& git rev-parse HEAD) | Select-Object -First 1).Trim()
-        git_dirty = [bool]((& git status --porcelain | Measure-Object).Count)
+        git_dirty = [bool]($trackedDirtyCount -gt 0)
+        git_tracked_dirty_count = $trackedDirtyCount
+        git_untracked_count = $untrackedCount
         legacy_winner = $script:LegacyWinner
         causal_winner = $script:CausalWinner
         final_candidate_run = $script:FinalCandidateRun
@@ -88,7 +109,7 @@ function Write-Status {
         transport_blocked = $script:TransportBlocked
         causal_blocked = $script:CausalBlocked
         private_test_opened = $false
-        steps = @($script:Rows)
+        steps = $stepsSnapshot
     }
     New-Item -ItemType Directory -Force -Path (Split-Path -Parent $StatusPath) | Out-Null
     $payload | ConvertTo-Json -Depth 20 | Set-Content -LiteralPath $StatusPath -Encoding utf8
@@ -96,10 +117,11 @@ function Write-Status {
 
 function Add-StepStatus {
     param([string]$Name,[string]$Category,[string]$Status,[int]$ExitCode,[string]$Message,[string]$LogDir)
-    $script:Rows.Add([ordered]@{
+    $entry = [pscustomobject][ordered]@{
         name=$Name; category=$Category; status=$Status; exit_code=$ExitCode; message=$Message;
         log_dir=$LogDir; at=(Get-Date).ToString("o")
-    })
+    }
+    $script:Rows += $entry
     Write-Status
 }
 
@@ -134,6 +156,8 @@ function Invoke-LoggedProcess {
     $psi.UseShellExecute = $false
     $psi.RedirectStandardOutput = $true
     $psi.RedirectStandardError = $true
+    $psi.StandardOutputEncoding = $script:Utf8NoBom
+    $psi.StandardErrorEncoding = $script:Utf8NoBom
     foreach ($arg in $Arguments) { [void]$psi.ArgumentList.Add([string]$arg) }
     $proc = [System.Diagnostics.Process]::new(); $proc.StartInfo=$psi
     [void]$proc.Start()
@@ -215,7 +239,7 @@ function Invoke-ParallelTrainPair {
         $args=@("scripts/train_causal_scale_eap_screen.py","--config",$cfg,"--output-dir",$run,"--device",$Device)
         (($args | ForEach-Object { Quote-DisplayArg $_ }) -join " ") | Set-Content (Join-Path $stepDir "command.txt") -Encoding utf8
         (Get-Date).ToString("o") | Set-Content (Join-Path $stepDir "started_at.txt") -Encoding utf8
-        $psi=[System.Diagnostics.ProcessStartInfo]::new(); $psi.FileName=(Get-Command python).Source; $psi.WorkingDirectory=$Root; $psi.UseShellExecute=$false; $psi.RedirectStandardOutput=$true; $psi.RedirectStandardError=$true
+        $psi=[System.Diagnostics.ProcessStartInfo]::new(); $psi.FileName=(Get-Command python).Source; $psi.WorkingDirectory=$Root; $psi.UseShellExecute=$false; $psi.RedirectStandardOutput=$true; $psi.RedirectStandardError=$true; $psi.StandardOutputEncoding=$script:Utf8NoBom; $psi.StandardErrorEncoding=$script:Utf8NoBom
         foreach($arg in $args){[void]$psi.ArgumentList.Add([string]$arg)}
         $p=[System.Diagnostics.Process]::new();$p.StartInfo=$psi;[void]$p.Start()
         $jobs += [pscustomobject]@{Name=$name;Run=$run;StepDir=$stepDir;Proc=$p;Out=$p.StandardOutput.ReadToEndAsync();Err=$p.StandardError.ReadToEndAsync()}
@@ -277,6 +301,10 @@ $env:NUMEXPR_NUM_THREADS = "2"
 
 if ($Force -and (Test-Path $Master)) { Remove-Item -Recurse -Force $Master }
 New-Item -ItemType Directory -Force -Path $Master,$Logs,$Audit,$Configs | Out-Null
+
+# Fail-fast runtime compatibility probe: status serialization must work before
+# any expensive training or evaluation process is started.
+Write-Status
 Start-HardwareMonitor
 
 try {
