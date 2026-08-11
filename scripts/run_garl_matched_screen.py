@@ -92,8 +92,18 @@ def materialize_config(
     validation = roles.get("validation")
     if not isinstance(train, dict) or not isinstance(validation, dict):
         raise ValueError("Matched subset requires train and validation roles.")
-    if int(train.get("rows", -1)) != 2048 or int(validation.get("rows", -1)) != 2048:
-        raise ValueError("Matched Garl config requires exact 2048/2048 rows.")
+    train_rows = int(train.get("rows", -1))
+    validation_rows = int(validation.get("rows", -1))
+    if train_rows <= 0 or validation_rows <= 0:
+        raise ValueError("Matched Garl config requires positive train/validation row counts.")
+    if validation_rows != 2048:
+        raise ValueError(
+            f"Matched Garl public validation must remain the frozen 2048 rows; got {validation_rows}."
+        )
+    if train_rows not in {2048, 8192}:
+        raise ValueError(
+            f"Matched Garl train budget must be one of the preregistered 2048/8192 budgets; got {train_rows}."
+        )
 
     subset_root = subset_manifest.parent.resolve()
 
@@ -119,7 +129,7 @@ def materialize_config(
             "data_blob_dir": str((eap_root / "data_blobs").resolve()),
             "annotation_format": "parquet",
             "mode": "event_only",
-            "db_sample_size": 2048,
+            "db_sample_size": train_rows,
             "train": role_config(train),
             "test": role_config(validation),
         }
@@ -151,6 +161,8 @@ def materialize_config(
         "release_checkpoint_initialization": False,
         "selection_source": "public_validation_only",
         "minimum_selection_epoch": minimum_selection_epoch,
+        "train_rows": train_rows,
+        "validation_rows": validation_rows,
         "test_opened": False,
     }
     output_config.parent.mkdir(parents=True, exist_ok=True)

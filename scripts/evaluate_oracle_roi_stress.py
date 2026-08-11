@@ -61,7 +61,8 @@ def _evaluate(model: CausalScaleTTC, loader: DataLoader, device: torch.device, s
         for host in loader:
             batch = host.to(device)
             events = _affine(batch.events, spec["tx"], spec["ty"], spec["sx"], spec["sy"])
-            output = model(events, batch.delta_t_s)
+            delta = batch.delta_t_s[:, None].expand(-1, events.shape[1] - 1)
+            output = model(events, delta)
             prediction = torch.where(
                 output.known_mask,
                 output.ttc_mean_seconds.float(),
@@ -162,9 +163,9 @@ def main() -> int:
     p.add_argument("--validation-manifest", type=Path, required=True)
     p.add_argument("--output", type=Path, required=True)
     p.add_argument("--device", default="cuda:0")
-    p.add_argument("--batch-size", type=int, default=64)
-    p.add_argument("--num-workers", type=int, default=8)
-    p.add_argument("--prefetch-factor", type=int, default=4)
+    p.add_argument("--batch-size", type=int, default=16)
+    p.add_argument("--num-workers", type=int, default=0)
+    p.add_argument("--prefetch-factor", type=int, default=2)
     args = p.parse_args()
     try:
         report = run(args.checkpoint.resolve(), args.validation_manifest.resolve(), args.output.resolve(), args.device, args.batch_size, args.num_workers, args.prefetch_factor)

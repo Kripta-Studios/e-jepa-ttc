@@ -859,6 +859,11 @@ def run(
             if device.type == "cuda"
             else None
         ),
+        "peak_vram_reserved_mb": (
+            float(torch.cuda.max_memory_reserved(device) / 2**20)
+            if device.type == "cuda"
+            else None
+        ),
         "checkpoint": {"path": checkpoint_path.name, "sha256": _sha256(checkpoint_path)},
         "predictions": {"path": predictions_path.name, "sha256": _sha256(predictions_path)},
         "environment": environment_snapshot(),
