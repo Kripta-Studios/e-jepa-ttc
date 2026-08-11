@@ -203,6 +203,8 @@ def _loader(
     batch_size: int,
     train: bool,
     generator: torch.Generator | None,
+    num_workers: int,
+    prefetch_factor: int,
 ) -> DataLoader[CachedBatch]:
     sampler = (
         ShardGroupedSampler(dataset.shard_index_groups(), cast(torch.Generator, generator))
@@ -216,8 +218,10 @@ def _loader(
             batch_size=batch_size,
             sampler=sampler,
             shuffle=False,
-            num_workers=0,
+            num_workers=num_workers,
             pin_memory=torch.cuda.is_available(),
+            persistent_workers=num_workers > 0,
+            prefetch_factor=(prefetch_factor if num_workers > 0 else None),
             collate_fn=_collate,
         ),
     )
@@ -310,6 +314,10 @@ def train(
     seed: int = 7,
     epochs: int = 18,
     batch_size: int = 32,
+    num_workers: int = 0,
+    prefetch_factor: int = 2,
+    expected_train_rows: int = 2048,
+    expected_validation_rows: int = 2048,
     minimum_epochs: int = 8,
     early_stopping_patience: int = 5,
     maximum_runtime_hours: float = 4.5,
@@ -320,7 +328,11 @@ def train(
 
     if not 1 <= minimum_epochs <= epochs:
         raise ValueError("minimum_epochs must lie in [1, epochs].")
-    if early_stopping_patience <= 0 or not 0.0 < maximum_runtime_hours <= 4.5:
+    if num_workers < 0 or prefetch_factor <= 0:
+        raise ValueError("Invalid DataLoader worker/prefetch configuration.")
+    if expected_train_rows <= 0 or expected_validation_rows <= 0:
+        raise ValueError("Expected matched split sizes must be positive.")
+    if early_stopping_patience <= 0 or not 0.0 < maximum_runtime_hours <= 12.0:
         raise ValueError("Invalid early stopping or runtime guard.")
     if stop_after_epoch is not None and not 1 <= stop_after_epoch <= epochs:
         raise ValueError("stop_after_epoch must lie in [1, epochs].")
@@ -328,8 +340,16 @@ def train(
     if state != {"commit": EXPECTED_RELEASE_COMMIT, "dirty": False}:
         raise RuntimeError(f"Official release is not the audited clean commit: {state}")
     manifest = _read_json(cache_manifest)
-    if manifest.get("split_counts") != {"train": 2048, "validation": 2048}:
-        raise ValueError("Matched cached training requires exact 2048/2048 rows.")
+    observed_split_counts = manifest.get("split_counts")
+    expected_split_counts = {
+        "train": int(expected_train_rows),
+        "validation": int(expected_validation_rows),
+    }
+    if observed_split_counts != expected_split_counts:
+        raise ValueError(
+            "Matched cached training split mismatch: "
+            f"expected={expected_split_counts}, observed={observed_split_counts}."
+        )
     config_path = Path(str(manifest["sources"]["materialized_config"]["path"]))
     if not config_path.is_absolute():
         config_path = cache_manifest.parent / config_path
@@ -356,6 +376,10 @@ def train(
         "seed": seed,
         "epochs": epochs,
         "batch_size": batch_size,
+        "num_workers": num_workers,
+        "prefetch_factor": prefetch_factor,
+        "expected_train_rows": expected_train_rows,
+        "expected_validation_rows": expected_validation_rows,
         "minimum_epochs": minimum_epochs,
         "early_stopping_patience": early_stopping_patience,
         "maximum_runtime_hours": maximum_runtime_hours,
@@ -377,10 +401,20 @@ def train(
         raise TypeError("Matched cached datasets must expose length.")
     generator = torch.Generator().manual_seed(seed)
     train_loader = _loader(
-        train_dataset, batch_size=batch_size, train=True, generator=generator
+        train_dataset,
+        batch_size=batch_size,
+        train=True,
+        generator=generator,
+        num_workers=num_workers,
+        prefetch_factor=prefetch_factor,
     )
     validation_loader = _loader(
-        validation_dataset, batch_size=batch_size, train=False, generator=None
+        validation_dataset,
+        batch_size=batch_size,
+        train=False,
+        generator=None,
+        num_workers=num_workers,
+        prefetch_factor=prefetch_factor,
     )
     model = model_api.TTCNetwork(config, is_train=True).to(device)
     optimizer, scheduler = trainer_api.prepare_optimizer(model, config)
@@ -582,6 +616,8 @@ def train(
             "seed": seed,
             "epochs_maximum": epochs,
             "batch_size": batch_size,
+            "num_workers": num_workers,
+            "prefetch_factor": prefetch_factor,
             "precision": "fp32",
             "from_scratch": True,
             "pretrained_release_checkpoint_used": False,
@@ -635,6 +671,10 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--seed", type=int, default=7)
     parser.add_argument("--epochs", type=int, default=18)
     parser.add_argument("--batch-size", type=int, default=32)
+    parser.add_argument("--num-workers", type=int, default=0)
+    parser.add_argument("--prefetch-factor", type=int, default=2)
+    parser.add_argument("--expected-train-rows", type=int, default=2048)
+    parser.add_argument("--expected-validation-rows", type=int, default=2048)
     parser.add_argument("--minimum-epochs", type=int, default=8)
     parser.add_argument("--early-stopping-patience", type=int, default=5)
     parser.add_argument("--maximum-runtime-hours", type=float, default=4.5)
@@ -654,6 +694,10 @@ def main(argv: Sequence[str] | None = None) -> int:
             seed=args.seed,
             epochs=args.epochs,
             batch_size=args.batch_size,
+            num_workers=args.num_workers,
+            prefetch_factor=args.prefetch_factor,
+            expected_train_rows=args.expected_train_rows,
+            expected_validation_rows=args.expected_validation_rows,
             minimum_epochs=args.minimum_epochs,
             early_stopping_patience=args.early_stopping_patience,
             maximum_runtime_hours=args.maximum_runtime_hours,

@@ -9,6 +9,11 @@ Set-StrictMode -Version Latest
 $Root = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 Set-Location $Root
 
+$ExpectedHead = (& git rev-parse HEAD).Trim()
+if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($ExpectedHead)) {
+    throw "Unable to resolve starting git HEAD for A6 provenance guard"
+}
+
 $AuditDir = "artifacts\audit\a6_transport_adapter_v1"
 $LogDir = "artifacts\logs\a6_transport_adapter_v1"
 $ConfigDir = "artifacts\configs\a6_transport_adapter_v1"
@@ -25,14 +30,27 @@ if ($Force) {
 }
 New-Item -ItemType Directory -Force $AuditDir,$LogDir,$ConfigDir | Out-Null
 
+function Assert-GitHead {
+    param([string]$Context)
+    $current = (& git rev-parse HEAD).Trim()
+    if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($current)) {
+        throw "Unable to resolve git HEAD during $Context"
+    }
+    if ($current -ne $ExpectedHead) {
+        throw "Git HEAD changed during A6 suite ($Context): expected $ExpectedHead, found $current. Use an isolated git worktree for concurrent experiments."
+    }
+}
+
 function Invoke-Python {
     param([string]$Name, [string[]]$PythonArgs)
+    Assert-GitHead "$Name before"
     Write-Host "`n=== $Name ==="
     Write-Host ("python " + ($PythonArgs -join " "))
     $log = Join-Path $LogDir ("$Name.log")
     New-Item -ItemType File -Force $log | Out-Null
     & python @PythonArgs 2>&1 | Tee-Object -FilePath $log | ForEach-Object { Write-Host $_ }
     $code = $LASTEXITCODE
+    Assert-GitHead "$Name after"
     return [int]$code
 }
 
@@ -61,10 +79,11 @@ function Finalize-Bundle {
         "artifacts\runs\causal_scale_eap_screen_a6_transport_adapter_v1_seed23\validation_predictions.csv"
     ) | ForEach-Object { Copy-IfExists $_ $BundleStage }
     New-Item -ItemType Directory -Force (Join-Path $BundleStage "provenance") | Out-Null
+    $ExpectedHead | Out-File (Join-Path $BundleStage "provenance\expected_git_head.txt") -Encoding utf8
     git rev-parse HEAD | Out-File (Join-Path $BundleStage "provenance\git_head.txt") -Encoding utf8
     git status --short | Out-File (Join-Path $BundleStage "provenance\git_status.txt") -Encoding utf8
     git log -25 --oneline --decorate | Out-File (Join-Path $BundleStage "provenance\git_log_25.txt") -Encoding utf8
-    $manifest = [ordered]@{ artifact_type="a6_transport_adapter_suite_bundle_v1"; status=$Status; private_test_opened=$false }
+    $manifest = [ordered]@{ artifact_type="a6_transport_adapter_suite_bundle_v1"; status=$Status; expected_git_head=$ExpectedHead; private_test_opened=$false }
     $manifest | ConvertTo-Json -Depth 5 | Out-File (Join-Path $BundleStage "suite_manifest.json") -Encoding utf8
     $inventory = Get-ChildItem $BundleStage -Recurse -File | Where-Object { $_.Name -ne "inventory.csv" } | ForEach-Object {
         [PSCustomObject]@{ Path=$_.FullName.Substring((Resolve-Path $BundleStage).Path.Length + 1); Bytes=$_.Length; SHA256=(Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLower() }

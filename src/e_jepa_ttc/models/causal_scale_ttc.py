@@ -49,6 +49,7 @@ class CausalScaleTTCConfig:
     foreground_fullres_dim: int = 16
     foreground_temperature: float = 1.0
     foreground_temporal_smoothing: float = 0.0
+    foreground_temporal_smoothing_mode: Literal["symmetric_legacy", "causal_left", "none"] = "symmetric_legacy"
     max_abs_log_ratio_residual: float = 0.05
     max_abs_log_height_correction: float = 0.0
     temporal_inverse_ttc_blend: float = 1.0
@@ -64,6 +65,7 @@ class CausalScaleTTCConfig:
     transport_temperature: float = 0.07
     transport_adapter_enabled: bool = False
     transport_adapter_depth: int = 1
+    transport_encoder_copy_enabled: bool = False
 
     def __post_init__(self) -> None:
         if self.modality not in {"event", "rgb"}:
@@ -89,6 +91,8 @@ class CausalScaleTTCConfig:
             raise ValueError("foreground_temperature must be positive")
         if not 0.0 <= self.foreground_temporal_smoothing <= 0.4:
             raise ValueError("foreground_temporal_smoothing must lie in [0,0.4]")
+        if self.foreground_temporal_smoothing_mode not in {"symmetric_legacy", "causal_left", "none"}:
+            raise ValueError("foreground_temporal_smoothing_mode must be symmetric_legacy, causal_left, or none")
         if not 0.0 <= self.max_abs_log_ratio_residual <= 0.25:
             raise ValueError("max_abs_log_ratio_residual must lie in [0,0.25]")
         if not 0.0 <= self.max_abs_log_height_correction <= 0.5:
@@ -113,6 +117,10 @@ class CausalScaleTTCConfig:
             raise ValueError("transport_adapter_enabled requires transport_enabled=true")
         if self.transport_adapter_depth < 1 or self.transport_adapter_depth > 4:
             raise ValueError("transport_adapter_depth must lie in [1,4]")
+        if self.transport_encoder_copy_enabled and not self.transport_enabled:
+            raise ValueError("transport_encoder_copy_enabled requires transport_enabled=true")
+        if self.transport_encoder_copy_enabled and self.transport_adapter_enabled:
+            raise ValueError("A7 transport encoder copy and A6 transport adapter are mutually exclusive")
 
 
 @dataclass
@@ -299,15 +307,30 @@ def smooth_temporal_foreground_logits(
     logits: torch.Tensor,
     *,
     neighbor_weight: float,
+    mode: Literal["symmetric_legacy", "causal_left", "none"] = "symmetric_legacy",
 ) -> torch.Tensor:
-    """Apply reversal-equivariant temporal consensus without future stream leakage."""
+    """Apply an explicit temporal foreground-smoothing contract.
+
+    ``symmetric_legacy`` reproduces the historical A4/A5/A6 implementation
+    exactly.  It is reversal-equivariant, but an interior endpoint depends on
+    both its previous and next endpoint and therefore is *not* prefix-causal.
+
+    ``causal_left`` uses only the current endpoint and its already-observed
+    predecessor.  Prefix outputs are invariant when future endpoints are
+    appended.  ``none`` disables smoothing regardless of ``neighbor_weight``.
+    """
 
     if logits.ndim != 5 or logits.shape[1] < 2:
         raise ValueError("foreground logits must have shape [B,T>=2,1,H,W]")
     if not 0.0 <= neighbor_weight <= 0.4:
         raise ValueError("neighbor_weight must lie in [0,0.4]")
-    if neighbor_weight == 0.0:
+    if mode not in {"symmetric_legacy", "causal_left", "none"}:
+        raise ValueError("unknown temporal smoothing mode")
+    if neighbor_weight == 0.0 or mode == "none":
         return logits
+    if mode == "causal_left":
+        previous = torch.cat((logits[:, :1], logits[:, :-1]), dim=1)
+        return (1.0 - neighbor_weight) * logits + neighbor_weight * previous
     padded = torch.cat((logits[:, :1], logits, logits[:, -1:]), dim=1)
     return (
         (1.0 - 2.0 * neighbor_weight) * padded[:, 1:-1]
@@ -596,6 +619,9 @@ class CausalScaleTTC(nn.Module):
         super().__init__()
         self.config = config or CausalScaleTTCConfig()
         self.encoder = _EndpointEncoder(self.config)
+        self.transport_encoder: _EndpointEncoder | None = (
+            _EndpointEncoder(self.config) if self.config.transport_encoder_copy_enabled else None
+        )
         endpoint_input = self.config.geometry_dim + 4
         self.endpoint_projector = nn.Sequential(
             nn.LayerNorm(endpoint_input),
@@ -706,10 +732,17 @@ class CausalScaleTTC(nn.Module):
         if bool((delta_t_s <= 0.0).any()) or not bool(torch.isfinite(delta_t_s).all()):
             raise ValueError("delta_t_s must be finite and strictly positive")
         flat = inputs.reshape(batch * steps, channels, height, width)
-        need_dense_features = return_dense_features or self.config.transport_enabled
+        need_dense_features = return_dense_features or (
+            self.config.transport_enabled and self.transport_encoder is None
+        )
         lowres_logits, base_tokens, flat_dense = self.encoder(
             flat, return_dense_features=need_dense_features,
         )
+        transport_flat_dense = flat_dense
+        if self.transport_encoder is not None:
+            _, _, transport_flat_dense = self.transport_encoder(
+                flat, return_dense_features=True,
+            )
         low_h, low_w = lowres_logits.shape[-2:]
         lowres_logits = lowres_logits.reshape(batch, steps, 1, low_h, low_w)
         foreground_logits = functional.interpolate(
@@ -721,6 +754,7 @@ class CausalScaleTTC(nn.Module):
         foreground_logits = smooth_temporal_foreground_logits(
             foreground_logits,
             neighbor_weight=self.config.foreground_temporal_smoothing,
+            mode=self.config.foreground_temporal_smoothing_mode,
         )
         observation = soft_vertical_extent_from_logits(
             foreground_logits,
@@ -759,12 +793,12 @@ class CausalScaleTTC(nn.Module):
         reverse_transport_tokens: torch.Tensor | None = None
         transport_raw_features: torch.Tensor | None = None
         if self.config.transport_enabled:
-            if flat_dense is None or self.transport_projector is None:
-                raise RuntimeError("A5 transport requires dense endpoint features")
+            if transport_flat_dense is None or self.transport_projector is None:
+                raise RuntimeError("A5/A7 transport requires dense endpoint features")
             transport_dense = (
-                self.transport_adapter(flat_dense)
+                self.transport_adapter(transport_flat_dense)
                 if self.transport_adapter is not None
-                else flat_dense
+                else transport_flat_dense
             )
             dense = transport_dense.reshape(
                 batch, steps, transport_dense.shape[1], transport_dense.shape[2], transport_dense.shape[3]

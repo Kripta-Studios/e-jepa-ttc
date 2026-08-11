@@ -60,6 +60,7 @@ class CausalScaleEAPTrainingConfig:
     weight_decay: float = 1.0e-4
     grad_clip_norm: float = 1.0
     num_workers: int = 0
+    prefetch_factor: int = 2
     precision: str = "bf16"
     maximum_runtime_hours: float = 6.0
     mask_t0_as_proxy: bool = True
@@ -90,6 +91,7 @@ class CausalScaleEAPTrainingConfig:
             self.batch_size,
             self.gradient_accumulation_steps,
             self.num_workers + 1,
+            self.prefetch_factor,
         )
         if self.seed < 0 or min(integers) <= 0:
             raise ValueError("invalid causal-scale eAP integer controls")
@@ -672,6 +674,7 @@ def _loader(
             num_workers=config.num_workers,
             pin_memory=torch.cuda.is_available(),
             persistent_workers=config.num_workers > 0,
+            prefetch_factor=(config.prefetch_factor if config.num_workers > 0 else None),
             collate_fn=collate_object_event_v4,
         ),
     )
@@ -817,6 +820,7 @@ def evaluate_real_causal_scale(
     transport_quality_sequences: list[str] = []
     sequences: list[str] = []
     tokens: list[str] = []
+    tracks: list[str] = []
     losses: list[tuple[float, int]] = []
     for host_batch in loader:
         batch = host_batch.to(device)
@@ -1005,6 +1009,7 @@ def evaluate_real_causal_scale(
                 ratio_component_sequences.append(sequence)
         sequences.extend(batch.sequence_ids)
         tokens.extend(batch.sample_tokens)
+        tracks.extend(batch.track_ids)
     target_np = torch.cat(truth).numpy().astype(np.float64)
     prediction_np = torch.cat(prediction).numpy().astype(np.float64)
     ratio = torch.cat(ratios)
@@ -1173,6 +1178,7 @@ def evaluate_real_causal_scale(
         "target_ttc_s": target_np.tolist(),
         "prediction_ttc_s": prediction_np.tolist(),
         "sequence_ids": sequences,
+        "track_ids": tracks,
     }
 
 
@@ -1219,6 +1225,10 @@ def _shape_compatible_initialize(
         if name in current and isinstance(value, torch.Tensor) and value.shape == current[name].shape:
             compatible[name] = value
     model.load_state_dict(compatible, strict=False)
+    transport_encoder_initialized_from_primary = False
+    if model.transport_encoder is not None:
+        model.transport_encoder.load_state_dict(model.encoder.state_dict(), strict=True)
+        transport_encoder_initialized_from_primary = True
     missing = sorted(set(current) - set(compatible))
     encoder_keys = [name for name in current if name.startswith("encoder.")]
     loaded_encoder_keys = [name for name in compatible if name.startswith("encoder.")]
@@ -1236,6 +1246,7 @@ def _shape_compatible_initialize(
         "mismatched_tensors": sorted(mismatched),
         "unexpected_tensors": sorted(unexpected),
         "complete_encoder_loaded": True,
+        "transport_encoder_initialized_from_primary": transport_encoder_initialized_from_primary,
     }
 
 

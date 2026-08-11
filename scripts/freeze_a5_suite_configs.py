@@ -193,13 +193,19 @@ def _scale_config(
     base: dict[str, Any],
     *,
     rows: int,
+    seed: int,
     train_manifest: Path,
     teacher_manifest: Path,
     validation_manifest: Path,
     dino_lambda: float,
+    num_workers: int,
+    prefetch_factor: int,
 ) -> dict[str, Any]:
     payload = json.loads(json.dumps(base))
     _freeze_scale_lambda(payload, dino_lambda)
+    payload["training"]["seed"] = int(seed)
+    payload["training"]["num_workers"] = int(num_workers)
+    payload["training"]["prefetch_factor"] = int(prefetch_factor)
     event_meta = _read_json(train_manifest)
     teacher_meta = _read_json(teacher_manifest)
     val_meta = _read_json(validation_manifest)
@@ -220,7 +226,7 @@ def _scale_config(
         "artifact_sha256": teacher_meta.get("artifact_sha256"),
     }
     payload["training"]["representation_teacher_cache_artifact_sha256"] = teacher_meta.get("artifact_sha256")
-    experiment["name"] = f"e_jepa_garl_event_causal_scale_a5_corr_v1_train{rows}_seed7"
+    experiment["name"] = f"e_jepa_garl_event_causal_scale_a5_corr_v1_train{rows}_seed{seed}"
     experiment["protocol_version"] = f"causal_scale_eap_a5_event_local_transport_train{rows}_v1"
     experiment["parent_arm"] = f"A4_S1_train{rows}_same_lambda_control_required_for_transport_claim"
     experiment["single_scientific_difference"] = "A5_local_transport_vs_same_scale_A4_control"
@@ -238,6 +244,8 @@ def run(
     scale_dino_lambda: float | None,
     include_scale: bool,
     preflight_selection_path: Path | None = None,
+    num_workers: int = 8,
+    prefetch_factor: int = 4,
 ) -> dict[str, Any]:
     if include_scale and scale_dino_lambda is None:
         raise ValueError("--include-scale requires --scale-dino-lambda from the train-only A4 CV")
@@ -245,6 +253,8 @@ def run(
         not math.isfinite(scale_dino_lambda) or scale_dino_lambda <= 0
     ):
         raise ValueError("--scale-dino-lambda must be finite and positive")
+    if num_workers < 0 or prefetch_factor < 1:
+        raise ValueError("invalid DataLoader hardware profile")
 
     output_dir.mkdir(parents=True, exist_ok=True)
     selection = _load_transport_selection(preflight_selection_path)
@@ -290,22 +300,33 @@ def run(
             scale_status[str(rows)] = {"ready": ready}
             if not ready:
                 continue
-            scaled = _scale_config(
-                frozen["seed7"],
-                rows=rows,
-                train_manifest=event_manifest,
-                teacher_manifest=teacher_manifest,
-                validation_manifest=validation,
-                dino_lambda=scale_dino_lambda,
-            )
-            target = output_dir / f"scale_{rows}_seed7.yaml"
-            _write(target, scaled)
-            written[f"scale_{rows}"] = target.relative_to(ROOT).as_posix()
+            seed_configs: dict[str, str] = {}
+            for seed in (7, 13, 23):
+                scaled = _scale_config(
+                    frozen["seed7"],
+                    rows=rows,
+                    seed=seed,
+                    train_manifest=event_manifest,
+                    teacher_manifest=teacher_manifest,
+                    validation_manifest=validation,
+                    dino_lambda=scale_dino_lambda,
+                    num_workers=num_workers,
+                    prefetch_factor=prefetch_factor,
+                )
+                target = output_dir / f"scale_{rows}_seed{seed}.yaml"
+                _write(target, scaled)
+                key = f"scale_{rows}_seed{seed}"
+                written[key] = target.relative_to(ROOT).as_posix()
+                seed_configs[str(seed)] = target.relative_to(ROOT).as_posix()
+            # Backward-compatible alias used by earlier orchestration.
+            written[f"scale_{rows}"] = seed_configs["7"]
             scale_status[str(rows)].update({
                 "event_manifest": event_manifest.relative_to(ROOT).as_posix(),
                 "teacher_manifest": teacher_manifest.relative_to(ROOT).as_posix(),
-                "config": target.relative_to(ROOT).as_posix(),
+                "configs": seed_configs,
+                "config": seed_configs["7"],
                 "dino_lambda": scale_dino_lambda,
+                "hardware_profile": {"num_workers": num_workers, "prefetch_factor": prefetch_factor},
             })
 
     manifest = {
@@ -341,12 +362,16 @@ def main() -> int:
     parser.add_argument("--scale-dino-lambda", type=float)
     parser.add_argument("--include-scale", action="store_true")
     parser.add_argument("--preflight-selection", type=Path)
+    parser.add_argument("--num-workers", type=int, default=8)
+    parser.add_argument("--prefetch-factor", type=int, default=4)
     args = parser.parse_args()
     payload = run(
         args.output_dir.resolve(),
         args.scale_dino_lambda,
         args.include_scale,
         args.preflight_selection.resolve() if args.preflight_selection is not None else None,
+        args.num_workers,
+        args.prefetch_factor,
     )
     print(json.dumps(payload, sort_keys=True))
     return 0

@@ -61,7 +61,9 @@ def main() -> int:
         ratio_recovery = (values["log_ratio_pearson"] - parent_ratio) / ratio_den
         mid_recovery = (parent_mid - values["sequence_macro_MiD"]) / mid_den
         init = summary.get("initialization", {})
-        model = summary.get("model_config", summary.get("model_architecture", {}))
+        model = summary.get("model_architecture", {})
+        if not isinstance(model, dict):
+            model = {}
         checks = {
             "temporal_gain_recovery": ratio_recovery >= float(gate["temporal_gain_recovery_fraction_min"]),
             "MiD_gain_recovery": mid_recovery >= float(gate["MiD_gain_recovery_fraction_min"]),

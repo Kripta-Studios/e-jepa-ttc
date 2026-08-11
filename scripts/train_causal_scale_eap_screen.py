@@ -82,8 +82,14 @@ def _resolve(value: object) -> Path:
 def _model_config(path: Path) -> CausalScaleTTCConfig:
     raw = _read_yaml(path)
     model_name = raw.pop("model", None)
-    if model_name not in {"e_jepa_causal_scale_event_v8", "e_jepa_causal_scale_event_v9_transport"}:
-        raise ValueError("real screen requires causal-scale event v8 or preregistered v9 transport")
+    allowed_models = {
+        "e_jepa_causal_scale_event_v8",
+        "e_jepa_causal_scale_event_v9_transport",
+        "e_jepa_causal_scale_event_v10_transport_adapter",
+        "e_jepa_causal_scale_event_v11_dual_transport",
+    }
+    if model_name not in allowed_models:
+        raise ValueError(f"real screen requires an audited causal-scale model, got {model_name!r}")
     thresholds = raw.get("risk_thresholds_s")
     if not isinstance(thresholds, list):
         raise ValueError("risk_thresholds_s must be a list")
@@ -248,6 +254,7 @@ def _validate_a5_transport_change(
         "a4_endpoint_dino_plus_event_native_local_cross_time_transport",
         "a4_frozen_endpoint_plus_event_native_local_cross_time_transport",
         "a4_frozen_endpoint_plus_adaptive_transport_adapter",
+        "a4_frozen_geometry_plus_trainable_transport_encoder",
     }
     if change_type not in supported_a5_types:
         if model_config.transport_enabled:
@@ -263,14 +270,15 @@ def _validate_a5_transport_change(
     if change_type in {
         "a4_frozen_endpoint_plus_event_native_local_cross_time_transport",
         "a4_frozen_endpoint_plus_adaptive_transport_adapter",
+        "a4_frozen_geometry_plus_trainable_transport_encoder",
     }:
-        contract_name = (
-            "adapter_contract"
-            if change_type == "a4_frozen_endpoint_plus_adaptive_transport_adapter"
-            else "anchor_contract"
-        )
+        if change_type == "a4_frozen_endpoint_plus_adaptive_transport_adapter":
+            contract_name, label = "adapter_contract", "A6-ADAPTER"
+        elif change_type == "a4_frozen_geometry_plus_trainable_transport_encoder":
+            contract_name, label = "dual_stream_contract", "A7-DUAL-STREAM"
+        else:
+            contract_name, label = "anchor_contract", "A5-ANCHOR"
         anchor = decision_contract.get(contract_name)
-        label = "A6-ADAPTER" if contract_name == "adapter_contract" else "A5-ANCHOR"
         if not isinstance(anchor, dict):
             raise ValueError(f"{label} requires decision_contract.{contract_name}")
         if training_config.initialization_mode != "shape_compatible":
@@ -298,6 +306,15 @@ def _validate_a5_transport_change(
                 raise ValueError("A6-ADAPTER may only adapt the cost-volume feature path")
             if anchor.get("adapter_identity_initialized") is not True:
                 raise ValueError("A6-ADAPTER must be identity-initialized")
+        elif contract_name == "dual_stream_contract":
+            if model_config.transport_encoder_copy_enabled is not True:
+                raise ValueError("A7-DUAL-STREAM requires transport_encoder_copy_enabled=true")
+            if model_config.transport_adapter_enabled is True:
+                raise ValueError("A7-DUAL-STREAM may not also enable the A6 adapter")
+            if anchor.get("dual_stream_is_transport_only") is not True:
+                raise ValueError("A7 trainable encoder may only feed the transport branch")
+            if anchor.get("transport_encoder_initialized_from_parent") is not True:
+                raise ValueError("A7 transport encoder must initialize from the frozen A4 encoder")
     elif training_config.initialization_mode != "none" or training_config.freeze_encoder:
         raise ValueError("baseline A5-CORR may not silently inherit/freeze an A4 checkpoint")
     if training_config.representation_temporal_delta_weight != 0.0:
@@ -737,6 +754,7 @@ def run(
         {
             "sample_token": validation["sample_tokens"],
             "sequence_id": validation["sequence_ids"],
+            "track_id": validation["track_ids"],
             "target_ttc_s": validation["target_ttc_s"],
             "prediction_ttc_s": validation["prediction_ttc_s"],
         }
@@ -746,7 +764,7 @@ def run(
     metrics = {
         key: value
         for key, value in validation.items()
-        if key not in {"sample_tokens", "sequence_ids", "target_ttc_s", "prediction_ttc_s"}
+        if key not in {"sample_tokens", "sequence_ids", "track_ids", "target_ttc_s", "prediction_ttc_s"}
     }
     payload: dict[str, Any] = {
         "artifact_type": "causal_scale_eap_public_validation_screen_v1",
