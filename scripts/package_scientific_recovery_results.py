@@ -44,12 +44,14 @@ def main()->int:
    if 'state' in src.relative_to(rr).parts:continue
    if src.name in KEEP_NAMES or src.suffix.lower() in {'.json','.yaml','.yml','.csv','.parquet','.txt','.log'}:
     copy_file(src,stage/'runs'/label/src.relative_to(rr))
- # Current patch/source provenance.
- for rel in ['scripts','configs/model','configs/experiment','tests/unit']:
+ # Current source provenance. Keep the full auditable Python/config/test surface:
+ # V3's name filter omitted core src/ plus runner dependencies such as the paired
+ # bootstrap and causal-hardening freezer, making the evidence ZIP non-self-contained.
+ for rel in ['src/e_jepa_ttc','scripts','configs/model','configs/experiment','tests/unit']:
   base=repo/rel
   if not base.exists():continue
   for src in base.rglob('*'):
-   if src.is_file() and src.suffix.lower() in KEEP_EXT and ('scientific_recovery' in src.name or 'a4_s1' in src.name or 'causal_scale' in src.name or 'garl' in src.name or 'a5' in src.name or 'a6' in src.name):
+   if src.is_file() and src.suffix.lower() in KEEP_EXT:
     copy_file(src,stage/'source_snapshot'/src.relative_to(repo))
  manifest=[]
  for src in sorted(stage.rglob('*')):

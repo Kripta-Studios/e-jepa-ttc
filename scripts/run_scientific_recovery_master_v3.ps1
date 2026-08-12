@@ -372,7 +372,7 @@ try {
     $compileArgs=@("-m","py_compile","src/e_jepa_ttc/models/causal_scale_ttc.py","src/e_jepa_ttc/training/causal_scale_eap.py","scripts/train_causal_scale_eap_screen.py","scripts/freeze_a4_s1_runtime_configs.py","scripts/freeze_a5_suite_configs.py","scripts/freeze_scientific_recovery_s1_configs.py","scripts/freeze_causal_hardening_configs.py","scripts/audit_scientific_recovery_contracts.py","scripts/audit_prefix_causality.py","scripts/evaluate_oracle_roi_stress.py","scripts/classify_scientific_recovery_gate.py","scripts/summarize_scientific_recovery_replication.py","scripts/paired_cluster_bootstrap.py","scripts/build_garl_budget_matched_subset.py","scripts/build_scientific_claim_readiness.py","scripts/package_scientific_recovery_results.py","scripts/freeze_hardware_rescue_config.py","scripts/audit_oracle_roi_future_invariance.py","scripts/summarize_a4_s1_replication.py")
     if((Invoke-Python "00_py_compile" "integrity" $compileArgs -AllowFailure) -ne 0){ throw "scientific-recovery code does not compile" }
     if(-not $SkipTests){
-        $testArgs=@("-m","pytest","-q","tests/unit/test_scientific_recovery_causality.py","tests/unit/test_a4_s1_lambda8_contract.py","tests/unit/test_a5_local_transport.py","tests/unit/test_a6_transport_adapter.py","tests/unit/test_causal_scale_ttc.py","tests/unit/test_garl_matched_cached_training.py","tests/unit/test_scientific_recovery_v2.py","tests/unit/test_scientific_recovery_v3.py")
+        $testArgs=@("-m","pytest","-q","tests/unit/test_scientific_recovery_causality.py","tests/unit/test_a4_s1_lambda8_contract.py","tests/unit/test_a5_local_transport.py","tests/unit/test_a6_transport_adapter.py","tests/unit/test_freeze_scientific_recovery_s1_configs.py","tests/unit/test_causal_scale_ttc.py","tests/unit/test_garl_matched_cached_training.py","tests/unit/test_scientific_recovery_v2.py","tests/unit/test_scientific_recovery_v3.py")
         if((Invoke-Python "01_pytest" "integrity" $testArgs -AllowFailure) -ne 0){ throw "integrity tests failed; training blocked" }
     }
 
@@ -646,6 +646,18 @@ try {
         } else {
             $script:ClaimsBlocked=$true
             Add-StepStatus "73_paired_bootstrap" "garl_compare" "SKIPPED" 0 "Garl comparator or E-JEPA candidate predictions unavailable" $Audit
+        }
+
+        # Diagnostic-only paired comparison for the already-observed A5 signal.
+        # This is deliberately outside every gate and may never alter A6/A7 selection.
+        $a5DiagnosticPred=Join-Path $Root "artifacts\runs\scientific_recovery_a5_s1_seed7\validation_predictions.csv"
+        if($garlComplete -and (Test-Path $a5DiagnosticPred)){
+            $a5Diagnostic=Join-Path $Audit "paired_a5_vs_garl_8192_diagnostic_only.json"
+            $a5PbArgs=@("scripts/paired_cluster_bootstrap.py","--ejepa-predictions",$a5DiagnosticPred,"--garl-predictions",$garlPred,"--resamples",[string]$BootstrapResamples,"--seed","20260811","--output",$a5Diagnostic)
+            if(Test-Path $clusterMetadata){$a5PbArgs+=@("--cluster-metadata",$clusterMetadata)}
+            [void](Invoke-Python "74_paired_a5_vs_garl_diagnostic_only" "diagnostic" $a5PbArgs -AllowFailure)
+        } else {
+            Add-StepStatus "74_paired_a5_vs_garl_diagnostic_only" "diagnostic" "SKIPPED" 0 "A5 or Garl predictions unavailable; no gate affected" $Audit
         }
     } else {
         $script:ClaimsBlocked=$true

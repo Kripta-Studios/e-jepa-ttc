@@ -39,12 +39,23 @@ def write_yaml(path: Path, payload: dict[str, Any]) -> None:
     path.write_text(yaml.safe_dump(payload, sort_keys=False, allow_unicode=True), encoding="utf-8", newline="\n")
 
 
+def model_config_kwargs(model_path: Path) -> dict[str, Any]:
+    """Load a model YAML using the same risk-threshold normalization as training."""
+
+    raw = read_yaml(model_path)
+    raw.pop("model", None)
+    thresholds = raw.get("risk_thresholds_s")
+    if not isinstance(thresholds, list):
+        raise ValueError("risk_thresholds_s must be a list")
+    raw["risk_thresholds_s"] = tuple(float(value) for value in thresholds)
+    return raw
+
+
 def parameter_count(model_path: Path) -> int:
     import sys
     sys.path.insert(0, str(ROOT / "src"))
     from e_jepa_ttc.models.causal_scale_ttc import CausalScaleTTC, CausalScaleTTCConfig
-    raw = read_yaml(model_path)
-    raw.pop("model", None)
+    raw = model_config_kwargs(model_path)
     return sum(p.numel() for p in CausalScaleTTC(CausalScaleTTCConfig(**raw)).parameters())
 
 
