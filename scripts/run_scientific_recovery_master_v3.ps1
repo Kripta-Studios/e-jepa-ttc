@@ -253,6 +253,51 @@ function Test-JsonStatus {
     try { return ((Get-Content -Raw -LiteralPath $Path | ConvertFrom-Json).status -eq $Expected) } catch { return $false }
 }
 
+function Move-StaleArtifactToQuarantine {
+    param([Parameter(Mandatory=$true)][string]$Path)
+    if (-not (Test-Path -LiteralPath $Path -PathType Leaf)) { return $null }
+    $fullPath = [System.IO.Path]::GetFullPath($Path)
+    $auditRoot = [System.IO.Path]::GetFullPath($Audit).TrimEnd('\') + '\'
+    if (-not $fullPath.StartsWith($auditRoot, [System.StringComparison]::OrdinalIgnoreCase)) {
+        throw "Refusing to quarantine scientific artifact outside audit root: $fullPath"
+    }
+    $quarantine = Join-Path $Audit "superseded"
+    New-Item -ItemType Directory -Force -Path $quarantine | Out-Null
+    $stamp = Get-Date -Format "yyyyMMdd_HHmmss_fff"
+    $hash = (Get-FileHash -LiteralPath $fullPath -Algorithm SHA256).Hash.ToLowerInvariant()
+    $leaf = [System.IO.Path]::GetFileNameWithoutExtension($fullPath)
+    $extension = [System.IO.Path]::GetExtension($fullPath)
+    $destination = Join-Path $quarantine "${leaf}_${stamp}_sha256_$($hash.Substring(0,12))${extension}"
+    Move-Item -LiteralPath $fullPath -Destination $destination
+    Add-StepStatus "quarantine_${leaf}_${stamp}" "provenance" "SUPERSEDED" 0 "prior active artifact quarantined before regeneration; sha256=$hash" $destination
+    return $destination
+}
+
+function Test-PairedArtifactForInputs {
+    param(
+        [Parameter(Mandatory=$true)][string]$Path,
+        [Parameter(Mandatory=$true)][string]$EjepaPredictions,
+        [Parameter(Mandatory=$true)][string]$GarlPredictions,
+        [Parameter(Mandatory=$true)][string]$Scope
+    )
+    if (-not (Test-Path -LiteralPath $Path -PathType Leaf)) { return $false }
+    try {
+        $artifact = Get-Content -Raw -LiteralPath $Path | ConvertFrom-Json
+        if ($artifact.artifact_type -ne "paired_cluster_bootstrap_ejepa_vs_garl_v1") { return $false }
+        if ($artifact.status -ne "completed_public_validation_only") { return $false }
+        if ($artifact.comparison_scope -ne $Scope) { return $false }
+        if ($artifact.checks.exact_sample_tokens -ne $true -or $artifact.checks.target_equality_atol_1e_5 -ne $true) { return $false }
+        $ejepaSha = (Get-FileHash -LiteralPath $EjepaPredictions -Algorithm SHA256).Hash.ToLowerInvariant()
+        $garlSha = (Get-FileHash -LiteralPath $GarlPredictions -Algorithm SHA256).Hash.ToLowerInvariant()
+        return (
+            $artifact.sources.ejepa_predictions.sha256 -eq $ejepaSha -and
+            $artifact.sources.garl_predictions.sha256 -eq $garlSha
+        )
+    } catch {
+        return $false
+    }
+}
+
 function Test-CompleteRun {
     param([string]$RunDir)
     $summary = Join-Path $RunDir "summary.json"
@@ -630,10 +675,12 @@ try {
             $wc=Invoke-Train "47_${stage}_causal_seed7" (Join-Path $causalDir "${stage}_s1_causal_left_seed7.yaml") $wcr[7] -AllowFailure
             if($wc -eq 0){[void](Invoke-SequentialTrainPair "48_${stage}_causal" (Join-Path $causalDir "${stage}_s1_causal_left_seed13.yaml") $wcr[13] (Join-Path $causalDir "${stage}_s1_causal_left_seed23.yaml") $wcr[23])}
             $allCausal = @(7,13,23) | ForEach-Object { Test-Path (Join-Path $wcr[$_] "summary.json") }
-            $allBase = @(7,13,23) | ForEach-Object { Test-Path (Join-Path $a4cr[$_] "summary.json") }
-            if(($allCausal -notcontains $false) -and ($allBase -notcontains $false)){
+            $fixedCausalParentSummary = Join-Path $a4cr[7] "summary.json"
+            if(($allCausal -notcontains $false) -and (Test-Path $fixedCausalParentSummary)){
                 $repArgs=@("scripts/summarize_scientific_recovery_replication.py","--stage",$stage)
-                foreach($seed in @(7,13,23)){$repArgs+=@("--base-summary",(Join-Path $a4cr[$seed] "summary.json"))}
+                # Current mechanistic replication: fixed A4 causal seed7 parent;
+                # seeds 7/13/23 vary transport training stochasticity only.
+                $repArgs+=@("--base-summary",$fixedCausalParentSummary)
                 foreach($seed in @(7,13,23)){$repArgs+=@("--summary",(Join-Path $wcr[$seed] "summary.json"))}
                 if($stage -in @("a6","a7")){foreach($seed in @(7,13,23)){$repArgs+=@("--a5-summary",(Join-Path $a5cr[$seed] "summary.json"))}}
                 $causalRep=Join-Path $Audit "${stage}_causal_replication.json"; $repArgs+=@("--required-passes","2","--output",$causalRep)
@@ -693,12 +740,21 @@ try {
                 $garlComplete=($gt -eq 0) -and (Test-Path $garlSummary) -and (Test-Path $garlCheckpoint) -and (Test-Path $garlPred)
             }
         }
+        # 73: a failed regeneration must never leave a stale paired path active.
+        $paired = $null
+        $pairedPath=Join-Path $Audit "paired_ejepa_vs_garl_8192.json"
+        [void](Move-StaleArtifactToQuarantine -Path $pairedPath)
         if($garlComplete -and (Test-Path $candidatePred)){
-            $paired=Join-Path $Audit "paired_ejepa_vs_garl_8192.json"
-            $pbArgs=@("scripts/paired_cluster_bootstrap.py","--ejepa-predictions",$candidatePred,"--garl-predictions",$garlPred,"--resamples",[string]$BootstrapResamples,"--seed","20260811","--output",$paired)
+            $pbArgs=@("scripts/paired_cluster_bootstrap.py","--ejepa-predictions",$candidatePred,"--garl-predictions",$garlPred,"--resamples",[string]$BootstrapResamples,"--seed","20260811","--comparison-scope","current_candidate_public_validation","--output",$pairedPath)
             if(Test-Path $clusterMetadata){$pbArgs+=@("--cluster-metadata",$clusterMetadata)}
             $pb=Invoke-Python "73_paired_bootstrap" "garl_compare" $pbArgs -AllowFailure
-            if($pb -ne 0 -or -not(Test-Path $paired)){$script:ClaimsBlocked=$true}
+            if($pb -eq 0 -and (Test-PairedArtifactForInputs -Path $pairedPath -EjepaPredictions $candidatePred -GarlPredictions $garlPred -Scope "current_candidate_public_validation")){
+                $paired = $pairedPath
+            } else {
+                $script:ClaimsBlocked=$true
+                $script:MasterExitCode=1
+                $paired = $null
+            }
         } else {
             $script:ClaimsBlocked=$true
             Add-StepStatus "73_paired_bootstrap" "garl_compare" "SKIPPED" 0 "Garl comparator or E-JEPA candidate predictions unavailable" $Audit
@@ -707,11 +763,18 @@ try {
         # Diagnostic-only paired comparison for the already-observed A5 signal.
         # This is deliberately outside every gate and may never alter A6/A7 selection.
         $a5DiagnosticPred=Join-Path $Root "artifacts\runs\scientific_recovery_a5_s1_seed7\validation_predictions.csv"
+        $a5Diagnostic=$null
+        $a5DiagnosticPath=Join-Path $Audit "paired_a5_vs_garl_8192_diagnostic_only.json"
+        [void](Move-StaleArtifactToQuarantine -Path $a5DiagnosticPath)
         if($garlComplete -and (Test-Path $a5DiagnosticPred)){
-            $a5Diagnostic=Join-Path $Audit "paired_a5_vs_garl_8192_diagnostic_only.json"
-            $a5PbArgs=@("scripts/paired_cluster_bootstrap.py","--ejepa-predictions",$a5DiagnosticPred,"--garl-predictions",$garlPred,"--resamples",[string]$BootstrapResamples,"--seed","20260811","--output",$a5Diagnostic)
+            $a5PbArgs=@("scripts/paired_cluster_bootstrap.py","--ejepa-predictions",$a5DiagnosticPred,"--garl-predictions",$garlPred,"--resamples",[string]$BootstrapResamples,"--seed","20260811","--comparison-scope","diagnostic_only","--output",$a5DiagnosticPath)
             if(Test-Path $clusterMetadata){$a5PbArgs+=@("--cluster-metadata",$clusterMetadata)}
-            [void](Invoke-Python "74_paired_a5_vs_garl_diagnostic_only" "diagnostic" $a5PbArgs -AllowFailure)
+            $a5Pb=Invoke-Python "74_paired_a5_vs_garl_diagnostic_only" "diagnostic" $a5PbArgs -AllowFailure
+            if($a5Pb -eq 0 -and (Test-PairedArtifactForInputs -Path $a5DiagnosticPath -EjepaPredictions $a5DiagnosticPred -GarlPredictions $garlPred -Scope "diagnostic_only")){
+                $a5Diagnostic=$a5DiagnosticPath
+            } else {
+                $a5Diagnostic=$null
+            }
         } else {
             Add-StepStatus "74_paired_a5_vs_garl_diagnostic_only" "diagnostic" "SKIPPED" 0 "A5 or Garl predictions unavailable; no gate affected" $Audit
         }
