@@ -5,7 +5,12 @@ import inspect
 import torch
 
 from e_jepa_ttc.data.event_v4_geometry import common_square_from_boxes
-from e_jepa_ttc.models.causal_scale_ttc import CausalScaleTTC, CausalScaleTTCConfig
+from e_jepa_ttc.models.causal_scale_ttc import (
+    CausalScaleTTC,
+    CausalScaleTTCConfig,
+    blend_current_inverse_ttc,
+    finite_ttc_from_inverse,
+)
 
 
 def _model(mode: str) -> CausalScaleTTC:
@@ -55,8 +60,12 @@ def test_causal_left_smoothing_is_prefix_invariant_for_all_emitted_pair_state() 
     torch.testing.assert_close(prefix.foreground_logits, full.foreground_logits[:, :3])
     torch.testing.assert_close(prefix.geometry_tokens, full.geometry_tokens[:, :3])
     torch.testing.assert_close(prefix.pair_tokens, full.pair_tokens[:, :2])
-    torch.testing.assert_close(prefix.analytic_log_height_ratio, full.analytic_log_height_ratio[:, :2])
-    torch.testing.assert_close(prefix.residual_log_height_ratio, full.residual_log_height_ratio[:, :2])
+    torch.testing.assert_close(
+        prefix.analytic_log_height_ratio, full.analytic_log_height_ratio[:, :2]
+    )
+    torch.testing.assert_close(
+        prefix.residual_log_height_ratio, full.residual_log_height_ratio[:, :2]
+    )
     torch.testing.assert_close(prefix.pair_log_height_ratio, full.pair_log_height_ratio[:, :2])
     torch.testing.assert_close(prefix.pair_ttc_seconds, full.pair_ttc_seconds[:, :2])
 
@@ -112,3 +121,49 @@ def test_a7_transport_encoder_copy_is_separate_and_trainable_when_primary_frozen
     out.pair_log_height_ratio.square().mean().backward()
     assert all(p.grad is None for p in model.encoder.parameters())
     assert any(p.grad is not None for p in model.transport_encoder.parameters())
+
+
+def test_a8_dual_transport_is_prefix_invariant_through_fused_ttc() -> None:
+    torch.manual_seed(456)
+    model = CausalScaleTTC(
+        CausalScaleTTCConfig(
+            in_channels=2,
+            hidden_dim=16,
+            geometry_dim=24,
+            residual_depth=1,
+            dropout=0.0,
+            foreground_temporal_smoothing=0.15,
+            foreground_temporal_smoothing_mode="causal_left",
+            transport_enabled=True,
+            transport_radius=1,
+            transport_temperature=0.02,
+            transport_encoder_copy_enabled=True,
+        )
+    ).eval()
+    assert model.transport_encoder is not None
+    model.transport_encoder.load_state_dict(model.encoder.state_dict(), strict=True)
+    values = torch.randn(1, 4, 2, 32, 32)
+    with torch.inference_mode():
+        prefix = model(values[:, :3], torch.full((1, 2), 0.1))
+        full = model(values, torch.full((1, 3), 0.1))
+
+    torch.testing.assert_close(prefix.foreground_logits, full.foreground_logits[:, :3])
+    torch.testing.assert_close(prefix.geometry_tokens, full.geometry_tokens[:, :3])
+    torch.testing.assert_close(prefix.transport_tokens, full.transport_tokens[:, :2])
+    torch.testing.assert_close(
+        prefix.residual_log_height_ratio, full.residual_log_height_ratio[:, :2]
+    )
+    torch.testing.assert_close(prefix.pair_log_height_ratio, full.pair_log_height_ratio[:, :2])
+    torch.testing.assert_close(prefix.pair_ttc_seconds, full.pair_ttc_seconds[:, :2])
+    derived_inverse, _ = blend_current_inverse_ttc(
+        full.pair_inverse_ttc[:, :2],
+        full.diagnostics["pair_known"][:, :2],
+        torch.full((1,), 0.1),
+        current_pair_weight=model.config.temporal_inverse_ttc_blend,
+    )
+    derived_ttc = finite_ttc_from_inverse(
+        derived_inverse,
+        minimum_abs_inverse_ttc=1.0 / model.config.ttc_clip_seconds,
+        clip_seconds=model.config.ttc_clip_seconds,
+    )
+    torch.testing.assert_close(prefix.ttc_mean_seconds, derived_ttc)
