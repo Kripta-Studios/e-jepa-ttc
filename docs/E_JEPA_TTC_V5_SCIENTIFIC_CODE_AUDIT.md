@@ -12,7 +12,7 @@ This audit treats the local checkout and artifacts as operational evidence. The 
 | P0 | Claim readiness | `scripts/build_scientific_claim_readiness.py` | Any paired JSON with `checks.exact_sample_tokens=true` was accepted for the current candidate. | A stale A4 paired result marked A6 ready for a sealed test. | The pre-fix reproduction returned `READY_FOR_ONE_SHOT_SEALED_MATCHED_ORACLE_ROI_TEST`; its prediction identity differed from A6. | Readiness now validates signatures, artifact type/status/scope, target and sample contracts, source provenance, candidate/Garl prediction SHAs, and explicit candidate promotion. | Positive case plus candidate, Garl, type, status, scope, and signature failures. | Fixed; PASS |
 | P0 | Runner control flow | `scripts/run_scientific_recovery_master_v3.ps1:step73/74` | The output path was assigned before the process succeeded; an existing file survived a failed regeneration. | A failed substep could be consumed as fresh evidence. | V4 launcher log records step73/74 failure while step80 received the old paired path. | The active variable is cleared, prior output is quarantined, and assignment occurs only after exit 0 plus input-SHA validation. Current-candidate paired failure sets the master exit code. | Failure-path regression plus PowerShell parse. | Fixed; PASS |
 | P0 | Replication semantics | causal hardening runner/freezer | A6 seeds all initialize from A4 causal seed 7, but the replication call compared seed 13/23 against A4 seed 13/23. | Geometry preservation and mechanistic attribution were evaluated against the wrong parent. | Frozen A6 configs bind `scientific_recovery_a4_causal_left_seed7/model_best.pt`; primary encoder tensors are exactly equal between that parent and A6 seed 7. | The fixed parent and transport-stochasticity semantics are explicit; replication receives one A4 seed-7 base. | Freezer/runner contracts plus regenerated replication artifact. | Fixed; PASS 3/3 |
-| P1 | Target-dependent sampling | `src/e_jepa_ttc/data/garlttc_sampling.py:sampling_stratum` | The historical 8192-row cache selection uses an official TTC bucket despite claiming selection without labels. | The fixed public training universe is target-stratified; this limits generalization claims even though it gives neither compared model differential access. | `sampling_stratum()` calls `signed_ttc_bucket(row['ttc'])`; E-JEPA and Garl use the exact same 8192/2048 tokens. | Correct the contract/documentation; ensure V5 fold assignment never reads targets and record the source-universe limitation. Do not rewrite historical artifacts. | Target permutation must not change grouped folds. | Confirmed; scoped fix pending |
+| P1 | Target-dependent sampling | `src/e_jepa_ttc/data/garlttc_sampling.py:sampling_stratum` | The historical 8192-row cache selection uses an official TTC bucket despite claiming selection without labels. | The fixed public training universe is target-stratified; this limits generalization claims even though it gives neither compared model differential access. | `sampling_stratum()` calls `signed_ttc_bucket(row['ttc'])`; E-JEPA and Garl use the exact same 8192/2048 tokens. | The historical artifact remains unchanged. V5 declares the limitation and freezes folds from a target-free metadata table using only sequence/token/track identities. | Target permutation does not change grouped folds; exact cache parity is checked. | Mitigated and explicitly scoped |
 | P1 | Comparator qualification | E-JEPA/Garl pipelines | “Matched” does not mean identical preprocessing. | An unqualified matched claim overstates parity. | Exact tokens/targets/budget/ROI privilege/metrics match; E-JEPA uses 3 endpoint tensors with 12 channels and Garl uses 2 endpoints with 40 channels and a different representation/model. | Report sample/target/budget/metric/ROI-privilege matched and preprocessing parity `PARTIAL`. | Explicit parity table and source hashes. | Confirmed; documentation fix pending |
 | P1 | End-to-end causality scope | common-ROI preprocessing and model audit | Current dynamic audit proves model-prefix invariance, not a deployable non-oracle streaming pipeline. | Claiming strict end-to-end streaming causality would be unsupported. | `causal_left` passes appended-input tests; the pipeline still depends on oracle ROI preprocessing and fixed materialized windows. | Preserve `model-prefix-causal`; set strict end-to-end status to `NOT CLAIMED`. Add preprocessing/window invariants where meaningful. | Prefix tests at geometry, transport, fusion and ROI/window levels. | Confirmed; tests pending |
 | P2 | Geometry freeze evidence | A4/A6 checkpoints | Existing summaries rely primarily on configuration assertions. | Weak provenance could hide accidental geometry updates. | Audit load shows all 27 `encoder.*` tensors exactly equal; tensor-state SHA is `8a579eca0b7371de195e141787d9e05017ae7db0e134ca0d92e216201b408e99`. | Emit parameter/optimizer/state/output evidence for A8 folds. | Before/after fixed-probe audit. | A6 observed PASS; A8 tooling pending |
@@ -25,6 +25,20 @@ This audit treats the local checkout and artifacts as operational evidence. The 
 - Both paired artifacts use 2048 exact samples and 108 sequence+track clusters. E-JEPA track IDs are exactly verified against external cluster metadata.
 - Corrected A6 mechanistic replication: `PASS`, 3/3 seeds, fixed A4 causal seed-7 parent, MiD mean `208.620253` (sample standard deviation `2.986616`).
 - Claim readiness: paired provenance `PASS`, candidate explicitly promotable `false`, `NO_PROMOTABLE_CANDIDATE`, `claims_blocked=true`, `private_test_opened=false`.
+
+## Frozen V5 grouped-development protocol
+
+Artifact: `configs/protocol/scientific_recovery_v5_train_only_grouped_dev.json`.
+
+- Artifact SHA-256: `f09c688fb4991714abc9d645dda787cb27f1e02a2d1857312ce3e45519bd7a63`.
+- File SHA-256: `be48917ae52d1c77d046318bd9ed284a32e8b16258257203fff439332b547874`.
+- Source code commit: `f21ffc5422e4e9b0e5b3f0a2f1cba5ad5c96469c`; tracked worktree was clean at freeze time.
+- Universe: 8192 unique public-train samples, nine sequences, exact token/sequence/track parity with the materialized cache.
+- Fold 0 dev: `5ilM1PX2vz`, `OYgB6RGWcq`, `qGsgzl4Q8B` (2731 rows).
+- Fold 1 dev: `2cyv0Oedzg`, `6h5yRW2LGc`, `mHGFBekt7X` (2731 rows).
+- Fold 2 dev: `OBneIVg4Cw`, `WbCh1DRerJ`, `t79dBxj1WS` (2730 rows).
+- Each sequence is dev exactly once; all folds are sequence-disjoint and exhaustive.
+- `public_validation_used_for_selection=false`; `private_test_opened=false`.
 
 ## Current contract status
 
@@ -44,5 +58,5 @@ These statuses are provisional until the fixes and regression suite finish.
 - stale artifact safety: PASS for paired/claim master paths; broader artifact audit remains in progress
 - checkpoint provenance: PARTIAL pending stronger A8 evidence
 - seed semantics: PASS for current A6 mechanistic replication
-- public-validation contamination for A8 selection: UNKNOWN until grouped-dev is frozen
+- public-validation contamination for A8 selection: PASS; grouped-dev was frozen before A8 results
 - private/test opened: false
