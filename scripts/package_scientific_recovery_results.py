@@ -30,10 +30,16 @@ def main()->int:
  stage=zip_path.with_suffix('')
  if stage.exists():shutil.rmtree(stage)
  stage.mkdir(parents=True)
- # Master logs/status/audits.
+ # Master logs/status/audits. Exclude the packaging step's own log directory:
+ # the ZIP is created before Invoke-LoggedProcess can write that step's final
+ # exit_code/finished_at, so including an older 99_package_results log would be
+ # self-referential and potentially stale/misleading.
  for src in root.rglob('*'):
+  rel=src.relative_to(root)
+  if len(rel.parts)>=2 and rel.parts[0]=='logs' and rel.parts[1]=='99_package_results':
+   continue
   if src.is_file() and src.stat().st_size<=MAX_COPY:
-   copy_file(src,stage/'master'/src.relative_to(root))
+   copy_file(src,stage/'master'/rel)
  # Selected run evidence only; no state dirs/cache shards.
  for r in a.run_dir:
   rr=r.resolve()

@@ -1,6 +1,10 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 from scripts.train_causal_scale_eap_screen import _blocking_worktree_state
+
+ROOT = Path(__file__).resolve().parents[2]
 
 
 def test_progress_monitor_tracked_edit_is_operational_not_scientific_dirty() -> None:
@@ -69,3 +73,24 @@ def test_paired_bootstrap_uses_external_track_metadata(tmp_path) -> None:
     report = run(e, g, out, resamples=20, seed=1, cluster_metadata=m)
     assert report["cluster_definition"] == "sequence_track_external_metadata"
     assert report["clusters"] == 3
+
+
+def test_master_runner_treats_nvidia_smi_as_optional_observability() -> None:
+    text = (ROOT / "scripts" / "run_scientific_recovery_master_v3.ps1").read_text(
+        encoding="utf-8-sig"
+    )
+    assert "function Resolve-NvidiaSmi" in text
+    assert "$script:NvidiaSmiExe" in text
+    assert "nvidia_smi_available" in text
+    assert "(& nvidia-smi)" not in text
+    assert "(& nvidia-smi --query-gpu=" not in text
+
+
+def test_master_runner_propagates_global_failures_after_packaging() -> None:
+    text = (ROOT / "scripts" / "run_scientific_recovery_master_v3.ps1").read_text(
+        encoding="utf-8-sig"
+    )
+    assert "$script:MasterExitCode = 1" in text
+    assert "if ($script:MasterExitCode -ne 0)" in text
+    assert "exit $script:MasterExitCode" in text
+    assert 'throw "result packaging failed (exit $packageCode)"' in text

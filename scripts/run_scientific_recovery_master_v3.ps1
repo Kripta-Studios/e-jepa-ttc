@@ -89,6 +89,49 @@ $script:ClaimsBlocked = $false
 $script:TransportBlocked = $false
 $script:TransportStopReason = $null
 $script:CausalBlocked = $false
+$script:NvidiaSmiExe = $null
+$script:MasterExitCode = 0
+
+function Resolve-NvidiaSmi {
+    # NVIDIA telemetry is observational only. It must never block scientific
+    # training when torch CUDA is otherwise available. Resolve common Windows
+    # install locations and expose the directory to child pwsh monitor processes.
+    $resolved = $null
+    try {
+        $cmd = Get-Command nvidia-smi.exe -ErrorAction SilentlyContinue
+        if ($cmd -and $cmd.Source -and (Test-Path -LiteralPath $cmd.Source -PathType Leaf)) {
+            $resolved = $cmd.Source
+        }
+    } catch {}
+
+    if (-not $resolved) {
+        $candidates = @(
+            (Join-Path $env:WINDIR "System32\nvidia-smi.exe"),
+            (Join-Path $env:ProgramFiles "NVIDIA Corporation\NVSMI\nvidia-smi.exe")
+        )
+        if ($env:ProgramW6432) {
+            $candidates += (Join-Path $env:ProgramW6432 "NVIDIA Corporation\NVSMI\nvidia-smi.exe")
+        }
+        foreach ($candidate in $candidates) {
+            if ($candidate -and (Test-Path -LiteralPath $candidate -PathType Leaf)) {
+                $resolved = (Resolve-Path -LiteralPath $candidate).Path
+                break
+            }
+        }
+    }
+
+    $script:NvidiaSmiExe = $resolved
+    if ($resolved) {
+        $dir = Split-Path -Parent $resolved
+        $pathParts = @($env:PATH -split [IO.Path]::PathSeparator)
+        if ($pathParts -notcontains $dir) {
+            $env:PATH = $dir + [IO.Path]::PathSeparator + $env:PATH
+        }
+        Write-Host "NVIDIA telemetry: $resolved" -ForegroundColor DarkGray
+    } else {
+        Write-Warning "nvidia-smi.exe was not found. GPU telemetry will be unavailable, but this does not block training."
+    }
+}
 
 function Write-Status {
     # Snapshot into a true PowerShell Object[] rather than wrapping a generic
@@ -268,8 +311,9 @@ function Test-StepCudaOom {
 }
 
 function Get-FreeVramMiB {
+    if (-not $script:NvidiaSmiExe) { return -1 }
     try {
-        $raw = (& nvidia-smi --query-gpu=memory.free --format=csv,noheader,nounits 2>$null | Select-Object -First 1)
+        $raw = (& $script:NvidiaSmiExe --query-gpu=memory.free --format=csv,noheader,nounits 2>$null | Select-Object -First 1)
         if ($raw) { return [int]([double]$raw.Trim()) }
     } catch {}
     return -1
@@ -323,7 +367,8 @@ function Package-Results {
     $runDirs = @($runDirs + $dynamicRuns | Sort-Object -Unique)
     $args=@("scripts/package_scientific_recovery_results.py","--master-root",$Master,"--repo-root",$Root,"--output-zip",$OutputZip)
     foreach($r in $runDirs){$args += @("--run-dir",$r)}
-    Invoke-Python "99_package_results" "packaging" $args -AllowFailure | Out-Null
+    $packageCode = Invoke-Python "99_package_results" "packaging" $args -AllowFailure
+    if ($packageCode -ne 0) { throw "result packaging failed (exit $packageCode)" }
 }
 
 # Conservative numerics: no TF32/torch.compile changes. Do not request expandable_segments on Windows/WDDM.
@@ -341,6 +386,7 @@ New-Item -ItemType Directory -Force -Path $Master,$Logs,$Audit,$Configs | Out-Nu
 # Fail-fast runtime compatibility probe: status serialization must work before
 # any expensive training or evaluation process is started.
 Write-Status
+Resolve-NvidiaSmi
 Start-HardwareMonitor
 
 try {
@@ -349,16 +395,26 @@ try {
     if($mergeBaseCode -ne 0){throw "HEAD $head is not a descendant of expected hardening base $ExpectedBase"}
     (& git status --short) | Set-Content (Join-Path $Master "git_status_start.txt") -Encoding utf8
     (& git log -30 --oneline --decorate) | Set-Content (Join-Path $Master "git_log_30.txt") -Encoding utf8
-    (& nvidia-smi) | Set-Content (Join-Path $Master "nvidia_smi_start.txt") -Encoding utf8
+    if ($script:NvidiaSmiExe) {
+        (& $script:NvidiaSmiExe) | Set-Content (Join-Path $Master "nvidia_smi_start.txt") -Encoding utf8
+    } else {
+        "nvidia-smi unavailable; GPU telemetry omitted. Scientific training is not blocked by telemetry availability." |
+            Set-Content (Join-Path $Master "nvidia_smi_start.txt") -Encoding utf8
+    }
     (python --version) | Set-Content (Join-Path $Master "python_version.txt") -Encoding utf8
     $cpuInfo = Get-CimInstance Win32_ComputerSystem -ErrorAction SilentlyContinue
     $osInfo = Get-CimInstance Win32_OperatingSystem -ErrorAction SilentlyContinue
-    $gpuInfo = (& nvidia-smi --query-gpu=name,memory.total,memory.free,utilization.gpu --format=csv,noheader,nounits 2>$null | Select-Object -First 1)
+    $gpuInfo = $null
+    if ($script:NvidiaSmiExe) {
+        $gpuInfo = (& $script:NvidiaSmiExe --query-gpu=name,memory.total,memory.free,utilization.gpu --format=csv,noheader,nounits 2>$null | Select-Object -First 1)
+    }
     [ordered]@{
         logical_processors = if($cpuInfo){$cpuInfo.NumberOfLogicalProcessors}else{$null}
         physical_memory_gb = if($cpuInfo){[math]::Round([double]$cpuInfo.TotalPhysicalMemory/1GB,2)}else{$null}
         free_memory_gb = if($osInfo){[math]::Round(([double]$osInfo.FreePhysicalMemory*1KB)/1GB,2)}else{$null}
         gpu_snapshot = $gpuInfo
+        nvidia_smi_available = [bool]$script:NvidiaSmiExe
+        nvidia_smi_path = $script:NvidiaSmiExe
         num_workers_per_training = $NumWorkers
         prefetch_factor = $PrefetchFactor
         parallel_replications = $false
@@ -673,13 +729,19 @@ try {
     }
 }
 catch {
+    $script:MasterExitCode = 1
     Add-StepStatus "MASTER_EXCEPTION" "master" "FAIL" 1 $_.Exception.Message $Master
     Write-Warning "Master encountered a global integrity/infrastructure stop: $($_.Exception.Message). Independent evidence collected so far will still be packaged."
 }
 finally {
     Stop-HardwareMonitor
     Write-Status
-    try { Package-Results } catch { Write-Warning "Packaging failed: $_" }
+    try {
+        Package-Results
+    } catch {
+        $script:MasterExitCode = 1
+        Write-Warning "Packaging failed: $_"
+    }
     Write-Host "`n=== SCIENTIFIC RECOVERY MASTER COMPLETE ===" -ForegroundColor Green
     Write-Host "Master evidence: $Master"
     if(Test-Path $OutputZip){
@@ -687,4 +749,8 @@ finally {
         Write-Host "SHA256: $((Get-FileHash $OutputZip -Algorithm SHA256).Hash.ToLower())" -ForegroundColor Green
     }
     Write-Host "Private/test evaluation was NOT invoked by this script."
+}
+
+if ($script:MasterExitCode -ne 0) {
+    exit $script:MasterExitCode
 }
