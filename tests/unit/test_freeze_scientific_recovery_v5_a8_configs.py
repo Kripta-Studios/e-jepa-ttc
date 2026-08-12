@@ -45,12 +45,18 @@ def test_a8_configs_are_train_only_causal_and_use_fixed_parent() -> None:
         assert training["initialization_checkpoint_sha256"] == PARENT_CHECKPOINT_SHA256
         assert decision["public_validation_used_for_selection"] is False
         assert decision["private_test_remains_closed"] is True
+        assert decision["require_finite_metrics_for_all_dev_sequences"] is True
+        assert "require_finite_metrics_for_all_validation_sequences" not in decision
+        assert "primary_baseline" not in decision
+        assert "frozen_validation_rows" not in decision
         assert config["model_config"].endswith("_causal.yaml")
         if name.startswith("a8_0"):
             assert "dual_transport" in config["model_config"]
             assert decision["dual_stream_contract"]["transport_encoder_trainable"] is True
+            assert decision["a8_0_gate"]["comparator"].startswith("A6_causal")
         else:
             assert "transport_adapter" in config["model_config"]
+            assert "a8_0_gate" not in decision
 
 
 def test_a8_configs_reject_protocol_that_opens_private_test() -> None:

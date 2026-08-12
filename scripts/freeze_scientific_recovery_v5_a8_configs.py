@@ -136,6 +136,7 @@ def _fold_config(
     )
     decision = config["decision_contract"]
     decision["checkpoint_selection"] = "dev_sequence_macro_MiD_then_failure_rate"
+    decision["require_finite_metrics_for_all_dev_sequences"] = True
     decision["grouped_dev_protocol"] = {
         "artifact_sha256": protocol["artifact_sha256"],
         "fold": index,
@@ -144,14 +145,18 @@ def _fold_config(
         "public_validation_used_for_selection": False,
         "private_test_opened": False,
     }
-    decision["a8_0_gate"] = {
-        "comparator": "A6_causal_same_fold_seed_budget",
-        "first_stage_sequence_macro_MiD_max": 175.0,
-        "strong_sequence_macro_MiD_max": 160.0,
-        "geometry_exact_parent_required": True,
-        "model_prefix_causal_required": True,
-        "aspirational_144_9_is_not_a_clean_gate": True,
-    }
+    if is_a8:
+        decision["primary_development_comparator"] = "A6_causal_same_fold_seed_budget"
+        decision["a8_0_gate"] = {
+            "comparator": "A6_causal_same_fold_seed_budget",
+            "first_stage_sequence_macro_MiD_max": 175.0,
+            "strong_sequence_macro_MiD_max": 160.0,
+            "geometry_exact_parent_required": True,
+            "model_prefix_causal_required": True,
+            "aspirational_144_9_is_not_a_clean_gate": True,
+        }
+    else:
+        decision["grouped_dev_role"] = "causal_A6_comparator_only"
     decision["public_validation_used_for_selection"] = False
     decision["private_test_remains_closed"] = True
     for key in (
@@ -160,6 +165,13 @@ def _fold_config(
         "parent_a4_sequence_macro_MiD",
         "parent_a4_failure_rate_pct",
         "transport_gate",
+        "primary_baseline",
+        "require_finite_metrics_for_all_validation_sequences",
+        "frozen_validation_rows",
+        "lambda_cv_must_not_change_2048_causal_screen",
+        "transport_radius_selected_before_a5_validation",
+        "transport_temperature_selected_before_a5_validation",
+        "scale_transport_claim_requires_A4_control_at_same_lambda",
     ):
         decision.pop(key, None)
     contract_name = "dual_stream_contract" if is_a8 else "adapter_contract"
