@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
@@ -106,6 +107,8 @@ def _assert_nested_equal(left: object, right: object) -> None:
         assert len(left) == len(right)
         for left_item, right_item in zip(left, right, strict=True):
             _assert_nested_equal(left_item, right_item)
+    elif isinstance(left, float) and isinstance(right, float):
+        assert left == right or (math.isnan(left) and math.isnan(right))
     else:
         assert left == right
 

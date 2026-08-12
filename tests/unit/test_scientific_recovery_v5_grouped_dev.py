@@ -2,8 +2,10 @@ from __future__ import annotations
 
 import pandas as pd
 import pytest
+from torch.utils.data import Dataset
 
 from e_jepa_ttc.data.scientific_recovery_v5 import (
+    SequenceIndexedView,
     build_train_only_grouped_dev,
     validate_cache_identities,
 )
@@ -87,3 +89,61 @@ def test_cache_identity_validation_rejects_track_mismatch() -> None:
 
     with pytest.raises(ValueError, match="track identity"):
         validate_cache_identities(metadata, identities)
+
+
+class _FakeShardedDataset(Dataset[dict[str, str]]):
+    def __init__(self) -> None:
+        self.rows = [
+            {
+                "sequence_id": f"sequence-{index % 3}",
+                "sample_token": f"token-{index}",
+                "track_id": f"track-{index // 2}",
+            }
+            for index in range(9)
+        ]
+
+    def __len__(self) -> int:
+        return len(self.rows)
+
+    def __getitem__(self, index: int) -> dict[str, str]:
+        return self.rows[index]
+
+    def shard_index_groups(self) -> tuple[tuple[int, ...], ...]:
+        return ((0, 1, 2), (3, 4, 5), (6, 7, 8))
+
+
+def test_sequence_indexed_view_preserves_filtered_shard_groups() -> None:
+    view = SequenceIndexedView(
+        _FakeShardedDataset(),
+        sequence_ids={"sequence-0", "sequence-2"},
+    )
+
+    assert len(view) == 6
+    assert [view[index]["sample_token"] for index in range(len(view))] == [
+        "token-0",
+        "token-2",
+        "token-3",
+        "token-5",
+        "token-6",
+        "token-8",
+    ]
+    assert view.shard_index_groups() == ((0, 1), (2, 3), (4, 5))
+    assert view.identity_frame()["sequence_id"].tolist() == [
+        "sequence-0",
+        "sequence-2",
+        "sequence-0",
+        "sequence-2",
+        "sequence-0",
+        "sequence-2",
+    ]
+
+
+def test_sequence_indexed_views_partition_base_dataset() -> None:
+    base = _FakeShardedDataset()
+    train = SequenceIndexedView(base, sequence_ids={"sequence-0", "sequence-1"})
+    dev = SequenceIndexedView(base, sequence_ids={"sequence-2"})
+
+    train_tokens = set(train.identity_frame()["sample_token"])
+    dev_tokens = set(dev.identity_frame()["sample_token"])
+    assert not train_tokens & dev_tokens
+    assert train_tokens | dev_tokens == {row["sample_token"] for row in base.rows}

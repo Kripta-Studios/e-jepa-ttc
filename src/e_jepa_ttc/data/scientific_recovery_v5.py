@@ -4,13 +4,79 @@ from __future__ import annotations
 
 import hashlib
 from collections import Counter
-from collections.abc import Iterable
-from typing import Any
+from collections.abc import Iterable, Sized
+from typing import Any, Generic, TypeVar, cast
 
 import pandas as pd
+from torch.utils.data import Dataset
 
 IDENTITY_COLUMNS = ("sequence_id", "sample_token", "track_id")
 SPLIT_ALGORITHM = "sequence_row_count_greedy_sha256_tiebreak_v1"
+RecordT = TypeVar("RecordT")
+
+
+class SequenceIndexedView(Dataset[RecordT], Generic[RecordT]):
+    """Read-only sequence-filtered view that preserves shard-local sampling."""
+
+    def __init__(self, dataset: Dataset[RecordT], *, sequence_ids: set[str]) -> None:
+        if not isinstance(dataset, Sized):
+            raise TypeError("sequence-indexed base dataset must expose length")
+        if not sequence_ids:
+            raise ValueError("sequence-indexed view requires at least one sequence")
+        self.dataset = dataset
+        self.sequence_ids = frozenset(str(value) for value in sequence_ids)
+        self._base_indices: list[int] = []
+        identities: list[dict[str, str]] = []
+        for base_index in range(len(dataset)):
+            record = dataset[base_index]
+            if not isinstance(record, dict):
+                raise TypeError("sequence-indexed records must be mappings")
+            sequence = str(record.get("sequence_id", ""))
+            if sequence not in self.sequence_ids:
+                continue
+            identity = {column: str(record.get(column, "")) for column in IDENTITY_COLUMNS}
+            if any(not value for value in identity.values()):
+                raise ValueError(f"base record {base_index} lacks a complete identity")
+            self._base_indices.append(base_index)
+            identities.append(identity)
+        if not self._base_indices:
+            raise ValueError("sequence-indexed view selected no rows")
+        self._identities = pd.DataFrame(identities)
+        if self._identities["sample_token"].duplicated().any():
+            raise ValueError("sequence-indexed view contains duplicate sample_token")
+
+        provider = getattr(dataset, "shard_index_groups", None)
+        if not callable(provider):
+            raise TypeError("sequence-indexed base dataset must expose shard groups")
+        base_groups = cast(tuple[tuple[int, ...], ...], provider())
+        group_by_base: dict[int, int] = {}
+        for group_index, group in enumerate(base_groups):
+            for base_index in group:
+                if base_index in group_by_base:
+                    raise ValueError("base shard groups contain a duplicate index")
+                group_by_base[base_index] = group_index
+        if sorted(group_by_base) != list(range(len(dataset))):
+            raise ValueError("base shard groups must partition the dataset")
+        view_groups: list[list[int]] = [[] for _ in base_groups]
+        for view_index, base_index in enumerate(self._base_indices):
+            view_groups[group_by_base[base_index]].append(view_index)
+        self._groups = tuple(tuple(group) for group in view_groups if group)
+
+    def __len__(self) -> int:
+        return len(self._base_indices)
+
+    def __getitem__(self, index: int) -> RecordT:
+        return self.dataset[self._base_indices[index]]
+
+    def shard_index_groups(self) -> tuple[tuple[int, ...], ...]:
+        """Return filtered groups whose indices partition this view."""
+
+        return self._groups
+
+    def identity_frame(self) -> pd.DataFrame:
+        """Return a defensive copy of the view's immutable identity table."""
+
+        return self._identities.copy()
 
 
 def _require_identities(frame: pd.DataFrame, *, source: str) -> pd.DataFrame:
@@ -144,6 +210,7 @@ def build_train_only_grouped_dev(
 __all__ = [
     "IDENTITY_COLUMNS",
     "SPLIT_ALGORITHM",
+    "SequenceIndexedView",
     "build_train_only_grouped_dev",
     "validate_cache_identities",
 ]

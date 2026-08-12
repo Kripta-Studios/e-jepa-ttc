@@ -30,6 +30,7 @@ from e_jepa_ttc.data.dinov3_relational_teacher_cache import (  # noqa: E402
 )
 from e_jepa_ttc.data.object_event_v4 import GarlTTCObjectEventV4Dataset  # noqa: E402
 from e_jepa_ttc.data.sam_teacher_cache import SAMTeacherMaskDataset  # noqa: E402
+from e_jepa_ttc.data.scientific_recovery_v5 import SequenceIndexedView  # noqa: E402
 from e_jepa_ttc.losses.causal_scale_ttc import CausalScaleTTCLossConfig  # noqa: E402
 from e_jepa_ttc.models.causal_scale_ttc import (  # noqa: E402
     CausalScaleTTC,
@@ -100,6 +101,15 @@ def _sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def _sorted_values_sha256(values: list[str]) -> str:
+    digest = hashlib.sha256()
+    for value in sorted(values):
+        encoded = value.encode("utf-8")
+        digest.update(len(encoded).to_bytes(8, "big"))
+        digest.update(encoded)
+    return digest.hexdigest()
+
+
 def _git(*args: str) -> str:
     result = subprocess.run(
         ["git", *args], cwd=ROOT, check=True, capture_output=True, text=True
@@ -139,6 +149,76 @@ def _model_config(path: Path) -> CausalScaleTTCConfig:
         raise ValueError("risk_thresholds_s must be a list")
     raw["risk_thresholds_s"] = tuple(float(value) for value in thresholds)
     return CausalScaleTTCConfig(**raw)
+
+
+def _load_grouped_development_contract(data: dict[str, Any]) -> dict[str, Any]:
+    """Load one frozen V5 train-only fold and reject any broader data scope."""
+
+    reference = data.get("development_protocol")
+    if not isinstance(reference, dict):
+        raise ValueError("grouped development requires data.development_protocol")
+    protocol_path = _resolve(reference.get("path"))
+    observed_file_sha = _sha256(protocol_path)
+    if observed_file_sha != reference.get("file_sha256"):
+        raise ValueError("grouped-development protocol file SHA256 differs")
+    protocol = json.loads(protocol_path.read_text(encoding="utf-8"))
+    if not isinstance(protocol, dict) or not verify_artifact_hash(protocol):
+        raise ValueError("grouped-development protocol signature is invalid")
+    if protocol.get("artifact_sha256") != reference.get("artifact_sha256"):
+        raise ValueError("grouped-development artifact SHA256 differs")
+    if protocol.get("artifact_type") != (
+        "scientific_recovery_v5_train_only_grouped_dev_v1"
+    ):
+        raise ValueError("grouped-development artifact type is incompatible")
+    if protocol.get("status") != "frozen_before_a8_results":
+        raise ValueError("grouped-development protocol was not frozen before A8")
+    checks = protocol.get("checks")
+    if not isinstance(checks, dict):
+        raise ValueError("grouped-development checks are missing")
+    required_true = (
+        "train_only_grouped_dev",
+        "sequence_disjoint_folds",
+        "sample_token_unique",
+        "same_cache_universe",
+    )
+    if any(checks.get(key) is not True for key in required_true):
+        raise ValueError("grouped-development protocol did not pass its split checks")
+    if checks.get("public_validation_used_for_selection") is not False:
+        raise ValueError("grouped development may not use public validation for selection")
+    if checks.get("private_test_opened") is not False:
+        raise ValueError("grouped development may not open private/test")
+
+    fold_index = reference.get("fold")
+    if not isinstance(fold_index, int):
+        raise ValueError("grouped-development fold must be an integer")
+    folds = protocol.get("folds")
+    if not isinstance(folds, list):
+        raise ValueError("grouped-development folds are malformed")
+    matches = [fold for fold in folds if fold.get("fold") == fold_index]
+    if len(matches) != 1:
+        raise ValueError(f"grouped-development fold {fold_index} is unavailable")
+    fold = matches[0]
+    train_sequences = {str(value) for value in fold.get("train_sequence_ids", [])}
+    dev_sequences = {str(value) for value in fold.get("dev_sequence_ids", [])}
+    universe = {str(value) for value in protocol.get("sequence_ids", [])}
+    if not train_sequences or not dev_sequences:
+        raise ValueError("grouped-development fold contains an empty partition")
+    if train_sequences & dev_sequences or train_sequences | dev_sequences != universe:
+        raise ValueError("grouped-development fold is not a disjoint universe partition")
+    if int(fold.get("train_rows", 0)) + int(fold.get("dev_rows", 0)) != int(
+        protocol.get("sample_count", -1)
+    ):
+        raise ValueError("grouped-development fold row counts are not exhaustive")
+    return {
+        "path": protocol_path,
+        "file_sha256": observed_file_sha,
+        "artifact_sha256": protocol["artifact_sha256"],
+        "protocol": protocol,
+        "fold": fold,
+        "fold_index": fold_index,
+        "train_sequences": train_sequences,
+        "dev_sequences": dev_sequences,
+    }
 
 
 def _validate_bbox_geometry_loss(
@@ -339,12 +419,18 @@ def _validate_a5_transport_change(
             raise ValueError(f"{label} initialization mode differs from frozen contract")
         if anchor.get("initialization_checkpoint") != training_config.initialization_checkpoint:
             raise ValueError(f"{label} initialization checkpoint differs from training config")
-        if anchor.get("initialization_checkpoint_sha256") != training_config.initialization_checkpoint_sha256:
-            raise ValueError(f"{label} initialization checkpoint SHA256 differs from training config")
+        if anchor.get("initialization_checkpoint_sha256") != (
+            training_config.initialization_checkpoint_sha256
+        ):
+            raise ValueError(
+                f"{label} initialization checkpoint SHA256 differs from training config"
+            )
         if contract_name == "adapter_contract":
             if model_config.transport_adapter_enabled is not True:
                 raise ValueError("A6-ADAPTER requires transport_adapter_enabled=true")
-            if int(anchor.get("transport_adapter_depth", -1)) != model_config.transport_adapter_depth:
+            if int(anchor.get("transport_adapter_depth", -1)) != (
+                model_config.transport_adapter_depth
+            ):
                 raise ValueError("A6-ADAPTER depth differs from frozen contract")
             if anchor.get("adapter_is_transport_only") is not True:
                 raise ValueError("A6-ADAPTER may only adapt the cost-volume feature path")
@@ -589,8 +675,12 @@ def run(
     data = raw.get("data")
     if not isinstance(experiment, dict) or not isinstance(data, dict):
         raise ValueError("experiment and data sections are required")
-    if data.get("opened_splits") != ["train", "validation"]:
-        raise ValueError("this screen may open train and validation only")
+    grouped = data.get("development_protocol") is not None
+    expected_opened_splits = ["train"] if grouped else ["train", "validation"]
+    if data.get("opened_splits") != expected_opened_splits:
+        raise ValueError(
+            f"opened_splits must be exactly {expected_opened_splits} for this protocol"
+        )
     forbidden = ("official_test_opened", "codabench_opened", "evttc_test_opened")
     if any(data.get(key) is not False for key in forbidden):
         raise ValueError("private/CodaBench/EvTTC test access must remain false")
@@ -603,23 +693,37 @@ def run(
     if manifest.get("artifact_sha256") != data.get("cache_artifact_sha256"):
         raise ValueError("cache artifact identity differs from the frozen protocol")
 
-    expected_train_rows = int(data.get("expected_train_rows", 2048))
-    expected_validation_rows = int(data.get("expected_validation_rows", 2048))
-    if min(expected_train_rows, expected_validation_rows) <= 0:
-        raise ValueError("expected train/validation row counts must be positive")
+    grouped_contract = _load_grouped_development_contract(data) if grouped else None
+    if grouped_contract is not None:
+        fold = grouped_contract["fold"]
+        expected_train_rows = int(fold["train_rows"])
+        expected_validation_rows = int(fold["dev_rows"])
+        expected_source_rows = int(grouped_contract["protocol"]["sample_count"])
+        if data.get("validation_cache_manifest") is not None:
+            raise ValueError("grouped development may not reference a validation cache")
+    else:
+        expected_train_rows = int(data.get("expected_train_rows", 2048))
+        expected_validation_rows = int(data.get("expected_validation_rows", 2048))
+        expected_source_rows = expected_train_rows
+    if min(expected_train_rows, expected_validation_rows, expected_source_rows) <= 0:
+        raise ValueError("expected train/dev row counts must be positive")
     split_counts = manifest.get("split_counts")
     if not isinstance(split_counts, dict):
         raise ValueError("cache manifest split_counts must be a mapping")
-    if int(split_counts.get("train", -1)) != expected_train_rows:
+    if int(split_counts.get("train", -1)) != expected_source_rows:
         raise ValueError(
             "train cache row count differs from frozen protocol: "
-            f"{split_counts.get('train')} != {expected_train_rows}"
+            f"{split_counts.get('train')} != {expected_source_rows}"
         )
 
-    validation_manifest_path = manifest_path
-    validation_manifest_hash = actual_manifest_hash
-    validation_manifest = manifest
-    if "validation_cache_manifest" in data:
+    validation_manifest_path: Path | None = None
+    validation_manifest_hash: str | None = None
+    validation_manifest: dict[str, Any] | None = None
+    if not grouped:
+        validation_manifest_path = manifest_path
+        validation_manifest_hash = actual_manifest_hash
+        validation_manifest = manifest
+    if not grouped and "validation_cache_manifest" in data:
         validation_manifest_path = _resolve(data["validation_cache_manifest"])
         validation_manifest_hash = _sha256(validation_manifest_path)
         if validation_manifest_hash != str(data["validation_cache_manifest_sha256"]):
@@ -635,23 +739,32 @@ def run(
             raise ValueError(
                 "validation cache artifact identity differs from the frozen protocol"
             )
-    validation_split_counts = validation_manifest.get("split_counts")
-    if not isinstance(validation_split_counts, dict):
-        raise ValueError("validation cache split_counts must be a mapping")
-    if int(validation_split_counts.get("validation", -1)) != expected_validation_rows:
-        raise ValueError(
-            "validation cache row count differs from frozen protocol: "
-            f"{validation_split_counts.get('validation')} != "
-            f"{expected_validation_rows}"
-        )
-    train_sequences = {str(value) for value in data.get("train_sequence_ids", [])}
-    validation_sequences = {
-        str(value) for value in data.get("validation_sequence_ids", [])
-    }
-    if len(train_sequences) != 9 or len(validation_sequences) != 3:
-        raise ValueError("frozen protocol requires 9 train and 3 validation sequences")
+    if grouped_contract is not None:
+        train_sequences = cast(set[str], grouped_contract["train_sequences"])
+        validation_sequences = cast(set[str], grouped_contract["dev_sequences"])
+        if set(data.get("train_sequence_ids", [])) != train_sequences:
+            raise ValueError("config train sequences differ from frozen grouped fold")
+        if set(data.get("dev_sequence_ids", [])) != validation_sequences:
+            raise ValueError("config dev sequences differ from frozen grouped fold")
+    else:
+        assert validation_manifest is not None
+        validation_split_counts = validation_manifest.get("split_counts")
+        if not isinstance(validation_split_counts, dict):
+            raise ValueError("validation cache split_counts must be a mapping")
+        if int(validation_split_counts.get("validation", -1)) != expected_validation_rows:
+            raise ValueError(
+                "validation cache row count differs from frozen protocol: "
+                f"{validation_split_counts.get('validation')} != "
+                f"{expected_validation_rows}"
+            )
+        train_sequences = {str(value) for value in data.get("train_sequence_ids", [])}
+        validation_sequences = {
+            str(value) for value in data.get("validation_sequence_ids", [])
+        }
+        if len(train_sequences) != 9 or len(validation_sequences) != 3:
+            raise ValueError("frozen protocol requires 9 train and 3 validation sequences")
     if train_sequences & validation_sequences:
-        raise ValueError("train and validation sequence IDs overlap")
+        raise ValueError("train and dev sequence IDs overlap")
 
     status_lines = _git(
         "-c", "core.quotepath=false", "status", "--porcelain=v1", "--untracked-files=all"
@@ -725,9 +838,15 @@ def run(
     train_dataset = GarlTTCObjectEventV4Dataset(
         str(manifest_path), splits=("train",)
     )
-    validation_dataset = GarlTTCObjectEventV4Dataset(
-        str(validation_manifest_path), splits=("validation",)
-    )
+    if grouped:
+        validation_dataset = GarlTTCObjectEventV4Dataset(
+            str(manifest_path), splits=("train",)
+        )
+    else:
+        assert validation_manifest_path is not None
+        validation_dataset = GarlTTCObjectEventV4Dataset(
+            str(validation_manifest_path), splits=("validation",)
+        )
     teacher_metadata: dict[str, Any] | None = None
     if training_config.foreground_supervision == "bbox_geometry_sam_teacher":
         teacher = data.get("sam_teacher")
@@ -780,6 +899,39 @@ def run(
             "validation_teacher_loaded": False,
             "teacher_type": "dinov3_local_relational",
         }
+    fold_identity: dict[str, Any] | None = None
+    if grouped_contract is not None:
+        train_dataset = SequenceIndexedView(
+            train_dataset, sequence_ids=train_sequences
+        )
+        validation_dataset = SequenceIndexedView(
+            validation_dataset, sequence_ids=validation_sequences
+        )
+        train_identity = train_dataset.identity_frame()
+        dev_identity = validation_dataset.identity_frame()
+        observed_train_tokens = _sorted_values_sha256(
+            train_identity["sample_token"].astype(str).tolist()
+        )
+        observed_dev_tokens = _sorted_values_sha256(
+            dev_identity["sample_token"].astype(str).tolist()
+        )
+        expected_fold = grouped_contract["fold"]
+        if len(train_dataset) != expected_train_rows or len(validation_dataset) != (
+            expected_validation_rows
+        ):
+            raise ValueError("grouped-development view row counts differ from frozen fold")
+        if observed_train_tokens != expected_fold["train_sample_tokens_sha256"]:
+            raise ValueError("grouped-development train token hash differs")
+        if observed_dev_tokens != expected_fold["dev_sample_tokens_sha256"]:
+            raise ValueError("grouped-development dev token hash differs")
+        fold_identity = {
+            "fold": grouped_contract["fold_index"],
+            "train_rows": len(train_dataset),
+            "dev_rows": len(validation_dataset),
+            "train_sample_tokens_sha256": observed_train_tokens,
+            "dev_sample_tokens_sha256": observed_dev_tokens,
+            "sequence_disjoint": train_sequences.isdisjoint(validation_sequences),
+        }
     device = resolve_device(device_name)
     _reset_peak_memory_stats(device)
     result = train_real_causal_scale(
@@ -795,7 +947,17 @@ def run(
     checkpoint_path = output_dir / "model_best.pt"
     temporary_checkpoint = output_dir / ".model_best.pt.tmp"
     torch.save(
-        checkpoint_payload(result, training_config, loss_config), temporary_checkpoint
+        checkpoint_payload(
+            result,
+            training_config,
+            loss_config,
+            artifact_type=(
+                "causal_scale_eap_grouped_dev_checkpoint_v1"
+                if grouped
+                else "causal_scale_eap_public_validation_checkpoint_v1"
+            ),
+        ),
+        temporary_checkpoint,
     )
     os.replace(temporary_checkpoint, checkpoint_path)
     validation = result.best_validation
@@ -808,20 +970,78 @@ def run(
             "prediction_ttc_s": validation["prediction_ttc_s"],
         }
     )
-    predictions_path = output_dir / "validation_predictions.csv"
+    evaluation_split = "dev" if grouped else "validation"
+    predictions_path = output_dir / f"{evaluation_split}_predictions.csv"
     predictions.to_csv(predictions_path, index=False, lineterminator="\n")
     metrics = {
         key: value
         for key, value in validation.items()
-        if key not in {"sample_tokens", "sequence_ids", "track_ids", "target_ttc_s", "prediction_ttc_s"}
+        if key
+        not in {
+            "sample_tokens",
+            "sequence_ids",
+            "track_ids",
+            "target_ttc_s",
+            "prediction_ttc_s",
+        }
     }
+    cache_payload: dict[str, Any] = {
+        "manifest_path": manifest_path.relative_to(ROOT).as_posix(),
+        "manifest_sha256": actual_manifest_hash,
+        "artifact_sha256": manifest["artifact_sha256"],
+        "split_counts": manifest["split_counts"],
+        "source_train_rows": expected_source_rows,
+        "effective_train_rows": expected_train_rows,
+        "effective_dev_rows": expected_validation_rows,
+        "train_sequence_ids": sorted(train_sequences),
+        "dev_sequence_ids": sorted(validation_sequences),
+    }
+    if not grouped:
+        assert validation_manifest_path is not None
+        assert validation_manifest_hash is not None
+        assert validation_manifest is not None
+        cache_payload.update(
+            {
+                "validation_manifest_path": (
+                    validation_manifest_path.relative_to(ROOT).as_posix()
+                ),
+                "validation_manifest_sha256": validation_manifest_hash,
+                "validation_artifact_sha256": validation_manifest["artifact_sha256"],
+                "validation_split_counts": validation_manifest["split_counts"],
+                "effective_validation_rows": expected_validation_rows,
+                "validation_sequence_ids": sorted(validation_sequences),
+            }
+        )
+    development_protocol_metadata = None
+    if grouped_contract is not None:
+        development_protocol_metadata = {
+            "path": grouped_contract["path"].relative_to(ROOT).as_posix(),
+            "file_sha256": grouped_contract["file_sha256"],
+            "artifact_sha256": grouped_contract["artifact_sha256"],
+            "fold_identity": fold_identity,
+            "train_only_grouped_dev": True,
+            "public_validation_used_for_selection": False,
+            "private_test_opened": False,
+        }
     payload: dict[str, Any] = {
-        "artifact_type": "causal_scale_eap_public_validation_screen_v1",
+        "artifact_type": (
+            "causal_scale_eap_train_only_grouped_dev_run_v1"
+            if grouped
+            else "causal_scale_eap_public_validation_screen_v1"
+        ),
         "created_at": datetime.now(UTC).isoformat(),
-        "status": "completed_public_validation_only",
+        "status": (
+            "completed_train_only_grouped_dev"
+            if grouped
+            else "completed_public_validation_only"
+        ),
         "selectable": False,
+        "development_selectable": grouped,
         "sota_claim_authorized": False,
         "official_test_opened": False,
+        "public_validation_opened": not grouped,
+        "public_validation_used_for_selection": False if grouped else True,
+        "private_test_opened": False,
         "garl_comparison_pending": True,
         "git_commit": _git("rev-parse", "HEAD"),
         "git_dirty": code_dirty,
@@ -835,22 +1055,8 @@ def run(
             "sha256": _sha256(model_path),
         },
         "model_architecture": asdict(model_config),
-        "cache": {
-            "manifest_path": manifest_path.relative_to(ROOT).as_posix(),
-            "manifest_sha256": actual_manifest_hash,
-            "artifact_sha256": manifest["artifact_sha256"],
-            "split_counts": manifest["split_counts"],
-            "effective_train_rows": expected_train_rows,
-            "validation_manifest_path": (
-                validation_manifest_path.relative_to(ROOT).as_posix()
-            ),
-            "validation_manifest_sha256": validation_manifest_hash,
-            "validation_artifact_sha256": validation_manifest["artifact_sha256"],
-            "validation_split_counts": validation_manifest["split_counts"],
-            "effective_validation_rows": expected_validation_rows,
-            "train_sequence_ids": sorted(train_sequences),
-            "validation_sequence_ids": sorted(validation_sequences),
-        },
+        "cache": cache_payload,
+        "development_protocol": development_protocol_metadata,
         "model_input_contract": {
             "forward_inputs": ["event_v4_common_roi", "garl_delta_t_s"],
             "foreground_supervision": training_config.foreground_supervision,
@@ -896,11 +1102,11 @@ def run(
         "training_config": asdict(training_config),
         "loss_config": asdict(loss_config),
         "selection": {
-            "split": "validation",
+            "split": evaluation_split,
             "best_epoch": result.best_epoch,
             **result.best_selection,
         },
-        "validation_metrics": metrics,
+        f"{evaluation_split}_metrics": metrics,
         "history": result.history,
         "elapsed_seconds": result.elapsed_seconds,
         "peak_vram_mb": (

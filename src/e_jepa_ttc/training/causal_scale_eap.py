@@ -181,16 +181,21 @@ class CausalScaleEAPTrainingConfig:
             if len(self.initialization_checkpoint_sha256) != 64:
                 raise ValueError("initialization_checkpoint_sha256 must be a SHA256 hex digest")
         else:
-            if self.initialization_checkpoint is not None or self.initialization_checkpoint_sha256 is not None:
+            if (
+                self.initialization_checkpoint is not None
+                or self.initialization_checkpoint_sha256 is not None
+            ):
                 raise ValueError(
-                    "initialization checkpoint metadata must be absent when initialization_mode=none"
+                    "initialization checkpoint metadata must be absent when "
+                    "initialization_mode=none"
                 )
         if self.freeze_encoder:
             if not uses_initialization:
                 raise ValueError("freeze_encoder requires a frozen initialization checkpoint")
             if self.foreground_warmup_epochs != 0:
                 raise ValueError(
-                    "freeze_encoder requires foreground_warmup_epochs=0 because foreground-only warmup has no trainable path"
+                    "freeze_encoder requires foreground_warmup_epochs=0 because "
+                    "foreground-only warmup has no trainable path"
                 )
 
 
@@ -1195,7 +1200,10 @@ def _shape_compatible_initialize(
     """
 
     payload = torch.load(Path(checkpoint_path), map_location="cpu", weights_only=False)
-    if payload.get("artifact_type") != "causal_scale_eap_public_validation_checkpoint_v1":
+    if payload.get("artifact_type") not in {
+        "causal_scale_eap_public_validation_checkpoint_v1",
+        "causal_scale_eap_grouped_dev_checkpoint_v1",
+    }:
         raise ValueError("initialization checkpoint has an incompatible artifact type")
     source_state = payload.get("model_state_dict")
     if not isinstance(source_state, dict):
@@ -1222,7 +1230,11 @@ def _shape_compatible_initialize(
         name = str(name)
         if group(name) in blocked_groups:
             continue
-        if name in current and isinstance(value, torch.Tensor) and value.shape == current[name].shape:
+        if (
+            name in current
+            and isinstance(value, torch.Tensor)
+            and value.shape == current[name].shape
+        ):
             compatible[name] = value
     model.load_state_dict(compatible, strict=False)
     transport_encoder_initialized_from_primary = False
@@ -1233,7 +1245,9 @@ def _shape_compatible_initialize(
     encoder_keys = [name for name in current if name.startswith("encoder.")]
     loaded_encoder_keys = [name for name in compatible if name.startswith("encoder.")]
     if encoder_keys and len(loaded_encoder_keys) != len(encoder_keys):
-        raise ValueError("shape-compatible initialization did not recover the complete endpoint encoder")
+        raise ValueError(
+            "shape-compatible initialization did not recover the complete endpoint encoder"
+        )
     return {
         "mode": "shape_compatible",
         "source_artifact_type": payload.get("artifact_type"),
@@ -1474,9 +1488,16 @@ def checkpoint_payload(
     result: CausalScaleEAPTrainingResult,
     training_config: CausalScaleEAPTrainingConfig,
     loss_config: CausalScaleTTCLossConfig,
+    *,
+    artifact_type: str = "causal_scale_eap_public_validation_checkpoint_v1",
 ) -> dict[str, Any]:
+    if artifact_type not in {
+        "causal_scale_eap_public_validation_checkpoint_v1",
+        "causal_scale_eap_grouped_dev_checkpoint_v1",
+    }:
+        raise ValueError(f"unsupported causal-scale checkpoint artifact type: {artifact_type}")
     return {
-        "artifact_type": "causal_scale_eap_public_validation_checkpoint_v1",
+        "artifact_type": artifact_type,
         "model_config": result.model.checkpoint_config(),
         "training_config": asdict(training_config),
         "loss_config": asdict(loss_config),
