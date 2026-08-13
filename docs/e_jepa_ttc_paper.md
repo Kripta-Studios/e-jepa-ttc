@@ -1,5 +1,9 @@
 # E-JEPA-TTC: informe científico local
 
+> **Desactualizado para Scientific Recovery V7.** Este paper no contiene
+> resultados V7. No debe actualizarse hasta que exista un agregado firmado según
+> [`CODEX_HANDOFF.md`](../CODEX_HANDOFF.md).
+
 Actualizado: 2026-08-02.
 
 ## Resumen

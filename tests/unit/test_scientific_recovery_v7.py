@@ -20,7 +20,8 @@ from e_jepa_ttc.training.causal_scale_eap import (
     CausalScaleEAPTrainingConfig,
     _load_soft_geometry_teacher,
 )
-from scripts.aggregate_v7_fold_results import _paired_bootstrap
+from scripts.aggregate_v7_fold_results import _paired_bootstrap, _token_sha
+from scripts.freeze_scientific_recovery_v7_configs import _sorted_values_sha256
 
 
 def _events() -> dict[str, np.ndarray]:
@@ -93,6 +94,11 @@ def test_old_training_config_loads_without_v7_fields() -> None:
     config = CausalScaleEAPTrainingConfig()
     assert config.freeze_encoder_stages == 0
     assert config.soft_geometry_teacher_checkpoint is None
+
+
+def test_v7_aggregate_uses_frozen_length_prefixed_token_hash() -> None:
+    tokens = ["b", "aa", "a"]
+    assert _token_sha(pd.Series(tokens)) == _sorted_values_sha256(tokens)
 
 
 def test_soft_teacher_is_frozen_in_eval_and_has_no_trainable_parameters(tmp_path) -> None:

@@ -15,6 +15,8 @@
 
 \newcolumntype{Y}{>{\raggedright\arraybackslash}X}
 \newcommand{\ttc}{\mathrm{TTC}}
+\newcommand{\vsevenwarning}{\textbf{Outdated for Scientific Recovery V7: this
+paper contains no V7 results and must not be updated before a signed aggregate.}}
 \Urlmuskip=0mu plus 2mu
 \def\UrlBreaks{\do\/\do\-\do\_\do\.}
 \emergencystretch=2em
@@ -39,6 +41,10 @@ KriptaStudios Research Handoff\\
 
 \begin{document}
 \maketitle
+
+\begin{center}
+\fcolorbox{red}{white}{\parbox{0.94\linewidth}{\vsevenwarning}}
+\end{center}
 
 \begin{abstract}
 E-JEPA-TTC investigates time-to-contact estimation from event cameras using

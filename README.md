@@ -6,6 +6,8 @@
 > TTC limpio, aunque no es promocionable porque no preserva geometría. Garl mantiene
 > 144,35 y cero failures. Public validation y private/test permanecen cerrados.
 > Estado canónico: [Scientific Recovery V6](docs/SCIENTIFIC_RECOVERY_V6_STATUS.md).
+> Contrato operativo V7/V8:
+> [CODEX_HANDOFF.md](CODEX_HANDOFF.md). V7 mantiene test y CodaBench cerrados.
 
 > Estado event-only (2026-08-10): Garl matched desde cero fija la métrica a batir
 > en MiD macro 203,63. A0 obtuvo 382,19, A1 geometry-only 346,83 y A3

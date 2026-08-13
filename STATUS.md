@@ -1,5 +1,9 @@
 # Estado del repositorio
 
+Contrato vigente: [cierre V6 y Scientific Recovery V7/V8](CODEX_HANDOFF.md).
+El acta V6 permanece en
+[docs/SCIENTIFIC_RECOVERY_V6_STATUS.md](docs/SCIENTIFIC_RECOVERY_V6_STATUS.md).
+
 ## 2026-08-13 — Scientific Recovery V6 cerrado sin promoción
 
 - V6-D0 seleccionó `motion_scale`; se congeló V6.1 cambiando solo radio 1 a 2.

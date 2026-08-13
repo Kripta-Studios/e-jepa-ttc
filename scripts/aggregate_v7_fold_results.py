@@ -65,8 +65,9 @@ def _json_safe(value: object) -> object:
 def _token_sha(values: pd.Series) -> str:
     digest = hashlib.sha256()
     for token in sorted(values.astype(str).tolist()):
-        digest.update(token.encode("utf-8"))
-        digest.update(b"\0")
+        encoded = token.encode("utf-8")
+        digest.update(len(encoded).to_bytes(8, "big"))
+        digest.update(encoded)
     return digest.hexdigest()
 
 

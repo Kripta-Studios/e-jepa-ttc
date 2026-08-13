@@ -1,684 +1,417 @@
-# CODEX HANDOFF — E-JEPA-TTC
-
-> Superseded como handoff operativo por
-> [Scientific Recovery V6](docs/SCIENTIFIC_RECOVERY_V6_STATUS.md), 2026-08-13.
-> El contenido inferior se conserva como estado histórico de 2026-08-10.
-
-Fecha de corte: 2026-08-10 (Europe/Madrid)
-
-## Resultado activo: Garl matched fijado; A1 y A3 negativos
-
-A0 seed 7 terminó en 16 épocas, seleccionó época 11 y no se promueve: MiD global
-`383.8549432`, MiD macro `382.1905104`, failure `12.3046875%`, weak-box IoU
-`0.4997858107` y Pearson log-ratio `0.0456290990`. La referencia release sobre los
-mismos 2.048 tokens obtuvo MiD macro `117.4281582` y cero failures, pero sus tres
-secuencias validation aparecen en train oficial y tuvo 88.744 filas/50 épocas.
-Etiquetar la tabla: **official release reference; unequal training budget and
-sequence exposure**.
-
-Comparador firmado:
-`artifacts/metrics/causal_scale_eap_garl_event_only_comparison_v1.json`, identidad
-`9f2bebde05729b7ace6fdbc0a990e6b75bf180ec87220924219ed7095105281c`.
-La diferencia A0 menos release es `+264.4246879` MiD, IC95% por secuencia
-`[228.8007775, 302.7170041]`.
-
-Matched training terminó desde cero en GPU: época seleccionada 11/16, MiD global
-`203.0982270`, MiD macro `203.6341709`, failure `0%`, Pearson log-ratio `.372213`.
-A0 queda `+180.7031360` MiD por detrás, IC95% por secuencia
-`[131.7444284, 215.3146093]`, y gana solo el `35.6904%` de los pares finitos.
-Garl matched mejora las tres secuencias. Su punto débil es negative: MiD `437.5957`
-y predicciones siempre positivas; A0 obtiene `210.1439` ahí pero con `20%` failures.
-La comparación firmada completa tiene identidad
-`e63447135e2b09c5c6a7e2afb996bb70cce8cbba4a112afc87069e2f60c254de`.
-A1 fue preregistrado antes de ejecutarse en
-`configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a1_geometry_v1.yaml`,
-SHA256 `bc3fe3daabb8f205b1dda81f6da442c2d7452253330960d0c3ff65af7795ba28`.
-Mantiene el mismo model config y 344.591 parámetros entrenables. La única diferencia
-científica es reemplazar BCE+Dice+extent contra la weak-box rasterizada por Huber
-sobre `log h`, `log w`, `cx`, `cy` derivados numéricamente de bbox. Pesos congelados:
-`1.25/1.25/2.5` (centro promedia x/y), suma nominal 5. `pair_ratio` permanece cero.
-El forward sigue aceptando solo eventos y delta; A1 no invoca el rasterizador.
-
-A1 seed 7 terminó las 18 épocas en GPU y seleccionó la época 18: MiD global
-`346.1117485`, MiD macro `346.8294571`, failure `9.9609375%`, known coverage
-`.900390625` y Pearson log-ratio `.1108212322`. Mejora A0 en `35.3610532` MiD
-macro y en las tres secuencias, pero sigue `143.1952862` por detrás de Garl
-matched. El IC95% por secuencia de A1−Garl es
-`[115.1041790, 166.6704803]`; A1 gana `39.0998%` de los 1.844 pares finitos.
-
-La geometría explica por qué no basta: `corr(log h_pred,log h_bbox)=.470828`,
-pero anchura `.078759`, centro x `.063569` y centro y `.031956` permanecen débiles.
-La dinámica de altura solo alcanza `.059130` frente a bbox-ratio y `.104778`
-frente al ratio físico; `r_iso` es esencialmente nulo (`-.000826` frente a física).
-Por tanto, quitar la weak-box ayuda parcialmente a altura y MiD, pero no confirma
-que el rectángulo fuese la causa principal: la representación espacial/temporal
-event-native sigue siendo el cuello de botella. No se promueve A1 ni se escala.
-
-Comparación A1/Garl firmada:
-`artifacts/metrics/causal_scale_eap_garl_event_only_a1_geometry_comparison_v1.json`,
-identidad `471fa106f4137f71ecfa4165abec696e5f83644830ded14a82abff8fb7ba485d`.
-La siguiente intervención debe actuar sobre representación densa event-native,
-manteniendo la cabeza geométrica y Causal Scale como controles; A1-R no es el
-siguiente paso porque A1 tampoco aprendió `w,cx,cy` de forma suficiente.
-
-Auditoría de observabilidad firmada
-`artifacts/metrics/causal_scale_eap_a1_geometry_observability_v1.json`, identidad
-`737a3663c13dc083b918e0101f4954bcfc22b23257255e0d183f8e09f0aa635d`:
-t1/t2 repiten el mismo fallo (`h r=.478/.493`, `w r=.048/.105`). La anchura bbox
-sí varía (`std=.096/.095`), por lo que no es un target constante. La masa absoluta
-de eventos cruda ocupa casi todo el ROI (`extent h=.9965`, `w=.9984`, std
-`~.003`) y su cambio no reproduce bbox (`r=-.052/-.078`). El decoder separable
-actual opera sobre el input full-resolution y colapsa cada eje con `amax`; la
-hipótesis siguiente, aún no demostrada, es que ese colapso pierde coocurrencia 2-D
-en un ROI con actividad difusa. El control mínimo es `equivariant_fullres` 2-D con
-la misma loss A1, no DINO/SAM/JEPA ni `pair_ratio` simultáneamente.
-
-El control se denomina A1-FR y está preregistrado en
-`configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a1_fullres_v1.yaml`,
-SHA256 `7ceb114963e8aad8f4c7edeb70344759543d3ac58abc6a47b862d3acf772c42e`.
-Su model config SHA256 es `97232184d7fb00520136319f5e902c726e26766ddaae236459b6d42d9596d39a`.
-Tiene 340.870 parámetros, 3.721 menos que A1. Fuera del decoder foreground, el
-model config es exactamente igual; data/training/loss son byte-semánticamente
-iguales a A1. Debe publicarse antes de ejecutar y correr una sola vez en CUDA.
-
-La primera ejecución de infraestructura A1-FR queda invalidada, no borrada. En su
-checkpoint elegido, `DGqicHUGWb` tenía MiD `NaN` (100% failure en negative) y el
-macro promedió solo las otras dos secuencias. El selector no exigía cobertura
-finita de todas las secuencias. Artifact de invalidación firmado
-`causal_scale_eap_a1_fullres_invalid_selection_v1.json`, identidad
-`fd5bde50328080975781a8fc2cdae1e0a198bb5a878430fde3e1f87c9be8f19b`.
-El selector ahora exige MiD finito en las tres secuencias y no cuenta candidatos
-incompletos para best/stale. `minimum_epochs=8` sigue significando suelo de early
-stopping; la selección comienza después del warm-up. Repetir desde cero en un output
-nuevo; no reanudar el estado contaminado.
-
-La repetición válida A1-FR terminó 16 épocas y seleccionó la 11 con cobertura 3/3:
-MiD global `380.3621495`, macro `380.2202364`, failure `28.7597656%`, known
-`.7124023` y Pearson log-ratio `-.0181180`. Es peor que A1 por `+33.3908` MiD
-macro y `+18.7988` puntos de failure; solo mejora A0 en `1.9703` MiD, a costa de
-muchos más unknowns. Altura/anchura absolutas `.271/.090` y deltas contra bbox
-`-.020/-.028` rechazan la hipótesis de que conservar 2-D en una cabeza superficial
-raw fuese suficiente. Comparador firmado identidad
-`b02518601497907ae2ca41a345c8719298f97047ee59e9b7fad8909bd53c3c35`.
-
-Ambos decoders probados (`separable` y `fullres`) reciben el input crudo y no las
-features profundas de `_EndpointEncoder`. La siguiente hipótesis mínima es usar el
-decoder existente `resize_conv`, que sí consume features aprendidas, manteniendo la
-loss A1. No introducir pretraining/teachers hasta probar ese control.
-
-Ese control queda preregistrado como A1-DF en
-`configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a1_deep_features_v1.yaml`.
-Experiment SHA256 `dddfb393bb0ce2c3245335cc459948c0830a435ffeaf5a76e710679a8180b284`;
-model SHA256 `265dbfd57e68d7a6aa385fbf31dc0ad41154b17afbd1d9454bbd8ddd80c6663f`;
-355.118 parámetros. Ejecutar una sola vez seed 7 en GPU y no tocar pair-ratio,
-teachers, unknown/clip ni loss A1.
-
-A1-DF terminó 18 épocas y seleccionó la 14: MiD global `350.0584595`, macro
-`350.3020204`, failure `21.09375%`, known `.7890625` y Pearson log-ratio
-`.1864874`. Mejora claramente la señal de A1 (ratio `.1108 -> .1865`, delta altura
-vs física `.1048 -> .1704`, anchura absoluta `.0788 -> .2428`), pero empeora MiD
-en `3.4726` y failure en `11.1328` puntos. No se promueve ni se escala.
-
-La descomposición firmada `5a9c42934f3335ddbe4fe679f3e53f4187926fa46749321fb27ac1e3775141da`
-muestra ratio analítico/físico `r=.1703`, slope `.0848`, residual/físico `r=.0622`,
-slope `.0038`, y 433 unknown por ratio bajo, cero por soporte. La representación
-profunda recupera señal, pero el cambio queda muy subescalado. El siguiente control
-mínimo justificable es A1-DF-R: mismo A1-DF y una única supervisión pair-ratio
-directa, preregistrada antes de ejecutarse. Teachers/JEPA siguen aplazados.
-
-A1-DF-R queda congelado en
-`configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a1_deep_features_ratio_v1.yaml`,
-SHA256 `b3f9eb9eb05b028c57e578f0962701647dcc29b8708f7b5a0a8ac9870de43f67`.
-Único cambio experimental: pair-ratio `0 -> 5`. El target deriva de altura bbox
-numérica training-only, sin rasterización; warm-up lo mantiene en cero. El peso se
-fijó con 2.048 train: contribución `.09044`, comparable a width `.08547`, sin usar
-validation ni sweep.
-
-A1-DF-R terminó 18 épocas, best 17: global `349.5329377`, macro `349.8628324`,
-failure `19.82421875%`, known `.8017578`, ratio `.1702691`. Frente a A1-DF solo
-mejora `.4392` MiD y `1.2695` puntos de failure; DGq/pBq empeoran y únicamente
-qooh mejora, así que la ganancia está dominada por una secuencia. Analítico/físico
-baja de `.1703` a `.1499`; slope sube `.0848 -> .0893` y unknown canónico baja
-432 -> 406. Resultado negativo/insuficiente; no sweep ni escalado.
-
-Comparador firmado `0560154542b06c12d20a24ed719ec9461ebaab9d7e4fa080afe964cda2dd6205`;
-descomposición `0bc741a5f732f705e4862a2e40e45413027fa6b28f3e326468ed30cea49900e7`.
-La auditoría de recursos ya terminó: 0/64.629 máscaras únicas son materiales; los
-64.629 RGB únicos sí existen en 135 TAR. SAM ViT-L y DINOv3 ConvNeXt-Tiny pasan
-config/processor/licencia/pesos locales. Artefacto firmado
-`garl_foreground_resource_audit_v2.json`, identidad `6e910ec2…f1e246`, generado por
-el commit publicado `4f5cc46`. No se abrió test ni se cargaron teachers.
-
-El smoke SAM bbox-prompt sobre una fila train ya pasó desde `e4969f1`: BF16/CUDA,
-inferencia `.4207 s`, peak VRAM `1691.39 MiB`, máscara finita `6.63%` y score interno
-`1.0`. Artefacto `be097e6c…2af5e9`. No es evidencia de calidad ni TTC. El siguiente
-trabajo es preregistrar un audit train-only multisequence de scores/geometría y, si
-pasa, precomputar solo train para A3 `event-only inference with RGB distillation`;
-validation no recibe pseudo-máscaras. No escalar 2.048 ni abrir test.
-
-El audit multisequence ya pasó desde `4400dd7`: 36 pares/72 endpoints, nueve
-secuencias, sin TTC; bbox–mask IoU mediana `.5761`, área temporal Pearson `.6471`,
-signo `.8286`, una degenerada. Artefacto `0922d540…73dd44`, endpoints CSV
-`bf659472…84eaf2`. El subset exacto train ya expone las 2.048 filas y rutas RGB en
-`artifacts/subsets/garl_event_only_matched_screen_v1/train_data.parquet`. Próximo
-hito: preregistrar/materializar solo esas 4.096 máscaras con filtros train-derived;
-no abrir `validation_data.parquet` para teacher generation.
-
-La materialización terminó en `6f9c92a`: 32 shards, 2.048 tokens exactos,
-4.096 endpoints; `.9492` válidos individualmente y `.7822` pares/`3204` máscaras
-usables tras filtro temporal. Tiempo `1784.63 s`, inferencia `.17110 s`, VRAM
-`1691.89 MiB`, cache ~2.18 MB. Manifest firmado `aaa60090…0426b0`; todos los NPZ,
-sidecars y orden de tokens fueron verificados. A3 ya está implementado y
-preregistrado (config SHA-256 `83e8c716…9b7754`) como A1 + SAM BCE `1.0`/Dice `.5`
-train-only en masks válidas, con fallback geometry-only. El wrapper valida firma,
-shards, token, secuencia y crop; validation no se envuelve ni carga teacher.
-
-El preregistro se publicó en `ffb360f` y A3 terminó best 8/13: global `354.2602`,
-macro `353.6351`, failure `10.8887%`, known `.8911`, ratio `.1053`, `458.08 s` y
-`1561.73 MiB`. Pierde frente a A1 en las tres secuencias; A3−A1 bootstrap por
-secuencia `+7.5388`, IC95% `[1.5525,10.6383]`, win rate `48.23%`. Solo mejora el
-bucket negative, pero empeora crucial/small/large. Comparadores `ffa968a8…26ee63`
-y `5e24d901…1bfcf0`; descomposición `fd637354…1c46d9`. Es negativo: no sweep,
-seeds ni escalado. Próxima intervención: representación event-native, una hipótesis
-preregistrada, sin otra máscara RGB ni cambios de física/unknown.
-
-El subset para matched training está materializado en
-`artifacts/subsets/garl_event_only_matched_screen_v1`, identidad firmada
-`dd08ecc983f30e38a939204f9a2df09e4966bbe73bd764c972f7726e5d4e34d3`.
-Contiene exactamente 2.048 train/9 secuencias y 2.048 validation/3 secuencias,
-con igualdad de tokens, join keys y TTC contra cache y parquets públicos.
-
-### Diagnóstico A0 reproducible
-
-`artifacts/metrics/causal_scale_eap_a0_failure_decomposition_v1.json`, identidad
-`75918c58cd91258fac5aac11f8d6fca00ce6cf43014e5ee19ab3a30d7c91beb7`:
-
-- bbox-ratio vs ratio físico: Pearson `.759753`, slope `.862189`;
-- altura predicha vs altura bbox: Pearson `.372040`, slope `.170747`;
-- ratio analítico vs bbox: Pearson `.014517`;
-- ratio analítico vs físico: Pearson `.036820`;
-- residual vs físico: Pearson `-.033979`;
-- ratio efectivo vs físico: Pearson `.045641`;
-- 252/2.048 unknown por `|pair_ratio| < .002`; cero por soporte bajo;
-- 151 predicciones conocidas saturadas en ±60 s.
-
-Conclusión observacional: las cajas contienen señal de escala útil y los eventos
-tienen soporte, pero el mapa no aprende una extensión temporal fiel. La inversión
-física amplifica ratios malos cerca de cero. La weak-box rectangular es la hipótesis
-principal, no una causa confirmada; A1 es el experimento que debe resolverlo.
-
-El preprocessing oficial del baseline matched ya está completo en
-`artifacts/cache/garl_official_event_only_matched_preprocessing_v1`, identidad
-`92af281030170733411ef9d65b19e88ebc8019c729dd6743e02ae9c40f564b52`.
-Contiene 2.048 train/2.048 validation, tensores FP32 `[40,128,128]`, sin RGB ni
-bbox como input. Declara el crop bbox oracle oficial. Train tardó `166.7501 s` y
-validation `155.3283 s`; el error máximo de target fue menor de `4.8e-7 s`.
-Garl matched y A1 están cerrados; no reinterpretar la referencia release como
-comparación causal ni reabrir A1 con pesos ajustados post-hoc.
-
-El runner `scripts/run_garl_matched_screen.py` desactiva explícitamente ambos
-pretrained checkpoints release y escribe todo fuera de `E:\Garl-TTC`. Su smoke de
-2 batches, batch 32/8 workers, terminó en 59.51 s sin OOM y dejó el release intacto.
-No usar el checkpoint smoke como resultado matched.
-
-Rama: `scientific-recovery-v3-hardening`
-
-Remote publicado antes de este handoff: `origin/scientific-recovery-v3-hardening`
-Base al empezar este lote: `cb25c0ff9344b17f23d8e4793a5390d1ec5d6a3b`
-
-Este archivo es el punto de entrada para una sesión nueva. El objetivo activo no está
-terminado: construir y evaluar honestamente un estimador TTC event-only, después
-RGB-only y finalmente multimodal, con la aspiración de superar Garl-TTC en eAP y el
-SOTA comparable en EvTTC. No existe todavía un claim SOTA.
-
-## 1. Qué se consiguió en la sesión que termina
-
-### 1.1 Cierre sintético V8 y CVaR
-
-La arquitectura causal-scale event-only predice foreground por endpoint, extrae una
-altura visible diferenciable y deriva TTC mediante la identidad física:
-
-```text
-events t0/t1/t2
-  -> foreground logits por endpoint
-  -> temporal consensus reversible w=0.15
-  -> altura normalizada h0/h1/h2
-  -> r = log(h_current / h_previous)
-  -> inverse_ttc = expm1(r) / delta_t
-  -> TTC, incertidumbre y riesgo
-```
-
-El residual aprendido está acotado y es antisimétrico; la cabeza directa de TTC es
-solo auxiliar y no alimenta la predicción principal. Implementación:
-
-- `src/e_jepa_ttc/models/causal_scale_ttc.py`
-- `src/e_jepa_ttc/losses/causal_scale_ttc.py`
-- `configs/model/e_jepa_causal_scale_event_v8_t015.yaml`
-- `configs/train/causal_scale_v8_tail_cvar.yaml`
-- `docs/causal_scale_v8.md`
-
-CVaR sobre el 10% de mayores errores de log-ratio, peso `2.0`, produjo el mejor V8:
-
-| Métrica validation multigrupo | Resultado | Gate |
-|---|---:|---:|
-| Pearson macro | `.946212649` | `>= .95`, falla por `.003787351` |
-| Pearson 801/802/803 | `.9481158/.9456668/.9448553` | cada grupo `>= .95` |
-| TTC symmetric relative error macro | `.2954736` | `<= .30`, pasa |
-| foreground IoU | `.868659` | `>= .60`, pasa |
-| sign accuracy | `.982978` | `>= .95`, pasa |
-| slope | `.917236` | `[.8,1.2]`, pasa |
-| translation leakage p95 | `.005864` | `<= .02`, pasa |
-
-V8 quedó cerrado sin abrir test seeds `901/902/903`. No se cambiaron gates. Artefacto
-firmado: `artifacts/metrics/causal_scale_v8_diagnostic_comparison_v1.json`, identidad
-`71bb1d8299141180ff964154e3440b971014e50953e174b9fb489ba9bbe1ef79`.
-
-Commits publicados durante V8:
-
-```text
-683a4f0 docs(results): record v7 held-out correlation failure
-46f9d61 feat(train): add multigroup causal scale selection
-c681d34 feat(model): add temporal foreground consensus arms
-1731ae4 feat(loss): add causal scale tail-risk optimization
-cb25c0f docs(results): close v8 with tail-risk diagnostics
-```
-
-### 1.2 Auditoría local de eAP y Garl-TTC
-
-Fuentes externas, solo lectura:
-
-```text
-E:\eAP_dataset       ~691.493 GiB, 334 ficheros, 40/46 secuencias locales
-E:\GarlTTC_dataset   parquets públicos Garl, 88,744 filas train
-E:\Garl-TTC           release oficial, commit 256661242b8a7f5e56aa3c1c02348b30f6e89de6
-```
-
-Checkpoints oficiales auditados en `E:\Garl-TTC\checkpoints`:
-
-```text
-paper_event_only_lhr.pth
-paper_visual_only_lhr.pth
-paper_ours_full.pth
-```
-
-La comparación primaria debe ser nuestro event-only frente a
-`paper_event_only_lhr.pth`. El multimodal oficial se reportará solo como referencia de
-modalidad distinta, no como comparación apples-to-apples.
-
-No hay GT privado del test oficial local. La cifra del paper no puede presentarse como
-reproducida. No ejecutar CodaBench sin freeze y autorización explícita.
-
-### 1.3 Subconjunto representativo congelado
-
-Cache materializado existente:
-
-```text
-artifacts/cache/garl_object_event_common_roi_screen_v4/manifest.json
-artifact identity: 36c12d75c91a243f4d712831cebcd3e82f896a76196b2a65b039e680f1fac309
-file SHA256: bba9ff9b143bfd57760bd61d2b6f664202581b5dee54444f44c625975557eb72
-```
-
-Cobertura exacta:
-
-- train: 2,048 muestras, 9 secuencias;
-- validation: 2,048 muestras, 3 secuencias diferentes;
-- ningún ID de secuencia cruza splits;
-- buckets totales: crucial `979`, small `1160`, large `1053`, negative `904`;
-- cada una de las tres secuencias validation contiene los cuatro buckets;
-- input real `[B,3,12,128,128]`, `delta_t=0.1 s`;
-- ROI cuadrada común preserva escala absoluta;
-- no contiene RGB ni máscaras de segmentación;
-- las cajas oficiales están en coordenadas ROI, rango observado `21.333..106.667`.
-
-Secuencias train:
-
-```text
-2cyv0Oedzg 5ilM1PX2vz 6h5yRW2LGc OBneIVg4Cw OYgB6RGWcq
-WbCh1DRerJ mHGFBekt7X qGsgzl4Q8B t79dBxj1WS
-```
-
-Secuencias validation:
-
-```text
-DGqicHUGWb pBqGOb2vYq qoohcdtLDH
-```
-
-### 1.4 Adaptación real implementada
-
-Nuevos componentes:
-
-- `src/e_jepa_ttc/training/causal_scale_eap.py`
-  - trainer BF16;
-  - warm-up foreground;
-  - CVaR 10%/peso 2;
-  - gradient accumulation y clipping;
-  - early stopping después de `minimum_epochs=8`, paciencia `5`;
-  - selección lexicográfica por MiD macro por secuencia y failure rate;
-  - límite total duro `6.0 h`;
-  - `last.pt` atómico cada época con modelo, optimizer, scheduler, RNG, historial,
-    estado del DataLoader y paciencia;
-  - `best.pt` resumible y `model_best.pt` de inferencia.
-- `scripts/train_causal_scale_eap_screen.py`
-  - valida hashes y split antes de reservar GPU;
-  - falla si Git/código está dirty;
-  - abre solo train/validation;
-  - genera `summary.json`, `validation_predictions.csv`, checkpoints e historial;
-  - soporta `--resume`.
-- `configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_v1.yaml`
-  - 18 épocas máximo, batch 32, seed 7, BF16;
-  - contrato exacto de datos, pérdida y claim boundary.
-- `src/e_jepa_ttc/data/object_event_v4.py::weak_box_masks`
-  - rasteriza cajas como supervisión débil declarada;
-  - no son segmentación GT;
-  - `t0` se invalida porque su caja es proxy en este cache;
-  - `t1/t2` son supervisión oficial;
-  - las cajas nunca entran en `CausalScaleTTC.forward`.
-
-Benchmark real ya ejecutado, solo para throughput, 128 train + 128 validation:
-
-```text
-train: 3.4567 s
-validation: 1.8323 s
-total: 5.2890 s
-peak VRAM: 395.6 MiB con batch 8
-MiD macro tras un único epoch parcial: 345.18 (diagnóstico, no resultado)
-known coverage: .421875 (diagnóstico, no resultado)
-```
-
-La extrapolación lineal conservadora de batch 8 es aproximadamente 85 s por época
-completa train+validation y ~26 min para 18 épocas. Batch 32 debe ser más rápido. Hay
-margen muy amplio bajo 6 h. Esta estimación histórica queda supersedida por los runs
-A0 (`541.49 s`) y A1 (`631.88 s`) completos.
-
-## 2. Integridad científica y filosofía de trabajo
-
-1. Un resultado sintético no es un resultado eAP.
-2. Validation puede seleccionar arquitectura/checkpoint; test no puede hacerlo.
-3. No mover gates después de ver resultados.
-4. Un fallo se conserva y diagnostica; no se oculta mediante media recortada.
-5. MiD/RTE se calculan con el protocolo firmado de Garl y se reportan counts/failures.
-6. Event-only se compara primero con Garl event-only sobre los mismos tokens.
-7. Las cajas GT usadas para crop/supervisión se declaran como oracle; el modelo no es
-   bbox-free.
-8. Una caja rasterizada es weak supervision, no una máscara de segmentación real.
-9. No afirmar SOTA con una seed, validation local o modalidades distintas.
-10. Cada run debe guardar commit, hashes, entorno, seed, split, historial, checkpoint,
-    tiempo, VRAM y predicciones regenerables.
-
-## 3. Estado exacto al abrir la sesión nueva
-
-Ejecutar primero:
+# CODEX HANDOFF: cierre V6 y Scientific Recovery V7/V8
+
+Fecha de corte: 2026-08-13 (Europe/Madrid).
+
+Este archivo es el contrato canónico de continuación. El acta V6 permanece en
+[`docs/SCIENTIFIC_RECOVERY_V6_STATUS.md`](docs/SCIENTIFIC_RECOVERY_V6_STATUS.md) y no
+se reinterpreta con resultados posteriores.
+
+## 1. Estado Git y límites de trabajo
+
+- Base V6 inmutable:
+  `scientific-recovery-v6-oof-diagnostics@28c1efb50622255719f239622ba07858ce704535`.
+- Rama V7 creada exactamente desde esa base: `scientific-recovery-v7-balanced-oof`.
+- Los worktrees A6 y CUDA robustness siguen intactos.
+- No se avanzó `main`, no se crearon tags y no se hizo push.
+- Public validation, private test, EvTTC test y CodaBench no se abrieron para
+  selección.
+- `artifacts/` contiene salidas ignoradas por Git. Un commit de código no basta para
+  recuperarlas: cada resultado aceptado debe conservar su archivo, SHA-256 y firma
+  `artifact_sha256`.
+- El worktree conserva entradas untracked ajenas a V7. No se usó `git add .`.
+
+La propuesta anterior se archivó, sin reescribir su cuerpo, en
+[`docs/archive/E_JEPA_TTC_SCIENTIFIC_RECOVERY_V6_POSTMORTEM_AND_V7_V8_MASTER_PLAN_2026-08-13.md`](docs/archive/E_JEPA_TTC_SCIENTIFIC_RECOVERY_V6_POSTMORTEM_AND_V7_V8_MASTER_PLAN_2026-08-13.md).
+
+## 2. Dictamen científico
+
+La formulación permitida es:
+
+> E-JEPA y Garl pueden compararse por rendimiento bajo una evaluación emparejada,
+> pero la diferencia no puede atribuirse exclusivamente a la arquitectura.
+
+La paridad local cubre las mismas 8.192 muestras, targets, particiones OOF,
+presupuesto, métrica y privilegio de ROI oracle. No iguala preprocessing,
+representación temporal, capacidad, topología ni contrato de cobertura.
+
+Correcciones que no deben volver a perderse:
+
+- El estado `epoch 8 / MiD 185.266` quedó obsoleto. V6.1 F0 terminó en epoch 18
+  con `181.351`; el agregado final fue `194.122`, failure `6.689%`, y falló el
+  gate.
+- Garl usa 40 planos totales: dos intervalos de 20. El modelo causal-scale local
+  usa tres pasos de 12 canales, 36 planos totales.
+- El Garl local es event-only y declara `with_decoder:false`. No recibió
+  supervisión SAM. El foreground del artículo es una hipótesis externa, no una
+  causa demostrada del resultado local.
+- Garl calcula `Δt / (1-h₀/h₁)`. Su failure de 0% es empírico. Si `h₀=h₁`,
+  el denominador es cero; el test local conserva esa singularidad.
+- A5 y V6 usan height-ratio, geometría y transporte, pero sus configuraciones
+  declaran `jepa_objective:false`. Son brazos causal-scale/transport del árbol
+  E-JEPA, no evidencia de un objetivo JEPA activo.
+- A3 ya probó distillation SAM train-only y empeoró A1 en `+7.539 MiD`, IC95%
+  `[1.553, 10.638]`. V7 no repite foreground/SAM como primera intervención.
+- Los tres folds V6 son particiones OOF, no semillas. El bootstrap de 422 clusters
+  mide incertidumbre de evaluación condicionada al entrenamiento seed 7; no mide
+  variabilidad de optimización.
+- Existe un repositorio oficial con benchmarks CodaBench de eAP y GarlTTC. No
+  existe un leaderboard unificado entre datasets y protocolos.
+
+## 3. Resultado V6 congelado
+
+| Modelo | MiD | Failure | Interpretación |
+|---|---:|---:|---|
+| Garl local | 144.353 | 0% | Mejor comparador bajo el protocolo local emparejado |
+| A5 causal | 155.472 | 4.761% | Mejor TTC propio; no preserva la geometría |
+| V6.1 r2 | 194.122 | 6.689% | Mejora media frente a A8 sin evidencia suficiente |
+| A8 r1 | 197.691 | 7.019% | Geometría preservada; TTC restringido |
+| A6 | 211.509 | 7.849% | Inferior a A5, A8 y V6.1 |
+
+Estadística emparejada firmada:
+
+- `A5−Garl = +11.119`, IC95% `[4.271, 17.527]`.
+- `V6.1−A8 = −3.570`, IC95% `[−8.187, 1.004]` al redondear la lectura
+  bootstrap solicitada. El acta V6 conserva `[−8.190, 0.999]` del agregado
+  firmado original; la decisión no cambia.
+- `A5−V6.1 = −38.650`, IC95% `[−46.050, −31.246]` en la lectura solicitada.
+  El agregado V6 registra `[−46.052, −31.250]` por precisión de serialización.
+
+Los buckets `0–3 s` y `3–6 s` explican casi todo el gap A5–Garl. R2 perjudica
+los cuartiles bajos de movimiento y mejora los altos; eso apoya adaptación
+condicional, no r2 fijo. A5 reduce las slopes aproximadamente de `.163→.027`
+frente a bbox y `.269→.041` frente a física.
+
+Fuentes locales:
+
+- `artifacts/scientific_recovery_v6/results/aggregate.json`, artifact
+  `ed6da1c77a211870406810d4d6b446d450845b021f211f45d0485b257945e77a`.
+- `artifacts/scientific_recovery_v6/diagnostics/a8_oof_failure_modes.json`.
+- `artifacts/scientific_recovery_v6/diagnostics/oof_garl_gap.json`, artifact
+  `f0ebc082d06571c645c42542d53a39324c22723f346b17dcac2e49d9ae646b9c`.
+- `scripts/aggregate_v6_fold_results.py`, `scripts/analyze_v6_oof_garl_gap.py` y
+  `scripts/audit_v5_fold_geometry.py` regeneran las lecturas; no hay cifras
+  incrustadas en el código de agregación.
+
+## 4. Nueva lectura V7 de los baselines
+
+V7 separa predicción puntual y abstención. El archivo histórico
+`prediction_ttc_s` conserva `NaN` cuando `known_mask=false`.
+`point_prediction_ttc_s` toma `ttc_mean_seconds` antes del gate y debe ser finito.
+La reevaluación está firmada en
+`artifacts/scientific_recovery_v7/baselines/manifest.json`, artifact
+`de5ff61811f7eb7579797c7131a74b279481b2ac9ed005726885e4d6434378c9`.
+
+| Modelo | MiD puntual, cobertura completa | MiD selectivo histórico | Cobertura selectiva | Failure puntual |
+|---|---:|---:|---:|---:|
+| Garl | 144.353 | 144.353 | 100.000% | 0% |
+| A5 | 158.449 | 155.374 | 95.227% | 0% |
+| V6.1 | 198.889 | 194.156 | 93.335% | 0% |
+| A8 | 203.243 | 197.620 | 93.005% | 0% |
+
+Esta tabla no reemplaza V6. Usa el mismo universo de tokens y checkpoints, pero
+reconstruye la salida puntual bajo el contrato V7. En A5, la diferencia media
+entre predicciones selectivas antiguas y reevaluadas es `0.045 s`; siete máscaras
+cambian. Cerca de la singularidad del cociente, diferencias numéricas pequeñas
+producen cambios grandes de TTC. Los gates V7 usan el A5 revaluado, no cambian el
+postmortem V6.
+
+## 5. Contrato V7.0 implementado
+
+El protocolo firmado es
+[`configs/protocol/scientific_recovery_v7_balanced_oof.json`](configs/protocol/scientific_recovery_v7_balanced_oof.json),
+artifact `7267421c288f6a5e68e779e344dabebb62c9d04df5e100186a8013dfe4a93cf9`.
+Congela 8.192 tokens, tres folds, seed 7, 18 epochs, hashes, bootstrap y splits
+prohibidos.
+
+El export de `causal_scale_eap.py` produce:
+
+- `prediction_ttc_s`: salida selectiva histórica;
+- `point_prediction_ttc_s`: punto finito anterior a `known_mask`;
+- `auxiliary_prediction_ttc_s`: diagnóstico, nunca métrica principal;
+- `known_mask`, `guard_margin`, log-varianza, varianza, fold, seed y hashes;
+- `guard_margin=min(|log_ratio|/0.002, support/0.0001)`.
+
+El agregado informa MiD puntual a cobertura completa, failure Garl, MiD
+selectivo, cobertura, curvas riesgo–cobertura en
+`[100, 99, 97.5, 95, 90, 80, 70, 50]%`, secuencias, tracks y cuartiles de
+movimiento. La salida puntual finita no se cuenta como cobertura selectiva.
+
+## 6. Matriz V7.1
+
+Todos los brazos mantienen muestras, targets, folds, optimizer, LR, 18 epochs,
+batch, DINO fold-local, loss TTC y r1 de A5 salvo el cambio declarado.
+
+| Brazo | Cambio único | Pregunta |
+|---|---|---|
+| V7-SOFT | Distillation desde A4 fold-local congelado | ¿A5 conserva geometría sin inmovilizar el encoder? |
+| V7-C2F | Transporte fine-r1/coarse-r2 con router causal | ¿La escala debe depender del régimen? |
+| V7-T20 | Diez bins por polaridad, 22 canales por paso | ¿Falta resolución temporal? |
+| V7-CAP-S | hidden 96, geometry 192, depth 3, r1 | ¿Una subida controlada a 1.107M ayuda? |
+
+### V7-SOFT
+
+El estudiante A5 parte de cero y permanece entrenable. El A4 del fold se carga
+en `eval`, con gradientes desactivados y fuera del optimizer. Solo vio train del
+fold y no se usa en outer-dev ni inferencia. Las dos pérdidas tienen peso `1.0`:
+distancia coseno de features densas finales y Smooth L1 de log-altura,
+log-anchura y centroides. Si falla geometría, solo se permite un control posterior
+que congele `encoder.features[0:3]`; no se barren capas ni pesos.
+
+### V7-C2F
+
+`CausalScaleTTCConfig` acepta `transport_mode: legacy | adaptive_pyramid` sin
+romper configs antiguas. Calcula r1 en `32×32` y r2 tras average-pooling en
+`16×16`; cada escala genera los mismos nueve descriptores físicos. Un router
+sigmoide parte con 90% de peso r1. Sus seis entradas son event count, event rate,
+flow magnitude, margin, entropy y cycle error actuales. TTC, secuencia, track,
+bbox y bucket no entran al router.
+
+### V7-T20
+
+`bins_per_polarity` conserva `5` como default. T20 genera
+`[3,22,128,128]`: 10 bins positivos, 10 negativos, count y rate por paso. El
+caché train-only tiene 8.192 filas en 32 shards float16, ocupa 17,52 GiB y se
+convierte a float32 al cargar. No materializó validation. Manifest artifact:
+`dea7974896825d8c633adfd0e96ff3a39f43ad332fc3ce7478e48949e6ec1b6f` en
+`artifacts/cache/garl_object_event_common_roi_train8192_t20_v1/manifest.json`.
+La materialización aborta si hay menos de 25 GiB libres. Es una ablation de
+resolución temporal, no paridad exacta con Garl: mantiene polaridad y tres pasos;
+Garl usa dos intervalos sin polaridad. El aumento del primer `Conv2d` queda
+separado del control general de capacidad.
+
+### V7-CAP-S
+
+El modelo r1 tiene 1.106.786 parámetros y deriva del patrón cap-S preregistrado.
+No reutiliza los runs cap-S/cap-M históricos con r4. Cap-M, alrededor de 2,25M,
+solo se autoriza si cap-S mejora al menos 5 MiD y obtiene
+`P(Δ<0)≥0.90`. Garl-small queda fuera: el head oficial fija 2.048 features y
+reducir ResNet cambia la topología.
+
+## 7. Archivos y ejecución
+
+Implementación principal:
+
+- `scripts/freeze_scientific_recovery_v7_configs.py` congela protocolo y doce
+  configs fold/arm.
+- `configs/experiment/scientific_recovery_v7_fold_chain/` contiene las doce
+  configs seed 7 y su `frozen_manifest.json` firmado.
+- `scripts/reevaluate_v7_baselines.py` reconstruye y firma baselines V7.
+- `scripts/run_scientific_recovery_v7.ps1` valida firmas y hashes antes de CUDA,
+  reanuda runs parciales, se detiene ante corrupción y ejecuta auditoría/agregado.
+- `scripts/aggregate_v7_fold_results.py` valida el OOF exacto, calcula bootstrap,
+  estratos y gates, y firma el resultado.
+- `scripts/audit_v7_fold_geometry.py` calcula retención frente a A4 fold-local.
+- Resultados ignorados por Git:
+  `artifacts/scientific_recovery_v7/{baselines,protocol,results,audit,diagnostics}`.
+
+Comandos desde la raíz:
 
 ```powershell
-git status --short
-git branch --show-current
-git log -5 --oneline --decorate
-git fetch origin
-git rev-parse HEAD
-git rev-parse origin/scientific-recovery-v3-hardening
+$env:PYTHONPATH = "src;.."
+uv run --no-sync python scripts/freeze_scientific_recovery_v7_configs.py
+uv run --no-sync python scripts/reevaluate_v7_baselines.py --device cuda
+powershell -ExecutionPolicy Bypass -File scripts/run_scientific_recovery_v7.ps1 `
+  -Device cuda -SkipBaselines
 ```
 
-Hay cuatro borrados tracked ajenos detectados al final de esta sesión y no incluidos
-deliberadamente en el commit del handoff:
+El runner no avanza al siguiente brazo si falta un summary firmado. Un summary
+existente con firma inválida también detiene la cadena. Freeze/resume conserva
+optimizer, scheduler, RNG y hashes mediante el state del trainer existente.
 
-```text
-APPLY.md
-E_JEPA_TTC_CODEX_HANDOFF_2026-08-08.md
-README_STABLE_SCREEN_V3_FIXED.txt
-RESULTS_INVALIDATION.md
-```
+## 8. Gates seed 7
 
-No asumir si deben restaurarse o eliminarse. Preguntar al usuario o confirmar su
-intención. El runner real exige tracked/code clean, así que estos cambios deben
-resolverse antes del run. Al inicio de esta sesión había siete patches y cuatro ZIPs
-untracked del usuario; ya no aparecen en el status ni en el directorio al cierre y
-este agente no los borró. No intentar reconstruirlos, restaurarlos o versionarlos sin
-una petición explícita.
+Integridad exige, a la vez:
 
-## 4. Primeras verificaciones obligatorias
+1. 8.192 predicciones OOF exactas, sin duplicados ni ausencias;
+2. tres folds y nueve secuencias con métricas finitas;
+3. 100% de puntos finitos;
+4. ningún split prohibido abierto;
+5. configs, checkpoints, predicciones y agregado firmados.
+
+`mechanism_positive` exige mejora puntual frente al A5 revaluado de al menos
+5 MiD, `P(Δ<0)≥0.90` y pérdida de cobertura selectiva no mayor de 1 pp.
+
+`geometry_positive` exige signo positivo y retención mínima del 60% del A4
+fold-local en slope y std-ratio, tanto frente a bbox como frente a física.
+
+Un candidato a confirmación debe pasar integridad y geometría, mejorar A5 al
+menos 3 MiD y alcanzar `P(Δ<0)≥0.90`.
+
+Si ningún brazo individual pasa:
+
+1. si SOFT preserva geometría y otro brazo es `mechanism_positive`, se combinan
+   solo esos dos cambios y se repiten tres folds seed 7;
+2. si SOFT falla geometría, se ejecuta el único control de congelación parcial;
+3. si no aparece un candidato Pareto, V7 cierra negativo.
+
+No se añaden foreground, SSM, radios mayores ni una curva de 25M parámetros.
+Entre varios candidatos: menor MiD completo, menor MiD `0–3 s`, menor failure,
+menor latencia y parámetros. Solo el ganador se repite con seeds 13 y 23.
+
+## 9. Atribución JEPA
+
+El ganador causal-scale no se llama E-JEPA final hasta comparar la misma
+arquitectura bajo:
+
+1. supervisado desde cero;
+2. pretraining JEPA denso sin TTC, bbox, máscaras ni categorías, seguido de
+   encoder frozen/linear probe;
+3. el mismo pretraining seguido de partial fine-tuning.
+
+El pretraining usa solo train del fold, predice tokens de `t2` desde `t0,t1`,
+emplea target encoder EMA y aborta ante colapso. Debe reutilizar
+`dense_level_dynamics_jepa.py` y el trainer existente. Si JEPA no mejora TTC,
+low-label o robustez, se publica el resultado negativo y el modelo se describe
+como `causal-scale event model`.
+
+## 10. V8: gate para superar al Garl local
+
+El ganador confirmado debe cumplir:
+
+- seeds `7, 13, 23`, cada una con tres folds OOF;
+- mismos 8.192 tokens, targets, folds y métrica que Garl;
+- media `candidate−Garl < 0`;
+- IC95% jerárquico completo bajo cero;
+- delta puntual negativo en cada seed;
+- 100% de puntos finitos y failure puntual 0%;
+- retención geométrica mínima del 60%;
+- ningún acceso a public validation, private test, EvTTC test o CodaBench
+  durante selección.
+
+La inferencia final remuestrea secuencias y, dentro de ellas, tracks; usa 10.000
+réplicas y seed congelada; promedia el efecto entre seeds dentro de cada réplica.
+También informa un IC compatible por `sequence_id+track_id`, desviación entre
+seeds y resultados por secuencia/bucket. Garl seed 7 sigue siendo el comparador
+congelado. Para atribuir la diferencia a arquitectura deben entrenarse Garl seeds
+13/23; superar un solo checkpoint no basta para ese claim.
+
+Solo después de congelar commit, configs, checkpoints y predicciones se puede
+preparar una evaluación CodaBench, con autorización explícita. Ese resultado forma
+un track externo separado y nunca se mezcla con el MiD local.
+
+## 11. Evidencia externa y alcance
+
+Hay tres niveles distintos:
+
+1. **Comparador local.** Garl `144.353`, exact-sample y relevante para este repo.
+2. **Resultados publicados.** El artículo Garl/eAP informa `79.7→66.2 MiD` al
+   pasar de regresión directa event-only a LHR, `45.0 MiD` para RGB+event completo
+   y `10.60% RTE / 12.67 ms` en EvTTC sin fine-tuning. No son comparables de forma
+   directa con el MiD local. Fuente: [artículo Garl/eAP](https://arxiv.org/html/2603.16303).
+3. **Benchmark externo.** El [repositorio oficial Garl-TTC](https://github.com/NAIL-HNU/Garl-TTC)
+   enlaza CodaBench de eAP y GarlTTC y mantiene labels de test privados.
+
+Las siguientes fuentes justifican mecanismos, no resultados TTC transferibles:
+
+- [V-JEPA 2.1](https://arxiv.org/html/2603.14482): supervisión predictiva densa y
+  profunda para features densas.
+- [Event-Aided TTC](https://arxiv.org/abs/2407.07324): refinamiento geométrico
+  coarse-to-fine.
+- [TMA](https://openaccess.thecvf.com/content/ICCV2023/html/Liu_TMA_Temporal_Motion_Aggregation_for_Event-based_Optical_Flow_ICCV_2023_paper.html):
+  agregación temporal para optical flow.
+- [ASTW](https://openaccess.thecvf.com/content/CVPR2026/html/Sui_Adaptive_Spatial-Temporal_Window_Unlocking_the_Potential_of_Event_Cameras_in_CVPR_2026_paper.html):
+  ventanas adaptativas en velocidades heterogéneas.
+- [TESPEC](https://openaccess.thecvf.com/content/ICCV2025/html/Mohammadi_TESPEC_Temporally-Enhanced_Self-Supervised_Pretraining_for_Event_Cameras_ICCV_2025_paper.html):
+  pretraining recurrente de historia larga.
+- [SelectiveNet](https://proceedings.mlr.press/v97/geifman19a.html) y
+  [CQR](https://proceedings.neurips.cc/paper_files/paper/2019/hash/5103c3584b063c431bd1268e9b5e76fb-Abstract.html):
+  riesgo–cobertura e intervalos.
+- [PCGrad](https://proceedings.neurips.cc/paper_files/paper/2020/hash/3fe78a8acf5fda99de95303940a2420c-Abstract.html):
+  solo si se prueba interferencia sistemática de gradientes.
+
+Foreground/boundary requiere un nuevo diagnóstico de error en bordes. CQR exige
+un calibration split separado y no mejora el punto. Recurrencia larga exige fallo
+residual en baja densidad o aceleración. ASTW completo exige que T20/C2F confirme
+dependencia temporal.
+
+## 12. Verificación y casos límite
+
+Pruebas V7 implementadas:
+
+- default `[3,12,128,128]` y T20 `[3,22,128,128]` finito contra referencia
+  float32;
+- configs antiguas sin campos V7;
+- teacher SOFT congelado, `eval` y sin parámetros entrenables;
+- router C2F con seis entradas permitidas e inicio 90% r1;
+- separación punto/abstención con todas las filas unknown;
+- rechazo de puntos no finitos en riesgo–cobertura;
+- singularidad Garl para `h₀=h₁`;
+- bootstrap con una sola secuencia falla con mensaje explícito;
+- hash de tokens del agregador idéntico al protocolo congelado.
+
+El smoke real de 32 filas y una epoch pasó en la RTX 5070 Ti para SOFT, C2F,
+T20 y CAP-S. Produjo 32 puntos finitos por brazo. Artefacto firmado:
+`artifacts/scientific_recovery_v7/smoke_v2/manifest.json`, identidad
+`560a3453a31b785957d1523364ac93e33662679cfc3e424ae940fe30957417f2`.
+El smoke desactiva el umbral de abstención solo para que el selector de
+infraestructura cubra nueve etiquetas de secuencia sintéticas; no genera una
+métrica científica ni cambia las configs OOF.
+
+La suite funcional completa del corte pasa: `1165 passed, 7 skipped`. Los archivos
+Python V7 modificados pasan Ruff. El comando global
+`uv run --no-sync ruff check src scripts tests` encuentra 1.353 incidencias
+históricas fuera del cambio V7; no se ocultaron ni se reescribieron de forma
+masiva en esta rama.
+
+Comandos de verificación:
 
 ```powershell
-uv run ruff check src/e_jepa_ttc/data/object_event_v4.py `
+$env:PYTHONPATH = "src;.."
+uv run --no-sync pytest
+uv run --no-sync ruff check src scripts tests
+uv run --no-sync ruff check `
+  src/e_jepa_ttc/data/evttc_object_cache.py `
+  src/e_jepa_ttc/data/event_v4_geometry.py `
+  src/e_jepa_ttc/data/object_event_v4.py `
+  src/e_jepa_ttc/evaluation/selective_ttc.py `
+  src/e_jepa_ttc/models/causal_scale_ttc.py `
   src/e_jepa_ttc/training/causal_scale_eap.py `
-  scripts/train_causal_scale_eap_screen.py `
-  tests/unit/test_causal_scale_ttc.py
-
-uv run pyright src/e_jepa_ttc/data/object_event_v4.py `
-  src/e_jepa_ttc/training/causal_scale_eap.py `
-  scripts/train_causal_scale_eap_screen.py
-
-uv run pytest tests/unit/test_causal_scale_ttc.py `
-  tests/unit/test_garl_signed_metrics_v4.py -q
-
-uv run pytest -q
+  scripts/freeze_scientific_recovery_v7_configs.py `
+  scripts/reevaluate_v7_baselines.py `
+  scripts/aggregate_v7_fold_results.py `
+  scripts/audit_v7_fold_geometry.py `
+  tests/unit/test_scientific_recovery_v7.py
 ```
 
-El test `tests/integration/test_causal_scale_eap_resume.py` ya demuestra igualdad
-exacta entre cuatro épocas continuas y dos + resume: modelo, optimizer, scheduler,
-RNG Torch/Python/NumPy, generador del DataLoader, historial y best checkpoint. También
-demuestra rechazo fail-closed si cambia config o tamaño del dataset.
+Antes de aceptar el agregado final deben constar además overfit sintético
+SOFT/C2F, equivalencia resume/continuo,
+orden exacto del sampler y auditoría de firmas. Una ventana sin eventos debe dar
+un punto finito con baja confianza; `log_height_ratio=0` o `sensor_support=0`
+debe dar punto finite/clipped, `known_mask=false` y salida selectiva `NaN`.
 
-## 5. Ejecución siguiente: entrenamiento real event-only
+## 13. Claims permitidos y prohibidos
 
-Una vez limpio y con tests verdes:
+Permitidos ahora:
 
-```powershell
-uv run python scripts/train_causal_scale_eap_screen.py `
-  --config configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_v1.yaml `
-  --output-dir artifacts/runs/causal_scale_eap_screen_v1_seed7 `
-  --device cuda
-```
+- Garl es el mejor comparador local seed 7 bajo el protocolo emparejado.
+- A5 es el mejor brazo TTC propio de V6 y pierde geometría.
+- V6.1 mejora la media de A8 sin evidencia suficiente y falla su gate.
+- V7 evalúa causal-scale/transport, resolución temporal, distillation geométrica
+  y capacidad bajo OOF train-only.
 
-Si se interrumpe:
+Prohibidos ahora:
 
-```powershell
-uv run python scripts/train_causal_scale_eap_screen.py `
-  --config configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_v1.yaml `
-  --output-dir artifacts/runs/causal_scale_eap_screen_v1_seed7 `
-  --device cuda --resume
-```
+- `SOTA`, `superamos Garl`, `JEPA causa la mejora` o `Garl garantiza siempre una
+  salida`;
+- comparar las cifras publicadas de eAP/EvTTC como si fueran el MiD local;
+- llamar a T20 paridad exacta con Garl;
+- usar el mismo OOF exploratorio como confirmación independiente;
+- abrir test o CodaBench antes de congelar un candidato y recibir autorización.
 
-Revisar al terminar:
+## 14. Estado de ejecución
 
-```text
-artifacts/runs/causal_scale_eap_screen_v1_seed7/summary.json
-artifacts/runs/causal_scale_eap_screen_v1_seed7/validation_predictions.csv
-artifacts/runs/causal_scale_eap_screen_v1_seed7/model_best.pt
-artifacts/runs/causal_scale_eap_screen_v1_seed7/state/last.pt
-artifacts/runs/causal_scale_eap_screen_v1_seed7/state/best.pt
-```
+- [x] Rama V7 creada desde el commit V6 exigido.
+- [x] Protocolo, doce configs y caché T20 congelados y firmados.
+- [x] Baselines V7 reevaluados sobre 8.192 tokens.
+- [x] Contratos SOFT, C2F, T20, CAP-S, export, agregado y auditoría implementados.
+- [x] Suite Pytest completa y lint focalizado ejecutados.
+- [x] Smokes GPU de los cuatro brazos.
+- [ ] Doce runs OOF seed 7.
+- [ ] Agregados y auditorías seed 7.
+- [ ] Selección de un único ganador o cierre negativo.
+- [ ] Seeds 13/23 del ganador, solo si existe.
+- [ ] Ablation JEPA del ganador, solo después de V7.1.
 
-Diagnóstico mínimo:
-
-- curva train/validation y época elegida;
-- MiD global y macro por secuencia;
-- MiD/RTE/failure por cuatro buckets;
-- known coverage;
-- log-ratio Pearson, MAE y slope si se añade al resumen;
-- weak bbox IoU, recordando que no es segmentation IoU;
-- distribución de predicciones por secuencia/bucket;
-- outliers de cola y error top 10%;
-- tiempo, throughput y peak VRAM;
-- NaN/unknown no sustituidos por cero.
-
-## 6. Comparación exacta con Garl-TTC oficial
-
-El builder exacto ya está implementado:
-
-```text
-scripts/build_garl_validation_subset_from_predictions.py
-```
-
-Valida y firma:
-
-1. leer `validation_predictions.csv` y extraer exactamente los 2,048 sample tokens;
-2. filtrar, sin modificar originales:
-   - `E:\GarlTTC_dataset\data\train.parquet`;
-   - `E:\GarlTTC_dataset\annotations\train.parquet`;
-3. preservar orden/joins oficiales y fallar si no hay cobertura 2048/2048;
-4. escribir parquets y asset list bajo
-   `artifacts/subsets/garl_validation_common_roi_v1/`;
-5. guardar hashes de inputs/outputs, sequences, tokens y counts en manifest firmado;
-6. verificar que no se abre test privado;
-7. igualdad TTC cache/predictions frente al parquet público con tolerancia `1e-6`;
-8. orden exacto tras roundtrip Parquet y manifest con hash canónico de tokens.
-
-Ejecutarlo tras el entrenamiento:
-
-```powershell
-uv run python scripts/build_garl_validation_subset_from_predictions.py `
-  --predictions artifacts/runs/causal_scale_eap_screen_v1_seed7/validation_predictions.csv `
-  --output-dir artifacts/subsets/garl_validation_common_roi_v1 `
-  --expected-count 2048
-```
-
-Después ejecutar Garl event-only:
-
-```powershell
-uv run python scripts/evaluate_official_garl_validation.py `
-  --release-root 'E:\Garl-TTC' `
-  --config 'E:\Garl-TTC\configs\ablation\event_lhr.yaml' `
-  --checkpoint 'E:\Garl-TTC\checkpoints\paper_event_only_lhr.pth' `
-  --dataset-root 'E:\eAP_dataset' `
-  --data-parquet artifacts/subsets/garl_validation_common_roi_v1/data.parquet `
-  --labels-parquet artifacts/subsets/garl_validation_common_roi_v1/labels.parquet `
-  --asset-list artifacts/subsets/garl_validation_common_roi_v1/assets.txt `
-  --output-dir artifacts/runs/garl_official_event_only_same2048 `
-  --device cuda
-```
-
-Crear después un comparador firmado, sugerido:
-
-```text
-scripts/build_causal_scale_eap_garl_comparison.py
-artifacts/metrics/causal_scale_eap_garl_event_only_comparison_v1.json
-```
-
-Comparar por los mismos sample tokens y secuencias:
-
-- paper MiD overall;
-- sequence-macro MiD;
-- MiD/RTE/failure por bucket;
-- bootstrap por secuencia, nunca por ventanas;
-- latencia/preprocesamiento por separado;
-- modalidad y representación declaradas.
-
-Garl usa 2 endpoints × 20 canales con preprocessing oficial; nuestro modelo usa 3
-endpoints × 12 canales en ROI común. Es una comparación de modalidad y muestras
-igualadas, no una equivalencia de representación. Reportarlo explícitamente.
-
-## 7. Criterio de decisión tras la comparación
-
-No escalar automáticamente. Primero clasificar el fallo:
-
-- `weak bbox IoU` bajo: localización/foreground;
-- IoU alto pero log-ratio Pearson/slope malos: operador de escala/temporal;
-- log-ratio bueno pero MiD malo: singularidad/clipping/known policy;
-- positivo bueno y negative malo: dirección de movimiento/post-contact;
-- una secuencia domina: domain shift, no sesgo global;
-- cola top 10% domina: inspección de outliers, CVaR o sampler, sin mirar test.
-
-Si nuestro event-only supera Garl event-only en validation con margen consistente por
-secuencia, repetir seeds `13` y `23` bajo config preregistrada. Solo después congelar
-un candidato. Si no, modificar una sola hipótesis por ablation y conservar el negativo.
-
-## 8. Ruta arquitectónica posterior
-
-### RGB-only
-
-Reutilizar `CausalScaleTTC` con `modality: rgb` y encoder RGB específico. Mantener el
-mismo contrato de outputs: foreground, escala, log-ratio, uncertainty/risk. Entrenar y
-comparar RGB-only contra `paper_visual_only_lhr.pth` sobre los mismos tokens.
-
-### Multimodal
-
-No concatenar RGB y eventos desde el principio. Usar dos encoders y dos observaciones
-geométricas con fusión tardía condicionada por incertidumbre/soporte:
-
-```text
-event encoder -> r_event, sigma_event, support_event
-RGB encoder   -> r_rgb,   sigma_rgb,   support_rgb
-              -> gated precision-weighted fusion
-              -> TTC/risk common physical head
-```
-
-Debe funcionar en tres modos: event-only, RGB-only y RGB-E, con modality dropout en
-training. Comparar multimodal contra `paper_ours_full.pth`, no contra el checkpoint
-event-only.
-
-### EvTTC
-
-EvTTC test permanece sellado. Primero implementar/adaptar inferencia label-free y
-congelar checkpoint/config. Separar predict y score. Ningún resultado eAP validation
-autoriza por sí mismo una apertura EvTTC test o un claim SOTA.
-
-## 9. Qué no hacer
-
-- no abrir seeds sintéticas V8 test 901/902/903;
-- no reutilizar seeds consumidas 303 o 603 como evidencia nueva;
-- no comparar nuestro event-only con Garl multimodal como si fuese igualdad;
-- no usar cajas/targets/IDs como inputs del forward;
-- no llamar mask GT a los rectángulos weak-box;
-- no seleccionar con eAP test, EvTTC test o CodaBench;
-- no descargar/procesar los 691 GiB completos para este screen;
-- no reconstruir ni versionar los patches/ZIPs del usuario que desaparecieron fuera
-  de las acciones de este agente;
-- no resolver los cuatro borrados tracked ajenos sin confirmar intención;
-- no escribir “SOTA” hasta reproducir protocolos oficiales, tres seeds y evaluación
-  externa comparable.
-
-## 10. Definición de salida de la próxima sesión
-
-Como mínimo:
-
-1. entrenamiento seed 7 terminado y artefacto firmado;
-2. subset exacto construido con el builder ya probado;
-3. baseline Garl event-only sobre los mismos 2,048 tokens;
-4. comparación y diagnóstico publicados en `.md` y JSON/CSV;
-5. decisión explícita: repetir seeds, ablation única o rechazar brazo;
-6. Ruff/Pyright/Pytest verdes;
-7. `git add` selectivo, commit y push;
-8. ningún test privado abierto y ningún claim inflado.
-
-## 11. Prompt listo para la siguiente sesión
-
-```text
-Trabaja en el repo
-C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc
-en la rama scientific-recovery-v3-hardening. Lee primero AGENTS.md y
-CODEX_HANDOFF.md completos y trata el estado actual del worktree como autoritativo.
-Usa Sol-Advisor conforme a su skill, sin sustituir sus roles si su lane no está
-disponible.
-
-Continúa la ruta honesta hacia superar Garl-TTC en eAP y después EvTTC. No abras
-test privado eAP, CodaBench, EvTTC test ni las seeds sintéticas V8 901/902/903. No
-reutilices 303/603. No afirmes SOTA con validation local o una seed.
-
-Primero inspecciona los cuatro borrados tracked ajenos que CODEX_HANDOFF.md registra;
-no los restaures ni los confirmes sin mi autorización. El runner exige código limpio,
-así que pregúntame qué hacer con ellos si siguen presentes. No toques otros cambios
-ajenos.
-
-Cuando el worktree esté limpio, ejecuta el entrenamiento event-only seed 7:
-uv run python scripts/train_causal_scale_eap_screen.py --config
-configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_v1.yaml --output-dir
-artifacts/runs/causal_scale_eap_screen_v1_seed7 --device cuda
-Usa --resume si existe state/last.pt. El trainer ya tiene early stopping, límite 6 h
-y resume determinista probado end-to-end.
-
-Analiza summary.json y validation_predictions.csv por secuencia, bucket, MiD, RTE,
-failure rate, known coverage, log-ratio, weak-box IoU y cola top 10%. Después construye
-el subset exacto con scripts/build_garl_validation_subset_from_predictions.py y evalúa
-el checkpoint oficial EVENT-ONLY de E:\Garl-TTC sobre exactamente esos 2.048 tokens
-mediante scripts/evaluate_official_garl_validation.py, usando
-E:\Garl-TTC\configs\ablation\event_lhr.yaml y
-E:\Garl-TTC\checkpoints\paper_event_only_lhr.pth. No uses el multimodal como baseline
-apples-to-apples; repórtalo solo como referencia separada.
-
-Implementa un comparador firmado por token/secuencia/bucket con bootstrap por
-secuencia, diagnostica los fallos y cambia una sola hipótesis por ablation si nuestro
-modelo no gana. Si gana consistentemente en validation, preregistra y ejecuta seeds
-13/23 antes de freeze. Después continúa RGB-only y fusión tardía RGB-E; EvTTC solo
-tras freeze label-free. Actualiza los .md y artefactos regenerables conforme avances,
-ejecuta Ruff/Pyright/Pytest, y haz git add selectivo, commit y push en hitos lógicos.
-```
+No hay resultados V7 de brazos hasta que aparezcan agregados firmados en
+`artifacts/scientific_recovery_v7/results/`. El paper Markdown/TeX sigue
+desactualizado y no debe incorporar V7 antes de ese punto.

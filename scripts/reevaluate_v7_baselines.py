@@ -21,6 +21,10 @@ sys.path.insert(0, str(ROOT / "src"))
 from e_jepa_ttc.artifacts.hashing import sign_artifact, verify_artifact_hash  # noqa: E402
 from e_jepa_ttc.data.object_event_v4 import GarlTTCObjectEventV4Dataset  # noqa: E402
 from e_jepa_ttc.data.scientific_recovery_v5 import SequenceIndexedView  # noqa: E402
+from e_jepa_ttc.evaluation.garl_ttc_protocol import (  # noqa: E402
+    sequence_macro_signed_metrics,
+    signed_garl_metrics,
+)
 from e_jepa_ttc.losses.causal_scale_ttc import CausalScaleTTCLossConfig  # noqa: E402
 from e_jepa_ttc.models.causal_scale_ttc import CausalScaleTTC, CausalScaleTTCConfig  # noqa: E402
 from e_jepa_ttc.reproducibility import resolve_device  # noqa: E402
@@ -74,6 +78,50 @@ def _frame(evaluation: dict[str, Any], *, fold: int, seed: int) -> pd.DataFrame:
             "seed": [seed] * row_count,
         }
     )
+
+
+def _readout(frame: pd.DataFrame, prediction_column: str) -> dict[str, float]:
+    target = frame["target_ttc_s"].to_numpy(dtype=np.float64)
+    prediction = frame[prediction_column].to_numpy(dtype=np.float64)
+    sequence = frame["sequence_id"].astype(str).to_numpy()
+    sample = signed_garl_metrics(target, prediction)
+    macro = sequence_macro_signed_metrics(target, prediction, sequence)
+    return {
+        "sequence_macro_MiD": float(macro["sequence_macro_paper_MiD_overall"]),
+        "sample_weighted_MiD": float(sample["paper_MiD_overall"]),
+        "failure_pct": float(sample["failure_rate_pct"]),
+        "finite_fraction": float(np.isfinite(prediction).mean()),
+    }
+
+
+def _attach_signed_readout(output_dir: Path, report: dict[str, Any]) -> dict[str, Any]:
+    readout: dict[str, Any] = {}
+    outputs: dict[str, Any] = {}
+    for arm in (*RUN_NAMES, "garl"):
+        path = output_dir / f"{arm}_oof_predictions.csv"
+        frame = pd.read_csv(path)
+        if len(frame) != 8192 or frame["sample_token"].astype(str).duplicated().any():
+            raise ValueError(f"{arm} baseline output is not an exact OOF partition")
+        point = frame["point_prediction_ttc_s"].to_numpy(dtype=np.float64)
+        if not np.isfinite(point).all():
+            raise ValueError(f"{arm} baseline output has a non-finite point prediction")
+        readout[arm] = {
+            "point_full_coverage": _readout(frame, "point_prediction_ttc_s"),
+            "historical_selective": _readout(frame, "prediction_ttc_s"),
+            "known_coverage": float(frame["known_mask"].astype(bool).mean()),
+        }
+        outputs[arm] = {"path": str(path.resolve()), "sha256": _sha256(path)}
+    report["readout"] = readout
+    report["outputs"] = outputs
+    report["created_at_utc"] = datetime.now(UTC).isoformat()
+    report.pop("artifact_sha256", None)
+    sign_artifact(report)
+    (output_dir / "manifest.json").write_text(
+        json.dumps(report, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+        newline="\n",
+    )
+    return report
 
 
 def reevaluate(*, device_name: str, output_dir: Path) -> dict[str, Any]:
@@ -180,18 +228,17 @@ def reevaluate(*, device_name: str, output_dir: Path) -> dict[str, Any]:
             "codabench_opened": False,
         },
     }
-    sign_artifact(report)
-    (output_dir / "manifest.json").write_text(
-        json.dumps(report, indent=2, sort_keys=True) + "\n",
-        encoding="utf-8",
-        newline="\n",
-    )
-    return report
+    return _attach_signed_readout(output_dir, report)
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--device", default="cpu")
+    parser.add_argument(
+        "--summarize-existing",
+        action="store_true",
+        help="re-sign the existing exact-token baseline CSVs without running inference",
+    )
     parser.add_argument(
         "--output-dir",
         type=Path,
@@ -199,7 +246,12 @@ def main() -> int:
     )
     args = parser.parse_args()
     try:
-        report = reevaluate(device_name=args.device, output_dir=args.output_dir.resolve())
+        output_dir = args.output_dir.resolve()
+        if args.summarize_existing:
+            report = _read_signed(output_dir / "manifest.json")
+            report = _attach_signed_readout(output_dir, report)
+        else:
+            report = reevaluate(device_name=args.device, output_dir=output_dir)
     except Exception as error:
         parser.exit(2, f"V7 baseline re-evaluation failed: {type(error).__name__}: {error}\n")
     print(json.dumps({"status": report["status"], "output": str(args.output_dir)}))

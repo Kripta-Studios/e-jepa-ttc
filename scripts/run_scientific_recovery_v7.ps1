@@ -74,6 +74,41 @@ if (-not $SkipTraining) {
             Assert-SignedJson -Path $Summary
         }
     }
+
+    $ReferenceSummaries = @(
+        (Join-Path $RunRoot "scientific_recovery_v5_a4_parent_grouped_fold0_seed7\summary.json"),
+        (Join-Path $RunRoot "scientific_recovery_v5_a4_parent_grouped_fold1_seed7\summary.json"),
+        (Join-Path $RunRoot "scientific_recovery_v5_a4_parent_grouped_fold2_seed7\summary.json")
+    )
+    foreach ($Arm in @("soft", "c2f", "t20", "cap_s")) {
+        $CandidateSummaries = 0..2 | ForEach-Object {
+            Join-Path $RunRoot "scientific_recovery_v7_${Arm}_fold${_}_seed7\summary.json"
+        }
+        $Predictions = 0..2 | ForEach-Object {
+            Join-Path $RunRoot "scientific_recovery_v7_${Arm}_fold${_}_seed7\dev_predictions.csv"
+        }
+        $Audit = Join-Path $ResultRoot "audit\${Arm}_geometry.json"
+        $Aggregate = Join-Path $ResultRoot "results\${Arm}_seed7_oof.json"
+        uv run --no-sync python scripts/audit_v7_fold_geometry.py `
+            --candidate-summaries $CandidateSummaries `
+            --reference-summaries $ReferenceSummaries `
+            --output $Audit
+        if ($LASTEXITCODE -ne 0) {
+            throw "V7 geometry audit failed: $Arm"
+        }
+        uv run --no-sync python scripts/aggregate_v7_fold_results.py `
+            --arm $Arm `
+            --predictions $Predictions `
+            --a5-baseline (Join-Path $ResultRoot "baselines\a5_oof_predictions.csv") `
+            --protocol $Protocol `
+            --geometry-audit $Audit `
+            --output $Aggregate
+        if ($LASTEXITCODE -ne 0) {
+            throw "V7 aggregation failed: $Arm"
+        }
+        Assert-SignedJson -Path $Audit
+        Assert-SignedJson -Path $Aggregate
+    }
 }
 
 Write-Output "V7 fold chain completed without opening validation, test, or CodaBench."
