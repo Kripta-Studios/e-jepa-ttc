@@ -10,20 +10,23 @@ import torch
 
 from scripts.train_garl_matched_from_cache import (
     GarlMatchedTensorCache,
+    GarlSequenceIndexedView,
     ShardGroupedSampler,
     _collate,
+    _load_grouped_contract,
     _prediction,
     _resolve_device,
 )
 
 ROOT = Path(__file__).resolve().parents[2]
+GROUPED_PROTOCOL = ROOT / "configs/protocol/scientific_recovery_v5_train_only_grouped_dev.json"
 
 
 def _write_cache(tmp_path: Path) -> Path:
     shards: list[dict[str, object]] = []
     for split in ("train", "validation"):
         split_dir = tmp_path / split
-        split_dir.mkdir()
+        split_dir.mkdir(parents=True)
         path = split_dir / "shard-00000.pt"
         torch.save(
             {
@@ -55,7 +58,52 @@ def test_cached_dataset_preserves_tokens_and_tensor_rows(tmp_path: Path) -> None
     batch = _collate([dataset[0], dataset[1]])
     assert batch.data.shape == (2, 2, 2, 2)
     assert batch.sequence_ids == ("seq-a", "seq-b")
+    assert batch.track_ids == ("", "")
     assert torch.equal(batch.visible_height, torch.tensor([[10.0, 11.0], [20.0, 22.0]]))
+
+
+def test_grouped_view_preserves_exact_fold_identity(tmp_path: Path) -> None:
+    metadata = tmp_path / "metadata.parquet"
+    import pandas as pd
+
+    pd.DataFrame(
+        {
+            "sample_token": ["train-0", "train-1"],
+            "sequence_id": ["seq-a", "seq-b"],
+            "track_id": ["track-a", "track-b"],
+        }
+    ).to_parquet(metadata, index=False)
+    base = GarlMatchedTensorCache(_write_cache(tmp_path / "cache"), "train")
+
+    view = GarlSequenceIndexedView(
+        base,
+        metadata_path=metadata,
+        sequence_ids={"seq-b"},
+    )
+
+    assert len(view) == 1
+    assert view[0]["sample_token"] == "train-1"
+    assert view[0]["track_id"] == "track-b"
+    assert _collate([view[0]]).track_ids == ("track-b",)
+    assert view.identity_frame().to_dict("records") == [
+        {
+            "sample_token": "train-1",
+            "sequence_id": "seq-b",
+            "track_id": "track-b",
+        }
+    ]
+    assert view.shard_index_groups() == ((0,),)
+
+
+def test_garl_grouped_contract_uses_frozen_fold_without_validation() -> None:
+    contract = _load_grouped_contract(GROUPED_PROTOCOL, 2)
+
+    assert contract["fold_index"] == 2
+    assert contract["fold"]["train_rows"] == 5462
+    assert contract["fold"]["dev_rows"] == 2730
+    assert contract["train_sequences"].isdisjoint(contract["dev_sequences"])
+    assert contract["protocol"]["checks"]["public_validation_used_for_selection"] is False
+    assert contract["protocol"]["checks"]["private_test_opened"] is False
 
 
 def test_shard_grouped_sampler_is_exact_and_seeded() -> None:

@@ -27,7 +27,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "src"))
 
-from e_jepa_ttc.artifacts.hashing import sign_artifact  # noqa: E402
+from e_jepa_ttc.artifacts.hashing import sign_artifact, verify_artifact_hash  # noqa: E402
 from e_jepa_ttc.evaluation.garl_ttc_protocol import (  # noqa: E402
     sequence_macro_signed_metrics,
     signed_garl_metrics,
@@ -48,6 +48,56 @@ def _read_json(path: Path) -> dict[str, Any]:
     if not isinstance(value, dict):
         raise TypeError(f"Expected JSON object: {path}")
     return value
+
+
+def _values_sha256(values: Sequence[str]) -> str:
+    digest = hashlib.sha256()
+    for value in sorted(str(item) for item in values):
+        encoded = value.encode("utf-8")
+        digest.update(len(encoded).to_bytes(8, "big"))
+        digest.update(encoded)
+    return digest.hexdigest()
+
+
+def _load_grouped_contract(path: Path, fold_index: int) -> dict[str, Any]:
+    protocol = _read_json(path.resolve(strict=True))
+    if not verify_artifact_hash(protocol):
+        raise ValueError("grouped-development protocol signature is invalid")
+    if protocol.get("artifact_type") != "scientific_recovery_v5_train_only_grouped_dev_v1":
+        raise ValueError("grouped-development protocol type is incompatible")
+    if protocol.get("status") != "frozen_before_a8_results":
+        raise ValueError("grouped-development protocol is not frozen")
+    checks = protocol.get("checks", {})
+    required_true = (
+        "train_only_grouped_dev",
+        "sequence_disjoint_folds",
+        "sample_token_unique",
+        "same_cache_universe",
+    )
+    if any(checks.get(key) is not True for key in required_true):
+        raise ValueError("grouped-development protocol failed required checks")
+    if checks.get("public_validation_used_for_selection") is not False:
+        raise ValueError("grouped Garl may not use public validation")
+    if checks.get("private_test_opened") is not False:
+        raise ValueError("grouped Garl may not open private/test")
+    matches = [row for row in protocol.get("folds", []) if row.get("fold") == fold_index]
+    if len(matches) != 1:
+        raise ValueError(f"grouped-development fold {fold_index} is unavailable")
+    fold = matches[0]
+    train_sequences = {str(value) for value in fold["train_sequence_ids"]}
+    dev_sequences = {str(value) for value in fold["dev_sequence_ids"]}
+    if train_sequences & dev_sequences:
+        raise ValueError("grouped-development train/dev sequences overlap")
+    return {
+        "path": path.resolve(),
+        "file_sha256": _sha256(path),
+        "artifact_sha256": protocol["artifact_sha256"],
+        "protocol": protocol,
+        "fold": fold,
+        "fold_index": fold_index,
+        "train_sequences": train_sequences,
+        "dev_sequences": dev_sequences,
+    }
 
 
 def _atomic_torch_save(payload: dict[str, Any], path: Path) -> None:
@@ -84,6 +134,7 @@ class CachedBatch:
     visible_height: torch.Tensor
     sample_tokens: tuple[str, ...]
     sequence_ids: tuple[str, ...]
+    track_ids: tuple[str, ...]
 
     def to(self, device: torch.device) -> CachedBatch:
         return CachedBatch(
@@ -92,6 +143,7 @@ class CachedBatch:
             visible_height=self.visible_height.to(device, non_blocking=True),
             sample_tokens=self.sample_tokens,
             sequence_ids=self.sequence_ids,
+            track_ids=self.track_ids,
         )
 
 
@@ -99,11 +151,10 @@ def _collate(rows: list[dict[str, Any]]) -> CachedBatch:
     return CachedBatch(
         data=torch.stack([cast(torch.Tensor, row["data"]) for row in rows]),
         target=torch.stack([cast(torch.Tensor, row["target"]) for row in rows]),
-        visible_height=torch.stack(
-            [cast(torch.Tensor, row["visible_height"]) for row in rows]
-        ),
+        visible_height=torch.stack([cast(torch.Tensor, row["visible_height"]) for row in rows]),
         sample_tokens=tuple(str(row["sample_token"]) for row in rows),
         sequence_ids=tuple(str(row["sequence_id"]) for row in rows),
+        track_ids=tuple(str(row.get("track_id", "")) for row in rows),
     )
 
 
@@ -179,6 +230,74 @@ class GarlMatchedTensorCache(Dataset[dict[str, Any]]):
         }
 
 
+class GarlSequenceIndexedView(Dataset[dict[str, Any]]):
+    """Sequence-filtered Garl view joined to immutable token/track metadata."""
+
+    def __init__(
+        self,
+        dataset: GarlMatchedTensorCache,
+        *,
+        metadata_path: Path,
+        sequence_ids: set[str],
+    ) -> None:
+        if not sequence_ids:
+            raise ValueError("Garl grouped view requires at least one sequence")
+        metadata = pd.read_parquet(
+            metadata_path, columns=["sample_token", "sequence_id", "track_id"]
+        ).astype(str)
+        if metadata["sample_token"].duplicated().any():
+            raise ValueError("Garl identity metadata contains duplicate sample_token")
+        by_token = metadata.set_index("sample_token")
+        self.dataset = dataset
+        self._indices: list[int] = []
+        identities: list[dict[str, str]] = []
+        base_group_by_index = {
+            base_index: group_index
+            for group_index, group in enumerate(dataset.shard_index_groups())
+            for base_index in group
+        }
+        view_groups: list[list[int]] = [[] for _ in dataset.shard_index_groups()]
+        for base_index in range(len(dataset)):
+            row = dataset[base_index]
+            token = str(row["sample_token"])
+            if token not in by_token.index:
+                raise ValueError(f"Garl cache token is absent from identity metadata: {token}")
+            identity = by_token.loc[token]
+            sequence = str(identity["sequence_id"])
+            if sequence != str(row["sequence_id"]):
+                raise ValueError(f"Garl cache sequence differs from metadata: {token}")
+            if sequence not in sequence_ids:
+                continue
+            view_index = len(self._indices)
+            self._indices.append(base_index)
+            identities.append(
+                {
+                    "sample_token": token,
+                    "sequence_id": sequence,
+                    "track_id": str(identity["track_id"]),
+                }
+            )
+            view_groups[base_group_by_index[base_index]].append(view_index)
+        if not self._indices:
+            raise ValueError("Garl grouped view selected no rows")
+        self._identities = pd.DataFrame(identities)
+        self._groups = tuple(tuple(group) for group in view_groups if group)
+
+    def __len__(self) -> int:
+        return len(self._indices)
+
+    def __getitem__(self, index: int) -> dict[str, Any]:
+        row = dict(self.dataset[self._indices[index]])
+        row["track_id"] = self._identities.iloc[index]["track_id"]
+        return row
+
+    def shard_index_groups(self) -> tuple[tuple[int, ...], ...]:
+        return self._groups
+
+    def identity_frame(self) -> pd.DataFrame:
+        return self._identities.copy()
+
+
 class ShardGroupedSampler(Sampler[int]):
     def __init__(self, groups: tuple[tuple[int, ...], ...], generator: torch.Generator) -> None:
         self.groups = groups
@@ -198,7 +317,7 @@ class ShardGroupedSampler(Sampler[int]):
 
 
 def _loader(
-    dataset: GarlMatchedTensorCache,
+    dataset: Dataset[dict[str, Any]],
     *,
     batch_size: int,
     train: bool,
@@ -206,10 +325,11 @@ def _loader(
     num_workers: int,
     prefetch_factor: int,
 ) -> DataLoader[CachedBatch]:
+    group_provider = getattr(dataset, "shard_index_groups", None)
+    if not callable(group_provider):
+        raise TypeError("matched dataset must expose shard_index_groups")
     sampler = (
-        ShardGroupedSampler(dataset.shard_index_groups(), cast(torch.Generator, generator))
-        if train
-        else None
+        ShardGroupedSampler(group_provider(), cast(torch.Generator, generator)) if train else None
     )
     return cast(
         DataLoader[CachedBatch],
@@ -245,6 +365,7 @@ def _evaluate(
     predictions: list[torch.Tensor] = []
     tokens: list[str] = []
     sequences: list[str] = []
+    tracks: list[str] = []
     started = time.perf_counter()
     for host_batch in loader:
         batch = host_batch.to(device)
@@ -256,6 +377,7 @@ def _evaluate(
         predictions.append(_prediction(raw, delta_t_s).detach().cpu())
         tokens.extend(batch.sample_tokens)
         sequences.extend(batch.sequence_ids)
+        tracks.extend(batch.track_ids)
     elapsed = time.perf_counter() - started
     target = torch.cat(targets).numpy().astype(np.float64)
     prediction = torch.cat(predictions).numpy().astype(np.float64)
@@ -265,6 +387,7 @@ def _evaluate(
         "sequence_macro": sequence_macro_signed_metrics(target, prediction, sequence),
         "sample_tokens": tokens,
         "sequence_ids": sequences,
+        "track_ids": tracks,
         "target_ttc_s": target.tolist(),
         "prediction_ttc_s": prediction.tolist(),
         "elapsed_seconds": elapsed,
@@ -323,8 +446,11 @@ def train(
     maximum_runtime_hours: float = 4.5,
     resume: bool = False,
     stop_after_epoch: int | None = None,
+    development_protocol: Path | None = None,
+    fold: int | None = None,
+    identity_metadata: Path | None = None,
 ) -> dict[str, Any]:
-    """Train/select with public validation only and exact resumable state."""
+    """Train/select from scratch on public validation or one frozen outer fold."""
 
     if not 1 <= minimum_epochs <= epochs:
         raise ValueError("minimum_epochs must lie in [1, epochs].")
@@ -339,17 +465,39 @@ def train(
     state = _release_state(release_root)
     if state != {"commit": EXPECTED_RELEASE_COMMIT, "dirty": False}:
         raise RuntimeError(f"Official release is not the audited clean commit: {state}")
+    grouped = development_protocol is not None or fold is not None
+    if grouped and (development_protocol is None or fold is None or identity_metadata is None):
+        raise ValueError("grouped Garl requires development_protocol, fold, and identity_metadata")
+    if not grouped and identity_metadata is not None:
+        raise ValueError("identity metadata is only valid for grouped Garl")
+    grouped_contract = (
+        _load_grouped_contract(cast(Path, development_protocol), cast(int, fold))
+        if grouped
+        else None
+    )
     manifest = _read_json(cache_manifest)
     observed_split_counts = manifest.get("split_counts")
-    expected_split_counts = {
-        "train": int(expected_train_rows),
-        "validation": int(expected_validation_rows),
-    }
-    if observed_split_counts != expected_split_counts:
-        raise ValueError(
-            "Matched cached training split mismatch: "
-            f"expected={expected_split_counts}, observed={observed_split_counts}."
-        )
+    if grouped_contract is not None:
+        expected_source_train_rows = int(grouped_contract["protocol"]["sample_count"])
+        if (
+            not isinstance(observed_split_counts, dict)
+            or int(observed_split_counts.get("train", -1)) != expected_source_train_rows
+        ):
+            raise ValueError("grouped Garl cache train universe differs from frozen protocol")
+        expected_train_rows = int(grouped_contract["fold"]["train_rows"])
+        expected_validation_rows = int(grouped_contract["fold"]["dev_rows"])
+    else:
+        expected_split_counts = {
+            "train": int(expected_train_rows),
+            "validation": int(expected_validation_rows),
+        }
+        if observed_split_counts != expected_split_counts:
+            raise ValueError(
+                "Matched cached training split mismatch: "
+                f"expected={expected_split_counts}, observed={observed_split_counts}."
+            )
+    if not isinstance(observed_split_counts, dict):
+        raise ValueError("Matched cached training split counts must be a mapping.")
     config_path = Path(str(manifest["sources"]["materialized_config"]["path"]))
     if not config_path.is_absolute():
         config_path = cache_manifest.parent / config_path
@@ -383,6 +531,15 @@ def train(
         "minimum_epochs": minimum_epochs,
         "early_stopping_patience": early_stopping_patience,
         "maximum_runtime_hours": maximum_runtime_hours,
+        "grouped_protocol_artifact_sha256": (
+            grouped_contract["artifact_sha256"] if grouped_contract else None
+        ),
+        "grouped_protocol_file_sha256": (
+            grouped_contract["file_sha256"] if grouped_contract else None
+        ),
+        "fold": fold,
+        "cache_manifest_file_sha256": _sha256(cache_manifest),
+        "identity_metadata_sha256": (_sha256(cast(Path, identity_metadata)) if grouped else None),
     }
     protocol_identity = hashlib.sha256(
         json.dumps(protocol, sort_keys=True).encode("utf-8")
@@ -395,8 +552,61 @@ def train(
     if device.type == "cuda":
         torch.cuda.set_device(device)
         torch.cuda.reset_peak_memory_stats()
-    train_dataset = GarlMatchedTensorCache(cache_manifest, "train")
-    validation_dataset = GarlMatchedTensorCache(cache_manifest, "validation")
+    base_train_dataset = GarlMatchedTensorCache(cache_manifest, "train")
+    fold_identity: dict[str, Any] | None = None
+    if grouped_contract is not None:
+        metadata_path = cast(Path, identity_metadata).resolve(strict=True)
+        frozen_metadata = grouped_contract["protocol"].get("sources", {}).get("train_metadata", {})
+        if _sha256(metadata_path) != frozen_metadata.get("sha256"):
+            raise ValueError("grouped Garl identity metadata differs from frozen protocol")
+        train_dataset: Dataset[dict[str, Any]] = GarlSequenceIndexedView(
+            base_train_dataset,
+            metadata_path=metadata_path,
+            sequence_ids=grouped_contract["train_sequences"],
+        )
+        validation_dataset: Dataset[dict[str, Any]] = GarlSequenceIndexedView(
+            GarlMatchedTensorCache(cache_manifest, "train"),
+            metadata_path=metadata_path,
+            sequence_ids=grouped_contract["dev_sequences"],
+        )
+        train_identity = cast(GarlSequenceIndexedView, train_dataset).identity_frame()
+        dev_identity = cast(GarlSequenceIndexedView, validation_dataset).identity_frame()
+        train_tokens = train_identity["sample_token"].tolist()
+        dev_tokens = dev_identity["sample_token"].tolist()
+        train_tracks = set(train_identity["track_id"])
+        dev_tracks = set(dev_identity["track_id"])
+        frozen_fold = grouped_contract["fold"]
+        if len(train_dataset) != expected_train_rows or len(validation_dataset) != (
+            expected_validation_rows
+        ):
+            raise ValueError("grouped Garl row counts differ from frozen fold")
+        if _values_sha256(train_tokens) != frozen_fold["train_sample_tokens_sha256"]:
+            raise ValueError("grouped Garl train token hash differs from frozen fold")
+        if _values_sha256(dev_tokens) != frozen_fold["dev_sample_tokens_sha256"]:
+            raise ValueError("grouped Garl dev token hash differs from frozen fold")
+        if set(train_tokens) & set(dev_tokens):
+            raise ValueError("grouped Garl train/dev tokens overlap")
+        if train_tracks & dev_tracks:
+            raise ValueError("grouped Garl train/dev tracks overlap")
+        fold_identity = {
+            "fold": grouped_contract["fold_index"],
+            "train_rows": len(train_dataset),
+            "dev_rows": len(validation_dataset),
+            "train_sample_tokens_sha256": _values_sha256(train_tokens),
+            "dev_sample_tokens_sha256": _values_sha256(dev_tokens),
+            "train_track_ids_sha256": _values_sha256(list(train_tracks)),
+            "dev_track_ids_sha256": _values_sha256(list(dev_tracks)),
+            "sequence_disjoint": True,
+            "sample_token_disjoint": True,
+            "track_id_disjoint": True,
+            "identity_metadata": {
+                "path": str(metadata_path),
+                "sha256": _sha256(metadata_path),
+            },
+        }
+    else:
+        train_dataset = base_train_dataset
+        validation_dataset = GarlMatchedTensorCache(cache_manifest, "validation")
     if not isinstance(train_dataset, Sized) or not isinstance(validation_dataset, Sized):
         raise TypeError("Matched cached datasets must expose length.")
     generator = torch.Generator().manual_seed(seed)
@@ -429,6 +639,27 @@ def train(
     best_validation: dict[str, Any] | None = None
     stale = 0
     elapsed_before = 0.0
+
+    def save_progress(*, status_value: str, epoch_value: int, elapsed: float) -> None:
+        payload = {
+            "artifact_type": "garl_matched_safe_progress_v1",
+            "status": status_value,
+            "epoch": epoch_value,
+            "configured_epochs": epochs,
+            "best_epoch": best_epoch,
+            "best_selection": list(best_selection) if best_selection else None,
+            "stale_epochs": stale,
+            "elapsed_seconds": elapsed,
+        }
+        path = output_dir / "progress.json"
+        temporary = path.with_name(f".{path.name}.tmp")
+        temporary.write_text(
+            json.dumps(payload, indent=2, sort_keys=True, allow_nan=False) + "\n",
+            encoding="utf-8",
+            newline="\n",
+        )
+        os.replace(temporary, path)
+
     if resume:
         if not last_path.is_file():
             raise FileNotFoundError(f"Matched resume state not found: {last_path}")
@@ -475,13 +706,13 @@ def train(
             optimizer.step()
             count = len(batch.target)
             examples += count
-            component_totals["total"] = component_totals.get("total", 0.0) + float(
-                loss_total.detach().cpu()
-            ) * count
+            component_totals["total"] = (
+                component_totals.get("total", 0.0) + float(loss_total.detach().cpu()) * count
+            )
             for name, value in loss_dict.items():
-                component_totals[name] = component_totals.get(name, 0.0) + float(
-                    value.detach().cpu()
-                ) * count
+                component_totals[name] = (
+                    component_totals.get(name, 0.0) + float(value.detach().cpu()) * count
+                )
         train_seconds = time.perf_counter() - train_started
         scheduler.step()
         validation = _evaluate(model, validation_loader, device, delta_t_s)
@@ -540,6 +771,7 @@ def train(
         _atomic_torch_save(payload, last_path)
         if improved:
             _atomic_torch_save(payload, best_path)
+        save_progress(status_value="running", epoch_value=epoch, elapsed=elapsed)
         if elapsed >= maximum_runtime_hours * 3600.0:
             status = "stopped_runtime_guard"
             break
@@ -556,15 +788,18 @@ def train(
     final_validation = _evaluate(model, validation_loader, device, delta_t_s)
     if _selection(final_validation) != best_selection:
         raise RuntimeError("Reloaded matched best checkpoint metrics changed.")
-    predictions = pd.DataFrame(
-        {
-            "sample_token": final_validation["sample_tokens"],
-            "sequence_id": final_validation["sequence_ids"],
-            "target_ttc_s": final_validation["target_ttc_s"],
-            "predicted_ttc_s": final_validation["prediction_ttc_s"],
-        }
-    )
-    predictions_path = output_dir / "validation_predictions.parquet"
+    prediction_column = "prediction_ttc_s" if grouped else "predicted_ttc_s"
+    prediction_payload: dict[str, Any] = {
+        "sample_token": final_validation["sample_tokens"],
+        "sequence_id": final_validation["sequence_ids"],
+        "target_ttc_s": final_validation["target_ttc_s"],
+        prediction_column: final_validation["prediction_ttc_s"],
+    }
+    if grouped:
+        prediction_payload["track_id"] = final_validation["track_ids"]
+    predictions = pd.DataFrame(prediction_payload)
+    evaluation_split = "dev" if grouped else "validation"
+    predictions_path = output_dir / f"{evaluation_split}_predictions.parquet"
     predictions.to_parquet(predictions_path, index=False)
     model_path = output_dir / "model_best.pt"
     _atomic_torch_save(
@@ -580,12 +815,19 @@ def train(
         model_path,
     )
     total_elapsed = elapsed_before + time.perf_counter() - started
+    save_progress(
+        status_value="completed", epoch_value=int(history[-1]["epoch"]), elapsed=total_elapsed
+    )
     report: dict[str, Any] = {
-        "artifact_type": "garl_event_only_matched_cached_training_v1",
+        "artifact_type": (
+            "garl_event_only_matched_grouped_dev_training_v1"
+            if grouped
+            else "garl_event_only_matched_cached_training_v1"
+        ),
         "created_at_utc": datetime.now(UTC).isoformat(),
         "status": status,
         "selection": {
-            "source": "public_validation_only",
+            "source": "outer_dev_development" if grouped else "public_validation_only",
             "best_epoch": best_epoch,
             "sequence_macro_MiD": best_selection[0],
             "failure_rate_pct": best_selection[1],
@@ -624,11 +866,26 @@ def train(
             "official_model_loss_optimizer": True,
             "cached_official_preprocessing": True,
             "train_rows": len(train_dataset),
-            "validation_rows": len(validation_dataset),
+            "dev_rows" if grouped else "validation_rows": len(validation_dataset),
             "maximum_runtime_hours": maximum_runtime_hours,
             "bbox_oracle_crop_declared": True,
+            "outer_dev_used_for_checkpoint_selection": grouped,
+            "outer_dev_is_not_test": grouped,
+            "public_validation_used_for_selection": False if grouped else True,
+            "public_validation_tensor_data_loaded": False if grouped else True,
             "test_used_for_selection": False,
         },
+        "development_protocol": (
+            {
+                "path": str(grouped_contract["path"]),
+                "file_sha256": grouped_contract["file_sha256"],
+                "artifact_sha256": grouped_contract["artifact_sha256"],
+                "fold_identity": fold_identity,
+                "train_only_grouped_dev": True,
+            }
+            if grouped_contract is not None
+            else None
+        ),
         "artifacts": {
             "model_best": {"path": str(model_path.resolve()), "sha256": _sha256(model_path)},
             "predictions": {
@@ -647,6 +904,7 @@ def train(
             "config": {"path": str(config_path.resolve()), "sha256": _sha256(config_path)},
         },
         "sealed_sources": {
+            "public_validation_opened": False if grouped else True,
             "private_test_opened": False,
             "codabench_opened": False,
             "evttc_test_opened": False,
@@ -680,6 +938,9 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--maximum-runtime-hours", type=float, default=4.5)
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--stop-after-epoch", type=int)
+    parser.add_argument("--development-protocol", type=Path)
+    parser.add_argument("--fold", type=int, choices=(0, 1, 2))
+    parser.add_argument("--identity-metadata", type=Path)
     return parser.parse_args(argv)
 
 
@@ -703,6 +964,9 @@ def main(argv: Sequence[str] | None = None) -> int:
             maximum_runtime_hours=args.maximum_runtime_hours,
             resume=args.resume,
             stop_after_epoch=args.stop_after_epoch,
+            development_protocol=args.development_protocol,
+            fold=args.fold,
+            identity_metadata=args.identity_metadata,
         )
     except Exception as error:
         print(
