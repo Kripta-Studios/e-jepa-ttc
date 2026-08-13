@@ -63,11 +63,17 @@ if (-not $SkipTraining) {
                 Assert-SignedJson -Path $Summary
                 continue
             }
-            uv run --no-sync python scripts/train_causal_scale_eap_screen.py `
-                --config $Config `
-                --output-dir $RunDir `
-                --device $Device `
-                --resume
+            $TrainArguments = @(
+                "run", "--no-sync", "python", "scripts/train_causal_scale_eap_screen.py",
+                "--config", $Config,
+                "--output-dir", $RunDir,
+                "--device", $Device
+            )
+            $LastCheckpoint = Join-Path $RunDir "state\last.pt"
+            if (Test-Path -LiteralPath $LastCheckpoint) {
+                $TrainArguments += "--resume"
+            }
+            uv @TrainArguments
             if ($LASTEXITCODE -ne 0) {
                 throw "V7 run failed or became corrupt: $RunName"
             }

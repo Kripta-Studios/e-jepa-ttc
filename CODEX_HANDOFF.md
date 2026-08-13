@@ -214,8 +214,9 @@ powershell -ExecutionPolicy Bypass -File scripts/run_scientific_recovery_v7.ps1 
   -Device cuda -SkipBaselines
 ```
 
-El runner no avanza al siguiente brazo si falta un summary firmado. Un summary
-existente con firma inválida también detiene la cadena. Freeze/resume conserva
+El runner no avanza al siguiente brazo si un run falla. Un summary existente con
+firma inválida también detiene la cadena. Solo añade `--resume` cuando existe
+`state/last.pt`; un directorio nuevo comienza desde cero. Freeze/resume conserva
 optimizer, scheduler, RNG y hashes mediante el state del trainer existente.
 
 ## 8. Gates seed 7
