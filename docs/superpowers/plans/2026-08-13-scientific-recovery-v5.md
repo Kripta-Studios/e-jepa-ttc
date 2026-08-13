@@ -1,6 +1,8 @@
 # Scientific Recovery V5 execution plan
 
-> Status: active. This plan records the execution order; observed results belong in the V5 state report and audit.
+> Status: historical/completed through the A8.0 gate. The fold-local parent
+> correction and observed results are in
+> [Scientific Recovery V5](../../SCIENTIFIC_RECOVERY_V5_STATUS.md).
 
 ## Scope and hard walls
 

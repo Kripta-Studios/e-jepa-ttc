@@ -1,5 +1,15 @@
 # Model card — E-JEPA-TTC
 
+## Scientific Recovery V5
+
+No hay modelo promovido. A8.0 usa geometry A4 congelada y un encoder transport
+separado, event-only, causal-left, radius 1, τ 0,02 y residual bound 0,05. En
+outer-dev de nueve secuencias obtiene MiD 197,69, failure 7,02%, Pearson 0,225 y
+coverage 92,98%. Mejora A6 (211,51), pero falla el gate MiD≤175 y pierde frente a
+Garl fold-local desde cero (144,35). Geometry es tensor-a-tensor idéntica a su
+parent y la causalidad prefix pasa. No es un candidato final, SOTA ni apto para
+seguridad. Véase [el estado canónico](SCIENTIFIC_RECOVERY_V5_STATUS.md).
+
 ## CausalScale A0/A1 public screen status
 
 The seed-7 event-only A0 screen is a negative result, not a promoted checkpoint:

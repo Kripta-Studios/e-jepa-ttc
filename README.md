@@ -1,5 +1,13 @@
 # E-JEPA-TTC
 
+> Estado vigente (2026-08-13): Scientific Recovery V5 completó las tres cadenas
+> fold-locales A4→A6/A8.0 y Garl desde cero. A8.0 mejora A6 en grouped development
+> (MiD macro 197,69 frente a 211,51), pero falla el gate preregistrado 175 y queda
+> no promovido. Garl obtiene 144,35 bajo exact-sample/target/budget/metric/oracle-ROI
+> matching, con preprocessing distinto. Public validation no se usó para selección
+> V5 y `private_test_opened=false`. Estado canónico:
+> [Scientific Recovery V5](docs/SCIENTIFIC_RECOVERY_V5_STATUS.md).
+
 > Estado event-only (2026-08-10): Garl matched desde cero fija la métrica a batir
 > en MiD macro 203,63. A0 obtuvo 382,19, A1 geometry-only 346,83 y A3
 > SAM-distilled 353,64. A3 empeora A1; no existe claim SOTA.
@@ -237,8 +245,8 @@ Para reanudar se repite el comando con `--resume`; la equivalencia continua/resu
 está probada end-to-end. Tras el run,
 `scripts/build_garl_validation_subset_from_predictions.py` crea el subset Garl exacto
 y firmado por tokens. Las cajas oficiales son supervisión weak-box y crop oracle,
-nunca entrada del modelo. El run completo y la comparación oficial Garl event-only
-siguen pendientes. Véase
+nunca entrada del modelo. Ese screen se completó históricamente; Scientific Recovery
+V5 lo sustituyó por cadenas fold-locales autocontenidas. Véase
 [el protocolo del screen](docs/causal_scale_eap_screen.md) y
 [el handoff](CODEX_HANDOFF.md).
 
@@ -295,6 +303,7 @@ eAP/CodaBench siguen pendientes.
 | Causal Scale v6 | validation: Pearson .92042, translation .00462, IoU .89323 | test 603 sellado; no promovido |
 | Causal Scale v7 | test: Pearson .92014 (falla), TTC .24576, translation .00338 | no promovido; seed 603 consumida |
 | Causal Scale v8 | validation Pearson .94621 con CVaR; falla por .00379 | test 901/902/903 nunca abierto |
+| Scientific Recovery V5 A8.0 | grouped-dev fold-local MiD 197,69 vs A6 211,51 y Garl 144,35 | mejora A6, falla gate 175; no promovido |
 
 El smoke high-resolution valida integración, no precisión. Los resultados v3
 muestran que la expansión firmada y la supervisión de ratio son útiles, pero
@@ -345,6 +354,9 @@ se pueden regenerar. No deben subirse a Git.
 - v4 exige dependencia observable de eventos antes de congelar candidato.
 
 ## Documentación
+
+- [estado canónico Scientific Recovery V5](docs/SCIENTIFIC_RECOVERY_V5_STATUS.md)
+- [auditoría científica y de código V5](docs/E_JEPA_TTC_V5_SCIENTIFIC_CODE_AUDIT.md)
 
 ### v4.30 authoritative negative result and v4.31 next action
 

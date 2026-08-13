@@ -91,7 +91,7 @@ def test_materialize_config_disables_exposed_pretraining_and_binds_exact_roles(
 def test_materialize_config_rejects_nonmatched_row_count(tmp_path: Path) -> None:
     official, manifest = _fixture(tmp_path, train_rows=2047)
 
-    with pytest.raises(ValueError, match="exact 2048/2048"):
+    with pytest.raises(ValueError, match="preregistered 2048/8192 budgets"):
         runner.materialize_config(
             official_config=official,
             subset_manifest=manifest,

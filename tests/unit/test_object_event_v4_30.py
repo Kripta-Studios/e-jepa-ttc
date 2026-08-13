@@ -1,4 +1,5 @@
 import inspect
+import shutil
 import subprocess
 from dataclasses import replace
 from pathlib import Path
@@ -1085,6 +1086,8 @@ def test_prepare_output_target_recovers_empty_exact_root_and_rejects_arbitrary_p
 
 def test_wrapper_explicit_diagnostic_parameter_builds_diagnostic_command():
     wrapper = (Path("scripts") / "run_object_event_v4_30_stable_similarity.ps1").resolve()
+    powershell = shutil.which("powershell") or shutil.which("pwsh")
+    assert powershell is not None
 
     def invoke(*arguments: str) -> str:
         command = "\n".join(
@@ -1098,7 +1101,7 @@ def test_wrapper_explicit_diagnostic_parameter_builds_diagnostic_command():
             )
         )
         result = subprocess.run(
-            ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", command],
+            [powershell, "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", command],
             check=True,
             text=True,
             capture_output=True,

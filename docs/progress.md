@@ -1,5 +1,18 @@
 # Progreso
 
+## 2026-08-13 — Scientific Recovery V5
+
+- reparados provenance, claim readiness y stale-output handling P0;
+- congelados tres folds train-only antes de A8;
+- invalidados para promoción los A6 parent-exposed sin borrar su evidencia;
+- ejecutados secuencialmente 3×A4, 3×A6, 3×A8.0 y 3×Garl;
+- probada geometry exacta y prefix causality de A6/A8;
+- agregado outer-dev exacto: A8.0 197,69, A6 211,51, Garl 144,35 MiD;
+- A8.0 mejora A6, pero falla el gate 175; A8.1 no se promueve;
+- public validation no usada y private/test cerrado.
+
+Detalles y hashes: [estado canónico V5](SCIENTIFIC_RECOVERY_V5_STATUS.md).
+
 ## 2026-08-10 — A0, Garl matched y A1 exact-2048
 
 - terminado A0 seed 7 como resultado negativo;

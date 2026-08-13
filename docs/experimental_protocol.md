@@ -1,5 +1,20 @@
 # Protocolo experimental
 
+## Scientific Recovery V5 fold-local (2026-08-13)
+
+La unidad experimental es la cadena completa por fold, no solo el entrenamiento
+del child. A4 se entrena en seis secuencias; A6 y A8.0 parten de ese A4; Garl parte
+de cero; las tres outer-dev nunca participan en gradientes de la cadena. Outer-dev
+selecciona checkpoint, por lo que es desarrollo y no test. Los tres folds ya estaban
+congelados antes de observar A8.
+
+Todas las comparaciones exigen identidad de sample token, sequence, track y target,
+sin filtrar NaN. El bootstrap resamplea `sequence_id+track_id`. El matching Garl es
+exact-sample/target/budget/metric/oracle-ROI; preprocessing es `PARTIAL`, no idéntico.
+El gate A8.0 requiere mejorar A6, MiD≤175, geometry exacta, prefix causality y
+coverage no materialmente peor. A8.0 falla MiD≤175; no se autoriza A8.1. Véase
+[el estado V5](SCIENTIFIC_RECOVERY_V5_STATUS.md).
+
 ## Event-only screen A0 / release reference (2026-08-10)
 
 A0 usa 2.048 train y 2.048 validation con secuencias disjuntas. La tabla release

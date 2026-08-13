@@ -1,5 +1,10 @@
 # Metodología
 
+> La metodología histórica inferior sigue siendo válida para sus experimentos,
+> pero la unidad experimental vigente de Scientific Recovery V5 es una cadena
+> A4→A6/A8 y Garl autocontenida por fold. Véase
+> [Scientific Recovery V5](SCIENTIFIC_RECOVERY_V5_STATUS.md).
+
 Actualizado: 2026-08-02.
 
 La especificación completa está en [PLAN.md](../PLAN.md). Este documento resume

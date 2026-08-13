@@ -1,5 +1,15 @@
 # Informe técnico
 
+## Addendum — Scientific Recovery V5 fold-local
+
+El primer grouped-dev V5 quedó invalidado para promoción porque A6 heredaba un A4
+global entrenado con las nueve secuencias. La repetición correcta entrenó un parent
+A4 dentro de cada fold, inicializó A6 y A8.0 desde ese mismo parent y entrenó Garl
+desde cero. A8.0 reduce MiD de 211,51 a 197,69 frente a A6, con IC95% pareado del
+delta [−17,72, −10,07], pero no alcanza el gate 175. Garl obtiene 144,35. La
+hipótesis de liberar la representación transport recibe apoyo parcial, insuficiente
+para promoción. A8.1 no se ejecuta. [Resultados completos](SCIENTIFIC_RECOVERY_V5_STATUS.md).
+
 Actualizado: 2026-08-09.
 
 ## Addendum — cambio mecanístico Causal Scale v5

@@ -1,5 +1,14 @@
 # Dataset card
 
+## Scientific Recovery V5 train-only grouped development
+
+El universo V5 contiene 8192 filas públicas train, nueve secuencias y tokens únicos.
+Cada fold usa seis secuencias train y tres outer-dev; cada secuencia aparece una vez
+en dev. Los hashes de tokens y tracks se congelaron antes de A8. El universo se
+seleccionó históricamente con estratificación por bucket TTC; esta limitación no se
+oculta. Public validation de 2048 filas y private/test no se abrieron para selección
+V5. Véase [el contrato y los folds](SCIENTIFIC_RECOVERY_V5_STATUS.md).
+
 ## Exact public validation screen
 
 The signed subset `garl_validation_common_roi_v1` contains exactly 2,048 public

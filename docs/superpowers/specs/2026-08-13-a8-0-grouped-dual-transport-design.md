@@ -1,5 +1,11 @@
 # A8.0 train-only grouped dual-transport design
 
+> Superseded addendum: la frase inferior “parent checkpoint is always A4 causal
+> seed 7” describía un parent global y quedó invalidada por exposición de outer-dev.
+> La ejecución válida usa A4-F0/F1/F2, todos seed 7 y entrenados solo en el train de
+> su fold. Se conserva el texto original como provenance. Resultado:
+> [Scientific Recovery V5](../../SCIENTIFIC_RECOVERY_V5_STATUS.md).
+
 ## Approval and scope
 
 The user-provided V5 protocol is the approved design authority for A8.0. This specification narrows implementation choices; it does not change the preregistered hypothesis or gates.
@@ -32,7 +38,12 @@ Bbox geometry and DINO relations are loss targets only. Sequence, track, token, 
 
 ## Training and outputs
 
-Each fold is an independent sequential CUDA run with `num_workers=0`. The parent checkpoint is always A4 causal seed 7. A8.0 seed identifies transport-training stochasticity conditional on that fixed parent; the initial grouped-development pass uses seed 7 for every fold so fold differences are not mixed with seed differences.
+Each fold is an independent sequential CUDA run with `num_workers=0`. The original,
+superseded assumption reused one global A4 causal seed-7 parent; parent-exposure
+auditing rejected it. The valid execution uses the fold-specific A4-Fk seed-7
+parent. A8.0 seed identifies transport-training stochasticity conditional on that
+fold parent; seed 7 is used in every fold so fold differences are not mixed with
+seed differences.
 
 The runner writes a grouped-dev summary, `dev_predictions.csv`, best/last checkpoints, progress, and effective configuration hashes. The summary must bind the protocol artifact/file hashes, fold, sequence/token contracts, parent checkpoint SHA, model/config SHA, git SHA, seed semantics, and closed public-validation/private-test state.
 

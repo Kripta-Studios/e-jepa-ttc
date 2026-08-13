@@ -1,5 +1,9 @@
 # Causal Scale eAP public validation screen v1
 
+> Protocolo histórico anterior a Scientific Recovery V5. Sus resultados no deben
+> sustituir la repetición fold-local autocontenida ni sus gates. Estado vigente:
+> [Scientific Recovery V5](SCIENTIFIC_RECOVERY_V5_STATUS.md).
+
 ## Resultado A3 SAM-distilled seed 7
 
 A3 se ejecutó una sola vez desde el preregistro publicado `ffb360f`, sobre las

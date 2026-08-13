@@ -1,0 +1,78 @@
+{
+  "artifact_sha256": "17512105fc6b41f18180bed041066d9b8101dee6f67078fe5c4cfb2a33dade74",
+  "artifact_type": "scientific_recovery_v5_grouped_paired_bootstrap_v1",
+  "bootstrap": {
+    "failure_pct_delta_first_minus_second": {
+      "lower_95": -1.7076940591284868,
+      "median": -0.36108326427962956,
+      "upper_95": 0.9360443802532591
+    },
+    "probability_first_lower_MiD": 0.4758,
+    "sequence_macro_MiD_delta_first_minus_second": {
+      "lower_95": -4.571700868936427,
+      "median": 0.12686221014632793,
+      "upper_95": 4.858486958409647
+    }
+  },
+  "checks": {
+    "exact_sample_tokens": true,
+    "paired_evaluation": true,
+    "private_test_opened": false,
+    "public_validation_used_for_selection": false,
+    "target_equality_atol_1e_5": true,
+    "track_identity_verified": true
+  },
+  "claim_scope": "development_only_not_sealed_not_sota",
+  "cluster_definition": "sequence_id+track_id_verified_external_metadata",
+  "clusters": 120,
+  "comparison": {
+    "first": "a8_0",
+    "second": "a6"
+  },
+  "created_at_utc": "2026-08-13T08:26:09.619299+00:00",
+  "delta_first_minus_second": {
+    "failure_pct": -0.36616623947272053,
+    "finite_prediction_fraction": 0.0036616623947272053,
+    "sample_weighted_MiD": 0.2066556039058014,
+    "sequence_macro_MiD": 0.11307118742720945
+  },
+  "first": {
+    "failure_pct": 7.3233247894544125,
+    "finite_prediction_fraction": 0.9267667521054559,
+    "sample_weighted_MiD": 181.98676723904396,
+    "sequence_macro_MiD": 180.79534771072886
+  },
+  "fold": 0,
+  "resamples": 5000,
+  "rows": 2731,
+  "sample_contract": {
+    "sample_token_count": 2731,
+    "sorted_sample_tokens_sha256": "170eb99760df9e72dee39e4a2ca7e2222fb6e9493bbaa4c07113e11d1f2c4b4e"
+  },
+  "second": {
+    "failure_pct": 7.689491028927133,
+    "finite_prediction_fraction": 0.9231050897107287,
+    "sample_weighted_MiD": 181.78011163513816,
+    "sequence_macro_MiD": 180.68227652330165
+  },
+  "seed": 20260813,
+  "sources": {
+    "cluster_metadata": {
+      "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\scientific_recovery_master_v3\\garl_budget_subset\\train_data.parquet",
+      "sha256": "50534e49323b10fb5cc1ab850391d85b88c7669b39f866e798cf0a18d621bbcd"
+    },
+    "first_predictions": {
+      "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\scientific_recovery_v5_a8_0_fold_chain_fold0_seed7\\dev_predictions.csv",
+      "sha256": "37989e37d31efe69d6878ca6071787793bf48acc943e04bff74b57aa201b517d"
+    },
+    "protocol": {
+      "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\configs\\protocol\\scientific_recovery_v5_train_only_grouped_dev.json",
+      "sha256": "be48917ae52d1c77d046318bd9ed284a32e8b16258257203fff439332b547874"
+    },
+    "second_predictions": {
+      "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\scientific_recovery_v5_a6_fold_chain_fold0_seed7\\dev_predictions.csv",
+      "sha256": "1a78a045f0913248353b05e7cf6e3fc5ec897d8dd4ce6799cf725bc9f66c7958"
+    }
+  },
+  "status": "completed_train_only_grouped_development"
+}

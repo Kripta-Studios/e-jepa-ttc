@@ -1,0 +1,73 @@
+{
+  "arm": "a6",
+  "artifact_sha256": "e6d096f0bbb712f49c7be8e025a3b05e0a179597a8bcf8415ea729f9d527fb5d",
+  "artifact_type": "scientific_recovery_v5_fold_geometry_audit_v1",
+  "contracts": {
+    "geometry_after_equals_parent": true,
+    "geometry_before_equals_parent": true,
+    "private_test_opened": false
+  },
+  "created_at_utc": "2026-08-13T07:33:28.112492+00:00",
+  "fold": 0,
+  "primary_geometry": {
+    "absent_from_optimizer": true,
+    "child_sha256": "029a13db3c1cc29447e74012ce03c97f3bc2e49253d4f5b3bef8020875012d9f",
+    "exact_tensor_equality": true,
+    "fixed_probe_exact": true,
+    "fixed_probe_hashes": {
+      "analytic_log_height_ratio": "51e23c50bd0dd09b574c2216af932c46d3e8c910c2e1e2fd00a6be915a4e7b7e",
+      "foreground_logits": "62aafc20f55e5b0fc04958695bb5fe02c3fb895b4e997bacca81d06eb4539083",
+      "visible_height_normalized": "7f089a970505136c574dc34ee939e3bdf14dc0a3ee9448c80084f72e0f4a3d4e",
+      "visible_width_normalized": "1835eb0ea6ce9413d4bf4e223f25cc72e47be4a4e3afeb306a5c4afe666c93be"
+    },
+    "parent_sha256": "029a13db3c1cc29447e74012ce03c97f3bc2e49253d4f5b3bef8020875012d9f",
+    "requires_grad_false": true,
+    "tensor_count": 27,
+    "tensor_names": [
+      "features.0.weight",
+      "features.1.bias",
+      "features.1.weight",
+      "features.3.weight",
+      "features.4.bias",
+      "features.4.weight",
+      "features.6.network.0.bias",
+      "features.6.network.0.weight",
+      "features.6.network.2.weight",
+      "features.6.network.3.bias",
+      "features.6.network.3.weight",
+      "features.6.network.6.weight",
+      "features.7.network.0.bias",
+      "features.7.network.0.weight",
+      "features.7.network.2.weight",
+      "features.7.network.3.bias",
+      "features.7.network.3.weight",
+      "features.7.network.6.weight",
+      "foreground.0.1.weight",
+      "foreground.1.bias",
+      "foreground.1.weight",
+      "foreground.3.bias",
+      "foreground.3.weight",
+      "token.2.bias",
+      "token.2.weight",
+      "token.3.bias",
+      "token.3.weight"
+    ]
+  },
+  "sources": {
+    "child_checkpoint": {
+      "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\scientific_recovery_v5_a6_fold_chain_fold0_seed7\\model_best.pt",
+      "sha256": "f03bf47f4d55f4af46941f8ed14964a8c92f7cb65be0db5b871362356ce0f557"
+    },
+    "child_summary": {
+      "artifact_sha256": "d436609125ff8c89ede22ba9d62c9a37910407567b5e3bdeac362fa3c9239fd0",
+      "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\scientific_recovery_v5_a6_fold_chain_fold0_seed7\\summary.json",
+      "sha256": "9a7a3e126d6c81d0e1c366e84ad671b5509efd898308075f75e0642490bb127d"
+    },
+    "parent_checkpoint": {
+      "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\artifacts\\runs\\scientific_recovery_v5_a4_parent_grouped_fold0_seed7\\model_best.pt",
+      "sha256": "bb9d087c88b49641d0054aa38a24537354fff3db0aac66b557373a9e8fd8cc9c"
+    }
+  },
+  "status": "completed_exact_primary_geometry",
+  "transport_encoder": null
+}

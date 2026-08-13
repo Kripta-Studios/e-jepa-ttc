@@ -1,5 +1,30 @@
 # Reproducibilidad
 
+## Scientific Recovery V5
+
+El protocolo congelado está en
+`configs/protocol/scientific_recovery_v5_train_only_grouped_dev.json`. Los comandos
+fold-locales A4/A6/A8 están en
+`configs/experiment/scientific_recovery_v5_fold_chain/`; Garl está congelado en
+`configs/protocol/scientific_recovery_v5_garl_grouped_runs.json`.
+
+El aggregate se regenera con:
+
+```powershell
+.\.venv\Scripts\python.exe scripts/aggregate_v5_fold_results.py `
+  --protocol configs/protocol/scientific_recovery_v5_train_only_grouped_dev.json `
+  --cluster-metadata artifacts/scientific_recovery_master_v3/garl_budget_subset/train_data.parquet `
+  --audit-dir artifacts/scientific_recovery_v5/audit `
+  --output-dir artifacts/scientific_recovery_v5/results `
+  --resamples 5000 --seed 20260813
+```
+
+El artifact valida firmas de summaries, hashes de predictions, universo/folds,
+Garl desde cero, splits cerrados, seis auditorías de geometry y dos de prefix
+causality. Resultado firmado: `b3f0fc48…bbb4fc5`. Los checkpoints y predictions
+son artifacts locales ignorados; los JSON compactos finales se versionan como
+evidencia. Más detalles: [estado V5](SCIENTIFIC_RECOVERY_V5_STATUS.md).
+
 ## Artefactos A0 / Garl exact-2048
 
 - A0: `artifacts/runs/causal_scale_eap_screen_v1_seed7/summary.json`.

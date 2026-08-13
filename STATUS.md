@@ -1,5 +1,20 @@
 # Estado del repositorio
 
+## 2026-08-13 — Scientific Recovery V5 cerrado sin promoción
+
+- Rama `scientific-recovery-v5-provenance-dual-transport`; aggregate limpio en
+  `c55e791c563e6f463385685e8dd3b4aa62d485a7`.
+- Los runs grouped inicializados desde el A4 global están clasificados
+  `diagnostic_parent_exposed`; el MiD 119,50 no es grouped-dev limpio.
+- Se entrenaron tres parents A4 fold-locales, tres A6, tres A8.0 y tres Garl desde
+  cero. Ningún parent vio su outer-dev durante gradientes.
+- Macro nueve secuencias: A4 291,09; A6 211,51; A8.0 197,69; Garl 144,35 MiD.
+- A8.0−A6 = −13,82, IC95% [−17,72, −10,07], pero A8.0 falla `MiD <= 175`.
+- Geometry exacta y model-prefix causality pasan; streaming end-to-end no se afirma.
+- No se ejecuta A8.1. Public validation no se usó para selección y private/test
+  permanece cerrado.
+- Fuente canónica: [Scientific Recovery V5](docs/SCIENTIFIC_RECOVERY_V5_STATUS.md).
+
 ## 2026-08-10 — Garl matched, A1 y A3 cerrados
 
 - A0 seed 7 terminó: época seleccionada 11/16, MiD macro `382.1905104`, failure

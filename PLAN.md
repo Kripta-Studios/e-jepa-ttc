@@ -1,5 +1,11 @@
 # PLAN.md — Recuperación científica y ruta ejecutable hacia E-JEPA-TTC frente a Garl-TTC
 
+> Este plan conserva la evolución histórica hasta 2026-08-10. La ruta operativa
+> vigente terminó Scientific Recovery V5 en 2026-08-13 y está documentada en
+> [docs/SCIENTIFIC_RECOVERY_V5_STATUS.md](docs/SCIENTIFIC_RECOVERY_V5_STATUS.md).
+> No interpretar los “siguientes pasos” inferiores como autorización para saltar
+> el gate A8.0, que falló.
+
 ## Plan activo 2026-08-10
 
 1. **Completado:** A0 seed 7, subset validation exacto, referencia release y

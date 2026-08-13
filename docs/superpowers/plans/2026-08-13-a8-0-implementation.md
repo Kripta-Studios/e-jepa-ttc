@@ -1,5 +1,10 @@
 # A8.0 grouped dual-transport implementation plan
 
+> Plan histórico. La ejecución final añadió parents A4 autocontenidos por fold
+> después de detectar exposición en el diseño inicial. No usar este texto para
+> relanzar un parent global. Véase
+> [Scientific Recovery V5](../../SCIENTIFIC_RECOVERY_V5_STATUS.md).
+
 ## 1. Grouped dataset views
 
 - Add failing tests for one-pass sequence partitioning, exact token hashes, disjoint/exhaustive views, and shard-group preservation.

@@ -1,5 +1,20 @@
 # Limitaciones
 
+## Scientific Recovery V5
+
+A8.0 mejora A6 de forma pareada, pero su MiD macro 197,69 falla el gate 175 y
+permanece 53,34 por detrás de Garl fold-local. Solo se ejecutó seed 7; los folds
+miden cambio de población, no stochasticity multiseed. Outer-dev seleccionó
+checkpoints y no es test. El universo 8192 fue estratificado históricamente por
+bucket TTC, aunque los folds V5 se asignaron sin targets.
+
+El forward es event-only, pero DINO RGB y bbox se usan como supervisión train-only,
+y bbox oracle define el ROI. Se prueba causalidad prefix del modelo, no una tubería
+streaming causal bbox-free. No se ejecutaron robustness A8, A8.1–A8.5, public
+validation final ni sealed evaluation. `private_test_opened=false`.
+
+El detalle cuantitativo está en [Scientific Recovery V5](SCIENTIFIC_RECOVERY_V5_STATUS.md).
+
 ## Limitación observada del screen A0
 
 A0 no aprende una dinámica temporal útil (Pearson log-ratio 0,046) y su weak-box
