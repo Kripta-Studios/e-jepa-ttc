@@ -576,12 +576,21 @@ def analyze(
     replay = pd.concat(replay_parts, ignore_index=True)
     frame = predictions.merge(
         replay,
-        on=["sample_token", "sequence_id", "track_id", "target_ttc_s", "fold"],
+        on=["sample_token", "sequence_id", "track_id", "fold"],
         how="inner",
         validate="one_to_one",
+        suffixes=("", "_replayed"),
     )
     if len(frame) != len(predictions):
         raise ValueError("diagnostic replay did not preserve the exact OOF population")
+    if not np.allclose(
+        frame["target_ttc_s"].to_numpy(dtype=np.float64),
+        frame["target_ttc_s_replayed"].to_numpy(dtype=np.float64),
+        rtol=0.0,
+        atol=1.0e-5,
+    ):
+        raise ValueError("diagnostic replay targets differ from V5 OOF")
+    frame = frame.drop(columns="target_ttc_s_replayed")
     _assert_replay(frame, "a6", "a6")
     _assert_replay(frame, "a8_0", "a8")
 
