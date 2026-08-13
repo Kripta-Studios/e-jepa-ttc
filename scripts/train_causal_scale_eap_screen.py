@@ -10,7 +10,7 @@ import math
 import os
 import subprocess
 import sys
-from dataclasses import asdict
+from dataclasses import asdict, replace
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, cast
@@ -929,6 +929,27 @@ def run(
             checkpoint_payload_value=initialization_payload,
             grouped_contract=grouped_contract,
         )
+    soft_teacher_metadata: dict[str, Any] | None = None
+    if training_config.soft_geometry_teacher_checkpoint is not None:
+        soft_teacher_path = _resolve(training_config.soft_geometry_teacher_checkpoint)
+        soft_teacher_sha = _sha256(soft_teacher_path)
+        if soft_teacher_sha != training_config.soft_geometry_teacher_checkpoint_sha256:
+            raise ValueError("soft geometry teacher SHA256 differs from frozen config")
+        soft_teacher_payload = torch.load(
+            soft_teacher_path,
+            map_location="cpu",
+            weights_only=False,
+        )
+        soft_teacher_metadata = _validate_initialization_checkpoint_contract(
+            checkpoint_path=soft_teacher_path,
+            checkpoint_sha256=soft_teacher_sha,
+            checkpoint_payload_value=soft_teacher_payload,
+            grouped_contract=grouped_contract,
+        )
+        training_config = replace(
+            training_config,
+            soft_geometry_teacher_checkpoint=soft_teacher_path.as_posix(),
+        )
     decision_contract = raw.get("decision_contract")
     if not isinstance(decision_contract, dict):
         raise ValueError("decision_contract mapping is required")
@@ -951,13 +972,26 @@ def run(
             yaml.safe_dump(raw, sort_keys=False), encoding="utf-8", newline="\n"
         )
     state_dir = output_dir / "state"
-    train_dataset = GarlTTCObjectEventV4Dataset(str(manifest_path), splits=("train",))
+    if model_config.in_channels < 4 or (model_config.in_channels - 2) % 2:
+        raise ValueError("event model in_channels must equal 2*bins_per_polarity+2")
+    bins_per_polarity = (model_config.in_channels - 2) // 2
+    train_dataset = GarlTTCObjectEventV4Dataset(
+        str(manifest_path),
+        splits=("train",),
+        bins_per_polarity=bins_per_polarity,
+    )
     if grouped:
-        validation_dataset = GarlTTCObjectEventV4Dataset(str(manifest_path), splits=("train",))
+        validation_dataset = GarlTTCObjectEventV4Dataset(
+            str(manifest_path),
+            splits=("train",),
+            bins_per_polarity=bins_per_polarity,
+        )
     else:
         assert validation_manifest_path is not None
         validation_dataset = GarlTTCObjectEventV4Dataset(
-            str(validation_manifest_path), splits=("validation",)
+            str(validation_manifest_path),
+            splits=("validation",),
+            bins_per_polarity=bins_per_polarity,
         )
     fold_identity: dict[str, Any] | None = None
     selected_train_tokens: set[str] | None = None
@@ -1105,6 +1139,24 @@ def run(
             "track_id": validation["track_ids"],
             "target_ttc_s": validation["target_ttc_s"],
             "prediction_ttc_s": validation["prediction_ttc_s"],
+            "point_prediction_ttc_s": validation["point_prediction_ttc_s"],
+            "auxiliary_prediction_ttc_s": validation["auxiliary_prediction_ttc_s"],
+            "known_mask": validation["known_mask"],
+            "guard_margin": validation["guard_margin"],
+            "ttc_log_variance": validation["ttc_log_variance"],
+            "ttc_variance": validation["ttc_variance"],
+            "event_count_log1p": validation["event_count_log1p"],
+            "event_rate_log1p": validation["event_rate_log1p"],
+            "transport_flow_magnitude": validation["transport_flow_magnitude"],
+            "fold": (
+                [grouped_contract["fold_index"]] * len(validation["sample_tokens"])
+                if grouped_contract is not None
+                else [-1] * len(validation["sample_tokens"])
+            ),
+            "seed": [training_config.seed] * len(validation["sample_tokens"]),
+            "cache_manifest_sha256": [actual_manifest_hash]
+            * len(validation["sample_tokens"]),
+            "config_sha256": [_sha256(config_path)] * len(validation["sample_tokens"]),
         }
     )
     evaluation_split = "dev" if grouped else "validation"
@@ -1120,6 +1172,15 @@ def run(
             "track_ids",
             "target_ttc_s",
             "prediction_ttc_s",
+            "point_prediction_ttc_s",
+            "auxiliary_prediction_ttc_s",
+            "known_mask",
+            "guard_margin",
+            "ttc_log_variance",
+            "ttc_variance",
+            "event_count_log1p",
+            "event_rate_log1p",
+            "transport_flow_magnitude",
         }
     }
     cache_payload: dict[str, Any] = {
@@ -1266,6 +1327,9 @@ def run(
             "dinov3_teacher_is_model_input": False,
             "dinov3_teacher_train_only": representation_teacher_metadata is not None,
             "validation_dinov3_teacher_loaded": False,
+            "soft_geometry_teacher_is_model_input": False,
+            "soft_geometry_teacher_train_only": soft_teacher_metadata is not None,
+            "validation_soft_geometry_teacher_loaded": False,
             "cross_time_transport_enabled": model_config.transport_enabled,
             "cross_time_transport_inputs": (
                 ["event_dense_features_t_previous", "event_dense_features_t_current"]
@@ -1278,6 +1342,7 @@ def run(
         },
         "sam_teacher": teacher_metadata,
         "representation_teacher": representation_teacher_metadata,
+        "soft_geometry_teacher": soft_teacher_metadata,
         "representation_temporal_delta_calibration": representation_calibration,
         "a5_transport_preflight": a5_preflight,
         "parameter_count": parameter_count,

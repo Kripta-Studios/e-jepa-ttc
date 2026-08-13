@@ -34,6 +34,26 @@ EVENT_V4_CHANNEL_COUNT = len(EVENT_V4_ACTIVE_CHANNELS)
 EVENT_V4_STEPS = 3
 
 
+def event_v4_channel_count(bins_per_polarity: int) -> int:
+    """Return voxel plus count/rate channels for one V4 endpoint."""
+
+    if bins_per_polarity <= 0:
+        raise ValueError("bins_per_polarity must be positive")
+    return 2 * bins_per_polarity + 2
+
+
+def event_v4_channel_names(bins_per_polarity: int) -> tuple[str, ...]:
+    """Build the declared channel schema for a V4 temporal resolution."""
+
+    event_v4_channel_count(bins_per_polarity)
+    return (
+        *(f"positive_voxel_bin_{index}" for index in range(bins_per_polarity)),
+        *(f"negative_voxel_bin_{index}" for index in range(bins_per_polarity)),
+        "event_count_log1p",
+        "event_rate_log1p",
+    )
+
+
 def _finite_box(box: Sequence[float]) -> tuple[float, float, float, float]:
     if len(box) != 4:
         raise ValueError("A box must contain exactly four xyxy coordinates")
@@ -136,16 +156,21 @@ def shifted_precontext_window(
         raise ValueError("Shifted precontext must end no later than t1 starts")
     return shifted
 
-def select_active_event_channels(value: torch.Tensor) -> torch.Tensor:
+def select_active_event_channels(
+    value: torch.Tensor,
+    *,
+    bins_per_polarity: int = 5,
+) -> torch.Tensor:
     """Drop the nine guaranteed-zero compatibility channels from a voxel."""
 
-    if value.ndim != 3 or value.shape[0] < EVENT_V4_CHANNEL_COUNT:
+    channel_count = event_v4_channel_count(bins_per_polarity)
+    if value.ndim != 3 or value.shape[0] < channel_count:
         raise ValueError(
             "Expected a [C,H,W] voxel with at least twelve active channels, "
             f"got {tuple(value.shape)}"
         )
-    selected = value[list(EVENT_V4_ACTIVE_CHANNELS)]
-    if selected.shape[0] != EVENT_V4_CHANNEL_COUNT:
+    selected = value[:channel_count]
+    if selected.shape[0] != channel_count:
         raise RuntimeError("Active event-channel selection changed unexpectedly")
     return selected.contiguous()
 
@@ -157,6 +182,8 @@ __all__ = [
     "EVENT_V4_STEPS",
     "box_in_common_roi",
     "common_square_from_boxes",
+    "event_v4_channel_count",
+    "event_v4_channel_names",
     "select_active_event_channels",
     "shifted_precontext_window",
 ]

@@ -15,8 +15,8 @@ import torch
 from torch.utils.data import Dataset
 
 from e_jepa_ttc.data.event_v4_geometry import (
-    EVENT_V4_CHANNEL_COUNT,
     EVENT_V4_STEPS,
+    event_v4_channel_count,
 )
 
 OBSERVABLE_MOTION_DIM = 18
@@ -142,12 +142,15 @@ class GarlTTCObjectEventV4Dataset(Dataset[dict[str, Any]]):
         *,
         splits: tuple[str, ...],
         event_field: str = "event_v4_common_roi",
+        bins_per_polarity: int = 5,
     ) -> None:
         from e_jepa_ttc.data.garlttc_lhr_cache import GarlTTCLHRCacheDataset
 
         self._dataset = GarlTTCLHRCacheDataset(manifest_path, splits=splits)
         self.manifest = self._dataset.manifest
         self.event_field = event_field
+        self.bins_per_polarity = bins_per_polarity
+        self.event_channels = event_v4_channel_count(bins_per_polarity)
         fields = set(self.manifest.get("model_input_fields", []))
         required = {
             event_field,
@@ -164,7 +167,7 @@ class GarlTTCObjectEventV4Dataset(Dataset[dict[str, Any]]):
         if not isinstance(extension, dict) or int(extension.get("version", 0)) < 3:
             raise ValueError("Object Event v4 requires object_lhr_extension >= 3")
         shape = extension.get("event_v4_common_roi_shape")
-        expected = [EVENT_V4_STEPS, EVENT_V4_CHANNEL_COUNT]
+        expected = [EVENT_V4_STEPS, self.event_channels]
         if not isinstance(shape, list) or shape[:2] != expected:
             raise ValueError(
                 f"Unexpected event_v4_common_roi_shape={shape!r}; expected prefix {expected}"
@@ -194,6 +197,7 @@ class GarlTTCObjectEventV4Dataset(Dataset[dict[str, Any]]):
         record = self._dataset[index]
         if not bool(record.get("event_v4_precontext_valid", False)):
             raise ValueError("V4 record is missing a valid t0 endpoint")
+        record["_event_v4_expected_channels"] = self.event_channels
         return record
 
 
@@ -205,10 +209,16 @@ def collate_object_event_v4(records: list[dict[str, Any]]) -> ObjectEventV4Batch
     if not records:
         raise ValueError("Object Event v4 collate received an empty batch")
     events = torch.stack([_tensor(record, "event_v4_common_roi") for record in records])
-    expected_prefix = (len(records), EVENT_V4_STEPS, EVENT_V4_CHANNEL_COUNT)
+    expected_channels = {
+        int(record.get("_event_v4_expected_channels", 12)) for record in records
+    }
+    if len(expected_channels) != 1:
+        raise ValueError("Object Event v4 batch mixes temporal channel schemas")
+    channel_count = expected_channels.pop()
+    expected_prefix = (len(records), EVENT_V4_STEPS, channel_count)
     if events.ndim != 5 or events.shape[:3] != expected_prefix:
         raise ValueError(
-            "event_v4_common_roi must collate to [B,3,12,H,W], "
+            f"event_v4_common_roi must collate to [B,3,{channel_count},H,W], "
             f"got {tuple(events.shape)}"
         )
     if events.shape[-1] != events.shape[-2]:

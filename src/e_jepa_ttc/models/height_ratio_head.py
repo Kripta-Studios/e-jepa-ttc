@@ -6,6 +6,16 @@ import torch
 from torch import nn
 
 
+def raw_garl_height_ratio_ttc(
+    first_height: torch.Tensor,
+    last_height: torch.Tensor,
+    elapsed_s: torch.Tensor,
+) -> torch.Tensor:
+    """Evaluate the unclamped Garl formula for singularity diagnostics."""
+
+    return elapsed_s / (1.0 - first_height / last_height)
+
+
 class LearnedHeightRatioHead(nn.Module):
     """Regress two raw visible heights and apply the source Garl formula."""
 
@@ -47,4 +57,4 @@ class LearnedHeightRatioHead(nn.Module):
         return inverse_ttc, height_ratio, heights
 
 
-__all__ = ["LearnedHeightRatioHead"]
+__all__ = ["LearnedHeightRatioHead", "raw_garl_height_ratio_ttc"]

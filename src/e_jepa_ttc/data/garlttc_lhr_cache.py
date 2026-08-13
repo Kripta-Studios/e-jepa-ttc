@@ -22,7 +22,7 @@ from concurrent.futures import ProcessPoolExecutor
 from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, cast
+from typing import Any, Literal, cast
 
 import numpy as np
 import torch
@@ -35,14 +35,17 @@ from e_jepa_ttc.data.eap_geometry_v2 import (
     category_index,
     coarse_category,
 )
-from e_jepa_ttc.data.eap_representation import base_compatible_voxel, downsample_full_frame
+from e_jepa_ttc.data.eap_representation import (
+    base_compatible_voxel,
+    downsample_full_frame,
+    event_voxel_with_scalars,
+)
 from e_jepa_ttc.data.event_v4_geometry import (
-    EVENT_V4_CHANNEL_COUNT,
-    EVENT_V4_CHANNEL_NAMES,
     EVENT_V4_STEPS,
     box_in_common_roi,
     common_square_from_boxes,
-    select_active_event_channels,
+    event_v4_channel_count,
+    event_v4_channel_names,
     shifted_precontext_window,
 )
 from e_jepa_ttc.data.garl_input_contract import (
@@ -123,6 +126,12 @@ class GarlTTCLHRCacheConfig:
     event_v4_margin_fraction: float = 0.25
     event_v4_require_precontext: bool = True
     event_v4_precontext_fallback: str = "shifted_event_window"
+    event_v4_bins_per_polarity: int = 5
+    event_v4_storage_dtype: str = "float32"
+    materialize_splits: tuple[Literal["train", "validation"], ...] = (
+        "train",
+        "validation",
+    )
     include_rgb: bool = False
     include_masks: bool = False
     mask_required: bool = False
@@ -149,6 +158,7 @@ class GarlTTCLHRCacheConfig:
             self.roi_size,
             self.roi_bins,
             self.jepa_roi_bins,
+            self.event_v4_bins_per_polarity,
             self.shard_size,
             self.expected_train_rows,
         )
@@ -175,6 +185,15 @@ class GarlTTCLHRCacheConfig:
             raise ValueError("Temporal pairing controls must be positive.")
         if self.event_v4_margin_fraction < 0.0:
             raise ValueError("event_v4_margin_fraction must be non-negative.")
+        if self.event_v4_storage_dtype not in {"float16", "float32"}:
+            raise ValueError("event_v4_storage_dtype must be float16 or float32.")
+        if not self.materialize_splits or set(self.materialize_splits) - {
+            "train",
+            "validation",
+        }:
+            raise ValueError("materialize_splits must contain train and/or validation.")
+        if len(set(self.materialize_splits)) != len(self.materialize_splits):
+            raise ValueError("materialize_splits must not contain duplicates.")
         if self.event_v4_precontext_fallback not in {
             "disabled",
             "shifted_event_window",
@@ -979,17 +998,45 @@ def _materialize_row(
                 raw = reader.read_window(start_us, end_us)
                 if source_index is not None:
                     raw_by_index[source_index] = raw
-            voxel = _jepa_roi_voxel(
-                raw,
-                event_v4_common_square,
-                size=config.roi_size,
-                bins=config.jepa_roi_bins,
-                sequence_id=str(row["sequence_id"]),
-                start_us=start_us,
-                end_us=end_us,
-                event_pixel_diff=config.event_pixel_diff,
+            source_width, source_height = EAP_IMAGE_SIZE
+            event_x = np.asarray(raw["x"], dtype=np.float64) + config.event_pixel_diff
+            event_y = np.asarray(raw["y"], dtype=np.float64)
+            event_t = np.asarray(raw["t"], dtype=np.int64)
+            event_p = np.asarray(raw["p"])
+            square_x0, square_y0, square_x1, square_y1 = event_v4_common_square
+            valid = (
+                (event_x >= 0)
+                & (event_x < source_width)
+                & (event_y >= 0)
+                & (event_y < source_height)
+                & (event_x >= square_x0)
+                & (event_x < square_x1)
+                & (event_y >= square_y0)
+                & (event_y < square_y1)
             )
-            event_v4_frames.append(select_active_event_channels(voxel))
+            mapped_x = np.floor(
+                (event_x[valid] - square_x0) * config.roi_size / (square_x1 - square_x0)
+            ).astype(np.int32)
+            mapped_y = np.floor(
+                (event_y[valid] - square_y0) * config.roi_size / (square_y1 - square_y0)
+            ).astype(np.int32)
+            endpoint = EventBatch(
+                x=np.clip(mapped_x, 0, config.roi_size - 1),
+                y=np.clip(mapped_y, 0, config.roi_size - 1),
+                t_us=event_t[valid],
+                polarity=np.where(event_p[valid] > 0, 1, -1).astype(np.int8),
+                width=config.roi_size,
+                height=config.roi_size,
+                sequence_id=str(row["sequence_id"]),
+                t_start_us=start_us,
+                t_end_us=end_us,
+            )
+            event_v4_frames.append(
+                event_voxel_with_scalars(
+                    endpoint,
+                    bins_per_polarity=config.event_v4_bins_per_polarity,
+                )
+            )
         event_v4_boxes = np.stack(
             [
                 box_in_common_roi(
@@ -1085,8 +1132,11 @@ def _materialize_row(
     if config.store_event_v4_common_roi:
         if event_v4_common_square is None or event_v4_boxes is None:
             raise RuntimeError("V4 common-ROI materialization was not completed.")
-        sample["event_v4_common_roi"] = (
-            torch.stack(event_v4_frames).numpy().astype(np.float32)
+        storage_dtype = (
+            np.float16 if config.event_v4_storage_dtype == "float16" else np.float32
+        )
+        sample["event_v4_common_roi"] = torch.stack(event_v4_frames).numpy().astype(
+            storage_dtype
         )
         sample["event_v4_boxes_xyxy"] = event_v4_boxes
         sample["event_v4_common_square_xyxy"] = np.asarray(
@@ -1166,7 +1216,7 @@ def materialize_garlttc_lhr_cache(
         raise ValueError("Split artifact has no assignments mapping.")
     sequence_role = {
         str(sequence): role
-        for role in ("train", "validation")
+        for role in config.materialize_splits
         for sequence in assignments.get(role, [])
     }
     index = load_garlttc_train_index(garlttc_root, sorted(sequence_role))
@@ -1332,7 +1382,7 @@ def materialize_garlttc_lhr_cache(
                 initializer=_init_cache_worker,
                 initargs=(eap_root.as_posix(), config),
             )
-        for role in ("train", "validation"):
+        for role in config.materialize_splits:
             rows_for_role = role_rows[role]
             for shard_index, start in enumerate(range(0, len(rows_for_role), config.shard_size)):
                 chunk_rows = rows_for_role[start : start + config.shard_size]
@@ -1557,7 +1607,7 @@ def materialize_garlttc_lhr_cache(
             "event_v4_common_roi_shape": (
                 [
                     EVENT_V4_STEPS,
-                    EVENT_V4_CHANNEL_COUNT,
+                    event_v4_channel_count(config.event_v4_bins_per_polarity),
                     config.roi_size,
                     config.roi_size,
                 ]
@@ -1565,7 +1615,7 @@ def materialize_garlttc_lhr_cache(
                 else None
             ),
             "event_v4_channel_names": (
-                list(EVENT_V4_CHANNEL_NAMES)
+                list(event_v4_channel_names(config.event_v4_bins_per_polarity))
                 if config.store_event_v4_common_roi
                 else None
             ),
@@ -1579,6 +1629,8 @@ def materialize_garlttc_lhr_cache(
                 if config.store_event_v4_common_roi
                 else None
             ),
+            "event_v4_bins_per_polarity": config.event_v4_bins_per_polarity,
+            "event_v4_storage_dtype": config.event_v4_storage_dtype,
             "event_v4_requires_precontext": config.event_v4_require_precontext,
             "event_v4_precontext_fallback": config.event_v4_precontext_fallback,
             "event_v4_precontext_is_real_events": True,

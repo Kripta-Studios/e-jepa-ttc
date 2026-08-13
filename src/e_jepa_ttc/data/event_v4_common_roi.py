@@ -13,11 +13,13 @@ from dataclasses import dataclass
 import numpy as np
 import torch
 
+from e_jepa_ttc.data.eap_representation import event_voxel_with_scalars
 from e_jepa_ttc.data.event_v4_geometry import common_square_from_boxes, select_active_event_channels
 from e_jepa_ttc.data.garlttc_lhr_cache import _jepa_roi_voxel
+from e_jepa_ttc.data.types import EventBatch
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, init=False)
 class CommonROIConfig:
     """Locked v4.30-compatible raster parameters."""
 
@@ -26,6 +28,38 @@ class CommonROIConfig:
     margin_fraction: float = 0.25
     minimum_edge: float = 8.0
     event_pixel_diff: int = 5
+
+    def __init__(
+        self,
+        size: int = 128,
+        bins: int = 5,
+        margin_fraction: float = 0.25,
+        minimum_edge: float = 8.0,
+        event_pixel_diff: int = 5,
+        *,
+        bins_per_polarity: int | None = None,
+    ) -> None:
+        """Create a V4 raster contract with a V7 temporal-resolution alias."""
+
+        resolved_bins = bins if bins_per_polarity is None else bins_per_polarity
+        if bins_per_polarity is not None and bins != 5 and bins != bins_per_polarity:
+            raise ValueError("bins and bins_per_polarity disagree")
+        object.__setattr__(self, "size", size)
+        object.__setattr__(self, "bins", resolved_bins)
+        object.__setattr__(self, "margin_fraction", margin_fraction)
+        object.__setattr__(self, "minimum_edge", minimum_edge)
+        object.__setattr__(self, "event_pixel_diff", event_pixel_diff)
+        self.__post_init__()
+
+    @property
+    def bins_per_polarity(self) -> int:
+        """Expose the V7 name while retaining the V6 ``bins`` constructor."""
+
+        return self.bins
+
+    def __post_init__(self) -> None:
+        if min(self.size, self.bins) <= 0:
+            raise ValueError("size and bins must be positive")
 
 
 DEFAULT_CONFIG = CommonROIConfig()
@@ -85,33 +119,43 @@ def rasterize_common_roi(
         raise ValueError("invalid common square")
     x, y, t, p = _as_events(events)
     selected = (t >= start_us) & (t < end_us)
-    out = np.zeros((12, config.size, config.size), dtype=np.float32)
     if not selected.any():
-        return torch.from_numpy(out)
+        empty = EventBatch(
+            x=np.asarray([], dtype=np.int32),
+            y=np.asarray([], dtype=np.int32),
+            t_us=np.asarray([], dtype=np.int64),
+            polarity=np.asarray([], dtype=np.int8),
+            width=config.size,
+            height=config.size,
+            sequence_id="common_roi",
+            t_start_us=start_us,
+            t_end_us=end_us,
+        )
+        return event_voxel_with_scalars(
+            empty,
+            bins_per_polarity=config.bins_per_polarity,
+        )
     x = x[selected] + config.event_pixel_diff
     y, t, p = y[selected], t[selected], p[selected]
     gx = (x - sx0) * config.size / (sx1 - sx0)
     gy = (y - sy0) * config.size / (sy1 - sy0)
     valid = (gx >= 0) & (gx < config.size) & (gy >= 0) & (gy < config.size)
     gx, gy, t, p = gx[valid], gy[valid], t[valid], p[valid]
-    ix, iy = gx.astype(np.int64), gy.astype(np.int64)
-    # v4 uses linear temporal bin interpolation and separate polarities.
-    pos = p > 0
-    coordinate = (t.astype(np.float64) - start_us) / (end_us - start_us) * (config.bins - 1)
-    lo = np.floor(coordinate).astype(np.int64).clip(0, config.bins - 1)
-    hi = np.minimum(lo + 1, config.bins - 1)
-    high_weight = coordinate - lo
-    for bin_index, weight in ((lo, 1.0 - high_weight), (hi, high_weight)):
-        channel = bin_index + np.where(pos, 0, config.bins)
-        np.add.at(out, (channel, iy, ix), weight.astype(np.float32))
-    # robust per-window normalization of voxel channels, without touching scalars.
-    scale = float(np.percentile(np.abs(out[:10]), 99.0))
-    if scale > 0.0:
-        out[:10] /= scale
-    count = float(len(t))
-    out[10].fill(np.log1p(count))
-    out[11].fill(np.log1p(count / max((end_us - start_us) / 1_000_000.0, 1e-9)))
-    return torch.from_numpy(out)
+    batch = EventBatch(
+        x=gx.astype(np.int32),
+        y=gy.astype(np.int32),
+        t_us=t,
+        polarity=np.where(p > 0, 1, -1).astype(np.int8),
+        width=config.size,
+        height=config.size,
+        sequence_id="common_roi",
+        t_start_us=start_us,
+        t_end_us=end_us,
+    )
+    return event_voxel_with_scalars(
+        batch,
+        bins_per_polarity=config.bins_per_polarity,
+    )
 
 
 def trajectory_common_roi(

@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import shutil
 import sys
 from dataclasses import asdict
 from pathlib import Path
@@ -28,6 +29,13 @@ def main() -> int:
     parser.add_argument("--max-samples-per-split", type=int)
     parser.add_argument("--roi-size", type=int, default=128)
     parser.add_argument("--margin-fraction", type=float, default=0.25)
+    parser.add_argument("--bins-per-polarity", type=int, default=5)
+    parser.add_argument("--storage-dtype", choices=("float16", "float32"), default="float32")
+    parser.add_argument(
+        "--train-only",
+        action="store_true",
+        help="Materialize only public train rows; required by the V7 T20 ablation.",
+    )
     parser.add_argument("--workers", type=int, default=4)
     parser.add_argument("--shard-size", type=int, default=256)
     parser.add_argument("--resume", action="store_true")
@@ -36,6 +44,15 @@ def main() -> int:
     maximum = args.max_samples_per_split
     if maximum is None and args.profile == "screen":
         maximum = 2048
+    if args.bins_per_polarity == 10:
+        args.output_dir.parent.mkdir(parents=True, exist_ok=True)
+        free_bytes = shutil.disk_usage(args.output_dir.parent).free
+        minimum_free_bytes = 25 * 1024**3
+        if free_bytes < minimum_free_bytes:
+            raise RuntimeError(
+                "T20 materialization requires at least 25 GiB free before writing; "
+                f"found {free_bytes / 1024**3:.2f} GiB"
+            )
     config = GarlTTCLHRCacheConfig(
         roi_size=args.roi_size,
         shard_size=args.shard_size,
@@ -46,6 +63,9 @@ def main() -> int:
         event_v4_margin_fraction=args.margin_fraction,
         event_v4_require_precontext=True,
         event_v4_precontext_fallback="shifted_event_window",
+        event_v4_bins_per_polarity=args.bins_per_polarity,
+        event_v4_storage_dtype=args.storage_dtype,
+        materialize_splits=(("train",) if args.train_only else ("train", "validation")),
         include_rgb=False,
         include_masks=False,
         workers=args.workers,

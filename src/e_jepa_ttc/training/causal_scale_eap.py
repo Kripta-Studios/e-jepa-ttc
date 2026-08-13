@@ -17,6 +17,7 @@ from typing import Any, Literal, cast
 import numpy as np
 import torch
 from torch import nn
+from torch.nn import functional
 from torch.utils.data import DataLoader, Dataset, Sampler
 
 from e_jepa_ttc.data.object_event_v4 import (
@@ -41,6 +42,7 @@ from e_jepa_ttc.losses.causal_scale_ttc import (
 from e_jepa_ttc.models.causal_scale_ttc import (
     CausalScaleTTC,
     CausalScaleTTCConfig,
+    finite_ttc_from_inverse,
     target_log_ratio_from_ttc,
 )
 from e_jepa_ttc.reproducibility import seed_everything
@@ -73,6 +75,14 @@ def _module_tensor_sha256(module: nn.Module) -> str:
         raw = cpu.view(torch.uint8).numpy().tobytes()
         digest.update(len(raw).to_bytes(8, "big"))
         digest.update(raw)
+    return digest.hexdigest()
+
+
+def _file_sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
     return digest.hexdigest()
 
 
@@ -113,6 +123,11 @@ class CausalScaleEAPTrainingConfig:
     initialization_checkpoint_sha256: str | None = None
     initialization_mode: Literal["none", "shape_compatible"] = "none"
     freeze_encoder: bool = False
+    freeze_encoder_stages: int = 0
+    soft_geometry_teacher_checkpoint: str | None = None
+    soft_geometry_teacher_checkpoint_sha256: str | None = None
+    soft_dense_cosine_weight: float = 0.0
+    soft_geometry_weight: float = 0.0
 
     def __post_init__(self) -> None:
         integers = (
@@ -223,6 +238,18 @@ class CausalScaleEAPTrainingConfig:
                     "freeze_encoder requires foreground_warmup_epochs=0 because "
                     "foreground-only warmup has no trainable path"
                 )
+        if self.freeze_encoder_stages < 0:
+            raise ValueError("freeze_encoder_stages must be non-negative")
+        uses_soft_teacher = self.soft_geometry_teacher_checkpoint is not None
+        if uses_soft_teacher != bool(self.soft_geometry_teacher_checkpoint_sha256):
+            raise ValueError("soft geometry teacher path and SHA256 must be declared together")
+        soft_weights = (self.soft_dense_cosine_weight, self.soft_geometry_weight)
+        if any(not math.isfinite(value) or value < 0.0 for value in soft_weights):
+            raise ValueError("soft geometry weights must be finite and non-negative")
+        if uses_soft_teacher != all(value > 0.0 for value in soft_weights):
+            raise ValueError("soft geometry teacher requires both losses with positive weights")
+        if self.freeze_encoder and self.freeze_encoder_stages:
+            raise ValueError("full and partial encoder freezing are mutually exclusive")
 
 
 @dataclass
@@ -325,13 +352,16 @@ def _loss(
     ] = "none",
     representation_distillation_weight: float = 0.0,
     representation_temporal_delta_weight: float = 0.0,
+    soft_geometry_teacher: CausalScaleTTC | None = None,
+    soft_dense_cosine_weight: float = 0.0,
+    soft_geometry_weight: float = 0.0,
 ) -> tuple[torch.Tensor, dict[str, torch.Tensor], Any]:
     targets = _targets(
         batch,
         mask_t0_as_proxy=mask_t0_as_proxy,
         foreground_supervision=foreground_supervision,
     )
-    need_dense = representation_supervision != "none"
+    need_dense = representation_supervision != "none" or soft_geometry_teacher is not None
     output = model(
         batch.events,
         targets.delta_t_s,
@@ -350,6 +380,54 @@ def _loss(
     )
     total = result.total
     components = dict(result.components)
+
+    if soft_geometry_teacher is not None:
+        soft_geometry_teacher.eval()
+        with torch.no_grad():
+            teacher_output = soft_geometry_teacher(
+                batch.events,
+                targets.delta_t_s,
+                return_dense_features=True,
+            )
+        if output.endpoint_dense_features is None or teacher_output.endpoint_dense_features is None:
+            raise RuntimeError("soft geometry distillation requires dense endpoint features")
+        student_dense = functional.normalize(output.endpoint_dense_features.float(), dim=2)
+        teacher_dense = functional.normalize(
+            teacher_output.endpoint_dense_features.float(), dim=2
+        )
+        if student_dense.shape != teacher_dense.shape:
+            raise ValueError("soft geometry teacher and student dense features differ in shape")
+        dense_cosine = (1.0 - (student_dense * teacher_dense).sum(dim=2)).mean()
+        student_geometry = torch.stack(
+            (
+                output.visible_height_normalized.clamp_min(1.0e-6).log(),
+                output.visible_width_normalized.clamp_min(1.0e-6).log(),
+                output.diagnostics["foreground_centroid_x"],
+                output.diagnostics["foreground_centroid_y"],
+            ),
+            dim=-1,
+        )
+        teacher_geometry = torch.stack(
+            (
+                teacher_output.visible_height_normalized.clamp_min(1.0e-6).log(),
+                teacher_output.visible_width_normalized.clamp_min(1.0e-6).log(),
+                teacher_output.diagnostics["foreground_centroid_x"],
+                teacher_output.diagnostics["foreground_centroid_y"],
+            ),
+            dim=-1,
+        )
+        geometry_distillation = functional.smooth_l1_loss(
+            student_geometry.float(),
+            teacher_geometry.float(),
+            beta=0.02,
+        )
+        weighted_dense = soft_dense_cosine_weight * dense_cosine
+        weighted_geometry = soft_geometry_weight * geometry_distillation
+        total = total + weighted_dense + weighted_geometry
+        components["soft_dense_cosine_raw"] = dense_cosine.detach()
+        components["soft_dense_cosine_weighted"] = weighted_dense.detach()
+        components["soft_geometry_raw"] = geometry_distillation.detach()
+        components["soft_geometry_weighted"] = weighted_geometry.detach()
 
     # --- A4: DINOv3 relational distillation (train-only) ---
     if (
@@ -707,6 +785,7 @@ def train_one_real_epoch(
     device: torch.device,
     config: CausalScaleEAPTrainingConfig,
     loss_config: CausalScaleTTCLossConfig,
+    soft_geometry_teacher: CausalScaleTTC | None = None,
 ) -> dict[str, float]:
     """Train one example-weighted epoch with bounded gradient accumulation."""
 
@@ -727,6 +806,9 @@ def train_one_real_epoch(
                 representation_supervision=config.representation_supervision,
                 representation_distillation_weight=config.representation_distillation_weight,
                 representation_temporal_delta_weight=(config.representation_temporal_delta_weight),
+                soft_geometry_teacher=soft_geometry_teacher,
+                soft_dense_cosine_weight=config.soft_dense_cosine_weight,
+                soft_geometry_weight=config.soft_geometry_weight,
             )
             scaled = total / config.gradient_accumulation_steps
         if not bool(torch.isfinite(total)):
@@ -761,6 +843,13 @@ def evaluate_real_causal_scale(
     model.eval()
     truth: list[torch.Tensor] = []
     prediction: list[torch.Tensor] = []
+    point_prediction: list[torch.Tensor] = []
+    auxiliary_prediction: list[torch.Tensor] = []
+    guard_margins: list[torch.Tensor] = []
+    ttc_log_variances: list[torch.Tensor] = []
+    event_counts: list[torch.Tensor] = []
+    event_rates: list[torch.Tensor] = []
+    motion_magnitudes: list[torch.Tensor] = []
     known: list[torch.Tensor] = []
     ratios: list[torch.Tensor] = []
     ratio_targets: list[torch.Tensor] = []
@@ -1016,6 +1105,37 @@ def evaluate_real_causal_scale(
         losses.append((float(total.detach().cpu()), count))
         truth.append(batch.target_ttc_s.cpu())
         current_prediction = output.ttc_mean_seconds.float()
+        point_prediction.append(current_prediction.cpu())
+        auxiliary_prediction.append(
+            finite_ttc_from_inverse(
+                output.auxiliary_inverse_ttc[:, -1].float(),
+                minimum_abs_inverse_ttc=1.0 / model.config.ttc_clip_seconds,
+                clip_seconds=model.config.ttc_clip_seconds,
+            ).cpu()
+        )
+        guard_margins.append(
+            torch.minimum(
+                output.log_height_ratio[:, -1].abs() / 0.002,
+                output.sensor_support[:, -1] / 0.0001,
+            )
+            .float()
+            .cpu()
+        )
+        ttc_log_variances.append(output.ttc_log_variance.float().cpu())
+        event_counts.append(batch.events[:, -1, -2].float().mean(dim=(-2, -1)).cpu())
+        event_rates.append(batch.events[:, -1, -1].float().mean(dim=(-2, -1)).cpu())
+        motion_magnitudes.append(
+            output.diagnostics.get(
+                "transport_flow_magnitude",
+                torch.full(
+                    (batch.events.shape[0], batch.events.shape[1] - 1),
+                    float("nan"),
+                    device=batch.events.device,
+                ),
+            )[:, -1]
+            .float()
+            .cpu()
+        )
         current_prediction = torch.where(
             output.known_mask, current_prediction, torch.full_like(current_prediction, float("nan"))
         )
@@ -1040,6 +1160,13 @@ def evaluate_real_causal_scale(
         tracks.extend(batch.track_ids)
     target_np = torch.cat(truth).numpy().astype(np.float64)
     prediction_np = torch.cat(prediction).numpy().astype(np.float64)
+    point_prediction_np = torch.cat(point_prediction).numpy().astype(np.float64)
+    auxiliary_prediction_np = torch.cat(auxiliary_prediction).numpy().astype(np.float64)
+    guard_margin_np = torch.cat(guard_margins).numpy().astype(np.float64)
+    ttc_log_variance_np = torch.cat(ttc_log_variances).numpy().astype(np.float64)
+    event_count_np = torch.cat(event_counts).numpy().astype(np.float64)
+    event_rate_np = torch.cat(event_rates).numpy().astype(np.float64)
+    motion_magnitude_np = torch.cat(motion_magnitudes).numpy().astype(np.float64)
     ratio = torch.cat(ratios)
     ratio_target = torch.cat(ratio_targets)
     pearson = (
@@ -1080,6 +1207,7 @@ def evaluate_real_causal_scale(
         "bound": residual_bound,
     }
     signed = signed_garl_metrics(target_np, prediction_np)
+    signed_point = signed_garl_metrics(target_np, point_prediction_np)
     sequence_macro = sequence_macro_signed_metrics(target_np, prediction_np, np.asarray(sequences))
     geometry_diagnostics: dict[str, Any] | None = None
     if endpoint_geometry["log_height_target"]:
@@ -1193,6 +1321,7 @@ def evaluate_real_causal_scale(
         "num_samples": int(target_np.size),
         "loss": sum(value * count for value, count in losses) / sum(count for _, count in losses),
         "signed": signed,
+        "signed_point": signed_point,
         "sequence_macro": sequence_macro,
         "known_coverage": float(torch.cat(known).float().mean()),
         "weak_bbox_iou": (float(torch.cat(weak_iou).mean()) if weak_iou else float("nan")),
@@ -1205,6 +1334,15 @@ def evaluate_real_causal_scale(
         "sample_tokens": tokens,
         "target_ttc_s": target_np.tolist(),
         "prediction_ttc_s": prediction_np.tolist(),
+        "point_prediction_ttc_s": point_prediction_np.tolist(),
+        "auxiliary_prediction_ttc_s": auxiliary_prediction_np.tolist(),
+        "known_mask": torch.cat(known).numpy().astype(bool).tolist(),
+        "guard_margin": guard_margin_np.tolist(),
+        "ttc_log_variance": ttc_log_variance_np.tolist(),
+        "ttc_variance": np.exp(ttc_log_variance_np).tolist(),
+        "event_count_log1p": event_count_np.tolist(),
+        "event_rate_log1p": event_rate_np.tolist(),
+        "transport_flow_magnitude": motion_magnitude_np.tolist(),
         "sequence_ids": sequences,
         "track_ids": tracks,
     }
@@ -1287,6 +1425,38 @@ def _shape_compatible_initialize(
     }
 
 
+def _load_soft_geometry_teacher(
+    checkpoint_path: Path,
+    *,
+    expected_sha256: str,
+    device: torch.device,
+) -> tuple[CausalScaleTTC, dict[str, Any]]:
+    """Load a frozen fold-local A4 teacher for train-only distillation."""
+
+    observed_sha256 = _file_sha256(checkpoint_path)
+    if observed_sha256 != expected_sha256:
+        raise ValueError("soft geometry teacher checkpoint SHA256 differs")
+    payload = torch.load(checkpoint_path, map_location="cpu", weights_only=False)
+    raw_config = payload.get("model_config")
+    state = payload.get("model_state_dict")
+    if not isinstance(raw_config, dict) or not isinstance(state, dict):
+        raise ValueError("soft geometry teacher checkpoint is malformed")
+    teacher = CausalScaleTTC(CausalScaleTTCConfig(**raw_config))
+    teacher.load_state_dict(state, strict=True)
+    teacher.requires_grad_(False)
+    teacher.eval()
+    teacher.to(device)
+    if any(parameter.requires_grad for parameter in teacher.parameters()):
+        raise RuntimeError("soft geometry teacher is not frozen")
+    return teacher, {
+        "checkpoint": checkpoint_path.as_posix(),
+        "checkpoint_sha256": observed_sha256,
+        "training": False,
+        "frozen": True,
+        "parameter_count": sum(parameter.numel() for parameter in teacher.parameters()),
+    }
+
+
 def train_real_causal_scale(
     model_config: CausalScaleTTCConfig,
     training_config: CausalScaleEAPTrainingConfig,
@@ -1310,6 +1480,17 @@ def train_real_causal_scale(
     train_loader = _loader(train_dataset, training_config, train=True, generator=generator)
     validation_loader = _loader(validation_dataset, training_config, train=False)
     model = CausalScaleTTC(model_config).to(device)
+    soft_geometry_teacher: CausalScaleTTC | None = None
+    soft_teacher_metadata: dict[str, Any] | None = None
+    if training_config.soft_geometry_teacher_checkpoint is not None:
+        expected_teacher_sha = training_config.soft_geometry_teacher_checkpoint_sha256
+        if expected_teacher_sha is None:
+            raise ValueError("soft geometry teacher SHA256 is unavailable")
+        soft_geometry_teacher, soft_teacher_metadata = _load_soft_geometry_teacher(
+            Path(training_config.soft_geometry_teacher_checkpoint),
+            expected_sha256=expected_teacher_sha,
+            device=device,
+        )
     initialization: dict[str, Any] = {
         "mode": "none",
         "freeze_encoder": False,
@@ -1328,6 +1509,18 @@ def train_real_causal_scale(
         for parameter in model.encoder.parameters():
             parameter.requires_grad_(False)
         initialization["freeze_encoder"] = True
+    if training_config.freeze_encoder_stages:
+        encoder_stages = list(model.encoder.features.children())
+        if training_config.freeze_encoder_stages > len(encoder_stages):
+            raise ValueError("freeze_encoder_stages exceeds encoder.features length")
+        for stage in encoder_stages[: training_config.freeze_encoder_stages]:
+            for parameter in stage.parameters():
+                parameter.requires_grad_(False)
+        initialization["freeze_encoder_stages"] = training_config.freeze_encoder_stages
+    initialization["soft_geometry_teacher"] = soft_teacher_metadata
+    initialization["soft_geometry_teacher_excluded_from_optimizer"] = (
+        soft_geometry_teacher is not None
+    )
     frozen_parameter_count = sum(
         parameter.numel() for parameter in model.parameters() if not parameter.requires_grad
     )
@@ -1482,7 +1675,13 @@ def train_real_causal_scale(
             foreground_only if epoch <= training_config.foreground_warmup_epochs else loss_config
         )
         train_metrics = train_one_real_epoch(
-            model, train_loader, optimizer, device, training_config, active_loss
+            model,
+            train_loader,
+            optimizer,
+            device,
+            training_config,
+            active_loss,
+            soft_geometry_teacher,
         )
         validation = evaluate_real_causal_scale(
             model,
@@ -1503,7 +1702,23 @@ def train_real_causal_scale(
             "validation": {
                 key: value
                 for key, value in validation.items()
-                if key not in {"sample_tokens", "target_ttc_s", "prediction_ttc_s", "sequence_ids"}
+                if key
+                not in {
+                    "sample_tokens",
+                    "sequence_ids",
+                    "track_ids",
+                    "target_ttc_s",
+                    "prediction_ttc_s",
+                    "point_prediction_ttc_s",
+                    "auxiliary_prediction_ttc_s",
+                    "known_mask",
+                    "guard_margin",
+                    "ttc_log_variance",
+                    "ttc_variance",
+                    "event_count_log1p",
+                    "event_rate_log1p",
+                    "transport_flow_magnitude",
+                }
             },
         }
         history.append(record)

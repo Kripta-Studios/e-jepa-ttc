@@ -49,7 +49,9 @@ class CausalScaleTTCConfig:
     foreground_fullres_dim: int = 16
     foreground_temperature: float = 1.0
     foreground_temporal_smoothing: float = 0.0
-    foreground_temporal_smoothing_mode: Literal["symmetric_legacy", "causal_left", "none"] = "symmetric_legacy"
+    foreground_temporal_smoothing_mode: Literal[
+        "symmetric_legacy", "causal_left", "none"
+    ] = "symmetric_legacy"
     max_abs_log_ratio_residual: float = 0.05
     max_abs_log_height_correction: float = 0.0
     temporal_inverse_ttc_blend: float = 1.0
@@ -61,8 +63,12 @@ class CausalScaleTTCConfig:
     log_ratio_log_variance_max: float = 2.0
     risk_thresholds_s: tuple[float, ...] = (0.5, 1.0, 2.0, 4.0)
     transport_enabled: bool = False
+    transport_mode: Literal["legacy", "adaptive_pyramid"] = "legacy"
     transport_radius: int = 4
     transport_temperature: float = 0.07
+    transport_fine_radius: int = 1
+    transport_coarse_radius: int = 2
+    transport_coarse_downsample: int = 2
     transport_adapter_enabled: bool = False
     transport_adapter_depth: int = 1
     transport_encoder_copy_enabled: bool = False
@@ -91,8 +97,14 @@ class CausalScaleTTCConfig:
             raise ValueError("foreground_temperature must be positive")
         if not 0.0 <= self.foreground_temporal_smoothing <= 0.4:
             raise ValueError("foreground_temporal_smoothing must lie in [0,0.4]")
-        if self.foreground_temporal_smoothing_mode not in {"symmetric_legacy", "causal_left", "none"}:
-            raise ValueError("foreground_temporal_smoothing_mode must be symmetric_legacy, causal_left, or none")
+        if self.foreground_temporal_smoothing_mode not in {
+            "symmetric_legacy",
+            "causal_left",
+            "none",
+        }:
+            raise ValueError(
+                "foreground_temporal_smoothing_mode must be symmetric_legacy, causal_left, or none"
+            )
         if not 0.0 <= self.max_abs_log_ratio_residual <= 0.25:
             raise ValueError("max_abs_log_ratio_residual must lie in [0,0.25]")
         if not 0.0 <= self.max_abs_log_height_correction <= 0.5:
@@ -111,6 +123,16 @@ class CausalScaleTTCConfig:
             raise ValueError("risk thresholds must be unique and strictly increasing")
         if self.transport_radius < 1 or self.transport_radius > 8:
             raise ValueError("transport_radius must lie in [1,8]")
+        if self.transport_mode not in {"legacy", "adaptive_pyramid"}:
+            raise ValueError("transport_mode must be legacy or adaptive_pyramid")
+        if not 1 <= self.transport_fine_radius <= 8:
+            raise ValueError("transport_fine_radius must lie in [1,8]")
+        if not 1 <= self.transport_coarse_radius <= 8:
+            raise ValueError("transport_coarse_radius must lie in [1,8]")
+        if self.transport_coarse_downsample < 2 or self.transport_coarse_downsample > 8:
+            raise ValueError("transport_coarse_downsample must lie in [2,8]")
+        if self.transport_mode == "adaptive_pyramid" and not self.transport_enabled:
+            raise ValueError("adaptive_pyramid requires transport_enabled=true")
         if not math.isfinite(self.transport_temperature) or self.transport_temperature <= 0.0:
             raise ValueError("transport_temperature must be finite and positive")
         if self.transport_adapter_enabled and not self.transport_enabled:
@@ -120,7 +142,9 @@ class CausalScaleTTCConfig:
         if self.transport_encoder_copy_enabled and not self.transport_enabled:
             raise ValueError("transport_encoder_copy_enabled requires transport_enabled=true")
         if self.transport_encoder_copy_enabled and self.transport_adapter_enabled:
-            raise ValueError("A7 transport encoder copy and A6 transport adapter are mutually exclusive")
+            raise ValueError(
+                "A7 transport encoder copy and A6 transport adapter are mutually exclusive"
+            )
 
 
 @dataclass
@@ -259,6 +283,12 @@ def finite_ttc_from_inverse(
 
     if minimum_abs_inverse_ttc <= 0.0 or clip_seconds <= 0.0:
         raise ValueError("finite TTC controls must be positive")
+    inverse_ttc = torch.nan_to_num(
+        inverse_ttc,
+        nan=0.0,
+        posinf=1.0 / minimum_abs_inverse_ttc,
+        neginf=-1.0 / minimum_abs_inverse_ttc,
+    )
     sign = torch.where(
         inverse_ttc < 0.0,
         -torch.ones_like(inverse_ttc),
@@ -661,6 +691,17 @@ class CausalScaleTTC(nn.Module):
             )
         else:
             self.transport_projector = None
+        self.transport_router: nn.Module | None = None
+        if self.config.transport_mode == "adaptive_pyramid":
+            self.transport_router = nn.Sequential(
+                nn.LayerNorm(6),
+                nn.Linear(6, 1),
+            )
+            router_output = self.transport_router[-1]
+            if not isinstance(router_output, nn.Linear):
+                raise TypeError("transport router must end with Linear")
+            nn.init.zeros_(router_output.weight)
+            nn.init.constant_(router_output.bias, math.log(9.0))
         self.residual = _AntisymmetricResidual(
             self.config.geometry_dim,
             self.config.geometry_dim,
@@ -801,7 +842,11 @@ class CausalScaleTTC(nn.Module):
                 else transport_flat_dense
             )
             dense = transport_dense.reshape(
-                batch, steps, transport_dense.shape[1], transport_dense.shape[2], transport_dense.shape[3]
+                batch,
+                steps,
+                transport_dense.shape[1],
+                transport_dense.shape[2],
+                transport_dense.shape[3],
             )
             pair_count = steps - 1
             dense_previous = dense[:, :-1].reshape(
@@ -809,18 +854,6 @@ class CausalScaleTTC(nn.Module):
             )
             dense_current = dense[:, 1:].reshape(
                 batch * pair_count, dense.shape[2], dense.shape[3], dense.shape[4]
-            )
-            forward_match = local_correlation_match(
-                dense_previous,
-                dense_current,
-                radius=self.config.transport_radius,
-                temperature=self.config.transport_temperature,
-            )
-            reverse_match = local_correlation_match(
-                dense_current,
-                dense_previous,
-                radius=self.config.transport_radius,
-                temperature=self.config.transport_temperature,
             )
             feature_size = (dense.shape[3], dense.shape[4])
             foreground_probability = functional.interpolate(
@@ -835,18 +868,112 @@ class CausalScaleTTC(nn.Module):
             foreground_current = foreground_probability[:, 1:].reshape(
                 batch * pair_count, 1, *feature_size
             )
-            raw_forward = transport_physical_features(
+            fine_radius = (
+                self.config.transport_fine_radius
+                if self.config.transport_mode == "adaptive_pyramid"
+                else self.config.transport_radius
+            )
+            forward_match = local_correlation_match(
+                dense_previous,
+                dense_current,
+                radius=fine_radius,
+                temperature=self.config.transport_temperature,
+            )
+            reverse_match = local_correlation_match(
+                dense_current,
+                dense_previous,
+                radius=fine_radius,
+                temperature=self.config.transport_temperature,
+            )
+            fine_forward = transport_physical_features(
                 forward_match,
                 reverse_match,
                 foreground_weight=foreground_previous,
-                radius=self.config.transport_radius,
+                radius=fine_radius,
             )
-            raw_reverse = transport_physical_features(
+            fine_reverse = transport_physical_features(
                 reverse_match,
                 forward_match,
                 foreground_weight=foreground_current,
-                radius=self.config.transport_radius,
+                radius=fine_radius,
             )
+            fine_weight: torch.Tensor | None = None
+            coarse_forward: torch.Tensor | None = None
+            coarse_reverse: torch.Tensor | None = None
+            if self.config.transport_mode == "adaptive_pyramid":
+                if self.transport_router is None:
+                    raise RuntimeError("adaptive transport router is unavailable")
+                downsample = self.config.transport_coarse_downsample
+                coarse_previous = functional.avg_pool2d(
+                    dense_previous,
+                    kernel_size=downsample,
+                    stride=downsample,
+                )
+                coarse_current = functional.avg_pool2d(
+                    dense_current,
+                    kernel_size=downsample,
+                    stride=downsample,
+                )
+                coarse_foreground_previous = functional.avg_pool2d(
+                    foreground_previous,
+                    kernel_size=downsample,
+                    stride=downsample,
+                )
+                coarse_foreground_current = functional.avg_pool2d(
+                    foreground_current,
+                    kernel_size=downsample,
+                    stride=downsample,
+                )
+                coarse_radius = self.config.transport_coarse_radius
+                coarse_match = local_correlation_match(
+                    coarse_previous,
+                    coarse_current,
+                    radius=coarse_radius,
+                    temperature=self.config.transport_temperature,
+                )
+                coarse_reverse_match = local_correlation_match(
+                    coarse_current,
+                    coarse_previous,
+                    radius=coarse_radius,
+                    temperature=self.config.transport_temperature,
+                )
+                coarse_forward = transport_physical_features(
+                    coarse_match,
+                    coarse_reverse_match,
+                    foreground_weight=coarse_foreground_previous,
+                    radius=coarse_radius,
+                )
+                coarse_reverse = transport_physical_features(
+                    coarse_reverse_match,
+                    coarse_match,
+                    foreground_weight=coarse_foreground_current,
+                    radius=coarse_radius,
+                )
+                pair_inputs = inputs[:, 1:].reshape(
+                    batch * pair_count,
+                    inputs.shape[2],
+                    inputs.shape[3],
+                    inputs.shape[4],
+                )
+                event_count = pair_inputs[:, -2].float().mean(dim=(-2, -1))
+                event_rate = pair_inputs[:, -1].float().mean(dim=(-2, -1))
+                router_features = torch.stack(
+                    (
+                        event_count,
+                        event_rate,
+                        fine_forward[:, 5],
+                        fine_forward[:, 6],
+                        fine_forward[:, 7],
+                        fine_forward[:, 8],
+                    ),
+                    dim=-1,
+                )
+                fine_weight = torch.sigmoid(self.transport_router(router_features))
+                raw_forward = fine_weight * fine_forward + (1.0 - fine_weight) * coarse_forward
+                raw_reverse = fine_weight * fine_reverse + (1.0 - fine_weight) * coarse_reverse
+            else:
+                raw_forward = fine_forward
+                raw_reverse = fine_reverse
             transport_raw_features = raw_forward.reshape(batch, pair_count, -1)
             transport_tokens = self.transport_projector(raw_forward).reshape(
                 batch, pair_count, self.config.geometry_dim
@@ -968,6 +1095,18 @@ class CausalScaleTTC(nn.Module):
         if transport_raw_features is not None:
             for index, name in enumerate(TRANSPORT_FEATURE_NAMES):
                 diagnostics[f"transport_{name}"] = transport_raw_features[..., index]
+            if fine_weight is not None:
+                diagnostics["transport_fine_weight"] = fine_weight.reshape(
+                    batch, pair_count
+                )
+            if coarse_forward is not None and coarse_reverse is not None:
+                for index, name in enumerate(TRANSPORT_FEATURE_NAMES):
+                    diagnostics[f"transport_fine_{name}"] = fine_forward.reshape(
+                        batch, pair_count, -1
+                    )[..., index]
+                    diagnostics[f"transport_coarse_{name}"] = coarse_forward.reshape(
+                        batch, pair_count, -1
+                    )[..., index]
 
         return CausalScaleTTCOutput(
             ttc_mean_seconds=ttc,

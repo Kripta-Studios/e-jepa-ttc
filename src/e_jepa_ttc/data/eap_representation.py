@@ -60,6 +60,31 @@ def base_compatible_voxel(events: EventBatch, *, bins: int) -> torch.Tensor:
     return torch.from_numpy(tensor)
 
 
+def event_voxel_with_scalars(events: EventBatch, *, bins_per_polarity: int) -> torch.Tensor:
+    """Encode an arbitrary temporal resolution plus count and rate channels.
+
+    Five bins per polarity reproduce the first twelve channels of
+    :func:`base_compatible_voxel`. Higher resolutions do not allocate the nine
+    historical compatibility channels.
+    """
+
+    if bins_per_polarity <= 0:
+        raise ValueError("bins_per_polarity must be positive")
+    voxel = encode_voxel_grid(events, bins=bins_per_polarity, normalize=True)
+    event_channels = 2 * bins_per_polarity
+    if voxel.shape[0] != event_channels:
+        raise RuntimeError("voxel channel count differs from the temporal schema")
+    tensor = np.zeros(
+        (event_channels + 2, events.height, events.width),
+        dtype=np.float32,
+    )
+    tensor[:event_channels] = voxel
+    duration_s = max((events.t_end_us - events.t_start_us) * 1e-6, 1e-6)
+    tensor[event_channels] = np.log1p(events.num_events)
+    tensor[event_channels + 1] = np.log1p(events.num_events / duration_s)
+    return torch.from_numpy(tensor)
+
+
 def base_compatible_voxel_chunks(
     chunks: Iterable[dict[str, np.ndarray]],
     *,
