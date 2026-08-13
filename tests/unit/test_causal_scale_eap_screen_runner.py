@@ -2,11 +2,18 @@
 
 from __future__ import annotations
 
+import hashlib
+import json
+from pathlib import Path
+
+import pytest
 import torch
 
+from e_jepa_ttc.artifacts.hashing import sign_artifact
 from scripts.train_causal_scale_eap_screen import (
     _load_grouped_development_contract,
     _reset_peak_memory_stats,
+    _validate_initialization_checkpoint_contract,
 )
 
 GROUPED_PROTOCOL = (
@@ -97,3 +104,80 @@ def test_peak_memory_reset_is_noop_on_cpu(monkeypatch) -> None:
     )
 
     _reset_peak_memory_stats(torch.device("cpu"))
+
+
+def _fold_parent_fixture(tmp_path: Path) -> tuple[Path, str, dict[str, object]]:
+    checkpoint = tmp_path / "fold_parent" / "model_best.pt"
+    checkpoint.parent.mkdir(parents=True)
+    checkpoint.write_bytes(b"fold-local checkpoint")
+    checkpoint_sha = hashlib.sha256(checkpoint.read_bytes()).hexdigest()
+    grouped = {
+        "fold_index": 0,
+        "train_sequences": {"train-a", "train-b"},
+        "dev_sequences": {"dev-a"},
+        "file_sha256": "1" * 64,
+        "artifact_sha256": "2" * 64,
+        "fold": {
+            "train_sample_tokens_sha256": "3" * 64,
+            "dev_sample_tokens_sha256": "4" * 64,
+        },
+    }
+    parent = {
+        "artifact_type": "scientific_recovery_v5_fold_parent_v1",
+        "status": "completed_fold_specific_parent",
+        "fold": 0,
+        "train_sequence_ids": ["train-a", "train-b"],
+        "dev_sequence_ids": ["dev-a"],
+        "train_token_sha256": "3" * 64,
+        "dev_token_sha256": "4" * 64,
+        "grouped_protocol_file_sha256": "1" * 64,
+        "grouped_protocol_artifact_sha256": "2" * 64,
+        "checkpoint_sha256": checkpoint_sha,
+        "teacher_contract": {
+            "teacher_tokens_equal_fold_train": True,
+            "teacher_tokens_intersect_fold_dev": False,
+        },
+        "public_validation_opened": False,
+        "private_test_opened": False,
+    }
+    sign_artifact(parent)
+    (checkpoint.parent / "parent_contract.json").write_text(
+        json.dumps(parent), encoding="utf-8"
+    )
+    return checkpoint, checkpoint_sha, grouped
+
+
+def test_grouped_initialization_accepts_matching_fold_parent(tmp_path: Path) -> None:
+    checkpoint, checkpoint_sha, grouped = _fold_parent_fixture(tmp_path)
+
+    result = _validate_initialization_checkpoint_contract(
+        checkpoint_path=checkpoint,
+        checkpoint_sha256=checkpoint_sha,
+        checkpoint_payload_value={
+            "artifact_type": "causal_scale_eap_grouped_dev_checkpoint_v1",
+            "model_config": {"transport_enabled": False},
+        },
+        grouped_contract=grouped,
+        repository_root=tmp_path,
+    )
+
+    assert result["parent_contract"]["fold"] == 0
+    assert result["parent_contract"]["artifact_sha256"]
+
+
+def test_grouped_initialization_rejects_global_public_validation_parent(
+    tmp_path: Path,
+) -> None:
+    checkpoint, checkpoint_sha, grouped = _fold_parent_fixture(tmp_path)
+
+    with pytest.raises(ValueError, match="requires a grouped-dev A4 checkpoint"):
+        _validate_initialization_checkpoint_contract(
+            checkpoint_path=checkpoint,
+            checkpoint_sha256=checkpoint_sha,
+            checkpoint_payload_value={
+                "artifact_type": "causal_scale_eap_public_validation_checkpoint_v1",
+                "model_config": {"transport_enabled": False},
+            },
+            grouped_contract=grouped,
+            repository_root=tmp_path,
+        )

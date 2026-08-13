@@ -70,9 +70,17 @@ class DINOv3RelationalTeacherDataset(Dataset[dict[str, Any]]):
         manifest_path: str | Path,
         expected_artifact_sha256: str,
         expected_manifest_sha256: str,
+        allowed_sample_tokens: set[str] | None = None,
     ) -> None:
         self.dataset = dataset
         self._dataset_size = len(cast(Sized, dataset))
+        allowed = (
+            frozenset(str(token) for token in allowed_sample_tokens)
+            if allowed_sample_tokens is not None
+            else None
+        )
+        if allowed is not None and len(allowed) != self._dataset_size:
+            raise ValueError("allowed teacher tokens differ from dataset size")
         path = Path(manifest_path).resolve(strict=True)
 
         # --- Manifest file hash ---
@@ -158,6 +166,7 @@ class DINOv3RelationalTeacherDataset(Dataset[dict[str, Any]]):
         self._teacher: dict[
             str, tuple[str, str, np.ndarray, np.ndarray, np.ndarray]
         ] = {}
+        source_tokens: set[str] = set()
         root = path.parent
         shards = manifest.get("shards")
         if not isinstance(shards, list) or not shards:
@@ -260,8 +269,12 @@ class DINOv3RelationalTeacherDataset(Dataset[dict[str, Any]]):
                     )
 
                 for idx, token in enumerate(tokens.tolist()):
-                    if token in self._teacher:
+                    token = str(token)
+                    if token in source_tokens:
                         raise ValueError(f"duplicate DINO teacher token: {token}")
+                    source_tokens.add(token)
+                    if allowed is not None and token not in allowed:
+                        continue
                     self._teacher[token] = (
                         str(track_ids[idx]),
                         str(sequences[idx]),
@@ -271,11 +284,14 @@ class DINOv3RelationalTeacherDataset(Dataset[dict[str, Any]]):
                     )
 
         # --- Count validation ---
-        if len(self._teacher) != expected_rows:
+        self.source_teacher_row_count = len(source_tokens)
+        if self.source_teacher_row_count != expected_rows:
             raise ValueError(
-                f"DINO teacher has {len(self._teacher)} tokens, "
+                f"DINO teacher has {self.source_teacher_row_count} source tokens, "
                 f"expected {expected_rows}"
             )
+        if allowed is not None and set(self._teacher) != set(allowed):
+            raise ValueError("allowed teacher tokens are unavailable from the cache")
         if len(self._teacher) != self._dataset_size:
             raise ValueError(
                 f"DINO teacher ({len(self._teacher)} tokens) and "
@@ -284,6 +300,11 @@ class DINOv3RelationalTeacherDataset(Dataset[dict[str, Any]]):
 
     def __len__(self) -> int:
         return self._dataset_size
+
+    def teacher_sample_tokens(self) -> frozenset[str]:
+        """Return the exact teacher-token subset exposed by this wrapper."""
+
+        return frozenset(self._teacher)
 
     def shard_index_groups(self) -> tuple[tuple[int, ...], ...]:
         """Delegate to base dataset for deterministic sampling."""

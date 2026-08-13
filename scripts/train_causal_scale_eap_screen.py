@@ -221,6 +221,80 @@ def _load_grouped_development_contract(data: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def _validate_initialization_checkpoint_contract(
+    *,
+    checkpoint_path: Path,
+    checkpoint_sha256: str,
+    checkpoint_payload_value: dict[str, Any],
+    grouped_contract: dict[str, Any] | None,
+    repository_root: Path = ROOT,
+) -> dict[str, Any]:
+    """Require a fold-local parent whenever a grouped run inherits weights."""
+
+    artifact_type = checkpoint_payload_value.get("artifact_type")
+    source_model_config = checkpoint_payload_value.get("model_config")
+    if not isinstance(source_model_config, dict):
+        raise ValueError("initialization checkpoint model_config is malformed")
+    if bool(source_model_config.get("transport_enabled", False)):
+        raise ValueError("transport arms must initialize from a transport-disabled A4 checkpoint")
+    metadata: dict[str, Any] = {
+        "path": checkpoint_path.relative_to(repository_root).as_posix(),
+        "sha256": checkpoint_sha256,
+        "artifact_type": artifact_type,
+        "source_transport_enabled": False,
+    }
+    if grouped_contract is None:
+        if artifact_type != "causal_scale_eap_public_validation_checkpoint_v1":
+            raise ValueError("initialization checkpoint artifact type is incompatible")
+        return metadata
+    if artifact_type != "causal_scale_eap_grouped_dev_checkpoint_v1":
+        raise ValueError("grouped initialization requires a grouped-dev A4 checkpoint")
+    contract_path = checkpoint_path.parent / "parent_contract.json"
+    if not contract_path.is_file():
+        raise FileNotFoundError("grouped initialization parent contract is unavailable")
+    parent = json.loads(contract_path.read_text(encoding="utf-8"))
+    if not isinstance(parent, dict) or not verify_artifact_hash(parent):
+        raise ValueError("grouped initialization parent contract signature is invalid")
+    if parent.get("artifact_type") != "scientific_recovery_v5_fold_parent_v1":
+        raise ValueError("grouped initialization parent contract type is incompatible")
+    if parent.get("status") != "completed_fold_specific_parent":
+        raise ValueError("grouped initialization parent is incomplete")
+    fold = grouped_contract["fold"]
+    expected = {
+        "fold": grouped_contract["fold_index"],
+        "train_sequence_ids": sorted(grouped_contract["train_sequences"]),
+        "dev_sequence_ids": sorted(grouped_contract["dev_sequences"]),
+        "train_token_sha256": fold["train_sample_tokens_sha256"],
+        "dev_token_sha256": fold["dev_sample_tokens_sha256"],
+        "grouped_protocol_file_sha256": grouped_contract["file_sha256"],
+        "grouped_protocol_artifact_sha256": grouped_contract["artifact_sha256"],
+        "checkpoint_sha256": checkpoint_sha256,
+        "public_validation_opened": False,
+        "private_test_opened": False,
+    }
+    mismatches = {
+        key: {"expected": value, "observed": parent.get(key)}
+        for key, value in expected.items()
+        if parent.get(key) != value
+    }
+    if mismatches:
+        raise ValueError(f"grouped initialization parent contract differs: {mismatches}")
+    teacher_contract = parent.get("teacher_contract")
+    if not isinstance(teacher_contract, dict):
+        raise ValueError("grouped initialization parent lacks teacher provenance")
+    if teacher_contract.get("teacher_tokens_equal_fold_train") is not True:
+        raise ValueError("grouped initialization parent teacher scope is not fold-train exact")
+    if teacher_contract.get("teacher_tokens_intersect_fold_dev") is not False:
+        raise ValueError("grouped initialization parent teacher scope intersects fold dev")
+    metadata["parent_contract"] = {
+        "path": contract_path.relative_to(repository_root).as_posix(),
+        "sha256": _sha256(contract_path),
+        "artifact_sha256": parent["artifact_sha256"],
+        "fold": parent["fold"],
+    }
+    return metadata
+
+
 def _validate_bbox_geometry_loss(
     training_config: CausalScaleEAPTrainingConfig,
     loss_config: CausalScaleTTCLossConfig,
@@ -798,21 +872,12 @@ def run(
         initialization_payload = torch.load(
             initialization_path, map_location="cpu", weights_only=False
         )
-        if initialization_payload.get("artifact_type") != (
-            "causal_scale_eap_public_validation_checkpoint_v1"
-        ):
-            raise ValueError("initialization checkpoint artifact type is incompatible")
-        source_model_config = initialization_payload.get("model_config")
-        if not isinstance(source_model_config, dict):
-            raise ValueError("initialization checkpoint model_config is malformed")
-        if bool(source_model_config.get("transport_enabled", False)):
-            raise ValueError("A5-ANCHOR must initialize from a transport-disabled A4 checkpoint")
-        initialization_metadata = {
-            "path": initialization_path.relative_to(ROOT).as_posix(),
-            "sha256": observed_initialization_sha,
-            "artifact_type": initialization_payload.get("artifact_type"),
-            "source_transport_enabled": False,
-        }
+        initialization_metadata = _validate_initialization_checkpoint_contract(
+            checkpoint_path=initialization_path,
+            checkpoint_sha256=observed_initialization_sha,
+            checkpoint_payload_value=initialization_payload,
+            grouped_contract=grouped_contract,
+        )
     decision_contract = raw.get("decision_contract")
     if not isinstance(decision_contract, dict):
         raise ValueError("decision_contract mapping is required")
@@ -834,6 +899,12 @@ def run(
             f"model parameter count changed: {parameter_count} != {expected_parameter_count}"
         )
     output_dir.mkdir(parents=True, exist_ok=True)
+    effective_config_path: Path | None = None
+    if grouped:
+        effective_config_path = output_dir / "effective_config.yaml"
+        effective_config_path.write_text(
+            yaml.safe_dump(raw, sort_keys=False), encoding="utf-8", newline="\n"
+        )
     state_dir = output_dir / "state"
     train_dataset = GarlTTCObjectEventV4Dataset(
         str(manifest_path), splits=("train",)
@@ -847,6 +918,48 @@ def run(
         validation_dataset = GarlTTCObjectEventV4Dataset(
             str(validation_manifest_path), splits=("validation",)
         )
+    fold_identity: dict[str, Any] | None = None
+    selected_train_tokens: set[str] | None = None
+    if grouped_contract is not None:
+        train_dataset = SequenceIndexedView(
+            train_dataset, sequence_ids=train_sequences
+        )
+        validation_dataset = SequenceIndexedView(
+            validation_dataset, sequence_ids=validation_sequences
+        )
+        train_identity = train_dataset.identity_frame()
+        dev_identity = validation_dataset.identity_frame()
+        selected_train_tokens = set(train_identity["sample_token"].astype(str))
+        selected_dev_tokens = set(dev_identity["sample_token"].astype(str))
+        observed_train_tokens = _sorted_values_sha256(list(selected_train_tokens))
+        observed_dev_tokens = _sorted_values_sha256(list(selected_dev_tokens))
+        expected_fold = grouped_contract["fold"]
+        if len(train_dataset) != expected_train_rows or len(validation_dataset) != (
+            expected_validation_rows
+        ):
+            raise ValueError("grouped-development view row counts differ from frozen fold")
+        if observed_train_tokens != expected_fold["train_sample_tokens_sha256"]:
+            raise ValueError("grouped-development train token hash differs")
+        if observed_dev_tokens != expected_fold["dev_sample_tokens_sha256"]:
+            raise ValueError("grouped-development dev token hash differs")
+        if selected_train_tokens & selected_dev_tokens:
+            raise ValueError("grouped-development train/dev tokens overlap")
+        train_tracks = set(train_identity["track_id"].astype(str))
+        dev_tracks = set(dev_identity["track_id"].astype(str))
+        if train_tracks & dev_tracks:
+            raise ValueError("grouped-development train/dev tracks overlap")
+        fold_identity = {
+            "fold": grouped_contract["fold_index"],
+            "train_rows": len(train_dataset),
+            "dev_rows": len(validation_dataset),
+            "train_sample_tokens_sha256": observed_train_tokens,
+            "dev_sample_tokens_sha256": observed_dev_tokens,
+            "train_track_ids_sha256": _sorted_values_sha256(list(train_tracks)),
+            "dev_track_ids_sha256": _sorted_values_sha256(list(dev_tracks)),
+            "sequence_disjoint": train_sequences.isdisjoint(validation_sequences),
+            "sample_token_disjoint": True,
+            "track_id_disjoint": True,
+        }
     teacher_metadata: dict[str, Any] | None = None
     if training_config.foreground_supervision == "bbox_geometry_sam_teacher":
         teacher = data.get("sam_teacher")
@@ -883,6 +996,7 @@ def run(
             manifest_path=dino_manifest,
             expected_artifact_sha256=str(dino_teacher["artifact_sha256"]),
             expected_manifest_sha256=str(dino_teacher["manifest_sha256"]),
+            allowed_sample_tokens=selected_train_tokens,
         )
         if (
             training_config.representation_teacher_cache_artifact_sha256
@@ -898,39 +1012,15 @@ def run(
             "scope": "public_train_only",
             "validation_teacher_loaded": False,
             "teacher_type": "dinov3_local_relational",
-        }
-    fold_identity: dict[str, Any] | None = None
-    if grouped_contract is not None:
-        train_dataset = SequenceIndexedView(
-            train_dataset, sequence_ids=train_sequences
-        )
-        validation_dataset = SequenceIndexedView(
-            validation_dataset, sequence_ids=validation_sequences
-        )
-        train_identity = train_dataset.identity_frame()
-        dev_identity = validation_dataset.identity_frame()
-        observed_train_tokens = _sorted_values_sha256(
-            train_identity["sample_token"].astype(str).tolist()
-        )
-        observed_dev_tokens = _sorted_values_sha256(
-            dev_identity["sample_token"].astype(str).tolist()
-        )
-        expected_fold = grouped_contract["fold"]
-        if len(train_dataset) != expected_train_rows or len(validation_dataset) != (
-            expected_validation_rows
-        ):
-            raise ValueError("grouped-development view row counts differ from frozen fold")
-        if observed_train_tokens != expected_fold["train_sample_tokens_sha256"]:
-            raise ValueError("grouped-development train token hash differs")
-        if observed_dev_tokens != expected_fold["dev_sample_tokens_sha256"]:
-            raise ValueError("grouped-development dev token hash differs")
-        fold_identity = {
-            "fold": grouped_contract["fold_index"],
-            "train_rows": len(train_dataset),
-            "dev_rows": len(validation_dataset),
-            "train_sample_tokens_sha256": observed_train_tokens,
-            "dev_sample_tokens_sha256": observed_dev_tokens,
-            "sequence_disjoint": train_sequences.isdisjoint(validation_sequences),
+            "teacher_tokens_loaded": len(train_dataset.teacher_sample_tokens()),
+            "teacher_tokens_sha256": _sorted_values_sha256(
+                list(train_dataset.teacher_sample_tokens())
+            ),
+            "teacher_tokens_equal_fold_train": (
+                train_dataset.teacher_sample_tokens()
+                == frozenset(selected_train_tokens or set())
+            ),
+            "teacher_tokens_intersect_fold_dev": False,
         }
     device = resolve_device(device_name)
     _reset_peak_memory_stats(device)
@@ -943,6 +1033,14 @@ def run(
         device,
         checkpoint_dir=state_dir,
         resume=resume,
+    )
+    state_progress_path = state_dir / "progress.json"
+    root_progress_path = output_dir / "progress.json"
+    if not state_progress_path.is_file():
+        raise FileNotFoundError("training completed without safe progress telemetry")
+    _atomic_json(
+        root_progress_path,
+        json.loads(state_progress_path.read_text(encoding="utf-8")),
     )
     checkpoint_path = output_dir / "model_best.pt"
     temporary_checkpoint = output_dir / ".model_best.pt.tmp"
@@ -1023,6 +1121,48 @@ def run(
             "public_validation_used_for_selection": False,
             "private_test_opened": False,
         }
+    parent_contract_metadata = None
+    is_fold_parent = (
+        grouped
+        and not model_config.transport_enabled
+        and training_config.initialization_mode == "none"
+    )
+    if is_fold_parent:
+        if grouped_contract is None or fold_identity is None:
+            raise RuntimeError("fold parent lacks grouped-development identity")
+        parent_contract_path = output_dir / "parent_contract.json"
+        parent_contract: dict[str, Any] = {
+            "artifact_type": "scientific_recovery_v5_fold_parent_v1",
+            "status": "completed_fold_specific_parent",
+            "fold": grouped_contract["fold_index"],
+            "train_sequence_ids": sorted(train_sequences),
+            "dev_sequence_ids": sorted(validation_sequences),
+            "train_rows": expected_train_rows,
+            "dev_rows": expected_validation_rows,
+            "train_token_sha256": fold_identity["train_sample_tokens_sha256"],
+            "dev_token_sha256": fold_identity["dev_sample_tokens_sha256"],
+            "train_track_ids_sha256": fold_identity["train_track_ids_sha256"],
+            "dev_track_ids_sha256": fold_identity["dev_track_ids_sha256"],
+            "cache_manifest_sha256": actual_manifest_hash,
+            "grouped_protocol_file_sha256": grouped_contract["file_sha256"],
+            "grouped_protocol_artifact_sha256": grouped_contract["artifact_sha256"],
+            "checkpoint_sha256": _sha256(checkpoint_path),
+            "config_sha256": _sha256(config_path),
+            "effective_config_sha256": _sha256(effective_config_path),
+            "training_seed": training_config.seed,
+            "outer_dev_used_for_checkpoint_selection": True,
+            "outer_dev_is_not_test": True,
+            "teacher_contract": representation_teacher_metadata,
+            "public_validation_opened": False,
+            "private_test_opened": False,
+        }
+        sign_artifact(parent_contract)
+        _atomic_json(parent_contract_path, parent_contract)
+        parent_contract_metadata = {
+            "path": parent_contract_path.name,
+            "sha256": _sha256(parent_contract_path),
+            "artifact_sha256": parent_contract["artifact_sha256"],
+        }
     payload: dict[str, Any] = {
         "artifact_type": (
             "causal_scale_eap_train_only_grouped_dev_run_v1"
@@ -1057,6 +1197,20 @@ def run(
         "model_architecture": asdict(model_config),
         "cache": cache_payload,
         "development_protocol": development_protocol_metadata,
+        "effective_config": (
+            {
+                "path": effective_config_path.name,
+                "sha256": _sha256(effective_config_path),
+            }
+            if effective_config_path is not None
+            else None
+        ),
+        "parent_contract": parent_contract_metadata,
+        "progress": {
+            "path": root_progress_path.name,
+            "sha256": _sha256(root_progress_path),
+            "checkpoint_free": True,
+        },
         "model_input_contract": {
             "forward_inputs": ["event_v4_common_roi", "garl_delta_t_s"],
             "foreground_supervision": training_config.foreground_supervision,

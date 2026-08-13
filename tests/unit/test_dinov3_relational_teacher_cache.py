@@ -172,6 +172,64 @@ def test_dino_cache_wrapper_success(dummy_teacher_cache: Path) -> None:
         assert "dinov3_relation_valid" in out
 
 
+def test_dino_cache_wrapper_can_bind_a_strict_teacher_subset(
+    dummy_teacher_cache: Path,
+) -> None:
+    records = [
+        _record("t1", "trk_A", "seq1", [0, 0, 10, 10]),
+        _record("t3", "trk_A", "seq2", [0, 0, 10, 10]),
+    ]
+    base_dataset = DummyDataset(records)
+    manifest_sha = hashlib.sha256(dummy_teacher_cache.read_bytes()).hexdigest()
+    signed_manifest = json.loads(dummy_teacher_cache.read_text())
+
+    wrapper = DINOv3RelationalTeacherDataset(
+        base_dataset,  # type: ignore[arg-type]
+        manifest_path=dummy_teacher_cache,
+        expected_artifact_sha256=signed_manifest["artifact_sha256"],
+        expected_manifest_sha256=manifest_sha,
+        allowed_sample_tokens={"t1", "t3"},
+    )
+
+    assert len(wrapper) == 2
+    assert wrapper.teacher_sample_tokens() == frozenset({"t1", "t3"})
+    assert wrapper.source_teacher_row_count == 3
+
+
+def test_dino_cache_wrapper_rejects_subset_not_equal_to_dataset(
+    dummy_teacher_cache: Path,
+) -> None:
+    records = [_record("t1", "trk_A", "seq1", [0, 0, 10, 10])]
+    manifest_sha = hashlib.sha256(dummy_teacher_cache.read_bytes()).hexdigest()
+    signed_manifest = json.loads(dummy_teacher_cache.read_text())
+
+    with pytest.raises(ValueError, match="allowed teacher tokens differ"):
+        DINOv3RelationalTeacherDataset(
+            DummyDataset(records),  # type: ignore[arg-type]
+            manifest_path=dummy_teacher_cache,
+            expected_artifact_sha256=signed_manifest["artifact_sha256"],
+            expected_manifest_sha256=manifest_sha,
+            allowed_sample_tokens={"t1", "t2"},
+        )
+
+
+def test_dino_cache_wrapper_rejects_unavailable_same_size_token(
+    dummy_teacher_cache: Path,
+) -> None:
+    records = [_record("t1", "trk_A", "seq1", [0, 0, 10, 10])]
+    manifest_sha = hashlib.sha256(dummy_teacher_cache.read_bytes()).hexdigest()
+    signed_manifest = json.loads(dummy_teacher_cache.read_text())
+
+    with pytest.raises(ValueError, match="unavailable from the cache"):
+        DINOv3RelationalTeacherDataset(
+            DummyDataset(records),  # type: ignore[arg-type]
+            manifest_path=dummy_teacher_cache,
+            expected_artifact_sha256=signed_manifest["artifact_sha256"],
+            expected_manifest_sha256=manifest_sha,
+            allowed_sample_tokens={"missing"},
+        )
+
+
 def test_dino_cache_wrapper_track_id_mismatch(dummy_teacher_cache: Path) -> None:
     records = [
         # Match token, but mismatch track_id
