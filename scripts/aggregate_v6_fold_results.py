@@ -217,8 +217,10 @@ def aggregate(
                 )
             ),
         }
-    models["a5_causal"]["geometry_diagnostics"] = _geometry_summary(summaries["a5_causal"])
+    for arm in ("a5_causal", "v6_1", "a8_0"):
+        models[arm]["geometry_diagnostics"] = _geometry_summary(summaries[arm])
     models["a5_causal"]["claim_scope"] = "diagnostic_geometry_unconstrained"
+    models["v6_1"]["geometry_claim_scope"] = "exact_frozen_fold_parent"
 
     paired: dict[str, Any] = {}
     for first, second in PAIRINGS:
