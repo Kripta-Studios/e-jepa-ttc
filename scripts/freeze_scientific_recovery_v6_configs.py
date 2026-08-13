@@ -196,6 +196,10 @@ def freeze(*, d0_path: Path, output_dir: Path, manifest_path: Path) -> dict[str,
             "a5_causal": {"path": A5_MODEL, "sha256": _sha256(ROOT / A5_MODEL)},
             "v6_1_radius2": {"path": V6_MODEL, "sha256": _sha256(ROOT / V6_MODEL)},
         },
+        "runner": {
+            "path": "scripts/train_causal_scale_eap_screen.py",
+            "sha256": _sha256(ROOT / "scripts/train_causal_scale_eap_screen.py"),
+        },
         "configs": written,
         "contracts": {
             "folds_unchanged_from_v5": True,

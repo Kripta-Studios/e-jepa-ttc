@@ -137,6 +137,7 @@ def _model_config(path: Path) -> CausalScaleTTCConfig:
         "e_jepa_causal_scale_event_v9_transport",
         "e_jepa_causal_scale_event_v10_transport_adapter",
         "e_jepa_causal_scale_event_v11_dual_transport",
+        "e_jepa_causal_scale_event_v12_dual_transport_r2_t002_causal",
     }
     if model_name not in allowed_models:
         raise ValueError(f"real screen requires an audited causal-scale model, got {model_name!r}")
