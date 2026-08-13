@@ -1,0 +1,171 @@
+{
+  "artifact_sha256": "7267421c288f6a5e68e779e344dabebb62c9d04df5e100186a8013dfe4a93cf9",
+  "artifact_type": "scientific_recovery_v7_balanced_oof_protocol_v1",
+  "claims": {
+    "architecture_only_attribution_allowed": false,
+    "jepa_attribution_allowed": false,
+    "jepa_objective_active": false,
+    "sota_claim_allowed": false
+  },
+  "closed_evaluation": {
+    "allowed_splits": [
+      "train_fold",
+      "outer_dev_fold"
+    ],
+    "codabench_opened": false,
+    "evttc_test_opened": false,
+    "private_test_opened": false,
+    "public_validation_used_for_selection": false
+  },
+  "created_at_utc": "2026-08-13T19:36:51.220849+00:00",
+  "evaluation_contract": {
+    "bootstrap_resamples_confirmation": 10000,
+    "bootstrap_resamples_exploratory": 5000,
+    "bootstrap_seed": 20260813,
+    "guard_margin": "min(abs(log_height_ratio)/0.002,sensor_support/0.0001)",
+    "point_prediction_column": "point_prediction_ttc_s",
+    "risk_coverage_levels": [
+      1.0,
+      0.99,
+      0.975,
+      0.95,
+      0.9,
+      0.8,
+      0.7,
+      0.5
+    ],
+    "selective_prediction_column": "prediction_ttc_s"
+  },
+  "gates": {
+    "confirmation_candidate": {
+      "delta_point_MiD_vs_a5_max": -3.0,
+      "geometry_positive_required": true,
+      "probability_delta_below_zero_min": 0.9
+    },
+    "geometry_positive": {
+      "measures": [
+        "bbox_slope",
+        "physical_slope",
+        "bbox_std_ratio",
+        "physical_std_ratio"
+      ],
+      "minimum_retention": 0.6,
+      "positive_sign_required": true
+    },
+    "mechanism_positive": {
+      "delta_point_MiD_vs_a5_max": -5.0,
+      "probability_delta_below_zero_min": 0.9,
+      "selective_coverage_drop_max_pp": 1.0
+    }
+  },
+  "git_base_commit": "28c1efb50622255719f239622ba07858ce704535",
+  "git_branch": "scientific-recovery-v7-balanced-oof",
+  "git_commit_at_freeze": "e3f5a61044ca5dbd4393004e488c83bfa08dcea0",
+  "sample_contract": {
+    "fold_definitions": [
+      {
+        "dev_rows": 2731,
+        "dev_sample_tokens_sha256": "85326602af71948734ff250a2e95e37d88db0d7cdbcfc494b30536f1956b61c9",
+        "dev_sequence_ids": [
+          "5ilM1PX2vz",
+          "OYgB6RGWcq",
+          "qGsgzl4Q8B"
+        ],
+        "fold": 0,
+        "train_rows": 5461,
+        "train_sample_tokens_sha256": "8f88d14d5f88228a7d59b853a8da86c9120d53c1fc7dcb94f94ae18f9a73d798",
+        "train_sequence_ids": [
+          "2cyv0Oedzg",
+          "6h5yRW2LGc",
+          "OBneIVg4Cw",
+          "WbCh1DRerJ",
+          "mHGFBekt7X",
+          "t79dBxj1WS"
+        ]
+      },
+      {
+        "dev_rows": 2731,
+        "dev_sample_tokens_sha256": "5ea864aaa339ac5140bb61357e45b620f5819c42fa9db1542179658395d4fa77",
+        "dev_sequence_ids": [
+          "2cyv0Oedzg",
+          "6h5yRW2LGc",
+          "mHGFBekt7X"
+        ],
+        "fold": 1,
+        "train_rows": 5461,
+        "train_sample_tokens_sha256": "b57f1d9667c25a97a6f812406a534c63678d0cfce4dc25749efcd5c5c131f552",
+        "train_sequence_ids": [
+          "5ilM1PX2vz",
+          "OBneIVg4Cw",
+          "OYgB6RGWcq",
+          "WbCh1DRerJ",
+          "qGsgzl4Q8B",
+          "t79dBxj1WS"
+        ]
+      },
+      {
+        "dev_rows": 2730,
+        "dev_sample_tokens_sha256": "e09980a547cf9c71c27cda9ee02c2ff12de6857dea47ced64ae61acb7a876f17",
+        "dev_sequence_ids": [
+          "OBneIVg4Cw",
+          "WbCh1DRerJ",
+          "t79dBxj1WS"
+        ],
+        "fold": 2,
+        "train_rows": 5462,
+        "train_sample_tokens_sha256": "b4163c61800ff36de95b2c764182b63a9a6b38f7975ea8a1db94f9b20f83fb24",
+        "train_sequence_ids": [
+          "2cyv0Oedzg",
+          "5ilM1PX2vz",
+          "6h5yRW2LGc",
+          "OYgB6RGWcq",
+          "mHGFBekt7X",
+          "qGsgzl4Q8B"
+        ]
+      }
+    ],
+    "folds": 3,
+    "rows": 8192,
+    "sequences": 9,
+    "sorted_sample_tokens_sha256": "a4a3174809e696c56e4d94dd9e37fd05cc1a632cf3e5a1363db5f71b1d54684c"
+  },
+  "sources": {
+    "base_cache": {
+      "artifact_sha256": "f64b4348820b3ed83307413fd52c2cb39dae3c70deae8e65dc24996fe9ef25ec",
+      "file_sha256": "063980fdae5fda0b2836befc662fdd1cd5659bf06f10d9760dfc0d566fac8e39",
+      "path": "artifacts/cache/garl_object_event_common_roi_train8192_v1/manifest.json",
+      "shape": [
+        3,
+        12,
+        128,
+        128
+      ]
+    },
+    "grouped_protocol": {
+      "artifact_sha256": "f09c688fb4991714abc9d645dda787cb27f1e02a2d1857312ce3e45519bd7a63",
+      "file_sha256": "be48917ae52d1c77d046318bd9ed284a32e8b16258257203fff439332b547874",
+      "path": "configs/protocol/scientific_recovery_v5_train_only_grouped_dev.json"
+    },
+    "t20_cache": null
+  },
+  "status": "frozen_before_v7_training",
+  "training_contract": {
+    "batch_size": 32,
+    "confirm_one_winner_only": true,
+    "confirmation_seeds": [
+      7,
+      13,
+      23
+    ],
+    "epochs": 18,
+    "exploratory_seed": 7,
+    "initial_arms": [
+      "soft",
+      "c2f",
+      "t20",
+      "cap_s"
+    ],
+    "learning_rate": 0.0003,
+    "optimizer": "AdamW"
+  }
+}

@@ -203,8 +203,16 @@ def freeze(*, require_t20: bool) -> dict[str, Any]:
             "sota_claim_allowed": False,
         },
     }
-    sign_artifact(protocol)
-    _write_json(V7_PROTOCOL, protocol)
+    if V7_PROTOCOL.is_file():
+        frozen_protocol = _read_json(V7_PROTOCOL, signed=True)
+        if frozen_protocol.get("status") != "frozen_before_v7_training":
+            raise ValueError("existing V7 protocol has an incompatible status")
+        if frozen_protocol.get("sample_contract") != protocol["sample_contract"]:
+            raise ValueError("existing V7 protocol sample contract differs")
+        protocol = frozen_protocol
+    else:
+        sign_artifact(protocol)
+        _write_json(V7_PROTOCOL, protocol)
 
     if t20_cache is None:
         return protocol
