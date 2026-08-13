@@ -51,10 +51,10 @@
     "replay_batch_size": 32,
     "selected_v6_1_requires_new_preregistration": true
   },
-  "artifact_sha256": "51682ef9d2b81a74548ac4b504081f70e0e29f62e93e005796e9335c592b92b9",
+  "artifact_sha256": "7fb3342b7748e239a1efee95836b7557d3a6d3f4395e6bf41b865693f522cfff",
   "artifact_type": "scientific_recovery_v6_d0_oof_postmortem_protocol_v1",
-  "created_at_utc": "2026-08-13T10:17:34.233181+00:00",
-  "git_commit": "2d7f387d9cfce92f62a8eb7450e3ac9c336ce735",
+  "created_at_utc": "2026-08-13T10:25:10.059362+00:00",
+  "git_commit": "dc7089d96f661564f0fb08a012009cdfc8a1b3ef",
   "sources": {
     "a6_fold0_effective_config_yaml": {
       "path": "artifacts/runs/scientific_recovery_v5_a6_fold_chain_fold0_seed7/effective_config.yaml",
@@ -138,7 +138,7 @@
     },
     "analysis_code": {
       "path": "scripts/analyze_v5_a8_oof_failure_modes.py",
-      "sha256": "efe7ccb49f662b784bfa7dc1f191829ad977493894f2952ff91755008a3c7aad"
+      "sha256": "52b069d8ae6c6be303873e611c94fd9425e78b067f8bbad8dea2f8e0bf48cb75"
     },
     "dataset_code": {
       "path": "src/e_jepa_ttc/data/object_event_v4.py",
