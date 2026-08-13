@@ -1,0 +1,147 @@
+experiment:
+  name: scientific_recovery_v5_a4_parent_grouped_fold2_seed7
+  protocol_version: scientific_recovery_v5_fold_specific_a4_parent_v1
+  evidence_scope: public_train_only_grouped_development
+  purpose: fold_local_geometry_parent_without_outer_dev_gradients
+  source_lambda_cv_commit: e8f233ea353bb32c4234a6c8c29c2a89a8fd103b
+  causality_hardening: symmetric_legacy_to_causal_left
+  grouped_dev_role: fold_specific_a4_parent
+model_config: configs/model/e_jepa_causal_scale_event_v8_t015_resize_conv_causal.yaml
+provenance:
+  source_a4_config: configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a4_dinov3_relational_v1.yaml
+  source_a4_config_sha256: aa20959e4b6aa25071fcab65f00b4c8ffeb053689633d6dbdd9ec5f955024885
+  lambda_selection_artifact: artifacts/metrics/a4_dinov3_relational_lambda_cv_train8192_v1/summary.json
+  lambda_selection_file_sha256: e48f445a4841dd84e71a8ba36f34020d0a372b875476ae9c8e46d92e57bf1568
+  lambda_selection_artifact_sha256: 68a8d049509167be5db7217acb9cbd69dbd4845cf93833fcab324cc6da919318
+  lambda_selection_code_commit: e8f233ea353bb32c4234a6c8c29c2a89a8fd103b
+  lambda_selection_candidate: 8.0
+  lambda_selection_boundary_hit: false
+  lambda_selection_promotion_ready: true
+  lambda_selection_nine_sequence_macro_MiD: 272.51705905188066
+  lambda_selection_sample_weighted_failure_rate_pct: 8.72802734375
+  lambda_selection_public_validation_samples_opened: 0
+  v5_fold_parent_interpretation:
+    weights_inherited_from_historical_a4: false
+    architecture_and_training_recipe_inherited: true
+    historical_lambda_recipe_was_fixed_before_fold_parent_training: true
+    historical_lambda_recipe_used_the_nine_sequence_train_universe: true
+    outer_dev_is_development_not_test: true
+data:
+  cache_manifest: artifacts/cache/garl_object_event_common_roi_train8192_v1/manifest.json
+  cache_manifest_sha256: 063980fdae5fda0b2836befc662fdd1cd5659bf06f10d9760dfc0d566fac8e39
+  cache_artifact_sha256: f64b4348820b3ed83307413fd52c2cb39dae3c70deae8e65dc24996fe9ef25ec
+  train_sequence_ids:
+  - 2cyv0Oedzg
+  - 5ilM1PX2vz
+  - 6h5yRW2LGc
+  - OYgB6RGWcq
+  - mHGFBekt7X
+  - qGsgzl4Q8B
+  opened_splits:
+  - train
+  official_test_opened: false
+  codabench_opened: false
+  evttc_test_opened: false
+  dinov3_relational_teacher:
+    manifest: artifacts/cache/dinov3_convnext_large_relational_a4_train8192_rgb_v1/manifest.json
+    manifest_sha256: 6ee4b205d29a07d3aabf7137f2a312376711b5e5d9d7930ea36328390023eab3
+    artifact_sha256: 6511c684881f3360efb7c8718976ef6b37de36668a89d9ea2f8d4bdf6f620b20
+  dev_sequence_ids:
+  - OBneIVg4Cw
+  - WbCh1DRerJ
+  - t79dBxj1WS
+  expected_source_train_rows: 8192
+  development_protocol:
+    path: configs/protocol/scientific_recovery_v5_train_only_grouped_dev.json
+    file_sha256: be48917ae52d1c77d046318bd9ed284a32e8b16258257203fff439332b547874
+    artifact_sha256: f09c688fb4991714abc9d645dda787cb27f1e02a2d1857312ce3e45519bd7a63
+    fold: 2
+training:
+  seed: 7
+  epochs: 18
+  minimum_epochs: 8
+  early_stopping_patience: 5
+  foreground_warmup_epochs: 3
+  batch_size: 32
+  gradient_accumulation_steps: 1
+  learning_rate: 0.0003
+  minimum_learning_rate: 3.0e-05
+  weight_decay: 0.0001
+  grad_clip_norm: 1.0
+  num_workers: 0
+  precision: bf16
+  maximum_runtime_hours: 6.0
+  mask_t0_as_proxy: true
+  foreground_supervision: bbox_geometry
+  representation_supervision: dinov3_local_relational
+  representation_teacher_cache_artifact_sha256: 6511c684881f3360efb7c8718976ef6b37de36668a89d9ea2f8d4bdf6f620b20
+  representation_distillation_weight: 8.0
+  prefetch_factor: 2
+  initialization_mode: none
+  initialization_checkpoint: null
+  initialization_checkpoint_sha256: null
+  freeze_encoder: false
+loss:
+  log_ratio_nll_weight: 1.0
+  log_ratio_huber_weight: 0.0
+  log_ratio_tail_weight: 2.0
+  log_ratio_tail_fraction: 0.1
+  foreground_bce_weight: 0.0
+  foreground_dice_weight: 0.0
+  foreground_extent_weight: 1.25
+  foreground_width_weight: 1.25
+  foreground_center_weight: 2.5
+  foreground_pair_ratio_weight: 0.0
+  risk_weight: 0.1
+  auxiliary_inverse_ttc_weight: 0.05
+  residual_regularization_weight: 0.1
+  temporal_consistency_weight: 0.0
+  smooth_l1_beta: 0.02
+  supervise_pair_ratio_before_temporal_blend: true
+decision_contract:
+  checkpoint_selection: dev_sequence_macro_MiD_then_failure_rate
+  expected_parameter_count: 355118
+  model_config_must_equal_a4: true
+  model_config_sha256: 265dbfd57e68d7a6aa385fbf31dc0ad41154b17afbd1d9454bbd8ddd80c6663f
+  architecture_scaling_in_this_arm: false
+  student_capacity_change_in_this_arm: false
+  interpretation:
+    primary_arm_is_lambda8: true
+    lambda4_full_train_control_is_not_required_for_primary_run: true
+    success_vs_a4_requires_lower_MiD_and_nonworse_failure: true
+    public_validation_does_not_authorize_sota_claim: true
+    private_test_remains_closed: true
+  bbox_is_training_supervision_only: true
+  bbox_is_never_forward_input: true
+  no_sam_teacher: true
+  no_jepa_objective: true
+  no_pair_ratio: true
+  foreground_pair_ratio_weight_must_remain_zero: true
+  r_iso_is_diagnostic_only: true
+  diagnostic_reporting: global_and_macro_by_sequence
+  maximum_runtime_hours: 6.0
+  multi_object_contract:
+    teacher_keyed_by_sample_token: true
+    track_id_verified_per_row: true
+    same_frame_multiple_tracks_not_deduplicated: true
+    rgb_crop_is_per_object_common_square: true
+  runtime_hardware_override:
+    scientific_fields_changed: false
+    allowed_fields:
+    - training.seed
+    - training.num_workers
+    - training.prefetch_factor
+    num_workers: 0
+    prefetch_factor: 2
+  temporal_smoothing_mode: causal_left
+  model_prefix_causal_required: true
+  oracle_roi_preprocessing_remains: true
+  public_validation_does_not_authorize_sota_claim: true
+  private_test_remains_closed: true
+  require_finite_metrics_for_all_dev_sequences: true
+  outer_dev_used_for_checkpoint_selection: true
+  outer_dev_is_not_test: true
+  parent_weights_trained_on_outer_dev: false
+  grouped_fold: 2
+  grouped_protocol_artifact_sha256: f09c688fb4991714abc9d645dda787cb27f1e02a2d1857312ce3e45519bd7a63
+  public_validation_used_for_selection: false
