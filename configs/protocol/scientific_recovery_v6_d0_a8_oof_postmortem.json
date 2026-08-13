@@ -48,12 +48,13 @@
     "outcome_a8_vs_a6": "per_sample_raw_MiD_delta_and_failure_transition",
     "outcome_a8_vs_garl": "per_sample_raw_MiD_delta_and_failure_transition",
     "population": "exact_8192_fold_local_outer_dev_rows",
+    "replay_batch_size": 32,
     "selected_v6_1_requires_new_preregistration": true
   },
-  "artifact_sha256": "a1db4d2c4c1e2665f4b572b7443ea5c34e3cd3c7fc136ca816273f9f7d617ca3",
+  "artifact_sha256": "51682ef9d2b81a74548ac4b504081f70e0e29f62e93e005796e9335c592b92b9",
   "artifact_type": "scientific_recovery_v6_d0_oof_postmortem_protocol_v1",
-  "created_at_utc": "2026-08-13T10:10:11.573169+00:00",
-  "git_commit": "588f9db251b5eb0918145157c7fcfca76be02ecc",
+  "created_at_utc": "2026-08-13T10:17:34.233181+00:00",
+  "git_commit": "2d7f387d9cfce92f62a8eb7450e3ac9c336ce735",
   "sources": {
     "a6_fold0_effective_config_yaml": {
       "path": "artifacts/runs/scientific_recovery_v5_a6_fold_chain_fold0_seed7/effective_config.yaml",
@@ -137,7 +138,7 @@
     },
     "analysis_code": {
       "path": "scripts/analyze_v5_a8_oof_failure_modes.py",
-      "sha256": "f9805130765c02d37d4d9ae2e55bed55be0c627b6377c6bfc5a871ad80da6ec6"
+      "sha256": "efe7ccb49f662b784bfa7dc1f191829ad977493894f2952ff91755008a3c7aad"
     },
     "dataset_code": {
       "path": "src/e_jepa_ttc/data/object_event_v4.py",
