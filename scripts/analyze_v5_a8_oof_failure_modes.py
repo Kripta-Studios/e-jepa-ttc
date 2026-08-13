@@ -66,8 +66,8 @@ FAMILY_FEATURES = {
         "event_density_current",
         "event_density_min",
         "event_density_range",
-        "transport_divergence_acceleration",
-        "transport_flow_acceleration",
+        "transport_divergence_isotropic_acceleration",
+        "transport_flow_magnitude_acceleration",
     ),
     "transport_confidence": (
         "a8_transport_confidence_margin",
