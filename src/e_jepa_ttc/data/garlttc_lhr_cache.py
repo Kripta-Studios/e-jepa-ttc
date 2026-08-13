@@ -1276,7 +1276,15 @@ def materialize_garlttc_lhr_cache(
             for key, value in expected_state.items()
             if state.get(key) != value
         }
-        if mismatches:
+        recoverable_train_only_closure = (
+            state.get("status") == "failed"
+            and state.get("error") == "empty_split_after_materialization"
+            and all(
+                int(state.get("split_counts", {}).get(role, 0)) > 0
+                for role in config.materialize_splits
+            )
+        )
+        if mismatches and not recoverable_train_only_closure:
             raise RuntimeError(
                 f"Resume state does not match this selection/configuration: {mismatches}"
             )
@@ -1500,7 +1508,7 @@ def materialize_garlttc_lhr_cache(
         if executor is not None:
             executor.shutdown(wait=True, cancel_futures=False)
 
-    if min(split_counts.values()) <= 0:
+    if any(split_counts[role] <= 0 for role in config.materialize_splits):
         failure = {
             "artifact_type": "garlttc_lhr_cache_build_failure_v2",
             "status": "failed",
@@ -1709,6 +1717,7 @@ def materialize_garlttc_lhr_cache(
             "shard_count": len(shard_meta),
         },
     )
+    (output / "FAILURE.json").unlink(missing_ok=True)
     return manifest
 
 
