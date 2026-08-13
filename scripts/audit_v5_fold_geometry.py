@@ -1,4 +1,4 @@
-"""Prove exact frozen primary geometry for one fold-local A6 or A8 run."""
+"""Prove exact frozen primary geometry for one fold-local A6, A8, or V6.1 run."""
 
 from __future__ import annotations
 
@@ -57,7 +57,7 @@ def build_audit(
     parent_checkpoint: Path,
     child_checkpoint: Path,
     child_summary: Path,
-    arm: Literal["a6", "a8_0"],
+    arm: Literal["a6", "a8_0", "v6_1"],
     fold: int,
 ) -> dict[str, Any]:
     """Build fail-closed state, optimizer, and fixed-probe geometry evidence."""
@@ -136,9 +136,9 @@ def build_audit(
         probe_hashes[name] = _tensor_hash(parent_value)
 
     transport: dict[str, Any] | None = None
-    if arm == "a8_0":
+    if arm in {"a8_0", "v6_1"}:
         if child.transport_encoder is None:
-            raise ValueError("A8.0 checkpoint lacks its transport encoder")
+            raise ValueError(f"{arm} checkpoint lacks its transport encoder")
         transport = {
             "initial_equal_parent": (
                 initialization.get("initial_transport_encoder_sha256") == parent_encoder_hash
@@ -147,9 +147,9 @@ def build_audit(
             "final_sha256": _module_tensor_sha256(child.transport_encoder),
         }
         if transport["initial_equal_parent"] is not True:
-            raise ValueError("A8.0 transport encoder did not initialize from the parent")
+            raise ValueError(f"{arm} transport encoder did not initialize from the parent")
         if transport["changed_after_training"] is not True:
-            raise ValueError("A8.0 transport encoder did not receive an observable update")
+            raise ValueError(f"{arm} transport encoder did not receive an observable update")
 
     report: dict[str, Any] = {
         "artifact_type": "scientific_recovery_v5_fold_geometry_audit_v1",
@@ -199,7 +199,7 @@ def main() -> int:
     parser.add_argument("--parent-checkpoint", type=Path, required=True)
     parser.add_argument("--child-checkpoint", type=Path, required=True)
     parser.add_argument("--child-summary", type=Path, required=True)
-    parser.add_argument("--arm", choices=("a6", "a8_0"), required=True)
+    parser.add_argument("--arm", choices=("a6", "a8_0", "v6_1"), required=True)
     parser.add_argument("--fold", type=int, choices=(0, 1, 2), required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()

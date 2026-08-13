@@ -73,3 +73,60 @@ def test_a6_geometry_audit_proves_exact_parent_state_and_probe(tmp_path: Path) -
     assert report["primary_geometry"]["exact_tensor_equality"] is True
     assert report["primary_geometry"]["fixed_probe_exact"] is True
     assert report["transport_encoder"] is None
+
+
+def test_v6_geometry_audit_accepts_trained_dual_transport(tmp_path: Path) -> None:
+    torch.manual_seed(7)
+    parent = CausalScaleTTC(CausalScaleTTCConfig(dropout=0.0))
+    child = CausalScaleTTC(
+        CausalScaleTTCConfig(
+            dropout=0.0,
+            transport_enabled=True,
+            transport_adapter_enabled=False,
+            transport_encoder_copy_enabled=True,
+            transport_radius=2,
+            transport_temperature=0.02,
+        )
+    )
+    child.encoder.load_state_dict(parent.encoder.state_dict(), strict=True)
+    child.transport_encoder.load_state_dict(parent.encoder.state_dict(), strict=True)
+    initial_transport_hash = _module_tensor_sha256(child.transport_encoder)
+    with torch.no_grad():
+        next(child.transport_encoder.parameters()).add_(0.01)
+    parent_path = tmp_path / "parent.pt"
+    child_path = tmp_path / "child.pt"
+    _checkpoint(parent_path, parent)
+    _checkpoint(child_path, child)
+    parent_hash = _module_tensor_sha256(parent.encoder)
+    frozen = [f"encoder.{name}" for name, _ in child.encoder.named_parameters()]
+    optimizer = [name for name, _ in child.named_parameters() if not name.startswith("encoder.")]
+    summary = {
+        "artifact_type": "causal_scale_eap_train_only_grouped_dev_run_v1",
+        "development_protocol": {"fold_identity": {"fold": 1}},
+        "initialization": {
+            "checkpoint_sha256": __import__("hashlib").sha256(parent_path.read_bytes()).hexdigest(),
+            "initial_primary_encoder_sha256": parent_hash,
+            "final_primary_encoder_sha256": parent_hash,
+            "primary_encoder_exact_initial": True,
+            "initial_transport_encoder_sha256": initial_transport_hash,
+            "transport_encoder_changed_from_initial": True,
+            "frozen_parameter_names": frozen,
+            "optimizer_parameter_names": optimizer,
+            "frozen_optimizer_overlap": [],
+        },
+    }
+    sign_artifact(summary)
+    summary_path = tmp_path / "summary.json"
+    summary_path.write_text(json.dumps(summary), encoding="utf-8")
+
+    report = build_audit(
+        parent_checkpoint=parent_path,
+        child_checkpoint=child_path,
+        child_summary=summary_path,
+        arm="v6_1",
+        fold=1,
+    )
+
+    assert report["status"] == "completed_exact_primary_geometry"
+    assert report["transport_encoder"]["initial_equal_parent"] is True
+    assert report["transport_encoder"]["changed_after_training"] is True
