@@ -9,6 +9,7 @@ import torch
 from e_jepa_ttc.models.causal_scale_ttc import CausalScaleTTC, CausalScaleTTCConfig
 from e_jepa_ttc.training.causal_scale_eap import (
     CausalScaleEAPTrainingConfig,
+    _module_tensor_sha256,
     _shape_compatible_initialize,
 )
 
@@ -42,6 +43,34 @@ def test_shape_compatible_initialization_recovers_complete_a4_encoder(tmp_path: 
     assert source_encoder.keys() == target_encoder.keys()
     for name in source_encoder:
         torch.testing.assert_close(source_encoder[name], target_encoder[name], rtol=0, atol=0)
+    assert _module_tensor_sha256(source.encoder) == _module_tensor_sha256(target.encoder)
+
+
+def test_dual_transport_initializes_as_exact_primary_encoder_copy(tmp_path: Path) -> None:
+    source = CausalScaleTTC(CausalScaleTTCConfig())
+    checkpoint = tmp_path / "a4.pt"
+    torch.save(
+        {
+            "artifact_type": "causal_scale_eap_grouped_dev_checkpoint_v1",
+            "model_config": source.checkpoint_config(),
+            "model_state_dict": source.state_dict(),
+        },
+        checkpoint,
+    )
+    target = CausalScaleTTC(
+        CausalScaleTTCConfig(
+            transport_enabled=True,
+            transport_encoder_copy_enabled=True,
+            transport_radius=1,
+            transport_temperature=0.02,
+        )
+    )
+
+    report = _shape_compatible_initialize(target, checkpoint)
+
+    assert report["transport_encoder_initialized_from_primary"] is True
+    assert target.transport_encoder is not None
+    assert _module_tensor_sha256(target.encoder) == _module_tensor_sha256(target.transport_encoder)
 
 
 def test_anchor_training_config_requires_zero_warmup_and_checkpoint(tmp_path: Path) -> None:

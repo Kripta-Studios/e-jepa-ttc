@@ -21,21 +21,12 @@ from e_jepa_ttc.artifacts.hashing import sign_artifact, verify_artifact_hash  # 
 
 PROTOCOL_PATH = ROOT / "configs/protocol/scientific_recovery_v5_train_only_grouped_dev.json"
 A6_SOURCE = (
-    ROOT
-    / "artifacts/scientific_recovery_master_v3/configs/causal_a6/"
-    "a6_s1_causal_left_seed7.yaml"
+    ROOT / "artifacts/scientific_recovery_master_v3/configs/causal_a6/a6_s1_causal_left_seed7.yaml"
 )
-A8_SOURCE = (
-    ROOT
-    / "artifacts/scientific_recovery_master_v3/configs/a6_a7_s1/"
-    "a7_s1_seed7.yaml"
-)
-OUTPUT_DIR = ROOT / "configs/experiment/scientific_recovery_v5"
-MANIFEST_PATH = ROOT / "configs/protocol/scientific_recovery_v5_a8_0_configs.json"
-PARENT_CHECKPOINT = "artifacts/runs/scientific_recovery_a4_causal_left_seed7/model_best.pt"
-PARENT_CHECKPOINT_SHA256 = (
-    "ac3a0ff7ec4fba3fcde31c95f18ba33e7905a0fb0c9ea70bb3541ffb12515431"
-)
+A8_SOURCE = ROOT / "artifacts/scientific_recovery_master_v3/configs/a6_a7_s1/a7_s1_seed7.yaml"
+OUTPUT_DIR = ROOT / "configs/experiment/scientific_recovery_v5_fold_chain"
+MANIFEST_PATH = ROOT / "configs/protocol/scientific_recovery_v5_fold_downstream_configs.json"
+PARENT_RUN_ROOT = ROOT / "artifacts/runs"
 
 
 def _sha256(path: Path) -> str:
@@ -54,9 +45,7 @@ def _read_yaml(path: Path) -> dict[str, Any]:
 
 
 def _git(*args: str) -> str:
-    result = subprocess.run(
-        ["git", *args], cwd=ROOT, check=True, capture_output=True, text=True
-    )
+    result = subprocess.run(["git", *args], cwd=ROOT, check=True, capture_output=True, text=True)
     return result.stdout.strip()
 
 
@@ -75,6 +64,8 @@ def _fold_config(
     fold: dict[str, Any],
     *,
     arm: str,
+    parent_checkpoint: str,
+    parent_checkpoint_sha256: str,
 ) -> dict[str, Any]:
     config = copy.deepcopy(source)
     index = int(fold["fold"])
@@ -82,11 +73,11 @@ def _fold_config(
     experiment = config["experiment"]
     experiment.update(
         {
-            "name": f"scientific_recovery_v5_{arm}_grouped_fold{index}_seed7",
+            "name": f"scientific_recovery_v5_{arm}_fold_chain_fold{index}_seed7",
             "protocol_version": f"scientific_recovery_v5_{arm}_grouped_dev_v1",
             "evidence_scope": "public_train_only_grouped_development",
             "grouped_dev_role": "candidate" if is_a8 else "causal_a6_comparator",
-            "parent_stochasticity": "fixed_A4_causal_seed7",
+            "parent_stochasticity": "fold_specific_A4_seed7",
             "transport_training_seed": 7,
         }
     )
@@ -95,13 +86,11 @@ def _fold_config(
             "A6_adapter_to_separate_trainable_transport_encoder_copy"
         )
         config["model_config"] = (
-            "configs/model/"
-            "e_jepa_causal_scale_event_v11_dual_transport_r1_t002_causal.yaml"
+            "configs/model/e_jepa_causal_scale_event_v11_dual_transport_r1_t002_causal.yaml"
         )
     else:
         config["model_config"] = (
-            "configs/model/"
-            "e_jepa_causal_scale_event_v10_transport_adapter_r1_t002_causal.yaml"
+            "configs/model/e_jepa_causal_scale_event_v10_transport_adapter_r1_t002_causal.yaml"
         )
 
     data = config["data"]
@@ -128,8 +117,8 @@ def _fold_config(
         {
             "seed": 7,
             "num_workers": 0,
-            "initialization_checkpoint": PARENT_CHECKPOINT,
-            "initialization_checkpoint_sha256": PARENT_CHECKPOINT_SHA256,
+            "initialization_checkpoint": parent_checkpoint,
+            "initialization_checkpoint_sha256": parent_checkpoint_sha256,
             "initialization_mode": "shape_compatible",
             "freeze_encoder": True,
         }
@@ -178,8 +167,8 @@ def _fold_config(
     contract = decision[contract_name]
     contract.update(
         {
-            "initialization_checkpoint": PARENT_CHECKPOINT,
-            "initialization_checkpoint_sha256": PARENT_CHECKPOINT_SHA256,
+            "initialization_checkpoint": parent_checkpoint,
+            "initialization_checkpoint_sha256": parent_checkpoint_sha256,
             "train_rows": fold["train_rows"],
             "dev_rows": fold["dev_rows"],
         }
@@ -192,6 +181,7 @@ def build_configs(
     protocol: dict[str, Any],
     a6_source: dict[str, Any],
     a8_source: dict[str, Any],
+    parent_refs: dict[int, dict[str, str]],
 ) -> dict[str, dict[str, Any]]:
     """Build all six configs without inspecting targets or model performance."""
 
@@ -207,13 +197,75 @@ def build_configs(
     outputs: dict[str, dict[str, Any]] = {}
     for fold in protocol["folds"]:
         index = int(fold["fold"])
+        parent = parent_refs.get(index)
+        if not isinstance(parent, dict):
+            raise ValueError(f"fold {index} lacks a fold-specific A4 parent")
         outputs[f"a6_grouped_fold{index}_seed7.yaml"] = _fold_config(
-            a6_source, protocol, fold, arm="a6"
+            a6_source,
+            protocol,
+            fold,
+            arm="a6",
+            parent_checkpoint=parent["checkpoint"],
+            parent_checkpoint_sha256=parent["checkpoint_sha256"],
         )
-        outputs[f"a8_0_dual_transport_grouped_fold{index}_seed7.yaml"] = (
-            _fold_config(a8_source, protocol, fold, arm="a8_0")
+        outputs[f"a8_0_dual_transport_grouped_fold{index}_seed7.yaml"] = _fold_config(
+            a8_source,
+            protocol,
+            fold,
+            arm="a8_0",
+            parent_checkpoint=parent["checkpoint"],
+            parent_checkpoint_sha256=parent["checkpoint_sha256"],
         )
     return outputs
+
+
+def load_parent_refs(protocol: dict[str, Any], parent_run_root: Path) -> dict[int, dict[str, str]]:
+    """Load all three signed parent contracts or fail without partial output."""
+
+    refs: dict[int, dict[str, str]] = {}
+    for fold in protocol["folds"]:
+        index = int(fold["fold"])
+        run = parent_run_root / f"scientific_recovery_v5_a4_parent_grouped_fold{index}_seed7"
+        contract_path = run / "parent_contract.json"
+        checkpoint_path = run / "model_best.pt"
+        summary_path = run / "summary.json"
+        if (
+            not contract_path.is_file()
+            or not checkpoint_path.is_file()
+            or not summary_path.is_file()
+        ):
+            raise FileNotFoundError(f"fold {index} parent run is incomplete: {run}")
+        contract = json.loads(contract_path.read_text(encoding="utf-8"))
+        if not isinstance(contract, dict) or not verify_artifact_hash(contract):
+            raise ValueError(f"fold {index} parent contract signature is invalid")
+        expected = {
+            "artifact_type": "scientific_recovery_v5_fold_parent_v1",
+            "status": "completed_fold_specific_parent",
+            "fold": index,
+            "train_sequence_ids": fold["train_sequence_ids"],
+            "dev_sequence_ids": fold["dev_sequence_ids"],
+            "train_token_sha256": fold["train_sample_tokens_sha256"],
+            "dev_token_sha256": fold["dev_sample_tokens_sha256"],
+            "grouped_protocol_artifact_sha256": protocol["artifact_sha256"],
+            "checkpoint_sha256": _sha256(checkpoint_path),
+            "public_validation_opened": False,
+            "private_test_opened": False,
+        }
+        mismatches = {
+            key: {"expected": value, "observed": contract.get(key)}
+            for key, value in expected.items()
+            if contract.get(key) != value
+        }
+        if mismatches:
+            raise ValueError(f"fold {index} parent contract differs: {mismatches}")
+        refs[index] = {
+            "checkpoint": checkpoint_path.relative_to(ROOT).as_posix(),
+            "checkpoint_sha256": contract["checkpoint_sha256"],
+            "parent_contract": contract_path.relative_to(ROOT).as_posix(),
+            "parent_contract_sha256": _sha256(contract_path),
+            "parent_contract_artifact_sha256": contract["artifact_sha256"],
+        }
+    return refs
 
 
 def main() -> int:
@@ -223,22 +275,23 @@ def main() -> int:
     parser.add_argument("--a8-source", type=Path, default=A8_SOURCE)
     parser.add_argument("--output-dir", type=Path, default=OUTPUT_DIR)
     parser.add_argument("--manifest", type=Path, default=MANIFEST_PATH)
+    parser.add_argument("--parent-run-root", type=Path, default=PARENT_RUN_ROOT)
     args = parser.parse_args()
 
     protocol_path = args.protocol.resolve(strict=True)
     protocol = json.loads(protocol_path.read_text(encoding="utf-8"))
+    parent_refs = load_parent_refs(protocol, args.parent_run_root.resolve())
     outputs = build_configs(
         protocol,
         _read_yaml(args.a6_source.resolve(strict=True)),
         _read_yaml(args.a8_source.resolve(strict=True)),
+        parent_refs,
     )
     args.output_dir.mkdir(parents=True, exist_ok=True)
     entries = []
     for name, config in outputs.items():
         path = args.output_dir / name
-        path.write_text(
-            yaml.safe_dump(config, sort_keys=False), encoding="utf-8", newline="\n"
-        )
+        path.write_text(yaml.safe_dump(config, sort_keys=False), encoding="utf-8", newline="\n")
         entries.append(
             {
                 "path": path.relative_to(ROOT).as_posix(),
@@ -249,8 +302,8 @@ def main() -> int:
             }
         )
     manifest = {
-        "artifact_type": "scientific_recovery_v5_a8_0_frozen_configs_v1",
-        "status": "frozen_before_grouped_dev_training",
+        "artifact_type": "scientific_recovery_v5_fold_downstream_frozen_configs_v1",
+        "status": "frozen_after_parents_before_a6_a8_training",
         "created_at_utc": datetime.now(UTC).isoformat(),
         "git_commit": _git("rev-parse", "HEAD"),
         "protocol": {
@@ -263,12 +316,11 @@ def main() -> int:
             "a8": {"path": str(args.a8_source), "sha256": _sha256(args.a8_source)},
         },
         "configs": sorted(entries, key=lambda row: (row["arm"], row["fold"])),
+        "parents": parent_refs,
         "seed_policy": {
-            "parent_checkpoint": PARENT_CHECKPOINT,
-            "parent_checkpoint_sha256": PARENT_CHECKPOINT_SHA256,
             "parent_seed": 7,
             "transport_training_seed": 7,
-            "folds_are_replications": True,
+            "folds_measure_sequence_population_change_not_multiseed": True,
         },
         "contracts": {
             "train_only_grouped_dev": True,

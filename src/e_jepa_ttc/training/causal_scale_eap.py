@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import json
 import math
 import os
@@ -59,6 +60,22 @@ def _safe_progress_value(value: object) -> object:
     return value
 
 
+def _module_tensor_sha256(module: nn.Module) -> str:
+    """Hash ordered tensor content without serialization metadata."""
+
+    digest = hashlib.sha256()
+    for name, tensor in sorted(module.state_dict().items()):
+        cpu = tensor.detach().cpu().contiguous()
+        for value in (name, str(cpu.dtype), repr(tuple(cpu.shape))):
+            encoded = value.encode("utf-8")
+            digest.update(len(encoded).to_bytes(8, "big"))
+            digest.update(encoded)
+        raw = cpu.view(torch.uint8).numpy().tobytes()
+        digest.update(len(raw).to_bytes(8, "big"))
+        digest.update(raw)
+    return digest.hexdigest()
+
+
 @dataclass(frozen=True)
 class CausalScaleEAPTrainingConfig:
     """Optimizer controls for a validation-only public eAP/Garl-TTC screen."""
@@ -79,9 +96,9 @@ class CausalScaleEAPTrainingConfig:
     precision: str = "bf16"
     maximum_runtime_hours: float = 6.0
     mask_t0_as_proxy: bool = True
-    foreground_supervision: Literal[
-        "weak_box", "bbox_geometry", "bbox_geometry_sam_teacher"
-    ] = "weak_box"
+    foreground_supervision: Literal["weak_box", "bbox_geometry", "bbox_geometry_sam_teacher"] = (
+        "weak_box"
+    )
     teacher_cache_artifact_sha256: str | None = None
     representation_supervision: Literal[
         "none",
@@ -135,8 +152,7 @@ class CausalScaleEAPTrainingConfig:
             "dinov3_local_relational_temporal_delta",
         }:
             raise ValueError(
-                "unsupported representation_supervision: "
-                f"{self.representation_supervision}"
+                f"unsupported representation_supervision: {self.representation_supervision}"
             )
 
         uses_dino = self.representation_supervision != "none"
@@ -157,8 +173,7 @@ class CausalScaleEAPTrainingConfig:
         if not math.isfinite(self.representation_temporal_delta_weight):
             raise ValueError("representation_temporal_delta_weight must be finite")
         uses_temporal_delta = (
-            self.representation_supervision
-            == "dinov3_local_relational_temporal_delta"
+            self.representation_supervision == "dinov3_local_relational_temporal_delta"
         )
         if uses_temporal_delta:
             if self.representation_temporal_delta_weight <= 0.0:
@@ -166,9 +181,7 @@ class CausalScaleEAPTrainingConfig:
                     "representation_temporal_delta_weight must be > 0.0 "
                     "for temporal-delta supervision"
                 )
-            if not bool(
-                self.representation_temporal_delta_calibration_artifact_sha256
-            ):
+            if not bool(self.representation_temporal_delta_calibration_artifact_sha256):
                 raise ValueError(
                     "A4D temporal-delta supervision requires the signed "
                     "calibration artifact identity"
@@ -181,9 +194,7 @@ class CausalScaleEAPTrainingConfig:
                     "'dinov3_local_relational_temporal_delta'"
                 )
             if self.representation_temporal_delta_calibration_artifact_sha256 is not None:
-                raise ValueError(
-                    "temporal-delta calibration identity must be absent outside A4D"
-                )
+                raise ValueError("temporal-delta calibration identity must be absent outside A4D")
 
         uses_initialization = self.initialization_mode != "none"
         if uses_initialization:
@@ -245,9 +256,7 @@ def _targets(
     batch: ObjectEventV4Batch,
     *,
     mask_t0_as_proxy: bool,
-    foreground_supervision: Literal[
-        "weak_box", "bbox_geometry", "bbox_geometry_sam_teacher"
-    ],
+    foreground_supervision: Literal["weak_box", "bbox_geometry", "bbox_geometry_sam_teacher"],
 ) -> CausalScaleEAPTargets:
     """Create disclosed weak targets; none are returned as model inputs."""
 
@@ -308,9 +317,7 @@ def _loss(
     loss_config: CausalScaleTTCLossConfig,
     *,
     mask_t0_as_proxy: bool,
-    foreground_supervision: Literal[
-        "weak_box", "bbox_geometry", "bbox_geometry_sam_teacher"
-    ],
+    foreground_supervision: Literal["weak_box", "bbox_geometry", "bbox_geometry_sam_teacher"],
     representation_supervision: Literal[
         "none",
         "dinov3_local_relational",
@@ -326,7 +333,9 @@ def _loss(
     )
     need_dense = representation_supervision != "none"
     output = model(
-        batch.events, targets.delta_t_s, return_dense_features=need_dense,
+        batch.events,
+        targets.delta_t_s,
+        return_dense_features=need_dense,
     )
     result = causal_scale_ttc_loss(
         output,
@@ -344,7 +353,8 @@ def _loss(
 
     # --- A4: DINOv3 relational distillation (train-only) ---
     if (
-        representation_supervision in {
+        representation_supervision
+        in {
             "dinov3_local_relational",
             "dinov3_local_relational_temporal_delta",
         }
@@ -361,8 +371,7 @@ def _loss(
         dense = output.endpoint_dense_features
         if dense.shape[1] < 3:
             raise ValueError(
-                f"DINO distillation requires at least 3 temporal endpoints, "
-                f"got {dense.shape[1]}"
+                f"DINO distillation requires at least 3 temporal endpoints, got {dense.shape[1]}"
             )
         # Select t1, t2 (not t0 which is the proxy reference)
         student_features = dense[:, 1:3]  # [B, 2, C, H, W]
@@ -384,13 +393,9 @@ def _loss(
                 batch.dinov3_relation_targets,
                 batch.dinov3_relation_valid,
             )
-            weighted_temporal_delta = (
-                representation_temporal_delta_weight * temporal_delta_loss
-            )
+            weighted_temporal_delta = representation_temporal_delta_weight * temporal_delta_loss
             total = total + weighted_temporal_delta
-            components["dinov3_relational_temporal_delta_raw"] = (
-                temporal_delta_loss.detach()
-            )
+            components["dinov3_relational_temporal_delta_raw"] = temporal_delta_loss.detach()
             components["dinov3_relational_temporal_delta_weighted"] = (
                 weighted_temporal_delta.detach()
             )
@@ -446,16 +451,19 @@ def _record_relational_fg_bg_diagnostic(
         student_rels = local_cosine_relation_maps(student_features)
         combined_valid = teacher_valid.bool() & student_rels.valid
         error_map = (
-            (student_rels.values - teacher_relations.float()).abs()
-            * combined_valid.float()
-        )  # [B, 2, K, H, W]
+            student_rels.values - teacher_relations.float()
+        ).abs() * combined_valid.float()  # [B, 2, K, H, W]
 
         # Build a coarse fg mask at feature resolution from the t1/t2 boxes
         # boxes_xyxy is [B, T, 4]; we need endpoints 1,2
         batch_size = student_features.shape[0]
         fg_mask = torch.zeros(
-            batch_size, 2, feat_h, feat_w,
-            dtype=torch.bool, device=student_features.device,
+            batch_size,
+            2,
+            feat_h,
+            feat_w,
+            dtype=torch.bool,
+            device=student_features.device,
         )
         if min(source_height, source_width, feat_h, feat_w) <= 0:
             raise ValueError("relational fg/bg diagnostic dimensions must be positive")
@@ -479,14 +487,10 @@ def _record_relational_fg_bg_diagnostic(
         valid_bg = combined_valid & ~fg_expanded
 
         fg_loss = (
-            error_map[valid_fg].mean()
-            if valid_fg.any()
-            else error_map.new_tensor(float("nan"))
+            error_map[valid_fg].mean() if valid_fg.any() else error_map.new_tensor(float("nan"))
         )
         bg_loss = (
-            error_map[valid_bg].mean()
-            if valid_bg.any()
-            else error_map.new_tensor(float("nan"))
+            error_map[valid_bg].mean() if valid_bg.any() else error_map.new_tensor(float("nan"))
         )
         fg_fraction = (
             valid_fg.float().sum() / combined_valid.float().sum()
@@ -646,14 +650,10 @@ class ShardGroupedRandomSampler(Sampler[int]):
         self.generator = generator
 
     def __iter__(self) -> Iterator[int]:
-        shard_order = torch.randperm(
-            len(self.groups), generator=self.generator
-        ).tolist()
+        shard_order = torch.randperm(len(self.groups), generator=self.generator).tolist()
         for shard_index in shard_order:
             group = self.groups[shard_index]
-            record_order = torch.randperm(
-                len(group), generator=self.generator
-            ).tolist()
+            record_order = torch.randperm(len(group), generator=self.generator).tolist()
             for record_index in record_order:
                 yield group[record_index]
 
@@ -726,9 +726,7 @@ def train_one_real_epoch(
                 foreground_supervision=config.foreground_supervision,
                 representation_supervision=config.representation_supervision,
                 representation_distillation_weight=config.representation_distillation_weight,
-                representation_temporal_delta_weight=(
-                    config.representation_temporal_delta_weight
-                ),
+                representation_temporal_delta_weight=(config.representation_temporal_delta_weight),
             )
             scaled = total / config.gradient_accumulation_steps
         if not bool(torch.isfinite(total)):
@@ -740,13 +738,9 @@ def train_one_real_epoch(
             optimizer.zero_grad(set_to_none=True)
         count = int(batch.events.shape[0])
         examples += count
-        totals["total"] = (
-            totals.get("total", 0.0) + float(total.detach().cpu()) * count
-        )
+        totals["total"] = totals.get("total", 0.0) + float(total.detach().cpu()) * count
         for key, value in components.items():
-            totals[key] = (
-                totals.get(key, 0.0) + float(value.detach().cpu()) * count
-            )
+            totals[key] = totals.get(key, 0.0) + float(value.detach().cpu()) * count
     if examples == 0:
         raise ValueError("training loader is empty")
     return {key: value / examples for key, value in totals.items()}
@@ -847,10 +841,7 @@ def evaluate_real_causal_scale(
     for host_batch in loader:
         batch = host_batch.to(device)
         # --- A4: Validation must never see DINO teacher fields ---
-        if (
-            batch.dinov3_relation_targets is not None
-            or batch.dinov3_relation_valid is not None
-        ):
+        if batch.dinov3_relation_targets is not None or batch.dinov3_relation_valid is not None:
             raise ValueError(
                 "DINO teacher fields must not appear in validation batches. "
                 "The DINOv3RelationalTeacherDataset wrapper must only be "
@@ -873,9 +864,7 @@ def evaluate_real_causal_scale(
             )
         else:
             delta = batch.delta_t_s[:, None].expand(-1, batch.events.shape[1] - 1)
-            target_valid = torch.isfinite(batch.target_ttc_s) & (
-                batch.target_ttc_s != 0.0
-            )
+            target_valid = torch.isfinite(batch.target_ttc_s) & (batch.target_ttc_s != 0.0)
             targets = CausalScaleEAPTargets(
                 delta_t_s=delta,
                 target_valid=target_valid,
@@ -904,14 +893,15 @@ def evaluate_real_causal_scale(
             predicted_masks = torch.sigmoid(output.foreground_logits) >= 0.5
             selected_masks = targets.mask_valid
             intersection = (
-                predicted_masks & targets.target_masks.bool()
-            ).sum(dim=(-3, -2, -1)).float()
-            union = (
-                predicted_masks | targets.target_masks.bool()
-            ).sum(dim=(-3, -2, -1)).float().clamp_min(1)
-            weak_iou.append(
-                (intersection[selected_masks] / union[selected_masks]).cpu()
+                (predicted_masks & targets.target_masks.bool()).sum(dim=(-3, -2, -1)).float()
             )
+            union = (
+                (predicted_masks | targets.target_masks.bool())
+                .sum(dim=(-3, -2, -1))
+                .float()
+                .clamp_min(1)
+            )
+            weak_iou.append((intersection[selected_masks] / union[selected_masks]).cpu())
         if targets.geometry is not None:
             geometry = targets.geometry
             endpoint_valid = geometry.valid.bool()
@@ -948,12 +938,8 @@ def evaluate_real_causal_scale(
                 output.diagnostics["foreground_centroid_y"][endpoint_valid].float().cpu()
             )
             endpoint_valid_cpu = endpoint_valid.cpu()
-            for sequence, row_valid in zip(
-                batch.sequence_ids, endpoint_valid_cpu, strict=True
-            ):
-                endpoint_geometry_sequences.extend(
-                    [sequence] * int(row_valid.sum().item())
-                )
+            for sequence, row_valid in zip(batch.sequence_ids, endpoint_valid_cpu, strict=True):
+                endpoint_geometry_sequences.extend([sequence] * int(row_valid.sum().item()))
 
             pair_valid = endpoint_valid[:, -2] & endpoint_valid[:, -1]
             target_height_ratio = (
@@ -973,9 +959,7 @@ def evaluate_real_causal_scale(
                 - output.visible_width_normalized[:, -2].clamp_min(1.0e-6).log()
             )
             target_isotropic_ratio = 0.5 * (target_height_ratio + target_width_ratio)
-            predicted_isotropic_ratio = 0.5 * (
-                predicted_height_ratio + predicted_width_ratio
-            )
+            predicted_isotropic_ratio = 0.5 * (predicted_height_ratio + predicted_width_ratio)
             pair_values = {
                 "height_target": target_height_ratio,
                 "height_prediction": predicted_height_ratio,
@@ -999,9 +983,7 @@ def evaluate_real_causal_scale(
             }
             for key, value in physical_values.items():
                 physical_geometry[key].append(value[physical_valid].float().cpu())
-            for sequence, valid in zip(
-                batch.sequence_ids, physical_valid.cpu(), strict=True
-            ):
+            for sequence, valid in zip(batch.sequence_ids, physical_valid.cpu(), strict=True):
                 if bool(valid):
                     physical_geometry_sequences.append(sequence)
 
@@ -1026,9 +1008,7 @@ def evaluate_real_causal_scale(
                 transport_quality[name].append(
                     output.diagnostics[f"transport_{name}"][:, current_pair].float().cpu()
                 )
-            for sequence, valid in zip(
-                batch.sequence_ids, transport_valid.cpu(), strict=True
-            ):
+            for sequence, valid in zip(batch.sequence_ids, transport_valid.cpu(), strict=True):
                 if bool(valid):
                     transport_geometry_sequences.append(sequence)
             transport_quality_sequences.extend(batch.sequence_ids)
@@ -1089,16 +1069,18 @@ def evaluate_real_causal_scale(
         "absolute_median": float(np.median(np.abs(residual_values))),
         "fraction_above_80pct_bound": float(
             np.mean(np.abs(residual_values) >= 0.8 * residual_bound)
-        ) if residual_bound > 0.0 else 0.0,
+        )
+        if residual_bound > 0.0
+        else 0.0,
         "fraction_above_95pct_bound": float(
             np.mean(np.abs(residual_values) >= 0.95 * residual_bound)
-        ) if residual_bound > 0.0 else 0.0,
+        )
+        if residual_bound > 0.0
+        else 0.0,
         "bound": residual_bound,
     }
     signed = signed_garl_metrics(target_np, prediction_np)
-    sequence_macro = sequence_macro_signed_metrics(
-        target_np, prediction_np, np.asarray(sequences)
-    )
+    sequence_macro = sequence_macro_signed_metrics(target_np, prediction_np, np.asarray(sequences))
     geometry_diagnostics: dict[str, Any] | None = None
     if endpoint_geometry["log_height_target"]:
         endpoint_np = {
@@ -1213,9 +1195,7 @@ def evaluate_real_causal_scale(
         "signed": signed,
         "sequence_macro": sequence_macro,
         "known_coverage": float(torch.cat(known).float().mean()),
-        "weak_bbox_iou": (
-            float(torch.cat(weak_iou).mean()) if weak_iou else float("nan")
-        ),
+        "weak_bbox_iou": (float(torch.cat(weak_iou).mean()) if weak_iou else float("nan")),
         "weak_bbox_iou_count": sum(int(value.numel()) for value in weak_iou),
         "log_ratio_mae": float((ratio - ratio_target).abs().mean()),
         "log_ratio_pearson": pearson,
@@ -1327,9 +1307,7 @@ def train_real_causal_scale(
         raise ValueError("stop_after_epoch must lie within the configured epoch range")
     seed_everything(training_config.seed, deterministic=True)
     generator = torch.Generator().manual_seed(training_config.seed)
-    train_loader = _loader(
-        train_dataset, training_config, train=True, generator=generator
-    )
+    train_loader = _loader(train_dataset, training_config, train=True, generator=generator)
     validation_loader = _loader(validation_dataset, training_config, train=False)
     model = CausalScaleTTC(model_config).to(device)
     initialization: dict[str, Any] = {
@@ -1360,6 +1338,25 @@ def train_real_causal_scale(
         raise RuntimeError("causal-scale run has no trainable parameters")
     initialization["frozen_parameter_count"] = frozen_parameter_count
     initialization["trainable_parameter_count"] = trainable_parameter_count
+    frozen_parameter_names = sorted(
+        name for name, parameter in model.named_parameters() if not parameter.requires_grad
+    )
+    optimizer_parameter_names = sorted(
+        name for name, parameter in model.named_parameters() if parameter.requires_grad
+    )
+    initialization["frozen_parameter_names"] = frozen_parameter_names
+    initialization["optimizer_parameter_names"] = optimizer_parameter_names
+    initialization["frozen_optimizer_overlap"] = sorted(
+        set(frozen_parameter_names) & set(optimizer_parameter_names)
+    )
+    initial_primary_encoder_sha256 = _module_tensor_sha256(model.encoder)
+    initialization["initial_primary_encoder_sha256"] = initial_primary_encoder_sha256
+    initial_transport_encoder_sha256 = (
+        _module_tensor_sha256(model.transport_encoder)
+        if model.transport_encoder is not None
+        else None
+    )
+    initialization["initial_transport_encoder_sha256"] = initial_transport_encoder_sha256
     optimizer = torch.optim.AdamW(
         [parameter for parameter in model.parameters() if parameter.requires_grad],
         lr=training_config.learning_rate,
@@ -1383,9 +1380,7 @@ def train_real_causal_scale(
         checkpoint_dir.mkdir(parents=True, exist_ok=True)
     last_path = checkpoint_dir / "last.pt" if checkpoint_dir is not None else None
     best_path = checkpoint_dir / "best.pt" if checkpoint_dir is not None else None
-    progress_path = (
-        checkpoint_dir / "progress.json" if checkpoint_dir is not None else None
-    )
+    progress_path = checkpoint_dir / "progress.json" if checkpoint_dir is not None else None
     if resume:
         if last_path is None or not last_path.is_file():
             raise FileNotFoundError("resume requested but last.pt is unavailable")
@@ -1399,9 +1394,7 @@ def train_real_causal_scale(
             "train_samples": len(train_dataset),
             "validation_samples": len(validation_dataset),
         }
-        actual_contract = {
-            key: saved.get(key) for key in expected_contract
-        }
+        actual_contract = {key: saved.get(key) for key in expected_contract}
         if actual_contract != expected_contract:
             raise ValueError("resume state differs from the current config/data contract")
         model.load_state_dict(saved["model_state_dict"], strict=True)
@@ -1422,9 +1415,7 @@ def train_real_causal_scale(
         if device.type == "cuda" and saved.get("cuda_rng_state_all") is not None:
             torch.cuda.set_rng_state_all(saved["cuda_rng_state_all"])
     started = time.perf_counter()
-    remaining_seconds = max(
-        0.0, training_config.maximum_runtime_hours * 3600.0 - prior_elapsed
-    )
+    remaining_seconds = max(0.0, training_config.maximum_runtime_hours * 3600.0 - prior_elapsed)
     deadline = started + remaining_seconds
 
     def save_state(path: Path, epoch: int, elapsed: float) -> None:
@@ -1488,9 +1479,7 @@ def train_real_causal_scale(
             break
         epoch_started = time.perf_counter()
         active_loss = (
-            foreground_only
-            if epoch <= training_config.foreground_warmup_epochs
-            else loss_config
+            foreground_only if epoch <= training_config.foreground_warmup_epochs else loss_config
         )
         train_metrics = train_one_real_epoch(
             model, train_loader, optimizer, device, training_config, active_loss
@@ -1546,6 +1535,17 @@ def train_real_causal_scale(
     if best_state is None or best_selection is None or best_validation is None:
         raise RuntimeError("real causal-scale training produced no selectable checkpoint")
     model.load_state_dict(best_state)
+    final_primary_encoder_sha256 = _module_tensor_sha256(model.encoder)
+    initialization["final_primary_encoder_sha256"] = final_primary_encoder_sha256
+    initialization["primary_encoder_exact_initial"] = (
+        final_primary_encoder_sha256 == initial_primary_encoder_sha256
+    )
+    if model.transport_encoder is not None:
+        final_transport_encoder_sha256 = _module_tensor_sha256(model.transport_encoder)
+        initialization["final_transport_encoder_sha256"] = final_transport_encoder_sha256
+        initialization["transport_encoder_changed_from_initial"] = (
+            final_transport_encoder_sha256 != initial_transport_encoder_sha256
+        )
     post_selection_validation = evaluate_real_causal_scale(
         model,
         validation_loader,
@@ -1558,9 +1558,7 @@ def train_real_causal_scale(
         raise RuntimeError("post-selection geometry evaluation changed TTC selection metrics")
     best_validation = post_selection_validation
     elapsed_total = prior_elapsed + time.perf_counter() - started
-    save_progress(
-        status="completed", epoch=last_completed_epoch, elapsed=elapsed_total
-    )
+    save_progress(status="completed", epoch=last_completed_epoch, elapsed=elapsed_total)
     if last_path is not None and last_completed_epoch < start_epoch:
         raise RuntimeError("runtime budget expired before a resumable epoch completed")
     return CausalScaleEAPTrainingResult(
