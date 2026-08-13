@@ -422,6 +422,67 @@ def _validate_representation_change(
     }
 
 
+def _validate_v6_d0_payload(
+    payload: dict[str, Any],
+    contract: dict[str, Any],
+    model_config: CausalScaleTTCConfig,
+) -> dict[str, Any]:
+    """Validate the frozen D0 decision that authorizes the radius-2 test."""
+
+    if payload.get("artifact_type") != "scientific_recovery_v6_d0_a8_oof_failure_modes_v1":
+        raise ValueError("V6.1 requires the signed V6-D0 failure-mode artifact")
+    if payload.get("status") != "completed_exploratory_outer_dev_diagnostic":
+        raise ValueError("V6-D0 did not complete")
+    decision = payload.get("decision")
+    if not isinstance(decision, dict):
+        raise ValueError("V6-D0 decision is malformed")
+    if decision.get("selected_family") != "motion_scale":
+        raise ValueError("V6-D0 did not select the motion/scale family")
+    if decision.get("selected_branch") != "V6.1_MULTI_SCALE_TRANSPORT":
+        raise ValueError("V6-D0 did not authorize the multi-scale branch")
+    contracts = payload.get("contracts")
+    if not isinstance(contracts, dict):
+        raise ValueError("V6-D0 contracts are malformed")
+    if contracts.get("public_validation_opened") is not False:
+        raise ValueError("V6-D0 opened public validation")
+    if contracts.get("private_test_opened") is not False:
+        raise ValueError("V6-D0 opened private/test")
+    if contracts.get("promotion_authorized") is not False:
+        raise ValueError("V6-D0 may not authorize promotion")
+    if contract.get("source_radius") != 1 or contract.get("candidate_radius") != 2:
+        raise ValueError("V6.1 radius transition must be 1 -> 2")
+    if model_config.transport_radius != int(contract["candidate_radius"]):
+        raise ValueError("V6.1 runtime radius differs from its D0 contract")
+    if contract.get("single_scientific_difference") != "transport_radius_1_to_2":
+        raise ValueError("V6.1 must change only the transport radius")
+    return {
+        "artifact_type": payload["artifact_type"],
+        "artifact_sha256": payload.get("artifact_sha256"),
+        "selected_family": decision["selected_family"],
+        "selected_branch": decision["selected_branch"],
+        "source_radius": 1,
+        "candidate_radius": 2,
+        "scope": "fold_local_outer_dev_exploratory",
+    }
+
+
+def _validate_v6_d0_radius_expansion(
+    decision_contract: dict[str, Any], model_config: CausalScaleTTCConfig
+) -> dict[str, Any]:
+    contract = decision_contract.get("v6_d0_contract")
+    if not isinstance(contract, dict):
+        raise ValueError("V6.1 requires decision_contract.v6_d0_contract")
+    artifact_path = _resolve(contract.get("artifact"))
+    if _sha256(artifact_path) != contract.get("file_sha256"):
+        raise ValueError("V6-D0 file hash differs from the frozen V6.1 contract")
+    payload = json.loads(artifact_path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict) or not verify_artifact_hash(payload):
+        raise ValueError("V6-D0 artifact signature is invalid")
+    if payload.get("artifact_sha256") != contract.get("artifact_sha256"):
+        raise ValueError("V6-D0 signed identity differs from the frozen V6.1 contract")
+    return _validate_v6_d0_payload(payload, contract, model_config)
+
+
 def _validate_a5_transport_change(
     training_config: CausalScaleEAPTrainingConfig,
     model_config: CausalScaleTTCConfig,
@@ -436,6 +497,7 @@ def _validate_a5_transport_change(
         "a4_frozen_endpoint_plus_event_native_local_cross_time_transport",
         "a4_frozen_endpoint_plus_adaptive_transport_adapter",
         "a4_frozen_geometry_plus_trainable_transport_encoder",
+        "a4_frozen_geometry_plus_trainable_transport_encoder_radius_expansion",
     }
     if change_type not in supported_a5_types:
         if model_config.transport_enabled:
@@ -452,11 +514,20 @@ def _validate_a5_transport_change(
         "a4_frozen_endpoint_plus_event_native_local_cross_time_transport",
         "a4_frozen_endpoint_plus_adaptive_transport_adapter",
         "a4_frozen_geometry_plus_trainable_transport_encoder",
+        "a4_frozen_geometry_plus_trainable_transport_encoder_radius_expansion",
     }:
         if change_type == "a4_frozen_endpoint_plus_adaptive_transport_adapter":
             contract_name, label = "adapter_contract", "A6-ADAPTER"
-        elif change_type == "a4_frozen_geometry_plus_trainable_transport_encoder":
-            contract_name, label = "dual_stream_contract", "A7-DUAL-STREAM"
+        elif change_type in {
+            "a4_frozen_geometry_plus_trainable_transport_encoder",
+            "a4_frozen_geometry_plus_trainable_transport_encoder_radius_expansion",
+        }:
+            contract_name = "dual_stream_contract"
+            label = (
+                "V6.1-RADIUS-EXPANSION"
+                if change_type.endswith("radius_expansion")
+                else "A7-DUAL-STREAM"
+            )
         else:
             contract_name, label = "anchor_contract", "A5-ANCHOR"
         anchor = decision_contract.get(contract_name)
@@ -526,6 +597,9 @@ def _validate_a5_transport_change(
         raise ValueError("A5 transport radius differs from model config")
     if change.get("transport_pairs") != ["t0_to_t1", "t1_to_t2"]:
         raise ValueError("A5 transport must cover both t0->t1 and t1->t2")
+
+    if change_type.endswith("radius_expansion"):
+        return _validate_v6_d0_radius_expansion(decision_contract, model_config)
 
     preflight = decision_contract.get("preflight_contract")
     if not isinstance(preflight, dict):
