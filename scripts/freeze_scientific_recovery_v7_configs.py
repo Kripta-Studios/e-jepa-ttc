@@ -19,6 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from e_jepa_ttc.artifacts.hashing import sign_artifact, verify_artifact_hash  # noqa: E402
+from e_jepa_ttc.data.garlttc_lhr_cache import GarlTTCLHRCacheDataset  # noqa: E402
 
 BASE_CONFIG_DIR = ROOT / "configs/experiment/scientific_recovery_v6_fold_chain"
 OUTPUT_CONFIG_DIR = ROOT / "configs/experiment/scientific_recovery_v7_fold_chain"
@@ -81,7 +82,21 @@ def _write_json(path: Path, payload: dict[str, Any]) -> None:
     )
 
 
-def _cache_identity(path: Path, *, expected_channels: int) -> dict[str, Any]:
+def _sorted_values_sha256(values: list[str]) -> str:
+    digest = hashlib.sha256()
+    for value in sorted(values):
+        encoded = value.encode("utf-8")
+        digest.update(len(encoded).to_bytes(8, "big"))
+        digest.update(encoded)
+    return digest.hexdigest()
+
+
+def _cache_identity(
+    path: Path,
+    *,
+    expected_channels: int,
+    expected_token_sha256: str | None = None,
+) -> dict[str, Any]:
     manifest = _read_json(path, signed=True)
     extension = manifest.get("object_lhr_extension", {})
     shape = extension.get("event_v4_common_roi_shape")
@@ -93,11 +108,21 @@ def _cache_identity(path: Path, *, expected_channels: int) -> dict[str, Any]:
         manifest.get("split_counts", {}).get("validation", -1)
     ) != 0:
         raise ValueError("T20 cache must not materialize public validation rows")
+    token_sha256 = None
+    if expected_token_sha256 is not None:
+        dataset = GarlTTCLHRCacheDataset(path, splits=("train",))
+        tokens = [str(dataset[index]["sample_token"]) for index in range(len(dataset))]
+        if len(tokens) != len(set(tokens)):
+            raise ValueError(f"cache {path} contains duplicate sample tokens")
+        token_sha256 = _sorted_values_sha256(tokens)
+        if token_sha256 != expected_token_sha256:
+            raise ValueError(f"cache {path} token universe differs from the protocol")
     return {
         "path": path.relative_to(ROOT).as_posix(),
         "file_sha256": _sha256(path),
         "artifact_sha256": manifest["artifact_sha256"],
         "shape": shape,
+        "sorted_sample_tokens_sha256": token_sha256,
     }
 
 
@@ -115,9 +140,14 @@ def freeze(*, require_t20: bool) -> dict[str, Any]:
     """Write the signed protocol and exact runnable configs."""
 
     grouped = _read_json(GROUPED_PROTOCOL, signed=True)
+    expected_token_sha256 = str(grouped["sorted_sample_tokens_sha256"])
     base_cache = _cache_identity(BASE_CACHE, expected_channels=12)
     t20_cache = (
-        _cache_identity(T20_CACHE, expected_channels=22)
+        _cache_identity(
+            T20_CACHE,
+            expected_channels=22,
+            expected_token_sha256=expected_token_sha256,
+        )
         if T20_CACHE.is_file()
         else None
     )
