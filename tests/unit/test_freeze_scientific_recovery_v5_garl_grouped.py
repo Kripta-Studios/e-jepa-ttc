@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import json
+import subprocess
+import sys
 
 from scripts.freeze_scientific_recovery_v5_garl_grouped import (
     PROTOCOL_PATH,
@@ -32,3 +34,14 @@ def test_garl_fold_runs_are_from_scratch_and_train_only() -> None:
         contracts["comparison_scope"]
         == "exact-sample, target, budget, metric and oracle-ROI matched"
     )
+
+
+def test_garl_freezer_is_directly_executable() -> None:
+    completed = subprocess.run(
+        [sys.executable, "scripts/freeze_scientific_recovery_v5_garl_grouped.py", "--help"],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert completed.returncode == 0, completed.stderr
