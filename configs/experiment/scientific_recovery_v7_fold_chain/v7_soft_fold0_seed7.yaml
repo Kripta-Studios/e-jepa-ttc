@@ -1,0 +1,206 @@
+experiment:
+  name: scientific_recovery_v7_soft_fold0_seed7
+  protocol_version: scientific_recovery_v7_balanced_oof_v1
+  evidence_scope: public_train_only_grouped_development
+  parent_arm: A4_S1_train8192_same_lambda_control_required_for_transport_claim
+  single_scientific_difference: fold_local_a4_soft_geometry_distillation
+  parent_config: configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a4_dinov3_relational_v1.yaml
+  grouped_dev_role: balanced_v7_exploratory_arm
+  parent_stochasticity: fold_specific_A4_seed7
+  transport_training_seed: 7
+  purpose: fold_local_test_of_unfrozen_a5_under_causal_smoothing
+model_config: configs/model/e_jepa_causal_scale_event_v9_transport_r1_t002_causal.yaml
+data:
+  cache_manifest: artifacts/cache/garl_object_event_common_roi_train8192_v1/manifest.json
+  cache_manifest_sha256: 063980fdae5fda0b2836befc662fdd1cd5659bf06f10d9760dfc0d566fac8e39
+  cache_artifact_sha256: f64b4348820b3ed83307413fd52c2cb39dae3c70deae8e65dc24996fe9ef25ec
+  train_sequence_ids:
+  - 2cyv0Oedzg
+  - 6h5yRW2LGc
+  - OBneIVg4Cw
+  - WbCh1DRerJ
+  - mHGFBekt7X
+  - t79dBxj1WS
+  opened_splits:
+  - train
+  official_test_opened: false
+  codabench_opened: false
+  evttc_test_opened: false
+  dinov3_relational_teacher:
+    manifest: artifacts/cache/dinov3_convnext_large_relational_a4_train8192_rgb_v1/manifest.json
+    manifest_sha256: 6ee4b205d29a07d3aabf7137f2a312376711b5e5d9d7930ea36328390023eab3
+    artifact_sha256: 6511c684881f3360efb7c8718976ef6b37de36668a89d9ea2f8d4bdf6f620b20
+  dev_sequence_ids:
+  - 5ilM1PX2vz
+  - OYgB6RGWcq
+  - qGsgzl4Q8B
+  expected_source_train_rows: 8192
+  development_protocol:
+    path: configs/protocol/scientific_recovery_v5_train_only_grouped_dev.json
+    file_sha256: be48917ae52d1c77d046318bd9ed284a32e8b16258257203fff439332b547874
+    artifact_sha256: f09c688fb4991714abc9d645dda787cb27f1e02a2d1857312ce3e45519bd7a63
+    fold: 0
+training:
+  seed: 7
+  epochs: 18
+  minimum_epochs: 8
+  early_stopping_patience: 5
+  foreground_warmup_epochs: 3
+  batch_size: 32
+  gradient_accumulation_steps: 1
+  learning_rate: 0.0003
+  minimum_learning_rate: 3.0e-05
+  weight_decay: 0.0001
+  grad_clip_norm: 1.0
+  num_workers: 0
+  precision: bf16
+  maximum_runtime_hours: 6.0
+  mask_t0_as_proxy: true
+  foreground_supervision: bbox_geometry
+  representation_supervision: dinov3_local_relational
+  representation_teacher_cache_artifact_sha256: 6511c684881f3360efb7c8718976ef6b37de36668a89d9ea2f8d4bdf6f620b20
+  representation_distillation_weight: 8.0
+  prefetch_factor: 2
+  initialization_checkpoint: null
+  initialization_checkpoint_sha256: null
+  initialization_mode: none
+  freeze_encoder: false
+  freeze_encoder_stages: 0
+  soft_geometry_teacher_checkpoint: artifacts/runs/scientific_recovery_v5_a4_parent_grouped_fold0_seed7/model_best.pt
+  soft_geometry_teacher_checkpoint_sha256: bb9d087c88b49641d0054aa38a24537354fff3db0aac66b557373a9e8fd8cc9c
+  soft_dense_cosine_weight: 1.0
+  soft_geometry_weight: 1.0
+loss:
+  log_ratio_nll_weight: 1.0
+  log_ratio_huber_weight: 0.0
+  log_ratio_tail_weight: 2.0
+  log_ratio_tail_fraction: 0.1
+  foreground_bce_weight: 0.0
+  foreground_dice_weight: 0.0
+  foreground_extent_weight: 1.25
+  foreground_width_weight: 1.25
+  foreground_center_weight: 2.5
+  foreground_pair_ratio_weight: 0.0
+  risk_weight: 0.1
+  auxiliary_inverse_ttc_weight: 0.05
+  residual_regularization_weight: 0.1
+  temporal_consistency_weight: 0.0
+  smooth_l1_beta: 0.02
+  supervise_pair_ratio_before_temporal_blend: true
+decision_contract:
+  checkpoint_selection: dev_sequence_macro_MiD_then_failure_rate
+  expected_parameter_count: 424274
+  bbox_is_training_supervision_only: true
+  bbox_is_never_forward_input: true
+  dense_weak_box_target_used: false
+  foreground_pair_ratio_weight_must_remain_zero: true
+  representation_change:
+    type: a4_endpoint_dino_plus_event_native_local_cross_time_transport
+    dino_endpoint_teacher_unchanged_from_a4: true
+    dino_temporal_delta_removed: true
+    teacher_model: facebook/dinov3-convnext-large-pretrain-lvd1689m
+    teacher_feature_grid:
+    - 32
+    - 32
+    teacher_is_model_input: false
+    transport_model_input: event_dense_features_only
+    transport_pairs:
+    - t0_to_t1
+    - t1_to_t2
+    transport_grid:
+    - 32
+    - 32
+    transport_radius: 1
+    transport_candidates_per_position: 9
+    transport_similarity: l2_normalized_cosine
+    transport_matching: softmax_expected_displacement
+    physical_features:
+    - translation_x
+    - translation_y
+    - divergence_x
+    - divergence_y
+    - divergence_isotropic
+    - flow_magnitude
+    - confidence_margin
+    - entropy
+    - cycle_error
+    foreground_features_use_predicted_foreground_only: true
+    bbox_used_by_transport: false
+    rgb_used_at_inference: false
+    jepa_objective: false
+    direct_ttc_regressor_from_flow: false
+    analytic_height_ratio_remains_primary_backbone: true
+    max_abs_total_learned_log_ratio_residual: 0.05
+    transport_temperature: 0.02
+  preflight_contract:
+    artifact_type: a5_transport_preflight_train_only_v3_confirmation
+    artifact: artifacts/metrics/a5_transport_preflight_v3_confirm/a5_transport_preflight_v3_confirm.json
+    artifact_sha256: 9fcf557ba47a8814846be0031c85fb84f83fa237cf98164dd9c5602017661aab
+    file_sha256: a848b24fd88946d3c928139dd3ebaabaa5e29ed219ee700c1a3315147ad465a6
+    selected_radius: 1
+    selected_temperature: 0.02
+    selection_rule: v3_disjoint_confirmation_of_v2_soft_epe_candidate
+    public_train_only: true
+    optimizer_steps: 0
+    a5_training_requires_preflight_pass: true
+  capacity_policy:
+    a5_corr_v1_must_keep_a4_encoder_width_depth: true
+    capacity_changes_are_separate_post_gate_arms: true
+    cap_s_parameter_count: 1106786
+    cap_m_parameter_count: 2250354
+    garl_event_lhr_reference_parameter_count: 24674178
+    larger_dino_grid_requires_new_teacher_cache_and_separate_preregistration: true
+  no_sam_teacher: true
+  no_jepa_objective: true
+  no_pair_ratio: true
+  no_posthoc_diagnostic_threshold_is_a_promotion_gate: true
+  r_iso_is_diagnostic_only: true
+  diagnostic_reporting: global_and_macro_by_sequence
+  scaling_rule: only_after_a5_transport_gate_then_seed_replication_then_data_scale
+  maximum_runtime_hours: 6.0
+  public_validation_does_not_authorize_sota_claim: true
+  private_test_remains_closed: true
+  multi_object_contract:
+    teacher_keyed_by_sample_token: true
+    track_id_verified_per_row: true
+    same_frame_multiple_tracks_not_deduplicated: true
+    rgb_crop_is_per_object_common_square: true
+  a4_endpoint_dino_lambda_source: train_only_A4_lambda_CV_selected_before_A5_scale_validation
+  a4_endpoint_dino_lambda_frozen: 8.0
+  data_scale_rows: 8192
+  scale_changes_model_architecture: false
+  scale_changes_transport_radius: false
+  scale_uses_new_rgb_teacher_only_for_train_rows: true
+  same_scale_A4_control_required: true
+  sota_requires_budget_matched_garl_and_sealed_test: true
+  require_finite_metrics_for_all_dev_sequences: true
+  grouped_dev_protocol:
+    artifact_sha256: f09c688fb4991714abc9d645dda787cb27f1e02a2d1857312ce3e45519bd7a63
+    fold: 0
+    train_rows: 5461
+    dev_rows: 2731
+    public_validation_used_for_selection: false
+    private_test_opened: false
+  primary_development_comparator: A8.0_same_fold_seed_budget
+  public_validation_used_for_selection: false
+  geometry_preservation_required: false
+  diagnostic_only_until_geometry_is_reassessed: true
+  grouped_dev_role: diagnostic_geometry_unconstrained_comparator
+  v7_protocol_path: configs/protocol/scientific_recovery_v7_balanced_oof.json
+  v7_protocol_artifact_sha256: 7267421c288f6a5e68e779e344dabebb62c9d04df5e100186a8013dfe4a93cf9
+  jepa_objective: false
+  jepa_attribution_allowed: false
+  evttc_test_remains_closed: true
+  codabench_remains_closed: true
+  point_prediction_finite_required: true
+  soft_teacher_contract:
+    fold: 0
+    checkpoint: artifacts/runs/scientific_recovery_v5_a4_parent_grouped_fold0_seed7/model_best.pt
+    checkpoint_sha256: bb9d087c88b49641d0054aa38a24537354fff3db0aac66b557373a9e8fd8cc9c
+    teacher_tokens_equal_fold_train: true
+    teacher_tokens_intersect_outer_dev: false
+    teacher_frozen_eval: true
+    teacher_excluded_from_optimizer: true
+    teacher_absent_at_inference: true
+    dense_cosine_weight: 1.0
+    geometry_smooth_l1_weight: 1.0

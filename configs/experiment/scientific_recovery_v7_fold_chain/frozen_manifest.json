@@ -1,0 +1,67 @@
+{
+  "artifact_sha256": "f0a06bfeb20f90a50efeb08e84fe027a7cb402b92917566d5b584e7e29f8bea6",
+  "artifact_type": "scientific_recovery_v7_frozen_config_manifest_v1",
+  "closed_evaluation": {
+    "allowed_splits": [
+      "train_fold",
+      "outer_dev_fold"
+    ],
+    "codabench_opened": false,
+    "evttc_test_opened": false,
+    "private_test_opened": false,
+    "public_validation_used_for_selection": false
+  },
+  "configs": {
+    "v7_c2f_fold0_seed7": {
+      "path": "configs/experiment/scientific_recovery_v7_fold_chain/v7_c2f_fold0_seed7.yaml",
+      "sha256": "39e9362829da6f0aa1460584198373ff4d88a902735f21923277ea1a59d08cf5"
+    },
+    "v7_c2f_fold1_seed7": {
+      "path": "configs/experiment/scientific_recovery_v7_fold_chain/v7_c2f_fold1_seed7.yaml",
+      "sha256": "f4110b80af9ab4f5fe623c785a31e5d9465c82fbc4d73741cf04a013dcf0c6e5"
+    },
+    "v7_c2f_fold2_seed7": {
+      "path": "configs/experiment/scientific_recovery_v7_fold_chain/v7_c2f_fold2_seed7.yaml",
+      "sha256": "ff229ac1030e7126fa33dc4dd186a3dae9831482b85e2f68092fb00c07896656"
+    },
+    "v7_cap_s_fold0_seed7": {
+      "path": "configs/experiment/scientific_recovery_v7_fold_chain/v7_cap_s_fold0_seed7.yaml",
+      "sha256": "1f89d17edad1f6e73a228d8c777f0533a8e17243d2917c0b3c9ed0521b88865b"
+    },
+    "v7_cap_s_fold1_seed7": {
+      "path": "configs/experiment/scientific_recovery_v7_fold_chain/v7_cap_s_fold1_seed7.yaml",
+      "sha256": "05c474742a2a08bc54de91cbcb26f7fef081f3c0b2361ca64d6ca17b80ba5365"
+    },
+    "v7_cap_s_fold2_seed7": {
+      "path": "configs/experiment/scientific_recovery_v7_fold_chain/v7_cap_s_fold2_seed7.yaml",
+      "sha256": "9996e335abdca670c6724ede35a0c48407dc014b7a725a7a48816bd9170707ab"
+    },
+    "v7_soft_fold0_seed7": {
+      "path": "configs/experiment/scientific_recovery_v7_fold_chain/v7_soft_fold0_seed7.yaml",
+      "sha256": "0a50fab26a470d31736a817880f3bc4c2889636d2de766cb4ea3f4788bdb211d"
+    },
+    "v7_soft_fold1_seed7": {
+      "path": "configs/experiment/scientific_recovery_v7_fold_chain/v7_soft_fold1_seed7.yaml",
+      "sha256": "a037353d1286d397c8e160518b0b0ab10818df437198574cbf915f35fb0e61ce"
+    },
+    "v7_soft_fold2_seed7": {
+      "path": "configs/experiment/scientific_recovery_v7_fold_chain/v7_soft_fold2_seed7.yaml",
+      "sha256": "e725e0f3fd40cfb994d1858506d22eb2e3881fef35a3756d1593a7e73e5ecabb"
+    },
+    "v7_t20_fold0_seed7": {
+      "path": "configs/experiment/scientific_recovery_v7_fold_chain/v7_t20_fold0_seed7.yaml",
+      "sha256": "a72dd8b9b2e3f57059d316427cc2194d0ec5b9c6232d0de651f30f96e5dc5403"
+    },
+    "v7_t20_fold1_seed7": {
+      "path": "configs/experiment/scientific_recovery_v7_fold_chain/v7_t20_fold1_seed7.yaml",
+      "sha256": "9a712abca48caa5400c23e593d5a569091f6c646813d03fa65f6277c6bdfde74"
+    },
+    "v7_t20_fold2_seed7": {
+      "path": "configs/experiment/scientific_recovery_v7_fold_chain/v7_t20_fold2_seed7.yaml",
+      "sha256": "8ab6a8c60ea3611db96106ceb2dd416eb12b8a794224d6805d23b25b693246d5"
+    }
+  },
+  "created_at_utc": "2026-08-13T19:59:53.423616+00:00",
+  "protocol_artifact_sha256": "7267421c288f6a5e68e779e344dabebb62c9d04df5e100186a8013dfe4a93cf9",
+  "status": "frozen_before_v7_training"
+}
