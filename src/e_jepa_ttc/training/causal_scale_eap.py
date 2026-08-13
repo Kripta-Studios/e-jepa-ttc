@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import copy
+import json
 import math
 import os
 import random
@@ -42,6 +43,20 @@ from e_jepa_ttc.models.causal_scale_ttc import (
     target_log_ratio_from_ttc,
 )
 from e_jepa_ttc.reproducibility import seed_everything
+
+
+def _safe_progress_value(value: object) -> object:
+    """Convert aggregate telemetry to strict JSON without model state."""
+
+    if isinstance(value, np.generic):
+        return _safe_progress_value(value.item())
+    if isinstance(value, float):
+        return value if math.isfinite(value) else None
+    if isinstance(value, dict):
+        return {str(key): _safe_progress_value(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_safe_progress_value(item) for item in value]
+    return value
 
 
 @dataclass(frozen=True)
@@ -1340,6 +1355,9 @@ def train_real_causal_scale(
         checkpoint_dir.mkdir(parents=True, exist_ok=True)
     last_path = checkpoint_dir / "last.pt" if checkpoint_dir is not None else None
     best_path = checkpoint_dir / "best.pt" if checkpoint_dir is not None else None
+    progress_path = (
+        checkpoint_dir / "progress.json" if checkpoint_dir is not None else None
+    )
     if resume:
         if last_path is None or not last_path.is_file():
             raise FileNotFoundError("resume requested but last.pt is unavailable")
@@ -1412,6 +1430,30 @@ def train_real_causal_scale(
         torch.save(payload, temporary)
         os.replace(temporary, path)
 
+    def save_progress(*, status: str, epoch: int, elapsed: float) -> None:
+        if progress_path is None:
+            return
+        payload = _safe_progress_value(
+            {
+                "artifact_type": "causal_scale_eap_safe_progress_v1",
+                "status": status,
+                "epoch": epoch,
+                "configured_epochs": training_config.epochs,
+                "best_epoch": best_epoch,
+                "stale_epochs": stale,
+                "elapsed_seconds": elapsed,
+                "latest_selection": history[-1].get("selection") if history else None,
+                "best_selection": best_selection,
+            }
+        )
+        temporary = progress_path.with_name(f".{progress_path.name}.tmp")
+        temporary.write_text(
+            json.dumps(payload, indent=2, sort_keys=True, allow_nan=False) + "\n",
+            encoding="utf-8",
+            newline="\n",
+        )
+        os.replace(temporary, progress_path)
+
     last_completed_epoch = start_epoch - 1
     for epoch in range(start_epoch, training_config.epochs + 1):
         if time.perf_counter() >= deadline:
@@ -1460,6 +1502,7 @@ def train_real_causal_scale(
             save_state(last_path, epoch, elapsed)
         if best_path is not None and best_epoch == epoch:
             save_state(best_path, epoch, elapsed)
+        save_progress(status="running", epoch=epoch, elapsed=elapsed)
         if stop_after_epoch is not None and epoch >= stop_after_epoch:
             break
         if (
@@ -1471,6 +1514,9 @@ def train_real_causal_scale(
         raise RuntimeError("real causal-scale training produced no selectable checkpoint")
     model.load_state_dict(best_state)
     elapsed_total = prior_elapsed + time.perf_counter() - started
+    save_progress(
+        status="completed", epoch=last_completed_epoch, elapsed=elapsed_total
+    )
     if last_path is not None and last_completed_epoch < start_epoch:
         raise RuntimeError("runtime budget expired before a resumable epoch completed")
     return CausalScaleEAPTrainingResult(

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import math
 from collections.abc import Mapping
 from pathlib import Path
@@ -192,6 +193,15 @@ def test_real_causal_scale_resume_matches_uninterrupted_epochs(tmp_path: Path) -
                 if key != "elapsed_seconds"
             },
         )
+    progress = json.loads(
+        (tmp_path / "resumed" / "progress.json").read_text(encoding="utf-8")
+    )
+    assert progress["artifact_type"] == "causal_scale_eap_safe_progress_v1"
+    assert progress["status"] == "completed"
+    assert progress["epoch"] == 4
+    assert progress["best_epoch"] == resumed.best_epoch
+    assert "model_state_dict" not in progress
+    assert "checkpoint" not in progress
 
 
 def test_real_causal_scale_resume_rejects_changed_contract(tmp_path: Path) -> None:
