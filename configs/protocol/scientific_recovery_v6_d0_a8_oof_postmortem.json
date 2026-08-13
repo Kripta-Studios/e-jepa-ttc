@@ -50,10 +50,10 @@
     "population": "exact_8192_fold_local_outer_dev_rows",
     "selected_v6_1_requires_new_preregistration": true
   },
-  "artifact_sha256": "a139e9f758360448fa25f0656c86bc78a4d04fc9c691e35b3c99e10ae4038276",
+  "artifact_sha256": "a1db4d2c4c1e2665f4b572b7443ea5c34e3cd3c7fc136ca816273f9f7d617ca3",
   "artifact_type": "scientific_recovery_v6_d0_oof_postmortem_protocol_v1",
-  "created_at_utc": "2026-08-13T10:02:05.515435+00:00",
-  "git_commit": "c4143c3cbc3649e950af478c14a4a108be8a98bc",
+  "created_at_utc": "2026-08-13T10:10:11.573169+00:00",
+  "git_commit": "588f9db251b5eb0918145157c7fcfca76be02ecc",
   "sources": {
     "a6_fold0_effective_config_yaml": {
       "path": "artifacts/runs/scientific_recovery_v5_a6_fold_chain_fold0_seed7/effective_config.yaml",
@@ -137,7 +137,7 @@
     },
     "analysis_code": {
       "path": "scripts/analyze_v5_a8_oof_failure_modes.py",
-      "sha256": "85a91973cf07aae6aa6b29f8e36a2bf10c52d4b744a47b1536abe074ff89ae3d"
+      "sha256": "f9805130765c02d37d4d9ae2e55bed55be0c627b6377c6bfc5a871ad80da6ec6"
     },
     "dataset_code": {
       "path": "src/e_jepa_ttc/data/object_event_v4.py",
