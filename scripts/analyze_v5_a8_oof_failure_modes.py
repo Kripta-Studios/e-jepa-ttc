@@ -213,6 +213,7 @@ def freeze_protocol(
         "sources": sources,
         "analysis_contract": {
             "population": "exact_8192_fold_local_outer_dev_rows",
+            "replay_batch_size": 32,
             "outcome_a8_vs_a6": "per_sample_raw_MiD_delta_and_failure_transition",
             "outcome_a8_vs_garl": "per_sample_raw_MiD_delta_and_failure_transition",
             "cluster_unit": "sequence_id_plus_track_id",
@@ -534,6 +535,11 @@ def analyze(
     if protocol.get("status") != "frozen_before_v6_d0_analysis":
         raise ValueError("V6-D0 protocol is not frozen")
     _verify_sources(protocol)
+    expected_batch_size = int(protocol["analysis_contract"]["replay_batch_size"])
+    if batch_size != expected_batch_size:
+        raise ValueError(
+            f"replay batch size must match V5 evaluation: {batch_size} != {expected_batch_size}"
+        )
     sources = protocol["sources"]
     predictions = align_predictions(
         {arm: _read_predictions(ROOT / sources[f"{arm}_oof"]["path"], arm) for arm in OOF_NAMES}
@@ -697,7 +703,7 @@ def main() -> int:
     analyze_parser.add_argument("--protocol", type=Path, required=True)
     analyze_parser.add_argument("--output-dir", type=Path, required=True)
     analyze_parser.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
-    analyze_parser.add_argument("--batch-size", type=int, default=64)
+    analyze_parser.add_argument("--batch-size", type=int, default=32)
     args = parser.parse_args()
     try:
         if args.command == "freeze":
