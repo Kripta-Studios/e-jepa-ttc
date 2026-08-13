@@ -178,7 +178,11 @@ def freeze_protocol(
     sources: dict[str, Any] = {
         "v5_grouped_protocol": _source(v5_protocol_path, artifact=v5_protocol),
         "v5_aggregate": _source(v5_aggregate_path, artifact=v5_aggregate),
+        "event_cache_manifest": _source(
+            ROOT / "artifacts/cache/garl_object_event_common_roi_train8192_v1/manifest.json"
+        ),
         "analysis_code": _source(Path(__file__)),
+        "dataset_code": _source(ROOT / "src/e_jepa_ttc/data/object_event_v4.py"),
         "metric_code": _source(ROOT / "src/e_jepa_ttc/evaluation/garl_ttc_protocol.py"),
         "model_code": _source(ROOT / "src/e_jepa_ttc/models/causal_scale_ttc.py"),
         "transport_code": _source(ROOT / "src/e_jepa_ttc/models/local_transport.py"),
@@ -544,9 +548,7 @@ def analyze(
     if predictions["fold"].isna().any():
         raise ValueError("OOF sequence is absent from the grouped protocol")
 
-    cache_manifest = (
-        ROOT / "artifacts/cache/garl_object_event_common_roi_train8192_v1/manifest.json"
-    )
+    cache_manifest = ROOT / sources["event_cache_manifest"]["path"]
     dataset = GarlTTCObjectEventV4Dataset(str(cache_manifest), splits=("train",))
     replay_parts: list[pd.DataFrame] = []
     for fold in range(3):
