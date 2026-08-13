@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import inspect
+from dataclasses import replace
 from pathlib import Path
 from typing import cast
 
@@ -285,6 +286,47 @@ def test_a1_evaluation_reports_absolute_and_differential_geometry() -> None:
     assert diagnostics["delta_log_height_vs_bbox"]["global"]["count"] == 2
     assert diagnostics["delta_log_width_vs_physical"]["global"]["count"] == 2
     assert diagnostics["r_iso_is_diagnostic_only"] is True
+
+
+def test_checkpoint_evaluation_is_independent_of_dev_bbox_metadata() -> None:
+    original = _batch()
+    altered = replace(original, boxes_xyxy=torch.zeros_like(original.boxes_xyxy))
+    config = training.CausalScaleEAPTrainingConfig(
+        epochs=2,
+        minimum_epochs=2,
+        foreground_warmup_epochs=1,
+        foreground_supervision="bbox_geometry",
+        precision="fp32",
+    )
+    loss = CausalScaleTTCLossConfig(
+        foreground_bce_weight=0.0,
+        foreground_dice_weight=0.0,
+        foreground_extent_weight=1.25,
+        foreground_width_weight=1.25,
+        foreground_center_weight=2.5,
+    )
+    model = _model().eval()
+
+    def evaluate(batch: ObjectEventV4Batch) -> dict[str, object]:
+        loader = DataLoader(
+            _OneItemDataset(), batch_size=1, collate_fn=lambda _: batch
+        )
+        return training.evaluate_real_causal_scale(
+            model,
+            cast(DataLoader[ObjectEventV4Batch], loader),
+            torch.device("cpu"),
+            config,
+            loss,
+            use_auxiliary_dev_metadata=False,
+        )
+
+    first = evaluate(original)
+    second = evaluate(altered)
+
+    assert first["loss"] == pytest.approx(second["loss"])
+    np.testing.assert_equal(first["prediction_ttc_s"], second["prediction_ttc_s"])
+    assert first["geometry_diagnostics"] is None
+    assert second["geometry_diagnostics"] is None
 
 
 def test_a1_preregistered_config_keeps_a0_model_and_only_geometry_supervision() -> None:

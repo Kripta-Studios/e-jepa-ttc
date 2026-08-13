@@ -759,8 +759,10 @@ def evaluate_real_causal_scale(
     device: torch.device,
     config: CausalScaleEAPTrainingConfig,
     loss_config: CausalScaleTTCLossConfig,
+    *,
+    use_auxiliary_dev_metadata: bool = True,
 ) -> dict[str, Any]:
-    """Evaluate the public validation split with official signed metrics."""
+    """Evaluate signed TTC; optionally add post-selection geometry diagnostics."""
 
     model.eval()
     truth: list[torch.Tensor] = []
@@ -854,21 +856,47 @@ def evaluate_real_causal_scale(
                 "The DINOv3RelationalTeacherDataset wrapper must only be "
                 "applied to the train dataset."
             )
-        with _autocast(device, config.precision):
-            total, _, output = _loss(
-                model,
+        if use_auxiliary_dev_metadata:
+            with _autocast(device, config.precision):
+                total, _, output = _loss(
+                    model,
+                    batch,
+                    loss_config,
+                    mask_t0_as_proxy=config.mask_t0_as_proxy,
+                    foreground_supervision=config.foreground_supervision,
+                    # Representation supervision is always absent on dev.
+                )
+            targets = _targets(
                 batch,
-                loss_config,
                 mask_t0_as_proxy=config.mask_t0_as_proxy,
                 foreground_supervision=config.foreground_supervision,
-                # representation_supervision is always "none" for validation:
-                # the DINO loss is train-only.
             )
-        targets = _targets(
-            batch,
-            mask_t0_as_proxy=config.mask_t0_as_proxy,
-            foreground_supervision=config.foreground_supervision,
-        )
+        else:
+            delta = batch.delta_t_s[:, None].expand(-1, batch.events.shape[1] - 1)
+            target_valid = torch.isfinite(batch.target_ttc_s) & (
+                batch.target_ttc_s != 0.0
+            )
+            targets = CausalScaleEAPTargets(
+                delta_t_s=delta,
+                target_valid=target_valid,
+                target_masks=None,
+                mask_valid=None,
+                geometry=None,
+            )
+            with _autocast(device, config.precision):
+                output = model(batch.events, delta, return_dense_features=False)
+                ttc_only = causal_scale_ttc_loss(
+                    output,
+                    target_ttc_seconds=batch.target_ttc_s,
+                    delta_t_s=delta,
+                    risk_thresholds_s=model.config.risk_thresholds_s,
+                    target_valid=target_valid,
+                    target_masks=None,
+                    mask_valid=None,
+                    target_geometry=None,
+                    config=loss_config,
+                )
+                total = ttc_only.total
         target_ratio, valid_ratio = target_log_ratio_from_ttc(
             batch.target_ttc_s, targets.delta_t_s[:, -1]
         )
@@ -1468,7 +1496,12 @@ def train_real_causal_scale(
             model, train_loader, optimizer, device, training_config, active_loss
         )
         validation = evaluate_real_causal_scale(
-            model, validation_loader, device, training_config, loss_config
+            model,
+            validation_loader,
+            device,
+            training_config,
+            loss_config,
+            use_auxiliary_dev_metadata=False,
         )
         selection = _selection(validation)
         record = {
@@ -1513,6 +1546,17 @@ def train_real_causal_scale(
     if best_state is None or best_selection is None or best_validation is None:
         raise RuntimeError("real causal-scale training produced no selectable checkpoint")
     model.load_state_dict(best_state)
+    post_selection_validation = evaluate_real_causal_scale(
+        model,
+        validation_loader,
+        device,
+        training_config,
+        loss_config,
+        use_auxiliary_dev_metadata=True,
+    )
+    if _selection(post_selection_validation) != best_selection:
+        raise RuntimeError("post-selection geometry evaluation changed TTC selection metrics")
+    best_validation = post_selection_validation
     elapsed_total = prior_elapsed + time.perf_counter() - started
     save_progress(
         status="completed", epoch=last_completed_epoch, elapsed=elapsed_total
