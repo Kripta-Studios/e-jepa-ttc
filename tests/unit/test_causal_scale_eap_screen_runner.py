@@ -16,12 +16,8 @@ from scripts.train_causal_scale_eap_screen import (
     _validate_initialization_checkpoint_contract,
 )
 
-GROUPED_PROTOCOL = (
-    "configs/protocol/scientific_recovery_v5_train_only_grouped_dev.json"
-)
-GROUPED_PROTOCOL_FILE_SHA256 = (
-    "be48917ae52d1c77d046318bd9ed284a32e8b16258257203fff439332b547874"
-)
+GROUPED_PROTOCOL = "configs/protocol/scientific_recovery_v5_train_only_grouped_dev.json"
+GROUPED_PROTOCOL_FILE_SHA256 = "be48917ae52d1c77d046318bd9ed284a32e8b16258257203fff439332b547874"
 GROUPED_PROTOCOL_ARTIFACT_SHA256 = (
     "f09c688fb4991714abc9d645dda787cb27f1e02a2d1857312ce3e45519bd7a63"
 )
@@ -141,9 +137,7 @@ def _fold_parent_fixture(tmp_path: Path) -> tuple[Path, str, dict[str, object]]:
         "private_test_opened": False,
     }
     sign_artifact(parent)
-    (checkpoint.parent / "parent_contract.json").write_text(
-        json.dumps(parent), encoding="utf-8"
-    )
+    (checkpoint.parent / "parent_contract.json").write_text(json.dumps(parent), encoding="utf-8")
     return checkpoint, checkpoint_sha, grouped
 
 
@@ -181,3 +175,14 @@ def test_grouped_initialization_rejects_global_public_validation_parent(
             grouped_contract=grouped,
             repository_root=tmp_path,
         )
+
+
+def test_runner_binds_git_revision_before_training() -> None:
+    source = Path("scripts/train_causal_scale_eap_screen.py").read_text(encoding="utf-8")
+
+    launch = source.index('launch_git_commit = _git("rev-parse", "HEAD")')
+    training = source.index("result = train_real_causal_scale(")
+    completion = source.index("completion_git_commit = _git(")
+
+    assert launch < training < completion
+    assert "refusing to publish artifacts" in source

@@ -146,3 +146,14 @@ def test_cuda_device_gets_explicit_default_index() -> None:
     assert _resolve_device("cuda") == torch.device("cuda:0")
     assert _resolve_device("cuda:1") == torch.device("cuda:1")
     assert _resolve_device("cpu") == torch.device("cpu")
+
+
+def test_garl_runner_binds_repository_revision_around_training() -> None:
+    source = Path("scripts/train_garl_matched_from_cache.py").read_text(encoding="utf-8")
+
+    launch = source.index("launch_git_commit = _repository_commit()")
+    training = source.index("for epoch in range(start_epoch, epochs + 1):")
+    completion = source.index("if _repository_commit() != launch_git_commit:")
+
+    assert launch < training < completion
+    assert "refusing to publish artifacts" in source

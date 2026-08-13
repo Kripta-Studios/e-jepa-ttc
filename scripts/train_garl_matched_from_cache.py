@@ -127,6 +127,16 @@ def _release_state(release_root: Path) -> dict[str, Any]:
     return {"commit": commit, "dirty": dirty}
 
 
+def _repository_commit() -> str:
+    return subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
+
+
 @dataclass(frozen=True)
 class CachedBatch:
     data: torch.Tensor
@@ -465,6 +475,7 @@ def train(
     state = _release_state(release_root)
     if state != {"commit": EXPECTED_RELEASE_COMMIT, "dirty": False}:
         raise RuntimeError(f"Official release is not the audited clean commit: {state}")
+    launch_git_commit = _repository_commit()
     grouped = development_protocol is not None or fold is not None
     if grouped and (development_protocol is None or fold is None or identity_metadata is None):
         raise ValueError("grouped Garl requires development_protocol, fold, and identity_metadata")
@@ -519,6 +530,7 @@ def train(
     ).hexdigest()
     protocol = {
         "release_commit": state["commit"],
+        "repository_git_commit": launch_git_commit,
         "cache_artifact_sha256": manifest.get("artifact_sha256"),
         "config_identity": config_identity,
         "seed": seed,
@@ -788,6 +800,10 @@ def train(
     final_validation = _evaluate(model, validation_loader, device, delta_t_s)
     if _selection(final_validation) != best_selection:
         raise RuntimeError("Reloaded matched best checkpoint metrics changed.")
+    if _repository_commit() != launch_git_commit:
+        raise RuntimeError(
+            "repository HEAD changed during Garl training; refusing to publish artifacts"
+        )
     prediction_column = "prediction_ttc_s" if grouped else "predicted_ttc_s"
     prediction_payload: dict[str, Any] = {
         "sample_token": final_validation["sample_tokens"],
@@ -825,6 +841,7 @@ def train(
             else "garl_event_only_matched_cached_training_v1"
         ),
         "created_at_utc": datetime.now(UTC).isoformat(),
+        "git_commit": launch_git_commit,
         "status": status,
         "selection": {
             "source": "outer_dev_development" if grouped else "public_validation_only",

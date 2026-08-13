@@ -82,9 +82,7 @@ def _blocking_worktree_state(status_lines: list[str]) -> dict[str, object]:
     tracked_dirty_paths = [
         _porcelain_path(line) for line in status_lines if not line.startswith("?? ")
     ]
-    ignored = [
-        path for path in tracked_dirty_paths if _is_ignored_operational_tracked_path(path)
-    ]
+    ignored = [path for path in tracked_dirty_paths if _is_ignored_operational_tracked_path(path)]
     blocking = [path for path in tracked_dirty_paths if path not in ignored]
     base["tracked_dirty_paths"] = tracked_dirty_paths
     base["ignored_operational_dirty_paths"] = ignored
@@ -111,9 +109,7 @@ def _sorted_values_sha256(values: list[str]) -> str:
 
 
 def _git(*args: str) -> str:
-    result = subprocess.run(
-        ["git", *args], cwd=ROOT, check=True, capture_output=True, text=True
-    )
+    result = subprocess.run(["git", *args], cwd=ROOT, check=True, capture_output=True, text=True)
     return result.stdout.strip()
 
 
@@ -166,9 +162,7 @@ def _load_grouped_development_contract(data: dict[str, Any]) -> dict[str, Any]:
         raise ValueError("grouped-development protocol signature is invalid")
     if protocol.get("artifact_sha256") != reference.get("artifact_sha256"):
         raise ValueError("grouped-development artifact SHA256 differs")
-    if protocol.get("artifact_type") != (
-        "scientific_recovery_v5_train_only_grouped_dev_v1"
-    ):
+    if protocol.get("artifact_type") != ("scientific_recovery_v5_train_only_grouped_dev_v1"):
         raise ValueError("grouped-development artifact type is incompatible")
     if protocol.get("status") != "frozen_before_a8_results":
         raise ValueError("grouped-development protocol was not frozen before A8")
@@ -307,19 +301,22 @@ def _validate_bbox_geometry_loss(
         return
     uses_sam = training_config.foreground_supervision == "bbox_geometry_sam_teacher"
     if not uses_sam and (
-        loss_config.foreground_bce_weight != 0.0
-        or loss_config.foreground_dice_weight != 0.0
+        loss_config.foreground_bce_weight != 0.0 or loss_config.foreground_dice_weight != 0.0
     ):
         raise ValueError("bbox_geometry supervision requires BCE/Dice weights to be zero")
-    if uses_sam and min(
-        loss_config.foreground_bce_weight, loss_config.foreground_dice_weight
-    ) <= 0.0:
+    if (
+        uses_sam
+        and min(loss_config.foreground_bce_weight, loss_config.foreground_dice_weight) <= 0.0
+    ):
         raise ValueError("SAM teacher supervision requires positive BCE/Dice weights")
-    if min(
-        loss_config.foreground_extent_weight,
-        loss_config.foreground_width_weight,
-        loss_config.foreground_center_weight,
-    ) <= 0.0:
+    if (
+        min(
+            loss_config.foreground_extent_weight,
+            loss_config.foreground_width_weight,
+            loss_config.foreground_center_weight,
+        )
+        <= 0.0
+    ):
         raise ValueError("bbox_geometry supervision requires positive h/w/center weights")
     pair_weight = loss_config.foreground_pair_ratio_weight
     if pair_weight == 0.0:
@@ -340,10 +337,7 @@ def _validate_representation_change(
 ) -> dict[str, Any] | None:
     """Fail closed on the post-A4 temporal-delta calibration contract."""
 
-    if (
-        training_config.representation_supervision
-        != "dinov3_local_relational_temporal_delta"
-    ):
+    if training_config.representation_supervision != "dinov3_local_relational_temporal_delta":
         return None
 
     change = decision_contract.get("representation_change")
@@ -367,9 +361,7 @@ def _validate_representation_change(
         "quarter_weighted_endpoint_equivalence_on_random_init_train_only"
     ):
         raise ValueError("A4D temporal-delta calibration method differs from protocol")
-    if int(calibration.get("samples", -1)) != 64 or int(
-        calibration.get("seed", -1)
-    ) != 7:
+    if int(calibration.get("samples", -1)) != 64 or int(calibration.get("seed", -1)) != 7:
         raise ValueError("A4D temporal-delta calibration must use 64 samples and seed 7")
     if float(calibration.get("target_fraction_of_weighted_endpoint", float("nan"))) != 0.25:
         raise ValueError("A4D temporal-delta calibration target fraction must be 0.25")
@@ -392,9 +384,7 @@ def _validate_representation_change(
         training_config.representation_temporal_delta_calibration_artifact_sha256
         != expected_signed_sha
     ):
-        raise ValueError(
-            "A4D training config is not bound to the signed calibration artifact"
-        )
+        raise ValueError("A4D training config is not bound to the signed calibration artifact")
     scope = payload.get("scope", {})
     if not isinstance(scope, dict):
         raise ValueError("A4D temporal-delta calibration scope is malformed")
@@ -404,9 +394,7 @@ def _validate_representation_change(
         raise ValueError("A4D temporal-delta calibration may not open validation/test")
     if int(scope.get("optimizer_steps", -1)) != 0:
         raise ValueError("A4D temporal-delta calibration may not take optimizer steps")
-    if int(payload.get("samples_collected", -1)) != 64 or int(
-        payload.get("seed", -1)
-    ) != 7:
+    if int(payload.get("samples_collected", -1)) != 64 or int(payload.get("seed", -1)) != 7:
         raise ValueError("A4D temporal-delta calibration artifact sample contract differs")
     if payload.get("teacher_artifact_sha256") != (
         training_config.representation_teacher_cache_artifact_sha256
@@ -428,15 +416,10 @@ def _validate_representation_change(
         "selected_weight": selected,
         "teacher_artifact_sha256": payload.get("teacher_artifact_sha256"),
         "scope": scope,
-        "median_endpoint_relation_error": payload.get(
-            "median_endpoint_relation_error"
-        ),
+        "median_endpoint_relation_error": payload.get("median_endpoint_relation_error"),
         "median_temporal_delta_error": payload.get("median_temporal_delta_error"),
-        "median_teacher_temporal_delta_abs": payload.get(
-            "median_teacher_temporal_delta_abs"
-        ),
+        "median_teacher_temporal_delta_abs": payload.get("median_teacher_temporal_delta_abs"),
     }
-
 
 
 def _validate_a5_transport_change(
@@ -801,18 +784,12 @@ def run(
         validation_manifest_path = _resolve(data["validation_cache_manifest"])
         validation_manifest_hash = _sha256(validation_manifest_path)
         if validation_manifest_hash != str(data["validation_cache_manifest_sha256"]):
-            raise ValueError(
-                "validation cache manifest hash differs from the frozen protocol"
-            )
-        validation_manifest = json.loads(
-            validation_manifest_path.read_text(encoding="utf-8")
-        )
+            raise ValueError("validation cache manifest hash differs from the frozen protocol")
+        validation_manifest = json.loads(validation_manifest_path.read_text(encoding="utf-8"))
         if validation_manifest.get("artifact_sha256") != data.get(
             "validation_cache_artifact_sha256"
         ):
-            raise ValueError(
-                "validation cache artifact identity differs from the frozen protocol"
-            )
+            raise ValueError("validation cache artifact identity differs from the frozen protocol")
     if grouped_contract is not None:
         train_sequences = cast(set[str], grouped_contract["train_sequences"])
         validation_sequences = cast(set[str], grouped_contract["dev_sequences"])
@@ -832,9 +809,7 @@ def run(
                 f"{expected_validation_rows}"
             )
         train_sequences = {str(value) for value in data.get("train_sequence_ids", [])}
-        validation_sequences = {
-            str(value) for value in data.get("validation_sequence_ids", [])
-        }
+        validation_sequences = {str(value) for value in data.get("validation_sequence_ids", [])}
         if len(train_sequences) != 9 or len(validation_sequences) != 3:
             raise ValueError("frozen protocol requires 9 train and 3 validation sequences")
     if train_sequences & validation_sequences:
@@ -852,6 +827,7 @@ def run(
             "representative real screen requires clean scientific code state; "
             f"blocking_tracked={blocking}, untracked_code={untracked_code}"
         )
+    launch_git_commit = _git("rev-parse", "HEAD")
 
     model_path = _resolve(raw["model_config"])
     model_config = _model_config(model_path)
@@ -882,19 +858,13 @@ def run(
     if not isinstance(decision_contract, dict):
         raise ValueError("decision_contract mapping is required")
     _validate_bbox_geometry_loss(training_config, loss_config, decision_contract)
-    representation_calibration = _validate_representation_change(
-        training_config, decision_contract
-    )
-    a5_preflight = _validate_a5_transport_change(
-        training_config, model_config, decision_contract
-    )
+    representation_calibration = _validate_representation_change(training_config, decision_contract)
+    a5_preflight = _validate_a5_transport_change(training_config, model_config, decision_contract)
     parameter_count = sum(
         parameter.numel() for parameter in CausalScaleTTC(model_config).parameters()
     )
     expected_parameter_count = decision_contract.get("expected_parameter_count")
-    if expected_parameter_count is not None and parameter_count != int(
-        expected_parameter_count
-    ):
+    if expected_parameter_count is not None and parameter_count != int(expected_parameter_count):
         raise ValueError(
             f"model parameter count changed: {parameter_count} != {expected_parameter_count}"
         )
@@ -906,13 +876,9 @@ def run(
             yaml.safe_dump(raw, sort_keys=False), encoding="utf-8", newline="\n"
         )
     state_dir = output_dir / "state"
-    train_dataset = GarlTTCObjectEventV4Dataset(
-        str(manifest_path), splits=("train",)
-    )
+    train_dataset = GarlTTCObjectEventV4Dataset(str(manifest_path), splits=("train",))
     if grouped:
-        validation_dataset = GarlTTCObjectEventV4Dataset(
-            str(manifest_path), splits=("train",)
-        )
+        validation_dataset = GarlTTCObjectEventV4Dataset(str(manifest_path), splits=("train",))
     else:
         assert validation_manifest_path is not None
         validation_dataset = GarlTTCObjectEventV4Dataset(
@@ -921,9 +887,7 @@ def run(
     fold_identity: dict[str, Any] | None = None
     selected_train_tokens: set[str] | None = None
     if grouped_contract is not None:
-        train_dataset = SequenceIndexedView(
-            train_dataset, sequence_ids=train_sequences
-        )
+        train_dataset = SequenceIndexedView(train_dataset, sequence_ids=train_sequences)
         validation_dataset = SequenceIndexedView(
             validation_dataset, sequence_ids=validation_sequences
         )
@@ -1002,9 +966,7 @@ def run(
             training_config.representation_teacher_cache_artifact_sha256
             != dino_teacher["artifact_sha256"]
         ):
-            raise ValueError(
-                "training and data representation teacher identities differ"
-            )
+            raise ValueError("training and data representation teacher identities differ")
         representation_teacher_metadata = {
             "manifest": dino_manifest.relative_to(ROOT).as_posix(),
             "manifest_sha256": str(dino_teacher["manifest_sha256"]),
@@ -1017,8 +979,7 @@ def run(
                 list(train_dataset.teacher_sample_tokens())
             ),
             "teacher_tokens_equal_fold_train": (
-                train_dataset.teacher_sample_tokens()
-                == frozenset(selected_train_tokens or set())
+                train_dataset.teacher_sample_tokens() == frozenset(selected_train_tokens or set())
             ),
             "teacher_tokens_intersect_fold_dev": False,
         }
@@ -1034,6 +995,9 @@ def run(
         checkpoint_dir=state_dir,
         resume=resume,
     )
+    completion_git_commit = _git("rev-parse", "HEAD")
+    if completion_git_commit != launch_git_commit:
+        raise RuntimeError("repository HEAD changed during training; refusing to publish artifacts")
     state_progress_path = state_dir / "progress.json"
     root_progress_path = output_dir / "progress.json"
     if not state_progress_path.is_file():
@@ -1100,9 +1064,7 @@ def run(
         assert validation_manifest is not None
         cache_payload.update(
             {
-                "validation_manifest_path": (
-                    validation_manifest_path.relative_to(ROOT).as_posix()
-                ),
+                "validation_manifest_path": (validation_manifest_path.relative_to(ROOT).as_posix()),
                 "validation_manifest_sha256": validation_manifest_hash,
                 "validation_artifact_sha256": validation_manifest["artifact_sha256"],
                 "validation_split_counts": validation_manifest["split_counts"],
@@ -1150,6 +1112,7 @@ def run(
             "config_sha256": _sha256(config_path),
             "effective_config_sha256": _sha256(effective_config_path),
             "training_seed": training_config.seed,
+            "git_commit": launch_git_commit,
             "outer_dev_used_for_checkpoint_selection": True,
             "outer_dev_is_not_test": True,
             "teacher_contract": representation_teacher_metadata,
@@ -1171,9 +1134,7 @@ def run(
         ),
         "created_at": datetime.now(UTC).isoformat(),
         "status": (
-            "completed_train_only_grouped_dev"
-            if grouped
-            else "completed_public_validation_only"
+            "completed_train_only_grouped_dev" if grouped else "completed_public_validation_only"
         ),
         "selectable": False,
         "development_selectable": grouped,
@@ -1183,7 +1144,7 @@ def run(
         "public_validation_used_for_selection": False if grouped else True,
         "private_test_opened": False,
         "garl_comparison_pending": True,
-        "git_commit": _git("rev-parse", "HEAD"),
+        "git_commit": launch_git_commit,
         "git_dirty": code_dirty,
         "worktree": worktree,
         "config": {
@@ -1214,12 +1175,8 @@ def run(
         "model_input_contract": {
             "forward_inputs": ["event_v4_common_roi", "garl_delta_t_s"],
             "foreground_supervision": training_config.foreground_supervision,
-            "weak_bbox_supervision_only": (
-                training_config.foreground_supervision == "weak_box"
-            ),
-            "weak_bbox_rasterized_for_loss": (
-                training_config.foreground_supervision == "weak_box"
-            ),
+            "weak_bbox_supervision_only": (training_config.foreground_supervision == "weak_box"),
+            "weak_bbox_rasterized_for_loss": (training_config.foreground_supervision == "weak_box"),
             "bbox_geometry_training_only": (
                 training_config.foreground_supervision
                 in {"bbox_geometry", "bbox_geometry_sam_teacher"}
@@ -1269,9 +1226,7 @@ def run(
             else None
         ),
         "peak_vram_reserved_mb": (
-            float(torch.cuda.max_memory_reserved(device) / 2**20)
-            if device.type == "cuda"
-            else None
+            float(torch.cuda.max_memory_reserved(device) / 2**20) if device.type == "cuda" else None
         ),
         "checkpoint": {"path": checkpoint_path.name, "sha256": _sha256(checkpoint_path)},
         "predictions": {"path": predictions_path.name, "sha256": _sha256(predictions_path)},
