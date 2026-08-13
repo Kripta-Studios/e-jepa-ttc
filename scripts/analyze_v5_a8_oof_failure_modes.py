@@ -44,6 +44,7 @@ from e_jepa_ttc.models.causal_scale_ttc import (  # noqa: E402
     target_log_ratio_from_ttc,
 )
 from e_jepa_ttc.models.local_transport import TRANSPORT_FEATURE_NAMES  # noqa: E402
+from e_jepa_ttc.reproducibility import seed_everything  # noqa: E402
 
 RUN_NAMES = {
     "a6": "scientific_recovery_v5_a6_fold_chain_fold{fold}_seed7",
@@ -540,6 +541,7 @@ def analyze(
         raise ValueError(
             f"replay batch size must match V5 evaluation: {batch_size} != {expected_batch_size}"
         )
+    seed_everything(7, deterministic=True)
     sources = protocol["sources"]
     predictions = align_predictions(
         {arm: _read_predictions(ROOT / sources[f"{arm}_oof"]["path"], arm) for arm in OOF_NAMES}
