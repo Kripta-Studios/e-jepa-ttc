@@ -1,5 +1,18 @@
 # Estado del repositorio
 
+## 2026-08-13 — Scientific Recovery V6 cerrado sin promoción
+
+- V6-D0 seleccionó `motion_scale`; se congeló V6.1 cambiando solo radio 1 a 2.
+- Se completaron tres folds V6.1 y tres A5 causales, todos train-only grouped-dev.
+- MiD macro: V6.1 194,12; A5 causal 155,47; A8.0 197,69; Garl 144,35.
+- V6.1−A8.0 = −3,57, IC95% [−8,19; 1,00]: mejora débil, gate 175 fallido.
+- A5−Garl = +11,12, IC95% [4,27; 17,53]. A5 es el mejor E-JEPA TTC limpio,
+  pero sigue siendo diagnóstico porque reduce de forma marcada la señal geométrica.
+- El déficit se concentra en TTC positivo 0–3 s; Garl mantiene cero failures.
+- Geometry V6.1 y prefix causality pasan. Public validation y private/test siguen
+  cerrados; no hay candidato sealed.
+- Fuente canónica: [Scientific Recovery V6](docs/SCIENTIFIC_RECOVERY_V6_STATUS.md).
+
 ## 2026-08-13 — Scientific Recovery V5 cerrado sin promoción
 
 - Rama `scientific-recovery-v5-provenance-dual-transport`; aggregate limpio en

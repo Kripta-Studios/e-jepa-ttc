@@ -1,5 +1,17 @@
 # Reproducibilidad
 
+## Scientific Recovery V6
+
+Los configs congelados están en
+`configs/protocol/scientific_recovery_v6_fold_runs.json`. El agregado se regenera
+con `scripts/aggregate_v6_fold_results.py`; exige el grouped protocol V5, el
+aggregate V5, el paired histórico A5, metadata de clusters y las cinco auditorías
+V6. El diagnóstico posterior se regenera con
+`scripts/analyze_v6_oof_garl_gap.py` usando el agregado y las filas D0 firmadas.
+Ambos fallan de forma cerrada ante firmas, tokens, targets, tracks o scopes
+incompatibles. Resultado agregado: `ed6da1c7…7945e77a`; diagnóstico:
+`f0ebc082…ae646b9c`. [Estado V6](SCIENTIFIC_RECOVERY_V6_STATUS.md).
+
 ## Scientific Recovery V5
 
 El protocolo congelado está en

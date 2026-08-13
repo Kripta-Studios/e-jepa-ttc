@@ -1,5 +1,15 @@
 # Limitaciones
 
+## Scientific Recovery V6
+
+V6.1 solo mejora A8.0 en 3,57 MiD y su IC95% incluye cero. A5 causal alcanza
+155,47, pero no conserva la geometría del parent y no es promotion-eligible. Los
+tres folds siguen siendo una única seed y outer-dev ya se usó para decidir V6;
+una arquitectura posterior basada en este diagnóstico será exploratoria hasta
+evaluarse bajo un protocolo nuevo. Garl tiene preprocessing distinto, aunque
+samples, targets, budget, métrica y privilegio oracle-ROI estén matched. No se
+afirma causalidad streaming extremo a extremo. [Detalle V6](SCIENTIFIC_RECOVERY_V6_STATUS.md).
+
 ## Scientific Recovery V5
 
 A8.0 mejora A6 de forma pareada, pero su MiD macro 197,69 falla el gate 175 y

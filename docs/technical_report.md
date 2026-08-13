@@ -1,5 +1,14 @@
 # Informe técnico
 
+## Addendum: Scientific Recovery V6
+
+V6-D0 seleccionó movimiento/escala y congeló un único cambio: radio de transporte
+1 a 2. V6.1 reduce A8.0 de 197,69 a 194,12 MiD, pero el IC95% pareado
+[-8,19; 1,00] incluye cero y el gate 175 falla. El comparador A5 causal obtiene
+155,47, frente a 144,35 de Garl, pero debilita de forma marcada la geometría.
+La brecha A5-Garl se concentra en TTC 0-3 s. No se abrió public validation ni
+private/test. [Resultados completos](SCIENTIFIC_RECOVERY_V6_STATUS.md).
+
 ## Addendum — Scientific Recovery V5 fold-local
 
 El primer grouped-dev V5 quedó invalidado para promoción porque A6 heredaba un A4

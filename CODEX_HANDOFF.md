@@ -1,7 +1,7 @@
 # CODEX HANDOFF — E-JEPA-TTC
 
 > Superseded como handoff operativo por
-> [Scientific Recovery V5](docs/SCIENTIFIC_RECOVERY_V5_STATUS.md), 2026-08-13.
+> [Scientific Recovery V6](docs/SCIENTIFIC_RECOVERY_V6_STATUS.md), 2026-08-13.
 > El contenido inferior se conserva como estado histórico de 2026-08-10.
 
 Fecha de corte: 2026-08-10 (Europe/Madrid)

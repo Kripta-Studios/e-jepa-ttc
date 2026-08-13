@@ -1,0 +1,73 @@
+{
+  "artifact_sha256": "a280c41c44c87c834a08570060a61d7d26c301fbe04aa49991f405d9b9de7439",
+  "artifact_type": "scientific_recovery_prefix_causality_audit_v1",
+  "created_at_utc": "2026-08-13T17:03:19.337056+00:00",
+  "interpretation": {
+    "causal_left_claim": "model-level prefix-causal if this dynamic test passes",
+    "full_pipeline_claim": "still oracle-ROI unless a causal non-oracle localizer is evaluated",
+    "legacy_claim": "endpoint-window causal only; not strict prefix-streaming causal"
+  },
+  "legacy_expected_to_fail_prefix_invariance": true,
+  "model_config": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\configs\\model\\e_jepa_causal_scale_event_v12_dual_transport_r2_t002_causal.yaml",
+  "results": {
+    "causal_left": {
+      "differences": {
+        "analytic_pair01_append_t2": 0.0,
+        "final_pair01_append_t2": 0.0,
+        "foreground_pair01_append_t2": 0.0,
+        "foreground_pair01_append_t3": 0.0,
+        "geometry_endpoint01_append_t2": 7.152557373046875e-07,
+        "geometry_endpoint01_append_t3": 0.0,
+        "pair12_append_t3": 0.0,
+        "pair_token01_append_t2": 6.556510925292969e-07,
+        "pair_ttc01_append_t2": 0.0,
+        "residual_pair01_append_t2": 0.0
+      },
+      "max_abs_difference": 7.152557373046875e-07,
+      "mode": "causal_left",
+      "prefix_invariant": true,
+      "tolerance": 1e-06
+    },
+    "none": {
+      "differences": {
+        "analytic_pair01_append_t2": 0.0,
+        "final_pair01_append_t2": 0.0,
+        "foreground_pair01_append_t2": 0.0,
+        "foreground_pair01_append_t3": 0.0,
+        "geometry_endpoint01_append_t2": 4.76837158203125e-07,
+        "geometry_endpoint01_append_t3": 0.0,
+        "pair12_append_t3": 0.0,
+        "pair_token01_append_t2": 5.21540641784668e-07,
+        "pair_ttc01_append_t2": 0.0,
+        "residual_pair01_append_t2": 0.0
+      },
+      "max_abs_difference": 5.21540641784668e-07,
+      "mode": "none",
+      "prefix_invariant": true,
+      "tolerance": 1e-06
+    },
+    "symmetric_legacy": {
+      "differences": {
+        "analytic_pair01_append_t2": 0.0025089308619499207,
+        "final_pair01_append_t2": 0.0025089308619499207,
+        "foreground_pair01_append_t2": 0.15377116203308105,
+        "foreground_pair01_append_t3": 0.15377116203308105,
+        "geometry_endpoint01_append_t2": 0.0002778172492980957,
+        "geometry_endpoint01_append_t3": 0.0002778172492980957,
+        "pair12_append_t3": 0.0036220261827111244,
+        "pair_token01_append_t2": 0.0021701455116271973,
+        "pair_ttc01_append_t2": 8.610773086547852,
+        "residual_pair01_append_t2": 0.0
+      },
+      "max_abs_difference": 8.610773086547852,
+      "mode": "symmetric_legacy",
+      "prefix_invariant": false,
+      "tolerance": 1e-06
+    }
+  },
+  "sealed_sources": {
+    "private_test_opened": false
+  },
+  "seed": 20260811,
+  "status": "PASS"
+}

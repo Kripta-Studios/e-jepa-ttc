@@ -1,12 +1,11 @@
 # E-JEPA-TTC
 
-> Estado vigente (2026-08-13): Scientific Recovery V5 completó las tres cadenas
-> fold-locales A4→A6/A8.0 y Garl desde cero. A8.0 mejora A6 en grouped development
-> (MiD macro 197,69 frente a 211,51), pero falla el gate preregistrado 175 y queda
-> no promovido. Garl obtiene 144,35 bajo exact-sample/target/budget/metric/oracle-ROI
-> matching, con preprocessing distinto. Public validation no se usó para selección
-> V5 y `private_test_opened=false`. Estado canónico:
-> [Scientific Recovery V5](docs/SCIENTIFIC_RECOVERY_V5_STATUS.md).
+> Estado vigente (2026-08-13): Scientific Recovery V6 cerró seis entrenamientos
+> fold-locales. V6.1 radio 2 mejora A8.0 de 197,69 a 194,12 MiD, pero su IC95%
+> incluye cero y falla el gate 175. A5 causal obtiene 155,47 y es el mejor E-JEPA
+> TTC limpio, aunque no es promocionable porque no preserva geometría. Garl mantiene
+> 144,35 y cero failures. Public validation y private/test permanecen cerrados.
+> Estado canónico: [Scientific Recovery V6](docs/SCIENTIFIC_RECOVERY_V6_STATUS.md).
 
 > Estado event-only (2026-08-10): Garl matched desde cero fija la métrica a batir
 > en MiD macro 203,63. A0 obtuvo 382,19, A1 geometry-only 346,83 y A3
