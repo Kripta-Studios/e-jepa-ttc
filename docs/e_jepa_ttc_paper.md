@@ -1,8 +1,9 @@
 # E-JEPA-TTC: informe científico local
 
-> **Desactualizado para Scientific Recovery V7.** Este paper no contiene
-> resultados V7. No debe actualizarse hasta que exista un agregado firmado según
-> [`CODEX_HANDOFF.md`](../CODEX_HANDOFF.md).
+> **Desactualizado.** Este paper no contiene los resultados finales V5–V7 ni el
+> diagnóstico post hoc A5/C2F. No debe citarse como estado actual. El cierre
+> canónico está en [`CODEX_HANDOFF.md`](../CODEX_HANDOFF.md) y
+> [`SCIENTIFIC_RECOVERY_V7_STATUS.md`](SCIENTIFIC_RECOVERY_V7_STATUS.md).
 
 Actualizado: 2026-08-02.
 

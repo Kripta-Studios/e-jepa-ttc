@@ -1,5 +1,20 @@
 # Progreso
 
+## 2026-08-14: Scientific Recovery V7
+
+- completados 15 runs: SOFT, C2F, T20, CAP-S y partial-freeze, tres folds seed 7;
+- integridad OOF: 8.192 tokens únicos, nueve secuencias y 100% de puntos finitos;
+- MiD puntual: A5 158.449; SOFT 165.116; C2F 158.573; T20 165.260;
+  CAP-S 167.025; partial-freeze 167.826;
+- todos los brazos fallan mecanismo, geometría y candidatura; V7 cierra negativo;
+- partial-freeze congela 9.664 parámetros, pero solo retiene ~19% de slopes y
+  ~29% de std-ratios;
+- diagnóstico post hoc A5/C2F-MoE: 153.519 MiD, delta bootstrap mediana
+  `−4.919`, IC95% `[−7.033,−2.910]`; requiere protocolo nuevo;
+- no se usaron public validation, private test, EvTTC test ni CodaBench.
+
+Detalles y hashes: [estado canónico V7](SCIENTIFIC_RECOVERY_V7_STATUS.md).
+
 ## 2026-08-13 — Scientific Recovery V5
 
 - reparados provenance, claim readiness y stale-output handling P0;

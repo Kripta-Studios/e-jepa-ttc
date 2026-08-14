@@ -1,5 +1,19 @@
 # Informe técnico
 
+## Addendum: Scientific Recovery V7
+
+V7 comparó cuatro cambios aislados y un control condicional sobre tres folds OOF
+seed 7. Ninguno supera los gates. MiD puntual: A5 revaluado 158.449; SOFT 165.116;
+C2F 158.573; T20 165.260; CAP-S 167.025; SOFT partial-freeze 167.826. El control
+partial-freeze empeora A5 por 9.378 MiD, IC95% `[+5.359,+13.272]`, y conserva solo
+~19% de slopes y ~29% de std-ratios. No se confirma ningún ganador ni se ejecutan
+seeds 13/23.
+
+Un análisis posterior encuentra complementariedad A5/C2F: un router causal
+leave-one-fold-out obtiene 153.519 MiD y delta mediana `−4.919`, IC95%
+`[−7.033,−2.910]`. Es una hipótesis TTC-first post hoc; necesita protocolo y
+confirmación nuevos. [Resultados completos](SCIENTIFIC_RECOVERY_V7_STATUS.md).
+
 ## Addendum: Scientific Recovery V6
 
 V6-D0 seleccionó movimiento/escala y congeló un único cambio: radio de transporte

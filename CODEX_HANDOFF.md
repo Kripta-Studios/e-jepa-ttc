@@ -1,6 +1,6 @@
 # CODEX HANDOFF: cierre V6 y Scientific Recovery V7/V8
 
-Fecha de corte: 2026-08-13 (Europe/Madrid).
+Fecha de corte: 2026-08-14 (Europe/Madrid).
 
 Este archivo es el contrato canónico de continuación. El acta V6 permanece en
 [`docs/SCIENTIFIC_RECOVERY_V6_STATUS.md`](docs/SCIENTIFIC_RECOVERY_V6_STATUS.md) y no
@@ -12,13 +12,14 @@ se reinterpreta con resultados posteriores.
   `scientific-recovery-v6-oof-diagnostics@28c1efb50622255719f239622ba07858ce704535`.
 - Rama V7 creada exactamente desde esa base: `scientific-recovery-v7-balanced-oof`.
 - Los worktrees A6 y CUDA robustness siguen intactos.
-- No se avanzó `main`, no se crearon tags y no se hizo push.
+- La entrega se publica solo en `scientific-recovery-v7-balanced-oof`. No se
+  avanzó `main` ni se crearon tags.
 - Public validation, private test, EvTTC test y CodaBench no se abrieron para
   selección.
 - `artifacts/` contiene salidas ignoradas por Git. Un commit de código no basta para
   recuperarlas: cada resultado aceptado debe conservar su archivo, SHA-256 y firma
   `artifact_sha256`.
-- El worktree conserva entradas untracked ajenas a V7. No se usó `git add .`.
+- La entrega usa staging explícito; no se usó `git add .`.
 
 La propuesta anterior se archivó, sin reescribir su cuerpo, en
 [`docs/archive/E_JEPA_TTC_SCIENTIFIC_RECOVERY_V6_POSTMORTEM_AND_V7_V8_MASTER_PLAN_2026-08-13.md`](docs/archive/E_JEPA_TTC_SCIENTIFIC_RECOVERY_V6_POSTMORTEM_AND_V7_V8_MASTER_PLAN_2026-08-13.md).
@@ -281,6 +282,31 @@ ratios. Esto activa el único control previsto: el mismo SOFT con
 No se permite barrer capas ni pesos. El acta detallada está en
 `docs/SCIENTIFIC_RECOVERY_V7_STATUS.md`.
 
+### 8.2 Control partial-freeze y cierre V7
+
+El control terminó los tres folds. Obtiene `167.826 MiD` puntual, delta `+9.378`
+frente a A5, mediana bootstrap `+9.427`, IC95% `[+5.359,+13.272]` y
+`P(delta<0)=0`. Su MiD selectivo es `164.744`, con `94.885%` de cobertura.
+Retiene aproximadamente 19% de las slopes y 29% de los std-ratios. Integridad
+pasa; mecanismo, geometría y candidatura fallan.
+
+V7 queda cerrado como resultado negativo. No hay ganador, seeds 13/23 ni ablation
+JEPA. La geometría densa permanece como requisito para atribuir el mecanismo, no
+como condición demostrada para maximizar MiD.
+
+### 8.3 Hipótesis posterior: A5/C2F-MoE
+
+Un diagnóstico no preregistrado encuentra complementariedad A5/C2F: oracle
+`133.074 MiD`; router logístico leave-one-fold-out con ocho señales causales
+`153.519 MiD`, delta mediana `−4.919`, IC95% `[−7.033,−2.910]` y
+`P(delta<0)=1.0`. Mejora los tres folds, pero se diseñó tras observar V7. No es
+un candidato confirmado ni puede reetiquetarse como resultado V7.
+
+Una continuación TTC-first debe abrir un protocolo nuevo, mantener fold,
+secuencia, track, bbox, TTC y bucket fuera del router, usar stacking anidado y
+confirmar con seeds/datos no usados para diseñarlo. La geometría se reportará como
+métrica secundaria y seguirá bloqueando claims mecanísticos, no el ranking TTC.
+
 ## 9. Atribución JEPA
 
 El ganador causal-scale no se llama E-JEPA final hasta comparar la misma
@@ -373,14 +399,12 @@ Pruebas V7 implementadas:
 - hash de tokens del agregador idéntico al protocolo congelado.
 
 El smoke real de 32 filas y una epoch pasó en la RTX 5070 Ti para SOFT, C2F,
-T20 y CAP-S. Produjo 32 puntos finitos por brazo. Artefacto firmado:
-`artifacts/scientific_recovery_v7/smoke_v2/manifest.json`, identidad
+T20 y CAP-S, con 32 puntos finitos por brazo. Su manifiesto tuvo identidad
 `560a3453a31b785957d1523364ac93e33662679cfc3e424ae940fe30957417f2`.
-El smoke desactiva el umbral de abstención solo para que el selector de
-infraestructura cubra nueve etiquetas de secuencia sintéticas; no genera una
-métrica científica ni cambia las configs OOF.
+La limpieza final retiró ese smoke regenerable. No contiene una métrica
+científica ni cambia las configs OOF.
 
-La suite funcional completa del corte pasa: `1165 passed, 7 skipped`. Los archivos
+La suite funcional completa previa al cierre pasa, con siete skips. Los archivos
 Python V7 modificados pasan Ruff. El comando global
 `uv run --no-sync ruff check src scripts tests` encuentra 1.353 incidencias
 históricas fuera del cambio V7; no se ocultaron ni se reescribieron de forma
@@ -406,11 +430,11 @@ uv run --no-sync ruff check `
   tests/unit/test_scientific_recovery_v7.py
 ```
 
-Antes de aceptar el agregado final deben constar además overfit sintético
-SOFT/C2F, equivalencia resume/continuo,
-orden exacto del sampler y auditoría de firmas. Una ventana sin eventos debe dar
-un punto finito con baja confianza; `log_height_ratio=0` o `sensor_support=0`
-debe dar punto finite/clipped, `known_mask=false` y salida selectiva `NaN`.
+El cierre no añadió nuevos overfits ni una nueva equivalencia resume/continuo.
+Estos controles vuelven a ser obligatorios si se abre otro protocolo. Una ventana
+sin eventos debe dar un punto finito con baja confianza; `log_height_ratio=0` o
+`sensor_support=0` debe dar punto finite/clipped, `known_mask=false` y salida
+selectiva `NaN`.
 
 ## 13. Claims permitidos y prohibidos
 
@@ -423,6 +447,8 @@ Permitidos ahora:
   T20 y CAP-S empeoran A5 bajo OOF train-only.
 - La congelación parcial SOFT es un control preregistrado, no un candidato ni
   evidencia a favor de JEPA.
+- V7 completo, incluido partial-freeze, es negativo bajo sus gates congelados.
+- El A5/C2F-MoE es una hipótesis post hoc con señal OOF, no confirmación.
 
 Prohibidos ahora:
 
@@ -444,12 +470,32 @@ Prohibidos ahora:
 - [x] Doce runs OOF seed 7.
 - [x] Cuatro agregados y auditorías seed 7 firmados; todos fallan los gates.
 - [x] Control SOFT partial-freeze congelado antes de entrenar.
-- [ ] Tres folds del control SOFT partial-freeze y agregado firmado.
-- [ ] Cierre negativo o selección de un único ganador.
-- [ ] Seeds 13/23 del ganador, solo si existe.
-- [ ] Ablation JEPA del ganador, solo después de V7.1.
+- [x] Tres folds del control SOFT partial-freeze y agregado firmado.
+- [x] V7 cerrado negativo; no existe ganador.
+- [x] Seeds 13/23 no ejecutadas por ausencia de ganador.
+- [x] Ablation JEPA no ejecutada por ausencia de ganador.
 
 Los resultados del screen constan en agregados firmados bajo
 `artifacts/scientific_recovery_v7/results/`; ese directorio está ignorado por Git y
 debe preservarse con el commit. El paper Markdown/TeX sigue desactualizado. No se
-hicieron push, tag, avance de `main` ni acceso a test/CodaBench.
+hicieron tag, avance de `main` ni acceso a test/CodaBench durante selección.
+
+## 15. Retención local tras el cierre
+
+La limpieza del 14 de agosto redujo `artifacts/` de 115,87 GiB a 446 MiB. Conservó:
+
+- `artifacts/scientific_recovery_v5/`, `v6/` y `v7/` con agregados, predicciones y
+  auditorías;
+- los runs V5–V7 completados con `summary.json`, predicciones y `model_best.pt`
+  firmado;
+- manifiestos, configuraciones de preprocessing y metadatos de caché.
+
+Se borraron tensores de caché, estados `best/last` usados para reanudar, smokes,
+logs de supervisión, runs abortados, screens anteriores y paquetes temporales. Los
+datasets fuente permanecen intactos. Los artefactos borrados se pueden regenerar;
+Git no los recupera porque estaban ignorados.
+
+El diario fold-local final queda en
+`artifacts/scientific_recovery_v7/diagnostics/FINAL_TRAINING_RESULTS.md`. Para
+transferir el proyecto hay que entregar el commit y el paquete de evidencia local;
+el repositorio Git por sí solo no incluye `artifacts/`.

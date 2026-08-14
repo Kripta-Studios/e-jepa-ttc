@@ -41,6 +41,29 @@ scratch/
 tmp/
 pytest_tmp/
 .tmp/
+
+# Local Codex/Hugging Face skills and experiment-tracker state.
+/.agents/
+/mlflow.db
+/mlruns/
+
+# One-off recovery material kept outside the canonical docs/ and scripts/ trees.
+/*.patch
+/A5_TRANSPORT_SUITE_V1_NOTES.md
+/E_JEPA_TTC_A6_POSTMORTEM_AND_NEXT_PLAN_2026-08-11.md
+/E_JEPA_TTC_SCIENTIFIC_RECOVERY_V3_HANDOFF_2026-08-12.md
+/E_JEPA_TTC_SCIENTIFIC_RECOVERY_V4_AUDIT_AND_V5_PLAN_2026-08-12.md
+/MONITOR_E_JEPA_RECOVERY_*.ps1
+/RUN_E_JEPA_RECOVERY_*.ps1
+/run_a4_*_isolated.ps1
+
+# Preserve signed aggregate JSON, but exclude bulky row-level diagnostic outputs.
+/artifacts/metrics/a4_dinov3_relational_lambda_cv_train8192_v1/runs/
+/artifacts/metrics/a5_transport_preflight_a4_checkpoint_v1/*.csv
+/artifacts/metrics/a5_transport_preflight_v1/*.csv
+/artifacts/metrics/a5_transport_preflight_v2/*.csv
+/artifacts/metrics/a5_transport_preflight_v3_confirm/*.csv
+
 # Local dataset roots are machine-specific; keep only the example template.
 configs/local/*.yaml
 !configs/local/paths.example.yaml

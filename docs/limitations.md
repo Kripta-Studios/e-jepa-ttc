@@ -1,5 +1,22 @@
 # Limitaciones
 
+## Scientific Recovery V7
+
+Los cinco brazos se evaluaron con una sola seed de optimización; los tres folds
+miden particiones OOF, no variabilidad entre seeds. Todos usaron outer-dev para
+seleccionar checkpoint y decidir el programa. No son test.
+
+El gate geométrico de 60% responde al claim mecanístico preregistrado. Los
+resultados no demuestran que esa retención mejore MiD: A5 conserva poca geometría
+y sigue siendo el mejor brazo propio; SOFT/partial-freeze no resuelven el trade-off.
+En un track TTC-first futuro, geometría debe reportarse como diagnóstico y reservarse
+como gate para claims de causal-scale, robustez o interpretabilidad.
+
+El router A5/C2F se diseñó tras observar V7. Aunque su IC OOF es favorable, reutiliza
+el universo que generó la hipótesis y no constituye confirmación. Además duplica
+inferencia y mezcla dos expertos que fallan geometría. Requiere stacking anidado,
+seeds/datos nuevos y contabilidad de latencia antes de cualquier claim.
+
 ## Scientific Recovery V6
 
 V6.1 solo mejora A8.0 en 3,57 MiD y su IC95% incluye cero. A5 causal alcanza

@@ -1,9 +1,10 @@
 # E-JEPA-TTC
 
-> Estado vigente (2026-08-14): el screen V7 de cuatro brazos y tres folds OOF
-> terminó sin candidato. C2F queda compatible con efecto nulo; SOFT, T20 y CAP-S
-> empeoran A5 y ninguno preserva geometría. Se ejecuta el único control previsto:
-> SOFT con `encoder.features[0:3]` congelado. Acta:
+> Estado vigente (2026-08-14): V7 terminó sin candidato. SOFT, T20, CAP-S y el
+> control partial-freeze empeoran A5; C2F queda compatible con efecto nulo. Ninguno
+> preserva geometría. No se ejecutan seeds 13/23 ni ablation JEPA. Un diagnóstico
+> post hoc A5/C2F-MoE obtiene 153,519 MiD, pero requiere confirmación prospectiva.
+> Acta:
 > [Scientific Recovery V7](docs/SCIENTIFIC_RECOVERY_V7_STATUS.md). Contrato y
 > gates: [CODEX_HANDOFF.md](CODEX_HANDOFF.md).
 

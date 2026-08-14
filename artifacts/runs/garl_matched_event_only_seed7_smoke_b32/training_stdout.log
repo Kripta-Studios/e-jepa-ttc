@@ -1,5 +1,0 @@
-[33mInitializing [train] set, db_mode: [window], db_size: [2048], TTC range: [-10, 10], please wait... [0m
-[32mInitialization finished for [train] set. TTC range: [-10, 10][0m
-[32mModel dT set to: 0.1 s[0m
-Saved checkpoint: C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc\artifacts\runs\garl_matched_event_only_seed7_smoke_b32\release_output\event_lhr_matched_screen\20260810_033212\event_lhr_matched_screen_1.pth
-Saved final checkpoint: C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc\artifacts\runs\garl_matched_event_only_seed7_smoke_b32\release_output\event_lhr_matched_screen\20260810_033212\ckpt.pth

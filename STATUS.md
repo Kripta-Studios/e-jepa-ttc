@@ -4,7 +4,7 @@ Contrato vigente: [cierre V6 y Scientific Recovery V7/V8](CODEX_HANDOFF.md).
 El acta V6 permanece en
 [docs/SCIENTIFIC_RECOVERY_V6_STATUS.md](docs/SCIENTIFIC_RECOVERY_V6_STATUS.md).
 
-## 2026-08-14 — Screen V7 inicial cerrado sin candidato
+## 2026-08-14: Scientific Recovery V7 cerrado negativo
 
 - Terminaron SOFT, C2F, T20 y CAP-S: tres folds OOF seed 7 y 8.192 tokens cada uno.
 - MiD puntual: A5 revaluado 158.449; SOFT 165.116; C2F 158.573; T20 165.260;
@@ -12,8 +12,12 @@ El acta V6 permanece en
 - Ningún brazo pasa mecanismo, geometría o candidatura. C2F es compatible con
   efecto nulo; los otros tres empeoran A5 con IC95% por encima de cero.
 - T20 no autoriza ASTW y CAP-S no autoriza cap-M.
-- Se congeló el único control permitido: SOFT con `encoder.features[0:3]`
-  congelado, mismo teacher y mismos pesos. No hay sweep.
+- El control SOFT partial-freeze también terminó: 167.826 MiD puntual, delta
+  `+9.378`, IC95% `[+5.359,+13.272]`; retiene ~19% de slopes y ~29% de std-ratios.
+- No hay ganador, seeds 13/23 ni ablation JEPA.
+- Diagnóstico post hoc, no promocionable: un router causal A5/C2F obtiene 153.519
+  MiD; delta mediana `−4.919`, IC95% `[−7.033,−2.910]`. Es la hipótesis
+  TTC-first recomendada para un protocolo prospectivo separado.
 - Acta y fuentes: [Scientific Recovery V7](docs/SCIENTIFIC_RECOVERY_V7_STATUS.md).
 - Public validation, private test, EvTTC test y CodaBench siguen cerrados.
 

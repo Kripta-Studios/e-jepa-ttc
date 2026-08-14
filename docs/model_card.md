@@ -1,5 +1,17 @@
 # Model card — E-JEPA-TTC
 
+## Scientific Recovery V7
+
+No hay modelo V7 promovido. SOFT, C2F, T20, CAP-S y SOFT partial-freeze completan
+tres folds OOF seed 7 y fallan los gates de mecanismo, geometría y candidatura.
+El mejor modelo propio sigue siendo A5 revaluado con 158.449 MiD puntual; Garl
+local conserva 144.353. El control partial-freeze obtiene 167.826 y no recupera
+geometría.
+
+Un router A5/C2F analizado post hoc obtiene 153.519 MiD, pero no es un checkpoint
+confirmado ni un resultado V7. No debe desplegarse, denominarse E-JEPA, SOTA o
+apto para seguridad. Véase [Scientific Recovery V7](SCIENTIFIC_RECOVERY_V7_STATUS.md).
+
 ## Scientific Recovery V5
 
 No hay modelo promovido. A8.0 usa geometry A4 congelada y un encoder transport
