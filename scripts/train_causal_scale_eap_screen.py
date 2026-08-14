@@ -761,6 +761,43 @@ def _validate_a5_transport_change(
     }
 
 
+def _validate_partial_freeze_control(
+    training_config: CausalScaleEAPTrainingConfig,
+    decision_contract: dict[str, Any],
+) -> None:
+    """Reject drift from the sole preregistered post-screen SOFT control."""
+
+    contract = decision_contract.get("partial_freeze_control")
+    if contract is None:
+        return
+    if not isinstance(contract, dict):
+        raise ValueError("partial_freeze_control must be a mapping")
+    if training_config.freeze_encoder is not False:
+        raise ValueError("SOFT partial-freeze control may not freeze the full encoder")
+    if training_config.freeze_encoder_stages != 3:
+        raise ValueError("SOFT partial-freeze control must freeze encoder.features[0:3]")
+    if training_config.initialization_mode != "none":
+        raise ValueError("SOFT partial-freeze student must initialize from scratch")
+    if training_config.soft_geometry_teacher_checkpoint is None:
+        raise ValueError("SOFT partial-freeze control requires the fold-local teacher")
+    if (
+        training_config.soft_dense_cosine_weight != 1.0
+        or training_config.soft_geometry_weight != 1.0
+    ):
+        raise ValueError("SOFT partial-freeze control must retain both loss weights at 1.0")
+    required = {
+        "frozen_module_slice": "encoder.features[0:3]",
+        "student_initialized_from_scratch": True,
+        "student_remaining_layers_trainable": True,
+        "same_fold_local_teacher": True,
+        "same_soft_loss_weights": True,
+        "layer_or_weight_sweep_allowed": False,
+    }
+    for key, expected in required.items():
+        if contract.get(key) != expected:
+            raise ValueError(f"partial-freeze contract mismatch: {key}")
+
+
 def _finite_json(value: object) -> object:
     if isinstance(value, np.generic):
         return _finite_json(value.item())
@@ -954,6 +991,7 @@ def run(
     if not isinstance(decision_contract, dict):
         raise ValueError("decision_contract mapping is required")
     _validate_bbox_geometry_loss(training_config, loss_config, decision_contract)
+    _validate_partial_freeze_control(training_config, decision_contract)
     representation_calibration = _validate_representation_change(training_config, decision_contract)
     a5_preflight = _validate_a5_transport_change(training_config, model_config, decision_contract)
     parameter_count = sum(
@@ -1154,8 +1192,7 @@ def run(
                 else [-1] * len(validation["sample_tokens"])
             ),
             "seed": [training_config.seed] * len(validation["sample_tokens"]),
-            "cache_manifest_sha256": [actual_manifest_hash]
-            * len(validation["sample_tokens"]),
+            "cache_manifest_sha256": [actual_manifest_hash] * len(validation["sample_tokens"]),
             "config_sha256": [_sha256(config_path)] * len(validation["sample_tokens"]),
         }
     )

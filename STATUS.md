@@ -4,6 +4,19 @@ Contrato vigente: [cierre V6 y Scientific Recovery V7/V8](CODEX_HANDOFF.md).
 El acta V6 permanece en
 [docs/SCIENTIFIC_RECOVERY_V6_STATUS.md](docs/SCIENTIFIC_RECOVERY_V6_STATUS.md).
 
+## 2026-08-14 — Screen V7 inicial cerrado sin candidato
+
+- Terminaron SOFT, C2F, T20 y CAP-S: tres folds OOF seed 7 y 8.192 tokens cada uno.
+- MiD puntual: A5 revaluado 158.449; SOFT 165.116; C2F 158.573; T20 165.260;
+  CAP-S 167.025. Todos producen 100% de puntos finitos y 0% de failure puntual.
+- Ningún brazo pasa mecanismo, geometría o candidatura. C2F es compatible con
+  efecto nulo; los otros tres empeoran A5 con IC95% por encima de cero.
+- T20 no autoriza ASTW y CAP-S no autoriza cap-M.
+- Se congeló el único control permitido: SOFT con `encoder.features[0:3]`
+  congelado, mismo teacher y mismos pesos. No hay sweep.
+- Acta y fuentes: [Scientific Recovery V7](docs/SCIENTIFIC_RECOVERY_V7_STATUS.md).
+- Public validation, private test, EvTTC test y CodaBench siguen cerrados.
+
 ## 2026-08-13 — Scientific Recovery V6 cerrado sin promoción
 
 - V6-D0 seleccionó `motion_scale`; se congeló V6.1 cambiando solo radio 1 a 2.

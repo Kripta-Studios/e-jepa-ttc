@@ -78,6 +78,33 @@ def _module_tensor_sha256(module: nn.Module) -> str:
     return digest.hexdigest()
 
 
+def _apply_encoder_freeze(
+    model: CausalScaleTTC,
+    *,
+    freeze_encoder: bool,
+    freeze_encoder_stages: int,
+) -> list[str]:
+    """Freeze the full encoder or the exact leading ``features`` slice."""
+
+    if freeze_encoder and freeze_encoder_stages:
+        raise ValueError("full and partial encoder freezing are mutually exclusive")
+    if freeze_encoder_stages < 0:
+        raise ValueError("freeze_encoder_stages must be non-negative")
+    if freeze_encoder:
+        for parameter in model.encoder.parameters():
+            parameter.requires_grad_(False)
+    elif freeze_encoder_stages:
+        encoder_stages = list(model.encoder.features.children())
+        if freeze_encoder_stages > len(encoder_stages):
+            raise ValueError("freeze_encoder_stages exceeds encoder.features length")
+        for stage in encoder_stages[:freeze_encoder_stages]:
+            for parameter in stage.parameters():
+                parameter.requires_grad_(False)
+    return sorted(
+        name for name, parameter in model.named_parameters() if not parameter.requires_grad
+    )
+
+
 def _file_sha256(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as handle:
@@ -392,9 +419,7 @@ def _loss(
         if output.endpoint_dense_features is None or teacher_output.endpoint_dense_features is None:
             raise RuntimeError("soft geometry distillation requires dense endpoint features")
         student_dense = functional.normalize(output.endpoint_dense_features.float(), dim=2)
-        teacher_dense = functional.normalize(
-            teacher_output.endpoint_dense_features.float(), dim=2
-        )
+        teacher_dense = functional.normalize(teacher_output.endpoint_dense_features.float(), dim=2)
         if student_dense.shape != teacher_dense.shape:
             raise ValueError("soft geometry teacher and student dense features differ in shape")
         dense_cosine = (1.0 - (student_dense * teacher_dense).sum(dim=2)).mean()
@@ -1505,17 +1530,14 @@ def train_real_causal_scale(
         )
         initialization["checkpoint"] = training_config.initialization_checkpoint
         initialization["checkpoint_sha256"] = training_config.initialization_checkpoint_sha256
+    frozen_parameter_names = _apply_encoder_freeze(
+        model,
+        freeze_encoder=training_config.freeze_encoder,
+        freeze_encoder_stages=training_config.freeze_encoder_stages,
+    )
     if training_config.freeze_encoder:
-        for parameter in model.encoder.parameters():
-            parameter.requires_grad_(False)
         initialization["freeze_encoder"] = True
     if training_config.freeze_encoder_stages:
-        encoder_stages = list(model.encoder.features.children())
-        if training_config.freeze_encoder_stages > len(encoder_stages):
-            raise ValueError("freeze_encoder_stages exceeds encoder.features length")
-        for stage in encoder_stages[: training_config.freeze_encoder_stages]:
-            for parameter in stage.parameters():
-                parameter.requires_grad_(False)
         initialization["freeze_encoder_stages"] = training_config.freeze_encoder_stages
     initialization["soft_geometry_teacher"] = soft_teacher_metadata
     initialization["soft_geometry_teacher_excluded_from_optimizer"] = (
@@ -1531,9 +1553,6 @@ def train_real_causal_scale(
         raise RuntimeError("causal-scale run has no trainable parameters")
     initialization["frozen_parameter_count"] = frozen_parameter_count
     initialization["trainable_parameter_count"] = trainable_parameter_count
-    frozen_parameter_names = sorted(
-        name for name, parameter in model.named_parameters() if not parameter.requires_grad
-    )
     optimizer_parameter_names = sorted(
         name for name, parameter in model.named_parameters() if parameter.requires_grad
     )

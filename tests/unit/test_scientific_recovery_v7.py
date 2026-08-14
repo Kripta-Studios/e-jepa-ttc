@@ -18,10 +18,12 @@ from e_jepa_ttc.models.causal_scale_ttc import CausalScaleTTC, CausalScaleTTCCon
 from e_jepa_ttc.models.height_ratio_head import raw_garl_height_ratio_ttc
 from e_jepa_ttc.training.causal_scale_eap import (
     CausalScaleEAPTrainingConfig,
+    _apply_encoder_freeze,
     _load_soft_geometry_teacher,
 )
 from scripts.aggregate_v7_fold_results import _paired_bootstrap, _token_sha
 from scripts.freeze_scientific_recovery_v7_configs import _sorted_values_sha256
+from scripts.train_causal_scale_eap_screen import _validate_partial_freeze_control
 
 
 def _events() -> dict[str, np.ndarray]:
@@ -126,6 +128,71 @@ def test_soft_teacher_is_frozen_in_eval_and_has_no_trainable_parameters(tmp_path
     assert teacher.training is False
     assert not any(parameter.requires_grad for parameter in teacher.parameters())
     assert metadata["frozen"] is True
+
+
+def test_partial_freeze_targets_exact_encoder_features_slice() -> None:
+    model = CausalScaleTTC(
+        CausalScaleTTCConfig(
+            in_channels=12,
+            hidden_dim=16,
+            geometry_dim=32,
+            residual_depth=1,
+        )
+    )
+    frozen = _apply_encoder_freeze(
+        model,
+        freeze_encoder=False,
+        freeze_encoder_stages=3,
+    )
+    expected = sorted(
+        name
+        for name, _ in model.named_parameters()
+        if name.startswith(("encoder.features.0.", "encoder.features.1.", "encoder.features.2."))
+    )
+    assert frozen == expected
+    assert frozen
+    assert all(not dict(model.named_parameters())[name].requires_grad for name in frozen)
+    assert all(
+        parameter.requires_grad
+        for name, parameter in model.named_parameters()
+        if name not in frozen
+    )
+    optimizer_names = {
+        name for name, parameter in model.named_parameters() if parameter.requires_grad
+    }
+    assert not optimizer_names.intersection(frozen)
+
+
+def test_partial_freeze_contract_rejects_layer_or_loss_drift() -> None:
+    training = CausalScaleEAPTrainingConfig(
+        freeze_encoder_stages=3,
+        soft_geometry_teacher_checkpoint="teacher.pt",
+        soft_geometry_teacher_checkpoint_sha256="0" * 64,
+        soft_dense_cosine_weight=1.0,
+        soft_geometry_weight=1.0,
+    )
+    contract = {
+        "partial_freeze_control": {
+            "frozen_module_slice": "encoder.features[0:3]",
+            "student_initialized_from_scratch": True,
+            "student_remaining_layers_trainable": True,
+            "same_fold_local_teacher": True,
+            "same_soft_loss_weights": True,
+            "layer_or_weight_sweep_allowed": False,
+        }
+    }
+    _validate_partial_freeze_control(training, contract)
+    with pytest.raises(ValueError, match="loss weights"):
+        _validate_partial_freeze_control(
+            CausalScaleEAPTrainingConfig(
+                freeze_encoder_stages=3,
+                soft_geometry_teacher_checkpoint="teacher.pt",
+                soft_geometry_teacher_checkpoint_sha256="0" * 64,
+                soft_dense_cosine_weight=0.5,
+                soft_geometry_weight=1.0,
+            ),
+            contract,
+        )
 
 
 def test_point_and_abstention_are_separate_when_all_rows_unknown() -> None:

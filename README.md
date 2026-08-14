@@ -1,5 +1,12 @@
 # E-JEPA-TTC
 
+> Estado vigente (2026-08-14): el screen V7 de cuatro brazos y tres folds OOF
+> terminó sin candidato. C2F queda compatible con efecto nulo; SOFT, T20 y CAP-S
+> empeoran A5 y ninguno preserva geometría. Se ejecuta el único control previsto:
+> SOFT con `encoder.features[0:3]` congelado. Acta:
+> [Scientific Recovery V7](docs/SCIENTIFIC_RECOVERY_V7_STATUS.md). Contrato y
+> gates: [CODEX_HANDOFF.md](CODEX_HANDOFF.md).
+
 > Estado vigente (2026-08-13): Scientific Recovery V6 cerró seis entrenamientos
 > fold-locales. V6.1 radio 2 mejora A8.0 de 197,69 a 194,12 MiD, pero su IC95%
 > incluye cero y falla el gate 175. A5 causal obtiene 155,47 y es el mejor E-JEPA

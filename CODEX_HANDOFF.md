@@ -198,6 +198,9 @@ Implementación principal:
 - `scripts/reevaluate_v7_baselines.py` reconstruye y firma baselines V7.
 - `scripts/run_scientific_recovery_v7.ps1` valida firmas y hashes antes de CUDA,
   reanuda runs parciales, se detiene ante corrupción y ejecuta auditoría/agregado.
+- `scripts/run_scientific_recovery_v7_soft_partial_freeze.ps1` ejecuta como
+  máximo dos folds del control a la vez, deja el tercero en cola y genera su
+  auditoría y agregado al completar los tres.
 - `scripts/aggregate_v7_fold_results.py` valida el OOF exacto, calcula bootstrap,
   estratos y gates, y firma el resultado.
 - `scripts/audit_v7_fold_geometry.py` calcula retención frente a A4 fold-local.
@@ -212,6 +215,11 @@ uv run --no-sync python scripts/freeze_scientific_recovery_v7_configs.py
 uv run --no-sync python scripts/reevaluate_v7_baselines.py --device cuda
 powershell -ExecutionPolicy Bypass -File scripts/run_scientific_recovery_v7.ps1 `
   -Device cuda -SkipBaselines
+uv run --no-sync python scripts/freeze_scientific_recovery_v7_configs.py `
+  --soft-partial-freeze-control
+powershell -ExecutionPolicy Bypass `
+  -File scripts/run_scientific_recovery_v7_soft_partial_freeze.ps1 `
+  -Device cuda -MaximumParallel 2 -PollSeconds 900
 ```
 
 El runner no avanza al siguiente brazo si un run falla. Un summary existente con
@@ -248,6 +256,30 @@ Si ningún brazo individual pasa:
 No se añaden foreground, SSM, radios mayores ni una curva de 25M parámetros.
 Entre varios candidatos: menor MiD completo, menor MiD `0–3 s`, menor failure,
 menor latencia y parámetros. Solo el ganador se repite con seeds 13 y 23.
+
+### 8.1 Resultado del screen inicial
+
+Los doce runs terminaron el 2026-08-14. Cada brazo produjo 8.192 puntos OOF
+únicos y finitos, tres folds y nueve secuencias sin abrir splits prohibidos.
+
+| Brazo | MiD puntual | Delta vs A5 | IC95% bootstrap del delta | P(delta<0) | Geometría |
+|---|---:|---:|---:|---:|---:|
+| SOFT | 165.116 | +6.668 | [+3.084,+10.547] | 0.0004 | falla |
+| C2F | 158.573 | +0.125 | [-3.025,+3.432] | 0.4460 | falla |
+| T20 | 165.260 | +6.812 | [+2.290,+11.514] | 0.0020 | falla |
+| CAP-S | 167.025 | +8.576 | [+3.735,+13.630] | 0.0002 | falla |
+
+Todos tienen `mechanism_positive=false`, `geometry_positive=false` y
+`confirmation_candidate=false`. C2F es compatible con efecto nulo; los otros tres
+empeoran A5. T20 no autoriza ASTW y CAP-S no autoriza cap-M.
+
+SOFT retiene solo 20.6%/19.8% de las slopes bbox/física y 28.6% de ambos std
+ratios. Esto activa el único control previsto: el mismo SOFT con
+`encoder.features[0:3]` congelado. Las tres configs y su causa están firmadas en
+`soft_partial_freeze_manifest.json`, artefacto
+`c41fabd0c4e12220d531bc39748aea40de078a316e14c9eca5b599bd93ecf174`.
+No se permite barrer capas ni pesos. El acta detallada está en
+`docs/SCIENTIFIC_RECOVERY_V7_STATUS.md`.
 
 ## 9. Atribución JEPA
 
@@ -387,8 +419,10 @@ Permitidos ahora:
 - Garl es el mejor comparador local seed 7 bajo el protocolo emparejado.
 - A5 es el mejor brazo TTC propio de V6 y pierde geometría.
 - V6.1 mejora la media de A8 sin evidencia suficiente y falla su gate.
-- V7 evalúa causal-scale/transport, resolución temporal, distillation geométrica
-  y capacidad bajo OOF train-only.
+- El screen V7 inicial fue negativo: C2F es compatible con efecto nulo y SOFT,
+  T20 y CAP-S empeoran A5 bajo OOF train-only.
+- La congelación parcial SOFT es un control preregistrado, no un candidato ni
+  evidencia a favor de JEPA.
 
 Prohibidos ahora:
 
@@ -407,12 +441,15 @@ Prohibidos ahora:
 - [x] Contratos SOFT, C2F, T20, CAP-S, export, agregado y auditoría implementados.
 - [x] Suite Pytest completa y lint focalizado ejecutados.
 - [x] Smokes GPU de los cuatro brazos.
-- [ ] Doce runs OOF seed 7.
-- [ ] Agregados y auditorías seed 7.
-- [ ] Selección de un único ganador o cierre negativo.
+- [x] Doce runs OOF seed 7.
+- [x] Cuatro agregados y auditorías seed 7 firmados; todos fallan los gates.
+- [x] Control SOFT partial-freeze congelado antes de entrenar.
+- [ ] Tres folds del control SOFT partial-freeze y agregado firmado.
+- [ ] Cierre negativo o selección de un único ganador.
 - [ ] Seeds 13/23 del ganador, solo si existe.
 - [ ] Ablation JEPA del ganador, solo después de V7.1.
 
-No hay resultados V7 de brazos hasta que aparezcan agregados firmados en
-`artifacts/scientific_recovery_v7/results/`. El paper Markdown/TeX sigue
-desactualizado y no debe incorporar V7 antes de ese punto.
+Los resultados del screen constan en agregados firmados bajo
+`artifacts/scientific_recovery_v7/results/`; ese directorio está ignorado por Git y
+debe preservarse con el commit. El paper Markdown/TeX sigue desactualizado. No se
+hicieron push, tag, avance de `main` ni acceso a test/CodaBench.

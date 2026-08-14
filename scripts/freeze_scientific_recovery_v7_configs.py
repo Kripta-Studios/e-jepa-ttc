@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Freeze the V7 protocol and twelve seed-7 fold configurations."""
+"""Freeze the V7 protocol, initial screen, and preregistered control configs."""
 
 from __future__ import annotations
 
@@ -27,6 +27,9 @@ GROUPED_PROTOCOL = ROOT / "configs/protocol/scientific_recovery_v5_train_only_gr
 V7_PROTOCOL = ROOT / "configs/protocol/scientific_recovery_v7_balanced_oof.json"
 BASE_CACHE = ROOT / "artifacts/cache/garl_object_event_common_roi_train8192_v1/manifest.json"
 T20_CACHE = ROOT / "artifacts/cache/garl_object_event_common_roi_train8192_t20_v1/manifest.json"
+INITIAL_MANIFEST = OUTPUT_CONFIG_DIR / "frozen_manifest.json"
+PARTIAL_FREEZE_MANIFEST = OUTPUT_CONFIG_DIR / "soft_partial_freeze_manifest.json"
+INITIAL_RESULT_DIR = ROOT / "artifacts/scientific_recovery_v7/results"
 
 ARMS: dict[str, dict[str, Any]] = {
     "soft": {
@@ -104,9 +107,7 @@ def _cache_identity(
         raise ValueError(f"cache {path} declares unexpected V4 shape: {shape}")
     if int(manifest.get("split_counts", {}).get("train", -1)) != 8192:
         raise ValueError(f"cache {path} does not contain 8192 train rows")
-    if expected_channels == 22 and int(
-        manifest.get("split_counts", {}).get("validation", -1)
-    ) != 0:
+    if expected_channels == 22 and int(manifest.get("split_counts", {}).get("validation", -1)) != 0:
         raise ValueError("T20 cache must not materialize public validation rows")
     token_sha256 = None
     if expected_token_sha256 is not None:
@@ -389,6 +390,9 @@ def freeze(*, require_t20: bool) -> dict[str, Any]:
                 newline="\n",
             )
 
+    initial_paths = [
+        OUTPUT_CONFIG_DIR / f"v7_{arm}_fold{fold}_seed7.yaml" for fold in range(3) for arm in ARMS
+    ]
     manifest: dict[str, Any] = {
         "artifact_type": "scientific_recovery_v7_frozen_config_manifest_v1",
         "created_at_utc": datetime.now(UTC).isoformat(),
@@ -399,15 +403,121 @@ def freeze(*, require_t20: bool) -> dict[str, Any]:
                 "path": path.relative_to(ROOT).as_posix(),
                 "sha256": _sha256(path),
             }
-            for path in sorted(OUTPUT_CONFIG_DIR.glob("v7_*_fold*_seed7.yaml"))
+            for path in sorted(initial_paths)
         },
         "closed_evaluation": protocol["closed_evaluation"],
     }
     if len(manifest["configs"]) != 12:
         raise RuntimeError("V7 freeze did not produce twelve initial configs")
     sign_artifact(manifest)
-    _write_json(OUTPUT_CONFIG_DIR / "frozen_manifest.json", manifest)
+    _write_json(INITIAL_MANIFEST, manifest)
     return protocol
+
+
+def freeze_soft_partial_control() -> dict[str, Any]:
+    """Freeze the sole post-screen control allowed by the V7 decision tree."""
+
+    protocol = _read_json(V7_PROTOCOL, signed=True)
+    initial_manifest = _read_json(INITIAL_MANIFEST, signed=True)
+    if initial_manifest.get("protocol_artifact_sha256") != protocol["artifact_sha256"]:
+        raise ValueError("initial config manifest is bound to a different V7 protocol")
+
+    screen: dict[str, dict[str, Any]] = {}
+    for arm in ARMS:
+        path = INITIAL_RESULT_DIR / f"{arm}_seed7_oof.json"
+        result = _read_json(path, signed=True)
+        if result.get("status") != "completed_seed7_oof_gate":
+            raise ValueError(f"initial result is not complete: {arm}")
+        gates = result.get("gates")
+        if not isinstance(gates, dict) or any(bool(gates.get(gate)) for gate in gates):
+            raise ValueError(f"initial result unexpectedly passed a gate: {arm}")
+        screen[arm] = {
+            "path": path.relative_to(ROOT).as_posix(),
+            "file_sha256": _sha256(path),
+            "artifact_sha256": result["artifact_sha256"],
+            "gates": gates,
+        }
+    if screen["soft"]["gates"].get("geometry_positive") is not False:
+        raise ValueError("partial-freeze control requires SOFT geometry_positive=false")
+
+    if PARTIAL_FREEZE_MANIFEST.is_file():
+        frozen = _read_json(PARTIAL_FREEZE_MANIFEST, signed=True)
+        if frozen.get("trigger_results") != screen:
+            raise ValueError("existing partial-freeze manifest has different trigger results")
+        for entry in frozen.get("configs", {}).values():
+            path = ROOT / str(entry["path"])
+            if not path.is_file() or _sha256(path) != entry["sha256"]:
+                raise ValueError(f"frozen partial-freeze config changed: {path}")
+        return frozen
+
+    configs: dict[str, dict[str, str]] = {}
+    for fold in range(3):
+        source = OUTPUT_CONFIG_DIR / f"v7_soft_fold{fold}_seed7.yaml"
+        source_key = source.stem
+        expected_source_sha = initial_manifest["configs"][source_key]["sha256"]
+        if _sha256(source) != expected_source_sha:
+            raise ValueError(f"initial SOFT config hash mismatch: {source}")
+        config = yaml.safe_load(source.read_text(encoding="utf-8"))
+        if (
+            config["training"].get("soft_dense_cosine_weight") != 1.0
+            or config["training"].get("soft_geometry_weight") != 1.0
+            or config["training"].get("initialization_mode") != "none"
+            or config["training"].get("freeze_encoder") is not False
+        ):
+            raise ValueError(f"initial SOFT contract is incompatible in fold {fold}")
+        config["experiment"].update(
+            {
+                "name": (f"scientific_recovery_v7_soft_partial_freeze_fold{fold}_seed7"),
+                "single_scientific_difference": "freeze_encoder_features_0_3",
+                "grouped_dev_role": "preregistered_soft_partial_freeze_control",
+            }
+        )
+        config["training"]["freeze_encoder_stages"] = 3
+        config["decision_contract"]["partial_freeze_control"] = {
+            "trigger": "initial_soft_failed_geometry_positive",
+            "frozen_module_slice": "encoder.features[0:3]",
+            "freeze_encoder_stages": 3,
+            "student_initialized_from_scratch": True,
+            "student_remaining_layers_trainable": True,
+            "same_fold_local_teacher": True,
+            "same_soft_loss_weights": True,
+            "teacher_dense_cosine_weight": 1.0,
+            "teacher_geometry_smooth_l1_weight": 1.0,
+            "layer_or_weight_sweep_allowed": False,
+            "initial_screen_artifacts": {
+                arm: entry["artifact_sha256"] for arm, entry in screen.items()
+            },
+        }
+        output = OUTPUT_CONFIG_DIR / f"v7_soft_partial_freeze_fold{fold}_seed7.yaml"
+        output.write_text(
+            yaml.safe_dump(config, sort_keys=False),
+            encoding="utf-8",
+            newline="\n",
+        )
+        configs[output.stem] = {
+            "path": output.relative_to(ROOT).as_posix(),
+            "sha256": _sha256(output),
+            "source_soft_config_sha256": expected_source_sha,
+        }
+
+    manifest: dict[str, Any] = {
+        "artifact_type": "scientific_recovery_v7_soft_partial_freeze_manifest_v1",
+        "created_at_utc": datetime.now(UTC).isoformat(),
+        "status": "frozen_after_negative_initial_screen_before_control_training",
+        "protocol_artifact_sha256": protocol["artifact_sha256"],
+        "initial_config_manifest_artifact_sha256": initial_manifest["artifact_sha256"],
+        "decision": {
+            "reason": "SOFT failed geometry and no initial arm became a candidate",
+            "only_authorized_control": "freeze encoder.features[0:3] with unchanged SOFT losses",
+            "layer_or_weight_sweep_allowed": False,
+        },
+        "trigger_results": screen,
+        "configs": configs,
+        "closed_evaluation": protocol["closed_evaluation"],
+    }
+    sign_artifact(manifest)
+    _write_json(PARTIAL_FREEZE_MANIFEST, manifest)
+    return manifest
 
 
 def main() -> int:
@@ -417,8 +527,27 @@ def main() -> int:
         action="store_true",
         help="Freeze the protocol before T20 exists; write configs after materialization.",
     )
+    parser.add_argument(
+        "--soft-partial-freeze-control",
+        action="store_true",
+        help="Freeze the sole control activated after a negative initial screen.",
+    )
     args = parser.parse_args()
+    if args.protocol_only and args.soft_partial_freeze_control:
+        parser.error("--protocol-only and --soft-partial-freeze-control are exclusive")
     try:
+        if args.soft_partial_freeze_control:
+            manifest = freeze_soft_partial_control()
+            print(
+                json.dumps(
+                    {
+                        "manifest": str(PARTIAL_FREEZE_MANIFEST),
+                        "artifact_sha256": manifest["artifact_sha256"],
+                        "configs_written": len(manifest["configs"]),
+                    }
+                )
+            )
+            return 0
         protocol = freeze(require_t20=not args.protocol_only)
     except Exception as error:
         parser.exit(2, f"V7 freeze failed: {type(error).__name__}: {error}\n")
