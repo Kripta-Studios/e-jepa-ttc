@@ -29,10 +29,8 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from e_jepa_ttc.artifacts.hashing import sign_artifact, verify_artifact_hash  # noqa: E402
-from e_jepa_ttc.data.scientific_recovery_v8_cache import (  # noqa: E402
-    ScientificRecoveryV8CacheDataset,
-    collate_scientific_recovery_v8,
-)
+from e_jepa_ttc.data.scientific_recovery_v8_cache import collate_scientific_recovery_v8  # noqa: E402
+from e_jepa_ttc.data.scientific_recovery_v8_jepa_data import open_jepa_dataset  # noqa: E402
 from e_jepa_ttc.evaluation.scientific_recovery_v8_jepa_attribution import (  # noqa: E402
     nested_low_label_tokens,
     validate_equal_compute,
@@ -84,7 +82,7 @@ def _write_signed(path: Path, payload: dict[str, Any]) -> dict[str, Any]:
 
 
 class _IndexView(Dataset[dict[str, Any]]):
-    def __init__(self, dataset: ScientificRecoveryV8CacheDataset, indices: Sequence[int]) -> None:
+    def __init__(self, dataset: Dataset[dict[str, Any]], indices: Sequence[int]) -> None:
         self.dataset, self.indices = dataset, tuple(indices)
 
     def __len__(self) -> int:
@@ -163,6 +161,7 @@ def _fit_and_predict(
     partial_lr: float,
     seed: int,
     device: str,
+    downstream_steps: int = 3,
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     selected = _IndexView(
         train.dataset,
@@ -202,8 +201,11 @@ def _fit_and_predict(
         except StopIteration:
             iterator = iter(loader)
             batch = next(iterator)
-        representation = batch.representations.to(device)
-        delta_t_s = (batch.endpoint_us[:, 1:] - batch.endpoint_us[:, :-1]).to(
+        if downstream_steps not in {2, 3}:
+            raise ValueError("downstream_steps must be 2 or 3")
+        representation = batch.representations.to(device)[:, -downstream_steps:]
+        endpoint_us = batch.endpoint_us[:, -downstream_steps:]
+        delta_t_s = (endpoint_us[:, 1:] - endpoint_us[:, :-1]).to(
             device=device, dtype=torch.float32
         ) / 1_000_000.0
         target_ttc = batch.target_ttc.to(device)
@@ -236,8 +238,9 @@ def _fit_and_predict(
             shuffle=False,
             collate_fn=collate_scientific_recovery_v8,
         ):
-            representation = batch.representations.to(device)
-            delta_t_s = (batch.endpoint_us[:, 1:] - batch.endpoint_us[:, :-1]).to(
+            representation = batch.representations.to(device)[:, -downstream_steps:]
+            endpoint_us = batch.endpoint_us[:, -downstream_steps:]
+            delta_t_s = (endpoint_us[:, 1:] - endpoint_us[:, :-1]).to(
                 device=device, dtype=torch.float32
             ) / 1_000_000.0
             prediction = model(representation, delta_t_s).ttc_mean_seconds.cpu()
@@ -308,11 +311,27 @@ def execute(
     device: str,
     folds: Sequence[int],
     allow_fixture_cache: bool = False,
+    protocol_path: Path = ROOT / "configs/protocol/scientific_recovery_v8_temporal.json",
+    low_label_manifest: Path | None = None,
 ) -> list[dict[str, Any]]:
     winner = _winner(winner_artifact)
-    cache = ScientificRecoveryV8CacheDataset(cache_manifest)
+    frozen_subsets: dict[str, Any] | None = None
+    if low_label_manifest is not None:
+        frozen_subsets = json.loads(low_label_manifest.read_text(encoding="utf-8"))
+        if not isinstance(frozen_subsets, dict) or not verify_artifact_hash(frozen_subsets):
+            raise ValueError("low-label manifest must be a signed artifact")
+        if frozen_subsets.get("winner_artifact_sha256") != winner.get("artifact_sha256"):
+            raise ValueError("low-label manifest winner binding differs")
+    cache = open_jepa_dataset(
+        cache_manifest=cache_manifest,
+        protocol_path=protocol_path,
+        allow_fixture_cache=allow_fixture_cache,
+    )
     configs = _configs(config_dir)
     endpoint_config = _endpoint_config(winner, channels=cache.shape[1])
+    downstream_steps = int(winner.get("downstream_steps", 3))
+    if downstream_steps not in {2, 3}:
+        raise ValueError("winner downstream_steps must be 2 or 3")
     summaries: list[dict[str, Any]] = []
     d2_compute: dict[int, dict[str, Any]] = {}
     for fold in folds:
@@ -330,7 +349,7 @@ def execute(
             exp, downstream, low_label = raw["experiment"], raw["downstream"], raw["low_label"]
             seed = int(exp["seed"])
             pretrain: dict[str, Any] | None = None
-            arm_dir = output_root / arm.lower() / f"fold{fold}" / "seed7"
+            arm_dir = output_root / arm.lower() / f"fold{fold}" / f"seed{seed}"
             checkpoint: Path | None = None
             if arm in {"D2", "D3", "D4"}:
                 pretrain = _PRETRAIN.run_pretraining(
@@ -341,6 +360,7 @@ def execute(
                     device=device,
                     allow_fixture_cache=allow_fixture_cache,
                     endpoint_config_override=endpoint_config,
+                    protocol_path=protocol_path,
                 )
                 checkpoint = Path(str(pretrain["checkpoint_path"]))
                 if arm == "D2":
@@ -349,11 +369,24 @@ def execute(
                     if fold not in d2_compute:
                         raise ValueError("D4 requires completed D2 equal-compute control first")
                     validate_equal_compute(d2_compute[fold], pretrain)
-            subsets = nested_low_label_tokens(
-                [train[index] for index in range(len(train))],
-                fractions=low_label["fractions"],
-                seed=seed,
-            )
+            if frozen_subsets is None:
+                if not allow_fixture_cache:
+                    raise ValueError("production JEPA attribution requires --low-label-manifest")
+                subsets = nested_low_label_tokens(
+                    [train.dataset[index] for index in train.indices],
+                    fractions=low_label["fractions"],
+                    seed=seed,
+                )
+            else:
+                fold_subsets = frozen_subsets.get("folds", {}).get(str(fold), {})
+                subsets = {
+                    float(fraction): tuple(
+                        str(token) for token in fold_subsets.get(str(float(fraction)), [])
+                    )
+                    for fraction in low_label["fractions"]
+                }
+            if any(not tokens for tokens in subsets.values()):
+                raise ValueError(f"low-label manifest is incomplete for fold {fold}")
             all_rows: dict[str, list[dict[str, Any]]] = {}
             train_info: dict[str, Any] = {}
             for fraction, tokens in subsets.items():
@@ -369,6 +402,7 @@ def execute(
                     partial_lr=float(downstream["partial_encoder_learning_rate"]),
                     seed=seed,
                     device=device,
+                    downstream_steps=downstream_steps,
                 )
                 all_rows[str(fraction)] = rows
                 train_info[str(fraction)] = info
@@ -421,6 +455,8 @@ def main() -> int:
     )
     parser.add_argument("--cache-manifest", type=Path)
     parser.add_argument("--winner-artifact", type=Path)
+    parser.add_argument("--low-label-manifest", type=Path)
+    parser.add_argument("--protocol", type=Path, default=ROOT / "configs/protocol/scientific_recovery_v8_temporal.json")
     parser.add_argument(
         "--output-root", type=Path, default=ROOT / "artifacts/scientific_recovery_v8/jepa"
     )
@@ -449,8 +485,8 @@ def main() -> int:
                 )
             )
             return 0
-        if args.cache_manifest is None or args.winner_artifact is None:
-            raise ValueError("--cache-manifest and --winner-artifact are required to execute")
+        if args.cache_manifest is None or args.winner_artifact is None or args.low_label_manifest is None:
+            raise ValueError("--cache-manifest, --winner-artifact and --low-label-manifest are required to execute")
         summaries = execute(
             config_dir=args.config_dir,
             cache_manifest=args.cache_manifest,
@@ -459,6 +495,8 @@ def main() -> int:
             device=args.device,
             folds=args.folds,
             allow_fixture_cache=args.allow_fixture_cache,
+            protocol_path=args.protocol,
+            low_label_manifest=args.low_label_manifest,
         )
     except (OSError, ValueError, RuntimeError) as error:
         parser.exit(2, f"V8 JEPA attribution failed closed: {type(error).__name__}: {error}\n")

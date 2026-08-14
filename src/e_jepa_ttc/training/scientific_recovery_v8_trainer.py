@@ -10,8 +10,9 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import subprocess
 from collections.abc import Mapping
-from dataclasses import fields
+from dataclasses import asdict, fields
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -43,6 +44,29 @@ def _sha(path: Path) -> str:
         for chunk in iter(lambda: handle.read(1 << 20), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def _git_commit() -> str:
+    result = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=Path(__file__).resolve().parents[3],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    value = result.stdout.strip()
+    return value if result.returncode == 0 and value else "unknown"
+
+
+def _artifact_hash_from_ref(value: object) -> str | None:
+    if isinstance(value, Mapping):
+        for key in ("artifact_sha256", "sha256"):
+            raw = value.get(key)
+            if isinstance(raw, str) and len(raw) == 64:
+                return raw
+    if isinstance(value, str) and len(value) == 64:
+        return value
+    return None
 
 
 def _atomic_json(path: Path, value: dict[str, Any]) -> None:
@@ -121,12 +145,28 @@ def run_v8_temporal_training(
         cache_path = (config_path.parents[3] / cache_path).resolve()
     cache, cache_manifest = _closed_cache(cache_path, fixture_smoke)
     fold = int(data["outer_fold"])
-    train = V8ToObjectEventV4Dataset(cache, outer_fold=fold, split="train")
-    dev = V8ToObjectEventV4Dataset(cache, outer_fold=fold, split="dev")
+    steps = int(data.get("steps", cache.shape[0] if len(cache.shape) > 0 else 3))
+    train = V8ToObjectEventV4Dataset(cache, outer_fold=fold, split="train", steps=steps)
+    dev = V8ToObjectEventV4Dataset(cache, outer_fold=fold, split="dev", steps=steps)
     dev_sample_weights = {
         str(dev[index]["sample_token"]): float(dev[index]["sample_weight"])
         for index in range(len(dev))
     }
+    dev_temporal_diagnostics: dict[str, tuple[float, float, float]] = {}
+    for cache_index in dev.indices:
+        row = cache[cache_index]
+        token = str(row["sample_token"])
+        diagnostics = row.get("endpoint_diagnostics")
+        if not isinstance(diagnostics, list) or not diagnostics:
+            dev_temporal_diagnostics[token] = (0.0, 0.0, 0.0)
+            continue
+        latest = diagnostics[-1]
+        event_count = float(latest.get("event_count", latest.get("state_event_count", 0.0)))
+        start_us = float(latest.get("support_start_us", row["endpoint_us"][-2]))
+        end_us = float(latest.get("support_end_us", row["endpoint_us"][-1]))
+        support_ms = max(0.0, (end_us - start_us) / 1000.0)
+        event_rate = event_count / max(support_ms / 1000.0, 1.0e-9)
+        dev_temporal_diagnostics[token] = (event_count, event_rate, support_ms)
     train_cfg = _mapping_dataclass(CausalScaleEAPTrainingConfig, training)
     # DINO is mandatory when the frozen configuration requests it, and is wrapped
     # around the train view only.  No dev row can be loaded by this teacher cache.
@@ -153,6 +193,19 @@ def run_v8_temporal_training(
         model_ref if model_ref.is_absolute() else (config_path.parents[3] / model_ref).resolve()
     )
     model_cfg = _model(model_path)
+    overrides = config.get("model_overrides", {})
+    if overrides:
+        if not isinstance(overrides, Mapping):
+            raise ValueError("model_overrides must be a mapping")
+        allowed_overrides = {
+            "temporal_channel_gate_enabled",
+            "temporal_channel_gate_patch_grid",
+            "temporal_channel_gate_hidden_dim",
+        }
+        unknown = sorted(set(overrides) - allowed_overrides)
+        if unknown:
+            raise ValueError(f"unsupported V8 model overrides: {unknown}")
+        model_cfg = CausalScaleTTCConfig(**{**asdict(model_cfg), **dict(overrides)})
     if model_cfg.in_channels != int(cache.shape[1]):
         raise ValueError("frozen model input channels differ from signed V8 cache")
     loss_cfg = _mapping_dataclass(CausalScaleTTCLossConfig, loss)
@@ -175,21 +228,39 @@ def run_v8_temporal_training(
         checkpoint,
     )
     validation = result.best_validation
+    checkpoint_sha256 = _sha(checkpoint)
+    config_sha256 = _sha(config_path)
+    protocol_sha256 = _artifact_hash_from_ref(cache_manifest.get("protocol"))
+    frozen_manifest_sha256 = _artifact_hash_from_ref(cache_manifest.get("frozen_manifest"))
+    if not fixture_smoke and (protocol_sha256 is None or frozen_manifest_sha256 is None):
+        raise ValueError("signed V8 cache lacks protocol/frozen-manifest artifact bindings")
     predictions_path = output_dir / "dev_predictions.csv"
+    tokens = [str(value) for value in validation["sample_tokens"]]
+    ttc_log_variance = validation.get("ttc_log_variance", [0.0] * len(tokens))
+    temporal_diag = [dev_temporal_diagnostics[token] for token in tokens]
     frame = pd.DataFrame(
         {
-            "sample_token": validation["sample_tokens"],
+            "token_id": tokens,
             "sequence_id": validation["sequence_ids"],
             "track_id": validation["track_ids"],
-            "target_ttc_s": validation["target_ttc_s"],
-            "prediction_ttc_s": validation["prediction_ttc_s"],
-            "fold": fold,
+            "outer_fold": fold,
             "seed": train_cfg.seed,
-            "sample_weight": [
-                dev_sample_weights[str(token)] for token in validation["sample_tokens"]
-            ],
+            "target_ttc": validation["target_ttc_s"],
+            "sample_weight": [dev_sample_weights[token] for token in tokens],
+            "prediction_ttc": validation["prediction_ttc_s"],
+            "prediction_log_variance": ttc_log_variance,
+            "finite": [bool(torch.isfinite(torch.tensor(value))) for value in validation["prediction_ttc_s"]],
+            "failure_reason": "",
+            "event_count": [value[0] for value in temporal_diag],
+            "event_rate": [value[1] for value in temporal_diag],
+            "support_ms": [value[2] for value in temporal_diag],
+            "model_name": str(exp["arm"]),
+            "config_sha256": config_sha256,
+            "checkpoint_sha256": checkpoint_sha256,
         }
     )
+    if not bool(frame["finite"].all()):
+        raise FloatingPointError("V8 fold produced non-finite point predictions")
     frame.to_csv(predictions_path, index=False, lineterminator="\n")
     metrics_path = output_dir / "train_metrics.json"
     _atomic_json(
@@ -203,16 +274,22 @@ def run_v8_temporal_training(
     )
     payload: dict[str, Any] = {
         "artifact_type": "scientific_recovery_v8_fold_result_v1",
-        "status": "fixture_smoke_completed"
-        if fixture_smoke
-        else "completed_train_only_grouped_dev",
+        "status": "fixture_smoke_completed" if fixture_smoke else "completed",
         "created_at_utc": datetime.now(UTC).isoformat(),
         "run_name": exp["name"],
         "arm": exp["arm"],
+        "outer_fold": fold,
         "fold": fold,
         "seed": train_cfg.seed,
-        "fixture_smoke": fixture_smoke,
-        "config": {"path": config_path.as_posix(), "sha256": _sha(config_path)},
+        "fixture": bool(fixture_smoke),
+        "fixture_smoke": bool(fixture_smoke),
+        "base_git_commit": cache_manifest.get("git_base_commit"),
+        "implementation_git_commit": _git_commit(),
+        "git_commit": _git_commit(),
+        "config_sha256": config_sha256,
+        "protocol_sha256": protocol_sha256,
+        "frozen_manifest_sha256": frozen_manifest_sha256,
+        "config": {"path": config_path.as_posix(), "sha256": config_sha256},
         "model_config": {"path": model_path.as_posix(), "sha256": _sha(model_path)},
         "protocol": cache_manifest.get("protocol"),
         "frozen_manifest": cache_manifest.get("frozen_manifest"),
@@ -221,7 +298,12 @@ def run_v8_temporal_training(
             "sha256": _sha(cache_path),
             "artifact_sha256": cache_manifest.get("artifact_sha256"),
         },
-        "checkpoint": {"path": checkpoint.name, "sha256": _sha(checkpoint)},
+        "checkpoint": {"path": checkpoint.name, "sha256": checkpoint_sha256},
+        "dev_predictions": {
+            "path": predictions_path.name,
+            "sha256": _sha(predictions_path),
+            "rows": len(frame),
+        },
         "predictions": {
             "path": predictions_path.name,
             "sha256": _sha(predictions_path),

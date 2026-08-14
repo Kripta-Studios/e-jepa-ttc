@@ -209,6 +209,25 @@ def verify_frozen_inputs(protocol_path: Path, manifest_path: Path) -> FrozenV8In
         except yaml.YAMLError as error:
             raise V8IntegrityError(f"invalid frozen configuration YAML: {name}") from error
         _assert_closed(config, label=f"frozen config {name}")
+    templates = manifest.get("conditional_templates", {})
+    if not isinstance(templates, Mapping):
+        raise V8IntegrityError("frozen manifest conditional_templates must be a mapping")
+    for template_name, template in templates.items():
+        if not isinstance(template, Mapping):
+            raise V8IntegrityError(f"invalid conditional template: {template_name}")
+        fold_configs = template.get("fold_configs", [])
+        if not isinstance(fold_configs, list):
+            raise V8IntegrityError(f"conditional template lacks fold_configs: {template_name}")
+        for index, entry in enumerate(fold_configs):
+            if not isinstance(entry, Mapping) or not isinstance(entry.get("path"), str):
+                raise V8IntegrityError(f"invalid conditional config {template_name}[{index}]")
+            config_path = _repo_path(ROOT / str(entry["path"]))
+            if not config_path.is_file() or entry.get("sha256") != _sha256_file(config_path):
+                raise V8IntegrityError(f"conditional config hash mismatch: {template_name}[{index}]")
+            config = yaml.safe_load(config_path.read_text(encoding="utf-8"))
+            if not isinstance(config, Mapping):
+                raise V8IntegrityError(f"conditional config is not a mapping: {template_name}[{index}]")
+            _assert_closed(config, label=f"conditional config {template_name}[{index}]")
     models = manifest.get("model_configs")
     if not isinstance(models, Mapping) or not models:
         raise V8IntegrityError("frozen manifest has no model configurations")

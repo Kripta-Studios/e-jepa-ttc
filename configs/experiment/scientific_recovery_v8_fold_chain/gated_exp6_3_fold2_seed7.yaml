@@ -1,12 +1,12 @@
 experiment:
-  name: scientific_recovery_v8_exp6_3_fold2_seed7
+  name: scientific_recovery_v8_gated_exp6_3_fold2_seed7
   protocol_version: scientific_recovery_v8_temporal_v1
   evidence_scope: public_train_only_grouped_development
   seed: 7
-  arm: exp6_3
-  single_scientific_difference: 'B2 frontend/cache/in_channels only: signed causal
-    EXP6 state 6x3.'
-model_config: configs/model/e_jepa_causal_scale_event_v8_exp6_3.yaml
+  arm: gated_exp6_3
+  single_scientific_difference: C1 gates the six preregistered causal EXP6 states
+    with the frozen 4x4 patch router; the A5 downstream contract is otherwise unchanged.
+model_config: configs/model/e_jepa_causal_scale_event_v8_gated_exp6_3.yaml
 data:
   cache_manifest: artifacts/scientific_recovery_v8/cache/exp6_3/manifest.json
   cache_manifest_expected: true
@@ -35,9 +35,9 @@ data:
     steps: 3
     channels: 6
     cache_manifest: artifacts/scientific_recovery_v8/cache/exp6_3/manifest.json
-    single_scientific_difference: 'B2 frontend/cache/in_channels only: signed causal
-      EXP6 state 6x3.'
-    builder: CausalExponentialStateRepresentation
+    single_scientific_difference: C1 gates the six preregistered causal EXP6 states
+      with the frozen 4x4 patch router; the A5 downstream contract is otherwise unchanged.
+    builder: CausalExponentialStateRepresentation+AdaptiveTemporalChannelGate
     alpha:
     - 0.1
     - 0.05
@@ -48,33 +48,6 @@ data:
     internal_dt_ms: 0.2
     output_interval_ms: 7.0
     time_bins: 35
-    source_parity:
-      official_commit_sha: 59c498b71ae526bc2d7e570c82a078306a996b93
-      processor_source:
-        path: ev_ttc/include/ev_ttc/ev_processor.h
-        sha256: 439384787969f36f72bdc72e3f6a058c33847f7f8a70454a44313ffc0e9d511e
-      config_source:
-        path: ev_ttc/include/ev_ttc/config.h
-        sha256: d30bfe8b292cb8505b1e1841bb76ebbeb2e1f34b3dce13c85b383252d4a44fe7
-      source_scope: filter-state equation parity under frozen raster assumptions,
-        not full ROS/lens/downsample parity
-      scheduling: EV-TTC triggers from its first event when elapsed time is >=7 ms
-        and can overshoot; V8 instead fixes boundaries at EventBatch.t_start_us+n*7000
-        us
-      equation: window_event(j) += polarity * alpha * (1-alpha)**(-j); snapshot *=
-        (1-alpha)**35
-      polarity: input polarity is normalized to {-1,+1}; +1 is positive and -1 is
-        negative
-      timestamp_quantization: j=floor((timestamp_us-origin_us)/200), with origin_us=EventBatch.t_start_us
-      boundary: at origin_us+n*7000 us, snapshot precedes events timestamped exactly
-        at the boundary; those events enter next window at j=0
-      initialization: zero state at the stable per-sequence EventBatch.t_start_us
-        origin
-      reset: manual, sequence change, endpoint rollback, or resolution change clears
-        state to zero
-      warmup: zero-state warmup is retained; no synthetic prehistory is injected
-      snapshot: only exact 7 ms boundary snapshots have EV-TTC filter-state parity;
-        non-boundary snapshots retain the causal local recurrence
     warmup_required: true
   dinov3_relational_teacher:
     manifest: artifacts/cache/dinov3_convnext_large_relational_a4_rgb_v2/manifest.json
@@ -129,3 +102,10 @@ decision_contract:
   private_test_opened: false
   evttc_test_opened: false
   codabench_opened: false
+  conditional_arm: true
+  opening_gate_required: signed V8 C1 opening artifact
+enabled: false
+model_overrides:
+  temporal_channel_gate_enabled: true
+  temporal_channel_gate_patch_grid: 4
+  temporal_channel_gate_hidden_dim: 16

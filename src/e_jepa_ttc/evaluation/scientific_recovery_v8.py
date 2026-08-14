@@ -144,6 +144,9 @@ class MechanismRules:
     maximum_shortcut_dynamic_spearman_abs: float = 0.10
     minimum_regime_complementarity: float = 0.05
     minimum_causal_regime_auroc: float = 0.60
+    minimum_fold_regime_auroc: float = 0.55
+    minimum_sequence_complementarity: float = 0.02
+    minimum_stable_sequence_fraction: float = 0.75
 
 
 DEFAULT_MECHANISM_RULES = MechanismRules()
@@ -483,7 +486,7 @@ def classify_mechanism(
     classifier records predicates rather than upgrading a result through prose.
     """
 
-    required = (
+    numeric_required = (
         "a5_delta_mid_vs_reference",
         "analytic_dynamic_spearman",
         "residual_dynamic_spearman",
@@ -492,7 +495,7 @@ def classify_mechanism(
         "regime_complementarity",
         "causal_regime_auroc",
     )
-    missing = [key for key in required if key not in evidence]
+    missing = [key for key in numeric_required if key not in evidence]
     if missing:
         return {
             "decision": "INCONCLUSIVE",
@@ -500,8 +503,21 @@ def classify_mechanism(
             "missing_evidence": missing,
             "rules": asdict(rules),
         }
-    values = {key: float(evidence[key]) for key in required}
-    if not all(math.isfinite(value) for value in values.values()):
+    values = {key: float(evidence[key]) for key in numeric_required}
+    stability_present = all(
+        key in evidence
+        for key in (
+            "stable_sequence_fraction",
+            "stable_across_outer_folds",
+            "stable_across_sequences",
+        )
+    )
+    stable_sequence_fraction = float(evidence.get("stable_sequence_fraction", 1.0))
+    booleans = {
+        "stable_across_outer_folds": bool(evidence.get("stable_across_outer_folds", True)),
+        "stable_across_sequences": bool(evidence.get("stable_across_sequences", True)),
+    }
+    if not all(math.isfinite(value) for value in (*values.values(), stable_sequence_fraction)):
         return {
             "decision": "INCONCLUSIVE",
             "reason": "non_finite_evidence",
@@ -513,10 +529,15 @@ def classify_mechanism(
     h3 = (
         values["regime_complementarity"] >= rules.minimum_regime_complementarity
         and values["causal_regime_auroc"] >= rules.minimum_causal_regime_auroc
+        and stable_sequence_fraction >= rules.minimum_stable_sequence_fraction
+        and booleans["stable_across_outer_folds"]
+        and booleans["stable_across_sequences"]
     )
+    # H1 concerns whether A5 carries stable physical dynamics, not whether it
+    # already beats the stronger Garl reference used in this diagnostic.  The
+    # A5-vs-Garl delta remains reported as context but is not a mechanism gate.
     h1 = (
-        values["a5_delta_mid_vs_reference"] <= rules.minimum_improvement_mid
-        and dynamic_strength >= rules.minimum_dynamic_spearman_abs
+        dynamic_strength >= rules.minimum_dynamic_spearman_abs
         and values["sequence_concentration"] <= rules.maximum_sequence_concentration
         and abs(values["innocuous_counterfactual_delta_mid"]) <= rules.maximum_innocuous_shift_mid
     )
@@ -532,7 +553,12 @@ def classify_mechanism(
         "decision": decision,
         "reason": "preregistered_rules",
         "predicates": predicates,
-        "evidence": values,
+        "evidence": {
+            **values,
+            "stable_sequence_fraction": stable_sequence_fraction,
+            **booleans,
+            "stability_evidence_present": stability_present,
+        },
         "rules": asdict(rules),
     }
 

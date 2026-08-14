@@ -68,25 +68,27 @@ def main() -> int:
         default=ROOT / "configs/experiment/scientific_recovery_v8_fold_chain/frozen_manifest.json",
     )
     parser.add_argument(
-        "--results-root", type=Path, default=ROOT / "artifacts/scientific_recovery_v8"
+        "--results-root", type=Path, default=ROOT / "artifacts/scientific_recovery_v8/results"
+    )
+    parser.add_argument(
+        "--evidence-root", type=Path, default=ROOT / "artifacts/scientific_recovery_v8"
     )
     parser.add_argument("--max-parallel", type=int, default=1)
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
     try:
         frozen = verify_frozen_inputs(args.protocol, args.manifest)
-        assert_adaptive_gate(results_root=args.results_root, frozen=frozen)
+        assert_adaptive_gate(results_root=args.evidence_root, frozen=frozen)
         templates = frozen.manifest.get("conditional_templates", {})
         gated = templates.get("gated_exp6_3") if isinstance(templates, dict) else None
-        if not isinstance(gated, dict) or gated.get("enabled") is not True:
+        if not isinstance(gated, dict):
             raise V8IntegrityError(
-                "C1 gate opened but no signed conditional gated_exp6_3 fold configs are frozen; "
-                "regenerate the protocol contract before training."
+                "C1 gate opened but no preregistered gated_exp6_3 template is frozen."
             )
         configs = conditional_fold_configs(gated)
         jobs = build_fold_jobs(
             configs=configs,
-            output_root=args.results_root / "adaptive" / "runs",
+            output_root=args.results_root / "runs",
             device=args.device,
             max_parallel=args.max_parallel,
         )

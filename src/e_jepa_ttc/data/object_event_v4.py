@@ -212,13 +212,19 @@ def collate_object_event_v4(records: list[dict[str, Any]]) -> ObjectEventV4Batch
     expected_channels = {
         int(record.get("_event_v4_expected_channels", 12)) for record in records
     }
-    if len(expected_channels) != 1:
-        raise ValueError("Object Event v4 batch mixes temporal channel schemas")
+    expected_steps = {
+        int(record.get("_event_v4_expected_steps", EVENT_V4_STEPS)) for record in records
+    }
+    if len(expected_channels) != 1 or len(expected_steps) != 1:
+        raise ValueError("Object Event batch mixes temporal channel/step schemas")
     channel_count = expected_channels.pop()
-    expected_prefix = (len(records), EVENT_V4_STEPS, channel_count)
+    step_count = expected_steps.pop()
+    if step_count not in {2, EVENT_V4_STEPS}:
+        raise ValueError("Object Event batches support only 2-step V8 or historical 3-step inputs")
+    expected_prefix = (len(records), step_count, channel_count)
     if events.ndim != 5 or events.shape[:3] != expected_prefix:
         raise ValueError(
-            f"event_v4_common_roi must collate to [B,3,{channel_count},H,W], "
+            f"event_v4_common_roi must collate to [B,{step_count},{channel_count},H,W], "
             f"got {tuple(events.shape)}"
         )
     if events.shape[-1] != events.shape[-2]:
@@ -246,7 +252,7 @@ def collate_object_event_v4(records: list[dict[str, Any]]) -> ObjectEventV4Batch
         raise ValueError(f"observable_motion has invalid shape {tuple(motion.shape)}")
     if heights.shape != (len(records), 2):
         raise ValueError(f"garl_visible_heights_px has invalid shape {tuple(heights.shape)}")
-    if boxes.shape != (len(records), EVENT_V4_STEPS, 4):
+    if boxes.shape != (len(records), step_count, 4):
         raise ValueError(f"event_v4_boxes_xyxy has invalid shape {tuple(boxes.shape)}")
     if squares.shape != (len(records), 4):
         raise ValueError(

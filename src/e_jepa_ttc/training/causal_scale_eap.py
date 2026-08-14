@@ -155,6 +155,7 @@ class CausalScaleEAPTrainingConfig:
     soft_geometry_teacher_checkpoint_sha256: str | None = None
     soft_dense_cosine_weight: float = 0.0
     soft_geometry_weight: float = 0.0
+    checkpoint_selection_mode: Literal["dev_best", "last_epoch"] = "dev_best"
 
     def __post_init__(self) -> None:
         integers = (
@@ -181,6 +182,8 @@ class CausalScaleEAPTrainingConfig:
             raise ValueError("optimizer/runtime controls must be positive")
         if self.weight_decay < 0.0:
             raise ValueError("weight_decay must be non-negative")
+        if self.checkpoint_selection_mode not in {"dev_best", "last_epoch"}:
+            raise ValueError("checkpoint_selection_mode must be dev_best or last_epoch")
         allowed = {"weak_box", "bbox_geometry", "bbox_geometry_sam_teacher"}
         if self.foreground_supervision not in allowed:
             raise ValueError(f"foreground_supervision must be one of {sorted(allowed)}")
@@ -469,15 +472,18 @@ def _loss(
                 "DINO relational distillation requires dense features but "
                 "the model did not return them"
             )
-        # Use t1/t2 endpoints (indices 1 and 2 in the T-step sequence)
-        # The model produces [B,T,C,H,W]; we select the observation endpoints.
+        # Historical 3-step arms supervise observation endpoints t1/t2.
+        # The preregistered V8 pair20_2 arm contains only those two observation
+        # endpoints, so it uses indices 0/1 without inventing a proxy t0.
         dense = output.endpoint_dense_features
-        if dense.shape[1] < 3:
+        if dense.shape[1] == 2:
+            student_features = dense[:, 0:2]
+        elif dense.shape[1] >= 3:
+            student_features = dense[:, 1:3]
+        else:
             raise ValueError(
-                f"DINO distillation requires at least 3 temporal endpoints, got {dense.shape[1]}"
+                f"DINO distillation requires at least 2 temporal endpoints, got {dense.shape[1]}"
             )
-        # Select t1, t2 (not t0 which is the proxy reference)
-        student_features = dense[:, 1:3]  # [B, 2, C, H, W]
 
         relational_loss = local_relational_distillation_loss(
             student_features,
@@ -557,9 +563,10 @@ def _record_relational_fg_bg_diagnostic(
             student_rels.values - teacher_relations.float()
         ).abs() * combined_valid.float()  # [B, 2, K, H, W]
 
-        # Build a coarse fg mask at feature resolution from the t1/t2 boxes
-        # boxes_xyxy is [B, T, 4]; we need endpoints 1,2
+        # Build a coarse fg mask at feature resolution from the two supervised
+        # observation boxes. Historical T=3 uses 1/2; pair20_2 uses 0/1.
         batch_size = student_features.shape[0]
+        observation_indices = [0, 1] if boxes_xyxy.shape[1] == 2 else [1, 2]
         fg_mask = torch.zeros(
             batch_size,
             2,
@@ -573,7 +580,7 @@ def _record_relational_fg_bg_diagnostic(
         scale_x = feat_w / float(source_width)
         scale_y = feat_h / float(source_height)
         for b in range(batch_size):
-            for ep_idx, t_idx in enumerate([1, 2]):
+            for ep_idx, t_idx in enumerate(observation_indices):
                 if t_idx >= boxes_xyxy.shape[1]:
                     continue
                 box = boxes_xyxy[b, t_idx].float()  # common-ROI pixel coordinates
@@ -1702,15 +1709,22 @@ def train_real_causal_scale(
             active_loss,
             soft_geometry_teacher,
         )
-        validation = evaluate_real_causal_scale(
-            model,
-            validation_loader,
-            device,
-            training_config,
-            loss_config,
-            use_auxiliary_dev_metadata=False,
+        fixed_last_epoch = training_config.checkpoint_selection_mode == "last_epoch"
+        final_requested_epoch = stop_after_epoch or training_config.epochs
+        should_evaluate = (not fixed_last_epoch) or epoch == final_requested_epoch
+        validation = (
+            evaluate_real_causal_scale(
+                model,
+                validation_loader,
+                device,
+                training_config,
+                loss_config,
+                use_auxiliary_dev_metadata=False,
+            )
+            if should_evaluate
+            else None
         )
-        selection = _selection(validation)
+        selection = _selection(validation) if validation is not None else None
         record = {
             "epoch": epoch,
             "learning_rate": float(optimizer.param_groups[0]["lr"]),
@@ -1718,39 +1732,55 @@ def train_real_causal_scale(
             "elapsed_seconds": time.perf_counter() - epoch_started,
             "selection": selection,
             "train": train_metrics,
-            "validation": {
-                key: value
-                for key, value in validation.items()
-                if key
-                not in {
-                    "sample_tokens",
-                    "sequence_ids",
-                    "track_ids",
-                    "target_ttc_s",
-                    "prediction_ttc_s",
-                    "point_prediction_ttc_s",
-                    "auxiliary_prediction_ttc_s",
-                    "known_mask",
-                    "guard_margin",
-                    "ttc_log_variance",
-                    "ttc_variance",
-                    "event_count_log1p",
-                    "event_rate_log1p",
-                    "transport_flow_magnitude",
+            "validation": (
+                {
+                    key: value
+                    for key, value in validation.items()
+                    if key
+                    not in {
+                        "sample_tokens",
+                        "sequence_ids",
+                        "track_ids",
+                        "target_ttc_s",
+                        "prediction_ttc_s",
+                        "point_prediction_ttc_s",
+                        "auxiliary_prediction_ttc_s",
+                        "known_mask",
+                        "guard_margin",
+                        "ttc_log_variance",
+                        "ttc_variance",
+                        "event_count_log1p",
+                        "event_rate_log1p",
+                        "transport_flow_magnitude",
+                    }
                 }
-            },
+                if validation is not None
+                else {"selection_deferred_to_fixed_last_epoch": True}
+            ),
         }
         history.append(record)
-        eligible = epoch > training_config.foreground_warmup_epochs
-        selectable = eligible and selection["complete_sequence_coverage"] == 1.0
-        if selectable and _is_better(selection, best_selection):
-            best_state = copy.deepcopy(model.state_dict())
-            best_selection = selection
-            best_validation = validation
-            best_epoch = epoch
-            stale = 0
-        elif selectable:
-            stale += 1
+        if fixed_last_epoch:
+            if validation is not None:
+                if selection is None or selection["complete_sequence_coverage"] != 1.0:
+                    raise RuntimeError("fixed-last-epoch outer fit has incomplete dev coverage")
+                best_state = copy.deepcopy(model.state_dict())
+                best_selection = selection
+                best_validation = validation
+                best_epoch = epoch
+                stale = 0
+        else:
+            eligible = epoch > training_config.foreground_warmup_epochs
+            selectable = bool(
+                selection is not None and eligible and selection["complete_sequence_coverage"] == 1.0
+            )
+            if selectable and _is_better(selection, best_selection):
+                best_state = copy.deepcopy(model.state_dict())
+                best_selection = selection
+                best_validation = validation
+                best_epoch = epoch
+                stale = 0
+            elif selectable:
+                stale += 1
         scheduler.step()
         last_completed_epoch = epoch
         elapsed = prior_elapsed + time.perf_counter() - started
@@ -1762,7 +1792,8 @@ def train_real_causal_scale(
         if stop_after_epoch is not None and epoch >= stop_after_epoch:
             break
         if (
-            epoch >= training_config.minimum_epochs
+            training_config.checkpoint_selection_mode == "dev_best"
+            and epoch >= training_config.minimum_epochs
             and stale >= training_config.early_stopping_patience
         ):
             break

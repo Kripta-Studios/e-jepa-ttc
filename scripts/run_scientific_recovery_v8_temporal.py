@@ -14,6 +14,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
+from e_jepa_ttc.artifacts.hashing import verify_artifact_hash  # noqa: E402
 from e_jepa_ttc.evaluation.scientific_recovery_v8_runner import (  # noqa: E402
     V8IntegrityError,
     verify_frozen_inputs,
@@ -28,15 +29,43 @@ from e_jepa_ttc.training.scientific_recovery_v8_jobs import (  # noqa: E402
 
 def _configs(frozen: object, arm: str) -> list[Path]:
     manifest = frozen.manifest
-    entries = manifest["enabled_seed7_configs"]
-    selected = [
-        ROOT / str(entry["path"])
-        for name, entry in entries.items()
-        if name.startswith(f"{arm}_fold") and name.endswith("_seed7")
-    ]
+    if arm in {"timevol20_3", "exp6_3"}:
+        entries = manifest["enabled_seed7_configs"]
+        selected = [
+            ROOT / str(entry["path"])
+            for name, entry in entries.items()
+            if name.startswith(f"{arm}_fold") and name.endswith("_seed7")
+        ]
+    elif arm == "pair20_2":
+        templates = manifest.get("conditional_templates", {})
+        template = templates.get(arm) if isinstance(templates, dict) else None
+        raw = template.get("fold_configs") if isinstance(template, dict) else None
+        if not isinstance(raw, list):
+            raise V8JobIntegrityError("frozen manifest lacks preregistered pair20_2 configs")
+        selected = [ROOT / str(entry["path"]) for entry in raw if isinstance(entry, dict)]
+    else:
+        raise V8JobIntegrityError(f"unsupported temporal arm: {arm}")
     if len(selected) != 3:
         raise V8JobIntegrityError(f"frozen manifest lacks exactly three {arm} seed-7 fold configs")
     return sorted(selected)
+
+
+def _pair_gate_open(results_root: Path) -> None:
+    path = results_root / "aggregate_seed7.json"
+    if not path.is_file():
+        raise V8JobIntegrityError("B3 is closed until a signed seed-7 aggregate exists")
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as error:
+        raise V8JobIntegrityError("seed-7 aggregate is invalid JSON") from error
+    if not isinstance(payload, dict) or not verify_artifact_hash(payload):
+        raise V8JobIntegrityError("B3 is closed: seed-7 aggregate is unsigned")
+    result = next(
+        (item for item in payload.get("candidate_results", []) if item.get("candidate_id") == "B1_TIMEVOL20_3"),
+        None,
+    )
+    if not isinstance(result, dict) or result.get("passed") is not True:
+        raise V8JobIntegrityError("B3 is closed: B1_TIMEVOL20_3 did not pass the frozen seed-7 gate")
 
 
 def _root(argument: Path | None, environment: str, pinned: str, label: str) -> Path:
@@ -57,7 +86,7 @@ def _root(argument: Path | None, environment: str, pinned: str, label: str) -> P
 def _cache_command(
     *, arm: str, eap_root: Path, garlttc_root: Path, protocol: Path, output: Path
 ) -> list[str]:
-    representation = "timevol20" if arm == "timevol20_3" else "exp6"
+    representation = "timevol20" if arm in {"timevol20_3", "pair20_2"} else "exp6"
     return [
         "uv",
         "run",
@@ -96,7 +125,7 @@ def main() -> int:
     parser.add_argument(
         "--results-root", type=Path, default=ROOT / "artifacts/scientific_recovery_v8"
     )
-    parser.add_argument("--arm", choices=("all", "timevol20_3", "exp6_3"), default="all")
+    parser.add_argument("--arm", choices=("all", "timevol20_3", "exp6_3", "pair20_2"), default="all")
     parser.add_argument("--max-parallel", type=int, default=1)
     parser.add_argument("--eap-root", type=Path)
     parser.add_argument("--garlttc-root", type=Path)
@@ -105,9 +134,12 @@ def main() -> int:
     try:
         frozen = verify_frozen_inputs(args.protocol, args.manifest)
         arms = ("timevol20_3", "exp6_3") if args.arm == "all" else (args.arm,)
+        if "pair20_2" in arms:
+            _pair_gate_open(args.results_root.resolve())
         cache_commands: list[list[str]] = []
         for arm in arms:
-            cache = ROOT / "artifacts/scientific_recovery_v8/cache" / arm / "manifest.json"
+            cache_arm = "timevol20_3" if arm == "pair20_2" else arm
+            cache = ROOT / "artifacts/scientific_recovery_v8/cache" / cache_arm / "manifest.json"
             if not cache.is_file():
                 eap_root = _root(args.eap_root, "EAP_ROOT", "E:/eAP_dataset", "eAP")
                 garl_root = _root(

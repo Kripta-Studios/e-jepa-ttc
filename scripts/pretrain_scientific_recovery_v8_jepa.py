@@ -27,10 +27,8 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from e_jepa_ttc.artifacts.hashing import sign_artifact, verify_artifact_hash  # noqa: E402
-from e_jepa_ttc.data.scientific_recovery_v8_cache import (  # noqa: E402
-    ScientificRecoveryV8CacheDataset,
-    collate_scientific_recovery_v8,
-)
+from e_jepa_ttc.data.scientific_recovery_v8_cache import collate_scientific_recovery_v8  # noqa: E402
+from e_jepa_ttc.data.scientific_recovery_v8_jepa_data import open_jepa_dataset  # noqa: E402
 from e_jepa_ttc.models.causal_scale_jepa_v8 import (  # noqa: E402
     CausalScaleJEPAV8,
     CausalScaleJEPAV8Config,
@@ -67,7 +65,7 @@ def _write_signed(path: Path, payload: dict[str, Any]) -> dict[str, Any]:
 
 
 class _IndexView(Dataset[dict[str, Any]]):
-    def __init__(self, source: ScientificRecoveryV8CacheDataset, indices: Sequence[int]) -> None:
+    def __init__(self, source: Dataset[dict[str, Any]], indices: Sequence[int]) -> None:
         self.source, self.indices = source, tuple(indices)
 
     def __len__(self) -> int:
@@ -162,6 +160,7 @@ def run_pretraining(
     device: str,
     allow_fixture_cache: bool = False,
     endpoint_config_override: CausalScaleTTCConfig | None = None,
+    protocol_path: Path | None = None,
 ) -> dict[str, Any]:
     """Run real label-free updates and emit signed checkpoint provenance."""
 
@@ -175,14 +174,13 @@ def run_pretraining(
         raise ValueError("pretrain command only accepts D2, D3 or D4 configs")
     shuffled = arm == "D4"
     manifest = json.loads(cache_manifest.read_text(encoding="utf-8"))
-    if not verify_artifact_hash(manifest) or manifest.get("train_only") is not True:
-        raise ValueError("JEPA pretraining requires a signed train-only V8 cache manifest")
-    if (
-        manifest.get("provenance", {}).get("raw_materialization") is not True
-        and not allow_fixture_cache
-    ):
-        raise ValueError("fixture cache is forbidden outside explicit test execution")
-    dataset = ScientificRecoveryV8CacheDataset(cache_manifest)
+    if not isinstance(manifest, dict) or not verify_artifact_hash(manifest):
+        raise ValueError("JEPA cache manifest must be a signed JSON artifact")
+    dataset = open_jepa_dataset(
+        cache_manifest=cache_manifest,
+        protocol_path=protocol_path,
+        allow_fixture_cache=allow_fixture_cache,
+    )
     train_indices = [
         index for index in range(len(dataset)) if int(dataset[index]["outer_fold"]) != int(fold)
     ]
@@ -271,6 +269,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", type=Path, required=True)
     parser.add_argument("--cache-manifest", type=Path, required=True)
+    parser.add_argument("--protocol", type=Path, default=ROOT / "configs/protocol/scientific_recovery_v8_temporal.json")
     parser.add_argument("--fold", type=int, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--device", default="cuda")

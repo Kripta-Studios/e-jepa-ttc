@@ -86,8 +86,8 @@ loss:
   supervise_pair_ratio_before_temporal_blend: true
 decision_contract:
   checkpoint_selection: dev_sequence_macro_MiD_then_failure_rate
-  bbox_is_training_supervision_only: true
-  bbox_is_never_forward_input: true
+  oracle_bbox_roi_preprocessing_shared_with_baseline: true
+  bbox_coordinates_not_direct_model_features: true
   rows_folds_targets_weights_must_match_protocol: true
   public_validation_used_for_selection: false
   private_test_opened: false

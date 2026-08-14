@@ -280,10 +280,18 @@ def run_fold(
     frozen = None
     if not fixture:
         frozen = verify_frozen_inputs(protocol_path, manifest_path)
-        if int(config["experiment"]["seed"]) != int(
-            frozen.protocol["training_contract"]["screen_seed"]
-        ):
-            raise RouterStageError("router config seed differs from frozen screen seed")
+        screen_seed = int(frozen.protocol["training_contract"]["screen_seed"])
+        config_seed = int(config["experiment"]["seed"])
+        replication = config["experiment"].get("multiseed_replication")
+        allowed_replication = (
+            config_seed in {13, 23}
+            and isinstance(replication, Mapping)
+            and int(replication.get("source_seed", -1)) == screen_seed
+            and replication.get("no_tuning") is True
+            and replication.get("no_reselection") is True
+        )
+        if config_seed != screen_seed and not allowed_replication:
+            raise RouterStageError("router config seed is neither frozen screen seed nor derived replication")
     inner = _combine_experts(a5_inner, c2f_inner, inner=True)
     fitted = fit_router_from_inner_oof(
         inner, inner_folds=folds, outer_dev_sequences=outer_dev, seed=seed
@@ -321,7 +329,7 @@ def run_fold(
             "support_ms": outer["support_ms"],
             "model_name": "scientific_recovery_v8_router_a5_c2f",
             "config_sha256": _sha256(config_path),
-            "checkpoint_sha256": fitted.router.signature.artifact_sha256,
+            "checkpoint_sha256": "pending_router_file_sha256",
             "a5_prediction_ttc": outer["a5_prediction_ttc_s"],
             "c2f_prediction_ttc": outer["c2f_prediction_ttc_s"],
             "choose_c2f": choose_c2f,
@@ -335,6 +343,10 @@ def run_fold(
         json.dumps(fitted.router.signature.payload, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
     )
+    router_file_sha256 = _sha256(router_path)
+    output["checkpoint_sha256"] = router_file_sha256
+    # Rewrite after binding each row to the exact router file used for inference.
+    output.to_csv(csv_path, index=False, lineterminator="\n")
     artifact: dict[str, Any] = {
         "artifact_type": "scientific_recovery_v8_router_fold_v1",
         "status": "fixture_completed" if fixture else "completed",
@@ -383,9 +395,49 @@ def run_fold(
         }
     artifact = sign_artifact(artifact)
     name = "router_fold_fixture.json" if fixture else f"router_fold{outer_fold}.json"
-    (output_dir / name).write_text(
+    fold_artifact_path = output_dir / name
+    fold_artifact_path.write_text(
         json.dumps(artifact, indent=2, sort_keys=True) + "\n", encoding="utf-8"
     )
+    if not fixture:
+        canonical_csv = output_dir / "dev_predictions.csv"
+        if canonical_csv != csv_path:
+            canonical_csv.write_bytes(csv_path.read_bytes())
+        summary = sign_artifact(
+            {
+                "artifact_type": "scientific_recovery_v8_fold_result_v1",
+                "status": "completed",
+                "fixture": False,
+                "stage": "router",
+                "arm": "router",
+                "run_name": str(config["experiment"]["name"]),
+                "outer_fold": outer_fold,
+                "fold": outer_fold,
+                "seed": seed,
+                "base_git_commit": str(frozen.protocol.get("git_base_commit", "")),
+                "implementation_git_commit": _git_commit(),
+                "git_commit": _git_commit(),
+                "protocol_sha256": str(frozen.protocol["artifact_sha256"]),
+                "frozen_manifest_sha256": str(frozen.manifest["artifact_sha256"]),
+                "config_sha256": _sha256(config_path),
+                "checkpoint": {"path": "router_signature.json", "sha256": router_file_sha256},
+                "dev_predictions": {"path": "dev_predictions.csv", "sha256": _sha256(canonical_csv)},
+                "fold_artifact": {
+                    "path": name,
+                    "sha256": _sha256(fold_artifact_path),
+                    "artifact_sha256": artifact["artifact_sha256"],
+                },
+                "closed_evaluation": {
+                    "public_validation_used_for_selection": False,
+                    "private_test_opened": False,
+                    "evttc_test_opened": False,
+                    "codabench_opened": False,
+                },
+            }
+        )
+        (output_dir / "summary.json").write_text(
+            json.dumps(summary, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+        )
     return artifact
 
 
@@ -466,7 +518,8 @@ def _fixture_config(output_dir: Path) -> Path:
 
 
 def _router_stage_plan(
-    *, frozen: object, results_root: Path, device: str, max_parallel: int
+    *, frozen: object, results_root: Path, device: str, max_parallel: int,
+    config_paths: Sequence[Path] | None = None, seed: int = 7,
 ) -> dict[str, Any]:
     """Return the exact 24 expert jobs required before the three router fits.
 
@@ -477,16 +530,19 @@ def _router_stage_plan(
     """
 
     manifest = frozen.manifest
-    entries = manifest.get("enabled_seed7_configs")
-    if not isinstance(entries, Mapping):
-        raise RouterStageError("frozen manifest lacks enabled seed-7 configurations")
-    config_paths = sorted(
-        ROOT / str(entry["path"])
-        for name, entry in entries.items()
-        if str(name).startswith("router_fold") and str(name).endswith("_seed7")
-    )
+    if config_paths is None:
+        entries = manifest.get("enabled_seed7_configs")
+        if not isinstance(entries, Mapping):
+            raise RouterStageError("frozen manifest lacks enabled seed-7 configurations")
+        config_paths = sorted(
+            ROOT / str(entry["path"])
+            for name, entry in entries.items()
+            if str(name).startswith("router_fold") and str(name).endswith("_seed7")
+        )
+    else:
+        config_paths = sorted(Path(path).resolve() for path in config_paths)
     if len(config_paths) != 3:
-        raise RouterStageError("frozen manifest lacks exactly three router seed-7 configs")
+        raise RouterStageError(f"router stage requires exactly three configs for seed {seed}")
     expert_jobs: list[dict[str, Any]] = []
     router_commands: list[list[str]] = []
     for config_path in config_paths:
@@ -494,7 +550,7 @@ def _router_stage_plan(
         if not isinstance(config, Mapping):
             raise RouterStageError(f"router config is malformed: {config_path}")
         fold = int(config["outer_fold"])
-        run_root = results_root / "router" / f"outer_fold{fold}_seed7"
+        run_root = results_root / "router" / f"outer_fold{fold}_seed{seed}"
         inner_folds = config.get("inner_folds")
         if not isinstance(inner_folds, list) or len(inner_folds) != 3:
             raise RouterStageError(f"router config lacks three inner folds: {config_path}")
@@ -506,7 +562,7 @@ def _router_stage_plan(
                 output = run_root / expert.lower() / f"inner{inner_fold}"
                 expert_jobs.append(
                     {
-                        "job_id": f"router_{expert.lower()}_outer{fold}_inner{inner_fold}_seed7",
+                        "job_id": f"router_{expert.lower()}_outer{fold}_inner{inner_fold}_seed{seed}",
                         "expert": expert,
                         "role": "inner_oof",
                         "outer_fold": fold,
@@ -541,7 +597,7 @@ def _router_stage_plan(
             output = run_root / expert.lower() / "outer_dev"
             expert_jobs.append(
                 {
-                    "job_id": f"router_{expert.lower()}_outer{fold}_final_seed7",
+                    "job_id": f"router_{expert.lower()}_outer{fold}_final_seed{seed}",
                     "expert": expert,
                     "role": "outer_dev",
                     "outer_fold": fold,
@@ -589,41 +645,38 @@ def _router_stage_plan(
                 "--c2f-outer-artifact",
                 _repo_relative(run_root / "c2f" / "outer_dev" / "expert_artifact.json"),
                 "--output-dir",
-                _repo_relative(run_root / "router"),
+                _repo_relative(results_root / "runs" / f"router_fold{fold}_seed{seed}"),
             ]
         )
     return {
         "status": "planned",
         "stage": "router",
+        "seed": seed,
         "protocol_sha256": frozen.protocol["artifact_sha256"],
         "device": device,
         "max_parallel": max_parallel,
         "results_root": _repo_relative(results_root),
         "expert_jobs": expert_jobs,
         "router_commands": router_commands,
-        "aggregate_command": [
-            "uv",
-            "run",
-            "--no-sync",
-            "python",
-            "scripts/aggregate_scientific_recovery_v8_router.py",
-            *[
-                item
-                for fold in range(3)
-                for item in (
-                    "--fold-artifact",
-                    _repo_relative(
-                        results_root
-                        / "router"
-                        / f"outer_fold{fold}_seed7"
-                        / "router"
-                        / f"router_fold{fold}.json"
-                    ),
-                )
-            ],
-            "--output-dir",
-            _repo_relative(results_root / "router" / "aggregate"),
-        ],
+        "aggregate_command": (
+            [
+                "uv", "run", "--no-sync", "python",
+                "scripts/aggregate_scientific_recovery_v8_router.py",
+                *[
+                    item
+                    for fold in range(3)
+                    for item in (
+                        "--fold-artifact",
+                        _repo_relative(
+                            results_root / "runs" / f"router_fold{fold}_seed{seed}" / f"router_fold{fold}.json"
+                        ),
+                    )
+                ],
+                "--output-dir", _repo_relative(results_root / "router" / f"aggregate_seed{seed}"),
+            ]
+            if seed == 7
+            else [sys.executable, "-c", f"print('router seed {seed} fold artifacts complete; multiseed aggregator owns the comparison')"]
+        ),
         "sealed_evaluation": "closed",
         "production_trainer_required": "scripts/train_scientific_recovery_v8_router_expert.py",
     }
@@ -647,22 +700,54 @@ def _execute_stage_plan(plan: Mapping[str, Any], *, max_parallel: int) -> None:
     if not isinstance(jobs, list) or len(jobs) != 24:
         raise RouterStageError("nested router stage plan must contain exactly 24 expert jobs")
 
+    def run_logged(command: list[str], *, label: str, output_dir: Path) -> None:
+        output_dir.mkdir(parents=True, exist_ok=True)
+        log_dir = output_dir / "logs"
+        log_dir.mkdir(parents=True, exist_ok=True)
+        stdout_path = log_dir / "stdout.log"
+        stderr_path = log_dir / "stderr.log"
+        command_path = log_dir / "command.json"
+        command_path.write_text(
+            json.dumps({"label": label, "command": command}, indent=2) + "\n", encoding="utf-8"
+        )
+        with stdout_path.open("a", encoding="utf-8", buffering=1) as stdout, stderr_path.open(
+            "a", encoding="utf-8", buffering=1
+        ) as stderr:
+            stdout.write(f"\n=== START {label} ===\n")
+            stdout.write("COMMAND: " + " ".join(command) + "\n")
+            result = subprocess.run(command, cwd=ROOT, stdout=stdout, stderr=stderr, check=False)
+            stdout.write(f"=== END {label} exit={result.returncode} ===\n")
+        if result.returncode != 0:
+            raise RouterStageError(
+                f"router job failed: {label}; inspect {stderr_path.relative_to(ROOT)}"
+            )
+
     def execute(job: Mapping[str, Any]) -> None:
         command = job.get("command")
-        if (
-            not isinstance(command, list)
-            or subprocess.run(command, cwd=ROOT, check=False).returncode != 0
-        ):
-            raise RouterStageError(f"router expert job failed: {job.get('job_id')}")
+        output_dir = job.get("output_dir")
+        if not isinstance(command, list) or not isinstance(output_dir, str):
+            raise RouterStageError(f"router expert job is malformed: {job.get('job_id')}")
+        run_logged(
+            [str(value) for value in command],
+            label=str(job.get("job_id")),
+            output_dir=ROOT / output_dir,
+        )
 
-    with concurrent.futures.ThreadPoolExecutor(max_workers=max_parallel) as executor:
-        futures = [executor.submit(execute, job) for job in jobs]
-        for future in futures:
-            future.result()
+    # Inner OOF experts are completed first.  Outer expert fits then run as a
+    # separate bounded wave, preventing a future fixed-epoch contract from
+    # racing ahead of its inner evidence.
+    inner_jobs = [job for job in jobs if job.get("role") == "inner_oof"]
+    outer_jobs = [job for job in jobs if job.get("role") == "outer_dev"]
+    for wave in (inner_jobs, outer_jobs):
+        with concurrent.futures.ThreadPoolExecutor(max_workers=max_parallel) as executor:
+            futures = [executor.submit(execute, job) for job in wave]
+            for future in futures:
+                future.result()
     protocol_sha = str(plan["protocol_sha256"])
     results_root = ROOT / str(plan["results_root"])
+    seed = int(plan.get("seed", 7))
     for fold in range(3):
-        run_root = results_root / "router" / f"outer_fold{fold}_seed7"
+        run_root = results_root / "router" / f"outer_fold{fold}_seed{seed}"
         for expert in ("a5", "c2f"):
             artifacts = [
                 _signed_json(
@@ -746,6 +831,8 @@ def main() -> int:
         help="Root for automatic nested expert/router stage outputs.",
     )
     parser.add_argument("--max-parallel", type=int, default=1)
+    parser.add_argument("--seed", type=int, choices=(7, 13, 23), default=7)
+    parser.add_argument("--config-dir", type=Path)
     parser.add_argument(
         "--execute",
         action="store_true",
@@ -800,11 +887,16 @@ def main() -> int:
         )
         if args.config is None and no_manual_artifacts:
             frozen = verify_frozen_inputs(args.protocol, args.manifest)
+            external_configs = None
+            if args.config_dir is not None:
+                external_configs = sorted(args.config_dir.glob(f"router_fold*_seed{args.seed}.yaml"))
             plan = _router_stage_plan(
                 frozen=frozen,
                 results_root=args.results_root.resolve(),
                 device=args.device,
                 max_parallel=args.max_parallel,
+                config_paths=external_configs,
+                seed=args.seed,
             )
             if args.execute:
                 _execute_stage_plan(plan, max_parallel=args.max_parallel)

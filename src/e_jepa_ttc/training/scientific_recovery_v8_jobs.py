@@ -202,7 +202,9 @@ def build_fold_jobs(
         seen_identities.add(identity)
         if data.get("opened_splits") != ["train"]:
             raise V8JobIntegrityError(f"V8 job must only open train data: {source}")
-        run_dir = output_root.resolve() / name
+        # Canonical run directories are arm/fold/seed based so producers and
+        # aggregators share one immutable path contract independent of display names.
+        run_dir = output_root.resolve() / f"{arm}_fold{fold}_seed{seed}"
         outcome = assess_v8_job(run_dir)
         command = [
             "uv",
@@ -294,7 +296,40 @@ def execute_jobs(
     def invoke(job: V8Job) -> int:
         if command_runner is not None:
             return int(command_runner(job))
-        return subprocess.run(list(job.command), cwd=ROOT, check=False).returncode
+        job.output_dir.mkdir(parents=True, exist_ok=True)
+        log_dir = job.output_dir / "logs"
+        log_dir.mkdir(parents=True, exist_ok=True)
+        stdout_path = log_dir / "stdout.log"
+        stderr_path = log_dir / "stderr.log"
+        command_path = log_dir / "command.json"
+        command_path.write_text(
+            json.dumps({"command": list(job.command), "cwd": str(ROOT)}, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        # Append on resume so the complete process history is retained.  Each
+        # invocation is bracketed with an ISO timestamp in both streams.
+        started = datetime.now(UTC).isoformat()
+        with stdout_path.open("a", encoding="utf-8", buffering=1) as stdout_handle, \
+             stderr_path.open("a", encoding="utf-8", buffering=1) as stderr_handle:
+            stdout_handle.write(f"\n===== V8 JOB START {started} =====\n")
+            stdout_handle.write("COMMAND: " + " ".join(job.command) + "\n")
+            stderr_handle.write(f"\n===== V8 JOB START {started} =====\n")
+            result = subprocess.run(
+                list(job.command),
+                cwd=ROOT,
+                check=False,
+                stdout=stdout_handle,
+                stderr=stderr_handle,
+                text=True,
+            )
+            finished = datetime.now(UTC).isoformat()
+            stdout_handle.write(
+                f"===== V8 JOB END {finished} exit={result.returncode} =====\n"
+            )
+            stderr_handle.write(
+                f"===== V8 JOB END {finished} exit={result.returncode} =====\n"
+            )
+        return int(result.returncode)
 
     outputs: dict[str, dict[str, Any]] = {}
     queued: list[V8Job] = []
@@ -505,6 +540,9 @@ def clone_multiseed_configs(
             cloned_experiment = cloned["experiment"]
             cloned_experiment["seed"] = seed
             cloned_experiment["name"] = str(experiment["name"]).replace("seed7", f"seed{seed}")
+            cloned_training = cloned.get("training")
+            if isinstance(cloned_training, dict) and "seed" in cloned_training:
+                cloned_training["seed"] = seed
             cloned_experiment["multiseed_replication"] = {
                 "source_seed": 7,
                 "seeds_are_optimization_stability_replication": True,

@@ -1,42 +1,42 @@
 experiment:
-  name: scientific_recovery_v8_timevol20_3_fold2_seed7
+  name: scientific_recovery_v8_pair20_2_fold0_seed7
   protocol_version: scientific_recovery_v8_temporal_v1
   evidence_scope: public_train_only_grouped_development
   seed: 7
-  arm: timevol20_3
-  single_scientific_difference: B1 changes the temporal frontend and mandatory 12-to-20
-    channel input stem; the downstream topology and training contract remain A5.
-model_config: configs/model/e_jepa_causal_scale_event_v8_timevol20_3.yaml
+  arm: pair20_2
+  single_scientific_difference: B3 uses the preregistered TIMEVOL20 frontend but only
+    t1,t2; the cache and downstream A5 contract remain unchanged.
+model_config: configs/model/e_jepa_causal_scale_event_v8_pair20_2.yaml
 data:
   cache_manifest: artifacts/scientific_recovery_v8/cache/timevol20_3/manifest.json
   cache_manifest_expected: true
   cache_materialization_required_before_run: true
   train_sequence_ids:
   - 2cyv0Oedzg
-  - 5ilM1PX2vz
   - 6h5yRW2LGc
-  - OYgB6RGWcq
-  - mHGFBekt7X
-  - qGsgzl4Q8B
-  dev_sequence_ids:
   - OBneIVg4Cw
   - WbCh1DRerJ
+  - mHGFBekt7X
   - t79dBxj1WS
+  dev_sequence_ids:
+  - 5ilM1PX2vz
+  - OYgB6RGWcq
+  - qGsgzl4Q8B
   opened_splits:
   - train
   expected_source_train_rows: 8192
-  outer_fold: 2
+  outer_fold: 0
   roi_size:
   - 128
   - 128
-  steps: 3
+  steps: 2
   channels_per_endpoint: 20
   temporal_frontend:
-    steps: 3
+    steps: 2
     channels: 20
     cache_manifest: artifacts/scientific_recovery_v8/cache/timevol20_3/manifest.json
-    single_scientific_difference: B1 changes the temporal frontend and mandatory 12-to-20
-      channel input stem; the downstream topology and training contract remain A5.
+    single_scientific_difference: B3 uses the preregistered TIMEVOL20 frontend but
+      only t1,t2; the cache and downstream A5 contract remain unchanged.
     builder: official_timevolume_roi_np
     support_ms: 100
     extra_tensor_channels: false
@@ -93,3 +93,6 @@ decision_contract:
   private_test_opened: false
   evttc_test_opened: false
   codabench_opened: false
+  conditional_arm: true
+  opening_gate_required: B1_TIMEVOL20_3 seed-7 screen gate
+enabled: false

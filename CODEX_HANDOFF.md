@@ -1359,3 +1359,50 @@ En orden:
 El patrón estable del repositorio es este: los eventos contienen señal, la escala aparente contiene señal y el foreground puede aprenderse; lo que falla es estimar y calibrar el cambio temporal correcto en secuencias y regímenes no vistos.
 
 V8 debe aislar esa afirmación. Si un frontend temporal mejora A5, el resultado apoya la importancia de la representación temporal. Si el router prospectivo mejora, el resultado apoya una mezcla de mecanismos por régimen. Si JEPA supera scratch, encoder aleatorio y futuro barajado, el resultado apoya predicción latente futura. Ninguna de esas conclusiones se puede sustituir por una sola cifra agregada.
+
+## V8 completion/hardening patch — one-command training DAG
+
+The V8 implementation is completed/hardened by the post-`191632b` patch.  Its
+canonical local training entrypoint is:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/run_scientific_recovery_v8_all_trainings.ps1 `
+  -Device cuda `
+  -MaxParallel 2 `
+  -EapRoot "E:\eAP_dataset" `
+  -GarlTtcRoot "E:\GarlTTC_dataset"
+```
+
+The orchestrator executes scientific stages serially while allowing at most two
+training processes concurrently *inside* a stage.  It freezes/verifies V8 before
+training, runs the no-training mechanism autopsy, prospective nested router,
+fixed temporal controls, gate-authorized B3/C1 controls, mandatory JEPA
+attribution, and gate-authorized multiseed replication.  A downstream stage is
+never opened by an unsigned or stale artifact.
+
+Top-level logs are written under
+`artifacts/scientific_recovery_v8/master_logs/<stage>/`, including separate
+`stdout.log`, `stderr.log`, and `command.txt`.  Individual training jobs retain
+per-run command/stdout/stderr logs and resumable state through the V8 job
+substrate.  `artifacts/scientific_recovery_v8/master_state.json` records the last
+master-stage transition.
+
+This local training DAG never opens public validation, private test, EvTTC test,
+or CodaBench.  Seeds 13/23 are optimization-stability replication on the same
+OOF universe, not external confirmation.
+
+The completion patch also makes these contracts explicit:
+
+- B1/B2/B3/C1 trainers emit the exact schema consumed by the canonical aggregate.
+- B3 uses the last two TIMEVOL20 endpoints and is opened only by a signed B1 pass.
+- C1 starts exactly from uniform EXP6 channel weights and is opened only by signed
+  preregistered mechanism/regime evidence.
+- prospective router experts preserve exact macro-sequence MiD weights and outer
+  dev is not used for checkpoint selection.
+- the autopsy computes fold/sequence stability instead of hard-coding it and uses
+  clean factorial replay contrasts.
+- JEPA low-label IDs are frozen before D0--D4; shuffled-future remains a
+  deterministic cross-track derangement; PAIR20 keeps a two-endpoint downstream
+  while JEPA pretraining still uses `t0,t1 -> t2`.
+- a router winner remains the primary TTC winner, but JEPA attribution is made on
+  its A5 constituent encoder because a meta-router is not one transferable encoder.

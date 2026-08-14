@@ -608,12 +608,12 @@ def _exp6_records_for_sequence(
             start_us=reader.t_start_us,
             end_us=endpoint,
         )
-        state.update(packet, endpoint)
+        event_count = state.update(packet, endpoint)
         watermark = endpoint + 1
         for row_index, step in requests[endpoint]:
             plan = plans[row_index]
             output_slots[row_index][step] = state.snapshot(
-                endpoint, torch.tensor(plan.roi_xyxy, dtype=torch.float32), event_count=0
+                endpoint, torch.tensor(plan.roi_xyxy, dtype=torch.float32), event_count=event_count
             )
     records: list[dict[str, Any]] = []
     for plan, outputs in zip(plans, output_slots, strict=True):

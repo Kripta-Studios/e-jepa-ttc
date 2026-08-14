@@ -6,6 +6,7 @@ import csv
 import hashlib
 import json
 import math
+import subprocess
 from collections import Counter
 from collections.abc import Mapping
 from decimal import Decimal
@@ -47,7 +48,8 @@ def _records_hash(rows: list[dict[str, str]]) -> str:
 
 
 def contract_hashes(rows: list[dict[str, str]]) -> dict[str, str]:
-    """Return the four immutable V8 row-contract hashes for normalized OOF rows."""
+    """Return immutable row-contract hashes using the exact macro-MiD weight definition."""
+    expected_weights = _expected_weights(rows)
     return {
         "ordered_token_ids_sha256": _records_hash([{"token_id": r["token_id"]} for r in rows]),
         "row_identity_sha256": _records_hash(
@@ -57,7 +59,7 @@ def contract_hashes(rows: list[dict[str, str]]) -> dict[str, str]:
             [{"target_ttc_s": r["target_ttc"], "token_id": r["token_id"]} for r in rows]
         ),
         "mid_sample_weight_sha256": _records_hash(
-            [{k: r[k] for k in ("sample_weight", "token_id")} for r in rows]
+            [{"sample_weight": expected_weights[r["token_id"]], "token_id": r["token_id"]} for r in rows]
         ),
         "fold_assignment_sha256": _records_hash(
             [{k: r[k] for k in ("outer_fold", "sequence_id", "token_id")} for r in rows]
@@ -343,6 +345,77 @@ def _bootstrap(
     }
 
 
+
+def _implementation_commit(repository_root: Path) -> str:
+    try:
+        return subprocess.check_output(
+            ["git", "rev-parse", "HEAD"], cwd=repository_root, text=True
+        ).strip()
+    except (OSError, subprocess.CalledProcessError):
+        return "unknown"
+
+
+def _candidate_config_entries(
+    manifest: Mapping[str, Any], *, arm: str, results_root: Path
+) -> list[tuple[str, Mapping[str, Any]]]:
+    """Return enabled configs or preregistered conditional configs once executed."""
+    enabled = manifest.get("enabled_seed7_configs", {})
+    if not isinstance(enabled, Mapping):
+        raise V8AggregateIntegrityError("missing frozen configs")
+    entries = [
+        (str(name), entry)
+        for name, entry in enabled.items()
+        if str(name).startswith(f"{arm}_fold")
+        and str(name).endswith("_seed7")
+        and isinstance(entry, Mapping)
+    ]
+    if entries:
+        return entries
+    templates = manifest.get("conditional_templates", {})
+    template = templates.get(arm) if isinstance(templates, Mapping) else None
+    if not isinstance(template, Mapping):
+        return []
+    presence = [
+        (results_root / "runs" / f"{arm}_fold{fold}_seed7").exists() for fold in range(3)
+    ]
+    if not any(presence):
+        return []
+    if not all(presence):
+        raise V8AggregateIntegrityError(f"partial conditional run set for {arm}")
+    raw = template.get("fold_configs")
+    if not isinstance(raw, list) or len(raw) != 3 or not all(isinstance(x, Mapping) for x in raw):
+        raise V8AggregateIntegrityError(f"conditional template for {arm} lacks three configs")
+    return [(f"{arm}_fold{fold}_seed7", entry) for fold, entry in enumerate(raw)]
+
+
+def _bind_candidate_to_baseline_contract(
+    rows: list[dict[str, str]], baseline: list[dict[str, str]]
+) -> list[dict[str, str]]:
+    """Validate protected row values numerically and canonicalize their exact text."""
+    by_token = {row["token_id"]: row for row in baseline}
+    expected_weights = _expected_weights(baseline)
+    if set(by_token) != {row["token_id"] for row in rows}:
+        raise V8AggregateIntegrityError("candidate token set differs from frozen A5 baseline")
+    normalized: list[dict[str, str]] = []
+    for row in rows:
+        base = by_token[row["token_id"]]
+        for key in ("sequence_id", "track_id", "outer_fold"):
+            if str(row[key]) != str(base[key]):
+                raise V8AggregateIntegrityError(f"candidate {key} differs from baseline")
+        if abs(float(row["target_ttc"]) - float(base["target_ttc"])) > 1e-6:
+            raise V8AggregateIntegrityError("candidate target differs from baseline")
+        expected_weight = float(expected_weights[row["token_id"]])
+        if not math.isclose(float(row["sample_weight"]), expected_weight, rel_tol=2e-5, abs_tol=1e-10):
+            raise V8AggregateIntegrityError("candidate MiD sample weight differs from frozen definition")
+        item = dict(row)
+        item["sequence_id"] = base["sequence_id"]
+        item["track_id"] = base["track_id"]
+        item["outer_fold"] = base["outer_fold"]
+        item["target_ttc"] = base["target_ttc"]
+        item["sample_weight"] = expected_weights[row["token_id"]]
+        normalized.append(item)
+    return normalized
+
 def aggregate_seed7(
     *,
     protocol: Mapping[str, Any],
@@ -372,11 +445,7 @@ def aggregate_seed7(
     base = _read_rows(a5, candidate=False)
     candidates = []
     for arm, candidate_id in _CANDIDATES.items():
-        entries = [
-            (n, e)
-            for n, e in configs.items()
-            if str(n).startswith(f"{arm}_fold") and str(n).endswith("_seed7")
-        ]
+        entries = _candidate_config_entries(manifest, arm=arm, results_root=results_root)
         if not entries:
             continue
         if len(entries) != 3:
@@ -401,6 +470,8 @@ def aggregate_seed7(
             refs.append(ref)
         if len({r["token_id"] for r in rows}) != len(rows):
             raise V8AggregateIntegrityError("duplicate OOF tokens across folds")
+        if not allow_fixture:
+            rows = _bind_candidate_to_baseline_contract(rows, base)
         hashes = contract_hashes(rows)
         expected = protocol.get("sample_contract", {})
         if len(rows) != expected.get("rows") or any(hashes[k] != expected.get(k) for k in hashes):
@@ -441,6 +512,8 @@ def aggregate_seed7(
         "schema_version": protocol.get("schema_version", "scientific_recovery_v8_temporal_v1"),
         "status": "completed",
         "git_commit": protocol.get("git_base_commit"),
+        "base_git_commit": protocol.get("git_base_commit"),
+        "implementation_git_commit": _implementation_commit(repository_root),
         "protocol_sha256": protocol.get("artifact_sha256"),
         "frozen_manifest_sha256": manifest.get("artifact_sha256"),
         "seed": 7,

@@ -72,6 +72,9 @@ class CausalScaleTTCConfig:
     transport_adapter_enabled: bool = False
     transport_adapter_depth: int = 1
     transport_encoder_copy_enabled: bool = False
+    temporal_channel_gate_enabled: bool = False
+    temporal_channel_gate_patch_grid: int = 4
+    temporal_channel_gate_hidden_dim: int = 16
 
     def __post_init__(self) -> None:
         if self.modality not in {"event", "rgb"}:
@@ -145,6 +148,12 @@ class CausalScaleTTCConfig:
             raise ValueError(
                 "A7 transport encoder copy and A6 transport adapter are mutually exclusive"
             )
+        if self.temporal_channel_gate_enabled and self.in_channels != 6:
+            raise ValueError("V8 temporal channel gate is preregistered only for EXP6 six-channel input")
+        if self.temporal_channel_gate_patch_grid != 4:
+            raise ValueError("V8 temporal channel gate patch grid is frozen at 4x4")
+        if self.temporal_channel_gate_hidden_dim != 16:
+            raise ValueError("V8 temporal channel gate hidden dimension is frozen at 16")
 
 
 @dataclass(frozen=True)
@@ -385,6 +394,50 @@ def smooth_temporal_foreground_logits(
         + neighbor_weight * padded[:, :-2]
         + neighbor_weight * padded[:, 2:]
     )
+
+
+class _AdaptiveTemporalChannelGate(nn.Module):
+    """Preregistered C1 patchwise gate over the six fixed EXP6 states.
+
+    The gate consumes only the current causal EXP6 tensor.  Six features are
+    channel-wise patch means; the final two are a causal event-mass proxy and
+    binary occupancy entropy.  It returns six positive weights per patch and
+    preserves six output channels rather than collapsing temporal scales.
+    """
+
+    def __init__(self, channels: int = 6, hidden: int = 16, patch_grid: int = 4) -> None:
+        super().__init__()
+        if channels != 6 or hidden != 16 or patch_grid != 4:
+            raise ValueError("C1 gate architecture is frozen at 6 channels, hidden 16, grid 4")
+        self.channels = channels
+        self.patch_grid = patch_grid
+        self.router = nn.Sequential(
+            nn.Conv2d(8, hidden, kernel_size=1),
+            nn.GELU(),
+            nn.Conv2d(hidden, channels, kernel_size=1),
+        )
+        final = self.router[-1]
+        if not isinstance(final, nn.Conv2d):
+            raise TypeError("C1 router must end in Conv2d")
+        nn.init.zeros_(final.weight)
+        nn.init.zeros_(final.bias)
+
+    def forward(self, values: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
+        if values.ndim != 4 or values.shape[1] != self.channels:
+            raise ValueError("C1 temporal gate expects [N,6,H,W]")
+        abs_values = values.abs()
+        channel_means = functional.adaptive_avg_pool2d(abs_values, self.patch_grid)
+        event_mass = torch.log1p(channel_means.sum(dim=1, keepdim=True))
+        occupancy = (abs_values.sum(dim=1, keepdim=True) > 1.0e-8).to(values.dtype)
+        occupancy = functional.adaptive_avg_pool2d(occupancy, self.patch_grid).clamp(1.0e-6, 1.0 - 1.0e-6)
+        entropy = -(occupancy * occupancy.log() + (1.0 - occupancy) * (1.0 - occupancy).log())
+        features = torch.cat((channel_means, event_mass, entropy), dim=1)
+        logits = self.router(features)
+        weights = torch.softmax(logits, dim=1)
+        weights_full = functional.interpolate(
+            weights, size=values.shape[-2:], mode="bilinear", align_corners=False
+        )
+        return values * weights_full, weights
 
 
 class _ResidualBlock(nn.Module):
@@ -666,6 +719,15 @@ class CausalScaleTTC(nn.Module):
     def __init__(self, config: CausalScaleTTCConfig | None = None) -> None:
         super().__init__()
         self.config = config or CausalScaleTTCConfig()
+        self.temporal_channel_gate: nn.Module | None = (
+            _AdaptiveTemporalChannelGate(
+                channels=self.config.in_channels,
+                hidden=self.config.temporal_channel_gate_hidden_dim,
+                patch_grid=self.config.temporal_channel_gate_patch_grid,
+            )
+            if self.config.temporal_channel_gate_enabled
+            else None
+        )
         self.encoder = _EndpointEncoder(self.config)
         self.transport_encoder: _EndpointEncoder | None = (
             _EndpointEncoder(self.config) if self.config.transport_encoder_copy_enabled else None
@@ -792,7 +854,17 @@ class CausalScaleTTC(nn.Module):
             raise ValueError("delta_t_s must have shape [B,T-1]")
         if bool((delta_t_s <= 0.0).any()) or not bool(torch.isfinite(delta_t_s).all()):
             raise ValueError("delta_t_s must be finite and strictly positive")
-        flat = inputs.reshape(batch * steps, channels, height, width)
+        temporal_gate_weights: torch.Tensor | None = None
+        model_inputs = inputs
+        if self.temporal_channel_gate is not None:
+            gated, patch_weights = self.temporal_channel_gate(
+                inputs.reshape(batch * steps, channels, height, width)
+            )
+            model_inputs = gated.reshape(batch, steps, channels, height, width)
+            temporal_gate_weights = patch_weights.reshape(
+                batch, steps, channels, patch_weights.shape[-2], patch_weights.shape[-1]
+            )
+        flat = model_inputs.reshape(batch * steps, channels, height, width)
         need_dense_features = return_dense_features or (
             self.config.transport_enabled and self.transport_encoder is None
         )
@@ -821,7 +893,7 @@ class CausalScaleTTC(nn.Module):
             foreground_logits,
             temperature=self.config.foreground_temperature,
         )
-        sensor_support = self._sensor_support(inputs)
+        sensor_support = self._sensor_support(model_inputs)
         endpoint_scalars = torch.stack(
             (
                 observation.height_normalized.clamp_min(1.0e-6).log(),
@@ -1143,6 +1215,10 @@ class CausalScaleTTC(nn.Module):
                 (batch,), replay_blend_weight
             ),
         }
+        if temporal_gate_weights is not None:
+            diagnostics["temporal_channel_gate_weights"] = temporal_gate_weights
+            gate_entropy = -(temporal_gate_weights.clamp_min(1.0e-8) * temporal_gate_weights.clamp_min(1.0e-8).log()).sum(dim=2)
+            diagnostics["temporal_channel_gate_entropy"] = gate_entropy
         if transport_raw_features is not None:
             for index, name in enumerate(TRANSPORT_FEATURE_NAMES):
                 diagnostics[f"transport_{name}"] = transport_raw_features[..., index]

@@ -1,5 +1,5 @@
 {
-  "artifact_sha256": "28924097d2adc0d4d81f17dcf6f17865079e68e50f9c4ce35d7875f59dc375c3",
+  "artifact_sha256": "34d9f3cc05a03a6f89b2fbfed3195423e49dff5e47f4b13006d61ddc87a5bbed",
   "artifact_type": "scientific_recovery_v8_frozen_config_manifest_v1",
   "c1_analysis_plans": {
     "autopsy_h3": {
@@ -8,9 +8,9 @@
       "sha256": "d2c5c1462e297952d12eeade743d2f62621f23242117959051b2d28ad400cd74"
     },
     "exp6_regime": {
-      "artifact_sha256": "ece3a2d9cd39ff4f97e339a5a81dac143ac49f4818a3b741c63ca3817ce3ebbf",
+      "artifact_sha256": "71db2048ee5668848ade8b0a902acbbf860f4be336287e06a0dd7bbcab5c5fd4",
       "path": "configs/protocol/scientific_recovery_v8_c1_analysis_plans/exp6_regime.json",
-      "sha256": "0ed4530f9ea81e866eef53c41d3120c6e7e067aba16a833c86cfb30e0d39aa99"
+      "sha256": "f0d282b173b438d4cb98b3ddccf92cc3e83493410a37d5cecf62eace589ff6b5"
     },
     "router_regime": {
       "artifact_sha256": "ee2a7b81154863355eeae2674018223ba58aec50db70b34af948b98f322def4c",
@@ -31,6 +31,20 @@
   "conditional_templates": {
     "gated_exp6_3": {
       "enabled": false,
+      "fold_configs": [
+        {
+          "path": "configs/experiment/scientific_recovery_v8_fold_chain/gated_exp6_3_fold0_seed7.yaml",
+          "sha256": "a4ef1468e7cedb3f27dab0fb944e6f7777e67ffaa35686071f64afb6994445e0"
+        },
+        {
+          "path": "configs/experiment/scientific_recovery_v8_fold_chain/gated_exp6_3_fold1_seed7.yaml",
+          "sha256": "ec47bf05f31a6a060a22b8d8ebe5f2eeff1109a52d0b4eca11c1c95e4338f380"
+        },
+        {
+          "path": "configs/experiment/scientific_recovery_v8_fold_chain/gated_exp6_3_fold2_seed7.yaml",
+          "sha256": "5a2f4c0f4ff280a72dca397071e636131207fe23b20568fd60f1b5417eafabc2"
+        }
+      ],
       "frontend_contract": "causal EXP6 patch frontend gate; not an architecture sweep.",
       "model_config": "configs/model/e_jepa_causal_scale_event_v8_gated_exp6_3.yaml",
       "opening_gate": "frozen route plan plus signed seed-7 H3 autopsy OR signed seed-7 EXP6 stable regime heterogeneity OR signed seed-7 router primary-gate pass with frozen-plan stable temporal/density causal-feature dependence across every outer fold and sequence plus causal invariance",
@@ -39,6 +53,20 @@
     },
     "pair20_2": {
       "enabled": false,
+      "fold_configs": [
+        {
+          "path": "configs/experiment/scientific_recovery_v8_fold_chain/pair20_2_fold0_seed7.yaml",
+          "sha256": "365a34cbed123914c15f4217735d91fb070904d9dd25027a3d30e7cdcb852471"
+        },
+        {
+          "path": "configs/experiment/scientific_recovery_v8_fold_chain/pair20_2_fold1_seed7.yaml",
+          "sha256": "356f491a320241f8fb4eb26727f7cb975c84dfd749e626444fbcf2e523f4fb62"
+        },
+        {
+          "path": "configs/experiment/scientific_recovery_v8_fold_chain/pair20_2_fold2_seed7.yaml",
+          "sha256": "47be888cb726747222213e6f7b4e757bbf22107f24577e34464088e689ec857b"
+        }
+      ],
       "frontend_contract": "TIMEVOL20; V8-only steps=2; EVENT_V4_STEPS remains 3.",
       "model_config": "configs/model/e_jepa_causal_scale_event_v8_pair20_2.yaml",
       "opening_gate": "B1 passes ttc_candidate_gate in signed seed-7 aggregate",
@@ -49,15 +77,15 @@
   "enabled_seed7_configs": {
     "exp6_3_fold0_seed7": {
       "path": "configs/experiment/scientific_recovery_v8_fold_chain/exp6_3_fold0_seed7.yaml",
-      "sha256": "85e70f2707b2e48757c56cedec9e3ce527654a7f2379e6efc23c662e9198fba3"
+      "sha256": "7bcbd5d21d80ec8ad6131260e2843109940f6d46c91e582ca9b927dbc917c70e"
     },
     "exp6_3_fold1_seed7": {
       "path": "configs/experiment/scientific_recovery_v8_fold_chain/exp6_3_fold1_seed7.yaml",
-      "sha256": "d60203ec46494374e65918eb1195738dad20de151e497d8249ccb0afc97c624e"
+      "sha256": "39d95952cf010bd4df3897a71c5f1ed5efc67830fec116570c16fde09d999ef5"
     },
     "exp6_3_fold2_seed7": {
       "path": "configs/experiment/scientific_recovery_v8_fold_chain/exp6_3_fold2_seed7.yaml",
-      "sha256": "785646dd3078c7b81302f4e54bc355feae4c6c172914628b87ac6a25e758aade"
+      "sha256": "bab6f4bdb135479f5dde9ccadd93ee2c38bce0badd7910984c33a9b54dab77df"
     },
     "router_fold0_seed7": {
       "path": "configs/experiment/scientific_recovery_v8_fold_chain/router_fold0_seed7.yaml",
@@ -73,15 +101,15 @@
     },
     "timevol20_3_fold0_seed7": {
       "path": "configs/experiment/scientific_recovery_v8_fold_chain/timevol20_3_fold0_seed7.yaml",
-      "sha256": "b7270d8f47e4bb1779db99899fe99ee5f762915fccd28e701f9eddb11d4b6f9e"
+      "sha256": "d5239be3fb4b0558af82beebde548d13a195da07a3639429b9d4e38f30429bc3"
     },
     "timevol20_3_fold1_seed7": {
       "path": "configs/experiment/scientific_recovery_v8_fold_chain/timevol20_3_fold1_seed7.yaml",
-      "sha256": "25aad5cf40417ffe26db55ce68f3372c300cc4743c1217c66444036f5a4985e9"
+      "sha256": "6c30420962a820f216ad369fbb1a46af92948c12cdf027dce73a2fbbc31941e2"
     },
     "timevol20_3_fold2_seed7": {
       "path": "configs/experiment/scientific_recovery_v8_fold_chain/timevol20_3_fold2_seed7.yaml",
-      "sha256": "0524e3c87b0f8b2e0495287c0a702da36e76cce90ce2941657db3bc9a29014a4"
+      "sha256": "7b866742b19405731e107e686daeaa0b1905cbf1f556b6e746f0d9e3e27d788c"
     }
   },
   "integrity": {
@@ -260,9 +288,9 @@
     }
   },
   "protocol": {
-    "artifact_sha256": "e196a1358b88c695d850df9e7b86ea5037688e28f2088b92ab5beb9d112fc0f7",
+    "artifact_sha256": "ec31c70d11ffef3c6972032d622c7c2d0586b2502e3449173a2cfed69d443f11",
     "path": "configs/protocol/scientific_recovery_v8_temporal.json",
-    "sha256": "ec52a21bd8a07d2363be5ec2c0e8ab71c18cba4524c16e5066b02facbf714226"
+    "sha256": "ee5d55cc75160d036f261007faeed9f561537b613b664bb0063e01b96f0fe69b"
   },
   "schema_version": "scientific_recovery_v8_temporal_v1",
   "status": "frozen_before_v8_training"

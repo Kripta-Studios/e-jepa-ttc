@@ -741,8 +741,8 @@ def base_run_config(
         },
         "decision_contract": {
             "checkpoint_selection": "dev_sequence_macro_MiD_then_failure_rate",
-            "bbox_is_training_supervision_only": True,
-            "bbox_is_never_forward_input": True,
+            "oracle_bbox_roi_preprocessing_shared_with_baseline": True,
+            "bbox_coordinates_not_direct_model_features": True,
             "rows_folds_targets_weights_must_match_protocol": True,
             "public_validation_used_for_selection": False,
             "private_test_opened": False,
@@ -866,6 +866,69 @@ def generated_configs(v5: dict[str, Any]) -> dict[str, dict[str, str]]:
             configs[name.removesuffix(".yaml")] = source_entry(ROOT / OUTPUT_DIR / name)
     return configs
 
+
+
+def conditional_configs(v5: dict[str, Any]) -> dict[str, list[dict[str, str]]]:
+    """Freeze B3/C1 fold configs before any V8 result can open their gates."""
+
+    groups = fold_groups(v5)
+    frontends = {
+        "pair20_2": {
+            "steps": 2,
+            "channels": 20,
+            "cache_manifest": "artifacts/scientific_recovery_v8/cache/timevol20_3/manifest.json",
+            "single_scientific_difference": (
+                "B3 uses the preregistered TIMEVOL20 frontend but only t1,t2; "
+                "the cache and downstream A5 contract remain unchanged."
+            ),
+            "builder": "official_timevolume_roi_np",
+            "support_ms": 100,
+            "extra_tensor_channels": False,
+        },
+        "gated_exp6_3": {
+            "steps": 3,
+            "channels": 6,
+            "cache_manifest": "artifacts/scientific_recovery_v8/cache/exp6_3/manifest.json",
+            "single_scientific_difference": (
+                "C1 gates the six preregistered causal EXP6 states with the frozen 4x4 "
+                "patch router; the A5 downstream contract is otherwise unchanged."
+            ),
+            "builder": "CausalExponentialStateRepresentation+AdaptiveTemporalChannelGate",
+            "alpha": list(EXP6_ALPHAS),
+            "internal_dt_ms": EXP6_INTERNAL_DT_MS,
+            "output_interval_ms": EXP6_OUTPUT_INTERVAL_MS,
+            "time_bins": EXP6_OUTPUT_TIME_BINS,
+            "warmup_required": True,
+        },
+    }
+    frozen: dict[str, list[dict[str, str]]] = {}
+    for arm, frontend in frontends.items():
+        entries: list[dict[str, str]] = []
+        for fold in range(3):
+            name = f"{arm}_fold{fold}_seed7.yaml"
+            config = base_run_config(
+                arm=arm,
+                fold=fold,
+                groups=groups,
+                model_config=MODEL_PATHS[arm].as_posix(),
+                frontend=frontend,
+            )
+            config["enabled"] = False
+            if arm == "gated_exp6_3":
+                config["model_overrides"] = {
+                    "temporal_channel_gate_enabled": True,
+                    "temporal_channel_gate_patch_grid": 4,
+                    "temporal_channel_gate_hidden_dim": 16,
+                }
+            config["decision_contract"]["conditional_arm"] = True
+            config["decision_contract"]["opening_gate_required"] = (
+                "B1_TIMEVOL20_3 seed-7 screen gate" if arm == "pair20_2"
+                else "signed V8 C1 opening artifact"
+            )
+            write_yaml(ROOT / OUTPUT_DIR / name, config)
+            entries.append(source_entry(ROOT / OUTPUT_DIR / name))
+        frozen[arm] = entries
+    return frozen
 
 def write_c1_analysis_plans(
     samples: list[Sample], v7: dict[str, Any], configs: dict[str, dict[str, str]]
@@ -1241,8 +1304,9 @@ def protocol_payload(
                 "collapse_monitoring": "per view",
                 "d3_allowlist": ["encoder.final_residual_block.*", "foreground.*"],
                 "router_winner_rule": (
-                    "apply selected R arm independently to both experts and refit identical "
-                    "inner-OOF router"
+                    "R remains the primary TTC winner, but JEPA attribution uses the frozen A5 "
+                    "constituent encoder because a meta-router has no single transferable encoder; "
+                    "the router itself is not credited as JEPA."
                 ),
             },
         }
@@ -1277,6 +1341,7 @@ def freeze(protocol_path: Path) -> dict[str, Any]:
     checkpoint_sources = checkpoints(baselines)
     model_files = write_models()
     configs = generated_configs(v5)
+    conditional = conditional_configs(v5)
     c1_analysis_plans = write_c1_analysis_plans(samples, v7, configs)
     protocol = protocol_payload(
         samples=samples,
@@ -1290,6 +1355,7 @@ def freeze(protocol_path: Path) -> dict[str, Any]:
     templates = {
         "pair20_2": {
             "enabled": False,
+            "fold_configs": conditional["pair20_2"],
             "opening_gate": protocol["gates"]["b3_open"],
             "model_config": MODEL_PATHS["pair20_2"].as_posix(),
             "steps": 2,
@@ -1298,6 +1364,7 @@ def freeze(protocol_path: Path) -> dict[str, Any]:
         },
         "gated_exp6_3": {
             "enabled": False,
+            "fold_configs": conditional["gated_exp6_3"],
             "opening_gate": protocol["gates"]["c1_open"],
             "model_config": MODEL_PATHS["gated_exp6_3"].as_posix(),
             "steps": 3,
@@ -1342,6 +1409,13 @@ def verify_frozen_outputs(protocol_path: Path) -> dict[str, Any]:
         *manifest.get("enabled_seed7_configs", {}).values(),
         *manifest.get("model_configs", {}).values(),
     ]
+    templates = manifest.get("conditional_templates", {})
+    if isinstance(templates, dict):
+        for template in templates.values():
+            if isinstance(template, dict):
+                fold_configs = template.get("fold_configs", [])
+                if isinstance(fold_configs, list):
+                    sources.extend(fold_configs)
     for source in sources:
         if not isinstance(source, dict) or not isinstance(source.get("path"), str):
             raise ValueError("frozen manifest contains an invalid source entry")

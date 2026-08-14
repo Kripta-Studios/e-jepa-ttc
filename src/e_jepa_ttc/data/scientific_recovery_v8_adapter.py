@@ -14,11 +14,19 @@ class V8ToObjectEventV4Dataset(Dataset[dict[str, Any]]):
     """Map V8 cache rows into training-only A5 batch fields without model leakage."""
 
     def __init__(
-        self, cache: ScientificRecoveryV8CacheDataset, *, outer_fold: int, split: str
+        self,
+        cache: ScientificRecoveryV8CacheDataset,
+        *,
+        outer_fold: int,
+        split: str,
+        steps: int = 3,
     ) -> None:
         if split not in {"train", "dev"}:
             raise ValueError("split must be train or dev")
+        if steps not in {2, 3}:
+            raise ValueError("V8 causal-scale adapter supports only 2 or 3 steps")
         self.cache = cache
+        self.steps = int(steps)
         self.indices = [
             index
             for index in range(len(cache))
@@ -33,9 +41,13 @@ class V8ToObjectEventV4Dataset(Dataset[dict[str, Any]]):
     def __getitem__(self, index: int) -> dict[str, Any]:
         row = self.cache[self.indices[index]]
         values = np.asarray(row["representation"], dtype=np.float32)
-        if values.shape[0] != 3:
-            raise ValueError("A5 adapter only supports V8 3-step arms; pair20_2 is native-only")
+        if values.ndim != 4 or values.shape[0] < self.steps:
+            raise ValueError("V8 representation does not contain the requested endpoint count")
+        values = values[-self.steps :].copy()
         boxes = np.asarray(row["endpoint_boxes_xyxy"], dtype=np.float32)
+        if boxes.ndim != 2 or boxes.shape[0] < self.steps or boxes.shape[1] != 4:
+            raise ValueError("V8 endpoint boxes do not match requested endpoint count")
+        boxes = boxes[-self.steps :].copy()
         square = np.asarray(row["common_roi_xyxy"], dtype=np.float32)
         width = float(square[2] - square[0])
         height = float(square[3] - square[1])
@@ -51,6 +63,8 @@ class V8ToObjectEventV4Dataset(Dataset[dict[str, Any]]):
             raise ValueError("V8 adapter requires positive delta and nonzero TTC")
         return {
             "event_v4_common_roi": values,
+            "_event_v4_expected_steps": self.steps,
+            "_event_v4_expected_channels": int(values.shape[1]),
             "garl_delta_t_s": np.float32(delta),
             "observable_motion": np.zeros(18, dtype=np.float32),
             "garl_visible_heights_px": np.asarray(row["visible_heights_px"], dtype=np.float32),

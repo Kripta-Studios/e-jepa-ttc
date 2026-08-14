@@ -134,19 +134,53 @@ def _terciles(frame: pd.DataFrame, column: str, labels: tuple[str, ...]) -> pd.S
     return pd.qcut(numeric.rank(method="first"), q=len(labels), labels=labels)
 
 
-def _diagnostic_groups(frame: pd.DataFrame, column: str, labels: tuple[str, ...]) -> dict[str, Any]:
-    groups = _terciles(frame, column, labels)
-    return {
-        label: {
-            "effect_size": float(group["prediction_ttc"].mean()),
-            "evidence_present": bool(len(group) > 0),
-            "stable": bool(np.isfinite(group["prediction_ttc"]).all()),
+def _diagnostic_records(frame: pd.DataFrame, groups: pd.Series) -> dict[str, Any]:
+    """Return schema-compatible, effect-based regime diagnostics."""
+
+    result: dict[str, Any] = {}
+    for label, group in frame.assign(_group=groups).groupby(
+        "_group", observed=True, sort=False
+    ):
+        effect = pd.to_numeric(group["c2f_minus_a5_raw_mid"], errors="coerce").to_numpy(
+            dtype=np.float64
+        )
+        finite = np.isfinite(effect)
+        win_fraction = float(np.mean(effect[finite] < 0.0)) if np.any(finite) else float("nan")
+        result[str(label)] = {
+            "effect_size": float(np.mean(effect[finite])) if np.any(finite) else 0.0,
+            "evidence_present": bool(np.any(finite)),
+            "stable": bool(np.any(finite) and 0.02 <= win_fraction <= 0.98),
         }
-        for label, group in frame.assign(_group=groups).groupby("_group", observed=True, sort=False)
-    }
+    return result
 
 
-def _regime_evidence(a5: pd.DataFrame, c2f: pd.DataFrame, garl: pd.DataFrame) -> dict[str, float]:
+def _binary_auc(labels: np.ndarray, scores: np.ndarray) -> float:
+    """Return an exact rank AUROC, or NaN when either class is absent."""
+
+    labels = np.asarray(labels, dtype=bool)
+    scores = np.asarray(scores, dtype=np.float64)
+    valid = np.isfinite(scores)
+    labels = labels[valid]
+    scores = scores[valid]
+    positives = int(labels.sum())
+    negatives = int((~labels).sum())
+    if positives == 0 or negatives == 0:
+        return float("nan")
+    ranks = pd.Series(scores).rank(method="average").to_numpy(dtype=np.float64)
+    rank_sum_positive = float(ranks[labels].sum())
+    return float(
+        (rank_sum_positive - positives * (positives + 1) / 2.0) / (positives * negatives)
+    )
+
+
+def _auc_separability(labels: np.ndarray, scores: np.ndarray) -> float:
+    auc = _binary_auc(labels, scores)
+    return float(max(auc, 1.0 - auc)) if np.isfinite(auc) else float("nan")
+
+
+def _regime_evidence(
+    a5: pd.DataFrame, c2f: pd.DataFrame, garl: pd.DataFrame
+) -> dict[str, Any]:
     joined = align_oof_frames({"a5": a5, "c2f": c2f, "garl": garl})
     joined = joined.merge(
         a5.loc[
@@ -155,6 +189,7 @@ def _regime_evidence(a5: pd.DataFrame, c2f: pd.DataFrame, garl: pd.DataFrame) ->
                 "token_id",
                 "sequence_id",
                 "track_id",
+                "outer_fold",
                 "event_rate",
                 "occupancy_entropy",
                 "motion_magnitude",
@@ -162,18 +197,45 @@ def _regime_evidence(a5: pd.DataFrame, c2f: pd.DataFrame, garl: pd.DataFrame) ->
         ],
         on=["token_id", "sequence_id", "track_id"],
         validate="one_to_one",
+        suffixes=("", "_mechanism"),
     )
+    if "outer_fold_mechanism" in joined:
+        if not np.array_equal(
+            joined["outer_fold"].to_numpy(dtype=np.int64),
+            joined["outer_fold_mechanism"].to_numpy(dtype=np.int64),
+        ):
+            raise ValueError("autopsy regime evidence outer-fold identity mismatch")
     target = joined["target_ttc"].to_numpy(dtype=np.float64)
     loss_a5 = raw_mid_per_sample(target, joined["a5_prediction_ttc"].to_numpy(dtype=np.float64))
     loss_c2f = raw_mid_per_sample(target, joined["c2f_prediction_ttc"].to_numpy(dtype=np.float64))
     delta = loss_c2f - loss_a5
-    # Complementarity is the smaller winning share; it is zero if one expert wins everywhere.
     wins_c2f = delta < 0.0
     complementarity = float(min(np.mean(wins_c2f), np.mean(~wins_c2f)))
-    # A transparent, preregistered causal score without using targets/predictions as features.
-    median_rate = float(joined["event_rate"].median())
-    rate_rule = joined["event_rate"].to_numpy(dtype=np.float64) >= median_rate
-    causal_accuracy = float(np.mean(rate_rule == wins_c2f))
+
+    # Event rate is a frozen causal observable.  AUROC is reported as
+    # separability (max(AUC, 1-AUC)) because either high or low event rate may
+    # identify the C2F-favouring regime; no target/prediction value is a feature.
+    event_rate = joined["event_rate"].to_numpy(dtype=np.float64)
+    causal_auc = _auc_separability(wins_c2f, event_rate)
+    per_fold_auc: dict[str, float] = {}
+    for fold, group in joined.assign(_wins=wins_c2f).groupby("outer_fold", sort=True):
+        per_fold_auc[str(int(fold))] = _auc_separability(
+            group["_wins"].to_numpy(dtype=bool), group["event_rate"].to_numpy(dtype=np.float64)
+        )
+    stable_folds = bool(
+        len(per_fold_auc) == 3
+        and all(np.isfinite(value) and value >= 0.55 for value in per_fold_auc.values())
+    )
+
+    per_sequence_complementarity: dict[str, float] = {}
+    for sequence, group in joined.assign(_wins=wins_c2f).groupby("sequence_id", sort=True):
+        share = float(group["_wins"].mean())
+        per_sequence_complementarity[str(sequence)] = min(share, 1.0 - share)
+    stable_sequence_fraction = float(
+        np.mean([value >= 0.02 for value in per_sequence_complementarity.values()])
+    ) if per_sequence_complementarity else 0.0
+    stable_sequences = bool(stable_sequence_fraction >= 0.75)
+
     a5_mid = _sequence_macro(joined, "a5_prediction_ttc")
     garl_mid = _sequence_macro(joined, "garl_prediction_ttc")
     improvement = (
@@ -193,7 +255,12 @@ def _regime_evidence(a5: pd.DataFrame, c2f: pd.DataFrame, garl: pd.DataFrame) ->
         ),
         "sequence_concentration": concentration,
         "regime_complementarity": complementarity,
-        "causal_regime_auroc": causal_accuracy,
+        "causal_regime_auroc": causal_auc,
+        "causal_regime_auroc_by_outer_fold": per_fold_auc,
+        "stable_across_outer_folds": stable_folds,
+        "per_sequence_complementarity": per_sequence_complementarity,
+        "stable_sequence_fraction": stable_sequence_fraction,
+        "stable_across_sequences": stable_sequences,
     }
 
 
@@ -204,11 +271,23 @@ def aggregate_autopsy(
     garl_manifest: Path,
     protocol: Path,
     output: Path,
-    bootstrap_resamples: int = 2_000,
+    bootstrap_resamples: int = 5_000,
 ) -> dict[str, Any]:
     """Create a signed H1/H2/H3 decision from recomputed replay evidence."""
 
     protocol_value = _signed_artifact(protocol)
+    sample_contract = protocol_value["sample_contract"]
+    closed_evaluation = protocol_value["closed_evaluation"]
+    protocol_file_sha256 = sha256_file(protocol)
+    fold_defs = {
+        str(item["fold"]): sorted(item["dev_sequence_ids"])
+        for item in sample_contract["fold_definitions"]
+    }
+    exact_coverage = {
+        "outer_folds": [0, 1, 2],
+        "sequences_by_outer_fold": fold_defs,
+        "sealed_evaluation_closed": True,
+    }
     a5_source = _signed_manifest(a5_manifest)
     c2f_source = _signed_manifest(c2f_manifest)
     for label, source in (("a5", a5_source), ("c2f", c2f_source)):
@@ -237,12 +316,6 @@ def aggregate_autopsy(
         cell_name = factorial_name_map.get(cell.name, cell.name)
         full_mid = _sequence_macro(frame, "prediction_ttc")
         baseline_mid = _sequence_macro(a5, "prediction_ttc")
-        prior_name = "analytic_residual" if cell.name == "analytic_transport" else "analytic_only"
-        prior = (
-            a5
-            if cell.name == "analytic_only"
-            else _frame(a5_manifest, f"factorial_{prior_name}", replay=True)
-        )
         factorial[cell_name] = {
             "row_count": len(frame),
             "row_identity_sha256": row_identity_sha256(frame),
@@ -251,11 +324,6 @@ def aggregate_autopsy(
             "metrics": {
                 "mid_macro_sequence": full_mid,
                 "delta_mid_vs_a5": full_mid - baseline_mid,
-                "delta_residual_vs_analytic": full_mid - _sequence_macro(prior, "prediction_ttc"),
-                "delta_transport_vs_without_transport": full_mid
-                - _sequence_macro(prior, "prediction_ttc"),
-                "delta_history_vs_without_history": full_mid
-                - _sequence_macro(prior, "prediction_ttc"),
             },
             "settings": {
                 "analytic": True,
@@ -274,6 +342,41 @@ def aggregate_autopsy(
         }
     if len(factorial) != 5:
         raise ValueError("H3 gate requires exactly five completed A5 factorial cells")
+    cell_mid = {name: float(value["metrics"]["mid_macro_sequence"]) for name, value in factorial.items()}
+    factorial_contrasts = {
+        "residual_on_analytic": cell_mid["analytic_residual"] - cell_mid["analytic_only"],
+        "transport_on_analytic": cell_mid["analytic_transport"] - cell_mid["analytic_only"],
+        "transport_given_residual": cell_mid["analytic_residual_transport"] - cell_mid["analytic_residual"],
+        "residual_given_transport": cell_mid["analytic_residual_transport"] - cell_mid["analytic_transport"],
+        "history_given_analytic_residual_transport": cell_mid["analytic_residual_transport_history"] - cell_mid["analytic_residual_transport"],
+    }
+    for name, cell in factorial.items():
+        residual_delta = (
+            factorial_contrasts["residual_on_analytic"]
+            if name == "analytic_residual"
+            else factorial_contrasts["residual_given_transport"]
+            if name in {"analytic_residual_transport", "analytic_residual_transport_history"}
+            else 0.0
+        )
+        transport_delta = (
+            factorial_contrasts["transport_on_analytic"]
+            if name == "analytic_transport"
+            else factorial_contrasts["transport_given_residual"]
+            if name in {"analytic_residual_transport", "analytic_residual_transport_history"}
+            else 0.0
+        )
+        history_delta = (
+            factorial_contrasts["history_given_analytic_residual_transport"]
+            if name == "analytic_residual_transport_history"
+            else 0.0
+        )
+        cell["metrics"].update(
+            {
+                "delta_residual_vs_analytic": float(residual_delta),
+                "delta_transport_vs_without_transport": float(transport_delta),
+                "delta_history_vs_without_history": float(history_delta),
+            }
+        )
     spatial = _frame(a5_manifest, "spatial_permutation", replay=True)
     innocence = _sequence_macro(spatial, "prediction_ttc") - _sequence_macro(a5, "prediction_ttc")
     evidence = _regime_evidence(a5, c2f, garl)
@@ -298,8 +401,8 @@ def aggregate_autopsy(
     diagnostic_inputs = {
         "complementarity_present": evidence["regime_complementarity"] >= 0.05,
         "causal_regime_predictability_passed": evidence["causal_regime_auroc"] >= 0.60,
-        "stable_across_outer_folds": True,
-        "stable_across_sequences": True,
+        "stable_across_outer_folds": bool(evidence["stable_across_outer_folds"]),
+        "stable_across_sequences": bool(evidence["stable_across_sequences"]),
         "innocuous_change_invariance_passed": abs(innocence) <= 1.0,
         "analytic_or_residual_physics_supported": max(
             abs(evidence["analytic_dynamic_spearman"]), abs(evidence["residual_dynamic_spearman"])
@@ -308,46 +411,57 @@ def aggregate_autopsy(
         "sequence_concentration_detected": evidence["sequence_concentration"] > 0.50,
         "residual_unrelated_to_dynamics": abs(evidence["residual_dynamic_spearman"]) <= 0.10,
     }
-    final_decision = (
-        "H3"
-        if all(
-            diagnostic_inputs[key]
-            for key in (
-                "complementarity_present",
-                "causal_regime_predictability_passed",
-                "stable_across_outer_folds",
-                "stable_across_sequences",
-                "innocuous_change_invariance_passed",
-            )
-        )
-        else "H1"
-        if diagnostic_inputs["analytic_or_residual_physics_supported"]
-        and not diagnostic_inputs["sequence_concentration_detected"]
-        and not diagnostic_inputs["residual_unrelated_to_dynamics"]
-        else "H2"
+    final_decision = str(decision["decision"])
+
+    joined_experts = align_oof_frames({"a5": a5, "c2f": c2f})
+    joined_experts = joined_experts.merge(
+        a5.loc[:, ["token_id", "sequence_id", "track_id", "event_rate", "motion_magnitude"]],
+        on=["token_id", "sequence_id", "track_id"],
+        validate="one_to_one",
     )
+    joined_experts["loss_a5"] = raw_mid_per_sample(
+        joined_experts["target_ttc"], joined_experts["a5_prediction_ttc"]
+    )
+    joined_experts["loss_c2f"] = raw_mid_per_sample(
+        joined_experts["target_ttc"], joined_experts["c2f_prediction_ttc"]
+    )
+    joined_experts["c2f_minus_a5_raw_mid"] = joined_experts["loss_c2f"] - joined_experts["loss_a5"]
     sequence_diagnostic = {
         str(name): {
-            "effect_size": float(group["prediction_ttc"].mean()),
-            "evidence_present": True,
-            "stable": bool(np.isfinite(group["prediction_ttc"]).all()),
+            "effect_size": float(group["c2f_minus_a5_raw_mid"].mean()),
+            "evidence_present": bool(len(group) > 0),
+            "stable": bool(
+                len(group) > 0
+                and 0.02
+                <= float((group["c2f_minus_a5_raw_mid"] < 0.0).mean())
+                <= 0.98
+            ),
         }
-        for name, group in a5.groupby("sequence_id", sort=True)
+        for name, group in joined_experts.groupby("sequence_id", sort=True)
     }
+    joined_experts["_bucket"] = joined_experts["target_ttc"].map(signed_ttc_bucket)
     by_bucket = {
-        label: {
-            "effect_size": float(group["prediction_ttc"].mean()),
-            "evidence_present": True,
-            "stable": bool(np.isfinite(group["prediction_ttc"]).all()),
+        str(label): {
+            "effect_size": float(group["c2f_minus_a5_raw_mid"].mean()),
+            "evidence_present": bool(len(group) > 0),
+            "stable": bool(
+                len(group) > 0
+                and 0.02
+                <= float((group["c2f_minus_a5_raw_mid"] < 0.0).mean())
+                <= 0.98
+            ),
         }
-        for label, group in a5.assign(_bucket=a5["target_ttc"].map(signed_ttc_bucket)).groupby(
-            "_bucket", sort=False
-        )
+        for label, group in joined_experts.groupby("_bucket", sort=False)
     }
     factorial_artifact: dict[str, Any] = {
         "artifact_type": "scientific_recovery_v8_autopsy_factorial_replay_v1",
         "status": "completed",
+        "protocol_artifact_sha256": protocol_value["artifact_sha256"],
+        "protocol_file_sha256": protocol_file_sha256,
+        "sample_contract": sample_contract,
+        "closed_evaluation": closed_evaluation,
         "factorial_cells": factorial,
+        "factorial_contrasts_mid": factorial_contrasts,
         "output_hashes": {name: cell["prediction_sha256"] for name, cell in factorial.items()},
     }
     sign_artifact(factorial_artifact)
@@ -356,14 +470,26 @@ def aggregate_autopsy(
     diagnostic_artifact: dict[str, Any] = {
         "artifact_type": "scientific_recovery_v8_autopsy_diagnostic_v1",
         "status": "completed",
+        "protocol_artifact_sha256": protocol_value["artifact_sha256"],
+        "protocol_file_sha256": protocol_file_sha256,
+        "sample_contract": sample_contract,
+        "closed_evaluation": closed_evaluation,
         "by_ttc_bucket": by_bucket,
         "by_sequence": sequence_diagnostic,
-        "by_event_density": _diagnostic_groups(a5, "event_rate", ("low", "medium", "high")),
-        "by_movement": _diagnostic_groups(a5, "motion_magnitude", ("low", "medium", "high")),
-        "by_sign": _diagnostic_groups(
-            a5.assign(_sign=np.where(a5["target_ttc"] > 0, "positive", "negative")),
-            "target_ttc",
-            ("negative", "positive"),
+        "by_event_density": _diagnostic_records(
+            joined_experts,
+            _terciles(joined_experts, "event_rate", ("low", "medium", "high")),
+        ),
+        "by_movement": _diagnostic_records(
+            joined_experts,
+            _terciles(joined_experts, "motion_magnitude", ("low", "medium", "high")),
+        ),
+        "by_sign": _diagnostic_records(
+            joined_experts,
+            pd.Series(
+                np.where(joined_experts["target_ttc"] > 0, "positive", "negative"),
+                index=joined_experts.index,
+            ),
         ),
         "decision_inputs": diagnostic_inputs,
         "decision_rule_output": final_decision,
@@ -380,10 +506,15 @@ def aggregate_autopsy(
     _atomic_json(diagnostic_path, diagnostic_artifact)
     result: dict[str, Any] = {
         "artifact_type": "scientific_recovery_v8_autopsy_seed7_aggregate_v1",
-        "schema_version": "scientific_recovery_v8_aggregate_v1",
+        "schema_version": protocol_value["schema_version"],
         "status": "completed",
-        "git_commit": protocol_value.get("git_commit", "unknown"),
+        "stage": "autopsy",
+        "arm": "autopsy",
+        "candidate_id": "A_AUTOPSY",
+        "git_commit": protocol_value["git_base_commit"],
         "protocol_sha256": protocol_value["artifact_sha256"],
+        "protocol_artifact_sha256": protocol_value["artifact_sha256"],
+        "protocol_file_sha256": protocol_file_sha256,
         "config_sha256": canonical_json_sha256(
             {
                 "a5": a5["config_sha256"].iloc[0],
@@ -392,9 +523,20 @@ def aggregate_autopsy(
             }
         ),
         "seed": 7,
-        "folds": sorted(int(value) for value in a5["outer_fold"].unique()),
-        "row_identity_sha256": row_identity_sha256(a5),
-        "target_sha256": target_sha256(a5),
+        "folds": {
+            label: {
+                "status": "completed",
+                "sequence_ids": sequences,
+                "row_count": int(sample_contract["row_count_contract"]["by_outer_fold"][label]),
+            }
+            for label, sequences in fold_defs.items()
+        },
+        "row_count": int(sample_contract["rows"]),
+        "row_identity_sha256": sample_contract["row_identity_sha256"],
+        "target_identity_sha256": sample_contract["target_identity_sha256"],
+        "target_sha256": sample_contract["target_sha256"],
+        "mid_sample_weight_sha256": sample_contract["mid_sample_weight_sha256"],
+        "fold_assignment_sha256": sample_contract["fold_assignment_sha256"],
         "prediction_sha256": prediction_sha256(a5),
         "checkpoint_sha256": canonical_json_sha256(
             {
@@ -419,6 +561,9 @@ def aggregate_autopsy(
         "mechanism_decision": final_decision,
         "mechanism_evidence": evidence,
         "diagnostic_cuts": cuts,
+        "coverage": exact_coverage,
+        "sample_contract": sample_contract,
+        "closed_evaluation": closed_evaluation,
         "autopsy_outputs": {
             "factorial_replay": {
                 "path": str(factorial_path.resolve().relative_to(ROOT)),
@@ -449,7 +594,7 @@ def main() -> None:
     parser.add_argument("--garl-manifest", type=Path, required=True)
     parser.add_argument("--protocol", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
-    parser.add_argument("--bootstrap-resamples", type=int, default=2_000)
+    parser.add_argument("--bootstrap-resamples", type=int, default=5_000)
     args = parser.parse_args()
     print(json.dumps(aggregate_autopsy(**vars(args)), sort_keys=True))
 

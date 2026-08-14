@@ -51,9 +51,9 @@ def _oof_contract_hashes(rows: list[dict[str, Any]]) -> dict[str, str]:
     }
 
 
-def _load(root: Path, arm: str) -> dict[float, pd.DataFrame]:
+def _load(root: Path, arm: str, seed: int = 7) -> dict[float, pd.DataFrame]:
     values: dict[float, list[dict[str, Any]]] = {}
-    paths = sorted(root.glob(f"{arm.lower()}/fold*/seed7/oof_predictions.json"))
+    paths = sorted(root.glob(f"{arm.lower()}/fold*/seed{seed}/oof_predictions.json"))
     if len(paths) != 3:
         raise ValueError(f"{arm} requires exactly three signed outer-fold OOF artifacts")
     for path in paths:
@@ -102,9 +102,9 @@ def _mid(frame: pd.DataFrame, column: str) -> float:
 
 
 def _candidate(
-    root: Path, arm: str, controls: dict[str, dict[float, pd.DataFrame]]
+    root: Path, arm: str, controls: dict[str, dict[float, pd.DataFrame]], seed: int = 7
 ) -> dict[str, Any]:
-    candidate = _load(root, arm)
+    candidate = _load(root, arm, seed)
     required = (0.01, 0.05, 0.10, 0.25, 1.0)
     if set(candidate) != set(required) or any(
         set(data) != set(required) for data in controls.values()
@@ -128,18 +128,19 @@ def _candidate(
         joined,
         candidate_prediction_column="prediction_ttc",
         reference_prediction_column="scratch_prediction",
-        resamples=500,
+        resamples=5_000,
         seed=20260814,
     )
     all_predictions = pd.concat(list(candidate.values()), ignore_index=True)
     finite_mask = all_predictions["finite"].astype(bool).to_numpy() & np.isfinite(
         all_predictions["prediction_ttc"].to_numpy(dtype=np.float64)
     )
+    low_label_auc_mid = float(
+        np.trapezoid([mid_values[value] for value in low], x=np.asarray(low))
+    )
     gate = classify_jepa_causal_gate(
         {
-            "low_label_auc_mid": float(
-                np.trapezoid([mid_values[value] for value in low], x=np.asarray(low))
-            ),
+            "low_label_auc_mid": low_label_auc_mid,
             "scratch_low_label_auc_mid": float(
                 np.trapezoid([baseline_mid[value] for value in low], x=np.asarray(low))
             ),
@@ -162,6 +163,7 @@ def _candidate(
         "arm": arm,
         "mid_by_fraction": mid_values,
         "bootstrap": bootstrap,
+        "low_label_auc_mid": low_label_auc_mid,
         "gate_decision": gate,
     }
 
@@ -174,6 +176,7 @@ def main() -> int:
     parser.add_argument(
         "--output", type=Path, default=ROOT / "artifacts/scientific_recovery_v8/jepa/aggregate.json"
     )
+    parser.add_argument("--seed", type=int, default=7)
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
     if args.dry_run:
@@ -189,17 +192,22 @@ def main() -> int:
         )
         return 0
     try:
-        controls = {arm: _load(args.results_root, arm) for arm in ("D0", "D1", "D4")}
-        d2, d3 = (_candidate(args.results_root, arm, controls) for arm in ("D2", "D3"))
+        controls = {arm: _load(args.results_root, arm, args.seed) for arm in ("D0", "D1", "D4")}
+        d2, d3 = (_candidate(args.results_root, arm, controls, args.seed) for arm in ("D2", "D3"))
         positive = [item for item in (d2, d3) if item["gate_decision"]["causally_positive"]]
         result = _write(
             args.output,
             {
                 "artifact_type": "scientific_recovery_v8_jepa_aggregate_v1",
                 "status": "completed",
+                "seed": args.seed,
                 "arms": {"D2": d2, "D3": d3},
                 "jepa_causally_positive": bool(positive),
-                "best_positive_arm": positive[0]["arm"] if len(positive) == 1 else None,
+                "best_positive_arm": (
+                    min(positive, key=lambda item: (item["low_label_auc_mid"], item["mid_by_fraction"][1.0]))["arm"]
+                    if positive
+                    else None
+                ),
                 "interpretation": "no causal JEPA claim permitted"
                 if not positive
                 else "JEPA multiseed controls required",

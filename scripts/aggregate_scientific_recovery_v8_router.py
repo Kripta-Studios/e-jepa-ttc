@@ -27,6 +27,11 @@ from e_jepa_ttc.evaluation.scientific_recovery_v8 import (  # noqa: E402
     prediction_sha256,
     validate_oof_frame,
 )
+from e_jepa_ttc.evaluation.scientific_recovery_v8_aggregate import (  # noqa: E402
+    _bind_candidate_to_baseline_contract,
+    _read_rows as _read_general_rows,
+    contract_hashes as _general_contract_hashes,
+)
 from e_jepa_ttc.evaluation.scientific_recovery_v8_runner import (  # noqa: E402
     V8IntegrityError,
     verify_frozen_inputs,
@@ -249,7 +254,29 @@ def aggregate(
     sample_contract = frozen.protocol["sample_contract"]
     if len(frame) != int(sample_contract["rows"]):
         raise RouterAggregateError("router aggregate does not contain the frozen 8192 rows")
-    observed_contract = _contract_hashes(frame)
+    a5_source = frozen.protocol.get("sources", {}).get("a5_oof_predictions", {})
+    a5_path = ROOT / str(a5_source.get("path", ""))
+    if not a5_path.is_file():
+        raise RouterAggregateError("frozen A5 OOF control is unavailable")
+    baseline_rows = _read_general_rows(a5_path, candidate=False)
+    candidate_rows = [
+        {
+            "token_id": str(row.token_id),
+            "sequence_id": str(row.sequence_id),
+            "track_id": str(row.track_id),
+            "outer_fold": str(int(row.outer_fold)),
+            "seed": str(int(row.seed)),
+            "target_ttc": format(float(row.target_ttc), ".17g"),
+            "sample_weight": format(float(row.sample_weight), ".17g"),
+            "prediction_ttc": format(float(row.prediction_ttc), ".17g"),
+        }
+        for row in frame.itertuples(index=False)
+    ]
+    try:
+        candidate_rows = _bind_candidate_to_baseline_contract(candidate_rows, baseline_rows)
+        observed_contract = _general_contract_hashes(candidate_rows)
+    except Exception as error:
+        raise RouterAggregateError(f"router sample contract mismatch: {error}") from error
     for name, observed in observed_contract.items():
         expected = sample_contract.get(name)
         if observed != expected:
@@ -338,7 +365,11 @@ def aggregate(
             "per_bucket": per_bucket,
             "bootstrap": bootstrap,
             "integrity_checks": integrity_checks,
-            "coverage": {"outer_folds": sorted(folds), "sealed_evaluation_closed": True},
+            "coverage": {
+                "outer_folds": [0, 1, 2],
+                "sequences_by_outer_fold": expected_folds,
+                "sealed_evaluation_closed": True,
+            },
             "gate_decision": {
                 "passed": passed,
                 "candidate_id": "R",

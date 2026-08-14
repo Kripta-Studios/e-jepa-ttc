@@ -9,7 +9,9 @@ import hashlib
 import json
 import subprocess
 import sys
+from collections import Counter
 from collections.abc import Mapping
+from decimal import Decimal
 from pathlib import Path
 from typing import Any
 
@@ -108,9 +110,35 @@ def _nested_contract(
     return output
 
 
+
+def _mid_sample_weights(source: pd.DataFrame) -> list[str]:
+    """Exact macro-sequence signed-MiD coefficient for every exported dev row."""
+
+    def bucket(value: Decimal) -> tuple[str, Decimal]:
+        if Decimal("0") < value <= Decimal("3"):
+            return "crucial", Decimal("0.5")
+        if Decimal("3") < value <= Decimal("6"):
+            return "small", Decimal("0.3")
+        if Decimal("6") < value <= Decimal("10"):
+            return "large", Decimal("0.1")
+        if Decimal("-10") < value <= Decimal("0"):
+            return "negative", Decimal("0.1")
+        raise ValueError(f"target outside signed MiD domain: {value}")
+
+    records = [
+        (str(row.sequence_id), Decimal(str(row.target_ttc_s)))
+        for row in source.itertuples(index=False)
+    ]
+    counts = Counter((sequence, bucket(target)[0]) for sequence, target in records)
+    return [
+        str(bucket(target)[1] / Decimal(9) / Decimal(counts[(sequence, bucket(target)[0])]))
+        for sequence, target in records
+    ]
+
 def _run(args: argparse.Namespace) -> None:
     router = yaml.safe_load(args.config.read_text(encoding="utf-8"))
     outer = int(router["outer_fold"])
+    seed = int(router.get("experiment", {}).get("seed", 7))
     inner_folds = {int(item["inner_fold"]): item for item in router["inner_folds"]}
     if args.role == "inner_oof":
         if args.inner_fold is None or args.inner_fold not in inner_folds:
@@ -141,8 +169,18 @@ def _run(args: argparse.Namespace) -> None:
     )
     raw = dict(base)
     raw["experiment"] = {
-        "name": f"v8_router_{args.expert.lower()}_outer{outer}_{args.role}_{args.inner_fold if args.inner_fold is not None else 'final'}_seed7"
+        "name": f"v8_router_{args.expert.lower()}_outer{outer}_{args.role}_{args.inner_fold if args.inner_fold is not None else 'final'}_seed{seed}"
     }
+    raw["training"] = dict(base.get("training", {}))
+    raw["training"]["seed"] = seed
+    if args.role == "outer_dev":
+        # Outer-dev is evaluation only: train the final expert for the frozen
+        # historical epoch budget and inspect outer-dev only at the final epoch.
+        raw["training"]["checkpoint_selection_mode"] = "last_epoch"
+        raw["training"]["minimum_epochs"] = int(raw["training"].get("epochs", 18))
+        raw["training"]["early_stopping_patience"] = int(raw["training"].get("epochs", 18))
+    else:
+        raw["training"]["checkpoint_selection_mode"] = "dev_best"
     raw["data"] = dict(base["data"])
     raw["data"].update(
         {
@@ -178,9 +216,9 @@ def _run(args: argparse.Namespace) -> None:
             "sequence_id": source.sequence_id,
             "track_id": source.track_id,
             "outer_fold": outer,
-            "seed": 7,
+            "seed": seed,
             "target_ttc": source.target_ttc_s,
-            "sample_weight": 1.0,
+            "sample_weight": _mid_sample_weights(source),
             "prediction_ttc": source.prediction_ttc_s,
             "prediction_log_variance": source.ttc_log_variance,
             "finite": True,

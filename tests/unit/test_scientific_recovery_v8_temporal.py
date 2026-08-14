@@ -351,3 +351,39 @@ def test_protocol_runtime_check_and_rejects_non_integer_roi() -> None:
     assert isinstance(representation, TemporalEndpointRepresentation)
     with pytest.raises(ValueError, match="integer"):
         representation.encode(_events(t_us=(0,)), 0, torch.tensor([0.5, 0, 8, 8]))
+
+
+def test_c1_temporal_channel_gate_is_uniform_at_initialization_and_finite() -> None:
+    """The preregistered C1 gate starts as the exact fixed EXP6 control."""
+
+    from e_jepa_ttc.models.causal_scale_ttc import CausalScaleTTC, CausalScaleTTCConfig
+
+    config = CausalScaleTTCConfig(
+        in_channels=6,
+        hidden_dim=32,
+        geometry_dim=64,
+        residual_depth=1,
+        foreground_temporal_smoothing=0.0,
+        foreground_temporal_smoothing_mode="causal_left",
+        temporal_channel_gate_enabled=True,
+        temporal_channel_gate_patch_grid=4,
+        temporal_channel_gate_hidden_dim=16,
+    )
+    model = CausalScaleTTC(config).eval()
+    inputs = torch.rand(2, 3, 6, 32, 32)
+    delta = torch.full((2, 2), 0.05)
+    with torch.no_grad():
+        output = model(inputs, delta)
+    weights = output.diagnostics["temporal_channel_gate_weights"]
+    assert weights.shape == (2, 3, 6, 4, 4)
+    torch.testing.assert_close(weights.sum(dim=2), torch.ones(2, 3, 4, 4))
+    torch.testing.assert_close(weights, torch.full_like(weights, 1.0 / 6.0), atol=1e-6, rtol=1e-6)
+    assert torch.isfinite(output.ttc_mean_seconds).all()
+    assert torch.isfinite(output.diagnostics["temporal_channel_gate_entropy"]).all()
+
+
+def test_c1_temporal_channel_gate_rejects_non_exp6_channel_count() -> None:
+    from e_jepa_ttc.models.causal_scale_ttc import CausalScaleTTCConfig
+
+    with pytest.raises(ValueError, match="EXP6 six-channel input"):
+        CausalScaleTTCConfig(in_channels=20, temporal_channel_gate_enabled=True)
