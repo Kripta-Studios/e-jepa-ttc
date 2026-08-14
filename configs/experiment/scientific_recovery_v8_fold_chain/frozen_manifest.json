@@ -1,0 +1,269 @@
+{
+  "artifact_sha256": "28924097d2adc0d4d81f17dcf6f17865079e68e50f9c4ce35d7875f59dc375c3",
+  "artifact_type": "scientific_recovery_v8_frozen_config_manifest_v1",
+  "c1_analysis_plans": {
+    "autopsy_h3": {
+      "artifact_sha256": "89a512cb7eb5bd6c1cfdb9315538da6516ff8152ecb93edebf1b786024e4baba",
+      "path": "configs/protocol/scientific_recovery_v8_c1_analysis_plans/autopsy_h3.json",
+      "sha256": "d2c5c1462e297952d12eeade743d2f62621f23242117959051b2d28ad400cd74"
+    },
+    "exp6_regime": {
+      "artifact_sha256": "ece3a2d9cd39ff4f97e339a5a81dac143ac49f4818a3b741c63ca3817ce3ebbf",
+      "path": "configs/protocol/scientific_recovery_v8_c1_analysis_plans/exp6_regime.json",
+      "sha256": "0ed4530f9ea81e866eef53c41d3120c6e7e067aba16a833c86cfb30e0d39aa99"
+    },
+    "router_regime": {
+      "artifact_sha256": "ee2a7b81154863355eeae2674018223ba58aec50db70b34af948b98f322def4c",
+      "path": "configs/protocol/scientific_recovery_v8_c1_analysis_plans/router_regime.json",
+      "sha256": "561ee62caee852ccea8983605971f77d0af9651c88f6c558e31b455c30ac56ae"
+    }
+  },
+  "closed_evaluation": {
+    "allowed_splits": [
+      "train_fold",
+      "outer_dev_fold"
+    ],
+    "codabench_opened": false,
+    "evttc_test_opened": false,
+    "private_test_opened": false,
+    "public_validation_used_for_selection": false
+  },
+  "conditional_templates": {
+    "gated_exp6_3": {
+      "enabled": false,
+      "frontend_contract": "causal EXP6 patch frontend gate; not an architecture sweep.",
+      "model_config": "configs/model/e_jepa_causal_scale_event_v8_gated_exp6_3.yaml",
+      "opening_gate": "frozen route plan plus signed seed-7 H3 autopsy OR signed seed-7 EXP6 stable regime heterogeneity OR signed seed-7 router primary-gate pass with frozen-plan stable temporal/density causal-feature dependence across every outer fold and sequence plus causal invariance",
+      "runner_refusal": "require signed V8 C1 gate decision artifact",
+      "steps": 3
+    },
+    "pair20_2": {
+      "enabled": false,
+      "frontend_contract": "TIMEVOL20; V8-only steps=2; EVENT_V4_STEPS remains 3.",
+      "model_config": "configs/model/e_jepa_causal_scale_event_v8_pair20_2.yaml",
+      "opening_gate": "B1 passes ttc_candidate_gate in signed seed-7 aggregate",
+      "runner_refusal": "require signed V8 B1 gate decision artifact",
+      "steps": 2
+    }
+  },
+  "enabled_seed7_configs": {
+    "exp6_3_fold0_seed7": {
+      "path": "configs/experiment/scientific_recovery_v8_fold_chain/exp6_3_fold0_seed7.yaml",
+      "sha256": "85e70f2707b2e48757c56cedec9e3ce527654a7f2379e6efc23c662e9198fba3"
+    },
+    "exp6_3_fold1_seed7": {
+      "path": "configs/experiment/scientific_recovery_v8_fold_chain/exp6_3_fold1_seed7.yaml",
+      "sha256": "d60203ec46494374e65918eb1195738dad20de151e497d8249ccb0afc97c624e"
+    },
+    "exp6_3_fold2_seed7": {
+      "path": "configs/experiment/scientific_recovery_v8_fold_chain/exp6_3_fold2_seed7.yaml",
+      "sha256": "785646dd3078c7b81302f4e54bc355feae4c6c172914628b87ac6a25e758aade"
+    },
+    "router_fold0_seed7": {
+      "path": "configs/experiment/scientific_recovery_v8_fold_chain/router_fold0_seed7.yaml",
+      "sha256": "40d42ac645d7f6d8e3b9889eda65de4708fd873ec7a2d851ad4e1c1f343fa791"
+    },
+    "router_fold1_seed7": {
+      "path": "configs/experiment/scientific_recovery_v8_fold_chain/router_fold1_seed7.yaml",
+      "sha256": "e48abc9d44374afd0f5dd14e3d688b74d5d6c566ad861b20a2e77c7782b9280f"
+    },
+    "router_fold2_seed7": {
+      "path": "configs/experiment/scientific_recovery_v8_fold_chain/router_fold2_seed7.yaml",
+      "sha256": "38e733db3eb6f47637c0d2f25c145d4294d75c8a6d8b243efdc67136e762389d"
+    },
+    "timevol20_3_fold0_seed7": {
+      "path": "configs/experiment/scientific_recovery_v8_fold_chain/timevol20_3_fold0_seed7.yaml",
+      "sha256": "b7270d8f47e4bb1779db99899fe99ee5f762915fccd28e701f9eddb11d4b6f9e"
+    },
+    "timevol20_3_fold1_seed7": {
+      "path": "configs/experiment/scientific_recovery_v8_fold_chain/timevol20_3_fold1_seed7.yaml",
+      "sha256": "25aad5cf40417ffe26db55ce68f3372c300cc4743c1217c66444036f5a4985e9"
+    },
+    "timevol20_3_fold2_seed7": {
+      "path": "configs/experiment/scientific_recovery_v8_fold_chain/timevol20_3_fold2_seed7.yaml",
+      "sha256": "0524e3c87b0f8b2e0495287c0a702da36e76cce90ce2941657db3bc9a29014a4"
+    }
+  },
+  "integrity": {
+    "canonical_hash_algorithm": "sha256(canonical JSON records sorted by token_id, newline-delimited UTF-8)",
+    "fold_assignment_sha256": "c67535ab44dc9faa39b415ba02115d6b2f8077cbd94875f7e9050954f95db996",
+    "fold_definitions": [
+      {
+        "dev_rows": 2731,
+        "dev_sample_tokens_sha256": "85326602af71948734ff250a2e95e37d88db0d7cdbcfc494b30536f1956b61c9",
+        "dev_sequence_ids": [
+          "5ilM1PX2vz",
+          "OYgB6RGWcq",
+          "qGsgzl4Q8B"
+        ],
+        "fold": 0,
+        "train_rows": 5461,
+        "train_sample_tokens_sha256": "8f88d14d5f88228a7d59b853a8da86c9120d53c1fc7dcb94f94ae18f9a73d798",
+        "train_sequence_ids": [
+          "2cyv0Oedzg",
+          "6h5yRW2LGc",
+          "OBneIVg4Cw",
+          "WbCh1DRerJ",
+          "mHGFBekt7X",
+          "t79dBxj1WS"
+        ]
+      },
+      {
+        "dev_rows": 2731,
+        "dev_sample_tokens_sha256": "5ea864aaa339ac5140bb61357e45b620f5819c42fa9db1542179658395d4fa77",
+        "dev_sequence_ids": [
+          "2cyv0Oedzg",
+          "6h5yRW2LGc",
+          "mHGFBekt7X"
+        ],
+        "fold": 1,
+        "train_rows": 5461,
+        "train_sample_tokens_sha256": "b57f1d9667c25a97a6f812406a534c63678d0cfce4dc25749efcd5c5c131f552",
+        "train_sequence_ids": [
+          "5ilM1PX2vz",
+          "OBneIVg4Cw",
+          "OYgB6RGWcq",
+          "WbCh1DRerJ",
+          "qGsgzl4Q8B",
+          "t79dBxj1WS"
+        ]
+      },
+      {
+        "dev_rows": 2730,
+        "dev_sample_tokens_sha256": "e09980a547cf9c71c27cda9ee02c2ff12de6857dea47ced64ae61acb7a876f17",
+        "dev_sequence_ids": [
+          "OBneIVg4Cw",
+          "WbCh1DRerJ",
+          "t79dBxj1WS"
+        ],
+        "fold": 2,
+        "train_rows": 5462,
+        "train_sample_tokens_sha256": "b4163c61800ff36de95b2c764182b63a9a6b38f7975ea8a1db94f9b20f83fb24",
+        "train_sequence_ids": [
+          "2cyv0Oedzg",
+          "5ilM1PX2vz",
+          "6h5yRW2LGc",
+          "OYgB6RGWcq",
+          "mHGFBekt7X",
+          "qGsgzl4Q8B"
+        ]
+      }
+    ],
+    "folds": 3,
+    "mid_sample_weight_sha256": "55d3aeb0a930926961532e8cf7f897fdf8affb514d6fac6c1082efd2d0ab915f",
+    "ordered_token_ids_sha256": "9cb26d801f5dd1c7e875f58926af247cb4b0cbf622d319783731b6fdf498e60f",
+    "row_count_contract": {
+      "by_bucket": {
+        "crucial": 1696,
+        "large": 1926,
+        "negative": 2484,
+        "small": 2086
+      },
+      "by_outer_fold": {
+        "0": 2731,
+        "1": 2731,
+        "2": 2730
+      },
+      "by_sequence": {
+        "2cyv0Oedzg": 911,
+        "5ilM1PX2vz": 911,
+        "6h5yRW2LGc": 910,
+        "OBneIVg4Cw": 910,
+        "OYgB6RGWcq": 910,
+        "WbCh1DRerJ": 910,
+        "mHGFBekt7X": 910,
+        "qGsgzl4Q8B": 910,
+        "t79dBxj1WS": 910
+      },
+      "by_sequence_bucket": {
+        "2cyv0Oedzg": {
+          "crucial": 160,
+          "large": 213,
+          "negative": 305,
+          "small": 233
+        },
+        "5ilM1PX2vz": {
+          "crucial": 150,
+          "large": 135,
+          "negative": 467,
+          "small": 159
+        },
+        "6h5yRW2LGc": {
+          "crucial": 288,
+          "large": 214,
+          "negative": 163,
+          "small": 245
+        },
+        "OBneIVg4Cw": {
+          "crucial": 325,
+          "large": 162,
+          "negative": 127,
+          "small": 296
+        },
+        "OYgB6RGWcq": {
+          "crucial": 95,
+          "large": 195,
+          "negative": 478,
+          "small": 142
+        },
+        "WbCh1DRerJ": {
+          "crucial": 255,
+          "large": 241,
+          "negative": 177,
+          "small": 237
+        },
+        "mHGFBekt7X": {
+          "crucial": 126,
+          "large": 249,
+          "negative": 308,
+          "small": 227
+        },
+        "qGsgzl4Q8B": {
+          "crucial": 145,
+          "large": 239,
+          "negative": 256,
+          "small": 270
+        },
+        "t79dBxj1WS": {
+          "crucial": 152,
+          "large": 278,
+          "negative": 203,
+          "small": 277
+        }
+      },
+      "total": 8192
+    },
+    "row_identity_sha256": "fe4ea01a430c8250c069241fd668ed7d12a270edadef31475afa4a99b5d72030",
+    "rows": 8192,
+    "sequences": 9,
+    "target_identity_sha256": "393d9d8260d56c5ebad83e6912df78b58c0b70626837e70b6e1bf7213f040c17",
+    "target_sha256": "393d9d8260d56c5ebad83e6912df78b58c0b70626837e70b6e1bf7213f040c17",
+    "token_order": "lexicographic token_id",
+    "weight_definition": "official MiD bucket coefficient / 9 sequences / rows in that sequence-bucket"
+  },
+  "model_configs": {
+    "exp6_3": {
+      "path": "configs/model/e_jepa_causal_scale_event_v8_exp6_3.yaml",
+      "sha256": "a1ba420292de449c0ee0db8dc9dce2d8b6218d78eff0bd22748b66fc6dfef12b"
+    },
+    "gated_exp6_3": {
+      "path": "configs/model/e_jepa_causal_scale_event_v8_gated_exp6_3.yaml",
+      "sha256": "a1ba420292de449c0ee0db8dc9dce2d8b6218d78eff0bd22748b66fc6dfef12b"
+    },
+    "pair20_2": {
+      "path": "configs/model/e_jepa_causal_scale_event_v8_pair20_2.yaml",
+      "sha256": "caaf9525ab0453e1994b1eca809e0e127fd9fdece9a53e1aace2c75e063dab13"
+    },
+    "timevol20_3": {
+      "path": "configs/model/e_jepa_causal_scale_event_v8_timevol20_3.yaml",
+      "sha256": "caaf9525ab0453e1994b1eca809e0e127fd9fdece9a53e1aace2c75e063dab13"
+    }
+  },
+  "protocol": {
+    "artifact_sha256": "e196a1358b88c695d850df9e7b86ea5037688e28f2088b92ab5beb9d112fc0f7",
+    "path": "configs/protocol/scientific_recovery_v8_temporal.json",
+    "sha256": "ec52a21bd8a07d2363be5ec2c0e8ab71c18cba4524c16e5066b02facbf714226"
+  },
+  "schema_version": "scientific_recovery_v8_temporal_v1",
+  "status": "frozen_before_v8_training"
+}

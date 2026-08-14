@@ -5,17 +5,29 @@ from __future__ import annotations
 import json
 import subprocess
 import sys
+from pathlib import Path
 
-from scripts.freeze_scientific_recovery_v5_garl_grouped import (
-    PROTOCOL_PATH,
-    build_manifest,
+import pytest
+
+import scripts.freeze_scientific_recovery_v5_garl_grouped as frozen_garl
+
+PROTOCOL_PATH = frozen_garl.PROTOCOL_PATH
+IDENTITY_FIXTURE = (
+    Path(__file__).parents[1]
+    / "fixtures"
+    / "scientific_recovery_v5"
+    / "garl_train_data_identity.txt"
 )
 
 
-def test_garl_fold_runs_are_from_scratch_and_train_only() -> None:
+def test_garl_fold_runs_are_from_scratch_and_train_only(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     protocol = json.loads(PROTOCOL_PATH.read_text(encoding="utf-8"))
 
-    manifest = build_manifest(protocol)
+    # The frozen parquet was ignored; the fixture retains provenance without restoring data.
+    monkeypatch.setattr(frozen_garl, "IDENTITY_METADATA", IDENTITY_FIXTURE)
+    manifest = frozen_garl.build_manifest(protocol)
 
     assert len(manifest["runs"]) == 3
     for run, fold in zip(manifest["runs"], protocol["folds"], strict=True):

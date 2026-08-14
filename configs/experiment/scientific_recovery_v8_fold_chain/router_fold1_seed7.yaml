@@ -1,0 +1,99 @@
+experiment:
+  name: scientific_recovery_v8_router_fold1_seed7
+  seed: 7
+  arm: R
+enabled: true
+outer_fold: 1
+outer_train_sequence_ids:
+- 5ilM1PX2vz
+- OBneIVg4Cw
+- OYgB6RGWcq
+- WbCh1DRerJ
+- qGsgzl4Q8B
+- t79dBxj1WS
+outer_dev_sequence_ids:
+- 2cyv0Oedzg
+- 6h5yRW2LGc
+- mHGFBekt7X
+inner_folds:
+- inner_fold: 0
+  train_sequence_ids:
+  - OYgB6RGWcq
+  - WbCh1DRerJ
+  - qGsgzl4Q8B
+  - t79dBxj1WS
+  dev_sequence_ids:
+  - 5ilM1PX2vz
+  - OBneIVg4Cw
+- inner_fold: 1
+  train_sequence_ids:
+  - 5ilM1PX2vz
+  - OBneIVg4Cw
+  - qGsgzl4Q8B
+  - t79dBxj1WS
+  dev_sequence_ids:
+  - OYgB6RGWcq
+  - WbCh1DRerJ
+- inner_fold: 2
+  train_sequence_ids:
+  - 5ilM1PX2vz
+  - OBneIVg4Cw
+  - OYgB6RGWcq
+  - WbCh1DRerJ
+  dev_sequence_ids:
+  - qGsgzl4Q8B
+  - t79dBxj1WS
+experts:
+- A5
+- C2F
+router:
+  feature_names:
+  - shared_event_count_log1p
+  - shared_event_rate_log1p
+  - a5_flow
+  - a5_margin
+  - a5_log_variance
+  - c2f_flow
+  - c2f_margin
+  - c2f_log_variance
+  prohibited_features:
+  - target_ttc
+  - prediction_ttc
+  - bbox
+  - ttc_bucket
+  - outer_fold
+  - sequence_id
+  - track_id
+  - category
+  - future_features
+  pipeline:
+    type: sklearn.pipeline.Pipeline
+    scale: StandardScaler
+    classifier: LogisticRegression
+    penalty: l2
+    C: 1.0
+    class_weight: null
+    solver: liblinear
+    max_iter: 1000
+    random_state: 7
+  threshold: 0.5
+  routing: hard
+  fit_rows: inner_oof_only
+  fit_sample_weight_only: true
+  label: lower_raw_official_eta_mid_loss
+  base_sample_weight: official MiD bucket coefficient / sequence-bucket rows / 9 sequences
+  effective_sample_weight: sequence_macro_mid_row_weight_times_absolute_expert_loss_delta
+  signature:
+    ordered_effective_weight_sha256: required_in_router_artifact
+    summary:
+    - sum
+    - minimum
+    - maximum
+    - positive_class_mass
+closed_evaluation:
+  opened_splits:
+  - train
+  public_validation_used_for_selection: false
+  private_test_opened: false
+  evttc_test_opened: false
+  codabench_opened: false

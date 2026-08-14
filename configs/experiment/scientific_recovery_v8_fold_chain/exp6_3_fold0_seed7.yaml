@@ -1,0 +1,131 @@
+experiment:
+  name: scientific_recovery_v8_exp6_3_fold0_seed7
+  protocol_version: scientific_recovery_v8_temporal_v1
+  evidence_scope: public_train_only_grouped_development
+  seed: 7
+  arm: exp6_3
+  single_scientific_difference: 'B2 frontend/cache/in_channels only: signed causal
+    EXP6 state 6x3.'
+model_config: configs/model/e_jepa_causal_scale_event_v8_exp6_3.yaml
+data:
+  cache_manifest: artifacts/scientific_recovery_v8/cache/exp6_3/manifest.json
+  cache_manifest_expected: true
+  cache_materialization_required_before_run: true
+  train_sequence_ids:
+  - 2cyv0Oedzg
+  - 6h5yRW2LGc
+  - OBneIVg4Cw
+  - WbCh1DRerJ
+  - mHGFBekt7X
+  - t79dBxj1WS
+  dev_sequence_ids:
+  - 5ilM1PX2vz
+  - OYgB6RGWcq
+  - qGsgzl4Q8B
+  opened_splits:
+  - train
+  expected_source_train_rows: 8192
+  outer_fold: 0
+  roi_size:
+  - 128
+  - 128
+  steps: 3
+  channels_per_endpoint: 6
+  temporal_frontend:
+    steps: 3
+    channels: 6
+    cache_manifest: artifacts/scientific_recovery_v8/cache/exp6_3/manifest.json
+    single_scientific_difference: 'B2 frontend/cache/in_channels only: signed causal
+      EXP6 state 6x3.'
+    builder: CausalExponentialStateRepresentation
+    alpha:
+    - 0.1
+    - 0.05
+    - 0.025
+    - 0.0125
+    - 0.0075
+    - 0.0035
+    internal_dt_ms: 0.2
+    output_interval_ms: 7.0
+    time_bins: 35
+    source_parity:
+      official_commit_sha: 59c498b71ae526bc2d7e570c82a078306a996b93
+      processor_source:
+        path: ev_ttc/include/ev_ttc/ev_processor.h
+        sha256: 439384787969f36f72bdc72e3f6a058c33847f7f8a70454a44313ffc0e9d511e
+      config_source:
+        path: ev_ttc/include/ev_ttc/config.h
+        sha256: d30bfe8b292cb8505b1e1841bb76ebbeb2e1f34b3dce13c85b383252d4a44fe7
+      source_scope: filter-state equation parity under frozen raster assumptions,
+        not full ROS/lens/downsample parity
+      scheduling: EV-TTC triggers from its first event when elapsed time is >=7 ms
+        and can overshoot; V8 instead fixes boundaries at EventBatch.t_start_us+n*7000
+        us
+      equation: window_event(j) += polarity * alpha * (1-alpha)**(-j); snapshot *=
+        (1-alpha)**35
+      polarity: input polarity is normalized to {-1,+1}; +1 is positive and -1 is
+        negative
+      timestamp_quantization: j=floor((timestamp_us-origin_us)/200), with origin_us=EventBatch.t_start_us
+      boundary: at origin_us+n*7000 us, snapshot precedes events timestamped exactly
+        at the boundary; those events enter next window at j=0
+      initialization: zero state at the stable per-sequence EventBatch.t_start_us
+        origin
+      reset: manual, sequence change, endpoint rollback, or resolution change clears
+        state to zero
+      warmup: zero-state warmup is retained; no synthetic prehistory is injected
+      snapshot: only exact 7 ms boundary snapshots have EV-TTC filter-state parity;
+        non-boundary snapshots retain the causal local recurrence
+    warmup_required: true
+  dinov3_relational_teacher:
+    manifest: artifacts/cache/dinov3_convnext_large_relational_a4_rgb_v2/manifest.json
+    manifest_sha256: e885a2ea2f2df370a3d4a8270c082a095a735c13db0248521ce2f553b314cf86
+    artifact_sha256: f175980d05c1d02a9aa743a74c78c0d5af9a826b2791760df5fbc00c548bd2a2
+    source_config: configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a5_corr_v1.yaml
+    source_config_sha256: 4c2d06f9799d37f7e6cea58881a534e5c439e08c0de92c110eb78d4b4a157dd5
+training:
+  seed: 7
+  epochs: 18
+  minimum_epochs: 8
+  early_stopping_patience: 5
+  foreground_warmup_epochs: 3
+  batch_size: 32
+  gradient_accumulation_steps: 1
+  learning_rate: 0.0003
+  minimum_learning_rate: 3.0e-05
+  weight_decay: 0.0001
+  grad_clip_norm: 1.0
+  num_workers: 0
+  precision: bf16
+  maximum_runtime_hours: 6.0
+  mask_t0_as_proxy: true
+  foreground_supervision: bbox_geometry
+  representation_supervision: dinov3_local_relational
+  representation_teacher_cache_artifact_sha256: f175980d05c1d02a9aa743a74c78c0d5af9a826b2791760df5fbc00c548bd2a2
+  representation_distillation_weight: 8.0
+  freeze_encoder: false
+loss:
+  log_ratio_nll_weight: 1.0
+  log_ratio_huber_weight: 0.0
+  log_ratio_tail_weight: 2.0
+  log_ratio_tail_fraction: 0.1
+  foreground_bce_weight: 0.0
+  foreground_dice_weight: 0.0
+  foreground_extent_weight: 1.25
+  foreground_width_weight: 1.25
+  foreground_center_weight: 2.5
+  foreground_pair_ratio_weight: 0.0
+  risk_weight: 0.1
+  auxiliary_inverse_ttc_weight: 0.05
+  residual_regularization_weight: 0.1
+  temporal_consistency_weight: 0.0
+  smooth_l1_beta: 0.02
+  supervise_pair_ratio_before_temporal_blend: true
+decision_contract:
+  checkpoint_selection: dev_sequence_macro_MiD_then_failure_rate
+  bbox_is_training_supervision_only: true
+  bbox_is_never_forward_input: true
+  rows_folds_targets_weights_must_match_protocol: true
+  public_validation_used_for_selection: false
+  private_test_opened: false
+  evttc_test_opened: false
+  codabench_opened: false

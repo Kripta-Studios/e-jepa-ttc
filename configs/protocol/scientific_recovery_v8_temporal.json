@@ -1,0 +1,587 @@
+{
+  "artifact_sha256": "e196a1358b88c695d850df9e7b86ea5037688e28f2088b92ab5beb9d112fc0f7",
+  "artifact_type": "scientific_recovery_v8_temporal_protocol_v1",
+  "c1_analysis_plans": {
+    "autopsy_h3": {
+      "artifact_sha256": "89a512cb7eb5bd6c1cfdb9315538da6516ff8152ecb93edebf1b786024e4baba",
+      "path": "configs/protocol/scientific_recovery_v8_c1_analysis_plans/autopsy_h3.json",
+      "sha256": "d2c5c1462e297952d12eeade743d2f62621f23242117959051b2d28ad400cd74"
+    },
+    "exp6_regime": {
+      "artifact_sha256": "ece3a2d9cd39ff4f97e339a5a81dac143ac49f4818a3b741c63ca3817ce3ebbf",
+      "path": "configs/protocol/scientific_recovery_v8_c1_analysis_plans/exp6_regime.json",
+      "sha256": "0ed4530f9ea81e866eef53c41d3120c6e7e067aba16a833c86cfb30e0d39aa99"
+    },
+    "router_regime": {
+      "artifact_sha256": "ee2a7b81154863355eeae2674018223ba58aec50db70b34af948b98f322def4c",
+      "path": "configs/protocol/scientific_recovery_v8_c1_analysis_plans/router_regime.json",
+      "sha256": "561ee62caee852ccea8983605971f77d0af9651c88f6c558e31b455c30ac56ae"
+    }
+  },
+  "c1_evidence_contract": {
+    "analysis_plan_artifact_type": "scientific_recovery_v8_preregistered_analysis_plan_v1",
+    "artifact_root": "artifacts/scientific_recovery_v8/",
+    "causal_invariance_artifact_type": "scientific_recovery_v8_causal_invariance_v1",
+    "coverage": "exact frozen outer fold dev sequence IDs",
+    "frozen_plan_paths": {
+      "autopsy_h3": "configs/protocol/scientific_recovery_v8_c1_analysis_plans/autopsy_h3.json",
+      "exp6_regime": "configs/protocol/scientific_recovery_v8_c1_analysis_plans/exp6_regime.json",
+      "router_regime": "configs/protocol/scientific_recovery_v8_c1_analysis_plans/router_regime.json"
+    },
+    "opening_artifact_type": "scientific_recovery_v8_c1_opening_decision_v1",
+    "regime_evidence_artifact_type": "scientific_recovery_v8_regime_evidence_v1",
+    "required_binding": [
+      "protocol_artifact_sha256",
+      "protocol_file_sha256",
+      "exact sample_contract including fold_definitions",
+      "closed_evaluation"
+    ],
+    "self_reference_or_result_aggregate": "rejected",
+    "source_aggregate": "route-specific signed seed-7 aggregate, typed and bound by the frozen plan",
+    "source_aggregate_requirements": {
+      "autopsy_h3_outputs": [
+        "factorial_replay",
+        "diagnostic"
+      ],
+      "exact_outer_fold_sequence_coverage": true,
+      "exact_sample_contract": true,
+      "finite_recursive_content": true,
+      "primary_ttc_gate_fields": [
+        "delta_mid_vs_a5",
+        "bootstrap_probability_delta_lt_zero",
+        "finite_fraction",
+        "failure_rate",
+        "coverage_drop_max_pp"
+      ],
+      "status": "completed"
+    }
+  },
+  "closed_evaluation": {
+    "allowed_splits": [
+      "train_fold",
+      "outer_dev_fold"
+    ],
+    "codabench_opened": false,
+    "evttc_test_opened": false,
+    "private_test_opened": false,
+    "public_validation_used_for_selection": false
+  },
+  "created_at_utc": "FROZEN_NO_WALL_CLOCK",
+  "evaluation_contract": {
+    "aggregate_schema": [
+      "schema_version",
+      "status",
+      "git_commit",
+      "protocol_sha256",
+      "config_sha256",
+      "seed",
+      "folds",
+      "row_count",
+      "row_identity_sha256",
+      "target_sha256",
+      "prediction_sha256",
+      "checkpoint_sha256",
+      "metrics",
+      "per_sequence",
+      "per_bucket",
+      "bootstrap",
+      "integrity_checks",
+      "gate_decision",
+      "coverage",
+      "artifact_sha256"
+    ],
+    "bootstrap": {
+      "method": "paired_hierarchical_sequence_then_track",
+      "resamples": 5000,
+      "seed": 20260814,
+      "unit": [
+        "sequence_id",
+        "track_id"
+      ]
+    },
+    "oof_schema": [
+      "token_id",
+      "sequence_id",
+      "track_id",
+      "outer_fold",
+      "seed",
+      "target_ttc",
+      "sample_weight",
+      "prediction_ttc",
+      "prediction_log_variance",
+      "finite",
+      "failure_reason",
+      "event_count",
+      "event_rate",
+      "support_ms",
+      "model_name",
+      "config_sha256",
+      "checkpoint_sha256"
+    ],
+    "primary_metric": "MiD macro-sequence at full coverage",
+    "report_metrics": [
+      "MiD_sample_weighted",
+      "MAE",
+      "relative_error",
+      "finite_fraction",
+      "failure_rate",
+      "coverage",
+      "per_sequence",
+      "per_track",
+      "per_ttc_bucket"
+    ]
+  },
+  "exp6_source_parity": {
+    "alphas": [
+      0.1,
+      0.05,
+      0.025,
+      0.0125,
+      0.0075,
+      0.0035
+    ],
+    "boundary": "at origin_us+n*7000 us, snapshot precedes events timestamped exactly at the boundary; those events enter next window at j=0",
+    "config_source": {
+      "path": "ev_ttc/include/ev_ttc/config.h",
+      "sha256": "d30bfe8b292cb8505b1e1841bb76ebbeb2e1f34b3dce13c85b383252d4a44fe7"
+    },
+    "equation": "window_event(j) += polarity * alpha * (1-alpha)**(-j); snapshot *= (1-alpha)**35",
+    "initialization": "zero state at the stable per-sequence EventBatch.t_start_us origin",
+    "internal_dt_ms": 0.2,
+    "official_commit_sha": "59c498b71ae526bc2d7e570c82a078306a996b93",
+    "output_interval_ms": 7.0,
+    "polarity": "input polarity is normalized to {-1,+1}; +1 is positive and -1 is negative",
+    "processor_source": {
+      "path": "ev_ttc/include/ev_ttc/ev_processor.h",
+      "sha256": "439384787969f36f72bdc72e3f6a058c33847f7f8a70454a44313ffc0e9d511e"
+    },
+    "reset": "manual, sequence change, endpoint rollback, or resolution change clears state to zero",
+    "scheduling": "EV-TTC triggers from its first event when elapsed time is >=7 ms and can overshoot; V8 instead fixes boundaries at EventBatch.t_start_us+n*7000 us",
+    "snapshot": "only exact 7 ms boundary snapshots have EV-TTC filter-state parity; non-boundary snapshots retain the causal local recurrence",
+    "source_scope": "filter-state equation parity under frozen raster assumptions, not full ROS/lens/downsample parity",
+    "time_bins": 35,
+    "timestamp_quantization": "j=floor((timestamp_us-origin_us)/200), with origin_us=EventBatch.t_start_us",
+    "warmup": "zero-state warmup is retained; no synthetic prehistory is injected"
+  },
+  "external_confirmation": {
+    "name": "single_user_authorized_sealed_public_validation",
+    "requires_user_authorization": true,
+    "selection_or_tuning_forbidden": true
+  },
+  "gates": {
+    "b3_open": "B1 passes ttc_candidate_gate in signed seed-7 aggregate",
+    "c1_open": "frozen route plan plus signed seed-7 H3 autopsy OR signed seed-7 EXP6 stable regime heterogeneity OR signed seed-7 router primary-gate pass with frozen-plan stable temporal/density causal-feature dependence across every outer fold and sequence plus causal invariance",
+    "mechanistic_interpretability_gate": {
+      "a4_retention": "diagnostic",
+      "physical_ratio_correlation": "diagnostic",
+      "reversal": "diagnostic",
+      "slope": "diagnostic"
+    },
+    "multiseed_replication": {
+      "bootstrap_ci95_below_zero_required": true,
+      "mean_delta_MiD_max": -3.0,
+      "per_seed_delta_negative_required": true,
+      "same_config_except_seed": true
+    },
+    "ttc_candidate_gate": {
+      "bootstrap_probability_delta_below_zero_min": 0.9,
+      "coverage_drop_max_pp": 1.0,
+      "delta_MiD_max": -3.0,
+      "exact_contract_identity_required": true,
+      "failure_rate_required": 0.0,
+      "finite_fraction_required": 1.0
+    }
+  },
+  "git_base_commit": "f9331b29596c4107430af5a8c78935bd127ccf94",
+  "git_branch": "scientific-recovery-v8-temporal-mechanisms",
+  "jepa_d4_contract": {
+    "cross_track_derangement": true,
+    "equal_compute": [
+      "initialization",
+      "optimizer",
+      "updates",
+      "batches",
+      "masking",
+      "EMA",
+      "predictor",
+      "augmentations"
+    ],
+    "fail_closed_when_cross_track_pairing_is_impossible": true,
+    "fixed_points_forbidden": true,
+    "multiseed_if_jepa_positive": [
+      "D0",
+      "D1",
+      "best(D2,D3)",
+      "D4"
+    ],
+    "track_ids_scope": "pairing_only; never model input or target"
+  },
+  "parent_checkpoints": {
+    "a5": [
+      {
+        "fold": "0",
+        "path": "artifacts/runs/scientific_recovery_v6_a5_causal_grouped_fold0_seed7/model_best.pt",
+        "sha256": "474fe6c662669c803f91a04c662381cf8511bdb354e2f7ebfb43037007dd1463"
+      },
+      {
+        "fold": "1",
+        "path": "artifacts/runs/scientific_recovery_v6_a5_causal_grouped_fold1_seed7/model_best.pt",
+        "sha256": "b6eee3bab5e4159f1baab7077f0554b9beb6dbd4200fc12a983cebc0540717b9"
+      },
+      {
+        "fold": "2",
+        "path": "artifacts/runs/scientific_recovery_v6_a5_causal_grouped_fold2_seed7/model_best.pt",
+        "sha256": "de1af16d2e3f2cdd33a88e8d61a1216d255b14f346e5f91b447424806f219bdb"
+      }
+    ],
+    "c2f": [
+      {
+        "fold": "0",
+        "path": "artifacts/runs/scientific_recovery_v7_c2f_fold0_seed7/model_best.pt",
+        "sha256": "62d0c5cf2aa005cdfc378aec980805f289de638b15ec42977711bdb4425c84cb",
+        "summary_artifact_sha256": "b4131b7ae51d72ec57cf5dfe5cb532c8ef9ae3998f738df770ee3d6f86475e58"
+      },
+      {
+        "fold": "1",
+        "path": "artifacts/runs/scientific_recovery_v7_c2f_fold1_seed7/model_best.pt",
+        "sha256": "b0a52d1076ebb0b2c5f598c1f42605b3d2a1e342a04fa83139a7a75dee9107cb",
+        "summary_artifact_sha256": "767ad8ee8aab31a05647b18a0af9229eb9ff80d4300e28aa607ee10962a6aeed"
+      },
+      {
+        "fold": "2",
+        "path": "artifacts/runs/scientific_recovery_v7_c2f_fold2_seed7/model_best.pt",
+        "sha256": "1469126691d6d832999886ceb2ff46adfe7b3b571d4c73d35ce69ebaad501241",
+        "summary_artifact_sha256": "30b7a14ca3c1d3769e242a2c5222910e679a3b5cb98342ffcb65948213a4e7ef"
+      }
+    ],
+    "garl": [
+      {
+        "fold": "0",
+        "path": "artifacts/runs/scientific_recovery_v5_garl_fold_chain_fold0_seed7/model_best.pt",
+        "sha256": "b08fe343b903042e5af3d0f18d62e630878a3df7e9f38f4e1b3ace4c477ddb08"
+      },
+      {
+        "fold": "1",
+        "path": "artifacts/runs/scientific_recovery_v5_garl_fold_chain_fold1_seed7/model_best.pt",
+        "sha256": "5e40fe412c0e93619d6d51a41be326b26777eae0a024003dc0affcbd66b9f5c7"
+      },
+      {
+        "fold": "2",
+        "path": "artifacts/runs/scientific_recovery_v5_garl_fold_chain_fold2_seed7/model_best.pt",
+        "sha256": "53fb2baf63f2040c469bb4944a28e4f04e419c7a9d5ae5b6c932943ed497ffe4"
+      }
+    ]
+  },
+  "phase_d_transfer_contract": {
+    "collapse_monitoring": "per view",
+    "d3_allowlist": [
+      "encoder.final_residual_block.*",
+      "foreground.*"
+    ],
+    "gradient_coverage": "finite nonzero gradient for every transferred parameter",
+    "label_free": true,
+    "router_winner_rule": "apply selected R arm independently to both experts and refit identical inner-OOF router",
+    "transfer_prefix": "CausalScaleTTC.encoder.*",
+    "transfer_validation": [
+      "strict ordered keys",
+      "strict shapes",
+      "state SHA-256"
+    ],
+    "views": [
+      {
+        "name": "dense",
+        "weight": 0.3333333333333333
+      },
+      {
+        "name": "global",
+        "weight": 0.3333333333333333
+      },
+      {
+        "name": "foreground",
+        "weight": 0.3333333333333333
+      }
+    ]
+  },
+  "router_contract": {
+    "base_sample_weight": "official MiD bucket coefficient / sequence-bucket rows / 9 sequences",
+    "classifier": {
+      "C": 1.0,
+      "class_weight": null,
+      "max_iter": 1000,
+      "penalty": "l2",
+      "solver": "liblinear",
+      "threshold": 0.5
+    },
+    "effective_sample_weight": "base_sample_weight * abs(raw_official_eta_mid_loss_C2F - raw_official_eta_mid_loss_A5)",
+    "fit_parameter": "router__sample_weight",
+    "fit_rows": "inner_oof_only",
+    "label": "lower_raw_official_eta_mid_loss",
+    "signature": {
+      "ordered_effective_weight_sha256": "required",
+      "summary": [
+        "sum",
+        "minimum",
+        "maximum",
+        "positive_class_mass"
+      ]
+    }
+  },
+  "sample_contract": {
+    "canonical_hash_algorithm": "sha256(canonical JSON records sorted by token_id, newline-delimited UTF-8)",
+    "fold_assignment_sha256": "c67535ab44dc9faa39b415ba02115d6b2f8077cbd94875f7e9050954f95db996",
+    "fold_definitions": [
+      {
+        "dev_rows": 2731,
+        "dev_sample_tokens_sha256": "85326602af71948734ff250a2e95e37d88db0d7cdbcfc494b30536f1956b61c9",
+        "dev_sequence_ids": [
+          "5ilM1PX2vz",
+          "OYgB6RGWcq",
+          "qGsgzl4Q8B"
+        ],
+        "fold": 0,
+        "train_rows": 5461,
+        "train_sample_tokens_sha256": "8f88d14d5f88228a7d59b853a8da86c9120d53c1fc7dcb94f94ae18f9a73d798",
+        "train_sequence_ids": [
+          "2cyv0Oedzg",
+          "6h5yRW2LGc",
+          "OBneIVg4Cw",
+          "WbCh1DRerJ",
+          "mHGFBekt7X",
+          "t79dBxj1WS"
+        ]
+      },
+      {
+        "dev_rows": 2731,
+        "dev_sample_tokens_sha256": "5ea864aaa339ac5140bb61357e45b620f5819c42fa9db1542179658395d4fa77",
+        "dev_sequence_ids": [
+          "2cyv0Oedzg",
+          "6h5yRW2LGc",
+          "mHGFBekt7X"
+        ],
+        "fold": 1,
+        "train_rows": 5461,
+        "train_sample_tokens_sha256": "b57f1d9667c25a97a6f812406a534c63678d0cfce4dc25749efcd5c5c131f552",
+        "train_sequence_ids": [
+          "5ilM1PX2vz",
+          "OBneIVg4Cw",
+          "OYgB6RGWcq",
+          "WbCh1DRerJ",
+          "qGsgzl4Q8B",
+          "t79dBxj1WS"
+        ]
+      },
+      {
+        "dev_rows": 2730,
+        "dev_sample_tokens_sha256": "e09980a547cf9c71c27cda9ee02c2ff12de6857dea47ced64ae61acb7a876f17",
+        "dev_sequence_ids": [
+          "OBneIVg4Cw",
+          "WbCh1DRerJ",
+          "t79dBxj1WS"
+        ],
+        "fold": 2,
+        "train_rows": 5462,
+        "train_sample_tokens_sha256": "b4163c61800ff36de95b2c764182b63a9a6b38f7975ea8a1db94f9b20f83fb24",
+        "train_sequence_ids": [
+          "2cyv0Oedzg",
+          "5ilM1PX2vz",
+          "6h5yRW2LGc",
+          "OYgB6RGWcq",
+          "mHGFBekt7X",
+          "qGsgzl4Q8B"
+        ]
+      }
+    ],
+    "folds": 3,
+    "mid_sample_weight_sha256": "55d3aeb0a930926961532e8cf7f897fdf8affb514d6fac6c1082efd2d0ab915f",
+    "ordered_token_ids_sha256": "9cb26d801f5dd1c7e875f58926af247cb4b0cbf622d319783731b6fdf498e60f",
+    "row_count_contract": {
+      "by_bucket": {
+        "crucial": 1696,
+        "large": 1926,
+        "negative": 2484,
+        "small": 2086
+      },
+      "by_outer_fold": {
+        "0": 2731,
+        "1": 2731,
+        "2": 2730
+      },
+      "by_sequence": {
+        "2cyv0Oedzg": 911,
+        "5ilM1PX2vz": 911,
+        "6h5yRW2LGc": 910,
+        "OBneIVg4Cw": 910,
+        "OYgB6RGWcq": 910,
+        "WbCh1DRerJ": 910,
+        "mHGFBekt7X": 910,
+        "qGsgzl4Q8B": 910,
+        "t79dBxj1WS": 910
+      },
+      "by_sequence_bucket": {
+        "2cyv0Oedzg": {
+          "crucial": 160,
+          "large": 213,
+          "negative": 305,
+          "small": 233
+        },
+        "5ilM1PX2vz": {
+          "crucial": 150,
+          "large": 135,
+          "negative": 467,
+          "small": 159
+        },
+        "6h5yRW2LGc": {
+          "crucial": 288,
+          "large": 214,
+          "negative": 163,
+          "small": 245
+        },
+        "OBneIVg4Cw": {
+          "crucial": 325,
+          "large": 162,
+          "negative": 127,
+          "small": 296
+        },
+        "OYgB6RGWcq": {
+          "crucial": 95,
+          "large": 195,
+          "negative": 478,
+          "small": 142
+        },
+        "WbCh1DRerJ": {
+          "crucial": 255,
+          "large": 241,
+          "negative": 177,
+          "small": 237
+        },
+        "mHGFBekt7X": {
+          "crucial": 126,
+          "large": 249,
+          "negative": 308,
+          "small": 227
+        },
+        "qGsgzl4Q8B": {
+          "crucial": 145,
+          "large": 239,
+          "negative": 256,
+          "small": 270
+        },
+        "t79dBxj1WS": {
+          "crucial": 152,
+          "large": 278,
+          "negative": 203,
+          "small": 277
+        }
+      },
+      "total": 8192
+    },
+    "row_identity_sha256": "fe4ea01a430c8250c069241fd668ed7d12a270edadef31475afa4a99b5d72030",
+    "rows": 8192,
+    "sequences": 9,
+    "target_identity_sha256": "393d9d8260d56c5ebad83e6912df78b58c0b70626837e70b6e1bf7213f040c17",
+    "target_sha256": "393d9d8260d56c5ebad83e6912df78b58c0b70626837e70b6e1bf7213f040c17",
+    "token_order": "lexicographic token_id",
+    "weight_definition": "official MiD bucket coefficient / 9 sequences / rows in that sequence-bucket"
+  },
+  "schema_version": "scientific_recovery_v8_temporal_v1",
+  "sources": {
+    "a5_model_recipe": {
+      "path": "configs/model/e_jepa_causal_scale_event_v9_transport_r1_t002_causal.yaml",
+      "sha256": "25e38b61b273dba2e72a39bb9eb8caef41833ad0515d31d007db6c0cff1749a0"
+    },
+    "a5_oof_predictions": {
+      "path": "artifacts/scientific_recovery_v7/baselines/a5_oof_predictions.csv",
+      "sha256": "eb3288a88b1c604ac0b1c8b5a311370f5e5229a573aca65f385d0ad4c6e7baa5"
+    },
+    "garl_official_preprocessing": {
+      "path": "src/e_jepa_ttc/data/garl_official_preprocessing.py",
+      "sha256": "10e8cc2bbb998144006a81e276942b76d8620a51b9ba778b62577d23ed8edd7e"
+    },
+    "garl_oof_predictions": {
+      "path": "artifacts/scientific_recovery_v7/baselines/garl_oof_predictions.csv",
+      "sha256": "9b7ff010c0ae5ac2bc3c5e91c323ee238d4434f3b2194ec1beb26d660926f0bd"
+    },
+    "garl_release_commit": "256661242b8a7f5e56aa3c1c02348b30f6e89de6",
+    "v5_grouped_protocol": {
+      "artifact_sha256": "f09c688fb4991714abc9d645dda787cb27f1e02a2d1857312ce3e45519bd7a63",
+      "path": "configs/protocol/scientific_recovery_v5_train_only_grouped_dev.json",
+      "sha256": "be48917ae52d1c77d046318bd9ed284a32e8b16258257203fff439332b547874"
+    },
+    "v7_balanced_protocol": {
+      "artifact_sha256": "7267421c288f6a5e68e779e344dabebb62c9d04df5e100186a8013dfe4a93cf9",
+      "path": "configs/protocol/scientific_recovery_v7_balanced_oof.json",
+      "sha256": "359b8268ba3428cbe000ef2f6b4feb0a83b605ab9685a0c167231977e5d638a6"
+    },
+    "v7_baseline_manifest": {
+      "artifact_sha256": "de5ff61811f7eb7579797c7131a74b279481b2ac9ed005726885e4d6434378c9",
+      "path": "artifacts/scientific_recovery_v7/baselines/manifest.json",
+      "sha256": "df5071a54834b4e336b732cfa7f3deabfca0a0ac53374139ce180c88f3c9e304"
+    }
+  },
+  "status": "frozen_before_v8_training",
+  "timevol20_3_capacity": {
+    "a5": {
+      "full_forward_flops": 1716493824,
+      "full_forward_macs": 858246912,
+      "input_shape": [
+        1,
+        3,
+        12,
+        128,
+        128
+      ],
+      "input_stem_params": 9600,
+      "total_params": 424274
+    },
+    "capacity_control": {
+      "default_enabled": false,
+      "purpose": "separate a near-threshold frontend result from input-stem capacity",
+      "trigger": "only if B1 marginally passes the seed-7 screen gate"
+    },
+    "delta_input_stem_params": 6400,
+    "delta_total_params": 6400,
+    "delta_total_params_fraction": 0.015084591561113808,
+    "macs_estimate": {
+      "delta_t_seconds": [
+        0.02,
+        0.02
+      ],
+      "method": "torch.utils.flop_counter.FlopCounterMode eval full forward; MACs=FLOPs/2",
+      "model_mode": "eval",
+      "scope": "CausalScaleTTC downstream plus mandatory input stem"
+    },
+    "timevol20_3": {
+      "full_forward_flops": 1873780224,
+      "full_forward_macs": 936890112,
+      "input_shape": [
+        1,
+        3,
+        20,
+        128,
+        128
+      ],
+      "input_stem_params": 16000,
+      "total_params": 430674
+    }
+  },
+  "training_contract": {
+    "batch_size": 32,
+    "epochs": 18,
+    "learning_rate": 0.0003,
+    "multiseed_replication_one_winner_only": true,
+    "multiseed_replication_seeds": [
+      13,
+      23
+    ],
+    "optimization_stability_only": true,
+    "optimizer": "AdamW",
+    "reselection_or_rescue_forbidden": true,
+    "screen_seed": 7
+  },
+  "v8_supersession": {
+    "a4_in_v8": "mechanistic diagnostic only",
+    "historical_v7_a4_retention_gate": "immutable",
+    "provisional_post_v7_commit": "f9331b29596c4107430af5a8c78935bd127ccf94",
+    "v8_ttc_candidate_gate": "supersedes provisional V8 A4 retention requirement"
+  }
+}

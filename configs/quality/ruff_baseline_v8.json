@@ -1,0 +1,5696 @@
+{
+  "artifact_sha256": "dbf4f466ff34da36b50d41716ff535cee7d341e5761feee0d915506444c41dbf",
+  "generated_against_git_commit": "f9331b29596c4107430af5a8c78935bd127ccf94",
+  "normalized_violations": [
+    {
+      "count": 1,
+      "message": "Import from `collections.abc` instead: `Mapping`",
+      "path": "scripts/aggregate_object_event_v4_10_multiseed.py",
+      "rule_code": "UP035"
+    },
+    {
+      "count": 3,
+      "message": "Line too long (103 > 100)",
+      "path": "scripts/aggregate_object_event_v4_14_multiseed.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (105 > 100)",
+      "path": "scripts/aggregate_object_event_v4_14_multiseed.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (106 > 100)",
+      "path": "scripts/aggregate_object_event_v4_14_multiseed.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (113 > 100)",
+      "path": "scripts/aggregate_object_event_v4_14_multiseed.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (115 > 100)",
+      "path": "scripts/aggregate_object_event_v4_14_multiseed.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (116 > 100)",
+      "path": "scripts/aggregate_object_event_v4_14_multiseed.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (121 > 100)",
+      "path": "scripts/aggregate_object_event_v4_14_multiseed.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (151 > 100)",
+      "path": "scripts/aggregate_object_event_v4_14_multiseed.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Import from `collections.abc` instead: `Mapping`",
+      "path": "scripts/aggregate_object_event_v4_14_multiseed.py",
+      "rule_code": "UP035"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (103 > 100)",
+      "path": "scripts/aggregate_object_event_v4_3_multiseed.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 3,
+      "message": "Line too long (104 > 100)",
+      "path": "scripts/aggregate_object_event_v4_3_multiseed.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (107 > 100)",
+      "path": "scripts/aggregate_object_event_v4_3_multiseed.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (111 > 100)",
+      "path": "scripts/aggregate_object_event_v4_3_multiseed.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "scripts/aggregate_object_event_v4_5_multiseed.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 3,
+      "message": "Module level import not at top of file",
+      "path": "scripts/analyze_object_event_v4_11_sign_router.py",
+      "rule_code": "E402"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (101 > 100)",
+      "path": "scripts/analyze_object_event_v4_11_sign_router.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Use `datetime.UTC` alias",
+      "path": "scripts/analyze_object_event_v4_11_sign_router.py",
+      "rule_code": "UP017"
+    },
+    {
+      "count": 1,
+      "message": "Import from `collections.abc` instead: `Mapping`",
+      "path": "scripts/analyze_object_event_v4_11_sign_router.py",
+      "rule_code": "UP035"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (102 > 100)",
+      "path": "scripts/analyze_object_event_v4_13_selective_dual_head.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (103 > 100)",
+      "path": "scripts/analyze_object_event_v4_13_selective_dual_head.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (108 > 100)",
+      "path": "scripts/analyze_object_event_v4_13_selective_dual_head.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (118 > 100)",
+      "path": "scripts/analyze_object_event_v4_13_selective_dual_head.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (121 > 100)",
+      "path": "scripts/analyze_object_event_v4_13_selective_dual_head.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (128 > 100)",
+      "path": "scripts/analyze_object_event_v4_13_selective_dual_head.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "scripts/analyze_object_event_v4_13_selective_dual_head.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Import from `collections.abc` instead: `Mapping`",
+      "path": "scripts/analyze_object_event_v4_13_selective_dual_head.py",
+      "rule_code": "UP035"
+    },
+    {
+      "count": 1,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `frozen`",
+      "path": "scripts/analyze_object_event_v4_18_radial_physics.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 1,
+      "message": "`copy` imported but unused",
+      "path": "scripts/analyze_object_event_v4_18_radial_physics.py",
+      "rule_code": "F401"
+    },
+    {
+      "count": 1,
+      "message": "`e_jepa_ttc.training.object_event_v4_18.sign_from_negative_logit` imported but unused",
+      "path": "scripts/analyze_object_event_v4_18_radial_physics.py",
+      "rule_code": "F401"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "scripts/analyze_object_event_v4_18_radial_physics.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `frozen`",
+      "path": "scripts/analyze_object_event_v4_19_dense_correspondence.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (101 > 100)",
+      "path": "scripts/analyze_object_event_v4_19_dense_correspondence.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (102 > 100)",
+      "path": "scripts/analyze_object_event_v4_19_dense_correspondence.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (104 > 100)",
+      "path": "scripts/analyze_object_event_v4_19_dense_correspondence.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 3,
+      "message": "Line too long (106 > 100)",
+      "path": "scripts/analyze_object_event_v4_19_dense_correspondence.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 4,
+      "message": "Line too long (108 > 100)",
+      "path": "scripts/analyze_object_event_v4_19_dense_correspondence.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (109 > 100)",
+      "path": "scripts/analyze_object_event_v4_19_dense_correspondence.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (110 > 100)",
+      "path": "scripts/analyze_object_event_v4_19_dense_correspondence.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (111 > 100)",
+      "path": "scripts/analyze_object_event_v4_19_dense_correspondence.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (112 > 100)",
+      "path": "scripts/analyze_object_event_v4_19_dense_correspondence.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (116 > 100)",
+      "path": "scripts/analyze_object_event_v4_19_dense_correspondence.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (122 > 100)",
+      "path": "scripts/analyze_object_event_v4_19_dense_correspondence.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (126 > 100)",
+      "path": "scripts/analyze_object_event_v4_19_dense_correspondence.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (128 > 100)",
+      "path": "scripts/analyze_object_event_v4_19_dense_correspondence.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (131 > 100)",
+      "path": "scripts/analyze_object_event_v4_19_dense_correspondence.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (134 > 100)",
+      "path": "scripts/analyze_object_event_v4_19_dense_correspondence.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Local variable `train_magnitude` is assigned to but never used",
+      "path": "scripts/analyze_object_event_v4_19_dense_correspondence.py",
+      "rule_code": "F841"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "scripts/analyze_object_event_v4_19_dense_correspondence.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `_construct`",
+      "path": "scripts/analyze_object_event_v4_20_box_pseudoflow.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 1,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `frozen`",
+      "path": "scripts/analyze_object_event_v4_20_box_pseudoflow.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 1,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `split`",
+      "path": "scripts/analyze_object_event_v4_20_box_pseudoflow.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 4,
+      "message": "Line too long (102 > 100)",
+      "path": "scripts/analyze_object_event_v4_20_box_pseudoflow.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (103 > 100)",
+      "path": "scripts/analyze_object_event_v4_20_box_pseudoflow.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (104 > 100)",
+      "path": "scripts/analyze_object_event_v4_20_box_pseudoflow.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (106 > 100)",
+      "path": "scripts/analyze_object_event_v4_20_box_pseudoflow.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (107 > 100)",
+      "path": "scripts/analyze_object_event_v4_20_box_pseudoflow.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (109 > 100)",
+      "path": "scripts/analyze_object_event_v4_20_box_pseudoflow.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (110 > 100)",
+      "path": "scripts/analyze_object_event_v4_20_box_pseudoflow.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (111 > 100)",
+      "path": "scripts/analyze_object_event_v4_20_box_pseudoflow.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (113 > 100)",
+      "path": "scripts/analyze_object_event_v4_20_box_pseudoflow.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (115 > 100)",
+      "path": "scripts/analyze_object_event_v4_20_box_pseudoflow.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (126 > 100)",
+      "path": "scripts/analyze_object_event_v4_20_box_pseudoflow.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (131 > 100)",
+      "path": "scripts/analyze_object_event_v4_20_box_pseudoflow.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (137 > 100)",
+      "path": "scripts/analyze_object_event_v4_20_box_pseudoflow.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "scripts/analyze_object_event_v4_20_box_pseudoflow.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Import from `collections.abc` instead: `Mapping`",
+      "path": "scripts/analyze_object_event_v4_20_box_pseudoflow.py",
+      "rule_code": "UP035"
+    },
+    {
+      "count": 1,
+      "message": "Remove quotes from type annotation",
+      "path": "scripts/analyze_object_event_v4_20_box_pseudoflow.py",
+      "rule_code": "UP037"
+    },
+    {
+      "count": 1,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `split`",
+      "path": "scripts/analyze_object_event_v4_21_box_pseudoflow_target_audit.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (101 > 100)",
+      "path": "scripts/analyze_object_event_v4_21_box_pseudoflow_target_audit.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (104 > 100)",
+      "path": "scripts/analyze_object_event_v4_21_box_pseudoflow_target_audit.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (105 > 100)",
+      "path": "scripts/analyze_object_event_v4_21_box_pseudoflow_target_audit.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (108 > 100)",
+      "path": "scripts/analyze_object_event_v4_21_box_pseudoflow_target_audit.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (110 > 100)",
+      "path": "scripts/analyze_object_event_v4_21_box_pseudoflow_target_audit.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (111 > 100)",
+      "path": "scripts/analyze_object_event_v4_21_box_pseudoflow_target_audit.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (114 > 100)",
+      "path": "scripts/analyze_object_event_v4_21_box_pseudoflow_target_audit.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (120 > 100)",
+      "path": "scripts/analyze_object_event_v4_21_box_pseudoflow_target_audit.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (123 > 100)",
+      "path": "scripts/analyze_object_event_v4_21_box_pseudoflow_target_audit.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (126 > 100)",
+      "path": "scripts/analyze_object_event_v4_21_box_pseudoflow_target_audit.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (133 > 100)",
+      "path": "scripts/analyze_object_event_v4_21_box_pseudoflow_target_audit.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (134 > 100)",
+      "path": "scripts/analyze_object_event_v4_21_box_pseudoflow_target_audit.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (137 > 100)",
+      "path": "scripts/analyze_object_event_v4_21_box_pseudoflow_target_audit.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (146 > 100)",
+      "path": "scripts/analyze_object_event_v4_21_box_pseudoflow_target_audit.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (154 > 100)",
+      "path": "scripts/analyze_object_event_v4_21_box_pseudoflow_target_audit.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (181 > 100)",
+      "path": "scripts/analyze_object_event_v4_21_box_pseudoflow_target_audit.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "scripts/analyze_object_event_v4_21_box_pseudoflow_target_audit.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `_construct`",
+      "path": "scripts/analyze_object_event_v4_22_encoder_geometry.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 2,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `backbone`",
+      "path": "scripts/analyze_object_event_v4_22_encoder_geometry.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 2,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `split`",
+      "path": "scripts/analyze_object_event_v4_22_encoder_geometry.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 1,
+      "message": "Module level import not at top of file",
+      "path": "scripts/analyze_object_event_v4_22_encoder_geometry.py",
+      "rule_code": "E402"
+    },
+    {
+      "count": 3,
+      "message": "Line too long (102 > 100)",
+      "path": "scripts/analyze_object_event_v4_22_encoder_geometry.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (103 > 100)",
+      "path": "scripts/analyze_object_event_v4_22_encoder_geometry.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (104 > 100)",
+      "path": "scripts/analyze_object_event_v4_22_encoder_geometry.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (105 > 100)",
+      "path": "scripts/analyze_object_event_v4_22_encoder_geometry.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (106 > 100)",
+      "path": "scripts/analyze_object_event_v4_22_encoder_geometry.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 4,
+      "message": "Line too long (107 > 100)",
+      "path": "scripts/analyze_object_event_v4_22_encoder_geometry.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (108 > 100)",
+      "path": "scripts/analyze_object_event_v4_22_encoder_geometry.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (109 > 100)",
+      "path": "scripts/analyze_object_event_v4_22_encoder_geometry.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 4,
+      "message": "Line too long (110 > 100)",
+      "path": "scripts/analyze_object_event_v4_22_encoder_geometry.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (111 > 100)",
+      "path": "scripts/analyze_object_event_v4_22_encoder_geometry.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (113 > 100)",
+      "path": "scripts/analyze_object_event_v4_22_encoder_geometry.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (114 > 100)",
+      "path": "scripts/analyze_object_event_v4_22_encoder_geometry.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (117 > 100)",
+      "path": "scripts/analyze_object_event_v4_22_encoder_geometry.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (118 > 100)",
+      "path": "scripts/analyze_object_event_v4_22_encoder_geometry.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 4,
+      "message": "Line too long (119 > 100)",
+      "path": "scripts/analyze_object_event_v4_22_encoder_geometry.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 3,
+      "message": "Line too long (120 > 100)",
+      "path": "scripts/analyze_object_event_v4_22_encoder_geometry.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (125 > 100)",
+      "path": "scripts/analyze_object_event_v4_22_encoder_geometry.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (126 > 100)",
+      "path": "scripts/analyze_object_event_v4_22_encoder_geometry.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (127 > 100)",
+      "path": "scripts/analyze_object_event_v4_22_encoder_geometry.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (131 > 100)",
+      "path": "scripts/analyze_object_event_v4_22_encoder_geometry.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (133 > 100)",
+      "path": "scripts/analyze_object_event_v4_22_encoder_geometry.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (136 > 100)",
+      "path": "scripts/analyze_object_event_v4_22_encoder_geometry.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (139 > 100)",
+      "path": "scripts/analyze_object_event_v4_22_encoder_geometry.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (158 > 100)",
+      "path": "scripts/analyze_object_event_v4_22_encoder_geometry.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "scripts/analyze_object_event_v4_22_encoder_geometry.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Import from `collections.abc` instead: `Mapping`",
+      "path": "scripts/analyze_object_event_v4_22_encoder_geometry.py",
+      "rule_code": "UP035"
+    },
+    {
+      "count": 1,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `_construct`",
+      "path": "scripts/analyze_object_event_v4_23_joint_geometry_ttc.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 2,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `backbone`",
+      "path": "scripts/analyze_object_event_v4_23_joint_geometry_ttc.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 1,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `model_config`",
+      "path": "scripts/analyze_object_event_v4_23_joint_geometry_ttc.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 2,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `split`",
+      "path": "scripts/analyze_object_event_v4_23_joint_geometry_ttc.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (101 > 100)",
+      "path": "scripts/analyze_object_event_v4_23_joint_geometry_ttc.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 4,
+      "message": "Line too long (103 > 100)",
+      "path": "scripts/analyze_object_event_v4_23_joint_geometry_ttc.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (104 > 100)",
+      "path": "scripts/analyze_object_event_v4_23_joint_geometry_ttc.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (105 > 100)",
+      "path": "scripts/analyze_object_event_v4_23_joint_geometry_ttc.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (106 > 100)",
+      "path": "scripts/analyze_object_event_v4_23_joint_geometry_ttc.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (107 > 100)",
+      "path": "scripts/analyze_object_event_v4_23_joint_geometry_ttc.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 3,
+      "message": "Line too long (108 > 100)",
+      "path": "scripts/analyze_object_event_v4_23_joint_geometry_ttc.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (109 > 100)",
+      "path": "scripts/analyze_object_event_v4_23_joint_geometry_ttc.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (110 > 100)",
+      "path": "scripts/analyze_object_event_v4_23_joint_geometry_ttc.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 3,
+      "message": "Line too long (111 > 100)",
+      "path": "scripts/analyze_object_event_v4_23_joint_geometry_ttc.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (112 > 100)",
+      "path": "scripts/analyze_object_event_v4_23_joint_geometry_ttc.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (113 > 100)",
+      "path": "scripts/analyze_object_event_v4_23_joint_geometry_ttc.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (115 > 100)",
+      "path": "scripts/analyze_object_event_v4_23_joint_geometry_ttc.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (116 > 100)",
+      "path": "scripts/analyze_object_event_v4_23_joint_geometry_ttc.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (117 > 100)",
+      "path": "scripts/analyze_object_event_v4_23_joint_geometry_ttc.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (120 > 100)",
+      "path": "scripts/analyze_object_event_v4_23_joint_geometry_ttc.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (124 > 100)",
+      "path": "scripts/analyze_object_event_v4_23_joint_geometry_ttc.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (126 > 100)",
+      "path": "scripts/analyze_object_event_v4_23_joint_geometry_ttc.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (127 > 100)",
+      "path": "scripts/analyze_object_event_v4_23_joint_geometry_ttc.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (132 > 100)",
+      "path": "scripts/analyze_object_event_v4_23_joint_geometry_ttc.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (133 > 100)",
+      "path": "scripts/analyze_object_event_v4_23_joint_geometry_ttc.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (134 > 100)",
+      "path": "scripts/analyze_object_event_v4_23_joint_geometry_ttc.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (135 > 100)",
+      "path": "scripts/analyze_object_event_v4_23_joint_geometry_ttc.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (138 > 100)",
+      "path": "scripts/analyze_object_event_v4_23_joint_geometry_ttc.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (145 > 100)",
+      "path": "scripts/analyze_object_event_v4_23_joint_geometry_ttc.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (150 > 100)",
+      "path": "scripts/analyze_object_event_v4_23_joint_geometry_ttc.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "scripts/analyze_object_event_v4_23_joint_geometry_ttc.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Import from `collections.abc` instead: `Mapping`",
+      "path": "scripts/analyze_object_event_v4_23_joint_geometry_ttc.py",
+      "rule_code": "UP035"
+    },
+    {
+      "count": 1,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `_construct`",
+      "path": "scripts/analyze_object_event_v4_24_orchestrator.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 1,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `_subset_split`",
+      "path": "scripts/analyze_object_event_v4_24_orchestrator.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 3,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `backbone`",
+      "path": "scripts/analyze_object_event_v4_24_orchestrator.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 2,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `model_config`",
+      "path": "scripts/analyze_object_event_v4_24_orchestrator.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 4,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `split`",
+      "path": "scripts/analyze_object_event_v4_24_orchestrator.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (101 > 100)",
+      "path": "scripts/analyze_object_event_v4_24_orchestrator.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (102 > 100)",
+      "path": "scripts/analyze_object_event_v4_24_orchestrator.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (103 > 100)",
+      "path": "scripts/analyze_object_event_v4_24_orchestrator.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 4,
+      "message": "Line too long (104 > 100)",
+      "path": "scripts/analyze_object_event_v4_24_orchestrator.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 4,
+      "message": "Line too long (105 > 100)",
+      "path": "scripts/analyze_object_event_v4_24_orchestrator.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (106 > 100)",
+      "path": "scripts/analyze_object_event_v4_24_orchestrator.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (107 > 100)",
+      "path": "scripts/analyze_object_event_v4_24_orchestrator.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (109 > 100)",
+      "path": "scripts/analyze_object_event_v4_24_orchestrator.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (110 > 100)",
+      "path": "scripts/analyze_object_event_v4_24_orchestrator.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (111 > 100)",
+      "path": "scripts/analyze_object_event_v4_24_orchestrator.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 5,
+      "message": "Line too long (112 > 100)",
+      "path": "scripts/analyze_object_event_v4_24_orchestrator.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 3,
+      "message": "Line too long (113 > 100)",
+      "path": "scripts/analyze_object_event_v4_24_orchestrator.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (114 > 100)",
+      "path": "scripts/analyze_object_event_v4_24_orchestrator.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (117 > 100)",
+      "path": "scripts/analyze_object_event_v4_24_orchestrator.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 4,
+      "message": "Line too long (118 > 100)",
+      "path": "scripts/analyze_object_event_v4_24_orchestrator.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (120 > 100)",
+      "path": "scripts/analyze_object_event_v4_24_orchestrator.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (122 > 100)",
+      "path": "scripts/analyze_object_event_v4_24_orchestrator.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (123 > 100)",
+      "path": "scripts/analyze_object_event_v4_24_orchestrator.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (124 > 100)",
+      "path": "scripts/analyze_object_event_v4_24_orchestrator.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (126 > 100)",
+      "path": "scripts/analyze_object_event_v4_24_orchestrator.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (128 > 100)",
+      "path": "scripts/analyze_object_event_v4_24_orchestrator.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 3,
+      "message": "Line too long (129 > 100)",
+      "path": "scripts/analyze_object_event_v4_24_orchestrator.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (130 > 100)",
+      "path": "scripts/analyze_object_event_v4_24_orchestrator.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (131 > 100)",
+      "path": "scripts/analyze_object_event_v4_24_orchestrator.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (132 > 100)",
+      "path": "scripts/analyze_object_event_v4_24_orchestrator.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (134 > 100)",
+      "path": "scripts/analyze_object_event_v4_24_orchestrator.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (137 > 100)",
+      "path": "scripts/analyze_object_event_v4_24_orchestrator.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (138 > 100)",
+      "path": "scripts/analyze_object_event_v4_24_orchestrator.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (139 > 100)",
+      "path": "scripts/analyze_object_event_v4_24_orchestrator.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (142 > 100)",
+      "path": "scripts/analyze_object_event_v4_24_orchestrator.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (147 > 100)",
+      "path": "scripts/analyze_object_event_v4_24_orchestrator.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (154 > 100)",
+      "path": "scripts/analyze_object_event_v4_24_orchestrator.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (157 > 100)",
+      "path": "scripts/analyze_object_event_v4_24_orchestrator.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (162 > 100)",
+      "path": "scripts/analyze_object_event_v4_24_orchestrator.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (163 > 100)",
+      "path": "scripts/analyze_object_event_v4_24_orchestrator.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 7,
+      "message": "Multiple statements on one line (semicolon)",
+      "path": "scripts/analyze_object_event_v4_24_orchestrator.py",
+      "rule_code": "E702"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "scripts/analyze_object_event_v4_24_orchestrator.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Import from `collections.abc` instead: `Mapping`",
+      "path": "scripts/analyze_object_event_v4_24_orchestrator.py",
+      "rule_code": "UP035"
+    },
+    {
+      "count": 1,
+      "message": "Missing return type annotation for private function `_fit_candidate`",
+      "path": "scripts/analyze_object_event_v4_25_geometry_readout.py",
+      "rule_code": "ANN202"
+    },
+    {
+      "count": 1,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `_load_champion`",
+      "path": "scripts/analyze_object_event_v4_25_geometry_readout.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 1,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `model_config`",
+      "path": "scripts/analyze_object_event_v4_25_geometry_readout.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 1,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `split`",
+      "path": "scripts/analyze_object_event_v4_25_geometry_readout.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 1,
+      "message": "Multiple imports on one line",
+      "path": "scripts/analyze_object_event_v4_25_geometry_readout.py",
+      "rule_code": "E401"
+    },
+    {
+      "count": 7,
+      "message": "Module level import not at top of file",
+      "path": "scripts/analyze_object_event_v4_25_geometry_readout.py",
+      "rule_code": "E402"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (101 > 100)",
+      "path": "scripts/analyze_object_event_v4_25_geometry_readout.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (102 > 100)",
+      "path": "scripts/analyze_object_event_v4_25_geometry_readout.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (103 > 100)",
+      "path": "scripts/analyze_object_event_v4_25_geometry_readout.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (105 > 100)",
+      "path": "scripts/analyze_object_event_v4_25_geometry_readout.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (107 > 100)",
+      "path": "scripts/analyze_object_event_v4_25_geometry_readout.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (108 > 100)",
+      "path": "scripts/analyze_object_event_v4_25_geometry_readout.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (113 > 100)",
+      "path": "scripts/analyze_object_event_v4_25_geometry_readout.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (116 > 100)",
+      "path": "scripts/analyze_object_event_v4_25_geometry_readout.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (117 > 100)",
+      "path": "scripts/analyze_object_event_v4_25_geometry_readout.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (118 > 100)",
+      "path": "scripts/analyze_object_event_v4_25_geometry_readout.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (120 > 100)",
+      "path": "scripts/analyze_object_event_v4_25_geometry_readout.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (122 > 100)",
+      "path": "scripts/analyze_object_event_v4_25_geometry_readout.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (124 > 100)",
+      "path": "scripts/analyze_object_event_v4_25_geometry_readout.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (127 > 100)",
+      "path": "scripts/analyze_object_event_v4_25_geometry_readout.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (128 > 100)",
+      "path": "scripts/analyze_object_event_v4_25_geometry_readout.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (134 > 100)",
+      "path": "scripts/analyze_object_event_v4_25_geometry_readout.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (144 > 100)",
+      "path": "scripts/analyze_object_event_v4_25_geometry_readout.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (148 > 100)",
+      "path": "scripts/analyze_object_event_v4_25_geometry_readout.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (151 > 100)",
+      "path": "scripts/analyze_object_event_v4_25_geometry_readout.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (159 > 100)",
+      "path": "scripts/analyze_object_event_v4_25_geometry_readout.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (168 > 100)",
+      "path": "scripts/analyze_object_event_v4_25_geometry_readout.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (169 > 100)",
+      "path": "scripts/analyze_object_event_v4_25_geometry_readout.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (170 > 100)",
+      "path": "scripts/analyze_object_event_v4_25_geometry_readout.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (173 > 100)",
+      "path": "scripts/analyze_object_event_v4_25_geometry_readout.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (175 > 100)",
+      "path": "scripts/analyze_object_event_v4_25_geometry_readout.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (199 > 100)",
+      "path": "scripts/analyze_object_event_v4_25_geometry_readout.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (270 > 100)",
+      "path": "scripts/analyze_object_event_v4_25_geometry_readout.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (347 > 100)",
+      "path": "scripts/analyze_object_event_v4_25_geometry_readout.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 6,
+      "message": "Multiple statements on one line (colon)",
+      "path": "scripts/analyze_object_event_v4_25_geometry_readout.py",
+      "rule_code": "E701"
+    },
+    {
+      "count": 41,
+      "message": "Multiple statements on one line (semicolon)",
+      "path": "scripts/analyze_object_event_v4_25_geometry_readout.py",
+      "rule_code": "E702"
+    },
+    {
+      "count": 1,
+      "message": "Local variable `eval_idx` is assigned to but never used",
+      "path": "scripts/analyze_object_event_v4_25_geometry_readout.py",
+      "rule_code": "F841"
+    },
+    {
+      "count": 1,
+      "message": "Local variable `fit_idx` is assigned to but never used",
+      "path": "scripts/analyze_object_event_v4_25_geometry_readout.py",
+      "rule_code": "F841"
+    },
+    {
+      "count": 2,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "scripts/analyze_object_event_v4_25_geometry_readout.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `backbone`",
+      "path": "scripts/analyze_object_event_v4_26_oof_residual_stack.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 1,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `model_config`",
+      "path": "scripts/analyze_object_event_v4_26_oof_residual_stack.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 2,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `split`",
+      "path": "scripts/analyze_object_event_v4_26_oof_residual_stack.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (101 > 100)",
+      "path": "scripts/analyze_object_event_v4_26_oof_residual_stack.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (102 > 100)",
+      "path": "scripts/analyze_object_event_v4_26_oof_residual_stack.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 3,
+      "message": "Line too long (103 > 100)",
+      "path": "scripts/analyze_object_event_v4_26_oof_residual_stack.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (104 > 100)",
+      "path": "scripts/analyze_object_event_v4_26_oof_residual_stack.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (105 > 100)",
+      "path": "scripts/analyze_object_event_v4_26_oof_residual_stack.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (109 > 100)",
+      "path": "scripts/analyze_object_event_v4_26_oof_residual_stack.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 3,
+      "message": "Line too long (110 > 100)",
+      "path": "scripts/analyze_object_event_v4_26_oof_residual_stack.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (111 > 100)",
+      "path": "scripts/analyze_object_event_v4_26_oof_residual_stack.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (112 > 100)",
+      "path": "scripts/analyze_object_event_v4_26_oof_residual_stack.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (116 > 100)",
+      "path": "scripts/analyze_object_event_v4_26_oof_residual_stack.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (120 > 100)",
+      "path": "scripts/analyze_object_event_v4_26_oof_residual_stack.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (121 > 100)",
+      "path": "scripts/analyze_object_event_v4_26_oof_residual_stack.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (154 > 100)",
+      "path": "scripts/analyze_object_event_v4_26_oof_residual_stack.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (160 > 100)",
+      "path": "scripts/analyze_object_event_v4_26_oof_residual_stack.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "scripts/analyze_object_event_v4_26_oof_residual_stack.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `_construct`",
+      "path": "scripts/analyze_object_event_v4_27_scale_correlation_lhr.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 4,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `split`",
+      "path": "scripts/analyze_object_event_v4_27_scale_correlation_lhr.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (101 > 100)",
+      "path": "scripts/analyze_object_event_v4_27_scale_correlation_lhr.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (102 > 100)",
+      "path": "scripts/analyze_object_event_v4_27_scale_correlation_lhr.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (103 > 100)",
+      "path": "scripts/analyze_object_event_v4_27_scale_correlation_lhr.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (104 > 100)",
+      "path": "scripts/analyze_object_event_v4_27_scale_correlation_lhr.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 4,
+      "message": "Line too long (105 > 100)",
+      "path": "scripts/analyze_object_event_v4_27_scale_correlation_lhr.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 3,
+      "message": "Line too long (106 > 100)",
+      "path": "scripts/analyze_object_event_v4_27_scale_correlation_lhr.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (108 > 100)",
+      "path": "scripts/analyze_object_event_v4_27_scale_correlation_lhr.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (109 > 100)",
+      "path": "scripts/analyze_object_event_v4_27_scale_correlation_lhr.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (110 > 100)",
+      "path": "scripts/analyze_object_event_v4_27_scale_correlation_lhr.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (117 > 100)",
+      "path": "scripts/analyze_object_event_v4_27_scale_correlation_lhr.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (119 > 100)",
+      "path": "scripts/analyze_object_event_v4_27_scale_correlation_lhr.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (126 > 100)",
+      "path": "scripts/analyze_object_event_v4_27_scale_correlation_lhr.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (129 > 100)",
+      "path": "scripts/analyze_object_event_v4_27_scale_correlation_lhr.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (131 > 100)",
+      "path": "scripts/analyze_object_event_v4_27_scale_correlation_lhr.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (132 > 100)",
+      "path": "scripts/analyze_object_event_v4_27_scale_correlation_lhr.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (137 > 100)",
+      "path": "scripts/analyze_object_event_v4_27_scale_correlation_lhr.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (139 > 100)",
+      "path": "scripts/analyze_object_event_v4_27_scale_correlation_lhr.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (140 > 100)",
+      "path": "scripts/analyze_object_event_v4_27_scale_correlation_lhr.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (149 > 100)",
+      "path": "scripts/analyze_object_event_v4_27_scale_correlation_lhr.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (151 > 100)",
+      "path": "scripts/analyze_object_event_v4_27_scale_correlation_lhr.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (163 > 100)",
+      "path": "scripts/analyze_object_event_v4_27_scale_correlation_lhr.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (169 > 100)",
+      "path": "scripts/analyze_object_event_v4_27_scale_correlation_lhr.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "`dataclasses.asdict` imported but unused",
+      "path": "scripts/analyze_object_event_v4_27_scale_correlation_lhr.py",
+      "rule_code": "F401"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "scripts/analyze_object_event_v4_27_scale_correlation_lhr.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Import from `collections.abc` instead: `Mapping`",
+      "path": "scripts/analyze_object_event_v4_27_scale_correlation_lhr.py",
+      "rule_code": "UP035"
+    },
+    {
+      "count": 1,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `_construct`",
+      "path": "scripts/analyze_object_event_v4_28_multiscale_posterior.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 4,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `split`",
+      "path": "scripts/analyze_object_event_v4_28_multiscale_posterior.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 3,
+      "message": "Line too long (101 > 100)",
+      "path": "scripts/analyze_object_event_v4_28_multiscale_posterior.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (102 > 100)",
+      "path": "scripts/analyze_object_event_v4_28_multiscale_posterior.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 4,
+      "message": "Line too long (103 > 100)",
+      "path": "scripts/analyze_object_event_v4_28_multiscale_posterior.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (105 > 100)",
+      "path": "scripts/analyze_object_event_v4_28_multiscale_posterior.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (106 > 100)",
+      "path": "scripts/analyze_object_event_v4_28_multiscale_posterior.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (108 > 100)",
+      "path": "scripts/analyze_object_event_v4_28_multiscale_posterior.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (109 > 100)",
+      "path": "scripts/analyze_object_event_v4_28_multiscale_posterior.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (110 > 100)",
+      "path": "scripts/analyze_object_event_v4_28_multiscale_posterior.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (112 > 100)",
+      "path": "scripts/analyze_object_event_v4_28_multiscale_posterior.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (113 > 100)",
+      "path": "scripts/analyze_object_event_v4_28_multiscale_posterior.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (115 > 100)",
+      "path": "scripts/analyze_object_event_v4_28_multiscale_posterior.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (116 > 100)",
+      "path": "scripts/analyze_object_event_v4_28_multiscale_posterior.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (117 > 100)",
+      "path": "scripts/analyze_object_event_v4_28_multiscale_posterior.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (118 > 100)",
+      "path": "scripts/analyze_object_event_v4_28_multiscale_posterior.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (119 > 100)",
+      "path": "scripts/analyze_object_event_v4_28_multiscale_posterior.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (123 > 100)",
+      "path": "scripts/analyze_object_event_v4_28_multiscale_posterior.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (129 > 100)",
+      "path": "scripts/analyze_object_event_v4_28_multiscale_posterior.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (155 > 100)",
+      "path": "scripts/analyze_object_event_v4_28_multiscale_posterior.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (163 > 100)",
+      "path": "scripts/analyze_object_event_v4_28_multiscale_posterior.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (169 > 100)",
+      "path": "scripts/analyze_object_event_v4_28_multiscale_posterior.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (190 > 100)",
+      "path": "scripts/analyze_object_event_v4_28_multiscale_posterior.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "scripts/analyze_object_event_v4_28_multiscale_posterior.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Import from `collections.abc` instead: `Mapping`",
+      "path": "scripts/analyze_object_event_v4_28_multiscale_posterior.py",
+      "rule_code": "UP035"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "scripts/analyze_object_event_v4_9_fixed_fusion.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (104 > 100)",
+      "path": "scripts/audit_a5_capacity_resolution.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (105 > 100)",
+      "path": "scripts/audit_a5_capacity_resolution.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (109 > 100)",
+      "path": "scripts/audit_a5_capacity_resolution.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (113 > 100)",
+      "path": "scripts/audit_a5_capacity_resolution.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (101 > 100)",
+      "path": "scripts/audit_a5_scale_readiness.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (103 > 100)",
+      "path": "scripts/audit_a5_scale_readiness.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (115 > 100)",
+      "path": "scripts/audit_a5_scale_readiness.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (117 > 100)",
+      "path": "scripts/audit_a5_scale_readiness.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (120 > 100)",
+      "path": "scripts/audit_a5_scale_readiness.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (147 > 100)",
+      "path": "scripts/audit_a5_scale_readiness.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Module level import not at top of file",
+      "path": "scripts/audit_oracle_roi_future_invariance.py",
+      "rule_code": "E402"
+    },
+    {
+      "count": 2,
+      "message": "Module level import not at top of file",
+      "path": "scripts/audit_prefix_causality.py",
+      "rule_code": "E402"
+    },
+    {
+      "count": 3,
+      "message": "Line too long (104 > 100)",
+      "path": "scripts/audit_prefix_causality.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (105 > 100)",
+      "path": "scripts/audit_prefix_causality.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (106 > 100)",
+      "path": "scripts/audit_prefix_causality.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (109 > 100)",
+      "path": "scripts/audit_prefix_causality.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (120 > 100)",
+      "path": "scripts/audit_prefix_causality.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (138 > 100)",
+      "path": "scripts/audit_prefix_causality.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Module level import not at top of file",
+      "path": "scripts/audit_scientific_recovery_contracts.py",
+      "rule_code": "E402"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (104 > 100)",
+      "path": "scripts/audit_scientific_recovery_contracts.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (109 > 100)",
+      "path": "scripts/audit_scientific_recovery_contracts.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (110 > 100)",
+      "path": "scripts/audit_scientific_recovery_contracts.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (113 > 100)",
+      "path": "scripts/audit_scientific_recovery_contracts.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (114 > 100)",
+      "path": "scripts/audit_scientific_recovery_contracts.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (137 > 100)",
+      "path": "scripts/audit_scientific_recovery_contracts.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "`ast` imported but unused",
+      "path": "scripts/audit_scientific_recovery_contracts.py",
+      "rule_code": "F401"
+    },
+    {
+      "count": 3,
+      "message": "Module level import not at top of file",
+      "path": "scripts/build_garl_budget_matched_subset.py",
+      "rule_code": "E402"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (102 > 100)",
+      "path": "scripts/build_garl_budget_matched_subset.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (111 > 100)",
+      "path": "scripts/build_garl_budget_matched_subset.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (116 > 100)",
+      "path": "scripts/build_garl_budget_matched_subset.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (126 > 100)",
+      "path": "scripts/build_garl_budget_matched_subset.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (182 > 100)",
+      "path": "scripts/build_garl_budget_matched_subset.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (259 > 100)",
+      "path": "scripts/build_garl_budget_matched_subset.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Ambiguous variable name: `l`",
+      "path": "scripts/build_garl_budget_matched_subset.py",
+      "rule_code": "E741"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (102 > 100)",
+      "path": "scripts/calibrate_a4_dinov3_relational_weight.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (103 > 100)",
+      "path": "scripts/calibrate_a4_dinov3_relational_weight.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (104 > 100)",
+      "path": "scripts/calibrate_a4_dinov3_relational_weight.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (114 > 100)",
+      "path": "scripts/calibrate_a4_dinov3_relational_weight.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (116 > 100)",
+      "path": "scripts/calibrate_a4_dinov3_relational_weight.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (119 > 100)",
+      "path": "scripts/calibrate_a4_dinov3_relational_weight.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Undefined name `Any`",
+      "path": "scripts/calibrate_a4_dinov3_relational_weight.py",
+      "rule_code": "F821"
+    },
+    {
+      "count": 2,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "scripts/calibrate_a4_dinov3_relational_weight.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Variable `B` in function should be lowercase",
+      "path": "scripts/calibrate_a4_dinov3_relational_weight.py",
+      "rule_code": "N806"
+    },
+    {
+      "count": 1,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `node`",
+      "path": "scripts/classify_scientific_recovery_gate.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 1,
+      "message": "Module level import not at top of file",
+      "path": "scripts/classify_scientific_recovery_gate.py",
+      "rule_code": "E402"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (101 > 100)",
+      "path": "scripts/classify_scientific_recovery_gate.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (102 > 100)",
+      "path": "scripts/classify_scientific_recovery_gate.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (107 > 100)",
+      "path": "scripts/classify_scientific_recovery_gate.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (108 > 100)",
+      "path": "scripts/classify_scientific_recovery_gate.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (109 > 100)",
+      "path": "scripts/classify_scientific_recovery_gate.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (111 > 100)",
+      "path": "scripts/classify_scientific_recovery_gate.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (117 > 100)",
+      "path": "scripts/classify_scientific_recovery_gate.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (118 > 100)",
+      "path": "scripts/classify_scientific_recovery_gate.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (119 > 100)",
+      "path": "scripts/classify_scientific_recovery_gate.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (122 > 100)",
+      "path": "scripts/classify_scientific_recovery_gate.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (127 > 100)",
+      "path": "scripts/classify_scientific_recovery_gate.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (128 > 100)",
+      "path": "scripts/classify_scientific_recovery_gate.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (129 > 100)",
+      "path": "scripts/classify_scientific_recovery_gate.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (131 > 100)",
+      "path": "scripts/classify_scientific_recovery_gate.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (147 > 100)",
+      "path": "scripts/classify_scientific_recovery_gate.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (213 > 100)",
+      "path": "scripts/classify_scientific_recovery_gate.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `get`",
+      "path": "scripts/collect_object_signed_expansion_v3_results.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 1,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `_get`",
+      "path": "scripts/compare_object_event_v4_runs.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (102 > 100)",
+      "path": "scripts/diagnose_a5_corr_transport.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (105 > 100)",
+      "path": "scripts/diagnose_a5_corr_transport.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (113 > 100)",
+      "path": "scripts/diagnose_a5_corr_transport.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (125 > 100)",
+      "path": "scripts/diagnose_a5_corr_transport.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (127 > 100)",
+      "path": "scripts/diagnose_a5_corr_transport.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "`math` imported but unused",
+      "path": "scripts/diagnose_a5_corr_transport.py",
+      "rule_code": "F401"
+    },
+    {
+      "count": 1,
+      "message": "Local variable `model_cfg` is assigned to but never used",
+      "path": "scripts/diagnose_a5_corr_transport.py",
+      "rule_code": "F841"
+    },
+    {
+      "count": 1,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `batch`",
+      "path": "scripts/diagnose_a5_transport_preflight.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (101 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (102 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (103 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 3,
+      "message": "Line too long (106 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (108 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (109 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (110 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (111 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (112 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 3,
+      "message": "Line too long (114 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (115 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 3,
+      "message": "Line too long (116 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (117 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (120 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (121 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (123 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (124 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (128 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (139 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (143 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (144 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "`math` imported but unused",
+      "path": "scripts/diagnose_a5_transport_preflight.py",
+      "rule_code": "F401"
+    },
+    {
+      "count": 1,
+      "message": "Local variable `delta` is assigned to but never used",
+      "path": "scripts/diagnose_a5_transport_preflight.py",
+      "rule_code": "F841"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "scripts/diagnose_a5_transport_preflight.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 3,
+      "message": "Line too long (101 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v2.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 6,
+      "message": "Line too long (102 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v2.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (103 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v2.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (104 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v2.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 3,
+      "message": "Line too long (105 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v2.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (107 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v2.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (108 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v2.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (111 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v2.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 4,
+      "message": "Line too long (113 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v2.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (114 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v2.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (115 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v2.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (116 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v2.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 4,
+      "message": "Line too long (117 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v2.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (120 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v2.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (122 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v2.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (125 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v2.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (126 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v2.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (127 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v2.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (134 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v2.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (135 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v2.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (137 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v2.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (138 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v2.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (141 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v2.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (142 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v2.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (143 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v2.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (145 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v2.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (153 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v2.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (157 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v2.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (158 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v2.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (160 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v2.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (169 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v2.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (181 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v2.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "`math` imported but unused",
+      "path": "scripts/diagnose_a5_transport_preflight_v2.py",
+      "rule_code": "F401"
+    },
+    {
+      "count": 1,
+      "message": "Local variable `fg` is assigned to but never used",
+      "path": "scripts/diagnose_a5_transport_preflight_v2.py",
+      "rule_code": "F841"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "scripts/diagnose_a5_transport_preflight_v2.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Import from `collections.abc` instead: `Iterable`",
+      "path": "scripts/diagnose_a5_transport_preflight_v2.py",
+      "rule_code": "UP035"
+    },
+    {
+      "count": 1,
+      "message": "Module level import not at top of file",
+      "path": "scripts/diagnose_a5_transport_preflight_v3_confirm.py",
+      "rule_code": "E402"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (101 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v3_confirm.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (102 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v3_confirm.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (105 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v3_confirm.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (106 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v3_confirm.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (107 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v3_confirm.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (108 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v3_confirm.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (110 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v3_confirm.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (111 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v3_confirm.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (112 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v3_confirm.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (116 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v3_confirm.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (120 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v3_confirm.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (126 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v3_confirm.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (127 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v3_confirm.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (131 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v3_confirm.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (145 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v3_confirm.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (148 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v3_confirm.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (154 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v3_confirm.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (156 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v3_confirm.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (166 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v3_confirm.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (194 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v3_confirm.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (206 > 100)",
+      "path": "scripts/diagnose_a5_transport_preflight_v3_confirm.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Local variable `random_row` is assigned to but never used",
+      "path": "scripts/diagnose_a5_transport_preflight_v3_confirm.py",
+      "rule_code": "F841"
+    },
+    {
+      "count": 1,
+      "message": "Missing return type annotation for private function `_autocast`",
+      "path": "scripts/diagnose_object_event_v4_1.py",
+      "rule_code": "ANN202"
+    },
+    {
+      "count": 1,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `_construct`",
+      "path": "scripts/diagnose_object_event_v4_1.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (102 > 100)",
+      "path": "scripts/diagnose_object_event_v4_1.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (104 > 100)",
+      "path": "scripts/diagnose_object_event_v4_1.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (107 > 100)",
+      "path": "scripts/diagnose_object_event_v4_1.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (112 > 100)",
+      "path": "scripts/diagnose_object_event_v4_1.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Remove quotes from type annotation",
+      "path": "scripts/diagnose_object_event_v4_1.py",
+      "rule_code": "UP037"
+    },
+    {
+      "count": 3,
+      "message": "Line too long (101 > 100)",
+      "path": "scripts/diagnose_object_event_v4_4_geometry_cv.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "`typing.Any` imported but unused",
+      "path": "scripts/diagnose_object_event_v4_4_geometry_cv.py",
+      "rule_code": "F401"
+    },
+    {
+      "count": 1,
+      "message": "Import from `collections.abc` instead: `Mapping`",
+      "path": "scripts/diagnose_object_event_v4_4_geometry_cv.py",
+      "rule_code": "UP035"
+    },
+    {
+      "count": 1,
+      "message": "Loop control variable `name` not used within loop body",
+      "path": "scripts/evaluate_oracle_roi_stress.py",
+      "rule_code": "B007"
+    },
+    {
+      "count": 4,
+      "message": "Module level import not at top of file",
+      "path": "scripts/evaluate_oracle_roi_stress.py",
+      "rule_code": "E402"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (102 > 100)",
+      "path": "scripts/evaluate_oracle_roi_stress.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (107 > 100)",
+      "path": "scripts/evaluate_oracle_roi_stress.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (121 > 100)",
+      "path": "scripts/evaluate_oracle_roi_stress.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (137 > 100)",
+      "path": "scripts/evaluate_oracle_roi_stress.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (149 > 100)",
+      "path": "scripts/evaluate_oracle_roi_stress.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (176 > 100)",
+      "path": "scripts/evaluate_oracle_roi_stress.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "`math` imported but unused",
+      "path": "scripts/evaluate_oracle_roi_stress.py",
+      "rule_code": "F401"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "scripts/evaluate_oracle_roi_stress.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Lowercase `functional` imported as non-lowercase `F`",
+      "path": "scripts/evaluate_oracle_roi_stress.py",
+      "rule_code": "N812"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (106 > 100)",
+      "path": "scripts/freeze_a4_s1_runtime_configs.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (107 > 100)",
+      "path": "scripts/freeze_a4_s1_runtime_configs.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (109 > 100)",
+      "path": "scripts/freeze_a4_s1_runtime_configs.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (111 > 100)",
+      "path": "scripts/freeze_a4_s1_runtime_configs.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (114 > 100)",
+      "path": "scripts/freeze_a4_s1_runtime_configs.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (156 > 100)",
+      "path": "scripts/freeze_a4_s1_runtime_configs.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Multiple statements on one line (semicolon)",
+      "path": "scripts/freeze_a4_s1_runtime_configs.py",
+      "rule_code": "E702"
+    },
+    {
+      "count": 1,
+      "message": "Multiple imports on one line",
+      "path": "scripts/freeze_a5_postgate_recovery_configs.py",
+      "rule_code": "E401"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (101 > 100)",
+      "path": "scripts/freeze_a5_postgate_recovery_configs.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (103 > 100)",
+      "path": "scripts/freeze_a5_postgate_recovery_configs.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (112 > 100)",
+      "path": "scripts/freeze_a5_postgate_recovery_configs.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (116 > 100)",
+      "path": "scripts/freeze_a5_postgate_recovery_configs.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (129 > 100)",
+      "path": "scripts/freeze_a5_postgate_recovery_configs.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (152 > 100)",
+      "path": "scripts/freeze_a5_postgate_recovery_configs.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (158 > 100)",
+      "path": "scripts/freeze_a5_postgate_recovery_configs.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (164 > 100)",
+      "path": "scripts/freeze_a5_postgate_recovery_configs.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (166 > 100)",
+      "path": "scripts/freeze_a5_postgate_recovery_configs.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (182 > 100)",
+      "path": "scripts/freeze_a5_postgate_recovery_configs.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (185 > 100)",
+      "path": "scripts/freeze_a5_postgate_recovery_configs.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (190 > 100)",
+      "path": "scripts/freeze_a5_postgate_recovery_configs.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (266 > 100)",
+      "path": "scripts/freeze_a5_postgate_recovery_configs.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (278 > 100)",
+      "path": "scripts/freeze_a5_postgate_recovery_configs.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (347 > 100)",
+      "path": "scripts/freeze_a5_postgate_recovery_configs.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 9,
+      "message": "Multiple statements on one line (colon)",
+      "path": "scripts/freeze_a5_postgate_recovery_configs.py",
+      "rule_code": "E701"
+    },
+    {
+      "count": 27,
+      "message": "Multiple statements on one line (semicolon)",
+      "path": "scripts/freeze_a5_postgate_recovery_configs.py",
+      "rule_code": "E702"
+    },
+    {
+      "count": 1,
+      "message": "Local variable `anchor_contract` is assigned to but never used",
+      "path": "scripts/freeze_a5_postgate_recovery_configs.py",
+      "rule_code": "F841"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "scripts/freeze_a5_postgate_recovery_configs.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (101 > 100)",
+      "path": "scripts/freeze_a5_suite_configs.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (102 > 100)",
+      "path": "scripts/freeze_a5_suite_configs.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 3,
+      "message": "Line too long (103 > 100)",
+      "path": "scripts/freeze_a5_suite_configs.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (104 > 100)",
+      "path": "scripts/freeze_a5_suite_configs.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (107 > 100)",
+      "path": "scripts/freeze_a5_suite_configs.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (109 > 100)",
+      "path": "scripts/freeze_a5_suite_configs.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (110 > 100)",
+      "path": "scripts/freeze_a5_suite_configs.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (111 > 100)",
+      "path": "scripts/freeze_a5_suite_configs.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (113 > 100)",
+      "path": "scripts/freeze_a5_suite_configs.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Multiple imports on one line",
+      "path": "scripts/freeze_a6_transport_adapter_configs.py",
+      "rule_code": "E401"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (104 > 100)",
+      "path": "scripts/freeze_a6_transport_adapter_configs.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (109 > 100)",
+      "path": "scripts/freeze_a6_transport_adapter_configs.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (111 > 100)",
+      "path": "scripts/freeze_a6_transport_adapter_configs.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (112 > 100)",
+      "path": "scripts/freeze_a6_transport_adapter_configs.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (123 > 100)",
+      "path": "scripts/freeze_a6_transport_adapter_configs.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "scripts/freeze_a6_transport_adapter_configs.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (101 > 100)",
+      "path": "scripts/freeze_scientific_recovery_s1_configs.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (103 > 100)",
+      "path": "scripts/freeze_scientific_recovery_s1_configs.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (106 > 100)",
+      "path": "scripts/freeze_scientific_recovery_s1_configs.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (108 > 100)",
+      "path": "scripts/freeze_scientific_recovery_s1_configs.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (111 > 100)",
+      "path": "scripts/freeze_scientific_recovery_s1_configs.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (113 > 100)",
+      "path": "scripts/freeze_scientific_recovery_s1_configs.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (121 > 100)",
+      "path": "scripts/freeze_scientific_recovery_s1_configs.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (127 > 100)",
+      "path": "scripts/freeze_scientific_recovery_s1_configs.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (129 > 100)",
+      "path": "scripts/freeze_scientific_recovery_s1_configs.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "scripts/make_object_signed_expansion_v3_ablation_configs.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Multiple imports on one line",
+      "path": "scripts/package_scientific_recovery_results.py",
+      "rule_code": "E401"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (108 > 100)",
+      "path": "scripts/package_scientific_recovery_results.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (111 > 100)",
+      "path": "scripts/package_scientific_recovery_results.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (123 > 100)",
+      "path": "scripts/package_scientific_recovery_results.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 11,
+      "message": "Multiple statements on one line (colon)",
+      "path": "scripts/package_scientific_recovery_results.py",
+      "rule_code": "E701"
+    },
+    {
+      "count": 5,
+      "message": "Multiple statements on one line (semicolon)",
+      "path": "scripts/package_scientific_recovery_results.py",
+      "rule_code": "E702"
+    },
+    {
+      "count": 1,
+      "message": "`os` imported but unused",
+      "path": "scripts/package_scientific_recovery_results.py",
+      "rule_code": "F401"
+    },
+    {
+      "count": 1,
+      "message": "`typing.Any` imported but unused",
+      "path": "scripts/package_scientific_recovery_results.py",
+      "rule_code": "F401"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "scripts/package_scientific_recovery_results.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (113 > 100)",
+      "path": "scripts/preflight_object_event_v4.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (114 > 100)",
+      "path": "scripts/preflight_object_event_v4.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 3,
+      "message": "Line too long (115 > 100)",
+      "path": "scripts/preflight_object_event_v4.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (117 > 100)",
+      "path": "scripts/preflight_object_event_v4.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (108 > 100)",
+      "path": "scripts/preflight_object_event_v4_1.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (113 > 100)",
+      "path": "scripts/preflight_object_event_v4_1.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (114 > 100)",
+      "path": "scripts/preflight_object_event_v4_1.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (115 > 100)",
+      "path": "scripts/preflight_object_event_v4_1.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (110 > 100)",
+      "path": "scripts/preflight_object_event_v4_10.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (113 > 100)",
+      "path": "scripts/preflight_object_event_v4_10.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (117 > 100)",
+      "path": "scripts/preflight_object_event_v4_10.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (121 > 100)",
+      "path": "scripts/preflight_object_event_v4_10.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (124 > 100)",
+      "path": "scripts/preflight_object_event_v4_10.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (141 > 100)",
+      "path": "scripts/preflight_object_event_v4_10.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Multiple imports on one line",
+      "path": "scripts/preflight_object_event_v4_13.py",
+      "rule_code": "E401"
+    },
+    {
+      "count": 2,
+      "message": "Multiple statements on one line (colon)",
+      "path": "scripts/preflight_object_event_v4_13.py",
+      "rule_code": "E701"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "scripts/preflight_object_event_v4_13.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (101 > 100)",
+      "path": "scripts/preflight_object_event_v4_17.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (102 > 100)",
+      "path": "scripts/preflight_object_event_v4_17.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (104 > 100)",
+      "path": "scripts/preflight_object_event_v4_17.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (109 > 100)",
+      "path": "scripts/preflight_object_event_v4_18.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (115 > 100)",
+      "path": "scripts/preflight_object_event_v4_18.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (119 > 100)",
+      "path": "scripts/preflight_object_event_v4_18.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (104 > 100)",
+      "path": "scripts/preflight_object_event_v4_19.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (108 > 100)",
+      "path": "scripts/preflight_object_event_v4_19.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (104 > 100)",
+      "path": "scripts/preflight_object_event_v4_2.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (112 > 100)",
+      "path": "scripts/preflight_object_event_v4_2.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (117 > 100)",
+      "path": "scripts/preflight_object_event_v4_2.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (119 > 100)",
+      "path": "scripts/preflight_object_event_v4_2.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (136 > 100)",
+      "path": "scripts/preflight_object_event_v4_2.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (102 > 100)",
+      "path": "scripts/preflight_object_event_v4_20.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (108 > 100)",
+      "path": "scripts/preflight_object_event_v4_20.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (107 > 100)",
+      "path": "scripts/preflight_object_event_v4_21.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (119 > 100)",
+      "path": "scripts/preflight_object_event_v4_21.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (123 > 100)",
+      "path": "scripts/preflight_object_event_v4_21.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (108 > 100)",
+      "path": "scripts/preflight_object_event_v4_22.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (109 > 100)",
+      "path": "scripts/preflight_object_event_v4_22.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (112 > 100)",
+      "path": "scripts/preflight_object_event_v4_22.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (117 > 100)",
+      "path": "scripts/preflight_object_event_v4_22.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (118 > 100)",
+      "path": "scripts/preflight_object_event_v4_22.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (119 > 100)",
+      "path": "scripts/preflight_object_event_v4_22.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (121 > 100)",
+      "path": "scripts/preflight_object_event_v4_22.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (122 > 100)",
+      "path": "scripts/preflight_object_event_v4_22.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (134 > 100)",
+      "path": "scripts/preflight_object_event_v4_22.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (116 > 100)",
+      "path": "scripts/preflight_object_event_v4_23.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (127 > 100)",
+      "path": "scripts/preflight_object_event_v4_23.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (116 > 100)",
+      "path": "scripts/preflight_object_event_v4_24.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (124 > 100)",
+      "path": "scripts/preflight_object_event_v4_24.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (138 > 100)",
+      "path": "scripts/preflight_object_event_v4_24.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Multiple imports on one line",
+      "path": "scripts/preflight_object_event_v4_25.py",
+      "rule_code": "E401"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (107 > 100)",
+      "path": "scripts/preflight_object_event_v4_25.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (137 > 100)",
+      "path": "scripts/preflight_object_event_v4_25.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (141 > 100)",
+      "path": "scripts/preflight_object_event_v4_25.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (151 > 100)",
+      "path": "scripts/preflight_object_event_v4_25.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 7,
+      "message": "Multiple statements on one line (colon)",
+      "path": "scripts/preflight_object_event_v4_25.py",
+      "rule_code": "E701"
+    },
+    {
+      "count": 2,
+      "message": "Multiple statements on one line (semicolon)",
+      "path": "scripts/preflight_object_event_v4_25.py",
+      "rule_code": "E702"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "scripts/preflight_object_event_v4_25.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (109 > 100)",
+      "path": "scripts/preflight_object_event_v4_26.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (127 > 100)",
+      "path": "scripts/preflight_object_event_v4_27.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "scripts/preflight_object_event_v4_27.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (122 > 100)",
+      "path": "scripts/preflight_object_event_v4_28.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "scripts/preflight_object_event_v4_28.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (116 > 100)",
+      "path": "scripts/preflight_object_event_v4_3.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (117 > 100)",
+      "path": "scripts/preflight_object_event_v4_3.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (119 > 100)",
+      "path": "scripts/preflight_object_event_v4_3.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (135 > 100)",
+      "path": "scripts/preflight_object_event_v4_3.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (116 > 100)",
+      "path": "scripts/preflight_object_event_v4_4.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (117 > 100)",
+      "path": "scripts/preflight_object_event_v4_4.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (119 > 100)",
+      "path": "scripts/preflight_object_event_v4_4.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (135 > 100)",
+      "path": "scripts/preflight_object_event_v4_4.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (116 > 100)",
+      "path": "scripts/preflight_object_event_v4_5.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (117 > 100)",
+      "path": "scripts/preflight_object_event_v4_5.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (119 > 100)",
+      "path": "scripts/preflight_object_event_v4_5.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (135 > 100)",
+      "path": "scripts/preflight_object_event_v4_5.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (101 > 100)",
+      "path": "scripts/preflight_object_event_v4_6.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (116 > 100)",
+      "path": "scripts/preflight_object_event_v4_6.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (117 > 100)",
+      "path": "scripts/preflight_object_event_v4_6.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (119 > 100)",
+      "path": "scripts/preflight_object_event_v4_6.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (116 > 100)",
+      "path": "scripts/preflight_object_event_v4_7.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (117 > 100)",
+      "path": "scripts/preflight_object_event_v4_7.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (119 > 100)",
+      "path": "scripts/preflight_object_event_v4_7.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (116 > 100)",
+      "path": "scripts/preflight_object_event_v4_8.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (117 > 100)",
+      "path": "scripts/preflight_object_event_v4_8.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (119 > 100)",
+      "path": "scripts/preflight_object_event_v4_8.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (123 > 100)",
+      "path": "scripts/preflight_object_event_v4_8.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `a`",
+      "path": "scripts/prepare_object_event_v4_14_seed_config.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 1,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `b`",
+      "path": "scripts/prepare_object_event_v4_14_seed_config.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (102 > 100)",
+      "path": "scripts/run_garl_matched_screen.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (110 > 100)",
+      "path": "scripts/run_garl_matched_screen.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Multiple imports on one line",
+      "path": "scripts/summarize_a4_s1_attribution.py",
+      "rule_code": "E401"
+    },
+    {
+      "count": 1,
+      "message": "Module level import not at top of file",
+      "path": "scripts/summarize_a4_s1_attribution.py",
+      "rule_code": "E402"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (103 > 100)",
+      "path": "scripts/summarize_a4_s1_attribution.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (129 > 100)",
+      "path": "scripts/summarize_a4_s1_attribution.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (155 > 100)",
+      "path": "scripts/summarize_a4_s1_attribution.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (167 > 100)",
+      "path": "scripts/summarize_a4_s1_attribution.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (172 > 100)",
+      "path": "scripts/summarize_a4_s1_attribution.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (297 > 100)",
+      "path": "scripts/summarize_a4_s1_attribution.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 3,
+      "message": "Multiple statements on one line (colon)",
+      "path": "scripts/summarize_a4_s1_attribution.py",
+      "rule_code": "E701"
+    },
+    {
+      "count": 11,
+      "message": "Multiple statements on one line (semicolon)",
+      "path": "scripts/summarize_a4_s1_attribution.py",
+      "rule_code": "E702"
+    },
+    {
+      "count": 2,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "scripts/summarize_a4_s1_attribution.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Missing type annotation for function argument `d`",
+      "path": "scripts/summarize_a4_s1_replication.py",
+      "rule_code": "ANN001"
+    },
+    {
+      "count": 1,
+      "message": "Missing type annotation for function argument `path`",
+      "path": "scripts/summarize_a4_s1_replication.py",
+      "rule_code": "ANN001"
+    },
+    {
+      "count": 1,
+      "message": "Missing return type annotation for public function `main`",
+      "path": "scripts/summarize_a4_s1_replication.py",
+      "rule_code": "ANN201"
+    },
+    {
+      "count": 1,
+      "message": "Missing return type annotation for public function `metric`",
+      "path": "scripts/summarize_a4_s1_replication.py",
+      "rule_code": "ANN201"
+    },
+    {
+      "count": 1,
+      "message": "Multiple imports on one line",
+      "path": "scripts/summarize_a4_s1_replication.py",
+      "rule_code": "E401"
+    },
+    {
+      "count": 1,
+      "message": "Module level import not at top of file",
+      "path": "scripts/summarize_a4_s1_replication.py",
+      "rule_code": "E402"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (137 > 100)",
+      "path": "scripts/summarize_a4_s1_replication.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (142 > 100)",
+      "path": "scripts/summarize_a4_s1_replication.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (149 > 100)",
+      "path": "scripts/summarize_a4_s1_replication.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 3,
+      "message": "Multiple statements on one line (colon)",
+      "path": "scripts/summarize_a4_s1_replication.py",
+      "rule_code": "E701"
+    },
+    {
+      "count": 2,
+      "message": "Multiple statements on one line (semicolon)",
+      "path": "scripts/summarize_a4_s1_replication.py",
+      "rule_code": "E702"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "scripts/summarize_a4_s1_replication.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Multiple imports on one line",
+      "path": "scripts/summarize_a5_anchor_replication.py",
+      "rule_code": "E401"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (105 > 100)",
+      "path": "scripts/summarize_a5_anchor_replication.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (106 > 100)",
+      "path": "scripts/summarize_a5_anchor_replication.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (107 > 100)",
+      "path": "scripts/summarize_a5_anchor_replication.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (109 > 100)",
+      "path": "scripts/summarize_a5_anchor_replication.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (111 > 100)",
+      "path": "scripts/summarize_a5_anchor_replication.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (113 > 100)",
+      "path": "scripts/summarize_a5_anchor_replication.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (164 > 100)",
+      "path": "scripts/summarize_a5_anchor_replication.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (246 > 100)",
+      "path": "scripts/summarize_a5_anchor_replication.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (258 > 100)",
+      "path": "scripts/summarize_a5_anchor_replication.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (264 > 100)",
+      "path": "scripts/summarize_a5_anchor_replication.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (313 > 100)",
+      "path": "scripts/summarize_a5_anchor_replication.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (328 > 100)",
+      "path": "scripts/summarize_a5_anchor_replication.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (347 > 100)",
+      "path": "scripts/summarize_a5_anchor_replication.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (440 > 100)",
+      "path": "scripts/summarize_a5_anchor_replication.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Multiple statements on one line (colon)",
+      "path": "scripts/summarize_a5_anchor_replication.py",
+      "rule_code": "E701"
+    },
+    {
+      "count": 23,
+      "message": "Multiple statements on one line (semicolon)",
+      "path": "scripts/summarize_a5_anchor_replication.py",
+      "rule_code": "E702"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "scripts/summarize_a5_anchor_replication.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (129 > 100)",
+      "path": "scripts/summarize_a5_capacity.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (161 > 100)",
+      "path": "scripts/summarize_a5_capacity.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (111 > 100)",
+      "path": "scripts/summarize_a5_replication.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (122 > 100)",
+      "path": "scripts/summarize_a5_replication.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (141 > 100)",
+      "path": "scripts/summarize_a5_replication.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (150 > 100)",
+      "path": "scripts/summarize_a5_replication.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (154 > 100)",
+      "path": "scripts/summarize_a5_replication.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (165 > 100)",
+      "path": "scripts/summarize_a5_replication.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Multiple imports on one line",
+      "path": "scripts/summarize_a5_signal_replication.py",
+      "rule_code": "E401"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (103 > 100)",
+      "path": "scripts/summarize_a5_signal_replication.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (119 > 100)",
+      "path": "scripts/summarize_a5_signal_replication.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (122 > 100)",
+      "path": "scripts/summarize_a5_signal_replication.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (123 > 100)",
+      "path": "scripts/summarize_a5_signal_replication.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (153 > 100)",
+      "path": "scripts/summarize_a5_signal_replication.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (202 > 100)",
+      "path": "scripts/summarize_a5_signal_replication.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (333 > 100)",
+      "path": "scripts/summarize_a5_signal_replication.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (340 > 100)",
+      "path": "scripts/summarize_a5_signal_replication.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 4,
+      "message": "Multiple statements on one line (colon)",
+      "path": "scripts/summarize_a5_signal_replication.py",
+      "rule_code": "E701"
+    },
+    {
+      "count": 9,
+      "message": "Multiple statements on one line (semicolon)",
+      "path": "scripts/summarize_a5_signal_replication.py",
+      "rule_code": "E702"
+    },
+    {
+      "count": 1,
+      "message": "`math` imported but unused",
+      "path": "scripts/summarize_a5_signal_replication.py",
+      "rule_code": "F401"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "scripts/summarize_a5_signal_replication.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Multiple imports on one line",
+      "path": "scripts/summarize_a6_transport_adapter.py",
+      "rule_code": "E401"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (103 > 100)",
+      "path": "scripts/summarize_a6_transport_adapter.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (104 > 100)",
+      "path": "scripts/summarize_a6_transport_adapter.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (107 > 100)",
+      "path": "scripts/summarize_a6_transport_adapter.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (118 > 100)",
+      "path": "scripts/summarize_a6_transport_adapter.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (119 > 100)",
+      "path": "scripts/summarize_a6_transport_adapter.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (121 > 100)",
+      "path": "scripts/summarize_a6_transport_adapter.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (123 > 100)",
+      "path": "scripts/summarize_a6_transport_adapter.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (131 > 100)",
+      "path": "scripts/summarize_a6_transport_adapter.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (137 > 100)",
+      "path": "scripts/summarize_a6_transport_adapter.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (140 > 100)",
+      "path": "scripts/summarize_a6_transport_adapter.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (174 > 100)",
+      "path": "scripts/summarize_a6_transport_adapter.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (176 > 100)",
+      "path": "scripts/summarize_a6_transport_adapter.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (179 > 100)",
+      "path": "scripts/summarize_a6_transport_adapter.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (194 > 100)",
+      "path": "scripts/summarize_a6_transport_adapter.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "`math` imported but unused",
+      "path": "scripts/summarize_a6_transport_adapter.py",
+      "rule_code": "F401"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "scripts/summarize_a6_transport_adapter.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `_construct`",
+      "path": "scripts/train_e_jepa_object_event_v4.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 1,
+      "message": "`e_jepa_ttc.models.object_event_v4.safe_ttc_from_expansion` imported but unused",
+      "path": "scripts/train_e_jepa_object_event_v4.py",
+      "rule_code": "F401"
+    },
+    {
+      "count": 1,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `_construct`",
+      "path": "scripts/train_e_jepa_object_event_v4_12.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (101 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_12.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (104 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_12.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (106 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_12.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (171 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_12.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "`math` imported but unused",
+      "path": "scripts/train_e_jepa_object_event_v4_12.py",
+      "rule_code": "F401"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "scripts/train_e_jepa_object_event_v4_12.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `_construct`",
+      "path": "scripts/train_e_jepa_object_event_v4_15.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (109 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_15.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (150 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_15.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "scripts/train_e_jepa_object_event_v4_15.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `_construct`",
+      "path": "scripts/train_e_jepa_object_event_v4_16.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 1,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `epoch_callback`",
+      "path": "scripts/train_e_jepa_object_event_v4_16.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (102 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_16.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 4,
+      "message": "Line too long (103 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_16.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (104 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_16.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (105 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_16.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (106 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_16.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (117 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_16.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "`e_jepa_ttc.training.object_event_v4_16.sign_statistics` imported but unused",
+      "path": "scripts/train_e_jepa_object_event_v4_16.py",
+      "rule_code": "F401"
+    },
+    {
+      "count": 2,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "scripts/train_e_jepa_object_event_v4_16.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `_construct`",
+      "path": "scripts/train_e_jepa_object_event_v4_17.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 1,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `epoch_callback`",
+      "path": "scripts/train_e_jepa_object_event_v4_17.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 1,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `frozen`",
+      "path": "scripts/train_e_jepa_object_event_v4_17.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 3,
+      "message": "Line too long (102 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_17.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (103 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_17.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (104 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_17.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 4,
+      "message": "Line too long (105 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_17.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (106 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_17.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (107 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_17.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (108 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_17.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (110 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_17.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (113 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_17.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (117 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_17.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (119 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_17.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (127 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_17.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (131 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_17.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (148 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_17.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (156 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_17.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "`collections.abc.Sequence` imported but unused",
+      "path": "scripts/train_e_jepa_object_event_v4_17.py",
+      "rule_code": "F401"
+    },
+    {
+      "count": 2,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "scripts/train_e_jepa_object_event_v4_17.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Missing return type annotation for private function `_autocast`",
+      "path": "scripts/train_e_jepa_object_event_v4_2.py",
+      "rule_code": "ANN202"
+    },
+    {
+      "count": 1,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `_construct`",
+      "path": "scripts/train_e_jepa_object_event_v4_2.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 1,
+      "message": "`e_jepa_ttc.training.object_event_v4_1.target_expansion` imported but unused",
+      "path": "scripts/train_e_jepa_object_event_v4_2.py",
+      "rule_code": "F401"
+    },
+    {
+      "count": 1,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `_construct`",
+      "path": "scripts/train_e_jepa_object_event_v4_5.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "scripts/train_e_jepa_object_event_v4_5.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `_construct`",
+      "path": "scripts/train_e_jepa_object_event_v4_6.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (101 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_6.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (103 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_6.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (105 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_6.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (106 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_6.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 3,
+      "message": "Line too long (107 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_6.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (108 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_6.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (109 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_6.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (110 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_6.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (112 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_6.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (113 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_6.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (116 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_6.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (117 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_6.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 3,
+      "message": "Line too long (120 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_6.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (121 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_6.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (123 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_6.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (125 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_6.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (126 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_6.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (131 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_6.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (132 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_6.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (135 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_6.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (173 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_6.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "scripts/train_e_jepa_object_event_v4_6.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Remove quotes from type annotation",
+      "path": "scripts/train_e_jepa_object_event_v4_6.py",
+      "rule_code": "UP037"
+    },
+    {
+      "count": 1,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `_construct`",
+      "path": "scripts/train_e_jepa_object_event_v4_7.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 1,
+      "message": "`scripts.train_e_jepa_object_event_v4_2._branch_metrics` imported but unused",
+      "path": "scripts/train_e_jepa_object_event_v4_7.py",
+      "rule_code": "F401"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "scripts/train_e_jepa_object_event_v4_7.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `_construct`",
+      "path": "scripts/train_e_jepa_object_event_v4_8.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (101 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_8.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (103 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_8.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (104 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_8.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (105 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_8.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (106 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_8.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (108 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_8.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (109 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_8.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (111 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_8.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (115 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_8.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (117 > 100)",
+      "path": "scripts/train_e_jepa_object_event_v4_8.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "scripts/train_e_jepa_object_event_v4_8.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `scaler`",
+      "path": "scripts/train_e_jepa_object_expansion.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 1,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `scaler`",
+      "path": "scripts/train_e_jepa_object_lhr.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 1,
+      "message": "Dynamically typed expressions (typing.Any) are disallowed in `scaler`",
+      "path": "scripts/train_e_jepa_object_signed_expansion.py",
+      "rule_code": "ANN401"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "src/e_jepa_ttc/data/garlttc_object_lhr.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (101 > 100)",
+      "path": "src/e_jepa_ttc/models/highres_factorized.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "src/e_jepa_ttc/models/local_transport.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (101 > 100)",
+      "path": "src/e_jepa_ttc/models/object_event_v4.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Remove quotes from type annotation",
+      "path": "src/e_jepa_ttc/models/object_event_v4.py",
+      "rule_code": "UP037"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (103 > 100)",
+      "path": "src/e_jepa_ttc/models/object_event_v4_12.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Remove quotes from type annotation",
+      "path": "src/e_jepa_ttc/models/object_event_v4_12.py",
+      "rule_code": "UP037"
+    },
+    {
+      "count": 1,
+      "message": "`e_jepa_ttc.models.object_event_v4_12.ObjectEventV412Config` imported but unused",
+      "path": "src/e_jepa_ttc/models/object_event_v4_15.py",
+      "rule_code": "F401"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "src/e_jepa_ttc/models/object_event_v4_15.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Remove quotes from type annotation",
+      "path": "src/e_jepa_ttc/models/object_event_v4_15.py",
+      "rule_code": "UP037"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (104 > 100)",
+      "path": "src/e_jepa_ttc/models/object_event_v4_16.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "`torch.nn.functional` imported but unused",
+      "path": "src/e_jepa_ttc/models/object_event_v4_16.py",
+      "rule_code": "F401"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "src/e_jepa_ttc/models/object_event_v4_18.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (105 > 100)",
+      "path": "src/e_jepa_ttc/models/object_event_v4_19.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (108 > 100)",
+      "path": "src/e_jepa_ttc/models/object_event_v4_19.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (129 > 100)",
+      "path": "src/e_jepa_ttc/models/object_event_v4_19.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (130 > 100)",
+      "path": "src/e_jepa_ttc/models/object_event_v4_19.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "`torch` imported but unused",
+      "path": "src/e_jepa_ttc/models/object_event_v4_22.py",
+      "rule_code": "F401"
+    },
+    {
+      "count": 1,
+      "message": "Import from `collections.abc` instead: `Iterable`",
+      "path": "src/e_jepa_ttc/models/object_event_v4_22.py",
+      "rule_code": "UP035"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (101 > 100)",
+      "path": "src/e_jepa_ttc/models/object_event_v4_23.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (106 > 100)",
+      "path": "src/e_jepa_ttc/models/object_event_v4_23.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (108 > 100)",
+      "path": "src/e_jepa_ttc/models/object_event_v4_23.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (113 > 100)",
+      "path": "src/e_jepa_ttc/models/object_event_v4_23.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Import from `collections.abc` instead: `Iterable`",
+      "path": "src/e_jepa_ttc/models/object_event_v4_23.py",
+      "rule_code": "UP035"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (102 > 100)",
+      "path": "src/e_jepa_ttc/models/object_event_v4_27.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (104 > 100)",
+      "path": "src/e_jepa_ttc/models/object_event_v4_27.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (105 > 100)",
+      "path": "src/e_jepa_ttc/models/object_event_v4_27.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (108 > 100)",
+      "path": "src/e_jepa_ttc/models/object_event_v4_27.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (114 > 100)",
+      "path": "src/e_jepa_ttc/models/object_event_v4_27.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (103 > 100)",
+      "path": "src/e_jepa_ttc/models/object_event_v4_28.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (104 > 100)",
+      "path": "src/e_jepa_ttc/models/object_event_v4_28.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (110 > 100)",
+      "path": "src/e_jepa_ttc/models/object_event_v4_28.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (111 > 100)",
+      "path": "src/e_jepa_ttc/models/object_event_v4_28.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (112 > 100)",
+      "path": "src/e_jepa_ttc/models/object_event_v4_28.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (114 > 100)",
+      "path": "src/e_jepa_ttc/models/object_event_v4_28.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (116 > 100)",
+      "path": "src/e_jepa_ttc/models/object_event_v4_28.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (127 > 100)",
+      "path": "src/e_jepa_ttc/models/object_event_v4_28.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "`typing.Iterable` imported but unused",
+      "path": "src/e_jepa_ttc/models/object_event_v4_28.py",
+      "rule_code": "F401"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "src/e_jepa_ttc/models/object_event_v4_28.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Import from `collections.abc` instead: `Iterable`",
+      "path": "src/e_jepa_ttc/models/object_event_v4_28.py",
+      "rule_code": "UP035"
+    },
+    {
+      "count": 1,
+      "message": "`torch.nn.functional` imported but unused",
+      "path": "src/e_jepa_ttc/models/object_event_v4_6.py",
+      "rule_code": "F401"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (109 > 100)",
+      "path": "src/e_jepa_ttc/models/object_event_v4_7.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (113 > 100)",
+      "path": "src/e_jepa_ttc/models/object_event_v4_7.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (107 > 100)",
+      "path": "src/e_jepa_ttc/models/object_event_v4_8.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (149 > 100)",
+      "path": "src/e_jepa_ttc/models/object_event_v4_8.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Remove quotes from type annotation",
+      "path": "src/e_jepa_ttc/models/object_event_v4_8.py",
+      "rule_code": "UP037"
+    },
+    {
+      "count": 1,
+      "message": "`math` imported but unused",
+      "path": "src/e_jepa_ttc/models/object_signed_expansion.py",
+      "rule_code": "F401"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "src/e_jepa_ttc/models/object_signed_expansion.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (101 > 100)",
+      "path": "src/e_jepa_ttc/object_event_v4_11.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (103 > 100)",
+      "path": "src/e_jepa_ttc/object_event_v4_11.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "`e_jepa_ttc.object_event_v4_4.pearson` imported but unused",
+      "path": "src/e_jepa_ttc/object_event_v4_11.py",
+      "rule_code": "F401"
+    },
+    {
+      "count": 1,
+      "message": "`typing.Iterable` imported but unused",
+      "path": "src/e_jepa_ttc/object_event_v4_11.py",
+      "rule_code": "F401"
+    },
+    {
+      "count": 1,
+      "message": "Import from `collections.abc` instead: `Iterable`, `Mapping`, `Sequence`",
+      "path": "src/e_jepa_ttc/object_event_v4_11.py",
+      "rule_code": "UP035"
+    },
+    {
+      "count": 1,
+      "message": "Import from `collections.abc` instead: `Mapping`",
+      "path": "src/e_jepa_ttc/object_event_v4_13.py",
+      "rule_code": "UP035"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (102 > 100)",
+      "path": "src/e_jepa_ttc/object_event_v4_14.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Import from `collections.abc` instead: `Mapping`",
+      "path": "src/e_jepa_ttc/object_event_v4_14.py",
+      "rule_code": "UP035"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (106 > 100)",
+      "path": "src/e_jepa_ttc/object_event_v4_4.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (111 > 100)",
+      "path": "src/e_jepa_ttc/object_event_v4_4.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Import from `collections.abc` instead: `Iterable`",
+      "path": "src/e_jepa_ttc/object_event_v4_4.py",
+      "rule_code": "UP035"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (106 > 100)",
+      "path": "src/e_jepa_ttc/object_event_v4_9.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (106 > 100)",
+      "path": "src/e_jepa_ttc/training/object_event_v4_1.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (110 > 100)",
+      "path": "src/e_jepa_ttc/training/object_event_v4_1.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (105 > 100)",
+      "path": "src/e_jepa_ttc/training/object_event_v4_12.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Import from `collections.abc` instead: `Mapping`",
+      "path": "src/e_jepa_ttc/training/object_event_v4_12.py",
+      "rule_code": "UP035"
+    },
+    {
+      "count": 1,
+      "message": "`torch` imported but unused",
+      "path": "src/e_jepa_ttc/training/object_event_v4_15.py",
+      "rule_code": "F401"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "src/e_jepa_ttc/training/object_event_v4_15.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (101 > 100)",
+      "path": "src/e_jepa_ttc/training/object_event_v4_16.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (103 > 100)",
+      "path": "src/e_jepa_ttc/training/object_event_v4_16.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (105 > 100)",
+      "path": "src/e_jepa_ttc/training/object_event_v4_16.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (106 > 100)",
+      "path": "src/e_jepa_ttc/training/object_event_v4_16.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (107 > 100)",
+      "path": "src/e_jepa_ttc/training/object_event_v4_16.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (113 > 100)",
+      "path": "src/e_jepa_ttc/training/object_event_v4_16.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (115 > 100)",
+      "path": "src/e_jepa_ttc/training/object_event_v4_16.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (118 > 100)",
+      "path": "src/e_jepa_ttc/training/object_event_v4_16.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (123 > 100)",
+      "path": "src/e_jepa_ttc/training/object_event_v4_16.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (125 > 100)",
+      "path": "src/e_jepa_ttc/training/object_event_v4_16.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (131 > 100)",
+      "path": "src/e_jepa_ttc/training/object_event_v4_16.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (140 > 100)",
+      "path": "src/e_jepa_ttc/training/object_event_v4_16.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (148 > 100)",
+      "path": "src/e_jepa_ttc/training/object_event_v4_16.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (161 > 100)",
+      "path": "src/e_jepa_ttc/training/object_event_v4_16.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (167 > 100)",
+      "path": "src/e_jepa_ttc/training/object_event_v4_16.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "src/e_jepa_ttc/training/object_event_v4_16.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (103 > 100)",
+      "path": "src/e_jepa_ttc/training/object_event_v4_17.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (105 > 100)",
+      "path": "src/e_jepa_ttc/training/object_event_v4_17.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (106 > 100)",
+      "path": "src/e_jepa_ttc/training/object_event_v4_17.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (110 > 100)",
+      "path": "src/e_jepa_ttc/training/object_event_v4_17.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (113 > 100)",
+      "path": "src/e_jepa_ttc/training/object_event_v4_17.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (115 > 100)",
+      "path": "src/e_jepa_ttc/training/object_event_v4_17.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (118 > 100)",
+      "path": "src/e_jepa_ttc/training/object_event_v4_17.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (125 > 100)",
+      "path": "src/e_jepa_ttc/training/object_event_v4_17.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (131 > 100)",
+      "path": "src/e_jepa_ttc/training/object_event_v4_17.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (140 > 100)",
+      "path": "src/e_jepa_ttc/training/object_event_v4_17.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (148 > 100)",
+      "path": "src/e_jepa_ttc/training/object_event_v4_17.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (161 > 100)",
+      "path": "src/e_jepa_ttc/training/object_event_v4_17.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (167 > 100)",
+      "path": "src/e_jepa_ttc/training/object_event_v4_17.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "src/e_jepa_ttc/training/object_event_v4_17.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (128 > 100)",
+      "path": "src/e_jepa_ttc/training/object_event_v4_20.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (130 > 100)",
+      "path": "src/e_jepa_ttc/training/object_event_v4_20.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (146 > 100)",
+      "path": "src/e_jepa_ttc/training/object_event_v4_21.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (102 > 100)",
+      "path": "src/e_jepa_ttc/training/object_event_v4_22.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (106 > 100)",
+      "path": "src/e_jepa_ttc/training/object_event_v4_22.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (119 > 100)",
+      "path": "src/e_jepa_ttc/training/object_event_v4_22.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (120 > 100)",
+      "path": "src/e_jepa_ttc/training/object_event_v4_22.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (122 > 100)",
+      "path": "src/e_jepa_ttc/training/object_event_v4_22.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Import from `collections.abc` instead: `Mapping`",
+      "path": "src/e_jepa_ttc/training/object_event_v4_22.py",
+      "rule_code": "UP035"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (114 > 100)",
+      "path": "src/e_jepa_ttc/training/object_event_v4_24.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Import from `collections.abc` instead: `Mapping`",
+      "path": "src/e_jepa_ttc/training/object_event_v4_24.py",
+      "rule_code": "UP035"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (118 > 100)",
+      "path": "src/e_jepa_ttc/training/object_event_v4_25.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (119 > 100)",
+      "path": "src/e_jepa_ttc/training/object_event_v4_25.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Import from `collections.abc` instead: `Iterable`",
+      "path": "src/e_jepa_ttc/training/object_event_v4_25.py",
+      "rule_code": "UP035"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (111 > 100)",
+      "path": "src/e_jepa_ttc/training/object_event_v4_26.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (112 > 100)",
+      "path": "src/e_jepa_ttc/training/object_event_v4_26.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Import from `collections.abc` instead: `Iterable`",
+      "path": "src/e_jepa_ttc/training/object_event_v4_26.py",
+      "rule_code": "UP035"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (102 > 100)",
+      "path": "src/e_jepa_ttc/training/object_event_v4_27.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (102 > 100)",
+      "path": "src/e_jepa_ttc/training/object_event_v4_28.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "`torch.nn` imported but unused",
+      "path": "src/e_jepa_ttc/training/object_lhr.py",
+      "rule_code": "F401"
+    },
+    {
+      "count": 2,
+      "message": "Do not call `getattr` with a constant attribute value. It is not any safer than normal property access.",
+      "path": "src/e_jepa_ttc/training/tubelet_finetuning.py",
+      "rule_code": "B009"
+    },
+    {
+      "count": 1,
+      "message": "Local variable `zeros` is assigned to but never used",
+      "path": "tests/unit/test_a5_local_transport.py",
+      "rule_code": "F841"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (161 > 100)",
+      "path": "tests/unit/test_a5_transport_preflight_v2.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (165 > 100)",
+      "path": "tests/unit/test_a5_transport_preflight_v2.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 3,
+      "message": "Line too long (219 > 100)",
+      "path": "tests/unit/test_a5_transport_preflight_v2.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (113 > 100)",
+      "path": "tests/unit/test_a6_transport_adapter.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "tests/unit/test_a6_transport_adapter.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (121 > 100)",
+      "path": "tests/unit/test_dinov3_relational_distillation.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 2,
+      "message": "Line too long (122 > 100)",
+      "path": "tests/unit/test_dinov3_relational_distillation.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "tests/unit/test_garlttc_object_cache_extension.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (101 > 100)",
+      "path": "tests/unit/test_object_event_v4_10.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "tests/unit/test_object_event_v4_10.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (109 > 100)",
+      "path": "tests/unit/test_object_event_v4_11.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "`json` imported but unused",
+      "path": "tests/unit/test_object_event_v4_11.py",
+      "rule_code": "F401"
+    },
+    {
+      "count": 1,
+      "message": "`pathlib.Path` imported but unused",
+      "path": "tests/unit/test_object_event_v4_11.py",
+      "rule_code": "F401"
+    },
+    {
+      "count": 1,
+      "message": "`yaml` imported but unused",
+      "path": "tests/unit/test_object_event_v4_11.py",
+      "rule_code": "F401"
+    },
+    {
+      "count": 1,
+      "message": "Local variable `batch` is assigned to but never used",
+      "path": "tests/unit/test_object_event_v4_12_model.py",
+      "rule_code": "F841"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (107 > 100)",
+      "path": "tests/unit/test_object_event_v4_13.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (122 > 100)",
+      "path": "tests/unit/test_object_event_v4_13.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (135 > 100)",
+      "path": "tests/unit/test_object_event_v4_13.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Multiple statements on one line (semicolon)",
+      "path": "tests/unit/test_object_event_v4_13.py",
+      "rule_code": "E702"
+    },
+    {
+      "count": 1,
+      "message": "`e_jepa_ttc.object_event_v4_13.ObjectEventV413Config` imported but unused",
+      "path": "tests/unit/test_object_event_v4_13.py",
+      "rule_code": "F401"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "tests/unit/test_object_event_v4_13.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "`numpy` imported but unused",
+      "path": "tests/unit/test_object_event_v4_14.py",
+      "rule_code": "F401"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "tests/unit/test_object_event_v4_15.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "`numpy` imported but unused",
+      "path": "tests/unit/test_object_event_v4_16.py",
+      "rule_code": "F401"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (118 > 100)",
+      "path": "tests/unit/test_object_event_v4_22.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (101 > 100)",
+      "path": "tests/unit/test_object_event_v4_23.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (103 > 100)",
+      "path": "tests/unit/test_object_event_v4_23.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (117 > 100)",
+      "path": "tests/unit/test_object_event_v4_23.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "tests/unit/test_object_event_v4_23.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 7,
+      "message": "Multiple statements on one line (semicolon)",
+      "path": "tests/unit/test_object_event_v4_25.py",
+      "rule_code": "E702"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "tests/unit/test_object_event_v4_25.py",
+      "rule_code": "I001"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (113 > 100)",
+      "path": "tests/unit/test_object_event_v4_4_calibration.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Line too long (112 > 100)",
+      "path": "tests/unit/test_object_event_v4_4_geometry.py",
+      "rule_code": "E501"
+    },
+    {
+      "count": 1,
+      "message": "Import block is un-sorted or un-formatted",
+      "path": "tests/unit/test_object_lhr_training.py",
+      "rule_code": "I001"
+    }
+  ],
+  "ruff_version": "ruff 0.15.20",
+  "schema_version": 1
+}

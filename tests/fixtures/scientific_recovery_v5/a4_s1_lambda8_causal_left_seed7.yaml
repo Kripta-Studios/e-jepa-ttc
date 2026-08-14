@@ -1,0 +1,53 @@
+# Minimal source recipe transcribed from V7 evidence:
+# artifacts/runs/scientific_recovery_v5_a4_parent_grouped_fold0_seed7/effective_config.yaml.
+experiment:
+  name: scientific_recovery_a4_s1_lambda8_causal_left_seed7
+  source_lambda_cv_commit: e8f233ea353bb32c4234a6c8c29c2a89a8fd103b
+  causality_hardening: symmetric_legacy_to_causal_left
+model_config: configs/model/e_jepa_causal_scale_event_v8_t015_resize_conv_causal.yaml
+provenance:
+  source_a4_config: configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a4_dinov3_relational_v1.yaml
+  source_a4_config_sha256: aa20959e4b6aa25071fcab65f00b4c8ffeb053689633d6dbdd9ec5f955024885
+  lambda_selection_candidate: 8.0
+  lambda_selection_public_validation_samples_opened: 0
+data:
+  cache_manifest: artifacts/cache/garl_object_event_common_roi_train8192_v1/manifest.json
+  cache_manifest_sha256: 063980fdae5fda0b2836befc662fdd1cd5659bf06f10d9760dfc0d566fac8e39
+  cache_artifact_sha256: f64b4348820b3ed83307413fd52c2cb39dae3c70deae8e65dc24996fe9ef25ec
+  official_test_opened: false
+  codabench_opened: false
+  evttc_test_opened: false
+training:
+  seed: 7
+  epochs: 18
+  minimum_epochs: 8
+  early_stopping_patience: 5
+  batch_size: 32
+  learning_rate: 0.0003
+  minimum_learning_rate: 0.00003
+  weight_decay: 0.0001
+  grad_clip_norm: 1.0
+  precision: bf16
+  maximum_runtime_hours: 6.0
+  foreground_supervision: bbox_geometry
+  representation_supervision: dinov3_local_relational
+  representation_distillation_weight: 8.0
+loss:
+  log_ratio_nll_weight: 1.0
+  log_ratio_tail_weight: 2.0
+  foreground_extent_weight: 1.25
+  foreground_width_weight: 1.25
+  foreground_center_weight: 2.5
+  risk_weight: 0.1
+  auxiliary_inverse_ttc_weight: 0.05
+decision_contract:
+  expected_parameter_count: 355118
+  model_config_must_equal_a4: true
+  model_config_sha256: 265dbfd57e68d7a6aa385fbf31dc0ad41154b17afbd1d9454bbd8ddd80c6663f
+  bbox_is_training_supervision_only: true
+  bbox_is_never_forward_input: true
+  no_sam_teacher: true
+  no_jepa_objective: true
+  oracle_roi_preprocessing_remains: true
+  temporal_smoothing_mode: causal_left
+  model_prefix_causal_required: true

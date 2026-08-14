@@ -1,0 +1,56 @@
+# Minimal source recipe transcribed from V7 evidence:
+# artifacts/runs/scientific_recovery_v5_a6_fold_chain_fold0_seed7/effective_config.yaml.
+experiment:
+  name: scientific_recovery_a6_s1_causal_left_seed7
+  parent_arm: A4_S1_train8192_same_lambda_control_required_for_transport_claim
+  single_scientific_difference: frozen_A4_S1_geometry_plus_identity_initialized_transport_adapter
+  causality_hardening: symmetric_legacy_to_causal_left
+model_config: configs/model/e_jepa_causal_scale_event_v10_transport_adapter_r1_t002_causal.yaml
+data:
+  cache_manifest: artifacts/cache/garl_object_event_common_roi_train8192_v1/manifest.json
+  cache_manifest_sha256: 063980fdae5fda0b2836befc662fdd1cd5659bf06f10d9760dfc0d566fac8e39
+  cache_artifact_sha256: f64b4348820b3ed83307413fd52c2cb39dae3c70deae8e65dc24996fe9ef25ec
+  official_test_opened: false
+  codabench_opened: false
+  evttc_test_opened: false
+training:
+  seed: 7
+  epochs: 18
+  minimum_epochs: 8
+  early_stopping_patience: 5
+  batch_size: 32
+  learning_rate: 0.0003
+  minimum_learning_rate: 0.00003
+  weight_decay: 0.0001
+  grad_clip_norm: 1.0
+  precision: bf16
+  maximum_runtime_hours: 6.0
+  foreground_supervision: bbox_geometry
+  representation_supervision: dinov3_local_relational
+  representation_distillation_weight: 8.0
+loss:
+  log_ratio_nll_weight: 1.0
+  log_ratio_tail_weight: 2.0
+  foreground_extent_weight: 1.25
+  foreground_width_weight: 1.25
+  foreground_center_weight: 2.5
+  risk_weight: 0.1
+  auxiliary_inverse_ttc_weight: 0.05
+decision_contract:
+  expected_parameter_count: 498130
+  bbox_is_training_supervision_only: true
+  bbox_is_never_forward_input: true
+  no_sam_teacher: true
+  no_jepa_objective: true
+  no_pair_ratio: true
+  temporal_smoothing_mode: causal_left
+  model_prefix_causal_required: true
+  adapter_contract:
+    initialization_mode: shape_compatible
+    parent_encoder_frozen_for_entire_run: true
+    geometry_must_equal_parent_by_construction: true
+    transport_radius: 1
+    transport_temperature: 0.02
+    dino_endpoint_lambda: 8.0
+    adapter_is_transport_only: true
+    adapter_identity_initialized: true

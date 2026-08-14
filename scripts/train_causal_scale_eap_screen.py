@@ -149,7 +149,12 @@ def _model_config(path: Path) -> CausalScaleTTCConfig:
 
 
 def _load_grouped_development_contract(data: dict[str, Any]) -> dict[str, Any]:
-    """Load one frozen V5 train-only fold and reject any broader data scope."""
+    """Load a V5 fold or the explicit signed V8 nested-router contract.
+
+    The historical V5 path remains byte-for-byte constrained.  V8's nested 4/2
+    and 6/3 fits are accepted only when their own signed artifact type and frozen
+    status are present; arbitrary grouped split files are still rejected.
+    """
 
     reference = data.get("development_protocol")
     if not isinstance(reference, dict):
@@ -163,9 +168,17 @@ def _load_grouped_development_contract(data: dict[str, Any]) -> dict[str, Any]:
         raise ValueError("grouped-development protocol signature is invalid")
     if protocol.get("artifact_sha256") != reference.get("artifact_sha256"):
         raise ValueError("grouped-development artifact SHA256 differs")
-    if protocol.get("artifact_type") != ("scientific_recovery_v5_train_only_grouped_dev_v1"):
+    artifact_type = protocol.get("artifact_type")
+    is_v8_nested = artifact_type == "scientific_recovery_v8_router_nested_v1"
+    if artifact_type not in {
+        "scientific_recovery_v5_train_only_grouped_dev_v1",
+        "scientific_recovery_v8_router_nested_v1",
+    }:
         raise ValueError("grouped-development artifact type is incompatible")
-    if protocol.get("status") != "frozen_before_a8_results":
+    expected_status = (
+        "frozen_before_v8_router_training" if is_v8_nested else "frozen_before_a8_results"
+    )
+    if protocol.get("status") != expected_status:
         raise ValueError("grouped-development protocol was not frozen before A8")
     checks = protocol.get("checks")
     if not isinstance(checks, dict):
@@ -200,10 +213,16 @@ def _load_grouped_development_contract(data: dict[str, Any]) -> dict[str, Any]:
         raise ValueError("grouped-development fold contains an empty partition")
     if train_sequences & dev_sequences or train_sequences | dev_sequences != universe:
         raise ValueError("grouped-development fold is not a disjoint universe partition")
-    if int(fold.get("train_rows", 0)) + int(fold.get("dev_rows", 0)) != int(
-        protocol.get("sample_count", -1)
-    ):
+    expected_selected_rows = (
+        protocol.get("selected_sample_count", protocol.get("sample_count", -1))
+        if is_v8_nested
+        else protocol.get("sample_count", -1)
+    )
+    if int(fold.get("train_rows", 0)) + int(fold.get("dev_rows", 0)) != int(expected_selected_rows):
         raise ValueError("grouped-development fold row counts are not exhaustive")
+    cache_universe_rows = int(protocol.get("cache_universe_rows", protocol.get("sample_count", -1)))
+    if cache_universe_rows <= 0:
+        raise ValueError("grouped-development cache universe rows are invalid")
     return {
         "path": protocol_path,
         "file_sha256": observed_file_sha,
@@ -213,6 +232,8 @@ def _load_grouped_development_contract(data: dict[str, Any]) -> dict[str, Any]:
         "fold_index": fold_index,
         "train_sequences": train_sequences,
         "dev_sequences": dev_sequences,
+        "is_v8_nested": is_v8_nested,
+        "cache_universe_rows": cache_universe_rows,
     }
 
 
@@ -867,7 +888,7 @@ def run(
         fold = grouped_contract["fold"]
         expected_train_rows = int(fold["train_rows"])
         expected_validation_rows = int(fold["dev_rows"])
-        expected_source_rows = int(grouped_contract["protocol"]["sample_count"])
+        expected_source_rows = int(grouped_contract["cache_universe_rows"])
         if data.get("validation_cache_manifest") is not None:
             raise ValueError("grouped development may not reference a validation cache")
     else:

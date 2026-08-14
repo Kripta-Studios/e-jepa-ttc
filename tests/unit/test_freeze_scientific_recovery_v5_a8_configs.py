@@ -11,11 +11,14 @@ import yaml
 
 from e_jepa_ttc.artifacts.hashing import sign_artifact
 from scripts.freeze_scientific_recovery_v5_a8_configs import (
-    A6_SOURCE,
-    A8_SOURCE,
     PROTOCOL_PATH,
     build_configs,
 )
+
+FIXTURE_ROOT = Path(__file__).parents[1] / "fixtures" / "scientific_recovery_v5"
+# These retained V5 recipes are minimized from the signed V7 effective-config evidence.
+A6_SOURCE = FIXTURE_ROOT / "a6_s1_causal_left_seed7.yaml"
+A8_SOURCE = FIXTURE_ROOT / "a7_s1_seed7.yaml"
 
 
 def _json(path: Path) -> dict[str, object]:

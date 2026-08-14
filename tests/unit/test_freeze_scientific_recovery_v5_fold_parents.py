@@ -8,10 +8,13 @@ from pathlib import Path
 import yaml
 
 from scripts.freeze_scientific_recovery_v5_fold_parents import (
-    A4_SOURCE,
     PROTOCOL_PATH,
     build_parent_configs,
 )
+
+FIXTURE_ROOT = Path(__file__).parents[1] / "fixtures" / "scientific_recovery_v5"
+# This retained V5 recipe is minimized from the signed V7 effective-config evidence.
+A4_SOURCE = FIXTURE_ROOT / "a4_s1_lambda8_causal_left_seed7.yaml"
 
 
 def _json(path: Path) -> dict[str, object]:
@@ -53,7 +56,8 @@ def test_fold_parent_configs_are_self_contained_and_preserve_a4_recipe() -> None
         assert config["model_config"] == source["model_config"]
         assert "parent_arm" not in config["experiment"]
         assert (
-            config["provenance"]["v5_fold_parent_interpretation"]
-            ["weights_inherited_from_historical_a4"]
+            config["provenance"]["v5_fold_parent_interpretation"][
+                "weights_inherited_from_historical_a4"
+            ]
             is False
         )

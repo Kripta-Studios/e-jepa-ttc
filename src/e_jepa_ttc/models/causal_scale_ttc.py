@@ -147,6 +147,24 @@ class CausalScaleTTCConfig:
             )
 
 
+@dataclass(frozen=True)
+class CausalScaleReplayControl:
+    """Explicit, inference-only interventions for a frozen causal-scale checkpoint.
+
+    These switches are intentionally unavailable from training configuration.  They
+    let the V8 autopsy replay the exact checkpoint graph while clamping individual
+    causal mechanisms; no weights, labels, or historical CSV predictions are used.
+    """
+
+    residual_enabled: bool = True
+    transport_enabled: bool = True
+    temporal_blend: Literal["trained", "current_only", "previous_only", "neutral"] = "trained"
+
+    def __post_init__(self) -> None:
+        if self.temporal_blend not in {"trained", "current_only", "previous_only", "neutral"}:
+            raise ValueError("invalid causal-scale replay temporal_blend")
+
+
 @dataclass
 class SoftScaleObservation:
     """Differentiable foreground geometry for one or more endpoint maps."""
@@ -758,6 +776,7 @@ class CausalScaleTTC(nn.Module):
         delta_t_s: torch.Tensor,
         *,
         return_dense_features: bool = False,
+        replay_control: CausalScaleReplayControl | None = None,
     ) -> CausalScaleTTCOutput:
         """Predict current TTC from causal endpoint tensors ``[B,T,C,H,W]``."""
 
@@ -767,6 +786,7 @@ class CausalScaleTTC(nn.Module):
             raise ValueError(
                 f"inputs have {inputs.shape[2]} channels; expected {self.config.in_channels}"
             )
+        control = replay_control or CausalScaleReplayControl()
         batch, steps, channels, height, width = inputs.shape
         if delta_t_s.shape != (batch, steps - 1):
             raise ValueError("delta_t_s must have shape [B,T-1]")
@@ -987,6 +1007,19 @@ class CausalScaleTTC(nn.Module):
                 transport_tokens,
                 reverse_transport_tokens,
             )
+            if not control.transport_enabled:
+                # Clamp only the transport pathways after their causal features
+                # have been computed.  This preserves the trained graph shape and
+                # changes no checkpoint parameter or input population.
+                transport_tokens = torch.zeros_like(transport_tokens)
+                reverse_transport_tokens = torch.zeros_like(reverse_transport_tokens)
+                transport_raw_features = torch.zeros_like(transport_raw_features)
+                residual = self.residual(
+                    previous,
+                    current,
+                    transport_tokens,
+                    reverse_transport_tokens,
+                )
             pair_input_values = [
                 previous,
                 current,
@@ -997,6 +1030,9 @@ class CausalScaleTTC(nn.Module):
         else:
             residual = self.residual(previous, current)
             pair_input_values = [previous, current, current - previous]
+
+        if not control.residual_enabled:
+            residual = torch.zeros_like(residual)
 
         log_ratio = analytic + residual
         pair_tokens = self.pair_projector(torch.cat(pair_input_values, dim=-1))
@@ -1027,11 +1063,17 @@ class CausalScaleTTC(nn.Module):
             & torch.isfinite(log_ratio)
         )
         current_dt = delta_t_s[:, -1]
+        replay_blend_weight = {
+            "trained": self.config.temporal_inverse_ttc_blend,
+            "current_only": 1.0,
+            "previous_only": 0.0,
+            "neutral": 0.5,
+        }[control.temporal_blend]
         inverse_ttc, temporal_blend_used = blend_current_inverse_ttc(
             pair_inverse_ttc,
             pair_known,
             current_dt,
-            current_pair_weight=self.config.temporal_inverse_ttc_blend,
+            current_pair_weight=replay_blend_weight,
         )
         current_ratio = torch.log1p((current_dt * inverse_ttc).clamp_min(-1.0 + 1.0e-6))
         effective_log_ratio = torch.cat(
@@ -1091,6 +1133,15 @@ class CausalScaleTTC(nn.Module):
             "foreground_temporal_smoothing": foreground_logits.new_full(
                 (batch,), self.config.foreground_temporal_smoothing
             ),
+            "replay_residual_enabled": foreground_logits.new_full(
+                (batch,), float(control.residual_enabled)
+            ),
+            "replay_transport_enabled": foreground_logits.new_full(
+                (batch,), float(control.transport_enabled)
+            ),
+            "replay_current_pair_weight": foreground_logits.new_full(
+                (batch,), replay_blend_weight
+            ),
         }
         if transport_raw_features is not None:
             for index, name in enumerate(TRANSPORT_FEATURE_NAMES):
@@ -1143,6 +1194,7 @@ class CausalScaleTTC(nn.Module):
 
 __all__ = [
     "CausalScaleTTC",
+    "CausalScaleReplayControl",
     "CausalScaleTTCConfig",
     "CausalScaleTTCOutput",
     "SoftScaleObservation",
