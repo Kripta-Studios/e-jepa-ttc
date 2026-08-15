@@ -433,12 +433,23 @@ def _quartile_groups(values: pd.Series) -> pd.Series | None:
     return pd.qcut(numeric, q=4, labels=("q1", "q2", "q3", "q4"), duplicates="drop")
 
 
-def mechanism_cuts(
-    frame: pd.DataFrame, *, prediction_column: str = "prediction_ttc"
-) -> dict[str, Any]:
-    """Compute prespecified mechanism cuts without using them as model features."""
+MECHANISM_CUT_SCALAR_REQUIRED_COLUMNS: tuple[str, ...] = (
+    "guard_margin",
+    "occupancy_entropy",
+    "motion_magnitude",
+)
 
-    validated = validate_replay_frame(frame)
+
+def _mechanism_cuts_from_validated_scalars(
+    validated: pd.DataFrame, *, prediction_column: str
+) -> dict[str, Any]:
+    """Compute cuts from an already OOF-validated scalar replay view."""
+
+    _require_columns(
+        validated,
+        MECHANISM_CUT_SCALAR_REQUIRED_COLUMNS,
+        label="V8 scalar mechanism replay",
+    )
     if prediction_column not in validated.columns:
         raise ValueError(f"mechanism cuts lack prediction column {prediction_column!r}")
     result: dict[str, Any] = {}
@@ -475,6 +486,39 @@ def mechanism_cuts(
             for label, group in labelled.groupby("_v8_cut", observed=True, sort=True)
         }
     return result
+
+
+def mechanism_cuts(
+    frame: pd.DataFrame, *, prediction_column: str = "prediction_ttc"
+) -> dict[str, Any]:
+    """Compute prespecified mechanism cuts from a complete replay export.
+
+    This public path deliberately keeps the original fail-closed contract and
+    requires every mechanism column in ``REPLAY_MECHANISM_REQUIRED_COLUMNS``.
+    """
+
+    validated = validate_replay_frame(frame)
+    return _mechanism_cuts_from_validated_scalars(
+        validated, prediction_column=prediction_column
+    )
+
+
+def mechanism_cuts_from_pruned_replay(
+    frame: pd.DataFrame, *, prediction_column: str = "prediction_ttc"
+) -> dict[str, Any]:
+    """Compute cuts from a memory-pruned replay after full artifact validation.
+
+    This is intentionally narrower than :func:`mechanism_cuts`: callers must
+    separately validate the complete replay artifact (full-file SHA-256 and full
+    replay header) before pruning high-dimensional payload columns.  The frame
+    itself still has to satisfy the complete OOF contract plus every scalar
+    mechanism quantity actually consumed by the prespecified cuts.
+    """
+
+    validated = validate_oof_frame(frame, label="V8 pruned mechanism replay")
+    return _mechanism_cuts_from_validated_scalars(
+        validated, prediction_column=prediction_column
+    )
 
 
 def classify_mechanism(
@@ -972,39 +1016,82 @@ def replay_output_frame(
 def assert_causal_prefix_invariance(
     model: CausalScaleTTC, events: torch.Tensor, delta_t_s: torch.Tensor
 ) -> None:
-    """Prove that the first pair's output is invariant to an appended future endpoint."""
+    """Prove that the first pair is independent of the future endpoint.
+
+    The historical implementation compared a two-endpoint forward pass with a
+    three-endpoint forward pass.  On CUDA that changes the flattened encoder batch
+    from ``B*2`` to ``B*3`` and can select different convolution kernels, creating
+    tiny floating-point differences even when the graph is mathematically causal.
+
+    V8 therefore keeps the exact same ``[B,3,C,H,W]`` execution shape and perturbs
+    only the future endpoint ``t2`` plus its future interval.  Any real dependency
+    of the ``t0->t1`` pair on future information still changes the checked tensors,
+    while backend batch-shape drift is removed from the test.
+    """
 
     if events.shape[1] != 3:
         raise ValueError("prefix invariance requires exactly three causal endpoints")
     if model.config.foreground_temporal_smoothing_mode == "symmetric_legacy":
         raise ValueError("prefix invariance rejects symmetric_legacy smoothing")
+
+    future_events = events.clone()
+    # Make t2 deterministically different without touching t0/t1.  A fixed impulse
+    # also changes an all-zero future endpoint, so the fixture cannot accidentally
+    # become a no-op.
+    future_events[:, -1] = torch.zeros_like(future_events[:, -1])
+    future_events[:, -1, :, 0, 0] = 1.0
+    future_delta_t_s = delta_t_s.clone()
+    future_delta_t_s[:, -1] = future_delta_t_s[:, -1] * 1.5 + 1.0e-6
+
     with torch.inference_mode():
-        prefix = model(events[:, :2], delta_t_s[:, :1])
-        complete = model(events, delta_t_s)
-    for label, before, after in (
+        baseline = model(events, delta_t_s)
+        perturbed = model(future_events, future_delta_t_s)
+
+    comparisons = (
+        (
+            "foreground_logits_prefix",
+            baseline.foreground_logits[:, :2],
+            perturbed.foreground_logits[:, :2],
+        ),
+        (
+            "geometry_tokens_prefix",
+            baseline.geometry_tokens[:, :2],
+            perturbed.geometry_tokens[:, :2],
+        ),
         (
             "pair_log_height_ratio",
-            prefix.pair_log_height_ratio[:, 0],
-            complete.pair_log_height_ratio[:, 0],
+            baseline.pair_log_height_ratio[:, 0],
+            perturbed.pair_log_height_ratio[:, 0],
         ),
         (
             "analytic_log_height_ratio",
-            prefix.analytic_log_height_ratio[:, 0],
-            complete.analytic_log_height_ratio[:, 0],
+            baseline.analytic_log_height_ratio[:, 0],
+            perturbed.analytic_log_height_ratio[:, 0],
         ),
         (
             "residual_log_height_ratio",
-            prefix.residual_log_height_ratio[:, 0],
-            complete.residual_log_height_ratio[:, 0],
+            baseline.residual_log_height_ratio[:, 0],
+            perturbed.residual_log_height_ratio[:, 0],
         ),
         (
             "pair_inverse_ttc",
-            prefix.pair_inverse_ttc[:, 0],
-            complete.pair_inverse_ttc[:, 0],
+            baseline.pair_inverse_ttc[:, 0],
+            perturbed.pair_inverse_ttc[:, 0],
         ),
-    ):
+    )
+    if baseline.transport_raw_features is not None and perturbed.transport_raw_features is not None:
+        comparisons += ((
+            "transport_raw_features_first_pair",
+            baseline.transport_raw_features[:, 0],
+            perturbed.transport_raw_features[:, 0],
+        ),)
+
+    for label, before, after in comparisons:
         if not torch.allclose(before, after, rtol=1.0e-5, atol=1.0e-6):
-            raise ValueError(f"future-prefix invariance failed for {label}")
+            max_abs = float((before - after).abs().max().detach().float().cpu())
+            raise ValueError(
+                f"future-prefix invariance failed for {label}; max_abs_diff={max_abs:.9g}"
+            )
 
 
 __all__ = [
@@ -1012,6 +1099,7 @@ __all__ = [
     "IDENTITY_COLUMNS",
     "OOF_V8_REQUIRED_COLUMNS",
     "REPLAY_MECHANISM_REQUIRED_COLUMNS",
+    "MECHANISM_CUT_SCALAR_REQUIRED_COLUMNS",
     "REQUIRED_GENERAL_GATE_INTEGRITY_CHECKS",
     "GeneralGateConfig",
     "MechanismRules",
@@ -1025,6 +1113,7 @@ __all__ = [
     "general_gate",
     "hierarchical_sequence_bootstrap",
     "mechanism_cuts",
+    "mechanism_cuts_from_pruned_replay",
     "prediction_sha256",
     "raw_mid_per_sample",
     "load_causal_scale_replay_checkpoint",

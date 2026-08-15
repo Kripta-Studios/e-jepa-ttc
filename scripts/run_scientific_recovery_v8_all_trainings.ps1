@@ -29,27 +29,103 @@ $ResultsRoot=Join-Path $BaseRoot 'results'
 $MasterLog=Join-Path $BaseRoot 'master_logs'
 $MasterState=Join-Path $BaseRoot 'master_state.json'
 New-Item -ItemType Directory -Force $MasterLog,$ResultsRoot | Out-Null
+$PsRuntime = $PSVersionTable.PSVersion.ToString()
+Write-Host "Scientific Recovery V8 orchestrator: PowerShell $PsRuntime" -ForegroundColor Cyan
 
 function Write-State([string]$Stage,[string]$Status,[string]$Detail='') {
     $value=[ordered]@{timestamp=(Get-Date).ToUniversalTime().ToString('o');stage=$Stage;status=$Status;detail=$Detail;device=$Device;max_parallel=$MaxParallel;sealed_evaluation='closed'}
     $tmp="$MasterState.tmp"; $value|ConvertTo-Json -Depth 8|Set-Content -LiteralPath $tmp -Encoding utf8; Move-Item -Force $tmp $MasterState
 }
-function Quote-Cmd([string[]]$Args) { return ($Args | ForEach-Object { if($_ -match '[\s"]'){ '"'+($_ -replace '"','\"')+'"' }else{$_} }) -join ' ' }
-function Start-LoggedProcess([string]$Label,[string]$File,[string[]]$Args) {
-    $dir=Join-Path $MasterLog $Label; New-Item -ItemType Directory -Force $dir|Out-Null
-    $stdout=Join-Path $dir 'stdout.log'; $stderr=Join-Path $dir 'stderr.log'; $command=Join-Path $dir 'command.txt'
-    @("START_UTC=$((Get-Date).ToUniversalTime().ToString('o'))","CWD=$RepoRoot","COMMAND=$File $(Quote-Cmd $Args)") | Add-Content -LiteralPath $command -Encoding utf8
-    if($DryRun){ Write-Host "[DRY] $Label :: $File $(Quote-Cmd $Args)"; return [pscustomobject]@{Label=$Label;Process=$null;Stdout=$stdout;Stderr=$stderr;Command=$command;Dry=$true} }
-    $p=Start-Process -FilePath $File -ArgumentList $Args -WorkingDirectory $RepoRoot -RedirectStandardOutput $stdout -RedirectStandardError $stderr -PassThru
-    return [pscustomobject]@{Label=$Label;Process=$p;Stdout=$stdout;Stderr=$stderr;Command=$command;Dry=$false}
+function Quote-NativeArgument([string]$Value) {
+    if($null -eq $Value){ throw 'Quote-NativeArgument received a NULL value.' }
+    if($Value.Length -eq 0){ return '""' }
+    if($Value -notmatch '[\s"]'){ return $Value }
+    # Start-Process joins/parses a command line on Windows. Quote arguments that
+    # contain whitespace explicitly; the repository path contains spaces.
+    return '"' + ($Value -replace '"','\"') + '"'
+}
+function ConvertTo-NativeArgumentLine([object[]]$ArgumentVector) {
+    $clean=@()
+    foreach($item in @($ArgumentVector)){
+        if($null -eq $item){ throw 'A child-process argument is NULL.' }
+        $clean += [string]$item
+    }
+    return ($clean | ForEach-Object { Quote-NativeArgument $_ }) -join ' '
+}
+function Quote-Cmd([object[]]$ArgumentVector) {
+    return ConvertTo-NativeArgumentLine $ArgumentVector
+}
+function Start-LoggedProcess([string]$Label,[string]$File,[object[]]$ArgumentVector) {
+    if([string]::IsNullOrWhiteSpace($Label)){ throw 'Process label must not be empty.' }
+    if([string]::IsNullOrWhiteSpace($File)){ throw "Process '$Label' has an empty executable." }
+
+    $cleanArgs=@()
+    foreach($item in @($ArgumentVector)){
+        if($null -eq $item){
+            throw "Process '$Label' has a NULL child-process argument."
+        }
+        $cleanArgs += [string]$item
+    }
+    $argumentLine=ConvertTo-NativeArgumentLine $cleanArgs
+
+    $dir=Join-Path $MasterLog $Label
+    New-Item -ItemType Directory -Force $dir | Out-Null
+    $stdout=Join-Path $dir 'stdout.log'
+    $stderr=Join-Path $dir 'stderr.log'
+    $command=Join-Path $dir 'command.txt'
+    @(
+        "START_UTC=$((Get-Date).ToUniversalTime().ToString('o'))",
+        "CWD=$RepoRoot",
+        "EXECUTABLE=$File",
+        "ARG_COUNT=$($cleanArgs.Count)",
+        "COMMAND=$File $argumentLine"
+    ) | Add-Content -LiteralPath $command -Encoding utf8
+
+    if($DryRun){
+        Write-Host "[DRY] $Label :: $File $argumentLine"
+        return [pscustomobject]@{
+            Label=$Label;Process=$null;Stdout=$stdout;Stderr=$stderr;Command=$command;Dry=$true
+        }
+    }
+
+    if($cleanArgs.Count -eq 0){
+        $p=Start-Process -FilePath $File `
+            -WorkingDirectory $RepoRoot `
+            -RedirectStandardOutput $stdout `
+            -RedirectStandardError $stderr `
+            -PassThru
+    } else {
+        # Pass one already-quoted command-line string. This avoids Windows
+        # PowerShell 5.1/Start-Process treating an array containing an empty or
+        # automatic $Args value as an invalid -ArgumentList.
+        $p=Start-Process -FilePath $File `
+            -ArgumentList $argumentLine `
+            -WorkingDirectory $RepoRoot `
+            -RedirectStandardOutput $stdout `
+            -RedirectStandardError $stderr `
+            -PassThru
+    }
+
+    return [pscustomobject]@{
+        Label=$Label;Process=$p;Stdout=$stdout;Stderr=$stderr;Command=$command;Dry=$false
+    }
 }
 function Wait-LoggedProcess($Job) {
     if($Job.Dry){ return }
-    $Job.Process.WaitForExit(); $code=$Job.Process.ExitCode
-    @("END_UTC=$((Get-Date).ToUniversalTime().ToString('o'))","EXIT_CODE=$code") | Add-Content -LiteralPath $Job.Command -Encoding utf8
-    if($code -ne 0){ throw "Process '$($Job.Label)' failed with exit $code. See $($Job.Stderr)" }
+    $Job.Process.WaitForExit()
+    $code=$Job.Process.ExitCode
+    @(
+        "END_UTC=$((Get-Date).ToUniversalTime().ToString('o'))",
+        "EXIT_CODE=$code"
+    ) | Add-Content -LiteralPath $Job.Command -Encoding utf8
+    if($code -ne 0){
+        throw "Process '$($Job.Label)' failed with exit $code. See $($Job.Stderr)"
+    }
 }
-function Invoke-Logged([string]$Label,[string]$File,[string[]]$Args){ $job=Start-LoggedProcess $Label $File $Args; Wait-LoggedProcess $job }
+function Invoke-Logged([string]$Label,[string]$File,[object[]]$ArgumentVector){
+    $job=Start-LoggedProcess $Label $File $ArgumentVector
+    Wait-LoggedProcess $job
+}
 function Invoke-Wave([array]$Specs){
     $active=@(); foreach($spec in $Specs){
         while($active.Count -ge $MaxParallel){ Wait-LoggedProcess $active[0]; if($active.Count -eq 1){$active=@()}else{$active=$active[1..($active.Count-1)]} }
@@ -61,6 +137,172 @@ function UvArgs([string[]]$Tail){ return @('run','--no-sync','python')+$Tail }
 function Read-SignedJson([string]$Path){ if(-not(Test-Path -LiteralPath $Path)){throw "Missing artifact: $Path"}; return Get-Content -Raw -LiteralPath $Path|ConvertFrom-Json }
 function Test-CandidatePassed([string]$CandidateId){
     $a=Read-SignedJson (Join-Path $ResultsRoot 'aggregate_seed7.json'); foreach($x in $a.candidate_results){if($x.candidate_id -eq $CandidateId){return [bool]$x.passed}}; return $false
+}
+
+function Invoke-DryRunRemainder {
+    Write-Host ""
+    Write-Host "[DRY-GATE] No artifacts are produced in -DryRun mode." -ForegroundColor Yellow
+    Write-Host "[DRY-GATE] The commands below show every conditional branch without claiming any gate passed." -ForegroundColor Yellow
+
+    # B3: shown only as a possible branch; real execution requires signed B1 pass.
+    Write-Host "[DRY-GATE] B3 PAIR20-2 would run only if B1_TIMEVOL20_3 passes." -ForegroundColor DarkYellow
+    Invoke-Logged '32_temporal_b3_pair20_2__CONDITIONAL' 'uv' (UvArgs @(
+        'scripts/run_scientific_recovery_v8_temporal.py',
+        '--protocol',$Protocol,
+        '--manifest',$Manifest,
+        '--results-root',$ResultsRoot,
+        '--arm','pair20_2',
+        '--device',$Device,
+        '--max-parallel',[string]$MaxParallel,
+        '--eap-root',$EapRoot,
+        '--garlttc-root',$GarlTtcRoot
+    ))
+    Invoke-Logged '33_aggregate_seed7_after_b3__CONDITIONAL' 'uv' (UvArgs @(
+        'scripts/aggregate_scientific_recovery_v8.py',
+        '--protocol',$Protocol,
+        '--manifest',$Manifest,
+        '--results-root',$ResultsRoot,
+        '--output',(Join-Path $ResultsRoot 'aggregate_seed7.json'),
+        '--resamples','5000'
+    ))
+
+    Invoke-Logged '40_primary_arm_aggregates' 'uv' (UvArgs @(
+        'scripts/build_scientific_recovery_v8_primary_aggregates.py',
+        '--protocol',$Protocol,
+        '--manifest',$Manifest,
+        '--aggregate',(Join-Path $ResultsRoot 'aggregate_seed7.json'),
+        '--output-dir',(Join-Path $BaseRoot 'arm_aggregates')
+    ))
+    Invoke-Logged '41_c1_opening' 'uv' (UvArgs @(
+        'scripts/build_scientific_recovery_v8_c1_opening.py',
+        '--protocol',$Protocol,
+        '--manifest',$Manifest,
+        '--results-root',$BaseRoot
+    ))
+
+    Write-Host "[DRY-GATE] C1 GATED-EXP6-3 would run only if signed C1-opening evidence exists." -ForegroundColor DarkYellow
+    Invoke-Logged '42_adaptive_c1__CONDITIONAL' 'uv' (UvArgs @(
+        'scripts/run_scientific_recovery_v8_adaptive.py',
+        '--protocol',$Protocol,
+        '--manifest',$Manifest,
+        '--evidence-root',$BaseRoot,
+        '--results-root',$ResultsRoot,
+        '--device',$Device,
+        '--max-parallel',[string]$MaxParallel
+    ))
+    Invoke-Logged '43_aggregate_seed7_after_c1__CONDITIONAL' 'uv' (UvArgs @(
+        'scripts/aggregate_scientific_recovery_v8.py',
+        '--protocol',$Protocol,
+        '--manifest',$Manifest,
+        '--results-root',$ResultsRoot,
+        '--output',(Join-Path $ResultsRoot 'aggregate_seed7.json'),
+        '--resamples','5000'
+    ))
+
+    # JEPA always runs in the real DAG. In dry-run the winner/cache does not exist,
+    # so use an explicit placeholder rather than trying to read a nonexistent artifact.
+    $dryJepaRef = Join-Path $BaseRoot 'jepa/downstream_reference.json'
+    $dryLowLabel = Join-Path $BaseRoot 'jepa/low_label_subsets.json'
+    $dryCacheManifest = '<CACHE_MANIFEST_FROM_SIGNED_DOWNSTREAM_REFERENCE>'
+
+    Invoke-Logged '50_jepa_reference' 'uv' (UvArgs @(
+        'scripts/build_scientific_recovery_v8_jepa_reference.py',
+        '--aggregate',(Join-Path $ResultsRoot 'aggregate_seed7.json'),
+        '--protocol',$Protocol,
+        '--output',$dryJepaRef
+    ))
+    Invoke-Logged '51_low_label_freeze' 'uv' (UvArgs @(
+        'scripts/freeze_scientific_recovery_v8_low_label_subsets.py',
+        '--winner-artifact',$dryJepaRef,
+        '--cache-manifest',$dryCacheManifest,
+        '--protocol',$Protocol,
+        '--output',$dryLowLabel
+    ))
+
+    $dryJepaSpecs=@()
+    foreach($fold in 0..2){
+        $dryJepaSpecs += [pscustomobject]@{
+            Label="52_jepa_seed7_fold$fold"
+            File='uv'
+            Args=(UvArgs @(
+                'scripts/run_scientific_recovery_v8_jepa_attribution.py',
+                '--config-dir','configs/experiment/scientific_recovery_v8_jepa',
+                '--cache-manifest',$dryCacheManifest,
+                '--winner-artifact',$dryJepaRef,
+                '--low-label-manifest',$dryLowLabel,
+                '--protocol',$Protocol,
+                '--output-root',(Join-Path $BaseRoot 'jepa'),
+                '--device',$Device,
+                '--folds',[string]$fold
+            ))
+        }
+    }
+    Invoke-Wave $dryJepaSpecs
+    Invoke-Logged '53_jepa_aggregate_seed7' 'uv' (UvArgs @(
+        'scripts/aggregate_scientific_recovery_v8_jepa.py',
+        '--results-root',(Join-Path $BaseRoot 'jepa'),
+        '--output',(Join-Path $BaseRoot 'jepa/aggregate_seed7.json'),
+        '--seed','7'
+    ))
+
+    Write-Host "[DRY-GATE] JEPA seeds 13/23 would run only if seed-7 JEPA is causally positive." -ForegroundColor DarkYellow
+    foreach($seed in 13,23){
+        Invoke-Logged "54_jepa_clone_seed${seed}__CONDITIONAL" 'uv' (UvArgs @(
+            'scripts/clone_scientific_recovery_v8_jepa_replication_configs.py',
+            '--seed',[string]$seed,
+            '--output-dir',(Join-Path $BaseRoot "jepa/configs_seed$seed")
+        ))
+    }
+
+    $dryRepSpecs=@()
+    foreach($seed in 13,23){
+        foreach($fold in 0..2){
+            $dryRepSpecs += [pscustomobject]@{
+                Label="55_jepa_seed${seed}_fold${fold}__CONDITIONAL"
+                File='uv'
+                Args=(UvArgs @(
+                    'scripts/run_scientific_recovery_v8_jepa_attribution.py',
+                    '--config-dir',(Join-Path $BaseRoot "jepa/configs_seed$seed"),
+                    '--cache-manifest',$dryCacheManifest,
+                    '--winner-artifact',$dryJepaRef,
+                    '--low-label-manifest',$dryLowLabel,
+                    '--protocol',$Protocol,
+                    '--output-root',(Join-Path $BaseRoot 'jepa'),
+                    '--device',$Device,
+                    '--folds',[string]$fold
+                ))
+            }
+        }
+    }
+    Invoke-Wave $dryRepSpecs
+
+    foreach($seed in 13,23){
+        Invoke-Logged "56_jepa_aggregate_seed${seed}__CONDITIONAL" 'uv' (UvArgs @(
+            'scripts/aggregate_scientific_recovery_v8_jepa.py',
+            '--results-root',(Join-Path $BaseRoot 'jepa'),
+            '--output',(Join-Path $BaseRoot "jepa/aggregate_seed$seed.json"),
+            '--seed',[string]$seed
+        ))
+    }
+
+    # The multiseed runner is itself gate-aware in real execution.
+    Invoke-Logged '60_downstream_multiseed' 'uv' (UvArgs @(
+        'scripts/run_scientific_recovery_v8_multiseed_replication.py',
+        '--protocol',$Protocol,
+        '--manifest',$Manifest,
+        '--results-root',$BaseRoot,
+        '--device',$Device,
+        '--max-parallel',[string]$MaxParallel
+    ))
+
+    if(Test-Path -LiteralPath 'scripts/build_scientific_recovery_v8_report.py'){
+        Invoke-Logged '70_report' 'uv' (UvArgs @('scripts/build_scientific_recovery_v8_report.py'))
+    }
+
+    Write-State 'dry_run' 'completed' 'All unconditional and conditional commands were rendered; no scientific gate was evaluated.'
+    Write-Host ""
+    Write-Host "V8 DRY-RUN DAG COMPLETED. No training/artifact-producing command was executed." -ForegroundColor Green
+    Write-Host "Conditional branches were shown for inspection only." -ForegroundColor Yellow
 }
 
 Write-State 'preflight' 'running'
@@ -75,10 +317,20 @@ Write-State 'preflight' 'completed'
 # A: no optimizer steps. Materialize exact V4 inputs, replay A5/C2F, bind frozen Garl OOF, aggregate.
 Write-State 'autopsy' 'running'
 $AInput=Join-Path $BaseRoot 'autopsy/inputs'; $AReplay=Join-Path $BaseRoot 'autopsy/replays'; $AOut=Join-Path $BaseRoot 'autopsy/mechanism_autopsy.json'
-Invoke-Logged '10_autopsy_materialize' 'uv' (UvArgs @('scripts/materialize_scientific_recovery_v8_autopsy_inputs.py','--protocol',$Protocol,'--output-dir',$AInput))
-Invoke-Logged '11_autopsy_replay_a5_c2f' 'uv' (UvArgs @('scripts/replay_scientific_recovery_v8_mechanisms.py','--protocol',$Protocol,'--replay-input-root',$AInput,'--output-dir',$AReplay,'--models','a5','c2f','--device',$Device))
-Invoke-Logged '12_autopsy_garl_bind' 'uv' (UvArgs @('scripts/materialize_scientific_recovery_v8_garl_autopsy_comparator.py','--protocol',$Protocol,'--output-dir',(Join-Path $AReplay 'garl')))
-Invoke-Logged '13_autopsy_aggregate' 'uv' (UvArgs @('scripts/aggregate_scientific_recovery_v8_autopsy.py','--a5-manifest',(Join-Path $AReplay 'a5/manifest.json'),'--c2f-manifest',(Join-Path $AReplay 'c2f/manifest.json'),'--garl-manifest',(Join-Path $AReplay 'garl/manifest.json'),'--protocol',$Protocol,'--output',$AOut,'--bootstrap-resamples','5000'))
+$A5ReplayManifest=Join-Path $AReplay 'a5/manifest.json'
+$C2FReplayManifest=Join-Path $AReplay 'c2f/manifest.json'
+$GarlReplayManifest=Join-Path $AReplay 'garl/manifest.json'
+$ReuseAutopsyReplays = (-not $DryRun) -and (Test-Path -LiteralPath $A5ReplayManifest) -and (Test-Path -LiteralPath $C2FReplayManifest) -and (Test-Path -LiteralPath $GarlReplayManifest)
+if($ReuseAutopsyReplays){
+    Write-Host 'Reusing completed A5/C2F/Garl autopsy replay manifests; stages 10-12 will not be recomputed.'
+}else{
+    Invoke-Logged '10_autopsy_materialize' 'uv' (UvArgs @('scripts/materialize_scientific_recovery_v8_autopsy_inputs.py','--protocol',$Protocol,'--output-dir',$AInput,'--eap-root',$EapRoot,'--garlttc-root',$GarlTtcRoot))
+    Invoke-Logged '11_autopsy_replay_a5_c2f' 'uv' (UvArgs @('scripts/replay_scientific_recovery_v8_mechanisms.py','--protocol',$Protocol,'--replay-input-root',$AInput,'--output-dir',$AReplay,'--models','a5','c2f','--device',$Device))
+    Invoke-Logged '12_autopsy_garl_bind' 'uv' (UvArgs @('scripts/materialize_scientific_recovery_v8_garl_autopsy_comparator.py','--protocol',$Protocol,'--output-dir',(Join-Path $AReplay 'garl')))
+}
+# Stage 13 re-verifies signed replay manifests and every referenced CSV hash, so
+# existence-only reuse above cannot silently accept stale/corrupt replay evidence.
+Invoke-Logged '13_autopsy_aggregate' 'uv' (UvArgs @('scripts/aggregate_scientific_recovery_v8_autopsy.py','--a5-manifest',$A5ReplayManifest,'--c2f-manifest',$C2FReplayManifest,'--garl-manifest',$GarlReplayManifest,'--protocol',$Protocol,'--output',$AOut,'--bootstrap-resamples','5000'))
 Write-State 'autopsy' 'completed'
 
 # R: prospective nested router. Internally executes 18 inner + 6 outer expert fits with max two concurrent.
@@ -90,6 +342,10 @@ Write-State 'router' 'completed'
 Write-State 'temporal' 'running'
 Invoke-Logged '30_temporal_b1_b2' 'uv' (UvArgs @('scripts/run_scientific_recovery_v8_temporal.py','--protocol',$Protocol,'--manifest',$Manifest,'--results-root',$ResultsRoot,'--arm','all','--device',$Device,'--max-parallel',[string]$MaxParallel,'--eap-root',$EapRoot,'--garlttc-root',$GarlTtcRoot))
 Invoke-Logged '31_aggregate_seed7_initial' 'uv' (UvArgs @('scripts/aggregate_scientific_recovery_v8.py','--protocol',$Protocol,'--manifest',$Manifest,'--results-root',$ResultsRoot,'--output',(Join-Path $ResultsRoot 'aggregate_seed7.json'),'--resamples','5000'))
+if($DryRun){
+    Invoke-DryRunRemainder
+    return
+}
 # B3 is automatically opened only by a signed B1 pass.
 if(Test-CandidatePassed 'B1_TIMEVOL20_3'){
     Invoke-Logged '32_temporal_b3_pair20_2' 'uv' (UvArgs @('scripts/run_scientific_recovery_v8_temporal.py','--protocol',$Protocol,'--manifest',$Manifest,'--results-root',$ResultsRoot,'--arm','pair20_2','--device',$Device,'--max-parallel',[string]$MaxParallel,'--eap-root',$EapRoot,'--garlttc-root',$GarlTtcRoot))

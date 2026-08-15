@@ -1,5 +1,5 @@
 {
-  "artifact_sha256": "e196a1358b88c695d850df9e7b86ea5037688e28f2088b92ab5beb9d112fc0f7",
+  "artifact_sha256": "ec31c70d11ffef3c6972032d622c7c2d0586b2502e3449173a2cfed69d443f11",
   "artifact_type": "scientific_recovery_v8_temporal_protocol_v1",
   "c1_analysis_plans": {
     "autopsy_h3": {
@@ -8,9 +8,9 @@
       "sha256": "d2c5c1462e297952d12eeade743d2f62621f23242117959051b2d28ad400cd74"
     },
     "exp6_regime": {
-      "artifact_sha256": "ece3a2d9cd39ff4f97e339a5a81dac143ac49f4818a3b741c63ca3817ce3ebbf",
+      "artifact_sha256": "71db2048ee5668848ade8b0a902acbbf860f4be336287e06a0dd7bbcab5c5fd4",
       "path": "configs/protocol/scientific_recovery_v8_c1_analysis_plans/exp6_regime.json",
-      "sha256": "0ed4530f9ea81e866eef53c41d3120c6e7e067aba16a833c86cfb30e0d39aa99"
+      "sha256": "f0d282b173b438d4cb98b3ddccf92cc3e83493410a37d5cecf62eace589ff6b5"
     },
     "router_regime": {
       "artifact_sha256": "ee2a7b81154863355eeae2674018223ba58aec50db70b34af948b98f322def4c",
@@ -280,7 +280,7 @@
     ],
     "gradient_coverage": "finite nonzero gradient for every transferred parameter",
     "label_free": true,
-    "router_winner_rule": "apply selected R arm independently to both experts and refit identical inner-OOF router",
+    "router_winner_rule": "R remains the primary TTC winner, but JEPA attribution uses the frozen A5 constituent encoder because a meta-router has no single transferable encoder; the router itself is not credited as JEPA.",
     "transfer_prefix": "CausalScaleTTC.encoder.*",
     "transfer_validation": [
       "strict ordered keys",

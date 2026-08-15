@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 import importlib.util
 from pathlib import Path
 
@@ -13,13 +14,16 @@ import pytest
 from e_jepa_ttc.artifacts.hashing import sign_artifact
 from e_jepa_ttc.evaluation.scientific_recovery_v8 import (
     AGGREGATE_V8_REQUIRED_KEYS,
+    OOF_V8_REQUIRED_COLUMNS,
     REPLAY_MECHANISM_REQUIRED_COLUMNS,
     REQUIRED_GENERAL_GATE_INTEGRITY_CHECKS,
     align_oof_frames,
+    assert_causal_prefix_invariance,
     classify_mechanism,
     general_gate,
     hierarchical_sequence_bootstrap,
     mechanism_cuts,
+    mechanism_cuts_from_pruned_replay,
     raw_mid_per_sample,
     row_identity_sha256,
     target_sha256,
@@ -225,6 +229,34 @@ def test_mechanism_cuts_include_prespecified_regimes_without_becoming_features()
     assert "category_analysis_only" in cuts
 
 
+
+
+def test_pruned_mechanism_cuts_match_full_replay_for_scalar_diagnostics() -> None:
+    full = _frame()
+    scalar_columns = [
+        *OOF_V8_REQUIRED_COLUMNS,
+        "guard_margin",
+        "occupancy_entropy",
+        "motion_magnitude",
+        "category",
+    ]
+    pruned = full.loc[:, list(dict.fromkeys(scalar_columns))].copy()
+
+    assert mechanism_cuts_from_pruned_replay(pruned) == mechanism_cuts(full)
+
+
+def test_pruned_mechanism_cuts_still_require_consumed_scalar_columns() -> None:
+    full = _frame()
+    pruned = full.loc[:, [
+        *OOF_V8_REQUIRED_COLUMNS,
+        "occupancy_entropy",
+        "motion_magnitude",
+    ]].copy()
+
+    with pytest.raises(ValueError, match="guard_margin"):
+        mechanism_cuts_from_pruned_replay(pruned)
+
+
 def test_general_gate_and_aggregate_schema_fail_closed() -> None:
     bootstrap = {"delta_candidate_minus_reference": {"probability_candidate_lower_mid": 0.95}}
     decision = general_gate(
@@ -389,3 +421,326 @@ def test_replay_cli_runner_loads_checkpoint_and_writes_signed_factorial_csvs(
     assert manifest["artifact_sha256"]
     assert len(manifest["factorial_cells"]) == 5
     assert (tmp_path / "replay" / "factorial_full.csv").is_file()
+
+
+def test_sharded_replay_streams_signed_parts_without_fold_tensor(tmp_path: Path) -> None:
+    """Production autopsy replay must accept small signed parts instead of one fold-sized tensor."""
+
+    torch = pytest.importorskip("torch")
+    from e_jepa_ttc.artifacts.hashing import sign_artifact
+    from e_jepa_ttc.evaluation.scientific_recovery_v8 import canonical_json_sha256, sha256_file
+
+    module_spec = importlib.util.spec_from_file_location(
+        "v8_replay_sharded", Path("scripts/replay_scientific_recovery_v8_mechanisms.py")
+    )
+    assert module_spec is not None and module_spec.loader is not None
+    module = importlib.util.module_from_spec(module_spec)
+    module_spec.loader.exec_module(module)
+
+    config = CausalScaleTTCConfig(
+        in_channels=2,
+        hidden_dim=8,
+        geometry_dim=8,
+        residual_depth=1,
+        dropout=0.0,
+        foreground_temporal_smoothing_mode="causal_left",
+        transport_enabled=True,
+        transport_radius=1,
+    )
+    model = CausalScaleTTC(config).eval()
+    checkpoint = tmp_path / "checkpoint.pt"
+    torch.save(
+        {"model_config": config.__dict__, "model_state_dict": model.state_dict()}, checkpoint
+    )
+
+    part_entries = []
+    for part_index in range(2):
+        part = tmp_path / f"fold0.part{part_index:04d}.pt"
+        start = part_index * 2
+        torch.save(
+            {
+                "events": torch.rand(2, 3, 2, 16, 16).half(),
+                "delta_t_s": torch.full((2, 2), 0.01),
+                "target_ttc": torch.tensor([2.0 + start, 4.0 + start]),
+                "sample_weight": torch.ones(2),
+                "token_id": [f"token-{start}", f"token-{start + 1}"],
+                "sequence_id": ["sequence-a", "sequence-a"],
+                "track_id": [f"track-{start}", f"track-{start + 1}"],
+                "outer_fold": [0, 0],
+                "seed": [7, 7],
+                "endpoint_us": torch.tensor([[1, 2, 3], [4, 5, 6]]),
+            },
+            part,
+        )
+        part_entries.append(
+            {
+                "part": part_index,
+                "path": part.name,
+                "sha256": sha256_file(part),
+                "rows": 2,
+                "first_token": f"token-{start}",
+                "last_token": f"token-{start + 1}",
+            }
+        )
+    input_manifest = {
+        "artifact_type": "scientific_recovery_v8_autopsy_replay_input_sharded_v2",
+        "protocol_artifact_sha256": "0" * 64,
+        "outer_fold": 0,
+        "rows": 4,
+        "chunk_rows": 2,
+        "parts": part_entries,
+        "sealed_splits_opened": False,
+    }
+    sign_artifact(input_manifest)
+    manifest_path = tmp_path / "fold0.manifest.json"
+    manifest_path.write_text(json.dumps(input_manifest), encoding="utf-8")
+
+    result = module.run_replay_sharded(
+        checkpoint=checkpoint,
+        input_manifest_path=manifest_path,
+        output_dir=tmp_path / "replay",
+        model_name="a5",
+        config_sha256=canonical_json_sha256(model.checkpoint_config()),
+    )
+    assert result["artifact_sha256"]
+    assert result["replay_input"]["parts"] == 2
+    assert result["replay_input"]["rows"] == 4
+    frame = pd.read_csv(tmp_path / "replay" / "baseline.csv")
+    assert len(frame) == 4
+    assert set(frame["token_id"]) == {"token-0", "token-1", "token-2", "token-3"}
+
+
+
+def test_replay_accepts_historical_checkpoint_config_with_new_default_fields(tmp_path: Path) -> None:
+    """Raw historical config hash must survive backward-compatible dataclass defaults."""
+
+    torch = pytest.importorskip("torch")
+    from e_jepa_ttc.artifacts.hashing import sign_artifact
+    from e_jepa_ttc.evaluation.scientific_recovery_v8 import canonical_json_sha256, sha256_file
+
+    module_spec = importlib.util.spec_from_file_location(
+        "v8_replay_historical_config", Path("scripts/replay_scientific_recovery_v8_mechanisms.py")
+    )
+    assert module_spec is not None and module_spec.loader is not None
+    module = importlib.util.module_from_spec(module_spec)
+    module_spec.loader.exec_module(module)
+
+    config = CausalScaleTTCConfig(
+        in_channels=2,
+        hidden_dim=8,
+        geometry_dim=8,
+        residual_depth=1,
+        dropout=0.0,
+        foreground_temporal_smoothing_mode="causal_left",
+        transport_enabled=True,
+        transport_radius=1,
+    )
+    model = CausalScaleTTC(config).eval()
+    raw_config = dict(config.__dict__)
+    # ``transport_mode`` was added after some historical A5/C2F checkpoints;
+    # its default reproduces the old behavior exactly.
+    raw_config.pop("transport_mode")
+    checkpoint = tmp_path / "historical_checkpoint.pt"
+    torch.save(
+        {"model_config": raw_config, "model_state_dict": model.state_dict()}, checkpoint
+    )
+
+    part = tmp_path / "fold0.part0000.pt"
+    torch.save(
+        {
+            "events": torch.rand(2, 3, 2, 16, 16).half(),
+            "delta_t_s": torch.full((2, 2), 0.01),
+            "target_ttc": torch.tensor([2.0, 4.0]),
+            "sample_weight": torch.ones(2),
+            "token_id": ["token-0", "token-1"],
+            "sequence_id": ["sequence-a", "sequence-a"],
+            "track_id": ["track-0", "track-1"],
+            "outer_fold": [0, 0],
+            "seed": [7, 7],
+            "endpoint_us": torch.tensor([[1, 2, 3], [4, 5, 6]]),
+        },
+        part,
+    )
+    manifest = {
+        "artifact_type": "scientific_recovery_v8_autopsy_replay_input_sharded_v2",
+        "protocol_artifact_sha256": "0" * 64,
+        "outer_fold": 0,
+        "rows": 2,
+        "chunk_rows": 2,
+        "parts": [
+            {
+                "part": 0,
+                "path": part.name,
+                "sha256": sha256_file(part),
+                "rows": 2,
+                "first_token": "token-0",
+                "last_token": "token-1",
+            }
+        ],
+        "sealed_splits_opened": False,
+    }
+    sign_artifact(manifest)
+    manifest_path = tmp_path / "fold0.manifest.json"
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+    result = module.run_replay_sharded(
+        checkpoint=checkpoint,
+        input_manifest_path=manifest_path,
+        output_dir=tmp_path / "replay",
+        model_name="a5",
+        config_sha256=canonical_json_sha256(raw_config),
+    )
+    assert result["config_sha256"] == canonical_json_sha256(raw_config)
+    assert (
+        result["config_provenance"]["raw_checkpoint_config_sha256"]
+        == canonical_json_sha256(raw_config)
+    )
+    assert (
+        result["config_provenance"]["effective_model_config_sha256"]
+        == canonical_json_sha256(model.checkpoint_config())
+    )
+
+def test_autopsy_materializer_detects_pruned_historical_shards_and_builds_storage_only_recovery_config(tmp_path: Path) -> None:
+    """Missing historical shards must trigger a train-only, value-equivalent recovery cache."""
+
+    module_spec = importlib.util.spec_from_file_location(
+        "v8_autopsy_materialize_recovery",
+        Path("scripts/materialize_scientific_recovery_v8_autopsy_inputs.py"),
+    )
+    assert module_spec is not None and module_spec.loader is not None
+    module = importlib.util.module_from_spec(module_spec)
+    module_spec.loader.exec_module(module)
+
+    manifest_path = tmp_path / "manifest.json"
+    manifest = {
+        "uses_official_garl_ttc_labels": True,
+        "shards": [
+            {"split": "train", "path": "train/shard-00000.pt", "count": 32},
+            {"split": "validation", "path": "validation/shard-00000.pt", "count": 5},
+        ],
+        "config": {
+            "full_width": 160,
+            "full_height": 90,
+            "full_bins": 5,
+            "roi_size": 128,
+            "roi_bins": 10,
+            "shard_size": 256,
+            "store_full_frame_events": False,
+            "store_garl_event_roi": False,
+            "store_jepa_event_roi": False,
+            "store_event_v4_common_roi": True,
+            "event_v4_margin_fraction": 0.25,
+            "event_v4_require_precontext": True,
+            "event_v4_precontext_fallback": "shifted_event_window",
+            "event_v4_bins_per_polarity": 5,
+            "event_v4_storage_dtype": "float32",
+            "materialize_splits": ["train", "validation"],
+            "include_rgb": False,
+            "include_masks": False,
+            "mask_required": False,
+            "jepa_roi_bins": 5,
+            "expected_train_rows": 88744,
+            "allow_dataset_version_change": False,
+            "target_delta_t_s": 0.1,
+            "delta_t_tolerance_s": 0.025,
+            "jepa_context_delta_t_s": 0.1,
+            "jepa_context_tolerance_s": 0.05,
+            "calibration_mode": "official_constant_fy",
+            "selection_seed": 7,
+            "event_pixel_diff": 5,
+            "preprocessing_device": "cpu",
+            "workers": 4,
+            "compression": "none",
+            "compression_level": 1,
+        },
+    }
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    missing = module._missing_split_shards(manifest_path)
+    assert missing == [tmp_path / "train" / "shard-00000.pt"]
+
+    recovered = module._recovery_config(manifest, shard_size=32)
+    assert recovered.materialize_splits == ("train",)
+    assert recovered.shard_size == 32
+    assert recovered.workers == 4
+    assert recovered.roi_size == 128
+    assert recovered.event_v4_bins_per_polarity == 5
+    assert recovered.event_v4_margin_fraction == 0.25
+    assert recovered.event_v4_precontext_fallback == "shifted_event_window"
+    assert recovered.event_v4_storage_dtype == "float32"
+    assert recovered.event_pixel_diff == 5
+
+
+def test_autopsy_materializer_prefers_existing_train_shards(tmp_path: Path) -> None:
+    module_spec = importlib.util.spec_from_file_location(
+        "v8_autopsy_materialize_existing",
+        Path("scripts/materialize_scientific_recovery_v8_autopsy_inputs.py"),
+    )
+    assert module_spec is not None and module_spec.loader is not None
+    module = importlib.util.module_from_spec(module_spec)
+    module_spec.loader.exec_module(module)
+
+    shard = tmp_path / "train" / "shard-00000.pt"
+    shard.parent.mkdir(parents=True)
+    shard.write_bytes(b"present")
+    manifest_path = tmp_path / "manifest.json"
+    manifest_path.write_text(
+        json.dumps({"shards": [{"split": "train", "path": "train/shard-00000.pt", "count": 1}]}),
+        encoding="utf-8",
+    )
+    assert module._missing_split_shards(manifest_path) == []
+
+
+def test_autopsy_materializer_loads_exact_sha_pinned_v7_population() -> None:
+    module_spec = importlib.util.spec_from_file_location(
+        "v8_autopsy_materialize_population",
+        Path("scripts/materialize_scientific_recovery_v8_autopsy_inputs.py"),
+    )
+    assert module_spec is not None and module_spec.loader is not None
+    module = importlib.util.module_from_spec(module_spec)
+    module_spec.loader.exec_module(module)
+    protocol = json.loads(
+        Path("configs/protocol/scientific_recovery_v8_temporal.json").read_text(encoding="utf-8")
+    )
+    rows = module._frozen_a5_rows(protocol)
+    assert len(rows) == 8192
+    assert {row["fold"] for row in rows.values()} == {0, 1, 2}
+    assert all(row["seed"] == 7 for row in rows.values())
+
+
+def test_future_prefix_invariance_uses_same_shape_future_perturbation() -> None:
+    torch = pytest.importorskip("torch")
+    model = CausalScaleTTC(
+        CausalScaleTTCConfig(
+            in_channels=2,
+            hidden_dim=8,
+            geometry_dim=8,
+            residual_depth=1,
+            dropout=0.0,
+            foreground_temporal_smoothing=0.15,
+            foreground_temporal_smoothing_mode="causal_left",
+            transport_enabled=False,
+        )
+    ).eval()
+    events = torch.rand(2, 3, 2, 16, 16)
+    delta_t_s = torch.full((2, 2), 0.1)
+    assert_causal_prefix_invariance(model, events, delta_t_s)
+
+
+def test_future_prefix_invariance_rejects_symmetric_legacy_smoothing() -> None:
+    torch = pytest.importorskip("torch")
+    model = CausalScaleTTC(
+        CausalScaleTTCConfig(
+            in_channels=2,
+            hidden_dim=8,
+            geometry_dim=8,
+            residual_depth=1,
+            dropout=0.0,
+            foreground_temporal_smoothing=0.15,
+            foreground_temporal_smoothing_mode="symmetric_legacy",
+            transport_enabled=False,
+        )
+    ).eval()
+    events = torch.rand(1, 3, 2, 16, 16)
+    delta_t_s = torch.full((1, 2), 0.1)
+    with pytest.raises(ValueError, match="rejects symmetric_legacy"):
+        assert_causal_prefix_invariance(model, events, delta_t_s)

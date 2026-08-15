@@ -21,7 +21,7 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from e_jepa_ttc.artifacts.hashing import sign_artifact  # noqa: E402
+from e_jepa_ttc.artifacts.hashing import sign_artifact, verify_artifact_hash  # noqa: E402
 from e_jepa_ttc.data.object_event_v4 import GarlTTCObjectEventV4Dataset  # noqa: E402
 from e_jepa_ttc.data.scientific_recovery_v5 import SequenceIndexedView  # noqa: E402
 
@@ -49,9 +49,125 @@ def _base_config(expert: str, outer: int) -> Path:
     )
 
 
-def _selected_identity(base: Mapping[str, Any], sequences: list[str]) -> tuple[pd.DataFrame, int]:
-    data = base["data"]
-    manifest = ROOT / str(data["cache_manifest"])
+def _read_json(path: Path) -> dict[str, Any]:
+    value = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(value, dict):
+        raise ValueError(f"JSON artifact must be an object: {path}")
+    return value
+
+
+def _cache_train_shards_healthy(manifest_path: Path) -> bool:
+    """Return true only when every declared train shard exists and is non-empty."""
+
+    if not manifest_path.is_file():
+        return False
+    try:
+        manifest = _read_json(manifest_path)
+    except (OSError, json.JSONDecodeError, ValueError):
+        return False
+    train_shards = [
+        item
+        for item in manifest.get("shards", [])
+        if isinstance(item, Mapping) and str(item.get("split")) == "train"
+    ]
+    if not train_shards:
+        return False
+    for shard in train_shards:
+        raw_path = shard.get("path")
+        if not isinstance(raw_path, str) or not raw_path:
+            return False
+        path = manifest_path.parent / raw_path
+        if not path.is_file() or path.stat().st_size <= 0:
+            return False
+    return True
+
+
+def _resolve_training_cache(base: Mapping[str, Any]) -> tuple[Path, dict[str, Any], dict[str, Any]]:
+    """Resolve the frozen V4 cache, using only the signed V8 storage-only recovery if needed.
+
+    The historical cache identity remains the scientific source of truth.  The
+    recovered cache is accepted solely when its signed RECOVERY record proves that
+    preprocessing semantics and split identity were inherited unchanged.
+    """
+
+    data = base.get("data")
+    if not isinstance(data, Mapping):
+        raise ValueError("router expert base config lacks a data mapping")
+    historical = (ROOT / str(data["cache_manifest"])).resolve()
+    if not historical.is_file():
+        raise FileNotFoundError(f"historical router cache manifest is missing: {historical}")
+    historical_sha = _sha(historical)
+    if historical_sha != str(data.get("cache_manifest_sha256", "")):
+        raise ValueError("historical router cache manifest SHA-256 differs from frozen config")
+    historical_manifest = _read_json(historical)
+    if historical_manifest.get("artifact_sha256") != data.get("cache_artifact_sha256"):
+        raise ValueError("historical router cache artifact identity differs from frozen config")
+    if _cache_train_shards_healthy(historical):
+        return historical, historical_manifest, {"used": False}
+
+    recovery_artifact = (
+        ROOT / "artifacts/scientific_recovery_v8/cache/autopsy_v4_recovered_v1/RECOVERY.json"
+    ).resolve()
+    if not recovery_artifact.is_file():
+        raise RuntimeError(
+            "historical router cache shards are missing and the signed V8 recovery cache "
+            f"is unavailable: {recovery_artifact}"
+        )
+    recovery = _read_json(recovery_artifact)
+    if not verify_artifact_hash(recovery):
+        raise ValueError("V8 recovered router cache RECOVERY.json signature is invalid")
+    if recovery.get("artifact_type") != "scientific_recovery_v8_autopsy_v4_cache_recovery_v1":
+        raise ValueError("V8 recovered router cache has an incompatible artifact_type")
+    if recovery.get("status") != "completed":
+        raise ValueError("V8 recovered router cache is not completed")
+    if recovery.get("sealed_splits_opened") is not False:
+        raise ValueError("V8 recovered router cache reports sealed split access")
+    if recovery.get("semantic_preprocessing_inherited_from_historical_manifest") is not True:
+        raise ValueError("V8 recovered router cache does not attest semantic preprocessing identity")
+
+    historical_ref = recovery.get("historical_manifest")
+    recovered_ref = recovery.get("recovered_manifest")
+    if not isinstance(historical_ref, Mapping) or not isinstance(recovered_ref, Mapping):
+        raise ValueError("V8 recovered router cache provenance references are malformed")
+    if historical_ref.get("file_sha256") != historical_sha:
+        raise ValueError("V8 recovered router cache does not bind the frozen historical manifest")
+    if historical_ref.get("artifact_sha256") != historical_manifest.get("artifact_sha256"):
+        raise ValueError("V8 recovered router cache historical artifact identity mismatch")
+    if recovery.get("historical_split_sha256") != recovery.get("recovered_split_sha256"):
+        raise ValueError("V8 recovered router cache split SHA-256 differs from historical cache")
+
+    recovered = recovery_artifact.parent / "manifest.json"
+    if not recovered.is_file() or _sha(recovered) != recovered_ref.get("file_sha256"):
+        raise ValueError("V8 recovered router cache manifest file SHA-256 mismatch")
+    recovered_manifest = _read_json(recovered)
+    if recovered_manifest.get("artifact_sha256") != recovered_ref.get("artifact_sha256"):
+        raise ValueError("V8 recovered router cache artifact identity mismatch")
+    if recovered_manifest.get("split_sha256") != historical_manifest.get("split_sha256"):
+        raise ValueError("V8 recovered router cache manifest split identity mismatch")
+    expected_rows = int(data.get("expected_source_train_rows", 8192))
+    if int(recovered_manifest.get("split_counts", {}).get("train", -1)) != expected_rows:
+        raise ValueError("V8 recovered router cache train row count differs from frozen config")
+    if int(recovery.get("expected_frozen_rows", -1)) != expected_rows:
+        raise ValueError("V8 recovery record expected row count differs from frozen config")
+    if not _cache_train_shards_healthy(recovered):
+        raise RuntimeError("V8 recovered router cache train shards are incomplete")
+
+    provenance = {
+        "used": True,
+        "recovery_artifact": _relative(recovery_artifact),
+        "recovery_artifact_sha256": recovery["artifact_sha256"],
+        "historical_manifest_sha256": historical_sha,
+        "recovered_manifest_sha256": _sha(recovered),
+        "semantic_preprocessing_unchanged": True,
+        "storage_only_recovery": True,
+    }
+    return recovered, recovered_manifest, provenance
+
+
+def _selected_identity(
+    base: Mapping[str, Any], sequences: list[str], *, cache_manifest: Path
+) -> tuple[pd.DataFrame, int]:
+    manifest = cache_manifest
     model = yaml.safe_load((ROOT / str(base["model_config"])).read_text(encoding="utf-8"))
     bins = (int(model["in_channels"]) - 2) // 2
     dataset = GarlTTCObjectEventV4Dataset(str(manifest), splits=("train",), bins_per_polarity=bins)
@@ -152,8 +268,11 @@ def _run(args: argparse.Namespace) -> None:
         )
     base_path = _base_config(args.expert, outer)
     base = yaml.safe_load(base_path.read_text(encoding="utf-8"))
-    train, universe = _selected_identity(base, list(train_sequences))
-    dev, _ = _selected_identity(base, list(dev_sequences))
+    cache_manifest, cache_payload, cache_provenance = _resolve_training_cache(base)
+    train, universe = _selected_identity(
+        base, list(train_sequences), cache_manifest=cache_manifest
+    )
+    dev, _ = _selected_identity(base, list(dev_sequences), cache_manifest=cache_manifest)
     if set(train.sequence_id) & set(dev.sequence_id) or set(train.sample_token) & set(
         dev.sample_token
     ):
@@ -184,6 +303,10 @@ def _run(args: argparse.Namespace) -> None:
     raw["data"] = dict(base["data"])
     raw["data"].update(
         {
+            "cache_manifest": _relative(cache_manifest),
+            "cache_manifest_sha256": _sha(cache_manifest),
+            "cache_artifact_sha256": cache_payload.get("artifact_sha256"),
+            "router_cache_provenance": cache_provenance,
             "train_sequence_ids": list(train_sequences),
             "dev_sequence_ids": list(dev_sequences),
             "development_protocol": {
