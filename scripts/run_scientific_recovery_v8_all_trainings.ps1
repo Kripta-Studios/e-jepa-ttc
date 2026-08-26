@@ -24,6 +24,14 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference='Stop'
 $RepoRoot=(Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 Set-Location -LiteralPath $RepoRoot
+if (-not $DryRun) {
+    $porcelain = & git status --porcelain
+    if (-not [string]::IsNullOrWhiteSpace($porcelain)) {
+        throw 'scientific execution requires a clean Git worktree'
+    }
+}
+$env:PYTHONUNBUFFERED = '1'
+$env:PYTORCH_CUDA_ALLOC_CONF = 'expandable_segments:True'
 $ForbiddenScientificEnv = @(
     'DINO_NUM_CHUNKS',
     'DINO_CHUNK_INDEX',
@@ -39,6 +47,15 @@ foreach ($name in $ForbiddenScientificEnv) {
     if (-not [string]::IsNullOrWhiteSpace($present)) {
         throw "scientific execution forbids bypass environment variable $name"
     }
+}
+if ($Device -match '^cuda' -and -not $DryRun) {
+    $torchProbe = 'import torch; assert torch.cuda.is_available(); print(torch.cuda.mem_get_info()[0] // (1024 * 1024))'
+    $reported = & uv run --no-sync python -c $torchProbe
+    $freeMiB = 0
+    if ($LASTEXITCODE -ne 0 -or -not [int]::TryParse((@($reported) | Select-Object -Last 1).ToString().Trim(), [ref]$freeMiB) -or $freeMiB -le 0) {
+        throw 'scientific CUDA execution requires a working GPU with measurable free memory'
+    }
+    Write-Host "GPU preflight: ${freeMiB} MiB free; MaxParallel=$MaxParallel (frozen V8 GPU bound)" -ForegroundColor Cyan
 }
 $BaseRoot=Join-Path $RepoRoot 'artifacts/scientific_recovery_v8'
 $ResultsRoot=Join-Path $BaseRoot 'results'
