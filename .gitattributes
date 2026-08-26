@@ -8,3 +8,6 @@
 *.bag binary
 *.hdf5 binary
 *.h5 binary
+
+# Frozen A5 V3 file_sha256 was observed on the original CRLF bytes.
+artifacts/metrics/a5_transport_preflight_v3_confirm/a5_transport_preflight_v3_confirm.json binary
