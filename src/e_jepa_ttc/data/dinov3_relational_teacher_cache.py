@@ -25,7 +25,10 @@ import torch
 from torch.utils.data import Dataset
 
 from e_jepa_ttc.artifacts.hashing import sign_artifact, verify_artifact_hash
-from e_jepa_ttc.data.canonical_token_identity import hash_sorted_token_strings
+from e_jepa_ttc.data.canonical_token_identity import (
+    hash_ordered_token_ids,
+    hash_sorted_token_strings,
+)
 from e_jepa_ttc.distillation.dinov3_relational import A4_RELATION_OFFSETS
 from e_jepa_ttc.scientific_provenance import refuse_scientific_bypass_env
 
@@ -227,7 +230,7 @@ def write_complete_mmap_cache(
     ]
     index_path.write_text(
         json.dumps(
-            {"rows": rows, "ordered_token_ids_sha256": hash_sorted_token_strings(tokens)},
+            {"rows": rows, "ordered_token_ids_sha256": hash_ordered_token_ids(tokens)},
             indent=2,
             sort_keys=True,
         )
@@ -363,6 +366,10 @@ def _load_mmap_teacher(
             raise ValueError(f"DINO complete-cache file hash mismatch: {path.name}")
     index = json.loads((root / "index.json").read_text(encoding="utf-8"))
     tokens = [str(item["token_id"]) for item in index["rows"]]
+    if index.get("ordered_token_ids_sha256") != hash_ordered_token_ids(tokens):
+        raise ValueError(
+            "DINO complete cache ordered_token_ids_sha256 is not the canonical JSON hash"
+        )
     if len(tokens) != len(set(tokens)):
         raise ValueError("DINO complete cache contains duplicate tokens")
     expected_rows = int(manifest.get("row_count_observed", -1))
