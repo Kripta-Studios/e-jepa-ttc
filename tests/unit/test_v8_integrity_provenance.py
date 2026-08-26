@@ -172,6 +172,9 @@ def test_cross_component_canonical_token_hashes_match() -> None:
     assert "WaitForExit($script:HeartbeatIntervalMs)" in all_trainings
     assert "LIVE" in all_trainings
     assert "Write-TrainerProgressSnapshot" in all_trainings
+    assert "System.Collections.Generic.List[object]" in all_trainings
+    assert "Get-JsonNote" in all_trainings
+    assert "$files += @(" not in all_trainings
     assert _canonical_token_hash(("zeta-token", "alpha-token", "mid-token")) == expected_sorted
     assert _token_hash(tokens) == expected_sorted
 

@@ -86,8 +86,23 @@ function Write-State([string]$Stage,[string]$Status,[string]$Detail='') {
     Write-Console "STAGE $Stage -> $Status$suffix" 'Cyan'
 }
 function Get-LogTail([string]$Path, [int]$Count = 4) {
-    if ([string]::IsNullOrWhiteSpace($Path) -or -not (Test-Path -LiteralPath $Path)) { return @() }
-    return @(Get-Content -LiteralPath $Path -Tail $Count -ErrorAction SilentlyContinue | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
+    $rows = New-Object 'System.Collections.Generic.List[string]'
+    if ([string]::IsNullOrWhiteSpace($Path) -or -not (Test-Path -LiteralPath $Path)) {
+        return $rows
+    }
+    foreach ($line in @(Get-Content -LiteralPath $Path -Tail $Count -ErrorAction SilentlyContinue)) {
+        if (-not [string]::IsNullOrWhiteSpace([string]$line)) {
+            $rows.Add([string]$line)
+        }
+    }
+    # Unary comma keeps the List intact under StrictMode (empty/one-item unwrap).
+    return ,$rows
+}
+function Get-JsonNote($Object, [string]$Name) {
+    if ($null -eq $Object) { return $null }
+    $prop = $Object.PSObject.Properties[$Name]
+    if ($null -eq $prop) { return $null }
+    return $prop.Value
 }
 function Write-GpuSnapshot {
     $nvsmi = Get-Command nvidia-smi -ErrorAction SilentlyContinue
@@ -103,33 +118,37 @@ function Write-TrainerProgressSnapshot {
         (Join-Path $ResultsRoot 'router'),
         (Join-Path $BaseRoot 'jepa')
     )
-    $files = @()
+    $files = New-Object 'System.Collections.Generic.List[object]'
     foreach ($dir in $dirs) {
-        if (Test-Path -LiteralPath $dir) {
-            $files += @(Get-ChildItem -LiteralPath $dir -Filter 'progress.json' -Recurse -ErrorAction SilentlyContinue)
+        if (-not (Test-Path -LiteralPath $dir)) { continue }
+        foreach ($item in @(Get-ChildItem -LiteralPath $dir -Filter 'progress.json' -Recurse -ErrorAction SilentlyContinue)) {
+            if ($null -ne $item) { $files.Add($item) }
         }
     }
     if ($files.Count -eq 0) { return }
-    $files = @($files | Sort-Object LastWriteTime -Descending | Select-Object -First 4)
-    foreach ($file in $files) {
+    $newest = @($files | Sort-Object LastWriteTime -Descending | Select-Object -First 4)
+    foreach ($file in $newest) {
+        if ($null -eq $file) { continue }
         try {
             $json = Get-Content -Raw -LiteralPath $file.FullName -ErrorAction Stop | ConvertFrom-Json
         } catch {
             continue
         }
-        $epoch = $json.epoch
-        $total = $json.configured_epochs
-        $elapsedSec = $json.elapsed_seconds
+        $epoch = Get-JsonNote $json 'epoch'
+        $total = Get-JsonNote $json 'configured_epochs'
+        $elapsedSec = Get-JsonNote $json 'elapsed_seconds'
+        $status = Get-JsonNote $json 'status'
+        $best = Get-JsonNote $json 'best_epoch'
         $eta = '-'
         if ($null -ne $epoch -and $null -ne $total -and [int]$epoch -gt 0 -and [int]$total -gt [int]$epoch -and $null -ne $elapsedSec -and [double]$elapsedSec -gt 0) {
             $remain = [int](([double]$elapsedSec / [int]$epoch) * ([int]$total - [int]$epoch))
             $eta = '{0:00}:{1:00}:{2:00}' -f [int][math]::Floor($remain / 3600), [int](($remain % 3600) / 60), ($remain % 60)
         }
-        $rel = $file.FullName
+        $rel = [string]$file.FullName
         if ($rel.StartsWith($RepoRoot, [System.StringComparison]::OrdinalIgnoreCase)) {
             $rel = $rel.Substring($RepoRoot.Length).TrimStart('\', '/')
         }
-        Write-Host ("  progress {0} status={1} epoch={2}/{3} best={4} eta~{5}" -f $rel, $json.status, $epoch, $total, $json.best_epoch, $eta)
+        Write-Host ("  progress {0} status={1} epoch={2}/{3} best={4} eta~{5}" -f $rel, $status, $epoch, $total, $best, $eta)
     }
 }
 function Write-ProcessHeartbeat($Job) {
@@ -142,8 +161,8 @@ function Write-ProcessHeartbeat($Job) {
     foreach ($kind in @('Stdout', 'Stderr')) {
         $path = [string]$Job.$kind
         $lines = Get-LogTail $path 4
-        if ($lines.Count -eq 0) { continue }
-        $finger = ($lines -join '|')
+        if ($null -eq $lines -or $lines.Count -eq 0) { continue }
+        $finger = (@($lines) -join '|')
         $key = "$($Job.Label):$kind"
         if ($script:HeartbeatSeen[$key] -eq $finger) { continue }
         $script:HeartbeatSeen[$key] = $finger
