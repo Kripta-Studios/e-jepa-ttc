@@ -12,6 +12,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 
 from e_jepa_ttc.artifacts.hashing import compute_artifact_hash, sign_artifact
+from e_jepa_ttc.data.canonical_token_identity import hash_sorted_token_strings
 
 ROUTER_FEATURES: tuple[str, ...] = (
     "shared_event_count_log1p",
@@ -37,7 +38,7 @@ class RouterFitError(ValueError):
 
 
 def _canonical_token_hash(tokens: tuple[str, ...]) -> str:
-    return compute_artifact_hash({"sample_tokens": list(tokens)})
+    return hash_sorted_token_strings(tokens)
 
 
 def _canonical_weight_hash(weights: np.ndarray) -> str:

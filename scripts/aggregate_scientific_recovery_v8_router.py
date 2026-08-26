@@ -20,6 +20,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from e_jepa_ttc.artifacts.hashing import sign_artifact, verify_artifact_hash  # noqa: E402
+from e_jepa_ttc.data.canonical_token_identity import hash_canonical_json_records  # noqa: E402
 from e_jepa_ttc.evaluation.garl_ttc_protocol import sequence_macro_signed_metrics  # noqa: E402
 from e_jepa_ttc.evaluation.scientific_recovery_v8 import (  # noqa: E402
     REQUIRED_GENERAL_GATE_INTEGRITY_CHECKS,
@@ -99,15 +100,7 @@ def _bucket_id(target: float) -> str:
 
 
 def _canonical_records(records: list[dict[str, str]]) -> str:
-    ordered = sorted(records, key=lambda record: record["token_id"])
-    encoded = b"".join(
-        json.dumps(record, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode(
-            "utf-8"
-        )
-        + b"\n"
-        for record in ordered
-    )
-    return hashlib.sha256(encoded).hexdigest()
+    return hash_canonical_json_records(records)
 
 
 def _contract_hashes(frame: pd.DataFrame) -> dict[str, str]:

@@ -24,6 +24,22 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference='Stop'
 $RepoRoot=(Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 Set-Location -LiteralPath $RepoRoot
+$ForbiddenScientificEnv = @(
+    'DINO_NUM_CHUNKS',
+    'DINO_CHUNK_INDEX',
+    'DINO_START_ROW',
+    'DINO_END_ROW',
+    'DINO_ALLOW_PARTIAL_CACHE',
+    'ALLOW_DIRTY_MATERIALIZE',
+    'ALLOW_DIRTY',
+    'ALLOW_PARTIAL'
+)
+foreach ($name in $ForbiddenScientificEnv) {
+    $present = [Environment]::GetEnvironmentVariable($name)
+    if (-not [string]::IsNullOrWhiteSpace($present)) {
+        throw "scientific execution forbids bypass environment variable $name"
+    }
+}
 $BaseRoot=Join-Path $RepoRoot 'artifacts/scientific_recovery_v8'
 $ResultsRoot=Join-Path $BaseRoot 'results'
 $MasterLog=Join-Path $BaseRoot 'master_logs'

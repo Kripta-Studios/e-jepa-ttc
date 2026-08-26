@@ -25,6 +25,10 @@ import torch
 import yaml
 
 from e_jepa_ttc.artifacts.hashing import sign_artifact, verify_artifact_hash
+from e_jepa_ttc.scientific_provenance import (
+    refuse_scientific_bypass_env,
+    require_clean_scientific_worktree,
+)
 
 ROOT = Path(__file__).resolve().parents[3]
 SEALED_MARKERS = ("public_validation", "private_test", "evttc_test", "codabench")
@@ -290,6 +294,8 @@ def execute_jobs(
 ) -> list[dict[str, Any]]:
     """Execute bounded concurrent commands, without treating plans as results."""
 
+    refuse_scientific_bypass_env()
+    require_clean_scientific_worktree()
     if max_parallel < 1:
         raise ValueError("max_parallel must be at least one")
 

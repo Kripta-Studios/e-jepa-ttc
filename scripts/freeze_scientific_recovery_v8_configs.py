@@ -264,8 +264,9 @@ def reject_sealed_paths(value: object, *, label: str = "source") -> None:
 def canonical_records(records: list[dict[str, str]]) -> str:
     """Hash sorted newline-delimited canonical JSON records (with a final newline)."""
 
-    encoded = b"".join(canonical_json(record) + b"\n" for record in records)
-    return hashlib.sha256(encoded).hexdigest()
+    from e_jepa_ttc.data.canonical_token_identity import hash_canonical_json_records
+
+    return hash_canonical_json_records(records)
 
 
 def bucket_for(target: Decimal) -> tuple[str, Decimal]:

@@ -22,6 +22,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from e_jepa_ttc.artifacts.hashing import sign_artifact, verify_artifact_hash  # noqa: E402
+from e_jepa_ttc.data.canonical_token_identity import hash_sorted_token_strings  # noqa: E402
 from e_jepa_ttc.data.object_event_v4 import GarlTTCObjectEventV4Dataset  # noqa: E402
 from e_jepa_ttc.data.scientific_recovery_v5 import SequenceIndexedView  # noqa: E402
 
@@ -204,12 +205,12 @@ def _nested_contract(
                 "dev_sequence_ids": sorted(dev.sequence_id.astype(str).unique().tolist()),
                 "train_rows": len(train),
                 "dev_rows": len(dev),
-                "train_sample_tokens_sha256": hashlib.sha256(
-                    "\n".join(sorted(train.sample_token.astype(str))).encode()
-                ).hexdigest(),
-                "dev_sample_tokens_sha256": hashlib.sha256(
-                    "\n".join(sorted(dev.sample_token.astype(str))).encode()
-                ).hexdigest(),
+                "train_sample_tokens_sha256": hash_sorted_token_strings(
+                    train.sample_token.astype(str)
+                ),
+                "dev_sample_tokens_sha256": hash_sorted_token_strings(
+                    dev.sample_token.astype(str)
+                ),
             }
         ],
         "checks": {
@@ -385,6 +386,9 @@ def _run(args: argparse.Namespace) -> None:
             },
             "oof_csv": {"path": _relative(csv_path), "sha256": _sha(csv_path)},
             "nested_contract": {"path": _relative(contract), "sha256": _sha(contract)},
+            "git_commit": summary.get("git_commit"),
+            "git_dirty": summary.get("git_dirty"),
+            "trainer_status": summary.get("status"),
         }
     )
     (args.output_dir / "expert_artifact.json").write_text(

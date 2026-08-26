@@ -24,7 +24,6 @@ import argparse
 import hashlib
 import json
 import os
-import subprocess
 import sys
 import tarfile
 from datetime import UTC, datetime
@@ -50,6 +49,12 @@ from e_jepa_ttc.distillation.dinov3_relational import (  # noqa: E402
     A4_RELATION_OFFSETS,
     local_cosine_relation_maps,
 )
+from e_jepa_ttc.scientific_provenance import (  # noqa: E402
+    observe_git_identity,
+    refuse_scientific_bypass_env,
+    require_clean_scientific_worktree,
+    serialize_git_identity,
+)
 
 _INPUT_SIZE = 256
 _EXPECTED_GRID = (32, 32)
@@ -68,16 +73,6 @@ def _sha256_file(path: Path) -> str:
 
 def _sha256_bytes(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
-
-
-def _git_identity() -> tuple[str, bool]:
-    head = subprocess.check_output(
-        ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True
-    ).strip()
-    status = subprocess.check_output(
-        ["git", "status", "--porcelain"], cwd=ROOT, text=True
-    )
-    return head, bool(status.strip())
 
 
 def _as_list(value: Any, *, field: str) -> list[Any]:  # noqa: ANN401
@@ -331,12 +326,11 @@ def run(
             "FATAL: scientific A4 materialization requires the frozen ConvNeXt-Large "
             f"teacher {_EXPECTED_MODEL_ID!r}; got {model_path!r}"
         )
-    git_head, git_dirty = _git_identity()
-    if git_dirty:
-        raise ValueError(
-            "FATAL: scientific A4 materialization requires a clean Git worktree; "
-            "commit the hardening patch before building the cache"
-        )
+    refuse_scientific_bypass_env()
+    git_identity = serialize_git_identity(observe_git_identity(ROOT))
+    require_clean_scientific_worktree(ROOT)
+    git_head = str(git_identity["git_commit"])
+    git_dirty = bool(git_identity["git_dirty"])
 
     # --- Load event cache dataset (train only) ---
     event_manifest = json.loads(event_cache_manifest.read_text(encoding="utf-8"))
@@ -657,7 +651,7 @@ def run(
         },
         "code_identity": {
             "git_commit": git_head,
-            "git_dirty": False,
+            "git_dirty": git_dirty,
         },
         "shards": shard_infos,
         "multi_object_contract": {

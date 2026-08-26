@@ -45,6 +45,12 @@ from e_jepa_ttc.evaluation.scientific_recovery_v8_runner import (  # noqa: E402
     verify_frozen_inputs,
 )
 from e_jepa_ttc.models.causal_expert_router import ROUTER_FEATURES  # noqa: E402
+from e_jepa_ttc.scientific_provenance import (  # noqa: E402
+    ScientificProvenanceError,
+    assert_router_expert_reusable,
+    refuse_scientific_bypass_env,
+    require_clean_scientific_worktree,
+)
 
 
 class RouterStageError(ValueError):
@@ -115,6 +121,26 @@ def _load_expert_artifact(
         )
     if payload.get("protocol_sha256") != protocol_sha256:
         raise RouterStageError("signed expert artifact protocol hash differs from frozen V8")
+    bound = dict(payload)
+    summary_path = path.parent / "train" / "summary.json"
+    if summary_path.is_file():
+        summary = _signed_json(summary_path, label=f"{expert} {role} train summary")
+        summary_dirty = summary.get("git_dirty")
+        if bound.get("git_dirty") is None:
+            bound["git_dirty"] = summary_dirty
+            bound.setdefault("git_commit", summary.get("git_commit"))
+        elif bound.get("git_dirty") != summary_dirty:
+            raise RouterStageError(
+                f"{expert} {role} expert git_dirty disagrees with train/summary.json"
+            )
+    elif bound.get("git_dirty") is None:
+        raise RouterStageError(
+            f"{expert} {role} expert omitted git_dirty and train/summary.json is missing"
+        )
+    try:
+        assert_router_expert_reusable(bound)
+    except ScientificProvenanceError as error:
+        raise RouterStageError(str(error)) from error
     checkpoint = payload.get("checkpoint")
     if not isinstance(checkpoint, Mapping) or not isinstance(checkpoint.get("sha256"), str):
         raise RouterStageError("signed expert artifact lacks a bound checkpoint SHA-256")
@@ -270,6 +296,9 @@ def run_fold(
 ) -> dict[str, Any]:
     """Fit on strict inner OOF and route one untouched outer-dev population."""
 
+    if not fixture:
+        refuse_scientific_bypass_env()
+        require_clean_scientific_worktree()
     config = yaml.safe_load(config_path.read_text(encoding="utf-8"))
     if not isinstance(config, Mapping):
         raise RouterStageError("router config must be a mapping")
@@ -690,6 +719,8 @@ def _execute_stage_plan(plan: Mapping[str, Any], *, max_parallel: int) -> None:
     fabricated expert artifact is created.
     """
 
+    refuse_scientific_bypass_env()
+    require_clean_scientific_worktree()
     trainer = ROOT / str(plan["production_trainer_required"])
     if not trainer.is_file():
         raise RouterStageError(

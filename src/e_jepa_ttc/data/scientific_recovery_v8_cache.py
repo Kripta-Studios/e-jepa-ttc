@@ -28,6 +28,10 @@ import torch
 from torch.utils.data import Dataset
 
 from e_jepa_ttc.artifacts.hashing import sign_artifact, verify_artifact_hash
+from e_jepa_ttc.data.canonical_token_identity import (
+    hash_canonical_json_records,
+    hash_sorted_token_strings,
+)
 from e_jepa_ttc.data.eap import EAP_IMAGE_SIZE, EAPEventReader
 from e_jepa_ttc.data.event_v4_geometry import (
     common_square_from_boxes,
@@ -173,7 +177,13 @@ def _identity(row: Mapping[str, object]) -> tuple[str, ...]:
 
 
 def _token_hash(tokens: Iterable[str]) -> str:
-    return _canonical_hash(sorted(str(value) for value in tokens))
+    return hash_sorted_token_strings(tokens)
+
+
+def _canonical_records(records: Sequence[Mapping[str, str]]) -> str:
+    """Match the newline-delimited canonical hash contract frozen by V8."""
+
+    return hash_canonical_json_records(records)
 
 
 def _assert_train_only_path(path: Path, *, label: str) -> None:
@@ -197,19 +207,6 @@ def _protocol_rows(
     if not isinstance(folds, list):
         raise ValueError("protocol folds must be a list")
     return expected_rows, str(token_hash) if token_hash is not None else None, folds
-
-
-def _canonical_records(records: Sequence[Mapping[str, str]]) -> str:
-    """Match the newline-delimited canonical hash contract frozen by V8."""
-
-    payload = b"".join(
-        json.dumps(dict(record), ensure_ascii=False, separators=(",", ":"), sort_keys=True).encode(
-            "utf-8"
-        )
-        + b"\n"
-        for record in records
-    )
-    return hashlib.sha256(payload).hexdigest()
 
 
 def _protocol_source_path(protocol: Mapping[str, Any], key: str) -> Path:
