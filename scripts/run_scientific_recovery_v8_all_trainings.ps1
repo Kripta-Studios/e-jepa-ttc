@@ -64,10 +64,93 @@ $MasterState=Join-Path $BaseRoot 'master_state.json'
 New-Item -ItemType Directory -Force $MasterLog,$ResultsRoot | Out-Null
 $PsRuntime = $PSVersionTable.PSVersion.ToString()
 Write-Host "Scientific Recovery V8 orchestrator: PowerShell $PsRuntime" -ForegroundColor Cyan
+Write-Host "Master logs: $MasterLog"
+Write-Host "Master state: $MasterState"
+Write-Host "Results root: $ResultsRoot"
+Write-Host "Heartbeats every 15s while a child runs; stdout/stderr still go to master_logs." -ForegroundColor DarkCyan
+$script:HeartbeatSeen = @{}
+$script:HeartbeatIntervalMs = 15000
 
+function Format-Elapsed([datetime]$Started) {
+    $span = (Get-Date) - $Started
+    return ('{0:00}:{1:00}:{2:00}' -f [int][math]::Floor($span.TotalHours), $span.Minutes, $span.Seconds)
+}
+function Write-Console([string]$Message, [string]$Color = 'Gray') {
+    Write-Host ("[{0}] {1}" -f (Get-Date -Format 'HH:mm:ss'), $Message) -ForegroundColor $Color
+}
 function Write-State([string]$Stage,[string]$Status,[string]$Detail='') {
     $value=[ordered]@{timestamp=(Get-Date).ToUniversalTime().ToString('o');stage=$Stage;status=$Status;detail=$Detail;device=$Device;max_parallel=$MaxParallel;sealed_evaluation='closed'}
     $tmp="$MasterState.tmp"; $value|ConvertTo-Json -Depth 8|Set-Content -LiteralPath $tmp -Encoding utf8; Move-Item -Force $tmp $MasterState
+    $suffix = ''
+    if (-not [string]::IsNullOrWhiteSpace($Detail)) { $suffix = " :: $Detail" }
+    Write-Console "STAGE $Stage -> $Status$suffix" 'Cyan'
+}
+function Get-LogTail([string]$Path, [int]$Count = 4) {
+    if ([string]::IsNullOrWhiteSpace($Path) -or -not (Test-Path -LiteralPath $Path)) { return @() }
+    return @(Get-Content -LiteralPath $Path -Tail $Count -ErrorAction SilentlyContinue | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
+}
+function Write-GpuSnapshot {
+    $nvsmi = Get-Command nvidia-smi -ErrorAction SilentlyContinue
+    if ($null -eq $nvsmi) { return }
+    $gpu = & nvidia-smi --query-gpu=index,utilization.gpu,memory.used,memory.total --format=csv,noheader,nounits 2>$null
+    if (-not [string]::IsNullOrWhiteSpace([string]$gpu)) {
+        Write-Host ("  gpu: {0}" -f ((@($gpu) | ForEach-Object { $_.ToString().Trim() }) -join ' | '))
+    }
+}
+function Write-TrainerProgressSnapshot {
+    $dirs = @(
+        (Join-Path $ResultsRoot 'runs'),
+        (Join-Path $ResultsRoot 'router'),
+        (Join-Path $BaseRoot 'jepa')
+    )
+    $files = @()
+    foreach ($dir in $dirs) {
+        if (Test-Path -LiteralPath $dir) {
+            $files += @(Get-ChildItem -LiteralPath $dir -Filter 'progress.json' -Recurse -ErrorAction SilentlyContinue)
+        }
+    }
+    if ($files.Count -eq 0) { return }
+    $files = @($files | Sort-Object LastWriteTime -Descending | Select-Object -First 4)
+    foreach ($file in $files) {
+        try {
+            $json = Get-Content -Raw -LiteralPath $file.FullName -ErrorAction Stop | ConvertFrom-Json
+        } catch {
+            continue
+        }
+        $epoch = $json.epoch
+        $total = $json.configured_epochs
+        $elapsedSec = $json.elapsed_seconds
+        $eta = '-'
+        if ($null -ne $epoch -and $null -ne $total -and [int]$epoch -gt 0 -and [int]$total -gt [int]$epoch -and $null -ne $elapsedSec -and [double]$elapsedSec -gt 0) {
+            $remain = [int](([double]$elapsedSec / [int]$epoch) * ([int]$total - [int]$epoch))
+            $eta = '{0:00}:{1:00}:{2:00}' -f [int][math]::Floor($remain / 3600), [int](($remain % 3600) / 60), ($remain % 60)
+        }
+        $rel = $file.FullName
+        if ($rel.StartsWith($RepoRoot, [System.StringComparison]::OrdinalIgnoreCase)) {
+            $rel = $rel.Substring($RepoRoot.Length).TrimStart('\', '/')
+        }
+        Write-Host ("  progress {0} status={1} epoch={2}/{3} best={4} eta~{5}" -f $rel, $json.status, $epoch, $total, $json.best_epoch, $eta)
+    }
+}
+function Write-ProcessHeartbeat($Job) {
+    if ($null -eq $Job -or $Job.Dry) { return }
+    $pidValue = '-'
+    if ($null -ne $Job.Process) { $pidValue = $Job.Process.Id }
+    Write-Console ("LIVE {0} elapsed={1} pid={2}" -f $Job.Label, (Format-Elapsed $Job.StartedAt), $pidValue) 'Yellow'
+    Write-GpuSnapshot
+    Write-TrainerProgressSnapshot
+    foreach ($kind in @('Stdout', 'Stderr')) {
+        $path = [string]$Job.$kind
+        $lines = Get-LogTail $path 4
+        if ($lines.Count -eq 0) { continue }
+        $finger = ($lines -join '|')
+        $key = "$($Job.Label):$kind"
+        if ($script:HeartbeatSeen[$key] -eq $finger) { continue }
+        $script:HeartbeatSeen[$key] = $finger
+        foreach ($line in $lines) {
+            Write-Host ("  {0}: {1}" -f $kind.ToLower(), $line)
+        }
+    }
 }
 function Quote-NativeArgument([string]$Value) {
     if($null -eq $Value){ throw 'Quote-NativeArgument received a NULL value.' }
@@ -117,9 +200,14 @@ function Start-LoggedProcess([string]$Label,[string]$File,[object[]]$ArgumentVec
     if($DryRun){
         Write-Host "[DRY] $Label :: $File $argumentLine"
         return [pscustomobject]@{
-            Label=$Label;Process=$null;Stdout=$stdout;Stderr=$stderr;Command=$command;Dry=$true
+            Label=$Label;Process=$null;Stdout=$stdout;Stderr=$stderr;Command=$command;Dry=$true;StartedAt=(Get-Date)
         }
     }
+
+    Write-Console "START $Label" 'Green'
+    Write-Host "  command: $File $argumentLine"
+    Write-Host "  stdout: $stdout"
+    Write-Host "  stderr: $stderr"
 
     if($cleanArgs.Count -eq 0){
         $p=Start-Process -FilePath $File `
@@ -141,9 +229,10 @@ function Start-LoggedProcess([string]$Label,[string]$File,[object[]]$ArgumentVec
     # Accessing Handle before WaitForExit is required on Windows PowerShell 5.1
     # or ExitCode stays $null and `$code -ne 0` treats a successful child as failure.
     $null = $p.Handle
+    Write-Host "  pid: $($p.Id)"
 
     return [pscustomobject]@{
-        Label=$Label;Process=$p;Stdout=$stdout;Stderr=$stderr;Command=$command;Dry=$false
+        Label=$Label;Process=$p;Stdout=$stdout;Stderr=$stderr;Command=$command;Dry=$false;StartedAt=(Get-Date)
     }
 }
 function Wait-LoggedProcess($Job) {
@@ -153,6 +242,15 @@ function Wait-LoggedProcess($Job) {
         throw "Process '$($Job.Label)' was not started."
     }
     $null = $proc.Handle
+    Write-ProcessHeartbeat $Job
+    while (-not $proc.HasExited) {
+        $null = $proc.Handle
+        $finished = $proc.WaitForExit($script:HeartbeatIntervalMs)
+        if ($finished) { break }
+        $proc.Refresh()
+        Write-ProcessHeartbeat $Job
+    }
+    $null = $proc.Handle
     $proc.WaitForExit()
     $proc.Refresh()
     $code = $proc.ExitCode
@@ -160,12 +258,21 @@ function Wait-LoggedProcess($Job) {
         "END_UTC=$((Get-Date).ToUniversalTime().ToString('o'))",
         "EXIT_CODE=$code"
     ) | Add-Content -LiteralPath $Job.Command -Encoding utf8
+    $elapsed = Format-Elapsed $Job.StartedAt
     if ($null -eq $code) {
         throw "Process '$($Job.Label)' exited without reporting an exit code. See $($Job.Stderr)"
     }
     if ([int]$code -ne 0) {
+        Write-Console "FAIL $($Job.Label) exit=$code elapsed=$elapsed" 'Red'
+        $errTail = Get-LogTail $Job.Stderr 30
+        foreach ($line in $errTail) { Write-Host "  stderr: $line" }
+        $outTail = Get-LogTail $Job.Stdout 10
+        foreach ($line in $outTail) { Write-Host "  stdout: $line" }
         throw "Process '$($Job.Label)' failed with exit $code. See $($Job.Stderr)"
     }
+    Write-Console "DONE $($Job.Label) exit=$code elapsed=$elapsed" 'Green'
+    $doneTail = Get-LogTail $Job.Stdout 3
+    foreach ($line in $doneTail) { Write-Host "  stdout: $line" }
 }
 function Invoke-Logged([string]$Label,[string]$File,[object[]]$ArgumentVector){
     $job=Start-LoggedProcess $Label $File $ArgumentVector
