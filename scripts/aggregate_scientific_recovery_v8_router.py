@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# ruff: noqa: E501
+# ruff: noqa: E501, I001
 """Aggregate the three untouched outer-dev folds of the V8 prospective router."""
 
 from __future__ import annotations
@@ -36,6 +36,10 @@ from e_jepa_ttc.evaluation.scientific_recovery_v8_aggregate import (  # noqa: E4
 from e_jepa_ttc.evaluation.scientific_recovery_v8_runner import (  # noqa: E402
     V8IntegrityError,
     verify_frozen_inputs,
+)
+from e_jepa_ttc.scientific_provenance import (  # noqa: E402
+    ScientificProvenanceError,
+    assert_router_expert_reusable,
 )
 
 
@@ -205,6 +209,11 @@ def aggregate(
         raise RouterAggregateError(
             "fixture or incomplete fold evidence cannot enter a real router aggregate"
         )
+    for path, payload in artifacts:
+        try:
+            assert_router_expert_reusable(payload)
+        except ScientificProvenanceError as error:
+            raise RouterAggregateError(f"router fold artifact is not reusable: {path}") from error
     if any(
         payload.get("artifact_type") != "scientific_recovery_v8_router_fold_v1"
         for _, payload in artifacts

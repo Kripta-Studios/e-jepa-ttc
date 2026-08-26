@@ -147,6 +147,24 @@ def test_cross_component_canonical_token_hashes_match() -> None:
     )
     assert "hash_sorted_token_strings" in expert_source
     assert '"\\n".join(sorted(' not in expert_source
+    nested_source = (ROOT / "scripts" / "run_scientific_recovery_v8_nested_router.py").read_text(
+        encoding="utf-8"
+    )
+    assert "hash_sorted_token_strings" in nested_source
+    assert '"\\n".join(sorted(' not in nested_source
+    all_trainings = (ROOT / "scripts" / "run_scientific_recovery_v8_all_trainings.ps1").read_text(
+        encoding="utf-8"
+    )
+    assert "--verify" in all_trainings
+    assert "00_verify_freeze" in all_trainings
+    assert "00_freeze" not in all_trainings
+    freeze_calls = [
+        line
+        for line in all_trainings.splitlines()
+        if "freeze_scientific_recovery_v8_configs.py" in line
+    ]
+    assert freeze_calls
+    assert all("--verify" in line for line in freeze_calls)
     assert _canonical_token_hash(("zeta-token", "alpha-token", "mid-token")) == expected_sorted
     assert _token_hash(tokens) == expected_sorted
 
@@ -215,6 +233,10 @@ def test_nested_router_binds_expert_git_identity() -> None:
         encoding="utf-8"
     )
     assert "assert_router_expert_reusable" in source
+    aggregator = (ROOT / "scripts" / "aggregate_scientific_recovery_v8_router.py").read_text(
+        encoding="utf-8"
+    )
+    assert "assert_router_expert_reusable" in aggregator
     assert "train" in source and "summary.json" in source
 
 

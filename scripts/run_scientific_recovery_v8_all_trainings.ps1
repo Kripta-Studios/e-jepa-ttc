@@ -339,9 +339,15 @@ function Invoke-DryRunRemainder {
 }
 
 Write-State 'preflight' 'running'
-# Re-freeze because the completion patch changes conditional model/config contracts.
-Invoke-Logged '00_freeze' 'uv' (UvArgs @('scripts/freeze_scientific_recovery_v8_configs.py','--protocol',$Protocol))
-Invoke-Logged '01_verify_freeze' 'uv' (UvArgs @('scripts/freeze_scientific_recovery_v8_configs.py','--protocol',$Protocol,'--verify'))
+# Verify committed frozen inputs. Do not regenerate: freeze() writes git_branch from
+# the current checkout and would dirty a clean scientific worktree.
+Invoke-Logged '00_verify_freeze' 'uv' (UvArgs @('scripts/freeze_scientific_recovery_v8_configs.py','--protocol',$Protocol,'--verify'))
+if (-not $DryRun) {
+    $porcelainAfterVerify = & git status --porcelain
+    if (-not [string]::IsNullOrWhiteSpace($porcelainAfterVerify)) {
+        throw 'scientific execution requires a clean Git worktree after freeze verification'
+    }
+}
 if(-not $SkipFocusedTests){
     Invoke-Logged '02_focused_tests' 'uv' @('run','--no-sync','pytest','-q','tests/unit/test_scientific_recovery_v8_temporal.py','tests/unit/test_scientific_recovery_v8_router.py','tests/unit/test_scientific_recovery_v8_autopsy.py','tests/unit/test_scientific_recovery_v8_aggregate.py','tests/unit/test_scientific_recovery_v8_jepa.py','tests/unit/test_scientific_recovery_v8_jepa_attribution.py','tests/unit/test_scientific_recovery_v8_jobs.py','tests/integration/test_scientific_recovery_v8_trainer_smoke.py','tests/integration/test_scientific_recovery_v8_router_smoke.py','tests/integration/test_scientific_recovery_v8_jepa_smoke.py')
 }
