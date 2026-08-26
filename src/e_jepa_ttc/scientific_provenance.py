@@ -78,8 +78,7 @@ def require_clean_scientific_worktree(root: Path | None = None) -> dict[str, Any
     serialized = serialize_git_identity(identity)
     if serialized["git_dirty"] is not False:
         raise ScientificProvenanceError(
-            "scientific execution requires a clean Git worktree; "
-            f"commit={serialized['git_commit']}"
+            f"scientific execution requires a clean Git worktree; commit={serialized['git_commit']}"
         )
     return serialized
 
@@ -92,6 +91,38 @@ def refuse_scientific_bypass_env(environ: Mapping[str, str] | None = None) -> No
     if present:
         raise ScientificProvenanceError(
             "scientific execution forbids bypass environment variables: " + ", ".join(present)
+        )
+
+
+def assert_autopsy_replay_producer_reusable(
+    payload: Mapping[str, Any],
+    *,
+    expected_commit: str,
+    source: str = "replay manifest",
+) -> None:
+    """Refuse autopsy replay reuse unless producer identity matches this HEAD.
+
+    Signed CSV hashes prove a completed replay, not that the replay was produced
+    by the current implementation.  Missing git_commit, a dirty producer, or a
+    commit mismatch are fatal.
+    """
+
+    if payload.get("status") != "completed_replay_without_optimizer_steps":
+        raise ScientificProvenanceError(f"{source} is incomplete")
+    commit = payload.get("git_commit")
+    dirty = payload.get("git_dirty")
+    if not isinstance(commit, str) or not commit:
+        raise ScientificProvenanceError(
+            f"{source} has no git_commit; existence-only reuse is forbidden "
+            "after implementation repair"
+        )
+    if dirty is not False:
+        raise ScientificProvenanceError(f"{source} was not produced from a clean worktree")
+    if not isinstance(expected_commit, str) or not expected_commit:
+        raise ScientificProvenanceError("implementation HEAD git_commit is missing")
+    if commit != expected_commit:
+        raise ScientificProvenanceError(
+            f"{source} git_commit {commit} differs from implementation HEAD {expected_commit}"
         )
 
 

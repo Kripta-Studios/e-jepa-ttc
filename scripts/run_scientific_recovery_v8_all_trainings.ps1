@@ -371,16 +371,30 @@ $AInput=Join-Path $BaseRoot 'autopsy/inputs'; $AReplay=Join-Path $BaseRoot 'auto
 $A5ReplayManifest=Join-Path $AReplay 'a5/manifest.json'
 $C2FReplayManifest=Join-Path $AReplay 'c2f/manifest.json'
 $GarlReplayManifest=Join-Path $AReplay 'garl/manifest.json'
-$ReuseAutopsyReplays = (-not $DryRun) -and (Test-Path -LiteralPath $A5ReplayManifest) -and (Test-Path -LiteralPath $C2FReplayManifest) -and (Test-Path -LiteralPath $GarlReplayManifest)
+$ReuseAutopsyReplays = $false
+if(-not $DryRun){
+    # Existence/signature of CSVs is not producer identity. Reuse only when each
+    # replay records git_commit=HEAD and git_dirty=false. Current pre-repair
+    # manifests lack those fields and must be recomputed.
+    & uv run --no-sync python scripts/assert_scientific_recovery_v8_autopsy_replay_reusable.py `
+        --a5-manifest $A5ReplayManifest `
+        --c2f-manifest $C2FReplayManifest `
+        --garl-manifest $GarlReplayManifest
+    if($LASTEXITCODE -eq 0){
+        $ReuseAutopsyReplays = $true
+        Write-Host 'Reusing autopsy replays bound to the current clean implementation commit.'
+    }else{
+        Write-Host 'Autopsy replays are missing, unsigned, or not bound to this HEAD; recomputing stages 10-12.'
+    }
+}
 if($ReuseAutopsyReplays){
-    Write-Host 'Reusing completed A5/C2F/Garl autopsy replay manifests; stages 10-12 will not be recomputed.'
+    Write-Host 'Skipping stages 10-12; stage 13 will still verify signed CSV hashes.'
 }else{
     Invoke-Logged '10_autopsy_materialize' 'uv' (UvArgs @('scripts/materialize_scientific_recovery_v8_autopsy_inputs.py','--protocol',$Protocol,'--output-dir',$AInput,'--eap-root',$EapRoot,'--garlttc-root',$GarlTtcRoot))
     Invoke-Logged '11_autopsy_replay_a5_c2f' 'uv' (UvArgs @('scripts/replay_scientific_recovery_v8_mechanisms.py','--protocol',$Protocol,'--replay-input-root',$AInput,'--output-dir',$AReplay,'--models','a5','c2f','--device',$Device))
     Invoke-Logged '12_autopsy_garl_bind' 'uv' (UvArgs @('scripts/materialize_scientific_recovery_v8_garl_autopsy_comparator.py','--protocol',$Protocol,'--output-dir',(Join-Path $AReplay 'garl')))
 }
-# Stage 13 re-verifies signed replay manifests and every referenced CSV hash, so
-# existence-only reuse above cannot silently accept stale/corrupt replay evidence.
+# Stage 13 re-verifies signed CSV hashes AND producer git identity vs HEAD.
 Invoke-Logged '13_autopsy_aggregate' 'uv' (UvArgs @('scripts/aggregate_scientific_recovery_v8_autopsy.py','--a5-manifest',$A5ReplayManifest,'--c2f-manifest',$C2FReplayManifest,'--garl-manifest',$GarlReplayManifest,'--protocol',$Protocol,'--output',$AOut,'--bootstrap-resamples','5000'))
 Write-State 'autopsy' 'completed'
 

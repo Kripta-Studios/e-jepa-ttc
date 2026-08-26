@@ -22,6 +22,7 @@ from e_jepa_ttc.models.causal_expert_router import _canonical_token_hash
 from e_jepa_ttc.scientific_provenance import (
     FORBIDDEN_SCIENTIFIC_ENV,
     ScientificProvenanceError,
+    assert_autopsy_replay_producer_reusable,
     assert_router_expert_reusable,
     observe_git_identity,
     refuse_scientific_bypass_env,
@@ -229,6 +230,41 @@ def test_invalid_router_experts_cannot_aggregate() -> None:
         assert_router_expert_reusable({"status": "completed", "git_dirty": False, "fixture": True})
     with pytest.raises(ScientificProvenanceError, match="dirty worktree"):
         assert_router_expert_reusable({"status": "completed", "fixture": False})
+
+
+def test_autopsy_replay_reuse_requires_clean_producer_head() -> None:
+    complete = {
+        "status": "completed_replay_without_optimizer_steps",
+        "git_commit": "abc123",
+        "git_dirty": False,
+    }
+    assert_autopsy_replay_producer_reusable(complete, expected_commit="abc123")
+    with pytest.raises(ScientificProvenanceError, match="no git_commit"):
+        assert_autopsy_replay_producer_reusable(
+            {"status": "completed_replay_without_optimizer_steps"},
+            expected_commit="abc123",
+        )
+    with pytest.raises(ScientificProvenanceError, match="clean worktree"):
+        assert_autopsy_replay_producer_reusable(
+            {**complete, "git_dirty": True},
+            expected_commit="abc123",
+        )
+    with pytest.raises(ScientificProvenanceError, match="differs from implementation HEAD"):
+        assert_autopsy_replay_producer_reusable(complete, expected_commit="def456")
+    all_trainings = (ROOT / "scripts" / "run_scientific_recovery_v8_all_trainings.ps1").read_text(
+        encoding="utf-8"
+    )
+    assert "assert_scientific_recovery_v8_autopsy_replay_reusable.py" in all_trainings
+    assert "Test-Path -LiteralPath $A5ReplayManifest" not in all_trainings
+    assert "Reusing completed A5/C2F/Garl autopsy replay manifests" not in all_trainings
+    replay = (ROOT / "scripts" / "replay_scientific_recovery_v8_mechanisms.py").read_text(
+        encoding="utf-8"
+    )
+    assert "_producer_git_identity" in replay
+    aggregator = (ROOT / "scripts" / "aggregate_scientific_recovery_v8_autopsy.py").read_text(
+        encoding="utf-8"
+    )
+    assert "assert_autopsy_replay_producer_reusable" in aggregator
 
 
 def test_nested_router_binds_expert_git_identity() -> None:

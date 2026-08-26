@@ -45,6 +45,11 @@ from e_jepa_ttc.models.garl_ttc_replica import (  # noqa: E402
     GarlTTCOutput,
     GarlTTCReplica,
 )
+from e_jepa_ttc.scientific_provenance import (  # noqa: E402
+    observe_git_identity,
+    require_clean_scientific_worktree,
+    serialize_git_identity,
+)
 
 
 def _atomic_json(path: Path, value: dict[str, Any]) -> None:
@@ -86,6 +91,12 @@ def _checkpoint_config_provenance(checkpoint: Path, model: CausalScaleTTC) -> di
         "raw_checkpoint_config_sha256": canonical_json_sha256(raw_config),
         "effective_model_config_sha256": canonical_json_sha256(effective_config),
     }
+
+
+def _producer_git_identity() -> dict[str, Any]:
+    """Record observed producer identity. Production entry points require clean HEAD."""
+
+    return serialize_git_identity(observe_git_identity())
 
 
 def _signed_json(path: Path) -> dict[str, Any]:
@@ -193,6 +204,7 @@ def run_garl_replay(
         "device": str(device),
         "causality_checks": {"optimizer_steps": 0, "two_endpoint_contract": True},
         "interventions": {"baseline": {"path": path.name, "sha256": csv_sha256}},
+        **_producer_git_identity(),
     }
     sign_artifact(manifest)
     _atomic_json(output_dir / "manifest.json", manifest)
@@ -407,6 +419,7 @@ def run_replay_sharded(
         },
         "factorial_cells": [cell.name for cell in FACTORIAL_A5_CELLS],
         "interventions": manifest_rows,
+        **_producer_git_identity(),
     }
     sign_artifact(manifest)
     _atomic_json(output_dir / "manifest.json", manifest)
@@ -423,6 +436,7 @@ def run_protocol_replays(
 ) -> dict[str, Any]:
     """Resolve all parent checkpoints/folds from the signed V8 protocol."""
 
+    require_clean_scientific_worktree()
     protocol = _signed_json(protocol_path)
     if protocol.get("status") != "frozen_before_v8_training":
         raise ValueError("canonical V8 replay requires the frozen pre-training protocol")
@@ -529,6 +543,7 @@ def run_protocol_replays(
                     "not_applicable_stateless_checkpoint" if causal_manifests else "not_applicable_garl_pair_checkpoint"
                 ),
             },
+            **_producer_git_identity(),
         }
         sign_artifact(manifest)
         _atomic_json(root / "manifest.json", manifest)
@@ -594,6 +609,7 @@ def run_replay(
         },
         "factorial_cells": [cell.name for cell in FACTORIAL_A5_CELLS],
         "interventions": manifest_rows,
+        **_producer_git_identity(),
     }
     sign_artifact(manifest)
     _atomic_json(output_dir / "manifest.json", manifest)
@@ -650,6 +666,7 @@ def main() -> None:
             json.dumps({"status": "validated_no_inference", "replay_input": str(args.replay_input)})
         )
         return
+    require_clean_scientific_worktree()
     result = (
         run_garl_replay(
             checkpoint=args.checkpoint,

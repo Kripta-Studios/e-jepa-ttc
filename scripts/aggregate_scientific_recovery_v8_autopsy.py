@@ -36,6 +36,10 @@ from e_jepa_ttc.evaluation.scientific_recovery_v8 import (  # noqa: E402
     target_sha256,
     validate_oof_frame,
 )
+from e_jepa_ttc.scientific_provenance import (  # noqa: E402
+    assert_autopsy_replay_producer_reusable,
+    require_clean_scientific_worktree,
+)
 
 
 def _atomic_json(path: Path, value: dict[str, Any]) -> None:
@@ -436,6 +440,18 @@ def aggregate_autopsy(
     }
     a5_source = _signed_manifest(a5_manifest)
     c2f_source = _signed_manifest(c2f_manifest)
+    garl_source = _signed_manifest(garl_manifest)
+    producer = require_clean_scientific_worktree()
+    for label, source, path in (
+        ("a5", a5_source, a5_manifest),
+        ("c2f", c2f_source, c2f_manifest),
+        ("garl", garl_source, garl_manifest),
+    ):
+        assert_autopsy_replay_producer_reusable(
+            source,
+            expected_commit=producer["git_commit"],
+            source=f"{label} replay {path}",
+        )
     for label, source in (("a5", a5_source), ("c2f", c2f_source)):
         checks = source.get("causality_checks")
         if not isinstance(checks, dict):
@@ -658,6 +674,8 @@ def aggregate_autopsy(
         "arm": "autopsy",
         "candidate_id": "A_AUTOPSY",
         "git_commit": protocol_value["git_base_commit"],
+        "producer_git_commit": producer["git_commit"],
+        "producer_git_dirty": producer["git_dirty"],
         "protocol_sha256": protocol_value["artifact_sha256"],
         "protocol_artifact_sha256": protocol_value["artifact_sha256"],
         "protocol_file_sha256": protocol_file_sha256,
@@ -705,6 +723,7 @@ def aggregate_autopsy(
             "five_factorial_cells_present": True,
             "future_prefix_invariance": True,
             "causality_preserved": True,
+            "producer_git_commit_matches_head": True,
         },
         "gate_decision": decision,
         "mechanism_decision": final_decision,

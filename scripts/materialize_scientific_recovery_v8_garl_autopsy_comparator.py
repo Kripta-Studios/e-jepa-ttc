@@ -6,6 +6,7 @@ from pathlib import Path
 import pandas as pd
 ROOT=Path(__file__).resolve().parents[1]; sys.path.insert(0,str(ROOT/'src'))
 from e_jepa_ttc.artifacts.hashing import sign_artifact, verify_artifact_hash
+from e_jepa_ttc.scientific_provenance import require_clean_scientific_worktree, serialize_git_identity
 
 def sha(p:Path)->str: return hashlib.sha256(p.read_bytes()).hexdigest()
 def main()->int:
@@ -24,8 +25,8 @@ def main()->int:
   if len(f)!=protocol['sample_contract']['rows'] or f['token_id'].astype(str).duplicated().any(): raise ValueError('Garl comparator is not exact OOF')
   f['seed']=7; f['prediction_log_variance']=0.0; f['guard_margin']=1.0; f['event_rate']=0.0; f['motion_magnitude']=0.0; f['occupancy_entropy']=0.0
   out=a.output_dir/'baseline.csv'; out.parent.mkdir(parents=True,exist_ok=True); f.to_csv(out,index=False,lineterminator='\n')
-  payload={'artifact_type':'scientific_recovery_v8_garl_replay_v1','status':'completed_replay_without_optimizer_steps','model_name':'garl','causality_checks':{'optimizer_steps':0,'frozen_oof_only':True},'interventions':{'baseline':{'path':out.name,'sha256':sha(out)}}}
+  payload={'artifact_type':'scientific_recovery_v8_garl_replay_v1','status':'completed_replay_without_optimizer_steps','model_name':'garl','causality_checks':{'optimizer_steps':0,'frozen_oof_only':True},'interventions':{'baseline':{'path':out.name,'sha256':sha(out)}},**serialize_git_identity(require_clean_scientific_worktree())}
   sign_artifact(payload); (a.output_dir/'manifest.json').write_text(json.dumps(payload,indent=2,sort_keys=True)+'\n',encoding='utf-8')
- except (OSError,ValueError,KeyError) as e: p.exit(2,f'V8 Garl comparator failed closed: {type(e).__name__}: {e}\n')
+ except (OSError,ValueError,KeyError,RuntimeError) as e: p.exit(2,f'V8 Garl comparator failed closed: {type(e).__name__}: {e}\n')
  print(json.dumps({'status':'completed','manifest':str(a.output_dir/'manifest.json')})); return 0
 if __name__=='__main__': raise SystemExit(main())
