@@ -92,12 +92,9 @@ def _require_identities(frame: pd.DataFrame, *, source: str) -> pd.DataFrame:
 
 
 def _values_sha256(values: Iterable[str]) -> str:
-    digest = hashlib.sha256()
-    for value in sorted(str(item) for item in values):
-        encoded = value.encode("utf-8")
-        digest.update(len(encoded).to_bytes(8, "big"))
-        digest.update(encoded)
-    return digest.hexdigest()
+    from e_jepa_ttc.data.canonical_token_identity import hash_sorted_token_strings
+
+    return hash_sorted_token_strings(values)
 
 
 def validate_cache_identities(

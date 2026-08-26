@@ -15,7 +15,8 @@ from typing import Any
 
 import numpy as np
 
-from e_jepa_ttc.artifacts.hashing import canonical_json, sign_artifact, verify_artifact_hash
+from e_jepa_ttc.artifacts.hashing import sign_artifact, verify_artifact_hash
+from e_jepa_ttc.data.canonical_token_identity import hash_canonical_json_records
 from e_jepa_ttc.evaluation.garl_ttc_protocol import (
     PAPER_MID_WEIGHTS,
     sequence_macro_signed_metrics,
@@ -42,9 +43,7 @@ def _sha(path: Path) -> str:
 
 
 def _records_hash(rows: list[dict[str, str]]) -> str:
-    return hashlib.sha256(
-        b"".join(canonical_json(row) + b"\n" for row in sorted(rows, key=lambda x: x["token_id"]))
-    ).hexdigest()
+    return hash_canonical_json_records(rows)
 
 
 def contract_hashes(rows: list[dict[str, str]]) -> dict[str, str]:

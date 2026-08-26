@@ -25,6 +25,10 @@ from typing import Any
 import yaml
 
 from e_jepa_ttc.artifacts.hashing import sign_artifact, verify_artifact_hash
+from e_jepa_ttc.scientific_provenance import (
+    refuse_scientific_bypass_env,
+    require_clean_scientific_worktree,
+)
 
 ROOT = Path(__file__).resolve().parents[3]
 STAGES: tuple[str, ...] = (
@@ -1239,6 +1243,8 @@ def run_stage(
 ) -> dict[str, Any]:
     """Validate and execute one concrete V8 stage exactly once when complete."""
 
+    refuse_scientific_bypass_env()
+    require_clean_scientific_worktree()
     if stage not in STAGES or stage in {"screen", "all"}:
         raise ValueError(f"run_stage expects a concrete V8 stage, got {stage!r}")
     frozen = verify_frozen_inputs(protocol_path, manifest_path)

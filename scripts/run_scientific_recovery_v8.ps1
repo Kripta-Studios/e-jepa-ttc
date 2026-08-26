@@ -102,6 +102,22 @@ $RouterInputsPath = Join-Path $RepoRoot $RouterInputsRoot
 # `uv run` must resolve this checkout even when the caller starts the script
 # from another directory (as the hidden monitor does).
 Set-Location -LiteralPath $RepoRoot
+$ForbiddenScientificEnv = @(
+    'DINO_NUM_CHUNKS',
+    'DINO_CHUNK_INDEX',
+    'DINO_START_ROW',
+    'DINO_END_ROW',
+    'DINO_ALLOW_PARTIAL_CACHE',
+    'ALLOW_DIRTY_MATERIALIZE',
+    'ALLOW_DIRTY',
+    'ALLOW_PARTIAL'
+)
+foreach ($name in $ForbiddenScientificEnv) {
+    $present = [Environment]::GetEnvironmentVariable($name)
+    if (-not [string]::IsNullOrWhiteSpace($present)) {
+        throw "scientific execution forbids bypass environment variable $name"
+    }
+}
 
 function Write-AtomicText {
     param([Parameter(Mandatory)][string]$Path, [Parameter(Mandatory)][string]$Content)
@@ -454,7 +470,9 @@ function Invoke-Seed7Aggregate {
             $previous = Get-Content -LiteralPath $aggregateState -Raw | ConvertFrom-Json
             if ($previous.status -eq 'completed' -and $previous.protocol_file_sha256 -eq (Get-FileSha256 $ProtocolPath) -and $previous.frozen_manifest_file_sha256 -eq (Get-FileSha256 $ManifestPath)) { return }
         }
-        catch { }
+        catch {
+            throw "signed aggregate_seed7 reuse state is unreadable or hash-mismatched: $_"
+        }
     }
     $command = [string[]]@(
         'run', '--no-sync', 'python', 'scripts/aggregate_scientific_recovery_v8.py',

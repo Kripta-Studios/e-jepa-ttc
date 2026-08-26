@@ -24,6 +24,18 @@ from e_jepa_ttc.training.scientific_recovery_v8_jobs import (
 )
 
 
+@pytest.fixture(autouse=True)
+def _stub_scientific_provenance(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(
+        "e_jepa_ttc.training.scientific_recovery_v8_jobs.require_clean_scientific_worktree",
+        lambda root=None: {"git_commit": "test", "git_dirty": False},
+    )
+    monkeypatch.setattr(
+        "e_jepa_ttc.training.scientific_recovery_v8_jobs.refuse_scientific_bypass_env",
+        lambda environ=None: None,
+    )
+
+
 def _signed(path: Path, payload: dict[str, object]) -> Path:
     sign_artifact(payload)
     path.parent.mkdir(parents=True, exist_ok=True)

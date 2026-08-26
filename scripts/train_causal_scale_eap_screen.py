@@ -25,6 +25,7 @@ sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT))
 
 from e_jepa_ttc.artifacts.hashing import sign_artifact, verify_artifact_hash  # noqa: E402
+from e_jepa_ttc.data.canonical_token_identity import hash_sorted_token_strings  # noqa: E402
 from e_jepa_ttc.data.dinov3_relational_teacher_cache import (  # noqa: E402
     DINOv3RelationalTeacherDataset,
 )
@@ -37,6 +38,7 @@ from e_jepa_ttc.models.causal_scale_ttc import (  # noqa: E402
     CausalScaleTTCConfig,
 )
 from e_jepa_ttc.reproducibility import environment_snapshot, resolve_device  # noqa: E402
+from e_jepa_ttc.scientific_provenance import refuse_scientific_bypass_env  # noqa: E402
 from e_jepa_ttc.training.causal_scale_eap import (  # noqa: E402
     CausalScaleEAPTrainingConfig,
     checkpoint_payload,
@@ -100,12 +102,7 @@ def _sha256(path: Path) -> str:
 
 
 def _sorted_values_sha256(values: list[str]) -> str:
-    digest = hashlib.sha256()
-    for value in sorted(values):
-        encoded = value.encode("utf-8")
-        digest.update(len(encoded).to_bytes(8, "big"))
-        digest.update(encoded)
-    return digest.hexdigest()
+    return hash_sorted_token_strings(values)
 
 
 def _git(*args: str) -> str:
@@ -960,6 +957,7 @@ def run(
             "representative real screen requires clean scientific code state; "
             f"blocking_tracked={blocking}, untracked_code={untracked_code}"
         )
+    refuse_scientific_bypass_env()
     launch_git_commit = _git("rev-parse", "HEAD")
 
     model_path = _resolve(raw["model_config"])
