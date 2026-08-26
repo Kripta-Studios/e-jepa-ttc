@@ -165,6 +165,9 @@ def test_cross_component_canonical_token_hashes_match() -> None:
     ]
     assert freeze_calls
     assert all("--verify" in line for line in freeze_calls)
+    assert "$null = $p.Handle" in all_trainings
+    assert "$null = $proc.Handle" in all_trainings
+    assert "exited without reporting an exit code" in all_trainings
     assert _canonical_token_hash(("zeta-token", "alpha-token", "mid-token")) == expected_sorted
     assert _token_hash(tokens) == expected_sorted
 
