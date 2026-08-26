@@ -30,6 +30,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from e_jepa_ttc.artifacts.hashing import sign_artifact, verify_artifact_hash  # noqa: E402
+from e_jepa_ttc.data.canonical_token_identity import hash_sorted_token_strings  # noqa: E402
 from e_jepa_ttc.evaluation.nested_router import (  # noqa: E402
     INNER_OOF_COLUMNS,
     InnerFold,
@@ -48,8 +49,10 @@ from e_jepa_ttc.models.causal_expert_router import ROUTER_FEATURES  # noqa: E402
 from e_jepa_ttc.scientific_provenance import (  # noqa: E402
     ScientificProvenanceError,
     assert_router_expert_reusable,
+    observe_git_identity,
     refuse_scientific_bypass_env,
     require_clean_scientific_worktree,
+    serialize_git_identity,
 )
 
 
@@ -386,12 +389,13 @@ def run_fold(
         "outer_fold": outer_fold,
         "seed": seed,
         "git_commit": _git_commit(),
+        **serialize_git_identity(observe_git_identity()),
         "protocol_sha256": "fixture" if fixture else str(frozen.protocol["artifact_sha256"]),
         "config_sha256": _sha256(config_path),
         "inner_oof_rows": int(len(inner)),
-        "inner_oof_tokens_sha256": hashlib.sha256(
-            "\n".join(sorted(inner["sample_token"].astype(str))).encode("utf-8")
-        ).hexdigest(),
+        "inner_oof_tokens_sha256": hash_sorted_token_strings(
+            inner["sample_token"].astype(str).tolist()
+        ),
         "router_signature": {
             "path": str(router_path) if fixture else _repo_relative(router_path),
             "sha256": _sha256(router_path),
@@ -446,6 +450,7 @@ def run_fold(
                 "base_git_commit": str(frozen.protocol.get("git_base_commit", "")),
                 "implementation_git_commit": _git_commit(),
                 "git_commit": _git_commit(),
+                **serialize_git_identity(observe_git_identity()),
                 "protocol_sha256": str(frozen.protocol["artifact_sha256"]),
                 "frozen_manifest_sha256": str(frozen.manifest["artifact_sha256"]),
                 "config_sha256": _sha256(config_path),
