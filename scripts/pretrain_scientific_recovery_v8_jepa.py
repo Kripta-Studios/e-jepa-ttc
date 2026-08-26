@@ -27,7 +27,10 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from e_jepa_ttc.artifacts.hashing import sign_artifact, verify_artifact_hash  # noqa: E402
-from e_jepa_ttc.data.scientific_recovery_v8_cache import collate_scientific_recovery_v8  # noqa: E402
+from e_jepa_ttc.data.scientific_recovery_v8_cache import (  # noqa: E402
+    ScientificRecoveryV8CacheDataset,
+    collate_scientific_recovery_v8,
+)
 from e_jepa_ttc.data.scientific_recovery_v8_jepa_data import open_jepa_dataset  # noqa: E402
 from e_jepa_ttc.models.causal_scale_jepa_v8 import (  # noqa: E402
     CausalScaleJEPAV8,

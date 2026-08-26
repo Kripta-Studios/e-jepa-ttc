@@ -838,10 +838,38 @@ class CausalScaleTTC(nn.Module):
         delta_t_s: torch.Tensor,
         *,
         return_dense_features: bool = False,
-        replay_control: CausalScaleReplayControl | None = None,
     ) -> CausalScaleTTCOutput:
         """Predict current TTC from causal endpoint tensors ``[B,T,C,H,W]``."""
 
+        return self._forward_impl(
+            inputs, delta_t_s, return_dense_features=return_dense_features
+        )
+
+    def _forward_replay(
+        self,
+        inputs: torch.Tensor,
+        delta_t_s: torch.Tensor,
+        *,
+        replay_control: CausalScaleReplayControl,
+        return_dense_features: bool = False,
+    ) -> CausalScaleTTCOutput:
+        """Private factorial/mechanism replay path. Not part of the public contract."""
+
+        return self._forward_impl(
+            inputs,
+            delta_t_s,
+            return_dense_features=return_dense_features,
+            replay_control=replay_control,
+        )
+
+    def _forward_impl(
+        self,
+        inputs: torch.Tensor,
+        delta_t_s: torch.Tensor,
+        *,
+        return_dense_features: bool = False,
+        replay_control: CausalScaleReplayControl | None = None,
+    ) -> CausalScaleTTCOutput:
         if inputs.ndim != 5 or inputs.shape[1] < 2:
             raise ValueError("inputs must have shape [B,T>=2,C,H,W]")
         if inputs.shape[2] != self.config.in_channels:

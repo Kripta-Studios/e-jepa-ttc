@@ -1,9 +1,10 @@
 #!/usr/bin/env python
-"""Materialize DINOv3 relational teacher cache for A4 (train-only).
+"""Materialize one complete DINOv3 relational teacher cache (train-only).
 
 Processes the requested train rows, computing per-object DINO features
-and six local cosine relation maps.  Writes sharded NPZ files and a
-signed manifest.
+and six local cosine relation maps.  Writes one indivisible mmap cache
+and a signed manifest.  GPU inference may batch internally; there is no
+scientific chunk/partial-cache mode.
 
 Each sample_token corresponds to a specific object/track within a frame.
 The RGB is cropped using that object's exact common_square_xyxy.
@@ -23,7 +24,6 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import os
 import sys
 import tarfile
 from datetime import UTC, datetime
@@ -38,7 +38,9 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT))
 
-from e_jepa_ttc.artifacts.hashing import sign_artifact  # noqa: E402
+from e_jepa_ttc.data.dinov3_relational_teacher_cache import (  # noqa: E402
+    write_complete_mmap_cache,
+)
 from e_jepa_ttc.data.event_v4_geometry import box_in_common_roi  # noqa: E402
 from e_jepa_ttc.data.garlttc_eap import (  # noqa: E402
     normalize_boxes_xyxy,
@@ -59,7 +61,7 @@ from e_jepa_ttc.scientific_provenance import (  # noqa: E402
 _INPUT_SIZE = 256
 _EXPECTED_GRID = (32, 32)
 _NUM_OFFSETS = len(A4_RELATION_OFFSETS)
-_SHARD_SIZE = 64
+_GPU_INFERENCE_BATCH = 8
 _EXPECTED_MODEL_ID = "facebook/dinov3-convnext-large-pretrain-lvd1689m"
 
 
@@ -99,13 +101,9 @@ def _resolve_rgb_endpoints(
     whose timestamp gap matches garl_delta_t_s.
     """
 
-    rgb_shards = [
-        str(v)
-        for v in _as_list(parquet_row["rgb_shard_paths"], field="rgb_shard_paths")
-    ]
+    rgb_shards = [str(v) for v in _as_list(parquet_row["rgb_shard_paths"], field="rgb_shard_paths")]
     rgb_members = [
-        str(v)
-        for v in _as_list(parquet_row["rgb_member_paths"], field="rgb_member_paths")
+        str(v) for v in _as_list(parquet_row["rgb_member_paths"], field="rgb_member_paths")
     ]
     frame_timestamps = [
         int(v) for v in _as_list(parquet_row["frame_timestamps_us"], field="frame_timestamps_us")
@@ -132,17 +130,12 @@ def _resolve_rgb_endpoints(
     if event_boxes.shape != (3, 4):
         raise ValueError(f"FATAL: event_v4_boxes_xyxy must be [3,4], got {event_boxes.shape}")
     if event_roi.ndim != 4 or event_roi.shape[0] != 3 or event_roi.shape[-2] != event_roi.shape[-1]:
-        raise ValueError(
-            "FATAL: event_v4_common_roi must be [3,C,H,W] with a square spatial ROI"
-        )
+        raise ValueError("FATAL: event_v4_common_roi must be [3,C,H,W] with a square spatial ROI")
     roi_size = int(event_roi.shape[-1])
     square_tuple = tuple(float(v) for v in square.tolist())
 
     mapped_boxes = np.asarray(
-        [
-            box_in_common_roi(box, square_tuple, roi_size=roi_size)
-            for box in source_boxes
-        ],
+        [box_in_common_roi(box, square_tuple, roi_size=roi_size) for box in source_boxes],
         dtype=np.float32,
     )
     t1_candidates = np.flatnonzero(
@@ -171,9 +164,7 @@ def _resolve_rgb_endpoints(
         )
 
     first, second = valid_pairs[0]
-    selected_windows = np.asarray(
-        [event_windows[first], event_windows[second]], dtype=np.int64
-    )
+    selected_windows = np.asarray([event_windows[first], event_windows[second]], dtype=np.int64)
     return {
         "indices": (first, second),
         "rgb_shards": (rgb_shards[first], rgb_shards[second]),
@@ -191,9 +182,7 @@ def _find_32x32_feature(
         outputs = model(dummy, output_hidden_states=True)
     hidden = getattr(outputs, "hidden_states", None)
     if hidden is not None:
-        candidates = [
-            (i, hs) for i, hs in enumerate(hidden) if hs.shape[-2:] == _EXPECTED_GRID
-        ]
+        candidates = [(i, hs) for i, hs in enumerate(hidden) if hs.shape[-2:] == _EXPECTED_GRID]
         if len(candidates) == 1:
             return candidates[0][0], "hidden_states"
         if len(candidates) > 1:
@@ -206,6 +195,7 @@ def _find_32x32_feature(
         def hook(m: Any, inp: Any, out: Any) -> None:  # noqa: ANN401
             if isinstance(out, torch.Tensor) and out.ndim == 4:
                 hooked[name] = out
+
         return hook
 
     handles = []
@@ -241,9 +231,11 @@ def _extract_features(
         return outputs.hidden_states[idx]  # type: ignore[index]
     else:
         result: list[torch.Tensor] = []
+
         def hook(m: Any, inp: Any, out: Any) -> None:  # noqa: ANN401
             if isinstance(out, torch.Tensor):
                 result.append(out)
+
         target_module = dict(model.named_modules())[str(selection_id)]
         handle = target_module.register_forward_hook(hook)
         with torch.no_grad():
@@ -275,6 +267,7 @@ def _load_and_crop_rgb(
     rgb_sha = _sha256_bytes(raw_bytes)
 
     import io
+
     img = Image.open(io.BytesIO(raw_bytes)).convert("RGB")
     img_w, img_h = img.size
 
@@ -284,9 +277,7 @@ def _load_and_crop_rgb(
     x2 = min(img_w, int(common_square_xyxy[2]))
     y2 = min(img_h, int(common_square_xyxy[3]))
     if x2 <= x1 or y2 <= y1:
-        raise ValueError(
-            f"Invalid crop: ({x1},{y1},{x2},{y2}) for image {img_w}×{img_h}"
-        )
+        raise ValueError(f"Invalid crop: ({x1},{y1},{x2},{y2}) for image {img_w}×{img_h}")
     crop = img.crop((x1, y1, x2, y2))
 
     # Resize to 256×256 — NO center crop, NO RandomResizedCrop
@@ -336,25 +327,29 @@ def run(
     event_manifest = json.loads(event_cache_manifest.read_text(encoding="utf-8"))
     event_manifest_sha = _sha256_file(event_cache_manifest)
     train_parquet_sha = _sha256_file(train_parquet)
-    train_dataset = GarlTTCObjectEventV4Dataset(
-        str(event_cache_manifest), splits=("train",)
-    )
+    train_dataset = GarlTTCObjectEventV4Dataset(str(event_cache_manifest), splits=("train",))
     total_rows = len(train_dataset)
     print(f"[materialize] Train dataset: {total_rows} rows")
 
     if total_rows != expected_rows:
         raise ValueError(
-            f"FATAL: Train dataset has {total_rows} rows, "
-            f"expected exactly {expected_rows}"
+            f"FATAL: Train dataset has {total_rows} rows, expected exactly {expected_rows}"
         )
 
     # Hard-fail on validation/test access
     validation_sequences = {"DGqicHUGWb", "pBqGOb2vYq", "qoohcdtLDH"}
-    
+
     # Expected train sequences
     expected_train_sequences = {
-        "2cyv0Oedzg", "5ilM1PX2vz", "6h5yRW2LGc", "OBneIVg4Cw", 
-        "OYgB6RGWcq", "WbCh1DRerJ", "mHGFBekt7X", "qGsgzl4Q8B", "t79dBxj1WS"
+        "2cyv0Oedzg",
+        "5ilM1PX2vz",
+        "6h5yRW2LGc",
+        "OBneIVg4Cw",
+        "OYgB6RGWcq",
+        "WbCh1DRerJ",
+        "mHGFBekt7X",
+        "qGsgzl4Q8B",
+        "t79dBxj1WS",
     }
 
     # Load train.parquet
@@ -380,8 +375,7 @@ def run(
         key = (token, track)
         if key in rgb_lookup:
             raise ValueError(
-                "FATAL: duplicate (sample_token, track_id) key in train.parquet: "
-                f"{key}"
+                f"FATAL: duplicate (sample_token, track_id) key in train.parquet: {key}"
             )
         rgb_lookup[key] = row
 
@@ -411,9 +405,7 @@ def run(
     config_dict = model.config.to_dict()
     config_json = json.dumps(config_dict, sort_keys=True)
     config_sha = hashlib.sha256(config_json.encode()).hexdigest()
-    preprocessor_json = json.dumps(
-        {"mean": image_mean, "std": image_std}, sort_keys=True
-    )
+    preprocessor_json = json.dumps({"mean": image_mean, "std": image_std}, sort_keys=True)
     preprocessor_sha = hashlib.sha256(preprocessor_json.encode()).hexdigest()
 
     # --- Find 32×32 feature ---
@@ -426,168 +418,121 @@ def run(
         f"grid={feat.shape[-2:]}, selection={selection_id}, method={selection_method}"
     )
 
-    # --- Process all train rows ---
+    # --- Process all train rows into one complete cache ---
     output_dir.mkdir(parents=True, exist_ok=True)
-    shard_infos: list[dict[str, Any]] = []
-    shard_idx = 0
 
-    seen_pairs = set()
+    all_tokens: list[str] = []
+    all_track_ids: list[str] = []
+    all_sequences: list[str] = []
+    all_squares: list[np.ndarray] = []
+    all_targets: list[np.ndarray] = []
+    all_valid: list[np.ndarray] = []
+    all_rgb_shas: list[np.ndarray] = []
+    all_rgb_indices: list[np.ndarray] = []
+    all_rgb_timestamps: list[np.ndarray] = []
+    all_event_windows: list[np.ndarray] = []
+    all_rgb_shards: list[np.ndarray] = []
+    all_rgb_members: list[np.ndarray] = []
+    pending_rgb: list[torch.Tensor] = []
+    pending_rows: list[int] = []
+    seen_pairs: set[tuple[str, str]] = set()
 
-    for start in range(0, total_rows, _SHARD_SIZE):
-        end = min(start + _SHARD_SIZE, total_rows)
-        shard_tokens: list[str] = []
-        shard_track_ids: list[str] = []
-        shard_sequences: list[str] = []
-        shard_squares: list[np.ndarray] = []
-        shard_targets: list[np.ndarray] = []
-        shard_valid: list[np.ndarray] = []
-        shard_rgb_shas: list[np.ndarray] = []
-        shard_rgb_indices: list[np.ndarray] = []
-        shard_rgb_timestamps: list[np.ndarray] = []
-        shard_event_windows: list[np.ndarray] = []
-        shard_rgb_shards: list[np.ndarray] = []
-        shard_rgb_members: list[np.ndarray] = []
+    def _flush_gpu_batch() -> None:
+        if not pending_rgb:
+            return
+        stacked = torch.cat(pending_rgb, dim=0)
+        features = _extract_features(model, stacked, selection_id, selection_method)
+        relations = local_cosine_relation_maps(features)
+        values = relations.values.cpu().numpy().astype(np.float16)
+        valid = relations.valid.cpu().numpy().astype(np.uint8)
+        if values.shape[0] != len(pending_rows) * 2:
+            raise RuntimeError("DINO GPU batch size does not match pending endpoint count")
+        for local_idx, _row_idx in enumerate(pending_rows):
+            start = local_idx * 2
+            all_targets.append(values[start : start + 2])
+            all_valid.append(valid[start : start + 2])
+        pending_rgb.clear()
+        pending_rows.clear()
 
-        for row_idx in range(start, end):
-            record = train_dataset[row_idx]
-            token = str(record["sample_token"])
-            track_id = str(record["track_id"])
-            sequence = str(record["sequence_id"])
+    for row_idx in range(total_rows):
+        record = train_dataset[row_idx]
+        token = str(record["sample_token"])
+        track_id = str(record["track_id"])
+        sequence = str(record["sequence_id"])
 
-            if (token, track_id) in seen_pairs:
-                raise ValueError(f"FATAL: Duplicate (token, track_id) detected: {token}/{track_id}")
-            seen_pairs.add((token, track_id))
+        if (token, track_id) in seen_pairs:
+            raise ValueError(f"FATAL: Duplicate (token, track_id) detected: {token}/{track_id}")
+        seen_pairs.add((token, track_id))
 
-            if sequence not in expected_train_sequences:
-                raise ValueError(
-                    f"FATAL: Sequence {sequence} is not an expected train sequence"
-                )
-
-            # Hard-fail on validation sequences (redundant but explicit)
-            if sequence in validation_sequences:
-                raise ValueError(
-                    f"FATAL: validation sequence {sequence} found in train dataset"
-                )
-            
-            if (token, track_id) not in rgb_lookup:
-                raise ValueError(
-                    f"FATAL: (token, track_id) {token}/{track_id} "
-                    "not found in train.parquet"
-                )
-
-            parquet_row = rgb_lookup[(token, track_id)]
-            parquet_sequence = str(parquet_row["sequence_id"])
-            endpoints = _resolve_rgb_endpoints(record, parquet_row)
-            rgb_shards = endpoints["rgb_shards"]
-            rgb_members = endpoints["rgb_members"]
-
-            if parquet_sequence != sequence:
-                raise ValueError(
-                    f"Sequence mismatch for {token}/{track_id}: "
-                    f"event={sequence}, parquet={parquet_sequence}"
-                )
-
-            square = np.asarray(
-                record["event_v4_common_square_xyxy"], dtype=np.float32
+        if sequence not in expected_train_sequences:
+            raise ValueError(f"FATAL: Sequence {sequence} is not an expected train sequence")
+        if sequence in validation_sequences:
+            raise ValueError(f"FATAL: validation sequence {sequence} found in train dataset")
+        if (token, track_id) not in rgb_lookup:
+            raise ValueError(
+                f"FATAL: (token, track_id) {token}/{track_id} not found in train.parquet"
             )
 
-            endpoint_targets = []
-            endpoint_valid = []
-            endpoint_rgb_shas = []
-            
-            for ep in range(2):
-                tar_path = eap_root / rgb_shards[ep]
-                member_path = rgb_members[ep]
-                
-                ep_input, rgb_sha = _load_and_crop_rgb(
-                    tar_path=tar_path,
-                    member_path=member_path,
-                    common_square_xyxy=square,
-                    image_mean=image_mean,
-                    image_std=image_std,
-                    device=device,
-                )
-                
-                features = _extract_features(
-                    model, ep_input, selection_id, selection_method,
-                )
-                rels = local_cosine_relation_maps(features)
-                endpoint_targets.append(
-                    rels.values.squeeze(0).cpu().numpy().astype(np.float16)
-                )
-                endpoint_valid.append(
-                    rels.valid.squeeze(0).cpu().numpy().astype(np.uint8)
-                )
-                endpoint_rgb_shas.append(rgb_sha)
-
-            shard_tokens.append(token)
-            shard_track_ids.append(track_id)
-            shard_sequences.append(sequence)
-            shard_squares.append(square)
-            shard_targets.append(np.stack(endpoint_targets, axis=0))
-            shard_valid.append(np.stack(endpoint_valid, axis=0))
-            shard_rgb_shas.append(np.asarray(endpoint_rgb_shas, dtype="<U64"))
-            shard_rgb_indices.append(np.asarray(endpoints["indices"], dtype=np.int32))
-            shard_rgb_timestamps.append(
-                np.asarray(endpoints["frame_timestamps_us"], dtype=np.int64)
+        parquet_row = rgb_lookup[(token, track_id)]
+        parquet_sequence = str(parquet_row["sequence_id"])
+        endpoints = _resolve_rgb_endpoints(record, parquet_row)
+        rgb_shards = endpoints["rgb_shards"]
+        rgb_members = endpoints["rgb_members"]
+        if parquet_sequence != sequence:
+            raise ValueError(
+                f"Sequence mismatch for {token}/{track_id}: "
+                f"event={sequence}, parquet={parquet_sequence}"
             )
-            shard_event_windows.append(
-                np.asarray(endpoints["event_windows_us"], dtype=np.int64)
+
+        square = np.asarray(record["event_v4_common_square_xyxy"], dtype=np.float32)
+        endpoint_rgb_shas: list[str] = []
+        for ep in range(2):
+            ep_input, rgb_sha = _load_and_crop_rgb(
+                tar_path=eap_root / rgb_shards[ep],
+                member_path=rgb_members[ep],
+                common_square_xyxy=square,
+                image_mean=image_mean,
+                image_std=image_std,
+                device=device,
             )
-            shard_rgb_shards.append(np.asarray(rgb_shards, dtype=str))
-            shard_rgb_members.append(np.asarray(rgb_members, dtype=str))
+            pending_rgb.append(ep_input)
+            endpoint_rgb_shas.append(rgb_sha)
 
-            if (row_idx + 1) % 100 == 0:
-                print(f"  processed {row_idx + 1}/{total_rows}")
+        all_tokens.append(token)
+        all_track_ids.append(track_id)
+        all_sequences.append(sequence)
+        all_squares.append(square)
+        all_rgb_shas.append(np.asarray(endpoint_rgb_shas, dtype="<U64"))
+        all_rgb_indices.append(np.asarray(endpoints["indices"], dtype=np.int32))
+        all_rgb_timestamps.append(np.asarray(endpoints["frame_timestamps_us"], dtype=np.int64))
+        all_event_windows.append(np.asarray(endpoints["event_windows_us"], dtype=np.int64))
+        all_rgb_shards.append(np.asarray(rgb_shards, dtype=str))
+        all_rgb_members.append(np.asarray(rgb_members, dtype=str))
+        pending_rows.append(row_idx)
+        if len(pending_rows) >= _GPU_INFERENCE_BATCH:
+            _flush_gpu_batch()
+        if (row_idx + 1) % 100 == 0:
+            print(f"  processed {row_idx + 1}/{total_rows}")
 
-        # Write shard
-        npz_name = f"shard_{shard_idx:04d}.npz"
-        npz_path = output_dir / npz_name
-        np.savez_compressed(
-            npz_path,
-            sample_tokens=np.array(shard_tokens),
-            track_ids=np.array(shard_track_ids),
-            sequence_ids=np.array(shard_sequences),
-            common_square_xyxy=np.stack(shard_squares),
-            relation_targets=np.stack(shard_targets),
-            relation_valid=np.stack(shard_valid),
-            rgb_sha256=np.stack(shard_rgb_shas),
-            rgb_endpoint_indices=np.stack(shard_rgb_indices),
-            rgb_frame_timestamps_us=np.stack(shard_rgb_timestamps),
-            event_windows_us=np.stack(shard_event_windows),
-            rgb_shard_paths=np.stack(shard_rgb_shards),
-            rgb_member_paths=np.stack(shard_rgb_members),
-        )
-        shard_sha = _sha256_file(npz_path)
-        shard_infos.append({
-            "npz_path": npz_name,
-            "npz_sha256": shard_sha,
-            "row_count": end - start,
-        })
-        shard_idx += 1
-        print(f"  shard {shard_idx}: {end - start} rows, sha={shard_sha[:16]}...")
+    _flush_gpu_batch()
 
-    # Final checks
-    observed_sequences = {
-        str(rgb_lookup[key]["sequence_id"]) for key in seen_pairs
-    }
+    observed_sequences = {str(rgb_lookup[key]["sequence_id"]) for key in seen_pairs}
     if len(seen_pairs) != expected_rows:
         raise ValueError(
             f"FATAL: Expected exactly {expected_rows} unique "
             f"(token, track_id) pairs, got {len(seen_pairs)}"
         )
-    expected_endpoints = expected_rows * 2
-    if len(seen_pairs) * 2 != expected_endpoints:
-        raise ValueError(
-            f"FATAL: Expected exactly {expected_endpoints} endpoints, "
-            f"got {len(seen_pairs) * 2}"
-        )
+    if len(all_tokens) != expected_rows or len(all_targets) != expected_rows:
+        raise ValueError("FATAL: complete DINO cache row count mismatch after GPU flush")
     if observed_sequences != expected_train_sequences:
         raise ValueError("FATAL: Observed sequences mismatch with expected train sequences")
 
-    # --- Build manifest ---
+    relation_targets = np.stack(all_targets, axis=0)
+    relation_valid = np.stack(all_valid, axis=0)
+    crops = np.stack(all_squares, axis=0)
+
     manifest_payload: dict[str, Any] = {
-        "artifact_type": "dinov3_relational_teacher_cache_v1",
+        "artifact_type": "scientific_recovery_v8_complete_dino_teacher_v1",
         "created_at": datetime.now(UTC).isoformat(),
         "status": "passed",
         "scope": {
@@ -631,10 +576,9 @@ def run(
             "metadata_parquet": str(train_parquet),
             "metadata_parquet_sha256": train_parquet_sha,
             "storage": "eap_tar_members",
-            "endpoint_binding": (
-                "unique_source_box_match_to_event_v4_t1_t2_plus_garl_delta_t"
-            ),
-            "endpoint_metadata_stored_in_shards": True,
+            "endpoint_binding": ("unique_source_box_match_to_event_v4_t1_t2_plus_garl_delta_t"),
+            "endpoint_metadata_stored_in_shards": False,
+            "endpoint_metadata_stored_in_complete_cache": True,
             "raw_rgb_sha256_stored_per_endpoint": True,
         },
         "relations": {
@@ -653,7 +597,6 @@ def run(
             "git_commit": git_head,
             "git_dirty": git_dirty,
         },
-        "shards": shard_infos,
         "multi_object_contract": {
             "teacher_keyed_by_sample_token": True,
             "track_id_stored_per_row": True,
@@ -661,21 +604,28 @@ def run(
             "crop_is_per_object_common_square": True,
         },
     }
-    sign_artifact(manifest_payload)
-
-    manifest_path = output_dir / "manifest.json"
-    tmp = manifest_path.with_name(".manifest.json.tmp")
-    tmp.write_text(
-        json.dumps(manifest_payload, indent=2, sort_keys=True) + "\n",
-        encoding="utf-8",
-        newline="\n",
+    write_complete_mmap_cache(
+        output_dir,
+        tokens=all_tokens,
+        track_ids=all_track_ids,
+        sequence_ids=all_sequences,
+        relation_targets=relation_targets,
+        relation_valid=relation_valid,
+        crops=crops,
+        manifest=manifest_payload,
+        rgb_sha256=np.stack(all_rgb_shas),
+        rgb_endpoint_indices=np.stack(all_rgb_indices),
+        rgb_frame_timestamps_us=np.stack(all_rgb_timestamps),
+        event_windows_us=np.stack(all_event_windows),
+        rgb_shard_paths=np.stack(all_rgb_shards),
+        rgb_member_paths=np.stack(all_rgb_members),
     )
-    os.replace(tmp, manifest_path)
-
-    print(f"\n[materialize] DONE: {total_rows} rows, {shard_idx} shards")
-    print(f"  manifest: {manifest_path}")
-    print(f"  manifest SHA: {_sha256_file(manifest_path)[:16]}...")
-    return manifest_payload
+    written = json.loads((output_dir / "manifest.json").read_text(encoding="utf-8"))
+    print(f"\n[materialize] DONE: {total_rows} rows, complete mmap cache")
+    print(f"  manifest: {output_dir / 'manifest.json'}")
+    print(f"  coverage: {written.get('coverage')}")
+    print(f"  manifest SHA: {_sha256_file(output_dir / 'manifest.json')[:16]}...")
+    return written
 
 
 def main() -> int:

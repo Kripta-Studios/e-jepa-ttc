@@ -102,6 +102,12 @@ $RouterInputsPath = Join-Path $RepoRoot $RouterInputsRoot
 # `uv run` must resolve this checkout even when the caller starts the script
 # from another directory (as the hidden monitor does).
 Set-Location -LiteralPath $RepoRoot
+if (-not $DryRun) {
+    $porcelain = & git status --porcelain
+    if (-not [string]::IsNullOrWhiteSpace($porcelain)) {
+        throw 'scientific execution requires a clean Git worktree'
+    }
+}
 $ForbiddenScientificEnv = @(
     'DINO_NUM_CHUNKS',
     'DINO_CHUNK_INDEX',

@@ -188,7 +188,7 @@ def replay_factorial_a5(
         raise TypeError("factorial replay requires a CausalScaleTTC checkpoint model")
     result: dict[str, CausalScaleTTCOutput] = {}
     for cell in FACTORIAL_A5_CELLS:
-        result[cell.name] = model(
+        result[cell.name] = model._forward_replay(
             events,
             delta_t_s,
             replay_control=CausalScaleReplayControl(

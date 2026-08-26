@@ -112,7 +112,7 @@ def _control_replay(
     if name not in controls:
         raise ValueError(f"unknown replay control {name}")
     with torch.inference_mode():
-        return model(events, delta_t_s, replay_control=controls[name])
+        return model._forward_replay(events, delta_t_s, replay_control=controls[name])
 
 
 def _garl_frame(
@@ -264,7 +264,7 @@ def _run_causal_batch_frames(
         for cell in FACTORIAL_A5_CELLS:
             capture(
                 f"factorial_{cell.name}",
-                model(
+                model._forward_replay(
                     events,
                     delta_t_s,
                     replay_control=CausalScaleReplayControl(
@@ -281,7 +281,7 @@ def _run_causal_batch_frames(
             ("pair_previous_only", CausalScaleReplayControl(temporal_blend="previous_only")),
             ("blend_neutral", CausalScaleReplayControl(temporal_blend="neutral")),
         ):
-            capture(name, model(events, delta_t_s, replay_control=control))
+            capture(name, model._forward_replay(events, delta_t_s, replay_control=control))
         capture("events_zero", model(torch.zeros_like(events), delta_t_s))
         capture("temporal_order_reversed", model(events.flip(1), delta_t_s.flip(1)))
         capture("spatial_permutation", model(events.flip(-1), delta_t_s))
