@@ -138,6 +138,9 @@ function Start-LoggedProcess([string]$Label,[string]$File,[object[]]$ArgumentVec
             -RedirectStandardError $stderr `
             -PassThru
     }
+    # Accessing Handle before WaitForExit is required on Windows PowerShell 5.1
+    # or ExitCode stays $null and `$code -ne 0` treats a successful child as failure.
+    $null = $p.Handle
 
     return [pscustomobject]@{
         Label=$Label;Process=$p;Stdout=$stdout;Stderr=$stderr;Command=$command;Dry=$false
@@ -145,13 +148,22 @@ function Start-LoggedProcess([string]$Label,[string]$File,[object[]]$ArgumentVec
 }
 function Wait-LoggedProcess($Job) {
     if($Job.Dry){ return }
-    $Job.Process.WaitForExit()
-    $code=$Job.Process.ExitCode
+    $proc = $Job.Process
+    if ($null -eq $proc) {
+        throw "Process '$($Job.Label)' was not started."
+    }
+    $null = $proc.Handle
+    $proc.WaitForExit()
+    $proc.Refresh()
+    $code = $proc.ExitCode
     @(
         "END_UTC=$((Get-Date).ToUniversalTime().ToString('o'))",
         "EXIT_CODE=$code"
     ) | Add-Content -LiteralPath $Job.Command -Encoding utf8
-    if($code -ne 0){
+    if ($null -eq $code) {
+        throw "Process '$($Job.Label)' exited without reporting an exit code. See $($Job.Stderr)"
+    }
+    if ([int]$code -ne 0) {
         throw "Process '$($Job.Label)' failed with exit $code. See $($Job.Stderr)"
     }
 }
