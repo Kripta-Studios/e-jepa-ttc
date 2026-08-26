@@ -175,7 +175,8 @@ def _resolve_rgb_endpoints(
 
 
 def _find_32x32_feature(
-    model: Any, dummy: torch.Tensor  # noqa: ANN401
+    model: Any,
+    dummy: torch.Tensor,  # noqa: ANN401
 ) -> tuple[int | str, str]:
     """Find the unique 32×32 feature map. Returns (selection_id, method)."""
     with torch.no_grad():
