@@ -127,10 +127,16 @@ def main() -> int:
             "jepa_reference_candidate_id": jepa_candidate,
             "selection_aggregate": {"path": a.aggregate.as_posix(), "artifact_sha256": aggregate["artifact_sha256"], "sha256": _sha(a.aggregate)},
             "protocol": {"path": a.protocol.as_posix(), "artifact_sha256": protocol["artifact_sha256"], "sha256": _sha(a.protocol)},
-            "downstream_model_recipe": {"path": model_path.relative_to(ROOT).as_posix(), "sha256": _sha(model_path)},
+            "downstream_model_recipe": {
+                "path": model_path.resolve().relative_to(ROOT.resolve()).as_posix(),
+                "sha256": _sha(model_path),
+            },
             "downstream_model_config": downstream_model_config,
             "downstream_steps": downstream_steps,
-            "cache_manifest": {"path": cache_path.relative_to(ROOT).as_posix(), "sha256": _sha(cache_path)},
+            "cache_manifest": {
+                "path": cache_path.resolve().relative_to(ROOT.resolve()).as_posix(),
+                "sha256": _sha(cache_path),
+            },
             "interpretation": note,
             "closed_evaluation": protocol.get("closed_evaluation", {}),
         }

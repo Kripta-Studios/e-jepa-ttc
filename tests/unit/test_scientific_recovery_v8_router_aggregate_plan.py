@@ -39,3 +39,16 @@ def test_router_aggregate_rejects_manifest_pointer_without_signed_plan() -> None
     )
     with pytest.raises(module.RouterAggregateError, match="router_regime"):
         module._frozen_router_config_sha256_by_fold(frozen)
+
+
+def test_router_aggregate_records_repo_relative_oof_path_from_relative_output(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    module = _load_module()
+    monkeypatch.chdir(ROOT)
+    relative = Path(
+        "artifacts/scientific_recovery_v8/results/router/aggregate_seed7/router_oof_predictions.csv"
+    )
+    posix = module._repo_relative(relative)
+    assert posix == relative.as_posix()
+    assert not Path(posix).is_absolute()

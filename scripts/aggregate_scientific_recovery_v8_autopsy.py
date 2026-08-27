@@ -723,7 +723,11 @@ def aggregate_autopsy(
             "five_factorial_cells_present": True,
             "future_prefix_invariance": True,
             "causality_preserved": True,
-            "producer_git_commit_matches_head": True,
+            "producer_git_commit_matches_head": (
+                producer["git_commit"] == a5_source.get("git_commit")
+                and producer["git_commit"] == c2f_source.get("git_commit")
+                and producer["git_commit"] == garl_source.get("git_commit")
+            ),
         },
         "gate_decision": decision,
         "mechanism_decision": final_decision,

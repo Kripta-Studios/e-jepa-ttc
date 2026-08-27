@@ -21,6 +21,21 @@ FORBIDDEN_SCIENTIFIC_ENV = (
     "ALLOW_PARTIAL",
 )
 
+# Files whose content can change A5/C2F/Garl autopsy replay identity.
+# A HEAD advance that does not touch these paths may reuse a clean producer.
+AUTOPSY_REPLAY_IDENTITY_PATHS = (
+    "scripts/replay_scientific_recovery_v8_mechanisms.py",
+    "scripts/materialize_scientific_recovery_v8_autopsy_inputs.py",
+    "scripts/materialize_scientific_recovery_v8_garl_autopsy_comparator.py",
+    "src/e_jepa_ttc/models/causal_scale_ttc.py",
+    "src/e_jepa_ttc/models/garl_ttc_replica.py",
+    "src/e_jepa_ttc/evaluation/scientific_recovery_v8.py",
+    "src/e_jepa_ttc/data/canonical_token_identity.py",
+    "src/e_jepa_ttc/data/scientific_recovery_v8_cache.py",
+    "configs/protocol/scientific_recovery_v8_temporal.json",
+    "configs/experiment/scientific_recovery_v8_fold_chain/frozen_manifest.json",
+)
+
 
 class ScientificProvenanceError(RuntimeError):
     """Raised when scientific execution cannot bind a clean, observed identity."""
@@ -94,17 +109,68 @@ def refuse_scientific_bypass_env(environ: Mapping[str, str] | None = None) -> No
         )
 
 
+def repo_relative_posix(path: Path, *, root: Path | None = None) -> str:
+    """Return a POSIX path relative to the repository after resolving both sides.
+
+    Windows ``Path.relative_to`` is fatal when one path is relative and the other
+    is absolute.  Callers that record artifact paths from a relative ``--output-dir``
+    must resolve first.
+    """
+
+    base = Path(ROOT if root is None else root).resolve()
+    resolved = Path(path).resolve()
+    try:
+        return resolved.relative_to(base).as_posix()
+    except ValueError as error:
+        raise ScientificProvenanceError(f"path escapes repository: {path}") from error
+
+
+def autopsy_replay_identity_paths_changed(
+    producer_commit: str,
+    head_commit: str,
+    *,
+    root: Path | None = None,
+) -> bool:
+    """Return True when git history between two commits touches replay identity files.
+
+    Comparison failure is fatal: a producer that cannot be compared to HEAD cannot
+    be reused.
+    """
+
+    cwd = Path(ROOT if root is None else root)
+    try:
+        result = subprocess.run(
+            ["git", "diff", "--name-only", producer_commit, head_commit],
+            cwd=cwd,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+    except (OSError, subprocess.CalledProcessError) as error:
+        raise ScientificProvenanceError(
+            f"cannot compare autopsy producer {producer_commit} to HEAD {head_commit}: {error}"
+        ) from error
+    changed = [
+        line.strip().replace("\\", "/")
+        for line in result.stdout.splitlines()
+        if line.strip()
+    ]
+    identity = set(AUTOPSY_REPLAY_IDENTITY_PATHS)
+    return any(path in identity for path in changed)
+
+
 def assert_autopsy_replay_producer_reusable(
     payload: Mapping[str, Any],
     *,
     expected_commit: str,
     source: str = "replay manifest",
 ) -> None:
-    """Refuse autopsy replay reuse unless producer identity matches this HEAD.
+    """Refuse autopsy replay reuse unless the producer is clean and identity-compatible.
 
     Signed CSV hashes prove a completed replay, not that the replay was produced
-    by the current implementation.  Missing git_commit, a dirty producer, or a
-    commit mismatch are fatal.
+    by the current implementation.  Missing git_commit or a dirty producer are
+    fatal.  A commit mismatch is fatal only when git history between the producer
+    and HEAD touches files that can change replay identity.
     """
 
     if payload.get("status") != "completed_replay_without_optimizer_steps":
@@ -120,7 +186,16 @@ def assert_autopsy_replay_producer_reusable(
         raise ScientificProvenanceError(f"{source} was not produced from a clean worktree")
     if not isinstance(expected_commit, str) or not expected_commit:
         raise ScientificProvenanceError("implementation HEAD git_commit is missing")
-    if commit != expected_commit:
+    if commit == expected_commit:
+        return
+    try:
+        identity_changed = autopsy_replay_identity_paths_changed(commit, expected_commit)
+    except ScientificProvenanceError as error:
+        raise ScientificProvenanceError(
+            f"{source} git_commit {commit} differs from implementation HEAD "
+            f"{expected_commit}; {error}"
+        ) from error
+    if identity_changed:
         raise ScientificProvenanceError(
             f"{source} git_commit {commit} differs from implementation HEAD {expected_commit}"
         )

@@ -372,8 +372,8 @@ def assess_run_resume_state(run_dir: Path) -> RunResumeState:
         failure = {
             "artifact_type": "scientific_recovery_v8_run_failure_v1",
             "status": "failed_integrity",
-            "run_dir": str(run_dir.relative_to(ROOT)),
-            "checkpoint": str(last_checkpoint.relative_to(ROOT)),
+            "run_dir": str(run_dir.resolve().relative_to(ROOT.resolve())),
+            "checkpoint": str(last_checkpoint.resolve().relative_to(ROOT.resolve())),
             "detail": f"corrupt state/last.pt: {type(error).__name__}: {error}",
         }
         sign_artifact(failure)

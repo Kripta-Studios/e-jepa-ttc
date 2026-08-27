@@ -861,7 +861,7 @@ def _execute_stage_plan(plan: Mapping[str, Any], *, max_parallel: int) -> None:
             stdout.write(f"=== END {label} exit={result.returncode} ===\n")
         if result.returncode != 0:
             raise RouterStageError(
-                f"router job failed: {label}; inspect {stderr_path.relative_to(ROOT)}"
+                f"router job failed: {label}; inspect {_repo_relative(stderr_path)}"
             )
 
     def execute(job: Mapping[str, Any]) -> None:

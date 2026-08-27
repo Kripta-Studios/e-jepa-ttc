@@ -41,6 +41,7 @@ from e_jepa_ttc.evaluation.scientific_recovery_v8_runner import (  # noqa: E402
 from e_jepa_ttc.scientific_provenance import (  # noqa: E402
     ScientificProvenanceError,
     assert_router_expert_reusable,
+    repo_relative_posix,
 )
 
 
@@ -54,6 +55,13 @@ def _sha256(path: Path) -> str:
         for block in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(block)
     return digest.hexdigest()
+
+
+def _repo_relative(path: Path) -> str:
+    try:
+        return repo_relative_posix(path, root=ROOT)
+    except ScientificProvenanceError as error:
+        raise RouterAggregateError(str(error)) from error
 
 
 def _current_commit() -> str:
@@ -401,7 +409,7 @@ def aggregate(
             "fold_assignment_sha256": sample_contract["fold_assignment_sha256"],
             "prediction_sha256": predictions,
             "checkpoint_sha256": checkpoints,
-            "oof_csv": {"path": combined.relative_to(ROOT).as_posix(), "sha256": _sha256(combined)},
+            "oof_csv": {"path": _repo_relative(combined), "sha256": _sha256(combined)},
             "metrics": metrics,
             "per_sequence": per_sequence,
             "per_bucket": per_bucket,

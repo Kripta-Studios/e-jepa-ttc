@@ -1,11 +1,11 @@
 #!/usr/bin/env python
-"""Refuse autopsy replay reuse unless producer identity matches this HEAD.
+"""Refuse autopsy replay reuse unless the producer is clean and identity-compatible.
 
 Existence of signed manifests is not enough.  Stage 13 verifies file hashes and
-protocol signatures; it does not by itself prove the replay was produced by the
-current implementation on a clean worktree.  After CausalScaleTTC / provenance
-repairs, missing git_commit or a mismatched commit must force stages 10-12 to
-rerun.
+protocol signatures; it does not by itself prove the replay was produced by a
+compatible implementation on a clean worktree.  Missing git_commit, a dirty
+producer, or a HEAD advance that touches replay-identity files must force
+stages 10-12 to rerun.
 """
 
 from __future__ import annotations

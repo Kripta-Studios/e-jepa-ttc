@@ -500,17 +500,17 @@ $GarlReplayManifest=Join-Path $AReplay 'garl/manifest.json'
 $ReuseAutopsyReplays = $false
 if(-not $DryRun){
     # Existence/signature of CSVs is not producer identity. Reuse only when each
-    # replay records git_commit=HEAD and git_dirty=false. Current pre-repair
-    # manifests lack those fields and must be recomputed.
+    # replay is from a clean worktree and git history since that producer does
+    # not touch autopsy replay-identity files.
     & uv run --no-sync python scripts/assert_scientific_recovery_v8_autopsy_replay_reusable.py `
         --a5-manifest $A5ReplayManifest `
         --c2f-manifest $C2FReplayManifest `
         --garl-manifest $GarlReplayManifest
     if($LASTEXITCODE -eq 0){
         $ReuseAutopsyReplays = $true
-        Write-Host 'Reusing autopsy replays bound to the current clean implementation commit.'
+        Write-Host 'Reusing autopsy replays bound to a compatible clean implementation commit.'
     }else{
-        Write-Host 'Autopsy replays are missing, unsigned, or not bound to this HEAD; recomputing stages 10-12.'
+        Write-Host 'Autopsy replays are missing, unsigned, dirty, or identity-incompatible with this HEAD; recomputing stages 10-12.'
     }
 }
 if($ReuseAutopsyReplays){

@@ -20,6 +20,7 @@ from e_jepa_ttc.data.scientific_recovery_v8_cache import _canonical_records, _to
 from e_jepa_ttc.evaluation.scientific_recovery_v8_aggregate import _records_hash
 from e_jepa_ttc.models.causal_expert_router import _canonical_token_hash
 from e_jepa_ttc.scientific_provenance import (
+    AUTOPSY_REPLAY_IDENTITY_PATHS,
     FORBIDDEN_SCIENTIFIC_ENV,
     ScientificProvenanceError,
     assert_autopsy_replay_producer_reusable,
@@ -276,6 +277,38 @@ def test_autopsy_replay_reuse_requires_clean_producer_head() -> None:
         encoding="utf-8"
     )
     assert "assert_autopsy_replay_producer_reusable" in aggregator
+    assert '"producer_git_commit_matches_head": True' not in aggregator
+    assert "a5_source.get(\"git_commit\")" in aggregator
+    assert "src/e_jepa_ttc/models/causal_scale_ttc.py" in AUTOPSY_REPLAY_IDENTITY_PATHS
+    assert "scripts/run_scientific_recovery_v8_nested_router.py" not in AUTOPSY_REPLAY_IDENTITY_PATHS
+    assert "src/e_jepa_ttc/scientific_provenance.py" not in AUTOPSY_REPLAY_IDENTITY_PATHS
+
+
+def test_autopsy_replay_reuse_allows_unrelated_head_advance(monkeypatch: pytest.MonkeyPatch) -> None:
+    complete = {
+        "status": "completed_replay_without_optimizer_steps",
+        "git_commit": "aaa111",
+        "git_dirty": False,
+    }
+    monkeypatch.setattr(
+        "e_jepa_ttc.scientific_provenance.autopsy_replay_identity_paths_changed",
+        lambda producer, head, root=None: False,
+    )
+    assert_autopsy_replay_producer_reusable(complete, expected_commit="bbb222")
+
+
+def test_autopsy_replay_reuse_rejects_identity_file_change(monkeypatch: pytest.MonkeyPatch) -> None:
+    complete = {
+        "status": "completed_replay_without_optimizer_steps",
+        "git_commit": "aaa111",
+        "git_dirty": False,
+    }
+    monkeypatch.setattr(
+        "e_jepa_ttc.scientific_provenance.autopsy_replay_identity_paths_changed",
+        lambda producer, head, root=None: True,
+    )
+    with pytest.raises(ScientificProvenanceError, match="differs from implementation HEAD"):
+        assert_autopsy_replay_producer_reusable(complete, expected_commit="bbb222")
 
 
 def test_nested_router_binds_expert_git_identity() -> None:
@@ -295,6 +328,8 @@ def test_nested_router_binds_expert_git_identity() -> None:
     assert "_frozen_router_config_sha256_by_fold" in aggregator
     assert 'frozen.manifest["c1_analysis_plans"]["router_regime"]' not in aggregator
     assert "integral_event_count_from_reconstructed" in source
+    assert "_repo_relative" in aggregator
+    assert "combined.relative_to(ROOT)" not in aggregator
     expert_source = (ROOT / "scripts" / "train_scientific_recovery_v8_router_expert.py").read_text(
         encoding="utf-8"
     )
