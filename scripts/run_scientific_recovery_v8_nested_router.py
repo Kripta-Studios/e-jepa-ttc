@@ -152,6 +152,29 @@ def _load_expert_artifact(
     return frame, payload
 
 
+def _merged_inner_oof_git_identity(
+    source_artifacts: Sequence[Mapping[str, Any]],
+) -> dict[str, Any]:
+    """Bind a merged inner-OOF artifact to observed Git without synthesizing cleanliness.
+
+    The three inner experts are the training evidence.  The merge is a later producer
+    and must record its own clean HEAD.  Missing or disagreeing source git_dirty is
+    fatal; existence of inner_oof.csv is not identity.
+    """
+
+    if len(source_artifacts) != 3:
+        raise RouterStageError("inner OOF merge requires three source expert artifacts")
+    commits = {item.get("git_commit") for item in source_artifacts}
+    dirties = {item.get("git_dirty") for item in source_artifacts}
+    if any(not isinstance(commit, str) or not commit for commit in commits):
+        raise RouterStageError("inner expert artifacts omitted git_commit")
+    if dirties != {False}:
+        raise RouterStageError("inner expert artifacts omitted git_dirty or were produced dirty")
+    if len(commits) != 1:
+        raise RouterStageError("inner expert artifacts disagree on git_commit")
+    return require_clean_scientific_worktree()
+
+
 def _inner_folds(config: Mapping[str, Any]) -> tuple[InnerFold, ...]:
     raw = config.get("inner_folds")
     if not isinstance(raw, list):
@@ -763,6 +786,18 @@ def _execute_stage_plan(plan: Mapping[str, Any], *, max_parallel: int) -> None:
         output_dir = job.get("output_dir")
         if not isinstance(command, list) or not isinstance(output_dir, str):
             raise RouterStageError(f"router expert job is malformed: {job.get('job_id')}")
+        artifact_path = ROOT / output_dir / "expert_artifact.json"
+        if artifact_path.is_file():
+            try:
+                _load_expert_artifact(
+                    artifact_path,
+                    expert=str(job.get("expert")),
+                    role=str(job.get("role")),
+                    protocol_sha256=str(plan["protocol_sha256"]),
+                )
+                return
+            except RouterStageError:
+                pass
         run_logged(
             [str(value) for value in command],
             label=str(job.get("job_id")),
@@ -806,6 +841,7 @@ def _execute_stage_plan(plan: Mapping[str, Any], *, max_parallel: int) -> None:
             csv_path = run_root / expert / "inner_oof.csv"
             csv_path.parent.mkdir(parents=True, exist_ok=True)
             merged.to_csv(csv_path, index=False, lineterminator="\n")
+            git_identity = _merged_inner_oof_git_identity(artifacts)
             payload = sign_artifact(
                 {
                     "artifact_type": "scientific_recovery_v8_router_expert_prediction_v1",
@@ -820,6 +856,8 @@ def _execute_stage_plan(plan: Mapping[str, Any], *, max_parallel: int) -> None:
                     },
                     "oof_csv": {"path": _repo_relative(csv_path), "sha256": _sha256(csv_path)},
                     "source_inner_artifacts": [item["artifact_sha256"] for item in artifacts],
+                    "git_commit": git_identity["git_commit"],
+                    "git_dirty": git_identity["git_dirty"],
                 }
             )
             (run_root / expert / "inner_oof_artifact.json").write_text(

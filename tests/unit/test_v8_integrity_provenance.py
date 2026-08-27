@@ -283,6 +283,8 @@ def test_nested_router_binds_expert_git_identity() -> None:
     )
     assert "assert_router_expert_reusable" in aggregator
     assert "train" in source and "summary.json" in source
+    assert "_merged_inner_oof_git_identity" in source
+    assert '"git_dirty": git_identity["git_dirty"]' in source
 
 
 def test_canonical_orchestrators_fail_closed_on_bypass_env_and_unsigned_aggregate() -> None:
