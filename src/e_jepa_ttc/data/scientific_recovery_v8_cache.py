@@ -439,7 +439,7 @@ def _planned_rows(
         endpoints = (int(context_window[1]), int(windows[first][1]), int(windows[second][1]))
         if config.steps == 2:
             endpoints = endpoints[1:]
-        if any(right <= left for left, right in zip(endpoints, endpoints[1:], strict=True)):
+        if any(right <= left for left, right in zip(endpoints[:-1], endpoints[1:], strict=True)):
             raise ValueError(f"{identity}: temporal endpoints must strictly increase")
         target = float(_official_ttc_at_endpoint(row, second))
         target_text = str(selected.get("target_ttc", selected.get("target_ttc_s", target)))

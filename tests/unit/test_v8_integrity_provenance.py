@@ -212,6 +212,8 @@ def test_v8_cache_protocol_identity_uses_ordered_token_ids() -> None:
     assert 'contract.get("sorted_sample_tokens_sha256")' not in source
     assert "hash_ordered_token_ids(key[1] for key in selected_keys)" in source
     assert "require_protocol_identity=True requires --protocol" in source
+    assert "zip(endpoints, endpoints[1:], strict=True)" not in source
+    assert "zip(endpoints[:-1], endpoints[1:], strict=True)" in source
 
 
 def _init_temp_repo(tmp_path: Path) -> None:
