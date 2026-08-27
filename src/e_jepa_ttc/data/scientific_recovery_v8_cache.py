@@ -30,6 +30,7 @@ from torch.utils.data import Dataset
 from e_jepa_ttc.artifacts.hashing import sign_artifact, verify_artifact_hash
 from e_jepa_ttc.data.canonical_token_identity import (
     hash_canonical_json_records,
+    hash_ordered_token_ids,
     hash_sorted_token_strings,
 )
 from e_jepa_ttc.data.eap import EAP_IMAGE_SIZE, EAPEventReader
@@ -200,7 +201,9 @@ def _protocol_rows(
         raise ValueError("protocol has no sample contract mapping")
     rows = contract.get("rows", contract.get("sample_count"))
     expected_rows = int(rows) if rows is not None else None
-    token_hash = contract.get("sorted_sample_tokens_sha256")
+    token_hash = contract.get("ordered_token_ids_sha256")
+    if token_hash is not None and not isinstance(token_hash, str):
+        raise ValueError("protocol ordered_token_ids_sha256 must be a string")
     folds = contract.get("fold_definitions", contract.get("folds", []))
     if isinstance(folds, int):
         folds = protocol.get("folds", [])
@@ -386,11 +389,15 @@ def _planned_rows(
     if expected_rows is not None and len(selected_rows) != expected_rows:
         raise ValueError(f"selected rows={len(selected_rows)} but expected {expected_rows}")
     if expected_token_hash is not None:
-        actual = _token_hash(key[1] for key in selected_keys)
+        actual = hash_ordered_token_ids(key[1] for key in selected_keys)
         if actual != expected_token_hash:
-            raise ValueError("selection sample-token hash does not match frozen protocol")
+            raise ValueError("selection ordered-token identity does not match frozen protocol")
     elif config.require_protocol_identity:
-        raise ValueError("require_protocol_identity=True requires --protocol")
+        if protocol_path is None:
+            raise ValueError("require_protocol_identity=True requires --protocol")
+        raise ValueError(
+            "require_protocol_identity=True requires sample_contract.ordered_token_ids_sha256"
+        )
 
     sequence_ids = sorted({key[0] for key in selected_keys})
     index = load_garlttc_train_index(garlttc_root, sequence_ids)

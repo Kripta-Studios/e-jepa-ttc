@@ -30,8 +30,6 @@ AUTOPSY_REPLAY_IDENTITY_PATHS = (
     "src/e_jepa_ttc/models/causal_scale_ttc.py",
     "src/e_jepa_ttc/models/garl_ttc_replica.py",
     "src/e_jepa_ttc/evaluation/scientific_recovery_v8.py",
-    "src/e_jepa_ttc/data/canonical_token_identity.py",
-    "src/e_jepa_ttc/data/scientific_recovery_v8_cache.py",
     "configs/protocol/scientific_recovery_v8_temporal.json",
     "configs/experiment/scientific_recovery_v8_fold_chain/frozen_manifest.json",
 )

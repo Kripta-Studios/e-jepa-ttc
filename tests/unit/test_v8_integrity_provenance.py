@@ -3,6 +3,7 @@ from __future__ import annotations
 import ast
 import hashlib
 import importlib.util
+import json
 import os
 import subprocess
 import sys
@@ -16,7 +17,7 @@ from e_jepa_ttc.data.canonical_token_identity import (
     hash_sorted_token_strings,
 )
 from e_jepa_ttc.data.scientific_recovery_v5 import _values_sha256
-from e_jepa_ttc.data.scientific_recovery_v8_cache import _canonical_records, _token_hash
+from e_jepa_ttc.data.scientific_recovery_v8_cache import _canonical_records, _protocol_rows, _token_hash
 from e_jepa_ttc.evaluation.scientific_recovery_v8_aggregate import _records_hash
 from e_jepa_ttc.models.causal_expert_router import _canonical_token_hash
 from e_jepa_ttc.scientific_provenance import (
@@ -193,6 +194,26 @@ def test_cross_component_canonical_token_hashes_match() -> None:
     assert _canonical_records(records) == expected_records
 
 
+def test_v8_cache_protocol_identity_uses_ordered_token_ids() -> None:
+    protocol = json.loads(
+        (ROOT / "configs" / "protocol" / "scientific_recovery_v8_temporal.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    rows, token_hash, folds = _protocol_rows(protocol)
+    contract = protocol["sample_contract"]
+    assert rows == 8192
+    assert token_hash == contract["ordered_token_ids_sha256"]
+    assert "sorted_sample_tokens_sha256" not in contract
+    assert isinstance(folds, list) and len(folds) == 3
+    source = (ROOT / "src" / "e_jepa_ttc" / "data" / "scientific_recovery_v8_cache.py").read_text(
+        encoding="utf-8"
+    )
+    assert 'contract.get("sorted_sample_tokens_sha256")' not in source
+    assert "hash_ordered_token_ids(key[1] for key in selected_keys)" in source
+    assert "require_protocol_identity=True requires --protocol" in source
+
+
 def _init_temp_repo(tmp_path: Path) -> None:
     subprocess.run(["git", "init"], cwd=tmp_path, check=True, capture_output=True)
     tracked = tmp_path / "tracked.py"
@@ -282,6 +303,7 @@ def test_autopsy_replay_reuse_requires_clean_producer_head() -> None:
     assert "src/e_jepa_ttc/models/causal_scale_ttc.py" in AUTOPSY_REPLAY_IDENTITY_PATHS
     assert "scripts/run_scientific_recovery_v8_nested_router.py" not in AUTOPSY_REPLAY_IDENTITY_PATHS
     assert "src/e_jepa_ttc/scientific_provenance.py" not in AUTOPSY_REPLAY_IDENTITY_PATHS
+    assert "src/e_jepa_ttc/data/scientific_recovery_v8_cache.py" not in AUTOPSY_REPLAY_IDENTITY_PATHS
 
 
 def test_autopsy_replay_reuse_allows_unrelated_head_advance(monkeypatch: pytest.MonkeyPatch) -> None:
