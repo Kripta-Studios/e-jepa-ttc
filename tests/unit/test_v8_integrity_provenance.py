@@ -17,7 +17,13 @@ from e_jepa_ttc.data.canonical_token_identity import (
     hash_sorted_token_strings,
 )
 from e_jepa_ttc.data.scientific_recovery_v5 import _values_sha256
-from e_jepa_ttc.data.scientific_recovery_v8_cache import _canonical_records, _protocol_rows, _token_hash
+from e_jepa_ttc.data.scientific_recovery_v8 import _roi_as_int_tuple
+from e_jepa_ttc.data.scientific_recovery_v8_cache import (
+    _canonical_records,
+    _integer_pixel_roi,
+    _protocol_rows,
+    _token_hash,
+)
 from e_jepa_ttc.evaluation.scientific_recovery_v8_aggregate import _records_hash
 from e_jepa_ttc.models.causal_expert_router import _canonical_token_hash
 from e_jepa_ttc.scientific_provenance import (
@@ -214,6 +220,22 @@ def test_v8_cache_protocol_identity_uses_ordered_token_ids() -> None:
     assert "require_protocol_identity=True requires --protocol" in source
     assert "zip(endpoints, endpoints[1:], strict=True)" not in source
     assert "zip(endpoints[:-1], endpoints[1:], strict=True)" in source
+    assert "roi_xyxy=_integer_pixel_roi(" in source
+
+
+def test_v8_cache_integer_pixel_roi_matches_frontend_validator() -> None:
+    import torch
+
+    square = (10.4, 20.6, 30.5, 41.5)
+    quantized = _integer_pixel_roi(square)
+    assert _roi_as_int_tuple(torch.tensor(quantized, dtype=torch.float32)) == (
+        int(quantized[0]),
+        int(quantized[1]),
+        int(quantized[2]),
+        int(quantized[3]),
+    )
+    with pytest.raises(ValueError, match="integer-valued"):
+        _roi_as_int_tuple(torch.tensor(square, dtype=torch.float64))
 
 
 def _init_temp_repo(tmp_path: Path) -> None:

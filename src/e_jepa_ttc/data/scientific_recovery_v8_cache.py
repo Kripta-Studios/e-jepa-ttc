@@ -132,6 +132,26 @@ class _PlannedRow:
     events_path: Path
 
 
+def _integer_pixel_roi(square: Sequence[float]) -> tuple[float, float, float, float]:
+    """Quantize a geometric common square onto the pixel grid the frontend requires.
+
+    ``common_square_from_boxes`` returns floats.  Official time-volume binning and
+    ``_roi_as_int_tuple`` both require integer xyxy.  Rounding uses the same
+    ``torch.round`` rule as the frontend validator so cache rows are admissible.
+    """
+
+    values = torch.as_tensor([float(value) for value in square], dtype=torch.float64)
+    if values.numel() != 4:
+        raise ValueError("roi must be four xyxy coordinates")
+    if not torch.isfinite(values).all():
+        raise ValueError("roi must be finite")
+    rounded = torch.round(values)
+    x_min, y_min, x_max, y_max = (int(value) for value in rounded.tolist())
+    if x_max <= x_min or y_max <= y_min:
+        raise ValueError("integer pixel roi must have positive width and height")
+    return float(x_min), float(y_min), float(x_max), float(y_max)
+
+
 def _canonical_hash(value: object) -> str:
     payload = json.dumps(
         value, sort_keys=True, separators=(",", ":"), ensure_ascii=False, default=str
@@ -464,8 +484,10 @@ def _planned_rows(
                 sample_token=str(row["sample_token"]),
                 track_id=str(row["track_id"]),
                 endpoint_us=endpoints,
-                roi_xyxy=common_square_from_boxes(
-                    boxes, (first, second), margin_fraction=config.roi_margin_fraction
+                roi_xyxy=_integer_pixel_roi(
+                    common_square_from_boxes(
+                        boxes, (first, second), margin_fraction=config.roi_margin_fraction
+                    )
                 ),
                 endpoint_boxes_xyxy=tuple(
                     tuple(float(value) for value in boxes[index])
