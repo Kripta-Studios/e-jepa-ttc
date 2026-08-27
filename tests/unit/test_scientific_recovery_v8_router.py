@@ -16,6 +16,7 @@ from e_jepa_ttc.evaluation.nested_router import (
     bind_expert_oof_to_trainer_point_ttc,
     build_inner_folds,
     fit_router_from_inner_oof,
+    integral_event_count_from_reconstructed,
     router_labels_from_official_error,
     routing_point_ttc,
     validate_inner_oof_frame,
@@ -266,3 +267,12 @@ def test_bind_expert_oof_replaces_selective_nan_with_trainer_point() -> None:
     mismatched = trainer.assign(sample_token=["token-a", "token-c"])
     with pytest.raises(NestedRouterIntegrityError, match="token identity"):
         bind_expert_oof_to_trainer_point_ttc(oof, mismatched)
+
+
+def test_reconstructed_event_count_is_integral_for_oof_schema() -> None:
+    counts = integral_event_count_from_reconstructed([191601.182728, 9.6, 10.0])
+    np.testing.assert_array_equal(counts, np.array([191601, 10, 10], dtype=np.int64))
+    with pytest.raises(NestedRouterIntegrityError, match="not finite"):
+        integral_event_count_from_reconstructed([1.0, np.nan])
+    with pytest.raises(NestedRouterIntegrityError, match="negative"):
+        integral_event_count_from_reconstructed([-0.6])

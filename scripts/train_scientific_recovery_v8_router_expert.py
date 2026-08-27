@@ -28,6 +28,7 @@ from e_jepa_ttc.data.object_event_v4 import GarlTTCObjectEventV4Dataset  # noqa:
 from e_jepa_ttc.data.scientific_recovery_v5 import SequenceIndexedView  # noqa: E402
 from e_jepa_ttc.evaluation.nested_router import (  # noqa: E402
     NestedRouterIntegrityError,
+    integral_event_count_from_reconstructed,
     routing_point_ttc,
 )
 
@@ -353,8 +354,13 @@ def _run(args: argparse.Namespace) -> None:
             "prediction_log_variance": source.ttc_log_variance,
             "finite": np.isfinite(routing_ttc),
             "failure_reason": "",
-            "event_count": source.event_count_log1p.map(
-                lambda value: float(__import__("math").expm1(value))
+            "event_count": integral_event_count_from_reconstructed(
+                np.expm1(
+                    pd.to_numeric(source.event_count_log1p, errors="raise").to_numpy(
+                        dtype=np.float64
+                    )
+                ),
+                label="event_count",
             ),
             "event_rate": source.event_rate_log1p.map(
                 lambda value: float(__import__("math").expm1(value))

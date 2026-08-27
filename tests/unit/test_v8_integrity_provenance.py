@@ -292,6 +292,13 @@ def test_nested_router_binds_expert_git_identity() -> None:
     assert '"git_dirty": git_identity["git_dirty"]' in source
     assert "_bind_expert_routing_ttc" in source
     assert "_load_signed_trainer_predictions" in source
+    assert "_frozen_router_config_sha256_by_fold" in aggregator
+    assert 'frozen.manifest["c1_analysis_plans"]["router_regime"]' not in aggregator
+    assert "integral_event_count_from_reconstructed" in source
+    expert_source = (ROOT / "scripts" / "train_scientific_recovery_v8_router_expert.py").read_text(
+        encoding="utf-8"
+    )
+    assert "integral_event_count_from_reconstructed" in expert_source
 
 
 def test_canonical_orchestrators_fail_closed_on_bypass_env_and_unsigned_aggregate() -> None:

@@ -100,6 +100,23 @@ def bind_expert_oof_to_trainer_point_ttc(oof: pd.DataFrame, trainer: pd.DataFram
     return bound
 
 
+def integral_event_count_from_reconstructed(
+    values: object, *, label: str = "event_count"
+) -> np.ndarray:
+    """Map reconstructed event counts onto the integral OOF schema field."""
+
+    try:
+        numeric = pd.to_numeric(pd.Series(values), errors="raise").to_numpy(dtype=np.float64)
+    except (TypeError, ValueError) as error:
+        raise NestedRouterIntegrityError(f"{label} is not numeric") from error
+    if not np.isfinite(numeric).all():
+        raise NestedRouterIntegrityError(f"{label} is not finite")
+    integral = np.rint(numeric)
+    if (integral < 0).any():
+        raise NestedRouterIntegrityError(f"{label} is negative")
+    return integral.astype(np.int64)
+
+
 def _unique_sequences(sequences: Iterable[str], *, label: str) -> tuple[str, ...]:
     ordered = tuple(sorted(str(item) for item in sequences))
     if not ordered:
@@ -363,6 +380,7 @@ __all__ = [
     "build_inner_folds",
     "effective_router_fit_weights",
     "fit_router_from_inner_oof",
+    "integral_event_count_from_reconstructed",
     "router_labels_from_official_error",
     "routing_point_ttc",
     "validate_inner_folds",

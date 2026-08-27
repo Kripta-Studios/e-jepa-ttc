@@ -37,6 +37,7 @@ from e_jepa_ttc.evaluation.nested_router import (  # noqa: E402
     NestedRouterIntegrityError,
     bind_expert_oof_to_trainer_point_ttc,
     fit_router_from_inner_oof,
+    integral_event_count_from_reconstructed,
     validate_inner_folds,
 )
 from e_jepa_ttc.evaluation.scientific_recovery_v8 import (  # noqa: E402
@@ -439,7 +440,9 @@ def run_fold(
             ),
             "finite": True,
             "failure_reason": "",
-            "event_count": outer["event_count"],
+            "event_count": integral_event_count_from_reconstructed(
+                outer["event_count"], label="outer-dev event_count"
+            ),
             "event_rate": outer["event_rate"],
             "support_ms": outer["support_ms"],
             "model_name": "scientific_recovery_v8_router_a5_c2f",

@@ -34,6 +34,7 @@ from e_jepa_ttc.evaluation.scientific_recovery_v8_aggregate import (  # noqa: E4
     contract_hashes as _general_contract_hashes,
 )
 from e_jepa_ttc.evaluation.scientific_recovery_v8_runner import (  # noqa: E402
+    FrozenV8Inputs,
     V8IntegrityError,
     verify_frozen_inputs,
 )
@@ -62,14 +63,55 @@ def _current_commit() -> str:
         raise RouterAggregateError("unable to resolve the implementation git commit") from error
 
 
-def _read_signed(path: Path) -> dict[str, Any]:
+def _read_signed(path: Path, *, label: str = "router fold artifact") -> dict[str, Any]:
     try:
         payload = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as error:
-        raise RouterAggregateError(f"cannot read fold artifact {path}") from error
+        raise RouterAggregateError(f"cannot read {label} {path}") from error
     if not isinstance(payload, dict) or not verify_artifact_hash(payload):
-        raise RouterAggregateError(f"router fold artifact is not signed: {path}")
+        raise RouterAggregateError(f"{label} is not signed: {path}")
     return payload
+
+
+def _frozen_router_config_sha256_by_fold(frozen: FrozenV8Inputs) -> dict[str, str]:
+    """Load fold config hashes from the signed router_regime plan, not the manifest pointer."""
+
+    manifest_plans = frozen.manifest.get("c1_analysis_plans")
+    protocol_plans = frozen.protocol.get("c1_analysis_plans")
+    if not isinstance(manifest_plans, Mapping) or manifest_plans != protocol_plans:
+        raise RouterAggregateError("frozen C1 analysis plans do not match the protocol")
+    reference = protocol_plans.get("router_regime")
+    if not isinstance(reference, Mapping):
+        raise RouterAggregateError("frozen protocol lacks router_regime plan")
+    relative = reference.get("path")
+    file_sha = reference.get("sha256")
+    artifact_sha = reference.get("artifact_sha256")
+    if not isinstance(relative, str) or Path(relative).is_absolute():
+        raise RouterAggregateError("frozen router_regime path must be relative")
+    if not isinstance(file_sha, str) or len(file_sha) != 64:
+        raise RouterAggregateError("frozen router_regime file checksum is malformed")
+    if not isinstance(artifact_sha, str) or len(artifact_sha) != 64:
+        raise RouterAggregateError("frozen router_regime artifact hash is malformed")
+    path = (ROOT / relative).resolve()
+    try:
+        path.relative_to(ROOT.resolve())
+    except ValueError as error:
+        raise RouterAggregateError("frozen router_regime path escapes repository") from error
+    if not path.is_file() or _sha256(path) != file_sha:
+        raise RouterAggregateError("frozen router_regime plan file checksum mismatch")
+    plan = _read_signed(path, label="frozen router_regime plan")
+    if plan.get("artifact_sha256") != artifact_sha:
+        raise RouterAggregateError("frozen router_regime plan artifact signature mismatch")
+    contract = plan.get("source_aggregate_contract")
+    if not isinstance(contract, Mapping):
+        raise RouterAggregateError("frozen router_regime plan lacks source_aggregate_contract")
+    expected = contract.get("config_sha256_by_fold")
+    if not isinstance(expected, Mapping) or set(expected) != {"0", "1", "2"}:
+        raise RouterAggregateError("frozen router_regime config_sha256_by_fold is incomplete")
+    hashes = {str(fold): expected[fold] for fold in ("0", "1", "2")}
+    if any(not isinstance(value, str) or len(value) != 64 for value in hashes.values()):
+        raise RouterAggregateError("frozen router_regime config hashes are malformed")
+    return hashes
 
 
 def _csv_from_fold(payload: Mapping[str, Any], *, artifact: Path) -> Path:
@@ -229,9 +271,7 @@ def aggregate(
         raise RouterAggregateError(
             "router aggregate requires exactly one signed fold 0, 1 and 2 artifact"
         )
-    expected_configs = frozen.manifest["c1_analysis_plans"]["router_regime"][
-        "source_aggregate_contract"
-    ]["config_sha256_by_fold"]
+    expected_configs = _frozen_router_config_sha256_by_fold(frozen)
     frames: list[pd.DataFrame] = []
     for fold in range(3):
         path, payload = by_fold[fold]
