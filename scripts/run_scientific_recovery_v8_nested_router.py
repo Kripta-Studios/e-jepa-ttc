@@ -35,6 +35,7 @@ from e_jepa_ttc.evaluation.nested_router import (  # noqa: E402
     INNER_OOF_COLUMNS,
     InnerFold,
     NestedRouterIntegrityError,
+    bind_expert_oof_to_trainer_point_ttc,
     fit_router_from_inner_oof,
     validate_inner_folds,
 )
@@ -83,6 +84,59 @@ def _signed_json(path: Path, *, label: str) -> dict[str, Any]:
     if not isinstance(payload, dict) or not verify_artifact_hash(payload):
         raise RouterStageError(f"{label} is not a valid signed artifact: {path}")
     return payload
+
+
+def _load_signed_trainer_predictions(artifact_path: Path, *, label: str) -> pd.DataFrame:
+    """Load the signed trainer prediction CSV that owns routing point TTC."""
+
+    summary_path = artifact_path.parent / "train" / "summary.json"
+    if not summary_path.is_file():
+        raise RouterStageError(f"{label} lacks train/summary.json for routing TTC bind")
+    summary = _signed_json(summary_path, label=f"{label} train summary")
+    reference = summary.get("predictions")
+    if not isinstance(reference, Mapping):
+        raise RouterStageError(f"{label} train summary lacks predictions reference")
+    relative = reference.get("path")
+    expected = reference.get("sha256")
+    if not isinstance(relative, str) or not isinstance(expected, str) or len(expected) != 64:
+        raise RouterStageError(f"{label} trainer predictions reference is malformed")
+    candidate = (artifact_path.parent / "train" / relative).resolve()
+    try:
+        candidate.relative_to(ROOT.resolve())
+    except ValueError as error:
+        raise RouterStageError(f"{label} trainer predictions path escapes repository") from error
+    if not candidate.is_file() or _sha256(candidate) != expected:
+        raise RouterStageError(
+            f"{label} trainer predictions digest does not match its signed summary"
+        )
+    return pd.read_csv(candidate)
+
+
+def _bind_expert_routing_ttc(
+    frame: pd.DataFrame, *, artifact_path: Path, label: str
+) -> pd.DataFrame:
+    """Bind routing TTC to trainer point predictions when that producer exists.
+
+    Merged inner-OOF artifacts have no trainer CSV.  Their prediction_ttc must
+    already be the finite point column written by a prior bind.
+    """
+
+    summary_path = artifact_path.parent / "train" / "summary.json"
+    if summary_path.is_file():
+        trainer = _load_signed_trainer_predictions(artifact_path, label=label)
+        try:
+            return bind_expert_oof_to_trainer_point_ttc(frame, trainer)
+        except NestedRouterIntegrityError as error:
+            raise RouterStageError(f"{label} cannot bind trainer point TTC: {error}") from error
+    if "prediction_ttc" not in frame.columns:
+        raise RouterStageError(f"{label} export lacks prediction_ttc")
+    values = pd.to_numeric(frame["prediction_ttc"], errors="raise").to_numpy(dtype=np.float64)
+    if not np.isfinite(values).all():
+        raise RouterStageError(
+            f"{label} export contains non-finite prediction_ttc and has no trainer "
+            "point_prediction_ttc_s to bind"
+        )
+    return frame
 
 
 def _reference_path(reference: object, *, artifact: Path, label: str) -> Path:
@@ -148,7 +202,11 @@ def _load_expert_artifact(
     if not isinstance(checkpoint, Mapping) or not isinstance(checkpoint.get("sha256"), str):
         raise RouterStageError("signed expert artifact lacks a bound checkpoint SHA-256")
     csv_path = _reference_path(payload.get("oof_csv"), artifact=path, label=f"{expert} {role}")
-    frame = pd.read_csv(csv_path)
+    frame = _bind_expert_routing_ttc(
+        pd.read_csv(csv_path),
+        artifact_path=path,
+        label=f"{expert} {role}",
+    )
     return frame, payload
 
 
@@ -346,7 +404,9 @@ def run_fold(
             and replication.get("no_reselection") is True
         )
         if config_seed != screen_seed and not allowed_replication:
-            raise RouterStageError("router config seed is neither frozen screen seed nor derived replication")
+            raise RouterStageError(
+                "router config seed is neither frozen screen seed nor derived replication"
+            )
     inner = _combine_experts(a5_inner, c2f_inner, inner=True)
     fitted = fit_router_from_inner_oof(
         inner, inner_folds=folds, outer_dev_sequences=outer_dev, seed=seed
@@ -478,7 +538,10 @@ def run_fold(
                 "frozen_manifest_sha256": str(frozen.manifest["artifact_sha256"]),
                 "config_sha256": _sha256(config_path),
                 "checkpoint": {"path": "router_signature.json", "sha256": router_file_sha256},
-                "dev_predictions": {"path": "dev_predictions.csv", "sha256": _sha256(canonical_csv)},
+                "dev_predictions": {
+                    "path": "dev_predictions.csv",
+                    "sha256": _sha256(canonical_csv),
+                },
                 "fold_artifact": {
                     "path": name,
                     "sha256": _sha256(fold_artifact_path),
@@ -575,8 +638,13 @@ def _fixture_config(output_dir: Path) -> Path:
 
 
 def _router_stage_plan(
-    *, frozen: object, results_root: Path, device: str, max_parallel: int,
-    config_paths: Sequence[Path] | None = None, seed: int = 7,
+    *,
+    frozen: object,
+    results_root: Path,
+    device: str,
+    max_parallel: int,
+    config_paths: Sequence[Path] | None = None,
+    seed: int = 7,
 ) -> dict[str, Any]:
     """Return the exact 24 expert jobs required before the three router fits.
 
@@ -717,7 +785,10 @@ def _router_stage_plan(
         "router_commands": router_commands,
         "aggregate_command": (
             [
-                "uv", "run", "--no-sync", "python",
+                "uv",
+                "run",
+                "--no-sync",
+                "python",
                 "scripts/aggregate_scientific_recovery_v8_router.py",
                 *[
                     item
@@ -725,14 +796,22 @@ def _router_stage_plan(
                     for item in (
                         "--fold-artifact",
                         _repo_relative(
-                            results_root / "runs" / f"router_fold{fold}_seed{seed}" / f"router_fold{fold}.json"
+                            results_root
+                            / "runs"
+                            / f"router_fold{fold}_seed{seed}"
+                            / f"router_fold{fold}.json"
                         ),
                     )
                 ],
-                "--output-dir", _repo_relative(results_root / "router" / f"aggregate_seed{seed}"),
+                "--output-dir",
+                _repo_relative(results_root / "router" / f"aggregate_seed{seed}"),
             ]
             if seed == 7
-            else [sys.executable, "-c", f"print('router seed {seed} fold artifacts complete; multiseed aggregator owns the comparison')"]
+            else [
+                sys.executable,
+                "-c",
+                f"print('router seed {seed} fold artifacts complete; multiseed aggregator owns the comparison')",
+            ]
         ),
         "sealed_evaluation": "closed",
         "production_trainer_required": "scripts/train_scientific_recovery_v8_router_expert.py",
@@ -769,9 +848,10 @@ def _execute_stage_plan(plan: Mapping[str, Any], *, max_parallel: int) -> None:
         command_path.write_text(
             json.dumps({"label": label, "command": command}, indent=2) + "\n", encoding="utf-8"
         )
-        with stdout_path.open("a", encoding="utf-8", buffering=1) as stdout, stderr_path.open(
-            "a", encoding="utf-8", buffering=1
-        ) as stderr:
+        with (
+            stdout_path.open("a", encoding="utf-8", buffering=1) as stdout,
+            stderr_path.open("a", encoding="utf-8", buffering=1) as stderr,
+        ):
             stdout.write(f"\n=== START {label} ===\n")
             stdout.write("COMMAND: " + " ".join(command) + "\n")
             result = subprocess.run(command, cwd=ROOT, stdout=stdout, stderr=stderr, check=False)
@@ -820,23 +900,19 @@ def _execute_stage_plan(plan: Mapping[str, Any], *, max_parallel: int) -> None:
     for fold in range(3):
         run_root = results_root / "router" / f"outer_fold{fold}_seed{seed}"
         for expert in ("a5", "c2f"):
-            artifacts = [
-                _signed_json(
+            frames: list[pd.DataFrame] = []
+            artifacts: list[dict[str, Any]] = []
+            for inner in range(3):
+                frame, payload = _load_expert_artifact(
                     run_root / expert / f"inner{inner}" / "expert_artifact.json",
-                    label="inner expert",
+                    expert=expert.upper(),
+                    role="inner_oof",
+                    protocol_sha256=protocol_sha,
                 )
-                for inner in range(3)
-            ]
-            if any(
-                item.get("expert") != expert.upper().replace("C2F", "C2F") for item in artifacts
-            ):
+                frames.append(frame)
+                artifacts.append(payload)
+            if any(item.get("expert") != expert.upper() for item in artifacts):
                 raise RouterStageError("inner expert artifact identity mismatch")
-            frames = [
-                pd.read_csv(
-                    _reference_path(item["oof_csv"], artifact=run_root, label="inner expert")
-                )
-                for item in artifacts
-            ]
             merged = pd.concat(frames, ignore_index=True).sort_values("token_id", kind="stable")
             csv_path = run_root / expert / "inner_oof.csv"
             csv_path.parent.mkdir(parents=True, exist_ok=True)
@@ -963,7 +1039,9 @@ def main() -> int:
             frozen = verify_frozen_inputs(args.protocol, args.manifest)
             external_configs = None
             if args.config_dir is not None:
-                external_configs = sorted(args.config_dir.glob(f"router_fold*_seed{args.seed}.yaml"))
+                external_configs = sorted(
+                    args.config_dir.glob(f"router_fold*_seed{args.seed}.yaml")
+                )
             plan = _router_stage_plan(
                 frozen=frozen,
                 results_root=args.results_root.resolve(),

@@ -13,9 +13,11 @@ import e_jepa_ttc.evaluation.nested_router as nested_router
 from e_jepa_ttc.evaluation.nested_router import (
     INNER_OOF_COLUMNS,
     NestedRouterIntegrityError,
+    bind_expert_oof_to_trainer_point_ttc,
     build_inner_folds,
     fit_router_from_inner_oof,
     router_labels_from_official_error,
+    routing_point_ttc,
     validate_inner_oof_frame,
 )
 from e_jepa_ttc.models.causal_expert_router import (
@@ -224,3 +226,43 @@ def test_router_fit_rejects_zero_effective_mass_for_an_outcome() -> None:
             sample_tokens=("a", "b", "c", "d"),
             effective_sample_weights=np.array([1.0, 1.0, 0.0, 0.0]),
         )
+
+
+def test_routing_point_ttc_rejects_selective_nan_and_requires_finite_point() -> None:
+    trainer = pd.DataFrame(
+        {
+            "sample_token": ["token-a", "token-b"],
+            "prediction_ttc_s": [np.nan, 1.0],
+            "point_prediction_ttc_s": [2.5, 1.0],
+        }
+    )
+    np.testing.assert_allclose(routing_point_ttc(trainer), [2.5, 1.0])
+    missing = trainer.drop(columns=["point_prediction_ttc_s"])
+    with pytest.raises(NestedRouterIntegrityError, match="point_prediction_ttc_s"):
+        routing_point_ttc(missing)
+    nonfinite = trainer.assign(point_prediction_ttc_s=[np.nan, 1.0])
+    with pytest.raises(NestedRouterIntegrityError, match="non-finite"):
+        routing_point_ttc(nonfinite)
+
+
+def test_bind_expert_oof_replaces_selective_nan_with_trainer_point() -> None:
+    oof = pd.DataFrame(
+        {
+            "token_id": ["token-b", "token-a"],
+            "prediction_ttc": [1.0, np.nan],
+            "finite": [True, True],
+        }
+    )
+    trainer = pd.DataFrame(
+        {
+            "sample_token": ["token-a", "token-b"],
+            "prediction_ttc_s": [np.nan, 1.0],
+            "point_prediction_ttc_s": [2.5, 1.0],
+        }
+    )
+    bound = bind_expert_oof_to_trainer_point_ttc(oof, trainer)
+    np.testing.assert_allclose(bound["prediction_ttc"].to_numpy(dtype=np.float64), [1.0, 2.5])
+    assert bool(bound["finite"].all())
+    mismatched = trainer.assign(sample_token=["token-a", "token-c"])
+    with pytest.raises(NestedRouterIntegrityError, match="token identity"):
+        bind_expert_oof_to_trainer_point_ttc(oof, mismatched)

@@ -15,6 +15,7 @@ from decimal import Decimal
 from pathlib import Path
 from typing import Any
 
+import numpy as np
 import pandas as pd
 import yaml
 
@@ -25,6 +26,10 @@ from e_jepa_ttc.artifacts.hashing import sign_artifact, verify_artifact_hash  # 
 from e_jepa_ttc.data.canonical_token_identity import hash_sorted_token_strings  # noqa: E402
 from e_jepa_ttc.data.object_event_v4 import GarlTTCObjectEventV4Dataset  # noqa: E402
 from e_jepa_ttc.data.scientific_recovery_v5 import SequenceIndexedView  # noqa: E402
+from e_jepa_ttc.evaluation.nested_router import (  # noqa: E402
+    NestedRouterIntegrityError,
+    routing_point_ttc,
+)
 
 
 def _sha(path: Path) -> str:
@@ -124,7 +129,9 @@ def _resolve_training_cache(base: Mapping[str, Any]) -> tuple[Path, dict[str, An
     if recovery.get("sealed_splits_opened") is not False:
         raise ValueError("V8 recovered router cache reports sealed split access")
     if recovery.get("semantic_preprocessing_inherited_from_historical_manifest") is not True:
-        raise ValueError("V8 recovered router cache does not attest semantic preprocessing identity")
+        raise ValueError(
+            "V8 recovered router cache does not attest semantic preprocessing identity"
+        )
 
     historical_ref = recovery.get("historical_manifest")
     recovered_ref = recovery.get("recovered_manifest")
@@ -208,9 +215,7 @@ def _nested_contract(
                 "train_sample_tokens_sha256": hash_sorted_token_strings(
                     train.sample_token.astype(str)
                 ),
-                "dev_sample_tokens_sha256": hash_sorted_token_strings(
-                    dev.sample_token.astype(str)
-                ),
+                "dev_sample_tokens_sha256": hash_sorted_token_strings(dev.sample_token.astype(str)),
             }
         ],
         "checks": {
@@ -225,7 +230,6 @@ def _nested_contract(
     payload = sign_artifact(payload)
     output.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     return output
-
 
 
 def _mid_sample_weights(source: pd.DataFrame) -> list[str]:
@@ -252,6 +256,7 @@ def _mid_sample_weights(source: pd.DataFrame) -> list[str]:
         for sequence, target in records
     ]
 
+
 def _run(args: argparse.Namespace) -> None:
     router = yaml.safe_load(args.config.read_text(encoding="utf-8"))
     outer = int(router["outer_fold"])
@@ -270,9 +275,7 @@ def _run(args: argparse.Namespace) -> None:
     base_path = _base_config(args.expert, outer)
     base = yaml.safe_load(base_path.read_text(encoding="utf-8"))
     cache_manifest, cache_payload, cache_provenance = _resolve_training_cache(base)
-    train, universe = _selected_identity(
-        base, list(train_sequences), cache_manifest=cache_manifest
-    )
+    train, universe = _selected_identity(base, list(train_sequences), cache_manifest=cache_manifest)
     dev, _ = _selected_identity(base, list(dev_sequences), cache_manifest=cache_manifest)
     if set(train.sequence_id) & set(dev.sequence_id) or set(train.sample_token) & set(
         dev.sample_token
@@ -334,6 +337,9 @@ def _run(args: argparse.Namespace) -> None:
         raise RuntimeError("historical expert trainer failed")
     summary = json.loads((args.output_dir / "train" / "summary.json").read_text())
     source = pd.read_csv(args.output_dir / "train" / summary["predictions"]["path"])
+    if "point_prediction_ttc_s" not in source.columns:
+        raise NestedRouterIntegrityError("trainer predictions lack point_prediction_ttc_s")
+    routing_ttc = routing_point_ttc(source)
     frame = pd.DataFrame(
         {
             "token_id": source.sample_token,
@@ -343,9 +349,9 @@ def _run(args: argparse.Namespace) -> None:
             "seed": seed,
             "target_ttc": source.target_ttc_s,
             "sample_weight": _mid_sample_weights(source),
-            "prediction_ttc": source.prediction_ttc_s,
+            "prediction_ttc": routing_ttc,
             "prediction_log_variance": source.ttc_log_variance,
-            "finite": True,
+            "finite": np.isfinite(routing_ttc),
             "failure_reason": "",
             "event_count": source.event_count_log1p.map(
                 lambda value: float(__import__("math").expm1(value))
@@ -409,7 +415,7 @@ def main() -> int:
     try:
         _run(args)
         return 0
-    except (OSError, ValueError, RuntimeError, KeyError) as error:
+    except (OSError, ValueError, RuntimeError, KeyError, NestedRouterIntegrityError) as error:
         parser.exit(2, f"V8 router expert failed closed: {type(error).__name__}: {error}\n")
 
 

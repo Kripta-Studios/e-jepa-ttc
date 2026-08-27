@@ -49,6 +49,57 @@ class NestedRouterIntegrityError(ValueError):
     """Raised when a nested split or OOF population violates the V8 protocol."""
 
 
+def _trainer_token_ids(trainer: pd.DataFrame) -> pd.Series:
+    if "sample_token" in trainer.columns:
+        return trainer["sample_token"].astype(str)
+    if "token_id" in trainer.columns:
+        return trainer["token_id"].astype(str)
+    raise NestedRouterIntegrityError("trainer predictions lack sample_token")
+
+
+def routing_point_ttc(source: pd.DataFrame) -> np.ndarray:
+    """Return the finite point TTC used for routing, never the selective column."""
+
+    if "point_prediction_ttc_s" not in source.columns:
+        raise NestedRouterIntegrityError("trainer predictions lack point_prediction_ttc_s")
+    try:
+        point = pd.to_numeric(source["point_prediction_ttc_s"], errors="raise").to_numpy(
+            dtype=np.float64
+        )
+    except (TypeError, ValueError) as error:
+        raise NestedRouterIntegrityError("point_prediction_ttc_s is not numeric") from error
+    if point.shape[0] != len(source):
+        raise NestedRouterIntegrityError("point_prediction_ttc_s length mismatch")
+    if not np.isfinite(point).all():
+        raise NestedRouterIntegrityError("point_prediction_ttc_s contains non-finite routing TTC")
+    return point
+
+
+def bind_expert_oof_to_trainer_point_ttc(oof: pd.DataFrame, trainer: pd.DataFrame) -> pd.DataFrame:
+    """Replace expert-export prediction_ttc with signed trainer point TTC by token identity."""
+
+    if "token_id" not in oof.columns:
+        raise NestedRouterIntegrityError("expert OOF lacks token_id")
+    oof_tokens = oof["token_id"].astype(str)
+    trainer_tokens = _trainer_token_ids(trainer)
+    if oof_tokens.duplicated().any() or trainer_tokens.duplicated().any():
+        raise NestedRouterIntegrityError("duplicate tokens prevent routing TTC bind")
+    if set(oof_tokens) != set(trainer_tokens) or len(oof_tokens) != len(trainer_tokens):
+        raise NestedRouterIntegrityError(
+            "expert OOF token identity does not match trainer predictions"
+        )
+    point = pd.Series(routing_point_ttc(trainer), index=trainer_tokens.to_numpy())
+    aligned = point.reindex(oof_tokens.to_numpy())
+    if aligned.isna().any():
+        raise NestedRouterIntegrityError("trainer point TTC could not be aligned to expert OOF")
+    bound = oof.copy()
+    bound["prediction_ttc"] = aligned.to_numpy(dtype=np.float64)
+    bound["finite"] = np.isfinite(bound["prediction_ttc"].to_numpy(dtype=np.float64))
+    if not bool(bound["finite"].all()):
+        raise NestedRouterIntegrityError("bound routing TTC is not finite")
+    return bound
+
+
 def _unique_sequences(sequences: Iterable[str], *, label: str) -> tuple[str, ...]:
     ordered = tuple(sorted(str(item) for item in sequences))
     if not ordered:
@@ -308,10 +359,12 @@ __all__ = [
     "InnerFold",
     "NestedRouterFit",
     "NestedRouterIntegrityError",
+    "bind_expert_oof_to_trainer_point_ttc",
     "build_inner_folds",
     "effective_router_fit_weights",
     "fit_router_from_inner_oof",
     "router_labels_from_official_error",
+    "routing_point_ttc",
     "validate_inner_folds",
     "validate_inner_oof_frame",
 ]

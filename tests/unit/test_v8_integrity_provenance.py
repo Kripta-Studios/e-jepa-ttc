@@ -153,6 +153,11 @@ def test_cross_component_canonical_token_hashes_match() -> None:
     )
     assert "hash_sorted_token_strings" in nested_source
     assert '"\\n".join(sorted(' not in nested_source
+    assert "bind_expert_oof_to_trainer_point_ttc" in nested_source
+    assert "routing_point_ttc" in expert_source
+    assert "point_prediction_ttc_s" in expert_source
+    assert '"prediction_ttc": source.prediction_ttc_s' not in expert_source
+    assert '"finite": True' not in expert_source
     all_trainings = (ROOT / "scripts" / "run_scientific_recovery_v8_all_trainings.ps1").read_text(
         encoding="utf-8"
     )
@@ -285,6 +290,8 @@ def test_nested_router_binds_expert_git_identity() -> None:
     assert "train" in source and "summary.json" in source
     assert "_merged_inner_oof_git_identity" in source
     assert '"git_dirty": git_identity["git_dirty"]' in source
+    assert "_bind_expert_routing_ttc" in source
+    assert "_load_signed_trainer_predictions" in source
 
 
 def test_canonical_orchestrators_fail_closed_on_bypass_env_and_unsigned_aggregate() -> None:
