@@ -422,6 +422,52 @@ class CausalExponentialStateRepresentation:
             raise ValueError("event timestamp precedes the stable per-sequence origin")
         return (int(timestamp_us) - self._origin_us) // self._dt_us
 
+    def _bins_for_timestamps(self, timestamps_us: np.ndarray) -> np.ndarray:
+        """Vectorized `_bin_for_timestamp` without boxing each event as a Python int.
+
+        The EXP6 cache ingest can hand this a multi-million-event packet.  A
+        Python list comprehension over those timestamps is the MemoryError that
+        killed stage 30; integer floor-division on int64 stays bit-identical.
+        """
+
+        if self._origin_us is None:
+            raise RuntimeError("state origin is not initialized")
+        stamps = np.asarray(timestamps_us, dtype=np.int64)
+        origin = int(self._origin_us)
+        if stamps.size and bool(np.any(stamps < origin)):
+            raise ValueError("event timestamp precedes the stable per-sequence origin")
+        return (stamps - origin) // self._dt_us
+
+    def _ingest_timestamp_groups(
+        self,
+        ingest_x: np.ndarray,
+        ingest_y: np.ndarray,
+        ingest_time: np.ndarray,
+        ingest_polarity: np.ndarray,
+    ) -> None:
+        """Apply ordered events to causal bins without a Python timestamp loop."""
+
+        if not ingest_time.size:
+            return
+        chunk = 1_048_576
+        for offset in range(0, int(ingest_time.size), chunk):
+            sl = slice(offset, offset + chunk)
+            bins = self._bins_for_timestamps(ingest_time[sl])
+            if int(bins[0]) < self._last_bin:
+                raise ValueError("new events precede the already snapshotted causal state")
+            starts = np.r_[0, np.flatnonzero(bins[1:] != bins[:-1]) + 1]
+            ends = np.r_[starts[1:], len(bins)]
+            chunk_x = ingest_x[sl]
+            chunk_y = ingest_y[sl]
+            chunk_polarity = ingest_polarity[sl]
+            for start, end in zip(starts.tolist(), ends.tolist(), strict=True):
+                self._apply_bin(
+                    int(bins[start]),
+                    chunk_x[start:end],
+                    chunk_y[start:end],
+                    chunk_polarity[start:end],
+                )
+
     def _advance_empty_bins(self, target_bin: int) -> None:
         if self._state is None:
             raise RuntimeError("state is not initialized")
@@ -488,18 +534,7 @@ class CausalExponentialStateRepresentation:
         ingest_time = time_values[ingest_mask]
         ingest_polarity = polarity_values[ingest_mask]
         if ingest_time.size:
-            bins = np.asarray([self._bin_for_timestamp(int(value)) for value in ingest_time])
-            if bins[0] < self._last_bin:
-                raise ValueError("new events precede the already snapshotted causal state")
-            starts = np.r_[0, np.flatnonzero(bins[1:] != bins[:-1]) + 1]
-            ends = np.r_[starts[1:], len(bins)]
-            for start, end in zip(starts.tolist(), ends.tolist(), strict=True):
-                self._apply_bin(
-                    int(bins[start]),
-                    ingest_x[start:end],
-                    ingest_y[start:end],
-                    ingest_polarity[start:end],
-                )
+            self._ingest_timestamp_groups(ingest_x, ingest_y, ingest_time, ingest_polarity)
             self._state_event_count += int(ingest_time.size)
         if time_values.size:
             self._last_ingested_t_us = int(time_values[-1])

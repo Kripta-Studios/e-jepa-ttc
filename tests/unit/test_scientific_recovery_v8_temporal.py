@@ -238,6 +238,39 @@ def test_exp6_matches_official_window_equation_across_snapshots_boundary_and_res
     assert replay.tensor.shape == (6, 8, 8)
 
 
+def test_exp6_vectorized_bins_match_scalar_loop_and_ingest_large_packet() -> None:
+    """Stage 30 died on a Python listcomp over ingest timestamps; keep numpy bins."""
+
+    representation = CausalExponentialStateRepresentation(target_size=(8, 8))
+    roi = torch.tensor([0, 0, 8, 8])
+    representation.update(_events(t_us=(0,), polarity=(1,)), 0)
+    stamps = np.asarray([0, 200, 200, 400, 1_000, 7_000], dtype=np.int64)
+    legacy = np.asarray([representation._bin_for_timestamp(int(value)) for value in stamps])
+    vectorized = representation._bins_for_timestamps(stamps)
+    np.testing.assert_array_equal(vectorized, legacy)
+    with pytest.raises(ValueError, match="precedes the stable per-sequence origin"):
+        representation._bins_for_timestamps(np.asarray([-1], dtype=np.int64))
+
+    count = 1_048_576 + 64
+    times = np.repeat(np.arange(32, dtype=np.int64) * 200 + 200, count // 32)
+    large = EventBatch(
+        x=np.ones(count, dtype=np.int32),
+        y=np.ones(count, dtype=np.int32),
+        t_us=times,
+        polarity=np.ones(count, dtype=np.int8),
+        width=8,
+        height=8,
+        sequence_id="sequence-a",
+        t_start_us=0,
+        t_end_us=int(times[-1]),
+    )
+    ingested = representation.update(large, int(times[-1]))
+    assert ingested == count
+    snapshot = representation.snapshot(int(times[-1]), roi, event_count=ingested)
+    assert snapshot.finite
+    assert torch.isfinite(snapshot.tensor).all()
+
+
 def test_exp6_empty_packet_decays_existing_state_without_nan() -> None:
     representation = CausalExponentialStateRepresentation(target_size=(8, 8))
     roi = torch.tensor([0, 0, 8, 8])
