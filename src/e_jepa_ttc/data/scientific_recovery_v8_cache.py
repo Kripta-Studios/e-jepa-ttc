@@ -10,12 +10,16 @@ private-test, EvTTC-test, or CodaBench examples.
 from __future__ import annotations
 
 import hashlib
+import heapq
 import json
 import math
 import os
+import pickle
+import shutil
+import struct
 import subprocess
 from collections import defaultdict
-from collections.abc import Iterable, Mapping, Sequence
+from collections.abc import Iterable, Iterator, Mapping, Sequence
 from csv import DictReader
 from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
@@ -61,8 +65,12 @@ from e_jepa_ttc.utils.io import read_structured
 
 V8_CACHE_SCHEMA = "scientific_recovery_v8_temporal_cache_v1"
 V8_CACHE_FORMAT = "torch_sharded_list_v1"
+V8_SPILL_SCHEMA = "scientific_recovery_v8_temporal_spill_run_v1"
 _FORBIDDEN_PATH_TOKENS = ("validation", "test_inputs", "private", "codabench", "evttc")
 _REPRESENTATIONS = {"timevol20", "exp6"}
+_SPILL_DIRNAME = "spill"
+_SPILL_MAGIC = b"V8SPILL1"
+_SPILL_FLUSH_BYTES = 512 * 1024 * 1024
 
 
 @dataclass(frozen=True)
@@ -191,6 +199,285 @@ def _load_records(path: Path) -> list[dict[str, Any]]:
     if not isinstance(loaded, list) or not all(isinstance(row, dict) for row in loaded):
         raise ValueError(f"V8 shard {path} is not a list of record mappings")
     return loaded
+
+
+def _record_identity(record: Mapping[str, Any]) -> tuple[str, ...]:
+    return tuple(str(value) for value in record["row_identity"])
+
+
+def _representation_nbytes(record: Mapping[str, Any]) -> int:
+    return int(np.asarray(record["representation"]).nbytes)
+
+
+def _sequence_spill_name(sequence_id: str, events_path: Path) -> str:
+    digest = hashlib.sha256(f"{sequence_id}\n{events_path.as_posix()}".encode()).hexdigest()
+    return f"seq-{digest}"
+
+
+def _flush_spill_run(
+    records: Sequence[dict[str, Any]], spill_dir: Path, name: str
+) -> dict[str, Any]:
+    """Write one identity-sorted spill run that can be merged without reloading RAM."""
+
+    if not records:
+        raise ValueError("refusing to flush an empty V8 spill run")
+    ordered = sorted(records, key=_record_identity)
+    identities = [list(_record_identity(record)) for record in ordered]
+    if len(set(tuple(item) for item in identities)) != len(identities):
+        raise RuntimeError(f"duplicate row_identity values in spill run {name}")
+    spill_dir.mkdir(parents=True, exist_ok=True)
+    relative = f"{_SPILL_DIRNAME}/{name}.bin"
+    bin_path = spill_dir / f"{name}.bin"
+    sidecar = spill_dir / f"{name}.meta.json"
+    temporary = bin_path.with_name(f".{bin_path.name}.tmp")
+    with temporary.open("wb") as handle:
+        handle.write(_SPILL_MAGIC)
+        for record in ordered:
+            payload = pickle.dumps(record, protocol=pickle.HIGHEST_PROTOCOL)
+            handle.write(struct.pack("<Q", len(payload)))
+            handle.write(payload)
+    os.replace(temporary, bin_path)
+    metadata = {
+        "artifact_type": V8_SPILL_SCHEMA,
+        "path": relative,
+        "count": len(ordered),
+        "sha256": _file_sha256(bin_path),
+        "row_identity_sha256": _canonical_hash(identities),
+        "identities": identities,
+        "sorted": True,
+    }
+    _atomic_json(sidecar, metadata)
+    return metadata
+
+
+def _iter_spill_run(path: Path) -> Iterator[dict[str, Any]]:
+    with path.open("rb") as handle:
+        magic = handle.read(len(_SPILL_MAGIC))
+        if magic != _SPILL_MAGIC:
+            raise RuntimeError(f"invalid V8 spill magic in {path}")
+        while True:
+            size_bytes = handle.read(8)
+            if not size_bytes:
+                return
+            if len(size_bytes) != 8:
+                raise RuntimeError(f"truncated V8 spill size prefix in {path}")
+            (size,) = struct.unpack("<Q", size_bytes)
+            payload = handle.read(size)
+            if len(payload) != size:
+                raise RuntimeError(f"truncated V8 spill record in {path}")
+            record = pickle.loads(payload)
+            if not isinstance(record, dict):
+                raise RuntimeError(f"V8 spill record in {path} is not a mapping")
+            yield record
+
+
+def _spill_sidecar_matches(sidecar: Path, expected_identities: Sequence[Sequence[str]]) -> bool:
+    if not sidecar.is_file():
+        return False
+    metadata = read_structured(sidecar)
+    bin_path = sidecar.with_suffix(".bin")
+    expected = [list(item) for item in expected_identities]
+    expected.sort(key=lambda item: tuple(item))
+    return (
+        isinstance(metadata, Mapping)
+        and verify_artifact_hash(metadata)
+        and metadata.get("artifact_type") == V8_SPILL_SCHEMA
+        and bin_path.is_file()
+        and metadata.get("sha256") == _file_sha256(bin_path)
+        and metadata.get("count") == len(expected)
+        and metadata.get("identities") == expected
+    )
+
+
+def _spill_record_list(
+    records: Sequence[dict[str, Any]], spill_dir: Path, *, flush_bytes: int
+) -> None:
+    buffer: list[dict[str, Any]] = []
+    nbytes = 0
+    run_index = 0
+    for record in records:
+        buffer.append(record)
+        nbytes += _representation_nbytes(record)
+        if nbytes >= flush_bytes:
+            _flush_spill_run(buffer, spill_dir, f"run-{run_index:05d}")
+            run_index += 1
+            buffer = []
+            nbytes = 0
+    if buffer:
+        _flush_spill_run(buffer, spill_dir, f"run-{run_index:05d}")
+
+
+def _persist_shard(
+    chunk: list[dict[str, Any]],
+    *,
+    output_dir: Path,
+    shard_index: int,
+    config: ScientificRecoveryV8CacheConfig,
+    resume: bool,
+) -> dict[str, Any]:
+    path = output_dir / "train" / f"shard-{shard_index:05d}.pt"
+    sidecar = output_dir / "train" / f"shard-{shard_index:05d}.meta.json"
+    chunk_hash = _canonical_hash([list(_record_identity(record)) for record in chunk])
+    if resume and path.is_file() and sidecar.is_file():
+        metadata = read_structured(sidecar)
+        if metadata.get("row_identity_sha256") != chunk_hash or metadata.get(
+            "sha256"
+        ) != _file_sha256(path):
+            raise RuntimeError(f"resume integrity mismatch for {path}")
+        if len(_load_records(path)) != len(chunk):
+            raise RuntimeError(f"resume load verification failed for {path}")
+        if not isinstance(metadata, Mapping):
+            raise RuntimeError(f"resume sidecar is not a mapping: {sidecar}")
+        return dict(metadata)
+    if path.exists() or sidecar.exists():
+        raise RuntimeError(
+            f"incomplete existing shard pair at {path}; use --resume only after repair"
+        )
+    _atomic_torch_save(chunk, path)
+    roundtrip = _load_records(path)
+    if len(roundtrip) != len(chunk):
+        raise RuntimeError(f"roundtrip count mismatch for {path}")
+    metadata = {
+        "split": "train",
+        "path": path.relative_to(output_dir).as_posix(),
+        "count": len(chunk),
+        "sha256": _file_sha256(path),
+        "row_identity_sha256": chunk_hash,
+        "torch_load_verified": True,
+        "storage_dtype": config.storage_dtype,
+    }
+    _atomic_json(sidecar, metadata)
+    return metadata
+
+
+def _assemble_shards_from_spill(
+    *,
+    output_dir: Path,
+    config: ScientificRecoveryV8CacheConfig,
+    provenance: Mapping[str, Any],
+    resume: bool,
+) -> dict[str, Any]:
+    """K-way merge identity-sorted spill runs into the signed train shards."""
+
+    spill_dir = output_dir / _SPILL_DIRNAME
+    sidecars = sorted(spill_dir.glob("*.meta.json"))
+    if not sidecars:
+        raise RuntimeError("V8 cache assembly requires at least one spill run")
+    run_metas: list[Mapping[str, Any]] = []
+    all_identities: list[tuple[str, ...]] = []
+    for sidecar in sidecars:
+        metadata = read_structured(sidecar)
+        bin_path = output_dir / str(metadata.get("path", ""))
+        if (
+            not isinstance(metadata, Mapping)
+            or not verify_artifact_hash(metadata)
+            or metadata.get("artifact_type") != V8_SPILL_SCHEMA
+            or not bin_path.is_file()
+            or metadata.get("sha256") != _file_sha256(bin_path)
+            or int(metadata.get("count", -1)) != len(metadata.get("identities", []))
+        ):
+            raise RuntimeError(f"spill integrity mismatch for {sidecar}")
+        run_metas.append(metadata)
+        all_identities.extend(
+            tuple(str(value) for value in item) for item in metadata["identities"]
+        )
+    if len(set(all_identities)) != len(all_identities):
+        raise RuntimeError("duplicate row_identity values across V8 spill runs")
+    all_identities.sort()
+    identity_hash = _canonical_hash([list(item) for item in all_identities])
+    config_hash = _canonical_hash(asdict(config))
+    expected_state = {"identity_hash": identity_hash, "config_hash": config_hash}
+    state_path = output_dir / "build_state.json"
+    _atomic_json(
+        state_path, {"artifact_type": V8_CACHE_SCHEMA, "status": "running", **expected_state}
+    )
+    iterators = [_iter_spill_run(output_dir / str(meta["path"])) for meta in run_metas]
+    merged = heapq.merge(*iterators, key=_record_identity)
+    shards: list[dict[str, Any]] = []
+    buffer: list[dict[str, Any]] = []
+    previous: tuple[str, ...] | None = None
+    shard_index = 0
+    try:
+        for record in merged:
+            identity = _record_identity(record)
+            if previous is not None and identity <= previous:
+                raise RuntimeError("spill merge is not strictly increasing by row_identity")
+            previous = identity
+            buffer.append(record)
+            if len(buffer) == config.shard_size:
+                shards.append(
+                    _persist_shard(
+                        buffer,
+                        output_dir=output_dir,
+                        shard_index=shard_index,
+                        config=config,
+                        resume=resume,
+                    )
+                )
+                buffer = []
+                shard_index += 1
+        if buffer:
+            shards.append(
+                _persist_shard(
+                    buffer,
+                    output_dir=output_dir,
+                    shard_index=shard_index,
+                    config=config,
+                    resume=resume,
+                )
+            )
+    except BaseException as exc:
+        _atomic_json(
+            state_path,
+            {
+                "artifact_type": V8_CACHE_SCHEMA,
+                "status": "failed",
+                **expected_state,
+                "error": f"{type(exc).__name__}: {exc}",
+            },
+        )
+        raise
+    if config.expected_rows is not None and len(all_identities) != config.expected_rows:
+        raise RuntimeError(
+            f"assembled rows={len(all_identities)} but expected {config.expected_rows}"
+        )
+    manifest: dict[str, Any] = {
+        "artifact_type": V8_CACHE_SCHEMA,
+        "format": V8_CACHE_FORMAT,
+        "created_at": datetime.now(UTC).isoformat(),
+        **_repository_provenance(),
+        "config": asdict(config),
+        "config_sha256": config_hash,
+        "model_input_fields": ["representation", "endpoint_us"],
+        "supervision_only_fields": ["target_ttc", "sample_weight", "outer_fold"],
+        "forbidden_model_input_fields": [
+            "target_ttc",
+            "sample_weight",
+            "outer_fold",
+            "row_identity",
+            "common_roi_xyxy",
+        ],
+        "shape": [config.steps, config.channels, config.roi_size, config.roi_size],
+        "split_counts": {"train": len(all_identities)},
+        "row_identity_sha256": identity_hash,
+        "shards": shards,
+        "train_only": True,
+        "sealed_splits_opened": False,
+        **dict(provenance),
+    }
+    manifest_path = output_dir / "manifest.json"
+    _atomic_json(manifest_path, manifest)
+    _atomic_json(
+        state_path,
+        {
+            "artifact_type": V8_CACHE_SCHEMA,
+            "status": "completed",
+            **expected_state,
+            "manifest_sha256": _file_sha256(manifest_path),
+        },
+    )
+    shutil.rmtree(spill_dir)
+    return manifest
 
 
 def _identity(row: Mapping[str, object]) -> tuple[str, ...]:
@@ -685,12 +972,14 @@ def _write_records(
     provenance: Mapping[str, Any],
     resume: bool,
 ) -> dict[str, Any]:
-    """Atomically persist prevalidated records and return a signed manifest."""
+    """Persist records via identity-sorted spill runs, then merge into signed shards."""
 
     output_dir.mkdir(parents=True, exist_ok=True)
     state_path = output_dir / "build_state.json"
     manifest_path = output_dir / "manifest.json"
-    identity_hash = _canonical_hash([record["row_identity"] for record in records])
+    identity_hash = _canonical_hash(
+        sorted((list(_record_identity(record)) for record in records), key=lambda item: tuple(item))
+    )
     config_hash = _canonical_hash(asdict(config))
     expected_state = {"identity_hash": identity_hash, "config_hash": config_hash}
     if resume and state_path.is_file():
@@ -710,91 +999,14 @@ def _write_records(
             return completed
     elif not resume and any(output_dir.iterdir()):
         raise FileExistsError(f"refusing to overwrite non-empty V8 cache directory: {output_dir}")
-    _atomic_json(
-        state_path, {"artifact_type": V8_CACHE_SCHEMA, "status": "running", **expected_state}
+    spill_dir = output_dir / _SPILL_DIRNAME
+    _spill_record_list(records, spill_dir, flush_bytes=_SPILL_FLUSH_BYTES)
+    assembled = _assemble_shards_from_spill(
+        output_dir=output_dir, config=config, provenance=provenance, resume=resume
     )
-    shards: list[dict[str, Any]] = []
-    try:
-        for shard_index, start in enumerate(range(0, len(records), config.shard_size)):
-            chunk = list(records[start : start + config.shard_size])
-            path = output_dir / "train" / f"shard-{shard_index:05d}.pt"
-            sidecar = output_dir / "train" / f"shard-{shard_index:05d}.meta.json"
-            chunk_hash = _canonical_hash([record["row_identity"] for record in chunk])
-            if resume and path.is_file() and sidecar.is_file():
-                metadata = read_structured(sidecar)
-                if metadata.get("row_identity_sha256") != chunk_hash or metadata.get(
-                    "sha256"
-                ) != _file_sha256(path):
-                    raise RuntimeError(f"resume integrity mismatch for {path}")
-                if len(_load_records(path)) != len(chunk):
-                    raise RuntimeError(f"resume load verification failed for {path}")
-                shards.append(metadata)
-                continue
-            if path.exists() or sidecar.exists():
-                raise RuntimeError(
-                    f"incomplete existing shard pair at {path}; use --resume only after repair"
-                )
-            _atomic_torch_save(chunk, path)
-            roundtrip = _load_records(path)
-            if len(roundtrip) != len(chunk):
-                raise RuntimeError(f"roundtrip count mismatch for {path}")
-            metadata = {
-                "split": "train",
-                "path": path.relative_to(output_dir).as_posix(),
-                "count": len(chunk),
-                "sha256": _file_sha256(path),
-                "row_identity_sha256": chunk_hash,
-                "torch_load_verified": True,
-                "storage_dtype": config.storage_dtype,
-            }
-            _atomic_json(sidecar, metadata)
-            shards.append(metadata)
-    except BaseException as exc:
-        _atomic_json(
-            state_path,
-            {
-                "artifact_type": V8_CACHE_SCHEMA,
-                "status": "failed",
-                **expected_state,
-                "error": f"{type(exc).__name__}: {exc}",
-            },
-        )
-        raise
-    manifest: dict[str, Any] = {
-        "artifact_type": V8_CACHE_SCHEMA,
-        "format": V8_CACHE_FORMAT,
-        "created_at": datetime.now(UTC).isoformat(),
-        **_repository_provenance(),
-        "config": asdict(config),
-        "config_sha256": config_hash,
-        "model_input_fields": ["representation", "endpoint_us"],
-        "supervision_only_fields": ["target_ttc", "sample_weight", "outer_fold"],
-        "forbidden_model_input_fields": [
-            "target_ttc",
-            "sample_weight",
-            "outer_fold",
-            "row_identity",
-            "common_roi_xyxy",
-        ],
-        "shape": [config.steps, config.channels, config.roi_size, config.roi_size],
-        "split_counts": {"train": len(records)},
-        "row_identity_sha256": identity_hash,
-        "shards": shards,
-        "train_only": True,
-        "sealed_splits_opened": False,
-        **dict(provenance),
-    }
-    _atomic_json(manifest_path, manifest)
-    _atomic_json(
-        state_path,
-        {
-            "artifact_type": V8_CACHE_SCHEMA,
-            "status": "completed",
-            **expected_state,
-            "manifest_sha256": _file_sha256(manifest_path),
-        },
-    )
-    return manifest
+    if assembled.get("row_identity_sha256") != identity_hash:
+        raise RuntimeError("spill assembly identity hash diverged from the in-memory record list")
+    return assembled
 
 
 def materialize_scientific_recovery_v8_cache(
@@ -822,25 +1034,73 @@ def materialize_scientific_recovery_v8_cache(
         protocol_path=protocol,
         config=config,
     )
+    output_path = Path(output_dir).resolve()
+    output_path.mkdir(parents=True, exist_ok=True)
+    state_path = output_path / "build_state.json"
+    manifest_path = output_path / "manifest.json"
+    identity_hash = _canonical_hash(
+        sorted((list(row.identity) for row in plan), key=lambda item: tuple(item))
+    )
+    config_hash = _canonical_hash(asdict(config))
+    expected_state = {"identity_hash": identity_hash, "config_hash": config_hash}
+    if resume and state_path.is_file():
+        state = read_structured(state_path)
+        if any(state.get(key) != value for key, value in expected_state.items()):
+            raise RuntimeError("refusing resume: cache identity/configuration differs")
+        if state.get("status") == "completed" and manifest_path.is_file():
+            completed = read_structured(manifest_path)
+            for metadata in completed.get("shards", []):
+                path = output_path / str(metadata.get("path", ""))
+                if not path.is_file() or metadata.get("sha256") != _file_sha256(path):
+                    raise RuntimeError(f"resume integrity mismatch for completed shard {path}")
+                if len(_load_records(path)) != int(metadata.get("count", -1)):
+                    raise RuntimeError(
+                        f"resume load verification failed for completed shard {path}"
+                    )
+            return completed
+    elif not resume and any(output_path.iterdir()):
+        raise FileExistsError(f"refusing to overwrite non-empty V8 cache directory: {output_path}")
     by_sequence: dict[tuple[str, Path], list[_PlannedRow]] = defaultdict(list)
     for row in plan:
         _assert_train_only_path(row.events_path, label="raw event HDF5")
         by_sequence[(row.sequence_id, row.events_path)].append(row)
-    records: list[dict[str, Any]] = []
-    for (_, event_path), sequence_rows in sorted(by_sequence.items(), key=lambda item: item[0]):
-        with EAPEventReader(event_path) as reader:
-            if config.representation == "timevol20":
-                records.extend(_timevol_record(row, reader, config) for row in sequence_rows)
-            else:
-                records.extend(_exp6_records_for_sequence(sequence_rows, reader, config))
-    records.sort(key=lambda record: tuple(record["row_identity"]))
-    return _write_records(
-        records=records,
-        output_dir=Path(output_dir).resolve(),
-        config=config,
-        provenance=provenance,
-        resume=resume,
+    spill_dir = output_path / _SPILL_DIRNAME
+    _atomic_json(
+        state_path, {"artifact_type": V8_CACHE_SCHEMA, "status": "running", **expected_state}
     )
+    try:
+        for (sequence_id, event_path), sequence_rows in sorted(
+            by_sequence.items(), key=lambda item: item[0]
+        ):
+            name = _sequence_spill_name(sequence_id, event_path)
+            sidecar = spill_dir / f"{name}.meta.json"
+            expected_identities = [row.identity for row in sequence_rows]
+            if resume and _spill_sidecar_matches(sidecar, expected_identities):
+                continue
+            with EAPEventReader(event_path) as reader:
+                if config.representation == "timevol20":
+                    batch = [_timevol_record(row, reader, config) for row in sequence_rows]
+                else:
+                    batch = _exp6_records_for_sequence(sequence_rows, reader, config)
+            _flush_spill_run(batch, spill_dir, name)
+            del batch
+    except BaseException as exc:
+        _atomic_json(
+            state_path,
+            {
+                "artifact_type": V8_CACHE_SCHEMA,
+                "status": "failed",
+                **expected_state,
+                "error": f"{type(exc).__name__}: {exc}",
+            },
+        )
+        raise
+    assembled = _assemble_shards_from_spill(
+        output_dir=output_path, config=config, provenance=provenance, resume=resume
+    )
+    if assembled.get("row_identity_sha256") != identity_hash:
+        raise RuntimeError("spill assembly identity hash diverged from the frozen row plan")
+    return assembled
 
 
 def write_scientific_recovery_v8_cache_for_testing(
