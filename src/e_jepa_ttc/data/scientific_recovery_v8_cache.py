@@ -272,11 +272,25 @@ def _iter_spill_run(path: Path) -> Iterator[dict[str, Any]]:
             yield record
 
 
+def _spill_bin_path(sidecar: Path, metadata: Mapping[str, Any]) -> Path:
+    """Resolve the spill ``.bin`` next to ``*.meta.json``.
+
+    ``Path.with_suffix('.bin')`` on a ``.meta.json`` sidecar yields
+    ``*.meta.bin``, which does not exist, so resume never skipped a completed
+    sequence.
+    """
+
+    relative = metadata.get("path")
+    if not isinstance(relative, str):
+        return sidecar.with_name(sidecar.name.removesuffix(".meta.json") + ".bin")
+    return sidecar.with_name(Path(relative).name)
+
+
 def _spill_sidecar_matches(sidecar: Path, expected_identities: Sequence[Sequence[str]]) -> bool:
-    if not sidecar.is_file():
+    if not sidecar.is_file() or not sidecar.name.endswith(".meta.json"):
         return False
     metadata = read_structured(sidecar)
-    bin_path = sidecar.with_suffix(".bin")
+    bin_path = _spill_bin_path(sidecar, metadata if isinstance(metadata, Mapping) else {})
     expected = [list(item) for item in expected_identities]
     expected.sort(key=lambda item: tuple(item))
     return (
@@ -284,6 +298,8 @@ def _spill_sidecar_matches(sidecar: Path, expected_identities: Sequence[Sequence
         and verify_artifact_hash(metadata)
         and metadata.get("artifact_type") == V8_SPILL_SCHEMA
         and bin_path.is_file()
+        and bin_path.name.endswith(".bin")
+        and not bin_path.name.endswith(".meta.bin")
         and metadata.get("sha256") == _file_sha256(bin_path)
         and metadata.get("count") == len(expected)
         and metadata.get("identities") == expected

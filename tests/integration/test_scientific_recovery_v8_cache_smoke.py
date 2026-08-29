@@ -109,6 +109,27 @@ def test_v8_cache_spill_merge_sorts_interleaved_identities_and_flushes_runs(
     assert len(cache_mod._load_records(shard_paths[2])) == 1
 
 
+def test_spill_resume_matches_bin_beside_meta_json_not_meta_bin(tmp_path) -> None:
+    """Resume looked for seq-*.meta.bin and recoded every spilled sequence."""
+
+    from e_jepa_ttc.data.scientific_recovery_v8_cache import (
+        _flush_spill_run,
+        _spill_sidecar_matches,
+    )
+
+    records = [_record(index, steps=2, channels=6) for index in range(3)]
+    metadata = _flush_spill_run(records, tmp_path, "seq-deadbeef")
+    sidecar = tmp_path / "seq-deadbeef.meta.json"
+    bin_path = tmp_path / "seq-deadbeef.bin"
+    assert sidecar.is_file() and bin_path.is_file()
+    assert metadata["path"] == "spill/seq-deadbeef.bin"
+    assert not (tmp_path / "seq-deadbeef.meta.bin").exists()
+    assert sidecar.with_suffix(".bin") == tmp_path / "seq-deadbeef.meta.bin"
+    identities = [list(record["row_identity"]) for record in records]
+    assert _spill_sidecar_matches(sidecar, identities) is True
+    assert _spill_sidecar_matches(sidecar, identities[:-1]) is False
+
+
 def test_v8_cache_rejects_non_train_split_and_incomplete_resume(tmp_path) -> None:
     config = ScientificRecoveryV8CacheConfig(
         representation="exp6", steps=2, roi_size=8, shard_size=2, expected_rows=None
