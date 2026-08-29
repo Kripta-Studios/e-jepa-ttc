@@ -12,6 +12,8 @@ import pytest
 from e_jepa_ttc.artifacts.hashing import sign_artifact
 from e_jepa_ttc.data.dinov3_relational_teacher_cache import (
     DINOv3RelationalTeacherDataset,
+    _event_crop_matches_teacher,
+    _integer_pixel_xyxy,
 )
 
 
@@ -113,7 +115,7 @@ def dummy_teacher_cache(tmp_path: Path) -> Path:
         },
         "relations": {
             "type": "local_cosine",
-            "offsets_dy_dx": [[0,1],[1,0],[0,2],[2,0],[1,1],[1,-1]],
+            "offsets_dy_dx": [[0, 1], [1, 0], [0, 2], [2, 0], [1, 1], [1, -1]],
             "grid_height": 32,
             "grid_width": 32,
         },
@@ -123,7 +125,7 @@ def dummy_teacher_cache(tmp_path: Path) -> Path:
                 "npz_sha256": shard_sha,
                 "row_count": 3,
             }
-        ]
+        ],
     }
 
     # We need a valid artifact signature. We can just sign it.
@@ -133,9 +135,7 @@ def dummy_teacher_cache(tmp_path: Path) -> Path:
     return manifest_path
 
 
-def _record(
-    token: str, track_id: str, sequence_id: str, square: list[int]
-) -> dict[str, object]:
+def _record(token: str, track_id: str, sequence_id: str, square: list[int]) -> dict[str, object]:
     return {
         "sample_token": token,
         "track_id": track_id,
@@ -278,6 +278,24 @@ def test_dino_cache_wrapper_crop_mismatch(dummy_teacher_cache: Path) -> None:
 
     with pytest.raises(ValueError, match="common crop mismatch"):
         _ = wrapper[0]
+
+
+def test_event_crop_accepts_v8_integer_pixel_quantization_of_teacher() -> None:
+    teacher = np.asarray([736.75, 434.25, 948.25, 645.75], dtype=np.float32)
+    event = np.asarray([737.0, 434.0, 948.0, 646.0], dtype=np.float32)
+    assert _event_crop_matches_teacher(event, teacher)
+    assert _event_crop_matches_teacher(teacher, teacher)
+    shifted = np.asarray([700.0, 434.0, 948.0, 646.0], dtype=np.float32)
+    assert not _event_crop_matches_teacher(shifted, teacher)
+
+
+def test_dino_integer_pixel_xyxy_matches_v8_cache_rule() -> None:
+    from e_jepa_ttc.data.scientific_recovery_v8_cache import _integer_pixel_roi
+
+    square = (736.75, 434.25, 948.25, 645.75)
+    assert tuple(float(value) for value in _integer_pixel_xyxy(np.asarray(square))) == (
+        _integer_pixel_roi(square)
+    )
 
 
 def test_dino_cache_wrapper_rejects_unproven_rgb_source(

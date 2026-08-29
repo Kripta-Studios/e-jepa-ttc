@@ -40,6 +40,41 @@ _EXPECTED_OFFSETS = [[dy, dx] for dy, dx in A4_RELATION_OFFSETS]
 _NUM_OFFSETS = len(A4_RELATION_OFFSETS)
 
 
+def _integer_pixel_xyxy(square: np.ndarray) -> np.ndarray:
+    """Quantize xyxy with the same ``torch.round`` rule as the V8 temporal cache.
+
+    V8 event rasters must sit on the integer pixel grid.  DINO maps were
+    extracted from the pre-quantization common square.  Those two crops name
+    the same object iff the event square equals this quantization.
+    """
+
+    values = torch.as_tensor(
+        [float(value) for value in np.asarray(square, dtype=np.float64).reshape(-1)],
+        dtype=torch.float64,
+    )
+    if values.numel() != 4:
+        raise ValueError("roi must be four xyxy coordinates")
+    if not torch.isfinite(values).all():
+        raise ValueError("roi must be finite")
+    rounded = torch.round(values)
+    x_min, y_min, x_max, y_max = (int(value) for value in rounded.tolist())
+    if x_max <= x_min or y_max <= y_min:
+        raise ValueError("integer pixel roi must have positive width and height")
+    return np.asarray((float(x_min), float(y_min), float(x_max), float(y_max)), dtype=np.float32)
+
+
+def _event_crop_matches_teacher(event_square: np.ndarray, teacher_square: np.ndarray) -> bool:
+    """Accept exact crop identity or the V8 integer-pixel quantization of it."""
+
+    if np.allclose(event_square, teacher_square, rtol=0.0, atol=1.0e-4):
+        return True
+    try:
+        quantized = _integer_pixel_xyxy(teacher_square)
+    except ValueError:
+        return False
+    return bool(np.allclose(event_square, quantized, rtol=0.0, atol=1.0e-4))
+
+
 def _sha256(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as handle:
@@ -656,7 +691,7 @@ class DINOv3RelationalTeacherDataset(Dataset[dict[str, Any]]):
             raise ValueError(f"DINO teacher sequence mismatch for {token}")
 
         event_square = np.asarray(record["event_v4_common_square_xyxy"], dtype=np.float32)
-        if not np.allclose(event_square, teacher_square, rtol=0.0, atol=1.0e-4):
+        if not _event_crop_matches_teacher(event_square, teacher_square):
             raise ValueError(f"DINO teacher common crop mismatch for {token}")
 
         record["dinov3_relation_targets"] = torch.from_numpy(
