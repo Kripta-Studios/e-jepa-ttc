@@ -71,6 +71,7 @@ _REPRESENTATIONS = {"timevol20", "exp6"}
 _SPILL_DIRNAME = "spill"
 _SPILL_MAGIC = b"V8SPILL1"
 _SPILL_FLUSH_BYTES = 512 * 1024 * 1024
+_EXP6_EVENT_CHUNK = 250_000
 
 
 @dataclass(frozen=True)
@@ -895,6 +896,60 @@ def _timevol_record(
     return _record_from_outputs(plan, outputs, config)
 
 
+def _ingest_exp6_window(
+    state: CausalExponentialStateRepresentation,
+    reader: EAPEventReader,
+    *,
+    start_us: int,
+    endpoint_us: int,
+    sequence_id: str,
+) -> int:
+    """Advance EXP6 state to ``endpoint_us`` without allocating the whole window.
+
+    One eAP gap can contain ~10^8 events.  Loading that interval as a single
+    ``EventBatch`` copies an int64 timestamp vector of several GiB and dies
+    with ``MemoryError``.  Prefix chunks share the causal state; only the last
+    non-empty chunk (or an empty packet) may call ``update`` with the snapshot
+    endpoint.
+    """
+
+    ingested = 0
+    pending_raw: Mapping[str, np.ndarray] | None = None
+    for raw in reader.iter_window_chunks(start_us, endpoint_us + 1, chunk_events=_EXP6_EVENT_CHUNK):
+        if not np.asarray(raw["t"]).size:
+            continue
+        if pending_raw is not None:
+            ingested += state.ingest_prefix(
+                _raw_event_batch(
+                    pending_raw,
+                    sequence_id=sequence_id,
+                    start_us=reader.t_start_us,
+                    end_us=int(np.asarray(pending_raw["t"], dtype=np.int64)[-1]),
+                )
+            )
+        pending_raw = raw
+    if pending_raw is None:
+        return ingested + state.update(
+            EventBatch.empty(
+                width=EAP_IMAGE_SIZE[0],
+                height=EAP_IMAGE_SIZE[1],
+                sequence_id=sequence_id,
+                t_start_us=reader.t_start_us,
+                t_end_us=int(endpoint_us),
+            ),
+            endpoint_us,
+        )
+    return ingested + state.update(
+        _raw_event_batch(
+            pending_raw,
+            sequence_id=sequence_id,
+            start_us=reader.t_start_us,
+            end_us=int(endpoint_us),
+        ),
+        endpoint_us,
+    )
+
+
 def _exp6_records_for_sequence(
     plans: Sequence[_PlannedRow], reader: EAPEventReader, config: ScientificRecoveryV8CacheConfig
 ) -> list[dict[str, Any]]:
@@ -911,17 +966,17 @@ def _exp6_records_for_sequence(
             requests[int(endpoint)].append((row_index, step))
     output_slots: list[list[Any | None]] = [[None] * config.steps for _ in plans]
     watermark = reader.t_start_us
+    sequence_id = plans[0].sequence_id
     for endpoint in sorted(requests):
         if endpoint < watermark:
             raise ValueError("EXP6 endpoint precedes stream watermark")
-        raw = reader.read_window(watermark, endpoint + 1)
-        packet = _raw_event_batch(
-            raw,
-            sequence_id=plans[0].sequence_id,
-            start_us=reader.t_start_us,
-            end_us=endpoint,
+        event_count = _ingest_exp6_window(
+            state,
+            reader,
+            start_us=watermark,
+            endpoint_us=endpoint,
+            sequence_id=sequence_id,
         )
-        event_count = state.update(packet, endpoint)
         watermark = endpoint + 1
         for row_index, step in requests[endpoint]:
             plan = plans[row_index]

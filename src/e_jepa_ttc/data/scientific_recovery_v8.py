@@ -500,6 +500,26 @@ class CausalExponentialStateRepresentation:
         alpha = np.asarray(self.alphas, dtype=np.float32)[:, None, None]
         self._state += alpha * signed_counts[None]
 
+    def ingest_prefix(self, events: EventBatch) -> int:
+        """Ingest a causal prefix without treating any timestamp as a snapshot boundary.
+
+        Stage 30 can see hundreds of millions of events between two sample
+        endpoints.  Prefix packets must not decay the state to the snapshot
+        endpoint, and must not hold 7 ms boundary events, or later chunks would
+        be rejected as already snapshotted.  Disjoint HDF5 chunks may split a
+        timestamp group, so events at ``_last_ingested_t_us`` are kept.
+        """
+
+        timestamps = np.asarray(events.t_us, dtype=np.int64)
+        if not timestamps.size:
+            return 0
+        return self._ingest_packet(
+            events,
+            endpoint_us=int(timestamps[-1]),
+            hold_output_boundary=False,
+            keep_equal_timestamp=True,
+        )
+
     def update(self, events: EventBatch, endpoint_us: int) -> int:
         """Incrementally ingest a causal packet and advance state to endpoint.
 
@@ -507,6 +527,21 @@ class CausalExponentialStateRepresentation:
         rejected before state is changed.
         """
 
+        return self._ingest_packet(
+            events,
+            endpoint_us=int(endpoint_us),
+            hold_output_boundary=True,
+            keep_equal_timestamp=False,
+        )
+
+    def _ingest_packet(
+        self,
+        events: EventBatch,
+        *,
+        endpoint_us: int,
+        hold_output_boundary: bool,
+        keep_equal_timestamp: bool,
+    ) -> int:
         endpoint = int(endpoint_us)
         _validate_events(events, endpoint)
         polarity = np.asarray(events.polarity)
@@ -515,17 +550,18 @@ class CausalExponentialStateRepresentation:
         self._ensure_sequence(events, endpoint)
         self._commit_pending_boundary_events(endpoint)
         timestamps = np.asarray(events.t_us, dtype=np.int64)
-        new_mask = (
-            np.ones(timestamps.shape, dtype=bool)
-            if self._last_ingested_t_us is None
-            else timestamps > self._last_ingested_t_us
-        )
+        if self._last_ingested_t_us is None:
+            new_mask = np.ones(timestamps.shape, dtype=bool)
+        elif keep_equal_timestamp:
+            new_mask = timestamps >= self._last_ingested_t_us
+        else:
+            new_mask = timestamps > self._last_ingested_t_us
         x_values = np.asarray(events.x)[new_mask]
         y_values = np.asarray(events.y)[new_mask]
         time_values = timestamps[new_mask]
         polarity_values = polarity[new_mask]
         boundary_mask = np.zeros(time_values.shape, dtype=bool)
-        if self._is_output_boundary(endpoint):
+        if hold_output_boundary and self._is_output_boundary(endpoint):
             boundary_mask = time_values == endpoint
         pending_count = int(np.count_nonzero(boundary_mask))
         ingest_mask = ~boundary_mask

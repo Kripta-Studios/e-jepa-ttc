@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import h5py
 import numpy as np
 import pytest
 import torch
@@ -124,3 +125,49 @@ def test_v8_cache_rejects_non_train_split_and_incomplete_resume(tmp_path) -> Non
         write_scientific_recovery_v8_cache_for_testing(
             records=[_record(0, steps=2, channels=6)], output_dir=output, config=config, resume=True
         )
+
+
+def test_exp6_window_ingest_chunks_match_whole_read(tmp_path, monkeypatch) -> None:
+    """A 373M-event gap must not be loaded as one EventBatch."""
+
+    import e_jepa_ttc.data.scientific_recovery_v8_cache as cache_mod
+    from e_jepa_ttc.data.eap import EAPEventReader
+    from e_jepa_ttc.data.scientific_recovery_v8 import CausalExponentialStateRepresentation
+    from e_jepa_ttc.data.scientific_recovery_v8_cache import (
+        _ingest_exp6_window,
+        _raw_event_batch,
+    )
+
+    timestamps = np.arange(0, 8_000, 200, dtype=np.int64)
+    n = int(timestamps.size)
+    source = tmp_path / "events.h5"
+    with h5py.File(source, "w") as handle:
+        events = handle.create_group("events")
+        events.create_dataset("x", data=np.ones(n, dtype=np.int32))
+        events.create_dataset("y", data=np.ones(n, dtype=np.int32))
+        events.create_dataset("t", data=timestamps)
+        events.create_dataset("p", data=np.ones(n, dtype=np.int8))
+        handle.create_dataset(
+            "ms_to_idx",
+            data=np.searchsorted(timestamps, np.arange(0, 12) * 1_000).astype(np.uint64),
+        )
+
+    monkeypatch.setattr(cache_mod, "_EXP6_EVENT_CHUNK", 3)
+    reader = EAPEventReader(source)
+    reader.open()
+    try:
+        raw = reader.read_window(0, 7_001)
+        whole = CausalExponentialStateRepresentation(target_size=(8, 8))
+        whole.update(
+            _raw_event_batch(raw, sequence_id="seq", start_us=0, end_us=7_000),
+            7_000,
+        )
+        chunked = CausalExponentialStateRepresentation(target_size=(8, 8))
+        count = _ingest_exp6_window(
+            chunked, reader, start_us=0, endpoint_us=7_000, sequence_id="seq"
+        )
+    finally:
+        reader.close()
+
+    np.testing.assert_allclose(chunked._state, whole._state, atol=1e-6, rtol=1e-6)
+    assert count == int(np.count_nonzero(raw["t"] < 7_000))

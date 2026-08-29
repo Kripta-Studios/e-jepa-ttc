@@ -238,6 +238,41 @@ def test_exp6_matches_official_window_equation_across_snapshots_boundary_and_res
     assert replay.tensor.shape == (6, 8, 8)
 
 
+def test_exp6_prefix_chunks_match_single_update_including_split_timestamp() -> None:
+    """Stage 30 died allocating a 373M-event window; prefixes must stay bit-identical."""
+
+    roi = torch.tensor([0, 0, 8, 8])
+    whole = _events(
+        x=(1, 2, 3, 4, 5, 6, 7),
+        y=(1, 2, 3, 4, 5, 6, 7),
+        t_us=(0, 200, 200, 200, 1_200, 6_800, 7_000),
+        polarity=(1, -1, 1, -1, 1, -1, 1),
+        start_us=0,
+    )
+    single = CausalExponentialStateRepresentation(target_size=(8, 8))
+    single.update(whole, 7_000)
+    chunked = CausalExponentialStateRepresentation(target_size=(8, 8))
+    prefixes = (
+        _events(x=(1,), y=(1,), t_us=(0,), polarity=(1,), start_us=0),
+        _events(x=(2, 3), y=(2, 3), t_us=(200, 200), polarity=(-1, 1), start_us=0),
+        _events(x=(4,), y=(4,), t_us=(200,), polarity=(-1,), start_us=0),
+        _events(x=(5, 6), y=(5, 6), t_us=(1_200, 6_800), polarity=(1, -1), start_us=0),
+    )
+    for prefix in prefixes:
+        chunked.ingest_prefix(prefix)
+    chunked.update(
+        _events(x=(7,), y=(7,), t_us=(7_000,), polarity=(1,), start_us=0),
+        7_000,
+    )
+    torch.testing.assert_close(
+        chunked.snapshot(7_000, roi).tensor,
+        single.snapshot(7_000, roi).tensor,
+        atol=1e-6,
+        rtol=1e-6,
+    )
+    assert chunked.snapshot(7_000, roi).diagnostics["state_event_count"] == 6.0
+
+
 def test_exp6_vectorized_bins_match_scalar_loop_and_ingest_large_packet() -> None:
     """Stage 30 died on a Python listcomp over ingest timestamps; keep numpy bins."""
 
