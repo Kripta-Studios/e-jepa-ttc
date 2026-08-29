@@ -130,6 +130,28 @@ def test_spill_resume_matches_bin_beside_meta_json_not_meta_bin(tmp_path) -> Non
     assert _spill_sidecar_matches(sidecar, identities[:-1]) is False
 
 
+def test_spill_assemble_keeps_protocol_row_identity_hash(tmp_path, monkeypatch) -> None:
+    """Join-key spill hashes must not clobber the frozen contract row_identity_sha256."""
+
+    from e_jepa_ttc.data.scientific_recovery_v8_cache import _write_records
+
+    monkeypatch.setattr("e_jepa_ttc.data.scientific_recovery_v8_cache._SPILL_FLUSH_BYTES", 1)
+    config = ScientificRecoveryV8CacheConfig(
+        representation="exp6", steps=2, roi_size=8, shard_size=2, expected_rows=None
+    )
+    records = [_record(index, steps=2, channels=6) for index in range(3)]
+    contract = "fe4ea01a" + "ab" * 28
+    manifest = _write_records(
+        records=records,
+        output_dir=tmp_path / "cache",
+        config=config,
+        provenance={"raw_materialization": False, "row_identity_sha256": contract},
+        resume=False,
+    )
+    assert manifest["row_identity_sha256"] == contract
+    assert manifest["split_counts"] == {"train": 3}
+
+
 def test_v8_cache_rejects_non_train_split_and_incomplete_resume(tmp_path) -> None:
     config = ScientificRecoveryV8CacheConfig(
         representation="exp6", steps=2, roi_size=8, shard_size=2, expected_rows=None

@@ -373,6 +373,7 @@ def _assemble_shards_from_spill(
     config: ScientificRecoveryV8CacheConfig,
     provenance: Mapping[str, Any],
     resume: bool,
+    expected_identity_hash: str,
 ) -> dict[str, Any]:
     """K-way merge identity-sorted spill runs into the signed train shards."""
 
@@ -402,6 +403,8 @@ def _assemble_shards_from_spill(
         raise RuntimeError("duplicate row_identity values across V8 spill runs")
     all_identities.sort()
     identity_hash = _canonical_hash([list(item) for item in all_identities])
+    if identity_hash != expected_identity_hash:
+        raise RuntimeError("spill assembly identity hash diverged from the frozen row plan")
     config_hash = _canonical_hash(asdict(config))
     expected_state = {"identity_hash": identity_hash, "config_hash": config_hash}
     state_path = output_dir / "build_state.json"
@@ -459,6 +462,7 @@ def _assemble_shards_from_spill(
             f"assembled rows={len(all_identities)} but expected {config.expected_rows}"
         )
     manifest: dict[str, Any] = {
+        **dict(provenance),
         "artifact_type": V8_CACHE_SCHEMA,
         "format": V8_CACHE_FORMAT,
         "created_at": datetime.now(UTC).isoformat(),
@@ -476,12 +480,14 @@ def _assemble_shards_from_spill(
         ],
         "shape": [config.steps, config.channels, config.roi_size, config.roi_size],
         "split_counts": {"train": len(all_identities)},
-        "row_identity_sha256": identity_hash,
         "shards": shards,
         "train_only": True,
         "sealed_splits_opened": False,
-        **dict(provenance),
     }
+    # Protocol contract hashes (canonical JSON records) must not be replaced by
+    # the join-key list hash used for spill/plan equality.
+    if "row_identity_sha256" not in provenance:
+        manifest["row_identity_sha256"] = identity_hash
     manifest_path = output_dir / "manifest.json"
     _atomic_json(manifest_path, manifest)
     _atomic_json(
@@ -1073,10 +1079,12 @@ def _write_records(
     spill_dir = output_dir / _SPILL_DIRNAME
     _spill_record_list(records, spill_dir, flush_bytes=_SPILL_FLUSH_BYTES)
     assembled = _assemble_shards_from_spill(
-        output_dir=output_dir, config=config, provenance=provenance, resume=resume
+        output_dir=output_dir,
+        config=config,
+        provenance=provenance,
+        resume=resume,
+        expected_identity_hash=identity_hash,
     )
-    if assembled.get("row_identity_sha256") != identity_hash:
-        raise RuntimeError("spill assembly identity hash diverged from the in-memory record list")
     return assembled
 
 
@@ -1155,6 +1163,13 @@ def materialize_scientific_recovery_v8_cache(
                     batch = _exp6_records_for_sequence(sequence_rows, reader, config)
             _flush_spill_run(batch, spill_dir, name)
             del batch
+        assembled = _assemble_shards_from_spill(
+            output_dir=output_path,
+            config=config,
+            provenance=provenance,
+            resume=resume,
+            expected_identity_hash=identity_hash,
+        )
     except BaseException as exc:
         _atomic_json(
             state_path,
@@ -1166,11 +1181,6 @@ def materialize_scientific_recovery_v8_cache(
             },
         )
         raise
-    assembled = _assemble_shards_from_spill(
-        output_dir=output_path, config=config, provenance=provenance, resume=resume
-    )
-    if assembled.get("row_identity_sha256") != identity_hash:
-        raise RuntimeError("spill assembly identity hash diverged from the frozen row plan")
     return assembled
 
 
