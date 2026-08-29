@@ -47,8 +47,8 @@ V7_BASELINES = Path("artifacts/scientific_recovery_v7/baselines/manifest.json")
 A5_OOF = Path("artifacts/scientific_recovery_v7/baselines/a5_oof_predictions.csv")
 GARL_OOF = Path("artifacts/scientific_recovery_v7/baselines/garl_oof_predictions.csv")
 A5_MODEL = Path("configs/model/e_jepa_causal_scale_event_v9_transport_r1_t002_causal.yaml")
-A5_TRAINING_CONFIG = Path(
-    "configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a5_corr_v1.yaml"
+A5_GROUPED_DINO_CONFIG = Path(
+    "configs/experiment/scientific_recovery_v6_fold_chain/a5_causal_fold0.yaml"
 )
 OUTPUT_DIR = Path("configs/experiment/scientific_recovery_v8_fold_chain")
 C1_PLAN_DIR = Path("configs/protocol/scientific_recovery_v8_c1_analysis_plans")
@@ -524,21 +524,34 @@ def model_recipe(channels: int) -> dict[str, Any]:
 
 
 def a5_dino_teacher_contract() -> tuple[dict[str, str], str]:
-    """Freeze the exact train-only A5 relational teacher identity for V8 arms."""
+    """Freeze the exact 8192-row A5 relational teacher identity for V8 arms.
 
-    source = yaml.safe_load((ROOT / A5_TRAINING_CONFIG).read_text(encoding="utf-8"))
+    V8 event rows are the grouped 8192-token universe.  The historical A5 screen
+    config still points at the 2048-row rgb_v2 teacher; that cache cannot cover a
+    fold-train subset of 8192 and must not be copied into V8 fold configs.
+    """
+
+    source = yaml.safe_load((ROOT / A5_GROUPED_DINO_CONFIG).read_text(encoding="utf-8"))
     if not isinstance(source, dict):
-        raise ValueError("A5 training source must be a mapping")
+        raise ValueError("A5 grouped DINO source must be a mapping")
     data = source.get("data")
     training = source.get("training")
     if not isinstance(data, dict) or not isinstance(training, dict):
-        raise ValueError("A5 training source lacks data/training")
+        raise ValueError("A5 grouped DINO source lacks data/training")
+    if int(data.get("expected_source_train_rows", -1)) != 8192:
+        raise ValueError("V8 A5 DINO source must declare the 8192-row grouped universe")
     teacher = data.get("dinov3_relational_teacher")
     if not isinstance(teacher, dict):
-        raise ValueError("A5 source has no DINO relational teacher contract")
+        raise ValueError("A5 grouped source has no DINO relational teacher contract")
     path = ROOT / str(teacher.get("manifest"))
     if not path.is_file() or sha256(path) != teacher.get("manifest_sha256"):
         raise ValueError("A5 DINO manifest file hash differs from frozen source")
+    manifest = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(manifest, dict):
+        raise ValueError("A5 DINO manifest must be a mapping")
+    row_count = int(manifest.get("scope", {}).get("row_count", -1))
+    if row_count != 8192:
+        raise ValueError(f"V8 A5 DINO teacher has {row_count} rows, expected 8192")
     artifact = str(teacher.get("artifact_sha256"))
     if training.get("representation_teacher_cache_artifact_sha256") != artifact:
         raise ValueError("A5 DINO training/data artifact identities differ")
@@ -546,8 +559,8 @@ def a5_dino_teacher_contract() -> tuple[dict[str, str], str]:
         "manifest": repo_path(path),
         "manifest_sha256": str(teacher["manifest_sha256"]),
         "artifact_sha256": artifact,
-        "source_config": repo_path(ROOT / A5_TRAINING_CONFIG),
-        "source_config_sha256": sha256(ROOT / A5_TRAINING_CONFIG),
+        "source_config": repo_path(ROOT / A5_GROUPED_DINO_CONFIG),
+        "source_config_sha256": sha256(ROOT / A5_GROUPED_DINO_CONFIG),
     }, artifact
 
 
@@ -868,7 +881,6 @@ def generated_configs(v5: dict[str, Any]) -> dict[str, dict[str, str]]:
     return configs
 
 
-
 def conditional_configs(v5: dict[str, Any]) -> dict[str, list[dict[str, str]]]:
     """Freeze B3/C1 fold configs before any V8 result can open their gates."""
 
@@ -923,13 +935,15 @@ def conditional_configs(v5: dict[str, Any]) -> dict[str, list[dict[str, str]]]:
                 }
             config["decision_contract"]["conditional_arm"] = True
             config["decision_contract"]["opening_gate_required"] = (
-                "B1_TIMEVOL20_3 seed-7 screen gate" if arm == "pair20_2"
+                "B1_TIMEVOL20_3 seed-7 screen gate"
+                if arm == "pair20_2"
                 else "signed V8 C1 opening artifact"
             )
             write_yaml(ROOT / OUTPUT_DIR / name, config)
             entries.append(source_entry(ROOT / OUTPUT_DIR / name))
         frozen[arm] = entries
     return frozen
+
 
 def write_c1_analysis_plans(
     samples: list[Sample], v7: dict[str, Any], configs: dict[str, dict[str, str]]

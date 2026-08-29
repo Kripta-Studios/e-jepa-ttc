@@ -1,5 +1,5 @@
 {
-  "artifact_sha256": "34d9f3cc05a03a6f89b2fbfed3195423e49dff5e47f4b13006d61ddc87a5bbed",
+  "artifact_sha256": "a8a2d276486fe0ad9173b6133bcb3c86640417ee5f5c6d40db45527edb16eee3",
   "artifact_type": "scientific_recovery_v8_frozen_config_manifest_v1",
   "c1_analysis_plans": {
     "autopsy_h3": {
@@ -34,15 +34,15 @@
       "fold_configs": [
         {
           "path": "configs/experiment/scientific_recovery_v8_fold_chain/gated_exp6_3_fold0_seed7.yaml",
-          "sha256": "a4ef1468e7cedb3f27dab0fb944e6f7777e67ffaa35686071f64afb6994445e0"
+          "sha256": "04dd056f0890fa444789b6301b4d831d39a001656fac211c41a1fe38f085f941"
         },
         {
           "path": "configs/experiment/scientific_recovery_v8_fold_chain/gated_exp6_3_fold1_seed7.yaml",
-          "sha256": "ec47bf05f31a6a060a22b8d8ebe5f2eeff1109a52d0b4eca11c1c95e4338f380"
+          "sha256": "a99affcd5e0d5abfe9947079ab9c0ccd5236122c85b9bb0f83ba3adf16366f36"
         },
         {
           "path": "configs/experiment/scientific_recovery_v8_fold_chain/gated_exp6_3_fold2_seed7.yaml",
-          "sha256": "5a2f4c0f4ff280a72dca397071e636131207fe23b20568fd60f1b5417eafabc2"
+          "sha256": "9d4c432d08fce2c854c7f835bbde1dd76c6d898edfffd694209a729ccfed9338"
         }
       ],
       "frontend_contract": "causal EXP6 patch frontend gate; not an architecture sweep.",
@@ -56,15 +56,15 @@
       "fold_configs": [
         {
           "path": "configs/experiment/scientific_recovery_v8_fold_chain/pair20_2_fold0_seed7.yaml",
-          "sha256": "365a34cbed123914c15f4217735d91fb070904d9dd25027a3d30e7cdcb852471"
+          "sha256": "009e2753e18e27f0e037348405682afb588002c4be06da29d024ee589b6d7102"
         },
         {
           "path": "configs/experiment/scientific_recovery_v8_fold_chain/pair20_2_fold1_seed7.yaml",
-          "sha256": "356f491a320241f8fb4eb26727f7cb975c84dfd749e626444fbcf2e523f4fb62"
+          "sha256": "29a2225fb1f68cc8f8d6d15d723342c0e4bfadc69775bf0408f0cf090f1dea1e"
         },
         {
           "path": "configs/experiment/scientific_recovery_v8_fold_chain/pair20_2_fold2_seed7.yaml",
-          "sha256": "47be888cb726747222213e6f7b4e757bbf22107f24577e34464088e689ec857b"
+          "sha256": "06fdd8299f9123eb37d52e7f47bd89daf829479527e6c04e258925eadb3bb700"
         }
       ],
       "frontend_contract": "TIMEVOL20; V8-only steps=2; EVENT_V4_STEPS remains 3.",
@@ -77,15 +77,15 @@
   "enabled_seed7_configs": {
     "exp6_3_fold0_seed7": {
       "path": "configs/experiment/scientific_recovery_v8_fold_chain/exp6_3_fold0_seed7.yaml",
-      "sha256": "7bcbd5d21d80ec8ad6131260e2843109940f6d46c91e582ca9b927dbc917c70e"
+      "sha256": "d6d990f00e5314e6b0a9e8cd786d6b5879be1869ee351d1ae82bb638bf447bda"
     },
     "exp6_3_fold1_seed7": {
       "path": "configs/experiment/scientific_recovery_v8_fold_chain/exp6_3_fold1_seed7.yaml",
-      "sha256": "39d95952cf010bd4df3897a71c5f1ed5efc67830fec116570c16fde09d999ef5"
+      "sha256": "620b639966a1ee55a7d59c798a3b4acdfebec9b4b8bad5007d6ed5215211d5c5"
     },
     "exp6_3_fold2_seed7": {
       "path": "configs/experiment/scientific_recovery_v8_fold_chain/exp6_3_fold2_seed7.yaml",
-      "sha256": "bab6f4bdb135479f5dde9ccadd93ee2c38bce0badd7910984c33a9b54dab77df"
+      "sha256": "835c9b5473cd394586ed8496224175eb35706b875c3e9203c151299a5bb5ebe9"
     },
     "router_fold0_seed7": {
       "path": "configs/experiment/scientific_recovery_v8_fold_chain/router_fold0_seed7.yaml",
@@ -101,15 +101,15 @@
     },
     "timevol20_3_fold0_seed7": {
       "path": "configs/experiment/scientific_recovery_v8_fold_chain/timevol20_3_fold0_seed7.yaml",
-      "sha256": "d5239be3fb4b0558af82beebde548d13a195da07a3639429b9d4e38f30429bc3"
+      "sha256": "f2182ed3bed783ad8254e7347da87467a2d66ba4a183037a38a7d7e9ac6850e3"
     },
     "timevol20_3_fold1_seed7": {
       "path": "configs/experiment/scientific_recovery_v8_fold_chain/timevol20_3_fold1_seed7.yaml",
-      "sha256": "6c30420962a820f216ad369fbb1a46af92948c12cdf027dce73a2fbbc31941e2"
+      "sha256": "e05f51a7092edd22ae81bf3b52a59167b83272b2fece847c53b60db549282766"
     },
     "timevol20_3_fold2_seed7": {
       "path": "configs/experiment/scientific_recovery_v8_fold_chain/timevol20_3_fold2_seed7.yaml",
-      "sha256": "7b866742b19405731e107e686daeaa0b1905cbf1f556b6e746f0d9e3e27d788c"
+      "sha256": "057561513dd8479b64678db7081d29f066aba3d18b04e7ba05331fcc8e42ca1f"
     }
   },
   "integrity": {

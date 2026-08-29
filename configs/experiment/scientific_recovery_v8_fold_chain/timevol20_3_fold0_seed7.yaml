@@ -41,11 +41,11 @@ data:
     support_ms: 100
     extra_tensor_channels: false
   dinov3_relational_teacher:
-    manifest: artifacts/cache/dinov3_convnext_large_relational_a4_rgb_v2/manifest.json
-    manifest_sha256: e885a2ea2f2df370a3d4a8270c082a095a735c13db0248521ce2f553b314cf86
-    artifact_sha256: f175980d05c1d02a9aa743a74c78c0d5af9a826b2791760df5fbc00c548bd2a2
-    source_config: configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a5_corr_v1.yaml
-    source_config_sha256: 4c2d06f9799d37f7e6cea58881a534e5c439e08c0de92c110eb78d4b4a157dd5
+    manifest: artifacts/cache/dinov3_convnext_large_relational_a4_train8192_rgb_v1/manifest.json
+    manifest_sha256: 6ee4b205d29a07d3aabf7137f2a312376711b5e5d9d7930ea36328390023eab3
+    artifact_sha256: 6511c684881f3360efb7c8718976ef6b37de36668a89d9ea2f8d4bdf6f620b20
+    source_config: configs/experiment/scientific_recovery_v6_fold_chain/a5_causal_fold0.yaml
+    source_config_sha256: 3b70eef2bd88e2a16384c5b2bc07de017c6059dd0abe806e650f3a9d11057cd2
 training:
   seed: 7
   epochs: 18
@@ -64,7 +64,7 @@ training:
   mask_t0_as_proxy: true
   foreground_supervision: bbox_geometry
   representation_supervision: dinov3_local_relational
-  representation_teacher_cache_artifact_sha256: f175980d05c1d02a9aa743a74c78c0d5af9a826b2791760df5fbc00c548bd2a2
+  representation_teacher_cache_artifact_sha256: 6511c684881f3360efb7c8718976ef6b37de36668a89d9ea2f8d4bdf6f620b20
   representation_distillation_weight: 8.0
   freeze_encoder: false
 loss:

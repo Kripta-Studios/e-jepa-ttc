@@ -46,6 +46,31 @@ def _sha(path: Path) -> str:
     return digest.hexdigest()
 
 
+def assert_v8_dino_teacher_matches_source_rows(
+    dino: Mapping[str, Any],
+    *,
+    expected_source_train_rows: int,
+    manifest_path: Path,
+) -> None:
+    """Refuse a DINO universe that cannot cover the frozen V8 train rows."""
+
+    if _sha(manifest_path) != str(dino.get("manifest_sha256")):
+        raise ValueError("DINO teacher manifest file hash differs from protocol")
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as error:
+        raise ValueError("DINO teacher manifest is invalid JSON") from error
+    if not isinstance(manifest, dict):
+        raise ValueError("DINO teacher manifest must be a mapping")
+    row_count = int(manifest.get("scope", {}).get("row_count", -1))
+    expected = int(expected_source_train_rows)
+    if row_count != expected:
+        raise ValueError(
+            "DINO teacher row_count differs from expected_source_train_rows "
+            f"({row_count} != {expected})"
+        )
+
+
 def _git_commit() -> str:
     result = subprocess.run(
         ["git", "rev-parse", "HEAD"],
@@ -177,6 +202,11 @@ def run_v8_temporal_training(
         manifest_path = Path(str(dino["manifest"]))
         if not manifest_path.is_absolute():
             manifest_path = (config_path.parents[3] / manifest_path).resolve()
+        assert_v8_dino_teacher_matches_source_rows(
+            dino,
+            expected_source_train_rows=int(data["expected_source_train_rows"]),
+            manifest_path=manifest_path,
+        )
         train = DINOv3RelationalTeacherDataset(
             train,
             manifest_path=manifest_path,
@@ -249,7 +279,10 @@ def run_v8_temporal_training(
             "sample_weight": [dev_sample_weights[token] for token in tokens],
             "prediction_ttc": validation["prediction_ttc_s"],
             "prediction_log_variance": ttc_log_variance,
-            "finite": [bool(torch.isfinite(torch.tensor(value))) for value in validation["prediction_ttc_s"]],
+            "finite": [
+                bool(torch.isfinite(torch.tensor(value)))
+                for value in validation["prediction_ttc_s"]
+            ],
             "failure_reason": "",
             "event_count": [value[0] for value in temporal_diag],
             "event_rate": [value[1] for value in temporal_diag],
@@ -430,10 +463,20 @@ def export_router_expert_predictions(
     if expert not in {"a5", "c2f"} or role not in {"inner_oof", "outer_dev"}:
         raise ValueError("router expert must be a5/c2f with inner_oof/outer_dev role")
     required = {
-        "sample_token", "sequence_id", "track_id", "target_ttc_s", "prediction_ttc_s",
-        "outer_fold", "shared_event_count_log1p", "shared_event_rate_log1p",
-        "a5_flow_magnitude", "c2f_flow_magnitude", "a5_margin", "c2f_margin",
-        "a5_log_variance", "c2f_log_variance",
+        "sample_token",
+        "sequence_id",
+        "track_id",
+        "target_ttc_s",
+        "prediction_ttc_s",
+        "outer_fold",
+        "shared_event_count_log1p",
+        "shared_event_rate_log1p",
+        "a5_flow_magnitude",
+        "c2f_flow_magnitude",
+        "a5_margin",
+        "c2f_margin",
+        "a5_log_variance",
+        "c2f_log_variance",
     }
     if role == "inner_oof":
         required.add("inner_fold")

@@ -182,6 +182,17 @@ def test_b_configs_preserve_a5_contract_except_frontend_cache_and_channels() -> 
     assert b1["data"]["steps"] == b2["data"]["steps"] == 3
     assert b1["data"]["channels_per_endpoint"] == 20
     assert b2["data"]["channels_per_endpoint"] == 6
+    teacher = b1["data"]["dinov3_relational_teacher"]
+    assert teacher == b2["data"]["dinov3_relational_teacher"]
+    assert teacher["manifest"].endswith(
+        "dinov3_convnext_large_relational_a4_train8192_rgb_v1/manifest.json"
+    )
+    assert teacher["artifact_sha256"] == (
+        "6511c684881f3360efb7c8718976ef6b37de36668a89d9ea2f8d4bdf6f620b20"
+    )
+    assert (
+        b1["training"]["representation_teacher_cache_artifact_sha256"] == teacher["artifact_sha256"]
+    )
 
 
 def test_conditional_templates_are_disabled_and_models_have_declared_channels() -> None:
@@ -259,3 +270,14 @@ def test_protocol_freezes_v8_specific_gates_and_auditable_frontend_capacity() ->
         autopsy_plan["source_aggregate_contract"]["diagnostic_schema"]["decision_rule"]["otherwise"]
         == "H2"
     )
+
+
+def test_v8_dino_teacher_contract_is_grouped_8192_not_screen_2048() -> None:
+    teacher, artifact = FREEZE.a5_dino_teacher_contract()
+    assert teacher["manifest"] == (
+        "artifacts/cache/dinov3_convnext_large_relational_a4_train8192_rgb_v1/manifest.json"
+    )
+    assert artifact == "6511c684881f3360efb7c8718976ef6b37de36668a89d9ea2f8d4bdf6f620b20"
+    assert teacher["source_config"].endswith("a5_causal_fold0.yaml")
+    manifest = json.loads((ROOT / teacher["manifest"]).read_text(encoding="utf-8"))
+    assert int(manifest["scope"]["row_count"]) == 8192
