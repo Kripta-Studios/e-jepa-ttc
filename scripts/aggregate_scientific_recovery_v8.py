@@ -50,6 +50,7 @@ def main() -> int:
                 )
             )
             return 0
+        out = a.output or a.results_root / "aggregate_seed7.json"
         report = aggregate_seed7(
             protocol=frozen.protocol,
             manifest=frozen.manifest,
@@ -57,18 +58,23 @@ def main() -> int:
             repository_root=ROOT,
             resamples=a.resamples,
             bootstrap_seed=a.bootstrap_seed,
+            existing_output=out if out.is_file() else None,
         )
-        out = a.output or a.results_root / "aggregate_seed7.json"
-        out.parent.mkdir(parents=True, exist_ok=True)
-        out.write_text(
-            json.dumps(report, indent=2, sort_keys=True, allow_nan=False) + "\n", encoding="utf-8"
-        )
+        previous = json.loads(out.read_text(encoding="utf-8")) if out.is_file() else {}
+        reused = bool(previous.get("artifact_sha256") == report.get("artifact_sha256"))
+        if not reused:
+            out.parent.mkdir(parents=True, exist_ok=True)
+            out.write_text(
+                json.dumps(report, indent=2, sort_keys=True, allow_nan=False) + "\n",
+                encoding="utf-8",
+            )
         print(
             json.dumps(
                 {
                     "output": str(out),
                     "candidate": report["candidate_id"],
                     "multiseed_replication_candidate": report["multiseed_replication_candidate"],
+                    "reused": reused,
                 }
             )
         )

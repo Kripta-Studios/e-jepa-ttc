@@ -25,6 +25,7 @@ from e_jepa_ttc.evaluation.garl_ttc_protocol import (
 
 ROOT = Path(__file__).resolve().parents[3]
 _SEALED = ("public_validation", "private_test", "evttc_test", "codabench")
+_DEFAULT_BOOTSTRAP_SEED = 20260814
 _CANDIDATES = {
     "router": "R",
     "timevol20_3": "B1_TIMEVOL20_3",
@@ -438,6 +439,149 @@ def _candidate_config_entries(
     return [(f"{arm}_fold{fold}_seed7", entry) for fold, entry in enumerate(raw)]
 
 
+def _load_signed_seed7_aggregate(path: Path) -> dict[str, Any] | None:
+    """Return a signed seed-7 screen aggregate, or None if it cannot be reused as evidence."""
+
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+    if (
+        not isinstance(payload, dict)
+        or not verify_artifact_hash(payload)
+        or payload.get("artifact_type") != "scientific_recovery_v8_seed7_aggregate_v1"
+        or payload.get("status") != "completed"
+    ):
+        return None
+    return payload
+
+
+def _ref_identity(refs: object) -> list[tuple[str, str]] | None:
+    if not isinstance(refs, list) or not refs:
+        return None
+    identity: list[tuple[str, str]] = []
+    for item in refs:
+        if not isinstance(item, Mapping):
+            return None
+        prediction = item.get("prediction_sha256")
+        checkpoint = item.get("checkpoint_sha256")
+        if not isinstance(prediction, str) or not isinstance(checkpoint, str):
+            return None
+        identity.append((prediction, checkpoint))
+    return identity
+
+
+def _collect_current_refs(
+    *,
+    protocol: Mapping[str, Any],
+    manifest: Mapping[str, Any],
+    results_root: Path,
+    repository_root: Path,
+    allow_fixture: bool,
+) -> dict[str, list[tuple[str, str]]]:
+    """Hash the current completed fold OOF/checkpoints without running bootstrap."""
+
+    current: dict[str, list[tuple[str, str]]] = {}
+    for arm in _CANDIDATES:
+        entries = _candidate_config_entries(manifest, arm=arm, results_root=results_root)
+        if not entries:
+            continue
+        if len(entries) != 3:
+            raise V8AggregateIntegrityError(f"incomplete frozen configs for {arm}")
+        refs: list[tuple[str, str]] = []
+        for fold in range(3):
+            entry = next((item for name, item in entries if f"fold{fold}_" in str(name)), None)
+            if not isinstance(entry, Mapping) or not isinstance(entry.get("sha256"), str):
+                raise V8AggregateIntegrityError("invalid frozen config hash")
+            _, ref = _fold_rows(
+                arm=arm,
+                fold=fold,
+                config_hash=entry["sha256"],
+                protocol=protocol,
+                manifest=manifest,
+                results_root=results_root,
+                repository_root=repository_root,
+                allow_fixture=allow_fixture,
+            )
+            identity = _ref_identity([ref])
+            if identity is None:
+                raise V8AggregateIntegrityError(f"incomplete fold refs for {arm} fold {fold}")
+            refs.extend(identity)
+        current[arm] = refs
+    return current
+
+
+def _existing_bootstrap_for_arm(
+    existing: Mapping[str, Any] | None,
+    *,
+    arm: str,
+    refs: list[dict[str, Any]],
+    resamples: int,
+    bootstrap_seed: int,
+) -> dict[str, Any] | None:
+    """Reuse one arm's signed bootstrap only when OOF/checkpoint bytes are unchanged."""
+
+    if existing is None or bootstrap_seed != _DEFAULT_BOOTSTRAP_SEED:
+        return None
+    current = _ref_identity(refs)
+    if current is None:
+        return None
+    for candidate in existing.get("candidate_results", []):
+        if not isinstance(candidate, Mapping) or candidate.get("arm") != arm:
+            continue
+        stored_refs = _ref_identity(candidate.get("refs"))
+        bootstrap = candidate.get("bootstrap")
+        if (
+            stored_refs == current
+            and isinstance(bootstrap, Mapping)
+            and bootstrap.get("resamples") == resamples
+        ):
+            return dict(bootstrap)
+    return None
+
+
+def _full_seed7_aggregate_reusable(
+    existing: Mapping[str, Any] | None,
+    *,
+    protocol: Mapping[str, Any],
+    manifest: Mapping[str, Any],
+    a5_sha256: str,
+    current_refs: Mapping[str, list[tuple[str, str]]],
+    resamples: int,
+    bootstrap_seed: int,
+    allow_fixture: bool,
+) -> bool:
+    """True when the signed screen already is the exact current OOF decision."""
+
+    if existing is None or bootstrap_seed != _DEFAULT_BOOTSTRAP_SEED:
+        return False
+    if existing.get("protocol_sha256") != protocol.get("artifact_sha256"):
+        return False
+    if existing.get("frozen_manifest_sha256") != manifest.get("artifact_sha256"):
+        return False
+    if existing.get("seed") != 7 or bool(existing.get("fixture")) != bool(allow_fixture):
+        return False
+    a5_control = existing.get("a5_control")
+    if not isinstance(a5_control, Mapping) or a5_control.get("sha256") != a5_sha256:
+        return False
+    stored_results = existing.get("candidate_results")
+    if not isinstance(stored_results, list):
+        return False
+    stored_refs: dict[str, list[tuple[str, str]]] = {}
+    for candidate in stored_results:
+        if not isinstance(candidate, Mapping):
+            return False
+        arm = candidate.get("arm")
+        identity = _ref_identity(candidate.get("refs"))
+        bootstrap = candidate.get("bootstrap")
+        if not isinstance(arm, str) or identity is None:
+            return False
+        if not isinstance(bootstrap, Mapping) or bootstrap.get("resamples") != resamples:
+            return False
+        stored_refs[arm] = identity
+    return stored_refs == dict(current_refs)
+
+
 def _bind_candidate_to_baseline_contract(
     rows: list[dict[str, str]], baseline: list[dict[str, str]]
 ) -> list[dict[str, str]]:
@@ -479,7 +623,8 @@ def aggregate_seed7(
     repository_root: Path = ROOT,
     allow_fixture: bool = False,
     resamples: int = 5000,
-    bootstrap_seed: int = 20260814,
+    bootstrap_seed: int = _DEFAULT_BOOTSTRAP_SEED,
+    existing_output: Path | None = None,
 ) -> dict[str, Any]:
     """Recompute and sign one screen decision; fixtures can never nominate a winner."""
     _closed(protocol.get("closed_evaluation", {}))
@@ -497,6 +642,27 @@ def aggregate_seed7(
     a5 = _resolve(repository_root, repository_root, source.get("path"))
     if isinstance(source.get("sha256"), str) and source["sha256"] != _sha(a5):
         raise V8AggregateIntegrityError("frozen A5 hash mismatch")
+    a5_sha256 = _sha(a5)
+    existing = _load_signed_seed7_aggregate(existing_output) if existing_output is not None else None
+    if existing is not None:
+        current_refs = _collect_current_refs(
+            protocol=protocol,
+            manifest=manifest,
+            results_root=results_root,
+            repository_root=repository_root,
+            allow_fixture=allow_fixture,
+        )
+        if _full_seed7_aggregate_reusable(
+            existing,
+            protocol=protocol,
+            manifest=manifest,
+            a5_sha256=a5_sha256,
+            current_refs=current_refs,
+            resamples=resamples,
+            bootstrap_seed=bootstrap_seed,
+            allow_fixture=allow_fixture,
+        ):
+            return existing
     base = _read_rows(a5, candidate=False)
     candidates = []
     for arm, candidate_id in _CANDIDATES.items():
@@ -534,7 +700,15 @@ def aggregate_seed7(
                 "OOF rows/folds/targets/weights differ from frozen contract"
             )
         metrics, per_sequence, per_bucket = _metrics(rows, base)
-        boot = _bootstrap(rows, base, resamples, bootstrap_seed)
+        boot = _existing_bootstrap_for_arm(
+            existing,
+            arm=arm,
+            refs=refs,
+            resamples=resamples,
+            bootstrap_seed=bootstrap_seed,
+        )
+        if boot is None:
+            boot = _bootstrap(rows, base, resamples, bootstrap_seed)
         gate = protocol.get("gates", {}).get("ttc_candidate_gate", {})
         passed = (
             math.isfinite(metrics["mid_macro_sequence"])
@@ -585,7 +759,7 @@ def aggregate_seed7(
         "candidate_results": [
             {k: v for k, v in x.items() if k not in {"rows"}} for x in candidates
         ],
-        "a5_control": {"path": str(a5), "sha256": _sha(a5)},
+        "a5_control": {"path": str(a5), "sha256": a5_sha256},
         "closed_evaluation": {
             "public_validation_used_for_selection": False,
             "private_test_opened": False,

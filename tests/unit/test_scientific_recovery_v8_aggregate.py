@@ -235,3 +235,88 @@ def test_duplicate_tokens_fail_closed(tmp_path: Path) -> None:
             allow_fixture=True,
             resamples=5,
         )
+
+
+def test_identical_signed_seed7_aggregate_reuses_bootstrap(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from e_jepa_ttc.evaluation import scientific_recovery_v8_aggregate as module
+
+    protocol, manifest, root = _fixture(tmp_path)
+    calls = {"n": 0}
+    original = module._bootstrap
+
+    def counted(*args: object, **kwargs: object) -> dict[str, object]:
+        calls["n"] += 1
+        return original(*args, **kwargs)
+
+    monkeypatch.setattr(module, "_bootstrap", counted)
+    first = module.aggregate_seed7(
+        protocol=protocol,
+        manifest=manifest,
+        results_root=root,
+        repository_root=tmp_path,
+        allow_fixture=True,
+        resamples=25,
+    )
+    output = tmp_path / "aggregate_seed7.json"
+    output.write_text(json.dumps(first, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    assert calls["n"] == 1
+    reused = module.aggregate_seed7(
+        protocol=protocol,
+        manifest=manifest,
+        results_root=root,
+        repository_root=tmp_path,
+        allow_fixture=True,
+        resamples=25,
+        existing_output=output,
+    )
+    assert reused["artifact_sha256"] == first["artifact_sha256"]
+    assert calls["n"] == 1
+
+
+def test_changed_prediction_hash_does_not_reuse_bootstrap(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from e_jepa_ttc.evaluation import scientific_recovery_v8_aggregate as module
+
+    protocol, manifest, root = _fixture(tmp_path)
+    first = module.aggregate_seed7(
+        protocol=protocol,
+        manifest=manifest,
+        results_root=root,
+        repository_root=tmp_path,
+        allow_fixture=True,
+        resamples=25,
+    )
+    output = tmp_path / "aggregate_seed7.json"
+    output.write_text(json.dumps(first, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    path = root / "runs" / "timevol20_3_fold0_seed7" / "dev_predictions.csv"
+    rows = list(csv.DictReader(path.open(encoding="utf-8")))
+    rows[0]["prediction_ttc"] = "9.0"
+    _write_csv(path, rows)
+    summary_path = root / "runs" / "timevol20_3_fold0_seed7" / "summary.json"
+    summary = json.loads(summary_path.read_text(encoding="utf-8"))
+    summary["dev_predictions"]["sha256"] = hashlib.sha256(path.read_bytes()).hexdigest()
+    summary.pop("artifact_sha256", None)
+    sign_artifact(summary)
+    summary_path.write_text(json.dumps(summary), encoding="utf-8")
+    calls = {"n": 0}
+    original = module._bootstrap
+
+    def counted(*args: object, **kwargs: object) -> dict[str, object]:
+        calls["n"] += 1
+        return original(*args, **kwargs)
+
+    monkeypatch.setattr(module, "_bootstrap", counted)
+    second = module.aggregate_seed7(
+        protocol=protocol,
+        manifest=manifest,
+        results_root=root,
+        repository_root=tmp_path,
+        allow_fixture=True,
+        resamples=25,
+        existing_output=output,
+    )
+    assert calls["n"] == 1
+    assert second["artifact_sha256"] != first["artifact_sha256"]
