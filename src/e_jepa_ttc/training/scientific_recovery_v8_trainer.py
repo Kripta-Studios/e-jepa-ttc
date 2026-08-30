@@ -9,9 +9,10 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import os
 import subprocess
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from dataclasses import asdict, fields
 from datetime import UTC, datetime
 from pathlib import Path
@@ -28,6 +29,7 @@ from e_jepa_ttc.data.scientific_recovery_v8_cache import (
     ScientificRecoveryV8CacheDataset,
     collate_scientific_recovery_v8,
 )
+from e_jepa_ttc.evaluation.scientific_recovery_v8 import validate_oof_frame
 from e_jepa_ttc.losses.causal_scale_ttc import CausalScaleTTCLossConfig, causal_scale_ttc_loss
 from e_jepa_ttc.models.causal_scale_ttc import CausalScaleTTCConfig
 from e_jepa_ttc.reproducibility import environment_snapshot, resolve_device
@@ -102,6 +104,48 @@ def _read_signed_mapping(path: Path) -> dict[str, Any]:
     if not isinstance(payload, dict) or not verify_artifact_hash(payload):
         raise ValueError(f"signed artifact hash is invalid: {path}")
     return payload
+
+
+def export_v8_point_predictions(
+    predictions: Sequence[object],
+    log_variances: Sequence[object],
+    known_mask: Sequence[object] | None,
+) -> tuple[list[float], list[float], list[bool], list[str]]:
+    """Record A5 unknown-support NaNs instead of aborting a selectable checkpoint.
+
+    Causal-scale eval writes NaN when ``known_mask`` is false and counts those
+    rows in ``failure_rate_pct``. The OOF CSV contract already requires
+    ``failure_reason`` for non-finite rows; the TTC candidate gate then decides
+    whether ``finite_fraction == 1``.
+    """
+
+    if len(log_variances) != len(predictions):
+        raise ValueError("ttc_log_variance length differs from predictions")
+    known_list = None if known_mask is None else list(known_mask)
+    if known_list is not None and len(known_list) != len(predictions):
+        raise ValueError("known_mask length differs from predictions")
+    exported_pred: list[float] = []
+    exported_var: list[float] = []
+    finite_flags: list[bool] = []
+    reasons: list[str] = []
+    for index, raw in enumerate(predictions):
+        value = float(raw)
+        is_finite = math.isfinite(value)
+        known = True if known_list is None else bool(known_list[index])
+        if is_finite:
+            variance = float(log_variances[index])
+            if not math.isfinite(variance):
+                raise ValueError("finite point TTC lacks finite log-variance")
+            exported_pred.append(value)
+            exported_var.append(variance)
+            finite_flags.append(True)
+            reasons.append("")
+            continue
+        exported_pred.append(float("nan"))
+        exported_var.append(float("nan"))
+        finite_flags.append(False)
+        reasons.append("no_known_causal_support" if not known else "non_finite_point_ttc")
+    return exported_pred, exported_var, finite_flags, reasons
 
 
 def _binding_record(path: Path, *, file_sha256: str, artifact_sha256: str) -> dict[str, str]:
@@ -395,6 +439,16 @@ def run_v8_temporal_training(
     predictions_path = output_dir / "dev_predictions.csv"
     tokens = [str(value) for value in validation["sample_tokens"]]
     ttc_log_variance = validation.get("ttc_log_variance", [0.0] * len(tokens))
+    known_mask = validation.get("known_mask")
+    if not isinstance(known_mask, list):
+        known_mask = None
+    prediction_ttc, prediction_log_variance, finite_flags, failure_reasons = (
+        export_v8_point_predictions(
+            validation["prediction_ttc_s"],
+            ttc_log_variance,
+            known_mask,
+        )
+    )
     temporal_diag = [dev_temporal_diagnostics[token] for token in tokens]
     frame = pd.DataFrame(
         {
@@ -405,13 +459,10 @@ def run_v8_temporal_training(
             "seed": train_cfg.seed,
             "target_ttc": validation["target_ttc_s"],
             "sample_weight": [dev_sample_weights[token] for token in tokens],
-            "prediction_ttc": validation["prediction_ttc_s"],
-            "prediction_log_variance": ttc_log_variance,
-            "finite": [
-                bool(torch.isfinite(torch.tensor(value)))
-                for value in validation["prediction_ttc_s"]
-            ],
-            "failure_reason": "",
+            "prediction_ttc": prediction_ttc,
+            "prediction_log_variance": prediction_log_variance,
+            "finite": finite_flags,
+            "failure_reason": failure_reasons,
             "event_count": [value[0] for value in temporal_diag],
             "event_rate": [value[1] for value in temporal_diag],
             "support_ms": [value[2] for value in temporal_diag],
@@ -420,8 +471,7 @@ def run_v8_temporal_training(
             "checkpoint_sha256": checkpoint_sha256,
         }
     )
-    if not bool(frame["finite"].all()):
-        raise FloatingPointError("V8 fold produced non-finite point predictions")
+    validate_oof_frame(frame, label="V8 fold dev predictions")
     frame.to_csv(predictions_path, index=False, lineterminator="\n")
     metrics_path = output_dir / "train_metrics.json"
     _atomic_json(
@@ -489,6 +539,7 @@ def run_v8_temporal_training(
 
 __all__ = [
     "assert_v8_dino_teacher_matches_source_rows",
+    "export_v8_point_predictions",
     "resolve_v8_cache_protocol_binding",
     "resolve_v8_frozen_manifest_binding",
     "run_v8_temporal_training",

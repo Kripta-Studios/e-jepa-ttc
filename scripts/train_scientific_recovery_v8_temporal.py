@@ -33,7 +33,7 @@ def main() -> int:
             resume=args.resume,
             fixture_smoke=args.fixture_smoke,
         )
-    except (OSError, ValueError, RuntimeError) as error:
+    except (OSError, ValueError, RuntimeError, ArithmeticError) as error:
         parser.exit(2, f"V8 temporal training refused: {type(error).__name__}: {error}\n")
     print(json.dumps({"status": result["status"], "run_name": result["run_name"]}))
     return 0
