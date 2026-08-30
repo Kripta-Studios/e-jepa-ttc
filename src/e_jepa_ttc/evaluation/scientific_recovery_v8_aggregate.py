@@ -58,7 +58,10 @@ def contract_hashes(rows: list[dict[str, str]]) -> dict[str, str]:
             [{"target_ttc_s": r["target_ttc"], "token_id": r["token_id"]} for r in rows]
         ),
         "mid_sample_weight_sha256": _records_hash(
-            [{"sample_weight": expected_weights[r["token_id"]], "token_id": r["token_id"]} for r in rows]
+            [
+                {"sample_weight": expected_weights[r["token_id"]], "token_id": r["token_id"]}
+                for r in rows
+            ]
         ),
         "fold_assignment_sha256": _records_hash(
             [{k: r[k] for k in ("outer_fold", "sequence_id", "token_id")} for r in rows]
@@ -68,6 +71,7 @@ def contract_hashes(rows: list[dict[str, str]]) -> dict[str, str]:
 
 def _expected_weights(rows: list[dict[str, str]]) -> dict[str, str]:
     """Recreate the frozen Decimal macro-MiD coefficient per token."""
+
     def bucket(value: Decimal) -> tuple[str, Decimal]:
         if Decimal("0") < value <= Decimal("3"):
             return "crucial", Decimal("0.5")
@@ -78,10 +82,13 @@ def _expected_weights(rows: list[dict[str, str]]) -> dict[str, str]:
         if Decimal("-10") < value <= Decimal("0"):
             return "negative", Decimal("0.1")
         raise V8AggregateIntegrityError("target outside frozen signed MiD domain")
+
     parsed = [(r, Decimal(r["target_ttc"])) for r in rows]
     counts = Counter((r["sequence_id"], bucket(value)[0]) for r, value in parsed)
     return {
-        r["token_id"]: str(bucket(value)[1] / Decimal(9) / counts[(r["sequence_id"], bucket(value)[0])])
+        r["token_id"]: str(
+            bucket(value)[1] / Decimal(9) / counts[(r["sequence_id"], bucket(value)[0])]
+        )
         for r, value in parsed
     }
 
@@ -97,6 +104,30 @@ def _closed(value: object) -> None:
             _closed(item)
     elif isinstance(value, str) and any(x in value.lower().replace("\\", "/") for x in _SEALED):
         raise V8AggregateIntegrityError("sealed evaluation source rejected")
+
+
+def _first_present(row: Mapping[str, str | None], choices: tuple[str, ...]) -> str | None:
+    return next((row.get(choice) for choice in choices if row.get(choice) not in (None, "")), None)
+
+
+def _finite_flag(row: Mapping[str, str]) -> bool | None:
+    raw = row.get("finite")
+    if raw is None or str(raw).strip() == "":
+        return None
+    token = str(raw).strip().lower()
+    if token in {"true", "1", "yes"}:
+        return True
+    if token in {"false", "0", "no"}:
+        return False
+    raise V8AggregateIntegrityError("invalid finite flag")
+
+
+def _documented_nonfinite_prediction(row: Mapping[str, str], raw_prediction: str | None) -> bool:
+    """True when the OOF contract already recorded an unknown/failed point TTC."""
+    token = "" if raw_prediction is None else str(raw_prediction).strip()
+    is_blank_or_nan = token == "" or token.lower() in {"nan", "+nan", "-nan", "inf", "+inf", "-inf"}
+    reason = str(row.get("failure_reason") or "").strip()
+    return _finite_flag(row) is False and bool(reason) and is_blank_or_nan
 
 
 def _read_rows(path: Path, *, candidate: bool) -> list[dict[str, str]]:
@@ -116,28 +147,40 @@ def _read_rows(path: Path, *, candidate: bool) -> list[dict[str, str]]:
     }
     out = []
     for row in raw:
-        normalized = {}
+        normalized = {k: str(v) for k, v in row.items() if v is not None}
         for key, choices in aliases.items():
-            value = next(
-                (row.get(choice) for choice in choices if row.get(choice) not in (None, "")), None
-            )
+            value = _first_present(row, choices)
             if value is None and key == "sample_weight" and not candidate:
                 value = "1"
             if value is None and key == "seed" and not candidate:
                 value = "7"
+            if (
+                value is None
+                and key == "prediction_ttc"
+                and _documented_nonfinite_prediction(row, _first_present(row, choices))
+            ):
+                value = "nan"
             if value is None:
                 raise V8AggregateIntegrityError(f"missing {key} in {path}")
             normalized[key] = str(value)
-        normalized.update({k: str(v) for k, v in row.items() if v is not None})
         out.append(normalized)
     if len({r["token_id"] for r in out}) != len(out):
         raise V8AggregateIntegrityError("duplicate token_id in predictions")
     for r in out:
         try:
-            values = [float(r[k]) for k in ("target_ttc", "prediction_ttc", "sample_weight")]
+            target = float(r["target_ttc"])
+            weight = float(r["sample_weight"])
+            prediction = float(r["prediction_ttc"])
         except ValueError as e:
             raise V8AggregateIntegrityError("non-numeric OOF value") from e
-        if not all(math.isfinite(x) for x in values):
+        if not math.isfinite(target) or not math.isfinite(weight):
+            raise V8AggregateIntegrityError("NaN or infinity in OOF predictions")
+        if math.isfinite(prediction):
+            if _finite_flag(r) is False:
+                raise V8AggregateIntegrityError("finite prediction marked non-finite")
+            continue
+        reason = str(r.get("failure_reason") or "").strip()
+        if _finite_flag(r) is not False or not reason:
             raise V8AggregateIntegrityError("NaN or infinity in OOF predictions")
     return out
 
@@ -243,8 +286,10 @@ def _metrics(
     bm = sequence_macro_signed_metrics(target, base, seq)
     mid = float(cm["sequence_macro_paper_MiD_overall"])
     base_mid = float(bm["sequence_macro_paper_MiD_overall"])
+    finite_fraction = float(np.isfinite(pred).mean())
     if not math.isfinite(mid) or not math.isfinite(base_mid):
-        raise V8AggregateIntegrityError("non-finite sequence macro MiD")
+        if finite_fraction == 1.0:
+            raise V8AggregateIntegrityError("non-finite sequence macro MiD")
     failure = float(np.mean(~np.isfinite(pred) | (np.abs(pred) < 0.1)))
     per_seq = {}
     per_bucket = {}
@@ -295,7 +340,7 @@ def _metrics(
         {
             "mid_macro_sequence": mid,
             "delta_mid_vs_a5": mid - base_mid,
-            "finite_fraction": float(np.isfinite(pred).mean()),
+            "finite_fraction": finite_fraction,
             "failure_rate": failure,
             "coverage_drop_max_pp": 0.0,
         },
@@ -336,13 +381,21 @@ def _bootstrap(
                         br.append(x)
         m, _, _ = _metrics(cr, br)
         deltas.append(m["delta_mid_vs_a5"])
+    arr = np.asarray(deltas, dtype=np.float64)
+    finite = arr[np.isfinite(arr)]
+    if finite.size == 0:
+        return {
+            "probability_delta_lt_zero": 0.0,
+            "ci95_low": float("nan"),
+            "ci95_high": float("nan"),
+            "resamples": n,
+        }
     return {
-        "probability_delta_lt_zero": float(np.mean(np.asarray(deltas) < 0)),
-        "ci95_low": float(np.quantile(deltas, 0.025)),
-        "ci95_high": float(np.quantile(deltas, 0.975)),
+        "probability_delta_lt_zero": float(np.mean(arr < 0)),
+        "ci95_low": float(np.quantile(finite, 0.025)),
+        "ci95_high": float(np.quantile(finite, 0.975)),
         "resamples": n,
     }
-
 
 
 def _implementation_commit(repository_root: Path) -> str:
@@ -374,9 +427,7 @@ def _candidate_config_entries(
     template = templates.get(arm) if isinstance(templates, Mapping) else None
     if not isinstance(template, Mapping):
         return []
-    presence = [
-        (results_root / "runs" / f"{arm}_fold{fold}_seed7").exists() for fold in range(3)
-    ]
+    presence = [(results_root / "runs" / f"{arm}_fold{fold}_seed7").exists() for fold in range(3)]
     if not any(presence):
         return []
     if not all(presence):
@@ -404,8 +455,12 @@ def _bind_candidate_to_baseline_contract(
         if abs(float(row["target_ttc"]) - float(base["target_ttc"])) > 1e-6:
             raise V8AggregateIntegrityError("candidate target differs from baseline")
         expected_weight = float(expected_weights[row["token_id"]])
-        if not math.isclose(float(row["sample_weight"]), expected_weight, rel_tol=2e-5, abs_tol=1e-10):
-            raise V8AggregateIntegrityError("candidate MiD sample weight differs from frozen definition")
+        if not math.isclose(
+            float(row["sample_weight"]), expected_weight, rel_tol=2e-5, abs_tol=1e-10
+        ):
+            raise V8AggregateIntegrityError(
+                "candidate MiD sample weight differs from frozen definition"
+            )
         item = dict(row)
         item["sequence_id"] = base["sequence_id"]
         item["track_id"] = base["track_id"]
@@ -414,6 +469,7 @@ def _bind_candidate_to_baseline_contract(
         item["sample_weight"] = expected_weights[row["token_id"]]
         normalized.append(item)
     return normalized
+
 
 def aggregate_seed7(
     *,
@@ -426,8 +482,8 @@ def aggregate_seed7(
     bootstrap_seed: int = 20260814,
 ) -> dict[str, Any]:
     """Recompute and sign one screen decision; fixtures can never nominate a winner."""
-    _closed(protocol)
-    _closed(manifest)
+    _closed(protocol.get("closed_evaluation", {}))
+    _closed(manifest.get("closed_evaluation", {}))
     configs = manifest.get("enabled_seed7_configs")
     if not isinstance(configs, Mapping):
         raise V8AggregateIntegrityError("missing frozen configs")
@@ -481,7 +537,9 @@ def aggregate_seed7(
         boot = _bootstrap(rows, base, resamples, bootstrap_seed)
         gate = protocol.get("gates", {}).get("ttc_candidate_gate", {})
         passed = (
-            metrics["delta_mid_vs_a5"] <= float(gate.get("delta_MiD_max", -3))
+            math.isfinite(metrics["mid_macro_sequence"])
+            and math.isfinite(metrics["delta_mid_vs_a5"])
+            and metrics["delta_mid_vs_a5"] <= float(gate.get("delta_MiD_max", -3))
             and boot["probability_delta_lt_zero"]
             >= float(gate.get("bootstrap_probability_delta_below_zero_min", 0.9))
             and metrics["finite_fraction"] == 1

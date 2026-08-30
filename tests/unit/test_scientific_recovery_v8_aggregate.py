@@ -145,6 +145,82 @@ def test_fixture_smoke_is_signed_but_cannot_nominate(tmp_path: Path) -> None:
     assert report["multiseed_replication_candidate"] is False
 
 
+def test_protocol_sealed_authorization_name_is_not_an_opened_source(tmp_path: Path) -> None:
+    protocol, manifest, root = _fixture(tmp_path)
+    protocol["external_confirmation"] = {
+        "name": "single_user_authorized_sealed_public_validation",
+        "requires_user_authorization": True,
+        "selection_or_tuning_forbidden": True,
+    }
+    report = aggregate_seed7(
+        protocol=protocol,
+        manifest=manifest,
+        results_root=root,
+        repository_root=tmp_path,
+        allow_fixture=True,
+        resamples=25,
+    )
+    assert verify_artifact_hash(report)
+    assert report["fixture"] is True
+
+
+def test_opened_public_validation_flag_still_fails_closed(tmp_path: Path) -> None:
+    protocol, manifest, root = _fixture(tmp_path)
+    protocol["closed_evaluation"]["public_validation_used_for_selection"] = True
+    with pytest.raises(V8AggregateIntegrityError, match="sealed evaluation flag is not false"):
+        aggregate_seed7(
+            protocol=protocol,
+            manifest=manifest,
+            results_root=root,
+            repository_root=tmp_path,
+            allow_fixture=True,
+            resamples=5,
+        )
+
+
+def test_documented_unknown_support_empty_prediction_does_not_abort(tmp_path: Path) -> None:
+    protocol, manifest, root = _fixture(tmp_path)
+    path = root / "runs" / "timevol20_3_fold0_seed7" / "dev_predictions.csv"
+    rows = list(csv.DictReader(path.open(encoding="utf-8")))
+    rows[0]["prediction_ttc"] = ""
+    rows[0]["prediction_log_variance"] = ""
+    rows[0]["finite"] = "False"
+    rows[0]["failure_reason"] = "no_known_causal_support"
+    _write_csv(path, rows)
+    report = aggregate_seed7(
+        protocol=protocol,
+        manifest=manifest,
+        results_root=root,
+        repository_root=tmp_path,
+        allow_fixture=True,
+        resamples=25,
+    )
+    assert verify_artifact_hash(report)
+    candidate = report["candidate_results"][0]
+    assert candidate["metrics"]["finite_fraction"] < 1.0
+    assert candidate["passed"] is False
+    assert report["candidate_id"] == "A5"
+
+
+def test_empty_prediction_without_failure_reason_still_fails_closed(tmp_path: Path) -> None:
+    protocol, manifest, root = _fixture(tmp_path)
+    path = root / "runs" / "timevol20_3_fold0_seed7" / "dev_predictions.csv"
+    rows = list(csv.DictReader(path.open(encoding="utf-8")))
+    rows[0]["prediction_ttc"] = ""
+    rows[0]["finite"] = "False"
+    rows[0]["failure_reason"] = ""
+    _write_csv(path, rows)
+    with pytest.raises(V8AggregateIntegrityError, match="missing prediction_ttc"):
+        aggregate_seed7(
+            protocol=protocol,
+            manifest=manifest,
+            results_root=root,
+            repository_root=tmp_path,
+            allow_fixture=True,
+            resamples=5,
+        )
+
+
 def test_duplicate_tokens_fail_closed(tmp_path: Path) -> None:
     protocol, manifest, root = _fixture(tmp_path)
     path = root / "runs" / "timevol20_3_fold0_seed7" / "dev_predictions.csv"
