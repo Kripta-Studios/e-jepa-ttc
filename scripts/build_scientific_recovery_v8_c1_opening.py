@@ -17,6 +17,7 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from e_jepa_ttc.artifacts.hashing import sign_artifact, verify_artifact_hash  # noqa: E402
 from e_jepa_ttc.evaluation.scientific_recovery_v8_runner import (  # noqa: E402
+    V8IntegrityError,
     assert_adaptive_gate,
     verify_frozen_inputs,
 )
@@ -122,17 +123,37 @@ def build_autopsy_route(frozen: Any, protocol_path: Path, source_path: Path, out
     )
 
 
-def build_router_route(frozen: Any, protocol_path: Path, source_path: Path, output_root: Path) -> Path | None:
+def load_router_oof_frame(source: dict[str, Any], *, results_root: Path) -> pd.DataFrame:
+    """Load choose_c2f evidence from the hash-bound official fold CSVs, not a sidecar OOF."""
+
+    predictions = source.get("prediction_sha256")
+    if not isinstance(predictions, dict) or not predictions:
+        raise ValueError("router aggregate lacks fold prediction hashes")
+    frames: list[pd.DataFrame] = []
+    for fold, expected in sorted(predictions.items(), key=lambda item: int(item[0])):
+        path = (
+            results_root
+            / "results"
+            / "runs"
+            / f"router_fold{fold}_seed7"
+            / "dev_predictions.csv"
+        )
+        if not path.is_file() or sha(path) != expected:
+            raise ValueError(f"router fold {fold} prediction CSV binding is invalid")
+        frames.append(pd.read_csv(path))
+    frame = pd.concat(frames, ignore_index=True)
+    if "choose_c2f" not in frame.columns:
+        raise ValueError("router OOF lacks choose_c2f")
+    return frame
+
+
+def build_router_route(
+    frozen: Any, protocol_path: Path, source_path: Path, output_root: Path, *, results_root: Path
+) -> Path | None:
     source = read_signed(source_path)
     if source.get("gate_decision", {}).get("passed") is not True:
         return None
-    csv_ref = source.get("oof_csv", {})
-    csv_path = ROOT / str(csv_ref.get("path", ""))
-    if not csv_path.is_file() or sha(csv_path) != csv_ref.get("sha256"):
-        raise ValueError("router aggregate OOF binding is invalid")
-    frame = pd.read_csv(csv_path)
-    if "choose_c2f" not in frame:
-        raise ValueError("router OOF lacks choose_c2f")
+    frame = load_router_oof_frame(source, results_root=results_root)
     def stable(part: pd.DataFrame) -> bool:
         fraction = float(part["choose_c2f"].astype(float).mean())
         return len(part) > 0 and 0.02 <= fraction <= 0.98
@@ -267,20 +288,22 @@ def main() -> int:
                 stale.unlink()
         created: list[Path] = []
         autopsy = args.results_root / "autopsy" / "mechanism_autopsy.json"
-        router = args.results_root / "results" / "router" / "aggregate_seed7" / "router_seed7_aggregate.json"
+        router = args.results_root / "arm_aggregates" / "router_seed7_aggregate.json"
         exp6 = args.results_root / "arm_aggregates" / "exp6_3_seed7_aggregate.json"
         if autopsy.is_file():
             value = build_autopsy_route(frozen, args.protocol, autopsy, out)
             if value: created.append(value)
         if router.is_file():
-            value = build_router_route(frozen, args.protocol, router, out)
+            value = build_router_route(
+                frozen, args.protocol, router, out, results_root=args.results_root
+            )
             if value: created.append(value)
         if exp6.is_file():
             value = build_exp6_route(frozen, args.protocol, exp6, out)
             if value: created.append(value)
         if created:
             assert_adaptive_gate(results_root=args.results_root, frozen=frozen)
-    except (OSError, ValueError, KeyError) as error:
+    except (OSError, ValueError, KeyError, V8IntegrityError) as error:
         p.exit(2, f"V8 C1 opening build failed closed: {type(error).__name__}: {error}\n")
     print(json.dumps({"status": "open" if created else "closed", "artifacts": [str(x) for x in created]}, indent=2))
     return 0

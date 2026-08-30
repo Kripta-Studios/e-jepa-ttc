@@ -21,10 +21,15 @@ from e_jepa_ttc.evaluation.scientific_recovery_v8_runner import (  # noqa: E402
 )
 
 ARTIFACT_TYPES = {
+    "router": "scientific_recovery_v8_router_seed7_aggregate_v1",
     "timevol20_3": "scientific_recovery_v8_timevol20_3_seed7_aggregate_v1",
     "exp6_3": "scientific_recovery_v8_exp6_3_seed7_aggregate_v1",
     "pair20_2": "scientific_recovery_v8_pair20_2_seed7_aggregate_v1",
     "gated_exp6_3": "scientific_recovery_v8_gated_exp6_3_seed7_aggregate_v1",
+}
+STAGE_BY_ARM = {
+    "router": "router",
+    "gated_exp6_3": "adaptive",
 }
 
 
@@ -93,7 +98,7 @@ def materialize(
             "artifact_type": ARTIFACT_TYPES[arm],
             "schema_version": frozen.protocol["schema_version"],
             "status": "completed",
-            "stage": "temporal" if arm != "gated_exp6_3" else "adaptive",
+            "stage": STAGE_BY_ARM.get(arm, "temporal"),
             "arm": arm,
             "candidate_id": candidate["candidate_id"],
             "git_commit": frozen.protocol["git_base_commit"],
