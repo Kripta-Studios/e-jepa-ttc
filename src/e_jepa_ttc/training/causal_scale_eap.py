@@ -1771,7 +1771,9 @@ def train_real_causal_scale(
         else:
             eligible = epoch > training_config.foreground_warmup_epochs
             selectable = bool(
-                selection is not None and eligible and selection["complete_sequence_coverage"] == 1.0
+                selection is not None
+                and eligible
+                and selection["complete_sequence_coverage"] == 1.0
             )
             if selectable and _is_better(selection, best_selection):
                 best_state = copy.deepcopy(model.state_dict())
@@ -1799,6 +1801,13 @@ def train_real_causal_scale(
             break
     if best_state is None or best_selection is None or best_validation is None:
         raise RuntimeError("real causal-scale training produced no selectable checkpoint")
+    budget_exhausted_before_new_epoch = last_completed_epoch < start_epoch
+    if (
+        last_path is not None
+        and budget_exhausted_before_new_epoch
+        and not (resume and best_state is not None and best_selection is not None)
+    ):
+        raise RuntimeError("runtime budget expired before a resumable epoch completed")
     model.load_state_dict(best_state)
     final_primary_encoder_sha256 = _module_tensor_sha256(model.encoder)
     initialization["final_primary_encoder_sha256"] = final_primary_encoder_sha256
@@ -1824,8 +1833,6 @@ def train_real_causal_scale(
     best_validation = post_selection_validation
     elapsed_total = prior_elapsed + time.perf_counter() - started
     save_progress(status="completed", epoch=last_completed_epoch, elapsed=elapsed_total)
-    if last_path is not None and last_completed_epoch < start_epoch:
-        raise RuntimeError("runtime budget expired before a resumable epoch completed")
     return CausalScaleEAPTrainingResult(
         model=model,
         history=history,

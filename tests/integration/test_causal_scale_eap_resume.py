@@ -160,9 +160,7 @@ def test_real_causal_scale_resume_matches_uninterrupted_epochs(tmp_path: Path) -
         map_location="cpu",
         weights_only=False,
     )
-    saved = torch.load(
-        tmp_path / "resumed" / "last.pt", map_location="cpu", weights_only=False
-    )
+    saved = torch.load(tmp_path / "resumed" / "last.pt", map_location="cpu", weights_only=False)
     assert saved["epoch"] == 4
     assert saved["best_epoch"] == resumed.best_epoch
     assert len(saved["history"]) == 4
@@ -182,26 +180,60 @@ def test_real_causal_scale_resume_matches_uninterrupted_epochs(tmp_path: Path) -
         "numpy_random_state",
     ):
         _assert_nested_equal(full_saved[key], saved[key])
-    for full_epoch, resumed_epoch in zip(
-        full_saved["history"], saved["history"], strict=True
-    ):
+    for full_epoch, resumed_epoch in zip(full_saved["history"], saved["history"], strict=True):
         _assert_nested_equal(
             {key: value for key, value in full_epoch.items() if key != "elapsed_seconds"},
-            {
-                key: value
-                for key, value in resumed_epoch.items()
-                if key != "elapsed_seconds"
-            },
+            {key: value for key, value in resumed_epoch.items() if key != "elapsed_seconds"},
         )
-    progress = json.loads(
-        (tmp_path / "resumed" / "progress.json").read_text(encoding="utf-8")
-    )
+    progress = json.loads((tmp_path / "resumed" / "progress.json").read_text(encoding="utf-8"))
     assert progress["artifact_type"] == "causal_scale_eap_safe_progress_v1"
     assert progress["status"] == "completed"
     assert progress["epoch"] == 4
     assert progress["best_epoch"] == resumed.best_epoch
     assert "model_state_dict" not in progress
     assert "checkpoint" not in progress
+
+
+def test_real_causal_scale_resume_signs_when_runtime_budget_already_exhausted(
+    tmp_path: Path,
+) -> None:
+    train = _TinyRealDataset(seed=101, sequence_id="train-sequence")
+    validation = _TinyRealDataset(seed=202, sequence_id="validation-sequence")
+    device = torch.device("cpu")
+    loss = CausalScaleTTCLossConfig(log_ratio_tail_weight=2.0)
+    state = tmp_path / "state"
+    first = train_real_causal_scale(
+        _model_config(),
+        _training_config(),
+        loss,
+        train,
+        validation,
+        device,
+        checkpoint_dir=state,
+        stop_after_epoch=2,
+    )
+    last_path = state / "last.pt"
+    saved = torch.load(last_path, map_location="cpu", weights_only=False)
+    saved["elapsed_seconds"] = 10_000.0
+    torch.save(saved, last_path)
+
+    resumed = train_real_causal_scale(
+        _model_config(),
+        _training_config(),
+        loss,
+        train,
+        validation,
+        device,
+        checkpoint_dir=state,
+        resume=True,
+    )
+
+    assert resumed.best_epoch == first.best_epoch
+    assert resumed.best_selection == first.best_selection
+    assert len(resumed.history) == 2
+    progress = json.loads((state / "progress.json").read_text(encoding="utf-8"))
+    assert progress["status"] == "completed"
+    assert progress["epoch"] == 2
 
 
 def test_real_causal_scale_resume_rejects_changed_contract(tmp_path: Path) -> None:

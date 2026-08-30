@@ -21,7 +21,7 @@ import pandas as pd
 import torch
 import yaml
 
-from e_jepa_ttc.artifacts.hashing import sign_artifact
+from e_jepa_ttc.artifacts.hashing import sign_artifact, verify_artifact_hash
 from e_jepa_ttc.data.dinov3_relational_teacher_cache import DINOv3RelationalTeacherDataset
 from e_jepa_ttc.data.scientific_recovery_v8_adapter import V8ToObjectEventV4Dataset
 from e_jepa_ttc.data.scientific_recovery_v8_cache import (
@@ -92,6 +92,128 @@ def _artifact_hash_from_ref(value: object) -> str | None:
     if isinstance(value, str) and len(value) == 64:
         return value
     return None
+
+
+def _read_signed_mapping(path: Path) -> dict[str, Any]:
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as error:
+        raise ValueError(f"signed artifact is invalid JSON: {path}") from error
+    if not isinstance(payload, dict) or not verify_artifact_hash(payload):
+        raise ValueError(f"signed artifact hash is invalid: {path}")
+    return payload
+
+
+def _binding_record(path: Path, *, file_sha256: str, artifact_sha256: str) -> dict[str, str]:
+    return {
+        "path": path.as_posix(),
+        "sha256": file_sha256,
+        "artifact_sha256": artifact_sha256,
+    }
+
+
+def resolve_v8_cache_protocol_binding(
+    cache_manifest: Mapping[str, Any],
+) -> tuple[str, dict[str, str]]:
+    """Bind fold results to the signed protocol via the cache file-hash fields.
+
+    Production caches store ``protocol_path`` and ``protocol_sha256`` (file hash).
+    They do not store a nested ``protocol.artifact_sha256`` object. Fold summaries
+    still need the signed protocol artifact hash after the file bytes are verified.
+    """
+
+    nested_hash = _artifact_hash_from_ref(cache_manifest.get("protocol"))
+    path_raw = cache_manifest.get("protocol_path")
+    expected_file = cache_manifest.get("protocol_sha256")
+    if isinstance(path_raw, str) and path_raw:
+        path = Path(path_raw)
+        if not path.is_file():
+            raise ValueError(f"signed V8 cache protocol path is missing: {path}")
+        if not isinstance(expected_file, str) or len(expected_file) != 64:
+            raise ValueError("signed V8 cache lacks protocol file SHA-256")
+        file_sha256 = _sha(path)
+        if file_sha256 != expected_file:
+            raise ValueError("protocol file hash differs from signed V8 cache binding")
+        payload = _read_signed_mapping(path)
+        artifact = payload.get("artifact_sha256")
+        if not isinstance(artifact, str) or len(artifact) != 64:
+            raise ValueError("signed V8 protocol lacks artifact_sha256")
+        if nested_hash is not None and nested_hash != artifact:
+            raise ValueError("cache protocol artifact hash disagrees with protocol file")
+        return artifact, _binding_record(path, file_sha256=file_sha256, artifact_sha256=artifact)
+    if nested_hash is not None:
+        nested = cache_manifest.get("protocol")
+        path_value = ""
+        file_value = nested_hash
+        if isinstance(nested, Mapping):
+            path_value = str(nested.get("path", ""))
+            raw_file = nested.get("sha256")
+            if isinstance(raw_file, str) and len(raw_file) == 64:
+                file_value = raw_file
+        return nested_hash, {
+            "path": path_value,
+            "sha256": file_value,
+            "artifact_sha256": nested_hash,
+        }
+    raise ValueError("signed V8 cache lacks protocol artifact bindings")
+
+
+def _frozen_manifest_lists_fold_config(
+    payload: Mapping[str, Any], *, config_path: Path, config_sha256: str
+) -> bool:
+    listed = payload.get("enabled_seed7_configs")
+    if not isinstance(listed, Mapping):
+        return False
+    name = config_path.name
+    for item in listed.values():
+        if not isinstance(item, Mapping):
+            continue
+        if item.get("sha256") != config_sha256:
+            continue
+        raw = item.get("path")
+        if isinstance(raw, str) and Path(raw).name == name:
+            return True
+    return False
+
+
+def resolve_v8_frozen_manifest_binding(
+    cache_manifest: Mapping[str, Any], *, config_path: Path
+) -> tuple[str, dict[str, str]]:
+    """Bind fold results to the freeze file that lists this yaml.
+
+    Temporal caches are protocol-identity-bound and never wrote a nested
+    ``frozen_manifest`` object. The training-time freeze lives beside the fold yaml.
+    """
+
+    path = config_path.parent / "frozen_manifest.json"
+    nested_hash = _artifact_hash_from_ref(cache_manifest.get("frozen_manifest"))
+    if not path.is_file():
+        if nested_hash is not None:
+            nested = cache_manifest.get("frozen_manifest")
+            path_value = ""
+            file_value = nested_hash
+            if isinstance(nested, Mapping):
+                path_value = str(nested.get("path", ""))
+                raw_file = nested.get("sha256")
+                if isinstance(raw_file, str) and len(raw_file) == 64:
+                    file_value = raw_file
+            return nested_hash, {
+                "path": path_value,
+                "sha256": file_value,
+                "artifact_sha256": nested_hash,
+            }
+        raise ValueError("signed V8 cache lacks frozen-manifest artifact bindings")
+    payload = _read_signed_mapping(path)
+    artifact = payload.get("artifact_sha256")
+    if not isinstance(artifact, str) or len(artifact) != 64:
+        raise ValueError("signed V8 frozen manifest lacks artifact_sha256")
+    if not _frozen_manifest_lists_fold_config(
+        payload, config_path=config_path, config_sha256=_sha(config_path)
+    ):
+        raise ValueError("frozen manifest does not list this V8 fold config")
+    if nested_hash is not None and nested_hash != artifact:
+        raise ValueError("cache frozen-manifest artifact hash disagrees with freeze file")
+    return artifact, _binding_record(path, file_sha256=_sha(path), artifact_sha256=artifact)
 
 
 def _atomic_json(path: Path, value: dict[str, Any]) -> None:
@@ -260,10 +382,16 @@ def run_v8_temporal_training(
     validation = result.best_validation
     checkpoint_sha256 = _sha(checkpoint)
     config_sha256 = _sha(config_path)
-    protocol_sha256 = _artifact_hash_from_ref(cache_manifest.get("protocol"))
-    frozen_manifest_sha256 = _artifact_hash_from_ref(cache_manifest.get("frozen_manifest"))
-    if not fixture_smoke and (protocol_sha256 is None or frozen_manifest_sha256 is None):
-        raise ValueError("signed V8 cache lacks protocol/frozen-manifest artifact bindings")
+    if fixture_smoke:
+        protocol_sha256 = _artifact_hash_from_ref(cache_manifest.get("protocol"))
+        frozen_manifest_sha256 = _artifact_hash_from_ref(cache_manifest.get("frozen_manifest"))
+        protocol_ref = cache_manifest.get("protocol")
+        frozen_ref = cache_manifest.get("frozen_manifest")
+    else:
+        protocol_sha256, protocol_ref = resolve_v8_cache_protocol_binding(cache_manifest)
+        frozen_manifest_sha256, frozen_ref = resolve_v8_frozen_manifest_binding(
+            cache_manifest, config_path=config_path
+        )
     predictions_path = output_dir / "dev_predictions.csv"
     tokens = [str(value) for value in validation["sample_tokens"]]
     ttc_log_variance = validation.get("ttc_log_variance", [0.0] * len(tokens))
@@ -324,8 +452,8 @@ def run_v8_temporal_training(
         "frozen_manifest_sha256": frozen_manifest_sha256,
         "config": {"path": config_path.as_posix(), "sha256": config_sha256},
         "model_config": {"path": model_path.as_posix(), "sha256": _sha(model_path)},
-        "protocol": cache_manifest.get("protocol"),
-        "frozen_manifest": cache_manifest.get("frozen_manifest"),
+        "protocol": protocol_ref,
+        "frozen_manifest": frozen_ref,
         "cache": {
             "path": cache_path.as_posix(),
             "sha256": _sha(cache_path),
@@ -359,7 +487,12 @@ def run_v8_temporal_training(
     return payload
 
 
-__all__ = ["run_v8_temporal_training"]
+__all__ = [
+    "assert_v8_dino_teacher_matches_source_rows",
+    "resolve_v8_cache_protocol_binding",
+    "resolve_v8_frozen_manifest_binding",
+    "run_v8_temporal_training",
+]
 
 
 def run_v8_cache_smoke(
