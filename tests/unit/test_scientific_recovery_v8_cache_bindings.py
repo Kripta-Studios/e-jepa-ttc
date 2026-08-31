@@ -102,3 +102,34 @@ def test_frozen_manifest_binding_refuses_unlisted_fold_yaml(tmp_path: Path) -> N
     )
     with pytest.raises(ValueError, match="does not list this V8 fold config"):
         resolve_v8_frozen_manifest_binding({}, config_path=config_path)
+
+
+def test_frozen_manifest_binding_accepts_conditional_template_fold_yaml(tmp_path: Path) -> None:
+    config_path = tmp_path / "gated_exp6_3_fold0_seed7.yaml"
+    config_path.write_text("experiment:\n  name: gated_exp6_3_fold0_seed7\n", encoding="utf-8")
+    payload = sign_artifact(
+        {
+            "artifact_type": "scientific_recovery_v8_frozen_config_manifest_v1",
+            "enabled_seed7_configs": {},
+            "conditional_templates": {
+                "gated_exp6_3": {
+                    "enabled": False,
+                    "fold_configs": [
+                        {
+                            "path": (
+                                "configs/experiment/scientific_recovery_v8_fold_chain/"
+                                "gated_exp6_3_fold0_seed7.yaml"
+                            ),
+                            "sha256": _sha(config_path),
+                        }
+                    ],
+                }
+            },
+        }
+    )
+    (tmp_path / "frozen_manifest.json").write_text(
+        json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
+    artifact, binding = resolve_v8_frozen_manifest_binding({}, config_path=config_path)
+    assert artifact == payload["artifact_sha256"]
+    assert binding["artifact_sha256"] == payload["artifact_sha256"]

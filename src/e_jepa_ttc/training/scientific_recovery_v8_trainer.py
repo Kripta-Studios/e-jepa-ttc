@@ -202,21 +202,45 @@ def resolve_v8_cache_protocol_binding(
     raise ValueError("signed V8 cache lacks protocol artifact bindings")
 
 
+def _fold_config_entry_matches(
+    item: Mapping[str, Any], *, name: str, config_sha256: str
+) -> bool:
+    if item.get("sha256") != config_sha256:
+        return False
+    raw = item.get("path")
+    return isinstance(raw, str) and Path(raw).name == name
+
+
 def _frozen_manifest_lists_fold_config(
     payload: Mapping[str, Any], *, config_path: Path, config_sha256: str
 ) -> bool:
-    listed = payload.get("enabled_seed7_configs")
-    if not isinstance(listed, Mapping):
-        return False
+    """True when this yaml is a freeze-listed seed-7 fold, including gated C1 templates.
+
+    Conditional templates stay disabled until a signed gate opens them. Once opened,
+    identity binding still has to accept the preregistered fold hashes.
+    """
+
     name = config_path.name
-    for item in listed.values():
-        if not isinstance(item, Mapping):
-            continue
-        if item.get("sha256") != config_sha256:
-            continue
-        raw = item.get("path")
-        if isinstance(raw, str) and Path(raw).name == name:
-            return True
+    listed = payload.get("enabled_seed7_configs")
+    if isinstance(listed, Mapping):
+        for item in listed.values():
+            if isinstance(item, Mapping) and _fold_config_entry_matches(
+                item, name=name, config_sha256=config_sha256
+            ):
+                return True
+    templates = payload.get("conditional_templates")
+    if isinstance(templates, Mapping):
+        for template in templates.values():
+            if not isinstance(template, Mapping):
+                continue
+            folds = template.get("fold_configs")
+            if not isinstance(folds, list):
+                continue
+            for item in folds:
+                if isinstance(item, Mapping) and _fold_config_entry_matches(
+                    item, name=name, config_sha256=config_sha256
+                ):
+                    return True
     return False
 
 
