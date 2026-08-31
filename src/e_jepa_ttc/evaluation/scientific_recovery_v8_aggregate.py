@@ -408,6 +408,30 @@ def _implementation_commit(repository_root: Path) -> str:
         return "unknown"
 
 
+_COMPLETE_STATUSES = {
+    "completed",
+    "complete",
+    "passed",
+    "success",
+    "completed_train_only_grouped_dev",
+}
+
+
+def _conditional_fold_signed(run_dir: Path) -> bool:
+    """True only for a signed completed fold summary, not a leftover run directory."""
+
+    summary = run_dir / "summary.json"
+    if not summary.is_file():
+        return False
+    try:
+        payload = json.loads(summary.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return False
+    if not isinstance(payload, dict) or not verify_artifact_hash(payload):
+        return False
+    return str(payload.get("status", "")).lower() in _COMPLETE_STATUSES
+
+
 def _candidate_config_entries(
     manifest: Mapping[str, Any], *, arm: str, results_root: Path
 ) -> list[tuple[str, Mapping[str, Any]]]:
@@ -428,10 +452,13 @@ def _candidate_config_entries(
     template = templates.get(arm) if isinstance(templates, Mapping) else None
     if not isinstance(template, Mapping):
         return []
-    presence = [(results_root / "runs" / f"{arm}_fold{fold}_seed7").exists() for fold in range(3)]
-    if not any(presence):
+    completed = [
+        _conditional_fold_signed(results_root / "runs" / f"{arm}_fold{fold}_seed7")
+        for fold in range(3)
+    ]
+    if not any(completed):
         return []
-    if not all(presence):
+    if not all(completed):
         raise V8AggregateIntegrityError(f"partial conditional run set for {arm}")
     raw = template.get("fold_configs")
     if not isinstance(raw, list) or len(raw) != 3 or not all(isinstance(x, Mapping) for x in raw):

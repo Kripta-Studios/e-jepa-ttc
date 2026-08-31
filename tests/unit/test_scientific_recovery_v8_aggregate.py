@@ -320,3 +320,68 @@ def test_changed_prediction_hash_does_not_reuse_bootstrap(
     )
     assert calls["n"] == 1
     assert second["artifact_sha256"] != first["artifact_sha256"]
+
+
+def _gated_manifest() -> dict[str, object]:
+    return {
+        "enabled_seed7_configs": {},
+        "conditional_templates": {
+            "gated_exp6_3": {
+                "enabled": False,
+                "fold_configs": [
+                    {"path": f"gated_exp6_3_fold{fold}_seed7.yaml", "sha256": "a" * 64}
+                    for fold in range(3)
+                ],
+            }
+        },
+    }
+
+
+def _write_signed_fold_summary(run_dir: Path) -> None:
+    run_dir.mkdir(parents=True, exist_ok=True)
+    payload = sign_artifact(
+        {
+            "artifact_type": "scientific_recovery_v8_fold_result_v1",
+            "status": "completed",
+        }
+    )
+    (run_dir / "summary.json").write_text(
+        json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
+
+
+def test_conditional_arm_ignored_when_run_dirs_lack_signed_summaries(tmp_path: Path) -> None:
+    from e_jepa_ttc.evaluation.scientific_recovery_v8_aggregate import _candidate_config_entries
+
+    results = tmp_path / "results"
+    (results / "runs" / "gated_exp6_3_fold0_seed7").mkdir(parents=True)
+    (results / "runs" / "gated_exp6_3_fold1_seed7").mkdir(parents=True)
+    assert _candidate_config_entries(
+        _gated_manifest(), arm="gated_exp6_3", results_root=results
+    ) == []
+
+
+def test_conditional_arm_refuses_partial_signed_summaries(tmp_path: Path) -> None:
+    from e_jepa_ttc.evaluation.scientific_recovery_v8_aggregate import _candidate_config_entries
+
+    results = tmp_path / "results"
+    _write_signed_fold_summary(results / "runs" / "gated_exp6_3_fold0_seed7")
+    (results / "runs" / "gated_exp6_3_fold1_seed7").mkdir(parents=True)
+    with pytest.raises(V8AggregateIntegrityError, match="partial conditional run set"):
+        _candidate_config_entries(_gated_manifest(), arm="gated_exp6_3", results_root=results)
+
+
+def test_conditional_arm_listed_when_all_folds_have_signed_summaries(tmp_path: Path) -> None:
+    from e_jepa_ttc.evaluation.scientific_recovery_v8_aggregate import _candidate_config_entries
+
+    results = tmp_path / "results"
+    for fold in range(3):
+        _write_signed_fold_summary(results / "runs" / f"gated_exp6_3_fold{fold}_seed7")
+    entries = _candidate_config_entries(
+        _gated_manifest(), arm="gated_exp6_3", results_root=results
+    )
+    assert [name for name, _ in entries] == [
+        "gated_exp6_3_fold0_seed7",
+        "gated_exp6_3_fold1_seed7",
+        "gated_exp6_3_fold2_seed7",
+    ]
