@@ -193,6 +193,16 @@ def test_configuration_rejects_unsorted_risk_thresholds() -> None:
         CausalScaleTTCConfig(risk_thresholds_s=(1.0, 0.5))
 
 
+def test_configuration_accepts_json_list_risk_thresholds() -> None:
+    config = CausalScaleTTCConfig(risk_thresholds_s=[0.5, 1.0, 2.0, 4.0])  # type: ignore[arg-type]
+    assert config.risk_thresholds_s == (0.5, 1.0, 2.0, 4.0)
+
+
+def test_configuration_rejects_duplicate_risk_thresholds() -> None:
+    with pytest.raises(ValueError, match="strictly increasing"):
+        CausalScaleTTCConfig(risk_thresholds_s=(0.5, 0.5, 1.0))
+
+
 def test_temporal_inverse_ttc_blend_transports_previous_pair_to_current_time() -> None:
     pair_inverse = torch.tensor([[0.4, 0.5], [0.4, 0.5]])
     pair_known = torch.tensor([[True, True], [False, True]])
@@ -228,9 +238,7 @@ def test_temporal_foreground_consensus_is_reversal_equivariant() -> None:
 
 def test_temporal_foreground_consensus_rejects_unsafe_weight() -> None:
     with pytest.raises(ValueError, match="neighbor_weight"):
-        smooth_temporal_foreground_logits(
-            torch.zeros(1, 3, 1, 2, 2), neighbor_weight=0.41
-        )
+        smooth_temporal_foreground_logits(torch.zeros(1, 3, 1, 2, 2), neighbor_weight=0.41)
 
 
 def test_stride_free_foreground_path_has_small_integer_translation_leakage() -> None:

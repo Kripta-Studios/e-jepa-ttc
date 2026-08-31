@@ -49,9 +49,9 @@ class CausalScaleTTCConfig:
     foreground_fullres_dim: int = 16
     foreground_temperature: float = 1.0
     foreground_temporal_smoothing: float = 0.0
-    foreground_temporal_smoothing_mode: Literal[
-        "symmetric_legacy", "causal_left", "none"
-    ] = "symmetric_legacy"
+    foreground_temporal_smoothing_mode: Literal["symmetric_legacy", "causal_left", "none"] = (
+        "symmetric_legacy"
+    )
     max_abs_log_ratio_residual: float = 0.05
     max_abs_log_height_correction: float = 0.0
     temporal_inverse_ttc_blend: float = 1.0
@@ -77,6 +77,9 @@ class CausalScaleTTCConfig:
     temporal_channel_gate_hidden_dim: int = 16
 
     def __post_init__(self) -> None:
+        object.__setattr__(
+            self, "risk_thresholds_s", tuple(float(value) for value in self.risk_thresholds_s)
+        )
         if self.modality not in {"event", "rgb"}:
             raise ValueError("modality must be 'event' or 'rgb'")
         if min(self.in_channels, self.hidden_dim, self.geometry_dim, self.residual_depth) <= 0:
@@ -149,7 +152,9 @@ class CausalScaleTTCConfig:
                 "A7 transport encoder copy and A6 transport adapter are mutually exclusive"
             )
         if self.temporal_channel_gate_enabled and self.in_channels != 6:
-            raise ValueError("V8 temporal channel gate is preregistered only for EXP6 six-channel input")
+            raise ValueError(
+                "V8 temporal channel gate is preregistered only for EXP6 six-channel input"
+            )
         if self.temporal_channel_gate_patch_grid != 4:
             raise ValueError("V8 temporal channel gate patch grid is frozen at 4x4")
         if self.temporal_channel_gate_hidden_dim != 16:
@@ -247,20 +252,16 @@ def soft_vertical_extent_from_logits(
     ) / float(width)
     centroid_y = (row_mass * y_coordinates).sum(dim=-1) / total
     centroid_x = (column_mass * x_coordinates).sum(dim=-1) / total
-    variance_y = (
-        row_mass * (y_coordinates - centroid_y.unsqueeze(-1)).square()
-    ).sum(dim=-1) / total
-    variance_x = (
-        column_mass * (x_coordinates - centroid_x.unsqueeze(-1)).square()
-    ).sum(dim=-1) / total
+    variance_y = (row_mass * (y_coordinates - centroid_y.unsqueeze(-1)).square()).sum(
+        dim=-1
+    ) / total
+    variance_x = (column_mass * (x_coordinates - centroid_x.unsqueeze(-1)).square()).sum(
+        dim=-1
+    ) / total
     pixel_height = 1.0 / float(height)
     pixel_width = 1.0 / float(width)
-    height_extent = torch.sqrt(
-        (12.0 * variance_y + pixel_height**2).clamp_min(pixel_height**2)
-    )
-    width_extent = torch.sqrt(
-        (12.0 * variance_x + pixel_width**2).clamp_min(pixel_width**2)
-    )
+    height_extent = torch.sqrt((12.0 * variance_y + pixel_height**2).clamp_min(pixel_height**2))
+    width_extent = torch.sqrt((12.0 * variance_x + pixel_width**2).clamp_min(pixel_width**2))
     return SoftScaleObservation(
         height_normalized=height_extent,
         width_normalized=width_extent,
@@ -429,7 +430,9 @@ class _AdaptiveTemporalChannelGate(nn.Module):
         channel_means = functional.adaptive_avg_pool2d(abs_values, self.patch_grid)
         event_mass = torch.log1p(channel_means.sum(dim=1, keepdim=True))
         occupancy = (abs_values.sum(dim=1, keepdim=True) > 1.0e-8).to(values.dtype)
-        occupancy = functional.adaptive_avg_pool2d(occupancy, self.patch_grid).clamp(1.0e-6, 1.0 - 1.0e-6)
+        occupancy = functional.adaptive_avg_pool2d(occupancy, self.patch_grid).clamp(
+            1.0e-6, 1.0 - 1.0e-6
+        )
         entropy = -(occupancy * occupancy.log() + (1.0 - occupancy) * (1.0 - occupancy).log())
         features = torch.cat((channel_means, event_mass, entropy), dim=1)
         logits = self.router(features)
@@ -841,9 +844,7 @@ class CausalScaleTTC(nn.Module):
     ) -> CausalScaleTTCOutput:
         """Predict current TTC from causal endpoint tensors ``[B,T,C,H,W]``."""
 
-        return self._forward_impl(
-            inputs, delta_t_s, return_dense_features=return_dense_features
-        )
+        return self._forward_impl(inputs, delta_t_s, return_dense_features=return_dense_features)
 
     def _forward_replay(
         self,
@@ -897,12 +898,14 @@ class CausalScaleTTC(nn.Module):
             self.config.transport_enabled and self.transport_encoder is None
         )
         lowres_logits, base_tokens, flat_dense = self.encoder(
-            flat, return_dense_features=need_dense_features,
+            flat,
+            return_dense_features=need_dense_features,
         )
         transport_flat_dense = flat_dense
         if self.transport_encoder is not None:
             _, _, transport_flat_dense = self.transport_encoder(
-                flat, return_dense_features=True,
+                flat,
+                return_dense_features=True,
             )
         low_h, low_w = lowres_logits.shape[-2:]
         lowres_logits = lowres_logits.reshape(batch, steps, 1, low_h, low_w)
@@ -1239,21 +1242,20 @@ class CausalScaleTTC(nn.Module):
             "replay_transport_enabled": foreground_logits.new_full(
                 (batch,), float(control.transport_enabled)
             ),
-            "replay_current_pair_weight": foreground_logits.new_full(
-                (batch,), replay_blend_weight
-            ),
+            "replay_current_pair_weight": foreground_logits.new_full((batch,), replay_blend_weight),
         }
         if temporal_gate_weights is not None:
             diagnostics["temporal_channel_gate_weights"] = temporal_gate_weights
-            gate_entropy = -(temporal_gate_weights.clamp_min(1.0e-8) * temporal_gate_weights.clamp_min(1.0e-8).log()).sum(dim=2)
+            gate_entropy = -(
+                temporal_gate_weights.clamp_min(1.0e-8)
+                * temporal_gate_weights.clamp_min(1.0e-8).log()
+            ).sum(dim=2)
             diagnostics["temporal_channel_gate_entropy"] = gate_entropy
         if transport_raw_features is not None:
             for index, name in enumerate(TRANSPORT_FEATURE_NAMES):
                 diagnostics[f"transport_{name}"] = transport_raw_features[..., index]
             if fine_weight is not None:
-                diagnostics["transport_fine_weight"] = fine_weight.reshape(
-                    batch, pair_count
-                )
+                diagnostics["transport_fine_weight"] = fine_weight.reshape(batch, pair_count)
             if coarse_forward is not None and coarse_reverse is not None:
                 for index, name in enumerate(TRANSPORT_FEATURE_NAMES):
                     diagnostics[f"transport_fine_{name}"] = fine_forward.reshape(
