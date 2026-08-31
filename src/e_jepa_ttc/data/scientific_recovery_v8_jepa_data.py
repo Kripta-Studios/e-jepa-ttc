@@ -5,6 +5,7 @@ A5 fallback to reuse the historical 12-channel V4 cache without duplicating ~10 
 of tensors on disk.  Targets and MiD weights are exposed only by the downstream
 collate path; pretraining consumes representations/identities only.
 """
+
 from __future__ import annotations
 
 import json
@@ -17,8 +18,49 @@ import torch
 from torch.utils.data import Dataset
 
 from e_jepa_ttc.artifacts.hashing import verify_artifact_hash
+from e_jepa_ttc.data.canonical_token_identity import hash_ordered_token_ids
 from e_jepa_ttc.data.object_event_v4 import GarlTTCObjectEventV4Dataset
 from e_jepa_ttc.data.scientific_recovery_v8_cache import ScientificRecoveryV8CacheDataset
+
+LEXICOGRAPHIC_TOKEN_ORDER = "lexicographic token_id"
+
+
+def resolve_historical_v4_token_order(
+    *,
+    sample_contract: dict[str, Any],
+    cache_tokens: list[str],
+) -> tuple[str, ...]:
+    """Bind V4 cache tokens to the frozen V8 universe without treating the order label as IDs.
+
+    The signed protocol stores ``token_order`` as the algorithm name
+    ``lexicographic token_id``, not as an 8192-long token list.  Iterating that
+    string would silently select character tokens and reject a valid cache.
+    """
+
+    unique = tuple(sorted({str(token) for token in cache_tokens}))
+    if len(unique) != len(cache_tokens):
+        raise ValueError("historical V4 cache has duplicate sample_token values")
+    declared = sample_contract.get("token_order")
+    expected_rows = int(sample_contract["rows"])
+    expected_hash = str(sample_contract["ordered_token_ids_sha256"])
+    if declared == LEXICOGRAPHIC_TOKEN_ORDER:
+        ordered = unique
+    elif isinstance(declared, (list, tuple)):
+        ordered = tuple(str(token) for token in declared)
+        if set(ordered) != set(unique) or len(ordered) != len(unique):
+            raise ValueError("historical V4 cache does not match the frozen V8 token universe")
+    else:
+        raise ValueError(
+            "sample_contract.token_order must be 'lexicographic token_id' or an explicit token list"
+        )
+    if len(ordered) != expected_rows:
+        raise ValueError(
+            f"historical V4 cache row count {len(ordered)} != protocol rows {expected_rows}"
+        )
+    actual_hash = hash_ordered_token_ids(ordered)
+    if actual_hash != expected_hash:
+        raise ValueError("historical V4 cache ordered_token_ids_sha256 does not match the protocol")
+    return ordered
 
 
 def _bucket(value: Decimal) -> tuple[str, Decimal]:
@@ -41,31 +83,26 @@ class HistoricalV4JEPAData(Dataset[dict[str, Any]]):
         if not isinstance(protocol, dict) or not verify_artifact_hash(protocol):
             raise ValueError("V8 protocol must be a signed artifact")
         source = GarlTTCObjectEventV4Dataset(str(manifest_path), splits=("train",))
-        token_order = tuple(str(x) for x in protocol["sample_contract"]["token_order"])
-        token_set = set(token_order)
+        loaded = [source[index] for index in range(len(source))]
+        token_order = resolve_historical_v4_token_order(
+            sample_contract=protocol["sample_contract"],
+            cache_tokens=[str(row["sample_token"]) for row in loaded],
+        )
         fold_by_sequence = {
             str(sequence): int(item["fold"])
             for item in protocol["sample_contract"]["fold_definitions"]
             for sequence in item["dev_sequence_ids"]
         }
-        selected: list[dict[str, Any]] = []
-        for index in range(len(source)):
-            row = source[index]
-            if str(row["sample_token"]) in token_set:
-                selected.append(row)
-        if len(selected) != len(token_order) or {str(x["sample_token"]) for x in selected} != token_set:
-            raise ValueError("historical V4 cache does not match the frozen V8 token universe")
         counts = Counter(
-            (str(row["sequence_id"]), _bucket(Decimal(str(row["ttc_s"])))[0])
-            for row in selected
+            (str(row["sequence_id"]), _bucket(Decimal(str(row["ttc_s"])))[0]) for row in loaded
         )
         weights: dict[str, float] = {}
-        for row in selected:
+        for row in loaded:
             label, coefficient = _bucket(Decimal(str(row["ttc_s"])))
             weights[str(row["sample_token"])] = float(
                 coefficient / Decimal(9) / Decimal(counts[(str(row["sequence_id"]), label)])
             )
-        by_token = {str(row["sample_token"]): row for row in selected}
+        by_token = {str(row["sample_token"]): row for row in loaded}
         self.rows = [by_token[token] for token in token_order]
         self.fold_by_sequence = fold_by_sequence
         self.weights = weights
@@ -125,7 +162,10 @@ def open_jepa_dataset(
         if artifact_type.startswith("scientific_recovery_v8_"):
             if manifest.get("train_only") is not True:
                 raise ValueError("JEPA requires a signed train-only cache")
-            if manifest.get("provenance", {}).get("raw_materialization") is not True and not allow_fixture_cache:
+            if (
+                manifest.get("provenance", {}).get("raw_materialization") is not True
+                and not allow_fixture_cache
+            ):
                 raise ValueError("fixture V8 cache is forbidden outside explicit test execution")
             return ScientificRecoveryV8CacheDataset(cache_manifest)
     if protocol_path is None:
@@ -133,4 +173,9 @@ def open_jepa_dataset(
     return HistoricalV4JEPAData(cache_manifest, protocol_path)
 
 
-__all__ = ["HistoricalV4JEPAData", "open_jepa_dataset"]
+__all__ = [
+    "HistoricalV4JEPAData",
+    "LEXICOGRAPHIC_TOKEN_ORDER",
+    "open_jepa_dataset",
+    "resolve_historical_v4_token_order",
+]
