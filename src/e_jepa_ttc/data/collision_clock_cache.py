@@ -5,13 +5,16 @@ from __future__ import annotations
 import gc
 import json
 import math
+import time
+from collections import OrderedDict
 from collections.abc import Iterator, Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
-from typing import Any
+from typing import Any, Literal
 
 import numpy as np
 import pandas as pd
+import psutil
 import torch
 
 from e_jepa_ttc.artifacts.hashing import compute_file_hash, verify_artifact_hash
@@ -50,6 +53,8 @@ _EXPECTED_ROW_FIELDS = {
     "ttc_label_timestamp_us",
     "ttc_s",
 }
+
+CacheMode = Literal["direct", "shard_lru", "fold_ram", "auto"]
 
 
 @dataclass(frozen=True)
@@ -153,9 +158,25 @@ def _bucket_name(target_ttc_s: float) -> str:
 class CollisionClockTrain8192Cache:
     """Verify and expose only the signed train cache through typed fold views."""
 
-    def __init__(self, cache_root: Path, protocol: Mapping[str, Any]) -> None:
+    def __init__(
+        self,
+        cache_root: Path,
+        protocol: Mapping[str, Any],
+        *,
+        cache_mode: CacheMode = "direct",
+        lru_capacity: int = 2,
+        fold_ram_margin_bytes: int = 6 * 1024**3,
+    ) -> None:
+        if cache_mode not in {"direct", "shard_lru", "fold_ram", "auto"}:
+            raise ValueError(f"unsupported cache mode: {cache_mode}")
+        if lru_capacity < 1 or lru_capacity > 4:
+            raise ValueError("shard LRU capacity must be between 1 and 4")
         self.cache_root = cache_root.resolve(strict=True)
         self.protocol = protocol
+        self.requested_cache_mode: CacheMode = cache_mode
+        self.cache_mode: CacheMode = cache_mode
+        self.lru_capacity = lru_capacity
+        self.fold_ram_margin_bytes = fold_ram_margin_bytes
         self.manifest_path = self.cache_root / "manifest.json"
         binding = protocol.get("cache_binding")
         if not isinstance(binding, Mapping):
@@ -182,6 +203,143 @@ class CollisionClockTrain8192Cache:
             raise ValueError("protocol must bind exactly 32 train shards")
         self.signed_shards = tuple(signed_shards)
         self._locators: tuple[CollisionClockSampleLocator, ...] | None = None
+        self._lru: OrderedDict[str, list[dict[str, Any]]] = OrderedDict()
+        self._fold_inputs: torch.Tensor | None = None
+        self._fold_delta: torch.Tensor | None = None
+        self._fold_target: torch.Tensor | None = None
+        self._fold_token_to_row: dict[str, int] = {}
+        self._stats: dict[str, int | float | str] = {
+            "requested_mode": cache_mode,
+            "selected_mode": cache_mode,
+            "shard_loads": 0,
+            "shard_cache_hits": 0,
+            "shard_cache_misses": 0,
+            "shard_evictions": 0,
+            "bytes_read": 0,
+            "load_seconds": 0.0,
+            "staging_seconds": 0.0,
+            "staged_rows": 0,
+            "staged_bytes": 0,
+        }
+
+    def engineering_stats(self) -> dict[str, int | float | str]:
+        """Return a snapshot of engineering-only cache telemetry."""
+
+        return dict(self._stats)
+
+    def _load_shard(self, relative: str) -> list[dict[str, Any]]:
+        if self.cache_mode == "shard_lru" and relative in self._lru:
+            self._stats["shard_cache_hits"] = int(self._stats["shard_cache_hits"]) + 1
+            shard = self._lru.pop(relative)
+            self._lru[relative] = shard
+            return shard
+        self._stats["shard_cache_misses"] = int(self._stats["shard_cache_misses"]) + 1
+        path = self.cache_root.joinpath(*PurePosixPath(relative).parts)
+        started = time.perf_counter()
+        loaded = torch.load(path, map_location="cpu", weights_only=False)
+        elapsed = time.perf_counter() - started
+        if not isinstance(loaded, list):
+            raise ValueError(f"cache shard payload is not a row list: {relative}")
+        self._stats["shard_loads"] = int(self._stats["shard_loads"]) + 1
+        self._stats["bytes_read"] = int(self._stats["bytes_read"]) + path.stat().st_size
+        self._stats["load_seconds"] = float(self._stats["load_seconds"]) + elapsed
+        if self.cache_mode == "shard_lru":
+            self._lru[relative] = loaded
+            while len(self._lru) > self.lru_capacity:
+                self._lru.popitem(last=False)
+                self._stats["shard_evictions"] = int(self._stats["shard_evictions"]) + 1
+        return loaded
+
+    def select_mode_for_train_view(self, view: CollisionClockOuterTrainView) -> CacheMode:
+        """Select auto mode using only tensor bytes and available host memory."""
+
+        if self.requested_cache_mode != "auto":
+            self.cache_mode = self.requested_cache_mode
+            self._stats["selected_mode"] = self.cache_mode
+            return self.cache_mode
+        shape = tuple(
+            int(value)
+            for value in self.manifest["object_lhr_extension"]["event_v4_common_roi_shape"]
+        )
+        row_bytes = math.prod(shape) * np.dtype(np.float32).itemsize
+        projected = len(view.locators) * row_bytes + max(
+            int(record["bytes"]) for record in self.signed_shards
+        )
+        available = int(psutil.virtual_memory().available)
+        self.cache_mode = (
+            "fold_ram" if available - projected >= self.fold_ram_margin_bytes else "shard_lru"
+        )
+        self._stats["selected_mode"] = self.cache_mode
+        self._stats["auto_available_bytes"] = available
+        self._stats["auto_projected_bytes"] = projected
+        self._stats["auto_required_margin_bytes"] = self.fold_ram_margin_bytes
+        return self.cache_mode
+
+    def release_staged_view(self) -> None:
+        """Release a staged fold before any train/dev role transition."""
+
+        self._fold_inputs = None
+        self._fold_delta = None
+        self._fold_target = None
+        self._fold_token_to_row.clear()
+        self._lru.clear()
+        gc.collect()
+
+    def stage_view(self, view: CollisionClockOuterTrainView | CollisionClockOuterDevView) -> None:
+        """Preallocate and fill one fold view without list+stack duplication."""
+
+        self.release_staged_view()
+        if self.cache_mode != "fold_ram":
+            return
+        shape = tuple(
+            int(value)
+            for value in self.manifest["object_lhr_extension"]["event_v4_common_roi_shape"]
+        )
+        count = len(view.locators)
+        inputs = torch.empty((count, *shape), dtype=torch.float32)
+        delta = torch.empty((count, 2), dtype=torch.float32)
+        target = torch.empty((count,), dtype=torch.float32)
+        by_shard: dict[str, list[tuple[int, CollisionClockSampleLocator]]] = {}
+        for output_index, locator in enumerate(view.locators):
+            by_shard.setdefault(locator.shard_path, []).append((output_index, locator))
+        started = time.perf_counter()
+        previous_mode = self.cache_mode
+        try:
+            self.cache_mode = "direct"
+            for relative, requested in by_shard.items():
+                shard = self._load_shard(relative)
+                for output_index, locator in requested:
+                    row = shard[locator.row_index]
+                    validated = self._validate_row(
+                        row, shard_path=locator.shard_path, row_index=locator.row_index
+                    )
+                    if validated["sample_token"] != locator.sample_token:
+                        raise ValueError("cache row changed during fold RAM staging")
+                    inputs[output_index].copy_(
+                        torch.from_numpy(np.asarray(row["event_v4_common_roi"]))
+                    )
+                    dt = float(np.asarray(row["garl_delta_t_s"]).item())
+                    delta[output_index] = dt
+                    target[output_index] = locator.target_ttc_s
+                del shard
+                gc.collect()
+        finally:
+            self.cache_mode = previous_mode
+        self._fold_inputs = inputs
+        self._fold_delta = delta
+        self._fold_target = target
+        self._fold_token_to_row = {
+            locator.sample_token: index for index, locator in enumerate(view.locators)
+        }
+        self._stats["staging_seconds"] = float(self._stats["staging_seconds"]) + (
+            time.perf_counter() - started
+        )
+        self._stats["staged_rows"] = count
+        self._stats["staged_bytes"] = (
+            inputs.numel() * inputs.element_size()
+            + delta.numel() * delta.element_size()
+            + target.numel() * target.element_size()
+        )
 
     def _verify_shard_file(self, record: Mapping[str, Any]) -> Path:
         relative = _safe_relative_path(str(record["path"]))
@@ -339,6 +497,19 @@ class CollisionClockTrain8192Cache:
     def _materialize(
         self, locators: Sequence[CollisionClockSampleLocator]
     ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+        if self.cache_mode == "fold_ram":
+            if self._fold_inputs is None or self._fold_delta is None or self._fold_target is None:
+                raise RuntimeError("fold_ram materialization requires an explicitly staged view")
+            try:
+                indices = [self._fold_token_to_row[item.sample_token] for item in locators]
+            except KeyError as error:
+                raise ValueError("requested row is outside the staged fold view") from error
+            selected = torch.tensor(indices, dtype=torch.int64)
+            return (
+                self._fold_inputs.index_select(0, selected),
+                self._fold_delta.index_select(0, selected),
+                self._fold_target.index_select(0, selected),
+            )
         events: list[torch.Tensor] = []
         deltas: list[tuple[float, float]] = []
         targets: list[float] = []
@@ -349,11 +520,7 @@ class CollisionClockTrain8192Cache:
             locators
         )
         for relative, requested in by_shard.items():
-            shard = torch.load(
-                self.cache_root.joinpath(*PurePosixPath(relative).parts),
-                map_location="cpu",
-                weights_only=False,
-            )
+            shard = self._load_shard(relative)
             for output_index, locator in requested:
                 row = shard[locator.row_index]
                 validated = self._validate_row(
@@ -364,7 +531,8 @@ class CollisionClockTrain8192Cache:
                 value = torch.from_numpy(np.asarray(row["event_v4_common_roi"])).clone()
                 dt = float(np.asarray(row["garl_delta_t_s"]).item())
                 output[output_index] = (value, (dt, dt), locator.target_ttc_s)
-            del shard
+            if self.cache_mode == "direct":
+                del shard
         if any(item is None for item in output):
             raise RuntimeError("cache materialization left an unresolved row")
         for item in output:
@@ -413,6 +581,7 @@ class CollisionClockTrain8192Cache:
 
 
 __all__ = [
+    "CacheMode",
     "CollisionClockOuterDevBatch",
     "CollisionClockOuterDevView",
     "CollisionClockOuterTrainBatch",

@@ -13,6 +13,7 @@ from e_jepa_ttc.artifacts.hashing import compute_file_hash, sign_artifact
 from e_jepa_ttc.data.collision_clock_cache import (
     CollisionClockOuterDevBatch,
     CollisionClockOuterTrainBatch,
+    CollisionClockOuterTrainView,
     CollisionClockTrain8192Cache,
 )
 from e_jepa_ttc.evaluation.collision_clock_protocol import canonical_records_hash
@@ -118,7 +119,7 @@ def _fixture_cache(tmp_path: Path, *, wrong_shape: bool = False) -> tuple[Path, 
             "target_ttc_s": [float(row["ttc_s"]) for row in flat_rows],
         }
     )
-    frame["outer_fold"] = frame["sequence_id"].map(FOLDS).astype(np.int64)
+    frame["outer_fold"] = [FOLDS[str(value)] for value in frame["sequence_id"]]
     target_to_bucket = {value: key for key, value in TARGETS.items()}
     frame["sample_weight"] = [
         PAPER_MID_WEIGHTS[target_to_bucket[float(row["ttc_s"])]] / 9.0 for row in flat_rows
@@ -198,3 +199,27 @@ def test_adapter_rejects_cache_manifest_sha_mismatch(tmp_path: Path) -> None:
     protocol["cache_binding"]["file_sha256"] = "0" * 64
     with pytest.raises(ValueError, match="physical SHA"):
         CollisionClockTrain8192Cache(root, protocol)
+
+
+def test_direct_lru_and_preallocated_fold_ram_are_bitwise_equal(tmp_path: Path) -> None:
+    root, protocol = _fixture_cache(tmp_path)
+    adapter = CollisionClockTrain8192Cache(root, protocol, cache_mode="direct")
+    train, _dev = adapter.outer_views(0)
+    subset = CollisionClockOuterTrainView(
+        0, train.locators[:1], adapter._subset_sha(train.locators[:1])
+    )
+    direct = adapter._materialize(subset.locators)
+    adapter.cache_mode = "shard_lru"
+    first = adapter._materialize(subset.locators)
+    second = adapter._materialize(subset.locators)
+    assert int(adapter.engineering_stats()["shard_cache_hits"]) > 0
+    adapter.cache_mode = "fold_ram"
+    adapter.stage_view(subset)
+    staged = adapter._materialize(subset.locators)
+    for expected, lru_value, repeated, staged_value in zip(
+        direct, first, second, staged, strict=True
+    ):
+        assert torch.equal(expected, lru_value)
+        assert torch.equal(expected, repeated)
+        assert torch.equal(expected, staged_value)
+    assert int(adapter.engineering_stats()["staged_rows"]) == 1
