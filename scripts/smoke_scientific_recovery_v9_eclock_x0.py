@@ -26,6 +26,7 @@ from e_jepa_ttc.evaluation.collision_clock_protocol import (
 from e_jepa_ttc.evaluation.collision_clock_runner import (
     _direct_model,
     _official_checkpoint,
+    _prediction_coordinates,
     load_runner_contracts,
 )
 from e_jepa_ttc.evaluation.scientific_recovery_v8 import load_causal_scale_replay_checkpoint
@@ -165,13 +166,12 @@ def main() -> int:
             model.eval()
             with torch.no_grad():
                 result = model(batch.inputs.to(device), batch.delta_t_s.to(device))
+            coordinates = _prediction_coordinates(
+                result,
+                delta_t_s=float(protocol["metric"]["metric_delta_t_s"]),
+            )
             finite = all(
-                bool(torch.isfinite(value).all())
-                for value in (
-                    result.benchmark_phase_mean,
-                    result.inverse_ttc_mean,
-                    result.predicted_ttc_raw,
-                )
+                bool(torch.isfinite(torch.from_numpy(value)).all()) for value in coordinates
             )
             if not finite:
                 raise FloatingPointError("A5 replay smoke produced non-finite coordinates")

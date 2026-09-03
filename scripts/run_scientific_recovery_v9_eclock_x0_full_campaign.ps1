@@ -211,7 +211,8 @@ try {
         'scripts/report_scientific_recovery_v9_eclock_environment.py', 'scripts/analyze_scientific_recovery_v9_eclock_x0.py',
         'scripts/package_scientific_recovery_v9_eclock_x0_results.py',
         'tests/unit/test_collision_clock_cache.py', 'tests/unit/test_collision_clock_bootstrap.py',
-        'tests/unit/test_collision_clock_gates.py', 'tests/integration/test_collision_clock_resume.py'
+        'tests/unit/test_collision_clock_gates.py', 'tests/unit/test_collision_clock_pair_and_support.py',
+        'tests/integration/test_collision_clock_resume.py'
     ) | ForEach-Object { Join-Path $RepoRoot $_ }
     Invoke-LoggedPython -Name 'qa-ruff-check' -Arguments (@('-m', 'ruff', 'check') + $qualityFiles)
     Invoke-LoggedPython -Name 'qa-ruff-format' -Arguments (@('-m', 'ruff', 'format', '--check') + $qualityFiles)

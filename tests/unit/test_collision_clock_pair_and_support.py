@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import torch
 
+from e_jepa_ttc.evaluation.collision_clock_runner import _prediction_coordinates
 from e_jepa_ttc.models.causal_scale_ttc import CausalScaleTTC, CausalScaleTTCConfig
 from e_jepa_ttc.models.collision_clock_features import event_sensor_support
 from e_jepa_ttc.models.collision_clock_ttc import (
@@ -50,6 +51,8 @@ def test_pair_is_frozen_geometry_infused_readout_and_a5_replay_is_exact() -> Non
         pair_output.diagnostics["source_a5_ttc_seconds"], source_output.ttc_mean_seconds
     )
     torch.testing.assert_close(replay_output.ttc_mean_seconds, source_output.ttc_mean_seconds)
+    phase, inverse, raw, clipped = _prediction_coordinates(replay_output, delta_t_s=0.1)
+    assert all(value.shape == (1,) for value in (phase, inverse, raw, clipped))
     assert bool(pair_output.diagnostics["pair_is_geometry_infused"].all())
 
 
