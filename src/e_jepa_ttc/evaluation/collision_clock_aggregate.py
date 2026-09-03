@@ -31,6 +31,12 @@ from e_jepa_ttc.evaluation.collision_clock_protocol import (
 from e_jepa_ttc.training.collision_clock_eap import require_frozen_checkpoint
 
 
+def _read_oof_csv(path: Path) -> pd.DataFrame:
+    """Read runner output without moving persisted float64 values by one ULP."""
+
+    return pd.read_csv(path, float_precision="round_trip")
+
+
 def _reference_identity(family: Mapping[str, Any]) -> dict[str, str]:
     physical = family.get("physical_references")
     artifact = family.get("artifact_reference")
@@ -392,7 +398,12 @@ def aggregate_run(
             or summary.get("oof_bytes") != oof_path.stat().st_size
         ):
             raise ValueError(f"fold {fold} physical hash mismatch")
-        frame = pd.read_csv(oof_path)
+        # These CSVs are a persistence boundary for signed float64 scientific
+        # coordinates.  Pandas' default fast parser can move a decimal by one
+        # ULP on a read -> write -> read cycle, breaking the canonical target
+        # identity even when the in-memory value was unchanged.  The round-trip
+        # parser restores the exact IEEE-754 value emitted by the runner.
+        frame = _read_oof_csv(oof_path)
         if set(frame["outer_fold"].astype(int)) != {fold}:
             raise ValueError(f"fold {fold} OOF rows are mixed")
         frames.append(frame)

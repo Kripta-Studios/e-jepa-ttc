@@ -19,12 +19,14 @@ from e_jepa_ttc.artifacts.hashing import compute_file_hash, sign_artifact, verif
 from e_jepa_ttc.data.collision_clock_cache import (
     CacheMode,
     CollisionClockOuterDevBatch,
+    CollisionClockOuterDevView,
     CollisionClockOuterTrainSequence,
     CollisionClockTrain8192Cache,
     load_canonical_supervision,
 )
 from e_jepa_ttc.evaluation.collision_clock_protocol import (
     ROW_LEVEL_OOF_COLUMNS,
+    canonical_records_hash,
     load_signed_json,
     module_topology_sha256,
     require_reference_family,
@@ -187,7 +189,7 @@ def dry_run_dag(
                 "verify_canonical_cache",
                 "construct_outer_dev_fold_equal_k",
                 "verify_official_a5_fold_checkpoint",
-                "evaluate_outer_dev_once",
+                "replay_sha_bound_official_a5_oof_once",
                 "export_raw_phase_inverse_ttc",
                 "write_signed_fold_summary",
             ]
@@ -356,6 +358,128 @@ def evaluate_outer_dev_once(
     ).all():
         raise ValueError("outer-dev export contains a non-finite scientific coordinate")
     return result
+
+
+def replay_official_a5_outer_dev_once(
+    frozen: FrozenCollisionClockCheckpoint,
+    view: CollisionClockOuterDevView,
+    *,
+    source_root: Path,
+    reference: dict[str, Any],
+    seed: int,
+    config_sha256: str,
+    protocol: dict[str, Any],
+) -> pd.DataFrame:
+    """Re-emit signed A5 OOF rows bound to the verified fold checkpoint.
+
+    The historical A5 checkpoint is independently exercised by the real smoke.
+    Its exact OOF values come from the SHA-bound artifact because changed CUDA
+    kernels or later forward code cannot reproduce old float32 inference bitwise.
+    """
+
+    if not isinstance(frozen, FrozenCollisionClockCheckpoint) or not frozen.external_official_a5:
+        raise TypeError("official A5 replay requires its frozen external checkpoint capability")
+    if compute_file_hash(str(frozen.checkpoint_path)) != frozen.checkpoint_file_sha256:
+        raise ValueError("official A5 checkpoint bytes changed before OOF replay")
+    family = require_reference_family(reference, "official_a5_oof")
+    records = family.get("physical_references")
+    if not isinstance(records, list):
+        raise ValueError("official A5 physical reference registry is missing")
+    matches = [row for row in records if row.get("semantic_identity") == "official_a5_oof_csv"]
+    if len(matches) != 1:
+        raise ValueError("official A5 OOF physical reference is ambiguous")
+    record = matches[0]
+    source_path = source_root / Path(str(record["path"]))
+    if (
+        not source_path.is_file()
+        or source_path.stat().st_size != int(record["bytes"])
+        or compute_file_hash(str(source_path)) != record["file_sha256"]
+    ):
+        raise ValueError("official A5 OOF physical identity mismatch")
+    source = pd.read_csv(source_path)
+    required = {
+        "sample_token",
+        "sequence_id",
+        "track_id",
+        "target_ttc_s",
+        "point_prediction_ttc_s",
+        "fold",
+        "seed",
+    }
+    if not required.issubset(source.columns) or len(source) != int(family["row_count"]):
+        raise ValueError("official A5 OOF schema/row count mismatch")
+    if source["sample_token"].duplicated().any():
+        raise ValueError("official A5 OOF tokens are not unique")
+    prediction_identity = pd.DataFrame(
+        {
+            "sample_token": source["sample_token"].astype(str),
+            "prediction_ttc_s": source["point_prediction_ttc_s"].to_numpy(dtype=np.float64),
+        }
+    )
+    if canonical_records_hash(
+        prediction_identity, ("sample_token", "prediction_ttc_s")
+    ) != family.get("prediction_sha256"):
+        raise ValueError("official A5 OOF prediction identity mismatch")
+
+    indexed = source.set_index(source["sample_token"].astype(str), drop=False)
+    tokens = [item.sample_token for item in view.locators]
+    if not set(tokens).issubset(set(indexed.index)):
+        raise ValueError("outer-dev tokens are absent from official A5 OOF")
+    selected = indexed.loc[tokens].reset_index(drop=True)
+    expected_sequence = np.asarray([item.sequence_id for item in view.locators], dtype=str)
+    expected_track = np.asarray([item.track_id for item in view.locators], dtype=str)
+    target = np.asarray([item.target_ttc_s for item in view.locators], dtype=np.float64)
+    weights = np.asarray([item.sample_weight for item in view.locators], dtype=np.float64)
+    if (
+        not np.array_equal(selected["sequence_id"].astype(str), expected_sequence)
+        or not np.array_equal(selected["track_id"].astype(str), expected_track)
+        or set(selected["fold"].astype(int)) != {view.fold}
+        or set(selected["seed"].astype(int)) != {seed}
+        or not np.allclose(
+            selected["target_ttc_s"].to_numpy(dtype=np.float64),
+            target,
+            rtol=0.0,
+            atol=1.0e-12,
+        )
+    ):
+        raise ValueError("official A5 OOF fold identity differs from canonical outer-dev")
+    raw = selected["point_prediction_ttc_s"].to_numpy(dtype=np.float64)
+    delta_metric = float(protocol["metric"]["metric_delta_t_s"])
+    clip_seconds = float(protocol["metric"]["deployment_ttc_clip_seconds"])
+    minimum_abs_ttc = float(protocol["metric"]["minimum_abs_prediction_ttc_s"])
+    valid_domain = (raw < 0.0) | (raw > delta_metric)
+    if not np.isfinite(raw).all() or not valid_domain.all():
+        raise ValueError("official A5 OOF contains an invalid point prediction")
+    inverse = np.reciprocal(raw)
+    phase = -np.log1p(-delta_metric * inverse)
+    target_phase = -np.log1p(-delta_metric / target)
+    clipped = np.clip(raw, -clip_seconds, clip_seconds)
+    result = pd.DataFrame(
+        {
+            "sample_token": tokens,
+            "sequence_id": expected_sequence,
+            "track_id": expected_track,
+            "outer_fold": view.fold,
+            "target_ttc_s": target,
+            "target_benchmark_phase": target_phase,
+            "predicted_benchmark_phase": phase,
+            "predicted_inverse_ttc_raw": inverse,
+            "predicted_ttc_raw": raw,
+            "predicted_ttc_clipped": clipped,
+            "is_clip_saturated": np.abs(raw) > clip_seconds,
+            "scientific_mid_per_row": 1.0e4 * np.abs(target_phase - phase),
+            "scientific_failure": np.abs(raw) < minimum_abs_ttc,
+            "sample_weight": weights,
+            "arm_id": "X0-A5-REPLAY",
+            "seed": seed,
+            "checkpoint_sha256": frozen.checkpoint_file_sha256,
+            "config_sha256": config_sha256,
+            "protocol_sha256": protocol["artifact_sha256"],
+            "cache_manifest_sha256": protocol["cache_binding"]["file_sha256"],
+            "split_manifest_sha256": protocol["split_binding"]["file_sha256"],
+        }
+    )
+    return result.loc[:, ROW_LEVEL_OOF_COLUMNS]
 
 
 def run_outer_folds(
@@ -610,20 +734,31 @@ def run_outer_folds(
                 "outer_dev_evaluation_count": 1,
             },
         )
-        adapter.stage_view(dev_view)
-        dev_batches = adapter.iter_outer_dev_batches(
-            dev_view,
-            batch_size=config.get("training", {}).get("batch_size", 32),
-        )
-        predictions = evaluate_outer_dev_once(
-            frozen,
-            dev_batches,
-            arm_id=config["arm_id"],
-            seed=7,
-            config_sha256=config_sha,
-            protocol=protocol,
-        )
-        adapter.release_staged_view()
+        if config["arm_id"] == "X0-A5-REPLAY":
+            predictions = replay_official_a5_outer_dev_once(
+                frozen,
+                dev_view,
+                source_root=source_root,
+                reference=reference,
+                seed=7,
+                config_sha256=config_sha,
+                protocol=protocol,
+            )
+        else:
+            adapter.stage_view(dev_view)
+            dev_batches = adapter.iter_outer_dev_batches(
+                dev_view,
+                batch_size=config.get("training", {}).get("batch_size", 32),
+            )
+            predictions = evaluate_outer_dev_once(
+                frozen,
+                dev_batches,
+                arm_id=config["arm_id"],
+                seed=7,
+                config_sha256=config_sha,
+                protocol=protocol,
+            )
+            adapter.release_staged_view()
         oof_path = fold_root / "oof_predictions.csv"
         predictions.to_csv(oof_path, index=False)
         summary = sign_artifact(

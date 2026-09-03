@@ -208,13 +208,15 @@ try {
         'src/e_jepa_ttc/data/collision_clock_cache.py', 'src/e_jepa_ttc/training/collision_clock_eap.py',
         'src/e_jepa_ttc/evaluation/collision_clock_bootstrap.py', 'src/e_jepa_ttc/evaluation/collision_clock_gates.py',
         'src/e_jepa_ttc/evaluation/collision_clock_cross_arm.py', 'src/e_jepa_ttc/evaluation/collision_clock_runner.py',
+        'src/e_jepa_ttc/evaluation/collision_clock_aggregate.py',
         'scripts/train_scientific_recovery_v9_eclock.py', 'scripts/compare_scientific_recovery_v9_eclock_x0.py',
         'scripts/preflight_scientific_recovery_v9_eclock_x0.py', 'scripts/smoke_scientific_recovery_v9_eclock_x0.py',
         'scripts/report_scientific_recovery_v9_eclock_environment.py', 'scripts/analyze_scientific_recovery_v9_eclock_x0.py',
         'scripts/package_scientific_recovery_v9_eclock_x0_results.py',
         'tests/unit/test_collision_clock_cache.py', 'tests/unit/test_collision_clock_bootstrap.py',
         'tests/unit/test_collision_clock_gates.py', 'tests/unit/test_collision_clock_pair_and_support.py',
-        'tests/unit/test_collision_clock_motion.py', 'tests/integration/test_collision_clock_resume.py'
+        'tests/unit/test_collision_clock_motion.py', 'tests/unit/test_collision_clock_aggregate_io.py',
+        'tests/integration/test_collision_clock_resume.py'
     ) | ForEach-Object { Join-Path $RepoRoot $_ }
     Invoke-LoggedPython -Name 'qa-ruff-check' -Arguments (@('-m', 'ruff', 'check') + $qualityFiles)
     Invoke-LoggedPython -Name 'qa-ruff-format' -Arguments (@('-m', 'ruff', 'format', '--check') + $qualityFiles)
