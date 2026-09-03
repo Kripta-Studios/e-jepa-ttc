@@ -8,6 +8,7 @@ param(
     [int]$Seed = 7,
     [ValidateSet(0, 1, 2)]
     [int[]]$Folds = @(0, 1, 2),
+    [string]$OutputRoot = 'artifacts/scientific_recovery_v9_eclock/runs',
     [switch]$ExecuteAuthorizedOOF
 )
 
@@ -16,6 +17,11 @@ $RepoRoot = Split-Path -Parent $PSScriptRoot
 $env:PYTHONPATH = Join-Path $RepoRoot 'src'
 $TrainScript = Join-Path $PSScriptRoot 'train_scientific_recovery_v9_eclock.py'
 $ConfigRoot = Join-Path $RepoRoot 'configs/experiment/scientific_recovery_v9_eclock'
+$ResolvedOutputRoot = if ([System.IO.Path]::IsPathRooted($OutputRoot)) {
+    $OutputRoot
+} else {
+    Join-Path $RepoRoot $OutputRoot
+}
 $ModeValue = switch ($Mode) {
     'DryRun' { 'dry-run' }
     'SyntheticSmoke' { 'synthetic-smoke' }
@@ -32,9 +38,10 @@ foreach ($Arm in $Arms) {
     $Config = Join-Path $ConfigRoot $ConfigNames[$Arm]
     if ($Mode -eq 'OOF') {
         foreach ($Fold in $Folds) {
+            $Output = Join-Path $ResolvedOutputRoot (Join-Path $Arm "fold$Fold")
             $Arguments = @(
-                $TrainScript,
-                '--config', $Config, '--mode', $ModeValue, '--seed', "$Seed", '--fold', "$Fold"
+                $TrainScript, '--config', $Config, '--mode', $ModeValue,
+                '--seed', "$Seed", '--fold', "$Fold", '--output', $Output
             )
             if ($ExecuteAuthorizedOOF) { $Arguments += '--execute-authorized-oof' }
             & python @Arguments
