@@ -16,6 +16,7 @@ from e_jepa_ttc.artifacts.hashing import compute_file_hash, sign_artifact
 from e_jepa_ttc.data.collision_clock_cache import (
     CollisionClockOuterTrainView,
     CollisionClockTrain8192Cache,
+    load_canonical_supervision,
 )
 from e_jepa_ttc.evaluation.collision_clock_config import (
     assert_arm_execution_authorized,
@@ -101,7 +102,12 @@ def main() -> int:
         raise ValueError("X0-DYN-W unexpectedly became executable")
     for fold in (0, 1, 2):
         _official_checkpoint(fold=fold, reference=reference, source_root=args.reference_root)
-    adapter = CollisionClockTrain8192Cache(args.cache_root, protocol, cache_mode=args.cache_mode)
+    adapter = CollisionClockTrain8192Cache(
+        args.cache_root,
+        protocol,
+        cache_mode=args.cache_mode,
+        canonical_supervision=load_canonical_supervision(reference, args.reference_root),
+    )
     train, _dev = adapter.outer_views(0)
     selected_mode = adapter.select_mode_for_train_view(train)
     subset_locators = train.locators[:2]

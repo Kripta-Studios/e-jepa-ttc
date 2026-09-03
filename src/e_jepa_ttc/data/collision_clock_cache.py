@@ -155,6 +155,78 @@ def _bucket_name(target_ttc_s: float) -> str:
     raise ValueError("cache target lies outside the signed TTC buckets")
 
 
+def _bound_reference_path(
+    reference: Mapping[str, Any],
+    source_root: Path,
+    *,
+    family: str,
+    semantic_identity: str,
+) -> Path:
+    families = reference.get("families")
+    if not isinstance(families, Mapping) or not isinstance(families.get(family), Mapping):
+        raise ValueError(f"canonical supervision family is missing: {family}")
+    records = families[family].get("physical_references")
+    if not isinstance(records, list):
+        raise ValueError(f"canonical supervision references are missing: {family}")
+    matches = [
+        record
+        for record in records
+        if isinstance(record, Mapping) and record.get("semantic_identity") == semantic_identity
+    ]
+    if len(matches) != 1:
+        raise ValueError(f"canonical supervision reference is ambiguous: {semantic_identity}")
+    record = matches[0]
+    relative = _safe_relative_path(str(record["path"]))
+    path = source_root.resolve(strict=True).joinpath(*relative.parts)
+    if not path.is_file() or path.stat().st_size != int(record["bytes"]):
+        raise ValueError(f"canonical supervision file identity mismatch: {relative}")
+    if compute_file_hash(str(path)) != record["file_sha256"]:
+        raise ValueError(f"canonical supervision SHA mismatch: {relative}")
+    return path
+
+
+def load_canonical_supervision(reference: Mapping[str, Any], source_root: Path) -> pd.DataFrame:
+    """Load only signed token, target and weight columns from authorized OOF evidence."""
+
+    target_path = _bound_reference_path(
+        reference,
+        source_root,
+        family="official_a5_oof",
+        semantic_identity="official_a5_oof_csv",
+    )
+    weight_path = _bound_reference_path(
+        reference,
+        source_root,
+        family="prospective_router_r",
+        semantic_identity="v8_nested_router_seed7_oof_csv",
+    )
+    targets = pd.read_csv(target_path, usecols=["sample_token", "target_ttc_s"])
+    weights = pd.read_csv(weight_path, usecols=["token_id", "sample_weight"]).rename(
+        columns={"token_id": "sample_token"}
+    )
+    result = targets.merge(weights, on="sample_token", how="outer", validate="one_to_one")
+    if (
+        len(result) != 8192
+        or result["sample_token"].duplicated().any()
+        or not np.isfinite(
+            result[["target_ttc_s", "sample_weight"]].to_numpy(dtype=np.float64)
+        ).all()
+    ):
+        raise ValueError("canonical supervision row universe is invalid")
+    official = reference["families"]["official_a5_oof"]
+    if (
+        canonical_records_hash(result, ("sample_token", "target_ttc_s"))
+        != official["target_sha256"]
+    ):
+        raise ValueError("canonical supervision target identity mismatch")
+    if (
+        canonical_records_hash(result, ("sample_token", "sample_weight"))
+        != official["sample_weight_sha256"]
+    ):
+        raise ValueError("canonical supervision weight identity mismatch")
+    return result
+
+
 class CollisionClockTrain8192Cache:
     """Verify and expose only the signed train cache through typed fold views."""
 
@@ -166,6 +238,7 @@ class CollisionClockTrain8192Cache:
         cache_mode: CacheMode = "direct",
         lru_capacity: int = 2,
         fold_ram_margin_bytes: int = 6 * 1024**3,
+        canonical_supervision: pd.DataFrame | None = None,
     ) -> None:
         if cache_mode not in {"direct", "shard_lru", "fold_ram", "auto"}:
             raise ValueError(f"unsupported cache mode: {cache_mode}")
@@ -177,6 +250,9 @@ class CollisionClockTrain8192Cache:
         self.cache_mode: CacheMode = cache_mode
         self.lru_capacity = lru_capacity
         self.fold_ram_margin_bytes = fold_ram_margin_bytes
+        self.canonical_supervision = (
+            canonical_supervision.copy() if canonical_supervision is not None else None
+        )
         self.manifest_path = self.cache_root / "manifest.json"
         binding = protocol.get("cache_binding")
         if not isinstance(binding, Mapping):
@@ -298,7 +374,7 @@ class CollisionClockTrain8192Cache:
         count = len(view.locators)
         inputs = torch.empty((count, *shape), dtype=torch.float32)
         delta = torch.empty((count, 2), dtype=torch.float32)
-        target = torch.empty((count,), dtype=torch.float32)
+        target = torch.empty((count,), dtype=torch.float64)
         by_shard: dict[str, list[tuple[int, CollisionClockSampleLocator]]] = {}
         for output_index, locator in enumerate(view.locators):
             by_shard.setdefault(locator.shard_path, []).append((output_index, locator))
@@ -427,11 +503,24 @@ class CollisionClockTrain8192Cache:
         if len(frame) != expected_count or frame["sample_token"].duplicated().any():
             raise ValueError("cache token count/uniqueness mismatch")
         counts = self.protocol["canonical_bucket_counts_by_sequence"]
-        weights = []
-        for row in raw_rows:
-            bucket = _bucket_name(float(row["target_ttc_s"]))
-            count = int(counts[row["sequence_id"]][bucket])
-            weights.append(PAPER_MID_WEIGHTS[bucket] / len(counts) / count)
+        if self.canonical_supervision is None:
+            weights = []
+            targets = [float(row["target_ttc_s"]) for row in raw_rows]
+            for row in raw_rows:
+                bucket = _bucket_name(float(row["target_ttc_s"]))
+                count = int(counts[row["sequence_id"]][bucket])
+                weights.append(PAPER_MID_WEIGHTS[bucket] / len(counts) / count)
+        else:
+            supervision = self.canonical_supervision.set_index("sample_token")
+            if set(supervision.index.astype(str)) != set(frame["sample_token"].astype(str)):
+                raise ValueError("cache and canonical supervision token universes differ")
+            ordered = supervision.loc[frame["sample_token"].astype(str)]
+            targets = ordered["target_ttc_s"].to_numpy(dtype=np.float64).tolist()
+            cached_targets = frame["target_ttc_s"].to_numpy(dtype=np.float64)
+            if not np.allclose(cached_targets, targets, rtol=0, atol=1e-5):
+                raise ValueError("cache target differs materially from canonical supervision")
+            weights = ordered["sample_weight"].to_numpy(dtype=np.float64).tolist()
+            frame["target_ttc_s"] = np.asarray(targets, dtype=np.float64)
         frame["sample_weight"] = np.asarray(weights, dtype=np.float64)
         observed = {
             "token_identity_sha256": canonical_records_hash(
@@ -455,10 +544,12 @@ class CollisionClockTrain8192Cache:
                 sequence_id=str(row["sequence_id"]),
                 track_id=str(row["track_id"]),
                 outer_fold=int(row["outer_fold"]),
-                target_ttc_s=float(row["target_ttc_s"]),
+                target_ttc_s=float(target),
                 sample_weight=float(weight),
             )
-            for row, location, weight in zip(raw_rows, row_locations, weights, strict=True)
+            for row, location, target, weight in zip(
+                raw_rows, row_locations, targets, weights, strict=True
+            )
         )
         return self._locators
 
@@ -543,7 +634,7 @@ class CollisionClockTrain8192Cache:
         return (
             torch.stack(events),
             torch.tensor(deltas, dtype=torch.float32),
-            torch.tensor(targets, dtype=torch.float32),
+            torch.tensor(targets, dtype=torch.float64),
         )
 
     def iter_outer_train_batches(
@@ -589,4 +680,5 @@ __all__ = [
     "CollisionClockOuterTrainView",
     "CollisionClockSampleLocator",
     "CollisionClockTrain8192Cache",
+    "load_canonical_supervision",
 ]

@@ -17,6 +17,7 @@ from e_jepa_ttc.data.collision_clock_cache import (
     CollisionClockOuterTrainSequence,
     CollisionClockOuterTrainView,
     CollisionClockTrain8192Cache,
+    load_canonical_supervision,
 )
 from e_jepa_ttc.evaluation.collision_clock_protocol import (
     module_topology_sha256,
@@ -140,7 +141,12 @@ def main() -> int:
     }
     first_config, protocol, reference = load_runner_contracts(repo, config_paths["X0-BASE-U"])
     del first_config
-    adapter = CollisionClockTrain8192Cache(args.cache_root, protocol, cache_mode=args.cache_mode)
+    adapter = CollisionClockTrain8192Cache(
+        args.cache_root,
+        protocol,
+        cache_mode=args.cache_mode,
+        canonical_supervision=load_canonical_supervision(reference, args.reference_root),
+    )
     train_view_full, dev_view = adapter.outer_views(0)
     locators = train_view_full.locators[: args.max_rows]
     train_view = CollisionClockOuterTrainView(0, locators, adapter._subset_sha(locators))

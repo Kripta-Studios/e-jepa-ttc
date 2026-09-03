@@ -21,6 +21,7 @@ from e_jepa_ttc.data.collision_clock_cache import (
     CollisionClockOuterDevBatch,
     CollisionClockOuterTrainSequence,
     CollisionClockTrain8192Cache,
+    load_canonical_supervision,
 )
 from e_jepa_ttc.evaluation.collision_clock_protocol import (
     ROW_LEVEL_OOF_COLUMNS,
@@ -413,7 +414,13 @@ def run_outer_folds(
     else:
         output_root.mkdir(parents=True, exist_ok=False)
         _write_signed_state(arm_manifest_path, arm_identity)
-    adapter = CollisionClockTrain8192Cache(cache_root, protocol, cache_mode=cache_mode)
+    supervision = load_canonical_supervision(reference, source_root)
+    adapter = CollisionClockTrain8192Cache(
+        cache_root,
+        protocol,
+        cache_mode=cache_mode,
+        canonical_supervision=supervision,
+    )
     adapter.verify_and_index()
     summaries = []
     for fold in (0, 1, 2):
@@ -696,7 +703,11 @@ def run_outer_train_smoke(
         raise PermissionError("real-data outer-train smoke is unavailable for this arm")
     if config.get("execution_authorized") is not True or outer_fold not in (0, 1, 2):
         raise PermissionError("outer-train smoke identity is not authorized")
-    adapter = CollisionClockTrain8192Cache(cache_root, protocol)
+    adapter = CollisionClockTrain8192Cache(
+        cache_root,
+        protocol,
+        canonical_supervision=load_canonical_supervision(reference, source_root),
+    )
     train_view, _dev_view = adapter.outer_views(outer_fold)
     torch.manual_seed(7)
     if arm_id == "X0-PAIR-U":

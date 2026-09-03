@@ -42,6 +42,10 @@ always reported; no per-sequence finite-value filtering is permitted.
 ## Engineering controls
 
 - The cache remains read-only and is never copied.
+- Cache tensors store TTC as float32, while the signed scientific universe hashes canonical
+  float64 targets and weights. The adapter therefore joins only `sample_token`, `target_ttc_s`
+  and `sample_weight` from their SHA-bound authorized OOF sources, rejects material disagreement
+  with the cached TTC, and carries supervision as float64. Prediction columns are not loaded.
 - All 32 signed shards are physically verified once in preflight.
 - Direct, bounded shard-LRU and fold-RAM modes must return exactly equal tensors and identities
   on a fixed outer-train subset.

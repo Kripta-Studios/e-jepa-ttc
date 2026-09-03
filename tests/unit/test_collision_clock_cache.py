@@ -180,6 +180,32 @@ def test_read_only_adapter_verifies_cache_and_builds_disjoint_typed_views(
     }
 
 
+def test_signed_canonical_supervision_restores_float64_target_identity(tmp_path: Path) -> None:
+    root, protocol = _fixture_cache(tmp_path)
+    locators = CollisionClockTrain8192Cache(root, protocol).verify_and_index()
+    canonical = pd.DataFrame(
+        {
+            "sample_token": [item.sample_token for item in locators],
+            "target_ttc_s": [item.target_ttc_s for item in locators],
+            "sample_weight": [item.sample_weight for item in locators],
+        }
+    )
+    canonical.loc[0, "target_ttc_s"] += 1.0e-7
+    canonical.loc[0, "sample_weight"] += 1.0e-12
+    protocol["canonical_hashes"]["target_sha256"] = canonical_records_hash(
+        canonical, ("sample_token", "target_ttc_s")
+    )
+    protocol["canonical_hashes"]["sample_weight_sha256"] = canonical_records_hash(
+        canonical, ("sample_token", "sample_weight")
+    )
+    adapter = CollisionClockTrain8192Cache(root, protocol, canonical_supervision=canonical)
+    restored = adapter.verify_and_index()
+    assert restored[0].target_ttc_s == canonical.loc[0, "target_ttc_s"]
+    train, _dev = adapter.outer_views(restored[0].outer_fold)
+    batch = next(adapter.iter_outer_train_batches(train, batch_size=2))
+    assert batch.target_ttc_seconds.dtype == torch.float64
+
+
 def test_adapter_rejects_missing_or_extra_shard(tmp_path: Path) -> None:
     root, protocol = _fixture_cache(tmp_path)
     extra = root / "train" / "extra.pt"
