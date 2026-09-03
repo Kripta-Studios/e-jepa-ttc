@@ -29,6 +29,7 @@ $env:PYTHONUNBUFFERED = '1'
 $env:PYTHONPATH = Join-Path $RepoRoot 'src'
 $env:CUDA_DEVICE_ORDER = 'PCI_BUS_ID'
 $env:CUDA_VISIBLE_DEVICES = '0'
+$env:CUBLAS_WORKSPACE_CONFIG = ':4096:8'
 $env:OMP_NUM_THREADS = '16'
 $env:MKL_NUM_THREADS = '16'
 $env:OPENBLAS_NUM_THREADS = '16'
@@ -203,6 +204,7 @@ try {
     Invoke-LoggedPython -Name 'qa-pytest-x0' -Arguments (@('-m', 'pytest', '-q') + $testPaths)
 
     $qualityFiles = @(
+        'src/e_jepa_ttc/models/collision_clock_motion.py',
         'src/e_jepa_ttc/data/collision_clock_cache.py', 'src/e_jepa_ttc/training/collision_clock_eap.py',
         'src/e_jepa_ttc/evaluation/collision_clock_bootstrap.py', 'src/e_jepa_ttc/evaluation/collision_clock_gates.py',
         'src/e_jepa_ttc/evaluation/collision_clock_cross_arm.py', 'src/e_jepa_ttc/evaluation/collision_clock_runner.py',
@@ -212,7 +214,7 @@ try {
         'scripts/package_scientific_recovery_v9_eclock_x0_results.py',
         'tests/unit/test_collision_clock_cache.py', 'tests/unit/test_collision_clock_bootstrap.py',
         'tests/unit/test_collision_clock_gates.py', 'tests/unit/test_collision_clock_pair_and_support.py',
-        'tests/integration/test_collision_clock_resume.py'
+        'tests/unit/test_collision_clock_motion.py', 'tests/integration/test_collision_clock_resume.py'
     ) | ForEach-Object { Join-Path $RepoRoot $_ }
     Invoke-LoggedPython -Name 'qa-ruff-check' -Arguments (@('-m', 'ruff', 'check') + $qualityFiles)
     Invoke-LoggedPython -Name 'qa-ruff-format' -Arguments (@('-m', 'ruff', 'format', '--check') + $qualityFiles)

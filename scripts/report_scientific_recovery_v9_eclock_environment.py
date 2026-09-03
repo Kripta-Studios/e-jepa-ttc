@@ -82,6 +82,11 @@ def main() -> int:
                     "NUMEXPR_MAX_THREADS",
                 )
             },
+            "cuda_determinism_environment": {
+                "CUBLAS_WORKSPACE_CONFIG": os.environ.get("CUBLAS_WORKSPACE_CONFIG"),
+                "CUDA_DEVICE_ORDER": os.environ.get("CUDA_DEVICE_ORDER"),
+                "CUDA_VISIBLE_DEVICES": os.environ.get("CUDA_VISIBLE_DEVICES"),
+            },
             "cache_root": str(args.cache_root.resolve()),
             "reference_root": str(args.reference_root.resolve()),
             "uv_lock_sha256": compute_file_hash(str(repo / "uv.lock")),
