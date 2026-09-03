@@ -8,6 +8,7 @@ import torch
 
 from e_jepa_ttc.models.local_transport import (
     TRANSPORT_FEATURE_NAMES,
+    LocalTransportMatch,
     local_correlation_match,
     transport_physical_features,
 )
@@ -49,9 +50,22 @@ def height_free_global_transport_features(
         temperature=temperature,
         return_probability=False,
     )
+    # X0 uses the reverse match as a target/reference for the cycle diagnostic.
+    # Detaching that reference keeps the direct motion path differentiable while
+    # avoiding CUDA grid_sample's atomic input-gradient accumulation, which is
+    # not bitwise reproducible across otherwise identical runs on Windows.  This
+    # is deliberately local to X0; A5 retains its original bidirectional graph.
+    reverse_reference = LocalTransportMatch(
+        dx=reverse.dx.detach(),
+        dy=reverse.dy.detach(),
+        confidence_margin=reverse.confidence_margin.detach(),
+        entropy=reverse.entropy.detach(),
+        valid=reverse.valid,
+        probability=None,
+    )
     features18 = transport_physical_features(
         forward,
-        reverse,
+        reverse_reference,
         foreground_weight=None,
         radius=radius,
     )

@@ -20,13 +20,20 @@ EXPECTED = (
 
 def test_global_transport_schema_is_exact_and_uses_no_foreground_weight(monkeypatch) -> None:
     calls: list[torch.Tensor | None] = []
+    reverse_requires_grad: list[tuple[bool, bool]] = []
     matcher_calls: list[tuple[torch.Tensor, torch.Tensor]] = []
     original = motion.transport_physical_features
     original_matcher = motion.local_correlation_match
 
-    def spy(*args, foreground_weight, **kwargs):
+    def spy(forward, reverse, *, foreground_weight, **kwargs):
         calls.append(foreground_weight)
-        return original(*args, foreground_weight=foreground_weight, **kwargs)
+        reverse_requires_grad.append((reverse.dx.requires_grad, reverse.dy.requires_grad))
+        return original(
+            forward,
+            reverse,
+            foreground_weight=foreground_weight,
+            **kwargs,
+        )
 
     def matcher_spy(previous, current, **kwargs):
         matcher_calls.append((previous, current))
@@ -34,7 +41,7 @@ def test_global_transport_schema_is_exact_and_uses_no_foreground_weight(monkeypa
 
     monkeypatch.setattr(motion, "transport_physical_features", spy)
     monkeypatch.setattr(motion, "local_correlation_match", matcher_spy)
-    dense = torch.randn(2, 8, 6, 6)
+    dense = torch.randn(2, 8, 6, 6, requires_grad=True)
     output = motion.height_free_global_transport_features(
         dense,
         dense.roll(1, dims=-1),
@@ -45,6 +52,7 @@ def test_global_transport_schema_is_exact_and_uses_no_foreground_weight(monkeypa
     assert motion.GLOBAL_TRANSPORT_FEATURE_NAMES == TRANSPORT_FEATURE_NAMES[:9]
     assert output.features.shape == (2, 9)
     assert calls == [None]
+    assert reverse_requires_grad == [(False, False)]
     assert len(matcher_calls) == 2
     assert matcher_calls[0][0] is dense
     assert matcher_calls[1][1] is dense
