@@ -1406,3 +1406,10 @@ The completion patch also makes these contracts explicit:
   while JEPA pretraining still uses `t0,t1 -> t2`.
 - a router winner remains the primary TTC winner, but JEPA attribution is made on
   its A5 constituent encoder because a meta-router is not one transferable encoder.
+
+## V9 E-Clock X0 implementation pointer
+
+The approved, implementation-only X0 status is recorded in
+`docs/SCIENTIFIC_RECOVERY_V9_ECLOCK_X0_STATUS.md`. No X0 scientific OOF result exists
+at this handoff. X0-DYN-W remains non-executable, and all height-bypass claims retain
+the upstream box-conditioned ROI provenance stated there.
