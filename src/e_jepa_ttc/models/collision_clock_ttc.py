@@ -15,8 +15,8 @@ from e_jepa_ttc.models.collision_clock_features import (
     ClockFeatureSchema,
     HeightBypassEncoderConfig,
     HeightBypassEndpointEncoder,
-    assert_height_bypass_module_tree,
     assemble_x0_clock_features,
+    assert_height_bypass_module_tree,
     event_sensor_support,
 )
 from e_jepa_ttc.models.collision_clock_math import (
