@@ -15,7 +15,7 @@ from e_jepa_ttc.evaluation.collision_clock_config import (
 
 ROOT = Path(__file__).resolve().parents[2]
 CONFIG_ROOT = ROOT / "configs/experiment/scientific_recovery_v9_eclock"
-SCHEMA = ROOT / "schemas/scientific_recovery_v9_eclock_config_v1.schema.json"
+SCHEMA = ROOT / "schemas/scientific_recovery_v9_eclock_config_v2.schema.json"
 
 
 def test_all_x0_configs_validate_and_protocol_signature_is_canonical() -> None:
@@ -34,7 +34,7 @@ def test_all_x0_configs_validate_and_protocol_signature_is_canonical() -> None:
     )
     assert verify_artifact_hash(protocol)
     protocol_schema = json.loads(
-        (ROOT / "schemas/scientific_recovery_v9_eclock_protocol_v1.schema.json").read_text(
+        (ROOT / "schemas/scientific_recovery_v9_eclock_protocol_v2.schema.json").read_text(
             encoding="utf-8"
         )
     )
@@ -56,10 +56,12 @@ def test_dyn_w_nonexecuted_summary_is_signed_and_schema_valid() -> None:
         (CONFIG_ROOT / "x0_dyn_w_not_executed_summary.json").read_text(encoding="utf-8")
     )
     schema = json.loads(
-        (ROOT / "schemas/scientific_recovery_v9_eclock_artifact_v1.schema.json").read_text(
-            encoding="utf-8"
-        )
+        (
+            ROOT / "schemas/scientific_recovery_v9_eclock_dyn_w_not_executed_v2.schema.json"
+        ).read_text(encoding="utf-8")
     )
     assert verify_artifact_hash(summary)
     jsonschema.Draft202012Validator(schema).validate(summary)
     assert summary["loss_reduction"] == "normalized_weighted_absolute_phase_error"
+    assert summary["status"] == "not_executed"
+    assert summary["forward_executed"] is False
