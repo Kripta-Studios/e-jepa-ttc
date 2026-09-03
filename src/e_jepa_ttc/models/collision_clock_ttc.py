@@ -21,7 +21,6 @@ from e_jepa_ttc.models.collision_clock_features import (
 )
 from e_jepa_ttc.models.collision_clock_math import (
     benchmark_phase_to_inverse_ttc,
-    finite_ttc_from_inverse,
     neutral_raw_phase,
     phase_lower_bound,
 )
@@ -58,13 +57,16 @@ class CollisionClockConfig:
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "risk_thresholds_s", tuple(self.risk_thresholds_s))
-        if min(
-            self.in_channels,
-            self.encoder_hidden_dim,
-            self.encoder_token_dim,
-            self.residual_depth,
-            self.clock_hidden_dim,
-        ) <= 0:
+        if (
+            min(
+                self.in_channels,
+                self.encoder_hidden_dim,
+                self.encoder_token_dim,
+                self.residual_depth,
+                self.clock_hidden_dim,
+            )
+            <= 0
+        ):
             raise ValueError("collision-clock dimensions and depth must be positive")
         if not 0.0 <= self.dropout < 1.0:
             raise ValueError("dropout must lie in [0,1)")
@@ -97,6 +99,10 @@ class CollisionClockConfig:
 @dataclass
 class CollisionClockTTCOutput:
     benchmark_phase_mean: torch.Tensor
+    predicted_ttc_raw: torch.Tensor
+    predicted_ttc_clipped: torch.Tensor
+    is_clip_saturated: torch.Tensor
+    # Backward-compatible alias for the scientific raw TTC coordinate.
     ttc_mean_seconds: torch.Tensor
     inverse_ttc_mean: torch.Tensor
     known_mask: torch.Tensor
@@ -180,23 +186,29 @@ def _physical_output(
         phase,
         metric_delta_t_s=config.metric_delta_t_s,
     )
-    ttc = finite_ttc_from_inverse(inverse, clip_seconds=config.ttc_clip_seconds)
+    raw_ttc = torch.reciprocal(inverse)
+    clipped_ttc = raw_ttc.clamp(-config.ttc_clip_seconds, config.ttc_clip_seconds)
+    clip_saturated = raw_ttc.abs() > config.ttc_clip_seconds
     known = (
         torch.isfinite(phase)
         & torch.isfinite(inverse)
-        & torch.isfinite(ttc)
-        & (inverse.abs() >= 1.0 / config.ttc_clip_seconds)
+        & torch.isfinite(raw_ttc)
+        & (raw_ttc.abs() >= config.minimum_abs_prediction_ttc_s)
         & (support >= config.min_sensor_support)
     )
     diagnostics = {
         **diagnostics,
         "raw_benchmark_phase": raw_phase,
         "distance_to_phase_lower_bound": phase - lower,
+        "deployment_clipping_not_used_for_scientific_metric": torch.ones_like(phase),
         "official_failure_region_excluded_by_parameterization": torch.ones_like(phase),
     }
     return CollisionClockTTCOutput(
         benchmark_phase_mean=phase,
-        ttc_mean_seconds=ttc,
+        predicted_ttc_raw=raw_ttc,
+        predicted_ttc_clipped=clipped_ttc,
+        is_clip_saturated=clip_saturated,
+        ttc_mean_seconds=raw_ttc,
         inverse_ttc_mean=inverse,
         known_mask=known,
         sensor_support=support,

@@ -42,12 +42,25 @@ def validate_x0_claim_scope(payload: Mapping[str, Any], *, arm_id: str) -> None:
 def evaluate_x0_height_gate(evidence: Mapping[str, Any]) -> dict[str, Any]:
     """Apply the preregistered DYN height-bypass gate without inferring missing evidence."""
 
+    reference_identity = evidence.get("reference_identity")
+    if not isinstance(reference_identity, Mapping):
+        raise ValueError("gate requires a physical reference identity")
+    required_reference = {"reference_family", "path", "file_sha256", "artifact_sha256"}
+    if set(reference_identity) != required_reference:
+        raise ValueError("gate reference identity is incomplete or ambiguous")
+    if reference_identity.get("reference_family") != "official_a5_oof":
+        raise ValueError("height gate requires official_a5_oof, never nested A5")
+    if any(
+        not isinstance(reference_identity[key], str) or not reference_identity[key]
+        for key in required_reference
+    ):
+        raise ValueError("gate reference identity contains an empty field")
     numeric_rules = {
         "row_count": (lambda value: value == 8192),
         "finite_fraction": (lambda value: value == 1.0),
         "failure_rate": (lambda value: value == 0.0),
         "coverage_drop_pp": (lambda value: value <= 1.0),
-        "delta_mid_vs_paired_a5": (lambda value: value <= -3.0),
+        "delta_mid_vs_official_a5_oof": (lambda value: value <= -3.0),
         "probability_delta_below_zero": (lambda value: value >= 0.90),
         "paired_ci95_upper": (lambda value: value < 0.0),
     }
@@ -70,9 +83,7 @@ def evaluate_x0_height_gate(evidence: Mapping[str, Any]) -> dict[str, Any]:
         checks[field] = rule(float(value))
     checks.update({field: evidence[field] is True for field in boolean_fields})
     decision = (
-        "DYNAMIC_HEIGHT_BYPASS_SUPPORTED"
-        if all(checks.values())
-        else "NEGATIVE_DIRECT_PHASE"
+        "DYNAMIC_HEIGHT_BYPASS_SUPPORTED" if all(checks.values()) else "NEGATIVE_DIRECT_PHASE"
     )
     return {"decision": decision, "missing": [], "checks": checks}
 
