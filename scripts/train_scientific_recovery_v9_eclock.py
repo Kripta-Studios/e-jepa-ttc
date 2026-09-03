@@ -37,6 +37,16 @@ def main() -> int:
     )
     parser.add_argument("--output-root", type=Path, required=True)
     parser.add_argument("--device", default="cpu")
+    parser.add_argument(
+        "--cache-mode", choices=("direct", "shard_lru", "fold_ram", "auto"), default="auto"
+    )
+    parser.add_argument("--resume-checkpoint-every", type=int, default=100)
+    parser.add_argument(
+        "--milestone-updates", type=int, nargs="+", default=[250, 500, 1000, 2000, 4000, 6840]
+    )
+    parser.add_argument("--progress-log-every", type=int, choices=(1,), default=1)
+    parser.add_argument("--rich-log-every", type=int, default=25)
+    parser.add_argument("--resume-campaign", action="store_true")
     parser.add_argument("--fold", type=int, choices=(0, 1, 2))
     parser.add_argument("--execute-authorized-outer-train-smoke", action="store_true")
     parser.add_argument("--execute-authorized-oof", action="store_true")
@@ -95,6 +105,11 @@ def main() -> int:
         source_root=args.reference_root,
         output_root=args.output_root,
         device=device,
+        cache_mode=args.cache_mode,
+        resume_campaign=args.resume_campaign,
+        resume_checkpoint_every=args.resume_checkpoint_every,
+        milestone_updates=tuple(args.milestone_updates),
+        rich_log_every=args.rich_log_every,
     )
     print(json.dumps(summaries, sort_keys=True))
     return 0

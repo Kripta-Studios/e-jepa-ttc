@@ -7,12 +7,15 @@ import json
 import os
 import random
 import tempfile
+import time
 from collections.abc import Mapping, Sequence
 from dataclasses import asdict, dataclass
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 import numpy as np
+import psutil
 import torch
 from torch import nn
 
@@ -123,6 +126,9 @@ class CollisionClockTrainingResult:
     checkpoint_path: Path
     checkpoint_manifest_path: Path
     checkpoint_frozen: bool
+    resume_checkpoint_path: Path
+    progress_path: Path
+    milestone_paths: tuple[Path, ...]
 
 
 def _seed_everything(seed: int) -> None:
@@ -158,8 +164,16 @@ def _atomic_json_save(payload: dict[str, Any], path: Path) -> None:
         temporary_path.unlink(missing_ok=True)
 
 
-def _schedule_hash(tokens: Sequence[str]) -> str:
-    return hashlib.sha256("\n".join(tokens).encode("utf-8")).hexdigest()
+_EMPTY_SCHEDULE_SHA256 = hashlib.sha256(b"eclock-x0-schedule-v3").hexdigest()
+
+
+def _schedule_hash(tokens: Sequence[str], previous: str = _EMPTY_SCHEDULE_SHA256) -> str:
+    digest = hashlib.sha256(bytes.fromhex(previous))
+    for token in tokens:
+        encoded = token.encode("utf-8")
+        digest.update(len(encoded).to_bytes(4, "little"))
+        digest.update(encoded)
+    return digest.hexdigest()
 
 
 def _checkpoint_manifest_path(checkpoint_path: Path) -> Path:
@@ -195,6 +209,111 @@ def _write_checkpoint_manifest(
     manifest_path = _checkpoint_manifest_path(checkpoint_path)
     _atomic_json_save(payload, manifest_path)
     return manifest_path, frozen
+
+
+def _append_jsonl(path: Path, payload: Mapping[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a", encoding="utf-8", newline="\n") as stream:
+        stream.write(json.dumps(dict(payload), sort_keys=True, allow_nan=False) + "\n")
+        stream.flush()
+
+
+def _read_progress_losses(path: Path, completed_updates: int) -> list[float]:
+    if not path.is_file():
+        raise ValueError("resume progress JSONL is missing")
+    losses: list[float] = []
+    observed_updates: list[int] = []
+    original_text = path.read_text(encoding="utf-8")
+    lines = original_text.splitlines()
+    retained_lines: list[str] = []
+    extra_updates = False
+    for line in lines:
+        if not line.strip():
+            continue
+        record = json.loads(line)
+        update = int(record["update"])
+        if record.get("event") != "update":
+            if update <= completed_updates:
+                retained_lines.append(line)
+            else:
+                extra_updates = True
+            continue
+        if update == 0:
+            retained_lines.append(line)
+            continue
+        if update > completed_updates:
+            extra_updates = True
+            continue
+        if "loss" not in record:
+            raise ValueError("resume progress record lacks loss")
+        observed_updates.append(update)
+        losses.append(float(record["loss"]))
+        retained_lines.append(line)
+    if observed_updates != list(range(1, completed_updates + 1)):
+        raise ValueError("resume progress JSONL is incomplete or non-contiguous")
+    if extra_updates:
+        orphaned = path.with_name(f"{path.stem}.orphaned-after-{completed_updates}.jsonl")
+        if orphaned.exists():
+            raise ValueError("orphaned progress evidence path already exists")
+        orphaned.write_text(original_text, encoding="utf-8")
+        temporary = path.with_name(f".{path.name}.resume-prefix.tmp")
+        temporary.write_text("\n".join(retained_lines) + "\n", encoding="utf-8")
+        temporary.replace(path)
+    return losses
+
+
+def _checkpoint_payload(
+    *,
+    model: nn.Module,
+    optimizer: torch.optim.Optimizer,
+    scheduler: torch.optim.lr_scheduler.LRScheduler,
+    identity: CollisionClockScientificIdentity,
+    completed: int,
+    schedule_hash: str,
+    consumed_token_count: int,
+    losses: Sequence[float],
+    batch_count: int,
+) -> dict[str, Any]:
+    return {
+        "artifact_type": "eclock_x0_checkpoint_v2",
+        "scientific_identity": asdict(identity),
+        "model_state_dict": model.state_dict(),
+        "optimizer_state_dict": optimizer.state_dict(),
+        "scheduler_state_dict": scheduler.state_dict(),
+        "completed_updates": completed,
+        "loss_count": len(losses),
+        "loss_sum": float(np.sum(np.asarray(losses, dtype=np.float64), dtype=np.float64)),
+        "recent_losses": list(losses[-100:]),
+        "consumed_token_count": consumed_token_count,
+        "batch_schedule_sha256": schedule_hash,
+        "python_rng_state": random.getstate(),
+        "numpy_rng_state": np.random.get_state(),
+        "torch_cpu_rng_state": torch.get_rng_state(),
+        "torch_cuda_rng_state": (
+            torch.cuda.get_rng_state_all() if torch.cuda.is_available() else None
+        ),
+        "sampler_order_state": {"next_update": completed, "batch_count": batch_count},
+    }
+
+
+def _save_checkpoint(
+    path: Path,
+    *,
+    payload: dict[str, Any],
+    identity: CollisionClockScientificIdentity,
+    completed: int,
+    schedule_hash: str,
+    immutable: bool,
+) -> tuple[Path, bool]:
+    if immutable and path.exists():
+        existing, _decision = validate_resume_checkpoint(path, expected_identity=identity)
+        if int(existing["completed_updates"]) != completed:
+            raise ValueError("immutable milestone has the wrong update identity")
+        return _checkpoint_manifest_path(path), completed == identity.update_budget
+    _atomic_torch_save(payload, path)
+    return _write_checkpoint_manifest(
+        path, identity=identity, completed_updates=completed, schedule_hash=schedule_hash
+    )
 
 
 def validate_resume_checkpoint(
@@ -237,6 +356,10 @@ def validate_resume_checkpoint(
     }
     if not required_states.issubset(payload):
         raise ValueError("checkpoint resume state is incomplete")
+    if int(payload.get("loss_count", -1)) != int(payload.get("completed_updates", -2)):
+        raise ValueError("checkpoint compact loss state is inconsistent")
+    if not isinstance(payload.get("batch_schedule_sha256"), str):
+        raise ValueError("checkpoint schedule digest is missing")
     decision = sign_artifact(
         {
             "artifact_type": "eclock_x0_resume_decision_v2",
@@ -288,6 +411,10 @@ def train_collision_clock_updates(
     checkpoint_path: Path,
     stop_after_updates: int | None = None,
     resume: bool = False,
+    checkpoint_every: int = 100,
+    milestone_updates: Sequence[int] = (250, 500, 1000, 2000, 4000, 6840),
+    progress_path: Path | None = None,
+    rich_log_every: int = 25,
 ) -> CollisionClockTrainingResult:
     """Train only typed outer-train batches and persist exact resume state."""
 
@@ -301,6 +428,11 @@ def train_collision_clock_updates(
         or config.checkpoint_policy != scientific_identity.checkpoint_policy
     ):
         raise ValueError("training budget/precision/checkpoint identity mismatch")
+    if checkpoint_every <= 0 or rich_log_every <= 0:
+        raise ValueError("checkpoint/progress cadence must be positive")
+    if any(value <= 0 for value in milestone_updates):
+        raise ValueError("milestone updates must be positive")
+    effective_milestones = {value for value in milestone_updates if value <= config.update_budget}
     expected_optimizer = {
         "name": "AdamW",
         "learning_rate": config.learning_rate,
@@ -330,10 +462,12 @@ def train_collision_clock_updates(
     )
     scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=lambda _step: 1.0)
     losses: list[float] = []
-    consumed_tokens: list[str] = []
+    schedule_hash = _EMPTY_SCHEDULE_SHA256
+    consumed_token_count = 0
     start = 0
+    progress = progress_path or checkpoint_path.with_name(f"{checkpoint_path.stem}.progress.jsonl")
     if resume:
-        payload, _decision = validate_resume_checkpoint(
+        payload, resume_decision = validate_resume_checkpoint(
             checkpoint_path, expected_identity=scientific_identity
         )
         model.load_state_dict(payload["model_state_dict"], strict=True)
@@ -348,15 +482,44 @@ def train_collision_clock_updates(
                 raise ValueError("checkpoint has CUDA RNG state but CUDA is unavailable")
             torch.cuda.set_rng_state_all(cuda_state)
         start = int(payload["completed_updates"])
-        losses = [float(value) for value in payload["losses"]]
-        consumed_tokens = [str(value) for value in payload["consumed_tokens"]]
+        losses = _read_progress_losses(progress, start)
+        if len(losses) != int(payload["loss_count"]):
+            raise ValueError("resume progress/checkpoint loss count mismatch")
+        schedule_hash = str(payload["batch_schedule_sha256"])
+        consumed_token_count = int(payload["consumed_token_count"])
         sampler_state = payload["sampler_order_state"]
         if sampler_state != {"next_update": start, "batch_count": len(batches)}:
             raise ValueError("resume sampler/order state mismatch")
-        if _schedule_hash(consumed_tokens) != payload["batch_schedule_sha256"]:
-            raise ValueError("resume batch schedule hash mismatch")
+        _append_jsonl(
+            progress,
+            {
+                "event": "training_resume",
+                "utc": datetime.now(UTC).isoformat(),
+                "update": start,
+                "arm_id": scientific_identity.arm_id,
+                "outer_fold": scientific_identity.outer_fold,
+                "seed": scientific_identity.seed,
+                "git_commit": scientific_identity.git_commit_observed,
+                "resume_decision_sha256": resume_decision["artifact_sha256"],
+            },
+        )
     else:
         _seed_everything(config.seed)
+        if progress.exists():
+            raise FileExistsError("new training progress path already exists")
+        _append_jsonl(
+            progress,
+            {
+                "event": "training_start",
+                "utc": datetime.now(UTC).isoformat(),
+                "update": 0,
+                "arm_id": scientific_identity.arm_id,
+                "outer_fold": scientific_identity.outer_fold,
+                "seed": scientific_identity.seed,
+                "git_commit": scientific_identity.git_commit_observed,
+                "initialization_sha256": scientific_identity.initialization_sha256,
+            },
+        )
     if start > stop:
         raise ValueError("checkpoint is beyond requested stop")
 
@@ -364,8 +527,13 @@ def train_collision_clock_updates(
     model_device = next(model.parameters()).device
     manifest_path = _checkpoint_manifest_path(checkpoint_path)
     frozen = False
+    milestones: list[Path] = []
+    loss_window_25: list[float] = []
+    loss_window_100: list[float] = []
     for update in range(start, stop):
+        step_started = time.perf_counter()
         batch = batches[update % len(batches)]
+        load_finished = time.perf_counter()
         if type(batch) is not CollisionClockOuterTrainBatch:
             raise TypeError("trainer accepts CollisionClockOuterTrainBatch values only")
         optimizer.zero_grad(set_to_none=True)
@@ -383,50 +551,131 @@ def train_collision_clock_updates(
             output.benchmark_phase_mean,
             target_phase64.to(output.benchmark_phase_mean.dtype),
         )
+        if not bool(torch.isfinite(loss)):
+            raise FloatingPointError(f"non-finite loss at update {update + 1}")
         loss.backward()
+        grad_sq = torch.zeros((), dtype=torch.float64, device=model_device)
+        for parameter in model.parameters():
+            if parameter.grad is not None:
+                if not bool(torch.isfinite(parameter.grad).all()):
+                    raise FloatingPointError(f"non-finite gradient at update {update + 1}")
+                grad_sq += torch.sum(parameter.grad.detach().to(torch.float64) ** 2)
+        grad_norm = float(torch.sqrt(grad_sq).detach().cpu())
+        backward_finished = time.perf_counter()
         optimizer.step()
         scheduler.step()
+        optimizer_finished = time.perf_counter()
+        parameter_sq = torch.zeros((), dtype=torch.float64, device=model_device)
+        for parameter in model.parameters():
+            if not bool(torch.isfinite(parameter).all()):
+                raise FloatingPointError(f"non-finite parameter at update {update + 1}")
+            parameter_sq += torch.sum(parameter.detach().to(torch.float64) ** 2)
+        parameter_norm = float(torch.sqrt(parameter_sq).detach().cpu())
         losses.append(float(loss.detach()))
-        consumed_tokens.extend(batch.sample_tokens)
-        schedule_hash = _schedule_hash(consumed_tokens)
+        loss_window_25 = (loss_window_25 + [losses[-1]])[-25:]
+        loss_window_100 = (loss_window_100 + [losses[-1]])[-100:]
+        schedule_hash = _schedule_hash(batch.sample_tokens, schedule_hash)
+        consumed_token_count += len(batch.sample_tokens)
         completed = update + 1
-        _atomic_torch_save(
-            {
-                "artifact_type": "eclock_x0_checkpoint_v2",
-                "scientific_identity": asdict(scientific_identity),
-                "model_state_dict": model.state_dict(),
-                "optimizer_state_dict": optimizer.state_dict(),
-                "scheduler_state_dict": scheduler.state_dict(),
-                "completed_updates": completed,
-                "losses": losses,
-                "consumed_tokens": consumed_tokens,
-                "batch_schedule_sha256": schedule_hash,
-                "python_rng_state": random.getstate(),
-                "numpy_rng_state": np.random.get_state(),
-                "torch_cpu_rng_state": torch.get_rng_state(),
-                "torch_cuda_rng_state": (
-                    torch.cuda.get_rng_state_all() if torch.cuda.is_available() else None
-                ),
-                "sampler_order_state": {
-                    "next_update": completed,
-                    "batch_count": len(batches),
-                },
-            },
-            checkpoint_path,
-        )
-        manifest_path, frozen = _write_checkpoint_manifest(
-            checkpoint_path,
-            identity=scientific_identity,
-            completed_updates=completed,
-            schedule_hash=schedule_hash,
-        )
+        phase = output.benchmark_phase_mean.detach().to(torch.float64)
+        inverse = output.inverse_ttc_mean.detach().to(torch.float64)
+        raw_ttc = output.predicted_ttc_raw.detach().to(torch.float64)
+        record: dict[str, Any] = {
+            "event": "update",
+            "utc": datetime.now(UTC).isoformat(),
+            "update": completed,
+            "arm_id": scientific_identity.arm_id,
+            "outer_fold": scientific_identity.outer_fold,
+            "seed": scientific_identity.seed,
+            "git_commit": scientific_identity.git_commit_observed,
+            "batch_index": update % len(batches),
+            "batch_rows": len(batch.sample_tokens),
+            "loss": losses[-1],
+            "loss_rolling_25": float(np.mean(loss_window_25, dtype=np.float64)),
+            "loss_rolling_100": float(np.mean(loss_window_100, dtype=np.float64)),
+            "learning_rate": float(optimizer.param_groups[0]["lr"]),
+            "grad_norm": grad_norm,
+            "grad_finite": True,
+            "parameter_norm": parameter_norm,
+            "parameter_finite": True,
+            "phase_mean": float(phase.mean().cpu()),
+            "phase_std": float(phase.std(unbiased=False).cpu()),
+            "phase_min": float(phase.min().cpu()),
+            "phase_max": float(phase.max().cpu()),
+            "inverse_ttc_finite_fraction": float(torch.isfinite(inverse).to(torch.float64).mean()),
+            "raw_ttc_finite_fraction": float(torch.isfinite(raw_ttc).to(torch.float64).mean()),
+            "batch_load_ms": (load_finished - step_started) * 1000.0,
+            "forward_backward_ms": (backward_finished - load_finished) * 1000.0,
+            "optimizer_ms": (optimizer_finished - backward_finished) * 1000.0,
+            "samples_per_second": len(batch.sample_tokens)
+            / max(optimizer_finished - step_started, 1.0e-12),
+            "cpu_rss_bytes": psutil.Process().memory_info().rss,
+            "system_available_ram_bytes": psutil.virtual_memory().available,
+            "gpu_allocated_bytes": (
+                torch.cuda.memory_allocated(model_device) if model_device.type == "cuda" else 0
+            ),
+            "gpu_reserved_bytes": (
+                torch.cuda.memory_reserved(model_device) if model_device.type == "cuda" else 0
+            ),
+            "gpu_peak_allocated_bytes": (
+                torch.cuda.max_memory_allocated(model_device) if model_device.type == "cuda" else 0
+            ),
+            "rich_record": completed % rich_log_every == 0,
+            "batch_schedule_sha256": schedule_hash,
+        }
+        _append_jsonl(progress, record)
+        payload: dict[str, Any] | None = None
+        checkpoint_due = completed % checkpoint_every == 0 or completed == stop
+        milestone_due = completed in effective_milestones or completed == config.update_budget
+        if checkpoint_due or milestone_due:
+            payload = _checkpoint_payload(
+                model=model,
+                optimizer=optimizer,
+                scheduler=scheduler,
+                identity=scientific_identity,
+                completed=completed,
+                schedule_hash=schedule_hash,
+                consumed_token_count=consumed_token_count,
+                losses=losses,
+                batch_count=len(batches),
+            )
+        if checkpoint_due and payload is not None:
+            manifest_path, frozen = _save_checkpoint(
+                checkpoint_path,
+                payload=payload,
+                identity=scientific_identity,
+                completed=completed,
+                schedule_hash=schedule_hash,
+                immutable=False,
+            )
+        if milestone_due and payload is not None:
+            milestone = checkpoint_path.parent / "milestones" / f"update-{completed:06d}.pt"
+            _save_checkpoint(
+                milestone,
+                payload=payload,
+                identity=scientific_identity,
+                completed=completed,
+                schedule_hash=schedule_hash,
+                immutable=True,
+            )
+            milestones.append(milestone)
+    final_path = (
+        checkpoint_path.parent / "milestones" / f"update-{stop:06d}.pt"
+        if stop == config.update_budget
+        else checkpoint_path
+    )
+    if stop == config.update_budget and not final_path.is_file():
+        raise RuntimeError("final scientific milestone checkpoint was not created")
     return CollisionClockTrainingResult(
         completed_updates=stop,
         losses=tuple(losses),
-        batch_schedule_sha256=_schedule_hash(consumed_tokens),
-        checkpoint_path=checkpoint_path,
-        checkpoint_manifest_path=manifest_path,
-        checkpoint_frozen=frozen,
+        batch_schedule_sha256=schedule_hash,
+        checkpoint_path=final_path,
+        checkpoint_manifest_path=_checkpoint_manifest_path(final_path),
+        checkpoint_frozen=stop == config.update_budget,
+        resume_checkpoint_path=checkpoint_path,
+        progress_path=progress,
+        milestone_paths=tuple(milestones),
     )
 
 

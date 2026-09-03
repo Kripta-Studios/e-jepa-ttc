@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import subprocess
+import time
 from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path
@@ -14,8 +15,9 @@ import pandas as pd
 import torch
 from torch import nn
 
-from e_jepa_ttc.artifacts.hashing import compute_file_hash, sign_artifact
+from e_jepa_ttc.artifacts.hashing import compute_file_hash, sign_artifact, verify_artifact_hash
 from e_jepa_ttc.data.collision_clock_cache import (
+    CacheMode,
     CollisionClockOuterDevBatch,
     CollisionClockOuterTrainSequence,
     CollisionClockTrain8192Cache,
@@ -77,6 +79,29 @@ def _git(repo: Path, *args: str) -> str:
         capture_output=True,
         text=True,
     ).stdout.strip()
+
+
+def _write_signed_state(path: Path, payload: dict[str, Any]) -> dict[str, Any]:
+    signed = sign_artifact(payload)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_name(f".{path.name}.tmp")
+    temporary.write_text(
+        json.dumps(signed, indent=2, sort_keys=True, allow_nan=False) + "\n",
+        encoding="utf-8",
+    )
+    temporary.replace(path)
+    return signed
+
+
+def _load_signed_state(path: Path, *, artifact_type: str) -> dict[str, Any]:
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if (
+        not isinstance(payload, dict)
+        or not verify_artifact_hash(payload)
+        or payload.get("artifact_type") != artifact_type
+    ):
+        raise ValueError(f"state signature/type mismatch: {path}")
+    return payload
 
 
 def _direct_model(config: dict[str, Any]) -> X0HeightBypassDirectPhase:
@@ -343,22 +368,109 @@ def run_outer_folds(
     source_root: Path,
     output_root: Path,
     device: torch.device,
+    cache_mode: CacheMode = "auto",
+    resume_campaign: bool = False,
+    resume_checkpoint_every: int = 100,
+    milestone_updates: tuple[int, ...] = (250, 500, 1000, 2000, 4000, 6840),
+    rich_log_every: int = 25,
 ) -> list[dict[str, Any]]:
     """Execute all frozen folds; caller must separately authorize this function."""
 
     if config["arm_id"] == "X0-DYN-W" or config.get("execution_authorized") is not True:
         raise PermissionError("arm is not executable")
-    if output_root.exists():
-        raise FileExistsError("run output root already exists; cross-arm overwrite is forbidden")
     dirty = bool(_git(repo, "status", "--porcelain=v1", "--untracked-files=no"))
     if dirty:
         raise ValueError("scientific OOF requires a clean versioned worktree")
     commit = _git(repo, "rev-parse", "HEAD")
-    adapter = CollisionClockTrain8192Cache(cache_root, protocol)
     config_sha = compute_file_hash(str(config_path))
+    arm_manifest_path = output_root / "campaign_manifest.json"
+    arm_identity = {
+        "artifact_type": "eclock_x0_arm_campaign_manifest_v1",
+        "git_commit": commit,
+        "arm_id": config["arm_id"],
+        "seed": 7,
+        "folds": [0, 1, 2],
+        "config_sha256": config_sha,
+        "protocol_sha256": protocol["artifact_sha256"],
+        "reference_sha256": reference["artifact_sha256"],
+        "cache_manifest_sha256": protocol["cache_binding"]["file_sha256"],
+        "cache_mode_requested": cache_mode,
+        "checkpoint_policy": "last_update_fixed_budget",
+    }
+    if output_root.exists():
+        if not resume_campaign:
+            raise FileExistsError(
+                "run output root already exists; use explicit resume only after "
+                "identity verification"
+            )
+        if not arm_manifest_path.is_file():
+            raise ValueError("existing campaign root lacks a signed arm manifest")
+        observed = _load_signed_state(
+            arm_manifest_path, artifact_type="eclock_x0_arm_campaign_manifest_v1"
+        )
+        if {k: v for k, v in observed.items() if k != "artifact_sha256"} != arm_identity:
+            raise ValueError("resume campaign identity mismatch")
+    else:
+        output_root.mkdir(parents=True, exist_ok=False)
+        _write_signed_state(arm_manifest_path, arm_identity)
+    adapter = CollisionClockTrain8192Cache(cache_root, protocol, cache_mode=cache_mode)
+    adapter.verify_and_index()
     summaries = []
     for fold in (0, 1, 2):
         train_view, dev_view = adapter.outer_views(fold)
+        if adapter.requested_cache_mode == "auto":
+            adapter.select_mode_for_train_view(train_view)
+        fold_root = output_root / f"fold-{fold}"
+        fold_root.mkdir(parents=True, exist_ok=resume_campaign)
+        state_path = fold_root / "fold_state.json"
+        summary_path = fold_root / "fold_summary.json"
+        if summary_path.is_file():
+            if not resume_campaign:
+                raise ValueError("completed fold exists without resume authorization")
+            summary = _load_signed_state(summary_path, artifact_type="eclock_x0_fold_summary_v2")
+            if (
+                summary.get("arm_id") != config["arm_id"]
+                or summary.get("outer_fold") != fold
+                or summary.get("seed") != 7
+                or summary.get("outer_dev_evaluations") != 1
+                or summary.get("git_commit") != commit
+                or summary.get("config_sha256") != config_sha
+                or summary.get("protocol_sha256") != protocol["artifact_sha256"]
+                or summary.get("reference_sha256") != reference["artifact_sha256"]
+            ):
+                raise ValueError("completed fold summary identity mismatch")
+            existing_oof = Path(str(summary.get("oof_path", "")))
+            if not existing_oof.is_file() or compute_file_hash(str(existing_oof)) != summary.get(
+                "oof_file_sha256"
+            ):
+                raise ValueError("completed fold OOF physical identity mismatch")
+            existing_checkpoint = Path(str(summary.get("checkpoint_path", "")))
+            if compute_file_hash(str(existing_checkpoint)) != summary.get("checkpoint_file_sha256"):
+                raise ValueError("completed fold checkpoint physical identity mismatch")
+            summaries.append(summary)
+            continue
+        if state_path.is_file():
+            state = _load_signed_state(state_path, artifact_type="eclock_x0_fold_state_v1")
+            if state.get("git_commit") != commit or state.get("arm_id") != config["arm_id"]:
+                raise ValueError("fold resume state identity mismatch")
+            if state.get("status") in {"evaluation_in_progress", "evaluation_complete"}:
+                raise ValueError(
+                    "outer-dev may have been opened; fail closed instead of reevaluating"
+                )
+        else:
+            state = _write_signed_state(
+                state_path,
+                {
+                    "artifact_type": "eclock_x0_fold_state_v1",
+                    "status": "planned",
+                    "git_commit": commit,
+                    "arm_id": config["arm_id"],
+                    "outer_fold": fold,
+                    "seed": 7,
+                    "outer_dev_opened": False,
+                },
+            )
+        fold_started = time.time()
         official_path: Path | None = None
         official_sha: str | None = None
         if config["arm_id"] in {"X0-A5-REPLAY", "X0-PAIR-U"}:
@@ -378,9 +490,8 @@ def run_outer_folds(
             model = X0PairDirectPhase(source_a5, CollisionClockConfig(**values)).to(device)
         else:
             model = _direct_model(config).to(device)
-        fold_root = output_root / f"fold-{fold}"
-        fold_root.mkdir(parents=True, exist_ok=False)
-        checkpoint_path = fold_root / "last_update.pt"
+        checkpoint_path = fold_root / "resume_latest.pt"
+        training_result = None
         if config["arm_id"] != "X0-A5-REPLAY":
             training = config["training"]
             identity = CollisionClockScientificIdentity(
@@ -424,7 +535,27 @@ def run_outer_folds(
             schedule = CollisionClockOuterTrainSequence(
                 adapter, train_view, batch_size=training["batch_size"]
             )
-            train_collision_clock_updates(
+            progress_path = fold_root / "progress.jsonl"
+            if resume_campaign and not checkpoint_path.is_file() and progress_path.is_file():
+                abandoned = fold_root / "progress.aborted-before-first-checkpoint.jsonl"
+                if abandoned.exists():
+                    raise ValueError("pre-checkpoint interruption evidence already exists")
+                progress_path.replace(abandoned)
+            adapter.stage_view(train_view)
+            _write_signed_state(
+                state_path,
+                {
+                    "artifact_type": "eclock_x0_fold_state_v1",
+                    "status": "training_in_progress",
+                    "git_commit": commit,
+                    "arm_id": config["arm_id"],
+                    "outer_fold": fold,
+                    "seed": 7,
+                    "outer_dev_opened": False,
+                    "cache_mode": adapter.cache_mode,
+                },
+            )
+            training_result = train_collision_clock_updates(
                 model,
                 schedule,
                 config=CollisionClockTrainingConfig(
@@ -437,8 +568,42 @@ def run_outer_folds(
                 ),
                 scientific_identity=identity,
                 checkpoint_path=checkpoint_path,
+                resume=checkpoint_path.is_file(),
+                checkpoint_every=resume_checkpoint_every,
+                milestone_updates=milestone_updates,
+                progress_path=progress_path,
+                rich_log_every=rich_log_every,
             )
-            frozen = _freeze_local(model, checkpoint_path)
+            adapter.release_staged_view()
+            frozen = _freeze_local(model, training_result.checkpoint_path)
+            _write_signed_state(
+                state_path,
+                {
+                    "artifact_type": "eclock_x0_fold_state_v1",
+                    "status": "training_complete_checkpoint_frozen",
+                    "git_commit": commit,
+                    "arm_id": config["arm_id"],
+                    "outer_fold": fold,
+                    "seed": 7,
+                    "outer_dev_opened": False,
+                    "checkpoint_path": str(training_result.checkpoint_path),
+                    "checkpoint_sha256": frozen.checkpoint_file_sha256,
+                },
+            )
+        _write_signed_state(
+            state_path,
+            {
+                "artifact_type": "eclock_x0_fold_state_v1",
+                "status": "evaluation_in_progress",
+                "git_commit": commit,
+                "arm_id": config["arm_id"],
+                "outer_fold": fold,
+                "seed": 7,
+                "outer_dev_opened": True,
+                "outer_dev_evaluation_count": 1,
+            },
+        )
+        adapter.stage_view(dev_view)
         dev_batches = adapter.iter_outer_dev_batches(
             dev_view,
             batch_size=config.get("training", {}).get("batch_size", 32),
@@ -451,6 +616,7 @@ def run_outer_folds(
             config_sha256=config_sha,
             protocol=protocol,
         )
+        adapter.release_staged_view()
         oof_path = fold_root / "oof_predictions.csv"
         predictions.to_csv(oof_path, index=False)
         summary = sign_artifact(
@@ -463,6 +629,7 @@ def run_outer_folds(
                 "checkpoint_policy": "last_update_fixed_budget",
                 "checkpoint_path": str(frozen.checkpoint_path),
                 "checkpoint_file_sha256": frozen.checkpoint_file_sha256,
+                "checkpoint_bytes": frozen.checkpoint_path.stat().st_size,
                 "checkpoint_manifest_sha256": frozen.checkpoint_manifest_sha256,
                 "external_official_a5": frozen.external_official_a5,
                 "oof_path": str(oof_path),
@@ -474,9 +641,36 @@ def run_outer_folds(
                 "outer_dev_evaluations": 1,
                 "outer_dev_used_during_training": False,
                 "outer_dev_used_for_selection": False,
+                "git_commit": commit,
+                "config_sha256": config_sha,
+                "protocol_sha256": protocol["artifact_sha256"],
+                "reference_sha256": reference["artifact_sha256"],
+                "cache_mode": adapter.cache_mode,
+                "cache_engineering": adapter.engineering_stats(),
+                "progress_path": (
+                    str(training_result.progress_path) if training_result is not None else None
+                ),
+                "updates_completed": (
+                    training_result.completed_updates if training_result is not None else 0
+                ),
+                "fold_wall_seconds": time.time() - fold_started,
             }
         )
-        (fold_root / "fold_summary.json").write_text(
+        _write_signed_state(
+            state_path,
+            {
+                "artifact_type": "eclock_x0_fold_state_v1",
+                "status": "evaluation_complete",
+                "git_commit": commit,
+                "arm_id": config["arm_id"],
+                "outer_fold": fold,
+                "seed": 7,
+                "outer_dev_opened": True,
+                "outer_dev_evaluation_count": 1,
+                "fold_summary_sha256": summary["artifact_sha256"],
+            },
+        )
+        summary_path.write_text(
             json.dumps(summary, indent=2, sort_keys=True, allow_nan=False) + "\n",
             encoding="utf-8",
         )

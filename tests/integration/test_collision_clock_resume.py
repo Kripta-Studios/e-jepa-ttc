@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from dataclasses import replace
 from pathlib import Path
+from typing import cast
 
 import pytest
 import torch
@@ -20,7 +21,11 @@ from e_jepa_ttc.models.collision_clock_features import (
     HeightBypassEncoderConfig,
     HeightBypassEndpointEncoder,
 )
-from e_jepa_ttc.models.collision_clock_ttc import CollisionClockConfig, X0HeightBypassDirectPhase
+from e_jepa_ttc.models.collision_clock_ttc import (
+    CollisionClockConfig,
+    MotionFeatureMode,
+    X0HeightBypassDirectPhase,
+)
 from e_jepa_ttc.training.collision_clock_eap import (
     CollisionClockScientificIdentity,
     CollisionClockTrainingConfig,
@@ -38,7 +43,7 @@ def _model(
         residual_depth=1,
         clock_hidden_dim=4,
         dropout=0.05,
-        motion_feature_mode=motion_feature_mode,
+        motion_feature_mode=cast(MotionFeatureMode, motion_feature_mode),
     )
     encoder = HeightBypassEndpointEncoder(
         HeightBypassEncoderConfig(
@@ -132,7 +137,19 @@ def test_continuous_n_equals_k_load_n_minus_k(tmp_path: Path) -> None:
         config=config,
         scientific_identity=partial_identity,
         checkpoint_path=tmp_path / "resumed.pt",
-        stop_after_updates=2,
+        stop_after_updates=1,
+    )
+    torch.manual_seed(7)
+    middle = _model()
+    middle_identity = _identity(middle)
+    train_collision_clock_updates(
+        middle,
+        _batches(),
+        config=config,
+        scientific_identity=middle_identity,
+        checkpoint_path=tmp_path / "resumed.pt",
+        stop_after_updates=3,
+        resume=True,
     )
     torch.manual_seed(7)
     resumed = _model()
@@ -276,3 +293,28 @@ def test_trainer_rejects_outer_dev_batch(tmp_path: Path) -> None:
             scientific_identity=identity,
             checkpoint_path=tmp_path / "forbidden.pt",
         )
+
+
+def test_checkpoint_cadence_progress_and_milestones_are_compact(tmp_path: Path) -> None:
+    torch.manual_seed(7)
+    model = _model()
+    config = CollisionClockTrainingConfig(arm_id="X0-DYN-U", update_budget=4)
+    identity = _identity(model)
+    resume_path = tmp_path / "resume_latest.pt"
+    result = train_collision_clock_updates(
+        model,
+        _batches(),
+        config=config,
+        scientific_identity=identity,
+        checkpoint_path=resume_path,
+        checkpoint_every=2,
+        milestone_updates=(3, 4),
+        progress_path=tmp_path / "progress.jsonl",
+    )
+    assert result.checkpoint_path.name == "update-000004.pt"
+    assert (tmp_path / "milestones" / "update-000003.pt").is_file()
+    assert len((tmp_path / "progress.jsonl").read_text().splitlines()) == 5
+    payload = torch.load(resume_path, map_location="cpu", weights_only=False)
+    assert "losses" not in payload
+    assert "consumed_tokens" not in payload
+    assert payload["loss_count"] == 4
