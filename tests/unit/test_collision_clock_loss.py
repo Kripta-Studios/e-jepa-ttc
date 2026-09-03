@@ -16,8 +16,9 @@ def test_weighted_loss_is_normalized_by_sum_weights_in_float64() -> None:
     loss = normalized_weighted_absolute_phase_error(prediction, target, weight)
     assert WEIGHTED_PHASE_REDUCTION == "normalized_weighted_absolute_phase_error"
     assert loss.dtype == torch.float64
-    assert float(loss) == pytest.approx(13.0 / 4.0)
-    assert float(loss) != pytest.approx(float((weight * prediction.abs()).mean()))
+    assert float(loss.detach()) == pytest.approx(13.0 / 4.0)
+    incorrect_mean = (weight * prediction.abs()).mean().detach()
+    assert float(loss.detach()) != pytest.approx(float(incorrect_mean))
     assert float(loss) != pytest.approx(13.0)
     loss.backward()
     assert prediction.grad is not None
