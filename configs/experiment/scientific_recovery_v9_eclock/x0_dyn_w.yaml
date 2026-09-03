@@ -1,4 +1,4 @@
-artifact_type: scientific_recovery_v9_eclock_config_v1
+artifact_type: scientific_recovery_v9_eclock_config_v2
 arm_id: X0-DYN-W
 execution_authorized: false
 scientific_role: conditional_weighting_config_only
@@ -8,6 +8,8 @@ loss_reduction: normalized_weighted_absolute_phase_error
 seed: 7
 upstream_roi_is_box_conditioned: true
 explicit_foreground_height_interface_bypassed: true
+protocol_path: configs/protocol/scientific_recovery_v9_eclock_x0.json
+reference_path: configs/protocol/scientific_recovery_v9_eclock_x0_reference.json
 model:
   in_channels: 12
   encoder_hidden_dim: 64
@@ -29,15 +31,16 @@ weight_clipping: false
 bucket_recomputation: false
 outer_dev_weight_selection: false
 target_or_error_resampling: false
-execution_status: config_schema_loss_unit_tested_not_executed
+execution_status: not_executed
 training:
-  epochs: 40
+  update_budget: 6840
   batch_size: 32
   learning_rate: 0.0003
   weight_decay: 0.0001
   scheduler: constant
   sampler: deterministic_sequence_grouped
   precision_mode: float32
-  checkpoint_policy: last_epoch_fixed_budget
+  checkpoint_policy: last_update_fixed_budget
 folds: [0, 1, 2]
+checkpoint_policy: last_update_fixed_budget
 sealed_evaluation: closed

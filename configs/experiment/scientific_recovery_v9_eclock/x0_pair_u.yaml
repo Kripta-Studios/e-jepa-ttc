@@ -1,4 +1,4 @@
-artifact_type: scientific_recovery_v9_eclock_config_v1
+artifact_type: scientific_recovery_v9_eclock_config_v2
 arm_id: X0-PAIR-U
 execution_authorized: true
 scientific_role: geometry_infused_readout_diagnostic
@@ -8,14 +8,34 @@ loss_reduction: mean_smooth_l1_benchmark_phase_error
 seed: 7
 upstream_roi_is_box_conditioned: true
 explicit_foreground_height_interface_bypassed: false
-source_a5_checkpoint: REQUIRED_FOLD_LOCAL_PHYSICAL_PATH
-source_a5_checkpoint_sha256: REQUIRED_OBSERVED_SHA256
+checkpoint_reference_family: official_a5_oof
+protocol_path: configs/protocol/scientific_recovery_v9_eclock_x0.json
+reference_path: configs/protocol/scientific_recovery_v9_eclock_x0_reference.json
+model:
+  in_channels: 12
+  encoder_hidden_dim: 64
+  encoder_token_dim: 128
+  residual_depth: 2
+  dropout: 0.05
+  clock_hidden_dim: 128
+  metric_delta_t_s: 0.1
+  minimum_abs_prediction_ttc_s: 0.1
+  ttc_clip_seconds: 60.0
+  min_sensor_support: 0.0001
+  risk_thresholds_s: [0.5, 1.0, 2.0, 4.0]
+  transport_radius: 1
+  transport_temperature: 0.02
+  phase_weighting: uniform
+  learn_phase_variance: false
 folds: [0, 1, 2]
+checkpoint_policy: last_update_fixed_budget
 training:
-  epochs: 40
+  update_budget: 6840
   batch_size: 32
   learning_rate: 0.0003
   weight_decay: 0.0001
   precision_mode: float32
-  checkpoint_policy: last_epoch_fixed_budget
+  scheduler: constant
+  sampler: deterministic_sequence_grouped
+  checkpoint_policy: last_update_fixed_budget
 sealed_evaluation: closed

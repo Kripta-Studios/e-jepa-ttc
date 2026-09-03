@@ -1,0 +1,157 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "artifact_type",
+    "arm_id",
+    "evidence_class",
+    "scientific_result",
+    "git_commit_observed",
+    "git_dirty_observed",
+    "config_reference",
+    "protocol_reference",
+    "reference_reference",
+    "checkpoint_policy",
+    "artifact_sha256"
+  ],
+  "properties": {
+    "artifact_type": {
+      "const": "eclock_x0_run_manifest_v2"
+    },
+    "arm_id": {
+      "enum": [
+        "X0-A5-REPLAY",
+        "X0-PAIR-U",
+        "X0-BASE-U",
+        "X0-DYN-U"
+      ]
+    },
+    "evidence_class": {
+      "enum": [
+        "dry_run",
+        "scientific_oof"
+      ]
+    },
+    "scientific_result": {
+      "type": "boolean"
+    },
+    "git_commit_observed": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "git_dirty_observed": {
+      "type": "boolean"
+    },
+    "config_reference": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "file_sha256",
+        "artifact_sha256",
+        "bytes",
+        "producer_identity"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "file_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "artifact_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "producer_identity": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "protocol_reference": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "file_sha256",
+        "artifact_sha256",
+        "bytes",
+        "producer_identity"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "file_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "artifact_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "producer_identity": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "reference_reference": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "file_sha256",
+        "artifact_sha256",
+        "bytes",
+        "producer_identity"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "file_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "artifact_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "producer_identity": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "checkpoint_policy": {
+      "const": "last_update_fixed_budget"
+    },
+    "artifact_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "$id": "scientific_recovery_v9_eclock_run_manifest_v2.schema.json"
+}

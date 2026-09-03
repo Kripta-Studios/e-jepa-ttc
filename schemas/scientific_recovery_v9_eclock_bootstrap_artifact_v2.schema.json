@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "artifact_type",
+    "method",
+    "cluster_order",
+    "rows_sampled_as_complete_tracks",
+    "paired_identical_draws",
+    "window_level_bootstrap_used",
+    "seed",
+    "draws",
+    "draws_identity_sha256",
+    "token_count",
+    "candidate_identity",
+    "reference_identity",
+    "candidate_mid",
+    "reference_mid",
+    "delta_candidate_minus_reference",
+    "protocol_sha256",
+    "artifact_sha256"
+  ],
+  "properties": {
+    "artifact_type": {
+      "const": "eclock_x0_bootstrap_v2"
+    },
+    "method": {
+      "const": "paired_hierarchical_sequence_then_track_cluster_bootstrap"
+    },
+    "cluster_order": {
+      "const": [
+        "sequence_id",
+        "track_id"
+      ]
+    },
+    "rows_sampled_as_complete_tracks": {
+      "const": true
+    },
+    "paired_identical_draws": {
+      "const": true
+    },
+    "window_level_bootstrap_used": {
+      "const": false
+    },
+    "seed": {
+      "type": "integer"
+    },
+    "draws": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "draws_identity_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "token_count": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "candidate_identity": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reference_family",
+        "path",
+        "file_sha256",
+        "artifact_sha256"
+      ],
+      "properties": {
+        "reference_family": {
+          "type": "string",
+          "minLength": 1
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "file_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "artifact_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "reference_identity": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reference_family",
+        "path",
+        "file_sha256",
+        "artifact_sha256"
+      ],
+      "properties": {
+        "reference_family": {
+          "const": "official_a5_oof"
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "file_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "artifact_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "candidate_mid": {
+      "type": "object"
+    },
+    "reference_mid": {
+      "type": "object"
+    },
+    "delta_candidate_minus_reference": {
+      "type": "object"
+    },
+    "protocol_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "artifact_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "$id": "scientific_recovery_v9_eclock_bootstrap_artifact_v2.schema.json"
+}

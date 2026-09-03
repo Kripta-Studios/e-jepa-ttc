@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "artifact_type",
+    "split_manifest",
+    "fold_assignment_sha256",
+    "train_token_subset_sha256",
+    "dev_token_subset_sha256",
+    "outer_fold",
+    "artifact_sha256"
+  ],
+  "properties": {
+    "artifact_type": {
+      "const": "eclock_x0_split_binding_v2"
+    },
+    "split_manifest": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "file_sha256",
+        "artifact_sha256",
+        "bytes",
+        "producer_identity"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "file_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "artifact_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "producer_identity": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "fold_assignment_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "train_token_subset_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "dev_token_subset_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "outer_fold": {
+      "enum": [
+        0,
+        1,
+        2
+      ]
+    },
+    "artifact_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "$id": "scientific_recovery_v9_eclock_split_binding_v2.schema.json"
+}

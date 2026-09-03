@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "artifact_type",
+    "cache_manifest",
+    "preprocessing_version",
+    "ordered_token_identity_sha256",
+    "shards",
+    "artifact_sha256"
+  ],
+  "properties": {
+    "artifact_type": {
+      "const": "eclock_x0_data_cache_binding_v2"
+    },
+    "cache_manifest": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "file_sha256",
+        "artifact_sha256",
+        "bytes",
+        "producer_identity"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "file_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "artifact_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "producer_identity": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "preprocessing_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "ordered_token_identity_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "shards": {
+      "type": "array",
+      "minItems": 32,
+      "maxItems": 32,
+      "items": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "file_sha256",
+          "artifact_sha256",
+          "bytes",
+          "producer_identity"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "file_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "artifact_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "bytes": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "producer_identity": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "artifact_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "$id": "scientific_recovery_v9_eclock_data_cache_binding_v2.schema.json"
+}

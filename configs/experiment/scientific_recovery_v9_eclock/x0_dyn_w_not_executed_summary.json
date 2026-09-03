@@ -1,17 +1,13 @@
 {
-  "artifact_type": "eclock_x0_summary_v1",
+  "artifact_sha256": "a8c6ae8f7b7032f7160a91479555eeae5f0c42e7d28138b1a0e2d70d0fa1a9c5",
+  "artifact_type": "eclock_x0_dyn_w_not_executed_v2",
   "arm_id": "X0-DYN-W",
-  "evidence_class": "dry_run",
-  "scientific_result": false,
+  "checkpoint_policy": "last_update_fixed_budget",
   "execution_authorized": false,
-  "execution_status": "config_schema_loss_unit_tested_not_executed",
+  "forward_executed": false,
   "loss_reduction": "normalized_weighted_absolute_phase_error",
-  "upstream_roi_is_box_conditioned": true,
-  "explicit_foreground_height_interface_bypassed": true,
-  "official_sample_weights_source": "verified_v8_signed_universe",
-  "weight_clipping": false,
-  "bucket_recomputation": false,
-  "outer_dev_weight_selection": false,
-  "target_or_error_resampling": false,
-  "artifact_sha256": "d885876783c51ff25f69d00266dcd566f8580ce1d2c6d310dc4e87ce9f95b5ca"
+  "oof_executed": false,
+  "scientific_result": false,
+  "status": "not_executed",
+  "training_executed": false
 }

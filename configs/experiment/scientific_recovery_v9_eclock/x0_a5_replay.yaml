@@ -1,4 +1,4 @@
-artifact_type: scientific_recovery_v9_eclock_config_v1
+artifact_type: scientific_recovery_v9_eclock_config_v2
 arm_id: X0-A5-REPLAY
 execution_authorized: true
 scientific_role: historical_geometry_infused_control
@@ -8,8 +8,9 @@ loss_reduction: historical_a5
 seed: 7
 upstream_roi_is_box_conditioned: true
 explicit_foreground_height_interface_bypassed: false
-source_a5_checkpoint: REQUIRED_FOLD_LOCAL_PHYSICAL_PATH
-source_a5_checkpoint_sha256: REQUIRED_OBSERVED_SHA256
+checkpoint_reference_family: official_a5_oof
+protocol_path: configs/protocol/scientific_recovery_v9_eclock_x0.json
+reference_path: configs/protocol/scientific_recovery_v9_eclock_x0_reference.json
 folds: [0, 1, 2]
-checkpoint_policy: last_epoch_fixed_budget
+checkpoint_policy: last_update_fixed_budget
 sealed_evaluation: closed

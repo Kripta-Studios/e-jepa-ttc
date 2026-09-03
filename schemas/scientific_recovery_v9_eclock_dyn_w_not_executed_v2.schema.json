@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "artifact_type",
+    "arm_id",
+    "execution_authorized",
+    "status",
+    "scientific_result",
+    "loss_reduction",
+    "checkpoint_policy",
+    "forward_executed",
+    "training_executed",
+    "oof_executed",
+    "artifact_sha256"
+  ],
+  "properties": {
+    "artifact_type": {
+      "const": "eclock_x0_dyn_w_not_executed_v2"
+    },
+    "arm_id": {
+      "const": "X0-DYN-W"
+    },
+    "execution_authorized": {
+      "const": false
+    },
+    "status": {
+      "const": "not_executed"
+    },
+    "scientific_result": {
+      "const": false
+    },
+    "loss_reduction": {
+      "const": "normalized_weighted_absolute_phase_error"
+    },
+    "checkpoint_policy": {
+      "const": "last_update_fixed_budget"
+    },
+    "forward_executed": {
+      "const": false
+    },
+    "training_executed": {
+      "const": false
+    },
+    "oof_executed": {
+      "const": false
+    },
+    "artifact_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "$id": "scientific_recovery_v9_eclock_dyn_w_not_executed_v2.schema.json"
+}
