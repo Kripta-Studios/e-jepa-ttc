@@ -163,6 +163,11 @@ def test_continuous_n_equals_k_load_n_minus_k(tmp_path: Path) -> None:
         resume=True,
     )
     assert continuous_result.losses == resumed_result.losses
+    assert torch.are_deterministic_algorithms_enabled()
+    assert torch.backends.cudnn.deterministic
+    assert not torch.backends.cudnn.benchmark
+    assert not torch.backends.cuda.matmul.allow_tf32
+    assert not torch.backends.cudnn.allow_tf32
     assert continuous_result.checkpoint_frozen is True
     assert continuous_result.batch_schedule_sha256 == resumed_result.batch_schedule_sha256
     for name, value in continuous.state_dict().items():

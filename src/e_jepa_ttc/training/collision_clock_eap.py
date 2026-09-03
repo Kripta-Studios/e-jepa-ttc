@@ -137,6 +137,17 @@ def _seed_everything(seed: int) -> None:
     torch.manual_seed(seed)
 
 
+def _configure_deterministic_fp32() -> None:
+    """Freeze CUDA math choices needed for exact interruption/resume parity."""
+
+    torch.use_deterministic_algorithms(True)
+    torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cuda.matmul.allow_tf32 = False
+    torch.backends.cudnn.allow_tf32 = False
+    torch.set_float32_matmul_precision("highest")
+
+
 def _atomic_torch_save(payload: dict[str, Any], path: Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     handle, temporary = tempfile.mkstemp(prefix=f".{path.name}.", dir=path.parent)
@@ -418,6 +429,7 @@ def train_collision_clock_updates(
 ) -> CollisionClockTrainingResult:
     """Train only typed outer-train batches and persist exact resume state."""
 
+    _configure_deterministic_fp32()
     if not batches:
         raise TypeError("trainer accepts CollisionClockOuterTrainBatch values only")
     if config.arm_id != scientific_identity.arm_id or config.seed != scientific_identity.seed:
@@ -518,6 +530,9 @@ def train_collision_clock_updates(
                 "seed": scientific_identity.seed,
                 "git_commit": scientific_identity.git_commit_observed,
                 "initialization_sha256": scientific_identity.initialization_sha256,
+                "deterministic_algorithms": True,
+                "cudnn_benchmark": False,
+                "tf32_allowed": False,
             },
         )
     if start > stop:

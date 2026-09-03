@@ -56,6 +56,8 @@ always reported; no per-sequence finite-value filtering is permitted.
   duplication.
 - Resume checkpoints are compact, atomic, signed and written every 100 updates. Immutable
   milestones are kept at 250, 500, 1000, 2000, 4000 and 6840 updates.
+- Exact CUDA resume parity is enforced with deterministic algorithms, cuDNN benchmark disabled,
+  cuDNN deterministic mode enabled, TF32 disabled and highest-precision float32 matmul.
 - Resume requires exact arm/fold/seed/config/protocol/reference/commit/optimizer/scheduler,
   checkpoint SHA, RNG state and sampler-order identity. A state indicating possible prior
   outer-development access fails closed instead of re-evaluating.
