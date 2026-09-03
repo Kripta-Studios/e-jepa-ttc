@@ -1,92 +1,140 @@
-# Scientific Recovery V9 — E-Clock X0 implementation status
+# Scientific Recovery V9 — E-Clock X0 corrected pre-execution status
 
-Status: implementation complete; scientific OOF campaign not executed.
+Status: implementation and synthetic integrity QA complete; training, outer-train
+smoke, OOF and sealed evaluation not executed.
 
-The X0 implementation is isolated on `scientific-recovery-v9-eclock-x0`, based on
-`718e0bf7ca9950fbc0fc2a3537e4b0e0e25a72a2`. It adds the direct benchmark-phase
-coordinate, the frozen A5 replay/readout controls, and one matched BASE/DYN class.
-X0-DYN-W is limited to config, schema, and synthetic loss tests; its execution is
-disabled.
+The X0 worktree remains based on immutable parent
+`718e0bf7ca9950fbc0fc2a3537e4b0e0e25a72a2`. This correction replaces every
+self-declared production identity with values bound to the signed protocol and
+the five-family signed reference artifact.
 
-## Scientific boundary
+## Reference taxonomy
 
-All X0 artifacts and future claims must declare:
+There are exactly five distinct families:
+
+| Reference family | Producer identity | Recomputed MiD |
+|---|---|---:|
+| `official_a5_oof` | official V7 point/full-coverage OOF | 158.44857930928274 |
+| `official_c2f_oof` | official V7 C2F seed-7 fold chain | 158.57314044954794 |
+| `nested_router_retrained_a5_constituent` | A5 retrained inside nested V8 Router | 162.19984180136834 |
+| `nested_router_retrained_c2f_constituent` | C2F retrained inside nested V8 Router | 158.92456189064018 |
+| `prospective_router_r` | prospective V8 Router output | 153.87679951674625 |
+
+The builder recalculates these values from the physical artifacts and verifies
+their hashes. `X0-A5-REPLAY` and the first `X0-PAIR-U` config are bound only to
+`official_a5_oof`. A nested Router constituent cannot satisfy that identity.
+
+## Canonical production boundary
+
+The production precheck loads signed identities rather than accepting caller
+lists or hashes. It requires 8,192 unique tokens, seed 7, integer folds exactly
+`{0,1,2}`, the exact nine sequences and sequence-to-fold assignment, all four
+buckets per sequence, canonical token/target/fold/weight hashes, three fold
+summaries and three physical checkpoints. Any missing, extra, duplicate,
+non-finite or self-consistent-but-noncanonical input fails closed.
+
+The row-level OOF contract is:
 
 ```text
-upstream_roi_is_box_conditioned=true
+sample_token, sequence_id, track_id, outer_fold,
+target_ttc_s, target_benchmark_phase,
+predicted_benchmark_phase, predicted_inverse_ttc_raw, predicted_ttc_raw,
+predicted_ttc_clipped, is_clip_saturated,
+scientific_mid_per_row, scientific_failure, sample_weight,
+arm_id, seed, checkpoint_sha256, config_sha256, protocol_sha256,
+cache_manifest_sha256, split_manifest_sha256
 ```
 
-BASE/DYN may additionally declare only:
+The primary row metric is calculated in float64 directly as
+`10000 * abs(target_benchmark_phase - predicted_benchmark_phase)`. Raw inverse
+TTC and raw TTC must agree with phase within strict tolerance. Clipping to ±60 s
+is exported only as a deployment diagnostic.
+
+For `X0-A5-REPLAY`, the historical clipped A5 vector is checked only to prove
+that each official fold checkpoint reproduces the signed legacy artifact. The
+X0 scientific MiD still uses the raw inverse-TTC-derived phase; the legacy
+replay MiD is labelled diagnostic-only and cannot replace that value.
 
 ```text
-explicit_foreground_height_interface_bypassed=true
+zero_failure_is_partially_assisted_by_output_domain=true
+deployment_clipping_not_used_for_scientific_metric=true
 ```
 
-This is not a claim that the system is geometry-free, bbox-free, detector-free, or
-free of implicit geometric information. X0-PAIR-U is geometry-infused and is only a
-readout diagnostic. Smoke outputs are engineering checks and never scientific
-results.
+## Cache and fold execution
 
-The maximum future DYN-versus-BASE claim, and only after an authorized complete OOF
-campaign, is:
+The read-only adapter requires an explicit `--cache-root`. Scientific identity
+depends on the manifest SHA, relative shard paths, all 32 shard sizes/SHAs,
+preprocessing version and canonical ordered token identity—not on the absolute
+host path. It validates the declared event tensor shape/dtype, endpoint order,
+label t2 anchor and delta-t before exposing model inputs.
 
-> En el universo grouped-development y presupuesto preregistrado, conservar los
-> nueve resúmenes de correspondencia global uniforme mejora frente al control que
-> calcula y anula esos mismos slots, cuando ambos predicen benchmark phase y omiten
-> la interfaz explícita de altura.
+`CollisionClockOuterTrainBatch` and `CollisionClockOuterDevBatch` are separate
+types. The trainer accepts only the former; the evaluator accepts only the
+latter plus a verified frozen-checkpoint capability. Outer-dev cannot enter
+training statistics, early stopping, normalization, calibration or checkpoint
+selection. The only checkpoint policy is `last_update_fixed_budget`.
 
-## Matched contrast
+The future OOF flow is complete for folds 0, 1 and 2: verify cache, construct
+disjoint views, initialize the exact arm, train outer-train for the fixed update
+budget, save/freeze the final update, evaluate outer-dev once, and write raw
+row-level coordinates plus a signed fold summary. Dry-run prints this DAG and
+all paths without opening shards or creating scientific results.
 
-`X0-BASE-U` and `X0-DYN-U` use the same model class, endpoint trunk/token, feature
-schema, phase head, seed, initialization, optimizer, scheduler, precision, sampler,
-budget, checkpoint policy, matcher radius, matcher temperature, and forward/reverse
-matcher calls. BASE computes both observed motion vectors and applies exactly
-`m01_base = m01 * 0.0` and `m12_base = m12 * 0.0` at the audited feature boundary.
-This is topology-, initialization-, data-, budget-, and matcher-call-matched; it is
-not a claim of equal scientific gradient signal.
+## Resume, aggregation and bootstrap
 
-The frozen motion schema contains exactly, in order:
+Resume binds commit/dirty state, arm and role, reference family where applicable,
+seed/fold/motion mode, model class/topology/initialization, config/protocol/
+reference/split/cache paths and hashes, canonical and subset hashes, optimizer,
+scheduler, precision, update budget, checkpoint policy, completed updates, all
+available RNG states, sampler/order state and the physical checkpoint SHA. Any
+mismatch or truncation is fatal.
 
-1. `translation_x`
-2. `translation_y`
-3. `divergence_x`
-4. `divergence_y`
-5. `divergence_isotropic`
-6. `flow_magnitude`
-7. `confidence_margin`
-8. `entropy`
-9. `cycle_error`
+The aggregator has a closed registry:
 
-The transport helper is called with `foreground_weight=None`; the duplicated trailing
-nine legacy fields are discarded.
+- `X0-A5-REPLAY`
+- `X0-PAIR-U`
+- `X0-BASE-U`
+- `X0-DYN-U`
+
+`X0-DYN-W`, unknown arms, smoke/subset evidence and incomplete folds are rejected.
+MiD, failure, clipping diagnostics, bootstrap intervals and gates are recomputed
+internally. Paired bootstrap samples sequence then tracks, keeps all rows of a
+selected track, uses identical draws for candidate/reference, and records the
+draw identity SHA. The A5 gate names and verifies `official_a5_oof` explicitly.
+
+## Matched BASE/DYN boundary
+
+BASE and DYN retain the audited shared class, 308,005 parameters, input `[B,946]`,
+encoder, clock head, matcher radius 1, temperature 0.02, four matcher calls and
+the same nine ordered observables. Both compute `m01` and `m12`; only BASE applies
+`m01 = m01 * 0.0` and `m12 = m12 * 0.0`. The duplicated 18-field historical
+calculation remains intact and X0 consumes only the first nine fields.
 
 ## X0-DYN-W
 
-The configured and signed reduction is literally:
+`X0-DYN-W` remains `execution_authorized=false`, `status=not_executed`. Its
+float64 normalized weighted absolute phase loss remains unit-tested, but no
+forward, smoke, training or OOF is authorized. The closed aggregator rejects it.
 
-```text
-loss_reduction=normalized_weighted_absolute_phase_error
+## Deferred execution
+
+No real-data model forward/backward, optimizer step, outer-train smoke, OOF,
+seed 13/23 run, sealed evaluation or X1–X5/Track-M/recurrent-depth implementation
+was performed during this correction. The future launch requires explicit
+authorization and the external read-only cache/reference roots.
+
+Future real-data outer-train smoke command (documented, not executed):
+
+```powershell
+python scripts/train_scientific_recovery_v9_eclock.py `
+  --config configs/experiment/scientific_recovery_v9_eclock/x0_base_u.yaml `
+  --mode outer-train-smoke --fold 0 `
+  --cache-root <V8_READ_ONLY_TRAIN8192_CACHE_ROOT> `
+  --reference-root <V8_READ_ONLY_CHECKOUT_ROOT> `
+  --output-root <NONSCIENTIFIC_SMOKE_OUTPUT_ROOT> `
+  --device cuda --execute-authorized-outer-train-smoke
 ```
 
-It accumulates `sum(weight * absolute phase error) / sum(weight)` in float64 and
-fails on non-finite inputs or a non-positive/non-finite denominator. The config
-forbids weight clipping, bucket recomputation, outer-dev weight selection, and
-target/error resampling. No real-data forward, smoke, or scientific run is allowed
-for this arm in the present phase.
-
-## Execution state and remaining prerequisites
-
-The protocol/config validators, strict 8,192-row/three-fold precheck, signed reference
-builder, fixed-update resume substrate, aggregator, verifier, and PowerShell
-orchestrator are implemented. The bounded synthetic BASE/DYN smoke is permitted but
-does not enter the production aggregator.
-
-The verified V8 essential-results package intentionally omits physical A5
-checkpoints and tensor cache shards. Therefore PAIR/A5 real smokes and the bounded
-outer-train smoke cannot run in this checkout. They must not be replaced or
-reconstructed. A future scientific launch must supply the original hash-verified,
-fold-local A5 checkpoints and the signed 12-channel train-only cache/split adapter;
-no sealed evaluation path may be resolved.
-
-The future coordinate control `X0-DYN-PHASE` versus `X0-DYN-INV-CTRL` remains
-documented but is not implemented or executed.
+This mode consumes one typed outer-train batch, performs one optimizer update,
+never opens or evaluates outer-dev, and emits only
+`evidence_class=smoke`/`scientific_result=false`.
