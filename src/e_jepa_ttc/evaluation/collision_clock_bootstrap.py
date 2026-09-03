@@ -50,9 +50,10 @@ def _sequence_macro_mid(
     mid: np.ndarray,
     buckets: np.ndarray,
     replica_sequences: np.ndarray,
-) -> float:
+) -> tuple[float, int, int]:
     sequence_scores: list[float] = []
-    for sequence in sorted(np.unique(replica_sequences).tolist()):
+    unique_sequences = sorted(np.unique(replica_sequences).tolist())
+    for sequence in unique_sequences:
         selected = replica_sequences == sequence
         weighted = 0.0
         complete = True
@@ -65,8 +66,12 @@ def _sequence_macro_mid(
         if complete:
             sequence_scores.append(weighted)
     if not sequence_scores:
-        return float("nan")
-    return float(np.mean(np.asarray(sequence_scores), dtype=np.float64))
+        return float("nan"), 0, len(unique_sequences)
+    return (
+        float(np.mean(np.asarray(sequence_scores), dtype=np.float64)),
+        len(sequence_scores),
+        len(unique_sequences),
+    )
 
 
 def _identity_record(value: Mapping[str, Any], *, label: str) -> dict[str, Any]:
@@ -138,6 +143,8 @@ def paired_hierarchical_mid_bootstrap(
     delta_values = np.empty(draws, dtype=np.float64)
     candidate_values = np.empty(draws, dtype=np.float64)
     reference_values = np.empty(draws, dtype=np.float64)
+    complete_replica_counts = np.empty(draws, dtype=np.int64)
+    total_replica_counts = np.empty(draws, dtype=np.int64)
     draws_digest = hashlib.sha256()
     for draw in range(draws):
         selected_sequences = rng.integers(0, len(sequences), size=len(sequences))
@@ -161,15 +168,24 @@ def paired_hierarchical_mid_bootstrap(
                 )
         selected_rows = np.concatenate(row_indices)
         replicas = np.concatenate(replica_ids)
-        candidate_values[draw] = _sequence_macro_mid(
+        candidate_score, complete_count, total_count = _sequence_macro_mid(
             candidate_mid[selected_rows], buckets[selected_rows], replicas
         )
-        reference_values[draw] = _sequence_macro_mid(
+        reference_score, reference_complete, reference_total = _sequence_macro_mid(
             reference_mid[selected_rows], buckets[selected_rows], replicas
         )
+        if (complete_count, total_count) != (reference_complete, reference_total):
+            raise RuntimeError("paired bootstrap completeness differs between arms")
+        candidate_values[draw] = candidate_score
+        reference_values[draw] = reference_score
+        complete_replica_counts[draw] = complete_count
+        total_replica_counts[draw] = total_count
         delta_values[draw] = candidate_values[draw] - reference_values[draw]
     finite = (
-        np.isfinite(candidate_values) & np.isfinite(reference_values) & np.isfinite(delta_values)
+        np.isfinite(candidate_values)
+        & np.isfinite(reference_values)
+        & np.isfinite(delta_values)
+        & (complete_replica_counts == total_replica_counts)
     )
     if not finite.any():
         raise ValueError("paired bootstrap produced no finite paired draws")
@@ -187,6 +203,21 @@ def paired_hierarchical_mid_bootstrap(
         "seed": seed,
         "draws": draws,
         "draws_identity_sha256": draws_digest.hexdigest(),
+        "complete_sequence_replicas": int(complete_replica_counts.sum()),
+        "total_sequence_replicas": int(total_replica_counts.sum()),
+        "complete_sequence_replica_fraction": float(
+            complete_replica_counts.sum() / total_replica_counts.sum()
+        ),
+        "draws_with_all_sequence_replicas_complete": int(
+            np.sum(complete_replica_counts == total_replica_counts)
+        ),
+        "all_sequence_replicas_complete_draw_fraction": float(
+            np.mean(complete_replica_counts == total_replica_counts)
+        ),
+        "incomplete_sequence_replicas_are_paired_identically": True,
+        "incomplete_draw_policy": "discard_entire_paired_draw_before_interval",
+        "incomplete_draws_disclosed": True,
+        "semantics_frozen_pre_results": True,
         "token_count": len(left),
         "candidate_identity": _identity_record(candidate_identity, label="candidate"),
         "reference_identity": _identity_record(reference_identity, label="reference"),

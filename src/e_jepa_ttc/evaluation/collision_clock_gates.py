@@ -88,4 +88,57 @@ def evaluate_x0_height_gate(evidence: Mapping[str, Any]) -> dict[str, Any]:
     return {"decision": decision, "missing": [], "checks": checks}
 
 
-__all__ = ["REQUIRED_PROVENANCE", "evaluate_x0_height_gate", "validate_x0_claim_scope"]
+def evaluate_x0_primary_dyn_vs_base_gate(evidence: Mapping[str, Any]) -> dict[str, Any]:
+    """Apply the frozen primary DYN-vs-BASE gate without an invented effect threshold."""
+
+    numeric_rules = {
+        "row_count": lambda value: value == 8192,
+        "base_finite_fraction": lambda value: value == 1.0,
+        "dyn_finite_fraction": lambda value: value == 1.0,
+        "base_failure_rate": lambda value: value == 0.0,
+        "dyn_failure_rate": lambda value: value == 0.0,
+        "coverage_delta_pp": lambda value: value == 0.0,
+        "finite_draw_fraction": lambda value: 0.0 < value <= 1.0,
+        "paired_ci95_upper": lambda value: value < 0.0,
+    }
+    boolean_fields = (
+        "primary_comparison_signed",
+        "identity_hashes_exact",
+        "matched_config_contract",
+        "paired_identical_draws",
+        "incomplete_draws_disclosed",
+        "official_a5_not_used_as_primary_reference",
+    )
+    missing = sorted((set(numeric_rules) | set(boolean_fields)) - set(evidence))
+    if missing:
+        return {"decision": "INCOMPLETE", "passed": False, "missing": missing, "checks": {}}
+    checks: dict[str, bool] = {}
+    for field, rule in numeric_rules.items():
+        value = evidence[field]
+        if not isinstance(value, (int, float)) or not math.isfinite(float(value)):
+            return {
+                "decision": "INCOMPLETE",
+                "passed": False,
+                "missing": [],
+                "non_finite": field,
+                "checks": checks,
+            }
+        checks[field] = rule(float(value))
+    checks.update({field: evidence[field] is True for field in boolean_fields})
+    passed = all(checks.values())
+    return {
+        "decision": ("DYNAMIC_SLOTS_SUPPORTED" if passed else "DYNAMIC_SLOTS_NOT_SUPPORTED"),
+        "passed": passed,
+        "missing": [],
+        "checks": checks,
+        "effect_size_threshold_mid": None,
+        "effect_rule": "paired_ci95_upper_strictly_below_zero",
+    }
+
+
+__all__ = [
+    "REQUIRED_PROVENANCE",
+    "evaluate_x0_height_gate",
+    "evaluate_x0_primary_dyn_vs_base_gate",
+    "validate_x0_claim_scope",
+]

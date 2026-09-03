@@ -1,12 +1,15 @@
 from __future__ import annotations
 
+from typing import Any
+
 from e_jepa_ttc.evaluation.collision_clock_gates import (
     evaluate_x0_height_gate,
+    evaluate_x0_primary_dyn_vs_base_gate,
     validate_x0_claim_scope,
 )
 
 
-def _passing_evidence() -> dict[str, float | int | bool]:
+def _passing_evidence() -> dict[str, Any]:
     return {
         "row_count": 8192,
         "finite_fraction": 1.0,
@@ -72,3 +75,27 @@ def test_smoke_cannot_be_promoted_or_claim_geometry_free() -> None:
         pass
     else:
         raise AssertionError("geometry-free claim was accepted")
+
+
+def test_primary_dyn_base_gate_requires_signed_matched_ci_not_effect_threshold() -> None:
+    evidence = {
+        "row_count": 8192,
+        "base_finite_fraction": 1.0,
+        "dyn_finite_fraction": 1.0,
+        "base_failure_rate": 0.0,
+        "dyn_failure_rate": 0.0,
+        "coverage_delta_pp": 0.0,
+        "finite_draw_fraction": 0.9998,
+        "paired_ci95_upper": -0.01,
+        "primary_comparison_signed": True,
+        "identity_hashes_exact": True,
+        "matched_config_contract": True,
+        "paired_identical_draws": True,
+        "incomplete_draws_disclosed": True,
+        "official_a5_not_used_as_primary_reference": True,
+    }
+    result = evaluate_x0_primary_dyn_vs_base_gate(evidence)
+    assert result["decision"] == "DYNAMIC_SLOTS_SUPPORTED"
+    assert result["effect_size_threshold_mid"] is None
+    evidence["paired_ci95_upper"] = 0.0
+    assert evaluate_x0_primary_dyn_vs_base_gate(evidence)["passed"] is False

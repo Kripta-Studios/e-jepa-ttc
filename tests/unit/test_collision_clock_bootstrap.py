@@ -101,3 +101,18 @@ def test_paired_bootstrap_rejects_track_identity_mismatch() -> None:
     reference.loc[0, "track_id"] = "foreign-track"
     with pytest.raises(ValueError, match="track_id mismatch"):
         _run(candidate, reference)
+
+
+def test_incomplete_bucket_draw_is_disclosed_and_discarded_as_a_whole() -> None:
+    candidate, reference = _frames()
+    sequence_zero = candidate["sequence_id"] == "sequence-0"
+    candidate.loc[sequence_zero, "track_id"] = [
+        f"bucket-track-{index % 4}" for index in range(int(sequence_zero.sum()))
+    ]
+    reference["track_id"] = candidate["track_id"]
+    result = _run(candidate, reference)
+    assert result["incomplete_draw_policy"] == "discard_entire_paired_draw_before_interval"
+    assert result["incomplete_draws_disclosed"] is True
+    assert result["all_sequence_replicas_complete_draw_fraction"] < 1.0
+    assert result["delta_candidate_minus_reference"]["finite_draw_fraction"] < 1.0
+    assert result["delta_candidate_minus_reference"]["mean"] == pytest.approx(-2.0)
