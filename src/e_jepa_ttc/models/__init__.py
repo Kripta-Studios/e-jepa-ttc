@@ -10,6 +10,17 @@ from e_jepa_ttc.models.causal_scale_ttc import (
     CausalScaleTTCConfig,
     CausalScaleTTCOutput,
 )
+from e_jepa_ttc.models.collision_clock_features import (
+    HeightBypassEncoderConfig,
+    HeightBypassEndpointEncoder,
+)
+from e_jepa_ttc.models.collision_clock_ttc import (
+    CollisionClockConfig,
+    CollisionClockTTCOutput,
+    X0A5Replay,
+    X0HeightBypassDirectPhase,
+    X0PairDirectPhase,
+)
 from e_jepa_ttc.models.garl_ttc_replica import GarlTTCConfig, GarlTTCReplica
 from e_jepa_ttc.models.highres_factorized import (
     EJEPATubeletLHR,
@@ -276,6 +287,8 @@ __all__ = [
     "CausalScaleTTC",
     "CausalScaleTTCConfig",
     "CausalScaleTTCOutput",
+    "CollisionClockConfig",
+    "CollisionClockTTCOutput",
     "DINOv3FeatureTeacher",
     "GarlTTCConfig",
     "GarlTTCReplica",
@@ -286,6 +299,8 @@ __all__ = [
     "PatchGeometry",
     "TheoreticalOOMError",
     "HighResolutionTokenPyramid",
+    "HeightBypassEncoderConfig",
+    "HeightBypassEndpointEncoder",
     "PyramidTaps",
     "SpaceToDepthPatchMerge",
     "ObjectEventRGBFusion",
@@ -301,6 +316,9 @@ __all__ = [
     "EventTokenTransformerRegressor",
     "TinyCNNEncoder",
     "TinyCNNRegressor",
+    "X0A5Replay",
+    "X0HeightBypassDirectPhase",
+    "X0PairDirectPhase",
     "build_encoder",
     "build_regressor",
     "geometric_dynamics_targets",
