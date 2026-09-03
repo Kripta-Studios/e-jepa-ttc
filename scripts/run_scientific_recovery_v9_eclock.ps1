@@ -1,14 +1,18 @@
 [CmdletBinding()]
 param(
-    [ValidateSet('DryRun', 'SyntheticSmoke', 'OOF')]
+    [ValidateSet('DryRun', 'OuterTrainSmoke', 'OOF')]
     [string]$Mode = 'DryRun',
-    [ValidateSet('X0-A5-REPLAY', 'X0-PAIR-U', 'X0-BASE-U', 'X0-DYN-U')]
+    [ValidateSet('X0-A5-REPLAY', 'X0-PAIR-U', 'X0-BASE-U', 'X0-DYN-U', 'X0-DYN-W')]
     [string[]]$Arms = @('X0-A5-REPLAY', 'X0-PAIR-U', 'X0-BASE-U', 'X0-DYN-U'),
-    [ValidateSet(7)]
-    [int]$Seed = 7,
-    [ValidateSet(0, 1, 2)]
-    [int[]]$Folds = @(0, 1, 2),
+    [Parameter(Mandatory = $true)]
+    [string]$CacheRoot,
+    [Parameter(Mandatory = $true)]
+    [string]$ReferenceRoot,
     [string]$OutputRoot = 'artifacts/scientific_recovery_v9_eclock/runs',
+    [string]$Device = 'cpu',
+    [ValidateSet(0, 1, 2)]
+    [int]$Fold = 0,
+    [switch]$ExecuteAuthorizedOuterTrainSmoke,
     [switch]$ExecuteAuthorizedOOF
 )
 
@@ -24,7 +28,7 @@ $ResolvedOutputRoot = if ([System.IO.Path]::IsPathRooted($OutputRoot)) {
 }
 $ModeValue = switch ($Mode) {
     'DryRun' { 'dry-run' }
-    'SyntheticSmoke' { 'synthetic-smoke' }
+    'OuterTrainSmoke' { 'outer-train-smoke' }
     'OOF' { 'oof' }
 }
 $ConfigNames = @{
@@ -32,24 +36,38 @@ $ConfigNames = @{
     'X0-PAIR-U' = 'x0_pair_u.yaml'
     'X0-BASE-U' = 'x0_base_u.yaml'
     'X0-DYN-U' = 'x0_dyn_u.yaml'
+    'X0-DYN-W' = 'x0_dyn_w.yaml'
 }
 
 foreach ($Arm in $Arms) {
+    if ($Mode -eq 'OOF' -and $Arm -eq 'X0-DYN-W') {
+        throw 'X0-DYN-W is always forbidden as scientific_oof.'
+    }
+    if ($Mode -eq 'OuterTrainSmoke' -and $Arm -notin @('X0-PAIR-U', 'X0-BASE-U', 'X0-DYN-U')) {
+        throw "Outer-train smoke is unavailable for $Arm."
+    }
     $Config = Join-Path $ConfigRoot $ConfigNames[$Arm]
-    if ($Mode -eq 'OOF') {
-        foreach ($Fold in $Folds) {
-            $Output = Join-Path $ResolvedOutputRoot (Join-Path $Arm "fold$Fold")
-            $Arguments = @(
-                $TrainScript, '--config', $Config, '--mode', $ModeValue,
-                '--seed', "$Seed", '--fold', "$Fold", '--output', $Output
-            )
-            if ($ExecuteAuthorizedOOF) { $Arguments += '--execute-authorized-oof' }
-            & python @Arguments
-            if ($LASTEXITCODE -ne 0) { throw "E-Clock OOF command failed for $Arm fold $Fold" }
+    $ArmOutput = Join-Path $ResolvedOutputRoot $Arm
+    $Arguments = @(
+        $TrainScript,
+        '--config', $Config,
+        '--mode', $ModeValue,
+        '--cache-root', $CacheRoot,
+        '--reference-root', $ReferenceRoot,
+        '--output-root', $ArmOutput,
+        '--device', $Device
+    )
+    if ($ExecuteAuthorizedOOF) {
+        $Arguments += '--execute-authorized-oof'
+    }
+    if ($Mode -eq 'OuterTrainSmoke') {
+        $Arguments += @('--fold', "$Fold")
+        if ($ExecuteAuthorizedOuterTrainSmoke) {
+            $Arguments += '--execute-authorized-outer-train-smoke'
         }
-    } else {
-        & python $TrainScript `
-            --config $Config --mode $ModeValue --seed $Seed
-        if ($LASTEXITCODE -ne 0) { throw "E-Clock command failed for $Arm" }
+    }
+    & python @Arguments
+    if ($LASTEXITCODE -ne 0) {
+        throw "E-Clock command failed for $Arm."
     }
 }
