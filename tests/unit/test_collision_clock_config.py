@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
+import jsonschema
 import pytest
 
 from e_jepa_ttc.artifacts.hashing import verify_artifact_hash
@@ -25,14 +27,18 @@ def test_all_x0_configs_validate_and_protocol_signature_is_canonical() -> None:
         "X0-DYN-U",
         "X0-DYN-W",
     }
-    import json
-
     protocol = json.loads(
         (ROOT / "configs/protocol/scientific_recovery_v9_eclock_x0.json").read_text(
             encoding="utf-8"
         )
     )
     assert verify_artifact_hash(protocol)
+    protocol_schema = json.loads(
+        (ROOT / "schemas/scientific_recovery_v9_eclock_protocol_v1.schema.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    jsonschema.Draft202012Validator(protocol_schema).validate(protocol)
 
 
 def test_base_dyn_configs_are_matched_and_dyn_w_is_nonexecutable() -> None:
@@ -43,3 +49,17 @@ def test_base_dyn_configs_are_matched_and_dyn_w_is_nonexecutable() -> None:
     assert weighted["loss_reduction"] == "normalized_weighted_absolute_phase_error"
     with pytest.raises(PermissionError):
         assert_arm_execution_authorized(weighted)
+
+
+def test_dyn_w_nonexecuted_summary_is_signed_and_schema_valid() -> None:
+    summary = json.loads(
+        (CONFIG_ROOT / "x0_dyn_w_not_executed_summary.json").read_text(encoding="utf-8")
+    )
+    schema = json.loads(
+        (ROOT / "schemas/scientific_recovery_v9_eclock_artifact_v1.schema.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert verify_artifact_hash(summary)
+    jsonschema.Draft202012Validator(schema).validate(summary)
+    assert summary["loss_reduction"] == "normalized_weighted_absolute_phase_error"

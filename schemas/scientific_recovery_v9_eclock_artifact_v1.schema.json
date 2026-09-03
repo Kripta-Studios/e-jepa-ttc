@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "scientific_recovery_v9_eclock_artifact_v1.schema.json",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "artifact_type", "artifact_sha256", "arm_id", "evidence_class",
+    "scientific_result", "upstream_roi_is_box_conditioned",
+    "explicit_foreground_height_interface_bypassed", "loss_reduction"
+  ],
+  "properties": {
+    "artifact_type": {"enum": ["eclock_x0_run_manifest_v1", "eclock_x0_summary_v1", "eclock_x0_aggregate_v1", "eclock_x0_reference_v1"]},
+    "artifact_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "arm_id": {"enum": ["REFERENCE", "X0-A5-REPLAY", "X0-PAIR-U", "X0-BASE-U", "X0-DYN-U", "X0-DYN-W"]},
+    "evidence_class": {"enum": ["reference", "dry_run", "smoke", "scientific_oof"]},
+    "scientific_result": {"type": "boolean"},
+    "upstream_roi_is_box_conditioned": {"const": true},
+    "explicit_foreground_height_interface_bypassed": {"type": "boolean"},
+    "loss_reduction": {"type": "string", "minLength": 1}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"evidence_class": {"enum": ["dry_run", "smoke"]}}},
+      "then": {"properties": {"scientific_result": {"const": false}}}
+    },
+    {
+      "if": {"properties": {"arm_id": {"const": "X0-DYN-W"}}},
+      "then": {
+        "properties": {
+          "evidence_class": {"enum": ["reference", "dry_run"]},
+          "scientific_result": {"const": false},
+          "loss_reduction": {"const": "normalized_weighted_absolute_phase_error"}
+        }
+      }
+    }
+  ]
+}

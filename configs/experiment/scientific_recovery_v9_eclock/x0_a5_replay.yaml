@@ -1,0 +1,15 @@
+artifact_type: scientific_recovery_v9_eclock_config_v1
+arm_id: X0-A5-REPLAY
+execution_authorized: true
+scientific_role: historical_geometry_infused_control
+feature_source: a5_pair
+motion_feature_mode: embedded_a5
+loss_reduction: historical_a5
+seed: 7
+upstream_roi_is_box_conditioned: true
+explicit_foreground_height_interface_bypassed: false
+source_a5_checkpoint: REQUIRED_FOLD_LOCAL_PHYSICAL_PATH
+source_a5_checkpoint_sha256: REQUIRED_OBSERVED_SHA256
+folds: [0, 1, 2]
+checkpoint_policy: last_epoch_fixed_budget
+sealed_evaluation: closed
