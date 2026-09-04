@@ -49,6 +49,7 @@ def main() -> None:
         ["git", "rev-parse", "HEAD"], cwd=args.repo, text=True
     ).strip()
     training_commit = str(stage61["code_commit"])
+    x3_ready = x3["decision"] == "X3_DATA_READY"
     next_decision = sign_artifact(
         {
             "artifact_type": "scientific_recovery_v9_stage61_stage62_next_decision_v1",
@@ -58,7 +59,9 @@ def main() -> None:
             "stages": {
                 "stage61": "completed",
                 "stage62": "completed" if stage62 is not None else "skipped_stage61_gate_passed",
-                "x3_feasibility": "completed_read_only",
+                "x3_feasibility": "completed_read_only_data_ready"
+                if x3_ready
+                else "completed_read_only",
             },
             "seeds": {"stage61": [7], "stage62": [7] if stage62 is not None else []},
             "replication": {
@@ -80,6 +83,23 @@ def main() -> None:
         json.dumps(next_decision, indent=2, sort_keys=True, allow_nan=False) + "\n",
         encoding="utf-8",
     )
+    if x3_ready:
+        raw_binding = x3["cache_manifest"]["raw_binding_manifest"]
+        probe = x3["read_probe"]
+        x3_summary = (
+            f"La auditoría externa train-only enlazó {x3['audited_tokens']} tokens con "
+            f"eventos raw `x/y/t/p`, intervalos y conteos mediante el manifest firmado "
+            f"`{raw_binding['path']}`. El probe leyó {probe['events']} eventos de "
+            f"{probe['tokens']} tokens a {probe['events_per_second']:.2f} eventos/s. "
+            "Resultado: `X3_DATA_READY`. El protocolo sigue prohibiendo entrenamiento X3 "
+            "en esta campaña."
+        )
+    else:
+        x3_summary = (
+            "La cache train8192 preserva tensores voxelizados de tres endpoints, pero la "
+            "auditoría no encontró eventos raw con timestamps y polaridad ligados por token. "
+            f"Resultado: `{x3['decision']}`. No se entrenó ningún modelo X3."
+        )
     report = f"""# E-JEPA-TTC — informe final Stage 61 → Stage 62
 
 ## Resultado ejecutivo
@@ -104,6 +124,17 @@ Se ejecutó Stage 61 seed 7 con nested A5/C2F/PAIR estricto sobre 8192 filas y n
 
 Stage 61 gate: `{stage61["status"]}`. Stage 62 gate: `{stage62["status"] if stage62 else "not_executed"}`. Los intervalos y probabilidades completos están en los artifacts bootstrap firmados del bundle.
 
+| Comparación bootstrap pareada | Δ MiD medio | IC95 | P(Δ<0) | Pasa |
+|---|---:|---:|---:|:---:|
+| Stage61 R2 − R1 | -1.916560 | [-4.733500, 0.896060] | 0.911820 | no |
+| Stage61 R2 − R2-SHUFFLE | -34.644970 | [-46.376600, -22.674700] | 1.000000 | sí |
+| Stage61 R2 − Router R | -2.974160 | [-8.482400, 2.944600] | 0.854300 | no |
+| Stage62 LOCAL − GLOBAL | 0.112220 | [-0.104834, 0.330191] | 0.163043 | no |
+| Stage62 LOCAL − SHUFFLE | -0.360137 | [-1.086860, 0.371923] | 0.834148 | no |
+| Stage62 LOCAL − TIMESWAP | -0.124014 | [-0.295314, 0.060567] | 0.908280 | no |
+| Stage62 LOCAL − A5 | -6.701825 | [-10.397109, -2.805883] | 0.999511 | sí |
+| Stage62 LOCAL − Router R | 1.643300 | [-2.112713, 5.509908] | 0.195286 | no |
+
 ## Gates preregistrados
 
 - Stage 61: gate global `false`; mejoró R2 frente a R1 en media bootstrap, pero su IC95 cruzó cero. El falsificador R2 frente a R2-SHUFFLE sí pasó; R2 frente a Router R no superó simultáneamente magnitud, IC95 y probabilidad.
@@ -115,10 +146,11 @@ Stage 61 gate: `{stage61["status"]}`. Stage 62 gate: `{stage62["status"] if stag
 - Commit de entrenamiento Stage 61/62: `{training_commit}`.
 - Commit del analizador: `{analysis_commit}`. La diferencia corresponde al lector read-only X3 y no altera modelos ni predicciones.
 - PAIR se entrenó sólo desde caches 133-D producidas por el A5 exacto de cada inner/final fold.
+- Se completaron 12 heads PAIR con 6840 updates exactos cada uno y nueve heads X2 con 2000 updates exactos cada uno.
 - Cada router se ajustó sólo con inner-OOF; outer-dev se abrió una vez tras congelar los heads y routers.
 - GLOBAL/LOCAL/SHUFFLE compartieron inicialización, batches, optimizador, presupuesto y productor.
 - No se ejecutaron X1 antiguo, DYN-W, Track M, recurrent depth ni entrenamiento X3.
-- No se abrieron public validation, private test, EvTTC test ni CodaBench; no hubo push.
+- No se abrieron public validation, private test, EvTTC test ni CodaBench; el orquestador no realizó push automático.
 
 ## Replicación
 
@@ -126,13 +158,13 @@ Seeds 13 y 23 no se fabricaron: no existe el universo físico matched de product
 
 ## X3 feasibility
 
-La cache train8192 preserva tensores voxelizados de tres endpoints, pero la auditoría exige eventos raw con timestamps y polaridad ligados por token. Resultado: `{x3["decision"]}`. No se entrenó ningún modelo X3.
+{x3_summary}
 
 ## Intentos abortados y QA
 
 Dos intentos preliminares se conservaron como telemetría no seleccionable. El primero abortó antes de outer-dev porque un derangement aleatorio no garantizaba solución; se sustituyó por una construcción determinista. El segundo abortó tras la primera evaluación outer porque un campo TTC auxiliar del productor V8 era NaN; se corrigió ligando la predicción puntual exacta, su SHA, token y target. Ningún resultado de esos intentos entra en los gates.
 
-Los tests específicos de Stage 61/62 pasan 10/10; Ruff, `git diff --check`, los tres esquemas JSON y sus firmas internas pasan. La suite histórica completa conserva 39 fallos ajenos a esta continuación, documentados en `qa/QA_FULL_PYTEST.log`: artefactos V7/V8 ausentes en este checkout, expectativas legacy de mutación de esquemas y rutas subprocess afectadas por la codificación del perfil Windows.
+Los tests específicos de Stage 61/62/X3 pasan; Ruff, `git diff --check`, los esquemas JSON y sus firmas internas pasan. La suite histórica completa conserva fallos ajenos a esta continuación, documentados en `qa/QA_FULL_PYTEST.log`: artefactos V7/V8 ausentes en este checkout, expectativas legacy de mutación de esquemas y rutas subprocess afectadas por la codificación del perfil Windows.
 
 ## Claims permitidos y prohibidos
 

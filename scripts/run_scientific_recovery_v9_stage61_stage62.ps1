@@ -6,6 +6,9 @@ param(
     [Parameter(Mandatory=$true)][string]$RouterRoot,
     [string]$CampaignRoot = "artifacts/scientific_recovery_v9_stage61_stage62",
     [string]$PythonExe = "",
+    [string]$X3GarlTtcRoot = "",
+    [string]$X3EapRoot = "",
+    [switch]$X3HashEventFiles,
     [switch]$Resume
 )
 
@@ -61,8 +64,19 @@ if (-not $stage61.gate_passed) {
     }
 }
 
-Invoke-StagePython scripts/audit_scientific_recovery_v9_x3_feasibility.py `
-    --cache-root $CacheRoot --output (Join-Path $campaign "X3_FEASIBILITY.json")
+$x3Args = @(
+    "scripts/audit_scientific_recovery_v9_x3_feasibility.py",
+    "--cache-root", $features,
+    "--output", (Join-Path $campaign "X3_FEASIBILITY.json")
+)
+if ($X3GarlTtcRoot -or $X3EapRoot) {
+    if (-not ($X3GarlTtcRoot -and $X3EapRoot)) {
+        throw "X3GarlTtcRoot and X3EapRoot must be supplied together."
+    }
+    $x3Args += @("--garlttc-root", $X3GarlTtcRoot, "--eap-root", $X3EapRoot)
+    if ($X3HashEventFiles) { $x3Args += "--hash-event-files" }
+}
+Invoke-StagePython @x3Args
 
 Invoke-StagePython scripts/aggregate_scientific_recovery_v9_stage61.py `
     --campaign-root $campaign --output (Join-Path $campaign "ESSENTIAL_INVENTORY.json")
