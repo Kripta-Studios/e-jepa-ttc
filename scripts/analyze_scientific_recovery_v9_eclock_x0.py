@@ -283,6 +283,7 @@ def main() -> int:
     preflight = _optional_signed(campaign / "preflight/preflight_summary.json")
     cache_decision = _optional_signed(campaign / "preflight/cache_engineering_decision.json")
     smoke = _optional_signed(campaign / "smoke/smoke_summary.json")
+    provenance = _optional_signed(campaign / "provenance_exception.json")
     qa_rows = _master_qa(campaign)
     comparison_path = campaign / "comparisons/x0_dyn_vs_base.json"
     comparison = _load_signed(comparison_path) if comparison_path.is_file() else None
@@ -338,6 +339,14 @@ def main() -> int:
         "```text",
         hardening_commits,
         "```",
+        "",
+        "## Cross-commit provenance",
+        "",
+        (
+            f"Signed provenance exception: `{json.dumps(provenance, sort_keys=True)}`"
+            if provenance is not None
+            else "No cross-commit artifact reuse was declared."
+        ),
         "",
         "## Preflight QA, cache and smoke",
         "",
@@ -494,6 +503,9 @@ def main() -> int:
             "missing_arms": missing,
             "arm_metrics": arm_metrics,
             "runtime": runtime_rows,
+            "provenance_exception_sha256": (
+                provenance.get("artifact_sha256") if provenance is not None else None
+            ),
             "report_sha256": compute_file_hash(str(args.output)),
         }
     )

@@ -12,6 +12,8 @@ import zipfile
 from pathlib import Path
 from typing import Any
 
+from e_jepa_ttc.artifacts.hashing import verify_artifact_hash
+
 ARMS = {"X0-A5-REPLAY", "X0-BASE-U", "X0-DYN-U", "X0-PAIR-U"}
 
 
@@ -78,19 +80,44 @@ def main() -> int:
     reference_path = repo / "configs/protocol" / reference_name
     members[f"reference/{reference_name}"] = reference_path.read_bytes()
     members["final_report.md"] = report.read_bytes()
+    provenance_path = campaign / "provenance_exception.json"
+    provenance = None
+    if provenance_path.is_file():
+        provenance = json.loads(provenance_path.read_text(encoding="utf-8"))
+        if not isinstance(provenance, dict) or not verify_artifact_hash(provenance):
+            raise ValueError("cross-commit provenance signature mismatch")
+    provenance_text = (
+        f"Finalization/PAIR commit: `{args.git_commit}`. BASE/DYN training commit: "
+        f"`{provenance['source_training_commit']}`. See `provenance_exception.json`."
+        if provenance is not None
+        else f"Training commit: `{args.git_commit}`."
+    )
     members["README.md"] = (
         "# E-Clock X0 seed-7 essential results\n\n"
-        f"Training commit: `{args.git_commit}`. Verify every payload member with "
+        f"{provenance_text} Verify every payload member with "
         "`MANIFEST.json` and verify the ZIP with the adjacent `.sha256` file. "
         "Checkpoints are intentionally excluded; "
         "their physical paths, byte counts and hashes are recorded in checkpoint manifests.\n"
     ).encode()
+    arm_training_commits = (
+        {
+            "X0-A5-REPLAY": "external_official_a5_checkpoints",
+            "X0-BASE-U": provenance["source_training_commit"],
+            "X0-DYN-U": provenance["source_training_commit"],
+            "X0-PAIR-U": args.git_commit,
+        }
+        if provenance is not None
+        else {arm: args.git_commit for arm in sorted(ARMS)}
+    )
     git_identity = {
         "branch": subprocess.check_output(
             ["git", "-C", str(repo), "branch", "--show-current"], text=True
         ).strip(),
         "starting_head": "af66f2c8ca2017059d7765b5f171e1cda866ab07",
         "training_commit": args.git_commit,
+        "training_commit_scope": ["X0-PAIR-U"] if provenance is not None else sorted(ARMS),
+        "arm_training_commits": arm_training_commits,
+        "cross_commit_reuse_declared": provenance is not None,
         "push_performed": False,
         "tracked_worktree_clean": not bool(
             subprocess.check_output(
@@ -134,6 +161,8 @@ def main() -> int:
             "comparisons/x0_dyn_vs_base_gate.json",
             "CHECKPOINT_SHA256SUMS.txt",
         }
+        if provenance is not None:
+            required.add("provenance_exception.json")
         for arm in sorted(ARMS):
             required.add(f"runs/{arm}/aggregate.json")
             for fold in (0, 1, 2):
@@ -148,6 +177,10 @@ def main() -> int:
     manifest: dict[str, Any] = {
         "schema": "eclock_x0_essential_bundle_manifest_v1",
         "git_commit": args.git_commit,
+        "arm_training_commits": arm_training_commits,
+        "provenance_exception_sha256": (
+            provenance.get("artifact_sha256") if provenance is not None else None
+        ),
         "manifest_self_hash_policy": "MANIFEST.json excluded to avoid impossible recursive digest",
         "members": [
             {"path": name, "bytes": len(data), "sha256": _sha(data)}

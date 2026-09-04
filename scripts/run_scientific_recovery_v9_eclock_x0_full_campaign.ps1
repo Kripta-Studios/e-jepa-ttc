@@ -9,6 +9,8 @@ param(
     [ValidateSet('auto', 'fold_ram', 'shard_lru')]
     [string]$CacheMode = 'auto',
     [int]$TelemetryIntervalSeconds = 5,
+    [string]$ReuseBaseDynCampaignRoot = '',
+    [string]$ReuseBaseDynCommit = '',
     [switch]$ResumeCampaign
 )
 
@@ -45,6 +47,12 @@ function Invoke-GitText {
 
 foreach ($path in @($RepoRoot, $ReferenceRoot, $CacheRoot, $PythonExecutable)) {
     if (-not (Test-Path -LiteralPath $path)) { throw "Required path does not exist: $path" }
+}
+if ($ReuseBaseDynCampaignRoot) {
+    if (-not (Test-Path -LiteralPath $ReuseBaseDynCampaignRoot -PathType Container)) {
+        throw "Reuse source campaign does not exist: $ReuseBaseDynCampaignRoot"
+    }
+    if (-not $ReuseBaseDynCommit) { throw 'ReuseBaseDynCommit is required with reuse source' }
 }
 $Branch = Invoke-GitText branch --show-current
 $Head = Invoke-GitText rev-parse HEAD
@@ -211,6 +219,7 @@ try {
         'src/e_jepa_ttc/evaluation/collision_clock_aggregate.py',
         'scripts/train_scientific_recovery_v9_eclock.py', 'scripts/compare_scientific_recovery_v9_eclock_x0.py',
         'scripts/preflight_scientific_recovery_v9_eclock_x0.py', 'scripts/smoke_scientific_recovery_v9_eclock_x0.py',
+        'scripts/adopt_scientific_recovery_v9_eclock_x0_base_dyn.py',
         'scripts/report_scientific_recovery_v9_eclock_environment.py', 'scripts/analyze_scientific_recovery_v9_eclock_x0.py',
         'scripts/package_scientific_recovery_v9_eclock_x0_results.py',
         'tests/unit/test_collision_clock_cache.py', 'tests/unit/test_collision_clock_bootstrap.py',
@@ -264,8 +273,18 @@ try {
 
     Run-ArmOOF -Arm 'X0-A5-REPLAY' -SelectedCacheMode $SelectedCacheMode
     Aggregate-Arm 'X0-A5-REPLAY'
-    Run-ArmOOF -Arm 'X0-BASE-U' -SelectedCacheMode $SelectedCacheMode
-    Run-ArmOOF -Arm 'X0-DYN-U' -SelectedCacheMode $SelectedCacheMode
+    if ($ReuseBaseDynCampaignRoot) {
+        Invoke-LoggedPython -Name 'adopt-BASE-DYN-provenance' -Arguments @(
+            (Join-Path $RepoRoot 'scripts\adopt_scientific_recovery_v9_eclock_x0_base_dyn.py'),
+            '--source-campaign', $ReuseBaseDynCampaignRoot,
+            '--destination-campaign', $CampaignRoot,
+            '--source-commit', $ReuseBaseDynCommit,
+            '--current-commit', $AuthorizedCommit
+        )
+    } else {
+        Run-ArmOOF -Arm 'X0-BASE-U' -SelectedCacheMode $SelectedCacheMode
+        Run-ArmOOF -Arm 'X0-DYN-U' -SelectedCacheMode $SelectedCacheMode
+    }
     Aggregate-Arm 'X0-BASE-U'
     Aggregate-Arm 'X0-DYN-U'
     $comparisonRoot = Join-Path $CampaignRoot 'comparisons'
