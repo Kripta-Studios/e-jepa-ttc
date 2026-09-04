@@ -10,7 +10,12 @@ import pandas as pd
 import pytest
 import torch
 
-from e_jepa_ttc.artifacts.hashing import compute_artifact_hash, verify_artifact_hash
+from e_jepa_ttc.artifacts.hashing import (
+    compute_artifact_hash,
+    compute_file_hash,
+    sign_artifact,
+    verify_artifact_hash,
+)
 from e_jepa_ttc.evaluation.collision_clock_protocol import (
     canonical_records_hash,
     module_topology_sha256,
@@ -26,6 +31,7 @@ from e_jepa_ttc.evaluation.incremental_fusion import (
     run_x05_cross_fit,
     validate_feature_table,
 )
+from e_jepa_ttc.evaluation.incremental_replay import _validate_reused_fold_binding
 from e_jepa_ttc.models.collision_clock_math import (
     benchmark_phase_to_inverse_ttc,
     phase_lower_bound,
@@ -549,3 +555,51 @@ def test_target_does_not_enter_transport_extractor_api() -> None:
         "temperature",
         "return_dense_diagnostics",
     }
+
+
+def test_cross_commit_reuse_requires_exact_signed_fold_binding(tmp_path: Path) -> None:
+    oof = tmp_path / "oof_predictions.csv"
+    oof.write_text("sample_token,predicted_benchmark_phase\nt0,0.1\n", encoding="utf-8")
+    summary_path = tmp_path / "fold_summary.json"
+    summary = sign_artifact(
+        {
+            "artifact_type": "eclock_x0_fold_summary_v2",
+            "git_commit": "source-commit",
+            "outer_fold": 0,
+            "row_count": 1,
+            "oof_file_sha256": compute_file_hash(str(oof)),
+            "checkpoint_file_sha256": "checkpoint-sha",
+            "checkpoint_bytes": 123,
+            "checkpoint_manifest_sha256": "manifest-sha",
+        }
+    )
+    summary_path.write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    binding = {
+        "fold_summary_file_sha256": compute_file_hash(str(summary_path)),
+        "fold_summary_sha256": summary["artifact_sha256"],
+        "oof_file_sha256": compute_file_hash(str(oof)),
+        "oof_bytes": oof.stat().st_size,
+        "checkpoint_file_sha256": "checkpoint-sha",
+        "checkpoint_bytes": 123,
+        "checkpoint_manifest_sha256": "manifest-sha",
+        "row_count": 1,
+        "outer_fold": 0,
+    }
+    _validate_reused_fold_binding(
+        summary_path=summary_path,
+        oof_path=oof,
+        summary=summary,
+        binding=binding,
+        source_training_commit="source-commit",
+    )
+
+    mutated = dict(binding)
+    mutated["checkpoint_file_sha256"] = "substituted-checkpoint"
+    with pytest.raises(ValueError, match="checkpoint SHA"):
+        _validate_reused_fold_binding(
+            summary_path=summary_path,
+            oof_path=oof,
+            summary=summary,
+            binding=mutated,
+            source_training_commit="source-commit",
+        )

@@ -48,6 +48,8 @@ from e_jepa_ttc.evaluation.incremental_fusion import (
 from e_jepa_ttc.evaluation.incremental_replay import (
     EXPECTED_X0_BUNDLE_SHA256,
     EXPECTED_X0_COMMIT,
+    EXPECTED_X0_PROVENANCE_SHA256,
+    load_x0_provenance_exception,
     run_feature_replay,
 )
 from e_jepa_ttc.models.incremental_residual import FrozenA5DynamicResidualAdapter
@@ -179,6 +181,7 @@ def _preflight_memory_policy(available_bytes: int) -> dict[str, Any]:
 
 
 def _verify_required_x0_checkpoints(args: argparse.Namespace) -> list[dict[str, Any]]:
+    provenance = load_x0_provenance_exception(args.x0_campaign, x0_bundle=args.x0_bundle)
     records: list[dict[str, Any]] = []
     for arm in ("X0-A5-REPLAY", "X0-BASE-U", "X0-DYN-U"):
         for fold in (0, 1, 2):
@@ -196,6 +199,27 @@ def _verify_required_x0_checkpoints(args: argparse.Namespace) -> list[dict[str, 
             observed = compute_file_hash(str(checkpoint))
             if observed != summary["checkpoint_file_sha256"]:
                 raise ValueError(f"required X0 checkpoint SHA mismatch: {checkpoint}")
+            provenance_sha = None
+            if arm in provenance["reused_arms"]:
+                matches = [
+                    item for item in provenance["arms"][arm]["folds"] if item["outer_fold"] == fold
+                ]
+                if len(matches) != 1:
+                    raise ValueError(f"missing signed checkpoint binding: {arm}/fold-{fold}")
+                binding = matches[0]
+                manifest_path = checkpoint.with_suffix(checkpoint.suffix + ".manifest.json")
+                manifest = load_signed_artifact(manifest_path)
+                if (
+                    observed != binding["checkpoint_file_sha256"]
+                    or checkpoint.stat().st_size != binding["checkpoint_bytes"]
+                    or manifest["artifact_sha256"] != binding["checkpoint_manifest_sha256"]
+                    or manifest["scientific_identity"]["git_commit_observed"]
+                    != provenance["source_training_commit"]
+                ):
+                    raise ValueError(
+                        f"required reused X0 checkpoint differs from provenance: {arm}/fold-{fold}"
+                    )
+                provenance_sha = provenance["artifact_sha256"]
             records.append(
                 {
                     "arm": arm,
@@ -203,6 +227,8 @@ def _verify_required_x0_checkpoints(args: argparse.Namespace) -> list[dict[str, 
                     "path": str(checkpoint),
                     "bytes": checkpoint.stat().st_size,
                     "sha256": observed,
+                    "training_commit": summary["git_commit"],
+                    "cross_commit_provenance_sha256": provenance_sha,
                 }
             )
     return records
@@ -274,7 +300,7 @@ def run_preflight(args: argparse.Namespace, campaign: Path) -> dict[str, Any]:
                     "training_commit": failure["training_commit"],
                     "exception_type": failure["exception_type"],
                     "exception_message": failure["exception_message"],
-                    "feature_replay_started": False,
+                    "feature_replay_completed": False,
                     "x05_meta_test_started": False,
                     "sealed_evaluation_opened": False,
                 }
@@ -337,6 +363,7 @@ def run_preflight(args: argparse.Namespace, campaign: Path) -> dict[str, Any]:
             "cache_shards_verified": len(shard_checks),
             "cache_shard_total_bytes": sum(row["bytes"] for row in shard_checks),
             "required_x0_checkpoints_verified": checkpoint_checks,
+            "x0_provenance_exception_sha256": EXPECTED_X0_PROVENANCE_SHA256,
             "x1_device_benchmark": x1_benchmark,
             "x1_device_selected": x1_benchmark["selected_device"],
             "gpu": gpu,
@@ -1076,8 +1103,8 @@ def build_final_report(campaign: Path, *, training_commit: str, decision: str) -
             f"{telemetry['peak_process_rss_bytes']} bytes; peak GPU memory "
             f"{telemetry['peak_gpu_memory_used_mib']} MiB.",
             f"- X1 device selected before scientific rows: `{preflight['x1_device_selected']}`.",
-            f"- Pre-result technical attempts: {prior_attempts['attempt_count']}; none reached "
-            "feature replay or an X0.5 meta-test.",
+            f"- Pre-result technical attempts: {prior_attempts['attempt_count']}; none completed "
+            "feature replay or reached an X0.5 meta-test.",
             "",
             "## Limitations and maximum claim",
             "",
