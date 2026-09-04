@@ -75,15 +75,35 @@ def _producer_state(
     cache_indices = indexed["cache_index"].to_numpy(np.int64)
     phase = arrays["a5_phase"][cache_indices].astype(np.float32)
     support = arrays["pair_features"][cache_indices, -2].astype(np.float32)
-    log_variance = indexed["prediction_log_variance"].to_numpy(np.float32)
+    oof_log_variance = indexed["prediction_log_variance"].to_numpy(np.float32)
+    log_variance = oof_log_variance
+    dense_replay: dict[str, Any] | None = None
+    # The Stage 61 outer-final cache is the exact replay consumed by Stage 62 and
+    # carries the three A5 state fields used to construct its dense local field.
+    # The older V8 expert_oof.csv is a separately materialized execution: its
+    # uncertainty values are therefore provenance evidence, not an authority that
+    # may silently replace the replay state. Inner caches do not contain a dense
+    # field, so their signed producer OOF remains the only stored log-variance.
+    if "patch_features" in arrays:
+        repeated = arrays["patch_features"][cache_indices, :, -3:].astype(np.float32)
+        if not np.array_equal(repeated, repeated[:, :1, :]):
+            raise ValueError("outer dense A5 state is not constant over patches")
+        if not np.allclose(repeated[:, 0, 0], phase, rtol=0, atol=1e-7):
+            raise ValueError("outer dense A5 phase disagrees with replay cache")
+        if not np.allclose(repeated[:, 0, 2], support, rtol=0, atol=1e-7):
+            raise ValueError("outer dense A5 support disagrees with replay cache")
+        log_variance = repeated[:, 0, 1]
+        difference = np.abs(log_variance.astype(np.float64) - oof_log_variance)
+        dense_replay = {
+            "state_source": "stage61_outer_final_dense_replay",
+            "oof_log_variance_comparison_max_abs": float(difference.max()),
+            "oof_log_variance_comparison_mean_abs": float(difference.mean()),
+            "oof_log_variance_within_1e_6_fraction": float(np.mean(difference <= 1e-6)),
+            "policy": "dense_replay_is_authoritative_for_outer_final",
+        }
     state = np.column_stack((phase, log_variance, support)).astype(np.float32)
     if not np.isfinite(state).all():
         raise ValueError("A5 state is not finite")
-    # Outer-final caches carry an independent copy of all three state fields.
-    if "patch_features" in arrays:
-        repeated = arrays["patch_features"][cache_indices, :, -3:]
-        if not np.allclose(repeated, state[:, None, :], rtol=0, atol=1e-6):
-            raise ValueError("A5 state disagrees with outer dense-field cache")
     identity = pd.DataFrame(
         {
             "sample_token": indexed["sample_token"].astype(str),
@@ -110,6 +130,16 @@ def _producer_state(
         "rows": len(identity),
         "sequence_ids": sorted(identity["sequence_id"].unique()),
         "nested_checks": protocol.get("checks", {}),
+        "state_component_sources": {
+            "phase": "stage61_feature_cache.a5_phase",
+            "log_variance": (
+                "stage61_outer_final.patch_features[-2]"
+                if dense_replay is not None
+                else "signed_expert_oof.prediction_log_variance"
+            ),
+            "support": "stage61_feature_cache.pair_features[-2]",
+        },
+        "dense_replay_reconciliation": dense_replay,
     }
     return identity, state, provenance
 

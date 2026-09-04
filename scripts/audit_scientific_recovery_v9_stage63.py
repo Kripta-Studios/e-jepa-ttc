@@ -201,7 +201,22 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         )
     if time.perf_counter() - began > args.max_hours * 3600:
         raise TimeoutError("Stage 63 hashing exceeded its preregistered wall cap")
-    if not state_root.exists():
+    state_manifest = state_root / "manifest.json"
+    if state_root.exists() and not state_manifest.is_file():
+        preserved = state_root.with_name(f"crossfitted_a5_state.failed_{time.time_ns()}")
+        state_root.replace(preserved)
+        preservation = sign_stage63_65_artifact(
+            {
+                "artifact_type": "scientific_recovery_v9_partial_state_preservation_v1",
+                "status": "preserved_before_resume",
+                "original_path": str(state_root),
+                "preserved_path": str(preserved),
+                "reason": "state directory existed without a signed completion manifest",
+            },
+            evidence_type="failed_partial_state",
+        )
+        _atomic_json(stage_root / "PARTIAL_STATE_PRESERVATION.json", preservation)
+    if not state_manifest.is_file():
         build_crossfitted_a5_states(
             feature_cache_root=source_root / "feature_cache",
             router_root=args.reference_root
