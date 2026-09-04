@@ -262,9 +262,22 @@ def _prediction_coordinates(
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     if isinstance(output, CollisionClockTTCOutput):
         phase = output.benchmark_phase_mean.detach().cpu().numpy().astype(np.float64)
-        inverse = output.inverse_ttc_mean.detach().cpu().numpy().astype(np.float64)
-        raw = output.predicted_ttc_raw.detach().cpu().numpy().astype(np.float64)
-        clipped = output.predicted_ttc_clipped.detach().cpu().numpy().astype(np.float64)
+        reported_coordinates = (
+            output.inverse_ttc_mean.detach().cpu().numpy().astype(np.float64),
+            output.predicted_ttc_raw.detach().cpu().numpy().astype(np.float64),
+            output.predicted_ttc_clipped.detach().cpu().numpy().astype(np.float64),
+        )
+        if not all(np.isfinite(values).all() for values in reported_coordinates):
+            raise ValueError("model output contains a non-finite reported coordinate")
+        # The benchmark phase is the primary scientific coordinate.  Rebuild
+        # every derived coordinate from it in float64 before CSV export.  The
+        # tensors carried by CollisionClockTTCOutput were derived in float32;
+        # exporting them directly makes an otherwise valid OOF file disagree
+        # with the protocol's canonical float64 transformation.
+        with np.errstate(divide="ignore", invalid="ignore", over="ignore"):
+            inverse = -np.expm1(-phase) / delta_t_s
+            raw = np.reciprocal(inverse)
+        clipped = np.clip(raw, -60.0, 60.0)
     else:
         inverse_tensor = getattr(output, "inverse_ttc_mean", None)
         if inverse_tensor is None or not hasattr(inverse_tensor, "detach"):

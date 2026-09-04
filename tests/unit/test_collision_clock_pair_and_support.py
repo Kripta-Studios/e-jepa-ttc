@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import numpy as np
 import torch
 
 from e_jepa_ttc.evaluation.collision_clock_runner import _prediction_coordinates
@@ -7,6 +8,7 @@ from e_jepa_ttc.models.causal_scale_ttc import CausalScaleTTC, CausalScaleTTCCon
 from e_jepa_ttc.models.collision_clock_features import event_sensor_support
 from e_jepa_ttc.models.collision_clock_ttc import (
     CollisionClockConfig,
+    CollisionClockTTCOutput,
     X0A5Replay,
     X0PairDirectPhase,
 )
@@ -54,6 +56,29 @@ def test_pair_is_frozen_geometry_infused_readout_and_a5_replay_is_exact() -> Non
     phase, inverse, raw, clipped = _prediction_coordinates(replay_output, delta_t_s=0.1)
     assert all(value.shape == (1,) for value in (phase, inverse, raw, clipped))
     assert bool(pair_output.diagnostics["pair_is_geometry_infused"].all())
+
+
+def test_typed_output_export_rebuilds_derived_coordinates_in_float64() -> None:
+    phase_tensor = torch.tensor([0.12345679], dtype=torch.float32)
+    finite_placeholder = torch.tensor([1.0], dtype=torch.float32)
+    output = CollisionClockTTCOutput(
+        benchmark_phase_mean=phase_tensor,
+        predicted_ttc_raw=finite_placeholder,
+        predicted_ttc_clipped=finite_placeholder,
+        is_clip_saturated=torch.tensor([False]),
+        ttc_mean_seconds=finite_placeholder,
+        inverse_ttc_mean=finite_placeholder,
+        known_mask=torch.tensor([True]),
+        sensor_support=finite_placeholder,
+        global_clock_token=finite_placeholder[:, None],
+        diagnostics={},
+    )
+    phase, inverse, raw, clipped = _prediction_coordinates(output, delta_t_s=0.1)
+    expected_inverse = -np.expm1(-phase) / 0.1
+    expected_raw = np.reciprocal(expected_inverse)
+    assert np.array_equal(inverse, expected_inverse)
+    assert np.array_equal(raw, expected_raw)
+    assert np.array_equal(clipped, np.clip(expected_raw, -60.0, 60.0))
 
 
 def test_public_event_support_matches_historical_semantics() -> None:
