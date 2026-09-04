@@ -1,0 +1,28 @@
+{
+  "artifact_sha256": "f1b5fb821a7b79ddcdbd639378bedd70fa8d49b460135c17cd02d881017fea99",
+  "artifact_type": "scientific_recovery_v9_stage61_stage62_protocol_v1",
+  "base_commit": "6c9cd1ef5f85c6b9b7fb5c2ccbbdde5c11a39181",
+  "bootstrap": {
+    "draws": 8192,
+    "method": "paired_hierarchical_sequence_then_track_cluster_bootstrap",
+    "seed": 610062
+  },
+  "execution_order": ["stage61_seed7", "stage61_replication_if_pass", "stage62_if_needed", "x3_feasibility", "analysis", "package"],
+  "forbidden": ["old_x1", "dyn_w", "track_m", "recurrent_depth", "x3_training", "public_validation", "private_test", "evttc_test", "codabench", "outer_dev_early_stopping", "push"],
+  "stage61": {
+    "experts": ["A5", "C2F", "PAIR"],
+    "router_features": {"R1": "BASE8", "R2": "PHASE17", "R2_SHUFFLE": "PHASE17_DERANGED_PAIR"},
+    "pair_head": {"batch_size": 32, "updates": 6840, "learning_rate": 0.0003, "weight_decay": 0.0001, "dropout": 0.05, "precision": "float32", "checkpoint": "last_update_fixed_budget"},
+    "gates": {"mechanism_delta_lte": -1.0, "shuffle_delta_lt": 0.0, "system_delta_lte": -3.0, "ci95_high_lt": 0.0, "probability_min": 0.9, "finite_fraction": 1.0, "failure_rate": 0.0, "coverage_drop_pp_lte": 1.0}
+  },
+  "stage62": {
+    "arms": ["X2-A5-REPLAY", "X2-GLOBALPOOL", "X2-LOCALFIELD", "X2-SHUFFLEFIELD", "X2-TIMESWAP"],
+    "field_shape": [16, 34],
+    "head": [34, 48, 32],
+    "residual_bound": 0.05,
+    "training": {"batch_size": 256, "updates": 2000, "learning_rate": 0.0003, "weight_decay": 0.0001, "precision": "float32", "checkpoint": "last_update_fixed_budget"},
+    "gates": {"locality_delta_lte": -1.0, "shuffle_delta_lt": 0.0, "time_swap_delta_lt": 0.0, "utility_delta_lte": -3.0, "ci95_high_lt": 0.0, "probability_min": 0.9}
+  },
+  "x3": {"mode": "read_only_feasibility", "training_authorized": false},
+  "sealed_evaluation": "closed"
+}

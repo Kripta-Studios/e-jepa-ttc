@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "scientific_recovery_v9_x3_feasibility_v1.schema.json",
+  "type": "object",
+  "required": ["artifact_type", "artifact_sha256", "status", "decision", "training_executed", "forbidden_paths_opened"],
+  "properties": {
+    "artifact_type": {"const": "scientific_recovery_v9_x3_feasibility_v1"},
+    "artifact_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "status": {"const": "completed_read_only"},
+    "decision": {"enum": ["X3_DATA_READY", "X3_RAW_EVENTS_MISSING", "X3_TOKEN_BINDING_INCOMPLETE"]},
+    "training_executed": {"const": false},
+    "forbidden_paths_opened": {"const": false}
+  },
+  "additionalProperties": true
+}

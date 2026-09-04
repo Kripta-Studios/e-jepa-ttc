@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "scientific_recovery_v9_stage61_gate_v1.schema.json",
+  "type": "object",
+  "required": ["artifact_type", "artifact_sha256", "status", "seed", "gate_passed", "integrity_passed", "summaries", "comparisons"],
+  "properties": {
+    "artifact_type": {"const": "scientific_recovery_v9_stage61_gate_v1"},
+    "artifact_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "status": {"enum": ["passed", "not_passed", "blocked"]},
+    "seed": {"enum": [7, 13, 23]},
+    "gate_passed": {"type": "boolean"},
+    "integrity_passed": {"type": "boolean"},
+    "summaries": {"type": "object"},
+    "comparisons": {"type": "object"}
+  },
+  "additionalProperties": true
+}

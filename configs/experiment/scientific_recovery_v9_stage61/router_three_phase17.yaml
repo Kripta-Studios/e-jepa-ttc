@@ -1,0 +1,9 @@
+artifact_type: scientific_recovery_v9_stage61_config_v1
+arm_id: S61-R2-THREE-PHASE17
+features: PHASE17
+experts: [A5, C2F, PAIR]
+solver: lbfgs
+C: 1.0
+class_weight: null
+max_iter: 2000
+hard_argmax: true
