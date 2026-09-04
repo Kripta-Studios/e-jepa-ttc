@@ -3,14 +3,13 @@
 from __future__ import annotations
 
 import argparse
+import csv
 import json
 import subprocess
 import time
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
-
-import torch
 
 from e_jepa_ttc.artifacts.hashing import compute_file_hash, sign_artifact
 
@@ -26,35 +25,44 @@ def main() -> None:
             encoding="utf-8"
         )
     )
-    manifest_path = args.cache_root / "manifest.json"
-    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest_paths = sorted(args.cache_root.glob("*.manifest.json"))
+    if not manifest_paths:
+        legacy_manifest = args.cache_root / "manifest.json"
+        if legacy_manifest.is_file():
+            manifest_paths = [legacy_manifest]
+        else:
+            raise FileNotFoundError(
+                f"no signed cache manifests found beneath {args.cache_root}"
+            )
+    manifests = [json.loads(path.read_text(encoding="utf-8")) for path in manifest_paths]
     forbidden = ("public", "private", "test", "codabench")
-    text = json.dumps(manifest).lower()
+    text = json.dumps(manifests).lower()
     raw_binding_keys = {
         key
+        for manifest in manifests
         for key in manifest
         if "raw" in key.lower() and ("path" in key.lower() or "manifest" in key.lower())
     }
-    shards = sorted((args.cache_root / "train").glob("*.pt"))
+    metadata_paths = sorted(args.cache_root.glob("*.metadata.csv"))
     rows: list[dict[str, Any]] = []
     bytes_read = 0
     began = time.perf_counter()
-    for shard_path in shards:
-        loaded = torch.load(shard_path, map_location="cpu", weights_only=False)
-        bytes_read += shard_path.stat().st_size
-        for row in loaded:
-            rows.append(row)
-            if len(rows) == 64:
-                break
+    for metadata_path in metadata_paths:
+        bytes_read += metadata_path.stat().st_size
+        with metadata_path.open(encoding="utf-8", newline="") as handle:
+            for row in csv.DictReader(handle):
+                rows.append(dict(row))
+                if len(rows) == 64:
+                    break
         if len(rows) == 64:
             break
     elapsed = time.perf_counter() - began
     tokens = [str(row.get("sample_token", "")) for row in rows]
-    raw_available = all(
+    raw_available = bool(rows) and all(
         any(key in row for key in ("raw_events", "raw_event_path", "events_xytp")) for row in rows
     )
-    timestamps_available = all("raw_event_timestamps_us" in row for row in rows)
-    polarity_available = all("raw_event_polarity" in row for row in rows)
+    timestamps_available = bool(rows) and all("raw_event_timestamps_us" in row for row in rows)
+    polarity_available = bool(rows) and all("raw_event_polarity" in row for row in rows)
     decision = (
         "X3_DATA_READY"
         if raw_available and timestamps_available and polarity_available and raw_binding_keys
@@ -75,8 +83,11 @@ def main() -> None:
             "training_executed": False,
             "decision": decision,
             "cache_manifest": {
-                "path": str(manifest_path),
-                "sha256": compute_file_hash(str(manifest_path)),
+                "count": len(manifest_paths),
+                "items": [
+                    {"path": str(path), "sha256": compute_file_hash(str(path))}
+                    for path in manifest_paths
+                ],
             },
             "raw_token_binding_manifest_keys": sorted(raw_binding_keys),
             "audited_tokens": len(tokens),
