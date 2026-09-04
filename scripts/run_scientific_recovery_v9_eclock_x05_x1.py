@@ -132,7 +132,7 @@ def _verify_zip_manifest(path: Path) -> dict[str, Any]:
 
 def _benchmark_x1_devices() -> dict[str, Any]:
     rng = np.random.default_rng(20260904)
-    a5 = torch.from_numpy(rng.normal(size=8192).astype(np.float32))
+    a5 = torch.zeros(8192, dtype=torch.float32)
     slots = torch.from_numpy(rng.normal(size=(8192, 9)).astype(np.float32))
     timings: dict[str, float] = {}
     candidates = [torch.device("cpu")]
@@ -241,6 +241,37 @@ def run_preflight(args: argparse.Namespace, campaign: Path) -> dict[str, Any]:
             "source_bundle_sha256": protocol["source_bundle_sha256"],
             "sealed_evaluation": protocol["sealed_evaluation"],
             "x1": protocol["x1"],
+        },
+    )
+    prior_attempts = []
+    campaigns_root = args.output_root / "campaigns"
+    if campaigns_root.is_dir():
+        for failure_path in sorted(campaigns_root.glob("*/campaign_failure.json")):
+            if campaign in failure_path.parents:
+                continue
+            replay_path = failure_path.parent / "x05/replay/x05_feature_replay_manifest.json"
+            if replay_path.exists():
+                continue
+            failure = load_signed_artifact(
+                failure_path, artifact_type="eclock_x05_x1_campaign_failure_v1"
+            )
+            prior_attempts.append(
+                {
+                    "campaign": failure_path.parent.name,
+                    "training_commit": failure["training_commit"],
+                    "exception_type": failure["exception_type"],
+                    "exception_message": failure["exception_message"],
+                    "feature_replay_started": False,
+                    "x05_meta_test_started": False,
+                    "sealed_evaluation_opened": False,
+                }
+            )
+    atomic_write_json(
+        campaign / "pre_result_attempts.json",
+        {
+            "artifact_type": "eclock_x05_x1_pre_result_attempts_v1",
+            "attempt_count": len(prior_attempts),
+            "attempts": prior_attempts,
         },
     )
     x0_protocol = load_signed_json(
@@ -904,6 +935,7 @@ def build_final_report(campaign: Path, *, training_commit: str, decision: str) -
     fold_summary = load_signed_artifact(campaign / "x05/meta/x05_meta_fold_summary.json")
     campaign_state = load_signed_artifact(campaign / "campaign_state.json")
     telemetry = load_signed_artifact(campaign / "telemetry/telemetry_summary.json")
+    prior_attempts = load_signed_artifact(campaign / "pre_result_attempts.json")
     comparisons = {
         name: load_signed_artifact(
             campaign / "x05/meta/comparisons" / f"x05_comparison_{name}.json"
@@ -1029,6 +1061,8 @@ def build_final_report(campaign: Path, *, training_commit: str, decision: str) -
             f"{telemetry['peak_process_rss_bytes']} bytes; peak GPU memory "
             f"{telemetry['peak_gpu_memory_used_mib']} MiB.",
             f"- X1 device selected before scientific rows: `{preflight['x1_device_selected']}`.",
+            f"- Pre-result technical attempts: {prior_attempts['attempt_count']}; none reached "
+            "feature replay or an X0.5 meta-test.",
             "",
             "## Limitations and maximum claim",
             "",
