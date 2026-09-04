@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "scientific_recovery_v9_eclock_x05_gate_v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "artifact_sha256",
+    "artifact_type",
+    "decision",
+    "incremental_signal_supported",
+    "x1_authorized",
+    "scientific_stop",
+    "integrity",
+    "dyn9_minus_cal",
+    "dyn9_minus_shuffle",
+    "dyn9_minus_a5_raw",
+    "aggregate_sha256"
+  ],
+  "properties": {
+    "artifact_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "artifact_type": {"const": "eclock_x05_gate_v1"},
+    "decision": {
+      "enum": [
+        "GLOBAL_DYNAMIC_SLOTS_REDUNDANT_WITH_A5_SCREEN",
+        "INCREMENTAL_SIGNAL_TOO_SMALL_FOR_X1",
+        "X1_AUTHORIZED"
+      ]
+    },
+    "incremental_signal_supported": {"type": "boolean"},
+    "x1_authorized": {"type": "boolean"},
+    "scientific_stop": {"type": "boolean"},
+    "integrity": {
+      "type": "object",
+      "required": [
+        "row_count",
+        "finite_fraction",
+        "failure_rate",
+        "identity_hashes_exact",
+        "replay_matches_x0",
+        "outer_meta_test_used_for_fit_or_selection",
+        "sealed_evaluation_opened"
+      ],
+      "properties": {
+        "row_count": {"const": 8192},
+        "finite_fraction": {"const": 1.0},
+        "failure_rate": {"const": 0.0},
+        "identity_hashes_exact": {"const": true},
+        "replay_matches_x0": {"const": true},
+        "outer_meta_test_used_for_fit_or_selection": {"const": false},
+        "sealed_evaluation_opened": {"const": false}
+      },
+      "additionalProperties": false
+    },
+    "dyn9_minus_cal": {"$ref": "#/$defs/comparison"},
+    "dyn9_minus_shuffle": {"$ref": "#/$defs/comparison"},
+    "dyn9_minus_a5_raw": {"$ref": "#/$defs/comparison"},
+    "aggregate_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "$defs": {
+    "comparison": {
+      "type": "object",
+      "required": ["delta_mid", "ci95_low", "ci95_high", "probability_delta_lt_zero"],
+      "properties": {
+        "delta_mid": {"type": "number"},
+        "ci95_low": {"type": "number"},
+        "ci95_high": {"type": "number"},
+        "probability_delta_lt_zero": {"type": "number", "minimum": 0, "maximum": 1}
+      },
+      "additionalProperties": true
+    }
+  }
+}

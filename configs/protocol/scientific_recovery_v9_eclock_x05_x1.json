@@ -1,0 +1,48 @@
+{
+  "artifact_sha256": "95169dcf5856844ba039a684085e6b67bdec4a1ec60628713903dbf9e62c7c8e",
+  "artifact_type": "scientific_recovery_v9_eclock_x05_x1_protocol_v1",
+  "source_commit": "57865bea943f7c1518341003170cec1c221aa093",
+  "source_bundle_sha256": "b8b228a6f0ea039238cf96d046228759d1a64f65fdda02b16353d63450beb7f9",
+  "production_row_count": 8192,
+  "outer_folds": [0, 1, 2],
+  "sealed_evaluation": {
+    "public_validation": "closed",
+    "private_test": "closed",
+    "evttc_test": "closed",
+    "codabench": "closed"
+  },
+  "x05": {
+    "ridge_lambdas": [0.0, 1e-8, 1e-6, 1e-4, 1e-2, 1e-1, 1.0, 10.0, 100.0],
+    "precision": "float64_cpu",
+    "slot_source": "X0-DYN-U.global_transport_12_observed",
+    "slot_interval": "m12_latest_causal_pair",
+    "slot_names": ["translation_x", "translation_y", "divergence_x", "divergence_y", "divergence_isotropic", "flow_magnitude", "confidence_margin", "entropy", "cycle_error"],
+    "shuffle_seed": 20260904,
+    "replay_phase_atol": 0.0,
+    "gates": {
+      "probability_min": 0.9,
+      "ci95_high_lt": 0.0,
+      "dyn9_minus_raw_delta_lte": -1.0
+    }
+  },
+  "x1": {
+    "seeds": [7, 13, 23],
+    "replication_condition": "seed7_primary_and_shuffle_and_practical_all_pass",
+    "architecture": "9-32-32-1_silu_dropout0.05_zero_final",
+    "batch_size": 256,
+    "update_budget": 1000,
+    "learning_rate": 0.0003,
+    "weight_decay": 0.0001,
+    "precision": "float32",
+    "checkpoint_policy": "last_update_fixed_budget",
+    "gates": {
+      "dyn_minus_zero_delta_lte": -1.0,
+      "dyn_minus_shuffle_delta_lt": 0.0,
+      "dyn_minus_a5_delta_lte": -3.0,
+      "probability_min": 0.9,
+      "ci95_high_lt": 0.0,
+      "coverage_drop_pp_lte": 1.0
+    }
+  },
+  "forbidden_execution": ["X0-DYN-W", "X2", "X3", "Track-M", "recurrent-depth", "post-hoc-sweep", "public-validation", "private-test", "EvTTC-test", "CodaBench"]
+}

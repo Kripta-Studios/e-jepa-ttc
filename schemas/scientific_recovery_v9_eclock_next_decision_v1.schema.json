@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "scientific_recovery_v9_eclock_next_decision_v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["artifact_sha256", "artifact_type", "decision", "scientific_stop", "sealed_evaluation_opened", "training_commit"],
+  "properties": {
+    "artifact_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "artifact_type": {"const": "eclock_x05_x1_next_decision_v1"},
+    "decision": {"enum": ["INVALID_X05", "GLOBAL_DYNAMIC_SLOTS_REDUNDANT_WITH_A5_SCREEN", "INCREMENTAL_SIGNAL_TOO_SMALL_FOR_X1", "X1_SEED7_NEGATIVE", "X1_INCREMENTAL_BUT_NOT_COMPETITIVE", "X1_SEED7_SUPPORTED_REPLICATION_REQUIRED", "X1_REPLICATED_GROUPED_DEV_CANDIDATE", "INVALID_X1"]},
+    "scientific_stop": {"type": "boolean"},
+    "sealed_evaluation_opened": {"const": false},
+    "training_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "scientific_recovery_v9_eclock_x1_gate_v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "artifact_sha256",
+    "artifact_type",
+    "decision",
+    "scientific_stop",
+    "seed",
+    "comparison_sha256"
+  ],
+  "properties": {
+    "artifact_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "artifact_type": {"const": "eclock_x1_gate_v1"},
+    "decision": {
+      "enum": [
+        "INVALID_X1",
+        "X1_SEED7_NEGATIVE",
+        "X1_INCREMENTAL_BUT_NOT_COMPETITIVE",
+        "X1_SEED7_SUPPORTED_REPLICATION_REQUIRED",
+        "X1_REPLICATED_GROUPED_DEV_CANDIDATE"
+      ]
+    },
+    "scientific_stop": {"type": "boolean"},
+    "seed": {"enum": [7, 13, 23]},
+    "comparison_sha256": {
+      "type": "object",
+      "required": ["dyn_vs_zero", "dyn_vs_shuffle", "dyn_vs_a5"],
+      "additionalProperties": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+    },
+    "failed_integrity_key": {"type": "string"},
+    "primary_passed": {"type": "boolean"},
+    "shuffle_passed": {"type": "boolean"},
+    "practical_utility_passed": {"type": "boolean"},
+    "replication_authorized": {"type": "boolean"},
+    "integrity": {"type": "object"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"decision": {"const": "INVALID_X1"}}},
+      "then": {"required": ["failed_integrity_key"]},
+      "else": {
+        "required": [
+          "primary_passed",
+          "shuffle_passed",
+          "practical_utility_passed",
+          "replication_authorized",
+          "integrity"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+artifact_type: scientific_recovery_v9_eclock_x1_config_v1
+execution_condition: signed_x05_gate_decision_equals_X1_AUTHORIZED
+arms: [X1-A5-REPLAY, X1-A5-ZERO-U, X1-A5-DYN-U, X1-A5-SHUFFLE-U]
+screen_seed: 7
+conditional_replication_seeds: [13, 23]
+model:
+  slot_count: 9
+  hidden_dim: 32
+  activation: SiLU
+  dropout: 0.05
+  final_layer_initialization: exact_zero
+  safe_phase_residual: bounded_negative_unbounded_positive_v1
+training:
+  batch_size: 256
+  update_budget: 1000
+  optimizer: AdamW
+  learning_rate: 0.0003
+  weight_decay: 0.0001
+  scheduler: constant
+  precision_mode: float32
+  sampler: deterministic_sequence_grouped
+  loss: normalized_weighted_smooth_l1_benchmark_phase_error
+  checkpoint_policy: last_update_fixed_budget
+  checkpoint_interval_updates: 100
+  milestones: [0, 100, 250, 500, 750, 1000]
+evaluation:
+  outer_folds: [0, 1, 2]
+  outer_dev_evaluations_per_arm_fold: 1
+  outer_dev_used_for_selection: false
+sealed_evaluation: closed

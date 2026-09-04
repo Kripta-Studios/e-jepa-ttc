@@ -1,0 +1,30 @@
+artifact_type: scientific_recovery_v9_eclock_x05_config_v1
+execution_authorized: true
+source_commit: 57865bea943f7c1518341003170cec1c221aa093
+source_bundle_sha256: b8b228a6f0ea039238cf96d046228759d1a64f65fdda02b16353d63450beb7f9
+row_count: 8192
+outer_folds: [0, 1, 2]
+slot_source: X0-DYN-U.global_transport_12_observed
+slot_interval: m12_latest_causal_pair
+slot_names:
+  - translation_x
+  - translation_y
+  - divergence_x
+  - divergence_y
+  - divergence_isotropic
+  - flow_magnitude
+  - confidence_margin
+  - entropy
+  - cycle_error
+ridge:
+  precision: float64_cpu
+  weighted: true
+  standardization: inner_train_for_loso_then_full_meta_train
+  lambda_grid: [0.0, 1.0e-8, 1.0e-6, 1.0e-4, 1.0e-2, 1.0e-1, 1.0, 10.0, 100.0]
+  selector: canonical_sequence_macro_mid
+shuffle:
+  seed: 20260904
+  within_sequence: true
+  partitions_separate: true
+replay_phase_atol: 0.0
+sealed_evaluation: closed

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "scientific_recovery_v9_eclock_x05_x1_protocol_v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["artifact_sha256", "artifact_type", "source_commit", "source_bundle_sha256", "production_row_count", "outer_folds", "sealed_evaluation", "x05", "x1", "forbidden_execution"],
+  "properties": {
+    "artifact_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "artifact_type": {"const": "scientific_recovery_v9_eclock_x05_x1_protocol_v1"},
+    "source_commit": {"const": "57865bea943f7c1518341003170cec1c221aa093"},
+    "source_bundle_sha256": {"const": "b8b228a6f0ea039238cf96d046228759d1a64f65fdda02b16353d63450beb7f9"},
+    "production_row_count": {"const": 8192},
+    "outer_folds": {"const": [0, 1, 2]},
+    "sealed_evaluation": {"type": "object", "additionalProperties": {"const": "closed"}, "minProperties": 4, "maxProperties": 4},
+    "x05": {"type": "object"},
+    "x1": {"type": "object"},
+    "forbidden_execution": {"type": "array", "minItems": 10, "uniqueItems": true}
+  }
+}
