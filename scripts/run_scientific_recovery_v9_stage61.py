@@ -13,7 +13,7 @@ import numpy as np
 import pandas as pd
 import torch
 
-from e_jepa_ttc.artifacts.hashing import compute_file_hash, sign_artifact
+from e_jepa_ttc.artifacts.hashing import compute_file_hash, sign_artifact, verify_artifact_hash
 from e_jepa_ttc.data.collision_clock_cache import load_canonical_supervision
 from e_jepa_ttc.data.stage61_pair_feature_cache import PairFeatureBatch, load_feature_cache
 from e_jepa_ttc.evaluation.collision_clock_bootstrap import paired_hierarchical_mid_bootstrap
@@ -39,8 +39,44 @@ def _write_json(path: Path, value: dict[str, Any]) -> dict[str, Any]:
 
 
 def _aligned(a5_path: Path, c2f_path: Path) -> tuple[pd.DataFrame, pd.DataFrame]:
-    a5 = pd.read_csv(a5_path).sort_values("token_id", kind="stable").reset_index(drop=True)
-    c2f = pd.read_csv(c2f_path).sort_values("token_id", kind="stable").reset_index(drop=True)
+    def bind(path: Path) -> pd.DataFrame:
+        frame = pd.read_csv(path)
+        trainer_path = path.parent / "train" / "dev_predictions.csv"
+        if trainer_path.is_file():
+            summary_path = path.parent / "train" / "summary.json"
+            summary = json.loads(summary_path.read_text(encoding="utf-8"))
+            prediction_reference = summary.get("predictions", {})
+            if not verify_artifact_hash(summary) or prediction_reference.get(
+                "sha256"
+            ) != compute_file_hash(str(trainer_path)):
+                raise ValueError("trainer point prediction signature/SHA mismatch")
+            trainer = pd.read_csv(
+                trainer_path,
+                usecols=["sample_token", "target_ttc_s", "point_prediction_ttc_s"],
+            ).rename(columns={"sample_token": "token_id"})
+            if set(frame["token_id"].astype(str)) != set(trainer["token_id"].astype(str)):
+                raise ValueError("expert export and trainer point tokens differ")
+            original_columns = list(frame.columns)
+            frame = frame.drop(columns=["prediction_ttc"]).merge(
+                trainer, on="token_id", how="left", validate="one_to_one"
+            )
+            if not np.allclose(
+                frame["target_ttc"].to_numpy(dtype=np.float64),
+                frame["target_ttc_s"].to_numpy(dtype=np.float64),
+                rtol=0,
+                atol=1e-5,
+            ):
+                raise ValueError("expert export and trainer point targets differ")
+            frame["prediction_ttc"] = frame.pop("point_prediction_ttc_s")
+            frame = frame.drop(columns=["target_ttc_s"])
+            frame = frame.loc[:, original_columns]
+        prediction = frame["prediction_ttc"].to_numpy(dtype=np.float64)
+        if not np.isfinite(prediction).all():
+            raise ValueError("expert point TTC remains non-finite after producer binding")
+        return frame.sort_values("token_id", kind="stable").reset_index(drop=True)
+
+    a5 = bind(a5_path)
+    c2f = bind(c2f_path)
     if a5["token_id"].astype(str).tolist() != c2f["token_id"].astype(str).tolist():
         raise ValueError("V8 A5/C2F artifacts do not share exact tokens")
     return a5, c2f
