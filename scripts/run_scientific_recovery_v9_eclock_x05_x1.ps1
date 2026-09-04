@@ -34,6 +34,16 @@ if (-not (Test-Path -LiteralPath $X0Bundle -PathType Leaf)) { throw "Missing X0 
 if (-not (Test-Path -LiteralPath $PythonExe -PathType Leaf)) { throw "Missing Python: $PythonExe" }
 
 $env:PYTHONPATH = "$(Join-Path $RepoRoot 'src');$RepoRoot"
+$env:PYTHONDONTWRITEBYTECODE = '1'
+$env:PYTHONUNBUFFERED = '1'
+$env:CUDA_DEVICE_ORDER = 'PCI_BUS_ID'
+$env:CUDA_VISIBLE_DEVICES = '0'
+$env:CUBLAS_WORKSPACE_CONFIG = ':4096:8'
+$env:OMP_NUM_THREADS = '16'
+$env:MKL_NUM_THREADS = '16'
+$env:OPENBLAS_NUM_THREADS = '16'
+$env:NUMEXPR_MAX_THREADS = '16'
+$env:TOKENIZERS_PARALLELISM = 'false'
 
 $TrainingCommit = (& git -C $RepoRoot rev-parse HEAD).Trim()
 $Branch = (& git -C $RepoRoot branch --show-current).Trim()

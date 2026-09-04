@@ -45,6 +45,17 @@ EXPECTED_X0_PROVENANCE_SHA256 = "7b8cd70f9dce14c531994bfe5adda18e389bff000329f49
 REPLAY_PHASE_ATOL = 0.0
 
 
+def _configure_replay_fp32() -> None:
+    """Restore the exact FP32 math policy active during X0 train/evaluation."""
+
+    torch.use_deterministic_algorithms(True)
+    torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cuda.matmul.allow_tf32 = False
+    torch.backends.cudnn.allow_tf32 = False
+    torch.set_float32_matmul_precision("highest")
+
+
 def load_x0_provenance_exception(
     campaign: Path, *, x0_bundle: Path | None = None
 ) -> dict[str, Any]:
@@ -269,6 +280,7 @@ def run_feature_replay(
     """Replay BASE/DYN once, hold slots until exact OOF equality, then sign them."""
 
     started = time.perf_counter()
+    _configure_replay_fp32()
     if compute_file_hash(str(x0_bundle)) != EXPECTED_X0_BUNDLE_SHA256:
         raise ValueError("mandatory X0 bundle SHA-256 mismatch")
     provenance = load_x0_provenance_exception(x0_campaign, x0_bundle=x0_bundle)
@@ -467,6 +479,12 @@ def run_feature_replay(
             "identity_hashes_exact": True,
             "replay_matches_x0": True,
             "replay_phase_atol": REPLAY_PHASE_ATOL,
+            "deterministic_algorithms": torch.are_deterministic_algorithms_enabled(),
+            "cudnn_benchmark": torch.backends.cudnn.benchmark,
+            "cudnn_deterministic": torch.backends.cudnn.deterministic,
+            "cuda_matmul_allow_tf32": torch.backends.cuda.matmul.allow_tf32,
+            "cudnn_allow_tf32": torch.backends.cudnn.allow_tf32,
+            "float32_matmul_precision": torch.get_float32_matmul_precision(),
             "base_replay_max_abs_phase_error": max_base_error,
             "dyn_replay_max_abs_phase_error": max_dyn_error,
             "a5_replay_semantics": "sha_bound_official_oof_per_x0_protocol",

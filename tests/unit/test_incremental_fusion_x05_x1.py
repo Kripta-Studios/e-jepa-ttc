@@ -31,7 +31,10 @@ from e_jepa_ttc.evaluation.incremental_fusion import (
     run_x05_cross_fit,
     validate_feature_table,
 )
-from e_jepa_ttc.evaluation.incremental_replay import _validate_reused_fold_binding
+from e_jepa_ttc.evaluation.incremental_replay import (
+    _configure_replay_fp32,
+    _validate_reused_fold_binding,
+)
 from e_jepa_ttc.models.collision_clock_math import (
     benchmark_phase_to_inverse_ttc,
     phase_lower_bound,
@@ -603,3 +606,20 @@ def test_cross_commit_reuse_requires_exact_signed_fold_binding(tmp_path: Path) -
             binding=mutated,
             source_training_commit="source-commit",
         )
+
+
+def test_replay_restores_x0_deterministic_fp32_policy() -> None:
+    torch.backends.cudnn.benchmark = True
+    torch.backends.cudnn.deterministic = False
+    torch.backends.cuda.matmul.allow_tf32 = True
+    torch.backends.cudnn.allow_tf32 = True
+    torch.set_float32_matmul_precision("high")
+
+    _configure_replay_fp32()
+
+    assert torch.are_deterministic_algorithms_enabled()
+    assert torch.backends.cudnn.benchmark is False
+    assert torch.backends.cudnn.deterministic is True
+    assert torch.backends.cuda.matmul.allow_tf32 is False
+    assert torch.backends.cudnn.allow_tf32 is False
+    assert torch.get_float32_matmul_precision() == "highest"
