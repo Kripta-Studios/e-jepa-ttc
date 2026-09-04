@@ -121,7 +121,7 @@ def _stage_args(args: argparse.Namespace, **changes: object) -> argparse.Namespa
 
 
 def _resource_preflight(args: argparse.Namespace) -> dict[str, Any]:
-    disk = psutil.disk_usage(args.output_root.parent)
+    disk = psutil.disk_usage(str(args.output_root.parent))
     memory = psutil.virtual_memory()
     result: dict[str, Any] = {
         "disk_free_bytes": disk.free,
