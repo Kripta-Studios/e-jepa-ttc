@@ -25,6 +25,12 @@ from e_jepa_ttc.evaluation.garl_ttc_protocol import BUCKETS
 from e_jepa_ttc.training.collision_clock_eap import require_frozen_checkpoint
 
 
+def _read_oof_csv(path: Path) -> pd.DataFrame:
+    """Read signed OOF floats without pandas' lossy default conversion."""
+
+    return pd.read_csv(path, float_precision="round_trip")
+
+
 def _load_arm(
     run_root: Path,
     *,
@@ -85,7 +91,7 @@ def _load_arm(
             raise ValueError(f"{arm_id} fold {fold} checkpoint identity mismatch")
         commits.add(str(identity.get("git_commit_observed", "")))
         checkpoint_hashes[fold] = str(manifest["checkpoint_file_sha256"])
-        frames.append(pd.read_csv(predictions_path))
+        frames.append(_read_oof_csv(predictions_path))
     if len(commits) != 1 or "" in commits:
         raise ValueError(f"{arm_id} folds do not share one training commit")
     frame = pd.concat(frames, ignore_index=True)

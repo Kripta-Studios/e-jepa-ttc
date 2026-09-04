@@ -69,7 +69,7 @@ def _checked_rows(arm_root: Path) -> tuple[pd.DataFrame, list[dict[str, Any]]]:
         path = root / "oof_predictions.csv"
         if summary["oof_file_sha256"] != compute_file_hash(str(path)):
             raise ValueError(f"OOF SHA mismatch: {path}")
-        frame = pd.read_csv(path)
+        frame = pd.read_csv(path, float_precision="round_trip")
         if set(frame["outer_fold"].astype(int)) != {fold}:
             raise ValueError(f"mixed fold rows: {path}")
         frames.append(frame)

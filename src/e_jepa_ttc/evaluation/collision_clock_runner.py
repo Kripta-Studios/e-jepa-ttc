@@ -409,7 +409,7 @@ def replay_official_a5_outer_dev_once(
         or compute_file_hash(str(source_path)) != record["file_sha256"]
     ):
         raise ValueError("official A5 OOF physical identity mismatch")
-    source = pd.read_csv(source_path)
+    source = pd.read_csv(source_path, float_precision="round_trip")
     required = {
         "sample_token",
         "sequence_id",

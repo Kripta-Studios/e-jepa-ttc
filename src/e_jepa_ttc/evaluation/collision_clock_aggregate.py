@@ -80,7 +80,7 @@ def load_official_a5_reference_frame(
     physical = family["physical_references"][0]
     if path.stat().st_size != int(physical["bytes"]):
         raise ValueError("official A5 physical reference byte count mismatch")
-    source = pd.read_csv(path)
+    source = pd.read_csv(path, float_precision="round_trip")
     required = {
         "sample_token",
         "sequence_id",
