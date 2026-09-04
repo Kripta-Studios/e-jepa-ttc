@@ -54,6 +54,17 @@ ROW_LEVEL_OOF_COLUMNS = (
 )
 
 
+def read_official_a5_csv(path: Path) -> pd.DataFrame:
+    """Read the historical A5 CSV with its signed parser semantics.
+
+    The frozen ``prediction_sha256`` was produced with pandas' high-precision
+    parser.  Runner-produced OOF CSVs instead require ``round_trip`` parsing;
+    conflating those two artifact classes changes float64 identity by one ULP.
+    """
+
+    return pd.read_csv(path, float_precision="high")
+
+
 def canonical_records_hash(frame: pd.DataFrame, columns: Iterable[str]) -> str:
     """Hash ordered typed records after stable sample-token sorting."""
 

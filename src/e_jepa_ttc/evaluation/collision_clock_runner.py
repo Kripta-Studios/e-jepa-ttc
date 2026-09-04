@@ -29,6 +29,7 @@ from e_jepa_ttc.evaluation.collision_clock_protocol import (
     canonical_records_hash,
     load_signed_json,
     module_topology_sha256,
+    read_official_a5_csv,
     require_reference_family,
     tensor_state_sha256,
     validate_protocol_reference_binding,
@@ -409,7 +410,7 @@ def replay_official_a5_outer_dev_once(
         or compute_file_hash(str(source_path)) != record["file_sha256"]
     ):
         raise ValueError("official A5 OOF physical identity mismatch")
-    source = pd.read_csv(source_path, float_precision="round_trip")
+    source = read_official_a5_csv(source_path)
     required = {
         "sample_token",
         "sequence_id",

@@ -25,6 +25,7 @@ from e_jepa_ttc.evaluation.collision_clock_protocol import (
     load_signed_json,
     precheck_production_oof,
     production_sequence_macro_metrics,
+    read_official_a5_csv,
     require_reference_family,
     validate_protocol_reference_binding,
 )
@@ -80,7 +81,7 @@ def load_official_a5_reference_frame(
     physical = family["physical_references"][0]
     if path.stat().st_size != int(physical["bytes"]):
         raise ValueError("official A5 physical reference byte count mismatch")
-    source = pd.read_csv(path, float_precision="round_trip")
+    source = read_official_a5_csv(path)
     required = {
         "sample_token",
         "sequence_id",
