@@ -31,6 +31,25 @@ def main() -> None:
     if compute_file_hash(str(args.package)) != expected_package:
         raise ValueError("handoff package SHA-256 mismatch")
     pins = json.loads((args.handoff_root / "SOURCE_PINS.json").read_text(encoding="utf-8"))
+    verified_members: list[dict[str, object]] = []
+    for line in (args.handoff_root / "SHA256SUMS.txt").read_text(encoding="utf-8").splitlines():
+        expected, relative = line.split(maxsplit=1)
+        member = args.handoff_root / relative.strip().lstrip("*")
+        observed = compute_file_hash(str(member))
+        if observed != expected.lower():
+            raise ValueError(f"handoff member SHA mismatch: {relative}")
+        verified_members.append(
+            {"path": relative, "bytes": member.stat().st_size, "sha256": observed}
+        )
+    input_names = {
+        "x0_bundle": "E_JEPA_TTC_X0_SEED7_ESSENTIAL_RESULTS_57865bea943f.zip",
+        "x05_x1_bundle": "E_JEPA_TTC_X05_X1_ESSENTIAL_RESULTS_6c9cd1ef5f85.zip",
+        "final_report": "CODEX_X05_X1_FINAL_REPORT.md",
+        "next_decision": "NEXT_DECISION.json",
+    }
+    for key, name in input_names.items():
+        if compute_file_hash(str(args.handoff_root / "INPUTS" / name)) != pins["input_sha256"][key]:
+            raise ValueError(f"pinned input mismatch: {key}")
     if (
         _git(repo, "rev-parse", "6c9cd1ef5f85c6b9b7fb5c2ccbbdde5c11a39181^{tree}")
         != pins["base_tree"]
@@ -65,6 +84,8 @@ def main() -> None:
             "base_commit": pins["base_commit"],
             "base_tree": pins["base_tree"],
             "source_pins_sha256": compute_file_hash(str(args.handoff_root / "SOURCE_PINS.json")),
+            "verified_handoff_members": verified_members,
+            "verified_input_sha256": pins["input_sha256"],
             "cache_manifest_sha256": compute_file_hash(str(args.cache_root / "manifest.json")),
             "a5_producers": len(checkpoints),
             "c2f_producers": len(c2f),

@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import argparse
 import json
+import subprocess
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -330,6 +332,14 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         aggregate / "STAGE61_GATE.json",
         {
             "artifact_type": "scientific_recovery_v9_stage61_gate_v1",
+            "schema_version": "1.0",
+            "evidence_type": "nested_outer_dev",
+            "code_commit": subprocess.check_output(
+                ["git", "rev-parse", "HEAD"], cwd=repo, text=True
+            ).strip(),
+            "protocol_version": "stage61_stage62_v1",
+            "protocol_sha256": protocol["artifact_sha256"],
+            "created_at": datetime.now(UTC).isoformat(),
             "status": "passed" if gate and integrity else "not_passed",
             "seed": args.seed,
             "gate_passed": bool(gate and integrity),

@@ -2,14 +2,32 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "scientific_recovery_v9_x3_feasibility_v1.schema.json",
   "type": "object",
-  "required": ["artifact_type", "artifact_sha256", "status", "decision", "training_executed", "forbidden_paths_opened"],
+  "required": ["artifact_type", "schema_version", "evidence_type", "code_commit", "protocol_version", "protocol_sha256", "created_at", "artifact_sha256", "status", "decision", "training_executed", "forbidden_paths_opened"],
   "properties": {
     "artifact_type": {"const": "scientific_recovery_v9_x3_feasibility_v1"},
+    "schema_version": {"const": "1.0"},
+    "evidence_type": {"const": "read_only_feasibility"},
+    "code_commit": {"type": "string"},
+    "protocol_version": {"const": "stage61_stage62_v1"},
+    "protocol_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "created_at": {"type": "string"},
     "artifact_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
     "status": {"const": "completed_read_only"},
     "decision": {"enum": ["X3_DATA_READY", "X3_RAW_EVENTS_MISSING", "X3_TOKEN_BINDING_INCOMPLETE"]},
     "training_executed": {"const": false},
-    "forbidden_paths_opened": {"const": false}
+    "forbidden_paths_opened": {"const": false},
+    "cache_manifest": {"type": "object"},
+    "raw_token_binding_manifest_keys": {"type": "array"},
+    "audited_tokens": {"type": "integer"},
+    "audited_tokens_unique": {"type": "integer"},
+    "raw_events_available": {"type": "boolean"},
+    "timestamps_available": {"type": "boolean"},
+    "polarity_available": {"type": "boolean"},
+    "manifest_mentions_forbidden_paths": {"type": "object"},
+    "event_counts_per_token_available": {"type": "boolean"},
+    "raw_intervals_per_token_available": {"type": "boolean"},
+    "read_probe": {"type": "object"},
+    "future_cache_proposal": {"type": "object"}
   },
-  "additionalProperties": true
+  "additionalProperties": false
 }

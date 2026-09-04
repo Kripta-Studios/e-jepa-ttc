@@ -2,16 +2,26 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "scientific_recovery_v9_stage61_gate_v1.schema.json",
   "type": "object",
-  "required": ["artifact_type", "artifact_sha256", "status", "seed", "gate_passed", "integrity_passed", "summaries", "comparisons"],
+  "required": ["artifact_type", "schema_version", "evidence_type", "code_commit", "protocol_version", "protocol_sha256", "created_at", "artifact_sha256", "status", "seed", "gate_passed", "integrity_passed", "summaries", "comparisons"],
   "properties": {
     "artifact_type": {"const": "scientific_recovery_v9_stage61_gate_v1"},
+    "schema_version": {"const": "1.0"},
+    "evidence_type": {"const": "nested_outer_dev"},
+    "code_commit": {"type": "string"},
+    "protocol_version": {"const": "stage61_stage62_v1"},
+    "protocol_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "created_at": {"type": "string"},
     "artifact_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
     "status": {"enum": ["passed", "not_passed", "blocked"]},
     "seed": {"enum": [7, 13, 23]},
     "gate_passed": {"type": "boolean"},
     "integrity_passed": {"type": "boolean"},
     "summaries": {"type": "object"},
-    "comparisons": {"type": "object"}
+    "comparisons": {"type": "object"},
+    "folds": {"type": "array"},
+    "replication_prerequisites": {"type": "object"},
+    "outer_dev_evaluations_per_fold": {"const": 1},
+    "outer_dev_used_for_selection": {"const": false}
   },
-  "additionalProperties": true
+  "additionalProperties": false
 }

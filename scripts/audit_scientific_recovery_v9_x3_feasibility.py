@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import argparse
 import json
+import subprocess
 import time
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -18,6 +20,12 @@ def main() -> None:
     parser.add_argument("--cache-root", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
+    repo = Path(__file__).resolve().parents[1]
+    protocol = json.loads(
+        (repo / "configs/protocol/scientific_recovery_v9_stage61_pair_router_x2.json").read_text(
+            encoding="utf-8"
+        )
+    )
     manifest_path = args.cache_root / "manifest.json"
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     forbidden = ("public", "private", "test", "codabench")
@@ -55,6 +63,14 @@ def main() -> None:
     result = sign_artifact(
         {
             "artifact_type": "scientific_recovery_v9_x3_feasibility_v1",
+            "schema_version": "1.0",
+            "evidence_type": "read_only_feasibility",
+            "code_commit": subprocess.check_output(
+                ["git", "rev-parse", "HEAD"], cwd=repo, text=True
+            ).strip(),
+            "protocol_version": "stage61_stage62_v1",
+            "protocol_sha256": protocol["artifact_sha256"],
+            "created_at": datetime.now(UTC).isoformat(),
             "status": "completed_read_only",
             "training_executed": False,
             "decision": decision,
