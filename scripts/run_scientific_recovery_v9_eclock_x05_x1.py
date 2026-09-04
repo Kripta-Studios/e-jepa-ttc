@@ -165,6 +165,19 @@ def _benchmark_x1_devices() -> dict[str, Any]:
     }
 
 
+def _preflight_memory_policy(available_bytes: int) -> dict[str, Any]:
+    if available_bytes < 4 * 1024**3:
+        raise ValueError("preflight RAM safety margin is below 4 GiB even for shard_lru")
+    return {
+        "available_bytes": available_bytes,
+        "fold_ram_eligible": available_bytes >= 8 * 1024**3,
+        "selected_cache_mode": "shard_lru",
+        "reason": "conservative_bounded_cache"
+        if available_bytes >= 8 * 1024**3
+        else "ram_fallback",
+    }
+
+
 def _verify_required_x0_checkpoints(args: argparse.Namespace) -> list[dict[str, Any]]:
     records: list[dict[str, Any]] = []
     for arm in ("X0-A5-REPLAY", "X0-BASE-U", "X0-DYN-U"):
@@ -304,8 +317,9 @@ def run_preflight(args: argparse.Namespace, campaign: Path) -> dict[str, Any]:
     ).stdout.strip()
     memory = psutil.virtual_memory()
     disk = shutil.disk_usage(repo)
-    if memory.available < 8 * 1024**3 or disk.free < 20 * 1024**3:
-        raise ValueError("preflight RAM/disk safety margin is insufficient")
+    memory_policy = _preflight_memory_policy(memory.available)
+    if disk.free < 20 * 1024**3:
+        raise ValueError("preflight disk safety margin is below 20 GiB")
     result = atomic_write_json(
         campaign / "preflight.json",
         {
@@ -328,6 +342,7 @@ def run_preflight(args: argparse.Namespace, campaign: Path) -> dict[str, Any]:
             "gpu": gpu,
             "ram_total_bytes": memory.total,
             "ram_available_bytes": memory.available,
+            "memory_policy": memory_policy,
             "disk_free_bytes": disk.free,
             "thread_limit": 16,
             "sealed_evaluation_opened": False,

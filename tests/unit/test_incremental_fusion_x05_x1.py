@@ -42,7 +42,10 @@ from e_jepa_ttc.training.incremental_residual import (
     train_x1_fixed_budget,
     trainable_mask_sha256,
 )
-from scripts.run_scientific_recovery_v9_eclock_x05_x1 import _benchmark_x1_devices
+from scripts.run_scientific_recovery_v9_eclock_x05_x1 import (
+    _benchmark_x1_devices,
+    _preflight_memory_policy,
+)
 
 
 @pytest.fixture
@@ -176,6 +179,14 @@ def test_x1_device_benchmark_uses_only_valid_synthetic_phases() -> None:
     assert result["selected_device"] in {"cpu", "cuda:0"}
     assert result["scientific_rows_observed"] is False
     assert result["synthetic_rows"] == 8192
+
+
+def test_preflight_uses_shard_lru_below_fold_ram_margin() -> None:
+    policy = _preflight_memory_policy(6 * 1024**3)
+    assert policy["fold_ram_eligible"] is False
+    assert policy["selected_cache_mode"] == "shard_lru"
+    with pytest.raises(ValueError, match="below 4 GiB"):
+        _preflight_memory_policy(3 * 1024**3)
 
 
 def test_zero_initialization_exactly_replays_a5() -> None:
