@@ -67,6 +67,9 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     protocol = json.loads(
         (repo / "configs/protocol/scientific_recovery_v9_stage61_pair_router_x2.json").read_text()
     )
+    training_commit = subprocess.check_output(
+        ["git", "rev-parse", "HEAD"], cwd=repo, text=True
+    ).strip()
     arm_parts: dict[str, list[pd.DataFrame]] = {
         name: []
         for name in (
@@ -126,6 +129,19 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
                 device=args.device,
                 identity={
                     "outer_fold": outer,
+                    "training_commit": training_commit,
+                    "protocol_sha256": protocol["artifact_sha256"],
+                    "config_sha256": compute_file_hash(
+                        str(
+                            repo
+                            / "configs/experiment/scientific_recovery_v9_stage62"
+                            / {
+                                "X2-GLOBALPOOL": "x2_globalpool.yaml",
+                                "X2-LOCALFIELD": "x2_localfield.yaml",
+                                "X2-SHUFFLEFIELD": "x2_shufflefield.yaml",
+                            }[arm]
+                        )
+                    ),
                     "feature_cache_artifact_sha256": manifest["artifact_sha256"],
                 },
             )
@@ -244,9 +260,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             "artifact_type": "scientific_recovery_v9_stage62_gate_v1",
             "schema_version": "1.0",
             "evidence_type": "matched_outer_dev",
-            "code_commit": subprocess.check_output(
-                ["git", "rev-parse", "HEAD"], cwd=repo, text=True
-            ).strip(),
+            "code_commit": training_commit,
             "protocol_version": "stage61_stage62_v1",
             "protocol_sha256": protocol["artifact_sha256"],
             "created_at": datetime.now(UTC).isoformat(),

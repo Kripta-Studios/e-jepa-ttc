@@ -144,6 +144,12 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     protocol = json.loads(
         (repo / "configs/protocol/scientific_recovery_v9_stage61_pair_router_x2.json").read_text()
     )
+    training_commit = subprocess.check_output(
+        ["git", "rev-parse", "HEAD"], cwd=repo, text=True
+    ).strip()
+    pair_config_sha = compute_file_hash(
+        str(repo / "configs/experiment/scientific_recovery_v9_stage61" / "pair_inner_head.yaml")
+    )
     pair_outer: list[pd.DataFrame] = []
     arm_outer: dict[str, list[pd.DataFrame]] = {name: [] for name in ("R1", "R2", "R2_SHUFFLE")}
     fold_records: list[dict[str, Any]] = []
@@ -181,6 +187,9 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
                 device=args.device,
                 identity={
                     "role": "inner_oof",
+                    "training_commit": training_commit,
+                    "protocol_sha256": protocol["artifact_sha256"],
+                    "config_sha256": pair_config_sha,
                     "outer_fold": outer,
                     "inner_fold": inner,
                     "feature_cache_artifact_sha256": manifest["artifact_sha256"],
@@ -263,6 +272,9 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             device=args.device,
             identity={
                 "role": "outer_dev",
+                "training_commit": training_commit,
+                "protocol_sha256": protocol["artifact_sha256"],
+                "config_sha256": pair_config_sha,
                 "outer_fold": outer,
                 "feature_cache_artifact_sha256": manifest["artifact_sha256"],
             },
@@ -362,9 +374,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             "artifact_type": "scientific_recovery_v9_stage61_gate_v1",
             "schema_version": "1.0",
             "evidence_type": "nested_outer_dev",
-            "code_commit": subprocess.check_output(
-                ["git", "rev-parse", "HEAD"], cwd=repo, text=True
-            ).strip(),
+            "code_commit": training_commit,
             "protocol_version": "stage61_stage62_v1",
             "protocol_sha256": protocol["artifact_sha256"],
             "created_at": datetime.now(UTC).isoformat(),
