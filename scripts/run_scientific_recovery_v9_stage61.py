@@ -26,6 +26,7 @@ from e_jepa_ttc.evaluation.stage61_nested_pair_router import (
 )
 from e_jepa_ttc.models.three_expert_router import fit_three_expert_router
 from e_jepa_ttc.training.stage61_pair_head import PairHeadTrainingConfig, train_pair_head
+from e_jepa_ttc.training.stage62_local_field import cross_track_derangement_indices
 
 
 def _write_json(path: Path, value: dict[str, Any]) -> dict[str, Any]:
@@ -46,20 +47,11 @@ def _aligned(a5_path: Path, c2f_path: Path) -> tuple[pd.DataFrame, pd.DataFrame]
 
 
 def _permutation(frame: pd.DataFrame, seed: int) -> np.ndarray:
-    result = np.arange(len(frame), dtype=np.int64)
-    sequence = frame["sequence_id"].astype(str).to_numpy()
-    track = frame["track_id"].astype(str).to_numpy()
-    rng = np.random.default_rng(seed)
-    for name in sorted(np.unique(sequence).tolist()):
-        indices = np.flatnonzero(sequence == name)
-        for _ in range(10_000):
-            candidate = rng.permutation(indices)
-            if np.all(candidate != indices) and np.all(track[candidate] != track[indices]):
-                result[indices] = candidate
-                break
-        else:
-            raise ValueError(f"PAIR derangement impossible for sequence {name}")
-    return result
+    return cross_track_derangement_indices(
+        sequence_ids=frame["sequence_id"].astype(str).tolist(),
+        track_ids=frame["track_id"].astype(str).tolist(),
+        seed=seed,
+    )
 
 
 def _predict_pair(model: torch.nn.Module, features: np.ndarray, device: torch.device) -> np.ndarray:

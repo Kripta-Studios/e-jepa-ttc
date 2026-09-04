@@ -74,24 +74,46 @@ def derange_cross_track(
     """Derange only the 29 local fields within sequence and between tracks."""
 
     values = np.asarray(features, dtype=np.float32)
-    sequences = np.asarray(sequence_ids, dtype=str)
-    tracks = np.asarray(track_ids, dtype=str)
-    permutation = np.arange(len(values), dtype=np.int64)
-    rng = np.random.default_rng(seed)
-    for sequence in sorted(np.unique(sequences).tolist()):
-        indices = np.flatnonzero(sequences == sequence)
-        found: np.ndarray | None = None
-        for _ in range(10_000):
-            candidate = rng.permutation(indices)
-            if np.all(candidate != indices) and np.all(tracks[candidate] != tracks[indices]):
-                found = candidate
-                break
-        if found is None:
-            raise ValueError(f"cannot construct cross-track derangement for {sequence}")
-        permutation[indices] = found
+    permutation = cross_track_derangement_indices(
+        sequence_ids=sequence_ids, track_ids=track_ids, seed=seed
+    )
     result = values.copy()
     result[:, :, :29] = values[permutation, :, :29]
     return result, permutation
+
+
+def cross_track_derangement_indices(
+    *, sequence_ids: list[str], track_ids: list[str], seed: int
+) -> np.ndarray:
+    """Construct a deterministic no-fixed-point cross-track permutation.
+
+    Within each sequence, rows are randomized inside randomized track groups,
+    concatenated, and circularly shifted by the largest track cardinality.
+    This is feasible exactly when no track owns more than half the sequence.
+    """
+
+    sequences = np.asarray(sequence_ids, dtype=str)
+    tracks = np.asarray(track_ids, dtype=str)
+    if sequences.shape != tracks.shape or sequences.ndim != 1 or not len(sequences):
+        raise ValueError("derangement identities are missing or misaligned")
+    permutation = np.arange(len(sequences), dtype=np.int64)
+    rng = np.random.default_rng(seed)
+    for sequence in sorted(np.unique(sequences).tolist()):
+        sequence_indices = np.flatnonzero(sequences == sequence)
+        names = rng.permutation(np.unique(tracks[sequence_indices])).tolist()
+        groups = [
+            rng.permutation(sequence_indices[tracks[sequence_indices] == name]) for name in names
+        ]
+        largest = max(len(group) for group in groups)
+        if largest > len(sequence_indices) - largest:
+            raise ValueError(f"cannot construct cross-track derangement for {sequence}")
+        ordered = np.concatenate(groups)
+        permutation[ordered] = np.roll(ordered, largest)
+        if np.any(permutation[sequence_indices] == sequence_indices) or np.any(
+            tracks[permutation[sequence_indices]] == tracks[sequence_indices]
+        ):
+            raise RuntimeError("constructed derangement violated its contract")
+    return permutation
 
 
 def train_local_field(
@@ -244,6 +266,7 @@ def load_local_field(path: Path, *, device: torch.device) -> LocalTemporalPhaseF
 
 __all__ = [
     "LocalFieldTrainingConfig",
+    "cross_track_derangement_indices",
     "derange_cross_track",
     "global_pool_field",
     "load_local_field",

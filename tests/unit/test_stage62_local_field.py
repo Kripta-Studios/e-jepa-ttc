@@ -6,6 +6,7 @@ import torch
 from e_jepa_ttc.data.stage61_pair_feature_cache import LocalTemporalFieldBatch
 from e_jepa_ttc.models.local_temporal_phase_field import LocalTemporalPhaseField
 from e_jepa_ttc.training.stage62_local_field import (
+    cross_track_derangement_indices,
     derange_cross_track,
     global_pool_field,
     time_swap_field,
@@ -40,3 +41,11 @@ def test_matched_interventions_preserve_a5_state() -> None:
     )
     assert np.all(permutation != np.arange(12))
     np.testing.assert_array_equal(shuffled[:, :, 31:], values[:, :, 31:])
+
+
+def test_derangement_handles_large_track_groups_without_random_retries() -> None:
+    sequence = ["s"] * 100
+    tracks = ["a"] * 45 + ["b"] * 35 + ["c"] * 20
+    permutation = cross_track_derangement_indices(sequence_ids=sequence, track_ids=tracks, seed=7)
+    assert np.all(permutation != np.arange(100))
+    assert np.all(np.asarray(tracks)[permutation] != np.asarray(tracks))
