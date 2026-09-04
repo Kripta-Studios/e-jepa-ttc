@@ -86,7 +86,8 @@ def _producer_state(
     # field, so their signed producer OOF remains the only stored log-variance.
     if "patch_features" in arrays:
         repeated = arrays["patch_features"][cache_indices, :, -3:].astype(np.float32)
-        if not np.array_equal(repeated, repeated[:, :1, :]):
+        broadcast_state = np.broadcast_to(repeated[:, :1, :], repeated.shape)
+        if not np.array_equal(repeated, broadcast_state):
             raise ValueError("outer dense A5 state is not constant over patches")
         if not np.allclose(repeated[:, 0, 0], phase, rtol=0, atol=1e-7):
             raise ValueError("outer dense A5 phase disagrees with replay cache")
