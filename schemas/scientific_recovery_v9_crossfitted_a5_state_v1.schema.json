@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "type": "object",
+  "required": ["artifact_type", "schema_version", "evidence_type", "code_commit", "protocol_version", "protocol_sha256", "created_at", "artifact_sha256", "state_order", "contains_targets", "outer_folds"],
+  "properties": {
+    "artifact_type": {"const": "scientific_recovery_v9_crossfitted_a5_state_v1"}, "schema_version": {"const": "1.0"}, "evidence_type": {"const": "nested_crossfitted_state"},
+    "code_commit": {"type": "string"}, "protocol_version": {"type": "string"}, "protocol_sha256": {"type": "string"}, "created_at": {"type": "string"}, "artifact_sha256": {"type": "string"},
+    "state_order": {"const": ["benchmark_phase", "log_variance", "sensor_support"]}, "contains_targets": {"const": false}, "outer_folds": {"type": "object", "required": ["0", "1", "2"], "minProperties": 3, "maxProperties": 3}
+  }, "additionalProperties": false
+}

@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "type": "object",
+  "required": ["artifact_type", "schema_version", "evidence_type", "code_commit", "protocol_version", "protocol_sha256", "created_at", "artifact_sha256", "seed", "status", "all_endpoints_frozen_before_evaluation", "gates", "elapsed_active_seconds"],
+  "properties": {
+    "artifact_type": {"const": "scientific_recovery_v9_stage64_result_v1"}, "schema_version": {"const": "1.0"}, "evidence_type": {"const": "nested_outer_dev"},
+    "code_commit": {"type": "string"}, "protocol_version": {"type": "string"}, "protocol_sha256": {"type": "string"}, "created_at": {"type": "string"}, "artifact_sha256": {"type": "string"},
+    "seed": {"enum": [7, 13, 23]}, "status": {"enum": ["RAW_ALL_GATES_PASSED", "RAW_GATES_FAILED", "RAW_RESOURCE_BLOCKED"]}, "all_endpoints_frozen_before_evaluation": {"const": true}, "gates": {"type": "object"}, "elapsed_active_seconds": {"type": "number", "minimum": 0}
+  }, "additionalProperties": false
+}

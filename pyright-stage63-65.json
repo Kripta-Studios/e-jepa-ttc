@@ -1,0 +1,21 @@
+{
+  "include": [
+    "src/e_jepa_ttc/artifacts/stage63_65.py",
+    "src/e_jepa_ttc/data/raw_event_binding.py",
+    "src/e_jepa_ttc/data/raw_temporal_cache.py",
+    "src/e_jepa_ttc/data/crossfitted_a5_state.py",
+    "src/e_jepa_ttc/models/raw_time_residual.py",
+    "src/e_jepa_ttc/models/full_regret_router.py",
+    "src/e_jepa_ttc/training/raw_time_residual.py",
+    "src/e_jepa_ttc/evaluation/stage63_65.py",
+    "scripts/audit_scientific_recovery_v9_stage63.py",
+    "scripts/build_scientific_recovery_v9_raw_temporal_cache.py",
+    "scripts/run_scientific_recovery_v9_stage64.py",
+    "scripts/run_scientific_recovery_v9_stage65.py",
+    "scripts/run_scientific_recovery_v9_stage63_65.py",
+    "scripts/package_scientific_recovery_v9_stage63_65.py"
+  ],
+  "extraPaths": ["src", "."],
+  "typeCheckingMode": "basic",
+  "reportMissingTypeStubs": "none"
+}
