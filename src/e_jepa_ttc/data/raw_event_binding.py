@@ -143,6 +143,7 @@ class RawWindowBinding:
     time_unit: Literal["us"]
     clock_origin_us: int
     frame_to_event_clock_offset_us: int
+    frame_to_event_clock_offset_drift_us: int
     window_start_us: int
     window_end_us: int
     observation_end_us: int
@@ -391,9 +392,12 @@ def build_raw_window_bindings(
             info = file_info[sequence]
             timestamp_data = cast(h5py.Dataset, info["timestamps"])
             frame_offset_values = [frames[i] - windows[i][1] for i in range(2)]
-            if max(frame_offset_values) - min(frame_offset_values) > 1:
-                raise ValueError(f"frame/event clock offset is inconsistent for {row.sample_token}")
-            clock_offset = int(round(sum(frame_offset_values) / 2))
+            clock_offset_drift = frame_offset_values[1] - frame_offset_values[0]
+            if abs(clock_offset_drift) > 5:
+                raise ValueError(
+                    f"frame/event clock drift exceeds 5 us for {row.sample_token}: "
+                    f"{clock_offset_drift}"
+                )
             clock_offsets[sequence].update(frame_offset_values)
             precontext_end = windows[0][1] - max(100_000, windows[0][1] - windows[0][0])
             delta01 = windows[0][1] - precontext_end
@@ -423,12 +427,13 @@ def build_raw_window_bindings(
                     h5_file_sha256=str(hashes[sequence]["sha256"]),
                     time_unit="us",
                     clock_origin_us=int(info["origin"]),
-                    frame_to_event_clock_offset_us=clock_offset,
+                    frame_to_event_clock_offset_us=frame_offset_values[window_id],
+                    frame_to_event_clock_offset_drift_us=clock_offset_drift,
                     window_start_us=start_us,
                     window_end_us=end_us,
                     observation_end_us=end_us,
                     target_anchor_us=frames[1],
-                    target_anchor_event_clock_us=frames[1] - clock_offset,
+                    target_anchor_event_clock_us=windows[1][1],
                     start_event_index=start_idx,
                     stop_event_index=stop_idx,
                     full_window_event_count=stop_idx - start_idx,
@@ -461,6 +466,12 @@ def build_raw_window_bindings(
         "hdf5_files": hashes,
         "clock_offsets_by_sequence": {
             key: sorted(value) for key, value in sorted(clock_offsets.items())
+        },
+        "within_token_clock_drift": {
+            "definition": "offset_window1_minus_offset_window0_us",
+            "allowed_absolute_max_us": 5,
+            "observed_min_us": int(frame["frame_to_event_clock_offset_drift_us"].min()),
+            "observed_max_us": int(frame["frame_to_event_clock_offset_drift_us"].max()),
         },
         "common_roi": {
             "same_transform_for_both_windows": bool(

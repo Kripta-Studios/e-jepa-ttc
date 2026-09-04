@@ -93,6 +93,8 @@ def test_binding_is_two_rows_per_token_and_common_roi(tmp_path: Path) -> None:
     assert len(binding) == 18
     assert binding.groupby("sample_token")["roi_transform_sha256"].nunique().eq(1).all()
     assert binding["h5_file_sha256"].str.fullmatch(r"[0-9a-f]{64}").all()
+    assert binding["frame_to_event_clock_offset_drift_us"].eq(0).all()
+    assert binding["target_anchor_event_clock_us"].eq(12_000).all()
     assert manifest["common_roi"]["same_transform_for_both_windows"]
     assert len(select_hash_probe_tokens(binding, 9)) == 9
 
