@@ -45,12 +45,16 @@ def main() -> None:
         decision = "STAGE61_AND_X2_NEGATIVE_X3_DATA_READY"
     else:
         decision = "STAGE61_AND_X2_NEGATIVE_X3_BLOCKED"
-    commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=args.repo, text=True).strip()
+    analysis_commit = subprocess.check_output(
+        ["git", "rev-parse", "HEAD"], cwd=args.repo, text=True
+    ).strip()
+    training_commit = str(stage61["code_commit"])
     next_decision = sign_artifact(
         {
             "artifact_type": "scientific_recovery_v9_stage61_stage62_next_decision_v1",
             "decision": decision,
-            "training_commit": commit,
+            "training_commit": training_commit,
+            "analysis_commit": analysis_commit,
             "stages": {
                 "stage61": "completed",
                 "stage62": "completed" if stage62 is not None else "skipped_stage61_gate_passed",
@@ -100,9 +104,16 @@ Se ejecutó Stage 61 seed 7 con nested A5/C2F/PAIR estricto sobre 8192 filas y n
 
 Stage 61 gate: `{stage61["status"]}`. Stage 62 gate: `{stage62["status"] if stage62 else "not_executed"}`. Los intervalos y probabilidades completos están en los artifacts bootstrap firmados del bundle.
 
+## Gates preregistrados
+
+- Stage 61: gate global `false`; mejoró R2 frente a R1 en media bootstrap, pero su IC95 cruzó cero. El falsificador R2 frente a R2-SHUFFLE sí pasó; R2 frente a Router R no superó simultáneamente magnitud, IC95 y probabilidad.
+- Stage 62: `locality=false`, `association=false`, `time_order=false`, `utility=true`, `system=false`. LOCALFIELD sólo superó el control A5 replay; no demostró ventaja frente a GLOBALPOOL, SHUFFLEFIELD, TIMESWAP ni Router R.
+- Por lo anterior no se autorizó replicación de Stage 61 y se ejecutó Stage 62 completo.
+
 ## Integridad y acceso sellado
 
-- Training commit: `{commit}`.
+- Commit de entrenamiento Stage 61/62: `{training_commit}`.
+- Commit del analizador: `{analysis_commit}`. La diferencia corresponde al lector read-only X3 y no altera modelos ni predicciones.
 - PAIR se entrenó sólo desde caches 133-D producidas por el A5 exacto de cada inner/final fold.
 - Cada router se ajustó sólo con inner-OOF; outer-dev se abrió una vez tras congelar los heads y routers.
 - GLOBAL/LOCAL/SHUFFLE compartieron inicialización, batches, optimizador, presupuesto y productor.
@@ -116,6 +127,12 @@ Seeds 13 y 23 no se fabricaron: no existe el universo físico matched de product
 ## X3 feasibility
 
 La cache train8192 preserva tensores voxelizados de tres endpoints, pero la auditoría exige eventos raw con timestamps y polaridad ligados por token. Resultado: `{x3["decision"]}`. No se entrenó ningún modelo X3.
+
+## Intentos abortados y QA
+
+Dos intentos preliminares se conservaron como telemetría no seleccionable. El primero abortó antes de outer-dev porque un derangement aleatorio no garantizaba solución; se sustituyó por una construcción determinista. El segundo abortó tras la primera evaluación outer porque un campo TTC auxiliar del productor V8 era NaN; se corrigió ligando la predicción puntual exacta, su SHA, token y target. Ningún resultado de esos intentos entra en los gates.
+
+Los tests específicos de Stage 61/62 pasan 10/10; Ruff, `git diff --check`, los tres esquemas JSON y sus firmas internas pasan. La suite histórica completa conserva 39 fallos ajenos a esta continuación, documentados en `qa/QA_FULL_PYTEST.log`: artefactos V7/V8 ausentes en este checkout, expectativas legacy de mutación de esquemas y rutas subprocess afectadas por la codificación del perfil Windows.
 
 ## Claims permitidos y prohibidos
 
