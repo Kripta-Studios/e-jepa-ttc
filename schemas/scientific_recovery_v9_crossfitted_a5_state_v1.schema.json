@@ -1,9 +1,10 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema", "type": "object",
-  "required": ["artifact_type", "schema_version", "evidence_type", "code_commit", "protocol_version", "protocol_sha256", "created_at", "artifact_sha256", "state_order", "contains_targets", "outer_folds"],
+  "required": ["artifact_type", "schema_version", "evidence_type", "code_commit", "protocol_version", "protocol_sha256", "created_at", "artifact_sha256", "state_order", "contains_targets", "outer_folds", "provenance_version"],
   "properties": {
     "artifact_type": {"const": "scientific_recovery_v9_crossfitted_a5_state_v1"}, "schema_version": {"const": "1.0"}, "evidence_type": {"const": "nested_crossfitted_state"},
     "code_commit": {"type": "string"}, "protocol_version": {"type": "string"}, "protocol_sha256": {"type": "string"}, "created_at": {"type": "string"}, "artifact_sha256": {"type": "string"},
-    "state_order": {"const": ["benchmark_phase", "log_variance", "sensor_support"]}, "contains_targets": {"const": false}, "outer_folds": {"type": "object", "required": ["0", "1", "2"], "minProperties": 3, "maxProperties": 3}
+    "provenance_version": {"const": "coherent_nested_v2"},
+    "state_order": {"const": ["benchmark_phase", "log_variance", "sensor_support"]}, "contains_targets": {"const": false}, "outer_folds": {"type": "object", "required": ["0", "1", "2"], "minProperties": 3, "maxProperties": 3, "additionalProperties": {"type": "object", "required": ["components", "inner_producers", "outer_producer", "train_tokens_sha256", "eval_tokens_sha256"], "properties": {"components": {"type": "object", "required": ["train_state.npy", "eval_state.npy", "train_metadata.csv", "eval_metadata.csv"], "minProperties": 4, "maxProperties": 4, "additionalProperties": {"type": "object", "required": ["path", "bytes", "sha256"]}}}}}
   }, "additionalProperties": false
 }

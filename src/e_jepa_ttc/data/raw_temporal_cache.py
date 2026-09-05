@@ -6,6 +6,7 @@ import hashlib
 import json
 import os
 import time
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Literal, cast
@@ -15,11 +16,80 @@ import hdf5plugin  # noqa: F401
 import numpy as np
 import pandas as pd
 
+from e_jepa_ttc.artifacts.cache_components import component_record, verify_components
 from e_jepa_ttc.artifacts.hashing import verify_artifact_hash
 from e_jepa_ttc.artifacts.stage63_65 import sign_stage63_65_artifact
 from e_jepa_ttc.data.raw_event_binding import ReadOnlyTrainAccess, select_hash_probe_tokens
 
 RAW_SHAPE_TAIL = (2, 16, 2, 64, 64)
+TEMPORAL_BINNING_VERSION = "raw16_floor_edges_searchsorted_v2"
+
+
+def convert_counts_bounded(
+    source_path: Path,
+    target_path: Path,
+    dtype: str,
+    resource_check: Callable[[], None] | None = None,
+) -> None:
+    """Convert exact integer counts with at most 64 rows mapped at once.
+
+    Whole-file memmaps can accumulate resident pages on Windows. Explicitly
+    releasing each source/target mapping bounds this conversion's working set.
+    Interrupted output is preserved; source counts are never modified.
+    """
+    source_header = np.load(source_path, mmap_mode="r", allow_pickle=False)
+    shape, source_dtype, source_offset = (
+        source_header.shape,
+        source_header.dtype,
+        source_header.offset,
+    )
+    if source_dtype.kind != "u" or np.dtype(dtype).kind != "u" or source_header.flags.f_contiguous:
+        raise ValueError("count conversion requires C-contiguous unsigned integer arrays")
+    del source_header
+    existing_bytes = sum(
+        path.stat().st_size for path in source_path.parent.iterdir() if path.is_file()
+    )
+    new_bytes = int(np.prod(shape)) * np.dtype(dtype).itemsize + 4096
+    if existing_bytes + new_bytes > 32 * 1024**3:
+        raise TimeoutError("raw cache plus preserved conversion attempts would exceed 32 GiB")
+    if target_path.exists():
+        target_path.replace(target_path.with_name(f"{target_path.name}.previous_{time.time_ns()}"))
+    target_header = np.lib.format.open_memmap(target_path, mode="w+", dtype=dtype, shape=shape)
+    target_offset = target_header.offset
+    target_header.flush()
+    del target_header
+    row_elements = int(np.prod(shape[1:]))
+    for start in range(0, shape[0], 64):
+        if resource_check is not None:
+            resource_check()
+        chunk_shape = (min(64, shape[0] - start), *shape[1:])
+        source = np.memmap(
+            source_path,
+            mode="r",
+            dtype=source_dtype,
+            offset=source_offset + start * row_elements * source_dtype.itemsize,
+            shape=chunk_shape,
+        )
+        target = np.memmap(
+            target_path,
+            mode="r+",
+            dtype=dtype,
+            offset=target_offset + start * row_elements * np.dtype(dtype).itemsize,
+            shape=chunk_shape,
+        )
+        if int(source.max(initial=0)) > np.iinfo(np.dtype(dtype)).max:
+            raise ValueError("count conversion would overflow the selected dtype")
+        target[:] = source
+        target.flush()
+        del target, source
+
+
+def temporal_bin_edges(start_us: int, end_us: int) -> np.ndarray:
+    """Return the single integer half-open boundary convention for all 16 bins."""
+    duration = int(end_us) - int(start_us)
+    if duration < 16:
+        raise ValueError("RAW16 requires at least 16 microseconds for positive bin durations")
+    return np.asarray([int(start_us) + duration * k // 16 for k in range(17)], dtype=np.int64)
 
 
 @dataclass(frozen=True)
@@ -77,17 +147,24 @@ def rasterize_bound_window(
         raise ValueError("raw event arrays have inconsistent lengths")
     start = int(binding["window_start_us"])
     end = int(binding["window_end_us"])
+    edges = temporal_bin_edges(start, end)
     if np.any(timestamps < start) or np.any(timestamps >= end) or np.any(np.diff(timestamps) < 0):
         raise ValueError("raw slice violates its monotonic half-open time contract")
     x0, y0 = float(binding["roi_x0"]), float(binding["roi_y0"])
     x1, y1 = float(binding["roi_x1"]), float(binding["roi_y1"])
+    if (
+        not np.isfinite([x0, y0, x1, y1]).all()
+        or x1 <= x0
+        or y1 <= y0
+        or not np.isclose(x1 - x0, y1 - y0, rtol=0, atol=1e-6)
+    ):
+        raise ValueError("raw window common ROI must be a finite positive square")
     gx = np.floor((x_values - x0) * 64.0 / (x1 - x0)).astype(np.int64)
     gy = np.floor((y_values - y0) * 64.0 / (y1 - y0)).astype(np.int64)
     keep = (gx >= 0) & (gx < 64) & (gy >= 0) & (gy < 64)
     if not np.any(keep):
         return np.zeros((16, 2, 64, 64), dtype=np.uint32), 0
-    relative = timestamps[keep] - start
-    bins = relative * 16 // (end - start)
+    bins = np.searchsorted(edges, timestamps[keep], side="right") - 1
     polarities = (p_values[keep] > 0).astype(np.int64)
     flat = ((bins * 2 + polarities) * 64 + gy[keep]) * 64 + gx[keep]
     counts = np.bincount(flat, minlength=16 * 2 * 64 * 64).reshape(16, 2, 64, 64)
@@ -141,6 +218,17 @@ def build_raw_temporal_cache(
         "stop_event_index",
         "h5_file_sha256",
         "roi_transform_sha256",
+        "window_start_us",
+        "window_end_us",
+        "event_x_offset_px",
+        "polarity_encoding",
+        "endpoint_delta01_us",
+        "endpoint_delta12_us",
+        "outer_fold",
+        "roi_x0",
+        "roi_y0",
+        "roi_x1",
+        "roi_y1",
     }
     if not required <= set(binding) or binding.duplicated(["sample_token", "window_id"]).any():
         raise ValueError("raw binding schema or uniqueness mismatch")
@@ -162,14 +250,32 @@ def build_raw_temporal_cache(
         "start_event_index",
         "stop_event_index",
         "roi_transform_sha256",
+        "window_start_us",
+        "window_end_us",
+        "event_x_offset_px",
+        "polarity_encoding",
+        "endpoint_delta01_us",
+        "endpoint_delta12_us",
+        "sequence_id",
+        "track_id",
+        "outer_fold",
+        "roi_x0",
+        "roi_y0",
+        "roi_x1",
+        "roi_y1",
     ]
     identity = hashlib.sha256(
-        ordered[identity_columns].to_csv(index=False, lineterminator="\n").encode("utf-8")
+        TEMPORAL_BINNING_VERSION.encode("ascii")
+        + ordered[identity_columns].to_csv(index=False, lineterminator="\n").encode("utf-8")
     ).hexdigest()
     output_dir.mkdir(parents=True, exist_ok=resume)
     progress_path = output_dir / "build_progress.json"
     progress = _load_progress(progress_path, identity)
     temp_counts = output_dir / "raw_counts.uint32.tmp.npy"
+    if not 0 <= int(progress["completed_tokens"]) <= len(metadata):
+        raise ValueError("raw cache completed row count is outside its bound universe")
+    if int(progress["completed_tokens"]) and not temp_counts.is_file():
+        raise ValueError("raw cache progress exists but its accumulated counts are missing")
     mode = "r+" if temp_counts.is_file() and resume else "w+"
     counts = np.lib.format.open_memmap(
         temp_counts, mode=mode, dtype=np.uint32, shape=(len(metadata), *RAW_SHAPE_TAIL)
@@ -189,15 +295,15 @@ def build_raw_temporal_cache(
     handles: dict[str, h5py.File] = {}
     try:
         for row_index in range(len(metadata)):
+            if access.resource_check is not None:
+                access.resource_check()
             rows = grouped[row_index].sort_values("window_id")
             durations_us = np.asarray(
                 rows["window_end_us"].to_numpy(np.int64)
                 - rows["window_start_us"].to_numpy(np.int64)
             )
             edges = [
-                np.asarray(
-                    [int(start) + int(duration) * k // 16 for k in range(17)], dtype=np.int64
-                )
+                temporal_bin_edges(int(start), int(start) + int(duration))
                 for start, duration in zip(rows["window_start_us"], durations_us, strict=True)
             ]
             for window in range(2):
@@ -272,17 +378,12 @@ def build_raw_temporal_cache(
     dtype: Literal["uint16", "uint32"] = "uint16" if max_cell <= 65535 else "uint32"
     final_path = output_dir / f"raw_counts.{dtype}.npy"
     if not final_path.is_file():
-        source = np.load(temp_counts, mmap_mode="r")
-        target = np.lib.format.open_memmap(
+        convert_counts_bounded(
+            temp_counts,
             final_path.with_suffix(final_path.suffix + ".tmp"),
-            mode="w+",
-            dtype=np.dtype(dtype),
-            shape=source.shape,
+            dtype,
+            access.resource_check,
         )
-        for start in range(0, len(source), 16):
-            target[start : start + 16] = source[start : start + 16]
-        target.flush()
-        del target, source
         os.replace(final_path.with_suffix(final_path.suffix + ".tmp"), final_path)
     np.save(output_dir / "durations_s.npy", durations)
     np.save(output_dir / "times_scaled_0p1s.npy", times)
@@ -296,6 +397,7 @@ def build_raw_temporal_cache(
     probe_payload = json.dumps(probe_records, sort_keys=True, separators=(",", ":"))
     manifest = {
         "artifact_type": "scientific_recovery_v9_raw16_temporal_cache_v1",
+        "temporal_binning_version": TEMPORAL_BINNING_VERSION,
         "status": "completed",
         "identity_sha256": identity,
         "shape": [len(metadata), *RAW_SHAPE_TAIL],
@@ -322,6 +424,17 @@ def build_raw_temporal_cache(
         "build_seconds_this_invocation": elapsed,
         "contains_targets": False,
         "common_cache_for_all_arms": True,
+        "components": {
+            name: component_record(output_dir / name)
+            for name in (
+                final_path.name,
+                "durations_s.npy",
+                "times_scaled_0p1s.npy",
+                "valid_patches.npy",
+                "roi_event_counts.npy",
+                "metadata.csv",
+            )
+        },
     }
     manifest = sign_stage63_65_artifact(manifest, evidence_type="physical_raw_cache")
     _atomic_json(output_dir / "manifest.json", manifest)
@@ -334,15 +447,36 @@ def load_raw_cache(path: Path) -> RawCacheView:
     manifest = json.loads((path / "manifest.json").read_text(encoding="utf-8"))
     if not verify_artifact_hash(manifest) or manifest.get("status") != "completed":
         raise ValueError("raw cache is not complete")
+    if manifest.get("temporal_binning_version") != TEMPORAL_BINNING_VERSION:
+        raise ValueError("raw cache temporal convention is obsolete; rebuild in a new directory")
     count_path = path / str(manifest["counts"]["path"])
-    if _file_sha256(count_path) != manifest["counts"]["sha256"]:
-        raise ValueError("raw cache count hash mismatch")
+    verify_components(
+        path,
+        manifest.get("components", {}),
+        {
+            count_path.name,
+            "durations_s.npy",
+            "times_scaled_0p1s.npy",
+            "valid_patches.npy",
+            "roi_event_counts.npy",
+            "metadata.csv",
+        },
+    )
+    if manifest["components"][count_path.name]["sha256"] != manifest["counts"]["sha256"]:
+        raise ValueError("raw cache count identities disagree")
     counts = np.load(count_path, mmap_mode="r")
     durations = np.load(path / "durations_s.npy")
     times = np.load(path / "times_scaled_0p1s.npy")
     valid = np.load(path / "valid_patches.npy")
     metadata = pd.read_csv(path / "metadata.csv", dtype={"sample_token": str})
     n = len(metadata)
+    tokens = metadata["sample_token"].astype(str)
+    if tokens.duplicated().any() or not tokens.is_monotonic_increasing:
+        raise ValueError("raw cache tokens must be unique and canonically sorted")
+    if not np.isfinite(durations).all() or np.any(durations <= 0) or not np.isfinite(times).all():
+        raise ValueError("raw cache temporal metadata is invalid")
+    if valid.dtype != np.bool_:
+        raise ValueError("raw cache patch mask must be boolean")
     if counts.shape != (n, *RAW_SHAPE_TAIL) or durations.shape != (n, 2, 16):
         raise ValueError("raw cache arrays are row-misaligned")
     if times.shape != (n, 6) or valid.shape != (n, 16):

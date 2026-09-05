@@ -12,9 +12,17 @@ import pandas as pd
 _REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(_REPOSITORY_ROOT / "src"))
 
-from e_jepa_ttc.data.crossfitted_a5_state import build_crossfitted_a5_states  # noqa: E402
+from e_jepa_ttc.artifacts.campaign_session import CampaignLock  # noqa: E402
+from e_jepa_ttc.data.crossfitted_a5_state import (  # noqa: E402
+    build_crossfitted_a5_states,
+    load_a5_state_split,
+)
 from e_jepa_ttc.data.raw_event_binding import ReadOnlyTrainAccess  # noqa: E402
 from e_jepa_ttc.data.raw_temporal_cache import build_raw_temporal_cache  # noqa: E402
+from e_jepa_ttc.training.campaign_budget import (  # noqa: E402
+    CampaignBudget,
+    check_resource_margins,
+)
 
 
 def main() -> None:
@@ -25,15 +33,34 @@ def main() -> None:
     parser.add_argument("--raw-train-root", type=Path, required=True)
     parser.add_argument("--train-parquet", type=Path, required=True)
     parser.add_argument("--output-root", type=Path, required=True)
+    parser.add_argument("--coherent-a5-root", type=Path, required=True)
+    parser.add_argument("--frozen-teacher-audit", type=Path, required=True)
     parser.add_argument("--resume", action="store_true")
     args = parser.parse_args()
-
     if not args.output_root.exists():
         args.output_root.mkdir(parents=True)
     elif not args.resume:
         raise FileExistsError("output root exists; use --resume only for identical inputs")
+    with CampaignLock(args.output_root / "CAMPAIGN_LOCK.json"):
+        build(args)
+
+
+def build(args: argparse.Namespace) -> None:
+    """Use the same persisted Stage63 budget and verified resume contracts as the audit."""
+    budget = CampaignBudget(args.output_root / "budgets/stage63.json", hours=12.0)
+
+    def resource_check() -> None:
+        budget.check()
+        check_resource_margins(args.output_root)
+
+    resource_check()
     binding = pd.read_csv(args.binding, dtype={"sample_token": str})
-    access = ReadOnlyTrainAccess(args.raw_train_root, args.train_parquet)
+    access = ReadOnlyTrainAccess(
+        args.raw_train_root,
+        args.train_parquet,
+        journal_path=args.output_root / "RAW_CACHE_READ_ACCESS_JOURNAL.jsonl",
+        resource_check=resource_check,
+    )
     cache = build_raw_temporal_cache(
         binding=binding,
         raw_train_root=args.raw_train_root,
@@ -47,6 +74,9 @@ def main() -> None:
         if not args.resume:
             raise FileExistsError("cross-fitted state already exists")
         state = json.loads((state_root / "manifest.json").read_text(encoding="utf-8"))
+        for outer in range(3):
+            for role in ("train", "eval"):
+                load_a5_state_split(state_root, outer, role)
     else:
         state = build_crossfitted_a5_states(
             feature_cache_root=source / "feature_cache",
@@ -54,6 +84,8 @@ def main() -> None:
                 args.reference_root / "artifacts" / "scientific_recovery_v8" / "results" / "router"
             ),
             output_root=state_root,
+            coherent_state_root=args.coherent_a5_root,
+            frozen_teacher_audit_path=args.frozen_teacher_audit,
         )
     access.write_ledger(args.output_root / "RAW_CACHE_READ_ACCESS_LEDGER.csv")
     print(

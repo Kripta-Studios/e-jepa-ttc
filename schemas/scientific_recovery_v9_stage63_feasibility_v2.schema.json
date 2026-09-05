@@ -7,6 +7,6 @@
     "status": {"const": "completed_read_only"}, "decision": {"enum": ["X3_DATA_READY", "RAW_DATA_UNAVAILABLE", "RAW_SUPPORT_INSUFFICIENT", "INTEGRITY_BLOCKED"]}, "physical_data_ready": {"type": "boolean"}, "integrity_passed": {"type": "boolean"}, "training_ready": {"type": "boolean"}, "authorization_id": {"type": "string"}, "raw_training_executed": {"const": false},
     "supersedes_artifact_path": {"type": "string"}, "supersedes_file_sha256": {"type": "string"}, "supersedes_artifact_sha256": {"type": "string"}, "reason_for_revision": {"type": "string"},
     "binding_manifest": {"type": "object"}, "raw_cache_manifest": {"type": "object"}, "crossfitted_state_manifest": {"type": "object"}, "a5_replay": {"type": "object"}, "support_readiness": {"type": "object"},
-    "forbidden_paths_opened": {"const": false}, "labels_in_raw_binding_or_cache": {"const": false}, "elapsed_seconds": {"type": "number"}, "disk_free_bytes": {"type": "integer"}
+    "forbidden_paths_opened": {"type": ["boolean", "null"]}, "access_audit": {"type": "object"}, "labels_in_raw_binding_or_cache": {"const": false}, "elapsed_seconds": {"type": "number"}, "disk_free_bytes": {"type": "integer"}
   }, "additionalProperties": false
 }

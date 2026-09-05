@@ -11,6 +11,7 @@ from e_jepa_ttc.evaluation.stage63_65 import (
     scientific_ttc,
     strict_macro_mass,
     strict_score,
+    validate_campaign_universe,
 )
 
 
@@ -48,6 +49,16 @@ def test_macro_mass_has_no_batch_renormalization() -> None:
         strict_score(frame.loc[frame.target_ttc_s > 0])
 
 
+@pytest.mark.parametrize(
+    "column,value", [("failure", True), ("finite", False), ("failure", "False")]
+)
+def test_score_rejects_failure_flags_and_ambiguous_booleans(column: str, value: object) -> None:
+    frame = _frame()
+    frame[column] = value
+    with pytest.raises(ValueError):
+        strict_score(frame)
+
+
 def test_identical_arms_bootstrap_to_zero() -> None:
     frame = _frame()
     result = paired_hierarchical_bootstrap(frame, frame, valid_draws=128, max_attempts=512)
@@ -55,7 +66,54 @@ def test_identical_arms_bootstrap_to_zero() -> None:
     assert result.ci95_low == result.ci95_high == 0
 
 
+@pytest.mark.parametrize("mutation", ["token", "track", "target", "fold", "missing"])
+def test_campaign_universe_rejects_identity_mutations(mutation: str) -> None:
+    indices = np.arange(8192)
+    canonical = pd.DataFrame(
+        {
+            "sample_token": [f"token-{index}" for index in indices],
+            "sequence_id": [f"seq-{index % 9}" for index in indices],
+            "track_id": [f"track-{index % 27}" for index in indices],
+            "outer_fold": indices % 9 // 3,
+            "target_ttc_s": np.full(8192, 2.0),
+        }
+    )
+    validate_campaign_universe(canonical, canonical)
+    changed = canonical.copy()
+    if mutation == "missing":
+        changed = changed.iloc[:-1]
+    else:
+        column, value = {
+            "token": ("sample_token", "alien-token"),
+            "track": ("track_id", "alien-track"),
+            "target": ("target_ttc_s", 3.0),
+            "fold": ("outer_fold", 2),
+        }[mutation]
+        changed.loc[0, column] = value
+    with pytest.raises(ValueError):
+        validate_campaign_universe(changed, canonical)
+
+
 def test_state_machine_branches_are_non_rescuing() -> None:
+    assert (
+        next_protocol_action(
+            stage63_integrity=True,
+            stage63_training_ready=True,
+            raw_available_or_supported=True,
+            stage64_seed7="RAW_RESOURCE_BLOCKED",
+        )
+        == "STOP_RAW_TECHNICAL_OR_INTEGRITY_FAILURE"
+    )
+    assert (
+        next_protocol_action(
+            stage63_integrity=True,
+            stage63_training_ready=True,
+            raw_available_or_supported=True,
+            stage64_seed7="RAW_ALL_GATES_PASSED",
+            replication={13: "RAW_GATES_FAILED"},
+        )
+        == "STOP_RAW_REPLICATION_NOT_CONFIRMED"
+    )
     assert (
         next_protocol_action(
             stage63_integrity=False,

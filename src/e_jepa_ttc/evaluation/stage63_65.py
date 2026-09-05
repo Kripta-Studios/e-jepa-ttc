@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any
 
@@ -82,6 +83,14 @@ def strict_score(frame: pd.DataFrame) -> dict[str, Any]:
         raise ValueError("prediction frame schema is incomplete")
     if frame["sample_token"].duplicated().any():
         raise ValueError("prediction frame contains duplicate tokens")
+    for column, forbidden in (("failure", True), ("finite", False)):
+        if column in frame:
+            flags = frame[column]
+            values = np.asarray(flags)
+            if not all(isinstance(value, (bool, np.bool_)) for value in values):
+                raise ValueError(f"prediction {column} flags must be explicit booleans")
+            if bool(np.any(values == forbidden)):
+                raise ValueError(f"prediction frame contains explicit {column} violations")
     prediction = frame["prediction_ttc_s"].to_numpy(np.float64)
     target = frame["target_ttc_s"].to_numpy(np.float64)
     if not np.isfinite(prediction).all() or np.any(np.abs(prediction) < 0.1):
@@ -115,6 +124,11 @@ def align_prediction_frames(
     left = candidate.sort_values("sample_token").reset_index(drop=True)
     right = reference.sort_values("sample_token").reset_index(drop=True)
     identity = ["sample_token", "sequence_id", "track_id", "target_ttc_s"]
+    if "outer_fold" in left or "outer_fold" in right:
+        if "outer_fold" not in left or "outer_fold" not in right:
+            raise ValueError("paired prediction outer_fold is missing")
+        if not left["outer_fold"].equals(right["outer_fold"]):
+            raise ValueError("paired prediction outer_fold mismatch")
     if len(left) != len(right) or any(not left[key].equals(right[key]) for key in identity[:3]):
         raise ValueError("paired prediction identity mismatch")
     if not np.array_equal(
@@ -123,6 +137,23 @@ def align_prediction_frames(
     ):
         raise ValueError("paired prediction target mismatch")
     return left, right
+
+
+def validate_campaign_universe(frame: pd.DataFrame, canonical: pd.DataFrame) -> None:
+    """Require the complete pinned 8192-token, nine-sequence, three-fold universe."""
+    required = {"sample_token", "sequence_id", "track_id", "outer_fold", "target_ttc_s"}
+    for label, table in (("canonical", canonical), ("prediction", frame)):
+        if not required <= set(table) or len(table) != 8192:
+            raise ValueError(f"{label} campaign universe schema/count mismatch")
+        if np.asarray(table[list(required)].isna()).any() or table.sample_token.duplicated().any():
+            raise ValueError(f"{label} campaign universe missing/duplicate identities")
+        if table.sequence_id.nunique() != 9 or set(table.outer_fold) != {0, 1, 2}:
+            raise ValueError(f"{label} campaign sequence/fold universe mismatch")
+        if (table.groupby("sequence_id").outer_fold.nunique() != 1).any():
+            raise ValueError(f"{label} campaign sequence crosses outer folds")
+        if (table.groupby("outer_fold").sequence_id.nunique() != 3).any():
+            raise ValueError(f"{label} campaign outer-dev must contain three sequences")
+    align_prediction_frames(frame, canonical)
 
 
 @dataclass(frozen=True)
@@ -149,6 +180,7 @@ def paired_hierarchical_bootstrap(
     seed: int = 640065,
     valid_draws: int = 8192,
     max_attempts: int = 32768,
+    resource_check: Callable[[], None] | None = None,
 ) -> BootstrapResult:
     """Bootstrap sequence→complete-track pairs with a shared draw for both arms."""
 
@@ -176,6 +208,8 @@ def paired_hierarchical_bootstrap(
     draw_digest = hashlib.sha256()
     attempts = 0
     while len(deltas) < valid_draws and attempts < max_attempts:
+        if resource_check is not None and attempts % 32 == 0:
+            resource_check()
         attempts += 1
         sequence_draw = rng.integers(0, len(sequence_values), size=len(sequence_values))
         occurrence_scores: list[float] = []
@@ -257,8 +291,14 @@ def next_protocol_action(
     if stage64_seed7 is None:
         return "RUN_STAGE64_SEED7"
     if stage64_seed7 != "RAW_ALL_GATES_PASSED":
-        return "RUN_STAGE65"
+        if stage64_seed7 == "RAW_GATES_FAILED":
+            return "RUN_STAGE65"
+        return "STOP_RAW_TECHNICAL_OR_INTEGRITY_FAILURE"
     outcomes = replication or {}
+    if set(outcomes) - {13, 23}:
+        raise ValueError("replication outcomes contain an unauthorized seed")
+    if any(value != "RAW_ALL_GATES_PASSED" for value in outcomes.values()):
+        return "STOP_RAW_REPLICATION_NOT_CONFIRMED"
     if 13 not in outcomes or 23 not in outcomes:
         return "RUN_STAGE64_REPLICATIONS"
     if all(outcomes[seed] == "RAW_ALL_GATES_PASSED" for seed in (13, 23)):

@@ -6,8 +6,11 @@ import hashlib
 import io
 import json
 import os
+import pickle
 import random
+import subprocess
 import time
+from collections.abc import Callable
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, Protocol
@@ -16,6 +19,7 @@ import numpy as np
 import psutil
 import torch
 
+from e_jepa_ttc.artifacts.hashing import sign_artifact, verify_artifact_hash
 from e_jepa_ttc.models.raw_time_residual import (
     RawArm,
     RawModelBatch,
@@ -64,6 +68,20 @@ class TrainSupervision:
             raise ValueError("Stage 64 supervision must be finite with nonnegative mass")
         if not np.isclose(mass.sum(), 1.0, atol=1e-10):
             raise ValueError("global macro mass must sum to one")
+
+
+def configure_raw_runtime(device: torch.device) -> None:
+    """Use one deterministic runtime policy for smoke, QA and scientific training."""
+    torch.set_num_threads(8)
+    if device.type == "cuda":
+        os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
+        if os.environ["CUBLAS_WORKSPACE_CONFIG"] != ":4096:8":
+            raise ValueError("CUBLAS_WORKSPACE_CONFIG differs from the frozen runtime policy")
+        torch.backends.cuda.matmul.allow_tf32 = False
+        torch.backends.cudnn.allow_tf32 = False
+        torch.backends.cudnn.benchmark = False
+        torch.backends.cudnn.deterministic = True
+    torch.use_deterministic_algorithms(True)
 
 
 class IndexableCounts(Protocol):
@@ -151,9 +169,9 @@ def _rng_state() -> dict[str, Any]:
 def _restore_rng(value: dict[str, Any]) -> None:
     random.setstate(value["python"])
     np.random.set_state(value["numpy"])
-    torch.set_rng_state(value["torch_cpu"])
+    torch.set_rng_state(value["torch_cpu"].cpu())
     if torch.cuda.is_available() and value["torch_cuda"]:
-        torch.cuda.set_rng_state_all(value["torch_cuda"])
+        torch.cuda.set_rng_state_all([state.cpu() for state in value["torch_cuda"]])
 
 
 def _atomic_torch_save(path: Path, value: object) -> None:
@@ -163,12 +181,40 @@ def _atomic_torch_save(path: Path, value: object) -> None:
         torch.save(value, stream)
         stream.flush()
         os.fsync(stream.fileno())
+    receipt = path.with_suffix(path.suffix + ".sha256")
+    temporary_receipt = receipt.with_suffix(receipt.suffix + ".tmp")
+    temporary_receipt.write_text(_checkpoint_sha256(temporary) + "\n", encoding="ascii")
     if path.is_file():
         previous = path.with_suffix(path.suffix + ".previous")
         if previous.exists():
             previous.unlink()
         os.replace(path, previous)
+        if receipt.is_file():
+            os.replace(receipt, previous.with_suffix(previous.suffix + ".sha256"))
     os.replace(temporary, path)
+    os.replace(temporary_receipt, receipt)
+
+
+def _recover_checkpoint(path: Path) -> tuple[dict[str, Any], Path]:
+    """Recover only byte-verified checkpoints; never bypass identity failures."""
+    failures: list[str] = []
+    for candidate in (path, path.with_suffix(path.suffix + ".previous")):
+        receipt = candidate.with_suffix(candidate.suffix + ".sha256")
+        if not candidate.is_file() or not receipt.is_file():
+            failures.append(f"{candidate.name}: missing checkpoint or receipt")
+            continue
+        if _checkpoint_sha256(candidate) != receipt.read_text(encoding="ascii").strip():
+            failures.append(f"{candidate.name}: SHA-256 mismatch")
+            continue
+        try:
+            checkpoint = torch.load(candidate, map_location="cpu", weights_only=False)
+        except (OSError, RuntimeError, EOFError, pickle.UnpicklingError) as error:
+            failures.append(f"{candidate.name}: {type(error).__name__}")
+            continue
+        if not isinstance(checkpoint, dict):
+            raise ValueError("checkpoint payload is not a mapping")
+        return checkpoint, candidate
+    raise ValueError("no byte-verified recoverable checkpoint: " + "; ".join(failures))
 
 
 def _checkpoint_sha256(path: Path) -> str:
@@ -187,6 +233,8 @@ def _telemetry(device: torch.device, update: int, updates_per_second: float) -> 
         "updates_per_second": updates_per_second,
         "rss_bytes": process.memory_info().rss,
         "host_available_bytes": psutil.virtual_memory().available,
+        "io_read_bytes": process.io_counters().read_bytes,
+        "io_write_bytes": process.io_counters().write_bytes,
     }
     if device.type == "cuda":
         result.update(
@@ -196,6 +244,28 @@ def _telemetry(device: torch.device, update: int, updates_per_second: float) -> 
                 "cuda_max_allocated_bytes": torch.cuda.max_memory_allocated(device),
             }
         )
+        fields = ("utilization.gpu", "memory.used", "power.draw", "temperature.gpu")
+        try:
+            query = subprocess.run(
+                [
+                    "nvidia-smi",
+                    f"--id={device.index or 0}",
+                    "--query-gpu=" + ",".join(fields),
+                    "--format=csv,noheader,nounits",
+                ],
+                capture_output=True,
+                text=True,
+                timeout=2,
+                check=True,
+                creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
+            )
+            values = query.stdout.strip().split(",")
+            result["gpu_sensor_readings"] = {
+                field: float(value.strip()) if value.strip().replace(".", "", 1).isdigit() else None
+                for field, value in zip(fields, values, strict=True)
+            }
+        except (OSError, subprocess.SubprocessError, ValueError) as error:
+            result["gpu_sensor_error"] = f"{type(error).__name__}: {error}"
     return result
 
 
@@ -219,10 +289,12 @@ def train_raw_time_residual(
     config: RawTrainingConfig | None = None,
     resume: bool = False,
     stop_after_updates: int | None = None,
+    resource_check: Callable[[], None] | None = None,
 ) -> dict[str, Any]:
     """Train one arm/fold to the fixed endpoint; no outer data is accepted."""
 
     config = config or RawTrainingConfig()
+    configure_raw_runtime(device)
     rows = len(a5_state)
     if counts.shape != (rows, 2, 16, 2, 64, 64):
         raise ValueError("training counts are not row-aligned")
@@ -232,9 +304,6 @@ def train_raw_time_residual(
         raise ValueError("training mask/token metadata is not row-aligned")
     if len(supervision.target_phase) != rows:
         raise ValueError("training supervision is not row-aligned")
-    if device.type == "cuda":
-        torch.backends.cuda.matmul.allow_tf32 = False
-        torch.backends.cudnn.allow_tf32 = False
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
@@ -258,18 +327,52 @@ def train_raw_time_residual(
     progress_path = output_dir / "progress.jsonl"
     start_update = 0
     loss_history: list[dict[str, float | int]] = []
-    if checkpoint_path.is_file():
+    previous_path = checkpoint_path.with_suffix(checkpoint_path.suffix + ".previous")
+    if checkpoint_path.is_file() or previous_path.is_file():
         if not resume:
             raise FileExistsError("checkpoint exists but resume was not requested")
-        checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)
+        checkpoint, recovered_path = _recover_checkpoint(checkpoint_path)
         expected_identity = {**identity, "arm": arm, "seed": seed, "outer_fold": outer_fold}
         if checkpoint["identity"] != expected_identity or checkpoint["config"] != asdict(config):
             raise ValueError("Stage 64 checkpoint identity/config mismatch")
         if checkpoint["schedule_sha256"] != schedule_sha:
             raise ValueError("Stage 64 checkpoint schedule mismatch")
+        for name, expected in (
+            ("rate_mean", rate_mean),
+            ("rate_std", rate_std),
+            ("state_mean", state_mean),
+            ("state_std", state_std),
+        ):
+            if not np.array_equal(np.asarray(checkpoint[name]), np.asarray(expected)):
+                raise ValueError(f"Stage 64 checkpoint normalization mismatch: {name}")
+        saved_update = int(checkpoint["completed_updates"])
+        if (
+            not 0 <= saved_update <= config.updates
+            or checkpoint["next_schedule_index"] != saved_update
+            or checkpoint["scheduler"] != {"type": "constant", "last_update": saved_update}
+            or len(checkpoint["loss_history"]) != saved_update
+            or checkpoint["initialization_sha256"] != init_sha
+        ):
+            raise ValueError("Stage 64 checkpoint update/RNG schedule state is inconsistent")
         model.load_state_dict(checkpoint["model"])
         optimizer.load_state_dict(checkpoint["optimizer"])
         _restore_rng(checkpoint["rng"])
+        if recovered_path != checkpoint_path:
+            # Preserve the defective latest bytes and the verified previous checkpoint.
+            if checkpoint_path.exists():
+                checkpoint_path.replace(output_dir / f"corrupt_checkpoint_{time.time_ns()}.pt")
+            _atomic_torch_save(checkpoint_path, checkpoint)
+            with (output_dir / "recovery.jsonl").open("a", encoding="utf-8") as stream:
+                stream.write(
+                    json.dumps(
+                        {
+                            "recovered_from": str(recovered_path),
+                            "sha256": _checkpoint_sha256(recovered_path),
+                            "completed_updates": saved_update,
+                        }
+                    )
+                    + "\n"
+                )
         start_update = int(checkpoint["completed_updates"])
         loss_history = list(checkpoint["loss_history"])
         if progress_path.is_file():
@@ -298,9 +401,51 @@ def train_raw_time_residual(
     last_telemetry = 0.0
     began = time.perf_counter()
     endpoint_update = config.updates if stop_after_updates is None else int(stop_after_updates)
-    if not start_update < endpoint_update <= config.updates:
-        raise ValueError("stop_after_updates must advance within the frozen total budget")
+    if not start_update <= endpoint_update <= config.updates or endpoint_update <= 0:
+        raise ValueError("stop_after_updates must stay within the frozen total budget")
+
+    def save_progress(completed: int) -> None:
+        checkpoint = {
+            "model": model.state_dict(),
+            "optimizer": optimizer.state_dict(),
+            "scheduler": {"type": "constant", "last_update": completed},
+            "rng": _rng_state(),
+            "completed_updates": completed,
+            "next_schedule_index": completed,
+            "schedule_sha256": schedule_sha,
+            "identity": {**identity, "arm": arm, "seed": seed, "outer_fold": outer_fold},
+            "config": asdict(config),
+            "rate_mean": np.asarray(rate_mean),
+            "rate_std": np.asarray(rate_std),
+            "state_mean": state_mean,
+            "state_std": state_std,
+            "initialization_sha256": init_sha,
+            "loss_history": loss_history,
+        }
+        _atomic_torch_save(checkpoint_path, checkpoint)
+
     for update in range(start_update, endpoint_update):
+        if resource_check is not None:
+            try:
+                resource_check()
+            except TimeoutError as error:
+                save_progress(update)
+                (output_dir / "RESOURCE_BLOCKED.json").write_text(
+                    json.dumps(
+                        {
+                            "status": "RESOURCE_BLOCKED",
+                            "completed_updates": update,
+                            "fixed_final_updates": config.updates,
+                            "checkpoint_sha256": _checkpoint_sha256(checkpoint_path),
+                            "scientific_final": False,
+                            "reason": str(error),
+                        },
+                        indent=2,
+                    )
+                    + "\n",
+                    encoding="utf-8",
+                )
+                raise
         optimizer.zero_grad(set_to_none=True)
         batch_indices = schedule[update]
         update_loss = 0.0
@@ -358,24 +503,7 @@ def train_raw_time_residual(
                 stream.write(json.dumps(_telemetry(device, update + 1, rate)) + "\n")
             last_telemetry = now
         if (update + 1) % config.checkpoint_interval == 0 or update + 1 == endpoint_update:
-            checkpoint = {
-                "model": model.state_dict(),
-                "optimizer": optimizer.state_dict(),
-                "scheduler": {"type": "constant", "last_update": update + 1},
-                "rng": _rng_state(),
-                "completed_updates": update + 1,
-                "next_schedule_index": update + 1,
-                "schedule_sha256": schedule_sha,
-                "identity": {**identity, "arm": arm, "seed": seed, "outer_fold": outer_fold},
-                "config": asdict(config),
-                "rate_mean": np.asarray(rate_mean),
-                "rate_std": np.asarray(rate_std),
-                "state_mean": state_mean,
-                "state_std": state_std,
-                "initialization_sha256": init_sha,
-                "loss_history": loss_history,
-            }
-            _atomic_torch_save(checkpoint_path, checkpoint)
+            save_progress(update + 1)
     checkpoint_sha = _checkpoint_sha256(checkpoint_path)
     frozen = endpoint_update == config.updates
     manifest = {
@@ -390,6 +518,7 @@ def train_raw_time_residual(
         "checkpoint_sha256": checkpoint_sha,
         "initialization_sha256": init_sha,
         "schedule_sha256": schedule_sha,
+        "identity": {**identity, "arm": arm, "seed": seed, "outer_fold": outer_fold},
         "normalization": {
             "rate_mean": np.asarray(rate_mean).tolist(),
             "rate_std": np.asarray(rate_std).tolist(),
@@ -400,6 +529,7 @@ def train_raw_time_residual(
         "outer_evaluation_opened": False,
     }
     manifest_name = "frozen_manifest.json" if frozen else "checkpoint_manifest.json"
+    manifest = sign_artifact(manifest)
     (output_dir / manifest_name).write_text(
         json.dumps(manifest, indent=2, sort_keys=True, allow_nan=False) + "\n", encoding="utf-8"
     )
@@ -412,12 +542,37 @@ def load_frozen_raw_endpoint(
     """Load a fixed-update endpoint only after its manifest hash check."""
 
     manifest = json.loads((path / "frozen_manifest.json").read_text(encoding="utf-8"))
-    checkpoint_path = Path(str(manifest["checkpoint_path"]))
+    if not verify_artifact_hash(manifest):
+        raise ValueError("Stage 64 endpoint manifest canonical hash mismatch")
+    checkpoint_path = Path(str(manifest["checkpoint_path"])).resolve(strict=True)
+    if checkpoint_path != (path / "checkpoint_last.pt").resolve(strict=True):
+        raise ValueError("Stage 64 endpoint checkpoint path identity mismatch")
     if manifest.get("status") != "frozen" or manifest.get("completed_updates") != 3000:
         raise ValueError("Stage 64 endpoint is not the fixed update3000 checkpoint")
     if _checkpoint_sha256(checkpoint_path) != manifest["checkpoint_sha256"]:
         raise ValueError("Stage 64 frozen checkpoint SHA mismatch")
-    checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)
+    if checkpoint_path.stat().st_size != manifest["checkpoint_bytes"]:
+        raise ValueError("Stage 64 frozen checkpoint size mismatch")
+    checkpoint = torch.load(checkpoint_path, map_location="cpu", weights_only=False)
+    for name in ("identity", "config", "initialization_sha256", "schedule_sha256"):
+        if checkpoint[name] != manifest[name]:
+            raise ValueError(f"Stage 64 frozen checkpoint/manifest mismatch: {name}")
+    if (
+        checkpoint["completed_updates"] != 3000
+        or checkpoint["next_schedule_index"] != 3000
+        or checkpoint["config"]["updates"] != 3000
+        or checkpoint["scheduler"] != {"type": "constant", "last_update": 3000}
+        or len(checkpoint["loss_history"]) != 3000
+    ):
+        raise ValueError("Stage 64 frozen checkpoint update schedule mismatch")
+    for name in ("arm", "seed", "outer_fold"):
+        if checkpoint["identity"][name] != manifest[name]:
+            raise ValueError(f"Stage 64 frozen endpoint identity mismatch: {name}")
+    for name, value in manifest["normalization"].items():
+        if not np.array_equal(np.asarray(checkpoint[name]), np.asarray(value)):
+            raise ValueError(f"Stage 64 frozen endpoint normalization mismatch: {name}")
+    if any(not bool(torch.isfinite(value).all()) for value in checkpoint["model"].values()):
+        raise ValueError("Stage 64 frozen endpoint has non-finite parameters")
     model = RawTimeResidual().to(device)
     model.load_state_dict(checkpoint["model"])
     model.eval()

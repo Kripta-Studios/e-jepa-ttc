@@ -154,7 +154,7 @@ def _raw_unavailable_result(
         "crossfitted_state_manifest": {},
         "a5_replay": {"passed": False, "not_run_reason": "raw unavailable"},
         "support_readiness": {"passed": False, "not_run_reason": "raw unavailable"},
-        "forbidden_paths_opened": False,
+        "forbidden_paths_opened": None,
         "labels_in_raw_binding_or_cache": False,
         "elapsed_seconds": 0.0,
         "disk_free_bytes": shutil.disk_usage(output_root).free,
@@ -165,10 +165,21 @@ def _raw_unavailable_result(
 
 
 def run(args: argparse.Namespace) -> dict[str, Any]:
+    from e_jepa_ttc.training.campaign_budget import CampaignBudget, check_resource_margins
+
     repo = Path(__file__).resolve().parents[1]
     began = time.perf_counter()
     stage_root = args.output_root / "stage63"
     stage_root.mkdir(parents=True, exist_ok=args.resume)
+    if args.max_hours != 12.0:
+        raise ValueError("Stage63 budget differs from the authorized twelve-hour cap")
+    budget = CampaignBudget(args.output_root / "budgets/stage63.json", hours=12.0)
+
+    def resource_check() -> None:
+        budget.check()
+        check_resource_margins(args.output_root)
+
+    resource_check()
     raw_cache_root = args.output_root / "raw_temporal_cache"
     state_root = args.output_root / "crossfitted_a5_state"
     source_root = _stage61_artifact_root(args.stage61_worktree)
@@ -182,7 +193,12 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             output_root=args.output_root,
             reason="authorized raw train root or train.parquet is physically unavailable",
         )
-    access = ReadOnlyTrainAccess(args.raw_train_root, args.train_parquet)
+    access = ReadOnlyTrainAccess(
+        args.raw_train_root,
+        args.train_parquet,
+        journal_path=stage_root / "READ_ACCESS_JOURNAL.jsonl",
+        resource_check=resource_check,
+    )
     try:
         binding, binding_manifest = build_raw_window_bindings(
             stage_metadata_path=stage_metadata,
@@ -225,6 +241,8 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             / "results"
             / "router",
             output_root=state_root,
+            coherent_state_root=args.coherent_a5_root,
+            frozen_teacher_audit_path=args.frozen_teacher_audit,
         )
     cache_manifest = build_raw_temporal_cache(
         binding=binding,
@@ -321,7 +339,8 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             "outer_train": support_details,
             "passed": support_passed,
         },
-        "forbidden_paths_opened": False,
+        "forbidden_paths_opened": None,
+        "access_audit": access.audit_summary(),
         "labels_in_raw_binding_or_cache": False,
         "elapsed_seconds": time.perf_counter() - began,
         "disk_free_bytes": shutil.disk_usage(args.output_root).free,
@@ -338,9 +357,38 @@ def main() -> None:
     parser.add_argument("--raw-train-root", type=Path, required=True)
     parser.add_argument("--train-parquet", type=Path, required=True)
     parser.add_argument("--output-root", type=Path, required=True)
+    parser.add_argument("--coherent-a5-root", type=Path, required=True)
+    parser.add_argument("--frozen-teacher-audit", type=Path, required=True)
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--max-hours", type=float, default=12.0)
-    result = run(parser.parse_args())
+    from e_jepa_ttc.artifacts.campaign_session import CampaignLock, append_transition
+
+    args = parser.parse_args()
+    args.output_root.mkdir(parents=True, exist_ok=True)
+    with CampaignLock(args.output_root / "CAMPAIGN_LOCK.json"):
+        source_files = [
+            Path(__file__),
+            _REPOSITORY_ROOT / "src/e_jepa_ttc/data/raw_temporal_cache.py",
+            _REPOSITORY_ROOT / "src/e_jepa_ttc/data/raw_event_binding.py",
+            _REPOSITORY_ROOT / "src/e_jepa_ttc/data/crossfitted_a5_state.py",
+        ]
+        source_hashes = {str(path): sha256_file(path) for path in source_files}
+        append_transition(
+            args.output_root / "RUN_LEDGER.jsonl",
+            "stage63_raw_audit_running",
+            implementation_source_sha256=source_hashes,
+            python=sys.version,
+            resume=args.resume,
+        )
+        result = run(args)
+        if source_hashes != {str(path): sha256_file(path) for path in source_files}:
+            raise ValueError("Stage63 source code changed during the physical audit")
+        append_transition(
+            args.output_root / "RUN_LEDGER.jsonl",
+            "stage63_raw_audit_completed",
+            decision=result["decision"],
+            implementation_unchanged=True,
+        )
     print(json.dumps({"decision": result["decision"], "training_ready": result["training_ready"]}))
 
 

@@ -11,6 +11,7 @@ import hashlib
 import json
 import os
 import time
+from collections.abc import Callable
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, Literal, cast
@@ -38,12 +39,19 @@ EXPECTED_SEQUENCES = frozenset(
 _H5_KEYS = ("events/x", "events/y", "events/t", "events/p", "ms_to_idx")
 
 
-def sha256_file(path: Path, *, chunk_bytes: int = 16 * 1024 * 1024) -> str:
+def sha256_file(
+    path: Path,
+    *,
+    chunk_bytes: int = 16 * 1024 * 1024,
+    resource_check: Callable[[], None] | None = None,
+) -> str:
     """Return the complete SHA-256 of *path* without loading it into memory."""
 
     digest = hashlib.sha256()
     with path.open("rb") as stream:
         for chunk in iter(lambda: stream.read(chunk_bytes), b""):
+            if resource_check is not None:
+                resource_check()
             digest.update(chunk)
     return digest.hexdigest()
 
@@ -69,12 +77,26 @@ class AccessRecord:
 class ReadOnlyTrainAccess:
     """Canonical-path allowlist and append-only access ledger for official-train data."""
 
-    def __init__(self, raw_train_root: Path, train_parquet: Path) -> None:
+    def __init__(
+        self,
+        raw_train_root: Path,
+        train_parquet: Path,
+        *,
+        journal_path: Path | None = None,
+        resource_check: Callable[[], None] | None = None,
+    ) -> None:
         self.raw_train_root = raw_train_root.resolve(strict=True)
         self.train_parquet = train_parquet.resolve(strict=True)
         if not self.raw_train_root.is_dir() or not self.train_parquet.is_file():
             raise ValueError("raw train root and train parquet must exist")
         self._records: list[AccessRecord] = []
+        self.resource_check = resource_check
+        self.journal_path = journal_path
+        if journal_path is not None:
+            journal_path.parent.mkdir(parents=True, exist_ok=True)
+            if journal_path.is_file():
+                for line in journal_path.read_text(encoding="utf-8").splitlines():
+                    self._records.append(AccessRecord(**json.loads(line)))
 
     @property
     def records(self) -> tuple[AccessRecord, ...]:
@@ -85,9 +107,22 @@ class ReadOnlyTrainAccess:
     def _record(
         self, path: Path, purpose: str, byte_start: int | None = None, byte_stop: int | None = None
     ) -> None:
-        self._records.append(
-            AccessRecord(str(path), purpose, byte_start, byte_stop, time.time_ns())
+        if self.resource_check is not None:
+            self.resource_check()
+        resolved = path.resolve(strict=True)
+        allowed = resolved == self.train_parquet or any(
+            resolved == (self.raw_train_root / sequence / "events.h5").resolve()
+            for sequence in EXPECTED_SEQUENCES
         )
+        if not allowed:
+            raise ValueError(f"physical read is outside the authorized allowlist: {resolved}")
+        record = AccessRecord(str(resolved), purpose, byte_start, byte_stop, time.time_ns())
+        if self.journal_path is not None:
+            with self.journal_path.open("a", encoding="utf-8") as stream:
+                stream.write(json.dumps(asdict(record), sort_keys=True) + "\n")
+                stream.flush()
+                os.fsync(stream.fileno())
+        self._records.append(record)
 
     def parquet_path(self, purpose: str) -> Path:
         """Return the sole authorized parquet path and record the intended read."""
@@ -123,9 +158,31 @@ class ReadOnlyTrainAccess:
 
         path.parent.mkdir(parents=True, exist_ok=True)
         with path.open("w", encoding="utf-8", newline="") as stream:
-            writer = csv.DictWriter(stream, fieldnames=list(asdict(self._records[0]).keys()))
+            writer = csv.DictWriter(stream, fieldnames=list(AccessRecord.__dataclass_fields__))
             writer.writeheader()
             writer.writerows(asdict(item) for item in self._records)
+
+    def audit_summary(self) -> dict[str, Any]:
+        """Assess recorded reads without claiming observation of other process I/O."""
+        allowed = {str(self.train_parquet)} | {
+            str((self.raw_train_root / sequence / "events.h5").resolve())
+            for sequence in EXPECTED_SEQUENCES
+        }
+        violations = sorted({record.path for record in self._records} - allowed)
+        return {
+            "recorded_reads": len(self._records),
+            "recorded_policy_violations": violations,
+            "recorded_paths_pass_policy": not violations,
+            "durable_journal": self.journal_path is not None,
+            "journal_sha256": (
+                sha256_file(self.journal_path)
+                if self.journal_path is not None and self.journal_path.is_file()
+                else None
+            ),
+            "scope": "reads_requested_through_ReadOnlyTrainAccess",
+            "exhaustive_process_access_audit": False,
+            "historical_unjournaled_attempts": "not_proven_by_this_journal",
+        }
 
 
 @dataclass(frozen=True)
@@ -267,12 +324,16 @@ def _polarity_encoding(dataset: h5py.Dataset) -> Literal["zero_one", "signed"]:
 
 
 def _stable_file_hashes(
-    event_paths: dict[str, Path], progress_path: Path | None = None
+    event_paths: dict[str, Path],
+    progress_path: Path | None = None,
+    resource_check: Callable[[], None] | None = None,
 ) -> dict[str, dict[str, Any]]:
     progress: dict[str, dict[str, Any]] = {}
     if progress_path is not None and progress_path.is_file():
         progress = json.loads(progress_path.read_text(encoding="utf-8"))
     for sequence_id, path in sorted(event_paths.items()):
+        if resource_check is not None:
+            resource_check()
         before = path.stat()
         prior = progress.get(sequence_id)
         if (
@@ -281,7 +342,7 @@ def _stable_file_hashes(
             and prior.get("mtime_ns") == before.st_mtime_ns
         ):
             continue
-        digest = sha256_file(path)
+        digest = sha256_file(path, resource_check=resource_check)
         after = path.stat()
         if (before.st_size, before.st_mtime_ns) != (after.st_size, after.st_mtime_ns):
             raise RuntimeError(f"HDF5 changed while hashing: {path}")
@@ -344,7 +405,7 @@ def build_raw_window_bindings(
         prior = event_paths.setdefault(sequence, path)
         if prior != path:
             raise ValueError(f"sequence maps to multiple HDF5 files: {sequence}")
-    hashes = _stable_file_hashes(event_paths, hash_progress_path)
+    hashes = _stable_file_hashes(event_paths, hash_progress_path, access.resource_check)
 
     file_info: dict[str, dict[str, Any]] = {}
     handles: dict[str, h5py.File] = {}
@@ -484,7 +545,8 @@ def build_raw_window_bindings(
             "canvas": [64, 64],
             "event_x_offset_px": 5.0,
         },
-        "forbidden_paths_opened": False,
+        "forbidden_paths_opened": None,
+        "recorded_access_assessment": access.audit_summary(),
         "targets_in_binding": False,
     }
     return frame, manifest

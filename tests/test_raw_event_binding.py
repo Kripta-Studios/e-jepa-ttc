@@ -15,7 +15,7 @@ from e_jepa_ttc.data.raw_event_binding import (
     exact_window_bounds,
     select_hash_probe_tokens,
 )
-from e_jepa_ttc.data.raw_temporal_cache import rasterize_bound_window
+from e_jepa_ttc.data.raw_temporal_cache import rasterize_bound_window, temporal_bin_edges
 
 
 def _event_file(path: Path, *, external: bool = False) -> None:
@@ -139,3 +139,81 @@ def test_rasterization_is_half_open_and_polarity_safe() -> None:
     assert roi == 2
     assert counts[0, 0, 0, 0] == 1
     assert counts[15, 1, 1, 1] == 1
+
+
+@pytest.mark.parametrize("duration", [16, 17, 31, 100001, 100003])
+def test_every_integer_boundary_uses_the_stored_bin_duration(duration: int) -> None:
+    start = 9_000_000_000
+    edges = temporal_bin_edges(start, start + duration)
+    binding = pd.Series(
+        {
+            "event_x_offset_px": 0.0,
+            "polarity_encoding": "signed",
+            "window_start_us": start,
+            "window_end_us": start + duration,
+            "roi_x0": 0.0,
+            "roi_y0": 0.0,
+            "roi_x1": 64.0,
+            "roi_y1": 64.0,
+        }
+    )
+    # Both ends of every nonempty half-open bin must map to that same bin.
+    for expected_bin in range(16):
+        timestamps = np.array([edges[expected_bin], edges[expected_bin + 1] - 1])
+        counts, accepted = rasterize_bound_window(
+            x=np.zeros(2),
+            y=np.zeros(2),
+            t_us=timestamps,
+            polarity=np.ones(2, dtype=np.int8),
+            binding=binding,
+        )
+        assert accepted == 2
+        assert counts[expected_bin, 1, 0, 0] == 2
+        assert counts.sum() == 2
+    assert np.diff(edges).sum() == duration
+    with pytest.raises(ValueError, match="half-open"):
+        rasterize_bound_window(
+            x=np.zeros(1),
+            y=np.zeros(1),
+            t_us=edges[-1:],
+            polarity=np.ones(1, dtype=np.int8),
+            binding=binding,
+        )
+
+
+def test_raw16_rejects_zero_width_temporal_bins() -> None:
+    with pytest.raises(ValueError, match="16 microseconds"):
+        temporal_bin_edges(0, 15)
+
+
+def test_access_journal_survives_reader_recreation(tmp_path: Path) -> None:
+    root = tmp_path / "train"
+    root.mkdir()
+    parquet = tmp_path / "train.parquet"
+    pd.DataFrame({"sequence_id": []}).to_parquet(parquet)
+    journal = tmp_path / "reads.jsonl"
+    first = ReadOnlyTrainAccess(root, parquet, journal_path=journal)
+    first.parquet_path("attempt_one")
+    second = ReadOnlyTrainAccess(root, parquet, journal_path=journal)
+    second.parquet_path("attempt_two")
+    assert [record.purpose for record in second.records] == ["attempt_one", "attempt_two"]
+    audit = second.audit_summary()
+    assert audit["recorded_reads"] == 2
+    assert audit["recorded_paths_pass_policy"]
+    assert not audit["exhaustive_process_access_audit"]
+    assert audit["journal_sha256"]
+
+
+def test_torn_access_journal_cannot_be_reported_as_complete(tmp_path: Path) -> None:
+    root = tmp_path / "train"
+    root.mkdir()
+    parquet = tmp_path / "train.parquet"
+    pd.DataFrame({"sequence_id": []}).to_parquet(parquet)
+    journal = tmp_path / "reads.jsonl"
+    reader = ReadOnlyTrainAccess(root, parquet, journal_path=journal)
+    reader.parquet_path("completed_record")
+    prior = journal.read_bytes()
+    journal.write_bytes(prior + b'{"path":')
+    with pytest.raises(ValueError):
+        ReadOnlyTrainAccess(root, parquet, journal_path=journal)
+    assert journal.read_bytes() == prior + b'{"path":'

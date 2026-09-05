@@ -10,9 +10,17 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
+import torch
+import yaml
 
+from e_jepa_ttc.artifacts.cache_components import component_record, verify_components
 from e_jepa_ttc.artifacts.hashing import compute_file_hash, verify_artifact_hash
 from e_jepa_ttc.artifacts.stage63_65 import sign_stage63_65_artifact
+from e_jepa_ttc.data.nested_provenance import (
+    validate_frozen_teacher_dependency,
+    validate_nested_split,
+    validate_uninitialized_producer_contract,
+)
 from e_jepa_ttc.data.stage61_pair_feature_cache import load_feature_cache
 
 
@@ -32,7 +40,12 @@ def _read_signed_artifact(path: Path) -> dict[str, Any]:
 
 
 def _producer_state(
-    *, feature_cache_base: Path, expert_root: Path, expected_role: str
+    *,
+    feature_cache_base: Path,
+    expert_root: Path,
+    expected_role: str,
+    coherent_state_root: Path | None = None,
+    frozen_teacher_audit: dict[str, Any] | None = None,
 ) -> tuple[pd.DataFrame, np.ndarray, dict[str, Any]]:
     arrays, metadata, cache_manifest = load_feature_cache(feature_cache_base.with_suffix(".npz"))
     artifact = _read_signed_artifact(expert_root / "expert_artifact.json")
@@ -44,11 +57,43 @@ def _producer_state(
     expected_checkpoint = str(artifact["checkpoint"]["sha256"])
     if compute_file_hash(str(checkpoint)) != expected_checkpoint:
         raise ValueError(f"A5 checkpoint SHA mismatch: {checkpoint}")
+    if (
+        compute_file_hash(str(expert_root / "nested_protocol.json"))
+        != artifact["nested_contract"]["sha256"]
+    ):
+        raise ValueError("A5 producer nested contract file hash mismatch")
     if cache_manifest["identity"]["a5_checkpoint_sha256"] != expected_checkpoint:
         raise ValueError("feature cache and A5 expert use different producer checkpoints")
     if artifact.get("role") != expected_role or artifact.get("expert") != "A5":
         raise ValueError("A5 expert role mismatch")
     oof = pd.read_csv(oof_path, dtype={"token_id": str, "sequence_id": str, "track_id": str})
+    effective_path = expert_root / "train" / "effective_config.yaml"
+    source_config_path = expert_root / "effective_config.yaml"
+    if set(oof["config_sha256"].astype(str)) != {compute_file_hash(str(source_config_path))}:
+        raise ValueError("A5 OOF rows do not bind the producer input configuration")
+    checkpoint_payload = torch.load(checkpoint, map_location="cpu", weights_only=False)
+    validate_uninitialized_producer_contract(
+        checkpoint_payload,
+        yaml.safe_load(source_config_path.read_text(encoding="utf-8")),
+        protocol,
+    )
+    initialization_validation = validate_uninitialized_producer_contract(
+        checkpoint_payload,
+        yaml.safe_load(effective_path.read_text(encoding="utf-8")),
+        protocol,
+    )
+    outer_fold = int(cache_manifest["identity"]["outer_fold"])
+    inner_fold = cache_manifest["identity"]["inner_fold"]
+    canonical = pd.read_csv(
+        feature_cache_base.parent / f"outer{outer_fold}_final.metadata.csv",
+        dtype={"sample_token": str, "sequence_id": str, "track_id": str},
+    )
+    nested_validation = validate_nested_split(
+        protocol, artifact, canonical, oof, outer_fold=outer_fold, inner_fold=inner_fold
+    )
+    if frozen_teacher_audit is not None:
+        validate_frozen_teacher_dependency(initialization_validation, frozen_teacher_audit)
+        nested_validation["ancestry_validated"] = True
     if bool(oof["token_id"].duplicated().any()) or not bool(
         np.asarray(oof["finite"].astype(bool)).all()
     ):
@@ -103,6 +148,38 @@ def _producer_state(
             "policy": "dense_replay_is_authoritative_for_outer_final",
         }
     state = np.column_stack((phase, log_variance, support)).astype(np.float32)
+    coherent_manifest: dict[str, Any] | None = None
+    if coherent_state_root is not None:
+        coherent_root = coherent_state_root / feature_cache_base.name
+        coherent_manifest = _read_signed_artifact(coherent_root / "manifest.json")
+        if (
+            coherent_manifest.get("artifact_type") != "coherent_frozen_a5_state_v2"
+            or coherent_manifest.get("checkpoint_sha256") != expected_checkpoint
+            or coherent_manifest.get("all_components_same_forward") is not True
+            or coherent_manifest.get("exact_feature_phase_support_replay") is not True
+            or coherent_manifest.get("producer") != feature_cache_base.name
+        ):
+            raise ValueError("coherent A5 replay producer identity mismatch")
+        verify_components(
+            coherent_root, coherent_manifest["components"], {"state.npy", "metadata.csv"}
+        )
+        coherent_metadata = pd.read_csv(coherent_root / "metadata.csv")
+        for column in ("sample_token", "sequence_id", "track_id", "outer_fold"):
+            if (
+                coherent_metadata[column].astype(str).tolist()
+                != metadata[column].astype(str).tolist()
+            ):
+                raise ValueError(f"coherent A5 replay metadata mismatch: {column}")
+        coherent_values = np.load(coherent_root / "state.npy", allow_pickle=False)
+        if coherent_values.shape != (len(metadata), 3) or coherent_values.dtype != np.float32:
+            raise ValueError("coherent A5 replay layout mismatch")
+        state = coherent_values[cache_indices]
+        if not np.array_equal(state[:, 0], phase) or not np.array_equal(state[:, 2], support):
+            raise ValueError("coherent A5 replay does not reproduce the stored phase/support")
+        if dense_replay is not None and not np.array_equal(state[:, 1], log_variance):
+            raise ValueError(
+                "coherent A5 outer-final uncertainty does not reproduce its dense source"
+            )
     if not np.isfinite(state).all():
         raise ValueError("A5 state is not finite")
     identity = pd.DataFrame(
@@ -131,6 +208,10 @@ def _producer_state(
         "rows": len(identity),
         "sequence_ids": sorted(identity["sequence_id"].unique()),
         "nested_checks": protocol.get("checks", {}),
+        "nested_relationship_validation": nested_validation,
+        "initialization_relationship_validation": initialization_validation,
+        "producer_input_config_sha256": compute_file_hash(str(source_config_path)),
+        "trainer_effective_config_sha256": compute_file_hash(str(effective_path)),
         "state_component_sources": {
             "phase": "stage61_feature_cache.a5_phase",
             "log_variance": (
@@ -141,7 +222,15 @@ def _producer_state(
             "support": "stage61_feature_cache.pair_features[-2]",
         },
         "dense_replay_reconciliation": dense_replay,
+        "scientific_state_accepted": coherent_manifest is not None,
+        "coherent_replay": coherent_manifest,
+        "frozen_teacher_dependency_audit": frozen_teacher_audit,
     }
+    if coherent_state_root is not None:
+        provenance["state_component_sources"] = {
+            component: str(coherent_state_root / feature_cache_base.name / "state.npy")
+            for component in ("phase", "log_variance", "support")
+        }
     return identity, state, provenance
 
 
@@ -150,12 +239,22 @@ def build_crossfitted_a5_states(
     feature_cache_root: Path,
     router_root: Path,
     output_root: Path,
+    coherent_state_root: Path,
+    frozen_teacher_audit_path: Path,
 ) -> dict[str, Any]:
     """Create inner-OOF train and outer-final eval states for all outer folds."""
 
+    frozen_teacher_audit = _read_signed_artifact(frozen_teacher_audit_path)
+    teacher_manifest_path = Path(frozen_teacher_audit["teacher_manifest_path"])
+    if (
+        compute_file_hash(str(teacher_manifest_path))
+        != frozen_teacher_audit["teacher_manifest_sha256"]
+    ):
+        raise ValueError("frozen teacher manifest changed since its dependency audit")
     output_root.mkdir(parents=True, exist_ok=False)
     manifest: dict[str, Any] = {
         "artifact_type": "scientific_recovery_v9_crossfitted_a5_state_v1",
+        "provenance_version": "coherent_nested_v2",
         "state_order": ["benchmark_phase", "log_variance", "sensor_support"],
         "contains_targets": False,
         "outer_folds": {},
@@ -170,6 +269,8 @@ def build_crossfitted_a5_states(
                 feature_cache_base=feature_cache_root / f"outer{outer}_inner{inner}",
                 expert_root=router_root / f"outer_fold{outer}_seed7" / "a5" / f"inner{inner}",
                 expected_role="inner_oof",
+                coherent_state_root=coherent_state_root,
+                frozen_teacher_audit=frozen_teacher_audit,
             )
             if not bool(np.asarray(identity["source_inner_fold"] == inner).all()):
                 raise ValueError("inner-fold label disagrees with producer path")
@@ -194,6 +295,8 @@ def build_crossfitted_a5_states(
             feature_cache_base=feature_cache_root / f"outer{outer}_final",
             expert_root=router_root / f"outer_fold{outer}_seed7" / "a5" / "outer_dev",
             expected_role="outer_dev",
+            coherent_state_root=coherent_state_root,
+            frozen_teacher_audit=frozen_teacher_audit,
         )
         if not bool(np.asarray(eval_meta["outer_fold"] == outer).all()):
             raise ValueError("outer-final evaluation rows contain a non-dev sequence")
@@ -220,6 +323,15 @@ def build_crossfitted_a5_states(
         train_meta.to_csv(fold_root / "train_metadata.csv", index=False, lineterminator="\n")
         eval_meta.to_csv(fold_root / "eval_metadata.csv", index=False, lineterminator="\n")
         manifest["outer_folds"][str(outer)] = {
+            "components": {
+                name: component_record(fold_root / name)
+                for name in (
+                    "train_state.npy",
+                    "eval_state.npy",
+                    "train_metadata.csv",
+                    "eval_metadata.csv",
+                )
+            },
             "train_rows": len(train_meta),
             "eval_rows": len(eval_meta),
             "train_tokens_sha256": hashlib.sha256(
@@ -245,11 +357,38 @@ def load_a5_state_split(root: Path, outer_fold: int, role: str) -> A5StateSplit:
     if role not in {"train", "eval"}:
         raise ValueError("A5 state role must be train or eval")
     manifest = json.loads((root / "manifest.json").read_text(encoding="utf-8"))
+    if manifest.get("provenance_version") != "coherent_nested_v2":
+        raise ValueError("legacy/hybrid A5 states cannot authorize the corrected campaign")
+    for fold_record in manifest["outer_folds"].values():
+        for producer in [*fold_record["inner_producers"], fold_record["outer_producer"]]:
+            if (
+                producer.get("scientific_state_accepted") is not True
+                or producer.get("nested_relationship_validation", {}).get("ancestry_validated")
+                is not True
+            ):
+                raise ValueError("A5 producer lacks coherent state or verified nested ancestry")
     if not verify_artifact_hash(manifest):
         raise ValueError("cross-fitted A5 state manifest signature mismatch")
     fold = root / f"outer{outer_fold}"
+    fold_manifest = manifest["outer_folds"][str(outer_fold)]
+    verify_components(
+        fold,
+        fold_manifest.get("components", {}),
+        {
+            "train_state.npy",
+            "eval_state.npy",
+            "train_metadata.csv",
+            "eval_metadata.csv",
+        },
+    )
     state = np.load(fold / f"{role}_state.npy")
     metadata = pd.read_csv(fold / f"{role}_metadata.csv", dtype={"sample_token": str})
+    tokens = metadata["sample_token"].astype(str)
+    if tokens.duplicated().any() or not tokens.is_monotonic_increasing:
+        raise ValueError("A5 state token order is not unique and canonical")
+    token_hash = hashlib.sha256("\n".join(tokens).encode("utf-8")).hexdigest()
+    if token_hash != fold_manifest[f"{role}_tokens_sha256"]:
+        raise ValueError("A5 state token identity mismatch")
     if state.shape != (len(metadata), 3) or not np.isfinite(state).all():
         raise ValueError("A5 state split is invalid")
     return A5StateSplit(state.astype(np.float32, copy=False), metadata)

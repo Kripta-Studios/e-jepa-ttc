@@ -1,10 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema", "type": "object",
-  "required": ["artifact_type", "schema_version", "evidence_type", "code_commit", "protocol_version", "protocol_sha256", "created_at", "artifact_sha256", "status", "identity_sha256", "shape", "dtype", "counts", "tokens", "windows", "contains_targets"],
+  "required": ["artifact_type", "schema_version", "evidence_type", "code_commit", "protocol_version", "protocol_sha256", "created_at", "artifact_sha256", "status", "identity_sha256", "shape", "dtype", "counts", "tokens", "windows", "contains_targets", "temporal_binning_version", "components"],
   "properties": {
     "artifact_type": {"const": "scientific_recovery_v9_raw16_temporal_cache_v1"}, "schema_version": {"const": "1.0"}, "evidence_type": {"const": "physical_raw_cache"},
     "code_commit": {"type": "string"}, "protocol_version": {"type": "string"}, "protocol_sha256": {"type": "string"}, "created_at": {"type": "string"}, "artifact_sha256": {"type": "string"},
     "status": {"const": "completed"}, "identity_sha256": {"type": "string"}, "shape": {"const": [8192, 2, 16, 2, 64, 64]}, "dtype": {"enum": ["uint16", "uint32"]},
+    "temporal_binning_version": {"const": "raw16_floor_edges_searchsorted_v2"},
+    "components": {"type": "object", "minProperties": 6, "maxProperties": 6, "required": ["durations_s.npy", "times_scaled_0p1s.npy", "valid_patches.npy", "roi_event_counts.npy", "metadata.csv"], "additionalProperties": {"type": "object", "required": ["path", "bytes", "sha256"]}},
     "counts": {"type": "object"}, "tokens": {"const": 8192}, "windows": {"const": 16384}, "supported_tokens": {"type": "integer"}, "supported_fraction": {"type": "number"}, "empty_roi_windows": {"type": "integer"}, "roi_events": {"type": "integer"}, "read_probe": {"type": "object"}, "build_seconds_this_invocation": {"type": "number"}, "contains_targets": {"const": false}, "common_cache_for_all_arms": {"const": true}
   }, "additionalProperties": false
 }

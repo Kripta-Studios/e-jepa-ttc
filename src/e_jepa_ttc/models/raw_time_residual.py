@@ -91,7 +91,10 @@ class RawTimeResidual(nn.Module):
             nn.Conv2d(24, 32, 3, stride=2, padding=1),
             nn.GroupNorm(4, 32),
             nn.SiLU(),
-            nn.AdaptiveAvgPool2d((4, 4)),
+            # The fixed 64x64 input produces 8x8 here. Non-overlapping 2x2
+            # averaging is exactly the specified adaptive 8x8 -> 4x4 operator,
+            # and provides a deterministic CUDA backward.
+            nn.AvgPool2d(kernel_size=2, stride=2),
         )
         self.temporal = nn.Sequential(*(CausalTemporalBlock(32, d) for d in (1, 2, 4)))
         self.readout = nn.Sequential(nn.Linear(203, 64), nn.SiLU(), nn.Linear(64, 32), nn.SiLU())

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import pickle
+from collections.abc import Callable
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -105,7 +105,24 @@ class _TinyResidual(torch.nn.Module):
         )
 
 
-def _run_tiny_training(output: Path, *, resume: bool, stop_after: int | None) -> dict[str, object]:
+def test_fixed_pool_matches_prescribed_adaptive_pool_values_and_gradients() -> None:
+    values = torch.randn(3, 32, 8, 8, requires_grad=True)
+    fixed = torch.nn.functional.avg_pool2d(values, 2, 2)
+    adaptive = torch.nn.functional.adaptive_avg_pool2d(values, (4, 4))
+    torch.testing.assert_close(fixed, adaptive, rtol=0, atol=0)
+    upstream = torch.randn_like(fixed)
+    a = torch.autograd.grad(fixed, values, upstream, retain_graph=True)[0]
+    b = torch.autograd.grad(adaptive, values, upstream)[0]
+    torch.testing.assert_close(a, b, rtol=0, atol=0)
+
+
+def _run_tiny_training(
+    output: Path,
+    *,
+    resume: bool,
+    stop_after: int | None,
+    resource_check: Callable[[], None] | None = None,
+) -> dict[str, object]:
     rows = 64
     state_axis = np.linspace(-1.0, 1.0, rows, dtype=np.float32)
     state = np.column_stack((state_axis, state_axis**2, np.sin(state_axis))).astype(np.float32)
@@ -128,6 +145,7 @@ def _run_tiny_training(output: Path, *, resume: bool, stop_after: int | None) ->
         config=RawTrainingConfig(updates=10, checkpoint_interval=5),
         resume=resume,
         stop_after_updates=stop_after,
+        resource_check=resource_check,
     )
 
 
@@ -158,5 +176,121 @@ def test_resume_rejects_corrupt_checkpoint(tmp_path: Path, monkeypatch: pytest.M
     output = tmp_path / "corrupt"
     output.mkdir()
     (output / "checkpoint_last.pt").write_bytes(b"not a torch checkpoint")
-    with pytest.raises((pickle.UnpicklingError, RuntimeError, EOFError)):
+    with pytest.raises(ValueError, match="no byte-verified recoverable checkpoint"):
         _run_tiny_training(output, resume=True, stop_after=None)
+
+
+def test_resource_cap_saves_partial_not_final(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(training_module, "RawTimeResidual", _TinyResidual)
+    checks = 0
+
+    def check() -> None:
+        nonlocal checks
+        checks += 1
+        if checks == 4:
+            raise TimeoutError("fixture deadline")
+
+    output = tmp_path / "cap"
+    with pytest.raises(TimeoutError):
+        _run_tiny_training(output, resume=False, stop_after=None, resource_check=check)
+    checkpoint = torch.load(output / "checkpoint_last.pt", weights_only=False)
+    assert checkpoint["completed_updates"] == 3
+    assert not (output / "frozen_manifest.json").exists()
+    assert (output / "RESOURCE_BLOCKED.json").is_file()
+    assert (output / "checkpoint_last.pt.sha256").is_file()
+
+
+@pytest.mark.parametrize("missing", [False, True])
+def test_resume_recovers_verified_previous(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, missing: bool
+) -> None:
+    monkeypatch.setattr(training_module, "RawTimeResidual", _TinyResidual)
+    output = tmp_path / "recover"
+    _run_tiny_training(output, resume=False, stop_after=None)
+    original = torch.load(output / "checkpoint_last.pt", weights_only=False)
+    (output / "frozen_manifest.json").unlink()
+    if missing:
+        (output / "checkpoint_last.pt").unlink()
+    else:
+        (output / "checkpoint_last.pt").write_bytes(b"interrupted write")
+    _run_tiny_training(output, resume=True, stop_after=None)
+    restored = torch.load(output / "checkpoint_last.pt", weights_only=False)
+    assert restored["loss_history"] == original["loss_history"]
+    assert torch.equal(restored["model"]["weight"], original["model"]["weight"])
+    assert (output / "recovery.jsonl").is_file()
+
+
+def test_resume_rejects_changed_normalizer_with_valid_byte_receipt(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(training_module, "RawTimeResidual", _TinyResidual)
+    output = tmp_path / "normalizer"
+    _run_tiny_training(output, resume=False, stop_after=5)
+    checkpoint_path = output / "checkpoint_last.pt"
+    payload = torch.load(checkpoint_path, map_location="cpu", weights_only=False)
+    payload["state_mean"][0] += 0.5
+    training_module._atomic_torch_save(checkpoint_path, payload)
+    with pytest.raises(ValueError, match="normalization mismatch"):
+        _run_tiny_training(output, resume=True, stop_after=None)
+
+
+@pytest.mark.skipif(not torch.cuda.is_available(), reason="requires the campaign CUDA device")
+def test_real_cuda_model_resume_matches_full_optimizer_rng_and_schedule(tmp_path: Path) -> None:
+    rows = 64
+    axis = np.linspace(0.01, 0.03, rows, dtype=np.float32)
+    state = np.column_stack((axis, axis**2, np.sin(axis))).astype(np.float32)
+    counts = np.random.default_rng(72).integers(0, 3, size=(rows, 2, 16, 2, 64, 64), dtype=np.uint8)
+
+    def run(path: Path, resume: bool, stop: int | None) -> None:
+        train_raw_time_residual(
+            counts=counts,
+            durations_s=np.full((rows, 2, 16), 0.00625),
+            times=np.zeros((rows, 6), dtype=np.float32),
+            valid_patches=np.ones((rows, 16), dtype=bool),
+            a5_state=state,
+            sample_tokens=[f"cuda-token-{index}" for index in range(rows)],
+            supervision=TrainSupervision(axis + 0.001, np.full(rows, 1 / rows)),
+            rate_mean=np.zeros(2, dtype=np.float32),
+            rate_std=np.ones(2, dtype=np.float32),
+            arm="S64-RAW-L1",
+            seed=7,
+            outer_fold=0,
+            output_dir=path,
+            device=torch.device("cuda"),
+            identity={"fixture": "real-cuda-resume-v2"},
+            config=RawTrainingConfig(updates=10, checkpoint_interval=5),
+            resume=resume,
+            stop_after_updates=stop,
+        )
+
+    def equal(left: object, right: object) -> None:
+        if isinstance(left, torch.Tensor):
+            assert isinstance(right, torch.Tensor) and torch.equal(left, right)
+        elif isinstance(left, np.ndarray):
+            assert isinstance(right, np.ndarray) and np.array_equal(left, right)
+        elif isinstance(left, dict):
+            assert isinstance(right, dict) and left.keys() == right.keys()
+            for key in left:
+                equal(left[key], right[key])
+        elif isinstance(left, (tuple, list)):
+            assert isinstance(right, (tuple, list)) and len(left) == len(right)
+            for a, b in zip(left, right, strict=True):
+                equal(a, b)
+        else:
+            assert left == right
+
+    continuous, resumed = tmp_path / "continuous", tmp_path / "resumed"
+    run(continuous, False, None)
+    run(resumed, False, 5)
+    run(resumed, True, None)
+    a = torch.load(continuous / "checkpoint_last.pt", map_location="cpu", weights_only=False)
+    b = torch.load(resumed / "checkpoint_last.pt", map_location="cpu", weights_only=False)
+    equal(a, b)
+    # A completed checkpoint must regenerate its lost freeze marker without steps.
+    (resumed / "frozen_manifest.json").unlink()
+    run(resumed, True, None)
+    c = torch.load(resumed / "checkpoint_last.pt", map_location="cpu", weights_only=False)
+    equal(b, c)
+    assert (resumed / "frozen_manifest.json").is_file()
