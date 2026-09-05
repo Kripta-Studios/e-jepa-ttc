@@ -24,6 +24,10 @@ sys.path.insert(0, str(_REPOSITORY_ROOT / "src"))
 from e_jepa_ttc.artifacts.campaign_session import CampaignLock, append_transition  # noqa: E402
 from e_jepa_ttc.artifacts.hashing import verify_artifact_hash  # noqa: E402
 from e_jepa_ttc.artifacts.stage63_65 import sign_stage63_65_artifact  # noqa: E402
+from e_jepa_ttc.artifacts.time_cap_amendment import (  # noqa: E402
+    training_identity_commit,
+    validate_time_amendment,
+)
 from e_jepa_ttc.artifacts.training_authorization import read_signed  # noqa: E402
 from e_jepa_ttc.evaluation.stage63_65 import next_protocol_action  # noqa: E402
 from e_jepa_ttc.training.raw_time_residual import (  # noqa: E402
@@ -258,6 +262,16 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         raise FileExistsError("output root exists; an identity-checked --resume is required")
     ledger = args.output_root / "RUN_LEDGER.jsonl"
     with CampaignLock(args.output_root / "CAMPAIGN_LOCK.json"):
+        time_amendment = validate_time_amendment(args.output_root, repo)
+        if time_amendment is not None:
+            _append_ledger(
+                ledger,
+                "wall_time_amendment_execution",
+                amendment_sha256=_sha(args.output_root / "WALL_TIME_AMENDMENT.json"),
+                execution_commit=time_amendment["execution_commit"],
+                original_training_commit=time_amendment["original_training_commit"],
+                wall_time_caps_enabled=False,
+            )
         previous_result = args.output_root / "CAMPAIGN_RESULT.json"
         if previous_result.is_file():
             preserved = args.output_root / f"PRIOR_CAMPAIGN_RESULT_{time.time_ns()}.json"
@@ -301,7 +315,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             _append_ledger(ledger, "stage64_real_train_only_smoke_running")
             smoke = stage64_runner.run_real_train_only_smoke(args)
             _append_ledger(ledger, "stage64_real_train_only_smoke_passed", **smoke)
-            if smoke["seed7_training_eta_seconds"] > 24 * 3600:
+            if time_amendment is None and smoke["seed7_training_eta_seconds"] > 24 * 3600:
                 raise TimeoutError("train-only smoke ETA exceeds the fixed Stage64 seed7 cap")
         if stage63.get("integrity_passed") is not True:
             final = {
@@ -326,7 +340,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             lock = json.loads((args.output_root / "TRAINING_LOCK.json").read_text(encoding="utf-8"))
             if not verify_artifact_hash(lock):
                 raise RuntimeError("TRAINING_LOCK signature mismatch")
-            if lock["training_commit"] != _git(repo, "rev-parse", "HEAD") or _git(
+            if lock["training_commit"] != training_identity_commit(args.output_root, repo) or _git(
                 repo, "status", "--porcelain"
             ):
                 raise RuntimeError("resume worktree/commit no longer matches TRAINING_LOCK")

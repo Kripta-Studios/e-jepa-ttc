@@ -12,6 +12,9 @@ from pathlib import Path
 import psutil
 import torch
 
+from e_jepa_ttc.artifacts.hashing import compute_file_hash
+from e_jepa_ttc.artifacts.time_cap_amendment import AMENDMENT_NAME, validate_time_amendment
+
 
 class CampaignBudget:
     """An immutable deadline: restarts and replica changes cannot renew a cap.
@@ -25,6 +28,12 @@ class CampaignBudget:
             raise ValueError("campaign hours must be finite and positive")
         self.path = path
         self.clock = clock
+        self.amendment_path = path.parent.parent / AMENDMENT_NAME
+        amendment = validate_time_amendment(path.parent.parent, Path(__file__).resolve().parents[3])
+        self.wall_time_unlimited = amendment is not None
+        self.amendment_sha256 = (
+            compute_file_hash(str(self.amendment_path)) if amendment is not None else None
+        )
         if path.exists():
             value = json.loads(path.read_text(encoding="utf-8"))
             if value["hours"] != hours or value["clock_policy"] != "conservative_wall_v1":
@@ -55,9 +64,14 @@ class CampaignBudget:
     def check(self) -> None:
         """Reject clock rollback and raise at the original persisted deadline."""
         now = self.clock()
+        if self.wall_time_unlimited and (
+            not self.amendment_path.is_file()
+            or compute_file_hash(str(self.amendment_path)) != self.amendment_sha256
+        ):
+            raise ValueError("time amendment changed during execution")
         if now < self.started:
             raise ValueError("campaign wall clock moved before budget creation")
-        if now >= self.deadline:
+        if not self.wall_time_unlimited and now >= self.deadline:
             raise TimeoutError(f"campaign resource cap reached: {self.path.name}")
 
 

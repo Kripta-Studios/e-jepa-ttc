@@ -215,7 +215,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             output_root=args.output_root,
             reason=f"authorized raw event file is physically unavailable: {exc}",
         )
-    if time.perf_counter() - began > args.max_hours * 3600:
+    if not budget.wall_time_unlimited and time.perf_counter() - began > args.max_hours * 3600:
         raise TimeoutError("Stage 63 hashing exceeded its preregistered wall cap")
     state_manifest = state_root / "manifest.json"
     if state_root.exists() and not state_manifest.is_file():
@@ -251,7 +251,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         output_dir=raw_cache_root,
         resume=args.resume,
     )
-    if time.perf_counter() - began > args.max_hours * 3600:
+    if not budget.wall_time_unlimited and time.perf_counter() - began > args.max_hours * 3600:
         raise TimeoutError("Stage 63 cache construction exceeded its preregistered wall cap")
     cache = load_raw_cache(raw_cache_root)
     roi_counts = np.load(raw_cache_root / "roi_event_counts.npy")

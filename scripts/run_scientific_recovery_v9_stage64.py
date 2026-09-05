@@ -5,7 +5,6 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import subprocess
 import sys
 import time
 from collections.abc import Callable
@@ -22,6 +21,7 @@ sys.path.insert(0, str(_REPOSITORY_ROOT / "src"))
 
 from e_jepa_ttc.artifacts.campaign_session import CampaignLock, append_transition  # noqa: E402
 from e_jepa_ttc.artifacts.stage63_65 import sign_stage63_65_artifact  # noqa: E402
+from e_jepa_ttc.artifacts.time_cap_amendment import training_identity_commit  # noqa: E402
 from e_jepa_ttc.artifacts.training_authorization import (  # noqa: E402
     bind_output_files,
     read_signed,
@@ -270,9 +270,7 @@ def run_real_train_only_smoke(args: argparse.Namespace) -> dict[str, Any]:
 
     output = args.output_root / "qa" / "STAGE64_REAL_TRAIN_ONLY_SMOKE.json"
     smoke_identity = {
-        "training_commit": subprocess.check_output(
-            ["git", "rev-parse", "HEAD"], cwd=_REPOSITORY_ROOT, text=True
-        ).strip(),
+        "training_commit": training_identity_commit(args.output_root, _REPOSITORY_ROOT),
         "raw_manifest_sha256": _sha256(args.output_root / "raw_temporal_cache/manifest.json"),
         "a5_manifest_sha256": _sha256(args.output_root / "crossfitted_a5_state/manifest.json"),
         "supervision_sha256": _sha256(

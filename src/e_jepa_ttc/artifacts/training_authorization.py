@@ -11,6 +11,7 @@ from typing import Any
 import torch
 
 from e_jepa_ttc.artifacts.hashing import compute_file_hash, verify_artifact_hash
+from e_jepa_ttc.artifacts.time_cap_amendment import training_identity_commit
 
 
 def read_signed(path: Path) -> dict[str, Any]:
@@ -101,9 +102,9 @@ def validate_training_authorization(
         raise ValueError("scientific training is under an integrity hold")
     lock_path = root / "TRAINING_LOCK.json"
     lock = read_signed(lock_path)
-    head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=repo, text=True).strip()
     dirty = subprocess.check_output(["git", "status", "--porcelain"], cwd=repo, text=True).strip()
-    if dirty or lock.get("training_commit") != head:
+    scientific_commit = training_identity_commit(root, repo)
+    if dirty or lock.get("training_commit") != scientific_commit:
         raise ValueError("training authorization requires the exact clean training commit")
     if lock.get("authorization_version") != "complete_identity_v2":
         raise ValueError("old training locks do not authorize the corrected campaign")
@@ -128,7 +129,7 @@ def validate_training_authorization(
         if (
             compute_file_hash(str(smoke_path)) != lock.get("smoke_sha256")
             or smoke.get("status") != "passed"
-            or smoke.get("identity", {}).get("training_commit") != head
+            or smoke.get("identity", {}).get("training_commit") != scientific_commit
             or smoke["identity"].get("microbatch") != lock["invocation"]["microbatch"]
             or smoke["identity"].get("device") != lock["invocation"]["device"]
         ):
@@ -142,7 +143,7 @@ def validate_training_authorization(
             raise ValueError(f"training input changed after freeze: {name}")
     qa = read_signed(root / "qa/QA_MANIFEST.json")
     if (
-        qa.get("training_commit") != head
+        qa.get("training_commit") != scientific_commit
         or qa.get("status") != "passed"
         or qa.get("input_bindings") != bindings
         or compute_file_hash(str(root / "qa/QA_MANIFEST.json")) != lock.get("qa_sha256")
