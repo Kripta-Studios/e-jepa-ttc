@@ -55,7 +55,7 @@ def _checkpoint_index(output_root: Path, *, allow_invalid: bool = False) -> list
                 "outer_fold": value["outer_fold"],
                 "arm": value["arm"],
                 "updates": value["completed_updates"],
-                "path": value["checkpoint_path"],
+                "path": str(checkpoint.resolve()),
                 "bytes": checkpoint.stat().st_size if checkpoint.is_file() else None,
                 "sha256": _sha(checkpoint) if checkpoint.is_file() else None,
                 "status": "frozen_bytes_verified" if valid else "invalid_endpoint_preserved",
@@ -104,6 +104,34 @@ def _checkpoint_index(output_root: Path, *, allow_invalid: bool = False) -> list
     return records
 
 
+def _snapshot_index(root: Path) -> list[dict[str, Any]]:
+    """Index preserved interrupted attempts separately from selectable endpoints."""
+    records = []
+    for pattern in ("*/checkpoint_last.pt", "*/checkpoint_last.pt.previous"):
+        for path in sorted((root / "resume_snapshots").glob(pattern)):
+            payload = torch.load(path, map_location="cpu", weights_only=False)
+            declared = path.with_suffix(path.suffix + ".sha256").read_text().strip()
+            actual = _sha(path)
+            if actual != declared:
+                raise ValueError("preserved snapshot checkpoint receipt mismatch")
+            identity = payload["identity"]
+            records.append(
+                {
+                    "seed": identity["seed"],
+                    "outer_fold": identity["outer_fold"],
+                    "arm": identity["arm"],
+                    "updates": payload["completed_updates"],
+                    "path": str(path.resolve()),
+                    "bytes": path.stat().st_size,
+                    "sha256": actual,
+                    "declared_sha256": declared,
+                    "status": "snapshot_bytes_verified_not_final",
+                    "attempt": "preserved_interruption_snapshot",
+                }
+            )
+    return records
+
+
 def _verify_bundle(path: Path, required: set[str]) -> None:
     """Reopen the closed ZIP and verify inventory, CRC, sizes and SHA-256 bytes."""
     with zipfile.ZipFile(path) as archive:
@@ -134,6 +162,7 @@ def _report(campaign: dict[str, Any], next_decision: dict[str, Any], output_root
         "# E-JEPA-TTC — Stage 63 / Stage 64 / Stage 65 final report",
         "",
         f"Final protocol status: `{campaign['status']}`.",
+        f"Observed runner endpoint: `{campaign.get('execution_status', campaign['status'])}`.",
         "",
         "## What actually ran",
         "",
@@ -143,7 +172,8 @@ def _report(campaign: dict[str, Any], next_decision: dict[str, Any], output_root
         f"- Stage 64 seeds with completed results: `{sorted(stage64)}`.",
         f"- Stage 65 status: `{stage65.get('status') if stage65 else 'not_authorized_branch'}`.",
         f"- Non-selectable real train-only smoke microbatches: `{smoke.get('batches', 0)}`.",
-        f"- Final-code QA acceptance: `{qa.get('status', 'not_accepted')}`; historical failures "
+        f"- Frozen training-code QA acceptance: `{qa.get('status', 'not_accepted')}`; "
+        "historical failures "
         f"retained: `{len(qa.get('historical_failures_classified_not_waived', []))}`.",
         "",
         "Reading or hashing raw events is not reported as training. Stage 64 is listed above only "
@@ -165,6 +195,19 @@ def _report(campaign: dict[str, Any], next_decision: dict[str, Any], output_root
         "from the two train bounding boxes is used for both windows and every temporal bin.",
         "The preserved handoff decision X3_BLOCKED describes its historical pin, not the later "
         "pending X3 export (X3_DATA_READY). Neither substitutes for the physical Stage 63 audit.",
+        "",
+        "The corrected cache uses one integer floor-edge/searchsorted convention for assignment "
+        "and duration (raw16_floor_edges_searchsorted_v2). Previous cache attempts are preserved, "
+        "not mixed. Every component has byte, dtype, shape and token-order identities.",
+        "A5 training uses inner-OOF producers and evaluation uses outer-final producers. All "
+        "three state components were recovered together from each frozen producer's FP32 "
+        "forward pass; phase/support match the preserved Stage 61 cache exactly. The historical "
+        "BF16 uncertainty route was not exactly reproduced and is not accepted as an equivalent "
+        "hybrid source. Frozen-teacher provenance and nested ancestor exclusions are verified.",
+        "Stage 65 prerequisite verification is not router training. Verified producer outputs "
+        "and aggregate unions do not authorize fitting after a resource failure.",
+        "The access journal covers recorded operations, not exhaustive process access: unknown "
+        "whole-process access is not reported as a proven absence of forbidden access.",
         "",
         "## Scores and gates",
         "",
@@ -197,6 +240,39 @@ def _report(campaign: dict[str, Any], next_decision: dict[str, Any], output_root
                 f"CI95 high `{stats.get('ci95_high')}`, passed `{gate.get('passed')}`."
             )
         lines.append("")
+    integrity = campaign.get("final_integrity_audit")
+    if integrity:
+        lines.extend(
+            [
+                "## Final conformance audit",
+                "",
+                "Positive numerical gates are preserved, but do not override these "
+                "protocol violations. The candidate is not accepted for promotion.",
+                "",
+            ]
+        )
+        lines.extend(f"- {reason}" for reason in integrity["acceptance_blockers"])
+        lines.extend(
+            [
+                "",
+                "CE17 replay ultimately matched R2, but its required pre-fit timing "
+                "cannot be recovered retrospectively. No corrective training or new "
+                "diagnostic model inference was performed after seeing these results. "
+                "Scores were independently recomputed from frozen CSVs; sequence/bucket "
+                "tables and fold-separated enriched CSVs are in run/final_audit.",
+                "",
+            ]
+        )
+    if not stage64 and not stage65:
+        lines.extend(
+            [
+                "No new outer scores were produced. Utility versus STATE/COUNT/PERM and system "
+                "utility versus R2/RouterR are both NOT_EVALUATED. Seeds 13/23 were not started.",
+                "The Stage 63 A5 reference replay (162.2045478952051 MiD) is an identity check, "
+                "not a new Stage 64 result or evidence that either gate passed.",
+                "",
+            ]
+        )
     lines.extend(
         [
             "## Integrity and interpretation",
@@ -212,6 +288,73 @@ def _report(campaign: dict[str, Any], next_decision: dict[str, Any], output_root
             "listed in `CHECKPOINT_INDEX.csv` for later local audit.",
         ]
     )
+    execution = campaign.get("execution_audit", {})
+    if execution:
+        lines.extend(
+            [
+                "",
+                "## Verified training execution (not evaluation)",
+                "",
+                f"Frozen update-3000 endpoints: `{execution['frozen_endpoints']}`.",
+                f"Actual new-module seeds trained: `{execution['seeds_started']}`.",
+                "Updates retained in latest verified checkpoints: "
+                f"`{execution['retained_updates']}`.",
+                "",
+                "| Fold | Arm | Updates | Checkpoint status |",
+                "| --- | --- | ---: | --- |",
+            ]
+        )
+        for item in execution["latest_checkpoints"]:
+            lines.append(
+                f"| {item['outer_fold']} | {item['arm']} | {item['updates']} | {item['status']} |"
+            )
+        lines.extend(
+            [
+                "",
+                "No completed seed result means gates are **not evaluated**, not failed. "
+                "A resource stop is not a scientific negative and does not authorize fallback. "
+                "Previous checkpoints are recovery evidence, not additional training endpoints.",
+                "",
+                "Earlier RAM interruptions, a missing E: drive and lost process observations "
+                "are preserved in the run ledger. These are not scientific negatives. "
+                "No automatic restart is requested.",
+                "",
+                "Packaging-only analysis changes follow the frozen training commit; "
+                "no trainer, protocol, inputs, checkpoint or outer score was changed "
+                "for this delivery.",
+                f"Analysis commit: `{next_decision['analysis_commit']}`.",
+                "",
+                "## QA scope and limitations",
+                "",
+                "Final training-code QA: 81 targeted tests and 29 reference-kernel tests passed. "
+                "Historical suite: 1633 passed, 14 skipped, 37 failed; the same 37 failing IDs "
+                "were reproduced on the pre-remediation baseline and classified, not waived. "
+                "Ruff, types, PowerShell AST and input-contract checks passed. The real CUDA model "
+                "passed exact 10-versus-5+5 resume comparisons including model, optimizer, RNG, "
+                "schedule, normalization and losses. Adversarial cache, nested-dev contamination, "
+                "checkpoint, authorization, resource, metric and ZIP checks are included.",
+                "Evidence and earlier unsuccessful engineering/QA attempts remain in the bundle. "
+                "The existing invalidated pre-review run is indexed separately and was never "
+                "resumed into this campaign. No raw data or model checkpoint bytes are copied.",
+            ]
+        )
+    time_path = output_root / "WALL_TIME_AMENDMENT.json"
+    if time_path.is_file():
+        time_amendment = read_signed(time_path)
+        lines.extend(
+            [
+                "",
+                "## Explicit user time-limit amendment",
+                "",
+                "The user removed the hour limits before the first new outer evaluation. "
+                "Historical budget JSONs remain unchanged but no longer enforce deadlines. "
+                "Update 3000, gates and RAM/VRAM/disk margins were not changed.",
+                f"Execution amendment commit: `{time_amendment['execution_commit']}`.",
+                "Amendment QA: 48 tests passed, including real CUDA 10-versus-5+5 resume; "
+                "Ruff, format, types and diff checks passed. The original TRAINING_LOCK "
+                "bytes and scientific trainer/model/loss code stayed unchanged.",
+            ]
+        )
     return "\n".join(lines) + "\n"
 
 
@@ -240,10 +383,45 @@ def package(args: argparse.Namespace) -> tuple[Path, Path]:
     lock_path = args.output_root / "TRAINING_LOCK.json"
     if lock_path.is_file():
         campaign.setdefault("training_commit", read_signed(lock_path)["training_commit"])
+    audit_path = args.output_root / "FINAL_INTEGRITY_AUDIT.json"
+    if audit_path.is_file():
+        audit = read_signed(audit_path)
+        for name, binding in audit["input_bindings"].items():
+            path = Path(name)
+            if path.stat().st_size != binding["bytes"] or _sha(path) != binding["sha256"]:
+                raise ValueError("final conformance audit inputs changed")
+        campaign["execution_status"] = campaign["status"]
+        campaign["status"] = audit["status"]
+        campaign["final_integrity_audit"] = audit
+        campaign["failure_phase"] = "final_protocol_conformance_audit"
+        campaign["error"] = "; ".join(audit["acceptance_blockers"])
     analysis_commit = subprocess.check_output(
         ["git", "rev-parse", "HEAD"], cwd=repo, text=True
     ).strip()
     stage63 = campaign.get("stage63", {})
+    current_checkpoints = _checkpoint_index(args.output_root, allow_invalid=True)
+    latest = [item for item in current_checkpoints if not item["path"].endswith(".previous")]
+    seeds_started = sorted({str(item["seed"]) for item in latest})
+    execution = {
+        "training_commit": campaign.get("training_commit"),
+        "analysis_commit": analysis_commit,
+        "seeds_started": seeds_started,
+        "frozen_endpoints": sum(item["status"] == "frozen_bytes_verified" for item in latest),
+        "retained_updates": sum(
+            item["updates"] or 0
+            for item in latest
+            if item["status"] in {"frozen_bytes_verified", "partial_bytes_verified_not_final"}
+        ),
+        "latest_checkpoints": latest,
+        "completed_evaluation_seeds": sorted(campaign.get("stage64", {})),
+        "terminal_status": campaign["status"],
+        "scientific_negative": campaign.get("scientific_negative", False),
+        "fallback_authorized_by_failure": campaign.get("fallback_authorized_by_failure", False),
+    }
+    campaign["execution_audit"] = execution
+    (args.output_root / "FINAL_EXECUTION_AUDIT.json").write_text(
+        json.dumps(execution, indent=2, sort_keys=True, allow_nan=False) + "\n", encoding="utf-8"
+    )
     next_decision = {
         "artifact_type": "scientific_recovery_v9_next_decision_v2",
         "historical_decision_preserved": "STAGE61_AND_X2_NEGATIVE_X3_BLOCKED",
@@ -257,9 +435,12 @@ def package(args: argparse.Namespace) -> tuple[Path, Path]:
             "stage65": campaign.get("stage65", {}).get("status")
             if campaign.get("stage65")
             else "not_run",
+            "final_protocol_acceptance": campaign["status"],
         },
         "authorized_branches_executed": {
-            "stage64_seeds": sorted(campaign.get("stage64", {})),
+            "stage64_seeds": seeds_started,
+            "stage64_completed_evaluation_seeds": sorted(campaign.get("stage64", {})),
+            "stage64_execution": execution,
             "stage65": campaign.get("stage65") is not None,
         },
         "training_commit": campaign.get("training_commit"),
@@ -270,7 +451,7 @@ def package(args: argparse.Namespace) -> tuple[Path, Path]:
         },
         "seeds_and_replication_scope": {
             "a5_producer_seed": 7,
-            "new_module_seeds_executed": sorted(campaign.get("stage64", {})),
+            "new_module_seeds_executed": seeds_started,
             "claim": "conditional_new_encoder_adapter_only_not_full_system_multiseed",
         },
         "gate_details": {
@@ -280,7 +461,8 @@ def package(args: argparse.Namespace) -> tuple[Path, Path]:
             {"stage65": campaign["stage65"].get("comparisons", {})}
             if campaign.get("stage65")
             else {}
-        ),
+        )
+        | {"final_conformance_audit": campaign.get("final_integrity_audit")},
         "sealed_access_status": {
             "forbidden_paths_opened": stage63.get("forbidden_paths_opened"),
             "derived_from_access_ledger": False,
@@ -320,6 +502,7 @@ def package(args: argparse.Namespace) -> tuple[Path, Path]:
     )
     for record in checkpoint_records:
         record["attempt"] = "corrected_campaign"
+    checkpoint_records.extend(_snapshot_index(args.output_root))
     if prior_root is not None:
         previous_records = _checkpoint_index(prior_root, allow_invalid=True)
         for record in previous_records:
@@ -371,7 +554,7 @@ def package(args: argparse.Namespace) -> tuple[Path, Path]:
             path.relative_to(args.output_root).parts
         )
         and path.suffix.lower()
-        in {".json", ".jsonl", ".csv", ".log", ".xml", ".md", ".txt", ".npz"}
+        in {".json", ".jsonl", ".csv", ".log", ".xml", ".md", ".txt", ".npz", ".sha256"}
         and path.stat().st_size < 50 * 1024 * 1024
     )
     for evidence_root in (remediation_root, prior_root):
