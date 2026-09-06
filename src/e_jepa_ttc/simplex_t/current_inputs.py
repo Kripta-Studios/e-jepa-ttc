@@ -8,10 +8,58 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
+import torch
+from torch import Tensor
 
 from e_jepa_ttc.artifacts.simplex_t_preflight import sha256
 
 from .cache import Normalizer, fit_normalizer, training_mass
+from .training import state_digest
+
+
+class CurrentQueries:
+    """H1 gather with caller-validated current timing; no inferred temporal history."""
+
+    def __init__(
+        self, table: dict[str, Any], normalizer: Normalizer, mass: np.ndarray, timing: np.ndarray
+    ) -> None:
+        arrays = table["arrays"]
+        self.population = len(arrays["features17"])
+        if timing.shape != (self.population, 4) or not np.isfinite(timing).all():
+            raise ValueError("explicit current timing required")
+        if mass.shape != (self.population,) or not np.isclose(mass.sum(), 1):
+            raise ValueError("invalid current query mass")
+        self.features = torch.from_numpy(
+            ((arrays["features17"] - normalizer.mean) / normalizer.scale).astype(np.float32)
+        )
+        self.experts = torch.from_numpy(arrays["expert_phase"].astype(np.float32))
+        self.truth = torch.from_numpy(arrays["target_phase"].astype(np.float32))
+        self.mass = torch.from_numpy(mass.astype(np.float32))
+        self.timing = torch.from_numpy(timing.astype(np.float32))
+        self.identity_sha256 = state_digest(
+            {
+                "table": table["reference"],
+                "features": self.features,
+                "experts": self.experts,
+                "truth": self.truth,
+                "mass": self.mass,
+                "timing": self.timing,
+                "mean": torch.from_numpy(normalizer.mean),
+                "scale": torch.from_numpy(normalizer.scale),
+            }
+        )
+
+    def gather(self, query_ids: Tensor) -> tuple[Tensor, Tensor, Tensor, Tensor, Tensor, Tensor]:
+        """Return one current observation per selected query, with original experts."""
+        ids = query_ids
+        return (
+            self.features[ids, None],
+            self.timing[ids, None],
+            torch.ones(len(ids), 1, dtype=torch.bool),
+            self.experts[ids],
+            self.truth[ids],
+            self.mass[ids],
+        )
 
 
 def load_current_inputs(

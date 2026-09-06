@@ -133,3 +133,19 @@ bytes, head architecture and loss were not changed. Initial typing errors from
 pandas named tuples were corrected with explicit record dictionaries. Ruff/types
 pass. No fit is authorized by this loader alone; replay and scientific freeze
 remain outstanding. Technical updates585, scientific updates0.
+
+## Real-array H1 head exact-resume probe
+
+CurrentQueries now connects normalized current inputs to the registered engine,
+binding the exact model inputs, expert phases, targets, masses, timing and
+normalizer tensors into its source identity. Timing is mandatory, not inferred.
+The bounded probe explicitly uses zero timing as a technical fixture: it does
+not certify real timing lineage or authorize a production fit.
+
+The global technical ledger reserved20 updates before execution. Outer0 TRAIN
+ran10 continuous updates and5+save+5 at batch128, registered FP32 recipe, seed7.
+The complete checkpoint state digests match exactly, including model, optimizer,
+sampler, RNG and logs. Evidence: T0/current_array_resume/RESUME_QA.json. No score
+was computed. Raw experts were not rerun. Total executed technical updates605;
+scientific updates0. No scientific freeze exists. CPU head/source integration
+has advanced; the temporal-source and replay gates remain independent.

@@ -24,6 +24,7 @@ SOURCE_FILES = (
     "scripts/fetch_simplex_t_original_annotations.py",
     "scripts/audit_simplex_t_original_release.py",
     "scripts/audit_simplex_t_current_tables.py",
+    "scripts/probe_simplex_t_current_resume.py",
     "configs/experiment/simplex_t_coordination.json",
     "docs/SIMPLEX_T_ACK_AND_PROJECTION_AUDIT.md",
     "tests/unit/test_simplex_t_preflight.py",
@@ -89,8 +90,14 @@ def package_t0(local_paths: Path, output: Path) -> dict[str, Any]:
         "analysis_commit": commit,
         "scientific_fits": 0,
         "scientific_optimizer_updates": 0,
-        "technical_optimizer_updates": 585,
-        "total_optimizer_updates": 585,
+        "technical_optimizer_updates": 605,
+        "total_optimizer_updates": 605,
+        "current_array_resume_accounting": {
+            "updates": 20,
+            "scope": "REAL_TRAIN_ARRAYS_ZERO_TIMING_TECHNICAL_FIXTURE",
+            "complete_state_exact_resume": True,
+            "raw_replay_parity": False,
+        },
         "technical_accounting": [
             {"test": "test_resume_exact", "updates": 20, "scope": "SYNTHETIC_REFERENCE"},
             {
@@ -210,8 +217,10 @@ QA, real TRAIN replay, production loader integration and scientific freeze are
 pending. No historical failing result has been relabelled.
 
 Executed scientific fits: **0**. Scientific optimizer updates: **0**. Technical
-updates: **585** (25 reference + three 20-update integrated resume invocations
-+ one 500-update synthetic CPU profile). No technical result selects a model.
+updates: **605** (25 reference + three 20-update synthetic resume invocations
++ one 500-update synthetic CPU profile +20 real-array resume updates with explicit
+zero timing fixture). The latter gives exact complete-state CPU resume, not raw
+expert replay or production timing validation. No technical result selects a model.
 Raw expert forwards: **0**. No model endpoint, scientific prediction, factor
 interaction, bootstrap interval, hull gain/harm or lag result exists to report.
 No partial checkpoint was evaluated as a scientific endpoint.
@@ -348,8 +357,16 @@ No future background completion is promised.
         payload[f"acquisition/{receipt.parent.name}/DOWNLOAD_RECEIPT.json"] = receipt.read_bytes()
     for original_audit in sorted(evidence.glob("ORIGINAL_RELEASE*.json")):
         payload[f"evidence/{original_audit.name}"] = original_audit.read_bytes()
-    for name in ("qa_original_release.xml", "CURRENT_TABLE_AUDIT.json"):
+    for name in (
+        "qa_original_release.xml",
+        "CURRENT_TABLE_AUDIT.json",
+        "CURRENT_INPUT_INTEGRATION.json",
+        "qa_current_inputs.xml",
+    ):
         payload[f"evidence/{name}"] = (evidence / name).read_bytes()
+    payload["evidence/current_array_resume/RESUME_QA.json"] = (
+        evidence / "current_array_resume/RESUME_QA.json"
+    ).read_bytes()
     payload["coordination/SIMPLEX_T_STAGE70_REQUEST.json"] = request.read_bytes()
     manifest = {name: hashlib.sha256(data).hexdigest() for name, data in payload.items()}
     payload["PAYLOAD_SHA256.json"] = json.dumps(manifest, indent=2).encode()
