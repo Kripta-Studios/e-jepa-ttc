@@ -1,6 +1,19 @@
 {
   "schema": "simplex_t_resumable_block_v1",
-  "status": "ACTIVE_QUERY_CONTEXT_AMENDMENT_REAL_REPLAY_PARITY_UNRESOLVED",
+  "status": "ACTIVE_HISTORICAL_REPLAY_VERIFIED_QUERY_CONTEXT_CACHE_PENDING",
+  "latest_replay_resolution": {
+    "evidence": "artifacts/simplex_t/T0/current_expert_replay_64/HISTORICAL_REPLAY_QA_PASSED.json",
+    "raw_windows_bit_identical": 192,
+    "original_and_recovered_input_queries_bit_identical": 64,
+    "a5_phase_and_latent_queries_bit_identical": 64,
+    "historical_expert_predictions_exact_in_source_fp32": 192,
+    "passed_simplex_tests": 151,
+    "qa_evidence": "artifacts/simplex_t/T0/qa_after_raw64_parity.xml",
+    "optimizer_updates_this_resolution": 0,
+    "production_temporal_cache_ready": false,
+    "production_scientific_freeze": false,
+    "prior_unresolved_replay_statements_below_are_historical": true
+  },
   "latest_user_amendment": {
     "source_alternative_authorized": true,
     "effective_replay_handoff_confirmed": true,

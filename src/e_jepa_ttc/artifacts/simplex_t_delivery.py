@@ -31,6 +31,11 @@ SOURCE_FILES = (
     "scripts/prepare_simplex_t_replay_cohort.py",
     "scripts/replay_simplex_t_current_experts.py",
     "scripts/diagnose_simplex_t_replay_precision.py",
+    "scripts/audit_simplex_t_pair_replay.py",
+    "scripts/audit_simplex_t_recovered_inputs.py",
+    "scripts/diagnose_simplex_t_a5_batch_shape.py",
+    "scripts/probe_simplex_t_query_context_raw.py",
+    "scripts/seal_simplex_t_replay_qa.py",
     "docs/SIMPLEX_T_QUERY_CONTEXT_AMENDMENT.md",
     "configs/experiment/simplex_t_coordination.json",
     "docs/SIMPLEX_T_ACK_AND_PROJECTION_AUDIT.md",
@@ -90,9 +95,9 @@ def package_t0(local_paths: Path, output: Path) -> dict[str, Any]:
     commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=worktree, text=True).strip()
     decision = {
         "artifact_type": "simplex_t_next_decision_v1",
-        "execution_status": "ACTIVE_QUERY_CONTEXT_AMENDMENT_REAL_REPLAY_PARITY_UNRESOLVED",
+        "execution_status": "ACTIVE_HISTORICAL_REPLAY_VERIFIED_QUERY_CONTEXT_CACHE_PENDING",
         "source_status": "OWNER_INTERFACES_ACKNOWLEDGED_GEOMETRY_PARITY_UNRESOLVED",
-        "numerical_status": "REAL64_REPLAY_EXECUTED_DIFFERENCES_REQUIRE_INVESTIGATION",
+        "numerical_status": "HISTORICAL64_COMPONENT_REPLAY_PARITY_PASSED",
         "mechanism_status": "NOT_EVALUATED",
         "replication_scope": "NONE",
         "claim_ceiling": "T0_METADATA_AND_SYNTHETIC_ENGINEERING_ONLY",
@@ -143,7 +148,7 @@ def package_t0(local_paths: Path, output: Path) -> dict[str, Any]:
         "canonical_D": "UNRESOLVED_BEFORE_SCORES",
         "D1_density_latent_availability": "UNRESOLVED",
         "history_index": "NOT_BUILT_LABEL_INDEPENDENT_TIMELINE_UNVERIFIED",
-        "production_replay_parity": "EXECUTED_NOT_PASSED",
+        "production_replay_parity": "HISTORICAL_COMPONENT_PARITY_PASSED_NEW_TEMPORAL_CACHE_PENDING",
         "production_device_resume": "CPU_ENGINE_PASS_ON_SYNTHETIC_DATA",
         "qa": qa,
         "qa_scope": (
@@ -197,6 +202,17 @@ def package_t0(local_paths: Path, output: Path) -> dict[str, Any]:
     report = f"""# SIMPLEX-T — active pre-fit alternative and replay audit
 
 ## Latest authoritative continuation
+
+The subsequent investigation resolves the initial replay differences described
+below. All192 raw windows and64 original/recovered cache rows are bit-identical.
+A5 phase and128-D tokens reproduce exactly with historical batch size/position
+and cuDNN runtime. Deterministic BF16 restores original A5/C2F point outputs;
+GPU1024-row historical layout restores PAIR outputs. All192 expert predictions
+match in the source FP32 representation. The component-wise proof is hash-bound
+in HISTORICAL_REPLAY_QA_PASSED.json. No tolerance or weights were adjusted.
+151 SIMPLEX-T tests pass without additional optimizer updates. New coherent
+temporal cache, timing-bound resume, remaining QA and scientific freeze are
+still pending. The earlier unresolved diagnostic narrative is historical.
 
 The user authorizes an executable alternative and confirms effective replay handoff.
 The query-conditioned sensor-context amendment is explicit, not a claim to have
@@ -466,6 +482,13 @@ No future background completion is promised.
         if path.suffix in {".json", ".npz"}:
             payload[f"evidence/current_expert_replay_64/{path.name}"] = path.read_bytes()
     for name in ("qa_query_context.xml", "qa_query_context_voxel.xml"):
+        payload[f"evidence/{name}"] = (evidence / name).read_bytes()
+    for name in (
+        "QUERY_CONTEXT_RAW_INPUT_PROBE.json",
+        "QUERY_CONTEXT_RAW_INPUT_PROBE_FIXED.json",
+        "QUERY_CONTEXT_RAW_INPUT_64.json",
+        "qa_after_raw64_parity.xml",
+    ):
         payload[f"evidence/{name}"] = (evidence / name).read_bytes()
     payload["coordination/SIMPLEX_T_STAGE70_REQUEST.json"] = request.read_bytes()
     manifest = {name: hashlib.sha256(data).hexdigest() for name, data in payload.items()}
