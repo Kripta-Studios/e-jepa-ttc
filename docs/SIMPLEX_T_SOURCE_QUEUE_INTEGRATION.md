@@ -104,3 +104,25 @@ selection and rejection of source, history, metadata order/bytes and expert
 cache changes. Ruff and Pyright pass (the initial pandas `usecols` stub mismatch
 was resolved with explicit column filtering and a required-column check).
 These checks perform no optimizer updates and are not real model results.
+
+## Paired uncertainty connection
+
+`uncertainty_analysis.paired_uncertainty` verifies identical complete nine-sequence
+cohorts (query, track, fold and target), then passes all named loss columns together
+to the existing historical `hierarchical_losses` implementation. It preserves
+the strict OLD metric and shared sequence/whole-track draws, writes the original
+draw log and arrays, and reports every named comparison against an explicit
+reference. Exact sequence-only intervals, sequence wins and omit-one-score
+sensitivity use the existing `exact_sequence_diagnostic`. No TTC values are
+averaged and bootstrap fractions are not called posterior probabilities.
+
+The output directory must be new. A resource interruption preserves partial
+draw evidence without publishing a complete summary; a retry requires a new
+directory. This analysis has no optimizer state and performs zero updates.
+
+Seven tests pass: six plumbing/failure tests plus one execution of the actual
+historical 8192-draw engine on synthetic complete-track losses. The latter
+verifies output draw files and a known constant paired difference. It is not
+scientific uncertainty for SIMPLEX-T. Ruff and Pyright pass. Real endpoint
+prediction assembly, practical gates, freeze and final package integration
+remain required before scientific completion.
