@@ -1,14 +1,17 @@
 """Queue/source wiring tests; no expert inference or optimizer updates."""
 
 import json
+from dataclasses import replace
 
 import numpy as np
+import pandas as pd
 import pytest
 
 from e_jepa_ttc.artifacts.hashing import compute_file_hash
 from e_jepa_ttc.simplex_t import campaign_sources
 from e_jepa_ttc.simplex_t.cache import CachedQueries, Normalizer
 from e_jepa_ttc.simplex_t.campaign_sources import CampaignSources, CompiledFold
+from e_jepa_ttc.simplex_t.expansion_sources import ExpansionBinding
 from e_jepa_ttc.simplex_t.phase_manifest import fit_key
 from e_jepa_ttc.simplex_t.registry import registered_graph
 
@@ -118,3 +121,80 @@ def test_unavailable_pool_and_partial_folds_fail_before_loading(wired):
     with pytest.raises(ValueError, match="all three"):
         CampaignSources(adapter.graph, {0: adapter.folds[0]}, **kwargs)
     assert calls == []
+
+
+def test_d1_dispatch_merges_and_never_reuses_d0_source(wired, monkeypatch):
+    original, _, _ = wired
+    graph = registered_graph(
+        d1=True,
+        density=False,
+        t3=False,
+        latent=False,
+        replicate_scalar=False,
+        replicate_latent=False,
+    )
+    pins = {}
+    for fold, pin in original.folds.items():
+        pins[fold] = ExpansionBinding(
+            pin.path,
+            pin.sha256,
+            pin.path,
+            "x",
+            pin.path,
+            pin.path,
+            "x",
+            pin.path,
+            "x",
+            pin.path,
+            "x",
+            "x",
+        )
+    expansion_calls = []
+
+    def expansion(pin, **kwargs):
+        expansion_calls.append(kwargs["outer"])
+        return None, np.array(["extra"])
+
+    monkeypatch.setattr(campaign_sources, "load_expansion_source", expansion)
+    monkeypatch.setattr(
+        campaign_sources,
+        "load_current_inputs",
+        lambda *args, **kwargs: {"metadata": pd.DataFrame({"sequence_id": ["original"]})},
+    )
+
+    def merge(sources, expansion, **kwargs):
+        assert kwargs["original_train_sequences"].tolist() == ["original"]
+        assert kwargs["expansion_train_sequences"].tolist() == ["extra"]
+        return {
+            role: replace(
+                source,
+                features=np.full_like(source.features, 9),
+                identity_sha256="merged:" + source.identity_sha256,
+            )
+            for role, source in sources.items()
+        }
+
+    monkeypatch.setattr(campaign_sources, "merge_validated_sources", merge)
+    adapter = CampaignSources(
+        graph,
+        original.folds,
+        index_root=original.index_root,
+        dedup_root=original.dedup_root,
+        historical_root=original.historical_root,
+        ancestry_sha256="fixture",
+        allowed_sequences={"original"},
+        expansion_folds=pins,
+        expansion_sequences={"extra"},
+    )
+    d0 = next(spec for spec in graph if spec.fold == 0 and "-D0-" in spec.name)
+    d1 = next(spec for spec in graph if spec.fold == 0 and "-D1-" in spec.name)
+    assert (adapter.train(d0).features == 1).all()
+    assert (adapter.train(d1).features == 9).all()
+    assert (adapter.source(d1, "outer_dev").features == 9).all()
+    assert expansion_calls == [0]
+    assert (adapter.train(d0).features == 1).all()
+    assert (adapter.train(d1).features == 9).all()
+    assert expansion_calls == [0, 0]
+    (pins[0].compiled / "COMPILED.json").write_text("{}", encoding="utf-8")
+    with pytest.raises(ValueError, match="manifest changed"):
+        adapter.train(d1)

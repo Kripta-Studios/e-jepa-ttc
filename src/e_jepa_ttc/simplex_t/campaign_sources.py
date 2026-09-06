@@ -16,6 +16,9 @@ from e_jepa_ttc.artifacts.hashing import compute_file_hash
 from .arms import resolve_arm
 from .cache import CachedQueries
 from .context_sources import load_context_sources
+from .current_inputs import load_current_inputs
+from .expanded_sources import merge_validated_sources
+from .expansion_sources import ExpansionBinding, load_expansion_source
 from .phase_manifest import fit_key
 from .registry import FitSpec
 
@@ -31,9 +34,8 @@ class CompiledFold:
 class CampaignSources:
     """Supply queue TRAIN callbacks and separate OLD_DEV endpoint inputs.
 
-    Only D0 query-context caches have a production loader at present. A graph
-    containing another pool is rejected before loading anything, never silently
-    mapped onto D0. D1 requires its own acknowledged lineage and pool adapter.
+    D1 requires explicit compiled expansion bindings for every outer fold and
+    an acknowledged TRAIN sequence set. No pool is silently mapped onto D0.
     """
 
     def __init__(
@@ -46,12 +48,21 @@ class CampaignSources:
         historical_root: Path,
         ancestry_sha256: str,
         allowed_sequences: set[str],
+        expansion_folds: dict[int, ExpansionBinding] | None = None,
+        expansion_sequences: set[str] | None = None,
     ) -> None:
         if not graph or len({fit_key(spec) for spec in graph}) != len(graph):
             raise ValueError("nonempty unique registered graph required")
         for spec in graph:
-            if resolve_arm(spec, graph).pool != "D0":
+            pool = resolve_arm(spec, graph).pool
+            if pool != "D0" and (
+                pool != "D1" or expansion_folds is None or not expansion_sequences
+            ):
                 raise ValueError("pool lacks an integrated authoritative source loader")
+        if expansion_folds is not None and set(expansion_folds) != {0, 1, 2}:
+            raise ValueError("all three expansion fold bindings required")
+        if set(expansion_sequences or ()) & allowed_sequences:
+            raise ValueError("expansion and original authorized sequences overlap")
         if set(folds) != {0, 1, 2}:
             raise ValueError("all three compiled outer-fold bindings required")
         self.graph = list(graph)
@@ -61,7 +72,9 @@ class CampaignSources:
         self.historical_root = historical_root
         self.ancestry_sha256 = ancestry_sha256
         self.allowed_sequences = set(allowed_sequences)
-        self._key: tuple[int, int] | None = None
+        self.expansion_folds = dict(expansion_folds or {})
+        self.expansion_sequences = set(expansion_sequences or ())
+        self._key: tuple[int, int, str] | None = None
         self._sources: dict[str, CachedQueries] = {}
 
     def release(self) -> None:
@@ -81,7 +94,13 @@ class CampaignSources:
             raise ValueError("compiled manifest changed since preparation")
         if json.loads(manifest.read_text(encoding="utf-8"))["outer"] != spec.fold:
             raise ValueError("compiled outer fold differs from registered fit")
-        key = (spec.fold, binding.model.feature_count)
+        if binding.pool == "D1":
+            expansion_pin = self.expansion_folds[spec.fold]
+            if compute_file_hash(str(expansion_pin.compiled / "COMPILED.json")) != (
+                expansion_pin.compiled_sha256
+            ):
+                raise ValueError("expansion compiled manifest changed since preparation")
+        key = (spec.fold, binding.model.feature_count, binding.pool)
         if self._key != key:
             self.release()
             sources = load_context_sources(
@@ -94,6 +113,26 @@ class CampaignSources:
                 allowed_sequences=self.allowed_sequences,
                 feature_count=binding.model.feature_count,
             )
+            if binding.pool == "D1":
+                expansion, sequences = load_expansion_source(
+                    self.expansion_folds[spec.fold],
+                    outer=spec.fold,
+                    feature_count=binding.model.feature_count,
+                    allowed_sequences=self.expansion_sequences,
+                )
+                original = load_current_inputs(
+                    self.historical_root,
+                    spec.fold,
+                    "inner_oof",
+                    ancestry_sha256=self.ancestry_sha256,
+                    allowed_sequences=self.allowed_sequences,
+                )["metadata"]
+                sources = merge_validated_sources(
+                    sources,
+                    expansion,
+                    original_train_sequences=original.sequence_id.to_numpy(),
+                    expansion_train_sequences=sequences,
+                )
             self._sources, self._key = sources, key
         return binding.source(self._sources[role])
 
@@ -111,7 +150,12 @@ class CampaignSources:
         try:
             for spec in sorted(
                 self.graph,
-                key=lambda s: (s.fold, resolve_arm(s, self.graph).model.feature_count, fit_key(s)),
+                key=lambda s: (
+                    s.fold,
+                    resolve_arm(s, self.graph).model.feature_count,
+                    resolve_arm(s, self.graph).pool,
+                    fit_key(s),
+                ),
             ):
                 result[fit_key(spec)] = {
                     role: self.source(spec, role).identity_sha256
