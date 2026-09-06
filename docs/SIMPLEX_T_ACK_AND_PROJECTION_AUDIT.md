@@ -115,3 +115,21 @@ that column only for inner_oof. The audit then completed on all six tables.
 This establishes compact H1 input availability, not producer replay parity or
 scientific readiness. Row-level transitive lineage, production loader, full
 pre-fit QA and freeze remain required. No optimizer updates were executed.
+
+## Current-input lineage and normalization integration
+
+CURRENT_INPUT_INTEGRATION.json records successful loading of all6 tables through
+the new current_inputs adapter. Each row's outer/inner family is checked against
+the historical ancestry: A5/C2F exclude that sequence, PAIR references the same
+A5 parent, and the row PAIR checkpoint hash matches. This consumes the previously
+verified ancestor audit; it does not independently replay teachers or checkpoints.
+Normalizer statistics and population weights are fit only on each inner_oof TRAIN
+table; outer_dev is explicitly refused by that operation. Three tests pass.
+
+The initial float64 anchor equality check failed by at most2.7755575615628914e-17;
+the feature phase and expert phase columns are bit-identical in registered FP32.
+The adapter checks exact FP32 equality, not an adjustable tolerance. Historical
+bytes, head architecture and loss were not changed. Initial typing errors from
+pandas named tuples were corrected with explicit record dictionaries. Ruff/types
+pass. No fit is authorized by this loader alone; replay and scientific freeze
+remain outstanding. Technical updates585, scientific updates0.
