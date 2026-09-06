@@ -96,3 +96,54 @@ def test_configuration_refuses_unapproved_or_incomplete_bindings(tmp_path, failu
     digest = "0" * 64 if failure == "hash" else compute_file_hash(str(path))
     with pytest.raises(ValueError):
         sources_from_configuration(path, expected_sha256=digest, **args)
+
+
+@pytest.mark.parametrize("failure", [None, "ancestry", "role"])
+def test_configuration_preflight_uses_owner_authority_without_enabling_fits(
+    tmp_path, monkeypatch, failure
+):
+    from e_jepa_ttc.simplex_t import configuration_preflight
+
+    config, _ = fixture(tmp_path)
+    if failure == "role":
+        config["original_sequences"] = ["protected"]
+    path = tmp_path / "sources.json"
+    path.write_text(json.dumps(config), encoding="utf-8")
+    local = tmp_path / "local.json"
+    local.write_text(
+        json.dumps(
+            {
+                "shared_coordination": str(tmp_path),
+                "worktree": str(tmp_path),
+                "stage70_worktree_read_only": str(tmp_path),
+                "garl_annotations_candidate": str(tmp_path / "data/train.parquet"),
+            }
+        ),
+        encoding="utf-8",
+    )
+    ack = {
+        "producers": {
+            "authoritative_historical_manifest": {
+                "path": str(tmp_path / "ancestry.json"),
+                "sha256": ("b" if failure == "ancestry" else "a") * 64,
+            }
+        },
+        "interfaces": {"role_manifest": {"roles": {"original": ["old"], "expansion": ["extra"]}}},
+    }
+    monkeypatch.setattr(configuration_preflight, "verified_ack", lambda *args: ack)
+    output = tmp_path / "preflight.json"
+    if failure:
+        with pytest.raises(ValueError):
+            configuration_preflight.inspect_source_configuration(
+                local, path, compute_file_hash(str(path)), output
+            )
+        assert not output.exists()
+    else:
+        result = configuration_preflight.inspect_source_configuration(
+            local, path, compute_file_hash(str(path)), output
+        )
+        assert result["maximum_registered_updates"] == 210000
+        assert len(result["maximum_registered_graph"]) == 84
+        assert result["optimizer_updates"] == 0
+        assert not result["graph_enables_practical_or_technical_gates"]
+        assert not result["feature_or_target_payloads_loaded"]

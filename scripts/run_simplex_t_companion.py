@@ -10,6 +10,7 @@ from e_jepa_ttc.artifacts.simplex_t_delivery import package_t0
 from e_jepa_ttc.artifacts.simplex_t_preflight import audit, interface_status, write_new_json
 from e_jepa_ttc.simplex_t.cache_status import context_cache_status
 from e_jepa_ttc.simplex_t.compiled_context import compile_fold
+from e_jepa_ttc.simplex_t.configuration_preflight import inspect_source_configuration
 from e_jepa_ttc.simplex_t.reuse_catalog import D0ReuseCatalog
 
 
@@ -29,7 +30,27 @@ def main() -> int:
     parser.add_argument("--compile-pool", choices=("D0", "D1", "DENSE_OLD"), default=None)
     parser.add_argument("--reuse-d0-compiled", type=Path)
     parser.add_argument("--reuse-d0-compiled-sha256")
+    parser.add_argument("--source-config", type=Path)
+    parser.add_argument("--source-config-sha256")
     args = parser.parse_args()
+    if args.source_config is not None or args.source_config_sha256 is not None:
+        if (
+            args.command != "prepare"
+            or args.output is None
+            or args.resume
+            or args.source_config is None
+            or args.source_config_sha256 is None
+            or args.compile_fold is not None
+            or args.compile_pool is not None
+            or args.reuse_d0_compiled is not None
+            or args.reuse_d0_compiled_sha256 is not None
+        ):
+            parser.error("source inspection requires prepare, both source pins and a new --output")
+        result = inspect_source_configuration(
+            args.local_paths, args.source_config, args.source_config_sha256, args.output
+        )
+        print(json.dumps(result, indent=2))
+        return 0
     if args.reuse_d0_compiled is not None or args.reuse_d0_compiled_sha256 is not None:
         if (
             args.reuse_d0_compiled is None

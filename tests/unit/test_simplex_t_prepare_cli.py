@@ -112,3 +112,29 @@ def test_dense_prepare_passes_explicit_d0_catalog(entry, tmp_path, monkeypatch):
     assert received[0]["compiled_sha256"] == "a" * 64
     assert received[0]["outer"] == 0
     assert compilations == [{"pool": "DENSE_OLD", "reuse": catalog}]
+
+
+def test_source_configuration_inspection_is_not_run(entry, monkeypatch):
+    calls = []
+    monkeypatch.setattr(
+        entry, "inspect_source_configuration", lambda *args: calls.append(args) or {}
+    )
+    args = [
+        "runner",
+        "prepare",
+        "--local-paths",
+        "local.json",
+        "--source-config",
+        "sources.json",
+        "--source-config-sha256",
+        "a" * 64,
+        "--output",
+        "inspection.json",
+    ]
+    monkeypatch.setattr("sys.argv", args)
+    assert entry.main() == 0
+    assert calls == [(Path("local.json"), Path("sources.json"), "a" * 64, Path("inspection.json"))]
+    args[1] = "run"
+    with pytest.raises(SystemExit):
+        entry.main()
+    assert len(calls) == 1
