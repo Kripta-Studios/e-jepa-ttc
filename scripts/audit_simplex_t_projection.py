@@ -19,6 +19,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--local-paths", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--diagnose-frame-candidates", action="store_true")
     args = parser.parse_args()
     paths = json.loads(args.local_paths.read_text(encoding="utf-8"))
     config = json.loads(Path("configs/experiment/simplex_t_coordination.json").read_text())
@@ -46,6 +47,9 @@ def main() -> None:
     objects = ds.dataset(label_path).to_table(columns=object_columns).to_pylist()
     lookup = {(str(row["sample_token"]), str(row["instance_id"])): row for row in objects}
     frames = {row["rgb_member_path"]: row for row in media}
+    objects_by_frame: dict[str, list] = {}
+    for row in objects:
+        objects_by_frame.setdefault(str(row["sample_token"]), []).append(row)
     if len(lookup) != len(objects) or len(frames) != len(media):
         raise ValueError("ambiguous frame/object identity")
     pair_columns = ["sample_token", "sequence_id", "track_id", "rgb_member_paths", "boxes_xyxy"]
@@ -54,10 +58,38 @@ def main() -> None:
     )
     pairs = scanner.head(128).to_pylist()
     comparisons = []
+    candidate_diagnostics = []
     missing = 0
     for pair in pairs:
         for member, box in zip(pair["rgb_member_paths"], pair["boxes_xyxy"], strict=True):
             frame = frames.get(member)
+            if args.diagnose_frame_candidates and frame is not None:
+                candidates = []
+                for candidate in objects_by_frame.get(str(frame["sample_token"]), []):
+                    try:
+                        _, projected, _, _ = project_box_3d_to_event(
+                            candidate["bbox_3d_ego"], frame["K_event"], frame["T_event_ego"]
+                        )
+                    except ValueError:
+                        continue
+                    candidates.append(
+                        {
+                            "instance_id": candidate["instance_id"],
+                            "max_corner_error_px": float(
+                                np.max(np.abs(np.asarray(projected) - box))
+                            ),
+                        }
+                    )
+                candidates.sort(key=lambda item: item["max_corner_error_px"])
+                candidate_diagnostics.append(
+                    {
+                        "pair": pair["sample_token"],
+                        "frame": frame["sample_token"],
+                        "garl_track_id": pair["track_id"],
+                        "nearest_two": candidates[:2],
+                        "identity_inferred": False,
+                    }
+                )
             obj = lookup.get((str(frame["sample_token"]), str(pair["track_id"]))) if frame else None
             if obj is None or frame is None:
                 missing += 1
@@ -95,6 +127,10 @@ def main() -> None:
             "maximum_corner_error_px": max(errors) if errors else None,
             "median_corner_error_px": float(np.median(errors)) if errors else None,
             "comparisons": comparisons,
+            "frame_candidate_diagnostics": candidate_diagnostics,
+            "candidate_search_scope": (
+                "Diagnostic only; nearest geometry is NOT an identity mapping"
+            ),
             "columns": {"media": media_columns, "objects": object_columns, "pairs": pair_columns},
             "ttc_or_velocity_read": False,
             "depth_used_for_geometric_projection_only": True,

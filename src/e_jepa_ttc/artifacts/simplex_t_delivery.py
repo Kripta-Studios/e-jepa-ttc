@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Any
 from xml.etree import ElementTree
 
-from e_jepa_ttc.artifacts.simplex_t_preflight import sha256, write_new_json
+from e_jepa_ttc.artifacts.simplex_t_preflight import interface_status, sha256, write_new_json
 
 SOURCE_FILES = (
     "src/e_jepa_ttc/artifacts/simplex_t_preflight.py",
@@ -20,6 +20,10 @@ SOURCE_FILES = (
     "scripts/audit_simplex_t_interfaces.py",
     "scripts/audit_simplex_t_timeline.py",
     "scripts/profile_simplex_t_cpu.py",
+    "scripts/audit_simplex_t_projection.py",
+    "scripts/fetch_simplex_t_original_annotations.py",
+    "configs/experiment/simplex_t_coordination.json",
+    "docs/SIMPLEX_T_ACK_AND_PROJECTION_AUDIT.md",
     "tests/unit/test_simplex_t_preflight.py",
     "configs/experiment/simplex_t_resource_amendment.json",
     "docs/SIMPLEX_T_T0_RESUME.md",
@@ -52,6 +56,7 @@ def package_t0(local_paths: Path, output: Path) -> dict[str, Any]:
     evidence = worktree / "artifacts/simplex_t/T0"
     audit_path = evidence / "LOCAL_DATA_AUDIT_FINAL.json"
     audit = json.loads(audit_path.read_text(encoding="utf-8"))
+    current_interfaces = interface_status(paths)
     if audit["scientific_fits"] != 0:
         raise ValueError("T0 packager cannot package scientific fits")
     qa = {
@@ -65,6 +70,7 @@ def package_t0(local_paths: Path, output: Path) -> dict[str, Any]:
             "pools",
             "checkpoint_resume",
             "technical_budget",
+            "ack_40gb",
         )
     }
     if any(item["failure_ids"] for item in qa.values()):
@@ -72,8 +78,8 @@ def package_t0(local_paths: Path, output: Path) -> dict[str, Any]:
     commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=worktree, text=True).strip()
     decision = {
         "artifact_type": "simplex_t_next_decision_v1",
-        "execution_status": "WAITING_SHARED_ROLE_MANIFEST",
-        "source_status": "OWNER_INTERFACES_DISCOVERED_NOT_ACKNOWLEDGED",
+        "execution_status": current_interfaces["execution_status"],
+        "source_status": "OWNER_INTERFACES_ACKNOWLEDGED_GEOMETRY_PARITY_UNRESOLVED",
         "numerical_status": "INTEGRATED_CPU_ENGINE_SYNTHETIC_RESUME_PASS_REAL_REPLAY_PENDING",
         "mechanism_status": "NOT_EVALUATED",
         "replication_scope": "NONE",
@@ -130,13 +136,14 @@ def package_t0(local_paths: Path, output: Path) -> dict[str, Any]:
         ],
         "historical_failure_reclassification": False,
         "required_next_evidence": [
-            "SIMPLEX_T_STAGE70_ACK.json acknowledging exact role/time byte hashes and quotas",
+            "Explicit exclusive inference slot after live architecture owner releases resources",
             "Adopt verified 36-producer ancestry and bind new history cache preprocessing",
             "Full permitted input-only OBJECT timeline and clock/ROI mapping",
             "Integrated production loader parity, all-arm implementation and pre-fit QA/freeze",
             "Exclusive inference scheduling boundary followed by CACHE_READY evidence",
         ],
-        "interfaces": audit["interfaces"],
+        "interfaces": current_interfaces,
+        "minimum_written_volume_remaining_bytes": 40_000_000_000,
         "producer_audit": json.loads(
             (evidence / "DISCOVERED_INTERFACES.json").read_text(encoding="utf-8")
         ),
@@ -158,10 +165,10 @@ def package_t0(local_paths: Path, output: Path) -> dict[str, Any]:
     report_path = output / "CODEX_SIMPLEX_T_FINAL_REPORT.md"
     report = f"""# SIMPLEX-T — resumable T0 prerequisite block
 
-Status: **WAITING_SHARED_ROLE_MANIFEST** (owner acknowledgement pending).
-Stage70 role/time files exist and their byte hashes are recorded. The local
-configuration has not adopted them; shared ownership/resource acknowledgement
-and the full-history source remain unresolved. All 36 historical checkpoints and
+Status: **{current_interfaces["execution_status"]}**.
+Stage70 role/time files and the user-pinned ACK have been verified and adopted
+read-only. Exclusive inference scheduling and production history parity remain
+unresolved. All 36 historical checkpoints and
 their bounded metadata bindings match the historical ancestry audit. This is not a
 scientific negative or completed T0–T6 campaign.
 
@@ -222,10 +229,22 @@ builder filters by TTC and 3D height, so its full pair table is not a safe prima
 history substitute. H1 is not intrinsically blocked by this missing timeline;
 it remains pending coordinated real replay/production pre-fit prerequisites.
 
+## Original annotation acquisition
+
+After explicit user download authorization, selective HTTP ranges retrieved
+annotations.pkl and frames.pkl from original-role sequence ZIPs linked by the
+official eAP release catalog. Per-sequence receipts bind archive ETag, member
+CRC verification, extracted SHA256 and transferred bytes. No media was downloaded.
+Acquisition does not establish complete-history eligibility or Garl identity/ROI
+parity. These sources require a separate input-only schema and lineage audit.
+Earlier filename-search findings describe the state before this acquisition.
+
 ## Resources and owner activity
 
 Minimum available RAM: 8 GiB; companion process-tree RSS maximum: 4 GiB; minimum
-free space per written volume: 60 GiB. Limits use absolute bytes/GiB only. The user
+free space after reservations per written volume: 40,000,000,000 bytes (40 GB).
+The latest explicit user instruction supersedes prior60 GiB and ACK120 GB floors.
+Limits use absolute bytes only. The user
 amendment changes operational resource limits, not model/statistical constants.
 T0 metadata audit elapsed: {audit["elapsed_seconds"]:.3f} seconds.
 Saved audit includes process commands, host RAM, disks and per-source read timings.
@@ -246,10 +265,10 @@ owner process was stopped, resumed, wrapped retroactively or otherwise modified.
 
 ## Resume boundary
 
-The shared SIMPLEX_T_STAGE70_REQUEST.json requests immutable role/time paths and
-hashes, complete producer ancestry, permitted timeline and cooperative resource
-quotas. The discovered owner manifest references are in NEXT_DECISION_SIMPLEX_T.json.
-No competing holdout assignment was made. Obtain owner acknowledgement, complete
+The shared SIMPLEX_T_STAGE70_ACK.json acknowledges the immutable interfaces and
+conditional light-I/O CPU overlap. It does not grant exclusive inference.
+References and verified ACK identity are in NEXT_DECISION_SIMPLEX_T.json.
+No competing holdout assignment was made. Coordinate the inference slot, complete
 timeline/producer integration and all registered pre-fit QA, freeze, then run every
 available registered fit. D*, density controls and latent availability remain
 unresolved before scores. No canonical candidate has been replaced by a control.
@@ -310,7 +329,21 @@ No future background completion is promised.
     payload["evidence/TECHNICAL_BUDGET.json"] = (
         worktree / "artifacts/simplex_t/TECHNICAL_BUDGET.json"
     ).read_bytes()
+    for name in (
+        "qa_ack_40gb.xml",
+        "PROJECTION_FEASIBILITY.json",
+        "PROJECTION_FEASIBILITY_INSTANCE_ID.json",
+        "PROJECTION_FRAME_CANDIDATES.json",
+    ):
+        payload[f"evidence/{name}"] = (evidence / name).read_bytes()
+    payload["coordination/SIMPLEX_T_STAGE70_ACK.json"] = (
+        Path(paths["shared_coordination"]) / "SIMPLEX_T_STAGE70_ACK.json"
+    ).read_bytes()
     request = Path(paths["shared_coordination"]) / "SIMPLEX_T_STAGE70_REQUEST.json"
+    for receipt in sorted(
+        (worktree / "artifacts/simplex_t/original_annotations").glob("*/DOWNLOAD_RECEIPT.json")
+    ):
+        payload[f"acquisition/{receipt.parent.name}/DOWNLOAD_RECEIPT.json"] = receipt.read_bytes()
     payload["coordination/SIMPLEX_T_STAGE70_REQUEST.json"] = request.read_bytes()
     manifest = {name: hashlib.sha256(data).hexdigest() for name, data in payload.items()}
     payload["PAYLOAD_SHA256.json"] = json.dumps(manifest, indent=2).encode()

@@ -46,3 +46,30 @@ the final targeted type check reporting zero errors. No scientific freeze exists
 Next: audit cross-release identity and projection provenance, validate real cached
 current-only inputs independently, finish production orchestration, and obtain a
 coordinated inference slot when required. Do not infer a slot from process exit.
+
+## Same-frame candidate diagnostic
+
+PROJECTION_FRAME_CANDIDATES.json extends the same128-pair audit to every eAP
+3D object in each referenced frame. For each of256 observations it records the
+nearest two projected boxes, solely as a diagnostic, not as an identity assignment.
+Even the nearest candidate has maximum-corner error at least39.1258877 pixels;
+mean125.6778264 and maximum428.1859298 pixels. Thus selecting another same-frame
+ID alone does not establish parity with this projector. No guessed mapping was
+adopted. The projection source and source3D file hashes are retained in the audit.
+
+## Original release acquisition after user authorization
+
+The official catalog at
+https://nail-hnu.github.io/eAP_dataset/assets/data/release_catalog.json links
+per-sequence Dropbox ZIPs, distinct from the Hugging Face Parquet release.
+Selective byte ranges successfully retrieved annotations.pkl and frames.pkl for
+all nine original-role sequences. Total transferred range bytes19,095,691;
+extracted bytes89,957,465. All18 member SHA256 values were reverified locally;
+ZIP member CRCs were checked during extraction. Receipts reside beside the
+files under artifacts/simplex_t/original_annotations/<sequence>/.
+No RGB/event media, confirmation or protected sequence archive was downloaded.
+The files were not unpickled/executed. An opcode-only inspection of the first
+annotation file confirms documented bbox, instance_id and exposure timestamp
+keys. Full schema, identity correspondence and history eligibility remain to audit.
+This supersedes the missing-loose-original-files prerequisite; it does not yet
+establish scientific cache readiness or authorize an exclusive replay slot.
