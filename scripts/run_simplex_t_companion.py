@@ -23,26 +23,33 @@ def main() -> int:
         "--compile-fold",
         type=int,
         choices=(0, 1, 2),
-        help="prepare: compile one complete D0 outer fold into a new --output directory",
+        help="prepare: compile one complete outer fold into a new --output directory",
     )
+    parser.add_argument("--compile-pool", choices=("D0", "D1"), default=None)
     args = parser.parse_args()
+    if args.compile_pool is not None and args.compile_fold is None:
+        parser.error("--compile-pool requires --compile-fold")
     if args.compile_fold is not None:
         if args.command != "prepare" or args.output is None or args.resume:
             parser.error("--compile-fold requires prepare, a new --output, and no --resume")
         paths = json.loads(args.local_paths.read_text(encoding="utf-8"))
         temporal = Path(paths["worktree"]) / "artifacts/simplex_t/T1"
+        pool = args.compile_pool or "D0"
+        prefix = "expansion_" if pool == "D1" else ""
         compile_fold(
-            temporal / "context_features_fp32",
-            temporal / "query_context_index",
-            temporal / "query_context_dedup",
+            temporal / f"{prefix}context_features_fp32",
+            temporal / f"{prefix}query_context_index",
+            temporal / f"{prefix}query_context_dedup",
             args.output,
             args.compile_fold,
+            pool=pool,
         )
         print(
             json.dumps(
                 {
                     "status": "COMPLETE_FOLD_CACHE_NOT_SCIENTIFIC_FREEZE",
                     "outer": args.compile_fold,
+                    "pool": pool,
                     "compiled": str(args.output),
                     "optimizer_updates": 0,
                 }

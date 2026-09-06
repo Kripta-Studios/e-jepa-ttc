@@ -56,11 +56,26 @@ def validate_block(
         raise ValueError("ROI availability changed")
 
 
-def compile_fold(cache: Path, index_root: Path, dedup_root: Path, output: Path, outer: int) -> None:
-    """Require every D0 query block before allocating a fold's feature memmaps."""
-    if outer not in range(3) or output.exists():
+def compile_fold(
+    cache: Path,
+    index_root: Path,
+    dedup_root: Path,
+    output: Path,
+    outer: int,
+    *,
+    pool: str = "D0",
+) -> None:
+    """Require every selected query block; never fabricate inactive D1 observations.
+
+    D0 remains the default and retains its existing compiled manifest schema.
+    D1 requires an explicitly bound extraction identity and masks inactive rows.
+    Compilation validates cache contents; it does not grant inference/fit authority.
+    """
+    if outer not in range(3) or output.exists() or pool not in {"D0", "D1"}:
         raise ValueError("invalid fold or existing compiled output")
     identity = json.loads((cache / "IDENTITY.json").read_text(encoding="utf-8"))
+    if pool == "D1" and identity.get("pool") != "D1":
+        raise ValueError("explicit D1 extraction identity required")
     index_path = index_root / "query_context_index.npz"
     if compute_file_hash(str(index_path)) != identity["index_sha256"]:
         raise ValueError("cache/index mismatch")
@@ -73,15 +88,29 @@ def compile_fold(cache: Path, index_root: Path, dedup_root: Path, output: Path, 
         raise ValueError("deduplicated index changed")
     with np.load(dedup_path, allow_pickle=False) as archive:
         history, keys = archive["history"], archive["keys"]
+    families = index["producer_family"][outer]
+    if history.shape != index["valid"].shape or history.shape != (len(families), 16):
+        raise ValueError("query/history shape mismatch")
+    if (history < -1).any() or (history >= len(keys)).any():
+        raise ValueError("history observation index out of bounds")
+    active = families >= 0
+    if (families < -1).any() or (pool == "D0" and not active.all()):
+        raise ValueError("invalid inactive producer assignment")
+    upper = outer * 4 + (2 if pool == "D1" else 3)
+    if not active.any() or ((families[active] < outer * 4) | (families[active] > upper)).any():
+        raise ValueError("query assigned outside permitted producer family")
+    if not np.array_equal(history >= 0, index["valid"] & active[:, None]):
+        raise ValueError("history mask differs from active query support")
     receipts = []
-    for qi, family in enumerate(index["producer_family"][outer]):
+    for qi in np.flatnonzero(active):
+        family = families[qi]
         stem = cache / f"family{family:02d}_query{qi:05d}"
         if not stem.with_suffix(".json").exists():
             raise ValueError(f"TEMPORAL_CACHE_INCOMPLETE:outer{outer}:query{qi}")
         receipt = json.loads(stem.with_suffix(".json").read_text(encoding="utf-8"))
         if receipt["query"] != qi or receipt["family"] != int(family):
             raise ValueError("receipt producer assignment changed")
-        receipts.append((stem.with_suffix(".npz"), receipt))
+        receipts.append((int(qi), stem.with_suffix(".npz"), receipt))
     resources = admitted([output.parent])
     if not resources["has_headroom"]:
         raise RuntimeError("RESOURCE_PAUSE")
@@ -98,7 +127,7 @@ def compile_fold(cache: Path, index_root: Path, dedup_root: Path, output: Path, 
         for name, (dtype, shape) in fields.items()
     }
     consumed = np.zeros(len(keys), dtype=bool)
-    for qi, (path, receipt) in enumerate(receipts):
+    for qi, path, receipt in receipts:
         if compute_file_hash(str(path)) != receipt["sha256"]:
             raise ValueError("cache payload changed")
         with np.load(path, allow_pickle=False) as archive:
@@ -121,6 +150,16 @@ def compile_fold(cache: Path, index_root: Path, dedup_root: Path, output: Path, 
     for destination in destinations.values():
         destination.flush()
     hashes = {name: compute_file_hash(str(output / f"{name}.npy")) for name in fields}
+    expansion_fields = (
+        {
+            "pool": "D1",
+            "indexed_queries": len(families),
+            "selected_query_ids": np.flatnonzero(active).tolist(),
+            "inactive_queries": int((~active).sum()),
+        }
+        if pool == "D1"
+        else {}
+    )
     write_new_json(
         output / "COMPILED.json",
         {
@@ -134,5 +173,6 @@ def compile_fold(cache: Path, index_root: Path, dedup_root: Path, output: Path, 
             "observations": len(keys),
             "optimizer_updates": 0,
             "status": "COMPLETE_FOLD_CACHE_NOT_SCIENTIFIC_FREEZE",
+            **expansion_fields,
         },
     )

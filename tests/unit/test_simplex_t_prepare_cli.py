@@ -17,14 +17,15 @@ def entry():
     return module
 
 
+@pytest.mark.parametrize("pool", ["D0", "D1"])
 def test_prepare_compiles_requested_fold_without_scientific_authorization(
-    entry, tmp_path, monkeypatch, capsys
+    entry, tmp_path, monkeypatch, capsys, pool
 ):
     paths = tmp_path / "local.json"
     paths.write_text(json.dumps({"worktree": str(tmp_path)}), encoding="utf-8")
     output = tmp_path / "outer1"
     calls = []
-    monkeypatch.setattr(entry, "compile_fold", lambda *args: calls.append(args))
+    monkeypatch.setattr(entry, "compile_fold", lambda *args, **kw: calls.append((args, kw)))
     monkeypatch.setattr(
         "sys.argv",
         [
@@ -32,6 +33,8 @@ def test_prepare_compiles_requested_fold_without_scientific_authorization(
             "prepare",
             "--compile-fold",
             "1",
+            "--compile-pool",
+            pool,
             "--local-paths",
             str(paths),
             "--output",
@@ -40,13 +43,17 @@ def test_prepare_compiles_requested_fold_without_scientific_authorization(
     )
     assert entry.main() == 0
     temporal = tmp_path / "artifacts/simplex_t/T1"
+    prefix = "expansion_" if pool == "D1" else ""
     assert calls == [
         (
-            temporal / "context_features_fp32",
-            temporal / "query_context_index",
-            temporal / "query_context_dedup",
-            output,
-            1,
+            (
+                temporal / f"{prefix}context_features_fp32",
+                temporal / f"{prefix}query_context_index",
+                temporal / f"{prefix}query_context_dedup",
+                output,
+                1,
+            ),
+            {"pool": pool},
         )
     ]
     result = json.loads(capsys.readouterr().out)
@@ -61,6 +68,7 @@ def test_prepare_compiles_requested_fold_without_scientific_authorization(
         ["prepare", "--compile-fold", "0"],
         ["prepare", "--compile-fold", "0", "--output", "unused", "--resume"],
         ["prepare", "--compile-fold", "3", "--output", "unused"],
+        ["prepare", "--compile-pool", "D1", "--output", "unused"],
     ],
 )
 def test_invalid_compile_arguments_fail_before_local_path_access(entry, monkeypatch, args):

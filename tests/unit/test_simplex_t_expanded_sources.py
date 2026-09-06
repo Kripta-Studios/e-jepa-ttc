@@ -6,7 +6,7 @@ import numpy as np
 import pytest
 import torch
 
-from e_jepa_ttc.simplex_t.cache import CachedQueries, Normalizer
+from e_jepa_ttc.simplex_t.cache import CachedQueries, Normalizer, training_mass
 from e_jepa_ttc.simplex_t.expanded_sources import merge_validated_sources
 
 
@@ -62,6 +62,21 @@ def test_shared_train_normalizer_and_unchanged_old_dev():
     for index in range(1, 6):
         assert torch.equal(before[index], after[index])
     np.testing.assert_array_equal(d0["outer_dev"].normalizer.mean, np.zeros(17))
+
+
+def test_merged_mass_matches_registered_recipe_with_unequal_group_counts():
+    d0, expansion = fixture()
+    old_sequences, new_sequences = np.array(["a", "a"]), np.array(["c", "d"])
+    combined = merge_validated_sources(
+        d0,
+        expansion,
+        original_train_sequences=old_sequences,
+        expansion_train_sequences=new_sequences,
+    )
+    expected = training_mass(
+        np.array([-2.0, -1.0, 1.0, 3.0]), np.concatenate((old_sequences, new_sequences))
+    )
+    np.testing.assert_allclose(combined["inner_oof"].mass, expected, rtol=1e-15, atol=0)
 
 
 @pytest.mark.parametrize("failure", ["overlap", "control", "mass", "leak", "index"])
