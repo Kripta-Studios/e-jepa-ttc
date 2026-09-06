@@ -70,6 +70,7 @@ def main() -> None:
         "index_sha256": manifest["index_sha256"],
         "preprocessing_sha256": prep_sha,
         "extractor_sha256": compute_file_hash("src/e_jepa_ttc/simplex_t/expert_features.py"),
+        "expert_phase_sha256": compute_file_hash("src/e_jepa_ttc/simplex_t/expert_phase.py"),
         "voxel_sha256": compute_file_hash("src/e_jepa_ttc/simplex_t/query_context_voxel.py"),
         "union_reader_sha256": compute_file_hash("src/e_jepa_ttc/simplex_t/context_raw_union.py"),
         "runner_sha256": compute_file_hash(__file__),

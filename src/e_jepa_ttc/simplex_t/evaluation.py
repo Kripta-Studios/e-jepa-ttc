@@ -10,6 +10,7 @@ import torch
 
 from e_jepa_ttc.evaluation.stage63_65 import benchmark_phase, strict_macro_mass
 
+from .expert_phase import expert_benchmark_phase
 from .phase import MAX_PHASE, MIN_PHASE, phase_to_ttc
 
 
@@ -33,7 +34,7 @@ def prediction_frame(
         raise ValueError("query population mismatch")
     target = metadata.target_ttc.to_numpy(np.float64)
     truth = benchmark_phase(target)
-    experts = benchmark_phase(expert_ttc)
+    experts = expert_benchmark_phase(expert_ttc)
     costs = np.asarray(outputs["relative_cost"], dtype=np.float64)
     if costs.shape != (count, 3) or not np.isfinite(costs).all():
         raise ValueError("nonfinite/misaligned costs")
@@ -50,7 +51,11 @@ def prediction_frame(
         prediction = expert_ttc[np.arange(count), selected].copy()
     else:
         prediction = phase_to_ttc(torch.from_numpy(point)).numpy()
-    actual_phase = benchmark_phase(prediction)
+    actual_phase = (
+        expert_benchmark_phase(prediction)
+        if output_mode == "selector"
+        else benchmark_phase(prediction)
+    )
     if not np.isfinite(actual_phase).all() or actual_phase.shape != (count,):
         raise ValueError("nonfinite/misaligned finite TTC")
     raw = np.asarray(outputs["raw_location"], dtype=np.float64)
@@ -61,6 +66,7 @@ def prediction_frame(
     frame = metadata.copy()
     frame["arm"], frame["seed"], frame["outer_fold"] = arm, seed, fold
     frame["prediction_ttc_s"] = prediction
+    frame["prediction_ttc_infinite"] = np.isinf(prediction)
     frame["prediction_phase"] = actual_phase
     frame["target_phase"] = truth
     frame["raw_location"] = raw
@@ -80,7 +86,7 @@ def prediction_frame(
     )
     frame["phase_support_saturation"] = (raw < MIN_PHASE) | (raw > MAX_PHASE)
     frame["target_outside_support"] = (truth < MIN_PHASE) | (truth > MAX_PHASE)
-    frame["finite_ttc_cap"] = np.abs(prediction) >= 60
+    frame["finite_ttc_cap"] = np.isfinite(prediction) & (np.abs(prediction) >= 60)
     frame["sign_change_from_median"] = np.sign(actual_phase) != np.sign(np.median(experts, 1))
     median_ttc = phase_to_ttc(torch.from_numpy(np.median(experts, 1))).numpy()
     median_loss = 10000 * np.abs(benchmark_phase(median_ttc) - truth)
@@ -91,6 +97,7 @@ def prediction_frame(
     frame["diagnostic_selector"] = selected
     for expert in range(3):
         frame[f"expert{expert}_ttc"] = expert_ttc[:, expert]
+        frame[f"expert{expert}_ttc_infinite"] = np.isinf(expert_ttc[:, expert])
         frame[f"expert{expert}_phase"] = experts[:, expert]
         frame[f"original_cost{expert}"] = 10000 * np.abs(experts[:, expert] - truth)
         frame[f"predicted_relative_cost{expert}"] = costs[:, expert]

@@ -77,6 +77,36 @@ def test_selector_exports_exact_original_ttc_without_residual_projection():
     assert frame.hull_position.iloc[0] == "inside"
 
 
+def test_selector_preserves_infinite_original_and_exports_flag():
+    metadata = pd.DataFrame(
+        dict(sample_token=["q"], sequence_id=["s"], track_id=["t"], target_ttc=[2.0])
+    )
+    output = dict(
+        point_phase=np.array([0.0]),
+        raw_location=np.array([0.0]),
+        raw_residual=np.array([0.0]),
+        q10=np.array([-0.03]),
+        q90=np.array([0.03]),
+        relative_cost=np.array([[2.0, 1.0, 0.0]]),
+    )
+    frame = prediction_frame(
+        metadata,
+        np.array([[1.0, 2.0, np.inf]]),
+        output,
+        np.array([[0]]),
+        arm="SELECTOR",
+        seed=7,
+        fold=0,
+        output_mode="selector",
+    )
+    assert np.isposinf(frame.prediction_ttc_s.iloc[0])
+    assert frame.prediction_phase.iloc[0] == 0
+    assert frame.prediction_ttc_infinite.iloc[0]
+    assert frame.expert2_ttc_infinite.iloc[0]
+    assert not frame.finite_ttc_cap.iloc[0]
+    assert np.isfinite(frame.loss.iloc[0])
+
+
 def test_escape_gain_uses_emitted_current_median_baseline():
     metadata = pd.DataFrame(
         dict(sample_token=["q"], sequence_id=["s"], track_id=["t"], target_ttc=[60.0])

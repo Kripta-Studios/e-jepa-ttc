@@ -10,7 +10,7 @@ import numpy as np
 
 from e_jepa_ttc.artifacts.hashing import compute_file_hash
 from e_jepa_ttc.artifacts.simplex_t_preflight import write_new_json
-from e_jepa_ttc.evaluation.stage61_nested_pair_router import phase_from_ttc
+from e_jepa_ttc.simplex_t.expert_phase import expert_phase_from_ttc
 
 
 def main() -> None:
@@ -36,6 +36,7 @@ def main() -> None:
         with np.load(path, allow_pickle=False) as archive:
             history.append(archive["history"])
     blocks = []
+    infinite_expert_points = []
     seen: set[tuple[int, int]] = set()
     for receipt in sorted(args.cache.glob("family*_query*.json")):
         saved = json.loads(receipt.read_text(encoding="utf-8"))
@@ -55,7 +56,21 @@ def main() -> None:
                 raise ValueError("feature schema drift")
             if expert.shape != (count, 3) or not np.isfinite(features).all():
                 raise ValueError("invalid expert content")
-            expected_phase = phase_from_ttc(expert.astype(np.float64)).astype(np.float32)
+            if not np.isfinite(expert[:, :2]).all():
+                raise ValueError("nonfinite A5/C2F points")
+            expected_phase = expert_phase_from_ttc(expert.astype(np.float64)).astype(np.float32)
+            for row, expert_id in np.argwhere(np.isinf(expert)):
+                infinite_expert_points.append(
+                    {
+                        "query": qi,
+                        "family": family,
+                        "row": int(row),
+                        "expert": int(expert_id),
+                        "observation_id": int(arrays["observation_ids"][row]),
+                        "ttc_repr": repr(float(expert[row, expert_id])),
+                        "phase": float(expected_phase[row, expert_id]),
+                    }
+                )
             if not np.array_equal(features[:, 8:11], expected_phase):
                 raise ValueError("phase/point inconsistency")
             if not np.array_equal(arrays["observation_ids"], history[outer][qi, mask]):
@@ -79,6 +94,7 @@ def main() -> None:
             "completed_query_blocks": len(blocks),
             "required_query_blocks": 3 * 8192,
             "observations": len(seen),
+            "infinite_expert_points": infinite_expert_points,
             "blocks": blocks,
             "cache_identity_sha256": compute_file_hash(str(args.cache / "IDENTITY.json")),
             "targets_read": False,

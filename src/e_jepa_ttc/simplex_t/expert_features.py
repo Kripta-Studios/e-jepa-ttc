@@ -8,9 +8,10 @@ import torch
 from torch import Tensor
 
 from e_jepa_ttc.data.stage61_pair_feature_cache import PairFeatureBatch
-from e_jepa_ttc.evaluation.stage61_nested_pair_router import build_router_features
 from e_jepa_ttc.models.causal_scale_ttc import CausalScaleTTC
 from e_jepa_ttc.training.stage61_pair_head import CachedPairDirectPhase
+
+from .expert_phase import build_expert_features as build_router_features
 
 
 @torch.inference_mode()
@@ -77,7 +78,23 @@ def extract_family(
                 -1,
             ).float()
     assert tokens is not None and pair_features is not None
-    pair_ttc = pair.predict_ttc(PairFeatureBatch(pair_features)).float().cpu().numpy()
+    native_phase: list[Tensor] = []
+
+    def capture_phase(module: torch.nn.Module, inputs: tuple, output: Tensor) -> None:
+        native_phase.append(output)
+
+    handle = pair.register_forward_hook(capture_phase)
+    try:
+        pair_ttc = pair.predict_ttc(PairFeatureBatch(pair_features)).float().cpu().numpy()
+    finally:
+        handle.remove()
+    if len(native_phase) != 1:
+        raise ValueError("PAIR native phase provenance missing")
+    phase = native_phase[0].float().cpu().numpy()
+    if not np.isfinite(phase).all() or (np.isinf(pair_ttc) & (phase != 0)).any():
+        raise ValueError("infinite PAIR TTC without an exact native zero phase")
+    if not all(np.isfinite(value).all() for value in predictions):
+        raise ValueError("nonfinite A5/C2F prediction")
     predictions.append(pair_ttc)
     _, features = build_router_features(frames[0], frames[1], pair_ttc)
     values = features.to_numpy(dtype=np.float32)
@@ -85,7 +102,7 @@ def extract_family(
     expert_ttc = np.stack(predictions, axis=1)
     if latent.shape != (len(events), 128) or values.shape != (len(events), 17):
         raise ValueError("frozen expert feature schema drift")
-    if not all(np.isfinite(v).all() for v in (values, latent, expert_ttc)):
+    if not all(np.isfinite(v).all() for v in (values, latent)) or np.isnan(expert_ttc).any():
         raise ValueError("nonfinite expert extraction; do not silently drop observations")
     return {
         "features145": np.concatenate((values, latent), axis=1),

@@ -10,6 +10,7 @@ import numpy as np
 from e_jepa_ttc.artifacts.hashing import compute_file_hash
 from e_jepa_ttc.artifacts.simplex_t_preflight import write_new_json
 
+from .expert_phase import expert_phase_from_ttc
 from .lifecycle import admitted
 
 
@@ -32,9 +33,16 @@ def validate_block(
     }
     if set(arrays) != set(shapes) or any(arrays[k].shape != shape for k, shape in shapes.items()):
         raise ValueError("temporal block schema mismatch")
-    for name in ("features145", "expert_ttc", "pair_features"):
+    for name in ("features145", "pair_features"):
         if arrays[name].dtype != np.float32 or not np.isfinite(arrays[name]).all():
             raise ValueError("nonfinite or non-FP32 cache values")
+    if arrays["expert_ttc"].dtype != np.float32:
+        raise ValueError("non-FP32 expert points")
+    if not np.isfinite(arrays["expert_ttc"][:, :2]).all():
+        raise ValueError("nonfinite A5/C2F points")
+    phase = expert_phase_from_ttc(arrays["expert_ttc"]).astype(np.float32)
+    if not np.array_equal(arrays["features145"][:, 8:11], phase):
+        raise ValueError("expert point/phase inconsistency")
     for name in ("observation_ids", "anchor_us", "available_us"):
         if arrays[name].dtype != np.int64:
             raise ValueError("integer cache identity/time required")
