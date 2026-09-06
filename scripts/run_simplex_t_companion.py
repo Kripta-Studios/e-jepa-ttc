@@ -1,0 +1,41 @@
+"""SIMPLEX-T T0 audit/resumption entry point; scientific integration is pending."""
+
+from __future__ import annotations
+
+import argparse
+import json
+from pathlib import Path
+
+from e_jepa_ttc.artifacts.simplex_t_delivery import package_t0
+from e_jepa_ttc.artifacts.simplex_t_preflight import audit, interface_status, write_new_json
+
+
+def main() -> int:
+    """Fail closed for scientific commands until owner interfaces are integrated."""
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("command", choices=["audit", "prepare", "run", "status", "package"])
+    parser.add_argument("--local-paths", type=Path, required=True)
+    parser.add_argument("--output", type=Path)
+    parser.add_argument("--resume", action="store_true")
+    args = parser.parse_args()
+    if args.command == "package":
+        if args.output is None:
+            parser.error("package requires a new --output directory")
+        print(json.dumps(package_t0(args.local_paths, args.output), indent=2))
+        return 0
+    if args.command == "audit":
+        if args.output is None:
+            parser.error("audit requires a new --output JSON evidence path")
+        result = audit(args.local_paths)
+        write_new_json(args.output, result)
+        print(json.dumps(result["interfaces"], indent=2))
+        return 0
+    paths = json.loads(args.local_paths.read_text(encoding="utf-8"))
+    result = interface_status(paths)
+    result["implementation_status"] = "INDEPENDENT_COMPONENTS_NOT_SCIENTIFICALLY_FROZEN"
+    print(json.dumps(result, indent=2))
+    return 0 if args.command == "status" else 3
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
