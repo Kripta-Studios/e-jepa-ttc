@@ -1,0 +1,22 @@
+{
+  "kind": "PRE_FREEZE_EXACT_INPUT_BOUNDED_IO_AMENDMENT",
+  "reason": "Query4981 family1 retained298830369 bytes, exceeding the268435456-byte union buffer; no host-resource shortage or scientific failure",
+  "old_union_reader_sha256": "4b9493b76ebd4efff859000a89e2b64541687f6d14d4b5e1ac9534ff97742d32",
+  "new_union_reader_sha256": "184c1094903e5bf0d6eeb6b87408f81d59012e22a015a577e277e651c438aca4",
+  "runner_sha256_unchanged": "63fbbd85024cf6e58215eefa9043562e783aabea5c9ab4957ecbbe841e594f80",
+  "proof": "artifacts/simplex_t/T1/UNION_CAPACITY_PARITY_4981.json",
+  "proof_sha256": "bf4b5d2d9feffe10b420f46749e4b98377c8fa69b015bf0aad767ade3efcf4e9",
+  "proof_windows": 48,
+  "all_input_tensors_bit_identical": true,
+  "proof_modes": ["bounded256MiB", "union512MiB", "original independent windows"],
+  "proof_process_peak_rss_bytes": 1416159232,
+  "production_retained_bytes_max_unchanged": 268435456,
+  "behavior": "Release oversized union pieces, then read each identical window separately with the same crop, order and byte cap. A single oversized window still pauses explicitly. No events are truncated.",
+  "unchanged": ["event ordering", "ROI", "window boundaries", "history length", "voxel arithmetic", "expert weights", "producer assignments", "batch layout", "FP32", "scientific constants"],
+  "existing_blocks_preserved": 3160,
+  "old_identity": "artifacts/simplex_t/T1/context_features_fp32/IDENTITY_UNION_ONLY_3160.json",
+  "old_identity_sha256": "2a101b6c7d9667690746057f5f8db7fc7244809ba0f4bd77a8b41831bdabd2cd",
+  "scientific_freeze_exists": false,
+  "optimizer_updates": 0,
+  "original_failure_evidence": "artifacts/simplex_t/T1/UNION_BUFFER_RESOURCE_PAUSE_3160.json"
+}

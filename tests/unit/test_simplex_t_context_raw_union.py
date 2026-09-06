@@ -70,3 +70,25 @@ def test_union_memory_cap_fails_without_substituting_windows():
             event_pixel_diff=5.0,
             retained_bytes_max=1,
         )
+
+
+def test_bounded_window_reads_equal_union_without_dropping_events():
+    reader, raw, windows, lag = fixture()
+
+    def chunks(start, end, *, chunk_events):
+        keep = (raw["t"] >= start) & (raw["t"] < end)
+        selected = {key: values[keep] for key, values in raw.items()}
+        return [selected]
+
+    reader.iter_window_chunks.side_effect = chunks
+    kwargs = dict(sequence_id="fixture", roi_size=16, event_pixel_diff=5.0)
+    valid = np.ones(16, bool)
+    valid[:2] = False
+    expected = encode_context_union(reader, windows, lag, valid, (0.0, 0.0, 100.0, 100.0), **kwargs)
+    reader.reset_mock()
+    actual = encode_context_union(
+        reader, windows, lag, valid, (0.0, 0.0, 100.0, 100.0), retained_bytes_max=1000, **kwargs
+    )
+    assert reader.iter_window_chunks.call_count == 1 + 3 * int(valid.sum())
+    assert torch.equal(actual, expected)
+    assert not actual[:2].any()
