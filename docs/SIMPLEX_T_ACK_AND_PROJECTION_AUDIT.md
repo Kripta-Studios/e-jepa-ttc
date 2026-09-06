@@ -189,3 +189,31 @@ The audit projects only identities and input boxes. The HF geometry/velocity
 columns are not loaded. Original primitive pickle decoding is unavoidable, but
 numeric target/velocity/3D values are never inspected or used in membership.
 Ruff and Pyright pass for both new metadata scripts and the delivery module.
+
+## Canonical arm-to-engine binding
+
+The arms module now resolves every registered D0/D1, density, temporal control,
+Transformer, latent and replication FitSpec into its exact TemporalConfig and
+cached-source transformation. It rejects unknown widths, seeds, folds, stages,
+endpoints and registered fits absent from the caller's frozen graph. It does
+not authorize the supplied graph or certify its stage-gate evidence.
+
+Eight tests pass without optimizer updates (qa_arm_binding.xml). They cover all
+registered configurations, rejection cases, and REPEAT_CURRENT gather parity:
+current experts, timings, masks, targets and masses remain unchanged, the shared
+normalizer is retained, and the original cache is not mutated. Ruff and Pyright
+pass. Scientific freeze, source validation and the production runner are still
+pending; this module is an integration component, not a completed campaign.
+
+## Exact outstanding source request
+
+For the Stage70 owner, ask only whether a verified source mapping already exists:
+"Do you have an authoritative crosswalk from Garl public_track_id/track_id to
+eAP instance_id for the nine original groups, or the original Garl train/*.pkl
+per-track annotations consumed by build_garlttc_dataset.py? Please provide paths,
+SHA256 and provenance only, without scores or protected data. The eAP ZIP/HF
+frame/instance keys agree exactly; direct Garl keys/boxes do not. If you do not
+have this mapping, no reconstruction or nearest-box association is requested."
+
+The same source question can be passed to the dataset publisher if the owner
+does not possess it. This is a request draft, not an externally sent message.

@@ -377,6 +377,7 @@ No future background completion is promised.
         "CURRENT_EXPOSURE_TIMING.json",
         "qa_current_inputs.xml",
         "qa_release_identity_dependencies.xml",
+        "qa_arm_binding.xml",
     ):
         payload[f"evidence/{name}"] = (evidence / name).read_bytes()
     payload["evidence/current_array_resume/RESUME_QA.json"] = (
