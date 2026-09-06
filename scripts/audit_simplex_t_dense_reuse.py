@@ -9,7 +9,7 @@ from pathlib import Path
 import numpy as np
 
 from e_jepa_ttc.artifacts.simplex_t_preflight import sha256, write_new_json
-from e_jepa_ttc.simplex_t.cache_reuse import rebind_block
+from e_jepa_ttc.simplex_t.cache_reuse import load_reused_block
 
 
 def main() -> None:
@@ -88,8 +88,13 @@ def main() -> None:
             mask = dense["valid"][target]
             if not np.array_equal(arrays["observation_ids"], histories[0][row, mask]):
                 raise ValueError("cached source observation IDs changed")
-            result = rebind_block(
-                arrays,
+            result = load_reused_block(
+                cache,
+                identity_sha256=sha256(cache / "IDENTITY.json"),
+                receipt_sha256=sha256(path.with_suffix(".json")),
+                query=int(row),
+                family=family,
+                source_ids=histories[0][row, mask],
                 source_keys=key_sets[0],
                 destination_keys=key_sets[1],
                 destination_ids=histories[1][target, mask],

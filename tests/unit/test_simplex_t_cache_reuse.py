@@ -1,9 +1,12 @@
 """Content-bound reuse keeps frozen expert outputs byte-identical."""
 
+import json
+
 import numpy as np
 import pytest
 
-from e_jepa_ttc.simplex_t.cache_reuse import rebind_block
+from e_jepa_ttc.artifacts.hashing import compute_file_hash
+from e_jepa_ttc.simplex_t.cache_reuse import load_reused_block, rebind_block
 from e_jepa_ttc.simplex_t.expert_phase import expert_phase_from_ttc
 
 
@@ -63,3 +66,44 @@ def test_changed_reuse_binding_rejected(failure):
         arguments["destination_keys"][2] = "bad"
     with pytest.raises(ValueError):
         rebind_block(arrays, **arguments)
+
+
+@pytest.mark.parametrize("failure", [None, "identity", "receipt", "payload", "history", "dev"])
+def test_production_reuse_loader_verifies_files_before_rebinding(tmp_path, failure):
+    arrays, arguments = fixture()
+    identity = tmp_path / "IDENTITY.json"
+    identity.write_text("{}", encoding="utf-8")
+    path = tmp_path / "family00_query00000.npz"
+    np.savez(path, **arrays)
+    receipt = path.with_suffix(".json")
+    receipt.write_text(
+        json.dumps({"query": 0, "family": 0, "sha256": compute_file_hash(str(path))}),
+        encoding="utf-8",
+    )
+    pins = dict(
+        identity_sha256=compute_file_hash(str(identity)),
+        receipt_sha256=compute_file_hash(str(receipt)),
+        query=0,
+        family=0,
+        source_ids=arrays["observation_ids"].copy(),
+    )
+    if failure == "identity":
+        identity.write_text('{"changed":true}', encoding="utf-8")
+    elif failure == "receipt":
+        receipt.write_text("{}", encoding="utf-8")
+    elif failure == "payload":
+        arrays["features145"][0, 0] = 9
+        np.savez(path, **arrays)
+    elif failure == "history":
+        pins["source_ids"] = np.array([1, 0], np.int64)
+    elif failure == "dev":
+        pins["family"] = 3
+    if failure is None:
+        result = load_reused_block(tmp_path, **pins, **arguments)
+        assert result["observation_ids"].tolist() == [2, 1]
+        for name in arrays:
+            if name != "observation_ids":
+                assert result[name].tobytes() == arrays[name].tobytes()
+    else:
+        with pytest.raises(ValueError):
+            load_reused_block(tmp_path, **pins, **arguments)

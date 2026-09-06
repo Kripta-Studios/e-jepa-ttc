@@ -2,7 +2,12 @@
 
 from __future__ import annotations
 
+import json
+from pathlib import Path
+
 import numpy as np
+
+from e_jepa_ttc.artifacts.hashing import compute_file_hash
 
 from .compiled_context import validate_block
 
@@ -51,3 +56,60 @@ def rebind_block(
     result["observation_ids"] = destination_ids.copy()
     validate_block(result, destination_ids, anchors_us, available_us)
     return result
+
+
+def load_reused_block(
+    cache: Path,
+    *,
+    identity_sha256: str,
+    receipt_sha256: str,
+    query: int,
+    family: int,
+    source_ids: np.ndarray,
+    source_keys: np.ndarray,
+    destination_keys: np.ndarray,
+    destination_ids: np.ndarray,
+    anchors_us: np.ndarray,
+    available_us: int,
+) -> dict[str, np.ndarray]:
+    """Load one pinned TRAIN block and rebind it without materializing a duplicate cache.
+
+    The caller pins the source receipt and index/dedup manifests before invoking
+    this loader. No path from the receipt is followed; paths derive from integer
+    query/family IDs under the explicitly supplied cache root.
+    """
+    if type(query) is not int or query < 0 or family not in range(12) or family % 4 == 3:
+        raise ValueError("reuse requires a TRAIN query and inner producer family")
+    root = cache.resolve(strict=True)
+
+    def verify(path: Path, expected: str) -> None:
+        resolved = path.resolve(strict=True)
+        if not resolved.is_relative_to(root):
+            raise ValueError("reuse file escapes declared cache root")
+        if (
+            len(expected) != 64
+            or set(expected) - set("0123456789abcdef")
+            or compute_file_hash(str(resolved)) != expected
+        ):
+            raise ValueError("reused cache content pin changed")
+
+    verify(root / "IDENTITY.json", identity_sha256)
+    path = root / f"family{family:02d}_query{query:05d}.npz"
+    receipt_path = path.with_suffix(".json")
+    verify(receipt_path, receipt_sha256)
+    receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+    if receipt["query"] != query or receipt["family"] != family:
+        raise ValueError("reused receipt query/producer assignment changed")
+    verify(path, receipt["sha256"])
+    with np.load(path, allow_pickle=False) as archive:
+        arrays = {name: archive[name] for name in archive.files}
+    if not np.array_equal(arrays["observation_ids"], source_ids):
+        raise ValueError("reused source history differs from pinned index")
+    return rebind_block(
+        arrays,
+        source_keys=source_keys,
+        destination_keys=destination_keys,
+        destination_ids=destination_ids,
+        anchors_us=anchors_us,
+        available_us=available_us,
+    )
