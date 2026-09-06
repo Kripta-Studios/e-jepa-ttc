@@ -176,3 +176,24 @@ of changed manifest/weights, invalid schema, parameter set or control. Tests
 perform zero optimizer updates. Ruff and Pyright pass; an initial single-line
 format failure was corrected. Scientific weights do not exist yet and these
 fixtures must not be included as campaign results.
+
+## Actual-history technical resume entry point
+
+`scripts/probe_simplex_t_context_resume.py` accepts a complete compiled fold and
+its manifest hash, index/dedup roots, local configuration and a new output. It
+verifies the acknowledged interfaces, loads the actual role-separated scalar
+history source, and gathers every TRAIN query to verify finite nonzero temporal
+inputs before reserving 20 updates in the global technical ledger. The two
+branches are update10 and update5 then resume-to10, using CPU FP32 and the engine
+work journal. Full checkpoint state digests, not just weights, are compared.
+
+`--resume` requires the same script/engine/source/compiled/runtime contract and
+existing reservation. Completed probes cannot run again. Resource pauses retain
+exact checkpoints. An unsettled crash journal refuses replay pending explicit
+accounting, rather than charging lost updates as zero. This does not authorize
+scientific training or replace the independent producer replay proof.
+
+One mocked-engine CLI integration test verifies the 10/5/10 invocation sequence,
+single 20-update reservation and completed-probe refusal. Ruff and Pyright pass.
+The test uses a temporary ledger and performs zero real optimizer updates. The
+actual-history probe has not yet been executed at this implementation checkpoint.
