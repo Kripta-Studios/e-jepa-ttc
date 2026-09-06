@@ -66,3 +66,18 @@ The future query-context cache must consistently use one declared FP32 route
 for all current and prior fields; historical RISK17 replay remains a separate
 comparator. Production cache integration, actual timing-bound CPU resume,
 remaining pre-fit QA and scientific freeze still precede every head fit.
+
+## Input-only context index
+
+The D0 metadata index now covers all8192 original queries and assigns each to
+the appropriate nested family independently for each of the three outer folds.
+Raw stream bounds permit H8 for8182 queries and H16 for8171. Other queries keep
+only complete supported windows, with explicit missing slots. These counts are
+input availability, not predictive results or evidence of same-object tracking.
+
+Content deduplication binds raw-source digest, frozen preprocessing digest,
+producer family, three shifted intervals, exact supplied crop, anchor and current
+ROI availability. Query names do not force duplicate feature rows. Distinct
+producer families and distinct availability dependencies cannot alias. Tests
+verify label perturbation invariance, cold starts and dependency isolation.
+Neither the index nor its deduplicated keys are an extracted feature cache.
