@@ -29,8 +29,8 @@ def resource_headroom(
         reasons.append("HOST_AVAILABLE_BELOW_8_GIB")
     if process_tree_rss > 4 * 1024**3:
         reasons.append("PROCESS_TREE_RSS_ABOVE_4_GIB")
-    if any(free < 60 * 1024**3 for free in written_volume_free):
-        reasons.append("WRITTEN_VOLUME_FREE_BELOW_60_GIB")
+    if any(free < 40_000_000_000 for free in written_volume_free):
+        reasons.append("WRITTEN_VOLUME_FREE_BELOW_40_GB")
     return {"has_headroom": not reasons, "reasons": reasons}
 
 
@@ -116,6 +116,31 @@ def interface_status(paths: dict[str, Any]) -> dict[str, Any]:
             missing.append(name)
     if not ack.is_file():
         missing.append("stage70_owner_acknowledgement")
+    config_path = (
+        Path(paths.get("worktree", ".")) / "configs/experiment/simplex_t_coordination.json"
+    )
+    if ack.is_file() and config_path.is_file() and paths.get("worktree"):
+        from e_jepa_ttc.simplex_t.coordination import verified_ack
+
+        config = json.loads(config_path.read_text(encoding="utf-8"))
+        accepted = verified_ack(ack, config["ack_sha256"])
+        return {
+            "execution_status": "INTERFACES_ACKNOWLEDGED_PRODUCTION_PREREQUISITES_PENDING",
+            "missing": [
+                "validated_history_source",
+                "production_replay_and_freeze",
+                "exclusive_inference_slot",
+            ],
+            "acknowledgement_path": str(ack),
+            "acknowledgement_sha256": config["ack_sha256"],
+            "acknowledgement_exists": True,
+            "authoritative_roles_adopted": True,
+            "interfaces": accepted["interfaces"],
+            "scientific_run_enabled": False,
+            "cpu_overlap_conditionally_authorized": accepted["resources"]["cpu_overlap_authorized"],
+            "disk_floor_bytes_latest_user_amendment": 40_000_000_000,
+            "reason": "Role/time authority resolved; source parity and production integration remain separate gates.",
+        }
     return {
         "execution_status": (
             "WAITING_SHARED_ROLE_MANIFEST" if missing else "INTERFACE_REVIEW_REQUIRED"

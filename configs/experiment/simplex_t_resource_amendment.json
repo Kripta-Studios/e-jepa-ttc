@@ -5,14 +5,14 @@
   "units": "GiB = 1073741824 bytes",
   "min_host_available_bytes": 8589934592,
   "max_process_tree_rss_bytes": 4294967296,
-  "min_written_volume_free_bytes": 64424509440,
+  "min_written_volume_free_bytes": 40000000000,
   "max_compact_cache_bytes": 8589934592,
   "max_temporary_raw_bytes": 2147483648,
   "max_gpu_reserved_bytes": 9663676416,
   "max_cpu_threads": 4,
   "max_interop_threads": 2,
   "percentage_resource_limits": false,
-  "supersedes": "document06 disk floor max(20 GiB, 10% capacity); use 60 GiB absolute",
+  "supersedes": "Latest user instruction: 40 decimal GB free after reservations replaces handoff disk percentages, prior 60 GiB and ACK 120 GB; other resource and scheduling constraints unchanged",
   "scientific_recipe_changed": false,
   "source_handoff_modified": false
 }

@@ -1,0 +1,10 @@
+{
+  "ack_filename": "SIMPLEX_T_STAGE70_ACK.json",
+  "ack_sha256": "3e55ab3c6e9a57eecd862ad05e999627ea90957e58e329b2eb3652120e953318",
+  "shared_written_volume_remaining_bytes_min": 40000000000,
+  "disk_authority": "Later explicit user instruction supersedes both 60 GiB and ACK 120 GB; 40 decimal GB remain after reservations",
+  "unknown_reservations_admitted": false,
+  "exclusive_inference_granted": false,
+  "e_drive_source_only": false,
+  "geometry_reconstruction_scope": "User-authorized feasibility and parity audit; no replacement of frozen expert ROI without demonstrated equivalence"
+}
