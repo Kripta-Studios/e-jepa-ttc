@@ -73,3 +73,27 @@ annotation file confirms documented bbox, instance_id and exposure timestamp
 keys. Full schema, identity correspondence and history eligibility remain to audit.
 This supersedes the missing-loose-original-files prerequisite; it does not yet
 establish scientific cache readiness or authorize an exclusive replay slot.
+
+## Primitive-only decoding and nine-sequence input audit
+
+All nine annotation/frame pairs were subsequently decoded using a primitive-only
+pickle opcode allow-boundary: globals, reducers, object construction and persistent
+references are refused before unpickling. Three decoder/field-projection tests pass.
+There are182086 object observations and26957 frames, with unique frame/instance
+keys and no object referencing an absent frame in each source. These counts describe
+the published originals, not proof of every acquisition observation being retained.
+
+Replacing TTC, velocity and bbox_3d with nonnumeric placeholders leaves the complete
+whitelisted observation digest unchanged for every sequence. No target value enters
+this projection. This is a real-source input membership test, not yet a full temporal
+history/producer-cache integration test.
+
+The first128 Garl pairs per sequence were compared by exact frame member and ID.
+Missing ID matches persist. The documented xywh interpretation yields no exact-box
+match in these audits. A diagnostic raw-xyxy interpretation yields only2 unique exact
+matches across the9 bounded samples. Example original bbox[236,499,348,601] versus
+Garl[234,497,343,601] suggests close but nonidentical raw bounds in one case.
+Neither convention nor cross-release persistent identity is promoted from this
+diagnostic. The earlier statement about coordinates exceeding720 was conditional
+on the documented xywh interpretation, not proof of a different camera resolution.
+Source format/provenance and causal history attachment remain under investigation.
