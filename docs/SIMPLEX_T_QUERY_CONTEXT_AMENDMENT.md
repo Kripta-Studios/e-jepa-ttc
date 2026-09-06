@@ -120,3 +120,11 @@ No completion or scientific fit is implied by an intermediate block receipt.
 The runner currently has one Pyright diagnostic on NumPy keyword unpacking at
 savez_compressed; runtime output and its schema are separately checked. This
 typing issue remains on the pre-freeze QA list.
+
+The fold compiler requires all8192 query/family receipts for its outer fold
+before allocating feature arrays. It verifies each block's hash, exact indices,
+float32 shapes, finite values, integer times and current ROI availability, then
+builds memory-mappable arrays and publishes a completion manifest only after
+every consumed observation is covered. A real partial-cache invocation rejected
+the first missing receipt and created no compiled output. Seven unit tests cover
+schema, identity, timing, dtype, nonfinite and forbidden-target rejection.
