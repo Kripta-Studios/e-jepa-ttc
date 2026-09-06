@@ -25,8 +25,12 @@ from .model import TemporalConfig, TemporalRefiner, training_loss
 class QuerySource(Protocol):
     """Uniform-query gather from prevalidated deduplicated features, never HDF5."""
 
-    population: int
     identity_sha256: str
+
+    @property
+    def population(self) -> int:
+        """Read-only query count; both stored attributes and properties conform."""
+        ...
 
     def gather(self, query_ids: Tensor) -> tuple[Tensor, Tensor, Tensor, Tensor, Tensor, Tensor]:
         """Return features, timing, valid, original experts, target and global mass."""

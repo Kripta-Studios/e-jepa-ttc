@@ -44,3 +44,28 @@ Still pending: run compilation and preparation on complete real folds; connect
 freeze/QA/practical-gate validation and source identities into the scientific
 CLI; connect sealed endpoints to analysis and final packaging; complete actual
 history resume QA and the complete freeze before the first scientific fit.
+
+## Sealed endpoint inference connection
+
+`phase_inference.iter_phase_predictions` now connects the complete sealed phase
+to the fixed-endpoint loader and cached-head inference. It checks the caller's
+prerequisite callback first, then the pinned phase manifest, exact registered fit
+set, canonical model configurations, path scope and non-aliasing, checkpoint
+hashes, and all completed-update training identities before invoking any OLD_DEV
+source loader. The caller supplies pre-frozen OLD_DEV identities; each source is
+checked before inference. Only complete per-fit outputs and the actually consumed
+history slots are yielded. The caller still owns metadata alignment, per-query
+export, phase-wide aggregation, practical gate reporting and publication.
+
+Ten new inference-wiring cases and the four existing sealer tests use explicitly
+mocked checkpoints: they are not scientific fits or proof of production endpoint
+execution. They cover partial/duplicate seals, altered model/bytes, escaping
+paths, gate rejection, source mismatch and resource interruption without partial
+fit output. No optimizer work is performed.
+
+The first type check exposed `QuerySource.population` as a mutable protocol
+attribute although `CachedQueries.population` is read-only. The protocol now
+declares a read-only property, accepting both existing stored counts and computed
+properties. This is an interface typing correction, not a model, optimizer,
+sampler, loss or checkpoint numerical change. Full actual-history resume QA
+remains pending as before.
