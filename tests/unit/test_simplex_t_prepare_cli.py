@@ -17,7 +17,7 @@ def entry():
     return module
 
 
-@pytest.mark.parametrize("pool", ["D0", "D1"])
+@pytest.mark.parametrize("pool", ["D0", "D1", "DENSE_OLD"])
 def test_prepare_compiles_requested_fold_without_scientific_authorization(
     entry, tmp_path, monkeypatch, capsys, pool
 ):
@@ -43,7 +43,7 @@ def test_prepare_compiles_requested_fold_without_scientific_authorization(
     )
     assert entry.main() == 0
     temporal = tmp_path / "artifacts/simplex_t/T1"
-    prefix = "expansion_" if pool == "D1" else ""
+    prefix = {"D0": "", "D1": "expansion_", "DENSE_OLD": "dense_"}[pool]
     assert calls == [
         (
             (

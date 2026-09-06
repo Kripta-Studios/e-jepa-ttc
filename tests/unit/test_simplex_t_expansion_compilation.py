@@ -15,7 +15,7 @@ def fixture(tmp_path, monkeypatch, *, pool="D1"):
     for path in (cache, index, dedup):
         path.mkdir()
     monkeypatch.setattr(compiled_context, "admitted", lambda paths: {"has_headroom": True})
-    active = [0, 2] if pool == "D1" else [0, 1, 2]
+    active = [0, 1, 2] if pool == "D0" else [0, 2]
     families = np.full((3, 3), -1, np.int64)
     families[0, active] = 0
     valid = np.zeros((3, 16), bool)
@@ -67,11 +67,13 @@ def fixture(tmp_path, monkeypatch, *, pool="D1"):
     return cache, index, dedup, tmp_path / "compiled"
 
 
-def test_inactive_middle_query_preserves_real_query_ids(tmp_path, monkeypatch):
-    args = fixture(tmp_path, monkeypatch)
-    compiled_context.compile_fold(*args, outer=0, pool="D1")
+@pytest.mark.parametrize("pool", ["D1", "DENSE_OLD"])
+def test_inactive_middle_query_preserves_real_query_ids(tmp_path, monkeypatch, pool):
+    args = fixture(tmp_path, monkeypatch, pool=pool)
+    compiled_context.compile_fold(*args, outer=0, pool=pool)
     manifest = json.loads((args[-1] / "COMPILED.json").read_text(encoding="utf-8"))
     assert manifest["selected_query_ids"] == [0, 2]
+    assert manifest["pool"] == pool
     assert manifest["queries"] == manifest["observations"] == 2
     assert manifest["indexed_queries"] == 3 and manifest["inactive_queries"] == 1
     assert np.load(args[-1] / "features145.npy")[:, 0].tolist() == [1, 3]
@@ -89,8 +91,9 @@ def test_d0_retains_manifest_schema(tmp_path, monkeypatch):
 
 
 @pytest.mark.parametrize("corruption", ["identity", "family", "mask", "missing"])
-def test_invalid_d1_is_rejected_before_allocating_outputs(tmp_path, monkeypatch, corruption):
-    args = fixture(tmp_path, monkeypatch)
+@pytest.mark.parametrize("pool", ["D1", "DENSE_OLD"])
+def test_invalid_d1_is_rejected_before_allocating_outputs(tmp_path, monkeypatch, corruption, pool):
+    args = fixture(tmp_path, monkeypatch, pool=pool)
     cache, index, dedup, output = args
     identity_path = cache / "IDENTITY.json"
     identity = json.loads(identity_path.read_text(encoding="utf-8"))
@@ -111,5 +114,5 @@ def test_invalid_d1_is_rejected_before_allocating_outputs(tmp_path, monkeypatch,
         identity["index_sha256"] = compute_file_hash(str(path))
     identity_path.write_text(json.dumps(identity), encoding="utf-8")
     with pytest.raises(ValueError):
-        compiled_context.compile_fold(*args, outer=0, pool="D1")
+        compiled_context.compile_fold(*args, outer=0, pool=pool)
     assert not output.exists()

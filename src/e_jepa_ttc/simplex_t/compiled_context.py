@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Mapping
 from pathlib import Path
 
 import numpy as np
@@ -12,6 +13,28 @@ from e_jepa_ttc.artifacts.simplex_t_preflight import write_new_json
 
 from .expert_phase import expert_phase_from_ttc
 from .lifecycle import admitted
+
+
+def store_observations(
+    destinations: Mapping[str, np.ndarray],
+    consumed: np.ndarray,
+    arrays: dict[str, np.ndarray],
+) -> None:
+    """Store validated rows once; repeated content IDs must match compiled fields exactly."""
+    ids = arrays["observation_ids"]
+    if len(np.unique(ids)) != len(ids) or (ids < 0).any() or (ids >= len(consumed)).any():
+        raise ValueError("invalid or repeated observation ID within one query")
+    repeated = consumed[ids]
+    for name, destination in destinations.items():
+        if (
+            destination.dtype != arrays[name].dtype
+            or destination[ids[repeated]].tobytes() != arrays[name][repeated].tobytes()
+        ):
+            raise ValueError(f"deduplicated observation content differs: {name}")
+    # Check every field before writing anything, retaining the first exact copy.
+    for name, destination in destinations.items():
+        destination[ids[~repeated]] = arrays[name][~repeated]
+    consumed[ids] = True
 
 
 def validate_block(
@@ -68,14 +91,14 @@ def compile_fold(
     """Require every selected query block; never fabricate inactive D1 observations.
 
     D0 remains the default and retains its existing compiled manifest schema.
-    D1 requires an explicitly bound extraction identity and masks inactive rows.
+    D1/DENSE_OLD require explicit extraction identities and mask inactive rows.
     Compilation validates cache contents; it does not grant inference/fit authority.
     """
-    if outer not in range(3) or output.exists() or pool not in {"D0", "D1"}:
+    if outer not in range(3) or output.exists() or pool not in {"D0", "D1", "DENSE_OLD"}:
         raise ValueError("invalid fold or existing compiled output")
     identity = json.loads((cache / "IDENTITY.json").read_text(encoding="utf-8"))
-    if pool == "D1" and identity.get("pool") != "D1":
-        raise ValueError("explicit D1 extraction identity required")
+    if pool != "D0" and identity.get("pool") != pool:
+        raise ValueError("explicit training-pool extraction identity required")
     index_path = index_root / "query_context_index.npz"
     if compute_file_hash(str(index_path)) != identity["index_sha256"]:
         raise ValueError("cache/index mismatch")
@@ -96,7 +119,7 @@ def compile_fold(
     active = families >= 0
     if (families < -1).any() or (pool == "D0" and not active.all()):
         raise ValueError("invalid inactive producer assignment")
-    upper = outer * 4 + (2 if pool == "D1" else 3)
+    upper = outer * 4 + (3 if pool == "D0" else 2)
     if not active.any() or ((families[active] < outer * 4) | (families[active] > upper)).any():
         raise ValueError("query assigned outside permitted producer family")
     if not np.array_equal(history >= 0, index["valid"] & active[:, None]):
@@ -140,11 +163,7 @@ def compile_fold(
             index["anchor_us"][qi] - index["lag_us"][mask],
             int(index["roi_available_us"][qi]),
         )
-        if consumed[ids].any():
-            raise ValueError("unexpected duplicate feature block")
-        consumed[ids] = True
-        for name, destination in destinations.items():
-            destination[ids] = arrays[name]
+        store_observations(destinations, consumed, arrays)
     if not consumed.all():
         raise ValueError("incomplete consumed observation coverage")
     for destination in destinations.values():
@@ -152,12 +171,12 @@ def compile_fold(
     hashes = {name: compute_file_hash(str(output / f"{name}.npy")) for name in fields}
     expansion_fields = (
         {
-            "pool": "D1",
+            "pool": pool,
             "indexed_queries": len(families),
             "selected_query_ids": np.flatnonzero(active).tolist(),
             "inactive_queries": int((~active).sum()),
         }
-        if pool == "D1"
+        if pool != "D0"
         else {}
     )
     write_new_json(

@@ -25,7 +25,7 @@ def main() -> int:
         choices=(0, 1, 2),
         help="prepare: compile one complete outer fold into a new --output directory",
     )
-    parser.add_argument("--compile-pool", choices=("D0", "D1"), default=None)
+    parser.add_argument("--compile-pool", choices=("D0", "D1", "DENSE_OLD"), default=None)
     args = parser.parse_args()
     if args.compile_pool is not None and args.compile_fold is None:
         parser.error("--compile-pool requires --compile-fold")
@@ -35,7 +35,7 @@ def main() -> int:
         paths = json.loads(args.local_paths.read_text(encoding="utf-8"))
         temporal = Path(paths["worktree"]) / "artifacts/simplex_t/T1"
         pool = args.compile_pool or "D0"
-        prefix = "expansion_" if pool == "D1" else ""
+        prefix = {"D0": "", "D1": "expansion_", "DENSE_OLD": "dense_"}[pool]
         compile_fold(
             temporal / f"{prefix}context_features_fp32",
             temporal / f"{prefix}query_context_index",

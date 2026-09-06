@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 
 from e_jepa_ttc.evaluation.stage61_nested_pair_router import phase_from_ttc
-from e_jepa_ttc.simplex_t.compiled_context import validate_block
+from e_jepa_ttc.simplex_t.compiled_context import store_observations, validate_block
 
 
 def block():
@@ -23,6 +23,38 @@ def block():
 
 def test_complete_input_block_accepted():
     validate_block(block(), np.array([1, 2]), np.array([100, 200]), 210)
+
+
+@pytest.mark.parametrize(
+    "corruption", [None, "features145", "expert_ttc", "known", "anchor_us", "available_us", "sign"]
+)
+def test_deduplicated_rows_require_byte_exact_compiled_fields(corruption):
+    arrays = block()
+    fields = ("features145", "expert_ttc", "known", "anchor_us", "available_us")
+    destinations = {
+        name: np.zeros((4, *arrays[name].shape[1:]), arrays[name].dtype) for name in fields
+    }
+    consumed = np.zeros(4, bool)
+    store_observations(destinations, consumed, arrays)
+    before = {name: array.copy() for name, array in destinations.items()}
+    arrays["observation_ids"][1] = 3  # One duplicate and one fresh row.
+    if corruption == "sign":
+        arrays["features145"][0, 0] = -0.0
+    elif corruption == "known":
+        arrays["known"][0, 0] = False
+    elif corruption is not None:
+        arrays[corruption][0] += 1
+    if corruption is None:
+        store_observations(destinations, consumed, arrays)
+        assert consumed.tolist() == [False, True, True, True]
+        for name in fields:
+            assert np.array_equal(destinations[name][3], arrays[name][1])
+    else:
+        with pytest.raises(ValueError, match="content differs"):
+            store_observations(destinations, consumed, arrays)
+        assert consumed.tolist() == [False, True, True, False]
+        for name in fields:
+            assert destinations[name].tobytes() == before[name].tobytes()
 
 
 def test_original_infinite_pair_requires_consistent_zero_phase():
