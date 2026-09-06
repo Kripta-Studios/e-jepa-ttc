@@ -1,6 +1,22 @@
 {
   "schema": "simplex_t_resumable_block_v1",
-  "status": "RESUMED_SOURCE_SEARCH_AND_REPLAY_PREPARATION_AWAITING_LIVE_IO_COORDINATION",
+  "status": "BLOCKED_EXTERNAL_PREREQUISITES_NOT_SCIENTIFIC_NEGATIVE",
+  "resumed_block_recurrence_audit": {
+    "consecutive_resumed_turns": 3,
+    "turns": [
+      "9539dd37e5bb: additional HF history and nine ZIP directory checks; 64-row cohort prepared",
+      "verified live PID29120 wait; historical loader requires verification of 32 shards totaling21639043680 bytes",
+      "current recheck: same live PID29120, no new shared acknowledgement and no Garl PKL/crosswalk in the bounded local search"
+    ],
+    "latest_read_transfer_bytes": 41098757557,
+    "latest_write_transfer_bytes": 6529486168,
+    "no_other_job_modified": true,
+    "reason": "The source dependency remains unsatisfied after public, archive and local checks. The newly granted replay authorization conflicts with a verified live Stage70 heavy-I/O job; its scheduling handoff is unresolved. No scientific fit can yet satisfy the mandatory replay and freeze prerequisites. Remaining production integration is explicitly incomplete, not certified by synthetic tests.",
+    "resume_triggers": [
+      "Authoritative unfiltered Garl TRAIN input history or Garl-to-eAP crosswalk with box/time provenance",
+      "Resolved actual exclusive replay handoff and bounded output reservations"
+    ]
+  },
   "resumed_user_authorization": {
     "replay_authorized": true,
     "old_absent_permission_status_superseded": true,

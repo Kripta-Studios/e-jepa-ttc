@@ -87,7 +87,7 @@ def package_t0(local_paths: Path, output: Path) -> dict[str, Any]:
     commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=worktree, text=True).strip()
     decision = {
         "artifact_type": "simplex_t_next_decision_v1",
-        "execution_status": "RESUMED_REPLAY_AUTHORIZED_LIVE_IO_CONFLICT_AND_SOURCE_UNRESOLVED",
+        "execution_status": "BLOCKED_EXTERNAL_PREREQUISITES_NOT_SCIENTIFIC_NEGATIVE",
         "source_status": "OWNER_INTERFACES_ACKNOWLEDGED_GEOMETRY_PARITY_UNRESOLVED",
         "numerical_status": "INTEGRATED_CPU_ENGINE_SYNTHETIC_RESUME_PASS_REAL_REPLAY_PENDING",
         "mechanism_status": "NOT_EVALUATED",
@@ -299,8 +299,11 @@ owner process was stopped, resumed, wrapped retroactively or otherwise modified.
 Latest resumed turn supersedes the historical absent-permission diagnosis:
 the user explicitly authorized replay. A new Stage70 cache worker29120 with
 launcher11124 was nevertheless observed doing substantial increasing I/O.
-The overlap question is pending; no other job was modified. The earlier
-three-turn blocked audit below is historical, not a new blocked-goal decision.
+The overlap question is pending; no other job was modified. A fresh three-turn
+resumed audit now reconfirms the same source and scheduling prerequisites.
+The latest bounded local search found no new Garl PKL/crosswalk. The worker
+read/write counters reached41098757557/6529486168 bytes. The goal is paused
+on these external requirements, not marked scientifically complete.
 All nine original ZIP central directories were inspected (2590887 metadata
 bytes); only the already downloaded annotation/frame PKLs accompany media.
 The initial HF revision contains only .gitattributes. No missing source URL
