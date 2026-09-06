@@ -1,6 +1,15 @@
 {
   "schema": "simplex_t_resumable_block_v1",
-  "status": "ACTIVE_HISTORICAL_REPLAY_VERIFIED_QUERY_CONTEXT_CACHE_PENDING",
+  "status": "ACTIVE_QUERY_CONTEXT_CACHE_EXTRACTION",
+  "current_execution": {
+    "cache": "artifacts/simplex_t/T1/context_features_fp32",
+    "last_audited_blocks_at_this_update": 644,
+    "last_audited_observations_at_this_update": 10244,
+    "required_D0_query_family_blocks": 24576,
+    "status_command_reads_live_processes": true,
+    "original_history_block_statements_below_are_historical": true,
+    "scientific_fit_authorized_by_partial_cache": false
+  },
   "latest_replay_resolution": {
     "evidence": "artifacts/simplex_t/T0/current_expert_replay_64/HISTORICAL_REPLAY_QA_PASSED.json",
     "raw_windows_bit_identical": 192,

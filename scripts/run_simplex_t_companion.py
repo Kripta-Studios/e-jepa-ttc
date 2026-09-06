@@ -8,6 +8,7 @@ from pathlib import Path
 
 from e_jepa_ttc.artifacts.simplex_t_delivery import package_t0
 from e_jepa_ttc.artifacts.simplex_t_preflight import audit, interface_status, write_new_json
+from e_jepa_ttc.simplex_t.cache_status import context_cache_status
 
 
 def main() -> int:
@@ -32,6 +33,10 @@ def main() -> int:
         return 0
     paths = json.loads(args.local_paths.read_text(encoding="utf-8"))
     result = interface_status(paths)
+    result["amended_context_execution"] = context_cache_status(Path(paths["worktree"]))
+    if args.command == "status":
+        result["historical_interface_status"] = result.get("status")
+        result["status"] = result["amended_context_execution"]["status"]
     result["implementation_status"] = "INDEPENDENT_COMPONENTS_NOT_SCIENTIFICALLY_FROZEN"
     print(json.dumps(result, indent=2))
     return 0 if args.command == "status" else 3
