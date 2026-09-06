@@ -299,3 +299,125 @@ def test_dense_dispatch_uses_file_loader_and_preserves_pool_separation(wired, mo
     (pins[0].compiled / "COMPILED.json").write_text("{}", encoding="utf-8")
     with pytest.raises(ValueError, match="dense compiled manifest changed"):
         adapter.train(dense)
+
+
+def test_diverse_dispatch_binds_original_targets_and_producers(wired, monkeypatch):
+    from types import SimpleNamespace
+
+    from e_jepa_ttc.simplex_t.campaign_sources import MatchedBinding
+
+    original, _, _ = wired
+    graph = [
+        s
+        for s in registered_graph(
+            d1=True,
+            density=True,
+            t3=False,
+            latent=False,
+            replicate_scalar=False,
+            replicate_latent=False,
+        )
+        if "-D0-" in s.name or "-DIVERSE_MATCHED-" in s.name
+    ]
+    manifest = original.index_root / "INDEX_MANIFEST.json"
+    manifest.write_text(
+        json.dumps(
+            {
+                "families": [
+                    {"outer_fold": outer, "role": f"inner{inner}", "family_sha256": "a" * 64}
+                    for outer in range(3)
+                    for inner in range(4)
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+    pool = original.index_root / "matched.json"
+    pool.write_text("{}", encoding="utf-8")
+    matched = MatchedBinding(pool, compute_file_hash(str(pool)), compute_file_hash(str(manifest)))
+    pins = {}
+    for fold, pin in original.folds.items():
+        extra_pool = pin.path / "expansion_pool.json"
+        extra_pool.write_text(
+            json.dumps({"folds": {str(fold): {"sequence_family_sha256": {"extra": "b" * 64}}}}),
+            encoding="utf-8",
+        )
+        pins[fold] = ExpansionBinding(
+            pin.path,
+            pin.sha256,
+            pin.path,
+            "x",
+            pin.path,
+            extra_pool,
+            compute_file_hash(str(extra_pool)),
+            pin.path,
+            "x",
+            pin.path,
+            "x",
+            "x",
+        )
+    calls = []
+
+    def view(sources, **kwargs):
+        calls.append(kwargs)
+        assert kwargs["train_tokens"].tolist() == ["old", "extraq"]
+        assert kwargs["train_target_ttc"].tolist() == [1.0, 2.0]
+        assert kwargs["sequence_families"] == {"original": "a" * 64, "extra": "b" * 64}
+        return {
+            role: replace(
+                source,
+                features=np.full_like(source.features, 9),
+                identity_sha256="diverse:" + source.identity_sha256,
+            )
+            for role, source in sources.items()
+        }
+
+    monkeypatch.setattr(
+        campaign_sources,
+        "load_expansion_inputs",
+        lambda *a, **k: SimpleNamespace(
+            source=None,
+            tokens=np.array(["extraq"]),
+            sequences=np.array(["extra"]),
+            target_ttc=np.array([2.0]),
+        ),
+    )
+    monkeypatch.setattr(
+        campaign_sources,
+        "load_current_inputs",
+        lambda *a, **k: {
+            "metadata": pd.DataFrame(
+                {
+                    "sample_token": ["old"],
+                    "sequence_id": ["original"],
+                    "inner_fold": [0],
+                    "target_ttc": [1.0],
+                }
+            )
+        },
+    )
+    monkeypatch.setattr(
+        campaign_sources, "merge_validated_sources", lambda sources, *a, **k: sources
+    )
+    monkeypatch.setattr(campaign_sources, "diverse_source_view", view)
+    adapter = CampaignSources(
+        graph,
+        original.folds,
+        index_root=original.index_root,
+        dedup_root=original.dedup_root,
+        historical_root=original.historical_root,
+        ancestry_sha256="fixture",
+        allowed_sequences={"original"},
+        expansion_folds=pins,
+        expansion_sequences={"extra"},
+        matched=matched,
+    )
+    d0 = next(s for s in graph if s.fold == 0 and "-D0-" in s.name)
+    diverse = next(s for s in graph if s.fold == 0 and "-DIVERSE_MATCHED-" in s.name)
+    assert (adapter.train(d0).features == 1).all()
+    assert (adapter.train(diverse).features == 9).all()
+    assert (adapter.source(diverse, "outer_dev").features == 9).all()
+    assert len(calls) == 1
+    pool.write_text('{"changed": true}', encoding="utf-8")
+    with pytest.raises(ValueError, match="matched pool or original producer manifest changed"):
+        adapter.train(diverse)

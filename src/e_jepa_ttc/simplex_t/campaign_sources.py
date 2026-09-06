@@ -11,6 +11,8 @@ import json
 from dataclasses import dataclass
 from pathlib import Path
 
+import numpy as np
+
 from e_jepa_ttc.artifacts.hashing import compute_file_hash
 
 from .arms import resolve_arm
@@ -19,8 +21,9 @@ from .context_sources import load_context_sources
 from .current_inputs import load_current_inputs
 from .dense_file_sources import DenseBinding, load_dense_inputs
 from .dense_sources import dense_source_pair
+from .diverse_sources import diverse_source_view
 from .expanded_sources import merge_validated_sources
-from .expansion_sources import ExpansionBinding, load_expansion_source
+from .expansion_sources import ExpansionBinding, load_expansion_inputs, load_expansion_source
 from .phase_manifest import fit_key
 from .registry import FitSpec
 
@@ -31,6 +34,15 @@ class CompiledFold:
 
     path: Path
     sha256: str
+
+
+@dataclass(frozen=True)
+class MatchedBinding:
+    """Explicit matched pool and original producer-manifest pins."""
+
+    pool: Path
+    pool_sha256: str
+    original_index_manifest_sha256: str
 
 
 class CampaignSources:
@@ -53,6 +65,7 @@ class CampaignSources:
         expansion_folds: dict[int, ExpansionBinding] | None = None,
         expansion_sequences: set[str] | None = None,
         dense_folds: dict[int, DenseBinding] | None = None,
+        matched: MatchedBinding | None = None,
     ) -> None:
         if not graph or len({fit_key(spec) for spec in graph}) != len(graph):
             raise ValueError("nonempty unique registered graph required")
@@ -62,11 +75,23 @@ class CampaignSources:
                 pool == "D0"
                 or (pool == "D1" and expansion_folds is not None and bool(expansion_sequences))
                 or (pool == "DENSE_OLD" and dense_folds is not None)
+                or (
+                    pool == "DIVERSE_MATCHED"
+                    and matched is not None
+                    and expansion_folds is not None
+                    and bool(expansion_sequences)
+                )
             )
             if not supported:
                 raise ValueError("pool lacks an integrated authoritative source loader")
         if dense_folds is not None and set(dense_folds) != {0, 1, 2}:
             raise ValueError("all three dense fold bindings required")
+        if (
+            matched is not None
+            and dense_folds is not None
+            and any(pin.pool_sha256 != matched.pool_sha256 for pin in dense_folds.values())
+        ):
+            raise ValueError("dense and diverse controls refer to different matched pools")
         if expansion_folds is not None and set(expansion_folds) != {0, 1, 2}:
             raise ValueError("all three expansion fold bindings required")
         if set(expansion_sequences or ()) & allowed_sequences:
@@ -83,6 +108,7 @@ class CampaignSources:
         self.expansion_folds = dict(expansion_folds or {})
         self.expansion_sequences = set(expansion_sequences or ())
         self.dense_folds = dict(dense_folds or {})
+        self.matched = matched
         self._key: tuple[int, int, str] | None = None
         self._sources: dict[str, CachedQueries] = {}
 
@@ -103,12 +129,21 @@ class CampaignSources:
             raise ValueError("compiled manifest changed since preparation")
         if json.loads(manifest.read_text(encoding="utf-8"))["outer"] != spec.fold:
             raise ValueError("compiled outer fold differs from registered fit")
-        if binding.pool == "D1":
+        if binding.pool in {"D1", "DIVERSE_MATCHED"}:
             expansion_pin = self.expansion_folds[spec.fold]
             if compute_file_hash(str(expansion_pin.compiled / "COMPILED.json")) != (
                 expansion_pin.compiled_sha256
             ):
                 raise ValueError("expansion compiled manifest changed since preparation")
+        if binding.pool == "DIVERSE_MATCHED":
+            if self.matched is None:
+                raise ValueError("missing matched pool binding")
+            if (
+                compute_file_hash(str(self.matched.pool)) != self.matched.pool_sha256
+                or compute_file_hash(str(self.index_root / "INDEX_MANIFEST.json"))
+                != self.matched.original_index_manifest_sha256
+            ):
+                raise ValueError("matched pool or original producer manifest changed")
         if binding.pool == "DENSE_OLD":
             dense_pin = self.dense_folds[spec.fold]
             if compute_file_hash(str(dense_pin.compiled / "COMPILED.json")) != (
@@ -147,6 +182,63 @@ class CampaignSources:
                     expansion,
                     original_train_sequences=original.sequence_id.to_numpy(),
                     expansion_train_sequences=sequences,
+                )
+            elif binding.pool == "DIVERSE_MATCHED":
+                if self.matched is None:
+                    raise ValueError("missing matched pool binding")
+                expansion_pin = self.expansion_folds[spec.fold]
+                expansion = load_expansion_inputs(
+                    expansion_pin,
+                    outer=spec.fold,
+                    feature_count=17,
+                    allowed_sequences=self.expansion_sequences,
+                )
+                original = load_current_inputs(
+                    self.historical_root,
+                    spec.fold,
+                    "inner_oof",
+                    ancestry_sha256=self.ancestry_sha256,
+                    allowed_sequences=self.allowed_sequences,
+                )["metadata"]
+                families = json.loads(
+                    (self.index_root / "INDEX_MANIFEST.json").read_text(encoding="utf-8")
+                )["families"]
+                sequence_families = {}
+                for row in original.to_dict("records"):
+                    family = families[spec.fold * 4 + int(row["inner_fold"])]
+                    if family["outer_fold"] != spec.fold or family["role"] == "outer_dev":
+                        raise ValueError("original matched query has wrong producer family")
+                    sequence = str(row["sequence_id"])
+                    digest = family["family_sha256"]
+                    if sequence in sequence_families and sequence_families[sequence] != digest:
+                        raise ValueError("one original sequence has multiple history families")
+                    sequence_families[sequence] = digest
+                expansion_plan = json.loads(expansion_pin.pool.read_text(encoding="utf-8"))
+                extra_families = expansion_plan["folds"][str(spec.fold)]["sequence_family_sha256"]
+                if set(sequence_families) & set(extra_families):
+                    raise ValueError("expansion producer groups overlap original TRAIN")
+                sequence_families.update(extra_families)
+                sources = merge_validated_sources(
+                    sources,
+                    expansion.source,
+                    original_train_sequences=original.sequence_id.to_numpy(),
+                    expansion_train_sequences=expansion.sequences,
+                )
+                sources = diverse_source_view(
+                    sources,
+                    pool_manifest=self.matched.pool,
+                    pool_sha256=self.matched.pool_sha256,
+                    outer=spec.fold,
+                    train_tokens=np.concatenate(
+                        (original.sample_token.to_numpy(), expansion.tokens)
+                    ),
+                    train_sequences=np.concatenate(
+                        (original.sequence_id.to_numpy(), expansion.sequences)
+                    ),
+                    train_target_ttc=np.concatenate(
+                        (original.target_ttc.to_numpy(), expansion.target_ttc)
+                    ),
+                    sequence_families=sequence_families,
                 )
             elif binding.pool == "DENSE_OLD":
                 dense = load_dense_inputs(
