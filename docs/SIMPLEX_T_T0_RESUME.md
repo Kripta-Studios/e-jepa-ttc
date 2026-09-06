@@ -100,3 +100,16 @@ Further independent work and audits:
   wire verified caches, ledger/leases, endpoint freeze and full-cohort analysis
   before any real fit. H1 controls remain viable without temporal-source proof
   once their other registered prerequisites and resource acknowledgement pass.
+
+Continuation 01 (before any scientific freeze):
+
+- Confirmed Stage70 correspondence-QA processes 36928/11812 live; shared
+  acknowledgement remained absent. No Stage70 scores were read.
+- Corrected SELECTOR export to emit the exact original expert TTC, without the
+  residual head's phase projection or finite-TTC cap. Corrected median-baseline
+  gain diagnostics to score its actual finite output. Five export tests pass.
+- Added target-free deterministic group/track/token query balancing, D0-preserving
+  D1 expansion, six-additional-group availability, all-fold D* resolution,
+  sequence-consistent inner producer assignment and matched-density count gates.
+  Six query-pool tests pass. No real query pool has been promoted without source
+  eligibility, and no extra optimizer updates were executed (total remains65).

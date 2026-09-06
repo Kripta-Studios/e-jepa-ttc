@@ -22,6 +22,7 @@ def prediction_frame(
     arm: str,
     seed: int,
     fold: int,
+    output_mode: str = "residual",
 ) -> pd.DataFrame:
     """Score actually emitted finite TTC and retain all cold-start query identities."""
     required = {"sample_token", "sequence_id", "track_id", "target_ttc"}
@@ -33,12 +34,23 @@ def prediction_frame(
     target = metadata.target_ttc.to_numpy(np.float64)
     truth = benchmark_phase(target)
     experts = benchmark_phase(expert_ttc)
-    point = np.asarray(outputs["point_phase"], dtype=np.float64)
-    prediction = phase_to_ttc(torch.from_numpy(point)).numpy()
-    actual_phase = benchmark_phase(prediction)
     costs = np.asarray(outputs["relative_cost"], dtype=np.float64)
     if costs.shape != (count, 3) or not np.isfinite(costs).all():
         raise ValueError("nonfinite/misaligned costs")
+    if output_mode not in {"residual", "free", "selector"}:
+        raise ValueError("unregistered output mode")
+    point = np.asarray(outputs["point_phase"], dtype=np.float64)
+    if point.shape != (count,) or not np.isfinite(point).all():
+        raise ValueError("nonfinite/misaligned point phase")
+    selected = costs.argmin(1)
+    if output_mode == "selector":
+        # This comparator emits an unchanged original expert. A phase roundtrip
+        # can alter its floating value and the broad residual projection can
+        # clip it; neither operation belongs to unchanged expert selection.
+        prediction = expert_ttc[np.arange(count), selected].copy()
+    else:
+        prediction = phase_to_ttc(torch.from_numpy(point)).numpy()
+    actual_phase = benchmark_phase(prediction)
     if not np.isfinite(actual_phase).all() or actual_phase.shape != (count,):
         raise ValueError("nonfinite/misaligned finite TTC")
     raw = np.asarray(outputs["raw_location"], dtype=np.float64)
@@ -70,12 +82,13 @@ def prediction_frame(
     frame["target_outside_support"] = (truth < MIN_PHASE) | (truth > MAX_PHASE)
     frame["finite_ttc_cap"] = np.abs(prediction) >= 60
     frame["sign_change_from_median"] = np.sign(actual_phase) != np.sign(np.median(experts, 1))
-    median_loss = 10000 * np.abs(np.median(experts, 1) - truth)
+    median_ttc = phase_to_ttc(torch.from_numpy(np.median(experts, 1))).numpy()
+    median_loss = 10000 * np.abs(benchmark_phase(median_ttc) - truth)
     frame["gain_over_current_median"] = median_loss - frame.loss
     outside = frame.hull_position != "inside"
     frame["escape_gain"] = np.where(outside, np.maximum(frame.gain_over_current_median, 0), 0)
     frame["escape_harm"] = np.where(outside, np.maximum(-frame.gain_over_current_median, 0), 0)
-    frame["diagnostic_selector"] = costs.argmin(1)
+    frame["diagnostic_selector"] = selected
     for expert in range(3):
         frame[f"expert{expert}_ttc"] = expert_ttc[:, expert]
         frame[f"expert{expert}_phase"] = experts[:, expert]

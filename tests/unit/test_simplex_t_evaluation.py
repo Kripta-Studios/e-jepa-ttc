@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
+from e_jepa_ttc.evaluation.stage63_65 import benchmark_phase
 from e_jepa_ttc.simplex_t.evaluation import factorial_contrasts, prediction_frame
 
 
@@ -45,3 +46,56 @@ def test_zero_phase_scores_emitted_positive60_not_zero():
     assert frame.prediction_ttc_s.iloc[0] == 60
     assert frame.loss.iloc[0] == 0
     assert frame.cold_start.iloc[0]
+
+
+def test_selector_exports_exact_original_ttc_without_residual_projection():
+    expert = np.array([[80.1234567890123, -17.1234567890123, 2.25]])
+    selected = expert[0, 0]
+    metadata = pd.DataFrame(
+        dict(sample_token=["q"], sequence_id=["s"], track_id=["t"], target_ttc=[selected])
+    )
+    output = dict(
+        point_phase=benchmark_phase(np.array([selected])).astype(np.float32),
+        raw_location=np.array([0.02]),
+        raw_residual=np.array([0.0]),
+        q10=np.array([-0.03]),
+        q90=np.array([0.03]),
+        relative_cost=np.array([[0.0, 1.0, 2.0]]),
+    )
+    frame = prediction_frame(
+        metadata,
+        expert,
+        output,
+        np.array([[0]]),
+        arm="SELECTOR",
+        seed=7,
+        fold=0,
+        output_mode="selector",
+    )
+    assert frame.prediction_ttc_s.iloc[0] == selected
+    assert frame.loss.iloc[0] == 0
+    assert frame.hull_position.iloc[0] == "inside"
+
+
+def test_escape_gain_uses_emitted_current_median_baseline():
+    metadata = pd.DataFrame(
+        dict(sample_token=["q"], sequence_id=["s"], track_id=["t"], target_ttc=[60.0])
+    )
+    output = dict(
+        point_phase=np.array([0.0]),
+        raw_location=np.array([0.0]),
+        raw_residual=np.array([0.0]),
+        q10=np.array([-0.03]),
+        q90=np.array([0.03]),
+        relative_cost=np.zeros((1, 3)),
+    )
+    frame = prediction_frame(
+        metadata,
+        np.array([[80.0, 90.0, 100.0]]),
+        output,
+        np.array([[0]]),
+        arm="TPR",
+        seed=7,
+        fold=0,
+    )
+    assert frame.gain_over_current_median.iloc[0] == 0

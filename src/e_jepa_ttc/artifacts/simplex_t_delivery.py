@@ -55,7 +55,14 @@ def package_t0(local_paths: Path, output: Path) -> dict[str, Any]:
         raise ValueError("T0 packager cannot package scientific fits")
     qa = {
         name: qa_summary(evidence / f"qa_{name}.xml")
-        for name in ("baseline", "companion", "reference", "integrated_final")
+        for name in (
+            "baseline",
+            "companion",
+            "reference",
+            "integrated_final",
+            "selector_export_fix",
+            "pools",
+        )
     }
     if any(item["failure_ids"] for item in qa.values()):
         raise ValueError("failed QA must be investigated before this T0 handoff")
@@ -98,7 +105,10 @@ def package_t0(local_paths: Path, output: Path) -> dict[str, Any]:
         "production_replay_parity": "NOT_RUN",
         "production_device_resume": "CPU_ENGINE_PASS_ON_SYNTHETIC_DATA",
         "qa": qa,
-        "qa_scope": "11 historical baseline; 19 combined T0; 65 reference; 86 integrated tests",
+        "qa_scope": (
+            "11 historical baseline; 19 combined T0; 65 reference; 86 integrated tests; "
+            "5 export tests and 6 pool tests after continuation fixes"
+        ),
         "full_repository_qa": "NOT_RUN",
         "initial_failure_ids": [
             "RUFF_FORMAT_AND_REFERENCE_STYLE",
@@ -163,6 +173,11 @@ synthetic reference only. The integrated suite additionally passes
 {qa["integrated_final"]["tests"]} tests including CPU 10 versus 5+5 on the actual
 new head engine at batch128 with the registered schedule. That proves synthetic
 engine resume, not real TRAIN replay parity or local loader integration.
+Continuation QA adds {qa["selector_export_fix"]["tests"]} export tests and
+{qa["pools"]["tests"]} query-pool tests, all passing without optimizer updates.
+The selector export now preserves the original expert TTC exactly; the median
+diagnostic scores its finite emitted output. D1/density query selection is
+implemented from input identity only, but real availability remains unresolved.
 Initial Ruff format failure was corrected and retained as a QA ID. Full repository
 QA, real TRAIN replay, production loader integration and scientific freeze are
 pending. No historical failing result has been relabelled.
@@ -251,6 +266,9 @@ No future background completion is promised.
         "qa_cache.xml",
         "qa_evaluation.xml",
         "qa_post_types.xml",
+        "qa_selector_export_fix.xml",
+        "qa_pools.xml",
+        "QA_CONTINUATION_01.json",
     ):
         payload[f"evidence/{name}"] = (evidence / name).read_bytes()
     request = Path(paths["shared_coordination"]) / "SIMPLEX_T_STAGE70_REQUEST.json"
