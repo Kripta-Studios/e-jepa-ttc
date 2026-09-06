@@ -33,6 +33,16 @@ class QuerySource(Protocol):
         ...
 
 
+class FitJournal(Protocol):
+    """Durable work accounting; called only at safe engine boundaries."""
+
+    def start(self, completed: int, checkpoint: Path) -> None: ...
+
+    def before_update(self, completed: int) -> None: ...
+
+    def checkpoint_saved(self, completed: int, checkpoint: Path) -> None: ...
+
+
 def learning_rate(update: int) -> float:
     """One-based update: warmup100, cosine to exactly 3e-5 at update2500."""
     if not 1 <= update <= 2500:
@@ -114,6 +124,7 @@ def fit(
     resource_ok: Callable[[], bool],
     resume: bool = False,
     stop_after: int = 2500,
+    journal: FitJournal | None = None,
 ) -> dict[str, Any]:
     """Train to an exact endpoint or save a resource pause; never score partials.
 
@@ -171,6 +182,7 @@ def fit(
         raise FileExistsError("existing fit requires explicit resume")
     if completed > stop_after:
         raise ValueError("cannot rewind fixed fit")
+    journal_ready = False
 
     def save(status: str) -> dict[str, Any]:
         state = {
@@ -186,6 +198,8 @@ def fit(
             "sampler_hashes": sampler_hashes,
         }
         atomic_checkpoint(checkpoint, state)
+        if journal is not None and journal_ready:
+            journal.checkpoint_saved(completed, checkpoint)
         return {
             "status": status,
             "completed_updates": completed,
@@ -193,10 +207,18 @@ def fit(
             "identity_sha256": identity_hash,
         }
 
+    if journal is not None:
+        if not checkpoint.exists():
+            save("IN_PROGRESS")  # A durable update0 restart point precedes any reservation.
+        journal.start(completed, checkpoint)
+        journal_ready = True
+
     model.train()
     for update in range(completed + 1, stop_after + 1):
         if not resource_ok():
             return save("PAUSED_RESOURCE")
+        if journal is not None:
+            journal.before_update(completed)
         ids = torch.randint(source.population, (128,), generator=generator)
         x, timing, valid, experts, truth, mass = source.gather(ids)
         if any(value.device.type != "cpu" for value in (x, timing, valid, experts, truth, mass)):

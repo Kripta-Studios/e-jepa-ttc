@@ -264,3 +264,33 @@ Garl PKL/crosswalk. SOURCE_ESCALATION.json now distinguishes those facts.
 The latest CIM query no longer found the two known Stage70 PIDs38464/36040.
 This is terminal evidence for those handles only, not proof of campaign success,
 absence of other jobs, or an exclusive slot. No new shared owner release exists.
+
+## Engine-connected work journal and exact resume
+
+The engine now accepts a work journal, publishes an initial durable update0
+checkpoint, reserves a chunk before consuming its first batch, and settles it
+only after checkpoint publication succeeds. Restart reconciles pending work
+against the engine-validated checkpoint. The caller must still hold the full-fit
+writer lease and verify freeze/data authorization; the production queue is pending.
+
+Seven journal integration/state tests pass, including pause-before-first-update
+and journal-publication failure before input gathering. No optimizer steps occur
+in these tests. Initial Pyright optional-endpoint comparison and Ruff E501 errors
+were corrected explicitly; final checks pass.
+
+The unique technical operation current_array_journal_resume_10_vs_5_5 reserved20
+updates before execution. It completed on audited outer0 TRAIN arrays with the
+same explicit zero-timing fixture:10 continuous and5+save+5 complete-state hashes
+match exactly with journal callbacks active. The journal JSON in this probe is
+labelled TECHNICAL_JOURNAL_FIXTURE, not scientific progress. Evidence resides at
+T0/current_array_journal_resume/RESUME_QA.json. No accuracy score was computed.
+Actual totals are625 technical updates and0 scientific updates; no scientific
+freeze exists. This proves callback-integrated resume, not raw replay or ROI-time
+lineage. The required real replay and full production queue remain outstanding.
+
+A subsequent live process query found Stage70 owner PowerShell15468 and its
+compact.exe child5152 compressing counts_original8192/counts_*.npy. This is a new
+active I/O operation, not the previously terminated expansion PID. No source
+files or process state were modified by SIMPLEX-T. Exclusive replay is still not
+granted. Final Ruff also found an older overlong delivery-message literal; its
+wording was shortened without changing the prerequisite or scientific recipe.

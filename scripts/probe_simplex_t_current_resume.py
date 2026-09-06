@@ -19,12 +19,16 @@ from e_jepa_ttc.simplex_t.current_inputs import (
 from e_jepa_ttc.simplex_t.lifecycle import TechnicalBudget, admitted
 from e_jepa_ttc.simplex_t.model import TemporalConfig
 from e_jepa_ttc.simplex_t.training import fit, load_checkpoint, state_digest
+from e_jepa_ttc.simplex_t.work_budget import EngineWorkJournal, WorkBudget
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--local-paths", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument(
+        "--journal", action="store_true", help="Validate new work-journal callbacks"
+    )
     args = parser.parse_args()
     paths = json.loads(args.local_paths.read_text(encoding="utf-8"))
     config = json.loads(Path("configs/experiment/simplex_t_coordination.json").read_text())
@@ -50,13 +54,19 @@ def main() -> None:
     # Technical fixture only: no claim of production observation latency calibration.
     source = CurrentQueries(table, normalizer, mass, np.zeros((len(mass), 4), dtype=np.float32))
     TechnicalBudget(Path(paths["worktree"]) / "artifacts/simplex_t/TECHNICAL_BUDGET.json").reserve(
-        "current_array_resume_10_vs_5_5", 20
+        "current_array_journal_resume_10_vs_5_5"
+        if args.journal
+        else "current_array_resume_10_vs_5_5",
+        20,
     )
     args.output.mkdir(parents=True)
     freeze = hashlib.sha256(
         b"technical_current_arrays_zero_timing_fixture_not_scientific_freeze"
     ).hexdigest()
     results = []
+    fixture_budget = WorkBudget(
+        args.output / "TECHNICAL_JOURNAL_FIXTURE.json", {"continuous": 2500, "split": 2500}, 0
+    )
     for folder, count, resume in (
         ("continuous", 10, False),
         ("split", 5, False),
@@ -71,6 +81,7 @@ def main() -> None:
             stop_after=count,
             resume=resume,
             resource_ok=lambda: bool(admitted([args.output])["has_headroom"]),
+            journal=EngineWorkJournal(fixture_budget, folder) if args.journal else None,
         )
         results.append(result)
         if result["status"] == "PAUSED_RESOURCE":
@@ -94,6 +105,8 @@ def main() -> None:
             "executed_technical_updates": 20,
             "scientific_updates": 0,
             "real_train_arrays": True,
+            "work_journal_callbacks": args.journal,
+            "journal_scope": "TECHNICAL_FIXTURE_NOT_SCIENTIFIC_PROGRESS",
             "timing": "EXPLICIT_ZERO_TECHNICAL_FIXTURE",
             "production_time_lineage_validated": False,
             "raw_expert_replay_parity": False,

@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import Any
 
 from e_jepa_ttc.artifacts.risk_geometry_v10 import atomic_json
+from e_jepa_ttc.artifacts.simplex_t_preflight import sha256
 
 from .lifecycle import ExclusiveLease
 
@@ -106,3 +107,69 @@ class WorkBudget:
             }
             atomic_json(self.path, state)
             return state
+
+
+class EngineWorkJournal:
+    """Bridge a fit's safe callbacks to its persistent physical-work journal.
+
+    The engine validates checkpoint training identity before calling start.
+    A fit writer lease must cover the entire engine invocation; transaction
+    leases here protect the shared budget only, not concurrent model updates.
+    """
+
+    def __init__(self, budget: WorkBudget, key: str) -> None:
+        if key not in budget.graph:
+            raise ValueError("unknown fit")
+        self.budget, self.key = budget, key
+        self.active_end: int | None = None
+        self.saved = 0
+        self.started = False
+
+    def start(self, completed: int, checkpoint: Path) -> None:
+        """Reconcile a validated resume checkpoint without dropping uncertain work."""
+        if self.started or not checkpoint.is_file():
+            raise ValueError("journal requires one start and an existing checkpoint")
+        fit = {"completed": 0, "pending": None}
+        if self.budget.path.exists():
+            state = json.loads(self.budget.path.read_text(encoding="utf-8"))
+            if (
+                state["graph"] != self.budget.graph
+                or state["technical_reserved"] != self.budget.technical_reserved
+            ):
+                raise ValueError("physical-work contract changed")
+            fit = state["fits"].get(self.key, fit)
+        if fit["pending"] is not None:
+            self.budget.transition(
+                "recover", self.key, completed, checkpoint_sha256=sha256(checkpoint)
+            )
+        elif fit["completed"] != completed:
+            raise ValueError("checkpoint and settled journal progress disagree")
+        self.saved, self.started = completed, True
+
+    def before_update(self, completed: int) -> None:
+        """Persist a chunk reservation before its first optimizer update."""
+        if not self.started:
+            raise ValueError("journal not started")
+        if self.active_end is None:
+            if completed != self.saved:
+                raise ValueError("unsaved progress without a reservation")
+            state = self.budget.transition("begin", self.key, completed)
+            end = state["fits"][self.key]["pending"][1]
+            if type(end) is not int:
+                raise ValueError("journal reservation endpoint must be an integer")
+            self.active_end = end
+        if self.active_end is None or not self.saved <= completed < self.active_end:
+            raise ValueError("update outside journal reservation")
+
+    def checkpoint_saved(self, completed: int, checkpoint: Path) -> None:
+        """Settle only after atomic checkpoint publication has returned successfully."""
+        if not self.started:
+            raise ValueError("journal not started")
+        if self.active_end is None:
+            if completed != self.saved:
+                raise ValueError("checkpoint progress without a reservation")
+            return
+        self.budget.transition(
+            "checkpoint", self.key, completed, checkpoint_sha256=sha256(checkpoint)
+        )
+        self.saved, self.active_end = completed, None

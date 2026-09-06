@@ -93,8 +93,14 @@ def package_t0(local_paths: Path, output: Path) -> dict[str, Any]:
         "analysis_commit": commit,
         "scientific_fits": 0,
         "scientific_optimizer_updates": 0,
-        "technical_optimizer_updates": 605,
-        "total_optimizer_updates": 605,
+        "technical_optimizer_updates": 625,
+        "total_optimizer_updates": 625,
+        "current_array_journal_resume_accounting": {
+            "updates": 20,
+            "scope": "REAL_TRAIN_ARRAYS_ZERO_TIMING_WITH_WORK_JOURNAL",
+            "complete_state_exact_resume": True,
+            "raw_replay_parity": False,
+        },
         "current_array_resume_accounting": {
             "updates": 20,
             "scope": "REAL_TRAIN_ARRAYS_ZERO_TIMING_TECHNICAL_FIXTURE",
@@ -150,7 +156,7 @@ def package_t0(local_paths: Path, output: Path) -> dict[str, Any]:
         "required_next_evidence": [
             "Explicit exclusive inference slot after live architecture owner releases resources",
             "Adopt verified 36-producer ancestry and bind new history cache preprocessing",
-            "Authoritative Garl-to-eAP persistent-object crosswalk or unfiltered Garl source tracks",
+            "Authoritative Garl-to-eAP object crosswalk or unfiltered Garl source tracks",
             "Historical producer clock/ROI dependency mapping, including nonzero exposure age",
             "Integrated production loader parity, all-arm implementation and pre-fit QA/freeze",
             "Exclusive inference scheduling boundary followed by CACHE_READY evidence",
@@ -224,9 +230,10 @@ QA, real TRAIN replay, production loader integration and scientific freeze are
 pending. No historical failing result has been relabelled.
 
 Executed scientific fits: **0**. Scientific optimizer updates: **0**. Technical
-updates: **605** (25 reference + three 20-update synthetic resume invocations
+updates: **625** (25 reference + three 20-update synthetic resume invocations
 + one 500-update synthetic CPU profile +20 real-array resume updates with explicit
-zero timing fixture). The latter gives exact complete-state CPU resume, not raw
+zero timing fixture +20 real-array resume updates with work-journal callbacks).
+The latter gives exact complete-state CPU resume, not raw
 expert replay or production timing validation. No technical result selects a model.
 Raw expert forwards: **0**. No model endpoint, scientific prediction, factor
 interaction, bootstrap interval, hull gain/harm or lag result exists to report.
@@ -383,11 +390,16 @@ No future background completion is promised.
         "qa_endpoint_complete.xml",
         "qa_work_budget.xml",
         "qa_work_budget_cap.xml",
+        "qa_engine_journal.xml",
     ):
         payload[f"evidence/{name}"] = (evidence / name).read_bytes()
     payload["evidence/current_array_resume/RESUME_QA.json"] = (
         evidence / "current_array_resume/RESUME_QA.json"
     ).read_bytes()
+    for name in ("RESUME_QA.json", "TECHNICAL_JOURNAL_FIXTURE.json"):
+        payload[f"evidence/current_array_journal_resume/{name}"] = (
+            evidence / "current_array_journal_resume" / name
+        ).read_bytes()
     payload["coordination/SIMPLEX_T_STAGE70_REQUEST.json"] = request.read_bytes()
     manifest = {name: hashlib.sha256(data).hexdigest() for name, data in payload.items()}
     payload["PAYLOAD_SHA256.json"] = json.dumps(manifest, indent=2).encode()
