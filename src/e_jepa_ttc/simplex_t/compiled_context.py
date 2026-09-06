@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 from collections.abc import Mapping
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import numpy as np
 
@@ -13,6 +14,9 @@ from e_jepa_ttc.artifacts.simplex_t_preflight import write_new_json
 
 from .expert_phase import expert_phase_from_ttc
 from .lifecycle import admitted
+
+if TYPE_CHECKING:
+    from .reuse_catalog import D0ReuseCatalog
 
 
 def store_observations(
@@ -87,6 +91,7 @@ def compile_fold(
     outer: int,
     *,
     pool: str = "D0",
+    reuse: D0ReuseCatalog | None = None,
 ) -> None:
     """Require every selected query block; never fabricate inactive D1 observations.
 
@@ -96,9 +101,13 @@ def compile_fold(
     """
     if outer not in range(3) or output.exists() or pool not in {"D0", "D1", "DENSE_OLD"}:
         raise ValueError("invalid fold or existing compiled output")
+    if reuse is not None and (pool != "DENSE_OLD" or reuse.outer != outer):
+        raise ValueError("D0 block reuse is restricted to the matching dense fold")
     identity = json.loads((cache / "IDENTITY.json").read_text(encoding="utf-8"))
     if pool != "D0" and identity.get("pool") != pool:
         raise ValueError("explicit training-pool extraction identity required")
+    if reuse is not None:
+        reuse.verify_recipe(identity)
     index_path = index_root / "query_context_index.npz"
     if compute_file_hash(str(index_path)) != identity["index_sha256"]:
         raise ValueError("cache/index mismatch")
@@ -125,8 +134,12 @@ def compile_fold(
     if not np.array_equal(history >= 0, index["valid"] & active[:, None]):
         raise ValueError("history mask differs from active query support")
     receipts = []
+    reused = reuse.plan(index["tokens"], families) if reuse is not None else {}
     for qi in np.flatnonzero(active):
         family = families[qi]
+        if int(qi) in reused:
+            receipts.append((int(qi), None, reused[int(qi)]))
+            continue
         stem = cache / f"family{family:02d}_query{qi:05d}"
         if not stem.with_suffix(".json").exists():
             raise ValueError(f"TEMPORAL_CACHE_INCOMPLETE:outer{outer}:query{qi}")
@@ -151,12 +164,23 @@ def compile_fold(
     }
     consumed = np.zeros(len(keys), dtype=bool)
     for qi, path, receipt in receipts:
-        if compute_file_hash(str(path)) != receipt["sha256"]:
-            raise ValueError("cache payload changed")
-        with np.load(path, allow_pickle=False) as archive:
-            arrays = {key: archive[key] for key in archive.files}
         mask = index["valid"][qi]
         ids = history[qi, mask]
+        if path is None:
+            if reuse is None:
+                raise ValueError("missing explicit reuse catalog")
+            arrays = reuse.load(
+                receipt,
+                destination_keys=keys,
+                destination_ids=ids,
+                anchors_us=index["anchor_us"][qi] - index["lag_us"][mask],
+                available_us=int(index["roi_available_us"][qi]),
+            )
+        else:
+            if compute_file_hash(str(path)) != receipt["sha256"]:
+                raise ValueError("cache payload changed")
+            with np.load(path, allow_pickle=False) as archive:
+                arrays = {key: archive[key] for key in archive.files}
         validate_block(
             arrays,
             ids,
@@ -193,5 +217,10 @@ def compile_fold(
             "optimizer_updates": 0,
             "status": "COMPLETE_FOLD_CACHE_NOT_SCIENTIFIC_FREEZE",
             **expansion_fields,
+            **(
+                {"D0_reuse": {"identity": reuse.identity, "blocks": reused}}
+                if reuse is not None
+                else {}
+            ),
         },
     )

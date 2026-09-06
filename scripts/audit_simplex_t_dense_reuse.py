@@ -9,7 +9,7 @@ from pathlib import Path
 import numpy as np
 
 from e_jepa_ttc.artifacts.simplex_t_preflight import sha256, write_new_json
-from e_jepa_ttc.simplex_t.cache_reuse import load_reused_block
+from e_jepa_ttc.simplex_t.reuse_catalog import D0ReuseCatalog
 
 
 def main() -> None:
@@ -41,6 +41,17 @@ def main() -> None:
         with np.load(root / "query_context_index.npz", allow_pickle=False) as archive:
             indices.append({name: archive[name] for name in archive.files})
     old, dense = indices
+    catalog = D0ReuseCatalog(
+        compiled=base / "compiled_context/outer0",
+        compiled_sha256="498e5bb23d93a23f7513c6f268620138da084ed39e73c9164e958554d8b13cb4",
+        cache=cache,
+        index_root=roots[0],
+        dedup=base / "query_context_dedup/outer0.npz",
+        outer=0,
+    )
+    reuse_plan = catalog.plan(dense["tokens"], dense["producer_family"][0])
+    if len(reuse_plan) != 5461:
+        raise ValueError("registered D0 reuse coverage changed")
     key_sets, histories = [], []
     for root, pin in (
         (base / "query_context_dedup", None),
@@ -88,14 +99,8 @@ def main() -> None:
             mask = dense["valid"][target]
             if not np.array_equal(arrays["observation_ids"], histories[0][row, mask]):
                 raise ValueError("cached source observation IDs changed")
-            result = load_reused_block(
-                cache,
-                identity_sha256=sha256(cache / "IDENTITY.json"),
-                receipt_sha256=sha256(path.with_suffix(".json")),
-                query=int(row),
-                family=family,
-                source_ids=histories[0][row, mask],
-                source_keys=key_sets[0],
+            result = catalog.load(
+                reuse_plan[target],
                 destination_keys=key_sets[1],
                 destination_ids=histories[1][target, mask],
                 anchors_us=dense["anchor_us"][target] - dense["lag_us"][mask],
@@ -119,6 +124,8 @@ def main() -> None:
             "status": "REAL_D0_DENSE_BLOCK_REUSE_EXACT",
             "outer": 0,
             "queries": len(records),
+            "catalog_reused_queries": len(reuse_plan),
+            "catalog_sha256": sha256(args.worktree / "src/e_jepa_ttc/simplex_t/reuse_catalog.py"),
             "records": records,
             "scope": "first/last eight input-index queries per inner family; not all cached blocks",
             "cache_blocks_written": 0,

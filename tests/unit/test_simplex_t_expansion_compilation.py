@@ -8,6 +8,7 @@ import pytest
 from e_jepa_ttc.artifacts.hashing import compute_file_hash
 from e_jepa_ttc.simplex_t import compiled_context
 from e_jepa_ttc.simplex_t.expert_phase import expert_phase_from_ttc
+from e_jepa_ttc.simplex_t.reuse_catalog import D0ReuseCatalog
 
 
 def fixture(tmp_path, monkeypatch, *, pool="D1"):
@@ -24,6 +25,7 @@ def fixture(tmp_path, monkeypatch, *, pool="D1"):
     index_file = index / "query_context_index.npz"
     np.savez(
         index_file,
+        tokens=np.array(["q0", "q1", "q2"]),
         producer_family=families,
         valid=valid,
         anchor_us=anchors,
@@ -31,7 +33,27 @@ def fixture(tmp_path, monkeypatch, *, pool="D1"):
         roi_available_us=anchors + 10,
     )
     (cache / "IDENTITY.json").write_text(
-        json.dumps({"pool": pool, "index_sha256": compute_file_hash(str(index_file))}),
+        json.dumps(
+            {
+                "pool": pool,
+                "index_sha256": compute_file_hash(str(index_file)),
+                **{
+                    key: "a" * 64
+                    for key in (
+                        "preprocessing_sha256",
+                        "extractor_sha256",
+                        "expert_phase_sha256",
+                        "voxel_sha256",
+                        "union_reader_sha256",
+                    )
+                },
+                "torch": "fixture",
+                "batch_size": 16,
+                "layout": "fixture",
+                "precision": "FP32",
+                "tf32": False,
+            }
+        ),
         encoding="utf-8",
     )
     history = np.full((3, 16), -1, np.int64)
@@ -57,7 +79,7 @@ def fixture(tmp_path, monkeypatch, *, pool="D1"):
             encoding="utf-8",
         )
     dedup_file = dedup / "outer0.npz"
-    np.savez(dedup_file, history=history, keys=np.array([f"key{i}" for i in active]))
+    np.savez(dedup_file, history=history, keys=np.array([f"{i:064x}" for i in active]))
     (dedup / "DEDUP_MANIFEST.json").write_text(
         json.dumps(
             {"outputs": [{"path": dedup_file.name, "sha256": compute_file_hash(str(dedup_file))}]}
@@ -116,3 +138,51 @@ def test_invalid_d1_is_rejected_before_allocating_outputs(tmp_path, monkeypatch,
     with pytest.raises(ValueError):
         compiled_context.compile_fold(*args, outer=0, pool=pool)
     assert not output.exists()
+
+
+@pytest.mark.parametrize("failure", [None, "missing_new", "changed_old", "recipe"])
+def test_mixed_dense_compilation_reuses_pinned_d0_without_copying_blocks(
+    tmp_path, monkeypatch, failure
+):
+    source_root, dense_root = tmp_path / "source", tmp_path / "dense"
+    source_root.mkdir()
+    dense_root.mkdir()
+    source = fixture(source_root, monkeypatch, pool="D0")
+    compiled_context.compile_fold(*source, outer=0)
+    catalog = D0ReuseCatalog(
+        compiled=source[-1],
+        compiled_sha256=compute_file_hash(str(source[-1] / "COMPILED.json")),
+        cache=source[0],
+        index_root=source[1],
+        dedup=source[2] / "outer0.npz",
+        outer=0,
+    )
+    dense = fixture(dense_root, monkeypatch, pool="DENSE_OLD")
+    path = dense[1] / "query_context_index.npz"
+    with np.load(path) as archive:
+        arrays = {name: archive[name] for name in archive.files}
+    arrays["tokens"] = np.array(["q0", "unused", "new-query"])
+    np.savez(path, **arrays)
+    identity_path = dense[0] / "IDENTITY.json"
+    identity = json.loads(identity_path.read_text(encoding="utf-8"))
+    identity["index_sha256"] = compute_file_hash(str(path))
+    if failure == "recipe":
+        identity["batch_size"] = 32
+    identity_path.write_text(json.dumps(identity), encoding="utf-8")
+    # Only temporary fixture files: the shared query deliberately has no dense copy.
+    for suffix in (".json", ".npz"):
+        (dense[0] / f"family00_query00000{suffix}").unlink()
+    if failure == "missing_new":
+        (dense[0] / "family00_query00002.json").unlink()
+    elif failure == "changed_old":
+        (source[0] / "family00_query00000.npz").write_bytes(b"changed")
+    if failure:
+        with pytest.raises(ValueError):
+            compiled_context.compile_fold(*dense, outer=0, pool="DENSE_OLD", reuse=catalog)
+        assert not (dense[-1] / "COMPILED.json").exists()
+    else:
+        compiled_context.compile_fold(*dense, outer=0, pool="DENSE_OLD", reuse=catalog)
+        manifest = json.loads((dense[-1] / "COMPILED.json").read_text(encoding="utf-8"))
+        assert manifest["queries"] == 2
+        assert set(manifest["D0_reuse"]["blocks"]) == {"0"}
+        assert np.load(dense[-1] / "features145.npy")[:, 0].tolist() == [1, 3]

@@ -76,3 +76,39 @@ def test_invalid_compile_arguments_fail_before_local_path_access(entry, monkeypa
     with pytest.raises(SystemExit) as error:
         entry.main()
     assert error.value.code == 2
+
+
+def test_dense_prepare_passes_explicit_d0_catalog(entry, tmp_path, monkeypatch):
+    paths = tmp_path / "local.json"
+    paths.write_text(json.dumps({"worktree": str(tmp_path)}), encoding="utf-8")
+    catalog, received, compilations = object(), [], []
+
+    def construct(**kwargs):
+        received.append(kwargs)
+        return catalog
+
+    monkeypatch.setattr(entry, "D0ReuseCatalog", construct)
+    monkeypatch.setattr(entry, "compile_fold", lambda *args, **kw: compilations.append(kw))
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "runner",
+            "prepare",
+            "--compile-fold",
+            "0",
+            "--compile-pool",
+            "DENSE_OLD",
+            "--local-paths",
+            str(paths),
+            "--output",
+            str(tmp_path / "output"),
+            "--reuse-d0-compiled",
+            str(tmp_path / "original"),
+            "--reuse-d0-compiled-sha256",
+            "a" * 64,
+        ],
+    )
+    assert entry.main() == 0
+    assert received[0]["compiled_sha256"] == "a" * 64
+    assert received[0]["outer"] == 0
+    assert compilations == [{"pool": "DENSE_OLD", "reuse": catalog}]

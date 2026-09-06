@@ -10,6 +10,7 @@ from e_jepa_ttc.artifacts.simplex_t_delivery import package_t0
 from e_jepa_ttc.artifacts.simplex_t_preflight import audit, interface_status, write_new_json
 from e_jepa_ttc.simplex_t.cache_status import context_cache_status
 from e_jepa_ttc.simplex_t.compiled_context import compile_fold
+from e_jepa_ttc.simplex_t.reuse_catalog import D0ReuseCatalog
 
 
 def main() -> int:
@@ -26,7 +27,17 @@ def main() -> int:
         help="prepare: compile one complete outer fold into a new --output directory",
     )
     parser.add_argument("--compile-pool", choices=("D0", "D1", "DENSE_OLD"), default=None)
+    parser.add_argument("--reuse-d0-compiled", type=Path)
+    parser.add_argument("--reuse-d0-compiled-sha256")
     args = parser.parse_args()
+    if args.reuse_d0_compiled is not None or args.reuse_d0_compiled_sha256 is not None:
+        if (
+            args.reuse_d0_compiled is None
+            or args.reuse_d0_compiled_sha256 is None
+            or args.compile_pool != "DENSE_OLD"
+            or args.compile_fold is None
+        ):
+            parser.error("D0 reuse requires both source pins and a DENSE_OLD compilation")
     if args.compile_pool is not None and args.compile_fold is None:
         parser.error("--compile-pool requires --compile-fold")
     if args.compile_fold is not None:
@@ -36,6 +47,16 @@ def main() -> int:
         temporal = Path(paths["worktree"]) / "artifacts/simplex_t/T1"
         pool = args.compile_pool or "D0"
         prefix = {"D0": "", "D1": "expansion_", "DENSE_OLD": "dense_"}[pool]
+        reuse_options = {}
+        if args.reuse_d0_compiled is not None and args.reuse_d0_compiled_sha256 is not None:
+            reuse_options["reuse"] = D0ReuseCatalog(
+                compiled=args.reuse_d0_compiled,
+                compiled_sha256=args.reuse_d0_compiled_sha256,
+                cache=temporal / "context_features_fp32",
+                index_root=temporal / "query_context_index",
+                dedup=temporal / "query_context_dedup" / f"outer{args.compile_fold}.npz",
+                outer=args.compile_fold,
+            )
         compile_fold(
             temporal / f"{prefix}context_features_fp32",
             temporal / f"{prefix}query_context_index",
@@ -43,6 +64,7 @@ def main() -> int:
             args.output,
             args.compile_fold,
             pool=pool,
+            **reuse_options,
         )
         print(
             json.dumps(
