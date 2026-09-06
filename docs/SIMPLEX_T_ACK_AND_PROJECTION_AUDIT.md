@@ -149,3 +149,43 @@ sampler, RNG and logs. Evidence: T0/current_array_resume/RESUME_QA.json. No scor
 was computed. Raw experts were not rerun. Total executed technical updates605;
 scientific updates0. No scientific freeze exists. CPU head/source integration
 has advanced; the temporal-source and replay gates remain independent.
+
+## Complete D0 exposure timing audit
+
+CURRENT_EXPOSURE_TIMING.json binds all 8192 original queries to the selected
+frame exposure metadata, using only input fields and the verified charter.
+The final selected exposure ends 1003–19992 microseconds after the event anchor;
+none has zero exposure age. This is not proof that the event-only historical
+expert consumes RGB, or that annotation generation was available online.
+The recorded conditional H1 timing must not be adopted as a final producer
+cutoff without establishing the historical ROI dependency contract. The earlier
+zero-timing resume probe remains a technical fixture, not production parity.
+
+A live read-only CIM check on this continuation still found Stage70 worker
+38464 and launcher36040 running the expansion-cache command. No exclusive
+inference slot was inferred or taken. An owner handoff request was presented
+to the user for after the entire command finishes. No optimizer updates were
+performed by either metadata audit; the technical total remains605.
+
+## Complete original/HF/Garl identity contrast
+
+ORIGINAL_RELEASE_IDENTITY_FULL.json covers all21471 Garl input pairs in the nine
+original roles (22716 unique frame/track/box observations). It is not a sample
+of128 pairs and is not limited to the8192 target-stratified D0 queries.
+All182086 original (frame, instance_id) keys exactly equal the HF eAP keys, with
+zero missing keys on either side in every sequence. HF's track_id is a shortened
+ID (for example000005 versus instance_id2cyv0Oedzg_000005); this spelling
+difference is not evidence of independent tracks.
+
+Only938 Garl observations have an exact original frame/instance key. None of
+those938 has an exact matching box under either raw-xyxy or documented-xywh
+interpretation. This rules out the tested direct-key and box-format-only adapter;
+it does not prove that a source-authoritative crosswalk cannot exist. No nearest
+box match or TTC/3D-based association was adopted. The missing prerequisite is
+a verified Garl-to-eAP persistent-object crosswalk or the original unfiltered
+Garl per-track annotations, not another copy of these eAP files.
+
+The audit projects only identities and input boxes. The HF geometry/velocity
+columns are not loaded. Original primitive pickle decoding is unavoidable, but
+numeric target/velocity/3D values are never inspected or used in membership.
+Ruff and Pyright pass for both new metadata scripts and the delivery module.

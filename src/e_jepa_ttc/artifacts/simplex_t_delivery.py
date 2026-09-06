@@ -25,6 +25,8 @@ SOURCE_FILES = (
     "scripts/audit_simplex_t_original_release.py",
     "scripts/audit_simplex_t_current_tables.py",
     "scripts/probe_simplex_t_current_resume.py",
+    "scripts/audit_simplex_t_current_timing.py",
+    "scripts/audit_simplex_t_release_identity.py",
     "configs/experiment/simplex_t_coordination.json",
     "docs/SIMPLEX_T_ACK_AND_PROJECTION_AUDIT.md",
     "tests/unit/test_simplex_t_preflight.py",
@@ -147,11 +149,15 @@ def package_t0(local_paths: Path, output: Path) -> dict[str, Any]:
         "required_next_evidence": [
             "Explicit exclusive inference slot after live architecture owner releases resources",
             "Adopt verified 36-producer ancestry and bind new history cache preprocessing",
-            "Full permitted input-only OBJECT timeline and clock/ROI mapping",
+            "Authoritative Garl-to-eAP persistent-object crosswalk or unfiltered Garl source tracks",
+            "Historical producer clock/ROI dependency mapping, including nonzero exposure age",
             "Integrated production loader parity, all-arm implementation and pre-fit QA/freeze",
             "Exclusive inference scheduling boundary followed by CACHE_READY evidence",
         ],
         "interfaces": current_interfaces,
+        "original_release_identity_audit": json.loads(
+            (evidence / "ORIGINAL_RELEASE_IDENTITY_FULL.json").read_text(encoding="utf-8")
+        ),
         "minimum_written_volume_remaining_bytes": 40_000_000_000,
         "producer_audit": json.loads(
             (evidence / "DISCOVERED_INTERFACES.json").read_text(encoding="utf-8")
@@ -276,6 +282,13 @@ owner process was stopped, resumed, wrapped retroactively or otherwise modified.
 
 ## Resume boundary
 
+The complete original-release identity audit covers182086 eAP object keys,
+exactly shared by ZIP and HF, and22716 unique Garl observations across21471
+original-role pairs. Only938 Garl frame/instance keys match directly; none has
+an exact same-ID box under the two audited conventions. No correspondence was
+invented. CURRENT_EXPOSURE_TIMING.json also records nonzero selected exposure
+age for all8192 D0 queries (1003–19992us); producer cutoff parity remains open.
+
 The shared SIMPLEX_T_STAGE70_ACK.json acknowledges the immutable interfaces and
 conditional light-I/O CPU overlap. It does not grant exclusive inference.
 References and verified ACK identity are in NEXT_DECISION_SIMPLEX_T.json.
@@ -361,7 +374,9 @@ No future background completion is promised.
         "qa_original_release.xml",
         "CURRENT_TABLE_AUDIT.json",
         "CURRENT_INPUT_INTEGRATION.json",
+        "CURRENT_EXPOSURE_TIMING.json",
         "qa_current_inputs.xml",
+        "qa_release_identity_dependencies.xml",
     ):
         payload[f"evidence/{name}"] = (evidence / name).read_bytes()
     payload["evidence/current_array_resume/RESUME_QA.json"] = (
