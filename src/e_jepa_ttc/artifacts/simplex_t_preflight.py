@@ -139,7 +139,10 @@ def interface_status(paths: dict[str, Any]) -> dict[str, Any]:
             "scientific_run_enabled": False,
             "cpu_overlap_conditionally_authorized": accepted["resources"]["cpu_overlap_authorized"],
             "disk_floor_bytes_latest_user_amendment": 40_000_000_000,
-            "reason": "Role/time authority resolved; source parity and production integration remain separate gates.",
+            "reason": (
+                "Role/time authority resolved; source parity and production integration "
+                "remain separate gates."
+            ),
         }
     return {
         "execution_status": (
