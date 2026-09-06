@@ -54,6 +54,27 @@ def test_missing_prerequisite_has_no_files_or_data_reads(tmp_path):
     assert not args["output"].exists()
 
 
+def test_prerequisites_rechecked_after_admission_before_loading(tmp_path):
+    args = arguments(tmp_path)
+    checks = []
+
+    def changed_after_initial_check():
+        checks.append(True)
+        if len(checks) == 2:
+            raise ValueError("frozen input changed after initial admission")
+
+    def unread(_):
+        raise AssertionError("changed prerequisites must not load TRAIN")
+
+    args["validate_prerequisites"] = changed_after_initial_check
+    args["source_loader"] = unread
+    with pytest.raises(ValueError, match="changed after initial admission"):
+        run_phase(**args)
+    assert len(checks) == 2
+    assert not (args["output"] / "fits").exists()
+    assert not (args["output"] / "HEAD_WRITER.lock").exists()
+
+
 def test_resource_pause_precedes_loading_and_preserves_resume_contract(tmp_path):
     args = arguments(tmp_path)
     args["resource_ok"] = lambda: False

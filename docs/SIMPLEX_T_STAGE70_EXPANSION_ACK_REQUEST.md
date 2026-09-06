@@ -45,7 +45,10 @@ dependencias temporales de expansión? Necesito que aclare:
 La alternativa autorizada de SIMPLEX-T usa ventanas sensoriales retrospectivas
 con la ROI de la consulta actual; no reconstruye asociaciones Garl–eAP. No pido
 scores ni resultados para escoger constantes. D0 conserva sus cachés y protocolo;
-su replay pendiente requiere coordinar un turno exclusivo mientras Stage70 está activo.
+el usuario autorizó ejecutar su replay junto a Stage70, sujeto a los límites
+absolutos de recursos. La autorización figura en
+`docs/SIMPLEX_T_CONCURRENT_EXECUTION_AMENDMENT.md` y no amplía el contrato temporal
+a nuevas consultas.
 
 SIMPLEX-T también comprobó el enlace a exposiciones RGB con las columnas de
 entrada de Garl y eAP: 27307 consultas, edades de dependencia entre 1003 y
@@ -83,4 +86,6 @@ consultas D0 solapadas, sin descartes en el conjunto denso. Los límites raw se
 reutilizaron del índice D0 pinneado; no se releyeron todos los archivos HDF5.
 No acredita nueva paridad de inferencia de expertos ni latencia de anotación online.
 Por favor, confirma el reconocimiento del contrato para estas consultas adicionales
-y una cesión efectiva de GPU/I/O. No se solicita detener Stage70 ni refitar expertos.
+y sus dependencias de ROI. El usuario ya autorizó la concurrencia de GPU/I/O;
+esta petición pendiente concierne al contrato de datos. No se solicita detener
+Stage70 ni refitar expertos.

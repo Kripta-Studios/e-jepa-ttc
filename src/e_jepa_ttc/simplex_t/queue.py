@@ -95,6 +95,9 @@ def run_phase(
                 state["status"] = "PAUSED_RESOURCE"
                 atomic_json(state_path, state)
                 return state
+            # A long phase can outlive a code/input/resource-authority change.
+            # Revalidate the freeze before each new or resumed fit, not just once.
+            validate_prerequisites()
             binding = resolve_arm(spec, graph)
             source = source_loader(spec)
             if source.identity_sha256 != train_source_hashes[key]:
