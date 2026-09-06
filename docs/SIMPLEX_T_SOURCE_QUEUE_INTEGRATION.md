@@ -155,3 +155,24 @@ Successful compilation means a complete fold cache, not scientific freeze or
 permission to fit. Five CLI wiring tests, Ruff, Pyright and PowerShell syntax
 parsing pass. The tests mock the compiler and consume no optimizer updates;
 actual complete-fold execution still depends on finishing its cache.
+
+## Compact endpoint weights
+
+`compact_weights.export_compact_endpoint` validates the caller's prerequisites
+and the exact completed endpoint, then exports only finite FP32 head arrays to
+`weights.npz`, without optimizer state. A new directory and exclusive export
+lease prevent overwriting prior evidence. The typed `WEIGHTS.json` manifest is
+published last and binds source endpoint, scientific freeze, TRAIN source,
+canonical fit/control/history, parameter names/shapes/dtypes and array-file hash.
+
+`load_compact_endpoint` uses `allow_pickle=False`, checks the pinned manifest and
+weights hashes, canonical arm contract, complete parameter set and exact shapes,
+then loads the head strictly in CPU FP32 evaluation mode. This is a weight
+transport loader, not independent proof that a campaign endpoint was authorized.
+
+Eight tests use explicitly mocked endpoint validation with untrained models:
+exact parameter roundtrip for scalar GRU, latent GRU and Transformer; rejection
+of changed manifest/weights, invalid schema, parameter set or control. Tests
+perform zero optimizer updates. Ruff and Pyright pass; an initial single-line
+format failure was corrected. Scientific weights do not exist yet and these
+fixtures must not be included as campaign results.
