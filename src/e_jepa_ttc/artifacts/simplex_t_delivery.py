@@ -34,6 +34,7 @@ SOURCE_FILES = (
     "docs/SIMPLEX_T_T0_RESUME.md",
     "docs/SIMPLEX_T_STAGE70_OWNER_MESSAGE.md",
     "docs/SIMPLEX_T_SOURCE_ESCALATION.json",
+    "docs/SIMPLEX_T_RESUMABLE_BLOCK.json",
 )
 
 
@@ -130,6 +131,9 @@ def package_t0(local_paths: Path, output: Path) -> dict[str, Any]:
             "KERNELS_CACHE_ENGINE_METRICS_LEDGER_IMPLEMENTED_INTEGRATION_PENDING"
         ),
         "scientific_freeze": False,
+        "resumable_block": json.loads(
+            (worktree / "docs/SIMPLEX_T_RESUMABLE_BLOCK.json").read_text(encoding="utf-8")
+        ),
         "T1_T6": "NOT_RUN_PREREQUISITE_BLOCK",
         "canonical_D": "UNRESOLVED_BEFORE_SCORES",
         "D1_density_latent_availability": "UNRESOLVED",
@@ -290,6 +294,16 @@ owner process was stopped, resumed, wrapped retroactively or otherwise modified.
 
 ## Resume boundary
 
+Final available independent validation passes143 SIMPLEX-T tests without optimizer
+updates; only the previously accounted synthetic20-update test was deselected.
+The callback-integrated real-TRAIN array10-versus5+5 proof is separately saved.
+All SIMPLEX-T modules pass Ruff and Pyright. These are not full repository QA or
+raw replay parity. The external source and exclusive-slot requirements have
+persisted through at least three continuations. The goal is paused as a genuine
+resumable prerequisite block, not completed science. Exact affected families,
+exhausted checks and remaining implementation work are in
+docs/SIMPLEX_T_RESUMABLE_BLOCK.json. No model/scientific result is invented.
+
 The complete original-release identity audit covers182086 eAP object keys,
 exactly shared by ZIP and HF, and22716 unique Garl observations across21471
 original-role pairs. Only938 Garl frame/instance keys match directly; none has
@@ -395,6 +409,7 @@ No future background completion is promised.
         "qa_execution_components.xml",
         "qa_queue.xml",
         "qa_queue_engine.xml",
+        "qa_all_simplex_no_updates.xml",
     ):
         payload[f"evidence/{name}"] = (evidence / name).read_bytes()
     payload["evidence/current_array_resume/RESUME_QA.json"] = (

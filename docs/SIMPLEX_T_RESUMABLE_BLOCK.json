@@ -1,0 +1,55 @@
+{
+  "schema": "simplex_t_resumable_block_v1",
+  "status": "BLOCKED_EXTERNAL_PREREQUISITES_NOT_SCIENTIFIC_NEGATIVE",
+  "scientific_fits": 0,
+  "scientific_updates": 0,
+  "technical_updates": 625,
+  "scientific_freeze": false,
+  "implementation_complete": false,
+  "latest_qa": {
+    "path": "artifacts/simplex_t/T0/qa_all_simplex_no_updates.xml",
+    "passed": 143,
+    "failed": 0,
+    "excluded": "test_production_cpu_10_versus_5_plus_5, to avoid unreserved repeated optimizer work",
+    "optimizer_updates": 0,
+    "real_array_journal_resume_evidence": "artifacts/simplex_t/T0/current_array_journal_resume/RESUME_QA.json",
+    "full_repository_qa": false
+  },
+  "external_dependencies": [
+    {
+      "id": "UNFILTERED_GARL_HISTORY_OR_AUTHORITATIVE_CROSSWALK",
+      "affects": "Genuine past scalar and latent history families",
+      "required": "Unfiltered Garl TRAIN per-track source before valid_ts_list/TTC/height filtering, or an authoritative Garl-to-eAP instance crosswalk with box/time provenance",
+      "exhausted_checks": [
+        "Local dataset/repository source and metadata searches",
+        "Stage70 owner's independent bounded search relayed by user",
+        "Official eAP ZIP annotation/frame download and SHA256 checks",
+        "All182086 original/HF frame-instance keys and all22716 original-role Garl input observations",
+        "Official publisher pages, repository releases/issues and current recursive HF API tree"
+      ],
+      "source_request": "docs/SIMPLEX_T_SOURCE_ESCALATION.json"
+    },
+    {
+      "id": "EXCLUSIVE_REPLAY_SLOT_NOT_GRANTED",
+      "affects": "Required real64 TRAIN replay parity, including current-only family, and new history feature inference",
+      "required": "Stage70 executor's explicit exclusive inference/GPU/heavy-I/O handoff with pending output reservations; no stopping other jobs",
+      "latest_shared_files": ["SIMPLEX_T_STAGE70_ACK.json", "SIMPLEX_T_STAGE70_REQUEST.json"],
+      "existing_ack_grants_slot": false,
+      "process_exit_is_not_permission": true
+    }
+  ],
+  "integration_remaining_not_hidden_as_data_absence": [
+    "Bind production cache loader and readiness validator to CLI",
+    "Complete real producer preprocessing/time parity and all pre-fit QA",
+    "Freeze code/config/roles/producer/normalizer/schema identities",
+    "Execute available registered phases and report real outputs"
+  ],
+  "recurrence_audit": {
+    "same_external_conditions_persisted_at": ["d5fd9ca49baa", "ce1686a95d00", "current143-test-validation"],
+    "independent_progress_was_made": true,
+    "reason_for_pause_now": "No scientific fit satisfies source/replay/freeze prerequisites. Speculative source adapters or further synthetic probes cannot certify the missing real contract. Resume on usable source evidence or coordinated replay access; this is not a completion claim."
+  },
+  "holdout_opened": false,
+  "new_experiments_invented": false,
+  "background_completion_promised": false
+}
