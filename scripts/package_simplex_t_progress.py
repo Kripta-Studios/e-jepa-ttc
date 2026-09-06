@@ -12,9 +12,15 @@ from pathlib import Path
 
 import psutil
 
-from e_jepa_ttc.artifacts.simplex_t_preflight import sha256, write_new_json
+from e_jepa_ttc.artifacts.simplex_t_preflight import write_new_json
 from e_jepa_ttc.simplex_t.coordination import shared_write_admission
 from e_jepa_ttc.simplex_t.lifecycle import admitted
+
+
+def sha256(path: Path) -> str:
+    """Stream bounded campaign artifacts, including feature arrays larger than metadata."""
+    with path.open("rb") as stream:
+        return hashlib.file_digest(stream, "sha256").hexdigest()
 
 
 def main() -> None:
