@@ -9,7 +9,11 @@ import pytest
 
 from e_jepa_ttc.artifacts.hashing import compute_file_hash
 from e_jepa_ttc.simplex_t.dense_file_sources import DenseBinding, load_dense_inputs
-from e_jepa_ttc.simplex_t.expansion_sources import ExpansionBinding, load_expansion_source
+from e_jepa_ttc.simplex_t.expansion_sources import (
+    ExpansionBinding,
+    load_expansion_inputs,
+    load_expansion_source,
+)
 from e_jepa_ttc.simplex_t.pools import expansion_producer
 
 
@@ -132,6 +136,18 @@ def test_file_loader_attaches_targets_in_pool_order(tmp_path, features):
     assert source.features.shape == (2, features)
     np.testing.assert_allclose(source.normalizer.mean, source.features.mean(0))
     assert source.target_phase[0] < source.target_phase[1]
+
+
+def test_expansion_details_preserve_original_targets_for_matched_weights(tmp_path):
+    binding = fixture(tmp_path)
+    result = load_expansion_inputs(binding, outer=0, feature_count=17, allowed_sequences={"extra"})
+    assert result.tokens.tolist() == ["b", "a"]
+    assert result.target_ttc.tolist() == [3.0, 1.0]
+    legacy, sequences = load_expansion_source(
+        binding, outer=0, feature_count=17, allowed_sequences={"extra"}
+    )
+    assert legacy.identity_sha256 == result.source.identity_sha256
+    np.testing.assert_array_equal(sequences, result.sequences)
 
 
 @pytest.mark.parametrize("change", ["cache", "metadata", "family", "closed_group"])

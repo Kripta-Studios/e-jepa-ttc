@@ -36,18 +36,28 @@ class ExpansionBinding:
     cache_identity_sha256: str
 
 
+@dataclass(frozen=True)
+class ExpansionInputs:
+    """Aligned D1 expansion source and original supervision for registered controls."""
+
+    source: CachedQueries
+    tokens: np.ndarray
+    sequences: np.ndarray
+    target_ttc: np.ndarray
+
+
 def _verify(path: Path, expected: str) -> None:
     if len(expected) != 64 or compute_file_hash(str(path)) != expected:
         raise ValueError(f"D1 content pin mismatch: {path.name}")
 
 
-def load_expansion_source(
+def load_expansion_inputs(
     binding: ExpansionBinding,
     *,
     outer: int,
     feature_count: int,
     allowed_sequences: set[str],
-) -> tuple[CachedQueries, np.ndarray]:
+) -> ExpansionInputs:
     """Return expansion TRAIN in frozen pool order, plus aligned sequence identities.
 
     This API grants no fit, replay or data-role authority. Callers first resolve
@@ -148,7 +158,7 @@ def load_expansion_source(
             "normalizer_ids": normalizer.consumed_ids_sha256,
         }
     )
-    return CachedQueries(
+    source = CachedQueries(
         features,
         arrays["anchor_us"],
         arrays["available_us"],
@@ -157,4 +167,15 @@ def load_expansion_source(
         targets.mass,
         normalizer,
         identity,
-    ), sequences
+    )
+    return ExpansionInputs(source, tokens, sequences, targets.target_ttc)
+
+
+def load_expansion_source(
+    binding: ExpansionBinding, *, outer: int, feature_count: int, allowed_sequences: set[str]
+) -> tuple[CachedQueries, np.ndarray]:
+    """Preserve the original D1 source API; no extra target reads or numerical changes."""
+    result = load_expansion_inputs(
+        binding, outer=outer, feature_count=feature_count, allowed_sequences=allowed_sequences
+    )
+    return result.source, result.sequences

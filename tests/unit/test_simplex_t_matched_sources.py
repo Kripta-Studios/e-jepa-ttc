@@ -1,12 +1,15 @@
 """Matched controls recompute TRAIN weighting and normalization without changing OLD."""
 
+import json
 from dataclasses import replace
 
 import numpy as np
 import pytest
 
+from e_jepa_ttc.artifacts.hashing import compute_file_hash
 from e_jepa_ttc.evaluation.stage61_nested_pair_router import phase_from_ttc
 from e_jepa_ttc.simplex_t.cache import CachedQueries, Normalizer, training_mass
+from e_jepa_ttc.simplex_t.diverse_sources import diverse_source_view
 from e_jepa_ttc.simplex_t.matched_sources import matched_source_view
 
 
@@ -56,6 +59,62 @@ def test_selected_train_normalizer_excludes_unselected_and_dev_observations():
     np.testing.assert_array_equal(dev.target_phase, sources["outer_dev"].target_phase)
     assert sources["inner_oof"].population == 4
     assert sources["inner_oof"].normalizer.consumed_ids_sha256 == "parent"
+
+
+@pytest.mark.parametrize("failure", [None, "count", "query", "group", "producer", "pin"])
+def test_diverse_registered_manifest_selection(tmp_path, failure):
+    sources, arguments = fixture()
+    selection = {
+        "tokens": ["q2", "q0"],
+        "sequences": ["a", "b"],
+        "sequence_family_sha256": {"a": "a" * 64, "b": "b" * 64},
+    }
+    count = 2
+    if failure == "count":
+        count = 3
+    elif failure == "query":
+        selection["tokens"][0] = "foreign"
+    elif failure == "group":
+        selection["sequences"] = ["a", "c"]
+    elif failure == "producer":
+        selection["sequence_family_sha256"]["a"] = "f" * 64
+    path = tmp_path / "pool.json"
+    path.write_text(
+        json.dumps(
+            {
+                "folds": [
+                    {
+                        "outer": 0,
+                        "nominal_common_count": count,
+                        "pools": {
+                            "DENSE_OLD": {"tokens": ["d0", "d1"]},
+                            "DIVERSE_MATCHED": selection,
+                        },
+                    }
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+    kwargs = dict(
+        pool_manifest=path,
+        pool_sha256=compute_file_hash(str(path)),
+        outer=0,
+        train_tokens=np.array(["q0", "q1", "q2", "q3"]),
+        train_sequences=arguments["train_sequences"],
+        train_target_ttc=arguments["train_target_ttc"],
+        sequence_families={"a": "a" * 64, "b": "b" * 64, "c": "c" * 64},
+    )
+    if failure == "pin":
+        kwargs["pool_sha256"] = "0" * 64
+    if failure:
+        with pytest.raises(ValueError):
+            diverse_source_view(sources, **kwargs)
+    else:
+        result = diverse_source_view(sources, **kwargs)
+        assert result["inner_oof"].history[:, -1].tolist() == [2, 0]
+        np.testing.assert_array_equal(result["inner_oof"].normalizer.mean, np.ones(17))
+        np.testing.assert_array_equal(result["outer_dev"].history, sources["outer_dev"].history)
 
 
 @pytest.mark.parametrize(
