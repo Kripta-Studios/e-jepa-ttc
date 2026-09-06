@@ -1,0 +1,17 @@
+{
+  "kind": "PRE_FREEZE_COMMENT_ONLY_TYPING_AMENDMENT",
+  "old_runner_sha256": "de2cadaa1e58365d550bfaea8b41ed5c4dfc9c803ed850f569cdb0b593d91740",
+  "new_runner_sha256": "830a20be35fb604ea0bbf41c6272cf02384c08798a2ebffe6b3ee124618ab0ea",
+  "equal_ast_dump_sha256": "e0063e34f4a91601a778fe17bf2994c619b968bd6390151af8b27d804341a299",
+  "verification": "ast.dump(ast.parse(source), include_attributes=False) exactly equal for old Git source and new physical source",
+  "change": "Single Pyright reportArgumentType suppression on array keyword unpacking; dictionary contains no allow_pickle key",
+  "numerical_change": false,
+  "scientific_freeze_exists": false,
+  "existing_query_blocks": 196,
+  "existing_observations": 3076,
+  "old_identity_preserved": "artifacts/simplex_t/T1/context_features_fp32/IDENTITY_ORIGINAL.json",
+  "old_identity_preservation": "Same JSON content with LF line endings; original write_new_json emitted CRLF",
+  "original_identity_crlf_sha256": "69471236506ab3c59a537f2685c0f8dc1ae7dc49f4a2a0ee7cd191e9aa164826",
+  "active_identity_change": "runner_sha256 only; no data, weights, batching or scientific constants changed",
+  "optimizer_updates": 0
+}

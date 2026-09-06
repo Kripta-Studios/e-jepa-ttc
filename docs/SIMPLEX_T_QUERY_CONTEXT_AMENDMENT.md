@@ -119,7 +119,9 @@ Execution remains partial. The required D0 cache has24576 query/family blocks.
 No completion or scientific fit is implied by an intermediate block receipt.
 The runner currently has one Pyright diagnostic on NumPy keyword unpacking at
 savez_compressed; runtime output and its schema are separately checked. This
-typing issue remains on the pre-freeze QA list.
+typing issue was resolved by the comment-only amendment documented in
+SIMPLEX_T_CACHE_TYPING_AMENDMENT.json. The executable AST is unchanged; old
+source and identity hashes remain recorded. Ruff and Pyright now pass the runner.
 
 The fold compiler requires all8192 query/family receipts for its outer fold
 before allocating feature arrays. It verifies each block's hash, exact indices,
@@ -128,3 +130,10 @@ builds memory-mappable arrays and publishes a completion manifest only after
 every consumed observation is covered. A real partial-cache invocation rejected
 the first missing receipt and created no compiled output. Seven unit tests cover
 schema, identity, timing, dtype, nonfinite and forbidden-target rejection.
+
+The D0 source loader separately binds compiled arrays, history indices, original
+query roles and historical supervision. TRAIN normalization uses only unique
+consumed TRAIN observations; OLD_DEV uses that same normalizer and cannot share
+consumed observations with TRAIN. Feature count and normalizer bytes contribute
+to the eventual frozen source identity. Loading is not fit authorization, and
+full-cache integration remains pending until extraction completes.

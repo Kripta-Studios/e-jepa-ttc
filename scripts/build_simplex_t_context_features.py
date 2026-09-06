@@ -165,7 +165,7 @@ def main() -> None:
                 with temporary.open("xb") as stream:
                     np.savez_compressed(
                         stream,
-                        **{k: v[mask] for k, v in arrays.items()},
+                        **{k: v[mask] for k, v in arrays.items()},  # pyright: ignore[reportArgumentType]
                         observation_ids=history[qi, mask],
                         anchor_us=index["anchor_us"][qi] - index["lag_us"][mask],
                         available_us=np.full(int(mask.sum()), index["roi_available_us"][qi]),
