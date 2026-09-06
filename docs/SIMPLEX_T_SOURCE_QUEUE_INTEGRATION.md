@@ -86,3 +86,21 @@ resolved using explicit DataFrame selection; Ruff and Pyright then pass. The
 returned per-query contrasts retain grouping identifiers for subsequent paired
 sequence/track uncertainty estimates. This does not yet implement their
 confidence intervals, authorize D1 availability, or establish real results.
+
+## Development export connection
+
+`development_export.development_frame` connects complete per-fit inference
+outputs with the role-validated metadata order and the current observation's
+original expert TTC from the coherent FP32 cache. It checks the frozen source
+identity, exact consumed history, historical metadata hash and query order, and
+compiled manifest/expert array hashes. Only identity and target CSV columns are
+decoded, not historical score columns. It exports query/track/fold identities,
+current experts, prediction diagnostics and consumed history indices through
+the existing `prediction_frame` implementation, adding source identity, explicit
+retrospective-current-ROI semantics, anchor/ROI availability and history span.
+
+Six synthetic integration cases pass, covering unchanged infinite expert
+selection and rejection of source, history, metadata order/bytes and expert
+cache changes. Ruff and Pyright pass (the initial pandas `usecols` stub mismatch
+was resolved with explicit column filtering and a required-column check).
+These checks perform no optimizer updates and are not real model results.
