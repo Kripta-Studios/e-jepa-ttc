@@ -1,6 +1,25 @@
 {
   "schema": "simplex_t_resumable_block_v1",
-  "status": "BLOCKED_EXTERNAL_PREREQUISITES_NOT_SCIENTIFIC_NEGATIVE",
+  "status": "ACTIVE_QUERY_CONTEXT_AMENDMENT_REAL_REPLAY_PARITY_UNRESOLVED",
+  "latest_user_amendment": {
+    "source_alternative_authorized": true,
+    "effective_replay_handoff_confirmed": true,
+    "original_source_dependency_not_silently_satisfied": true,
+    "new_estimand": "Retrospective past sensor windows conditioned on the currently supplied query ROI; not verified same-object trajectory history",
+    "document": "docs/SIMPLEX_T_QUERY_CONTEXT_AMENDMENT.md",
+    "real_replay": "artifacts/simplex_t/T0/current_expert_replay_64/REPLAY_DIAGNOSTIC.json",
+    "real_replay_rows": 64,
+    "real_replay_checkpoints": 36,
+    "real_replay_predictions": 192,
+    "precision_diagnostic_additional_predictions": 384,
+    "parity_passed": false,
+    "replay_input_bytes": 150999453,
+    "replay_input_sha256": "5b509f3f2eb5549e2dcc4fa82ad4a8d809d80dce92c328faaf3d04d39467fb47",
+    "new_optimizer_updates": 0,
+    "new_tests_passed": 5,
+    "preserved_failure_ids": ["REPLAY_COHORT_CP1252_DECODE", "REPLAY_INPUT_HASH_METADATA_SIZE_BOUND", "REAL_REPLAY_NUMERICAL_DIFFERENCES_UNRESOLVED"],
+    "historical_block_audits_below_superseded": true
+  },
   "resumed_block_recurrence_audit": {
     "consecutive_resumed_turns": 3,
     "turns": [

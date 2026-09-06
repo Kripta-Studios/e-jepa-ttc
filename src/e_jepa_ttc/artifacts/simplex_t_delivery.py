@@ -29,6 +29,9 @@ SOURCE_FILES = (
     "scripts/audit_simplex_t_release_identity.py",
     "scripts/audit_simplex_t_archive_inventory.py",
     "scripts/prepare_simplex_t_replay_cohort.py",
+    "scripts/replay_simplex_t_current_experts.py",
+    "scripts/diagnose_simplex_t_replay_precision.py",
+    "docs/SIMPLEX_T_QUERY_CONTEXT_AMENDMENT.md",
     "configs/experiment/simplex_t_coordination.json",
     "docs/SIMPLEX_T_ACK_AND_PROJECTION_AUDIT.md",
     "tests/unit/test_simplex_t_preflight.py",
@@ -87,9 +90,9 @@ def package_t0(local_paths: Path, output: Path) -> dict[str, Any]:
     commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=worktree, text=True).strip()
     decision = {
         "artifact_type": "simplex_t_next_decision_v1",
-        "execution_status": "BLOCKED_EXTERNAL_PREREQUISITES_NOT_SCIENTIFIC_NEGATIVE",
+        "execution_status": "ACTIVE_QUERY_CONTEXT_AMENDMENT_REAL_REPLAY_PARITY_UNRESOLVED",
         "source_status": "OWNER_INTERFACES_ACKNOWLEDGED_GEOMETRY_PARITY_UNRESOLVED",
-        "numerical_status": "INTEGRATED_CPU_ENGINE_SYNTHETIC_RESUME_PASS_REAL_REPLAY_PENDING",
+        "numerical_status": "REAL64_REPLAY_EXECUTED_DIFFERENCES_REQUIRE_INVESTIGATION",
         "mechanism_status": "NOT_EVALUATED",
         "replication_scope": "NONE",
         "claim_ceiling": "T0_METADATA_AND_SYNTHETIC_ENGINEERING_ONLY",
@@ -140,7 +143,7 @@ def package_t0(local_paths: Path, output: Path) -> dict[str, Any]:
         "canonical_D": "UNRESOLVED_BEFORE_SCORES",
         "D1_density_latent_availability": "UNRESOLVED",
         "history_index": "NOT_BUILT_LABEL_INDEPENDENT_TIMELINE_UNVERIFIED",
-        "production_replay_parity": "NOT_RUN",
+        "production_replay_parity": "EXECUTED_NOT_PASSED",
         "production_device_resume": "CPU_ENGINE_PASS_ON_SYNTHETIC_DATA",
         "qa": qa,
         "qa_scope": (
@@ -191,7 +194,25 @@ def package_t0(local_paths: Path, output: Path) -> dict[str, Any]:
     decision_path = output / "NEXT_DECISION_SIMPLEX_T.json"
     write_new_json(decision_path, decision)
     report_path = output / "CODEX_SIMPLEX_T_FINAL_REPORT.md"
-    report = f"""# SIMPLEX-T — resumable T0 prerequisite block
+    report = f"""# SIMPLEX-T — active pre-fit alternative and replay audit
+
+## Latest authoritative continuation
+
+The user authorizes an executable alternative and confirms effective replay handoff.
+The query-conditioned sensor-context amendment is explicit, not a claim to have
+recovered same-object Garl histories. Its window/crop implementation passes five
+unit tests and module Ruff/Pyright checks; real raw-window parity remains pending.
+The mandatory64 TRAIN cohort has now been executed through36 frozen checkpoints,
+producing192 finite TTC predictions. Additional precision diagnostics produce384
+predictions without optimizer updates or raw shard rereads. Numerical differences
+remain: parity is NOT passed, no scientific freeze or scientific fit has occurred.
+The recovered-input inference run took8.676 seconds, EXCLUDING the preceding
+32-shard verification/materialization. Inputs are150999453 bytes and hash-bound.
+The initial CP1252 decode and metadata-only32MiB hasher failures are preserved in
+the decision; the latter was repaired using a streaming file hash and the already
+saved input tensor, not by repeating the dataset scan. GPU inference stayed in one
+process. The historical source/slot pauses below are superseded by this continuation.
+See SIMPLEX_T_QUERY_CONTEXT_AMENDMENT.md and the replay evidence in this bundle.
 
 Status: **{current_interfaces["execution_status"]}**.
 Stage70 role/time files and the user-pinned ACK have been verified and adopted
@@ -441,6 +462,11 @@ No future background completion is promised.
         payload[f"evidence/current_array_journal_resume/{name}"] = (
             evidence / "current_array_journal_resume" / name
         ).read_bytes()
+    for path in sorted((evidence / "current_expert_replay_64").iterdir()):
+        if path.suffix in {".json", ".npz"}:
+            payload[f"evidence/current_expert_replay_64/{path.name}"] = path.read_bytes()
+    for name in ("qa_query_context.xml", "qa_query_context_voxel.xml"):
+        payload[f"evidence/{name}"] = (evidence / name).read_bytes()
     payload["coordination/SIMPLEX_T_STAGE70_REQUEST.json"] = request.read_bytes()
     manifest = {name: hashlib.sha256(data).hexdigest() for name, data in payload.items()}
     payload["PAYLOAD_SHA256.json"] = json.dumps(manifest, indent=2).encode()

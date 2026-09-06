@@ -4,7 +4,8 @@
   "shared_written_volume_remaining_bytes_min": 40000000000,
   "disk_authority": "Later explicit user instruction supersedes both 60 GiB and ACK 120 GB; 40 decimal GB remain after reservations",
   "unknown_reservations_admitted": false,
-  "exclusive_inference_granted": false,
+  "exclusive_inference_granted": true,
+  "exclusive_inference_authority": "User explicitly reconfirms effective handoff and requests executable alternative in latest turn; historical ACK bytes remain unchanged",
   "e_drive_source_only": false,
   "geometry_reconstruction_scope": "User-authorized feasibility and parity audit; no replacement of frozen expert ROI without demonstrated equivalence"
 }
