@@ -1,4 +1,4 @@
-"""Bind D0 current exposure dependencies; never infer zero observation age."""
+"""Audit D0 or pinned expansion exposure dependencies; never infer zero observation age."""
 
 from __future__ import annotations
 
@@ -18,6 +18,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--local-paths", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--expansion-metadata", type=Path)
     args = parser.parse_args()
     paths = json.loads(args.local_paths.read_text(encoding="utf-8"))
     config = json.loads(Path("configs/experiment/simplex_t_coordination.json").read_text())
@@ -28,19 +29,35 @@ def main() -> None:
     garl = Path(charter["metadata_source"]["path"])
     if sha256(garl) != charter["metadata_source"]["sha256"]:
         raise ValueError("charter input metadata changed")
-    historical = Path(ack["producers"]["authoritative_historical_manifest"]["path"]).parent
-    index = json.loads((historical / "FROZEN_EXPERT_TABLE_INDEX.json").read_text())
-    tokens = set()
-    for role in ("inner_oof", "outer_dev"):
-        record = next(r for r in index if r["outer_fold"] == 0 and r["role"] == role)
-        path = historical / "tables" / f"outer0_{role}.csv"
-        if sha256(path) != record["metadata_sha256"]:
-            raise ValueError("historical D0 identity changed")
-        tokens.update(
-            pd.read_csv(path, usecols=lambda column: column == "sample_token").sample_token
+    if args.expansion_metadata is None:
+        historical = Path(ack["producers"]["authoritative_historical_manifest"]["path"]).parent
+        index = json.loads((historical / "FROZEN_EXPERT_TABLE_INDEX.json").read_text())
+        tokens = set()
+        for role in ("inner_oof", "outer_dev"):
+            record = next(r for r in index if r["outer_fold"] == 0 and r["role"] == role)
+            path = historical / "tables" / f"outer0_{role}.csv"
+            if sha256(path) != record["metadata_sha256"]:
+                raise ValueError("historical D0 identity changed")
+            tokens.update(
+                pd.read_csv(path, usecols=lambda column: column == "sample_token").sample_token
+            )
+        if len(tokens) != 8192:
+            raise ValueError("D0 cohort changed")
+        allowed = set(ack["interfaces"]["role_manifest"]["roles"]["original"])
+    else:
+        if sha256(args.expansion_metadata) != (
+            "e8514492952a3abd86e45e3b00c07e398d2e6def5b73062eb5b5f8f13a932064"
+        ):
+            raise ValueError("expansion metadata pin changed")
+        selected = pd.read_parquet(
+            args.expansion_metadata, columns=["sample_token", "sequence_id"]
         )
-    if len(tokens) != 8192:
-        raise ValueError("D0 cohort changed")
+        allowed = set(ack["interfaces"]["role_manifest"]["roles"]["expansion"])
+        tokens = set(selected.sample_token)
+        if len(tokens) != 27307 or len(selected) != len(tokens):
+            raise ValueError("expansion cohort changed")
+        if set(selected.sequence_id) != allowed:
+            raise ValueError("expansion roles mismatch")
     pairs = (
         ds.dataset(garl)
         .to_table(
@@ -55,10 +72,9 @@ def main() -> None:
         )
         .to_pylist()
     )
-    original = set(ack["interfaces"]["role_manifest"]["roles"]["original"])
     observed_tokens = [pair["sample_token"] for pair in pairs]
     if len(observed_tokens) != len(tokens) or set(observed_tokens) != tokens:
-        raise ValueError("D0 input metadata is missing, duplicated or unexpected")
+        raise ValueError("input metadata is missing, duplicated or unexpected")
     media_path = Path(paths["eap_root"]) / "data/train.parquet"
     media = (
         ds.dataset(media_path)
@@ -69,7 +85,7 @@ def main() -> None:
                 "rgb_exposure_start_timestamp_us",
                 "rgb_exposure_end_timestamp_us",
             ],
-            filter=ds.field("sequence_id").isin(original),
+            filter=ds.field("sequence_id").isin(allowed),
         )
         .to_pylist()
     )
@@ -78,7 +94,7 @@ def main() -> None:
         raise ValueError("ambiguous media reference")
     rows = []
     for pair in pairs:
-        if pair["sequence_id"] not in original:
+        if pair["sequence_id"] not in allowed:
             raise ValueError("closed-role query")
         windows, timestamps = pair["event_windows_us"], pair["frame_timestamps_us"]
         if len(windows) != 2 or len(timestamps) != 2:
@@ -128,6 +144,8 @@ def main() -> None:
             "historical_expert_cutoff_parity_validated": False,
             "scientific_updates": 0,
             "targets_read": False,
+            "population": "D0" if args.expansion_metadata is None else "D1_EXPANSION_ONLY",
+            "expansion_owner_time_ack_implied": False,
         },
     )
     print(

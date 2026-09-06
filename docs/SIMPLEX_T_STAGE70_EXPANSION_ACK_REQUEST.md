@@ -7,9 +7,16 @@ He localizado, solo en lectura:
 
 - `artifacts/stage70_76_architecture/expansion_raw_bindings/RAW_BINDING_MANIFEST.json`
   SHA256 `4b7bfab2dc9ff31a6f3c936f487c1456bec1f8fd739d28165acb12e92a9047ba`.
-- Su referencia a `RAW_BINDINGS.csv`: SHA256 declarado
+- `RAW_BINDINGS.csv`: SHA256 verificado localmente
   `eedda241de4cd2ce44b73838b66a8efdf04e83d99c63786285dbdbf8adf439bf`;
-  27307 consultas,22 grupos. El payload CSV no se ha importado ni interpretado.
+  27307 consultas,22 grupos. SIMPLEX-T verificó sus 54614 ventanas contra los
+  metadatos de entrada, incluyendo identidad, reloj y ROI, sin leer scores.
+- `expansion_usability/USABLE_METADATA.parquet`: SHA256 verificado
+  `e8514492952a3abd86e45e3b00c07e398d2e6def5b73062eb5b5f8f13a932064`.
+- `expansion_inventory/SELECTED_METADATA.csv`: SHA256 verificado
+  `ab273a087b4b92e48f0f6657407a520dc033ed7b84c6f80efd9dad1a3cc3aedf`.
+  Sus identidades coinciden íntegramente con USABLE_METADATA. El código de
+  validación sí consulta TTC, pero no descartó ninguna de estas consultas.
 - La carta `time_charter/LABEL_TIME_CHARTER.json` conserva SHA256
   `06a3c8ecb015895729b390a35cb2ec06a34578ed60bb48af33f4f17a492ed568`
   y estado `ORIGINAL_8192_CLOCK_AND_ROI_VERIFIED`.
@@ -22,8 +29,9 @@ dependencias temporales de expansión? Necesito que aclare:
    de confirmación/protegidos, sin nuevas asignaciones de holdout.
 2. Qué documento acredita la conversión de reloj y disponibilidad de ROI de esos
    grupos; la carta original no se extiende automáticamente a ellos.
-3. Qué filtros de elegibilidad produjeron USABLE_METADATA y RAW_BINDINGS: si usan
-   TTC, profundidad, velocidad o descarte por eventos, indícalo expresamente.
+3. Confirmar los filtros de procedencia: selección prospectiva input-only,
+   validación posterior del dominio TTC y etiqueta del segundo frame sin
+   rechazos en estas 27307 consultas; RAW_BINDINGS conserva ventanas vacías.
    No se usarán estas tablas como historia primaria de un objeto.
 4. Que el reconocimiento no sustituye el preprocessing ni los productores
    históricos A5/C2F/PAIR. SIMPLEX-T auditará sus propias exclusiones transitivas.
@@ -31,3 +39,19 @@ dependencias temporales de expansión? Necesito que aclare:
 La alternativa autorizada de SIMPLEX-T usa ventanas sensoriales retrospectivas
 con la ROI de la consulta actual; no reconstruye asociaciones Garl–eAP. No pido
 scores ni resultados para escoger constantes. D0 sigue en ejecución independiente.
+
+SIMPLEX-T también comprobó el enlace a exposiciones RGB con las columnas de
+entrada de Garl y eAP: 27307 consultas, edades de dependencia entre 1003 y
+19992 us, ninguna nula. Recibo propio:
+`artifacts/simplex_t/T0/EXPANSION_EXPOSURE_TIMING.json`, SHA256
+`8061b30e6acead8249e099e3c488558d773cdef7b5d724adaead3417bdc7e63a`.
+No acredita la latencia de generación online de las anotaciones, ni reemplaza
+la carta temporal del propietario. Se pide el reconocimiento de la procedencia
+de estos bindings para expansión, no extender por suposición la carta OLD.
+
+Recibo de correspondencia de entradas:
+`artifacts/simplex_t/T0/EXPANSION_INPUT_BINDING_AUDIT_V2.json`, SHA256
+`1b141a23abd3ab8c14b48587d9790201c7b4f1f4f6e1d414f4940acec7a25e3f`.
+Los 22 archivos raw existen y coinciden en tamaño/mtime con el manifiesto del
+propietario. Los hashes completos de esos archivos se atribuyen al propietario;
+SIMPLEX-T no afirma haber repetido esa lectura masiva durante el replay D0.
