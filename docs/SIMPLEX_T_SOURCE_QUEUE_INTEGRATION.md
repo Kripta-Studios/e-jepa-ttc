@@ -126,3 +126,14 @@ verifies output draw files and a known constant paired difference. It is not
 scientific uncertainty for SIMPLEX-T. Ruff and Pyright pass. Real endpoint
 prediction assembly, practical gates, freeze and final package integration
 remain required before scientific completion.
+
+## Combined verification receipt
+
+At implementation commit `021d449`, all 50 tests across campaign sources,
+context sources, phase inference/sealing, factorial alignment/evaluation,
+development export and uncertainty passed together (zero skipped or failed).
+Evidence: `artifacts/simplex_t/T0/qa_source_analysis_integration_021d449.xml`,
+SHA256 `c935c60107f57240b04426a6a6724f8327fc5aca4dabb6a446f7879e2299fa4f`.
+This combined run performs zero optimizer updates. Historical failure receipts
+remain unchanged; this is not baseline-versus-new full-repository QA or the
+pending actual-history 10-versus5+5 resume proof.
