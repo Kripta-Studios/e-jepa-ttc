@@ -7,7 +7,9 @@ param(
     [Parameter(Mandatory = $true)]
     [string]$PythonExecutable,
     [string]$OutputPath,
-    [switch]$Resume
+    [switch]$Resume,
+    [ValidateRange(0, 2)]
+    [Nullable[int]]$CompileFold
 )
 
 $ErrorActionPreference = 'Stop'
@@ -22,6 +24,7 @@ $arguments = @('-B', "$PSScriptRoot\run_simplex_t_companion.py", $Command,
     '--local-paths', $resolvedPaths)
 if ($OutputPath) { $arguments += @('--output', $OutputPath) }
 if ($Resume) { $arguments += '--resume' }
+if ($null -ne $CompileFold) { $arguments += @('--compile-fold', "$CompileFold") }
 try {
     $env:PYTHONPATH = "$companionRoot\src"
     $env:OMP_NUM_THREADS = '4'

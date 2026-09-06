@@ -137,3 +137,21 @@ SHA256 `c935c60107f57240b04426a6a6724f8327fc5aca4dabb6a446f7879e2299fa4f`.
 This combined run performs zero optimizer updates. Historical failure receipts
 remain unchanged; this is not baseline-versus-new full-repository QA or the
 pending actual-history 10-versus5+5 resume proof.
+
+## Executable fold compilation
+
+The main Python entry point now accepts `prepare --compile-fold 0|1|2` with a
+new `--output` directory and the existing `--local-paths` argument. The PowerShell
+wrapper forwards `-CompileFold`. It uses the companion's canonical T1 cache,
+index and deduplication paths, then calls the existing complete-fold compiler.
+Output directories should be named `outer0`, `outer1`, `outer2` under the
+`--compiled-root` subsequently supplied to `prepare_simplex_t_head_sources.py`.
+Their parent must already exist.
+
+The command rejects `--resume`, missing output and incompatible commands before
+reading local paths. It does not pretend an incomplete compilation can resume;
+existing partial outputs remain explicit evidence and are not overwritten.
+Successful compilation means a complete fold cache, not scientific freeze or
+permission to fit. Five CLI wiring tests, Ruff, Pyright and PowerShell syntax
+parsing pass. The tests mock the compiler and consume no optimizer updates;
+actual complete-fold execution still depends on finishing its cache.
