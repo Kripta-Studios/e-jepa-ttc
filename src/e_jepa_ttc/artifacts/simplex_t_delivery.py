@@ -64,6 +64,7 @@ def package_t0(local_paths: Path, output: Path) -> dict[str, Any]:
             "selector_export_fix",
             "pools",
             "checkpoint_resume",
+            "technical_budget",
         )
     }
     if any(item["failure_ids"] for item in qa.values()):
@@ -191,6 +192,10 @@ implemented from input identity only, but real availability remains unresolved.
 Checkpoint continuation adds {qa["checkpoint_resume"]["tests"]} passing tests:
 complete-state digest validation, corruption refusal, interrupted-publication
 preservation, false-endpoint refusal and another CPU exact-resume comparison.
+Budget continuation adds {qa["technical_budget"]["tests"]} passing resource/ledger
+tests without optimizer updates. The persistent technical ledger reconciles 585
+executed updates and prevents repeating the profile in another output directory.
+Future reservations are upper bounds, not claims of executed updates.
 Initial Ruff format failure was corrected and retained as a QA ID. Full repository
 QA, real TRAIN replay, production loader integration and scientific freeze are
 pending. No historical failing result has been relabelled.
@@ -299,6 +304,12 @@ No future background completion is promised.
         payload[f"technical_cpu_profile/{name}"] = (
             evidence / "cpu_profile_500" / name
         ).read_bytes()
+    payload["evidence/qa_technical_budget.xml"] = (
+        evidence / "qa_technical_budget.xml"
+    ).read_bytes()
+    payload["evidence/TECHNICAL_BUDGET.json"] = (
+        worktree / "artifacts/simplex_t/TECHNICAL_BUDGET.json"
+    ).read_bytes()
     request = Path(paths["shared_coordination"]) / "SIMPLEX_T_STAGE70_REQUEST.json"
     payload["coordination/SIMPLEX_T_STAGE70_REQUEST.json"] = request.read_bytes()
     manifest = {name: hashlib.sha256(data).hexdigest() for name, data in payload.items()}

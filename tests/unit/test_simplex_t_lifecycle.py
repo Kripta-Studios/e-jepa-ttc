@@ -4,7 +4,27 @@ import json
 
 import pytest
 
-from e_jepa_ttc.simplex_t.lifecycle import ExclusiveLease, UpdateLedger
+from e_jepa_ttc.simplex_t.lifecycle import ExclusiveLease, TechnicalBudget, UpdateLedger
+
+
+def test_technical_reservations_survive_restart_and_refuse_repeat(tmp_path):
+    path = tmp_path / "technical.json"
+    TechnicalBudget(path).reserve("prior_qa", 85)
+    TechnicalBudget(path).reserve("cpu_profile_500", 500)
+    original = path.read_bytes()
+    with pytest.raises(ValueError, match="already reserved"):
+        TechnicalBudget(path).reserve("cpu_profile_500", 500)
+    with pytest.raises(ValueError, match="budget exceeded"):
+        TechnicalBudget(path).reserve("new_probe", 416)
+    assert path.read_bytes() == original
+    state = TechnicalBudget(path).reserve("remaining", 415)
+    assert sum(state["reservations"].values()) == 1000
+
+
+@pytest.mark.parametrize("amount", [True, 0, -1, 1001, 1.5])
+def test_invalid_technical_reservations(tmp_path, amount):
+    with pytest.raises(ValueError, match="invalid"):
+        TechnicalBudget(tmp_path / "technical.json").reserve("probe", amount)
 
 
 def test_lease_refuses_other_owner(tmp_path):

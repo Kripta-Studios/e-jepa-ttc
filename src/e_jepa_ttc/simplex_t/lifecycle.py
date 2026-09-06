@@ -65,6 +65,40 @@ def admitted(written_volumes: list[Path]) -> dict[str, Any]:
     }
 
 
+class TechnicalBudget:
+    """Charge unique technical operations before execution, never refund crashes.
+
+    Reservations are conservative upper bounds, not evidence of executed updates.
+    The campaign must use one persistent path across output directories.
+    """
+
+    def __init__(self, path: Path) -> None:
+        self.path = path
+
+    def reserve(self, key: str, updates: int) -> dict[str, Any]:
+        """Refuse duplicate probes and cap all reserved technical work at 1000."""
+        if not key or type(updates) is not int or not 1 <= updates <= 1000:
+            raise ValueError("invalid technical reservation")
+        with ExclusiveLease(self.path.with_suffix(".lock")):
+            state = (
+                json.loads(self.path.read_text(encoding="utf-8"))
+                if self.path.exists()
+                else {"schema": "simplex_t_technical_budget_v1", "reservations": {}}
+            )
+            if state.get("schema") != "simplex_t_technical_budget_v1":
+                raise ValueError("unrecognized technical budget schema")
+            reservations = state["reservations"]
+            if any(type(value) is not int or value < 1 for value in reservations.values()):
+                raise ValueError("invalid saved technical reservation")
+            if key in reservations:
+                raise ValueError("technical operation already reserved; do not repeat")
+            if sum(reservations.values()) + updates > 1000:
+                raise ValueError("technical budget exceeded")
+            reservations[key] = updates
+            atomic_json(self.path, state)
+            return state
+
+
 class UpdateLedger:
     """Reserve only a frozen graph; persist counted progress under a writer lease."""
 

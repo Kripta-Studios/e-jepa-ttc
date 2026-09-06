@@ -128,3 +128,15 @@ Continuation02 (before scientific freeze):
   peak process-tree RSS639238144bytes; minimum host available17568727040bytes.
   All resource admissions passed. This is not a scientific model or full-system
   latency measurement. Total technical updates585; scientific updates0.
+
+Continuation03 (before scientific freeze):
+
+- Reconciled the six executed technical operations into the persistent
+  artifacts/simplex_t/TECHNICAL_BUDGET.json (585 updates). Reservations are
+  conservative upper bounds, distinct from executed-update evidence.
+- The profile runner now requires that existing campaign-wide ledger and refuses
+  repeating cpu_profile_500 even with a different output directory. Reservation
+  precedes execution; crashes do not silently refund the budget.
+- Ten resource/ledger tests pass without training; total executed updates remains
+  585. All future optimizer probes must reserve their own unique operation first.
+  Scientific engine/ledger integration remains pending, not implicitly complete.

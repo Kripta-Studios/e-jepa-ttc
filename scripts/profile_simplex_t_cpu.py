@@ -12,7 +12,7 @@ import torch
 from torch import Tensor
 
 from e_jepa_ttc.artifacts.simplex_t_preflight import write_new_json
-from e_jepa_ttc.simplex_t.lifecycle import admitted
+from e_jepa_ttc.simplex_t.lifecycle import TechnicalBudget, admitted
 from e_jepa_ttc.simplex_t.model import TemporalConfig
 from e_jepa_ttc.simplex_t.training import fit
 
@@ -53,13 +53,20 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
+    if args.output.exists():
+        raise FileExistsError("profile output already exists; inspect its exact saved state")
+    budget_path = Path(__file__).resolve().parents[1] / "artifacts/simplex_t/TECHNICAL_BUDGET.json"
+    if not budget_path.is_file():
+        raise FileNotFoundError("reconcile historical technical receipts before profiling")
+    budget = TechnicalBudget(budget_path).reserve("cpu_profile_500", 500)
+    previous_updates = sum(budget["reservations"].values()) - 500
     args.output.mkdir(parents=True, exist_ok=False)
     write_new_json(
         args.output / "RESERVATION.json",
         {
             "scope": "SYNTHETIC_CPU_PROFILE_ONLY",
             "reserved_technical_updates": 500,
-            "previous_technical_updates": 85,
+            "previous_reserved_technical_updates": previous_updates,
             "technical_cap": 1000,
             "registered_scientific_updates": 0,
         },
@@ -105,7 +112,8 @@ def main() -> None:
             ),
             "observations": observations,
             "scientific_fits": 0,
-            "total_technical_updates": 85 + result["completed_updates"],
+            "profile_executed_updates": result["completed_updates"],
+            "total_reserved_technical_updates": previous_updates + 500,
             "scientific_recipe_selected_from_scores": False,
         },
     )
