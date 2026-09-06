@@ -17,6 +17,8 @@ from .arms import resolve_arm
 from .cache import CachedQueries
 from .context_sources import load_context_sources
 from .current_inputs import load_current_inputs
+from .dense_file_sources import DenseBinding, load_dense_inputs
+from .dense_sources import dense_source_pair
 from .expanded_sources import merge_validated_sources
 from .expansion_sources import ExpansionBinding, load_expansion_source
 from .phase_manifest import fit_key
@@ -50,15 +52,21 @@ class CampaignSources:
         allowed_sequences: set[str],
         expansion_folds: dict[int, ExpansionBinding] | None = None,
         expansion_sequences: set[str] | None = None,
+        dense_folds: dict[int, DenseBinding] | None = None,
     ) -> None:
         if not graph or len({fit_key(spec) for spec in graph}) != len(graph):
             raise ValueError("nonempty unique registered graph required")
         for spec in graph:
             pool = resolve_arm(spec, graph).pool
-            if pool != "D0" and (
-                pool != "D1" or expansion_folds is None or not expansion_sequences
-            ):
+            supported = (
+                pool == "D0"
+                or (pool == "D1" and expansion_folds is not None and bool(expansion_sequences))
+                or (pool == "DENSE_OLD" and dense_folds is not None)
+            )
+            if not supported:
                 raise ValueError("pool lacks an integrated authoritative source loader")
+        if dense_folds is not None and set(dense_folds) != {0, 1, 2}:
+            raise ValueError("all three dense fold bindings required")
         if expansion_folds is not None and set(expansion_folds) != {0, 1, 2}:
             raise ValueError("all three expansion fold bindings required")
         if set(expansion_sequences or ()) & allowed_sequences:
@@ -74,6 +82,7 @@ class CampaignSources:
         self.allowed_sequences = set(allowed_sequences)
         self.expansion_folds = dict(expansion_folds or {})
         self.expansion_sequences = set(expansion_sequences or ())
+        self.dense_folds = dict(dense_folds or {})
         self._key: tuple[int, int, str] | None = None
         self._sources: dict[str, CachedQueries] = {}
 
@@ -100,6 +109,12 @@ class CampaignSources:
                 expansion_pin.compiled_sha256
             ):
                 raise ValueError("expansion compiled manifest changed since preparation")
+        if binding.pool == "DENSE_OLD":
+            dense_pin = self.dense_folds[spec.fold]
+            if compute_file_hash(str(dense_pin.compiled / "COMPILED.json")) != (
+                dense_pin.compiled_sha256
+            ):
+                raise ValueError("dense compiled manifest changed since preparation")
         key = (spec.fold, binding.model.feature_count, binding.pool)
         if self._key != key:
             self.release()
@@ -132,6 +147,32 @@ class CampaignSources:
                     expansion,
                     original_train_sequences=original.sequence_id.to_numpy(),
                     expansion_train_sequences=sequences,
+                )
+            elif binding.pool == "DENSE_OLD":
+                dense = load_dense_inputs(
+                    self.dense_folds[spec.fold],
+                    outer=spec.fold,
+                    allowed_sequences=self.allowed_sequences,
+                )
+                metadata = {
+                    role: load_current_inputs(
+                        self.historical_root,
+                        spec.fold,
+                        role,
+                        ancestry_sha256=self.ancestry_sha256,
+                        allowed_sequences=self.allowed_sequences,
+                    )["metadata"]
+                    for role in ("inner_oof", "outer_dev")
+                }
+                sources = dense_source_pair(
+                    sources,
+                    dense.source,
+                    original_tokens=metadata["inner_oof"].sample_token.to_numpy(),
+                    original_sequences=metadata["inner_oof"].sequence_id.to_numpy(),
+                    dev_sequences=metadata["outer_dev"].sequence_id.to_numpy(),
+                    dense_tokens=dense.tokens,
+                    dense_sequences=dense.sequences,
+                    dense_target_ttc=dense.target_ttc,
                 )
             self._sources, self._key = sources, key
         return binding.source(self._sources[role])

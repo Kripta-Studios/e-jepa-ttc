@@ -198,3 +198,104 @@ def test_d1_dispatch_merges_and_never_reuses_d0_source(wired, monkeypatch):
     (pins[0].compiled / "COMPILED.json").write_text("{}", encoding="utf-8")
     with pytest.raises(ValueError, match="manifest changed"):
         adapter.train(d1)
+
+
+def test_dense_dispatch_uses_file_loader_and_preserves_pool_separation(wired, monkeypatch):
+    from types import SimpleNamespace
+
+    from e_jepa_ttc.simplex_t.dense_file_sources import DenseBinding
+
+    original, _, _ = wired
+    graph = [
+        s
+        for s in registered_graph(
+            d1=True,
+            density=True,
+            t3=False,
+            latent=False,
+            replicate_scalar=False,
+            replicate_latent=False,
+        )
+        if "-D0-" in s.name or "-DENSE_OLD-" in s.name
+    ]
+    pins = {
+        fold: DenseBinding(
+            pin.path,
+            pin.sha256,
+            pin.path,
+            "x",
+            pin.path,
+            pin.path,
+            "x",
+            pin.path,
+            "x",
+            pin.path,
+            "x",
+            "x",
+        )
+        for fold, pin in original.folds.items()
+    }
+    for fold, pin in list(pins.items()):
+        folder = pin.compiled / "dense_fixture"
+        folder.mkdir()
+        (folder / "COMPILED.json").write_text(
+            (pin.compiled / "COMPILED.json").read_text(encoding="utf-8"), encoding="utf-8"
+        )
+        pins[fold] = replace(pin, compiled=folder)
+    calls = []
+
+    def load(pin, **kwargs):
+        calls.append(kwargs["outer"])
+        return SimpleNamespace(
+            source=None,
+            tokens=np.array(["q", "new"]),
+            sequences=np.array(["original", "original"]),
+            target_ttc=np.array([1.0, 2.0]),
+        )
+
+    def compose(sources, dense, **kwargs):
+        assert kwargs["original_tokens"].tolist() == ["q"]
+        assert kwargs["dev_sequences"].tolist() == ["dev"]
+        assert kwargs["dense_target_ttc"].tolist() == [1.0, 2.0]
+        return {
+            role: replace(
+                source,
+                features=np.full_like(source.features, 8),
+                identity_sha256="dense:" + source.identity_sha256,
+            )
+            for role, source in sources.items()
+        }
+
+    monkeypatch.setattr(campaign_sources, "load_dense_inputs", load)
+    monkeypatch.setattr(campaign_sources, "dense_source_pair", compose)
+    monkeypatch.setattr(
+        campaign_sources,
+        "load_current_inputs",
+        lambda root, fold, role, **kw: {
+            "metadata": pd.DataFrame(
+                {
+                    "sample_token": ["q"],
+                    "sequence_id": ["original" if role == "inner_oof" else "dev"],
+                }
+            )
+        },
+    )
+    adapter = CampaignSources(
+        graph,
+        original.folds,
+        index_root=original.index_root,
+        dedup_root=original.dedup_root,
+        historical_root=original.historical_root,
+        ancestry_sha256="fixture",
+        allowed_sequences={"original", "dev"},
+        dense_folds=pins,
+    )
+    d0 = next(s for s in graph if s.fold == 0 and "-D0-" in s.name)
+    dense = next(s for s in graph if s.fold == 0 and "-DENSE_OLD-" in s.name)
+    assert (adapter.train(d0).features == 1).all()
+    assert (adapter.train(dense).features == 8).all()
+    assert (adapter.source(dense, "outer_dev").features == 8).all()
+    assert calls == [0]
+    (pins[0].compiled / "COMPILED.json").write_text("{}", encoding="utf-8")
+    with pytest.raises(ValueError, match="dense compiled manifest changed"):
+        adapter.train(dense)

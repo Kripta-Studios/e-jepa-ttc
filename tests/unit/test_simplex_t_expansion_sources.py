@@ -8,6 +8,7 @@ import pandas as pd
 import pytest
 
 from e_jepa_ttc.artifacts.hashing import compute_file_hash
+from e_jepa_ttc.simplex_t.dense_file_sources import DenseBinding, load_dense_inputs
 from e_jepa_ttc.simplex_t.expansion_sources import ExpansionBinding, load_expansion_source
 from e_jepa_ttc.simplex_t.pools import expansion_producer
 
@@ -154,3 +155,80 @@ def test_bad_binding_rejected_before_label_read(tmp_path, monkeypatch, change):
         groups = {"protected"}
     with pytest.raises(ValueError):
         load_expansion_source(binding, outer=0, feature_count=17, allowed_sequences=groups)
+
+
+def dense_fixture(tmp_path):
+    binding = fixture(tmp_path)
+    original = json.loads(binding.pool.read_text(encoding="utf-8"))["folds"]["0"]
+    binding.pool.write_text(
+        json.dumps(
+            {
+                "folds": [
+                    {
+                        "outer": 0,
+                        "nominal_common_count": 2,
+                        "pools": {
+                            "DENSE_OLD": {
+                                "tokens": ["b", "a"],
+                                "sequences": ["extra"],
+                                "sequence_family_sha256": original["sequence_family_sha256"],
+                            }
+                        },
+                    }
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+    path = binding.compiled / "COMPILED.json"
+    compiled = json.loads(path.read_text(encoding="utf-8"))
+    compiled["pool"] = "DENSE_OLD"
+    path.write_text(json.dumps(compiled), encoding="utf-8")
+    return DenseBinding(
+        **{
+            **vars(binding),
+            "pool_sha256": compute_file_hash(str(binding.pool)),
+            "compiled_sha256": compute_file_hash(str(path)),
+        }
+    )
+
+
+def test_dense_file_loader_keeps_registered_order_and_original_ttc(tmp_path):
+    binding = dense_fixture(tmp_path)
+    result = load_dense_inputs(binding, outer=0, allowed_sequences={"extra"})
+    assert result.tokens.tolist() == ["b", "a"]
+    assert result.sequences.tolist() == ["extra", "extra"]
+    assert result.target_ttc.tolist() == [3.0, 1.0]
+    assert result.source.history[:, -1].tolist() == [1, 0]
+    assert result.source.features.shape == (2, 17)
+    np.testing.assert_allclose(result.source.normalizer.mean, result.source.features.mean(0))
+
+
+@pytest.mark.parametrize("failure", ["cache", "role", "schema", "family"])
+def test_invalid_dense_files_refused_before_label_access(tmp_path, monkeypatch, failure):
+    from e_jepa_ttc.simplex_t import dense_file_sources
+
+    binding = dense_fixture(tmp_path)
+    groups = {"extra"}
+    if failure == "cache":
+        binding = replace(binding, cache_identity_sha256="b" * 64)
+    elif failure == "role":
+        groups = {"closed"}
+    elif failure == "schema":
+        path = binding.compiled / "COMPILED.json"
+        compiled = json.loads(path.read_text(encoding="utf-8"))
+        compiled["observations"] = 3
+        path.write_text(json.dumps(compiled), encoding="utf-8")
+        binding = replace(binding, compiled_sha256=compute_file_hash(str(path)))
+    else:
+        plan = json.loads(binding.pool.read_text(encoding="utf-8"))
+        plan["folds"][0]["pools"]["DENSE_OLD"]["sequence_family_sha256"]["extra"] = "f" * 64
+        binding.pool.write_text(json.dumps(plan), encoding="utf-8")
+        binding = replace(binding, pool_sha256=compute_file_hash(str(binding.pool)))
+
+    def forbidden(*args, **kwargs):
+        pytest.fail("labels read before dense source validation")
+
+    monkeypatch.setattr(dense_file_sources, "load_selected_train_targets", forbidden)
+    with pytest.raises(ValueError):
+        load_dense_inputs(binding, outer=0, allowed_sequences=groups)
