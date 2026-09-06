@@ -217,3 +217,28 @@ have this mapping, no reconstruction or nearest-box association is requested."
 
 The same source question can be passed to the dataset publisher if the owner
 does not possess it. This is a request draft, not an externally sent message.
+
+## Fixed-endpoint inference integration
+
+The endpoint module checks the phase-manifest checkpoint byte hash, complete
+checkpoint integrity, completed2500 status and exact TRAIN-source/freeze/config/
+seed/device/Torch identity before restoring the head in evaluation mode. Cached
+inference visits queries in order with FP32 batches of128 including the final
+short batch. Resource interruption raises without returning partial outputs.
+It performs no raw expert replay. The caller still must validate the phase
+endpoint manifest, role permissions and scientific freeze; this component does
+not create any of those missing authorizations.
+
+QA covers complete query order, tail batches, partial-checkpoint refusal,
+incorrect checkpoint bytes, training-mode refusal, resource interruption, exact
+model restoration and mismatched seed/source/freeze rejection. The positive
+loading test mocks the verified decoder boundary using initialized weights; it
+is explicitly not a trained checkpoint or a2500-update experiment. No fabricated
+optimizer history is published. Existing corruption/publication tests are rerun
+alongside these tests. No optimizer updates occur; the campaign remains at605
+technical updates and0 scientific updates. Ruff and module Pyright pass.
+
+The owner ACK/request files remain unchanged. A current read-only process check
+again found Stage70 worker38464/launcher36040 live; no slot was taken or job
+interrupted. The previous goal turn made implementation progress, not scientific
+progress or completion. Production data/replay/freeze and execution remain open.
