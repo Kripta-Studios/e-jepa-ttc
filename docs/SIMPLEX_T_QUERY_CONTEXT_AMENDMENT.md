@@ -81,3 +81,20 @@ ROI availability. Query names do not force duplicate feature rows. Distinct
 producer families and distinct availability dependencies cannot alias. Tests
 verify label perturbation invariance, cold starts and dependency isolation.
 Neither the index nor its deduplicated keys are an extracted feature cache.
+
+## Coherent FP32 extractor integration
+
+The reusable extractor now produces PHASE17,128 A5 pair tokens, original expert
+TTC and known-support flags from a single FP32 route. Its scalar definitions
+reuse the historical evaluator: current voxel count/rate channels, final
+transport-flow diagnostic, minimum phase/support guard margin and log variance.
+The PHASE17 ordering is assembled by the existing Stage61 feature function.
+
+On all64 signed current-query inputs across12 families, this implementation
+reproduces the earlier same-runtime FP32 expert predictions and133-D PAIR
+inputs exactly. The hashed receipt is in
+artifacts/simplex_t/T0/coherent_fp32_extractor_receipt/QA.json.
+This validates extraction integration, not the unbuilt full temporal cache;
+the earlier historical BF16 parity proof remains separate. All operations here
+use frozen weights and zero optimizer updates. Four contract tests reject
+wrong precision, wrong window count, nonpositive time deltas and training mode.
