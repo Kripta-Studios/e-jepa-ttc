@@ -34,7 +34,13 @@ dependencias temporales de expansión? Necesito que aclare:
    rechazos en estas 27307 consultas; RAW_BINDINGS conserva ventanas vacías.
    No se usarán estas tablas como historia primaria de un objeto.
 4. Que el reconocimiento no sustituye el preprocessing ni los productores
-   históricos A5/C2F/PAIR. SIMPLEX-T auditará sus propias exclusiones transitivas.
+   históricos A5/C2F/PAIR. SIMPLEX-T ha reverificado las nueve familias internas:
+   hashes de 27 checkpoints, contratos efectivos, teacher congelado y calendarios
+   PAIR, excluyendo expansión y outer-dev de los conjuntos de entrenamiento.
+   Recibo: `artifacts/simplex_t/T0/EXPANSION_ANCESTRY_RECHECK.json`, SHA256
+   `f81b2874925ae584a6a96452e1a451364a3f3bff7d95982e559ea0a906021bcc`.
+   El teacher externo conserva la limitación sobre posible solapamiento de su
+   pretraining web; no se afirma una nueva prueba de independencia por adquisición.
 
 La alternativa autorizada de SIMPLEX-T usa ventanas sensoriales retrospectivas
 con la ROI de la consulta actual; no reconstruye asociaciones Garl–eAP. No pido
