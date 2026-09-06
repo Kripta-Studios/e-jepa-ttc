@@ -69,3 +69,20 @@ declares a read-only property, accepting both existing stored counts and compute
 properties. This is an interface typing correction, not a model, optimizer,
 sampler, loss or checkpoint numerical change. Full actual-history resume QA
 remains pending as before.
+
+## Paired factorial analysis
+
+`factorial_analysis.paired_factor_effects` aligns seed7 T2 cells against an
+explicit authoritative 8192-query OLD_DEV identity table, including sequence,
+track and outer fold. Input row order is irrelevant; missing, duplicate,
+reassigned or nonfinite rows are errors rather than complete-case filtering.
+The eight-cell graph reports D/H/C and their interactions using the registered
+algebra. If D1 is technically unavailable, the four D0 cells report H, C and HxC
+only. No D estimate is manufactured. Controls do not become factorial cells.
+
+Seven new algebra/alignment tests plus six existing evaluation tests pass with
+synthetic losses and zero optimizer work. Initial pandas-stub type errors were
+resolved using explicit DataFrame selection; Ruff and Pyright then pass. The
+returned per-query contrasts retain grouping identifiers for subsequent paired
+sequence/track uncertainty estimates. This does not yet implement their
+confidence intervals, authorize D1 availability, or establish real results.
