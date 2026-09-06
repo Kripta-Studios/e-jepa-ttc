@@ -1,6 +1,26 @@
 {
   "schema": "simplex_t_resumable_block_v1",
-  "status": "BLOCKED_EXTERNAL_PREREQUISITES_NOT_SCIENTIFIC_NEGATIVE",
+  "status": "RESUMED_SOURCE_SEARCH_AND_REPLAY_PREPARATION_AWAITING_LIVE_IO_COORDINATION",
+  "resumed_user_authorization": {
+    "replay_authorized": true,
+    "old_absent_permission_status_superseded": true,
+    "active_stage70_worker_pid": 29120,
+    "active_stage70_launcher_pid": 11124,
+    "command": "build_stage71_expansion_cache.py --build-count-cache",
+    "observed_worker_read_bytes_first": 23848080845,
+    "observed_worker_read_bytes_later": 37088571100,
+    "observed_worker_write_bytes_first": 3229987159,
+    "observed_worker_write_bytes_later": 5721265478,
+    "question_pending": "Does the granted replay slot permit overlap with this still-active heavy-I/O worker, or will Stage70 hand off after it exits?",
+    "source_search_continued": true,
+    "replay_cohort": "artifacts/simplex_t/T0/REPLAY_COHORT_64.json",
+    "cohort_rows": 64,
+    "producer_families": 12,
+    "raw_replay_executed": false,
+    "new_optimizer_updates": 0,
+    "new_unit_tests_passed": 3,
+    "prior_block_recurrence_audit_is_historical": true
+  },
   "scientific_fits": 0,
   "scientific_updates": 0,
   "technical_updates": 625,
@@ -30,9 +50,9 @@
       "source_request": "docs/SIMPLEX_T_SOURCE_ESCALATION.json"
     },
     {
-      "id": "EXCLUSIVE_REPLAY_SLOT_NOT_GRANTED",
+      "id": "USER_REPLAY_GRANTED_BUT_ACTIVE_STAGE70_IO_CONFLICT",
       "affects": "Required real64 TRAIN replay parity, including current-only family, and new history feature inference",
-      "required": "Stage70 executor's explicit exclusive inference/GPU/heavy-I/O handoff with pending output reservations; no stopping other jobs",
+      "required": "Resolve the actual active Stage70 I/O overlap despite the new user replay authorization; preserve other jobs and reserve pending outputs",
       "latest_shared_files": ["SIMPLEX_T_STAGE70_ACK.json", "SIMPLEX_T_STAGE70_REQUEST.json"],
       "existing_ack_grants_slot": false,
       "process_exit_is_not_permission": true

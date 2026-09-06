@@ -30,6 +30,17 @@
   "public_github_releases_found": 0,
   "issue_scope": "July23 report of HF asset links returning404; not evidence of a Garl/eAP ID mapping or current HF unavailability",
   "verified_missing_source_download_url": null,
+  "additional_publication_and_archive_checks": {
+    "initial_hf_revision": "32bfafd17115c6895756ef1921e00af38ba2fd42",
+    "initial_hf_tree": [".gitattributes"],
+    "garl_git_commits_inspected": ["7fdd9ce", "426a055", "2566612"],
+    "original_role_zip_directories_inspected": 9,
+    "zip_metadata_range_bytes": 2590887,
+    "additional_non_media_members": false,
+    "only_non_media_members": ["annotations.pkl", "frames.pkl"],
+    "evidence": "artifacts/simplex_t/T0/ORIGINAL_ARCHIVE_INVENTORY.json",
+    "evidence_sha256": "96b3b6eb7711c0aa95471d989c53062f6644721942f6f97422377cd5fa1fc547"
+  },
   "absence_claim_scope": "Inspected local locations and official publication pages only; not proof of global nonexistence",
   "public_project_contact": "eeyzhou@hnu.edu.cn",
   "contact_source": "https://nail-hnu.github.io/eAP_dataset/",
@@ -40,8 +51,8 @@
   "scientific_fits": 0,
   "optimizer_updates_this_continuation": 0,
   "independent_work_remaining": [
-    "Crash/retry physical-update accounting integration",
-    "Production finite-queue lifecycle and stage endpoint manifest integration",
+    "Production source-loader and prerequisite binding to CLI",
+    "Actual 64-row raw expert replay with all matching producer families",
     "Pre-fit full QA and scientific freeze after real source/replay prerequisites"
   ]
 }

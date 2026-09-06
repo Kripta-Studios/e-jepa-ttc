@@ -27,6 +27,8 @@ SOURCE_FILES = (
     "scripts/probe_simplex_t_current_resume.py",
     "scripts/audit_simplex_t_current_timing.py",
     "scripts/audit_simplex_t_release_identity.py",
+    "scripts/audit_simplex_t_archive_inventory.py",
+    "scripts/prepare_simplex_t_replay_cohort.py",
     "configs/experiment/simplex_t_coordination.json",
     "docs/SIMPLEX_T_ACK_AND_PROJECTION_AUDIT.md",
     "tests/unit/test_simplex_t_preflight.py",
@@ -85,7 +87,7 @@ def package_t0(local_paths: Path, output: Path) -> dict[str, Any]:
     commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=worktree, text=True).strip()
     decision = {
         "artifact_type": "simplex_t_next_decision_v1",
-        "execution_status": current_interfaces["execution_status"],
+        "execution_status": "RESUMED_REPLAY_AUTHORIZED_LIVE_IO_CONFLICT_AND_SOURCE_UNRESOLVED",
         "source_status": "OWNER_INTERFACES_ACKNOWLEDGED_GEOMETRY_PARITY_UNRESOLVED",
         "numerical_status": "INTEGRATED_CPU_ENGINE_SYNTHETIC_RESUME_PASS_REAL_REPLAY_PENDING",
         "mechanism_status": "NOT_EVALUATED",
@@ -294,6 +296,20 @@ owner process was stopped, resumed, wrapped retroactively or otherwise modified.
 
 ## Resume boundary
 
+Latest resumed turn supersedes the historical absent-permission diagnosis:
+the user explicitly authorized replay. A new Stage70 cache worker29120 with
+launcher11124 was nevertheless observed doing substantial increasing I/O.
+The overlap question is pending; no other job was modified. The earlier
+three-turn blocked audit below is historical, not a new blocked-goal decision.
+All nine original ZIP central directories were inspected (2590887 metadata
+bytes); only the already downloaded annotation/frame PKLs accompany media.
+The initial HF revision contains only .gitattributes. No missing source URL
+or authoritative crosswalk was found in these additional checks.
+The label-independent64-row TRAIN replay cohort now covers all12 producer
+families, requiring192 expert evaluations. Three new selection tests pass;
+Ruff check/format and selector Pyright pass. This is preparation, not replay.
+Scientific fits remain0 and the technical optimizer total remains625.
+
 Final available independent validation passes143 SIMPLEX-T tests without optimizer
 updates; only the previously accounted synthetic20-update test was deselected.
 The callback-integrated real-TRAIN array10-versus5+5 proof is separately saved.
@@ -410,6 +426,9 @@ No future background completion is promised.
         "qa_queue.xml",
         "qa_queue_engine.xml",
         "qa_all_simplex_no_updates.xml",
+        "ORIGINAL_ARCHIVE_INVENTORY.json",
+        "REPLAY_COHORT_64.json",
+        "qa_replay_selection.xml",
     ):
         payload[f"evidence/{name}"] = (evidence / name).read_bytes()
     payload["evidence/current_array_resume/RESUME_QA.json"] = (
