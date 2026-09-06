@@ -33,6 +33,7 @@ SOURCE_FILES = (
     "configs/experiment/simplex_t_resource_amendment.json",
     "docs/SIMPLEX_T_T0_RESUME.md",
     "docs/SIMPLEX_T_STAGE70_OWNER_MESSAGE.md",
+    "docs/SIMPLEX_T_SOURCE_ESCALATION.json",
 )
 
 

@@ -1,0 +1,38 @@
+{
+  "schema": "simplex_t_source_escalation_v1",
+  "status": "GARL_EAP_CROSSWALK_OR_UNFILTERED_GARL_SOURCE_REQUIRED",
+  "owner_reply_attribution": "User relayed Stage70 owner's bounded read-only inspection; not a new signed ACK file",
+  "owner_found_crosswalk": false,
+  "owner_found_original_garl_train_pickles": false,
+  "owner_reported_garl_revision": "9f477b5c4d5f9cdc32e7cc4bb3b186301979d6b5",
+  "owner_reported_builder_commit": "256661242b8a7f5e56aa3c1c02348b30f6e89de6",
+  "source_file_sha256": {
+    "data/train.parquet": "03dd3022db4b5f43bb10244fc8778476d74351e764f73a90c8566af949c17fd6",
+    "annotations/train.parquet": "64e9a81232643ecce1d2f66e906c7cff6ea1e9e6958f81588b95e112693b11ad",
+    "garl_ttc_benchmark/build_garlttc_dataset.py": "dccc152fda78f7b7a75ddc4b9532f9c60f27f8e958b7355bf86ce6afb0a2f93c"
+  },
+  "web_inspection_date": "2026-09-06",
+  "official_pages_inspected": [
+    "https://github.com/NAIL-HNU/Garl-TTC",
+    "https://github.com/NAIL-HNU/Garl-TTC/releases",
+    "https://github.com/NAIL-HNU/Garl-TTC/issues/1",
+    "https://nail-hnu.github.io/eAP_dataset/"
+  ],
+  "public_github_releases_found": 0,
+  "issue_scope": "July23 report of HF asset links returning404; not evidence of a Garl/eAP ID mapping or current HF unavailability",
+  "verified_missing_source_download_url": null,
+  "absence_claim_scope": "Inspected local locations and official publication pages only; not proof of global nonexistence",
+  "public_project_contact": "eeyzhou@hnu.edu.cn",
+  "contact_source": "https://nail-hnu.github.io/eAP_dataset/",
+  "request": "Please provide the original unfiltered Garl TRAIN per-track annotation files consumed by build_garlttc_dataset.py, including all input timestamps and 2D boxes before valid_ts_list/TTC/height filtering, or an authoritative Garl track_id/public_track_id to eAP instance_id crosswalk. Please specify the bbox convention, clock mapping and provenance/version. We already have the official eAP annotations.pkl/frames.pkl and HF Garl train.parquet; those do not establish this mapping. No protected or test annotations are requested.",
+  "external_message_sent": false,
+  "approximate_association_authorized": false,
+  "scientific_negative": false,
+  "scientific_fits": 0,
+  "optimizer_updates_this_continuation": 0,
+  "independent_work_remaining": [
+    "Crash/retry physical-update accounting integration",
+    "Production finite-queue lifecycle and stage endpoint manifest integration",
+    "Pre-fit full QA and scientific freeze after real source/replay prerequisites"
+  ]
+}
