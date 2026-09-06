@@ -9,6 +9,7 @@ from e_jepa_ttc.simplex_t.pools import (
     density_size,
     expanded_pool,
     expansion_producer,
+    matched_density_pools,
 )
 
 
@@ -71,3 +72,33 @@ def test_one_family_for_whole_sequence():
     families = ("a" * 64, "b" * 64, "c" * 64)
     assert expansion_producer("sequence", families) in families
     assert len({expansion_producer("sequence", families) for _ in range(16)}) == 1
+
+
+def test_matched_pools_are_equal_unique_and_input_order_invariant():
+    original = (QueryIdentity("old0", "old", "t", "old"),)
+    dense = [*original, QueryIdentity("old1", "old", "t", "old")]
+    diverse = [*original, *candidates()]
+    kwargs = {"original_groups": {"old"}, "expansion_groups": {f"g{i}" for i in range(6)}}
+    result = matched_density_pools(original, dense, diverse, **kwargs)
+    assert result is not None
+    assert len(result[0]) == len(result[1]) == 2
+    assert result == matched_density_pools(original, dense[::-1], diverse[::-1], **kwargs)
+    assert {row.acquisition_group for row in result[0]} == {"old"}
+
+
+def test_matched_pools_validate_identity_even_below_count_gate():
+    original = (QueryIdentity("old0", "old", "t", "old"),)
+    assert (
+        matched_density_pools(
+            original,
+            list(original),
+            list(original),
+            original_groups={"old"},
+            expansion_groups=set(),
+        )
+        is None
+    )
+    with pytest.raises(ValueError, match="preserve"):
+        matched_density_pools(
+            original, [], list(original), original_groups={"old"}, expansion_groups=set()
+        )

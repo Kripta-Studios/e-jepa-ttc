@@ -122,3 +122,44 @@ def density_size(*, d0_count: int, dense_old_available: int, diverse_available: 
         raise ValueError("invalid query counts")
     count = min(32768, dense_old_available, diverse_available)
     return count if count >= 2 * d0_count else None
+
+
+def matched_density_pools(
+    original: tuple[QueryIdentity, ...],
+    dense_old: list[QueryIdentity],
+    diverse: list[QueryIdentity],
+    *,
+    original_groups: set[str],
+    expansion_groups: set[str],
+) -> tuple[tuple[QueryIdentity, ...], tuple[QueryIdentity, ...]] | None:
+    """Select equal unique counts from valid input universes, without using targets.
+
+    These controls sample their own pools; unlike core D1, DIVERSE_MATCHED does
+    not require preserving every D0 query after the matched-count subsampling.
+    Availability of actual timing/ROI/producer inputs must be resolved separately.
+    """
+    if original_groups & expansion_groups:
+        raise ValueError("original and expansion roles overlap")
+    original_ids = {row.token for row in original}
+    if not original or len(original_ids) != len(original):
+        raise ValueError("invalid D0 query identities")
+    if {row.acquisition_group for row in original} != original_groups:
+        raise ValueError("D0 original group inventory mismatch")
+    # Validate all input identities even when the count gate will fail.
+    for rows, groups in (
+        (dense_old, original_groups),
+        (diverse, original_groups | expansion_groups),
+    ):
+        balanced_queries(rows, limit=0, allowed_groups=groups)
+        lookup = {row.token: row for row in rows}
+        if any(lookup.get(row.token) != row for row in original):
+            raise ValueError("candidate universe does not preserve original input identities")
+    count = density_size(
+        d0_count=len(original), dense_old_available=len(dense_old), diverse_available=len(diverse)
+    )
+    if count is None:
+        return None
+    return (
+        balanced_queries(dense_old, limit=count, allowed_groups=original_groups),
+        balanced_queries(diverse, limit=count, allowed_groups=original_groups | expansion_groups),
+    )
