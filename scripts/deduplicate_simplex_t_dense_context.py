@@ -63,7 +63,7 @@ def main() -> None:
     old_path = old_dedup / record["path"]
     if sha256(old_path) != record["sha256"]:
         raise ValueError("D0 deduplicated keys changed")
-    raw = pd.read_csv(args.binding, usecols=["sequence_id", "h5_file_sha256"])
+    raw = pd.read_csv(args.binding, usecols=pd.Index(["sequence_id", "h5_file_sha256"]))
     raw_hashes = {}
     for sequence, group in raw.groupby("sequence_id"):
         values = group.h5_file_sha256.unique()
