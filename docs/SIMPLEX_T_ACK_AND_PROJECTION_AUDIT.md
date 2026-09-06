@@ -242,3 +242,25 @@ The owner ACK/request files remain unchanged. A current read-only process check
 again found Stage70 worker38464/launcher36040 live; no slot was taken or job
 interrupted. The previous goal turn made implementation progress, not scientific
 progress or completion. Production data/replay/freeze and execution remain open.
+
+## Physical work accounting after interruption
+
+WorkBudget separates saved scientific progress from a conservative upper bound
+on work lost after a checkpoint. It reserves a chunk ending at the next100-update
+checkpoint boundary. Synchronous resource-pause settlement at update37 counts37
+saved updates, not100. Restart recovery at the old checkpoint retains the entire
+unsaved chunk as uncertain work, not as an execution claim. The full graph plus
+technical reservations and possible lost work cannot exceed250000. A failed
+recovery cannot erase its pending chunk or permit a blind restart.
+
+Five state-transition tests pass (qa_work_budget_cap.xml), with zero optimizer
+updates. Ruff and Pyright pass. This journal is not yet connected to engine
+callbacks or the production queue; that integration is required before fits.
+No real crash/replay counts were invented and the actual technical total stays605.
+
+The relayed publisher email resolves HF access, not unfiltered-history lineage.
+A live API check found the same local revision and TRAIN LFS hashes, no new
+Garl PKL/crosswalk. SOURCE_ESCALATION.json now distinguishes those facts.
+The latest CIM query no longer found the two known Stage70 PIDs38464/36040.
+This is terminal evidence for those handles only, not proof of campaign success,
+absence of other jobs, or an exclusive slot. No new shared owner release exists.

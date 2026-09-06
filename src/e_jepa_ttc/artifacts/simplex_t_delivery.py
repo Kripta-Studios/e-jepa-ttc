@@ -381,6 +381,8 @@ No future background completion is promised.
         "qa_arm_binding.xml",
         "qa_endpoint.xml",
         "qa_endpoint_complete.xml",
+        "qa_work_budget.xml",
+        "qa_work_budget_cap.xml",
     ):
         payload[f"evidence/{name}"] = (evidence / name).read_bytes()
     payload["evidence/current_array_resume/RESUME_QA.json"] = (

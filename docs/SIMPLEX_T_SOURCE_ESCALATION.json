@@ -5,6 +5,15 @@
   "owner_found_crosswalk": false,
   "owner_found_original_garl_train_pickles": false,
   "owner_reported_garl_revision": "9f477b5c4d5f9cdc32e7cc4bb3b186301979d6b5",
+  "publisher_email_relayed_by_user": "Hongxin Zhang confirms that the HF repositories were made public; the email does not specify an unfiltered Garl history or ID crosswalk",
+  "public_api_followup": {
+    "revision": "9f477b5c4d5f9cdc32e7cc4bb3b186301979d6b5",
+    "private": false,
+    "gated": false,
+    "train_lfs_hashes_match_local": true,
+    "additional_garl_pickles_or_crosswalk_in_recursive_tree": false,
+    "protected_payloads_opened": false
+  },
   "owner_reported_builder_commit": "256661242b8a7f5e56aa3c1c02348b30f6e89de6",
   "source_file_sha256": {
     "data/train.parquet": "03dd3022db4b5f43bb10244fc8778476d74351e764f73a90c8566af949c17fd6",
