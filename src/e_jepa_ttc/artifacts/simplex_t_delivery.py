@@ -391,6 +391,8 @@ No future background completion is promised.
         "qa_work_budget.xml",
         "qa_work_budget_cap.xml",
         "qa_engine_journal.xml",
+        "qa_phase_manifest.xml",
+        "qa_execution_components.xml",
     ):
         payload[f"evidence/{name}"] = (evidence / name).read_bytes()
     payload["evidence/current_array_resume/RESUME_QA.json"] = (

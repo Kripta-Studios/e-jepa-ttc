@@ -294,3 +294,26 @@ active I/O operation, not the previously terminated expansion PID. No source
 files or process state were modified by SIMPLEX-T. Exclusive replay is still not
 granted. Final Ruff also found an older overlong delivery-message literal; its
 wording was shortened without changing the prerequisite or scientific recipe.
+
+## Complete phase endpoint publication
+
+phase_manifest.seal_phase derives the required fit set from resolved registered
+availability, refuses missing/extra fits, rejects aliased or out-of-root checkpoint
+paths before reading model bytes, and validates each fixed endpoint against its
+training source/config/seed/freeze before publishing one durable manifest. The
+phase manifest is immutable under an exclusive writer lease and its returned
+hash must be pinned before evaluation. This is not the campaign scientific
+freeze, nor a substitute for availability-gate or role validation by the caller.
+
+Four endpoint-list tests pass. Their positive fixture explicitly mocks the
+checkpoint validator and contains no trained weights or real experiment counts.
+One initial Ruff I001 import-order error was corrected. Module Pyright passes.
+A joint run of phase-manifest, arm-binding, endpoint, engine-journal and physical
+budget tests passes25 tests (qa_execution_components.xml), without optimizer
+steps. The actual campaign total remains625 technical and0 scientific updates.
+
+The subsequent check no longer found known compaction handles5152/15468. This
+does not grant an exclusive slot or establish absence of other owner jobs.
+No new owner ACK/release has been imported. Production queue/source integration,
+real replay, scientific freeze and all scientific fit/evaluation results remain
+uncompleted; no endpoint manifest for a real phase has been published.
