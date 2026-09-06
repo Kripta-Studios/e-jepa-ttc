@@ -45,7 +45,7 @@ def main() -> None:
                 raise ValueError("table references another ancestry")
             metadata = pd.read_csv(
                 stem.with_suffix(".csv"),
-                usecols=lambda column: (
+                usecols=lambda column, table_role=role: (
                     column
                     in [
                         "sample_token",
@@ -53,7 +53,7 @@ def main() -> None:
                         "track_id",
                         "producer_outer_fold",
                     ]
-                    + (["inner_fold"] if role == "inner_oof" else [])
+                    + (["inner_fold"] if table_role == "inner_oof" else [])
                 ),
             )
             if not set(metadata.sequence_id) <= allowed or not metadata.sample_token.is_unique:
