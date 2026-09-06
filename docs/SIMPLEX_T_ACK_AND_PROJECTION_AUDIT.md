@@ -97,3 +97,21 @@ Neither convention nor cross-release persistent identity is promoted from this
 diagnostic. The earlier statement about coordinates exceeding720 was conditional
 on the documented xywh interpretation, not proof of a different camera resolution.
 Source format/provenance and causal history attachment remain under investigation.
+
+## Current-only historical table audit
+
+CURRENT_TABLE_AUDIT.json verifies all6 compact historical tables (three outer
+folds, inner_oof and outer_dev separately). CSV and NPZ byte hashes match the
+frozen index; ancestry hashes match the acknowledged historical audit. Selected
+identity columns contain only original-role sequences. Features17, expert TTC,
+expert phase and target phase arrays are finite and match declared shape/dtype.
+Each outer fold has disjoint training/development token sets totaling8192; the
+three development sets jointly cover8192 unique queries. No performance score
+was computed. No pooled outer-OOF table was used to synthesize temporal histories.
+
+The first audit attempt correctly stopped on an assumed inner_fold column in
+outer_dev; the actual outer_dev schema has no inner_fold. The adapter now requests
+that column only for inner_oof. The audit then completed on all six tables.
+This establishes compact H1 input availability, not producer replay parity or
+scientific readiness. Row-level transitive lineage, production loader, full
+pre-fit QA and freeze remain required. No optimizer updates were executed.

@@ -23,6 +23,7 @@ SOURCE_FILES = (
     "scripts/audit_simplex_t_projection.py",
     "scripts/fetch_simplex_t_original_annotations.py",
     "scripts/audit_simplex_t_original_release.py",
+    "scripts/audit_simplex_t_current_tables.py",
     "configs/experiment/simplex_t_coordination.json",
     "docs/SIMPLEX_T_ACK_AND_PROJECTION_AUDIT.md",
     "tests/unit/test_simplex_t_preflight.py",
@@ -347,7 +348,8 @@ No future background completion is promised.
         payload[f"acquisition/{receipt.parent.name}/DOWNLOAD_RECEIPT.json"] = receipt.read_bytes()
     for original_audit in sorted(evidence.glob("ORIGINAL_RELEASE*.json")):
         payload[f"evidence/{original_audit.name}"] = original_audit.read_bytes()
-    payload["evidence/qa_original_release.xml"] = (evidence / "qa_original_release.xml").read_bytes()
+    for name in ("qa_original_release.xml", "CURRENT_TABLE_AUDIT.json"):
+        payload[f"evidence/{name}"] = (evidence / name).read_bytes()
     payload["coordination/SIMPLEX_T_STAGE70_REQUEST.json"] = request.read_bytes()
     manifest = {name: hashlib.sha256(data).hexdigest() for name, data in payload.items()}
     payload["PAYLOAD_SHA256.json"] = json.dumps(manifest, indent=2).encode()
