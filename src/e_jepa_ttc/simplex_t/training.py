@@ -10,6 +10,7 @@ import hashlib
 import json
 import math
 import os
+import uuid
 from collections.abc import Callable
 from dataclasses import asdict
 from pathlib import Path
@@ -41,11 +42,63 @@ def learning_rate(update: int) -> float:
     return 3e-5 + (3e-4 - 3e-5) * (1 + math.cos(math.pi * (update - 100) / 2400)) / 2
 
 
+def state_digest(value: Any) -> str:  # noqa: ANN401 -- typed recursive checkpoint boundary
+    """Hash every tensor, scalar and container, independent of torch archive layout."""
+    digest = hashlib.sha256()
+
+    def update(item: Any) -> None:  # noqa: ANN401 -- nested optimizer state
+        if isinstance(item, Tensor):
+            tensor = item.detach().cpu().contiguous()
+            digest.update(b"tensor:")
+            update(str(tensor.dtype))
+            update(tuple(tensor.shape))
+            digest.update(tensor.numpy().tobytes())
+        elif isinstance(item, dict):
+            digest.update(f"dict:{len(item)}:".encode())
+            for key in sorted(item, key=lambda key: (type(key).__name__, str(key))):
+                update(key)
+                update(item[key])
+        elif isinstance(item, (list, tuple)):
+            digest.update(f"{type(item).__name__}:{len(item)}:".encode())
+            for child in item:
+                update(child)
+        elif item is None or type(item) in {str, int, float, bool}:
+            encoded = json.dumps(item, allow_nan=False, ensure_ascii=True).encode()
+            digest.update(f"{type(item).__name__}:{len(encoded)}:".encode())
+            digest.update(encoded)
+        else:
+            raise TypeError(f"unsupported checkpoint member: {type(item).__name__}")
+
+    update(value)
+    return digest.hexdigest()
+
+
+def load_checkpoint(path: Path) -> dict[str, Any]:
+    """Reject incomplete, legacy-unsealed or modified state before loading a model."""
+    state = torch.load(path, map_location="cpu", weights_only=True)
+    if not isinstance(state, dict) or "state_sha256" not in state:
+        raise ValueError("checkpoint lacks complete-state integrity digest")
+    expected = state.pop("state_sha256")
+    if state_digest(state) != expected:
+        raise ValueError("checkpoint state integrity mismatch")
+    count = state.get("completed_updates")
+    if type(count) is not int or not 0 <= count <= 2500:
+        raise ValueError("invalid checkpoint update count")
+    if len(state.get("losses", [])) != count or len(state.get("sampler_hashes", [])) != count:
+        raise ValueError("checkpoint progress logs disagree with optimizer update count")
+    if state.get("status") == "COMPLETED" and count != 2500:
+        raise ValueError("partial checkpoint cannot claim a scientific endpoint")
+    return state
+
+
 def atomic_checkpoint(path: Path, state: dict[str, Any]) -> None:
     """Publish a complete checkpoint with durable bytes before atomic replace."""
-    temporary = path.with_suffix(f".{os.getpid()}.tmp")
+    if "state_sha256" in state:
+        raise ValueError("checkpoint payload already contains an integrity digest")
+    sealed = {**state, "state_sha256": state_digest(state)}
+    temporary = path.with_suffix(f".{os.getpid()}.{uuid.uuid4().hex}.tmp")
     with temporary.open("xb") as stream:
-        torch.save(state, stream)
+        torch.save(sealed, stream)
         stream.flush()
         os.fsync(stream.fileno())
     os.replace(temporary, path)
@@ -104,7 +157,7 @@ def fit(
     losses: list[float] = []
     sampler_hashes: list[str] = []
     if resume:
-        state = torch.load(checkpoint, map_location="cpu", weights_only=True)
+        state = load_checkpoint(checkpoint)
         if state["identity_sha256"] != identity_hash:
             raise ValueError("resume identity mismatch")
         model.load_state_dict(state["model"])

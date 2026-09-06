@@ -113,3 +113,18 @@ Continuation 01 (before any scientific freeze):
   sequence-consistent inner producer assignment and matched-density count gates.
   Six query-pool tests pass. No real query pool has been promoted without source
   eligibility, and no extra optimizer updates were executed (total remains65).
+
+Continuation02 (before scientific freeze):
+
+- Checkpoints now seal the complete tensor/optimizer/RNG/config/log state with a
+  deterministic content digest. Resume refuses missing digests, altered tensors,
+  inconsistent progress logs and false completed endpoints. A unique temporary
+  filename preserves failed-publication bytes and permits a subsequent save;
+  the old checkpoint remains intact if atomic replacement fails.
+- Nine checkpoint/resume tests pass. The additional10-versus5+5 comparison costs
+  20updates. Synthetic technical total before profiling:85updates.
+- The preregistered500-update synthetic CPU profile completed on the145-input,
+  hidden160/H8 GRU, batch128, FP32, four threads/two interop:16.9820253seconds;
+  peak process-tree RSS639238144bytes; minimum host available17568727040bytes.
+  All resource admissions passed. This is not a scientific model or full-system
+  latency measurement. Total technical updates585; scientific updates0.

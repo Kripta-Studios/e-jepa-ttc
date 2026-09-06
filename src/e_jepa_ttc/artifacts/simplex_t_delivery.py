@@ -19,6 +19,7 @@ SOURCE_FILES = (
     "scripts/run_simplex_t_companion.ps1",
     "scripts/audit_simplex_t_interfaces.py",
     "scripts/audit_simplex_t_timeline.py",
+    "scripts/profile_simplex_t_cpu.py",
     "tests/unit/test_simplex_t_preflight.py",
     "configs/experiment/simplex_t_resource_amendment.json",
     "docs/SIMPLEX_T_T0_RESUME.md",
@@ -62,6 +63,7 @@ def package_t0(local_paths: Path, output: Path) -> dict[str, Any]:
             "integrated_final",
             "selector_export_fix",
             "pools",
+            "checkpoint_resume",
         )
     }
     if any(item["failure_ids"] for item in qa.values()):
@@ -78,8 +80,8 @@ def package_t0(local_paths: Path, output: Path) -> dict[str, Any]:
         "analysis_commit": commit,
         "scientific_fits": 0,
         "scientific_optimizer_updates": 0,
-        "technical_optimizer_updates": 65,
-        "total_optimizer_updates": 65,
+        "technical_optimizer_updates": 585,
+        "total_optimizer_updates": 585,
         "technical_accounting": [
             {"test": "test_resume_exact", "updates": 20, "scope": "SYNTHETIC_REFERENCE"},
             {
@@ -90,9 +92,14 @@ def package_t0(local_paths: Path, output: Path) -> dict[str, Any]:
         ],
         "integrated_technical_accounting": {
             "test": "test_production_cpu_10_versus_5_plus_5",
-            "invocations": 2,
-            "updates": 40,
+            "invocations": 3,
+            "updates": 60,
             "scope": "INTEGRATED_ENGINE_SYNTHETIC",
+        },
+        "synthetic_profile_accounting": {
+            "updates": 500,
+            "scope": "SYNTHETIC_CPU_PROFILE_ONLY",
+            "evidence": "cpu_profile_500/RESOURCE_PROFILE.json",
         },
         "implementation_status": (
             "KERNELS_CACHE_ENGINE_METRICS_LEDGER_IMPLEMENTED_INTEGRATION_PENDING"
@@ -107,7 +114,7 @@ def package_t0(local_paths: Path, output: Path) -> dict[str, Any]:
         "qa": qa,
         "qa_scope": (
             "11 historical baseline; 19 combined T0; 65 reference; 86 integrated tests; "
-            "5 export tests and 6 pool tests after continuation fixes"
+            "5 export tests, 6 pool tests, 9 checkpoint/resume tests after continuation fixes"
         ),
         "full_repository_qa": "NOT_RUN",
         "initial_failure_ids": [
@@ -134,6 +141,9 @@ def package_t0(local_paths: Path, output: Path) -> dict[str, Any]:
         ),
         "timeline_feasibility": json.loads(
             (evidence / "LOCAL_TIMELINE_FEASIBILITY.json").read_text(encoding="utf-8")
+        ),
+        "cpu_profile": json.loads(
+            (evidence / "cpu_profile_500/RESOURCE_PROFILE.json").read_text(encoding="utf-8")
         ),
         "new_weights": [],
         "per_query_predictions": [],
@@ -178,12 +188,16 @@ Continuation QA adds {qa["selector_export_fix"]["tests"]} export tests and
 The selector export now preserves the original expert TTC exactly; the median
 diagnostic scores its finite emitted output. D1/density query selection is
 implemented from input identity only, but real availability remains unresolved.
+Checkpoint continuation adds {qa["checkpoint_resume"]["tests"]} passing tests:
+complete-state digest validation, corruption refusal, interrupted-publication
+preservation, false-endpoint refusal and another CPU exact-resume comparison.
 Initial Ruff format failure was corrected and retained as a QA ID. Full repository
 QA, real TRAIN replay, production loader integration and scientific freeze are
 pending. No historical failing result has been relabelled.
 
 Executed scientific fits: **0**. Scientific optimizer updates: **0**. Technical
-updates: **65** (25 reference + two 20-update integrated resume invocations).
+updates: **585** (25 reference + three 20-update integrated resume invocations
++ one 500-update synthetic CPU profile). No technical result selects a model.
 Raw expert forwards: **0**. No model endpoint, scientific prediction, factor
 interaction, bootstrap interval, hull gain/harm or lag result exists to report.
 No partial checkpoint was evaluated as a scientific endpoint.
@@ -210,11 +224,19 @@ free space per written volume: 60 GiB. Limits use absolute bytes/GiB only. The u
 amendment changes operational resource limits, not model/statistical constants.
 T0 metadata audit elapsed: {audit["elapsed_seconds"]:.3f} seconds.
 Saved audit includes process commands, host RAM, disks and per-source read timings.
+The 145-input C160/H8 GRU CPU profile completed 500 synthetic updates in 16.982s,
+with 639238144 bytes peak process-tree RSS and 17568727040 bytes minimum host
+available RAM, four threads/two interop. This measures the head on generated
+inputs, not real expert replay, full-system latency or useful TTC performance.
 
-Read-only observation found active Stage71 count-cache construction, growing from
+The initial saved read-only observation found Stage71 count-cache construction, growing from
 7616 to 7680 rows with 120 physical count shards. State declared zero fits/updates.
-The process CPU counter advanced; the declared state is not a claim that every
-artifact is independently validated. GPU/heavy I/O remains unacknowledged. No
+The process CPU counter advanced; this is a historical snapshot, not current job status.
+A later continuation observed Stage71 QA processes; the final bounded process-command
+check found no matching Stage70/architecture Python or PowerShell command. Absence
+of a matching command is not an owner acknowledgement or proof of GPU availability.
+The declared state is not a claim that every artifact is independently validated.
+GPU/heavy I/O remains unacknowledged. No
 owner process was stopped, resumed, wrapped retroactively or otherwise modified.
 
 ## Resume boundary
@@ -269,8 +291,14 @@ No future background completion is promised.
         "qa_selector_export_fix.xml",
         "qa_pools.xml",
         "QA_CONTINUATION_01.json",
+        "qa_checkpoint_resume.xml",
+        "QA_CONTINUATION_02.json",
     ):
         payload[f"evidence/{name}"] = (evidence / name).read_bytes()
+    for name in ("RESERVATION.json", "RESOURCE_PROFILE.json", "checkpoint_last.pt"):
+        payload[f"technical_cpu_profile/{name}"] = (
+            evidence / "cpu_profile_500" / name
+        ).read_bytes()
     request = Path(paths["shared_coordination"]) / "SIMPLEX_T_STAGE70_REQUEST.json"
     payload["coordination/SIMPLEX_T_STAGE70_REQUEST.json"] = request.read_bytes()
     manifest = {name: hashlib.sha256(data).hexdigest() for name, data in payload.items()}
