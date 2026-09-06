@@ -44,7 +44,8 @@ dependencias temporales de expansión? Necesito que aclare:
 
 La alternativa autorizada de SIMPLEX-T usa ventanas sensoriales retrospectivas
 con la ROI de la consulta actual; no reconstruye asociaciones Garl–eAP. No pido
-scores ni resultados para escoger constantes. D0 sigue en ejecución independiente.
+scores ni resultados para escoger constantes. D0 conserva sus cachés y protocolo;
+su replay pendiente requiere coordinar un turno exclusivo mientras Stage70 está activo.
 
 SIMPLEX-T también comprobó el enlace a exposiciones RGB con las columnas de
 entrada de Garl y eAP: 27307 consultas, edades de dependencia entre 1003 y
@@ -61,3 +62,25 @@ Recibo de correspondencia de entradas:
 Los 22 archivos raw existen y coinciden en tamaño/mtime con el manifiesto del
 propietario. Los hashes completos de esos archivos se atribuyen al propietario;
 SIMPLEX-T no afirma haber repetido esa lectura masiva durante el replay D0.
+
+## Ampliación de la petición: controles registrados de cantidad/diversidad
+
+Reconocer también el alcance temporal de las consultas adicionales DENSE_OLD,
+sin reasignar grupos: son 21.471 consultas únicas de las nueve secuencias OLD,
+con TRAIN de seis secuencias por fold y 14.520/13.473/14.949 consultas respectivas.
+Los productores internos históricos siguen excluyendo la secuencia de cada consulta.
+
+Evidencias propias para revisar, sin consultar scores:
+
+- Exposición: `artifacts/simplex_t/T0/DENSE_OLD_EXPOSURE_TIMING.json`, SHA256
+  `11fda3e6666c23dd306b667c1f2e0920104ffaf363e34023b1f013d93d96bfcb`.
+- Índice: `artifacts/simplex_t/T1/dense_query_context_index/INDEX_MANIFEST.json`, SHA256
+  `cb9e51715a71e25128923ccb20c5ec7abf6efc7095de34b001c649ebc12a0850`.
+- Arrays: SHA256 `a2a4dacddbdda1a7b408c5360121d26649ec1bca6b37977f49d83af0f28912ce`.
+
+Se verificó paridad exacta de ventanas, ROI, tiempos y máscaras para las 8.192
+consultas D0 solapadas, sin descartes en el conjunto denso. Los límites raw se
+reutilizaron del índice D0 pinneado; no se releyeron todos los archivos HDF5.
+No acredita nueva paridad de inferencia de expertos ni latencia de anotación online.
+Por favor, confirma el reconocimiento del contrato para estas consultas adicionales
+y una cesión efectiva de GPU/I/O. No se solicita detener Stage70 ni refitar expertos.

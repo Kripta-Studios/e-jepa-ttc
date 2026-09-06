@@ -18,20 +18,43 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--local-paths", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
-    parser.add_argument("--expansion-metadata", type=Path)
+    cohort = parser.add_mutually_exclusive_group()
+    cohort.add_argument("--expansion-metadata", type=Path)
+    cohort.add_argument("--dense-old-pool-plan", type=Path)
     args = parser.parse_args()
     paths = json.loads(args.local_paths.read_text(encoding="utf-8"))
-    config = json.loads(Path("configs/experiment/simplex_t_coordination.json").read_text())
+    config = json.loads(
+        Path("configs/experiment/simplex_t_coordination.json").read_text(encoding="utf-8")
+    )
     ack = verified_ack(
         Path(paths["shared_coordination"]) / config["ack_filename"], config["ack_sha256"]
     )
-    charter = json.loads(Path(ack["interfaces"]["time_charter"]["path"]).read_text())
+    charter = json.loads(
+        Path(ack["interfaces"]["time_charter"]["path"]).read_text(encoding="utf-8")
+    )
     garl = Path(charter["metadata_source"]["path"])
     if sha256(garl) != charter["metadata_source"]["sha256"]:
         raise ValueError("charter input metadata changed")
-    if args.expansion_metadata is None:
+    if args.dense_old_pool_plan is not None:
+        if sha256(args.dense_old_pool_plan) != (
+            "b0685050b799058e6090d6e3b7c47b653f2939ca7db2d75a93526ab236ec9e3c"
+        ):
+            raise ValueError("nominal matched pool plan changed")
+        plan = json.loads(args.dense_old_pool_plan.read_text(encoding="utf-8"))
+        allowed = set(ack["interfaces"]["role_manifest"]["roles"]["original"])
+        tokens = set()
+        for fold in plan["folds"]:
+            selected = fold["pools"]["DENSE_OLD"]
+            if not set(selected["sequences"]) <= allowed:
+                raise ValueError("dense query plan includes a closed group")
+            tokens.update(selected["tokens"])
+        if not tokens:
+            raise ValueError("empty dense-old pool")
+    elif args.expansion_metadata is None:
         historical = Path(ack["producers"]["authoritative_historical_manifest"]["path"]).parent
-        index = json.loads((historical / "FROZEN_EXPERT_TABLE_INDEX.json").read_text())
+        index = json.loads(
+            (historical / "FROZEN_EXPERT_TABLE_INDEX.json").read_text(encoding="utf-8")
+        )
         tokens = set()
         for role in ("inner_oof", "outer_dev"):
             record = next(r for r in index if r["outer_fold"] == 0 and r["role"] == role)
@@ -49,9 +72,7 @@ def main() -> None:
             "e8514492952a3abd86e45e3b00c07e398d2e6def5b73062eb5b5f8f13a932064"
         ):
             raise ValueError("expansion metadata pin changed")
-        selected = pd.read_parquet(
-            args.expansion_metadata, columns=["sample_token", "sequence_id"]
-        )
+        selected = pd.read_parquet(args.expansion_metadata, columns=["sample_token", "sequence_id"])
         allowed = set(ack["interfaces"]["role_manifest"]["roles"]["expansion"])
         tokens = set(selected.sample_token)
         if len(tokens) != 27307 or len(selected) != len(tokens):
@@ -144,7 +165,13 @@ def main() -> None:
             "historical_expert_cutoff_parity_validated": False,
             "scientific_updates": 0,
             "targets_read": False,
-            "population": "D0" if args.expansion_metadata is None else "D1_EXPANSION_ONLY",
+            "population": (
+                "DENSE_OLD_UNION"
+                if args.dense_old_pool_plan is not None
+                else "D0"
+                if args.expansion_metadata is None
+                else "D1_EXPANSION_ONLY"
+            ),
             "expansion_owner_time_ack_implied": False,
         },
     )
