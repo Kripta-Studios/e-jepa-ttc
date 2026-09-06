@@ -16,10 +16,10 @@ from e_jepa_ttc.artifacts.hashing import compute_file_hash
 from e_jepa_ttc.artifacts.simplex_t_preflight import write_new_json
 from e_jepa_ttc.data.eap import EAPEventReader
 from e_jepa_ttc.evaluation.scientific_recovery_v8 import load_causal_scale_replay_checkpoint
+from e_jepa_ttc.simplex_t.context_raw_union import encode_context_union
 from e_jepa_ttc.simplex_t.coordination import shared_write_admission, verified_ack
 from e_jepa_ttc.simplex_t.expert_features import extract_family
 from e_jepa_ttc.simplex_t.lifecycle import ExclusiveLease, admitted
-from e_jepa_ttc.simplex_t.query_context_voxel import encode_query_window
 from e_jepa_ttc.training.stage61_pair_head import load_pair_head
 
 
@@ -71,6 +71,7 @@ def main() -> None:
         "preprocessing_sha256": prep_sha,
         "extractor_sha256": compute_file_hash("src/e_jepa_ttc/simplex_t/expert_features.py"),
         "voxel_sha256": compute_file_hash("src/e_jepa_ttc/simplex_t/query_context_voxel.py"),
+        "union_reader_sha256": compute_file_hash("src/e_jepa_ttc/simplex_t/context_raw_union.py"),
         "runner_sha256": compute_file_hash(__file__),
         "torch": str(torch.__version__),
         "batch_size": 16,
@@ -138,22 +139,19 @@ def main() -> None:
                 raw_path = (raw_root / sequence / "events.h5").resolve(strict=True)
                 if not raw_path.is_relative_to(raw_root):
                     raise ValueError("raw path escapes TRAIN")
-                tensor = torch.zeros(16, 3, 12, 128, 128)
                 mask = index["valid"][qi]
                 windows = index["base_windows_us"][qi]
                 with EAPEventReader(raw_path) as reader:
-                    for slot in np.flatnonzero(mask):
-                        for w, (start, end) in enumerate(windows - index["lag_us"][slot]):
-                            tensor[slot, w] = encode_query_window(
-                                reader.read_window(int(start), int(end)),
-                                square_xyxy=tuple(index["square_xyxy"][qi]),
-                                start_us=int(start),
-                                end_us=int(end),
-                                sequence_id=sequence,
-                                roi_size=prep["roi_size"],
-                                bins_per_polarity=5,
-                                event_pixel_diff=prep["event_pixel_diff"],
-                            )
+                    tensor = encode_context_union(
+                        reader,
+                        windows,
+                        index["lag_us"],
+                        mask,
+                        tuple(index["square_xyxy"][qi]),
+                        sequence_id=sequence,
+                        roi_size=prep["roi_size"],
+                        event_pixel_diff=prep["event_pixel_diff"],
+                    )
                 delta = torch.tensor(np.diff(windows[:, 1]) / 1e6, dtype=torch.float32)
                 arrays = extract_family(
                     a5, c2f, pair, tensor.to(device), delta.repeat(16, 1).to(device)

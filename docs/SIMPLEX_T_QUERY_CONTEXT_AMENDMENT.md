@@ -137,3 +137,17 @@ consumed TRAIN observations; OLD_DEV uses that same normalizer and cannot share
 consumed observations with TRAIN. Feature count and normalizer bytes contribute
 to the eventual frozen source identity. Loading is not fit authorization, and
 full-cache integration remains pending until extraction completes.
+
+## Verified union-read I/O amendment
+
+SIMPLEX_T_CACHE_IO_AMENDMENT.json records the switch from independent event
+window reads to a bounded union read followed by the same crop and exact time
+slices. All64 preselected real TRAIN queries, covering3063 supported temporal
+windows, produce bit-identical input tensors. Alternating method order gave
+246.834seconds total for independent reads and93.679seconds for union reads;
+these are local timings with filesystem caches active, not a hardware benchmark.
+
+The cache resumed after block323 without replacing earlier blocks. Only the
+reader implementation/source binding changed; expert weights, FP32 settings,
+16-slot batch layout, histories, ROI availability and scientific constants did
+not change. Original identities remain recorded. No scientific fit had begun.
