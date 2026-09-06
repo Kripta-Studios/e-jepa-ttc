@@ -317,3 +317,26 @@ does not grant an exclusive slot or establish absence of other owner jobs.
 No new owner ACK/release has been imported. Production queue/source integration,
 real replay, scientific freeze and all scientific fit/evaluation results remain
 uncompleted; no endpoint manifest for a real phase has been published.
+
+## Synchronous finite phase queue
+
+queue.run_phase now connects registered fit selection, a mandatory prerequisite
+validator, exact frozen-source hashes, a full-invocation writer lease, engine
+work journaling, compatible resume, resource pause, and complete phase endpoint
+sealing. It performs no scoring and cannot shorten the2500-update recipe. A
+completed checkpoint is validated and reconciled with pending journal work before
+it is reused. Potential optional branches are reserved without authorizing them;
+later practical gates do not change that physical-work reservation graph.
+
+Five queue tests pass (qa_queue_engine.xml), including an actual engine invocation
+that publishes a zero-update checkpoint and releases its writer lease when
+resources disappear. No input batch or optimizer step is executed. Other tests
+cover missing prerequisites before any output writes, source mismatch before
+training, partial-phase pause without sealing, and resume-contract refusal.
+Initial Ruff I001 import ordering was corrected; final Ruff/module Pyright pass.
+
+The mandatory validator and source loader still need production CLI binding to
+the audited role/time/producer/cache/freeze evidence. No permissive default is
+provided for that validation, and run/prepare have not been enabled scientifically.
+Scientific completion remains unproven:625 technical updates,0 scientific fits,
+no scientific freeze, and no real phase endpoints or results.
