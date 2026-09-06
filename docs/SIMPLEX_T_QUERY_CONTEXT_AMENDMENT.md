@@ -98,3 +98,25 @@ This validates extraction integration, not the unbuilt full temporal cache;
 the earlier historical BF16 parity proof remains separate. All operations here
 use frozen weights and zero optimizer updates. Four contract tests reject
 wrong precision, wrong window count, nonpositive time deltas and training mode.
+
+## Temporal cache execution started
+
+The production extractor reads the actual past raw event windows for each
+query-conditioned crop. It uses a fixed16-slot chronological batch per query,
+FP32 with TF32 disabled, and exports only supported slots. This layout is
+distinct from the historical evaluator and is bound in the cache identity;
+current and prior observations share the same route. Frozen experts are not
+rerun during head updates.
+
+Each completed query/family block is fsynced and hashed before its receipt is
+published. Restart verifies receipts and skips completed blocks. Unreceipted
+files are retained and trigger recovery review, never silently overwritten.
+The initial4-block run and subsequent resumed run use the same source identity.
+The content audit checks exact observation indices, phase/point consistency,
+chronology and non-backdated ROI availability without reading targets.
+
+Execution remains partial. The required D0 cache has24576 query/family blocks.
+No completion or scientific fit is implied by an intermediate block receipt.
+The runner currently has one Pyright diagnostic on NumPy keyword unpacking at
+savez_compressed; runtime output and its schema are separately checked. This
+typing issue remains on the pre-freeze QA list.
