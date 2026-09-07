@@ -138,3 +138,55 @@ def test_source_configuration_inspection_is_not_run(entry, monkeypatch):
     with pytest.raises(SystemExit):
         entry.main()
     assert len(calls) == 1
+
+
+def test_source_identities_pass_resume_and_reservations(entry, monkeypatch):
+    calls = []
+    monkeypatch.setattr(
+        entry,
+        "prepare_configured_sources",
+        lambda *args, **kwargs: calls.append((args, kwargs)) or {"status": "PAUSED_RESOURCE"},
+    )
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "runner",
+            "prepare",
+            "--source-identities",
+            "--local-paths",
+            "local.json",
+            "--source-config",
+            "sources.json",
+            "--source-config-sha256",
+            "a" * 64,
+            "--output",
+            "prepared",
+            "--other-reserved-bytes",
+            "20000000000",
+            "--resume",
+        ],
+    )
+    assert entry.main() == 3
+    assert calls[0][1] == {"other_reserved_bytes": 20_000_000_000, "resume": True}
+
+
+def test_identity_preparation_requires_explicit_reservations(entry, monkeypatch):
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "runner",
+            "prepare",
+            "--source-identities",
+            "--local-paths",
+            "missing",
+            "--source-config",
+            "missing",
+            "--source-config-sha256",
+            "a" * 64,
+            "--output",
+            "unused",
+        ],
+    )
+    with pytest.raises(SystemExit) as error:
+        entry.main()
+    assert error.value.code == 2

@@ -11,6 +11,7 @@ from e_jepa_ttc.artifacts.simplex_t_preflight import audit, interface_status, wr
 from e_jepa_ttc.simplex_t.cache_status import context_cache_status
 from e_jepa_ttc.simplex_t.compiled_context import compile_fold
 from e_jepa_ttc.simplex_t.configuration_preflight import inspect_source_configuration
+from e_jepa_ttc.simplex_t.configured_preparation import prepare_configured_sources
 from e_jepa_ttc.simplex_t.reuse_catalog import D0ReuseCatalog
 
 
@@ -32,7 +33,42 @@ def main() -> int:
     parser.add_argument("--reuse-d0-compiled-sha256")
     parser.add_argument("--source-config", type=Path)
     parser.add_argument("--source-config-sha256")
+    parser.add_argument(
+        "--source-identities",
+        action="store_true",
+        help="prepare: load acknowledged cached sources and persist resumable identities; no fits",
+    )
+    parser.add_argument(
+        "--other-reserved-bytes",
+        type=int,
+        help="pending output bytes on the shared write volume; required for source identities",
+    )
     args = parser.parse_args()
+    if args.source_identities or args.other_reserved_bytes is not None:
+        if (
+            not args.source_identities
+            or args.command != "prepare"
+            or args.source_config is None
+            or args.source_config_sha256 is None
+            or args.output is None
+            or args.other_reserved_bytes is None
+            or args.other_reserved_bytes < 0
+            or args.compile_fold is not None
+            or args.compile_pool is not None
+            or args.reuse_d0_compiled is not None
+            or args.reuse_d0_compiled_sha256 is not None
+        ):
+            parser.error("source identities require prepare, source pins, output and reservations")
+        result = prepare_configured_sources(
+            args.local_paths,
+            args.source_config,
+            args.source_config_sha256,
+            args.output,
+            other_reserved_bytes=args.other_reserved_bytes,
+            resume=args.resume,
+        )
+        print(json.dumps(result, indent=2))
+        return 3 if result["status"] == "PAUSED_RESOURCE" else 0
     if args.source_config is not None or args.source_config_sha256 is not None:
         if (
             args.command != "prepare"

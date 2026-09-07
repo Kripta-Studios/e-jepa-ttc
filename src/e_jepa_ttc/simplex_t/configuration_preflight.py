@@ -8,6 +8,7 @@ from pathlib import Path
 
 from e_jepa_ttc.artifacts.simplex_t_preflight import sha256, write_new_json
 
+from .campaign_sources import CampaignSources
 from .coordination import verified_ack
 from .registry import registered_graph
 from .source_configuration import sources_from_configuration
@@ -23,6 +24,22 @@ def inspect_source_configuration(
     """
     if output.exists():
         raise FileExistsError("preserve existing source preflight")
+    sources, result = open_acknowledged_source_configuration(
+        local_paths, source_config, source_config_sha256
+    )
+    sources.release()
+    write_new_json(output, result)
+    return result
+
+
+def open_acknowledged_source_configuration(
+    local_paths: Path, source_config: Path, source_config_sha256: str
+) -> tuple[CampaignSources, dict]:
+    """Return unloaded sources bound to actual ACK roles and historical ancestry.
+
+    This is configuration admission, not expanded time authority or a freeze.
+    The caller owns releasing the returned adapter, including on exceptions.
+    """
     if source_config.stat().st_size > 1_048_576 or sha256(source_config) != source_config_sha256:
         raise ValueError("source configuration changed or exceeds metadata bound")
     paths = json.loads(local_paths.read_text(encoding="utf-8"))
@@ -62,8 +79,8 @@ def inspect_source_configuration(
         allowed_expansion_sequences=set(roles["expansion"]) if d1 else set(),
     )
     if sources.historical_root != historical:
+        sources.release()
         raise ValueError("source configuration changes acknowledged historical producer root")
-    sources.release()
     result = {
         "status": "SOURCE_CONFIGURATION_INSPECTED_NOT_PAYLOAD_VERIFIED_OR_FROZEN",
         "source_configuration_sha256": source_config_sha256,
@@ -77,5 +94,4 @@ def inspect_source_configuration(
         "new_query_time_authority_validated": False,
         "optimizer_updates": 0,
     }
-    write_new_json(output, result)
-    return result
+    return sources, result
