@@ -290,6 +290,18 @@ def run_and_publish_frozen_phase(
                     raise ValueError("published targets differ from frozen OLD cohort")
                 count += 1
             validate()
+            # Revalidate checkpoint bytes after reading predictions, not only
+            # their endpoint manifest. A changed weight file invalidates the
+            # phase even when the two JSON manifests remain unchanged.
+            validated_phase(
+                endpoints,
+                execution / "fits",
+                manifest_sha256=endpoint_hash,
+                freeze_sha256=freeze_sha256,
+                stage=stage,
+                availability=flags,
+                resource_ok=resource_ok,
+            )
             if (
                 count != len(selected)
                 or sha256(endpoints) != endpoint_hash

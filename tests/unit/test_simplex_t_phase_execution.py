@@ -14,7 +14,7 @@ from e_jepa_ttc.simplex_t.phase_manifest import fit_key
 from e_jepa_ttc.simplex_t.registry import registered_graph
 
 
-@pytest.mark.parametrize("fault", ["none", "missing", "source", "target", "seal"])
+@pytest.mark.parametrize("fault", ["none", "missing", "source", "target", "seal", "late_seal"])
 def test_phase_read_only_verifier_never_fits_or_exports(tmp_path, monkeypatch, fault):
     flags = dict.fromkeys(
         ("d1", "density", "t3", "latent", "replicate_scalar", "replicate_latent"), False
@@ -56,8 +56,11 @@ def test_phase_read_only_verifier_never_fits_or_exports(tmp_path, monkeypatch, f
     monkeypatch.setattr(module, "run_frozen_phase", lambda *a, **kw: pytest.fail("fit started"))
     monkeypatch.setattr(module, "export_phase", lambda *a, **kw: pytest.fail("export started"))
 
+    seal_checks = []
+
     def seal(*a, **kw):
-        if fault == "seal":
+        seal_checks.append(True)
+        if fault == "seal" or (fault == "late_seal" and len(seal_checks) == 2):
             raise ValueError("bad seal")
 
     monkeypatch.setattr(module, "validated_phase", seal)
@@ -84,7 +87,7 @@ def test_phase_read_only_verifier_never_fits_or_exports(tmp_path, monkeypatch, f
         resume=False,
         verify_only=True,
     )
-    if fault in {"source", "target", "seal"}:
+    if fault in {"source", "target", "seal", "late_seal"}:
         with pytest.raises(ValueError):
             module.run_and_publish_frozen_phase(execution, publication, **options)
     else:
@@ -93,6 +96,8 @@ def test_phase_read_only_verifier_never_fits_or_exports(tmp_path, monkeypatch, f
             "PHASE_INCOMPLETE" if fault == "missing" else "PHASE_PUBLICATION_VERIFIED_NOT_T6"
         )
     assert released == [True]
+    if fault in {"none", "late_seal"}:
+        assert len(seal_checks) == 2
     assert {
         str(p): (p.read_bytes(), p.stat().st_mtime_ns) for p in tmp_path.rglob("*") if p.is_file()
     } == before
