@@ -12,6 +12,7 @@ from e_jepa_ttc.artifacts.simplex_t_preflight import sha256
 
 from .campaign_postprocessing import postprocess_completed_campaign
 from .configuration_preflight import open_acknowledged_source_configuration
+from .frozen_history import frozen_history_pools
 from .old_cohort import load_old_evaluation_cohort
 from .risk17_inputs import load_acknowledged_risk17
 from .scientific_admission import validate_scientific_admission
@@ -149,6 +150,7 @@ def postprocess_configured_campaign(
             freeze_sha256=freeze_sha256,
             roots=roots,
             sources=sources,
+            history_pools=frozen_history_pools(sources, record, roots=roots),
             phases=phases,
             expected_queries=cohort,
             load_verified_risk17=risk17,

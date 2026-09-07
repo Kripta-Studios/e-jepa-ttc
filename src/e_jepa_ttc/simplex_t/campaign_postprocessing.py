@@ -15,6 +15,7 @@ from .campaign_sources import CampaignSources
 from .candidate_interface import publish_candidate_interface
 from .compact_phase import export_compact_phase
 from .followup_analysis import analyze_followup_phase, analyze_three_seed_family
+from .history_bundle import HistoryPoolPins, history_bundle_members
 from .phase_bundle import phase_bundle_members
 from .postprocessing_inventory import inventory_postprocessing
 from .sealed_analysis import analyze_sealed_t2
@@ -37,6 +38,7 @@ def postprocess_completed_campaign(
     freeze_sha256: str,
     roots: dict[str, Path],
     sources: CampaignSources,
+    history_pools: dict[str, HistoryPoolPins],
     phases: dict[str, CanonicalPublication],
     expected_queries: pd.DataFrame,
     load_verified_risk17: Callable[[], pd.DataFrame],
@@ -69,6 +71,12 @@ def postprocess_completed_campaign(
         )
 
     coverage = verify()
+    history_members = history_bundle_members(
+        history_pools,
+        work_root=work,
+        validate_authority=validate_authority_and_qa,
+        resource_ok=resource_ok,
+    )
     common = _AnalysisInputs(
         freeze=freeze,
         freeze_sha256=freeze_sha256,
@@ -161,6 +169,14 @@ def postprocess_completed_campaign(
         "three_seed": three_seed,
         "future_interface_sha256": sha256(interface),
         "output_inventory": inventory,
+        "history_payload_inventory": {
+            name: {
+                "work_relative_path": member.path.relative_to(work).as_posix(),
+                "sha256": member.sha256,
+                "bytes": member.bytes,
+            }
+            for name, member in history_members.items()
+        },
         "phase_payload_inventory": {
             name: {
                 "work_relative_path": member.path.resolve().relative_to(work).as_posix(),

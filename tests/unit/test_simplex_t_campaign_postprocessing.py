@@ -61,6 +61,7 @@ def test_assembly_preserves_all_required_components(tmp_path, monkeypatch, expan
 
     for name, method in (
         ("phase_bundle_members", lambda *args, **kwargs: {}),
+        ("history_bundle_members", lambda *args, **kwargs: {}),
         ("verify_completed_scientific_graph", verify),
         ("analyze_sealed_t2", t2),
         ("analyze_followup_phase", followup),
@@ -79,6 +80,7 @@ def test_assembly_preserves_all_required_components(tmp_path, monkeypatch, expan
         freeze_sha256=sha256(seal),
         roots={"work": tmp_path},
         sources=None,
+        history_pools={},
         phases=phases,
         expected_queries=pd.DataFrame(),
         load_verified_risk17=pd.DataFrame,

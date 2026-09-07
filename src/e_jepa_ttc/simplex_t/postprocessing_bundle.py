@@ -9,6 +9,7 @@ from pathlib import Path
 
 from .bundle_creation import BundleMember
 from .bundle_integrity import validate_bundle_inventory
+from .history_bundle import HistoryPoolPins, history_bundle_members
 from .phase_bundle import phase_bundle_members
 from .postprocessing_inventory import inventory_postprocessing
 from .stage_gate import CanonicalPublication
@@ -21,6 +22,7 @@ def postprocessing_bundle_members(
     freeze_sha256: str,
     work_root: Path,
     phases: dict[str, CanonicalPublication],
+    history_pools: dict[str, HistoryPoolPins],
     verify_completed_graph: Callable[[], dict],
     validate_scientific_authority: Callable[[], None],
     resource_ok: Callable[[], bool],
@@ -28,7 +30,7 @@ def postprocessing_bundle_members(
     """Rehash all owned outputs and include the pinned manifest in the archive.
 
     This supplies postprocessing and all registered phase publications. The
-    caller must separately include indices, provenance, accounting
+    caller must separately include provenance, accounting
     and reports, and repeat this validation in the ZIP authority callback.
     No fitting, output writes or campaign-completion inference occurs here.
     """
@@ -82,6 +84,22 @@ def postprocessing_bundle_members(
     }
     if not phase_members or expected_phase_pins != document.get("phase_payload_inventory"):
         raise ValueError("postprocessing phase inventory differs from verified publications")
+    history_members = history_bundle_members(
+        history_pools,
+        work_root=work,
+        validate_authority=validate_scientific_authority,
+        resource_ok=resource_ok,
+    )
+    expected_history_pins = {
+        name: {
+            "work_relative_path": member.path.relative_to(work).as_posix(),
+            "sha256": member.sha256,
+            "bytes": member.bytes,
+        }
+        for name, member in history_members.items()
+    }
+    if not history_members or expected_history_pins != document.get("history_payload_inventory"):
+        raise ValueError("postprocessing history inventory differs from frozen sources")
     validate_scientific_authority()
     if not resource_ok():
         raise InterruptedError("PAUSED_RESOURCE: postprocessing bundle binding")
@@ -98,5 +116,8 @@ def postprocessing_bundle_members(
     if members.keys() & phase_members.keys():
         raise ValueError("postprocessing and phase archive names collide")
     members.update(phase_members)
+    if members.keys() & history_members.keys():
+        raise ValueError("history and publication archive names collide")
+    members.update(history_members)
     validate_bundle_inventory({name: member.sha256 for name, member in members.items()})
     return members

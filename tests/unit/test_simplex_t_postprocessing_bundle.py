@@ -1,4 +1,5 @@
 """Pinned postprocessing-to-ZIP integration using real fixture bytes."""
+
 import hashlib
 import json
 
@@ -25,6 +26,8 @@ from e_jepa_ttc.simplex_t.postprocessing_inventory import inventory_postprocessi
         "phase_hash",
         "phase_bytes",
         "phase_extra",
+        "history_omitted",
+        "history_path",
     ],
 )
 def test_publication_to_transport(tmp_path, monkeypatch, fault):
@@ -42,6 +45,19 @@ def test_publication_to_transport(tmp_path, monkeypatch, fault):
     phase_pins = {
         name: dict(work_relative_path=prediction.name, sha256=member.sha256, bytes=member.bytes)
     }
+    history_name = "history/D0/query_context_index.npz"
+    monkeypatch.setattr(
+        module, "history_bundle_members", lambda *args, **kwargs: {history_name: member}
+    )
+    history_pins = {
+        history_name: dict(
+            work_relative_path=prediction.name, sha256=member.sha256, bytes=member.bytes
+        )
+    }
+    if fault == "history_omitted":
+        history_pins = {}
+    elif fault == "history_path":
+        history_pins[history_name]["work_relative_path"] = "../not_authorized.npz"
     if fault == "phase_omitted":
         phase_pins = {}
     elif fault == "phase_path":
@@ -58,6 +74,7 @@ def test_publication_to_transport(tmp_path, monkeypatch, fault):
         "freeze_sha256": "a" * 64,
         "output_inventory": inventory_postprocessing(output, resource_ok=lambda: True),
         "phase_payload_inventory": phase_pins,
+        "history_payload_inventory": history_pins,
     }
     manifest = output / "POSTPROCESSING.json"
     payload = json.dumps(document).encode()
@@ -78,6 +95,7 @@ def test_publication_to_transport(tmp_path, monkeypatch, fault):
             freeze_sha256=("b" if fault == "freeze" else "a") * 64,
             work_root=tmp_path,
             phases={},
+            history_pools={},
             verify_completed_graph=lambda: {},
             validate_scientific_authority=lambda: None,
             resource_ok=lambda: fault != "pause",
@@ -98,5 +116,5 @@ def test_publication_to_transport(tmp_path, monkeypatch, fault):
         validate_inventory_authority=verify,
         resource_ok=lambda: True,
     )
-    assert result["members"] == 3
+    assert result["members"] == 4
     assert result["optimizer_updates"] == 0

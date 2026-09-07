@@ -41,6 +41,7 @@ def configured(tmp_path, monkeypatch):
         encoding="utf-8",
     )
     calls = []
+    monkeypatch.setattr(module, "frozen_history_pools", lambda *args, **kwargs: {})
     source = SimpleNamespace(
         historical_root=historical,
         ancestry_sha256=sha256(historical / "NESTED_ANCESTRY_AUDIT.json"),
