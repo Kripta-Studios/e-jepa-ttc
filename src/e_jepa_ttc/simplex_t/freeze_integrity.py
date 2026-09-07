@@ -51,9 +51,13 @@ def verify_code_commit(files: list[FrozenFile], roots: dict[str, Path], commit: 
         raise ValueError("full source commit and companion work root required")
     work = roots["work"].resolve(strict=True)
 
-    def git(*args: str) -> bytes:
+    def git(*args: str, input_data: bytes | None = None) -> bytes:
         result = subprocess.run(
-            ["git", "-C", str(work), *args], capture_output=True, check=False, timeout=30
+            ["git", "-C", str(work), *args],
+            input=input_data,
+            capture_output=True,
+            check=False,
+            timeout=30,
         )
         if result.returncode:
             raise ValueError("cannot verify scientific code against declared Git commit")
@@ -70,13 +74,17 @@ def verify_code_commit(files: list[FrozenFile], roots: dict[str, Path], commit: 
         )
         if item
     }
-    local_paths = {
-        path.relative_to(work).as_posix()
-        for folder in ("src", "scripts")
-        if (work / folder).exists()
-        for path in (work / folder).rglob("*")
-        if path.is_file() and path.suffix.lower() in {".py", ".ps1", ".psm1"}
-    }
+
+    def local_inventory() -> set[str]:
+        return {
+            path.relative_to(work).as_posix()
+            for folder in ("src", "scripts")
+            if (work / folder).exists()
+            for path in (work / folder).rglob("*")
+            if path.is_file() and path.suffix.lower() in {".py", ".ps1", ".psm1"}
+        }
+
+    local_paths = local_inventory()
     required_code = {
         relative
         for relative in committed_paths | local_paths
@@ -89,6 +97,7 @@ def verify_code_commit(files: list[FrozenFile], roots: dict[str, Path], commit: 
     missing = sorted(required_code - declared_code)
     if missing:
         raise ValueError(f"scientific freeze omits executable source inventory: {missing[:8]}")
+    requests, paths = [], []
     for pin in code:
         relative = Path(pin.relative_path)
         if pin.root != "work" or relative.is_absolute() or relative.drive or ".." in relative.parts:
@@ -96,11 +105,44 @@ def verify_code_commit(files: list[FrozenFile], roots: dict[str, Path], commit: 
         path = (work / relative).resolve(strict=True)
         if not path.is_relative_to(work) or path.stat().st_size > 16_777_216:
             raise ValueError("code pin escapes work or exceeds source file bound")
-        blob = git("cat-file", "blob", f"{commit}:{relative.as_posix()}")
+        if any(char in relative.as_posix() for char in "\0\r\n"):
+            raise ValueError("control character in Git source request")
+        requests.append(f"{commit}:{relative.as_posix()}\n")
+        paths.append(path)
+    payload = "".join(requests).encode("utf-8")
+    if len(code) > 10000 or len(payload) > 4_194_304:
+        raise ValueError("source inventory exceeds bounded batch metadata")
+    headers = git("cat-file", "--batch-check", input_data=payload).splitlines()
+    sizes = []
+    if len(headers) != len(code):
+        raise ValueError("Git source inventory response count differs")
+    for header in headers:
+        parts = header.split()
+        if len(parts) != 3 or parts[1] != b"blob" or not parts[2].isdigit():
+            raise ValueError("source pin missing or not a committed blob")
+        size = int(parts[2])
+        if size > 16_777_216:
+            raise ValueError("committed source exceeds per-file bound")
+        sizes.append(size)
+    if sum(sizes) > 134_217_728:
+        raise ValueError("committed source exceeds 128 MiB batch bound")
+    stream = git("cat-file", "--batch", input_data=payload)
+    position = 0
+    for pin, path, header, size in zip(code, paths, headers, sizes, strict=True):
+        end = stream.find(b"\n", position)
+        if end < 0 or stream[position:end] != header:
+            raise ValueError("Git source stream header differs")
+        blob = stream[end + 1 : end + 1 + size]
+        position = end + 1 + size
+        if len(blob) != size or stream[position : position + 1] != b"\n":
+            raise ValueError("truncated Git source stream")
+        position += 1
         if hashlib.sha256(blob).hexdigest() != pin.sha256:
             raise ValueError(f"code pin differs from declared commit: {pin.relative_path}")
         if compute_file_hash(str(path)) != pin.sha256:
             raise ValueError(f"working source differs from committed code pin: {pin.relative_path}")
+    if position != len(stream) or local_inventory() != local_paths:
+        raise ValueError("source stream has trailing data or executable inventory changed")
 
 
 def verify_files(files: list[FrozenFile], roots: dict[str, Path]) -> None:
