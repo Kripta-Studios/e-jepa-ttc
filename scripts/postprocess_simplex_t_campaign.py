@@ -27,6 +27,7 @@ def main() -> int:
     parser.add_argument("--launch-sha256", required=True)
     parser.add_argument("--other-reserved-bytes", type=int, required=True)
     parser.add_argument("--own-reserved-bytes", type=int, required=True)
+    parser.add_argument("--verify-only", action="store_true")
     args = parser.parse_args()
     if args.other_reserved_bytes < 0 or args.own_reserved_bytes < 1:
         parser.error("nonnegative other and positive own output reservations required")
@@ -54,6 +55,8 @@ def main() -> int:
     }:
         raise ValueError("unrecognized postprocessing launch schema")
     delivery = None
+    if args.verify_only and not deliver:
+        raise ValueError("read-only completion verification requires launch v3 with delivery")
     if deliver:
         value = config["delivery"]
         if (
@@ -124,6 +127,13 @@ def main() -> int:
     try:
         if not resource_ok():
             raise InterruptedError("PAUSED_RESOURCE: postprocessing launch")
+        if (
+            args.verify_only
+            and delivery is not None
+            and not (delivery.output / "DELIVERY.json").is_file()
+        ):
+            print(json.dumps({"status": "DELIVERY_INCOMPLETE", "optimizer_updates_executed": 0}))
+            return 10
         result = postprocess_configured_campaign(
             Path(config["output"]),
             local_paths=Path(config["local_paths"]),
@@ -138,6 +148,7 @@ def main() -> int:
             accounting_pins=accounting,
             resource_ok=resource_ok,
             delivery=delivery,
+            verify_only=args.verify_only,
         )
     except (InterruptedError, RuntimeError) as error:
         if not str(error).startswith(("PAUSED_RESOURCE", "RESOURCE_PAUSE")):

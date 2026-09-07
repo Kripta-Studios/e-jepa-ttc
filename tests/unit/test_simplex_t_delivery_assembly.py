@@ -7,6 +7,7 @@ import zipfile
 import pytest
 
 from e_jepa_ttc.simplex_t import delivery_assembly as assembly
+from e_jepa_ttc.simplex_t import delivery_verification as verification
 from e_jepa_ttc.simplex_t.bundle_creation import BundleMember
 
 
@@ -108,3 +109,53 @@ def test_delivery_metadata_limit_retains_partial_documents_without_archive(tmp_p
     assert not (output / "NEXT_DECISION_SIMPLEX_T.json").exists()
     assert not list(output.glob("*.zip*"))
     assert not (output / "DELIVERY.json").exists()
+
+
+@pytest.mark.parametrize(
+    "fault", ["none", "report", "manifest", "sidecar", "receipt", "zip", "authority"]
+)
+def test_delivery_read_only_verification_rebinds_scientific_evidence(tmp_path, monkeypatch, fault):
+    source = tmp_path / "source.json"
+    source.write_bytes(b"{}")
+    pin = BundleMember(source, hashlib.sha256(b"{}").hexdigest(), 2)
+    original = {
+        f"postprocessing/{name}.json": pin
+        for name in ("SCIENTIFIC_GRAPH_COVERAGE", "CAMPAIGN_ACCOUNTING")
+    }
+    for module in (assembly, verification):
+        monkeypatch.setattr(module, "render_delivery_documents", lambda *a, **kw: ("fixture", {}))
+    output = tmp_path / "artifacts/delivery"
+    arguments = dict(
+        work_root=tmp_path,
+        analysis_commit="a" * 40,
+        bind_verified_members=lambda: original,
+        resource_ok=lambda: True,
+    )
+    assembly.assemble_delivery(output, **arguments, reserved_output_bytes=100_000_000)
+    archive = output / "E_JEPA_TTC_SIMPLEX_T_ESSENTIAL_RESULTS_aaaaaaaaaaaa.zip"
+    targets = {
+        "report": output / "CODEX_SIMPLEX_T_FINAL_REPORT.md",
+        "manifest": output / "CONTENT_MANIFEST.json",
+        "sidecar": archive.with_suffix(".zip.sha256"),
+        "receipt": output / "DELIVERY.json",
+        "zip": archive,
+    }
+    if fault in targets:
+        targets[fault].write_bytes(b"{}")
+    calls = []
+
+    def bind():
+        calls.append(True)
+        return {} if fault == "authority" and len(calls) > 1 else original
+
+    arguments["bind_verified_members"] = bind
+    before = {p.name: (p.read_bytes(), p.stat().st_mtime_ns) for p in output.iterdir()}
+    if fault == "none":
+        result = verification.verify_delivery(output, **arguments)
+        assert result["files_written"] == result["optimizer_updates_executed"] == 0
+        assert len(calls) == 2
+        assert result["sha256"] == hashlib.sha256(archive.read_bytes()).hexdigest()
+    else:
+        with pytest.raises((ValueError, zipfile.BadZipFile)):
+            verification.verify_delivery(output, **arguments)
+    assert {p.name: (p.read_bytes(), p.stat().st_mtime_ns) for p in output.iterdir()} == before

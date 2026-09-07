@@ -183,3 +183,43 @@ def test_only_resource_failure_is_translated_to_pause(entry, monkeypatch, resour
     else:
         with pytest.raises(RuntimeError, match="bad sealed"):
             module.main()
+
+
+@pytest.mark.parametrize("state", ["missing", "complete", "invalid", "legacy"])
+def test_read_only_delivery_verifier_exit_contract(entry, monkeypatch, state):
+    module, launch, config, argv = entry
+    argv.append("--verify-only")
+    output = launch.parent / "delivery"
+    if state != "legacy":
+        config["schema"] = "simplex_t_postprocessing_launch_v3"
+        config["delivery"] = {
+            "output": str(output),
+            "analysis_commit": "f" * 40,
+            "resource_attempts": [
+                {
+                    "launch": "attempt.json",
+                    "launch_sha256": "4" * 64,
+                    "receipt": "receipt.json",
+                    "receipt_sha256": "5" * 64,
+                }
+            ],
+        }
+    launch.write_text(json.dumps(config), encoding="utf-8")
+    argv[4] = sha256(launch)
+    if state in {"complete", "invalid"}:
+        output.mkdir()
+        (output / "DELIVERY.json").write_text("{}")
+
+    def verify(*a, **kwargs):
+        assert state in {"complete", "invalid"}
+        assert kwargs["verify_only"] is True
+        if state == "invalid":
+            raise ValueError("bad payload")
+        return {"status": "TEST_WIRING_ONLY"}
+
+    monkeypatch.setattr(module, "postprocess_configured_campaign", verify)
+    if state in {"invalid", "legacy"}:
+        with pytest.raises(ValueError, match="bad payload|requires launch v3"):
+            module.main()
+    else:
+        assert module.main() == (10 if state == "missing" else 0)

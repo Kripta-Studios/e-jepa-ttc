@@ -18,6 +18,7 @@ from .campaign_completion import verify_completed_scientific_graph
 from .campaign_postprocessing import postprocess_completed_campaign
 from .configuration_preflight import open_acknowledged_source_configuration
 from .delivery_assembly import assemble_delivery
+from .delivery_verification import verify_delivery
 from .frozen_history import frozen_history_pools
 from .old_cohort import load_old_evaluation_cohort
 from .postprocessing_bundle import postprocessing_bundle_members
@@ -53,6 +54,7 @@ def postprocess_configured_campaign(
     accounting_pins: AccountingPins,
     resource_ok: Callable[[], bool],
     delivery: DeliveryRequest | None = None,
+    verify_only: bool = False,
 ) -> dict:
     """Assemble T6 analysis inputs without accepting caller-supplied targets or gates.
 
@@ -67,13 +69,19 @@ def postprocess_configured_campaign(
     work = Path(json.loads(local_paths.read_text(encoding="utf-8"))["worktree"]).resolve(
         strict=True
     )
-    if output.exists() or output.resolve() == work or not output.resolve().is_relative_to(work):
+    if verify_only and delivery is None:
+        raise ValueError("read-only completion verification requires a delivery request")
+    if (
+        (output.exists() and not verify_only)
+        or output.resolve() == work
+        or not output.resolve().is_relative_to(work)
+    ):
         raise ValueError("new companion-local postprocessing directory required")
     if delivery is not None:
         destination = delivery.output.resolve()
         if (
             not destination.is_relative_to(work / "artifacts")
-            or destination.exists()
+            or (destination.exists() and not verify_only)
             or destination.is_relative_to(output.resolve())
             or output.resolve().is_relative_to(destination)
             or not delivery.resource_attempts
@@ -190,20 +198,22 @@ def postprocess_configured_campaign(
                 resource_ok=resource_ok,
             )
 
-        result = postprocess_completed_campaign(
-            output,
-            freeze=freeze,
-            freeze_sha256=freeze_sha256,
-            roots=roots,
-            sources=sources,
-            history_pools=frozen_history_pools(sources, record, roots=roots),
-            phases=phases,
-            accounting_pins=accounting_pins,
-            expected_queries=cohort,
-            load_verified_risk17=risk17,
-            validate_authority_and_qa=validate,
-            resource_ok=resource_ok,
-        )
+        result = {}
+        if not verify_only:
+            result = postprocess_completed_campaign(
+                output,
+                freeze=freeze,
+                freeze_sha256=freeze_sha256,
+                roots=roots,
+                sources=sources,
+                history_pools=frozen_history_pools(sources, record, roots=roots),
+                phases=phases,
+                accounting_pins=accounting_pins,
+                expected_queries=cohort,
+                load_verified_risk17=risk17,
+                validate_authority_and_qa=validate,
+                resource_ok=resource_ok,
+            )
         if delivery is None:
             return result
         manifest = output / "POSTPROCESSING.json"
@@ -240,6 +250,14 @@ def postprocess_configured_campaign(
                 resource_ok=resource_ok,
             )
 
+        if verify_only:
+            return verify_delivery(
+                delivery.output,
+                work_root=work,
+                analysis_commit=delivery.analysis_commit,
+                bind_verified_members=bind,
+                resource_ok=resource_ok,
+            )
         return assemble_delivery(
             delivery.output,
             work_root=work,

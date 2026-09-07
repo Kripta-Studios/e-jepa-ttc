@@ -171,13 +171,21 @@ def test_analysis_failure_releases_sources(configured, monkeypatch):
 
 
 @pytest.mark.parametrize("graph_failure", [False, True])
-def test_delivery_binds_real_input_context_and_releases(configured, monkeypatch, graph_failure):
+@pytest.mark.parametrize("verify_only", [False, True])
+def test_delivery_binds_real_input_context_and_releases(
+    configured, monkeypatch, graph_failure, verify_only
+):
     output, args, _, _, calls = configured
     monkeypatch.setattr(module.subprocess, "check_output", lambda *a, **kw: b"a" * 40)
     attempts = [object()]
     args["delivery"] = module.DeliveryRequest(
         output.parent / "artifacts/delivery", "a" * 40, attempts, 100_000_000
     )
+    args["verify_only"] = verify_only
+    if verify_only:
+        output.mkdir()
+        (output / "POSTPROCESSING.json").write_text("{}")
+        args["delivery"].output.mkdir(parents=True)
     original_post = module.postprocess_completed_campaign
 
     def post(path, **kwargs):
@@ -214,6 +222,7 @@ def test_delivery_binds_real_input_context_and_releases(configured, monkeypatch,
     monkeypatch.setattr(module, "verify_completed_scientific_graph", graph)
     monkeypatch.setattr(module, "postprocessing_bundle_members", bind)
     monkeypatch.setattr(module, "assemble_delivery", assemble)
+    monkeypatch.setattr(module, "verify_delivery", assemble)
     if graph_failure:
         with pytest.raises(ValueError, match="missing completed fit"):
             module.postprocess_configured_campaign(output, **args)
@@ -224,3 +233,4 @@ def test_delivery_binds_real_input_context_and_releases(configured, monkeypatch,
         )
         assert calls.count("bind") == 2
     assert calls[-1] == "release"
+    assert ("post" not in calls) if verify_only else ("post" in calls)
