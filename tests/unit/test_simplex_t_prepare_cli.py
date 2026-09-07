@@ -244,3 +244,32 @@ def test_source_preparation_only_resource_pauses_are_retryable(entry, monkeypatc
             entry.main()
     else:
         assert entry.main() == (0 if outcome == "complete" else 3)
+
+
+def test_source_verifier_incomplete_routes_to_orchestrator_without_resume(entry, monkeypatch):
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "runner",
+            "prepare",
+            "--source-identities",
+            "--verify-only",
+            "--local-paths",
+            "local.json",
+            "--source-config",
+            "sources.json",
+            "--source-config-sha256",
+            "a" * 64,
+            "--output",
+            "prepared",
+            "--other-reserved-bytes",
+            "20000000000",
+        ],
+    )
+
+    def verify(*args, **kwargs):
+        assert kwargs["verify_only"] is True and kwargs["resume"] is False
+        return {"status": "SOURCE_IDENTITIES_INCOMPLETE"}
+
+    monkeypatch.setattr(entry, "prepare_configured_sources", verify)
+    assert entry.main() == 10

@@ -25,6 +25,7 @@ def prepare_configured_sources(
     *,
     other_reserved_bytes: int,
     resume: bool,
+    verify_only: bool = False,
 ) -> dict:
     """Prepare source identities, not fits; refuse unacknowledged expanded scope.
 
@@ -105,6 +106,7 @@ def prepare_configured_sources(
             validate_prerequisites=validate,
             resource_ok=resource_ok,
             resume=resume,
+            verify_only=verify_only,
             validate_loaded_source=lambda source: audit_cached_source(
                 source, boundary=audit_boundary
             ),

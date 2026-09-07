@@ -11,6 +11,41 @@ from e_jepa_ttc.simplex_t.registry import registered_graph
 from e_jepa_ttc.simplex_t.source_preparation import prepare_source_identities
 
 
+@pytest.mark.parametrize("fault", ["none", "source", "qa", "inventory", "resource", "missing"])
+def test_read_only_verification_never_rewrites_preparation(setup, fault):
+    output, kwargs, calls, released = setup
+    kwargs["validate_loaded_source"] = lambda source: {"identity": source.identity_sha256}
+    if fault != "missing":
+        prepare_source_identities(output, **kwargs)
+    if fault == "source":
+        kwargs["sources"].source = lambda *_: SimpleNamespace(identity_sha256="c" * 64)
+    elif fault == "qa":
+        kwargs["validate_loaded_source"] = lambda source: {"identity": "changed"}
+    elif fault == "inventory":
+        path = output / "SOURCE_PREPARATION.json"
+        state = json.loads(path.read_text())
+        state["identities"].pop(next(iter(state["identities"])))
+        path.write_text(json.dumps(state), encoding="utf-8")
+    elif fault == "resource":
+        kwargs["resource_ok"] = lambda: False
+    before = {p.name: (p.read_bytes(), p.stat().st_mtime_ns) for p in output.glob("*")}
+    calls.clear()
+    kwargs["verify_only"] = True
+    if fault in {"source", "qa", "inventory", "resource"}:
+        with pytest.raises((ValueError, InterruptedError)):
+            prepare_source_identities(output, **kwargs)
+    else:
+        result = prepare_source_identities(output, **kwargs)
+        assert result["status"] == (
+            "SOURCE_IDENTITIES_INCOMPLETE"
+            if fault == "missing"
+            else "SOURCE_IDENTITIES_COMPLETE_NOT_SCIENTIFIC_FREEZE"
+        )
+        assert len(calls) == (0 if fault == "missing" else len(kwargs["sources"].graph) * 2)
+    assert {p.name: (p.read_bytes(), p.stat().st_mtime_ns) for p in output.glob("*")} == before
+    assert len(released) == (1 if fault == "missing" else 2)
+
+
 @pytest.fixture
 def setup(tmp_path):
     flags = dict.fromkeys(

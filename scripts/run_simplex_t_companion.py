@@ -22,6 +22,7 @@ def main() -> int:
     parser.add_argument("--local-paths", type=Path, required=True)
     parser.add_argument("--output", type=Path)
     parser.add_argument("--resume", action="store_true")
+    parser.add_argument("--verify-only", action="store_true")
     parser.add_argument(
         "--compile-fold",
         type=int,
@@ -44,6 +45,8 @@ def main() -> int:
         help="pending output bytes on the shared write volume; required for identities/compilation",
     )
     args = parser.parse_args()
+    if args.verify_only and not args.source_identities:
+        parser.error("--verify-only requires --source-identities")
     if args.source_identities or (
         args.other_reserved_bytes is not None and args.compile_fold is None
     ):
@@ -69,6 +72,7 @@ def main() -> int:
                 args.output,
                 other_reserved_bytes=args.other_reserved_bytes,
                 resume=args.resume,
+                **({"verify_only": True} if args.verify_only else {}),
             )
         except (InterruptedError, RuntimeError) as error:
             if not str(error).startswith(("PAUSED_RESOURCE:", "RESOURCE_PAUSE:")):
@@ -83,9 +87,14 @@ def main() -> int:
         if result["status"] not in {
             "PAUSED_RESOURCE",
             "SOURCE_IDENTITIES_COMPLETE_NOT_SCIENTIFIC_FREEZE",
+            "SOURCE_IDENTITIES_INCOMPLETE",
         }:
             raise ValueError("source preparation returned an unexpected terminal status")
         print(json.dumps(result, indent=2))
+        if result["status"] == "SOURCE_IDENTITIES_INCOMPLETE":
+            if not args.verify_only:
+                raise ValueError("preparation worker did not complete or report a resource pause")
+            return 10
         return 3 if result["status"] == "PAUSED_RESOURCE" else 0
     if args.source_config is not None or args.source_config_sha256 is not None:
         if (

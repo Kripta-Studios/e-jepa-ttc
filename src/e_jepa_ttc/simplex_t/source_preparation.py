@@ -28,6 +28,7 @@ def prepare_source_identities(
     resource_ok: Callable[[], bool],
     resume: bool,
     validate_loaded_source: Callable[[CachedQueries], dict] | None = None,
+    verify_only: bool = False,
 ) -> dict:
     """Persist complete TRAIN/OLD_DEV identity pairs at fit boundaries.
 
@@ -63,6 +64,72 @@ def prepare_source_identities(
         contract["loaded_source_qa"] = "simplex_t_full_population_gather_qa_v1"
     validate_prerequisites()
     state_path = output / "SOURCE_PREPARATION.json"
+    if verify_only:
+        try:
+            if not state_path.exists():
+                return {"status": "SOURCE_IDENTITIES_INCOMPLETE", "optimizer_updates": 0}
+
+            def read() -> bytes:
+                if not resource_ok():
+                    raise InterruptedError("PAUSED_RESOURCE: source identity verification")
+                with state_path.open("rb") as stream:
+                    data = stream.read(8_388_609)
+                if len(data) > 8_388_608:
+                    raise ValueError("source preparation exceeds freeze metadata bound")
+                return data
+
+            payload = read()
+            state = json.loads(payload)
+            if (
+                state.get("schema") != "simplex_t_source_preparation_v1"
+                or state.get("contract") != contract
+                or type(state.get("optimizer_updates")) is not int
+                or state["optimizer_updates"] != 0
+                or state.get("scientific_freeze") is not False
+                or state.get("gates_enabled") is not False
+            ):
+                raise ValueError("source preparation verification contract differs")
+            if state.get("status") in {"PREPARING", "PAUSED_RESOURCE"}:
+                return {"status": "SOURCE_IDENTITIES_INCOMPLETE", "optimizer_updates": 0}
+            expected = {fit_key(spec) for spec in graph}
+            if (
+                state.get("status") != "SOURCE_IDENTITIES_COMPLETE_NOT_SCIENTIFIC_FREEZE"
+                or set(state.get("identities", {})) != expected
+                or (
+                    validate_loaded_source is not None
+                    and set(state.get("source_qa", {})) != expected
+                )
+            ):
+                raise ValueError("source preparation completion inventory differs")
+            for spec in sorted(
+                graph,
+                key=lambda item: (
+                    item.fold,
+                    resolve_arm(item, graph).model.feature_count,
+                    resolve_arm(item, graph).pool,
+                    fit_key(item),
+                ),
+            ):
+                validate_prerequisites()
+                pair, checked_pair = {}, {}
+                for role in ("inner_oof", "outer_dev"):
+                    if not resource_ok():
+                        raise InterruptedError("PAUSED_RESOURCE: source identity verification")
+                    source = sources.source(spec, role)
+                    pair[role] = source.identity_sha256
+                    if validate_loaded_source is not None:
+                        checked_pair[role] = validate_loaded_source(source)
+                key = fit_key(spec)
+                if state["identities"][key] != pair:
+                    raise ValueError("verified source or TRAIN normalizer differs")
+                if validate_loaded_source is not None and state["source_qa"][key] != checked_pair:
+                    raise ValueError("verified loaded source QA differs")
+            validate_prerequisites()
+            if read() != payload:
+                raise ValueError("source preparation changed during verification")
+            return state
+        finally:
+            sources.release()
     with ExclusiveLease(output / "SOURCE_PREPARATION.lock"):
         if state_path.exists():
             if not resume:
