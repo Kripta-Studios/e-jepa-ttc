@@ -74,6 +74,7 @@ def predict_fixed_baselines(
         phase = np.concatenate(chunks)
         result[name] = {
             "prediction_phase": phase,
-            "prediction_ttc_s": phase_to_ttc(torch.from_numpy(phase)).numpy(),
+            # Match prediction_frame's final TTC emission from saved FP32 phase.
+            "prediction_ttc_s": phase_to_ttc(torch.from_numpy(phase.astype(np.float64))).numpy(),
         }
     return result

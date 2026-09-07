@@ -60,6 +60,9 @@ def load_fixed_baselines(
     ):
         raise ValueError("independent fixed comparator identity schema mismatch")
     names = ("CURRENT_MEDIAN", "EWMA_0P3S_H8")
+    emission = report.get("ttc_emission_dtype", "float32")
+    if emission not in {"float32", "float64"}:
+        raise ValueError("unregistered fixed comparator emission dtype")
     required = {"sample_token", "sequence_id", "history"} | {
         f"{name}_{field}" for name in names for field in ("prediction_phase", "prediction_ttc_s")
     }
@@ -76,12 +79,13 @@ def load_fixed_baselines(
             raise ValueError("fixed comparator differs from independent query/history identity")
     for name in names:
         phase, ttc = result[f"{name}_prediction_phase"], result[f"{name}_prediction_ttc_s"]
-        if any(
-            a.shape != tokens.shape or a.dtype != np.float32 or not np.isfinite(a).all()
-            for a in (phase, ttc)
+        if (
+            phase.dtype != np.float32
+            or ttc.dtype != np.dtype(emission)
+            or any(a.shape != tokens.shape or not np.isfinite(a).all() for a in (phase, ttc))
         ):
             raise ValueError("fixed comparator prediction shape, dtype or finiteness changed")
-        if not np.array_equal(phase_to_ttc(torch.from_numpy(phase)).numpy(), ttc):
+        if not np.array_equal(phase_to_ttc(torch.from_numpy(phase.astype(emission))).numpy(), ttc):
             raise ValueError("fixed comparator emitted TTC differs from its phase")
     validate_prerequisites()
     return result

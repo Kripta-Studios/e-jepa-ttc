@@ -84,3 +84,17 @@ def test_inconsistent_ttc_rejected_even_with_matching_file_hashes(saved):
     args["manifest_sha256"] = compute_file_hash(str(args["manifest"]))
     with pytest.raises(ValueError, match="emitted TTC"):
         load_fixed_baselines(**args)
+
+
+def test_explicit_float64_emission_matches_head_export(saved):
+    args, payload, report, file = saved
+    for name in ("CURRENT_MEDIAN", "EWMA_0P3S_H8"):
+        phase = payload[f"{name}_prediction_phase"].astype(np.float64)
+        payload[f"{name}_prediction_ttc_s"] = phase_to_ttc(torch.from_numpy(phase)).numpy()
+    np.savez(file, **payload)
+    report["ttc_emission_dtype"] = "float64"
+    report["roles"]["outer_dev"]["sha256"] = compute_file_hash(str(file))
+    args["manifest"].write_text(json.dumps(report), encoding="utf-8")
+    args["manifest_sha256"] = compute_file_hash(str(args["manifest"]))
+    result = load_fixed_baselines(**args)
+    assert result["CURRENT_MEDIAN_prediction_ttc_s"].dtype == np.float64

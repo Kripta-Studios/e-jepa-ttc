@@ -48,6 +48,7 @@ def test_constant_phase_and_cold_start_without_supervision(source):
     for result in results.values():
         assert result["prediction_phase"].shape == (2,)
         assert np.isfinite(result["prediction_ttc_s"]).all()
+        assert result["prediction_ttc_s"].dtype == np.float64
     np.testing.assert_allclose(
         results["CURRENT_MEDIAN"]["prediction_phase"], results["EWMA_0P3S_H8"]["prediction_phase"]
     )

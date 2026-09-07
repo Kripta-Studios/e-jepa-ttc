@@ -128,6 +128,7 @@ def main() -> None:
             "runner_sha256": compute_file_hash(__file__),
             "optimizer_updates": 0,
             "scores_computed": False,
+            "ttc_emission_dtype": "float64",
             "seconds": time.perf_counter() - started,
             "resource_observations": observations,
         }
