@@ -212,7 +212,7 @@ def test_compile_reserves_own_arrays_before_allocation(tmp_path, monkeypatch):
         "admitted",
         lambda paths: {
             "has_headroom": True,
-            "written_volume_free_bytes": [40_000_000_000 + 1_048_576],
+            "written_volume_free_bytes": [20_000_000_000 + 1_048_576],
         },
     )
     with pytest.raises(RuntimeError, match="RESOURCE_PAUSE"):
@@ -255,6 +255,6 @@ def test_compile_other_reservations_are_not_free_space(tmp_path, monkeypatch):
     args = fixture(tmp_path, monkeypatch)
     with pytest.raises(RuntimeError, match="RESOURCE_PAUSE"):
         compiled_context.compile_fold(
-            *args, outer=0, pool="D1", other_reserved_bytes=40_000_000_000
+            *args, outer=0, pool="D1", other_reserved_bytes=60_000_000_000
         )
     assert not args[-1].exists()

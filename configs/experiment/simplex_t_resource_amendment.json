@@ -1,18 +1,18 @@
 {
-  "amendment_id": "SIMPLEX_T_RESOURCE_ABSOLUTE_2026-09-06",
+  "amendment_id": "SIMPLEX_T_RESOURCE_RELAXATION_2026-09-07",
   "authority": "Explicit user steering during companion T0, before any scientific fit",
   "scope": "SIMPLEX-T resource limits only; Stage70-76 unchanged",
   "units": "GiB = 1073741824 bytes",
-  "min_host_available_bytes": 8589934592,
+  "min_host_available_bytes": 4294967296,
   "max_process_tree_rss_bytes": 4294967296,
-  "min_written_volume_free_bytes": 40000000000,
+  "min_written_volume_free_bytes": 20000000000,
   "max_compact_cache_bytes": 8589934592,
   "max_temporary_raw_bytes": 2147483648,
   "max_gpu_reserved_bytes": 9663676416,
   "max_cpu_threads": 4,
   "max_interop_threads": 2,
   "percentage_resource_limits": false,
-  "supersedes": "Latest user instruction: 40 decimal GB free after reservations replaces handoff disk percentages, prior 60 GiB and ACK 120 GB; other resource and scheduling constraints unchanged",
+  "supersedes": "Explicit user request to relax RAM and disk: 4 GiB available host RAM and 20 decimal GB free after pending output reservations replace SIMPLEX-T 8 GiB and 40 GB floors. Historical ACK and Stage70 policy unchanged; running processes retain their loaded policy until the next safe restart.",
   "scientific_recipe_changed": false,
   "source_handoff_modified": false
 }

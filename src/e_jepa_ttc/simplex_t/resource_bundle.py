@@ -79,7 +79,7 @@ def resource_bundle_members(
             or receipt.get("campaign_complete") is not False
             or receipt.get("observer_optimizer_updates") != 0
             or receipt.get("vram_measurement") is not None
-            or receipt.get("disk_floor_after_reservations_bytes") != 40_000_000_000
+            or receipt.get("disk_floor_after_reservations_bytes") != 20_000_000_000
             or receipt.get("timing_scope")
             != "INVOCATION_ADMISSION_LOADING_FITS_AND_PUBLICATION_NOT_OPTIMIZER_ONLY"
             or type(receipt.get("resume_requested")) is not bool

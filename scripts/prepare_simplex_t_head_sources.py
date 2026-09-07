@@ -36,8 +36,8 @@ def main() -> None:
         Path(paths["shared_coordination"]) / config["ack_filename"], config["ack_sha256"]
     )
     snapshot = admitted([args.output.parent])
-    if not snapshot["has_headroom"] or snapshot["host_available_bytes"] < 12 * 1024**3:
-        raise RuntimeError("RESOURCE_PAUSE: reserve4 GiB while retaining8 GiB available")
+    if not snapshot["has_headroom"] or snapshot["host_available_bytes"] < 8 * 1024**3:
+        raise RuntimeError("RESOURCE_PAUSE: reserve 4 GiB while retaining 4 GiB available")
     folds = {}
     for outer in range(3):
         folder = args.compiled_root / f"outer{outer}"

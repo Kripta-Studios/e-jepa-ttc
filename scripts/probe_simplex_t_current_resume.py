@@ -40,8 +40,8 @@ def main() -> None:
     if args.output.exists():
         raise FileExistsError("existing probe must not be repeated")
     snapshot = admitted([Path(paths["worktree"])])
-    if not snapshot["has_headroom"] or snapshot["host_available_bytes"] < 12 * 1024**3:
-        raise RuntimeError("reserve up to4 GiB allocation while retaining8 GiB host availability")
+    if not snapshot["has_headroom"] or snapshot["host_available_bytes"] < 8 * 1024**3:
+        raise RuntimeError("reserve up to 4 GiB allocation while retaining 4 GiB host availability")
     ancestry = ack["producers"]["authoritative_historical_manifest"]
     table = load_current_inputs(
         Path(ancestry["path"]).parent,

@@ -81,8 +81,8 @@ def main() -> None:
     if args.output.exists():
         raise FileExistsError("preserve existing download evidence")
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    if shutil.disk_usage(args.output.parent).free - 512 * 1024**2 < 40_000_000_000:
-        raise ValueError("40 GB free after bounded download reservation required")
+    if shutil.disk_usage(args.output.parent).free - 512 * 1024**2 < 20_000_000_000:
+        raise ValueError("20 GB free after bounded download reservation required")
     catalog_url = "https://nail-hnu.github.io/eAP_dataset/assets/data/release_catalog.json"
     response = requests.get(catalog_url, timeout=25)
     response.raise_for_status()

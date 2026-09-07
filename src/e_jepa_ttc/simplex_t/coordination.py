@@ -40,4 +40,4 @@ def shared_write_admission(free_bytes: int, reservations_bytes: int | None) -> b
         return False
     if min(free_bytes, reservations_bytes) < 0:
         raise ValueError("negative resource accounting")
-    return free_bytes - reservations_bytes >= 40_000_000_000
+    return free_bytes - reservations_bytes >= 20_000_000_000

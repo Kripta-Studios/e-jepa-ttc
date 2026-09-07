@@ -45,7 +45,7 @@ def test_resource_transport_preserves_all_declared_attempts(tmp_path, fault):
             execution_result_status=status,
             other_reserved_bytes=0,
             own_reserved_bytes=65536,
-            disk_floor_after_reservations_bytes=40000000000,
+            disk_floor_after_reservations_bytes=20000000000,
         )
         if i == 0:
             if fault == "freeze":

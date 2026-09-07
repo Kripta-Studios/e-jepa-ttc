@@ -25,12 +25,12 @@ def resource_headroom(
     if min([available_ram, process_tree_rss, *written_volume_free]) < 0:
         raise ValueError("resource counters must be nonnegative")
     reasons = []
-    if available_ram < 8 * 1024**3:
-        reasons.append("HOST_AVAILABLE_BELOW_8_GIB")
+    if available_ram < 4 * 1024**3:
+        reasons.append("HOST_AVAILABLE_BELOW_4_GIB")
     if process_tree_rss > 4 * 1024**3:
         reasons.append("PROCESS_TREE_RSS_ABOVE_4_GIB")
-    if any(free < 40_000_000_000 for free in written_volume_free):
-        reasons.append("WRITTEN_VOLUME_FREE_BELOW_40_GB")
+    if any(free < 20_000_000_000 for free in written_volume_free):
+        reasons.append("WRITTEN_VOLUME_FREE_BELOW_20_GB")
     return {"has_headroom": not reasons, "reasons": reasons}
 
 
@@ -138,7 +138,7 @@ def interface_status(paths: dict[str, Any]) -> dict[str, Any]:
             "interfaces": accepted["interfaces"],
             "scientific_run_enabled": False,
             "cpu_overlap_conditionally_authorized": accepted["resources"]["cpu_overlap_authorized"],
-            "disk_floor_bytes_latest_user_amendment": 40_000_000_000,
+            "disk_floor_bytes_latest_user_amendment": 20_000_000_000,
             "reason": (
                 "Role/time authority resolved; source parity and production integration "
                 "remain separate gates."

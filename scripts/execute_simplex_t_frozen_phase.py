@@ -142,7 +142,7 @@ def main() -> int:
                     failure=failure,
                     other_reserved_bytes=args.other_reserved_bytes,
                     own_reserved_bytes=args.own_reserved_bytes,
-                    disk_floor_after_reservations_bytes=40000000000,
+                    disk_floor_after_reservations_bytes=20000000000,
                     campaign_complete=False,
                 ),
             )

@@ -9,8 +9,8 @@ from e_jepa_ttc.simplex_t.coordination import shared_write_admission, verified_a
 
 
 def test_shared_disk_after_reservations():
-    assert shared_write_admission(93_000_000_000, 53_000_000_000)
-    assert not shared_write_admission(93_000_000_000, 53_000_000_001)
+    assert shared_write_admission(93_000_000_000, 73_000_000_000)
+    assert not shared_write_admission(93_000_000_000, 73_000_000_001)
     assert not shared_write_admission(165_000_000_000, None)
     assert shared_write_admission(93_000_000_000, 0)
 

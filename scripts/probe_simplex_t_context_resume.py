@@ -36,8 +36,8 @@ def main() -> None:
     paths = json.loads(args.local_paths.read_text(encoding="utf-8"))
     worktree = Path(paths["worktree"])
     snapshot = admitted([worktree])
-    if not snapshot["has_headroom"] or snapshot["host_available_bytes"] < 12 * 1024**3:
-        raise RuntimeError("RESOURCE_PAUSE: reserve4 GiB and retain8 GiB available")
+    if not snapshot["has_headroom"] or snapshot["host_available_bytes"] < 8 * 1024**3:
+        raise RuntimeError("RESOURCE_PAUSE: reserve 4 GiB and retain 4 GiB available")
     config = json.loads((worktree / "configs/experiment/simplex_t_coordination.json").read_text())
     ack = verified_ack(
         Path(paths["shared_coordination"]) / config["ack_filename"], config["ack_sha256"]

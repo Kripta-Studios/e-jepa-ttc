@@ -19,12 +19,12 @@ from e_jepa_ttc.artifacts.simplex_t_preflight import (
 def test_absolute_resource_floors():
     gib = 1024**3
     assert resource_headroom(
-        available_ram=8 * gib, process_tree_rss=4 * gib, written_volume_free=[40_000_000_000]
+        available_ram=4 * gib, process_tree_rss=4 * gib, written_volume_free=[20_000_000_000]
     )["has_headroom"]
     result = resource_headroom(
-        available_ram=8 * gib - 1,
+        available_ram=4 * gib - 1,
         process_tree_rss=4 * gib + 1,
-        written_volume_free=[40_000_000_000 - 1],
+        written_volume_free=[20_000_000_000 - 1],
     )
     assert len(result["reasons"]) == 3
 
