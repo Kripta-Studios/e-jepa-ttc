@@ -122,3 +122,55 @@ def test_numerical_failure_is_not_reported_as_success(tmp_path, monkeypatch):
             local, profile, sha256(profile), resource_ok=lambda: True, require_h16=True
         )
     assert calls == ["ancestry", "replay", "resume"]
+
+
+def test_missing_unit_evidence_rejected_before_heavy_reads(tmp_path, monkeypatch):
+    local, profile, calls = inputs(tmp_path, monkeypatch)
+    with pytest.raises(ValueError, match="WAITING_CURRENT_UNIT_QA"):
+        module.verify_component_profile(
+            local,
+            profile,
+            sha256(profile),
+            resource_ok=lambda: True,
+            require_h16=True,
+            require_unit_qa=True,
+        )
+    assert not calls
+
+
+@pytest.mark.parametrize("reject", [False, True])
+def test_unit_profile_is_actually_verified(tmp_path, monkeypatch, reject):
+    local, profile, calls = inputs(tmp_path, monkeypatch)
+    record = json.loads(profile.read_text(encoding="utf-8"))
+    record["unit_qa"] = {"root": ".", "pins": {}, "technical_ledger_sha256": "a" * 64}
+    profile.write_text(json.dumps(record), encoding="utf-8")
+
+    def verify(*args, **kwargs):
+        calls.append("unit_qa")
+        assert kwargs["technical_ledger_sha256"] == "a" * 64
+        if reject:
+            raise ValueError("unit source changed")
+        return {"fixture": "unit_qa"}
+
+    monkeypatch.setattr(module, "verify_companion_unit_qa", verify)
+    if reject:
+        with pytest.raises(ValueError, match="unit source changed"):
+            module.verify_component_profile(
+                local,
+                profile,
+                sha256(profile),
+                resource_ok=lambda: True,
+                require_h16=True,
+                require_unit_qa=True,
+            )
+    else:
+        result = module.verify_component_profile(
+            local,
+            profile,
+            sha256(profile),
+            resource_ok=lambda: True,
+            require_h16=True,
+            require_unit_qa=True,
+        )
+        assert result["unit_qa"] == {"fixture": "unit_qa"}
+    assert calls[-1] == "unit_qa"

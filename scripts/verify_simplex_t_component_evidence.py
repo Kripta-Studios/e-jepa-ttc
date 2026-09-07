@@ -23,6 +23,7 @@ def main() -> None:
     parser.add_argument("--other-reserved-bytes", type=int, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--require-h16", action="store_true")
+    parser.add_argument("--require-unit-qa", action="store_true")
     args = parser.parse_args()
     if args.output.exists():
         raise FileExistsError("component evidence report already exists")
@@ -48,6 +49,7 @@ def main() -> None:
         args.profile_sha256,
         resource_ok=resources,
         require_h16=args.require_h16,
+        require_unit_qa=args.require_unit_qa,
     )
     result["observed_seconds_excluding_imports"] = time.monotonic() - started
     write_new_json(args.output, result)
