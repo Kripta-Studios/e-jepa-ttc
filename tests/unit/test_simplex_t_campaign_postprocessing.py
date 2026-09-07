@@ -7,11 +7,12 @@ import pytest
 
 from e_jepa_ttc.artifacts.simplex_t_preflight import sha256
 from e_jepa_ttc.simplex_t import campaign_postprocessing as module
+from e_jepa_ttc.simplex_t.campaign_accounting import AccountingPins
 from e_jepa_ttc.simplex_t.stage_gate import CanonicalPublication
 
 
 @pytest.mark.parametrize("expanded", [False, True])
-@pytest.mark.parametrize("fault", ["none", "missing", "pause", "changed"])
+@pytest.mark.parametrize("fault", ["none", "missing", "pause", "changed", "accounting"])
 def test_assembly_preserves_all_required_components(tmp_path, monkeypatch, expanded, fault):
     seal = tmp_path / "seal.json"
     seal.write_text("synthetic fixture")
@@ -59,7 +60,15 @@ def test_assembly_preserves_all_required_components(tmp_path, monkeypatch, expan
         visits.append("interface")
         publish(output)
 
+    def account(**kwargs):
+        assert kwargs["phases"] is phases
+        assert kwargs["journal"] == seal
+        if fault == "accounting":
+            raise ValueError("unsettled work")
+        return {"fixture": True, "optimizer_updates_executed": 0}
+
     for name, method in (
+        ("verify_campaign_accounting", account),
         ("phase_bundle_members", lambda *args, **kwargs: {}),
         ("history_bundle_members", lambda *args, **kwargs: {}),
         ("verify_completed_scientific_graph", verify),
@@ -82,6 +91,7 @@ def test_assembly_preserves_all_required_components(tmp_path, monkeypatch, expan
         sources=None,
         history_pools={},
         phases=phases,
+        accounting_pins=AccountingPins(seal, sha256(seal), seal, sha256(seal), seal, sha256(seal)),
         expected_queries=pd.DataFrame(),
         load_verified_risk17=pd.DataFrame,
         validate_authority_and_qa=lambda: None,
@@ -91,7 +101,7 @@ def test_assembly_preserves_all_required_components(tmp_path, monkeypatch, expan
         with pytest.raises((ValueError, InterruptedError)):
             module.postprocess_completed_campaign(output, **kwargs)
         assert not (output / "POSTPROCESSING.json").exists()
-        if fault == "missing":
+        if fault in {"missing", "accounting"}:
             assert not output.exists()
     else:
         result = module.postprocess_completed_campaign(output, **kwargs)
@@ -101,7 +111,8 @@ def test_assembly_preserves_all_required_components(tmp_path, monkeypatch, expan
         assert not result["campaign_complete"] and not result["transport_bundle_complete"]
         assert len(verifies) == 2 and visits[-1] == "interface"
         inventory = result["output_inventory"]
-        assert inventory["files"] == (12 if expanded else 4)
+        assert inventory["files"] == (13 if expanded else 5)
+        assert result["campaign_accounting_sha256"] == sha256(output / "CAMPAIGN_ACCOUNTING.json")
         for name, pin in inventory["members"].items():
             assert sha256(output / name) == pin["sha256"]
             assert (output / name).stat().st_size == pin["bytes"]

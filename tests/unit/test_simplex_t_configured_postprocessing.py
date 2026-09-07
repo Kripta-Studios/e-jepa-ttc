@@ -86,6 +86,7 @@ def configured(tmp_path, monkeypatch):
     monkeypatch.setattr(module, "load_acknowledged_risk17", risk)
 
     def post(output, **kwargs):
+        assert kwargs["accounting_pins"] is args["accounting_pins"]
         assert kwargs["expected_queries"] is cohort
         kwargs["validate_authority_and_qa"]()
         assert kwargs["load_verified_risk17"]().equals(cohort)
@@ -103,6 +104,7 @@ def configured(tmp_path, monkeypatch):
         freeze_sha256=sha256(freeze),
         roots={"work": tmp_path},
         phases={},
+        accounting_pins=object(),
         resource_ok=lambda: True,
     )
     return tmp_path / "output", args, record, receipt, calls

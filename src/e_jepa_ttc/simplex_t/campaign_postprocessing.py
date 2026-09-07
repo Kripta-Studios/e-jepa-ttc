@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable
+from dataclasses import asdict
 from pathlib import Path
 from typing import TypedDict
 
@@ -10,6 +11,7 @@ import pandas as pd
 
 from e_jepa_ttc.artifacts.simplex_t_preflight import sha256, write_new_json
 
+from .campaign_accounting import AccountingPins, verify_campaign_accounting
 from .campaign_completion import verify_completed_scientific_graph
 from .campaign_sources import CampaignSources
 from .candidate_interface import publish_candidate_interface
@@ -40,6 +42,7 @@ def postprocess_completed_campaign(
     sources: CampaignSources,
     history_pools: dict[str, HistoryPoolPins],
     phases: dict[str, CanonicalPublication],
+    accounting_pins: AccountingPins,
     expected_queries: pd.DataFrame,
     load_verified_risk17: Callable[[], pd.DataFrame],
     validate_authority_and_qa: Callable[[], None],
@@ -51,7 +54,7 @@ def postprocess_completed_campaign(
     the graph verifier derives practical gates from canonical predictions. A
     resource interruption preserves partial output and requires a new output
     directory for analysis retry, not refitting. Final transport packaging and
-    full technical/resource accounting remain distinct required delivery steps.
+    observed resource accounting remain distinct required delivery steps.
     """
     work = roots["work"].resolve(strict=True)
     if output.exists() or output.resolve() == work or not output.resolve().is_relative_to(work):
@@ -71,6 +74,14 @@ def postprocess_completed_campaign(
         )
 
     coverage = verify()
+    accounting = verify_campaign_accounting(
+        **asdict(accounting_pins),
+        freeze_sha256=freeze_sha256,
+        phases=phases,
+        work_root=work,
+        verify_completed_graph=verify,
+        resource_ok=resource_ok,
+    )
     history_members = history_bundle_members(
         history_pools,
         work_root=work,
@@ -87,6 +98,7 @@ def postprocess_completed_campaign(
     )
     output.mkdir(parents=True)
     write_new_json(output / "SCIENTIFIC_GRAPH_COVERAGE.json", coverage)
+    write_new_json(output / "CAMPAIGN_ACCOUNTING.json", accounting)
     analyses, weights = {}, {}
     for stage in sorted(phases):
         if not resource_ok():
@@ -152,6 +164,18 @@ def postprocess_completed_campaign(
     )
     if verify() != coverage:
         raise ValueError("scientific graph changed during postprocessing")
+    if (
+        verify_campaign_accounting(
+            **asdict(accounting_pins),
+            freeze_sha256=freeze_sha256,
+            phases=phases,
+            work_root=work,
+            verify_completed_graph=verify,
+            resource_ok=resource_ok,
+        )
+        != accounting
+    ):
+        raise ValueError("optimizer accounting changed during postprocessing")
     phase_members = phase_bundle_members(
         phases,
         freeze_sha256=freeze_sha256,
@@ -164,6 +188,7 @@ def postprocess_completed_campaign(
         "status": "SEALED_ANALYSES_WEIGHTS_INTERFACE_ASSEMBLED_NOT_TRANSPORT_DELIVERY",
         "freeze_sha256": freeze_sha256,
         "graph_coverage_sha256": sha256(output / "SCIENTIFIC_GRAPH_COVERAGE.json"),
+        "campaign_accounting_sha256": sha256(output / "CAMPAIGN_ACCOUNTING.json"),
         "analyses": analyses,
         "compact_weights": weights,
         "three_seed": three_seed,
@@ -188,6 +213,7 @@ def postprocess_completed_campaign(
         "scientific_fits_completed": coverage["fits_completed"],
         "scientific_updates_completed": coverage["scientific_updates_completed"],
         "optimizer_updates_executed": 0,
+        "optimizer_work_accounting_verified": True,
         "technical_ledger_and_resource_accounting_complete": False,
         "transport_bundle_complete": False,
         "campaign_complete": False,

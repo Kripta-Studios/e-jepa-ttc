@@ -9,6 +9,7 @@ from pathlib import Path
 import torch
 
 from e_jepa_ttc.artifacts.simplex_t_preflight import sha256
+from e_jepa_ttc.simplex_t.campaign_accounting import AccountingPins
 from e_jepa_ttc.simplex_t.configured_postprocessing import postprocess_configured_campaign
 from e_jepa_ttc.simplex_t.coordination import shared_write_admission
 from e_jepa_ttc.simplex_t.lifecycle import admitted
@@ -40,9 +41,28 @@ def main() -> int:
         "roots",
         "output",
         "publications",
+        "accounting",
     }
-    if set(config) != required or config["schema"] != "simplex_t_postprocessing_launch_v1":
+    if set(config) != required or config["schema"] != "simplex_t_postprocessing_launch_v2":
         raise ValueError("unrecognized postprocessing launch schema")
+    evidence = config["accounting"]
+    if set(evidence) != {
+        "journal",
+        "journal_sha256",
+        "reconciliation",
+        "reconciliation_sha256",
+        "ledger",
+        "ledger_sha256",
+    }:
+        raise ValueError("exact physical and technical accounting pins required")
+    accounting = AccountingPins(
+        journal=Path(evidence["journal"]),
+        journal_sha256=evidence["journal_sha256"],
+        reconciliation=Path(evidence["reconciliation"]),
+        reconciliation_sha256=evidence["reconciliation_sha256"],
+        ledger=Path(evidence["ledger"]),
+        ledger_sha256=evidence["ledger_sha256"],
+    )
     stages = set(config["publications"])
     if "T2" not in stages or not stages <= {"T2", "T3", "T4", "T5"}:
         raise ValueError("registered sealed publications including T2 required")
@@ -84,6 +104,7 @@ def main() -> int:
             freeze_sha256=config["freeze_sha256"],
             roots=roots,
             phases=phases,
+            accounting_pins=accounting,
             resource_ok=resource_ok,
         )
     except (InterruptedError, RuntimeError) as error:

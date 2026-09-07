@@ -10,6 +10,7 @@ import pandas as pd
 
 from e_jepa_ttc.artifacts.simplex_t_preflight import sha256
 
+from .campaign_accounting import AccountingPins
 from .campaign_postprocessing import postprocess_completed_campaign
 from .configuration_preflight import open_acknowledged_source_configuration
 from .frozen_history import frozen_history_pools
@@ -32,6 +33,7 @@ def postprocess_configured_campaign(
     freeze_sha256: str,
     roots: dict[str, Path],
     phases: dict[str, CanonicalPublication],
+    accounting_pins: AccountingPins,
     resource_ok: Callable[[], bool],
 ) -> dict:
     """Assemble T6 analysis inputs without accepting caller-supplied targets or gates.
@@ -41,7 +43,7 @@ def postprocess_configured_campaign(
     pins. The downstream graph check requires every enabled phase before analyses.
     Source ownership is released on success, pause and failure. Partial analysis
     output remains for audit; retry uses a new output directory, not new fits.
-    This does not replace final transport packaging and technical accounting.
+    This does not replace final transport packaging and observed resource accounting.
     """
     work = Path(json.loads(local_paths.read_text(encoding="utf-8"))["worktree"]).resolve(
         strict=True
@@ -152,6 +154,7 @@ def postprocess_configured_campaign(
             sources=sources,
             history_pools=frozen_history_pools(sources, record, roots=roots),
             phases=phases,
+            accounting_pins=accounting_pins,
             expected_queries=cohort,
             load_verified_risk17=risk17,
             validate_authority_and_qa=validate,

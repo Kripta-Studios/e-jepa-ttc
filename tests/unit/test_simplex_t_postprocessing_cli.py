@@ -17,7 +17,15 @@ def entry(tmp_path, monkeypatch):
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     config = {
-        "schema": "simplex_t_postprocessing_launch_v1",
+        "schema": "simplex_t_postprocessing_launch_v2",
+        "accounting": {
+            "journal": "fits/PHYSICAL_WORK.json",
+            "journal_sha256": "1" * 64,
+            "reconciliation": "reconciliation.json",
+            "reconciliation_sha256": "2" * 64,
+            "ledger": "ledger.json",
+            "ledger_sha256": "3" * 64,
+        },
         "local_paths": "local.json",
         "source_configuration": "sources.json",
         "source_configuration_sha256": "a" * 64,
@@ -73,6 +81,8 @@ def test_postprocessing_cli_passes_real_configured_inputs(entry, monkeypatch, ca
         assert kwargs["source_configuration_sha256"] == "a" * 64
         assert set(kwargs["phases"]) == {"T2"}
         assert kwargs["phases"]["T2"].endpoints_sha256 == "e" * 64
+        assert kwargs["accounting_pins"].journal == Path("fits/PHYSICAL_WORK.json")
+        assert kwargs["accounting_pins"].ledger_sha256 == "3" * 64
         assert kwargs["resource_ok"]()
         return {"status": "WIRED", "campaign_complete": False}
 
@@ -81,7 +91,7 @@ def test_postprocessing_cli_passes_real_configured_inputs(entry, monkeypatch, ca
     assert json.loads(capsys.readouterr().out)["campaign_complete"] is False
 
 
-@pytest.mark.parametrize("mutation", ["hash", "schema", "stage", "no_t2", "extra"])
+@pytest.mark.parametrize("mutation", ["hash", "schema", "stage", "no_t2", "extra", "accounting"])
 def test_invalid_launch_fails_before_postprocessing(entry, monkeypatch, mutation):
     module, launch, config, argv = entry
     if mutation == "hash":
@@ -93,6 +103,8 @@ def test_invalid_launch_fails_before_postprocessing(entry, monkeypatch, mutation
             config["publications"]["T7"] = config["publications"]["T2"]
         elif mutation == "no_t2":
             config["publications"] = {}
+        elif mutation == "accounting":
+            config["accounting"].pop("journal_sha256")
         else:
             config["caller_targets"] = "not allowed"
         launch.write_text(json.dumps(config), encoding="utf-8")
