@@ -33,7 +33,13 @@ class WorkBudget:
         self.path, self.graph, self.technical_reserved = path, graph, technical_reserved
 
     def transition(
-        self, operation: str, key: str, completed: int, *, checkpoint_sha256: str | None = None
+        self,
+        operation: str,
+        key: str,
+        completed: int,
+        *,
+        checkpoint_sha256: str | None = None,
+        checkpoint_state_sha256: str | None = None,
     ) -> dict[str, Any]:
         """Begin a chunk, settle a safe checkpoint, or recover uncertain crashed work.
 
@@ -47,6 +53,12 @@ class WorkBudget:
             raise ValueError("invalid fit/progress")
         if operation not in {"begin", "checkpoint", "recover"}:
             raise ValueError("unknown work-budget operation")
+        if checkpoint_state_sha256 is not None and (
+            operation == "begin"
+            or len(checkpoint_state_sha256) != 64
+            or set(checkpoint_state_sha256) - set("0123456789abcdef")
+        ):
+            raise ValueError("invalid checkpoint training-state digest")
         if operation != "begin" and (
             checkpoint_sha256 is None
             or len(checkpoint_sha256) != 64
@@ -86,6 +98,8 @@ class WorkBudget:
                 if operation == "recover":
                     fit["uncertain_lost_upper"] += pending[1] - completed
                 fit.update(completed=completed, pending=None, checkpoint_sha256=checkpoint_sha256)
+                if checkpoint_state_sha256 is not None:
+                    fit["checkpoint_state_sha256"] = checkpoint_state_sha256
             lost_upper = sum(f["uncertain_lost_upper"] for f in fits.values())
             required = sum(self.graph.values()) + self.technical_reserved + lost_upper
             if required > 250000:
@@ -125,6 +139,16 @@ class EngineWorkJournal:
         self.saved = 0
         self.started = False
 
+    @staticmethod
+    def _training_state_digest(checkpoint: Path) -> str:
+        # A final status-only save may follow the update100/2500 safe checkpoint.
+        # All model, optimizer, RNG, identity and progress-log state remains bound.
+        from .training import load_checkpoint, state_digest
+
+        state = load_checkpoint(checkpoint)
+        state.pop("status", None)
+        return state_digest(state)
+
     def start(self, completed: int, checkpoint: Path) -> None:
         """Reconcile a validated resume checkpoint without dropping uncertain work."""
         if self.started or not checkpoint.is_file():
@@ -140,10 +164,18 @@ class EngineWorkJournal:
             fit = state["fits"].get(self.key, fit)
         if fit["pending"] is not None:
             self.budget.transition(
-                "recover", self.key, completed, checkpoint_sha256=sha256(checkpoint)
+                "recover",
+                self.key,
+                completed,
+                checkpoint_sha256=sha256(checkpoint),
+                checkpoint_state_sha256=self._training_state_digest(checkpoint),
             )
         elif fit["completed"] != completed:
             raise ValueError("checkpoint and settled journal progress disagree")
+        elif "checkpoint_sha256" in fit and fit["checkpoint_sha256"] != sha256(checkpoint):
+            expected = fit.get("checkpoint_state_sha256")
+            if expected is None or self._training_state_digest(checkpoint) != expected:
+                raise ValueError("checkpoint training state differs from settled journal")
         self.saved, self.started = completed, True
 
     def before_update(self, completed: int) -> None:
@@ -170,6 +202,10 @@ class EngineWorkJournal:
                 raise ValueError("checkpoint progress without a reservation")
             return
         self.budget.transition(
-            "checkpoint", self.key, completed, checkpoint_sha256=sha256(checkpoint)
+            "checkpoint",
+            self.key,
+            completed,
+            checkpoint_sha256=sha256(checkpoint),
+            checkpoint_state_sha256=self._training_state_digest(checkpoint),
         )
         self.saved, self.active_end = completed, None
