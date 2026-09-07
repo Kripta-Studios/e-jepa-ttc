@@ -40,7 +40,9 @@ class FrozenFile:
 def verify_code_commit(files: list[FrozenFile], roots: dict[str, Path], commit: str) -> None:
     """Bind pinned companion code bytes to an existing Git commit, read-only.
 
-    Unrelated untracked or modified files do not invalidate this scoped check.
+    Every Python/PowerShell source under src/scripts must be pinned, including
+    newly added files; untracked executable code cannot be silently omitted.
+    Unrelated untracked documents do not invalidate this scoped check.
     Code must be inside the explicit companion ``work`` root; imported producer
     artifacts have separate producer pins, not a claim of belonging to this commit.
     No checkout, index update, filter, or repository configuration is performed.
@@ -61,9 +63,32 @@ def verify_code_commit(files: list[FrozenFile], roots: dict[str, Path], commit: 
         raise ValueError("companion work root must be the Git worktree root")
     if git("rev-parse", "--verify", f"{commit}^{{commit}}").decode().strip() != commit:
         raise ValueError("declared source object is not an exact commit")
+    committed_paths = {
+        item.decode("utf-8")
+        for item in git("ls-tree", "-r", "-z", "--name-only", commit, "--", "src", "scripts").split(
+            b"\0"
+        )
+        if item
+    }
+    local_paths = {
+        path.relative_to(work).as_posix()
+        for folder in ("src", "scripts")
+        if (work / folder).exists()
+        for path in (work / folder).rglob("*")
+        if path.is_file() and path.suffix.lower() in {".py", ".ps1", ".psm1"}
+    }
+    required_code = {
+        relative
+        for relative in committed_paths | local_paths
+        if Path(relative).suffix.lower() in {".py", ".ps1", ".psm1"}
+    }
     code = [pin for pin in files if pin.category == "code"]
     if not code:
         raise ValueError("scientific freeze requires committed code pins")
+    declared_code = {Path(pin.relative_path).as_posix() for pin in code if pin.root == "work"}
+    missing = sorted(required_code - declared_code)
+    if missing:
+        raise ValueError(f"scientific freeze omits executable source inventory: {missing[:8]}")
     for pin in code:
         relative = Path(pin.relative_path)
         if pin.root != "work" or relative.is_absolute() or relative.drive or ".." in relative.parts:
