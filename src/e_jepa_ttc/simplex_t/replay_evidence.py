@@ -10,6 +10,91 @@ import numpy as np
 from e_jepa_ttc.artifacts.simplex_t_preflight import sha256
 
 
+def verify_coherent_replay(
+    work: Path,
+    historical_report: Path,
+    historical_sha256: str,
+    coherent_report: Path,
+    coherent_sha256: str,
+) -> dict:
+    """Recompare saved coherent outputs to the same-runtime diagnostic arrays.
+
+    This checks the original 5/6-row QA layout, not production H16 batch parity.
+    It does not rerun experts or claim that current source code was used by an
+    old QA run; production code hashes require separate frozen identity checks.
+    """
+    verify_historical_replay(work, historical_report, historical_sha256)
+    if coherent_report.stat().st_size > 1_048_576 or sha256(coherent_report) != coherent_sha256:
+        raise ValueError("coherent replay report changed")
+    historical = json.loads(historical_report.read_text(encoding="utf-8"))
+    record = json.loads(coherent_report.read_text(encoding="utf-8"))
+    rows = record["results"]
+    families = historical["families"]
+    if (
+        record["status"] != "COHERENT_FP32_CURRENT_EXTRACTOR_CHECKED"
+        or record["rows"] != 64
+        or record["all_exact"] is not True
+        or record["optimizer_updates"] != 0
+        or len(rows) != 12
+        or {r["family"] for r in rows} != set(families)
+    ):
+        raise ValueError("coherent replay coverage differs")
+    runtime = record["runtime"]
+    if (
+        runtime["precision"] != "FP32"
+        or runtime["cudnn_tf32"] is not False
+        or runtime["matmul_tf32"] is not False
+    ):
+        raise ValueError("coherent runtime differs from FP32 without TF32")
+    sources = {Path(k).name: work / k for k in historical["sources"]}
+    diagnostic = json.loads(sources["REPLAY_DIAGNOSTIC.json"].read_text(encoding="utf-8"))
+    producers = {r["family"]: r["checkpoint_sha256"] for r in diagnostic["results"]}
+    for row in rows:
+        family = row["family"]
+        name = family.replace("/", "_") + ".npz"
+        output = coherent_report.parent / name
+        if (
+            output.stat().st_size > 16_777_216
+            or sha256(output) != row["output_sha256"]
+            or row["checkpoint_sha256"] != producers[family]
+        ):
+            raise ValueError("coherent output or producer binding changed")
+        count = len(families[family])
+        if row["rows"] != count:
+            raise ValueError("coherent family count differs")
+        with (
+            np.load(output, allow_pickle=False) as new,
+            np.load(sources[name], allow_pickle=False) as old,
+        ):
+            if new["tokens"].tolist() != families[family]:
+                raise ValueError("coherent query order differs")
+            for new_key, old_key in (
+                ("expert_ttc", "actual_ttc"),
+                ("pair_features", "pair_features"),
+            ):
+                if not np.array_equal(new[new_key], old[old_key]):
+                    raise ValueError("coherent same-runtime array parity failed")
+            for key, shape, dtype in (
+                ("features145", (count, 145), np.float32),
+                ("expert_ttc", (count, 3), np.float32),
+                ("pair_features", (count, 133), np.float32),
+                ("known", (count, 2), np.bool_),
+            ):
+                array = new[key]
+                if array.shape != shape or array.dtype != dtype or not np.isfinite(array).all():
+                    raise ValueError("coherent feature schema or finite-value check failed")
+    return {
+        "status": "COHERENT_FP32_SAVED_ARRAYS_REVERIFIED",
+        "queries": 64,
+        "families": 12,
+        "historical_report_sha256": historical_sha256,
+        "coherent_report_sha256": coherent_sha256,
+        "new_optimizer_updates": 0,
+        "scientific_stage_authorized": False,
+        "scope": "Saved 5/6-row current QA only; no production H16 numerical parity claim.",
+    }
+
+
 def verify_historical_replay(work: Path, report: Path, expected_sha256: str) -> dict:
     """Check pinned diagnostic payloads and all twelve historical producer families.
 
