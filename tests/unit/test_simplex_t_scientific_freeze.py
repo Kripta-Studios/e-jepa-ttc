@@ -4,11 +4,13 @@ import json
 from dataclasses import asdict
 from hashlib import sha256
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
 from e_jepa_ttc.simplex_t.arms import resolve_arm
 from e_jepa_ttc.simplex_t.freeze_integrity import REQUIRED_CATEGORIES, FrozenFile
+from e_jepa_ttc.simplex_t.frozen_phase import run_frozen_phase
 from e_jepa_ttc.simplex_t.phase_manifest import fit_key
 from e_jepa_ttc.simplex_t.registry import registered_graph
 from e_jepa_ttc.simplex_t.scientific_freeze import (
@@ -131,3 +133,68 @@ def test_semantic_rejection_before_publication(tmp_path: Path, reject_call: int)
         publish_scientific_freeze(output, **inputs, validate_prerequisites=validate)
     assert not output.exists()
     assert not output.with_suffix(".lock").exists()
+
+
+@pytest.mark.parametrize("mode", ["resource_pause", "gate", "ledger", "old_dev", "fit_boundary"])
+def test_freeze_to_actual_queue(tmp_path: Path, monkeypatch, mode: str) -> None:
+    inputs = fixture_inputs(tmp_path)
+    path = tmp_path / "freeze.json"
+    record = publish_scientific_freeze(path, **inputs, validate_prerequisites=lambda: None)
+    availability = record["source_contract"]["availability"]
+    released, loaded, fitted = [], [], []
+
+    def source(spec, role):
+        loaded.append(role)
+        digest = "a" * 64 if role == "inner_oof" else "b" * 64
+        if mode == "old_dev" and role == "outer_dev":
+            digest = "c" * 64
+        return SimpleNamespace(identity_sha256=digest)
+
+    sources = SimpleNamespace(
+        graph=registered_graph(**availability), source=source, release=lambda: released.append(True)
+    )
+
+    def gate(stage, flags):
+        assert stage == "T2" and flags == availability
+        if mode == "gate":
+            raise ValueError("unresolved scientific gate")
+
+    def resources():
+        if mode == "ledger":
+            (tmp_path / "qa.json").write_text("{}", encoding="utf-8")
+        return mode != "resource_pause"
+
+    def paused_fit(*args, **kwargs):
+        assert mode == "fit_boundary"
+        assert loaded == ["inner_oof", "outer_dev"]
+        assert kwargs["journal"].budget.technical_reserved == 20
+        fitted.append(True)
+        return {"status": "PAUSED_RESOURCE", "completed_updates": 0}
+
+    monkeypatch.setattr("e_jepa_ttc.simplex_t.queue.fit", paused_fit)
+    options = dict(
+        sources=sources,
+        freeze=path,
+        freeze_sha256=sha256(path.read_bytes()).hexdigest(),
+        roots=inputs["roots"],
+        stage="T2",
+        availability=availability,
+        validate_authority_and_qa=lambda: None,
+        validate_stage_gate=gate,
+        resource_ok=resources,
+        resume=False,
+    )
+    output = tmp_path / "execution"
+    if mode in {"gate", "ledger", "old_dev"}:
+        with pytest.raises(ValueError):
+            run_frozen_phase(output, **options)
+        assert not fitted
+    else:
+        result = run_frozen_phase(output, **options)
+        assert result["status"] == "PAUSED_RESOURCE"
+        assert result["contract"]["technical_reserved"] == 20
+        assert result["contract"]["freeze"] == options["freeze_sha256"]
+    assert released == [True]
+    if mode in {"resource_pause", "gate", "ledger"}:
+        assert not loaded
+    assert not (output / "T2_ENDPOINTS.json").exists()
