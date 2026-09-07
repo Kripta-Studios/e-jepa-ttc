@@ -197,3 +197,50 @@ def test_identity_preparation_requires_explicit_reservations(entry, monkeypatch)
     with pytest.raises(SystemExit) as error:
         entry.main()
     assert error.value.code == 2
+
+
+@pytest.mark.parametrize(
+    "outcome",
+    ["pause_exception", "pause_runtime", "lineage", "io", "unexpected", "complete"],
+)
+def test_source_preparation_only_resource_pauses_are_retryable(entry, monkeypatch, outcome):
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "runner",
+            "prepare",
+            "--source-identities",
+            "--local-paths",
+            "local.json",
+            "--source-config",
+            "sources.json",
+            "--source-config-sha256",
+            "a" * 64,
+            "--output",
+            "prepared",
+            "--other-reserved-bytes",
+            "20000000000",
+        ],
+    )
+
+    def prepare(*args, **kwargs):
+        if outcome == "pause_exception":
+            raise InterruptedError("PAUSED_RESOURCE: before source loading")
+        if outcome == "pause_runtime":
+            raise RuntimeError("RESOURCE_PAUSE: available host RAM")
+        if outcome == "lineage":
+            raise RuntimeError("producer ancestry differs")
+        if outcome == "io":
+            raise InterruptedError("unclassified interrupted I/O")
+        return {
+            "status": "SOURCE_IDENTITIES_COMPLETE_NOT_SCIENTIFIC_FREEZE"
+            if outcome == "complete"
+            else "PREPARING"
+        }
+
+    monkeypatch.setattr(entry, "prepare_configured_sources", prepare)
+    if outcome in {"lineage", "io", "unexpected"}:
+        with pytest.raises((RuntimeError, InterruptedError, ValueError)):
+            entry.main()
+    else:
+        assert entry.main() == (0 if outcome == "complete" else 3)

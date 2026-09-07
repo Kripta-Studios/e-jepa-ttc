@@ -61,14 +61,30 @@ def main() -> int:
             or args.reuse_d0_compiled_sha256 is not None
         ):
             parser.error("source identities require prepare, source pins, output and reservations")
-        result = prepare_configured_sources(
-            args.local_paths,
-            args.source_config,
-            args.source_config_sha256,
-            args.output,
-            other_reserved_bytes=args.other_reserved_bytes,
-            resume=args.resume,
-        )
+        try:
+            result = prepare_configured_sources(
+                args.local_paths,
+                args.source_config,
+                args.source_config_sha256,
+                args.output,
+                other_reserved_bytes=args.other_reserved_bytes,
+                resume=args.resume,
+            )
+        except (InterruptedError, RuntimeError) as error:
+            if not str(error).startswith(("PAUSED_RESOURCE:", "RESOURCE_PAUSE:")):
+                raise
+            result = {
+                "status": "PAUSED_RESOURCE",
+                "reason": str(error),
+                "output": str(args.output),
+                "optimizer_updates": 0,
+                "scientific_freeze": False,
+            }
+        if result["status"] not in {
+            "PAUSED_RESOURCE",
+            "SOURCE_IDENTITIES_COMPLETE_NOT_SCIENTIFIC_FREEZE",
+        }:
+            raise ValueError("source preparation returned an unexpected terminal status")
         print(json.dumps(result, indent=2))
         return 3 if result["status"] == "PAUSED_RESOURCE" else 0
     if args.source_config is not None or args.source_config_sha256 is not None:
