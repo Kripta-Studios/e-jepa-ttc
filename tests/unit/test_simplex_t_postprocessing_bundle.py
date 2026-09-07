@@ -7,6 +7,7 @@ import pytest
 
 from e_jepa_ttc.simplex_t import postprocessing_bundle as module
 from e_jepa_ttc.simplex_t.bundle_creation import BundleMember, create_verified_bundle
+from e_jepa_ttc.simplex_t.campaign_accounting import AccountingPins
 from e_jepa_ttc.simplex_t.postprocessing_bundle import postprocessing_bundle_members
 from e_jepa_ttc.simplex_t.postprocessing_inventory import inventory_postprocessing
 
@@ -28,6 +29,11 @@ from e_jepa_ttc.simplex_t.postprocessing_inventory import inventory_postprocessi
         "phase_extra",
         "history_omitted",
         "history_path",
+        "accounting_missing",
+        "accounting_hash",
+        "accounting_changed",
+        "accounting_unverified",
+        "accounting_actual",
     ],
 )
 def test_publication_to_transport(tmp_path, monkeypatch, fault):
@@ -35,6 +41,30 @@ def test_publication_to_transport(tmp_path, monkeypatch, fault):
     output.mkdir()
     data = output / "weights.npz"
     data.write_bytes(b"synthetic fixture weights")
+    accounting = {"fixture": True, "optimizer_updates_executed": 0}
+    receipt = output / "CAMPAIGN_ACCOUNTING.json"
+    receipt.write_text(json.dumps(accounting), encoding="utf-8")
+    accounting_hash = hashlib.sha256(receipt.read_bytes()).hexdigest()
+    evidence = tmp_path / "evidence.json"
+    evidence.write_text("{}", encoding="utf-8")
+    evidence_hash = hashlib.sha256(evidence.read_bytes()).hexdigest()
+    accounting_pins = AccountingPins(
+        evidence, evidence_hash, evidence, evidence_hash, evidence, evidence_hash
+    )
+
+    def verify_accounting(**kwargs):
+        assert kwargs["journal"] == evidence
+        if fault == "accounting_actual":
+            raise ValueError("actual journal not settled")
+        return accounting
+
+    monkeypatch.setattr(module, "verify_campaign_accounting", verify_accounting)
+    monkeypatch.setattr(module, "technical_bundle_members", lambda *a, **kw: {})
+    if fault == "accounting_missing":
+        receipt.unlink()
+    elif fault == "accounting_changed":
+        receipt.write_text('{"fixture": false}', encoding="utf-8")
+        accounting_hash = hashlib.sha256(receipt.read_bytes()).hexdigest()
     prediction = tmp_path / "predictions.parquet"
     prediction.write_bytes(b"fixture prediction bytes; graph verifier tested separately")
     member = BundleMember(
@@ -75,6 +105,8 @@ def test_publication_to_transport(tmp_path, monkeypatch, fault):
         "output_inventory": inventory_postprocessing(output, resource_ok=lambda: True),
         "phase_payload_inventory": phase_pins,
         "history_payload_inventory": history_pins,
+        "campaign_accounting_sha256": "f" * 64 if fault == "accounting_hash" else accounting_hash,
+        "optimizer_work_accounting_verified": fault != "accounting_unverified",
     }
     manifest = output / "POSTPROCESSING.json"
     payload = json.dumps(document).encode()
@@ -96,6 +128,7 @@ def test_publication_to_transport(tmp_path, monkeypatch, fault):
             work_root=tmp_path,
             phases={},
             history_pools={},
+            accounting_pins=accounting_pins,
             verify_completed_graph=lambda: {},
             validate_scientific_authority=lambda: None,
             resource_ok=lambda: fault != "pause",
@@ -116,5 +149,5 @@ def test_publication_to_transport(tmp_path, monkeypatch, fault):
         validate_inventory_authority=verify,
         resource_ok=lambda: True,
     )
-    assert result["members"] == 4
+    assert result["members"] == 8
     assert result["optimizer_updates"] == 0

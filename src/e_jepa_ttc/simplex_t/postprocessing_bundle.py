@@ -5,14 +5,17 @@ from __future__ import annotations
 import hashlib
 import json
 from collections.abc import Callable
+from dataclasses import asdict
 from pathlib import Path
 
 from .bundle_creation import BundleMember
 from .bundle_integrity import validate_bundle_inventory
+from .campaign_accounting import AccountingPins, verify_campaign_accounting
 from .history_bundle import HistoryPoolPins, history_bundle_members
 from .phase_bundle import phase_bundle_members
 from .postprocessing_inventory import inventory_postprocessing
 from .stage_gate import CanonicalPublication
+from .technical_bundle import technical_bundle_members
 
 
 def postprocessing_bundle_members(
@@ -23,6 +26,7 @@ def postprocessing_bundle_members(
     work_root: Path,
     phases: dict[str, CanonicalPublication],
     history_pools: dict[str, HistoryPoolPins],
+    accounting_pins: AccountingPins,
     verify_completed_graph: Callable[[], dict],
     validate_scientific_authority: Callable[[], None],
     resource_ok: Callable[[], bool],
@@ -30,7 +34,7 @@ def postprocessing_bundle_members(
     """Rehash all owned outputs and include the pinned manifest in the archive.
 
     This supplies postprocessing and all registered phase publications. The
-    caller must separately include provenance, accounting
+    caller must separately include full scientific provenance, observed resource evidence
     and reports, and repeat this validation in the ZIP authority callback.
     No fitting, output writes or campaign-completion inference occurs here.
     """
@@ -66,6 +70,44 @@ def postprocessing_bundle_members(
     )
     if actual != document.get("output_inventory"):
         raise ValueError("postprocessing output inventory differs")
+    accounting = verify_campaign_accounting(
+        **asdict(accounting_pins),
+        freeze_sha256=freeze_sha256,
+        phases=phases,
+        work_root=work,
+        verify_completed_graph=verify_completed_graph,
+        resource_ok=resource_ok,
+    )
+    accounting_name = "CAMPAIGN_ACCOUNTING.json"
+    pin = actual["members"].get(accounting_name)
+    if (
+        pin is None
+        or pin["sha256"] != document.get("campaign_accounting_sha256")
+        or document.get("optimizer_work_accounting_verified") is not True
+        or pin["bytes"] > 8_388_608
+    ):
+        raise ValueError("postprocessing requires the bound optimizer accounting receipt")
+    if json.loads((manifest.parent / accounting_name).read_text(encoding="utf-8")) != accounting:
+        raise ValueError("postprocessing accounting differs from actual work evidence")
+    accounting_members = {}
+    for name in ("journal", "reconciliation", "ledger"):
+        path = getattr(accounting_pins, name).resolve(strict=True)
+        digest = getattr(accounting_pins, name + "_sha256")
+        if not path.is_relative_to(work):
+            raise ValueError("accounting evidence outside companion worktree")
+        # The real accounting reader has just verified these exact bytes. ZIP
+        # construction also rehashes every member and repeats this authority check.
+        accounting_members[f"accounting/{name}.json"] = BundleMember(
+            path, digest, path.stat().st_size
+        )
+    technical_members = technical_bundle_members(
+        accounting_pins.reconciliation,
+        reconciliation_sha256=accounting_pins.reconciliation_sha256,
+        ledger=accounting_pins.ledger,
+        ledger_sha256=accounting_pins.ledger_sha256,
+        work_root=work,
+        resource_ok=resource_ok,
+    )
     # Regenerate from scientific publications, never follow caller-entered paths
     # in the serialized inventory before establishing their exact correspondence.
     phase_members = phase_bundle_members(
@@ -119,5 +161,11 @@ def postprocessing_bundle_members(
     if members.keys() & history_members.keys():
         raise ValueError("history and publication archive names collide")
     members.update(history_members)
+    if members.keys() & accounting_members.keys():
+        raise ValueError("accounting and publication archive names collide")
+    members.update(accounting_members)
+    if members.keys() & technical_members.keys():
+        raise ValueError("technical evidence and publication archive names collide")
+    members.update(technical_members)
     validate_bundle_inventory({name: member.sha256 for name, member in members.items()})
     return members
