@@ -24,6 +24,7 @@ def main() -> int:
     parser.add_argument("--other-reserved-bytes", type=int, required=True)
     parser.add_argument("--own-reserved-bytes", type=int, required=True)
     parser.add_argument("--resume", action="store_true")
+    parser.add_argument("--verify-only", action="store_true")
     args = parser.parse_args()
     if args.other_reserved_bytes < 0 or args.own_reserved_bytes < 65536:
         parser.error(
@@ -54,7 +55,11 @@ def main() -> int:
     roots = {key: Path(value).resolve(strict=True) for key, value in config["roots"].items()}
     receipt = Path(config["resource_receipt"]).resolve()
     receipt_root = roots["work"] / "artifacts/simplex_t/resource_observations"
-    if not receipt.is_relative_to(receipt_root) or receipt.suffix != ".json" or receipt.exists():
+    if (
+        not receipt.is_relative_to(receipt_root)
+        or receipt.suffix != ".json"
+        or (receipt.exists() and not args.verify_only)
+    ):
         raise ValueError("new resource receipt under companion resource_observations required")
     publications = {
         key: CanonicalPublication(
@@ -100,32 +105,50 @@ def main() -> int:
             publications=publications,
             resource_ok=resource_ok,
             resume=args.resume,
+            verify_only=args.verify_only,
         )
         outcome = result["status"]
     except Exception as error:
         failure = {"type": type(error).__name__, "message": str(error)[:4096]}
-        raise
+        if (
+            args.verify_only
+            and isinstance(error, (InterruptedError, RuntimeError))
+            and (
+                str(error).startswith(("PAUSED_RESOURCE:", "RESOURCE_PAUSE:"))
+                or str(error) in {
+                    "prediction integrity resource pause",
+                    "prediction table resource pause",
+                    "endpoint validation resource pause",
+                }
+            )
+        ):
+            result = {"status": "PAUSED_RESOURCE", "reason": str(error), "optimizer_updates": 0}
+        else:
+            raise
     finally:
         # A small reserved receipt is also needed on safe resource pauses. It
         # neither starts new work nor claims a checkpoint exists after an error.
-        receipt.parent.mkdir(parents=True, exist_ok=True)
-        write_new_json(
-            receipt,
-            dict(
-                **observations.summary(),
-                launch_sha256=args.launch_sha256,
-                freeze_sha256=config["freeze_sha256"],
-                stage=config["stage"],
-                resume_requested=args.resume,
-                execution_result_status=outcome,
-                failure=failure,
-                other_reserved_bytes=args.other_reserved_bytes,
-                own_reserved_bytes=args.own_reserved_bytes,
-                disk_floor_after_reservations_bytes=40000000000,
-                campaign_complete=False,
-            ),
-        )
+        if not args.verify_only:
+            receipt.parent.mkdir(parents=True, exist_ok=True)
+            write_new_json(
+                receipt,
+                dict(
+                    **observations.summary(),
+                    launch_sha256=args.launch_sha256,
+                    freeze_sha256=config["freeze_sha256"],
+                    stage=config["stage"],
+                    resume_requested=args.resume,
+                    execution_result_status=outcome,
+                    failure=failure,
+                    other_reserved_bytes=args.other_reserved_bytes,
+                    own_reserved_bytes=args.own_reserved_bytes,
+                    disk_floor_after_reservations_bytes=40000000000,
+                    campaign_complete=False,
+                ),
+            )
     print(json.dumps(result, indent=2))
+    if result["status"] == "PHASE_INCOMPLETE":
+        return 10
     return 3 if result["status"] == "PAUSED_RESOURCE" else 0
 
 

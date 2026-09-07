@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from collections.abc import Callable
 from pathlib import Path
 
@@ -15,6 +16,7 @@ from .old_cohort import load_old_evaluation_cohort
 from .phase_export import export_phase
 from .phase_inference import validated_phase
 from .phase_manifest import fit_key
+from .published_predictions import iter_published_predictions
 from .registry import registered_graph
 from .risk17_inputs import load_acknowledged_risk17
 from .scientific_freeze import read_scientific_freeze
@@ -37,6 +39,7 @@ def run_historical_cohort_phase(
     resume: bool,
     publications: dict[str, CanonicalPublication] | None = None,
     risk17_ack: Path | None = None,
+    verify_only: bool = False,
 ) -> dict:
     """Load OLD from frozen historical inputs and execute the same bounded phase.
 
@@ -161,6 +164,7 @@ def run_historical_cohort_phase(
             validate_stage_gate=validate_stage_gate,
             resource_ok=resource_ok,
             resume=resume,
+            verify_only=verify_only,
         )
     finally:
         if not delegated:
@@ -182,6 +186,7 @@ def run_and_publish_frozen_phase(
     validate_stage_gate: Callable[[str, dict[str, bool]], None],
     resource_ok: Callable[[], bool],
     resume: bool,
+    verify_only: bool = False,
 ) -> dict:
     """Finish one registered phase, then publish OLD predictions, without selection.
 
@@ -235,6 +240,68 @@ def run_and_publish_frozen_phase(
         ):
             raise ValueError("phase changes frozen pools or enables an unavailable branch")
         endpoints = execution / f"{stage}_ENDPOINTS.json"
+        if verify_only:
+            published = publication / f"{stage}_PREDICTIONS.json"
+            if not endpoints.is_file() or not published.is_file():
+                return {"status": "PHASE_INCOMPLETE", "optimizer_updates": 0}
+            if published.stat().st_size > 8_388_608:
+                raise ValueError("phase publication exceeds metadata bound")
+            publication_hash = sha256(published)
+            state = json.loads(published.read_text(encoding="utf-8"))
+            if state.get("schema") != "simplex_t_phase_predictions_v1":
+                raise ValueError("unrecognized phase publication")
+            if state.get("status") in {"PREPARING_PREDICTIONS", "PAUSED_RESOURCE"}:
+                return {"status": "PHASE_INCOMPLETE", "optimizer_updates": 0}
+            endpoint_hash = sha256(endpoints)
+            validated_phase(
+                endpoints,
+                execution / "fits",
+                manifest_sha256=endpoint_hash,
+                freeze_sha256=freeze_sha256,
+                stage=stage,
+                availability=flags,
+                resource_ok=resource_ok,
+            )
+            dev_hashes = {
+                fit_key(spec): record["source_identities"][fit_key(spec)]["outer_dev"]
+                for spec in selected
+            }
+            if state["contract"]["dev_source_hashes"] != dev_hashes:
+                raise ValueError("published source identities differ from scientific freeze")
+            count = 0
+            for _, frame in iter_published_predictions(
+                published,
+                manifest_sha256=publication_hash,
+                endpoint_manifest_sha256=endpoint_hash,
+                freeze_sha256=freeze_sha256,
+                stage=stage,
+                availability=flags,
+                expected_queries=cohort,
+                validate_prerequisites=validate,
+                resource_ok=resource_ok,
+            ):
+                if "target_ttc" not in cohort or "target_ttc" not in frame:
+                    raise ValueError("independent OLD targets required for phase verification")
+                expected_targets = cohort.set_index("sample_token").target_ttc
+                if not (
+                    frame.target_ttc.to_numpy()
+                    == expected_targets.loc[frame.sample_token].to_numpy()
+                ).all():
+                    raise ValueError("published targets differ from frozen OLD cohort")
+                count += 1
+            validate()
+            if (
+                count != len(selected)
+                or sha256(endpoints) != endpoint_hash
+                or sha256(published) != publication_hash
+            ):
+                raise ValueError("phase publication changed during verification")
+            return {
+                "status": "PHASE_PUBLICATION_VERIFIED_NOT_T6",
+                "optimizer_updates": 0,
+                "fits_verified": count,
+                "files_written": 0,
+            }
         if endpoints.exists():
             if not resume:
                 raise FileExistsError("sealed phase requires explicit publication resume")

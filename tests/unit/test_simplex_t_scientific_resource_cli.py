@@ -9,6 +9,35 @@ import pytest
 from e_jepa_ttc.artifacts.simplex_t_preflight import sha256
 
 
+@pytest.mark.parametrize(
+    "outcome", ["PHASE_INCOMPLETE", "PHASE_PUBLICATION_VERIFIED_NOT_T6", "pause", "error"]
+)
+def test_read_only_phase_verifier_never_writes_receipt(entry, monkeypatch, outcome):
+    module, _, _, argv, receipt = entry
+    argv.append("--verify-only")
+    receipt.parent.mkdir(parents=True)
+    receipt.write_bytes(b"preserve existing attempt")
+    before = (receipt.read_bytes(), receipt.stat().st_mtime_ns)
+
+    def execute(**kwargs):
+        assert kwargs["verify_only"] is True
+        if outcome == "pause":
+            raise InterruptedError("PAUSED_RESOURCE: verifier")
+        if outcome == "error":
+            raise ValueError("bad phase")
+        return {"status": outcome}
+
+    monkeypatch.setattr(module, "execute_configured_phase", execute)
+    if outcome == "error":
+        with pytest.raises(ValueError, match="bad phase"):
+            module.main()
+    else:
+        assert module.main() == (
+            3 if outcome == "pause" else 10 if outcome == "PHASE_INCOMPLETE" else 0
+        )
+    assert (receipt.read_bytes(), receipt.stat().st_mtime_ns) == before
+
+
 @pytest.fixture
 def entry(tmp_path, monkeypatch):
     path = Path(__file__).resolve().parents[2] / "scripts/execute_simplex_t_frozen_phase.py"

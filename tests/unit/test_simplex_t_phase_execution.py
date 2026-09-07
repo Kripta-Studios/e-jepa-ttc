@@ -1,5 +1,6 @@
 """Fit/seal/export orchestration without any optimizer or model execution."""
 
+import json
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Any
@@ -11,6 +12,90 @@ from e_jepa_ttc.artifacts.simplex_t_preflight import sha256
 from e_jepa_ttc.simplex_t import phase_execution as module
 from e_jepa_ttc.simplex_t.phase_manifest import fit_key
 from e_jepa_ttc.simplex_t.registry import registered_graph
+
+
+@pytest.mark.parametrize("fault", ["none", "missing", "source", "target", "seal"])
+def test_phase_read_only_verifier_never_fits_or_exports(tmp_path, monkeypatch, fault):
+    flags = dict.fromkeys(
+        ("d1", "density", "t3", "latent", "replicate_scalar", "replicate_latent"), False
+    )
+    graph = registered_graph(**flags)
+    selected = [s for s in graph if s.stage == "T2"]
+    ids = {fit_key(s): {"outer_dev": "a" * 64} for s in graph}
+    record = {"source_contract": {"availability": flags}, "source_identities": ids}
+    released = []
+    execution, publication = tmp_path / "execution", tmp_path / "publication"
+    execution.mkdir()
+    publication.mkdir()
+    if fault != "missing":
+        (execution / "T2_ENDPOINTS.json").write_text("fixture")
+        (publication / "T2_PREDICTIONS.json").write_text(
+            json.dumps(
+                {
+                    "schema": "simplex_t_phase_predictions_v1",
+                    "status": "PREDICTIONS_COMPLETE_NOT_FINAL_ANALYSIS",
+                    "contract": {
+                        "dev_source_hashes": {
+                            fit_key(s): "b" * 64 if fault == "source" else "a" * 64
+                            for s in selected
+                        }
+                    },
+                }
+            )
+        )
+    cohort = pd.DataFrame(
+        {
+            "sample_token": [str(i) for i in range(8192)],
+            "sequence_id": [str(i % 9) for i in range(8192)],
+            "track_id": [str(i % 10) for i in range(8192)],
+            "outer_fold": [i % 3 for i in range(8192)],
+            "target_ttc": 2.0,
+        }
+    )
+    monkeypatch.setattr(module, "read_scientific_freeze", lambda *a, **kw: record)
+    monkeypatch.setattr(module, "run_frozen_phase", lambda *a, **kw: pytest.fail("fit started"))
+    monkeypatch.setattr(module, "export_phase", lambda *a, **kw: pytest.fail("export started"))
+
+    def seal(*a, **kw):
+        if fault == "seal":
+            raise ValueError("bad seal")
+
+    monkeypatch.setattr(module, "validated_phase", seal)
+    frame = cohort.copy()
+    if fault == "target":
+        frame.loc[0, "target_ttc"] = 3.0
+    monkeypatch.setattr(
+        module, "iter_published_predictions", lambda *a, **kw: iter((s, frame) for s in selected)
+    )
+    before = {
+        str(p): (p.read_bytes(), p.stat().st_mtime_ns) for p in tmp_path.rglob("*") if p.is_file()
+    }
+    options = dict(
+        sources=SimpleNamespace(graph=graph, release=lambda: released.append(True)),
+        freeze=tmp_path / "freeze",
+        freeze_sha256="f" * 64,
+        roots={"work": tmp_path},
+        stage="T2",
+        availability=flags,
+        expected_queries=cohort,
+        validate_authority_qa_and_cohort=lambda: None,
+        validate_stage_gate=lambda *a: None,
+        resource_ok=lambda: True,
+        resume=False,
+        verify_only=True,
+    )
+    if fault in {"source", "target", "seal"}:
+        with pytest.raises(ValueError):
+            module.run_and_publish_frozen_phase(execution, publication, **options)
+    else:
+        result = module.run_and_publish_frozen_phase(execution, publication, **options)
+        assert result["status"] == (
+            "PHASE_INCOMPLETE" if fault == "missing" else "PHASE_PUBLICATION_VERIFIED_NOT_T6"
+        )
+    assert released == [True]
+    assert {
+        str(p): (p.read_bytes(), p.stat().st_mtime_ns) for p in tmp_path.rglob("*") if p.is_file()
+    } == before
 
 
 @pytest.mark.parametrize("stage", ["T2", "T3", "T4", "T5"])

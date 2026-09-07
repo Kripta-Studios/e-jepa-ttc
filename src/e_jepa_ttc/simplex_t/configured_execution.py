@@ -31,6 +31,7 @@ def execute_configured_phase(
     publications: dict[str, CanonicalPublication],
     resource_ok: Callable[[], bool],
     resume: bool,
+    verify_only: bool = False,
 ) -> dict:
     """Run fit → complete endpoint seal → OLD publication, or exact resource pause.
 
@@ -90,4 +91,5 @@ def execute_configured_phase(
         risk17_ack=Path(paths["shared_coordination"]) / "SIMPLEX_T_STAGE70_ACK.json",
         resource_ok=resource_ok,
         resume=resume,
+        verify_only=verify_only,
     )
