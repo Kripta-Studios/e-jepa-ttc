@@ -10,23 +10,57 @@ import numpy as np
 
 from e_jepa_ttc.artifacts.hashing import compute_file_hash
 from e_jepa_ttc.artifacts.simplex_t_preflight import write_new_json
+from e_jepa_ttc.simplex_t.cache_completion import complete_d0_receipts
+from e_jepa_ttc.simplex_t.compiled_context import validate_block
+from e_jepa_ttc.simplex_t.coordination import shared_write_admission
 from e_jepa_ttc.simplex_t.expert_phase import expert_phase_from_ttc
+from e_jepa_ttc.simplex_t.lifecycle import admitted
+from e_jepa_ttc.simplex_t.resource_cadence import ResourceCadence
 
 
-def main() -> None:
+def main() -> int:
     """Check content, schema, chronology and frozen observation assignments."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--cache", type=Path, required=True)
     parser.add_argument("--index", type=Path, required=True)
     parser.add_argument("--dedup", type=Path, required=True)
-    parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--output", type=Path)
+    parser.add_argument("--verify-only", action="store_true")
+    parser.add_argument("--other-reserved-bytes", type=int)
     args = parser.parse_args()
+    if args.verify_only:
+        if (
+            args.output is not None
+            or args.other_reserved_bytes is None
+            or args.other_reserved_bytes < 0
+        ):
+            parser.error("read-only verification requires reservations and no output")
+    elif args.output is None:
+        parser.error("audit requires a new --output")
+
+    def resources() -> bool:
+        snapshot = admitted([args.cache.parent])
+        return snapshot["has_headroom"] and shared_write_admission(
+            snapshot["written_volume_free_bytes"][0], args.other_reserved_bytes or 0
+        )
+
+    cadence = ResourceCadence(resources, maximum_age_seconds=1.0)
+    if args.verify_only and not cadence():
+        return 3
+    if args.verify_only and not (args.cache / "IDENTITY.json").is_file():
+        return 10
     identity = json.loads((args.cache / "IDENTITY.json").read_text(encoding="utf-8"))
     index_path = args.index / "query_context_index.npz"
     if compute_file_hash(str(index_path)) != identity["index_sha256"]:
         raise ValueError("wrong cache index")
     with np.load(index_path, allow_pickle=False) as archive:
         index = {name: archive[name] for name in archive.files}
+    if args.verify_only:
+        if index["producer_family"].shape != (3, 8192):
+            raise ValueError("verification requires the complete D0 OLD8192 assignment")
+        if complete_d0_receipts(args.cache, index["producer_family"], resource_ok=cadence) is None:
+            print(json.dumps({"status": "D0_CACHE_INCOMPLETE", "optimizer_updates": 0}))
+            return 10
     history = []
     dedup_manifest = json.loads((args.dedup / "DEDUP_MANIFEST.json").read_text(encoding="utf-8"))
     for record in dedup_manifest["outputs"]:
@@ -39,6 +73,8 @@ def main() -> None:
     infinite_expert_points = []
     seen: set[tuple[int, int]] = set()
     for receipt in sorted(args.cache.glob("family*_query*.json")):
+        if args.verify_only and not cadence():
+            return 3
         saved = json.loads(receipt.read_text(encoding="utf-8"))
         path = receipt.with_suffix(".npz")
         if compute_file_hash(str(path)) != saved["sha256"]:
@@ -50,6 +86,13 @@ def main() -> None:
         mask = index["valid"][qi]
         count = int(mask.sum())
         with np.load(path, allow_pickle=False) as arrays:
+            if args.verify_only:
+                validate_block(
+                    {key: arrays[key] for key in arrays.files},
+                    history[outer][qi, mask],
+                    index["anchor_us"][qi] - index["lag_us"][mask],
+                    int(index["roi_available_us"][qi]),
+                )
             features = arrays["features145"]
             expert = arrays["expert_ttc"]
             if features.shape != (count, 145) or features.dtype != np.float32:
@@ -87,6 +130,21 @@ def main() -> None:
                     raise ValueError("duplicate consumed observation")
                 seen.add(key)
         blocks.append({"path": path.name, "sha256": saved["sha256"], "rows": count})
+    if args.verify_only:
+        if complete_d0_receipts(args.cache, index["producer_family"], resource_ok=cadence) is None:
+            raise ValueError("D0 receipt coverage changed during payload verification")
+        print(
+            json.dumps(
+                {
+                    "status": "D0_CACHE_CONTENT_COMPLETE_NOT_SCIENTIFIC_FREEZE",
+                    "blocks": len(blocks),
+                    "optimizer_updates": 0,
+                    "files_written": 0,
+                }
+            )
+        )
+        return 0
+    assert args.output is not None
     write_new_json(
         args.output,
         {
@@ -102,7 +160,14 @@ def main() -> None:
         },
     )
     print(json.dumps({"blocks": len(blocks), "observations": len(seen)}))
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        raise SystemExit(main())
+    except InterruptedError as error:
+        if not str(error).startswith("PAUSED_RESOURCE:"):
+            raise
+        print(str(error))
+        raise SystemExit(3) from error
