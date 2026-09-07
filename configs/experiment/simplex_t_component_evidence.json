@@ -9,6 +9,34 @@
     "path": "artifacts/simplex_t/T0/coherent_fp32_extractor_receipt/QA.json",
     "sha256": "5801fee3e03f967b471344a72bdbaa9830679a1e0d71539478fc578c5a1694de"
   },
+  "unit_qa": {
+    "root": "artifacts/simplex_t/T0/full_unit_qa_fixed_6bcd238",
+    "pins": {
+      "CONTRACT.json": "6829d7266f7a022e6e16579eec52674b29e18a0d20f28f62821da818907d5c14",
+      "COLLECTED.json": "89c336ef8329e993dda54117a1199ec8ede942a05a4de4595f3dbc2c6f76cc31",
+      "RESULT.json": "887b7811a1bb7483d7e7d8540a0978a25b78f666c8dbcdf626e50101ccdeabe8",
+      "UPDATE_PROGRESS.json": "5215e43cc052074f6b52c4e6ea4f5be7cb81d8e0eaa247c5709914c168138d8c",
+      "reports.jsonl": "b30022978a59b40035d0609aa2eb8a57504eb561bb70ff6e595b31fe3b32c01c",
+      "QA.xml": "d4197d3a831929294c92e4c71d10eaf25e9d92beec030fe3e715741d214e210b"
+    },
+    "technical_ledger_sha256": "fa02115d250b0f03ec96b375a63754cbce3a99530defb0c15d70fad08b0fc3ad"
+  },
+  "static_qa": {
+    "root": "artifacts/simplex_t/T0/static_failure_comparison_6bcd238",
+    "pins": {
+      "COMPARISON.json": "f3dc9d39eac24033c4928689eb79ca9ffa38b4bc3cc149ab1d73dc39559d70a5",
+      "BASELINE_RUFF.json": "6433cf2199b5531f6e981b52bdd387de2edf14c15d1807ccf8bbde3415a9a589",
+      "CURRENT_RUFF.json": "bd7b1a58302e2e59c943d387deaf2d4836a50719075ebd290e90078c4f908542"
+    }
+  },
+  "types_qa": {
+    "path": "artifacts/simplex_t/T0/COMPANION_FULL_TYPES_6bcd238.json",
+    "sha256": "93f5ea846e383242486de0898cddb80398c833f774f8faec71250a26ff031b57"
+  },
+  "powershell_qa": {
+    "path": "artifacts/simplex_t/T0/POWERSHELL_BASELINE_CURRENT_AST_UTF8.json",
+    "sha256": "3a7c1a73977b7a0790c204d240437c67eef994da5616cce4ea439aab3c449cd9"
+  },
   "resume": {
     "root": "artifacts/simplex_t/T0/real_context_cpu_resume_journal_v2",
     "source_sha256": "79f711eecf6f5b6f8bf0ae7d6cbac5982a137784dcf3bc215fa62a1abb5c851b",
