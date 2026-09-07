@@ -127,9 +127,10 @@ def validate_scientific_admission(
             or qa["ancestry"]["ancestry_sha256"] != ancestry["sha256"]
         ):
             raise ValueError("real QA refers to another input authority")
-        if temporal is not None and verify_expansion_authority(
-            local_paths, resource_ok=resource_ok
-        ) != temporal:
+        if (
+            temporal is not None
+            and verify_expansion_authority(local_paths, resource_ok=resource_ok) != temporal
+        ):
             raise ValueError("supplementary temporal authority changed during admission")
         if (
             sha256(local_paths) != local_hash
@@ -143,7 +144,19 @@ def validate_scientific_admission(
             "source_configuration_sha256": source_configuration_sha256,
             "evidence_profile_sha256": evidence_profile_sha256,
             "ack_sha256": ack_hash,
-            "time_scope": "OLD8192_CURRENT_ROI_RETROSPECTIVE_CONTEXT",
+            "time_scope": (
+                "OLD8192_AND_ACKNOWLEDGED_EXPANDED_CURRENT_ROI_RETROSPECTIVE_CONTEXT"
+                if temporal is not None
+                else "OLD8192_CURRENT_ROI_RETROSPECTIVE_CONTEXT"
+            ),
+            "supplementary_time_ack_sha256": temporal["sha256"] if temporal is not None else None,
+            "training_pools": [
+                "D0",
+                *(["D1"] if "expansion" in configuration else []),
+                *(["DENSE_OLD"] if "dense" in configuration else []),
+            ],
+            "evaluation_cohort": "UNCHANGED_OLD8192",
+            "online_annotation_availability_accredited": False,
             "optimizer_updates_executed": 0,
             "holdout_authorized": False,
         }
