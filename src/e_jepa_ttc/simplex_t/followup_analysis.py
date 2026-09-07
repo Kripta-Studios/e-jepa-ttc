@@ -13,6 +13,7 @@ from .diagnostic_summary import summarize_diagnostics
 from .replication_summary import three_seed_losses
 from .sealed_analysis import load_sealed_analysis_arms
 from .stage_gate import CanonicalPublication
+from .temporal_diagnostics import sampled_temporal_diagnostics
 from .uncertainty_analysis import paired_uncertainty
 
 
@@ -122,12 +123,18 @@ def analyze_followup_phase(
             ignore_index=True,
         )
         diagnostics.to_parquet(destination / "DIAGNOSTICS.parquet", index=False)
+        temporal = [sampled_temporal_diagnostics(frame) for frame in frames.values()]
+        temporal_names = ("TEMPORAL_QUERY_DIAGNOSTICS.parquet", "TEMPORAL_STRATA.parquet")
+        for position, name in enumerate(temporal_names):
+            pd.concat([item[position] for item in temporal], ignore_index=True).to_parquet(
+                destination / name, index=False
+            )
         records[group] = {
             "reference": reference,
             "arms": sorted(frames),
             "files": {
                 name: sha256(destination / name)
-                for name in ("PAIRED_UNCERTAINTY.json", "DIAGNOSTICS.parquet")
+                for name in ("PAIRED_UNCERTAINTY.json", "DIAGNOSTICS.parquet", *temporal_names)
             },
         }
     boundary()
@@ -142,7 +149,11 @@ def analyze_followup_phase(
             for item in references
         ],
         "cross_seed_analysis_complete": False,
-        "rapid_change_and_sign_transition_diagnostics_complete": False,
+        "rapid_change_and_sign_transition_diagnostics_complete": True,
+        "temporal_scope": (
+            "Sampled same-track endpoints within 750ms; "
+            "no complete trajectory or transition-delay claim"
+        ),
         "controls_can_replace_primary": False,
         "ttc_ensembling_performed": False,
         "scope": "REUSED_OLD_DEVELOPMENT_NOT_CONFIRMATORY",

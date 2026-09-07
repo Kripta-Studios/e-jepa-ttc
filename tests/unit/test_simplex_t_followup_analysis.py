@@ -42,6 +42,11 @@ def test_registered_same_seed_references(tmp_path, monkeypatch, stage, d1, pause
     monkeypatch.setattr(module, "load_sealed_analysis_arms", load)
     monkeypatch.setattr(module, "paired_uncertainty", uncertainty)
     monkeypatch.setattr(
+        module,
+        "sampled_temporal_diagnostics",
+        lambda *args, **kwargs: (pd.DataFrame({"fixture": [1]}), pd.DataFrame({"fixture": [1]})),
+    )
+    monkeypatch.setattr(
         module, "summarize_diagnostics", lambda *args, **kwargs: pd.DataFrame({"fixture": [1]})
     )
     binding = CanonicalPublication(seal, sha256(seal), seal, sha256(seal), tmp_path, flags)

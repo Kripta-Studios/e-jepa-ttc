@@ -117,6 +117,8 @@ def test_t2_factorial_publication_keeps_registered_reference(tmp_path: Path, mon
     for d, h, c in product((0, 1) if d1 else (0,), (1, 8), (64, 160)):
         name = f"TPR-D{d}-H{h}-C{c}"
         frames[name, 7] = cohort.assign(
+            anchor_us=np.arange(8192) // 9 * 100_000,
+            prediction_ttc_s=2.0,
             arm=name,
             seed=7,
             loss=float(d + h + c),
@@ -164,3 +166,6 @@ def test_t2_factorial_publication_keeps_registered_reference(tmp_path: Path, mon
     assert len(effects) == 8192 and result["reference"] == reference
     assert ("DxHxC" in effects) == d1
     assert result["optimizer_updates"] == 0 and result["holdout_opened"] is False
+    temporal = pd.read_parquet(output / "TEMPORAL_QUERY_DIAGNOSTICS.parquet")
+    assert len(temporal) == 8192 * len(frames)
+    assert result["rapid_change_and_sign_transition_diagnostics_complete"]

@@ -20,6 +20,7 @@ from .phase_manifest import fit_key
 from .published_predictions import iter_published_predictions
 from .scientific_freeze import read_scientific_freeze
 from .stage_gate import CanonicalPublication
+from .temporal_diagnostics import sampled_temporal_diagnostics
 from .uncertainty_analysis import paired_uncertainty
 
 
@@ -207,6 +208,16 @@ def analyze_sealed_t2(
     effects.to_parquet(effects_path, index=False)
     diagnostics_path = output / "DIAGNOSTICS.parquet"
     diagnostics.to_parquet(diagnostics_path, index=False)
+    temporal = [sampled_temporal_diagnostics(frame) for frame in frames.values()]
+    temporal_files = {}
+    for position, name in enumerate(
+        ("TEMPORAL_QUERY_DIAGNOSTICS.parquet", "TEMPORAL_STRATA.parquet")
+    ):
+        path = output / name
+        pd.concat([item[position] for item in temporal], ignore_index=True).to_parquet(
+            path, index=False
+        )
+        temporal_files[name] = sha256(path)
     uncertainty = paired_uncertainty(
         frames,
         reference=reference,
@@ -226,7 +237,12 @@ def analyze_sealed_t2(
         "factor_effects": {"path": effects_path.name, "sha256": sha256(effects_path)},
         "diagnostics": {"path": diagnostics_path.name, "sha256": sha256(diagnostics_path)},
         "diagnostic_scope": "Availability and exact-age strata; no accredited object trajectory",
-        "rapid_change_and_sign_transition_diagnostics_complete": False,
+        "sampled_query_temporal_diagnostics": temporal_files,
+        "rapid_change_and_sign_transition_diagnostics_complete": True,
+        "temporal_scope": (
+            "Sampled same-track endpoints within 750ms; "
+            "no complete trajectory or transition-delay claim"
+        ),
         "uncertainty": {
             "path": "paired_uncertainty/PAIRED_UNCERTAINTY.json",
             "sha256": sha256(output / "paired_uncertainty/PAIRED_UNCERTAINTY.json"),
