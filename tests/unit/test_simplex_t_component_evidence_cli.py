@@ -7,6 +7,7 @@ from pathlib import Path
 import pytest
 
 from e_jepa_ttc.artifacts.simplex_t_preflight import sha256
+from e_jepa_ttc.simplex_t import component_verification
 
 
 @pytest.mark.parametrize("failure", ["profile", "schema", "output", "reservation"])
@@ -32,7 +33,7 @@ def test_component_cli_rejects_before_evidence_loading(tmp_path, monkeypatch, fa
     def forbidden(*args, **kwargs):
         raise AssertionError("invalid CLI configuration reached evidence loading")
 
-    monkeypatch.setattr(module, "verify_acknowledged_producers", forbidden)
+    monkeypatch.setattr(component_verification, "verify_acknowledged_producers", forbidden)
     monkeypatch.setattr(module.torch, "set_num_threads", forbidden)
     monkeypatch.setattr(
         "sys.argv",

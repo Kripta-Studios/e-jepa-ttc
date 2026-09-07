@@ -9,7 +9,7 @@ from pathlib import Path
 
 import torch
 
-from e_jepa_ttc.artifacts.simplex_t_preflight import write_new_json
+from e_jepa_ttc.artifacts.simplex_t_preflight import sha256, write_new_json
 from e_jepa_ttc.simplex_t.component_verification import verify_component_profile
 from e_jepa_ttc.simplex_t.coordination import shared_write_admission
 from e_jepa_ttc.simplex_t.lifecycle import admitted
@@ -36,6 +36,11 @@ def main() -> None:
     work = Path(paths["worktree"]).resolve(strict=True)
     if not args.output.resolve().is_relative_to(work):
         raise ValueError("report must remain in the companion worktree")
+    if args.profile.stat().st_size > 1_048_576 or sha256(args.profile) != args.profile_sha256:
+        raise ValueError("component evidence profile changed or exceeds metadata bound")
+    profile = json.loads(args.profile.read_text(encoding="utf-8"))
+    if profile.get("schema") != "simplex_t_component_evidence_profile_v1":
+        raise ValueError("unrecognized evidence profile")
 
     def resources() -> bool:
         snapshot = admitted([work])

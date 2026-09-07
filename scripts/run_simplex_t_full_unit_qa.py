@@ -144,6 +144,8 @@ def main() -> None:
     }
     write_new_json(output / "RESULT.json", result)
     print(json.dumps(result))
+    if exit_code != 0:
+        raise SystemExit(int(exit_code))
 
 
 if __name__ == "__main__":
