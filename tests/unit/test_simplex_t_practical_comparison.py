@@ -6,6 +6,7 @@ import pytest
 
 from e_jepa_ttc.evaluation.stage63_65 import benchmark_phase, scientific_ttc
 from e_jepa_ttc.simplex_t.practical_comparison import paired_practical_comparison
+from e_jepa_ttc.simplex_t.practical_decisions import canonical_practical_decisions
 
 
 @pytest.fixture
@@ -61,3 +62,52 @@ def test_infinite_candidate_is_retained_but_cannot_claim_full_finite_coverage(fr
     assert result["query_count"] == 8192
     assert result["candidate_finite_fraction"] == 8191 / 8192
     assert np.isfinite(result["point_delta"])
+
+
+@pytest.mark.parametrize("family", ["TPR", "LATENT"])
+@pytest.mark.parametrize("has_risk", [False, True])
+def test_canonical_decision_uses_actual_ttc_without_ci(frames, family, has_risk):
+    candidate, reference = frames
+    calls = []
+    result = canonical_practical_decisions(
+        candidate.assign(arm=f"{family}-D1-H8-C160", seed=7),
+        reference.assign(arm=f"{family}-D1-H1-C160", seed=7),
+        reference if has_risk else None,
+        primary_pool="D1",
+        family=family,
+        fraction_train_h8=(0.5, 0.5, 0.5),
+        validate_publication_and_lineage=lambda: calls.append(True),
+    )
+    assert len(calls) == 2
+    assert result["t3_practically_eligible"] is (True if family == "TPR" else None)
+    assert result["t5_practically_eligible"] is (True if has_risk else None)
+    assert result["scientific_execution_authorized"] is False
+    assert result["t4_enabled_by_this_result"] is False
+
+
+@pytest.mark.parametrize("change", ["candidate", "seed", "h1", "lineage"])
+def test_decision_rejects_retrospective_substitution(frames, change):
+    candidate, reference = frames
+    candidate = candidate.assign(arm="TPR-D0-H8-C160", seed=7)
+    reference = reference.assign(arm="TPR-D0-H1-C160", seed=7)
+    if change == "candidate":
+        candidate["arm"] = "FREE-D0-H8-C160"
+    elif change == "seed":
+        candidate["seed"] = 13
+    elif change == "h1":
+        reference["arm"] = "LATENT-D0-H1-C160"
+
+    def validate():
+        if change == "lineage":
+            raise ValueError("unverified producer lineage")
+
+    with pytest.raises(ValueError):
+        canonical_practical_decisions(
+            candidate,
+            reference,
+            None,
+            primary_pool="D0",
+            family="TPR",
+            fraction_train_h8=(1.0, 1.0, 1.0),
+            validate_publication_and_lineage=validate,
+        )
