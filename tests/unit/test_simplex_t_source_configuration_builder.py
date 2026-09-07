@@ -19,7 +19,8 @@ def entry():
     return module
 
 
-def test_build_keeps_all_pools_and_fold_bindings(entry, tmp_path, monkeypatch):
+@pytest.mark.parametrize("amended", [False, True])
+def test_build_keeps_all_pools_and_fold_bindings(entry, tmp_path, monkeypatch, amended):
     pools = {
         "EXPANSION_POOL_PLAN.json": (
             "2c2a36f42c93f3d5304c524e04bcb84c31c5e8a756715d1ab955288abc2d1849"
@@ -28,13 +29,33 @@ def test_build_keeps_all_pools_and_fold_bindings(entry, tmp_path, monkeypatch):
             "b0685050b799058e6090d6e3b7c47b653f2939ca7db2d75a93526ab236ec9e3c"
         ),
     }
+    selection = {"path": str(tmp_path / "selection.json"), "sha256": "b" * 64}
+    if amended:
+        pools["MATCHED_CONTROL_POOL_DENSITY_20260908.json"] = (
+            "00322ff06093aa5dc46c2aaed26e42961dc3349fc85823001672d0c593cca122"
+        )
+        config = tmp_path / "configs/experiment/simplex_t_throughput_amendment.json"
+        config.parent.mkdir(parents=True)
+        config.write_text(json.dumps({"id": "SIMPLEX_T_THROUGHPUT_2026-09-08"}))
+        plan = tmp_path / "artifacts/simplex_t/T0/MATCHED_CONTROL_POOL_DENSITY_20260908.json"
+        plan.parent.mkdir(parents=True)
+        plan.write_text(
+            json.dumps({"dense_membership_unchanged": True, "query_selection": selection})
+        )
     monkeypatch.setattr(entry, "sha256", lambda path: pools.get(path.name, "b" * 64))
     for prefix, pool in (("expansion", "D1"), ("dense", "DENSE_OLD")):
         for outer in range(3):
             folder = tmp_path / f"artifacts/simplex_t/T1/compiled_{prefix}_context/outer{outer}"
             folder.mkdir(parents=True)
             (folder / "COMPILED.json").write_text(
-                json.dumps({"outer": outer, "pool": pool, "cache_identity_sha256": str(outer) * 64})
+                json.dumps(
+                    {
+                        "outer": outer,
+                        "pool": pool,
+                        "cache_identity_sha256": str(outer) * 64,
+                        **({"query_selection": selection} if amended else {}),
+                    }
+                )
             )
     ack = {
         "interfaces": {"role_manifest": {"roles": {"original": ["old"], "expansion": ["new"]}}},
@@ -57,6 +78,10 @@ def test_build_keeps_all_pools_and_fold_bindings(entry, tmp_path, monkeypatch):
             assert row["cache_identity_sha256"] == str(outer) * 64
             assert row["metadata"]["root"] == row["labels"]["root"] == "garl"
     assert result["matched"]["pool_sha256"] == result["dense"]["0"]["pool_sha256"]
+    if amended:
+        assert result["matched"]["pool"]["relative_path"].endswith(
+            "MATCHED_CONTROL_POOL_DENSITY_20260908.json"
+        )
 
 
 def test_missing_cache_returns_exact_dependencies_without_writes(

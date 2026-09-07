@@ -6,10 +6,12 @@ import argparse
 import json
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 from e_jepa_ttc.artifacts.simplex_t_preflight import sha256, write_new_json
 from e_jepa_ttc.simplex_t.coordination import verified_ack
+from e_jepa_ttc.simplex_t.density_selection import bound_selection_rows
 from e_jepa_ttc.simplex_t.pools import QueryIdentity, matched_density_pools
 
 
@@ -27,11 +29,43 @@ def main() -> None:
     parser.add_argument("--local-paths", type=Path, required=True)
     parser.add_argument("--train-metadata", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--d1-selection", type=Path)
+    parser.add_argument("--d1-selection-sha256")
     args = parser.parse_args()
     if args.output.exists():
         raise FileExistsError(args.output)
     paths = json.loads(args.local_paths.read_text(encoding="utf-8"))
     root = Path(paths["worktree"])
+    if (args.d1_selection is None) != (args.d1_selection_sha256 is None):
+        raise ValueError("density amendment requires selection path and hash")
+    selection_binding = None
+    selected_by_outer = None
+    if args.d1_selection is not None:
+        selection_binding = {
+            "path": str(args.d1_selection.resolve()),
+            "sha256": args.d1_selection_sha256,
+        }
+        index_root = root / "artifacts/simplex_t/T1/expansion_query_context_index"
+        manifest_path = index_root / "INDEX_MANIFEST.json"
+        if (
+            sha256(manifest_path)
+            != "46a0749cb4a8c8394b14141e1a78e9181755a4718a44116fdd86b8aa82502cfe"
+        ):
+            raise ValueError("D1 index manifest changed")
+        manifest = json.loads(manifest_path.read_text("utf-8"))
+        array_path = index_root / "query_context_index.npz"
+        if sha256(array_path) != manifest["index_sha256"]:
+            raise ValueError("D1 index bytes changed")
+        with np.load(array_path, allow_pickle=False) as archive:
+            index = {
+                name: archive[name]
+                for name in ("tokens", "sequences", "anchor_us", "producer_family")
+            }
+        selected = bound_selection_rows(selection_binding, index, manifest["index_sha256"])
+        selected_by_outer = [
+            set(index["tokens"][selected[index["producer_family"][outer, selected] >= 0]])
+            for outer in range(3)
+        ]
     config = json.loads(
         (root / "configs/experiment/simplex_t_coordination.json").read_text(encoding="utf-8")
     )
@@ -77,7 +111,12 @@ def main() -> None:
         if len(groups) != 6 or not groups <= set(roles["original"]):
             raise ValueError("invalid original TRAIN group set")
         dense_frame = metadata.loc[metadata.sequence_id.isin(groups)]
-        diverse_frame = lookup.loc[fold["original_train_tokens"] + fold["additional_train_tokens"]]
+        additions = fold["additional_train_tokens"]
+        if selected_by_outer is not None:
+            additions = [token for token in additions if token in selected_by_outer[outer]]
+            if set(additions) != selected_by_outer[outer]:
+                raise ValueError("selected D1 queries absent from authorized fold")
+        diverse_frame = lookup.loc[fold["original_train_tokens"] + additions]
         if not isinstance(dense_frame, pd.DataFrame) or not isinstance(diverse_frame, pd.DataFrame):
             raise ValueError("matched pool lookup must retain its query axis")
         matched = matched_density_pools(
@@ -130,6 +169,21 @@ def main() -> None:
             "recompute both pools before scores"
         ),
     }
+    if selection_binding is not None:
+        parent_path = root / "artifacts/simplex_t/T0/MATCHED_CONTROL_POOL_PLAN.json"
+        parent_hash = "b0685050b799058e6090d6e3b7c47b653f2939ca7db2d75a93526ab236ec9e3c"
+        if sha256(parent_path) != parent_hash:
+            raise ValueError("parent matched pool changed")
+        parent = json.loads(parent_path.read_text("utf-8"))
+        if any(
+            current["pools"]["DENSE_OLD"] != previous["pools"]["DENSE_OLD"]
+            or current["nominal_common_count"] != previous["nominal_common_count"]
+            for current, previous in zip(outputs, parent["folds"], strict=True)
+        ):
+            raise ValueError("DENSE changed: cannot reuse its acknowledged index")
+        result["query_selection"] = selection_binding
+        result["parent_matched_pool"] = {"path": str(parent_path), "sha256": parent_hash}
+        result["dense_membership_unchanged"] = True
     write_new_json(args.output, result)
     print(
         json.dumps(

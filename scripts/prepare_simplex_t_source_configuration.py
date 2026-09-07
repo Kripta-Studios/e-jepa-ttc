@@ -50,6 +50,24 @@ def configuration(work: Path, ack: dict) -> dict:
             "b0685050b799058e6090d6e3b7c47b653f2939ca7db2d75a93526ab236ec9e3c",
         ),
     }
+    amendment_path = work / "configs/experiment/simplex_t_throughput_amendment.json"
+    selected_binding = None
+    if amendment_path.exists():
+        amendment = json.loads(amendment_path.read_text("utf-8"))
+        if amendment["id"] != "SIMPLEX_T_THROUGHPUT_2026-09-08":
+            raise ValueError("unknown throughput amendment")
+        amended_pool = "MATCHED_CONTROL_POOL_DENSITY_20260908.json"
+        amended_hash = "00322ff06093aa5dc46c2aaed26e42961dc3349fc85823001672d0c593cca122"
+        amended_path = work / "artifacts/simplex_t/T0" / amended_pool
+        if sha256(amended_path) != amended_hash:
+            raise ValueError("amended matched pool missing or changed; no legacy fallback")
+        amended = json.loads(amended_path.read_text("utf-8"))
+        if not amended["dense_membership_unchanged"]:
+            raise ValueError("amendment changes acknowledged DENSE membership")
+        selected_binding = amended["query_selection"]
+        if sha256(Path(selected_binding["path"])) != selected_binding["sha256"]:
+            raise ValueError("amended D1 selection changed")
+        pools["dense"] = ("dense", amended_pool, amended_hash)
     for name, (prefix, pool_file, pool_hash) in pools.items():
         pool_path = "artifacts/simplex_t/T0/" + pool_file
         if sha256(work / pool_path) != pool_hash:
@@ -63,6 +81,9 @@ def configuration(work: Path, ack: dict) -> dict:
                 "D1" if name == "expansion" else "DENSE_OLD"
             ):
                 raise ValueError("compiled TRAIN pool/fold differs")
+            if name == "expansion" and selected_binding is not None:
+                if manifest.get("query_selection") != selected_binding:
+                    raise ValueError("D1 compiled selection and matched controls differ")
             folds[str(outer)] = {
                 "compiled": reference(folder),
                 "compiled_sha256": sha256(manifest_path),
@@ -85,7 +106,7 @@ def configuration(work: Path, ack: dict) -> dict:
             }
         result[name] = folds
     result["matched"] = {
-        "pool": reference("artifacts/simplex_t/T0/MATCHED_CONTROL_POOL_PLAN.json"),
+        "pool": reference("artifacts/simplex_t/T0/" + pools["dense"][1]),
         "pool_sha256": pools["dense"][2],
         "original_index_manifest_sha256": (
             "93a4f62e5025c5046fc82fcb1428a428f8a8df869b34486b92d5c753b0f68a3b"
