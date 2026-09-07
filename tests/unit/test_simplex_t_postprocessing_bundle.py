@@ -60,6 +60,13 @@ def test_publication_to_transport(tmp_path, monkeypatch, fault):
 
     monkeypatch.setattr(module, "verify_campaign_accounting", verify_accounting)
     monkeypatch.setattr(module, "technical_bundle_members", lambda *a, **kw: {})
+
+    def provenance(freeze, **kwargs):
+        assert freeze == tmp_path / "freeze.json"
+        assert kwargs["roots"]["work"] == tmp_path
+        return {"provenance/fixture.json": BundleMember(evidence, evidence_hash, 2)}
+
+    monkeypatch.setattr(module, "provenance_bundle_members", provenance)
     if fault == "accounting_missing":
         receipt.unlink()
     elif fault == "accounting_changed":
@@ -124,7 +131,9 @@ def test_publication_to_transport(tmp_path, monkeypatch, fault):
         return postprocessing_bundle_members(
             manifest,
             manifest_sha256=hashlib.sha256(payload).hexdigest(),
+            freeze=tmp_path / "freeze.json",
             freeze_sha256=("b" if fault == "freeze" else "a") * 64,
+            roots={"work": tmp_path},
             work_root=tmp_path,
             phases={},
             history_pools={},
@@ -149,5 +158,5 @@ def test_publication_to_transport(tmp_path, monkeypatch, fault):
         validate_inventory_authority=verify,
         resource_ok=lambda: True,
     )
-    assert result["members"] == 8
+    assert result["members"] == 9
     assert result["optimizer_updates"] == 0

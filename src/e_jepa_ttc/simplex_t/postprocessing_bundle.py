@@ -14,6 +14,7 @@ from .campaign_accounting import AccountingPins, verify_campaign_accounting
 from .history_bundle import HistoryPoolPins, history_bundle_members
 from .phase_bundle import phase_bundle_members
 from .postprocessing_inventory import inventory_postprocessing
+from .provenance_bundle import provenance_bundle_members
 from .stage_gate import CanonicalPublication
 from .technical_bundle import technical_bundle_members
 
@@ -22,7 +23,9 @@ def postprocessing_bundle_members(
     manifest: Path,
     *,
     manifest_sha256: str,
+    freeze: Path,
     freeze_sha256: str,
+    roots: dict[str, Path],
     work_root: Path,
     phases: dict[str, CanonicalPublication],
     history_pools: dict[str, HistoryPoolPins],
@@ -34,7 +37,7 @@ def postprocessing_bundle_members(
     """Rehash all owned outputs and include the pinned manifest in the archive.
 
     This supplies postprocessing and all registered phase publications. The
-    caller must separately include full scientific provenance, observed resource evidence
+    caller must separately include observed resource evidence
     and reports, and repeat this validation in the ZIP authority callback.
     No fitting, output writes or campaign-completion inference occurs here.
     """
@@ -44,6 +47,8 @@ def postprocessing_bundle_members(
     if manifest.name != "POSTPROCESSING.json" or manifest.is_symlink():
         raise ValueError("canonical postprocessing manifest required")
     work = work_root.resolve(strict=True)
+    if roots["work"].resolve(strict=True) != work:
+        raise ValueError("provenance and publication work roots differ")
     if not manifest.resolve(strict=True).is_relative_to(work):
         raise ValueError("postprocessing manifest outside companion worktree")
     for binding in phases.values():
@@ -70,6 +75,13 @@ def postprocessing_bundle_members(
     )
     if actual != document.get("output_inventory"):
         raise ValueError("postprocessing output inventory differs")
+    provenance_members = provenance_bundle_members(
+        freeze,
+        freeze_sha256=freeze_sha256,
+        roots=roots,
+        validate_scientific_authority=validate_scientific_authority,
+        resource_ok=resource_ok,
+    )
     accounting = verify_campaign_accounting(
         **asdict(accounting_pins),
         freeze_sha256=freeze_sha256,
@@ -167,5 +179,8 @@ def postprocessing_bundle_members(
     if members.keys() & technical_members.keys():
         raise ValueError("technical evidence and publication archive names collide")
     members.update(technical_members)
+    if members.keys() & provenance_members.keys():
+        raise ValueError("provenance and publication archive names collide")
+    members.update(provenance_members)
     validate_bundle_inventory({name: member.sha256 for name, member in members.items()})
     return members
