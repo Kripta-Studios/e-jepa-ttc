@@ -7,8 +7,11 @@ import numpy as np
 import pandas as pd
 import pytest
 
+from e_jepa_ttc.artifacts.hashing import compute_file_hash
 from e_jepa_ttc.simplex_t import phase_export as module
+from e_jepa_ttc.simplex_t.factorial_analysis import paired_factor_effects
 from e_jepa_ttc.simplex_t.phase_manifest import fit_key
+from e_jepa_ttc.simplex_t.published_predictions import iter_published_predictions
 from e_jepa_ttc.simplex_t.registry import registered_graph
 
 
@@ -35,7 +38,7 @@ def export_args(tmp_path, monkeypatch):
 
     def frame(sources, spec, *args, **kwargs):
         return cohort.loc[cohort.outer_fold == spec.fold].assign(
-            prediction_ttc_s=2.0, arm=spec.name, seed=spec.seed
+            prediction_ttc_s=2.0, arm=spec.name, seed=spec.seed, loss=1.0, source_sha256="c" * 64
         )
 
     monkeypatch.setattr(module, "iter_phase_predictions", predictions)
@@ -68,6 +71,28 @@ def test_complete_phase_and_byte_identical_resume(export_args):
     args["resume"] = True
     assert module.export_phase(**args) == state
     assert len(released) == 2
+    path = args["output"] / "T2_PREDICTIONS.json"
+    frames = list(
+        iter_published_predictions(
+            path,
+            manifest_sha256=compute_file_hash(str(path)),
+            endpoint_manifest_sha256=args["manifest_sha256"],
+            freeze_sha256=args["freeze_sha256"],
+            stage="T2",
+            availability=args["availability"],
+            expected_queries=args["expected_queries"],
+            validate_prerequisites=lambda: None,
+            resource_ok=lambda: True,
+        )
+    )
+    assert [spec for spec, _ in frames] == graph
+    effects = paired_factor_effects(
+        pd.concat([frame for _, frame in frames], ignore_index=True),
+        args["expected_queries"],
+        d1_available=False,
+    )
+    assert len(effects) == 8192
+    assert (effects[["H", "C", "HxC"]].to_numpy() == 0).all()
 
 
 def test_resource_pause_keeps_only_complete_fit_and_resumes(export_args):
@@ -117,3 +142,50 @@ def test_query_mismatch_rejected_before_any_parquet(export_args, monkeypatch):
     with pytest.raises(ValueError, match="query identities differ"):
         module.export_phase(**args)
     assert not list(args["output"].rglob("*.parquet"))
+
+
+@pytest.mark.parametrize("failure", ["incomplete", "last_file_corrupt"])
+def test_analysis_rejects_bad_publication_before_first_table(export_args, monkeypatch, failure):
+    args, graph, _ = export_args
+    state = module.export_phase(**args)
+    path = args["output"] / "T2_PREDICTIONS.json"
+    if failure == "incomplete":
+        state["status"] = "PAUSED_RESOURCE"
+        path.write_text(json.dumps(state), encoding="utf-8")
+    else:
+        (args["output"] / fit_key(graph[-1]) / "predictions.parquet").write_bytes(b"corrupt")
+
+    def forbidden(*args, **kwargs):
+        raise AssertionError("must validate whole publication before reading any table")
+
+    monkeypatch.setattr(pd, "read_parquet", forbidden)
+    iterator = iter_published_predictions(
+        path,
+        manifest_sha256=compute_file_hash(str(path)),
+        endpoint_manifest_sha256=args["manifest_sha256"],
+        freeze_sha256=args["freeze_sha256"],
+        stage="T2",
+        availability=args["availability"],
+        expected_queries=args["expected_queries"],
+        validate_prerequisites=lambda: None,
+        resource_ok=lambda: True,
+    )
+    with pytest.raises(ValueError):
+        next(iterator)
+
+
+@pytest.mark.parametrize("bad", ["availability", "digest"])
+def test_analysis_requires_resolved_pins_before_manifest_access(tmp_path, bad):
+    iterator = iter_published_predictions(
+        tmp_path / "absent.json",
+        manifest_sha256="invalid" if bad == "digest" else "a" * 64,
+        endpoint_manifest_sha256="b" * 64,
+        freeze_sha256="c" * 64,
+        stage="T2",
+        availability={"d1": 1} if bad == "availability" else {"d1": False},
+        expected_queries=pd.DataFrame(),
+        validate_prerequisites=lambda: None,
+        resource_ok=lambda: True,
+    )
+    with pytest.raises(ValueError):
+        next(iterator)
