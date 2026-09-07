@@ -69,12 +69,41 @@ def development_frame(
     if compute_file_hash(str(expert_path)) != manifest["arrays"]["expert_ttc"]:
         raise ValueError("current expert cache changed before export")
     experts = np.load(expert_path, mmap_mode="r", allow_pickle=False)
+    # Dense TRAIN composition compacts and offsets OLD_DEV observations. Those
+    # source-local IDs are not row IDs in the original D0 expert array. Resolve
+    # the unchanged expert through the pinned original query identity instead.
+    index_path = sources.index_root / "query_context_index.npz"
+    dedup_path = sources.dedup_root / f"outer{spec.fold}.npz"
+    if (
+        compute_file_hash(str(index_path)) != manifest["index_sha256"]
+        or compute_file_hash(str(dedup_path)) != manifest["dedup_sha256"]
+    ):
+        raise ValueError("original expert query/history mapping changed before export")
+    with np.load(index_path, allow_pickle=False) as archive:
+        tokens = archive["tokens"]
+    if tokens.ndim != 1 or len(np.unique(tokens)) != len(tokens):
+        raise ValueError("ambiguous original expert query identities")
+    positions = {str(token): row for row, token in enumerate(tokens)}
+    if any(str(token) not in positions for token in metadata.sample_token):
+        raise ValueError("OLD_DEV query absent from original expert index")
+    with np.load(dedup_path, allow_pickle=False) as archive:
+        original_history = archive["history"]
+    if original_history.ndim != 2 or original_history.shape[0] != len(tokens):
+        raise ValueError("original expert history population mismatch")
+    expert_current = original_history[
+        [positions[str(token)] for token in metadata.sample_token], -1
+    ]
     current = expected_history[:, -1]
-    if np.any(current < 0) or np.any(current >= len(experts)):
+    if (
+        np.any(expert_current < 0)
+        or np.any(expert_current >= len(experts))
+        or np.any(current < 0)
+        or np.any(current >= len(source.anchor_us))
+    ):
         raise ValueError("current expert observation is missing")
     result = prediction_frame(
         metadata,
-        np.asarray(experts[current]),
+        np.asarray(experts[expert_current]),
         outputs,
         consumed_history,
         arm=spec.name,
@@ -83,6 +112,7 @@ def development_frame(
         output_mode=binding.model.output_mode,
     )
     result["source_sha256"] = expected_source_sha256
+    result["original_expert_observation_index"] = expert_current
     result["context_semantics"] = "RETROSPECTIVE_CURRENT_QUERY_ROI_NOT_VERIFIED_OBJECT_HISTORY"
     result["anchor_us"] = source.anchor_us[current]
     result["roi_available_us"] = source.available_us[current]

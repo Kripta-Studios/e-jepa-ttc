@@ -49,10 +49,16 @@ def export_fixture(tmp_path, monkeypatch):
     )
     experts = np.array([[4.0, 5.0, np.inf], [6.0, 7.0, 8.0], [9.0, 10.0, 11.0]], np.float32)
     np.save(tmp_path / "expert_ttc.npy", experts)
+    np.savez(tmp_path / "query_context_index.npz", tokens=np.array(["q1", "q0"]))
+    np.savez(tmp_path / "outer0.npz", history=history[::-1])
     manifest = tmp_path / "COMPILED.json"
     manifest.write_text(
         json.dumps(
-            dict(arrays=dict(expert_ttc=compute_file_hash(str(tmp_path / "expert_ttc.npy"))))
+            dict(
+                arrays=dict(expert_ttc=compute_file_hash(str(tmp_path / "expert_ttc.npy"))),
+                index_sha256=compute_file_hash(str(tmp_path / "query_context_index.npz")),
+                dedup_sha256=compute_file_hash(str(tmp_path / "outer0.npz")),
+            )
         ),
         encoding="utf-8",
     )
@@ -60,6 +66,8 @@ def export_fixture(tmp_path, monkeypatch):
         graph=graph,
         source=lambda *a: source,
         historical_root=tmp_path,
+        index_root=tmp_path,
+        dedup_root=tmp_path,
         ancestry_sha256="fixture",
         allowed_sequences={"s"},
         folds={0: CompiledFold(tmp_path, compute_file_hash(str(manifest)))},
@@ -89,7 +97,30 @@ def test_export_keeps_current_cached_experts_identity_and_actual_history(export_
     assert result.context_semantics.str.contains("NOT_VERIFIED_OBJECT_HISTORY").all()
 
 
-@pytest.mark.parametrize("corruption", ["source", "history", "metadata", "order", "expert"])
+@pytest.mark.parametrize("mapping", [np.array([20, 21, 22]), np.array([1, 2, 0])])
+def test_reindexed_dense_dev_uses_original_expert_rows_not_combined_ids(export_fixture, mapping):
+    sources, spec, output, history, _, _ = export_fixture
+    source = sources.source(spec, "outer_dev")
+    # Cover both out-of-range original IDs and silent wrong-row selection.
+    shifted = np.where(history >= 0, mapping[np.maximum(history, 0)], -1)
+    source.history = shifted
+    for field in ("anchor_us", "available_us"):
+        original = getattr(source, field)
+        remapped = np.zeros(int(mapping.max()) + 1, original.dtype)
+        remapped[mapping] = original
+        setattr(source, field, remapped)
+    result = development_export.development_frame(
+        sources, spec, output, shifted, expected_source_sha256="source"
+    )
+    np.testing.assert_array_equal(result.prediction_ttc_s, [np.inf, 9.0])
+    np.testing.assert_array_equal(result.original_expert_observation_index, [0, 2])
+    np.testing.assert_array_equal(result.history_index1, mapping[[0, 2]])
+    np.testing.assert_array_equal(result.history_span_us, [0, 100])
+
+
+@pytest.mark.parametrize(
+    "corruption", ["source", "history", "metadata", "order", "expert", "index", "dedup"]
+)
 def test_export_rejects_misalignment_or_mutation(export_fixture, corruption):
     sources, spec, output, history, table, csv = export_fixture
     expected = "changed" if corruption == "source" else "source"
@@ -101,6 +132,10 @@ def test_export_rejects_misalignment_or_mutation(export_fixture, corruption):
         table["metadata"] = table["metadata"].iloc[::-1]
     elif corruption == "expert":
         np.save(sources.historical_root / "expert_ttc.npy", np.ones((3, 3)))
+    elif corruption == "index":
+        np.savez(sources.index_root / "query_context_index.npz", tokens=np.array(["q0", "q1"]))
+    elif corruption == "dedup":
+        np.savez(sources.dedup_root / "outer0.npz", history=history)
     with pytest.raises(ValueError):
         development_export.development_frame(
             sources, spec, output, history, expected_source_sha256=expected
