@@ -12,6 +12,7 @@ from .ancestry_evidence import verify_acknowledged_producers
 from .h16_qa_evidence import verify_h16_execution_identity, verify_h16_replay
 from .replay_evidence import verify_coherent_replay
 from .resume_evidence import verify_real_cpu_resume
+from .static_qa_evidence import verify_ruff_comparison
 from .unit_qa_evidence import verify_companion_unit_qa
 
 
@@ -23,6 +24,7 @@ def verify_component_profile(
     resource_ok: Callable[[], bool],
     require_h16: bool,
     require_unit_qa: bool = False,
+    require_static_qa: bool = False,
 ) -> dict:
     """Reopen actual ancestry, replay arrays and resume states, without fitting.
 
@@ -31,7 +33,7 @@ def verify_component_profile(
     only one part of admission: complete source preparation, availability,
     repository QA, code freeze and practical stage gates remain separate.
     """
-    if type(require_h16) is not bool or type(require_unit_qa) is not bool:
+    if any(type(value) is not bool for value in (require_h16, require_unit_qa, require_static_qa)):
         raise ValueError("explicit evidence verification policies required")
     if profile_path.stat().st_size > 1_048_576 or sha256(profile_path) != profile_sha256:
         raise ValueError("component evidence profile changed")
@@ -44,6 +46,8 @@ def verify_component_profile(
         )
     if require_unit_qa and "unit_qa" not in profile:
         raise ValueError("WAITING_CURRENT_UNIT_QA: complete pinned unit evidence required")
+    if require_static_qa and "static_qa" not in profile:
+        raise ValueError("WAITING_CURRENT_STATIC_QA: pinned Ruff comparison required")
     paths_hash = sha256(local_paths)
     paths = json.loads(local_paths.read_text(encoding="utf-8"))
     work = Path(paths["worktree"]).resolve(strict=True)
@@ -113,6 +117,16 @@ def verify_component_profile(
             resource_ok=resource_ok,
         )
         boundary()
+    static_qa = None
+    if "static_qa" in profile:
+        entry = profile["static_qa"]
+        static_qa = verify_ruff_comparison(
+            work,
+            resolve(entry["root"]),
+            pins=entry["pins"],
+            resource_ok=resource_ok,
+        )
+        boundary()
     return {
         "status": "REAL_COMPONENT_EVIDENCE_VERIFIED_NOT_SCIENTIFIC_ADMISSION",
         "profile_sha256": profile_sha256,
@@ -122,6 +136,7 @@ def verify_component_profile(
         "resume": proof,
         "h16_replay": h16,
         "unit_qa": unit_qa,
+        "static_qa": static_qa,
         "optimizer_updates_executed": 0,
         "scientific_admission": False,
         "not_covered": [

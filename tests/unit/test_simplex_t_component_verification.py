@@ -138,6 +138,41 @@ def test_missing_unit_evidence_rejected_before_heavy_reads(tmp_path, monkeypatch
     assert not calls
 
 
+def test_missing_static_evidence_rejected_before_heavy_reads(tmp_path, monkeypatch):
+    local, profile, calls = inputs(tmp_path, monkeypatch)
+    with pytest.raises(ValueError, match="WAITING_CURRENT_STATIC_QA"):
+        module.verify_component_profile(
+            local,
+            profile,
+            sha256(profile),
+            resource_ok=lambda: True,
+            require_h16=True,
+            require_static_qa=True,
+        )
+    assert not calls
+
+
+def test_static_evidence_reader_is_required(tmp_path, monkeypatch):
+    local, profile, calls = inputs(tmp_path, monkeypatch)
+    record = json.loads(profile.read_text(encoding="utf-8"))
+    record["static_qa"] = {"root": ".", "pins": {}}
+    profile.write_text(json.dumps(record), encoding="utf-8")
+
+    def reject(*args, **kwargs):
+        raise ValueError("stale real static evidence")
+
+    monkeypatch.setattr(module, "verify_ruff_comparison", reject)
+    with pytest.raises(ValueError, match="stale real static evidence"):
+        module.verify_component_profile(
+            local,
+            profile,
+            sha256(profile),
+            resource_ok=lambda: True,
+            require_h16=True,
+            require_static_qa=True,
+        )
+
+
 @pytest.mark.parametrize("reject", [False, True])
 def test_unit_profile_is_actually_verified(tmp_path, monkeypatch, reject):
     local, profile, calls = inputs(tmp_path, monkeypatch)
