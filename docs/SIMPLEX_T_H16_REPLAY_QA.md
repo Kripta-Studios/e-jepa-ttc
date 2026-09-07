@@ -45,3 +45,18 @@ remaining references; no numerical amendment or replacement cache was made.
 Unit/integration tests use simulated producers and temporary NPZ files to test
 leases, exact comparison, resumed rows, preserved failures, and changed payloads.
 They are not substitutes for the pending real same-layout GPU execution.
+
+## Evidence consumption
+
+After real completion, a separately pinned component-evidence profile may add
+`h16_replay` with the companion-relative `root` and actual `report_sha256` of
+`QA.json`. The verifier then reads all 64 independent NPZ outputs and compares
+their arrays to the separately validated production references. It also checks
+the executable inventory, historical numerical source hashes, acknowledged
+interfaces, preprocessing hash and recorded runtime. Missing or changed output
+is a failure even if a JSON status claims success.
+
+The existing profile intentionally has no H16 success reference yet. Its report
+continues to list production H16 numerical parity as not covered. Supplying this
+new evidence does not remove the separate requirements for complete source
+integration, expanded time authority, repository QA and scientific freeze.

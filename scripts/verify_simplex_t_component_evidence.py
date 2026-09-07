@@ -12,6 +12,7 @@ import torch
 from e_jepa_ttc.artifacts.simplex_t_preflight import sha256, write_new_json
 from e_jepa_ttc.simplex_t.ancestry_evidence import verify_acknowledged_producers
 from e_jepa_ttc.simplex_t.coordination import shared_write_admission
+from e_jepa_ttc.simplex_t.h16_qa_evidence import verify_h16_execution_identity, verify_h16_replay
 from e_jepa_ttc.simplex_t.lifecycle import admitted
 from e_jepa_ttc.simplex_t.replay_evidence import verify_coherent_replay
 from e_jepa_ttc.simplex_t.resume_evidence import verify_real_cpu_resume
@@ -90,6 +91,19 @@ def main() -> None:
         probe_script=resolve("scripts/probe_simplex_t_context_resume.py"),
     )
     boundary()
+    h16 = None
+    if "h16_replay" in profile:
+        entry = profile["h16_replay"]
+        h16 = verify_h16_replay(
+            work,
+            resolve(entry["root"]),
+            entry["report_sha256"],
+            validate_execution_identity=lambda record: verify_h16_execution_identity(
+                work, args.local_paths, record
+            ),
+            resource_ok=resources,
+        )
+        boundary()
     result = {
         "status": "REAL_COMPONENT_EVIDENCE_VERIFIED_NOT_SCIENTIFIC_ADMISSION",
         "profile_sha256": args.profile_sha256,
@@ -97,10 +111,11 @@ def main() -> None:
         "ancestry": ancestry,
         "replay": replay,
         "resume": proof,
+        "h16_replay": h16,
         "optimizer_updates_executed": 0,
         "scientific_admission": False,
         "not_covered": [
-            "Production H16 extraction numerical parity",
+            *([] if h16 is not None else ["Production H16 extraction numerical parity"]),
             "All-fold and expanded-pool source integration and normalization",
             "Supplementary expanded time authority",
             "Complete baseline-versus-new repository QA and frozen code inventory",
