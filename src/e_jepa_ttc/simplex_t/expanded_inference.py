@@ -6,6 +6,7 @@ import gc
 from collections.abc import Callable, Iterator
 from contextlib import contextmanager
 from pathlib import Path
+from typing import Literal
 
 import numpy as np
 import torch
@@ -31,20 +32,29 @@ def expanded_inference_family(
     allowed_sequences: set[str],
     preprocessing: dict,
     validate_prerequisites: Callable[[], None],
+    producer_scope: Literal["expanded", "original_qa"] = "expanded",
 ) -> Iterator[Callable[[int], dict[str, np.ndarray]]]:
     """Load a family once and emit exactly the original H16 FP32 query layout.
 
     Caller holds CURRENT_REPLAY.lock and admits resources before entering. Its
-    mandatory validator checks acknowledged expanded time, producer ancestry,
-    index/preprocessing pins and numerical identity. This adapter never grants
-    that authority and never refits a producer or changes its teacher.
+    mandatory validator checks the acknowledged time scope, producer ancestry,
+    index/preprocessing pins and numerical identity. The explicit original_qa
+    scope also permits outer-dev families, only for the pinned OLD8192 QA path.
+    Expanded replay retains the default inner-only restriction. This adapter
+    never grants authority and never refits a producer or changes its teacher.
     """
     validate_prerequisites()
-    if family_id not in {0, 1, 2, 4, 5, 6, 8, 9, 10}:
+    if producer_scope not in {"expanded", "original_qa"}:
+        raise ValueError("unknown historical inference scope")
+    if producer_scope == "original_qa" and len(index["tokens"]) != 8192:
+        raise ValueError("original QA requires the acknowledged OLD8192 index")
+    permitted = set(range(12)) if producer_scope == "original_qa" else {0, 1, 2, 4, 5, 6, 8, 9, 10}
+    if family_id not in permitted:
         raise ValueError("expanded inference requires an inner producer family")
     family = families[family_id]
     outer = family_id // 4
-    if family["outer_fold"] != outer or family["role"] != f"inner{family_id % 4}":
+    role = "outer_dev" if family_id % 4 == 3 else f"inner{family_id % 4}"
+    if family["outer_fold"] != outer or family["role"] != role:
         raise ValueError("expanded producer descriptor differs")
     if (
         torch.get_num_threads() != 4

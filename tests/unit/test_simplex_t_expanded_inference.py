@@ -11,7 +11,8 @@ from e_jepa_ttc.simplex_t.expanded_inference import expanded_inference_family
 
 
 @pytest.mark.parametrize("failure", ["", "authority", "role", "inactive", "weights"])
-def test_adapter_uses_h16_layout_and_explicit_train_role(tmp_path, monkeypatch, failure):
+@pytest.mark.parametrize("scope", ["expanded", "original_qa"])
+def test_adapter_uses_h16_layout_and_explicit_train_role(tmp_path, monkeypatch, failure, scope):
     import e_jepa_ttc.simplex_t.expanded_inference as module
 
     checkpoint = tmp_path / "weights"
@@ -73,6 +74,18 @@ def test_adapter_uses_h16_layout_and_explicit_train_role(tmp_path, monkeypatch, 
 
     if failure == "weights":
         checkpoint.write_bytes(b"changed")
+    family_id = 0
+    if scope == "original_qa":
+        family_id = 3
+        families = families * 4
+        families[3] = dict(families[0], role="outer_dev")
+        for key in tuple(index):
+            if key == "lag_us":
+                continue
+            axis = 1 if key == "producer_family" else 0
+            index[key] = np.repeat(index[key], 8192, axis=axis)
+        index["producer_family"][0] = -1 if failure == "inactive" else family_id
+        history = np.repeat(history, 8192, axis=0)
     args = dict(
         families=families,
         checkpoint_paths={digest: checkpoint},
@@ -82,15 +95,16 @@ def test_adapter_uses_h16_layout_and_explicit_train_role(tmp_path, monkeypatch, 
         allowed_sequences=set() if failure == "role" else {"seq"},
         preprocessing={"roi_size": 2, "event_pixel_diff": 1},
         validate_prerequisites=validate,
+        producer_scope=scope,
     )
     if failure:
-        with pytest.raises(ValueError), expanded_inference_family(0, **args) as infer:
+        with pytest.raises(ValueError), expanded_inference_family(family_id, **args) as infer:
             infer(0)
         assert reads == forwards == []
         if failure in {"authority", "weights"}:
             assert loads == []
     else:
-        with expanded_inference_family(0, **args) as infer:
+        with expanded_inference_family(family_id, **args) as infer:
             result = infer(0)
         assert len(loads) == 3 and len(reads) == 1 and len(forwards) == 1
         assert result["features145"].shape == (2, 145)
