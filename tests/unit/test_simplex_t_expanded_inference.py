@@ -1,7 +1,5 @@
 """Adapter wiring with simulated producers/readers; no GPU or raw dataset access."""
 
-from contextlib import nullcontext
-
 import numpy as np
 import pytest
 import torch
@@ -51,7 +49,16 @@ def test_adapter_uses_h16_layout_and_explicit_train_role(tmp_path, monkeypatch, 
 
     monkeypatch.setattr(module, "load_causal_scale_replay_checkpoint", load)
     monkeypatch.setattr(module, "load_pair_head", load)
-    monkeypatch.setattr(module, "EAPEventReader", lambda path: nullcontext(path))
+    closes = []
+
+    class Pool:
+        def get(self, path):
+            return path
+
+        def close(self):
+            closes.append(True)
+
+    monkeypatch.setattr(module, "ReaderPool", Pool)
 
     def encode(reader, windows, lags, mask, roi, **kwargs):
         reads.append(reader)
@@ -107,6 +114,7 @@ def test_adapter_uses_h16_layout_and_explicit_train_role(tmp_path, monkeypatch, 
         with expanded_inference_family(family_id, **args) as infer:
             result = infer(0)
         assert len(loads) == 3 and len(reads) == 1 and len(forwards) == 1
+        assert closes == [True]
         assert result["features145"].shape == (2, 145)
         np.testing.assert_array_equal(result["anchor_us"], [250000, 300000])
         np.testing.assert_array_equal(result["observation_ids"], [0, 1])

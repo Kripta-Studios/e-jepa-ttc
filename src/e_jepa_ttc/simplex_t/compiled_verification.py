@@ -70,6 +70,19 @@ def verify_compiled_fold(
         index_root / "query_context_index.npz": manifest["index_sha256"],
         dedup_root / f"outer{outer}.npz": manifest["dedup_sha256"],
     }
+    if "query_selection" in manifest:
+        if pool != "D1":
+            raise ValueError("density-selected compilation must belong to D1")
+        mapping = output / "source_observation_ids.npy"
+        bindings[mapping] = manifest["source_observation_ids_sha256"]
+        ids = np.load(mapping, allow_pickle=False)
+        if (
+            ids.dtype != np.int64
+            or ids.shape != (manifest["observations"],)
+            or (ids < 0).any()
+            or (np.diff(ids) <= 0).any()
+        ):
+            raise ValueError("invalid selected observation remapping")
     count = manifest["observations"]
     fields = {
         "features145": (np.dtype("float32"), (count, 145)),

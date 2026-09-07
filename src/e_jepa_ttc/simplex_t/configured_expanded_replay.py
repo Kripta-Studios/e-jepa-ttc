@@ -233,7 +233,9 @@ def run_configured_expanded_replay(
         pool=pool,
         authorized_families=families,
         selected_queries=selected_queries,
-        selection_binding=selection_ref,
+        selection_binding=(
+            {**selection_ref, "path": str(selection_path)} if selection_ref is not None else None
+        ),
         reuse_catalog_loader=catalogs.__getitem__ if identities is not None else None,
         reuse_expected_identities=identities,
         **({"verify_only": True} if verify_only else {}),

@@ -38,6 +38,7 @@ def fixture(tmp_path):
         sequences=np.array(["extra"] * 3),
         producer_family=assignments,
         valid=valid,
+        anchor_us=np.array([100, 200, 300], dtype=np.int64),
     )
     manifest = save(
         "INDEX_MANIFEST.json",
@@ -136,6 +137,35 @@ def test_file_loader_attaches_targets_in_pool_order(tmp_path, features):
     assert source.features.shape == (2, features)
     np.testing.assert_allclose(source.normalizer.mean, source.features.mean(0))
     assert source.target_phase[0] < source.target_phase[1]
+
+
+def test_density_loader_normalizes_only_compact_selected_rows(tmp_path, monkeypatch):
+    from e_jepa_ttc.simplex_t import expansion_sources
+
+    binding = fixture(tmp_path)
+    path = tmp_path / "COMPILED.json"
+    compiled = json.loads(path.read_text())
+    compiled.update(
+        query_selection={"path": "fixture-only"}, selected_query_ids=[2], queries=1, observations=1
+    )
+    for name in compiled["arrays"]:
+        array_path = tmp_path / f"{name}.npy"
+        values = np.load(array_path)[1:2].copy()
+        np.save(array_path, values)
+        compiled["arrays"][name] = compute_file_hash(str(array_path))
+    mapping = tmp_path / "source_observation_ids.npy"
+    np.save(mapping, np.array([1], dtype=np.int64))
+    compiled["source_observation_ids_sha256"] = compute_file_hash(str(mapping))
+    path.write_text(json.dumps(compiled))
+    binding = replace(binding, compiled_sha256=compute_file_hash(str(path)))
+    monkeypatch.setattr(
+        expansion_sources, "bound_selection_rows", lambda *args: np.array([2], dtype=np.int64)
+    )
+    result = load_expansion_inputs(binding, outer=0, feature_count=17, allowed_sequences={"extra"})
+    assert result.tokens.tolist() == ["b"]
+    assert result.source.population == 1
+    assert result.source.history[:, -1].tolist() == [0]
+    np.testing.assert_array_equal(result.source.normalizer.mean, result.source.features[0])
 
 
 def test_expansion_details_preserve_original_targets_for_matched_weights(tmp_path):

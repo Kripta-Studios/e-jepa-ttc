@@ -13,6 +13,7 @@ import torch
 from e_jepa_ttc.artifacts.hashing import compute_file_hash
 
 from .cache import CachedQueries, fit_normalizer
+from .density_selection import bound_selection_rows, compact_selected_history
 from .expansion_selection import selected_expansion_rows
 from .expansion_targets import load_expansion_targets
 from .training import state_digest
@@ -92,7 +93,10 @@ def load_expansion_inputs(
         raise ValueError("compiled cache refers to another query index")
     _verify(binding.dedup, compiled["dedup_sha256"])
     with np.load(index_path, allow_pickle=False) as archive:
-        index = {key: archive[key] for key in ("tokens", "sequences", "producer_family", "valid")}
+        names = ["tokens", "sequences", "producer_family", "valid"]
+        if "query_selection" in compiled:
+            names.append("anchor_us")
+        index = {key: archive[key] for key in names}
     with np.load(binding.dedup, allow_pickle=False) as archive:
         history = archive["history"]
     rows = selected_expansion_rows(
@@ -103,6 +107,10 @@ def load_expansion_inputs(
         families=manifest["families"],
         allowed_expansion_sequences=allowed_sequences,
     )
+    selection = compiled.get("query_selection")
+    if selection is not None:
+        selected = bound_selection_rows(selection, index, manifest["index_sha256"])
+        rows = rows[np.isin(rows, selected)]
     if (
         compiled["selected_query_ids"] != sorted(rows.tolist())
         or compiled["queries"] != len(rows)
@@ -121,6 +129,13 @@ def load_expansion_inputs(
     if arrays["features145"].shape != (count, 145) or arrays["features145"].dtype != np.float32:
         raise ValueError("D1 observation feature schema mismatch")
     selected_history = history[rows]
+    if selection is not None:
+        selected_history, expected_ids = compact_selected_history(selected_history)
+        mapping = binding.compiled / "source_observation_ids.npy"
+        _verify(mapping, compiled["source_observation_ids_sha256"])
+        actual_ids = np.load(mapping, allow_pickle=False)
+        if actual_ids.dtype != np.int64 or not np.array_equal(actual_ids, expected_ids):
+            raise ValueError("compiled D1 observation remapping changed")
     if (selected_history >= count).any():
         raise ValueError("D1 history exceeds compiled observation universe")
     features = arrays["features145"][:, :feature_count]

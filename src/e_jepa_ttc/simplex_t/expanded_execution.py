@@ -120,6 +120,7 @@ def run_expanded_context_cache(
             "reuse_catalog.py",
             "cache_reuse.py",
             "density_selection.py",
+            "cached_event_reader.py",
         )
     }
     identity = {

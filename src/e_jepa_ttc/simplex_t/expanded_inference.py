@@ -12,10 +12,10 @@ import numpy as np
 import torch
 
 from e_jepa_ttc.artifacts.simplex_t_preflight import sha256
-from e_jepa_ttc.data.eap import EAPEventReader
 from e_jepa_ttc.evaluation.scientific_recovery_v8 import load_causal_scale_replay_checkpoint
 from e_jepa_ttc.training.stage61_pair_head import load_pair_head
 
+from .cached_event_reader import ReaderPool
 from .context_raw_union import encode_context_union
 from .expert_features import extract_family
 
@@ -74,6 +74,7 @@ def expanded_inference_family(
         paths[expert] = path
     device = torch.device("cuda")
     models = []
+    readers = ReaderPool()
     try:
         models.append(load_causal_scale_replay_checkpoint(paths["A5"], device=device))
         models.append(load_causal_scale_replay_checkpoint(paths["C2F"], device=device))
@@ -101,17 +102,16 @@ def expanded_inference_family(
                 or (history[qi, mask] < 0).any()
             ):
                 raise ValueError("invalid active H16 history")
-            with EAPEventReader(raw_path) as reader:
-                tensor = encode_context_union(
-                    reader,
-                    windows,
-                    index["lag_us"],
-                    mask,
-                    tuple(index["square_xyxy"][qi]),
-                    sequence_id=sequence,
-                    roi_size=preprocessing["roi_size"],
-                    event_pixel_diff=preprocessing["event_pixel_diff"],
-                )
+            tensor = encode_context_union(
+                readers.get(raw_path),
+                windows,
+                index["lag_us"],
+                mask,
+                tuple(index["square_xyxy"][qi]),
+                sequence_id=sequence,
+                roi_size=preprocessing["roi_size"],
+                event_pixel_diff=preprocessing["event_pixel_diff"],
+            )
             delta = torch.tensor(np.diff(windows[:, 1]) / 1e6, dtype=torch.float32)
             arrays = extract_family(
                 models[0], models[1], models[2], tensor.to(device), delta.repeat(16, 1).to(device)
@@ -125,5 +125,6 @@ def expanded_inference_family(
 
         yield infer
     finally:
+        readers.close()
         models.clear()
         gc.collect()

@@ -116,6 +116,23 @@ def test_d0_retains_manifest_schema(tmp_path, monkeypatch):
     assert "pool" not in manifest and "selected_query_ids" not in manifest
 
 
+def test_density_compiler_compacts_only_selected_observations(tmp_path, monkeypatch):
+    args = fixture(tmp_path, monkeypatch)
+    identity_path = args[0] / "IDENTITY.json"
+    identity = json.loads(identity_path.read_text())
+    identity["query_selection"] = {"path": "fixture-only", "sha256": "a" * 64}
+    identity_path.write_text(json.dumps(identity))
+    monkeypatch.setattr(
+        compiled_context, "bound_selection_rows", lambda *args: np.array([2], dtype=np.int64)
+    )
+    compiled_context.compile_fold(*args, outer=0, pool="D1", other_reserved_bytes=0)
+    manifest = json.loads((args[-1] / "COMPILED.json").read_text())
+    assert manifest["selected_query_ids"] == [2]
+    assert manifest["queries"] == manifest["observations"] == 1
+    assert np.load(args[-1] / "source_observation_ids.npy").tolist() == [1]
+    assert np.load(args[-1] / "features145.npy")[:, 0].tolist() == [3]
+
+
 @pytest.mark.parametrize("corruption", ["identity", "family", "mask", "missing"])
 @pytest.mark.parametrize("pool", ["D1", "DENSE_OLD"])
 def test_invalid_d1_is_rejected_before_allocating_outputs(tmp_path, monkeypatch, corruption, pool):

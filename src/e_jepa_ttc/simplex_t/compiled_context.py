@@ -13,6 +13,7 @@ from e_jepa_ttc.artifacts.hashing import compute_file_hash
 from e_jepa_ttc.artifacts.simplex_t_preflight import write_new_json
 
 from .coordination import shared_write_admission
+from .density_selection import bound_selection_rows, compact_selected_history
 from .expert_phase import expert_phase_from_ttc
 from .lifecycle import admitted
 from .resource_cadence import ResourceCadence
@@ -157,6 +158,17 @@ def compile_fold(
         raise ValueError("query assigned outside permitted producer family")
     if not np.array_equal(history >= 0, index["valid"] & active[:, None]):
         raise ValueError("history mask differs from active query support")
+    selection = identity.get("query_selection")
+    source_ids = None
+    if selection is not None:
+        if pool != "D1":
+            raise ValueError("density selection is restricted to D1")
+        selected_rows = bound_selection_rows(selection, index, identity["index_sha256"])
+        active &= np.isin(np.arange(len(families)), selected_rows)
+        _, source_ids = compact_selected_history(history[active])
+    observation_count = len(keys) if source_ids is None else len(source_ids)
+    if observation_count == 0:
+        raise ValueError("empty selected observation universe")
     receipts = []
     reused = reuse.plan(index["tokens"], families) if reuse is not None else {}
     for qi in np.flatnonzero(active):
@@ -175,17 +187,17 @@ def compile_fold(
     boundary(force=True)
     output.mkdir()
     fields = {
-        "features145": (np.float32, (len(keys), 145)),
-        "expert_ttc": (np.float32, (len(keys), 3)),
-        "known": (np.bool_, (len(keys), 2)),
-        "anchor_us": (np.int64, (len(keys),)),
-        "available_us": (np.int64, (len(keys),)),
+        "features145": (np.float32, (observation_count, 145)),
+        "expert_ttc": (np.float32, (observation_count, 3)),
+        "known": (np.bool_, (observation_count, 2)),
+        "anchor_us": (np.int64, (observation_count,)),
+        "available_us": (np.int64, (observation_count,)),
     }
     destinations = {
         name: np.lib.format.open_memmap(output / f"{name}.npy", mode="w+", dtype=dtype, shape=shape)
         for name, (dtype, shape) in fields.items()
     }
-    consumed = np.zeros(len(keys), dtype=bool)
+    consumed = np.zeros(observation_count, dtype=bool)
     for qi, path, receipt in receipts:
         boundary()
         mask = index["valid"][qi]
@@ -211,6 +223,11 @@ def compile_fold(
             index["anchor_us"][qi] - index["lag_us"][mask],
             int(index["roi_available_us"][qi]),
         )
+        if source_ids is not None:
+            arrays = {
+                **arrays,
+                "observation_ids": np.searchsorted(source_ids, ids).astype(np.int64),
+            }
         store_observations(destinations, consumed, arrays)
     if not consumed.all():
         raise ValueError("incomplete consumed observation coverage")
@@ -232,6 +249,15 @@ def compile_fold(
         else {}
     )
     boundary(force=True)
+    selection_fields = {}
+    if source_ids is not None:
+        mapping_path = output / "source_observation_ids.npy"
+        with mapping_path.open("xb") as stream:
+            np.save(stream, source_ids, allow_pickle=False)
+        selection_fields = {
+            "query_selection": selection,
+            "source_observation_ids_sha256": compute_file_hash(str(mapping_path)),
+        }
     write_new_json(
         output / "COMPILED.json",
         {
@@ -242,10 +268,11 @@ def compile_fold(
             "dedup_sha256": record["sha256"],
             "arrays": hashes,
             "queries": len(receipts),
-            "observations": len(keys),
+            "observations": observation_count,
             "optimizer_updates": 0,
             "status": "COMPLETE_FOLD_CACHE_NOT_SCIENTIFIC_FREEZE",
             **expansion_fields,
+            **selection_fields,
             **(
                 {"D0_reuse": {"identity": reuse.identity, "blocks": reused}}
                 if reuse is not None
