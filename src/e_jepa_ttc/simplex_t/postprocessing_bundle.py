@@ -8,7 +8,10 @@ from collections.abc import Callable
 from pathlib import Path
 
 from .bundle_creation import BundleMember
+from .bundle_integrity import validate_bundle_inventory
+from .phase_bundle import phase_bundle_members
 from .postprocessing_inventory import inventory_postprocessing
+from .stage_gate import CanonicalPublication
 
 
 def postprocessing_bundle_members(
@@ -16,13 +19,16 @@ def postprocessing_bundle_members(
     *,
     manifest_sha256: str,
     freeze_sha256: str,
+    work_root: Path,
+    phases: dict[str, CanonicalPublication],
+    verify_completed_graph: Callable[[], dict],
     validate_scientific_authority: Callable[[], None],
     resource_ok: Callable[[], bool],
 ) -> dict[str, BundleMember]:
     """Rehash all owned outputs and include the pinned manifest in the archive.
 
-    This supplies only the postprocessing section of the final inventory. The
-    caller must separately include predictions, indices, provenance, accounting
+    This supplies postprocessing and all registered phase publications. The
+    caller must separately include indices, provenance, accounting
     and reports, and repeat this validation in the ZIP authority callback.
     No fitting, output writes or campaign-completion inference occurs here.
     """
@@ -31,6 +37,15 @@ def postprocessing_bundle_members(
         raise InterruptedError("PAUSED_RESOURCE: postprocessing bundle binding")
     if manifest.name != "POSTPROCESSING.json" or manifest.is_symlink():
         raise ValueError("canonical postprocessing manifest required")
+    work = work_root.resolve(strict=True)
+    if not manifest.resolve(strict=True).is_relative_to(work):
+        raise ValueError("postprocessing manifest outside companion worktree")
+    for binding in phases.values():
+        if any(
+            not path.resolve(strict=True).is_relative_to(work)
+            for path in (binding.publication, binding.endpoints, binding.checkpoint_root)
+        ):
+            raise ValueError("phase publication outside companion worktree")
     # Administrative JSON only; cap allocation independently of host RAM size.
     with manifest.open("rb") as stream:
         payload = stream.read(16_777_217)
@@ -49,6 +64,24 @@ def postprocessing_bundle_members(
     )
     if actual != document.get("output_inventory"):
         raise ValueError("postprocessing output inventory differs")
+    # Regenerate from scientific publications, never follow caller-entered paths
+    # in the serialized inventory before establishing their exact correspondence.
+    phase_members = phase_bundle_members(
+        phases,
+        freeze_sha256=freeze_sha256,
+        verify_completed_graph=verify_completed_graph,
+        resource_ok=resource_ok,
+    )
+    expected_phase_pins = {
+        name: {
+            "work_relative_path": member.path.resolve(strict=True).relative_to(work).as_posix(),
+            "sha256": member.sha256,
+            "bytes": member.bytes,
+        }
+        for name, member in phase_members.items()
+    }
+    if not phase_members or expected_phase_pins != document.get("phase_payload_inventory"):
+        raise ValueError("postprocessing phase inventory differs from verified publications")
     validate_scientific_authority()
     if not resource_ok():
         raise InterruptedError("PAUSED_RESOURCE: postprocessing bundle binding")
@@ -62,4 +95,8 @@ def postprocessing_bundle_members(
     members["postprocessing/POSTPROCESSING.json"] = BundleMember(
         manifest, manifest_sha256, len(payload)
     )
+    if members.keys() & phase_members.keys():
+        raise ValueError("postprocessing and phase archive names collide")
+    members.update(phase_members)
+    validate_bundle_inventory({name: member.sha256 for name, member in members.items()})
     return members
