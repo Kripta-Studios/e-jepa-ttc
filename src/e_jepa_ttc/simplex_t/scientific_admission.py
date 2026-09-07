@@ -11,6 +11,7 @@ from e_jepa_ttc.artifacts.simplex_t_preflight import sha256
 from .component_verification import verify_component_profile
 from .configuration_preflight import open_acknowledged_source_configuration
 from .coordination import verified_ack
+from .expansion_authority import verify_expansion_authority
 from .registry import registered_graph
 
 
@@ -32,9 +33,8 @@ def validate_scientific_admission(
     preparation, normalization, graph and all pinned files before execution.
     Practical gates remain separate. No model is fitted or expert replay run.
 
-    The currently acknowledged executable time scope is OLD8192. Expanded
-    configurations remain intact and fail explicitly pending owner recognition;
-    this implementation does not invent the supplementary ACK's future schema.
+    Expanded configurations require the exact supplementary owner ACK and all
+    its references in the freeze. This does not substitute for source or replay QA.
     """
     if not resource_ok():
         raise InterruptedError("PAUSED_RESOURCE: scientific input admission")
@@ -51,11 +51,10 @@ def validate_scientific_admission(
     if roots["work"].resolve(strict=True) != work:
         raise ValueError("scientific admission worktree differs from frozen roots")
     configuration = json.loads(source_configuration.read_text(encoding="utf-8"))
-    if any(key in configuration for key in ("expansion", "dense", "matched")):
-        raise ValueError(
-            "WAITING_EXPANDED_TIME_RECOGNITION: preserve D1/DENSE configuration; "
-            "original ACK does not cover the additional queries"
-        )
+    expanded = any(key in configuration for key in ("expansion", "dense", "matched"))
+    temporal = (
+        verify_expansion_authority(local_paths, resource_ok=resource_ok) if expanded else None
+    )
     ack_path = Path(paths["shared_coordination"]) / "SIMPLEX_T_STAGE70_ACK.json"
     ack_hash = "3e55ab3c6e9a57eecd862ad05e999627ea90957e58e329b2eb3652120e953318"
     ack = verified_ack(ack_path, ack_hash)
@@ -86,11 +85,15 @@ def validate_scientific_admission(
     ):
         require_pin(path, digest, category)
     contract = record["source_contract"]
+    if temporal is not None:
+        require_pin(Path(temporal["path"]), temporal["sha256"], "time")
+        for entry in temporal["evidence"]:
+            require_pin(Path(entry["path"]), entry["sha256"])
     if (
         contract["configuration_sha256"] != source_configuration_sha256
         or contract["authority_sha256"] != ack_hash
-        or contract["availability"]["d1"] is not False
-        or contract["availability"]["density"] is not False
+        or contract["availability"]["d1"] is not ("expansion" in configuration)
+        or contract["availability"]["density"] is not ("dense" in configuration)
     ):
         raise ValueError("freeze changes acknowledged source configuration or data scope")
     sources, inspection = open_acknowledged_source_configuration(
@@ -124,6 +127,10 @@ def validate_scientific_admission(
             or qa["ancestry"]["ancestry_sha256"] != ancestry["sha256"]
         ):
             raise ValueError("real QA refers to another input authority")
+        if temporal is not None and verify_expansion_authority(
+            local_paths, resource_ok=resource_ok
+        ) != temporal:
+            raise ValueError("supplementary temporal authority changed during admission")
         if (
             sha256(local_paths) != local_hash
             or sha256(source_configuration) != source_configuration_sha256

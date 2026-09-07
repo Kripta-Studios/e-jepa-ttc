@@ -11,6 +11,7 @@ from e_jepa_ttc.artifacts.simplex_t_preflight import sha256
 
 from .configuration_preflight import open_acknowledged_source_configuration
 from .coordination import shared_write_admission, verified_ack
+from .expansion_authority import verify_expansion_authority
 from .lifecycle import admitted
 from .source_gather_qa import audit_cached_source
 from .source_preparation import prepare_source_identities
@@ -28,9 +29,8 @@ def prepare_configured_sources(
     """Prepare source identities, not fits; refuse unacknowledged expanded scope.
 
     An expanded configuration is never silently reduced to D0. The original ACK
-    currently covers only OLD8192. Expanded metadata can be inspected with the
-    separate configuration preflight, but new query sources need the supplementary
-    temporal recognition requested from the owner before this loader opens them.
+    covers only OLD8192. New query sources require the exact supplementary owner
+    recognition before this loader opens them, and at each validation boundary.
     """
     if type(other_reserved_bytes) is not int or other_reserved_bytes < 0:
         raise ValueError("explicit nonnegative outstanding output reservation required")
@@ -40,10 +40,9 @@ def prepare_configured_sources(
     config = json.loads(source_config.read_text(encoding="utf-8"))
     # Check before resolving missing cache paths or reading any target payload.
     if any(key in config for key in ("expansion", "dense", "matched")):
-        raise ValueError(
-            "WAITING_EXPANDED_TIME_RECOGNITION: original ACK covers OLD8192 only; "
-            "preserve D1/DENSE configuration and obtain the supplementary recognition "
-            "specified in docs/SIMPLEX_T_STAGE70_EXPANSION_ACK_REQUEST.md"
+        verify_expansion_authority(
+            local_paths,
+            resource_ok=lambda: admitted([local_paths.resolve().parent])["has_headroom"],
         )
     sources, inspection = open_acknowledged_source_configuration(
         local_paths, source_config, source_config_sha256
@@ -63,6 +62,10 @@ def prepare_configured_sources(
             if sha256(local_paths) != paths_hash or sha256(source_config) != source_config_sha256:
                 raise ValueError("local/source configuration changed during preparation")
             ack = verified_ack(ack_path, ack_hash)
+            if any(key in config for key in ("expansion", "dense", "matched")):
+                verify_expansion_authority(
+                    local_paths, resource_ok=lambda: admitted([work])["has_headroom"]
+                )
             if sha256(index_path) != index_hash:
                 raise ValueError("source index differs from audited OLD8192 context amendment")
             index = json.loads(index_path.read_text(encoding="utf-8"))
@@ -86,8 +89,8 @@ def prepare_configured_sources(
         if torch.get_num_interop_threads() != 2:
             torch.set_num_interop_threads(2)
         availability = {
-            "d1": False,
-            "density": False,
+            "d1": "expansion" in config,
+            "density": "dense" in config,
             "t3": True,
             "latent": True,
             "replicate_scalar": True,

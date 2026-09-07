@@ -119,3 +119,23 @@ def test_output_cannot_escape_companion(prepared_config):
             other_reserved_bytes=0,
             resume=False,
         )
+
+
+def test_acknowledged_expansion_preserves_configured_pools(prepared_config, monkeypatch):
+    local, config, _, output = prepared_config
+    config.write_text(json.dumps({"expansion": {}, "dense": {}, "matched": {}}))
+    calls = []
+    monkeypatch.setattr(module, "verify_expansion_authority", lambda *a, **k: calls.append("ack"))
+
+    def prepare(*args, **kwargs):
+        kwargs["validate_prerequisites"]()
+        assert kwargs["availability"]["d1"] is True
+        assert kwargs["availability"]["density"] is True
+        return {"status": "fixture_configuration_preserved"}
+
+    monkeypatch.setattr(module, "prepare_source_identities", prepare)
+    result = module.prepare_configured_sources(
+        local, config, sha256(config), output, other_reserved_bytes=0, resume=False
+    )
+    assert result["status"] == "fixture_configuration_preserved"
+    assert len(calls) >= 3

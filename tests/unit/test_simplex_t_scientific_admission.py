@@ -10,7 +10,9 @@ from e_jepa_ttc.artifacts.simplex_t_preflight import sha256
 from e_jepa_ttc.simplex_t import scientific_admission as module
 
 
-@pytest.mark.parametrize("mode", ["ok", "expanded", "pin", "qa", "changed", "resource"])
+@pytest.mark.parametrize(
+    "mode", ["ok", "expanded", "expanded_ok", "expanded_pin", "pin", "qa", "changed", "resource"]
+)
 def test_admission_composition(tmp_path: Path, monkeypatch, mode: str):
     def save(name, value):
         path = tmp_path / name
@@ -26,7 +28,7 @@ def test_admission_composition(tmp_path: Path, monkeypatch, mode: str):
         "interfaces": {"time_charter": {"path": str(time_path), "sha256": sha256(time_path)}},
     }
     local = save("paths.json", {"worktree": str(tmp_path), "shared_coordination": str(tmp_path)})
-    config = save("source.json", {"expansion": {}} if mode == "expanded" else {})
+    config = save("source.json", {"expansion": {}} if mode.startswith("expanded") else {})
     profile = save("profile.json", {})
     index = save("INDEX_MANIFEST.json", {"ancestry": ancestry})
     ack_hash = "3e55ab3c6e9a57eecd862ad05e999627ea90957e58e329b2eb3652120e953318"
@@ -36,6 +38,8 @@ def test_admission_composition(tmp_path: Path, monkeypatch, mode: str):
     flags = dict(
         d1=False, density=False, t3=True, latent=True, replicate_scalar=True, replicate_latent=True
     )
+    if mode in {"expanded_ok", "expanded_pin"}:
+        flags["d1"] = True
     record = {
         "files": [],
         "source_contract": {
@@ -58,6 +62,14 @@ def test_admission_composition(tmp_path: Path, monkeypatch, mode: str):
         )
     if mode == "pin":
         record["files"][0]["sha256"] = "0" * 64
+    if mode in {"expanded_ok", "expanded_pin"}:
+        extra = save("expanded_ack.json", {"fixture": True})
+        receipt = {"path": str(extra), "sha256": sha256(extra), "evidence": []}
+        monkeypatch.setattr(module, "verify_expansion_authority", lambda *a, **k: receipt)
+        if mode == "expanded_ok":
+            record["files"].append(
+                dict(root="work", relative_path=extra.name, sha256=sha256(extra), category="time")
+            )
     calls = []
     sources = SimpleNamespace(
         index_root=tmp_path,
@@ -101,7 +113,7 @@ def test_admission_composition(tmp_path: Path, monkeypatch, mode: str):
         evidence_profile_sha256=sha256(profile),
         resource_ok=lambda: mode != "resource",
     )
-    if mode == "ok":
+    if mode in {"ok", "expanded_ok"}:
         result = module.validate_scientific_admission(record, **kwargs)
         assert result["optimizer_updates_executed"] == 0
         assert result["holdout_authorized"] is False
@@ -109,7 +121,7 @@ def test_admission_composition(tmp_path: Path, monkeypatch, mode: str):
     else:
         with pytest.raises((ValueError, InterruptedError)):
             module.validate_scientific_admission(record, **kwargs)
-        if mode in {"expanded", "pin", "resource"}:
+        if mode in {"expanded", "expanded_pin", "pin", "resource"}:
             assert not calls
         else:
             assert calls == ["open", "qa", "release"]
