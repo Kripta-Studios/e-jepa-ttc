@@ -8,6 +8,8 @@ from types import SimpleNamespace
 
 import pytest
 
+from e_jepa_ttc.simplex_t.resource_bundle import ResourceAttempt, resource_bundle_members
+
 
 @pytest.fixture
 def entry():
@@ -131,3 +133,88 @@ def test_cli_admission_and_resume_dispatch(entry, tmp_path, monkeypatch, allowed
     assert report.exists() == allowed
     if not allowed:
         assert not (tmp_path / "artifacts").exists()
+
+
+def test_materialized_launch_real_cli_receipt_and_transport(entry, tmp_path, monkeypatch):
+    """Real CLI receipt writer and transport, with model execution explicitly stubbed."""
+    runner_path = Path(__file__).resolve().parents[2] / "scripts/execute_simplex_t_frozen_phase.py"
+    spec = importlib.util.spec_from_file_location("phase_receipt_integration", runner_path)
+    assert spec is not None and spec.loader is not None
+    runner = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(runner)
+    monkeypatch.setattr(runner.torch, "set_num_threads", lambda _: None)
+    monkeypatch.setattr(runner.torch, "set_num_interop_threads", lambda _: None)
+    monkeypatch.setattr(
+        runner,
+        "admitted",
+        lambda _: {
+            "has_headroom": True,
+            "process_tree_rss_bytes": 100_000_000,
+            "host_available_bytes": 10_000_000_000,
+            "written_volume_free_bytes": [90_000_000_000],
+        },
+    )
+    template = tmp_path / "template.json"
+    original = dict(
+        schema="simplex_t_frozen_phase_launch_v2",
+        roots={"work": str(tmp_path)},
+        resource_receipt="unused.json",
+        local_paths="local.json",
+        source_configuration="sources.json",
+        source_configuration_sha256="b" * 64,
+        evidence_profile="evidence.json",
+        evidence_profile_sha256="c" * 64,
+        freeze="freeze.json",
+        freeze_sha256="a" * 64,
+        execution="same_execution",
+        publication="same_publication",
+        stage="T2",
+        availability={},
+        publications={},
+    )
+    template.write_text(json.dumps(original), encoding="utf-8")
+    template_hash = hashlib.sha256(template.read_bytes()).hexdigest()
+    attempts = []
+    for index, status in enumerate(("PAUSED_RESOURCE", "PUBLISHED")):
+        launch, digest = entry.materialize_attempt(template, template_hash, tmp_path)
+
+        def execute(expected_resume=bool(index), expected_status=status, **kwargs):
+            assert kwargs["resource_ok"]()
+            assert kwargs["resume"] == expected_resume
+            assert kwargs["execution"] == Path("same_execution")
+            return {"status": expected_status}
+
+        monkeypatch.setattr(runner, "execute_configured_phase", execute)
+        arguments = [
+            "runner",
+            "--launch",
+            str(launch),
+            "--launch-sha256",
+            digest,
+            "--other-reserved-bytes",
+            "0",
+            "--own-reserved-bytes",
+            "2097152",
+        ]
+        if index:
+            arguments.append("--resume")
+        monkeypatch.setattr("sys.argv", arguments)
+        assert runner.main() == (3 if index == 0 else 0)
+        receipt = Path(json.loads(launch.read_bytes())["resource_receipt"])
+        attempts.append(
+            ResourceAttempt(
+                launch,
+                digest,
+                receipt,
+                hashlib.sha256(receipt.read_bytes()).hexdigest(),
+            )
+        )
+    members = resource_bundle_members(
+        attempts,
+        work_root=tmp_path,
+        freeze_sha256="a" * 64,
+        completed_stages={"T2"},
+        resource_ok=lambda: True,
+    )
+    assert len(members) == 4
+    assert hashlib.sha256(template.read_bytes()).hexdigest() == template_hash
