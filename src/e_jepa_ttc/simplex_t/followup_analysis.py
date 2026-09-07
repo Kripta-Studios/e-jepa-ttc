@@ -10,6 +10,7 @@ import pandas as pd
 from e_jepa_ttc.artifacts.simplex_t_preflight import sha256, write_new_json
 
 from .diagnostic_summary import summarize_diagnostics
+from .replication_summary import three_seed_losses
 from .sealed_analysis import load_sealed_analysis_arms
 from .stage_gate import CanonicalPublication
 from .uncertainty_analysis import paired_uncertainty
@@ -149,4 +150,94 @@ def analyze_followup_phase(
         "holdout_opened": False,
     }
     write_new_json(output / "FOLLOWUP_ANALYSIS.json", report)
+    return report
+
+
+def analyze_three_seed_family(
+    seed7: CanonicalPublication,
+    replicates: CanonicalPublication,
+    *,
+    family: str,
+    output: Path,
+    freeze: Path,
+    freeze_sha256: str,
+    roots: dict[str, Path],
+    expected_queries: pd.DataFrame,
+    validate_authority_and_qa: Callable[[], None],
+    resource_ok: Callable[[], bool],
+) -> dict:
+    """Bind seed7 and T5 to the same freeze, then publish paired mean-loss analysis."""
+    if family not in {"TPR", "LATENT"}:
+        raise ValueError("canonical scalar or latent family required")
+    flag = "replicate_scalar" if family == "TPR" else "replicate_latent"
+    if not replicates.availability[flag] or any(
+        seed7.availability[key] != replicates.availability[key] for key in ("d1", "density")
+    ):
+        raise ValueError("replication family unavailable or frozen pools differ")
+    work = roots["work"].resolve(strict=True)
+    if output.exists() or output.resolve() == work or not output.resolve().is_relative_to(work):
+        raise ValueError("new companion three-seed output required")
+    inputs = []
+    for binding, stage in ((seed7, "T2" if family == "TPR" else "T4"), (replicates, "T5")):
+        inputs.append(
+            load_sealed_analysis_arms(
+                binding,
+                stage=stage,
+                freeze=freeze,
+                freeze_sha256=freeze_sha256,
+                roots=roots,
+                expected_queries=expected_queries,
+                validate_authority_and_qa=validate_authority_and_qa,
+                resource_ok=resource_ok,
+            )
+        )
+    pool = "D1" if replicates.availability["d1"] else "D0"
+    names = [f"{family}-{pool}-H{h}-C160" for h in (1, 8)]
+    selected = {(name, 7): inputs[0][name, 7] for name in names}
+    selected.update({(name, seed): inputs[1][name, seed] for name in names for seed in (13, 23)})
+    averaged, summary = three_seed_losses(selected, family=family, pool=pool)
+
+    def boundary() -> None:
+        if not resource_ok():
+            raise InterruptedError("PAUSED_RESOURCE: three-seed analysis")
+        validate_authority_and_qa()
+        if sha256(freeze) != freeze_sha256 or any(
+            sha256(binding.publication) != binding.publication_sha256
+            or sha256(binding.endpoints) != binding.endpoints_sha256
+            for binding in (seed7, replicates)
+        ):
+            raise ValueError("three-seed input seals changed")
+
+    boundary()
+    output.mkdir(parents=True)
+    losses = pd.concat(
+        [frame.assign(loss_series=name) for name, frame in averaged.items()], ignore_index=True
+    )
+    losses.to_parquet(output / "MEAN_LOSSES_NOT_TTC_PREDICTIONS.parquet", index=False)
+    paired_uncertainty(
+        averaged, reference=names[0], output=output / "uncertainty", resource_check=boundary
+    )
+    boundary()
+    report = {
+        "schema": "simplex_t_sealed_three_seed_analysis_v1",
+        "status": "THREE_SEED_LOSS_ANALYSIS_COMPLETE_NOT_T6",
+        "family": family,
+        "freeze_sha256": freeze_sha256,
+        "summary": summary,
+        "seed7_publication_sha256": seed7.publication_sha256,
+        "replicates_publication_sha256": replicates.publication_sha256,
+        "uncertainty_conditions_on_seeds": [7, 13, 23],
+        "optimization_seeds_resampled": False,
+        "files": {
+            name: sha256(output / name)
+            for name in (
+                "MEAN_LOSSES_NOT_TTC_PREDICTIONS.parquet",
+                "uncertainty/PAIRED_UNCERTAINTY.json",
+            )
+        },
+        "scope": "REUSED_OLD_DEVELOPMENT_NOT_CONFIRMATORY",
+        "optimizer_updates": 0,
+        "holdout_opened": False,
+    }
+    write_new_json(output / "THREE_SEED_ANALYSIS.json", report)
     return report
