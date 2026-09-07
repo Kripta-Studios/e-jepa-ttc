@@ -8,6 +8,8 @@ from pathlib import Path
 
 from e_jepa_ttc.artifacts.simplex_t_preflight import sha256
 
+from .resource_cadence import ResourceCadence
+
 
 def _read_report(work: Path, path: Path, digest: str) -> dict:
     path = path.resolve(strict=True)
@@ -40,11 +42,16 @@ def _verify_sources(
         resolved[path] = digest
     if set(resolved) != actual:
         raise ValueError("static report does not cover its complete current source scope")
+    cadence = ResourceCadence(resource_ok, maximum_age_seconds=1.0)
+    if not cadence(force=True):
+        raise InterruptedError("PAUSED_RESOURCE: static source verification")
     for path, digest in resolved.items():
-        if not resource_ok():
+        if not cadence():
             raise InterruptedError("PAUSED_RESOURCE: static source verification")
         if sha256(path) != digest:
             raise ValueError("static report source bytes changed")
+    if not cadence(force=True):
+        raise InterruptedError("PAUSED_RESOURCE: static source verification")
 
 
 def verify_companion_types(

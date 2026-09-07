@@ -6,11 +6,50 @@ from pathlib import Path
 import pytest
 
 from e_jepa_ttc.artifacts.simplex_t_preflight import sha256
+from e_jepa_ttc.simplex_t import static_qa_evidence as module
+from e_jepa_ttc.simplex_t.resource_cadence import ResourceCadence
 from e_jepa_ttc.simplex_t.static_qa_evidence import (
     verify_companion_types,
     verify_powershell_syntax,
     verify_ruff_comparison,
 )
+
+
+@pytest.mark.parametrize("mode", ["ok", "denied_at_end", "changed_file", "expired"])
+def test_source_hash_cadence_preserves_hashes_and_fresh_boundaries(tmp_path, monkeypatch, mode):
+    now = [0.0]
+    monkeypatch.setattr(
+        module,
+        "ResourceCadence",
+        lambda probe, **kwargs: ResourceCadence(probe, **kwargs, clock=lambda: now[0]),
+    )
+    paths = [tmp_path / f"{i}.py" for i in range(4)]
+    for path in paths:
+        path.write_text("# fixture", encoding="utf-8")
+    declared = {path.name: sha256(path) for path in paths}
+    if mode == "changed_file":
+        paths[-1].write_text("# changed", encoding="utf-8")
+    hashed = []
+    probes = []
+
+    def digest(path):
+        hashed.append(path)
+        if mode == "expired":
+            now[0] += 1.1
+        return sha256(path)
+
+    def probe():
+        probes.append(now[0])
+        return mode != "denied_at_end" or len(probes) == 1
+
+    monkeypatch.setattr(module, "sha256", digest)
+    if mode in {"denied_at_end", "changed_file"}:
+        with pytest.raises(InterruptedError if mode == "denied_at_end" else ValueError):
+            module._verify_sources(tmp_path, declared, set(paths), probe)
+    else:
+        module._verify_sources(tmp_path, declared, set(paths), probe)
+    assert hashed == paths
+    assert len(probes) == (5 if mode == "expired" else 1 if mode == "changed_file" else 2)
 
 
 @pytest.mark.parametrize("failure", ["", "diagnostic", "missing", "source", "boolean"])
