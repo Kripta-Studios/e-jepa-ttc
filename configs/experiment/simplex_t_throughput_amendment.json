@@ -1,0 +1,22 @@
+{
+  "id": "SIMPLEX_T_THROUGHPUT_2026-09-08",
+  "authorization": "User explicitly requests implementing and applying acceleration and permits stopping own replay while preserving valid artifacts",
+  "scientific_fits_before_amendment": 0,
+  "D0": "Preserve all 8192 OLD queries and existing valid cache blocks",
+  "D1": {
+    "sequence_count": 22,
+    "queries_per_sequence": 512,
+    "selection": "Chronological evenly spaced ranks including endpoints; token tie-break; independent of TTC",
+    "new_query_count": 11264,
+    "parent_query_count": 27307
+  },
+  "controls": "Rebind quantity/diversity controls to selected D1 counts per outer fold before any scientific fit; no unmatched fallback",
+  "history": "Unchanged H16 windows and current retrospective ROI",
+  "experts": "Unchanged frozen A5/C2F/PAIR and complete ancestry exclusions",
+  "recipe": "Unchanged FP32, batches, losses, updates, seeds and registered fit graph",
+  "io": "One persistent read-only HDF5 sequence with retained dataset handles, gated on exact real input tensor parity",
+  "resource_floors": {"available_ram_bytes": 4294967296, "free_disk_bytes_after_reservations": 20000000000},
+  "no_holdouts": true,
+  "stage70_76_unchanged": true,
+  "no_completion_time_guarantee": true
+}
