@@ -16,6 +16,7 @@ from .expanded_history_loader import ExpandedHistoryLoader
 from .expanded_inference import expanded_inference_family
 from .expanded_replay_plan import inspect_expanded_replay, verify_d1_index_ancestry
 from .expanded_replay_queue import run_expanded_blocks
+from .expanded_stream_support import verify_expanded_stream_support, verify_stream_receipts
 from .reuse_catalog import D0ReuseCatalog
 
 
@@ -83,6 +84,14 @@ def run_expanded_context_cache(
         producer_family=index["producer_family"],
         valid=index["valid"],
     )
+    stream_receipts = verify_expanded_stream_support(
+        index,
+        manifest,
+        pool=pool,
+        raw_train_root=raw_train_root,
+        allowed_sequences=allowed_sequences,
+        resource_ok=resource_ok,
+    )
     parent = json.loads(ancestry.read_text(encoding="utf-8"))
     checkpoints = {r["sha256"]: Path(r["path"]) for r in parent["input_bindings"].values()}
     prep = json.loads(preprocessing.read_text(encoding="utf-8"))["config"]
@@ -99,6 +108,7 @@ def run_expanded_context_cache(
             "expanded_replay_queue.py",
             "expanded_history_loader.py",
             "expanded_replay_plan.py",
+            "expanded_stream_support.py",
             "dense_replay_reuse.py",
             "reuse_catalog.py",
             "cache_reuse.py",
@@ -117,6 +127,7 @@ def run_expanded_context_cache(
         "expanded_code_sha256": code,
         "dedup_manifest_sha256": dedup_manifest_sha256,
         "ancestry_sha256": ancestry_sha256,
+        "raw_stream_support": stream_receipts,
         "torch": str(torch.__version__),
         "batch_size": 16,
         "layout": "one query, chronological H16; absent slots zero, never exported",
@@ -139,6 +150,7 @@ def run_expanded_context_cache(
 
     def validate() -> None:
         validate_expanded_authority()
+        verify_stream_receipts(stream_receipts)
         for path, expected in (
             (index_root / "INDEX_MANIFEST.json", index_manifest_sha256),
             (dedup_root / "DEDUP_MANIFEST.json", dedup_manifest_sha256),

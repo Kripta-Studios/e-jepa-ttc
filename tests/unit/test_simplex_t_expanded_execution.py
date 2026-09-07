@@ -77,6 +77,7 @@ def test_d1_execution_checks_authority_before_inference(tmp_path, monkeypatch, f
         ),
     )
     monkeypatch.setattr(module.torch, "get_num_interop_threads", lambda: 2)
+    monkeypatch.setattr(module, "verify_expanded_stream_support", lambda *a, **kw: [])
 
     def forbidden(*args, **kwargs):
         raise AssertionError("resource pause must precede producer inference")
