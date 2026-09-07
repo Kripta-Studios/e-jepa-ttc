@@ -7,6 +7,8 @@ This module neither publishes a freeze nor authorizes an optimizer update.
 
 from __future__ import annotations
 
+import hashlib
+import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -33,6 +35,47 @@ class FrozenFile:
     root: str
     relative_path: str
     sha256: str
+
+
+def verify_code_commit(files: list[FrozenFile], roots: dict[str, Path], commit: str) -> None:
+    """Bind pinned companion code bytes to an existing Git commit, read-only.
+
+    Unrelated untracked or modified files do not invalidate this scoped check.
+    Code must be inside the explicit companion ``work`` root; imported producer
+    artifacts have separate producer pins, not a claim of belonging to this commit.
+    No checkout, index update, filter, or repository configuration is performed.
+    """
+    if len(commit) != 40 or set(commit) - set("0123456789abcdef") or "work" not in roots:
+        raise ValueError("full source commit and companion work root required")
+    work = roots["work"].resolve(strict=True)
+
+    def git(*args: str) -> bytes:
+        result = subprocess.run(
+            ["git", "-C", str(work), *args], capture_output=True, check=False, timeout=30
+        )
+        if result.returncode:
+            raise ValueError("cannot verify scientific code against declared Git commit")
+        return result.stdout
+
+    if Path(git("rev-parse", "--show-toplevel").decode().strip()).resolve() != work:
+        raise ValueError("companion work root must be the Git worktree root")
+    if git("rev-parse", "--verify", f"{commit}^{{commit}}").decode().strip() != commit:
+        raise ValueError("declared source object is not an exact commit")
+    code = [pin for pin in files if pin.category == "code"]
+    if not code:
+        raise ValueError("scientific freeze requires committed code pins")
+    for pin in code:
+        relative = Path(pin.relative_path)
+        if pin.root != "work" or relative.is_absolute() or relative.drive or ".." in relative.parts:
+            raise ValueError("companion code pin must remain under work")
+        path = (work / relative).resolve(strict=True)
+        if not path.is_relative_to(work) or path.stat().st_size > 16_777_216:
+            raise ValueError("code pin escapes work or exceeds source file bound")
+        blob = git("cat-file", "blob", f"{commit}:{relative.as_posix()}")
+        if hashlib.sha256(blob).hexdigest() != pin.sha256:
+            raise ValueError(f"code pin differs from declared commit: {pin.relative_path}")
+        if compute_file_hash(str(path)) != pin.sha256:
+            raise ValueError(f"working source differs from committed code pin: {pin.relative_path}")
 
 
 def verify_files(files: list[FrozenFile], roots: dict[str, Path]) -> None:

@@ -11,7 +11,7 @@ from e_jepa_ttc.artifacts.hashing import compute_file_hash
 from e_jepa_ttc.artifacts.simplex_t_preflight import write_new_json
 
 from .arms import resolve_arm
-from .freeze_integrity import FrozenFile, verify_files, verify_stage_sources
+from .freeze_integrity import FrozenFile, verify_code_commit, verify_files, verify_stage_sources
 from .lifecycle import ExclusiveLease
 from .phase_manifest import fit_key
 from .registry import registered_graph
@@ -28,6 +28,7 @@ def _content(
     if len(code_commit) != 40 or set(code_commit) - set("0123456789abcdef"):
         raise ValueError("full source commit required")
     verify_files(files, roots)
+    verify_code_commit(files, roots, code_commit)
     if preparation not in files or preparation.category != "normalizers":
         raise ValueError("complete source preparation must be pinned as normalization evidence")
     if technical_ledger not in files or technical_ledger.category != "qa":

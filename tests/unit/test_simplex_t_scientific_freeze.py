@@ -1,6 +1,7 @@
 """Synthetic publication checks; no scientific authority or optimizer is created."""
 
 import json
+import subprocess
 from dataclasses import asdict
 from hashlib import sha256
 from pathlib import Path
@@ -67,12 +68,31 @@ def fixture_inputs(root: Path, failure: str = "") -> dict:
         path = root / f"{category}.json"
         path.write_text(json.dumps(value), encoding="utf-8")
         pins.append(FrozenFile(category, "work", path.name, digest(value)))
+
+    def git(*args):
+        return subprocess.check_output(["git", "-C", str(root), *args], stderr=subprocess.DEVNULL)
+
+    git("init", "--quiet")
+    git("add", "code.json")
+    git(
+        "-c",
+        "user.name=QA Fixture",
+        "-c",
+        "user.email=qa@example.invalid",
+        "-c",
+        "commit.gpgsign=false",
+        "commit",
+        "--quiet",
+        "-m",
+        "Synthetic freeze fixture",
+    )
+    commit = git("rev-parse", "HEAD").decode().strip()
     return dict(
         files=pins,
         roots={"work": root},
         preparation=next(p for p in pins if p.category == "normalizers"),
         technical_ledger=next(p for p in pins if p.category == "qa"),
-        code_commit="d" * 40,
+        code_commit=commit,
     )
 
 
@@ -104,6 +124,34 @@ def test_round_trip_and_no_overwrite(tmp_path: Path) -> None:
         read_scientific_freeze(
             output, expected_sha256=pin, roots=inputs["roots"], validate_prerequisites=validator
         )
+
+
+@pytest.mark.parametrize("change", ["invented_commit", "repinned_working_code", "untracked_other"])
+def test_freeze_code_must_belong_to_declared_commit(tmp_path: Path, change: str) -> None:
+    inputs = fixture_inputs(tmp_path)
+    if change == "invented_commit":
+        inputs["code_commit"] = "a" * 40
+    elif change == "repinned_working_code":
+        path = tmp_path / "code.json"
+        path.write_text('{"different": true}', encoding="utf-8")
+        inputs["files"] = [
+            FrozenFile(
+                pin.category, pin.root, pin.relative_path, sha256(path.read_bytes()).hexdigest()
+            )
+            if pin.category == "code"
+            else pin
+            for pin in inputs["files"]
+        ]
+    else:
+        (tmp_path / "unrelated_proposal.md").write_text("preserve me", encoding="utf-8")
+    output = tmp_path / "freeze.json"
+    if change == "untracked_other":
+        publish_scientific_freeze(output, **inputs, validate_prerequisites=lambda: None)
+        assert output.exists()
+    else:
+        with pytest.raises(ValueError, match="commit"):
+            publish_scientific_freeze(output, **inputs, validate_prerequisites=lambda: None)
+        assert not output.exists()
 
 
 @pytest.mark.parametrize(
