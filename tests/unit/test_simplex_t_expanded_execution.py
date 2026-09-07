@@ -9,8 +9,9 @@ from e_jepa_ttc.artifacts.simplex_t_preflight import sha256
 from e_jepa_ttc.simplex_t.expanded_execution import run_d1_context_cache
 
 
-@pytest.mark.parametrize("failure", ["pause", "authority", "roles"])
-def test_d1_execution_checks_authority_before_inference(tmp_path, monkeypatch, failure):
+@pytest.mark.parametrize("pool", ["D1", "DENSE_OLD"])
+@pytest.mark.parametrize("failure", ["pause", "authority", "roles", "wiring"])
+def test_d1_execution_checks_authority_before_inference(tmp_path, monkeypatch, failure, pool):
     import e_jepa_ttc.simplex_t.expanded_execution as module
 
     index, dedup = tmp_path / "index", tmp_path / "dedup"
@@ -47,17 +48,22 @@ def test_d1_execution_checks_authority_before_inference(tmp_path, monkeypatch, f
         "ancestry": {"path": str(ancestry), "sha256": sha256(ancestry)},
         "index_sha256": sha256(index / "query_context_index.npz"),
     }
+    if pool == "DENSE_OLD":
+        manifest["status"] = "DENSE_INPUT_INDEX_PREPARED_PENDING_TIME_ACK_AND_REPLAY"
+        del manifest["ancestry"]
     path = index / "INDEX_MANIFEST.json"
     path.write_text(json.dumps(manifest), encoding="utf-8")
     dedup_path = dedup / "DEDUP_MANIFEST.json"
+    dedup_manifest = {
+        "status": "D1_CONTENT_INDEX_READY_NOT_FEATURE_CACHE_OR_REPLAY_AUTHORIZATION",
+        "identity": {"index_manifest_sha256": sha256(path)},
+        "outputs": [{}, {}, {}],
+    }
+    if pool == "DENSE_OLD":
+        dedup_manifest["status"] = "DENSE_CONTENT_INDEX_READY_PENDING_TIME_ACK_AND_FEATURE_REPLAY"
+        dedup_manifest["input_manifest_sha256"] = sha256(path)
     dedup_path.write_text(
-        json.dumps(
-            {
-                "status": "D1_CONTENT_INDEX_READY_NOT_FEATURE_CACHE_OR_REPLAY_AUTHORIZATION",
-                "identity": {"index_manifest_sha256": sha256(path)},
-                "outputs": [{}, {}, {}],
-            }
-        ),
+        json.dumps(dedup_manifest),
         encoding="utf-8",
     )
     # Only the frozen preprocessing fixture digest is substituted; all other pins are real.
@@ -99,12 +105,60 @@ def test_d1_execution_checks_authority_before_inference(tmp_path, monkeypatch, f
         validate_expanded_authority=authority,
         resource_ok=resources,
         max_new_queries=1,
+        pool=pool,
     )
+    if pool == "DENSE_OLD":
+        args.update(
+            reuse_catalog_loader=forbidden,
+            reuse_expected_identities={o: {"compiled_sha256": str(o) * 64} for o in range(3)},
+            authorized_families=families,
+        )
     output = tmp_path / "cache"
-    if failure == "pause":
+    if failure == "wiring":
+
+        def queue(destination, **kwargs):
+            assert destination == output
+            kwargs["validate_prerequisites"]()
+            identity = kwargs["identity"]
+            assert json.loads(json.dumps(identity)) == identity
+            assert identity["pool"] == pool
+            if pool == "DENSE_OLD":
+                assert isinstance(kwargs["reuse_block"], module.DenseReplayReuse)
+                assert set(identity["d0_reuse_identities"]) == {"0", "1", "2"}
+            else:
+                assert kwargs["reuse_block"] is None
+            return {"status": "WIRED_WITHOUT_INFERENCE"}
+
+        monkeypatch.setattr(module, "run_expanded_blocks", queue)
+        assert run_d1_context_cache(output, **args)["status"] == "WIRED_WITHOUT_INFERENCE"
+    elif failure == "pause":
         assert run_d1_context_cache(output, **args)["status"] == "PAUSED_RESOURCE"
     else:
         with pytest.raises(ValueError):
             run_d1_context_cache(output, **args)
     assert not output.exists()
     assert not (tmp_path / "CURRENT_REPLAY.lock").exists()
+
+
+@pytest.mark.parametrize("identities", [None, {}, {0: {}}, {0: {}, 1: {}}])
+def test_dense_execution_requires_all_reuse_folds(tmp_path, identities):
+    with pytest.raises(ValueError, match="all D0 fold identities"):
+        run_d1_context_cache(
+            tmp_path,
+            index_root=tmp_path,
+            index_manifest_sha256="",
+            dedup_root=tmp_path,
+            dedup_manifest_sha256="",
+            ancestry=tmp_path,
+            ancestry_sha256="",
+            preprocessing=tmp_path,
+            raw_train_root=tmp_path,
+            allowed_sequences=set(),
+            validate_expanded_authority=lambda: None,
+            resource_ok=lambda: True,
+            max_new_queries=1,
+            pool="DENSE_OLD",
+            reuse_catalog_loader=lambda outer: None,
+            reuse_expected_identities=identities,
+            authorized_families=[],
+        )
