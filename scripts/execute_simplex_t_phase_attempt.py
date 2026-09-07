@@ -53,16 +53,21 @@ def main() -> int:
     parser.add_argument("--template", type=Path, required=True)
     parser.add_argument("--template-sha256", required=True)
     parser.add_argument("--worker-sha256", required=True)
-    parser.add_argument("--report", type=Path, required=True)
+    parser.add_argument("--report", type=Path)
     parser.add_argument("--other-reserved-bytes", type=int, required=True)
     parser.add_argument("--own-reserved-bytes", type=int, required=True)
     parser.add_argument("--resume", action="store_true")
+    parser.add_argument("--verify-only", action="store_true")
     args = parser.parse_args()
     if args.other_reserved_bytes < 0 or args.own_reserved_bytes < 2_097_152:
         parser.error("nonnegative other and at least 2097152 own reserved bytes required")
     work = Path(__file__).resolve().parents[1]
-    report = args.report.resolve()
-    if not report.is_relative_to(work / "artifacts") or report.exists():
+    if args.verify_only and (args.report is not None or args.resume):
+        parser.error("verification must not request an attempt report or execution resume")
+    if not args.verify_only and args.report is None:
+        parser.error("execution requires a new --report")
+    report = args.report.resolve() if args.report is not None else None
+    if report is not None and (not report.is_relative_to(work / "artifacts") or report.exists()):
         raise ValueError("new attempt report inside companion artifacts required")
     worker = Path(__file__).with_name("execute_simplex_t_frozen_phase.py")
     pinned_bytes(worker, args.worker_sha256)
@@ -73,7 +78,16 @@ def main() -> int:
     ):
         print("PAUSED_RESOURCE: attempt metadata admission; no worker started")
         return 3
-    launch, digest = materialize_attempt(args.template, args.template_sha256, work)
+    if args.verify_only:
+        config = json.loads(pinned_bytes(args.template, args.template_sha256))
+        if (
+            config.get("schema") != "simplex_t_frozen_phase_launch_v2"
+            or Path(config["roots"]["work"]).resolve(strict=True) != work
+        ):
+            raise ValueError("verification template must belong to this companion worktree")
+        launch, digest = args.template, args.template_sha256
+    else:
+        launch, digest = materialize_attempt(args.template, args.template_sha256, work)
     command = [
         sys.executable,
         "-B",
@@ -89,6 +103,11 @@ def main() -> int:
     ]
     if args.resume:
         command.append("--resume")
+    if args.verify_only:
+        command.append("--verify-only")
+        pinned_bytes(worker, args.worker_sha256)
+        pinned_bytes(args.template, args.template_sha256)
+        return subprocess.run(command, check=False).returncode
     record = {
         "schema": "simplex_t_phase_attempt_v1",
         "template": str(args.template.resolve()),
@@ -101,6 +120,7 @@ def main() -> int:
     }
     # Publish lineage before execution, including attempts terminated externally.
     # A missing return code is unknown, never evidence of zero completed work.
+    assert report is not None
     report.parent.mkdir(parents=True, exist_ok=True)
     with report.open("x", encoding="utf-8") as stream:
         json.dump(record, stream, indent=2, ensure_ascii=False)

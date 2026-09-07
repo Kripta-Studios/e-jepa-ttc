@@ -73,7 +73,8 @@ def test_invalid_template_creates_no_attempt(entry, tmp_path, fault):
 
 
 @pytest.mark.parametrize("allowed", [False, True])
-def test_cli_admission_and_resume_dispatch(entry, tmp_path, monkeypatch, allowed):
+@pytest.mark.parametrize("verify_only", [False, True])
+def test_cli_admission_and_resume_dispatch(entry, tmp_path, monkeypatch, allowed, verify_only):
     scripts = tmp_path / "scripts"
     scripts.mkdir()
     monkeypatch.setattr(entry, "__file__", str(scripts / "execute_simplex_t_phase_attempt.py"))
@@ -117,21 +118,27 @@ def test_cli_admission_and_resume_dispatch(entry, tmp_path, monkeypatch, allowed
             "written_volume_free_bytes": [90_000_000_000],
         },
     )
+    if verify_only:
+        del entry.sys.argv[7:9]
+        entry.sys.argv[-1] = "--verify-only"
     calls = []
 
     def run(command, *, check):
         assert check is False
-        assert report.exists()  # lineage is published before worker execution
-        assert command[-1] == "--resume"
-        assert json.loads(report.read_text(encoding="utf-8"))["command"] == command
+        assert report.exists() is not verify_only
+        assert command[-1] == ("--verify-only" if verify_only else "--resume")
+        if verify_only:
+            assert command[command.index("--launch") + 1] == str(template)
+        else:
+            assert json.loads(report.read_text(encoding="utf-8"))["command"] == command
         calls.append(command)
-        return SimpleNamespace(returncode=3)
+        return SimpleNamespace(returncode=10 if verify_only else 3)
 
     monkeypatch.setattr(entry.subprocess, "run", run)
-    assert entry.main() == 3
+    assert entry.main() == (10 if allowed and verify_only else 3)
     assert len(calls) == int(allowed)
-    assert report.exists() == allowed
-    if not allowed:
+    assert report.exists() == (allowed and not verify_only)
+    if not allowed or verify_only:
         assert not (tmp_path / "artifacts").exists()
 
 
