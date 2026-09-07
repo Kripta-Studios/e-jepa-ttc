@@ -8,11 +8,12 @@ import pandas as pd
 import pytest
 
 from e_jepa_ttc.artifacts.simplex_t_preflight import sha256
-from e_jepa_ttc.simplex_t.risk17_inputs import load_risk17_replay
+from e_jepa_ttc.simplex_t.risk17_inputs import load_risk17_replay, load_selector_replay
 
 
 @pytest.mark.parametrize("failure", ["", "prediction", "identity", "role", "bytes", "authority"])
-def test_risk17_comparator_contract(tmp_path: Path, failure: str) -> None:
+@pytest.mark.parametrize("comparator", ["S65-RISK17", "S67-SIMPLEX17"])
+def test_risk17_comparator_contract(tmp_path: Path, failure: str, comparator: str) -> None:
     ids = np.arange(8192)
     identity = pd.DataFrame(
         {
@@ -24,7 +25,7 @@ def test_risk17_comparator_contract(tmp_path: Path, failure: str) -> None:
         }
     )
     frame = identity.assign(
-        arm="S65-RISK17",
+        arm=comparator,
         seed=7,
         selected_expert=0,
         prediction_ttc_s=1.0,
@@ -36,7 +37,9 @@ def test_risk17_comparator_contract(tmp_path: Path, failure: str) -> None:
         frame.loc[0, "prediction_ttc_s"] = 2.0
     if failure == "identity":
         frame.loc[0, "track_id"] = -1
-    path = tmp_path / "RISK17_OLD.parquet"
+    path = tmp_path / (
+        "RISK17_OLD.parquet" if comparator == "S65-RISK17" else "SIMPLEX17_OLD.parquet"
+    )
     frame.to_parquet(path, index=False)
     bindings = [
         {
@@ -49,7 +52,9 @@ def test_risk17_comparator_contract(tmp_path: Path, failure: str) -> None:
         for fold in range(3)
     ]
     report = {
-        "status": "HISTORICAL_RISK17_OLD_REPLAY_EXACT",
+        "status": "HISTORICAL_RISK17_OLD_REPLAY_EXACT"
+        if comparator == "S65-RISK17"
+        else "HISTORICAL_SIMPLEX17_OLD_REPLAY_EXACT_FP32",
         "queries": 8192,
         "optimizer_updates": 0,
         "scientific_stage_authorized": False,
@@ -76,8 +81,13 @@ def test_risk17_comparator_contract(tmp_path: Path, failure: str) -> None:
     )
     if failure:
         with pytest.raises(ValueError):
-            load_risk17_replay(manifest, **arguments)
+            load_selector_replay(manifest, comparator=comparator, **arguments)
     else:
-        result = load_risk17_replay(manifest, **arguments)
+        result = load_selector_replay(manifest, comparator=comparator, **arguments)
         assert len(result) == 8192
         assert result.prediction_ttc_s.eq(1.0).all()
+        if comparator == "S65-RISK17":
+            assert load_risk17_replay(manifest, **arguments).equals(result)
+        else:
+            with pytest.raises(ValueError):
+                load_risk17_replay(manifest, **arguments)

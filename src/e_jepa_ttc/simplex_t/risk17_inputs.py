@@ -1,4 +1,4 @@
-"""Load the unchanged-expert RISK17 comparator against independent OLD identities."""
+"""Load historical unchanged-expert selectors against independent OLD identities."""
 
 from __future__ import annotations
 
@@ -12,9 +12,10 @@ import pandas as pd
 from e_jepa_ttc.artifacts.simplex_t_preflight import sha256
 
 
-def load_risk17_replay(
+def load_selector_replay(
     manifest: Path,
     *,
+    comparator: str,
     manifest_sha256: str,
     expected_identity: pd.DataFrame,
     expected_bindings: list[dict],
@@ -29,11 +30,18 @@ def load_risk17_replay(
     does not authorize fits, gates or any confirmation access.
     """
     validate_prerequisites()
+    registered = {
+        "S65-RISK17": ("HISTORICAL_RISK17_OLD_REPLAY_EXACT", "RISK17_OLD.parquet"),
+        "S67-SIMPLEX17": ("HISTORICAL_SIMPLEX17_OLD_REPLAY_EXACT_FP32", "SIMPLEX17_OLD.parquet"),
+    }
+    if comparator not in registered:
+        raise ValueError("unregistered historical selector")
+    status, filename = registered[comparator]
     if manifest.stat().st_size > 1_048_576 or sha256(manifest) != manifest_sha256:
         raise ValueError("RISK17 replay manifest changed")
     record = json.loads(manifest.read_text(encoding="utf-8"))
     if (
-        record["status"] != "HISTORICAL_RISK17_OLD_REPLAY_EXACT"
+        record["status"] != status
         or record["queries"] != 8192
         or type(record["optimizer_updates"]) is not int
         or record["optimizer_updates"] != 0
@@ -51,7 +59,7 @@ def load_risk17_replay(
         ):
             raise ValueError("RISK17 requires outer development producers")
     root = manifest.parent.resolve(strict=True)
-    payload = (root / "RISK17_OLD.parquet").resolve(strict=True)
+    payload = (root / filename).resolve(strict=True)
     if (
         not payload.is_relative_to(root)
         or payload.stat().st_size > 16_777_216
@@ -74,7 +82,7 @@ def load_risk17_replay(
     expected = expected_identity.sort_values("sample_token").reset_index(drop=True)
     if not frame[identity].equals(expected[identity]):
         raise ValueError("RISK17 query, fold or target identity differs")
-    if not frame.arm.eq("S65-RISK17").all() or not frame.seed.eq(7).all():
+    if not frame.arm.eq(comparator).all() or not frame.seed.eq(7).all():
         raise ValueError("historical RISK17 seed7 comparator required")
     selected = frame.selected_expert.to_numpy()
     experts = frame[["a5_ttc_s", "c2f_ttc_s", "pair_ttc_s"]].to_numpy()
@@ -89,3 +97,24 @@ def load_risk17_replay(
     if sha256(manifest) != manifest_sha256 or sha256(payload) != record["payload_sha256"]:
         raise ValueError("RISK17 publication changed during loading")
     return frame
+
+
+def load_risk17_replay(
+    manifest: Path,
+    *,
+    manifest_sha256: str,
+    expected_identity: pd.DataFrame,
+    expected_bindings: list[dict],
+    ancestry_sha256: str,
+    validate_prerequisites: Callable[[], None],
+) -> pd.DataFrame:
+    """Preserve the explicit RISK17-only interface; never substitute SIMPLEX17."""
+    return load_selector_replay(
+        manifest,
+        comparator="S65-RISK17",
+        manifest_sha256=manifest_sha256,
+        expected_identity=expected_identity,
+        expected_bindings=expected_bindings,
+        ancestry_sha256=ancestry_sha256,
+        validate_prerequisites=validate_prerequisites,
+    )
