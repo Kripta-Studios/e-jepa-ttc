@@ -15,7 +15,7 @@ class Evidence:
     finite_fraction: float
     sign_error_delta: float
     crucial_delta: float
-    integrity: bool = True
+    integrity: bool = False
 
 
 def may_replicate(e: Evidence) -> bool:
@@ -26,11 +26,13 @@ def may_replicate(e: Evidence) -> bool:
         e.sign_error_delta,
         e.crucial_delta,
     )
-    if not all(math.isfinite(v) for v in numeric) or not e.integrity:
+    if not all(math.isfinite(v) for v in numeric) or e.integrity is not True:
         return False
     return (
-        e.sequence_count == 9
-        and e.sequence_wins >= 6
+        type(e.sequence_count) is int
+        and type(e.sequence_wins) is int
+        and e.sequence_count == 9
+        and 6 <= e.sequence_wins <= e.sequence_count
         and e.delta_risk17 <= -3
         and e.delta_current_control <= -1
         and e.finite_fraction == 1.0

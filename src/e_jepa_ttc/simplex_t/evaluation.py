@@ -148,8 +148,9 @@ def may_explore_context(
 ) -> bool:
     """T3 practical gate independent of CI significance; no retrospective candidate swap."""
     return (
-        integrity
-        and finite
+        integrity is True
+        and finite is True
+        and len(fraction_train_h8) == 3
         and np.isfinite(delta_h1)
         and delta_h1 <= -1
         and np.isfinite(sign_delta)
