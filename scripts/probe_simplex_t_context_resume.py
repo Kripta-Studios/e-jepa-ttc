@@ -82,7 +82,8 @@ def main() -> None:
         "torch": str(torch.__version__),
         "updates_reserved": 20,
     }
-    operation = "real_context_cpu_resume_10_vs_5_5_journal_state_v2"
+    # Renew changed source/code evidence without reusing an old budget reservation.
+    operation = "real_context_cpu_resume_" + state_digest(contract)
     budget_path = worktree / "artifacts/simplex_t/TECHNICAL_BUDGET.json"
     with ExclusiveLease(args.output.with_suffix(".probe.lock")):
         if args.resume:

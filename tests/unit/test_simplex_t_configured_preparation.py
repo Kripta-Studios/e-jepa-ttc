@@ -71,7 +71,7 @@ def test_disk_floor_includes_pending_outputs_and_preparation_overhead(prepared_c
     monkeypatch.setattr(
         module,
         "admitted",
-        lambda _: {"has_headroom": True, "written_volume_free_bytes": [60_067_108_863]},
+        lambda _: {"has_headroom": True, "written_volume_free_bytes": [40_067_108_863]},
     )
 
     def prepare(*args, **kwargs):

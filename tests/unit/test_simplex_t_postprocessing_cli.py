@@ -160,7 +160,7 @@ def test_reservations_are_subtracted_before_postprocessing(entry, monkeypatch, c
         "admitted",
         lambda *a: {
             "has_headroom": True,
-            "written_volume_free_bytes": [60_000_000_000],
+            "written_volume_free_bytes": [40_000_000_000],
         },
     )
     monkeypatch.setattr(

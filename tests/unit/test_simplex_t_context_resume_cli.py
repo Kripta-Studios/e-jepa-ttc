@@ -99,6 +99,8 @@ def test_real_history_probe_plan_reserves_twenty_once_without_running_optimizer(
     assert result["exact_complete_state_match"]
     assert result["executed_technical_updates"] == 20  # Mocked metadata, not executed work.
     budget = json.loads((tmp_path / "artifacts/simplex_t/TECHNICAL_BUDGET.json").read_text())
-    assert budget["reservations"] == {"real_context_cpu_resume_10_vs_5_5_journal_state_v2": 20}
+    contract = json.loads((output / "CONTRACT.json").read_text())
+    operation = "real_context_cpu_resume_" + module.state_digest(contract)
+    assert budget["reservations"] == {operation: 20}
     with pytest.raises(FileExistsError):
         module.main()
