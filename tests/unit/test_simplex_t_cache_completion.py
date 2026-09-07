@@ -10,6 +10,22 @@ import pytest
 from e_jepa_ttc.simplex_t.cache_completion import complete_d0_receipts
 
 
+def test_partial_coverage_does_not_open_receipt_payloads(tmp_path, monkeypatch):
+    path = tmp_path / "family00_query00000.json"
+    path.write_bytes(b"partial receipt not read until coverage can be complete")
+    original = Path.open
+
+    def guarded_open(self, *args, **kwargs):
+        if self == path:
+            pytest.fail("opened an unnecessary partial-coverage receipt")
+        return original(self, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "open", guarded_open)
+    assert (
+        complete_d0_receipts(tmp_path, np.array([[0], [4], [8]]), resource_ok=lambda: True) is None
+    )
+
+
 @pytest.mark.parametrize("mode", ["absent", "partial", "resource"])
 def test_read_only_cli_reports_incomplete_without_creating_files(tmp_path, monkeypatch, mode):
     script = Path(__file__).resolve().parents[2] / "scripts/audit_simplex_t_context_cache.py"

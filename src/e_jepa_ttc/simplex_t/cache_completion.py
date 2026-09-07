@@ -35,8 +35,20 @@ def complete_d0_receipts(
         if not np.isin(assignments, np.arange(outer * 4, outer * 4 + 4)).all():
             raise ValueError("D0 assignments change outer producer family")
         expected.update((int(family), query) for query, family in enumerate(assignments))
-    receipts = {}
+    # Fewer files already proves incompleteness. Do not spend minutes opening
+    # every small receipt just to reach that same negative coverage result.
+    # Exact-size populations still require every identity and backing payload.
+    paths = []
     for path in cache.glob("family*_query*.json"):
+        if not resource_ok():
+            raise InterruptedError("PAUSED_RESOURCE: cache receipt coverage")
+        paths.append(path)
+        if len(paths) > len(expected):
+            raise ValueError("too many D0 cache receipts")
+    if len(paths) < len(expected):
+        return None
+    receipts = {}
+    for path in paths:
         if not resource_ok():
             raise InterruptedError("PAUSED_RESOURCE: cache receipt coverage")
         with path.open("rb") as stream:
