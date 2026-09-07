@@ -14,7 +14,7 @@ from e_jepa_ttc.artifacts.simplex_t_preflight import sha256
 from .dense_replay_reuse import DenseReplayReuse
 from .expanded_history_loader import ExpandedHistoryLoader
 from .expanded_inference import expanded_inference_family
-from .expanded_replay_plan import inspect_expanded_replay
+from .expanded_replay_plan import inspect_expanded_replay, verify_d1_index_ancestry
 from .expanded_replay_queue import run_expanded_blocks
 from .reuse_catalog import D0ReuseCatalog
 
@@ -67,11 +67,8 @@ def run_expanded_context_cache(
     if sha256(preprocessing) != prep_hash or sha256(ancestry) != ancestry_sha256:
         raise ValueError("frozen preprocessing or historical ancestry changed")
     manifest = json.loads((index_root / "INDEX_MANIFEST.json").read_text(encoding="utf-8"))
-    if pool == "D1" and (
-        Path(manifest["ancestry"]["path"]).resolve() != ancestry.resolve()
-        or manifest["ancestry"]["sha256"] != ancestry_sha256
-    ):
-        raise ValueError("D1 index changes acknowledged historical ancestry")
+    if pool == "D1":
+        verify_d1_index_ancestry(manifest, ancestry, ancestry_sha256)
     if authorized_families is not None and manifest["families"] != authorized_families:
         raise ValueError("expanded producer descriptors differ from authorized families")
     with np.load(index_root / "query_context_index.npz", allow_pickle=False) as archive:

@@ -10,6 +10,38 @@ import numpy as np
 from e_jepa_ttc.artifacts.simplex_t_preflight import sha256
 
 
+def verify_d1_index_ancestry(manifest: dict, ancestry: Path, ancestry_sha256: str) -> None:
+    """Follow the real prepared index's pinned ancestry receipt without rewriting it.
+
+    A direct ancestry reference is retained for explicitly bound older inputs.
+    When both forms exist they must agree. Neither a filename nor an unverified
+    receipt status is accepted as proof of the authoritative ancestry bytes.
+    """
+    references = []
+    if "ancestry" in manifest:
+        references.append(manifest["ancestry"])
+    receipts = [
+        (Path(path), digest)
+        for path, digest in manifest.get("sources", {}).items()
+        if Path(path).name == "EXPANSION_ANCESTRY_RECHECK.json"
+    ]
+    if len(receipts) > 1:
+        raise ValueError("ambiguous D1 ancestry receipts")
+    for path, digest in receipts:
+        if path.stat().st_size > 1_048_576 or sha256(path) != digest:
+            raise ValueError("D1 ancestry receipt bytes changed")
+        receipt = json.loads(path.read_text(encoding="utf-8"))
+        if receipt.get("status") != "D1_FROZEN_INNER_ANCESTRY_RECHECKED_NO_EXPERT_REFITS":
+            raise ValueError("unrecognized D1 ancestry receipt")
+        references.append(receipt["authoritative_ancestry"])
+    if not references or sha256(ancestry) != ancestry_sha256 or any(
+        Path(ref["path"]).resolve(strict=True) != ancestry.resolve(strict=True)
+        or ref["sha256"] != ancestry_sha256
+        for ref in references
+    ):
+        raise ValueError("D1 index changes acknowledged historical ancestry")
+
+
 def expanded_family_queries(
     producer_family: np.ndarray, families: list[dict], *, queries: int
 ) -> dict[int, np.ndarray]:
