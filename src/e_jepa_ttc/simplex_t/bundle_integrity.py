@@ -8,15 +8,8 @@ from collections.abc import Callable
 from pathlib import Path, PurePosixPath
 
 
-def verify_bundle(
-    archive: Path, inventory: dict[str, str], *, resource_ok: Callable[[], bool]
-) -> dict:
-    """Read every archived byte in bounded chunks; do not extract or trust CRC alone.
-
-    Inventory authority and scientific completeness belong to the caller. This
-    verifies transport integrity only, including the inventory document itself
-    when its digest is supplied. No member may be omitted, duplicated or added.
-    """
+def validate_bundle_inventory(inventory: dict[str, str]) -> None:
+    """Reject ambiguous or unsafe archive names before reading or writing payloads."""
     if not inventory:
         raise ValueError("nonempty pinned bundle inventory required")
     for name, digest in inventory.items():
@@ -34,6 +27,18 @@ def verify_bundle(
             raise ValueError("canonical relative member name and SHA256 required")
     if len({name.casefold() for name in inventory}) != len(inventory):
         raise ValueError("case-aliased bundle members")
+
+
+def verify_bundle(
+    archive: Path, inventory: dict[str, str], *, resource_ok: Callable[[], bool]
+) -> dict:
+    """Read every archived byte in bounded chunks; do not extract or trust CRC alone.
+
+    Inventory authority and scientific completeness belong to the caller. This
+    verifies transport integrity only, including the inventory document itself
+    when its digest is supplied. No member may be omitted, duplicated or added.
+    """
+    validate_bundle_inventory(inventory)
     checked_bytes = 0
     with zipfile.ZipFile(archive) as bundle:
         members = bundle.infolist()
