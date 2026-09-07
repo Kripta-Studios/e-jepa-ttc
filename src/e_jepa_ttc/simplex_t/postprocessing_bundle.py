@@ -15,6 +15,7 @@ from .history_bundle import HistoryPoolPins, history_bundle_members
 from .phase_bundle import phase_bundle_members
 from .postprocessing_inventory import inventory_postprocessing
 from .provenance_bundle import provenance_bundle_members
+from .resource_bundle import ResourceAttempt, resource_bundle_members
 from .stage_gate import CanonicalPublication
 from .technical_bundle import technical_bundle_members
 
@@ -30,6 +31,7 @@ def postprocessing_bundle_members(
     phases: dict[str, CanonicalPublication],
     history_pools: dict[str, HistoryPoolPins],
     accounting_pins: AccountingPins,
+    resource_attempts: list[ResourceAttempt],
     verify_completed_graph: Callable[[], dict],
     validate_scientific_authority: Callable[[], None],
     resource_ok: Callable[[], bool],
@@ -37,8 +39,9 @@ def postprocessing_bundle_members(
     """Rehash all owned outputs and include the pinned manifest in the archive.
 
     This supplies postprocessing and all registered phase publications. The
-    caller must separately include observed resource evidence
-    and reports, and repeat this validation in the ZIP authority callback.
+    caller must separately include final reports and repeat this validation in
+    the ZIP authority callback. Resource receipts cover declared observed
+    attempts, not an exhaustive wall-time history after hard terminations.
     No fitting, output writes or campaign-completion inference occurs here.
     """
     validate_scientific_authority()
@@ -80,6 +83,13 @@ def postprocessing_bundle_members(
         freeze_sha256=freeze_sha256,
         roots=roots,
         validate_scientific_authority=validate_scientific_authority,
+        resource_ok=resource_ok,
+    )
+    resource_members = resource_bundle_members(
+        resource_attempts,
+        work_root=work,
+        freeze_sha256=freeze_sha256,
+        completed_stages=set(phases),
         resource_ok=resource_ok,
     )
     accounting = verify_campaign_accounting(
@@ -182,5 +192,8 @@ def postprocessing_bundle_members(
     if members.keys() & provenance_members.keys():
         raise ValueError("provenance and publication archive names collide")
     members.update(provenance_members)
+    if members.keys() & resource_members.keys():
+        raise ValueError("resource and publication archive names collide")
+    members.update(resource_members)
     validate_bundle_inventory({name: member.sha256 for name, member in members.items()})
     return members

@@ -60,6 +60,7 @@ def test_publication_to_transport(tmp_path, monkeypatch, fault):
 
     monkeypatch.setattr(module, "verify_campaign_accounting", verify_accounting)
     monkeypatch.setattr(module, "technical_bundle_members", lambda *a, **kw: {})
+    monkeypatch.setattr(module, "resource_bundle_members", lambda *a, **kw: {})
 
     def provenance(freeze, **kwargs):
         assert freeze == tmp_path / "freeze.json"
@@ -138,6 +139,7 @@ def test_publication_to_transport(tmp_path, monkeypatch, fault):
             phases={},
             history_pools={},
             accounting_pins=accounting_pins,
+            resource_attempts=[],
             verify_completed_graph=lambda: {},
             validate_scientific_authority=lambda: None,
             resource_ok=lambda: fault != "pause",
