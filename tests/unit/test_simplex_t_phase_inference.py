@@ -162,3 +162,57 @@ def test_gate_rejection_precedes_even_manifest_access(tmp_path):
                 resource_ok=lambda: True,
             )
         )
+
+
+@pytest.mark.parametrize("moment", ["before_population", "before_publication"])
+def test_prerequisites_rechecked_during_long_inference(sealed, monkeypatch, moment):
+    path, _, graph, kwargs, _ = sealed
+    checks, reads = [], []
+
+    def validate():
+        checks.append(True)
+        if len(checks) == (2 if moment == "before_population" else 3):
+            raise ValueError("freeze changed while evaluating")
+
+    def source(spec):
+        reads.append(spec)
+        return SimpleNamespace(
+            identity_sha256="dev", history=np.arange(16).reshape(1, 16), length=8
+        )
+
+    monkeypatch.setattr(phase_inference, "predict_cached", lambda *a, **k: {"point": np.zeros(1)})
+    iterator = phase_inference.iter_phase_predictions(
+        path,
+        path.parent,
+        **kwargs,
+        dev_source_hashes={fit_key(s): "dev" for s in graph},
+        validate_prerequisites=validate,
+        dev_source_loader=source,
+        resource_ok=lambda: True,
+    )
+    with pytest.raises(ValueError, match="freeze changed"):
+        next(iterator)
+    assert len(reads) == (0 if moment == "before_population" else 1)
+
+
+def test_changed_seal_during_prediction_is_not_published(sealed, monkeypatch):
+    path, _, graph, kwargs, _ = sealed
+
+    def predict(*args, **kw):
+        path.write_text("{}", encoding="utf-8")
+        return {"point": np.zeros(1)}
+
+    monkeypatch.setattr(phase_inference, "predict_cached", predict)
+    iterator = phase_inference.iter_phase_predictions(
+        path,
+        path.parent,
+        **kwargs,
+        dev_source_hashes={fit_key(s): "dev" for s in graph},
+        validate_prerequisites=lambda: None,
+        dev_source_loader=lambda s: SimpleNamespace(
+            identity_sha256="dev", history=np.arange(16).reshape(1, 16), length=8
+        ),
+        resource_ok=lambda: True,
+    )
+    with pytest.raises(ValueError, match="before prediction publication"):
+        next(iterator)

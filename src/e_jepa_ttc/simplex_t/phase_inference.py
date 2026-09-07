@@ -124,6 +124,9 @@ def iter_phase_predictions(
             continue
         if not resource_ok():
             raise InterruptedError("phase inference resource pause")
+        validate_prerequisites()
+        if sha256(manifest_path) != manifest_sha256:
+            raise ValueError("phase seal changed during inference")
         key = fit_key(spec)
         row = records[key]
         source = dev_source_loader(spec)
@@ -140,4 +143,7 @@ def iter_phase_predictions(
         outputs = predict_cached(model, source, resource_ok=resource_ok)
         history = source.history[:, -source.length :].copy()
         del model, source
+        validate_prerequisites()
+        if sha256(manifest_path) != manifest_sha256:
+            raise ValueError("phase seal changed before prediction publication")
         yield spec, outputs, history
