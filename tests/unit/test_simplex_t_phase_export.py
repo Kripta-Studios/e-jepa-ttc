@@ -9,6 +9,7 @@ import pytest
 
 from e_jepa_ttc.artifacts.hashing import compute_file_hash
 from e_jepa_ttc.simplex_t import phase_export as module
+from e_jepa_ttc.simplex_t.canonical_publication import load_canonical_publication
 from e_jepa_ttc.simplex_t.factorial_analysis import paired_factor_effects
 from e_jepa_ttc.simplex_t.phase_manifest import fit_key
 from e_jepa_ttc.simplex_t.published_predictions import iter_published_predictions
@@ -189,3 +190,54 @@ def test_analysis_requires_resolved_pins_before_manifest_access(tmp_path, bad):
     )
     with pytest.raises(ValueError):
         next(iterator)
+
+
+@pytest.mark.parametrize("change", ["", "target", "endpoint"])
+def test_canonical_pair_from_real_parquet_publication(export_args, monkeypatch, change):
+    args, graph, _ = export_args
+    cohort = args["expected_queries"]
+    cohort["sequence_id"] = [f"s{i % 9}" for i in range(8192)]
+    cohort["target_ttc"] = 1.0
+    original_frame = module.development_frame
+
+    def frame(*a, **kwargs):
+        return original_frame(*a, **kwargs).assign(target_ttc=2.0 if change == "target" else 1.0)
+
+    monkeypatch.setattr(module, "development_frame", frame)
+    args["manifest"].write_bytes(b"synthetic endpoint seal")
+    args["manifest_sha256"] = compute_file_hash(str(args["manifest"]))
+    module.export_phase(**args)
+    path = args["output"] / "T2_PREDICTIONS.json"
+    called = []
+
+    def validate_endpoint(*a, **kwargs):
+        called.append(True)
+        if change == "endpoint":
+            raise ValueError("incomplete endpoint phase")
+        return graph, {}
+
+    monkeypatch.setattr(
+        "e_jepa_ttc.simplex_t.canonical_publication.validated_phase", validate_endpoint
+    )
+    kwargs = dict(
+        publication_sha256=compute_file_hash(str(path)),
+        endpoints=args["manifest"],
+        endpoints_sha256=args["manifest_sha256"],
+        checkpoint_root=args["checkpoint_root"],
+        freeze_sha256=args["freeze_sha256"],
+        availability=args["availability"],
+        family="TPR",
+        expected_queries=cohort,
+        validate_authority=lambda: None,
+        resource_ok=lambda: True,
+    )
+    if change:
+        with pytest.raises(ValueError, match="targets differ|incomplete endpoint"):
+            load_canonical_publication(path, **kwargs)
+    else:
+        h8, h1 = load_canonical_publication(path, **kwargs)
+        assert len(h8) == len(h1) == 8192
+        assert h8.arm.eq("TPR-D0-H8-C160").all()
+        assert h1.arm.eq("TPR-D0-H1-C160").all()
+        assert set(h8.outer_fold) == set(h1.outer_fold) == {0, 1, 2}
+    assert called == [True]
