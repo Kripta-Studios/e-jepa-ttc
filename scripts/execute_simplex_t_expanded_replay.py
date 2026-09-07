@@ -23,14 +23,34 @@ def main() -> int:
     work = Path(json.loads(args.local_paths.read_text(encoding="utf-8"))["worktree"]).resolve()
     if args.report.exists() or not args.report.resolve().is_relative_to(work):
         raise ValueError("a new companion-local report path is required")
-    result = run_configured_expanded_replay(
-        args.local_paths,
-        args.config,
-        args.config_sha256,
-        max_new_queries=args.max_new_queries,
-        other_reserved_bytes=args.other_reserved_bytes,
-        inspect_only=args.inspect_only,
-    )
+    try:
+        result = run_configured_expanded_replay(
+            args.local_paths,
+            args.config,
+            args.config_sha256,
+            max_new_queries=args.max_new_queries,
+            other_reserved_bytes=args.other_reserved_bytes,
+            inspect_only=args.inspect_only,
+        )
+    except (InterruptedError, RuntimeError) as error:
+        # Only known resource boundaries are pauses. A model/data/runtime failure
+        # must remain a failure, not acquire a misleading resumable-resource label.
+        if not str(error).startswith(("PAUSED_RESOURCE", "RESOURCE_PAUSE")):
+            raise
+        result = {
+            "status": "PAUSED_RESOURCE",
+            "reason": str(error),
+            "new_blocks": None,
+            "progress_count": "UNKNOWN_FOR_INTERRUPTED_INVOCATION_NOT_ASSUMED_ZERO",
+            "optimizer_updates": 0,
+            "resume": (
+                "Same pinned configuration and existing queue receipts; use a new report path. "
+                "Do not remove a lease or overwrite an unreceipted partial block."
+            ),
+        }
+    result["launch_configuration_sha256"] = args.config_sha256
+    result["requested_max_new_queries"] = args.max_new_queries
+    result["inspect_only"] = args.inspect_only
     write_new_json(args.report, result)
     print(json.dumps(result))
     return 2 if result["status"] == "PAUSED_RESOURCE" else 0
