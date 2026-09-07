@@ -1,0 +1,11 @@
+{
+  "schema": "simplex_t_expanded_replay_launch_v1",
+  "pool": "D1",
+  "index": "artifacts/simplex_t/T1/expansion_query_context_index",
+  "dedup": "artifacts/simplex_t/T1/expansion_query_context_dedup",
+  "dedup_sha256": "9ac8280bb89644f4331287eeb6f1ef4e818d83e7191522383fab949378b93590",
+  "original_index": "artifacts/simplex_t/T1/query_context_index",
+  "preprocessing": "e-jepa-ttc/artifacts/cache/garl_object_event_common_roi_train8192_v1/manifest.json",
+  "output": "artifacts/simplex_t/T1/expansion_context_features_fp32",
+  "reserved_output_bytes": 12000000000
+}
