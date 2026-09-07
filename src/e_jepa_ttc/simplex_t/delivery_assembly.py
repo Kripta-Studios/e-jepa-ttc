@@ -18,6 +18,7 @@ def assemble_delivery(
     analysis_commit: str,
     bind_verified_members: Callable[[], dict[str, BundleMember]],
     resource_ok: Callable[[], bool],
+    reserved_output_bytes: int,
 ) -> dict:
     """Require a full scientific member provider, rechecking it around transport.
 
@@ -37,6 +38,8 @@ def assemble_delivery(
 
     boundary()
     original = bind_verified_members()
+    if type(reserved_output_bytes) is not int or reserved_output_bytes < 1:
+        raise ValueError("positive explicit delivery output reservation required")
 
     def read(name: str) -> dict:
         boundary()
@@ -63,12 +66,26 @@ def assemble_delivery(
     }
     if names & original.keys():
         raise ValueError("delivery documents collide with source inventory")
+    # Conservative byte bound: ZIP payload expansion, entry headers/names and
+    # up to 16 MiB of reports/inventory plus their archived copies. No free-space
+    # percentage and no assumption that compression must shrink every input.
+    required_reservation = 49 * 1024**2 + sum(
+        2 * member.bytes + 4096 + 2 * len(name.encode("utf-8"))
+        for name, member in original.items()
+    )
+    if reserved_output_bytes < required_reservation:
+        raise ValueError(f"delivery reservation needs at least {required_reservation} bytes")
     boundary()
     destination.mkdir(parents=True)
     members = dict(original)
+    metadata_bytes = 0
 
     def write(name: str, payload: bytes) -> None:
+        nonlocal metadata_bytes
         boundary()
+        metadata_bytes += len(payload)
+        if metadata_bytes > 16_777_216:
+            raise ValueError("delivery document exceeds reserved metadata bound")
         path = destination / name
         with path.open("xb") as stream:
             stream.write(payload)
@@ -116,6 +133,8 @@ def assemble_delivery(
         "bundle": result,
         "content_manifest_sha256": members["CONTENT_MANIFEST.json"].sha256,
         "optimizer_updates_executed": 0,
+        "reserved_output_bytes": reserved_output_bytes,
+        "required_reservation_bound_bytes": required_reservation,
         "campaign_complete": False,
         "completion_scope": "Caller must establish configured full campaign admission",
     }

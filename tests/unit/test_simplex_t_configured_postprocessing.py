@@ -176,7 +176,7 @@ def test_delivery_binds_real_input_context_and_releases(configured, monkeypatch,
     monkeypatch.setattr(module.subprocess, "check_output", lambda *a, **kw: b"a" * 40)
     attempts = [object()]
     args["delivery"] = module.DeliveryRequest(
-        output.parent / "artifacts/delivery", "a" * 40, attempts
+        output.parent / "artifacts/delivery", "a" * 40, attempts, 100_000_000
     )
     original_post = module.postprocess_completed_campaign
 

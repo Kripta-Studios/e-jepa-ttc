@@ -35,6 +35,7 @@ class DeliveryRequest:
     output: Path
     analysis_commit: str
     resource_attempts: list[ResourceAttempt]
+    reserved_output_bytes: int
 
 
 def postprocess_configured_campaign(
@@ -245,6 +246,7 @@ def postprocess_configured_campaign(
             analysis_commit=delivery.analysis_commit,
             bind_verified_members=bind,
             resource_ok=resource_ok,
+            reserved_output_bytes=delivery.reserved_output_bytes,
         )
     finally:
         sources.release()

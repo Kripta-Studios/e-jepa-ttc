@@ -73,7 +73,9 @@ def main() -> int:
                     row["receipt_sha256"],
                 )
             )
-        delivery = DeliveryRequest(Path(value["output"]), value["analysis_commit"], attempts)
+        delivery = DeliveryRequest(
+            Path(value["output"]), value["analysis_commit"], attempts, args.own_reserved_bytes
+        )
     evidence = config["accounting"]
     if set(evidence) != {
         "journal",

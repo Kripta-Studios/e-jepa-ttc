@@ -10,7 +10,7 @@ from e_jepa_ttc.simplex_t import delivery_assembly as assembly
 from e_jepa_ttc.simplex_t.bundle_creation import BundleMember
 
 
-@pytest.mark.parametrize("fault", ["none", "payload", "authority", "resource"])
+@pytest.mark.parametrize("fault", ["none", "payload", "authority", "resource", "reservation"])
 def test_delivery_transport_preserves_documents_and_checks_inputs(tmp_path, monkeypatch, fault):
     source = tmp_path / "source.json"
     source.write_text("{}", encoding="utf-8")
@@ -46,6 +46,7 @@ def test_delivery_transport_preserves_documents_and_checks_inputs(tmp_path, monk
         analysis_commit="a" * 40,
         bind_verified_members=bind,
         resource_ok=lambda: fault != "resource",
+        reserved_output_bytes=1 if fault == "reservation" else 100_000_000,
     )
     if fault != "none":
         with pytest.raises((ValueError, InterruptedError)):
