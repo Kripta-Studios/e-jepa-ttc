@@ -2,6 +2,7 @@
 
 import pytest
 
+from e_jepa_ttc.simplex_t.delivery_documents import render_delivery_documents
 from e_jepa_ttc.simplex_t.registry import registered_graph
 from e_jepa_ttc.simplex_t.scientific_summary import render_scientific_summary
 
@@ -62,6 +63,8 @@ def test_summary_keeps_primary_identity_and_scope(expanded, fault):
     if fault != "none":
         with pytest.raises(ValueError):
             render_scientific_summary(coverage, accounting)
+        with pytest.raises(ValueError):
+            render_delivery_documents(coverage, accounting, analysis_commit="a" * 40)
         return
     result = render_scientific_summary(coverage, accounting)
     assert "| 100 | 120 | -20 | 90 | 10 |" in result
@@ -69,3 +72,11 @@ def test_summary_keeps_primary_identity_and_scope(expanded, fault):
     assert "no ejecución observada adicional" in result
     assert "no certifica por sí solo" in result
     assert ("Tres semillas" in result) == expanded
+    report, decision = render_delivery_documents(coverage, accounting, analysis_commit="a" * 40)
+    assert "](postprocessing/analyses/T2/T2_ANALYSIS.json)" in report
+    assert "| 100 | 120 | -20 | 90 | 10 |" in report
+    assert decision["canonical_decisions"] == coverage["decisions"]
+    assert decision["holdout_authorized"] is False
+    assert decision["transport_completion_inferred_from_rendering"] is False
+    with pytest.raises(ValueError, match="analysis commit"):
+        render_delivery_documents(coverage, accounting, analysis_commit="short")
