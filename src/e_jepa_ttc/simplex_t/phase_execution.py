@@ -11,11 +11,108 @@ from e_jepa_ttc.artifacts.simplex_t_preflight import sha256
 
 from .campaign_sources import CampaignSources
 from .frozen_phase import run_frozen_phase
+from .old_cohort import load_old_evaluation_cohort
 from .phase_export import export_phase
 from .phase_inference import validated_phase
 from .phase_manifest import fit_key
 from .registry import registered_graph
 from .scientific_freeze import read_scientific_freeze
+
+
+def run_historical_cohort_phase(
+    execution: Path,
+    publication: Path,
+    *,
+    sources: CampaignSources,
+    freeze: Path,
+    freeze_sha256: str,
+    roots: dict[str, Path],
+    stage: str,
+    availability: dict[str, bool],
+    validate_authority_and_qa: Callable[[], None],
+    validate_stage_gate: Callable[[str, dict[str, bool]], None],
+    resource_ok: Callable[[], bool],
+    resume: bool,
+) -> dict:
+    """Load OLD from frozen historical inputs and execute the same bounded phase.
+
+    No evaluation dataframe is accepted from the caller. All three historical
+    outer-dev CSV/array pairs, the table index and ancestry must be in the freeze.
+    The actual admission and stage-gate callbacks remain mandatory. Loading OLD
+    identities/targets does not compute scores or permit pre-seal head inference.
+    """
+    delegated = False
+    try:
+        record = read_scientific_freeze(
+            freeze,
+            expected_sha256=freeze_sha256,
+            roots=roots,
+            validate_prerequisites=validate_authority_and_qa,
+        )
+
+        def frozen_digest(path: Path) -> str:
+            target = path.resolve(strict=True)
+            matches = [
+                pin["sha256"]
+                for pin in record["files"]
+                if (roots[pin["root"]] / pin["relative_path"]).resolve(strict=True) == target
+            ]
+            if len(matches) != 1:
+                raise ValueError("historical cohort input must have one exact freeze pin")
+            return matches[0]
+
+        historical = sources.historical_root.resolve(strict=True)
+        index = historical / "FROZEN_EXPERT_TABLE_INDEX.json"
+        ancestry = historical / "NESTED_ANCESTRY_AUDIT.json"
+        if frozen_digest(ancestry) != sources.ancestry_sha256:
+            raise ValueError("cohort loader changes frozen ancestry")
+        pins = {index: frozen_digest(index), ancestry: sources.ancestry_sha256}
+        for fold in range(3):
+            for suffix in ("csv", "npz"):
+                path = historical / "tables" / f"outer{fold}_outer_dev.{suffix}"
+                pins[path] = frozen_digest(path)
+
+        def validate() -> None:
+            validate_authority_and_qa()
+            for path, digest in pins.items():
+                if not resource_ok():
+                    raise InterruptedError("PAUSED_RESOURCE: frozen OLD cohort bindings")
+                if sha256(path) != digest:
+                    raise ValueError("historical cohort input differs from scientific freeze")
+
+        validate()
+        cohort, receipt = load_old_evaluation_cohort(
+            historical,
+            ancestry_sha256=sources.ancestry_sha256,
+            table_index_sha256=pins[index],
+            allowed_sequences=sources.allowed_sequences,
+            resource_ok=resource_ok,
+        )
+        for row in receipt["folds"]:
+            for suffix, field in (("csv", "metadata_sha256"), ("npz", "arrays_sha256")):
+                path = historical / "tables" / f"outer{row['outer_fold']}_outer_dev.{suffix}"
+                if pins[path] != row[field]:
+                    raise ValueError("cohort table reference differs from frozen payload")
+        validate()
+        delegated = True
+        return run_and_publish_frozen_phase(
+            execution,
+            publication,
+            sources=sources,
+            freeze=freeze,
+            freeze_sha256=freeze_sha256,
+            roots=roots,
+            stage=stage,
+            availability=availability,
+            expected_queries=cohort,
+            validate_authority_qa_and_cohort=validate,
+            validate_stage_gate=validate_stage_gate,
+            resource_ok=resource_ok,
+            resume=resume,
+        )
+    finally:
+        if not delegated:
+            sources.release()
 
 
 def run_and_publish_frozen_phase(
@@ -39,7 +136,7 @@ def run_and_publish_frozen_phase(
     The required callbacks must verify actual campaign authority/QA, the supplied
     OLD cohort and practical gates. They have no permissive default. This joins
     the fit and publication engines, not the still-separate authority admission.
-    A resource pause during fitting never opens evaluation inputs. On resumption
+    A resource pause during fitting never starts evaluation inference. On resumption
     an existing complete seal is verified and exported without repeating fits.
     All T2--T5 stages use the same frozen 2500-update endpoint machinery.
     """

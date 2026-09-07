@@ -7,6 +7,7 @@ from typing import Any
 import pandas as pd
 import pytest
 
+from e_jepa_ttc.artifacts.simplex_t_preflight import sha256
 from e_jepa_ttc.simplex_t import phase_execution as module
 from e_jepa_ttc.simplex_t.phase_manifest import fit_key
 from e_jepa_ttc.simplex_t.registry import registered_graph
@@ -111,3 +112,100 @@ def test_phase_transition(tmp_path: Path, monkeypatch, stage: str, mode: str):
             assert calls.count("export") == 1
             assert calls.count("fit") == (1 if mode == "fresh" else 0)
     assert len(releases) == (2 if mode == "fresh" else 1)
+
+
+@pytest.mark.parametrize("failure", ["", "missing_pin", "bytes", "receipt", "mutation", "resource"])
+def test_historical_cohort_phase_binding(tmp_path: Path, monkeypatch, failure: str):
+    historical = tmp_path / "historical"
+    (historical / "tables").mkdir(parents=True)
+    paths = [
+        historical / name
+        for name in (
+            "NESTED_ANCESTRY_AUDIT.json",
+            "FROZEN_EXPERT_TABLE_INDEX.json",
+            *[f"tables/outer{o}_outer_dev.{suffix}" for o in range(3) for suffix in ("csv", "npz")],
+        )
+    ]
+    for path in paths:
+        path.write_text("fixture", encoding="utf-8")
+    pins = [
+        {"root": "work", "relative_path": str(p.relative_to(tmp_path)), "sha256": sha256(p)}
+        for p in paths
+    ]
+    if failure == "missing_pin":
+        pins.pop()
+    if failure == "bytes":
+        paths[-1].write_text("changed", encoding="utf-8")
+    record = {"files": pins}
+    calls, released = [], []
+    cohort = pd.DataFrame({"fixture": [1]})
+    sources = SimpleNamespace(
+        historical_root=historical,
+        ancestry_sha256=sha256(paths[0]),
+        allowed_sequences={str(i) for i in range(9)},
+        release=lambda: released.append(True),
+    )
+
+    def read(*args, **kwargs):
+        kwargs["validate_prerequisites"]()
+        return record
+
+    def load(root, **kwargs):
+        calls.append("cohort")
+        assert root == historical
+        assert kwargs["table_index_sha256"] == sha256(paths[1])
+        return cohort, {
+            "folds": [
+                {
+                    "outer_fold": fold,
+                    "metadata_sha256": "0" * 64
+                    if failure == "receipt"
+                    else sha256(paths[2 + fold * 2]),
+                    "arrays_sha256": sha256(paths[3 + fold * 2]),
+                }
+                for fold in range(3)
+            ]
+        }
+
+    def execute(*args, **kwargs):
+        calls.append("execute")
+        try:
+            assert kwargs["expected_queries"] is cohort
+            if failure == "mutation":
+                paths[-1].write_text("changed", encoding="utf-8")
+            kwargs["validate_authority_qa_and_cohort"]()
+            return {"fixture": "paused before fit"}
+        finally:
+            sources.release()
+
+    monkeypatch.setattr(module, "read_scientific_freeze", read)
+    monkeypatch.setattr(module, "load_old_evaluation_cohort", load)
+    monkeypatch.setattr(module, "run_and_publish_frozen_phase", execute)
+    options: dict[str, Any] = dict(
+        sources=sources,
+        freeze=tmp_path / "freeze.json",
+        freeze_sha256="f" * 64,
+        roots={"work": tmp_path},
+        stage="T2",
+        availability={},
+        validate_authority_and_qa=lambda: None,
+        validate_stage_gate=lambda *_: None,
+        resource_ok=lambda: failure != "resource",
+        resume=False,
+    )
+    if failure:
+        with pytest.raises(InterruptedError if failure == "resource" else ValueError):
+            module.run_historical_cohort_phase(
+                tmp_path / "execution", tmp_path / "publication", **options
+            )
+        if failure in {"missing_pin", "bytes", "resource"}:
+            assert not calls
+        if failure == "receipt":
+            assert calls == ["cohort"]
+    else:
+        result = module.run_historical_cohort_phase(
+            tmp_path / "execution", tmp_path / "publication", **options
+        )
+        assert result == {"fixture": "paused before fit"}
+        assert calls == ["cohort", "execute"]
+    assert released == [True]
