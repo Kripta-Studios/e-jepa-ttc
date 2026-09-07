@@ -72,14 +72,14 @@ def main() -> None:
 
     @functools.wraps(original_step)
     def counted_step(
-        optimizer: torch.optim.AdamW, closure: Callable[[], torch.Tensor | float] | None = None
+        self: torch.optim.AdamW, closure: Callable[[], torch.Tensor | float] | None = None
     ) -> torch.Tensor | float | None:
         boundary()
         if counters["attempted_optimizer_updates"] >= 20:
             raise RuntimeError("technical suite attempted to exceed reserved 20 updates")
         counters["attempted_optimizer_updates"] += 1
         atomic_json(output / "UPDATE_PROGRESS.json", counters)
-        result = original_step(optimizer, closure)
+        result = original_step(self, closure)
         counters["completed_optimizer_updates"] += 1
         atomic_json(output / "UPDATE_PROGRESS.json", counters)
         return result
