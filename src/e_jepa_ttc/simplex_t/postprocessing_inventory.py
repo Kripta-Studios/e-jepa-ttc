@@ -16,11 +16,14 @@ class _FilePin(TypedDict):
     bytes: int
 
 
-def inventory_postprocessing(output: Path, *, resource_ok: Callable[[], bool]) -> dict:
+def inventory_postprocessing(
+    output: Path, *, resource_ok: Callable[[], bool], sealed_manifest_present: bool = False
+) -> dict:
     """Hash regular outputs in bounded reads, refusing links and unfinished files.
 
     Call only on the fresh directory owned by the postprocessor, before writing
-    POSTPROCESSING.json. Scientific graph authority is established by its caller;
+    POSTPROCESSING.json, or with sealed_manifest_present after its separate validation.
+    Scientific graph authority is established by its caller;
     this inventory does not include source publications or certify completion.
     """
 
@@ -52,6 +55,8 @@ def inventory_postprocessing(output: Path, *, resource_ok: Callable[[], bool]) -
             if not stat.S_ISREG(before.st_mode):
                 raise ValueError("regular postprocessing files required")
             name = path.relative_to(root).as_posix()
+            if name == "POSTPROCESSING.json" and sealed_manifest_present:
+                continue
             if name == "POSTPROCESSING.json" or path.suffix.lower() in {".partial", ".tmp"}:
                 raise ValueError("unfinished or already inventoried postprocessing output")
             digest = hashlib.sha256()
