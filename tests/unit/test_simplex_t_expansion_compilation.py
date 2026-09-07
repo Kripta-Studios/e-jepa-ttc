@@ -15,7 +15,11 @@ def fixture(tmp_path, monkeypatch, *, pool="D1"):
     cache, index, dedup = (tmp_path / name for name in ("cache", "index", "dedup"))
     for path in (cache, index, dedup):
         path.mkdir()
-    monkeypatch.setattr(compiled_context, "admitted", lambda paths: {"has_headroom": True})
+    monkeypatch.setattr(
+        compiled_context,
+        "admitted",
+        lambda paths: {"has_headroom": True, "written_volume_free_bytes": [80_000_000_000]},
+    )
     active = [0, 1, 2] if pool == "D0" else [0, 2]
     families = np.full((3, 3), -1, np.int64)
     families[0, active] = 0
@@ -92,7 +96,7 @@ def fixture(tmp_path, monkeypatch, *, pool="D1"):
 @pytest.mark.parametrize("pool", ["D1", "DENSE_OLD"])
 def test_inactive_middle_query_preserves_real_query_ids(tmp_path, monkeypatch, pool):
     args = fixture(tmp_path, monkeypatch, pool=pool)
-    compiled_context.compile_fold(*args, outer=0, pool=pool)
+    compiled_context.compile_fold(*args, outer=0, pool=pool, other_reserved_bytes=0)
     manifest = json.loads((args[-1] / "COMPILED.json").read_text(encoding="utf-8"))
     assert manifest["selected_query_ids"] == [0, 2]
     assert manifest["pool"] == pool
@@ -106,7 +110,7 @@ def test_inactive_middle_query_preserves_real_query_ids(tmp_path, monkeypatch, p
 
 def test_d0_retains_manifest_schema(tmp_path, monkeypatch):
     args = fixture(tmp_path, monkeypatch, pool="D0")
-    compiled_context.compile_fold(*args, outer=0)
+    compiled_context.compile_fold(*args, outer=0, other_reserved_bytes=0)
     manifest = json.loads((args[-1] / "COMPILED.json").read_text(encoding="utf-8"))
     assert manifest["queries"] == 3
     assert "pool" not in manifest and "selected_query_ids" not in manifest
@@ -136,7 +140,7 @@ def test_invalid_d1_is_rejected_before_allocating_outputs(tmp_path, monkeypatch,
         identity["index_sha256"] = compute_file_hash(str(path))
     identity_path.write_text(json.dumps(identity), encoding="utf-8")
     with pytest.raises(ValueError):
-        compiled_context.compile_fold(*args, outer=0, pool=pool)
+        compiled_context.compile_fold(*args, outer=0, pool=pool, other_reserved_bytes=0)
     assert not output.exists()
 
 
@@ -148,7 +152,7 @@ def test_mixed_dense_compilation_reuses_pinned_d0_without_copying_blocks(
     source_root.mkdir()
     dense_root.mkdir()
     source = fixture(source_root, monkeypatch, pool="D0")
-    compiled_context.compile_fold(*source, outer=0)
+    compiled_context.compile_fold(*source, outer=0, other_reserved_bytes=0)
     catalog = D0ReuseCatalog(
         compiled=source[-1],
         compiled_sha256=compute_file_hash(str(source[-1] / "COMPILED.json")),
@@ -178,11 +182,73 @@ def test_mixed_dense_compilation_reuses_pinned_d0_without_copying_blocks(
         (source[0] / "family00_query00000.npz").write_bytes(b"changed")
     if failure:
         with pytest.raises(ValueError):
-            compiled_context.compile_fold(*dense, outer=0, pool="DENSE_OLD", reuse=catalog)
+            compiled_context.compile_fold(
+                *dense, outer=0, pool="DENSE_OLD", reuse=catalog, other_reserved_bytes=0
+            )
         assert not (dense[-1] / "COMPILED.json").exists()
     else:
-        compiled_context.compile_fold(*dense, outer=0, pool="DENSE_OLD", reuse=catalog)
+        compiled_context.compile_fold(
+            *dense, outer=0, pool="DENSE_OLD", reuse=catalog, other_reserved_bytes=0
+        )
         manifest = json.loads((dense[-1] / "COMPILED.json").read_text(encoding="utf-8"))
         assert manifest["queries"] == 2
         assert set(manifest["D0_reuse"]["blocks"]) == {"0"}
         assert np.load(dense[-1] / "features145.npy")[:, 0].tolist() == [1, 3]
+
+
+@pytest.mark.parametrize("reservation", [None, -1, True])
+def test_compile_requires_explicit_reservations(tmp_path, monkeypatch, reservation):
+    args = fixture(tmp_path, monkeypatch)
+    with pytest.raises(ValueError, match="reservations"):
+        compiled_context.compile_fold(*args, outer=0, pool="D1", other_reserved_bytes=reservation)
+    assert not args[-1].exists()
+
+
+def test_compile_reserves_own_arrays_before_allocation(tmp_path, monkeypatch):
+    args = fixture(tmp_path, monkeypatch)
+    # Enough for the first metadata check, not for arrays plus their headers.
+    monkeypatch.setattr(
+        compiled_context,
+        "admitted",
+        lambda paths: {
+            "has_headroom": True,
+            "written_volume_free_bytes": [40_000_000_000 + 1_048_576],
+        },
+    )
+    with pytest.raises(RuntimeError, match="RESOURCE_PAUSE"):
+        compiled_context.compile_fold(*args, outer=0, pool="D1", other_reserved_bytes=0)
+    assert not args[-1].exists()
+
+
+def test_compile_midstream_pause_never_seals_partial_arrays(tmp_path, monkeypatch):
+    args = fixture(tmp_path, monkeypatch)
+    stored = []
+    original_store = compiled_context.store_observations
+
+    def store(*values):
+        original_store(*values)
+        stored.append(True)
+
+    monkeypatch.setattr(compiled_context, "store_observations", store)
+    monkeypatch.setattr(
+        compiled_context,
+        "admitted",
+        lambda paths: {
+            "has_headroom": not stored,
+            "written_volume_free_bytes": [80_000_000_000],
+        },
+    )
+    with pytest.raises(RuntimeError, match="RESOURCE_PAUSE"):
+        compiled_context.compile_fold(*args, outer=0, pool="D1", other_reserved_bytes=0)
+    assert len(stored) == 1
+    assert (args[-1] / "features145.npy").exists()
+    assert not (args[-1] / "COMPILED.json").exists()
+
+
+def test_compile_other_reservations_are_not_free_space(tmp_path, monkeypatch):
+    args = fixture(tmp_path, monkeypatch)
+    with pytest.raises(RuntimeError, match="RESOURCE_PAUSE"):
+        compiled_context.compile_fold(
+            *args, outer=0, pool="D1", other_reserved_bytes=40_000_000_000
+        )
+    assert not args[-1].exists()

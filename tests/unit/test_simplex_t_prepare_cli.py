@@ -39,6 +39,8 @@ def test_prepare_compiles_requested_fold_without_scientific_authorization(
             str(paths),
             "--output",
             str(output),
+            "--other-reserved-bytes",
+            "20000000000",
         ],
     )
     assert entry.main() == 0
@@ -53,7 +55,7 @@ def test_prepare_compiles_requested_fold_without_scientific_authorization(
                 output,
                 1,
             ),
-            {"pool": pool},
+            {"pool": pool, "other_reserved_bytes": 20_000_000_000},
         )
     ]
     result = json.loads(capsys.readouterr().out)
@@ -69,6 +71,7 @@ def test_prepare_compiles_requested_fold_without_scientific_authorization(
         ["prepare", "--compile-fold", "0", "--output", "unused", "--resume"],
         ["prepare", "--compile-fold", "3", "--output", "unused"],
         ["prepare", "--compile-pool", "D1", "--output", "unused"],
+        ["prepare", "--compile-fold", "0", "--output", "unused"],
     ],
 )
 def test_invalid_compile_arguments_fail_before_local_path_access(entry, monkeypatch, args):
@@ -106,12 +109,16 @@ def test_dense_prepare_passes_explicit_d0_catalog(entry, tmp_path, monkeypatch):
             str(tmp_path / "original"),
             "--reuse-d0-compiled-sha256",
             "a" * 64,
+            "--other-reserved-bytes",
+            "20000000000",
         ],
     )
     assert entry.main() == 0
     assert received[0]["compiled_sha256"] == "a" * 64
     assert received[0]["outer"] == 0
-    assert compilations == [{"pool": "DENSE_OLD", "reuse": catalog}]
+    assert compilations == [
+        {"pool": "DENSE_OLD", "reuse": catalog, "other_reserved_bytes": 20_000_000_000}
+    ]
 
 
 def test_source_configuration_inspection_is_not_run(entry, monkeypatch):

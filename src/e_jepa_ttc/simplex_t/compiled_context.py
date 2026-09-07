@@ -12,6 +12,7 @@ import numpy as np
 from e_jepa_ttc.artifacts.hashing import compute_file_hash
 from e_jepa_ttc.artifacts.simplex_t_preflight import write_new_json
 
+from .coordination import shared_write_admission
 from .expert_phase import expert_phase_from_ttc
 from .lifecycle import admitted
 
@@ -92,6 +93,7 @@ def compile_fold(
     *,
     pool: str = "D0",
     reuse: D0ReuseCatalog | None = None,
+    other_reserved_bytes: int | None = None,
 ) -> None:
     """Require every selected query block; never fabricate inactive D1 observations.
 
@@ -101,6 +103,18 @@ def compile_fold(
     """
     if outer not in range(3) or output.exists() or pool not in {"D0", "D1", "DENSE_OLD"}:
         raise ValueError("invalid fold or existing compiled output")
+    if type(other_reserved_bytes) is not int or other_reserved_bytes < 0:
+        raise ValueError("explicit nonnegative outstanding compilation reservations required")
+    own_reservation = 1_048_576
+
+    def boundary() -> None:
+        resources = admitted([output.parent])
+        if not resources["has_headroom"] or not shared_write_admission(
+            resources["written_volume_free_bytes"][0], other_reserved_bytes + own_reservation
+        ):
+            raise RuntimeError("RESOURCE_PAUSE: compilation; partial output is not complete")
+
+    boundary()
     if reuse is not None and (pool != "DENSE_OLD" or reuse.outer != outer):
         raise ValueError("D0 block reuse is restricted to the matching dense fold")
     identity = json.loads((cache / "IDENTITY.json").read_text(encoding="utf-8"))
@@ -120,6 +134,9 @@ def compile_fold(
         raise ValueError("deduplicated index changed")
     with np.load(dedup_path, allow_pickle=False) as archive:
         history, keys = archive["history"], archive["keys"]
+    # 610 bytes per observation across the five unchanged arrays, plus NPY headers
+    # and manifest allowance. Keep this conservative reservation through sealing.
+    own_reservation += len(keys) * 610 + 5 * 128
     families = index["producer_family"][outer]
     if history.shape != index["valid"].shape or history.shape != (len(families), 16):
         raise ValueError("query/history shape mismatch")
@@ -136,6 +153,7 @@ def compile_fold(
     receipts = []
     reused = reuse.plan(index["tokens"], families) if reuse is not None else {}
     for qi in np.flatnonzero(active):
+        boundary()
         family = families[qi]
         if int(qi) in reused:
             receipts.append((int(qi), None, reused[int(qi)]))
@@ -147,9 +165,7 @@ def compile_fold(
         if receipt["query"] != qi or receipt["family"] != int(family):
             raise ValueError("receipt producer assignment changed")
         receipts.append((int(qi), stem.with_suffix(".npz"), receipt))
-    resources = admitted([output.parent])
-    if not resources["has_headroom"]:
-        raise RuntimeError("RESOURCE_PAUSE")
+    boundary()
     output.mkdir()
     fields = {
         "features145": (np.float32, (len(keys), 145)),
@@ -164,6 +180,7 @@ def compile_fold(
     }
     consumed = np.zeros(len(keys), dtype=bool)
     for qi, path, receipt in receipts:
+        boundary()
         mask = index["valid"][qi]
         ids = history[qi, mask]
         if path is None:
@@ -191,8 +208,12 @@ def compile_fold(
     if not consumed.all():
         raise ValueError("incomplete consumed observation coverage")
     for destination in destinations.values():
+        boundary()
         destination.flush()
-    hashes = {name: compute_file_hash(str(output / f"{name}.npy")) for name in fields}
+    hashes = {}
+    for name in fields:
+        boundary()
+        hashes[name] = compute_file_hash(str(output / f"{name}.npy"))
     expansion_fields = (
         {
             "pool": pool,
@@ -203,6 +224,7 @@ def compile_fold(
         if pool != "D0"
         else {}
     )
+    boundary()
     write_new_json(
         output / "COMPILED.json",
         {

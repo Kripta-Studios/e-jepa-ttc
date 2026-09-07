@@ -41,10 +41,12 @@ def main() -> int:
     parser.add_argument(
         "--other-reserved-bytes",
         type=int,
-        help="pending output bytes on the shared write volume; required for source identities",
+        help="pending output bytes on the shared write volume; required for identities/compilation",
     )
     args = parser.parse_args()
-    if args.source_identities or args.other_reserved_bytes is not None:
+    if args.source_identities or (
+        args.other_reserved_bytes is not None and args.compile_fold is None
+    ):
         if (
             not args.source_identities
             or args.command != "prepare"
@@ -100,6 +102,8 @@ def main() -> int:
     if args.compile_fold is not None:
         if args.command != "prepare" or args.output is None or args.resume:
             parser.error("--compile-fold requires prepare, a new --output, and no --resume")
+        if args.other_reserved_bytes is None or args.other_reserved_bytes < 0:
+            parser.error("compilation requires explicit nonnegative --other-reserved-bytes")
         paths = json.loads(args.local_paths.read_text(encoding="utf-8"))
         temporal = Path(paths["worktree"]) / "artifacts/simplex_t/T1"
         pool = args.compile_pool or "D0"
@@ -121,6 +125,7 @@ def main() -> int:
             args.output,
             args.compile_fold,
             pool=pool,
+            other_reserved_bytes=args.other_reserved_bytes,
             **reuse_options,
         )
         print(
