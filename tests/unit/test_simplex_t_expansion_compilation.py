@@ -224,6 +224,12 @@ def test_compile_midstream_pause_never_seals_partial_arrays(tmp_path, monkeypatc
     args = fixture(tmp_path, monkeypatch)
     stored = []
     original_store = compiled_context.store_observations
+    original_cadence = compiled_context.ResourceCadence
+    monkeypatch.setattr(
+        compiled_context,
+        "ResourceCadence",
+        lambda probe, **kw: original_cadence(probe, **kw, clock=lambda: float(len(stored))),
+    )
 
     def store(*values):
         original_store(*values)

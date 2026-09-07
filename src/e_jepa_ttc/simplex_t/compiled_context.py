@@ -15,6 +15,7 @@ from e_jepa_ttc.artifacts.simplex_t_preflight import write_new_json
 from .coordination import shared_write_admission
 from .expert_phase import expert_phase_from_ttc
 from .lifecycle import admitted
+from .resource_cadence import ResourceCadence
 
 if TYPE_CHECKING:
     from .reuse_catalog import D0ReuseCatalog
@@ -107,11 +108,16 @@ def compile_fold(
         raise ValueError("explicit nonnegative outstanding compilation reservations required")
     own_reservation = 1_048_576
 
-    def boundary() -> None:
+    def probe() -> bool:
         resources = admitted([output.parent])
-        if not resources["has_headroom"] or not shared_write_admission(
+        return resources["has_headroom"] and shared_write_admission(
             resources["written_volume_free_bytes"][0], other_reserved_bytes + own_reservation
-        ):
+        )
+
+    cadence = ResourceCadence(probe, maximum_age_seconds=1.0)
+
+    def boundary(*, force: bool = False) -> None:
+        if not cadence(force=force):
             raise RuntimeError("RESOURCE_PAUSE: compilation; partial output is not complete")
 
     boundary()
@@ -137,6 +143,7 @@ def compile_fold(
     # 610 bytes per observation across the five unchanged arrays, plus NPY headers
     # and manifest allowance. Keep this conservative reservation through sealing.
     own_reservation += len(keys) * 610 + 5 * 128
+    boundary(force=True)
     families = index["producer_family"][outer]
     if history.shape != index["valid"].shape or history.shape != (len(families), 16):
         raise ValueError("query/history shape mismatch")
@@ -165,7 +172,7 @@ def compile_fold(
         if receipt["query"] != qi or receipt["family"] != int(family):
             raise ValueError("receipt producer assignment changed")
         receipts.append((int(qi), stem.with_suffix(".npz"), receipt))
-    boundary()
+    boundary(force=True)
     output.mkdir()
     fields = {
         "features145": (np.float32, (len(keys), 145)),
@@ -208,11 +215,11 @@ def compile_fold(
     if not consumed.all():
         raise ValueError("incomplete consumed observation coverage")
     for destination in destinations.values():
-        boundary()
+        boundary(force=True)
         destination.flush()
     hashes = {}
     for name in fields:
-        boundary()
+        boundary(force=True)
         hashes[name] = compute_file_hash(str(output / f"{name}.npy"))
     expansion_fields = (
         {
@@ -224,7 +231,7 @@ def compile_fold(
         if pool != "D0"
         else {}
     )
-    boundary()
+    boundary(force=True)
     write_new_json(
         output / "COMPILED.json",
         {
