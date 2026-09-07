@@ -10,8 +10,12 @@ from e_jepa_ttc.artifacts.simplex_t_delivery import package_t0
 from e_jepa_ttc.artifacts.simplex_t_preflight import audit, interface_status, write_new_json
 from e_jepa_ttc.simplex_t.cache_status import context_cache_status
 from e_jepa_ttc.simplex_t.compiled_context import compile_fold
+from e_jepa_ttc.simplex_t.compiled_verification import verify_compiled_fold
 from e_jepa_ttc.simplex_t.configuration_preflight import inspect_source_configuration
 from e_jepa_ttc.simplex_t.configured_preparation import prepare_configured_sources
+from e_jepa_ttc.simplex_t.coordination import shared_write_admission
+from e_jepa_ttc.simplex_t.lifecycle import admitted
+from e_jepa_ttc.simplex_t.resource_cadence import ResourceCadence
 from e_jepa_ttc.simplex_t.reuse_catalog import D0ReuseCatalog
 
 
@@ -45,8 +49,8 @@ def main() -> int:
         help="pending output bytes on the shared write volume; required for identities/compilation",
     )
     args = parser.parse_args()
-    if args.verify_only and not args.source_identities:
-        parser.error("--verify-only requires --source-identities")
+    if args.verify_only and not args.source_identities and args.compile_fold is None:
+        parser.error("--verify-only requires --source-identities or --compile-fold")
     if args.source_identities or (
         args.other_reserved_bytes is not None and args.compile_fold is None
     ):
@@ -133,6 +137,42 @@ def main() -> int:
         temporal = Path(paths["worktree"]) / "artifacts/simplex_t/T1"
         pool = args.compile_pool or "D0"
         prefix = {"D0": "", "D1": "expansion_", "DENSE_OLD": "dense_"}[pool]
+        if args.verify_only:
+
+            def probe() -> bool:
+                resources = admitted([temporal])
+                return resources["has_headroom"] and shared_write_admission(
+                    resources["written_volume_free_bytes"][0], args.other_reserved_bytes
+                )
+
+            try:
+                complete = verify_compiled_fold(
+                    args.output,
+                    temporal / f"{prefix}context_features_fp32",
+                    temporal / f"{prefix}query_context_index",
+                    temporal / f"{prefix}query_context_dedup",
+                    args.compile_fold,
+                    pool=pool,
+                    resource_ok=ResourceCadence(probe, maximum_age_seconds=1.0),
+                )
+            except InterruptedError as error:
+                if not str(error).startswith("RESOURCE_PAUSE:"):
+                    raise
+                print(json.dumps({"status": "PAUSED_RESOURCE", "optimizer_updates": 0}))
+                return 3
+            print(
+                json.dumps(
+                    {
+                        "status": "COMPILED_TRANSPORT_VERIFIED"
+                        if complete
+                        else "COMPILED_INCOMPLETE",
+                        "scientific_freeze": False,
+                        "optimizer_updates": 0,
+                        "files_written": 0,
+                    }
+                )
+            )
+            return 0 if complete else 10
         reuse_options = {}
         if args.reuse_d0_compiled is not None and args.reuse_d0_compiled_sha256 is not None:
             reuse_options["reuse"] = D0ReuseCatalog(

@@ -17,6 +17,47 @@ def entry():
     return module
 
 
+@pytest.mark.parametrize("outcome,code", [(True, 0), (False, 10), ("pause", 3)])
+def test_compiled_verify_dispatch_never_compiles(entry, tmp_path, monkeypatch, outcome, code):
+    paths = tmp_path / "local.json"
+    paths.write_text(json.dumps({"worktree": str(tmp_path)}))
+    output = tmp_path / "output"
+
+    def verify(*args, **kwargs):
+        assert args == (
+            output,
+            tmp_path / "artifacts/simplex_t/T1/context_features_fp32",
+            tmp_path / "artifacts/simplex_t/T1/query_context_index",
+            tmp_path / "artifacts/simplex_t/T1/query_context_dedup",
+            0,
+        )
+        assert kwargs["pool"] == "D0"
+        if outcome == "pause":
+            raise InterruptedError("RESOURCE_PAUSE: fixture")
+        return outcome
+
+    monkeypatch.setattr(entry, "verify_compiled_fold", verify)
+    monkeypatch.setattr(entry, "compile_fold", lambda *a, **k: pytest.fail("compiled in verify"))
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "runner",
+            "prepare",
+            "--compile-fold",
+            "0",
+            "--verify-only",
+            "--local-paths",
+            str(paths),
+            "--output",
+            str(output),
+            "--other-reserved-bytes",
+            "0",
+        ],
+    )
+    assert entry.main() == code
+    assert not output.exists()
+
+
 @pytest.mark.parametrize("pool", ["D0", "D1", "DENSE_OLD"])
 def test_prepare_compiles_requested_fold_without_scientific_authorization(
     entry, tmp_path, monkeypatch, capsys, pool
