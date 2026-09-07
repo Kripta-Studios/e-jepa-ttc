@@ -31,6 +31,7 @@ def run_expanded_blocks(
     validate_prerequisites: Callable[[], None],
     resource_ok: Callable[[], bool],
     max_new_queries: int,
+    reuse_block: Callable[[int, int], dict[str, np.ndarray] | None] | None = None,
 ) -> dict:
     """Schedule validated blocks; callbacks own pinned input and expert loading.
 
@@ -46,16 +47,24 @@ def run_expanded_blocks(
     ):
         raise ValueError("expanded pool and positive execution slice required")
     validate_prerequisites()
+    if (identity["pool"] == "DENSE_OLD") != (reuse_block is not None):
+        raise ValueError("DENSE requires explicit D0 reuse; D1 cannot borrow D0 query blocks")
     groups = expanded_family_queries(
         index["producer_family"], families, queries=len(index["tokens"])
     )
     if index["valid"].shape != (len(index["tokens"]), 16) or index["valid"].dtype != bool:
         raise ValueError("H16 boolean availability required")
     completed = 0
+    reused = 0
     started = time.monotonic()
 
     def result(status: str) -> dict:
-        return {"status": status, "new_blocks": completed, "optimizer_updates": 0}
+        return {
+            "status": status,
+            "new_blocks": completed,
+            "reused_blocks": reused,
+            "optimizer_updates": 0,
+        }
 
     # Same lock as D0: do not launch a second companion GPU replay.
     with ExclusiveLease(output.parent / "CURRENT_REPLAY.lock"):
@@ -103,6 +112,15 @@ def run_expanded_blocks(
                 elif payload.exists() or stem.with_suffix(".partial").exists():
                     raise FileExistsError("unreceipted expanded block retained for recovery audit")
                 else:
+                    if reuse_block is not None:
+                        validate_prerequisites()
+                        if not resource_ok():
+                            return result("PAUSED_RESOURCE")
+                        shared = reuse_block(family, qi)
+                        if shared is not None:
+                            validate(shared, qi)
+                            reused += 1
+                            continue
                     pending.append((qi, stem))
             if not pending:
                 continue
@@ -144,4 +162,8 @@ def run_expanded_blocks(
                     completed += 1
                     if completed >= max_new_queries:
                         return result("SLICE_COMPLETE")
-    return result("ALL_EXPANDED_BLOCKS_COMPLETE_NOT_SCIENTIFIC_FREEZE")
+    return result(
+        "ALL_EXPANDED_INPUTS_AVAILABLE_WITH_D0_REUSE_NOT_SCIENTIFIC_FREEZE"
+        if reused
+        else "ALL_EXPANDED_BLOCKS_COMPLETE_NOT_SCIENTIFIC_FREEZE"
+    )

@@ -106,3 +106,43 @@ def test_no_inference_when_not_admitted(tmp_path, inputs, failure):
         with pytest.raises((ValueError, FileExistsError)):
             run_expanded_blocks(output, **args)
     assert calls == []
+
+
+@pytest.mark.parametrize("corrupt", [False, True])
+def test_dense_reuse_validates_blocks_without_new_inference(tmp_path, inputs, corrupt):
+    args, calls, releases = inputs
+    original = tmp_path / "original"
+    args["max_new_queries"] = 100
+    run_expanded_blocks(original, **args)
+    assert calls == [0, 1]
+    args["identity"] = {"pool": "DENSE_OLD"}
+
+    def reuse(family, query):
+        with np.load(
+            original / f"family{family:02d}_query{query:05d}.npz", allow_pickle=False
+        ) as archive:
+            arrays = {key: archive[key] for key in archive.files}
+        if corrupt:
+            arrays["anchor_us"] += 1
+        return arrays
+
+    args["reuse_block"] = reuse
+    output = tmp_path / "dense"
+    if corrupt:
+        with pytest.raises(ValueError, match="sensor times changed"):
+            run_expanded_blocks(output, **args)
+    else:
+        result = run_expanded_blocks(output, **args)
+        assert result["new_blocks"] == 0 and result["reused_blocks"] == 2
+        assert "WITH_D0_REUSE" in result["status"]
+        assert not list(output.glob("family*.npz"))
+    assert calls == [0, 1]
+    assert len(releases) == 1
+
+
+def test_dense_reuse_cannot_be_silently_omitted(tmp_path, inputs):
+    args, calls, _ = inputs
+    args["identity"] = {"pool": "DENSE_OLD"}
+    with pytest.raises(ValueError, match="explicit D0 reuse"):
+        run_expanded_blocks(tmp_path / "dense", **args)
+    assert calls == []
