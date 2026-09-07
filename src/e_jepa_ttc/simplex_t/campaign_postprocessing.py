@@ -15,6 +15,7 @@ from .campaign_sources import CampaignSources
 from .candidate_interface import publish_candidate_interface
 from .compact_phase import export_compact_phase
 from .followup_analysis import analyze_followup_phase, analyze_three_seed_family
+from .phase_bundle import phase_bundle_members
 from .postprocessing_inventory import inventory_postprocessing
 from .sealed_analysis import analyze_sealed_t2
 from .stage_gate import CanonicalPublication
@@ -143,6 +144,12 @@ def postprocess_completed_campaign(
     )
     if verify() != coverage:
         raise ValueError("scientific graph changed during postprocessing")
+    phase_members = phase_bundle_members(
+        phases,
+        freeze_sha256=freeze_sha256,
+        verify_completed_graph=verify,
+        resource_ok=resource_ok,
+    )
     inventory = inventory_postprocessing(output, resource_ok=resource_ok)
     result = {
         "schema": "simplex_t_campaign_postprocessing_v1",
@@ -154,6 +161,14 @@ def postprocess_completed_campaign(
         "three_seed": three_seed,
         "future_interface_sha256": sha256(interface),
         "output_inventory": inventory,
+        "phase_payload_inventory": {
+            name: {
+                "work_relative_path": member.path.resolve().relative_to(work).as_posix(),
+                "sha256": member.sha256,
+                "bytes": member.bytes,
+            }
+            for name, member in phase_members.items()
+        },
         "scientific_fits_completed": coverage["fits_completed"],
         "scientific_updates_completed": coverage["scientific_updates_completed"],
         "optimizer_updates_executed": 0,

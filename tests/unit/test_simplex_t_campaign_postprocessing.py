@@ -60,6 +60,7 @@ def test_assembly_preserves_all_required_components(tmp_path, monkeypatch, expan
         publish(output)
 
     for name, method in (
+        ("phase_bundle_members", lambda *args, **kwargs: {}),
         ("verify_completed_scientific_graph", verify),
         ("analyze_sealed_t2", t2),
         ("analyze_followup_phase", followup),
