@@ -44,9 +44,12 @@ def verify_expansion_authority(local_paths: Path, *, resource_ok: Callable[[], b
     if len(evidence) != 29:
         raise ValueError("complete supplementary evidence set required")
     total = 0
+    # Each source is bounded at 32 MB and released by sha256 before the next.
+    # Admission brackets this metadata-only transaction; querying the entire
+    # Windows process tree separately for all 29 files costs more than hashing.
+    if not resource_ok():
+        raise InterruptedError("PAUSED_RESOURCE: supplementary temporal evidence")
     for entry in evidence:
-        if not resource_ok():
-            raise InterruptedError("PAUSED_RESOURCE: supplementary temporal evidence")
         source = Path(entry["path"])
         if (
             entry["bytes"] > 32_000_000
@@ -55,6 +58,8 @@ def verify_expansion_authority(local_paths: Path, *, resource_ok: Callable[[], b
         ):
             raise ValueError("supplementary temporal evidence changed: " + source.name)
         total += entry["bytes"]
+    if not resource_ok():
+        raise InterruptedError("PAUSED_RESOURCE: supplementary temporal evidence")
     if sha256(path) != ACK_SHA256:
         raise ValueError("supplementary ACK changed during verification")
     return {

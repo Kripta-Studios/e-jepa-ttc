@@ -8,7 +8,9 @@ from e_jepa_ttc.artifacts.simplex_t_preflight import sha256
 from e_jepa_ttc.simplex_t import expansion_authority as module
 
 
-@pytest.mark.parametrize("fault", ["none", "ack", "reference", "size", "pause", "semantics"])
+@pytest.mark.parametrize(
+    "fault", ["none", "ack", "reference", "size", "pause", "end_pause", "semantics"]
+)
 def test_verified_reference_boundary(tmp_path, monkeypatch, fault):
     reference = tmp_path / "input.json"
     reference.write_text("fixture")
@@ -33,13 +35,20 @@ def test_verified_reference_boundary(tmp_path, monkeypatch, fault):
         reference.write_text("changed")
     elif fault == "size":
         reference.write_text("larger fixture")
+    resource_calls = []
+
+    def resources():
+        resource_calls.append(True)
+        return fault != "pause" and not (fault == "end_pause" and len(resource_calls) == 2)
+
     if fault != "none":
         with pytest.raises((ValueError, InterruptedError)):
-            module.verify_expansion_authority(local, resource_ok=lambda: fault != "pause")
+            module.verify_expansion_authority(local, resource_ok=resources)
     else:
-        result = module.verify_expansion_authority(local, resource_ok=lambda: True)
+        result = module.verify_expansion_authority(local, resource_ok=resources)
         assert result["bytes_hashed"] == 29 * len("fixture")
         assert result["optimizer_updates"] == 0
+        assert len(resource_calls) == 2
 
 
 def test_missing_ack_remains_missing_evidence(tmp_path):

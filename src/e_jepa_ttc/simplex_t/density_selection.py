@@ -5,6 +5,15 @@ from __future__ import annotations
 import numpy as np
 
 
+def validate_selected_rows(
+    rows: np.ndarray, sequences: np.ndarray, anchor_us: np.ndarray, tokens: np.ndarray
+) -> None:
+    """Reject edited selections, duplicates and changes to the registered cap."""
+    expected = select_time_density(sequences, anchor_us, tokens, per_sequence=512)
+    if rows.dtype != np.int64 or not np.array_equal(rows, expected):
+        raise ValueError("D1 selection differs from registered input-only time ranks")
+
+
 def select_time_density(
     sequences: np.ndarray, anchor_us: np.ndarray, tokens: np.ndarray, *, per_sequence: int
 ) -> np.ndarray:

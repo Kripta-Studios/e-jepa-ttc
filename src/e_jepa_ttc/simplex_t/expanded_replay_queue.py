@@ -33,6 +33,7 @@ def run_expanded_blocks(
     max_new_queries: int,
     reuse_block: Callable[[int, int], dict[str, np.ndarray] | None] | None = None,
     verify_only: bool = False,
+    selected_queries: np.ndarray | None = None,
 ) -> dict:
     """Schedule validated blocks; callbacks own pinned input and expert loading.
 
@@ -53,6 +54,24 @@ def run_expanded_blocks(
     groups = expanded_family_queries(
         index["producer_family"], families, queries=len(index["tokens"])
     )
+    if selected_queries is not None:
+        if (
+            identity["pool"] != "D1"
+            or "query_selection" not in identity
+            or selected_queries.ndim != 1
+            or selected_queries.dtype != np.int64
+            or not len(selected_queries)
+            or len(np.unique(selected_queries)) != len(selected_queries)
+            or selected_queries.min() < 0
+            or selected_queries.max() >= len(index["tokens"])
+        ):
+            raise ValueError("invalid explicitly bound D1 query subset")
+        groups = {
+            family: queries[np.isin(queries, selected_queries)]
+            for family, queries in groups.items()
+        }
+    elif "query_selection" in identity:
+        raise ValueError("selection-bound cache requires its explicit query subset")
     if index["valid"].shape != (len(index["tokens"]), 16) or index["valid"].dtype != bool:
         raise ValueError("H16 boolean availability required")
     completed = 0

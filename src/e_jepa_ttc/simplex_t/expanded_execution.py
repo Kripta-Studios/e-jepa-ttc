@@ -40,6 +40,8 @@ def run_expanded_context_cache(
     reuse_expected_identities: dict[int, dict] | None = None,
     authorized_families: list[dict] | None = None,
     verify_only: bool = False,
+    selected_queries: np.ndarray | None = None,
+    selection_binding: dict | None = None,
 ) -> dict:
     """Run only under independently verified expanded authority and absolute limits.
 
@@ -51,6 +53,10 @@ def run_expanded_context_cache(
     """
     if pool not in {"D1", "DENSE_OLD"}:
         raise ValueError("unknown expanded pool")
+    if (selected_queries is None) != (selection_binding is None):
+        raise ValueError("query subset requires its immutable selection binding")
+    if selected_queries is not None and pool != "D1":
+        raise ValueError("D1 density amendment cannot silently thin DENSE controls")
     if pool == "DENSE_OLD":
         if (
             reuse_catalog_loader is None
@@ -113,6 +119,7 @@ def run_expanded_context_cache(
             "dense_replay_reuse.py",
             "reuse_catalog.py",
             "cache_reuse.py",
+            "density_selection.py",
         )
     }
     identity = {
@@ -137,6 +144,8 @@ def run_expanded_context_cache(
         "optimizer_updates": 0,
     }
     reuse = None
+    if selection_binding is not None:
+        identity["query_selection"] = selection_binding
     if pool == "DENSE_OLD":
         assert reuse_catalog_loader is not None and reuse_expected_identities is not None
         # JSON round-trip also isolates the frozen values from caller mutation.
@@ -171,6 +180,7 @@ def run_expanded_context_cache(
     torch.backends.cudnn.benchmark = False
     return run_expanded_blocks(
         output,
+        selected_queries=selected_queries,
         identity=identity,
         index=index,
         families=manifest["families"],

@@ -15,6 +15,7 @@
   "experts": "Unchanged frozen A5/C2F/PAIR and complete ancestry exclusions",
   "recipe": "Unchanged FP32, batches, losses, updates, seeds and registered fit graph",
   "io": "One persistent read-only HDF5 sequence with retained dataset handles, gated on exact real input tensor parity",
+  "metadata_resource_admission": "Bracket each complete 29-file temporal evidence hash transaction with resource checks; preserve all file hashes and 32 MB per-file bound",
   "resource_floors": {"available_ram_bytes": 4294967296, "free_disk_bytes_after_reservations": 20000000000},
   "no_holdouts": true,
   "stage70_76_unchanged": true,

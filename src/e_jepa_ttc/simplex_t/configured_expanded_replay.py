@@ -5,10 +5,13 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import numpy as np
+
 from e_jepa_ttc.artifacts.simplex_t_preflight import sha256
 
 from .ancestry_evidence import verify_acknowledged_producers
 from .coordination import shared_write_admission, verified_ack
+from .density_selection import validate_selected_rows
 from .expanded_execution import run_expanded_context_cache
 from .expansion_authority import verify_expansion_authority
 from .lifecycle import admitted
@@ -94,8 +97,38 @@ def run_configured_expanded_replay(
     if sha256(index_path) != POOL_INDEX_SHA256[pool]:
         raise ValueError("expanded index differs from the acknowledged query population")
     index_manifest = json.loads(index_path.read_text(encoding="utf-8"))
+    selection_ref = config.get("query_selection")
+    selected_queries = None
+    selection_path = None
+    if selection_ref is not None:
+        if pool != "D1" or set(selection_ref) != {"path", "sha256"}:
+            raise ValueError("only an explicitly pinned D1 density selection is accepted")
+        selection_path = resolve(selection_ref["path"])
+        if (
+            selection_path.stat().st_size > 1_048_576
+            or sha256(selection_path) != selection_ref["sha256"]
+        ):
+            raise ValueError("D1 density selection changed")
+        selection = json.loads(selection_path.read_text("utf-8"))
+        if (
+            selection["schema"] != "simplex_t_d1_density_selection_v1"
+            or selection["amendment"] != "SIMPLEX_T_THROUGHPUT_2026-09-08"
+            or selection["parent_manifest"]["sha256"] != POOL_INDEX_SHA256[pool]
+            or selection["parent_index_sha256"] != index_manifest["index_sha256"]
+            or selection["per_sequence_cap"] != 512
+        ):
+            raise ValueError("D1 selection changes its authorized parent or amendment")
+        array_path = index_root / "query_context_index.npz"
+        if sha256(array_path) != index_manifest["index_sha256"]:
+            raise ValueError("D1 parent index bytes changed")
+        selected_queries = np.asarray(selection["selected_original_rows"], dtype=np.int64)
+        with np.load(array_path, allow_pickle=False) as data:
+            validate_selected_rows(
+                selected_queries, data["sequences"], data["anchor_us"], data["tokens"]
+            )
     # Conservative uncompressed per-query allowance plus identity/receipt overhead.
-    required_reservation = index_manifest["queries"] * 3 * 131_072 + 1_048_576
+    query_count = index_manifest["queries"] if selected_queries is None else len(selected_queries)
+    required_reservation = query_count * 3 * 131_072 + 1_048_576
     if own_reservation < required_reservation:
         raise ValueError("pending output reservation is smaller than the full expanded cache bound")
     dedup_path = dedup_root / "DEDUP_MANIFEST.json"
@@ -153,6 +186,10 @@ def run_configured_expanded_replay(
         verify_expansion_authority(local_paths, resource_ok=resources)
         if sha256(original_path) != D0_INDEX_SHA256:
             raise ValueError("original family index changed during expanded replay")
+        if selection_path is not None:
+            assert selection_ref is not None
+            if sha256(selection_path) != selection_ref["sha256"]:
+                raise ValueError("D1 selection changed during replay")
 
     inspected = {
         "status": "EXPANDED_LAUNCH_INSPECTED_NOT_REPLAY_OR_SCIENTIFIC_ADMISSION",
@@ -167,6 +204,8 @@ def run_configured_expanded_replay(
         "output": str(output),
         "optimizer_updates": 0,
         "models_loaded": False,
+        "selected_queries": query_count,
+        "query_selection": selection_ref,
     }
     if inspect_only:
         validate()
@@ -193,6 +232,8 @@ def run_configured_expanded_replay(
         max_new_queries=max_new_queries,
         pool=pool,
         authorized_families=families,
+        selected_queries=selected_queries,
+        selection_binding=selection_ref,
         reuse_catalog_loader=catalogs.__getitem__ if identities is not None else None,
         reuse_expected_identities=identities,
         **({"verify_only": True} if verify_only else {}),

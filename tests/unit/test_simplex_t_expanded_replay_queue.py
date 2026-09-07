@@ -83,6 +83,31 @@ def test_resume_skips_verified_blocks_and_releases_family(tmp_path, inputs):
     assert not (tmp_path / "CURRENT_REPLAY.lock").exists()
 
 
+def test_d1_selection_only_infers_selected_queries_and_verifies(tmp_path, inputs):
+    args, calls, _ = inputs
+    args["identity"]["query_selection"] = {"sha256": "a" * 64}
+    args["selected_queries"] = np.array([1], dtype=np.int64)
+    output = tmp_path / "cache"
+    run_expanded_blocks(output, **args)
+    assert calls == [1]
+    assert not (output / "family00_query00000.npz").exists()
+    result = run_expanded_blocks(output, **args, verify_only=True)
+    assert result["status"] == "EXPANDED_CACHE_VERIFIED_NOT_SCIENTIFIC_FREEZE"
+    del args["selected_queries"]
+    with pytest.raises(ValueError, match="explicit query subset"):
+        run_expanded_blocks(output, **args, verify_only=True)
+
+
+@pytest.mark.parametrize("rows", [[1, 1], [-1], [2], []])
+def test_d1_selection_rejects_invalid_rows(tmp_path, inputs, rows):
+    args, calls, _ = inputs
+    args["identity"]["query_selection"] = {"sha256": "a" * 64}
+    args["selected_queries"] = np.asarray(rows, dtype=np.int64)
+    with pytest.raises(ValueError, match="invalid explicitly bound"):
+        run_expanded_blocks(tmp_path / "cache", **args)
+    assert not calls
+
+
 @pytest.mark.parametrize("blocks", [0, 1, 2])
 def test_read_only_verification_never_takes_lease_or_infers(tmp_path, inputs, blocks):
     args, calls, _ = inputs
