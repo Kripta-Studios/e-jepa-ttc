@@ -10,9 +10,13 @@ import torch
 
 from e_jepa_ttc.artifacts.simplex_t_preflight import sha256
 from e_jepa_ttc.simplex_t.campaign_accounting import AccountingPins
-from e_jepa_ttc.simplex_t.configured_postprocessing import postprocess_configured_campaign
+from e_jepa_ttc.simplex_t.configured_postprocessing import (
+    DeliveryRequest,
+    postprocess_configured_campaign,
+)
 from e_jepa_ttc.simplex_t.coordination import shared_write_admission
 from e_jepa_ttc.simplex_t.lifecycle import admitted
+from e_jepa_ttc.simplex_t.resource_bundle import ResourceAttempt
 from e_jepa_ttc.simplex_t.stage_gate import CanonicalPublication
 
 
@@ -43,8 +47,33 @@ def main() -> int:
         "publications",
         "accounting",
     }
-    if set(config) != required or config["schema"] != "simplex_t_postprocessing_launch_v2":
+    deliver = config.get("schema") == "simplex_t_postprocessing_launch_v3"
+    if set(config) != required | ({"delivery"} if deliver else set()) or config["schema"] not in {
+        "simplex_t_postprocessing_launch_v2",
+        "simplex_t_postprocessing_launch_v3",
+    }:
         raise ValueError("unrecognized postprocessing launch schema")
+    delivery = None
+    if deliver:
+        value = config["delivery"]
+        if (
+            set(value) != {"output", "analysis_commit", "resource_attempts"}
+            or not value["resource_attempts"]
+        ):
+            raise ValueError("explicit delivery output, commit and resource attempts required")
+        attempts = []
+        for row in value["resource_attempts"]:
+            if set(row) != {"launch", "launch_sha256", "receipt", "receipt_sha256"}:
+                raise ValueError("exact resource attempt pins required")
+            attempts.append(
+                ResourceAttempt(
+                    Path(row["launch"]),
+                    row["launch_sha256"],
+                    Path(row["receipt"]),
+                    row["receipt_sha256"],
+                )
+            )
+        delivery = DeliveryRequest(Path(value["output"]), value["analysis_commit"], attempts)
     evidence = config["accounting"]
     if set(evidence) != {
         "journal",
@@ -106,6 +135,7 @@ def main() -> int:
             phases=phases,
             accounting_pins=accounting,
             resource_ok=resource_ok,
+            delivery=delivery,
         )
     except (InterruptedError, RuntimeError) as error:
         if not str(error).startswith(("PAUSED_RESOURCE", "RESOURCE_PAUSE")):

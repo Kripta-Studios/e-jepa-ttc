@@ -3,22 +3,38 @@
 from __future__ import annotations
 
 import json
+import subprocess
 from collections.abc import Callable
+from dataclasses import dataclass
 from pathlib import Path
 
 import pandas as pd
 
 from e_jepa_ttc.artifacts.simplex_t_preflight import sha256
 
+from .bundle_creation import BundleMember
 from .campaign_accounting import AccountingPins
+from .campaign_completion import verify_completed_scientific_graph
 from .campaign_postprocessing import postprocess_completed_campaign
 from .configuration_preflight import open_acknowledged_source_configuration
+from .delivery_assembly import assemble_delivery
 from .frozen_history import frozen_history_pools
 from .old_cohort import load_old_evaluation_cohort
+from .postprocessing_bundle import postprocessing_bundle_members
+from .resource_bundle import ResourceAttempt
 from .risk17_inputs import load_acknowledged_risk17
 from .scientific_admission import validate_scientific_admission
 from .scientific_freeze import read_scientific_freeze
 from .stage_gate import CanonicalPublication
+
+
+@dataclass(frozen=True)
+class DeliveryRequest:
+    """Separate fresh transport destination and declared resource-attempt evidence."""
+
+    output: Path
+    analysis_commit: str
+    resource_attempts: list[ResourceAttempt]
 
 
 def postprocess_configured_campaign(
@@ -35,6 +51,7 @@ def postprocess_configured_campaign(
     phases: dict[str, CanonicalPublication],
     accounting_pins: AccountingPins,
     resource_ok: Callable[[], bool],
+    delivery: DeliveryRequest | None = None,
 ) -> dict:
     """Assemble T6 analysis inputs without accepting caller-supplied targets or gates.
 
@@ -43,13 +60,39 @@ def postprocess_configured_campaign(
     pins. The downstream graph check requires every enabled phase before analyses.
     Source ownership is released on success, pause and failure. Partial analysis
     output remains for audit; retry uses a new output directory, not new fits.
-    This does not replace final transport packaging and observed resource accounting.
+    A delivery request also assembles transport through real graph and resource
+    evidence checks. Retry uses fresh analysis and delivery outputs, never refits.
     """
     work = Path(json.loads(local_paths.read_text(encoding="utf-8"))["worktree"]).resolve(
         strict=True
     )
     if output.exists() or output.resolve() == work or not output.resolve().is_relative_to(work):
         raise ValueError("new companion-local postprocessing directory required")
+    if delivery is not None:
+        destination = delivery.output.resolve()
+        if (
+            not destination.is_relative_to(work / "artifacts")
+            or destination.exists()
+            or destination.is_relative_to(output.resolve())
+            or output.resolve().is_relative_to(destination)
+            or not delivery.resource_attempts
+        ):
+            raise ValueError("separate new delivery directory and resource attempts required")
+
+    def verify_analysis_commit() -> None:
+        if delivery is not None:
+            observed = (
+                subprocess.check_output(
+                    ["git", "-C", str(work), "rev-parse", "HEAD"],
+                    timeout=30,
+                )
+                .decode("ascii")
+                .strip()
+            )
+            if observed != delivery.analysis_commit:
+                raise ValueError("delivery analysis commit differs from worktree HEAD")
+
+    verify_analysis_commit()
     if freeze.stat().st_size > 8_388_608 or sha256(freeze) != freeze_sha256:
         raise ValueError("postprocessing freeze bytes changed")
     requested = json.loads(freeze.read_text(encoding="utf-8"))
@@ -146,7 +189,7 @@ def postprocess_configured_campaign(
                 resource_ok=resource_ok,
             )
 
-        return postprocess_completed_campaign(
+        result = postprocess_completed_campaign(
             output,
             freeze=freeze,
             freeze_sha256=freeze_sha256,
@@ -158,6 +201,49 @@ def postprocess_configured_campaign(
             expected_queries=cohort,
             load_verified_risk17=risk17,
             validate_authority_and_qa=validate,
+            resource_ok=resource_ok,
+        )
+        if delivery is None:
+            return result
+        manifest = output / "POSTPROCESSING.json"
+        manifest_hash = sha256(manifest)
+
+        def graph() -> dict:
+            return verify_completed_scientific_graph(
+                freeze=freeze,
+                freeze_sha256=freeze_sha256,
+                roots=roots,
+                sources=sources,
+                phases=phases,
+                expected_queries=cohort,
+                load_verified_risk17=risk17,
+                validate_authority_and_qa=validate,
+                resource_ok=resource_ok,
+            )
+
+        def bind() -> dict[str, BundleMember]:
+            verify_analysis_commit()
+            return postprocessing_bundle_members(
+                manifest,
+                manifest_sha256=manifest_hash,
+                freeze=freeze,
+                freeze_sha256=freeze_sha256,
+                roots=roots,
+                work_root=work,
+                phases=phases,
+                history_pools=frozen_history_pools(sources, record, roots=roots),
+                accounting_pins=accounting_pins,
+                resource_attempts=delivery.resource_attempts,
+                verify_completed_graph=graph,
+                validate_scientific_authority=validate,
+                resource_ok=resource_ok,
+            )
+
+        return assemble_delivery(
+            delivery.output,
+            work_root=work,
+            analysis_commit=delivery.analysis_commit,
+            bind_verified_members=bind,
             resource_ok=resource_ok,
         )
     finally:

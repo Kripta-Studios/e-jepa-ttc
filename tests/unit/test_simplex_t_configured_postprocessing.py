@@ -168,3 +168,59 @@ def test_analysis_failure_releases_sources(configured, monkeypatch):
     with pytest.raises(ValueError, match="missing sealed"):
         module.postprocess_configured_campaign(output, **args)
     assert calls[-1] == "release"
+
+
+@pytest.mark.parametrize("graph_failure", [False, True])
+def test_delivery_binds_real_input_context_and_releases(configured, monkeypatch, graph_failure):
+    output, args, _, _, calls = configured
+    monkeypatch.setattr(module.subprocess, "check_output", lambda *a, **kw: b"a" * 40)
+    attempts = [object()]
+    args["delivery"] = module.DeliveryRequest(
+        output.parent / "artifacts/delivery", "a" * 40, attempts
+    )
+    original_post = module.postprocess_completed_campaign
+
+    def post(path, **kwargs):
+        result = original_post(path, **kwargs)
+        path.mkdir()
+        (path / "POSTPROCESSING.json").write_text("{}")
+        return result
+
+    def graph(**kwargs):
+        assert kwargs["expected_queries"]["sample_token"].tolist() == ["old-query"]
+        assert kwargs["load_verified_risk17"]().equals(kwargs["expected_queries"])
+        kwargs["validate_authority_and_qa"]()
+        calls.append("graph")
+        if graph_failure:
+            raise ValueError("missing completed fit")
+        return {"fixture": True}
+
+    def bind(path, **kwargs):
+        assert path == output / "POSTPROCESSING.json"
+        assert kwargs["resource_attempts"] is attempts
+        assert kwargs["accounting_pins"] is args["accounting_pins"]
+        kwargs["validate_scientific_authority"]()
+        assert kwargs["verify_completed_graph"]() == {"fixture": True}
+        calls.append("bind")
+        return {}
+
+    def assemble(path, **kwargs):
+        assert path == args["delivery"].output
+        assert kwargs["bind_verified_members"]() == {}
+        assert kwargs["bind_verified_members"]() == {}
+        return {"status": "TEST_WIRING_ONLY"}
+
+    monkeypatch.setattr(module, "postprocess_completed_campaign", post)
+    monkeypatch.setattr(module, "verify_completed_scientific_graph", graph)
+    monkeypatch.setattr(module, "postprocessing_bundle_members", bind)
+    monkeypatch.setattr(module, "assemble_delivery", assemble)
+    if graph_failure:
+        with pytest.raises(ValueError, match="missing completed fit"):
+            module.postprocess_configured_campaign(output, **args)
+        assert "bind" not in calls
+    else:
+        assert (
+            module.postprocess_configured_campaign(output, **args)["status"] == "TEST_WIRING_ONLY"
+        )
+        assert calls.count("bind") == 2
+    assert calls[-1] == "release"

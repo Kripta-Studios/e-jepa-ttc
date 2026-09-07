@@ -91,6 +91,43 @@ def test_postprocessing_cli_passes_real_configured_inputs(entry, monkeypatch, ca
     assert json.loads(capsys.readouterr().out)["campaign_complete"] is False
 
 
+@pytest.mark.parametrize("missing_attempt", [False, True])
+def test_delivery_launch_requires_resource_pins(entry, monkeypatch, missing_attempt):
+    module, launch, config, argv = entry
+    config["schema"] = "simplex_t_postprocessing_launch_v3"
+    config["delivery"] = dict(
+        output="artifacts/delivery",
+        analysis_commit="f" * 40,
+        resource_attempts=[]
+        if missing_attempt
+        else [
+            dict(
+                launch="attempt.json",
+                launch_sha256="4" * 64,
+                receipt="receipt.json",
+                receipt_sha256="5" * 64,
+            )
+        ],
+    )
+    launch.write_text(json.dumps(config), encoding="utf-8")
+    argv[4] = sha256(launch)
+
+    def post(*args, **kwargs):
+        assert not missing_attempt
+        delivery = kwargs["delivery"]
+        assert delivery.output == Path("artifacts/delivery")
+        assert delivery.analysis_commit == "f" * 40
+        assert delivery.resource_attempts[0].receipt_sha256 == "5" * 64
+        return {"status": "WIRED_NOT_EXECUTED"}
+
+    monkeypatch.setattr(module, "postprocess_configured_campaign", post)
+    if missing_attempt:
+        with pytest.raises(ValueError, match="resource attempts"):
+            module.main()
+    else:
+        assert module.main() == 0
+
+
 @pytest.mark.parametrize("mutation", ["hash", "schema", "stage", "no_t2", "extra", "accounting"])
 def test_invalid_launch_fails_before_postprocessing(entry, monkeypatch, mutation):
     module, launch, config, argv = entry
