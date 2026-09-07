@@ -12,7 +12,9 @@ from pathlib import Path
 import pytest
 
 
-@pytest.mark.parametrize("mode", ["validate", "verified", "bad_hash"])
+@pytest.mark.parametrize(
+    "mode", ["validate", "verified", "bad_hash", "verifier_report", "duplicate_report"]
+)
 def test_campaign_shell_pins_and_verifier_skip(tmp_path, mode):
     pwsh = shutil.which("pwsh")
     if pwsh is None:
@@ -24,6 +26,10 @@ def test_campaign_shell_pins_and_verifier_skip(tmp_path, mode):
         sha256=hashlib.sha256(script.read_bytes()).hexdigest(),
         arguments=["--help"],
     )
+    if mode in {"verifier_report", "duplicate_report"}:
+        command["attempt_report"] = True
+    if mode == "duplicate_report":
+        command["arguments"] = ["--report=existing.json"]
     plan = tmp_path / "plan.json"
     plan.write_text(
         json.dumps(
@@ -53,7 +59,7 @@ def test_campaign_shell_pins_and_verifier_skip(tmp_path, mode):
     if mode == "validate":
         args.append("-ValidateOnly")
     result = subprocess.run(args, capture_output=True, text=True, encoding="utf-8", timeout=90)
-    if mode == "bad_hash":
+    if mode in {"bad_hash", "verifier_report", "duplicate_report"}:
         assert result.returncode != 0
         assert not output.exists()
     else:
@@ -67,7 +73,8 @@ def test_campaign_shell_pins_and_verifier_skip(tmp_path, mode):
             assert not (output / "ORCHESTRATOR.lock").exists()
 
 
-def test_resource_retry_uses_resume_and_keeps_logs(tmp_path):
+@pytest.mark.parametrize("attempt_report", [False, True])
+def test_resource_retry_uses_resume_and_keeps_logs(tmp_path, attempt_report):
     pwsh = shutil.which("pwsh")
     if pwsh is None:
         pytest.skip("PowerShell is required for native shell integration")
@@ -83,6 +90,9 @@ def test_resource_retry_uses_resume_and_keeps_logs(tmp_path):
         "p=Path(sys.argv[2]); rows=json.loads(p.read_text()) if p.exists() else []\n"
         "if sys.argv[1]=='verify': sys.exit(0 if len(rows)==2 else 10)\n"
         "rows.append(sys.argv[1]); p.write_text(json.dumps(rows))\n"
+        "if len(sys.argv)>3:\n"
+        " assert sys.argv[3]=='--report'\n"
+        " with Path(sys.argv[4]).open('x') as f: json.dump(rows,f)\n"
         "sys.exit(3 if len(rows)==1 else 0)\n",
         encoding="utf-8",
     )
@@ -90,11 +100,14 @@ def test_resource_retry_uses_resume_and_keeps_logs(tmp_path):
         digest = hashlib.sha256(script.read_bytes()).hexdigest()
 
         def command(mode):
-            return dict(
+            result = dict(
                 script=script.relative_to(work).as_posix(),
                 sha256=digest,
                 arguments=[mode, str(state)],
             )
+            if attempt_report and mode != "verify":
+                result["attempt_report"] = True
+            return result
 
         plan = tmp_path / "retry.json"
         plan.write_text(
@@ -142,6 +155,12 @@ def test_resource_retry_uses_resume_and_keeps_logs(tmp_path):
         assert len(list(output.glob("*.run.log"))) == 2
         assert len(list(output.glob("*.verify.log"))) == 3
         assert not (output / "ORCHESTRATOR.lock").exists()
+        invocations = list(output.glob("*.command.json"))
+        assert len(invocations) == 5
+        reports = list(output.glob("*.run.log.report.json"))
+        assert len(reports) == (2 if attempt_report else 0)
+        if attempt_report:
+            assert sorted(len(json.loads(p.read_text())) for p in reports) == [1, 2]
     finally:
         script.unlink()
 

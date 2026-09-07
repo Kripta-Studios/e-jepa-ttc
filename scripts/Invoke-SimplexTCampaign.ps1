@@ -17,6 +17,9 @@ alive. A positive limit returns exit 3 when reached; use -Resume to continue.
 .NOTES
 Workers must enforce RAM, VRAM, disk reservations and scientific prerequisites.
 The shell does not grant resource leases or authorize protected data access.
+Worker commands may declare attempt_report=true to append --report with a fresh
+JSON path alongside their log. Do not also supply --report in arguments. This
+changes only the receipt destination, never a scientific launch configuration.
 #>
 [CmdletBinding()]
 param(
@@ -73,12 +76,23 @@ function Assert-Command($command) {
     foreach ($argument in @($command.arguments)) {
         if ($argument -isnot [string]) { throw 'Arguments must be explicit strings.' }
     }
+    if ($command.PSObject.Properties.Name -contains 'attempt_report') {
+        if ($command.attempt_report -isnot [bool] -or -not $command.attempt_report) {
+            throw 'attempt_report, when declared, must be true.'
+        }
+        if (@($command.arguments | Where-Object { $_ -eq '--report' -or $_ -like '--report=*' }).Count -gt 0) {
+            throw 'attempt_report cannot override an explicit report argument.'
+        }
+    }
     return $scriptPath
 }
 foreach ($step in $spec.steps) {
     if ($step.id -notmatch '^[a-zA-Z0-9_-]+$' -or $ids.ContainsKey($step.id)) { throw 'Invalid or duplicate step ID.' }
     $ids[$step.id] = $true
     foreach ($field in @('run', 'resume', 'verify')) { $null = Assert-Command $step.$field }
+    if ($step.verify.PSObject.Properties.Name -contains 'attempt_report') {
+        throw 'attempt_report is for workers, not completion verifiers.'
+    }
 }
 if ($ValidateOnly) { Write-Output "Validated $(@($spec.steps).Count) command triples; no campaign executed."; exit 0 }
 if ((Test-Path -LiteralPath $destination) -and -not $Resume) {
@@ -108,6 +122,18 @@ try {
         }
         $scriptPath = Assert-Command $command
         $arguments = @('-B', $scriptPath) + @($command.arguments)
+        if ($Worker -and $command.PSObject.Properties.Name -contains 'attempt_report') {
+            $arguments += @('--report', "$logPath.report.json")
+        }
+        $invocation = @{
+            schema = 'simplex_t_orchestrator_invocation_v1'
+            plan_sha256 = $PlanSha256
+            script_sha256 = $command.sha256
+            python = $python
+            arguments = $arguments
+            worker = [bool]$Worker
+        } | ConvertTo-Json -Depth 5
+        [IO.File]::WriteAllText("$logPath.command.json", $invocation)
         Write-Host "Running $([IO.Path]::GetFileName($scriptPath)); log: $logPath"
         & $python @arguments *> $logPath
         $code = $LASTEXITCODE
