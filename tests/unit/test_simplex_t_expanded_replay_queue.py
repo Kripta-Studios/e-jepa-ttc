@@ -83,6 +83,37 @@ def test_resume_skips_verified_blocks_and_releases_family(tmp_path, inputs):
     assert not (tmp_path / "CURRENT_REPLAY.lock").exists()
 
 
+@pytest.mark.parametrize("blocks", [0, 1, 2])
+def test_read_only_verification_never_takes_lease_or_infers(tmp_path, inputs, blocks):
+    args, calls, _ = inputs
+    output = tmp_path / "cache"
+    for _ in range(blocks):
+        run_expanded_blocks(output, **args)
+    lock = tmp_path / "CURRENT_REPLAY.lock"
+    lock.write_text("another owner")
+    before = {p: (p.read_bytes(), p.stat().st_mtime_ns) for p in tmp_path.rglob("*") if p.is_file()}
+    args["inference_family"] = lambda _: pytest.fail("verifier opened inference")
+    result = run_expanded_blocks(output, **args, verify_only=True)
+    assert result["status"] == (
+        "EXPANDED_CACHE_VERIFIED_NOT_SCIENTIFIC_FREEZE"
+        if blocks == 2
+        else "EXPANDED_CACHE_INCOMPLETE"
+    )
+    assert result["new_blocks"] == 0 and len(calls) == blocks
+    assert before == {
+        p: (p.read_bytes(), p.stat().st_mtime_ns) for p in tmp_path.rglob("*") if p.is_file()
+    }
+
+
+def test_read_only_verification_rejects_changed_block(tmp_path, inputs):
+    args, _, _ = inputs
+    output = tmp_path / "cache"
+    run_expanded_blocks(output, **args)
+    (output / "family00_query00000.npz").write_bytes(b"corrupt")
+    with pytest.raises(ValueError, match="completed block changed"):
+        run_expanded_blocks(output, **args, verify_only=True)
+
+
 @pytest.mark.parametrize("failure", ["lease", "resource", "authority", "orphan"])
 def test_no_inference_when_not_admitted(tmp_path, inputs, failure):
     args, calls, _ = inputs
@@ -135,6 +166,12 @@ def test_dense_reuse_validates_blocks_without_new_inference(tmp_path, inputs, co
         result = run_expanded_blocks(output, **args)
         assert result["new_blocks"] == 0 and result["reused_blocks"] == 2
         assert "WITH_D0_REUSE" in result["status"]
+        assert not list(output.glob("family*.npz"))
+        seal_before = (output / "IDENTITY.json").read_bytes()
+        verified = run_expanded_blocks(output, **args, verify_only=True)
+        assert verified["status"] == "EXPANDED_CACHE_VERIFIED_NOT_SCIENTIFIC_FREEZE"
+        assert verified["new_blocks"] == 0 and verified["reused_blocks"] == 2
+        assert (output / "IDENTITY.json").read_bytes() == seal_before
         assert not list(output.glob("family*.npz"))
     assert calls == [0, 1]
     assert len(releases) == 1

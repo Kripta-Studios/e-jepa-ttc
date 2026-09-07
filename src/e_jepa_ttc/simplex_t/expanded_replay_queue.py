@@ -6,7 +6,7 @@ import json
 import os
 import time
 from collections.abc import Callable
-from contextlib import AbstractContextManager
+from contextlib import AbstractContextManager, nullcontext
 from pathlib import Path
 
 import numpy as np
@@ -32,6 +32,7 @@ def run_expanded_blocks(
     resource_ok: Callable[[], bool],
     max_new_queries: int,
     reuse_block: Callable[[int, int], dict[str, np.ndarray] | None] | None = None,
+    verify_only: bool = False,
 ) -> dict:
     """Schedule validated blocks; callbacks own pinned input and expert loading.
 
@@ -67,16 +68,22 @@ def run_expanded_blocks(
         }
 
     # Same lock as D0: do not launch a second companion GPU replay.
-    with ExclusiveLease(output.parent / "CURRENT_REPLAY.lock"):
+    context = (
+        nullcontext() if verify_only else ExclusiveLease(output.parent / "CURRENT_REPLAY.lock")
+    )
+    with context:
         validate_prerequisites()
         if not resource_ok():
             return result("PAUSED_RESOURCE")
-        output.mkdir(parents=True, exist_ok=True)
+        if not verify_only:
+            output.mkdir(parents=True, exist_ok=True)
         identity_path = output / "IDENTITY.json"
         if identity_path.exists():
             if json.loads(identity_path.read_text(encoding="utf-8")) != identity:
                 raise ValueError("expanded extraction identity changed; no silent resume")
         else:
+            if verify_only:
+                return result("EXPANDED_CACHE_INCOMPLETE")
             write_new_json(identity_path, identity)
         for family, queries in groups.items():
             history = history_loader(family // 4)
@@ -96,6 +103,8 @@ def run_expanded_blocks(
                 )
 
             for value in queries:
+                if not resource_ok():
+                    return result("PAUSED_RESOURCE")
                 qi = int(value)
                 stem = output / f"family{family:02d}_query{qi:05d}"
                 receipt, payload = stem.with_suffix(".json"), stem.with_suffix(".npz")
@@ -124,6 +133,8 @@ def run_expanded_blocks(
                     pending.append((qi, stem))
             if not pending:
                 continue
+            if verify_only:
+                return result("EXPANDED_CACHE_INCOMPLETE")
             validate_prerequisites()
             if not resource_ok():
                 return result("PAUSED_RESOURCE")
@@ -162,6 +173,11 @@ def run_expanded_blocks(
                     completed += 1
                     if completed >= max_new_queries:
                         return result("SLICE_COMPLETE")
+    if verify_only:
+        validate_prerequisites()
+        if json.loads(identity_path.read_text(encoding="utf-8")) != identity:
+            raise ValueError("expanded extraction identity changed during verification")
+        return result("EXPANDED_CACHE_VERIFIED_NOT_SCIENTIFIC_FREEZE")
     return result(
         "ALL_EXPANDED_INPUTS_AVAILABLE_WITH_D0_REUSE_NOT_SCIENTIFIC_FREEZE"
         if reused

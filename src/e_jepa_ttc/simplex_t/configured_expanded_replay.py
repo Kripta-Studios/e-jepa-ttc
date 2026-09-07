@@ -30,6 +30,7 @@ def run_configured_expanded_replay(
     max_new_queries: int,
     other_reserved_bytes: int,
     inspect_only: bool,
+    verify_only: bool = False,
 ) -> dict:
     """Resolve real authority and pins; inspection never opens models or raw streams.
 
@@ -40,6 +41,8 @@ def run_configured_expanded_replay(
     """
     if (
         type(inspect_only) is not bool
+        or type(verify_only) is not bool
+        or (inspect_only and verify_only)
         or type(max_new_queries) is not int
         or max_new_queries < 1
         or type(other_reserved_bytes) is not int
@@ -168,6 +171,9 @@ def run_configured_expanded_replay(
     if inspect_only:
         validate()
         return inspected
+    if verify_only and not (output / "IDENTITY.json").exists():
+        validate()
+        return {**inspected, "status": "EXPANDED_CACHE_INCOMPLETE", "files_written": 0}
     # Check every acknowledged checkpoint/ancestor binding once before launching;
     # individual families also rehash their checkpoints when they are loaded.
     verify_acknowledged_producers(ack_path, PARENT_ACK_SHA256, resource_ok=resources)
@@ -189,4 +195,5 @@ def run_configured_expanded_replay(
         authorized_families=families,
         reuse_catalog_loader=catalogs.__getitem__ if identities is not None else None,
         reuse_expected_identities=identities,
+        **({"verify_only": True} if verify_only else {}),
     )

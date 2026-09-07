@@ -2,6 +2,7 @@
 
 import importlib.util
 import json
+import sys
 from pathlib import Path
 
 import pytest
@@ -36,6 +37,27 @@ def entry(tmp_path, monkeypatch):
         ],
     )
     return module, report
+
+
+@pytest.mark.parametrize(
+    "status,code",
+    [
+        ("EXPANDED_CACHE_INCOMPLETE", 10),
+        ("EXPANDED_CACHE_VERIFIED_NOT_SCIENTIFIC_FREEZE", 0),
+        ("PAUSED_RESOURCE", 3),
+    ],
+)
+def test_verifier_dispatch_writes_no_report(entry, monkeypatch, status, code):
+    module, report = entry
+    monkeypatch.setattr("sys.argv", sys.argv[:-2] + ["--verify-only"])
+
+    def verify(*args, **kwargs):
+        assert kwargs["verify_only"] and not kwargs["inspect_only"]
+        return {"status": status, "optimizer_updates": 0}
+
+    monkeypatch.setattr(module, "run_configured_expanded_replay", verify)
+    assert module.main() == code
+    assert not report.exists()
 
 
 @pytest.mark.parametrize(

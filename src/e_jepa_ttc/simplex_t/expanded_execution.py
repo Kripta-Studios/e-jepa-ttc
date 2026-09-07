@@ -39,6 +39,7 @@ def run_expanded_context_cache(
     reuse_catalog_loader: Callable[[int], D0ReuseCatalog] | None = None,
     reuse_expected_identities: dict[int, dict] | None = None,
     authorized_families: list[dict] | None = None,
+    verify_only: bool = False,
 ) -> dict:
     """Run only under independently verified expanded authority and absolute limits.
 
@@ -189,6 +190,7 @@ def run_expanded_context_cache(
         resource_ok=resource_ok,
         max_new_queries=max_new_queries,
         reuse_block=reuse,
+        **({"verify_only": True} if verify_only else {}),
     )
 
 
