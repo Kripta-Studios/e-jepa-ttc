@@ -85,6 +85,10 @@ def validate_scientific_admission(
     ):
         require_pin(path, digest, category)
     contract = record["source_contract"]
+    amendment_path = work / "configs/experiment/simplex_t_throughput_amendment.json"
+    amendment_hash = sha256(amendment_path) if amendment_path.exists() else None
+    if amendment_hash is not None:
+        require_pin(amendment_path, amendment_hash, "config")
     if temporal is not None:
         require_pin(Path(temporal["path"]), temporal["sha256"], "time")
         for entry in temporal["evidence"]:
@@ -134,6 +138,7 @@ def validate_scientific_admission(
             raise ValueError("supplementary temporal authority changed during admission")
         if (
             sha256(local_paths) != local_hash
+            or (amendment_hash is not None and sha256(amendment_path) != amendment_hash)
             or sha256(source_configuration) != source_configuration_sha256
             or sha256(evidence_profile) != evidence_profile_sha256
             or verified_ack(ack_path, ack_hash) != ack

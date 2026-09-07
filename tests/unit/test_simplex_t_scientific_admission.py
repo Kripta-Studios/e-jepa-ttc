@@ -22,6 +22,9 @@ from e_jepa_ttc.simplex_t import scientific_admission as module
         "qa",
         "changed",
         "resource",
+        "amendment_ok",
+        "amendment_pin",
+        "amendment_changed",
     ],
 )
 def test_admission_composition(tmp_path: Path, monkeypatch, mode: str):
@@ -78,6 +81,19 @@ def test_admission_composition(tmp_path: Path, monkeypatch, mode: str):
         )
     if mode == "pin":
         record["files"][0]["sha256"] = "0" * 64
+    if mode.startswith("amendment"):
+        amendment = tmp_path / "configs/experiment/simplex_t_throughput_amendment.json"
+        amendment.parent.mkdir(parents=True)
+        amendment.write_text('{"id": "fixture"}', encoding="utf-8")
+        if mode != "amendment_pin":
+            record["files"].append(
+                dict(
+                    root="work",
+                    relative_path=amendment.relative_to(tmp_path).as_posix(),
+                    sha256=sha256(amendment),
+                    category="config",
+                )
+            )
     if mode in {"expanded_ok", "expanded_dense_ok", "expanded_pin"}:
         extra = save("expanded_ack.json", {"fixture": True})
         receipt = {"path": str(extra), "sha256": sha256(extra), "evidence": []}
@@ -113,6 +129,8 @@ def test_admission_composition(tmp_path: Path, monkeypatch, mode: str):
             raise ValueError("real evidence missing")
         if mode == "changed":
             profile.write_text("changed", encoding="utf-8")
+        if mode == "amendment_changed":
+            amendment.write_text("changed", encoding="utf-8")
         return {
             "local_paths_sha256": sha256(local),
             "ancestry": {"ancestry_sha256": ancestry["sha256"]},
@@ -129,7 +147,7 @@ def test_admission_composition(tmp_path: Path, monkeypatch, mode: str):
         evidence_profile_sha256=sha256(profile),
         resource_ok=lambda: mode != "resource",
     )
-    if mode in {"ok", "expanded_ok", "expanded_dense_ok"}:
+    if mode in {"ok", "expanded_ok", "expanded_dense_ok", "amendment_ok"}:
         result = module.validate_scientific_admission(record, **kwargs)
         assert result["optimizer_updates_executed"] == 0
         assert result["holdout_authorized"] is False
@@ -150,7 +168,7 @@ def test_admission_composition(tmp_path: Path, monkeypatch, mode: str):
     else:
         with pytest.raises((ValueError, InterruptedError)):
             module.validate_scientific_admission(record, **kwargs)
-        if mode in {"expanded", "expanded_pin", "pin", "resource"}:
+        if mode in {"expanded", "expanded_pin", "pin", "resource", "amendment_pin"}:
             assert not calls
         else:
             assert calls == ["open", "qa", "release"]
