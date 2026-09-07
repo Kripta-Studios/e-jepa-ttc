@@ -53,7 +53,7 @@ def test_resource_interrupt_preserves_unknown_progress(entry, monkeypatch, error
         raise error
 
     monkeypatch.setattr(module, "run_configured_expanded_replay", pause)
-    assert module.main() == 2
+    assert module.main() == 3
     result = json.loads(report.read_text(encoding="utf-8"))
     assert result["status"] == "PAUSED_RESOURCE"
     assert result["new_blocks"] is None

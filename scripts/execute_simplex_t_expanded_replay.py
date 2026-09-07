@@ -53,7 +53,9 @@ def main() -> int:
     result["inspect_only"] = args.inspect_only
     write_new_json(args.report, result)
     print(json.dumps(result))
-    return 2 if result["status"] == "PAUSED_RESOURCE" else 0
+    # Match the campaign launch contract: 3 is a resumable resource boundary.
+    # argparse retains exit 2 for malformed arguments, which must not be retried.
+    return 3 if result["status"] == "PAUSED_RESOURCE" else 0
 
 
 if __name__ == "__main__":
