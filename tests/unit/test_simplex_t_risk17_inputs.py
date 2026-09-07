@@ -2,13 +2,101 @@
 
 import json
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 import pandas as pd
 import pytest
 
 from e_jepa_ttc.artifacts.simplex_t_preflight import sha256
+from e_jepa_ttc.simplex_t import risk17_inputs as module
 from e_jepa_ttc.simplex_t.risk17_inputs import load_risk17_replay, load_selector_replay
+
+
+@pytest.mark.parametrize(
+    "failure", ["", "index", "weight", "ancestry", "fit_role", "fold", "resource", "cohort"]
+)
+def test_acknowledged_router_bindings(tmp_path: Path, monkeypatch, failure: str):
+    ridge = tmp_path / "frozen_audit/extracted_input/run/stage65"
+    (tmp_path / "tables").mkdir()
+    ack = {
+        "producers": {
+            "authoritative_historical_manifest": {
+                "path": str(tmp_path / "NESTED_ANCESTRY_AUDIT.json"),
+                "sha256": "a" * 64,
+            }
+        },
+        "interfaces": {"role_manifest": {"roles": {"original": ["old"]}}},
+    }
+    fits, tables = [], []
+    for fold in range(3):
+        checkpoint = ridge / f"outer{fold}/S65-RISK17.npz"
+        checkpoint.parent.mkdir(parents=True)
+        checkpoint.write_bytes(b"fixture")
+        fit = {
+            "model": "S65-RISK17",
+            "outer_fold": fold,
+            "sha256": sha256(checkpoint),
+            "evidence_type": "train_only_frozen_router_fit",
+        }
+        if failure == "fit_role":
+            fit["evidence_type"] = "unknown"
+        if failure == "weight" and fold == 0:
+            checkpoint.write_bytes(b"changed")
+        fits.append(fit)
+        table = {
+            "outer_fold": fold,
+            "role": "outer_dev",
+            "ancestry_sha256": "b" * 64 if failure == "ancestry" else "a" * 64,
+        }
+        for suffix, key in (("csv", "metadata_sha256"), ("npz", "arrays_sha256")):
+            path = tmp_path / "tables" / f"outer{fold}_outer_dev.{suffix}"
+            path.write_bytes(b"fixture")
+            table[key] = sha256(path)
+        tables.append(table)
+    if failure == "fold":
+        fits.pop()
+    index = tmp_path / "FROZEN_EXPERT_TABLE_INDEX.json"
+    manifest = ridge / "ALL_RIDGE_FITS_FROZEN.json"
+    index.write_text(json.dumps(tables), encoding="utf-8")
+    manifest.write_text(
+        json.dumps({"fits": fits, "evidence_type": "all_router_fits_frozen_before_evaluation"}),
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(module, "verified_ack", lambda *args: ack)
+    calls = []
+
+    def replay(*args, **kwargs):
+        kwargs["validate_prerequisites"]()
+        calls.append("verified")
+        assert kwargs["expected_bindings"] == [
+            {"fold": o, "weights_sha256": fits[o]["sha256"], "table": tables[o]} for o in range(3)
+        ]
+        return kwargs["expected_identity"]
+
+    monkeypatch.setattr(module, "load_risk17_replay", replay)
+
+    def run():
+        return module.load_acknowledged_risk17(
+            tmp_path / "REPLAY.json",
+            manifest_sha256="f" * 64,
+            ack_path=tmp_path / "ACK.json",
+            ack_sha256="c" * 64,
+            table_index_sha256="0" * 64 if failure == "index" else sha256(index),
+            ridge_manifest_sha256=sha256(manifest),
+            expected_identity=pd.DataFrame(
+                {"sequence_id": ["closed" if failure == "cohort" else "old"]}
+            ),
+            resource_ok=lambda: failure != "resource",
+        )
+
+    if failure:
+        with pytest.raises(InterruptedError if failure == "resource" else ValueError):
+            run()
+        assert not calls
+    else:
+        assert len(run()) == 1
+        assert calls == ["verified"]
 
 
 @pytest.mark.parametrize("failure", ["", "prediction", "identity", "role", "bytes", "authority"])
@@ -72,7 +160,7 @@ def test_risk17_comparator_contract(tmp_path: Path, failure: str, comparator: st
         if failure == "authority":
             raise ValueError("unverified authority")
 
-    arguments = dict(
+    arguments: dict[str, Any] = dict(
         manifest_sha256=pin,
         expected_identity=identity,
         expected_bindings=bindings,

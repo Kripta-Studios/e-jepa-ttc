@@ -11,6 +11,80 @@ import pandas as pd
 
 from e_jepa_ttc.artifacts.simplex_t_preflight import sha256
 
+from .coordination import verified_ack
+
+
+def load_acknowledged_risk17(
+    manifest: Path,
+    *,
+    manifest_sha256: str,
+    ack_path: Path,
+    ack_sha256: str,
+    table_index_sha256: str,
+    ridge_manifest_sha256: str,
+    expected_identity: pd.DataFrame,
+    resource_ok: Callable[[], bool],
+) -> pd.DataFrame:
+    """Derive replay bindings from independently frozen historical router inputs.
+
+    The caller binds the supplied table/ridge hashes and OLD cohort to the
+    scientific freeze. Router weights and all three outer-dev table pairs are
+    rehashed, not inferred from the replay receipt. No router fit or inference
+    is repeated. This is suitable for the T5 gate's verified RISK17 callback.
+    """
+    ack = verified_ack(ack_path, ack_sha256)
+    ancestry = ack["producers"]["authoritative_historical_manifest"]
+    historical = Path(ancestry["path"]).parent.resolve(strict=True)
+    ridge = historical / "frozen_audit/extracted_input/run/stage65"
+    index_path = historical / "FROZEN_EXPERT_TABLE_INDEX.json"
+    ridge_path = ridge / "ALL_RIDGE_FITS_FROZEN.json"
+    pins = {index_path: table_index_sha256, ridge_path: ridge_manifest_sha256}
+
+    def validate() -> None:
+        if verified_ack(ack_path, ack_sha256) != ack:
+            raise ValueError("RISK17 acknowledged authority changed")
+        for path, digest in pins.items():
+            if not resource_ok():
+                raise InterruptedError("PAUSED_RESOURCE: RISK17 historical bindings")
+            if sha256(path) != digest:
+                raise ValueError("RISK17 historical binding bytes changed")
+
+    validate()
+    tables = json.loads(index_path.read_text(encoding="utf-8"))
+    ridge_manifest = json.loads(ridge_path.read_text(encoding="utf-8"))
+    if ridge_manifest.get("evidence_type") != "all_router_fits_frozen_before_evaluation":
+        raise ValueError("RISK17 router freeze must precede evaluation")
+    fits = [row for row in ridge_manifest["fits"] if row["model"] == "S65-RISK17"]
+    if len(fits) != 3 or {row["outer_fold"] for row in fits} != {0, 1, 2}:
+        raise ValueError("complete historical RISK17 fold set required")
+    bindings = []
+    for fit in sorted(fits, key=lambda row: row["outer_fold"]):
+        fold = fit["outer_fold"]
+        if fit["evidence_type"] != "train_only_frozen_router_fit":
+            raise ValueError("RISK17 router is not a frozen TRAIN-only fit")
+        matches = [
+            row for row in tables if row["outer_fold"] == fold and row["role"] == "outer_dev"
+        ]
+        if len(matches) != 1 or matches[0]["ancestry_sha256"] != ancestry["sha256"]:
+            raise ValueError("RISK17 outer table has ambiguous or different ancestry")
+        table = matches[0]
+        pins[ridge / f"outer{fold}/S65-RISK17.npz"] = fit["sha256"]
+        for suffix, key in (("csv", "metadata_sha256"), ("npz", "arrays_sha256")):
+            pins[historical / "tables" / f"outer{fold}_outer_dev.{suffix}"] = table[key]
+        bindings.append({"fold": fold, "weights_sha256": fit["sha256"], "table": table})
+    if set(expected_identity.sequence_id) != set(
+        ack["interfaces"]["role_manifest"]["roles"]["original"]
+    ):
+        raise ValueError("RISK17 expected cohort changes acknowledged OLD roles")
+    return load_risk17_replay(
+        manifest,
+        manifest_sha256=manifest_sha256,
+        expected_identity=expected_identity,
+        expected_bindings=bindings,
+        ancestry_sha256=ancestry["sha256"],
+        validate_prerequisites=validate,
+    )
+
 
 def load_selector_replay(
     manifest: Path,
