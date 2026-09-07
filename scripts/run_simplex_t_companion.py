@@ -183,16 +183,35 @@ def main() -> int:
                 dedup=temporal / "query_context_dedup" / f"outer{args.compile_fold}.npz",
                 outer=args.compile_fold,
             )
-        compile_fold(
-            temporal / f"{prefix}context_features_fp32",
-            temporal / f"{prefix}query_context_index",
-            temporal / f"{prefix}query_context_dedup",
-            args.output,
-            args.compile_fold,
-            pool=pool,
-            other_reserved_bytes=args.other_reserved_bytes,
-            **reuse_options,
-        )
+        try:
+            compile_fold(
+                temporal / f"{prefix}context_features_fp32",
+                temporal / f"{prefix}query_context_index",
+                temporal / f"{prefix}query_context_dedup",
+                args.output,
+                args.compile_fold,
+                pool=pool,
+                other_reserved_bytes=args.other_reserved_bytes,
+                **reuse_options,
+            )
+        except RuntimeError as error:
+            if not str(error).startswith("RESOURCE_PAUSE:"):
+                raise
+            print(json.dumps({"status": "PAUSED_RESOURCE", "optimizer_updates": 0}))
+            return 3
+        except ValueError as error:
+            if not str(error).startswith("TEMPORAL_CACHE_INCOMPLETE:"):
+                raise
+            print(
+                json.dumps(
+                    {
+                        "status": "TEMPORAL_CACHE_INCOMPLETE",
+                        "reason": str(error),
+                        "optimizer_updates": 0,
+                    }
+                )
+            )
+            return 10
         print(
             json.dumps(
                 {

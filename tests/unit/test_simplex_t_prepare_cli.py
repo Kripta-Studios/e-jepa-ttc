@@ -105,6 +105,39 @@ def test_prepare_compiles_requested_fold_without_scientific_authorization(
 
 
 @pytest.mark.parametrize(
+    "error,code",
+    [
+        (RuntimeError("RESOURCE_PAUSE: fixture"), 3),
+        (ValueError("TEMPORAL_CACHE_INCOMPLETE:outer0:query7"), 10),
+    ],
+)
+def test_compile_pause_codes(entry, tmp_path, monkeypatch, error, code):
+    paths = tmp_path / "local.json"
+    paths.write_text(json.dumps({"worktree": str(tmp_path)}))
+
+    def compile_stub(*args, **kwargs):
+        raise error
+
+    monkeypatch.setattr(entry, "compile_fold", compile_stub)
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "runner",
+            "prepare",
+            "--compile-fold",
+            "0",
+            "--local-paths",
+            str(paths),
+            "--output",
+            str(tmp_path / "output"),
+            "--other-reserved-bytes",
+            "0",
+        ],
+    )
+    assert entry.main() == code
+
+
+@pytest.mark.parametrize(
     "args",
     [
         ["run", "--compile-fold", "0", "--output", "unused"],
