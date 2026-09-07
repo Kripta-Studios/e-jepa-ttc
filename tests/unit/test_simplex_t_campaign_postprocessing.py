@@ -97,3 +97,8 @@ def test_assembly_preserves_all_required_components(tmp_path, monkeypatch, expan
         assert result["optimizer_updates_executed"] == 0
         assert not result["campaign_complete"] and not result["transport_bundle_complete"]
         assert len(verifies) == 2 and visits[-1] == "interface"
+        inventory = result["output_inventory"]
+        assert inventory["files"] == (12 if expanded else 4)
+        for name, pin in inventory["members"].items():
+            assert sha256(output / name) == pin["sha256"]
+            assert (output / name).stat().st_size == pin["bytes"]

@@ -15,6 +15,7 @@ from .campaign_sources import CampaignSources
 from .candidate_interface import publish_candidate_interface
 from .compact_phase import export_compact_phase
 from .followup_analysis import analyze_followup_phase, analyze_three_seed_family
+from .postprocessing_inventory import inventory_postprocessing
 from .sealed_analysis import analyze_sealed_t2
 from .stage_gate import CanonicalPublication
 
@@ -142,6 +143,7 @@ def postprocess_completed_campaign(
     )
     if verify() != coverage:
         raise ValueError("scientific graph changed during postprocessing")
+    inventory = inventory_postprocessing(output, resource_ok=resource_ok)
     result = {
         "schema": "simplex_t_campaign_postprocessing_v1",
         "status": "SEALED_ANALYSES_WEIGHTS_INTERFACE_ASSEMBLED_NOT_TRANSPORT_DELIVERY",
@@ -151,6 +153,7 @@ def postprocess_completed_campaign(
         "compact_weights": weights,
         "three_seed": three_seed,
         "future_interface_sha256": sha256(interface),
+        "output_inventory": inventory,
         "scientific_fits_completed": coverage["fits_completed"],
         "scientific_updates_completed": coverage["scientific_updates_completed"],
         "optimizer_updates_executed": 0,
