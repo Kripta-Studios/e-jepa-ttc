@@ -1,3 +1,23 @@
+<#
+.SYNOPSIS
+Runs a pinned SIMPLEX-T orchestration plan synchronously, retaining attempt logs.
+.DESCRIPTION
+Requires a resolved plan with run, resume and verify commands for every step.
+This shell is not a resolved T0-T6 campaign plan or a scientific freeze.
+Completed steps are skipped only after their verifier succeeds. Resource pauses
+are retried; other errors stop execution. Regeneration requires distinct outputs
+and a new pinned plan; existing caches and checkpoints are never reset here.
+.PARAMETER Resume
+Allows an existing RunRoot with the same plan hash and selects resume commands.
+.PARAMETER ValidateOnly
+Checks command and plan pins without launching workers or creating RunRoot.
+.PARAMETER MaxResourceRetries
+Zero retries without a numerical limit while this foreground process remains
+alive. A positive limit returns exit 3 when reached; use -Resume to continue.
+.NOTES
+Workers must enforce RAM, VRAM, disk reservations and scientific prerequisites.
+The shell does not grant resource leases or authorize protected data access.
+#>
 [CmdletBinding()]
 param(
     [Parameter(Mandatory)][string]$Plan,
@@ -12,7 +32,7 @@ param(
 
 # This is the synchronous orchestration shell, not scientific authority. The
 # campaign's resolved plan must call real admission, freeze and output verifiers.
-# Exit 10 from a verifier means incomplete; every other failure stops the graph.
+# Verifier exits: 0 complete, 10 incomplete, 3 resource pause; others stop.
 # Exit 3 from a worker means resource pause. Other errors are never auto-retried.
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
@@ -31,6 +51,16 @@ if ($spec.schema -ne 'simplex_t_orchestration_plan_v1' -or @($spec.steps).Count 
     throw 'A resolved, nonempty orchestration plan is required.'
 }
 $ids = @{}
+function Resolve-WorkerExitCode([int]$Code, [string]$ScriptPath, [string]$LogPath) {
+    # The original immutable replay uses exit1 for these two safe boundaries.
+    # Do not match arbitrary occurrences of RESOURCE_PAUSE inside a traceback.
+    if ($Code -eq 1 -and [IO.Path]::GetFileName($ScriptPath) -eq 'build_simplex_t_context_features.py') {
+        $lastLine = Get-Content -LiteralPath $LogPath -Tail 1
+        if ($lastLine -ceq 'RuntimeError: RESOURCE_PAUSE at completed query boundary' -or
+            $lastLine -ceq 'RuntimeError: RESOURCE_PAUSE before model load') { return 3 }
+    }
+    return $Code
+}
 function Assert-Command($command) {
     $scriptPath = [IO.Path]::GetFullPath((Join-Path $work $command.script))
     if (-not $scriptPath.StartsWith($PSScriptRoot + [IO.Path]::DirectorySeparatorChar,
@@ -72,7 +102,7 @@ try {
     $env:PYTHONPATH = Join-Path $work 'src'
     foreach ($name in $previousThreads.Keys) { [Environment]::SetEnvironmentVariable($name, '4', 'Process') }
     Set-Location -LiteralPath $work
-    function Invoke-Logged($command, [string]$logPath) {
+    function Invoke-Logged($command, [string]$logPath, [switch]$Worker) {
         if ((Get-FileHash -LiteralPath $planPath -Algorithm SHA256).Hash.ToLowerInvariant() -ne $PlanSha256) {
             throw 'Plan changed during execution.'
         }
@@ -80,7 +110,9 @@ try {
         $arguments = @('-B', $scriptPath) + @($command.arguments)
         Write-Host "Running $([IO.Path]::GetFileName($scriptPath)); log: $logPath"
         & $python @arguments *> $logPath
-        return $LASTEXITCODE
+        $code = $LASTEXITCODE
+        if ($Worker) { return (Resolve-WorkerExitCode $code $scriptPath $logPath) }
+        return $code
     }
     foreach ($step in $spec.steps) {
         $attempt = 0
@@ -90,9 +122,16 @@ try {
             $prefix = Join-Path $destination "$($step.id)_$stamp"
             $verified = Invoke-Logged $step.verify "$prefix.verify.log"
             if ($verified -eq 0) { Write-Host "Verified: $($step.id)"; break }
+            if ($verified -eq 3) {
+                $resourceRetries += 1
+                if ($MaxResourceRetries -gt 0 -and $resourceRetries -ge $MaxResourceRetries) { exit 3 }
+                Write-Host "Verifier resource pause at $($step.id); retry in $ResourceRetrySeconds seconds."
+                Start-Sleep -Seconds $ResourceRetrySeconds
+                continue
+            }
             if ($verified -ne 10) { throw "Verifier failed for $($step.id), exit $verified. See $prefix.verify.log" }
             $command = if ($Resume -or $attempt -gt 0) { $step.resume } else { $step.run }
-            $code = Invoke-Logged $command "$prefix.run.log"
+            $code = Invoke-Logged $command "$prefix.run.log" -Worker
             $attempt += 1
             if ($code -eq 3) {
                 $resourceRetries += 1

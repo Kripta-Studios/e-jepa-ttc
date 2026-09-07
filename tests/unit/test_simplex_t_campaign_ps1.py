@@ -1,5 +1,6 @@
 """Native PowerShell shell checks with help-only verifiers, never campaign work."""
 
+import base64
 import hashlib
 import json
 import shutil
@@ -143,3 +144,71 @@ def test_resource_retry_uses_resume_and_keeps_logs(tmp_path):
         assert not (output / "ORCHESTRATOR.lock").exists()
     finally:
         script.unlink()
+
+
+@pytest.mark.parametrize(
+    "code,script,message,expected",
+    [
+        (
+            1,
+            "build_simplex_t_context_features.py",
+            "RuntimeError: RESOURCE_PAUSE at completed query boundary",
+            3,
+        ),
+        (
+            1,
+            "build_simplex_t_context_features.py",
+            "RuntimeError: RESOURCE_PAUSE before model load",
+            3,
+        ),
+        (1, "another.py", "RuntimeError: RESOURCE_PAUSE before model load", 1),
+        (1, "build_simplex_t_context_features.py", "ValueError: invalid producer", 1),
+        (
+            1,
+            "build_simplex_t_context_features.py",
+            "RuntimeError: RESOURCE_PAUSE before model load\nValueError: later failure",
+            1,
+        ),
+        (
+            0,
+            "build_simplex_t_context_features.py",
+            "RuntimeError: RESOURCE_PAUSE before model load",
+            0,
+        ),
+    ],
+)
+def test_exact_legacy_resource_pause_adapter(tmp_path, code, script, message, expected):
+    pwsh = shutil.which("pwsh")
+    if pwsh is None:
+        pytest.skip("PowerShell required")
+    source = Path(__file__).resolve().parents[2] / "scripts/Invoke-SimplexTCampaign.ps1"
+    log = tmp_path / "worker.log"
+    log.write_text(message + "\n", encoding="utf-8")
+
+    def quote(value):
+        return "'" + str(value).replace("'", "''") + "'"
+
+    command = (
+        "$t=$null; $e=$null; $ast=[System.Management.Automation.Language.Parser]::ParseFile("
+        + quote(source)
+        + ",[ref]$t,[ref]$e); "
+        "$node=$ast.Find({param($n) $n -is "
+        "[System.Management.Automation.Language.FunctionDefinitionAst] "
+        "-and $n.Name -eq 'Resolve-WorkerExitCode'},$true); "
+        ". ([ScriptBlock]::Create($node.Extent.Text)); "
+        f"Resolve-WorkerExitCode -Code {code} -ScriptPath {quote(script)} -LogPath {quote(log)}"
+    )
+    result = subprocess.run(
+        [
+            pwsh,
+            "-NoProfile",
+            "-EncodedCommand",
+            base64.b64encode(command.encode("utf-16-le")).decode("ascii"),
+        ],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=30,
+    )
+    assert result.returncode == 0, result.stderr
+    assert int(result.stdout.strip()) == expected
