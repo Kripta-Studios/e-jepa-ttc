@@ -6,8 +6,37 @@ from collections.abc import Callable
 
 import pandas as pd
 
+from .campaign_sources import CampaignSources
+from .history_support import frozen_train_history_support
 from .practical_decisions import canonical_practical_decisions
 from .registry import registered_graph
+
+
+def stage_gate_from_frozen_sources(
+    *,
+    freeze: dict,
+    sources: CampaignSources,
+    scalar: tuple[pd.DataFrame, pd.DataFrame] | None,
+    latent: tuple[pd.DataFrame, pd.DataFrame] | None,
+    risk17: pd.DataFrame | None,
+    validate_frozen_publications_and_lineage: Callable[[], None],
+) -> Callable[[str, dict[str, bool]], None]:
+    """Connect immutable TRAIN history support to the canonical practical gate.
+
+    Caller validates actual freeze/source bytes and publication lineage at every
+    boundary. No fraction, denominator, primary pool or candidate is hand-entered.
+    """
+    support = frozen_train_history_support(
+        sources, freeze, validate_frozen_sources=validate_frozen_publications_and_lineage
+    )
+    return stage_gate_from_predictions(
+        frozen_availability=freeze["source_contract"]["availability"],
+        scalar=scalar,
+        latent=latent,
+        risk17=risk17,
+        fraction_train_h8=support["fraction_train_h8"],
+        validate_frozen_publications_and_lineage=validate_frozen_publications_and_lineage,
+    )
 
 
 def stage_gate_from_predictions(
