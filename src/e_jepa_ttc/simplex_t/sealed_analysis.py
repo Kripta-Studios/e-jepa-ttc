@@ -12,6 +12,7 @@ from e_jepa_ttc.artifacts.simplex_t_preflight import sha256, write_new_json
 from e_jepa_ttc.evaluation.stage63_65 import benchmark_phase
 
 from .arms import resolve_arm
+from .diagnostic_summary import summarize_diagnostics
 from .expert_phase import expert_benchmark_phase
 from .factorial_analysis import paired_factor_effects
 from .phase_inference import validated_phase
@@ -181,6 +182,13 @@ def analyze_sealed_t2(
         expected_queries,
         d1_available=binding.availability["d1"],
     )
+    diagnostics = pd.concat(
+        [
+            summarize_diagnostics(frame, history_length=int(name.split("-")[2][1:]))
+            for name, frame in frames.items()
+        ],
+        ignore_index=True,
+    )
 
     def boundary() -> None:
         if not resource_ok():
@@ -197,6 +205,8 @@ def analyze_sealed_t2(
     output.mkdir(parents=True)
     effects_path = output / "FACTOR_EFFECTS.parquet"
     effects.to_parquet(effects_path, index=False)
+    diagnostics_path = output / "DIAGNOSTICS.parquet"
+    diagnostics.to_parquet(diagnostics_path, index=False)
     uncertainty = paired_uncertainty(
         frames,
         reference=reference,
@@ -214,6 +224,9 @@ def analyze_sealed_t2(
         "arm_names": sorted(frames),
         "query_count_per_arm": 8192,
         "factor_effects": {"path": effects_path.name, "sha256": sha256(effects_path)},
+        "diagnostics": {"path": diagnostics_path.name, "sha256": sha256(diagnostics_path)},
+        "diagnostic_scope": "Availability and exact-age strata; no accredited object trajectory",
+        "rapid_change_and_sign_transition_diagnostics_complete": False,
         "uncertainty": {
             "path": "paired_uncertainty/PAIRED_UNCERTAINTY.json",
             "sha256": sha256(output / "paired_uncertainty/PAIRED_UNCERTAINTY.json"),

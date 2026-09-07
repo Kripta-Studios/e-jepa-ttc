@@ -113,9 +113,28 @@ def test_t2_factorial_publication_keeps_registered_reference(tmp_path: Path, mon
         }
     )
     frames = {}
+    cohort["target_ttc"] = np.asarray([-2.0, 1.0, 4.0, 8.0])[np.arange(8192) % 4]
     for d, h, c in product((0, 1) if d1 else (0,), (1, 8), (64, 160)):
         name = f"TPR-D{d}-H{h}-C{c}"
-        frames[name, 7] = cohort.assign(arm=name, seed=7, loss=float(d + h + c))
+        frames[name, 7] = cohort.assign(
+            arm=name,
+            seed=7,
+            loss=float(d + h + c),
+            history_count=h,
+            history_span_us=(h - 1) * 50000,
+            roi_age_us=10000,
+            cold_start=h == 1,
+            hull_position="inside",
+            signed_phase_error=0.001,
+            escape_gain=0.0,
+            escape_harm=0.0,
+            phase_interval_width=0.1,
+            wrong_sign=False,
+            phase_interval_covers=True,
+            phase_support_saturation=False,
+            target_outside_support=False,
+            finite_ttc_cap=False,
+        )
     monkeypatch.setattr(module, "load_sealed_analysis_arms", lambda *args, **kwargs: frames)
     reference = f"TPR-D{int(d1)}-H1-C160"
 
