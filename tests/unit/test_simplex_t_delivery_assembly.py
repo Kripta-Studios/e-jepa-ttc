@@ -10,7 +10,10 @@ from e_jepa_ttc.simplex_t import delivery_assembly as assembly
 from e_jepa_ttc.simplex_t.bundle_creation import BundleMember
 
 
-@pytest.mark.parametrize("fault", ["none", "payload", "authority", "resource", "reservation"])
+@pytest.mark.parametrize(
+    "fault",
+    ["none", "payload", "authority", "resource", "reservation", "negative", "bool", "path"],
+)
 def test_delivery_transport_preserves_documents_and_checks_inputs(tmp_path, monkeypatch, fault):
     source = tmp_path / "source.json"
     source.write_text("{}", encoding="utf-8")
@@ -22,6 +25,12 @@ def test_delivery_transport_preserves_documents_and_checks_inputs(tmp_path, monk
             "CAMPAIGN_ACCOUNTING",
         )
     }
+    if fault in {"negative", "bool"}:
+        original["extra.bin"] = BundleMember(
+            source, pin.sha256, -100_000_000 if fault == "negative" else True
+        )
+    if fault == "path":
+        original["../extra.bin"] = pin
     calls = []
 
     def bind():
@@ -53,6 +62,8 @@ def test_delivery_transport_preserves_documents_and_checks_inputs(tmp_path, monk
             assembly.assemble_delivery(output, **arguments)
         assert not list(output.glob("*.zip"))
         assert not (output / "DELIVERY.json").exists()
+        if fault != "authority":
+            assert not output.exists()
         return
     result = assembly.assemble_delivery(output, **arguments)
     archive = output / "E_JEPA_TTC_SIMPLEX_T_ESSENTIAL_RESULTS_aaaaaaaaaaaa.zip"
@@ -68,3 +79,32 @@ def test_delivery_transport_preserves_documents_and_checks_inputs(tmp_path, monk
     assert archive.with_suffix(".zip.sha256").read_text().startswith(result["bundle"]["sha256"])
     with pytest.raises(ValueError, match="new companion"):
         assembly.assemble_delivery(output, **arguments)
+
+
+def test_delivery_metadata_limit_retains_partial_documents_without_archive(tmp_path, monkeypatch):
+    source = tmp_path / "source.json"
+    source.write_bytes(b"{}")
+    pin = BundleMember(source, hashlib.sha256(b"{}").hexdigest(), 2)
+    original = {
+        f"postprocessing/{name}.json": pin
+        for name in ("SCIENTIFIC_GRAPH_COVERAGE", "CAMPAIGN_ACCOUNTING")
+    }
+    monkeypatch.setattr(
+        assembly,
+        "render_delivery_documents",
+        lambda *a, **kw: ("x" * 16_777_216, {"fixture": True}),
+    )
+    output = tmp_path / "artifacts/delivery"
+    with pytest.raises(ValueError, match="reserved metadata bound"):
+        assembly.assemble_delivery(
+            output,
+            work_root=tmp_path,
+            analysis_commit="a" * 40,
+            bind_verified_members=lambda: original,
+            resource_ok=lambda: True,
+            reserved_output_bytes=100_000_000,
+        )
+    assert (output / "CODEX_SIMPLEX_T_FINAL_REPORT.md").stat().st_size == 16_777_216
+    assert not (output / "NEXT_DECISION_SIMPLEX_T.json").exists()
+    assert not list(output.glob("*.zip*"))
+    assert not (output / "DELIVERY.json").exists()

@@ -8,6 +8,7 @@ from collections.abc import Callable
 from pathlib import Path
 
 from .bundle_creation import BundleMember, create_verified_bundle
+from .bundle_integrity import validate_bundle_inventory
 from .delivery_documents import render_delivery_documents
 
 
@@ -40,6 +41,9 @@ def assemble_delivery(
     original = bind_verified_members()
     if type(reserved_output_bytes) is not int or reserved_output_bytes < 1:
         raise ValueError("positive explicit delivery output reservation required")
+    validate_bundle_inventory({name: member.sha256 for name, member in original.items()})
+    if any(type(member.bytes) is not int or member.bytes < 0 for member in original.values()):
+        raise ValueError("exact nonnegative source byte counts required")
 
     def read(name: str) -> dict:
         boundary()
@@ -70,8 +74,7 @@ def assemble_delivery(
     # up to 16 MiB of reports/inventory plus their archived copies. No free-space
     # percentage and no assumption that compression must shrink every input.
     required_reservation = 49 * 1024**2 + sum(
-        2 * member.bytes + 4096 + 2 * len(name.encode("utf-8"))
-        for name, member in original.items()
+        2 * member.bytes + 4096 + 2 * len(name.encode("utf-8")) for name, member in original.items()
     )
     if reserved_output_bytes < required_reservation:
         raise ValueError(f"delivery reservation needs at least {required_reservation} bytes")
