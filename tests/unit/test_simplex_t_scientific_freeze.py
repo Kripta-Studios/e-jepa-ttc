@@ -42,6 +42,7 @@ def fixture_inputs(root: Path, failure: str = "") -> dict:
         "scientific_freeze": False,
         "gates_enabled": False,
         "contract": {
+            "loaded_source_qa": "simplex_t_full_population_gather_qa_v1",
             "availability": flags,
             "configuration_sha256": digest(values["config"]),
             "authority_sha256": digest(values["roles"]),
@@ -50,6 +51,23 @@ def fixture_inputs(root: Path, failure: str = "") -> dict:
             ],
         },
         "identities": {fit_key(s): {"inner_oof": "a" * 64, "outer_dev": "b" * 64} for s in graph},
+    }
+    values["normalizers"]["source_qa"] = {
+        fit_key(s): {
+            role: {
+                "schema": "simplex_t_full_population_gather_qa_v1",
+                "source_sha256": digest_value,
+                "history_length": resolve_arm(s, graph).history,
+                "feature_count": resolve_arm(s, graph).model.feature_count,
+                "queries": 1,
+                "valid_slots": resolve_arm(s, graph).history,
+                "model_inference": False,
+                "optimizer_updates": 0,
+                "normalizer_ids_sha256": "d" * 64,
+            }
+            for role, digest_value in (("inner_oof", "a" * 64), ("outer_dev", "b" * 64))
+        }
+        for s in graph
     }
     values["qa"] = {"schema": "simplex_t_technical_budget_v1", "reservations": {"probe": 20}}
     prepared = values["normalizers"]
@@ -63,6 +81,14 @@ def fixture_inputs(root: Path, failure: str = "") -> dict:
         values["qa"]["reservations"]["probe"] = 1001
     elif failure == "candidate":
         prepared["contract"]["fits"].pop()
+    elif failure == "missing_source_qa":
+        prepared.pop("source_qa")
+    elif failure == "source_qa_identity":
+        next(iter(prepared["source_qa"].values()))["inner_oof"]["source_sha256"] = "c" * 64
+    elif failure == "source_qa_normalizer":
+        next(iter(prepared["source_qa"].values()))["outer_dev"]["normalizer_ids_sha256"] = "c" * 64
+    elif failure == "source_qa_boolean":
+        next(iter(prepared["source_qa"].values()))["inner_oof"]["history_length"] = True
     pins = []
     for category, value in sorted(values.items()):
         path = root / f"{category}.json"
@@ -155,7 +181,18 @@ def test_freeze_code_must_belong_to_declared_commit(tmp_path: Path, change: str)
 
 
 @pytest.mark.parametrize(
-    "failure", ["missing_fit", "missing_role", "authority", "budget", "candidate"]
+    "failure",
+    [
+        "missing_fit",
+        "missing_role",
+        "authority",
+        "budget",
+        "candidate",
+        "missing_source_qa",
+        "source_qa_identity",
+        "source_qa_normalizer",
+        "source_qa_boolean",
+    ],
 )
 def test_rejects_incomplete_or_changed_contract(tmp_path: Path, failure: str) -> None:
     inputs = fixture_inputs(tmp_path, failure)

@@ -12,6 +12,7 @@ from e_jepa_ttc.artifacts.simplex_t_preflight import sha256
 from .configuration_preflight import open_acknowledged_source_configuration
 from .coordination import shared_write_admission, verified_ack
 from .lifecycle import admitted
+from .source_gather_qa import audit_cached_source
 from .source_preparation import prepare_source_identities
 
 
@@ -76,6 +77,11 @@ def prepare_configured_sources(
             )
 
         validate()
+
+        def audit_boundary() -> None:
+            if not resource_ok():
+                raise InterruptedError("PAUSED_RESOURCE: full source gather QA")
+
         torch.set_num_threads(4)
         if torch.get_num_interop_threads() != 2:
             torch.set_num_interop_threads(2)
@@ -96,6 +102,9 @@ def prepare_configured_sources(
             validate_prerequisites=validate,
             resource_ok=resource_ok,
             resume=resume,
+            validate_loaded_source=lambda source: audit_cached_source(
+                source, boundary=audit_boundary
+            ),
         )
     finally:
         sources.release()

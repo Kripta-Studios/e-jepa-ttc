@@ -56,6 +56,29 @@ def test_complete_is_not_freeze_and_resume_reloads_every_pair(setup):
     assert not (output / "SOURCE_PREPARATION.lock").exists()
 
 
+def test_loaded_qa_interruption_keeps_only_complete_pairs(setup):
+    output, kwargs, _, released = setup
+    checks = []
+
+    def audit(source):
+        checks.append(source.identity_sha256)
+        if len(checks) == 4:
+            raise InterruptedError("resource pause during gather")
+        return {"source_sha256": source.identity_sha256}
+
+    kwargs["validate_loaded_source"] = audit
+    paused = prepare_source_identities(output, **kwargs)
+    assert paused["status"] == "PAUSED_RESOURCE"
+    assert len(paused["identities"]) == len(paused["source_qa"]) == 1
+    assert set(next(iter(paused["source_qa"].values()))) == {"inner_oof", "outer_dev"}
+    assert released == [True]
+    kwargs.update(
+        resume=True, validate_loaded_source=lambda s: {"source_sha256": s.identity_sha256}
+    )
+    complete = prepare_source_identities(output, **kwargs)
+    assert set(complete["source_qa"]) == set(complete["identities"])
+
+
 def test_pause_between_roles_never_persists_half_pair(setup):
     output, kwargs, calls, released = setup
     admission = iter((True, True, True, False))

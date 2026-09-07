@@ -56,6 +56,38 @@ def _content(
     serialized = [{"fit": asdict(s), "model": asdict(resolve_arm(s, graph).model)} for s in graph]
     if contract["fits"] != serialized or set(prepared["identities"]) != {fit_key(s) for s in graph}:
         raise ValueError("preparation graph differs from complete canonical candidates")
+    if contract.get("loaded_source_qa") != "simplex_t_full_population_gather_qa_v1" or set(
+        prepared.get("source_qa", {})
+    ) != set(prepared["identities"]):
+        raise ValueError("complete loaded-source QA required before scientific freeze")
+    for spec in graph:
+        key = fit_key(spec)
+        pair = prepared["source_qa"][key]
+        binding = resolve_arm(spec, graph)
+        if set(pair) != {"inner_oof", "outer_dev"} or set(prepared["identities"][key]) != set(pair):
+            raise ValueError("both loaded-source QA roles required")
+        for role, qa in pair.items():
+            if (
+                qa.get("schema") != "simplex_t_full_population_gather_qa_v1"
+                or qa.get("source_sha256") != prepared["identities"][key][role]
+                or type(qa.get("history_length")) is not int
+                or type(qa.get("feature_count")) is not int
+                or qa.get("history_length") != binding.history
+                or qa.get("feature_count") != binding.model.feature_count
+                or type(qa.get("queries")) is not int
+                or qa["queries"] < 1
+                or type(qa.get("valid_slots")) is not int
+                or not qa["queries"] <= qa["valid_slots"] <= qa["queries"] * binding.history
+                or qa.get("model_inference") is not False
+                or type(qa.get("optimizer_updates")) is not int
+                or qa["optimizer_updates"] != 0
+                or not isinstance(qa.get("normalizer_ids_sha256"), str)
+                or len(qa["normalizer_ids_sha256"]) != 64
+                or set(qa["normalizer_ids_sha256"]) - set("0123456789abcdef")
+            ):
+                raise ValueError("loaded-source QA differs from canonical source")
+        if pair["inner_oof"]["normalizer_ids_sha256"] != pair["outer_dev"]["normalizer_ids_sha256"]:
+            raise ValueError("TRAIN and OLD source QA use different normalizers")
     for stage in {s.stage for s in graph}:
         subset = {fit_key(s): prepared["identities"][fit_key(s)] for s in graph if s.stage == stage}
         verify_stage_sources(stage=stage, availability=flags, frozen=subset, observed=subset)

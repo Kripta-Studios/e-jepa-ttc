@@ -10,6 +10,7 @@ from pathlib import Path
 from e_jepa_ttc.artifacts.risk_geometry_v10 import atomic_json
 
 from .arms import resolve_arm
+from .cache import CachedQueries
 from .campaign_sources import CampaignSources
 from .lifecycle import ExclusiveLease
 from .phase_manifest import fit_key
@@ -26,6 +27,7 @@ def prepare_source_identities(
     validate_prerequisites: Callable[[], None],
     resource_ok: Callable[[], bool],
     resume: bool,
+    validate_loaded_source: Callable[[CachedQueries], dict] | None = None,
 ) -> dict:
     """Persist complete TRAIN/OLD_DEV identity pairs at fit boundaries.
 
@@ -57,6 +59,8 @@ def prepare_source_identities(
             {"fit": asdict(spec), "model": asdict(resolve_arm(spec, graph).model)} for spec in graph
         ],
     }
+    if validate_loaded_source is not None:
+        contract["loaded_source_qa"] = "simplex_t_full_population_gather_qa_v1"
     validate_prerequisites()
     state_path = output / "SOURCE_PREPARATION.json"
     with ExclusiveLease(output / "SOURCE_PREPARATION.lock"):
@@ -87,6 +91,8 @@ def prepare_source_identities(
                 "scientific_freeze": False,
                 "gates_enabled": False,
             }
+        if validate_loaded_source is not None:
+            state.setdefault("source_qa", {})
         if set(state["identities"]) - {fit_key(spec) for spec in graph}:
             raise ValueError("unregistered identity in source preparation state")
         try:
@@ -102,22 +108,35 @@ def prepare_source_identities(
             for spec in ordered:
                 validate_prerequisites()
                 pair = {}
+                checked_pair = {}
                 for role in ("inner_oof", "outer_dev"):
                     if not resource_ok():
                         state["status"] = "PAUSED_RESOURCE"
                         atomic_json(state_path, state)
                         return state
-                    digest = sources.source(spec, role).identity_sha256
+                    source = sources.source(spec, role)
+                    digest = source.identity_sha256
                     if len(digest) != 64 or set(digest) - set("0123456789abcdef"):
                         raise ValueError("source loader returned an invalid identity")
                     pair[role] = digest
+                    if validate_loaded_source is not None:
+                        checked_pair[role] = validate_loaded_source(source)
                 key = fit_key(spec)
                 if key in state["identities"] and state["identities"][key] != pair:
                     raise ValueError("recorded source or TRAIN normalizer changed on resume")
                 state["identities"][key] = pair
+                if validate_loaded_source is not None:
+                    if key in state["source_qa"] and state["source_qa"][key] != checked_pair:
+                        raise ValueError("loaded source QA changed on resume")
+                    state["source_qa"][key] = checked_pair
                 state["status"] = "PREPARING"
                 atomic_json(state_path, state)
+            validate_prerequisites()
             state["status"] = "SOURCE_IDENTITIES_COMPLETE_NOT_SCIENTIFIC_FREEZE"
+            atomic_json(state_path, state)
+            return state
+        except InterruptedError:
+            state["status"] = "PAUSED_RESOURCE"
             atomic_json(state_path, state)
             return state
         finally:
