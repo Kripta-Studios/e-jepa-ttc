@@ -114,7 +114,20 @@ def test_phase_transition(tmp_path: Path, monkeypatch, stage: str, mode: str):
     assert len(releases) == (2 if mode == "fresh" else 1)
 
 
-@pytest.mark.parametrize("failure", ["", "missing_pin", "bytes", "receipt", "mutation", "resource"])
+@pytest.mark.parametrize(
+    "failure",
+    [
+        "",
+        "missing_pin",
+        "bytes",
+        "receipt",
+        "mutation",
+        "resource",
+        "integrated",
+        "integrated_t5",
+        "missing_ack",
+    ],
+)
 def test_historical_cohort_phase_binding(tmp_path: Path, monkeypatch, failure: str):
     historical = tmp_path / "historical"
     (historical / "tables").mkdir(parents=True)
@@ -126,7 +139,16 @@ def test_historical_cohort_phase_binding(tmp_path: Path, monkeypatch, failure: s
             *[f"tables/outer{o}_outer_dev.{suffix}" for o in range(3) for suffix in ("csv", "npz")],
         )
     ]
+    if failure == "integrated_t5":
+        paths.extend(
+            [
+                tmp_path / "ACK.json",
+                tmp_path / "artifacts/simplex_t/T1/risk17_frozen_replay/REPLAY.json",
+                historical / "frozen_audit/extracted_input/run/stage65/ALL_RIDGE_FITS_FROZEN.json",
+            ]
+        )
     for path in paths:
+        path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text("fixture", encoding="utf-8")
     pins = [
         {"root": "work", "relative_path": str(p.relative_to(tmp_path)), "sha256": sha256(p)}
@@ -174,6 +196,7 @@ def test_historical_cohort_phase_binding(tmp_path: Path, monkeypatch, failure: s
             if failure == "mutation":
                 paths[-1].write_text("changed", encoding="utf-8")
             kwargs["validate_authority_qa_and_cohort"]()
+            kwargs["validate_stage_gate"](kwargs["stage"], kwargs["availability"])
             return {"fixture": "paused before fit"}
         finally:
             sources.release()
@@ -181,6 +204,28 @@ def test_historical_cohort_phase_binding(tmp_path: Path, monkeypatch, failure: s
     monkeypatch.setattr(module, "read_scientific_freeze", read)
     monkeypatch.setattr(module, "load_old_evaluation_cohort", load)
     monkeypatch.setattr(module, "run_and_publish_frozen_phase", execute)
+
+    def risk(*args, **kwargs):
+        calls.append("risk")
+        assert kwargs["expected_identity"] is cohort
+        assert kwargs["ack_sha256"] == sha256(tmp_path / "ACK.json")
+        return cohort
+
+    def gate_factory(**kwargs):
+        calls.append("gate_factory")
+        assert kwargs["expected_queries"] is cohort
+        if failure == "integrated_t5":
+            kwargs["load_verified_risk17"]()
+        else:
+            assert kwargs["load_verified_risk17"] is None
+
+        def gate(*args):
+            calls.append("gate")
+
+        return gate
+
+    monkeypatch.setattr(module, "load_acknowledged_risk17", risk)
+    monkeypatch.setattr(module, "stage_gate_from_publications", gate_factory)
     options: dict[str, Any] = dict(
         sources=sources,
         freeze=tmp_path / "freeze.json",
@@ -193,19 +238,32 @@ def test_historical_cohort_phase_binding(tmp_path: Path, monkeypatch, failure: s
         resource_ok=lambda: failure != "resource",
         resume=False,
     )
-    if failure:
+    if failure in {"integrated", "integrated_t5", "missing_ack"}:
+        options["validate_stage_gate"] = None
+        options["publications"] = {}
+        if failure != "integrated":
+            options["stage"] = "T5"
+        if failure == "integrated_t5":
+            options["risk17_ack"] = tmp_path / "ACK.json"
+    if failure not in {"", "integrated", "integrated_t5"}:
         with pytest.raises(InterruptedError if failure == "resource" else ValueError):
             module.run_historical_cohort_phase(
                 tmp_path / "execution", tmp_path / "publication", **options
             )
         if failure in {"missing_pin", "bytes", "resource"}:
             assert not calls
-        if failure == "receipt":
+        if failure in {"receipt", "missing_ack"}:
             assert calls == ["cohort"]
     else:
         result = module.run_historical_cohort_phase(
             tmp_path / "execution", tmp_path / "publication", **options
         )
         assert result == {"fixture": "paused before fit"}
-        assert calls == ["cohort", "execute"]
+        assert calls == (
+            ["cohort", "execute"]
+            if not failure
+            else ["cohort", "gate_factory", "risk", "execute", "gate"]
+            if failure == "integrated_t5"
+            else ["cohort", "gate_factory", "execute", "gate"]
+        )
     assert released == [True]

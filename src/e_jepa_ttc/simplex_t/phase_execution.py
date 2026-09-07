@@ -16,7 +16,9 @@ from .phase_export import export_phase
 from .phase_inference import validated_phase
 from .phase_manifest import fit_key
 from .registry import registered_graph
+from .risk17_inputs import load_acknowledged_risk17
 from .scientific_freeze import read_scientific_freeze
+from .stage_gate import CanonicalPublication, stage_gate_from_publications
 
 
 def run_historical_cohort_phase(
@@ -30,19 +32,26 @@ def run_historical_cohort_phase(
     stage: str,
     availability: dict[str, bool],
     validate_authority_and_qa: Callable[[], None],
-    validate_stage_gate: Callable[[str, dict[str, bool]], None],
+    validate_stage_gate: Callable[[str, dict[str, bool]], None] | None,
     resource_ok: Callable[[], bool],
     resume: bool,
+    publications: dict[str, CanonicalPublication] | None = None,
+    risk17_ack: Path | None = None,
 ) -> dict:
     """Load OLD from frozen historical inputs and execute the same bounded phase.
 
     No evaluation dataframe is accepted from the caller. All three historical
     outer-dev CSV/array pairs, the table index and ancestry must be in the freeze.
-    The actual admission and stage-gate callbacks remain mandatory. Loading OLD
-    identities/targets does not compute scores or permit pre-seal head inference.
+    Admission remains mandatory. With no supplied stage callback, build the gate
+    from the pinned publications and this independently loaded cohort. T5 also
+    requires the ACK and historical RISK17 manifest to be pinned in the freeze.
+    Loading OLD identities/targets does not compute scores or permit pre-seal
+    head inference.
     """
     delegated = False
     try:
+        if validate_stage_gate is not None and (publications is not None or risk17_ack is not None):
+            raise ValueError("choose a gate callback or the integrated publication gate, not both")
         record = read_scientific_freeze(
             freeze,
             expected_sha256=freeze_sha256,
@@ -94,6 +103,49 @@ def run_historical_cohort_phase(
                 if pins[path] != row[field]:
                     raise ValueError("cohort table reference differs from frozen payload")
         validate()
+        if validate_stage_gate is None:
+            risk_loader: Callable[[], pd.DataFrame] | None = None
+            if stage == "T5":
+                if risk17_ack is None:
+                    raise ValueError("WAITING_RISK17_AUTHORITY: frozen ACK required")
+                replay = roots["work"] / "artifacts/simplex_t/T1/risk17_frozen_replay/REPLAY.json"
+                ridge = (
+                    historical
+                    / "frozen_audit/extracted_input/run/stage65/ALL_RIDGE_FITS_FROZEN.json"
+                )
+                replay_hash, ack_hash, ridge_hash = (
+                    frozen_digest(replay),
+                    frozen_digest(risk17_ack),
+                    frozen_digest(ridge),
+                )
+
+                def read_risk17() -> pd.DataFrame:
+                    assert risk17_ack is not None
+                    return load_acknowledged_risk17(
+                        replay,
+                        manifest_sha256=replay_hash,
+                        ack_path=risk17_ack,
+                        ack_sha256=ack_hash,
+                        table_index_sha256=pins[index],
+                        ridge_manifest_sha256=ridge_hash,
+                        expected_identity=cohort,
+                        resource_ok=resource_ok,
+                    )
+
+                risk_loader = read_risk17
+
+            validate_stage_gate = stage_gate_from_publications(
+                stage=stage,
+                availability=availability,
+                freeze=record,
+                freeze_sha256=freeze_sha256,
+                sources=sources,
+                publications=publications or {},
+                expected_queries=cohort,
+                load_verified_risk17=risk_loader,
+                validate_frozen_sources_cohort_and_lineage=validate,
+                resource_ok=resource_ok,
+            )
         delegated = True
         return run_and_publish_frozen_phase(
             execution,
