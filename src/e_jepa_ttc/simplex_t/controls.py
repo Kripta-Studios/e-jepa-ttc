@@ -33,16 +33,30 @@ def ewma_phase(
     history_experts: Tensor, anchor_lags: Tensor, valid: Tensor, time_constant: float = 0.3
 ) -> Tensor:
     """Fixed causal smoother of expert-median PHASE, not signed TTC averaging."""
-    if history_experts.shape[:2] != valid.shape or history_experts.shape[-1] != 3:
+    if (
+        history_experts.ndim != 3
+        or history_experts.shape[:2] != valid.shape
+        or history_experts.shape[-1] != 3
+        or valid.dtype != torch.bool
+        or valid.shape[1] == 0
+    ):
         raise ValueError("EWMA shape mismatch")
     if anchor_lags.shape != valid.shape or time_constant != 0.3 or (anchor_lags[valid] < 0).any():
         raise ValueError("invalid EWMA time setting")
+    if (
+        not valid[:, -1].all()
+        or (anchor_lags[:, -1] != 0).any()
+        or not torch.isfinite(anchor_lags[valid]).all()
+        or not torch.isfinite(history_experts[valid]).all()
+    ):
+        raise ValueError("EWMA requires finite observed phases/lags and the actual current slot")
     phase = (
         torch.where(valid[..., None], history_experts, torch.zeros_like(history_experts))
         .median(-1)
         .values
     )
-    weights = torch.exp(-anchor_lags / time_constant) * valid
+    safe_lags = torch.where(valid, anchor_lags, torch.zeros_like(anchor_lags))
+    weights = torch.exp(-safe_lags / time_constant) * valid
     if not (weights.sum(-1) > 0).all():
         raise ValueError("empty EWMA")
     return emitted_phase((weights * phase).sum(-1) / weights.sum(-1))
