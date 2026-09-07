@@ -64,6 +64,10 @@ def verify_real_cpu_resume(
         "torch": str(torch.__version__),
         "updates_reserved": 20,
     }
+    if "journal_engine_sha256" in contract:
+        expected_contract["journal_engine_sha256"] = sha256(
+            Path(__file__).with_name("work_budget.py")
+        )
     if contract != expected_contract:
         raise ValueError("resume contract differs from current source, code or runtime")
     if (
@@ -96,14 +100,19 @@ def verify_real_cpu_resume(
     for branch in ("continuous", "split"):
         name = f"{branch}/checkpoint_last.pt"
         row = journal["fits"][branch]
-        if row != {
+        expected_row = {
             "completed": 10,
             "uncertain_lost_upper": 0,
             "pending": None,
             "checkpoint_sha256": pins[name],
-        }:
+        }
+        if {k: v for k, v in row.items() if k != "checkpoint_state_sha256"} != expected_row:
             raise ValueError("resume journal has incomplete or uncertain work")
         state = load_checkpoint(base / name)
+        if "checkpoint_state_sha256" in row and row["checkpoint_state_sha256"] != state_digest(
+            {k: v for k, v in state.items() if k != "status"}
+        ):
+            raise ValueError("resume journal training-state digest differs from checkpoint")
         if (
             state["completed_updates"] != 10
             or state["status"] != "TECHNICAL_PARTIAL"

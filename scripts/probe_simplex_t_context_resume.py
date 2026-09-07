@@ -76,10 +76,13 @@ def main() -> None:
         "compiled_sha256": args.compiled_sha256,
         "script_sha256": compute_file_hash(__file__),
         "engine_sha256": compute_file_hash(str(worktree / "src/e_jepa_ttc/simplex_t/training.py")),
+        "journal_engine_sha256": compute_file_hash(
+            str(worktree / "src/e_jepa_ttc/simplex_t/work_budget.py")
+        ),
         "torch": str(torch.__version__),
         "updates_reserved": 20,
     }
-    operation = "real_context_cpu_resume_10_vs_5_5"
+    operation = "real_context_cpu_resume_10_vs_5_5_journal_state_v2"
     budget_path = worktree / "artifacts/simplex_t/TECHNICAL_BUDGET.json"
     with ExclusiveLease(args.output.with_suffix(".probe.lock")):
         if args.resume:

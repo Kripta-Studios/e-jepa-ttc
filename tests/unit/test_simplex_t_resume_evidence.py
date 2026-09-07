@@ -26,6 +26,12 @@ def fixture(root: Path, failure: str) -> dict:
         "torch": str(torch.__version__),
         "updates_reserved": 20,
     }
+    if failure in {"journal_valid", "journal_changed"}:
+        contract["journal_engine_sha256"] = (
+            sha256(Path(__file__).resolve().parents[2] / "src/e_jepa_ttc/simplex_t/work_budget.py")
+            if failure == "journal_valid"
+            else "0" * 64
+        )
     identity = {
         "source": "a" * 64,
         "freeze": state_digest(contract),
@@ -65,6 +71,12 @@ def fixture(root: Path, failure: str) -> dict:
             "pending": None,
             "checkpoint_sha256": sha256(checkpoint),
         }
+        if failure in {"semantic_valid", "semantic_changed"}:
+            journal["fits"][branch]["checkpoint_state_sha256"] = (
+                state_digest({k: v for k, v in state.items() if k != "status"})
+                if failure == "semantic_valid"
+                else "0" * 64
+            )
         for count in [10] if branch == "continuous" or failure == "boundary" else [5, 10]:
             journal["events"].append({"operation": "checkpoint", "key": branch, "completed": count})
     if failure == "pending":
@@ -100,11 +112,25 @@ def fixture(root: Path, failure: str) -> dict:
 
 
 @pytest.mark.parametrize(
-    "failure", ["", "states", "device", "boundary", "pending", "history", "bytes", "engine"]
+    "failure",
+    [
+        "",
+        "states",
+        "device",
+        "boundary",
+        "pending",
+        "history",
+        "bytes",
+        "engine",
+        "semantic_valid",
+        "semantic_changed",
+        "journal_valid",
+        "journal_changed",
+    ],
 )
 def test_resume_evidence(tmp_path: Path, failure: str) -> None:
     inputs = fixture(tmp_path, failure)
-    if failure:
+    if failure not in {"", "semantic_valid", "journal_valid"}:
         with pytest.raises(ValueError):
             verify_real_cpu_resume(tmp_path, **inputs)
     else:
