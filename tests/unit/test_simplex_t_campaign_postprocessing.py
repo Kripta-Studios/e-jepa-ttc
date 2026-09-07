@@ -68,6 +68,7 @@ def test_assembly_preserves_all_required_components(tmp_path, monkeypatch, expan
         return {"fixture": True, "optimizer_updates_executed": 0}
 
     for name, method in (
+        ("render_scientific_summary", lambda *args: "# Fixture, not real results\n"),
         ("verify_campaign_accounting", account),
         ("phase_bundle_members", lambda *args, **kwargs: {}),
         ("history_bundle_members", lambda *args, **kwargs: {}),
@@ -111,7 +112,8 @@ def test_assembly_preserves_all_required_components(tmp_path, monkeypatch, expan
         assert not result["campaign_complete"] and not result["transport_bundle_complete"]
         assert len(verifies) == 2 and visits[-1] == "interface"
         inventory = result["output_inventory"]
-        assert inventory["files"] == (13 if expanded else 5)
+        assert inventory["files"] == (14 if expanded else 6)
+        assert result["scientific_summary_sha256"] == sha256(output / "SCIENTIFIC_RESULTS.md")
         assert result["campaign_accounting_sha256"] == sha256(output / "CAMPAIGN_ACCOUNTING.json")
         for name, pin in inventory["members"].items():
             assert sha256(output / name) == pin["sha256"]

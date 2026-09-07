@@ -20,6 +20,7 @@ from .followup_analysis import analyze_followup_phase, analyze_three_seed_family
 from .history_bundle import HistoryPoolPins, history_bundle_members
 from .phase_bundle import phase_bundle_members
 from .postprocessing_inventory import inventory_postprocessing
+from .scientific_summary import render_scientific_summary
 from .sealed_analysis import analyze_sealed_t2
 from .stage_gate import CanonicalPublication
 
@@ -182,6 +183,9 @@ def postprocess_completed_campaign(
         verify_completed_graph=verify,
         resource_ok=resource_ok,
     )
+    summary_path = output / "SCIENTIFIC_RESULTS.md"
+    with summary_path.open("x", encoding="utf-8") as stream:
+        stream.write(render_scientific_summary(coverage, accounting))
     inventory = inventory_postprocessing(output, resource_ok=resource_ok)
     result = {
         "schema": "simplex_t_campaign_postprocessing_v1",
@@ -189,6 +193,7 @@ def postprocess_completed_campaign(
         "freeze_sha256": freeze_sha256,
         "graph_coverage_sha256": sha256(output / "SCIENTIFIC_GRAPH_COVERAGE.json"),
         "campaign_accounting_sha256": sha256(output / "CAMPAIGN_ACCOUNTING.json"),
+        "scientific_summary_sha256": sha256(summary_path),
         "analyses": analyses,
         "compact_weights": weights,
         "three_seed": three_seed,
