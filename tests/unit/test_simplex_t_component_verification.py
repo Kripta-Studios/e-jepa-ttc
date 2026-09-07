@@ -152,6 +152,47 @@ def test_missing_static_evidence_rejected_before_heavy_reads(tmp_path, monkeypat
     assert not calls
 
 
+@pytest.mark.parametrize("kind", ["types", "powershell"])
+def test_missing_types_or_syntax_before_heavy_reads(tmp_path, monkeypatch, kind):
+    local, profile, calls = inputs(tmp_path, monkeypatch)
+    with pytest.raises(ValueError, match="WAITING_CURRENT_"):
+        module.verify_component_profile(
+            local,
+            profile,
+            sha256(profile),
+            resource_ok=lambda: True,
+            require_h16=True,
+            require_types=kind == "types",
+            require_powershell=kind == "powershell",
+        )
+    assert not calls
+
+
+@pytest.mark.parametrize("kind", ["types", "powershell"])
+def test_types_or_syntax_reader_really_called(tmp_path, monkeypatch, kind):
+    local, profile, calls = inputs(tmp_path, monkeypatch)
+    record = json.loads(profile.read_text(encoding="utf-8"))
+    record[f"{kind}_qa"] = {"path": "historical.json", "sha256": "a" * 64}
+    profile.write_text(json.dumps(record), encoding="utf-8")
+
+    def reject(*args, **kwargs):
+        raise ValueError("stale type or syntax input")
+
+    monkeypatch.setattr(
+        module, "verify_companion_types" if kind == "types" else "verify_powershell_syntax", reject
+    )
+    with pytest.raises(ValueError, match="stale type or syntax input"):
+        module.verify_component_profile(
+            local,
+            profile,
+            sha256(profile),
+            resource_ok=lambda: True,
+            require_h16=True,
+            require_types=kind == "types",
+            require_powershell=kind == "powershell",
+        )
+
+
 def test_static_evidence_reader_is_required(tmp_path, monkeypatch):
     local, profile, calls = inputs(tmp_path, monkeypatch)
     record = json.loads(profile.read_text(encoding="utf-8"))

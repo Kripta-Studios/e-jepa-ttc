@@ -25,6 +25,8 @@ def main() -> None:
     parser.add_argument("--require-h16", action="store_true")
     parser.add_argument("--require-unit-qa", action="store_true")
     parser.add_argument("--require-static-qa", action="store_true")
+    parser.add_argument("--require-types", action="store_true")
+    parser.add_argument("--require-powershell", action="store_true")
     args = parser.parse_args()
     if args.output.exists():
         raise FileExistsError("component evidence report already exists")
@@ -52,6 +54,8 @@ def main() -> None:
         require_h16=args.require_h16,
         require_unit_qa=args.require_unit_qa,
         require_static_qa=args.require_static_qa,
+        require_types=args.require_types,
+        require_powershell=args.require_powershell,
     )
     result["observed_seconds_excluding_imports"] = time.monotonic() - started
     write_new_json(args.output, result)

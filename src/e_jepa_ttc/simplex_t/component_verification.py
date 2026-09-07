@@ -12,7 +12,11 @@ from .ancestry_evidence import verify_acknowledged_producers
 from .h16_qa_evidence import verify_h16_execution_identity, verify_h16_replay
 from .replay_evidence import verify_coherent_replay
 from .resume_evidence import verify_real_cpu_resume
-from .static_qa_evidence import verify_ruff_comparison
+from .static_qa_evidence import (
+    verify_companion_types,
+    verify_powershell_syntax,
+    verify_ruff_comparison,
+)
 from .unit_qa_evidence import verify_companion_unit_qa
 
 
@@ -25,6 +29,8 @@ def verify_component_profile(
     require_h16: bool,
     require_unit_qa: bool = False,
     require_static_qa: bool = False,
+    require_types: bool = False,
+    require_powershell: bool = False,
 ) -> dict:
     """Reopen actual ancestry, replay arrays and resume states, without fitting.
 
@@ -33,7 +39,16 @@ def verify_component_profile(
     only one part of admission: complete source preparation, availability,
     repository QA, code freeze and practical stage gates remain separate.
     """
-    if any(type(value) is not bool for value in (require_h16, require_unit_qa, require_static_qa)):
+    if any(
+        type(value) is not bool
+        for value in (
+            require_h16,
+            require_unit_qa,
+            require_static_qa,
+            require_types,
+            require_powershell,
+        )
+    ):
         raise ValueError("explicit evidence verification policies required")
     if profile_path.stat().st_size > 1_048_576 or sha256(profile_path) != profile_sha256:
         raise ValueError("component evidence profile changed")
@@ -48,6 +63,10 @@ def verify_component_profile(
         raise ValueError("WAITING_CURRENT_UNIT_QA: complete pinned unit evidence required")
     if require_static_qa and "static_qa" not in profile:
         raise ValueError("WAITING_CURRENT_STATIC_QA: pinned Ruff comparison required")
+    if require_types and "types_qa" not in profile:
+        raise ValueError("WAITING_CURRENT_TYPES_QA: pinned companion types required")
+    if require_powershell and "powershell_qa" not in profile:
+        raise ValueError("WAITING_CURRENT_POWERSHELL_QA: pinned parsing report required")
     paths_hash = sha256(local_paths)
     paths = json.loads(local_paths.read_text(encoding="utf-8"))
     work = Path(paths["worktree"]).resolve(strict=True)
@@ -127,6 +146,25 @@ def verify_component_profile(
             resource_ok=resource_ok,
         )
         boundary()
+    types_qa, powershell_qa = None, None
+    if "types_qa" in profile:
+        entry = profile["types_qa"]
+        types_qa = verify_companion_types(
+            work,
+            resolve(entry["path"]),
+            report_sha256=entry["sha256"],
+            resource_ok=resource_ok,
+        )
+        boundary()
+    if "powershell_qa" in profile:
+        entry = profile["powershell_qa"]
+        powershell_qa = verify_powershell_syntax(
+            work,
+            resolve(entry["path"]),
+            report_sha256=entry["sha256"],
+            resource_ok=resource_ok,
+        )
+        boundary()
     return {
         "status": "REAL_COMPONENT_EVIDENCE_VERIFIED_NOT_SCIENTIFIC_ADMISSION",
         "profile_sha256": profile_sha256,
@@ -137,6 +175,8 @@ def verify_component_profile(
         "h16_replay": h16,
         "unit_qa": unit_qa,
         "static_qa": static_qa,
+        "types_qa": types_qa,
+        "powershell_qa": powershell_qa,
         "optimizer_updates_executed": 0,
         "scientific_admission": False,
         "not_covered": [

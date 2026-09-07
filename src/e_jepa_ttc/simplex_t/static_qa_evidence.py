@@ -9,6 +9,130 @@ from pathlib import Path
 from e_jepa_ttc.artifacts.simplex_t_preflight import sha256
 
 
+def _read_report(work: Path, path: Path, digest: str) -> dict:
+    path = path.resolve(strict=True)
+    if (
+        not path.is_relative_to(work / "artifacts/simplex_t/T0")
+        or path.stat().st_size > 16_777_216
+        or sha256(path) != digest
+    ):
+        raise ValueError("static report path, size or bytes changed")
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _verify_sources(
+    work: Path,
+    declared: dict[str, str],
+    actual: set[Path],
+    resource_ok: Callable[[], bool],
+) -> None:
+    resolved = {}
+    for name, digest in declared.items():
+        relative = Path(name)
+        path = (work / relative).resolve(strict=True)
+        if (
+            relative.is_absolute()
+            or ".." in relative.parts
+            or not path.is_relative_to(work)
+            or path in resolved
+        ):
+            raise ValueError("static source path escapes or aliases")
+        resolved[path] = digest
+    if set(resolved) != actual:
+        raise ValueError("static report does not cover its complete current source scope")
+    for path, digest in resolved.items():
+        if not resource_ok():
+            raise InterruptedError("PAUSED_RESOURCE: static source verification")
+        if sha256(path) != digest:
+            raise ValueError("static report source bytes changed")
+
+
+def verify_companion_types(
+    work: Path,
+    report: Path,
+    *,
+    report_sha256: str,
+    resource_ok: Callable[[], bool],
+) -> dict:
+    """Recheck complete companion package/script Pyright evidence, not all repo types."""
+    work = work.resolve(strict=True)
+    record = _read_report(work, report, report_sha256)
+    actual = {p.resolve() for p in (work / "src/e_jepa_ttc/simplex_t").rglob("*.py")} | {
+        p.resolve() for p in (work / "scripts").glob("*simplex*.py")
+    }
+    summary = record["result"]["summary"]
+    if (
+        record.get("status") != "STATIC_TYPES_ONLY_NOT_SCIENTIFIC_ADMISSION"
+        or type(record.get("exit_code")) is not int
+        or record["exit_code"] != 0
+        or type(record.get("optimizer_updates")) is not int
+        or record["optimizer_updates"] != 0
+        or record["result"]["generalDiagnostics"] != []
+        or not actual
+        or type(summary.get("filesAnalyzed")) is not int
+        or summary["filesAnalyzed"] != len(actual)
+        or any(
+            type(summary.get(key)) is not int or summary[key] != 0
+            for key in ("errorCount", "warningCount", "informationCount")
+        )
+    ):
+        raise ValueError("complete clean companion type evidence required")
+    _verify_sources(work, record["source_sha256"], actual, resource_ok)
+    return {
+        "status": "COMPANION_TYPES_CURRENT_SOURCES_VERIFIED",
+        "files": len(actual),
+        "optimizer_updates_executed": 0,
+        "scientific_admission": False,
+    }
+
+
+def verify_powershell_syntax(
+    work: Path,
+    report: Path,
+    *,
+    report_sha256: str,
+    resource_ok: Callable[[], bool],
+) -> dict:
+    """Verify current PowerShell parse coverage and preserved baseline parse results."""
+    work = work.resolve(strict=True)
+    record = _read_report(work, report, report_sha256)
+    if (
+        record.get("status") != "POWERSHELL_AST_ONLY_NOT_SCRIPT_EXECUTION"
+        or type(record.get("optimizer_updates")) is not int
+        or record["optimizer_updates"] != 0
+        or len(record["runs"]) != 2
+    ):
+        raise ValueError("current and baseline PowerShell parsing evidence required")
+    roots = [Path(run["root"]).resolve(strict=True) for run in record["runs"]]
+    if len(set(roots)) != 2 or roots.count(work) != 1:
+        raise ValueError("ambiguous PowerShell current/baseline roots")
+    baseline = next(root for root in roots if root != work)
+    if not baseline.is_relative_to(work / "artifacts/simplex_t/T0"):
+        raise ValueError("PowerShell baseline outside preserved T0 evidence")
+    counts = {}
+    for root, run in zip(roots, record["runs"], strict=True):
+        rows = run["files"]
+        if not rows or any(row["errors"] != [] for row in rows):
+            raise ValueError("PowerShell syntax failures require review")
+        declared = {row["path"]: row["sha256"] for row in rows}
+        if len(declared) != len(rows):
+            raise ValueError("duplicate PowerShell source record")
+        actual = {
+            p.resolve()
+            for folder in ("src", "scripts")
+            for p in (root / folder).rglob("*")
+            if p.is_file() and p.suffix.lower() in {".ps1", ".psm1"}
+        }
+        _verify_sources(root, declared, actual, resource_ok)
+        counts["current" if root == work else "baseline"] = len(actual)
+    return {
+        "status": "POWERSHELL_SYNTAX_CURRENT_SOURCES_VERIFIED",
+        "files": counts,
+        "optimizer_updates_executed": 0,
+        "scientific_admission": False,
+    }
+
+
 def verify_ruff_comparison(
     work: Path,
     root: Path,
