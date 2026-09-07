@@ -3,12 +3,24 @@
 import hashlib
 import importlib.util
 import json
+import sys
 from pathlib import Path
 
 import pytest
 
 
-@pytest.mark.parametrize("mode", ["valid", "resource", "qa_failure", "changed_preparation"])
+@pytest.mark.parametrize(
+    "mode",
+    [
+        "valid",
+        "resource",
+        "qa_failure",
+        "changed_preparation",
+        "verify_missing",
+        "verify_existing",
+        "verify_mismatch",
+    ],
+)
 def test_freeze_cli_requires_admission_before_publication(tmp_path, monkeypatch, mode):
     source = Path(__file__).resolve().parents[2] / "scripts/freeze_simplex_t_campaign.py"
     spec = importlib.util.spec_from_file_location("freeze_cli", source)
@@ -75,19 +87,44 @@ def test_freeze_cli_requires_admission_before_publication(tmp_path, monkeypatch,
             raise ValueError("real QA missing")
 
     def publish(destination, **kwargs):
+        assert not mode.startswith("verify")
         kwargs["validate_prerequisites"]()
         kwargs["validate_prerequisites"]()
         destination.parent.mkdir()
         destination.write_text("{}")
 
+    def read(path, **kwargs):
+        assert path == output
+        assert kwargs["expected_sha256"] == hashlib.sha256(output.read_bytes()).hexdigest()
+        kwargs["validate_prerequisites"]()
+        return dict(
+            files=[pin],
+            preparation=pin,
+            technical_ledger=pin,
+            code_commit=("e" if mode == "verify_mismatch" else "d") * 40,
+        )
+
     monkeypatch.setattr(entry, "validate_scientific_admission", admission)
     monkeypatch.setattr(entry, "publish_scientific_freeze", publish)
+    monkeypatch.setattr(entry, "read_scientific_freeze", read)
+    if mode.startswith("verify"):
+        sys.argv.append("--verify-only")
+        if mode != "verify_missing":
+            output.parent.mkdir()
+            output.write_text("preserve this existing fixture")
     if mode == "changed_preparation":
         prepared.write_text("{}")
-    if mode in {"qa_failure", "changed_preparation"}:
+    if mode in {"qa_failure", "changed_preparation", "verify_mismatch"}:
         with pytest.raises(ValueError):
             entry.main()
     else:
-        assert entry.main() == (3 if mode == "resource" else 0)
-    assert output.exists() == (mode == "valid")
-    assert len(admissions) == {"valid": 2, "qa_failure": 1}.get(mode, 0)
+        assert entry.main() == {"resource": 3, "verify_missing": 10}.get(mode, 0)
+    assert output.exists() == (mode in {"valid", "verify_existing", "verify_mismatch"})
+    assert len(admissions) == {
+        "valid": 2,
+        "qa_failure": 1,
+        "verify_existing": 1,
+        "verify_mismatch": 1,
+    }.get(mode, 0)
+    if mode in {"verify_existing", "verify_mismatch"}:
+        assert output.read_text() == "preserve this existing fixture"
