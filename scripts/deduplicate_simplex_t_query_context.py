@@ -6,6 +6,7 @@ import argparse
 import json
 import time
 from pathlib import Path
+from typing import cast
 
 import numpy as np
 import pandas as pd
@@ -38,7 +39,7 @@ def main() -> None:
     preprocessing_sha = compute_file_hash(str(args.preprocessing_manifest))
     if preprocessing_sha != "063980fdae5fda0b2836befc662fdd1cd5659bf06f10d9760dfc0d566fac8e39":
         raise ValueError("frozen preprocessing manifest mismatch")
-    raw = pd.read_csv(args.binding, usecols=["sequence_id", "h5_file_sha256"])
+    raw = pd.read_csv(args.binding, usecols=pd.Index(["sequence_id", "h5_file_sha256"]))
     raw_hashes = {}
     for sequence, rows in raw.groupby("sequence_id"):
         hashes = rows.h5_file_sha256.unique()
@@ -64,8 +65,16 @@ def main() -> None:
                     int(index["roi_available_us"][i]),
                     int(index["roi_available_us"][i]),
                     manifest["stream_bounds_us"][sequence][0],
-                    tuple(tuple(int(v) for v in window) for window in index["base_windows_us"][i]),
-                    tuple(float(v) for v in index["square_xyxy"][i]),
+                    cast(
+                        tuple[tuple[int, int], tuple[int, int], tuple[int, int]],
+                        tuple(
+                            tuple(int(v) for v in window) for window in index["base_windows_us"][i]
+                        ),
+                    ),
+                    cast(
+                        tuple[float, float, float, float],
+                        tuple(float(v) for v in index["square_xyxy"][i]),
+                    ),
                 )
                 sources.append(
                     ContextSource(sequence, raw_hashes[sequence], preprocessing_sha, current)

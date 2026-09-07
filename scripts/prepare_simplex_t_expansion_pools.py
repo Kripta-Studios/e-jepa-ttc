@@ -70,7 +70,7 @@ def main() -> None:
         table = historical / "tables" / f"outer{outer}_inner_oof.csv"
         if sha256(table) != ref["metadata_sha256"]:
             raise ValueError("OLD TRAIN identity changed")
-        original_frame = pd.read_csv(table, usecols=columns, dtype={"track_id": str})
+        original_frame = pd.read_csv(table, usecols=pd.Index(columns), dtype={"track_id": str})
         original = tuple(
             QueryIdentity(str(token), str(sequence), str(track), str(sequence))
             for token, sequence, track in original_frame[columns].itertuples(index=False, name=None)

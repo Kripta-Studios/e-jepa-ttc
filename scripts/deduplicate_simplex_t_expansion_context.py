@@ -7,6 +7,7 @@ import gc
 import json
 import time
 from pathlib import Path
+from typing import cast
 
 import numpy as np
 
@@ -91,8 +92,14 @@ def main() -> None:
                 int(index["roi_available_us"][i]),
                 int(index["roi_available_us"][i]),
                 manifest["stream_bounds_us"][sequence][0],
-                tuple(tuple(int(v) for v in window) for window in index["base_windows_us"][i]),
-                tuple(float(v) for v in index["square_xyxy"][i]),
+                cast(
+                    tuple[tuple[int, int], tuple[int, int], tuple[int, int]],
+                    tuple(tuple(int(v) for v in window) for window in index["base_windows_us"][i]),
+                ),
+                cast(
+                    tuple[float, float, float, float],
+                    tuple(float(v) for v in index["square_xyxy"][i]),
+                ),
             )
             sources.append(ContextSource(sequence, raw[sequence]["sha256"], prep_hash, current))
         keys, local_history = deduplicate_contexts(sources)

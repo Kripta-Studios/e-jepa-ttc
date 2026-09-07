@@ -150,6 +150,8 @@ def main() -> None:
                     raise ValueError("checkpoint bytes changed")
                 hashes[expert] = digest
                 if expert == "PAIR":
+                    if pair_features is None:
+                        raise ValueError("A5 features required before the PAIR producer")
                     model = load_pair_head(path, device=device)
                     with torch.inference_mode():
                         prediction = model.predict_ttc(PairFeatureBatch(pair_features))
@@ -180,6 +182,8 @@ def main() -> None:
                 gc.collect()
             actual = np.stack(predicted, axis=1)
             expected = table["arrays"]["expert_ttc"][rows]
+            if pair_features is None:
+                raise ValueError("completed A5 feature extraction required for replay output")
             np.savez_compressed(
                 args.output / f"{outer_name}_{role}.npz",
                 actual_ttc=actual,

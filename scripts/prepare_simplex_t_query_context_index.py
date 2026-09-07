@@ -67,7 +67,7 @@ def main() -> None:
         "roi_y1",
         "events_path_relative",
     ]
-    binding = pd.read_csv(args.binding, usecols=columns)
+    binding = pd.read_csv(args.binding, usecols=pd.Index(columns))
     if not set(binding.sequence_id) <= allowed or len(binding) != 16384:
         raise ValueError("binding includes a closed group or wrong cohort")
     exposure = json.loads(args.exposure_audit.read_text(encoding="utf-8"))

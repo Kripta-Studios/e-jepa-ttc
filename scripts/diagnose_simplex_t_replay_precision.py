@@ -75,7 +75,9 @@ def main() -> None:
                     ]
                     if len(bound) != 1 or compute_file_hash(str(csv_path)) != bound[0]["sha256"]:
                         raise ValueError("historical validation order hash mismatch")
-                    order = pd.read_csv(csv_path, usecols=["sample_token"]).sample_token.tolist()
+                    order = pd.read_csv(
+                        csv_path, usecols=pd.Index(["sample_token"])
+                    ).sample_token.tolist()
                     for token in saved["tokens"][offset - count : offset]:
                         source_index = order.index(token)
                         positions.append(

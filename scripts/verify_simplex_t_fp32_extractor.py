@@ -71,6 +71,7 @@ def main() -> None:
                 pair_exact = np.array_equal(arrays["pair_features"], old["pair_features"])
             np.savez_compressed(
                 args.output / f"{stem}.npz",
+                allow_pickle=False,
                 **arrays,
                 tokens=np.asarray(saved["tokens"][offset : offset + count]),
             )

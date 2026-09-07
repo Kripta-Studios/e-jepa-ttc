@@ -65,7 +65,9 @@ def audit(root: Path) -> dict[str, Any]:
         raise ValueError("expansion query inventory mismatch")
     selected = pd.read_csv(
         root / "expansion_inventory/SELECTED_METADATA.csv",
-        usecols=["sample_token", "sequence_id", "track_id", "timestamp_us", "events_path"],
+        usecols=pd.Index(
+            ["sample_token", "sequence_id", "track_id", "timestamp_us", "events_path"]
+        ),
         dtype={"track_id": str},
     ).sort_values("sample_token")
     for column in selected.columns:

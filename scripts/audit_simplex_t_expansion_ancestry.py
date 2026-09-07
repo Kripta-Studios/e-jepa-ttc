@@ -126,7 +126,7 @@ def main() -> None:
                 raise ValueError("PAIR nested teacher feature lineage mismatch")
             metadata = pd.read_csv(
                 verify(feature_dir / feature["metadata"]["path"]),
-                usecols=["sample_token", "sequence_id"],
+                usecols=pd.Index(["sample_token", "sequence_id"]),
             )
             if set(metadata.sequence_id) & expansion or not set(metadata.sequence_id) <= original:
                 raise ValueError("PAIR source universe contains expansion or closed groups")
