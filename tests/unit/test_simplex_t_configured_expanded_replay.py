@@ -108,6 +108,60 @@ def test_inspection_never_opens_producers_or_queue(launch, monkeypatch):
     assert result["optimizer_updates"] == 0
 
 
+@pytest.mark.parametrize("mutation", [None, "payload", "source", "memory", "speed"])
+def test_query_major_requires_exact_pinned_qa(launch, monkeypatch, mutation):
+    local, path, config, write = launch
+    root = local.parent / "artifacts/simplex_t/T0/reuse_qa"
+    dependency = write(root / "dependency.json", {"version": 1})
+    contract = write(
+        root / "CONTRACT.json",
+        {
+            "queries": [455, 1366, 2277, 3187, 4097, 5007],
+            "pins": {str(dependency): sha256(dependency)},
+        },
+    )
+    payload = {
+        "status": "QUERY_MAJOR_INPUT_REUSE_EXACT_PASS",
+        "compared_blocks_per_pass": 18,
+        "optimizer_updates": 0,
+        "sampled_rss_max_bytes": 2 * 1024**3,
+        "results": [
+            {"mode": "baseline", "preparations": 18, "hits": 0, "seconds": 100.0},
+            {"mode": "query_major", "preparations": 6, "hits": 12, "seconds": 37.0},
+        ],
+    }
+    if mutation == "memory":
+        payload["sampled_rss_max_bytes"] = 5 * 1024**3
+    if mutation == "speed":
+        payload["results"][1]["seconds"] = 101.0
+    qa = write(root / "QA.json", payload)
+    ref = {
+        "path": qa.relative_to(local.parent).as_posix(),
+        "sha256": sha256(qa),
+        "contract_sha256": sha256(contract),
+    }
+    config["query_major_qa"] = ref
+    write(path, config)
+    if mutation == "payload":
+        write(qa, {})
+    if mutation == "source":
+        write(dependency, {"version": 2})
+    if mutation is not None:
+        with pytest.raises(ValueError):
+            invoke(launch)
+        return
+    assert invoke(launch)["query_major_qa"] == ref
+    monkeypatch.setattr(module, "verify_acknowledged_producers", lambda *a, **kw: None)
+
+    def queue(output, **kwargs):
+        assert kwargs["query_major"] is True
+        assert kwargs["input_reuse_qa_binding"] == ref
+        return {"status": "WIRED"}
+
+    monkeypatch.setattr(module, "run_expanded_context_cache", queue)
+    assert invoke(launch, inspect_only=False)["status"] == "WIRED"
+
+
 def test_execution_reverifies_lineage_and_wires_real_validator(launch, monkeypatch):
     calls = []
     monkeypatch.setattr(

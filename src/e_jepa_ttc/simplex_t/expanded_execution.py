@@ -44,6 +44,7 @@ def run_expanded_context_cache(
     selected_queries: np.ndarray | None = None,
     selection_binding: dict | None = None,
     query_major: bool = False,
+    input_reuse_qa_binding: dict | None = None,
 ) -> dict:
     """Run only under independently verified expanded authority and absolute limits.
 
@@ -57,6 +58,8 @@ def run_expanded_context_cache(
         raise ValueError("unknown expanded pool")
     if query_major and pool != "D1":
         raise ValueError("query-major shared inputs are currently D1-only")
+    if query_major != (input_reuse_qa_binding is not None):
+        raise ValueError("query-major execution requires its verified QA binding")
     if (selected_queries is None) != (selection_binding is None):
         raise ValueError("query subset requires its immutable selection binding")
     if selected_queries is not None and pool != "D1":
@@ -152,6 +155,7 @@ def run_expanded_context_cache(
     reuse = None
     if query_major:
         identity["input_reuse_order"] = "query_major_single_fp32_input_v1"
+        identity["input_reuse_qa"] = input_reuse_qa_binding
     if selection_binding is not None:
         identity["query_selection"] = selection_binding
     if pool == "DENSE_OLD":

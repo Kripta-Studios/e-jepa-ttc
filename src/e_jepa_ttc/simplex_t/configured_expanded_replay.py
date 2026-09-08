@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import math
 from pathlib import Path
 
 import numpy as np
@@ -85,6 +86,45 @@ def run_configured_expanded_replay(
         if not result.is_relative_to(root):
             raise ValueError("launch path resolves outside its declared root")
         return result
+
+    reuse_qa_ref = config.get("query_major_qa")
+    if reuse_qa_ref is not None:
+        if pool != "D1" or set(reuse_qa_ref) != {"path", "sha256", "contract_sha256"}:
+            raise ValueError("query-major execution requires a pinned D1 input reuse QA")
+        qa_path = resolve(reuse_qa_ref["path"])
+        contract_path = qa_path.parent / "CONTRACT.json"
+        if (
+            not qa_path.is_relative_to(work / "artifacts/simplex_t/T0")
+            or sha256(qa_path) != reuse_qa_ref["sha256"]
+            or sha256(contract_path) != reuse_qa_ref["contract_sha256"]
+        ):
+            raise ValueError("query-major QA binding changed")
+        qa = json.loads(qa_path.read_text("utf-8"))
+        contract = json.loads(contract_path.read_text("utf-8"))
+        if (
+            qa["status"] != "QUERY_MAJOR_INPUT_REUSE_EXACT_PASS"
+            or qa["compared_blocks_per_pass"] != 18
+            or qa["optimizer_updates"] != 0
+            or qa["sampled_rss_max_bytes"] > 4 * 1024**3
+            or contract["queries"] != [455, 1366, 2277, 3187, 4097, 5007]
+        ):
+            raise ValueError("query-major QA coverage or resource evidence differs")
+        baseline, optimized = qa["results"]
+        if (
+            baseline["mode"] != "baseline"
+            or optimized["mode"] != "query_major"
+            or baseline["preparations"] != 18
+            or optimized["preparations"] != 6
+            or optimized["hits"] != 12
+            or not all(
+                math.isfinite(row["seconds"]) and row["seconds"] > 0 for row in qa["results"]
+            )
+            or optimized["seconds"] >= baseline["seconds"]
+        ):
+            raise ValueError("query-major QA does not demonstrate an input reuse time saving")
+        for value, digest in contract["pins"].items():
+            if sha256(Path(value)) != digest:
+                raise ValueError("input reuse QA dependencies changed")
 
     index_root, dedup_root = resolve(config["index"]), resolve(config["dedup"])
     output = resolve(config["output"])
@@ -206,6 +246,7 @@ def run_configured_expanded_replay(
         "models_loaded": False,
         "selected_queries": query_count,
         "query_selection": selection_ref,
+        "query_major_qa": reuse_qa_ref,
     }
     if inspect_only:
         validate()
@@ -236,6 +277,8 @@ def run_configured_expanded_replay(
         selection_binding=(
             {**selection_ref, "path": str(selection_path)} if selection_ref is not None else None
         ),
+        query_major=reuse_qa_ref is not None,
+        input_reuse_qa_binding=reuse_qa_ref,
         reuse_catalog_loader=catalogs.__getitem__ if identities is not None else None,
         reuse_expected_identities=identities,
         **({"verify_only": True} if verify_only else {}),
