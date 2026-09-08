@@ -129,23 +129,37 @@ def fit(
     resume: bool = False,
     stop_after: int = 2500,
     journal: FitJournal | None = None,
+    device: str = "cpu",
 ) -> dict[str, Any]:
     """Train to an exact endpoint or save a resource pause; never score partials.
 
     stop_after is for accounted technical/resume probes only. Production callers
-    must keep 2500. This implementation is CPU-only; changing device requires an
-    explicit pre-freeze numerical recipe and device-specific resume validation.
+    must keep 2500. CUDA is currently limited to accounted technical probes;
+    scientific CUDA admission requires a separate validated device recipe.
     """
     if not 1 <= stop_after <= 2500 or seed not in {7, 13, 23} or source.population < 1:
         raise ValueError("invalid registered fit arguments")
     if len(freeze_sha256) != 64 or len(source.identity_sha256) != 64:
         raise ValueError("frozen source and implementation identity required")
+    if device not in {"cpu", "cuda:0"}:
+        raise ValueError("supported devices are cpu and cuda:0")
+    if device != "cpu":
+        if stop_after == 2500:
+            raise ValueError("CUDA scientific admission pending device benchmark and freeze")
+        if os.environ.get("CUBLAS_WORKSPACE_CONFIG") != ":4096:8":
+            raise ValueError("CUDA probe requires CUBLAS_WORKSPACE_CONFIG=:4096:8 at launch")
+        if not torch.cuda.is_available():
+            raise RuntimeError("CUDA requested but unavailable; no automatic CPU fallback")
+        torch.backends.cuda.matmul.allow_tf32 = False
+        torch.backends.cudnn.allow_tf32 = False
+        torch.backends.cudnn.benchmark = False
+        torch.backends.cudnn.deterministic = True
     torch.set_num_threads(4)
     if torch.get_num_interop_threads() > 2:
         torch.set_num_interop_threads(2)
     torch.use_deterministic_algorithms(True)
     torch.manual_seed(seed)
-    model = TemporalRefiner(config).float().cpu()
+    model = TemporalRefiner(config).float().to(device)
     optimizer = torch.optim.AdamW(
         model.parameters(),
         lr=3e-4,
@@ -160,11 +174,20 @@ def fit(
         "freeze": freeze_sha256,
         "config": asdict(config),
         "seed": seed,
-        "device": "cpu",
+        "device": device,
         "torch_version": str(torch.__version__),
         "batch": 128,
         "endpoint": 2500,
     }
+    if device != "cpu":
+        identity["cuda_recipe"] = {
+            "gpu": torch.cuda.get_device_name(0),
+            "capability": list(torch.cuda.get_device_capability(0)),
+            "cuda_version": torch.version.cuda,
+            "cudnn_version": torch.backends.cudnn.version(),
+            "tf32": False,
+            "cublas_workspace": ":4096:8",
+        }
     identity_hash = hashlib.sha256(json.dumps(identity, sort_keys=True).encode()).hexdigest()
     output.mkdir(parents=True, exist_ok=True)
     checkpoint = output / "checkpoint_last.pt"
@@ -179,6 +202,8 @@ def fit(
         optimizer.load_state_dict(state["optimizer"])
         generator.set_state(state["sampler_rng"])
         torch.set_rng_state(state["torch_rng"])
+        if device != "cpu":
+            torch.cuda.set_rng_state(state["cuda_rng"], device=device)
         completed = state["completed_updates"]
         losses = state["losses"]
         sampler_hashes = state["sampler_hashes"]
@@ -201,6 +226,8 @@ def fit(
             "losses": losses,
             "sampler_hashes": sampler_hashes,
         }
+        if device != "cpu":
+            state["cuda_rng"] = torch.cuda.get_rng_state(device)
         atomic_checkpoint(checkpoint, state)
         if journal is not None and journal_ready:
             journal.checkpoint_saved(completed, checkpoint)
@@ -230,6 +257,10 @@ def fit(
         for value in (x, timing, experts, truth, mass):
             if value.dtype != torch.float32:
                 raise ValueError("FP32 training tensors required")
+        if device != "cpu":
+            x, timing, valid, experts, truth, mass = (
+                value.to(device) for value in (x, timing, valid, experts, truth, mass)
+            )
         optimizer.param_groups[0]["lr"] = learning_rate(update)
         optimizer.zero_grad(set_to_none=True)
         loss = training_loss(

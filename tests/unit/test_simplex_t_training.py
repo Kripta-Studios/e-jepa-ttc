@@ -74,3 +74,38 @@ def test_schedule_exact_endpoints():
     assert learning_rate(100) == 3e-4
     assert learning_rate(2500) == 3e-5
     assert learning_rate(1) == pytest.approx(3e-6, rel=1e-15)
+
+
+@pytest.mark.parametrize(
+    ("device", "endpoint", "message"),
+    [("cuda", 10, "supported devices"), ("cuda:0", 2500, "scientific admission")],
+)
+def test_device_rejected_before_any_updates(tmp_path, device, endpoint, message):
+    with pytest.raises(ValueError, match=message):
+        fit(
+            SyntheticSource(),
+            TemporalConfig(),
+            tmp_path / "unused",
+            seed=7,
+            freeze_sha256="f" * 64,
+            resource_ok=lambda: True,
+            device=device,
+            stop_after=endpoint,
+        )
+    assert not (tmp_path / "unused").exists()
+
+
+def test_cuda_requires_launch_determinism_without_initializing_gpu(tmp_path, monkeypatch):
+    monkeypatch.delenv("CUBLAS_WORKSPACE_CONFIG", raising=False)
+    with pytest.raises(ValueError, match="CUBLAS_WORKSPACE_CONFIG"):
+        fit(
+            SyntheticSource(),
+            TemporalConfig(),
+            tmp_path / "unused",
+            seed=7,
+            freeze_sha256="f" * 64,
+            resource_ok=lambda: True,
+            device="cuda:0",
+            stop_after=10,
+        )
+    assert not (tmp_path / "unused").exists()

@@ -10,6 +10,48 @@ import pytest
 import torch
 
 
+@pytest.mark.parametrize("device", ["cpu", "cuda:0"])
+def test_benchmark_does_not_overlap_replay_or_load_sources(tmp_path, monkeypatch, device):
+    path = Path(__file__).resolve().parents[2] / "scripts/probe_simplex_t_context_resume.py"
+    spec = importlib.util.spec_from_file_location("benchmark_lease_test", path)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    local = tmp_path / "local.json"
+    local.write_text(json.dumps({"worktree": str(tmp_path)}), encoding="utf-8")
+    lock = tmp_path / "artifacts/simplex_t/T1/CURRENT_REPLAY.lock"
+    lock.parent.mkdir(parents=True)
+    lock.write_text("existing-owner", encoding="utf-8")
+    monkeypatch.setattr(module, "run_probe", lambda args: pytest.fail("must not run"))
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "probe",
+            "--local-paths",
+            str(local),
+            "--compiled",
+            "unused",
+            "--compiled-sha256",
+            "c" * 64,
+            "--index",
+            "unused",
+            "--dedup",
+            "unused",
+            "--output",
+            str(tmp_path / "probe"),
+            "--benchmark",
+            "--device",
+            device,
+            "--feature-count",
+            "145",
+        ],
+    )
+    with pytest.raises(FileExistsError):
+        module.main()
+    assert lock.read_text(encoding="utf-8") == "existing-owner"
+    assert not (tmp_path / "probe").exists()
+
+
 def test_real_history_probe_plan_reserves_twenty_once_without_running_optimizer(
     tmp_path, monkeypatch
 ):
