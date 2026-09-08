@@ -72,11 +72,18 @@ def main() -> int:
     if code:
         return code
     check_pins()
-    if args.stage in {"T3", "T5"}:
+    if args.stage in {"T3", "T5"} or (
+        args.stage == "T4" and not (root / "launches/T4.json").exists()
+    ):
         decision = root / "launches" / f"{args.stage}.decision.json"
         state = json.loads(decision.read_text("utf-8"))
         if (
-            state.get("schema") != "simplex_t_practical_launch_decision_v1"
+            state.get("schema")
+            != (
+                "simplex_t_technical_launch_decision_v1"
+                if args.stage == "T4"
+                else "simplex_t_practical_launch_decision_v1"
+            )
             or state.get("stage") != args.stage
             or state.get("optimizer_updates") != 0
             or state.get("scientific_completion") is not False

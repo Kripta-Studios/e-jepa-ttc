@@ -12,20 +12,25 @@ import pytest
 from e_jepa_ttc.artifacts.simplex_t_preflight import sha256
 
 
-@pytest.mark.parametrize("mode", ["verify", "resume", "missing", "resource", "negative", "bad_pin"])
+@pytest.mark.parametrize(
+    "mode", ["verify", "resume", "missing", "resource", "negative", "bad_pin", "no_latent"]
+)
 def test_stage_bridge_preserves_outcomes_and_exact_resume(tmp_path, monkeypatch, mode):
     work = Path(__file__).resolve().parents[2]
     root = work / "artifacts/simplex_t/T0" / ("bridge_fixture_" + uuid.uuid4().hex)
     (root / "launches").mkdir(parents=True)
-    stage = "T3" if mode == "negative" else "T2"
+    stage = "T3" if mode == "negative" else "T4" if mode == "no_latent" else "T2"
     template = root / "launches" / f"{stage}.json"
-    template.write_text("{}", encoding="utf-8")
-    if mode == "negative":
-        (root / "launches/T3.decision.json").write_text(
+    if mode != "no_latent":
+        template.write_text("{}", encoding="utf-8")
+    if mode in {"negative", "no_latent"}:
+        (root / "launches" / f"{stage}.decision.json").write_text(
             json.dumps(
                 {
-                    "schema": "simplex_t_practical_launch_decision_v1",
-                    "stage": "T3",
+                    "schema": "simplex_t_technical_launch_decision_v1"
+                    if mode == "no_latent"
+                    else "simplex_t_practical_launch_decision_v1",
+                    "stage": stage,
                     "eligible": False,
                     "optimizer_updates": 0,
                     "scientific_completion": False,
@@ -92,4 +97,4 @@ def test_stage_bridge_preserves_outcomes_and_exact_resume(tmp_path, monkeypatch,
         assert not calls
     else:
         assert module["main"]() == {"missing": 10, "resource": 3}.get(mode, 0)
-        assert len(calls) == (1 if mode in {"missing", "resource", "negative"} else 2)
+        assert len(calls) == (1 if mode in {"missing", "resource", "negative", "no_latent"} else 2)

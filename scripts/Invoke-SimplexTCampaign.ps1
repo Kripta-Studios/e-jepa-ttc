@@ -4,6 +4,9 @@ Runs a pinned SIMPLEX-T orchestration plan synchronously, retaining attempt logs
 .DESCRIPTION
 Requires a resolved plan with run, resume and verify commands for every step.
 This shell is not a resolved T0-T6 campaign plan or a scientific freeze.
+prepare_simplex_t_scientific_plan.py binds a prerequisite plan to the real freeze,
+T2/T4, canonical T3/T5 gates and the T6 analysis/archive verifier. Such plans bind
+RunRoot because terminal resource receipts are discovered there for delivery.
 Completed steps are skipped only after their verifier succeeds. Resource pauses
 are retried; other errors stop execution. Regeneration requires distinct outputs
 and a new pinned plan; existing caches and checkpoints are never reset here.
@@ -51,6 +54,11 @@ if ((Get-FileHash -LiteralPath $planPath -Algorithm SHA256).Hash.ToLowerInvarian
     throw 'Plan SHA256 mismatch.'
 }
 $spec = Get-Content -LiteralPath $planPath -Raw | ConvertFrom-Json
+if ($spec.PSObject.Properties.Name -contains 'required_run_root') {
+    if ([IO.Path]::GetFullPath($spec.required_run_root) -ne $destination) {
+        throw 'RunRoot differs from the plan-bound T6 resource log discovery root.'
+    }
+}
 if ($spec.schema -ne 'simplex_t_orchestration_plan_v1' -or @($spec.steps).Count -eq 0) {
     throw 'A resolved, nonempty orchestration plan is required.'
 }

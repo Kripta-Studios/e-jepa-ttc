@@ -13,7 +13,8 @@ import pytest
 
 
 @pytest.mark.parametrize(
-    "mode", ["validate", "verified", "bad_hash", "verifier_report", "duplicate_report"]
+    "mode",
+    ["validate", "verified", "bad_hash", "verifier_report", "duplicate_report", "wrong_root"],
 )
 def test_campaign_shell_pins_and_verifier_skip(tmp_path, mode):
     pwsh = shutil.which("pwsh")
@@ -31,15 +32,13 @@ def test_campaign_shell_pins_and_verifier_skip(tmp_path, mode):
     if mode == "duplicate_report":
         command["arguments"] = ["--report=existing.json"]
     plan = tmp_path / "plan.json"
-    plan.write_text(
-        json.dumps(
-            dict(
-                schema="simplex_t_orchestration_plan_v1",
-                steps=[dict(id="help_fixture", run=command, resume=command, verify=command)],
-            )
-        ),
-        encoding="utf-8",
+    spec = dict(
+        schema="simplex_t_orchestration_plan_v1",
+        steps=[dict(id="help_fixture", run=command, resume=command, verify=command)],
     )
+    if mode == "wrong_root":
+        spec["required_run_root"] = str(work / "artifacts/simplex_t/T0/not_the_logs")
+    plan.write_text(json.dumps(spec), encoding="utf-8")
     digest = hashlib.sha256(plan.read_bytes()).hexdigest()
     output = work / "artifacts/simplex_t/T0" / ("orchestrator_fixture_" + uuid.uuid4().hex)
     args = [
@@ -59,7 +58,7 @@ def test_campaign_shell_pins_and_verifier_skip(tmp_path, mode):
     if mode == "validate":
         args.append("-ValidateOnly")
     result = subprocess.run(args, capture_output=True, text=True, encoding="utf-8", timeout=90)
-    if mode in {"bad_hash", "verifier_report", "duplicate_report"}:
+    if mode in {"bad_hash", "verifier_report", "duplicate_report", "wrong_root"}:
         assert result.returncode != 0
         assert not output.exists()
     else:

@@ -71,6 +71,37 @@ def main() -> int:
             stages = [args.stage]
         outputs = []
         for stage in stages:
+            if stage == "T4" and not frozen["source_contract"]["availability"]["latent"]:
+                decision = {
+                    "schema": "simplex_t_technical_launch_decision_v1",
+                    "stage": "T4",
+                    "freeze_sha256": digest,
+                    "eligible": False,
+                    "reason": "LATENT_TECHNICALLY_UNAVAILABLE_IN_FREEZE",
+                    "optimizer_updates": 0,
+                    "scientific_completion": False,
+                }
+                decision_path = args.campaign_root / "launches/T4.decision.json"
+                if (args.campaign_root / "launches/T4.json").exists():
+                    raise ValueError("technically unavailable stage has an existing template")
+                if decision_path.exists():
+                    if json.loads(decision_path.read_text("utf-8")) != decision:
+                        raise ValueError("technical availability decision changed")
+                elif args.verify_only:
+                    return 10
+                else:
+                    if not resource_ok():
+                        return 3
+                    write_new_json(decision_path, decision)
+                outputs.append(
+                    {
+                        "stage": stage,
+                        "eligible": False,
+                        "decision": str(decision_path),
+                        "sha256": sha256(decision_path),
+                    }
+                )
+                continue
             template = technical_phase_launch(
                 stage=stage if stage in {"T2", "T4"} else "T2",
                 freeze_launch=launch,
