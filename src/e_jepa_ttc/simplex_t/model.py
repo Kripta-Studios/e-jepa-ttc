@@ -102,7 +102,11 @@ class TemporalRefiner(nn.Module):
             causal = torch.ones((length, length), device=z.device, dtype=torch.bool).triu(1)
             encoded = self.encoder(packed, mask=causal, src_key_padding_mask=pad)
             hidden = encoded[torch.arange(b, device=z.device), counts - 1]
-        anchor = experts.median(-1).values
+        anchor = (
+            experts.sort(dim=-1, stable=True).values[:, 1]
+            if experts.device.type == "cuda"
+            else experts.median(-1).values
+        )
         delta = 0.03 * self.location(hidden).squeeze(-1)
         location = delta if self.cfg.output_mode == "free" else anchor + delta
         widths = 0.03 * functional.softplus(self.width(hidden))

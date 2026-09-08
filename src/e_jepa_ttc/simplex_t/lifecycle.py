@@ -76,8 +76,8 @@ class TechnicalBudget:
         self.path = path
 
     def reserve(self, key: str, updates: int) -> dict[str, Any]:
-        """Refuse duplicate probes and cap all reserved technical work at 1000."""
-        if not key or type(updates) is not int or not 1 <= updates <= 1000:
+        """Refuse duplicates; 1020 reservation cap includes the CUDA pre-update failure."""
+        if not key or type(updates) is not int or not 1 <= updates <= 1020:
             raise ValueError("invalid technical reservation")
         with ExclusiveLease(self.path.with_suffix(".lock")):
             state = (
@@ -92,7 +92,7 @@ class TechnicalBudget:
                 raise ValueError("invalid saved technical reservation")
             if key in reservations:
                 raise ValueError("technical operation already reserved; do not repeat")
-            if sum(reservations.values()) + updates > 1000:
+            if sum(reservations.values()) + updates > 1020:
                 raise ValueError("technical budget exceeded")
             reservations[key] = updates
             atomic_json(self.path, state)

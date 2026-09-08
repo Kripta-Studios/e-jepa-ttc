@@ -80,6 +80,7 @@ def run_probe(args: argparse.Namespace) -> None:
             raise ValueError("CUDA benchmark requires CUBLAS_WORKSPACE_CONFIG=:4096:8")
         if not torch.cuda.is_available():
             raise RuntimeError("CUDA unavailable; do not fall back")
+        torch.cuda.init()
         torch.cuda.reset_peak_memory_stats(0)
     config = json.loads((worktree / "configs/experiment/simplex_t_coordination.json").read_text())
     ack = verified_ack(
@@ -120,6 +121,7 @@ def run_probe(args: argparse.Namespace) -> None:
         "compiled_sha256": args.compiled_sha256,
         "script_sha256": compute_file_hash(__file__),
         "engine_sha256": compute_file_hash(str(worktree / "src/e_jepa_ttc/simplex_t/training.py")),
+        "model_sha256": compute_file_hash(str(worktree / "src/e_jepa_ttc/simplex_t/model.py")),
         "journal_engine_sha256": compute_file_hash(
             str(worktree / "src/e_jepa_ttc/simplex_t/work_budget.py")
         ),

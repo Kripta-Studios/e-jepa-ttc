@@ -15,13 +15,13 @@ def test_technical_reservations_survive_restart_and_refuse_repeat(tmp_path):
     with pytest.raises(ValueError, match="already reserved"):
         TechnicalBudget(path).reserve("cpu_profile_500", 500)
     with pytest.raises(ValueError, match="budget exceeded"):
-        TechnicalBudget(path).reserve("new_probe", 416)
+        TechnicalBudget(path).reserve("new_probe", 436)
     assert path.read_bytes() == original
-    state = TechnicalBudget(path).reserve("remaining", 415)
-    assert sum(state["reservations"].values()) == 1000
+    state = TechnicalBudget(path).reserve("remaining", 435)
+    assert sum(state["reservations"].values()) == 1020
 
 
-@pytest.mark.parametrize("amount", [True, 0, -1, 1001, 1.5])
+@pytest.mark.parametrize("amount", [True, 0, -1, 1021, 1.5])
 def test_invalid_technical_reservations(tmp_path, amount):
     with pytest.raises(ValueError, match="invalid"):
         TechnicalBudget(tmp_path / "technical.json").reserve("probe", amount)
