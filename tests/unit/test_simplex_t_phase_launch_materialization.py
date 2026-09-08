@@ -51,8 +51,8 @@ def test_exact_paths_and_no_practical_gate_claim(tmp_path, stage):
         freeze_sha256="c" * 64,
         campaign_root=output,
     )
-    assert result["execution"] == str(output / stage / "execution")
-    assert result["publication"] == str(output / stage / "publication")
+    assert result["execution"] == str(output / "execution")
+    assert result["publication"] == str(output / "publication")
     assert result["publications"] == {}
     assert result["availability"] == dict(
         d1=True, density=True, t3=False, latent=True, replicate_scalar=False, replicate_latent=False

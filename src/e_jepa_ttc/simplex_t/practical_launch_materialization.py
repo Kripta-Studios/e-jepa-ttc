@@ -28,8 +28,8 @@ def resolve_practical_launch(
     result = deepcopy(base)
     result.update(
         stage=stage,
-        execution=str(campaign_root / stage / "execution"),
-        publication=str(campaign_root / stage / "publication"),
+        execution=str(campaign_root / "execution"),
+        publication=str(campaign_root / "publication"),
         publications={},
     )
     flags = result["availability"]
