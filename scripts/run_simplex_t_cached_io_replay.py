@@ -13,10 +13,37 @@ import runpy
 import sys
 from collections.abc import Iterator
 from contextlib import contextmanager
+from functools import partial
 from pathlib import Path
 
 from e_jepa_ttc.artifacts.simplex_t_preflight import sha256, write_new_json
 from e_jepa_ttc.simplex_t.cached_event_reader import CachedEventReader, ReaderPool
+
+
+def validated_capacity(work: Path, report_path: Path, forwarded: list[str]) -> dict:
+    """Admit only the measured 512 MiB input-equivalent capacity amendment."""
+    digest = "435027b73c2d434441573e866c3ce43323633e3fddf5d35a883795e692e77b03"
+    if sha256(report_path) != digest:
+        raise ValueError("capacity QA differs from the authorized measured report")
+    report = json.loads(report_path.read_text("utf-8"))
+    bindings = {
+        "union_source_sha256": work / "src/e_jepa_ttc/simplex_t/context_raw_union.py",
+        "script_sha256": work / "artifacts/simplex_t/T0/probe_union_capacity_20260908.py",
+        "index_sha256": Path(forwarded[forwarded.index("--index") + 1])
+        / "query_context_index.npz",
+        "preprocessing_sha256": Path(
+            forwarded[forwarded.index("--preprocessing-manifest") + 1]
+        ),
+    }
+    if any(sha256(path) != report[key] for key, path in bindings.items()):
+        raise ValueError("capacity QA source or input binding changed")
+    return {
+        "path": str(report_path.resolve()),
+        "sha256": digest,
+        "retained_bytes_max": 512 * 1024**2,
+        "scope": "D0 input buffer only; unchanged FP32/H16/ROI/producer extraction",
+        "limitations": report["limitations"],
+    }
 
 
 def main() -> None:
@@ -24,6 +51,7 @@ def main() -> None:
     parser.add_argument("--io-qa", type=Path, required=True)
     parser.add_argument("--io-qa-sha256", required=True)
     parser.add_argument("--execution-receipt", type=Path, required=True)
+    parser.add_argument("--union-capacity-qa", type=Path)
     args, forwarded = parser.parse_known_args()
     work = Path(__file__).resolve().parent.parent
     runner = work / "scripts/build_simplex_t_context_features.py"
@@ -45,6 +73,11 @@ def main() -> None:
         raise ValueError("this adapter is only for the existing D0 replay")
     if (output.parent / "CURRENT_REPLAY.lock").exists():
         raise RuntimeError("existing replay owns its lease; no takeover")
+    capacity = (
+        validated_capacity(work, args.union_capacity_qa, forwarded)
+        if args.union_capacity_qa is not None
+        else None
+    )
     identity = output / "IDENTITY.json"
     execution = {
         "schema": "simplex_t_exact_io_execution_v1",
@@ -62,6 +95,8 @@ def main() -> None:
         "unchanged": ["FP32", "H16 batch16", "TF32 off", "ROI", "time windows", "producers"],
         "optimizer_updates": 0,
     }
+    if capacity is not None:
+        execution["capacity_amendment"] = capacity
     write_new_json(args.execution_receipt, execution)
     execution_hash = sha256(args.execution_receipt)
     namespace = runpy.run_path(str(runner), run_name="simplex_t_pinned_numerical_runner")
@@ -85,6 +120,11 @@ def main() -> None:
 
     entry.__globals__["EAPEventReader"] = borrowed_reader
     entry.__globals__["write_new_json"] = attributed_write
+    if capacity is not None:
+        entry.__globals__["encode_context_union"] = partial(
+            entry.__globals__["encode_context_union"],
+            retained_bytes_max=capacity["retained_bytes_max"],
+        )
     previous = sys.argv
     try:
         sys.argv = [str(runner), *forwarded]
