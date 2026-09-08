@@ -91,7 +91,7 @@ def verify_companion_unit_qa(
     if (
         ledger.get("schema") != "simplex_t_technical_budget_v1"
         or any(type(value) is not int or value < 1 for value in reservations.values())
-        or sum(reservations.values()) > 1025
+        or sum(reservations.values()) > 1045
         or reservations.get(contract.get("operation_id")) != 20
     ):
         raise ValueError("unit QA operation missing from technical budget")

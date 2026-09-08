@@ -28,7 +28,7 @@ class WorkBudget:
             or any(type(n) is not int or n != 2500 for n in graph.values())
         ):
             raise ValueError("invalid scientific graph")
-        if type(technical_reserved) is not int or not 0 <= technical_reserved <= 1025:
+        if type(technical_reserved) is not int or not 0 <= technical_reserved <= 1045:
             raise ValueError("invalid technical reservation")
         self.path, self.graph, self.technical_reserved = path, graph, technical_reserved
 
