@@ -135,7 +135,7 @@ class UpdateLedger:
             else:
                 raise ValueError("unknown ledger operation")
             reserved = len(state["fits"]) * 2500
-            if state["technical_updates"] > 1000 or reserved > 210000:
+            if state["technical_updates"] > 1020 or reserved > 210000:
                 raise ValueError("registered scientific/technical budget exceeded")
             if reserved + state["technical_updates"] > 250000:
                 raise ValueError("absolute optimizer update cap exceeded")

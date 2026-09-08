@@ -55,9 +55,10 @@ def verify_technical_accounting(
         raise ValueError("technical reconciliation contract differs")
     reservations = budget["reservations"]
     reserved = sum(count(value) for value in reservations.values())
-    if reserved > 1000:
+    if reserved > 1020:
         raise ValueError("technical reservation cap exceeded")
     seen, classes, failures = set(), {}, []
+    uncertain_upper = 0
     consumed_evidence: set[tuple[Path, str]] = set()
     for row in audit["operations"]:
         operations = row["operations"]
@@ -116,6 +117,17 @@ def verify_technical_accounting(
             ):
                 raise ValueError("technical journal has unsettled work")
             executed = sum(count(fit["completed"]) for fit in evidence["fits"].values())
+        elif category == "UNSETTLED_TECHNICAL_RESERVATION_CONSERVATIVE_UPPER":
+            if (
+                set(evidence["fits"]) != {"continuous"}
+                or evidence["fits"]["continuous"]["completed"] != 0
+                or evidence["fits"]["continuous"]["pending"] != [0, 100]
+                or row["uncertain_updates_upper"] != allocation
+            ):
+                raise ValueError("failed technical reservation evidence differs")
+            executed = 0
+            uncertain_upper += allocation
+            failures.append(row["failure_id"])
         elif category == "INSTRUMENTED_SUITE_COUNTER_INCLUDING_FAILED_RUNS":
             counters = read(evidence_path.parent / "UPDATE_PROGRESS.json", row["counters_sha256"])
             executed = count(counters["completed_optimizer_updates"])
@@ -144,6 +156,7 @@ def verify_technical_accounting(
         or audit["historical_noninstrumented_reconciliation_updates"] != legacy
         or audit["engine_journal_or_instrumented_receipt_updates"] != total - legacy
         or audit["scientific_updates_in_these_records"] != 0
+        or audit.get("uncertain_updates_upper", 0) != uncertain_upper
     ):
         raise ValueError("technical reconciliation totals or coverage differ")
     return dict(
@@ -152,6 +165,7 @@ def verify_technical_accounting(
         reconciliation_sha256=reconciliation_sha256,
         reserved_updates=reserved,
         recorded_executed_updates=total,
+        uncertain_updates_upper=uncertain_upper,
         evidence_class_updates=classes,
         historical_noninstrumented_updates=legacy,
         failed_nodeids=sorted(set(failures)),

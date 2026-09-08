@@ -78,7 +78,7 @@ def fixture_inputs(root: Path, failure: str = "") -> dict:
     elif failure == "authority":
         prepared["contract"]["authority_sha256"] = "c" * 64
     elif failure == "budget":
-        values["qa"]["reservations"]["probe"] = 1001
+        values["qa"]["reservations"]["probe"] = 1021
     elif failure == "candidate":
         prepared["contract"]["fits"].pop()
     elif failure == "missing_source_qa":

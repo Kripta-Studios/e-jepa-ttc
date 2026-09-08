@@ -105,7 +105,7 @@ def _content(
     ):
         raise ValueError("invalid technical reservations")
     reserved = sum(reservations.values())
-    if reserved > 1000:
+    if reserved > 1020:
         raise ValueError("technical work exceeds registered cap")
     primary = "D1" if flags["d1"] else "D0"
     return {

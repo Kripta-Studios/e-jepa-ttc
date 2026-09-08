@@ -133,7 +133,7 @@ def verify_campaign_accounting(
         if stream.read(len(payload) + 1) != payload:
             raise ValueError("scientific journal changed during accounting")
     lower = physical["saved_updates"] + technical["recorded_executed_updates"]
-    upper = lower + physical["possible_lost_updates_upper"]
+    upper = lower + physical["possible_lost_updates_upper"] + technical["uncertain_updates_upper"]
     if upper > 250000:
         raise ValueError("combined recorded optimizer-work upper bound exceeds cap")
     return dict(
