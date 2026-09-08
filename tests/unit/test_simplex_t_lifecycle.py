@@ -59,6 +59,6 @@ def test_ledger_refuses_new_arms_and_partial_completion(tmp_path):
         ledger.transaction("reserve", "invented")
     with pytest.raises(ValueError, match="nonmonotonic"):
         ledger.transaction("progress", "canonical_fold0_seed7", 99)
-    ledger.transaction("technical", "qa", 1000)
+    ledger.transaction("technical", "qa", 1025)
     with pytest.raises(ValueError, match="budget"):
         ledger.transaction("technical", "qa", 1)
