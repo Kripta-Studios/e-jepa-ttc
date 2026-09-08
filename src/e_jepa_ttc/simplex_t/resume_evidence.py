@@ -68,6 +68,8 @@ def verify_real_cpu_resume(
         expected_contract["journal_engine_sha256"] = sha256(
             Path(__file__).with_name("work_budget.py")
         )
+    if "model_sha256" in contract:
+        expected_contract["model_sha256"] = sha256(Path(__file__).with_name("model.py"))
     if contract != expected_contract:
         raise ValueError("resume contract differs from current source, code or runtime")
     if (

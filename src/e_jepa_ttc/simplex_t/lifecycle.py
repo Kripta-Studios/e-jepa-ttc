@@ -14,7 +14,7 @@ import psutil
 from e_jepa_ttc.artifacts.risk_geometry_v10 import atomic_json
 from e_jepa_ttc.artifacts.simplex_t_preflight import resource_headroom
 
-TECHNICAL_UPDATE_CAP = 1085
+TECHNICAL_UPDATE_CAP = 1125
 
 
 class ExclusiveLease:

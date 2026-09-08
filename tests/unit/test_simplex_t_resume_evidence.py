@@ -32,6 +32,12 @@ def fixture(root: Path, failure: str) -> dict:
             if failure == "journal_valid"
             else "0" * 64
         )
+    if failure in {"model_valid", "model_changed"}:
+        contract["model_sha256"] = (
+            sha256(Path(__file__).resolve().parents[2] / "src/e_jepa_ttc/simplex_t/model.py")
+            if failure == "model_valid"
+            else "0" * 64
+        )
     identity = {
         "source": "a" * 64,
         "freeze": state_digest(contract),
@@ -126,11 +132,13 @@ def fixture(root: Path, failure: str) -> dict:
         "semantic_changed",
         "journal_valid",
         "journal_changed",
+        "model_valid",
+        "model_changed",
     ],
 )
 def test_resume_evidence(tmp_path: Path, failure: str) -> None:
     inputs = fixture(tmp_path, failure)
-    if failure not in {"", "semantic_valid", "journal_valid"}:
+    if failure not in {"", "semantic_valid", "journal_valid", "model_valid"}:
         with pytest.raises(ValueError):
             verify_real_cpu_resume(tmp_path, **inputs)
     else:

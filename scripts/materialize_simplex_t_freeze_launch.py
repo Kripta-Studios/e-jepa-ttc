@@ -164,6 +164,7 @@ def main() -> int:
         "simplex_t_resource_amendment.json",
         "simplex_t_technical_qa_amendment.json",
         "simplex_t_consumer_binding_qa_amendment.json",
+        "simplex_t_current_resume_qa_amendment.json",
     ):
         add(work / "configs/experiment" / name, "config")
     add(roots["handoff"] / "configs/RESOLVED_FIT_MANIFEST.schema.json", "schemas")
