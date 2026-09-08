@@ -83,6 +83,41 @@ def test_resume_skips_verified_blocks_and_releases_family(tmp_path, inputs):
     assert not (tmp_path / "CURRENT_REPLAY.lock").exists()
 
 
+def test_query_major_retains_each_family_once_and_resumes_exact_blocks(tmp_path, inputs):
+    args, _, _ = inputs
+    args["index"]["producer_family"][1] = 4
+    args["identity"]["input_reuse_order"] = "query_major_single_fp32_input_v1"
+    original_factory = args["inference_family"]
+    entered, exited, order = [], [], []
+
+    @contextmanager
+    def resident_factory(family):
+        entered.append(family)
+        with original_factory(0) as original:
+
+            def infer(query):
+                order.append((query, family))
+                return original(query)
+
+            try:
+                yield infer
+            finally:
+                exited.append(family)
+
+    args["inference_family"] = resident_factory
+    args["max_new_queries"] = 3
+    output = tmp_path / "cache"
+    first = run_expanded_blocks(output, **args, query_major=True)
+    assert first["status"] == "SLICE_COMPLETE"
+    assert order == [(0, 0), (0, 4), (1, 0)]
+    assert entered == [0, 4] and exited == [4, 0]
+    second = run_expanded_blocks(output, **args, query_major=True)
+    assert second["new_blocks"] == 1
+    assert order[-1] == (1, 4)
+    assert entered == [0, 4, 4]
+    assert not (tmp_path / "CURRENT_REPLAY.lock").exists()
+
+
 def test_d1_selection_only_infers_selected_queries_and_verifies(tmp_path, inputs):
     args, calls, _ = inputs
     args["identity"]["query_selection"] = {"sha256": "a" * 64}

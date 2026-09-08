@@ -6,7 +6,7 @@ import json
 import os
 import time
 from collections.abc import Callable
-from contextlib import AbstractContextManager, nullcontext
+from contextlib import AbstractContextManager, ExitStack, nullcontext
 from pathlib import Path
 
 import numpy as np
@@ -34,6 +34,7 @@ def run_expanded_blocks(
     reuse_block: Callable[[int, int], dict[str, np.ndarray] | None] | None = None,
     verify_only: bool = False,
     selected_queries: np.ndarray | None = None,
+    query_major: bool = False,
 ) -> dict:
     """Schedule validated blocks; callbacks own pinned input and expert loading.
 
@@ -49,6 +50,13 @@ def run_expanded_blocks(
     ):
         raise ValueError("expanded pool and positive execution slice required")
     validate_prerequisites()
+    if query_major and (
+        identity.get("pool") != "D1"
+        or identity.get("input_reuse_order") != "query_major_single_fp32_input_v1"
+    ):
+        raise ValueError("query-major reuse requires explicit D1 identity amendment")
+    if not query_major and "input_reuse_order" in identity:
+        raise ValueError("query-major identity cannot silently use family-major execution")
     if (identity["pool"] == "DENSE_OLD") != (reuse_block is not None):
         raise ValueError("DENSE requires explicit D0 reuse; D1 cannot borrow D0 query blocks")
     groups = expanded_family_queries(
@@ -90,7 +98,7 @@ def run_expanded_blocks(
     context = (
         nullcontext() if verify_only else ExclusiveLease(output.parent / "CURRENT_REPLAY.lock")
     )
-    with context:
+    with context, ExitStack() as resident:
         validate_prerequisites()
         if not resource_ok():
             return result("PAUSED_RESOURCE")
@@ -104,8 +112,26 @@ def run_expanded_blocks(
             if verify_only:
                 return result("EXPANDED_CACHE_INCOMPLETE")
             write_new_json(identity_path, identity)
-        for family, queries in groups.items():
-            history = history_loader(family // 4)
+        history_cache: dict[int, np.ndarray] = {}
+        inference_cache: dict[int, Callable[[int], dict[str, np.ndarray]]] = {}
+        ordered = (
+            (
+                (family, np.asarray([query], dtype=np.int64))
+                for query, family in sorted(
+                    (int(query), family) for family, queries in groups.items() for query in queries
+                )
+            )
+            if query_major
+            else groups.items()
+        )
+        for family, queries in ordered:
+            outer = family // 4
+            if query_major:
+                if outer not in history_cache:
+                    history_cache[outer] = history_loader(outer)
+                history = history_cache[outer]
+            else:
+                history = history_loader(outer)
             if history.shape != index["valid"].shape or history.dtype != np.int64:
                 raise ValueError("expanded history shape or identity dtype differs")
             pending = []
@@ -157,7 +183,15 @@ def run_expanded_blocks(
             validate_prerequisites()
             if not resource_ok():
                 return result("PAUSED_RESOURCE")
-            with inference_family(family) as infer:
+            if query_major:
+                if family not in inference_cache:
+                    inference_cache[family] = resident.enter_context(inference_family(family))
+                    if not resource_ok():
+                        return result("PAUSED_RESOURCE")
+                family_context = nullcontext(inference_cache[family])
+            else:
+                family_context = inference_family(family)
+            with family_context as infer:
                 for qi, stem in pending:
                     validate_prerequisites()
                     if not resource_ok():

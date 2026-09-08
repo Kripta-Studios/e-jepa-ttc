@@ -17,6 +17,7 @@ from .expanded_inference import expanded_inference_family
 from .expanded_replay_plan import inspect_expanded_replay, verify_d1_index_ancestry
 from .expanded_replay_queue import run_expanded_blocks
 from .expanded_stream_support import verify_expanded_stream_support, verify_stream_receipts
+from .prepared_query_input import PreparedQueryInput
 from .reuse_catalog import D0ReuseCatalog
 
 
@@ -42,6 +43,7 @@ def run_expanded_context_cache(
     verify_only: bool = False,
     selected_queries: np.ndarray | None = None,
     selection_binding: dict | None = None,
+    query_major: bool = False,
 ) -> dict:
     """Run only under independently verified expanded authority and absolute limits.
 
@@ -53,6 +55,8 @@ def run_expanded_context_cache(
     """
     if pool not in {"D1", "DENSE_OLD"}:
         raise ValueError("unknown expanded pool")
+    if query_major and pool != "D1":
+        raise ValueError("query-major shared inputs are currently D1-only")
     if (selected_queries is None) != (selection_binding is None):
         raise ValueError("query subset requires its immutable selection binding")
     if selected_queries is not None and pool != "D1":
@@ -121,6 +125,7 @@ def run_expanded_context_cache(
             "cache_reuse.py",
             "density_selection.py",
             "cached_event_reader.py",
+            "prepared_query_input.py",
         )
     }
     identity = {
@@ -145,6 +150,8 @@ def run_expanded_context_cache(
         "optimizer_updates": 0,
     }
     reuse = None
+    if query_major:
+        identity["input_reuse_order"] = "query_major_single_fp32_input_v1"
     if selection_binding is not None:
         identity["query_selection"] = selection_binding
     if pool == "DENSE_OLD":
@@ -179,6 +186,7 @@ def run_expanded_context_cache(
     torch.backends.cuda.matmul.allow_tf32 = False
     torch.backends.cudnn.allow_tf32 = False
     torch.backends.cudnn.benchmark = False
+    prepared_inputs = PreparedQueryInput() if query_major else None
     return run_expanded_blocks(
         output,
         selected_queries=selected_queries,
@@ -196,11 +204,13 @@ def run_expanded_context_cache(
             allowed_sequences=allowed_sequences,
             preprocessing=prep,
             validate_prerequisites=validate,
+            prepared_inputs=prepared_inputs,
         ),
         validate_prerequisites=validate,
         resource_ok=resource_ok,
         max_new_queries=max_new_queries,
         reuse_block=reuse,
+        query_major=query_major,
         **({"verify_only": True} if verify_only else {}),
     )
 
