@@ -71,6 +71,26 @@ def test_campaign_shell_pins_and_verifier_skip(tmp_path, mode):
             assert len(list(output.glob("*.verify.log"))) == 1
             assert not list(output.glob("*.run.log"))
             assert not (output / "ORCHESTRATOR.lock").exists()
+            state = json.loads((output / "CAMPAIGN_STATE.json").read_text())
+            assert state["status"] == "ALL_DECLARED_STEPS_VERIFIED"
+            assert state["scientific_completion"] is False
+            assert state["verified_steps_this_invocation"] == ["help_fixture"]
+            assert len(list(output.glob("*.exit.json"))) == 1
+            # A killed orchestrator can leave an unlocked file. There is no
+            # matching live fixture worker; auto-resume must reverify outputs.
+            (output / "ORCHESTRATOR.lock").touch()
+            again = subprocess.run(
+                args, capture_output=True, text=True, encoding="utf-8", timeout=90
+            )
+            assert again.returncode == 0, again.stdout + again.stderr
+            assert len(list(output.glob("*.verify.log"))) == 2
+            assert not list(output.glob("*.run.log"))
+            events = [
+                json.loads(line) for line in (output / "events.jsonl").read_text().splitlines()
+            ]
+            assert len({row["run_id"] for row in events}) == 2
+            assert any(row["status"] == "RECOVERED_TERMINAL_ORCHESTRATOR" for row in events)
+            assert not (output / "ORCHESTRATOR.lock").exists()
 
 
 @pytest.mark.parametrize("attempt_report", [False, True])
@@ -157,6 +177,11 @@ def test_resource_retry_uses_resume_and_keeps_logs(tmp_path, attempt_report):
         assert not (output / "ORCHESTRATOR.lock").exists()
         invocations = list(output.glob("*.command.json"))
         assert len(invocations) == 5
+        state_value = json.loads((output / "CAMPAIGN_STATE.json").read_text())
+        assert state_value["status"] == "ALL_DECLARED_STEPS_VERIFIED"
+        events = [json.loads(line) for line in (output / "events.jsonl").read_text().splitlines()]
+        assert any(row["status"] == "PAUSED_RESOURCE" for row in events)
+        assert len(list(output.glob("*.exit.json"))) == 5
         reports = list(output.glob("*.run.log.report.json"))
         assert len(reports) == (2 if attempt_report else 0)
         if attempt_report:
