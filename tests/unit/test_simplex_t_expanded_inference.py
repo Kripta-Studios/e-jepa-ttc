@@ -10,7 +10,10 @@ from e_jepa_ttc.simplex_t.expanded_inference import expanded_inference_family
 
 @pytest.mark.parametrize("failure", ["", "authority", "role", "inactive", "weights"])
 @pytest.mark.parametrize("scope", ["expanded", "original_qa"])
-def test_adapter_uses_h16_layout_and_explicit_train_role(tmp_path, monkeypatch, failure, scope):
+@pytest.mark.parametrize("shared_input", [False, True])
+def test_adapter_uses_h16_layout_and_explicit_train_role(
+    tmp_path, monkeypatch, failure, scope, shared_input
+):
     import e_jepa_ttc.simplex_t.expanded_inference as module
 
     checkpoint = tmp_path / "weights"
@@ -103,6 +106,7 @@ def test_adapter_uses_h16_layout_and_explicit_train_role(tmp_path, monkeypatch, 
         preprocessing={"roi_size": 2, "event_pixel_diff": 1},
         validate_prerequisites=validate,
         producer_scope=scope,
+        prepared_inputs=module.PreparedQueryInput() if shared_input else None,
     )
     if failure:
         with pytest.raises(ValueError), expanded_inference_family(family_id, **args) as infer:
@@ -113,7 +117,12 @@ def test_adapter_uses_h16_layout_and_explicit_train_role(tmp_path, monkeypatch, 
     else:
         with expanded_inference_family(family_id, **args) as infer:
             result = infer(0)
-        assert len(loads) == 3 and len(reads) == 1 and len(forwards) == 1
+            if shared_input:
+                repeated = infer(0)
+                for name in result:
+                    np.testing.assert_array_equal(result[name], repeated[name])
+        assert len(loads) == 3 and len(reads) == 1
+        assert len(forwards) == (2 if shared_input else 1)
         assert closes == [True]
         assert result["features145"].shape == (2, 145)
         np.testing.assert_array_equal(result["anchor_us"], [250000, 300000])

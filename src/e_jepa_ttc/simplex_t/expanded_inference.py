@@ -18,6 +18,7 @@ from e_jepa_ttc.training.stage61_pair_head import load_pair_head
 from .cached_event_reader import ReaderPool
 from .context_raw_union import encode_context_union
 from .expert_features import extract_family
+from .prepared_query_input import PreparedQueryInput
 
 
 @contextmanager
@@ -33,6 +34,7 @@ def expanded_inference_family(
     preprocessing: dict,
     validate_prerequisites: Callable[[], None],
     producer_scope: Literal["expanded", "original_qa"] = "expanded",
+    prepared_inputs: PreparedQueryInput | None = None,
 ) -> Iterator[Callable[[int], dict[str, np.ndarray]]]:
     """Load a family once and emit exactly the original H16 FP32 query layout.
 
@@ -102,16 +104,37 @@ def expanded_inference_family(
                 or (history[qi, mask] < 0).any()
             ):
                 raise ValueError("invalid active H16 history")
-            tensor = encode_context_union(
-                readers.get(raw_path),
-                windows,
-                index["lag_us"],
-                mask,
-                tuple(index["square_xyxy"][qi]),
-                sequence_id=sequence,
-                roi_size=preprocessing["roi_size"],
-                event_pixel_diff=preprocessing["event_pixel_diff"],
-            )
+
+            def prepare() -> torch.Tensor:
+                return encode_context_union(
+                    readers.get(raw_path),
+                    windows,
+                    index["lag_us"],
+                    mask,
+                    tuple(index["square_xyxy"][qi]),
+                    sequence_id=sequence,
+                    roi_size=preprocessing["roi_size"],
+                    event_pixel_diff=preprocessing["event_pixel_diff"],
+                )
+
+            if prepared_inputs is None:
+                tensor = prepare()
+            else:
+                # Producer identity deliberately stays OUT of sensor input reuse.
+                # All producer-dependent extraction and output binding below remain separate.
+                input_key = (
+                    str(raw_path).encode("utf-8"),
+                    sequence.encode("utf-8"),
+                    windows.dtype.str.encode(),
+                    windows.tobytes(),
+                    index["lag_us"].dtype.str.encode(),
+                    index["lag_us"].tobytes(),
+                    mask.tobytes(),
+                    np.asarray(index["square_xyxy"][qi], dtype="<f8").tobytes(),
+                    str(preprocessing["roi_size"]).encode(),
+                    repr(preprocessing["event_pixel_diff"]).encode(),
+                )
+                tensor = prepared_inputs.get(input_key, prepare)
             delta = torch.tensor(np.diff(windows[:, 1]) / 1e6, dtype=torch.float32)
             arrays = extract_family(
                 models[0], models[1], models[2], tensor.to(device), delta.repeat(16, 1).to(device)
