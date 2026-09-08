@@ -9,6 +9,7 @@ from pathlib import Path
 import numpy as np
 
 from e_jepa_ttc.artifacts.simplex_t_preflight import sha256, write_new_json
+from e_jepa_ttc.simplex_t.lifecycle import admitted
 from e_jepa_ttc.simplex_t.reuse_catalog import D0ReuseCatalog
 
 
@@ -17,6 +18,12 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--worktree", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--outer", type=int, choices=(0, 1, 2), default=0)
+    parser.add_argument(
+        "--compiled-sha256",
+        default="498e5bb23d93a23f7513c6f268620138da084ed39e73c9164e958554d8b13cb4",
+    )
+    parser.add_argument("--all-blocks", action="store_true")
     args = parser.parse_args()
     if args.output.exists():
         raise FileExistsError("preserve reuse QA evidence")
@@ -42,15 +49,15 @@ def main() -> None:
             indices.append({name: archive[name] for name in archive.files})
     old, dense = indices
     catalog = D0ReuseCatalog(
-        compiled=base / "compiled_context/outer0",
-        compiled_sha256="498e5bb23d93a23f7513c6f268620138da084ed39e73c9164e958554d8b13cb4",
+        compiled=base / f"compiled_context/outer{args.outer}",
+        compiled_sha256=args.compiled_sha256,
         cache=cache,
         index_root=roots[0],
-        dedup=base / "query_context_dedup/outer0.npz",
-        outer=0,
+        dedup=base / f"query_context_dedup/outer{args.outer}.npz",
+        outer=args.outer,
     )
-    reuse_plan = catalog.plan(dense["tokens"], dense["producer_family"][0])
-    if len(reuse_plan) != 5461:
+    reuse_plan = catalog.plan(dense["tokens"], dense["producer_family"][args.outer])
+    if len(reuse_plan) != (5462 if args.outer == 2 else 5461):
         raise ValueError("registered D0 reuse coverage changed")
     key_sets, histories = [], []
     for root, pin in (
@@ -63,15 +70,13 @@ def main() -> None:
         manifest_path = root / "DEDUP_MANIFEST.json"
         if pin is not None and sha256(manifest_path) != pin:
             raise ValueError("dense deduplication seal changed")
-        record = json.loads(manifest_path.read_text(encoding="utf-8"))["outputs"][0]
-        path = root / "outer0.npz"
+        record = json.loads(manifest_path.read_text(encoding="utf-8"))["outputs"][args.outer]
+        path = root / f"outer{args.outer}.npz"
         expected = record["sha256"]
         if root.name == "query_context_dedup":
             # Compiled D0 manifest pins the actual dedup payload used by heads.
-            compiled = base / "compiled_context/outer0/COMPILED.json"
-            if sha256(compiled) != (
-                "498e5bb23d93a23f7513c6f268620138da084ed39e73c9164e958554d8b13cb4"
-            ):
+            compiled = base / f"compiled_context/outer{args.outer}/COMPILED.json"
+            if sha256(compiled) != args.compiled_sha256:
                 raise ValueError("original compiled D0 manifest changed")
             expected = json.loads(compiled.read_text(encoding="utf-8"))["dedup_sha256"]
         if sha256(path) != expected:
@@ -81,12 +86,20 @@ def main() -> None:
             histories.append(archive["history"])
     positions = {str(token): i for i, token in enumerate(dense["tokens"])}
     records = []
-    for family in range(3):
-        candidates = np.flatnonzero(old["producer_family"][0] == family)
-        selected = np.unique(np.concatenate((candidates[:8], candidates[-8:])))
+    for family in range(args.outer * 4, args.outer * 4 + 3):
+        candidates = np.flatnonzero(old["producer_family"][args.outer] == family)
+        selected = (
+            candidates
+            if args.all_blocks
+            else np.unique(np.concatenate((candidates[:8], candidates[-8:])))
+        )
         for row in selected:
+            if len(records) % 64 == 0:
+                if not admitted([args.worktree])["has_headroom"]:
+                    raise RuntimeError("RESOURCE_PAUSE during read-only reuse audit")
+                print(json.dumps({"outer": args.outer, "verified": len(records)}), flush=True)
             target = positions[str(old["tokens"][row])]
-            if dense["producer_family"][0, target] != family:
+            if dense["producer_family"][args.outer, target] != family:
                 raise ValueError("reuse changes producer family")
             path = cache / f"family{family:02d}_query{row:05d}.npz"
             receipt = json.loads(path.with_suffix(".json").read_text(encoding="utf-8"))
@@ -122,12 +135,15 @@ def main() -> None:
         args.output,
         {
             "status": "REAL_D0_DENSE_BLOCK_REUSE_EXACT",
-            "outer": 0,
+            "outer": args.outer,
             "queries": len(records),
             "catalog_reused_queries": len(reuse_plan),
             "catalog_sha256": sha256(args.worktree / "src/e_jepa_ttc/simplex_t/reuse_catalog.py"),
             "records": records,
-            "scope": "first/last eight input-index queries per inner family; not all cached blocks",
+            "scope": "all reusable TRAIN blocks of this outer fold"
+            if args.all_blocks
+            else "first/last eight input-index queries per inner family; not all cached blocks",
+            "compiled_sha256": args.compiled_sha256,
             "cache_blocks_written": 0,
             "targets_read": False,
             "scores_read": False,
