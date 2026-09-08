@@ -165,6 +165,33 @@ def test_read_only_verification_never_takes_lease_or_infers(tmp_path, inputs, bl
     }
 
 
+@pytest.mark.parametrize("reject_second", [False, True])
+def test_resident_query_major_validates_each_inference_without_duplicate(
+    tmp_path, inputs, reject_second
+):
+    args, calls, _ = inputs
+    args["identity"]["input_reuse_order"] = "query_major_single_fp32_input_v1"
+    args["max_new_queries"] = 2
+    checks = []
+
+    def validate():
+        checks.append(len(calls))
+        if reject_second and calls:
+            raise ValueError("authority changed after first inference")
+
+    args["validate_prerequisites"] = validate
+    if reject_second:
+        with pytest.raises(ValueError, match="authority changed"):
+            run_expanded_blocks(tmp_path / "cache", **args, query_major=True)
+        assert calls == [0]
+    else:
+        result = run_expanded_blocks(tmp_path / "cache", **args, query_major=True)
+        assert result["new_blocks"] == 2
+        assert calls == [0, 1]
+    # Entry, lease, first model load, first inference, second inference.
+    assert checks == [0, 0, 0, 0, 1]
+
+
 def test_read_only_verification_rejects_changed_block(tmp_path, inputs):
     args, _, _ = inputs
     output = tmp_path / "cache"

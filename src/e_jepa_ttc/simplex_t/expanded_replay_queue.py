@@ -180,7 +180,11 @@ def run_expanded_blocks(
                 continue
             if verify_only:
                 return result("EXPANDED_CACHE_INCOMPLETE")
-            validate_prerequisites()
+            # Resident query-major families need no second full authority read:
+            # the mandatory per-block check below still precedes every inference.
+            # Keep the separate check before loading a new producer context.
+            if not query_major or family not in inference_cache:
+                validate_prerequisites()
             if not resource_ok():
                 return result("PAUSED_RESOURCE")
             if query_major:
