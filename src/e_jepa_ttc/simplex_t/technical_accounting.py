@@ -7,6 +7,8 @@ import json
 from collections.abc import Callable
 from pathlib import Path
 
+from .lifecycle import TECHNICAL_UPDATE_CAP
+
 
 def verify_technical_accounting(
     reconciliation: Path,
@@ -55,7 +57,7 @@ def verify_technical_accounting(
         raise ValueError("technical reconciliation contract differs")
     reservations = budget["reservations"]
     reserved = sum(count(value) for value in reservations.values())
-    if reserved > 1065:
+    if reserved > TECHNICAL_UPDATE_CAP:
         raise ValueError("technical reservation cap exceeded")
     seen, classes, failures = set(), {}, []
     uncertain_upper = 0

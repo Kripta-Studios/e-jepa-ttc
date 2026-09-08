@@ -12,7 +12,7 @@ from e_jepa_ttc.artifacts.simplex_t_preflight import write_new_json
 
 from .arms import resolve_arm
 from .freeze_integrity import FrozenFile, verify_code_commit, verify_files, verify_stage_sources
-from .lifecycle import ExclusiveLease
+from .lifecycle import TECHNICAL_UPDATE_CAP, ExclusiveLease
 from .phase_manifest import fit_key
 from .registry import registered_graph
 
@@ -105,7 +105,7 @@ def _content(
     ):
         raise ValueError("invalid technical reservations")
     reserved = sum(reservations.values())
-    if reserved > 1065:
+    if reserved > TECHNICAL_UPDATE_CAP:
         raise ValueError("technical work exceeds registered cap")
     primary = "D1" if flags["d1"] else "D0"
     return {

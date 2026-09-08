@@ -1,0 +1,16 @@
+{
+  "id": "SIMPLEX_T_CONSUMER_BINDING_QA_2026-09-08",
+  "authority": "Authorized completion and verification of the full companion launcher before scientific fitting",
+  "scope": "One full suite after correcting omitted pre-fit consumer pins, H16 read-only verification, and the stale budget test",
+  "previous_technical_reservation_cap": 1065,
+  "technical_reservation_cap": 1085,
+  "additional_authorized_optimizer_updates_max": 20,
+  "operation_id": "full_unit_qa_consumer_bindings",
+  "retained_previous_failure_id": "tests/unit/test_simplex_t_scientific_freeze.py::test_rejects_incomplete_or_changed_contract[budget]",
+  "scientific_update_cap": 210000,
+  "total_new_optimizer_update_cap": 250000,
+  "new_scientific_arms_authorized": false,
+  "numerical_recipe_changed": false,
+  "historical_work_removed": false,
+  "scores_used": false
+}

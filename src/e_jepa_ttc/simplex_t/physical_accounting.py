@@ -5,6 +5,8 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import Any
 
+from .lifecycle import TECHNICAL_UPDATE_CAP
+
 
 def audit_physical_work(
     state: dict,
@@ -25,7 +27,7 @@ def audit_physical_work(
         or len(expected_graph) > 84
         or any(type(n) is not int or n != 2500 for n in expected_graph.values())
         or type(technical_reserved) is not int
-        or not 0 <= technical_reserved <= 1065
+        or not 0 <= technical_reserved <= TECHNICAL_UPDATE_CAP
     ):
         raise ValueError("bounded registered graph and technical reservation required")
     if (

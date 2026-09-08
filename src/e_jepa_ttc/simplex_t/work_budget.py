@@ -15,7 +15,7 @@ from typing import Any
 from e_jepa_ttc.artifacts.risk_geometry_v10 import atomic_json
 from e_jepa_ttc.artifacts.simplex_t_preflight import sha256
 
-from .lifecycle import ExclusiveLease
+from .lifecycle import TECHNICAL_UPDATE_CAP, ExclusiveLease
 
 
 class WorkBudget:
@@ -28,7 +28,10 @@ class WorkBudget:
             or any(type(n) is not int or n != 2500 for n in graph.values())
         ):
             raise ValueError("invalid scientific graph")
-        if type(technical_reserved) is not int or not 0 <= technical_reserved <= 1065:
+        if (
+            type(technical_reserved) is not int
+            or not 0 <= technical_reserved <= TECHNICAL_UPDATE_CAP
+        ):
             raise ValueError("invalid technical reservation")
         self.path, self.graph, self.technical_reserved = path, graph, technical_reserved
 

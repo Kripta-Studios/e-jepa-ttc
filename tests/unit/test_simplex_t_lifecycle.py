@@ -4,7 +4,12 @@ import json
 
 import pytest
 
-from e_jepa_ttc.simplex_t.lifecycle import ExclusiveLease, TechnicalBudget, UpdateLedger
+from e_jepa_ttc.simplex_t.lifecycle import (
+    TECHNICAL_UPDATE_CAP,
+    ExclusiveLease,
+    TechnicalBudget,
+    UpdateLedger,
+)
 
 
 def test_technical_reservations_survive_restart_and_refuse_repeat(tmp_path):
@@ -15,13 +20,13 @@ def test_technical_reservations_survive_restart_and_refuse_repeat(tmp_path):
     with pytest.raises(ValueError, match="already reserved"):
         TechnicalBudget(path).reserve("cpu_profile_500", 500)
     with pytest.raises(ValueError, match="budget exceeded"):
-        TechnicalBudget(path).reserve("new_probe", 481)
+        TechnicalBudget(path).reserve("new_probe", TECHNICAL_UPDATE_CAP - 585 + 1)
     assert path.read_bytes() == original
-    state = TechnicalBudget(path).reserve("remaining", 480)
-    assert sum(state["reservations"].values()) == 1065
+    state = TechnicalBudget(path).reserve("remaining", TECHNICAL_UPDATE_CAP - 585)
+    assert sum(state["reservations"].values()) == TECHNICAL_UPDATE_CAP
 
 
-@pytest.mark.parametrize("amount", [True, 0, -1, 1066, 1.5])
+@pytest.mark.parametrize("amount", [True, 0, -1, TECHNICAL_UPDATE_CAP + 1, 1.5])
 def test_invalid_technical_reservations(tmp_path, amount):
     with pytest.raises(ValueError, match="invalid"):
         TechnicalBudget(tmp_path / "technical.json").reserve("probe", amount)
@@ -59,6 +64,6 @@ def test_ledger_refuses_new_arms_and_partial_completion(tmp_path):
         ledger.transaction("reserve", "invented")
     with pytest.raises(ValueError, match="nonmonotonic"):
         ledger.transaction("progress", "canonical_fold0_seed7", 99)
-    ledger.transaction("technical", "qa", 1065)
+    ledger.transaction("technical", "qa", TECHNICAL_UPDATE_CAP)
     with pytest.raises(ValueError, match="budget"):
         ledger.transaction("technical", "qa", 1)

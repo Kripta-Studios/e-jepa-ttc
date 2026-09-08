@@ -10,6 +10,38 @@ import pytest
 from e_jepa_ttc.artifacts.simplex_t_preflight import sha256
 
 
+def test_consumer_inventory_covers_old_router_and_all_history_pools(tmp_path):
+    work = Path(__file__).resolve().parents[2]
+    module = runpy.run_path(str(work / "scripts/materialize_simplex_t_freeze_launch.py"))
+    historical = tmp_path / "historical"
+    rows = module["consumer_references"](tmp_path, historical)
+    paths = {path for path, _ in rows}
+    assert len(rows) == len(paths) == 15
+    for fold in range(3):
+        for suffix in ("csv", "npz"):
+            assert historical / "tables" / f"outer{fold}_outer_dev.{suffix}" in paths
+    assert historical / "FROZEN_EXPERT_TABLE_INDEX.json" in paths
+    assert (
+        historical / "frozen_audit/extracted_input/run/stage65/ALL_RIDGE_FITS_FROZEN.json" in paths
+    )
+    assert tmp_path / "artifacts/simplex_t/T1/risk17_frozen_replay/REPLAY.json" in paths
+    for prefix in ("", "expansion_", "dense_"):
+        assert (
+            tmp_path
+            / "artifacts/simplex_t/T1"
+            / (prefix + "query_context_index")
+            / "INDEX_MANIFEST.json"
+            in paths
+        )
+        assert (
+            tmp_path
+            / "artifacts/simplex_t/T1"
+            / (prefix + "query_context_dedup")
+            / "DEDUP_MANIFEST.json"
+            in paths
+        )
+
+
 @pytest.mark.parametrize("mode", ["verify", "run", "bad_pin", "same_output"])
 def test_missing_inputs_are_explicit_and_do_not_write(tmp_path, monkeypatch, capsys, mode):
     work = Path(__file__).resolve().parents[2]

@@ -12,6 +12,7 @@ import pytest
 from e_jepa_ttc.simplex_t.arms import resolve_arm
 from e_jepa_ttc.simplex_t.freeze_integrity import REQUIRED_CATEGORIES, FrozenFile
 from e_jepa_ttc.simplex_t.frozen_phase import run_frozen_phase
+from e_jepa_ttc.simplex_t.lifecycle import TECHNICAL_UPDATE_CAP
 from e_jepa_ttc.simplex_t.phase_manifest import fit_key
 from e_jepa_ttc.simplex_t.registry import registered_graph
 from e_jepa_ttc.simplex_t.scientific_freeze import (
@@ -78,7 +79,7 @@ def fixture_inputs(root: Path, failure: str = "") -> dict:
     elif failure == "authority":
         prepared["contract"]["authority_sha256"] = "c" * 64
     elif failure == "budget":
-        values["qa"]["reservations"]["probe"] = 1046
+        values["qa"]["reservations"]["probe"] = TECHNICAL_UPDATE_CAP + 1
     elif failure == "candidate":
         prepared["contract"]["fits"].pop()
     elif failure == "missing_source_qa":

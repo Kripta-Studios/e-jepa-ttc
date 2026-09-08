@@ -8,6 +8,8 @@ from pathlib import Path
 
 from e_jepa_ttc.artifacts.simplex_t_preflight import sha256
 
+from .lifecycle import TECHNICAL_UPDATE_CAP
+
 UNIT_QA_FILES = frozenset(
     {
         "CONTRACT.json",
@@ -91,7 +93,7 @@ def verify_companion_unit_qa(
     if (
         ledger.get("schema") != "simplex_t_technical_budget_v1"
         or any(type(value) is not int or value < 1 for value in reservations.values())
-        or sum(reservations.values()) > 1065
+        or sum(reservations.values()) > TECHNICAL_UPDATE_CAP
         or reservations.get(contract.get("operation_id")) != 20
     ):
         raise ValueError("unit QA operation missing from technical budget")

@@ -15,6 +15,28 @@ from e_jepa_ttc.simplex_t.lifecycle import admitted
 from e_jepa_ttc.simplex_t.scientific_admission import validate_scientific_admission
 
 
+def consumer_references(work: Path, historical: Path) -> list[tuple[Path, str]]:
+    """Enumerate the exact OLD/control/history files consumed after freeze."""
+    result = [
+        (historical / "FROZEN_EXPERT_TABLE_INDEX.json", "producers"),
+        (
+            historical / "frozen_audit/extracted_input/run/stage65/ALL_RIDGE_FITS_FROZEN.json",
+            "producers",
+        ),
+        (work / "artifacts/simplex_t/T1/risk17_frozen_replay/REPLAY.json", "producers"),
+    ]
+    for fold in range(3):
+        for suffix in ("csv", "npz"):
+            result.append((historical / "tables" / f"outer{fold}_outer_dev.{suffix}", "producers"))
+    for prefix in ("", "expansion_", "dense_"):
+        for folder, filename in (
+            ("query_context_index", "INDEX_MANIFEST.json"),
+            ("query_context_dedup", "DEDUP_MANIFEST.json"),
+        ):
+            result.append((work / "artifacts/simplex_t/T1" / (prefix + folder) / filename, "time"))
+    return result
+
+
 def main() -> int:
     """Materialize metadata, not a freeze; the publisher independently validates it."""
     parser = argparse.ArgumentParser(description=__doc__)
@@ -130,6 +152,8 @@ def main() -> int:
         entry = ack["interfaces"][field]
         add(Path(entry["path"]), category, entry["sha256"])
     add(Path(ancestry["path"]), "producers", ancestry["sha256"])
+    for path, category in consumer_references(work, roots["historical"]):
+        add(path, category)
     add(
         work / "artifacts/simplex_t/T1/query_context_index/INDEX_MANIFEST.json",
         "time",
@@ -139,6 +163,7 @@ def main() -> int:
         "simplex_t_throughput_amendment.json",
         "simplex_t_resource_amendment.json",
         "simplex_t_technical_qa_amendment.json",
+        "simplex_t_consumer_binding_qa_amendment.json",
     ):
         add(work / "configs/experiment" / name, "config")
     add(roots["handoff"] / "configs/RESOLVED_FIT_MANIFEST.schema.json", "schemas")

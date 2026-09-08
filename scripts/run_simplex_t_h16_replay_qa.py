@@ -14,6 +14,7 @@ import torch
 from e_jepa_ttc.artifacts.simplex_t_preflight import sha256
 from e_jepa_ttc.simplex_t.coordination import shared_write_admission, verified_ack
 from e_jepa_ttc.simplex_t.expanded_inference import expanded_inference_family
+from e_jepa_ttc.simplex_t.h16_qa_evidence import verify_h16_execution_identity, verify_h16_replay
 from e_jepa_ttc.simplex_t.h16_qa_execution import execute_h16_qa
 from e_jepa_ttc.simplex_t.h16_qa_plan import plan_h16_replay_qa
 from e_jepa_ttc.simplex_t.lifecycle import admitted
@@ -25,12 +26,45 @@ def main() -> None:
     parser.add_argument("--preprocessing-manifest", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--other-reserved-bytes", type=int, required=True)
+    parser.add_argument(
+        "--verify-only",
+        action="store_true",
+        help="Verify saved H16 QA without inference; exit 10 if absent",
+    )
     args = parser.parse_args()
     if args.other_reserved_bytes < 0:
         raise ValueError("nonnegative outstanding output reservation required")
     paths_hash = sha256(args.local_paths)
     paths = json.loads(args.local_paths.read_text(encoding="utf-8"))
     work = Path(paths["worktree"]).resolve(strict=True)
+
+    def resource_ok() -> bool:
+        snapshot = admitted([work])
+        return snapshot["has_headroom"] and shared_write_admission(
+            snapshot["written_volume_free_bytes"][0], args.other_reserved_bytes + 67_108_864
+        )
+
+    if args.verify_only:
+        if not resource_ok():
+            raise SystemExit(3)
+        report = args.output / "QA.json"
+        if not report.is_file():
+            print(json.dumps({"status": "H16_QA_ABSENT", "optimizer_updates": 0}))
+            raise SystemExit(10)
+        try:
+            result = verify_h16_replay(
+                work,
+                args.output,
+                sha256(report),
+                validate_execution_identity=lambda record: verify_h16_execution_identity(
+                    work, args.local_paths, record
+                ),
+                resource_ok=resource_ok,
+            )
+        except InterruptedError:
+            raise SystemExit(3) from None
+        print(json.dumps(result))
+        return
     base = work / "artifacts/simplex_t"
     plan = plan_h16_replay_qa(work)
     identity = json.loads((base / "T1/context_features_fp32/IDENTITY.json").read_text("utf-8"))
@@ -106,12 +140,6 @@ def main() -> None:
             preprocessing=prep,
             validate_prerequisites=validate,
             producer_scope="original_qa",
-        )
-
-    def resource_ok() -> bool:
-        snapshot = admitted([work])
-        return snapshot["has_headroom"] and shared_write_admission(
-            snapshot["written_volume_free_bytes"][0], args.other_reserved_bytes + 67_108_864
         )
 
     result = execute_h16_qa(
