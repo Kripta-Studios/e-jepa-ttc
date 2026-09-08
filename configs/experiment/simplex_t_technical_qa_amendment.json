@@ -1,0 +1,15 @@
+{
+  "id": "SIMPLEX_T_FINAL_PIPELINE_QA_2026-09-08",
+  "authority": "User authorization to finish and verify the complete T0-T6 launcher before scientific fitting",
+  "scope": "One accounted full companion CPU unit suite after complete-pipeline implementation",
+  "previous_technical_reservation_cap": 1045,
+  "technical_reservation_cap": 1065,
+  "additional_authorized_optimizer_updates_max": 20,
+  "operation_id": "full_unit_qa_complete_pipeline",
+  "scientific_update_cap": 210000,
+  "total_new_optimizer_update_cap": 250000,
+  "new_scientific_arms_authorized": false,
+  "numerical_recipe_changed": false,
+  "retained_failure_and_uncertain_work_removed": false,
+  "scores_used": false
+}

@@ -135,7 +135,11 @@ def main() -> int:
         "time",
         "93a4f62e5025c5046fc82fcb1428a428f8a8df869b34486b92d5c753b0f68a3b",
     )
-    for name in ("simplex_t_throughput_amendment.json", "simplex_t_resource_amendment.json"):
+    for name in (
+        "simplex_t_throughput_amendment.json",
+        "simplex_t_resource_amendment.json",
+        "simplex_t_technical_qa_amendment.json",
+    ):
         add(work / "configs/experiment" / name, "config")
     add(roots["handoff"] / "configs/RESOLVED_FIT_MANIFEST.schema.json", "schemas")
     add(roots["handoff"] / "configs/CAMPAIGN.json", "config")

@@ -25,7 +25,7 @@ def audit_physical_work(
         or len(expected_graph) > 84
         or any(type(n) is not int or n != 2500 for n in expected_graph.values())
         or type(technical_reserved) is not int
-        or not 0 <= technical_reserved <= 1045
+        or not 0 <= technical_reserved <= 1065
     ):
         raise ValueError("bounded registered graph and technical reservation required")
     if (

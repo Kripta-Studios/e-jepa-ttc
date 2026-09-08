@@ -15,13 +15,13 @@ def test_technical_reservations_survive_restart_and_refuse_repeat(tmp_path):
     with pytest.raises(ValueError, match="already reserved"):
         TechnicalBudget(path).reserve("cpu_profile_500", 500)
     with pytest.raises(ValueError, match="budget exceeded"):
-        TechnicalBudget(path).reserve("new_probe", 461)
+        TechnicalBudget(path).reserve("new_probe", 481)
     assert path.read_bytes() == original
-    state = TechnicalBudget(path).reserve("remaining", 460)
-    assert sum(state["reservations"].values()) == 1045
+    state = TechnicalBudget(path).reserve("remaining", 480)
+    assert sum(state["reservations"].values()) == 1065
 
 
-@pytest.mark.parametrize("amount", [True, 0, -1, 1046, 1.5])
+@pytest.mark.parametrize("amount", [True, 0, -1, 1066, 1.5])
 def test_invalid_technical_reservations(tmp_path, amount):
     with pytest.raises(ValueError, match="invalid"):
         TechnicalBudget(tmp_path / "technical.json").reserve("probe", amount)
@@ -59,6 +59,6 @@ def test_ledger_refuses_new_arms_and_partial_completion(tmp_path):
         ledger.transaction("reserve", "invented")
     with pytest.raises(ValueError, match="nonmonotonic"):
         ledger.transaction("progress", "canonical_fold0_seed7", 99)
-    ledger.transaction("technical", "qa", 1045)
+    ledger.transaction("technical", "qa", 1065)
     with pytest.raises(ValueError, match="budget"):
         ledger.transaction("technical", "qa", 1)

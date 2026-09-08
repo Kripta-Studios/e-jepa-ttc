@@ -76,8 +76,8 @@ class TechnicalBudget:
         self.path = path
 
     def reserve(self, key: str, updates: int) -> dict[str, Any]:
-        """Refuse duplicates; cap 1045 includes retained failures and corrected unit QA."""
-        if not key or type(updates) is not int or not 1 <= updates <= 1045:
+        """Refuse duplicates; cap 1065 includes retained failures and final pipeline QA."""
+        if not key or type(updates) is not int or not 1 <= updates <= 1065:
             raise ValueError("invalid technical reservation")
         with ExclusiveLease(self.path.with_suffix(".lock")):
             state = (
@@ -92,7 +92,7 @@ class TechnicalBudget:
                 raise ValueError("invalid saved technical reservation")
             if key in reservations:
                 raise ValueError("technical operation already reserved; do not repeat")
-            if sum(reservations.values()) + updates > 1045:
+            if sum(reservations.values()) + updates > 1065:
                 raise ValueError("technical budget exceeded")
             reservations[key] = updates
             atomic_json(self.path, state)
@@ -135,7 +135,7 @@ class UpdateLedger:
             else:
                 raise ValueError("unknown ledger operation")
             reserved = len(state["fits"]) * 2500
-            if state["technical_updates"] > 1045 or reserved > 210000:
+            if state["technical_updates"] > 1065 or reserved > 210000:
                 raise ValueError("registered scientific/technical budget exceeded")
             if reserved + state["technical_updates"] > 250000:
                 raise ValueError("absolute optimizer update cap exceeded")
