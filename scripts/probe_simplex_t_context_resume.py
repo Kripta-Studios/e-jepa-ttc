@@ -34,9 +34,14 @@ def main() -> None:
     parser.add_argument("--benchmark", action="store_true")
     parser.add_argument("--device", choices=("cpu", "cuda:0"), default="cpu")
     parser.add_argument("--feature-count", type=int, choices=(17, 145), default=17)
+    parser.add_argument("--hidden", type=int, choices=(64, 160), default=64)
     args = parser.parse_args()
-    if not args.benchmark and (args.device != "cpu" or args.feature_count != 17):
+    if not args.benchmark and (
+        args.device != "cpu" or args.feature_count != 17 or args.hidden != 64
+    ):
         raise ValueError("nonhistorical device/features require explicit --benchmark")
+    if args.feature_count == 145 and args.hidden != 160:
+        raise ValueError("registered latent benchmark requires hidden160")
     paths = json.loads(args.local_paths.read_text(encoding="utf-8"))
     worktree = Path(paths["worktree"])
     lease = (
@@ -125,6 +130,7 @@ def run_probe(args: argparse.Namespace) -> None:
         contract["benchmark"] = {
             "device": args.device,
             "feature_count": args.feature_count,
+            "hidden": args.hidden,
             "batch": 128,
             "precision": "FP32",
             "evaluation_role": "inner_oof",
@@ -168,7 +174,7 @@ def run_probe(args: argparse.Namespace) -> None:
             attempt_started = time.perf_counter()
             result = fit(
                 source,
-                TemporalConfig(feature_count=args.feature_count),
+                TemporalConfig(feature_count=args.feature_count, hidden=args.hidden),
                 args.output / folder,
                 seed=7,
                 freeze_sha256=freeze,
@@ -197,7 +203,9 @@ def run_probe(args: argparse.Namespace) -> None:
         benchmark = None
         if args.benchmark:
             evaluation_started = time.perf_counter()
-            model = TemporalRefiner(TemporalConfig(feature_count=args.feature_count)).float()
+            model = TemporalRefiner(
+                TemporalConfig(feature_count=args.feature_count, hidden=args.hidden)
+            ).float()
             model.load_state_dict(first["model"])
             model = model.to(args.device).eval()
             prediction_hashes = []

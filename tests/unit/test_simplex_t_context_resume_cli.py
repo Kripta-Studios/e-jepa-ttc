@@ -42,8 +42,10 @@ def test_benchmark_does_not_overlap_replay_or_load_sources(tmp_path, monkeypatch
             "--benchmark",
             "--device",
             device,
-            "--feature-count",
-            "145",
+        "--feature-count",
+        "145",
+        "--hidden",
+        "160",
         ],
     )
     with pytest.raises(FileExistsError):
