@@ -55,7 +55,7 @@ def verify_technical_accounting(
         raise ValueError("technical reconciliation contract differs")
     reservations = budget["reservations"]
     reserved = sum(count(value) for value in reservations.values())
-    if reserved > 1020:
+    if reserved > 1025:
         raise ValueError("technical reservation cap exceeded")
     seen, classes, failures = set(), {}, []
     uncertain_upper = 0
