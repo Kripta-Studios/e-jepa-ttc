@@ -255,6 +255,7 @@ def test_dense_dispatch_uses_file_loader_and_preserves_pool_separation(wired, mo
 
     def compose(sources, dense, **kwargs):
         assert kwargs["original_tokens"].tolist() == ["q"]
+        assert kwargs["original_target_ttc"].tolist() == [1.0]
         assert kwargs["dev_sequences"].tolist() == ["dev"]
         assert kwargs["dense_target_ttc"].tolist() == [1.0, 2.0]
         return {
@@ -276,6 +277,7 @@ def test_dense_dispatch_uses_file_loader_and_preserves_pool_separation(wired, mo
                 {
                     "sample_token": ["q"],
                     "sequence_id": ["original" if role == "inner_oof" else "dev"],
+                    "target_ttc": [1.0],
                 }
             )
         },
