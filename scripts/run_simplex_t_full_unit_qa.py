@@ -22,6 +22,8 @@ def main() -> None:
     parser.add_argument("--other-reserved-bytes", type=int, required=True)
     parser.add_argument("--reuse-zero-attempt-evidence", type=Path)
     parser.add_argument("--reuse-zero-attempt-evidence-sha256")
+    parser.add_argument("--prior-interrupted-zero-evidence", type=Path)
+    parser.add_argument("--prior-interrupted-zero-evidence-sha256")
     args = parser.parse_args()
     work = Path.cwd().resolve(strict=True)
     output = args.output.resolve()
@@ -86,6 +88,34 @@ def main() -> None:
         ):
             raise ValueError("historical technical reservation was not wholly unspent")
         reused = {"path": str(evidence.relative_to(work)), "sha256": sha256(evidence)}
+    prior = None
+    if args.prior_interrupted_zero_evidence is not None:
+        interrupted = args.prior_interrupted_zero_evidence.resolve(strict=True)
+        if (
+            reused is None
+            or args.prior_interrupted_zero_evidence_sha256 is None
+            or sha256(interrupted) != args.prior_interrupted_zero_evidence_sha256
+            or not interrupted.is_relative_to(work / "artifacts/simplex_t/T0")
+            or interrupted.name != "ZERO_UPDATE_INTERRUPTED_ATTEMPT.json"
+        ):
+            raise ValueError("pinned interrupted zero-update attempt required")
+        record = json.loads(interrupted.read_text(encoding="utf-8"))
+        saved = interrupted.parent
+        if (
+            record.get("status")
+            != "PRESERVED_EARLY_TEST_FAILURE_INTERRUPTED_BEFORE_OPTIMIZER_UPDATES"
+            or record.get("operation_id") != args.operation_id
+            or any(
+                sha256(saved / name) != digest
+                for name, digest in record["original_attempt_outputs_preserved"].items()
+            )
+            or (saved / "UPDATE_PROGRESS.json").exists()
+            or (saved / "RESULT.json").exists()
+        ):
+            raise ValueError("interrupted QA attempt has unsettled optimizer work")
+        prior = {"path": str(interrupted.relative_to(work)), "sha256": sha256(interrupted)}
+    elif args.prior_interrupted_zero_evidence_sha256 is not None:
+        raise ValueError("interrupted evidence SHA256 requires its path")
     output.mkdir(parents=True)
     write_new_json(
         output / "CONTRACT.json",
@@ -101,6 +131,7 @@ def main() -> None:
             "cuda_visible_devices": "-1",
             "runner_sha256": sha256(Path(__file__)),
             "reused_zero_attempt_reservation": reused,
+            "prior_interrupted_zero_attempt": prior,
         },
     )
     counters = {"attempted_optimizer_updates": 0, "completed_optimizer_updates": 0}

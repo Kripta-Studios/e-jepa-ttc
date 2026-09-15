@@ -13,7 +13,13 @@
     "reason": "Resource pause, exit 3, no attempted or completed optimizer update; original result and JUnit retained."
   },
   "rule": "The existing accounted QA runner may consume that same operation's unused 20-update reservation once, only after verifying the pinned old zero-attempt terminal result, original operation identity, absence of UPDATE_PROGRESS and unchanged persistent ledger. No reservation is refunded or added. All old files and the failed new-reservation attempt remain preserved.",
-  "new_runner_sha256": "435c254733d3fdae39895644bb7c1d1ac1567f55de12c59f538102e7171af30b",
+  "initial_runner_sha256": "435c254733d3fdae39895644bb7c1d1ac1567f55de12c59f538102e7171af30b",
+  "current_runner_sha256": "def416c6a7afb8263907d3599c51e23893b32d5bd09ff49eabb30b65a73b73c0",
+  "additional_interrupted_zero_update_attempt": {
+    "path": "artifacts/simplex_t/T0/full_unit_qa_prefreeze_5c27d48/ZERO_UPDATE_INTERRUPTED_ATTEMPT.json",
+    "sha256": "11be9f148a952efe032f59e2609b420810d3c37d99625c57f48c8c9a228fd51a",
+    "cause": "Current QA discovered an outdated DENSE dispatch test mock. The scoped QA processes were stopped before an AdamW step, with no UPDATE_PROGRESS or terminal RESULT; partial reports and the old attempt remain preserved. The updated runner verifies these files and absence of counter before a further continuation."
+  },
   "technical_cap_unchanged": 1125,
   "technical_ledger_reserved_before_reuse": 1125,
   "technical_updates_executed_by_amendment": 0,
