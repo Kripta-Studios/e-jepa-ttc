@@ -180,6 +180,17 @@ def test_expansion_details_preserve_original_targets_for_matched_weights(tmp_pat
     np.testing.assert_array_equal(sequences, result.sequences)
 
 
+def test_pool_eligibility_metadata_is_distinct_from_garl_target_reference(tmp_path):
+    binding = fixture(tmp_path)
+    pool = json.loads(binding.pool.read_text(encoding="utf-8"))
+    pool["expansion_metadata_sha256"] = "e" * 64
+    binding.pool.write_text(json.dumps(pool), encoding="utf-8")
+    binding = replace(binding, pool_sha256=compute_file_hash(str(binding.pool)))
+    result = load_expansion_inputs(binding, outer=0, feature_count=17, allowed_sequences={"extra"})
+    assert result.tokens.tolist() == ["b", "a"]
+    assert result.target_ttc.tolist() == [3.0, 1.0]
+
+
 @pytest.mark.parametrize("change", ["cache", "metadata", "family", "closed_group"])
 def test_bad_binding_rejected_before_label_read(tmp_path, monkeypatch, change):
     from e_jepa_ttc.simplex_t import expansion_sources

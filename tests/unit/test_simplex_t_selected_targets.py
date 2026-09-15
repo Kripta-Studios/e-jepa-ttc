@@ -5,6 +5,7 @@ import pandas as pd
 import pytest
 
 from e_jepa_ttc.artifacts.hashing import compute_file_hash
+from e_jepa_ttc.evaluation.stage61_nested_pair_router import phase_from_ttc
 from e_jepa_ttc.simplex_t.selected_targets import load_selected_train_targets
 
 
@@ -76,3 +77,16 @@ def test_missing_selected_query_is_not_dropped(tmp_path):
     args["tokens"][1] = "absent"
     with pytest.raises(ValueError, match="missing or foreign"):
         load_selected_train_targets(path, **args)
+
+
+def test_dense_supervision_uses_historical_fp32_ttc_phase(tmp_path):
+    path, args = fixture(tmp_path)
+    labels = pd.read_parquet(path)
+    labels.loc[labels.sample_token == "first", "ttc"] = 8.04442849047379
+    labels.to_parquet(path)
+    args["expected_sha256"] = compute_file_hash(str(path))
+    result = load_selected_train_targets(path, **args)
+    expected = phase_from_ttc(result.target_ttc.astype(np.float32))
+    assert np.array_equal(result.target_phase, expected)
+    assert result.target_ttc.dtype == np.float64
+    assert result.target_phase.dtype == np.float64

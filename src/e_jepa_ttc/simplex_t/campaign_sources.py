@@ -261,6 +261,7 @@ class CampaignSources:
                     dense.source,
                     original_tokens=metadata["inner_oof"].sample_token.to_numpy(),
                     original_sequences=metadata["inner_oof"].sequence_id.to_numpy(),
+                    original_target_ttc=metadata["inner_oof"].target_ttc.to_numpy(),
                     dev_sequences=metadata["outer_dev"].sequence_id.to_numpy(),
                     dense_tokens=dense.tokens,
                     dense_sequences=dense.sequences,

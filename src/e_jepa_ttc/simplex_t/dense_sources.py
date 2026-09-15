@@ -17,6 +17,7 @@ def dense_source_pair(
     *,
     original_tokens: np.ndarray,
     original_sequences: np.ndarray,
+    original_target_ttc: np.ndarray,
     dev_sequences: np.ndarray,
     dense_tokens: np.ndarray,
     dense_sequences: np.ndarray,
@@ -64,13 +65,19 @@ def dense_source_pair(
             raise ValueError("TRAIN query identity alignment mismatch")
     if dev_sequences.shape != (dev.population,) or any(not str(v) for v in dev_sequences):
         raise ValueError("OLD_DEV sequence identity alignment mismatch")
+    if (
+        original_target_ttc.shape != (train.population,)
+        or not np.isfinite(original_target_ttc).all()
+    ):
+        raise ValueError("original TRAIN TTC identity alignment mismatch")
     if set(original_sequences) != set(dense_sequences) or set(dense_sequences) & set(dev_sequences):
         raise ValueError("dense groups differ from original TRAIN or overlap OLD_DEV")
     if dense_target_ttc.shape != (dense.population,) or not np.array_equal(
-        phase_from_ttc(dense_target_ttc).astype(np.float32), dense.target_phase.astype(np.float32)
+        phase_from_ttc(dense_target_ttc.astype(np.float32)), dense.target_phase
     ):
         raise ValueError("dense original TTC supervision mismatch")
     positions = {str(token): row for row, token in enumerate(dense_tokens)}
+    canonical_phase = dense.target_phase.copy()
     for row, token in enumerate(original_tokens):
         other = positions.get(str(token))
         if other is None or original_sequences[row] != dense_sequences[other]:
@@ -84,8 +91,13 @@ def dense_source_pair(
                 getattr(dense, field)[dense_ids[mask]].tobytes()
             ):
                 raise ValueError("original TRAIN expert context changed")
-        if train.target_phase[row] != dense.target_phase[other]:
+        if np.float32(original_target_ttc[row]) != np.float32(
+            dense_target_ttc[other]
+        ) or np.float32(train.target_phase[row]) != np.float32(dense.target_phase[other]):
             raise ValueError("original TRAIN supervision changed")
+        # Retain the historical source-phase bytes for overlap. A 1-ULP FP64
+        # implementation difference is irrelevant to the FP32 training gather.
+        canonical_phase[other] = train.target_phase[row]
     original_train_ids = np.unique(train.history[train.history >= 0])
     dev_ids = np.unique(dev.history[dev.history >= 0])
     if np.intersect1d(original_train_ids, dev_ids).size:
@@ -115,6 +127,7 @@ def dense_source_pair(
                 "dense": dense.identity_sha256,
                 "original_dev": dev.identity_sha256,
                 "original_train": train.identity_sha256,
+                "target_phase": torch.from_numpy(canonical_phase),
                 "tokens": dense_tokens.tolist(),
                 "sequences": dense_sequences.tolist(),
                 "dev_sequences": dev_sequences.tolist(),
@@ -130,7 +143,7 @@ def dense_source_pair(
             anchors,
             available,
             dense.history.copy() if role == "inner_oof" else dev_history,
-            dense.target_phase.copy() if role == "inner_oof" else dev.target_phase.copy(),
+            canonical_phase.copy() if role == "inner_oof" else dev.target_phase.copy(),
             mass if role == "inner_oof" else dev.mass.copy(),
             normalizer,
             identity,

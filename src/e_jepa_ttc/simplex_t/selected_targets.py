@@ -7,8 +7,10 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import torch
 
 from e_jepa_ttc.artifacts.hashing import compute_file_hash
+from e_jepa_ttc.evaluation.stage61_nested_pair_router import phase_from_ttc
 
 from .expansion_targets import ExpansionTargets, align_expansion_targets
 from .training import state_digest
@@ -69,6 +71,13 @@ def load_selected_train_targets(
         timestamps_us=timestamps_us,
         label_sha256=expected_sha256,
     )
+    if pool == "DENSE_OLD":
+        # The retained D0 rows were supervised from FP32 TTC. Canonicalize the
+        # entire dense pool identically, without changing label identity or mass.
+        result = replace(
+            result,
+            target_phase=phase_from_ttc(result.target_ttc.astype(np.float32)),
+        )
     return replace(
         result,
         identity_sha256=state_digest(
@@ -77,6 +86,7 @@ def load_selected_train_targets(
                 "pool": pool,
                 "allowed_sequences": sorted(allowed_sequences),
                 "aligned_supervision": result.identity_sha256,
+                "target_phase": torch.from_numpy(result.target_phase),
             }
         ),
     )

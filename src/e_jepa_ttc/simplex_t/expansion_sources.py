@@ -85,8 +85,16 @@ def load_expansion_inputs(
         raise ValueError("compiled D1 family/identity/status mismatch")
     manifest = json.loads(binding.index_manifest.read_text(encoding="utf-8"))
     pool = json.loads(binding.pool.read_text(encoding="utf-8"))
-    if pool["expansion_metadata_sha256"] != binding.metadata_sha256:
-        raise ValueError("pool metadata lineage changed")
+    # The pool records eAP input-only eligibility metadata. The separately pinned
+    # Garl TRAIN metadata below supplies the label-reference timestamps. They are
+    # different files; the caller verifies the owner's eAP evidence before loading.
+    eligibility_sha256 = pool.get("expansion_metadata_sha256")
+    if (
+        not isinstance(eligibility_sha256, str)
+        or len(eligibility_sha256) != 64
+        or set(eligibility_sha256) - set("0123456789abcdef")
+    ):
+        raise ValueError("invalid expansion eligibility metadata lineage")
     index_path = binding.index_manifest.parent / "query_context_index.npz"
     _verify(index_path, manifest["index_sha256"])
     if compiled["index_sha256"] != manifest["index_sha256"]:

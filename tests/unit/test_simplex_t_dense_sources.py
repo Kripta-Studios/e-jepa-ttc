@@ -24,7 +24,7 @@ def fixture():
             anchors,
             available,
             history,
-            phase_from_ttc(np.ones(len(ids))).astype(np.float32),
+            phase_from_ttc(np.ones(len(ids))),
             np.full(len(ids), 1 / len(ids)),
             normalizer,
             name,
@@ -40,6 +40,7 @@ def fixture():
     arguments = dict(
         original_tokens=np.array(["q0", "q1"]),
         original_sequences=np.array(["a", "b"]),
+        original_target_ttc=np.ones(2),
         dev_sequences=np.array(["c"]),
         dense_tokens=np.array(["q0", "q1", "q2", "q3"]),
         dense_sequences=np.array(["a", "b", "a", "b"]),
@@ -67,6 +68,33 @@ def test_dense_replaces_train_and_preserves_old_dev_without_train_duplicates():
     for position in range(1, 6):
         assert torch.equal(before[position], after[position])
     assert np.array_equal(original["outer_dev"].normalizer.mean, np.zeros(17))
+
+
+def test_dense_overlap_accepts_only_exact_historical_fp32_phase():
+    original, dense, args = fixture()
+    args["dense_target_ttc"][0] = 8.04442849047379
+    args["original_target_ttc"][0] = 8.044428825378418
+    canonical = phase_from_ttc(args["dense_target_ttc"].astype(np.float32))
+    original["inner_oof"].target_phase[0] = canonical[0]
+    dense.target_phase = canonical.copy()
+    result = dense_source_pair(original, dense, **args)
+    assert result["inner_oof"].target_phase[0] == original["inner_oof"].target_phase[0]
+    dense.target_phase[0] = np.nextafter(canonical[0], 1.0)
+    with pytest.raises(ValueError, match="dense original TTC supervision mismatch"):
+        dense_source_pair(original, dense, **args)
+
+
+def test_dense_overlap_retains_historical_float64_phase_bytes():
+    original, dense, args = fixture()
+    original["inner_oof"].target_phase[0] = np.nextafter(dense.target_phase[0], 1.0)
+    result = dense_source_pair(original, dense, **args)
+    assert result["inner_oof"].target_phase[0] == original["inner_oof"].target_phase[0]
+    assert result["inner_oof"].gather(torch.tensor([0]))[4].item() == np.float32(
+        dense.target_phase[0]
+    )
+    args["original_target_ttc"][0] = 3.0
+    with pytest.raises(ValueError, match="original TRAIN supervision changed"):
+        dense_source_pair(original, dense, **args)
 
 
 @pytest.mark.parametrize("failure", ["missing", "groups", "dev", "features", "labels", "history"])

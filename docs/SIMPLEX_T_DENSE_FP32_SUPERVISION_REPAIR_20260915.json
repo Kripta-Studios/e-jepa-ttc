@@ -1,0 +1,28 @@
+{
+  "schema": "simplex_t_prefreeze_technical_amendment_v1",
+  "status": "REGISTERED_PRE_FREEZE_NUMERICAL_LINEAGE_REPAIR_NOT_SCIENTIFIC_RESULT_OR_FIT_AUTHORIZATION",
+  "date_local": "2026-09-15",
+  "campaign": "EXISTING_SIMPLEX_T_T0_T6",
+  "failure_preserved": "artifacts/simplex_t/full_pipeline/preparation_logs/source_identity_preparation_fed032ee56ce4b5e8f2903dcba6b471f.run.log",
+  "cause": "Historical D0 target TTC was stored in FP32 and its pinned target-phase array is FP64 computed from that rounded TTC; selected Garl TRAIN Parquet target TTC is projected as FP64. The old and dense labels are identical after FP32 casting, but all 16384 retained original target-phase rows across three folds differ at FP64 precision when phase is computed from unrounded Parquet TTC or reduced to FP32 before exact source-lineage comparison.",
+  "measured_original_train_queries_per_fold": [5461, 5461, 5462],
+  "measured_phase_mismatches_at_fp32_per_fold": [1410, 1438, 1406],
+  "measured_phase_mismatches_at_source_precision_per_fold": [5461, 5461, 5462],
+  "measured_fold0_phase_mismatches_after_fp32_ttc_reconstruction_at_fp64": 2404,
+  "maximum_abs_fold0_reconstruction_difference_at_fp64": 2.7755575615628914e-17,
+  "maximum_abs_ttc_difference_seconds": 4.76769908885899e-7,
+  "maximum_abs_phase_difference": 1.4901161193847656e-8,
+  "verification": "For every original TRAIN token in all three folds: selected Parquet TTC cast to FP32 equals pinned historical TTC; benchmark phase computed from that FP32 TTC equals pinned historical target_phase when cast to FP32. Source arrays retain independent FP64 implementation rounding. Query, sequence, context feature and timing parity checks remain exact.",
+  "repair": "Canonicalize DENSE_OLD target phase in FP64 from selected TRAIN TTC first cast to FP32 for the entire registered dense pool. For every retained original token, require exact FP32 TTC and phase parity, then copy its pinned historical FP64 phase into the dense TRAIN source. The training gather casts all target phases to FP32 as before. Preserve the projected FP64 TTC for original label-file lineage and registered TRAIN mass calculation. D1 and DIVERSE_MATCHED targets are unchanged. Bind canonical source target-phase bytes in the selected supervision and composed source identities. Continue rejecting any real label or phase mismatch.",
+  "files_sha256_after_repair": {
+    "src/e_jepa_ttc/simplex_t/selected_targets.py": "86dd3f80434221d9528ea3e70ecb651d6916f3474d17a53a7f81eab69c72e13c",
+    "src/e_jepa_ttc/simplex_t/dense_sources.py": "d3f1fb847a68a86bebba65d19269c006bdd219e848ad88a3d919ae6e620c49d9",
+    "src/e_jepa_ttc/simplex_t/campaign_sources.py": "a92a3b9dd1fc7af1508dbbfe5e1b64ca0711ff03c89b4957fee3a9b59943299f"
+  },
+  "source_configuration_sha256_unchanged": "a8be266e26c1dfd8a3e74f98db792dfc860cd159f3074be49af2b2aa29a6ad28",
+  "technical_updates_added": 0,
+  "scientific_fits_completed": 0,
+  "scientific_updates_completed": 0,
+  "freeze_required_before_fits": true,
+  "old_attempts_and_caches_preserved": true
+}
