@@ -20,6 +20,8 @@ def main() -> None:
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--operation-id", required=True)
     parser.add_argument("--other-reserved-bytes", type=int, required=True)
+    parser.add_argument("--reuse-zero-attempt-evidence", type=Path)
+    parser.add_argument("--reuse-zero-attempt-evidence-sha256")
     args = parser.parse_args()
     work = Path.cwd().resolve(strict=True)
     output = args.output.resolve()
@@ -50,7 +52,40 @@ def main() -> None:
         for path in (work / folder).rglob("*.py")
     }
     budget = work / "artifacts/simplex_t/TECHNICAL_BUDGET.json"
-    TechnicalBudget(budget).reserve(args.operation_id, 20)
+    reused = None
+    if args.reuse_zero_attempt_evidence is None:
+        if args.reuse_zero_attempt_evidence_sha256 is not None:
+            raise ValueError("zero-attempt evidence requires its path and SHA256")
+        TechnicalBudget(budget).reserve(args.operation_id, 20)
+    else:
+        evidence = args.reuse_zero_attempt_evidence.resolve(strict=True)
+        if (
+            args.reuse_zero_attempt_evidence_sha256 is None
+            or sha256(evidence) != args.reuse_zero_attempt_evidence_sha256
+            or not evidence.is_relative_to(work / "artifacts/simplex_t/T0")
+            or evidence.name != "ZERO_UPDATE_OBSERVATION.json"
+        ):
+            raise ValueError("pinned T0 zero-attempt evidence required for reservation reuse")
+        observed = json.loads(evidence.read_text(encoding="utf-8"))
+        old = evidence.parent
+        old_result = old / observed["native_result"]["path"]
+        old_contract = json.loads((old / "CONTRACT.json").read_text(encoding="utf-8"))
+        terminal = json.loads(old_result.read_text(encoding="utf-8"))
+        ledger = json.loads(budget.read_text(encoding="utf-8"))
+        if (
+            observed.get("status") != "OBSERVED_ZERO_UPDATE_RESOURCE_PAUSE"
+            or old_result.resolve(strict=True).parent != old
+            or sha256(old_result) != observed["native_result"]["sha256"]
+            or sha256(old / observed["supporting_junit"]["path"])
+            != observed["supporting_junit"]["sha256"]
+            or old_contract.get("operation_id") != args.operation_id
+            or terminal.get("attempted_optimizer_updates") != 0
+            or terminal.get("completed_optimizer_updates") != 0
+            or (old / "UPDATE_PROGRESS.json").exists()
+            or ledger.get("reservations", {}).get(args.operation_id) != 20
+        ):
+            raise ValueError("historical technical reservation was not wholly unspent")
+        reused = {"path": str(evidence.relative_to(work)), "sha256": sha256(evidence)}
     output.mkdir(parents=True)
     write_new_json(
         output / "CONTRACT.json",
@@ -65,6 +100,7 @@ def main() -> None:
             "interop_threads": 2,
             "cuda_visible_devices": "-1",
             "runner_sha256": sha256(Path(__file__)),
+            "reused_zero_attempt_reservation": reused,
         },
     )
     counters = {"attempted_optimizer_updates": 0, "completed_optimizer_updates": 0}

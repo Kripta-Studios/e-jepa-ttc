@@ -1,0 +1,23 @@
+{
+  "schema": "simplex_t_prefreeze_technical_amendment_v1",
+  "status": "PREFREEZE_EXISTING_CAMPAIGN_ZERO_STEP_RESERVATION_REUSE_NOT_SCIENTIFIC_AUTHORIZATION",
+  "date_local": "2026-09-15",
+  "reason": "Current complete unit QA needs a fresh source-pinned execution. The technical ledger already reserves its fixed 1125-update maximum, so a new reservation is refused before execution.",
+  "eligible_existing_operation_id": "full_unit_qa_execution_bf3f07d",
+  "reserved_updates": 20,
+  "recorded_executed_updates_before_reuse": 0,
+  "prior_terminal_evidence": {
+    "path": "artifacts/simplex_t/T0/full_unit_qa_execution_bf3f07d/ZERO_UPDATE_OBSERVATION.json",
+    "sha256": "2c96063b39048a888e1ec2bef9955fbd17bbaa6484a6ecdbf2afef3a48c40d6d",
+    "native_result_sha256": "c894240358f9d5f773be1762da43ada99ee62495633dbcf4eb51fa8216d2a5a7",
+    "reason": "Resource pause, exit 3, no attempted or completed optimizer update; original result and JUnit retained."
+  },
+  "rule": "The existing accounted QA runner may consume that same operation's unused 20-update reservation once, only after verifying the pinned old zero-attempt terminal result, original operation identity, absence of UPDATE_PROGRESS and unchanged persistent ledger. No reservation is refunded or added. All old files and the failed new-reservation attempt remain preserved.",
+  "new_runner_sha256": "435c254733d3fdae39895644bb7c1d1ac1567f55de12c59f538102e7171af30b",
+  "technical_cap_unchanged": 1125,
+  "technical_ledger_reserved_before_reuse": 1125,
+  "technical_updates_executed_by_amendment": 0,
+  "scientific_fits_completed": 0,
+  "scientific_updates_completed": 0,
+  "followup": "Execute complete current QA under the existing operation ID; if it passes, publish a new explicit technical reconciliation and use it for amended prefreeze evidence and orchestration. Do not launch fits until current QA and scientific freeze validate."
+}
