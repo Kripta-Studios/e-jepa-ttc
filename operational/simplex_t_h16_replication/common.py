@@ -10,7 +10,7 @@ import sys
 import time
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, BinaryIO
+from typing import IO, TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -36,7 +36,7 @@ def record(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def durable_stream(target: Path, stream: BinaryIO, expected_sha256: str) -> None:
+def durable_stream(target: Path, stream: IO[bytes], expected_sha256: str) -> None:
     """Publish a verified stream atomically; a partial temporary file is recoverable."""
     if target.exists():
         if digest(target) != expected_sha256:
