@@ -1,0 +1,13 @@
+{
+  "schema": "simplex_t_closure_resource_amendment_v1",
+  "date": "2026-10-02",
+  "authority": ["User in this session: reduce la exigencia a 2gb y continua", "User in this session: reduce también el presupuesto de almacenamiento de 20gb a 10gb"],
+  "scope": "SIMPLEX-T closure only; no Stage70-76 changes",
+  "host_available_ram_floor_bytes": 2147483648,
+  "process_tree_rss_ceiling_bytes": 4294967296,
+  "written_volume_emergency_floor_bytes": 10000000000,
+  "other_reserved_bytes": 0,
+  "scientific_freeze_sha256": "2eb3fff9ea24145c4af16c0c8645eb65893144580e41880790e169239fa8f3a7",
+  "optimizer_updates_authorized": 0,
+  "scientific_recipe_changed": false
+}
