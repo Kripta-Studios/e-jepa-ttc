@@ -1,0 +1,4 @@
+extend = "../../pyproject.toml"
+
+[lint.per-file-ignores]
+"test_contracts.py" = ["ANN"]
