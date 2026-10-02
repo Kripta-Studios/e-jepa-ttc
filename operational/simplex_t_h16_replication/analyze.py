@@ -196,7 +196,11 @@ def publish(p: dict, pin: str, resources: Resources) -> dict:
                 "roi_age_us",
             ]
         ].copy()
-        experts = current["arrays"]["expert_ttc"]
+        experts = np.load(s.folds[row["fold"]].path / "expert_ttc.npy", mmap_mode="r")[
+            source.history[:, -1]
+        ]
+        if not np.array_equal(experts, template[[f"expert{i}_ttc" for i in range(3)]].to_numpy()):
+            raise ValueError("compiled expert TTC differs from published seed7 control")
         frame = prediction_frame(
             metadata,
             experts,

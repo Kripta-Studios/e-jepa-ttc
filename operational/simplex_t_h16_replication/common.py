@@ -3,13 +3,14 @@
 from __future__ import annotations
 
 import ctypes
+import hashlib
 import json
 import os
 import sys
 import time
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, BinaryIO
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -27,11 +28,37 @@ from runtime import atomic_bytes, atomic_json, digest, publish_json  # noqa: E40
 HISTORICAL_FREEZE = "2eb3fff9ea24145c4af16c0c8645eb65893144580e41880790e169239fa8f3a7"
 CAMPAIGN = "H16_REPLICATION_20261003"
 ARM = "TPR-D1-H16-C160"
-RESERVATION = 2_000_000_000
+RESERVATION = 1024**3
+COMMIT_FLOOR = 1024**3
 
 
 def record(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def durable_stream(target: Path, stream: BinaryIO, expected_sha256: str) -> None:
+    """Publish a verified stream atomically; a partial temporary file is recoverable."""
+    if target.exists():
+        if digest(target) != expected_sha256:
+            raise ValueError(f"immutable delivery member changed: {target}")
+        return
+    target.parent.mkdir(parents=True, exist_ok=True)
+    pending = target.with_name(target.name + ".pending")
+    h = hashlib.sha256()
+    with pending.open("wb") as output:
+        while block := stream.read(1024 * 1024):
+            h.update(block)
+            output.write(block)
+        output.flush()
+        os.fsync(output.fileno())
+    if h.hexdigest() != expected_sha256:
+        raise ValueError(f"delivery source changed: {target}")
+    pending.replace(target)
+
+
+def durable_copy(source: Path, target: Path) -> None:
+    with source.open("rb") as stream:
+        durable_stream(target, stream, digest(source))
 
 
 def ids() -> list[dict[str, Any]]:
@@ -122,9 +149,9 @@ class Resources:
             reasons.append("TREE_RSS_EXCEEDS_4_GIB")
         # Conservative outstanding reservation stays charged throughout execution.
         if m["free_disk"] - RESERVATION < 10_000_000_000:
-            reasons.append("DISK_AFTER_2_GB_RESERVATION_BELOW_10_GB")
-        if m["commit_headroom"] < 2 * 1024**3:
-            reasons.append("WINDOWS_COMMIT_HEADROOM_BELOW_2_GIB")
+            reasons.append("DISK_AFTER_1_GIB_RESERVATION_BELOW_10_GB")
+        if m["commit_headroom"] < COMMIT_FLOOR:
+            reasons.append("WINDOWS_COMMIT_HEADROOM_BELOW_1_GIB")
         if reasons or time.monotonic() - self.last > 5:
             atomic_json(
                 OUT / "RESOURCES.json",

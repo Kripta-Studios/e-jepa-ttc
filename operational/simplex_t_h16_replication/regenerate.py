@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import ctypes
 import hashlib
 import json
 import sys
@@ -42,6 +43,42 @@ def main() -> None:
     torch.set_num_threads(4)
     torch.set_num_interop_threads(2)
     torch.use_deterministic_algorithms(True)
+
+    def guard() -> None:
+        process = psutil.Process()
+        parent = process.parent()
+        supervisor = parent if parent and "python" in parent.name().lower() else process
+        rss = supervisor.memory_info().rss + sum(
+            child.memory_info().rss for child in supervisor.children(recursive=True)
+        )
+        if psutil.virtual_memory().available < 2 * 1024**3 or rss > 4 * 1024**3:
+            raise InterruptedError("registered RAM/RSS limit during regeneration")
+        if psutil.disk_usage(str(root)).free - 1024**3 < 10_000_000_000:
+            raise InterruptedError("registered disk margin during regeneration")
+        if sys.platform == "win32":
+
+            class MemoryStatus(ctypes.Structure):
+                _fields_ = [("length", ctypes.c_ulong), ("load", ctypes.c_ulong)] + [
+                    (key, ctypes.c_ulonglong)
+                    for key in (
+                        "total_physical",
+                        "available_physical",
+                        "total_page_file",
+                        "available_page_file",
+                        "total_virtual",
+                        "available_virtual",
+                        "available_extended_virtual",
+                    )
+                ]
+
+            status = MemoryStatus()
+            status.length = ctypes.sizeof(status)
+            if not ctypes.windll.kernel32.GlobalMemoryStatusEx(ctypes.byref(status)):
+                raise OSError("Windows commitment counter unavailable")
+            if status.available_page_file < 1024**3:
+                raise InterruptedError("registered commit margin during regeneration")
+
+    guard()
     seal = json.loads((root / "ENDPOINTS.json").read_text(encoding="utf-8"))
     rows = []
     pieces = {}
@@ -57,8 +94,7 @@ def main() -> None:
         frame = pd.read_parquet(root / "publication" / r["key"] / "PREDICTIONS.parquet")
         maximum = 0.0
         for start in range(0, len(frame), 128):
-            if psutil.virtual_memory().available < 2 * 1024**3:
-                raise InterruptedError("RAM below registered floor during regeneration")
+            guard()
             with np.load(
                 root / "cached_inputs" / f"H16_fold{r['fold']}_batch{start:05d}.npz",
                 allow_pickle=False,

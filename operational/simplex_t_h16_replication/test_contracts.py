@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import io
 import os
 from pathlib import Path
 
@@ -25,7 +26,7 @@ def test_only_authorized_six_ids() -> None:
     [
         ("available", 2 * 1024**3 - 1),
         ("tree_rss", 4 * 1024**3 + 1),
-        ("commit_headroom", 2 * 1024**3 - 1),
+        ("commit_headroom", common.COMMIT_FLOOR - 1),
         ("free_disk", 10_000_000_000 + common.RESERVATION - 1),
     ],
 )
@@ -86,3 +87,13 @@ def test_changed_protocol_cannot_resume(monkeypatch, tmp_path: Path) -> None:
     common.atomic_json(path, dict(updates=15001))
     with pytest.raises(ValueError, match="protocol changed"):
         common.protocol()
+
+
+def test_partial_delivery_stream_recovers(tmp_path: Path) -> None:
+    target = tmp_path / "payload"
+    target.with_name("payload.pending").write_bytes(b"partial")
+    source = tmp_path / "source"
+    source.write_bytes(b"complete")
+    common.durable_stream(target, io.BytesIO(b"complete"), common.digest(source))
+    assert target.read_bytes() == b"complete"
+    assert not target.with_name("payload.pending").exists()

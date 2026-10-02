@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-import shutil
 import subprocess
 import sys
 import zipfile
@@ -17,6 +16,8 @@ from common import (
     atomic_bytes,
     atomic_json,
     digest,
+    durable_copy,
+    durable_stream,
     protocol,
     publish_json,
     record,
@@ -65,13 +66,13 @@ def main() -> None:
                 if digest(target) != digest(file):
                     raise ValueError("existing essential delivery member changed")
             else:
-                shutil.copyfile(file, target)
+                durable_copy(file, target)
         controls = {}
         for key, row in p["historical_controls"].items():
             target = payload / "historical_controls" / (key.replace("/", "__") + ".parquet")
             target.parent.mkdir(exist_ok=True)
             if not target.exists():
-                shutil.copyfile(row["prediction"], target)
+                durable_copy(Path(row["prediction"]), target)
             if digest(target) != row["prediction_sha256"]:
                 raise ValueError("bundled historical control differs")
             controls[key] = dict(
@@ -93,14 +94,14 @@ def main() -> None:
             target = payload / "provenance" / row["relative_path"]
             target.parent.mkdir(parents=True, exist_ok=True)
             if not target.exists():
-                shutil.copyfile(source, target)
+                durable_copy(source, target)
             if digest(target) != row["sha256"]:
                 raise ValueError("delivery scientific code changed")
         for name in ("regenerate.py", "README.md"):
             target = payload / name
             source = Path(__file__).parent / name
             if not target.exists():
-                shutil.copyfile(source, target)
+                durable_copy(source, target)
             elif digest(target) != digest(source):
                 raise ValueError("delivery regeneration source changed")
         manifest = {
@@ -159,7 +160,14 @@ def main() -> None:
                         if h.hexdigest() != digest(dest):
                             raise ValueError("extracted member changed")
                 else:
-                    z.extract(member, extraction)
+                    with z.open(member) as stream:
+                        import hashlib
+
+                        h = hashlib.sha256()
+                        while block := stream.read(1024 * 1024):
+                            h.update(block)
+                    with z.open(member) as stream:
+                        durable_stream(dest, stream, h.hexdigest())
         # Parent exits the scientific environment; only the extracted package is supplied.
         completed = subprocess.run(
             [

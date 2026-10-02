@@ -8,6 +8,7 @@ from pathlib import Path
 from common import (
     ARM,
     CAMPAIGN,
+    COMMIT_FLOOR,
     HISTORICAL_FREEZE,
     OUT,
     RESERVATION,
@@ -42,8 +43,12 @@ Un único escritor, ejecución secuencial, checkpoint completo cada100, RNG/samp
 optimizador/scheduler determinista restaurados. Pausa real del primer fit tras100
 para probar recuperación sin repetir trabajo; continúa desde101. Trabajo perdido
 o incierto se contabiliza aparte y no autoriza fits nuevos. RAM disponible≥2GiB,
-RSS árbol≤4GiB, disco libre-reserva2GB≥10GB. Criterio operativo nuevo explícito:
-Windows commit headroom≥2GiB. Sin modificación de precisión ni batch por recursos.
+RSS árbol≤4GiB, disco libre-reserva1GiB≥10GB. Revisión operativa v2 previa a
+cualquier update: reserva estimada de archivos1GiB dentro del techo propio2GiB,
+Windows commit headroom≥1GiB. El preflight completo midió RSS<0.75GB; el
+margen de compromiso se comprueba antes de cada update. Los tres límites del
+usuario no se rebajan. Se preserva v1, que no produjo ningún checkpoint/update.
+Sin modificación de precisión ni batch por recursos.
 
 Antes de cualquier nueva inferencia OLD_DEV se sellan los seis checkpoints2500.
 H8 seeds7/13/23 y H16 seed7 se reutilizan con hashes originales. Consultas, targets,
@@ -97,7 +102,8 @@ def main() -> None:
     publish_json(
         OUT / "PROTOCOL.json",
         dict(
-            schema="simplex_t_independent_h16_replication_v1",
+            schema="simplex_t_independent_h16_replication_v2_pre_update",
+            supersedes_zero_update_protocol_sha256="60b6a45ec3748cd9fd098e17e933e5d85527f280c5d81a9b0a27cf4f71430a92",
             campaign=CAMPAIGN,
             arm=ARM,
             historical_candidate="TPR-D1-H8-C160",
@@ -111,7 +117,7 @@ def main() -> None:
                 tree_rss_ceiling=4 * 1024**3,
                 free_disk_after_reservation_floor=10_000_000_000,
                 own_reserved_bytes=RESERVATION,
-                windows_commit_floor=2 * 1024**3,
+                windows_commit_floor=COMMIT_FLOOR,
             ),
             launch=preflight["launch"],
             sources=preflight["sources"],
