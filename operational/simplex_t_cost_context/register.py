@@ -193,7 +193,7 @@ def main() -> None:
         schema="prospective_cost_context_protocol_v1",
         campaign=CAMPAIGN,
         training_commit=head,
-        scientific_code=parent["launch"].get("scientific_code"),
+        scientific_code=record(Path(parent["launch"]["freeze"]))["code_commit"],
         historical_candidate="TPR-D1-H8-C160",
         historical_freeze_sha256=HISTORICAL_FREEZE,
         fits=ids(),
