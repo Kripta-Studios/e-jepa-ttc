@@ -1,0 +1,8 @@
+{
+  "freeze_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v10-simplex-t-companion\\artifacts\\simplex_t\\SCIENTIFIC_FREEZE.json",
+  "sha256": "2eb3fff9ea24145c4af16c0c8645eb65893144580e41880790e169239fa8f3a7",
+  "historical_scientific_code": "0c1a7285b6b5af869b0bf5a13a9629f08997e7a2",
+  "operational_head": "fc18bc54a1cc229db7846d923a9f7bc2101f2e83",
+  "candidate": "TPR-D1-H8-C160",
+  "optimizer_updates": 0
+}

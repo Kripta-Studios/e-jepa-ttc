@@ -1,0 +1,216 @@
+{
+  "contrasts": [
+    {
+      "contrast": "FULL_C0_minus_H8@7",
+      "candidate": "FULL_C0",
+      "reference": "H8_SEED7",
+      "precision_screen_pass": true,
+      "delta_MiD": -0.2416262103066833,
+      "hierarchical_ci95": [
+        -0.6210695932243308,
+        0.14280577379537274
+      ],
+      "sequence_only_ci95": [
+        -0.5289332203496362,
+        -0.00043319786180844185
+      ],
+      "sign_error_delta": -0.0005705638438639739,
+      "crucial_delta": 0.014099810973145097,
+      "p95_reduction_by_block": [
+        -0.01227366892317261,
+        -0.08747715982523596,
+        0.021597862074305474
+      ],
+      "all_blocks_p95_reduction_at_least_20_percent": false,
+      "latency_screen_by_block": [
+        false,
+        false,
+        false
+      ],
+      "all_block_summary_is_descriptive": true,
+      "qualifies_prepared_head_only": false,
+      "full_c0_is_objective_control": true,
+      "qualifies_system_substitution": false,
+      "system_route_blocked": true,
+      "changed_thresholds": false,
+      "confirmatory": false
+    },
+    {
+      "contrast": "A5_ONLY_C0_minus_FULL_C0",
+      "candidate": "A5_ONLY_C0",
+      "reference": "FULL_C0",
+      "precision_screen_pass": false,
+      "delta_MiD": 6.380670303365077,
+      "hierarchical_ci95": [
+        -0.09726888418760105,
+        13.804899200544122
+      ],
+      "sequence_only_ci95": [
+        1.0923189972123077,
+        12.37371718445006
+      ],
+      "sign_error_delta": 0.009110966535465715,
+      "crucial_delta": 12.34687327131234,
+      "p95_reduction_by_block": [
+        -0.08669852949383094,
+        -0.017667348218009638,
+        0.0022769560438505865
+      ],
+      "all_blocks_p95_reduction_at_least_20_percent": false,
+      "latency_screen_by_block": [
+        false,
+        false,
+        false
+      ],
+      "all_block_summary_is_descriptive": true,
+      "qualifies_prepared_head_only": false,
+      "full_c0_is_objective_control": false,
+      "qualifies_system_substitution": false,
+      "system_route_blocked": true,
+      "changed_thresholds": false,
+      "confirmatory": false
+    },
+    {
+      "contrast": "C2F_ONLY_C0_minus_FULL_C0",
+      "candidate": "C2F_ONLY_C0",
+      "reference": "FULL_C0",
+      "precision_screen_pass": false,
+      "delta_MiD": 5.3002681705048404,
+      "hierarchical_ci95": [
+        -0.1472445951258283,
+        11.033927080586398
+      ],
+      "sequence_only_ci95": [
+        0.8239553422182134,
+        10.042429088992053
+      ],
+      "sign_error_delta": 0.005895980989051333,
+      "crucial_delta": 10.243616501399021,
+      "p95_reduction_by_block": [
+        0.026455261323546586,
+        0.02342478838139228,
+        0.08629734487022678
+      ],
+      "all_blocks_p95_reduction_at_least_20_percent": false,
+      "latency_screen_by_block": [
+        false,
+        false,
+        false
+      ],
+      "all_block_summary_is_descriptive": true,
+      "qualifies_prepared_head_only": false,
+      "full_c0_is_objective_control": false,
+      "qualifies_system_substitution": false,
+      "system_route_blocked": true,
+      "changed_thresholds": false,
+      "confirmatory": false
+    },
+    {
+      "contrast": "A5_PAIR_C0_minus_FULL_C0",
+      "candidate": "A5_PAIR_C0",
+      "reference": "FULL_C0",
+      "precision_screen_pass": false,
+      "delta_MiD": 3.264025477079855,
+      "hierarchical_ci95": [
+        -2.4680534514039114,
+        8.889672735990562
+      ],
+      "sequence_only_ci95": [
+        -1.491152819380906,
+        8.157581163610807
+      ],
+      "sign_error_delta": 0.008557541590915603,
+      "crucial_delta": 6.420309892110742,
+      "p95_reduction_by_block": [
+        -0.005802426796837512,
+        -0.004635229260806062,
+        0.06340718395032685
+      ],
+      "all_blocks_p95_reduction_at_least_20_percent": false,
+      "latency_screen_by_block": [
+        false,
+        false,
+        false
+      ],
+      "all_block_summary_is_descriptive": true,
+      "qualifies_prepared_head_only": false,
+      "full_c0_is_objective_control": false,
+      "qualifies_system_substitution": false,
+      "system_route_blocked": true,
+      "changed_thresholds": false,
+      "confirmatory": false
+    },
+    {
+      "contrast": "SET_AGE_C0_minus_FULL_C0",
+      "candidate": "SET_AGE_C0",
+      "reference": "FULL_C0",
+      "precision_screen_pass": false,
+      "delta_MiD": 1.0378981788458321,
+      "hierarchical_ci95": [
+        -3.0355556542166293,
+        4.6344481546170835
+      ],
+      "sequence_only_ci95": [
+        -2.248812177406003,
+        3.418927051935405
+      ],
+      "sign_error_delta": 0.0005585076277567248,
+      "crucial_delta": 3.0115873675307117,
+      "p95_reduction_by_block": [
+        0.49291000518476946,
+        0.4998457849711049,
+        0.5375883742083668
+      ],
+      "all_blocks_p95_reduction_at_least_20_percent": true,
+      "latency_screen_by_block": [
+        true,
+        true,
+        true
+      ],
+      "all_block_summary_is_descriptive": true,
+      "qualifies_prepared_head_only": false,
+      "full_c0_is_objective_control": false,
+      "qualifies_system_substitution": false,
+      "system_route_blocked": true,
+      "changed_thresholds": false,
+      "confirmatory": false
+    },
+    {
+      "contrast": "SET_NOTIME_C0_minus_SET_AGE_C0",
+      "candidate": "SET_NOTIME_C0",
+      "reference": "SET_AGE_C0",
+      "precision_screen_pass": false,
+      "delta_MiD": 1.2439956315111262,
+      "hierarchical_ci95": [
+        -0.6957483995635467,
+        2.6766788018183627
+      ],
+      "sequence_only_ci95": [
+        0.0927967215074051,
+        2.2638898416205233
+      ],
+      "sign_error_delta": 0.0007545918172267392,
+      "crucial_delta": 2.9884317314855524,
+      "p95_reduction_by_block": [
+        0.012565597973897558,
+        0.04331584362579155,
+        -0.016000983793034163
+      ],
+      "all_blocks_p95_reduction_at_least_20_percent": false,
+      "latency_screen_by_block": [
+        false,
+        false,
+        false
+      ],
+      "all_block_summary_is_descriptive": true,
+      "qualifies_prepared_head_only": false,
+      "full_c0_is_objective_control": false,
+      "qualifies_system_substitution": false,
+      "system_route_blocked": true,
+      "changed_thresholds": false,
+      "confirmatory": false
+    }
+  ],
+  "scope": "exploratory_development_reuse",
+  "promotion": false
+}

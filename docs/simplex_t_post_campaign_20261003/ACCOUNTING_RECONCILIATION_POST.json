@@ -1,0 +1,15 @@
+{
+  "scientific_saved_updates": 60000,
+  "historical_scientific_physical_lower": 60000,
+  "historical_scientific_physical_upper": 60100,
+  "historical_technical_confirmed": 80,
+  "new_scientific_optimizer_updates": 0,
+  "new_technical_optimizer_updates": 0,
+  "old_reserve_does_not_authorize_new_training": true,
+  "sources": {
+    "artifacts\\simplex_t\\h16_replication_20261003\\ACCOUNTING.json": "90743a07b3321975faca6e087bb74ba3247bd4ef4ea353b8cf2a2b3710813385",
+    "artifacts\\simplex_t\\nocturnal_20261003\\execution\\ACCOUNTING.json": "be0f0d3d90d8b96c1037abf55ebf637ea9bf42f47b7b75df6d1e7dc9c0669d44",
+    "artifacts\\simplex_t\\nocturnal_20261003\\TECHNICAL_WORK.json": "4fe5c7ee7556afaabeea82213fa27d5e5c3e952230685b9e2c1235162cd11f3b"
+  },
+  "note": "Preserve original journal uncertainty bounds; byte-verified endpoint seals corroborate scientific completion. Profiling calls are inference, never optimizer updates."
+}

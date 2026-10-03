@@ -1,0 +1,14 @@
+{
+  "status": "COMPLETE",
+  "canonical_queries": 8192,
+  "models": 12,
+  "endpoint_count": 24,
+  "saved_updates": 60000,
+  "new_updates": 0,
+  "maximum_score_difference": 1.9895196601282805e-13,
+  "strata_rows": 583,
+  "episode_rows": 90079,
+  "post_hoc": true,
+  "all_queries_preserved": true,
+  "no_new_intervals": true
+}

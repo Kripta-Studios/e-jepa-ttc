@@ -1,0 +1,11 @@
+{
+  "stage_worker_commands_observed": [],
+  "owner_files": [
+    {
+      "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v10-stage70-architecture\\artifacts\\stage70_76_architecture\\expansion_raw_bindings\\ACTIVE_OWNER.json",
+      "exists": false
+    }
+  ],
+  "exclusive_gpu_slot": null,
+  "raw_or_private_results_read": false
+}

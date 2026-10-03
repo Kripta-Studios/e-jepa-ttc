@@ -1,0 +1,292 @@
+{
+  "study": "FROZEN_SYSTEM_POST_20261003",
+  "stages": {
+    "P0": "COMPLETE",
+    "P1": "COMPLETE",
+    "P2": "COMPLETE",
+    "P3": "BLOCKED",
+    "P4": "COMPLETE_WITH_SYSTEM_COST_LIMITATION"
+  },
+  "optimizer_updates": 0,
+  "new_fits": 0,
+  "historical_candidate": "TPR-D1-H8-C160",
+  "candidate_replaced": false,
+  "H16": {
+    "status": "HEAD_SEED_IMPROVEMENT_STABLE_SCENE_GENERALIZATION_UNCERTAIN",
+    "evidence": {
+      "7": {
+        "h16_mid": 118.86573891024777,
+        "h8_mid": 121.64633225755662,
+        "paired_loss_delta": -2.7805933473086526,
+        "hierarchical_ci95": [
+          -5.8793891043486735,
+          0.3014086898835507
+        ],
+        "sequence_only": {
+          "point_delta": -2.7805933473086517,
+          "ci95": [
+            -5.04072752615747,
+            -0.297714448636225
+          ],
+          "fraction_negative": 0.9855708921992508,
+          "sequence_wins": 8,
+          "sequence_count_vectors": 24310,
+          "omit_one_score_deltas": [
+            -2.5912042811415175,
+            -3.1191162529974723,
+            -2.467014758972383,
+            -3.7280452391820518,
+            -2.846831092093147,
+            -3.0500776895005797,
+            -2.716497826488459,
+            -2.451463769336871,
+            -2.055089216065385
+          ],
+          "signflip_p_two_sided_descriptive": 0.05859375,
+          "retraining_performed": false,
+          "confirmatory": false
+        },
+        "practical": {
+          "candidate_score": 118.86573891024781,
+          "reference_score": 121.64633225755645,
+          "point_delta": -2.7805933473086526,
+          "weighted_sign_error_delta": -0.002379822251692239,
+          "crucial_bucket_mid_delta": -4.009655413920364,
+          "candidate_finite_fraction": 1.0,
+          "reference_finite_fraction": 1.0,
+          "sequence_deltas": {
+            "2cyv0Oedzg": -4.295705876645728,
+            "5ilM1PX2vz": -0.07241010179808735,
+            "6h5yRW2LGc": -5.289222053998803,
+            "OBneIVg4Cw": 4.799021787678549,
+            "OYgB6RGWcq": -2.2506913890326876,
+            "WbCh1DRerJ": -0.6247186097732281,
+            "mHGFBekt7X": -3.2933575138701943,
+            "qGsgzl4Q8B": -5.413629971082898,
+            "t79dBxj1WS": -8.584626397254787
+          },
+          "sequence_wins": 8,
+          "sequence_count": 9,
+          "query_count": 8192,
+          "gate_authorized": false
+        },
+        "guardrails_pass": true,
+        "seed7_previously_observed": true,
+        "averaged_losses_not_ttc": false
+      },
+      "13": {
+        "h16_mid": 119.69680178724657,
+        "h8_mid": 121.8409520461133,
+        "paired_loss_delta": -2.1441502588669983,
+        "hierarchical_ci95": [
+          -5.3172817792701785,
+          0.7117871784090213
+        ],
+        "sequence_only": {
+          "point_delta": -2.1441502588669987,
+          "ci95": [
+            -4.254618845589939,
+            0.0019846953258013914
+          ],
+          "fraction_negative": 0.9748954733263991,
+          "sequence_wins": 7,
+          "sequence_count_vectors": 24310,
+          "omit_one_score_deltas": [
+            -2.1954245773736965,
+            -2.3564020557407184,
+            -2.888531690206256,
+            -2.4663694339219204,
+            -1.5642297531369953,
+            -2.212251882241099,
+            -2.261022234679058,
+            -1.6374543254415947,
+            -1.7156663770616492
+          ],
+          "signflip_p_two_sided_descriptive": 0.1171875,
+          "retraining_performed": false,
+          "confirmatory": false
+        },
+        "practical": {
+          "candidate_score": 119.69680178724647,
+          "reference_score": 121.8409520461135,
+          "point_delta": -2.1441502588669983,
+          "weighted_sign_error_delta": -0.0016499777298738486,
+          "crucial_bucket_mid_delta": -2.8819482741715836,
+          "candidate_finite_fraction": 1.0,
+          "reference_finite_fraction": 1.0,
+          "sequence_deltas": {
+            "2cyv0Oedzg": -1.7339557108134156,
+            "5ilM1PX2vz": -0.44613588387723846,
+            "6h5yRW2LGc": 3.8109011918470603,
+            "OBneIVg4Cw": 0.43360314157237495,
+            "OYgB6RGWcq": -6.783514304707024,
+            "WbCh1DRerJ": -1.5993372718741956,
+            "mHGFBekt7X": -1.2091744523705241,
+            "qGsgzl4Q8B": -6.197717726270229,
+            "t79dBxj1WS": -5.572021313309793
+          },
+          "sequence_wins": 7,
+          "sequence_count": 9,
+          "query_count": 8192,
+          "gate_authorized": false
+        },
+        "guardrails_pass": true,
+        "seed7_previously_observed": false,
+        "averaged_losses_not_ttc": false
+      },
+      "23": {
+        "h16_mid": 119.16152634210421,
+        "h8_mid": 121.86478063534265,
+        "paired_loss_delta": -2.7032542932385475,
+        "hierarchical_ci95": [
+          -5.514432149695562,
+          -0.07054196680497006
+        ],
+        "sequence_only": {
+          "point_delta": -2.703254293238549,
+          "ci95": [
+            -4.731992735328027,
+            -0.5523821280150378
+          ],
+          "fraction_negative": 0.9931133404769411,
+          "sequence_wins": 8,
+          "sequence_count_vectors": 24310,
+          "omit_one_score_deltas": [
+            -2.2543406310851175,
+            -3.015598273080925,
+            -2.917802990634878,
+            -3.4510674308368054,
+            -2.18742713558502,
+            -3.0287821659650174,
+            -2.649121210563059,
+            -2.4586018959600864,
+            -2.366546905436029
+          ],
+          "signflip_p_two_sided_descriptive": 0.04296875,
+          "retraining_performed": false,
+          "confirmatory": false
+        },
+        "practical": {
+          "candidate_score": 119.16152634210417,
+          "reference_score": 121.86478063534273,
+          "point_delta": -2.7032542932385475,
+          "weighted_sign_error_delta": -0.002156428825129687,
+          "crucial_bucket_mid_delta": -2.5741395354239316,
+          "candidate_finite_fraction": 1.0,
+          "reference_finite_fraction": 1.0,
+          "sequence_deltas": {
+            "2cyv0Oedzg": -6.294563590465998,
+            "5ilM1PX2vz": -0.2045024544995355,
+            "6h5yRW2LGc": -0.986864714067914,
+            "OBneIVg4Cw": 3.2792508075475038,
+            "OYgB6RGWcq": -6.829871554466777,
+            "WbCh1DRerJ": -0.09903131142680056,
+            "mHGFBekt7X": -3.136318954642465,
+            "qGsgzl4Q8B": -4.660473471466245,
+            "t79dBxj1WS": -5.396913395658705
+          },
+          "sequence_wins": 8,
+          "sequence_count": 9,
+          "query_count": 8192,
+          "gate_authorized": false
+        },
+        "guardrails_pass": true,
+        "seed7_previously_observed": false,
+        "averaged_losses_not_ttc": false
+      },
+      "new13_23": {
+        "h16_mid": 119.4291640646752,
+        "h8_mid": 121.85286634072813,
+        "paired_loss_delta": -2.423702276052773,
+        "hierarchical_ci95": [
+          -5.244259454753143,
+          0.04109148518456987
+        ],
+        "sequence_only": {
+          "point_delta": -2.423702276052774,
+          "ci95": [
+            -4.3576685199511545,
+            -0.4869114246067176
+          ],
+          "fraction_negative": 0.9934676505970752,
+          "sequence_wins": 7,
+          "sequence_count_vectors": 24310,
+          "omit_one_score_deltas": [
+            -2.224882604229407,
+            -2.6860001644108222,
+            -2.903167340420567,
+            -2.958718432379363,
+            -1.8758284443610078,
+            -2.620517024103058,
+            -2.4550717226210588,
+            -2.048028110700841,
+            -2.041106641248839
+          ],
+          "signflip_p_two_sided_descriptive": 0.0625,
+          "retraining_performed": false,
+          "confirmatory": false
+        },
+        "practical": {
+          "weighted_sign_error_delta": -0.0019032032775017677,
+          "crucial_bucket_mid_delta": -2.7280439047977576,
+          "candidate_finite_fraction": 1.0
+        },
+        "guardrails_pass": true,
+        "seed7_previously_observed": false,
+        "averaged_losses_not_ttc": true
+      },
+      "all7_13_23": {
+        "h16_mid": 119.24135567986619,
+        "h8_mid": 121.78402164633769,
+        "paired_loss_delta": -2.5426659664713998,
+        "hierarchical_ci95": [
+          -5.2133978893639155,
+          -0.11124053108043853
+        ],
+        "sequence_only": {
+          "point_delta": -2.5426659664713993,
+          "ci95": [
+            -4.364446908410385,
+            -0.6226868591014174
+          ],
+          "fraction_negative": 0.9953714683375976,
+          "sequence_wins": 8,
+          "sequence_count_vectors": 24310,
+          "omit_one_score_deltas": [
+            -2.346989829866777,
+            -2.8303721939397053,
+            -2.7577831466045053,
+            -3.215160701313592,
+            -2.1994959936050544,
+            -2.7637039125688982,
+            -2.542213757243525,
+            -2.1825066635795167,
+            -2.045767499521021
+          ],
+          "signflip_p_two_sided_descriptive": 0.04296875,
+          "retraining_performed": false,
+          "confirmatory": false
+        },
+        "practical": {
+          "weighted_sign_error_delta": -0.0020620762688985917,
+          "crucial_bucket_mid_delta": -3.15524774117196,
+          "candidate_finite_fraction": 1.0
+        },
+        "guardrails_pass": true,
+        "seed7_previously_observed": false,
+        "averaged_losses_not_ttc": true
+      }
+    },
+    "promotion": false
+  },
+  "reductions_and_aggregators": "Original precision screens still fail; lower head latency cannot reverse those results.",
+  "full_route_dependency": "Explicit exclusive GPU/heavy-I/O lease from Stage70–76 resource owner; then validate TRAIN raw sources and frozen producer bindings.",
+  "next_action": "Complete frozen full-route profiling only after a live exclusive resource lease and verified producer/raw bindings; no training or sealed confirmation authorized.",
+  "application_latency_budget": "not supplied; no invented acceptable system latency",
+  "scientific_limits": [
+    "Nine independent sequences, not 27 seed-scenes",
+    "Replicated heads, not all experts",
+    "Past context informative; chronological mechanism not established",
+    "No faster AEB/persistent tracking/calibrated uncertainty claim"
+  ]
+}

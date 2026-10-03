@@ -1,0 +1,146 @@
+{
+  "schema": "simplex_t_post_campaign_analysis_plan_v1",
+  "created_utc": "2026-10-03T20:07:19.943906+00:00",
+  "status": "PROPOSED_NOT_EXECUTED",
+  "purpose": "Resolve the practical value and real cost of frozen SIMPLEX-T alternatives before any further training or promotion.",
+  "source_commit": "fc18bc54a1cc229db7846d923a9f7bc2101f2e83",
+  "sources": {
+    "H16_RESULTS.json": "46f876a11f7508b2c65855b25f60fc6a55b0b2c8a1e5275f2e85e5f1cc6f0d45",
+    "N2_RESULTS.json": "500707893a0f17f5f512b51e0cf69d53e8696885f3a3f9109cf555767b91fdef",
+    "N3_RESULTS.json": "36a3eb253b477f2c12aab1afc12bf9c5cf95b02d341e6e3abec30989f7ee61ed",
+    "COMPARABILITY.md": "e2657bf2db7f399fa32e975a7d88fdf138364294e3d85000e689a90dce26cd7b",
+    "COST_ACCURACY.csv": "2da92c82d3fcb88d56b95baf6ccdc083e3ba003d84e71fb812ba88376076f124",
+    "HEAD_COST_REPLAY.csv": "05f395523141e17a2498816f7c4d2dc38be3380dc7fc66e8d8eea889aafa269e",
+    "POST_PUBLICATION_VERIFICATION.md": "2cf5b1064c1e3e93a3627616b0cf02e173f30a0609a247047253f27b5d8c2678",
+    "NEXT_EXPERIMENT_NOCTURNA.md": "6ee68bd4df2b5c8470c977db15fe23bbf106bb6c10bb0e4f319991d21cb6479d"
+  },
+  "registered_candidate": "TPR-D1-H8-C160",
+  "proposed_immediate_training_budget": {
+    "fits": 0,
+    "optimizer_updates": 0
+  },
+  "authorization_note": "This file records a plan requested by the user; it does not start a new execution window, profiling run, training campaign, promotion, or sealed evaluation.",
+  "findings": [
+    "H16 improves all three paired head seeds; the two new seeds have hierarchical CI95 [-5.244259454753143, 0.04109148518456987], so independent-scene evidence remains uncertain.",
+    "All three expert reductions fail the fixed accuracy screen, including sign and crucial-bucket limits.",
+    "SET_AGE and SET_NOTIME fail the fixed hierarchical-CI precision screen; this is not proof that all pooling or time-free models are inferior.",
+    "Primary and replay head timings differ materially; their cause is not isolated. No causal expert-removal or end-to-end speed claim is justified.",
+    "OBneIVg4Cw has positive H16-minus-H8 loss delta in all three seeds; this is a diagnostic lead, not a reason to exclude it.",
+    "The nine independent sequences, frozen experts and reused OLD_DEV remain the limitations; additional head seeds would not create new scenes or replicate expert training."
+  ],
+  "single_next_study": {
+    "name": "Frozen-system accuracy/cost and failure characterization",
+    "stages": [
+      {
+        "id": "P0",
+        "task": "Consolidate final evidence and comparator admission",
+        "outputs": [
+          "Final endpoint/source/receipt index",
+          "Compact comparator contract matrix",
+          "Separate historical progress snapshots from final active state"
+        ],
+        "criteria": [
+          "Use verified 24 endpoints and complete final inventory",
+          "At most two existing insufficient-evidence comparators for targeted genealogy review; no broad archaeology",
+          "Missing comparator evidence does not block independent work"
+        ],
+        "optimizer_updates": 0
+      },
+      {
+        "id": "P1",
+        "task": "Diagnose errors from existing predictions and authorized metadata",
+        "outputs": [
+          "Paired sequence/fold/bucket matrix for H8/H16 and registered C0 contrasts",
+          "Sign, crucial, capping, escape and coverage audit",
+          "Error episodes for all nine sequences with explicit focus on OBneIVg4Cw"
+        ],
+        "criteria": [
+          "Keep all queries and registered masses",
+          "Distinguish observations from hypotheses",
+          "Do not retune thresholds, select checkpoints, remove difficult sequences or change the campaign decision",
+          "Mark all new breakdowns as post hoc descriptive"
+        ],
+        "optimizer_updates": 0
+      },
+      {
+        "id": "P2",
+        "task": "Specify and admit a bounded matched cost protocol",
+        "outputs": [
+          "Protocol for the nine frozen heads and their real producer routes",
+          "Resource lease or precise blocker",
+          "Runtime/source/shape/thread/timing audit"
+        ],
+        "criteria": [
+          "Reuse the 64 TRAIN fold0 queries selected by the registered hash; no targets or error selection",
+          "CPU FP32 heads, four numerical threads and historical interop policy",
+          "Check timer scope, backend, shapes, warmup and thread counts before attributing timing differences to host load",
+          "Three prospective measurement blocks; model order balanced deterministically before measurements",
+          "Keep 25 warmups and 500 batch1 head measurements per model and block; do not repeat until a favorable result",
+          "Freeze full-route repetitions and stop boundary before raw access"
+        ],
+        "optimizer_updates": 0
+      },
+      {
+        "id": "P3",
+        "task": "Measure real context and producer cost under an explicit exclusive slot",
+        "outputs": [
+          "Per-query total latency and stage timing",
+          "Warm and application-cold results separately",
+          "Memory, producer-call counts, availability and route-dependency receipts"
+        ],
+        "criteria": [
+          "Explicit exclusive GPU/heavy-I/O slot from shared owner; do not stop Stage70-76",
+          "Verify raw TRAIN and frozen producer weights via existing manifests before executing",
+          "Measure raw slice/ROI, experts, feature construction, head and TTC output",
+          "Measure total request time directly; do not add stage p95 values or divide batch throughput into response latency",
+          "A5+PAIR shares A5; excluded experts must not affect validity, history, anchors or normalization",
+          "Do not assume retrospective current-ROI context is cached between different queries",
+          "If independent reduced route cannot be verified, report it as unavailable instead of fabricating an online equivalent",
+          "Define timing boundaries explicitly: if ROI is supplied externally or by the dataset, report estimator latency conditional on an available ROI; do not claim that detector, persistent tracking or sensor-to-AEB cost was measured.",
+          "If a frozen producer uses GPU, synchronize the measured execution and record transfers; preserve its recorded numerical/runtime contract rather than introducing a faster precision or backend as an unregistered alternative."
+        ],
+        "optimizer_updates": 0
+      },
+      {
+        "id": "P4",
+        "task": "Make the frozen-system decision without changing prior statistical gates",
+        "outputs": [
+          "Accuracy/cost frontier with scope and uncertainty",
+          "H8 versus H16 recommendation conditional on measured whole-route cost",
+          "Final complete/uncertain/negative/blocked statuses"
+        ],
+        "criteria": [
+          "Keep H8 as historical candidate",
+          "H16 is the accuracy challenger, not automatically promoted",
+          "No reduced or aggregation arm currently passes the registered accuracy screen; lower measured latency alone cannot reverse that result",
+          "If no application latency budget exists, publish the tradeoff without inventing one",
+          "End the study once planned outputs or concrete blockers are established"
+        ],
+        "optimizer_updates": 0
+      }
+    ],
+    "resources": {
+      "minimum_available_ram_bytes": 2147483648,
+      "maximum_own_tree_rss_bytes": 4294967296,
+      "minimum_free_disk_after_reservations_bytes": 10000000000,
+      "maximum_own_artifact_bytes": 10000000000,
+      "one_heavy_worker": true
+    },
+    "sealed_access_authorized": false,
+    "new_data_or_models_authorized": false,
+    "external_dependency": "Explicit exclusive GPU/heavy-I/O lease plus verified authorized raw TRAIN sources and existing frozen producer weights"
+  },
+  "subsequent_decision_only": {
+    "condition": "Only after frozen-system cost and failure characterization",
+    "direction": "If the objective becomes independent generalization, design one separately authorized confirmatory evaluation on genuinely independent scenes; determine comparators, practical margin, population and statistical unit before seeing outcomes.",
+    "not_authorized_here": [
+      "Any new fits or seeds",
+      "Stage76 or other sealed evaluations",
+      "New datasets",
+      "LATENT repair",
+      "New architectures or expert training",
+      "Automatic promotion of H16"
+    ],
+    "why_not_more_head_seeds_now": "The paired head-seed improvement is stable; the larger remaining uncertainties concern scenes, shared frozen experts, information availability and system cost."
+  }
+}
