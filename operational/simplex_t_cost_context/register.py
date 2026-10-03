@@ -170,6 +170,8 @@ def main() -> None:
     receipts = [
         OUT / "verification/MODEL_TESTS.xml",
         OUT / "verification/MODEL_TESTS_RESOURCE.json",
+        OUT / "verification/ENGINE_RESOURCE_QA.xml",
+        OUT / "verification/DELIVERY_RECONCILIATION_QA.xml",
     ]
     if any(not path.exists() for path in receipts):
         raise ValueError("focused model QA receipts required")
