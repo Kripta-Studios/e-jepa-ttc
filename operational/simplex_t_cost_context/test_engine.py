@@ -127,3 +127,118 @@ def test_union_guard_and_resource_receipts_use_only_own_root(
     reasons = engine.record(out / "execution/RESOURCES.json")["reasons"]
     assert "UNION_LOGICAL_OR_REPLAY_CAP_EXCEEDED" in reasons
     assert not n1.exists()
+
+
+def test_artifact_capacity_exact_boundary_and_reserved_disk() -> None:
+    cap = engine.ARTIFACT_CAP
+    assert not engine.artifact_capacity(cap - 10, 10, 20_000_000_000)["reasons"]
+    result = engine.artifact_capacity(cap - 10, 11, 20_000_000_000)
+    assert "OWN_ARTIFACTS_AND_RESERVATIONS_EXCEED_2_GIB" in result["reasons"]
+    result = engine.artifact_capacity(0, 2_000_000_000, 11_999_999_999)
+    assert result["reasons"] == ["DISK_AFTER_OWN_RESERVATION_BELOW_10_GB"]
+    assert not engine.artifact_capacity(0, 2_000_000_000, 12_000_000_000)["reasons"]
+    with pytest.raises(ValueError):
+        engine.artifact_capacity(0, -1, 20_000_000_000)
+
+
+def test_artifact_inventory_counts_own_pending_and_prior_deliveries(tmp_path: Path) -> None:
+    own, historical, unrelated = (tmp_path / name for name in ("night", "n1", "other"))
+    for root in (own, historical, unrelated):
+        root.mkdir()
+    (own / "bundle.zip.pending").write_bytes(b"123")
+    (own / "bundle.zip.checkpoint.next").write_bytes(b"4567")
+    (historical / "previous.zip").write_bytes(b"89012")
+    (unrelated / "borrowed.cache").write_bytes(b"x" * 100)
+    result = engine.artifact_inventory((own, historical))
+    assert result["used_bytes"] == 12
+    assert result["roots"] == {str(own): 7, str(historical): 5}
+    assert not (tmp_path / "missing").exists()
+    assert engine.artifact_inventory((tmp_path / "missing",))["used_bytes"] == 0
+
+
+def test_artifact_reservation_consumed_without_double_counting(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    monkeypatch.setattr(engine, "OUT", tmp_path)
+    monkeypatch.setattr(engine, "EXEC", tmp_path / "execution")
+    monkeypatch.setattr(engine, "N1", tmp_path / "n1")
+    monkeypatch.setattr(engine, "_owner", lambda _: None)
+    used = [100]
+    monkeypatch.setattr(
+        engine,
+        "artifact_inventory",
+        lambda: dict(used_bytes=used[0], roots={"own": used[0]}, cap_bytes=engine.ARTIFACT_CAP),
+    )
+    monkeypatch.setattr(
+        engine,
+        "memory",
+        lambda: dict(
+            available=3 * 1024**3,
+            tree_rss=1024**3,
+            commit_headroom=2 * 1024**3,
+            free_disk=15_000_000_000,
+        ),
+    )
+    resource = engine.Resources()
+    additional = 1_500_000_000
+    resource.reserve_artifacts(additional, "ZIP publication and extraction peak")
+    first = engine.record(tmp_path / "execution/RESOURCES.json")["artifacts"]
+    assert first["projected_bytes"] == 100 + additional
+    used[0] += 500_000_000
+    resource._artifact_stamp = float("-inf")
+    resource.last = float("-inf")
+    assert resource()
+    second = engine.record(tmp_path / "execution/RESOURCES.json")["artifacts"]
+    assert second["projected_bytes"] == first["projected_bytes"]
+    assert second["additional_reserved_bytes"] == additional - 500_000_000
+    used[0] = engine.ARTIFACT_CAP + 1
+    resource._artifact_stamp = float("-inf")
+    assert not resource()
+    with pytest.raises(InterruptedError):
+        resource.reserve_artifacts(1, "too much own data")
+
+
+@pytest.mark.parametrize(
+    "block",
+    [
+        dict(reason="UNKNOWN"),
+        dict(kind="RESOURCE_REJECTION", shared_source_integrity_failed=False),
+        dict(kind="NON_SHARED_FAMILY_SPECIFIC", shared_source_integrity_failed=True),
+        dict(kind="NON_SHARED_FAMILY_SPECIFIC"),
+    ],
+)
+def test_n3_never_bypasses_unknown_or_shared_n2_failure(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, block: dict
+) -> None:
+    monkeypatch.setattr(engine, "OUT", tmp_path)
+    monkeypatch.setattr(engine, "EXEC", tmp_path / "execution")
+    monkeypatch.setattr(engine, "N1", tmp_path / "n1")
+    monkeypatch.setattr(engine, "_owner", lambda _: None)
+    engine.atomic_json(tmp_path / "BLOCK_N2_TRAIN.json", block)
+    with pytest.raises(ValueError, match="explicit non-shared"):
+        engine.admit_n2({}, "a" * 64)
+    assert not (tmp_path / "execution").exists()
+
+
+def test_n3_independent_block_preserves_each_recovery_frontier(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    monkeypatch.setattr(engine, "OUT", tmp_path)
+    monkeypatch.setattr(engine, "EXEC", tmp_path / "execution")
+    monkeypatch.setattr(engine, "N1", tmp_path / "n1")
+    monkeypatch.setattr(engine, "_owner", lambda _: None)
+    engine.atomic_json(
+        tmp_path / "BLOCK_N2_TRAIN.json",
+        dict(kind="NON_SHARED_FAMILY_SPECIFIC", shared_source_integrity_failed=False),
+    )
+    engine.atomic_json(tmp_path / "execution/PHYSICAL_WORK.json", dict(frontier=0))
+    assert engine.admit_n2({}, "a" * 64) == []
+    first = next((tmp_path / "execution").glob("N2_BLOCK_ADMISSION_*.json"))
+    proof = engine.record(first)
+    assert len(proof["checkpoints"]) == 12
+    assert proof["optimizer_updates_for_admission"] == 0
+    assert proof["snapshots"]["PHYSICAL_WORK.json"]["value"] == dict(frontier=0)
+    engine.atomic_json(tmp_path / "execution/PHYSICAL_WORK.json", dict(frontier=100))
+    assert engine.admit_n2({}, "a" * 64) == []
+    assert len(list((tmp_path / "execution").glob("N2_BLOCK_ADMISSION_*.json"))) == 2
+    assert engine.record(first) == proof

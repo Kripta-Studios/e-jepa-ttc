@@ -7,6 +7,7 @@ an active historical training process; N1 runs in its own unchanged interpreter.
 from __future__ import annotations
 
 import gc
+import hashlib
 import json
 import os
 import time
@@ -51,6 +52,59 @@ ARM_ORDER = (
     "SET_AGE_C0",
     "SET_NOTIME_C0",
 )
+ARTIFACT_CAP = 2 * 1024**3
+DISK_FLOOR = 10_000_000_000
+
+
+def artifact_inventory(roots: tuple[Path, ...] | None = None) -> dict:
+    """Count only own N1/new-study files, without following borrowed directory links.
+
+    All own copies, pending publications, failed fragments and earlier deliveries
+    count. Hard-linked files are conservatively counted per directory entry.
+    """
+    sizes = {}
+    for root in (N1, OUT) if roots is None else roots:
+        total = 0
+        stack = [root]
+        while stack:
+            path = stack.pop()
+            if not path.exists():
+                continue
+            with os.scandir(path) as entries:
+                for entry in entries:
+                    try:
+                        state = entry.stat(follow_symlinks=False)
+                        reparse = bool(getattr(state, "st_file_attributes", 0) & 1024)
+                        if entry.is_dir(follow_symlinks=False):
+                            if not reparse:
+                                stack.append(Path(entry.path))
+                        else:
+                            total += state.st_size
+                    except FileNotFoundError:
+                        # An atomic publication may replace a temporary entry.
+                        continue
+        sizes[str(root)] = total
+    return dict(roots=sizes, used_bytes=sum(sizes.values()), cap_bytes=ARTIFACT_CAP)
+
+
+def artifact_capacity(used_bytes: int, additional_bytes: int, free_disk: int) -> dict:
+    """Calculate prospective own-artifact and free-disk limits without mutation."""
+    if min(used_bytes, additional_bytes, free_disk) < 0:
+        raise ValueError("artifact sizes and disk availability must be nonnegative")
+    reserve = max(1024**3, additional_bytes)
+    reasons = []
+    if used_bytes + additional_bytes > ARTIFACT_CAP:
+        reasons.append("OWN_ARTIFACTS_AND_RESERVATIONS_EXCEED_2_GIB")
+    if free_disk - reserve < DISK_FLOOR:
+        reasons.append("DISK_AFTER_OWN_RESERVATION_BELOW_10_GB")
+    return dict(
+        used_bytes=used_bytes,
+        additional_reserved_bytes=additional_bytes,
+        projected_bytes=used_bytes + additional_bytes,
+        cap_bytes=ARTIFACT_CAP,
+        disk_reservation_bytes=reserve,
+        reasons=reasons,
+    )
 
 
 def ids() -> list[dict[str, Any]]:
@@ -128,6 +182,32 @@ class Resources:
         self.minimum_available = 2**63 - 1
         self.minimum_commit = 2**63 - 1
         self._journals: dict[Path, tuple[int, dict]] = {}
+        self._artifact_snapshot: dict = {}
+        self._artifact_stamp = float("-inf")
+        self._artifact_reserved_ceiling = 0
+        self._artifact_reservation_reason = "NO_ADDITIONAL_PUBLICATION_RESERVATION"
+
+    def reserve_artifacts(self, additional_bytes: int, reason: str) -> None:
+        """Reserve peak *additional* own bytes, then immediately verify fresh limits.
+
+        The caller includes ZIP pending/checkpoint/next and extraction peaks. This
+        replaces this guard's previous reservation; zero explicitly releases it.
+        Its ceiling remains active while files are written. Newly persisted bytes
+        consume the reservation, rather than being counted twice. Call again with
+        a fresh remaining-growth bound before a different publication stage.
+        """
+        if isinstance(additional_bytes, bool) or not isinstance(additional_bytes, int):
+            raise TypeError("additional artifact bytes must be an integer")
+        if additional_bytes < 0 or not reason:
+            raise ValueError("a nonnegative reservation and explicit reason are required")
+        self._artifact_snapshot = artifact_inventory()
+        self._artifact_stamp = time.monotonic()
+        self._artifact_reserved_ceiling = (
+            self._artifact_snapshot["used_bytes"] + additional_bytes if additional_bytes else 0
+        )
+        self._artifact_reservation_reason = reason
+        self.last = float("-inf")
+        self.check()
 
     def _read(self, path: Path) -> dict:
         if not path.exists():
@@ -139,6 +219,13 @@ class Resources:
 
     def __call__(self) -> bool:
         m = memory()
+        if time.monotonic() - self._artifact_stamp >= 5:
+            self._artifact_snapshot = artifact_inventory()
+            self._artifact_stamp = time.monotonic()
+        used = self._artifact_snapshot["used_bytes"]
+        artifact = artifact_capacity(
+            used, max(0, self._artifact_reserved_ceiling - used), m["free_disk"]
+        )
         # Include another explicitly authorized campaign owner if present. This
         # reads its RSS only; no signal, scheduling or resource mutation occurs.
         seen = {os.getpid(), *(v.pid for v in psutil.Process().children(recursive=True))}
@@ -155,13 +242,11 @@ class Resources:
         self.peak = max(self.peak, m["tree_rss"])
         self.minimum_available = min(self.minimum_available, m["available"])
         self.minimum_commit = min(self.minimum_commit, m["commit_headroom"])
-        reasons = []
+        reasons = list(artifact["reasons"])
         if m["available"] < 2 * 1024**3:
             reasons.append("AVAILABLE_RAM_BELOW_2_GIB")
         if m["tree_rss"] > 4 * 1024**3:
             reasons.append("AUTHORIZED_PROCESS_RSS_EXCEEDS_4_GIB")
-        if m["free_disk"] - 1024**3 < 10_000_000_000:
-            reasons.append("DISK_AFTER_1_GIB_RESERVATION_BELOW_10_GB")
         if m["commit_headroom"] < 1024**3:
             reasons.append("WINDOWS_COMMIT_HEADROOM_BELOW_1_GIB")
         if self.training:
@@ -188,7 +273,12 @@ class Resources:
                     peak_tree_rss=self.peak,
                     minimum_available=self.minimum_available,
                     minimum_commit_headroom=self.minimum_commit,
-                    reservation_bytes=1024**3,
+                    reservation_bytes=artifact["disk_reservation_bytes"],
+                    artifacts=dict(
+                        **artifact,
+                        roots=self._artifact_snapshot["roots"],
+                        reservation_reason=self._artifact_reservation_reason,
+                    ),
                 ),
             )
             self.last = time.monotonic()
@@ -273,6 +363,8 @@ def fit_arm(
 
     if arm not in ARM_ORDER or seed != 7:
         raise ValueError("only the fixed seed7 prospective matrix is authorized")
+    if isinstance(resource_ok, Resources):
+        resource_ok.reserve_artifacts(16 * 1024**2, "FULL_STATE_CHECKPOINT_AND_ATOMIC_PENDING")
     with numeric_binding(arm):
         return fit(
             source,
@@ -390,8 +482,104 @@ def admit_n1(p: dict) -> None:
     )
 
 
+def admit_n2(p: dict, pin: str) -> list[dict]:
+    """Preserve N2 before N3; accept only an explicitly independent blocked family.
+
+    The caller has verified every shared input pin. Unknown failures, resource
+    pauses alone and shared-integrity failures never establish this exception.
+    The receipt preserves checkpoint, status and accounting bytes without scores,
+    optimizer updates or any change to the failed family's scientific recipe.
+    """
+    if _owner(N1 / "WRITER.lock") is not None:
+        raise RuntimeError("N1 live owner forbids N3 admission")
+    owner = _owner(EXEC / "WRITER.lock")
+    if owner is not None and owner.pid != os.getpid():
+        raise RuntimeError("another live new-study writer forbids N3 admission")
+    path = EXEC / "N2_ENDPOINTS.json"
+    if path.exists():
+        n2 = record(path)
+        expected = {row["key"] for row in ids() if row["family"] == "N2"}
+        if (
+            n2["protocol_sha256"] != pin
+            or len(n2["fits"]) != 12
+            or {row["key"] for row in n2["fits"]} != expected
+        ):
+            raise ValueError("complete matching N2 seal required before N3")
+        for row in n2["fits"]:
+            model, state = load_new_endpoint(row, p, pin)
+            del model, state
+        return n2["fits"]
+    block_path = OUT / "BLOCK_N2_TRAIN.json"
+    if not block_path.exists():
+        raise ValueError("N2 incomplete without a preserved independent blockage")
+    block = record(block_path)
+    if (
+        block.get("kind") != "NON_SHARED_FAMILY_SPECIFIC"
+        or block.get("shared_source_integrity_failed") is not False
+    ):
+        raise ValueError("N2 exception requires explicit non-shared family classification")
+    preserved = []
+    for row in (v for v in ids() if v["family"] == "N2"):
+        checkpoint = EXEC / "fits" / row["key"] / "checkpoint_last.pt"
+        if checkpoint.exists():
+            from e_jepa_ttc.simplex_t.training import load_checkpoint
+
+            state = load_checkpoint(checkpoint)
+            identity = state["identity"]
+            expected_source = p["sources"][str(row["fold"])]["wrapped"][row["arm"]]["train_sha256"]
+            if (
+                identity["freeze"] != pin
+                or identity["source"] != expected_source
+                or identity["seed"] != 7
+                or identity["device"] != "cpu"
+                or identity["batch"] != 128
+                or identity["endpoint"] != 2500
+            ):
+                raise ValueError("blocked N2 checkpoint identity differs")
+            preserved.append(
+                dict(
+                    key=row["key"],
+                    checkpoint=str(checkpoint),
+                    sha256=digest(checkpoint),
+                    completed_updates=state["completed_updates"],
+                    status=state["status"],
+                    identity_sha256=state["identity_sha256"],
+                )
+            )
+            del state
+        else:
+            preserved.append(dict(key=row["key"], checkpoint=None, completed_updates=0))
+    snapshots = {}
+    for name in ("STATUS.json", "PHYSICAL_WORK.json", "ENDPOINT_PROGRESS.json"):
+        path = EXEC / name
+        snapshots[name] = dict(value=record(path), sha256=digest(path)) if path.exists() else None
+    rows = (snapshots["ENDPOINT_PROGRESS.json"] or {}).get("value", {}).get("fits", [])
+    progress = (snapshots["ENDPOINT_PROGRESS.json"] or {}).get("value")
+    if progress is not None and progress["protocol_sha256"] != pin:
+        raise ValueError("preserved N2 endpoint inventory protocol differs")
+    completed = [row for row in rows if row["family"] == "N2"]
+    for row in completed:
+        model, state = load_new_endpoint(row, p, pin)
+        del model, state
+    receipt = dict(
+        status="N2_INDEPENDENT_BLOCK_PRESERVED_SHARED_H8_PINS_VERIFIED",
+        protocol_sha256=pin,
+        block=block,
+        block_sha256=digest(block_path),
+        checkpoints=preserved,
+        snapshots=snapshots,
+        shared_input_pins_verified=True,
+        scientific_recipe_modified=False,
+        optimizer_updates_for_admission=0,
+    )
+    # N3 may resume after its journal advances; preserve each admission frontier.
+    receipt_pin = hashlib.sha256(json.dumps(receipt, sort_keys=True).encode()).hexdigest()
+    publish_json(EXEC / f"N2_BLOCK_ADMISSION_{receipt_pin[:12]}.json", receipt)
+    return completed
+
+
 def main(family: str) -> int:
-    """Execute one fixed family; N3 requires the prior durable N2 seal."""
+    """Execute a fixed family after preserving its required predecessor state."""
     from e_jepa_ttc.simplex_t.physical_accounting import audit_physical_work
     from e_jepa_ttc.simplex_t.training import learning_rate, load_checkpoint
     from e_jepa_ttc.simplex_t.work_budget import EngineWorkJournal, WorkBudget
@@ -415,15 +603,8 @@ def main(family: str) -> int:
         budget = WorkBudget(EXEC / "PHYSICAL_WORK.json", graph, technical_reserved=0)
         s = sources(p)
         sealed: list[dict] = []
-        prior_seal = EXEC / "N2_ENDPOINTS.json"
         if family == "N3":
-            n2 = record(prior_seal)
-            if n2["protocol_sha256"] != pin or len(n2["fits"]) != 12:
-                raise ValueError("complete matching N2 seal required before N3")
-            for endpoint in n2["fits"]:
-                model, state = load_new_endpoint(endpoint, p, pin)
-                del model, state
-            sealed.extend(n2["fits"])
+            sealed.extend(admit_n2(p, pin))
         for row in (v for v in ids() if v["family"] == family):
             resources.check()
             validate_pins(p, full=False)

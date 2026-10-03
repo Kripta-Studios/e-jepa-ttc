@@ -3,8 +3,11 @@
 from __future__ import annotations
 
 import json
+import sys
 import zipfile
 from pathlib import Path
+from types import ModuleType
+from typing import Any
 
 import pytest
 
@@ -84,3 +87,37 @@ def test_zero_checkpoint_and_pending_work_are_preserved(
     assert result["scientific_physical_upper"] == 100
     assert result["endpoints"] == 0
     assert result["fits"][0]["status"] == "RECOVERABLE_PARTIAL"
+
+
+def test_checkpoint_ahead_of_journal_is_admitted_only_within_reserved_fragment(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    h16 = tmp_path / "h16"
+    h16.mkdir()
+    monkeypatch.setattr(deliver, "H16", h16)
+    p = h16 / "PROTOCOL.json"
+    deliver.atomic_json(p, dict(sources={"0": dict(train_sha256="source")}))
+    state: dict[str, Any] = dict(
+        completed_updates=200,
+        identity=dict(
+            source="source",
+            freeze=deliver.digest(p),
+            seed=13,
+            endpoint=2500,
+            batch=128,
+            device="cpu",
+        ),
+    )
+    module = ModuleType("e_jepa_ttc.simplex_t.training")
+    setattr(module, "load_checkpoint", lambda path: state)  # noqa: B010
+    monkeypatch.setitem(sys.modules, module.__name__, module)
+    progress = dict(completed=100, pending=[100, 200])
+    fit = dict(fold=0, seed=13)
+    assert deliver.admit_checkpoint(tmp_path / "checkpoint", fit, True, progress) == 200
+    state["completed_updates"] = 201
+    with pytest.raises(ValueError, match="cannot reconcile"):
+        deliver.admit_checkpoint(tmp_path / "checkpoint", fit, True, progress)
+    state["completed_updates"] = 200
+    state["identity"]["source"] = "other source"
+    with pytest.raises(ValueError, match="cannot reconcile"):
+        deliver.admit_checkpoint(tmp_path / "checkpoint", fit, True, progress)

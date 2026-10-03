@@ -366,6 +366,9 @@ def publish_family(
             frame["hull_reference"] = "ALL_THREE_FROZEN_EXPERTS_DIAGNOSTIC_ONLY"
             frame["allowed_anchor_phase"] = np.concatenate(anchors).astype(np.float64)
             frame["cost_auxiliary_active"] = False
+            frame["cost_supervision_active"] = False
+            frame["expert_selection_used"] = False
+            frame["cost_fields_semantics"] = "INACTIVE_COMPATIBILITY_PLACEHOLDERS_NOT_SELECTION"
             write_table(frame, root / "PREDICTIONS.parquet", root / "PREDICTIONS.csv")
             publication = dict(
                 protocol_sha256=pin,

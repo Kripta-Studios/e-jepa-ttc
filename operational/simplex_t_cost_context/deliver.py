@@ -40,7 +40,36 @@ def ledger(root: Path) -> dict:
     )
 
 
-def inventory() -> dict:
+def admit_checkpoint(path: Path, fit: dict, historical: bool, progress: dict) -> int:
+    """Read a complete durable state without rewriting its journal or checkpoint."""
+    from e_jepa_ttc.simplex_t.training import load_checkpoint
+
+    protocol_path = H16 / "PROTOCOL.json" if historical else NIGHT / "PROTOCOL_COST_CONTEXT.json"
+    p = record(protocol_path)
+    source = p["sources"][str(fit["fold"])]
+    source_sha = (
+        source["train_sha256"] if historical else source["wrapped"][fit["arm"]]["train_sha256"]
+    )
+    state = load_checkpoint(path)
+    identity = state["identity"]
+    completed = state["completed_updates"]
+    journal_saved = progress.get("completed", 0)
+    pending = progress.get("pending")
+    upper = pending[1] if pending else journal_saved
+    if (
+        not journal_saved <= completed <= upper <= 2500
+        or identity["source"] != source_sha
+        or identity["freeze"] != digest(protocol_path)
+        or identity["seed"] != fit["seed"]
+        or identity["endpoint"] != 2500
+        or identity["batch"] != 128
+        or identity["device"] != "cpu"
+    ):
+        raise ValueError(f"physical checkpoint cannot reconcile with admitted journal: {path}")
+    return completed
+
+
+def inventory(*, admit_physical_checkpoints: bool = False) -> dict:
     authorized = record(NIGHT / "QUEUE_AUTHORIZED.json")["fits"]
     journals = {"N1": ledger(H16), "N2_N3": ledger(NIGHT / "execution")}
     rows = []
@@ -54,6 +83,9 @@ def inventory() -> dict:
         checkpoint = root / "fits" / key / "checkpoint_last.pt"
         if not checkpoint.exists() and saved:
             raise FileNotFoundError(f"saved checkpoint is missing: {checkpoint}")
+        journal_saved = saved
+        if admit_physical_checkpoints and checkpoint.exists():
+            saved = admit_checkpoint(checkpoint, fit, historical, progress)
         rows.append(
             dict(
                 id=key,
@@ -68,13 +100,15 @@ def inventory() -> dict:
                 fold=fit["fold"],
                 seed=fit["seed"],
                 saved_updates=saved,
+                journal_saved_updates=journal_saved,
+                checkpoint_journal_reconciled=saved != journal_saved,
                 status="COMPLETE_ENDPOINT"
                 if saved == 2500
                 else ("RECOVERABLE_PARTIAL" if checkpoint.exists() else "NOT_STARTED"),
                 checkpoint=str(checkpoint) if checkpoint.exists() else None,
                 checkpoint_sha256=digest(checkpoint) if checkpoint.exists() else None,
                 uncertain_lost_upper=progress.get("uncertain_lost_upper", 0),
-                pending_unknown_upper=(progress["pending"][1] - progress["pending"][0])
+                pending_unknown_upper=(progress["pending"][1] - saved)
                 if progress.get("pending")
                 else 0,
             )
@@ -82,19 +116,14 @@ def inventory() -> dict:
     return dict(
         fits=rows,
         journals=journals,
-        scientific_saved_updates=sum(
-            v["accounting"]["scientific_saved_updates"] for v in journals.values()
-        ),
+        scientific_saved_updates=sum(v["saved_updates"] for v in rows),
         repeated_or_uncertain_upper=(
             sum(v["accounting"]["scientific_uncertain_lost_upper"] for v in journals.values())
             + sum(v["pending_unknown_upper"] for v in rows)
         ),
         endpoints=sum(v["saved_updates"] == 2500 for v in rows),
-        scientific_physical_upper=sum(
-            v["accounting"]["scientific_saved_updates"]
-            + v["accounting"]["scientific_uncertain_lost_upper"]
-            for v in journals.values()
-        )
+        scientific_physical_upper=sum(v["saved_updates"] for v in rows)
+        + sum(v["accounting"]["scientific_uncertain_lost_upper"] for v in journals.values())
         + sum(v["pending_unknown_upper"] for v in rows),
         technical=record(NIGHT / "TECHNICAL_WORK.json")
         if (NIGHT / "TECHNICAL_WORK.json").exists()
@@ -115,10 +144,12 @@ def report(state: dict) -> dict:
         fits = [v for v in state["fits"] if v["family"] == family]
         if path.exists():
             results = record(path)
+            gaps = results.get("pending_comparators", [])
             states[family] = dict(
                 status="COMPLETE"
-                if all(v["saved_updates"] == 2500 for v in fits)
-                else "PARTIAL_ANALYZED",
+                if all(v["saved_updates"] == 2500 for v in fits) and not gaps
+                else ("ANALYZED_WITH_COMPARATOR_GAPS" if gaps else "PARTIAL_ANALYZED"),
+                pending_comparators=gaps,
                 result_path=str(path),
                 sha256=digest(path),
                 conclusion=results.get("conclusion", "EXPLORATORY"),
@@ -158,6 +189,9 @@ def report(state: dict) -> dict:
         stages=states,
         endpoints=state["endpoints"],
         scientific_saved_updates=state["scientific_saved_updates"],
+        scientific_physical_updates_upper=state["scientific_physical_upper"],
+        total_physical_updates_upper=state["scientific_physical_upper"]
+        + state["technical"].get("reserved_updates", 0),
         technical=state["technical"],
         repeated_or_uncertain_upper=state["repeated_or_uncertain_upper"],
         authorized_updates_ceiling=60000,
@@ -198,6 +232,32 @@ def report(state: dict) -> dict:
     ]
     for family in ("N1", "N2", "N3"):
         lines.append(f"- {family}: {json.dumps(states[family], ensure_ascii=False)}")
+        if not resultpaths[family].exists():
+            continue
+        results = record(resultpaths[family])
+        lines += [
+            "",
+            "| Contraste | Candidato MiD | Referencia MiD | Delta de pérdidas | "
+            "CI95 jerárquico | CI95 secuencias |",
+            "|---|---:|---:|---:|---|---|",
+        ]
+        for label, contrast in results["comparisons"].items():
+            candidate = contrast["h16_mid"] if family == "N1" else contrast["candidate_MiD"]
+            reference = contrast["h8_mid"] if family == "N1" else contrast["reference_MiD"]
+            lines.append(
+                f"| {label} | {candidate:.9f} | {reference:.9f} | "
+                f"{contrast['paired_loss_delta']:.9f} | {contrast['hierarchical_ci95']} | "
+                f"{contrast['sequence_only']['ci95']} |"
+            )
+        if family != "N1":
+            lines += ["", "MiD de todos los brazos disponibles, sin selección por score:", ""]
+            lines.extend(f"- {name}: {score:.9f}." for name, score in results["scores"].items())
+        else:
+            lines += [
+                "",
+                "Seed7 es exploratoria ya observada; seeds13/23 son nuevas. Los resúmenes "
+                "new13_23 y all7_13_23 promedian pérdidas emparejadas, nunca predicciones TTC.",
+            ]
     lines += [
         "",
         (
@@ -278,6 +338,30 @@ def report(state: dict) -> dict:
             "otros fits."
         ),
     ]
+    cost_path = NIGHT / "HEAD_COST.csv"
+    if cost_path.exists():
+        import csv
+
+        lines += [
+            "",
+            "## Latencia medida con entradas preparadas",
+            "",
+            "| Modelo | p50 ms | p95 ms | Medidas batch1 | Parámetros |",
+            "|---|---:|---:|---:|---:|",
+        ]
+        with cost_path.open(encoding="utf-8", newline="") as stream:
+            for row in csv.DictReader(stream):
+                lines.append(
+                    f"| {row['model']} | {float(row['p50_ms']):.6f} | "
+                    f"{float(row['p95_ms']):.6f} | {row['measurements']} | "
+                    f"{row['parameters']} |"
+                )
+        lines += [
+            "",
+            "Estas medidas incluyen la emisión TTC de la cabeza; excluyen generar contexto "
+            "y ejecutar expertos. COST_ACCURACY.csv aplica el cribado de precisión/p95 "
+            "con el mismo alcance y conserva system_substitution_supported=false.",
+        ]
     atomic_bytes(NIGHT / "INFORME_NOCTURNO_SIMPLEX_T.md", ("\n".join(lines) + "\n").encode("utf-8"))
     return decision
 
@@ -332,6 +416,8 @@ def selected_files() -> dict[str, Path]:
                 "PROGRESS.json",
                 "ACTIVITY.md",
                 "ACTIVE_CHILD.json",
+                "DRIVER.log",
+                "RESOURCES.json",
                 "FINAL_DELIVERY_NOCTURNA.json",
                 "CONTENT_MANIFEST.json",
             }:
@@ -462,11 +548,30 @@ def bundle(files: dict[str, Path], decision: dict) -> dict:
     archive = (
         delivery / f"E_JEPA_TTC_SIMPLEX_T_NOCTURNO_{state_count(decision)}_{manifest_sha[:12]}.zip"
     )
+    extract = delivery / ("extracted_" + manifest_sha[:12])
+    uncompressed = sum(row["bytes"] for row in manifest["members"].values()) + len(manifest_bytes)
+    # Conservative DEFLATE/ZIP bound, including filenames and both headers.
+    zip_upper = (
+        uncompressed
+        + uncompressed // 1000
+        + 65536
+        + sum(1024 + 2 * len(name.encode("utf-8")) for name in files)
+    )
+    peak = max(3 * zip_upper, 2 * zip_upper + uncompressed)
+    recognized = [
+        archive,
+        archive.with_suffix(".zip.pending"),
+        archive.with_suffix(".zip.checkpoint"),
+        archive.with_suffix(".zip.checkpoint").with_name(archive.name + ".checkpoint.next"),
+    ]
+    existing = sum(p.stat().st_size for p in recognized if p.is_file())
+    if extract.exists():
+        existing += sum(p.stat().st_size for p in extract.rglob("*") if p.is_file())
+    resources.reserve_artifacts(max(0, peak - existing), "NOCTURNAL_BUNDLE_PUBLICATION_PEAK")
     if not archive.exists():
         fragmented_zip(archive, files, manifest, manifest_bytes, resources)
     sha = digest(archive)
     atomic_bytes(archive.with_suffix(".zip.sha256"), (sha + "  " + archive.name + "\n").encode())
-    extract = delivery / ("extracted_" + manifest_sha[:12])
     extract.mkdir(exist_ok=True)
     with zipfile.ZipFile(archive) as z:
         if len(z.namelist()) != len(set(z.namelist())) or z.testzip() is not None:
@@ -555,12 +660,38 @@ def state_count(decision: dict) -> str:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.parse_args()
-    state = inventory()
+    from .engine import EXEC, Resources, _owner
+
+    if any(_owner(path) is not None for path in (H16 / "WRITER.lock", EXEC / "WRITER.lock")):
+        raise RuntimeError("publication cannot reconcile a live training writer")
+    Resources().check()
+    state = inventory(admit_physical_checkpoints=True)
+    atomic_json(
+        NIGHT / "CHECKPOINT_JOURNAL_RECONCILIATION.json",
+        dict(
+            status="READ_ONLY_PHYSICAL_CHECKPOINT_ADMISSION",
+            journal_files_unchanged=True,
+            fits=[
+                {k: r[k] for k in ("id", "journal_saved_updates", "saved_updates")}
+                for r in state["fits"]
+                if r["checkpoint_journal_reconciled"]
+            ],
+            optimizer_updates=0,
+        ),
+    )
     atomic_json(NIGHT / "ENDPOINT_INVENTORY.json", state)
     if (NIGHT / "ACTIVITY.md").exists():
         atomic_bytes(NIGHT / "DELIVERY_ACTIVITY.md", (NIGHT / "ACTIVITY.md").read_bytes())
     decision = report(state)
     tables()
+    # The parent continues logging and our guard updates RESOURCES during ZIP
+    # fragments. Bind immutable copies, never hash those changing source files.
+    for source, target in (
+        (NIGHT / "DRIVER.log", NIGHT / "DELIVERY_DRIVER_LOG.log"),
+        (EXEC / "RESOURCES.json", NIGHT / "DELIVERY_RESOURCES.json"),
+    ):
+        if source.exists() and not target.exists():
+            atomic_bytes(target, source.read_bytes())
     receipt = bundle(selected_files(), decision)
     atomic_json(NIGHT / "FINAL_DELIVERY_NOCTURNA.json", receipt)
     print(json.dumps(receipt, ensure_ascii=False), flush=True)
