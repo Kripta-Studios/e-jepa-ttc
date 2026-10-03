@@ -1,0 +1,25 @@
+{
+  "schema": "simplex_t_remaining_route_decision_v1",
+  "observed_utc": "2026-10-03T22:24:04.161624+00:00",
+  "P0": "COMPLETE",
+  "P1": "COMPLETE",
+  "P2": "COMPLETE",
+  "P3": "BLOCKED",
+  "P4": "COMPLETE_WITH_SYSTEM_COST_LIMITATION",
+  "new_optimizer_updates": 0,
+  "historical_scientific_updates_saved": 60000,
+  "historical_new_endpoints": 24,
+  "registered_candidate": "TPR-D1-H8-C160",
+  "blockers": [
+    "MISSING_EXPLICIT_EXCLUSIVE_GPU_HEAVY_IO_SLOT",
+    "OTHER_LIVE_PYTHON_GPU_JOB"
+  ],
+  "dependency": "Exclusive GPU/heavy-I/O handoff coordinated with current resource owners",
+  "remaining_tasks": [
+    "canonical full/reduced route adapter integration and actual parity",
+    "prospectively frozen warm/application-cold whole-route repetitions",
+    "Whole-route report and delivery supplement"
+  ],
+  "snapshot_is_not_lease": true,
+  "receipt": "READINESS_FINAL.json"
+}
