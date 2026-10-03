@@ -1,1 +1,4 @@
 * -text whitespace=cr-at-eol
+# Preserve renderer and checker bytes used by delivery manifests.
+*.svg -whitespace
+PYRIGHT_FINAL.json -whitespace
