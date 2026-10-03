@@ -1,0 +1,6 @@
+{
+  "include": ["."],
+  "extraPaths": ["../..", "../../src", "../simplex_t_closure", "../simplex_t_h16_replication"],
+  "typeCheckingMode": "basic",
+  "pythonVersion": "3.11"
+}
