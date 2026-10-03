@@ -1,0 +1,18 @@
+{
+  "status": "PHYSICAL_CSV_JSON_FULL_PRECISION_RECONCILED",
+  "families": {
+    "N2": {
+      "rows": 9,
+      "maximum_difference": 0.0,
+      "results_sha256": "500707893a0f17f5f512b51e0cf69d53e8696885f3a3f9109cf555767b91fdef",
+      "csv_sha256": "780220890de8e13d2a32667466d1b71aaf76fa2158880827da84b8ebebe9b4b3"
+    },
+    "N3": {
+      "rows": 6,
+      "maximum_difference": 0.0,
+      "results_sha256": "36a3eb253b477f2c12aab1afc12bf9c5cf95b02d341e6e3abec30989f7ee61ed",
+      "csv_sha256": "882476a973b29fd82d93f0e3aba7c364dd02140d553a105146a17f5eb1df474c"
+    }
+  },
+  "optimizer_updates": 0
+}

@@ -1,0 +1,49 @@
+{
+  "status": "SIX_NEW_HEADS_REGENERATED_FROM_EXTRACTED_BYTES",
+  "heads": [
+    {
+      "seed": 13,
+      "fold": 0,
+      "queries": 2731,
+      "max_ttc_error": 0.0
+    },
+    {
+      "seed": 13,
+      "fold": 1,
+      "queries": 2731,
+      "max_ttc_error": 0.0
+    },
+    {
+      "seed": 13,
+      "fold": 2,
+      "queries": 2730,
+      "max_ttc_error": 0.0
+    },
+    {
+      "seed": 23,
+      "fold": 0,
+      "queries": 2731,
+      "max_ttc_error": 0.0
+    },
+    {
+      "seed": 23,
+      "fold": 1,
+      "queries": 2731,
+      "max_ttc_error": 0.0
+    },
+    {
+      "seed": 23,
+      "fold": 2,
+      "queries": 2730,
+      "max_ttc_error": 0.0
+    }
+  ],
+  "h16_mid": {
+    "13": 119.69680178724649,
+    "23": 119.16152634210414
+  },
+  "members_verified": 985,
+  "optimizer_updates": 0,
+  "raw_reconstruction": false,
+  "torch_version": "2.11.0+cu128"
+}

@@ -1,0 +1,10 @@
+{
+  "prepared_head": "COMPLETE",
+  "models": 9,
+  "missing_head_models": [],
+  "full_route": "NOT_MEASURED",
+  "missing_dependency": "Explicit exclusive GPU/heavy-I/O slot from the shared resource owner; no such lease is present in the acknowledged interface.",
+  "full_route_admission_sha256": "8876d1ed3e853310dc0c518ef325681e45545b0ce1e8e71ea1e6dfcae85ffbe1",
+  "route_cost_does_not_follow_from_head_latency": true,
+  "profile_receipts_reconciled_without_new_measurements": true
+}

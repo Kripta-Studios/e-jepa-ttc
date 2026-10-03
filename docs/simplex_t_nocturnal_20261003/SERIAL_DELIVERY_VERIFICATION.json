@@ -1,0 +1,94 @@
+{
+  "status": "SERIAL_DELIVERY_VERIFIED_EXACT_SCOPE",
+  "jobs": [
+    {
+      "argv": [
+        "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\.venv\\Scripts\\python.exe",
+        "-B",
+        "artifacts\\simplex_t\\nocturnal_20261003\\delivery\\extracted_bbabc02921d2\\verify_checkpoints.py",
+        "--root",
+        "artifacts\\simplex_t\\nocturnal_20261003\\delivery\\extracted_bbabc02921d2",
+        "--output",
+        "artifacts\\simplex_t\\nocturnal_20261003\\delivery\\CHECKPOINT_VERIFICATION_bbabc02921d2.json"
+      ],
+      "cwd": "artifacts\\simplex_t\\nocturnal_20261003\\delivery\\extracted_bbabc02921d2",
+      "output": "artifacts\\simplex_t\\nocturnal_20261003\\delivery\\CHECKPOINT_VERIFICATION_bbabc02921d2.json",
+      "status": "VERIFIED",
+      "returncode": 0,
+      "pid": 56096,
+      "create_time": 1791055732.077535,
+      "receipt_sha256": "9b6ed640682544ecfbcdadf3436a1c8d13495fc10ba3653b0016457740cbbf1c"
+    },
+    {
+      "argv": [
+        "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\.venv\\Scripts\\python.exe",
+        "-B",
+        "artifacts\\simplex_t\\nocturnal_20261003\\delivery\\extracted_bbabc02921d2\\regenerate.py",
+        "--root",
+        "artifacts\\simplex_t\\nocturnal_20261003\\delivery\\extracted_bbabc02921d2",
+        "--output",
+        "artifacts\\simplex_t\\nocturnal_20261003\\delivery\\REGENERATION_bbabc02921d2.json"
+      ],
+      "cwd": "artifacts\\simplex_t\\nocturnal_20261003\\delivery\\extracted_bbabc02921d2",
+      "output": "artifacts\\simplex_t\\nocturnal_20261003\\delivery\\REGENERATION_bbabc02921d2.json",
+      "status": "VERIFIED",
+      "returncode": 0,
+      "pid": 26676,
+      "create_time": 1791055773.0318923,
+      "receipt_sha256": "982d08946f4e9f1deb167768f041835cacccbede35101a0ab96783b5c1cb7441"
+    }
+  ],
+  "optimizer_updates": 0,
+  "scope": {
+    "cached_head_ids": [
+      "COST_CONTEXT_20261003/A5_ONLY_C0/fold0/seed7",
+      "COST_CONTEXT_20261003/A5_ONLY_C0/fold1/seed7",
+      "COST_CONTEXT_20261003/A5_ONLY_C0/fold2/seed7",
+      "COST_CONTEXT_20261003/A5_PAIR_C0/fold0/seed7",
+      "COST_CONTEXT_20261003/A5_PAIR_C0/fold1/seed7",
+      "COST_CONTEXT_20261003/A5_PAIR_C0/fold2/seed7",
+      "COST_CONTEXT_20261003/C2F_ONLY_C0/fold0/seed7",
+      "COST_CONTEXT_20261003/C2F_ONLY_C0/fold1/seed7",
+      "COST_CONTEXT_20261003/C2F_ONLY_C0/fold2/seed7",
+      "COST_CONTEXT_20261003/FULL_C0/fold0/seed7",
+      "COST_CONTEXT_20261003/FULL_C0/fold1/seed7",
+      "COST_CONTEXT_20261003/FULL_C0/fold2/seed7",
+      "COST_CONTEXT_20261003/SET_AGE_C0/fold0/seed7",
+      "COST_CONTEXT_20261003/SET_AGE_C0/fold1/seed7",
+      "COST_CONTEXT_20261003/SET_AGE_C0/fold2/seed7",
+      "COST_CONTEXT_20261003/SET_NOTIME_C0/fold0/seed7",
+      "COST_CONTEXT_20261003/SET_NOTIME_C0/fold1/seed7",
+      "COST_CONTEXT_20261003/SET_NOTIME_C0/fold2/seed7"
+    ],
+    "checkpoint_ids": [
+      "COST_CONTEXT_20261003/A5_ONLY_C0/fold0/seed7",
+      "COST_CONTEXT_20261003/A5_ONLY_C0/fold1/seed7",
+      "COST_CONTEXT_20261003/A5_ONLY_C0/fold2/seed7",
+      "COST_CONTEXT_20261003/A5_PAIR_C0/fold0/seed7",
+      "COST_CONTEXT_20261003/A5_PAIR_C0/fold1/seed7",
+      "COST_CONTEXT_20261003/A5_PAIR_C0/fold2/seed7",
+      "COST_CONTEXT_20261003/C2F_ONLY_C0/fold0/seed7",
+      "COST_CONTEXT_20261003/C2F_ONLY_C0/fold1/seed7",
+      "COST_CONTEXT_20261003/C2F_ONLY_C0/fold2/seed7",
+      "COST_CONTEXT_20261003/FULL_C0/fold0/seed7",
+      "COST_CONTEXT_20261003/FULL_C0/fold1/seed7",
+      "COST_CONTEXT_20261003/FULL_C0/fold2/seed7",
+      "COST_CONTEXT_20261003/SET_AGE_C0/fold0/seed7",
+      "COST_CONTEXT_20261003/SET_AGE_C0/fold1/seed7",
+      "COST_CONTEXT_20261003/SET_AGE_C0/fold2/seed7",
+      "COST_CONTEXT_20261003/SET_NOTIME_C0/fold0/seed7",
+      "COST_CONTEXT_20261003/SET_NOTIME_C0/fold1/seed7",
+      "COST_CONTEXT_20261003/SET_NOTIME_C0/fold2/seed7",
+      "H16_REPLICATION_20261003/TPR-D1-H16-C160/fold0/seed13",
+      "H16_REPLICATION_20261003/TPR-D1-H16-C160/fold0/seed23",
+      "H16_REPLICATION_20261003/TPR-D1-H16-C160/fold1/seed13",
+      "H16_REPLICATION_20261003/TPR-D1-H16-C160/fold1/seed23",
+      "H16_REPLICATION_20261003/TPR-D1-H16-C160/fold2/seed13",
+      "H16_REPLICATION_20261003/TPR-D1-H16-C160/fold2/seed23"
+    ],
+    "export_index_sha256": "105f4c12feca2217f6b123d440fbb9b34c48a353bec7a5bc9d3b88b70581e011",
+    "complete_but_not_exported_ids": [],
+    "optimizer_updates": 0
+  },
+  "archive_sha256": "f7d915b3d203453696d7006b08dbde0c731c3d1f92e652d616edfad60e0e2ff1"
+}

@@ -1,0 +1,2 @@
+# Operational source hashes bind the original bytes included in the bundle.
+* -text whitespace=cr-at-eol

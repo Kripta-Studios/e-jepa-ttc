@@ -1,0 +1,180 @@
+{
+  "schema": "simplex_t_prospective_cost_context_results_v1",
+  "status": "COMPLETE_EXPLORATORY_FAMILY_ANALYSIS",
+  "protocol_sha256": "876a2c2ff8d0d2f3c9796352d9cb009a3d4346a949d5cd3f45c5e015d2053eb2",
+  "family": "N3",
+  "arms": [
+    "SET_AGE_C0",
+    "SET_NOTIME_C0"
+  ],
+  "scores": {
+    "FULL_C0": 121.40470604724992,
+    "H8@7": 121.64633225755662,
+    "SET_AGE_C0": 122.4426042260957,
+    "SET_NOTIME_C0": 123.6865998576068
+  },
+  "comparisons": {
+    "SET_AGE_C0_minus_FULL_C0": {
+      "candidate": "SET_AGE_C0",
+      "reference": "FULL_C0",
+      "candidate_MiD": 122.4426042260957,
+      "reference_MiD": 121.40470604724992,
+      "paired_loss_delta": 1.0378981788458321,
+      "hierarchical_ci95": [
+        -3.0355556542166293,
+        4.6344481546170835
+      ],
+      "sequence_only": {
+        "point_delta": 1.0378981788458332,
+        "ci95": [
+          -2.248812177406003,
+          3.418927051935405
+        ],
+        "fraction_negative": 0.23212018608546026,
+        "sequence_wins": 2,
+        "sequence_count_vectors": 24310,
+        "omit_one_score_deltas": [
+          2.484614229418529,
+          1.0534053402890826,
+          0.9866038414049183,
+          0.44511022558271873,
+          1.1797489399455547,
+          0.574075157010392,
+          0.9615549154254261,
+          0.7375514532011958,
+          0.9184195073346809
+        ],
+        "signflip_p_two_sided_descriptive": 0.55078125,
+        "retraining_performed": false,
+        "confirmatory": false
+      },
+      "practical": {
+        "candidate_score": 122.4426042260956,
+        "reference_score": 121.40470604724979,
+        "point_delta": 1.0378981788458321,
+        "weighted_sign_error_delta": 0.0005585076277567248,
+        "crucial_bucket_mid_delta": 3.0115873675307117,
+        "candidate_finite_fraction": 1.0,
+        "reference_finite_fraction": 1.0,
+        "sequence_deltas": {
+          "2cyv0Oedzg": -10.535830225735737,
+          "5ilM1PX2vz": 0.9138408872998377,
+          "6h5yRW2LGc": 1.4482528783731525,
+          "OBneIVg4Cw": 5.780201804950749,
+          "OYgB6RGWcq": -0.09690790995193886,
+          "WbCh1DRerJ": 4.748482353529362,
+          "mHGFBekt7X": 1.6486442862090889,
+          "qGsgzl4Q8B": 3.4406719840029325,
+          "t79dBxj1WS": 1.993727550935051
+        },
+        "sequence_wins": 2,
+        "sequence_count": 9,
+        "query_count": 8192,
+        "gate_authorized": false
+      },
+      "engineering_screen": {
+        "ci_upper_strictly_below_2": false,
+        "sign_increase_max_0p005": true,
+        "crucial_increase_max_5": true,
+        "precision_screen_pass": false,
+        "latency_reduction_required": 0.2,
+        "latency_scope": "UNMEASURED",
+        "qualifies_head_efficiency": false,
+        "qualifies_system_substitution": false
+      },
+      "exploratory": true,
+      "confirmatory": false
+    },
+    "SET_NOTIME_C0_minus_SET_AGE_C0": {
+      "candidate": "SET_NOTIME_C0",
+      "reference": "SET_AGE_C0",
+      "candidate_MiD": 123.6865998576068,
+      "reference_MiD": 122.4426042260957,
+      "paired_loss_delta": 1.2439956315111262,
+      "hierarchical_ci95": [
+        -0.6957483995635467,
+        2.6766788018183627
+      ],
+      "sequence_only": {
+        "point_delta": 1.2439956315111256,
+        "ci95": [
+          0.0927967215074051,
+          2.2638898416205233
+        ],
+        "fraction_negative": 0.01733490662131708,
+        "sequence_wins": 2,
+        "sequence_count_vectors": 24310,
+        "omit_one_score_deltas": [
+          1.4978581393899706,
+          1.2632133317419636,
+          1.1857557944541488,
+          1.0517175368285552,
+          1.6641316791617853,
+          0.9628912953501285,
+          1.316044644949891,
+          1.1180485260337423,
+          1.1362997356899451
+        ],
+        "signflip_p_two_sided_descriptive": 0.078125,
+        "retraining_performed": false,
+        "confirmatory": false
+      },
+      "practical": {
+        "candidate_score": 123.68659985760674,
+        "reference_score": 122.4426042260956,
+        "point_delta": 1.2439956315111262,
+        "weighted_sign_error_delta": 0.0007545918172267392,
+        "crucial_bucket_mid_delta": 2.9884317314855524,
+        "candidate_finite_fraction": 1.0,
+        "reference_finite_fraction": 1.0,
+        "sequence_deltas": {
+          "2cyv0Oedzg": -0.786904431519634,
+          "5ilM1PX2vz": 1.0902540296644225,
+          "6h5yRW2LGc": 1.7099143279669404,
+          "OBneIVg4Cw": 2.7822203889716888,
+          "OYgB6RGWcq": -2.1170927496941516,
+          "WbCh1DRerJ": 3.492830320799103,
+          "mHGFBekt7X": 0.6676035240010014,
+          "qGsgzl4Q8B": 2.2515724753301916,
+          "t79dBxj1WS": 2.1055627980805687
+        },
+        "sequence_wins": 2,
+        "sequence_count": 9,
+        "query_count": 8192,
+        "gate_authorized": false
+      },
+      "engineering_screen": {
+        "ci_upper_strictly_below_2": false,
+        "sign_increase_max_0p005": true,
+        "crucial_increase_max_5": true,
+        "precision_screen_pass": false,
+        "latency_reduction_required": 0.2,
+        "latency_scope": "UNMEASURED",
+        "qualifies_head_efficiency": false,
+        "qualifies_system_substitution": false
+      },
+      "exploratory": true,
+      "confirmatory": false
+    }
+  },
+  "pending_comparators": [],
+  "bootstrap": {
+    "draws_sha256": "c9bb64817f5bbd09ea67784d9fe596b0de12f2439000ffb32d3552a74d679a7f",
+    "valid_draws": 8192,
+    "attempts": 8195,
+    "discarded": 3,
+    "validity_fraction": 0.999633923123856
+  },
+  "independent_sequences": 9,
+  "seed": 7,
+  "ensemble": false,
+  "historical_candidate": "TPR-D1-H8-C160",
+  "candidate_replaced": false,
+  "confirmatory": false,
+  "full_hull_diagnostic_reference": true,
+  "latency_measured_here": false,
+  "input_scope": "NORMALIZED_CACHED_H8_CONTEXTS",
+  "raw_reconstruction": false,
+  "export_index_sha256": "696bac6ccf12afd5b1dc1d37ecdb22e23208063e9ba49daf4e8bf4bd7c54bd5e",
+  "metrics_sha256": "882476a973b29fd82d93f0e3aba7c364dd02140d553a105146a17f5eb1df474c"
+}

@@ -1,0 +1,13 @@
+# Lectura de los resultados cerrados
+
+N1: H16 obtiene 119.241355680 MiD en la media de pérdidas de tres seeds, frente a 121.784021646 de H8; delta -2.542665966, CI95 jerárquico [-5.2133978893639155, -0.11124053108043853]. Las tres diferencias por seed son favorables. Seed7 era exploratoria y ya observada. El resumen de las dos seeds nuevas tiene delta -2.423702276 y CI95 jerárquico [-5.244259454753143, 0.04109148518456987], que incluye cero: estabilidad local de la optimización y incertidumbre entre escenas deben mantenerse separadas. No es confirmación fresca ni promoción del H16.
+
+N2: FULL_C0 obtiene 121.404706047 MiD. A5_ONLY_C0, C2F_ONLY_C0 y A5_PAIR_C0 obtienen, respectivamente, 127.785376351, 126.704974218 y 124.668731524. Las tres reducciones fallan el cribado prospectivo de precisión. Se conserva también el contraste FULL_C0 frente a H8: no se atribuye a quitar expertos el cambio del objetivo auxiliar.
+
+N3: SET_AGE_C0 obtiene 122.442604226 MiD y SET_NOTIME_C0 123.686599858. SET_AGE menos FULL_C0 tiene delta 1.037898179, CI95 jerárquico [-3.0355556542166293, 4.6344481546170835]. SET_NOTIME menos SET_AGE tiene delta 1.243995632, CI95 jerárquico [-0.6957483995635467, 2.6766788018183627]. Ninguno pasa el límite superior CI95 <+2 MiD fijado para cribado ingenieril. Esto no demuestra equivalencia ni ausencia de efecto; no se habilitan más seeds o updates para rescatarlo.
+
+N4: hay nueve perfiles completos, 500 mediciones batch1 cada uno, con TTC canónico incluido. PROFILE_VARIABILITY.csv conserva dispersión y extremos de los tiempos crudos. Se reutilizaron perfiles válidos tomados en distintos estados de memoria/carga del host. Incluso las cabezas GRU con idéntica capacidad muestran diferencias grandes: no se atribuye causalmente esa variación a quitar un experto. Los ratios publicados describen estas mediciones de cabeza; no son coste del sistema ni ahorro energético. La falta de slot exclusivo GPU/lectura pesada impide medir la ruta integral. No se decide sustitución del sistema. Las 64 entradas TRAIN normalizadas del perfilado y los pesos están exportados sin targets para repetir la medición desde el bundle.
+
+T6 permanece cerrado y H8 conserva su registro. H8 mejora OLD_DEV; las réplicas corresponden a cabezas, no a todos los expertos. El contexto pasado aporta información, pero el mecanismo cronológico no queda demostrado: los expertos pueden conservar información temporal incluso en SET_NOTIME. No se acredita AEB más rápida, tracking persistente o incertidumbre calibrada. Hay nueve secuencias independientes, no27 escenas por combinar seeds. Todos los contrastes nuevos son exploratorios sobre OLD_DEV reutilizado.
+
+La única propuesta posterior está en NEXT_EXPERIMENT_NOCTURNA.md; no se ha ejecutado.

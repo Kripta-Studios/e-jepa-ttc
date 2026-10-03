@@ -1,0 +1,171 @@
+{
+  "status": "INCLUDED_NEW_HEADS_REGENERATED_FROM_EXTRACTED_CACHED_BYTES",
+  "heads": [
+    {
+      "key": "COST_CONTEXT_20261003/A5_ONLY_C0/fold0/seed7",
+      "arm": "A5_ONLY_C0",
+      "fold": 0,
+      "queries": 2731,
+      "max_ttc_error": 0.0,
+      "fragments": 22
+    },
+    {
+      "key": "COST_CONTEXT_20261003/A5_ONLY_C0/fold1/seed7",
+      "arm": "A5_ONLY_C0",
+      "fold": 1,
+      "queries": 2731,
+      "max_ttc_error": 0.0,
+      "fragments": 22
+    },
+    {
+      "key": "COST_CONTEXT_20261003/A5_ONLY_C0/fold2/seed7",
+      "arm": "A5_ONLY_C0",
+      "fold": 2,
+      "queries": 2730,
+      "max_ttc_error": 0.0,
+      "fragments": 22
+    },
+    {
+      "key": "COST_CONTEXT_20261003/A5_PAIR_C0/fold0/seed7",
+      "arm": "A5_PAIR_C0",
+      "fold": 0,
+      "queries": 2731,
+      "max_ttc_error": 0.0,
+      "fragments": 22
+    },
+    {
+      "key": "COST_CONTEXT_20261003/A5_PAIR_C0/fold1/seed7",
+      "arm": "A5_PAIR_C0",
+      "fold": 1,
+      "queries": 2731,
+      "max_ttc_error": 0.0,
+      "fragments": 22
+    },
+    {
+      "key": "COST_CONTEXT_20261003/A5_PAIR_C0/fold2/seed7",
+      "arm": "A5_PAIR_C0",
+      "fold": 2,
+      "queries": 2730,
+      "max_ttc_error": 0.0,
+      "fragments": 22
+    },
+    {
+      "key": "COST_CONTEXT_20261003/C2F_ONLY_C0/fold0/seed7",
+      "arm": "C2F_ONLY_C0",
+      "fold": 0,
+      "queries": 2731,
+      "max_ttc_error": 0.0,
+      "fragments": 22
+    },
+    {
+      "key": "COST_CONTEXT_20261003/C2F_ONLY_C0/fold1/seed7",
+      "arm": "C2F_ONLY_C0",
+      "fold": 1,
+      "queries": 2731,
+      "max_ttc_error": 0.0,
+      "fragments": 22
+    },
+    {
+      "key": "COST_CONTEXT_20261003/C2F_ONLY_C0/fold2/seed7",
+      "arm": "C2F_ONLY_C0",
+      "fold": 2,
+      "queries": 2730,
+      "max_ttc_error": 0.0,
+      "fragments": 22
+    },
+    {
+      "key": "COST_CONTEXT_20261003/FULL_C0/fold0/seed7",
+      "arm": "FULL_C0",
+      "fold": 0,
+      "queries": 2731,
+      "max_ttc_error": 0.0,
+      "fragments": 22
+    },
+    {
+      "key": "COST_CONTEXT_20261003/FULL_C0/fold1/seed7",
+      "arm": "FULL_C0",
+      "fold": 1,
+      "queries": 2731,
+      "max_ttc_error": 0.0,
+      "fragments": 22
+    },
+    {
+      "key": "COST_CONTEXT_20261003/FULL_C0/fold2/seed7",
+      "arm": "FULL_C0",
+      "fold": 2,
+      "queries": 2730,
+      "max_ttc_error": 0.0,
+      "fragments": 22
+    },
+    {
+      "key": "COST_CONTEXT_20261003/SET_AGE_C0/fold0/seed7",
+      "arm": "SET_AGE_C0",
+      "fold": 0,
+      "queries": 2731,
+      "max_ttc_error": 0.0,
+      "fragments": 22
+    },
+    {
+      "key": "COST_CONTEXT_20261003/SET_AGE_C0/fold1/seed7",
+      "arm": "SET_AGE_C0",
+      "fold": 1,
+      "queries": 2731,
+      "max_ttc_error": 0.0,
+      "fragments": 22
+    },
+    {
+      "key": "COST_CONTEXT_20261003/SET_AGE_C0/fold2/seed7",
+      "arm": "SET_AGE_C0",
+      "fold": 2,
+      "queries": 2730,
+      "max_ttc_error": 0.0,
+      "fragments": 22
+    },
+    {
+      "key": "COST_CONTEXT_20261003/SET_NOTIME_C0/fold0/seed7",
+      "arm": "SET_NOTIME_C0",
+      "fold": 0,
+      "queries": 2731,
+      "max_ttc_error": 0.0,
+      "fragments": 22
+    },
+    {
+      "key": "COST_CONTEXT_20261003/SET_NOTIME_C0/fold1/seed7",
+      "arm": "SET_NOTIME_C0",
+      "fold": 1,
+      "queries": 2731,
+      "max_ttc_error": 0.0,
+      "fragments": 22
+    },
+    {
+      "key": "COST_CONTEXT_20261003/SET_NOTIME_C0/fold2/seed7",
+      "arm": "SET_NOTIME_C0",
+      "fold": 2,
+      "queries": 2730,
+      "max_ttc_error": 0.0,
+      "fragments": 22
+    }
+  ],
+  "scores": {
+    "A5_ONLY_C0": 127.78537635061487,
+    "A5_PAIR_C0": 124.66873152432966,
+    "C2F_ONLY_C0": 126.70497421775462,
+    "FULL_C0": 121.40470604724977,
+    "SET_AGE_C0": 122.44260422609561,
+    "SET_NOTIME_C0": 123.68659985760674
+  },
+  "members_verified": 2792,
+  "optimizer_updates": 0,
+  "raw_reconstruction": false,
+  "expert_weights_required": false,
+  "torch_version": "2.11.0+cu128",
+  "resource_scope": "Delivery Python tree checked before each head and fragment; external supervisor retains union budget",
+  "last_resource_check": {
+    "available_ram_bytes": 14184443904,
+    "delivery_tree_rss_bytes": 834310144,
+    "tree_owner_pid": 23340,
+    "disk_free_after_reserve_bytes": 160899280896,
+    "disk_reserve_bytes": 1073741824,
+    "windows_commit_headroom_bytes": 10543403008
+  }
+}

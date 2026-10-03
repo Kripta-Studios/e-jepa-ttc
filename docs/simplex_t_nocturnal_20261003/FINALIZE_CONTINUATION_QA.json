@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "ruff": "PASS",
+  "pyright": "PASS",
+  "stdlib_unit_contracts": 2,
+  "optimizer_updates": 0,
+  "scientific_code_unchanged": true,
+  "source_sha256": {
+    "finalize_continuation.py": "49ea19a8a965bdb6fba6fb76ba22fa05ac4cd498ee3f3f8a87864719515d5a33",
+    "export_profile_inputs.py": "ed7a5fecda43ad76bcf242751fb9aa571f31c207557fc6ee637004860117bf46",
+    "profile_cached.py": "dd3db3f150a7cb9f6997828cbddd78301946f18c46dd5213a116a09e9219f627",
+    "test_finalization.py": "7901445d998a760050c3cdc3eff5ac45842e6b670d7bdafd14901bf7481bf405"
+  },
+  "independent_static_review": "PASS_SERIAL_OWNERSHIP_EXACT_SCOPE"
+}
