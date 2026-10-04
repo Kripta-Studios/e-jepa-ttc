@@ -240,6 +240,10 @@ def report(c: Campaign) -> None:
         },
         "raw_restoration": restoration_status,
         "microbatch_profile": micro,
+        "active_resource_policy": c.policy,
+        "resource_amendment": read(c.out / "RESOURCE_AUTHORIZATION.json")
+        if (c.out / "RESOURCE_AUTHORIZATION.json").exists()
+        else None,
         "protected_evaluation_access": False,
         "push_or_submission": False,
         "source_references": (

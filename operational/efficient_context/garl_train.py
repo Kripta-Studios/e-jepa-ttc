@@ -63,12 +63,13 @@ def records(c: Campaign) -> dict:
 
 
 class InputCache:
-    """One256MiB memory LRU; adaptive lossless cache under the owned10GB quota."""
+    """Bounded FP32 memory LRU and lossless disk cache under the owned10GB quota."""
 
     def __init__(self, c: Campaign, rows: dict) -> None:
         from e_jepa_ttc.simplex_t.cached_event_reader import ReaderPool
 
         self.c, self.rows = c, rows
+        self.memory_limit = 6 * 1024**3 if c.policy["max_tree_rss_gib"] > 4 else 256 * 1024**2
         self.pool = ReaderPool()
         self.values: OrderedDict = OrderedDict()
         self.root = c.out / "garl/native_cache"
@@ -161,7 +162,7 @@ class InputCache:
                 self.files[key] = len(payload)
                 self.disk += len(payload)
         size = value[0].numel() * 4 + value[1].numel() * 4
-        while self.bytes + size > 256 * 1024**2 and self.values:
+        while self.bytes + size > self.memory_limit and self.values:
             _, previous = self.values.popitem(last=False)
             self.bytes -= previous[0].numel() * 4 + previous[1].numel() * 4
         self.values[token] = value
@@ -207,6 +208,10 @@ def execute(c: Campaign) -> None:
         "microbatch_profile_sha256": digest(c.out / "garl/MICROBATCH_PROFILE.json"),
         "input_QA_sha256": digest(c.out / "garl/INPUT_QA.json"),
         "raw_restoration_plan_sha256": digest(c.out / "data_recovery/DOWNLOAD_PLAN.json"),
+        "resource_authorization_sha256": digest(c.out / "RESOURCE_AUTHORIZATION.json")
+        if (c.out / "RESOURCE_AUTHORIZATION.json").exists()
+        else None,
+        "active_tree_RSS_limit_bytes": int(c.policy["max_tree_rss_gib"] * 1024**3),
         "fits": admission["fits"],
         "updates": admission["updates_exact_50_epochs"],
         "epochs": 50,
@@ -223,7 +228,7 @@ def execute(c: Campaign) -> None:
         ],
         "cache": {
             "FP32_lossless": True,
-            "memory_bytes": 256 * 1024**2,
+            "memory_bytes": 6 * 1024**3 if c.policy["max_tree_rss_gib"] > 4 else 256 * 1024**2,
             "disk_max_bytes": 8_000_000_000,
             "atomic_checkpoint_reservation_bytes": 1_000_000_000,
             "within_owned_total_bytes": 10_000_000_000,

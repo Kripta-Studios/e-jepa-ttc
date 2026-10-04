@@ -15,7 +15,7 @@ from .restore_data import atomic_json, plan
 
 
 def restore(c: Campaign, sequence: str) -> int:
-    """Select only an already authorized file; enforce the joint4GiB process RSS."""
+    """Select only an already authorized file; enforce the active joint process RSS limit."""
     import psutil
 
     value = plan(c)
@@ -88,13 +88,15 @@ def restore(c: Campaign, sequence: str) -> int:
                     rss += process.memory_info().rss
                 except psutil.Error:
                     pass
-            admitted = c.check() and rss <= 4 * 1024**3
+            rss_limit = c.policy["max_tree_rss_gib"] * 1024**3
+            admitted = c.check() and rss <= rss_limit
             atomic_json(
                 status_path,
                 {
                     "status": "DOWNLOADING" if admitted else "PAUSED_RESOURCE",
                     "file": row,
                     "joint_downloader_RSS": rss,
+                    "authorized_RSS_limit_bytes": rss_limit,
                     "observed_utc": datetime.now(UTC).isoformat(),
                     "worker_pid": worker.pid,
                     "command": command,
