@@ -282,7 +282,9 @@ def finish(*, partial: bool = False) -> None:
     bundle = publication / "bundle"
     bundle.mkdir(parents=True, exist_ok=True)
     for path in docs.iterdir():
-        if not path.is_file():
+        if not path.is_file() or path.name in {
+            "DELIVERY_STATUS.json", "EXTRACTED_VERIFICATION.json"
+        }:
             continue
         copy_file(path, bundle / path.name)
     for name in (

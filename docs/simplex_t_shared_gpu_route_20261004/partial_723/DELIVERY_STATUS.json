@@ -3,17 +3,17 @@
   "measured_fragments": 723,
   "planned_fragments": 1728,
   "pending_fragments": 1005,
-  "publication_members_confirmed": 880,
+  "publication_members_confirmed": 940,
   "new_zip_created": false,
   "extracted_numeric_replay_complete": false,
   "scientific_optimizer_updates": 0,
   "technical_optimizer_updates": 0,
   "last_resource_observation": {
-    "available_ram_bytes": 1609367552,
+    "available_ram_bytes": 2682228736,
     "minimum_available_ram_bytes": 2147483648,
-    "windows_commit_headroom_bytes": 670220288,
+    "windows_commit_headroom_bytes": 1065697280,
     "minimum_windows_commit_headroom_bytes": 1073741824,
-    "disk_free_after_reserve_bytes": 133859262464
+    "disk_free_after_reserve_bytes": 132927623168
   },
   "required_dependency": "Sustained host RAM and Windows commit headroom for the original resource guard",
   "profile_resume": "python -B -m operational.simplex_t_shared_route.run run",
