@@ -6,6 +6,7 @@ import argparse
 import gc
 import hashlib
 import random
+import time
 from collections import OrderedDict
 from collections.abc import Callable
 from pathlib import Path
@@ -380,6 +381,24 @@ def run_fit(
         work.update(saved=completed, pending=None)
     elif work["saved"] != completed:
         raise ValueError("native ledger and checkpoint progress differ")
+    session_start = time.perf_counter()
+    session_start_updates = completed
+
+    def performance() -> dict:
+        elapsed = time.perf_counter() - session_start
+        updates = completed - session_start_updates
+        return {
+            "session_elapsed_seconds": elapsed,
+            "session_completed_updates": updates,
+            "session_updates_per_second": updates / elapsed if updates else None,
+            "includes_raw_cache_warmup_and_checkpoint_work": True,
+            "source_cache_reads": cache.reads,
+            "source_cache_hits": cache.hits,
+            "memory_cache_bytes": cache.bytes,
+            "memory_cache_limit_bytes": cache.memory_limit,
+            "disk_cache_bytes": cache.disk,
+            "disk_cache_limit_bytes": cache.limit,
+        }
 
     def save(status: str) -> None:
         nr = cast(tuple, np.random.get_state(legacy=True))
@@ -422,6 +441,7 @@ def run_fit(
                 "status": status,
                 "cache_reads": cache.reads,
                 "cache_hits": cache.hits,
+                "performance": performance(),
             },
         )
 
@@ -483,6 +503,18 @@ def run_fit(
         if completed % 100 == 0:
             save("RUNNING")
             print(f"GARL_{key}_epoch{epoch}_update{completed}", flush=True)
+        if completed % 10 == 0:
+            atomic_json(
+                c.out / "garl/UPDATE_PROGRESS.json",
+                {
+                    "fit": key,
+                    "epoch": epoch,
+                    "confirmed_updates": completed,
+                    "durable_updates": work["saved"],
+                    "performance": performance(),
+                    "scientific_endpoint_complete": completed == fit["updates_50_epochs"],
+                },
+            )
     if completed != fit["updates_50_epochs"]:
         raise ValueError("native50-epoch endpoint count differs from preregistered budget")
     save("COMPLETE")
