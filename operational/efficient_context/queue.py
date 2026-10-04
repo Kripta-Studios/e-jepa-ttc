@@ -257,6 +257,13 @@ def main() -> int:
     )
     parser.add_argument("--resume", action="store_true")
     args = parser.parse_args()
+    for name in (
+        "OMP_NUM_THREADS",
+        "OPENBLAS_NUM_THREADS",
+        "MKL_NUM_THREADS",
+        "NUMEXPR_NUM_THREADS",
+    ):
+        os.environ[name] = "4"
     c = Campaign(args.protocol)
     if args.action == "status":
         print(json.dumps(dependencies(c), ensure_ascii=False))

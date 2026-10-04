@@ -99,11 +99,11 @@ def package(c: Campaign) -> None:
     atomic_bytes(
         c.out / "REPLAY_ANALYSIS.txt",
         (
-            "From an independently extracted bundle root, using the recorded compatible environment:\n"
-            "python -P source/operational/efficient_context/replay_bundle.py --root .\n"
-            "-P prevents the adjacent queue.py from shadowing the Python standard library.\n"
-            "This regenerates included analysis and TRAIN head outputs, not raw training or latency.\n"
-        ).encode(),
+            b"From the extracted bundle root, using the recorded compatible environment:\n"
+            b"python -P source/operational/efficient_context/replay_bundle.py --root .\n"
+            b"-P prevents the adjacent queue.py from shadowing the Python standard library.\n"
+            b"Replays included analysis/head outputs; excludes raw training and latency.\n"
+        ),
     )
     excluded = {"BUNDLE_MANIFEST.json", "BUNDLE.sha256", "BUNDLE_VERIFICATION.json"}
     entries = []
@@ -161,6 +161,13 @@ def package(c: Campaign) -> None:
     script = extraction / "source/operational/efficient_context/replay_bundle.py"
     command = [sys.executable, "-P", str(script), "--root", str(extraction)]
     env = dict(os.environ, PYTHONUTF8="1")
+    for name in (
+        "OMP_NUM_THREADS",
+        "OPENBLAS_NUM_THREADS",
+        "MKL_NUM_THREADS",
+        "NUMEXPR_NUM_THREADS",
+    ):
+        env[name] = "4"
     env.pop("PYTHONPATH", None)
     result = subprocess.run(command, cwd=extraction, env=env, capture_output=True)
     atomic_bytes(c.out / "verification/REPLAY_STDOUT.json", result.stdout)

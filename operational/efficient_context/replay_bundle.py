@@ -90,7 +90,7 @@ def replay_heads(root: Path, measurements: pd.DataFrame) -> dict:
                     phase = head(*xs)["point_phase"]
                     ttc = phase_to_ttc(phase.double())
                 records = measurements.loc[
-                    (measurements.label == label) & (measurements.query == token)
+                    (measurements.label == label) & (measurements["query"] == token)
                 ]
                 if len(records) != 3:
                     raise ValueError("prepared replay query has missing blocks")
