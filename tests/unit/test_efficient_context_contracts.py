@@ -212,3 +212,54 @@ def test_mapping_rejects_timestamp_rollback():
             8,
             0,
         )
+
+
+def test_completed_checkpoint_supersedes_stale_progress(tmp_path):
+    """Completion can precede the final heartbeat; do not count saved work as unsaved."""
+    from types import SimpleNamespace
+
+    from operational.efficient_context.budget import accounting
+    from operational.efficient_context.common import atomic_json
+
+    key = "WIDE/fold2/seed7"
+    atomic_json(
+        tmp_path / "PHYSICAL_WORK.json",
+        {
+            "accounting": {
+                "scientific_saved_updates": 7500,
+                "scientific_uncertain_lost_upper": 100,
+            },
+            "fits": {key: {"completed": 2500, "pending": None}},
+        },
+    )
+    atomic_json(tmp_path / "UPDATE_PROGRESS.json", {"fit": key, "confirmed": 2475, "durable": 2400})
+    atomic_json(
+        tmp_path / "data_recovery/INTERRUPTION_ACCOUNTING.json",
+        {"confirmed_lost_updates_lower": 50},
+    )
+    result = accounting(SimpleNamespace(out=tmp_path))
+    assert result["unsaved_updates_confirmed_by_progress"] == 0
+    assert result["physical_execution_lower"] == 7550
+    assert result["physical_execution_upper"] == 7600
+
+
+def test_pending_progress_has_observed_lower_and_reserved_upper(tmp_path):
+    """A pending reservation is not evidence that all its optimizer calls executed."""
+    from types import SimpleNamespace
+
+    from operational.efficient_context.budget import accounting
+    from operational.efficient_context.common import atomic_json
+
+    key = "WIDE/fold2/seed7"
+    atomic_json(
+        tmp_path / "PHYSICAL_WORK.json",
+        {
+            "accounting": {"scientific_saved_updates": 6600, "scientific_uncertain_lost_upper": 0},
+            "fits": {key: {"completed": 1600, "pending": [1600, 1700]}},
+        },
+    )
+    atomic_json(tmp_path / "UPDATE_PROGRESS.json", {"fit": key, "confirmed": 1650, "durable": 1600})
+    result = accounting(SimpleNamespace(out=tmp_path))
+    assert result["unsaved_updates_confirmed_by_progress"] == 50
+    assert result["physical_execution_lower"] == 6650
+    assert result["physical_execution_upper"] == 6700

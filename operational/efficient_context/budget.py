@@ -39,17 +39,30 @@ def accounting(c: Campaign) -> dict:
     progress = c.out / "UPDATE_PROGRESS.json"
     if progress.exists():
         last = read(progress)
-        unsaved_confirmed = max(0, last["confirmed"] - last["durable"])
+        durable = last["durable"]
+        wide_ledger = c.out / "PHYSICAL_WORK.json"
+        if wide_ledger.exists():
+            durable = read(wide_ledger)["fits"].get(last["fit"], {}).get("completed", durable)
+        unsaved_confirmed = max(0, last["confirmed"] - durable)
+    interrupted = c.out / "data_recovery/INTERRUPTION_ACCOUNTING.json"
+    confirmed_recovery = (
+        read(interrupted)["confirmed_lost_updates_lower"] if interrupted.exists() else 0
+    )
     return {
         "wide_saved": wide,
         "garl_producer_saved": producer,
         "garl_head_saved": heads,
         "scientific_saved_updates": wide + producer + heads,
         "recovery_uncertain_upper": recovery,
+        "recovery_confirmed_lower": confirmed_recovery,
         "unresolved_execution_upper": unresolved,
         "physical_execution_upper": wide + producer + heads + recovery + unresolved,
         "unsaved_updates_confirmed_by_progress": unsaved_confirmed,
-        "physical_execution_lower": wide + producer + heads + unsaved_confirmed,
+        "physical_execution_lower": wide
+        + producer
+        + heads
+        + unsaved_confirmed
+        + confirmed_recovery,
         "technical_synthetic_updates": 0,
         "physical_cap": 240000,
         "historical_reexecuted_updates": 0,
