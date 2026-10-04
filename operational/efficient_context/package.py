@@ -187,7 +187,7 @@ def package(c: Campaign) -> None:
             "CRC": "PASS",
             "manifest_files_verified": len(entries),
             "bundle_sha256": sha,
-            "bundle_bytes": target.stat().st_size(),
+            "bundle_bytes": target.stat().st_size,
             "independently_extracted_files": len(extracted),
             "replay": replay,
             "replay_command": command,
