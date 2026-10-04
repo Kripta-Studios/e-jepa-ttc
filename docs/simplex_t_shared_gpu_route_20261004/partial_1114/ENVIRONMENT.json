@@ -1,0 +1,20 @@
+{
+  "python": "3.11.15 (main, Mar 10 2026, 18:12:25) [MSC v.1944 64 bit (AMD64)]",
+  "platform": "Windows-10-10.0.26200-SP0",
+  "cpu": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+  "packages": {
+    "numpy": "2.4.6",
+    "torch": "2.11.0+cu128",
+    "psutil": "7.2.2",
+    "pandas": "3.0.3",
+    "pyarrow": "25.0.0",
+    "h5py": "3.16.0"
+  },
+  "gpu": "NVIDIA GeForce RTX 5070 Ti Laptop GPU, GPU-b4787a6d-3f5a-56a2-7b2f-ae1664f9994d, 591.86, 12227 MiB",
+  "source_parent_head": "9575b0c34e34917c987696ea710b058b39d9bd1f",
+  "resources_shared": true,
+  "numeric_threads": 4,
+  "interop_threads": 2,
+  "producers": "CUDA_FP32_TF32_OFF",
+  "heads": "CPU_FP32"
+}

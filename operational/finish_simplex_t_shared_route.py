@@ -75,6 +75,9 @@ def finish(*, partial: bool = False) -> None:
     ):
         raise ValueError("all 1728 prospectively bound measurements required")
     complete = len(rows) == 1728
+    last_execution = read(OUT / "PROGRESS.json")
+    missing_source = last_execution.get("error_type") == "FileNotFoundError"
+    incomplete_status = "BLOCKED_EXTERNAL_SOURCE" if missing_source else "INCOMPLETE_RESOURCE_BLOCK"
     observed_names = {path.stem for path in (OUT / "fragments").glob("*.json")}
     planned_names = []
     for rank, _query in sorted(enumerate(p["queries"]), key=lambda q: (q[1]["family_id"], q[0])):
@@ -94,6 +97,29 @@ def finish(*, partial: bool = False) -> None:
         optimizer_updates=0,
     ))
     statistics = summaries(rows, require_full=complete)
+    query_counts = {
+        token: sum(r["sample_token"] == token for r in rows)
+        for token in {r["sample_token"] for r in rows}
+    }
+    matched_rows = [r for r in rows if query_counts[r["sample_token"]] == 27]
+    matched_families = sorted({r["family"] for r in matched_rows})
+    stage_shares = []
+    for label in p["models"]:
+        for mode in p["modes"]:
+            group = [r for r in matched_rows if r["model"] == label and r["mode"] == mode]
+            total = sum(r["total_ms"] for r in group)
+            stage_shares.append(dict(
+                model=label, mode=mode, measurements=len(group),
+                inventory_complete=complete, shared_gpu=True,
+                **{
+                    field + "_fraction_of_measured_sum": sum(r[field] for r in group) / total
+                    for field in (
+                        "raw_read_ms", "roi_voxel_ms", "experts_transfers_ms",
+                        "normalize_ms", "head_emission_ms",
+                    )
+                },
+            ))
+    csv_file(OUT / "STAGE_SHARES.csv", stage_shares)
     docs = DOCS if complete else DOCS / f"partial_{len(rows)}"
     publication = OUT / "delivery" if complete else OUT / f"delivery_partial_{len(rows)}"
     csv_file(OUT / "ROUTE_COST.csv", statistics)
@@ -135,7 +161,7 @@ def finish(*, partial: bool = False) -> None:
         frontier.append(
             dict(
                 model=label,
-                OLD_DEV_evidence_model=key,
+                OLD_DEV_evidence_model=source["model"] if source is not None else key,
                 OLD_DEV_MiD=float(source["MiD"]) if source is not None else None,
                 warm_total_p95_block1_ms=warm[0]["total_ms_p95"],
                 warm_total_p95_block2_ms=warm[1]["total_ms_p95"],
@@ -145,6 +171,9 @@ def finish(*, partial: bool = False) -> None:
                 automatic_promotion=False,
                 accuracy_scope="OLD_DEV_seed7_nine_sequences_three_folds",
                 cost_scope="64_TRAIN_fold0_queries_three_inner_producer_families_shared_GPU",
+                observed_matched_queries=statistics[0]["measurements"],
+                observed_matched_producer_families=",".join(map(str, matched_families)),
+                cost_inventory_complete=complete,
             )
         )
     csv_file(OUT / "COST_ACCURACY_SHARED.csv", frontier)
@@ -170,8 +199,8 @@ def finish(*, partial: bool = False) -> None:
     )
     save(OUT / "PARITY_SUMMARY.json", parity_receipt)
     decision = dict(
-        status="COMPLETE_SHARED_RESOURCE_SCOPE" if complete else "INCOMPLETE_RESOURCE_BLOCK",
-        P3="COMPLETE_SHARED_GPU" if complete else "INCOMPLETE_SHARED_GPU",
+        status="COMPLETE_SHARED_RESOURCE_SCOPE" if complete else incomplete_status,
+        P3="COMPLETE_SHARED_GPU" if complete else incomplete_status,
         P0="COMPLETE",
         P1="COMPLETE",
         P2="COMPLETE",
@@ -183,7 +212,8 @@ def finish(*, partial: bool = False) -> None:
         next_id=pending[0] if pending else None,
         resume_command="python -B -m operational.simplex_t_shared_route.run run",
         resume_output_root="artifacts/simplex_t/shared_gpu_route_20261004",
-        last_execution_state=read(OUT / "PROGRESS.json"),
+        last_execution_state=last_execution,
+        external_dependency=(last_execution.get("error") if missing_source else None),
         optimizer_updates=0,
         registered_candidate="TPR-D1-H8-C160",
         automatic_promotion=False,
@@ -205,7 +235,10 @@ def finish(*, partial: bool = False) -> None:
     )
     save(OUT / "NEXT_DECISION_SHARED_GPU.json", decision)
     lines = [
-        ("P3 completado" if complete else "P3 incompleto por recursos")
+        ("P3 completado" if complete else (
+            "P3 bloqueado por una fuente externa ausente" if missing_source
+            else "P3 incompleto por recursos"
+        ))
         + ": inferencia con autorización explícita de GPU compartida.",
         "Se conservaron H8, los 24 endpoints y los 60.000 updates científicos anteriores. "
         "Esta continuación ejecutó cero actualizaciones de optimizador.",
@@ -213,11 +246,12 @@ def finish(*, partial: bool = False) -> None:
         f"{statistics[0]['measurements']} consultas TRAIN tienen las 27 mediciones completas. "
         "Se validaron primero los 64 contextos crudos y las tres familias de productores "
         "contra el extractor canónico. Los brazos reducidos no llaman a expertos excluidos.",
-        "| Ruta | p95 caliente 1 (ms) | p95 caliente 2 (ms) | p95 HDF5 frío (ms) |",
-        "|---|---:|---:|---:|",
+        "| Ruta | MiD OLD_DEV seed7 | p95 caliente 1 (ms) | "
+        "p95 caliente 2 (ms) | p95 HDF5 frío (ms) |",
+        "|---|---:|---:|---:|---:|",
     ]
     lines += [
-        f"| {r['model']} | {r['warm_total_p95_block1_ms']:.3f} | "
+        f"| {r['model']} | {r['OLD_DEV_MiD']:.6f} | {r['warm_total_p95_block1_ms']:.3f} | "
         f"{r['warm_total_p95_block2_ms']:.3f} | "
         f"{r['application_hdf5_cold_total_p95_ms']:.3f} |"
         for r in frontier
@@ -226,6 +260,10 @@ def finish(*, partial: bool = False) -> None:
     lines += [
         "Los CSV preservan precisión completa. El total se midió directamente, "
         "desde la petición con ROI suministrado hasta TTC; no se sumaron p95 de etapas.",
+        "STAGE_SHARES.csv desglosa las fracciones de la suma de tiempos medidos, "
+        "por ruta y bloque, en las mismas consultas completas. No son cocientes de p95 "
+        "ni una estimación del coste fuera de esta población. Familias internas observadas "
+        "en ese subconjunto: " + ", ".join(map(str, matched_families)) + ".",
         "GPU compartida: las diferencias observadas incluyen contención y variación del host. "
         "No prueban un ahorro causal o una latencia aislada. Frío significa cierre de las "
         "cachés HDF5 de la aplicación, con modelos residentes "
@@ -249,6 +287,12 @@ def finish(*, partial: bool = False) -> None:
         "agregadores no pasan el cribado registrado. Una latencia menor no cambia esa decisión. "
         "H16 conserva una mejora estable entre seeds de cabeza y la incertidumbre entre escenas; "
         "no sustituye automáticamente al H8 histórico.",
+        "En la réplica H16, la media de pérdidas de las tres seeds mejora 2,542666 MiD "
+        "frente a H8 (intervalo jerárquico [-5,213398; -0,111241]). Las dos seeds nuevas "
+        "mejoran 2,423702 MiD, pero su intervalo jerárquico [-5,244259; +0,041091] "
+        "incluye cero. Seed7 ya era exploratoria. La réplica corresponde a las cabezas; "
+        "las unidades independientes siguen siendo nueve secuencias. El contexto pasado "
+        "aporta información, pero el mecanismo cronológico no está demostrado.",
         "No se midieron detección, tracking online, sensor-to-AEB ni calibración de incertidumbre. "
         "La paridad numérica y las fuentes reutilizadas "
         "no constituyen una réplica nueva de los expertos.",
@@ -258,6 +302,10 @@ def finish(*, partial: bool = False) -> None:
         "para la misma observación y ROI acreditados. Ningún entrenamiento ni holdout "
         "se abre con esta entrega.",
     ]
+    if not complete:
+        lines.insert(3, "Dependencia pendiente: " + str(last_execution.get("error"))
+                     + ". Los fragmentos confirmados se reutilizan al reanudar; "
+                     "no se repiten los entrenamientos ni se cambian consultas.")
     (OUT / "INFORME_GPU_COMPARTIDA_SIMPLEX_T.md").write_text(
         "\n\n".join(lines) + "\n", encoding="utf-8"
     )
@@ -265,6 +313,7 @@ def finish(*, partial: bool = False) -> None:
     for name in (
         "ROUTE_COST.csv",
         "COST_ACCURACY_SHARED.csv",
+        "STAGE_SHARES.csv",
         "ACCOUNTING.json",
         "PARITY_SUMMARY.json",
         "NEXT_DECISION_SHARED_GPU.json",
@@ -292,11 +341,19 @@ def finish(*, partial: bool = False) -> None:
         "DIAGNOSTIC_PRECISION.json", "DIAGNOSTIC_PRECISION.npz",
         "PYRIGHT_DELIVERY_FINAL.json", "SOURCE_ADMISSION.json", "RESUME_START_27.json",
         "RESUME_START_675.json", "RESUME_START_697.json",
+        "RESUME_START_723.json", "LIGHT_INTEGRITY_723.json",
         "IO_ERROR_697.json", "IO_READER_REPAIR.json",
+        "EXTERNAL_SOURCE_BLOCK.json",
+        "SOURCE_BOUNDARY_1114.json",
+        "PUBLICATION_PAUSE_1114.json", "PUBLICATION_RESOURCE_RECEIPT.json",
     ):
         if (OUT / name).exists():
             copy_file(OUT / name, bundle / "audit" / name)
     copy_file(OLD / "ACCURACY_COST_FRONTIER.csv", bundle / "audit/ACCURACY_COST_FRONTIER.csv")
+    copy_file(
+        ROOT / "artifacts/simplex_t/h16_replication_20261003/FINAL_REPORT_H16.md",
+        bundle / "audit/FINAL_REPORT_H16.md",
+    )
     save(bundle / "REPRODUCTION.json", dict(
         command="python -B verify.py --root . --output ../SHARED_GPU_REGENERATION.json --heads",
         required_packages=["numpy", "torch", "psutil", "pandas", "pyarrow", "h5py"],

@@ -150,6 +150,59 @@ def verify(root: Path, heads: bool) -> dict:
         for a, e in zip(actual, expected, strict=True)
     ):
         raise ValueError("cost table labels changed")
+    shares = list(csv.DictReader((root / "STAGE_SHARES.csv").open(encoding="utf-8")))
+    if len(shares) != 27:
+        raise ValueError("stage contribution inventory changed")
+    query_counts = {
+        token: sum(r["sample_token"] == token for r in rows)
+        for token in {r["sample_token"] for r in rows}
+    }
+    matched = [r for r in rows if query_counts[r["sample_token"]] == 27]
+    contribution_errors = []
+    for share in shares:
+        group = [r for r in matched if (r["model"], r["mode"]) == (
+            share["model"], share["mode"]
+        )]
+        if len(group) != int(share["measurements"]):
+            raise ValueError("stage share query count differs")
+        total = sum(r["total_ms"] for r in group)
+        for field in (
+            "raw_read_ms", "roi_voxel_ms", "experts_transfers_ms",
+            "normalize_ms", "head_emission_ms",
+        ):
+            contribution_errors.append(abs(
+                sum(r[field] for r in group) / total
+                - float(share[field + "_fraction_of_measured_sum"])
+            ))
+    if max(contribution_errors) > 1e-12:
+        raise ValueError("stage contribution differs from physical fragments")
+    accuracy = {
+        r["model"]: r
+        for r in csv.DictReader((root / "audit/ACCURACY_COST_FRONTIER.csv").open(
+            encoding="utf-8"
+        ))
+    }
+    frontier = list(csv.DictReader((root / "COST_ACCURACY_SHARED.csv").open(encoding="utf-8")))
+    if len(frontier) != 9 or {r["model"] for r in frontier} != set(protocol["models"]):
+        raise ValueError("accuracy/cost model inventory changed")
+    for row in frontier:
+        if float(row["OLD_DEV_MiD"]) != float(accuracy[row["OLD_DEV_evidence_model"]]["MiD"]):
+            raise ValueError("referenced full-precision OLD_DEV score differs")
+    parity_receipts = [
+        record(path)
+        for path in sorted((root / "results/parity_historical_runtime").glob("*.json"))
+    ]
+    if len(parity_receipts) != 64 or any(
+        r["protocol_sha256"] != protocol_hash for r in parity_receipts
+    ):
+        raise ValueError("64 admitted raw-context parity receipts required")
+    prediction_rows = rows + [r["observation"] for r in parity_receipts]
+    for row in prediction_rows:
+        key = row["inputs_relative_path"]
+        member = manifest["members"].get(key)
+        if member is None or member["sha256"] != row["inputs_sha256"]:
+            raise ValueError("admitted parity input binding changed")
+        checked_inputs.add(key)
     prediction_error = None
     replayed = 0
     if heads:
@@ -184,7 +237,7 @@ def verify(root: Path, heads: bool) -> dict:
                     )
                 model.cpu().float().eval()
                 cache = {}
-                for measured in [r for r in rows if r["model"] == label]:
+                for measured in [r for r in prediction_rows if r["model"] == label]:
                     path = measured["inputs_relative_path"]
                     if path not in cache:
                         with np.load(root / path, allow_pickle=False) as archive:
@@ -216,9 +269,15 @@ def verify(root: Path, heads: bool) -> dict:
         fragments=len(rows),
         cost_rows=27,
         captured_input_files=len(checked_inputs),
+        raw_parity_predictions_checked=64,
+        prediction_scope=(
+            "measured requests and admitted raw parity; failed diagnostic evidence hashed"
+        ),
         prospective_inventory_verified=True,
         excluded_producer_calls_verified=True,
         maximum_quantile_difference=max(errors),
+        maximum_stage_contribution_difference=max(contribution_errors),
+        referenced_accuracy_scores_verified=9,
         heads_replayed=heads,
         unique_head_inputs_replayed=replayed,
         maximum_prediction_difference=prediction_error,
