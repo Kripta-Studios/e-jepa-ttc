@@ -1,0 +1,25 @@
+{
+  "status": "STAGING_BLOCKED_RESOURCE",
+  "measured_fragments": 723,
+  "planned_fragments": 1728,
+  "pending_fragments": 1005,
+  "publication_members_confirmed": 880,
+  "new_zip_created": false,
+  "extracted_numeric_replay_complete": false,
+  "scientific_optimizer_updates": 0,
+  "technical_optimizer_updates": 0,
+  "last_resource_observation": {
+    "available_ram_bytes": 1609367552,
+    "minimum_available_ram_bytes": 2147483648,
+    "windows_commit_headroom_bytes": 670220288,
+    "minimum_windows_commit_headroom_bytes": 1073741824,
+    "disk_free_after_reserve_bytes": 133859262464
+  },
+  "required_dependency": "Sustained host RAM and Windows commit headroom for the original resource guard",
+  "profile_resume": "python -B -m operational.simplex_t_shared_route.run run",
+  "profile_output_root": "artifacts/simplex_t/shared_gpu_route_20261004",
+  "publication_resume": "python -B operational/finish_simplex_t_shared_route.py --partial",
+  "publication_output_root": "artifacts/simplex_t/shared_gpu_route_20261004/delivery_partial_723",
+  "registered_candidate": "TPR-D1-H8-C160",
+  "prior_campaigns_unchanged": true
+}

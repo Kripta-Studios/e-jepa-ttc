@@ -1,0 +1,22 @@
+{
+  "measured_fragments": 723,
+  "planned_fragments": 1728,
+  "pending_fragments": 1005,
+  "matched_complete_queries": 26,
+  "inventory_complete": false,
+  "parity_queries": 64,
+  "scientific_optimizer_updates": 0,
+  "technical_optimizer_updates": 0,
+  "inference_attempts_completed": 1048,
+  "inference_attempts_unresolved": 2,
+  "warmups_completed": 243,
+  "actual_measurement_producer_calls": {
+    "A5": 643,
+    "C2F": 563,
+    "PAIR": 563
+  },
+  "candidate": "TPR-D1-H8-C160",
+  "exclusive_gpu_claim": false,
+  "manual_diagnostic_requests": 2,
+  "failed_runtime_admission_preserved": true
+}

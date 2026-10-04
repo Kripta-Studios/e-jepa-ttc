@@ -1,0 +1,38 @@
+{
+  "status": "INCOMPLETE_RESOURCE_BLOCK",
+  "P3": "INCOMPLETE_SHARED_GPU",
+  "P0": "COMPLETE",
+  "P1": "COMPLETE",
+  "P2": "COMPLETE",
+  "P4": "PARTIAL_COST",
+  "planned_measurements": 1728,
+  "confirmed_measurements": 723,
+  "pending_measurements": 1005,
+  "cost_population_complete": false,
+  "next_id": "q61_warm_block2_FULL_C0",
+  "resume_command": "python -B -m operational.simplex_t_shared_route.run run",
+  "resume_output_root": "artifacts/simplex_t/shared_gpu_route_20261004",
+  "last_execution_state": {
+    "status": "PAUSED",
+    "observed_utc": "2026-10-04T01:30:25.694662+00:00",
+    "optimizer_updates": 0,
+    "fragments": 723,
+    "error_type": "InterruptedError",
+    "error": "Windows commit headroom below 1 GiB: {\"available_ram_bytes\": 2956726272, \"delivery_tree_rss_bytes\": 2131472384, \"tree_owner_pid\": 42864, \"disk_free_after_reserve_bytes\": 134808154112, \"disk_reserve_bytes\": 1073741824, \"windows_commit_headroom_bytes\": 907096064}"
+  },
+  "optimizer_updates": 0,
+  "registered_candidate": "TPR-D1-H8-C160",
+  "automatic_promotion": false,
+  "old_statistical_decisions_unchanged": true,
+  "referenced_accuracy_csv_sha256": "8d96bbc9bd66d8fb09d1b0e4db03804be19373338ee05501d6b82478a47e5f2e",
+  "prior_bundle_sha256": "83c0599944a275a08568259aed69b72eed7ab56f15c7a8972a89abbff081b476",
+  "limitations": [
+    "GPU contention is not isolated or experimentally controlled",
+    "Supplied ROI excludes detector, persistent tracking and AEB",
+    "Application-cold HDF5 handles; OS cache and producer models are not cold",
+    "Frozen producer padding batch16 retained; no upstream optimization claim",
+    "Raw events are external and full raw hash/encoder regeneration is not bundled",
+    "GPU allocation fields are post-forward snapshots with all three producers resident"
+  ],
+  "next_proposal": "Preregister one separate exact-parity optimization of retrospective raw/ROI context preparation with frozen weights; no execution authorized here"
+}
