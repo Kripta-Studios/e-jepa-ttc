@@ -178,9 +178,8 @@ def all_tasks(c: Campaign) -> int:
         if read(path)["parity"]["status"] == "FAILED_INTEGRITY"
     ]
     if parity_failures:
-        state["E1"] = "FAILED_INTEGRITY_REQUIRES_INSPECTION"
         atomic_json(
-            c.out / "INPUT_OUTPUT_PARITY.json",
+            c.out / "INPUT_OUTPUT_PARITY_VALID_DISPATCH_FAILURE.json",
             {
                 "status": "FAILED_INTEGRITY",
                 "failed_fragments": parity_failures,
@@ -189,6 +188,20 @@ def all_tasks(c: Campaign) -> int:
                 "scientific_negative": False,
             },
         )
+        safe_failures = [
+            str(path)
+            for path in (c.out / "profile_reference_dispatch/fragments").glob("*.json")
+            if read(path)["parity"]["status"] == "FAILED_INTEGRITY"
+        ]
+        if safe_failures:
+            state["E1"] = "FAILED_INTEGRITY_REQUIRES_INSPECTION"
+        elif not dep["E1_missing"]:
+            code = call(
+                c, "raw_profile_reference_dispatch", "operational.efficient_context.profile_safe"
+            )
+            state["E1"] = "COMPLETE" if code == 0 else "INCOMPLETE_CHECK_LOG"
+        else:
+            state["E1"] = "BLOCKED_DEPENDENCY"
     elif not dep["E1_missing"]:
         code = call(c, "raw_profile", "operational.efficient_context.run", "profile")
         state["E1"] = "COMPLETE" if code == 0 else "INCOMPLETE_CHECK_LOG"
@@ -213,6 +226,7 @@ def all_tasks(c: Campaign) -> int:
             ("garl_microbatch", "native_garl", ("profile",)),
             ("garl_producers", "garl_train", ("--resume",)),
             ("garl_heads", "garl_heads", ("all", "--resume")),
+            ("garl_runtime", "garl_runtime", ()),
         ]
         for key, module, args in stages:
             if module == "garl_qa" and (c.out / "garl/INPUT_QA.json").exists():

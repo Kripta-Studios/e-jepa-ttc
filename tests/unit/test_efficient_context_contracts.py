@@ -305,3 +305,71 @@ def test_restored_raw_requires_verified_full_sha_receipt(tmp_path, changed_sha):
         result = verify_raw(campaign, path, historical)
         assert result["restored"] and result["sha256"] == sha
         assert result["historical_mtime_preserved_in_reference_only"] == 1
+
+
+@pytest.mark.parametrize("ratio", [1.0, 2.0, -1.0])
+def test_native_runtime_retains_signed_and_infinite_outputs(monkeypatch, ratio):
+    """Native cost evaluation must not cap infinity or discard invalid queries."""
+    from e_jepa_ttc.efficient_context.garl_head import NativeHeadSource
+    from e_jepa_ttc.simplex_t.cache import Normalizer
+    from operational.efficient_context.garl_runtime import prepared_forward
+
+    class Producer(torch.nn.Module):
+        def forward(self, _):
+            return torch.tensor([[ratio * 2, 2]]), None
+
+    monkeypatch.setattr(torch.Tensor, "cuda", lambda self: self)
+    native = NativeHeadSource(
+        features=np.zeros((1, 3), np.float32),
+        times=np.zeros((1, 1, 4), np.float32),
+        history=np.array([[0]], np.int64),
+        truth=np.zeros(1),
+        mass=np.ones(1),
+        normalizer=Normalizer(np.zeros(3), np.ones(3), "fixture"),
+        identity_sha256="fixture",
+        length=1,
+    )
+    args = (Producer(), [torch.zeros((40, 2, 2))], [], native, native.gather(torch.tensor([0]))[:4])
+    if ratio < 0:
+        with pytest.raises(ArithmeticError, match="no query dropping"):
+            prepared_forward(*args, label="GARL_NATIVE", refiner=torch.nn.Identity())
+    else:
+        value, fresh = prepared_forward(*args, label="GARL_NATIVE", refiner=torch.nn.Identity())
+        assert fresh is None
+        assert value[0] == pytest.approx(-np.log(ratio), abs=1e-7)
+        assert np.isposinf(value[1]) if ratio == 1 else value[1] == pytest.approx(-0.1)
+
+
+def test_native_runtime_uses_fresh_sensor_scalars_and_frozen_normalizer(monkeypatch):
+    """The measured raw route must reconstruct the trained three-feature head inputs."""
+    from e_jepa_ttc.efficient_context.garl_head import NativeHeadSource, model
+    from e_jepa_ttc.simplex_t.cache import Normalizer
+    from operational.efficient_context.garl_runtime import prepared_forward
+
+    class Producer(torch.nn.Module):
+        def forward(self, _):
+            return torch.tensor([[4.0, 2.0]]), None
+
+    monkeypatch.setattr(torch.Tensor, "cuda", lambda self: self)
+    native = NativeHeadSource(
+        features=np.array([[-np.log(2.0), 2.0, 3.0]], np.float32),
+        times=np.zeros((1, 1, 4), np.float32),
+        history=np.array([[0]], np.int64),
+        truth=np.zeros(1),
+        mass=np.ones(1),
+        normalizer=Normalizer(np.array([0.0, 1.0, 2.0]), np.array([1.0, 2.0, 3.0]), "fixture"),
+        identity_sha256="fixture",
+        length=1,
+    )
+    expected = native.gather(torch.tensor([0]))[:4]
+    _, actual = prepared_forward(
+        Producer(),
+        [torch.zeros((40, 2, 2))],
+        [np.array([2.0, 3.0])],
+        native,
+        expected,
+        label="GARL_H1",
+        refiner=model().eval(),
+    )
+    assert actual is not None
+    assert all(torch.equal(a, b) for a, b in zip(actual, expected, strict=True))

@@ -53,6 +53,8 @@ def report(c: Campaign) -> None:
     micro = read(c.out / "garl/MICROBATCH_PROFILE.json")
     parity = read(c.out / "INPUT_OUTPUT_PARITY.json")
     raw_measured = bool(parity.get("R0_end_to_end_measured"))
+    native_runtime_path = c.out / "GARL_RUNTIME_RESULTS.json"
+    native_runtime = read(native_runtime_path) if native_runtime_path.exists() else {}
     restored = [read(p) for p in sorted((c.out / "data_recovery/files").glob("*.json"))]
     verified_raw = [r for r in restored if r.get("status") == "VERIFIED"]
     restoration_status = (
@@ -64,7 +66,14 @@ def report(c: Campaign) -> None:
     qa = read(c.out / "TEST_RESULTS/final/QA.json")
     pytest_log = (c.out / "TEST_RESULTS/final/pytest.txt").read_text(encoding="utf-8")
     passed_tests = re.search(r"(\d+) passed", pytest_log)
-    test_count = int(passed_tests[1]) if passed_tests else "consultar recibo"
+    quiet_passes = re.search(r"^([.]+)\s+\[100%\]$", pytest_log, re.MULTILINE)
+    test_count = (
+        int(passed_tests[1])
+        if passed_tests
+        else len(quiet_passes[1])
+        if quiet_passes and qa["results"]["pytest"]["returncode"] == 0
+        else "consultar recibo"
+    )
     remaining = sum(
         2500 - r["completed_updates"] for r in checkpoints if r["key"].endswith("seed7")
     ) + 2500 * (3 - sum(r["key"].endswith("seed7") for r in checkpoints))
@@ -379,6 +388,27 @@ def report(c: Campaign) -> None:
         markdown_table(pd.read_csv(c.out / "RUNTIME_COMPARISON.csv")) + "\n"
         if raw_measured
         else "Las mediciones R0 todavía no están completas.\n",
+        "Los recibos profile/EXECUTION_CONTEXT.json registran que las lecturas "
+        "raw E1 comparten el volumen con la recuperación TRAIN. Los tiempos "
+        "absolutos pueden incluir contención de disco; las dos rutas permanecen "
+        "pareadas con orden fijado prospectivamente. No se presenta como "
+        "throughput de almacenamiento aislado.\n",
+        "La variante CUDA de slots reducidos falló el límite1e-4 de features "
+        "en una consulta TRAIN (máximo0,0001277923583984375), con raw exacto. "
+        "Se preserva completa en verification/rejected_valid_dispatch. La ruta "
+        "alternativa sólo optimiza preparación raw y conserva batch16; "
+        "no atribuye reducción de cómputo de productores a slots válidos. "
+        "Las tolerancias permanecen intactas.\n"
+        if (c.out / "verification/rejected_valid_dispatch/PRESERVATION.json").exists()
+        else "",
+        markdown_table(pd.read_csv(c.out / "garl_runtime/RUNTIME.csv")) + "\n"
+        if native_runtime.get("status") == "COMPLETE"
+        else "Coste de la ruta Garl pendiente de los endpoints completos.\n",
+        "Garl runtime usa los mismos64 IDs TRAIN y tres bloques: módulos nativos "
+        "con inputs preparados, cabeza CPU FP32 y ruta sensores+ROI. El encoding "
+        "40ch nativo permanece intacto; conteo/tasa se extraen aparte del ROI común "
+        "de100ms. Se excluyen ingestión y detector de ROI. Las observaciones "
+        "nativas~200ms e históricas~300ms tienen presupuesto distinto.\n",
         "Preprocesado compartido: filtro/proyección ROI una vez, views half-open "
         "int64 y reducciones/normalización originales por ventana. Tests cubren "
         "borde, ROI vacío/fuera, offset, empates, timestamps grandes, chunks, "
