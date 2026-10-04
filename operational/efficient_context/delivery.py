@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -32,10 +33,11 @@ def report(c: Campaign) -> None:
     import matplotlib.pyplot as plt
 
     from .budget import accounting
-    from .checkpoints import inventory
+    from .checkpoints import inventory, inventory_native
     from .queue import dependencies
 
     checkpoints = inventory(c)
+    native_checkpoints = inventory_native(c)
     counts = accounting(c)
     dep = dependencies(c)
     atomic_json(c.out / "ACCOUNTING.json", counts)
@@ -44,6 +46,25 @@ def report(c: Campaign) -> None:
     wide_path = c.out / "H8_WIDE_RESULTS.json"
     wide = read(wide_path) if wide_path.exists() else {}
     wide_evaluated = wide.get("status") == "COMPLETE"
+    replication_path = c.out / "WIDE_REPLICATION_RESULTS.json"
+    replication = read(replication_path) if replication_path.exists() else {}
+    garl_path = c.out / "GARL_CONTEXT_RESULTS.json"
+    garl = read(garl_path) if garl_path.exists() else {}
+    micro = read(c.out / "garl/MICROBATCH_PROFILE.json")
+    parity = read(c.out / "INPUT_OUTPUT_PARITY.json")
+    raw_measured = bool(parity.get("R0_end_to_end_measured"))
+    restored = [read(p) for p in sorted((c.out / "data_recovery/files").glob("*.json"))]
+    verified_raw = [r for r in restored if r.get("status") == "VERIFIED"]
+    restoration_status = (
+        f"{len(verified_raw)}/31 HDF5 TRAIN verificados por SHA256; "
+        f"{sum(r['bytes'] for r in verified_raw):,} bytes. "
+        f"Dependencias raw pendientes E1: {len(dep['E1_missing'])}; "
+        f"Garl: {len(dep['garl_raw_missing'])}."
+    )
+    qa = read(c.out / "TEST_RESULTS/final/QA.json")
+    pytest_log = (c.out / "TEST_RESULTS/final/pytest.txt").read_text(encoding="utf-8")
+    passed_tests = re.search(r"(\d+) passed", pytest_log)
+    test_count = int(passed_tests[1]) if passed_tests else "consultar recibo"
     remaining = sum(
         2500 - r["completed_updates"] for r in checkpoints if r["key"].endswith("seed7")
     ) + 2500 * (3 - sum(r["key"].endswith("seed7") for r in checkpoints))
@@ -67,6 +88,61 @@ def report(c: Campaign) -> None:
     atomic_bytes(
         c.out / "tables/ANALYTICAL_COMPARISON.csv", pd.DataFrame(rows).to_csv(index=False).encode()
     )
+    wide_rows = []
+    for seed in (7, 13, 23):
+        path = c.out / ("H8_WIDE_RESULTS.json" if seed == 7 else f"H8_WIDE_RESULTS_seed{seed}.json")
+        result = read(path) if path.exists() else {}
+        if result.get("status") != "COMPLETE":
+            continue
+        for reference, comparison in result["comparisons"].items():
+            wide_rows.append(
+                {
+                    "scope": f"seed{seed}",
+                    "reference": reference,
+                    "WIDE_MiD": comparison["candidate_score"],
+                    "reference_MiD": comparison["reference_score"],
+                    "delta_MiD": comparison["point_delta"],
+                    "hierarchical_low": comparison["hierarchical_ci95"][0],
+                    "hierarchical_high": comparison["hierarchical_ci95"][1],
+                    "sequence_low": comparison["sequence_only"]["ci95"][0],
+                    "sequence_high": comparison["sequence_only"]["ci95"][1],
+                    "sequence_wins": comparison["sequence_wins"],
+                }
+            )
+    for scope, result in replication.get("results", {}).items():
+        for reference, comparison in result["contrasts"].items():
+            wide_rows.append(
+                {
+                    "scope": scope,
+                    "reference": reference,
+                    "WIDE_MiD": result["scores"]["WIDE"],
+                    "reference_MiD": result["scores"][reference],
+                    "delta_MiD": comparison["point_delta"],
+                    "hierarchical_low": comparison["hierarchical_ci95"][0],
+                    "hierarchical_high": comparison["hierarchical_ci95"][1],
+                    "sequence_low": comparison["sequence_only"]["ci95"][0],
+                    "sequence_high": comparison["sequence_only"]["ci95"][1],
+                    "sequence_wins": comparison["sequence_wins"],
+                }
+            )
+    wide_table = pd.DataFrame(wide_rows)
+    atomic_bytes(c.out / "tables/WIDE_COMPARISON.csv", wide_table.to_csv(index=False).encode())
+    native_rows = []
+    for contrast, comparison in garl.get("comparisons", {}).items():
+        native_rows.append(
+            {
+                "contrast": contrast,
+                "candidate_MiD": comparison["candidate_score"],
+                "reference_MiD": comparison["reference_score"],
+                "delta_MiD": comparison["point_delta"],
+                "hierarchical_low": comparison["hierarchical_ci95"][0],
+                "hierarchical_high": comparison["hierarchical_ci95"][1],
+                "sequence_low": comparison["sequence_only"]["ci95"][0],
+                "sequence_high": comparison["sequence_only"]["ci95"][1],
+            }
+        )
+    native_table = pd.DataFrame(native_rows)
+    atomic_bytes(c.out / "tables/GARL_COMPARISON.csv", native_table.to_csv(index=False).encode())
     sequence = pd.DataFrame(
         [{"sequence_id": k, "delta_MiD": v} for k, v in analytical["sequence_deltas"].items()]
     )
@@ -113,6 +189,26 @@ def report(c: Campaign) -> None:
     axes[1].set(xlabel="Delta MiD EWMA−H8 seed7", title="OLD_DEV: control analítico")
     fig.savefig(paths / "CURVES_AND_SEQUENCE_RESULTS.png", dpi=180)
     plt.close(fig)
+    if native_checkpoints:
+        fig, ax = plt.subplots(figsize=(10, 5), layout="constrained")
+        for record in native_checkpoints:
+            curve_path = Path(record["checkpoint"]).parent / "TRAINING_CURVE.csv"
+            if curve_path.exists():
+                curve = pd.read_csv(curve_path)
+                ax.plot(
+                    curve["update"],
+                    curve.loss.rolling(100, min_periods=1).mean(),
+                    label=record["key"],
+                    linewidth=1,
+                )
+        ax.set(
+            xlabel="Update durable",
+            ylabel="Loss TRAIN (media móvil100)",
+            title="Garl: productores y cabezas; pérdidas de objetivos distintos",
+        )
+        ax.legend(fontsize=7, ncol=2)
+        fig.savefig(paths / "GARL_TRAINING_CURVES.png", dpi=180)
+        plt.close(fig)
     manifest = {
         "campaign": "EFFICIENT_CONTEXT_20261004",
         "base_commit": c.config["base_commit"],
@@ -122,6 +218,7 @@ def report(c: Campaign) -> None:
         ).strip(),
         "roots": read(c.out / "SOURCE_ADMISSION.json")["roots"],
         "checkpoint_inventory": checkpoints,
+        "native_checkpoint_inventory": native_checkpoints,
         "branches": state.get("branches", {}),
         "caps": {
             "WIDE": 22500,
@@ -139,7 +236,10 @@ def report(c: Campaign) -> None:
             "WIDE_scored_after_all_three_folds_sealed": wide_evaluated,
             "partial_WIDE_scored": False,
             "Garl_results_status": read(c.out / "GARL_COMPARISON.json").get("status"),
+            "Garl_context_results_status": garl.get("status", "PENDING"),
         },
+        "raw_restoration": restoration_status,
+        "microbatch_profile": micro,
         "protected_evaluation_access": False,
         "push_or_submission": False,
         "source_references": (
@@ -164,8 +264,23 @@ def report(c: Campaign) -> None:
         "H16_retained": True,
         "WIDE_promoted": False,
         "EWMA_control": "NEGATIVE_LOCAL_DEVELOPMENT",
-        "E2": "BLOCKED_DEPENDENCY" if dep["wide_missing"] else state.get("branches", {}).get("E2"),
-        "E3": "BLOCKED_DEPENDENCY" if dep["garl_missing"] else state.get("branches", {}).get("E3"),
+        "E2": (
+            "COMPLETE"
+            if replication.get("status") == "COMPLETE"
+            else "BLOCKED_DEPENDENCY"
+            if dep["wide_missing"]
+            else "CONDITIONAL_REPLICAS_PENDING"
+            if wide_evaluated
+            else "PENDING"
+        ),
+        "E3": (
+            "COMPLETE"
+            if garl.get("status") == "COMPLETE"
+            else "BLOCKED_DEPENDENCY"
+            if dep["garl_missing"] or dep["garl_raw_missing"]
+            else "PENDING_EXECUTION"
+        ),
+        "E1": "COMPLETE" if raw_measured else "PENDING_RAW_PROFILE",
         "new_WIDE_OLD_DEV_evaluation_performed": wide_evaluated,
         "scientific_negative_for_missing_comparators": False,
         "remaining_seed7_WIDE_updates": remaining,
@@ -204,8 +319,10 @@ def report(c: Campaign) -> None:
             "H8 y máscara; lambda_cost=0. Count/rate procede del ROI y último intervalo "
             "de100ms común, sólo sensores. Observación nativa~200ms frente a~300ms "
             "de A5/C2F: la comparación declara ese presupuesto diferente.\n\n"
-            "R2 medido aquí corresponde exclusivamente a cabeza preparada. R0 completo, "
-            "dispatch CUDA y encoding nativo real requieren las fuentes ausentes. "
+            f"R0 medido: {raw_measured}; estado de paridad: {parity['status']}. "
+            "El recibo de cada solicitud conserva el binding raw y sus errores. "
+            "R2 preparado se mide por separado; cuando R0 está completo, sus segmentos "
+            "transfer/productores/norm/cabeza constan en PROFILE_COMPONENTS.csv. "
             "R1 no implementado. No hay declaración de servicio online ni tiempo real.\n"
         ).encode(),
     )
@@ -219,10 +336,19 @@ def report(c: Campaign) -> None:
         f"OLD_DEV evaluado tras el seal: {wide_evaluated}. "
         "Los endpoints parciales no se puntúan; la replicación conserva sus "
         "cinco guardrails prospectivos.\n",
-        "E: desapareció durante la sesión. El siguiente acceso al TRAIN parquet "
-        "falló antes de reiniciar entrenamiento. Los checkpoints completos, "
-        "curvas y RNG/sampler se preservan; RESUME_PROOF verifica recarga y "
-        "el siguiente batch sin updates adicionales.\n",
+        "El fallo inicial del disco se conserva en los recibos de recuperación. "
+        "Los dos parquets Garl TRAIN restaurados coinciden con los SHA256 originales. "
+        "La restauración raw usa una revisión HF fija, sólo la allowlist TRAIN "
+        "autorizada, y verifica el SHA completo de cada HDF5. " + restoration_status + " "
+        "RESUME_PROOF verifica checkpoints, RNG y siguiente batch sin updates.\n",
+        "## Precisión WIDE\n",
+        markdown_table(wide_table) + "\n" if wide_rows else "Endpoints pendientes.\n",
+        f"Réplicas autorizadas por los cinco guardrails seed7: "
+        f"{wide.get('replication_authorized', False)}. "
+        f"Agregación de réplicas: {replication.get('status', 'PENDING')}. "
+        "Cada seed se evalúa después del seal de sus tres folds. "
+        "La agregación promedia pérdidas pareadas por consulta, nunca TTC; "
+        "separa tres semillas y semillas nuevas13/23. No se promueve el candidato.\n",
         "## Precisión del control analítico\n",
         markdown_table(pd.DataFrame(rows)) + "\n",
         f"EWMA−H8: **{analytical['point_delta']:.6f} MiD**, IC jerárquico95% "
@@ -243,8 +369,12 @@ def report(c: Campaign) -> None:
         "CPU FP32/4 threads/2 interop. Son mediciones de cabeza y emisión; "
         "no incluyen productores, HDF5, ROI, ingestión ni detector. "
         "La variación entre bloques y su orden impiden atribuir causalmente "
-        "una aceleración al runtime raw. R0 y paridad CUDA reales están bloqueados "
-        "por fuentes; R1 no implementado. No se repiten las1.728 medidas históricas.\n",
+        "una aceleración al runtime raw. "
+        f"R0 real: {raw_measured}; paridad: {parity['status']}. "
+        "R1 no implementado. No se repiten las1.728 medidas históricas.\n",
+        markdown_table(pd.read_csv(c.out / "RUNTIME_COMPARISON.csv")) + "\n"
+        if raw_measured
+        else "Las mediciones R0 todavía no están completas.\n",
         "Preprocesado compartido: filtro/proyección ROI una vez, views half-open "
         "int64 y reducciones/normalización originales por ventana. Tests cubren "
         "borde, ROI vacío/fuera, offset, empates, timestamps grandes, chunks, "
@@ -259,9 +389,10 @@ def report(c: Campaign) -> None:
         "Los12 productores Garl nuevos están admitidos por datos y presupuesto: "
         "**59.100 updates exactos** para50 épocas. Source commit/config blob "
         "verificados al iniciar; arquitectura40ch/128px/ResNet50/512 intacta. "
-        "No se cargan paper_event_only ni paper_visual_only. El perfil sintético "
-        "de microbatch128→64→32→16→8, QA nativa y sus50 épocas requieren "
-        "restablecer E:. Microbatch con BN se declarará adaptación hardware. "
+        "No se cargan paper_event_only ni paper_visual_only. "
+        f"Perfil sintético: {micro['status']}; microbatch elegido "
+        f"{micro.get('selected_microbatch')}, batch efectivo128. "
+        "El recibo documenta memoria, selección y adaptación BN, si procede. "
         f"Progreso científico nuevo Garl:{counts['garl_producer_saved']}; "
         f"cabezas Garl:{counts['garl_head_saved']}.\n",
         "Las seis cabezas implementadas usan INNER-OOF excluyendo outer e inner "
@@ -270,6 +401,10 @@ def report(c: Campaign) -> None:
         "históricos tuvieron supervisión RGB/DINO aunque inferencia event-only; "
         "Garl usa geometría3D TRAIN para LHR, nunca en forward. "
         "Mismo número de anchors no implica encoding/ROI/span equivalentes.\n",
+        markdown_table(native_table) + "\n"
+        if native_rows
+        else "Los comparadores nativos aún no tienen resultados evaluados. "
+        "Este estado no es un resultado científico negativo.\n",
         "## Contabilidad y reanudación\n",
         "```json\n" + json.dumps(counts, indent=2) + "\n```\n",
         f"Reserva pendiente: {counts['unresolved_execution_upper']} updates; "
@@ -291,11 +426,12 @@ def report(c: Campaign) -> None:
         "existentes. Avanza ramas viables; un comparador ausente sólo bloquea "
         "su dependencia. H8 mantiene identidad; H16 se conserva; WIDE no se promueve.\n",
         "## Validación y límites\n",
-        "37 tests focalizados, Ruff, formato, Pyright y help pasan, con0 updates "
-        "de tests. Se conservan el fallo de formato y el fallo de acceso a E:. "
+        f"QA final: {qa['status']}; {test_count} tests focalizados, Ruff, formato, "
+        "Pyright y help tienen recibos con exit code y0 updates de tests. "
+        "Se conservan los fallos transitorios y de QA anteriores. "
         "Contratos handoff:39 tests CPU pasaron antes de la campaña. "
-        "No se ha probado end-to-end el entrenamiento nativo por ausencia actual "
-        "de fuente; su estado es dependencia bloqueada.\n",
+        f"Estado nativo evaluado: {garl.get('status', 'PENDING_EXECUTION')}; "
+        "no se afirma ejecución end-to-end de una rama que carezca de endpoints.\n",
         "Bundle: código/configs/diff, pesos/checkpoints completos, predicciones "
         "EWMA, curves, normalizadores, draws/recibos, bindings externos y QA. "
         "CRC y manifiesto SHA256 se verifican; se regenera la evidencia incluida "

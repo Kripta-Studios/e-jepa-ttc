@@ -29,6 +29,13 @@ def records(c: Campaign) -> dict:
             tokens.update(map(str, z["tokens"]))
     filters = [("sample_token", "in", sorted(tokens))]
     dataset = Path(c.local["garl_annotations_candidate"])
+    original = read(Path(c.launch["source_configuration"]))["expansion"]["0"]
+    label_path = dataset.parents[1] / "annotations/train.parquet"
+    if (
+        digest(dataset) != original["metadata_sha256"]
+        or digest(label_path) != original["labels_sha256"]
+    ):
+        raise ValueError("native TRAIN metadata or labels differ from original frozen SHA256")
     inputs = pq.read_table(
         dataset,
         columns=[
@@ -42,7 +49,7 @@ def records(c: Campaign) -> dict:
         use_threads=False,
     ).to_pylist()
     labels = pq.read_table(
-        dataset.parents[1] / "annotations/train.parquet",
+        label_path,
         columns=["sample_token", "frame_ttc", "box3d_h", "box3d_Fcam"],
         filters=filters,
         use_threads=False,
@@ -56,7 +63,7 @@ def records(c: Campaign) -> dict:
 
 
 class InputCache:
-    """One256MiB in-memory LRU;2GB lossless numeric cache, never raw copies."""
+    """One256MiB memory LRU; adaptive lossless cache under the owned10GB quota."""
 
     def __init__(self, c: Campaign, rows: dict) -> None:
         from e_jepa_ttc.simplex_t.cached_event_reader import ReaderPool
@@ -74,6 +81,39 @@ class InputCache:
             (p.name, p.stat().st_size) for p in sorted(self.root.glob("*.npz"))
         )
         self.disk = sum(self.files.values())
+        self.limit = 0
+        self.refresh_capacity()
+
+    def refresh_capacity(self) -> None:
+        """Reserve1GB for atomic checkpoints; existing scientific outputs are never evicted."""
+        owned_noncache = sum(
+            p.stat().st_size
+            for p in self.c.out.rglob("*")
+            if p.is_file() and self.root not in p.parents
+        )
+        self.limit = max(0, min(8_000_000_000, 9_000_000_000 - owned_noncache))
+        self.evict(0)
+        atomic_json(
+            self.c.out / "garl/CACHE_BUDGET.json",
+            {
+                "owned_noncache_bytes": owned_noncache,
+                "cache_limit_bytes": self.limit,
+                "cached_bytes": self.disk,
+                "atomic_checkpoint_reservation_bytes": 1_000_000_000,
+                "owned_quota_bytes": 10_000_000_000,
+                "lossless_FP32": True,
+            },
+        )
+
+    def evict(self, incoming_bytes: int) -> None:
+        """Evict only verified paths inside this process's disposable numeric cache."""
+        while self.disk + incoming_bytes > self.limit and self.files:
+            name, size = self.files.popitem(last=False)
+            candidate = (self.root / name).resolve()
+            if candidate.parent != self.root.resolve():
+                raise ValueError("cache eviction escaped owned root")
+            candidate.unlink()
+            self.disk -= size
 
     def get(self, token: str) -> tuple:
         """Cache by bound exact token; FP32 tensors, no uint16/FP16 approximation."""
@@ -115,16 +155,11 @@ class InputCache:
                 stream, events=value[0].numpy(), visible=value[1].numpy(), target=value[2]
             )
             payload = stream.getvalue()
-            while self.disk + len(payload) > 2_000_000_000 and self.files:
-                name, size = self.files.popitem(last=False)
-                candidate = (self.root / name).resolve()
-                if candidate.parent != self.root.resolve():
-                    raise ValueError("cache eviction escaped owned root")
-                candidate.unlink()
-                self.disk -= size
-            atomic_bytes(path, payload)
-            self.files[key] = len(payload)
-            self.disk += len(payload)
+            self.evict(len(payload))
+            if len(payload) <= self.limit:
+                atomic_bytes(path, payload)
+                self.files[key] = len(payload)
+                self.disk += len(payload)
         size = value[0].numel() * 4 + value[1].numel() * 4
         while self.bytes + size > 256 * 1024**2 and self.values:
             _, previous = self.values.popitem(last=False)
@@ -144,6 +179,7 @@ def execute(c: Campaign) -> None:
     import torch
 
     c.require_resources()
+    c.freeze()
     admission = read(c.out / "garl/ADMISSION.json")
     profile = read(c.out / "garl/MICROBATCH_PROFILE.json")
     if admission["reasons"] or profile["status"] != "ADMITTED":
@@ -160,6 +196,8 @@ def execute(c: Campaign) -> None:
         Path(__file__),
         Path(__file__).with_name("native_garl.py"),
         ROOT / "src/e_jepa_ttc/efficient_context/garl_input.py",
+        Path(__file__).with_name("garl_qa.py"),
+        Path(__file__).with_name("budget.py"),
         code / "garl_ttc/models/ttc_network.py",
         code / "garl_ttc/models/resnet.py",
     ]
@@ -167,6 +205,8 @@ def execute(c: Campaign) -> None:
         "parent_protocol_sha256": digest(c.out / "PROTOCOL.json"),
         "admission_sha256": digest(c.out / "garl/ADMISSION.json"),
         "microbatch_profile_sha256": digest(c.out / "garl/MICROBATCH_PROFILE.json"),
+        "input_QA_sha256": digest(c.out / "garl/INPUT_QA.json"),
+        "raw_restoration_plan_sha256": digest(c.out / "data_recovery/DOWNLOAD_PLAN.json"),
         "fits": admission["fits"],
         "updates": admission["updates_exact_50_epochs"],
         "epochs": 50,
@@ -175,6 +215,19 @@ def execute(c: Campaign) -> None:
         "microbatch": profile["selected_microbatch"],
         "batchnorm_adaptation": profile["hardware_adaptation"],
         "native_config": native_config(c),
+        "execution_order": [
+            fit["key"]
+            for fit in sorted(
+                admission["fits"], key=lambda fit: (-fit["updates_50_epochs"], fit["key"])
+            )
+        ],
+        "cache": {
+            "FP32_lossless": True,
+            "memory_bytes": 256 * 1024**2,
+            "disk_max_bytes": 8_000_000_000,
+            "atomic_checkpoint_reservation_bytes": 1_000_000_000,
+            "within_owned_total_bytes": 10_000_000_000,
+        },
         "science_files": [{"path": str(p), "sha256": digest(p)} for p in inventory],
     }
     freeze = c.out / "garl/PROTOCOL.json"
@@ -196,22 +249,52 @@ def execute(c: Campaign) -> None:
     )
     with Lease(c.out):
         try:
-            for fit in protocol["fits"]:
-                endpoint = run_fit(c, fit, protocol, pin, ledger, cache, ctor)
+            fits = {fit["key"]: fit for fit in protocol["fits"]}
+            failures_path = c.out / "garl/FIT_FAILURES.json"
+            failures = read(failures_path) if failures_path.exists() else {}
+            for key in protocol["execution_order"]:
+                fit = fits[key]
+                cache.refresh_capacity()
+                if key in failures:
+                    # Preserve an integrity failure for inspection; no automatic scientific retry.
+                    continue
+                try:
+                    endpoint = run_fit(c, fit, protocol, pin, ledger, cache, ctor)
+                except ArithmeticError as error:
+                    failures[key] = {
+                        "status": "FAILED_INTEGRITY",
+                        "error": repr(error),
+                        "scientific_negative": False,
+                        "automatic_retry": False,
+                    }
+                    atomic_json(failures_path, failures)
+                    endpoint = None
                 if endpoint is None:
-                    return
-                endpoints.append(endpoint)
+                    if not c.check():
+                        return
+                else:
+                    endpoints.append(endpoint)
+                atomic_json(
+                    c.out / "garl/INDEPENDENT_PROGRESS.json",
+                    {
+                        "completed_fits": endpoints,
+                        "integrity_failures": failures,
+                        "all_twelve_required_before_evaluation": True,
+                        "scientific_negative_for_missing_fit": False,
+                    },
+                )
                 gc.collect()
                 torch.cuda.empty_cache()
-            atomic_json(
-                c.out / "garl/ENDPOINTS.json",
-                {
-                    "fits": endpoints,
-                    "all_twelve_frozen_before_evaluation": True,
-                    "protocol_sha256": pin,
-                    "updates": ledger["saved_updates"],
-                },
-            )
+            if len(endpoints) == 12:
+                atomic_json(
+                    c.out / "garl/ENDPOINTS.json",
+                    {
+                        "fits": endpoints,
+                        "all_twelve_frozen_before_evaluation": True,
+                        "protocol_sha256": pin,
+                        "updates": ledger["saved_updates"],
+                    },
+                )
         finally:
             cache.close()
 
@@ -319,6 +402,7 @@ def run_fit(
             "losses": losses,
             "status": status,
         }
+        cache.refresh_capacity()
         atomic_checkpoint(checkpoint, state)
         work.update(saved=completed, pending=None, checkpoint_sha256=digest(checkpoint))
         ledger["saved_updates"] = sum(v["saved"] for v in ledger["fits"].values())

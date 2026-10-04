@@ -1,6 +1,10 @@
 """Global physical ceilings without altering any historical or WIDE journal."""
 
+import time
+
 from .common import Campaign, read
+
+_artifact_scans: dict[str, tuple[float, int]] = {}
 
 
 def accounting(c: Campaign) -> dict:
@@ -81,7 +85,11 @@ def require(c: Campaign) -> None:
         or counts["physical_execution_upper"] > 240000
     ):
         raise ValueError("authorized campaign physical work ceiling exceeded")
-    used = sum(p.stat().st_size for p in c.out.rglob("*") if p.is_file())
+    key = str(c.out)
+    previous_time, used = _artifact_scans.get(key, (float("-inf"), 0))
+    if time.monotonic() - previous_time >= 5:
+        used = sum(p.stat().st_size for p in c.out.rglob("*") if p.is_file())
+        _artifact_scans[key] = time.monotonic(), used
     if used > 10_000_000_000:
         raise InterruptedError(
             "owned campaign artifacts exceed10GB; no historical deletion permitted"

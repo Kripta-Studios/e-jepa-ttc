@@ -73,3 +73,91 @@ def inventory(c: Campaign) -> list:
         {"status": "COMPLETE_STATE_AND_NEXT_SAMPLER_VERIFIED", "fits": records, "extra_updates": 0},
     )
     return records
+
+
+def inventory_native(c: Campaign) -> list:
+    """Validate producer/head state, optimizer/RNG and next sampler without extra updates."""
+    import gc
+    import hashlib
+
+    import torch
+
+    from e_jepa_ttc.simplex_t.training import load_checkpoint, state_digest
+
+    records = []
+    for namespace in ("garl", "garl_heads"):
+        directory = c.out / namespace
+        protocol_path = directory / "PROTOCOL.json"
+        if not protocol_path.exists():
+            continue
+        protocol = read(protocol_path)
+        pin = digest(protocol_path)
+        ledger = read(directory / "PHYSICAL_WORK.json")
+        recipes = {fit["key"]: fit for fit in protocol["fits"]}
+        for path in sorted((directory / "fits").rglob("checkpoint_last.pt")):
+            if namespace == "garl":
+                state = torch.load(path, map_location="cpu", weights_only=True)
+                seal = state.pop("state_sha256")
+                if state_digest(state) != seal or state["protocol_sha256"] != pin:
+                    raise ValueError("native producer complete-state integrity differs")
+                key = state["key"]
+                completed = state["completed_updates"]
+                if completed != len(state["losses"]) or completed != ledger["fits"][key]["saved"]:
+                    raise ValueError("native producer durable progress differs")
+                if digest(path) != ledger["fits"][key]["checkpoint_sha256"]:
+                    raise ValueError("native producer archive differs from its journal")
+                clone = torch.load(path, map_location="cpu", weights_only=True)
+                clone.pop("state_sha256")
+                if state_digest(clone) != state_digest(state):
+                    raise ValueError("native producer independent reload differs")
+                draws = []
+                for payload in (state, clone):
+                    generator = torch.Generator().set_state(payload["sampler_rng"])
+                    permutation = torch.randperm(len(payload["order"]), generator=generator)
+                    draws.append(hashlib.sha256(permutation.numpy().tobytes()).hexdigest())
+                if draws[0] != draws[1]:
+                    raise ValueError("native producer RNG reload differs")
+                del clone
+                steps_per_epoch = recipes[key]["updates_50_epochs"] // 50
+                curve_rows = ["update,loss,learning_rate\n"]
+                for i, value in enumerate(state["losses"]):
+                    reductions = sum(i // steps_per_epoch >= m for m in (10, 20, 30, 40))
+                    lr = 0.001 * 0.5**reductions
+                    curve_rows.append(f"{i + 1},{value:.17g},{lr:.17g}\n")
+                curve = "".join(curve_rows)
+                atomic_bytes(path.parent / "TRAINING_CURVE.csv", curve.encode())
+                sampler_proof = draws[0]
+            else:
+                state = load_checkpoint(path)
+                key = (
+                    state["identity"]["fit_key"]
+                    if "fit_key" in state["identity"]
+                    else (path.parent.relative_to(directory / "fits").as_posix())
+                )
+                completed = state["completed_updates"]
+                if state["identity"]["freeze"] != pin:
+                    raise ValueError("native temporal head parent differs")
+                if completed != ledger["fits"][key]["completed"]:
+                    raise ValueError("native head durable journal progress differs")
+                npz(
+                    path.parent / "WEIGHTS.npz", **{k: v.numpy() for k, v in state["model"].items()}
+                )
+                sampler_proof = hashlib.sha256(state["sampler_rng"].numpy().tobytes()).hexdigest()
+            records.append(
+                {
+                    "key": key,
+                    "namespace": namespace,
+                    "checkpoint": str(path),
+                    "sha256": digest(path),
+                    "state_sha256": state_digest(state),
+                    "completed_updates": completed,
+                    "status": state["status"],
+                    "sampler_restore_proof_sha256": sampler_proof,
+                    "model_weights_in_complete_checkpoint": True,
+                    "extra_optimizer_updates": 0,
+                }
+            )
+            del state
+            gc.collect()
+    atomic_json(c.out / "NATIVE_CHECKPOINT_INVENTORY.json", {"fits": records, "extra_updates": 0})
+    return records

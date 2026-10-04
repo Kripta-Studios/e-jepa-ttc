@@ -203,7 +203,7 @@ def evaluate(c: Campaign) -> None:
 
     from e_jepa_ttc.efficient_context.garl_head import model
     from e_jepa_ttc.evaluation.exact_sequence_v10 import exact_sequence_diagnostic
-    from e_jepa_ttc.evaluation.stage63_65 import benchmark_phase
+    from e_jepa_ttc.evaluation.stage63_65 import benchmark_phase, strict_macro_mass
     from e_jepa_ttc.simplex_t.evaluation import prediction_frame
     from e_jepa_ttc.simplex_t.expert_phase import expert_benchmark_phase
     from e_jepa_ttc.simplex_t.practical_comparison import paired_practical_comparison
@@ -297,7 +297,23 @@ def evaluate(c: Campaign) -> None:
         frames[name].to_parquet(stream, index=False)
         atomic_bytes(c.out / f"garl_heads/analysis/{name}.parquet", stream.getvalue())
     names = ["GARL_NATIVE", "GARL_H1", "GARL_H8", "H8", "H16"]
+    identity = ["sample_token", "sequence_id", "track_id", "outer_fold", "target_ttc"]
+    if any(not frames[k][identity].equals(frames["H8"][identity]) for k in names):
+        raise ValueError("native paired scientific query identities differ")
+    for name in ("H8", "H16"):
+        stream = io.BytesIO()
+        frames[name].to_parquet(stream, index=False)
+        atomic_bytes(c.out / f"garl_heads/analysis/{name}.parquet", stream.getvalue())
     losses = np.column_stack([frames[k].loss.to_numpy(np.float64) for k in names])
+    mass = strict_macro_mass(
+        frames["H8"].target_ttc.to_numpy(), frames["H8"].sequence_id.to_numpy()
+    )
+    npz(
+        c.out / "garl_heads/analysis/PAIRED_LOSSES.npz",
+        losses=losses,
+        mass=mass,
+        names=np.asarray(names),
+    )
     draws, receipt = resumable_hierarchical_losses(
         frames["H8"].rename(columns={"target_ttc": "target_ttc_s"}),
         losses,

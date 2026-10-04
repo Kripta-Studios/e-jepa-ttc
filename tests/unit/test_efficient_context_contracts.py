@@ -263,3 +263,45 @@ def test_pending_progress_has_observed_lower_and_reserved_upper(tmp_path):
     assert result["unsaved_updates_confirmed_by_progress"] == 50
     assert result["physical_execution_lower"] == 6650
     assert result["physical_execution_upper"] == 6700
+
+
+@pytest.mark.parametrize("changed_sha", [False, True])
+def test_restored_raw_requires_verified_full_sha_receipt(tmp_path, changed_sha):
+    """Disk recreation changes mtime, but must never silently change source bytes."""
+    from types import SimpleNamespace
+
+    from operational.efficient_context.common import atomic_json, digest
+    from operational.efficient_context.profile import verify_raw
+
+    path = tmp_path / "train/fixture/events.h5"
+    path.parent.mkdir(parents=True)
+    path.write_bytes(b"authorized TRAIN fixture")
+    sha = digest(path)
+    stat = path.stat()
+    out = tmp_path / "outputs"
+    atomic_json(
+        out / "data_recovery/DOWNLOAD_PLAN.json",
+        {
+            "revision": "pinned_public_revision",
+            "files": [{"sequence_id": "fixture", "sha256": sha, "bytes": stat.st_size}],
+        },
+    )
+    atomic_json(
+        out / "data_recovery/files/fixture.json",
+        {
+            "status": "VERIFIED",
+            "path": str(path),
+            "sha256": "wrong" if changed_sha else sha,
+            "bytes": stat.st_size,
+            "mtime_ns": stat.st_mtime_ns,
+        },
+    )
+    historical = {"bytes": stat.st_size, "mtime_ns": 1}
+    campaign = SimpleNamespace(out=out)
+    if changed_sha:
+        with pytest.raises(ValueError, match="pinned SHA receipt"):
+            verify_raw(campaign, path, historical)
+    else:
+        result = verify_raw(campaign, path, historical)
+        assert result["restored"] and result["sha256"] == sha
+        assert result["historical_mtime_preserved_in_reference_only"] == 1

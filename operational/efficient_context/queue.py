@@ -25,11 +25,16 @@ def dependencies(c: Campaign) -> dict:
     ]
     route = read(c.historical / "artifacts/simplex_t/shared_gpu_route_20261004/PROTOCOL.json")
     raw = [Path(v["path"]) for v in route["raw"]]
+    native_raw = [
+        c.raw / sequence / "events.h5"
+        for sequence in sorted(set(config["original_sequences"] + config["expansion_sequences"]))
+    ]
     return {
         "observed_utc": datetime.now(UTC).isoformat(),
         "wide_missing": [str(v) for v in train_files if not v.is_file()],
         "E1_missing": [str(v) for v in raw if not v.is_file()],
         "garl_missing": [str(v) for v in native if not v.is_file()],
+        "garl_raw_missing": [str(v) for v in native_raw if not v.is_file()],
         "TRAIN_metadata_sha256": labels["metadata_sha256"],
         "TRAIN_labels_sha256": labels["labels_sha256"],
         "global_environment_changed": False,
@@ -185,7 +190,7 @@ def all_tasks(c: Campaign) -> int:
                 "optimizer_updates": 0,
             },
         )
-    if not dep["garl_missing"] and not dep["E1_missing"]:
+    if not dep["garl_missing"] and not dep["garl_raw_missing"]:
         stages = [
             ("garl_input_QA", "garl_qa", ()),
             ("garl_microbatch", "native_garl", ("profile",)),
@@ -211,7 +216,7 @@ def all_tasks(c: Campaign) -> int:
         original.update(
             status="BLOCKED_DEPENDENCY",
             current_missing_paths=dep["garl_missing"],
-            current_native_raw_missing=dep["E1_missing"],
+            current_native_raw_missing=dep["garl_raw_missing"],
             scientific_negative=False,
             producer_training_updates=0,
             heads="BLOCKED_BY_NATIVE_PRODUCERS",

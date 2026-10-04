@@ -9,6 +9,33 @@ from pathlib import Path
 from .common import Campaign, atomic_bytes, atomic_json, digest, read
 
 
+def verify_raw(c: Campaign, path: Path, historical: dict) -> dict:
+    """Admit restored TRAIN bytes by full HF SHA, preserving the old source binding."""
+    stat = path.stat()
+    if (stat.st_size, stat.st_mtime_ns) == (historical["bytes"], historical["mtime_ns"]):
+        return {"binding": "historical_size_mtime", "restored": False}
+    plan = read(c.out / "data_recovery/DOWNLOAD_PLAN.json")
+    expected = next(v for v in plan["files"] if v["sequence_id"] == path.parent.name)
+    receipt_path = c.out / "data_recovery/files" / (path.parent.name + ".json")
+    receipt = read(receipt_path)
+    if not (
+        receipt["status"] == "VERIFIED"
+        and receipt["sha256"] == expected["sha256"]
+        and receipt["path"] == str(path)
+        and stat.st_size == receipt["bytes"] == expected["bytes"] == historical["bytes"]
+        and stat.st_mtime_ns == receipt["mtime_ns"]
+    ):
+        raise ValueError("restored raw TRAIN identity differs from pinned SHA receipt")
+    return {
+        "binding": "restored_pinned_HF_full_SHA256",
+        "restored": True,
+        "sha256": receipt["sha256"],
+        "receipt_sha256": digest(receipt_path),
+        "historical_mtime_preserved_in_reference_only": historical["mtime_ns"],
+        "revision": plan["revision"],
+    }
+
+
 def run_profile(c: Campaign) -> None:
     """Commit each exact tensor comparison and independent R0 preparation request."""
     import numpy as np
@@ -56,6 +83,7 @@ def run_profile(c: Campaign) -> None:
         "historical_route_sha256": digest(
             c.historical / "artifacts/simplex_t/shared_gpu_route_20261004/PROTOCOL.json"
         ),
+        "restored_raw_plan_sha256": digest(c.out / "data_recovery/DOWNLOAD_PLAN.json"),
         "queries": 64,
         "blocks": 3,
         "arms": ["H1", "H8", "H16", "WIDE"],
@@ -96,8 +124,7 @@ def run_profile(c: Campaign) -> None:
                 raw_path = c.raw / query["sequence_id"] / "events.h5"
                 expected = next(r for r in p["raw"] if r["path"] == str(raw_path))
                 stat = raw_path.stat()
-                if (stat.st_size, stat.st_mtime_ns) != (expected["bytes"], expected["mtime_ns"]):
-                    raise ValueError("raw TRAIN binding changed")
+                source_binding = verify_raw(c, raw_path, expected)
                 for label, length in (("H1", 1), ("H8", 8), ("H16", 16), ("WIDE", 8)):
                     if label not in runtime.heads:
                         continue
@@ -246,6 +273,7 @@ def run_profile(c: Campaign) -> None:
                             "parity": parity,
                             "raw_path": str(raw_path),
                             "raw_bytes": stat.st_size,
+                            "raw_binding": source_binding,
                         },
                     )
                     rows.extend(requests)

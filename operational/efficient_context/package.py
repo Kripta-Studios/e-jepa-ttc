@@ -6,12 +6,41 @@ import hashlib
 import importlib.metadata
 import json
 import os
+import re
 import subprocess
 import sys
 import zipfile
 from pathlib import Path
 
 from .common import ROOT, Campaign, atomic_bytes, atomic_json, digest
+
+
+def release_cache_for_bundle(c: Campaign) -> None:
+    """Release disposable numeric inputs while retaining every scientific checkpoint."""
+    if (c.out / "WRITER.lock").exists():
+        raise InterruptedError("essential bundle requires no active campaign writer")
+    root = (c.out / "garl/native_cache").resolve()
+    if c.out.resolve() not in root.parents:
+        raise ValueError("numeric cache root escaped the owned campaign")
+    paths = list(root.glob("*.npz")) if root.exists() else []
+    for path in paths:
+        if path.resolve().parent != root or not re.fullmatch(r"[0-9a-f]{64}\.npz", path.name):
+            raise ValueError("unrecognized path in the disposable numeric cache")
+    size = sum(path.stat().st_size for path in paths)
+    for path in paths:
+        path.unlink()
+    if paths:
+        atomic_json(
+            c.out / "garl/CACHE_RELEASE_FOR_BUNDLE.json",
+            {
+                "root": str(root),
+                "released_files": len(paths),
+                "released_bytes": size,
+                "scientific_checkpoints_removed": 0,
+                "raw_removed": 0,
+                "cache_reconstructible_from_pinned_TRAIN": True,
+            },
+        )
 
 
 def sources(c: Campaign) -> None:
@@ -38,6 +67,18 @@ def sources(c: Campaign) -> None:
     records = []
     for file in sorted(set(files)):
         relative = file.relative_to(ROOT).as_posix()
+        atomic_bytes(c.out / "source" / relative, file.read_bytes())
+        records.append({"path": relative, "sha256": digest(file), "bytes": file.stat().st_size})
+    external = Path(c.local["garl_code_candidate"])
+    native_files = [
+        external / "garl_ttc/__init__.py",
+        external / "configs/ablation/event_lhr.yaml",
+        *sorted((external / "garl_ttc/models").glob("*.py")),
+    ]
+    for file in native_files:
+        if not file.is_file():
+            continue
+        relative = "external/Garl-TTC/" + file.relative_to(external).as_posix()
         atomic_bytes(c.out / "source" / relative, file.read_bytes())
         records.append({"path": relative, "sha256": digest(file), "bytes": file.stat().st_size})
     diff = subprocess.check_output(
@@ -92,6 +133,7 @@ def package(c: Campaign) -> None:
     from .delivery import report
     from .export_prepared import export
 
+    release_cache_for_bundle(c)
     require(c)
     report(c)
     export(c)
@@ -105,7 +147,12 @@ def package(c: Campaign) -> None:
             b"Replays included analysis/head outputs; excludes raw training and latency.\n"
         ),
     )
-    excluded = {"BUNDLE_MANIFEST.json", "BUNDLE.sha256", "BUNDLE_VERIFICATION.json"}
+    excluded = {
+        "BUNDLE_MANIFEST.json",
+        "BUNDLE.sha256",
+        "BUNDLE_VERIFICATION.json",
+        "RESOURCES.json",
+    }
     entries = []
     for path in sorted(c.out.rglob("*")):
         relative = path.relative_to(c.out)
@@ -113,9 +160,10 @@ def package(c: Campaign) -> None:
             not path.is_file()
             or path.suffix in (".zip", ".pending", ".lock", ".pyc")
             or path.name in excluded
+            or relative.as_posix() == "data_recovery/PROGRESS.json"
             or "__pycache__" in relative.parts
             or relative.parts[0] == "verification"
-            or (relative.parts[0] == "garl" and "cache" in relative.parts)
+            or (relative.parts[0] == "garl" and "native_cache" in relative.parts)
         ):
             continue
         entries.append(
@@ -147,7 +195,17 @@ def package(c: Campaign) -> None:
             relative = Path(row["path"])
             needed = (
                 relative.parts[0] in ("analysis", "analytical", "prepared_heads", "source")
-                or row["path"] == "EWMA_TRANSPORT_CV_RESULTS.json"
+                or relative.parts[0] == "garl_heads"
+                and "analysis" in relative.parts
+                or row["path"]
+                in (
+                    "EWMA_TRANSPORT_CV_RESULTS.json",
+                    "H8_WIDE_RESULTS.json",
+                    "H8_WIDE_RESULTS_seed13.json",
+                    "H8_WIDE_RESULTS_seed23.json",
+                    "WIDE_REPLICATION_RESULTS.json",
+                    "GARL_CONTEXT_RESULTS.json",
+                )
             )
             if needed:
                 path = (extraction / relative).resolve()

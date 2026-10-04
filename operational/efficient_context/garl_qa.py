@@ -5,10 +5,24 @@ from __future__ import annotations
 import argparse
 import hashlib
 import importlib
+import importlib.util
 import sys
 from pathlib import Path
+from types import ModuleType
 
 from .common import ROOT, Campaign, atomic_json, digest
+
+
+def source_module(c: Campaign, relative: str) -> ModuleType:
+    """Load the pinned sensor kernel without initializing unrelated RGB dataset code."""
+    path = Path(c.local["garl_code_candidate"]) / relative
+    module_spec = importlib.util.spec_from_file_location("pinned_native_" + path.stem, path)
+    if module_spec is None or module_spec.loader is None:
+        raise ImportError("cannot load pinned native source: " + str(path))
+    module = importlib.util.module_from_spec(module_spec)
+    sys.dont_write_bytecode = True
+    module_spec.loader.exec_module(module)
+    return module
 
 
 def run(c: Campaign) -> dict:
@@ -32,11 +46,11 @@ def run(c: Campaign) -> dict:
     rows = records(c)
     sys.dont_write_bytecode = True
     sys.path.insert(0, c.local["garl_code_candidate"])
-    get_timevolume_roi_np = importlib.import_module(
-        "garl_ttc.datasets.event_representation"
+    get_timevolume_roi_np = source_module(
+        c, "garl_ttc/datasets/event_representation.py"
     ).get_timevolume_roi_np
-    extract_from_h5_by_timewindow = importlib.import_module(
-        "garl_ttc.utils.events"
+    extract_from_h5_by_timewindow = source_module(
+        c, "garl_ttc/utils/events.py"
     ).extract_from_h5_by_timewindow
 
     pool = ReaderPool()

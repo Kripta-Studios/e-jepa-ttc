@@ -52,14 +52,119 @@ def replay(root: Path) -> dict:
     if len(profile) != 768:
         raise ValueError("prepared TRAIN head measurements incomplete")
     head_outputs = replay_heads(root, profile)
+    scientific = replay_scientific(root, frame, mass)
     result.update(
         status="PASS",
         prepared_head_requests=len(profile),
         head_output_replay=head_outputs,
-        scope="included analytical predictions/losses/bootstrap and TRAIN head outputs",
+        scientific_analysis_replay=scientific,
+        scope="included predictions/losses/bootstrap and TRAIN head outputs; no raw replay",
         independent_raw_training_replay=False,
     )
     return result
+
+
+def bootstrap_losses(path: Path, columns: int) -> np.ndarray:
+    """Concatenate the sealed numerical fragments, preserving their original draws."""
+    blocks = [
+        np.load(p, allow_pickle=False) for p in sorted((path / ".resume").glob("*/LOSSES.npy"))
+    ]
+    draws = np.concatenate(blocks)
+    if draws.shape != (8192, columns):
+        raise ValueError("included scientific bootstrap fragments incomplete")
+    return draws
+
+
+def check_contrast(
+    losses: np.ndarray,
+    mass: np.ndarray,
+    draws: np.ndarray,
+    candidate: int,
+    reference: int,
+    expected: dict,
+) -> None:
+    """Verify persisted point contrasts and hierarchical95 intervals from losses."""
+    delta = float(mass @ (losses[:, candidate] - losses[:, reference]))
+    ci = np.percentile(draws[:, candidate] - draws[:, reference], [2.5, 97.5])
+    if not np.isclose(delta, expected["point_delta"], rtol=0, atol=1e-10):
+        raise ValueError("scientific paired point contrast does not regenerate")
+    if not np.allclose(ci, expected["hierarchical_ci95"], rtol=0, atol=1e-10):
+        raise ValueError("scientific paired interval does not regenerate")
+
+
+def replay_scientific(root: Path, base: pd.DataFrame, base_mass: np.ndarray) -> dict:
+    """Verify each completed WIDE seed, loss aggregation and native paired contrast."""
+    verified = []
+    frames = {}
+    identity = ["sample_token", "sequence_id", "track_id", "outer_fold", "target_ttc"]
+    for seed in (7, 13, 23):
+        report = root / (
+            "H8_WIDE_RESULTS.json" if seed == 7 else f"H8_WIDE_RESULTS_seed{seed}.json"
+        )
+        if not report.exists():
+            continue
+        expected = json.loads(report.read_text())
+        if expected["status"] != "COMPLETE":
+            continue
+        path = root / f"analysis/seed{seed}"
+        with np.load(path / "PAIRED_LOSSES.npz", allow_pickle=False) as z:
+            losses, mass, names = z["losses"].copy(), z["mass"].copy(), list(z["names"])
+        for i, name in enumerate(names):
+            frame = pd.read_parquet(path / f"{name}.parquet")
+            if not frame[identity].equals(base[identity]):
+                raise ValueError("WIDE replay query identities differ")
+            if not np.array_equal(frame.loss.to_numpy(np.float64), losses[:, i]):
+                raise ValueError("WIDE included point losses differ")
+            frames[seed, name] = frame
+        if not np.array_equal(mass, base_mass):
+            raise ValueError("WIDE replay query masses differ")
+        draws = bootstrap_losses(path / "bootstrap", len(names))
+        for reference, comparison in expected["comparisons"].items():
+            check_contrast(
+                losses, mass, draws, names.index("WIDE"), names.index(reference), comparison
+            )
+        verified.append(f"WIDE_seed{seed}")
+    report = root / "WIDE_REPLICATION_RESULTS.json"
+    if report.exists():
+        expected = json.loads(report.read_text())
+        for label, result in expected["results"].items():
+            path = root / "analysis/replication" / label
+            with np.load(path / "PAIRED_MEAN_LOSSES.npz", allow_pickle=False) as z:
+                losses, mass, names = z["losses"].copy(), z["mass"].copy(), list(z["names"])
+            for i, name in enumerate(names):
+                actual = np.mean(
+                    [frames[s, name].loss.to_numpy(np.float64) for s in result["seeds"]], axis=0
+                )
+                if not np.array_equal(actual, losses[:, i]):
+                    raise ValueError("replication must average paired losses, never TTC")
+                if not np.isclose(float(mass @ actual), result["scores"][name], rtol=0, atol=1e-10):
+                    raise ValueError("replication included score does not regenerate")
+            draws = bootstrap_losses(path / "bootstrap", len(names))
+            for reference, comparison in result["contrasts"].items():
+                check_contrast(
+                    losses, mass, draws, names.index("WIDE"), names.index(reference), comparison
+                )
+            verified.append(label)
+    report = root / "GARL_CONTEXT_RESULTS.json"
+    if report.exists():
+        expected = json.loads(report.read_text())
+        path = root / "garl_heads/analysis"
+        with np.load(path / "PAIRED_LOSSES.npz", allow_pickle=False) as z:
+            losses, mass, names = z["losses"].copy(), z["mass"].copy(), list(z["names"])
+        native_frames = [pd.read_parquet(path / f"{name}.parquet") for name in names]
+        if any(not frame[identity].equals(base[identity]) for frame in native_frames):
+            raise ValueError("native replay query identities differ")
+        actual = np.column_stack([frame.loss.to_numpy(np.float64) for frame in native_frames])
+        if not np.array_equal(actual, losses) or not np.array_equal(mass, base_mass):
+            raise ValueError("native replay losses or masses differ")
+        draws = bootstrap_losses(path / "bootstrap", len(names))
+        for label, comparison in expected["comparisons"].items():
+            candidate, reference = label.split("-")
+            check_contrast(
+                losses, base_mass, draws, names.index(candidate), names.index(reference), comparison
+            )
+        verified.append("GARL_CONTEXT")
+    return {"verified_completed_analyses": verified, "extra_optimizer_updates": 0}
 
 
 def replay_heads(root: Path, measurements: pd.DataFrame) -> dict:
