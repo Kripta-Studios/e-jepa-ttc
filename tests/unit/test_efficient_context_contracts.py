@@ -373,3 +373,47 @@ def test_native_runtime_uses_fresh_sensor_scalars_and_frozen_normalizer(monkeypa
     )
     assert actual is not None
     assert all(torch.equal(a, b) for a, b in zip(actual, expected, strict=True))
+
+
+@pytest.mark.parametrize("variant", ["complete", "tampered", "missing"])
+def test_completed_wide_reuse_checks_all_sealed_bytes(tmp_path, variant):
+    """A resumable queue must reuse finished work without accepting altered weights."""
+    from types import SimpleNamespace
+
+    from operational.efficient_context.common import atomic_json, digest
+    from operational.efficient_context.queue import completed_wide
+
+    atomic_json(tmp_path / "WIDE_REPLICATION_RESULTS.json", {"status": "COMPLETE"})
+    checkpoint = tmp_path / "checkpoint.pt"
+    checkpoint.write_bytes(b"sealed fixture weights")
+    sha = digest(checkpoint)
+    for seed in (7, 13, 23):
+        atomic_json(
+            tmp_path
+            / ("H8_WIDE_RESULTS.json" if seed == 7 else f"H8_WIDE_RESULTS_seed{seed}.json"),
+            {"status": "COMPLETE"},
+        )
+        if variant == "missing" and seed == 23:
+            continue
+        atomic_json(
+            tmp_path / f"ENDPOINTS_seed{seed}.json",
+            {
+                "all_three_frozen_before_evaluation": True,
+                "fits": [
+                    {
+                        "seed": seed,
+                        "fold": fold,
+                        "updates": 2500,
+                        "checkpoint": str(checkpoint),
+                        "checkpoint_sha256": sha,
+                    }
+                    for fold in range(3)
+                ],
+            },
+        )
+    if variant == "tampered":
+        checkpoint.write_bytes(b"altered weights")
+        with pytest.raises(ValueError, match="do not retrain"):
+            completed_wide(SimpleNamespace(out=tmp_path))
+    else:
+        assert completed_wide(SimpleNamespace(out=tmp_path)) == (variant == "complete")

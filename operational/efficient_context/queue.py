@@ -109,6 +109,31 @@ def call(c: Campaign, key: str, module: str, *args: str) -> int:
     return result.returncode
 
 
+def completed_wide(c: Campaign) -> bool:
+    """Reuse the completed family only after checking all nine sealed checkpoint bytes."""
+    aggregate = c.out / "WIDE_REPLICATION_RESULTS.json"
+    if not aggregate.exists() or read(aggregate).get("status") != "COMPLETE":
+        return False
+    for seed in (7, 13, 23):
+        seal_path = c.out / f"ENDPOINTS_seed{seed}.json"
+        result_path = c.out / (
+            "H8_WIDE_RESULTS.json" if seed == 7 else f"H8_WIDE_RESULTS_seed{seed}.json"
+        )
+        if not seal_path.exists() or not result_path.exists():
+            return False
+        seal = read(seal_path)
+        if not seal["all_three_frozen_before_evaluation"] or len(seal["fits"]) != 3:
+            return False
+        if read(result_path).get("status") != "COMPLETE":
+            return False
+        for fit in seal["fits"]:
+            if fit["updates"] != 2500 or fit["seed"] != seed:
+                raise ValueError("completed WIDE endpoint has changed its fixed recipe")
+            if digest(Path(fit["checkpoint"])) != fit["checkpoint_sha256"]:
+                raise ValueError("completed WIDE checkpoint bytes differ; do not retrain")
+    return True
+
+
 def all_tasks(c: Campaign) -> int:
     """Continue every currently viable branch; no source fallback or truncation."""
     c.freeze()
@@ -123,7 +148,14 @@ def all_tasks(c: Campaign) -> int:
     )
     dep = dependencies(c)
     atomic_json(c.out / "DEPENDENCIES.json", dep)
-    if not dep["wide_missing"]:
+    if not dep["wide_missing"] and completed_wide(c):
+        freeze_analysis(c)
+        state["E2"] = "COMPLETE"
+        atomic_json(
+            c.out / "queue/WIDE_REUSED.json",
+            {"verified_endpoints": 9, "optimizer_updates": 0, "analysis_reexecuted": False},
+        )
+    elif not dep["wide_missing"]:
         code = call(c, "wide_seed7", "operational.efficient_context.run", "train", "--resume")
         if code == 0:
             freeze_analysis(c)
