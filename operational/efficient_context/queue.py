@@ -266,7 +266,23 @@ def main() -> int:
 
         package(c)
         return 0
+    started = datetime.now(UTC).isoformat()
     code = all_tasks(c)
+    log = c.out / "COMMAND_LOG.jsonl"
+    receipt = {
+        "task": "complete_E0_E3_queue",
+        "command": [sys.executable, "-m", "operational.efficient_context.queue", *sys.argv[1:]],
+        "start_utc": started,
+        "end_utc": datetime.now(UTC).isoformat(),
+        "task_returncode": code,
+        "package_verification": "reported separately in BUNDLE_VERIFICATION.json",
+        "state_sha256": digest(c.out / "QUEUE_STATE.json"),
+    }
+    atomic_bytes(
+        log,
+        (log.read_bytes() if log.exists() else b"")
+        + (json.dumps(receipt, ensure_ascii=False) + "\n").encode(),
+    )
     from .package import package
 
     package(c)

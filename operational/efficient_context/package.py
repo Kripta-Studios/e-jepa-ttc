@@ -110,7 +110,7 @@ def package(c: Campaign) -> None:
         ):
             continue
         entries.append(
-            {"path": relative.as_posix(), "bytes": path.stat().st_size(), "sha256": digest(path)}
+            {"path": relative.as_posix(), "bytes": path.stat().st_size, "sha256": digest(path)}
         )
     payload_size = sum(row["bytes"] for row in entries)
     owned_size = sum(p.stat().st_size for p in c.out.rglob("*") if p.is_file())
