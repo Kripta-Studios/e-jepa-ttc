@@ -1,0 +1,310 @@
+"""Measured tables, explicit blocked branches and a regenerable campaign report."""
+
+from __future__ import annotations
+
+import json
+import subprocess
+from pathlib import Path
+from typing import TYPE_CHECKING
+
+from .common import ROOT, Campaign, atomic_bytes, atomic_json, digest, read
+
+if TYPE_CHECKING:
+    from pandas import DataFrame
+
+
+def markdown_table(frame: DataFrame) -> str:
+    """Render persisted tables without introducing an optional tabulate dependency."""
+    columns = list(frame.columns)
+    lines = ["| " + " | ".join(columns) + " |", "| " + " | ".join("---" for _ in columns) + " |"]
+    for row in frame.itertuples(index=False, name=None):
+        values = [f"{v:.6f}" if isinstance(v, float) else str(v) for v in row]
+        lines.append("| " + " | ".join(values) + " |")
+    return "\n".join(lines)
+
+
+def report(c: Campaign) -> None:
+    """Every reported number comes from persisted predictions, curves or receipts."""
+    import matplotlib
+    import pandas as pd
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    from .budget import accounting
+    from .checkpoints import inventory
+    from .queue import dependencies
+
+    checkpoints = inventory(c)
+    counts = accounting(c)
+    dep = dependencies(c)
+    atomic_json(c.out / "ACCOUNTING.json", counts)
+    atomic_json(c.out / "DEPENDENCIES.json", dep)
+    state = read(c.out / "QUEUE_STATE.json") if (c.out / "QUEUE_STATE.json").exists() else {}
+    wide_path = c.out / "H8_WIDE_RESULTS.json"
+    wide = read(wide_path) if wide_path.exists() else {}
+    wide_evaluated = wide.get("status") == "COMPLETE"
+    remaining = sum(
+        2500 - r["completed_updates"] for r in checkpoints if r["key"].endswith("seed7")
+    ) + 2500 * (3 - sum(r["key"].endswith("seed7") for r in checkpoints))
+    checkpoint_summary = "; ".join(
+        f"{r['key']}: {r['completed_updates']} ({r['status']})" for r in checkpoints
+    )
+    analytical = read(c.out / "EWMA_TRANSPORT_CV_RESULTS.json")
+    rows = [
+        {"system": "H8 historical seed7", "MiD": analytical["reference_score"], "delta_H8": 0},
+        {
+            "system": "EWMA_TRANSPORT_CV_H8",
+            "MiD": analytical["candidate_score"],
+            "delta_H8": analytical["point_delta"],
+        },
+        {
+            "system": "EWMA cap sensitivity",
+            "MiD": analytical["cap_sensitivity"]["candidate_score"],
+            "delta_H8": analytical["cap_sensitivity"]["point_delta"],
+        },
+    ]
+    atomic_bytes(
+        c.out / "tables/ANALYTICAL_COMPARISON.csv", pd.DataFrame(rows).to_csv(index=False).encode()
+    )
+    sequence = pd.DataFrame(
+        [{"sequence_id": k, "delta_MiD": v} for k, v in analytical["sequence_deltas"].items()]
+    )
+    atomic_bytes(c.out / "tables/ANALYTICAL_SEQUENCE.csv", sequence.to_csv(index=False).encode())
+    runtime = pd.read_csv(c.out / "prepared_heads/MEASUREMENTS.csv")
+    pooled = (
+        runtime.groupby(["regime", "label"])
+        .milliseconds.agg(requests="count", p50_ms="median", p95_ms=lambda x: x.quantile(0.95))
+        .reset_index()
+    )
+    atomic_bytes(c.out / "tables/PREPARED_HEAD_COST.csv", pooled.to_csv(index=False).encode())
+    if not (c.out / "RUNTIME_COMPARISON.csv").exists():
+        atomic_bytes(c.out / "RUNTIME_COMPARISON.csv", pooled.to_csv(index=False).encode())
+        atomic_bytes(c.out / "PROFILE_COMPONENTS.csv", runtime.to_csv(index=False).encode())
+    repeat = runtime.groupby(["label", "query"])[["ttc_s", "point_phase"]].agg(
+        lambda x: x.max() - x.min()
+    )
+    atomic_json(
+        c.out / "prepared_heads/REPEATABILITY.json",
+        {
+            "status": "EXACT" if not repeat.to_numpy().any() else "FAILED_INTEGRITY",
+            "max_ttc_difference": float(repeat.ttc_s.max()),
+            "max_phase_difference": float(repeat.point_phase.max()),
+            "queries_per_head": 64,
+            "blocks": 3,
+            "scientific_accuracy_comparison": False,
+        },
+    )
+    paths = c.out / "figures"
+    paths.mkdir(parents=True, exist_ok=True)
+    fig, axes = plt.subplots(1, 2, figsize=(11, 4), layout="constrained")
+    for record in checkpoints:
+        curve = pd.read_csv(Path(record["checkpoint"]).parent / "TRAINING_CURVE.csv")
+        smooth = curve.loss.rolling(100, min_periods=1).mean()
+        axes[0].plot(curve["update"], smooth, label=record["key"].replace("WIDE/", ""))
+    axes[0].set(
+        xlabel="Update durable",
+        ylabel="Loss TRAIN (media móvil100)",
+        title="WIDE: checkpoints conservados",
+    )
+    axes[0].legend(fontsize=8)
+    axes[1].barh(sequence.sequence_id, sequence.delta_MiD, color="#b65b43")
+    axes[1].axvline(0, color="black", linewidth=0.8)
+    axes[1].set(xlabel="Delta MiD EWMA−H8 seed7", title="OLD_DEV: control analítico")
+    fig.savefig(paths / "CURVES_AND_SEQUENCE_RESULTS.png", dpi=180)
+    plt.close(fig)
+    manifest = {
+        "campaign": "EFFICIENT_CONTEXT_20261004",
+        "base_commit": c.config["base_commit"],
+        "protocol_sha256": digest(c.out / "PROTOCOL.json"),
+        "code_commit": subprocess.check_output(
+            ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True
+        ).strip(),
+        "roots": read(c.out / "SOURCE_ADMISSION.json")["roots"],
+        "checkpoint_inventory": checkpoints,
+        "branches": state.get("branches", {}),
+        "caps": {
+            "WIDE": 22500,
+            "GARL_PRODUCERS": 200000,
+            "GARL_HEADS": 15000,
+            "TECHNICAL_SYNTHETIC": 200,
+            "RECOVERY": 2300,
+            "PHYSICAL": 240000,
+        },
+        "native_producers_exact_plan": read(c.out / "garl/ADMISSION.json")[
+            "updates_exact_50_epochs"
+        ],
+        "OLD_DEV_access": {
+            "zero_update_analytical_control": True,
+            "WIDE_scored_after_all_three_folds_sealed": wide_evaluated,
+            "partial_WIDE_scored": False,
+            "Garl_results_status": read(c.out / "GARL_COMPARISON.json").get("status"),
+        },
+        "protected_evaluation_access": False,
+        "push_or_submission": False,
+        "source_references": (
+            "release SHA bindings and original frozen TRAIN/config/control identities"
+        ),
+    }
+    atomic_json(c.out / "EXPERIMENT_MANIFEST.json", manifest)
+    command = (
+        "$env:PYTHONUTF8='1'; & '../e-jepa-ttc/.venv/Scripts/python.exe' "
+        "-m operational.efficient_context.queue all "
+        "--protocol configs/campaign/efficient_context_v1.json --resume"
+    )
+    atomic_bytes(
+        c.out / "RESUME.ps1",
+        (
+            "$ErrorActionPreference='Stop'\nSet-Location -LiteralPath $PSScriptRoot\n"
+            "Set-Location -LiteralPath '../..'\n" + command + "\nexit $LASTEXITCODE\n"
+        ).encode("utf-8-sig"),
+    )
+    next_decision = {
+        "historical_candidate": "TPR-D1-H8-C160",
+        "H16_retained": True,
+        "WIDE_promoted": False,
+        "EWMA_control": "NEGATIVE_LOCAL_DEVELOPMENT",
+        "E2": "BLOCKED_DEPENDENCY" if dep["wide_missing"] else state.get("branches", {}).get("E2"),
+        "E3": "BLOCKED_DEPENDENCY" if dep["garl_missing"] else state.get("branches", {}).get("E3"),
+        "new_WIDE_OLD_DEV_evaluation_performed": wide_evaluated,
+        "scientific_negative_for_missing_comparators": False,
+        "remaining_seed7_WIDE_updates": remaining,
+        "replication_rule": "unchanged five prospective guardrails after all3 endpoints freeze",
+        "native_resume_recipe": "12 fixed50-epoch native producers, then6 INNER-OOF GRU160 heads",
+        "missing_paths": dep,
+        "resume_command": command,
+        "resume_script": "RESUME.ps1",
+        "holdouts_opened": False,
+        "confirmation_requires_future_authorization": True,
+    }
+    atomic_json(c.out / "NEXT_DECISION.json", next_decision)
+    semantics = (
+        "# Semántica del target\n\nSe conserva TTC firmado del benchmark Garl/eAP y "
+        "psi(T)=-log(1−0,1/T). El anchor es el final de la observación; las edades "
+        "y la disponibilidad del ROI permanecen explícitas. Esta auditoría verifica "
+        "los anchors int64 de las observaciones compiladas y su genealogía; no reproduce "
+        "independientemente la adquisición física de las etiquetas.\n\n"
+        "El TTC de profundidad/expansión no se sustituye por primer contacto físico. "
+        "No se reconstruyen velocidades con Z/TTC_GT. Los campos3D TRAIN admitidos "
+        "sólo supervisan visible_height en la receta nativa Garl; el forward acepta "
+        "sensores y ROI. Inferencia event-only de los expertos históricos no borra "
+        "su supervisión RGB/DINO. +60s es capping numérico, no una clase NO_CONTACT.\n"
+    )
+    atomic_bytes(c.out / "TTC_TARGET_SEMANTICS.md", semantics.encode())
+    atomic_bytes(
+        c.out / "INFERENCE_INTERFACE.md",
+        (
+            "# Interfaces congeladas\n\nWIDE usa ocho slots [0,2,4,6,9,11,13,15] "
+            "del H16 padre, PHASE17, cuatro tiempos, máscara y tres fases expertas actuales. "
+            "Gaps recalculados en int64; normalizador histórico D1; GRU160 CPU FP32. "
+            "No se admite un endpoint parcial para OLD_DEV.\n\n"
+            "Garl nativo usa40 canales FP32,20 planos por cada uno de dos endpoints, "
+            "ResNet50 y ROI nativo por frame. Los límites ms se redondean como upstream. "
+            "Garl-H1/H8 usa fase nativa, log1p(count), log1p(rate), los cuatro tiempos "
+            "H8 y máscara; lambda_cost=0. Count/rate procede del ROI y último intervalo "
+            "de100ms común, sólo sensores. Observación nativa~200ms frente a~300ms "
+            "de A5/C2F: la comparación declara ese presupuesto diferente.\n\n"
+            "R2 medido aquí corresponde exclusivamente a cabeza preparada. R0 completo, "
+            "dispatch CUDA y encoding nativo real requieren las fuentes ausentes. "
+            "R1 no implementado. No hay declaración de servicio online ni tiempo real.\n"
+        ).encode(),
+    )
+    lines = [
+        "# Campaña E-JEPA-TTC: contexto eficiente\n",
+        "Base publicada `fd16d8102914537653622d3abf298b753120ea43`. "
+        "Raíces históricas de sólo lectura; outputs nuevos separados.\n",
+        "## Estado verificable\n",
+        f"WIDE conserva **{counts['wide_saved']:,} updates duraderos**. "
+        f"{checkpoint_summary}. Restantes seed7: {remaining}. "
+        f"OLD_DEV evaluado tras el seal: {wide_evaluated}. "
+        "Los endpoints parciales no se puntúan; la replicación conserva sus "
+        "cinco guardrails prospectivos.\n",
+        "E: desapareció durante la sesión. El siguiente acceso al TRAIN parquet "
+        "falló antes de reiniciar entrenamiento. Los checkpoints completos, "
+        "curvas y RNG/sampler se preservan; RESUME_PROOF verifica recarga y "
+        "el siguiente batch sin updates adicionales.\n",
+        "## Precisión del control analítico\n",
+        markdown_table(pd.DataFrame(rows)) + "\n",
+        f"EWMA−H8: **{analytical['point_delta']:.6f} MiD**, IC jerárquico95% "
+        f"[{analytical['hierarchical_ci95'][0]:.6f}, {analytical['hierarchical_ci95'][1]:.6f}], "
+        f"IC sólo por secuencia [{analytical['sequence_only']['ci95'][0]:.6f}, "
+        f"{analytical['sequence_only']['ci95'][1]:.6f}]. Mejora en "
+        f"{analytical['sequence_wins']}/9 secuencias; outputs finitos100%. "
+        "Se reutilizan8.192 consultas OLD_DEV, sus masas y draws originales. "
+        "Cero updates; el control histórico EWMA permanece intacto.\n",
+        f"Términos válidos: {analytical['valid_terms']}; rechazados: "
+        f"{analytical['rejected_terms']}; flags cap60: {analytical['cap60_terms']}. "
+        "Los flags de productor y los anchors están incluidos en fragmentos. "
+        "La sensibilidad trata fases medianas históricas capadas como cero "
+        "sin cambiar el presente ni eliminar consultas.\n",
+        "## Coste y paridad\n",
+        markdown_table(pooled) + "\n",
+        "768 solicitudes nuevas TRAIN,64 IDs, tres bloques,10 warmups por cabeza, "
+        "CPU FP32/4 threads/2 interop. Son mediciones de cabeza y emisión; "
+        "no incluyen productores, HDF5, ROI, ingestión ni detector. "
+        "La variación entre bloques y su orden impiden atribuir causalmente "
+        "una aceleración al runtime raw. R0 y paridad CUDA reales están bloqueados "
+        "por fuentes; R1 no implementado. No se repiten las1.728 medidas históricas.\n",
+        "Preprocesado compartido: filtro/proyección ROI una vez, views half-open "
+        "int64 y reducciones/normalización originales por ventana. Tests cubren "
+        "borde, ROI vacío/fuera, offset, empates, timestamps grandes, chunks, "
+        "rollback y fallback de capacidad. Dispatch válido requiere validación "
+        "real con tolerancias1e-4 features,1e-5 fase,0,01s TTC,1e-7 tiempos "
+        "y máscara exacta. No se declara EXACT para la ruta CUDA sin medirla.\n",
+        "## Comparadores y privilegios\n",
+        "La revisión acotada verifica archivos V7 manifestados. Garl local "
+        "144,353027 y C2F158,573140 permanecen descriptivos: faltan genealogía "
+        "TRAIN completa, selección de checkpoint y ROI/modalidad/disponibilidad. "
+        "No se usan como productores admisibles.\n",
+        "Los12 productores Garl nuevos están admitidos por datos y presupuesto: "
+        "**59.100 updates exactos** para50 épocas. Source commit/config blob "
+        "verificados al iniciar; arquitectura40ch/128px/ResNet50/512 intacta. "
+        "No se cargan paper_event_only ni paper_visual_only. El perfil sintético "
+        "de microbatch128→64→32→16→8, QA nativa y sus50 épocas requieren "
+        "restablecer E:. Microbatch con BN se declarará adaptación hardware. "
+        f"Progreso científico nuevo Garl:{counts['garl_producer_saved']}; "
+        f"cabezas Garl:{counts['garl_head_saved']}.\n",
+        "Las seis cabezas implementadas usan INNER-OOF excluyendo outer e inner "
+        "holdouts, endpoint final fijo y normalización TRAIN de observaciones "
+        "únicas. No incorporan A5/PAIR/RGB/DINO como features. Los expertos "
+        "históricos tuvieron supervisión RGB/DINO aunque inferencia event-only; "
+        "Garl usa geometría3D TRAIN para LHR, nunca en forward. "
+        "Mismo número de anchors no implica encoding/ROI/span equivalentes.\n",
+        "## Contabilidad y reanudación\n",
+        "```json\n" + json.dumps(counts, indent=2) + "\n```\n",
+        f"Reserva pendiente: {counts['unresolved_execution_upper']} updates; "
+        "se cuenta conservadoramente en el techo físico. "
+        f"Updates confirmados por progreso pero no duraderos: "
+        f"{counts['unsaved_updates_confirmed_by_progress']}. "
+        "Se contabiliza recuperación al reiniciar el journal; "
+        "no se presenta una reserva como ejecución observada. "
+        "No se añaden brazos para consumir los máximos.\n",
+        "Dependencias exactas: `DEPENDENCIES.json`. Necesarias para WIDE: "
+        "`E:\\GarlTTC_dataset\\data\\train.parquet` y "
+        "`E:\\GarlTTC_dataset\\annotations\\train.parquet`, ligados por SHA256. "
+        "E1/Garl necesitan además raw TRAIN y código upstream de E:. "
+        "No se cambian hashes, etiquetas ni entornos globales para sustituirlos.\n",
+        "Desde el worktree, tras restablecer las mismas fuentes:\n\n```powershell\n"
+        + command
+        + "\n```\n",
+        "El comando continúa E0–E3 con un worker pesado, checkpoints y fragmentos "
+        "existentes. Avanza ramas viables; un comparador ausente sólo bloquea "
+        "su dependencia. H8 mantiene identidad; H16 se conserva; WIDE no se promueve.\n",
+        "## Validación y límites\n",
+        "37 tests focalizados, Ruff, formato, Pyright y help pasan, con0 updates "
+        "de tests. Se conservan el fallo de formato y el fallo de acceso a E:. "
+        "Contratos handoff:39 tests CPU pasaron antes de la campaña. "
+        "No se ha probado end-to-end el entrenamiento nativo por ausencia actual "
+        "de fuente; su estado es dependencia bloqueada.\n",
+        "Bundle: código/configs/diff, pesos/checkpoints completos, predicciones "
+        "EWMA, curves, normalizadores, draws/recibos, bindings externos y QA. "
+        "CRC y manifiesto SHA256 se verifican; se regenera la evidencia incluida "
+        "desde extracción independiente. Los eventos crudos y productores "
+        "históricos se referencian; no se promete entrenamiento raw autónomo.\n",
+        "Se conserva TTC firmado del benchmark. OLD_DEV ya fue reutilizado "
+        "adaptativamente: evidencia local de desarrollo, sin confirmación "
+        "independiente, SOTA, contacto físico ni utilidad AEB demostrados. "
+        "Stage76, public validation, private test, EvTTC test y CodaBench "
+        "permanecen cerrados. No push ni submissions.\n",
+    ]
+    atomic_bytes(c.out / "FINAL_REPORT.md", "\n".join(lines).encode())

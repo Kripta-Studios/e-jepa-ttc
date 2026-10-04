@@ -1,0 +1,184 @@
+"""Essential bundle with full checkpoints, streaming hashes and independent numerical replay."""
+
+from __future__ import annotations
+
+import hashlib
+import importlib.metadata
+import json
+import os
+import subprocess
+import sys
+import zipfile
+from pathlib import Path
+
+from .common import ROOT, Campaign, atomic_bytes, atomic_json, digest
+
+
+def sources(c: Campaign) -> None:
+    """Snapshot our changes and only the base kernels needed for included head replay."""
+    directories = (
+        "operational/efficient_context",
+        "src/e_jepa_ttc/efficient_context",
+        "configs/campaign",
+        "docs/efficient_context_handoff_20261004",
+    )
+    files = [
+        ROOT / "tests/unit/test_efficient_context_contracts.py",
+        ROOT / "pyproject.toml",
+        ROOT / "uv.lock",
+        ROOT / "src/e_jepa_ttc/__init__.py",
+        ROOT / "src/e_jepa_ttc/simplex_t/__init__.py",
+        ROOT / "src/e_jepa_ttc/simplex_t/model.py",
+        ROOT / "src/e_jepa_ttc/simplex_t/phase.py",
+    ]
+    for directory in directories:
+        files.extend(
+            p for p in (ROOT / directory).rglob("*") if p.is_file() and "__pycache__" not in p.parts
+        )
+    records = []
+    for file in sorted(set(files)):
+        relative = file.relative_to(ROOT).as_posix()
+        atomic_bytes(c.out / "source" / relative, file.read_bytes())
+        records.append({"path": relative, "sha256": digest(file), "bytes": file.stat().st_size})
+    diff = subprocess.check_output(
+        [
+            "git",
+            "diff",
+            "--binary",
+            c.config["base_commit"],
+            "--",
+            *directories[:3],
+            "tests/unit/test_efficient_context_contracts.py",
+        ],
+        cwd=ROOT,
+    )
+    atomic_bytes(c.out / "source/OWN_CHANGES.diff", diff)
+    atomic_json(
+        c.out / "SOURCE_CODE_MANIFEST.json",
+        {
+            "files": records,
+            "base_commit": c.config["base_commit"],
+            "raw_training_requires_base_checkout": True,
+        },
+    )
+    atomic_json(
+        c.out / "ENVIRONMENT.json",
+        {
+            "python": sys.version,
+            "interpreter": sys.executable,
+            "packages": {
+                name: importlib.metadata.version(name)
+                for name in (
+                    "torch",
+                    "numpy",
+                    "pandas",
+                    "pyarrow",
+                    "psutil",
+                    "pytest",
+                    "ruff",
+                    "pyright",
+                )
+            },
+            "global_environment_modified": False,
+            "numeric_threads": 4,
+            "interop_threads": 2,
+        },
+    )
+
+
+def package(c: Campaign) -> None:
+    """Deliver measured and blocked branches without converting dependencies into negatives."""
+    from .budget import require
+    from .delivery import report
+    from .export_prepared import export
+
+    require(c)
+    report(c)
+    export(c)
+    sources(c)
+    excluded = {"BUNDLE_MANIFEST.json", "BUNDLE.sha256", "BUNDLE_VERIFICATION.json"}
+    entries = []
+    for path in sorted(c.out.rglob("*")):
+        relative = path.relative_to(c.out)
+        if (
+            not path.is_file()
+            or path.suffix in (".zip", ".pending", ".lock", ".pyc")
+            or path.name in excluded
+            or "__pycache__" in relative.parts
+            or relative.parts[0] == "verification"
+            or (relative.parts[0] == "garl" and "cache" in relative.parts)
+        ):
+            continue
+        entries.append(
+            {"path": relative.as_posix(), "bytes": path.stat().st_size(), "sha256": digest(path)}
+        )
+    payload_size = sum(row["bytes"] for row in entries)
+    owned_size = sum(p.stat().st_size for p in c.out.rglob("*") if p.is_file())
+    if owned_size + payload_size > 10_000_000_000:
+        raise InterruptedError("bundle reservation would exceed the owned10GB quota")
+    atomic_json(c.out / "BUNDLE_MANIFEST.json", {"files": entries})
+    target = c.out / "E_JEPA_TTC_EFFICIENT_CONTEXT_ESSENTIAL.zip"
+    pending = target.with_suffix(".pending")
+    with zipfile.ZipFile(pending, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=6) as z:
+        for row in entries:
+            z.write(c.out / row["path"], row["path"])
+        z.write(c.out / "BUNDLE_MANIFEST.json", "BUNDLE_MANIFEST.json")
+    extraction = c.out / "verification/extracted"
+    extracted = []
+    with zipfile.ZipFile(pending) as z:
+        if z.testzip() is not None:
+            raise ValueError("bundle CRC failed")
+        for row in entries:
+            check = hashlib.sha256()
+            with z.open(row["path"]) as stream:
+                for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+                    check.update(chunk)
+            if check.hexdigest() != row["sha256"]:
+                raise ValueError("bundle manifest mismatch: " + row["path"])
+            relative = Path(row["path"])
+            needed = (
+                relative.parts[0] in ("analysis", "analytical", "prepared_heads", "source")
+                or row["path"] == "EWMA_TRANSPORT_CV_RESULTS.json"
+            )
+            if needed:
+                path = (extraction / relative).resolve()
+                if extraction.resolve() not in path.parents:
+                    raise ValueError("bundle extraction path escapes the owned verification root")
+                path.parent.mkdir(parents=True, exist_ok=True)
+                with z.open(row["path"]) as stream, path.open("wb") as output:
+                    for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+                        output.write(chunk)
+                extracted.append(row["path"])
+    script = extraction / "source/operational/efficient_context/replay_bundle.py"
+    command = [sys.executable, str(script), "--root", str(extraction)]
+    env = dict(os.environ, PYTHONUTF8="1")
+    env.pop("PYTHONPATH", None)
+    result = subprocess.run(command, cwd=extraction, env=env, capture_output=True)
+    atomic_bytes(c.out / "verification/REPLAY_STDOUT.json", result.stdout)
+    atomic_bytes(c.out / "verification/REPLAY_STDERR.txt", result.stderr)
+    if result.returncode:
+        raise ValueError("independent extracted replay failed; preserved verification logs")
+    replay = json.loads(result.stdout)
+    if replay["status"] != "PASS":
+        raise ValueError("independent numerical regeneration did not pass")
+    pending.replace(target)
+    sha = digest(target)
+    atomic_bytes(c.out / "BUNDLE.sha256", (sha + "  " + target.name + "\n").encode())
+    atomic_json(
+        c.out / "BUNDLE_VERIFICATION.json",
+        {
+            "status": "PASS",
+            "CRC": "PASS",
+            "manifest_files_verified": len(entries),
+            "bundle_sha256": sha,
+            "bundle_bytes": target.stat().st_size(),
+            "independently_extracted_files": len(extracted),
+            "replay": replay,
+            "replay_command": command,
+            "extra_optimizer_updates": 0,
+            "raw_training_replay": False,
+            "full_checkpoint_archives_sha256_verified": True,
+        },
+    )
+    require(c)
+    print("BUNDLE_VERIFIED", sha, flush=True)

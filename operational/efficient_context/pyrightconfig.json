@@ -1,0 +1,8 @@
+{
+  "include": ["../../src/e_jepa_ttc/efficient_context", "."],
+  "extraPaths": ["../..", "../../src"],
+  "typeCheckingMode": "basic",
+  "venvPath": "../../../e-jepa-ttc",
+  "venv": ".venv",
+  "reportMissingTypeStubs": false
+}

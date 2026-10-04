@@ -1,0 +1,7 @@
+extend = "../../pyproject.toml"
+src = ["../..", "../../src"]
+
+[lint.per-file-ignores]
+# This102-column descriptive literal is part of the already sealed zero-update
+# analytical source. Keep its bytes to preserve the executed protocol binding.
+"analytical_control.py" = ["E501"]

@@ -1,0 +1,214 @@
+"""Numerical contracts with zero optimizer updates."""
+
+import numpy as np
+import pytest
+import torch
+
+from e_jepa_ttc.efficient_context.analytical import transport_ewma
+from e_jepa_ttc.efficient_context.mapped_union import encode_mapped, encode_union, map_roi
+from e_jepa_ttc.efficient_context.sparse_history import WIDE_SLOTS, WideSource
+from e_jepa_ttc.simplex_t.cache import CachedQueries, Normalizer
+from e_jepa_ttc.simplex_t.context_raw_union import encode_context_union
+from e_jepa_ttc.simplex_t.phase import phase_to_ttc, ttc_to_phase
+from e_jepa_ttc.simplex_t.query_context_voxel import encode_query_window
+
+
+def test_native_garl_floor_boundaries_and_sensor_offset(tmp_path):
+    import h5py
+
+    from e_jepa_ttc.efficient_context.garl_input import read_native_window
+    from e_jepa_ttc.simplex_t.cached_event_reader import ReaderPool
+
+    path = tmp_path / "events.h5"
+    t = np.array([0, 999, 1000, 1999, 2000, 2999, 3000], np.int64)
+    with h5py.File(path, "w") as f:
+        f["events/t"] = t
+        f["events/x"] = np.array([0, 1, 2, 3, 1918, 65534, 4], np.uint16)
+        f["events/y"] = np.zeros(7, np.uint16)
+        f["events/p"] = np.ones(7, np.uint8)
+        f["ms_to_idx"] = np.array([0, 2, 4, 6], np.int64)
+    pool = ReaderPool()
+    try:
+        raw = read_native_window(pool, path, 1500, 2999)
+        # The native reader floors both ms bounds and intentionally includes1000us.
+        assert np.array_equal(raw["t"], [1000, 1999])
+        assert np.array_equal(raw["x"], [7, 8])
+        with pytest.raises(InterruptedError, match="bounded extraction"):
+            read_native_window(pool, path, 0, 2999, cap=1)
+        with pytest.raises(ValueError, match="support"):
+            read_native_window(pool, path, 0, 4000)
+    finally:
+        pool.close()
+
+
+def test_native_garl_global_time_origin_is_preserved():
+    from e_jepa_ttc.efficient_context.garl_input import native_feature
+
+    raw = {
+        "x": np.array([99, 1, 1]),
+        "y": np.array([99, 1, 1]),
+        "t": np.array([100000, 108000, 109000], np.int64),
+    }
+    value = native_feature(raw, (0, 0, 4, 4), size=4)
+    assert value.dtype == torch.float32
+    assert value[0].sum() == 0  # ROI-first filtering would move these events into plane0.
+    assert value[1].sum() > 0
+
+
+def test_native_gru_contract_and_zero_cost_objective():
+    from e_jepa_ttc.efficient_context.garl_head import NativeHeadConfig, model, objective
+
+    with pytest.raises(ValueError, match="fixed Garl"):
+        NativeHeadConfig(hidden=64)
+    head = model().eval()
+    assert len(head.cells) == 2 and head.project[0].in_features == 7
+    x = torch.ones(2, 8, 3)
+    times = torch.zeros(2, 8, 4)
+    mask = torch.ones(2, 8, dtype=torch.bool)
+    experts = torch.tensor([[0.02, 0.02, 0.02], [0.1, 0.1, 0.1]])
+    with torch.no_grad():
+        output = head(x, times, mask, experts)
+    y = torch.tensor([0.03, 0.09])
+    first = objective(output, y, experts, torch.ones(2) / 2, 2)
+    altered = {**output, "relative_cost": torch.full((2, 3), float("nan"))}
+    assert torch.equal(first, objective(altered, y, experts, torch.ones(2) / 2, 2))
+    assert torch.isfinite(first)
+
+
+def test_native_source_current_phase_and_shared_statistics():
+    from e_jepa_ttc.efficient_context.garl_head import NativeHeadSource, normalize
+
+    features = np.asarray([[0.01, 2, 3], [0.02, 4, 5], [0.03, 6, 7]], np.float32)
+    history = np.asarray([[-1, -1, -1, -1, -1, -1, 0, 1], [-1, -1, -1, -1, -1, 0, 1, 2]], np.int64)
+    stats = normalize(features, history)
+    times = np.zeros((2, 8, 4), np.float32)
+    times[:, -1, 2] = 0.05
+    source = NativeHeadSource(
+        features,
+        times,
+        history,
+        np.ones(2, np.float32),
+        np.ones(2, np.float64) / 2,
+        stats,
+        "a" * 64,
+        1,
+    )
+    x, t, valid, anchor, _, _ = source.gather(torch.tensor([0, 1]))
+    assert x.shape == (2, 1, 3) and valid.all() and (t[:, :, 2] == 0).all()
+    assert np.allclose(stats.mean, features.mean(0))
+    assert torch.equal(anchor[:, 0], torch.tensor([0.02, 0.03]))
+    assert torch.equal(anchor[:, 0], anchor[:, 2])
+
+
+@pytest.mark.parametrize("missing", [0, 1, 7, 15])
+def test_wide_gaps_and_cold_starts(missing):
+    history = np.arange(16)[None]
+    history[:, :missing] = -1
+    parent = CachedQueries(
+        np.ones((16, 17), np.float32),
+        np.arange(16, dtype=np.int64) * 50000,
+        np.arange(16, dtype=np.int64) * 50000 + 100,
+        history,
+        np.ones(1, np.float32),
+        np.ones(1, np.float32),
+        Normalizer(np.zeros(17), np.ones(17), "a" * 64),
+        "b" * 64,
+        length=16,
+    )
+    x, t, v, e, y, m = WideSource(parent).gather(torch.tensor([0]))
+    assert x.shape == (1, 8, 17)
+    assert v[0, -1]
+    assert torch.all(t[~v] == 0)
+    expected = parent.anchor_us[np.maximum(history[:, WIDE_SLOTS], 0)]
+    for i in range(1, 8):
+        gap = (expected[0, i] - expected[0, i - 1]) / 1e6 if v[0, i - 1] and v[0, i] else 0
+        assert t[0, i, 2].item() == np.float32(gap)
+    assert torch.equal(e, parent.gather(torch.tensor([0]))[3])
+
+
+@pytest.mark.parametrize(
+    "roi", [(0, 0, 50, 50), (-10, -10, 20, 20), (2000, 2000, 2100, 2100), (12.3, 9.7, 88.1, 85.5)]
+)
+@pytest.mark.parametrize("offset", [0, 5, -5])
+@pytest.mark.parametrize("anchor", [1000000, 2**53 + 100])
+def test_mapping_bitexact(roi, offset, anchor):
+    rng = np.random.default_rng(7)
+    raw = {
+        "x": rng.integers(-5, 100, 1500),
+        "y": rng.integers(-5, 100, 1500),
+        "t": np.sort(rng.integers(anchor, anchor + 100001, 1500)),
+        "p": rng.integers(-1, 2, 1500),
+    }
+    raw["t"][:3] = anchor
+    raw["t"][-3:] = anchor + 100000
+    raw["t"].sort()
+    mapped = map_roi(raw, roi, 16, offset)
+    for start, end in [(anchor, anchor + 100000), (anchor + 50000, anchor + 100001)]:
+        keep = (raw["t"] >= start) & (raw["t"] < end)
+        reference = encode_query_window(
+            {k: v[keep] for k, v in raw.items()},
+            square_xyxy=roi,
+            start_us=start,
+            end_us=end,
+            sequence_id="fixture",
+            roi_size=16,
+            bins_per_polarity=5,
+            event_pixel_diff=offset,
+        )
+        actual = encode_mapped(mapped, start, end, 16, "fixture")
+        assert torch.equal(reference, actual)
+
+
+@pytest.mark.parametrize("cap", [1, 1000000])
+def test_chunk_union_and_capacity_fallback(cap):
+    class Reader:
+        def iter_window_chunks(self, start, end, chunk_events):
+            for a in range(start, end, 5000):
+                t = np.arange(a, min(a + 5000, end), 100, dtype=np.int64)
+                yield {
+                    "x": np.ones(len(t), np.int32) * 10,
+                    "y": np.ones(len(t), np.int32) * 10,
+                    "t": t,
+                    "p": np.ones(len(t), np.int8),
+                }
+
+    windows = np.array([[800000, 900000], [850000, 950000], [900000, 1000000]])
+    lags = np.arange(15, -1, -1) * 50000
+    valid = np.ones(16, bool)
+    kwargs = dict(sequence_id="fixture", roi_size=8, event_pixel_diff=5, retained_bytes_max=cap)
+    if cap == 1:
+        with pytest.raises(RuntimeError, match="RESOURCE_PAUSE"):
+            encode_union(Reader(), windows, lags, valid, (0, 0, 50, 50), **kwargs)
+    else:
+        assert torch.equal(
+            encode_context_union(Reader(), windows, lags, valid, (0, 0, 50, 50), **kwargs),
+            encode_union(Reader(), windows, lags, valid, (0, 0, 50, 50), **kwargs),
+        )
+
+
+def test_transport_exact_cv_and_zero():
+    ages = torch.arange(7, -1, -1).double()[None] * 0.05
+    phases = ttc_to_phase(2 + ages)
+    point, diag = transport_ewma(phases, ages, torch.ones((1, 8), dtype=torch.bool))
+    assert torch.allclose(phase_to_ttc(point), torch.tensor([2.0], dtype=torch.float64), atol=1e-12)
+    point, diag = transport_ewma(torch.zeros_like(ages), ages, torch.ones((1, 8), dtype=torch.bool))
+    assert phase_to_ttc(point).item() == 60
+
+
+def test_transport_excludes_terms_not_queries():
+    ages = torch.arange(7, -1, -1).double()[None] * 0.1
+    point, diag = transport_ewma(
+        ttc_to_phase(torch.ones_like(ages) * 0.2), ages, torch.ones((1, 8), dtype=torch.bool)
+    )
+    assert torch.isfinite(point).all()
+    assert diag["rejected_terms"] > 0 and diag["queries"] == 1
+
+
+def test_mapping_rejects_timestamp_rollback():
+    with pytest.raises(ValueError, match="rollback"):
+        map_roi(
+            {"x": np.ones(2), "y": np.ones(2), "t": np.array([2, 1]), "p": np.ones(2)},
+            (0, 0, 10, 10),
+            8,
+            0,
+        )
