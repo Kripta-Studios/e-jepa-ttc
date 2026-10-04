@@ -96,6 +96,15 @@ def package(c: Campaign) -> None:
     report(c)
     export(c)
     sources(c)
+    atomic_bytes(
+        c.out / "REPLAY_ANALYSIS.txt",
+        (
+            "From an independently extracted bundle root, using the recorded compatible environment:\n"
+            "python -P source/operational/efficient_context/replay_bundle.py --root .\n"
+            "-P prevents the adjacent queue.py from shadowing the Python standard library.\n"
+            "This regenerates included analysis and TRAIN head outputs, not raw training or latency.\n"
+        ).encode(),
+    )
     excluded = {"BUNDLE_MANIFEST.json", "BUNDLE.sha256", "BUNDLE_VERIFICATION.json"}
     entries = []
     for path in sorted(c.out.rglob("*")):
@@ -150,7 +159,7 @@ def package(c: Campaign) -> None:
                         output.write(chunk)
                 extracted.append(row["path"])
     script = extraction / "source/operational/efficient_context/replay_bundle.py"
-    command = [sys.executable, str(script), "--root", str(extraction)]
+    command = [sys.executable, "-P", str(script), "--root", str(extraction)]
     env = dict(os.environ, PYTHONUTF8="1")
     env.pop("PYTHONPATH", None)
     result = subprocess.run(command, cwd=extraction, env=env, capture_output=True)
