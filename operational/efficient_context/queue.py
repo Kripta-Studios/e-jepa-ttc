@@ -172,7 +172,24 @@ def all_tasks(c: Campaign) -> int:
         )
     if not (c.out / "PREPARED_HEAD_RESULTS.json").exists():
         call(c, "prepared_heads", "operational.efficient_context.prepared_heads")
-    if not dep["E1_missing"]:
+    parity_failures = [
+        str(path)
+        for path in (c.out / "profile/fragments").glob("*.json")
+        if read(path)["parity"]["status"] == "FAILED_INTEGRITY"
+    ]
+    if parity_failures:
+        state["E1"] = "FAILED_INTEGRITY_REQUIRES_INSPECTION"
+        atomic_json(
+            c.out / "INPUT_OUTPUT_PARITY.json",
+            {
+                "status": "FAILED_INTEGRITY",
+                "failed_fragments": parity_failures,
+                "automatic_retry": False,
+                "R0_end_to_end_measured": False,
+                "scientific_negative": False,
+            },
+        )
+    elif not dep["E1_missing"]:
         code = call(c, "raw_profile", "operational.efficient_context.run", "profile")
         state["E1"] = "COMPLETE" if code == 0 else "INCOMPLETE_CHECK_LOG"
     else:
