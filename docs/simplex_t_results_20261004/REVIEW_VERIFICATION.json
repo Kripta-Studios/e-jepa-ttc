@@ -1,0 +1,15 @@
+{
+  "status": "EXACT_REGENERATION_VERIFIED",
+  "files": {
+    "README.md": "28dffaeebbdc691aa8e09c0a2c2c07b8b3420b42e25f613d795dcb6c4da50070",
+    "RESULTS_SUMMARY.json": "d74875065c8d82f35298ea01775dbfb10699a3c754ff754d15f031f586467df8",
+    "INPUT_HASHES.json": "4103993f88dd6137555c2cf91164c7e6a2b6374ffec5d9c445a4d00be41bd609",
+    "RELEASE_ASSETS.json": "8cd0bd027b69f6c81a5bfcbb7327d31cad8f1815bdd0ce8a5803fea54844e986",
+    "SHA256SUMS.txt": "c23f6a1920c7687998baf20549d80acd8c009b686e3bf2f5dec2bd0e60cb7ff2"
+  },
+  "scientific_or_technical_optimizer_updates": 0,
+  "archive_count": 6,
+  "archive_bytes": 821365982,
+  "raw_events_included": false,
+  "newline_contract": "LF for generated review artifacts; input hashes refer to physical reviewed sources"
+}
