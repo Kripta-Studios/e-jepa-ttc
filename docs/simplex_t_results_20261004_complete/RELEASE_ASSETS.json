@@ -1,0 +1,53 @@
+{
+  "tag": "simplex-t-local-results-20261004-complete",
+  "release": "https://github.com/Kripta-Studios/e-jepa-ttc/releases/tag/simplex-t-local-results-20261004-complete",
+  "archives": [
+    {
+      "filename": "E_JEPA_TTC_SIMPLEX_T_ESSENTIAL_RESULTS_215768633b2d.zip",
+      "path": "artifacts/simplex_t/closure_20261002/essential_delivery/E_JEPA_TTC_SIMPLEX_T_ESSENTIAL_RESULTS_215768633b2d.zip",
+      "bytes": 366470745,
+      "sha256": "84e2506584a4847a6fa55d3d02e881689285eee1cfa7278ff218526abd4d7e8a",
+      "receipt": "artifacts/simplex_t/closure_20261002/essential_delivery/FINAL_DELIVERY.json",
+      "download_url": "https://github.com/Kripta-Studios/e-jepa-ttc/releases/download/simplex-t-local-results-20261004/E_JEPA_TTC_SIMPLEX_T_ESSENTIAL_RESULTS_215768633b2d.zip"
+    },
+    {
+      "filename": "E_JEPA_TTC_H16_REPLICATION_20261003.zip",
+      "path": "artifacts/simplex_t/h16_replication_20261003/E_JEPA_TTC_H16_REPLICATION_20261003.zip",
+      "bytes": 80619961,
+      "sha256": "08ee2aae60d56006a73fdb8b249a6467cee0704b0a258bb9ad5659f863b3e348",
+      "receipt": "docs/simplex_t_nocturnal_20261003/H16_FINAL_DELIVERY.json",
+      "download_url": "https://github.com/Kripta-Studios/e-jepa-ttc/releases/download/simplex-t-local-results-20261004/E_JEPA_TTC_H16_REPLICATION_20261003.zip"
+    },
+    {
+      "filename": "E_JEPA_TTC_SIMPLEX_T_NOCTURNO_60000_bbabc02921d2.zip",
+      "path": "artifacts/simplex_t/nocturnal_20261003/delivery/E_JEPA_TTC_SIMPLEX_T_NOCTURNO_60000_bbabc02921d2.zip",
+      "bytes": 319980492,
+      "sha256": "f7d915b3d203453696d7006b08dbde0c731c3d1f92e652d616edfad60e0e2ff1",
+      "receipt": "docs/simplex_t_nocturnal_20261003/FINAL_DELIVERY_NOCTURNA.json",
+      "download_url": "https://github.com/Kripta-Studios/e-jepa-ttc/releases/download/simplex-t-local-results-20261004/E_JEPA_TTC_SIMPLEX_T_NOCTURNO_60000_bbabc02921d2.zip"
+    },
+    {
+      "filename": "E_JEPA_TTC_POST_CAMPANA_24ff19a567c6.zip",
+      "path": "artifacts/simplex_t/post_campaign_20261003/delivery/E_JEPA_TTC_POST_CAMPANA_24ff19a567c6.zip",
+      "bytes": 30933226,
+      "sha256": "83c0599944a275a08568259aed69b72eed7ab56f15c7a8972a89abbff081b476",
+      "receipt": "docs/simplex_t_post_campaign_20261003/FINAL_DELIVERY.json",
+      "download_url": "https://github.com/Kripta-Studios/e-jepa-ttc/releases/download/simplex-t-local-results-20261004/E_JEPA_TTC_POST_CAMPANA_24ff19a567c6.zip"
+    },
+    {
+      "filename": "E_JEPA_TTC_SHARED_GPU_ROUTE_20261004.zip",
+      "path": "artifacts/simplex_t/shared_gpu_route_20261004/delivery/E_JEPA_TTC_SHARED_GPU_ROUTE_20261004.zip",
+      "bytes": 24510834,
+      "sha256": "a2aad451e6bc2ef2a6b41f1f09bc7425e37b3d70916167444f1b5a84727cb0e5",
+      "receipt": "docs/simplex_t_shared_gpu_route_20261004/DELIVERY_STATUS.json",
+      "download_url": "https://github.com/Kripta-Studios/e-jepa-ttc/releases/download/simplex-t-local-results-20261004-complete/E_JEPA_TTC_SHARED_GPU_ROUTE_20261004.zip"
+    },
+    {
+      "filename": "E_JEPA_TTC_P3_READINESS_20261004.zip",
+      "path": "artifacts/simplex_t/route_readiness_20261004/E_JEPA_TTC_P3_READINESS_20261004.zip",
+      "bytes": 16884,
+      "sha256": "c208373ed4fc24eb04c5342213ca4de12fdbacea8eaa6d08eca2d3b8c82c0127",
+      "download_url": "https://github.com/Kripta-Studios/e-jepa-ttc/releases/download/simplex-t-local-results-20261004/E_JEPA_TTC_P3_READINESS_20261004.zip"
+    }
+  ]
+}

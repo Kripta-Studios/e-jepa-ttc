@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import argparse
 import csv
 import hashlib
 import json
@@ -11,7 +12,6 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "docs/simplex_t_results_20261004"
 TAG = "simplex-t-local-results-20261004"
-URL = f"https://github.com/Kripta-Studios/e-jepa-ttc/releases/tag/{TAG}"
 
 
 def sha(path: Path) -> str:
@@ -20,9 +20,12 @@ def sha(path: Path) -> str:
         return hashlib.file_digest(stream, "sha256").hexdigest()
 
 
-def main() -> None:
+def main(*, complete: bool = False) -> None:
     """Read frozen evidence and publish a reproducible descriptive synthesis."""
-    OUT.mkdir(parents=True, exist_ok=True)
+    out = OUT.with_name(OUT.name + "_complete") if complete else OUT
+    tag = TAG + "-complete" if complete else TAG
+    url = f"https://github.com/Kripta-Studios/e-jepa-ttc/releases/tag/{tag}"
+    out.mkdir(parents=True, exist_ok=True)
     inputs: dict[str, str] = {}
 
     def read(name: str) -> Any:  # noqa: ANN401
@@ -37,7 +40,7 @@ def main() -> None:
             return list(csv.DictReader(stream))
 
     def save(name: str, value: object) -> None:
-        (OUT / name).write_text(
+        (out / name).write_text(
             json.dumps(value, indent=2, ensure_ascii=False, allow_nan=False) + "\n",
             encoding="utf-8",
             newline="\n",
@@ -52,14 +55,18 @@ def main() -> None:
     profile = rows("docs/simplex_t_post_campaign_20261003/ACCURACY_COST_FRONTIER.csv")
     registry = rows("docs/simplex_t_nocturnal_20261003/BASELINE_REGISTRY.csv")
     comparators = read("docs/simplex_t_post_campaign_20261003/COMPARATOR_REVIEW_RECONCILED.json")
-    gpu_dir = "docs/simplex_t_shared_gpu_route_20261004/partial_1114"
+    gpu_dir = "docs/simplex_t_shared_gpu_route_20261004" + ("" if complete else "/partial_1114")
     gpu = read(f"{gpu_dir}/DELIVERY_STATUS.json")
     costs = rows(f"{gpu_dir}/COST_ACCURACY_SHARED.csv")
     shares = rows(f"{gpu_dir}/STAGE_SHARES.csv")
     scores = {r["model"]: float(r["MiD"]) for r in profile}
     baseline = {r["id"]: r for r in registry}
     assert night["endpoints"] == 24 and night["scientific_saved_updates"] == 60000
-    assert gpu["confirmed_fragments"] == 1114 and gpu["pending_fragments"] == 614
+    confirmed, pending = (1728, 0) if complete else (1114, 614)
+    assert gpu["confirmed_fragments"] == confirmed and gpu["pending_fragments"] == pending
+    matched = gpu["matched_queries"]
+    producer_families = [0, 1, 2] if complete else [0, 1]
+    replayed = gpu["zip"]["verification"]["unique_head_inputs_replayed"]
     contrasts = {
         name: {
             key: comparison[key]
@@ -90,7 +97,7 @@ def main() -> None:
     }
     summary = dict(
         dates=["2026-10-03", "2026-10-04"],
-        release=URL,
+        release=url,
         scientific_endpoints=24,
         scientific_saved_updates=60000,
         technical_updates=night["technical"]["confirmed_updates"],
@@ -100,16 +107,19 @@ def main() -> None:
         prepared_head_cost=profile,
         shared_route_cost=costs,
         warm_block2_context_fraction=context_share,
-        shared_route_confirmed=1114,
-        shared_route_pending=614,
-        matched_complete_queries=41,
-        matched_producer_families=[0, 1],
+        shared_route_confirmed=confirmed,
+        shared_route_pending=pending,
+        matched_complete_queries=matched,
+        matched_producer_families=producer_families,
         registered_candidate="TPR-D1-H8-C160",
         candidate_replaced=False,
         independent_sequences=9,
         confirmatory=False,
         ensemble=False,
-        interpretation="head replication favorable; simplification screen negative; route partial",
+        interpretation=(
+            "head replication favorable; simplification screen negative; "
+            + ("route complete in shared-resource scope" if complete else "route partial")
+        ),
         comparator_review=comparators,
         new_optimizer_updates_for_this_review=0,
     )
@@ -121,10 +131,12 @@ def main() -> None:
         "docs/simplex_t_nocturnal_20261003/H16_FINAL_DELIVERY.json",
         "docs/simplex_t_nocturnal_20261003/FINAL_DELIVERY_NOCTURNA.json",
         "docs/simplex_t_post_campaign_20261003/FINAL_DELIVERY.json",
-        "artifacts/simplex_t/shared_gpu_route_20261004/DELIVERY.json",
+        gpu_dir + "/DELIVERY_STATUS.json",
     ]
     for name in receipts:
         receipt = read(name)
+        if name.endswith("DELIVERY_STATUS.json"):
+            receipt = receipt["zip"]
         path = Path(receipt.get("archive", receipt.get("zip")))
         assert sha(path) == receipt["sha256"]
         assert path.stat().st_size == receipt.get("bytes", receipt.get("archive_bytes"))
@@ -135,6 +147,12 @@ def main() -> None:
                 bytes=path.stat().st_size,
                 sha256=receipt["sha256"],
                 receipt=name,
+                download_url=(
+                    "https://github.com/Kripta-Studios/e-jepa-ttc/releases/download/"
+                    + (tag if complete and name.endswith("DELIVERY_STATUS.json") else TAG)
+                    + "/"
+                    + path.name
+                ),
             )
         )
     readiness = ROOT / (
@@ -147,10 +165,14 @@ def main() -> None:
             path=readiness.relative_to(ROOT).as_posix(),
             bytes=readiness.stat().st_size,
             sha256=sha(readiness),
+            download_url=(
+                f"https://github.com/Kripta-Studios/e-jepa-ttc/releases/download/{TAG}/"
+                + readiness.name
+            ),
         )
     )
-    save("RELEASE_ASSETS.json", dict(tag=TAG, release=URL, archives=assets))
-    (OUT / "SHA256SUMS.txt").write_text(
+    save("RELEASE_ASSETS.json", dict(tag=tag, release=url, archives=assets))
+    (out / "SHA256SUMS.txt").write_text(
         "".join(f"{a['sha256']}  {a['filename']}\n" for a in assets),
         encoding="ascii",
         newline="\n",
@@ -160,7 +182,12 @@ def main() -> None:
         "# SIMPLEX-T: resultados del 3 y 4 de octubre de 2026",
         "H8 conserva su identidad histórica. H16 mejora modestamente la precisión local; "
         "las simplificaciones no cumplen el cribado fijado. El trabajo de entrenamiento "
-        "está completo; el perfilado de la ruta real está parcialmente bloqueado.",
+        "está completo; "
+        + (
+            "el perfilado autorizado también está completo en el alcance de GPU compartida."
+            if complete
+            else "el perfilado de la ruta real está parcialmente bloqueado."
+        ),
         "Se completaron 24 cabezas hasta update 2.500 (60.000 updates científicos): "
         "seis réplicas H16, doce ajustes de dependencia de expertos y seis de agregación. "
         f"Se contabilizan además {night['technical']['confirmed_updates']} updates sintéticos "
@@ -178,6 +205,23 @@ def main() -> None:
         for r in profile
     ]
     lines[4:] = ["\n".join(lines[4:])]
+    if complete:
+        lines += [
+            "Ruta completa desde eventos con ROI suministrado hasta TTC, modelos residentes "
+            "y GPU compartida. p95 por bloque caliente, medido directamente en las mismas "
+            "64 consultas TRAIN; no incluye detector, tracking ni reacción AEB.",
+            "\n".join(
+                [
+                    "| Ruta | p95 caliente 1 (s) | p95 caliente 2 (s) |",
+                    "|---|---:|---:|",
+                    *[
+                        f"| {r['model']} | {float(r['warm_total_p95_block1_ms']) / 1000:.3f} | "
+                        f"{float(r['warm_total_p95_block2_ms']) / 1000:.3f} |"
+                        for r in costs
+                    ],
+                ]
+            ),
+        ]
     lines += [
         f"**H16 frente a H8.** Media de pérdidas de tres seeds: {all_seeds['h16_mid']:.6f} "
         f"frente a {all_seeds['h8_mid']:.6f}; mejora relativa {gain_pct:.2f} %. "
@@ -217,23 +261,30 @@ def main() -> None:
         "TRAIN y disponibilidad del ROI. No se proclama superioridad sobre todos los históricos. "
         "La revisión reconciliada sustituye los flags preliminares que atribuían diferencias "
         "de población a columnas distintas o redondeo del CSV.",
-        "**Coste real y pendiente.** Se completaron 13.500 medidas emparejadas de nueve cabezas "
-        "en CPU y se conservan 1.114 de 1.728 mediciones raw → contexto → expertos GPU → cabeza "
-        "→ TTC. Hay 41 consultas con las 27 mediciones completas, de dos de las tres familias "
+        "**Coste de la ruta.** Se completaron 13.500 medidas emparejadas de nueve cabezas "
+        f"en CPU y se conservan {confirmed} de 1.728 mediciones raw → contexto → expertos GPU "
+        f"→ cabeza → TTC. Hay {matched} consultas con las 27 mediciones completas, "
+        f"de {len(producer_families)} de las tres familias "
         "previstas; los 64 contextos pasaron previamente la admisión numérica. "
         f"En warm_block2, lectura y ROI/voxel suman {100 * context_share['H8_SEED7']:.1f} % "
         f"del tiempo H8 y {100 * context_share['H16_SEED7']:.1f} % del H16. "
         "La cabeza supone menos del 1 % en esos dos casos. Son fracciones de la suma de tiempos "
         "observados, con GPU compartida y ROI suministrado; no son p95 sumados ni latencia AEB. "
-        "Faltan 614 mediciones porque dejó de estar accesible E:/eAP_dataset/data/train. "
-        "La exclusividad GPU dejó de ser un requisito por autorización posterior; "
+        + (
+            "Las 614 mediciones pendientes se completaron tras recuperar E:. "
+            "La prueba de reanudación verifica que los 1.114 fragmentos anteriores no cambiaron. "
+            if complete
+            else "Faltan 614 mediciones porque dejó de estar accesible E:/eAP_dataset/data/train. "
+        )
+        + "La exclusividad GPU dejó de ser un requisito por autorización posterior; "
         "los documentos anteriores conservan su estado histórico.",
         "**Ingeniería y comprobaciones.** Se implementaron máscaras y anchors sin expertos "
         "excluidos, los dos agregadores, checkpoints completos, pruebas de reanudación, análisis "
         "y publicación por fragmentos, inferencia con productores congelados y tiempos por etapa. "
         "Se preservaron los fallos de recursos y el intento inicial con un runtime CUDA distinto; "
         "se restauró la configuración histórica antes de medir, sin ampliar tolerancias. "
-        "El análisis posterior reconcilió 98.304 predicciones; el último bundle regeneró 398 "
+        "El análisis posterior reconcilió 98.304 predicciones; "
+        f"el último bundle regeneró {replayed} "
         "entradas de cabeza y 27 filas de coste con diferencia cero. Los manifests verifican "
         "bytes y SHA-256; reproducir cachés no equivale a reconstruir datos crudos "
         "o entrenar expertos.",
@@ -243,32 +294,43 @@ def main() -> None:
         "El mecanismo cronológico sigue sin demostrarse; tampoco hay evidencia de AEB más rápida, "
         "tracking online persistente o incertidumbre calibrada. LATENT conserva su diagnóstico "
         "histórico negativo; no se corrigió ni reentrenó en esta campaña.",
-        "**Continuación.** Primero recuperar E: y completar las 614 medidas ya autorizadas, "
-        "conservando los fragmentos. La única propuesta posterior es optimizar la preparación "
+        "**Continuación.** "
+        + (
+            "La cola autorizada está completa; no quedan entrenamientos ni mediciones pendientes. "
+            if complete
+            else "Primero recuperar E: y completar las 614 medidas ya autorizadas, "
+            "conservando los fragmentos. "
+        )
+        + "La única propuesta posterior es optimizar la preparación "
         "retrospectiva raw/ROI con pesos congelados y paridad verificada, bajo un protocolo "
         "independiente. No se ejecuta esa propuesta ni se abren entrenamientos o holdouts.",
-        f"[Descargar todos los bundles y sus hashes]({URL}). El bundle nocturno incluye "
+        f"[Descargar la entrega y consultar sus hashes]({url}). El bundle nocturno incluye "
         "también el ZIP H16, disponible por separado. T6 es la base histórica del 2 de octubre. "
-        "Se publican los entregables finales y la última entrega parcial, no copias temporales "
+        "El inventario enlaza los entregables finales "
+        + ("y el perfilado completo" if complete else "y la última entrega parcial")
+        + "; no copias temporales "
         "redundantes. RELEASE_ASSETS.json inventaría el alcance; "
         "los raw externos no están incluidos.",
         "Fuentes: [campaña nocturna]"
         "(../simplex_t_nocturnal_20261003/INFORME_NOCTURNO_SIMPLEX_T.md), "
         "[diagnóstico y coste emparejado]"
         "(../simplex_t_post_campaign_20261003/INFORME_POST_CAMPANA_SIMPLEX_T.md), "
-        "[ruta GPU parcial](../simplex_t_shared_gpu_route_20261004/partial_1114/"
-        "INFORME_GPU_COMPARTIDA_SIMPLEX_T.md). "
+        "[ruta GPU](../simplex_t_shared_gpu_route_20261004/"
+        + ("" if complete else "partial_1114/")
+        + "INFORME_GPU_COMPARTIDA_SIMPLEX_T.md). "
         "RESULTS_SUMMARY.json conserva cifras completas e INPUT_HASHES.json sus fuentes. "
-        "Regeneración local: `python -B operational/build_simplex_t_results_review.py`.",
+        "Regeneración local: `python -B operational/build_simplex_t_results_review.py"
+        + (" --complete" if complete else "")
+        + "`.",
     ]
-    (OUT / "README.md").write_text("\n\n".join(lines) + "\n", encoding="utf-8", newline="\n")
+    (out / "README.md").write_text("\n\n".join(lines) + "\n", encoding="utf-8", newline="\n")
     save("INPUT_HASHES.json", inputs)
     print(
         json.dumps(
             dict(
                 archives=len(assets),
                 bytes=sum(a["bytes"] for a in assets),
-                output=str(OUT),
+                output=str(out),
                 optimizer_updates=0,
             )
         )
@@ -276,4 +338,6 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--complete", action="store_true", help="Use the complete P3 delivery")
+    main(complete=parser.parse_args().complete)

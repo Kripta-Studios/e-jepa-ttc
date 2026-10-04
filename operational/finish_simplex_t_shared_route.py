@@ -88,14 +88,20 @@ def finish(*, partial: bool = False) -> None:
     if len(observed_names) != len(rows) or not observed_names <= set(planned_names):
         raise ValueError("physical fragment IDs differ from the queue")
     pending = [name for name in planned_names if name not in observed_names]
-    save(OUT / "INFERENCE_INVENTORY.json", dict(
-        planned_count=1728, confirmed_count=len(rows), pending_count=len(pending),
-        next_id=pending[0] if pending else None, pending_ids=pending,
-        confirmed_files={
-            path.name: digest(path) for path in sorted((OUT / "fragments").glob("*.json"))
-        },
-        optimizer_updates=0,
-    ))
+    save(
+        OUT / "INFERENCE_INVENTORY.json",
+        dict(
+            planned_count=1728,
+            confirmed_count=len(rows),
+            pending_count=len(pending),
+            next_id=pending[0] if pending else None,
+            pending_ids=pending,
+            confirmed_files={
+                path.name: digest(path) for path in sorted((OUT / "fragments").glob("*.json"))
+            },
+            optimizer_updates=0,
+        ),
+    )
     statistics = summaries(rows, require_full=complete)
     query_counts = {
         token: sum(r["sample_token"] == token for r in rows)
@@ -108,17 +114,25 @@ def finish(*, partial: bool = False) -> None:
         for mode in p["modes"]:
             group = [r for r in matched_rows if r["model"] == label and r["mode"] == mode]
             total = sum(r["total_ms"] for r in group)
-            stage_shares.append(dict(
-                model=label, mode=mode, measurements=len(group),
-                inventory_complete=complete, shared_gpu=True,
-                **{
-                    field + "_fraction_of_measured_sum": sum(r[field] for r in group) / total
-                    for field in (
-                        "raw_read_ms", "roi_voxel_ms", "experts_transfers_ms",
-                        "normalize_ms", "head_emission_ms",
-                    )
-                },
-            ))
+            stage_shares.append(
+                dict(
+                    model=label,
+                    mode=mode,
+                    measurements=len(group),
+                    inventory_complete=complete,
+                    shared_gpu=True,
+                    **{
+                        field + "_fraction_of_measured_sum": sum(r[field] for r in group) / total
+                        for field in (
+                            "raw_read_ms",
+                            "roi_voxel_ms",
+                            "experts_transfers_ms",
+                            "normalize_ms",
+                            "head_emission_ms",
+                        )
+                    },
+                )
+            )
     csv_file(OUT / "STAGE_SHARES.csv", stage_shares)
     docs = DOCS if complete else DOCS / f"partial_{len(rows)}"
     publication = OUT / "delivery" if complete else OUT / f"delivery_partial_{len(rows)}"
@@ -210,7 +224,9 @@ def finish(*, partial: bool = False) -> None:
         pending_measurements=1728 - len(rows),
         cost_population_complete=complete,
         next_id=pending[0] if pending else None,
-        resume_command="python -B -m operational.simplex_t_shared_route.run run",
+        resume_command=(
+            None if complete else "python -B -m operational.simplex_t_shared_route.run run"
+        ),
         resume_output_root="artifacts/simplex_t/shared_gpu_route_20261004",
         last_execution_state=last_execution,
         external_dependency=(last_execution.get("error") if missing_source else None),
@@ -234,11 +250,30 @@ def finish(*, partial: bool = False) -> None:
         ),
     )
     save(OUT / "NEXT_DECISION_SHARED_GPU.json", decision)
+    shares_by_route = {(r["model"], r["mode"]): r for r in stage_shares}
+    findings = []
+    for model in ("H8_SEED7", "H16_SEED7"):
+        for mode in ("warm_block1", "warm_block2"):
+            share = shares_by_route[model, mode]
+            context = (
+                share["raw_read_ms_fraction_of_measured_sum"]
+                + share["roi_voxel_ms_fraction_of_measured_sum"]
+            )
+            head = share["head_emission_ms_fraction_of_measured_sum"]
+            findings.append(
+                f"{model}/{mode}: lectura y preparación ROI/voxel {100 * context:.2f} %; "
+                f"cabeza y emisión TTC {100 * head:.2f} %."
+            )
     lines = [
-        ("P3 completado" if complete else (
-            "P3 bloqueado por una fuente externa ausente" if missing_source
-            else "P3 incompleto por recursos"
-        ))
+        (
+            "P3 completado"
+            if complete
+            else (
+                "P3 bloqueado por una fuente externa ausente"
+                if missing_source
+                else "P3 incompleto por recursos"
+            )
+        )
         + ": inferencia con autorización explícita de GPU compartida.",
         "Se conservaron H8, los 24 endpoints y los 60.000 updates científicos anteriores. "
         "Esta continuación ejecutó cero actualizaciones de optimizador.",
@@ -260,6 +295,10 @@ def finish(*, partial: bool = False) -> None:
     lines += [
         "Los CSV preservan precisión completa. El total se midió directamente, "
         "desde la petición con ROI suministrado hasta TTC; no se sumaron p95 de etapas.",
+        "Descomposición del tiempo acumulado observado: "
+        + " ".join(findings)
+        + " Estos porcentajes pertenecen a esta ejecución y población; "
+        "orientan la propuesta posterior sin aislar causalmente la contención del host.",
         "STAGE_SHARES.csv desglosa las fracciones de la suma de tiempos medidos, "
         "por ruta y bloque, en las mismas consultas completas. No son cocientes de p95 "
         "ni una estimación del coste fuera de esta población. Familias internas observadas "
@@ -303,9 +342,13 @@ def finish(*, partial: bool = False) -> None:
         "se abre con esta entrega.",
     ]
     if not complete:
-        lines.insert(3, "Dependencia pendiente: " + str(last_execution.get("error"))
-                     + ". Los fragmentos confirmados se reutilizan al reanudar; "
-                     "no se repiten los entrenamientos ni se cambian consultas.")
+        lines.insert(
+            3,
+            "Dependencia pendiente: "
+            + str(last_execution.get("error"))
+            + ". Los fragmentos confirmados se reutilizan al reanudar; "
+            "no se repiten los entrenamientos ni se cambian consultas.",
+        )
     (OUT / "INFORME_GPU_COMPARTIDA_SIMPLEX_T.md").write_text(
         "\n\n".join(lines) + "\n", encoding="utf-8"
     )
@@ -332,20 +375,31 @@ def finish(*, partial: bool = False) -> None:
     bundle.mkdir(parents=True, exist_ok=True)
     for path in docs.iterdir():
         if not path.is_file() or path.name in {
-            "DELIVERY_STATUS.json", "EXTRACTED_VERIFICATION.json"
+            "DELIVERY_STATUS.json",
+            "EXTRACTED_VERIFICATION.json",
         }:
             continue
         copy_file(path, bundle / path.name)
     for name in (
-        "PROTOCOL_BEFORE_RAW_CAPTURE.json", "PROTOCOL_RUNTIME_MISMATCH.json",
-        "DIAGNOSTIC_PRECISION.json", "DIAGNOSTIC_PRECISION.npz",
-        "PYRIGHT_DELIVERY_FINAL.json", "SOURCE_ADMISSION.json", "RESUME_START_27.json",
-        "RESUME_START_675.json", "RESUME_START_697.json",
-        "RESUME_START_723.json", "LIGHT_INTEGRITY_723.json",
-        "IO_ERROR_697.json", "IO_READER_REPAIR.json",
+        "PROTOCOL_BEFORE_RAW_CAPTURE.json",
+        "PROTOCOL_RUNTIME_MISMATCH.json",
+        "DIAGNOSTIC_PRECISION.json",
+        "DIAGNOSTIC_PRECISION.npz",
+        "PYRIGHT_DELIVERY_FINAL.json",
+        "SOURCE_ADMISSION.json",
+        "RESUME_START_27.json",
+        "RESUME_START_675.json",
+        "RESUME_START_697.json",
+        "RESUME_START_723.json",
+        "LIGHT_INTEGRITY_723.json",
+        "IO_ERROR_697.json",
+        "IO_READER_REPAIR.json",
         "EXTERNAL_SOURCE_BLOCK.json",
         "SOURCE_BOUNDARY_1114.json",
-        "PUBLICATION_PAUSE_1114.json", "PUBLICATION_RESOURCE_RECEIPT.json",
+        "RESUME_START_1114.json",
+        "SOURCE_BOUNDARY_FINAL.json",
+        "PUBLICATION_PAUSE_1114.json",
+        "PUBLICATION_RESOURCE_RECEIPT.json",
     ):
         if (OUT / name).exists():
             copy_file(OUT / name, bundle / "audit" / name)
@@ -354,19 +408,26 @@ def finish(*, partial: bool = False) -> None:
         ROOT / "artifacts/simplex_t/h16_replication_20261003/FINAL_REPORT_H16.md",
         bundle / "audit/FINAL_REPORT_H16.md",
     )
-    save(bundle / "REPRODUCTION.json", dict(
-        command="python -B verify.py --root . --output ../SHARED_GPU_REGENERATION.json --heads",
-        required_packages=["numpy", "torch", "psutil", "pandas", "pyarrow", "h5py"],
-        measured_environment="ENVIRONMENT.json",
-        included_scope="numeric frozen heads from captured inputs; timing quantiles from fragments",
-        excluded_scope="raw event reconstruction, model training and elapsed timing recollection",
-        raw_profile_requires="original source-bound repository and external TRAIN event files",
-        original_continuation_command=(
-            "python -B -m operational.simplex_t_shared_route.run run"
+    save(
+        bundle / "REPRODUCTION.json",
+        dict(
+            command="python -B verify.py --root . --output ../SHARED_GPU_REGENERATION.json --heads",
+            required_packages=["numpy", "torch", "psutil", "pandas", "pyarrow", "h5py"],
+            measured_environment="ENVIRONMENT.json",
+            included_scope=(
+                "numeric frozen heads from captured inputs; timing quantiles from fragments"
+            ),
+            excluded_scope=(
+                "raw event reconstruction, model training and elapsed timing recollection"
+            ),
+            raw_profile_requires="original source-bound repository and external TRAIN event files",
+            original_continuation_command=(
+                "python -B -m operational.simplex_t_shared_route.run run"
+            ),
+            output_root="artifacts/simplex_t/shared_gpu_route_20261004",
+            optimizer_updates=0,
         ),
-        output_root="artifacts/simplex_t/shared_gpu_route_20261004",
-        optimizer_updates=0,
-    ))
+    )
     for folder in (
         "fragments",
         "parity",
@@ -404,7 +465,8 @@ def finish(*, partial: bool = False) -> None:
     copy_file(ROOT / "operational/verify_simplex_t_shared_route.py", bundle / "verify.py")
     copy_file(OLD / "delivery/bundle/resource_guard.py", bundle / "resource_guard.py")
     files = [
-        path for path in sorted(bundle.rglob("*"))
+        path
+        for path in sorted(bundle.rglob("*"))
         if path.is_file() and path.name != "CONTENT_MANIFEST.json"
     ]
     manifest = {
@@ -418,7 +480,8 @@ def finish(*, partial: bool = False) -> None:
     }
     save(bundle / "CONTENT_MANIFEST.json", manifest)
     archive = publication / (
-        "E_JEPA_TTC_SHARED_GPU_ROUTE_20261004.zip" if complete
+        "E_JEPA_TTC_SHARED_GPU_ROUTE_20261004.zip"
+        if complete
         else f"E_JEPA_TTC_SHARED_GPU_ROUTE_PARTIAL_{len(rows)}_20261004.zip"
     )
     if not archive.exists():
