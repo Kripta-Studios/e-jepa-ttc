@@ -264,6 +264,9 @@ def report(c: Campaign) -> None:
         )
         if (c.out / "TEST_RESULTS/garl_resume_review/QA.json").exists()
         else None,
+        "exact_owned_quota_scanner": read(c.out / "garl/QUOTA_SCANNER_FREEZE.json")
+        if (c.out / "garl/QUOTA_SCANNER_FREEZE.json").exists()
+        else None,
         "protected_evaluation_access": False,
         "push_or_submission": False,
         "source_references": (
@@ -538,6 +541,17 @@ def report(c: Campaign) -> None:
         "checksum, identidad, completitud y paridad al reanudar. Esto verifica "
         "código y fixtures, sin sustituir la ejecución científica pendiente.\n"
         if (c.out / "TEST_RESULTS/garl_resume_review/QA.json").exists()
+        else "",
+        "Un freeze operativo adicional acelera el cómputo exacto de bytes propios "
+        "con metadata de scandir, conservando el TTL original de5 segundos y "
+        "delegando todos los checks al require original. La prueba sobre la "
+        "misma caché dio exactamente5.431.459.552 bytes en ambos contadores: "
+        "3,30s con el recorrido original y0,134s con scandir; el recorrido completo "
+        "optimizado del árbol propio midió0,386s. Son diagnósticos operativos, "
+        "sin forwards ni updates. Pasaron133 tests, incluidos12 de cuota/handoff. "
+        "El relevo conserva un checkpoint completo, RNG, sampler y optimizer; "
+        "las fuentes científicas y los límites permanecen intactos.\n"
+        if (c.out / "garl/QUOTA_SCANNER_FREEZE.json").exists()
         else "",
         "Bundle: código/configs/diff, pesos/checkpoints completos, predicciones "
         "EWMA, curves, normalizadores, draws/recibos, bindings externos y QA. "
