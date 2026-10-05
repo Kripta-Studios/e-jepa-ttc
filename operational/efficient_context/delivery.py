@@ -259,7 +259,9 @@ def report(c: Campaign) -> None:
         "parallel_resource_admission": read(c.out / "garl/PARALLEL_RESOURCE_ADAPTER_FREEZE.json")
         if (c.out / "garl/PARALLEL_RESOURCE_ADAPTER_FREEZE.json").exists()
         else None,
-        "Garl_resume_code_and_fixture_review": read(c.out / "TEST_RESULTS/garl_resume_review/QA.json")
+        "Garl_resume_code_and_fixture_review": read(
+            c.out / "TEST_RESULTS/garl_resume_review/QA.json"
+        )
         if (c.out / "TEST_RESULTS/garl_resume_review/QA.json").exists()
         else None,
         "protected_evaluation_access": False,
