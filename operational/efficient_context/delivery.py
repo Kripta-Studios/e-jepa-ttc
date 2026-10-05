@@ -443,7 +443,7 @@ def report(c: Campaign) -> None:
         "El recibo documenta memoria, selección y adaptación BN, si procede. "
         f"Progreso científico nuevo Garl:{counts['garl_producer_saved']}; "
         f"cabezas Garl:{counts['garl_head_saved']}.\n",
-        "La colocación de la caché nativa tiene un freeze de ingeniería separado: "
+        "El primer freeze de ingeniería de caché nativa documenta la capacidad inicial: "
         "conserva en RAM los tensores FP32 expulsados del disco, dentro de los "
         "mismos límites6GiB/8GB y cuota total10GB. Se comprobaron192 retornos "
         "sobre64 inputs TRAIN ya codificados: tensores y targets exactos, cero "
@@ -470,7 +470,7 @@ def report(c: Campaign) -> None:
         "fijado. Paridad exacta de inputs y targets TRAIN y RNG del padre sin "
         "cambios constan en PARALLEL_INPUT_QA.json. Los workers no construyen "
         "modelos ni inicializan CUDA; permanece un único trainer pesado. Los "
-        "límites de updates y disco no cambian.\n"
+        "límites de updates y disco de ese freeze no cambian.\n"
         if (c.out / "garl/PARALLEL_INPUT_FREEZE.json").exists()
         else "",
         "El protocolo científico nativo conserva su metadata histórica de12GB. "
@@ -482,6 +482,29 @@ def report(c: Campaign) -> None:
         "propagación de errores de integridad; no elimina ninguna comprobación "
         "de los archivos científicos originales.\n"
         if (c.out / "garl/PARALLEL_RESOURCE_ADAPTER_FREEZE.json").exists()
+        else "",
+        "La autorización posterior de más disco se registra aparte en "
+        "DISK_RESOURCE_AUTHORIZATION.json:40GB de artefactos propios, hasta32GB "
+        "de caché numérica persistente y1GB reservado para checkpoint atómico. "
+        "Se mantienen16GB RSS del árbol,8GiB de RAM comprimida, el suelo de2GiB "
+        "disponibles y todos los techos científicos y físicos. Cuatro hilos "
+        "adicionales leen/descomprimen entradas inmutables de la cola original; "
+        "ningún hilo escribe caché, consume RNG científico ni cambia el orden. "
+        "Pasaron147 tests, Ruff/Pyright y72 comparaciones exactas, incluyendo "
+        "duplicados, sobre64 NPZ TRAIN originales. El microdiagnóstico separado "
+        "de64 entradas dio2,38x en descompresión; no es un speedup del entrenamiento "
+        "completo ni una medición R0. El relevo preservó el update3021 con "
+        "optimizer, scheduler, RNG y sampler completos, sin updates perdidos. "
+        "Una entrega parcial conserva la caché persistente si faltan productores.\n"
+        if (c.out / "garl/DECODE_ENGINEERING_FREEZE.json").exists()
+        else "",
+        "El usuario fijó un plazo de72 horas, registrado en EXECUTION_DEADLINE.json. "
+        "Al vencimiento se pausa en un límite completo y se conservan pendientes "
+        "los comparadores inconclusos. No se habilita early stopping ni se "
+        "presenta un fit incompleto como endpoint de50 épocas o resultado negativo. "
+        "El diagnóstico del driver detectó SW Thermal Slowdown activo a86°C; "
+        "la alimentación conectada no elimina este registro térmico.\n"
+        if (c.out / "EXECUTION_DEADLINE.json").exists()
         else "",
         "Las seis cabezas implementadas usan INNER-OOF excluyendo outer e inner "
         "holdouts, endpoint final fijo y normalización TRAIN de observaciones "
