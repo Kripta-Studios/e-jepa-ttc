@@ -429,6 +429,16 @@ def report(c: Campaign) -> None:
         "El recibo documenta memoria, selección y adaptación BN, si procede. "
         f"Progreso científico nuevo Garl:{counts['garl_producer_saved']}; "
         f"cabezas Garl:{counts['garl_head_saved']}.\n",
+        "La colocación de la caché nativa tiene un freeze de ingeniería separado: "
+        "conserva en RAM los tensores FP32 expulsados del disco, dentro de los "
+        "mismos límites6GiB/8GB y cuota total10GB. Se comprobaron192 retornos "
+        "sobre64 inputs TRAIN ya codificados: tensores y targets exactos, cero "
+        "extracciones raw nuevas y cero updates. Los archivos científicos "
+        "originales, sampler, RNG, optimizer, epoch50 y checkpoint identity "
+        "permanecen intactos. El reinicio controlado conserva un checkpoint "
+        "completo y registra la reserva de recuperación.\n"
+        if (c.out / "garl/CACHE_ENGINEERING_FREEZE.json").exists()
+        else "",
         "Las seis cabezas implementadas usan INNER-OOF excluyendo outer e inner "
         "holdouts, endpoint final fijo y normalización TRAIN de observaciones "
         "únicas. No incorporan A5/PAIR/RGB/DINO como features. Los expertos "

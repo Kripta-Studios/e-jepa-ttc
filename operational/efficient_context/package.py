@@ -162,7 +162,10 @@ def package(c: Campaign) -> None:
             or path.name in excluded
             or relative.as_posix() == "data_recovery/PROGRESS.json"
             or "__pycache__" in relative.parts
-            or relative.parts[0] == "verification"
+            or (
+                relative.parts[0] == "verification"
+                and relative.parts[:2] != ("verification", "rejected_valid_dispatch")
+            )
             or (relative.parts[0] == "garl" and "native_cache" in relative.parts)
         ):
             continue

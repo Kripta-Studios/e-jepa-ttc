@@ -253,10 +253,16 @@ def all_tasks(c: Campaign) -> int:
             },
         )
     if not dep["garl_missing"] and not dep["garl_raw_missing"]:
+        cache_qa = c.out / "garl/CACHE_ENGINEERING_QA.json"
+        producer_module = (
+            "garl_train_cached"
+            if cache_qa.exists() and read(cache_qa).get("status") == "PASSED"
+            else "garl_train"
+        )
         stages = [
             ("garl_input_QA", "garl_qa", ()),
             ("garl_microbatch", "native_garl", ("profile",)),
-            ("garl_producers", "garl_train", ("--resume",)),
+            ("garl_producers", producer_module, ("--resume",)),
             ("garl_heads", "garl_heads", ("all", "--resume")),
             ("garl_runtime", "garl_runtime", ()),
         ]

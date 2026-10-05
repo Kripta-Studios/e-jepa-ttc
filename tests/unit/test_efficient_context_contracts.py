@@ -417,3 +417,60 @@ def test_completed_wide_reuse_checks_all_sealed_bytes(tmp_path, variant):
             completed_wide(SimpleNamespace(out=tmp_path))
     else:
         assert completed_wide(SimpleNamespace(out=tmp_path)) == (variant == "complete")
+
+
+def test_exclusive_cache_retains_disk_victims_without_changing_training_tensors(
+    tmp_path, monkeypatch
+):
+    """RAM plus disk must cover the working set while preserving all three returned fields."""
+    import io
+    from types import SimpleNamespace
+
+    from e_jepa_ttc.efficient_context import garl_input
+    from operational.efficient_context.exclusive_cache import ExclusiveInputCache
+
+    out = tmp_path / "out"
+    (out / "garl").mkdir(parents=True)
+    (out / "garl/PROTOCOL.json").write_text('{"fixture":true}', encoding="utf-8")
+    raw = tmp_path / "raw/sequence/events.h5"
+    raw.parent.mkdir(parents=True)
+    raw.write_bytes(b"read-only sensor fixture")
+    rows = {str(i): {"sequence_id": "sequence", "value": i} for i in range(5)}
+    expected = {
+        str(i): (
+            torch.arange(24, dtype=torch.float32).reshape(3, 2, 4) + i,
+            torch.tensor([i, i + 1], dtype=torch.float32),
+            float(i) + 0.25,
+        )
+        for i in range(5)
+    }
+
+    def encode(row, _pool, _root):
+        return expected[str(row["value"])]
+
+    monkeypatch.setattr(garl_input, "encode_record", encode)
+    c = SimpleNamespace(
+        out=out,
+        raw=raw.parent.parent,
+        policy={"max_tree_rss_gib": 12},
+        require_resources=lambda: None,
+    )
+    cache = ExclusiveInputCache(c, rows)
+    stream = io.BytesIO()
+    v = expected["0"]
+    np.savez_compressed(stream, events=v[0].numpy(), visible=v[1].numpy(), target=v[2])
+    cache.limit = len(stream.getvalue()) * 2 + 128
+    cache.memory_limit = 3 * cache.tensor_bytes(expected["0"])
+    for _ in range(3):
+        for token, reference in expected.items():
+            result = cache.get(token)
+            assert torch.equal(result[0], reference[0])
+            assert torch.equal(result[1], reference[1])
+            assert result[2] == reference[2]
+            assert cache.disk <= cache.limit and cache.bytes <= cache.memory_limit
+    assert cache.reads == 5
+    assert cache.preserved_disk_evictions > 0
+    raw.write_bytes(b"changed identity")
+    with pytest.raises(ValueError, match="raw identity changed"):
+        cache.get("0")
+    cache.close()
