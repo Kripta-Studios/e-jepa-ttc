@@ -29,13 +29,16 @@ def main() -> int:
             raise ValueError("compressed cache QA source changed before the restart")
     if read(c.out / "garl/PARALLEL_INPUT_QA.json")["status"] != "PASSED":
         raise ValueError("real TRAIN cache bit parity required")
-    progress_path = c.out / "garl/PROGRESS.json"
+    progress_path = c.out / "garl/UPDATE_PROGRESS.json"
     initial = read(progress_path)
+    work_path = c.out / "garl/PHYSICAL_WORK.json"
+    initial_saved = read(work_path)["fits"][initial["fit"]]["saved"]
     while True:
         progress = read(progress_path)
         if progress["fit"] != initial["fit"]:
             raise RuntimeError("fit changed before the controlled checkpoint boundary")
-        if progress["updates"] > initial["updates"]:
+        saved = read(work_path)["fits"][initial["fit"]]["saved"]
+        if saved > initial_saved:
             break
         owner = read(c.out / "WRITER.lock")
         if not psutil.pid_exists(owner["pid"]):
