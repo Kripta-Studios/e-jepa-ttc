@@ -269,6 +269,12 @@ def report(c: Campaign) -> None:
         "exact_owned_quota_scanner": read(c.out / "garl/QUOTA_SCANNER_FREEZE.json")
         if (c.out / "garl/QUOTA_SCANNER_FREEZE.json").exists()
         else None,
+        "parallel_TRAIN_preflight": read(c.out / "garl/parallel_preflight/RESULTS.json")
+        if (c.out / "garl/parallel_preflight/RESULTS.json").exists()
+        else None,
+        "public_checkpoint_reaudit": read(c.out / "garl/public_checkpoint_audit/AUDIT.json")
+        if (c.out / "garl/public_checkpoint_audit/AUDIT.json").exists()
+        else None,
         "protected_evaluation_access": False,
         "push_or_submission": False,
         "source_references": (
@@ -510,6 +516,22 @@ def report(c: Campaign) -> None:
         "exige el sello de los12 productores completos. Las pruebas "
         "revisadas se incluyen en source/tests, con manifiesto SHA256 separado.\n"
         if (c.out / "garl/FEATURE_INPUT_ENGINEERING_FREEZE.json").exists()
+        else "",
+        "Se adelantó en paralelo una auditoría CPU de los checkpoints completos "
+        "y la planificación de queries TRAIN: rutas INNER-OOF, ventanas, cajas, "
+        "máscaras e identidades raw. Los fragmentos y receipts están en "
+        "garl/parallel_preflight; no contienen features de un modelo incompleto "
+        "ni abren OLD_DEV. Pasaron12 pruebas de exclusión y causalidad. "
+        "La generación final conserva sus comprobaciones originales.\n"
+        if (c.out / "garl/parallel_preflight/RESULTS.json").exists()
+        else "",
+        "La auditoría actualizada de Hugging Face confirmó checkpoints, configs "
+        "y SHA256 publicados, y un split TRAIN de40 secuencias. Ese split "
+        "solapa las exclusiones de los12 fits de esta campaña; la release no "
+        "vincula un manifiesto de entrenamiento por checkpoint que acredite "
+        "esas exclusiones. No se admitieron pesos públicos. Las revisiones, "
+        "documentos y cruces exactos están en garl/public_checkpoint_audit.\n"
+        if (c.out / "garl/public_checkpoint_audit/AUDIT.json").exists()
         else "",
         f"El usuario fijó un plazo de {read(c.out / 'EXECUTION_DEADLINE.json')['hours']} "
         "horas desde la autorización vigente, registrado en EXECUTION_DEADLINE.json. "
