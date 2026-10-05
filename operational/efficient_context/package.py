@@ -12,7 +12,7 @@ import sys
 import zipfile
 from pathlib import Path
 
-from .common import ROOT, Campaign, atomic_bytes, atomic_json, digest
+from .common import ROOT, Campaign, atomic_bytes, atomic_json, digest, read
 
 
 def release_cache_for_bundle(c: Campaign) -> None:
@@ -123,6 +123,13 @@ def sources(c: Campaign) -> None:
             "global_environment_modified": False,
             "numeric_threads": 4,
             "interop_threads": 2,
+            "CPU_preparation_workers": read(c.out / "RESOURCE_AUTHORIZATION_V2.json")[
+                "CPU_preparation_workers"
+            ]
+            if (c.out / "garl/PARALLEL_INPUT_FREEZE.json").exists()
+            else 0,
+            "CPU_threads_per_preparation_worker": 4,
+            "single_heavy_trainer": True,
         },
     )
 

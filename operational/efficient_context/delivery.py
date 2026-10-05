@@ -253,6 +253,9 @@ def report(c: Campaign) -> None:
         "resource_amendment": read(c.out / "RESOURCE_AUTHORIZATION.json")
         if (c.out / "RESOURCE_AUTHORIZATION.json").exists()
         else None,
+        "additional_resource_amendment": read(c.out / "RESOURCE_AUTHORIZATION_V2.json")
+        if (c.out / "RESOURCE_AUTHORIZATION_V2.json").exists()
+        else None,
         "protected_evaluation_access": False,
         "push_or_submission": False,
         "source_references": (
@@ -448,6 +451,17 @@ def report(c: Campaign) -> None:
         "tensores descomprimidos; no modifica el encoding ni sus pesos.\n"
         if (c.out / "garl/COMPRESSED_CACHE_FREEZE.json").exists()
         else "",
+        "La autorización posterior de más recursos permite16GB de RSS total "
+        "del árbol,8GiB de caché RAM comprimida y cuatro workers CPU de preparación. "
+        "Cada worker mantiene4 threads/2 interop y hasta8 lectores originales "
+        "de sólo lectura. El lookahead está limitado a64 records y usa una copia "
+        "privada del sampler restaurado; la entrega conserva el orden del batch "
+        "fijado. Paridad exacta de inputs y targets TRAIN y RNG del padre sin "
+        "cambios constan en PARALLEL_INPUT_QA.json. Los workers no construyen "
+        "modelos ni inicializan CUDA; permanece un único trainer pesado. Los "
+        "límites de updates y disco no cambian.\n"
+        if (c.out / "garl/PARALLEL_INPUT_FREEZE.json").exists()
+        else "",
         "Las seis cabezas implementadas usan INNER-OOF excluyendo outer e inner "
         "holdouts, endpoint final fijo y normalización TRAIN de observaciones "
         "únicas. No incorporan A5/PAIR/RGB/DINO como features. Los expertos "
@@ -489,6 +503,11 @@ def report(c: Campaign) -> None:
         "Ruff y Pyright satisfactorios; recibos en TEST_RESULTS/compressed_cache. "
         "Incluye los tests anteriores y no se suma como50 experimentos nuevos.\n"
         if (c.out / "TEST_RESULTS/compressed_cache/QA.json").exists()
+        else "",
+        "La ampliación para preparación CPU tiene tests de contratos, incluido "
+        "el orden del sampler al cruzar épocas y el límite de lectores abiertos. "
+        "Sus recibos de Ruff/Pyright y paridad real están en TEST_RESULTS/parallel_inputs.\n"
+        if (c.out / "TEST_RESULTS/parallel_inputs/QA.json").exists()
         else "",
         "Bundle: código/configs/diff, pesos/checkpoints completos, predicciones "
         "EWMA, curves, normalizadores, draws/recibos, bindings externos y QA. "

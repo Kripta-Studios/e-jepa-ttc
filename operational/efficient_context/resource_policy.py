@@ -34,6 +34,31 @@ class AuthorizedCampaign(Campaign):
                 "global_environment_modified": False,
             },
         )
+        extra = self.out / "RESOURCE_AUTHORIZATION_V2.json"
+        if extra.exists():
+            extension = read(extra)
+            if (
+                extension["parent_amendment_sha256"] != digest(amendment)
+                or extension["parent_protocol_sha256"] != digest(self.out / "PROTOCOL.json")
+                or extension["max_tree_rss_bytes"] != 16_000_000_000
+                or extension["CPU_preparation_workers"] != 4
+                or extension["scientific_recipe_changed"]
+            ):
+                raise ValueError("additional resource authorization is not bound to this campaign")
+            self.policy["max_tree_rss_gib"] = extension["max_tree_rss_bytes"] / 1024**3
+            atomic_json(
+                self.out / "ACTIVE_RESOURCE_POLICY.json",
+                {
+                    "amendment_sha256": digest(extra),
+                    "previous_amendment_sha256": digest(amendment),
+                    "max_tree_rss_bytes": extension["max_tree_rss_bytes"],
+                    "CPU_preparation_workers": extension["CPU_preparation_workers"],
+                    "active_policy": self.policy,
+                    "scientific_protocol_unchanged": True,
+                    "global_environment_modified": False,
+                    "heavy_trainers": 1,
+                },
+            )
 
 
 def install() -> None:

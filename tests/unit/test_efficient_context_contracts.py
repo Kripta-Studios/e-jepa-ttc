@@ -488,3 +488,114 @@ def test_exclusive_cache_retains_disk_victims_without_changing_training_tensors(
     with pytest.raises(ValueError, match="raw identity changed"):
         cache.get("0")
     cache.close()
+
+
+def test_cpu_lookahead_preserves_sampler_tail_epochs_and_parent_rng():
+    """Independent lookahead must reproduce the next trainer draws across the final boundary."""
+    from operational.efficient_context.parallel_inputs import sampler_indices
+
+    generator = torch.Generator().manual_seed(7)
+    order = torch.randperm(17, generator=generator)
+    copied = torch.Generator()
+    copied.set_state(generator.get_state())
+    reference = torch.Generator()
+    reference.set_state(generator.get_state())
+    before = torch.get_rng_state().clone()
+    expected = order[11:].tolist() + torch.randperm(17, generator=reference).tolist()
+    assert list(sampler_indices(order, 11, 49, copied)) == expected
+    assert torch.equal(torch.get_rng_state(), before)
+
+
+def test_cpu_reader_pool_reuses_handles_and_closes_lru_victims(tmp_path, monkeypatch):
+    """More readers must stay bounded and preserve the original read-only reader class contract."""
+    from e_jepa_ttc.simplex_t import cached_event_reader
+    from operational.efficient_context.parallel_inputs import MultiReaderPool
+
+    class Reader:
+        def __init__(self, path):
+            self.path, self.closed = path, False
+
+        def open(self):
+            pass
+
+        def close(self):
+            self.closed = True
+
+    monkeypatch.setattr(cached_event_reader, "CachedEventReader", Reader)
+    paths = [tmp_path / f"sequence{i}.h5" for i in range(3)]
+    for p in paths:
+        p.touch()
+    pool = MultiReaderPool(limit=2)
+    first, second = pool.get(paths[0]), pool.get(paths[1])
+    assert pool.get(paths[0]) is first
+    third = pool.get(paths[2])
+    assert second.closed and not first.closed and not third.closed
+    assert len(pool.readers) == 2
+    pool.close()
+    assert first.closed and third.closed and not pool.readers
+
+
+def test_parallel_input_cache_restores_exact_order_across_epoch_boundary(tmp_path, monkeypatch):
+    """Resumed lookahead must return the original row order even with duplicated future tokens."""
+    from concurrent.futures import Future
+    from types import SimpleNamespace
+
+    from e_jepa_ttc.simplex_t.training import state_digest
+    from operational.efficient_context.common import digest
+    from operational.efficient_context.parallel_inputs import ParallelInputCache
+
+    out = tmp_path / "out"
+    (out / "garl/admission").mkdir(parents=True)
+    proto = out / "garl/PROTOCOL.json"
+    proto.write_text('{"fixture":true}', encoding="utf-8")
+    raw = tmp_path / "raw/sequence/events.h5"
+    raw.parent.mkdir(parents=True)
+    raw.write_bytes(b"stable fixture")
+    rows = {str(i): {"sequence_id": "sequence", "value": i} for i in range(5)}
+    np.savez(out / "garl/admission/fixture_native_tokens.npz", tokens=np.array(list(rows)))
+    generator = torch.Generator().manual_seed(7)
+    order = torch.randperm(5, generator=generator)
+    copied = torch.Generator()
+    copied.set_state(generator.get_state())
+    expected = order[3:].tolist() + torch.randperm(5, generator=copied).tolist()
+    state = {
+        "protocol_sha256": digest(proto),
+        "order": order,
+        "cursor": 3,
+        "epoch": 49,
+        "sampler_rng": generator.get_state(),
+    }
+    state["state_sha256"] = state_digest(state)
+    path = out / "garl/fits/fixture/checkpoint_last.pt"
+    path.parent.mkdir(parents=True)
+    torch.save(state, path)
+
+    class Executor:
+        def submit(self, _, row, _root):
+            future = Future()
+            i = row["value"]
+            future.set_result(
+                (np.full((40, 2, 2), i, np.float32), np.array([i, i + 1], np.float32), float(i))
+            )
+            return future
+
+        def shutdown(self, **_):
+            pass
+
+    c = SimpleNamespace(
+        out=out,
+        raw=raw.parent.parent,
+        policy={"max_tree_rss_gib": 16_000_000_000 / 1024**3},
+        require_resources=lambda: None,
+    )
+    cache = ParallelInputCache(c, rows)
+    cache.executor = Executor()
+    before = torch.get_rng_state().clone()
+    cache.activate({"key": "fixture"})
+    for i in expected:
+        x, visible, target = cache.get(str(i))
+        assert torch.equal(x, torch.full((40, 2, 2), i, dtype=torch.float32))
+        assert torch.equal(visible, torch.tensor([i, i + 1], dtype=torch.float32))
+        assert target == float(i)
+    assert not cache.pending and torch.equal(torch.get_rng_state(), before)
+    cache.close()
