@@ -511,7 +511,8 @@ def report(c: Campaign) -> None:
         "revisadas se incluyen en source/tests, con manifiesto SHA256 separado.\n"
         if (c.out / "garl/FEATURE_INPUT_ENGINEERING_FREEZE.json").exists()
         else "",
-        "El usuario fijó un plazo de72 horas, registrado en EXECUTION_DEADLINE.json. "
+        f"El usuario fijó un plazo de {read(c.out / 'EXECUTION_DEADLINE.json')['hours']} "
+        "horas desde la autorización vigente, registrado en EXECUTION_DEADLINE.json. "
         "Al vencimiento se pausa en un límite completo y se conservan pendientes "
         "los comparadores inconclusos. No se habilita early stopping ni se "
         "presenta un fit incompleto como endpoint de50 épocas o resultado negativo. "
