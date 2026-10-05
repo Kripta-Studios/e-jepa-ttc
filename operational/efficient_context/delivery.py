@@ -256,6 +256,9 @@ def report(c: Campaign) -> None:
         "additional_resource_amendment": read(c.out / "RESOURCE_AUTHORIZATION_V2.json")
         if (c.out / "RESOURCE_AUTHORIZATION_V2.json").exists()
         else None,
+        "parallel_resource_admission": read(c.out / "garl/PARALLEL_RESOURCE_ADAPTER_FREEZE.json")
+        if (c.out / "garl/PARALLEL_RESOURCE_ADAPTER_FREEZE.json").exists()
+        else None,
         "protected_evaluation_access": False,
         "push_or_submission": False,
         "source_references": (
@@ -461,6 +464,16 @@ def report(c: Campaign) -> None:
         "modelos ni inicializan CUDA; permanece un único trainer pesado. Los "
         "límites de updates y disco no cambian.\n"
         if (c.out / "garl/PARALLEL_INPUT_FREEZE.json").exists()
+        else "",
+        "El protocolo científico nativo conserva su metadata histórica de12GB. "
+        "El adaptador de recursos tiene un sello separado: ejecuta la comparación "
+        "completa del protocolo original y restaura el límite autorizado de16GB "
+        "antes de construir la caché o ejecutar cualquier fit. Se conserva el "
+        "fallo inicial de arranque, con cero updates, en PARALLEL_INPUT_START_FAILURE.json. "
+        "La suite de57 casos verifica también la restauración de recursos y "
+        "propagación de errores de integridad; no elimina ninguna comprobación "
+        "de los archivos científicos originales.\n"
+        if (c.out / "garl/PARALLEL_RESOURCE_ADAPTER_FREEZE.json").exists()
         else "",
         "Las seis cabezas implementadas usan INNER-OOF excluyendo outer e inner "
         "holdouts, endpoint final fijo y normalización TRAIN de observaciones "
