@@ -33,9 +33,11 @@ def report(c: Campaign) -> None:
     import matplotlib.pyplot as plt
 
     from .budget import accounting
+    from .bundle_test_sources import snapshot
     from .checkpoints import inventory, inventory_native
     from .queue import dependencies
 
+    snapshot(c)
     checkpoints = inventory(c)
     native_checkpoints = inventory_native(c)
     counts = accounting(c)
@@ -497,6 +499,17 @@ def report(c: Campaign) -> None:
         "optimizer, scheduler, RNG y sampler completos, sin updates perdidos. "
         "Una entrega parcial conserva la caché persistente si faltan productores.\n"
         if (c.out / "garl/DECODE_ENGINEERING_FREEZE.json").exists()
+        else "",
+        "La generación futura de features prepara hasta8 inputs de una query "
+        "en cuatro workers CPU y conserva los forwards GPU originales de batch1 "
+        "y su orden. No cambia encoding, cajas, ventanas ni labels; los workers "
+        "sólo aceptan secuencia, ROI y timestamps. Se validaron32 tensores TRAIN "
+        "originales con paridad exacta y RNG del padre intacto, sin modelo GPU "
+        "ni updates. La suite actualizada pasó159 tests, incluidos12 de "
+        "aislamiento de labels, identidad raw y recursos. La generación científica "
+        "sigue esperando el sello de los12 productores completos. Las pruebas "
+        "revisadas se incluyen en source/tests, con manifiesto SHA256 separado.\n"
+        if (c.out / "garl/FEATURE_INPUT_ENGINEERING_FREEZE.json").exists()
         else "",
         "El usuario fijó un plazo de72 horas, registrado en EXECUTION_DEADLINE.json. "
         "Al vencimiento se pausa en un límite completo y se conservan pendientes "
