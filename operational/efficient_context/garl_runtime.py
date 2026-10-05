@@ -3,12 +3,15 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
+import json
 import time
 from functools import partial
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 from .common import ROOT, Campaign, Lease, atomic_bytes, atomic_json, digest, read
+from .garl_recovery import runtime_measurements
 
 if TYPE_CHECKING:
     import numpy as np
@@ -115,6 +118,7 @@ def run(c: Campaign) -> None:
         "OLD_DEV_opened": False,
         "optimizer_updates": 0,
         "implementation_sha256": digest(Path(__file__)),
+        "recovery_implementation_sha256": digest(Path(__file__).with_name("garl_recovery.py")),
     }
     pin = folder / "PROTOCOL.json"
     if pin.exists() and read(pin) != protocol:
@@ -199,11 +203,15 @@ def run(c: Campaign) -> None:
                 for label, length in (("GARL_NATIVE", 1), ("GARL_H1", 1), ("GARL_H8", 8)):
                     c.require_resources()
                     receipt = folder / f"fragments/{block}_{qi:02d}_{label}.json"
+                    receipt_binding = {
+                        "runtime_protocol_sha256": digest(pin),
+                        "producer_sha256": endpoints[key]["sha256"],
+                        "query": token,
+                        "label": label,
+                        "block": block,
+                    }
                     if receipt.exists():
-                        saved = read(receipt)
-                        if saved["status"] != "PASSED":
-                            raise ValueError("failed native runtime parity requires inspection")
-                        measurements.extend(saved["measurements"])
+                        measurements.extend(runtime_measurements(receipt, receipt_binding))
                         continue
                     native = inputs[length]
                     xs = native.gather(torch.tensor([positions[token]]))[:4]
@@ -335,8 +343,11 @@ def run(c: Campaign) -> None:
                         receipt,
                         dict(
                             status="PASSED" if passed else "FAILED_INTEGRITY",
-                            producer_sha256=endpoints[key]["sha256"],
+                            **receipt_binding,
                             measurements=measured,
+                            measurements_sha256=hashlib.sha256(
+                                json.dumps(measured, sort_keys=True, allow_nan=False).encode()
+                            ).hexdigest(),
                             feature_max_abs=feature_error,
                             phase_max_abs=phase_error,
                             repeated_output_max_abs=repeat_error,

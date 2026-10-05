@@ -259,6 +259,9 @@ def report(c: Campaign) -> None:
         "parallel_resource_admission": read(c.out / "garl/PARALLEL_RESOURCE_ADAPTER_FREEZE.json")
         if (c.out / "garl/PARALLEL_RESOURCE_ADAPTER_FREEZE.json").exists()
         else None,
+        "Garl_resume_code_and_fixture_review": read(c.out / "TEST_RESULTS/garl_resume_review/QA.json")
+        if (c.out / "TEST_RESULTS/garl_resume_review/QA.json").exists()
+        else None,
         "protected_evaluation_access": False,
         "push_or_submission": False,
         "source_references": (
@@ -521,6 +524,18 @@ def report(c: Campaign) -> None:
         "el orden del sampler al cruzar épocas y el límite de lectores abiertos. "
         "Sus recibos de Ruff/Pyright y paridad real están en TEST_RESULTS/parallel_inputs.\n"
         if (c.out / "TEST_RESULTS/parallel_inputs/QA.json").exists()
+        else "",
+        "La revisión adicional de recuperación Garl pasó121 tests, incluidos45 "
+        "casos de recuperación nativa, con cero updates en fixtures. Comprueba "
+        "H1/H8 con el engine real en pausa/reanudación de update0, integridad de "
+        "checkpoints, fallos de publicación atómica y reconciliación del journal. "
+        "Un lock transaccional se archiva sólo si su propietario local está "
+        "muerto y el proceso posee WRITER.lock; los propietarios vivos o ambiguos "
+        "se conservan. Los fragmentos se vinculan a query, source, rango y checkpoint; "
+        "el SOURCE completo se reutiliza sin reescritura. Las mediciones verifican "
+        "checksum, identidad, completitud y paridad al reanudar. Esto verifica "
+        "código y fixtures, sin sustituir la ejecución científica pendiente.\n"
+        if (c.out / "TEST_RESULTS/garl_resume_review/QA.json").exists()
         else "",
         "Bundle: código/configs/diff, pesos/checkpoints completos, predicciones "
         "EWMA, curves, normalizadores, draws/recibos, bindings externos y QA. "

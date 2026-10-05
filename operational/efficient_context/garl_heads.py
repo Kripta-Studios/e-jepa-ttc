@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, cast
 
 from .common import ROOT, Campaign, Lease, atomic_bytes, atomic_json, digest, npz, read
+from .garl_recovery import completed_source, recover_head_transaction, verified_fragment
 
 if TYPE_CHECKING:
     from e_jepa_ttc.efficient_context.garl_head import NativeHeadSource
@@ -40,9 +41,9 @@ def source(c: Campaign, fold: int, role: str, length: int) -> NativeHeadSource:
     from e_jepa_ttc.simplex_t.training import state_digest
 
     folder = c.out / f"garl/features/fold{fold}/{role}"
-    receipt = read(folder / "COMPLETE.json")
-    if digest(folder / "SOURCE.npz") != receipt["source_sha256"]:
-        raise ValueError("native head source changed")
+    receipt = completed_source(folder, digest(folder / "BINDING.json"))
+    if receipt is None:
+        raise ValueError("native head source is not completely published")
     with np.load(c.out / f"garl_heads/normalizers/fold{fold}.npz", allow_pickle=False) as z:
         normalizer = Normalizer(z["mean"], z["scale"], str(z["ids_hash"]))
     with np.load(folder / "SOURCE.npz", allow_pickle=False) as z:
@@ -70,11 +71,14 @@ def prepare(c: Campaign) -> dict:
     from .garl_features import build
 
     path = c.out / "garl_heads/PROTOCOL.json"
+    c.freeze()
     if path.exists():
         protocol = read(path)
         for file in protocol["files"]:
             if digest(Path(file["path"])) != file["sha256"]:
                 raise ValueError("native temporal scientific implementation changed")
+        if protocol["producer_endpoints_sha256"] != digest(c.out / "garl/ENDPOINTS.json"):
+            raise ValueError("native producer endpoint seal changed")
         return protocol
     fits = []
     for fold in range(3):
@@ -115,6 +119,7 @@ def prepare(c: Campaign) -> dict:
             for p in (
                 Path(__file__),
                 Path(__file__).with_name("garl_features.py"),
+                Path(__file__).with_name("garl_recovery.py"),
                 ROOT / "src/e_jepa_ttc/efficient_context/garl_head.py",
                 ROOT / "src/e_jepa_ttc/simplex_t/training.py",
             )
@@ -134,6 +139,7 @@ def train(c: Campaign) -> bool:
     from .budget import require
 
     protocol = prepare(c)
+    recover_head_transaction(c)
     pin = digest(c.out / "garl_heads/PROTOCOL.json")
     budget = WorkBudget(
         c.out / "garl_heads/PHYSICAL_WORK.json",
@@ -213,6 +219,7 @@ def evaluate(c: Campaign) -> None:
     from .analysis import controls
     from .garl_features import build
 
+    prepare(c)
     seal = read(c.out / "garl_heads/ENDPOINTS.json")
     if len(seal["fits"]) != 6 or not seal["all_six_frozen_before_evaluation"]:
         raise ValueError("all six head endpoints required before OLD_DEV forward")
@@ -260,21 +267,21 @@ def evaluate(c: Campaign) -> None:
                 stop = min(start + 128, source_input.population)
                 fragment = c.out / f"garl_heads/publication/fold{fold}/H{length}_{start:05d}.npz"
                 receipt = fragment.with_suffix(".json")
-                if receipt.exists():
-                    r = read(receipt)
-                    if (
-                        r["checkpoint_sha256"] != row["checkpoint_sha256"]
-                        or digest(fragment) != r["sha256"]
-                    ):
-                        raise ValueError("native head inference fragment changed")
-                else:
+                fragment_binding = {
+                    "checkpoint_sha256": row["checkpoint_sha256"],
+                    "source_identity_sha256": source_input.identity_sha256,
+                    "head_protocol_sha256": seal["protocol_sha256"],
+                    "start": start,
+                    "stop": stop,
+                }
+                if not verified_fragment(fragment, fragment_binding):
                     x, t, v, e, _, _ = source_input.gather(torch.arange(start, stop))
                     with torch.inference_mode():
                         output = {k: value.numpy() for k, value in head(x, t, v, e).items()}
                     npz(fragment, **output)
                     atomic_json(
                         receipt,
-                        {"checkpoint_sha256": row["checkpoint_sha256"], "sha256": digest(fragment)},
+                        {**fragment_binding, "sha256": digest(fragment)},
                     )
                 with np.load(fragment, allow_pickle=False) as z:
                     chunks.append({k: z[k].copy() for k in z.files})

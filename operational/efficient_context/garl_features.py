@@ -8,6 +8,7 @@ import json
 from pathlib import Path
 
 from .common import Campaign, atomic_bytes, atomic_json, digest, npz, read, release, spec
+from .garl_recovery import completed_source, verified_fragment
 
 
 def build(c: Campaign, fold: int, role: str) -> dict:
@@ -24,6 +25,7 @@ def build(c: Campaign, fold: int, role: str) -> dict:
     from .budget import require
     from .native_garl import model_class, native_config
 
+    c.freeze()
     if role not in ("inner_oof", "outer_dev"):
         raise ValueError("only the authorized TRAIN and OLD_DEV roles")
     seal = read(c.out / "garl/ENDPOINTS.json")
@@ -60,8 +62,26 @@ def build(c: Campaign, fold: int, role: str) -> dict:
         use_threads=False,
     ).to_pylist()
     records = {row["sample_token"]: row for row in rows}
-    if set(records) != set(tokens):
+    if set(records) != set(tokens) or len(set(tokens)) != len(tokens):
         raise ValueError("missing exact-token native query input; no query dropping permitted")
+    raw_identity = {}
+    for sequence in sorted({r["sequence_id"] for r in rows}):
+        receipt_path = c.out / f"data_recovery/files/{sequence}.json"
+        restored = read(receipt_path)
+        path = c.raw / sequence / "events.h5"
+        stat = path.stat()
+        if (
+            restored["status"] != "VERIFIED"
+            or Path(restored["path"]).resolve() != path.resolve()
+            or (restored["bytes"], restored["mtime_ns"]) != (stat.st_size, stat.st_mtime_ns)
+        ):
+            raise ValueError("native source raw identity differs from verified restoration")
+        raw_identity[sequence] = {
+            "bytes": stat.st_size,
+            "mtime_ns": stat.st_mtime_ns,
+            "sha256": restored["sha256"],
+            "receipt_sha256": digest(receipt_path),
+        }
     admission = read(c.out / "garl/ADMISSION.json")
     endpoints = {v["key"]: v for v in seal["fits"]}
     inner_groups = [v for v in admission["fits"] if v["outer"] == fold and v["inner"] is not None]
@@ -81,6 +101,8 @@ def build(c: Campaign, fold: int, role: str) -> dict:
         "producer_endpoints_sha256": digest(c.out / "garl/ENDPOINTS.json"),
         "input_metadata_sha256": digest(Path(c.local["garl_annotations_candidate"])),
         "implementation_sha256": digest(Path(__file__)),
+        "recovery_implementation_sha256": digest(Path(__file__).with_name("garl_recovery.py")),
+        "restored_raw_identity": raw_identity,
         "native_encoding": (
             "40FP32channels,2nativeframes,floor-ms bounds; current2-frame supplied boxes"
         ),
@@ -101,6 +123,10 @@ def build(c: Campaign, fold: int, role: str) -> dict:
     if not frozen.exists():
         atomic_json(frozen, binding)
     pin = digest(frozen)
+    existing = completed_source(folder, pin, len(tokens))
+    if existing is not None:
+        release(sources)
+        return existing
     pool = ReaderPool()
     model, active = None, None
     positions = {token: i for i, token in enumerate(tokens)}
@@ -110,10 +136,13 @@ def build(c: Campaign, fold: int, role: str) -> dict:
             i = positions[token]
             path = folder / f"fragments/query{i:05d}.npz"
             receipt = path.with_suffix(".json")
-            if receipt.exists():
-                r = read(receipt)
-                if r["binding_sha256"] != pin or digest(path) != r["sha256"]:
-                    raise ValueError("native feature fragment changed")
+            fragment_binding = {
+                "binding_sha256": pin,
+                "query": token,
+                "producer_key": family[token],
+                "producer_sha256": endpoints[family[token]]["sha256"],
+            }
+            if verified_fragment(path, fragment_binding):
                 continue
             key = family[token]
             endpoint = endpoints[key]
@@ -150,6 +179,12 @@ def build(c: Campaign, fold: int, role: str) -> dict:
                     "event_windows_us": windows.tolist(),
                 }
                 raw_stat = (c.raw / query["sequence_id"] / "events.h5").stat()
+                expected_raw = raw_identity[query["sequence_id"]]
+                if (raw_stat.st_size, raw_stat.st_mtime_ns) != (
+                    expected_raw["bytes"],
+                    expected_raw["mtime_ns"],
+                ):
+                    raise ValueError("native source raw identity changed during generation")
                 content = {
                     **native,
                     "producer": endpoint["sha256"],
@@ -186,10 +221,7 @@ def build(c: Campaign, fold: int, role: str) -> dict:
                 receipt,
                 {
                     "sha256": digest(path),
-                    "binding_sha256": pin,
-                    "query": token,
-                    "producer_key": key,
-                    "producer_sha256": endpoint["sha256"],
+                    **fragment_binding,
                 },
             )
             if i % 128 == 0:
@@ -228,6 +260,7 @@ def build(c: Campaign, fold: int, role: str) -> dict:
             "status": "COMPLETE",
             "binding_sha256": pin,
             "source_sha256": digest(folder / "SOURCE.npz"),
+            "metadata_sha256": digest(folder / "METADATA.csv"),
             "queries": len(tokens),
             "unique_observations": len(compact),
             "optimizer_updates": 0,
