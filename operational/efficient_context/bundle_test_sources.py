@@ -4,7 +4,7 @@ from .common import ROOT, Campaign, atomic_bytes, atomic_json, digest
 
 
 def snapshot(c: Campaign) -> None:
-    """Copy only this campaign's tests; raw integration tests still require the recorded base checkout."""
+    """Copy reviewed tests; integration tests still require the recorded base checkout."""
     names = (
         "test_efficient_context_contracts.py",
         "test_parallel_resource_adapter.py",
