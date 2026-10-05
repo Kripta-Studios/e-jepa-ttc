@@ -47,9 +47,11 @@ def call(c: Campaign, key: str, module: str, *args: str) -> int:
     logs.mkdir(parents=True, exist_ok=True)
     import psutil
 
+    own = psutil.Process()
+    ancestors = {os.getpid(), *(parent.pid for parent in own.parents())}
     busy = []
     for process in psutil.process_iter(["pid", "cmdline"]):
-        if process.info["pid"] == os.getpid():
+        if process.info["pid"] in ancestors:
             continue
         command_line = " ".join(process.info["cmdline"] or []).lower()
         scientific = any(

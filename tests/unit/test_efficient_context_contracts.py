@@ -599,3 +599,44 @@ def test_parallel_input_cache_restores_exact_order_across_epoch_boundary(tmp_pat
         assert target == float(i)
     assert not cache.pending and torch.equal(torch.get_rng_state(), before)
     cache.close()
+
+
+@pytest.mark.parametrize("external_trainer", [False, True])
+def test_queue_resource_guard_distinguishes_own_control_ancestor(
+    tmp_path, monkeypatch, external_trainer
+):
+    """A handoff parent must not block its child, while a separate trainer still does."""
+    from types import SimpleNamespace
+
+    import psutil
+
+    from operational.efficient_context import queue
+
+    ancestor = SimpleNamespace(
+        pid=101,
+        info={
+            "pid": 101,
+            "cmdline": [
+                "python",
+                "-m",
+                "operational.efficient_context.garl_train_parallel",
+                "--handoff",
+            ],
+        },
+    )
+    external = SimpleNamespace(
+        pid=202,
+        info={
+            "pid": 202,
+            "cmdline": ["python", "-m", "operational.efficient_context.garl_train", "--resume"],
+        },
+    )
+    monkeypatch.setattr(psutil, "Process", lambda: SimpleNamespace(parents=lambda: [ancestor]))
+    monkeypatch.setattr(
+        psutil, "process_iter", lambda _: [ancestor, external] if external_trainer else [ancestor]
+    )
+    monkeypatch.setattr(queue.subprocess, "run", lambda *_, **__: SimpleNamespace(returncode=0))
+    c = SimpleNamespace(out=tmp_path, config_path=tmp_path / "fixture.json")
+    code = queue.call(c, "fixture_no_training", "fixture_no_training")
+    assert code == (3 if external_trainer else 0)
+    assert (tmp_path / "queue/RESOURCE_PAUSE.json").exists() == external_trainer
