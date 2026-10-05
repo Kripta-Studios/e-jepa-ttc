@@ -507,7 +507,7 @@ def report(c: Campaign) -> None:
         "originales con paridad exacta y RNG del padre intacto, sin modelo GPU "
         "ni updates. La suite actualizada pasó159 tests, incluidos12 de "
         "aislamiento de labels, identidad raw y recursos. La generación científica "
-        "sigue esperando el sello de los12 productores completos. Las pruebas "
+        "exige el sello de los12 productores completos. Las pruebas "
         "revisadas se incluyen en source/tests, con manifiesto SHA256 separado.\n"
         if (c.out / "garl/FEATURE_INPUT_ENGINEERING_FREEZE.json").exists()
         else "",
