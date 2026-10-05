@@ -80,6 +80,17 @@ def call(c: Campaign, key: str, module: str, *args: str) -> int:
     timestamp = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
     path = logs / f"{timestamp}_{key}.txt"
     command = [sys.executable, "-m", module, *args, "--protocol", str(c.config_path)]
+    if (c.out / "garl/DECODE_ENGINEERING_FREEZE.json").exists():
+        command = [
+            sys.executable,
+            "-m",
+            "operational.efficient_context.execution_resources",
+            "--target",
+            module,
+            *args,
+            "--protocol",
+            str(c.config_path),
+        ]
     atomic_json(
         c.out / "QUEUE_PROGRESS.json",
         {"status": "RUNNING", "task": key, "command": command, "log": str(path)},
@@ -269,6 +280,8 @@ def all_tasks(c: Campaign) -> int:
             producer_module = "garl_train_parallel_authorized"
         if (c.out / "garl/QUOTA_SCANNER_FREEZE.json").exists():
             producer_module = "garl_train_scandir"
+        if (c.out / "garl/DECODE_ENGINEERING_FREEZE.json").exists():
+            producer_module = "garl_train_decode"
         stages = [
             ("garl_input_QA", "garl_qa", ()),
             ("garl_microbatch", "native_garl", ("profile",)),
@@ -349,6 +362,12 @@ def main() -> int:
     ):
         os.environ[name] = "4"
     c = Campaign(args.protocol)
+    if (c.out / "garl/DECODE_ENGINEERING_FREEZE.json").exists():
+        from .expanded_disk import install
+        from .garl_train_decode import verify_admission
+
+        verify_admission(c)
+        install(c)
     if args.action == "status":
         print(json.dumps(dependencies(c), ensure_ascii=False))
         return 0

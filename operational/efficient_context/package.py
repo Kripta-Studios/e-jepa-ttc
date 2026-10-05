@@ -19,7 +19,11 @@ def release_cache_for_bundle(c: Campaign) -> None:
     """Release disposable numeric inputs while retaining every scientific checkpoint."""
     if (c.out / "WRITER.lock").exists():
         raise InterruptedError("essential bundle requires no active campaign writer")
-    for name in ("PARALLEL_INPUT_HANDOFF_INTENT.json", "QUOTA_SCAN_HANDOFF_INTENT.json"):
+    for name in (
+        "PARALLEL_INPUT_HANDOFF_INTENT.json",
+        "QUOTA_SCAN_HANDOFF_INTENT.json",
+        "DECODE_HANDOFF_INTENT.json",
+    ):
         handoff = c.out / "garl" / name
         if handoff.exists() and read(handoff).get("status") == "REQUESTED":
             raise InterruptedError("preserve native input cache during the authorized handoff")
@@ -31,6 +35,20 @@ def release_cache_for_bundle(c: Campaign) -> None:
         if path.resolve().parent != root or not re.fullmatch(r"[0-9a-f]{64}\.npz", path.name):
             raise ValueError("unrecognized path in the disposable numeric cache")
     size = sum(path.stat().st_size for path in paths)
+    if (c.out / "DISK_RESOURCE_AUTHORIZATION.json").exists() and not (
+        c.out / "garl/ENDPOINTS.json"
+    ).exists():
+        atomic_json(
+            c.out / "garl/CACHE_RETAINED_FOR_RESUME.json",
+            {
+                "root": str(root),
+                "retained_files": len(paths),
+                "retained_bytes": size,
+                "reason": "native producers unfinished; preserve expanded persistent cache",
+                "cache_in_essential_bundle": False,
+            },
+        )
+        return
     for path in paths:
         path.unlink()
     if paths:
@@ -185,8 +203,15 @@ def package(c: Campaign) -> None:
         )
     payload_size = sum(row["bytes"] for row in entries)
     owned_size = sum(p.stat().st_size for p in c.out.rglob("*") if p.is_file())
-    if owned_size + payload_size > 10_000_000_000:
-        raise InterruptedError("bundle reservation would exceed the owned10GB quota")
+    quota = 10_000_000_000
+    if (c.out / "DISK_RESOURCE_AUTHORIZATION.json").exists():
+        from .expanded_disk import authorization
+
+        quota = authorization(c)["max_owned_bytes"]
+    if owned_size + payload_size > quota:
+        raise InterruptedError(
+            "bundle reservation would exceed the authorized owned artifact quota"
+        )
     atomic_json(c.out / "BUNDLE_MANIFEST.json", {"files": entries})
     target = c.out / "E_JEPA_TTC_EFFICIENT_CONTEXT_ESSENTIAL.zip"
     pending = target.with_suffix(".pending")
