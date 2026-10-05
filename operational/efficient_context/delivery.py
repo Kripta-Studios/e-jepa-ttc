@@ -439,6 +439,15 @@ def report(c: Campaign) -> None:
         "completo y registra la reserva de recuperación.\n"
         if (c.out / "garl/CACHE_ENGINEERING_FREEZE.json").exists()
         else "",
+        "Un segundo freeze de ingeniería conserva los mismos bytes NPZ originales "
+        "también en RAM comprimida, con las mismas capacidades. El QA adicional "
+        "verifica192 retornos exactos sobre64 inputs TRAIN, layouts contiguos y "
+        "ausencia de consumo de RNG, lecturas raw o updates. Se conservan los "
+        "dos freezes y pruebas de reanudación con estados completos. El cambio "
+        "reduce las relecturas cuando el conjunto activo supera la capacidad de "
+        "tensores descomprimidos; no modifica el encoding ni sus pesos.\n"
+        if (c.out / "garl/COMPRESSED_CACHE_FREEZE.json").exists()
+        else "",
         "Las seis cabezas implementadas usan INNER-OOF excluyendo outer e inner "
         "holdouts, endpoint final fijo y normalización TRAIN de observaciones "
         "únicas. No incorporan A5/PAIR/RGB/DINO como features. Los expertos "
@@ -476,6 +485,11 @@ def report(c: Campaign) -> None:
         "Contratos handoff:39 tests CPU pasaron antes de la campaña. "
         f"Estado nativo evaluado: {garl.get('status', 'PENDING_EXECUTION')}; "
         "no se afirma ejecución end-to-end de una rama que carezca de endpoints.\n",
+        "La suite ampliada para almacenamiento comprimido pasó50 tests, con "
+        "Ruff y Pyright satisfactorios; recibos en TEST_RESULTS/compressed_cache. "
+        "Incluye los tests anteriores y no se suma como50 experimentos nuevos.\n"
+        if (c.out / "TEST_RESULTS/compressed_cache/QA.json").exists()
+        else "",
         "Bundle: código/configs/diff, pesos/checkpoints completos, predicciones "
         "EWMA, curves, normalizadores, draws/recibos, bindings externos y QA. "
         "CRC y manifiesto SHA256 se verifican; se regenera la evidencia incluida "
