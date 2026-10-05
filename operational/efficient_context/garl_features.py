@@ -18,11 +18,10 @@ def build(c: Campaign, fold: int, role: str) -> dict:
     import pyarrow.parquet as pq
     import torch
 
-    from e_jepa_ttc.efficient_context.garl_input import inference_record
-    from e_jepa_ttc.simplex_t.cached_event_reader import ReaderPool
     from e_jepa_ttc.simplex_t.training import state_digest
 
     from .budget import require
+    from .garl_feature_inputs import InferenceWorkers
     from .native_garl import model_class, native_config
 
     c.freeze()
@@ -31,6 +30,17 @@ def build(c: Campaign, fold: int, role: str) -> dict:
     seal = read(c.out / "garl/ENDPOINTS.json")
     if len(seal["fits"]) != 12 or not seal["all_twelve_frozen_before_evaluation"]:
         raise ValueError("all native producer endpoints required before family evaluation")
+    input_qa = read(c.out / "garl/FEATURE_INPUT_QA.json")
+    if (
+        input_qa["status"] != "PASSED"
+        or input_qa["native_protocol_sha256"] != digest(c.out / "garl/PROTOCOL.json")
+        or input_qa["implementation_sha256"]
+        != digest(Path(__file__).with_name("garl_feature_inputs.py"))
+        or input_qa["QA_implementation_sha256"]
+        != digest(Path(__file__).with_name("garl_feature_input_qa.py"))
+        or not input_qa["exact_original_FP32_input_and_parent_RNG_parity"]
+    ):
+        raise ValueError("native parallel inference inputs require exact TRAIN-only input QA")
     protocol = read(c.out / "garl/PROTOCOL.json")
     if digest(c.out / "garl/PROTOCOL.json") != seal["protocol_sha256"]:
         raise ValueError("native producer freeze changed")
@@ -102,6 +112,13 @@ def build(c: Campaign, fold: int, role: str) -> dict:
         "input_metadata_sha256": digest(Path(c.local["garl_annotations_candidate"])),
         "implementation_sha256": digest(Path(__file__)),
         "recovery_implementation_sha256": digest(Path(__file__).with_name("garl_recovery.py")),
+        "CPU_preparation_implementation_sha256": digest(
+            Path(__file__).with_name("garl_feature_inputs.py")
+        ),
+        "CPU_preparation_QA_sha256": digest(c.out / "garl/FEATURE_INPUT_QA.json"),
+        "CPU_preparation_workers": 4,
+        "max_pending_native_inputs": 8,
+        "GPU_forward_batch_size_unchanged": 1,
         "restored_raw_identity": raw_identity,
         "native_encoding": (
             "40FP32channels,2nativeframes,floor-ms bounds; current2-frame supplied boxes"
@@ -127,7 +144,7 @@ def build(c: Campaign, fold: int, role: str) -> dict:
     if existing is not None:
         release(sources)
         return existing
-    pool = ReaderPool()
+    workers = InferenceWorkers(c)
     model, active = None, None
     positions = {token: i for i, token in enumerate(tokens)}
     try:
@@ -170,6 +187,7 @@ def build(c: Campaign, fold: int, role: str) -> dict:
             query = records[token]
             anchor = int(parent.anchor_us[safe[-1]])
             original_windows = np.asarray(query["event_windows_us"], np.int64)
+            pending = {}
             for slot in np.flatnonzero(valid):
                 lag = anchor - int(parent.anchor_us[safe[slot]])
                 windows = original_windows - lag
@@ -195,7 +213,18 @@ def build(c: Campaign, fold: int, role: str) -> dict:
                 observation_keys[slot] = hashlib.sha256(
                     json.dumps(content, sort_keys=True).encode()
                 ).hexdigest()
-                sensor = inference_record(native, pool, c.raw)
+                pending[int(slot)] = workers.submit(
+                    native, (expected_raw["bytes"], expected_raw["mtime_ns"])
+                )
+            for slot in np.flatnonzero(valid):
+                sensor = torch.from_numpy(pending.pop(int(slot)).result())
+                raw_stat = (c.raw / query["sequence_id"] / "events.h5").stat()
+                expected_raw = raw_identity[query["sequence_id"]]
+                if (raw_stat.st_size, raw_stat.st_mtime_ns) != (
+                    expected_raw["bytes"],
+                    expected_raw["mtime_ns"],
+                ):
+                    raise ValueError("native source raw identity changed before its GPU forward")
                 if model is None:
                     raise ValueError("native producer was not loaded")
                 with torch.inference_mode():
@@ -268,7 +297,7 @@ def build(c: Campaign, fold: int, role: str) -> dict:
         atomic_json(folder / "COMPLETE.json", result)
         return result
     finally:
-        pool.close()
+        workers.close()
         release(sources)
         model = None
         gc.collect()

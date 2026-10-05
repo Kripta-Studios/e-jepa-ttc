@@ -119,6 +119,7 @@ def prepare(c: Campaign) -> dict:
             for p in (
                 Path(__file__),
                 Path(__file__).with_name("garl_features.py"),
+                Path(__file__).with_name("garl_feature_inputs.py"),
                 Path(__file__).with_name("garl_recovery.py"),
                 ROOT / "src/e_jepa_ttc/efficient_context/garl_head.py",
                 ROOT / "src/e_jepa_ttc/simplex_t/training.py",
