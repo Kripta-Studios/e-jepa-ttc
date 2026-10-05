@@ -45,6 +45,10 @@ def report(c: Campaign) -> None:
     atomic_json(c.out / "ACCOUNTING.json", counts)
     atomic_json(c.out / "DEPENDENCIES.json", dep)
     state = read(c.out / "QUEUE_STATE.json") if (c.out / "QUEUE_STATE.json").exists() else {}
+    pause_path = c.out / "garl/USER_PAUSE_RECEIPT.json"
+    user_pause = read(pause_path) if pause_path.exists() else None
+    pilot_path = c.out / "strategy_pilot/RESULTS.json"
+    pilot = read(pilot_path) if pilot_path.exists() else None
     wide_path = c.out / "H8_WIDE_RESULTS.json"
     wide = read(wide_path) if wide_path.exists() else {}
     wide_evaluated = wide.get("status") == "COMPLETE"
@@ -275,6 +279,8 @@ def report(c: Campaign) -> None:
         "public_checkpoint_reaudit": read(c.out / "garl/public_checkpoint_audit/AUDIT.json")
         if (c.out / "garl/public_checkpoint_audit/AUDIT.json").exists()
         else None,
+        "user_strategy_pause": user_pause,
+        "TRAIN40_zero_update_feasibility_pilot": pilot,
         "protected_evaluation_access": False,
         "push_or_submission": False,
         "source_references": (
@@ -309,7 +315,9 @@ def report(c: Campaign) -> None:
             else "PENDING"
         ),
         "E3": (
-            "COMPLETE"
+            "PAUSED_USER_STRATEGY"
+            if user_pause
+            else "COMPLETE"
             if garl.get("status") == "COMPLETE"
             else "BLOCKED_DEPENDENCY"
             if dep["garl_missing"] or dep["garl_raw_missing"]
@@ -326,6 +334,18 @@ def report(c: Campaign) -> None:
         "resume_script": "RESUME.ps1",
         "holdouts_opened": False,
         "confirmation_requires_future_authorization": True,
+        "original_queue_reactivation_requires_user_decision": bool(user_pause),
+        "TRAIN40_pilot": pilot,
+        "TRAIN40_encoder_training_authorized": False,
+        "next_protocol_dependencies": (
+            [
+                "public checkpoint training provenance: TRAIN40 vs code TRAIN46",
+                "independent evaluation contract and external ROI/TTC adapter",
+                "full-system producer training budget and recipe, not head-only timing",
+            ]
+            if user_pause
+            else []
+        ),
     }
     atomic_json(c.out / "NEXT_DECISION.json", next_decision)
     semantics = (
@@ -623,4 +643,29 @@ def report(c: Campaign) -> None:
         "Stage76, public validation, private test, EvTTC test y CodaBench "
         "permanecen cerrados. No push ni submissions.\n",
     ]
+    if user_pause:
+        lines.insert(
+            1,
+            "Campaña pausada por decisión del usuario: E3 no está terminado ni tiene un "
+            "resultado negativo. Se preservaron los checkpoints completos, incluidos "
+            f"{user_pause['saved_native_updates_all_fits']} updates Garl duraderos, "
+            "con cero updates confirmados perdidos. No se reactivará la cola original "
+            "sin una nueva decisión del usuario.\n",
+        )
+    if pilot and pilot.get("status") == "COMPLETE":
+        serial = pilot["modes"]["serial"]
+        parallel = pilot["modes"]["four_workers"]
+        lines.insert(
+            2,
+            "Piloto TRAIN40 sin entrenamiento:88 consultas nuevas de22 secuencias "
+            "TRAIN disponibles, H8 y productores congelados. Se guardaron176 fragmentos "
+            "de inputs/predicciones, con paridad exacta entre preparación serial y cuatro "
+            f"workers. Throughput serial:{serial['queries_per_second']:.3f} consultas/s; "
+            f"cuatro workers:{parallel['queries_per_second']:.3f} consultas/s. "
+            "El orden fijo y la caché del SO impiden atribuir causalmente toda la diferencia "
+            "a los workers. Extrapolaciones orientativas de un pase de88.744 consultas: "
+            f"{serial['naive_88744_query_hours']:.2f}/{parallel['naive_88744_query_hours']:.2f}h. "
+            "Excluyen descargas pendientes, entrenamiento de encoders/productores y "
+            "adaptación/evaluación externa. No miden precisión frente a Garl.\n",
+        )
     atomic_bytes(c.out / "FINAL_REPORT.md", "\n".join(lines).encode())

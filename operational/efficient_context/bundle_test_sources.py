@@ -13,6 +13,7 @@ def snapshot(c: Campaign) -> None:
         "test_parallel_decode.py",
         "test_garl_feature_inputs.py",
         "test_garl_parallel_preflight.py",
+        "test_train40_pilot.py",
     )
     rows = []
     for name in names:
