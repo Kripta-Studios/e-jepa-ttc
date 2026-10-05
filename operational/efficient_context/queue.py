@@ -259,6 +259,9 @@ def all_tasks(c: Campaign) -> int:
             if cache_qa.exists() and read(cache_qa).get("status") == "PASSED"
             else "garl_train"
         )
+        compressed_qa = c.out / "garl/COMPRESSED_CACHE_QA.json"
+        if compressed_qa.exists() and read(compressed_qa).get("status") == "PASSED":
+            producer_module = "garl_train_compressed"
         stages = [
             ("garl_input_QA", "garl_qa", ()),
             ("garl_microbatch", "native_garl", ("profile",)),

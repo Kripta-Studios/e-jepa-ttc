@@ -419,14 +419,16 @@ def test_completed_wide_reuse_checks_all_sealed_bytes(tmp_path, variant):
         assert completed_wide(SimpleNamespace(out=tmp_path)) == (variant == "complete")
 
 
+@pytest.mark.parametrize("compressed", [False, True])
 def test_exclusive_cache_retains_disk_victims_without_changing_training_tensors(
-    tmp_path, monkeypatch
+    tmp_path, monkeypatch, compressed
 ):
     """RAM plus disk must cover the working set while preserving all three returned fields."""
     import io
     from types import SimpleNamespace
 
     from e_jepa_ttc.efficient_context import garl_input
+    from operational.efficient_context.compressed_cache import CompressedInputCache
     from operational.efficient_context.exclusive_cache import ExclusiveInputCache
 
     out = tmp_path / "out"
@@ -455,12 +457,23 @@ def test_exclusive_cache_retains_disk_victims_without_changing_training_tensors(
         policy={"max_tree_rss_gib": 12},
         require_resources=lambda: None,
     )
-    cache = ExclusiveInputCache(c, rows)
+    cache = (CompressedInputCache if compressed else ExclusiveInputCache)(c, rows)
     stream = io.BytesIO()
     v = expected["0"]
     np.savez_compressed(stream, events=v[0].numpy(), visible=v[1].numpy(), target=v[2])
     cache.limit = len(stream.getvalue()) * 2 + 128
     cache.memory_limit = 3 * cache.tensor_bytes(expected["0"])
+    if compressed:
+        sizes = []
+        for value in expected.values():
+            buffer = io.BytesIO()
+            np.savez_compressed(
+                buffer, events=value[0].numpy(), visible=value[1].numpy(), target=value[2]
+            )
+            sizes.append(len(buffer.getvalue()))
+        cache.limit = 2 * max(sizes) + 64
+        cache.memory_limit = 3 * max(sizes) + 64
+    rng_before = torch.get_rng_state().clone()
     for _ in range(3):
         for token, reference in expected.items():
             result = cache.get(token)
@@ -470,6 +483,7 @@ def test_exclusive_cache_retains_disk_victims_without_changing_training_tensors(
             assert cache.disk <= cache.limit and cache.bytes <= cache.memory_limit
     assert cache.reads == 5
     assert cache.preserved_disk_evictions > 0
+    assert torch.equal(torch.get_rng_state(), rng_before)
     raw.write_bytes(b"changed identity")
     with pytest.raises(ValueError, match="raw identity changed"):
         cache.get("0")
