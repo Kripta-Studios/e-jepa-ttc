@@ -19,11 +19,10 @@ def release_cache_for_bundle(c: Campaign) -> None:
     """Release disposable numeric inputs while retaining every scientific checkpoint."""
     if (c.out / "WRITER.lock").exists():
         raise InterruptedError("essential bundle requires no active campaign writer")
-    handoff = c.out / "garl/PARALLEL_INPUT_HANDOFF_INTENT.json"
-    if handoff.exists() and read(handoff).get("status") == "REQUESTED":
-        raise InterruptedError(
-            "preserve native input cache during the authorized CPU worker handoff"
-        )
+    for name in ("PARALLEL_INPUT_HANDOFF_INTENT.json", "QUOTA_SCAN_HANDOFF_INTENT.json"):
+        handoff = c.out / "garl" / name
+        if handoff.exists() and read(handoff).get("status") == "REQUESTED":
+            raise InterruptedError("preserve native input cache during the authorized handoff")
     root = (c.out / "garl/native_cache").resolve()
     if c.out.resolve() not in root.parents:
         raise ValueError("numeric cache root escaped the owned campaign")
