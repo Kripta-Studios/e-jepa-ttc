@@ -14,14 +14,24 @@ from .garl_train_cached import GuardedCampaign
 def main() -> int:
     """Seal exact CPU worker QA and resources before restoring the original complete states."""
     from . import garl_train
-    from .parallel_inputs import ParallelInputCache
 
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--protocol", type=Path, default=ROOT / "configs/campaign/efficient_context_v1.json"
     )
     parser.add_argument("--resume", action="store_true")
+    parser.add_argument(
+        "--handoff",
+        action="store_true",
+        help="Request the previous worker's existing safe resource handoff",
+    )
     args = parser.parse_args()
+    if args.handoff:
+        from .parallel_input_handoff import run
+
+        return run()
+    from .parallel_inputs import ParallelInputCache
+
     c = GuardedCampaign(args.protocol)
     c.freeze()
     previous = c.out / "garl/COMPRESSED_CACHE_FREEZE.json"
@@ -35,6 +45,7 @@ def main() -> int:
         Path(__file__).with_name("parallel_inputs.py"),
         Path(__file__).with_name("parallel_input_qa.py"),
         Path(__file__).with_name("resource_policy.py"),
+        Path(__file__).with_name("parallel_input_handoff.py"),
     ]
     if (
         qa["status"] != "PASSED"
