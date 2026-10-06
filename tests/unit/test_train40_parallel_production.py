@@ -1,0 +1,439 @@
+from __future__ import annotations
+
+import json
+import subprocess
+import sys
+from pathlib import Path
+from typing import Any, cast
+
+import pytest
+
+from operational.train40_system import (
+    parallel_controller_production as parallel_controller,
+)
+from operational.train40_system import (
+    parallel_engine_production as parallel_engine,
+)
+from operational.train40_system import (
+    resource_monitor,
+)
+from operational.train40_system.parallel_runtime_production import (
+    LEDGER_NAME,
+    REGISTRY_NAME,
+    SCIENTIFIC_ENDPOINTS,
+    ParallelResourceMonitor,
+    arm_target_complete,
+    is_parallel_engine_command,
+    physical_budget,
+    publish_upfront_reservation,
+    require_exact_parallel_family,
+)
+
+
+def write(path: Path, value: dict[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(value), encoding="utf-8")
+
+
+def journal(committed: int, *, durable: int | None = None, recovery: int = 0) -> dict[str, Any]:
+    return {
+        "contract": {"updates_limit": 49_932},
+        "committed_updates": committed,
+        "durable_updates": committed if durable is None else durable,
+        "recovery_upper": recovery,
+        "pending_update_upper": 0,
+    }
+
+
+def prepared_output(tmp_path: Path) -> Path:
+    write(tmp_path / "AUTHORIZATION.json", {"previous_physical_execution_upper": 100})
+    write(tmp_path / "TECHNICAL_ACCOUNTING.json", {"synthetic_optimizer_updates": 3})
+    write(tmp_path / "fits/a5_seed7/UPDATE_JOURNAL.json", journal(27_500, recovery=30))
+    write(tmp_path / "fits/c2f_seed7/UPDATE_JOURNAL.json", journal(400))
+    from operational.efficient_context.common import digest
+
+    for arm, committed, recovery in (("a5", 27_500, 30), ("c2f", 400, 0)):
+        checkpoint = tmp_path / f"fits/{arm}_seed7/checkpoint_last.pt"
+        checkpoint.write_bytes(f"{arm} full checkpoint".encode())
+        write(
+            tmp_path / f"fits/{arm}_seed7/CHECKPOINT_RECEIPT.json",
+            {
+                "status": "PAUSED_RESOURCE",
+                "committed_updates": committed,
+                "recovery_upper": recovery,
+                "sha256": digest(checkpoint),
+                "full_optimizer_scheduler_sampler_and_all_RNG": True,
+            },
+        )
+    write(
+        tmp_path / REGISTRY_NAME,
+        {"token": "nonce", "phase": "BOTH_AT_BARRIER", "children": {}},
+    )
+    return tmp_path
+
+
+def test_upfront_reservation_uses_post_restore_baselines_and_balanced_targets(
+    tmp_path: Path,
+) -> None:
+    output = prepared_output(tmp_path)
+    ledger = publish_upfront_reservation(output, "nonce")
+    assert ledger["arms"]["a5"]["baseline_committed"] == 27_500
+    assert ledger["arms"]["a5"]["baseline_durable"] == 27_500
+    assert ledger["arms"]["a5"]["baseline_recovery_upper"] == 30
+    assert ledger["arms"]["a5"]["target_committed"] == 49_932
+    assert len(ledger["arms"]["a5"]["baseline_checkpoint_sha256"]) == 64
+    assert ledger["arms"]["c2f"]["target_committed"] == 49_932
+    assert ledger["scientific_endpoints"] == SCIENTIFIC_ENDPOINTS
+    assert ledger["combined_remaining_updates"] == (49_932 - 27_500) + (49_932 - 400)
+    assert ledger["physical_updates_reserved_upper"] == (
+        physical_budget(output)["physical"] + ledger["combined_remaining_updates"]
+    )
+    assert json.loads((output / LEDGER_NAME).read_text())["token"] == "nonce"
+
+
+def test_reservation_fails_closed_for_pending_or_physical_cap(tmp_path: Path) -> None:
+    output = prepared_output(tmp_path)
+    pending = journal(400)
+    pending["pending_update_upper"] = 1
+    write(output / "fits/c2f_seed7/UPDATE_JOURNAL.json", pending)
+    with pytest.raises(ValueError, match="pending"):
+        publish_upfront_reservation(output, "nonce")
+
+    write(output / "fits/c2f_seed7/UPDATE_JOURNAL.json", journal(400))
+    write(output / "AUTHORIZATION.json", {"previous_physical_execution_upper": 200_000})
+    with pytest.raises(ValueError, match="physical update cap"):
+        publish_upfront_reservation(output, "nonce")
+
+
+def test_completed_arm_requires_exact_target_full_checkpoint(tmp_path: Path) -> None:
+    output = prepared_output(tmp_path)
+    ledger = publish_upfront_reservation(output, "nonce")
+    target = ledger["arms"]["a5"]["target_committed"]
+    write(output / "fits/a5_seed7/UPDATE_JOURNAL.json", journal(target, recovery=30))
+    checkpoint = output / "fits/a5_seed7/checkpoint_last.pt"
+    checkpoint.write_bytes(b"full checkpoint")
+    from operational.efficient_context.common import digest
+
+    write(
+        output / "fits/a5_seed7/CHECKPOINT_RECEIPT.json",
+        {
+            "status": "PAUSED_RESOURCE",
+            "committed_updates": target,
+            "recovery_upper": 30,
+            "sha256": digest(checkpoint),
+            "full_optimizer_scheduler_sampler_and_all_RNG": True,
+        },
+    )
+    assert arm_target_complete(output, "a5", "nonce")
+    value = journal(target, durable=target - 1)
+    write(output / "fits/a5_seed7/UPDATE_JOURNAL.json", value)
+    assert not arm_target_complete(output, "a5", "nonce")
+
+
+def test_reservation_requires_durable_baselines_and_recovery_budget(tmp_path: Path) -> None:
+    output = prepared_output(tmp_path)
+    write(
+        output / "fits/a5_seed7/UPDATE_JOURNAL.json",
+        journal(27_500, durable=27_400, recovery=30),
+    )
+    with pytest.raises(ValueError, match="full durable"):
+        publish_upfront_reservation(output, "nonce")
+    write(output / "fits/a5_seed7/UPDATE_JOURNAL.json", journal(27_500, recovery=2001))
+    with pytest.raises(ValueError, match="recovery budget"):
+        publish_upfront_reservation(output, "nonce")
+
+
+def test_repeated_guards_do_not_consume_quota_and_target_cannot_overshoot(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    output = prepared_output(tmp_path)
+    ledger = publish_upfront_reservation(output, "nonce")
+    monitor = object.__new__(ParallelResourceMonitor)
+    monitor.output = output
+    monitor.arm = "a5"
+    monitor.token = "nonce"
+    monitor._guard_invocations = 0
+    monitor._parallel_guard_total_seconds = 0.0
+    monitor._paired_sample = lambda required_arms: {
+        "aggregate_tree_rss_bytes": 1,
+        "host_available_bytes": 4 * 1024**3,
+        "disk_free_bytes": 100 * 1024**3,
+    }
+    monkeypatch.setattr(
+        resource_monitor.ResourceMonitor,
+        "guard",
+        lambda self, path: (True, {"reasons": []}),
+    )
+    allowed, _ = ParallelResourceMonitor.guard(monitor, output)
+    assert allowed  # A5 prewarm admission consumes no quota.
+    allowed, _ = ParallelResourceMonitor.guard(monitor, output)
+    assert allowed
+    assert json.loads((output / LEDGER_NAME).read_text()) == ledger
+    target = ledger["arms"]["a5"]["target_committed"]
+    write(output / "fits/a5_seed7/UPDATE_JOURNAL.json", journal(target, recovery=30))
+    allowed, telemetry = ParallelResourceMonitor.guard(monitor, output)
+    assert not allowed
+    assert "PARALLEL_ARM_TARGET_REACHED" in telemetry["reasons"]
+
+
+def test_failure_cleanup_waits_for_live_peer_full_checkpoint(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    output = prepared_output(tmp_path)
+    checkpoint = output / "fits/a5_seed7/checkpoint_last.pt"
+    checkpoint.write_bytes(b"paused")
+    from operational.efficient_context.common import digest
+
+    write(output / "fits/a5_seed7/UPDATE_JOURNAL.json", journal(27_500, recovery=30))
+    write(
+        output / "fits/a5_seed7/CHECKPOINT_RECEIPT.json",
+        {"committed_updates": 27_500, "sha256": digest(checkpoint)},
+    )
+
+    class Process:
+        calls = 0
+
+        def poll(self) -> int | None:
+            self.calls += 1
+            return None if self.calls == 1 else 0
+
+    pauses: list[str] = []
+    monkeypatch.setattr(
+        parallel_controller,
+        "request_peer_pause",
+        lambda out, token, arm: pauses.append(arm),
+    )
+    parallel_controller.wait_for_paused_survivors(output, "nonce", cast(Any, {"a5": Process()}))
+    assert pauses == ["coordinator_failure"]
+
+
+def test_frozen_heavy_predicate_keeps_parallel_route_explicitly_separate() -> None:
+    predicate = resource_monitor._is_heavy_command
+    assert not predicate(["python", "-m", "operational.train40_system.parallel_engine_production"])
+    assert predicate(["python", "-m", "operational.train40_system.engine_host_fast_4"])
+
+
+def test_parallel_family_allowlist_sees_v1_v4_and_future_siblings() -> None:
+    assert is_parallel_engine_command(
+        ["python", "-m", "operational.train40_system.parallel_engine"]
+    )
+    assert is_parallel_engine_command(
+        ["python", "-m", "operational.train40_system.parallel_engine_production"]
+    )
+    assert is_parallel_engine_command(
+        ["python", "-m", "operational.train40_system.parallel_engine_production"]
+    )
+    assert not is_parallel_engine_command(["python", "-m", "unrelated.module"])
+    expected = {(10, 1.0), (11, 1.1), (20, 2.0), (21, 2.1)}
+    require_exact_parallel_family(set(expected), expected)
+    with pytest.raises(RuntimeError, match="allowlist differs"):
+        require_exact_parallel_family(expected | {(99, 9.9)}, expected)
+    with pytest.raises(RuntimeError, match="allowlist differs"):
+        require_exact_parallel_family(expected - {(11, 1.1)}, expected)
+
+
+def test_parallel_engine_restores_monitor_binding_on_delegate_failure(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from operational.train40_system import engine_host_fast_4
+
+    original = resource_monitor.ResourceMonitor
+    monkeypatch.setattr(parallel_engine, "verify_admission", lambda output: {})
+    monkeypatch.setattr(parallel_engine, "wait_for_registry", lambda *args: None)
+
+    def fail(output: Path, arm: str) -> None:
+        assert resource_monitor.ResourceMonitor is not original
+        raise RuntimeError("delegate failed")
+
+    monkeypatch.setattr(engine_host_fast_4, "run", fail)
+    with pytest.raises(RuntimeError, match="delegate failed"):
+        parallel_engine.run(tmp_path, "a5", "nonce")
+    assert resource_monitor.ResourceMonitor is original
+    runtime = json.loads((tmp_path / "fits/a5_seed7/PARALLEL_PRODUCTION_RUNTIME.json").read_text())
+    assert runtime == {"arm": "a5", "status": "FAILED", "token": "nonce"}
+
+
+def test_engine_wrapper_calls_run_directly_and_never_frozen_main() -> None:
+    source = Path(parallel_engine.__file__).read_text(encoding="utf-8")
+    assert "engine_host_fast_4.run(output, arm)" in source
+    assert "engine_host_fast_4.main" not in source
+    assert 'Lease(output / "fits" / f"{args.arm}_seed7")' in source
+
+
+def test_parallel_constants_match_explicit_authorization() -> None:
+    from operational.train40_system import parallel_runtime_production as parallel_runtime
+
+    assert parallel_runtime.AGGREGATE_RSS_LIMIT_BYTES == 24 * 1024**3
+    assert parallel_runtime.HOST_AVAILABLE_MIN_BYTES == 2 * 1024**3
+    assert parallel_runtime.DISK_FREE_MIN_BYTES == 20 * 1024**3
+    assert parallel_runtime.PHYSICAL_UPDATE_LIMIT == 240_000
+
+
+def test_fresh_parallel_engine_import_does_not_import_torch() -> None:
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-c",
+            (
+                "import sys; import operational.train40_system.parallel_engine_production; "
+                "assert 'torch' not in sys.modules"
+            ),
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+        timeout=30,
+    )
+    assert result.returncode == 0, result.stderr
+
+
+def test_barrier_wait_fails_immediately_when_child_exits(tmp_path: Path) -> None:
+    class DeadProcess:
+        def poll(self) -> int:
+            return 7
+
+    with pytest.raises(RuntimeError, match="exited before"):
+        parallel_controller.wait_file(
+            tmp_path / "missing.json", "nonce", cast(Any, DeadProcess()), timeout=30.0
+        )
+
+
+def test_new_accounted_recovery_is_reserved_without_changing_quota(tmp_path: Path) -> None:
+    output = prepared_output(tmp_path)
+    write(output / "fits/a5_seed7/UPDATE_JOURNAL.json", journal(27_500, recovery=91))
+    receipt_path = output / "fits/a5_seed7/CHECKPOINT_RECEIPT.json"
+    receipt = json.loads(receipt_path.read_text())
+    receipt["recovery_upper"] = 91
+    write(receipt_path, receipt)
+    ledger = publish_upfront_reservation(output, "nonce")
+    assert ledger["arms"]["a5"]["baseline_recovery_upper"] == 91
+    assert ledger["arms"]["a5"]["target_committed"] == 49_932
+    assert ledger["recovery_upper_at_reservation"] == 91
+
+
+def test_transient_windows_read_retries_without_using_stale_budget(monkeypatch):
+    from operational.train40_system import parallel_runtime_production as runtime
+
+    attempts = []
+    waits = []
+
+    def transient(path, **kwargs):
+        attempts.append(path)
+        if len(attempts) < 3:
+            raise PermissionError("atomic replacement sharing violation")
+        return '{"committed_updates": 42}'
+
+    monkeypatch.setattr(Path, "read_text", transient)
+    monkeypatch.setattr(runtime.time, "sleep", waits.append)
+    assert runtime.read_object(Path("journal.json")) == {"committed_updates": 42}
+    assert len(attempts) == 3 and sum(waits) < 0.2
+
+
+def test_persistent_windows_read_fails_closed_after_bounded_wait(monkeypatch):
+    from operational.train40_system import parallel_runtime_production as runtime
+
+    attempts = []
+    waits = []
+
+    def denied(path, **kwargs):
+        attempts.append(path)
+        raise PermissionError("persistent denial")
+
+    monkeypatch.setattr(Path, "read_text", denied)
+    monkeypatch.setattr(runtime.time, "sleep", waits.append)
+    with pytest.raises(PermissionError, match="persistent denial"):
+        runtime.read_object(Path("journal.json"))
+    assert len(attempts) == 6 and sum(waits) <= 0.1551
+
+
+def test_completed_arm_accepts_natural_scientific_endpoint_status(
+    tmp_path: Path,
+) -> None:
+    output = prepared_output(tmp_path)
+    ledger = publish_upfront_reservation(output, "nonce")
+    target = ledger["arms"]["c2f"]["target_committed"]
+    write(output / "fits/c2f_seed7/UPDATE_JOURNAL.json", journal(target))
+    checkpoint = output / "fits/c2f_seed7/checkpoint_last.pt"
+    checkpoint.write_bytes(b"natural endpoint")
+    from operational.efficient_context.common import digest
+
+    write(
+        output / "fits/c2f_seed7/CHECKPOINT_RECEIPT.json",
+        {
+            "status": "COMPLETE",
+            "committed_updates": target,
+            "recovery_upper": 0,
+            "sha256": digest(checkpoint),
+            "full_optimizer_scheduler_sampler_and_all_RNG": True,
+        },
+    )
+    assert arm_target_complete(output, "c2f", "nonce")
+
+
+def test_paired_inventory_retries_a_process_exit_race(monkeypatch) -> None:
+    monitor = object.__new__(ParallelResourceMonitor)
+    calls = 0
+    expected = {
+        "aggregate_tree_rss_bytes": 1,
+        "host_available_bytes": 4 * 1024**3,
+        "disk_free_bytes": 100 * 1024**3,
+    }
+
+    def sample(required_arms):
+        nonlocal calls
+        calls += 1
+        if calls == 1:
+            raise RuntimeError("Parallel process allowlist differs")
+        return expected
+
+    monitor._paired_sample_once = sample
+    monkeypatch.setattr(
+        "operational.train40_system.parallel_runtime_production.time.sleep", lambda _: None
+    )
+    assert monitor._paired_sample(("a5", "c2f")) == expected
+    assert calls == 2
+
+
+def test_frozen_inventory_repair_clears_only_a_freshly_resolved_race(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monitor = object.__new__(ParallelResourceMonitor)
+    monitor.output = tmp_path
+    monkeypatch.setattr(
+        resource_monitor,
+        "_collect_sample",
+        lambda *args: {
+            "inventory_unreadable_python_pids": [],
+            "other_heavy_processes": [],
+            "tree_rss_bytes": 1,
+            "host_available_bytes": 4 * 1024**3,
+            "disk_free_bytes": 100 * 1024**3,
+            "processes_seen": 5,
+            "python_cmdline_reads": 2,
+        },
+    )
+    allowed, telemetry = monitor._repair_transient_frozen_inventory(
+        False, {"reasons": ["RESOURCE_MONITOR_INVENTORY_INCOMPLETE"]}
+    )
+    assert allowed
+    assert telemetry["reasons"] == []
+
+
+def test_frozen_inventory_repair_keeps_persistent_unreadable_python_fail_closed(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monitor = object.__new__(ParallelResourceMonitor)
+    monitor.output = tmp_path
+    monkeypatch.setattr(
+        resource_monitor,
+        "_collect_sample",
+        lambda *args: {"inventory_unreadable_python_pids": [99]},
+    )
+    monkeypatch.setattr(
+        "operational.train40_system.parallel_runtime_production.time.sleep", lambda _: None
+    )
+    allowed, telemetry = monitor._repair_transient_frozen_inventory(
+        False, {"reasons": ["RESOURCE_MONITOR_INVENTORY_INCOMPLETE"]}
+    )
+    assert not allowed
+    assert telemetry["reasons"] == ["RESOURCE_MONITOR_INVENTORY_INCOMPLETE"]
