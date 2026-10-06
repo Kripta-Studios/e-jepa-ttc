@@ -95,7 +95,7 @@ def _compile_forward(
 
 
 def _tensor_sha256(value: torch.Tensor) -> str:
-    array = value.detach().cpu().contiguous().numpy()
+    array = value.detach().cpu().contiguous().reshape(-1).view(torch.uint8).numpy()
     return hashlib.sha256(array.tobytes()).hexdigest()
 
 

@@ -1,6 +1,8 @@
 """CPU-only routing checks for the CUDA-graph admission harness."""
 
+import hashlib
 from pathlib import Path
+from types import SimpleNamespace
 
 import torch
 
@@ -8,6 +10,8 @@ from operational.train40_system.graph_launch_admission import (
     BACKEND,
     ForwardDispatcher,
     _compile_forward,
+    _output_identity,
+    _tensor_sha256,
 )
 
 
@@ -62,3 +66,18 @@ def test_admission_source_has_no_optimizer_or_default_inductor() -> None:
     assert 'backend=BACKEND' in source
     assert 'backend="inductor"' not in source
     assert "relation_reuse_admission" not in source
+
+
+def test_raw_byte_hash_supports_bfloat16_and_scalar_metadata() -> None:
+    values = torch.tensor([1.0, -2.0], dtype=torch.bfloat16)
+    assert _tensor_sha256(values) == hashlib.sha256(b"\x80\x3f\x00\xc0").hexdigest()
+
+    scalar = torch.tensor(1.0, dtype=torch.bfloat16)
+    identity = _output_identity(SimpleNamespace(value=scalar))
+    assert identity == {
+        "value": {
+            "shape": [],
+            "dtype": "torch.bfloat16",
+            "sha256": hashlib.sha256(b"\x80\x3f").hexdigest(),
+        }
+    }
