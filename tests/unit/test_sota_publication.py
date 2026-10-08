@@ -29,7 +29,9 @@ def _canonical_campaign_validation_stub(monkeypatch: pytest.MonkeyPatch) -> None
         fcwd_run,
         "source_binding",
         lambda manifest, *_args, **_kwargs: json.loads(
-            (Path(manifest).parent / "SOURCE_FREEZE.json").read_text(encoding="utf-8")
+            (Path(manifest).parents[1] / "fcwd_inference/SOURCE_FREEZE.json").read_text(
+                encoding="utf-8"
+            )
         ),
     )
 
@@ -162,7 +164,9 @@ def _minimum(root: Path, *, complete: bool) -> None:
         fcwd = root / "fcwd_inference"
         scoring = fcwd / "scoring"
         _scoring(scoring)
-        _write_json(fcwd / "QUERY_MANIFEST.json", {"rows": []})
+        fcwd_manifest = root / "fcwd_population/QUERY_MANIFEST.json"
+        _write_json(fcwd_manifest, {"rows": []})
+        (fcwd / "QUERY_MANIFEST.json").write_bytes(fcwd_manifest.read_bytes())
         _write_json(
             fcwd / "SOURCE_FREEZE.json",
             {
@@ -178,7 +182,7 @@ def _minimum(root: Path, *, complete: bool) -> None:
             {
                 "status": "FROZEN",
                 "source_freeze_sha256": _digest(fcwd / "SOURCE_FREEZE.json"),
-                "manifest_sha256": _digest(fcwd / "QUERY_MANIFEST.json"),
+                "manifest_sha256": _digest(fcwd_manifest),
                 "optimizer_updates": 0,
                 "targets_read": False,
             },
@@ -187,7 +191,7 @@ def _minimum(root: Path, *, complete: bool) -> None:
             fcwd / "PREDICTIONS_SEALED.json",
             {
                 "status": "COMPLETE",
-                "manifest_sha256": _digest(fcwd / "QUERY_MANIFEST.json"),
+                "manifest_sha256": _digest(fcwd_manifest),
                 "source_freeze_sha256": _digest(fcwd / "SOURCE_FREEZE.json"),
                 "binding_sha256": _digest(fcwd / "INFERENCE_FREEZE.json"),
                 "optimizer_updates": 0,
@@ -207,7 +211,7 @@ def _minimum(root: Path, *, complete: bool) -> None:
             "status": "COMPLETE",
             "prediction_seal_sha256": _digest(fcwd / "PREDICTIONS_SEALED.json"),
             "source_freeze_sha256": _digest(fcwd / "SOURCE_FREEZE.json"),
-            "query_manifest_sha256": _digest(fcwd / "QUERY_MANIFEST.json"),
+            "query_manifest_sha256": _digest(fcwd_manifest),
             "model_coverage_sha256": _digest(scoring / "MODEL_COVERAGE.json"),
             "joined_predictions_sha256": _digest(scoring / "SCORED_PREDICTIONS.csv"),
             "scoring_manifest_sha256": _digest(scoring / "SHA256.json"),
@@ -371,6 +375,23 @@ def test_complete_publication_regenerates_exact_table(tmp_path: Path) -> None:
     assert "Para la rama `expanded_metrics`" in readme
     assert "no cubren las filas históricas ni FCWD" in readme
     assert "sustitución coordinada" in readme
+
+
+def test_fcwd_verifier_uses_canonical_population_manifest(tmp_path: Path) -> None:
+    artifacts = tmp_path / "artifacts"
+    _minimum(artifacts, complete=True)
+    canonical = artifacts / "fcwd_population/QUERY_MANIFEST.json"
+    inference_copy = artifacts / "fcwd_inference/QUERY_MANIFEST.json"
+    assert publication_module._canonical_fcwd_manifest(artifacts) == canonical
+    inference_copy.unlink()
+    assert publication_module._canonical_fcwd_manifest(artifacts) == canonical
+    branch = next(item for item in inspect_branches(artifacts) if item.name == "fcwd_metrics")
+    assert branch.complete
+    _write_json(inference_copy, {"rows": [{"query_id": "divergent"}]})
+    with pytest.raises(ValueError, match="differs from canonical"):
+        publication_module._canonical_fcwd_manifest(artifacts)
+    branch = next(item for item in inspect_branches(artifacts) if item.name == "fcwd_metrics")
+    assert not branch.complete
 
 
 def test_regeneration_verifies_top_level_snapshot_manifest(tmp_path: Path) -> None:

@@ -137,7 +137,7 @@ def _fcwd_complete(artifacts: Path) -> bool:
     try:
         output = artifacts / "fcwd_inference"
         scoring = output / "scoring"
-        manifest = output / "QUERY_MANIFEST.json"
+        manifest = _canonical_fcwd_manifest(artifacts)
         receipt = _json(output / "SCORING_COMPLETE.json")
         contract = _json(scoring / "TARGET_JOIN_CONTRACT.json")
         coverage = _json(scoring / "MODEL_COVERAGE.json")
@@ -195,6 +195,19 @@ def _fcwd_complete(artifacts: Path) -> bool:
         )
     except (FileNotFoundError, KeyError, OSError, ValueError, TypeError, json.JSONDecodeError):
         return False
+
+
+def _canonical_fcwd_manifest(artifacts: Path) -> Path:
+    """Resolve the population manifest and reject any divergent inference copy."""
+    canonical = artifacts / "fcwd_population" / "QUERY_MANIFEST.json"
+    if not canonical.is_file():
+        raise FileNotFoundError(f"Missing canonical FCWD query manifest: {canonical}")
+    inference_copy = artifacts / "fcwd_inference" / "QUERY_MANIFEST.json"
+    if inference_copy.exists() and (
+        not inference_copy.is_file() or sha256(inference_copy) != sha256(canonical)
+    ):
+        raise ValueError("FCWD inference manifest copy differs from canonical population manifest")
+    return canonical
 
 
 def _cost_complete(artifacts: Path) -> bool:
