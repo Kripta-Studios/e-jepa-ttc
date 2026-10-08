@@ -367,6 +367,83 @@ def test_complete_publication_regenerates_exact_table(tmp_path: Path) -> None:
         text=True,
     )
     assert completed.returncode == 0, completed.stderr
+    readme = (output / "README.md").read_text(encoding="utf-8")
+    assert "Para la rama `expanded_metrics`" in readme
+    assert "no cubren las filas históricas ni FCWD" in readme
+    assert "sustitución coordinada" in readme
+
+
+def test_regeneration_verifies_top_level_snapshot_manifest(tmp_path: Path) -> None:
+    artifacts, output = tmp_path / "artifacts", tmp_path / "docs/sota"
+    _minimum(artifacts, complete=True)
+    publish(
+        artifacts,
+        output,
+        artifacts / "bundle.zip",
+        require_complete=True,
+        repo=_publication_repo(tmp_path),
+    )
+    (output / "README.md").write_text("tampered\n", encoding="utf-8")
+    completed = subprocess.run(  # noqa: S603
+        [sys.executable, str(output / "regenerate.py"), "--verify"],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    assert completed.returncode != 0
+    assert "snapshot hash mismatch: README.md" in completed.stderr
+
+
+def test_nested_checksum_manifest_is_rehashed_after_sanitization(tmp_path: Path) -> None:
+    artifacts, output = tmp_path / "artifacts", tmp_path / "docs/sota"
+    _minimum(artifacts, complete=False)
+    repo = _publication_repo(tmp_path)
+    audit = artifacts / "root_qa/full_outlier_audit/AUDIT.json"
+    payload = artifacts / "root_qa/full_outlier_audit/DETAIL.txt"
+    _write_json(audit, {"repo_path": str(repo / "private/source.py")})
+    payload.write_text("measured\n", encoding="utf-8")
+    source_manifest = audit.parent / "SHA256SUMS.txt"
+    source_manifest.write_text(
+        f"{_digest(audit)}  AUDIT.json\n{_digest(payload)}  DETAIL.txt\n",
+        encoding="utf-8",
+    )
+    source_manifest_sha = _digest(source_manifest)
+    incomplete = artifacts / "root_qa/incomplete_manifest/SHA256SUMS.txt"
+    incomplete.parent.mkdir(parents=True)
+    incomplete.write_text(f"{'0' * 64}  missing.json\n", encoding="utf-8")
+    publish(
+        artifacts,
+        output,
+        artifacts / "bundle.zip",
+        require_complete=False,
+        repo=repo,
+    )
+    published_root = output / "evidence/root_qa/full_outlier_audit"
+    assert "${REPO}" in (published_root / "AUDIT.json").read_text(encoding="utf-8")
+    for line in (published_root / "SHA256SUMS.txt").read_text(encoding="utf-8").splitlines():
+        expected, name = line.split("  ", 1)
+        assert _digest(published_root / name) == expected
+    inventory = json.loads((output / "SOURCE_INVENTORY.json").read_text(encoding="utf-8"))
+    item = next(
+        row
+        for row in inventory["files"]
+        if row["published_path"].endswith("full_outlier_audit/SHA256SUMS.txt")
+    )
+    assert item["source_sha256"] == source_manifest_sha
+    assert item["published_sha256"] == _digest(published_root / "SHA256SUMS.txt")
+    assert item["nested_checksum_manifest_mode"] == "REHASHED_PUBLISHED_BYTES"
+    incomplete_published = output / "evidence/root_qa/incomplete_manifest/SHA256SUMS.txt"
+    assert incomplete_published.read_text(encoding="utf-8").startswith(
+        "# SOURCE_ONLY_MANIFEST: not locally verifiable"
+    )
+    incomplete_item = next(
+        row
+        for row in inventory["files"]
+        if row["published_path"].endswith("incomplete_manifest/SHA256SUMS.txt")
+    )
+    assert incomplete_item["nested_checksum_manifest_mode"] == (
+        "SOURCE_ONLY_NOT_LOCALLY_VERIFIABLE"
+    )
 
 
 def test_regeneration_never_overwrites_a_tampered_published_table(tmp_path: Path) -> None:

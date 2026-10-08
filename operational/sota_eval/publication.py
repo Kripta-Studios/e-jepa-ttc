@@ -17,7 +17,7 @@ import shutil
 import tempfile
 import zipfile
 from dataclasses import dataclass
-from pathlib import Path, PureWindowsPath
+from pathlib import Path, PurePosixPath, PureWindowsPath
 from typing import Any
 
 SCORING_FILES = (
@@ -148,8 +148,11 @@ def _fcwd_complete(artifacts: Path) -> bool:
 
         fcwd_run.verify_seal(output, manifest)
         followups.verify_fcwd(
-            output, manifest, Path(str(source_value["campaign"])),
-            Path(str(source_value["public_full_dir"])), Path(str(source_value["code_root"])),
+            output,
+            manifest,
+            Path(str(source_value["campaign"])),
+            Path(str(source_value["public_full_dir"])),
+            Path(str(source_value["code_root"])),
         )
         source_current = (
             fcwd_run.source_binding(
@@ -466,13 +469,76 @@ def _copy_sanitized(source: Path, destination: Path, repo: Path, roots: list[str
         shutil.copyfile(source, destination)
 
 
+def _refresh_published_checksum_manifests(
+    evidence: Path, inventory: list[dict[str, Any]]
+) -> None:
+    """Make nested checksum manifests describe published bytes after sanitization.
+
+    A source manifest is retained as provenance through ``source_sha256`` in the
+    inventory.  Only safe, present sibling paths are rehashed.  A manifest that
+    cannot be made locally verifiable is explicitly labelled source-only rather
+    than being published with checksums that describe different bytes.
+    """
+    inventory_by_path = {str(item["published_path"]): item for item in inventory}
+    for manifest in sorted(evidence.rglob("SHA256SUMS.txt"), key=lambda path: path.as_posix()):
+        original = manifest.read_text(encoding="utf-8").splitlines()
+        parsed: list[tuple[str, Path]] = []
+        reason: str | None = None
+        for line in original:
+            fields = line.split("  ", 1)
+            if len(fields) != 2 or len(fields[0]) != 64:
+                reason = "malformed checksum entry"
+                break
+            name = fields[1]
+            relative = PurePosixPath(name)
+            if (
+                relative.is_absolute()
+                or not relative.parts
+                or ".." in relative.parts
+                or "\\" in name
+            ):
+                reason = "unsafe checksum path"
+                break
+            target = (manifest.parent / Path(*relative.parts)).resolve()
+            parent = manifest.parent.resolve()
+            if target == manifest.resolve() or parent not in target.parents or not target.is_file():
+                reason = "checksum target is not present in the published directory"
+                break
+            parsed.append((name, target))
+        if reason is None:
+            manifest.write_text(
+                "".join(f"{sha256(target)}  {name}\n" for name, target in parsed),
+                encoding="utf-8",
+            )
+            mode = "REHASHED_PUBLISHED_BYTES"
+        else:
+            manifest.write_text(
+                "# SOURCE_ONLY_MANIFEST: not locally verifiable after publication filtering; "
+                f"{reason}. Original source bytes are bound by SOURCE_INVENTORY.json.\n"
+                + "\n".join(f"# {line}" for line in original)
+                + "\n",
+                encoding="utf-8",
+            )
+            mode = "SOURCE_ONLY_NOT_LOCALLY_VERIFIABLE"
+        relative_manifest = manifest.relative_to(evidence.parent).as_posix()
+        item = inventory_by_path[relative_manifest]
+        item["published_sha256"] = sha256(manifest)
+        item["sanitized"] = item["source_sha256"] != item["published_sha256"]
+        item["bytes"] = manifest.stat().st_size
+        item["nested_checksum_manifest_mode"] = mode
+
+
 def _allowlisted_sources(artifacts: Path, branches: list[Branch]) -> list[Path]:
     complete = {branch.name: branch.complete for branch in branches}
     roots = [
         artifacts / name
         for name in (
-            "official_contract", "r1_resume", "root_qa", "fcwd_runner_qa",
-            "prefetch", "full_prefetch",
+            "official_contract",
+            "r1_resume",
+            "root_qa",
+            "fcwd_runner_qa",
+            "prefetch",
+            "full_prefetch",
         )
     ]
     if complete["scoring_existing_946"]:
@@ -748,6 +814,13 @@ def _readme(
         "tres cabezas H8 sobre productores compartidos, no tres réplicas independientes de "
         "los productores. Ningún error Garl se filtra por rendimiento; fallos y cobertura "
         "permanecen en la cohorte y las vistas puntuables se etiquetan condicionales.",
+        "H8 limita su salida nativa a ±60 s; Garl conserva la división nativa sin clipping. "
+        "Cuando sus dos alturas predichas son casi iguales, Garl puede emitir TTC finitos "
+        "extremos. Por eso se muestran conjuntamente MAE y mediana, sin eliminar filas. "
+        "La mediana no tiene intervalo bootstrap en este análisis; una mediana menor no "
+        "se describe como una diferencia estadísticamente demostrada. El diagnóstico "
+        "de extremos y cualquier sensibilidad post hoc se conservan separadamente en "
+        "`evidence/root_qa/full_outlier_audit/`; no sustituyen las métricas nativas.",
         "",
         "El inventario de baselines de desarrollo retiene fallos. Las métricas del subconjunto "
         "puntuable se publican sólo como condicionales, con cobertura explícita. Los costes "
@@ -755,6 +828,9 @@ def _readme(
         "consultas, con caché caliente y contextos distintos; no demuestran causalidad de "
         "arquitectura ni son comparables directamente con latencias publicadas. El protocolo "
         "mide batch 1 en float32 sin TF32 y separa preparación, GPU y E2E. H8 y EO "
+        "se miden con un único worker GPU del proyecto en el escritorio Windows WDDM; "
+        "los clientes gráficos ambientales y la telemetría quedan registrados. No se "
+        "afirma exclusividad física ni ausencia de contención del escritorio. H8 y EO "
         "comparten la preparación cruda; la preparación/E2E de EO es conservadora porque "
         "también construye history8. El piloto de tres consultas no prueba un 2,59× sostenido.",
         "",
@@ -769,36 +845,56 @@ def _readme(
         "releen payloads, aunque CachedEventReader sí abre handles; cachés OS/HDF5 no están "
         "controladas y el timing final puede mezclar tramos antiguos y nuevos. No se afirma "
         "timing bit-exact ni una medición cold/warm ininterrumpida. Se informa el estado "
-        "literal del recibo vigente y la medición GPU final sigue pendiente.",
+        "literal del recibo vigente; R1 y el coste del sistema TRAIN40 son mediciones distintas.",
         "",
         "Fuentes primarias: [EvTTC](https://nail-hnu.github.io/EventAidedTTC/), "
         "[Garl-TTC](https://github.com/NAIL-HNU/Garl-TTC) y "
         "[FCWD](https://nail-hnu.github.io/EventAidedTTC/).",
         "",
         "Ejecute `python regenerate.py --verify` desde este directorio para verificar hashes "
-        "y reproducir exactamente las tablas desde la evidencia publicada.",
+        "y reproducir exactamente las tablas desde la evidencia publicada. Esta verificación "
+        "comprueba `SHA256SUMS.txt`; el `.sha256` del ZIP es el ancla externa sólo si se "
+        "conserva u obtiene por separado. Ningún manifiesto autocontenido protege frente a la "
+        "sustitución coordinada del snapshot y de todos sus hashes.",
     ]
     if metrics:
         lines += [
             "",
             "## Resultados medidos",
             "",
-            "| Rama | Método | Cobertura | RTE cohorte completa (%) | MAE (s) | "
+            "| Rama | Método | Población | GT elegibles | Cobertura | "
+            "RTE cohorte completa (%) | MAE (s) | Mediana AE (s) | "
             "RTE condicional (%) |",
-            "|---|---|---:|---:|---:|---:|",
+            "|---|---|---:|---:|---:|---:|---:|---:|---:|",
         ]
         for row in metrics:
             lines.append(
-                "| {branch} | {method} | {coverage} | {rte} | {mae} | {conditional} |".format(
+                (
+                    "| {branch} | {method} | {total} | {eligible} | {coverage} | "
+                    "{rte} | {mae} | {median} | {conditional} |"
+                ).format(
                     branch=row["branch"],
                     method=row["method"],
+                    total=row["total_rows"],
+                    eligible=row["gt_eligible"],
                     coverage=row["coverage_on_eligible_gt"] or "n/a",
                     rte=row["complete_cohort_metrics__rte_percent"] or "n/a",
                     mae=row["complete_cohort_metrics__mae_seconds"] or "n/a",
+                    median=row["complete_cohort_metrics__median_absolute_error_seconds"] or "n/a",
                     conditional=row["conditional_on_scorable_predictions_metrics__rte_percent"]
                     or "n/a",
                 )
             )
+        lines += [
+            "",
+            "Cobertura se refiere exclusivamente a GT elegibles. Las filas sin GT válido "
+            "permanecen en la población y su tratamiento sigue la regla predeclarada. "
+            "Para la rama `expanded_metrics`, los contrastes pareados y sus intervalos por "
+            "secuencia/grupo completos están en `evidence/expanded_metrics/PAIRED.csv`; no "
+            "cubren las filas históricas ni FCWD de esta tabla. Describen esos cinco sistemas "
+            "con sus distintos contratos de salida y no una superioridad intrínseca de "
+            "arquitectura.",
+        ]
     if costs:
         lines += [
             "",
@@ -867,7 +963,7 @@ def _readme(
 REGENERATE = r'''"""Verify evidence, rerun every published scorer, and rebuild all tables."""
 from __future__ import annotations
 import argparse, csv, hashlib, json, subprocess, sys, tempfile
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 ROOT = Path(__file__).resolve().parent
 SCORE_OUTPUTS = ("METADATA.json", "METHOD_METRICS.csv", "PAIRED.csv",
@@ -910,6 +1006,25 @@ def write_csv(path: Path, values, columns) -> None:
         writer = csv.DictWriter(f, fieldnames=columns, lineterminator="\n")
         writer.writeheader(); writer.writerows(values)
 
+def verify_snapshot() -> None:
+    manifest = ROOT / "SHA256SUMS.txt"
+    if not manifest.is_file():
+        raise SystemExit("missing top-level SHA256SUMS.txt")
+    seen = set()
+    for line in manifest.read_text(encoding="utf-8").splitlines():
+        fields = line.split("  ", 1)
+        if len(fields) != 2 or len(fields[0]) != 64:
+            raise SystemExit("malformed top-level SHA256SUMS.txt")
+        expected, name = fields
+        relative = PurePosixPath(name)
+        if (relative.is_absolute() or not relative.parts or ".." in relative.parts
+                or "\\" in name or name in seen):
+            raise SystemExit(f"unsafe or duplicate snapshot path: {name}")
+        seen.add(name)
+        path = (ROOT / Path(*relative.parts)).resolve()
+        if ROOT.resolve() not in path.parents or not path.is_file() or digest(path) != expected:
+            raise SystemExit(f"snapshot hash mismatch: {name}")
+
 def rerun(job, scorer: Path) -> None:
     reference, input_csv = ROOT / job["reference"], ROOT / job["input"]
     config = read_json(reference / "METADATA.json")["configuration"]
@@ -930,6 +1045,7 @@ def rerun(job, scorer: Path) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(); parser.add_argument("--verify", action="store_true")
     args = parser.parse_args()
+    verify_snapshot()
     inventory = read_json(ROOT / "SOURCE_INVENTORY.json")
     for item in inventory["files"]:
         path = ROOT / item["published_path"]
@@ -1118,6 +1234,7 @@ def publish(
                     "bytes": destination.stat().st_size,
                 }
             )
+        _refresh_published_checksum_manifests(evidence, inventory)
         (
             metric_rows,
             cost_rows,
@@ -1205,7 +1322,8 @@ def publish(
             )
         if not branch_complete["system_cost"]:
             next_actions.append(
-                "Ejecutar el protocolo de coste fixed-8 exclusivo y verificar sus ocho "
+                "Ejecutar el protocolo de coste fixed-8 con un único worker GPU del proyecto "
+                "y verificar sus ocho "
                 "fragments RAW contra ambos freezes."
             )
         if not branch_complete["official_contract"]:
@@ -1215,7 +1333,8 @@ def publish(
             )
         if not branch_complete["r1_measurement"]:
             next_actions.append(
-                "Reanudar R1 desde 486/768 con GPU exclusiva después de accuracy/cost; "
+                "Continuar R1 desde los pares preservados del recibo vigente, sin otro "
+                "trabajo GPU del proyecto, después de accuracy/cost; "
                 "reportar el timing interrumpido con su caveat de caché."
             )
         state = {
