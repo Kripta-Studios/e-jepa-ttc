@@ -50,6 +50,9 @@ class Owner:
         "operational.evttc_rgb_transfer.run",
         "operational.train40_system.engine",
         "operational.train40_system.engine_profiled",
+        "operational.train40_system.garl_predictions",
+        "operational.train40_system.history_features",
+        "operational.train40_system.history_resources8_transport_graph",
         "operational.efficient_context.r1_gib_measure",
     ],
 )

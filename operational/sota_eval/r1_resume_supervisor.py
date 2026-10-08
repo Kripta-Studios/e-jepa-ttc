@@ -79,13 +79,15 @@ def is_heavy(name: str, command: list[str]) -> bool:
         "operational.efficient_context.r1_profile",
         "operational.efficient_context.garl_train",
         "operational.train40_system.engine",
+        "operational.train40_system.garl_predictions",
+        "operational.train40_system.history_features",
         "operational.simplex_t_h16_replication.train",
         "train_baseline",
         "pretrain_jepa",
         "finetune_ttc",
     }
     return module in exact_gpu_entrypoints or module.startswith(
-        "operational.train40_system.engine_"
+        ("operational.train40_system.engine_", "operational.train40_system.history_resources")
     )
 
 
