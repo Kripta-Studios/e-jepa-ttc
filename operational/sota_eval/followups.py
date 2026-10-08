@@ -10,8 +10,10 @@ operational failure is never represented as a scientific negative result.
 from __future__ import annotations
 
 import argparse
+import csv
 import hashlib
 import json
+import math
 import os
 import subprocess
 import sys
@@ -217,26 +219,211 @@ def verify_fcwd_population(manifest: Path) -> dict[str, Any]:
     return freeze
 
 
-def verify_fcwd(output: Path, manifest: Path) -> dict[str, Any]:
-    seal = read(output / "PREDICTIONS_SEALED.json")
-    rows = read(manifest).get("rows")
-    if not isinstance(rows, list) or len(rows) != 630:
-        raise ValueError("FCWD frozen population is not exactly 630 queries")
-    if (seal.get("status"), seal.get("queries"), seal.get("manifest_sha256")) != (
-        "COMPLETE",
-        630,
-        digest(manifest),
+def _verify_full_model_binding(model: Mapping[str, Any]) -> None:
+    checkpoint, configuration = Path(str(model["checkpoint"])), Path(str(model["config"]))
+    if (
+        checkpoint.stat().st_size != model["checkpoint_bytes"]
+        or digest(checkpoint) != model["checkpoint_sha256"]
+        or digest(configuration) != model["config_sha256"]
+        or digest(ROOT / "operational/evttc_rgb_transfer/model.py") != model["module_sha256"]
     ):
-        raise ValueError("FCWD prediction seal is incomplete or unbound")
-    scoring = read(output / "SCORING_COMPLETE.json")
-    if scoring.get("status") != "COMPLETE" or scoring.get("queries") != 630:
-        raise ValueError("FCWD score receipt is incomplete")
-    if scoring.get("prediction_seal_sha256") != digest(output / "PREDICTIONS_SEALED.json"):
-        raise ValueError("FCWD scoring is not bound to the prediction seal")
-    return scoring
+        raise ValueError("full Garl model/checkpoint/config binding changed")
+    native = Path(str(model["native_code_root"]))
+    for relative, expected in model["native_source_sha256"].items():
+        if digest(native / relative) != expected:
+            raise ValueError(f"full Garl native source changed: {relative}")
+
+
+def verify_fcwd_inference(
+    output: Path, manifest: Path, campaign_root: Path, public_full: Path, code_root: Path
+) -> tuple[dict[str, Any], list[dict[str, Any]]]:
+    """Verify current source/model/input lineage and every ordered FCWD fragment."""
+    from operational.sota_eval import fcwd_run
+    from operational.sota_eval.reuse import _verify_model_binding
+
+    expected_source = fcwd_run.source_binding(
+        manifest, campaign_root, public_full, code_root, "cuda"
+    )
+    if read(output / "SOURCE_FREEZE.json") != expected_source:
+        raise ValueError("FCWD current source/campaign receipt freeze changed")
+    inference = read(output / "INFERENCE_FREEZE.json")
+    if (
+        inference.get("source_freeze_sha256") != digest(output / "SOURCE_FREEZE.json")
+        or inference.get("manifest_sha256") != digest(manifest)
+        or inference.get("methods") != list(fcwd_run.METHODS)
+        or inference.get("device") != "cuda"
+        or inference.get("precision") != "float32_no_tf32"
+        or inference.get("targets_read") is not False
+        or inference.get("optimizer_updates") != 0
+    ):
+        raise ValueError("FCWD inference model/source/input freeze changed")
+    _verify_model_binding(inference["own_models"])
+    _verify_full_model_binding(inference["full_model"])
+    manifest_value, predictions = fcwd_run.verify_seal(output, manifest)
+    if [row["query_id"] for row in manifest_value["rows"]] != [
+        prediction["query_id"] for prediction in predictions
+    ]:
+        raise ValueError("FCWD prediction order differs from frozen manifest")
+    return manifest_value, predictions
+
+
+def verify_fcwd(
+    output: Path,
+    manifest: Path,
+    campaign_root: Path,
+    public_full: Path,
+    code_root: Path,
+    inference_validator: Callable[
+        [Path, Path, Path, Path, Path], tuple[dict[str, Any], list[dict[str, Any]]]
+    ] = verify_fcwd_inference,
+) -> dict[str, Any]:
+    manifest_value, predictions = inference_validator(
+        output, manifest, campaign_root, public_full, code_root
+    )
+    from operational.sota_eval import fcwd_run, scoring
+
+    score_dir = output / "scoring"
+    scoring_receipt = read(output / "SCORING_COMPLETE.json")
+    coverage = read(score_dir / "MODEL_COVERAGE.json")
+    target_join = read(score_dir / "TARGET_JOIN_CONTRACT.json")
+    checksums = read(score_dir / "SHA256.json")
+    expected_inventory = {
+        "REPORT.json",
+        "METHOD_METRICS.csv",
+        "PER_SEQUENCE.csv",
+        "PAIRED.csv",
+        "SCORED_ROWS.csv",
+        "METADATA.json",
+    }
+    if set(checksums) != expected_inventory or any(
+        digest(score_dir / name) != expected for name, expected in checksums.items()
+    ):
+        raise ValueError("FCWD scorer SHA inventory changed or is incomplete")
+    expected_reason = "MISSING_AUDITED_EVENT_TO_RGB_SPATIAL_MAPPING"
+    expected_dependency = "Audited event-right to RGB-right spatial mapping without GT depth"
+    gt_files = target_join.get("gt_files", {})
+    gt_current = (
+        isinstance(gt_files, dict)
+        and set(gt_files) == {"FCWD1", "FCWD2", "FCWD3"}
+        and all(
+            digest(Path(str(receipt["path"]))) == receipt["sha256"]
+            and Path(str(receipt["path"])).stat().st_size == receipt["bytes"]
+            for receipt in gt_files.values()
+        )
+    )
+    if (
+        scoring_receipt.get("status") != "COMPLETE"
+        or scoring_receipt.get("queries") != 630
+        or scoring_receipt.get("methods") != list(fcwd_run.METHODS[:4])
+        or scoring_receipt.get("planned_methods") != list(fcwd_run.METHODS)
+        or scoring_receipt.get("optimizer_updates") != 0
+        or scoring_receipt.get("prediction_seal_sha256")
+        != digest(output / "PREDICTIONS_SEALED.json")
+        or scoring_receipt.get("scoring_manifest_sha256") != digest(score_dir / "SHA256.json")
+        or scoring_receipt.get("target_join_contract_sha256")
+        != digest(score_dir / "TARGET_JOIN_CONTRACT.json")
+        or coverage.get("planned_methods") != list(fcwd_run.METHODS)
+        or coverage.get("scored_methods") != list(fcwd_run.METHODS[:4])
+        or coverage.get("all_queries_retained") != 630
+        or coverage.get("head_selection_performed") is not False
+        or coverage.get("full_model", {}).get("status") != "DEPENDENCY_UNAVAILABLE"
+        or coverage.get("full_model", {}).get("queries_with_missing_spatial_mapping") != 630
+        or coverage.get("full_model", {}).get("not_a_negative_model_result") is not True
+        or coverage.get("full_model", {}).get("dependency") != expected_dependency
+        or any(
+            prediction.get("unavailable_reasons", {}).get(fcwd_run.METHODS[4]) != expected_reason
+            for prediction in predictions
+        )
+        or target_join.get("status") != "COMPLETE"
+        or target_join.get("rows_retained") != 630
+        or target_join.get("prediction_seal_sha256") != digest(output / "PREDICTIONS_SEALED.json")
+        or target_join.get("source_freeze_sha256") != digest(output / "SOURCE_FREEZE.json")
+        or target_join.get("asset_manifest_sha256")
+        != digest(Path(str(manifest_value["asset_manifest_path"])))
+        or target_join.get("reference_contract_sha256")
+        != digest(Path(str(manifest_value["reference_contract_path"])))
+        or target_join.get("model_coverage_sha256") != digest(score_dir / "MODEL_COVERAGE.json")
+        or target_join.get("joined_predictions_sha256")
+        != digest(score_dir / "SCORED_PREDICTIONS.csv")
+        or target_join.get("scoring_manifest_sha256") != digest(score_dir / "SHA256.json")
+        or target_join.get("scorer_module_sha256") != digest(Path(scoring.__file__))
+        or target_join.get("query_manifest_sha256") != digest(manifest)
+        or target_join.get("population_selection_used_gt") is not False
+        or target_join.get("labels_opened_only_after_verified_prediction_seal") is not True
+        or target_join.get("optimizer_updates") != 0
+        or target_join.get("checkpoint_training_exclusion_certified") is not False
+        or target_join.get("model_predictions_rerun") is not False
+        or not gt_current
+        or len(manifest_value["rows"]) != 630
+    ):
+        raise ValueError("FCWD scoring/coverage/target-join contract changed")
+    return scoring_receipt
+
+
+def verify_cost_fragments(
+    output: Path, selected: Sequence[Mapping[str, Any]], execution_sha: str, model_sha: str
+) -> list[dict[str, str]]:
+    """Verify every cost fragment/raw row, fixed identity, order, and sample count."""
+    from operational.sota_eval import cost
+
+    expected_counts = {
+        "cpu_prepare": (cost.CPU_WARMUPS + cost.CPU_MEASUREMENTS, cost.CPU_WARMUPS),
+        "gpu_inference": (cost.GPU_WARMUPS + cost.GPU_MEASUREMENTS, cost.GPU_WARMUPS),
+        "sequential_end_to_end": (cost.E2E_MEASUREMENTS, 0),
+    }
+    all_rows: list[dict[str, str]] = []
+    for selected_row in selected:
+        query_id = str(selected_row["query_id"])
+        stem = hashlib.sha256(query_id.encode("utf-8")).hexdigest()[:16]
+        fragment_path, raw_path = output / f"FRAGMENT_{stem}.json", output / f"RAW_{stem}.csv"
+        fragment = read(fragment_path)
+        cost.validate_resume(fragment, raw_path, execution_sha, model_sha, query_id)
+        if (
+            fragment.get("sequence_id") != selected_row["sequence_id"]
+            or fragment.get("scenario_family") != selected_row["scenario_family"]
+            or set(fragment.get("audit", {}).get("prediction_sha256", {})) != set(cost.SYSTEMS)
+            or fragment.get("targets_read") is not False
+            or fragment.get("optimizer_updates") != 0
+            or fragment.get("raw_csv") != raw_path.name
+        ):
+            raise ValueError("cost fragment fixed identity/scientific boundary changed")
+        with raw_path.open(newline="", encoding="utf-8") as handle:
+            reader = csv.DictReader(handle)
+            if reader.fieldnames != list(cost.CSV_FIELDS):
+                raise ValueError("cost raw CSV schema/order changed")
+            rows = list(reader)
+        for row in rows:
+            if (
+                row["query_id"] != query_id
+                or row["sequence_id"] != selected_row["sequence_id"]
+                or row["scenario_family"] != selected_row["scenario_family"]
+                or row["status"] != "OK"
+                or not math.isfinite(float(row["milliseconds"]))
+                or float(row["milliseconds"]) < 0.0
+            ):
+                raise ValueError("cost raw row identity/status changed")
+        for system in cost.SYSTEMS:
+            for stage, (count, warmups) in expected_counts.items():
+                group = [row for row in rows if row["system"] == system and row["stage"] == stage]
+                if (
+                    len(group) != count
+                    or [int(row["iteration"]) for row in group] != list(range(count))
+                    or sum(row["warmup"] == "true" for row in group) != warmups
+                    or any(row["warmup"] not in {"true", "false"} for row in group)
+                ):
+                    raise ValueError("cost raw warmup/measurement inventory changed")
+        if len(rows) != sum(count for count, _ in expected_counts.values()) * len(cost.SYSTEMS):
+            raise ValueError("cost raw rows contain an undeclared system/stage")
+        all_rows.extend(rows)
+    return all_rows
 
 
 def verify_cost(output: Path) -> dict[str, Any]:
+    from importlib import metadata
+
+    from operational.sota_eval import cost
+    from operational.sota_eval.reuse import _verify_model_binding
+
     result = read(output / "SYSTEM_COST_SUMMARY.json")
     if result.get("status") != "COMPLETE" or result.get("query_count") != 8:
         raise ValueError("system-cost result is incomplete")
@@ -246,6 +433,94 @@ def verify_cost(output: Path) -> dict[str, Any]:
         raise ValueError("system-cost execution freeze binding failed")
     if result.get("model_freeze_sha256") != digest(output / "MODEL_FREEZE.json"):
         raise ValueError("system-cost model freeze binding failed")
+    execution = read(output / "EXECUTION_FREEZE.json")
+    model = read(output / "MODEL_FREEZE.json")
+    manifest_path = Path(str(execution["manifest"]))
+    manifest = read(manifest_path)
+    selected = cost.select_fixed_queries(manifest)
+    declared = [
+        {
+            key: row[key]
+            for key in (
+                "query_id",
+                "sequence_id",
+                "scenario_family",
+                "anchor_us",
+                "metadata_sha256",
+            )
+        }
+        for row in selected
+    ]
+    if (
+        execution.get("status") != "EXECUTION_FROZEN"
+        or execution.get("source_sha256") != digest(Path(cost.__file__))
+        or execution.get("manifest_sha256") != digest(manifest_path)
+        or execution.get("selected_queries") != declared
+        or execution.get("targets_read") is not False
+        or execution.get("optimizer_updates") != 0
+    ):
+        raise ValueError("system-cost execution/input freeze changed")
+    cost.validate_source_closure(cost.ROOT, execution["source_closure"])
+    if (
+        model.get("status") != "MODELS_FROZEN_BEFORE_MEASUREMENT"
+        or model.get("execution_freeze_sha256") != digest(output / "EXECUTION_FREEZE.json")
+        or model.get("targets_read") is not False
+        or model.get("optimizer_updates") != 0
+        or set(model.get("models", {})) != set(cost.SYSTEMS)
+        or model["models"][cost.SYSTEMS[0]] != model["models"][cost.SYSTEMS[1]]
+    ):
+        raise ValueError("system-cost model freeze changed")
+    _verify_model_binding(model["models"][cost.SYSTEMS[0]])
+    _verify_full_model_binding(model["models"][cost.SYSTEMS[2]])
+    runtime = model["runtime_identity"]
+    current_nvidia = cost._nvidia(
+        (
+            "--query-gpu=name,driver_version,memory.total,compute_cap",
+            "--format=csv,noheader,nounits",
+        )
+    )
+    if (
+        runtime.get("python_version") != sys.version
+        or runtime.get("packages") != cost.python_cpu_identity()["packages"]
+        or runtime.get("platform") != cost.python_cpu_identity()["platform"]
+        or str(runtime.get("torch_version", "")).split("+")[0]
+        != metadata.version("torch").split("+")[0]
+        or runtime.get("nvidia_smi") != current_nvidia
+        or result.get("preflight", {}).get("hardware_identity") != runtime.get("nvidia_smi")
+        or result.get("targets_read") is not False
+        or set(result.get("metrics", {})) != set(cost.SYSTEMS)
+    ):
+        raise ValueError("system-cost runtime/hardware/summary identity changed")
+    raw_rows = verify_cost_fragments(
+        output,
+        selected,
+        digest(output / "EXECUTION_FREEZE.json"),
+        digest(output / "MODEL_FREEZE.json"),
+    )
+    if result.get("metrics") != cost._aggregate(raw_rows):
+        raise ValueError("system-cost summary metrics differ from sealed raw rows")
+    expected_measured = {"cpu_prepare": 24, "gpu_inference": 160, "sequential_end_to_end": 24}
+    for system in cost.SYSTEMS:
+        metrics = result["metrics"][system]
+        if any(metrics[stage].get("count") != count for stage, count in expected_measured.items()):
+            raise ValueError("system-cost summary measured counts changed")
+        if set(metrics.get("by_sequence", {})) != {row["sequence_id"] for row in selected}:
+            raise ValueError("system-cost per-sequence inventory changed")
+        if any(item.get("count") != 3 for item in metrics["by_sequence"].values()):
+            raise ValueError("system-cost per-sequence E2E counts changed")
+    if any(
+        float(result[key]) < 0
+        for key in (
+            "peak_process_rss_bytes_observed_50ms",
+            "peak_cuda_allocated_bytes",
+            "peak_cuda_reserved_bytes",
+        )
+    ) or any(
+        not math.isfinite(float(result["setup_seconds"][system]))
+        or float(result["setup_seconds"][system]) < 0
+        for system in cost.SYSTEMS
+    ):
+        raise ValueError("system-cost setup/resource measurements are invalid")
     return result
 
 
@@ -384,6 +659,14 @@ def run(arguments: argparse.Namespace) -> dict[str, Any]:
                 ],
                 output,
             )
+        else:
+            verify_fcwd_inference(
+                fcwd_output,
+                fcwd_manifest,
+                arguments.train40_campaign.resolve(),
+                arguments.public_full_dir.resolve(),
+                arguments.code_root.resolve(),
+            )
         if not (fcwd_output / "SCORING_COMPLETE.json").exists():
             _run_child(
                 "fcwd_score",
@@ -401,8 +684,27 @@ def run(arguments: argparse.Namespace) -> dict[str, Any]:
                 ],
                 output,
             )
+        else:
+            verify_fcwd(
+                fcwd_output,
+                fcwd_manifest,
+                arguments.train40_campaign.resolve(),
+                arguments.public_full_dir.resolve(),
+                arguments.code_root.resolve(),
+            )
 
-    fcwd = _branch(output, "fcwd", fcwd_action, lambda: verify_fcwd(fcwd_output, fcwd_manifest))
+    fcwd = _branch(
+        output,
+        "fcwd",
+        fcwd_action,
+        lambda: verify_fcwd(
+            fcwd_output,
+            fcwd_manifest,
+            arguments.train40_campaign.resolve(),
+            arguments.public_full_dir.resolve(),
+            arguments.code_root.resolve(),
+        ),
+    )
 
     def cost_action() -> None:
         if not (arguments.cost_output / "SYSTEM_COST_SUMMARY.json").exists():
@@ -425,6 +727,8 @@ def run(arguments: argparse.Namespace) -> dict[str, Any]:
                 ],
                 output,
             )
+        else:
+            verify_cost(arguments.cost_output.resolve())
 
     cost = _branch(
         output, "cost", cost_action, lambda: verify_cost(arguments.cost_output.resolve())

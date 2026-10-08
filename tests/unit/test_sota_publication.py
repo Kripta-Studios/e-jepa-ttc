@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import shutil
 import subprocess
 import sys
 import zipfile
@@ -9,6 +10,7 @@ from pathlib import Path
 
 import pytest
 
+from operational.sota_eval import publication as publication_module
 from operational.sota_eval.publication import inspect_branches, publish
 from operational.sota_eval.scoring import run as score
 
@@ -16,11 +18,13 @@ from operational.sota_eval.scoring import run as score
 @pytest.fixture(autouse=True)
 def _canonical_campaign_validation_stub(monkeypatch: pytest.MonkeyPatch) -> None:
     """Keep fixtures tiny; campaign validators have their own fragment/model test suite."""
-    from operational.sota_eval import campaign, fcwd_run
+    from operational.sota_eval import campaign, fcwd_run, followups
 
     monkeypatch.setattr(campaign, "_sealed", lambda *_args, **_kwargs: True)
     monkeypatch.setattr(campaign, "_scored", lambda *_args, **_kwargs: True)
     monkeypatch.setattr(fcwd_run, "verify_seal", lambda *_args, **_kwargs: ({}, []))
+    monkeypatch.setattr(followups, "verify_fcwd", lambda *_args, **_kwargs: {})
+    monkeypatch.setattr(followups, "verify_cost", lambda *_args, **_kwargs: {})
     monkeypatch.setattr(
         fcwd_run,
         "source_binding",
@@ -72,6 +76,41 @@ def _minimum(root: Path, *, complete: bool) -> None:
         },
     )
     _write_json(root / "baselines/FAILURE_COUNTS.json", {"status": "COMPLETE"})
+    _write_json(
+        root / "baselines/CMAX_REFERENCE_DIAGNOSIS.json",
+        {
+            "status": "COMPLETE",
+            "old_variant": {"equation": "wrong", "requested": 32, "successful": 0},
+            "corrected_variant": {
+                "equation": "affine",
+                "requested": 32,
+                "successful": 15,
+                "failed_retained": 17,
+                "success_fraction": 0.46875,
+            },
+        },
+    )
+    pilot = root / "baselines/pilot_scored/METHOD_METRICS.csv"
+    pilot.parent.mkdir(parents=True)
+    pilot.write_text(
+        "method,cohort_queries,truth_exposed_queries,prediction_coverage_all_queries,"
+        "prediction_coverage_on_exposed_truth,complete_exposed_cohort_status,"
+        "conditional_support,conditional_mae_seconds,conditional_rmse_seconds,"
+        "conditional_median_absolute_error_seconds,conditional_signed_bias_seconds,"
+        "conditional_metrics_not_rankable\n"
+        "cmax_reference,32,29,0.46875,0.517,N/A,15,3.7,6.2,1.5,0.3,True\n"
+        "strttc_adapted,32,29,0.34375,0.379,N/A,11,6.5,9.5,3.4,-2.2,True\n",
+        encoding="utf-8",
+    )
+    _write_json(root / "baselines/pilot_scored/REPORT.json", {"status": "COMPLETE"})
+    (root / "baselines/pilot_scored/SCORED_ROWS.csv").write_text("query_id\nq0\n", encoding="utf-8")
+    _write_json(
+        root / "baselines/pilot_scored/SHA256.json",
+        {
+            name: _digest(root / "baselines/pilot_scored" / name)
+            for name in ("METHOD_METRICS.csv", "REPORT.json", "SCORED_ROWS.csv")
+        },
+    )
     _write_json(root / "official_contract/STATUS.json", {"status": "BLOCKED"})
     _write_json(root / "R1_STATUS.json", {"status": "RUNNING"})
     if complete:
@@ -180,8 +219,11 @@ def _minimum(root: Path, *, complete: bool) -> None:
             {
                 "status": "COMPLETE",
                 "queries": 630,
-                "methods": ["a", "b", "c", "d"],
-                "planned_methods": ["a", "b", "c", "d", "e"],
+                "methods": ["H8_seed7", "H8_seed13", "H8_seed23", "public_Garl_event_lhr"],
+                "planned_methods": [
+                    "H8_seed7", "H8_seed13", "H8_seed23", "public_Garl_event_lhr",
+                    "public_Garl_rgb_event_full",
+                ],
                 "optimizer_updates": 0,
                 "prediction_seal_sha256": _digest(fcwd / "PREDICTIONS_SEALED.json"),
                 "scoring_manifest_sha256": _digest(scoring / "SHA256.json"),
@@ -245,15 +287,37 @@ def _digest(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def _publication_repo(tmp_path: Path) -> Path:
+    for name in (
+        "publication.py",
+        "scoring.py",
+        "campaign.py",
+        "fcwd_run.py",
+        "fcwd_score.py",
+        "cost.py",
+    ):
+        source = Path.cwd() / "operational/sota_eval" / name
+        destination = tmp_path / "operational/sota_eval" / name
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(source, destination)
+    return tmp_path
+
+
 def test_partial_publication_is_sanitized_and_preserves_plan(tmp_path: Path) -> None:
-    artifacts, output = tmp_path / "artifacts", tmp_path / "docs"
+    artifacts, output = tmp_path / "artifacts", tmp_path / "docs/sota"
     _minimum(artifacts, complete=False)
-    output.mkdir()
+    output.mkdir(parents=True)
     (output / "PLAN.json").write_text("plan", encoding="utf-8")
     (output / "unowned.txt").write_text("preserve", encoding="utf-8")
     (artifacts / "UNRELATED_ROOT_FILE.txt").write_text("do not recurse", encoding="utf-8")
     bundle = artifacts / "SOTA_ESSENTIAL.zip"
-    result = publish(artifacts, output, bundle, require_complete=False, repo=Path.cwd())
+    result = publish(
+        artifacts,
+        output,
+        bundle,
+        require_complete=False,
+        repo=_publication_repo(tmp_path),
+    )
     assert result["status"] == "PARTIAL_BLOCKED"
     assert (output / "PLAN.json").read_text(encoding="utf-8") == "plan"
     assert (output / "unowned.txt").read_text(encoding="utf-8") == "preserve"
@@ -267,25 +331,31 @@ def test_partial_publication_is_sanitized_and_preserves_plan(tmp_path: Path) -> 
 
 
 def test_require_complete_refuses_partial_without_touching_output(tmp_path: Path) -> None:
-    artifacts, output = tmp_path / "artifacts", tmp_path / "docs"
+    artifacts, output = tmp_path / "artifacts", tmp_path / "docs/sota"
     _minimum(artifacts, complete=False)
-    output.mkdir()
+    output.mkdir(parents=True)
     marker = output / "keep.txt"
     marker.write_text("unchanged", encoding="utf-8")
     with pytest.raises(RuntimeError, match="expanded_metrics, fcwd_metrics, system_cost"):
-        publish(artifacts, output, artifacts / "bundle.zip", require_complete=True, repo=Path.cwd())
+        publish(
+            artifacts,
+            output,
+            artifacts / "bundle.zip",
+            require_complete=True,
+            repo=_publication_repo(tmp_path),
+        )
     assert marker.read_text(encoding="utf-8") == "unchanged"
 
 
 def test_complete_publication_regenerates_exact_table(tmp_path: Path) -> None:
-    artifacts, output = tmp_path / "artifacts", tmp_path / "docs"
+    artifacts, output = tmp_path / "artifacts", tmp_path / "docs/sota"
     _minimum(artifacts, complete=True)
     result = publish(
         artifacts,
         output,
         artifacts / "SOTA_ESSENTIAL.zip",
         require_complete=True,
-        repo=Path.cwd(),
+        repo=_publication_repo(tmp_path),
     )
     assert result["status"] == "COMPLETE"
     state = json.loads((output / "NEXT_DECISION.json").read_text(encoding="utf-8"))
@@ -299,11 +369,167 @@ def test_complete_publication_regenerates_exact_table(tmp_path: Path) -> None:
     assert completed.returncode == 0, completed.stderr
 
 
+def test_regeneration_never_overwrites_a_tampered_published_table(tmp_path: Path) -> None:
+    artifacts, output = tmp_path / "artifacts", tmp_path / "docs/sota"
+    _minimum(artifacts, complete=True)
+    publish(
+        artifacts,
+        output,
+        artifacts / "bundle.zip",
+        require_complete=True,
+        repo=_publication_repo(tmp_path),
+    )
+    table = output / "tables/metrics.csv"
+    tampered = b"tampered\n"
+    table.write_bytes(tampered)
+    completed = subprocess.run(  # noqa: S603
+        [sys.executable, str(output / "regenerate.py"), "--verify"],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    assert completed.returncode != 0
+    assert table.read_bytes() == tampered
+
+
+def test_publication_rejects_paths_outside_repo_destinations(tmp_path: Path) -> None:
+    artifacts = tmp_path / "artifacts"
+    _minimum(artifacts, complete=False)
+    repo = _publication_repo(tmp_path)
+    with pytest.raises(ValueError, match="Unsafe publication output"):
+        publish(
+            artifacts,
+            tmp_path / "outside",
+            artifacts / "bundle.zip",
+            require_complete=False,
+            repo=repo,
+        )
+    with pytest.raises(ValueError, match="Unsafe publication bundle"):
+        publish(
+            artifacts,
+            tmp_path / "docs/sota",
+            tmp_path / "bundle.zip",
+            require_complete=False,
+            repo=repo,
+        )
+
+
+def test_owned_tree_commit_rolls_back_on_move_failure(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    artifacts, output = tmp_path / "artifacts", tmp_path / "docs/sota"
+    _minimum(artifacts, complete=False)
+    output.mkdir(parents=True)
+    (output / "README.md").write_text("old readme\n", encoding="utf-8")
+    (output / "SOURCE_INVENTORY.json").write_text("old inventory\n", encoding="utf-8")
+    real_move = shutil.move
+
+    def failing_move(source: str, destination: str | Path) -> str:
+        path = Path(source)
+        if path.name == "README.md" and path.parent.name == "publication":
+            raise OSError("injected tree commit failure")
+        return str(real_move(source, destination))
+
+    monkeypatch.setattr(publication_module.shutil, "move", failing_move)
+    with pytest.raises(OSError, match="injected tree commit failure"):
+        publish(
+            artifacts,
+            output,
+            artifacts / "bundle.zip",
+            require_complete=False,
+            repo=_publication_repo(tmp_path),
+        )
+    assert (output / "README.md").read_text(encoding="utf-8") == "old readme\n"
+    assert (output / "SOURCE_INVENTORY.json").read_text(encoding="utf-8") == "old inventory\n"
+    assert not (output / "evidence").exists()
+
+
+def test_publication_includes_only_campaign_qa_and_preservation_evidence(tmp_path: Path) -> None:
+    artifacts = tmp_path / "artifacts/campaign"
+    _minimum(artifacts, complete=False)
+    wanted = (
+        "root_qa/PYTEST_RECEIPT.json", "fcwd_runner_qa/QA.json",
+        "prefetch/PILOT.json", "full_prefetch/PILOT.json", "ACCOUNTING.json",
+        "dev32_expanded/PREFETCH_PRESERVATION_VERIFIED.json",
+        "dev32_expanded/REUSE.json",
+    )
+    for name in wanted:
+        _write_json(artifacts / name, {"test": True})
+    excluded = (
+        artifacts.parent / "root_qa/OLD.json",
+        artifacts / "prefetch/predictions/query_00000.json",
+        artifacts / "prefetch/model.pth",
+        artifacts / "prefetch/raw.hdf5",
+    )
+    for path in excluded:
+        _write_json(path, {"excluded": True})
+    sources = publication_module._allowlisted_sources(artifacts, inspect_branches(artifacts))
+    assert all(artifacts / name in sources for name in wanted)
+    assert all(path not in sources for path in excluded)
+
+
+@pytest.mark.parametrize(
+    "branch,verifier", [("fcwd_metrics", "verify_fcwd"), ("system_cost", "verify_cost")]
+)
+def test_publication_requires_canonical_full_verifier(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, branch: str, verifier: str
+) -> None:
+    from operational.sota_eval import followups
+
+    artifacts = tmp_path / "artifacts"
+    _minimum(artifacts, complete=True)
+
+    def reject(*_args: object, **_kwargs: object) -> None:
+        raise ValueError("mutated canonical lineage")
+
+    monkeypatch.setattr(followups, verifier, reject)
+    assert not next(item for item in inspect_branches(artifacts) if item.name == branch).complete
+
+
+def test_publication_rejects_wrong_fcwd_method_identity(tmp_path: Path) -> None:
+    artifacts = tmp_path / "artifacts"
+    _minimum(artifacts, complete=True)
+    path = artifacts / "fcwd_inference/SCORING_COMPLETE.json"
+    receipt = json.loads(path.read_text(encoding="utf-8"))
+    receipt["methods"] = list(reversed(receipt["methods"]))
+    _write_json(path, receipt)
+    branch = next(item for item in inspect_branches(artifacts) if item.name == "fcwd_metrics")
+    assert not branch.complete
+
+
+def test_publication_hashes_survive_git_text_filters(tmp_path: Path) -> None:
+    artifacts, output = tmp_path / "artifacts", tmp_path / "docs/sota"
+    _minimum(artifacts, complete=False)
+    repo = _publication_repo(tmp_path)
+    publish(artifacts, output, artifacts / "bundle.zip", require_complete=False, repo=repo)
+    (repo / ".gitattributes").write_bytes(b"* text=auto eol=lf\n")
+    git = shutil.which("git")
+    assert git is not None
+    for args in (["init", "--quiet"], ["config", "core.autocrlf", "true"], ["add", "docs/sota"]):
+        subprocess.run([git, "-C", str(repo), *args], check=True, capture_output=True)  # noqa: S603
+    subprocess.run(  # noqa: S603
+        [git, "-C", str(repo), "diff", "--cached", "--check"], check=True, capture_output=True
+    )
+    for line in (output / "SHA256SUMS.txt").read_text(encoding="utf-8").splitlines():
+        expected, name = line.split("  ", 1)
+        staged = subprocess.run(  # noqa: S603
+            [git, "-C", str(repo), "show", f":docs/sota/{name}"],
+            check=True, capture_output=True,
+        ).stdout
+        assert hashlib.sha256(staged).hexdigest() == expected, name
+
+
 def test_hash_manifest_tamper_makes_historical_branch_incomplete(tmp_path: Path) -> None:
-    artifacts, output = tmp_path / "artifacts", tmp_path / "docs"
+    artifacts, output = tmp_path / "artifacts", tmp_path / "docs/sota"
     _minimum(artifacts, complete=False)
     (artifacts / "scoring_existing/REPORT.json").write_text('{"changed":true}', encoding="utf-8")
-    publish(artifacts, output, artifacts / "bundle.zip", require_complete=False, repo=Path.cwd())
+    publish(
+        artifacts,
+        output,
+        artifacts / "bundle.zip",
+        require_complete=False,
+        repo=_publication_repo(tmp_path),
+    )
     state = json.loads((output / "NEXT_DECISION.json").read_text(encoding="utf-8"))
     historical = next(row for row in state["branches"] if row["name"] == "scoring_existing_946")
     assert historical["status"] == "INCOMPLETE"
@@ -341,8 +567,34 @@ def test_canonical_paths_ignore_stale_nested_complete_outputs(tmp_path: Path) ->
     assert status["system_cost"] is False
 
 
+@pytest.mark.parametrize(
+    "relative",
+    [
+        "baselines/CMAX_REFERENCE_DIAGNOSIS.json",
+        "baselines/pilot_scored/METHOD_METRICS.csv",
+        "baselines/pilot_scored/SHA256.json",
+    ],
+)
+def test_partial_publication_handles_missing_baseline_companion(
+    tmp_path: Path, relative: str
+) -> None:
+    artifacts, output = tmp_path / "artifacts", tmp_path / "docs/sota"
+    _minimum(artifacts, complete=False)
+    (artifacts / relative).unlink()
+    result = publish(
+        artifacts,
+        output,
+        artifacts / "bundle.zip",
+        require_complete=False,
+        repo=_publication_repo(tmp_path),
+    )
+    assert result["status"] == "PARTIAL_BLOCKED"
+    assert not (output / "evidence/baselines").exists()
+    assert (output / "tables/baseline_coverage.csv").read_text(encoding="utf-8").count("\n") == 1
+
+
 def test_sanitized_json_key_collision_is_rejected(tmp_path: Path) -> None:
-    artifacts, output = tmp_path / "artifacts", tmp_path / "docs"
+    artifacts, output = tmp_path / "artifacts", tmp_path / "docs/sota"
     _minimum(artifacts, complete=False)
     _write_json(
         artifacts / "fcwd/COLLISION.json",
@@ -357,5 +609,5 @@ def test_sanitized_json_key_collision_is_rejected(tmp_path: Path) -> None:
             output,
             artifacts / "bundle.zip",
             require_complete=False,
-            repo=Path.cwd(),
+            repo=_publication_repo(tmp_path),
         )

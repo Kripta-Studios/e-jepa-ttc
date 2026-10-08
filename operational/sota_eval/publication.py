@@ -32,6 +32,7 @@ TEXT_SUFFIXES = {".json", ".md", ".txt", ".csv", ".py", ".yaml", ".yml"}
 EXCLUDED_NAMES = {"PLAN.json", "QUERY_MANIFEST.json", "WRITER.lock"}
 MAX_PUBLIC_FILE_BYTES = 5 * 1024 * 1024
 OWNED_OUTPUT_NAMES = {
+    ".gitattributes",
     "README.md",
     "NEXT_DECISION.json",
     "regenerate.py",
@@ -143,9 +144,13 @@ def _fcwd_complete(artifacts: Path) -> bool:
         seal = output / "PREDICTIONS_SEALED.json"
         source_value = _json(output / "SOURCE_FREEZE.json")
         inference_value = _json(output / "INFERENCE_FREEZE.json")
-        from operational.sota_eval import fcwd_run
+        from operational.sota_eval import fcwd_run, followups
 
         fcwd_run.verify_seal(output, manifest)
+        followups.verify_fcwd(
+            output, manifest, Path(str(source_value["campaign"])),
+            Path(str(source_value["public_full_dir"])), Path(str(source_value["code_root"])),
+        )
         source_current = (
             fcwd_run.source_binding(
                 manifest,
@@ -160,8 +165,8 @@ def _fcwd_complete(artifacts: Path) -> bool:
             receipt.get("status") == "COMPLETE"
             and receipt.get("queries") == 630
             and receipt.get("optimizer_updates") == 0
-            and len(receipt.get("methods", [])) == 4
-            and len(receipt.get("planned_methods", [])) == 5
+            and receipt.get("methods") == list(fcwd_run.METHODS[:4])
+            and receipt.get("planned_methods") == list(fcwd_run.METHODS)
             and source_current
             and inference_value.get("source_freeze_sha256") == sha256(output / "SOURCE_FREEZE.json")
             and inference_value.get("manifest_sha256") == sha256(manifest)
@@ -193,6 +198,9 @@ def _cost_complete(artifacts: Path) -> bool:
     """Validate the canonical fixed-eight cost summary and its two freezes."""
     try:
         output = artifacts / "cost"
+        from operational.sota_eval.followups import verify_cost
+
+        verify_cost(output)
         summary = _json(output / "SYSTEM_COST_SUMMARY.json")
         execution = output / "EXECUTION_FREEZE.json"
         models = output / "MODEL_FREEZE.json"
@@ -239,6 +247,26 @@ def _cost_complete(artifacts: Path) -> bool:
             and fragments_valid
             and source.is_file()
             and execution_value.get("source_sha256") == sha256(source)
+        )
+    except (FileNotFoundError, KeyError, OSError, ValueError, TypeError, json.JSONDecodeError):
+        return False
+
+
+def _baseline_complete(artifacts: Path) -> bool:
+    """Require the failure, corrected-CMax and conditional-pilot evidence as one unit."""
+    try:
+        root = artifacts / "baselines"
+        failure = _json(root / "FAILURE_COUNTS.json")
+        diagnosis = _json(root / "CMAX_REFERENCE_DIAGNOSIS.json")
+        pilot = root / "pilot_scored"
+        hashes = _json(pilot / "SHA256.json")
+        return bool(
+            failure.get("status") == "COMPLETE"
+            and diagnosis.get("status") == "COMPLETE"
+            and diagnosis.get("old_variant", {}).get("successful") == 0
+            and diagnosis.get("corrected_variant", {}).get("successful") == 15
+            and set(hashes) == {"METHOD_METRICS.csv", "REPORT.json", "SCORED_ROWS.csv"}
+            and all(sha256(pilot / name) == expected for name, expected in hashes.items())
         )
     except (FileNotFoundError, OSError, ValueError, TypeError, json.JSONDecodeError):
         return False
@@ -336,7 +364,7 @@ def inspect_branches(artifacts: Path) -> list[Branch]:
     )
 
     baseline = artifacts / "baselines" / "FAILURE_COUNTS.json"
-    baseline_ok = baseline.is_file() and _json(baseline).get("status") == "COMPLETE"
+    baseline_ok = _baseline_complete(artifacts)
     branches.append(
         Branch(
             "baseline_failure_inventory",
@@ -440,7 +468,13 @@ def _copy_sanitized(source: Path, destination: Path, repo: Path, roots: list[str
 
 def _allowlisted_sources(artifacts: Path, branches: list[Branch]) -> list[Path]:
     complete = {branch.name: branch.complete for branch in branches}
-    roots = [artifacts / "official_contract", artifacts / "r1_resume"]
+    roots = [
+        artifacts / name
+        for name in (
+            "official_contract", "r1_resume", "root_qa", "fcwd_runner_qa",
+            "prefetch", "full_prefetch",
+        )
+    ]
     if complete["scoring_existing_946"]:
         roots.append(artifacts / "scoring_existing")
     if complete["garl_parity"]:
@@ -461,6 +495,7 @@ def _allowlisted_sources(artifacts: Path, branches: list[Branch]) -> list[Path]:
     if complete["system_cost"]:
         roots.append(artifacts / "cost")
     singletons = [
+        artifacts / "ACCOUNTING.json",
         artifacts / "R1_STATUS.json",
         artifacts / "R1_STATUS_BEFORE_PAUSE.json",
         artifacts / "R1_PAUSE_OWNERSHIP.json",
@@ -471,6 +506,8 @@ def _allowlisted_sources(artifacts: Path, branches: list[Branch]) -> list[Path]:
         artifacts / "dev32_expanded" / "INFERENCE_FREEZE.json",
         artifacts / "dev32_expanded" / "CALIBRATION_AUDIT.json",
         artifacts / "dev32_expanded" / "STATE.json",
+        artifacts / "dev32_expanded" / "PREFETCH_PRESERVATION_VERIFIED.json",
+        artifacts / "dev32_expanded" / "REUSE.json",
         artifacts / "fcwd_population" / "FCWD_INPUT_FREEZE.json",
     ]
     found: set[Path] = {path for path in singletons if path.is_file()}
@@ -536,6 +573,29 @@ COST_COLUMNS = (
     "maximum_ms",
     "samples_per_second_from_mean",
 )
+BASELINE_COVERAGE_COLUMNS = (
+    "variant",
+    "equation",
+    "requested",
+    "successful",
+    "failed_retained",
+    "success_fraction",
+    "interpretation",
+)
+PILOT_CONDITIONAL_COLUMNS = (
+    "method",
+    "cohort_queries",
+    "truth_exposed_queries",
+    "prediction_coverage_all_queries",
+    "prediction_coverage_on_exposed_truth",
+    "complete_exposed_cohort_status",
+    "conditional_support",
+    "conditional_mae_seconds",
+    "conditional_rmse_seconds",
+    "conditional_median_absolute_error_seconds",
+    "conditional_signed_bias_seconds",
+    "conditional_metrics_not_rankable",
+)
 
 
 def _csv_rows(path: Path) -> list[dict[str, str]]:
@@ -545,7 +605,13 @@ def _csv_rows(path: Path) -> list[dict[str, str]]:
 
 def _result_rows(
     artifacts: Path, branches: list[Branch]
-) -> tuple[list[dict[str, object]], list[dict[str, object]], list[dict[str, object]]]:
+) -> tuple[
+    list[dict[str, object]],
+    list[dict[str, object]],
+    list[dict[str, object]],
+    list[dict[str, object]],
+    list[dict[str, object]],
+]:
     complete = {branch.name: branch.complete for branch in branches}
     metric_sources: list[tuple[str, Path]] = []
     if complete["scoring_existing_946"]:
@@ -587,7 +653,44 @@ def _result_rows(
         for method, reasons in sorted(baseline.get("failure_counts", {}).items()):
             for reason, count in sorted(reasons.items()):
                 failures.append({"method": method, "reason": reason, "count": count})
-    return metrics, costs, failures
+    baseline_coverage: list[dict[str, object]] = []
+    baseline_conditional: list[dict[str, object]] = []
+    if complete["baseline_failure_inventory"]:
+        diagnosis = _json(artifacts / "baselines" / "CMAX_REFERENCE_DIAGNOSIS.json")
+        old, corrected = diagnosis["old_variant"], diagnosis["corrected_variant"]
+        baseline_coverage = [
+            {
+                "variant": "initial_local_cmax",
+                "equation": old["equation"],
+                "requested": old["requested"],
+                "successful": old["successful"],
+                "failed_retained": old["requested"] - old["successful"],
+                "success_fraction": old["successful"] / old["requested"],
+                "interpretation": (
+                    "Incorrect exponential/latest-event warp in the initial local adapter; "
+                    "not a failure of the published CMax method"
+                ),
+            },
+            {
+                "variant": "affine_corrected_cmax_reference",
+                "equation": corrected["equation"],
+                "requested": corrected["requested"],
+                "successful": corrected["successful"],
+                "failed_retained": corrected["failed_retained"],
+                "success_fraction": corrected["success_fraction"],
+                "interpretation": (
+                    "Corrected affine reference-time local adaptation; diagnostic, not a "
+                    "paper-result reproduction"
+                ),
+            },
+        ]
+        pilot = _csv_rows(artifacts / "baselines" / "pilot_scored" / "METHOD_METRICS.csv")
+        baseline_conditional = [
+            {column: row.get(column, "") for column in PILOT_CONDITIONAL_COLUMNS}
+            for row in pilot
+            if row.get("method") in {"cmax_reference", "strttc_adapted"}
+        ]
+    return metrics, costs, failures, baseline_coverage, baseline_conditional
 
 
 def _dict_csv(path: Path, rows: list[dict[str, object]], columns: tuple[str, ...]) -> None:
@@ -603,6 +706,8 @@ def _readme(
     metrics: list[dict[str, object]],
     costs: list[dict[str, object]],
     failures: list[dict[str, object]],
+    baseline_coverage: list[dict[str, object]],
+    baseline_conditional: list[dict[str, object]],
 ) -> str:
     lines = [
         "# Campaña TTC 2026-10-08 — evidencia reproducible",
@@ -658,7 +763,8 @@ def _readme(
         "por lo que no se presenta como comparación directa ni como reproducción oficial. "
         "El contrato oficial conserva dependencias bloqueadas y `AUTHORS_DRAFT.txt` es un "
         "borrador no enviado. El presupuesto restante no admite el plan inicial de nuevo "
-        "entrenamiento; esta campaña registra cero updates. R1 conserva 486 pares en un "
+        "entrenamiento; esta campaña registra cero updates. R1 registra 486 pares "
+        "preexistentes preservados en un "
         "límite de grupo y registra cero avances de prefijo. Los grupos guardados no "
         "releen payloads, aunque CachedEventReader sí abre handles; cachés OS/HDF5 no están "
         "controladas y el timing final puede mezclar tramos antiguos y nuevos. No se afirma "
@@ -718,6 +824,43 @@ def _readme(
             "|---|---|---:|",
         ]
         lines.extend(f"| {row['method']} | {row['reason']} | {row['count']} |" for row in failures)
+    if baseline_coverage:
+        lines += [
+            "",
+            "## Diagnóstico CMax",
+            "",
+            "El adaptador CMax local inicial obtuvo 0/32 porque usaba un warp exponencial "
+            "referido al último evento. Esa formulación era incorrecta para la expansión afín "
+            "de inverse-TTC. La adaptación corregida usa tiempo de referencia fijo y obtuvo "
+            "15/32. Ambos son diagnósticos locales; no son fallos ni reproducciones del método "
+            "publicado.",
+            "",
+            "| Variante | Éxitos | Solicitadas | Interpretación |",
+            "|---|---:|---:|---|",
+        ]
+        lines.extend(
+            f"| {row['variant']} | {row['successful']} | {row['requested']} | "
+            f"{row['interpretation']} |"
+            for row in baseline_coverage
+        )
+    if baseline_conditional:
+        lines += [
+            "",
+            "## Piloto condicional de baselines geométricos",
+            "",
+            "Los soportes se muestran en la tabla. Son cohortes de éxito distintas: "
+            "las cifras condicionales describen los "
+            "casos puntuables y no forman un ranking entre métodos.",
+            "",
+            "| Método | Soporte | MAE condicional (s) | RMSE condicional (s) | No rankeable |",
+            "|---|---:|---:|---:|---|",
+        ]
+        lines.extend(
+            f"| {row['method']} | {row['conditional_support']} | "
+            f"{row['conditional_mae_seconds']} | {row['conditional_rmse_seconds']} | "
+            f"{row['conditional_metrics_not_rankable']} |"
+            for row in baseline_conditional
+        )
     return "\n".join(lines) + "\n"
 
 
@@ -740,6 +883,13 @@ METRIC_COLUMNS = ("branch", "method", "total_rows", "gt_eligible",
     "conditional_on_scorable_predictions_metrics__rmse_seconds")
 COST_COLUMNS = ("system", "stage", "count", "mean_ms", "p50_ms", "p95_ms",
                 "minimum_ms", "maximum_ms", "samples_per_second_from_mean")
+BASELINE_COVERAGE_COLUMNS = ("variant", "equation", "requested", "successful",
+    "failed_retained", "success_fraction", "interpretation")
+PILOT_CONDITIONAL_COLUMNS = ("method", "cohort_queries", "truth_exposed_queries",
+    "prediction_coverage_all_queries", "prediction_coverage_on_exposed_truth",
+    "complete_exposed_cohort_status", "conditional_support", "conditional_mae_seconds",
+    "conditional_rmse_seconds", "conditional_median_absolute_error_seconds",
+    "conditional_signed_bias_seconds", "conditional_metrics_not_rankable")
 
 def digest(path: Path) -> str:
     h = hashlib.sha256()
@@ -789,9 +939,11 @@ def main() -> None:
     scorer = ROOT / regeneration["scorer"]
     for job in regeneration["scoring_jobs"]:
         rerun(job, scorer)
+    temporary_tables = tempfile.TemporaryDirectory(prefix="sota_tables_verify_")
+    generated = Path(temporary_tables.name)
     state = read_json(ROOT / "NEXT_DECISION.json")
     branch_rows = state["branches"]
-    target = ROOT / "tables" / "branch_status.csv"
+    target = generated / "branch_status.csv"
     with target.open("w", encoding="utf-8", newline="") as f:
         writer = csv.writer(f, lineterminator="\n")
         writer.writerow(("branch", "status", "complete", "detail"))
@@ -804,7 +956,7 @@ def main() -> None:
             metric_rows.append({
                 column: job["branch"] if column == "branch" else source.get(column, "")
                 for column in METRIC_COLUMNS})
-    write_csv(ROOT / "tables" / "metrics.csv", metric_rows, METRIC_COLUMNS)
+    write_csv(generated / "metrics.csv", metric_rows, METRIC_COLUMNS)
     cost_rows = []
     cost_path = ROOT / "evidence" / "cost" / "SYSTEM_COST_SUMMARY.json"
     if cost_path.is_file():
@@ -815,7 +967,7 @@ def main() -> None:
                     column: system if column == "system" else
                     stage if column == "stage" else values.get(column, "")
                     for column in COST_COLUMNS})
-    write_csv(ROOT / "tables" / "system_cost.csv", cost_rows, COST_COLUMNS)
+    write_csv(generated / "system_cost.csv", cost_rows, COST_COLUMNS)
     failure_rows = []
     failure_path = ROOT / "evidence" / "baselines" / "FAILURE_COUNTS.json"
     if failure_path.is_file():
@@ -823,15 +975,53 @@ def main() -> None:
         for method, reasons in failure_source.get("failure_counts", {}).items():
             for reason, count in reasons.items():
                 failure_rows.append({"method": method, "reason": reason, "count": count})
-    write_csv(ROOT / "tables" / "baseline_failures.csv", failure_rows,
+    write_csv(generated / "baseline_failures.csv", failure_rows,
               ("method", "reason", "count"))
+    coverage_rows, conditional_rows = [], []
+    diagnosis_path = ROOT / "evidence" / "baselines" / "CMAX_REFERENCE_DIAGNOSIS.json"
+    pilot_path = ROOT / "evidence" / "baselines" / "pilot_scored" / "METHOD_METRICS.csv"
+    if diagnosis_path.is_file():
+        diagnosis = read_json(diagnosis_path)
+        old, corrected = diagnosis["old_variant"], diagnosis["corrected_variant"]
+        coverage_rows = [{
+            "variant": "initial_local_cmax", "equation": old["equation"],
+            "requested": old["requested"], "successful": old["successful"],
+            "failed_retained": old["requested"] - old["successful"],
+            "success_fraction": old["successful"] / old["requested"],
+            "interpretation": "Incorrect exponential/latest-event warp in the initial local "
+                              "adapter; not a failure of the published CMax method"}, {
+            "variant": "affine_corrected_cmax_reference",
+            "equation": corrected["equation"], "requested": corrected["requested"],
+            "successful": corrected["successful"],
+            "failed_retained": corrected["failed_retained"],
+            "success_fraction": corrected["success_fraction"],
+            "interpretation": "Corrected affine reference-time local adaptation; diagnostic, "
+                              "not a paper-result reproduction"}]
+    if pilot_path.is_file():
+        conditional_rows = [
+            {column: row.get(column, "") for column in PILOT_CONDITIONAL_COLUMNS}
+            for row in rows(pilot_path)
+            if row.get("method") in {"cmax_reference", "strttc_adapted"}]
+    write_csv(generated / "baseline_coverage.csv", coverage_rows,
+              BASELINE_COVERAGE_COLUMNS)
+    write_csv(generated / "baseline_conditional_metrics.csv", conditional_rows,
+              PILOT_CONDITIONAL_COLUMNS)
     results = {"metrics": metric_rows, "system_cost": cost_rows,
-               "baseline_failures": failure_rows}
-    (ROOT / "tables" / "RESULTS.json").write_text(
+               "baseline_failures": failure_rows, "baseline_coverage": coverage_rows,
+               "baseline_conditional_metrics": conditional_rows}
+    (generated / "RESULTS.json").write_text(
         json.dumps(results, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     for name, expected in state["generated_tables"].items():
-        if digest(ROOT / "tables" / name) != expected:
+        if name == "REGENERATION.json":
+            candidate = ROOT / "tables" / name
+        else:
+            candidate = generated / name
+        if not candidate.is_file() or digest(candidate) != expected:
             raise SystemExit(f"regenerated table differs: {name}")
+        published = ROOT / "tables" / name
+        if not published.is_file() or digest(published) != expected:
+            raise SystemExit(f"published table hash mismatch: {name}")
+    temporary_tables.cleanup()
     if args.verify:
         print(f"verified {len(inventory['files'])} evidence files and "
               f"{len(regeneration['scoring_jobs'])} exact scoring runs")
@@ -854,8 +1044,15 @@ def publish(
     output = output.resolve()
     bundle = bundle.resolve()
     repo = (repo or Path.cwd()).resolve()
-    if output in {repo, artifacts, output.anchor and Path(output.anchor)} or not output.name:
+    docs_root = (repo / "docs").resolve()
+    artifacts_root = (repo / "artifacts").resolve()
+    sidecar = bundle.with_suffix(bundle.suffix + ".sha256").resolve()
+    if docs_root not in output.parents or output in {repo, artifacts} or not output.name:
         raise ValueError(f"Unsafe publication output: {output}")
+    if artifacts_root not in bundle.parents or output == bundle or output in bundle.parents:
+        raise ValueError(f"Unsafe publication bundle: {bundle}")
+    if output == sidecar or output in sidecar.parents or sidecar == bundle:
+        raise ValueError(f"Unsafe publication sidecar: {sidecar}")
     branches = inspect_branches(artifacts)
     required = {
         "scoring_existing_946",
@@ -892,6 +1089,7 @@ def publish(
             "publication.py",
             "scoring.py",
             "campaign.py",
+            "followups.py",
             "fcwd_run.py",
             "fcwd_score.py",
             "cost.py",
@@ -920,7 +1118,13 @@ def publish(
                     "bytes": destination.stat().st_size,
                 }
             )
-        metric_rows, cost_rows, failure_rows = _result_rows(artifacts, branches)
+        (
+            metric_rows,
+            cost_rows,
+            failure_rows,
+            baseline_coverage_rows,
+            baseline_conditional_rows,
+        ) = _result_rows(artifacts, branches)
         scoring_jobs = []
         if branch_complete["scoring_existing_946"]:
             scoring_jobs.append(
@@ -961,9 +1165,25 @@ def publish(
             failure_rows,
             ("method", "reason", "count"),
         )
+        _dict_csv(
+            stage / "tables" / "baseline_coverage.csv",
+            baseline_coverage_rows,
+            BASELINE_COVERAGE_COLUMNS,
+        )
+        _dict_csv(
+            stage / "tables" / "baseline_conditional_metrics.csv",
+            baseline_conditional_rows,
+            PILOT_CONDITIONAL_COLUMNS,
+        )
         _write_json(
             stage / "tables" / "RESULTS.json",
-            {"metrics": metric_rows, "system_cost": cost_rows, "baseline_failures": failure_rows},
+            {
+                "metrics": metric_rows,
+                "system_cost": cost_rows,
+                "baseline_failures": failure_rows,
+                "baseline_coverage": baseline_coverage_rows,
+                "baseline_conditional_metrics": baseline_conditional_rows,
+            },
         )
         table_hash = sha256(stage / "tables" / "branch_status.csv")
         branch_rows = []
@@ -1017,6 +1237,8 @@ def publish(
                     "metrics.csv",
                     "system_cost.csv",
                     "baseline_failures.csv",
+                    "baseline_coverage.csv",
+                    "baseline_conditional_metrics.csv",
                     "RESULTS.json",
                     "REGENERATION.json",
                 )
@@ -1024,12 +1246,24 @@ def publish(
         }
         _write_json(stage / "NEXT_DECISION.json", state)
         (stage / "README.md").write_text(
-            _readme(branches, metric_rows, cost_rows, failure_rows), encoding="utf-8"
+            _readme(
+                branches,
+                metric_rows,
+                cost_rows,
+                failure_rows,
+                baseline_coverage_rows,
+                baseline_conditional_rows,
+            ),
+            encoding="utf-8",
         )
         (stage / "regenerate.py").write_text(REGENERATE, encoding="utf-8")
         _write_json(
             stage / "SOURCE_INVENTORY.json",
             {"schema": "sanitized_source_inventory_v1", "files": inventory},
+        )
+        # Git must retain the physical bytes covered by SHA-256, including CSV CRLF.
+        (stage / ".gitattributes").write_bytes(
+            b"* -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol\n"
         )
         sums = []
         for path in sorted(stage.rglob("*"), key=lambda item: item.as_posix()):
@@ -1037,50 +1271,78 @@ def publish(
                 sums.append(f"{sha256(path)}  {path.relative_to(stage).as_posix()}")
         (stage / "SHA256SUMS.txt").write_text("\n".join(sums) + "\n", encoding="utf-8")
 
-        plan = output / "PLAN.json"
-        saved_plan = plan.read_bytes() if plan.is_file() else None
-        for name in sorted(OWNED_OUTPUT_NAMES):
-            child = (output / name).resolve()
-            if child.parent != output:
-                raise ValueError(f"Unsafe publication child: {child}")
-            if not child.exists():
-                continue
-            if child.is_dir():
-                shutil.rmtree(child)
-            else:
-                child.unlink()
         output.mkdir(parents=True, exist_ok=True)
-        for child in stage.iterdir():
-            shutil.move(str(child), output / child.name)
-        if saved_plan is not None and not plan.exists():
-            plan.write_bytes(saved_plan)
+        backup = Path(temporary) / "backup"
+        backup.mkdir()
+        installed: list[Path] = []
+        try:
+            for name in sorted(OWNED_OUTPUT_NAMES):
+                child = (output / name).resolve()
+                if child.parent != output:
+                    raise ValueError(f"Unsafe publication child: {child}")
+                if child.exists():
+                    shutil.move(str(child), backup / name)
+            for child in stage.iterdir():
+                destination = output / child.name
+                shutil.move(str(child), destination)
+                installed.append(destination)
+        except Exception:
+            for child in reversed(installed):
+                if child.is_dir():
+                    shutil.rmtree(child)
+                elif child.exists():
+                    child.unlink()
+            for child in backup.iterdir():
+                shutil.move(str(child), output / child.name)
+            raise
 
     bundle.parent.mkdir(parents=True, exist_ok=True)
-    temporary_bundle = bundle.with_suffix(bundle.suffix + ".partial")
-    with zipfile.ZipFile(temporary_bundle, "w", compression=zipfile.ZIP_DEFLATED) as archive:
-        bundle_paths: list[Path] = []
-        for name in sorted(OWNED_OUTPUT_NAMES):
-            owned = output / name
-            if owned.is_file():
-                bundle_paths.append(owned)
-            elif owned.is_dir():
-                bundle_paths.extend(path for path in owned.rglob("*") if path.is_file())
-        for path in sorted(bundle_paths, key=lambda item: item.as_posix()):
-            archive.write(path, path.relative_to(output).as_posix())
-        for source in sorted(
-            [
-                repo / "operational" / "sota_eval" / "publication.py",
-                repo / "operational" / "sota_eval" / "scoring.py",
-            ],
-            key=str,
-        ):
-            if source.is_file():
-                archive.write(source, f"scripts/{source.name}")
-    os.replace(temporary_bundle, bundle)
-    digest = sha256(bundle)
-    bundle.with_suffix(bundle.suffix + ".sha256").write_text(
-        f"{digest}  {bundle.name}\n", encoding="ascii"
-    )
+    with tempfile.TemporaryDirectory(prefix="sota_bundle_", dir=bundle.parent) as bundle_temp:
+        transaction = Path(bundle_temp)
+        temporary_bundle = transaction / bundle.name
+        temporary_sidecar = transaction / sidecar.name
+        with zipfile.ZipFile(temporary_bundle, "w", compression=zipfile.ZIP_DEFLATED) as archive:
+            bundle_paths: list[Path] = []
+            for name in sorted(OWNED_OUTPUT_NAMES):
+                owned = output / name
+                if owned.is_file():
+                    bundle_paths.append(owned)
+                elif owned.is_dir():
+                    bundle_paths.extend(path for path in owned.rglob("*") if path.is_file())
+            for path in sorted(bundle_paths, key=lambda item: item.as_posix()):
+                archive.write(path, path.relative_to(output).as_posix())
+            for source in sorted(
+                [
+                    repo / "operational" / "sota_eval" / "publication.py",
+                    repo / "operational" / "sota_eval" / "scoring.py",
+                ],
+                key=str,
+            ):
+                if source.is_file():
+                    archive.write(source, f"scripts/{source.name}")
+        digest = sha256(temporary_bundle)
+        temporary_sidecar.write_text(f"{digest}  {bundle.name}\n", encoding="ascii")
+        old_bundle, old_sidecar = transaction / "old.zip", transaction / "old.sha256"
+        bundle_installed = sidecar_installed = False
+        try:
+            if bundle.exists():
+                os.replace(bundle, old_bundle)
+            if sidecar.exists():
+                os.replace(sidecar, old_sidecar)
+            os.replace(temporary_bundle, bundle)
+            bundle_installed = True
+            os.replace(temporary_sidecar, sidecar)
+            sidecar_installed = True
+        except Exception:
+            if sidecar_installed and sidecar.exists():
+                sidecar.unlink()
+            if bundle_installed and bundle.exists():
+                bundle.unlink()
+            if old_bundle.exists():
+                os.replace(old_bundle, bundle)
+            if old_sidecar.exists():
+                os.replace(old_sidecar, sidecar)
+            raise
     return {"status": state["status"], "blocked_branches": blockers, "bundle_sha256": digest}
 
 
