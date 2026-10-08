@@ -224,6 +224,63 @@ def test_source_change_stops_before_model_loading_and_releases_both_guards(tmp_p
     assert fcwd_run.read(output / "STATE.json")["status"] == "FAILED_PRESERVED"
 
 
+def test_source_closure_covers_reviewed_numerical_helpers():
+    closure = set(fcwd_run.local_source_closure())
+    assert {
+        "src/e_jepa_ttc/simplex_t/context_raw_union.py",
+        "src/e_jepa_ttc/simplex_t/query_context_voxel.py",
+        "src/e_jepa_ttc/data/eap_representation.py",
+        "src/e_jepa_ttc/representations/voxel_grid.py",
+        "src/e_jepa_ttc/data/types.py",
+        "src/e_jepa_ttc/data/eap.py",
+        "src/e_jepa_ttc/models/local_transport.py",
+        "src/e_jepa_ttc/models/collision_clock_math.py",
+        "src/e_jepa_ttc/training/incremental_residual.py",
+        "src/e_jepa_ttc/simplex_t/expert_phase.py",
+        "src/e_jepa_ttc/evaluation/stage61_nested_pair_router.py",
+        "operational/simplex_t_cost_context/model.py",
+        "operational/simplex_t_post_campaign/route_policy.py",
+    } <= closure
+
+
+@pytest.mark.parametrize("mutation", ["helper", "initializer"])
+def test_transitive_helper_byte_mutation_rejects_resume_before_models(
+    tmp_path, monkeypatch, mutation
+):
+    manifest, _, output, _ = population(tmp_path)
+    package = tmp_path / "src/e_jepa_ttc"
+    package.mkdir(parents=True)
+    initializer = package / "__init__.py"
+    initializer.write_text("# package\n", encoding="utf-8")
+    entry = package / "entry.py"
+    entry.write_text("from . import helper\n", encoding="utf-8")
+    helper = package / "helper.py"
+    helper.write_text("def transform(x): return x * 2\n", encoding="utf-8")
+    monkeypatch.setattr(fcwd_run, "ROOT", tmp_path)
+    monkeypatch.setattr(fcwd_run, "SOURCE_FILES", ("src/e_jepa_ttc/entry.py",))
+    campaign = tmp_path / "old_campaign"
+    for name in ("TRAINING_PROTOCOL.json", "DELIVERY_FREEZE.json", "H8_FEATURE_MANIFEST.json"):
+        atomic_json(campaign / name, {"synthetic": True})
+    for fit in ("a5_seed7", "c2f_seed7", "pair_seed7", "h8_seed7", "h8_seed13", "h8_seed23"):
+        atomic_json(campaign / "fits" / fit / "CHECKPOINT_RECEIPT.json", {"synthetic": True})
+    args = (manifest, campaign, tmp_path / "full", tmp_path / "code", "cpu")
+    binding = fcwd_run.source_binding(*args)
+    assert set(binding["sources"]) == {
+        "src/e_jepa_ttc/__init__.py",
+        "src/e_jepa_ttc/entry.py",
+        "src/e_jepa_ttc/helper.py",
+    }
+    atomic_json(output / "SOURCE_FREEZE.json", binding)
+    changed_path = helper if mutation == "helper" else initializer
+    changed_path.write_text("# changed scientific helper\n", encoding="utf-8")
+    guard = tmp_path / "guard"
+    with pytest.raises(ValueError, match="Source/config freeze changed"):
+        fcwd_run.run(manifest, output, *args[1:], gpu_guard_root=guard)
+    assert not (output / "WRITER.lock").exists()
+    assert not (guard / "WRITER.lock").exists()
+    assert fcwd_run.read(output / "STATE.json")["status"] == "FAILED_PRESERVED"
+
+
 def test_gpu_guard_rejects_cuda_but_not_cpu_or_score_processes(monkeypatch):
     import psutil
 

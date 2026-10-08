@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import ast
 import hashlib
 import json
 import math
@@ -45,6 +46,15 @@ SOURCE_FILES = (
     "src/e_jepa_ttc/training/stage61_pair_head.py",
     "src/e_jepa_ttc/simplex_t/model.py",
     "src/e_jepa_ttc/simplex_t/phase.py",
+    "src/e_jepa_ttc/simplex_t/context_raw_union.py",
+    "src/e_jepa_ttc/simplex_t/query_context_voxel.py",
+    "src/e_jepa_ttc/data/eap_representation.py",
+    "src/e_jepa_ttc/representations/voxel_grid.py",
+    "src/e_jepa_ttc/data/types.py",
+    "src/e_jepa_ttc/data/eap.py",
+    "src/e_jepa_ttc/models/local_transport.py",
+    "src/e_jepa_ttc/models/collision_clock_math.py",
+    "src/e_jepa_ttc/training/incremental_residual.py",
 )
 FORBIDDEN_VALUE_KEYS = {
     "truth_ttc_seconds",
@@ -149,11 +159,62 @@ def validate_manifest(manifest: dict[str, Any]) -> list[dict[str, Any]]:
     return rows
 
 
+def local_source_closure() -> tuple[str, ...]:
+    """Resolve conservative local import ancestry without importing or running code.
+
+    Include conditional/function/type-checking imports and package initializers:
+    this deliberately over-approximates executed paths rather than missing a
+    numerical helper. Third-party libraries and separately bound public model
+    repositories are outside this local-source closure.
+    """
+    pending: list[str] = list(SOURCE_FILES)
+    seen: set[str] = set()
+
+    def enqueue_module(module: str) -> None:
+        if not module.startswith(("e_jepa_ttc", "operational")):
+            return
+        prefix = "src/" if module.startswith("e_jepa_ttc") else ""
+        parts = module.split(".")
+        for length in range(1, len(parts) + 1):
+            package = prefix + "/".join(parts[:length]) + "/__init__.py"
+            if (ROOT / package).is_file() and package not in seen:
+                pending.append(package)
+        filename = prefix + module.replace(".", "/") + ".py"
+        if (ROOT / filename).is_file() and filename not in seen:
+            pending.append(filename)
+
+    while pending:
+        filename = pending.pop()
+        if filename in seen:
+            continue
+        seen.add(filename)
+        path = ROOT / filename
+        tree = ast.parse(path.read_text(encoding="utf-8-sig"), filename=filename)
+        module = filename.removeprefix("src/").removesuffix(".py").replace("/", ".")
+        package_parts = module.split(".")[:-1]
+        enqueue_module(module.removesuffix(".__init__"))
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Import):
+                for name in node.names:
+                    enqueue_module(name.name)
+            elif isinstance(node, ast.ImportFrom):
+                if node.level:
+                    prefix_parts = package_parts[: len(package_parts) - node.level + 1]
+                    imported = ".".join([*prefix_parts, *([node.module] if node.module else [])])
+                else:
+                    imported = node.module or ""
+                enqueue_module(imported)
+                for name in node.names:
+                    if name.name != "*":
+                        enqueue_module(imported + "." + name.name)
+    return tuple(sorted(seen))
+
+
 def source_binding(
     manifest_path: Path, campaign: Path, public_full: Path, code_root: Path, device: str
 ) -> dict[str, Any]:
     """Capture an explicit source list before any model is allocated on CUDA."""
-    files = {name: digest(ROOT / name) for name in SOURCE_FILES}
+    files = {name: digest(ROOT / name) for name in local_source_closure()}
     campaign_files = ["TRAINING_PROTOCOL.json", "DELIVERY_FREEZE.json", "H8_FEATURE_MANIFEST.json"]
     campaign_files += [
         f"fits/{fit}/CHECKPOINT_RECEIPT.json"
@@ -170,6 +231,7 @@ def source_binding(
         "schema": "fcwd_pre_gpu_source_freeze_v1",
         "manifest_sha256": digest(manifest_path),
         "sources": files,
+        "source_closure_policy": "conservative_local_ast_imports_including_package_initializers",
         "campaign_receipts": {name: digest(campaign / name) for name in campaign_files},
         "campaign": str(campaign.resolve()),
         "public_full_dir": str(public_full.resolve()),
