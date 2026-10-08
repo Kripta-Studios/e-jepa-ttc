@@ -1,0 +1,9 @@
+{
+  "checked_utc": "2026-10-08T19:17:41.218673+00:00",
+  "destination": "artifacts\\sota_campaign_20261008\\dev32_expanded_rgb\\QUERY_MANIFEST.json",
+  "optimizer_updates": 0,
+  "reason": "Full inference references the baseline manifest; pipeline verifier expects the same bytes also materialized in full output. No prediction, input population, model or scientific freeze changed.",
+  "sha256": "83d3eb0a64686adb37ffd077daad87ae97ba0e6ff6fc32041435151b3546d30b",
+  "source": "artifacts\\sota_campaign_20261008\\dev32_expanded\\QUERY_MANIFEST.json",
+  "status": "EXACT_COPY_VERIFIED"
+}

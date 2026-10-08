@@ -1,0 +1,62 @@
+{
+  "anchor_us": 14750576,
+  "artifact_sha256": "0df0a4b5223be673d3bfc3561f767aaf41042be24c7d6f438e38101aa4c6fb59",
+  "claim": {
+    "differences": [
+      "causal 200 ms observed-box ROI instead of the official FCWD epoch construction",
+      "deterministic bounded RANSAC and contour budgets",
+      "median plus Gaussian approximation; MATLAB bilateral filtering omitted",
+      "independent queries without official lastOptimizedResult sequence fallback",
+      "no TTC ground truth is opened or printed",
+      "published nonlinear least-squares stage is enabled"
+    ],
+    "label": "local_causal_strttc_source_port_adaptation",
+    "official_commit": "79ff0842955304ec4f6164ec09baddc71386d225",
+    "reference": "https://github.com/NAIL-HNU/event_aided_ttc",
+    "reproduction_of_paper_result": false
+  },
+  "config": {
+    "cmax_coarse_steps": 65,
+    "cmax_maximum_events": 50000,
+    "cmax_maximum_ttc_s": 100.0,
+    "cmax_minimum_events": 1000,
+    "cmax_minimum_relative_contrast_gain": 0.01,
+    "cmax_minimum_ttc_s": 0.1,
+    "lookback_us": 200000,
+    "object_margin_fraction": 0.1,
+    "roi_margin_fraction": 0.1,
+    "strttc_maximum_events": 250000,
+    "strttc_minimum_events": 2000,
+    "strttc_nonlinear_maximum_function_evaluations": 40,
+    "strttc_nonlinear_refinement": true
+  },
+  "diagnostics": {
+    "inverse_ttc_at_endpoint": 0.5870672869347483,
+    "linear_inlier_ratio": 1.0,
+    "linear_inverse_ttc_at_reference": 0.44495284722248507,
+    "nonlinear_inverse_ttc_at_reference": 0.5545189880945639,
+    "nonlinear_refinement": true,
+    "normal_flow_count": 24,
+    "optimized_event_count": 11487,
+    "roi_event_count": 11487,
+    "roi_xyxy": [
+      608,
+      340,
+      727,
+      430
+    ]
+  },
+  "failure": null,
+  "method": "strttc",
+  "prediction_ttc_s": 1.7033822566085999,
+  "query_id": "CCRs-1-low-50-overlap-50:00",
+  "query_manifest_sha256": "83d3eb0a64686adb37ffd077daad87ae97ba0e6ff6fc32041435151b3546d30b",
+  "query_metadata_sha256": "bb7c4c03149e1325bc6519a0aaabdfef672e3eaef0a650ed07229c5969ea667b",
+  "runner_source_sha256": "69ac030922fdc723cfead0847aa7d6b9f71e423cc99cae534f92cd170b5e319e",
+  "runtime_s": 1.3599715999735054,
+  "schema": "evttc_fixed_query_geometric_baselines_v1",
+  "scientific_optimizer_updates": 0,
+  "sequence_id": "CCRs-1-low-50-overlap-50",
+  "status": "SUCCESS",
+  "target_fields_opened": []
+}

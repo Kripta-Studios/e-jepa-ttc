@@ -1,0 +1,23 @@
+{
+  "configuration": {
+    "bootstrap_draws": 10000,
+    "group_column": null,
+    "methods": [
+      "H8_seed7",
+      "H8_seed13",
+      "H8_seed23",
+      "public_Garl_event_lhr",
+      "public_Garl_rgb_event_full"
+    ],
+    "seed": 20261008
+  },
+  "configuration_sha256": "b945b315f69b09e680aa39a3bdc62c6e1d124008b8784854b4a724c505a2e8d7",
+  "inference_runs": 0,
+  "input_bytes": 689362,
+  "input_filename": "SCORED_PREDICTIONS.csv",
+  "input_sha256": "265161f9dd2c7941af57cce3811a35945e2bea055b13a260b960df1c65c7f2d8",
+  "no_timestamp": "Outputs intentionally omit wall-clock time for deterministic regeneration",
+  "optimizer_updates": 0,
+  "scorer_sha256": "c19af78b0a3efe27f2b7cf8b5aa074294eec2c16a6e8e09b9f5debd64d23a2ec",
+  "source_mutated": false
+}

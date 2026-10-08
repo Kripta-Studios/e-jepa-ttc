@@ -1,0 +1,25 @@
+{
+  "artifacts": "${REPO}\\artifacts\\sota_campaign_20261008\\r1_resume\\supervisor",
+  "deadline_utc": "2026-10-09T18:31:35+00:00",
+  "handoff": true,
+  "max_attempts": 3,
+  "old_owner": {
+    "create_time": 1791450044.5194364,
+    "pid": 44552
+  },
+  "optimizer_updates": 0,
+  "os_cache_history": "Interrupted; OS cache history is not equivalent to uninterrupted replay.",
+  "output": "${REPO}\\artifacts\\efficient_context_20261004\\r1_20261008\\resident_1g",
+  "ownership_receipt": "${REPO}\\artifacts\\sota_campaign_20261008\\R1_PAUSE_OWNERSHIP.json",
+  "ownership_receipt_sha256": "114be0877c7635de0add0f47c4bbb33f5cb464444169f36ebc99bb56f5a715c6",
+  "parent_freeze_sha256": "92875ac7375c075c4b56cbccc334e2c693f847cd8a92137ed4f5577bd2f8c582",
+  "retry_seconds": 1800,
+  "sources": {
+    "operational/efficient_context/common.py": "689ac6f0437807e9c86c41104b3a8d24d6c991a01b1e2eb57b52ed74ff8dcae3",
+    "operational/efficient_context/r1_gib_bundle.py": "465b44085065b10f212e23939926822c3230ce890336504c014aa68cba9648af",
+    "operational/sota_eval/r1_resume.py": "e5712a5081285a3b33be469db2cbf9dcbcee866cbfeabf9646bc571d80db1e6a",
+    "operational/sota_eval/r1_resume_supervisor.py": "db47301fc3f53ed124ca830d41e2628d2974d218f6a4c11a75d65756f4f83507",
+    "tests/unit/test_sota_r1_resume.py": "7c109bf492b758e591505903fdca4bcfcf3c636b8d2c44dd31871aa8499c2d9c",
+    "tests/unit/test_sota_r1_resume_supervisor.py": "dd2222a78079a71ceaa5111dc33c8ad0d1aba70150568a1bbce49a4d666b7dd7"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "automatic_chain": "handoff -> r1_resume --execute -> original bundle(output) -> SHA verification",
+  "deadline_utc": "2026-10-09T18:31:35+00:00",
+  "estimated_measurement_hours": 3.75,
+  "execute_after": "Root coordinator has finished independent GPU queue and revalidated old owner identity.",
+  "powershell": "& '..\\e-jepa-ttc\\.venv\\Scripts\\python.exe' -m operational.sota_eval.r1_resume_supervisor --run --handoff --expected-owner-pid 44552 --expected-owner-create-time '1791450044.5194364'",
+  "remaining_pairs": 282
+}

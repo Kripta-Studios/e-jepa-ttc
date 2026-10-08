@@ -1,0 +1,24 @@
+{
+  "all_queries_retained": 630,
+  "full_model": {
+    "dependency": "Audited event-right to RGB-right spatial mapping without GT depth",
+    "not_a_negative_model_result": true,
+    "queries_with_missing_spatial_mapping": 630,
+    "status": "DEPENDENCY_UNAVAILABLE"
+  },
+  "head_selection_performed": false,
+  "planned_methods": [
+    "H8_seed7",
+    "H8_seed13",
+    "H8_seed23",
+    "public_Garl_event_lhr",
+    "public_Garl_rgb_event_full"
+  ],
+  "scored_methods": [
+    "H8_seed7",
+    "H8_seed13",
+    "H8_seed23",
+    "public_Garl_event_lhr"
+  ],
+  "sequence_count": 3
+}

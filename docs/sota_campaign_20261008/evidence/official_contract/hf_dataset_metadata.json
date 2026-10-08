@@ -1,0 +1,55 @@
+{
+  "_id": "6a40de76c7ffe8ba76dc87e3",
+  "author": "NAIL-HNU",
+  "createdAt": "2026-06-28T08:42:30.000Z",
+  "description": "\n\t\n\t\t\n\t\n\t\n\t\tGarlTTC Dataset\n\t\n\nThis repository contains the public GarlTTC structured annotations and benchmark\ninputs. RGB frames and event streams are not duplicated here; they are referenced\nfrom NAIL-HNU/eAP-dataset.\n\n\t\n\t\t\n\t\n\t\n\t\tRequired Companion Dataset\n\t\n\nDownload NAIL-HNU/eAP-dataset first, then download this repository. Pass the\nlocal eAP public root as --data-root and this repository root as\n--garlttc-annotation-root when running the release code.\n\n\t\n\t\t\n\t\n\t\n\t\tFiles… See the full description on the dataset page: https://huggingface.co/datasets/NAIL-HNU/GarlTTC-dataset.",
+  "disabled": false,
+  "downloads": 35,
+  "gated": false,
+  "id": "NAIL-HNU/GarlTTC-dataset",
+  "lastModified": "2026-07-22T08:58:12.000Z",
+  "likes": 0,
+  "private": false,
+  "sha": "9f477b5c4d5f9cdc32e7cc4bb3b186301979d6b5",
+  "siblings": [
+    {
+      "rfilename": ".gitattributes"
+    },
+    {
+      "rfilename": "README.md"
+    },
+    {
+      "rfilename": "annotations/train.parquet"
+    },
+    {
+      "rfilename": "data/test_inputs.parquet"
+    },
+    {
+      "rfilename": "data/train.parquet"
+    },
+    {
+      "rfilename": "dataset_info.json"
+    },
+    {
+      "rfilename": "sample_submission.json"
+    },
+    {
+      "rfilename": "splits/test.txt"
+    },
+    {
+      "rfilename": "splits/train.txt"
+    }
+  ],
+  "tags": [
+    "size_categories:100K<n<1M",
+    "format:parquet",
+    "modality:tabular",
+    "modality:text",
+    "library:datasets",
+    "library:dask",
+    "library:polars",
+    "library:mlcroissant",
+    "region:us"
+  ],
+  "usedStorage": 30647167
+}

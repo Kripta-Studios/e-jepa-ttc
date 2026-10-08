@@ -1,0 +1,30 @@
+{
+  "exclude": [
+    "..\\..",
+    "..\\..\\..\\data\\cache",
+    "..\\..\\..\\scratch",
+    "..\\..\\..\\tmp"
+  ],
+  "executionEnvironments": [
+    {
+      "extraPaths": [
+        "${REPO}",
+        "${REPO}/src",
+        "${DATA}/Garl-TTC"
+      ],
+      "root": "${REPO}"
+    }
+  ],
+  "include": [
+    "..\\..\\..\\operational\\sota_eval"
+  ],
+  "pythonPlatform": "Windows",
+  "pythonVersion": "3.11",
+  "reportMissingImports": "error",
+  "reportMissingTypeStubs": "none",
+  "typeCheckingMode": "basic",
+  "typeshedPath": "${REPO}/.venv/Lib/site-packages/pyright/dist/dist/typeshed-fallback",
+  "useLibraryCodeForTypes": true,
+  "venv": ".venv",
+  "venvPath": "${DATA}\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc"
+}

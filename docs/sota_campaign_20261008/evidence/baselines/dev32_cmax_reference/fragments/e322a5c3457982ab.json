@@ -1,0 +1,48 @@
+{
+  "anchor_us": 15626369,
+  "artifact_sha256": "2a6de51f9523fe687c8e42f5d81c7ab7534e2dfb0498b3a59107b0e6cd408d65",
+  "config": {
+    "coarse_log_steps": 65,
+    "maximum_events": 50000,
+    "maximum_inverse_ttc_per_s": 10.0,
+    "minimum_events": 1000,
+    "minimum_inverse_ttc_per_s": 0.01,
+    "minimum_relative_contrast_gain": 0.01,
+    "minimum_survival_fraction": 0.8,
+    "optimizer_absolute_tolerance": 1e-05,
+    "optimizer_maximum_iterations": 64
+  },
+  "diagnostics": {
+    "contrast": 2.067288522203963,
+    "evaluations": 86,
+    "event_count": 4813,
+    "inverse_ttc_per_s": 2.39047544881937,
+    "null_contrast": 1.8983053298028343,
+    "null_survival_fraction": 0.9864949096197798,
+    "object_event_count": 4813,
+    "prediction_ttc_s": 0.41832682301501534,
+    "reason": "ok",
+    "relative_contrast_gain": 0.08901792021975738,
+    "roi_event_count": 6902,
+    "roi_xyxy": [
+      643,
+      304,
+      665,
+      358
+    ],
+    "survival_fraction": 0.844379804695616,
+    "valid": true
+  },
+  "failure": null,
+  "prediction_ttc_s": 0.41832682301501534,
+  "query_id": "CPLA-high:00",
+  "query_manifest_sha256": "83d3eb0a64686adb37ffd077daad87ae97ba0e6ff6fc32041435151b3546d30b",
+  "query_metadata_sha256": "6be5566e6e1d92eefcb549e882ff9c802e5dc51ddab25b84f6ef4e926616da09",
+  "runtime_s": 2.2150139000150375,
+  "schema": "evttc_cmax_reference_equation_v1",
+  "scientific_optimizer_updates": 0,
+  "sequence_id": "CPLA-high",
+  "source_sha256": "7d4e9443541fa52e5ecf8f89c186eccd35adb75e21fe290643204bc3bf063f92",
+  "status": "SUCCESS",
+  "target_fields_opened": []
+}

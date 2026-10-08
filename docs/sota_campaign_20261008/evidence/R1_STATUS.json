@@ -1,0 +1,22 @@
+{
+  "checked_utc": "2026-10-08T19:53:23.602238+00:00",
+  "measurement_complete": false,
+  "optimizer_updates": 0,
+  "original_486_pairs_preserved": true,
+  "pairs_remaining": 271,
+  "pairs_saved": 497,
+  "pairs_total": 768,
+  "pause_release_sha256": "0a64478a9ab9bb994f776781a9ea12df9c0b449b8c3b098189d65709d2359bb9",
+  "priority_pause_497_pairs_preserved": true,
+  "resume": "Existing supervisor PID8672; automatic after configured transient backoff ending 2026-10-08T19:57:08Z.",
+  "retry_budget_reset": false,
+  "status": "WAIT_TRANSIENT_BACKOFF",
+  "supervisor_restarted": false,
+  "supervisor_state": {
+    "checked_utc": "2026-10-08T19:53:16.820816+00:00",
+    "optimizer_updates": 0,
+    "remaining_seconds": 231.90761184692383,
+    "status": "WAIT_TRANSIENT_BACKOFF"
+  },
+  "timing_caveat": "Interrupted OS/HDF5 cache history; not an uninterrupted cold/warm measurement."
+}

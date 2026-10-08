@@ -1,0 +1,44 @@
+{
+  "anchor_us": 19652381,
+  "artifact_sha256": "7abaeabcdaaef3eecf7f925c4e0266165fde80af6e1b706730c451056d1fa405",
+  "claim": {
+    "differences": [
+      "paper framework, but a custom radial looming warp for TTC",
+      "causal observed-box ROI and interpolated observed-box centers",
+      "fixed broad positive TTC search and deterministic event cap",
+      "independent fixed EvTTC queries rather than a paper benchmark protocol"
+    ],
+    "label": "local_causal_radial_cmax_adaptation",
+    "reference": "Gallego, Rebecq, and Scaramuzza, CVPR 2018",
+    "reproduction_of_paper_result": false
+  },
+  "config": {
+    "cmax_coarse_steps": 65,
+    "cmax_maximum_events": 50000,
+    "cmax_maximum_ttc_s": 100.0,
+    "cmax_minimum_events": 1000,
+    "cmax_minimum_relative_contrast_gain": 0.01,
+    "cmax_minimum_ttc_s": 0.1,
+    "lookback_us": 200000,
+    "object_margin_fraction": 0.1,
+    "roi_margin_fraction": 0.1,
+    "strttc_maximum_events": 250000,
+    "strttc_minimum_events": 2000,
+    "strttc_nonlinear_maximum_function_evaluations": 40,
+    "strttc_nonlinear_refinement": true
+  },
+  "diagnostics": {},
+  "failure": "RuntimeError:cmax_invalid:non_approaching_best_warp",
+  "method": "cmax",
+  "prediction_ttc_s": null,
+  "query_id": "CPNA-high:00",
+  "query_manifest_sha256": "83d3eb0a64686adb37ffd077daad87ae97ba0e6ff6fc32041435151b3546d30b",
+  "query_metadata_sha256": "cfd0fbe72a1f4fa35f6f04751c164908a0ee8fd2ab8f57ceb48d8c06aa342368",
+  "runner_source_sha256": "69ac030922fdc723cfead0847aa7d6b9f71e423cc99cae534f92cd170b5e319e",
+  "runtime_s": 0.916390099999262,
+  "schema": "evttc_fixed_query_geometric_baselines_v1",
+  "scientific_optimizer_updates": 0,
+  "sequence_id": "CPNA-high",
+  "status": "FAILED_RETAINED",
+  "target_fields_opened": []
+}

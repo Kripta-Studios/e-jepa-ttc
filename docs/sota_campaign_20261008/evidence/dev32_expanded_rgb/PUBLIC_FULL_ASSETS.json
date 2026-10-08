@@ -1,0 +1,10 @@
+{
+  "files": {
+    "configs/ablation/ours_full.yaml": "c7dedc9b93d32a416b8e92a6b474cc5a17ffd96b2cdaae3a4554e3cc0ee28454",
+    "model_release_metadata.json": "e14b72588172424f5dcedc0c75ba4c4923ff1af7cb842bd15239b1626e88aca8",
+    "paper_ours_full.pth": "e96a613a4fb877a1969d57ab562cadba89961fb202f5f2f2f0658f333a0d443e"
+  },
+  "optimizer_updates": 0,
+  "source": "${REPO}\\artifacts\\evttc_rgb_transfer_20261008\\public_garl",
+  "status": "VERIFIED_COPY"
+}

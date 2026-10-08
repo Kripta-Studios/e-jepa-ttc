@@ -1,0 +1,10 @@
+branch,status,complete,detail
+scoring_existing_946,COMPLETE_EXPLORATORY,true,946 GT-eligible rows; exploratory frozen historical cohort
+expanded_metrics,COMPLETE,true,Full expanded cohort; no result is inferred while inference/scoring runs
+fcwd_assets,COMPLETE,true,Three public FCWD sequences; small transfer set with uncertified ancestry
+fcwd_metrics,COMPLETE,true,H8/event-only comparison; unavailable comparators remain null
+garl_parity,PASSED,true,Native preprocessing parity and declared EvTTC transfer adaptations
+system_cost,COMPLETE,true,Fixed-eight host observation; warm-cache and architecture contexts differ
+baseline_failure_inventory,COMPLETE_DIAGNOSTIC,true,Development-32 coverage diagnostic; scorable-subset metrics remain conditional
+official_contract,METADATA_READY_OFFICIAL_REPRODUCTION_BLOCKED_CONTRACT_UNRESOLVED,false,Metadata evidence may be complete while official reproduction remains blocked
+r1_measurement,WAIT_TRANSIENT_BACKOFF,false,Resume state is reported literally and never promoted by inference

@@ -1,0 +1,13 @@
+{
+  "evaluation": "FCWD benchmark without model fine-tuning",
+  "metric": "RTE_percent_lower_is_better",
+  "not_a_reproduced_result": true,
+  "own_results": null,
+  "published_ours_full": {
+    "FCWD1": 5.2,
+    "FCWD2": 6.1,
+    "FCWD3": 5.4
+  },
+  "schema": "garl_paper_table_vii_fcwd_reference_v1",
+  "source": "https://arxiv.org/abs/2603.16303"
+}

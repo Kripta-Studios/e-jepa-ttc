@@ -1,0 +1,349 @@
+{
+  "artifact_type": "sota_garl_native_parity_v1",
+  "comparison_path": "frozen local normalization/ROI/timevolume helpers",
+  "contracts": {
+    "crop": "integer center, max edge shared over both endpoints, ceil boundaries",
+    "events": "x+5 eAP registration, full-sensor clip, 20-plane polarity-agnostic timevolume per endpoint, endpoint square crop",
+    "input_channels": "RGB0[3],RGB1[3],EVENT0[20],EVENT1[20]",
+    "optimizer_updates": 0,
+    "polarity": "not read or consumed by the published Garl timevolume",
+    "resize": "bilinear grid_sample align_corners=True with endpoint-inclusive linspace",
+    "rgb": "RGB uint8 -> /255 -> ImageNet normalize -> shared square crop",
+    "targets_read": false
+  },
+  "evttc_transfer_diagnostic": {
+    "current_transfer_reader": "exact half-open [start_us,end_us)",
+    "eap_upstream_reader": "ms_to_idx[floor(start/1000):floor(end/1000)]",
+    "endpoint_windows": 2048,
+    "event_pixel_diff": {
+      "eap_upstream": 5,
+      "evttc_transfer": 0,
+      "interpretation": "dataset-specific sensor registration; +5 is not transferred because EvTTC uses its explicit RGB-to-event calibration"
+    },
+    "millisecond_floor_quantization_us": {
+      "duration_change_range": [
+        0,
+        0
+      ],
+      "end_shift_range": [
+        -997,
+        -7
+      ],
+      "mean_end_shift": -507.9033203125,
+      "mean_start_shift": -507.9033203125,
+      "start_shift_range": [
+        -997,
+        -7
+      ]
+    },
+    "non_millisecond_aligned_endpoint_windows": 2048,
+    "not_selected_from_metric_errors": true,
+    "queries": 1024
+  },
+  "findings": [
+    {
+      "finding": "eAP local adapters are bit-exact with upstream preprocessing",
+      "severity": "INFO",
+      "supported": true
+    },
+    {
+      "finding": "published event representation is polarity-agnostic",
+      "impact": "polarity is intentionally absent from both EO and full Garl inputs",
+      "severity": "INFO"
+    },
+    {
+      "action": "retain declaration; do not choose +5 or ms-flooring from scored errors",
+      "finding": "EvTTC exact timing and calibrated sensor registration are transfer adaptations, not an upstream EvTTC protocol",
+      "severity": "LIMITATION"
+    }
+  ],
+  "identities": {
+    "campaign_index_sha256": "6161503de1d56d0ed9daa4da811da56507d24df53d622e448f18cd4564bb3cf6",
+    "campaign_rows_sha256": "0e59ce2629f512f68dff6ab77beef68090816adac7adf21994cb29fa6954859c",
+    "event_checkpoint_sha256": "fcaf9be47e2dafc6f73c6c3ebd102595ae06119dcae78aea698a42627b2b4fef",
+    "full_checkpoint_sha256": "e96a613a4fb877a1969d57ab562cadba89961fb202f5f2f2f0658f333a0d443e",
+    "full_config_sha256": "c7dedc9b93d32a416b8e92a6b474cc5a17ffd96b2cdaae3a4554e3cc0ee28454",
+    "hf_revision": "b676fcdaf26c04bcf896cdb2b208c9c424e8462a",
+    "local_executed_helpers": {
+      "operational\\evttc_rgb_transfer\\inputs.py": "498e0bb40bdacaacafb582b870725f461d325a819134d558da4aae46971ec07f",
+      "src\\e_jepa_ttc\\data\\garl_official_preprocessing.py": "10e8cc2bbb998144006a81e276942b76d8620a51b9ba778b62577d23ed8edd7e",
+      "src\\e_jepa_ttc\\efficient_context\\garl_input.py": "915153f34b6de0803059c709fbb668958a1ee843dabf09265393b9830a22449d",
+      "src\\e_jepa_ttc\\simplex_t\\cached_event_reader.py": "3d98509354694fd8688bb611014a9d69c55c1db65541f63db41d7f272e31db85"
+    },
+    "native_sources": {
+      "garl_ttc/__init__.py": "90e0ac4f12e75ccb82264ee28d99b786dc0ec48bd3e6a65ce86593530c2ea383",
+      "garl_ttc/config.py": "d9d3a44725646858a61bf8b185131f540b8f4cd670c4b8ba49f560cb82ef7fcd",
+      "garl_ttc/datasets/__init__.py": "0c6eea255e95b21d4edfda8cf29d7b792134f3ca22b2d8b1328d37b94efae16c",
+      "garl_ttc/datasets/event_representation.py": "3311a5024d6f974621257639520dd05043b25f7ac728380f80028d615531e3d6",
+      "garl_ttc/datasets/ttc_dataset.py": "d21eaf3928528c2d5b9a7c2787a64e248bbf49bc60756a3156034b9d8ac5b592",
+      "garl_ttc/engine/__init__.py": "4c0b28958f60ce638537935437684394ce22be1eff696e139db8d3ff7aea958b",
+      "garl_ttc/engine/evaluator.py": "062848733e21f994bd3247d4cdacdf12d4fb177a14e15f87bad50e42cc20b8d5",
+      "garl_ttc/engine/inference.py": "78f30f84bb771c278e2b692412dd07beee8b4f12fd500be3b8e9e9003482dfa8",
+      "garl_ttc/engine/metrics.py": "1c31e7875cd6b0ceab1f6778462b9bce50eb9cacf7bff9c5246e0e04dd55431c",
+      "garl_ttc/engine/runtime.py": "98de68d5d119cd1e83180fe7c0196901e9c196aee380cbe7fe42f0615ff7f66e",
+      "garl_ttc/engine/trainer.py": "b22d170b339da5af016116e6da6d7d205f90821addb507ea9d656af1b60b001d",
+      "garl_ttc/models/__init__.py": "039bdb68efbbb07647669670110825e0d3a96ffb4232c62fff59f6d590d834ea",
+      "garl_ttc/models/focal_loss.py": "7e5e53b9efff75b0254ebd13a7361a55be63ec8bd1385770b176f439dd6369c9",
+      "garl_ttc/models/resnet.py": "6fbb6bb08d57f6a1d70fa4df31b362476a2b7af6f5c3d82a09a111da17f2f26b",
+      "garl_ttc/models/ttc_network.py": "7927946d4b9af608f1ed2e57c6cc8b498d3c4be8b9c84305647199ef812d9c14",
+      "garl_ttc/utils/__init__.py": "ed6c0144d813d3157716678fbefc0a32d941f3fb542f17cbd465109b83f43b1c",
+      "garl_ttc/utils/events.py": "722760fde3325f4f2a741b1ae9d2a9dd14716cc371a0f94f406bed7a11abc3c0",
+      "garl_ttc/utils/io.py": "637a4ef794acc57d5f91c6c6f66362560a1defdfb4810148030a20eab682bc1b",
+      "garl_ttc/utils/sam_masks.py": "965faea7a54cf8ad8de3c04160d04b2d672d602e41d4eceabe3a7d959b5bbf91"
+    },
+    "script_sha256": "616ff63be6f392c512e23114ab3db504d7caf4b17ce327ba7149517acf15f0c8",
+    "upstream_commit": "256661242b8a7f5e56aa3c1c02348b30f6e89de6"
+  },
+  "models": {
+    "clipping": "none",
+    "event_only": {
+      "checkpoint_sha256": "fcaf9be47e2dafc6f73c6c3ebd102595ae06119dcae78aea698a42627b2b4fef",
+      "dT_seconds": 0.1,
+      "heights": [
+        [
+          100.33170318603516,
+          98.83513641357422
+        ],
+        [
+          94.2950668334961,
+          96.02119445800781
+        ],
+        [
+          115.95868682861328,
+          117.95744323730469
+        ]
+      ],
+      "ttc_seconds": [
+        -6.604111194610596,
+        5.562811374664307,
+        5.901548385620117
+      ]
+    },
+    "full": {
+      "checkpoint_sha256": "e96a613a4fb877a1969d57ab562cadba89961fb202f5f2f2f0658f333a0d443e",
+      "dT_seconds": 0.1,
+      "outputs": [
+        {
+          "heights": [
+            105.4643325805664,
+            104.29624938964844
+          ],
+          "ttc": -8.928800582885742
+        },
+        {
+          "heights": [
+            101.43368530273438,
+            103.53507232666016
+          ],
+          "ttc": 4.92698335647583
+        },
+        {
+          "heights": [
+            121.12986755371094,
+            122.90818786621094
+          ],
+          "ttc": 6.91148567199707
+        }
+      ],
+      "strict_state_load": true
+    },
+    "output_order": [
+      "visible_height_t0",
+      "visible_height_t1"
+    ],
+    "sign": "signed; denominator sign is preserved",
+    "ttc_equation": "dT / (1 - height_t0 / height_t1)",
+    "ttc_units": "seconds"
+  },
+  "preprocessing_max_abs": 0.0,
+  "preprocessing_reference": "pinned upstream garl_ttc.datasets.ttc_dataset.preprocess_data",
+  "records": [
+    {
+      "bit_exact": true,
+      "event_max_abs": 0.0,
+      "full_max_abs": 0.0,
+      "local": {
+        "rgb_square": [
+          79,
+          413,
+          435,
+          769
+        ]
+      },
+      "local_sensor_sha256": "6d86ee7c1edabcaeebed9152ac68d48e2eab63075aed41c9134363547e458a9c",
+      "reference": {
+        "boxes": [
+          [
+            84,
+            466,
+            433,
+            719
+          ],
+          [
+            79,
+            464,
+            435,
+            719
+          ]
+        ],
+        "event_counts": [
+          581510,
+          448058
+        ],
+        "rgb_shapes": [
+          [
+            720,
+            1280,
+            3
+          ],
+          [
+            720,
+            1280,
+            3
+          ]
+        ],
+        "windows_us": [
+          [
+            292671068,
+            292771070
+          ],
+          [
+            292771070,
+            292871071
+          ]
+        ]
+      },
+      "reference_sensor_sha256": "6d86ee7c1edabcaeebed9152ac68d48e2eab63075aed41c9134363547e458a9c",
+      "rgb_max_abs": 0.0,
+      "sample_token": "2JkLL5W891_000000_554400000",
+      "sequence_id": "2JkLL5W891"
+    },
+    {
+      "bit_exact": true,
+      "event_max_abs": 0.0,
+      "full_max_abs": 0.0,
+      "local": {
+        "rgb_square": [
+          -2,
+          488,
+          229,
+          719
+        ]
+      },
+      "local_sensor_sha256": "a4e257d716e5bad35ea0526c8d3cc38ac9a8d6d43c012a8bb187fc24bc51b896",
+      "reference": {
+        "boxes": [
+          [
+            0,
+            513,
+            231,
+            707
+          ],
+          [
+            0,
+            505,
+            226,
+            702
+          ]
+        ],
+        "event_counts": [
+          925589,
+          1056986
+        ],
+        "rgb_shapes": [
+          [
+            720,
+            1280,
+            3
+          ],
+          [
+            720,
+            1280,
+            3
+          ]
+        ],
+        "windows_us": [
+          [
+            275248819,
+            275348820
+          ],
+          [
+            275348820,
+            275448822
+          ]
+        ]
+      },
+      "reference_sensor_sha256": "a4e257d716e5bad35ea0526c8d3cc38ac9a8d6d43c012a8bb187fc24bc51b896",
+      "rgb_max_abs": 0.0,
+      "sample_token": "2Y46OkK3ff_000001_1564300000",
+      "sequence_id": "2Y46OkK3ff"
+    },
+    {
+      "bit_exact": true,
+      "event_max_abs": 0.0,
+      "full_max_abs": 0.0,
+      "local": {
+        "rgb_square": [
+          -32,
+          392,
+          288,
+          712
+        ]
+      },
+      "local_sensor_sha256": "5ea7f6a0f89bb2916d18206f8fedbbc4f53f892e98565041b968d8b2f5210f76",
+      "reference": {
+        "boxes": [
+          [
+            0,
+            387,
+            264,
+            704
+          ],
+          [
+            0,
+            392,
+            256,
+            712
+          ]
+        ],
+        "event_counts": [
+          586321,
+          691152
+        ],
+        "rgb_shapes": [
+          [
+            720,
+            1280,
+            3
+          ],
+          [
+            720,
+            1280,
+            3
+          ]
+        ],
+        "windows_us": [
+          [
+            225712277,
+            225812278
+          ],
+          [
+            225812278,
+            225912280
+          ]
+        ]
+      },
+      "reference_sensor_sha256": "5ea7f6a0f89bb2916d18206f8fedbbc4f53f892e98565041b968d8b2f5210f76",
+      "rgb_max_abs": 0.0,
+      "sample_token": "2cyv0Oedzg_000001_19317100000",
+      "sequence_id": "2cyv0Oedzg"
+    }
+  ],
+  "samples": 3,
+  "sequence_coverage": [
+    "2JkLL5W891",
+    "2Y46OkK3ff",
+    "2cyv0Oedzg"
+  ],
+  "status": "PASSED"
+}

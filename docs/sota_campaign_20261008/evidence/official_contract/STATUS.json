@@ -1,0 +1,53 @@
+{
+  "authorization_is_not_the_blocker": true,
+  "dependencies": [
+    {
+      "id": "OFFICIAL_RECORDING_AND_QUERY_IDENTITY",
+      "reason": "A short scenario label does not identify the recording or queried intervals; dev32 naming candidates are not proven mappings.",
+      "required": "Official file hashes/revisions, source recording IDs, crop start/end times and evaluation query timestamps for each benchmark label, including overlap/run variant.",
+      "status": "UNRESOLVED"
+    },
+    {
+      "id": "CAMERA_ROI_AND_AVAILABILITY",
+      "reason": "Website distinguishes 8-mm/16-mm settings. Existing dev32 left-camera rotation-only ROI protocol is a local approximation, not a certified official adapter.",
+      "required": "Exact camera/lens for Garl TableVI; calibration, ROI sensor/projection, rectification/resize and annotation/detector availability rules; whether GT boxes/depth are used.",
+      "status": "UNRESOLVED"
+    },
+    {
+      "id": "TEMPORAL_TARGET_AND_SCORER_CONTRACT",
+      "reason": "The pointwise RTE equation is documented; a complete executable official scoring/coverage contract has not been bound. Do not import eAP bins or choose exclusions from predictions.",
+      "required": "Reference timestamp, history/event duration, RGB pairing and actual delta_t, GT alignment/interpolation, evaluated TTC range, zero/missing/failed prediction rules, sequence aggregation and runtime boundary.",
+      "status": "UNRESOLVED"
+    },
+    {
+      "id": "CHECKPOINT_TO_TABLEVI_BINDING",
+      "reason": "HF identifies a primary full checkpoint and its config/hash, but no inspected document binds this digest to the TableVI evaluation.",
+      "required": "Author-linked SHA-256 checkpoint and exact code/config revision for TableVI, including whether released paper_ours_full.pth is that model.",
+      "status": "UNRESOLVED"
+    },
+    {
+      "id": "CHECKPOINT_TRAINING_AND_SELECTION_LINEAGE",
+      "reason": "Paper states eAP training and no EvTTC fine-tuning; this is not a checkpoint-specific exclusion manifest. Six extra GitHub IDs are training-listed, not new holdouts.",
+      "required": "Per-checkpoint sequence manifests for all training, branch pretraining, checkpoint selection, validation and calibration; explain public TRAIN40 versus GitHub TRAIN46 and any EvTTC use.",
+      "status": "UNRESOLVED"
+    },
+    {
+      "id": "INDEPENDENT_GROUPS_AND_FREEZE",
+      "reason": "Local dev32 has a development-model-selection protocol and observed evaluations. Crops of those recordings cannot become independent by renaming them.",
+      "required": "Map official clips to physical recording/session groups and prior dev32 usage; freeze models, adapters, queries, target eligibility and scorer before protected evaluation access.",
+      "status": "UNRESOLVED"
+    }
+  ],
+  "independent_confirmation_ready": false,
+  "next_actions": [
+    "Request the four concise author clarifications in AUTHORS_DRAFT.txt; draft remains unsent.",
+    "Resolve recording/clip identity using metadata or publisher hash maps before declaring independence.",
+    "Freeze the completed query, adapter, checkpoint and scorer contract; then proceed within authorized evaluation scope.",
+    "Keep local development comparisons running independently with explicit exploratory status."
+  ],
+  "official_reproduction_ready": false,
+  "protocol_sha256": "fa94c018480e34616a0bb84921d93fd37ed6f46a7c5084618e3da9046af410d8",
+  "schema": "evttc_official_comparison_v2",
+  "status": "METADATA_READY_OFFICIAL_REPRODUCTION_BLOCKED_CONTRACT_UNRESOLVED",
+  "user_campaign_authorized": true
+}

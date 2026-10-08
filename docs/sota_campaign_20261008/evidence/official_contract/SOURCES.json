@@ -1,0 +1,107 @@
+{
+  "observed_utc": "2026-10-08T18:01:43.706722+00:00",
+  "protected_payloads_opened": false,
+  "revisions": {
+    "dataset": "9f477b5c4d5f9cdc32e7cc4bb3b186301979d6b5",
+    "github": "256661242b8a7f5e56aa3c1c02348b30f6e89de6",
+    "model": "b676fcdaf26c04bcf896cdb2b208c9c424e8462a"
+  },
+  "sources": [
+    {
+      "bytes": 460711,
+      "file": "garl_paper_2603.16303v1.html",
+      "retrieved_utc_from_receipt_mtime": "2026-10-08T18:01:14.928289+00:00",
+      "sha256": "322a1d497c915f534acb07268fea90597042d023667db9493ac846bec2611998",
+      "status": "OK",
+      "url": "https://arxiv.org/html/2603.16303v1"
+    },
+    {
+      "bytes": 215331,
+      "file": "evttc_paper_2412.05053v2.html",
+      "retrieved_utc_from_receipt_mtime": "2026-10-08T18:01:15.111583+00:00",
+      "sha256": "694628ae95e5770c3f57af90f9e0a67fe5671aefb740eecb63cb593e72f33370",
+      "status": "OK",
+      "url": "https://arxiv.org/html/2412.05053v2"
+    },
+    {
+      "bytes": 228079,
+      "file": "react_paper_2609.19204v1.html",
+      "retrieved_utc_from_receipt_mtime": "2026-10-08T18:01:15.399403+00:00",
+      "sha256": "13c3e86b18c616bf11749d417016c235909659981be46c47385b817a72521ca5",
+      "status": "OK",
+      "url": "https://arxiv.org/html/2609.19204v1"
+    },
+    {
+      "bytes": 81919,
+      "file": "competition.html",
+      "retrieved_utc_from_receipt_mtime": "2026-10-08T18:01:15.692351+00:00",
+      "sha256": "cda37d02a25d4eb5eb2b00ceed3961dc297e11d4598dc0d476ff83cf84e5078d",
+      "status": "OK",
+      "url": "https://nail-hnu.github.io/EvTTC/competition/"
+    },
+    {
+      "bytes": 1851,
+      "file": "hf_model_metadata.json",
+      "retrieved_utc_from_receipt_mtime": "2026-10-08T18:01:15.903748+00:00",
+      "sha256": "cc590f0978a0385a4ebc07bc9d182acb64801b295d4851d6494fcaa528cfbb90",
+      "status": "OK",
+      "url": "https://huggingface.co/api/models/NAIL-HNU/GarlTTC-model"
+    },
+    {
+      "bytes": 1464,
+      "file": "hf_dataset_metadata.json",
+      "retrieved_utc_from_receipt_mtime": "2026-10-08T18:01:16.145489+00:00",
+      "sha256": "4e159ddd69734d764e00616f35a86366ba09e4bf32f51fef9320a1cb0d681bc7",
+      "status": "OK",
+      "url": "https://huggingface.co/api/datasets/NAIL-HNU/GarlTTC-dataset"
+    },
+    {
+      "bytes": 4459,
+      "file": "github_main_metadata.json",
+      "retrieved_utc_from_receipt_mtime": "2026-10-08T18:01:16.577379+00:00",
+      "sha256": "56c825a9ddc3df233419c7f6d1f90d7c24547abe1134e0d5610f03005972811f",
+      "status": "OK",
+      "url": "https://api.github.com/repos/NAIL-HNU/Garl-TTC/commits/main"
+    },
+    {
+      "bytes": 791,
+      "file": "model_README.md",
+      "retrieved_utc_from_receipt_mtime": "2026-10-08T18:01:16.860704+00:00",
+      "sha256": "ba523905a727da5f8d5ada06b8c46ae19fd6be368bc16f97badfeb8367d973e0",
+      "status": "OK",
+      "url": "https://huggingface.co/NAIL-HNU/GarlTTC-model/raw/b676fcdaf26c04bcf896cdb2b208c9c424e8462a/README.md"
+    },
+    {
+      "bytes": 2751,
+      "file": "model_model_release_metadata.json",
+      "retrieved_utc_from_receipt_mtime": "2026-10-08T18:01:17.078945+00:00",
+      "sha256": "e14b72588172424f5dcedc0c75ba4c4923ff1af7cb842bd15239b1626e88aca8",
+      "status": "OK",
+      "url": "https://huggingface.co/NAIL-HNU/GarlTTC-model/raw/b676fcdaf26c04bcf896cdb2b208c9c424e8462a/model_release_metadata.json"
+    },
+    {
+      "bytes": 1113,
+      "file": "dataset_README.md",
+      "retrieved_utc_from_receipt_mtime": "2026-10-08T18:01:17.317156+00:00",
+      "sha256": "41ecfeac0c6c3529938c32bc5146ccff9514431535e34a2ad28fccb1a73d11c1",
+      "status": "OK",
+      "url": "https://huggingface.co/datasets/NAIL-HNU/GarlTTC-dataset/raw/9f477b5c4d5f9cdc32e7cc4bb3b186301979d6b5/README.md"
+    },
+    {
+      "bytes": 440,
+      "file": "dataset_splits_train.txt",
+      "retrieved_utc_from_receipt_mtime": "2026-10-08T18:01:17.632231+00:00",
+      "sha256": "ab2a68609d535379b1d6ed3617b3487cf61dce38dcb13c53246d5ac74c0b3251",
+      "status": "OK",
+      "url": "https://huggingface.co/datasets/NAIL-HNU/GarlTTC-dataset/raw/9f477b5c4d5f9cdc32e7cc4bb3b186301979d6b5/splits/train.txt"
+    },
+    {
+      "bytes": 505,
+      "file": "github_train.txt",
+      "retrieved_utc_from_receipt_mtime": "2026-10-08T18:01:43.538794+00:00",
+      "sha256": "2f92c1c3ed881642190c6d6ddd71f247e6184deb489456e06db2516b81a774fb",
+      "status": "OK",
+      "url": "https://raw.githubusercontent.com/NAIL-HNU/Garl-TTC/256661242b8a7f5e56aa3c1c02348b30f6e89de6/configs/splits/train.txt"
+    }
+  ]
+}

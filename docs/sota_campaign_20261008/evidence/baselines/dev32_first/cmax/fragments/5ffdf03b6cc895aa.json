@@ -1,0 +1,44 @@
+{
+  "anchor_us": 15750407,
+  "artifact_sha256": "6091953ca763b1e0a5a55d0774c856fcbd82262fde09b0c049df5f06855c7088",
+  "claim": {
+    "differences": [
+      "paper framework, but a custom radial looming warp for TTC",
+      "causal observed-box ROI and interpolated observed-box centers",
+      "fixed broad positive TTC search and deterministic event cap",
+      "independent fixed EvTTC queries rather than a paper benchmark protocol"
+    ],
+    "label": "local_causal_radial_cmax_adaptation",
+    "reference": "Gallego, Rebecq, and Scaramuzza, CVPR 2018",
+    "reproduction_of_paper_result": false
+  },
+  "config": {
+    "cmax_coarse_steps": 65,
+    "cmax_maximum_events": 50000,
+    "cmax_maximum_ttc_s": 100.0,
+    "cmax_minimum_events": 1000,
+    "cmax_minimum_relative_contrast_gain": 0.01,
+    "cmax_minimum_ttc_s": 0.1,
+    "lookback_us": 200000,
+    "object_margin_fraction": 0.1,
+    "roi_margin_fraction": 0.1,
+    "strttc_maximum_events": 250000,
+    "strttc_minimum_events": 2000,
+    "strttc_nonlinear_maximum_function_evaluations": 40,
+    "strttc_nonlinear_refinement": true
+  },
+  "diagnostics": {},
+  "failure": "RuntimeError:cmax_invalid:non_approaching_best_warp",
+  "method": "cmax",
+  "prediction_ttc_s": null,
+  "query_id": "CCRm-medium-100-overlap-100:00",
+  "query_manifest_sha256": "83d3eb0a64686adb37ffd077daad87ae97ba0e6ff6fc32041435151b3546d30b",
+  "query_metadata_sha256": "1a22a9ec3459c2e75c1049c9ecd1900a2da6af076c0957521f0e32900da07af6",
+  "runner_source_sha256": "69ac030922fdc723cfead0847aa7d6b9f71e423cc99cae534f92cd170b5e319e",
+  "runtime_s": 0.574533800012432,
+  "schema": "evttc_fixed_query_geometric_baselines_v1",
+  "scientific_optimizer_updates": 0,
+  "sequence_id": "CCRm-medium-100-overlap-100",
+  "status": "FAILED_RETAINED",
+  "target_fields_opened": []
+}

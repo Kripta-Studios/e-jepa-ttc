@@ -1,0 +1,9 @@
+{
+  "checked_utc": "2026-10-08T19:27:04.771680+00:00",
+  "marker_sha256": "b86c305c90dd226c256667a77fb9ef9942a28569ea6bf931cad171d378d8a038",
+  "previous_receipts_preserved": true,
+  "saved_pairs": 497,
+  "status": "PAUSED_AT_PAIR_BOUNDARY",
+  "supervisor_alive": true,
+  "worker_alive": false
+}

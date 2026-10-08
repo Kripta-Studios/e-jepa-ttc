@@ -1,0 +1,47 @@
+{
+  "checked_utc": "2026-10-08T19:47:33.515381+00:00",
+  "metrics_changed": false,
+  "optimizer_updates": 0,
+  "predictions_rerun": false,
+  "prior_failure": {
+    "error": "FCWD scoring/coverage/target-join contract changed",
+    "error_type": "ValueError",
+    "scientific_negative": false,
+    "status": "FAILED_PRESERVED"
+  },
+  "reason": "Verifier previously compared the generic scorer SHA to the sealed FCWD target-join writer SHA; now binds the actual writer. Both modules remain protected by the inference source freeze.",
+  "result": {
+    "checked_utc": "2026-10-08T19:44:00.326868+00:00",
+    "cohort": {
+      "all_rows_retained": true,
+      "gt_eligible": 597,
+      "gt_nonfinite": 33,
+      "gt_zero": 0,
+      "selection_uses_predictions": false,
+      "sequences": 3,
+      "total_rows": 630
+    },
+    "methods": [
+      "H8_seed7",
+      "H8_seed13",
+      "H8_seed23",
+      "public_Garl_event_lhr"
+    ],
+    "optimizer_updates": 0,
+    "planned_methods": [
+      "H8_seed7",
+      "H8_seed13",
+      "H8_seed23",
+      "public_Garl_event_lhr",
+      "public_Garl_rgb_event_full"
+    ],
+    "prediction_seal_sha256": "61c840969f2e02ff012a4f906ed4e822125cd2cd3aecd8ee82a57c7f84353236",
+    "queries": 630,
+    "scoring_manifest_sha256": "528192ca8348a419eb07f149a1bba6922b238c775c30c92d88db4fd2a605e41c",
+    "status": "COMPLETE",
+    "target_join_contract_sha256": "962a1d48676becdb609d166f822be023d074549507729cb926dcf83ffad3840c"
+  },
+  "scoring_receipt_sha256": "270f0588fba52e448914c378186019e0e1c97edf6c249e600a4141d9d0c1413a",
+  "status": "VERIFIED_COMPLETE",
+  "verifier_sha256": "5f71371de1f42c049c4df5578436abffa8df69d55b35634f6b6b44d63a74080e"
+}

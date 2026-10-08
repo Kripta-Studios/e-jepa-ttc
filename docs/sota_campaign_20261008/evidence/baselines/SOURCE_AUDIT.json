@@ -1,0 +1,69 @@
+{
+  "claim_boundary": "No baseline result or paper metric was produced by this source audit.",
+  "cmax": {
+    "finding": "The variance-of-IWE objective is source-traceable, while the radial TTC warp, causal observed-box center compensation, search interval, and EvTTC protocol are local adaptations.",
+    "local_files": [
+      "src/e_jepa_ttc/evaluation/cmax_evttc.py",
+      "src/e_jepa_ttc/geometry/cmax.py"
+    ],
+    "new_runner_policy": "Use fixed broad 0.1-100 s positive TTC search, fixed manifest queries, deterministic caps, retained failures, and no paper-reproduction claim.",
+    "paper": "Gallego, Rebecq, and Scaramuzza, A Unifying Contrast Maximization Framework for Event Cameras, CVPR 2018"
+  },
+  "local_source_sha256": {
+    "operational/sota_eval/baselines.py": "69ac030922fdc723cfead0847aa7d6b9f71e423cc99cae534f92cd170b5e319e",
+    "src/e_jepa_ttc/evaluation/cmax_evttc.py": "ff6ad042a7e960e1335685849d4326e38144c6c183308893af26d969eae89ad4",
+    "src/e_jepa_ttc/evaluation/strttc_evttc.py": "6c3cd56eed5297489aa96e99049711e0bc0bee98933a0546b1b83ede314c9e03",
+    "src/e_jepa_ttc/geometry/cmax.py": "a39bcc06101ceb9c4b41636647e1d12e779d880e74253224d3b4cd662e29627e",
+    "src/e_jepa_ttc/geometry/strttc.py": "c65ee6f27dd5e9e8776da93950ec5a5e5fc50244399cf962316b184974563e0d",
+    "src/e_jepa_ttc/geometry/strttc_frontend.py": "6de01013882edfc0348b213f8e7df3c6ccea38685a1907acfc29d792b9254e0a"
+  },
+  "matlab_runtime_available": false,
+  "official_strttc_file_sha256": {
+    "matlab_code/main/function/calculateSTRTTC.m": "c89290efdc2f884dc627df1b13d012ce67ddfb1e09a8ada13bc82a6e6e1d3325",
+    "matlab_code/main/main_FCWD.m": "7e7252fb76ab6b0c0e64f4763e04a9cdcb29174f2904ae97160e3d4f47a09957",
+    "matlab_code/utils/Find_nearest_index.m": "3d923652e2af18632a5f8db673b920ef35dd9563a984bbd5b4990a3f725e5248",
+    "matlab_code/utils/GetValidPointonNLTS.m": "e929ef566f10b7486c70d0a1bce9e0ddb954c5a2eb111c69e7242b4bc6774fa3",
+    "matlab_code/utils/NearestLinearTimeSurfacePositiveAndNegative.m": "bcaf9fd31d9df50fb3e8829a0bd1107941c6b2bfee813c7c2f8e22d19c981c42",
+    "matlab_code/utils/PlaneFittingNormalFlowByEventValied.m": "d76605799a89a80e001f5dfc68efea86991e350ee667e6ecf1cef64cabc746d3",
+    "matlab_code/utils/RANSAC_raw.m": "65fec85011ae6d40cd826c2768668f6386830bb39c6ead486e568fcafaa8887f",
+    "matlab_code/utils/constructA_b.m": "804a697df9e1f8f2c83fe5285d4af0af2dbd634778b44483c21dd9f31660e2c9",
+    "matlab_code/utils/findBiggerIndex.m": "9f2f44d01473051b8ed0df9cecf401022e2ff3273084c3a07cd3f496438ad949",
+    "matlab_code/utils/getEpochTime.m": "02e622a1ccdc11a53db58e10d7c2e9c94be9b5f4647455240f3686d683ab9bae",
+    "matlab_code/utils/loadUndistortEventsMap.m": "65bb86e9d6b6cc524caa907a3d7a5bb3aa1da670a06d45c70ff05b0a3abb0f02",
+    "matlab_code/utils/metricRee.m": "8e9a736528b2e0f40b618a891a8d04b96e27b7d970fd3386778f49d389733397",
+    "matlab_code/utils/plotSimpleResult.m": "dd19a698aff9dab2a741941124e729e6b05f4563f416d573647387286702ecb8",
+    "matlab_code/utils/removeEmptycelltoArray.m": "b1e35d38a3506c0522a5519b3ba5f2c920eb6de298aca974491d1fcefb78bde7",
+    "matlab_code/utils/str_warping.m": "5a5bb5ffe13514c7baebed0479c808029a27d6f3d2b06348890cff4829682042",
+    "matlab_code/utils/strttc_error_func.m": "4985d660378374fa30f9788e2765e3045fb36d840a84170e933e728e19a38ad1",
+    "matlab_code/utils/strttc_minimal.m": "01828a3342f45c0cb266c1ee2b2eb1ee0a706142672895c8b419883513e92cc8",
+    "matlab_code/utils/strttc_optimize.m": "9da5e86e4d65ffe204b778ab3579233c12ae6acddad600450d0cb7922ad24629"
+  },
+  "schema": "sota_baseline_source_audit_v1",
+  "scientific_optimizer_updates": 0,
+  "status": "SOURCE_REVIEW_COMPLETE_NO_PREDICTIONS",
+  "strttc": {
+    "finding": "The local equations and nonlinear warp follow named official stages, but the complete runner is an adaptation, not an exact paper reproduction.",
+    "local_files": [
+      "src/e_jepa_ttc/evaluation/strttc_evttc.py",
+      "src/e_jepa_ttc/geometry/strttc.py",
+      "src/e_jepa_ttc/geometry/strttc_frontend.py"
+    ],
+    "material_differences": [
+      "official code carries lastOptimizedResult between epochs; fixed dev32 queries are independent",
+      "official code always calls nonlinear lsqnonlin; the old local EvTTC default disabled it",
+      "official code uses median, bilateral, and 3D Gaussian MATLAB filters; local frontend uses median plus Gaussian approximation",
+      "official epoch construction, undistortion, RANSAC settings, contour admission, and fallback thresholds are not reproduced exactly",
+      "official calculateSTRTTC accepts gtTTC for logging; the new runner opens no TTC target"
+    ],
+    "new_runner_policy": "Enable nonlinear refinement with a fixed 40-evaluation cap, retain every failure, and label output local_causal_strttc_source_port_adaptation.",
+    "official_commit": "79ff0842955304ec4f6164ec09baddc71386d225",
+    "official_files_inspected": [
+      "matlab_code/main/function/calculateSTRTTC.m",
+      "matlab_code/utils/NearestLinearTimeSurfacePositiveAndNegative.m",
+      "matlab_code/utils/GetValidPointonNLTS.m",
+      "matlab_code/utils/constructA_b.m",
+      "matlab_code/utils/strttc_optimize.m"
+    ],
+    "official_repository": "https://github.com/NAIL-HNU/event_aided_ttc"
+  }
+}

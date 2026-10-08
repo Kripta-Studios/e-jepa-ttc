@@ -1,0 +1,20 @@
+Subject: Reproducing Garl-TTC Table VI: checkpoint, sequences and scoring contract
+
+Dear Hongxin and Prof. Zhou,
+
+Thank you for the public releases. We are preparing a frozen comparison with Garl-TTC and would appreciate four clarifications:
+
+1. Does paper_ours_full.pth (SHA-256 e96a613a4fb877a1969d57ab562cadba89961fb202f5f2f2f0658f333a0d443e) reproduce Table VI of arXiv:2603.16303v1? Please identify the exact evaluation code/config revision and whether this is the checkpoint used for the three reported EvTTC sequences.
+
+2. Could you share checkpoint-linked training/pretraining/validation/checkpoint-selection sequence IDs, including the visual/event branches? The public HF TRAIN list contains 40 sequences, whereas GitHub lists 46. Were the published weights trained on TRAIN40 or another list, and was any EvTTC data used for training, selection or calibration?
+
+3. For CCRs2-medium, CCRs2-high and CCRm-medium, could you provide the original recording/file identity and evaluated timestamps, overlap/run variant and camera/lens? Are the competition downloads clips of the public 32-sequence dataset? A mapping with hashes, source timestamps and recording/session groups would help us avoid calling overlapping clips independent.
+
+4. Could you share the Table VI adapter/scorer contract: ROI source and projection, event window, frame pairing and timestamps, TTC alignment/interpolation, valid range, missing/failed prediction treatment, per-sequence aggregation and runtime boundaries? We implement abs(prediction-GT)/abs(GT)*100 but do not want to guess the sampling or exclusion rules.
+
+We will preserve the distinction between a development comparison and an independently validated reproduction, and will freeze the protocol before evaluating protected data.
+
+Best regards,
+Alvaro
+
+DRAFT ONLY. Not sent by the agent; no email or submission performed.

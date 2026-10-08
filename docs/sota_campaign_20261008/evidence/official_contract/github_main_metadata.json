@@ -1,0 +1,101 @@
+{
+  "author": {
+    "avatar_url": "https://avatars.githubusercontent.com/u/29891758?v=4",
+    "events_url": "https://api.github.com/users/JinghangLi/events{/privacy}",
+    "followers_url": "https://api.github.com/users/JinghangLi/followers",
+    "following_url": "https://api.github.com/users/JinghangLi/following{/other_user}",
+    "gists_url": "https://api.github.com/users/JinghangLi/gists{/gist_id}",
+    "gravatar_id": "",
+    "html_url": "https://github.com/JinghangLi",
+    "id": 29891758,
+    "login": "JinghangLi",
+    "node_id": "MDQ6VXNlcjI5ODkxNzU4",
+    "organizations_url": "https://api.github.com/users/JinghangLi/orgs",
+    "received_events_url": "https://api.github.com/users/JinghangLi/received_events",
+    "repos_url": "https://api.github.com/users/JinghangLi/repos",
+    "site_admin": false,
+    "starred_url": "https://api.github.com/users/JinghangLi/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/JinghangLi/subscriptions",
+    "type": "User",
+    "url": "https://api.github.com/users/JinghangLi",
+    "user_view_type": "public"
+  },
+  "comments_url": "https://api.github.com/repos/NAIL-HNU/Garl-TTC/commits/256661242b8a7f5e56aa3c1c02348b30f6e89de6/comments",
+  "commit": {
+    "author": {
+      "date": "2026-06-29T03:16:23Z",
+      "email": "jhanglee.ro@gmail.com",
+      "name": "Jinghangli"
+    },
+    "comment_count": 0,
+    "committer": {
+      "date": "2026-06-29T03:16:23Z",
+      "email": "jhanglee.ro@gmail.com",
+      "name": "Jinghangli"
+    },
+    "message": "Update benchmark links",
+    "tree": {
+      "sha": "f48ce2ded7cf52d79cee036f10ddbcb354f2f9db",
+      "url": "https://api.github.com/repos/NAIL-HNU/Garl-TTC/git/trees/f48ce2ded7cf52d79cee036f10ddbcb354f2f9db"
+    },
+    "url": "https://api.github.com/repos/NAIL-HNU/Garl-TTC/git/commits/256661242b8a7f5e56aa3c1c02348b30f6e89de6",
+    "verification": {
+      "payload": null,
+      "reason": "unsigned",
+      "signature": null,
+      "verified": false,
+      "verified_at": null
+    }
+  },
+  "committer": {
+    "avatar_url": "https://avatars.githubusercontent.com/u/29891758?v=4",
+    "events_url": "https://api.github.com/users/JinghangLi/events{/privacy}",
+    "followers_url": "https://api.github.com/users/JinghangLi/followers",
+    "following_url": "https://api.github.com/users/JinghangLi/following{/other_user}",
+    "gists_url": "https://api.github.com/users/JinghangLi/gists{/gist_id}",
+    "gravatar_id": "",
+    "html_url": "https://github.com/JinghangLi",
+    "id": 29891758,
+    "login": "JinghangLi",
+    "node_id": "MDQ6VXNlcjI5ODkxNzU4",
+    "organizations_url": "https://api.github.com/users/JinghangLi/orgs",
+    "received_events_url": "https://api.github.com/users/JinghangLi/received_events",
+    "repos_url": "https://api.github.com/users/JinghangLi/repos",
+    "site_admin": false,
+    "starred_url": "https://api.github.com/users/JinghangLi/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/JinghangLi/subscriptions",
+    "type": "User",
+    "url": "https://api.github.com/users/JinghangLi",
+    "user_view_type": "public"
+  },
+  "files": [
+    {
+      "additions": 2,
+      "blob_url": "https://github.com/NAIL-HNU/Garl-TTC/blob/256661242b8a7f5e56aa3c1c02348b30f6e89de6/README.md",
+      "changes": 4,
+      "contents_url": "https://api.github.com/repos/NAIL-HNU/Garl-TTC/contents/README.md?ref=256661242b8a7f5e56aa3c1c02348b30f6e89de6",
+      "deletions": 2,
+      "filename": "README.md",
+      "patch": "@@ -21,8 +21,8 @@ media and does not duplicate those files.\n | Page | Link |\n | --- | --- |\n | 🌐 eAP dataset project page | https://nail-hnu.github.io/eAP_dataset/ |\n-| 🏆 eAP 3D detection benchmark | https://www.codabench.org/competitions/16717/ |\n-| 🏆 GarlTTC benchmark | https://www.codabench.org/competitions/17289/ |\n+| 🏆 eAP Benchmark | https://www.codabench.org/competitions/17291/ |\n+| 🏆 GarlTTC Benchmark | https://www.codabench.org/competitions/17289/ |\n \n The public test annotations do not include ground-truth TTC values. Submit\n predictions to the CodaBench benchmark for official evaluation.",
+      "raw_url": "https://github.com/NAIL-HNU/Garl-TTC/raw/256661242b8a7f5e56aa3c1c02348b30f6e89de6/README.md",
+      "sha": "603a4f59244d041e934d64326af9f7ef33dd5a49",
+      "status": "modified"
+    }
+  ],
+  "html_url": "https://github.com/NAIL-HNU/Garl-TTC/commit/256661242b8a7f5e56aa3c1c02348b30f6e89de6",
+  "node_id": "C_kwDOTD6cT9oAKDI1NjY2MTI0MmI4YTdmNWU1NmFhM2MxYzAyMzQ4YjMwZjZlODlkZTY",
+  "parents": [
+    {
+      "html_url": "https://github.com/NAIL-HNU/Garl-TTC/commit/426a05535ff71e151d05ea397ea417193527277e",
+      "sha": "426a05535ff71e151d05ea397ea417193527277e",
+      "url": "https://api.github.com/repos/NAIL-HNU/Garl-TTC/commits/426a05535ff71e151d05ea397ea417193527277e"
+    }
+  ],
+  "sha": "256661242b8a7f5e56aa3c1c02348b30f6e89de6",
+  "stats": {
+    "additions": 2,
+    "deletions": 2,
+    "total": 4
+  },
+  "url": "https://api.github.com/repos/NAIL-HNU/Garl-TTC/commits/256661242b8a7f5e56aa3c1c02348b30f6e89de6"
+}

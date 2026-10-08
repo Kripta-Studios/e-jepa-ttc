@@ -1,0 +1,15 @@
+{
+  "extraPaths": [
+    "${REPO}\\src",
+    "${REPO}"
+  ],
+  "include": [
+    "..\\..\\..\\..\\operational\\sota_eval\\r1_resume_supervisor.py"
+  ],
+  "pythonVersion": "3.11",
+  "reportMissingImports": "error",
+  "reportMissingTypeStubs": "none",
+  "typeCheckingMode": "basic",
+  "venv": ".venv",
+  "venvPath": "${DATA}\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc"
+}

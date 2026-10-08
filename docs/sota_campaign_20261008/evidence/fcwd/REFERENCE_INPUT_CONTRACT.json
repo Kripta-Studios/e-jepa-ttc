@@ -1,0 +1,281 @@
+{
+  "bbox_contract": {
+    "boundary_note": "late boxes extend to 1281/1282 and 721/722; clip only against event sensor bounds, do not reject",
+    "columns": {
+      "0": "zero-based RGB frame index",
+      "1": "relative sensor time in seconds",
+      "2": "event-space x_min",
+      "3": "event-space y_min",
+      "4": "event-space x_max",
+      "5": "event-space y_max"
+    },
+    "coordinate_semantics": "event camera 1280x720 coordinates; official code applies strict >/< crop before converting retained event x/y from zero-based to MATLAB one-based",
+    "csv_has_header": false,
+    "evidence": [
+      "main_FCWD uses boxes(:,2) as seconds and boxes(:,3:6) directly for event filtering",
+      "column 0 exactly indexes blackflys/right/ts for every public bbox row",
+      "column 1 * 1e6 exactly equals blackflys/right/ts[column 0] for every row"
+    ],
+    "missing_official_dependency": "main_FCWD also expects innercar_bbox.csv for exclusion, but project page publishes only one bounding_box.csv per sequence",
+    "role": "prediction_input_oracle; permitted before inference; separate from TTC target"
+  },
+  "calibration": {
+    "camera_mat_path": "${DATA}\\inputs\\calibration\\camera_intrinsic\\calibParams.mat",
+    "camera_mat_sha256": "8e16b2261749915b046664b2b544ad6fad23595d1c698e4470ecc630889944e4",
+    "lidar_extrinsic_matrix": [
+      [
+        -0.0128421,
+        -0.99984,
+        -0.0124732,
+        -0.0194854
+      ],
+      [
+        -0.0083723,
+        0.0125813,
+        -0.999886,
+        -0.101831
+      ],
+      [
+        0.999882,
+        -0.0127362,
+        -0.00853253,
+        0.16225
+      ],
+      [
+        0,
+        0,
+        0,
+        1
+      ]
+    ],
+    "lidar_extrinsic_orientation": "project page labels Lidar2RGB (T_RGB<-LiDAR); official MATLAB FCWD code does not consume it, so do not use for event-to-RGB transfer",
+    "lidar_extrinsic_path": "${DATA}\\inputs\\calibration\\lidar_to_rgb_extrinsic\\right\\extrinsic.txt",
+    "lidar_extrinsic_sha256": "08b334638115341617632dd39df45c4f4621464df480678aa02aa56e306cadad",
+    "matlab_format": "MATLAB 5 MCOS cameraParameters object named DVScameraParams",
+    "official_fields_used": [
+      "DVScameraParams.K",
+      "DVScameraParams.ImageSize"
+    ],
+    "portable_decode_status": "UNAVAILABLE_FROM_SCIPY; requires MATLAB cameraParameters or separately admitted MCOS decoder"
+  },
+  "depth_livox_navigation_read": false,
+  "official_commit": "79ff0842955304ec4f6164ec09baddc71386d225",
+  "official_repository": "https://github.com/NAIL-HNU/event_aided_ttc",
+  "official_sources": [
+    {
+      "path": "matlab_code/main/main_FCWD.m",
+      "sha256": "7e7252fb76ab6b0c0e64f4763e04a9cdcb29174f2904ae97160e3d4f47a09957"
+    },
+    {
+      "path": "matlab_code/utils/Find_nearest_index.m",
+      "sha256": "3d923652e2af18632a5f8db673b920ef35dd9563a984bbd5b4990a3f725e5248"
+    },
+    {
+      "path": "matlab_code/utils/getEpochTime.m",
+      "sha256": "02e622a1ccdc11a53db58e10d7c2e9c94be9b5f4647455240f3686d683ab9bae"
+    },
+    {
+      "path": "matlab_code/utils/plotSimpleResult.m",
+      "sha256": "dd19a698aff9dab2a741941124e729e6b05f4563f416d573647387286702ecb8"
+    },
+    {
+      "path": "matlab_code/utils/metricRee.m",
+      "sha256": "8e9a736528b2e0f40b618a891a8d04b96e27b7d970fd3386778f49d389733397"
+    }
+  ],
+  "schema": "fcwd_reference_input_contract_v1",
+  "sequences": [
+    {
+      "bbox_columns": 6,
+      "bbox_path": "${DATA}\\sealed_labels\\sequence_1\\bounding_box.csv",
+      "bbox_rows": 219,
+      "bbox_sha256": "936fcaa0115ff1e7dbe09bedf472d1eba5196e700a4e82c79c1df86e3d4375b4",
+      "bbox_xyxy_max": [
+        615.0,
+        313.0,
+        1282.0,
+        722.0
+      ],
+      "bbox_xyxy_min": [
+        1.0,
+        1.0,
+        716.0,
+        413.0
+      ],
+      "event_count": 65486441,
+      "event_sensor_coordinate_range": {
+        "polarity": [
+          0,
+          1
+        ],
+        "x": [
+          0,
+          1279
+        ],
+        "y": [
+          0,
+          719
+        ]
+      },
+      "frame_index_matches_hdf5_rgb_index": true,
+      "frame_index_min_max": [
+        117,
+        335
+      ],
+      "hdf5": "2024-03-02-10-35-27.hdf5",
+      "hdf5_base_timestamp_epoch_seconds": 1709346928.6883426,
+      "relative_seconds_min_max": [
+        5.85579,
+        16.766569
+      ],
+      "rgb_shape": [
+        357,
+        1200,
+        1920,
+        3
+      ],
+      "sequence": 1
+    },
+    {
+      "bbox_columns": 6,
+      "bbox_path": "${DATA}\\sealed_labels\\sequence_2\\bounding_box.csv",
+      "bbox_rows": 223,
+      "bbox_sha256": "be8b5933038609c430b1d796038345280a589874fb6b10a06f5c7bdece16c88c",
+      "bbox_xyxy_max": [
+        719.0,
+        307.0,
+        1282.0,
+        722.0
+      ],
+      "bbox_xyxy_min": [
+        1.0,
+        1.0,
+        786.0,
+        412.0
+      ],
+      "event_count": 66797890,
+      "event_sensor_coordinate_range": {
+        "polarity": [
+          0,
+          1
+        ],
+        "x": [
+          0,
+          1279
+        ],
+        "y": [
+          0,
+          719
+        ]
+      },
+      "frame_index_matches_hdf5_rgb_index": true,
+      "frame_index_min_max": [
+        81,
+        303
+      ],
+      "hdf5": "2024-03-02-10-37-09.hdf5",
+      "hdf5_base_timestamp_epoch_seconds": 1709347030.9403853,
+      "relative_seconds_min_max": [
+        4.054006,
+        15.164991
+      ],
+      "rgb_shape": [
+        340,
+        1200,
+        1920,
+        3
+      ],
+      "sequence": 2
+    },
+    {
+      "bbox_columns": 6,
+      "bbox_path": "${DATA}\\sealed_labels\\sequence_3\\bounding_box.csv",
+      "bbox_rows": 203,
+      "bbox_sha256": "69291c08420cdc6629c05d57c57fa7c7c1fe87f5e00273869e6e106df42823d1",
+      "bbox_xyxy_max": [
+        709.0,
+        308.0,
+        1282.0,
+        722.0
+      ],
+      "bbox_xyxy_min": [
+        1.0,
+        1.0,
+        776.0,
+        418.0
+      ],
+      "event_count": 65488787,
+      "event_sensor_coordinate_range": {
+        "polarity": [
+          0,
+          1
+        ],
+        "x": [
+          0,
+          1279
+        ],
+        "y": [
+          0,
+          719
+        ]
+      },
+      "frame_index_matches_hdf5_rgb_index": true,
+      "frame_index_min_max": [
+        102,
+        304
+      ],
+      "hdf5": "2024-03-02-10-38-25.hdf5",
+      "hdf5_base_timestamp_epoch_seconds": 1709347106.2147992,
+      "relative_seconds_min_max": [
+        5.105044,
+        15.215047
+      ],
+      "rgb_shape": [
+        330,
+        1200,
+        1920,
+        3
+      ],
+      "sequence": 3
+    }
+  ],
+  "spatial_transfer": {
+    "event_resolution": [
+      1280,
+      720
+    ],
+    "forbidden_inference": "do not infer a scale-only RGB mapping from differing resolutions/FOVs",
+    "reason": "published bbox coordinates are consumed in event space; HDF5 provides temporal indices but no audited event-to-RGB spatial transform",
+    "rgb_resolution": [
+      1920,
+      1200
+    ],
+    "same_bbox_for_rgb_crop_supported": false
+  },
+  "status": "READY_WITH_SPATIAL_CALIBRATION_LIMITATION",
+  "targets_read": false,
+  "time_contract": {
+    "absolute_seconds": "base_timestamp/time + relative_seconds",
+    "base_epoch_path": "base_timestamp/time; Unix-like epoch seconds",
+    "event_ms_lower_bound": "prophesee/event_cam_right/ms_map_idx[ms] is first event index with t >= ms*1000",
+    "official_epoch_reference": "midpoint of minimum and maximum retained event timestamps",
+    "relative_seconds": "sensor_timestamp_us / 1e6",
+    "relative_unit": "microseconds in blackflys/right/ts and prophesee/event_cam_right/t",
+    "rgb_to_event_temporal_index": "blackflys/right/prophesee_event_cam_right_ms_map_idx[frame_index]"
+  },
+  "ttc_target_contract_from_official_code_only": {
+    "column_0": "identity used to nearest-align bbox column 0",
+    "column_1": "relative seconds used as interpolation x-axis",
+    "column_4": "TTC seconds used as interpolation y-axis/scoring target",
+    "columns_2_3": "unknown; must remain ignored",
+    "csv_paths": [
+      "${DATA}\\sealed_labels\\sequence_1\\gt_ttc.csv",
+      "${DATA}\\sealed_labels\\sequence_2\\gt_ttc.csv",
+      "${DATA}\\sealed_labels\\sequence_3\\gt_ttc.csv"
+    ],
+    "files_opened": false,
+    "gate": "open only after all prediction artifacts and identities are frozen",
+    "metric": "per-sample RTE percent = 100*abs(gt-pred)/abs(gt), followed by arithmetic mean per sequence",
+    "scoring_interpolation": "official plotSimpleResult uses linear interpolation with extrapolation at prediction reference times"
+  }
+}

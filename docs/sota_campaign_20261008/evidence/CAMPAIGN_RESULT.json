@@ -1,0 +1,17 @@
+{
+  "baseline_preservation_sha256": "d6987b366cc27a45ab5eeee26579b57567da1d69d73d6f3e2e7f9b38a2d1bc29",
+  "campaign_freeze_sha256": "adfb08dc202e4d6ad1f742df650fda29f0a39f9a01678c761d7a9b8beb57acf7",
+  "elapsed_seconds": 16.171999999991385,
+  "full_prediction_seal_sha256": "577953a3f5f87343f6e6c1d980455b316492a46478b0ff173da2f4fee93e37ac",
+  "metrics_sha256": "43e5fad1c30383ac650412c761ed55c55162700738fd4deca83b1eb96ffaa5a9",
+  "optimizer_updates": 0,
+  "phases": [
+    "event_inference",
+    "full_inference",
+    "event_scoring",
+    "full_scoring",
+    "expanded_metrics"
+  ],
+  "scored_predictions_sha256": "265161f9dd2c7941af57cce3811a35945e2bea055b13a260b960df1c65c7f2d8",
+  "status": "COMPLETE"
+}

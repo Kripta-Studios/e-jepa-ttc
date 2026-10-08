@@ -1,0 +1,13 @@
+{
+  "event_prediction_seal_sha256": "6869057554a51826ad75130b1926448552fe537baa469e3e0d60e339a50a21b0",
+  "failure": "Windows PermissionError WinError5 while replacing STATE.json; no model/gradient failure",
+  "final_event_queries": 3947,
+  "optimizer_updates": 0,
+  "prior_launcher_pid": 29004,
+  "raw_error_sha256": "1fe2f4fb2157df10d4e69f527fe234e2190905b9f50393e2bc863f0df942409f",
+  "recovery": "Same scientific freeze and prefetch backend; skip intact saved fragments and retry only recognized transient status-replacement errors.",
+  "resume_launcher_pid": 15064,
+  "retained_fragments_at_restart": 3252,
+  "snapshot_verified_unchanged": 2043,
+  "status": "RECOVERED"
+}

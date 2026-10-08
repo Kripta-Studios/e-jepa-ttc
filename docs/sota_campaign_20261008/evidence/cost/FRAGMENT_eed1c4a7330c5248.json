@@ -1,0 +1,30 @@
+{
+  "audit": {
+    "garl_event_only_native_context": "2 event endpoints",
+    "garl_full_native_context": "2 RGB endpoints + 2 event endpoints",
+    "h8_native_contexts": 16,
+    "h8_reported_heads": [
+      7,
+      13,
+      23
+    ],
+    "h8_single_head": "NOT_MEASURED_OPTIONAL_NO_BACKBONE_SLICING",
+    "prediction_sha256": {
+      "garl_event_only_shared_preparation": "a984e223514101fcfca1382553f14752e74f7c73659ca83286a85630d59574fa",
+      "garl_full_rgb_event": "a4cf05888fccac9871542f4dab67cb1f02dbf1f05b6604d4c5c4ebb854778754",
+      "h8_system_three_heads": "e9b2bcd7f009a1dec2c8ad9b657e376fedee6748a4f89b29df8500b051686643"
+    }
+  },
+  "completed_utc": "2026-10-08T19:44:50.469373+00:00",
+  "execution_freeze_sha256": "31ee30645f44829e79165d9d7b110c92d0835c790e25c158d03308c5f22cc8fa",
+  "model_freeze_sha256": "69f5f8d17a2f691ab096a03efb58a6e36d1d8ff8715ac034b8b64d59fae7e4de",
+  "optimizer_updates": 0,
+  "query_id": "CCRs-1-high-0-overlap-0:00",
+  "raw_csv": "RAW_eed1c4a7330c5248.csv",
+  "raw_csv_sha256": "3cdc7b71269662dc4bb336d19dbb342169f2a2f1fecc6b912b685c239e7669c9",
+  "scenario_family": "CCRs-1",
+  "schema": "sota_system_cost_fixed8_v1",
+  "sequence_id": "CCRs-1-high-0-overlap-0",
+  "status": "COMPLETE",
+  "targets_read": false
+}

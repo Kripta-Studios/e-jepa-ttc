@@ -1,0 +1,21 @@
+{
+  "artifacts/sota_campaign_20261008/official_contract/AUTHORS_DRAFT.txt": "396e830c6c609e37329ac430b01af4a42e7294ceb34a00ec8bd23471feea4400",
+  "artifacts/sota_campaign_20261008/official_contract/QA.json": "84c39839b013814033fc9da6460b1b648375332072f0de46373b1a91a7141456",
+  "artifacts/sota_campaign_20261008/official_contract/REPORT.md": "f7fb9dd0648b9b12dd85779e9af8e49496dbd06bad56e85d146571be3c009363",
+  "artifacts/sota_campaign_20261008/official_contract/SOURCES.json": "04e58c05693643964ee4c0400909d2f710ac56c4579d5e65ce65346304477931",
+  "artifacts/sota_campaign_20261008/official_contract/STATUS.json": "f75af1428cd52860999f628f5a92e1acc6f56db1c6e512f2d746090d70aae93f",
+  "artifacts/sota_campaign_20261008/official_contract/build_contract.py": "b80bcb7ed8e4c79d250956eb4132e1b0fb7f75d956b426c469140a925aeaade3",
+  "artifacts/sota_campaign_20261008/official_contract/competition.html": "cda37d02a25d4eb5eb2b00ceed3961dc297e11d4598dc0d476ff83cf84e5078d",
+  "artifacts/sota_campaign_20261008/official_contract/dataset_README.md": "41ecfeac0c6c3529938c32bc5146ccff9514431535e34a2ad28fccb1a73d11c1",
+  "artifacts/sota_campaign_20261008/official_contract/dataset_splits_train.txt": "ab2a68609d535379b1d6ed3617b3487cf61dce38dcb13c53246d5ac74c0b3251",
+  "artifacts/sota_campaign_20261008/official_contract/evttc_paper_2412.05053v2.html": "694628ae95e5770c3f57af90f9e0a67fe5671aefb740eecb63cb593e72f33370",
+  "artifacts/sota_campaign_20261008/official_contract/garl_paper_2603.16303v1.html": "322a1d497c915f534acb07268fea90597042d023667db9493ac846bec2611998",
+  "artifacts/sota_campaign_20261008/official_contract/github_main_metadata.json": "56c825a9ddc3df233419c7f6d1f90d7c24547abe1134e0d5610f03005972811f",
+  "artifacts/sota_campaign_20261008/official_contract/github_train.txt": "2f92c1c3ed881642190c6d6ddd71f247e6184deb489456e06db2516b81a774fb",
+  "artifacts/sota_campaign_20261008/official_contract/hf_dataset_metadata.json": "4e159ddd69734d764e00616f35a86366ba09e4bf32f51fef9320a1cb0d681bc7",
+  "artifacts/sota_campaign_20261008/official_contract/hf_model_metadata.json": "cc590f0978a0385a4ebc07bc9d182acb64801b295d4851d6494fcaa528cfbb90",
+  "artifacts/sota_campaign_20261008/official_contract/model_README.md": "ba523905a727da5f8d5ada06b8c46ae19fd6be368bc16f97badfeb8367d973e0",
+  "artifacts/sota_campaign_20261008/official_contract/model_model_release_metadata.json": "e14b72588172424f5dcedc0c75ba4c4923ff1af7cb842bd15239b1626e88aca8",
+  "artifacts/sota_campaign_20261008/official_contract/react_paper_2609.19204v1.html": "13c3e86b18c616bf11749d417016c235909659981be46c47385b817a72521ca5",
+  "data/protocols/evttc_official_comparison_v2.json": "fa94c018480e34616a0bb84921d93fd37ed6f46a7c5084618e3da9046af410d8"
+}

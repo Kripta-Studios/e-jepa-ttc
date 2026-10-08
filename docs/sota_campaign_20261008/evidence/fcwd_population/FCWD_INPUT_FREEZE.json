@@ -1,0 +1,14 @@
+{
+  "asset_manifest_sha256": "bfc10347d85c7fbe786e67607bd15581fa4b4182f4dcd937b99c90f57d6f28c8",
+  "bbox_values_read": true,
+  "gpu_used": false,
+  "input_adapter_sha256": "6a792ae0b5018527a40bbaf243ae6a69becce0acef9801131d1801ebd9447d81",
+  "manifest_path": "${REPO}\\artifacts\\sota_campaign_20261008\\fcwd_population\\QUERY_MANIFEST.json",
+  "manifest_sha256": "5e5706ff4018161aa81b938d0093c58a33ceb2b7d780bd8721b776ccde73c2a2",
+  "optimizer_updates": 0,
+  "query_count": 630,
+  "reference_contract_sha256": "b294bf7fbdf702272401b9abc79b7761e4b33818d536071e9b0c26b5f1ece833",
+  "sequence_count": 3,
+  "status": "FROZEN_LABEL_FREE",
+  "ttc_targets_read": false
+}

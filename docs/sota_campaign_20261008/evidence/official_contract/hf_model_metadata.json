@@ -1,0 +1,112 @@
+{
+  "_id": "6a40dec974029aee4c3cf305",
+  "author": "NAIL-HNU",
+  "cardData": {
+    "datasets": [
+      "NAIL-HNU/eAP-dataset",
+      "NAIL-HNU/GarlTTC-dataset"
+    ],
+    "library_name": "pytorch",
+    "tags": [
+      "ttc",
+      "time-to-collision",
+      "event-camera",
+      "rgb-event",
+      "multimodal",
+      "autonomous-driving",
+      "pytorch"
+    ]
+  },
+  "config": {},
+  "createdAt": "2026-06-28T08:43:53.000Z",
+  "disabled": false,
+  "downloads": 0,
+  "gated": false,
+  "id": "NAIL-HNU/GarlTTC-model",
+  "lastModified": "2026-07-24T07:51:41.000Z",
+  "library_name": "pytorch",
+  "likes": 0,
+  "model-index": null,
+  "modelId": "NAIL-HNU/GarlTTC-model",
+  "private": false,
+  "sha": "b676fcdaf26c04bcf896cdb2b208c9c424e8462a",
+  "siblings": [
+    {
+      "rfilename": ".gitattributes"
+    },
+    {
+      "rfilename": "README.md"
+    },
+    {
+      "rfilename": "ablation/paper_event_only_baseline.pth"
+    },
+    {
+      "rfilename": "ablation/paper_multi_modal_baseline.pth"
+    },
+    {
+      "rfilename": "ablation/paper_multi_modal_lhr_early_fusion.pth"
+    },
+    {
+      "rfilename": "ablation/paper_multi_modal_lhr_late_fusion.pth"
+    },
+    {
+      "rfilename": "ablation/paper_visual_only_baseline.pth"
+    },
+    {
+      "rfilename": "configs/ablation/event_baseline.yaml"
+    },
+    {
+      "rfilename": "configs/ablation/event_lhr.yaml"
+    },
+    {
+      "rfilename": "configs/ablation/multimodal_baseline.yaml"
+    },
+    {
+      "rfilename": "configs/ablation/multimodal_lhr_early.yaml"
+    },
+    {
+      "rfilename": "configs/ablation/multimodal_lhr_late.yaml"
+    },
+    {
+      "rfilename": "configs/ablation/ours_full.yaml"
+    },
+    {
+      "rfilename": "configs/ablation/visual_baseline.yaml"
+    },
+    {
+      "rfilename": "configs/ablation/visual_lhr.yaml"
+    },
+    {
+      "rfilename": "configs/garl_ttc_eventdecoder.yaml"
+    },
+    {
+      "rfilename": "metrics/paper_test12.json"
+    },
+    {
+      "rfilename": "model_release_metadata.json"
+    },
+    {
+      "rfilename": "paper_event_only_lhr.pth"
+    },
+    {
+      "rfilename": "paper_ours_full.pth"
+    },
+    {
+      "rfilename": "paper_visual_only_lhr.pth"
+    }
+  ],
+  "spaces": [],
+  "tags": [
+    "pytorch",
+    "ttc",
+    "time-to-collision",
+    "event-camera",
+    "rgb-event",
+    "multimodal",
+    "autonomous-driving",
+    "dataset:NAIL-HNU/eAP-dataset",
+    "dataset:NAIL-HNU/GarlTTC-dataset",
+    "region:us"
+  ],
+  "usedStorage": 1764300768
+}

@@ -1,0 +1,8 @@
+{
+  "note": "Existing supervisor resumes after its configured backoff.",
+  "released_epoch": 1791488827.260296,
+  "retry_budget_reset": false,
+  "sha256": "b86c305c90dd226c256667a77fb9ef9942a28569ea6bf931cad171d378d8a038",
+  "status": "OWNED_PAUSE_RELEASED",
+  "supervisor_restarted": false
+}

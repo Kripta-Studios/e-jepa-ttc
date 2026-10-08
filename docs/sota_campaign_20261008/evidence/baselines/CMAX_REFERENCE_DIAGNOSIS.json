@@ -1,0 +1,39 @@
+{
+  "artifact_sha256": "a7f22b077aa5451e696dc50da7aa15ee5dc59e16e8bfe7b654b8733a232720dd",
+  "claim_boundary": "Coverage correction on fixed label-free queries only; no TTC targets or success-only accuracy metrics were opened.",
+  "corrected_variant": {
+    "equation": "x_ref=c_ref+(1-q*(t-t_ref))*(x(t)-c(t))",
+    "failed_retained": 17,
+    "failure_counts": {
+      "insufficient_positive_contrast_gain": 17
+    },
+    "objective": "signed IWE variance",
+    "positive_domain_fixed_before_targets": true,
+    "requested": 32,
+    "success_fraction": 0.46875,
+    "successful": 15,
+    "successful_prediction_ttc_range_s": [
+      0.31339471989510453,
+      24.230327988302086
+    ],
+    "summary_path": "artifacts/sota_campaign_20261008/baselines/dev32_cmax_reference/SUMMARY.json",
+    "summary_physical_sha256": "84fbd5619a19e3d4ba3a6cd3438c493031ba79fd619ae0b0e3e643427fe56e16"
+  },
+  "diagnosis": {
+    "mathematical_error": "The old local radial warp used exp(-q*dt); constant inverse-TTC affine expansion uses 1-q*dt at a fixed reference time.",
+    "observed_boxes_expanding_height_sequences": 27,
+    "observed_boxes_expanding_width_sequences": 25,
+    "reference_time_error": "The old primitive used max(event_time), while the fixed query prediction endpoint is anchor_us.",
+    "sequence_count": 32
+  },
+  "old_variant": {
+    "equation": "exponential scale referenced to latest event",
+    "failure": "non_approaching_best_warp",
+    "requested": 32,
+    "successful": 0
+  },
+  "schema": "cmax_reference_correction_diagnosis_v1",
+  "scientific_optimizer_updates": 0,
+  "status": "COMPLETE",
+  "target_fields_opened": []
+}

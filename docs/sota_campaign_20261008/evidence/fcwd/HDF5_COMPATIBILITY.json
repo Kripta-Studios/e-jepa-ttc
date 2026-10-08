@@ -1,0 +1,510 @@
+{
+  "architecture_or_training_changes": false,
+  "hdf5": [
+    {
+      "adapter_contract": {
+        "event_column_lengths": {
+          "prophesee/event_cam_right/p": 65486441,
+          "prophesee/event_cam_right/t": 65486441,
+          "prophesee/event_cam_right/x": 65486441,
+          "prophesee/event_cam_right/y": 65486441
+        },
+        "event_columns_equal_length": true,
+        "event_columns_present": true,
+        "event_ms_index_path": "prophesee/event_cam_right/ms_map_idx",
+        "event_paths": [
+          "prophesee/event_cam_right/x",
+          "prophesee/event_cam_right/y",
+          "prophesee/event_cam_right/t",
+          "prophesee/event_cam_right/p"
+        ],
+        "rgb_event_ms_index_path": "blackflys/right/prophesee_event_cam_right_ms_map_idx",
+        "rgb_frames_match_timestamps": true,
+        "rgb_path": "blackflys/right/data",
+        "rgb_timestamp_path": "blackflys/right/ts"
+      },
+      "depth_navigation_read": false,
+      "file": "2024-03-02-10-35-27.hdf5",
+      "root_names": [
+        "base_timestamp",
+        "blackflys",
+        "livox",
+        "prophesee"
+      ],
+      "safe_datasets": [
+        {
+          "chunks": [
+            1
+          ],
+          "compression": "lzf",
+          "dtype": "float64",
+          "path": "base_timestamp/time",
+          "shape": [
+            1
+          ]
+        },
+        {
+          "chunks": [
+            1,
+            1200,
+            1920,
+            3
+          ],
+          "compression": "lzf",
+          "dtype": "uint8",
+          "path": "blackflys/right/data",
+          "shape": [
+            357,
+            1200,
+            1920,
+            3
+          ]
+        },
+        {
+          "chunks": null,
+          "compression": null,
+          "dtype": "uint64",
+          "path": "blackflys/right/prophesee_event_cam_right_ms_map_idx",
+          "shape": [
+            357
+          ]
+        },
+        {
+          "chunks": [
+            357
+          ],
+          "compression": "lzf",
+          "dtype": "int64",
+          "path": "blackflys/right/ts",
+          "shape": [
+            357
+          ]
+        },
+        {
+          "chunks": null,
+          "compression": null,
+          "dtype": "uint64",
+          "path": "prophesee/event_cam_right/ms_map_idx",
+          "shape": [
+            17894
+          ]
+        },
+        {
+          "chunks": [
+            40000
+          ],
+          "compression": "lzf",
+          "dtype": "int8",
+          "path": "prophesee/event_cam_right/p",
+          "shape": [
+            65486441
+          ]
+        },
+        {
+          "chunks": [
+            40000
+          ],
+          "compression": "lzf",
+          "dtype": "int64",
+          "path": "prophesee/event_cam_right/t",
+          "shape": [
+            65486441
+          ]
+        },
+        {
+          "chunks": [
+            40000
+          ],
+          "compression": "lzf",
+          "dtype": "uint16",
+          "path": "prophesee/event_cam_right/x",
+          "shape": [
+            65486441
+          ]
+        },
+        {
+          "chunks": [
+            40000
+          ],
+          "compression": "lzf",
+          "dtype": "uint16",
+          "path": "prophesee/event_cam_right/y",
+          "shape": [
+            65486441
+          ]
+        }
+      ],
+      "skipped_roots_unread": [
+        "livox"
+      ],
+      "targets_read": false,
+      "timestamp_endpoints": [
+        {
+          "count": 1,
+          "finite": true,
+          "first": 1709346928.6883426,
+          "last": 1709346928.6883426,
+          "monotonic_non_decreasing": true,
+          "path": "base_timestamp/time"
+        },
+        {
+          "count": 357,
+          "finite": true,
+          "first": 0,
+          "last": 17817615,
+          "monotonic_non_decreasing": true,
+          "path": "blackflys/right/ts"
+        },
+        {
+          "count": 65486441,
+          "finite": true,
+          "first": 65,
+          "last": 17894990,
+          "monotonic_non_decreasing": true,
+          "path": "prophesee/event_cam_right/t"
+        }
+      ]
+    },
+    {
+      "adapter_contract": {
+        "event_column_lengths": {
+          "prophesee/event_cam_right/p": 66797890,
+          "prophesee/event_cam_right/t": 66797890,
+          "prophesee/event_cam_right/x": 66797890,
+          "prophesee/event_cam_right/y": 66797890
+        },
+        "event_columns_equal_length": true,
+        "event_columns_present": true,
+        "event_ms_index_path": "prophesee/event_cam_right/ms_map_idx",
+        "event_paths": [
+          "prophesee/event_cam_right/x",
+          "prophesee/event_cam_right/y",
+          "prophesee/event_cam_right/t",
+          "prophesee/event_cam_right/p"
+        ],
+        "rgb_event_ms_index_path": "blackflys/right/prophesee_event_cam_right_ms_map_idx",
+        "rgb_frames_match_timestamps": true,
+        "rgb_path": "blackflys/right/data",
+        "rgb_timestamp_path": "blackflys/right/ts"
+      },
+      "depth_navigation_read": false,
+      "file": "2024-03-02-10-37-09.hdf5",
+      "root_names": [
+        "base_timestamp",
+        "blackflys",
+        "livox",
+        "prophesee"
+      ],
+      "safe_datasets": [
+        {
+          "chunks": [
+            1
+          ],
+          "compression": "lzf",
+          "dtype": "float64",
+          "path": "base_timestamp/time",
+          "shape": [
+            1
+          ]
+        },
+        {
+          "chunks": [
+            1,
+            1200,
+            1920,
+            3
+          ],
+          "compression": "lzf",
+          "dtype": "uint8",
+          "path": "blackflys/right/data",
+          "shape": [
+            340,
+            1200,
+            1920,
+            3
+          ]
+        },
+        {
+          "chunks": null,
+          "compression": null,
+          "dtype": "uint64",
+          "path": "blackflys/right/prophesee_event_cam_right_ms_map_idx",
+          "shape": [
+            340
+          ]
+        },
+        {
+          "chunks": [
+            340
+          ],
+          "compression": "lzf",
+          "dtype": "int64",
+          "path": "blackflys/right/ts",
+          "shape": [
+            340
+          ]
+        },
+        {
+          "chunks": null,
+          "compression": null,
+          "dtype": "uint64",
+          "path": "prophesee/event_cam_right/ms_map_idx",
+          "shape": [
+            17033
+          ]
+        },
+        {
+          "chunks": [
+            40000
+          ],
+          "compression": "lzf",
+          "dtype": "int8",
+          "path": "prophesee/event_cam_right/p",
+          "shape": [
+            66797890
+          ]
+        },
+        {
+          "chunks": [
+            40000
+          ],
+          "compression": "lzf",
+          "dtype": "int64",
+          "path": "prophesee/event_cam_right/t",
+          "shape": [
+            66797890
+          ]
+        },
+        {
+          "chunks": [
+            40000
+          ],
+          "compression": "lzf",
+          "dtype": "uint16",
+          "path": "prophesee/event_cam_right/x",
+          "shape": [
+            66797890
+          ]
+        },
+        {
+          "chunks": [
+            40000
+          ],
+          "compression": "lzf",
+          "dtype": "uint16",
+          "path": "prophesee/event_cam_right/y",
+          "shape": [
+            66797890
+          ]
+        }
+      ],
+      "skipped_roots_unread": [
+        "livox"
+      ],
+      "targets_read": false,
+      "timestamp_endpoints": [
+        {
+          "count": 1,
+          "finite": true,
+          "first": 1709347030.9403853,
+          "last": 1709347030.9403853,
+          "monotonic_non_decreasing": true,
+          "path": "base_timestamp/time"
+        },
+        {
+          "count": 340,
+          "finite": true,
+          "first": 0,
+          "last": 16966768,
+          "monotonic_non_decreasing": true,
+          "path": "blackflys/right/ts"
+        },
+        {
+          "count": 66797890,
+          "finite": true,
+          "first": 9,
+          "last": 17033899,
+          "monotonic_non_decreasing": true,
+          "path": "prophesee/event_cam_right/t"
+        }
+      ]
+    },
+    {
+      "adapter_contract": {
+        "event_column_lengths": {
+          "prophesee/event_cam_right/p": 65488787,
+          "prophesee/event_cam_right/t": 65488787,
+          "prophesee/event_cam_right/x": 65488787,
+          "prophesee/event_cam_right/y": 65488787
+        },
+        "event_columns_equal_length": true,
+        "event_columns_present": true,
+        "event_ms_index_path": "prophesee/event_cam_right/ms_map_idx",
+        "event_paths": [
+          "prophesee/event_cam_right/x",
+          "prophesee/event_cam_right/y",
+          "prophesee/event_cam_right/t",
+          "prophesee/event_cam_right/p"
+        ],
+        "rgb_event_ms_index_path": "blackflys/right/prophesee_event_cam_right_ms_map_idx",
+        "rgb_frames_match_timestamps": true,
+        "rgb_path": "blackflys/right/data",
+        "rgb_timestamp_path": "blackflys/right/ts"
+      },
+      "depth_navigation_read": false,
+      "file": "2024-03-02-10-38-25.hdf5",
+      "root_names": [
+        "base_timestamp",
+        "blackflys",
+        "livox",
+        "prophesee"
+      ],
+      "safe_datasets": [
+        {
+          "chunks": [
+            1
+          ],
+          "compression": "lzf",
+          "dtype": "float64",
+          "path": "base_timestamp/time",
+          "shape": [
+            1
+          ]
+        },
+        {
+          "chunks": [
+            1,
+            1200,
+            1920,
+            3
+          ],
+          "compression": "lzf",
+          "dtype": "uint8",
+          "path": "blackflys/right/data",
+          "shape": [
+            330,
+            1200,
+            1920,
+            3
+          ]
+        },
+        {
+          "chunks": null,
+          "compression": null,
+          "dtype": "uint64",
+          "path": "blackflys/right/prophesee_event_cam_right_ms_map_idx",
+          "shape": [
+            330
+          ]
+        },
+        {
+          "chunks": [
+            330
+          ],
+          "compression": "lzf",
+          "dtype": "int64",
+          "path": "blackflys/right/ts",
+          "shape": [
+            330
+          ]
+        },
+        {
+          "chunks": null,
+          "compression": null,
+          "dtype": "uint64",
+          "path": "prophesee/event_cam_right/ms_map_idx",
+          "shape": [
+            16511
+          ]
+        },
+        {
+          "chunks": [
+            40000
+          ],
+          "compression": "lzf",
+          "dtype": "int8",
+          "path": "prophesee/event_cam_right/p",
+          "shape": [
+            65488787
+          ]
+        },
+        {
+          "chunks": [
+            40000
+          ],
+          "compression": "lzf",
+          "dtype": "int64",
+          "path": "prophesee/event_cam_right/t",
+          "shape": [
+            65488787
+          ]
+        },
+        {
+          "chunks": [
+            40000
+          ],
+          "compression": "lzf",
+          "dtype": "uint16",
+          "path": "prophesee/event_cam_right/x",
+          "shape": [
+            65488787
+          ]
+        },
+        {
+          "chunks": [
+            40000
+          ],
+          "compression": "lzf",
+          "dtype": "uint16",
+          "path": "prophesee/event_cam_right/y",
+          "shape": [
+            65488787
+          ]
+        }
+      ],
+      "skipped_roots_unread": [
+        "livox"
+      ],
+      "targets_read": false,
+      "timestamp_endpoints": [
+        {
+          "count": 1,
+          "finite": true,
+          "first": 1709347106.2147992,
+          "last": 1709347106.2147992,
+          "monotonic_non_decreasing": true,
+          "path": "base_timestamp/time"
+        },
+        {
+          "count": 330,
+          "finite": true,
+          "first": 0,
+          "last": 16466285,
+          "monotonic_non_decreasing": true,
+          "path": "blackflys/right/ts"
+        },
+        {
+          "count": 65488787,
+          "finite": true,
+          "first": 1307,
+          "last": 16511128,
+          "monotonic_non_decreasing": true,
+          "path": "prophesee/event_cam_right/t"
+        }
+      ]
+    }
+  ],
+  "prior_repository_exposure": {
+    "existing_baseline_note": "STRTTC wrapper declares its causal ROI differs from official FCWD epochs",
+    "population_contract": "operational/sota_eval/population.py declared FCWD separately gated",
+    "prior_download_or_adapter_found": false,
+    "status": "DEPENDENCY_ONLY_BEFORE_THIS_MODULE"
+  },
+  "required_adapter_work": [
+    "map discovered event x/y/t/p datasets to EventBatch without copying the full stream",
+    "align RGB/event timestamps using only recorded sensor timestamps",
+    "freeze prediction inputs before opening sealed bbox/TTC CSV files",
+    "score per-sequence relative TTC error under the published no-fine-tuning protocol"
+  ],
+  "status": "COMPATIBLE_METADATA_ONLY"
+}

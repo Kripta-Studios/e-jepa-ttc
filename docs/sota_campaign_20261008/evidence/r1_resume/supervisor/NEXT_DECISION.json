@@ -1,0 +1,27 @@
+{
+  "checked_utc": "2026-10-08T19:53:46.935461+00:00",
+  "optimizer_updates": 0,
+  "owners": [
+    {
+      "command": [
+        "${DATA}\\AppData\\Roaming\\uv\\python\\cpython-3.11-windows-x86_64-none\\python.exe",
+        "-m",
+        "operational.sota_eval.publication",
+        "--require-complete"
+      ],
+      "create_time": 1791489203.681986,
+      "pid": 18540
+    },
+    {
+      "command": [
+        "${DATA}\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\.venv\\Scripts\\python.exe",
+        "-m",
+        "operational.sota_eval.publication",
+        "--require-complete"
+      ],
+      "create_time": 1791489203.6710355,
+      "pid": 44096
+    }
+  ],
+  "status": "WAIT_GPU_QUEUE"
+}

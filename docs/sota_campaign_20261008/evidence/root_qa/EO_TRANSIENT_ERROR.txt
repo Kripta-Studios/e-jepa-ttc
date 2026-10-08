@@ -1,0 +1,17 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "${REPO}\operational\sota_eval\prefetch.py", line 525, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "${REPO}\operational\sota_eval\prefetch.py", line 512, in main
+    run_prefetched(
+  File "${REPO}\operational\sota_eval\prefetch.py", line 341, in run_prefetched
+    frozen_run.run(campaign, output, device, limit)
+  File "${REPO}\operational\evttc_transfer\run.py", line 167, in run
+    atomic_json(
+  File "${REPO}\operational\simplex_t_closure\runtime.py", line 35, in atomic_json
+    atomic_bytes(
+  File "${REPO}\operational\simplex_t_closure\runtime.py", line 31, in atomic_bytes
+    os.replace(name, path)
+PermissionError: [WinError 5] Acceso denegado: '${REPO}\\artifacts\\sota_campaign_20261008\\dev32_expanded\\STATE.json.mvirdq5r.pending' -> '${REPO}\\artifacts\\sota_campaign_20261008\\dev32_expanded\\STATE.json'

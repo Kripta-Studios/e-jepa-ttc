@@ -1,0 +1,34 @@
+{
+  "bound_not_exact_count": true,
+  "checked_utc": "2026-10-08T19:02:07.277717+00:00",
+  "classification": "Frozen inference, analytical baseline diagnostics, preparation parity and cost measurements; no optimizer training is launched.",
+  "execution_plan_sha256": "967b38866e5811bb26b9268d0d553a7f05048718f86a88206cacb89a1c49f9ed",
+  "historical_joint_accounting": {
+    "avoid_double_counting": "WIDE PHYSICAL_WORK upper22600 is nested inside original40748. Historical1728 are latency measurements. R1/external inference/analysis add zero optimizer updates.",
+    "bound_not_exact_count": true,
+    "equation": "40448 + 114204 + 300 + 91 + 35 = 155078; equivalently 40748 + 114204 + 91 + 35",
+    "original_recovery_upper": 300,
+    "original_scientific": 40448,
+    "physical_cap": 240000,
+    "physical_upper": 155078,
+    "synthetic_technical": 35,
+    "total_recovery_upper": 391,
+    "total_scientific": 154652,
+    "train40_recovery_upper": 91,
+    "train40_scientific": 114204,
+    "unused_upper_budget_not_new_authorization": 84922
+  },
+  "historical_source": "docs\\research_review_20261004_08\\evidence\\science_audit.json",
+  "historical_source_sha256": "06073f4182de1a419dd3d1775675248bccd80a5b34ab8b4e9a7d50318c431954",
+  "joint_physical_upper": 155078,
+  "measurement_counts_are_not_optimizer_updates": true,
+  "new_campaign": {
+    "recovery_optimizer_updates": 0,
+    "scientific_optimizer_updates": 0,
+    "synthetic_optimizer_updates": 0,
+    "total_optimizer_updates": 0
+  },
+  "physical_cap": 240000,
+  "remaining_bound_not_new_authorization": 84922,
+  "schema": "sota_campaign_optimizer_accounting_v1"
+}

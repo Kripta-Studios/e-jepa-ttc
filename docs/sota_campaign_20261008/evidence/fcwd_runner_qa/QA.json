@@ -1,0 +1,34 @@
+{
+  "current_gpu_guard_preflight": "Another GPU job is active: PIDs [13812, 29004]",
+  "gpu_initialized": false,
+  "gt_reads": "synthetic fixtures only; no real GT file opened",
+  "inference_executed_on_real_data": false,
+  "label_free_cpu_prepare": "COMPLETE: first frozen query per each FCWD sequence; see CPU_PREPARE_PROBE.json; no GT/GPU/model predictions",
+  "lineage_mutation_tests": "PASSED: actual temporary transitive helper and package initializer byte changes rejected before model loading; both leases released",
+  "optimizer_updates": 0,
+  "primary_gt_join": "linear interpolation only within measured support, no extrapolation; target eligibility independent of predictions",
+  "pyright": "0 errors, 0 warnings",
+  "real_cpu_preflight": {
+    "full_sensor_unavailable_queries": 630,
+    "manifest_sha256": "5e5706ff4018161aa81b938d0093c58a33ceb2b7d780bd8721b776ccde73c2a2",
+    "model_endpoint_receipts": 9,
+    "specific_source_files": 168,
+    "validated_queries": 630
+  },
+  "resume": "same inference command; per-query JSON+atomic SHA commit markers and complete seal",
+  "ruff": "PASSED",
+  "single_gpu_guard": "Exact GPU entrypoint classification; prefetch/full_prefetch run, cost, R1 --execute and native evaluators/trainers. CPU pilot/scoring/planning/supervisor wrappers excluded; own Windows launcher ancestors excluded.",
+  "source_closure_policy": "conservative_local_ast_imports_including_package_initializers",
+  "source_hashes": {
+    "operational/sota_eval/fcwd_run.py": "219bb41db72cbc7d6ed9d68afd585b7a9987f239f6bd62db5a208696f2a3bceb",
+    "operational/sota_eval/fcwd_score.py": "cac2db7825550c9815a4e01ca75f62fe43a6a5bc549b5c0b696cea4aa113f7bb",
+    "tests/unit/test_sota_fcwd_run.py": "f1990726bc36c5fd4acf247b9486f1ec5f62305d42876188668d5b9ce0894b2a"
+  },
+  "status": "PASSED_READY_FOR_ROOT_GPU_LAUNCH",
+  "unit_tests": {
+    "explicit_rte_scorer": 11,
+    "fcwd_runner_score": 24,
+    "total": 35
+  },
+  "windows_python_launcher_ancestor_guard_test": "PASSED"
+}

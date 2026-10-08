@@ -1,0 +1,2495 @@
+{
+  "files": [
+    {
+      "bytes": 1662,
+      "published_path": "evidence/ACCOUNTING.json",
+      "published_sha256": "d48778b44c2d58918097e5b7c2e85545e26e3cd3ae6be556e563ac1bdc5c970c",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/ACCOUNTING.json",
+      "source_sha256": "276f828aeda39632fcb761d013e424f355d51fffeaba25feda5f978568c4c7ff"
+    },
+    {
+      "bytes": 2337,
+      "published_path": "evidence/CAMPAIGN_FREEZE.json",
+      "published_sha256": "77f4ff8a1468387de640de5d3fa5cb85daf11f307b92f91153a1be1608c7413d",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/CAMPAIGN_FREEZE.json",
+      "source_sha256": "adfb08dc202e4d6ad1f742df650fda29f0a39f9a01678c761d7a9b8beb57acf7"
+    },
+    {
+      "bytes": 725,
+      "published_path": "evidence/CAMPAIGN_RESULT.json",
+      "published_sha256": "10412587ab334dc4df0a28b539495eb7d4be0d299802a9409a0e59145ed55ab7",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/CAMPAIGN_RESULT.json",
+      "source_sha256": "b66afd378707c5cd35a291d7ad6c67e4c162a2dbcb27e3222c340b2df685bbcd"
+    },
+    {
+      "bytes": 265,
+      "published_path": "evidence/PIPELINE_STATE.json",
+      "published_sha256": "e3f3aa53744770f43358904e03fbf5073aa95f50d83f21b864d6d60c10dd662d",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/PIPELINE_STATE.json",
+      "source_sha256": "ebb94420e12e426de5d1736ab52fb3ff168b6c3a3a06e106519508d843c7e868"
+    },
+    {
+      "bytes": 366,
+      "published_path": "evidence/R1_PAUSE_OWNERSHIP.json",
+      "published_sha256": "2eec5d8bc093e96945421458527cea6954d9840f9e24b376e6e885c759aac97b",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/R1_PAUSE_OWNERSHIP.json",
+      "source_sha256": "114be0877c7635de0add0f47c4bbb33f5cb464444169f36ebc99bb56f5a715c6"
+    },
+    {
+      "bytes": 904,
+      "published_path": "evidence/R1_STATUS.json",
+      "published_sha256": "aee9e03fad64d45c854e060ef07278e75a88d9196e10b8cf54547ce6380b36ae",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/R1_STATUS.json",
+      "source_sha256": "d4eaa11a750a19e281197f26726e05ff5da7b837e7ee33bb018b4aa36e0af50d"
+    },
+    {
+      "bytes": 2893,
+      "published_path": "evidence/R1_STATUS_BEFORE_PAUSE.json",
+      "published_sha256": "36fb054443864fa5ad7a97edb228bddc6ee8db10e27381611c26a46c5ee9b69a",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/R1_STATUS_BEFORE_PAUSE.json",
+      "source_sha256": "650baf5aebad057050486eaecc86c4e30c3af4c00b0c3241e4008653d3b0e3eb"
+    },
+    {
+      "bytes": 1676,
+      "published_path": "evidence/baselines/CMAX_REFERENCE_DIAGNOSIS.json",
+      "published_sha256": "b37d0259d602b48d1118f108fa4f424073d9f9d8fb0e20e38af3f3cdf21cd34d",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/CMAX_REFERENCE_DIAGNOSIS.json",
+      "source_sha256": "b37d0259d602b48d1118f108fa4f424073d9f9d8fb0e20e38af3f3cdf21cd34d"
+    },
+    {
+      "bytes": 195,
+      "published_path": "evidence/baselines/CMAX_REFERENCE_QA_PYRIGHT.txt",
+      "published_sha256": "48b2ece9985aa0d5ce31fcc374bdc5f0d2a61aa71c76b3d9423d63911eeedcad",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/CMAX_REFERENCE_QA_PYRIGHT.txt",
+      "source_sha256": "48b2ece9985aa0d5ce31fcc374bdc5f0d2a61aa71c76b3d9423d63911eeedcad"
+    },
+    {
+      "bytes": 81,
+      "published_path": "evidence/baselines/CMAX_REFERENCE_QA_PYTEST.txt",
+      "published_sha256": "c7e4112ee00157f6cd73b78553233801e1ebd66836f258ef8f46fb8e60480444",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/CMAX_REFERENCE_QA_PYTEST.txt",
+      "source_sha256": "c7e4112ee00157f6cd73b78553233801e1ebd66836f258ef8f46fb8e60480444"
+    },
+    {
+      "bytes": 20,
+      "published_path": "evidence/baselines/CMAX_REFERENCE_QA_RUFF.txt",
+      "published_sha256": "a4443afdcfb6d7363adb285762515ccf7cf50473b1a05c20c1a50f6bed4d26b0",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/CMAX_REFERENCE_QA_RUFF.txt",
+      "source_sha256": "a4443afdcfb6d7363adb285762515ccf7cf50473b1a05c20c1a50f6bed4d26b0"
+    },
+    {
+      "bytes": 1450,
+      "published_path": "evidence/baselines/FAILURE_COUNTS.json",
+      "published_sha256": "cc0043d34217266f45d299ea6e87873e85f503cb46a859de2101e9c36310eff0",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/FAILURE_COUNTS.json",
+      "source_sha256": "cc0043d34217266f45d299ea6e87873e85f503cb46a859de2101e9c36310eff0"
+    },
+    {
+      "bytes": 195,
+      "published_path": "evidence/baselines/QA_PYRIGHT.txt",
+      "published_sha256": "48b2ece9985aa0d5ce31fcc374bdc5f0d2a61aa71c76b3d9423d63911eeedcad",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/QA_PYRIGHT.txt",
+      "source_sha256": "48b2ece9985aa0d5ce31fcc374bdc5f0d2a61aa71c76b3d9423d63911eeedcad"
+    },
+    {
+      "bytes": 81,
+      "published_path": "evidence/baselines/QA_PYTEST.txt",
+      "published_sha256": "bfce81a920a305e888c2d21f12eb35beb7c515e88d5d692d6df4756a46f89a0e",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/QA_PYTEST.txt",
+      "source_sha256": "bfce81a920a305e888c2d21f12eb35beb7c515e88d5d692d6df4756a46f89a0e"
+    },
+    {
+      "bytes": 20,
+      "published_path": "evidence/baselines/QA_RUFF.txt",
+      "published_sha256": "a4443afdcfb6d7363adb285762515ccf7cf50473b1a05c20c1a50f6bed4d26b0",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/QA_RUFF.txt",
+      "source_sha256": "a4443afdcfb6d7363adb285762515ccf7cf50473b1a05c20c1a50f6bed4d26b0"
+    },
+    {
+      "bytes": 5325,
+      "published_path": "evidence/baselines/SOURCE_AUDIT.json",
+      "published_sha256": "0b51590cba5bbe69b6c9e717a464d8ac330834cfd66dc0e6c71402e38ed2cacc",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/SOURCE_AUDIT.json",
+      "source_sha256": "0b51590cba5bbe69b6c9e717a464d8ac330834cfd66dc0e6c71402e38ed2cacc"
+    },
+    {
+      "bytes": 4791,
+      "published_path": "evidence/baselines/dev32_cmax_reference/SUMMARY.json",
+      "published_sha256": "ae02ee84922cc32b1952ed1bd168255d55494420b0300eea1787820469ae2379",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_cmax_reference/SUMMARY.json",
+      "source_sha256": "84fbd5619a19e3d4ba3a6cd3438c493031ba79fd619ae0b0e3e643427fe56e16"
+    },
+    {
+      "bytes": 1661,
+      "published_path": "evidence/baselines/dev32_cmax_reference/fragments/19885c93f85e0d07.json",
+      "published_sha256": "c2cfe7e63b5fc7cb3d64a75955b14e98bce51cd3b78e8d7128985ad5654a8b08",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_cmax_reference/fragments/19885c93f85e0d07.json",
+      "source_sha256": "c2cfe7e63b5fc7cb3d64a75955b14e98bce51cd3b78e8d7128985ad5654a8b08"
+    },
+    {
+      "bytes": 1681,
+      "published_path": "evidence/baselines/dev32_cmax_reference/fragments/1c06f05250c8495a.json",
+      "published_sha256": "73f0be6a847e950efc66efa1b9e85953acd61ab1e0c08d50e356d75ecd18a604",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_cmax_reference/fragments/1c06f05250c8495a.json",
+      "source_sha256": "73f0be6a847e950efc66efa1b9e85953acd61ab1e0c08d50e356d75ecd18a604"
+    },
+    {
+      "bytes": 1683,
+      "published_path": "evidence/baselines/dev32_cmax_reference/fragments/29ff0f3d46a7abde.json",
+      "published_sha256": "3ea4dd5c7e55c18ab688c29d2f33297aad1bc5cb7cd158ee31c614a948a0bd0f",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_cmax_reference/fragments/29ff0f3d46a7abde.json",
+      "source_sha256": "3ea4dd5c7e55c18ab688c29d2f33297aad1bc5cb7cd158ee31c614a948a0bd0f"
+    },
+    {
+      "bytes": 1664,
+      "published_path": "evidence/baselines/dev32_cmax_reference/fragments/32ff5606eb4af9e8.json",
+      "published_sha256": "d2f1465120839c6f2276dd5df033a4a5ecdd60372afb60e3a76f3fb5bda92cb3",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_cmax_reference/fragments/32ff5606eb4af9e8.json",
+      "source_sha256": "d2f1465120839c6f2276dd5df033a4a5ecdd60372afb60e3a76f3fb5bda92cb3"
+    },
+    {
+      "bytes": 1684,
+      "published_path": "evidence/baselines/dev32_cmax_reference/fragments/37142fe4c59fd246.json",
+      "published_sha256": "4e5e4f428b8ffee92aadf6ccd01f003c8f5f0c7ce125421a3572977d5a250f7c",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_cmax_reference/fragments/37142fe4c59fd246.json",
+      "source_sha256": "4e5e4f428b8ffee92aadf6ccd01f003c8f5f0c7ce125421a3572977d5a250f7c"
+    },
+    {
+      "bytes": 1684,
+      "published_path": "evidence/baselines/dev32_cmax_reference/fragments/3e96f50ebc1fd3ae.json",
+      "published_sha256": "bb7e3c54b2eda0cd49389e47d498704c33b6691830984a8dcd0d308cf8e9139d",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_cmax_reference/fragments/3e96f50ebc1fd3ae.json",
+      "source_sha256": "bb7e3c54b2eda0cd49389e47d498704c33b6691830984a8dcd0d308cf8e9139d"
+    },
+    {
+      "bytes": 1715,
+      "published_path": "evidence/baselines/dev32_cmax_reference/fragments/3eaebc058aa172fa.json",
+      "published_sha256": "62f90e925477902e23de0d7b1f83055273d245f77ab714193623594e100a0184",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_cmax_reference/fragments/3eaebc058aa172fa.json",
+      "source_sha256": "62f90e925477902e23de0d7b1f83055273d245f77ab714193623594e100a0184"
+    },
+    {
+      "bytes": 1636,
+      "published_path": "evidence/baselines/dev32_cmax_reference/fragments/41ab286910d71415.json",
+      "published_sha256": "832ccb633395b766fc3f1f4755e81941f9ca9b64a8282eaba3336541ee527172",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_cmax_reference/fragments/41ab286910d71415.json",
+      "source_sha256": "832ccb633395b766fc3f1f4755e81941f9ca9b64a8282eaba3336541ee527172"
+    },
+    {
+      "bytes": 1632,
+      "published_path": "evidence/baselines/dev32_cmax_reference/fragments/4346bb02c97d9ead.json",
+      "published_sha256": "fc6f762ca09b771b9972ee6fee8f354b5e6fa4b91a66f991ab5ac7d261b81239",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_cmax_reference/fragments/4346bb02c97d9ead.json",
+      "source_sha256": "fc6f762ca09b771b9972ee6fee8f354b5e6fa4b91a66f991ab5ac7d261b81239"
+    },
+    {
+      "bytes": 1697,
+      "published_path": "evidence/baselines/dev32_cmax_reference/fragments/43b49b617cf4be49.json",
+      "published_sha256": "ce6e7676e3f544cfb1ff9b1b4220870bb90a4671cca818ac3bebace644643317",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_cmax_reference/fragments/43b49b617cf4be49.json",
+      "source_sha256": "ce6e7676e3f544cfb1ff9b1b4220870bb90a4671cca818ac3bebace644643317"
+    },
+    {
+      "bytes": 1643,
+      "published_path": "evidence/baselines/dev32_cmax_reference/fragments/4494691de18f0b35.json",
+      "published_sha256": "4be837759166c65d237a1e7b3c702163977ad4bf29c5424339a6ee87f3592cbd",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_cmax_reference/fragments/4494691de18f0b35.json",
+      "source_sha256": "4be837759166c65d237a1e7b3c702163977ad4bf29c5424339a6ee87f3592cbd"
+    },
+    {
+      "bytes": 1671,
+      "published_path": "evidence/baselines/dev32_cmax_reference/fragments/45e73422eb8910b0.json",
+      "published_sha256": "d10e9f04a0b9fafbf9b5e9cfacbc3aaa7dab94ddea5fd2c5db0122c81e8e9db4",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_cmax_reference/fragments/45e73422eb8910b0.json",
+      "source_sha256": "d10e9f04a0b9fafbf9b5e9cfacbc3aaa7dab94ddea5fd2c5db0122c81e8e9db4"
+    },
+    {
+      "bytes": 1727,
+      "published_path": "evidence/baselines/dev32_cmax_reference/fragments/4f05a3620b892f31.json",
+      "published_sha256": "264bfddaab0c040e9ed39dc70795dcf08b2093881a48322f0aff959d87eae831",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_cmax_reference/fragments/4f05a3620b892f31.json",
+      "source_sha256": "264bfddaab0c040e9ed39dc70795dcf08b2093881a48322f0aff959d87eae831"
+    },
+    {
+      "bytes": 1714,
+      "published_path": "evidence/baselines/dev32_cmax_reference/fragments/592a121ac14dd18d.json",
+      "published_sha256": "e09866c8667457d66d0eacf84e4de83ca88644891aef3de5675514db5c9c1725",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_cmax_reference/fragments/592a121ac14dd18d.json",
+      "source_sha256": "e09866c8667457d66d0eacf84e4de83ca88644891aef3de5675514db5c9c1725"
+    },
+    {
+      "bytes": 1716,
+      "published_path": "evidence/baselines/dev32_cmax_reference/fragments/5ffdf03b6cc895aa.json",
+      "published_sha256": "a432f0025ad71a89d412d1823ac780147796e94373cebfdfed67dc05a434e55f",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_cmax_reference/fragments/5ffdf03b6cc895aa.json",
+      "source_sha256": "a432f0025ad71a89d412d1823ac780147796e94373cebfdfed67dc05a434e55f"
+    },
+    {
+      "bytes": 1682,
+      "published_path": "evidence/baselines/dev32_cmax_reference/fragments/744cd3ecfa748e2a.json",
+      "published_sha256": "9f4938bb457341f243f52ee83217d0ad342276b3a2164b6a5afca99c95048a82",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_cmax_reference/fragments/744cd3ecfa748e2a.json",
+      "source_sha256": "9f4938bb457341f243f52ee83217d0ad342276b3a2164b6a5afca99c95048a82"
+    },
+    {
+      "bytes": 1685,
+      "published_path": "evidence/baselines/dev32_cmax_reference/fragments/76e74084fb631642.json",
+      "published_sha256": "c822918e8b8418092d903009cc1cfe5e21a15184ef3272ea8b78db5e2250a3f4",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_cmax_reference/fragments/76e74084fb631642.json",
+      "source_sha256": "c822918e8b8418092d903009cc1cfe5e21a15184ef3272ea8b78db5e2250a3f4"
+    },
+    {
+      "bytes": 1669,
+      "published_path": "evidence/baselines/dev32_cmax_reference/fragments/9789c6f102b0085f.json",
+      "published_sha256": "c8bbe5edd13ed534c00b07f2538020e720d1607226c8133206c30a95209ba4fa",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_cmax_reference/fragments/9789c6f102b0085f.json",
+      "source_sha256": "c8bbe5edd13ed534c00b07f2538020e720d1607226c8133206c30a95209ba4fa"
+    },
+    {
+      "bytes": 1724,
+      "published_path": "evidence/baselines/dev32_cmax_reference/fragments/994276d720603aa1.json",
+      "published_sha256": "2b540675211c48bb1c01676160ecfbab9250c1917b3adca730144529c277bc30",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_cmax_reference/fragments/994276d720603aa1.json",
+      "source_sha256": "2b540675211c48bb1c01676160ecfbab9250c1917b3adca730144529c277bc30"
+    },
+    {
+      "bytes": 1662,
+      "published_path": "evidence/baselines/dev32_cmax_reference/fragments/ac57276d6006a5f1.json",
+      "published_sha256": "264148bcc0efb736fb431a8bd8220fe803cb3ad5cabda7bd8b9740b4de225f8c",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_cmax_reference/fragments/ac57276d6006a5f1.json",
+      "source_sha256": "264148bcc0efb736fb431a8bd8220fe803cb3ad5cabda7bd8b9740b4de225f8c"
+    },
+    {
+      "bytes": 1641,
+      "published_path": "evidence/baselines/dev32_cmax_reference/fragments/b3a96afdbd57cd95.json",
+      "published_sha256": "75b2e90068d289bf4db7bfe34780f8a0bff0ba5afcbec2af5276a1d8cf94b803",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_cmax_reference/fragments/b3a96afdbd57cd95.json",
+      "source_sha256": "75b2e90068d289bf4db7bfe34780f8a0bff0ba5afcbec2af5276a1d8cf94b803"
+    },
+    {
+      "bytes": 1639,
+      "published_path": "evidence/baselines/dev32_cmax_reference/fragments/c207de9bbb900a0f.json",
+      "published_sha256": "cf27d7f06d1d6962ca76f16cae8fd66a9a630ef53a4096da277fd9849d7aaffa",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_cmax_reference/fragments/c207de9bbb900a0f.json",
+      "source_sha256": "cf27d7f06d1d6962ca76f16cae8fd66a9a630ef53a4096da277fd9849d7aaffa"
+    },
+    {
+      "bytes": 1713,
+      "published_path": "evidence/baselines/dev32_cmax_reference/fragments/c68aa6d149b87a05.json",
+      "published_sha256": "5b7456c1472ad80239888ff1123be08b27e8ca1fd8b6dd8f18e0d7e9801c4895",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_cmax_reference/fragments/c68aa6d149b87a05.json",
+      "source_sha256": "5b7456c1472ad80239888ff1123be08b27e8ca1fd8b6dd8f18e0d7e9801c4895"
+    },
+    {
+      "bytes": 1650,
+      "published_path": "evidence/baselines/dev32_cmax_reference/fragments/d14c3842a73af264.json",
+      "published_sha256": "9edd59a75e3a1c0b2cae20ffa168e1440bf349d585216bafefa6e6bcd523c457",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_cmax_reference/fragments/d14c3842a73af264.json",
+      "source_sha256": "9edd59a75e3a1c0b2cae20ffa168e1440bf349d585216bafefa6e6bcd523c457"
+    },
+    {
+      "bytes": 1640,
+      "published_path": "evidence/baselines/dev32_cmax_reference/fragments/d888372256738ce2.json",
+      "published_sha256": "76dc9dbd9d76dd1215f5c381991037078f1bcdc5f9c87239ea07be5b5ff172e8",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_cmax_reference/fragments/d888372256738ce2.json",
+      "source_sha256": "76dc9dbd9d76dd1215f5c381991037078f1bcdc5f9c87239ea07be5b5ff172e8"
+    },
+    {
+      "bytes": 1712,
+      "published_path": "evidence/baselines/dev32_cmax_reference/fragments/d9e84632aa5824af.json",
+      "published_sha256": "fce5661fa2c0cca5f8f89e6159088ea1d2bc4a1c5bc26135bac8cc7973544fd7",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_cmax_reference/fragments/d9e84632aa5824af.json",
+      "source_sha256": "fce5661fa2c0cca5f8f89e6159088ea1d2bc4a1c5bc26135bac8cc7973544fd7"
+    },
+    {
+      "bytes": 1631,
+      "published_path": "evidence/baselines/dev32_cmax_reference/fragments/e322a5c3457982ab.json",
+      "published_sha256": "95c92354a50d31bdecffbc1cb85a942f00021f8dcc54aea40f2c6380000c832b",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_cmax_reference/fragments/e322a5c3457982ab.json",
+      "source_sha256": "95c92354a50d31bdecffbc1cb85a942f00021f8dcc54aea40f2c6380000c832b"
+    },
+    {
+      "bytes": 1721,
+      "published_path": "evidence/baselines/dev32_cmax_reference/fragments/e32cd945b9b041f8.json",
+      "published_sha256": "fae59390a35df4b25719a71f8ffd40a4e991e94bf5ea76894e132100e0a9c71e",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_cmax_reference/fragments/e32cd945b9b041f8.json",
+      "source_sha256": "fae59390a35df4b25719a71f8ffd40a4e991e94bf5ea76894e132100e0a9c71e"
+    },
+    {
+      "bytes": 1653,
+      "published_path": "evidence/baselines/dev32_cmax_reference/fragments/eacdb2141b564349.json",
+      "published_sha256": "fade4d2acf3aefe118fad374ed6949a5fb31365c2a1872702bcb7bf1dfb41f99",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_cmax_reference/fragments/eacdb2141b564349.json",
+      "source_sha256": "fade4d2acf3aefe118fad374ed6949a5fb31365c2a1872702bcb7bf1dfb41f99"
+    },
+    {
+      "bytes": 1642,
+      "published_path": "evidence/baselines/dev32_cmax_reference/fragments/ebbcf3d74dbed75b.json",
+      "published_sha256": "5c34b7e7fd7b37c2af369f632898e917acf72b71e0c3b2c934367e7061d4fe87",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_cmax_reference/fragments/ebbcf3d74dbed75b.json",
+      "source_sha256": "5c34b7e7fd7b37c2af369f632898e917acf72b71e0c3b2c934367e7061d4fe87"
+    },
+    {
+      "bytes": 1716,
+      "published_path": "evidence/baselines/dev32_cmax_reference/fragments/eed1c4a7330c5248.json",
+      "published_sha256": "11a2c192166815012c2017a8077c24311e88626daf28a8b31e1094ab74a9eeb0",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_cmax_reference/fragments/eed1c4a7330c5248.json",
+      "source_sha256": "11a2c192166815012c2017a8077c24311e88626daf28a8b31e1094ab74a9eeb0"
+    },
+    {
+      "bytes": 1638,
+      "published_path": "evidence/baselines/dev32_cmax_reference/fragments/fbaf9ee57ff56ae0.json",
+      "published_sha256": "a343f8854e39f49663ec63afee7f35c1e11ee89364f7bc881c1ae192bdfb4854",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_cmax_reference/fragments/fbaf9ee57ff56ae0.json",
+      "source_sha256": "a343f8854e39f49663ec63afee7f35c1e11ee89364f7bc881c1ae192bdfb4854"
+    },
+    {
+      "bytes": 10180,
+      "published_path": "evidence/baselines/dev32_first/SUMMARY.json",
+      "published_sha256": "8a83fb2d782df5c398be6ec88782d0e932dbc2ab367b42a7d0396296dbbe28d5",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/SUMMARY.json",
+      "source_sha256": "8d34753f6761ae0a460ddc5eca17ab4501913763f7193866186fa849fd8d871b"
+    },
+    {
+      "bytes": 1815,
+      "published_path": "evidence/baselines/dev32_first/cmax/fragments/19885c93f85e0d07.json",
+      "published_sha256": "f73ea13788c00e58a6fef8a9b39ad389a4fe1f7c67e7ec93a5c5bb194fe2803c",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/cmax/fragments/19885c93f85e0d07.json",
+      "source_sha256": "f73ea13788c00e58a6fef8a9b39ad389a4fe1f7c67e7ec93a5c5bb194fe2803c"
+    },
+    {
+      "bytes": 1810,
+      "published_path": "evidence/baselines/dev32_first/cmax/fragments/1c06f05250c8495a.json",
+      "published_sha256": "c64dc6036496631e120ca345eadcb8d12fb4be80133f876ebaed392bf2c21d07",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/cmax/fragments/1c06f05250c8495a.json",
+      "source_sha256": "c64dc6036496631e120ca345eadcb8d12fb4be80133f876ebaed392bf2c21d07"
+    },
+    {
+      "bytes": 1842,
+      "published_path": "evidence/baselines/dev32_first/cmax/fragments/29ff0f3d46a7abde.json",
+      "published_sha256": "968692128c492b78535ae2c54da5d0633c3b43db370e58236255f64d8ce29e2e",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/cmax/fragments/29ff0f3d46a7abde.json",
+      "source_sha256": "968692128c492b78535ae2c54da5d0633c3b43db370e58236255f64d8ce29e2e"
+    },
+    {
+      "bytes": 1840,
+      "published_path": "evidence/baselines/dev32_first/cmax/fragments/32ff5606eb4af9e8.json",
+      "published_sha256": "53b20986866d89104eb86d2330fd7862ba0fe88e9cff9e2377031c3fc425feae",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/cmax/fragments/32ff5606eb4af9e8.json",
+      "source_sha256": "53b20986866d89104eb86d2330fd7862ba0fe88e9cff9e2377031c3fc425feae"
+    },
+    {
+      "bytes": 1811,
+      "published_path": "evidence/baselines/dev32_first/cmax/fragments/37142fe4c59fd246.json",
+      "published_sha256": "49907eaf06874c73028482f2171aaa9fe628c3fe4305cdd2dcf246fed5fd8a23",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/cmax/fragments/37142fe4c59fd246.json",
+      "source_sha256": "49907eaf06874c73028482f2171aaa9fe628c3fe4305cdd2dcf246fed5fd8a23"
+    },
+    {
+      "bytes": 1810,
+      "published_path": "evidence/baselines/dev32_first/cmax/fragments/3e96f50ebc1fd3ae.json",
+      "published_sha256": "9397b9ebeaa941499e7816b04b908d68ee440d202f68f346a33f2f4268aae5b0",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/cmax/fragments/3e96f50ebc1fd3ae.json",
+      "source_sha256": "9397b9ebeaa941499e7816b04b908d68ee440d202f68f346a33f2f4268aae5b0"
+    },
+    {
+      "bytes": 1843,
+      "published_path": "evidence/baselines/dev32_first/cmax/fragments/3eaebc058aa172fa.json",
+      "published_sha256": "1df774915cbf002404a6d76f6ca7d197ac1796c5c2b9d551e9649109d0665330",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/cmax/fragments/3eaebc058aa172fa.json",
+      "source_sha256": "1df774915cbf002404a6d76f6ca7d197ac1796c5c2b9d551e9649109d0665330"
+    },
+    {
+      "bytes": 1815,
+      "published_path": "evidence/baselines/dev32_first/cmax/fragments/41ab286910d71415.json",
+      "published_sha256": "c6aa1738bb0c97b57619a6b8c873ea7598cbaf2d687fbb974ef354b77de84cd9",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/cmax/fragments/41ab286910d71415.json",
+      "source_sha256": "c6aa1738bb0c97b57619a6b8c873ea7598cbaf2d687fbb974ef354b77de84cd9"
+    },
+    {
+      "bytes": 1837,
+      "published_path": "evidence/baselines/dev32_first/cmax/fragments/4346bb02c97d9ead.json",
+      "published_sha256": "8b4b76a2f09d922eabe5e7fe06a2b0c49870abf94a26a33feb7675df728d1958",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/cmax/fragments/4346bb02c97d9ead.json",
+      "source_sha256": "8b4b76a2f09d922eabe5e7fe06a2b0c49870abf94a26a33feb7675df728d1958"
+    },
+    {
+      "bytes": 1824,
+      "published_path": "evidence/baselines/dev32_first/cmax/fragments/43b49b617cf4be49.json",
+      "published_sha256": "501f38d6cc94b2947d823355f9d13b4ce76b766f92ddb220e8a4771eafb5a231",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/cmax/fragments/43b49b617cf4be49.json",
+      "source_sha256": "501f38d6cc94b2947d823355f9d13b4ce76b766f92ddb220e8a4771eafb5a231"
+    },
+    {
+      "bytes": 1837,
+      "published_path": "evidence/baselines/dev32_first/cmax/fragments/4494691de18f0b35.json",
+      "published_sha256": "46e38dc501c61c73a92e57103592a1951e44b787d89066f43693c915c4770c65",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/cmax/fragments/4494691de18f0b35.json",
+      "source_sha256": "46e38dc501c61c73a92e57103592a1951e44b787d89066f43693c915c4770c65"
+    },
+    {
+      "bytes": 1849,
+      "published_path": "evidence/baselines/dev32_first/cmax/fragments/45e73422eb8910b0.json",
+      "published_sha256": "2ab66b7d9f6c7421bc806ac138f50e38117ba3f81ee55ec4ff5fda89e4359987",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/cmax/fragments/45e73422eb8910b0.json",
+      "source_sha256": "2ab66b7d9f6c7421bc806ac138f50e38117ba3f81ee55ec4ff5fda89e4359987"
+    },
+    {
+      "bytes": 1850,
+      "published_path": "evidence/baselines/dev32_first/cmax/fragments/4f05a3620b892f31.json",
+      "published_sha256": "1433099903fd9f606276eecc0e2482cccf6c72ae68c3192b8b77a23d900f7cbb",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/cmax/fragments/4f05a3620b892f31.json",
+      "source_sha256": "1433099903fd9f606276eecc0e2482cccf6c72ae68c3192b8b77a23d900f7cbb"
+    },
+    {
+      "bytes": 1843,
+      "published_path": "evidence/baselines/dev32_first/cmax/fragments/592a121ac14dd18d.json",
+      "published_sha256": "e1115bdebe3c8a2b1b8db72cf6cf386df6c8b9f0d07ae89ea09f7d3e562b7876",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/cmax/fragments/592a121ac14dd18d.json",
+      "source_sha256": "e1115bdebe3c8a2b1b8db72cf6cf386df6c8b9f0d07ae89ea09f7d3e562b7876"
+    },
+    {
+      "bytes": 1846,
+      "published_path": "evidence/baselines/dev32_first/cmax/fragments/5ffdf03b6cc895aa.json",
+      "published_sha256": "cf7d299582e52f7d68d326050f35ecc80a9f19da1978a4076261fe6d0ebec8c4",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/cmax/fragments/5ffdf03b6cc895aa.json",
+      "source_sha256": "cf7d299582e52f7d68d326050f35ecc80a9f19da1978a4076261fe6d0ebec8c4"
+    },
+    {
+      "bytes": 1809,
+      "published_path": "evidence/baselines/dev32_first/cmax/fragments/744cd3ecfa748e2a.json",
+      "published_sha256": "10d55f147337355d60a2676f8e3eed294e63a30672fdea8fd73738dc4e499f5e",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/cmax/fragments/744cd3ecfa748e2a.json",
+      "source_sha256": "10d55f147337355d60a2676f8e3eed294e63a30672fdea8fd73738dc4e499f5e"
+    },
+    {
+      "bytes": 1813,
+      "published_path": "evidence/baselines/dev32_first/cmax/fragments/76e74084fb631642.json",
+      "published_sha256": "4d338ae255e18b09fa78bd1917888b30d24dc3aad29ed13b10ea1ce43d2917d8",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/cmax/fragments/76e74084fb631642.json",
+      "source_sha256": "4d338ae255e18b09fa78bd1917888b30d24dc3aad29ed13b10ea1ce43d2917d8"
+    },
+    {
+      "bytes": 1847,
+      "published_path": "evidence/baselines/dev32_first/cmax/fragments/9789c6f102b0085f.json",
+      "published_sha256": "e7475da4a1e0ee68cc8ec2e708c90070422983037d8855abba643d6aa3f98584",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/cmax/fragments/9789c6f102b0085f.json",
+      "source_sha256": "e7475da4a1e0ee68cc8ec2e708c90070422983037d8855abba643d6aa3f98584"
+    },
+    {
+      "bytes": 1850,
+      "published_path": "evidence/baselines/dev32_first/cmax/fragments/994276d720603aa1.json",
+      "published_sha256": "d1588a0705e939c7de37805a6955e20b44f8c5116b9b292353f2764fd3612f3f",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/cmax/fragments/994276d720603aa1.json",
+      "source_sha256": "d1588a0705e939c7de37805a6955e20b44f8c5116b9b292353f2764fd3612f3f"
+    },
+    {
+      "bytes": 1845,
+      "published_path": "evidence/baselines/dev32_first/cmax/fragments/ac57276d6006a5f1.json",
+      "published_sha256": "f161f8c9878a311dbcebb17b37cc5c6bb02692b3fead7e4eefaf0eb0e4771686",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/cmax/fragments/ac57276d6006a5f1.json",
+      "source_sha256": "f161f8c9878a311dbcebb17b37cc5c6bb02692b3fead7e4eefaf0eb0e4771686"
+    },
+    {
+      "bytes": 1819,
+      "published_path": "evidence/baselines/dev32_first/cmax/fragments/b3a96afdbd57cd95.json",
+      "published_sha256": "057c31c9723eea4bd57e0b2b8a9d9bf0b6acb6f9c20a388ca3d5c304fc19f6cb",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/cmax/fragments/b3a96afdbd57cd95.json",
+      "source_sha256": "057c31c9723eea4bd57e0b2b8a9d9bf0b6acb6f9c20a388ca3d5c304fc19f6cb"
+    },
+    {
+      "bytes": 1847,
+      "published_path": "evidence/baselines/dev32_first/cmax/fragments/c207de9bbb900a0f.json",
+      "published_sha256": "a25fad8fd9b21b0437ec4e9018b865ae887023cf96b5dfb4cf3803e4b6b280b1",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/cmax/fragments/c207de9bbb900a0f.json",
+      "source_sha256": "a25fad8fd9b21b0437ec4e9018b865ae887023cf96b5dfb4cf3803e4b6b280b1"
+    },
+    {
+      "bytes": 1844,
+      "published_path": "evidence/baselines/dev32_first/cmax/fragments/c68aa6d149b87a05.json",
+      "published_sha256": "7e2fac59a338c54104f86fd30da4b7ec49d83e20edb18b06bdd22b20c21d9a1a",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/cmax/fragments/c68aa6d149b87a05.json",
+      "source_sha256": "7e2fac59a338c54104f86fd30da4b7ec49d83e20edb18b06bdd22b20c21d9a1a"
+    },
+    {
+      "bytes": 1841,
+      "published_path": "evidence/baselines/dev32_first/cmax/fragments/d14c3842a73af264.json",
+      "published_sha256": "40c611feb880eb49d386bdd8d29bd96d3bddcfc878de6486a2831d28fd7f4ec9",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/cmax/fragments/d14c3842a73af264.json",
+      "source_sha256": "40c611feb880eb49d386bdd8d29bd96d3bddcfc878de6486a2831d28fd7f4ec9"
+    },
+    {
+      "bytes": 1820,
+      "published_path": "evidence/baselines/dev32_first/cmax/fragments/d888372256738ce2.json",
+      "published_sha256": "23fc5fe0f681a683115cc80b68790cb910c14054525acbd2db07bec781c36f41",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/cmax/fragments/d888372256738ce2.json",
+      "source_sha256": "23fc5fe0f681a683115cc80b68790cb910c14054525acbd2db07bec781c36f41"
+    },
+    {
+      "bytes": 1838,
+      "published_path": "evidence/baselines/dev32_first/cmax/fragments/d9e84632aa5824af.json",
+      "published_sha256": "25fc4e84a7761709bb401a240a01f541d783c78a346c493270af1ad8b8b73849",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/cmax/fragments/d9e84632aa5824af.json",
+      "source_sha256": "25fc4e84a7761709bb401a240a01f541d783c78a346c493270af1ad8b8b73849"
+    },
+    {
+      "bytes": 1810,
+      "published_path": "evidence/baselines/dev32_first/cmax/fragments/e322a5c3457982ab.json",
+      "published_sha256": "d5fa0580a327a4ebc9d1ae4a365af486d98036d88738974795c7e2fc0057bc1a",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/cmax/fragments/e322a5c3457982ab.json",
+      "source_sha256": "d5fa0580a327a4ebc9d1ae4a365af486d98036d88738974795c7e2fc0057bc1a"
+    },
+    {
+      "bytes": 1846,
+      "published_path": "evidence/baselines/dev32_first/cmax/fragments/e32cd945b9b041f8.json",
+      "published_sha256": "621cf3f4fab0be7755d97854ff13ede2fff217d96d542800610e47970e9a9b22",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/cmax/fragments/e32cd945b9b041f8.json",
+      "source_sha256": "621cf3f4fab0be7755d97854ff13ede2fff217d96d542800610e47970e9a9b22"
+    },
+    {
+      "bytes": 1843,
+      "published_path": "evidence/baselines/dev32_first/cmax/fragments/eacdb2141b564349.json",
+      "published_sha256": "3ac9951992fd4932b4e421f0970e03311242622a06dbb9244f5ad5ac72161c45",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/cmax/fragments/eacdb2141b564349.json",
+      "source_sha256": "3ac9951992fd4932b4e421f0970e03311242622a06dbb9244f5ad5ac72161c45"
+    },
+    {
+      "bytes": 1833,
+      "published_path": "evidence/baselines/dev32_first/cmax/fragments/ebbcf3d74dbed75b.json",
+      "published_sha256": "640fd5f32267e4797a5af2fd6fa8c6a0463274f45795d90ddaa48ff28ad74170",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/cmax/fragments/ebbcf3d74dbed75b.json",
+      "source_sha256": "640fd5f32267e4797a5af2fd6fa8c6a0463274f45795d90ddaa48ff28ad74170"
+    },
+    {
+      "bytes": 1838,
+      "published_path": "evidence/baselines/dev32_first/cmax/fragments/eed1c4a7330c5248.json",
+      "published_sha256": "8fec73c5626ea96cb8245cfae173f99f5257450176a5e1266637e394a1d939d2",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/cmax/fragments/eed1c4a7330c5248.json",
+      "source_sha256": "8fec73c5626ea96cb8245cfae173f99f5257450176a5e1266637e394a1d939d2"
+    },
+    {
+      "bytes": 1817,
+      "published_path": "evidence/baselines/dev32_first/cmax/fragments/fbaf9ee57ff56ae0.json",
+      "published_sha256": "696f2e0ed81d54061517f6f33826cf09728bb4261a4ba33397c91350dc6f9a3e",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/cmax/fragments/fbaf9ee57ff56ae0.json",
+      "source_sha256": "696f2e0ed81d54061517f6f33826cf09728bb4261a4ba33397c91350dc6f9a3e"
+    },
+    {
+      "bytes": 2037,
+      "published_path": "evidence/baselines/dev32_first/strttc/fragments/19885c93f85e0d07.json",
+      "published_sha256": "39fcce6ec62f20f2249a7d8e958cd387191130089a8665b3d24e501b171a4e5f",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/strttc/fragments/19885c93f85e0d07.json",
+      "source_sha256": "39fcce6ec62f20f2249a7d8e958cd387191130089a8665b3d24e501b171a4e5f"
+    },
+    {
+      "bytes": 2031,
+      "published_path": "evidence/baselines/dev32_first/strttc/fragments/1c06f05250c8495a.json",
+      "published_sha256": "60152a3421867beeaffba95ee2d489cef8f5aef7586e1cf8b48fc00590cc47a1",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/strttc/fragments/1c06f05250c8495a.json",
+      "source_sha256": "60152a3421867beeaffba95ee2d489cef8f5aef7586e1cf8b48fc00590cc47a1"
+    },
+    {
+      "bytes": 2428,
+      "published_path": "evidence/baselines/dev32_first/strttc/fragments/29ff0f3d46a7abde.json",
+      "published_sha256": "ec0016055e9fff6096674c68a69dd067028ad7b2e3b0264aad07758fca34a227",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/strttc/fragments/29ff0f3d46a7abde.json",
+      "source_sha256": "ec0016055e9fff6096674c68a69dd067028ad7b2e3b0264aad07758fca34a227"
+    },
+    {
+      "bytes": 2067,
+      "published_path": "evidence/baselines/dev32_first/strttc/fragments/32ff5606eb4af9e8.json",
+      "published_sha256": "b6a67520b2fecb9e60605b5a76cec13f6e999427ce982565ddc1f44248faf909",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/strttc/fragments/32ff5606eb4af9e8.json",
+      "source_sha256": "b6a67520b2fecb9e60605b5a76cec13f6e999427ce982565ddc1f44248faf909"
+    },
+    {
+      "bytes": 2397,
+      "published_path": "evidence/baselines/dev32_first/strttc/fragments/37142fe4c59fd246.json",
+      "published_sha256": "aa2cb563a1534f5906d0edd1f21dbcf9bad75204f7bd0d8aff6b909cef1bdfe3",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/strttc/fragments/37142fe4c59fd246.json",
+      "source_sha256": "aa2cb563a1534f5906d0edd1f21dbcf9bad75204f7bd0d8aff6b909cef1bdfe3"
+    },
+    {
+      "bytes": 2398,
+      "published_path": "evidence/baselines/dev32_first/strttc/fragments/3e96f50ebc1fd3ae.json",
+      "published_sha256": "d921a26a27a2f02298f52242de73d84ddf6ebc3e2aed4dc6887529c73d0d364d",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/strttc/fragments/3e96f50ebc1fd3ae.json",
+      "source_sha256": "d921a26a27a2f02298f52242de73d84ddf6ebc3e2aed4dc6887529c73d0d364d"
+    },
+    {
+      "bytes": 2070,
+      "published_path": "evidence/baselines/dev32_first/strttc/fragments/3eaebc058aa172fa.json",
+      "published_sha256": "5a1773a582c309c48b6d16b33b912ad0150b300aee5fdeb7e739d6ca78d554be",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/strttc/fragments/3eaebc058aa172fa.json",
+      "source_sha256": "5a1773a582c309c48b6d16b33b912ad0150b300aee5fdeb7e739d6ca78d554be"
+    },
+    {
+      "bytes": 2018,
+      "published_path": "evidence/baselines/dev32_first/strttc/fragments/41ab286910d71415.json",
+      "published_sha256": "5a4f0651613b567080e611fba72b2102b5f3375c556d4984ca281b9c27a4128c",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/strttc/fragments/41ab286910d71415.json",
+      "source_sha256": "5a4f0651613b567080e611fba72b2102b5f3375c556d4984ca281b9c27a4128c"
+    },
+    {
+      "bytes": 2427,
+      "published_path": "evidence/baselines/dev32_first/strttc/fragments/4346bb02c97d9ead.json",
+      "published_sha256": "d6e08dffc0a44a1e0b7f99afd6840768ca10782f0c8e9e7db396d91e77753446",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/strttc/fragments/4346bb02c97d9ead.json",
+      "source_sha256": "d6e08dffc0a44a1e0b7f99afd6840768ca10782f0c8e9e7db396d91e77753446"
+    },
+    {
+      "bytes": 2413,
+      "published_path": "evidence/baselines/dev32_first/strttc/fragments/43b49b617cf4be49.json",
+      "published_sha256": "810311bdbf2ffc396e23ad91602c565a356cda8ccaa98eb152ff66d4f25f7486",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/strttc/fragments/43b49b617cf4be49.json",
+      "source_sha256": "810311bdbf2ffc396e23ad91602c565a356cda8ccaa98eb152ff66d4f25f7486"
+    },
+    {
+      "bytes": 2063,
+      "published_path": "evidence/baselines/dev32_first/strttc/fragments/4494691de18f0b35.json",
+      "published_sha256": "887b7a46ae0f4bf3ac710af84c312233a94337d59980624fb2952df5d4f7a70b",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/strttc/fragments/4494691de18f0b35.json",
+      "source_sha256": "887b7a46ae0f4bf3ac710af84c312233a94337d59980624fb2952df5d4f7a70b"
+    },
+    {
+      "bytes": 2076,
+      "published_path": "evidence/baselines/dev32_first/strttc/fragments/45e73422eb8910b0.json",
+      "published_sha256": "48053da4733f6feacfe6370b402298d83e0d50ff77295b126148ebfd9fbd22f4",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/strttc/fragments/45e73422eb8910b0.json",
+      "source_sha256": "48053da4733f6feacfe6370b402298d83e0d50ff77295b126148ebfd9fbd22f4"
+    },
+    {
+      "bytes": 2076,
+      "published_path": "evidence/baselines/dev32_first/strttc/fragments/4f05a3620b892f31.json",
+      "published_sha256": "a3e2367cc7d9d6d42b0c8bbb47f11add65bd8382f7d00da78cb8498c8eedafb7",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/strttc/fragments/4f05a3620b892f31.json",
+      "source_sha256": "a3e2367cc7d9d6d42b0c8bbb47f11add65bd8382f7d00da78cb8498c8eedafb7"
+    },
+    {
+      "bytes": 2065,
+      "published_path": "evidence/baselines/dev32_first/strttc/fragments/592a121ac14dd18d.json",
+      "published_sha256": "f639fd50a889f3ccf3b5d2e47298758b4ee83fd4f4b5e91723a869902b60cf44",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/strttc/fragments/592a121ac14dd18d.json",
+      "source_sha256": "f639fd50a889f3ccf3b5d2e47298758b4ee83fd4f4b5e91723a869902b60cf44"
+    },
+    {
+      "bytes": 2074,
+      "published_path": "evidence/baselines/dev32_first/strttc/fragments/5ffdf03b6cc895aa.json",
+      "published_sha256": "7cc22ca13419ec438d1df849732cdee3207bfd3d7ee03909101dd81cfa67459d",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/strttc/fragments/5ffdf03b6cc895aa.json",
+      "source_sha256": "7cc22ca13419ec438d1df849732cdee3207bfd3d7ee03909101dd81cfa67459d"
+    },
+    {
+      "bytes": 2011,
+      "published_path": "evidence/baselines/dev32_first/strttc/fragments/744cd3ecfa748e2a.json",
+      "published_sha256": "a20cb03fb860f3d4a8a9274854460d5b8eda25348d2dc5b2dc3c49715ae956d0",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/strttc/fragments/744cd3ecfa748e2a.json",
+      "source_sha256": "a20cb03fb860f3d4a8a9274854460d5b8eda25348d2dc5b2dc3c49715ae956d0"
+    },
+    {
+      "bytes": 2401,
+      "published_path": "evidence/baselines/dev32_first/strttc/fragments/76e74084fb631642.json",
+      "published_sha256": "66647baa965d48dd4007cc8bd329c90f6bfa6fb3b646f9e5dc1aa822558a32c2",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/strttc/fragments/76e74084fb631642.json",
+      "source_sha256": "66647baa965d48dd4007cc8bd329c90f6bfa6fb3b646f9e5dc1aa822558a32c2"
+    },
+    {
+      "bytes": 2432,
+      "published_path": "evidence/baselines/dev32_first/strttc/fragments/9789c6f102b0085f.json",
+      "published_sha256": "b0fa04b6daff9aeb62dfd3c5637eb421df21960b876a9f13825866b9d5d6c498",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/strttc/fragments/9789c6f102b0085f.json",
+      "source_sha256": "b0fa04b6daff9aeb62dfd3c5637eb421df21960b876a9f13825866b9d5d6c498"
+    },
+    {
+      "bytes": 2076,
+      "published_path": "evidence/baselines/dev32_first/strttc/fragments/994276d720603aa1.json",
+      "published_sha256": "682cab014f1a411d18a5b54d95e9401ddf0f3a8275569cfa06ecd5cd6cab905a",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/strttc/fragments/994276d720603aa1.json",
+      "source_sha256": "682cab014f1a411d18a5b54d95e9401ddf0f3a8275569cfa06ecd5cd6cab905a"
+    },
+    {
+      "bytes": 2072,
+      "published_path": "evidence/baselines/dev32_first/strttc/fragments/ac57276d6006a5f1.json",
+      "published_sha256": "6682e81d0276aa44a097f1d9c1e736d19edd580780984018cc562fb0315eb4c8",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/strttc/fragments/ac57276d6006a5f1.json",
+      "source_sha256": "6682e81d0276aa44a097f1d9c1e736d19edd580780984018cc562fb0315eb4c8"
+    },
+    {
+      "bytes": 2046,
+      "published_path": "evidence/baselines/dev32_first/strttc/fragments/b3a96afdbd57cd95.json",
+      "published_sha256": "4f623c66f722f2c772334aaeb57c56ac94f392c6e46efb76bf03ae234c06007e",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/strttc/fragments/b3a96afdbd57cd95.json",
+      "source_sha256": "4f623c66f722f2c772334aaeb57c56ac94f392c6e46efb76bf03ae234c06007e"
+    },
+    {
+      "bytes": 2073,
+      "published_path": "evidence/baselines/dev32_first/strttc/fragments/c207de9bbb900a0f.json",
+      "published_sha256": "07270a36207022106d581cad6f9ae625294f39c0e9bfae77858b048e0bf3859f",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/strttc/fragments/c207de9bbb900a0f.json",
+      "source_sha256": "07270a36207022106d581cad6f9ae625294f39c0e9bfae77858b048e0bf3859f"
+    },
+    {
+      "bytes": 2070,
+      "published_path": "evidence/baselines/dev32_first/strttc/fragments/c68aa6d149b87a05.json",
+      "published_sha256": "a8291aa0738e70eeb54b84373a971e18546efbb034962d2eb192c3c46f875db2",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/strttc/fragments/c68aa6d149b87a05.json",
+      "source_sha256": "a8291aa0738e70eeb54b84373a971e18546efbb034962d2eb192c3c46f875db2"
+    },
+    {
+      "bytes": 2430,
+      "published_path": "evidence/baselines/dev32_first/strttc/fragments/d14c3842a73af264.json",
+      "published_sha256": "cd2157cb247ba93126082e65dd861befcc9bc5beefb763b5c586460abe419373",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/strttc/fragments/d14c3842a73af264.json",
+      "source_sha256": "cd2157cb247ba93126082e65dd861befcc9bc5beefb763b5c586460abe419373"
+    },
+    {
+      "bytes": 2411,
+      "published_path": "evidence/baselines/dev32_first/strttc/fragments/d888372256738ce2.json",
+      "published_sha256": "e011bdee1158083226d07277c6d26733fae0f87b405cd2107bcab0cc3ea46ff5",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/strttc/fragments/d888372256738ce2.json",
+      "source_sha256": "e011bdee1158083226d07277c6d26733fae0f87b405cd2107bcab0cc3ea46ff5"
+    },
+    {
+      "bytes": 2041,
+      "published_path": "evidence/baselines/dev32_first/strttc/fragments/d9e84632aa5824af.json",
+      "published_sha256": "b9e3c0ecbd21c7be70688fb3a51cbe99e019e8b8bd8a3c5c868e28f3467e1d49",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/strttc/fragments/d9e84632aa5824af.json",
+      "source_sha256": "b9e3c0ecbd21c7be70688fb3a51cbe99e019e8b8bd8a3c5c868e28f3467e1d49"
+    },
+    {
+      "bytes": 2037,
+      "published_path": "evidence/baselines/dev32_first/strttc/fragments/e322a5c3457982ab.json",
+      "published_sha256": "409a6271afd5efdf1c83d0becd3cd37bf9ce71e0a6d83d5ec96a7b2ce826c256",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/strttc/fragments/e322a5c3457982ab.json",
+      "source_sha256": "409a6271afd5efdf1c83d0becd3cd37bf9ce71e0a6d83d5ec96a7b2ce826c256"
+    },
+    {
+      "bytes": 2432,
+      "published_path": "evidence/baselines/dev32_first/strttc/fragments/e32cd945b9b041f8.json",
+      "published_sha256": "1768fbe8ced8e4360336cdb18d9d24536c7867bbcace49ff51d7ae4904b7bfac",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/strttc/fragments/e32cd945b9b041f8.json",
+      "source_sha256": "1768fbe8ced8e4360336cdb18d9d24536c7867bbcace49ff51d7ae4904b7bfac"
+    },
+    {
+      "bytes": 2069,
+      "published_path": "evidence/baselines/dev32_first/strttc/fragments/eacdb2141b564349.json",
+      "published_sha256": "b0cfea7fc46f677982c9711ebee837d872bbffb0bff379cacaad10d245f11fb9",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/strttc/fragments/eacdb2141b564349.json",
+      "source_sha256": "b0cfea7fc46f677982c9711ebee837d872bbffb0bff379cacaad10d245f11fb9"
+    },
+    {
+      "bytes": 2058,
+      "published_path": "evidence/baselines/dev32_first/strttc/fragments/ebbcf3d74dbed75b.json",
+      "published_sha256": "6ac7c771f16cf53155ce0fbdfbb2e1d7f019fdc668cdfcb2695ecd66a4e1842a",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/strttc/fragments/ebbcf3d74dbed75b.json",
+      "source_sha256": "6ac7c771f16cf53155ce0fbdfbb2e1d7f019fdc668cdfcb2695ecd66a4e1842a"
+    },
+    {
+      "bytes": 2060,
+      "published_path": "evidence/baselines/dev32_first/strttc/fragments/eed1c4a7330c5248.json",
+      "published_sha256": "77d61c8e04fa7be0040f6743317387c9af1f01643a6e5321b3ba3f6d0d793ced",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/strttc/fragments/eed1c4a7330c5248.json",
+      "source_sha256": "77d61c8e04fa7be0040f6743317387c9af1f01643a6e5321b3ba3f6d0d793ced"
+    },
+    {
+      "bytes": 2406,
+      "published_path": "evidence/baselines/dev32_first/strttc/fragments/fbaf9ee57ff56ae0.json",
+      "published_sha256": "c6f13c2c1670f93eea5f9269cfcba2a7b9a8219e5fe64caab682a05932149147",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/dev32_first/strttc/fragments/fbaf9ee57ff56ae0.json",
+      "source_sha256": "c6f13c2c1670f93eea5f9269cfcba2a7b9a8219e5fe64caab682a05932149147"
+    },
+    {
+      "bytes": 1398,
+      "published_path": "evidence/baselines/pilot_scored/METHOD_METRICS.csv",
+      "published_sha256": "ba855dcc2ebb2388e32dab5f37b33aaae96e5959943e373e08c33d8c9c1798d7",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/pilot_scored/METHOD_METRICS.csv",
+      "source_sha256": "ba855dcc2ebb2388e32dab5f37b33aaae96e5959943e373e08c33d8c9c1798d7"
+    },
+    {
+      "bytes": 195,
+      "published_path": "evidence/baselines/pilot_scored/QA_PYRIGHT.txt",
+      "published_sha256": "48b2ece9985aa0d5ce31fcc374bdc5f0d2a61aa71c76b3d9423d63911eeedcad",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/pilot_scored/QA_PYRIGHT.txt",
+      "source_sha256": "48b2ece9985aa0d5ce31fcc374bdc5f0d2a61aa71c76b3d9423d63911eeedcad"
+    },
+    {
+      "bytes": 81,
+      "published_path": "evidence/baselines/pilot_scored/QA_PYTEST.txt",
+      "published_sha256": "9d5a2646cfea101970d3c6e3eb8c2650770734a095b2562b4c25cf9f554c913c",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/pilot_scored/QA_PYTEST.txt",
+      "source_sha256": "9d5a2646cfea101970d3c6e3eb8c2650770734a095b2562b4c25cf9f554c913c"
+    },
+    {
+      "bytes": 20,
+      "published_path": "evidence/baselines/pilot_scored/QA_RUFF.txt",
+      "published_sha256": "a4443afdcfb6d7363adb285762515ccf7cf50473b1a05c20c1a50f6bed4d26b0",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/pilot_scored/QA_RUFF.txt",
+      "source_sha256": "a4443afdcfb6d7363adb285762515ccf7cf50473b1a05c20c1a50f6bed4d26b0"
+    },
+    {
+      "bytes": 8833,
+      "published_path": "evidence/baselines/pilot_scored/REPORT.json",
+      "published_sha256": "0bd08210710de4e2bd279e5fd518bb5dcc759c0234fdf6cf4a20d75bb99603ec",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/pilot_scored/REPORT.json",
+      "source_sha256": "8fc2483dec23bd54e8648f5145cc061c3b843e85894072bafee85d0e5ffc2c5f"
+    },
+    {
+      "bytes": 8912,
+      "published_path": "evidence/baselines/pilot_scored/SCORED_ROWS.csv",
+      "published_sha256": "17a5b2cee8307207bc9996d5ec0c06d246d7b6feaec1873f690f12842cf23bef",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/pilot_scored/SCORED_ROWS.csv",
+      "source_sha256": "17a5b2cee8307207bc9996d5ec0c06d246d7b6feaec1873f690f12842cf23bef"
+    },
+    {
+      "bytes": 274,
+      "published_path": "evidence/baselines/pilot_scored/SHA256.json",
+      "published_sha256": "e5c9eab7ed302c3f4e8060c3e3b89a6e7a60602390490dc112ee4ceb130b007e",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/baselines/pilot_scored/SHA256.json",
+      "source_sha256": "e5c9eab7ed302c3f4e8060c3e3b89a6e7a60602390490dc112ee4ceb130b007e"
+    },
+    {
+      "bytes": 20057,
+      "published_path": "evidence/cost/EXECUTION_FREEZE.json",
+      "published_sha256": "a4f7d359a8e0675f7494276d42acbd365e562872aa869f2dbedbc6778911e1c9",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/cost/EXECUTION_FREEZE.json",
+      "source_sha256": "31ee30645f44829e79165d9d7b110c92d0835c790e25c158d03308c5f22cc8fa"
+    },
+    {
+      "bytes": 1260,
+      "published_path": "evidence/cost/FRAGMENT_3e96f50ebc1fd3ae.json",
+      "published_sha256": "7e8b894838294c531f3fe2e8d0cc425b3337d1b83cbd3244ac60bcbd86e7f5b3",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/cost/FRAGMENT_3e96f50ebc1fd3ae.json",
+      "source_sha256": "7e8b894838294c531f3fe2e8d0cc425b3337d1b83cbd3244ac60bcbd86e7f5b3"
+    },
+    {
+      "bytes": 1263,
+      "published_path": "evidence/cost/FRAGMENT_76e74084fb631642.json",
+      "published_sha256": "f51f8ac657f6e5f60187e51b8177762644446dd0acfcb841e1348fef74ae667a",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/cost/FRAGMENT_76e74084fb631642.json",
+      "source_sha256": "f51f8ac657f6e5f60187e51b8177762644446dd0acfcb841e1348fef74ae667a"
+    },
+    {
+      "bytes": 1298,
+      "published_path": "evidence/cost/FRAGMENT_c207de9bbb900a0f.json",
+      "published_sha256": "6da25f21039bb82aa62a07aac88675c3ed441aadf722d18f785200aac59c6e87",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/cost/FRAGMENT_c207de9bbb900a0f.json",
+      "source_sha256": "6da25f21039bb82aa62a07aac88675c3ed441aadf722d18f785200aac59c6e87"
+    },
+    {
+      "bytes": 1296,
+      "published_path": "evidence/cost/FRAGMENT_c68aa6d149b87a05.json",
+      "published_sha256": "036265461cee0eb5f8b619055493934426ff461c8729e1708f35525346a138ac",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/cost/FRAGMENT_c68aa6d149b87a05.json",
+      "source_sha256": "036265461cee0eb5f8b619055493934426ff461c8729e1708f35525346a138ac"
+    },
+    {
+      "bytes": 1275,
+      "published_path": "evidence/cost/FRAGMENT_d888372256738ce2.json",
+      "published_sha256": "79f66244ad64fa80b0a7157362767b571165ae15fd14c2f5ed4c5c6e48cb4bf4",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/cost/FRAGMENT_d888372256738ce2.json",
+      "source_sha256": "79f66244ad64fa80b0a7157362767b571165ae15fd14c2f5ed4c5c6e48cb4bf4"
+    },
+    {
+      "bytes": 1260,
+      "published_path": "evidence/cost/FRAGMENT_e322a5c3457982ab.json",
+      "published_sha256": "7a747414fece20326f2aff2556dfb726dca337eb24a7a503b6ea9abd32272af0",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/cost/FRAGMENT_e322a5c3457982ab.json",
+      "source_sha256": "7a747414fece20326f2aff2556dfb726dca337eb24a7a503b6ea9abd32272af0"
+    },
+    {
+      "bytes": 1282,
+      "published_path": "evidence/cost/FRAGMENT_ebbcf3d74dbed75b.json",
+      "published_sha256": "6c3340e76e862701ef4dfba8e246a09a601c2a27f07de3421ed4f320661b1d95",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/cost/FRAGMENT_ebbcf3d74dbed75b.json",
+      "source_sha256": "6c3340e76e862701ef4dfba8e246a09a601c2a27f07de3421ed4f320661b1d95"
+    },
+    {
+      "bytes": 1290,
+      "published_path": "evidence/cost/FRAGMENT_eed1c4a7330c5248.json",
+      "published_sha256": "080c9d38ed76a29b48ca92c1ba87431e839109e12707cb4721a13ce8ae09b562",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/cost/FRAGMENT_eed1c4a7330c5248.json",
+      "source_sha256": "080c9d38ed76a29b48ca92c1ba87431e839109e12707cb4721a13ce8ae09b562"
+    },
+    {
+      "bytes": 12566,
+      "published_path": "evidence/cost/MODEL_FREEZE.json",
+      "published_sha256": "3bf1e1804fd33cda961dd18919f5b4df2abe5b3acee33ab83de852a1f790914a",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/cost/MODEL_FREEZE.json",
+      "source_sha256": "69f5f8d17a2f691ab096a03efb58a6e36d1d8ff8715ac034b8b64d59fae7e4de"
+    },
+    {
+      "bytes": 9099,
+      "published_path": "evidence/cost/RAW_3e96f50ebc1fd3ae.csv",
+      "published_sha256": "c556c8feaf109c706546e79d8b94e34ae16ef90d7d67f5a90fdd16616edd586d",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/cost/RAW_3e96f50ebc1fd3ae.csv",
+      "source_sha256": "c556c8feaf109c706546e79d8b94e34ae16ef90d7d67f5a90fdd16616edd586d"
+    },
+    {
+      "bytes": 9378,
+      "published_path": "evidence/cost/RAW_76e74084fb631642.csv",
+      "published_sha256": "850c00fa28e9e4962173465453d9a75ed97223d794de9314ff5c9b579d9837ac",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/cost/RAW_76e74084fb631642.csv",
+      "source_sha256": "850c00fa28e9e4962173465453d9a75ed97223d794de9314ff5c9b579d9837ac"
+    },
+    {
+      "bytes": 12739,
+      "published_path": "evidence/cost/RAW_c207de9bbb900a0f.csv",
+      "published_sha256": "4c77f50bdfe708ac249b09aabbb6ebce62617bb0f63bcb3a72b91f3ba55e80ef",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/cost/RAW_c207de9bbb900a0f.csv",
+      "source_sha256": "4c77f50bdfe708ac249b09aabbb6ebce62617bb0f63bcb3a72b91f3ba55e80ef"
+    },
+    {
+      "bytes": 12550,
+      "published_path": "evidence/cost/RAW_c68aa6d149b87a05.csv",
+      "published_sha256": "f5f6015eb9296b08545aa2c2b1e22c3e35c111fad551be242ef7fba469d24e5a",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/cost/RAW_c68aa6d149b87a05.csv",
+      "source_sha256": "f5f6015eb9296b08545aa2c2b1e22c3e35c111fad551be242ef7fba469d24e5a"
+    },
+    {
+      "bytes": 10530,
+      "published_path": "evidence/cost/RAW_d888372256738ce2.csv",
+      "published_sha256": "af9148eadf5de4e97b240bf4c1e17ee22b5883980c9cea70ebdd65186dae8508",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/cost/RAW_d888372256738ce2.csv",
+      "source_sha256": "af9148eadf5de4e97b240bf4c1e17ee22b5883980c9cea70ebdd65186dae8508"
+    },
+    {
+      "bytes": 9088,
+      "published_path": "evidence/cost/RAW_e322a5c3457982ab.csv",
+      "published_sha256": "b40868c8c36c2d85f2f6e260537a719cb82d8931a7e9612ddfedc40fa8298508",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/cost/RAW_e322a5c3457982ab.csv",
+      "source_sha256": "b40868c8c36c2d85f2f6e260537a719cb82d8931a7e9612ddfedc40fa8298508"
+    },
+    {
+      "bytes": 11198,
+      "published_path": "evidence/cost/RAW_ebbcf3d74dbed75b.csv",
+      "published_sha256": "d9c9d7d38016e55408a29ec36901104605b3563c73235c2593df9095e900e1e6",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/cost/RAW_ebbcf3d74dbed75b.csv",
+      "source_sha256": "d9c9d7d38016e55408a29ec36901104605b3563c73235c2593df9095e900e1e6"
+    },
+    {
+      "bytes": 11964,
+      "published_path": "evidence/cost/RAW_eed1c4a7330c5248.csv",
+      "published_sha256": "3cdc7b71269662dc4bb336d19dbb342169f2a2f1fecc6b912b685c239e7669c9",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/cost/RAW_eed1c4a7330c5248.csv",
+      "source_sha256": "3cdc7b71269662dc4bb336d19dbb342169f2a2f1fecc6b912b685c239e7669c9"
+    },
+    {
+      "bytes": 35305,
+      "published_path": "evidence/cost/SYSTEM_COST_SUMMARY.json",
+      "published_sha256": "3e62633ed2c92872df0a1638fd878b589ca3649d1692d5370a26adc930387e13",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/cost/SYSTEM_COST_SUMMARY.json",
+      "source_sha256": "7dcd3c10a27fa8b3a71995f34165b01b4c6b591ae932f9645624b3b4e3eab14b"
+    },
+    {
+      "bytes": 86605,
+      "published_path": "evidence/dev32_expanded/CALIBRATION_AUDIT.json",
+      "published_sha256": "54288245ec404d54ffb5ae4f4091b397c1a1cc6aea727f2de1552e88937f4801",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/dev32_expanded/CALIBRATION_AUDIT.json",
+      "source_sha256": "8d49ac17b105aa7c1dd089d1f0c45cfac8cba57bd572485028c2ce319c5c53f7"
+    },
+    {
+      "bytes": 5430,
+      "published_path": "evidence/dev32_expanded/INFERENCE_FREEZE.json",
+      "published_sha256": "055ea4894ac6df9dcff9eaa4a1b1ff16fb0298493d6e50260665f26275f88520",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/dev32_expanded/INFERENCE_FREEZE.json",
+      "source_sha256": "24522515e7876b46ca627ddf5c676c2e5c74e1b7cb3492009d75be68a0753ac9"
+    },
+    {
+      "bytes": 809,
+      "published_path": "evidence/dev32_expanded/POPULATION_FREEZE.json",
+      "published_sha256": "f778238f5823f60d0d89fc70ce02e2d9be8ef72b745c29287a42d84d1163744e",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/dev32_expanded/POPULATION_FREEZE.json",
+      "source_sha256": "61953b5ce6e1d0f506b44d109eb2a339223ad8a64567a592c7f4e263679d457f"
+    },
+    {
+      "bytes": 289,
+      "published_path": "evidence/dev32_expanded/PREFETCH_PRESERVATION_VERIFIED.json",
+      "published_sha256": "b05cad5e6124e87c548872b3b79229aa035e942ef68baa8a9f67f4268e5fcbbc",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/dev32_expanded/PREFETCH_PRESERVATION_VERIFIED.json",
+      "source_sha256": "96f4f9ca4c21641bcb2791e600d8688c24d8f20a54925683118446ac202aa157"
+    },
+    {
+      "bytes": 569639,
+      "published_path": "evidence/dev32_expanded/REUSE.json",
+      "published_sha256": "b7c527fa1d02dd9c28fb87e99bec08d66584728411fd215facfa0003733121a2",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/dev32_expanded/REUSE.json",
+      "source_sha256": "300b6bffaecc8b8ff40129374a153c550e36c891c322e416a8ee104be7e441a7"
+    },
+    {
+      "bytes": 143,
+      "published_path": "evidence/dev32_expanded/STATE.json",
+      "published_sha256": "643ffd7bcde2edfbefd1991768bb33e50921968383dd4f27b1fc6b5c653a4aee",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/dev32_expanded/STATE.json",
+      "source_sha256": "9f0d93eb1d8686bf557f99a8de8398806fe6bc9cdca239a502df1c4fa686b214"
+    },
+    {
+      "bytes": 1575348,
+      "published_path": "evidence/dev32_expanded_rgb/BACKEND_EXECUTION.json",
+      "published_sha256": "ca54f3716b491b8f2c097a5444775600b61629d82e5989ec421255de570417cb",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/dev32_expanded_rgb/BACKEND_EXECUTION.json",
+      "source_sha256": "b5165e5d727d5593a768c6005fee829003277109d3957d147451424e1019ceb4"
+    },
+    {
+      "bytes": 982,
+      "published_path": "evidence/dev32_expanded_rgb/BACKEND_FREEZE.json",
+      "published_sha256": "9975602d6c68bfe552d5021a9b31dcb466b48c6f95d74d46cabc859594fd0f95",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/dev32_expanded_rgb/BACKEND_FREEZE.json",
+      "source_sha256": "7397e0314c9aed3e0d2b4e21a62f2be2b7604c638ab723e0e39d947f380548ff"
+    },
+    {
+      "bytes": 449,
+      "published_path": "evidence/dev32_expanded_rgb/BASELINE_PRESERVATION.json",
+      "published_sha256": "19405472258b0fc45c0062782dd79e326a24557c6cafc76a9ab2c12fbed35696",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/dev32_expanded_rgb/BASELINE_PRESERVATION.json",
+      "source_sha256": "d6987b366cc27a45ab5eeee26579b57567da1d69d73d6f3e2e7f9b38a2d1bc29"
+    },
+    {
+      "bytes": 5350,
+      "published_path": "evidence/dev32_expanded_rgb/INFERENCE_FREEZE.json",
+      "published_sha256": "635da25552454a8de4d96bfae5ae35cbf11d37498fb90a2e12ed7307a1fa8798",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/dev32_expanded_rgb/INFERENCE_FREEZE.json",
+      "source_sha256": "bf97435edd780914cafe48f28cf18e8081bcdbfa803aaffeae12a54355b58681"
+    },
+    {
+      "bytes": 20660,
+      "published_path": "evidence/dev32_expanded_rgb/PER_SEQUENCE.csv",
+      "published_sha256": "63b730568df0c74933706026f40a0dac56f6b90062f20cd3f46a632a2a4e591b",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/dev32_expanded_rgb/PER_SEQUENCE.csv",
+      "source_sha256": "63b730568df0c74933706026f40a0dac56f6b90062f20cd3f46a632a2a4e591b"
+    },
+    {
+      "bytes": 414768,
+      "published_path": "evidence/dev32_expanded_rgb/PREDICTIONS_SEALED.json",
+      "published_sha256": "751e9a38f40558f8c6099a722075287edbbdcaa38691e911a7178710567b149c",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/dev32_expanded_rgb/PREDICTIONS_SEALED.json",
+      "source_sha256": "577953a3f5f87343f6e6c1d980455b316492a46478b0ff173da2f4fee93e37ac"
+    },
+    {
+      "bytes": 466,
+      "published_path": "evidence/dev32_expanded_rgb/PUBLIC_FULL_ASSETS.json",
+      "published_sha256": "0680ec8629ba45576eb812defc41fbba16fd341f9a56ef0bb9b5b1e47ab11e8b",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/dev32_expanded_rgb/PUBLIC_FULL_ASSETS.json",
+      "source_sha256": "d13524698a4e290dbf4feeaca3658624d99cdd4547a458e6be80894cc4b2032b"
+    },
+    {
+      "bytes": 2265,
+      "published_path": "evidence/dev32_expanded_rgb/REPORT.md",
+      "published_sha256": "308033dd069eb21c00bba78d441eaf106b65230df081979b41516fef10093983",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/dev32_expanded_rgb/REPORT.md",
+      "source_sha256": "308033dd069eb21c00bba78d441eaf106b65230df081979b41516fef10093983"
+    },
+    {
+      "bytes": 6034,
+      "published_path": "evidence/dev32_expanded_rgb/RESULT.json",
+      "published_sha256": "ca45e48f3808eb4f187c0f912dec1f44ef6a8dfe13d5f57fcb45e77ddb96947c",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/dev32_expanded_rgb/RESULT.json",
+      "source_sha256": "7c247c7369e2b614340b5281490e5c6a6b96dfc49190d37ded11fcc37692f3e1"
+    },
+    {
+      "bytes": 689362,
+      "published_path": "evidence/dev32_expanded_rgb/SCORED_PREDICTIONS.csv",
+      "published_sha256": "265161f9dd2c7941af57cce3811a35945e2bea055b13a260b960df1c65c7f2d8",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/dev32_expanded_rgb/SCORED_PREDICTIONS.csv",
+      "source_sha256": "265161f9dd2c7941af57cce3811a35945e2bea055b13a260b960df1c65c7f2d8"
+    },
+    {
+      "bytes": 539,
+      "published_path": "evidence/dev32_expanded_rgb/SCORING_SEAL.json",
+      "published_sha256": "a627d43392710fe12e49c8c9ec84c3450cfc4bd723e20f8db2efd2e81247a83a",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/dev32_expanded_rgb/SCORING_SEAL.json",
+      "source_sha256": "7866fdaa877e549d9f848ff83b4b61f5e0d3042490b459265f86f61b042ffe68"
+    },
+    {
+      "bytes": 116,
+      "published_path": "evidence/dev32_expanded_rgb/STATE.json",
+      "published_sha256": "7ea66e8e6ee118655c5985e8080efdc6ca3cf5bdc2735f037dcb0be48120a17d",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/dev32_expanded_rgb/STATE.json",
+      "source_sha256": "c4cc5cb793187be6cc9ff0235c15aa23cf5c200c1c7cb7791a5dfc7c52b5b663"
+    },
+    {
+      "bytes": 1840,
+      "published_path": "evidence/dev32_expanded_rgb/public_garl/configs/ablation/ours_full.yaml",
+      "published_sha256": "c7dedc9b93d32a416b8e92a6b474cc5a17ffd96b2cdaae3a4554e3cc0ee28454",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/dev32_expanded_rgb/public_garl/configs/ablation/ours_full.yaml",
+      "source_sha256": "c7dedc9b93d32a416b8e92a6b474cc5a17ffd96b2cdaae3a4554e3cc0ee28454"
+    },
+    {
+      "bytes": 2826,
+      "published_path": "evidence/dev32_expanded_rgb/public_garl/model_release_metadata.json",
+      "published_sha256": "4e2347a3c6b4102c755673fb724e823a813f7ec878952fb4d2e4f62d55168fd3",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/dev32_expanded_rgb/public_garl/model_release_metadata.json",
+      "source_sha256": "e14b72588172424f5dcedc0c75ba4c4923ff1af7cb842bd15239b1626e88aca8"
+    },
+    {
+      "bytes": 784,
+      "published_path": "evidence/expanded_metrics/METADATA.json",
+      "published_sha256": "e5e827ca90bdd690c9eb40eb7f6b08cbcdb08fee6f9ef3f801bc6437eb06feca",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/expanded_metrics/METADATA.json",
+      "source_sha256": "e5e827ca90bdd690c9eb40eb7f6b08cbcdb08fee6f9ef3f801bc6437eb06feca"
+    },
+    {
+      "bytes": 2904,
+      "published_path": "evidence/expanded_metrics/METHOD_METRICS.csv",
+      "published_sha256": "792a5042dfa8be8b3d572dbc32a21646e4a20eec2c26b8589dc02953fc8117ee",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/expanded_metrics/METHOD_METRICS.csv",
+      "source_sha256": "792a5042dfa8be8b3d572dbc32a21646e4a20eec2c26b8589dc02953fc8117ee"
+    },
+    {
+      "bytes": 7856,
+      "published_path": "evidence/expanded_metrics/PAIRED.csv",
+      "published_sha256": "2619cc3d11be7320451e7edd0642b34784c20c891a3dcc5be5af3a229bb4acba",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/expanded_metrics/PAIRED.csv",
+      "source_sha256": "2619cc3d11be7320451e7edd0642b34784c20c891a3dcc5be5af3a229bb4acba"
+    },
+    {
+      "bytes": 42465,
+      "published_path": "evidence/expanded_metrics/PER_SEQUENCE.csv",
+      "published_sha256": "fbea8ff6b97bb8f5a068613539b7861bcf9e77aaaa88a0e67d971271e566d35e",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/expanded_metrics/PER_SEQUENCE.csv",
+      "source_sha256": "fbea8ff6b97bb8f5a068613539b7861bcf9e77aaaa88a0e67d971271e566d35e"
+    },
+    {
+      "bytes": 27245,
+      "published_path": "evidence/expanded_metrics/REPORT.json",
+      "published_sha256": "47d4e34144574603ddc8a2fa5d1ffc1cec250a1f589b8c74ec2c5741a56a790e",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/expanded_metrics/REPORT.json",
+      "source_sha256": "47d4e34144574603ddc8a2fa5d1ffc1cec250a1f589b8c74ec2c5741a56a790e"
+    },
+    {
+      "bytes": 1575656,
+      "published_path": "evidence/expanded_metrics/SCORED_ROWS.csv",
+      "published_sha256": "20f58c1200b3834dd69c13aafd94e770580517b07d9f41299369c66a1d3eec86",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/expanded_metrics/SCORED_ROWS.csv",
+      "source_sha256": "20f58c1200b3834dd69c13aafd94e770580517b07d9f41299369c66a1d3eec86"
+    },
+    {
+      "bytes": 538,
+      "published_path": "evidence/expanded_metrics/SHA256.json",
+      "published_sha256": "43e5fad1c30383ac650412c761ed55c55162700738fd4deca83b1eb96ffaa5a9",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/expanded_metrics/SHA256.json",
+      "source_sha256": "43e5fad1c30383ac650412c761ed55c55162700738fd4deca83b1eb96ffaa5a9"
+    },
+    {
+      "bytes": 6294,
+      "published_path": "evidence/fcwd/ASSET_MANIFEST.json",
+      "published_sha256": "4d9540618e02eb9101fab9eccb5f473929428f7d5da6e81463dea880d775e175",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/fcwd/ASSET_MANIFEST.json",
+      "source_sha256": "bfc10347d85c7fbe786e67607bd15581fa4b4182f4dcd937b99c90f57d6f28c8"
+    },
+    {
+      "bytes": 1465,
+      "published_path": "evidence/fcwd/FCWD_AUTHORS_DRAFT.txt",
+      "published_sha256": "fc471dbb93c57547458417050c6a9087805701e73ae4715ea99f922b2c355b67",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/fcwd/FCWD_AUTHORS_DRAFT.txt",
+      "source_sha256": "fc471dbb93c57547458417050c6a9087805701e73ae4715ea99f922b2c355b67"
+    },
+    {
+      "bytes": 364,
+      "published_path": "evidence/fcwd/GARL_TABLE_VII_CONTRACT.json",
+      "published_sha256": "2d6d342c5a041b15d6d7439f9b7f43b5a58021d343faec461a8932aa49022a7f",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/fcwd/GARL_TABLE_VII_CONTRACT.json",
+      "source_sha256": "f66f6c5d561446b140079e02e3827a57b371961f39a1a034c5eef8e7c1906a48"
+    },
+    {
+      "bytes": 13449,
+      "published_path": "evidence/fcwd/HDF5_COMPATIBILITY.json",
+      "published_sha256": "c9a95ea9abb9f1414587a85db0d65163625e1d04ceaf4d61abacded1efe26df1",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/fcwd/HDF5_COMPATIBILITY.json",
+      "source_sha256": "8358453c36a29e1e03d225933dda71be31d32b2f09e20c826c1210fae91741cb"
+    },
+    {
+      "bytes": 38,
+      "published_path": "evidence/fcwd/QA_PYRIGHT.txt",
+      "published_sha256": "c584b21ee012de391dc2799d5455db619d3fefbb192ab07ea4ba83fb0d704c14",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/fcwd/QA_PYRIGHT.txt",
+      "source_sha256": "c584b21ee012de391dc2799d5455db619d3fefbb192ab07ea4ba83fb0d704c14"
+    },
+    {
+      "bytes": 100,
+      "published_path": "evidence/fcwd/QA_PYTEST.txt",
+      "published_sha256": "260cc0cf6a7de5c32be04cf5f1bec0af6dbdd9052eb586bab129abddf435f41a",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/fcwd/QA_PYTEST.txt",
+      "source_sha256": "260cc0cf6a7de5c32be04cf5f1bec0af6dbdd9052eb586bab129abddf435f41a"
+    },
+    {
+      "bytes": 20,
+      "published_path": "evidence/fcwd/QA_RUFF.txt",
+      "published_sha256": "a4443afdcfb6d7363adb285762515ccf7cf50473b1a05c20c1a50f6bed4d26b0",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/fcwd/QA_RUFF.txt",
+      "source_sha256": "a4443afdcfb6d7363adb285762515ccf7cf50473b1a05c20c1a50f6bed4d26b0"
+    },
+    {
+      "bytes": 8827,
+      "published_path": "evidence/fcwd/REFERENCE_INPUT_CONTRACT.json",
+      "published_sha256": "2606196068a5b03860045257f4077a22cb8eb998c6e44d8553a00ac4e324e217",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/fcwd/REFERENCE_INPUT_CONTRACT.json",
+      "source_sha256": "b294bf7fbdf702272401b9abc79b7761e4b33818d536071e9b0c26b5f1ece833"
+    },
+    {
+      "bytes": 6851,
+      "published_path": "evidence/fcwd_inference/INFERENCE_FREEZE.json",
+      "published_sha256": "eeba25699f39f36a4f375d974105698175dbe5fd24734026b9a13adba141da32",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/fcwd_inference/INFERENCE_FREEZE.json",
+      "source_sha256": "ca4721942b75973cdd61a4fb16e0d8ea56f07b3f16f0b890f4ee1df557117d10"
+    },
+    {
+      "bytes": 66741,
+      "published_path": "evidence/fcwd_inference/PREDICTIONS_SEALED.json",
+      "published_sha256": "260573a22f9a2af049e4bc3283dcb19907c718990e8fd169ff2497ea9de86a6a",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/fcwd_inference/PREDICTIONS_SEALED.json",
+      "source_sha256": "61c840969f2e02ff012a4f906ed4e822125cd2cd3aecd8ee82a57c7f84353236"
+    },
+    {
+      "bytes": 399,
+      "published_path": "evidence/fcwd_inference/QUERY_MANIFEST_MATERIALIZATION.json",
+      "published_sha256": "2ffff148e4180232c96e066596e2f09a0bcfe093730f27643678ac3440275e23",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/fcwd_inference/QUERY_MANIFEST_MATERIALIZATION.json",
+      "source_sha256": "67a8955004ab17e0f3c53f335bacc92b5593d475d11e2ac1d6a338496206ee16"
+    },
+    {
+      "bytes": 886,
+      "published_path": "evidence/fcwd_inference/SCORING_COMPLETE.json",
+      "published_sha256": "e19eb088a147cdf6db7a658ee3e57436d6fc8c4c1a23a08c0b6b22e9f8a86de6",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/fcwd_inference/SCORING_COMPLETE.json",
+      "source_sha256": "270f0588fba52e448914c378186019e0e1c97edf6c249e600a4141d9d0c1413a"
+    },
+    {
+      "bytes": 21466,
+      "published_path": "evidence/fcwd_inference/SOURCE_FREEZE.json",
+      "published_sha256": "b9f6a9ee75d05b6ad865e275d3aa7e79312c7c85ab2369bf2ebddb76a78aba58",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/fcwd_inference/SOURCE_FREEZE.json",
+      "source_sha256": "f73b3e15db53ac60ff5468dff54f2621e23febb3319e87877023a4d4018c380c"
+    },
+    {
+      "bytes": 115,
+      "published_path": "evidence/fcwd_inference/STATE.json",
+      "published_sha256": "304c889480039dcc65f91c48e0fe4e7b38ba6f960292367ee1827a2651bbaa24",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/fcwd_inference/STATE.json",
+      "source_sha256": "b8050fdee6bbc94643a8a6b3f2d718a93071ab113866fb8dde73662bd8536137"
+    },
+    {
+      "bytes": 747,
+      "published_path": "evidence/fcwd_inference/scoring/METADATA.json",
+      "published_sha256": "f38a0e027850711b9765d02d36ebd98c66ea9bbcebbf619053151c108c321a92",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/fcwd_inference/scoring/METADATA.json",
+      "source_sha256": "f38a0e027850711b9765d02d36ebd98c66ea9bbcebbf619053151c108c321a92"
+    },
+    {
+      "bytes": 2519,
+      "published_path": "evidence/fcwd_inference/scoring/METHOD_METRICS.csv",
+      "published_sha256": "a1c0c4a741b08a36f92a0f050723fa20162624758d97e1fd8ffd7a7086ce1b40",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/fcwd_inference/scoring/METHOD_METRICS.csv",
+      "source_sha256": "a1c0c4a741b08a36f92a0f050723fa20162624758d97e1fd8ffd7a7086ce1b40"
+    },
+    {
+      "bytes": 602,
+      "published_path": "evidence/fcwd_inference/scoring/MODEL_COVERAGE.json",
+      "published_sha256": "23cf03a9fc1e04347acbcca6e81847c9a64fb77fa1239774ac99a67348135d97",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/fcwd_inference/scoring/MODEL_COVERAGE.json",
+      "source_sha256": "a0427e229f57aa5f511a30e53cd3a9082d8f439bc5dc9e34dc0cbbf2506c39d6"
+    },
+    {
+      "bytes": 4529,
+      "published_path": "evidence/fcwd_inference/scoring/PAIRED.csv",
+      "published_sha256": "2581bd042f29a466beb2e53d9865cab8cb29b8dcf0efad561f5e38345a0015ea",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/fcwd_inference/scoring/PAIRED.csv",
+      "source_sha256": "2581bd042f29a466beb2e53d9865cab8cb29b8dcf0efad561f5e38345a0015ea"
+    },
+    {
+      "bytes": 3396,
+      "published_path": "evidence/fcwd_inference/scoring/PER_SEQUENCE.csv",
+      "published_sha256": "269d447c9ef7f9fa55fd26ec5cd5debc7ba4ba6a74bb664e4993b0794cff0d11",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/fcwd_inference/scoring/PER_SEQUENCE.csv",
+      "source_sha256": "269d447c9ef7f9fa55fd26ec5cd5debc7ba4ba6a74bb664e4993b0794cff0d11"
+    },
+    {
+      "bytes": 17875,
+      "published_path": "evidence/fcwd_inference/scoring/REPORT.json",
+      "published_sha256": "5764cd2592a09914a348e8d4b05f98a8877db49a890c9b95a7a95fea411f27d2",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/fcwd_inference/scoring/REPORT.json",
+      "source_sha256": "5764cd2592a09914a348e8d4b05f98a8877db49a890c9b95a7a95fea411f27d2"
+    },
+    {
+      "bytes": 110077,
+      "published_path": "evidence/fcwd_inference/scoring/SCORED_PREDICTIONS.csv",
+      "published_sha256": "69d619c3b2864e6dfaec86156fd5756a05b72207e766997ea74abd3b441a352b",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/fcwd_inference/scoring/SCORED_PREDICTIONS.csv",
+      "source_sha256": "69d619c3b2864e6dfaec86156fd5756a05b72207e766997ea74abd3b441a352b"
+    },
+    {
+      "bytes": 226034,
+      "published_path": "evidence/fcwd_inference/scoring/SCORED_ROWS.csv",
+      "published_sha256": "68f4cd5610f50c8b9d5cf1d393e22a7bae091245caccc4d4b1e878030626fa9f",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/fcwd_inference/scoring/SCORED_ROWS.csv",
+      "source_sha256": "68f4cd5610f50c8b9d5cf1d393e22a7bae091245caccc4d4b1e878030626fa9f"
+    },
+    {
+      "bytes": 538,
+      "published_path": "evidence/fcwd_inference/scoring/SHA256.json",
+      "published_sha256": "528192ca8348a419eb07f149a1bba6922b238c775c30c92d88db4fd2a605e41c",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/fcwd_inference/scoring/SHA256.json",
+      "source_sha256": "528192ca8348a419eb07f149a1bba6922b238c775c30c92d88db4fd2a605e41c"
+    },
+    {
+      "bytes": 3457,
+      "published_path": "evidence/fcwd_inference/scoring/TARGET_JOIN_CONTRACT.json",
+      "published_sha256": "aba5ecfdbad2d3e589c2545ed77f03e2e90090931510488d3e5e5c4df2d8639f",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/fcwd_inference/scoring/TARGET_JOIN_CONTRACT.json",
+      "source_sha256": "962a1d48676becdb609d166f822be023d074549507729cb926dcf83ffad3840c"
+    },
+    {
+      "bytes": 679,
+      "published_path": "evidence/fcwd_population/FCWD_INPUT_FREEZE.json",
+      "published_sha256": "af8e82da13bb899324529e5dfec7084f181040c62f0cab8334d10461619e0cab",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/fcwd_population/FCWD_INPUT_FREEZE.json",
+      "source_sha256": "163143a620cfa8f939c8a0452cb927c44c68f6af5148268cc4eea8936bb1bba6"
+    },
+    {
+      "bytes": 4656,
+      "published_path": "evidence/fcwd_runner_qa/CPU_PREPARE_PROBE.json",
+      "published_sha256": "43f0bf2b0cf01452baf0da681234f897ee162adaf42bc636651e6367c53f6bdf",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/fcwd_runner_qa/CPU_PREPARE_PROBE.json",
+      "source_sha256": "0746f156a81badb070e62a5e43ebee677c7c3d9ab9f454a0291d53107e9d924d"
+    },
+    {
+      "bytes": 21466,
+      "published_path": "evidence/fcwd_runner_qa/LOCAL_SOURCE_CLOSURE.json",
+      "published_sha256": "b9f6a9ee75d05b6ad865e275d3aa7e79312c7c85ab2369bf2ebddb76a78aba58",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/fcwd_runner_qa/LOCAL_SOURCE_CLOSURE.json",
+      "source_sha256": "f73b3e15db53ac60ff5468dff54f2621e23febb3319e87877023a4d4018c380c"
+    },
+    {
+      "bytes": 1109,
+      "published_path": "evidence/fcwd_runner_qa/PREPARE_FCWD1.json",
+      "published_sha256": "74b85e36f22396fee3c4ecd37174c4997c47816d0d073c3ad07049fb4b28df53",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/fcwd_runner_qa/PREPARE_FCWD1.json",
+      "source_sha256": "491347f1461989756a0df69a285de94e99f9c4d84b9b37e8b80e709178e49625"
+    },
+    {
+      "bytes": 1112,
+      "published_path": "evidence/fcwd_runner_qa/PREPARE_FCWD2.json",
+      "published_sha256": "0a75f342510ec6976c4e287207f53d04c603dc63caddc18747540b6fd4a1e7ec",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/fcwd_runner_qa/PREPARE_FCWD2.json",
+      "source_sha256": "06be3d9ff7b999b20d9f84e905e4708bebf944acaab7132981d65b0fd2e7d92a"
+    },
+    {
+      "bytes": 1111,
+      "published_path": "evidence/fcwd_runner_qa/PREPARE_FCWD3.json",
+      "published_sha256": "7af2652304f9db41eb74549a2bf2264232a761c8b3c015a0f5c8a124468320cd",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/fcwd_runner_qa/PREPARE_FCWD3.json",
+      "source_sha256": "e654281a33f72053298c73d2704629554c4887586baf4acca1bbb10e88bd8c98"
+    },
+    {
+      "bytes": 2033,
+      "published_path": "evidence/fcwd_runner_qa/QA.json",
+      "published_sha256": "15df696200597bdb79ae4b7bedd1853a38586ed8e7a7ab172d4f6c0ab7586b4e",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/fcwd_runner_qa/QA.json",
+      "source_sha256": "af5b64f85e98c5c309f24875171495a58512ea6a8e27ecfc43cb59d82392e6b2"
+    },
+    {
+      "bytes": 604,
+      "nested_checksum_manifest_mode": "REHASHED_PUBLISHED_BYTES",
+      "published_path": "evidence/fcwd_runner_qa/SHA256SUMS.txt",
+      "published_sha256": "e64460c24ac8995ad76b06407fbf6e58e3e5ab1a329b6529023764791b7f09a9",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/fcwd_runner_qa/SHA256SUMS.txt",
+      "source_sha256": "bf74a19f794c1ece0b76aebc480adbb29d8f804c37068d62aedf245cc1305e63"
+    },
+    {
+      "bytes": 4266,
+      "published_path": "evidence/fcwd_runner_qa/prepare_cpu_probe.py",
+      "published_sha256": "953ba422f126f730f42fd94dc0fc24dbf6d6132fa56dc3ee3cf17b24d84d35b0",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/fcwd_runner_qa/prepare_cpu_probe.py",
+      "source_sha256": "953ba422f126f730f42fd94dc0fc24dbf6d6132fa56dc3ee3cf17b24d84d35b0"
+    },
+    {
+      "bytes": 982,
+      "published_path": "evidence/full_prefetch/BACKEND_FREEZE.json",
+      "published_sha256": "9975602d6c68bfe552d5021a9b31dcb466b48c6f95d74d46cabc859594fd0f95",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/full_prefetch/BACKEND_FREEZE.json",
+      "source_sha256": "7397e0314c9aed3e0d2b4e21a62f2be2b7604c638ab723e0e39d947f380548ff"
+    },
+    {
+      "bytes": 16776,
+      "published_path": "evidence/full_prefetch/PILOT.json",
+      "published_sha256": "f52c77abb5bf920257c096cd92f5a8721a773b8c2e499b4783b0998e854779e8",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/full_prefetch/PILOT.json",
+      "source_sha256": "1bf98dc0e07286336a32d6d450409cce67344797d357a0309fd0a3b2ed21211b"
+    },
+    {
+      "bytes": 184,
+      "published_path": "evidence/full_prefetch/SHA256.json",
+      "published_sha256": "78c7f7770cc76f9565684197bdcf6d380c7d88692cbe6c37eaa87b252f8355ad",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/full_prefetch/SHA256.json",
+      "source_sha256": "9ee192ca2e777c224cab524b19e5ae5e4522e3323e50d39d79389e9197a3efd5"
+    },
+    {
+      "bytes": 2195,
+      "published_path": "evidence/garl_parity/AUDIT_BINDING.json",
+      "published_sha256": "65bf1cc25cac9ff808ea08cd55aaa30598ba79f3a7c648671293311ce199fccf",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/garl_parity/AUDIT_BINDING.json",
+      "source_sha256": "c6a3936115ae12e3fdbea258e613d8030575bd29d6b50eaef8635b003f1297b9"
+    },
+    {
+      "bytes": 522,
+      "published_path": "evidence/garl_parity/REPORT.md",
+      "published_sha256": "6b9bc2dc5097dd5bbbe3bdc9d49c6e490b67758b0c7d7f837432a7808d4f31d5",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/garl_parity/REPORT.md",
+      "source_sha256": "6b9bc2dc5097dd5bbbe3bdc9d49c6e490b67758b0c7d7f837432a7808d4f31d5"
+    },
+    {
+      "bytes": 11143,
+      "published_path": "evidence/garl_parity/RESULT.json",
+      "published_sha256": "62e28c6d0fbbf5d2c70eb34df7c7676e7a1d5dc696c3c41190f4e1267657a10c",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/garl_parity/RESULT.json",
+      "source_sha256": "62e28c6d0fbbf5d2c70eb34df7c7676e7a1d5dc696c3c41190f4e1267657a10c"
+    },
+    {
+      "bytes": 268,
+      "published_path": "evidence/garl_parity/SHA256.json",
+      "published_sha256": "0212136cc6b582816a4b66d852a266dad17cdbb98ef9dc904914311805ed7b60",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/garl_parity/SHA256.json",
+      "source_sha256": "0212136cc6b582816a4b66d852a266dad17cdbb98ef9dc904914311805ed7b60"
+    },
+    {
+      "bytes": 1866,
+      "published_path": "evidence/official_contract/AUTHORS_DRAFT.txt",
+      "published_sha256": "396e830c6c609e37329ac430b01af4a42e7294ceb34a00ec8bd23471feea4400",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/official_contract/AUTHORS_DRAFT.txt",
+      "source_sha256": "396e830c6c609e37329ac430b01af4a42e7294ceb34a00ec8bd23471feea4400"
+    },
+    {
+      "bytes": 377,
+      "published_path": "evidence/official_contract/QA.json",
+      "published_sha256": "ee5bc15bb1530f372f2edf806d42e7e97f25deafa246887d7412f3340926dd30",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/official_contract/QA.json",
+      "source_sha256": "84c39839b013814033fc9da6460b1b648375332072f0de46373b1a91a7141456"
+    },
+    {
+      "bytes": 3176,
+      "published_path": "evidence/official_contract/REPORT.md",
+      "published_sha256": "f7fb9dd0648b9b12dd85779e9af8e49496dbd06bad56e85d146571be3c009363",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/official_contract/REPORT.md",
+      "source_sha256": "f7fb9dd0648b9b12dd85779e9af8e49496dbd06bad56e85d146571be3c009363"
+    },
+    {
+      "bytes": 2747,
+      "published_path": "evidence/official_contract/SHA256.json",
+      "published_sha256": "41bcd8e0ec158d4c274ab5faa09cc89a47b55512c64dc2fbee0463179f0d3691",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/official_contract/SHA256.json",
+      "source_sha256": "41bcd8e0ec158d4c274ab5faa09cc89a47b55512c64dc2fbee0463179f0d3691"
+    },
+    {
+      "bytes": 4611,
+      "published_path": "evidence/official_contract/SOURCES.json",
+      "published_sha256": "b6f090ab758392f93a5e39fbfd29d508591c13c72f48c71650044bc66667cca4",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/official_contract/SOURCES.json",
+      "source_sha256": "04e58c05693643964ee4c0400909d2f710ac56c4579d5e65ce65346304477931"
+    },
+    {
+      "bytes": 3653,
+      "published_path": "evidence/official_contract/STATUS.json",
+      "published_sha256": "7b9fb0ed2de4f83a9be1f560f152cfd1d91c9df001aea8125c1f3bec096e5044",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/official_contract/STATUS.json",
+      "source_sha256": "f75af1428cd52860999f628f5a92e1acc6f56db1c6e512f2d746090d70aae93f"
+    },
+    {
+      "bytes": 13820,
+      "published_path": "evidence/official_contract/build_contract.py",
+      "published_sha256": "b80bcb7ed8e4c79d250956eb4132e1b0fb7f75d956b426c469140a925aeaade3",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/official_contract/build_contract.py",
+      "source_sha256": "b80bcb7ed8e4c79d250956eb4132e1b0fb7f75d956b426c469140a925aeaade3"
+    },
+    {
+      "bytes": 81919,
+      "published_path": "evidence/official_contract/competition.html",
+      "published_sha256": "cda37d02a25d4eb5eb2b00ceed3961dc297e11d4598dc0d476ff83cf84e5078d",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/official_contract/competition.html",
+      "source_sha256": "cda37d02a25d4eb5eb2b00ceed3961dc297e11d4598dc0d476ff83cf84e5078d"
+    },
+    {
+      "bytes": 1113,
+      "published_path": "evidence/official_contract/dataset_README.md",
+      "published_sha256": "41ecfeac0c6c3529938c32bc5146ccff9514431535e34a2ad28fccb1a73d11c1",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/official_contract/dataset_README.md",
+      "source_sha256": "41ecfeac0c6c3529938c32bc5146ccff9514431535e34a2ad28fccb1a73d11c1"
+    },
+    {
+      "bytes": 440,
+      "published_path": "evidence/official_contract/dataset_splits_train.txt",
+      "published_sha256": "ab2a68609d535379b1d6ed3617b3487cf61dce38dcb13c53246d5ac74c0b3251",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/official_contract/dataset_splits_train.txt",
+      "source_sha256": "ab2a68609d535379b1d6ed3617b3487cf61dce38dcb13c53246d5ac74c0b3251"
+    },
+    {
+      "bytes": 215331,
+      "published_path": "evidence/official_contract/evttc_paper_2412.05053v2.html",
+      "published_sha256": "694628ae95e5770c3f57af90f9e0a67fe5671aefb740eecb63cb593e72f33370",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/official_contract/evttc_paper_2412.05053v2.html",
+      "source_sha256": "694628ae95e5770c3f57af90f9e0a67fe5671aefb740eecb63cb593e72f33370"
+    },
+    {
+      "bytes": 460711,
+      "published_path": "evidence/official_contract/garl_paper_2603.16303v1.html",
+      "published_sha256": "322a1d497c915f534acb07268fea90597042d023667db9493ac846bec2611998",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/official_contract/garl_paper_2603.16303v1.html",
+      "source_sha256": "322a1d497c915f534acb07268fea90597042d023667db9493ac846bec2611998"
+    },
+    {
+      "bytes": 5160,
+      "published_path": "evidence/official_contract/github_main_metadata.json",
+      "published_sha256": "29f43c42a8e1458d2364a65944680c99c24dc773f3d25177178e4b12ecb8ad79",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/official_contract/github_main_metadata.json",
+      "source_sha256": "56c825a9ddc3df233419c7f6d1f90d7c24547abe1134e0d5610f03005972811f"
+    },
+    {
+      "bytes": 505,
+      "published_path": "evidence/official_contract/github_train.txt",
+      "published_sha256": "2f92c1c3ed881642190c6d6ddd71f247e6184deb489456e06db2516b81a774fb",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/official_contract/github_train.txt",
+      "source_sha256": "2f92c1c3ed881642190c6d6ddd71f247e6184deb489456e06db2516b81a774fb"
+    },
+    {
+      "bytes": 1794,
+      "published_path": "evidence/official_contract/hf_dataset_metadata.json",
+      "published_sha256": "745d21e54bebab116e518a12dda5dd94dc76fee5143ac909f27f8e26dc66af23",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/official_contract/hf_dataset_metadata.json",
+      "source_sha256": "4e159ddd69734d764e00616f35a86366ba09e4bf32f51fef9320a1cb0d681bc7"
+    },
+    {
+      "bytes": 2573,
+      "published_path": "evidence/official_contract/hf_model_metadata.json",
+      "published_sha256": "0ea5cac1fa0a88270e172917c71b78505314675cdc037642354a44fdf95e473b",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/official_contract/hf_model_metadata.json",
+      "source_sha256": "cc590f0978a0385a4ebc07bc9d182acb64801b295d4851d6494fcaa528cfbb90"
+    },
+    {
+      "bytes": 791,
+      "published_path": "evidence/official_contract/model_README.md",
+      "published_sha256": "ba523905a727da5f8d5ada06b8c46ae19fd6be368bc16f97badfeb8367d973e0",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/official_contract/model_README.md",
+      "source_sha256": "ba523905a727da5f8d5ada06b8c46ae19fd6be368bc16f97badfeb8367d973e0"
+    },
+    {
+      "bytes": 2826,
+      "published_path": "evidence/official_contract/model_model_release_metadata.json",
+      "published_sha256": "4e2347a3c6b4102c755673fb724e823a813f7ec878952fb4d2e4f62d55168fd3",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/official_contract/model_model_release_metadata.json",
+      "source_sha256": "e14b72588172424f5dcedc0c75ba4c4923ff1af7cb842bd15239b1626e88aca8"
+    },
+    {
+      "bytes": 228079,
+      "published_path": "evidence/official_contract/react_paper_2609.19204v1.html",
+      "published_sha256": "13c3e86b18c616bf11749d417016c235909659981be46c47385b817a72521ca5",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/official_contract/react_paper_2609.19204v1.html",
+      "source_sha256": "13c3e86b18c616bf11749d417016c235909659981be46c47385b817a72521ca5"
+    },
+    {
+      "bytes": 457,
+      "published_path": "evidence/prefetch/BACKEND_FREEZE.json",
+      "published_sha256": "1f3a3834a32377cc7a9670a2bfb902895611236e4be7847a625fb136ce6a5dff",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/prefetch/BACKEND_FREEZE.json",
+      "source_sha256": "b3ea8d0b2d8d6858a7a42ef27298b85f9c15c35be06320ddfebfe083ef1c80a3"
+    },
+    {
+      "bytes": 16425,
+      "published_path": "evidence/prefetch/PILOT.json",
+      "published_sha256": "ff60c2e4425c08abc3a157afc81f7ce86e6e49944758b846185ff6969b1466b7",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/prefetch/PILOT.json",
+      "source_sha256": "2bf9b41f902ef47729d43a4020c3438e0fa74d7bccb9d299f6c6b28f1cbe9d74"
+    },
+    {
+      "bytes": 184,
+      "published_path": "evidence/prefetch/SHA256.json",
+      "published_sha256": "d4c171f2082b7ebfb8e78a322868ebaeeede5817249379d466b8d0b8da8c5be3",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/prefetch/SHA256.json",
+      "source_sha256": "5898aef110a81312ed29b04f565d2caf0dcd55d4e980f999a30d3ee899e35282"
+    },
+    {
+      "bytes": 1401,
+      "published_path": "evidence/r1_resume/CPU_NEXT_INPUT_PARITY.json",
+      "published_sha256": "ba1db907df1487721b0f6b739096927cfbf6a6623d75a640b1cc5999b063f584",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/r1_resume/CPU_NEXT_INPUT_PARITY.json",
+      "source_sha256": "4cf08d30828200150da06172380443c33ddb8b47227645a7a84ff47252ef1594"
+    },
+    {
+      "bytes": 305,
+      "published_path": "evidence/r1_resume/PRIORITY_PAUSE_CONFIRMED.json",
+      "published_sha256": "0d9d4eb7fbeeac2fb36ac41500df4db8fe01db676fa47715700ea682601a3544",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/r1_resume/PRIORITY_PAUSE_CONFIRMED.json",
+      "source_sha256": "c10cc2b030e3bf09152b93b11df0a43ebd2118a45fe7d866c76484efff725f72"
+    },
+    {
+      "bytes": 87964,
+      "published_path": "evidence/r1_resume/PRIORITY_PAUSE_OWNERSHIP.json",
+      "published_sha256": "30207a8e5749ae5d5e8715e1f6f141af50dd4c1982f82cf655532de8f2941639",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/r1_resume/PRIORITY_PAUSE_OWNERSHIP.json",
+      "source_sha256": "8eddb90988f38e19bc57aa06df410b31a79503362e5aa3dc7da4e5489f66b9d2"
+    },
+    {
+      "bytes": 301,
+      "published_path": "evidence/r1_resume/PRIORITY_PAUSE_RELEASED.json",
+      "published_sha256": "199dcb96ce4c691b3dc34ff0fe781a7b27d92bdba408a613c6b61d2975908e55",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/r1_resume/PRIORITY_PAUSE_RELEASED.json",
+      "source_sha256": "0a64478a9ab9bb994f776781a9ea12df9c0b449b8c3b098189d65709d2359bb9"
+    },
+    {
+      "bytes": 195,
+      "published_path": "evidence/r1_resume/PYRIGHT.txt",
+      "published_sha256": "48b2ece9985aa0d5ce31fcc374bdc5f0d2a61aa71c76b3d9423d63911eeedcad",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/r1_resume/PYRIGHT.txt",
+      "source_sha256": "48b2ece9985aa0d5ce31fcc374bdc5f0d2a61aa71c76b3d9423d63911eeedcad"
+    },
+    {
+      "bytes": 381,
+      "published_path": "evidence/r1_resume/PYRIGHT_CONFIG.json",
+      "published_sha256": "894c1bdd84d07df7949638b021d88d2455dd43e077b131d7e5fdd3e54177380b",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/r1_resume/PYRIGHT_CONFIG.json",
+      "source_sha256": "ddbde6c7ad623a193efaedf673edb443d57c21e8463c90639df6a87a6c6aa788"
+    },
+    {
+      "bytes": 81,
+      "published_path": "evidence/r1_resume/PYTEST.txt",
+      "published_sha256": "5dad3086b272feebec423c5de901520a8ca3b7975a114efe2b12aacbd0110c04",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/r1_resume/PYTEST.txt",
+      "source_sha256": "5dad3086b272feebec423c5de901520a8ca3b7975a114efe2b12aacbd0110c04"
+    },
+    {
+      "bytes": 92194,
+      "published_path": "evidence/r1_resume/RECEIPTS_BEFORE.json",
+      "published_sha256": "8269c9e74fd19995554a72304adeae6c098edcd180bcc7fd5cb31cae404d2c0e",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/r1_resume/RECEIPTS_BEFORE.json",
+      "source_sha256": "3e3eb072d4cad58e556acf2848ce368816fadfe65603944f731ca241c43d2b80"
+    },
+    {
+      "bytes": 196,
+      "published_path": "evidence/r1_resume/RECEIPT_PRESERVATION.json",
+      "published_sha256": "332232a8fc687d026217b197d4ed222e3fffbdda0fc2527efa9a292b8d5dbc99",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/r1_resume/RECEIPT_PRESERVATION.json",
+      "source_sha256": "9d29a4f154341a8c4191635c1fb0cd71a9e4df6ff8682815aba30a1939c24b1f"
+    },
+    {
+      "bytes": 545,
+      "published_path": "evidence/r1_resume/RESUME_COMMAND.json",
+      "published_sha256": "ed35107da3f35036d34bfe4d1c32670303e1d12ed3e78ca178b6ae6555916926",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/r1_resume/RESUME_COMMAND.json",
+      "source_sha256": "ab0f16418ebe636d928dda122200b047c169355d39a31f6c10731e4a2259ccc6"
+    },
+    {
+      "bytes": 579,
+      "published_path": "evidence/r1_resume/RESUME_FREEZE.json",
+      "published_sha256": "27995624b18769223328a45f2232614196e34b030e0bab9b590b6c09b8fd9beb",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/r1_resume/RESUME_FREEZE.json",
+      "source_sha256": "9826ef0a80be1a6079b4be392e959ba69c3b09adbe1d3299e82c5ce4ae2d3dde"
+    },
+    {
+      "bytes": 20,
+      "published_path": "evidence/r1_resume/RUFF.txt",
+      "published_sha256": "a4443afdcfb6d7363adb285762515ccf7cf50473b1a05c20c1a50f6bed4d26b0",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/r1_resume/RUFF.txt",
+      "source_sha256": "a4443afdcfb6d7363adb285762515ccf7cf50473b1a05c20c1a50f6bed4d26b0"
+    },
+    {
+      "bytes": 85968,
+      "published_path": "evidence/r1_resume/supervisor/HANDOFF.json",
+      "published_sha256": "55978b1c6ff7b2cabda23f82f65c156fb4461f6a2ec7f8862e62ca1b4c6f9024",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/r1_resume/supervisor/HANDOFF.json",
+      "source_sha256": "6fb39dc0f9654cfdacb562b5d4da894d23981ad5ef5a69394e2e0cfe76dd98a4"
+    },
+    {
+      "bytes": 739,
+      "published_path": "evidence/r1_resume/supervisor/NEXT_DECISION.json",
+      "published_sha256": "d5447504ad4f573c5e4e4c004a15e7c663a8afa61eaa187acc87d164327c9e36",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/r1_resume/supervisor/NEXT_DECISION.json",
+      "source_sha256": "1065f9e17f7586a47ee7162bd5395fbe03b951f419f69d587b1bd022118f8a8e"
+    },
+    {
+      "bytes": 195,
+      "published_path": "evidence/r1_resume/supervisor/PYRIGHT.txt",
+      "published_sha256": "48b2ece9985aa0d5ce31fcc374bdc5f0d2a61aa71c76b3d9423d63911eeedcad",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/r1_resume/supervisor/PYRIGHT.txt",
+      "source_sha256": "48b2ece9985aa0d5ce31fcc374bdc5f0d2a61aa71c76b3d9423d63911eeedcad"
+    },
+    {
+      "bytes": 401,
+      "published_path": "evidence/r1_resume/supervisor/PYRIGHT_CONFIG.json",
+      "published_sha256": "05d22c3c94188c86c22fae40ee87a4e652c8f638fb9290aa10d03eef13d1f701",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/r1_resume/supervisor/PYRIGHT_CONFIG.json",
+      "source_sha256": "3df7ef8668b7b46028c90265e09246efbbb297f09f8aa55b0a72ae26ba2bf8bb"
+    },
+    {
+      "bytes": 81,
+      "published_path": "evidence/r1_resume/supervisor/PYTEST.txt",
+      "published_sha256": "cd6aefe5277a860e9e16f076b14bc359f9c18088b4adfd23d6c67308fa782c0a",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/r1_resume/supervisor/PYTEST.txt",
+      "source_sha256": "cd6aefe5277a860e9e16f076b14bc359f9c18088b4adfd23d6c67308fa782c0a"
+    },
+    {
+      "bytes": 87420,
+      "published_path": "evidence/r1_resume/supervisor/QA_RECEIPT.json",
+      "published_sha256": "538de992dc23016983d0977ae7c0bd073f346486ded18728d74bef7423444b2a",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/r1_resume/supervisor/QA_RECEIPT.json",
+      "source_sha256": "2e39174f06199d7ebbc3793d94634d3ef4f471e6a4097af773e1a2cf07d0188c"
+    },
+    {
+      "bytes": 540,
+      "published_path": "evidence/r1_resume/supervisor/RESUME_COMMAND.json",
+      "published_sha256": "7e53e5ef5954b453619cc6d9781b5fafd229447f88da01d49b6deb6786d67971",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/r1_resume/supervisor/RESUME_COMMAND.json",
+      "source_sha256": "59285df3401936ba8bee1e87d4abee733f8a14c2be71d16a542787a90d71787b"
+    },
+    {
+      "bytes": 20,
+      "published_path": "evidence/r1_resume/supervisor/RUFF.txt",
+      "published_sha256": "a4443afdcfb6d7363adb285762515ccf7cf50473b1a05c20c1a50f6bed4d26b0",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/r1_resume/supervisor/RUFF.txt",
+      "source_sha256": "a4443afdcfb6d7363adb285762515ccf7cf50473b1a05c20c1a50f6bed4d26b0"
+    },
+    {
+      "bytes": 739,
+      "published_path": "evidence/r1_resume/supervisor/STATE.json",
+      "published_sha256": "d5447504ad4f573c5e4e4c004a15e7c663a8afa61eaa187acc87d164327c9e36",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/r1_resume/supervisor/STATE.json",
+      "source_sha256": "1065f9e17f7586a47ee7162bd5395fbe03b951f419f69d587b1bd022118f8a8e"
+    },
+    {
+      "bytes": 1516,
+      "published_path": "evidence/r1_resume/supervisor/SUPERVISOR_FREEZE.json",
+      "published_sha256": "48749a2adbfa6b755b667ddec73336b5673f86ec0f8431c916c615904b0c220e",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/r1_resume/supervisor/SUPERVISOR_FREEZE.json",
+      "source_sha256": "3b400ebe43d3dc3c3b4589ca590fa2b208342d838575342754733223c6e7593a"
+    },
+    {
+      "bytes": 87467,
+      "published_path": "evidence/r1_resume/supervisor/attempt_001_resume/RECEIPTS_AFTER.json",
+      "published_sha256": "d28c51ba982570eb7a644fd28eb614b1a090ac265ad46767a37dadad693054ad",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/r1_resume/supervisor/attempt_001_resume/RECEIPTS_AFTER.json",
+      "source_sha256": "917584a9e0d861df62e4b7481b1b96ae95f7fa79b60532aaf1dcf31b7b52ffd2"
+    },
+    {
+      "bytes": 86329,
+      "published_path": "evidence/r1_resume/supervisor/attempts/attempt_001.json",
+      "published_sha256": "cee97bd415a0c924a64efc3322be3f9280c5c0aab8e7b01a6954de06f6cb0320",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/r1_resume/supervisor/attempts/attempt_001.json",
+      "source_sha256": "f109fa03deeff91ba0555c158e2366a8fdfa1f95da1f2d0d0f85ea24e5d6abc6"
+    },
+    {
+      "bytes": 2416,
+      "published_path": "evidence/r1_resume/supervisor/attempts/attempt_001_1791487189698563300.log",
+      "published_sha256": "a9c6716c5951a60729c2ca5188713baf36f4a63cdf40bfe290398f188b05ea80",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/r1_resume/supervisor/attempts/attempt_001_1791487189698563300.log",
+      "source_sha256": "a9c6716c5951a60729c2ca5188713baf36f4a63cdf40bfe290398f188b05ea80"
+    },
+    {
+      "bytes": 619,
+      "published_path": "evidence/root_qa/COST_CONTEXT.json",
+      "published_sha256": "4794ed629d56d2896e833318f029d8c48e611b1b2cd62047de630bed97bce260",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/root_qa/COST_CONTEXT.json",
+      "source_sha256": "6e03535064e475723ca8bd69ab931e07a5871035f35a4497e47ea985beb41e3f"
+    },
+    {
+      "bytes": 1021,
+      "published_path": "evidence/root_qa/EO_TRANSIENT_ERROR.txt",
+      "published_sha256": "17a8a7dd810ba60d61c7755635fecde825b4b60d9bafb11a923806e1adea4c7d",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/root_qa/EO_TRANSIENT_ERROR.txt",
+      "source_sha256": "1fe2f4fb2157df10d4e69f527fe234e2190905b9f50393e2bc863f0df942409f"
+    },
+    {
+      "bytes": 399,
+      "published_path": "evidence/root_qa/FCWD_MANIFEST_MATERIALIZATION.json",
+      "published_sha256": "2ffff148e4180232c96e066596e2f09a0bcfe093730f27643678ac3440275e23",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/root_qa/FCWD_MANIFEST_MATERIALIZATION.json",
+      "source_sha256": "67a8955004ab17e0f3c53f335bacc92b5593d475d11e2ac1d6a338496206ee16"
+    },
+    {
+      "bytes": 1726,
+      "published_path": "evidence/root_qa/FCWD_VERIFIER_RECOVERY.json",
+      "published_sha256": "b96db67e3e391ce860efcc6fb62c297962b7bcfcb9902b5fa65a25e12b3946c4",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/root_qa/FCWD_VERIFIER_RECOVERY.json",
+      "source_sha256": "18d26d9ffa5875af2d2039e0cc2dc2c7b82c70710d3ee671a770ab0146114eaa"
+    },
+    {
+      "bytes": 2844,
+      "published_path": "evidence/root_qa/FINAL_QA.py",
+      "published_sha256": "e76c481b368a3292b37112159ac93fe13d417e7fd597d9c060e2cc65f17cf9a8",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/root_qa/FINAL_QA.py",
+      "source_sha256": "e76c481b368a3292b37112159ac93fe13d417e7fd597d9c060e2cc65f17cf9a8"
+    },
+    {
+      "bytes": 4212,
+      "published_path": "evidence/root_qa/FINISH_VIABLE.py",
+      "published_sha256": "4d5f8a205a1eac8bfffb3067c7f0c8909d91be8fedd6676411f9dcb8fd621439",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/root_qa/FINISH_VIABLE.py",
+      "source_sha256": "4d5f8a205a1eac8bfffb3067c7f0c8909d91be8fedd6676411f9dcb8fd621439"
+    },
+    {
+      "bytes": 65390,
+      "published_path": "evidence/root_qa/FOLLOWUP_OPERATIONS.json",
+      "published_sha256": "63a295d8bfce8f2e24b906c0dfb4d228f76e8f99951793eb1b463b8fd8e32a52",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/root_qa/FOLLOWUP_OPERATIONS.json",
+      "source_sha256": "9e728b9c9187e417d96c88477c2d4bbb650ff554338b25621e1e3c534c72098b"
+    },
+    {
+      "bytes": 595,
+      "published_path": "evidence/root_qa/FULL_MANIFEST_MATERIALIZATION.json",
+      "published_sha256": "1b480cf9dbee99a0e3df2b92197bbd5f4d5cdf8f26eb1d87d2f530140d5e6af4",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/root_qa/FULL_MANIFEST_MATERIALIZATION.json",
+      "source_sha256": "c3dc43df327b626a772ddfb8c347f09fe523c6f795beddba4ad2e95a843e48d1"
+    },
+    {
+      "bytes": 690,
+      "published_path": "evidence/root_qa/OPERATIONAL_EVENTS.json",
+      "published_sha256": "cad37583039eaced5f8110685da247ec8d46c8a90e141e43db786f795cbf58e6",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/root_qa/OPERATIONAL_EVENTS.json",
+      "source_sha256": "b5ec7432a5564e763d1f02d818f53417561e26cbd74b06f57ef8e41015d541d1"
+    },
+    {
+      "bytes": 768,
+      "published_path": "evidence/root_qa/PYRIGHT_CONFIG.json",
+      "published_sha256": "1548664d7adc797b6e76288379c4307dbbfb5de8834236756bb4f4f618eb2496",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/root_qa/PYRIGHT_CONFIG.json",
+      "source_sha256": "8a13a19a6cfcfa8e99fa669b601871d00ea887966a5cc6f9233e888cc5cf02dc"
+    },
+    {
+      "bytes": 37,
+      "published_path": "evidence/root_qa/PYRIGHT_OUTPUT.txt",
+      "published_sha256": "6d88a1b220adb7a3d62092b6e38431f0b3fe8babe9864fab90e5849766260332",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/root_qa/PYRIGHT_OUTPUT.txt",
+      "source_sha256": "6d88a1b220adb7a3d62092b6e38431f0b3fe8babe9864fab90e5849766260332"
+    },
+    {
+      "bytes": 243,
+      "published_path": "evidence/root_qa/PYTEST.txt",
+      "published_sha256": "4246b275c79030c154d31ea910976b321e1955624c559b796349dd7624321c35",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/root_qa/PYTEST.txt",
+      "source_sha256": "4246b275c79030c154d31ea910976b321e1955624c559b796349dd7624321c35"
+    },
+    {
+      "bytes": 26310,
+      "published_path": "evidence/root_qa/PYTEST_JUNIT.xml",
+      "published_sha256": "fed5aef02891837357c2f9dac25a7aee4918f2f2eb5f905a64d5c688ae6347bb",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/root_qa/PYTEST_JUNIT.xml",
+      "source_sha256": "fed5aef02891837357c2f9dac25a7aee4918f2f2eb5f905a64d5c688ae6347bb"
+    },
+    {
+      "bytes": 6110,
+      "published_path": "evidence/root_qa/PYTEST_RECEIPT.json",
+      "published_sha256": "44aa98be323f8033c83b19489d5ecf876a6a318f279f94c45627d9093cbd600b",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/root_qa/PYTEST_RECEIPT.json",
+      "source_sha256": "d9869c06c603f2ec6fdb80400afa44b3a29f5418d9117a81e3e0317a80ea28db"
+    },
+    {
+      "bytes": 796,
+      "published_path": "evidence/root_qa/QA.json",
+      "published_sha256": "f1b03da4f5dce3b1d81eac959069ee955c3034ff7efff4dd7405ea719594ec45",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/root_qa/QA.json",
+      "source_sha256": "27ddf5c485a45f4b7c617303e007492f57eda1055ecb4a42ecd03e4b391f14e7"
+    },
+    {
+      "bytes": 3224,
+      "published_path": "evidence/root_qa/R1_STATUS_BEFORE_FINAL_REFRESH.json",
+      "published_sha256": "a866741f9020c693be47a130ff5890d87928f773014fe03e7a1d97611e2fc145",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/root_qa/R1_STATUS_BEFORE_FINAL_REFRESH.json",
+      "source_sha256": "83faa08ebe5c29c278b2b8f95b7a1101099d609b8b2114696ae2088baada600b"
+    },
+    {
+      "bytes": 19,
+      "published_path": "evidence/root_qa/RUFF.txt",
+      "published_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/root_qa/RUFF.txt",
+      "source_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "bytes": 38749,
+      "published_path": "evidence/root_qa/full_outlier_audit/AUDIT.json",
+      "published_sha256": "332c5e71e7421e78b6f833113c51088ce296b950a758d6c07295e750fc3bef14",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/root_qa/full_outlier_audit/AUDIT.json",
+      "source_sha256": "4005d066d7d703fb5801280955de24f58e3c3c39b394bcb0a9645cb1e41ea2a7"
+    },
+    {
+      "bytes": 1927,
+      "published_path": "evidence/root_qa/full_outlier_audit/COMMON_BOUND_SENSITIVITY_POSTHOC.csv",
+      "published_sha256": "5dae79c532f68a64686f1caf6f4276b2b1a85fd33d8004fd2f81e8b72eefe116",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/root_qa/full_outlier_audit/COMMON_BOUND_SENSITIVITY_POSTHOC.csv",
+      "source_sha256": "5dae79c532f68a64686f1caf6f4276b2b1a85fd33d8004fd2f81e8b72eefe116"
+    },
+    {
+      "bytes": 3619,
+      "published_path": "evidence/root_qa/full_outlier_audit/FULL_TOP_ERRORS.csv",
+      "published_sha256": "68fc7f756b32fd5ef9e951610df39a409d0945838165d67fa9db1ede75730473",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/root_qa/full_outlier_audit/FULL_TOP_ERRORS.csv",
+      "source_sha256": "68fc7f756b32fd5ef9e951610df39a409d0945838165d67fa9db1ede75730473"
+    },
+    {
+      "bytes": 7856,
+      "published_path": "evidence/root_qa/full_outlier_audit/PAIRED_PRIMARY_UNALTERED.csv",
+      "published_sha256": "2619cc3d11be7320451e7edd0642b34784c20c891a3dcc5be5af3a229bb4acba",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/root_qa/full_outlier_audit/PAIRED_PRIMARY_UNALTERED.csv",
+      "source_sha256": "2619cc3d11be7320451e7edd0642b34784c20c891a3dcc5be5af3a229bb4acba"
+    },
+    {
+      "bytes": 449,
+      "nested_checksum_manifest_mode": "REHASHED_PUBLISHED_BYTES",
+      "published_path": "evidence/root_qa/full_outlier_audit/SHA256SUMS.txt",
+      "published_sha256": "e27a8d982e5ecae3a9d6edac20c22446d1fc22a9fab99beeae2258bc1f0bd235",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/root_qa/full_outlier_audit/SHA256SUMS.txt",
+      "source_sha256": "9356d8f5b6bb37a3b6826166a718990f48c895b660a58f065fb3faaa875ddc0f"
+    },
+    {
+      "bytes": 12081,
+      "published_path": "evidence/root_qa/full_outlier_audit/outlier_audit.py",
+      "published_sha256": "b7298883750bf86999f91342768c35520fc67ceba5e7ab32b01fcc1181330ac0",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/root_qa/full_outlier_audit/outlier_audit.py",
+      "source_sha256": "b7298883750bf86999f91342768c35520fc67ceba5e7ab32b01fcc1181330ac0"
+    },
+    {
+      "bytes": 38,
+      "published_path": "evidence/root_qa/prior_qa_20261008T193745Z/PYRIGHT_OUTPUT.txt",
+      "published_sha256": "c584b21ee012de391dc2799d5455db619d3fefbb192ab07ea4ba83fb0d704c14",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/root_qa/prior_qa_20261008T193745Z/PYRIGHT_OUTPUT.txt",
+      "source_sha256": "c584b21ee012de391dc2799d5455db619d3fefbb192ab07ea4ba83fb0d704c14"
+    },
+    {
+      "bytes": 243,
+      "published_path": "evidence/root_qa/prior_qa_20261008T193745Z/PYTEST.txt",
+      "published_sha256": "9e68ba35bd273042abf9a13c3bda5a0f95703dc51a295aecf7d23204810814cc",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/root_qa/prior_qa_20261008T193745Z/PYTEST.txt",
+      "source_sha256": "9e68ba35bd273042abf9a13c3bda5a0f95703dc51a295aecf7d23204810814cc"
+    },
+    {
+      "bytes": 24710,
+      "published_path": "evidence/root_qa/prior_qa_20261008T193745Z/PYTEST_JUNIT.xml",
+      "published_sha256": "f9971bcc6b004c0fe76a8a74ce1455e069a6b10ceb830eb9f81220e73188f6fe",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/root_qa/prior_qa_20261008T193745Z/PYTEST_JUNIT.xml",
+      "source_sha256": "f9971bcc6b004c0fe76a8a74ce1455e069a6b10ceb830eb9f81220e73188f6fe"
+    },
+    {
+      "bytes": 5909,
+      "published_path": "evidence/root_qa/prior_qa_20261008T193745Z/PYTEST_RECEIPT.json",
+      "published_sha256": "f5de56dd26fbe0eb449e0d51bfe2bf89c80b6ccfe2d6d944329fc18f51918e92",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/root_qa/prior_qa_20261008T193745Z/PYTEST_RECEIPT.json",
+      "source_sha256": "bd522689bfa18c1d9d9ea856962c44fe68bd0fa8a0c9726a9555ce607cb3e81e"
+    },
+    {
+      "bytes": 879,
+      "published_path": "evidence/root_qa/prior_qa_20261008T193745Z/QA.json",
+      "published_sha256": "0c8e8842f63c1e7fbd426dc00d0ce1ffb6f36b6051fbf62da2ba0f8c11a7b425",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/root_qa/prior_qa_20261008T193745Z/QA.json",
+      "source_sha256": "ba4ce65ae7c8725741437856e63b99259219ebb10c1a9cdddd1e45ce33c40daa"
+    },
+    {
+      "bytes": 20,
+      "published_path": "evidence/root_qa/prior_qa_20261008T193745Z/RUFF.txt",
+      "published_sha256": "a4443afdcfb6d7363adb285762515ccf7cf50473b1a05c20c1a50f6bed4d26b0",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/root_qa/prior_qa_20261008T193745Z/RUFF.txt",
+      "source_sha256": "a4443afdcfb6d7363adb285762515ccf7cf50473b1a05c20c1a50f6bed4d26b0"
+    },
+    {
+      "bytes": 37,
+      "published_path": "evidence/root_qa/prior_qa_20261008T194731Z/PYRIGHT_OUTPUT.txt",
+      "published_sha256": "6d88a1b220adb7a3d62092b6e38431f0b3fe8babe9864fab90e5849766260332",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/root_qa/prior_qa_20261008T194731Z/PYRIGHT_OUTPUT.txt",
+      "source_sha256": "6d88a1b220adb7a3d62092b6e38431f0b3fe8babe9864fab90e5849766260332"
+    },
+    {
+      "bytes": 243,
+      "published_path": "evidence/root_qa/prior_qa_20261008T194731Z/PYTEST.txt",
+      "published_sha256": "b4be59f7a4dd283dec67203a7086961447dfcfc190c0524c105755309a17d47d",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/root_qa/prior_qa_20261008T194731Z/PYTEST.txt",
+      "source_sha256": "b4be59f7a4dd283dec67203a7086961447dfcfc190c0524c105755309a17d47d"
+    },
+    {
+      "bytes": 26179,
+      "published_path": "evidence/root_qa/prior_qa_20261008T194731Z/PYTEST_JUNIT.xml",
+      "published_sha256": "f116842852869391e71ff0aaaa018eccdbcecfa65d7c051c09cd6302e4b1488e",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/root_qa/prior_qa_20261008T194731Z/PYTEST_JUNIT.xml",
+      "source_sha256": "f116842852869391e71ff0aaaa018eccdbcecfa65d7c051c09cd6302e4b1488e"
+    },
+    {
+      "bytes": 6110,
+      "published_path": "evidence/root_qa/prior_qa_20261008T194731Z/PYTEST_RECEIPT.json",
+      "published_sha256": "66cf9e6a9ccac6eb1f59444a71ee9a4f9c92dd9334c96d9a2020cc1a2f157d42",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/root_qa/prior_qa_20261008T194731Z/PYTEST_RECEIPT.json",
+      "source_sha256": "50973d5c4eb1d19562737b7b3bcc5b00071cb9d4bb94520be2b951753e9f0abb"
+    },
+    {
+      "bytes": 796,
+      "published_path": "evidence/root_qa/prior_qa_20261008T194731Z/QA.json",
+      "published_sha256": "c5a6b93ae28711bbd8d94dcf3f32e4c4e596af31e01239c0f29fd7ffd565e14a",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/root_qa/prior_qa_20261008T194731Z/QA.json",
+      "source_sha256": "c0aab69c2c3d5ccbd51bf5861afd3c6545257eb3bce22cab646052e60c3024f9"
+    },
+    {
+      "bytes": 19,
+      "published_path": "evidence/root_qa/prior_qa_20261008T194731Z/RUFF.txt",
+      "published_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/root_qa/prior_qa_20261008T194731Z/RUFF.txt",
+      "source_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "bytes": 37,
+      "published_path": "evidence/root_qa/prior_qa_20261008T195209Z/PYRIGHT_OUTPUT.txt",
+      "published_sha256": "6d88a1b220adb7a3d62092b6e38431f0b3fe8babe9864fab90e5849766260332",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/root_qa/prior_qa_20261008T195209Z/PYRIGHT_OUTPUT.txt",
+      "source_sha256": "6d88a1b220adb7a3d62092b6e38431f0b3fe8babe9864fab90e5849766260332"
+    },
+    {
+      "bytes": 243,
+      "published_path": "evidence/root_qa/prior_qa_20261008T195209Z/PYTEST.txt",
+      "published_sha256": "b4be59f7a4dd283dec67203a7086961447dfcfc190c0524c105755309a17d47d",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/root_qa/prior_qa_20261008T195209Z/PYTEST.txt",
+      "source_sha256": "b4be59f7a4dd283dec67203a7086961447dfcfc190c0524c105755309a17d47d"
+    },
+    {
+      "bytes": 26179,
+      "published_path": "evidence/root_qa/prior_qa_20261008T195209Z/PYTEST_JUNIT.xml",
+      "published_sha256": "7e8eff2b291a104d943a1a1385aa38e1ddd22717c9d9e7d09385784346e78a7f",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/root_qa/prior_qa_20261008T195209Z/PYTEST_JUNIT.xml",
+      "source_sha256": "7e8eff2b291a104d943a1a1385aa38e1ddd22717c9d9e7d09385784346e78a7f"
+    },
+    {
+      "bytes": 6110,
+      "published_path": "evidence/root_qa/prior_qa_20261008T195209Z/PYTEST_RECEIPT.json",
+      "published_sha256": "112bd6b1b59b26691ebba2257ae7a7eb067a46dfa28b43ba3a07b069bc6a166f",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/root_qa/prior_qa_20261008T195209Z/PYTEST_RECEIPT.json",
+      "source_sha256": "b65abde8286b3161493dffce4df56f6bcde6158ff9810d78b24ad04e84aba8cb"
+    },
+    {
+      "bytes": 796,
+      "published_path": "evidence/root_qa/prior_qa_20261008T195209Z/QA.json",
+      "published_sha256": "911a109afe2c21e3d8ec91863c248dcce3fcb315ae7cf82366fb517f5617281e",
+      "sanitized": true,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/root_qa/prior_qa_20261008T195209Z/QA.json",
+      "source_sha256": "17ce290e0da3714785ff3194b5fe60f32ceba295aefce75fb7c0df9cd4f71523"
+    },
+    {
+      "bytes": 19,
+      "published_path": "evidence/root_qa/prior_qa_20261008T195209Z/RUFF.txt",
+      "published_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/root_qa/prior_qa_20261008T195209Z/RUFF.txt",
+      "source_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "bytes": 784,
+      "published_path": "evidence/scoring_existing/METADATA.json",
+      "published_sha256": "adb7fd82fef15ae07d9798c8ba37aaf03876d901882ec6e174799e25b0a4660a",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/scoring_existing/METADATA.json",
+      "source_sha256": "adb7fd82fef15ae07d9798c8ba37aaf03876d901882ec6e174799e25b0a4660a"
+    },
+    {
+      "bytes": 2889,
+      "published_path": "evidence/scoring_existing/METHOD_METRICS.csv",
+      "published_sha256": "03c57b4503ca95f4a0875885fed971d013c4acab73e7fb79f88d136c27248e7a",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/scoring_existing/METHOD_METRICS.csv",
+      "source_sha256": "03c57b4503ca95f4a0875885fed971d013c4acab73e7fb79f88d136c27248e7a"
+    },
+    {
+      "bytes": 7856,
+      "published_path": "evidence/scoring_existing/PAIRED.csv",
+      "published_sha256": "5fee507ffe8a4aca40fcf8281eb06a660648074a20ca0c828ee374bdbe62d74c",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/scoring_existing/PAIRED.csv",
+      "source_sha256": "5fee507ffe8a4aca40fcf8281eb06a660648074a20ca0c828ee374bdbe62d74c"
+    },
+    {
+      "bytes": 42089,
+      "published_path": "evidence/scoring_existing/PER_SEQUENCE.csv",
+      "published_sha256": "88cd7ba04613376a5b30fe32ff06a2282e230304023fbea4a334c50a78f9f21f",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/scoring_existing/PER_SEQUENCE.csv",
+      "source_sha256": "88cd7ba04613376a5b30fe32ff06a2282e230304023fbea4a334c50a78f9f21f"
+    },
+    {
+      "bytes": 1327,
+      "published_path": "evidence/scoring_existing/QA.json",
+      "published_sha256": "462cb582bd8228f8ae4385b0cd2ef9779460620f2b84f30146c84057dadb9dee",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/scoring_existing/QA.json",
+      "source_sha256": "462cb582bd8228f8ae4385b0cd2ef9779460620f2b84f30146c84057dadb9dee"
+    },
+    {
+      "bytes": 27218,
+      "published_path": "evidence/scoring_existing/REPORT.json",
+      "published_sha256": "5869cb248997774fc7e3fccc6bb5f6abe7994b399829e1ad2a89f43aaf9094c4",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/scoring_existing/REPORT.json",
+      "source_sha256": "5869cb248997774fc7e3fccc6bb5f6abe7994b399829e1ad2a89f43aaf9094c4"
+    },
+    {
+      "bytes": 408305,
+      "published_path": "evidence/scoring_existing/SCORED_ROWS.csv",
+      "published_sha256": "d284e52a0c25a8978cffb03943480b247fdfd95f0e9f1c3fc4d861a5921d4f9f",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/scoring_existing/SCORED_ROWS.csv",
+      "source_sha256": "d284e52a0c25a8978cffb03943480b247fdfd95f0e9f1c3fc4d861a5921d4f9f"
+    },
+    {
+      "bytes": 538,
+      "published_path": "evidence/scoring_existing/SHA256.json",
+      "published_sha256": "5d4e8cb4d73895e5be148f53a310d490183e5f437465e9ea54500decf8ccd091",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/sota_campaign_20261008/scoring_existing/SHA256.json",
+      "source_sha256": "5d4e8cb4d73895e5be148f53a310d490183e5f437465e9ea54500decf8ccd091"
+    },
+    {
+      "bytes": 177963,
+      "published_path": "evidence/scoring_existing/input/SCORED_PREDICTIONS.csv",
+      "published_sha256": "fbd724dc1a959c6af754bc8ea6e06c8cfe865439b4526578deb1e6380cc1b53e",
+      "sanitized": false,
+      "source_path": "${REPO}/artifacts/evttc_rgb_transfer_20261008/SCORED_PREDICTIONS.csv",
+      "source_sha256": "fbd724dc1a959c6af754bc8ea6e06c8cfe865439b4526578deb1e6380cc1b53e"
+    },
+    {
+      "bytes": 67696,
+      "published_path": "evidence/scripts/publication.py",
+      "published_sha256": "4bc9d793be6358c929885cecdbec4d17793e0b0efd26caa948f13891420b7f9d",
+      "sanitized": false,
+      "source_path": "${REPO}/operational/sota_eval/publication.py",
+      "source_sha256": "4bc9d793be6358c929885cecdbec4d17793e0b0efd26caa948f13891420b7f9d"
+    },
+    {
+      "bytes": 24281,
+      "published_path": "evidence/scripts/scoring.py",
+      "published_sha256": "c19af78b0a3efe27f2b7cf8b5aa074294eec2c16a6e8e09b9f5debd64d23a2ec",
+      "sanitized": false,
+      "source_path": "${REPO}/operational/sota_eval/scoring.py",
+      "source_sha256": "c19af78b0a3efe27f2b7cf8b5aa074294eec2c16a6e8e09b9f5debd64d23a2ec"
+    },
+    {
+      "bytes": 34072,
+      "published_path": "evidence/scripts/campaign.py",
+      "published_sha256": "f2a8f78457c41bb1c7c409cb1dbc43ff6e3d605b0fcbd5f8b8d6b6f742bacb18",
+      "sanitized": false,
+      "source_path": "${REPO}/operational/sota_eval/campaign.py",
+      "source_sha256": "f2a8f78457c41bb1c7c409cb1dbc43ff6e3d605b0fcbd5f8b8d6b6f742bacb18"
+    },
+    {
+      "bytes": 34549,
+      "published_path": "evidence/scripts/followups.py",
+      "published_sha256": "5f71371de1f42c049c4df5578436abffa8df69d55b35634f6b6b44d63a74080e",
+      "sanitized": false,
+      "source_path": "${REPO}/operational/sota_eval/followups.py",
+      "source_sha256": "5f71371de1f42c049c4df5578436abffa8df69d55b35634f6b6b44d63a74080e"
+    },
+    {
+      "bytes": 28088,
+      "published_path": "evidence/scripts/fcwd_run.py",
+      "published_sha256": "219bb41db72cbc7d6ed9d68afd585b7a9987f239f6bd62db5a208696f2a3bceb",
+      "sanitized": false,
+      "source_path": "${REPO}/operational/sota_eval/fcwd_run.py",
+      "source_sha256": "219bb41db72cbc7d6ed9d68afd585b7a9987f239f6bd62db5a208696f2a3bceb"
+    },
+    {
+      "bytes": 11551,
+      "published_path": "evidence/scripts/fcwd_score.py",
+      "published_sha256": "cac2db7825550c9815a4e01ca75f62fe43a6a5bc549b5c0b696cea4aa113f7bb",
+      "sanitized": false,
+      "source_path": "${REPO}/operational/sota_eval/fcwd_score.py",
+      "source_sha256": "cac2db7825550c9815a4e01ca75f62fe43a6a5bc549b5c0b696cea4aa113f7bb"
+    },
+    {
+      "bytes": 40641,
+      "published_path": "evidence/scripts/cost.py",
+      "published_sha256": "4b9f18a06a88f1ab0b72bde0a944d2c2f3933d5540cf3712104ffaa4ccabfaf5",
+      "sanitized": false,
+      "source_path": "${REPO}/operational/sota_eval/cost.py",
+      "source_sha256": "4b9f18a06a88f1ab0b72bde0a944d2c2f3933d5540cf3712104ffaa4ccabfaf5"
+    }
+  ],
+  "schema": "sanitized_source_inventory_v1"
+}

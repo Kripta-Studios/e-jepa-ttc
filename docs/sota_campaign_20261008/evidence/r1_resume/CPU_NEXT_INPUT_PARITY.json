@@ -1,0 +1,49 @@
+{
+  "arm": "WIDE",
+  "cases": [
+    {
+      "coverage_start": 274278803,
+      "cutoff": 275328808,
+      "exact": true,
+      "ingestion_stats": {
+        "capacity_fallback_reads": 0,
+        "evicted_bytes": 0,
+        "ingested_bytes": 133827757,
+        "ingested_events": 7872221,
+        "ingestion_ms": 281.7446999833919,
+        "peak_retained_bytes": 133827757,
+        "resident_reads": 1,
+        "stream_seconds": 1.050005
+      },
+      "max_abs": 0.0,
+      "retained_bytes": 133827757,
+      "route": "reference"
+    },
+    {
+      "coverage_start": 274278803,
+      "cutoff": 275328808,
+      "exact": true,
+      "ingestion_stats": {
+        "capacity_fallback_reads": 0,
+        "evicted_bytes": 0,
+        "ingested_bytes": 133827757,
+        "ingested_events": 7872221,
+        "ingestion_ms": 332.4240999936592,
+        "peak_retained_bytes": 133827757,
+        "resident_reads": 1,
+        "stream_seconds": 1.050005
+      },
+      "max_abs": 0.0,
+      "retained_bytes": 133827757,
+      "route": "mapped"
+    }
+  ],
+  "elapsed_s": 2.526811200019438,
+  "gpu_used": false,
+  "opened_payload_handles_in_saved_groups": 0,
+  "optimizer_updates": 0,
+  "query": "WbCh1DRerJ_000643_9495200000",
+  "skipped_saved_pairs": 486,
+  "status": "EXACT",
+  "wrapper_sha256": "e5712a5081285a3b33be469db2cbf9dcbcee866cbfeabf9646bc571d80db1e6a"
+}

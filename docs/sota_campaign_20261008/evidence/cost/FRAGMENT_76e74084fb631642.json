@@ -1,0 +1,30 @@
+{
+  "audit": {
+    "garl_event_only_native_context": "2 event endpoints",
+    "garl_full_native_context": "2 RGB endpoints + 2 event endpoints",
+    "h8_native_contexts": 16,
+    "h8_reported_heads": [
+      7,
+      13,
+      23
+    ],
+    "h8_single_head": "NOT_MEASURED_OPTIONAL_NO_BACKBONE_SLICING",
+    "prediction_sha256": {
+      "garl_event_only_shared_preparation": "5cbfc82ed973e6d576692bb6c2175ef40d6c6ea9a51f75e401577582c0df2295",
+      "garl_full_rgb_event": "3fcb159fa844527d5d0a74c2c3b59b9fc37918ae5b9099f8f36af00bcea2b268",
+      "h8_system_three_heads": "9afb9bff818f0d752b565d8637d394a1e08281462b1561ab6dab77139d7c62e4"
+    }
+  },
+  "completed_utc": "2026-10-08T19:47:01.502800+00:00",
+  "execution_freeze_sha256": "31ee30645f44829e79165d9d7b110c92d0835c790e25c158d03308c5f22cc8fa",
+  "model_freeze_sha256": "69f5f8d17a2f691ab096a03efb58a6e36d1d8ff8715ac034b8b64d59fae7e4de",
+  "optimizer_updates": 0,
+  "query_id": "CPNAO-high:00",
+  "raw_csv": "RAW_76e74084fb631642.csv",
+  "raw_csv_sha256": "850c00fa28e9e4962173465453d9a75ed97223d794de9314ff5c9b579d9837ac",
+  "scenario_family": "CPNAO",
+  "schema": "sota_system_cost_fixed8_v1",
+  "sequence_id": "CPNAO-high",
+  "status": "COMPLETE",
+  "targets_read": false
+}
