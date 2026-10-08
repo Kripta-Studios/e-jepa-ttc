@@ -1,0 +1,4 @@
+# Preserve evidence bytes: source/snapshot SHA-256 must survive checkout.
+evidence/** -text
+# Frozen CSV uses RFC-style CRLF; keep it without treating CR as trailing whitespace.
+evidence/**/*.csv whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

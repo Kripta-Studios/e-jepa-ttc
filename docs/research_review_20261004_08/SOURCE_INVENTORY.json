@@ -1,0 +1,353 @@
+[
+  {
+    "source": "artifacts/report_20261004_08/engineering_audit.json",
+    "source_sha256": "67dccabb314cad8164f7e219943053e56ccca69b49b6c3f1d811f9d9c8da4354",
+    "snapshot": "evidence/engineering_audit.json",
+    "snapshot_sha256": "e756ba5c7a433efd0e70c94fc91fd324bfe9c7993a89feca66a6b4f831536242",
+    "original_bytes": 24233,
+    "published_bytes": 23617,
+    "transformation": "JSON reserialization and local path sanitization"
+  },
+  {
+    "source": "artifacts/report_20261004_08/science_audit.json",
+    "source_sha256": "d7122d06b2ed99b5d7ba8b9f7015aade48bc594d308234811af21e48c0346b9e",
+    "snapshot": "evidence/science_audit.json",
+    "snapshot_sha256": "06073f4182de1a419dd3d1775675248bccd80a5b34ab8b4e9a7d50318c431954",
+    "original_bytes": 50086,
+    "published_bytes": 48554,
+    "transformation": "JSON reserialization and local path sanitization"
+  },
+  {
+    "source": "artifacts/train40_system_20261005/REPORT.json",
+    "source_sha256": "aeab94ab3da17af2b6a3e1971e1878966c5e1e71141cbe9481ec06393204439f",
+    "snapshot": "evidence/train40/REPORT.json",
+    "snapshot_sha256": "aeab94ab3da17af2b6a3e1971e1878966c5e1e71141cbe9481ec06393204439f",
+    "original_bytes": 10336,
+    "published_bytes": 10336,
+    "transformation": "JSON reserialization and local path sanitization"
+  },
+  {
+    "source": "artifacts/train40_system_20261005/TRAINING_QUEUE_COMPLETION.json",
+    "source_sha256": "a63aaade2997f90b9969c182d1dbcba7501b21d47af6cb180d402ed8df34bbaf",
+    "snapshot": "evidence/train40/TRAINING_QUEUE_COMPLETION.json",
+    "snapshot_sha256": "a63aaade2997f90b9969c182d1dbcba7501b21d47af6cb180d402ed8df34bbaf",
+    "original_bytes": 174,
+    "published_bytes": 174,
+    "transformation": "JSON reserialization and local path sanitization"
+  },
+  {
+    "source": "artifacts/train40_system_20261005/TECHNICAL_ACCOUNTING.json",
+    "source_sha256": "a7dc371316abf5d1667fa77b97256630587ee141d420a3eb9b6747ae0f64a088",
+    "snapshot": "evidence/train40/TECHNICAL_ACCOUNTING.json",
+    "snapshot_sha256": "a7dc371316abf5d1667fa77b97256630587ee141d420a3eb9b6747ae0f64a088",
+    "original_bytes": 457,
+    "published_bytes": 457,
+    "transformation": "JSON reserialization and local path sanitization"
+  },
+  {
+    "source": "artifacts/efficient_context_20261004/ACCOUNTING.json",
+    "source_sha256": "70045a05b8d7a92ec3ec86dab95da7c891479709f101915c64222c17be1225f4",
+    "snapshot": "evidence/e0_e3/ACCOUNTING.json",
+    "snapshot_sha256": "70045a05b8d7a92ec3ec86dab95da7c891479709f101915c64222c17be1225f4",
+    "original_bytes": 443,
+    "published_bytes": 443,
+    "transformation": "JSON reserialization and local path sanitization"
+  },
+  {
+    "source": "artifacts/efficient_context_20261004/WIDE_REPLICATION_RESULTS.json",
+    "source_sha256": "c15e32a8dea0eece9ab99aced7dc183f6946acee29d84c824a2ef4ac231c79b5",
+    "snapshot": "evidence/e0_e3/WIDE_REPLICATION_RESULTS.json",
+    "snapshot_sha256": "c15e32a8dea0eece9ab99aced7dc183f6946acee29d84c824a2ef4ac231c79b5",
+    "original_bytes": 5782,
+    "published_bytes": 5782,
+    "transformation": "JSON reserialization and local path sanitization"
+  },
+  {
+    "source": "artifacts/efficient_context_20261004/H8_WIDE_RESULTS.json",
+    "source_sha256": "ab4af7c6b708d9cdd4288312468ad0a2f5bfe16ad6b176344420831c113aed77",
+    "snapshot": "evidence/e0_e3/H8_WIDE_RESULTS.json",
+    "snapshot_sha256": "ab4af7c6b708d9cdd4288312468ad0a2f5bfe16ad6b176344420831c113aed77",
+    "original_bytes": 4059,
+    "published_bytes": 4059,
+    "transformation": "JSON reserialization and local path sanitization"
+  },
+  {
+    "source": "artifacts/efficient_context_20261004/H8_WIDE_RESULTS_seed13.json",
+    "source_sha256": "a3a67b2a863309709ae7addd0208983213c37bb516e762821d5e033422f69ac0",
+    "snapshot": "evidence/e0_e3/H8_WIDE_RESULTS_seed13.json",
+    "snapshot_sha256": "a3a67b2a863309709ae7addd0208983213c37bb516e762821d5e033422f69ac0",
+    "original_bytes": 4066,
+    "published_bytes": 4066,
+    "transformation": "JSON reserialization and local path sanitization"
+  },
+  {
+    "source": "artifacts/efficient_context_20261004/H8_WIDE_RESULTS_seed23.json",
+    "source_sha256": "179592e448b4a3b998ed2d5f4f920fead299c59f87ca7a8f4206c90d5a4514d7",
+    "snapshot": "evidence/e0_e3/H8_WIDE_RESULTS_seed23.json",
+    "snapshot_sha256": "179592e448b4a3b998ed2d5f4f920fead299c59f87ca7a8f4206c90d5a4514d7",
+    "original_bytes": 4072,
+    "published_bytes": 4072,
+    "transformation": "JSON reserialization and local path sanitization"
+  },
+  {
+    "source": "artifacts/efficient_context_20261004/EWMA_TRANSPORT_CV_RESULTS.json",
+    "source_sha256": "47cca03ccda6f0542014f48f1dbe71d99bcbcd86ae4739dc17e79e72160015e5",
+    "snapshot": "evidence/e0_e3/EWMA_TRANSPORT_CV_RESULTS.json",
+    "snapshot_sha256": "47cca03ccda6f0542014f48f1dbe71d99bcbcd86ae4739dc17e79e72160015e5",
+    "original_bytes": 2759,
+    "published_bytes": 2759,
+    "transformation": "JSON reserialization and local path sanitization"
+  },
+  {
+    "source": "artifacts/efficient_context_20261004/COMPARATOR_CONTRACTS.json",
+    "source_sha256": "5f0989f8962d9cdbef59e49f0cae9629d8f331f6ff764e95e877ba730c7a9d85",
+    "snapshot": "evidence/e0_e3/COMPARATOR_CONTRACTS.json",
+    "snapshot_sha256": "a837d64f1bd8e408972a0e75bbd4a05a2dfb376bbc6644a12aa2fbecb01c92a0",
+    "original_bytes": 7586,
+    "published_bytes": 7394,
+    "transformation": "JSON reserialization and local path sanitization"
+  },
+  {
+    "source": "artifacts/evttc_transfer_20261008/RESULT.json",
+    "source_sha256": "ba8f7b390f27120cd01c0d90c0b425d76c587ea55a01d8f24de698f085b79734",
+    "snapshot": "evidence/event_only/RESULT.json",
+    "snapshot_sha256": "ba8f7b390f27120cd01c0d90c0b425d76c587ea55a01d8f24de698f085b79734",
+    "original_bytes": 6336,
+    "published_bytes": 6336,
+    "transformation": "JSON reserialization and local path sanitization"
+  },
+  {
+    "source": "artifacts/evttc_transfer_20261008/COST.json",
+    "source_sha256": "00a44b5bde3300f425ee4856461f4a9a3f729a2eb43f2adcfb4669fba1b26aa5",
+    "snapshot": "evidence/event_only/COST.json",
+    "snapshot_sha256": "07e3210193a77b30dd318f5ee2ac18b3f4629c114c3c9a27fe7af28dcb5204ef",
+    "original_bytes": 917,
+    "published_bytes": 888,
+    "transformation": "JSON reserialization and local path sanitization"
+  },
+  {
+    "source": "artifacts/evttc_transfer_20261008/QA.json",
+    "source_sha256": "037c87499482df2d7a9340773cff7e80e26b31ee5bcad48e8fbe9e95549c38f0",
+    "snapshot": "evidence/event_only/QA.json",
+    "snapshot_sha256": "037c87499482df2d7a9340773cff7e80e26b31ee5bcad48e8fbe9e95549c38f0",
+    "original_bytes": 1167,
+    "published_bytes": 1167,
+    "transformation": "JSON reserialization and local path sanitization"
+  },
+  {
+    "source": "artifacts/evttc_transfer_20261008/DEPENDENCIES.json",
+    "source_sha256": "5d0c8bc5edd346644f3dc1305d69f253a7a05e945464f956197f495e44498a7b",
+    "snapshot": "evidence/event_only/DEPENDENCIES.json",
+    "snapshot_sha256": "a41c0f76ee1fb59810b691996b7574544f1e166830ea2baf53544fb0b74b3a91",
+    "original_bytes": 4880,
+    "published_bytes": 4684,
+    "transformation": "JSON reserialization and local path sanitization"
+  },
+  {
+    "source": "artifacts/evttc_transfer_20261008/POST_SCORING_DIAGNOSTICS.json",
+    "source_sha256": "49f3a3d4ef9f40c46cbe4f5c27cd4c730376b8ffb502b7bfc4e9c91c3e011d5d",
+    "snapshot": "evidence/event_only/POST_SCORING_DIAGNOSTICS.json",
+    "snapshot_sha256": "ee04e1eb87465ee91f9b964610c158ecde8791d346074b1dafbe24a9336ca41f",
+    "original_bytes": 4814,
+    "published_bytes": 4683,
+    "transformation": "JSON reserialization and local path sanitization"
+  },
+  {
+    "source": "artifacts/evttc_transfer_20261008/SCORED_PREDICTIONS.csv",
+    "source_sha256": "de00b0420b2ec4421c9e989b4cc4242e012a491fb4b42d8b78528c91a03fa1d2",
+    "snapshot": "evidence/event_only/SCORED_PREDICTIONS.csv",
+    "snapshot_sha256": "de00b0420b2ec4421c9e989b4cc4242e012a491fb4b42d8b78528c91a03fa1d2",
+    "original_bytes": 157990,
+    "published_bytes": 157990,
+    "transformation": "byte-identical"
+  },
+  {
+    "source": "artifacts/evttc_transfer_20261008/PER_SEQUENCE.csv",
+    "source_sha256": "83a26d9eae528e80a16006455bafa379dca592c1d040aa20a85fc4ae32018250",
+    "snapshot": "evidence/event_only/PER_SEQUENCE.csv",
+    "snapshot_sha256": "83a26d9eae528e80a16006455bafa379dca592c1d040aa20a85fc4ae32018250",
+    "original_bytes": 15936,
+    "published_bytes": 15936,
+    "transformation": "byte-identical"
+  },
+  {
+    "source": "artifacts/evttc_transfer_20261008/BUNDLE_VERIFICATION.json",
+    "source_sha256": "1093c09f606db1c059ea090e4cf9992a0954d0dece4dd8c0785f4573aabdef92",
+    "snapshot": "evidence/event_only/BUNDLE_VERIFICATION.json",
+    "snapshot_sha256": "4a63c6927a766fdae046a5de16dccddd2f1178d423b34a5976a3dd62824c36c2",
+    "original_bytes": 213,
+    "published_bytes": 206,
+    "transformation": "JSON reserialization and local path sanitization"
+  },
+  {
+    "source": "artifacts/evttc_transfer_20261008/INFERENCE_FREEZE.json",
+    "source_sha256": "7315ad7a79cfe3e8c48df4538330ded08f9a67eea60364c544f4f1660c5db82f",
+    "snapshot": "evidence/event_only/INFERENCE_FREEZE.json",
+    "snapshot_sha256": "62535fc9ca2d70e8da9d0f6809e788b1235aa85f46ef1c771fc4ff1a8db07fbc",
+    "original_bytes": 5965,
+    "published_bytes": 5859,
+    "transformation": "JSON reserialization and local path sanitization"
+  },
+  {
+    "source": "artifacts/evttc_rgb_transfer_20261008/RESULT.json",
+    "source_sha256": "5b39b0cbead22977789ce4d327b14c94945a7292dac200160fe96b573f7fda88",
+    "snapshot": "evidence/rgb_event/RESULT.json",
+    "snapshot_sha256": "5b39b0cbead22977789ce4d327b14c94945a7292dac200160fe96b573f7fda88",
+    "original_bytes": 5857,
+    "published_bytes": 5857,
+    "transformation": "JSON reserialization and local path sanitization"
+  },
+  {
+    "source": "artifacts/evttc_rgb_transfer_20261008/COST_AND_SYNC.json",
+    "source_sha256": "fd514271cc7b0ed01d203be3eaae4282e3a8fc40daf1d1c3e59e8b2e3f2c8e1e",
+    "snapshot": "evidence/rgb_event/COST_AND_SYNC.json",
+    "snapshot_sha256": "25b62e3556a23cdcd1d484c1ca7f4239dcdfa69088a26a017028e327f53e21fc",
+    "original_bytes": 690,
+    "published_bytes": 665,
+    "transformation": "JSON reserialization and local path sanitization"
+  },
+  {
+    "source": "artifacts/evttc_rgb_transfer_20261008/QA.json",
+    "source_sha256": "fad52ac111aeb0c66ea3ae6bd22925ce0375e53134f90dfe65471060db3a2393",
+    "snapshot": "evidence/rgb_event/QA.json",
+    "snapshot_sha256": "529552e4c04f41577c4535446d27702454aed8a74612ccd4cd10c3a16c5cac2f",
+    "original_bytes": 1259,
+    "published_bytes": 1239,
+    "transformation": "JSON reserialization and local path sanitization"
+  },
+  {
+    "source": "artifacts/evttc_rgb_transfer_20261008/DEPENDENCIES.json",
+    "source_sha256": "e630f58c1174dad4977b260c8b5b48ec5d86822c525c3982755361453a0dbecc",
+    "snapshot": "evidence/rgb_event/DEPENDENCIES.json",
+    "snapshot_sha256": "3e8fb749fcf37f5d3effbb69d4b71a0c83cfbb2b0cd9b3b753cee97ea27d6435",
+    "original_bytes": 701,
+    "published_bytes": 582,
+    "transformation": "JSON reserialization and local path sanitization"
+  },
+  {
+    "source": "artifacts/evttc_rgb_transfer_20261008/POST_SCORING_DIAGNOSTICS.json",
+    "source_sha256": "b0cfbbf3a443f343ae55b487d40c61a1c6c6ca3bc26711cf9a3b97dce020598c",
+    "snapshot": "evidence/rgb_event/POST_SCORING_DIAGNOSTICS.json",
+    "snapshot_sha256": "22403f8013efa5c206685f115d5998c888ff2d30a4f6020d6d5128845c1e4964",
+    "original_bytes": 5755,
+    "published_bytes": 5608,
+    "transformation": "JSON reserialization and local path sanitization"
+  },
+  {
+    "source": "artifacts/evttc_rgb_transfer_20261008/SCORED_PREDICTIONS.csv",
+    "source_sha256": "fbd724dc1a959c6af754bc8ea6e06c8cfe865439b4526578deb1e6380cc1b53e",
+    "snapshot": "evidence/rgb_event/SCORED_PREDICTIONS.csv",
+    "snapshot_sha256": "fbd724dc1a959c6af754bc8ea6e06c8cfe865439b4526578deb1e6380cc1b53e",
+    "original_bytes": 177963,
+    "published_bytes": 177963,
+    "transformation": "byte-identical"
+  },
+  {
+    "source": "artifacts/evttc_rgb_transfer_20261008/PER_SEQUENCE.csv",
+    "source_sha256": "1733be49fe3ced36edfe7bbee1e9c5045c37580c57573eebaca8be67a96af1f5",
+    "snapshot": "evidence/rgb_event/PER_SEQUENCE.csv",
+    "snapshot_sha256": "1733be49fe3ced36edfe7bbee1e9c5045c37580c57573eebaca8be67a96af1f5",
+    "original_bytes": 20360,
+    "published_bytes": 20360,
+    "transformation": "byte-identical"
+  },
+  {
+    "source": "artifacts/evttc_rgb_transfer_20261008/CPU_GPU_PARITY.json",
+    "source_sha256": "12e1ca491d059fc9e8b0c523b7e5fb2f055d6b96443bd307c688446a8ebb7cfc",
+    "snapshot": "evidence/rgb_event/CPU_GPU_PARITY.json",
+    "snapshot_sha256": "bbd002a89e1ef15d9d963437c4f0ac3a7f24a9f11cb505c8cca01bc9a31ad9c4",
+    "original_bytes": 627,
+    "published_bytes": 602,
+    "transformation": "JSON reserialization and local path sanitization"
+  },
+  {
+    "source": "artifacts/evttc_rgb_transfer_20261008/RUN_ENVIRONMENT.json",
+    "source_sha256": "cbb907616057045550c52b1fe10424c5fafc72bc99b99702d0e9b1073e4645d4",
+    "snapshot": "evidence/rgb_event/RUN_ENVIRONMENT.json",
+    "snapshot_sha256": "7e62ae206457359f1beec528198a12e3d61dd81da6c1b17738182f59574edb44",
+    "original_bytes": 748,
+    "published_bytes": 707,
+    "transformation": "JSON reserialization and local path sanitization"
+  },
+  {
+    "source": "artifacts/evttc_rgb_transfer_20261008/BUNDLE_VERIFICATION.json",
+    "source_sha256": "361c5e1eee72529f7ec9b338be3666277a3b553e42b3651b4e367b48063ae2cf",
+    "snapshot": "evidence/rgb_event/BUNDLE_VERIFICATION.json",
+    "snapshot_sha256": "9c4d53301d2b5d5a23b23b27f03a6928f10fa67e7b60f69134eed80d8583e2cf",
+    "original_bytes": 213,
+    "published_bytes": 206,
+    "transformation": "JSON reserialization and local path sanitization"
+  },
+  {
+    "source": "artifacts/evttc_rgb_transfer_20261008/BASELINE_PRESERVATION.json",
+    "source_sha256": "c5443d28e170c994e425e0a7747b90ec33ba314f1fed247a04e5ac233eb9e125",
+    "snapshot": "evidence/rgb_event/BASELINE_PRESERVATION.json",
+    "snapshot_sha256": "5e3dd1036cfb0ab1e404454aaea2fcf9e1b8ea60aadb31773cf4f14300615c0c",
+    "original_bytes": 938,
+    "published_bytes": 813,
+    "transformation": "JSON reserialization and local path sanitization"
+  },
+  {
+    "source": "artifacts/evttc_rgb_transfer_20261008/INFERENCE_FREEZE.json",
+    "source_sha256": "e48e6ffe66e2ce107941894228304f164eabc8ed16e4db5f8ae5c3471d7c6211",
+    "snapshot": "evidence/rgb_event/INFERENCE_FREEZE.json",
+    "snapshot_sha256": "64535e3df797068f9f1c605603e764621a2148f847612a0d85e65678a67eaaee",
+    "original_bytes": 6457,
+    "published_bytes": 6245,
+    "transformation": "JSON reserialization and local path sanitization"
+  },
+  {
+    "source": "artifacts/evttc_rgb_transfer_20261008/BACKUP_VERIFICATION.json",
+    "source_sha256": "e5829178fdce3c706dd0c8ae4ee0fb64f28378c7bdfdc2faf208271b7f38615e",
+    "snapshot": "evidence/rgb_event/BACKUP_VERIFICATION.json",
+    "snapshot_sha256": "9c11f37a71e3e801042a061d29d3ca42923117ea4665cd85c03eb715a1e2f37a",
+    "original_bytes": 884,
+    "published_bytes": 647,
+    "transformation": "JSON reserialization and local path sanitization"
+  },
+  {
+    "source": "artifacts/evttc_rgb_transfer_20261008/TTC_CURVES.png",
+    "source_sha256": "a299a73ff0a71ab3c15554c8bb350271df25a5d0635e9266bb88ef900cde3043",
+    "snapshot": "evidence/rgb_event/TTC_CURVES.png",
+    "snapshot_sha256": "a299a73ff0a71ab3c15554c8bb350271df25a5d0635e9266bb88ef900cde3043",
+    "original_bytes": 1766543,
+    "published_bytes": 1766543,
+    "transformation": "byte-identical"
+  },
+  {
+    "source": "artifacts/efficient_context_20261004/r1_20261008/resident_1g/CHAIN_STATE.json",
+    "source_sha256": "a3054ccb850351997370ff82a19347e219c71ba99f486b55151b4b6cbddd765c",
+    "snapshot": "evidence/r1/CHAIN_STATE.json",
+    "snapshot_sha256": "ed271f6460a53e045d8ba602c8e9cdf8df95c98445e9de54fdc6ed68952cb301",
+    "original_bytes": 841,
+    "published_bytes": 613,
+    "transformation": "JSON reserialization and local path sanitization"
+  },
+  {
+    "source": "artifacts/efficient_context_20261004/r1_20261008/resident_1g/measurement/PROGRESS.json",
+    "source_sha256": "76413872685ae4f0d87bc630df7084837fe4e62a09a52c2d3d6b29406dddba8c",
+    "snapshot": "evidence/r1/measurement/PROGRESS.json",
+    "snapshot_sha256": "76413872685ae4f0d87bc630df7084837fe4e62a09a52c2d3d6b29406dddba8c",
+    "original_bytes": 200,
+    "published_bytes": 200,
+    "transformation": "JSON reserialization and local path sanitization"
+  },
+  {
+    "source": "artifacts/efficient_context_20261004/r1_20261008/resident_1g/window_parity/RESULT.json",
+    "source_sha256": "f4720c947d0e7e709be3e9875bb488910b5c927c3bb60a7d1edf8411fc334613",
+    "snapshot": "evidence/r1/window_parity/RESULT.json",
+    "snapshot_sha256": "f4720c947d0e7e709be3e9875bb488910b5c927c3bb60a7d1edf8411fc334613",
+    "original_bytes": 244602,
+    "published_bytes": 244602,
+    "transformation": "JSON reserialization and local path sanitization"
+  },
+  {
+    "source": "artifacts/efficient_context_20261004/r1_20261008/resident_1g/QA.json",
+    "source_sha256": "04c12d4c17f6ccf112b164b37111e25325c4635f22b4b24920fbb90ada0c6921",
+    "snapshot": "evidence/r1/QA.json",
+    "snapshot_sha256": "7e428662117077e5e115af10545d3e409858dd5028c708e75862ae354b551605",
+    "original_bytes": 1666,
+    "published_bytes": 1647,
+    "transformation": "JSON reserialization and local path sanitization"
+  }
+]

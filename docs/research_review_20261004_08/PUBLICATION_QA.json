@@ -1,0 +1,33 @@
+{
+  "status": "PASSED",
+  "checked_utc": "2026-10-08T17:03:53.558563+00:00",
+  "evidence_snapshots_verified": 39,
+  "inherited_query_rows_verified": 1024,
+  "labeled_rows": 946,
+  "sequences": 32,
+  "model_metric_sets_recomputed": 5,
+  "paired_sequence_bootstraps_recomputed": 4,
+  "bootstrap_draws": 2000,
+  "bootstrap_seed": 20261008,
+  "accounting_upper_verified": 155078,
+  "source_commits_in_period": 77,
+  "local_markdown_links_verified": 40,
+  "ruff": "PASS",
+  "ruff_format": "PASS",
+  "pyright_errors": 0,
+  "independent_readonly_review": "addressed ZIP payload counts, statistical language, unsupported parameter count; explicit integrity exceptions replace asserts",
+  "historical_training_tests_rerun_for_docs": false,
+  "raw_datasets_reread_for_docs": false,
+  "new_optimizer_updates": 0,
+  "publication_scope": "reports and compact evidence on existing scientific branch; no merge or submissions",
+  "historical_outgoing_blob_audit": {
+    "blobs": 412,
+    "uncompressed_bytes": 3448103,
+    "high_confidence_secret_pattern_hits": 0,
+    "over_100MiB": 0
+  },
+  "new_report_secret_pattern_hits": 0,
+  "clean_git_index_checkout_verification": "PASS normal and Python -O",
+  "corrupted_csv_rejection": "PASS under Python -O in isolated checkout",
+  "git_diff_check": "PASS with frozen CRLF CSV attributes"
+}

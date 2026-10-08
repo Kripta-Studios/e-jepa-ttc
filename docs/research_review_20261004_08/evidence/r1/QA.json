@@ -1,0 +1,21 @@
+{
+  "status": "PASSED",
+  "tests": 28,
+  "ruff": "PASS",
+  "pyright": "0 errors",
+  "sources": {
+    "operational\\efficient_context\\r1_chain.py": "2ee183e515702599d9b805b0876eef840f56a5327197e771e1ac5498bc70b418",
+    "operational\\efficient_context\\r1_gib_bundle.py": "465b44085065b10f212e23939926822c3230ce890336504c014aa68cba9648af",
+    "operational\\efficient_context\\r1_gib_measure.py": "1e227fbbde894cf3bbf6079aff587e91a3f565f6f42e7e9e14ff3769551bd96f",
+    "operational\\efficient_context\\r1_gib_parity.py": "1228bd549b5dd95c78ea53e0e9ff280d693054249774f8183570ac409f28dc15",
+    "operational\\efficient_context\\r1_gib_supervisor.py": "9448fbd58fb6d6c665fd8d41ee913dbce043f91c8229adc332834124ac1c6e2f",
+    "operational\\efficient_context\\r1_measure.py": "58670d817e5e13fed78468555cd4dfc340ca812aa89a14a66fd87ee237b0f5d5",
+    "operational\\efficient_context\\r1_parity.py": "46621f21287ac0d99622a15b0bef85029ed870b35777a6d7eb78b8ff17211ebb",
+    "operational\\efficient_context\\r1_profile.py": "b93e8df4e4747d68b017cb352855add3e1897dae0d310d8d97c8929f0de876d4",
+    "operational\\efficient_context\\r1_reader.py": "34d6535b23bcacda9c832a2ca5ba90e9f7cb531635cb24a5d9446f9715a0379f",
+    "operational\\efficient_context\\r1_supervisor.py": "91f042daa1f6744508607554f26b54765ead8d07491afde7da13267b59fe2a43",
+    "tests\\unit\\test_r1_gib.py": "5dbec480b5eb81743729ccb56dfc6d8e2e0ef01183adf3867273b90d61441436",
+    "tests\\unit\\test_r1_reader.py": "635da6a1827ba89793d05ffb43051e03aac3401fcade9833fdd0381b54fab928",
+    "tests\\unit\\test_r1_supervisor.py": "a206c38ff2f97fe5e348abad9e0a7da9c38cc7bd70d0beeb4a628de2441193c3"
+  }
+}

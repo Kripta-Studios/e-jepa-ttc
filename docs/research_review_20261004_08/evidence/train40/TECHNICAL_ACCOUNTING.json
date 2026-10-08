@@ -1,0 +1,11 @@
+{
+  "synthetic_optimizer_updates": 35,
+  "first_checkpoint_QA_failed_after_9_optimizer_updates_due_to_Windows_read_only_fsync": true,
+  "second_checkpoint_QA_passed_with_13_optimizer_updates": true,
+  "technical_synthetic_cap": 200,
+  "real_scientific_updates": 0,
+  "original_physical_upper": 40748,
+  "combined_physical_upper": 40783,
+  "recovery_for_new_scientific_training": 0,
+  "third_checkpoint_integrity_QA_passed_with_13_optimizer_updates": true
+}

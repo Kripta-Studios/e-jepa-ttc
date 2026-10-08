@@ -1,0 +1,21 @@
+{
+  "python": "3.11.15 (main, Mar 10 2026, 18:12:25) [MSC v.1944 64 bit (AMD64)]",
+  "executable": "${USER_HOME}\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\.venv\\Scripts\\python.exe",
+  "platform": "Windows-10-10.0.26200-SP0",
+  "packages": {
+    "torch": "2.11.0+cu128",
+    "torchvision": "0.26.0+cu128",
+    "numpy": "2.4.6",
+    "h5py": "3.16.0",
+    "opencv-python": null,
+    "PyYAML": "6.0.3",
+    "psutil": "7.2.2"
+  },
+  "gpu": "NVIDIA GeForce RTX 5070 Ti Laptop GPU, 591.86, 12227 MiB",
+  "checked_utc": "2026-10-08T16:29:05.131045+00:00",
+  "global_environment_changed": false,
+  "torch_threads": 4,
+  "torch_interop_threads": 2,
+  "precision": "float32",
+  "TF32": false
+}

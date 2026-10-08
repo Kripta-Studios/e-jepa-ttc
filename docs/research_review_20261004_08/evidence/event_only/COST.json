@@ -1,0 +1,29 @@
+{
+  "phases": {
+    "prepare": {
+      "measured_queries": 1024,
+      "sum_seconds": 1270.0484430997458,
+      "p50_seconds": 0.9082342499896185,
+      "p95_seconds": 3.6040717249998098
+    },
+    "own": {
+      "measured_queries": 1024,
+      "sum_seconds": 120.62801849973039,
+      "p50_seconds": 0.11344795000331942,
+      "p95_seconds": 0.14626473499520212
+    },
+    "garl": {
+      "measured_queries": 1024,
+      "sum_seconds": 7.941144700103905,
+      "p50_seconds": 0.007386049983324483,
+      "p95_seconds": 0.009808499994687735
+    },
+    "total": {
+      "measured_queries": 1024,
+      "sum_seconds": 1398.61760629958,
+      "p50_seconds": 1.0317306500073755,
+      "p95_seconds": 3.755147334990028
+    }
+  },
+  "limitation": "Sequential local inference; own includes three heads and longer history; initialization excluded. Not a real-time controlled speed comparison."
+}

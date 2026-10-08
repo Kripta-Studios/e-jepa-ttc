@@ -1,0 +1,125 @@
+{
+  "status": "COMPLETE",
+  "role": "FROZEN_EVTTC_TRANSFER_DEVELOPMENT_COMPARISON",
+  "manifest_sha256": "d9fe973c37f9e97ac7cb8a46de01bfe461ccc2672328bfa3e51b853763589bd5",
+  "prediction_seal_sha256": "d5c4d199c2ad301cde5c9b968d3010e7c88d085074b663518de40613ad178fb4",
+  "label_sha256": {
+    "CCRm-low-0-overlap-0": "e494f3f96184e67c2b215c90389dec7bca68ed798b1380c7f1bff8931423c743",
+    "CCRm-low-100-overlap-100": "4b382c146a71499e9ca4d80a419cb0e2c9e2ca91b74c9b548aa88061e82d52d1",
+    "CCRm-low-50-overlap-50": "7127949e0d645c47ba8447200337e5fa46c7f498e95e2eebe9e2c73d47d3c4f1",
+    "CCRm-medium-0-overlap-0": "f9d26e4eeba9b39d9e7a3812b039065985478486406c2962233d9881bdb055d1",
+    "CCRm-medium-100-overlap-100": "f80ee9f318a65fc68be57557fdcde6d34b4407389f9846f5e758472af1eee579",
+    "CCRm-medium-50-overlap-50": "07f59611a7c3aece0f2bcb4e1ad98629b59de24b66bef085b4f24ba9485fe5e5",
+    "CCRs-1-high-0-overlap-0": "9d3b8acbc750bf53e53a4a8c956a84b451ecc1cc68a59c52d7b4e02efdef2fe4",
+    "CCRs-1-high-100-overlap-100": "dcef1fe2bdbc6d809a08b35da38411af696caa26b6b5e30ee6be870d454a33d2",
+    "CCRs-1-high-50-overlap-50": "e731bf9ad4c1cd32c7bd8f8106ed5c53b077ac741009f8aa41d0be619fd5c526",
+    "CCRs-1-low-0-overlap-0": "293d6c880755c087ebd6aa14a486f7f75a2cbbeab003c9fb6444a06e7b8597cd",
+    "CCRs-1-low-100-overlap-100": "780ee30ff9775da8452102bbbb9f5120ae903055007348096ecbc24b594b8c76",
+    "CCRs-1-low-50-overlap-50": "c6cac3cb22653db4c1d9ba44091d0da3ba7e5434151ed848c65c9f3f30c1413e",
+    "CCRs-1-medium-0-overlap-0": "0b2cbb110a62a13daefeb49ad3180b593b2f8f5f7347d459117e5021f5c2770a",
+    "CCRs-1-medium-100-overlap-100": "1c5adba8667acb8096eb80c26e9a9229ca3a7d76d0a6d998085c2d9b4e820fed",
+    "CCRs-1-medium-50-overlap-50": "e8b4a0230369c3700c0af60be58d7ee71d5d958e7980ffdda06c40aa58af2fab",
+    "CCRs-2-high-100-overlap-100": "55a5ceb6f145c794a0479abc68a905bf0344e4d605dbd14768ca7c37cf1cf764",
+    "CCRs-2-low-100-overlap-100": "e627046c8a44483317204a6247af9661379e2c709a4ca8e7d6c4df47d248cfcb",
+    "CCRs-2-medium-100-overlap-100": "45f1fb65a2066d087f8eebda197396108fee4608586a9f9b9427454745c5e656",
+    "CCRs-3-low-100-overlap-100": "c3715dbdb17d1ebaae99107270371a6c6da15ccd0c0c3899b5f8a3a1beabca91",
+    "CCRs-3-medium-100-overlap-100": "0f53de84a93fd5434071db450c9b5140044f37fa8252ed968372a119bb425b2c",
+    "CCRs-side-high": "c26213c8a0a0adeb18484110f1f0ec52d57723fc77bfb8ad6c184168b7b17cf1",
+    "CCRs-side-low": "030dfc001e9ce445ff9c90bfb71306e0bb2b33f4075641de8590c1801b303259",
+    "CCRs-side-medium": "fdd38df97cf0af9a1cdc3a894c44e523a6556f1a8d8766cb7358ea458ff9a447",
+    "CPLA-high": "34ebf9788269542d8e31c1799de26d97832d3d17d42998a39da0392153601a72",
+    "CPLA-low": "ee3e960801c82a5201552d98b12b603ad2865ae0119f3cccbdfb772832315230",
+    "CPLA-medium": "67c7f67c9e1fb1c6bff12904693d5e96c04986f67fff0ac02d6aef1dc5039e0a",
+    "CPNA-high": "511ecfbde36972545480b8a94305f870d32cde24c3e1089460337c3ec6710296",
+    "CPNA-low": "6cb2a3c524d157e95be2185f26bbf2ff0ce4c959d99ca343ae0d23597bc9ea90",
+    "CPNA-medium": "4820918cbc149ebbf2a7896b131e3d31436dc7fe95728fd3b264e7262b629473",
+    "CPNAO-high": "bd9c61dcc2699211f867f9baf22ee38b0e559e84dd359c076ee9e0461d441320",
+    "CPNAO-low": "8ffe13afccf78a859f47f454ff99bf79d33075b54b77479a34ab8b44a500a8f4",
+    "CPNAO-medium": "2979232e6e0abf52644f770d5db9610aa4b7a1f18b80bb775ad7cb374bd2ca28"
+  },
+  "metrics": {
+    "H8_seed7": {
+      "queries": 1024,
+      "labeled_queries": 946,
+      "finite_predictions_on_labels": 946,
+      "coverage": 1.0,
+      "mae_seconds": 1.3208407080791975,
+      "rmse_seconds": 3.0272090763541155,
+      "median_absolute_error_seconds": 0.7660472305174808,
+      "signed_bias_seconds": 0.5772782609818461
+    },
+    "H8_seed13": {
+      "queries": 1024,
+      "labeled_queries": 946,
+      "finite_predictions_on_labels": 946,
+      "coverage": 1.0,
+      "mae_seconds": 1.3528085341054652,
+      "rmse_seconds": 3.206100370385306,
+      "median_absolute_error_seconds": 0.7314128477156492,
+      "signed_bias_seconds": 0.5335948212366387
+    },
+    "H8_seed23": {
+      "queries": 1024,
+      "labeled_queries": 946,
+      "finite_predictions_on_labels": 946,
+      "coverage": 1.0,
+      "mae_seconds": 1.4087141425533638,
+      "rmse_seconds": 3.392154971186864,
+      "median_absolute_error_seconds": 0.7384638920614139,
+      "signed_bias_seconds": 0.7289229283915373
+    },
+    "public_Garl_event_lhr": {
+      "queries": 1024,
+      "labeled_queries": 946,
+      "finite_predictions_on_labels": 946,
+      "coverage": 1.0,
+      "mae_seconds": 8.04810892663675,
+      "rmse_seconds": 159.2468081345456,
+      "median_absolute_error_seconds": 0.996929195177185,
+      "signed_bias_seconds": 5.475819090611121
+    }
+  },
+  "paired_sequence_comparison": {
+    "H8_seed7": {
+      "metric": "macro_sequence_MAE_difference_ours_minus_Garl",
+      "common_queries": 946,
+      "sequences": 32,
+      "difference_seconds": -6.359474047598371,
+      "sequence_bootstrap_95pct_seconds": [
+        -16.129740833452832,
+        -1.0983149065141606
+      ]
+    },
+    "H8_seed13": {
+      "metric": "macro_sequence_MAE_difference_ours_minus_Garl",
+      "common_queries": 946,
+      "sequences": 32,
+      "difference_seconds": -6.32656702042615,
+      "sequence_bootstrap_95pct_seconds": [
+        -16.110485501255653,
+        -1.067057534126427
+      ]
+    },
+    "H8_seed23": {
+      "metric": "macro_sequence_MAE_difference_ours_minus_Garl",
+      "common_queries": 946,
+      "sequences": 32,
+      "difference_seconds": -6.27518977773368,
+      "sequence_bootstrap_95pct_seconds": [
+        -16.034355758452367,
+        -1.02291362038182
+      ]
+    }
+  },
+  "optimizer_updates": 0,
+  "checkpoint_selection_on_EvTTC": false,
+  "limitations": [
+    "Historical EvTTC development exposure; not a wholly blind model-selection test.",
+    "Garl checkpoint training/selection ancestry not independently certified.",
+    "Oracle RGB ROI with documented rotation-only projection; parallax ignored.",
+    "Conservative past annotation availability; no TTC/distance in inference.",
+    "Native H8 TTC support +/-60 seconds; native Garl unbounded.",
+    "Related depth/relative-velocity TTC definitions; annotation construction differs across datasets.",
+    "Fixed temporal sample per sequence, not all frames or official benchmark score."
+  ]
+}

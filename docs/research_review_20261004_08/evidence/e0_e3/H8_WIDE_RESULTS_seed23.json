@@ -1,0 +1,128 @@
+{
+  "status": "COMPLETE",
+  "seed": 23,
+  "comparisons": {
+    "H8": {
+      "candidate_score": 119.07785095385645,
+      "reference_score": 121.86478063534273,
+      "point_delta": -2.7869296814862325,
+      "weighted_sign_error_delta": -4.009533950809612e-05,
+      "crucial_bucket_mid_delta": -3.656792413989466,
+      "candidate_finite_fraction": 1.0,
+      "reference_finite_fraction": 1.0,
+      "sequence_deltas": {
+        "2cyv0Oedzg": -9.44367783694487,
+        "5ilM1PX2vz": -0.32503769701332347,
+        "6h5yRW2LGc": 2.6577222382808126,
+        "OBneIVg4Cw": 3.130191623676351,
+        "OYgB6RGWcq": -3.878382096836369,
+        "WbCh1DRerJ": -4.040265481088755,
+        "mHGFBekt7X": -2.435087325925611,
+        "qGsgzl4Q8B": -5.1729035575797795,
+        "t79dBxj1WS": -5.574926999944546
+      },
+      "sequence_wins": 7,
+      "sequence_count": 9,
+      "query_count": 8192,
+      "gate_authorized": false,
+      "hierarchical_ci95": [
+        -6.399732132291909,
+        0.46945377337474975
+      ],
+      "sequence_only": {
+        "point_delta": -2.786929681486232,
+        "ci95": [
+          -5.250949223857137,
+          -0.2787619542656181
+        ],
+        "fraction_negative": 0.9854089492928186,
+        "sequence_wins": 7,
+        "sequence_count_vectors": 24310,
+        "omit_one_score_deltas": [
+          -1.9548361620539023,
+          -3.094666179545346,
+          -3.4675111714571125,
+          -3.5265698446315548,
+          -2.650498129567465,
+          -2.6302627065359165,
+          -2.8309099759313097,
+          -2.4886829469745386,
+          -2.438430016678943
+        ],
+        "signflip_p_two_sided_descriptive": 0.07421875,
+        "retraining_performed": false,
+        "confirmatory": false
+      },
+      "noninferiority_margin_mid": 2,
+      "noninferiority_supported": true
+    },
+    "H16": {
+      "candidate_score": 119.07785095385645,
+      "reference_score": 119.16152634210417,
+      "point_delta": -0.08367538824768445,
+      "weighted_sign_error_delta": 0.0021163334856215904,
+      "crucial_bucket_mid_delta": -1.0826528785655358,
+      "candidate_finite_fraction": 1.0,
+      "reference_finite_fraction": 1.0,
+      "sequence_deltas": {
+        "2cyv0Oedzg": -3.149114246478873,
+        "5ilM1PX2vz": -0.12053524251378726,
+        "6h5yRW2LGc": 3.644586952348726,
+        "OBneIVg4Cw": -0.1490591838711529,
+        "OYgB6RGWcq": 2.951489457630404,
+        "WbCh1DRerJ": -3.9412341696619553,
+        "mHGFBekt7X": 0.7012316287168529,
+        "qGsgzl4Q8B": -0.5124300861135349,
+        "t79dBxj1WS": -0.17801360428584154
+      },
+      "sequence_wins": 6,
+      "sequence_count": 9,
+      "query_count": 8192,
+      "gate_authorized": false,
+      "hierarchical_ci95": [
+        -2.2653915832013296,
+        2.101260133199566
+      ],
+      "sequence_only": {
+        "point_delta": -0.08367538824768465,
+        "ci95": [
+          -1.6075585846340539,
+          1.4242546021173992
+        ],
+        "fraction_negative": 0.5472161902103221,
+        "sequence_wins": 6,
+        "sequence_count_vectors": 24310,
+        "omit_one_score_deltas": [
+          0.29950446903121386,
+          -0.07906790646442183,
+          -0.5497081808222359,
+          -0.07550241379475112,
+          -0.4630709939824457,
+          0.39851945942909917,
+          -0.18178876536825184,
+          -0.030081051014453367,
+          -0.07188311124291503
+        ],
+        "signflip_p_two_sided_descriptive": 0.84375,
+        "retraining_performed": false,
+        "confirmatory": false
+      },
+      "noninferiority_margin_mid": 2,
+      "noninferiority_supported": false
+    }
+  },
+  "replication_authorized": false,
+  "replication_rule": "prospective_all_five_conditions",
+  "bootstrap": {
+    "draws_sha256": "c9bb64817f5bbd09ea67784d9fe596b0de12f2439000ffb32d3552a74d679a7f",
+    "valid_draws": 8192,
+    "attempts": 8195,
+    "discarded": 3,
+    "validity_fraction": 0.999633923123856
+  },
+  "scientific_updates": 7500,
+  "encoder_replicas": false,
+  "head_replicas": true,
+  "confirmation": false,
+  "candidate_promoted": false
+}

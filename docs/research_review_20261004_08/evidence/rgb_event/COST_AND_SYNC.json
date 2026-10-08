@@ -1,0 +1,25 @@
+{
+  "phases": {
+    "prepare": {
+      "queries": 1024,
+      "sum_seconds": 558.9103939996858,
+      "p50_seconds": 0.5076582000037888,
+      "p95_seconds": 0.9538381399892377
+    },
+    "full_garl": {
+      "queries": 1024,
+      "sum_seconds": 46.04293510026764,
+      "p50_seconds": 0.043224149994784966,
+      "p95_seconds": 0.05501035998458973
+    },
+    "total": {
+      "queries": 1024,
+      "sum_seconds": 604.9533290999534,
+      "p50_seconds": 0.5521859000000404,
+      "p95_seconds": 0.9993016199936385
+    }
+  },
+  "max_absolute_rgb_event_offset_us": 453,
+  "max_additional_sync_wait_us": 0,
+  "no_controlled_cross_architecture_latency_claim": true
+}

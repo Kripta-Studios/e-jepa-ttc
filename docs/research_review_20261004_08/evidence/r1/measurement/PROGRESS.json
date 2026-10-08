@@ -1,0 +1,9 @@
+{
+  "completed_pairs": 486,
+  "total_pairs": 768,
+  "block": "warm_block1",
+  "label": "WIDE",
+  "query": "VLA3oBKFyX_001382_7633000000",
+  "elapsed_s": 22622.680479700008,
+  "optimizer_updates": 0
+}

@@ -1,0 +1,78 @@
+commit,author_datetime,subject
+9575b0c34e34917c987696ea710b058b39d9bd1f,2026-10-04T00:26:34+02:00,Record live P3 resource blocker and verify selected TRAIN producer sources [skip ci]
+a6efe7fce0f510cccc6ec095386605d55196423a,2026-10-04T03:42:39+02:00,Record shared-GPU route profiling and recoverable memory block [skip ci]
+b0b1e6fcdb3046413a9354460d40d2062d305cbe,2026-10-04T03:48:09+02:00,Preserve recoverable publication frontier and external delivery receipt [skip ci]
+e42d2872a9dc1bd18b1171790bf43e27c51ee98c,2026-10-04T12:00:09+02:00,Deliver verified partial shared-GPU route evidence at 1114 fragments [skip ci]
+11209ba3fc6b2cefb4fc25e45a43a01fc616f799,2026-10-04T12:12:06+02:00,Summarize October 3-4 SIMPLEX-T findings and verified release inventory [skip ci]
+440a67d91319a69df638a345cec619b00010d982,2026-10-04T12:16:29+02:00,Record verified GitHub publication of SIMPLEX-T result bundles [skip ci]
+fd16d8102914537653622d3abf298b753120ea43,2026-10-04T16:26:44+02:00,Complete shared-GPU route profiling and verified final SIMPLEX-T delivery [skip ci]
+a8bcf3456bbe071ea295071b5f9d59bc7a9b4897,2026-10-04T22:13:11+02:00,Implement authorized efficient-context queue with complete-state recovery and bounded analyses
+0db691fefaadf22da0d4bba9c5d04ea293e24215,2026-10-04T22:15:43+02:00,Fix bundle file inventory and persist complete queue invocation receipts
+bddae4758dd8852afbc60685196b97c4d829c244,2026-10-04T22:18:31+02:00,Replay extracted evidence with Python safe path to avoid queue module shadowing
+86cbe2a21d567ff75e602225bf117d18277bca76,2026-10-04T22:22:59+02:00,Verify exact TRAIN head replay and constrain resumed numeric worker threads
+ee229f5a78c91f6899f206b52f629316514358b5,2026-10-04T22:25:38+02:00,Finalize verified bundle receipt with file size property
+8dab13ac76fa6c5d14695e0a10606b43a19a05b0,2026-10-04T23:16:17+02:00,Restore authorized TRAIN media from pinned HF revisions and retain interruption accounting
+c9ce7fde25a2b03a9a9d14a5a942192cb397d1c2,2026-10-04T23:52:09+02:00,Bind restored TRAIN sources and complete replicated WIDE delivery
+c940d0bf6039d02259926f0d1d9779cf87da04dd,2026-10-05T00:07:29+02:00,Resume viable campaign branches from verified TRAIN restoration
+594d082954efa9f3e7f132e8f81e70e4577bcdf8,2026-10-05T00:15:50+02:00,Apply explicit 12GB RAM authorization without changing scientific freezes
+c1b0129161e53fdba26145b862eba2ac70913c1a,2026-10-05T00:55:46+02:00,Preserve rejected GPU dispatch and profile parity-safe raw preparation plus native Garl cost
+ac7cef596530101a66188c180a1a3bdebc318cd9,2026-10-05T00:59:48+02:00,Reuse all nine SHA-verified completed WIDE endpoints during independent queue resumption
+c7d62f5e2109df4dda932815e5f0bc746bf43e34,2026-10-05T01:03:03+02:00,Record actual native producer progress and session throughput before scientific freeze
+b000d40428fd4e71d8ed5355f587b5ded2116adb,2026-10-05T02:08:40+02:00,Seal bitexact exclusive RAM disk cache and preserve full native state for controlled resumption
+95643b441d13d0d73545940a7f2a02853a3805a8,2026-10-05T06:30:55+02:00,Cache exact native NPZ bytes in bounded RAM after complete-state preservation
+ab39bc90e4e6caa591f6ee1a82794c1a53355dcd,2026-10-05T10:16:32+02:00,Report both exact native cache engineering amendments and expanded QA
+36a8b4aed81a7a6559314cfbe3420cabcab04187,2026-10-05T13:33:02+02:00,Prepare exact native inputs with four CPU workers under authorized sixteen GB limit
+651c0af0dbf7c6d8020cc40f8469ccebd1196a7e,2026-10-05T13:34:47+02:00,Use the native durable ledger when waiting for a resumed worker boundary
+fd1cd484d905d527f74a74efda4bd1778d8d6473,2026-10-05T13:47:55+02:00,Request cooperative native resource handoff at a complete optimizer boundary
+4af1364c6549b1406a0953f39c8b08a9b25d7c2d,2026-10-05T14:02:05+02:00,Exclude own orchestration ancestors while retaining external trainer admission checks
+401c65a707a32f30db3e2866e9a3e14ae4fe8be8,2026-10-05T14:12:15+02:00,Admit authorized parallel resources after original native protocol validation
+9ecebfe4736e4c7c15bce7d956cfd372960954f5,2026-10-05T14:14:04+02:00,Report archived resource metadata and separately sealed active admission
+6bbf15efcbda7a0088bdff2efac13429c5423660,2026-10-05T14:47:39+02:00,Harden native head and feature recovery with fault injection and full bindings
+c8f65e1c0d900f93d5d5e02b831960938764ad37,2026-10-05T14:47:58+02:00,Format native resume review manifest entry
+ae0617b15dd4a82809180d8f1bc997c929ad3e54,2026-10-05T17:40:34+02:00,Count exact owned bytes from scandir metadata under unchanged budget checks
+13e679bcc1a53666829f4433b8e627a79e602a60,2026-10-05T17:45:28+02:00,Report exact quota scan parity and complete-state engineering handoff
+1ca9b1560e887d48dd58f6fc880f5dbcce52c7f2,2026-10-05T18:47:57+02:00,Prefetch exact Garl cache decoding and retain expanded persistent inputs
+29fe7dfffe59b9ae29c517adbd616720065b4e48,2026-10-05T18:50:42+02:00,Report expanded cache parity and the explicit campaign time budget
+f9c0e8c7940976963af029c4c4059c08871dee02,2026-10-05T19:20:57+02:00,Prepare exact native Garl head inputs with bounded CPU workers
+6897d41d129351b1c78aaa42dfc30b2bac8d2dd6,2026-10-05T19:23:56+02:00,Include campaign test sources and bounded inference preparation evidence in delivery
+d43734661273b0736d5da2c2fcd359f04b636016,2026-10-05T19:26:30+02:00,Keep the included test-source documentation within the formatting contract
+ff25ebb53e4979ea5927b8c310741918d4f0e836,2026-10-05T19:29:20+02:00,Describe the producer seal as a permanent feature-generation requirement
+74f7ad7ef47adf00afd1860c9e8da64171560d4b,2026-10-05T20:32:01+02:00,Report the current user-authorized execution deadline
+3d8ce335d726d841600ae5e05a1899f94df4fbe3,2026-10-05T21:53:23+02:00,Run TRAIN routing and checkpoint preflight beside the native trainer
+e28233176489293deed5909cac39a72c3e2944b5,2026-10-05T23:18:17+02:00,Preserve user pause and execute frozen TRAIN40 feasibility pilot
+f431a01ebdb756d9a02f3bd3d2d7a6ed893b8e9f,2026-10-06T01:04:17+02:00,Add recoverable local TRAIN40 training queue and content contracts
+f2663874ef2deee1177c27651c1d30e8f1edde17,2026-10-06T01:40:34+02:00,Preserve raw preparation after atomic rename and automate TRAIN diagnostics delivery
+4b93165a9dbd8d01e2d0f7cd4396fd43a881358a,2026-10-06T05:51:53+02:00,Bound H8 raw prefetch to eight workers while preserving frozen math
+37fd022ceb39097cc7b630312d4bc61a5bbead9d,2026-10-06T05:57:12+02:00,Reuse sealed TRAIN40 inputs without repeated full receipt walks
+ddffb4371fd6fbc4c19bb36f745df1740fa62bcd,2026-10-06T10:52:55+02:00,Overlap TRAIN40 input transfers and remove scalar diagnostic synchronization
+b5ce48012696f24ccb43245fefaeca38172fa562,2026-10-06T11:07:26+02:00,Keep TRAIN40 coordination pauses persistent across controller retries
+ba2b0745e9042d0bb57afa27fd843b3f38761a6a,2026-10-06T11:13:23+02:00,Profile bounded real TRAIN40 updates without changing scientific state
+066f09845a1b1bda7925be42fac35e389436d405,2026-10-06T11:40:54+02:00,Admit process-scoped passive OpenMP waiting with measured CPU controls
+80f1d0b4399587a3de8186dc3a15f58d29054e56,2026-10-06T11:53:24+02:00,Reuse exact same-loss diagnostic relation maps with passive CPU waiting
+444b023822961fd437edefb63e7bb100eaba6d5b,2026-10-06T12:32:13+02:00,Bound TRAIN40 cache eviction by coordinated memory pressure
+74149a9e8928ceffa4df86d202ce4d5035724b7e,2026-10-06T12:44:18+02:00,Add zero-update CUDA graph launch admission pilot
+ddbd6ff66563192e7b28eb35a83e66fca6abd280,2026-10-06T12:59:53+02:00,Add zero-update CUDA graph admission harness
+9c2f5f9e3785465dee4009ce23ab4364bec004cb,2026-10-06T13:00:13+02:00,Reduce process inspection overhead while preserving training guards
+70024ef5a70d4c551559b1cfc845c34a05095d80,2026-10-06T13:21:15+02:00,Admit A5 CUDA graph replay with full state restoration before prefetch
+1b0f50c0d710069bd40d52bfe0884ec705e69eda,2026-10-06T13:30:52+02:00,Preserve canonical model hashes for scalar graph-replay state
+653f2f585ab897e10b8efea6704192a765705dfe,2026-10-06T14:47:47+02:00,Isolate TRAIN40 host preparation and monitoring with bounded shared memory
+c25778a700682e5362cee7ca44fb614d97cc2388,2026-10-06T15:04:47+02:00,Admit four-thread CPU preparation with exact frozen-loader parity
+82168d0230aa661cdb397e2941e22be54a3df85c,2026-10-06T15:49:07+02:00,Avoid redundant CPU variance reductions with a parity-checked finite-range guard
+a64338ddc72ce55819046e98eef3908808e1161e,2026-10-06T16:25:53+02:00,Add admitted fast-collate thread trial variants
+c67006b783234e8a687abd961f672aefae3f99a9,2026-10-06T17:21:15+02:00,Add authenticated parallel TRAIN40 pilot
+9d022bb42b58a381b1e93f92fced2a916589a63d,2026-10-06T17:55:37+02:00,Admit Windows-safe bounded parallel TRAIN40 pilot
+6281b20b7eaf74b1e8e8df0e03a2299ce6890ece,2026-10-06T18:00:09+02:00,Bind parallel quotas to verified cumulative recovery accounting
+a33e00c65b52a83ba23530196072a8185bc37602,2026-10-06T18:11:23+02:00,Retry transient Windows sharing conflicts in paired budget reads
+b54ef3d98703eb69d4eb4470161e40890a6e221b,2026-10-06T18:41:31+02:00,Finish the preserved C2F pilot quota with the frozen serial trainer
+7b2524b305765c2012a8d52c18c3a16166292061,2026-10-06T19:18:49+02:00,Run the admitted TRAIN40 producers concurrently with process-exit recovery guards
+fc27f157c5b3ee595597cbd34c8acea461d19758,2026-10-07T00:45:56+02:00,Enable parity-checked CUDA graph replay for the existing TRAIN40 C2F producer
+720688f66fb54959cb4bb7ea9baf127e794d26f3,2026-10-07T01:08:53+02:00,Add hourly recovery supervisor for the existing TRAIN40 queue
+0928bd09b3a243fd527b3a7274b2f7774fd19acc,2026-10-07T10:13:40+02:00,Accelerate H8 preparation with admitted shared buffers and independent monitor
+2fe69d5b91106a18e92f7f6de47cd76029b293fa,2026-10-07T14:53:22+02:00,Optimize H8 transport dispatch and bound dense raw unions with exact parity
+6807eba07bf4bab3d2f2d72ebf5fa6f2fa6e3557,2026-10-07T15:17:23+02:00,Keep H8 resource telemetry fresh throughout long resumable initialization
+6810cf86809a11f6d92f64ca83be74b9ecf36efb,2026-10-07T16:29:13+02:00,Resume H8 directly from durable cursor with bounded shared-memory allowance
+c4edbb0bc792c8323bfd09289c0b12f5ecddc859,2026-10-07T17:08:33+02:00,Keep H8 alive under RAM pressure with23GB throttling and four raw workers
+f7e4d73d52d1753be4cac9c024b80096ae78aff8,2026-10-08T11:07:53+02:00,Add frozen causal replay measurement and TRAIN40 cost audit
+f6f74ca847360d3b2ab7421a631220da7c252a9d,2026-10-08T16:54:02+02:00,Audit frozen TRAIN40 predictions across fixed descriptive strata
+efb31486708740dd0348ad75f5d534eed5bf9af0,2026-10-08T17:27:04+02:00,Evaluate frozen TRAIN40 and Garl models on causal EvTTC inputs
+f13f018421afe5c99104475400f8ffbbefcc434d,2026-10-08T18:24:16+02:00,Add frozen RGB-event Garl transfer comparison with preserved baseline

@@ -1,0 +1,15 @@
+{
+  "wide_saved": 22500,
+  "garl_producer_saved": 17948,
+  "garl_head_saved": 0,
+  "scientific_saved_updates": 40448,
+  "recovery_uncertain_upper": 300,
+  "recovery_confirmed_lower": 50,
+  "unresolved_execution_upper": 0,
+  "physical_execution_upper": 40748,
+  "unsaved_updates_confirmed_by_progress": 0,
+  "physical_execution_lower": 40498,
+  "technical_synthetic_updates": 0,
+  "physical_cap": 240000,
+  "historical_reexecuted_updates": 0
+}

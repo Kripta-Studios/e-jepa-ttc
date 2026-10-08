@@ -1,0 +1,17 @@
+{
+  "status": "RUNNING",
+  "supervisor": "1GiB",
+  "phase": "measurement",
+  "child_pid": 43832,
+  "command": [
+    "${USER_HOME}\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\.venv\\Scripts\\python.exe",
+    "-m",
+    "operational.efficient_context.r1_gib_measure",
+    "--output",
+    "${REPO}\\artifacts\\efficient_context_20261004\\r1_20261008\\resident_1g"
+  ],
+  "log": "${REPO}\\artifacts\\efficient_context_20261004\\r1_20261008\\resident_1g\\attempts\\measurement_1791478390810333500.log",
+  "attempt": 3,
+  "checked_utc": "2026-10-08T17:00:11.310874+00:00",
+  "optimizer_updates": 0
+}

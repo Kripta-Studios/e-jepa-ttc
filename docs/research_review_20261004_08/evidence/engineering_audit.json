@@ -1,0 +1,616 @@
+{
+  "schema": "train40_engineering_audit_20261004_08_v1",
+  "generated_utc": "2026-10-08T16:48:32.701967+00:00",
+  "scope": {
+    "dates": [
+      "2026-10-04",
+      "2026-10-05",
+      "2026-10-06",
+      "2026-10-07",
+      "2026-10-08"
+    ],
+    "read_only_source_audit": true,
+    "gpu_calls": 0,
+    "process_controls": 0,
+    "claim_rule": "Measured artifact evidence is separated from commit-only implementation evidence."
+  },
+  "git": {
+    "branch": "scientific-recovery-v12-efficient-context",
+    "commit_counts_by_author_date": {
+      "2026-10-04": 14,
+      "2026-10-05": 27,
+      "2026-10-06": 25,
+      "2026-10-07": 7,
+      "2026-10-08": 4
+    },
+    "workspace_note": "git status showed untracked docs/efficient_context_handoff_20261004/ at audit time; root must decide inclusion before push.",
+    "measured_milestone_commits": [
+      {
+        "sha": "ddffb4371fd6fbc4c19bb36f745df1740fa62bcd",
+        "date": "2026-10-06",
+        "subject": "Overlap input transfers and remove scalar diagnostic synchronization"
+      },
+      {
+        "sha": "444b023822961fd437edefb63e7bb100eaba6d5b",
+        "date": "2026-10-06",
+        "subject": "Bound cache eviction by coordinated memory pressure"
+      },
+      {
+        "sha": "9c2f5f9e3785465dee4009ce23ab4364bec004cb",
+        "date": "2026-10-06",
+        "subject": "Reduce process inspection overhead"
+      },
+      {
+        "sha": "70024ef5a70d4c551559b1cfc845c34a05095d80",
+        "date": "2026-10-06",
+        "subject": "Admit A5 CUDA graph replay"
+      },
+      {
+        "sha": "653f2f585ab897e10b8efea6704192a765705dfe",
+        "date": "2026-10-06",
+        "subject": "Isolate host preparation and monitoring"
+      },
+      {
+        "sha": "82168d0230aa661cdb397e2941e22be54a3df85c",
+        "date": "2026-10-06",
+        "subject": "Avoid redundant CPU variance reductions"
+      },
+      {
+        "sha": "7b2524b305765c2012a8d52c18c3a16166292061",
+        "date": "2026-10-06",
+        "subject": "Concurrent admitted producers with recovery guards"
+      },
+      {
+        "sha": "0928bd09b3a243fd527b3a7274b2f7774fd19acc",
+        "date": "2026-10-07",
+        "subject": "H8 shared buffers and independent monitor"
+      },
+      {
+        "sha": "2fe69d5b91106a18e92f7f6de47cd76029b293fa",
+        "date": "2026-10-07",
+        "subject": "H8 transport dispatch and dense raw union bound"
+      },
+      {
+        "sha": "c4edbb0bc792c8323bfd09289c0b12f5ecddc859",
+        "date": "2026-10-07",
+        "subject": "H8 23GB flow control and four raw workers"
+      }
+    ]
+  },
+  "training_efficiency": {
+    "adaptive_cache": {
+      "control": {
+        "updates": 600,
+        "range": [
+          16201,
+          16800
+        ],
+        "updates_per_minute": 36.74834684461078,
+        "mean_compute_ms": 1220.0893701670673,
+        "mean_data_wait_ms": 70.81057483383726
+      },
+      "candidate": {
+        "updates": 400,
+        "range": [
+          17001,
+          17400
+        ],
+        "updates_per_minute": 26.30861135658212,
+        "mean_compute_ms": 1777.7060099993832,
+        "mean_data_wait_ms": 86.58848474944534
+      },
+      "ratio": 0.7159127856234526,
+      "conclusion": "Correctness/resource-pressure fix; no demonstrated speedup and observed window was slower.",
+      "evidence": {
+        "path": "artifacts/train40_system_20261005/ADAPTIVE_CACHE_LIVE_MEASUREMENT.json",
+        "sha256": "7fa9148bb7d4b7b8e1482fddcdf0d579ffdefcb59bbfc29a5013ee01b1779cb6"
+      }
+    },
+    "process_scan": {
+      "isolated": {
+        "original_seconds": 0.36273959997924976,
+        "name_first_seconds": 0.01715830000466667,
+        "speedup": 21.14076568661189,
+        "processes": 509,
+        "python_processes": 12
+      },
+      "live_window": {
+        "updates": 200,
+        "range": [
+          17601,
+          17800
+        ],
+        "updates_per_minute": 32.88931481136268,
+        "mean_compute_ms": 1241.9066180003574,
+        "mean_data_wait_ms": 295.08603000082076
+      },
+      "conclusion": "21.14x is an isolated scan microbenchmark, not whole-training speedup.",
+      "evidence": [
+        {
+          "path": "artifacts/train40_system_20261005/FAST_PROCESS_SCAN_BENCHMARK.json",
+          "sha256": "0d1fdffd4aa29ca5e45571c9246ca376a77130f97beb2212bd1d330b83a703eb"
+        },
+        {
+          "path": "artifacts/train40_system_20261005/FAST_PROCESS_SCAN_LIVE_MEASUREMENT.json",
+          "sha256": "22163cba1af36d5e88e70daf9e3bfe68334fbabac087d2a8e803f69ae00988fd"
+        }
+      ]
+    },
+    "cuda_graph_a5": {
+      "admission": {
+        "eager_launches": 5877,
+        "compiled_launches": 1270,
+        "launch_reduction_percent": 78.39033520503658,
+        "exact_outputs_and_losses": true,
+        "gradient_tensors": 59,
+        "rng_exact": true,
+        "optimizer_updates": 0,
+        "compiled_seconds": [
+          0.5593090000038501,
+          0.1316645999904722,
+          0.11823729999014176
+        ],
+        "eager_seconds": [
+          0.1722427000058815,
+          0.1643634999927599,
+          0.1717435999889858
+        ]
+      },
+      "control": {
+        "updates": 200,
+        "range": [
+          17601,
+          17800
+        ],
+        "updates_per_minute": 32.88931481136268,
+        "mean_compute_ms": 1241.9066180003574
+      },
+      "graph_live": {
+        "updates": 400,
+        "range": [
+          18301,
+          18700
+        ],
+        "updates_per_minute": 41.77532373976427,
+        "mean_compute_ms": 380.4141614996479,
+        "mean_data_wait_ms": 836.4833119999093
+      },
+      "rate_ratio": 1.2701792049900542,
+      "limitations": [
+        "Nonrandomized changing host load.",
+        "First compiled steady repetition 0.559309s was slower than eager.",
+        "Launch reduction is admission evidence; live rate combines all host effects."
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/train40_system_20261005/SOTA_EFFICIENCY_RESULT_20261006.json",
+          "sha256": "583bdc11a2d61d5898d2db9fc03fc0728dc06cd087fa1457c20b37a89ce228f9"
+        },
+        {
+          "path": "artifacts/train40_system_20261005/GRAPH_REPLAY_LIVE_MEASUREMENT.json",
+          "sha256": "fe1f54b6536197981db52f7239811aa8569d61aa43c33f9650ce145bafba7017"
+        }
+      ]
+    },
+    "host_pipeline_and_collate": {
+      "windows": [
+        {
+          "name": "pre_pipeline_control",
+          "range": [
+            20601,
+            21000
+          ],
+          "updates": 400,
+          "upm": 45.659869968498164,
+          "compute_mean_ms": 439.64943049992144,
+          "data_wait_mean_ms": 654.7122185002809,
+          "evidence": "HOST_PIPELINE_CONTROL_MEASUREMENT.json"
+        },
+        {
+          "name": "process_pipeline_short",
+          "range": [
+            21201,
+            21600
+          ],
+          "updates": 400,
+          "upm": 101.59331195514301,
+          "compute_mean_ms": 171.11738875042647,
+          "data_wait_mean_ms": 405.9196674992563,
+          "evidence": "HOST_PIPELINE_LIVE_MEASUREMENT.json"
+        },
+        {
+          "name": "four_threads_short",
+          "range": [
+            22401,
+            22800
+          ],
+          "updates": 400,
+          "upm": 81.70714262842121,
+          "compute_mean_ms": 291.25035850011045,
+          "data_wait_mean_ms": 403.398218250004,
+          "evidence": "HOST_THREADS_LIVE_MEASUREMENT.json"
+        },
+        {
+          "name": "restored_one_thread_reference",
+          "range": [
+            23201,
+            24000
+          ],
+          "updates": 800,
+          "upm": 36.36965432083882,
+          "compute_mean_ms": 262.60993512521964,
+          "data_wait_mean_ms": 1347.7584650000426,
+          "evidence": "HOST_PIPELINE_RESTORED_REFERENCE_MEASUREMENT.json"
+        },
+        {
+          "name": "fast_collate_primary",
+          "range": [
+            24201,
+            24600
+          ],
+          "updates": 400,
+          "upm": 57.152375762178664,
+          "evidence": "HOST_FAST_COLLATE_LIVE_MEASUREMENT.json"
+        },
+        {
+          "name": "fast_collate_confirmation",
+          "range": [
+            24201,
+            26200
+          ],
+          "updates": 2000,
+          "upm": 67.46605554583722,
+          "compute_mean_ms": 330.3420165497664,
+          "data_wait_mean_ms": 504.407278450235,
+          "evidence": "HOST_FAST_COLLATE_CONFIRMATION_MEASUREMENT.json"
+        },
+        {
+          "name": "fast_collate_post_aux_secondary",
+          "range": [
+            25201,
+            26200
+          ],
+          "updates": 1000,
+          "upm": 82.62611877875236,
+          "evidence": "HOST_FAST_COLLATE_POST_AUX_MEASUREMENT.json"
+        },
+        {
+          "name": "fast_2_short",
+          "range": [
+            26401,
+            26800
+          ],
+          "updates": 400,
+          "upm": 72.03801905147527,
+          "evidence": "HOST_FAST_2_LIVE_MEASUREMENT.json"
+        },
+        {
+          "name": "fast_4_interrupted_ineligible",
+          "range": [
+            27101,
+            27500
+          ],
+          "updates": 400,
+          "upm": 23.881071654194784,
+          "selection_eligible": false,
+          "evidence": "HOST_FAST_4_LIVE_MEASUREMENT.json"
+        }
+      ],
+      "interpretation": [
+        "101.59 upm was a 400-update short window and was not sustained; restored pipeline later measured 36.37 upm over 800.",
+        "Most defensible sustained candidate window is fast-collate 67.47 upm over 2000 updates; the 82.63 upm subset is secondary and followed auxiliary activity.",
+        "Four-thread and two-thread short windows were sequential, nonrandomized, and host-confounded; no intrinsic thread-count causality.",
+        "Fast-4 original window is ineligible because E-drive OSError interrupted at committed27430/durable27400 with recovery exposure30."
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/train40_system_20261005/HOST_PIPELINE_CONTROL_MEASUREMENT.json",
+          "sha256": "bd6966570032bd8ba9b6ffa6577a600144f293b198c3d307a13382f270deb43a"
+        },
+        {
+          "path": "artifacts/train40_system_20261005/HOST_PIPELINE_LIVE_MEASUREMENT.json",
+          "sha256": "772d0c418fbedb072903d8f47593a63da89f63453034a43cf414e4422f87ec59"
+        },
+        {
+          "path": "artifacts/train40_system_20261005/HOST_THREADS_LIVE_MEASUREMENT.json",
+          "sha256": "e3792f0bdccbe8308468e5b68802e33445d9f7a40df6c8afd0fcc372bb6be21c"
+        },
+        {
+          "path": "artifacts/train40_system_20261005/HOST_PIPELINE_RESTORED_REFERENCE_MEASUREMENT.json",
+          "sha256": "efdb53c59d20a4ad2c5568d707614b5f07fdcac7e7ce40f1cf0afe6680e8a475"
+        },
+        {
+          "path": "artifacts/train40_system_20261005/HOST_FAST_COLLATE_CONFIRMATION_MEASUREMENT.json",
+          "sha256": "09cb229c1221ed0ecbe6271f6f2848e0aae51504beaf23d8c021568a08d7be50"
+        },
+        {
+          "path": "artifacts/train40_system_20261005/HOST_FAST_COLLATE_POST_AUX_MEASUREMENT.json",
+          "sha256": "45201d84e7d444d6f601444d8604a526457a5e18eddf554aa557de6f25bc0e89"
+        },
+        {
+          "path": "artifacts/train40_system_20261005/HOST_FAST_2_LIVE_MEASUREMENT.json",
+          "sha256": "bb2a6630a0dd6fd3dfa2a8c38115c85576c5f277e690f54de26f60b32b9af3d0"
+        },
+        {
+          "path": "artifacts/train40_system_20261005/HOST_FAST_4_LIVE_MEASUREMENT.json",
+          "sha256": "7ea0698eb9206cc1b43b1e5801986b07c9971a2bdd993728d7c98355843f242d"
+        },
+        {
+          "path": "artifacts/train40_system_20261005/HOST_FAST_4_EXTERNAL_IO_INTERRUPTION.json",
+          "sha256": "86f59281fd6cda5017dc65e326a5538aea30d82eceeba79b66903680c4c89435"
+        }
+      ]
+    },
+    "parallel_pilot": {
+      "parallel_segment": {
+        "combined_updates": 1500,
+        "approx_elapsed_seconds": 965.111242,
+        "approx_combined_upm": 93.25349875056166,
+        "status": "INTERRUPTED_NORMAL_PEER_EXIT_RACE"
+      },
+      "serial_tail": {
+        "updates": 500,
+        "elapsed_seconds_including_restore": 757.0711087,
+        "upm_including_restore": 39.62639658976594
+      },
+      "final": {
+        "combined_updates": 2000,
+        "continuous_measurement": false,
+        "additional_recovery_updates": 0,
+        "status": "INTERRUPTED_THEN_COMPLETED"
+      },
+      "conclusion": "Quota completed with preserved full checkpoints, but result is segmented and cannot establish a continuous parallel throughput advantage.",
+      "evidence": [
+        {
+          "path": "artifacts/train40_system_20261005/PARALLEL_PILOT_V4_RESULT.json",
+          "sha256": "15d6a9d51569c936ec68293f905046b438bab01c217916c30af89d9c4e6f980c"
+        },
+        {
+          "path": "artifacts/train40_system_20261005/PARALLEL_PILOT_V4_SEGMENTED_RESULT.json",
+          "sha256": "6deabf2bd4432b91a7183ebe6f7dbc5603a11a7caf1588d73c9a930936599e92"
+        },
+        {
+          "path": "artifacts/train40_system_20261005/PARALLEL_PILOT_V4_TAIL_RESULT.json",
+          "sha256": "e62a0494d42a0570179f624584a175bb7673dcad1c7b87ab4c6bf1151864a092"
+        }
+      ]
+    },
+    "early_a5_baseline": {
+      "first_hour": {
+        "committed_updates": 2217,
+        "durable_updates": 2200,
+        "first_period_updates_per_minute": 37.29994978667413,
+        "recent_updates_per_minute": 37.14813110853078,
+        "mean_compute_ms": 1055.8391141818918,
+        "mean_unhidden_data_wait_ms": 303.70644099995184,
+        "recovery_upper": 0,
+        "evidence": {
+          "path": "artifacts/train40_system_20261005/FIRST_HOUR_REAL_TRAIN_THROUGHPUT.json",
+          "sha256": "3789e5e40dfe10b48d4fb4267b61f7c466eaadc7f26fe123ce400bfc62dcc12b"
+        }
+      },
+      "later_rolling_window": {
+        "durable_endpoint": 11000,
+        "updates": 2000,
+        "updates_per_minute": 38.34093274389932,
+        "evidence": {
+          "path": "artifacts/train40_system_20261005/CURRENT_REAL_TRAIN_THROUGHPUT.json",
+          "sha256": "d141b92e5c622cee0b4186608ad990a98389b670372a55ffe2a8c778a0622783"
+        }
+      },
+      "conclusion": "The original Oct 6 A5 baseline was consistently about 37–38 updates/min before later variants; it is a historical baseline, not a randomized control for every later host state."
+    }
+  },
+  "gil_and_process_overhead": {
+    "capture": {
+      "seconds": 30,
+      "gil_held_weighted_samples": 519,
+      "updates": [
+        17924,
+        17943
+      ],
+      "read_errors": 4
+    },
+    "shares_of_gil_held_samples_not_wall_time": {
+      "decode_npz_percent": 32.755299,
+      "fast_scan_relationships_percent": 23.314066,
+      "cache_memory_snapshot_percent": 14.643545,
+      "delegated_guard_relationships_and_memory_percent": 9.248555,
+      "background_decode_and_admission_role_percent": 51.637765
+    },
+    "warning": "These percentages describe only GIL-held samples and are neither wall-time shares nor causal speedup estimates.",
+    "evidence": {
+      "path": "artifacts/train40_system_20261005/HOST_GIL_SAMPLE_ANALYSIS.json",
+      "sha256": "26215c656f378cd767977db514fb6442b0828fca4bdc0e906a0b4ed9348ac285"
+    }
+  },
+  "h8": {
+    "final_completion": {
+      "status": "COMPLETE",
+      "total_rows": 88744,
+      "suffix_first_row": 58241,
+      "suffix_rows": 30503,
+      "started_utc": "2026-10-07T15:09:16.021475+00:00",
+      "finished_utc": "2026-10-07T22:33:35.864351+00:00",
+      "elapsed_seconds": 26659.842876,
+      "observed_suffix_rows_per_minute": 68.64931682127742,
+      "optimizer_updates": 0
+    },
+    "bottleneck_accounting": {
+      "raw_worker_prepare_total_seconds": 102084.92998799951,
+      "raw_worker_prepare_seconds_per_row_aggregate": 3.346717699504951,
+      "extract_total_seconds": 5173.004102899737,
+      "extract_seconds_per_row": 0.16959001091367198,
+      "guard_seconds_per_row": 0.010216038012686434,
+      "raw_workers": 4,
+      "arenas": 8,
+      "inflight_max": 8,
+      "arena_bytes": 301989888,
+      "transport_graph_replays": 366036,
+      "transport_graph_failures": 0
+    },
+    "ram_history": [
+      {
+        "cursor": 57766,
+        "tree_rss_bytes": 16035979264,
+        "host_available_bytes": 4476010496,
+        "result": "paused by 16GB aggregate RSS guard",
+        "evidence": "H8_MEMORY_FREEZE.json"
+      },
+      {
+        "cursor": 58241,
+        "tree_rss_bytes": 20140371968,
+        "host_available_bytes": 3039232000,
+        "result": "paused by 20GB aggregate RSS guard",
+        "evidence": "H8_FEATURE_PAUSE.json"
+      },
+      {
+        "result": "final route used23GB tree limit,2GiB hard host reserve,3GiB recovery hysteresis and4 raw workers; completed",
+        "evidence": "H8_FAST_RUNTIME.json"
+      }
+    ],
+    "memory_flow_observation": {
+      "wait_seconds": 0.0,
+      "throttle_seconds": 0.0,
+      "wait_iterations": 0,
+      "throttle_count": 0,
+      "conclusion": "Policy was installed, but final runtime recorded no actual wait/throttle event; completion cannot be attributed to throttling itself."
+    },
+    "qos_trials": {
+      "first_sequence": {
+        "before_qpm": 69.41192699556697,
+        "high_qos_qpm": 118.70502776619219,
+        "restored_qpm": 101.18420181076624
+      },
+      "repeat": {
+        "before_qpm": 93.4910553406668,
+        "high_qos_qpm": 96.69146970731794,
+        "ratio": 1.0342323054862235
+      },
+      "conclusion": "Initial large change was not replicated; repeat was +3.4% under sequential live inputs. Original policy was restored, so no durable QoS speedup claim."
+    },
+    "thermal": {
+      "gpu_observation_utc": "2026-10-06T22:50:53.348402+00:00",
+      "active_sw_thermal_slowdown": false,
+      "active_hw_thermal_slowdown": false,
+      "cumulative_sw_thermal_slowdown_microseconds": 1742971347,
+      "raw_device_sample": "NVIDIA GeForce RTX 5070 Ti Laptop GPU, 2, 4953, 12227, 84, 33.79, 862",
+      "conclusion": "Cumulative counter proves earlier thermal limiting occurred, but the captured instant reported no active thermal slowdown; it does not establish thermal causality for later H8 rate changes."
+    },
+    "close_telemetry_note": "H8_TRANSPORT_RUNTIME and H8_RECEIVER_RUNTIME record OSError handle is closed after monitor shutdown; H8_FAST_RUNTIME immediately before shutdown is COMPLETE with a healthy monitor. Treat as close-time telemetry artifact, not extraction failure.",
+    "evidence": [
+      {
+        "path": "artifacts/train40_system_20261005/H8_FAST_RUNTIME.json",
+        "sha256": "4553ad28497c916a2eb3cd3802c7cd7aabd441bb9ff8730086bd241d4ea03a7d"
+      },
+      {
+        "path": "artifacts/train40_system_20261005/H8_TRANSPORT_RUNTIME.json",
+        "sha256": "4ed035d21909c2ee79da40577cad56b7f6e676211a6f209641a199830519d7ec"
+      },
+      {
+        "path": "artifacts/train40_system_20261005/H8_RECEIVER_RUNTIME.json",
+        "sha256": "ba05364915352f71bebd8f874bfc371ff4d6277d9f95fad87e0c9223f391c747"
+      },
+      {
+        "path": "artifacts/train40_system_20261005/H8_MEMORY_FLOW.json",
+        "sha256": "96047358b64ca4607e3b1ca9eb90a9c67c8404f4535e155fa12050c134c1457b"
+      },
+      {
+        "path": "artifacts/train40_system_20261005/H8_FEATURE_PAUSE.json",
+        "sha256": "396cae52216b7a727a63aef0dec928837f207e0eab516ccae05ad944a63ff38b"
+      },
+      {
+        "path": "artifacts/train40_system_20261005/h8_bottleneck_20261007/QOS_TRIAL_REPORT.json",
+        "sha256": "aa26b3b6d1c8c340754a236bb2fe752b1bd6530272393d00d50c691512cef519"
+      },
+      {
+        "path": "artifacts/train40_system_20261005/h8_bottleneck_20261007/QOS_REPEAT_REPORT.json",
+        "sha256": "56a959683e250f5acb57c0983e38081ccda6fa90ea2eac94dd7aa2e859ac2919"
+      },
+      {
+        "path": "artifacts/train40_system_20261005/h8_bottleneck_20261007/QOS_RESTORE.json",
+        "sha256": "58dd97f7dcabaa5488e85f971691331ac48ce827d3febb9eae0c51771b9df9f2"
+      },
+      {
+        "path": "artifacts/train40_system_20261005/h8_bottleneck_20261007/LIVE_PROFILE_ANALYSIS.json",
+        "sha256": "fe428bb740d905219f72258c70efef9a814e403201102f131052b24d11299c60"
+      },
+      {
+        "path": "artifacts/train40_system_20261005/h8_bottleneck_20261007/TRANSPORT_GRAPH_PROBE.json",
+        "sha256": "66c8d2f662785fd9442ed98226596bd71ffad53c788df329134a7c331dab460d"
+      },
+      {
+        "path": "artifacts/train40_system_20261005/C2F_GRAPH_GPU_OBSERVATION.json",
+        "sha256": "6142a3359b669f46fc2cd771b62b8c67f67ba3e6002697aa613c2caa2394501e"
+      }
+    ],
+    "early_sequence_baseline": {
+      "completed_endpoint": 6942,
+      "windows": [
+        {
+          "rows": 300,
+          "rows_per_minute": 184.35592960241286
+        },
+        {
+          "rows": 1000,
+          "rows_per_minute": 198.9005427284195
+        },
+        {
+          "rows": 2000,
+          "rows_per_minute": 174.53670677963697
+        }
+      ],
+      "last100_receipt_seconds_mean": 0.2920723019998695,
+      "last100_receipt_seconds_median": 0.1883083499960776,
+      "evidence": {
+        "path": "artifacts/train40_system_20261005/H8_OPTIMIZATION_BASELINE.json",
+        "sha256": "74a3bd4cfb0fab338286480c18e4eaf7706192b5ed12ddd0393faafea48c6ef6"
+      },
+      "interpretation": "Earlier sequence regions were much faster than the final dense suffix. These rates are not comparable as an implementation-only speedup because event density and sequence complexity changed."
+    }
+  },
+  "reversals_and_failures": [
+    {
+      "item": "Adaptive cache throughput",
+      "outcome": "Correctness retained; acceleration claim rejected after26.31 vs36.75 upm."
+    },
+    {
+      "item": "Passive OpenMP/relation rollout",
+      "outcome": "Rolled back after degraded live throughput; commit alone is not speed evidence."
+    },
+    {
+      "item": "Host pipeline101.59 upm",
+      "outcome": "Not sustained; later same-family reference36.37 upm."
+    },
+    {
+      "item": "Four-thread trial81.71 upm",
+      "outcome": "Historical gate/reversion was host-confounded; later evidence explicitly does not prove intrinsic inferiority."
+    },
+    {
+      "item": "Fast-4 selection window",
+      "outcome": "Invalidated by external E-drive OSError22 and30-update deterministic replay exposure; zero scientific updates lost after replay."
+    },
+    {
+      "item": "Parallel pilot v4",
+      "outcome": "Interrupted by normal peer-exit inventory race at1500 combined; completed via500-update serial tail, so final2000 is segmented."
+    },
+    {
+      "item": "H8 RAM guards",
+      "outcome": "Safe pauses at16GB and20GB preserved cursors; final23GB/four-worker route completed without recorded flow wait or throttle."
+    },
+    {
+      "item": "QoS",
+      "outcome": "Initial uplift did not reproduce materially; original policy restored."
+    }
+  ],
+  "publication_cautions": [
+    "Do not call any result SOTA from these engineering measurements.",
+    "Do not compare sequential windows as randomized causal experiments.",
+    "Do not report isolated microbench speedups as end-to-end speedups.",
+    "Do not describe the ineligible fast-4 window as a valid thread comparison.",
+    "Do not claim the23GB flow controller accelerated H8; it recorded zero wait/throttle in the successful final suffix.",
+    "Do not claim active thermal throttling from a cumulative driver counter when the sampled active flag was false.",
+    "SOTA_EFFICIENCY_RESULT_20261006 is a dated intermediate snapshot and is superseded for later host/H8 runtime status.",
+    "Do not compare the early H8 174.54 rows/min window at row 6942 with the final 68.65 rows/min suffix as a causal regression; the sequence regions and event density differ."
+  ]
+}

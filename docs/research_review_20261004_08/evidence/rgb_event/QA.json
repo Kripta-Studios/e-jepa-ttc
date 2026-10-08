@@ -1,0 +1,20 @@
+{
+  "status": "PASSED",
+  "tests": 16,
+  "ruff": "PASS",
+  "pyright_errors": 0,
+  "review": "RGB sync-front and independent pair support blockers resolved before freeze",
+  "source_commit": "f13f018",
+  "source_sha256": {
+    "operational\\evttc_rgb_transfer\\inputs.py": "498e0bb40bdacaacafb582b870725f461d325a819134d558da4aae46971ec07f",
+    "operational\\evttc_rgb_transfer\\model.py": "814c4a62b15d0c50ff72ef6aae46d5665778b52c34620a1fcfb817509565d2f7",
+    "operational\\evttc_rgb_transfer\\run.py": "f9bb29a949134b18181146f1b25bbd97b6eccf008ea78874a91aa542e0d4a2c5",
+    "operational\\evttc_rgb_transfer\\score.py": "77278cd647fed88c542d68dde4b3b6a0bcf108806a2b3ba6a7ba74ade428e03e",
+    "operational\\evttc_rgb_transfer\\__init__.py": "6092d574279e59acc2c252402f82bcc85a50c929584b259e228bd294ccc4eccb",
+    "tests\\unit\\test_evttc_rgb_inputs.py": "4f6331b34f580057af0168c3193af003c6141323137d5d5e0134f6fcd6e0b8d7",
+    "tests\\unit\\test_evttc_rgb_model.py": "58cd48a6edcdad2f2ba585b540bc612024bf0e3a175304dd460b1c822e1b6873",
+    "tests\\unit\\test_evttc_rgb_score.py": "0e0b1fc21dba9e65738afaa934b60a3d243237e0b02d2a1dbf2e32273e69a457"
+  },
+  "CPU_GPU_real_query_parity_receipt": "CPU_GPU_PARITY.json",
+  "optimizer_updates": 0
+}

@@ -1,5 +1,11 @@
 # E-JEPA-TTC
 
+> Actualización del 8 de octubre de 2026:
+> [informes del 4–8 de octubre](docs/research_review_20261004_08/README.md), con
+> TRAIN40 completo, comparación EvTTC congelada frente a Garl event-only y
+> RGB+eventos, predicciones, costes y evidencia verificable. R1 sigue pendiente
+> en el corte publicado. No se afirma SOTA. Los estados fechados debajo son históricos.
+
 > Estado vigente (2026-08-14): V7 terminó sin candidato. SOFT, T20, CAP-S y el
 > control partial-freeze empeoran A5; C2F queda compatible con efecto nulo. Ninguno
 > preserva geometría. No se ejecutan seeds 13/23 ni ablation JEPA. Un diagnóstico

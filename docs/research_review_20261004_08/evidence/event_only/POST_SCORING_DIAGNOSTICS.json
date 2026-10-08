@@ -1,0 +1,131 @@
+{
+  "role": "post_scoring_descriptive_only_no_sample_or_model_changes",
+  "missing_ground_truth_counts": {
+    "outside_ground_truth_time_range": 78
+  },
+  "garl_top1_absolute_error_share": 0.6420666260906469,
+  "garl_top10_absolute_error_share": 0.7408322354800486,
+  "garl_top1_squared_error_share": 0.9960876324382624,
+  "garl_worst_queries": [
+    {
+      "query_id": "CCRs-side-high:04",
+      "sequence_id": "CCRs-side-high",
+      "anchor_us": "12662742",
+      "truth_ttc_seconds": "2.9355454220999992",
+      "prediction_status": "PREDICTED",
+      "H8_seed7": "2.835541248321533",
+      "H8_seed13": "3.0118770599365234",
+      "H8_seed23": "2.92838978767395",
+      "public_Garl_event_lhr": "4891.31689453125",
+      "absolute_error_seconds": 4888.38134910915
+    },
+    {
+      "query_id": "CCRs-2-low-100-overlap-100:04",
+      "sequence_id": "CCRs-2-low-100-overlap-100",
+      "anchor_us": "6800187",
+      "truth_ttc_seconds": "8.3512898224",
+      "prediction_status": "PREDICTED",
+      "H8_seed7": "7.126160621643066",
+      "H8_seed13": "7.5220489501953125",
+      "H8_seed23": "7.60478401184082",
+      "public_Garl_event_lhr": "-149.71636962890625",
+      "absolute_error_seconds": 158.06765945130624
+    },
+    {
+      "query_id": "CPNA-high:11",
+      "sequence_id": "CPNA-high",
+      "anchor_us": "20752471",
+      "truth_ttc_seconds": "1.3165555515999998",
+      "prediction_status": "PREDICTED",
+      "H8_seed7": "2.744567394256592",
+      "H8_seed13": "2.678422451019287",
+      "H8_seed23": "2.7663991451263428",
+      "public_Garl_event_lhr": "130.5518341064453",
+      "absolute_error_seconds": 129.2352785548453
+    },
+    {
+      "query_id": "CCRm-medium-50-overlap-50:09",
+      "sequence_id": "CCRm-medium-50-overlap-50",
+      "anchor_us": "10250269",
+      "truth_ttc_seconds": "6.027812371",
+      "prediction_status": "PREDICTED",
+      "H8_seed7": "5.421056747436523",
+      "H8_seed13": "5.249000549316406",
+      "H8_seed23": "5.670787811279297",
+      "public_Garl_event_lhr": "120.70808410644531",
+      "absolute_error_seconds": 114.68027173544532
+    },
+    {
+      "query_id": "CPNAO-high:07",
+      "sequence_id": "CPNAO-high",
+      "anchor_us": "14300445",
+      "truth_ttc_seconds": "2.6131260138999997",
+      "prediction_status": "PREDICTED",
+      "H8_seed7": "3.5694215297698975",
+      "H8_seed13": "3.6651499271392822",
+      "H8_seed23": "3.6602630615234375",
+      "public_Garl_event_lhr": "-85.17218017578125",
+      "absolute_error_seconds": 87.78530618968125
+    },
+    {
+      "query_id": "CPNA-low:09",
+      "sequence_id": "CPNA-low",
+      "anchor_us": "20100748",
+      "truth_ttc_seconds": "4.5037876768",
+      "prediction_status": "PREDICTED",
+      "H8_seed7": "7.5668134689331055",
+      "H8_seed13": "7.58218240737915",
+      "H8_seed23": "7.3333234786987305",
+      "public_Garl_event_lhr": "-66.62384033203125",
+      "absolute_error_seconds": 71.12762800883125
+    },
+    {
+      "query_id": "CPNAO-high:00",
+      "sequence_id": "CPNAO-high",
+      "anchor_us": "13050415",
+      "truth_ttc_seconds": "3.4830584631000003",
+      "prediction_status": "PREDICTED",
+      "H8_seed7": "3.9956045150756836",
+      "H8_seed13": "3.941453456878662",
+      "H8_seed23": "3.8672242164611816",
+      "public_Garl_event_lhr": "68.83807373046875",
+      "absolute_error_seconds": 65.35501526736876
+    },
+    {
+      "query_id": "CCRs-1-low-100-overlap-100:08",
+      "sequence_id": "CCRs-1-low-100-overlap-100",
+      "anchor_us": "11300490",
+      "truth_ttc_seconds": "3.392719771999999",
+      "prediction_status": "PREDICTED",
+      "H8_seed7": "2.91741681098938",
+      "H8_seed13": "2.9592840671539307",
+      "H8_seed23": "2.7700865268707275",
+      "public_Garl_event_lhr": "-39.73007583618164",
+      "absolute_error_seconds": 43.12279560818164
+    },
+    {
+      "query_id": "CPNAO-low:05",
+      "sequence_id": "CPNAO-low",
+      "anchor_us": "22500801",
+      "truth_ttc_seconds": "3.578869328000002",
+      "prediction_status": "PREDICTED",
+      "H8_seed7": "3.0109703540802",
+      "H8_seed13": "2.8824381828308105",
+      "H8_seed23": "2.8829901218414307",
+      "public_Garl_event_lhr": "-38.81278991699219",
+      "absolute_error_seconds": 42.39165924499219
+    },
+    {
+      "query_id": "CPNA-high:12",
+      "sequence_id": "CPNA-high",
+      "anchor_us": "20852474",
+      "truth_ttc_seconds": "1.2756603959999997",
+      "prediction_status": "PREDICTED",
+      "H8_seed7": "2.3287458419799805",
+      "H8_seed13": "2.2054998874664307",
+      "H8_seed23": "2.2169225215911865",
+      "public_Garl_event_lhr": "41.463104248046875",
+      "absolute_error_seconds": 40.187443852046876
+    }
+  ]
+}

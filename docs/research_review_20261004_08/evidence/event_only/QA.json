@@ -1,0 +1,19 @@
+{
+  "status": "PASSED",
+  "tests": 21,
+  "ruff": "PASS",
+  "pyright_errors": 0,
+  "source_sha256": {
+    "operational\\evttc_transfer\\inputs.py": "1b7fc0a80226b7f76356c879910fc2ad02fa58b48e929618037b334d7a7c6417",
+    "operational\\evttc_transfer\\models.py": "cb13b23543fb569706fafc23124ee5b1035a191cc378e624b5406a6db105d21f",
+    "operational\\evttc_transfer\\run.py": "a3f879bfc5cd36b4a0e32a27da8f05bb01a2581146e9f7c212a9bc58f691e662",
+    "operational\\evttc_transfer\\score.py": "37605ac8738484ad04ec3f9d9f4996d5c192330a6dcd5fbe5c8c08631f6e00cc",
+    "operational\\evttc_transfer\\__init__.py": "900fd5bf07d1f101c03496b9473b15d8818f7cb0320159c6dc54208b2d90a551",
+    "tests\\unit\\test_evttc_transfer_inputs.py": "3ff33575d4b574eff3831a92dbd8e30c610fed4dbb7957110abbbac994ee1422",
+    "tests\\unit\\test_evttc_transfer_models.py": "4a9501480a935110634899ccb4ec116fa734102e2d7f65b98153160bc17ee76d",
+    "tests\\unit\\test_evttc_transfer_score.py": "e89a884b974c2798daa4bf79d1f7be5c80526c71f2d542b741ce307934d4264b"
+  },
+  "CPU_saved_TRAIN40_head_phase_and_TTC_parity": "EXACT seeds7,13,23 ordinal0",
+  "GPU_before_this_pilot": false,
+  "optimizer_updates": 0
+}
