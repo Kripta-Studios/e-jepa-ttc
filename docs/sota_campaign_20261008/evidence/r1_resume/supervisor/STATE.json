@@ -1,5 +1,5 @@
 {
-  "checked_utc": "2026-10-08T19:53:46.935461+00:00",
+  "checked_utc": "2026-10-08T19:58:09.830205+00:00",
   "optimizer_updates": 0,
   "owners": [
     {
@@ -9,8 +9,8 @@
         "operational.sota_eval.publication",
         "--require-complete"
       ],
-      "create_time": 1791489203.681986,
-      "pid": 18540
+      "create_time": 1791489473.8149035,
+      "pid": 16036
     },
     {
       "command": [
@@ -19,8 +19,8 @@
         "operational.sota_eval.publication",
         "--require-complete"
       ],
-      "create_time": 1791489203.6710355,
-      "pid": 44096
+      "create_time": 1791489473.804512,
+      "pid": 42124
     }
   ],
   "status": "WAIT_GPU_QUEUE"

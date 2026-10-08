@@ -66,18 +66,18 @@
       "detail": "Resume state is reported literally and never promoted by inference",
       "name": "r1_measurement",
       "path": "${REPO}\\artifacts\\sota_campaign_20261008\\R1_STATUS.json",
-      "status": "WAIT_TRANSIENT_BACKOFF"
+      "status": "RUNNING"
     }
   ],
   "claim": "No SOTA claim; measured evidence only",
-  "generated_table_sha256": "449fff9aef5208f8a23b848f0d634cecb80106c2b9a0da1633959afad5aac73b",
+  "generated_table_sha256": "811920a4116387773b91cf8c681f9484c762251410defcb7a92070236e9e38d5",
   "generated_tables": {
     "REGENERATION.json": "986eb7f65fe7091d90fbe4d8332a49421527262c03e0651a653274ce46b302bf",
     "RESULTS.json": "9f9af9e280c5501fd0f65800ed9f47887049472c315084ab3f6336e6cbae3200",
     "baseline_conditional_metrics.csv": "70e25229fa5a2714d0370c98203d4d303f815dbf0f861cfc94a3710438d91601",
     "baseline_coverage.csv": "3eb10d4b1713e0289eb15df7dad6dcac88fdb65d7aaa65d47274596518fc4d4b",
     "baseline_failures.csv": "7c33049254121183c7422224be9645e4b926fcd86b4eecf09f7fff5aaf410419",
-    "branch_status.csv": "449fff9aef5208f8a23b848f0d634cecb80106c2b9a0da1633959afad5aac73b",
+    "branch_status.csv": "811920a4116387773b91cf8c681f9484c762251410defcb7a92070236e9e38d5",
     "metrics.csv": "28314785908c811236c24fce3a1c6b34d54faa322ecc86fdf40477ad2fc8c5b6",
     "system_cost.csv": "3f2d33c22ab1c7ca7f8099a9a41dc4f7c8e752f6e4f8911817929e14ad7cea3e"
   },

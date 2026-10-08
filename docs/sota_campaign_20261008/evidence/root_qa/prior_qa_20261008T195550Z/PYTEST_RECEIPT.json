@@ -26,7 +26,7 @@
     "-q",
     "--junitxml=${REPO}\\artifacts\\sota_campaign_20261008\\root_qa\\PYTEST_JUNIT.xml"
   ],
-  "finished_utc": "2026-10-08T19:56:10.847671+00:00",
+  "finished_utc": "2026-10-08T19:52:30.550655+00:00",
   "returncode": 0,
   "source_hashes": {
     "operational\\sota_eval\\__init__.py": "e213590f92e24a73e8aef74f13b0fda25c8535d0852682efa60c9f11fd443956",
@@ -46,7 +46,7 @@
     "operational\\sota_eval\\outlier_audit.py": "b7298883750bf86999f91342768c35520fc67ceba5e7ab32b01fcc1181330ac0",
     "operational\\sota_eval\\population.py": "c8532b973aa2bc58ce2ac98cfa27406477618d09ae95fb494ad4bc3181db9f2f",
     "operational\\sota_eval\\prefetch.py": "3333f4aa07aeade3743083169057e8ecedddb9e21a1b43296555cdc644927200",
-    "operational\\sota_eval\\publication.py": "d5a6b6dff6498fb0d058d3b06c160170159e85c96e6edf709eb4c67467c416a2",
+    "operational\\sota_eval\\publication.py": "4bc9d793be6358c929885cecdbec4d17793e0b0efd26caa948f13891420b7f9d",
     "operational\\sota_eval\\r1_resume.py": "e5712a5081285a3b33be469db2cbf9dcbcee866cbfeabf9646bc571d80db1e6a",
     "operational\\sota_eval\\r1_resume_supervisor.py": "db47301fc3f53ed124ca830d41e2628d2974d218f6a4c11a75d65756f4f83507",
     "operational\\sota_eval\\reuse.py": "099c8b466379c4846149f83c1f5b1640710092a5bc38c495dd113fe00db69f81",
@@ -72,5 +72,5 @@
     "tests\\unit\\test_sota_r1_resume_supervisor.py": "dd2222a78079a71ceaa5111dc33c8ad0d1aba70150568a1bbce49a4d666b7dd7",
     "tests\\unit\\test_sota_reuse.py": "64b10731d918416092fd9bc7fbfc4049974ac41e07e17f7d46d8977eeb1d1e00"
   },
-  "started_utc": "2026-10-08T19:55:50.274021+00:00"
+  "started_utc": "2026-10-08T19:52:09.978084+00:00"
 }

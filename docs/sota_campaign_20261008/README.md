@@ -14,7 +14,7 @@ Este directorio es una vista sanitizada y regenerable de artefactos medidos. No 
 | `system_cost` | `COMPLETE` | Fixed-eight host observation; warm-cache and architecture contexts differ |
 | `baseline_failure_inventory` | `COMPLETE_DIAGNOSTIC` | Development-32 coverage diagnostic; scorable-subset metrics remain conditional |
 | `official_contract` | `METADATA_READY_OFFICIAL_REPRODUCTION_BLOCKED_CONTRACT_UNRESOLVED` | Metadata evidence may be complete while official reproduction remains blocked |
-| `r1_measurement` | `WAIT_TRANSIENT_BACKOFF` | Resume state is reported literally and never promoted by inference |
+| `r1_measurement` | `RUNNING` | Resume state is reported literally and never promoted by inference |
 
 ## Alcance científico
 
