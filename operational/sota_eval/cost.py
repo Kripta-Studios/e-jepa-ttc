@@ -2,7 +2,7 @@
 
 The module is deliberately import-light.  Torch, NumPy, model wrappers, and
 dataset preparation code are loaded only inside :func:`run`, after the
-manifest, source freeze, output lease, and exclusive-GPU preflight pass.
+manifest, source freeze, output lease, and project-worker GPU preflight pass.
 """
 
 from __future__ import annotations
@@ -13,6 +13,7 @@ import csv
 import hashlib
 import importlib
 import json
+import locale
 import math
 import os
 import platform
@@ -315,16 +316,47 @@ class _Lease:
 
 
 def _nvidia(arguments: Sequence[str]) -> dict[str, Any]:
+    """Run ``nvidia-smi`` and decode its native Windows bytes without text pipes.
+
+    ``PYTHONUTF8=1`` forces :mod:`subprocess` text pipes to UTF-8 even though
+    ``nvidia-smi`` emits paths using the active Windows ANSI code page.  Reading
+    bytes prevents the background pipe reader from losing the result to a
+    ``UnicodeDecodeError``.  Every candidate decoder is strict: undecodable
+    output makes the probe unavailable and therefore preserves fail-closed
+    preflight behavior.
+    """
+
+    def decode(raw: bytes) -> str:
+        candidates = ("utf-8", locale.getencoding(), "mbcs", "cp1252")
+        attempted: set[str] = set()
+        failure: UnicodeDecodeError | None = None
+        for encoding in candidates:
+            normalized = encoding.lower()
+            if normalized in attempted:
+                continue
+            attempted.add(normalized)
+            try:
+                return raw.decode(encoding, errors="strict")
+            except LookupError:
+                continue
+            except UnicodeDecodeError as exc:
+                failure = exc
+        if failure is not None:
+            raise failure
+        raise UnicodeError("no usable decoder for nvidia-smi output")
+
     try:
         completed = subprocess.run(
-            ["nvidia-smi", *arguments], check=False, capture_output=True, text=True, timeout=2.0
+            ["nvidia-smi", *arguments], check=False, capture_output=True, timeout=2.0
         )
-    except (OSError, subprocess.TimeoutExpired) as exc:
+        stdout = decode(completed.stdout)
+        decode(completed.stderr)
+    except (OSError, subprocess.TimeoutExpired, UnicodeError) as exc:
         return {"available": False, "error_type": type(exc).__name__}
     return {
         "available": completed.returncode == 0,
         "returncode": completed.returncode,
-        "rows": [line.strip() for line in completed.stdout.splitlines() if line.strip()],
+        "rows": [line.strip() for line in stdout.splitlines() if line.strip()],
     }
 
 
@@ -341,8 +373,97 @@ def _python_entrypoint(name: str, arguments: Sequence[str]) -> str | None:
     return None
 
 
+_WDDM_DESKTOP_PROCESS_NAMES = frozenset(
+    name.casefold()
+    for name in (
+        "dwm.exe",
+        "explorer.exe",
+        "LockApp.exe",
+        "msedgewebview2.exe",
+        "jabra-direct.exe",
+        "firefox.exe",
+        "RadeonSoftware.exe",
+        "WindowsTerminal.exe",
+        "CrossDeviceResume.exe",
+        "SearchHost.exe",
+        "StartMenuExperienceHost.exe",
+        "PowerToys.QuickAccess.exe",
+        "PowerToys.exe",
+        "ms-teams.exe",
+        "TextInputHost.exe",
+        "PhoneExperienceHost.exe",
+        "SystemSettings.exe",
+        "PowerToys.ColorPickerUI.exe",
+        "PowerToys.FancyZones.exe",
+        "Microsoft.CmdPal.UI.exe",
+        "PowerToys.PowerLauncher.exe",
+        "AMDRSSrcExt.exe",
+        "mpc-hc64.exe",
+        "PowerToys.PowerOCR.exe",
+        "ChatGPT Classic.exe",
+        "ShellExperienceHost.exe",
+        "ApplicationFrameHost.exe",
+        "PrintDialog.exe",
+        "Notepad.exe",
+        "ShellHost.exe",
+        "Discord.exe",
+    )
+)
+
+
+def _classify_nvidia_clients(
+    rows: Sequence[str], process_names: Mapping[int, str], own_pid: int
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    """Classify WDDM client rows without treating desktop clients as experiments."""
+    clients: list[dict[str, Any]] = []
+    blockers: list[dict[str, Any]] = []
+    for raw in rows:
+        fields = [field.strip() for field in raw.split(",", 2)]
+        try:
+            pid = int(fields[0])
+        except (IndexError, ValueError):
+            item = {"raw": raw, "classification": "unresolved_nvidia_client"}
+            clients.append(item)
+            blockers.append(item)
+            continue
+        reported_name = fields[1] if len(fields) > 1 else ""
+        observed_name = process_names.get(pid)
+        normalized = (observed_name or reported_name).casefold()
+        if pid == own_pid:
+            classification = "current_cost_worker"
+        elif observed_name is None:
+            classification = "unresolved_nvidia_client"
+        elif "python" in normalized:
+            classification = "other_python_gpu_client"
+        elif normalized in _WDDM_DESKTOP_PROCESS_NAMES:
+            classification = "wddm_desktop_environment"
+        else:
+            classification = "other_native_gpu_client"
+        item = {
+            "pid": pid,
+            "reported_process": reported_name,
+            "observed_process_name": observed_name,
+            "used_gpu_memory_reported": fields[2] if len(fields) > 2 else None,
+            "classification": classification,
+        }
+        clients.append(item)
+        if classification in {
+            "unresolved_nvidia_client",
+            "other_python_gpu_client",
+            "other_native_gpu_client",
+        }:
+            blockers.append(item)
+    return clients, blockers
+
+
 def exclusive_gpu_preflight() -> dict[str, Any]:
-    """Reject existing compute clients before this process imports Torch."""
+    """Require one project GPU worker while recording ambient WDDM clients.
+
+    Windows WDDM exposes ordinary desktop C+G clients through NVIDIA's client
+    inventory.  They are environmental contention, not proof of another model
+    worker.  Python clients, unapproved native clients, and unresolved rows
+    remain fail-closed.
+    """
     psutil: Any = importlib.import_module("psutil")
     module_roles = {
         "operational.sota_eval.prefetch": "event_only_prefetch",
@@ -357,9 +478,11 @@ def exclusive_gpu_preflight() -> dict[str, Any]:
         "operational.efficient_context.r1_profile": "r1",
     }
     conflicts: list[dict[str, int | str]] = []
+    process_names: dict[int, str] = {}
     for process in psutil.process_iter(["pid", "name"]):
         try:
             name = str(process.info.get("name") or "").lower()
+            process_names[int(process.pid)] = name
             if process.pid == os.getpid() or "python" not in name:
                 continue
             arguments = [str(item) for item in process.cmdline()]
@@ -406,10 +529,9 @@ def exclusive_gpu_preflight() -> dict[str, Any]:
     if not compute["available"]:
         raise RuntimeError("nvidia-smi compute-process preflight unavailable")
     rows = list(compute["rows"])
-    if rows:
-        raise RuntimeError(
-            f"exclusive benchmark requires zero existing GPU compute clients; got {len(rows)}"
-        )
+    clients, client_blockers = _classify_nvidia_clients(rows, process_names, os.getpid())
+    if client_blockers:
+        raise RuntimeError(f"unapproved NVIDIA client count: {len(client_blockers)}")
     hardware = _nvidia(
         (
             "--query-gpu=name,driver_version,memory.total,memory.free,temperature.gpu,"
@@ -426,7 +548,11 @@ def exclusive_gpu_preflight() -> dict[str, Any]:
     if not identity["available"] or len(identity["rows"]) != 1:
         raise RuntimeError("stable NVIDIA hardware identity unavailable")
     return {
-        "compute_clients": 0,
+        "gpu_execution_scope": "one_project_gpu_worker_on_wddm_desktop",
+        "physical_gpu_exclusive": False,
+        "latency_interpretation": "observational_with_recorded_desktop_gpu_contention",
+        "nvidia_client_count": len(clients),
+        "nvidia_clients": clients,
         "project_gpu_conflicts": 0,
         "hardware_identity": identity,
         "hardware_telemetry": hardware,
@@ -656,6 +782,11 @@ def run(
             "h8_prediction": "system_three_heads",
             "precision": "float32_no_tf32",
             "cache_state": "warm_after_explicit_per-query_warmups",
+            "gpu_execution_scope": "one_project_gpu_worker_on_wddm_desktop",
+            "physical_gpu_exclusive": False,
+            "latency_statistics": ["p50", "p95"],
+            "desktop_gpu_clients": "recorded_at_preflight_as_environmental_contention",
+            "background_gpu_telemetry": "nvidia_smi_snapshots_before_and_after_measurement",
         },
         "preprocessing_disclosure": {
             SYSTEMS[0]: "native frozen H8 history8 preparation; existing helper also prepares the "
@@ -827,6 +958,8 @@ def run(
                 ),
                 "interpretation": [
                     "Measured on this host only; no comparison to published hardware latency.",
+                    "One project GPU worker ran on a WDDM desktop; physical GPU exclusivity "
+                    "is not claimed and ambient NVIDIA clients are recorded in preflight.",
                     "Architecture contexts differ by design and are reported, not normalized.",
                     "Sequential execution excludes model setup and includes warm-cache "
                     "preparation.",

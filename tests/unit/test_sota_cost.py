@@ -5,6 +5,7 @@ import csv
 import hashlib
 import math
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -154,6 +155,68 @@ def test_gpu_guard_uses_real_entrypoint_not_ancestor_text() -> None:
     )
     assert script is not None and script.endswith("operational/sota_eval/prefetch.py")
     assert cost._python_entrypoint("powershell.exe", ["operational.sota_eval.fcwd_run"]) is None
+
+
+def test_wddm_desktop_clients_are_recorded_without_claiming_exclusivity() -> None:
+    rows = [
+        "2764, Insufficient Permissions, [N/A]",
+        "4000, C:/Program Files/Firefox/firefox.exe, [N/A]",
+    ]
+    clients, blockers = cost._classify_nvidia_clients(
+        rows, {2764: "dwm.exe", 4000: "firefox.exe"}, own_pid=999
+    )
+    assert blockers == []
+    assert [item["classification"] for item in clients] == [
+        "wddm_desktop_environment",
+        "wddm_desktop_environment",
+    ]
+    assert clients[0]["reported_process"] == "Insufficient Permissions"
+    assert clients[0]["observed_process_name"] == "dwm.exe"
+
+
+def test_wddm_unknown_or_python_gpu_client_remains_fail_closed() -> None:
+    clients, blockers = cost._classify_nvidia_clients(
+        [
+            "7000, python.exe, 2048",
+            "8000, mystery.exe, [N/A]",
+            "9000, native_training.exe, 4096",
+        ],
+        {7000: "python.exe", 9000: "native_training.exe"},
+        own_pid=999,
+    )
+    assert [item["classification"] for item in blockers] == [
+        "other_python_gpu_client",
+        "unresolved_nvidia_client",
+        "other_native_gpu_client",
+    ]
+    assert blockers == clients
+
+
+def test_nvidia_decodes_native_windows_bytes_without_text_pipe(monkeypatch) -> None:
+    def fake_run(*_args, **kwargs):
+        assert kwargs["capture_output"] is True
+        assert "text" not in kwargs
+        return SimpleNamespace(
+            returncode=0,
+            stdout="C:/Users/Álvaro/python.exe, 1024\r\n".encode("cp1252"),
+            stderr=b"",
+        )
+
+    monkeypatch.setattr(cost.locale, "getencoding", lambda: "cp1252")
+    monkeypatch.setattr(cost.subprocess, "run", fake_run)
+    assert cost._nvidia(("--query-compute-apps=pid",)) == {
+        "available": True,
+        "returncode": 0,
+        "rows": ["C:/Users/Álvaro/python.exe, 1024"],
+    }
+
+
+def test_nvidia_nonzero_failure_remains_fail_closed(monkeypatch) -> None:
+    response = SimpleNamespace(returncode=9, stdout=b"", stderr=b"driver failure")
+    monkeypatch.setattr(cost.subprocess, "run", lambda *_args, **_kwargs: response)
+    nonzero = cost._nvidia(())
+    assert nonzero["available"] is False
+    assert nonzero["returncode"] == 9
 
 
 def test_aggregate_retains_all_measured_observations() -> None:
