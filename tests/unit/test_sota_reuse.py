@@ -65,6 +65,17 @@ def test_immutable_fragment_rejects_existing_difference(tmp_path: Path) -> None:
         reuse._write_immutable_json(path, {"status": "REUSED", "value": 2})
 
 
+def test_reuse_rejects_either_nested_root(tmp_path: Path) -> None:
+    parent = tmp_path / "source"
+    child = parent / "expanded"
+    parent.mkdir()
+    child.mkdir()
+    with pytest.raises(ValueError, match="separate"):
+        reuse.reuse_predictions(parent, child)
+    with pytest.raises(ValueError, match="separate"):
+        reuse.reuse_predictions(child, parent)
+
+
 def test_source_verification_detects_fragment_tamper(tmp_path: Path, monkeypatch) -> None:
     root = tmp_path / "source"
     predictions = root / "predictions"

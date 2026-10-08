@@ -215,7 +215,11 @@ def reuse_predictions(old_root: Path, expanded_root: Path) -> dict[str, Any]:
     """Publish verified source predictions under the expanded manifest binding."""
     old_root = old_root.resolve()
     expanded_root = expanded_root.resolve()
-    if old_root == expanded_root or old_root in expanded_root.parents:
+    if (
+        old_root == expanded_root
+        or old_root in expanded_root.parents
+        or expanded_root in old_root.parents
+    ):
         raise ValueError("expanded outputs must be separate from the historical source run")
     new_manifest_path = expanded_root / "QUERY_MANIFEST.json"
     new_manifest = _read(new_manifest_path)
