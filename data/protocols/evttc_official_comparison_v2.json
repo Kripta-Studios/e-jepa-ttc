@@ -1,0 +1,258 @@
+{
+  "schema": "evttc_official_comparison_v2",
+  "observed_utc": "2026-10-08T18:04:38.748705+00:00",
+  "status": "METADATA_READY_OFFICIAL_REPRODUCTION_BLOCKED_CONTRACT_UNRESOLVED",
+  "user_campaign_authorized": true,
+  "authorization_is_not_the_blocker": true,
+  "official_reproduction_ready": false,
+  "independent_confirmation_ready": false,
+  "protected_payload_access_performed": false,
+  "protected_payload_access_gate": "Only after an explicit frozen evaluation contract; no Stage76 or sealed test payload was inspected here.",
+  "protocols": {
+    "garl_table_vi_three": {
+      "source": "https://arxiv.org/html/2603.16303v1",
+      "locator": "Table VI and section VII-C1; metric section VII-A",
+      "documented_labels": [
+        "CCRs2-medium",
+        "CCRs2-high",
+        "CCRm-medium"
+      ],
+      "published_garl_rte_percent": [
+        8.31,
+        10.56,
+        12.93
+      ],
+      "published_average_rte_percent": 10.6,
+      "modality": "RGB plus events",
+      "reported_transfer": "eAP-trained, EvTTC without fine-tuning",
+      "average_is_consistent_with_equal_three_row_mean": true,
+      "exact_query_weighting_verified": false,
+      "checkpoint_digest_bound_by_paper": null,
+      "exact_official_sequence_file_map": null
+    },
+    "evttc_benchmark_ten": {
+      "source": "https://nail-hnu.github.io/EvTTC/competition/",
+      "paper_source": "https://arxiv.org/html/2412.05053v2",
+      "labels": [
+        "CCRs1-low",
+        "CCRs1-medium",
+        "CCRs1-high",
+        "CCRs2-low",
+        "CCRs2-medium",
+        "CCRs2-high",
+        "CCRm-low",
+        "CCRm-medium",
+        "Slider-750",
+        "Slider-1000"
+      ],
+      "documented_scope": "Eight road sequences plus two Slider sequences; distinct from the Garl three-row table and local dev32.",
+      "metadata_only": true,
+      "download_links_followed": false,
+      "leaderboard_submission_performed": false,
+      "official_complete_scorer_bound": false
+    },
+    "react_in_domain": {
+      "source": "https://arxiv.org/html/2609.19204v1",
+      "locator": "Sections III-E/F, Table II caption, section IV-E1",
+      "documented": "Trained on EvTTC; TableII uses in-domain validation and full-field event input; five seeds. RTE averaged per sequence. ROI crop ablation is separate.",
+      "table_ii_garl_reference_percent": 9.44,
+      "table_ii_react_fp32_percent": 9.59,
+      "table_ii_react_reported_spread": 0.74,
+      "not_same_reported_garl_number_as_table_vi": true,
+      "exact_train_validation_ids_or_baseline_query_alignment_bound": false,
+      "comparability": "Literature context only until split, checkpoint and query identity are resolved; do not combine its numbers with TableVI or our development scores."
+    }
+  },
+  "metric_contract": {
+    "documented_garl_pointwise_rte_percent": "abs(predicted_ttc - ground_truth_ttc) / abs(ground_truth_ttc) * 100",
+    "react_equation_denominator": "ground_truth_ttc, with evaluated cases described as positive/collision cases",
+    "local_explicit_scorer": "operational/sota_eval/scoring.py",
+    "local_scorer_ready": true,
+    "local_policy_not_official_certification": {
+      "eligibility": "GT finite and !=0; no prediction-dependent selection",
+      "coverage": "Keep rows without GT, count prediction failures; full-cohort score unavailable on failure",
+      "micro_and_macro_sequence": "Report both explicitly; no eAP bin weighting",
+      "bootstrap": "Paired whole sequences or verified recording groups, fixed seed"
+    },
+    "official_aggregation_and_invalid_rules": null,
+    "invented_official_thresholds": false,
+    "historical_inverse_ttc_relative_alias_is_not_rte": true
+  },
+  "lineage": {
+    "revisions": {
+      "model": "b676fcdaf26c04bcf896cdb2b208c9c424e8462a",
+      "dataset": "9f477b5c4d5f9cdc32e7cc4bb3b186301979d6b5",
+      "github": "256661242b8a7f5e56aa3c1c02348b30f6e89de6"
+    },
+    "hf_public_train_count": 40,
+    "github_train_count": 46,
+    "github_extra_training_ids": [
+      "AUIkq1ZJRv",
+      "CEOFFwY7c8",
+      "F6XHHaiwJg",
+      "OwA5qqkewc",
+      "mXRa2Ux9ok",
+      "uXfPJNOXVY"
+    ],
+    "hf_train_not_in_github": [],
+    "checkpoint_candidates": [
+      {
+        "name": "paper_ours_full.pth",
+        "path": "paper_ours_full.pth",
+        "config": "configs/ablation/ours_full.yaml",
+        "bytes": 973290993,
+        "sha256": "e96a613a4fb877a1969d57ab562cadba89961fb202f5f2f2f0658f333a0d443e"
+      },
+      {
+        "name": "paper_event_only_lhr.pth",
+        "path": "paper_event_only_lhr.pth",
+        "config": "configs/ablation/event_lhr.yaml",
+        "bytes": 99018365,
+        "sha256": "fcaf9be47e2dafc6f73c6c3ebd102595ae06119dcae78aea698a42627b2b4fef"
+      }
+    ],
+    "publisher_release_metadata_fields": [
+      "checkpoints",
+      "configs",
+      "metrics",
+      "repo_id"
+    ],
+    "train40_checkpoint_genealogy_verified": false,
+    "sha_identifies_bytes_not_training_membership": true
+  },
+  "development_overlap": {
+    "dev32_sequence_count": 32,
+    "dev32_sequences": [
+      "CCRm-low-0-overlap-0",
+      "CCRm-low-100-overlap-100",
+      "CCRm-low-50-overlap-50",
+      "CCRm-medium-0-overlap-0",
+      "CCRm-medium-100-overlap-100",
+      "CCRm-medium-50-overlap-50",
+      "CCRs-1-high-0-overlap-0",
+      "CCRs-1-high-100-overlap-100",
+      "CCRs-1-high-50-overlap-50",
+      "CCRs-1-low-0-overlap-0",
+      "CCRs-1-low-100-overlap-100",
+      "CCRs-1-low-50-overlap-50",
+      "CCRs-1-medium-0-overlap-0",
+      "CCRs-1-medium-100-overlap-100",
+      "CCRs-1-medium-50-overlap-50",
+      "CCRs-2-high-100-overlap-100",
+      "CCRs-2-low-100-overlap-100",
+      "CCRs-2-medium-100-overlap-100",
+      "CCRs-3-low-100-overlap-100",
+      "CCRs-3-medium-100-overlap-100",
+      "CCRs-side-high",
+      "CCRs-side-low",
+      "CCRs-side-medium",
+      "CPLA-high",
+      "CPLA-low",
+      "CPLA-medium",
+      "CPNA-high",
+      "CPNA-low",
+      "CPNA-medium",
+      "CPNAO-high",
+      "CPNAO-low",
+      "CPNAO-medium"
+    ],
+    "declared_local_cv_role": "development_model_selection",
+    "existing_cv_benchmark10_opened": false,
+    "candidate_mapping_status": "NAME_FAMILY_SPEED_ONLY_NOT_FILE_OR_TEMPORAL_IDENTITY",
+    "candidate_matches": {
+      "CCRs1-low": [
+        "CCRs-1-low-0-overlap-0",
+        "CCRs-1-low-100-overlap-100",
+        "CCRs-1-low-50-overlap-50"
+      ],
+      "CCRs1-medium": [
+        "CCRs-1-medium-0-overlap-0",
+        "CCRs-1-medium-100-overlap-100",
+        "CCRs-1-medium-50-overlap-50"
+      ],
+      "CCRs1-high": [
+        "CCRs-1-high-0-overlap-0",
+        "CCRs-1-high-100-overlap-100",
+        "CCRs-1-high-50-overlap-50"
+      ],
+      "CCRs2-low": [
+        "CCRs-2-low-100-overlap-100"
+      ],
+      "CCRs2-medium": [
+        "CCRs-2-medium-100-overlap-100"
+      ],
+      "CCRs2-high": [
+        "CCRs-2-high-100-overlap-100"
+      ],
+      "CCRm-low": [
+        "CCRm-low-0-overlap-0",
+        "CCRm-low-100-overlap-100",
+        "CCRm-low-50-overlap-50"
+      ],
+      "CCRm-medium": [
+        "CCRm-medium-0-overlap-0",
+        "CCRm-medium-100-overlap-100",
+        "CCRm-medium-50-overlap-50"
+      ],
+      "Slider-750": [],
+      "Slider-1000": []
+    },
+    "confirmed_physical_recording_overlap": null,
+    "independent_groups": null,
+    "no_new_holdout_claim": true,
+    "slider_absent_from_dev32_manifest": true
+  },
+  "dependencies": [
+    {
+      "id": "OFFICIAL_RECORDING_AND_QUERY_IDENTITY",
+      "status": "UNRESOLVED",
+      "required": "Official file hashes/revisions, source recording IDs, crop start/end times and evaluation query timestamps for each benchmark label, including overlap/run variant.",
+      "reason": "A short scenario label does not identify the recording or queried intervals; dev32 naming candidates are not proven mappings."
+    },
+    {
+      "id": "CAMERA_ROI_AND_AVAILABILITY",
+      "status": "UNRESOLVED",
+      "required": "Exact camera/lens for Garl TableVI; calibration, ROI sensor/projection, rectification/resize and annotation/detector availability rules; whether GT boxes/depth are used.",
+      "reason": "Website distinguishes 8-mm/16-mm settings. Existing dev32 left-camera rotation-only ROI protocol is a local approximation, not a certified official adapter."
+    },
+    {
+      "id": "TEMPORAL_TARGET_AND_SCORER_CONTRACT",
+      "status": "UNRESOLVED",
+      "required": "Reference timestamp, history/event duration, RGB pairing and actual delta_t, GT alignment/interpolation, evaluated TTC range, zero/missing/failed prediction rules, sequence aggregation and runtime boundary.",
+      "reason": "The pointwise RTE equation is documented; a complete executable official scoring/coverage contract has not been bound. Do not import eAP bins or choose exclusions from predictions."
+    },
+    {
+      "id": "CHECKPOINT_TO_TABLEVI_BINDING",
+      "status": "UNRESOLVED",
+      "required": "Author-linked SHA-256 checkpoint and exact code/config revision for TableVI, including whether released paper_ours_full.pth is that model.",
+      "reason": "HF identifies a primary full checkpoint and its config/hash, but no inspected document binds this digest to the TableVI evaluation."
+    },
+    {
+      "id": "CHECKPOINT_TRAINING_AND_SELECTION_LINEAGE",
+      "status": "UNRESOLVED",
+      "required": "Per-checkpoint sequence manifests for all training, branch pretraining, checkpoint selection, validation and calibration; explain public TRAIN40 versus GitHub TRAIN46 and any EvTTC use.",
+      "reason": "Paper states eAP training and no EvTTC fine-tuning; this is not a checkpoint-specific exclusion manifest. Six extra GitHub IDs are training-listed, not new holdouts."
+    },
+    {
+      "id": "INDEPENDENT_GROUPS_AND_FREEZE",
+      "status": "UNRESOLVED",
+      "required": "Map official clips to physical recording/session groups and prior dev32 usage; freeze models, adapters, queries, target eligibility and scorer before protected evaluation access.",
+      "reason": "Local dev32 has a development-model-selection protocol and observed evaluations. Crops of those recordings cannot become independent by renaming them."
+    }
+  ],
+  "next_actions": [
+    "Request the four concise author clarifications in AUTHORS_DRAFT.txt; draft remains unsent.",
+    "Resolve recording/clip identity using metadata or publisher hash maps before declaring independence.",
+    "Freeze the completed query, adapter, checkpoint and scorer contract; then proceed within authorized evaluation scope.",
+    "Keep local development comparisons running independently with explicit exploratory status."
+  ],
+  "local_source_sha256": {
+    "data/manifests/evttc_all32_local.yaml": "607f8faa2aebeaa95ac7b61fb5bbcbe105c9e3606152ee6584e2e8cb4621722c",
+    "data/splits/evttc32_grouped_cv.yaml": "9c8ac450d6cfa8d0a70e0e9b6e67da221be7f1ddd5188aad39244562015e0f12",
+    "data/splits/evttc_all32_article_family_holdout.yaml": "80ac74500052a479e50bbeac7e8488dcf15baab654828f0a3288ad3dd5c0e376",
+    "artifacts/evttc_transfer_20261008/QUERY_MANIFEST.json": "d9fe973c37f9e97ac7cb8a46de01bfe461ccc2672328bfa3e51b853763589bd5",
+    "artifacts/efficient_context_20261004/resumption_20261008/evaluation/AUTHORS_DRAFT.txt": "7df717fcffdcf27f080c85de0037345bf829a45335355f97e6a4b9b8bcf07593"
+  },
+  "public_source_receipts": "artifacts/sota_campaign_20261008/official_contract/SOURCES.json",
+  "updates": 0
+}

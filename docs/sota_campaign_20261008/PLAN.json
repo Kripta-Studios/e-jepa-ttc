@@ -1,0 +1,43 @@
+{
+  "schema": "sota_evaluation_execution_plan_v1",
+  "authorization": "User requested full implementation, execution, coordinated subagents, reports and GitHub push after the research roadmap.",
+  "base_commit": "b46d40bf1f38ae3e3ea201d58b79391fa475ca3c",
+  "objective": "Establish reproducible, protocol-specific evidence of comparative accuracy and cost; SOTA is an outcome to test, not an assumed result.",
+  "historical_roots": ["docs/research_review_20261004_08", "artifacts/evttc_transfer_20261008", "artifacts/evttc_rgb_transfer_20261008", "artifacts/train40_system_20261005"],
+  "new_outputs": "artifacts/sota_campaign_20261008",
+  "publication": "docs/sota_campaign_20261008",
+  "constraints": {
+    "optimizer_updates_this_evaluation": 0,
+    "no_garl_retraining": true,
+    "preserve_existing_checkpoints_and_predictions": true,
+    "no_global_environment_upgrade": true,
+    "no_model_selection_on_new_evaluation": true,
+    "retain_all_three_existing_heads": true,
+    "no_posthoc_error_exclusion": true,
+    "protected_stage70_76_unchanged": true,
+    "sealed_evttc_payloads_closed_during_contract_audit": true,
+    "no_submissions": true,
+    "ram_headroom_gib": 2,
+    "minimum_disk_headroom_gb": 10,
+    "fcwd_download_budget_gb": 10,
+    "heavy_gpu_jobs": 1,
+    "cost_measurements_require_exclusive_gpu": true
+  },
+  "phases": [
+    {"id": "P0", "work": "Inventory, authorization delta, active-run and resource audit", "gate": "Historical outputs isolated; plan saved", "owner": "root"},
+    {"id": "P1", "work": "Explicit EvTTC metrics and paired sequence/group statistics", "gate": "Hand-calculated and failure-policy tests; existing CSV recalculated", "owner": "eval_dependency"},
+    {"id": "P2", "work": "Label-free expanded development population and camera audit", "gate": "Manifest, source hashes, causal and identity tests", "owner": "evttc_inputs"},
+    {"id": "P3", "work": "Garl preprocessing and native output parity audit", "gate": "Independent reference evidence or explicitly scoped missing dependency", "owner": "evttc_models"},
+    {"id": "P4", "work": "CMax and STRTTC reference audit, resumable common-query runner", "gate": "Declare every departure from the published methods; execute fixed pilot", "owner": "efficiency_audit"},
+    {"id": "P5", "work": "FCWD acquisition, schema and historical-exposure audit", "gate": "Data integrity and label-free adapter contract before scoring", "owner": "pilot_audit"},
+    {"id": "P6", "work": "Freeze and execute admissible inference jobs; separate scoring", "gate": "Fragment identities and hashes, coverage, no fitting or silent failures", "owner": "root"},
+    {"id": "P7", "work": "Exclusive final-system cost measurement and R1 status", "gate": "Hardware/process evidence; keep R1 distinct from TRAIN40 system cost", "owner": "root"},
+    {"id": "P8", "work": "Regenerable reports, review, essential bundle and GitHub push", "gate": "QA passes, no raw data or weights in git, verify remote commit", "owner": "root"}
+  ],
+  "conditional_followups": [
+    "Official benchmark execution requires a resolved camera/time/ROI contract and a reviewed freeze before any protected payload exposure.",
+    "Full producer replications exceed the remaining original update budget; record dependency without starting unbudgeted training.",
+    "Causal JEPA/teacher ablations need matched training recipes and a distinct prospective budget; do not infer their results from this evaluation.",
+    "A missing comparator or external asset blocks only its branch."
+  ]
+}
