@@ -49,28 +49,44 @@ def entrypoint(name: str, command: list[str]) -> str | None:
 
 
 def is_heavy(name: str, command: list[str]) -> bool:
-    """Exclude independent evaluation, prefetch, cost, and training owners."""
+    """Identify known GPU workers by their real entrypoint and execution mode."""
     module = entrypoint(name, command)
     if module is None:
         return False
-    if re.search(r"stage(?:70|71|72|73|74|75|76)(?:\D|$)", " ".join(command).lower()):
+    values = [str(value).replace("\\", "/").lower() for value in command]
+    if "--device=cpu" in values or any(
+        left == "--device" and right == "cpu"
+        for left, right in zip(values, values[1:], strict=False)
+    ):
+        return False
+    if module == "operational.sota_eval.fcwd_run" and "--score" in values:
+        return False
+    stage_pattern = r"(?:--?)?stage(?:70|71|72|73|74|75|76)"
+    if re.search(r"stage(?:70|71|72|73|74|75|76)(?:\D|$)", module) or any(
+        re.fullmatch(stage_pattern, value) for value in values[1:]
+    ):
         return True
-    return module.startswith(
-        (
-            "operational.sota_eval.",
-            "operational.evttc_transfer.",
-            "operational.evttc_rgb_transfer.",
-            "operational.efficient_context.r1_measure",
-            "operational.efficient_context.r1_gib_measure",
-            "operational.efficient_context.r1_profile",
-            "operational.efficient_context.garl_train",
-            "operational.train40_system.engine",
-            "operational.train40_system.history_resources",
-            "operational.train40_system.garl_predictions",
-            "operational.train40_system.feature_resources",
-            "operational.simplex_t_h16_replication.train",
-        )
-    ) or module in ("train_baseline", "pretrain_jepa", "finetune_ttc")
+    exact_gpu_entrypoints = {
+        "operational.sota_eval.fcwd_run",
+        "operational.sota_eval.cost",
+        "operational.sota_eval.prefetch",
+        "operational.sota_eval.full_prefetch",
+        "operational.sota_eval.campaign",
+        "operational.evttc_transfer.run",
+        "operational.evttc_rgb_transfer.run",
+        "operational.efficient_context.r1_measure",
+        "operational.efficient_context.r1_gib_measure",
+        "operational.efficient_context.r1_profile",
+        "operational.efficient_context.garl_train",
+        "operational.train40_system.engine",
+        "operational.simplex_t_h16_replication.train",
+        "train_baseline",
+        "pretrain_jepa",
+        "finetune_ttc",
+    }
+    return module in exact_gpu_entrypoints or module.startswith(
+        "operational.train40_system.engine_"
+    )
 
 
 def heavy_processes() -> list[dict]:

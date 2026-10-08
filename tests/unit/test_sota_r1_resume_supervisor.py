@@ -44,8 +44,12 @@ class Owner:
         "operational.sota_eval.fcwd_run",
         "operational.sota_eval.cost",
         "operational.sota_eval.prefetch",
+        "operational.sota_eval.full_prefetch",
         "operational.sota_eval.campaign",
-        "operational.evttc_transfer.infer",
+        "operational.evttc_transfer.run",
+        "operational.evttc_rgb_transfer.run",
+        "operational.train40_system.engine",
+        "operational.train40_system.engine_profiled",
         "operational.efficient_context.r1_gib_measure",
     ],
 )
@@ -54,8 +58,26 @@ def test_actual_gpu_work_and_prefetch_block(module):
     assert not supervisor.is_heavy("powershell.exe", ["powershell", "-Command", module])
 
 
+@pytest.mark.parametrize(
+    ("module", "arguments"),
+    [
+        ("operational.sota_eval.publication", ["--require-complete"]),
+        ("operational.sota_eval.scoring", []),
+        ("operational.sota_eval.followups", ["--verify-only"]),
+        ("pytest", ["tests/unit"]),
+        ("operational.sota_eval.fcwd_run", ["--score"]),
+        ("operational.sota_eval.campaign", ["--device", "cpu"]),
+    ],
+)
+def test_cpu_only_entrypoints_do_not_block_r1(module, arguments):
+    assert not supervisor.is_heavy("python.exe", ["python", "-m", module, *arguments])
+
+
 def test_stage_protection_and_control_exclusion():
     assert supervisor.is_heavy("python.exe", ["python", "-m", "runner", "--stage75"])
+    assert not supervisor.is_heavy(
+        "python.exe", ["python", "-m", "operational.sota_eval.publication", "--note=stage75"]
+    )
     assert not supervisor.is_heavy("python.exe", Owner().cmdline())
 
 
