@@ -1396,6 +1396,8 @@ def publish(
         # Git must retain the physical bytes covered by SHA-256, including CSV CRLF.
         (stage / ".gitattributes").write_bytes(
             b"* -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol\n"
+            b"# Preserve whitespace in captured evidence and upstream source snapshots.\n"
+            b"evidence/** -whitespace\n"
         )
         sums = []
         for path in sorted(stage.rglob("*"), key=lambda item: item.as_posix()):
