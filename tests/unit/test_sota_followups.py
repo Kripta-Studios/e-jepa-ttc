@@ -104,7 +104,7 @@ def test_fcwd_population_requires_existing_frozen_dependency_bindings(tmp_path: 
 
 
 def test_fcwd_verification_requires_630_and_score_binding(tmp_path: Path) -> None:
-    from operational.sota_eval import fcwd_run
+    from operational.sota_eval import fcwd_run, fcwd_score
     from operational.sota_eval import scoring as scoring_module
 
     manifest = tmp_path / "manifest.json"
@@ -168,7 +168,7 @@ def test_fcwd_verification_requires_630_and_score_binding(tmp_path: Path) -> Non
         "model_coverage_sha256": _digest(score_dir / "MODEL_COVERAGE.json"),
         "joined_predictions_sha256": _digest(score_dir / "SCORED_PREDICTIONS.csv"),
         "scoring_manifest_sha256": _digest(score_dir / "SHA256.json"),
-        "scorer_module_sha256": _digest(Path(scoring_module.__file__)),
+        "scorer_module_sha256": _digest(Path(fcwd_score.__file__)),
         "query_manifest_sha256": _digest(manifest),
         "population_selection_used_gt": False,
         "labels_opened_only_after_verified_prediction_seal": True,
@@ -177,6 +177,7 @@ def test_fcwd_verification_requires_630_and_score_binding(tmp_path: Path) -> Non
         "optimizer_updates": 0,
     }
     _write(score_dir / "TARGET_JOIN_CONTRACT.json", target)
+    assert target["scorer_module_sha256"] != _digest(Path(scoring_module.__file__))
     scoring = {
         "status": "COMPLETE",
         "queries": 630,

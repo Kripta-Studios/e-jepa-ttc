@@ -280,7 +280,7 @@ def verify_fcwd(
     manifest_value, predictions = inference_validator(
         output, manifest, campaign_root, public_full, code_root
     )
-    from operational.sota_eval import fcwd_run, scoring
+    from operational.sota_eval import fcwd_run, fcwd_score
 
     score_dir = output / "scoring"
     scoring_receipt = read(output / "SCORING_COMPLETE.json")
@@ -346,7 +346,7 @@ def verify_fcwd(
         or target_join.get("joined_predictions_sha256")
         != digest(score_dir / "SCORED_PREDICTIONS.csv")
         or target_join.get("scoring_manifest_sha256") != digest(score_dir / "SHA256.json")
-        or target_join.get("scorer_module_sha256") != digest(Path(scoring.__file__))
+        or target_join.get("scorer_module_sha256") != digest(Path(fcwd_score.__file__))
         or target_join.get("query_manifest_sha256") != digest(manifest)
         or target_join.get("population_selection_used_gt") is not False
         or target_join.get("labels_opened_only_after_verified_prediction_seal") is not True
