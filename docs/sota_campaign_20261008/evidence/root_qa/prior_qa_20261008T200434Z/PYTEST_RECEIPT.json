@@ -26,7 +26,7 @@
     "-q",
     "--junitxml=${REPO}\\artifacts\\sota_campaign_20261008\\root_qa\\PYTEST_JUNIT.xml"
   ],
-  "finished_utc": "2026-10-08T20:05:55.202478+00:00",
+  "finished_utc": "2026-10-08T19:56:10.847671+00:00",
   "returncode": 0,
   "source_hashes": {
     "operational\\sota_eval\\__init__.py": "e213590f92e24a73e8aef74f13b0fda25c8535d0852682efa60c9f11fd443956",
@@ -48,7 +48,7 @@
     "operational\\sota_eval\\prefetch.py": "3333f4aa07aeade3743083169057e8ecedddb9e21a1b43296555cdc644927200",
     "operational\\sota_eval\\publication.py": "d5a6b6dff6498fb0d058d3b06c160170159e85c96e6edf709eb4c67467c416a2",
     "operational\\sota_eval\\r1_resume.py": "e5712a5081285a3b33be469db2cbf9dcbcee866cbfeabf9646bc571d80db1e6a",
-    "operational\\sota_eval\\r1_resume_supervisor.py": "19f58bdbcc0a83d04519f7dab36aa4ed41dfca0ec92d2647e15d7650500da3a4",
+    "operational\\sota_eval\\r1_resume_supervisor.py": "db47301fc3f53ed124ca830d41e2628d2974d218f6a4c11a75d65756f4f83507",
     "operational\\sota_eval\\reuse.py": "099c8b466379c4846149f83c1f5b1640710092a5bc38c495dd113fe00db69f81",
     "operational\\sota_eval\\scoring.py": "c19af78b0a3efe27f2b7cf8b5aa074294eec2c16a6e8e09b9f5debd64d23a2ec",
     "tests\\unit\\test_sota_baseline_scoring.py": "74b7f5ec7e1302305f9b584d2a3e83d9273f49a509c4f3e2645e56c4ca496e88",
@@ -69,8 +69,8 @@
     "tests\\unit\\test_sota_prefetch.py": "f1d4bdb67450f7251db94062c4e05551faa4e09c053935ff2834cf59bf3df634",
     "tests\\unit\\test_sota_publication.py": "4667f509ed516cb8dbfc24d44ea2390f558af33189f2648e72755eaf87088cc2",
     "tests\\unit\\test_sota_r1_resume.py": "7c109bf492b758e591505903fdca4bcfcf3c636b8d2c44dd31871aa8499c2d9c",
-    "tests\\unit\\test_sota_r1_resume_supervisor.py": "61ca4f9876bd4e934c7def2d640e1f5b4c1f268adb3f982e31e860f6a5dcf195",
+    "tests\\unit\\test_sota_r1_resume_supervisor.py": "dd2222a78079a71ceaa5111dc33c8ad0d1aba70150568a1bbce49a4d666b7dd7",
     "tests\\unit\\test_sota_reuse.py": "64b10731d918416092fd9bc7fbfc4049974ac41e07e17f7d46d8977eeb1d1e00"
   },
-  "started_utc": "2026-10-08T20:05:34.228188+00:00"
+  "started_utc": "2026-10-08T19:55:50.274021+00:00"
 }

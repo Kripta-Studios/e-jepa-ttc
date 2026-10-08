@@ -1,0 +1,22 @@
+{
+  "attempts_carried": 2,
+  "command": [
+    "../e-jepa-ttc/.venv/Scripts/python.exe",
+    "-m",
+    "operational.sota_eval.r1_resume_supervisor",
+    "--run",
+    "--artifacts",
+    "artifacts/sota_campaign_20261008/r1_resume/supervisor_v2"
+  ],
+  "condition": "Only when the matching coordinator is no longer alive; use the same artifacts and ledger. Do not reset attempts or deadline.",
+  "environment": {
+    "MKL_NUM_THREADS": "2",
+    "OMP_NUM_THREADS": "2",
+    "PYTHONPATH": "src;.",
+    "PYTHONUTF8": "1"
+  },
+  "max_attempts": 3,
+  "measurement_source_unchanged": true,
+  "migration_sha256": "4dc272ed75d8451c487a4386552bbd08cf4971d5a9ae70e62fd31f9ee192479c",
+  "working_directory": "repository_root"
+}

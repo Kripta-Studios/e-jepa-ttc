@@ -1,0 +1,11 @@
+{
+  "attempt": 3,
+  "checked_utc": "2026-10-08T20:11:36.889164+00:00",
+  "child": {
+    "create_time": 1791490010.0330129,
+    "pid": 5224
+  },
+  "log": "${REPO}\\artifacts\\sota_campaign_20261008\\r1_resume\\supervisor_v2\\attempts\\attempt_003_1791490009988350300.log",
+  "optimizer_updates": 0,
+  "status": "RUNNING"
+}

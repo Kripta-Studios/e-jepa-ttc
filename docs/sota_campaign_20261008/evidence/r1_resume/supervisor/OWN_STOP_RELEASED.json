@@ -1,0 +1,7 @@
+{
+  "checked_utc": "2026-10-08T19:57:54.626152+00:00",
+  "path": "${REPO}\\artifacts\\efficient_context_20261004\\r1_20261008\\resident_1g\\STOP_REQUEST",
+  "reason": "EXTERNAL_HEAVY",
+  "released_utc": "2026-10-08T19:58:39.951229+00:00",
+  "sha256": "310b78cd912f25752674a11b0560550c68679c8656d285509fc9f2b7bf839fb1"
+}
