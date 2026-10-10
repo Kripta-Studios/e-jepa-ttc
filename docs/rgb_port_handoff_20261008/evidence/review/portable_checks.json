@@ -1,0 +1,20 @@
+{
+  "dev32": {
+    "rows": 3947,
+    "eligible": 3640,
+    "sequences": 32,
+    "optimizer_updates": 0,
+    "sha256": "265161f9dd2c7941af57cce3811a35945e2bea055b13a260b960df1c65c7f2d8",
+    "unavailable_methods": []
+  },
+  "fcwd": {
+    "rows": 630,
+    "eligible": 597,
+    "sequences": 3,
+    "optimizer_updates": 0,
+    "sha256": "69d619c3b2864e6dfaec86156fd5756a05b72207e766997ea74abd3b441a352b",
+    "unavailable_methods": [
+      "public_Garl_rgb_event_full"
+    ]
+  }
+}

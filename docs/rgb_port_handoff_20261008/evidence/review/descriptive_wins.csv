@@ -1,0 +1,10 @@
+dataset,h,garl,row_win_fraction,sequence_wins,sequences,macro_delta
+dev32,H8_seed7,public_Garl_event_lhr,0.5634615384615385,29,32,-3.408308300309936
+dev32,H8_seed13,public_Garl_event_lhr,0.5733516483516483,28,32,-3.3778828902387916
+dev32,H8_seed23,public_Garl_event_lhr,0.5675824175824176,28,32,-3.3015390376134017
+dev32,H8_seed7,public_Garl_rgb_event_full,0.4870879120879121,18,32,-89.86399792326263
+dev32,H8_seed13,public_Garl_rgb_event_full,0.496978021978022,19,32,-89.83357251319148
+dev32,H8_seed23,public_Garl_rgb_event_full,0.48928571428571427,17,32,-89.75722866056608
+fcwd,H8_seed7,public_Garl_event_lhr,0.5008375209380235,3,3,-0.3640904174732154
+fcwd,H8_seed13,public_Garl_event_lhr,0.5226130653266332,3,3,-0.5439041138437585
+fcwd,H8_seed23,public_Garl_event_lhr,0.541038525963149,3,3,-0.5711597821723052
