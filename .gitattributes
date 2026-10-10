@@ -14,3 +14,9 @@ artifacts/metrics/a5_transport_preflight_v3_confirm/a5_transport_preflight_v3_co
 
 # Imported handoff carries a SHA-256 inventory of its original bytes.
 docs/rgb_port_handoff_20261008/** -text
+
+# Additive V13 continuity source freeze binds exact admitted bytes.
+operational/rgb_port_continuity/** -text
+operational/rgb_port_streaming/** -text
+tests/test_rgb_port_continuity.py -text
+tests/test_rgb_port_streaming.py -text
