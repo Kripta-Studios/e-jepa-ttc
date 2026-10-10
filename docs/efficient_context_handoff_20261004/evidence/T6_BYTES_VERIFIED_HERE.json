@@ -1,0 +1,16 @@
+{
+  "assets": [
+    {
+      "filename": "E_JEPA_TTC_SIMPLEX_T_ESSENTIAL_RESULTS_215768633b2d.zip",
+      "status": "VERIFIED_BYTES",
+      "sha256": "84e2506584a4847a6fa55d3d02e881689285eee1cfa7278ff218526abd4d7e8a",
+      "members": 1996,
+      "crc_verified": true,
+      "uncompressed_bytes": 544633650,
+      "root_manifest": "CONTENT_MANIFEST.json",
+      "member_hashes_verified": 1995,
+      "scope": "CRC of every file; hashes only when a recognized complete root manifest exists"
+    }
+  ],
+  "all_verified": true
+}

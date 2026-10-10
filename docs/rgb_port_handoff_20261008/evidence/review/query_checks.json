@@ -1,0 +1,20 @@
+{
+  "dev32": {
+    "rows": 3947,
+    "eligible": 3640,
+    "sequences": 32,
+    "truth_min": 0.4765494895999997,
+    "truth_max": 21.281069798000008,
+    "neg_targets": 0,
+    "source_sha256": "265161f9dd2c7941af57cce3811a35945e2bea055b13a260b960df1c65c7f2d8"
+  },
+  "fcwd": {
+    "rows": 630,
+    "eligible": 597,
+    "sequences": 3,
+    "truth_min": 1.19419533654634,
+    "truth_max": 28.9226189494698,
+    "neg_targets": 0,
+    "source_sha256": "69d619c3b2864e6dfaec86156fd5756a05b72207e766997ea74abd3b441a352b"
+  }
+}

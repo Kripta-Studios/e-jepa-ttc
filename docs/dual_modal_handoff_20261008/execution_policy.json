@@ -1,0 +1,51 @@
+{
+  "schema": "dual_ttc_campaign_v13",
+  "activation": "user sends start prompt explicitly",
+  "source_head": "b46d40bf1f38ae3e3ea201d58b79391fa475ca3c",
+  "new_branch": "scientific-recovery-v13-dual-modal-ttc",
+  "scientific_max_updates": 286500,
+  "technical_max_updates": 500,
+  "recovery_max_updates": 13000,
+  "physical_hard_cap": 300000,
+  "historical_budget_reuse": false,
+  "local_only": true,
+  "resources": {
+    "tree_rss_max_bytes": 23000000000,
+    "host_available_hard_bytes": 2147483648,
+    "host_recovery_bytes": 3221225472,
+    "disk_emergency_bytes": 10000000000,
+    "heavy_new_trainers_default": 1,
+    "initial_raw_workers": 4,
+    "max_prefetch_items": 8
+  },
+  "preserve": [
+    "TRAIN40",
+    "H8",
+    "WIDE",
+    "T6",
+    "R1 fragments",
+    "Stage70-76",
+    "Garl partial17,948"
+  ],
+  "allowed_reads": [
+    "existing published evidence",
+    "authorized public TRAIN40",
+    "previously exposed EvTTC development",
+    "generic ImageNet pretraining",
+    "public test inputs only after final freeze for local export"
+  ],
+  "forbidden": [
+    "private test labels",
+    "Stage76 confirmation",
+    "automatic submissions",
+    "automatic push/main merge",
+    "new cloud charges",
+    "global OS/driver/Control Center changes",
+    "relabel benchmark as contact",
+    "unregistered sweeps"
+  ],
+  "r1_is_precision_gate": false,
+  "bridge_is_architecture_gate": false,
+  "run_until": "enabled graph complete or specific irrecoverable external blocker; checkpoint resource pauses",
+  "new_output_root": "artifacts/dual_ttc_20261008"
+}

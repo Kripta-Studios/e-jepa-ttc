@@ -1,0 +1,12 @@
+[
+  {
+    "extra": "scripts/scoring.py",
+    "same_as_manifested_copy": true,
+    "sha256": "c19af78b0a3efe27f2b7cf8b5aa074294eec2c16a6e8e09b9f5debd64d23a2ec"
+  },
+  {
+    "extra": "scripts/publication.py",
+    "same_as_manifested_copy": true,
+    "sha256": "d5a6b6dff6498fb0d058d3b06c160170159e85c96e6edf709eb4c67467c416a2"
+  }
+]

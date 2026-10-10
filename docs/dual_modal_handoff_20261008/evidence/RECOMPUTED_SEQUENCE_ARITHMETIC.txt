@@ -1,0 +1,25 @@
+{
+  "scope": "MAE arithmetic from transcribed published per-sequence fields, no model inference",
+  "sequences": 32,
+  "n": 946,
+  "models": {
+    "H8_seed7": {
+      "pooled_mae": 1.3208407080791975,
+      "sequence_wins_vs_Garl_ER": 16
+    },
+    "H8_seed13": {
+      "pooled_mae": 1.352808534105465,
+      "sequence_wins_vs_Garl_ER": 18
+    },
+    "H8_seed23": {
+      "pooled_mae": 1.4087141425533642,
+      "sequence_wins_vs_Garl_ER": 18
+    },
+    "Garl_E": {
+      "pooled_mae": 8.048108926636752
+    },
+    "Garl_ER": {
+      "pooled_mae": 1.8682761924690516
+    }
+  }
+}

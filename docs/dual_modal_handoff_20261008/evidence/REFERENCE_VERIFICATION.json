@@ -1,0 +1,23 @@
+{
+  "status": "PASSED_REFERENCE_SCOPE_ONLY",
+  "python": "3.13.5",
+  "torch": "2.10.0+cpu",
+  "torchvision": "0.25.0+cpu",
+  "numpy": "2.3.5",
+  "pytest_tests_passed": 51,
+  "ast_python_files": 12,
+  "scientific_training_updates": 0,
+  "test_scope": "synthetic CPU contracts, tiny-encoder gradient and exact resume tests, real ResNet50 random-weight forward128x128; no eAP/EvTTC/GPU training",
+  "synthetic_optimizer_steps_per_full_test_run": 14,
+  "full_test_suite_runs_in_preparation": 5,
+  "synthetic_optimizer_steps_across_test_runs": 70,
+  "science_fits_max": 23,
+  "science_updates_max": 286500,
+  "total_physical_updates_ceiling": 300000,
+  "windows_powershell_runtime_tested": false,
+  "powershell_ast_tested": false,
+  "production_data_adapter_integrated": false,
+  "generic_weights_downloaded": false,
+  "full_git_clone_completed": false,
+  "next_required": "production integration, dataset role/ROI/time audits, local GPU admission and controlled training"
+}

@@ -1,0 +1,42 @@
+{
+  "review_date": "2026-10-04",
+  "release_commit": "fd16d8102914537653622d3abf298b753120ea43",
+  "source_read": "GitHub connector pinned files and uploaded reports",
+  "git_clone_completed": false,
+  "new_release_binary_assets_downloaded": false,
+  "historical_T6_attached_archive_checked_here": true,
+  "raw_replay_performed": false,
+  "latest_24_heads_replayed_here": false,
+  "optimizer_updates": 0,
+  "cuda_tested_here": false,
+  "powershell_runtime_tested_here": false,
+  "small_asset_byte_matches": [
+    {
+      "file": "GPU_ACCOUNTING.json",
+      "sha256": "78920abbf3a60f808e20a590f473869de433f823715a344369d1a9023ff2f1b2",
+      "matches_release_asset_digest": true
+    },
+    {
+      "file": "PUBLISHED_EXTRACTED_VERIFICATION.json",
+      "sha256": "d196e3f99380113715b4328299a086a05bbcdc550f0ee49d7280ce4efd7ab3f7",
+      "matches_release_asset_digest": true
+    },
+    {
+      "file": "GPU_REPORT.md",
+      "sha256": "74c6297d89cf559f65a50cd2261d91324030c461f451a9095d308e2d849b67a3",
+      "matches_release_asset_digest": true
+    }
+  ],
+  "derived_amdahl_from_published_sum_fractions": {
+    "source": "docs/simplex_t_shared_gpu_route_20261004/STAGE_SHARES.csv at release commit",
+    "scope": "Same-workload algebra; not p95 or live-system guarantee",
+    "H8_preparation_fraction": 0.8546958389023358,
+    "H16_preparation_fraction": 0.9036264524517388,
+    "H8_max_if_head_free": 1.0045546394150195,
+    "H8_if_preparation_10x": 4.333248567996511,
+    "H8_max_if_preparation_free": 6.8821153671426085,
+    "H16_max_if_preparation_free": 10.376291269128881
+  },
+  "reference_tests_passed": 39,
+  "portable_window_replay_matches_saved_result": true
+}

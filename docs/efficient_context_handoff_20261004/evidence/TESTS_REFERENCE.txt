@@ -1,0 +1,44 @@
+test_backslash (test_archive_verification.ArchiveVerification.test_backslash) ... ok
+test_bad_hash (test_archive_verification.ArchiveVerification.test_bad_hash) ... ok
+test_cap (test_archive_verification.ArchiveVerification.test_cap) ... ok
+test_crc_scope_without_manifest (test_archive_verification.ArchiveVerification.test_crc_scope_without_manifest) ... ok
+test_drive (test_archive_verification.ArchiveVerification.test_drive) ... ok
+test_good (test_archive_verification.ArchiveVerification.test_good) ... ok
+test_incomplete (test_archive_verification.ArchiveVerification.test_incomplete) ... ok
+test_traversal (test_archive_verification.ArchiveVerification.test_traversal) ... ok
+test_bad_binding (test_contracts.Contracts.test_bad_binding) ... ok
+test_bad_id (test_contracts.Contracts.test_bad_id) ... ok
+test_cold_start (test_contracts.Contracts.test_cold_start) ... ok
+test_contact_task_differs (test_contracts.Contracts.test_contact_task_differs) ... ok
+test_current_mandatory (test_contracts.Contracts.test_current_mandatory) ... ok
+test_encoder_calls (test_contracts.Contracts.test_encoder_calls) ... ok
+test_future (test_contracts.Contracts.test_future) ... ok
+test_gap_recomputed (test_contracts.Contracts.test_gap_recomputed) ... ok
+test_holes (test_contracts.Contracts.test_holes) ... ok
+test_invalid_interval (test_contracts.Contracts.test_invalid_interval) ... ok
+test_nonfinite (test_contracts.Contracts.test_nonfinite) ... ok
+test_offset_identity (test_contracts.Contracts.test_offset_identity) ... ok
+test_partial (test_contracts.Contracts.test_partial) ... ok
+test_pending (test_contracts.Contracts.test_pending) ... ok
+test_phase_anchor_identity (test_contracts.Contracts.test_phase_anchor_identity) ... ok
+test_prep_identity (test_contracts.Contracts.test_prep_identity) ... ok
+test_resume (test_contracts.Contracts.test_resume) ... ok
+test_roi_is_identity (test_contracts.Contracts.test_roi_is_identity) ... ok
+test_source_identity (test_contracts.Contracts.test_source_identity) ... ok
+test_span (test_contracts.Contracts.test_span) ... ok
+test_time_exact (test_contracts.Contracts.test_time_exact) ... ok
+test_timestamp_int_precision (test_contracts.Contracts.test_timestamp_int_precision) ... ok
+test_unique (test_contracts.Contracts.test_unique) ... ok
+test_approach (test_cv_transport.TransportContracts.test_approach) ... ok
+test_current (test_cv_transport.TransportContracts.test_current) ... ok
+test_domain_guard (test_cv_transport.TransportContracts.test_domain_guard) ... ok
+test_future (test_cv_transport.TransportContracts.test_future) ... ok
+test_infinite (test_cv_transport.TransportContracts.test_infinite) ... ok
+test_invalid_value (test_cv_transport.TransportContracts.test_invalid_value) ... ok
+test_no_post_contact_sign_flip (test_cv_transport.TransportContracts.test_no_post_contact_sign_flip) ... ok
+test_receding (test_cv_transport.TransportContracts.test_receding) ... ok
+
+----------------------------------------------------------------------
+Ran 39 tests in 0.003s
+
+OK

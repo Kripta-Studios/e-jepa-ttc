@@ -1,0 +1,33 @@
+{
+  "scope": "untrained random initialization CPU full-resolution forward; not accuracy/latency benchmark",
+  "torch": "2.10.0+cpu",
+  "cuda_available": false,
+  "generic_pretrained_weights_loaded": false,
+  "event_parameters": 25661795,
+  "fused_total_parameters": 51014122,
+  "rgb_stage_trainable_parameters": 25352327,
+  "dense_grid_shape": [
+    128,
+    32,
+    32
+  ],
+  "event_input_shape": [
+    1,
+    2,
+    20,
+    128,
+    128
+  ],
+  "rgb_input_shape": [
+    1,
+    2,
+    3,
+    128,
+    128
+  ],
+  "initial_ttc_seconds": 3.3835835456848145,
+  "missing_rgb_exact_fallback": true,
+  "initial_true_rgb_equal_event": true,
+  "scientific_training_updates": 0,
+  "optimizer_updates_in_this_forward": 0
+}

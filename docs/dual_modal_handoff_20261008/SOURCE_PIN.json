@@ -1,0 +1,25 @@
+{
+  "repository": "Kripta-Studios/e-jepa-ttc",
+  "branch": "scientific-recovery-v12-efficient-context",
+  "reviewed_head": "b46d40bf1f38ae3e3ea201d58b79391fa475ca3c",
+  "comparison_code": "f13f018421afe5c99104475400f8ffbbefcc434d",
+  "review_root": "docs/research_review_20261004_08",
+  "upstream_garl": {
+    "repository": "NAIL-HNU/Garl-TTC",
+    "commit": "256661242b8a7f5e56aa3c1c02348b30f6e89de6",
+    "hf_full_revision": "b676fcdaf26c04bcf896cdb2b208c9c424e8462a",
+    "event_checkpoint_sha256": "fcaf9be47e2dafc6f73c6c3ebd102595ae06119dcae78aea698a42627b2b4fef",
+    "full_checkpoint_sha256": "e96a613a4fb877a1969d57ab562cadba89961fb202f5f2f2f0658f333a0d443e"
+  },
+  "known_code_blobs": {
+    "src/e_jepa_ttc/models/causal_scale_ttc.py": "683f06b6ffb244d01c8af30461af12622fc04969",
+    "src/e_jepa_ttc/models/multimodal.py": "3f3c613ab7b14fff128c2c93155ba6128fed5d75",
+    "src/e_jepa_ttc/simplex_t/model.py": "0394a8699e72073be82932da58ed08cf55e13834",
+    "src/e_jepa_ttc/simplex_t/phase.py": "975efc111f95b312124c66db07546fe13c7d6e89",
+    "operational/evttc_rgb_transfer/inputs.py": "e31763025c1ee95bfd4ceb37dff500fd18faa73c",
+    "operational/train40_system/engine.py": "bcb2e82bbb0679d02b7015a4165ddbd33c1a5260",
+    "src/e_jepa_ttc/efficient_context/garl_input.py": "fcd3f4137c4a8e27eac42ee99c46cf86babb34fb",
+    "operational/evttc_rgb_transfer/model.py": "e390d03ff9d2e2d2c6a08b01a80f8d498090a84c"
+  },
+  "scope": "Connected GitHub source inspection and supplied reports. Clone/download failed DNS. No new raw/weight inference."
+}

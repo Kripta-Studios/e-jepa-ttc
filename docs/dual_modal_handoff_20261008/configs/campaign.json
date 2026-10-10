@@ -1,0 +1,191 @@
+{
+  "policy": "../execution_policy.json",
+  "fits": [
+    {
+      "id": "B_TRUE",
+      "role": "TRAIN40_exploratory",
+      "updates": 2500,
+      "seed": 7,
+      "condition": "always",
+      "parent": null
+    },
+    {
+      "id": "B_REPEAT",
+      "role": "TRAIN40_exploratory",
+      "updates": 2500,
+      "seed": 7,
+      "condition": "always",
+      "parent": null
+    },
+    {
+      "id": "B_ZERO",
+      "role": "TRAIN40_exploratory",
+      "updates": 2500,
+      "seed": 7,
+      "condition": "always",
+      "parent": null
+    },
+    {
+      "id": "GARL_PHI_CAL_E",
+      "role": "TRAIN40_exploratory",
+      "updates": 2500,
+      "seed": 7,
+      "condition": "public_checkpoint_inputs_available",
+      "parent": null
+    },
+    {
+      "id": "GARL_PHI_CAL_ER",
+      "role": "TRAIN40_exploratory",
+      "updates": 2500,
+      "seed": 7,
+      "condition": "public_checkpoint_inputs_available",
+      "parent": null
+    },
+    {
+      "id": "EV_DIRECT_P2@7",
+      "role": "D_train_only",
+      "updates": 24000,
+      "seed": 7,
+      "condition": "always",
+      "parent": null
+    },
+    {
+      "id": "EV_CORR_P2@7",
+      "role": "D_train_only",
+      "updates": 24000,
+      "seed": 7,
+      "condition": "always",
+      "parent": null
+    },
+    {
+      "id": "EV_CORR_T4@7",
+      "role": "D_train_only",
+      "updates": 24000,
+      "seed": 7,
+      "condition": "always",
+      "parent": null
+    },
+    {
+      "id": "R_TRUE@7",
+      "role": "D_train_only",
+      "updates": 12000,
+      "seed": 7,
+      "condition": "valid_selected_E",
+      "parent": "E_BASE@7"
+    },
+    {
+      "id": "R_REPEAT@7",
+      "role": "D_train_only",
+      "updates": 12000,
+      "seed": 7,
+      "condition": "valid_selected_E",
+      "parent": "E_BASE@7"
+    },
+    {
+      "id": "E_BASE@13",
+      "role": "D_train_only",
+      "updates": 24000,
+      "seed": 13,
+      "condition": "E_replication_gate",
+      "parent": null
+    },
+    {
+      "id": "R_TRUE@13",
+      "role": "D_train_only",
+      "updates": 12000,
+      "seed": 13,
+      "condition": "RGB_replication_gate",
+      "parent": "E_BASE@13"
+    },
+    {
+      "id": "E_BASE@23",
+      "role": "D_train_only",
+      "updates": 24000,
+      "seed": 23,
+      "condition": "E_replication_gate",
+      "parent": null
+    },
+    {
+      "id": "R_TRUE@23",
+      "role": "D_train_only",
+      "updates": 12000,
+      "seed": 23,
+      "condition": "RGB_replication_gate",
+      "parent": "E_BASE@23"
+    },
+    {
+      "id": "E_EXTRA@7",
+      "role": "D_train_only",
+      "updates": 10000,
+      "seed": 7,
+      "condition": "RGB_gate and (seed7 or KD_replication_gate)",
+      "parent": "E_BASE@7"
+    },
+    {
+      "id": "E_KD@7",
+      "role": "D_train_only",
+      "updates": 10000,
+      "seed": 7,
+      "condition": "RGB_gate and (seed7 or KD_replication_gate)",
+      "parent": "E_BASE@7"
+    },
+    {
+      "id": "E_EXTRA@13",
+      "role": "D_train_only",
+      "updates": 10000,
+      "seed": 13,
+      "condition": "RGB_gate and (seed7 or KD_replication_gate)",
+      "parent": "E_BASE@13"
+    },
+    {
+      "id": "E_KD@13",
+      "role": "D_train_only",
+      "updates": 10000,
+      "seed": 13,
+      "condition": "RGB_gate and (seed7 or KD_replication_gate)",
+      "parent": "E_BASE@13"
+    },
+    {
+      "id": "E_EXTRA@23",
+      "role": "D_train_only",
+      "updates": 10000,
+      "seed": 23,
+      "condition": "RGB_gate and (seed7 or KD_replication_gate)",
+      "parent": "E_BASE@23"
+    },
+    {
+      "id": "E_KD@23",
+      "role": "D_train_only",
+      "updates": 10000,
+      "seed": 23,
+      "condition": "RGB_gate and (seed7 or KD_replication_gate)",
+      "parent": "E_BASE@23"
+    },
+    {
+      "id": "FINAL_E@7",
+      "role": "TRAIN40_final",
+      "updates": 24000,
+      "seed": 7,
+      "condition": "selected_valid_E",
+      "parent": null
+    },
+    {
+      "id": "FINAL_R@7",
+      "role": "TRAIN40_final",
+      "updates": 12000,
+      "seed": 7,
+      "condition": "selected_valid_RGB",
+      "parent": "FINAL_E@7"
+    },
+    {
+      "id": "FINAL_KD@7",
+      "role": "TRAIN40_final",
+      "updates": 10000,
+      "seed": 7,
+      "condition": "KD_selected",
+      "parent": "FINAL_E@7"
+    }
+  ],
+  "timing": "no invented time deadline",
+  "notes": "conditions are binding; all inputs and parent identities resolved before fitting; no fit allocation by leftover budget"
+}

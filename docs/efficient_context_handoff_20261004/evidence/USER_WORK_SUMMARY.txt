@@ -1,0 +1,222 @@
+**El trabajo autorizado está terminado y publicado en GitHub:** cerré el análisis T6 sin repetir sus entrenamientos, completé **24 cabezas nuevas con 60.000 updates científicos**, analicé sus predicciones y medí tanto las cabezas aisladas como la ruta desde eventos hasta TTC. El resultado principal es que **H8 mejora sustancialmente la precisión local; H16 añade una mejora pequeña; las simplificaciones ensayadas todavía no justifican sustituir el sistema**.
+
+Puedes consultar la [entrega completa en GitHub](<https://github.com/Kripta-Studios/e-jepa-ttc/releases/tag/simplex-t-local-results-20261004-complete>) y el informe integrado local (docs/simplex\_t\_results\_20261004\_complete/README.md).
+
+**1\. Qué sistema hemos estudiado**
+
+SIMPLEX-T trabaja sobre tres productores existentes y congelados: **A5, C2F y PAIR**. Aprovecha sus predicciones y diagnósticos para aprender una corrección usando observaciones pasadas.
+
+El recorrido es:
+
+```
+Eventos + ROI de la consulta actual
+    → extracción de ventanas y representaciones de eventos
+    → productores congelados A5 / C2F / PAIR
+    → predicciones y diagnósticos: 17 características
+    → normalización registrada en TRAIN
+    → contexto H1, H8 o H16
+    → cabeza temporal
+    → corrección en PHASE17
+    → conversión canónica a TTC
+```
+
+Los productores A5/C2F utilizan la infraestructura de src/e\_jepa\_ttc/models/causal\_scale\_ttc.py: estima mapas de primer plano y expansión aparente entre observaciones, con los mecanismos y correcciones registrados en sus checkpoints.
+
+PAIR utiliza características procedentes de A5. Su cabeza histórica contiene `LayerNorm(133) → Linear(133,128) → GELU → Dropout → Linear(128,1)`, definida en src/e\_jepa\_ttc/training/stage61\_pair\_head.py. **PAIR comparte A5: no representa un segundo encoder independiente.** Estos días reutilicé sus pesos; no entrené de nuevo esos expertos.
+
+Las 17 características incluyen conteo y tasa de eventos, diagnósticos de A5/C2F, las tres predicciones transformadas a fase y desacuerdos entre expertos. Se añaden cuatro campos temporales: antigüedad de la observación, antigüedad de disponibilidad, separación respecto a la observación anterior y diferencia entre disponibilidad y timestamp de referencia.
+
+La construcción y validación de ese contexto están en src/e\_jepa\_ttc/simplex\_t/history.py. Impide mezclar tracks o productores y utilizar observaciones futuras.
+
+**2\. Arquitectura de H8 y H16**
+
+La cabeza principal está en src/e\_jepa\_ttc/simplex\_t/model.py:39:
+
+- Proyección de **21 entradas —17 características y cuatro tiempos— a 160 dimensiones**, con LayerNorm y SiLU.
+- Dos capas de `GRUCell`, ambas de anchura 160.
+- Cabezas de corrección central, cuantiles y diferencias de error entre expertos.
+- **313\.765 parámetros**.
+
+La predicción parte de la mediana de las fases actuales de los expertos y añade una corrección aprendida. Las capas de salida se inicializan a cero, por lo que la cabeza comienza alrededor de ese anchor.
+
+**H8 y H16 tienen la misma capacidad y arquitectura.** Cambia la longitud máxima del contexto: ocho o dieciséis observaciones. Los estados GRU se reconstruyen para cada consulta; este experimento no implementa un estado persistente de tracking.
+
+La transformación y emisión TTC están en src/e\_jepa\_ttc/simplex\_t/phase.py. La métrica **MiD mide error ponderado en esa fase; menor es mejor. No son milisegundos ni MAE de TTC en segundos.**
+
+El contexto retrospectivo está condicionado al ROI actual. H16 puede abarcar aproximadamente 750 ms de pasado, pero eso describe información disponible: no significa que cada consulta deba esperar obligatoriamente 750 ms.
+
+**3\. Qué hice para cerrar T6**
+
+La campaña histórica ya contenía **72 fits de 2.500 updates**, equivalentes a 180.000 updates científicos guardados. En su cierre ejecuté **cero updates nuevos**.
+
+Preservé sus endpoints y checkpoints de análisis válidos, completé los 13 checkpoints T6 y la EWMA registrada en los tres folds. Reparé problemas de publicación atómica Parquet en Windows, comparación JSON de tuplas/listas y recibos incompletos.
+
+El bootstrap se recuperó por fragmentos conservando los draws originales: **8\.195 intentos, 8.192 aceptados y tres rechazados**, sin volver a seleccionar muestras para cambiar los intervalos. Comprobé equivalencia entre ejecución continua e interrumpida y reconcilié los CSV con `evidence.json` a precisión completa.
+
+Está documentado en artifacts/simplex\_t/closure\_20261002/essential\_delivery/CODEX\_SIMPLEX\_T\_FINAL\_REPORT.md.
+
+Los resultados principales conservados fueron:
+
+| Modelo o referencia | MiD OLD\_DEV |
+|---|---:|
+| EWMA registrada, 0,3 s | 159,278795 |
+| Mediana actual de expertos | 157,954041 |
+| RISK17 | 146,039451 |
+| SIMPLEX17 | 144,021187 |
+| H1, D1/C160, seed7 | 132,831619 |
+| H8, D1/C160, seed7 | **121,646332** |
+| H16, D1/C160, seed7 exploratoria | **118,865739** |
+
+H8 mejora **37,632463 MiD frente a la EWMA**, con intervalo jerárquico `[-54,579885; -20,720944]` y mejora en las nueve secuencias. Esto demuestra que esa receta de suavizado no reproduce la ganancia.
+
+Los controles también aportan información: repetir únicamente la observación actual obtiene **131,211197**, mientras que invertir sistemáticamente el pasado obtiene **121,224864**. El pasado aporta información, pero el control invertido pudo aprender a adaptarse a la inversión: **el mecanismo cronológico sigue sin quedar demostrado**.
+
+**4\. Los entrenamientos nuevos que completé**
+
+La ampliación quedó organizada en tres familias independientes:
+
+| Familia | Nuevos fits | Updates guardados | Configuración |
+|---|---:|---:|---|
+| Réplica H16 | 6 | 15\.000 | Seeds 13/23 × folds 0/1/2 |
+| Dependencia de expertos | 12 | 30\.000 | Cuatro brazos × tres folds, seed7 |
+| Agregadores | 6 | 15\.000 | Dos brazos × tres folds, seed7 |
+| **Total** | **24** | **60\.000** | Endpoint fijo 2.500 |
+
+Cada cabeza se entrenó desde su inicialización por seed. Reutilicé H8 seeds 7/13/23 y H16 seed7 como controles históricos.
+
+Conservé **CPU FP32, batch128, AdamW, weight decay 0,001, warmup100, LR máxima 0,0003, LR final 0,00003, scheduler cosine y clipping 1**. El motor canónico está en src/e\_jepa\_ttc/simplex\_t/training.py.
+
+Antes de entrenar registré recetas, fuentes, IDs, hashes y comparadores. Los endpoints se congelaron antes de evaluar los resultados de cada familia. OLD\_DEV no decidió cuándo detenerlos.
+
+Guardé checkpoints completos cada 100 updates y progreso durable cada 25, incluyendo pesos, optimizador, RNG, sampler, contador y curvas. La contabilidad (docs/simplex\_t\_nocturnal\_20261003/ACCOUNTING.json) separa:
+
+- **60\.000 updates científicos guardados**.
+- **80 updates técnicos sintéticos**, utilizados para verificar recuperación.
+- Hasta **100 updates científicos repetidos o inciertos** por interrupciones.
+
+La cota física conservadora total es **60\.180**, no una autorización para entrenar más.
+
+**5\. Qué respondió la réplica H16**
+
+Los resultados y análisis están en docs/simplex\_t\_nocturnal\_20261003/H16\_RESULTS.json.
+
+| Seed | H8 MiD | H16 MiD | H16 − H8 |
+|---|---:|---:|---:|
+| 7, histórica exploratoria | 121,646332 | 118,865739 | −2,780593 |
+| 13, nueva | 121,840952 | 119,696802 | −2,144150 |
+| 23, nueva | 121,864781 | 119,161526 | −2,703254 |
+| Media de pérdidas de las tres | **121,784022** | **119,241356** | **−2,542666** |
+
+Las tres seeds favorecen H16. La mejora descriptiva es aproximadamente **2,09 %** sobre H8.
+
+El resumen de tres seeds tiene intervalo jerárquico `[-5,213398; -0,111241]`. Sin embargo, usando únicamente las dos seeds nuevas, el intervalo es `[-5,244259; +0,041091]`: todavía incluye cero.
+
+Además, la secuencia `OBneIVg4Cw` empeora en las tres seeds. Por tanto, hay estabilidad favorable entre inicializaciones de la cabeza, pero la mejora no es uniforme entre escenas.
+
+Promedié **pérdidas emparejadas por consulta**, no predicciones TTC para crear un ensemble. Las unidades independientes siguen siendo **nueve secuencias**, y la replicación corresponde a las cabezas, no a todos los expertos.
+
+**6\. Qué implementé para estudiar simplificación**
+
+Implementé los seis brazos en cost\_context/model.py (operational/simplex\_t\_cost\_context/model.py):
+
+| Brazo | Información utilizada | Anchor |
+|---|---|---|
+| FULL\_C0 | Los tres expertos y 17 características | Mediana de tres fases |
+| A5\_ONLY\_C0 | Seis características permitidas | A5 |
+| C2F\_ONLY\_C0 | Seis características permitidas | C2F |
+| A5\_PAIR\_C0 | Nueve características permitidas | Punto medio A5/PAIR en fase |
+| SET\_AGE\_C0 | Todos los expertos, con tiempos | Mediana |
+| SET\_NOTIME\_C0 | Todos los expertos, tiempos anulados | Mediana |
+
+En las reducciones eliminé también diagnósticos y desacuerdos del experto excluido. Las máscaras se aplican **después de normalizar cada coordenada**.
+
+Todos los nuevos brazos usan `lambda_cost=0`, manteniendo pérdida de fase y cuantiles. La cabeza histórica denominada “cost” estima diferencias de **error predictivo entre expertos**, no latencia computacional. Quitar esa supervisión evita entrenar un brazo reducido con errores de productores que ya no utiliza. FULL\_C0 controla ese cambio de objetivo.
+
+Los agregadores sustituyen el recorrido recurrente por una red compartida sobre el pasado, pooling de media y máximo y una red final que recibe esos resúmenes junto al presente. Tienen **289\.765 parámetros**. SET\_AGE conserva parejas característica-tiempo; SET\_NOTIME elimina los tiempos explícitos. Sus pruebas comprueban invariancia a las permutaciones correspondientes, padding sin contribución e historia vacía finita.
+
+Los resultados fueron:
+
+| Brazo | MiD | Comparador primario | Delta |
+|---|---:|---|---:|
+| FULL\_C0 | 121,404706 | H8 seed7 | −0,241626 |
+| A5\_ONLY\_C0 | 127,785376 | FULL\_C0 | \+6,380670 |
+| C2F\_ONLY\_C0 | 126,704974 | FULL\_C0 | \+5,300268 |
+| A5\_PAIR\_C0 | 124,668732 | FULL\_C0 | \+3,264025 |
+| SET\_AGE\_C0 | 122,442604 | FULL\_C0 | \+1,037898 |
+| SET\_NOTIME\_C0 | 123,686600 | SET\_AGE\_C0 | \+1,243996 |
+
+**Ninguna reducción o agregador pasó el cribado prospectivo de precisión.** Este exigía, entre otros criterios, límite superior CI95 del exceso menor de +2 MiD. Por ejemplo, SET\_AGE llega a **\+4,634448**. Un intervalo que cruza cero no demuestra equivalencia.
+
+Los contrastes completos están en docs/simplex\_t\_nocturnal\_20261003/INFORME\_NOCTURNO\_SIMPLEX\_T.md.
+
+**7\. Qué inferencias y mediciones de coste hice**
+
+Separé dos preguntas.
+
+Primero medí **las cabezas con entradas preparadas**: nueve modelos, tres bloques y 500 mediciones por bloque, **13\.500 inferencias batch1**. La mediana del p95 de los bloques fue aproximadamente:
+
+| Cabeza | p95 preparado |
+|---|---:|
+| H1 | 9,28 ms |
+| H8 | 19,47 ms |
+| H16 | 31,45 ms |
+| FULL\_C0 | 21,07 ms |
+| SET\_AGE\_C0 | 10,00 ms |
+| SET\_NOTIME\_C0 | 9,91 ms |
+
+Los agregadores cuestan aproximadamente la mitad como cabezas aisladas. Las mediciones emparejadas posteriores permiten interpretar mejor diferencias que inicialmente estaban afectadas por el estado del host. Está explicado en el informe postcampaña (docs/simplex\_t\_post\_campaign\_20261003/INFORME\_POST\_CAMPANA\_SIMPLEX\_T.md).
+
+Después, con tu autorización de GPU compartida, medí **la ruta real desde eventos y ROI suministrado hasta TTC**:
+
+- 64 consultas TRAIN elegidas mediante hash.
+- Nueve rutas.
+- Tres modos: HDF5 frío de aplicación y dos bloques calientes.
+- **1\.728 mediciones completas**, además de warmups.
+- Validación previa de los 64 contextos contra las cachés y del extractor contra las tres familias de productores.
+
+El driver está en shared\_route/run.py (operational/simplex\_t\_shared\_route/run.py). El operational/simplex\_t\_shared\_route/adapter.py verifica que los brazos reducidos realmente omiten llamadas a productores excluidos.
+
+Los p95 calientes observados fueron:
+
+| Ruta | Bloque 1 | Bloque 2 |
+|---|---:|---:|
+| H1 | 2,944 s | 2,902 s |
+| H8 | 9,349 s | 8,479 s |
+| H16 | 13,201 s | 15,304 s |
+| FULL\_C0 | 8,477 s | 9,337 s |
+| A5\_PAIR\_C0 | 7,086 s | 7,502 s |
+| SET\_AGE\_C0 | 7,628 s | 8,303 s |
+
+**La ruta actual es costosa:** lectura y preparación ROI/voxel representan aproximadamente **85–86 % del tiempo acumulado de H8 y 90–91 % del de H16**. La cabeza supone menos del 0,5 %.
+
+Esto explica por qué reducir a la mitad el tiempo de la cabeza no reduce a la mitad el tiempo del sistema. Las mediciones incluyen variación y contención de GPU compartida; excluyen detector, tracking y reacción AEB. Los resultados completos están en el informe de ruta GPU (docs/simplex\_t\_shared\_gpu\_route\_20261004/INFORME\_GPU\_COMPARTIDA\_SIMPLEX\_T.md).
+
+**8\. Recuperación, pruebas y regeneración**
+
+Las pausas por RAM, memoria comprometida, disco y disponibilidad de E: conservaron checkpoints y fragmentos. Comprobé recuperación real de H16 desde el checkpoint100 hacia el update101 y equivalencia continua/interrumpida en los tests sintéticos del nuevo estudio.
+
+En el perfilado preservé el intento de admisión fallido causado por una configuración CUDA diferente de la histórica. Restauré el runtime registrado antes de medir, sin ampliar tolerancias.
+
+Cuando volvió E:, terminé las **614 mediciones pendientes**. La docs/simplex\_t\_shared\_gpu\_route\_20261004/RESUME\_PROOF.json verifica que los **1\.114 fragmentos anteriores conservaron sus hashes**.
+
+Entre las comprobaciones guardadas hay nueve tests de cierre T6, 28 del estudio postcampaña y ocho de la ruta GPU, sin fallos. Se ejecutaron también Ruff y Pyright sobre los cambios correspondientes.
+
+La extracción independiente del último bundle verificó **4\.929 entradas de manifiesto**, regeneró las 27 filas de coste y reprodujo **576 entradas únicas de cabeza con diferencia numérica cero**. El alcance exacto figura en docs/simplex\_t\_shared\_gpu\_route\_20261004/EXTRACTED\_VERIFICATION.json.
+
+Reproducir esas inferencias desde inputs cacheados no equivale a reconstruir todos los eventos crudos ni a reentrenar los expertos.
+
+**9\. C2F, Garl y LATENT**
+
+Reconcilié las referencias históricas: **Garl local y C2F oficial tienen las mismas 8.192 consultas, secuencias y folds**, una vez resueltos aliases y diferencias mínimas de serialización.
+
+Garl local obtiene **144,353027 MiD**, C2F oficial V7 **158,573140** y H8 seed7 **121,646332**. Sin embargo, faltan bindings completos de productores, genealogía TRAIN, selección de checkpoint y contrato de ROI/disponibilidad. Podemos describir esas cifras locales; **todavía no sostienen una afirmación SOTA**. Está registrado en docs/simplex\_t\_post\_campaign\_20261003/COMPARATOR\_REVIEW\_RECONCILED.json.
+
+LATENT conserva el resultado negativo: **184,072300 MiD**, frente a **120,910416** al anular sus entradas latentes. Documenté valores normalizados extremos y productores distintos. La incompatibilidad entre coordenadas latentes es una hipótesis, no una causa demostrada. El diagnóstico está en artifacts/simplex\_t/closure\_20261002/essential\_delivery/LATENT\_DIAGNOSTIC\_NOTE.md.
+
+**10\. Qué queda entregado y qué significa**
+
+GitHub contiene código, protocolos, informes y recibos; las releases contienen pesos, predicciones, curvas, inputs cacheados, análisis y manifiestos. La [publicación completa](<https://github.com/Kripta-Studios/e-jepa-ttc/releases/tag/simplex-t-local-results-20261004-complete>) está verificada contra tamaños y SHA-256 remotos. El inventario de entregables (docs/simplex\_t\_results\_20261004\_complete/RELEASE\_ASSETS.json) enlaza los bundles T6, H16, nocturno, postcampaña y perfilado.
+
+**No quedan entrenamientos ni mediciones autorizados pendientes.** H8 mantiene su identidad como candidato registrado. H16 es un challenger de precisión local; las reducciones probadas quedan documentadas con sus resultados negativos o inciertos.
+
+La propuesta posterior más sustentada es **optimizar la lectura y preparación retrospectiva raw/ROI con pesos congelados y paridad verificada**, porque ahí se concentra el coste observado. Esa propuesta todavía no se ha ejecutado. La campaña tampoco demuestra reacción AEB más rápida, tracking persistente, incertidumbre calibrada ni que la mejora proceda específicamente del preentrenamiento JEPA

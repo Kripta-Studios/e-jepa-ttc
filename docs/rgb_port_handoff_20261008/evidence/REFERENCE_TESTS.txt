@@ -1,0 +1,38 @@
+test_10hz_no_fake_20hz (test_rgb_port_contracts.Contracts.test_10hz_no_fake_20hz) ... ok
+test_availability (test_rgb_port_contracts.Contracts.test_availability) ... ok
+test_bad_phase_domain (test_rgb_port_contracts.Contracts.test_bad_phase_domain) ... ok
+test_bin_gate_not_silently_reused (test_rgb_port_contracts.Contracts.test_bin_gate_not_silently_reused) ... ok
+test_common_resize_invariance (test_rgb_port_contracts.Contracts.test_common_resize_invariance) ... ok
+test_duplicate_timestamp (test_rgb_port_contracts.Contracts.test_duplicate_timestamp) ... ok
+test_empty_context_not_faked (test_rgb_port_contracts.Contracts.test_empty_context_not_faked) ... ok
+test_exposure_black (test_rgb_port_contracts.Contracts.test_exposure_black) ... ok
+test_exposure_white (test_rgb_port_contracts.Contracts.test_exposure_white) ... ok
+test_feature_nonfinite (test_rgb_port_contracts.Contracts.test_feature_nonfinite) ... ok
+test_feature_schema (test_rgb_port_contracts.Contracts.test_feature_schema) ... ok
+test_flat_colour_is_not_certified_texture (test_rgb_port_contracts.Contracts.test_flat_colour_is_not_certified_texture) ... ok
+test_flat_gray (test_rgb_port_contracts.Contracts.test_flat_gray) ... ok
+test_fulltrain_weights_rejected (test_rgb_port_contracts.Contracts.test_fulltrain_weights_rejected) ... ok
+test_gradient (test_rgb_port_contracts.Contracts.test_gradient) ... ok
+test_height_anchor (test_rgb_port_contracts.Contracts.test_height_anchor) ... ok
+test_imagenet_is_rejected (test_rgb_port_contracts.Contracts.test_imagenet_is_rejected) ... ok
+test_int_precision (test_rgb_port_contracts.Contracts.test_int_precision) ... ok
+test_no_duplicate_ids (test_rgb_port_contracts.Contracts.test_no_duplicate_ids) ... ok
+test_nonfinite (test_rgb_port_contracts.Contracts.test_nonfinite) ... ok
+test_positive_config (test_rgb_port_contracts.Contracts.test_positive_config) ... ok
+test_repeated_time (test_rgb_port_contracts.Contracts.test_repeated_time) ... ok
+test_reversal_time (test_rgb_port_contracts.Contracts.test_reversal_time) ... ok
+test_roles_overlap (test_rgb_port_contracts.Contracts.test_roles_overlap) ... ok
+test_roles_valid (test_rgb_port_contracts.Contracts.test_roles_valid) ... ok
+test_selection_no_future (test_rgb_port_contracts.Contracts.test_selection_no_future) ... ok
+test_shape_is_not_semantics (test_rgb_port_contracts.Contracts.test_shape_is_not_semantics) ... ok
+test_signed_phase (test_rgb_port_contracts.Contracts.test_signed_phase) ... ok
+test_stats_shape (test_rgb_port_contracts.Contracts.test_stats_shape) ... ok
+test_triplets_are_real (test_rgb_port_contracts.Contracts.test_triplets_are_real) ... ok
+test_uint16_not_guessed (test_rgb_port_contracts.Contracts.test_uint16_not_guessed) ... ok
+test_uint8 (test_rgb_port_contracts.Contracts.test_uint8) ... ok
+test_wrong_order_shape (test_rgb_port_contracts.Contracts.test_wrong_order_shape) ... ok
+
+----------------------------------------------------------------------
+Ran 33 tests in 0.004s
+
+OK

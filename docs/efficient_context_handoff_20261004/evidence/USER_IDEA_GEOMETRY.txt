@@ -1,0 +1,440 @@
+## Conclusión: no sustituiría el objetivo de GARL-TTC por el TTC de contacto
+
+**Con el estado actual de tu rama, no hay base para esperar que introducir el método de contacto entre carrocerías produzca una mejora muy sustancial en el benchmark GARL-TTC. Como sustitución del *ground truth*, sería un cambio de tarea, no una corrección del benchmark.**
+
+Sí veo dos usos razonables: **una auditoría geométrica que ayude a interpretar los errores actuales** y, después, **una extensión separada para estimar riesgo de contacto físico**. La primera encaja bastante bien; la segunda exige información y capacidades que H8/H16 no proporcionan actualmente.
+
+He revisado la rama indicada fijando el commit **`440a67d91319a69df638a345cec619b00010d982`**, publicado el 4 de octubre de 2026. **La clonación no se completó por un fallo de resolución de red del entorno**; accedí al código y a los resultados mediante el conector de GitHub. Por tanto, lo que sigue es una revisión remota del código versionado y de los informes publicados: **no he ejecutado sus tests, cargado los pesos ni reproducido los experimentos sobre los datos crudos**. 
+
+---
+
+## 1. La corrección fundamental a lo que te expliqué antes
+
+### GARL-TTC no intenta medir exactamente el primer choque entre dos vehículos
+
+El artículo define su objetivo como el tiempo hasta que el objeto alcanza el plano de la cámara, suponiendo que se mantiene el movimiento relativo. Su ecuación de anotación utiliza:
+
+\[
+\tau_{\text{GARL}}=\frac{Z_{\min}}{v_{\text{rel},z}},
+\]
+
+donde \(Z_{\min}\) es **la profundidad del punto más cercano del objeto**, y el denominador representa la velocidad relativa de aproximación en profundidad. Por tanto, **no está tratando necesariamente al vehículo como un punto situado en su centro**: ya utiliza una referencia geométrica relacionada con su superficie. [arXiv](https://arxiv.org/html/2603.16303v1)
+
+Además, la fuente principal de esta rama es **eAP/GarlTTC**. No debe confundirse con las secuencias **CCRs de EvTTC** que utilizaste en fases anteriores: el repositorio oficial de GARL distribuye sus anotaciones sobre los datos RGB/eventos de eAP. [GitHub](https://github.com/NAIL-HNU/Garl-TTC?utm_source=chatgpt.com)
+
+La pregunta del contacto físico es distinta:
+
+\[
+\tau_{\text{contacto}}
+=
+\inf\left\{
+s\geq0:
+B_{\text{ego}}(s)\cap B_{\text{objeto}}(s)\neq\varnothing
+\right\}.
+\]
+
+Aquí \(B\) representa el cuerpo de cada participante, y el resultado depende de sus dimensiones, posiciones, orientaciones y movimientos.
+
+**Mi error anterior fue presentar esta segunda definición como un *ground truth* universalmente superior para tu proyecto. Es más adecuada para otra pregunta: cuándo se tocarían los cuerpos. No es automáticamente una etiqueta mejor para la tarea de GARL.**
+
+### Un ejemplo que muestra por qué importa
+
+Considera estos valores **hipotéticos**, no extraídos del dataset:
+
+Un objeto tiene su superficie más cercana a 20 metros del plano de la cámara y se aproxima en profundidad a 10 m/s. Su TTC de profundidad es:
+
+\[
+\tau_{\text{profundidad}}=20/10=2\,s.
+\]
+
+Pero pueden darse dos situaciones:
+
+| Situación hipotética | TTC de profundidad | Contacto entre cuerpos |
+|---|---:|---|
+| Está alineado con el ego, cuyo frontal está 2 m por delante de la cámara | 2 s | 1,8 s |
+| Está desplazado lateralmente y las trayectorias no se intersectan | 2 s | No hay contacto bajo ese movimiento |
+
+No hay contradicción. **Los números responden a preguntas diferentes.**
+
+Tu evaluador implementa MiD como una diferencia logarítmica de las cantidades \(1-0,1/\tau\), multiplicada por \(10^4\). En el primer ejemplo, sustituir una predicción correcta de 2 s por el contacto físico correcto de 1,8 s introduciría aproximadamente **58,65 unidades de MiD por muestra** respecto a la etiqueta de 2 s. Es un cálculo ilustrativo aplicando la fórmula del código, no un resultado experimental. 
+
+**Por tanto, una mejora en contacto físico podría empeorar GARL-TTC precisamente porque estaría respondiendo mejor a otra tarea.**
+
+Tampoco hay que contraponer «geometría rigurosa» a «\(d/v\) incorrecto»: en una aproximación longitudinal con velocidad constante, **distancia libre entre superficies dividida entre velocidad de cierre puede ser exactamente el cálculo de primer contacto**.
+
+---
+
+## 2. Qué está haciendo realmente la rama actual
+
+### 2.1. El resultado vigente es SIMPLEX-T, no solo “un encoder JEPA que predice TTC”
+
+El cierre publicado el 4 de octubre contiene estos resultados:
+
+| Modelo | MiD en OLD_DEV, semilla 7 |
+|---|---:|
+| H1 | 132,831619 |
+| H8 | 121,646332 |
+| H16 | 118,865739 |
+
+La media de pérdidas de las tres semillas es **121,784022 para H8** frente a **119,241356 para H16**: aproximadamente **2,09 % de mejora relativa**. El intervalo jerárquico del contraste agregado es favorable, pero el de las dos semillas nuevas todavía incluye cero. Se evalúan **8.192 consultas de nueve secuencias OLD_DEV**, y el propio informe las clasifica como desarrollo reutilizado, no como confirmación independiente.  
+
+Esto cambia la interpretación del siguiente paso:
+
+**Ya tienes evidencia local de que combinar expertos con contexto pasado ayuda. Lo que sigue pendiente no es añadir por primera vez “física”, sino demostrar mejor qué información aprovecha el sistema, cuánto generaliza y qué cuesta producir sus entradas.**
+
+El cierre también indica que el mecanismo cronológico sigue sin demostrarse, que no hay evidencia de incertidumbre calibrada o tracking online persistente, y que el diagnóstico histórico de `LATENT` continúa siendo negativo. Una ganancia de H16 no demuestra por sí sola que el encoder JEPA haya aprendido un estado físico completo. 
+
+### 2.2. El camino activo tiene esta estructura
+
+Simplificando las interfaces que he revisado:
+
+```text
+Eventos y ROI suministrada
+        ↓
+Preparación de observaciones
+        ↓
+Expertos congelados: A5, C2F y PAIR
+        ↓
+PHASE17 + información temporal + máscara de validez
+        ↓
+Refinador H8 o H16
+        ↓
+Fase corregida
+        ↓
+TTC firmado del benchmark
+```
+
+`PHASE17` incluye conteo y tasa de eventos, salidas como `flow`, `margin` y `log_variance` de A5/C2F, las fases de los tres expertos y diferencias entre ellas. **PAIR comparte el encoder A5; no equivale a un tercer encoder independiente.**  
+
+En `src/e_jepa_ttc/simplex_t/model.py`, `TemporalRefiner` procesa las observaciones con dos celdas GRU en la configuración correspondiente. El predictor residual toma como referencia la mediana de las fases actuales:
+
+\[
+\widehat{\phi}
+=
+\operatorname{mediana}
+\left(\phi_{\mathrm{A5}},\phi_{\mathrm{C2F}},\phi_{\mathrm{PAIR}}\right)
++
+0,03\,f_\theta(\text{historial}).
+\]
+
+Es importante que **el residual puede salir del intervalo de los expertos**: no se limita a escoger uno o promediarlos. El modelo también produce cuantiles de fase y costes relativos de los expertos originales, pero el propio código advierte que esos cuantiles **no son probabilidades calibradas de colisión**. 
+
+`CachedQueries`, en `simplex_t/cache.py`, construye ventanas de longitud 1, 4, 8 o 16, normaliza con observaciones de TRAIN y añade cuatro variables temporales, incluyendo edades respecto al ancla y a la disponibilidad. **H16 significa hasta 16 observaciones de contexto, no 16 segundos**; la duración efectiva depende de sus timestamps. 
+
+### 2.3. La física ya está presente en otras partes del proyecto
+
+En `models/causal_scale_ttc.py` ya existe explícitamente este planteamiento:
+
+```text
+Foreground estimado
+        ↓
+Extensión vertical
+        ↓
+Cambio logarítmico de altura
+        ↓
+Inversión física hacia TTC
+```
+
+El módulo documenta:
+
+\[
+r=\log\frac{h_{\text{actual}}}{h_{\text{anterior}}},
+\qquad
+\frac{1}{\tau}=\frac{\operatorname{expm1}(r)}{\Delta t}.
+\]
+
+Por tanto, **“hacer que una red estime una variable geométrica y aplicar después una fórmula física” no es una idea nueva para este repositorio**. Ya la has implementado y sometido a experimentos. El nuevo elemento sería pasar de geometría de expansión visual a geometría de ocupación y contacto entre cuerpos. 
+
+---
+
+## 3. Por qué no puedes conectar directamente el algoritmo de contacto a H16
+
+### Falta el estado necesario
+
+El cálculo de contacto entre rectángulos necesita, como mínimo, posiciones relativas, velocidades relativas en dos dimensiones, orientaciones y dimensiones de ambos cuerpos.
+
+**Eso no aparece como estado explícito en PHASE17.** Sus entradas describen principalmente observaciones y desacuerdos de estimadores de TTC, no una escena métrica completa. 
+
+Es un problema de información, no de tamaño del refinador.
+
+Dos escenas pueden tener el mismo TTC de profundidad y prácticamente las mismas estimaciones de los expertos, pero distinta separación lateral: una termina en contacto y la otra no. **Ninguna fórmula aplicada únicamente a ese TTC puede recuperar la separación lateral que falta.**
+
+Por eso no sería correcto hacer:
+
+```text
+TTC de H16 → fórmula de rectángulos → TTC físico más preciso
+```
+
+El camino necesitaría ser algo como:
+
+```text
+Observaciones con información espacial suficiente
+        ↓
+Estimación del estado relativo y de los cuerpos
+        ↓
+Cálculo de contacto
+```
+
+### También cambia el tipo de salida
+
+El contrato actual de `simplex_t/phase.py` utiliza TTC firmado, la transformación
+
+\[
+\phi=-\log\left(1-\frac{0,1}{\tau}\right)
+\]
+
+y una reconversión con límite de magnitud de 60 segundos. Una fase cero se convierte en +60 s. 
+
+En cambio, un módulo de contacto necesita distinguir al menos:
+
+**contacto futuro**, **ausencia de contacto dentro del horizonte evaluado** y **geometría insuficiente para decidir**.
+
+No conviene meter esos tres estados dentro del mismo número. En particular:
+
+**“No hay contacto” no equivale a +60 s, y “TTC negativo” no equivale a una colisión futura.**
+
+Reutilizar sin cambios la salida, la pérdida y el evaluador actuales mezclaría significados distintos.
+
+---
+
+## 4. Qué datos geométricos tienes realmente a tu alcance
+
+Aquí sí encontré algo útil: **el exportador oficial de GARL conserva información 3D en las etiquetas de entrenamiento**.
+
+En `garl_ttc_benchmark/build_garlttc_dataset.py`, las filas de datos incluyen identificadores, timestamps, ventanas de eventos y cajas 2D. Las filas de etiquetas añaden:
+
+```python
+ttc
+frame_ttc
+box3d_h
+box3d_Fcam
+```
+
+Pero `box3d_Fcam` se obtiene mediante `anno.get(...)`: que el campo exista en el esquema **no garantiza que todas las muestras tengan valores completos y válidos**. 
+
+Además, `schema.py` incluye `box3d_Fcam`, `box3d_h`, profundidad y otras variables geométricas entre los campos prohibidos en los datos públicos de test. Esto establece una frontera clara: **pueden servir como etiquetas o diagnóstico de entrenamiento, pero no como entradas disponibles para un predictor del benchmark**. 
+
+La situación práctica queda así:
+
+| Información | Qué permite afirmar el código revisado |
+|---|---|
+| Identidad, timestamps y cajas 2D | Existen en el esquema de muestras |
+| Cajas 3D en cámara | El exportador las contempla en las etiquetas de entrenamiento; falta comprobar cobertura y formato material |
+| Velocidad relativa completa | No aparece como campo explícito en esa fila exportada |
+| Geometría física del ego | No aparece en esa fila |
+| Transformaciones necesarias entre instantes | Hay que localizar y verificar los activos correspondientes |
+| Estado 3D real durante inferencia de test | No puede asumirse disponible |
+
+Por tanto, **la auditoría geométrica es plausible**, pero todavía no puedo afirmar que tus archivos locales contengan todo lo necesario para reconstruir un TTC de contacto fiable.
+
+Hay además una trampa que evitar: **no reconstruir la velocidad como \(Z/\tau_{\mathrm{GT}}\) para después presentar el resultado como una referencia independiente de \(\tau_{\mathrm{GT}}\)**. Eso introduciría la etiqueta en el supuesto oráculo de validación.
+
+---
+
+## 5. Cómo lo incorporaría, paso a paso, sin desviar el proyecto
+
+### Paso 1. Congelar el sistema actual y documentar las dos tareas
+
+Mantendría intactos H8, H16, sus expertos, normalizadores, pérdidas, conjuntos de evaluación y resultados históricos.
+
+Crearía un documento nuevo, por ejemplo:
+
+```text
+docs/TTC_TARGET_SEMANTICS.md
+```
+
+En él separaría explícitamente:
+
+```text
+ttc_benchmark_signed_s
+ttc_contact_cv_s
+contact_status
+reference_timestamp_us
+prediction_available_timestamp_us
+geometry_valid
+```
+
+`cv` indicaría **velocidad constante**. El nombre importa: es una predicción de contacto bajo una hipótesis de movimiento, no una afirmación de que realmente ocurrirá el accidente.
+
+También actualizaría la entrada documental al proyecto: el README raíz todavía empieza con estados de agosto, mientras que la síntesis de octubre está en `docs/simplex_t_results_20261004/README.md`. Para una sesión nueva de Codex, esa diferencia puede inducir a trabajar sobre una interpretación obsoleta.  
+
+### Paso 2. Auditar la referencia temporal antes de calcular nada nuevo
+
+Este punto es especialmente importante en tu código.
+
+La transformación de expansión de `causal_scale_ttc.py` y la fase de benchmark de `simplex_t/phase.py` **no deben intercambiarse suponiendo que son la misma variable**. Sus expresiones son distintas. Eso no demuestra un bug: obliga a identificar a qué instante está referido cada TTC y qué conversión aplica cada productor.  
+
+Ejemplo matemático: si la altura pasa de 50 a 55 píxeles en 0,1 s bajo aproximación uniforme, el TTC referido al primer instante es 1,1 s y el referido al segundo es 1,0 s.
+
+**Compararlos sin alinear el instante introduce 100 ms de discrepancia aunque ambos cálculos sean correctos.**
+
+Revisaría juntos el instante de la etiqueta, los endpoints utilizados, el final de la ventana de eventos y el momento de disponibilidad de la predicción. El proyecto ya separa anclas y disponibilidad en `CachedQueries`; conservaría esa distinción. 
+
+### Paso 3. Construir un inventario geométrico, todavía sin entrenamiento
+
+Haría un script separado, por ejemplo:
+
+```text
+scripts/audit_garl_geometry_support.py
+```
+
+Su trabajo sería unir muestras y etiquetas por identidad exacta y medir cuántas permiten reconstruir el estado geométrico.
+
+El resultado debería informar de cobertura, valores ausentes, convenciones de coordenadas, continuidad de las identidades, intervalos temporales y disponibilidad de la geometría del ego. No bastaría con encontrar una columna llamada `box3d_Fcam`.
+
+**No conectaría esa información al `forward` actual.** Tu interfaz `ObjectEventV4Batch.event_inputs()` devuelve eventos e intervalo temporal, manteniendo cajas, alturas y TTC fuera de las entradas del modelo; esa separación es valiosa y hay que preservarla. 
+
+### Paso 4. Reconstruir primero una referencia compatible con GARL
+
+Antes del contacto entre cuerpos, intentaría obtener una referencia geométrica de **TTC de profundidad** con información independiente suficiente.
+
+La pregunta sería:
+
+> ¿Hasta qué punto podemos reproducir la semántica de la etiqueta oficial con la geometría exportada?
+
+Si aparecen diferencias, investigaría primero referencias temporales, transformaciones de coordenadas, estimación de velocidades, suavizado de las anotaciones y cambios del punto más cercano.
+
+**Una discrepancia no demostraría automáticamente que la etiqueta es incorrecta.** Podría significar que estamos reconstruyendo otra aproximación de la misma magnitud.
+
+Este paso aportaría algo directamente útil al proyecto actual: separar error de percepción, error de conversión y discrepancias de protocolo.
+
+### Paso 5. Añadir el cálculo de contacto como referencia independiente
+
+Solo después implementaría un módulo aislado, por ejemplo:
+
+```text
+src/e_jepa_ttc/geometry/contact_cv.py
+tests/test_contact_cv.py
+```
+
+Para dos rectángulos con orientaciones fijas y velocidades constantes, propondría una implementación basada en **intervalos de solapamiento sobre ejes de separación**. Es una formulación alternativa del problema de primer contacto, no una afirmación de haber reproducido literalmente el algoritmo del artículo de 2013.
+
+La idea es sencilla: en cada dirección relevante calculas durante qué intervalo las proyecciones de los coches se solapan. Hay contacto únicamente si esos intervalos coinciden en todas las direcciones.
+
+Para un eje unitario \(n\):
+
+\[
+|s_0+u\,t|\leq R,
+\]
+
+donde \(s_0\) es la separación inicial proyectada, \(u\) la velocidad relativa proyectada y \(R\) la suma de los semitamaños proyectados. Intersectando los intervalos válidos obtienes el primer instante de contacto.
+
+Lo probaría con aproximación longitudinal, paso lateral sin choque, cruce oblicuo, velocidades iguales, separación creciente, contacto inicial y casos tangenciales. También verificaría que trasladar o rotar conjuntamente toda la escena no cambia el resultado.
+
+**Las velocidades deben estar expresadas en un marco común adecuado.** Restar posiciones de cajas observadas en dos cámaras orientadas de forma distinta puede introducir movimiento aparente del ego en el cálculo.
+
+Y no llamaría “sin colisión” a una muestra cuya geometría no se puede reconstruir: sería **desconocida**.
+
+### Paso 6. Ejecutar una auditoría del modelo congelado
+
+Ahora sí tendría sentido construir, para las muestras compatibles:
+
+| Magnitud | Pregunta que responde |
+|---|---|
+| Etiqueta oficial | ¿Cuál es el objetivo del benchmark? |
+| TTC de profundidad reconstruido | ¿Podemos explicar geométricamente esa etiqueta? |
+| TTC de contacto bajo movimiento constante | ¿Se intersectarían los cuerpos? |
+| Predicción H8/H16 | ¿Qué estima el sistema actual? |
+
+Pero **no haría una competición indiscriminada entre las cuatro columnas usando el mismo MAE**.
+
+Separaría dos análisis:
+
+**Fidelidad al benchmark.** Mediría dónde falla H8/H16 respecto a la etiqueta oficial y si el error se concentra en rotación, movimiento lateral, cambios de punto cercano, poco soporte geométrico o contextos incompletos.
+
+**Relación con contacto.** Mediría cuántos TTC de profundidad pequeños corresponden a contacto geométrico y cuántos a objetos que se aproximan sin intersectar al ego.
+
+Esto puede ser valioso aunque no mejore ni una décima de MiD: permitiría saber **cuánto riesgo físico se puede inferir realmente del TTC que predices**.
+
+---
+
+## 6. Qué haría falta para convertirlo en una mejora del modelo
+
+### Ruta A: mejorar GARL-TTC sin cambiar la tarea
+
+Esta sería mi ruta preferida para mantener el foco.
+
+Si la auditoría identifica que determinados errores se relacionan con una variable geométrica concreta, entonces formularía una hipótesis acotada: por ejemplo, que el estado actual no distingue bien expansión debida a aproximación de cambios aparentes debidos a orientación.
+
+A partir de ahí tendría sentido estudiar supervisión auxiliar de entrenamiento o probes sobre las representaciones que conservan información espacial. **No introduciría de entrada un estado 3D completo con muchas cabezas nuevas.**
+
+La condición sería que la nueva señal mejore la **misma tarea GARL**, con inferencia basada en entradas permitidas y un protocolo independiente. Una mejora sobre OLD_DEV, después de haber usado OLD_DEV para elegir la hipótesis, seguiría siendo desarrollo.
+
+Además, separarían dos afirmaciones:
+
+> La geometría auxiliar mejora la predicción supervisada.
+
+y
+
+> El preentrenamiento JEPA aporta esa mejora.
+
+La segunda requiere una comparación específica con inicialización desde cero y presupuestos controlados. **Ni el método analítico ni un probe exitoso demuestran por sí solos la contribución de JEPA.** El cierre actual ya es prudente al no convertir sus resultados de contexto en una afirmación de mecanismo latente. 
+
+### Ruta B: construir un predictor de contacto físico
+
+Aquí el proyecto crecería hacia otra tarea:
+
+```text
+Eventos y contexto espacial
+        ↓
+Estado relativo estimado
+        ↓
+Geometría de los cuerpos y movimiento
+        ↓
+Contacto bajo una hipótesis explícita
+```
+
+Podría ser una extensión interesante, pero necesitaría comparar tres sistemas distintos:
+
+**Geometría con estado de referencia:** comprueba si el problema está bien definido y si las anotaciones permiten resolverlo.
+
+**Geometría con estado estimado:** mide el coste de los errores perceptivos.
+
+**Predictor directo de contacto:** comprueba si imponer la representación geométrica aporta algo frente a aprender la tarea directamente.
+
+La diferencia entre los dos primeros es crucial. Un cálculo excelente usando cajas y velocidades reales **no demuestra que puedas conseguir el mismo resultado a partir de eventos**.
+
+También serían necesarias métricas propias: falsas alarmas, omisiones a igualdad de sensibilidad, error temporal condicionado a contacto y cobertura de los casos desconocidos. Los cuantiles y la cabeza de costes actuales no sustituyen esa evaluación. 
+
+### ¿Cuándo sería una mejora realmente sustancial?
+
+Para mí, tendría que ocurrir alguna de estas dos cosas:
+
+**En la tarea actual:** mejorar de forma reproducible el TTC firmado en escenas independientes, sin información privilegiada en inferencia y sin degradar cobertura, signo o casos cruciales.
+
+**En la nueva tarea:** reducir de forma convincente las falsas alertas de contacto manteniendo la detección de situaciones peligrosas, frente a utilizar únicamente el TTC de profundidad.
+
+Lo que **no** bastaría sería demostrar que H16 está a veces más cerca de la nueva etiqueta que de la antigua. Mi explicación anterior daba demasiado peso a esa observación: **por sí sola puede deberse a sesgos, coincidencias o relaciones entre ambas definiciones, no necesariamente a una representación física más rica**.
+
+---
+
+## 7. Mi prioridad concreta para esta rama
+
+Hay una mejora práctica bastante más respaldada por tus propios resultados que cambiar ahora el objetivo físico: **la preparación de datos y contexto**.
+
+El cierre informa de 1.114 de 1.728 mediciones de la ruta completa conservadas. En los casos descritos de `warm_block2`, lectura y ROI/voxel representan el **84,9 % del tiempo de H8** y el **90,0 % del de H16**; la cabeza supone menos del 1 %. Son medidas parciales con GPU compartida y ROI suministrada, no latencia AEB. Las 614 mediciones restantes quedaron bloqueadas al perderse el acceso a `E:/eAP_dataset/data/train`. 
+
+Eso no garantiza una aceleración concreta, pero sí localiza un cuello de botella observado. El propio cierre propone optimizar la preparación retrospectiva con pesos congelados y paridad verificada, mediante un protocolo separado. 
+
+Mi orden sería:
+
+| Acción | Valor esperado | Decisión |
+|---|---|---|
+| Alinear documentación y semántica temporal | Evita comparaciones e intervenciones equivocadas | Hacerlo primero |
+| Completar el perfilado autorizado | Cierra una medición ya iniciada | Prioridad operativa |
+| Auditar `box3d_Fcam` y reconstrucción del TTC de profundidad | Puede explicar errores del objetivo actual | Sí, sin entrenamiento |
+| Calcular contacto entre cuerpos como diagnóstico separado | Aclara la relación entre TTC y riesgo | Sí, si hay datos suficientes |
+| Reemplazar las etiquetas GARL por contacto físico | Cambia la tarea y rompe la comparabilidad | No |
+| Añadir una nueva arquitectura de estado 3D y contacto | Potencial investigador, coste y beneficio aún desconocidos | Solo tras la auditoría |
+
+### Mi recomendación final
+
+**Mantendría SIMPLEX-T y el objetivo GARL intactos. Añadiría primero una auditoría geométrica, no otra campaña de entrenamiento.**
+
+El artículo de contacto puede ayudarte a descubrir **qué parte del riesgo de colisión queda fuera del TTC que hoy predices**. Eso es relevante y puede justificar una extensión futura. Pero **no aporta, por sí solo, la pieza que falta para que H16 mejore sustancialmente en GARL, ni convierte las etiquetas actuales en incorrectas**.
+
+El experimento más útil ahora sería resolver esta pregunta:
+
+> **¿Los errores de H8/H16 proceden de estimar mal la magnitud de GARL, de convenciones temporales o geométricas mal alineadas, o de que estamos intentando interpretar esa magnitud como un riesgo físico que no representa completamente?**
+
+Cada respuesta conduce a una intervención distinta. Esa separación evitaría invertir otra campaña en mejorar una tarea mientras crees que estás mejorando otra.

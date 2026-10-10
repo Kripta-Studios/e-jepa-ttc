@@ -11,3 +11,8 @@
 
 # Frozen A5 V3 file_sha256 was observed on the original CRLF bytes.
 artifacts/metrics/a5_transport_preflight_v3_confirm/a5_transport_preflight_v3_confirm.json binary
+
+# Imported handoffs carry SHA-256 inventories of their original bytes.
+docs/efficient_context_handoff_20261004/** -text
+docs/dual_modal_handoff_20261008/** -text
+docs/rgb_port_handoff_20261008/** -text

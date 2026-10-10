@@ -1,0 +1,24 @@
+{
+  "scope": "Derived from manually transcribed MAE fields of published PER_SEQUENCE.csv, not model inference; verified against published 6-decimal pooled metrics. Family stratification is exploratory, not the official unit or a claim of family independence.",
+  "labeled_queries": 946,
+  "sequences": 32,
+  "pooled_mae": {
+    "H8_seed7": 1.3208407080791975,
+    "H8_seed13": 1.3528085341054652,
+    "H8_seed23": 1.4087141425533638,
+    "Garl_E": 8.048108926636752,
+    "Garl_ER": 1.8682761924690514
+  },
+  "h8_mean_of_losses_vs_full_macro_delta": -0.5086008217568564,
+  "h8_mean_of_losses_seq_ci95": [
+    -1.2093226839342959,
+    -0.008274806583337891
+  ],
+  "h8_mean_loss_sequence_wins": 18,
+  "family_balanced_delta_exploratory": -0.31536615033540527,
+  "family_bootstrap_ci95_exploratory": [
+    -0.6582491037052296,
+    0.013964955517610442
+  ],
+  "family_wins": 5
+}

@@ -1,0 +1,56 @@
+[
+  {
+    "uploaded_name": "01_CRONOLOGIA.md",
+    "copy": "evidence/source_reports/01_CRONOLOGIA.md",
+    "bytes": 8677,
+    "sha256": "1aef42d509c190a544ff9c27aceae9b1c1c6225a283edd234f73e1cb4d5d2639"
+  },
+  {
+    "uploaded_name": "02_INGENIERIA.md",
+    "copy": "evidence/source_reports/02_INGENIERIA.md",
+    "bytes": 8153,
+    "sha256": "da409a293a70b1e391f4d97a92cc416d3aae813772a19ecf728b4ff5a75e9681"
+  },
+  {
+    "uploaded_name": "03_RESULTADOS.md",
+    "copy": "evidence/source_reports/03_RESULTADOS.md",
+    "bytes": 10500,
+    "sha256": "d92c9074516354bdad3629926ecad1cbca6eb933f6d4be281734ae79a077f17a"
+  },
+  {
+    "uploaded_name": "04_REPRODUCIBILIDAD.md",
+    "copy": "evidence/source_reports/04_REPRODUCIBILIDAD.md",
+    "bytes": 7974,
+    "sha256": "e5fe413e06a4b1b7ed9a0bc6432b58ac571f3903a9e9b026a22f3ca5871abdff"
+  },
+  {
+    "uploaded_name": "CUTOFF.json",
+    "copy": "evidence/source_reports/CUTOFF.json",
+    "bytes": 332,
+    "sha256": "8a746099f1fd1a3e888b38474143a2cb7ca79dea253acb219d84c3b50f679ff8"
+  },
+  {
+    "uploaded_name": "NEXT_DECISION.md",
+    "copy": "evidence/source_reports/NEXT_DECISION.md",
+    "bytes": 3447,
+    "sha256": "e82a9fe21fbfa4d230ce247d779816b1354d3f9d406b933099b38ef200fcbf77"
+  },
+  {
+    "uploaded_name": "PUBLICATION_QA.json",
+    "copy": "evidence/source_reports/PUBLICATION_QA.json",
+    "bytes": 1115,
+    "sha256": "ce6256cccc51ceed3e56371bea86df667dd9395add2e7dc8fe2bf1ae3c50f742"
+  },
+  {
+    "uploaded_name": "README(20261008-172845).md",
+    "copy": "evidence/source_reports/README.md",
+    "bytes": 3690,
+    "sha256": "f2038e2d46ea2bb090448f583a9b69370a4d7ee9b6eddfb9540fcb368b140ee4"
+  },
+  {
+    "uploaded_name": "commits.csv",
+    "copy": "evidence/source_reports/commits.csv",
+    "bytes": 10718,
+    "sha256": "09e0802beecfc92396676179ffae6e52a71057243826abd2c30a996bcd60c4ee"
+  }
+]

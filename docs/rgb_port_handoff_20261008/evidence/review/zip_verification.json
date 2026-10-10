@@ -1,0 +1,14 @@
+{
+  "zip_sha256": "b24b1f68be8e2846805d2b7f3f7cab2bd385864faac7cc662a1ade47940f3917",
+  "zip_bytes": 2680967,
+  "members": 362,
+  "manifest_entries": 357,
+  "bad": [],
+  "extra_files": [
+    "SHA256SUMS.txt",
+    "evidence/fcwd_runner_qa/SHA256SUMS.txt",
+    "evidence/root_qa/full_outlier_audit/SHA256SUMS.txt",
+    "scripts/publication.py",
+    "scripts/scoring.py"
+  ]
+}

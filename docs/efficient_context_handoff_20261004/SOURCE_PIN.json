@@ -1,0 +1,53 @@
+{
+  "base_commit": "fd16d8102914537653622d3abf298b753120ea43",
+  "tag": "simplex-t-local-results-20261004-complete",
+  "inspection": "GitHub connected read-only",
+  "clone_succeeded": false,
+  "new_release_archives_downloaded": false,
+  "local_historical_t6_sha256": "84e2506584a4847a6fa55d3d02e881689285eee1cfa7278ff218526abd4d7e8a",
+  "inspected_files": {
+    "src/e_jepa_ttc/simplex_t/context_raw_union.py": {
+      "git_blob_sha1": "085622ea3f8d3062743419f22eba669b6e6a6d65",
+      "url": "https://github.com/Kripta-Studios/e-jepa-ttc/blob/fd16d8102914537653622d3abf298b753120ea43/src/e_jepa_ttc/simplex_t/context_raw_union.py"
+    },
+    "src/e_jepa_ttc/simplex_t/query_context_voxel.py": {
+      "git_blob_sha1": "0c4bbe3d1ca1b850ccc19bfec1c96f02df083a63",
+      "url": "https://github.com/Kripta-Studios/e-jepa-ttc/blob/fd16d8102914537653622d3abf298b753120ea43/src/e_jepa_ttc/simplex_t/query_context_voxel.py"
+    },
+    "src/e_jepa_ttc/simplex_t/cached_event_reader.py": {
+      "git_blob_sha1": "2592510dfb84adcc1ea96624863416ca89f16ff8",
+      "url": "https://github.com/Kripta-Studios/e-jepa-ttc/blob/fd16d8102914537653622d3abf298b753120ea43/src/e_jepa_ttc/simplex_t/cached_event_reader.py"
+    },
+    "src/e_jepa_ttc/data/eap_representation.py": {
+      "git_blob_sha1": "d516909418bfa5cdba7091d1aa6d33ee0fd7af72",
+      "url": "https://github.com/Kripta-Studios/e-jepa-ttc/blob/fd16d8102914537653622d3abf298b753120ea43/src/e_jepa_ttc/data/eap_representation.py"
+    },
+    "src/e_jepa_ttc/representations/voxel_grid.py": {
+      "git_blob_sha1": "1afc07dc41341dadd787cba3495dd9bdee1160cc",
+      "url": "https://github.com/Kripta-Studios/e-jepa-ttc/blob/fd16d8102914537653622d3abf298b753120ea43/src/e_jepa_ttc/representations/voxel_grid.py"
+    },
+    "operational/simplex_t_shared_route/run.py": {
+      "git_blob_sha1": "8f0281aea26517135a0da871430305cdd6186cc9",
+      "url": "https://github.com/Kripta-Studios/e-jepa-ttc/blob/fd16d8102914537653622d3abf298b753120ea43/operational/simplex_t_shared_route/run.py"
+    },
+    "operational/simplex_t_shared_route/adapter.py": {
+      "git_blob_sha1": "7e23ab972e395efdc56e1cbd875d72aa995d0706",
+      "url": "https://github.com/Kripta-Studios/e-jepa-ttc/blob/fd16d8102914537653622d3abf298b753120ea43/operational/simplex_t_shared_route/adapter.py"
+    },
+    "docs/simplex_t_shared_gpu_route_20261004/STAGE_SHARES.csv": {
+      "git_blob_sha1": "cf6085ee5c6bb744723f6e1ce31e4149c0efd8cd",
+      "url": "https://github.com/Kripta-Studios/e-jepa-ttc/blob/fd16d8102914537653622d3abf298b753120ea43/docs/simplex_t_shared_gpu_route_20261004/STAGE_SHARES.csv"
+    },
+    "docs/simplex_t_results_20261004_complete/RELEASE_ASSETS.json": {
+      "git_blob_sha1": "8a44dfb9d205d76c427543fe4c182dee716f2196",
+      "url": "https://github.com/Kripta-Studios/e-jepa-ttc/blob/fd16d8102914537653622d3abf298b753120ea43/docs/simplex_t_results_20261004_complete/RELEASE_ASSETS.json"
+    }
+  },
+  "upstream_garl_config": {
+    "url": "https://github.com/NAIL-HNU/Garl-TTC/blob/256661242b8a7f5e56aa3c1c02348b30f6e89de6/configs/ablation/event_lhr.yaml",
+    "git_blob_sha1": "555058f52e9fce72d0530f256d5d155b5b88f78f",
+    "must_pin_full_commit_before_training": false,
+    "commit": "256661242b8a7f5e56aa3c1c02348b30f6e89de6",
+    "must_verify_pinned_commit_and_blob_locally_before_training": true
+  }
+}

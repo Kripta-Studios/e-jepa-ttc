@@ -1,0 +1,171 @@
+{
+  "scope": "Bound historical query-context indices included in supplied T6 bundle; not raw replay; no optimizer updates",
+  "archive_sha256": "84e2506584a4847a6fa55d3d02e881689285eee1cfa7278ff218526abd4d7e8a",
+  "pools": {
+    "D0": {
+      "rows": 8192,
+      "sha256": "0fe7d7bb597dc768073a2940795442417ab6dba0be6110cd356d3ff0b9f656bf",
+      "history_lag_us": [
+        750000,
+        700000,
+        650000,
+        600000,
+        550000,
+        500000,
+        450000,
+        400000,
+        350000,
+        300000,
+        250000,
+        200000,
+        150000,
+        100000,
+        50000,
+        0
+      ],
+      "contexts": {
+        "1": {
+          "total_window_uses": 24576,
+          "unique_windows_within_query": 24576,
+          "exact_reuse_fraction": 0.0,
+          "median_raw_union_duration_ms": 300.004,
+          "queries_with_exact_duplicates": 0
+        },
+        "8": {
+          "total_window_uses": 196494,
+          "unique_windows_within_query": 196464,
+          "exact_reuse_fraction": 0.00015267641760052797,
+          "median_raw_union_duration_ms": 650.004,
+          "queries_with_exact_duplicates": 5
+        },
+        "16": {
+          "total_window_uses": 392745,
+          "unique_windows_within_query": 392675,
+          "exact_reuse_fraction": 0.0001782326955148683,
+          "median_raw_union_duration_ms": 1050.004,
+          "queries_with_exact_duplicates": 5
+        }
+      },
+      "anchor_to_last_window_end_us_quantiles": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "anchor_to_roi_available_us_quantiles": [
+        1003.0,
+        2333.0,
+        19992.0
+      ]
+    },
+    "D1": {
+      "rows": 27307,
+      "sha256": "23b335053b0bd75a9ec4445d5ecefb904938fdb93666dbb1d573ddb57289c759",
+      "history_lag_us": [
+        750000,
+        700000,
+        650000,
+        600000,
+        550000,
+        500000,
+        450000,
+        400000,
+        350000,
+        300000,
+        250000,
+        200000,
+        150000,
+        100000,
+        50000,
+        0
+      ],
+      "contexts": {
+        "1": {
+          "total_window_uses": 81921,
+          "unique_windows_within_query": 81921,
+          "exact_reuse_fraction": 0.0,
+          "median_raw_union_duration_ms": 300.004,
+          "queries_with_exact_duplicates": 0
+        },
+        "8": {
+          "total_window_uses": 654723,
+          "unique_windows_within_query": 654699,
+          "exact_reuse_fraction": 3.665672353037053e-05,
+          "median_raw_union_duration_ms": 650.004,
+          "queries_with_exact_duplicates": 4
+        },
+        "16": {
+          "total_window_uses": 1308075,
+          "unique_windows_within_query": 1308019,
+          "exact_reuse_fraction": 4.281100089831291e-05,
+          "median_raw_union_duration_ms": 1050.004,
+          "queries_with_exact_duplicates": 4
+        }
+      },
+      "anchor_to_last_window_end_us_quantiles": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "anchor_to_roi_available_us_quantiles": [
+        1003.0,
+        1659.0,
+        19992.0
+      ]
+    },
+    "DENSE_OLD": {
+      "rows": 21471,
+      "sha256": "a2a4dacddbdda1a7b408c5360121d26649ec1bca6b37977f49d83af0f28912ce",
+      "history_lag_us": [
+        750000,
+        700000,
+        650000,
+        600000,
+        550000,
+        500000,
+        450000,
+        400000,
+        350000,
+        300000,
+        250000,
+        200000,
+        150000,
+        100000,
+        50000,
+        0
+      ],
+      "contexts": {
+        "1": {
+          "total_window_uses": 64413,
+          "unique_windows_within_query": 64413,
+          "exact_reuse_fraction": 0.0,
+          "median_raw_union_duration_ms": 300.004,
+          "queries_with_exact_duplicates": 0
+        },
+        "8": {
+          "total_window_uses": 514731,
+          "unique_windows_within_query": 514677,
+          "exact_reuse_fraction": 0.00010490916614702694,
+          "median_raw_union_duration_ms": 650.004,
+          "queries_with_exact_duplicates": 9
+        },
+        "16": {
+          "total_window_uses": 1028427,
+          "unique_windows_within_query": 1028301,
+          "exact_reuse_fraction": 0.00012251720345735073,
+          "median_raw_union_duration_ms": 1050.004,
+          "queries_with_exact_duplicates": 9
+        }
+      },
+      "anchor_to_last_window_end_us_quantiles": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "anchor_to_roi_available_us_quantiles": [
+        1003.0,
+        1956.0,
+        19992.0
+      ]
+    }
+  }
+}

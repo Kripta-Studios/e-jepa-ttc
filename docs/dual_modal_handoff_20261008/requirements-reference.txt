@@ -1,0 +1,7 @@
+# Use the existing project environment when compatible. Do not upgrade globally.
+# Tested here: Python 3.13, torch 2.10.0+cpu, torchvision 0.25.0+cpu.
+# User scientific environment is different; run parity/admission there.
+numpy>=1.26
+pytest>=8
+torch>=2.5
+torchvision>=0.20

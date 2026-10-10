@@ -1,0 +1,113 @@
+[
+  {
+    "branch": "scoring_existing_946",
+    "optimizer_updates": 0,
+    "files": {
+      "METHOD_METRICS.csv": {
+        "same_bytes": true,
+        "same_newline_normalized": true
+      },
+      "PAIRED.csv": {
+        "same_bytes": true,
+        "same_newline_normalized": true
+      },
+      "PER_SEQUENCE.csv": {
+        "same_bytes": true,
+        "same_newline_normalized": true
+      },
+      "SCORED_ROWS.csv": {
+        "same_bytes": true,
+        "same_newline_normalized": true
+      },
+      "METADATA.json": {
+        "same_bytes": false,
+        "same_newline_normalized": true,
+        "same_parsed_values": true
+      },
+      "REPORT.json": {
+        "same_bytes": false,
+        "same_newline_normalized": true,
+        "same_parsed_values": true
+      },
+      "SHA256.json": {
+        "same_bytes": false,
+        "same_newline_normalized": false,
+        "same_parsed_values": false
+      }
+    }
+  },
+  {
+    "branch": "expanded_metrics",
+    "optimizer_updates": 0,
+    "files": {
+      "METHOD_METRICS.csv": {
+        "same_bytes": true,
+        "same_newline_normalized": true
+      },
+      "PAIRED.csv": {
+        "same_bytes": true,
+        "same_newline_normalized": true
+      },
+      "PER_SEQUENCE.csv": {
+        "same_bytes": true,
+        "same_newline_normalized": true
+      },
+      "SCORED_ROWS.csv": {
+        "same_bytes": true,
+        "same_newline_normalized": true
+      },
+      "METADATA.json": {
+        "same_bytes": false,
+        "same_newline_normalized": true,
+        "same_parsed_values": true
+      },
+      "REPORT.json": {
+        "same_bytes": false,
+        "same_newline_normalized": true,
+        "same_parsed_values": true
+      },
+      "SHA256.json": {
+        "same_bytes": false,
+        "same_newline_normalized": false,
+        "same_parsed_values": false
+      }
+    }
+  },
+  {
+    "branch": "fcwd_metrics",
+    "optimizer_updates": 0,
+    "files": {
+      "METHOD_METRICS.csv": {
+        "same_bytes": true,
+        "same_newline_normalized": true
+      },
+      "PAIRED.csv": {
+        "same_bytes": true,
+        "same_newline_normalized": true
+      },
+      "PER_SEQUENCE.csv": {
+        "same_bytes": true,
+        "same_newline_normalized": true
+      },
+      "SCORED_ROWS.csv": {
+        "same_bytes": true,
+        "same_newline_normalized": true
+      },
+      "METADATA.json": {
+        "same_bytes": false,
+        "same_newline_normalized": true,
+        "same_parsed_values": true
+      },
+      "REPORT.json": {
+        "same_bytes": false,
+        "same_newline_normalized": true,
+        "same_parsed_values": true
+      },
+      "SHA256.json": {
+        "same_bytes": false,
+        "same_newline_normalized": false,
+        "same_parsed_values": false
+      }
+    }
+  }
+]
