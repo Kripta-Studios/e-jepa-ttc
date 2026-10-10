@@ -1,0 +1,111 @@
+{
+  "schema": "rgb_port_loader_v3_memory_observation_v1",
+  "reserve_gib": 1,
+  "code_commit": "44689ba4c51833d3c2a256c8a16516c6da57016c",
+  "intervals": [
+    {
+      "status": "FIVE_MINUTES_OBSERVED",
+      "origin_updates": {
+        "E_A5_MATCHED": 27777,
+        "E_C2F_MATCHED": 19120
+      },
+      "final_updates": {
+        "E_A5_MATCHED": 27886,
+        "E_C2F_MATCHED": 19205
+      },
+      "observed_s": 578.5939999999828,
+      "steady_s": 301.85999999998603,
+      "commit_headroom_min_gib": 2.3709793090820312,
+      "commit_headroom_final_gib": 2.9949264526367188,
+      "ram_available_min_gib": 5.255252838134766,
+      "reserve_gib": 1,
+      "last_minute_commit_slope_mib_per_min": 541.0291693149252,
+      "steady_commit_first_30s_gib": 58.77696228027344,
+      "steady_commit_last_30s_gib": 59.04563903808594,
+      "interval": "first_5min",
+      "steady_updates_first": {
+        "E_A5_MATCHED": 27820,
+        "E_C2F_MATCHED": 19121
+      },
+      "steady_updates_last": {
+        "E_A5_MATCHED": 27886,
+        "E_C2F_MATCHED": 19205
+      },
+      "private_memory_gib": {
+        "E_A5_MATCHED": {
+          "first_30s_median": 6.52191162109375,
+          "last_30s_median": 6.231487274169922,
+          "min": 6.062664031982422,
+          "max": 6.7540740966796875,
+          "pids": [
+            10328
+          ]
+        },
+        "E_C2F_MATCHED": {
+          "first_30s_median": 6.1934051513671875,
+          "last_30s_median": 6.820030212402344,
+          "min": 5.821815490722656,
+          "max": 6.820030212402344,
+          "pids": [
+            22944
+          ]
+        }
+      }
+    },
+    {
+      "status": "OBSERVATION_COMPLETED",
+      "origin_updates": {
+        "E_A5_MATCHED": 27901,
+        "E_C2F_MATCHED": 19220
+      },
+      "final_updates": {
+        "E_A5_MATCHED": 27941,
+        "E_C2F_MATCHED": 19260
+      },
+      "observed_s": 191.29699999996228,
+      "steady_s": 182.59399999998277,
+      "commit_headroom_min_gib": 1.4166183471679688,
+      "commit_headroom_final_gib": 2.57025146484375,
+      "ram_available_min_gib": 4.124240875244141,
+      "reserve_gib": 1,
+      "last_minute_commit_slope_mib_per_min": -438.23886777791455,
+      "steady_commit_first_30s_gib": 59.568477630615234,
+      "steady_commit_last_30s_gib": 59.93704032897949,
+      "interval": "extra_3min",
+      "steady_updates_first": {
+        "E_A5_MATCHED": 27902,
+        "E_C2F_MATCHED": 19227
+      },
+      "steady_updates_last": {
+        "E_A5_MATCHED": 27941,
+        "E_C2F_MATCHED": 19260
+      },
+      "private_memory_gib": {
+        "E_A5_MATCHED": {
+          "first_30s_median": 6.292812347412109,
+          "last_30s_median": 6.276149749755859,
+          "min": 6.260295867919922,
+          "max": 6.639766693115234,
+          "pids": [
+            10328
+          ]
+        },
+        "E_C2F_MATCHED": {
+          "first_30s_median": 6.653751373291016,
+          "last_30s_median": 6.7118988037109375,
+          "min": 6.301536560058594,
+          "max": 6.754169464111328,
+          "pids": [
+            22944
+          ]
+        }
+      }
+    }
+  ],
+  "no_automatic_pause_observed": true,
+  "limitations": [
+    "Eight observed minutes do not prove indefinite stability.",
+    "Global commit also includes other applications.",
+    "Warm CPU loader speedups are not GPU training speedups."
+  ]
+}

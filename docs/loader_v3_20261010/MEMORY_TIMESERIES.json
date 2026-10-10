@@ -1,0 +1,4557 @@
+[
+  {
+    "interval": "first_5min",
+    "samples": [
+      {
+        "utc": "2026-10-10T16:21:14.048135+00:00",
+        "elapsed_s": 0.0,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27777,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 49975132160,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 16991625216,
+        "available_ram_bytes": 13504704512,
+        "trainers": {}
+      },
+      {
+        "utc": "2026-10-10T16:21:17.055073+00:00",
+        "elapsed_s": 4.686999999976251,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27777,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 50964623360,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 16002134016,
+        "available_ram_bytes": 13113319424,
+        "trainers": {}
+      },
+      {
+        "utc": "2026-10-10T16:21:20.061169+00:00",
+        "elapsed_s": 7.686999999976251,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27777,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 51060891648,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 15905865728,
+        "available_ram_bytes": 13006405632,
+        "trainers": {}
+      },
+      {
+        "utc": "2026-10-10T16:21:23.069525+00:00",
+        "elapsed_s": 10.702999999979511,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27777,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 51055976448,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 15910780928,
+        "available_ram_bytes": 13005398016,
+        "trainers": {}
+      },
+      {
+        "utc": "2026-10-10T16:21:26.078168+00:00",
+        "elapsed_s": 13.702999999979511,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27777,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 51066007552,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 15900749824,
+        "available_ram_bytes": 12986707968,
+        "trainers": {}
+      },
+      {
+        "utc": "2026-10-10T16:21:31.751880+00:00",
+        "elapsed_s": 16.71899999998277,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27777,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 51190095872,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 15776661504,
+        "available_ram_bytes": 12876976128,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 1188384768,
+            "rss_bytes": 719708160
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:21:34.761954+00:00",
+        "elapsed_s": 22.39100000000326,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27777,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 51131252736,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 15835504640,
+        "available_ram_bytes": 12963397632,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 1188384768,
+            "rss_bytes": 719708160
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:21:37.771838+00:00",
+        "elapsed_s": 25.40600000001723,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27777,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 51750793216,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 15215964160,
+        "available_ram_bytes": 12703318016,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 1188384768,
+            "rss_bytes": 719708160
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:21:40.782456+00:00",
+        "elapsed_s": 28.40600000001723,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27777,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 52209119232,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 14757638144,
+        "available_ram_bytes": 12122230784,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 1188384768,
+            "rss_bytes": 719708160
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:21:43.790623+00:00",
+        "elapsed_s": 31.42200000002049,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27777,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 52448768000,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 14517989376,
+        "available_ram_bytes": 12025507840,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 1188384768,
+            "rss_bytes": 719708160
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:21:48.524063+00:00",
+        "elapsed_s": 34.42200000002049,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27777,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 52476928000,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 14489829376,
+        "available_ram_bytes": 11998699520,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 2570358784,
+            "rss_bytes": 1707139072
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:21:51.530600+00:00",
+        "elapsed_s": 39.15600000001723,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27777,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 53550514176,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 13416243200,
+        "available_ram_bytes": 11521626112,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 2570358784,
+            "rss_bytes": 1707139072
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:21:54.538616+00:00",
+        "elapsed_s": 42.17200000002049,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27777,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 53628395520,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 13338361856,
+        "available_ram_bytes": 11467452416,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 2570358784,
+            "rss_bytes": 1707139072
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:21:57.547179+00:00",
+        "elapsed_s": 45.17200000002049,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27777,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 53657980928,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 13308776448,
+        "available_ram_bytes": 11434328064,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 2570358784,
+            "rss_bytes": 1707139072
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:22:00.556061+00:00",
+        "elapsed_s": 48.18699999997625,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27777,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 56156483584,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 10810273792,
+        "available_ram_bytes": 10281431040,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 2570358784,
+            "rss_bytes": 1707139072
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:22:06.354181+00:00",
+        "elapsed_s": 51.18699999997625,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27777,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 56637747200,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 10329010176,
+        "available_ram_bytes": 9962512384,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6058135552,
+            "rss_bytes": 3397844992
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 1075449856,
+            "rss_bytes": 631853056
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:22:09.376174+00:00",
+        "elapsed_s": 57.0,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27777,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 57414098944,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 9552658432,
+        "available_ram_bytes": 9621991424,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6058135552,
+            "rss_bytes": 3397844992
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 1075449856,
+            "rss_bytes": 631853056
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:22:12.384490+00:00",
+        "elapsed_s": 60.01600000000326,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27777,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 57519456256,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 9447301120,
+        "available_ram_bytes": 9545089024,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6058135552,
+            "rss_bytes": 3397844992
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 1075449856,
+            "rss_bytes": 631853056
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:22:15.406657+00:00",
+        "elapsed_s": 63.03100000001723,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27777,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 57595273216,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 9371484160,
+        "available_ram_bytes": 9373679616,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6058135552,
+            "rss_bytes": 3397844992
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 1075449856,
+            "rss_bytes": 631853056
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:22:18.468562+00:00",
+        "elapsed_s": 66.04700000002049,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27778,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 57836331008,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 9130426368,
+        "available_ram_bytes": 9213317120,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6058135552,
+            "rss_bytes": 3397844992
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 1075449856,
+            "rss_bytes": 631853056
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:22:27.156632+00:00",
+        "elapsed_s": 69.125,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27779,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 58022948864,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 8943808512,
+        "available_ram_bytes": 9102020608,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6390444032,
+            "rss_bytes": 3481440256
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 1707728896,
+            "rss_bytes": 939839488
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:22:30.223752+00:00",
+        "elapsed_s": 77.81199999997625,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27780,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 58309853184,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 8656904192,
+        "available_ram_bytes": 9032818688,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6390444032,
+            "rss_bytes": 3481440256
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 1707728896,
+            "rss_bytes": 939839488
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:22:33.249160+00:00",
+        "elapsed_s": 80.875,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27780,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 58499395584,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 8467361792,
+        "available_ram_bytes": 8781357056,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6390444032,
+            "rss_bytes": 3481440256
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 1707728896,
+            "rss_bytes": 939839488
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:22:36.278572+00:00",
+        "elapsed_s": 83.90600000001723,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27780,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 58549915648,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 8416841728,
+        "available_ram_bytes": 8799682560,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6390444032,
+            "rss_bytes": 3481440256
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 1707728896,
+            "rss_bytes": 939839488
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:22:39.360536+00:00",
+        "elapsed_s": 86.93699999997625,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27781,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 58229395456,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 8737361920,
+        "available_ram_bytes": 9177980928,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6390444032,
+            "rss_bytes": 3481440256
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 1707728896,
+            "rss_bytes": 939839488
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:22:48.323903+00:00",
+        "elapsed_s": 90.01600000000326,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27781,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 58420543488,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 8546213888,
+        "available_ram_bytes": 9042259968,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6934081536,
+            "rss_bytes": 3977609216
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 1783832576,
+            "rss_bytes": 997285888
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:22:51.387453+00:00",
+        "elapsed_s": 98.96899999998277,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27782,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 58877120512,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 8089636864,
+        "available_ram_bytes": 8882020352,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6934081536,
+            "rss_bytes": 3977609216
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 1783832576,
+            "rss_bytes": 997285888
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:22:54.447358+00:00",
+        "elapsed_s": 102.03100000001723,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27784,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 58979328000,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 7987429376,
+        "available_ram_bytes": 8805199872,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6934081536,
+            "rss_bytes": 3977609216
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 1783832576,
+            "rss_bytes": 997285888
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:22:57.516175+00:00",
+        "elapsed_s": 105.09399999998277,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27786,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 59156684800,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 7810072576,
+        "available_ram_bytes": 8664301568,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6934081536,
+            "rss_bytes": 3977609216
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 1783832576,
+            "rss_bytes": 997285888
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:23:00.579908+00:00",
+        "elapsed_s": 108.17200000002049,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27787,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 59215536128,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 7751221248,
+        "available_ram_bytes": 8696008704,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6934081536,
+            "rss_bytes": 3977609216
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 1783832576,
+            "rss_bytes": 997285888
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:23:09.573793+00:00",
+        "elapsed_s": 111.23399999999674,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27788,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 59481534464,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 7485222912,
+        "available_ram_bytes": 8580206592,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6961590272,
+            "rss_bytes": 3984797696
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 2505461760,
+            "rss_bytes": 1637556224
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:23:12.603307+00:00",
+        "elapsed_s": 120.23399999999674,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27788,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 59743903744,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 7222853632,
+        "available_ram_bytes": 8171339776,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6961590272,
+            "rss_bytes": 3984797696
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 2505461760,
+            "rss_bytes": 1637556224
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:23:15.671910+00:00",
+        "elapsed_s": 123.25,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27789,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 59156643840,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 7810113536,
+        "available_ram_bytes": 8728825856,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6961590272,
+            "rss_bytes": 3984797696
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 2505461760,
+            "rss_bytes": 1637556224
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:23:18.700106+00:00",
+        "elapsed_s": 126.32799999997951,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27789,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 59263156224,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 7703601152,
+        "available_ram_bytes": 8669921280,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6961590272,
+            "rss_bytes": 3984797696
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 2505461760,
+            "rss_bytes": 1637556224
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:23:21.730045+00:00",
+        "elapsed_s": 129.35899999999674,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27789,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 59421868032,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 7544889344,
+        "available_ram_bytes": 8532377600,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6961590272,
+            "rss_bytes": 3984797696
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 2505461760,
+            "rss_bytes": 1637556224
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:23:30.838111+00:00",
+        "elapsed_s": 132.39100000000326,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27789,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 59400351744,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 7566405632,
+        "available_ram_bytes": 8471769088,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7110762496,
+            "rss_bytes": 4006187008
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 2519695360,
+            "rss_bytes": 1655881728
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:23:33.897183+00:00",
+        "elapsed_s": 141.48399999999674,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27793,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 59216289792,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 7750467584,
+        "available_ram_bytes": 8649445376,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7110762496,
+            "rss_bytes": 4006187008
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 2519695360,
+            "rss_bytes": 1655881728
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:23:36.959109+00:00",
+        "elapsed_s": 144.5470000000205,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27795,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 59252862976,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 7713894400,
+        "available_ram_bytes": 8640217088,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7110762496,
+            "rss_bytes": 4006187008
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 2519695360,
+            "rss_bytes": 1655881728
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:23:40.029125+00:00",
+        "elapsed_s": 147.60899999999674,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27796,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 59445182464,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 7521574912,
+        "available_ram_bytes": 8509124608,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7110762496,
+            "rss_bytes": 4006187008
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 2519695360,
+            "rss_bytes": 1655881728
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:23:43.055055+00:00",
+        "elapsed_s": 150.68699999997625,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27796,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 59525435392,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 7441321984,
+        "available_ram_bytes": 8483938304,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7110762496,
+            "rss_bytes": 4006187008
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 2519695360,
+            "rss_bytes": 1655881728
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:23:51.775029+00:00",
+        "elapsed_s": 153.7029999999795,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27796,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 59531763712,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 7434993664,
+        "available_ram_bytes": 8482627584,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7098847232,
+            "rss_bytes": 4062969856
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 2548420608,
+            "rss_bytes": 1684357120
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:23:54.838809+00:00",
+        "elapsed_s": 162.4220000000205,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27797,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 59486085120,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 7480672256,
+        "available_ram_bytes": 8440791040,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7098847232,
+            "rss_bytes": 4062969856
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 2548420608,
+            "rss_bytes": 1684357120
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:23:57.867967+00:00",
+        "elapsed_s": 165.5,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27797,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 59656278016,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 7310479360,
+        "available_ram_bytes": 8283836416,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7098847232,
+            "rss_bytes": 4062969856
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 2548420608,
+            "rss_bytes": 1684357120
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:24:00.894922+00:00",
+        "elapsed_s": 168.51600000000326,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27797,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 59701817344,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 7264940032,
+        "available_ram_bytes": 8232857600,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7098847232,
+            "rss_bytes": 4062969856
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 2548420608,
+            "rss_bytes": 1684357120
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:24:03.920396+00:00",
+        "elapsed_s": 171.5470000000205,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27797,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 59658743808,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 7308013568,
+        "available_ram_bytes": 8118009856,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7098847232,
+            "rss_bytes": 4062969856
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 2548420608,
+            "rss_bytes": 1684357120
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:24:13.323586+00:00",
+        "elapsed_s": 174.5779999999795,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27798,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 59741691904,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 7225065472,
+        "available_ram_bytes": 8127119360,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7002234880,
+            "rss_bytes": 4038881280
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 2557927424,
+            "rss_bytes": 1693917184
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:24:16.390408+00:00",
+        "elapsed_s": 183.98399999999674,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27800,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 59471142912,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 7495614464,
+        "available_ram_bytes": 8315715584,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7002234880,
+            "rss_bytes": 4038881280
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 2557927424,
+            "rss_bytes": 1693917184
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:24:19.501774+00:00",
+        "elapsed_s": 187.0779999999795,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27801,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 59554971648,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 7411785728,
+        "available_ram_bytes": 8235048960,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7002234880,
+            "rss_bytes": 4038881280
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 2557927424,
+            "rss_bytes": 1693917184
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:24:22.572302+00:00",
+        "elapsed_s": 190.15600000001723,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27802,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 59551084544,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 7415672832,
+        "available_ram_bytes": 8344940544,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7002234880,
+            "rss_bytes": 4038881280
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 2557927424,
+            "rss_bytes": 1693917184
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:24:25.601458+00:00",
+        "elapsed_s": 193.23399999999674,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27802,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 59557425152,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 7409332224,
+        "available_ram_bytes": 8385785856,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7002234880,
+            "rss_bytes": 4038881280
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 2557927424,
+            "rss_bytes": 1693917184
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:24:35.394832+00:00",
+        "elapsed_s": 196.25,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27802,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 59736444928,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 7230312448,
+        "available_ram_bytes": 8281403392,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6666403840,
+            "rss_bytes": 3698458624
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 2580279296,
+            "rss_bytes": 1720168448
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:24:38.467066+00:00",
+        "elapsed_s": 206.0470000000205,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27804,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 59460419584,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 7506337792,
+        "available_ram_bytes": 8334675968,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6666403840,
+            "rss_bytes": 3698458624
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 2580279296,
+            "rss_bytes": 1720168448
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:24:41.498428+00:00",
+        "elapsed_s": 209.125,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27804,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 59750309888,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 7216447488,
+        "available_ram_bytes": 8074211328,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6666403840,
+            "rss_bytes": 3698458624
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 2580279296,
+            "rss_bytes": 1720168448
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:24:44.524101+00:00",
+        "elapsed_s": 212.15600000001723,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27804,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 59839848448,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 7126908928,
+        "available_ram_bytes": 7912189952,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6666403840,
+            "rss_bytes": 3698458624
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 2580279296,
+            "rss_bytes": 1720168448
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:24:47.567683+00:00",
+        "elapsed_s": 215.1720000000205,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27805,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 59553677312,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 7413080064,
+        "available_ram_bytes": 8176734208,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6666403840,
+            "rss_bytes": 3698458624
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 2580279296,
+            "rss_bytes": 1720168448
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:24:56.556485+00:00",
+        "elapsed_s": 218.21899999998277,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27805,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 59853205504,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 7113551872,
+        "available_ram_bytes": 7885598720,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7062028288,
+            "rss_bytes": 4058673152
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 2615123968,
+            "rss_bytes": 1754447872
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:24:59.631011+00:00",
+        "elapsed_s": 227.21899999998277,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27807,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 61923729408,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 5043027968,
+        "available_ram_bytes": 7261163520,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7062028288,
+            "rss_bytes": 4058673152
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 2615123968,
+            "rss_bytes": 1754447872
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:25:02.707223+00:00",
+        "elapsed_s": 230.28100000001723,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27808,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 62253211648,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 4713545728,
+        "available_ram_bytes": 6899163136,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7062028288,
+            "rss_bytes": 4058673152
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 2615123968,
+            "rss_bytes": 1754447872
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:25:05.791898+00:00",
+        "elapsed_s": 233.35899999999674,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27811,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 62237290496,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 4729466880,
+        "available_ram_bytes": 6933135360,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7062028288,
+            "rss_bytes": 4058673152
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 2615123968,
+            "rss_bytes": 1754447872
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:25:08.880454+00:00",
+        "elapsed_s": 236.4529999999795,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27812,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 62295191552,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 4671565824,
+        "available_ram_bytes": 6881644544,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7062028288,
+            "rss_bytes": 4058673152
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 2615123968,
+            "rss_bytes": 1754447872
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:25:18.702501+00:00",
+        "elapsed_s": 239.5470000000205,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27812,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 62576136192,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 4390621184,
+        "available_ram_bytes": 6676365312,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7075520512,
+            "rss_bytes": 4113571840
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6005080064,
+            "rss_bytes": 3380940800
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:25:21.782671+00:00",
+        "elapsed_s": 249.35899999999674,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27813,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 63104700416,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3862056960,
+        "available_ram_bytes": 6552190976,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7075520512,
+            "rss_bytes": 4113571840
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6005080064,
+            "rss_bytes": 3380940800
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:25:24.814098+00:00",
+        "elapsed_s": 252.43699999997625,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27813,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 63328624640,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3638132736,
+        "available_ram_bytes": 6332010496,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7075520512,
+            "rss_bytes": 4113571840
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6005080064,
+            "rss_bytes": 3380940800
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:25:27.892445+00:00",
+        "elapsed_s": 255.46899999998277,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27814,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 63338971136,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3627786240,
+        "available_ram_bytes": 6322827264,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7075520512,
+            "rss_bytes": 4113571840
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6005080064,
+            "rss_bytes": 3380940800
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:25:30.967454+00:00",
+        "elapsed_s": 258.5470000000205,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27815,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 62745800704,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 4220956672,
+        "available_ram_bytes": 7004073984,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7075520512,
+            "rss_bytes": 4113571840
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6005080064,
+            "rss_bytes": 3380940800
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:25:39.981953+00:00",
+        "elapsed_s": 261.625,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27816,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 62589792256,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 4376965120,
+        "available_ram_bytes": 7162978304,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6662217728,
+            "rss_bytes": 3582476288
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6251126784,
+            "rss_bytes": 3506802688
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:25:43.051368+00:00",
+        "elapsed_s": 270.64100000000326,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27820,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 62544470016,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 4422287360,
+        "available_ram_bytes": 7091097600,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6662217728,
+            "rss_bytes": 3582476288
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6251126784,
+            "rss_bytes": 3506802688
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:25:46.083121+00:00",
+        "elapsed_s": 273.7029999999795,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27820,
+          "E_C2F_MATCHED": 19120
+        },
+        "commit_bytes": 62686216192,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 4280541184,
+        "available_ram_bytes": 6957174784,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6662217728,
+            "rss_bytes": 3582476288
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6251126784,
+            "rss_bytes": 3506802688
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:25:49.151168+00:00",
+        "elapsed_s": 276.73399999999674,
+        "steady_elapsed_s": 0.0,
+        "updates": {
+          "E_A5_MATCHED": 27820,
+          "E_C2F_MATCHED": 19121
+        },
+        "commit_bytes": 62989312000,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3977445376,
+        "available_ram_bytes": 6716243968,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6662217728,
+            "rss_bytes": 3582476288
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6251126784,
+            "rss_bytes": 3506802688
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:25:52.229324+00:00",
+        "elapsed_s": 279.81199999997625,
+        "steady_elapsed_s": 3.077999999979511,
+        "updates": {
+          "E_A5_MATCHED": 27821,
+          "E_C2F_MATCHED": 19121
+        },
+        "commit_bytes": 62655041536,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 4311715840,
+        "available_ram_bytes": 7023968256,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6662217728,
+            "rss_bytes": 3582476288
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6251126784,
+            "rss_bytes": 3506802688
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:26:01.457619+00:00",
+        "elapsed_s": 282.89100000000326,
+        "steady_elapsed_s": 6.157000000006519,
+        "updates": {
+          "E_A5_MATCHED": 27821,
+          "E_C2F_MATCHED": 19122
+        },
+        "commit_bytes": 62989012992,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3977744384,
+        "available_ram_bytes": 6771683328,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7002849280,
+            "rss_bytes": 3977199616
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6650118144,
+            "rss_bytes": 3713269760
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:26:04.532235+00:00",
+        "elapsed_s": 292.10899999999674,
+        "steady_elapsed_s": 15.375,
+        "updates": {
+          "E_A5_MATCHED": 27821,
+          "E_C2F_MATCHED": 19127
+        },
+        "commit_bytes": 63126949888,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3839807488,
+        "available_ram_bytes": 6697889792,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7002849280,
+            "rss_bytes": 3977199616
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6650118144,
+            "rss_bytes": 3713269760
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:26:07.663302+00:00",
+        "elapsed_s": 295.18699999997625,
+        "steady_elapsed_s": 18.45299999997951,
+        "updates": {
+          "E_A5_MATCHED": 27822,
+          "E_C2F_MATCHED": 19127
+        },
+        "commit_bytes": 63298138112,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3668619264,
+        "available_ram_bytes": 6544617472,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7002849280,
+            "rss_bytes": 3977199616
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6650118144,
+            "rss_bytes": 3713269760
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:26:10.730414+00:00",
+        "elapsed_s": 298.3279999999795,
+        "steady_elapsed_s": 21.59399999998277,
+        "updates": {
+          "E_A5_MATCHED": 27824,
+          "E_C2F_MATCHED": 19127
+        },
+        "commit_bytes": 63251677184,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3715080192,
+        "available_ram_bytes": 6536286208,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7002849280,
+            "rss_bytes": 3977199616
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6650118144,
+            "rss_bytes": 3713269760
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:26:13.817600+00:00",
+        "elapsed_s": 301.40600000001723,
+        "steady_elapsed_s": 24.67200000002049,
+        "updates": {
+          "E_A5_MATCHED": 27825,
+          "E_C2F_MATCHED": 19127
+        },
+        "commit_bytes": 63276134400,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3690622976,
+        "available_ram_bytes": 6481051648,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7002849280,
+            "rss_bytes": 3977199616
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6650118144,
+            "rss_bytes": 3713269760
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:26:22.574163+00:00",
+        "elapsed_s": 304.46899999998277,
+        "steady_elapsed_s": 27.73499999998603,
+        "updates": {
+          "E_A5_MATCHED": 27827,
+          "E_C2F_MATCHED": 19127
+        },
+        "commit_bytes": 63095615488,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3871141888,
+        "available_ram_bytes": 6687858688,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6509735936,
+            "rss_bytes": 3548278784
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7008530432,
+            "rss_bytes": 4021145600
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:26:25.638850+00:00",
+        "elapsed_s": 313.23399999999674,
+        "steady_elapsed_s": 36.5,
+        "updates": {
+          "E_A5_MATCHED": 27828,
+          "E_C2F_MATCHED": 19132
+        },
+        "commit_bytes": 62859317248,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 4107440128,
+        "available_ram_bytes": 6909145088,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6509735936,
+            "rss_bytes": 3548278784
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7008530432,
+            "rss_bytes": 4021145600
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:26:28.715832+00:00",
+        "elapsed_s": 316.2970000000205,
+        "steady_elapsed_s": 39.56300000002375,
+        "updates": {
+          "E_A5_MATCHED": 27828,
+          "E_C2F_MATCHED": 19134
+        },
+        "commit_bytes": 62888861696,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 4077895680,
+        "available_ram_bytes": 6887399424,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6509735936,
+            "rss_bytes": 3548278784
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7008530432,
+            "rss_bytes": 4021145600
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:26:31.792122+00:00",
+        "elapsed_s": 319.375,
+        "steady_elapsed_s": 42.64100000000326,
+        "updates": {
+          "E_A5_MATCHED": 27828,
+          "E_C2F_MATCHED": 19135
+        },
+        "commit_bytes": 63301521408,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3665235968,
+        "available_ram_bytes": 6577897472,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6509735936,
+            "rss_bytes": 3548278784
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7008530432,
+            "rss_bytes": 4021145600
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:26:34.824585+00:00",
+        "elapsed_s": 322.4529999999795,
+        "steady_elapsed_s": 45.71899999998277,
+        "updates": {
+          "E_A5_MATCHED": 27828,
+          "E_C2F_MATCHED": 19135
+        },
+        "commit_bytes": 63553785856,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3412971520,
+        "available_ram_bytes": 6344527872,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6509735936,
+            "rss_bytes": 3548278784
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7008530432,
+            "rss_bytes": 4021145600
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:26:43.702260+00:00",
+        "elapsed_s": 325.48399999999674,
+        "steady_elapsed_s": 48.75,
+        "updates": {
+          "E_A5_MATCHED": 27829,
+          "E_C2F_MATCHED": 19135
+        },
+        "commit_bytes": 63224184832,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3742572544,
+        "available_ram_bytes": 6577901568,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6920208384,
+            "rss_bytes": 3842719744
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7096827904,
+            "rss_bytes": 4122669056
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:26:46.782408+00:00",
+        "elapsed_s": 334.35899999999674,
+        "steady_elapsed_s": 57.625,
+        "updates": {
+          "E_A5_MATCHED": 27829,
+          "E_C2F_MATCHED": 19137
+        },
+        "commit_bytes": 63499702272,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3467055104,
+        "available_ram_bytes": 6297223168,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6920208384,
+            "rss_bytes": 3842719744
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7096827904,
+            "rss_bytes": 4122669056
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:26:49.855245+00:00",
+        "elapsed_s": 337.43699999997625,
+        "steady_elapsed_s": 60.70299999997951,
+        "updates": {
+          "E_A5_MATCHED": 27829,
+          "E_C2F_MATCHED": 19138
+        },
+        "commit_bytes": 63316500480,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3650256896,
+        "available_ram_bytes": 6409732096,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6920208384,
+            "rss_bytes": 3842719744
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7096827904,
+            "rss_bytes": 4122669056
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:26:52.920048+00:00",
+        "elapsed_s": 340.51600000000326,
+        "steady_elapsed_s": 63.78200000000652,
+        "updates": {
+          "E_A5_MATCHED": 27830,
+          "E_C2F_MATCHED": 19141
+        },
+        "commit_bytes": 63122747392,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3844009984,
+        "available_ram_bytes": 6602465280,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6920208384,
+            "rss_bytes": 3842719744
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7096827904,
+            "rss_bytes": 4122669056
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:26:55.999411+00:00",
+        "elapsed_s": 343.5779999999795,
+        "steady_elapsed_s": 66.84399999998277,
+        "updates": {
+          "E_A5_MATCHED": 27831,
+          "E_C2F_MATCHED": 19143
+        },
+        "commit_bytes": 63126794240,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3839963136,
+        "available_ram_bytes": 6643826688,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6920208384,
+            "rss_bytes": 3842719744
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7096827904,
+            "rss_bytes": 4122669056
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:27:05.350399+00:00",
+        "elapsed_s": 346.65600000001723,
+        "steady_elapsed_s": 69.92200000002049,
+        "updates": {
+          "E_A5_MATCHED": 27833,
+          "E_C2F_MATCHED": 19143
+        },
+        "commit_bytes": 63184998400,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3781758976,
+        "available_ram_bytes": 6692171776,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6664781824,
+            "rss_bytes": 3641413632
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7145730048,
+            "rss_bytes": 4164915200
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:27:08.464018+00:00",
+        "elapsed_s": 356.01600000000326,
+        "steady_elapsed_s": 79.28200000000652,
+        "updates": {
+          "E_A5_MATCHED": 27836,
+          "E_C2F_MATCHED": 19144
+        },
+        "commit_bytes": 63570403328,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3396354048,
+        "available_ram_bytes": 6372175872,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6664781824,
+            "rss_bytes": 3641413632
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7145730048,
+            "rss_bytes": 4164915200
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:27:11.532984+00:00",
+        "elapsed_s": 359.125,
+        "steady_elapsed_s": 82.39100000000326,
+        "updates": {
+          "E_A5_MATCHED": 27836,
+          "E_C2F_MATCHED": 19145
+        },
+        "commit_bytes": 63611854848,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3354902528,
+        "available_ram_bytes": 6246187008,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6664781824,
+            "rss_bytes": 3641413632
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7145730048,
+            "rss_bytes": 4164915200
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:27:14.573179+00:00",
+        "elapsed_s": 362.2029999999795,
+        "steady_elapsed_s": 85.46899999998277,
+        "updates": {
+          "E_A5_MATCHED": 27836,
+          "E_C2F_MATCHED": 19145
+        },
+        "commit_bytes": 63459106816,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3507650560,
+        "available_ram_bytes": 6274023424,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6664781824,
+            "rss_bytes": 3641413632
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7145730048,
+            "rss_bytes": 4164915200
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:27:17.649547+00:00",
+        "elapsed_s": 365.23399999999674,
+        "steady_elapsed_s": 88.5,
+        "updates": {
+          "E_A5_MATCHED": 27837,
+          "E_C2F_MATCHED": 19146
+        },
+        "commit_bytes": 63065722880,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3901034496,
+        "available_ram_bytes": 6687899648,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6664781824,
+            "rss_bytes": 3641413632
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7145730048,
+            "rss_bytes": 4164915200
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:27:26.333336+00:00",
+        "elapsed_s": 368.31199999997625,
+        "steady_elapsed_s": 91.57799999997951,
+        "updates": {
+          "E_A5_MATCHED": 27837,
+          "E_C2F_MATCHED": 19147
+        },
+        "commit_bytes": 63194914816,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3771842560,
+        "available_ram_bytes": 6594953216,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7126585344,
+            "rss_bytes": 4106305536
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6762864640,
+            "rss_bytes": 3712548864
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:27:29.412026+00:00",
+        "elapsed_s": 377.0,
+        "steady_elapsed_s": 100.26600000000326,
+        "updates": {
+          "E_A5_MATCHED": 27838,
+          "E_C2F_MATCHED": 19151
+        },
+        "commit_bytes": 63397453824,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3569303552,
+        "available_ram_bytes": 6383779840,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7126585344,
+            "rss_bytes": 4106305536
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6762864640,
+            "rss_bytes": 3712548864
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:27:32.483447+00:00",
+        "elapsed_s": 380.0779999999795,
+        "steady_elapsed_s": 103.34399999998277,
+        "updates": {
+          "E_A5_MATCHED": 27840,
+          "E_C2F_MATCHED": 19151
+        },
+        "commit_bytes": 63312011264,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3654746112,
+        "available_ram_bytes": 6419312640,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7126585344,
+            "rss_bytes": 4106305536
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6762864640,
+            "rss_bytes": 3712548864
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:27:35.642497+00:00",
+        "elapsed_s": 383.21899999998277,
+        "steady_elapsed_s": 106.48499999998603,
+        "updates": {
+          "E_A5_MATCHED": 27843,
+          "E_C2F_MATCHED": 19152
+        },
+        "commit_bytes": 63200325632,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3766431744,
+        "available_ram_bytes": 6567165952,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7126585344,
+            "rss_bytes": 4106305536
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6762864640,
+            "rss_bytes": 3712548864
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:27:38.714715+00:00",
+        "elapsed_s": 386.2970000000205,
+        "steady_elapsed_s": 109.56300000002375,
+        "updates": {
+          "E_A5_MATCHED": 27844,
+          "E_C2F_MATCHED": 19154
+        },
+        "commit_bytes": 63151738880,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3815018496,
+        "available_ram_bytes": 6625734656,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7126585344,
+            "rss_bytes": 4106305536
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6762864640,
+            "rss_bytes": 3712548864
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:27:47.142522+00:00",
+        "elapsed_s": 389.375,
+        "steady_elapsed_s": 112.64100000000326,
+        "updates": {
+          "E_A5_MATCHED": 27844,
+          "E_C2F_MATCHED": 19156
+        },
+        "commit_bytes": 63250141184,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3716616192,
+        "available_ram_bytes": 6518743040,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7194808320,
+            "rss_bytes": 4232200192
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6763782144,
+            "rss_bytes": 3720376320
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:27:50.226342+00:00",
+        "elapsed_s": 397.81199999997625,
+        "steady_elapsed_s": 121.07799999997951,
+        "updates": {
+          "E_A5_MATCHED": 27845,
+          "E_C2F_MATCHED": 19159
+        },
+        "commit_bytes": 63296827392,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3669929984,
+        "available_ram_bytes": 6802497536,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7194808320,
+            "rss_bytes": 4232200192
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6763782144,
+            "rss_bytes": 3720376320
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:27:53.264075+00:00",
+        "elapsed_s": 400.89100000000326,
+        "steady_elapsed_s": 124.15700000000652,
+        "updates": {
+          "E_A5_MATCHED": 27845,
+          "E_C2F_MATCHED": 19159
+        },
+        "commit_bytes": 63603249152,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3363508224,
+        "available_ram_bytes": 6468624384,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7194808320,
+            "rss_bytes": 4232200192
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6763782144,
+            "rss_bytes": 3720376320
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:27:56.304187+00:00",
+        "elapsed_s": 403.9220000000205,
+        "steady_elapsed_s": 127.18800000002375,
+        "updates": {
+          "E_A5_MATCHED": 27845,
+          "E_C2F_MATCHED": 19159
+        },
+        "commit_bytes": 63663132672,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3303624704,
+        "available_ram_bytes": 6357016576,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7194808320,
+            "rss_bytes": 4232200192
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6763782144,
+            "rss_bytes": 3720376320
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:27:59.390571+00:00",
+        "elapsed_s": 406.96899999998277,
+        "steady_elapsed_s": 130.23499999998603,
+        "updates": {
+          "E_A5_MATCHED": 27847,
+          "E_C2F_MATCHED": 19161
+        },
+        "commit_bytes": 63542243328,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3424514048,
+        "available_ram_bytes": 6446452736,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7194808320,
+            "rss_bytes": 4232200192
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6763782144,
+            "rss_bytes": 3720376320
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:28:08.711775+00:00",
+        "elapsed_s": 410.06199999997625,
+        "steady_elapsed_s": 133.3279999999795,
+        "updates": {
+          "E_A5_MATCHED": 27849,
+          "E_C2F_MATCHED": 19162
+        },
+        "commit_bytes": 63327670272,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3639087104,
+        "available_ram_bytes": 6658211840,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6664265728,
+            "rss_bytes": 3610279936
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6689009664,
+            "rss_bytes": 3715727360
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:28:11.788283+00:00",
+        "elapsed_s": 419.375,
+        "steady_elapsed_s": 142.64100000000326,
+        "updates": {
+          "E_A5_MATCHED": 27852,
+          "E_C2F_MATCHED": 19167
+        },
+        "commit_bytes": 63061540864,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3905216512,
+        "available_ram_bytes": 7126401024,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6664265728,
+            "rss_bytes": 3610279936
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6689009664,
+            "rss_bytes": 3715727360
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:28:14.824364+00:00",
+        "elapsed_s": 422.4529999999795,
+        "steady_elapsed_s": 145.71899999998277,
+        "updates": {
+          "E_A5_MATCHED": 27852,
+          "E_C2F_MATCHED": 19167
+        },
+        "commit_bytes": 63360585728,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3606171648,
+        "available_ram_bytes": 6799626240,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6664265728,
+            "rss_bytes": 3610279936
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6689009664,
+            "rss_bytes": 3715727360
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:28:17.866886+00:00",
+        "elapsed_s": 425.5,
+        "steady_elapsed_s": 148.76600000000326,
+        "updates": {
+          "E_A5_MATCHED": 27852,
+          "E_C2F_MATCHED": 19167
+        },
+        "commit_bytes": 63884173312,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3082584064,
+        "available_ram_bytes": 6327324672,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6664265728,
+            "rss_bytes": 3610279936
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6689009664,
+            "rss_bytes": 3715727360
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:28:20.942596+00:00",
+        "elapsed_s": 428.53100000001723,
+        "steady_elapsed_s": 151.7970000000205,
+        "updates": {
+          "E_A5_MATCHED": 27852,
+          "E_C2F_MATCHED": 19168
+        },
+        "commit_bytes": 64103923712,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 2862833664,
+        "available_ram_bytes": 6098841600,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6664265728,
+            "rss_bytes": 3610279936
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6689009664,
+            "rss_bytes": 3715727360
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:28:30.207285+00:00",
+        "elapsed_s": 431.60899999999674,
+        "steady_elapsed_s": 154.875,
+        "updates": {
+          "E_A5_MATCHED": 27852,
+          "E_C2F_MATCHED": 19168
+        },
+        "commit_bytes": 63750184960,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3216572416,
+        "available_ram_bytes": 6631424000,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6823317504,
+            "rss_bytes": 3859406848
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6992146432,
+            "rss_bytes": 4018143232
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:28:33.284908+00:00",
+        "elapsed_s": 440.875,
+        "steady_elapsed_s": 164.14100000000326,
+        "updates": {
+          "E_A5_MATCHED": 27853,
+          "E_C2F_MATCHED": 19170
+        },
+        "commit_bytes": 63985348608,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 2981408768,
+        "available_ram_bytes": 6211043328,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6823317504,
+            "rss_bytes": 3859406848
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6992146432,
+            "rss_bytes": 4018143232
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:28:36.350536+00:00",
+        "elapsed_s": 443.9529999999795,
+        "steady_elapsed_s": 167.21899999998277,
+        "updates": {
+          "E_A5_MATCHED": 27854,
+          "E_C2F_MATCHED": 19173
+        },
+        "commit_bytes": 63987924992,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 2978832384,
+        "available_ram_bytes": 6213529600,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6823317504,
+            "rss_bytes": 3859406848
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6992146432,
+            "rss_bytes": 4018143232
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:28:39.427110+00:00",
+        "elapsed_s": 447.01600000000326,
+        "steady_elapsed_s": 170.28200000000652,
+        "updates": {
+          "E_A5_MATCHED": 27856,
+          "E_C2F_MATCHED": 19175
+        },
+        "commit_bytes": 64113016832,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 2853740544,
+        "available_ram_bytes": 6096715776,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6823317504,
+            "rss_bytes": 3859406848
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6992146432,
+            "rss_bytes": 4018143232
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:28:42.511961+00:00",
+        "elapsed_s": 450.09399999998277,
+        "steady_elapsed_s": 173.35999999998603,
+        "updates": {
+          "E_A5_MATCHED": 27858,
+          "E_C2F_MATCHED": 19175
+        },
+        "commit_bytes": 64192753664,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 2774003712,
+        "available_ram_bytes": 6000857088,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6823317504,
+            "rss_bytes": 3859406848
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6992146432,
+            "rss_bytes": 4018143232
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:28:51.878021+00:00",
+        "elapsed_s": 453.18699999997625,
+        "steady_elapsed_s": 176.4529999999795,
+        "updates": {
+          "E_A5_MATCHED": 27860,
+          "E_C2F_MATCHED": 19175
+        },
+        "commit_bytes": 64344436736,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 2622320640,
+        "available_ram_bytes": 5841977344,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7067705344,
+            "rss_bytes": 4018434048
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7124758528,
+            "rss_bytes": 4122349568
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:28:54.961827+00:00",
+        "elapsed_s": 462.5470000000205,
+        "steady_elapsed_s": 185.81300000002375,
+        "updates": {
+          "E_A5_MATCHED": 27860,
+          "E_C2F_MATCHED": 19176
+        },
+        "commit_bytes": 64420937728,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 2545819648,
+        "available_ram_bytes": 5642784768,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7067705344,
+            "rss_bytes": 4018434048
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7124758528,
+            "rss_bytes": 4122349568
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:28:58.043794+00:00",
+        "elapsed_s": 465.625,
+        "steady_elapsed_s": 188.89100000000326,
+        "updates": {
+          "E_A5_MATCHED": 27861,
+          "E_C2F_MATCHED": 19177
+        },
+        "commit_bytes": 63795044352,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3171713024,
+        "available_ram_bytes": 6396370944,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7067705344,
+            "rss_bytes": 4018434048
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7124758528,
+            "rss_bytes": 4122349568
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:29:01.083724+00:00",
+        "elapsed_s": 468.7029999999795,
+        "steady_elapsed_s": 191.96899999998277,
+        "updates": {
+          "E_A5_MATCHED": 27861,
+          "E_C2F_MATCHED": 19177
+        },
+        "commit_bytes": 63721455616,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3245301760,
+        "available_ram_bytes": 6222917632,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7067705344,
+            "rss_bytes": 4018434048
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7124758528,
+            "rss_bytes": 4122349568
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:29:04.232524+00:00",
+        "elapsed_s": 471.75,
+        "steady_elapsed_s": 195.01600000000326,
+        "updates": {
+          "E_A5_MATCHED": 27861,
+          "E_C2F_MATCHED": 19178
+        },
+        "commit_bytes": 63777239040,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3189518336,
+        "available_ram_bytes": 6214094848,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7067705344,
+            "rss_bytes": 4018434048
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7124758528,
+            "rss_bytes": 4122349568
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:29:13.092904+00:00",
+        "elapsed_s": 474.90600000001723,
+        "steady_elapsed_s": 198.1720000000205,
+        "updates": {
+          "E_A5_MATCHED": 27861,
+          "E_C2F_MATCHED": 19180
+        },
+        "commit_bytes": 63132958720,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3833798656,
+        "available_ram_bytes": 6651273216,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7011205120,
+            "rss_bytes": 4049432576
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6763393024,
+            "rss_bytes": 3670142976
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:29:16.252888+00:00",
+        "elapsed_s": 483.8279999999795,
+        "steady_elapsed_s": 207.09399999998277,
+        "updates": {
+          "E_A5_MATCHED": 27865,
+          "E_C2F_MATCHED": 19183
+        },
+        "commit_bytes": 62976040960,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3990716416,
+        "available_ram_bytes": 6869958656,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7011205120,
+            "rss_bytes": 4049432576
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6763393024,
+            "rss_bytes": 3670142976
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:29:19.333365+00:00",
+        "elapsed_s": 486.9220000000205,
+        "steady_elapsed_s": 210.18800000002375,
+        "updates": {
+          "E_A5_MATCHED": 27867,
+          "E_C2F_MATCHED": 19183
+        },
+        "commit_bytes": 62973558784,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3993198592,
+        "available_ram_bytes": 6884966400,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7011205120,
+            "rss_bytes": 4049432576
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6763393024,
+            "rss_bytes": 3670142976
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:29:22.414939+00:00",
+        "elapsed_s": 490.0,
+        "steady_elapsed_s": 213.26600000000326,
+        "updates": {
+          "E_A5_MATCHED": 27868,
+          "E_C2F_MATCHED": 19183
+        },
+        "commit_bytes": 63329251328,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3637506048,
+        "available_ram_bytes": 6540025856,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7011205120,
+            "rss_bytes": 4049432576
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6763393024,
+            "rss_bytes": 3670142976
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:29:25.456804+00:00",
+        "elapsed_s": 493.0779999999795,
+        "steady_elapsed_s": 216.34399999998277,
+        "updates": {
+          "E_A5_MATCHED": 27868,
+          "E_C2F_MATCHED": 19183
+        },
+        "commit_bytes": 63525605376,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3441152000,
+        "available_ram_bytes": 6317441024,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7011205120,
+            "rss_bytes": 4049432576
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6763393024,
+            "rss_bytes": 3670142976
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:29:34.364458+00:00",
+        "elapsed_s": 496.125,
+        "steady_elapsed_s": 219.39100000000326,
+        "updates": {
+          "E_A5_MATCHED": 27868,
+          "E_C2F_MATCHED": 19185
+        },
+        "commit_bytes": 63237558272,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3729199104,
+        "available_ram_bytes": 6568570880,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6774784000,
+            "rss_bytes": 3735330816
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6687694848,
+            "rss_bytes": 3714404352
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:29:37.448301+00:00",
+        "elapsed_s": 505.03100000001723,
+        "steady_elapsed_s": 228.2970000000205,
+        "updates": {
+          "E_A5_MATCHED": 27869,
+          "E_C2F_MATCHED": 19191
+        },
+        "commit_bytes": 63123894272,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3842863104,
+        "available_ram_bytes": 6702219264,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6774784000,
+            "rss_bytes": 3735330816
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6687694848,
+            "rss_bytes": 3714404352
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:29:40.528501+00:00",
+        "elapsed_s": 508.10899999999674,
+        "steady_elapsed_s": 231.375,
+        "updates": {
+          "E_A5_MATCHED": 27870,
+          "E_C2F_MATCHED": 19191
+        },
+        "commit_bytes": 63116042240,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3850715136,
+        "available_ram_bytes": 6713786368,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6774784000,
+            "rss_bytes": 3735330816
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6687694848,
+            "rss_bytes": 3714404352
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:29:43.606470+00:00",
+        "elapsed_s": 511.18699999997625,
+        "steady_elapsed_s": 234.4529999999795,
+        "updates": {
+          "E_A5_MATCHED": 27873,
+          "E_C2F_MATCHED": 19192
+        },
+        "commit_bytes": 62803615744,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 4163141632,
+        "available_ram_bytes": 6942986240,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6774784000,
+            "rss_bytes": 3735330816
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6687694848,
+            "rss_bytes": 3714404352
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:29:46.721203+00:00",
+        "elapsed_s": 514.2660000000033,
+        "steady_elapsed_s": 237.53200000000652,
+        "updates": {
+          "E_A5_MATCHED": 27875,
+          "E_C2F_MATCHED": 19194
+        },
+        "commit_bytes": 62562205696,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 4404551680,
+        "available_ram_bytes": 7184470016,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6774784000,
+            "rss_bytes": 3735330816
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6687694848,
+            "rss_bytes": 3714404352
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:29:56.540495+00:00",
+        "elapsed_s": 517.3910000000033,
+        "steady_elapsed_s": 240.65700000000652,
+        "updates": {
+          "E_A5_MATCHED": 27876,
+          "E_C2F_MATCHED": 19195
+        },
+        "commit_bytes": 62877437952,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 4089319424,
+        "available_ram_bytes": 7007051776,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7252131840,
+            "rss_bytes": 4238381056
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6816866304,
+            "rss_bytes": 3739762688
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:29:59.620542+00:00",
+        "elapsed_s": 527.2029999999795,
+        "steady_elapsed_s": 250.46899999998277,
+        "updates": {
+          "E_A5_MATCHED": 27877,
+          "E_C2F_MATCHED": 19195
+        },
+        "commit_bytes": 62814871552,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 4151885824,
+        "available_ram_bytes": 7083896832,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7252131840,
+            "rss_bytes": 4238381056
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6816866304,
+            "rss_bytes": 3739762688
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:30:02.658394+00:00",
+        "elapsed_s": 530.2810000000172,
+        "steady_elapsed_s": 253.5470000000205,
+        "updates": {
+          "E_A5_MATCHED": 27877,
+          "E_C2F_MATCHED": 19195
+        },
+        "commit_bytes": 63177814016,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3788943360,
+        "available_ram_bytes": 6759518208,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7252131840,
+            "rss_bytes": 4238381056
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6816866304,
+            "rss_bytes": 3739762688
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:30:05.697735+00:00",
+        "elapsed_s": 533.3279999999795,
+        "steady_elapsed_s": 256.59399999998277,
+        "updates": {
+          "E_A5_MATCHED": 27877,
+          "E_C2F_MATCHED": 19195
+        },
+        "commit_bytes": 63166459904,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3800297472,
+        "available_ram_bytes": 6618316800,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7252131840,
+            "rss_bytes": 4238381056
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6816866304,
+            "rss_bytes": 3739762688
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:30:08.771179+00:00",
+        "elapsed_s": 536.3589999999967,
+        "steady_elapsed_s": 259.625,
+        "updates": {
+          "E_A5_MATCHED": 27877,
+          "E_C2F_MATCHED": 19196
+        },
+        "commit_bytes": 63024381952,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3942375424,
+        "available_ram_bytes": 6831849472,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7252131840,
+            "rss_bytes": 4238381056
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6816866304,
+            "rss_bytes": 3739762688
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:30:17.972136+00:00",
+        "elapsed_s": 539.4369999999763,
+        "steady_elapsed_s": 262.7029999999795,
+        "updates": {
+          "E_A5_MATCHED": 27877,
+          "E_C2F_MATCHED": 19196
+        },
+        "commit_bytes": 63537532928,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3429224448,
+        "available_ram_bytes": 6355570688,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6968176640,
+            "rss_bytes": 4004290560
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7146844160,
+            "rss_bytes": 4124880896
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:30:21.043390+00:00",
+        "elapsed_s": 548.625,
+        "steady_elapsed_s": 271.89100000000326,
+        "updates": {
+          "E_A5_MATCHED": 27883,
+          "E_C2F_MATCHED": 19198
+        },
+        "commit_bytes": 63174574080,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3792183296,
+        "available_ram_bytes": 6599917568,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6968176640,
+            "rss_bytes": 4004290560
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7146844160,
+            "rss_bytes": 4124880896
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:30:24.111665+00:00",
+        "elapsed_s": 551.7029999999795,
+        "steady_elapsed_s": 274.96899999998277,
+        "updates": {
+          "E_A5_MATCHED": 27884,
+          "E_C2F_MATCHED": 19199
+        },
+        "commit_bytes": 63246921728,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3719835648,
+        "available_ram_bytes": 6657867776,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6968176640,
+            "rss_bytes": 4004290560
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7146844160,
+            "rss_bytes": 4124880896
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:30:27.182153+00:00",
+        "elapsed_s": 554.7660000000033,
+        "steady_elapsed_s": 278.0320000000065,
+        "updates": {
+          "E_A5_MATCHED": 27884,
+          "E_C2F_MATCHED": 19202
+        },
+        "commit_bytes": 63074521088,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3892236288,
+        "available_ram_bytes": 6687395840,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6968176640,
+            "rss_bytes": 4004290560
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7146844160,
+            "rss_bytes": 4124880896
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:30:30.308472+00:00",
+        "elapsed_s": 557.8910000000033,
+        "steady_elapsed_s": 281.1570000000065,
+        "updates": {
+          "E_A5_MATCHED": 27884,
+          "E_C2F_MATCHED": 19203
+        },
+        "commit_bytes": 63399772160,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3566985216,
+        "available_ram_bytes": 6455787520,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6968176640,
+            "rss_bytes": 4004290560
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7146844160,
+            "rss_bytes": 4124880896
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:30:38.781173+00:00",
+        "elapsed_s": 560.9689999999828,
+        "steady_elapsed_s": 284.23499999998603,
+        "updates": {
+          "E_A5_MATCHED": 27884,
+          "E_C2F_MATCHED": 19203
+        },
+        "commit_bytes": 63738826752,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3227930624,
+        "available_ram_bytes": 6114156544,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6691008512,
+            "rss_bytes": 3591426048
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7322951680,
+            "rss_bytes": 4312043520
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:30:41.859121+00:00",
+        "elapsed_s": 569.4369999999763,
+        "steady_elapsed_s": 292.7029999999795,
+        "updates": {
+          "E_A5_MATCHED": 27885,
+          "E_C2F_MATCHED": 19204
+        },
+        "commit_bytes": 63220617216,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3746140160,
+        "available_ram_bytes": 6758625280,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6691008512,
+            "rss_bytes": 3591426048
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7322951680,
+            "rss_bytes": 4312043520
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:30:44.892721+00:00",
+        "elapsed_s": 572.5160000000033,
+        "steady_elapsed_s": 295.7820000000065,
+        "updates": {
+          "E_A5_MATCHED": 27885,
+          "E_C2F_MATCHED": 19204
+        },
+        "commit_bytes": 63618740224,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3348017152,
+        "available_ram_bytes": 6264463360,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6691008512,
+            "rss_bytes": 3591426048
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7322951680,
+            "rss_bytes": 4312043520
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:30:47.932421+00:00",
+        "elapsed_s": 575.5619999999763,
+        "steady_elapsed_s": 298.8279999999795,
+        "updates": {
+          "E_A5_MATCHED": 27885,
+          "E_C2F_MATCHED": 19204
+        },
+        "commit_bytes": 63845928960,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3120828416,
+        "available_ram_bytes": 5907910656,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6691008512,
+            "rss_bytes": 3591426048
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7322951680,
+            "rss_bytes": 4312043520
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:30:51.005524+00:00",
+        "elapsed_s": 578.5939999999828,
+        "steady_elapsed_s": 301.85999999998603,
+        "updates": {
+          "E_A5_MATCHED": 27886,
+          "E_C2F_MATCHED": 19205
+        },
+        "commit_bytes": 63750979584,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3215777792,
+        "available_ram_bytes": 5956423680,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6691008512,
+            "rss_bytes": 3591426048
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7322951680,
+            "rss_bytes": 4312043520
+          }
+        }
+      }
+    ]
+  },
+  {
+    "interval": "extra_3min",
+    "samples": [
+      {
+        "utc": "2026-10-10T16:32:03.693871+00:00",
+        "elapsed_s": 0.0,
+        "steady_elapsed_s": null,
+        "updates": {
+          "E_A5_MATCHED": 27901,
+          "E_C2F_MATCHED": 19221
+        },
+        "commit_bytes": 63599685632,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3367071744,
+        "available_ram_bytes": 6126264320,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7063531520,
+            "rss_bytes": 4064854016
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6766223360,
+            "rss_bytes": 3793289216
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:32:06.826590+00:00",
+        "elapsed_s": 8.702999999979511,
+        "steady_elapsed_s": 0.0,
+        "updates": {
+          "E_A5_MATCHED": 27902,
+          "E_C2F_MATCHED": 19227
+        },
+        "commit_bytes": 63810326528,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3156430848,
+        "available_ram_bytes": 5949927424,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7063531520,
+            "rss_bytes": 4064854016
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6766223360,
+            "rss_bytes": 3793289216
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:32:09.845207+00:00",
+        "elapsed_s": 11.796999999962281,
+        "steady_elapsed_s": 3.0939999999827705,
+        "updates": {
+          "E_A5_MATCHED": 27902,
+          "E_C2F_MATCHED": 19227
+        },
+        "commit_bytes": 63961165824,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3005591552,
+        "available_ram_bytes": 5819265024,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7063531520,
+            "rss_bytes": 4064854016
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6766223360,
+            "rss_bytes": 3793289216
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:32:12.864021+00:00",
+        "elapsed_s": 14.811999999976251,
+        "steady_elapsed_s": 6.10899999999674,
+        "updates": {
+          "E_A5_MATCHED": 27902,
+          "E_C2F_MATCHED": 19227
+        },
+        "commit_bytes": 64199229440,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 2767527936,
+        "available_ram_bytes": 5655224320,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7063531520,
+            "rss_bytes": 4064854016
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6766223360,
+            "rss_bytes": 3793289216
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:32:15.920955+00:00",
+        "elapsed_s": 17.84399999998277,
+        "steady_elapsed_s": 9.14100000000326,
+        "updates": {
+          "E_A5_MATCHED": 27904,
+          "E_C2F_MATCHED": 19227
+        },
+        "commit_bytes": 64045367296,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 2921390080,
+        "available_ram_bytes": 5738074112,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7063531520,
+            "rss_bytes": 4064854016
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6766223360,
+            "rss_bytes": 3793289216
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:32:24.253895+00:00",
+        "elapsed_s": 20.889999999955762,
+        "steady_elapsed_s": 12.186999999976251,
+        "updates": {
+          "E_A5_MATCHED": 27906,
+          "E_C2F_MATCHED": 19228
+        },
+        "commit_bytes": 63656325120,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3310432256,
+        "available_ram_bytes": 6119120896,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6756855808,
+            "rss_bytes": 3715670016
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7144411136,
+            "rss_bytes": 4105695232
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:32:27.309877+00:00",
+        "elapsed_s": 29.23399999999674,
+        "steady_elapsed_s": 20.53100000001723,
+        "updates": {
+          "E_A5_MATCHED": 27908,
+          "E_C2F_MATCHED": 19228
+        },
+        "commit_bytes": 64062619648,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 2904137728,
+        "available_ram_bytes": 5680005120,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6756855808,
+            "rss_bytes": 3715670016
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7144411136,
+            "rss_bytes": 4105695232
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:32:30.359019+00:00",
+        "elapsed_s": 32.28099999995902,
+        "steady_elapsed_s": 23.57799999997951,
+        "updates": {
+          "E_A5_MATCHED": 27908,
+          "E_C2F_MATCHED": 19229
+        },
+        "commit_bytes": 64071983104,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 2894774272,
+        "available_ram_bytes": 5695963136,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6756855808,
+            "rss_bytes": 3715670016
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7144411136,
+            "rss_bytes": 4105695232
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:32:33.415229+00:00",
+        "elapsed_s": 35.32799999997951,
+        "steady_elapsed_s": 26.625,
+        "updates": {
+          "E_A5_MATCHED": 27908,
+          "E_C2F_MATCHED": 19230
+        },
+        "commit_bytes": 63952203776,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3014553600,
+        "available_ram_bytes": 5680840704,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6756855808,
+            "rss_bytes": 3715670016
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7144411136,
+            "rss_bytes": 4105695232
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:32:36.474061+00:00",
+        "elapsed_s": 38.38999999995576,
+        "steady_elapsed_s": 29.68699999997625,
+        "updates": {
+          "E_A5_MATCHED": 27909,
+          "E_C2F_MATCHED": 19233
+        },
+        "commit_bytes": 63250833408,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3715923968,
+        "available_ram_bytes": 6450827264,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6756855808,
+            "rss_bytes": 3715670016
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7144411136,
+            "rss_bytes": 4105695232
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:32:46.366621+00:00",
+        "elapsed_s": 41.45299999997951,
+        "steady_elapsed_s": 32.75,
+        "updates": {
+          "E_A5_MATCHED": 27909,
+          "E_C2F_MATCHED": 19235
+        },
+        "commit_bytes": 63474921472,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3491835904,
+        "available_ram_bytes": 6219292672,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7124377600,
+            "rss_bytes": 4131569664
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7252234240,
+            "rss_bytes": 4217995264
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:32:49.387846+00:00",
+        "elapsed_s": 51.34399999998277,
+        "steady_elapsed_s": 42.64100000000326,
+        "updates": {
+          "E_A5_MATCHED": 27910,
+          "E_C2F_MATCHED": 19235
+        },
+        "commit_bytes": 64878178304,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 2088579072,
+        "available_ram_bytes": 5857562624,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7124377600,
+            "rss_bytes": 4131569664
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7252234240,
+            "rss_bytes": 4217995264
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:32:52.444831+00:00",
+        "elapsed_s": 54.35899999999674,
+        "steady_elapsed_s": 45.65600000001723,
+        "updates": {
+          "E_A5_MATCHED": 27912,
+          "E_C2F_MATCHED": 19236
+        },
+        "commit_bytes": 65036189696,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 1930567680,
+        "available_ram_bytes": 5103783936,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7124377600,
+            "rss_bytes": 4131569664
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7252234240,
+            "rss_bytes": 4217995264
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:32:55.510546+00:00",
+        "elapsed_s": 57.42199999996228,
+        "steady_elapsed_s": 48.71899999998277,
+        "updates": {
+          "E_A5_MATCHED": 27913,
+          "E_C2F_MATCHED": 19236
+        },
+        "commit_bytes": 65134743552,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 1832013824,
+        "available_ram_bytes": 4597264384,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7124377600,
+            "rss_bytes": 4131569664
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7252234240,
+            "rss_bytes": 4217995264
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:32:58.579118+00:00",
+        "elapsed_s": 60.48399999999674,
+        "steady_elapsed_s": 51.78100000001723,
+        "updates": {
+          "E_A5_MATCHED": 27916,
+          "E_C2F_MATCHED": 19237
+        },
+        "commit_bytes": 64921145344,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 2045612032,
+        "available_ram_bytes": 5013667840,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7124377600,
+            "rss_bytes": 4131569664
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7252234240,
+            "rss_bytes": 4217995264
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:33:07.645549+00:00",
+        "elapsed_s": 63.54699999996228,
+        "steady_elapsed_s": 54.84399999998277,
+        "updates": {
+          "E_A5_MATCHED": 27916,
+          "E_C2F_MATCHED": 19239
+        },
+        "commit_bytes": 63861305344,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3105452032,
+        "available_ram_bytes": 6069362688,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7076843520,
+            "rss_bytes": 4009857024
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6766866432,
+            "rss_bytes": 3794194432
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:33:10.717170+00:00",
+        "elapsed_s": 72.625,
+        "steady_elapsed_s": 63.92200000002049,
+        "updates": {
+          "E_A5_MATCHED": 27916,
+          "E_C2F_MATCHED": 19243
+        },
+        "commit_bytes": 64373829632,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 2592927744,
+        "available_ram_bytes": 5666299904,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7076843520,
+            "rss_bytes": 4009857024
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6766866432,
+            "rss_bytes": 3794194432
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:33:13.785143+00:00",
+        "elapsed_s": 75.70299999997951,
+        "steady_elapsed_s": 67.0,
+        "updates": {
+          "E_A5_MATCHED": 27917,
+          "E_C2F_MATCHED": 19243
+        },
+        "commit_bytes": 63877677056,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3089080320,
+        "available_ram_bytes": 5978869760,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7076843520,
+            "rss_bytes": 4009857024
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6766866432,
+            "rss_bytes": 3794194432
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:33:16.808839+00:00",
+        "elapsed_s": 78.76499999995576,
+        "steady_elapsed_s": 70.06199999997625,
+        "updates": {
+          "E_A5_MATCHED": 27917,
+          "E_C2F_MATCHED": 19243
+        },
+        "commit_bytes": 64306094080,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 2660663296,
+        "available_ram_bytes": 5647147008,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7076843520,
+            "rss_bytes": 4009857024
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6766866432,
+            "rss_bytes": 3794194432
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:33:19.834989+00:00",
+        "elapsed_s": 81.79699999996228,
+        "steady_elapsed_s": 73.09399999998277,
+        "updates": {
+          "E_A5_MATCHED": 27917,
+          "E_C2F_MATCHED": 19243
+        },
+        "commit_bytes": 64699080704,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 2267676672,
+        "available_ram_bytes": 5003538432,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7076843520,
+            "rss_bytes": 4009857024
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6766866432,
+            "rss_bytes": 3794194432
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:33:29.013834+00:00",
+        "elapsed_s": 84.81199999997625,
+        "steady_elapsed_s": 76.10899999999674,
+        "updates": {
+          "E_A5_MATCHED": 27917,
+          "E_C2F_MATCHED": 19244
+        },
+        "commit_bytes": 64242483200,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 2724274176,
+        "available_ram_bytes": 5311062016,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6946852864,
+            "rss_bytes": 3838513152
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7067176960,
+            "rss_bytes": 4016893952
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:33:32.085830+00:00",
+        "elapsed_s": 94.0,
+        "steady_elapsed_s": 85.29700000002049,
+        "updates": {
+          "E_A5_MATCHED": 27922,
+          "E_C2F_MATCHED": 19244
+        },
+        "commit_bytes": 64158806016,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 2807951360,
+        "available_ram_bytes": 5824024576,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6946852864,
+            "rss_bytes": 3838513152
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7067176960,
+            "rss_bytes": 4016893952
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:33:35.149545+00:00",
+        "elapsed_s": 97.06199999997625,
+        "steady_elapsed_s": 88.35899999999674,
+        "updates": {
+          "E_A5_MATCHED": 27924,
+          "E_C2F_MATCHED": 19244
+        },
+        "commit_bytes": 64045666304,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 2921091072,
+        "available_ram_bytes": 5875585024,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6946852864,
+            "rss_bytes": 3838513152
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7067176960,
+            "rss_bytes": 4016893952
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:33:38.208561+00:00",
+        "elapsed_s": 100.125,
+        "steady_elapsed_s": 91.42200000002049,
+        "updates": {
+          "E_A5_MATCHED": 27924,
+          "E_C2F_MATCHED": 19245
+        },
+        "commit_bytes": 64235597824,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 2731159552,
+        "available_ram_bytes": 5706043392,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6946852864,
+            "rss_bytes": 3838513152
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7067176960,
+            "rss_bytes": 4016893952
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:33:41.231230+00:00",
+        "elapsed_s": 103.18699999997625,
+        "steady_elapsed_s": 94.48399999999674,
+        "updates": {
+          "E_A5_MATCHED": 27924,
+          "E_C2F_MATCHED": 19245
+        },
+        "commit_bytes": 64327716864,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 2639040512,
+        "available_ram_bytes": 5611597824,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6946852864,
+            "rss_bytes": 3838513152
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7067176960,
+            "rss_bytes": 4016893952
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:33:49.321927+00:00",
+        "elapsed_s": 106.20299999997951,
+        "steady_elapsed_s": 97.5,
+        "updates": {
+          "E_A5_MATCHED": 27924,
+          "E_C2F_MATCHED": 19246
+        },
+        "commit_bytes": 64386740224,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 2580017152,
+        "available_ram_bytes": 5510959104,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7121489920,
+            "rss_bytes": 4158607360
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6842572800,
+            "rss_bytes": 3870838784
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:33:52.406010+00:00",
+        "elapsed_s": 114.31199999997625,
+        "steady_elapsed_s": 105.60899999999674,
+        "updates": {
+          "E_A5_MATCHED": 27925,
+          "E_C2F_MATCHED": 19251
+        },
+        "commit_bytes": 63788093440,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 3178663936,
+        "available_ram_bytes": 6127136768,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7121489920,
+            "rss_bytes": 4158607360
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6842572800,
+            "rss_bytes": 3870838784
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:33:55.432739+00:00",
+        "elapsed_s": 117.38999999995576,
+        "steady_elapsed_s": 108.68699999997625,
+        "updates": {
+          "E_A5_MATCHED": 27925,
+          "E_C2F_MATCHED": 19251
+        },
+        "commit_bytes": 65056325632,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 1910431744,
+        "available_ram_bytes": 5655457792,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7121489920,
+            "rss_bytes": 4158607360
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6842572800,
+            "rss_bytes": 3870838784
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:33:58.454220+00:00",
+        "elapsed_s": 120.40599999995902,
+        "steady_elapsed_s": 111.70299999997951,
+        "updates": {
+          "E_A5_MATCHED": 27925,
+          "E_C2F_MATCHED": 19251
+        },
+        "commit_bytes": 65228783616,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 1737973760,
+        "available_ram_bytes": 4841443328,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7121489920,
+            "rss_bytes": 4158607360
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6842572800,
+            "rss_bytes": 3870838784
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:34:01.518079+00:00",
+        "elapsed_s": 123.43699999997625,
+        "steady_elapsed_s": 114.73399999999674,
+        "updates": {
+          "E_A5_MATCHED": 27926,
+          "E_C2F_MATCHED": 19251
+        },
+        "commit_bytes": 65445675008,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 1521082368,
+        "available_ram_bytes": 4428369920,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7121489920,
+            "rss_bytes": 4158607360
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6842572800,
+            "rss_bytes": 3870838784
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:34:10.759130+00:00",
+        "elapsed_s": 126.5,
+        "steady_elapsed_s": 117.79700000002049,
+        "updates": {
+          "E_A5_MATCHED": 27927,
+          "E_C2F_MATCHED": 19251
+        },
+        "commit_bytes": 65335861248,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 1630896128,
+        "available_ram_bytes": 4558938112,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7103496192,
+            "rss_bytes": 4040990720
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6887116800,
+            "rss_bytes": 3776880640
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:34:13.820041+00:00",
+        "elapsed_s": 135.73399999999674,
+        "steady_elapsed_s": 127.03100000001723,
+        "updates": {
+          "E_A5_MATCHED": 27928,
+          "E_C2F_MATCHED": 19252
+        },
+        "commit_bytes": 64028831744,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 2937925632,
+        "available_ram_bytes": 5795872768,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7103496192,
+            "rss_bytes": 4040990720
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6887116800,
+            "rss_bytes": 3776880640
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:34:16.882099+00:00",
+        "elapsed_s": 138.79699999996228,
+        "steady_elapsed_s": 130.09399999998277,
+        "updates": {
+          "E_A5_MATCHED": 27930,
+          "E_C2F_MATCHED": 19252
+        },
+        "commit_bytes": 64107184128,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 2859573248,
+        "available_ram_bytes": 5834461184,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7103496192,
+            "rss_bytes": 4040990720
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6887116800,
+            "rss_bytes": 3776880640
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:34:19.946194+00:00",
+        "elapsed_s": 141.85899999999674,
+        "steady_elapsed_s": 133.15600000001723,
+        "updates": {
+          "E_A5_MATCHED": 27932,
+          "E_C2F_MATCHED": 19253
+        },
+        "commit_bytes": 64182419456,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 2784337920,
+        "available_ram_bytes": 5876895744,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7103496192,
+            "rss_bytes": 4040990720
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6887116800,
+            "rss_bytes": 3776880640
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:34:22.966491+00:00",
+        "elapsed_s": 144.92199999996228,
+        "steady_elapsed_s": 136.21899999998277,
+        "updates": {
+          "E_A5_MATCHED": 27932,
+          "E_C2F_MATCHED": 19253
+        },
+        "commit_bytes": 64478339072,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 2488418304,
+        "available_ram_bytes": 5506752512,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7103496192,
+            "rss_bytes": 4040990720
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6887116800,
+            "rss_bytes": 3776880640
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:34:32.692555+00:00",
+        "elapsed_s": 147.9529999999795,
+        "steady_elapsed_s": 139.25,
+        "updates": {
+          "E_A5_MATCHED": 27932,
+          "E_C2F_MATCHED": 19255
+        },
+        "commit_bytes": 65288691712,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 1678065664,
+        "available_ram_bytes": 5506281472,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6721941504,
+            "rss_bytes": 3759169536
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6909825024,
+            "rss_bytes": 3923632128
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:34:35.755300+00:00",
+        "elapsed_s": 157.67199999996228,
+        "steady_elapsed_s": 148.96899999998277,
+        "updates": {
+          "E_A5_MATCHED": 27933,
+          "E_C2F_MATCHED": 19259
+        },
+        "commit_bytes": 64911695872,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 2055061504,
+        "available_ram_bytes": 5890117632,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6721941504,
+            "rss_bytes": 3759169536
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6909825024,
+            "rss_bytes": 3923632128
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:34:38.785766+00:00",
+        "elapsed_s": 160.73399999999674,
+        "steady_elapsed_s": 152.03100000001723,
+        "updates": {
+          "E_A5_MATCHED": 27933,
+          "E_C2F_MATCHED": 19259
+        },
+        "commit_bytes": 64300597248,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 2666160128,
+        "available_ram_bytes": 5634568192,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6721941504,
+            "rss_bytes": 3759169536
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6909825024,
+            "rss_bytes": 3923632128
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:34:41.844299+00:00",
+        "elapsed_s": 163.76499999995576,
+        "steady_elapsed_s": 155.06199999997625,
+        "updates": {
+          "E_A5_MATCHED": 27934,
+          "E_C2F_MATCHED": 19259
+        },
+        "commit_bytes": 64389672960,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 2577084416,
+        "available_ram_bytes": 5595959296,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6721941504,
+            "rss_bytes": 3759169536
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6909825024,
+            "rss_bytes": 3923632128
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:34:44.908149+00:00",
+        "elapsed_s": 166.8279999999795,
+        "steady_elapsed_s": 158.125,
+        "updates": {
+          "E_A5_MATCHED": 27935,
+          "E_C2F_MATCHED": 19259
+        },
+        "commit_bytes": 64364494848,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 2602262528,
+        "available_ram_bytes": 5459955712,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6721941504,
+            "rss_bytes": 3759169536
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 6909825024,
+            "rss_bytes": 3923632128
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:34:54.128192+00:00",
+        "elapsed_s": 169.88999999995576,
+        "steady_elapsed_s": 161.18699999997625,
+        "updates": {
+          "E_A5_MATCHED": 27937,
+          "E_C2F_MATCHED": 19259
+        },
+        "commit_bytes": 64437903360,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 2528854016,
+        "available_ram_bytes": 5471891456,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6738964480,
+            "rss_bytes": 3777978368
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7206846464,
+            "rss_bytes": 4233605120
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:34:57.206074+00:00",
+        "elapsed_s": 179.10899999999674,
+        "steady_elapsed_s": 170.40600000001723,
+        "updates": {
+          "E_A5_MATCHED": 27940,
+          "E_C2F_MATCHED": 19260
+        },
+        "commit_bytes": 64002179072,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 2964578304,
+        "available_ram_bytes": 5941964800,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6738964480,
+            "rss_bytes": 3777978368
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7206846464,
+            "rss_bytes": 4233605120
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:35:00.230557+00:00",
+        "elapsed_s": 182.18699999997625,
+        "steady_elapsed_s": 173.48399999999674,
+        "updates": {
+          "E_A5_MATCHED": 27940,
+          "E_C2F_MATCHED": 19260
+        },
+        "commit_bytes": 64349319168,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 2617438208,
+        "available_ram_bytes": 5576695808,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6738964480,
+            "rss_bytes": 3777978368
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7206846464,
+            "rss_bytes": 4233605120
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:35:03.256885+00:00",
+        "elapsed_s": 185.21899999998277,
+        "steady_elapsed_s": 176.51600000000326,
+        "updates": {
+          "E_A5_MATCHED": 27940,
+          "E_C2F_MATCHED": 19260
+        },
+        "commit_bytes": 64535437312,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 2431320064,
+        "available_ram_bytes": 5391810560,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6738964480,
+            "rss_bytes": 3777978368
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7206846464,
+            "rss_bytes": 4233605120
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:35:06.319155+00:00",
+        "elapsed_s": 188.23399999999674,
+        "steady_elapsed_s": 179.53100000001723,
+        "updates": {
+          "E_A5_MATCHED": 27941,
+          "E_C2F_MATCHED": 19260
+        },
+        "commit_bytes": 64253296640,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 2713460736,
+        "available_ram_bytes": 5624254464,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 6738964480,
+            "rss_bytes": 3777978368
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7206846464,
+            "rss_bytes": 4233605120
+          }
+        }
+      },
+      {
+        "utc": "2026-10-10T16:35:15.198061+00:00",
+        "elapsed_s": 191.29699999996228,
+        "steady_elapsed_s": 182.59399999998277,
+        "updates": {
+          "E_A5_MATCHED": 27941,
+          "E_C2F_MATCHED": 19260
+        },
+        "commit_bytes": 64206970880,
+        "commit_limit_bytes": 66966757376,
+        "commit_headroom_bytes": 2759786496,
+        "available_ram_bytes": 5662191616,
+        "trainers": {
+          "E_A5_MATCHED": {
+            "pid": 10328,
+            "private_bytes": 7129395200,
+            "rss_bytes": 4082024448
+          },
+          "E_C2F_MATCHED": {
+            "pid": 22944,
+            "private_bytes": 7167696896,
+            "rss_bytes": 4194549760
+          }
+        }
+      }
+    ]
+  }
+]
