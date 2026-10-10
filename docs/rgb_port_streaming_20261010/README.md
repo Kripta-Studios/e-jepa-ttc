@@ -100,5 +100,12 @@ python -m operational.rgb_port_continuity.queue resume --run artifacts/rgb_port_
 
 Las pruebas GPU de restauración de los wrappers originales se ejecutan antes de
 actualizar el optimizador. El estado observado después del lanzamiento se guarda
-en `evidence/RESUME_STATUS.json`. Solo los modelos finales permitirán cerrar las
+en `E:/EJEPA_results/v13_streaming_port_20261010/RESUME_STATUS.json`. Solo los modelos finales permitirán cerrar las
 mediciones V13 en Dev32/FCWD y preparar sus predicciones test12.
+
+La suite ampliada y las pruebas finales cubren 235 casos únicos aprobados y una
+prueba técnica omitida. La admisión Git registra el commit concreto descendiente
+del original y exige identidad byte a byte con el código comprometido. No se
+altera execution.json ni SOURCE_FREEZE.json. Tras publicar commits posteriores,
+una nueva reanudación exige conservar y renovar CONTINUITY_GIT_ADMISSION.json;
+la cola activa conserva la admisión con la que arrancó.

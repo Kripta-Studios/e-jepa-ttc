@@ -88,9 +88,6 @@ def test_queue_routes_existing_delegates_through_guard(tmp_path):
     ]
     with (
         patch.object(guarded, "validate"),
-        patch.object(
-            guarded, "validate_git", return_value={"original_base": "old", "admitted_head": "new"}
-        ),
         patch("sys.argv", ["queue", "resume", "--run", str(tmp_path)]),
     ):
 
@@ -105,41 +102,3 @@ def test_queue_routes_existing_delegates_through_guard(tmp_path):
         with patch.object(queue, "main", side_effect=inner):
             assert guarded.main() == 0
     assert queue.PRODUCER_MODULE == "operational.rgb_port_io_recovery.producer"
-
-
-def test_git_admission_rejects_unrecorded_commit(tmp_path):
-    from operational.rgb_port.accounting import atomic_write_json
-    from operational.rgb_port_continuity import git_admission
-
-    atomic_write_json(tmp_path / git_admission.ADMISSION, {"head": "old"})
-    with patch.object(git_admission, "inspect", return_value={"head": "new"}):
-        with pytest.raises(ValueError, match="not been admitted"):
-            git_admission.validate_git(tmp_path)
-
-
-def test_runtime_commit_update_preserves_scientific_freeze_config(tmp_path):
-    from operational.rgb_port_continuity import queue as guarded
-
-    frozen = guarded.io_queue.frozen_queue
-    config = {"base_commit": "old", "package": {"members": []}, "loss": "unchanged"}
-    with (
-        patch.object(guarded, "validate"),
-        patch.object(
-            guarded, "validate_git", return_value={"original_base": "old", "admitted_head": "new"}
-        ),
-        patch.object(frozen, "_load_config", return_value=config.copy()),
-        patch.object(frozen, "_freeze_inputs", return_value={}) as freeze,
-        patch("sys.argv", ["queue", "resume", "--run", str(tmp_path)]),
-    ):
-
-        def inner(args):
-            runtime = frozen._load_config(tmp_path)
-            assert runtime["base_commit"] == "new"
-            assert "CONTINUITY_FREEZE.json" in runtime["package"]["members"]
-            frozen._freeze_inputs(tmp_path, runtime, tmp_path)
-            assert freeze.call_args.args[1]["base_commit"] == "old"
-            assert freeze.call_args.args[1]["loss"] == "unchanged"
-            return 0
-
-        with patch.object(guarded.io_queue, "main", side_effect=inner):
-            assert guarded.main() == 0

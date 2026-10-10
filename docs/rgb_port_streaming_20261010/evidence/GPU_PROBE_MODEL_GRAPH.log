@@ -1,0 +1,75 @@
+native_fp32 {'cold_ms': 500.9038000134751, 'median_batch2_ms': 74.98660002602264, 'max_feature_abs_difference': 0.0, 'finite': True}
+W1010 16:33:51.380000 24296 Lib\site-packages\torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+vectorized_fp32 {'cold_ms': 67.5710000214167, 'median_batch2_ms': 60.070450039347634, 'max_feature_abs_difference': 3.0517578125e-05, 'finite': True}
+W1010 16:33:53.897000 24296 Lib\site-packages\torch\_dynamo\variables\tensor.py:1379] [0/0] Graph break from `Tensor.item()`, consider setting:
+W1010 16:33:53.897000 24296 Lib\site-packages\torch\_dynamo\variables\tensor.py:1379] [0/0]     torch._dynamo.config.capture_scalar_outputs = True
+W1010 16:33:53.897000 24296 Lib\site-packages\torch\_dynamo\variables\tensor.py:1379] [0/0] or:
+W1010 16:33:53.897000 24296 Lib\site-packages\torch\_dynamo\variables\tensor.py:1379] [0/0]     env TORCHDYNAMO_CAPTURE_SCALAR_OUTPUTS=1
+W1010 16:33:53.897000 24296 Lib\site-packages\torch\_dynamo\variables\tensor.py:1379] [0/0] to include these operations in the captured graph.
+W1010 16:33:53.897000 24296 Lib\site-packages\torch\_dynamo\variables\tensor.py:1379] [0/0] 
+W1010 16:33:53.897000 24296 Lib\site-packages\torch\_dynamo\variables\tensor.py:1379] [0/0] Graph break: from user code at:
+W1010 16:33:53.897000 24296 Lib\site-packages\torch\_dynamo\variables\tensor.py:1379] [0/0]   File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc-v13-rgb-port\src\e_jepa_ttc\models\causal_scale_ttc.py", line 848, in forward
+W1010 16:33:53.897000 24296 Lib\site-packages\torch\_dynamo\variables\tensor.py:1379] [0/0]     return self._forward_impl(inputs, delta_t_s, return_dense_features=return_dense_features)
+W1010 16:33:53.897000 24296 Lib\site-packages\torch\_dynamo\variables\tensor.py:1379] [0/0]   File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc-v13-rgb-port\src\e_jepa_ttc\models\causal_scale_ttc.py", line 885, in _forward_impl
+W1010 16:33:53.897000 24296 Lib\site-packages\torch\_dynamo\variables\tensor.py:1379] [0/0]     if bool((delta_t_s <= 0.0).any()) or not bool(torch.isfinite(delta_t_s).all()):
+W1010 16:33:53.897000 24296 Lib\site-packages\torch\_dynamo\variables\tensor.py:1379] [0/0] 
+W1010 16:33:53.897000 24296 Lib\site-packages\torch\_dynamo\variables\tensor.py:1379] [0/0] 
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc-v13-rgb-port\operational\rgb_port_streaming\probe.py", line 128, in <module>
+    main()
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc-v13-rgb-port\operational\rgb_port_streaming\probe.py", line 81, in main
+    actual = runner(sensor, delta)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc\.venv\Lib\site-packages\torch\utils\_contextlib.py", line 124, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc-v13-rgb-port\operational\rgb_port_streaming\runtime.py", line 137, in __call__
+    c2f = self.models[1](x, dt)
+          ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc\.venv\Lib\site-packages\torch\nn\modules\module.py", line 1779, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc\.venv\Lib\site-packages\torch\nn\modules\module.py", line 1790, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc-v13-rgb-port\operational\rgb_port_streaming\runtime.py", line 47, in forward
+    return producer_features(cast(CausalScaleTTC, self.model), sensor, delta)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc-v13-rgb-port\operational\rgb_port\train_producers.py", line 256, in producer_features
+    output = model(inputs, measured_delta, return_dense_features=False)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc\.venv\Lib\site-packages\torch\nn\modules\module.py", line 1779, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc\.venv\Lib\site-packages\torch\nn\modules\module.py", line 1790, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc-v13-rgb-port\operational\streaming_revision\kernels.py", line 111, in forward
+    return owned_output(self.module(*args, **kwargs))
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc\.venv\Lib\site-packages\torch\_dynamo\eval_frame.py", line 472, in __call__
+    return super().__call__(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc\.venv\Lib\site-packages\torch\nn\modules\module.py", line 1779, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc\.venv\Lib\site-packages\torch\nn\modules\module.py", line 1790, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc\.venv\Lib\site-packages\torch\_dynamo\eval_frame.py", line 1024, in compile_wrapper
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc\.venv\Lib\site-packages\torch\nn\modules\module.py", line 1779, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc\.venv\Lib\site-packages\torch\nn\modules\module.py", line 1790, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc-v13-rgb-port\src\e_jepa_ttc\models\causal_scale_ttc.py", line 848, in forward
+    return self._forward_impl(inputs, delta_t_s, return_dense_features=return_dense_features)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc-v13-rgb-port\src\e_jepa_ttc\models\causal_scale_ttc.py", line 867, in _forward_impl
+    def _forward_impl(
+NameError: name '__compiled_fn_4_26282ea5_7b9b_4192_bc38_5b330983ec5a' is not defined

@@ -1,0 +1,14 @@
+........................................................................ [ 31%]
+..............................................s.......................F. [ 62%]
+........................................................................ [ 93%]
+................                                                         [100%]
+================================== FAILURES ===================================
+___________ test_native_current_mask_adapter_preserves_scalar_mask ____________
+tests\test_rgb_port_streaming.py:223: in test_native_current_mask_adapter_preserves_scalar_mask
+    value.known = value.known.float()
+    ^^^^^^^^^^^
+<string>:4: in __setattr__
+    ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'known'
+=========================== short test summary info ===========================
+FAILED tests/test_rgb_port_streaming.py::test_native_current_mask_adapter_preserves_scalar_mask

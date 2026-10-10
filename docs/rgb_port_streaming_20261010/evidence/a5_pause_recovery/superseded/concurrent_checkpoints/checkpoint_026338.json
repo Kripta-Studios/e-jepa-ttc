@@ -1,0 +1,27 @@
+{
+  "cache": {
+    "bytes": 460115264,
+    "entries": 0,
+    "hits": 366,
+    "limit_bytes": 536870912,
+    "reads": 92
+  },
+  "cache_limit_bytes": 536870912,
+  "checkpoint_identity_sha256": "9a3db2b292872f71d3a57f41090e28e0719cf355144aa2eb257b5380208e282f",
+  "checkpoint_sha256": "ffddb3a1a7b9f08f5c9bc5723baa79f2bf47250a1929b41c4b285436c6211f41",
+  "checkpoint_version": "checkpoint_026338.pt",
+  "completed_updates": 26338,
+  "concurrent_freeze_file_sha256": "b271d8bbaf4e28927813de65654b5aa767f94a8ce6faf32e73992b22d9be1378",
+  "concurrent_freeze_sha256": "8b5bb06f6038b981b402d424043bdf9761ef41afddab1279f53921485a37335a",
+  "fit_id": "E_A5_MATCHED",
+  "graph_mode": "V1_ONLY",
+  "optimizer_updates": 0,
+  "schema": "rgb_port_concurrent_checkpoint_receipt_v1",
+  "source_sha256": {
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\operational\\rgb_port_concurrent\\__init__.py": "90083d4bba045784d13776a4c98d35ec3094ae3258470556ab256b06b015a8f2",
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\operational\\rgb_port_concurrent\\contracts.py": "429ee1067fa2a38635665ac257fb208d8e6f87432df8fb3b13bf0df6d9bd734b",
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\operational\\rgb_port_concurrent\\producer.py": "222d24428665462c5d929f3f0b46a71be2b0d27ae2dff3115c57d5fe0ba2ffc9",
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\operational\\rgb_port_concurrent\\queue.py": "85dff3587396dc09a8af3d7ac296dcff2749ca0dc07a2049babf5385084d3b5c"
+  },
+  "status": "COMPLETE"
+}

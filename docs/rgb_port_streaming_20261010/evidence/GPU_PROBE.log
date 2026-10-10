@@ -1,0 +1,105 @@
+native_fp32 {'cold_ms': 512.2206999803893, 'median_batch2_ms': 77.9117500060238, 'max_feature_abs_difference': 0.0, 'finite': True}
+W1010 16:32:57.287000 38580 Lib\site-packages\torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+vectorized_fp32 {'cold_ms': 74.51890001539141, 'median_batch2_ms': 54.45799996959977, 'max_feature_abs_difference': 3.0517578125e-05, 'finite': True}
+W1010 16:32:59.813000 38580 Lib\site-packages\torch\_dynamo\variables\tensor.py:1379] [0/0] Graph break from `Tensor.item()`, consider setting:
+W1010 16:32:59.813000 38580 Lib\site-packages\torch\_dynamo\variables\tensor.py:1379] [0/0]     torch._dynamo.config.capture_scalar_outputs = True
+W1010 16:32:59.813000 38580 Lib\site-packages\torch\_dynamo\variables\tensor.py:1379] [0/0] or:
+W1010 16:32:59.813000 38580 Lib\site-packages\torch\_dynamo\variables\tensor.py:1379] [0/0]     env TORCHDYNAMO_CAPTURE_SCALAR_OUTPUTS=1
+W1010 16:32:59.813000 38580 Lib\site-packages\torch\_dynamo\variables\tensor.py:1379] [0/0] to include these operations in the captured graph.
+W1010 16:32:59.813000 38580 Lib\site-packages\torch\_dynamo\variables\tensor.py:1379] [0/0] 
+W1010 16:32:59.813000 38580 Lib\site-packages\torch\_dynamo\variables\tensor.py:1379] [0/0] Graph break: from user code at:
+W1010 16:32:59.813000 38580 Lib\site-packages\torch\_dynamo\variables\tensor.py:1379] [0/0]   File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc-v13-rgb-port\operational\rgb_port_streaming\runtime.py", line 42, in forward
+W1010 16:32:59.813000 38580 Lib\site-packages\torch\_dynamo\variables\tensor.py:1379] [0/0]     return producer_features(cast(CausalScaleTTC, self.model), sensor, delta)
+W1010 16:32:59.813000 38580 Lib\site-packages\torch\_dynamo\variables\tensor.py:1379] [0/0]   File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc-v13-rgb-port\operational\rgb_port\train_producers.py", line 256, in producer_features
+W1010 16:32:59.813000 38580 Lib\site-packages\torch\_dynamo\variables\tensor.py:1379] [0/0]     output = model(inputs, measured_delta, return_dense_features=False)
+W1010 16:32:59.813000 38580 Lib\site-packages\torch\_dynamo\variables\tensor.py:1379] [0/0]   File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc-v13-rgb-port\src\e_jepa_ttc\models\causal_scale_ttc.py", line 848, in forward
+W1010 16:32:59.813000 38580 Lib\site-packages\torch\_dynamo\variables\tensor.py:1379] [0/0]     return self._forward_impl(inputs, delta_t_s, return_dense_features=return_dense_features)
+W1010 16:32:59.813000 38580 Lib\site-packages\torch\_dynamo\variables\tensor.py:1379] [0/0]   File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc-v13-rgb-port\src\e_jepa_ttc\models\causal_scale_ttc.py", line 885, in _forward_impl
+W1010 16:32:59.813000 38580 Lib\site-packages\torch\_dynamo\variables\tensor.py:1379] [0/0]     if bool((delta_t_s <= 0.0).any()) or not bool(torch.isfinite(delta_t_s).all()):
+W1010 16:32:59.813000 38580 Lib\site-packages\torch\_dynamo\variables\tensor.py:1379] [0/0] 
+W1010 16:32:59.813000 38580 Lib\site-packages\torch\_dynamo\variables\tensor.py:1379] [0/0] 
+W1010 16:33:04.073000 38580 Lib\site-packages\torch\_inductor\cudagraph_utils.py:207] [10/0_1] [__cudagraphs] skipping cudagraphs due to skipping cudagraphs due to cpu device (_to_copy). Found from : 
+W1010 16:33:04.073000 38580 Lib\site-packages\torch\_inductor\cudagraph_utils.py:207] [10/0_1] [__cudagraphs]    File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc-v13-rgb-port\operational\rgb_port\train_producers.py", line 258, in torch_dynamo_resume_in_producer_features_at_256
+W1010 16:33:04.073000 38580 Lib\site-packages\torch\_inductor\cudagraph_utils.py:207] [10/0_1] [__cudagraphs]     phase_np = expert_phase_from_ttc(ttc.detach().cpu().numpy())
+W1010 16:33:04.073000 38580 Lib\site-packages\torch\_inductor\cudagraph_utils.py:207] [10/0_1] [__cudagraphs] 
+W1010 16:33:04.126000 38580 Lib\site-packages\torch\_inductor\cudagraph_utils.py:207] [11/0_1] [__cudagraphs] skipping cudagraphs due to skipping cudagraphs due to cpu device (arg0_1). Found from : 
+W1010 16:33:04.126000 38580 Lib\site-packages\torch\_inductor\cudagraph_utils.py:207] [11/0_1] [__cudagraphs]    File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc-v13-rgb-port\src\e_jepa_ttc\simplex_t\expert_phase.py", line 18, in expert_phase_from_ttc
+W1010 16:33:04.126000 38580 Lib\site-packages\torch\_inductor\cudagraph_utils.py:207] [11/0_1] [__cudagraphs]     values = np.asarray(values, dtype=np.float64)
+W1010 16:33:04.126000 38580 Lib\site-packages\torch\_inductor\cudagraph_utils.py:207] [11/0_1] [__cudagraphs] 
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc-v13-rgb-port\operational\rgb_port_streaming\probe.py", line 128, in <module>
+    main()
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc-v13-rgb-port\operational\rgb_port_streaming\probe.py", line 81, in main
+    actual = runner(sensor, delta)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc\.venv\Lib\site-packages\torch\utils\_contextlib.py", line 124, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc-v13-rgb-port\operational\rgb_port_streaming\runtime.py", line 121, in __call__
+    a5 = self.models[0](x, dt)
+         ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc\.venv\Lib\site-packages\torch\nn\modules\module.py", line 1779, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc\.venv\Lib\site-packages\torch\nn\modules\module.py", line 1790, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc-v13-rgb-port\operational\streaming_revision\kernels.py", line 111, in forward
+    return owned_output(self.module(*args, **kwargs))
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc\.venv\Lib\site-packages\torch\_dynamo\eval_frame.py", line 472, in __call__
+    return super().__call__(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc\.venv\Lib\site-packages\torch\nn\modules\module.py", line 1779, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc\.venv\Lib\site-packages\torch\nn\modules\module.py", line 1790, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc\.venv\Lib\site-packages\torch\_dynamo\eval_frame.py", line 1024, in compile_wrapper
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc\.venv\Lib\site-packages\torch\nn\modules\module.py", line 1779, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc\.venv\Lib\site-packages\torch\nn\modules\module.py", line 1790, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc-v13-rgb-port\operational\rgb_port_streaming\runtime.py", line 42, in forward
+    return producer_features(cast(CausalScaleTTC, self.model), sensor, delta)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc-v13-rgb-port\operational\rgb_port\train_producers.py", line 256, in producer_features
+    output = model(inputs, measured_delta, return_dense_features=False)
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc-v13-rgb-port\operational\rgb_port\train_producers.py", line 258, in torch_dynamo_resume_in_producer_features_at_256
+    phase_np = expert_phase_from_ttc(ttc.detach().cpu().numpy())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc\.venv\Lib\site-packages\torch\_dynamo\convert_frame.py", line 2316, in __call__
+    result = self._torchdynamo_orig_backend(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc\.venv\Lib\site-packages\torch\_dynamo\convert_frame.py", line 2052, in __call__
+    result = self._inner_convert(
+             ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc\.venv\Lib\site-packages\torch\_dynamo\convert_frame.py", line 729, in __call__
+    result = _compile(
+             ^^^^^^^^^
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc\.venv\Lib\site-packages\torch\_dynamo\convert_frame.py", line 1827, in _compile
+    guarded_code, tracer_output = compile_inner(code, one_graph, hooks)
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc\.venv\Lib\site-packages\torch\_utils_internal.py", line 96, in wrapper_function
+    return function(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc\.venv\Lib\site-packages\torch\_dynamo\convert_frame.py", line 1500, in compile_inner
+    return _compile_inner(code, one_graph, hooks)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc\.venv\Lib\site-packages\torch\_dynamo\convert_frame.py", line 1634, in _compile_inner
+    check_fn = dynamo_output.build_guards(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc\.venv\Lib\site-packages\torch\_dynamo\convert_frame.py", line 904, in build_guards
+    return CheckFunctionManager(
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc\.venv\Lib\site-packages\torch\_dynamo\guards.py", line 3928, in __init__
+    raise AssertionError(
+AssertionError: Guard failed on the same frame it was created. This is a bug - please create an issue.Guard fail reason: 11/0: tensor '___from_numpy(values)' dispatch key set mismatch. expected DispatchKeySet(CPU, BackendSelect, ADInplaceOrView), actual DispatchKeySet(CPU, BackendSelect)
+
