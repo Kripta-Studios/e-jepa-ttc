@@ -179,7 +179,11 @@ def test_new_stop_does_not_replace_unknown_marker(tmp_path):
     assert not (artifacts / "OWN_STOP.json").exists()
 
 
-def test_only_owned_temporary_stop_is_released(tmp_path):
+def test_only_owned_temporary_stop_is_released(tmp_path, monkeypatch):
+    # Exercise recovery before its deadline regardless of the machine's date.
+    monkeypatch.setattr(
+        supervisor, "DEADLINE", supervisor.datetime.max.replace(tzinfo=supervisor.UTC)
+    )
     output, artifacts, _, _ = fixture_handoff(tmp_path)
     (output / "STOP_REQUEST").unlink()
     supervisor.stop_child(output, artifacts, "EXTERNAL_HEAVY")
