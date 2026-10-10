@@ -16,7 +16,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import asdict, dataclass
-from typing import Literal
+from typing import Literal, cast
 
 import torch
 from torch import nn
@@ -421,7 +421,7 @@ class _AdaptiveTemporalChannelGate(nn.Module):
         if not isinstance(final, nn.Conv2d):
             raise TypeError("C1 router must end in Conv2d")
         nn.init.zeros_(final.weight)
-        nn.init.zeros_(final.bias)
+        nn.init.zeros_(cast(torch.Tensor, final.bias))
 
     def forward(self, values: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
         if values.ndim != 4 or values.shape[1] != self.channels:
@@ -656,6 +656,7 @@ class _TransportFeatureAdapter(nn.Module):
     def forward(self, values: torch.Tensor) -> torch.Tensor:
         output = values
         for block in self.blocks:
+            block = cast(nn.ModuleDict, block)
             residual = block["norm"](output)
             residual = functional.gelu(block["conv_in"](residual))
             residual = block["dropout"](residual)
@@ -689,7 +690,7 @@ class _AntisymmetricResidual(nn.Module):
         if not isinstance(final, nn.Linear):
             raise TypeError("antisymmetric scorer must end with Linear")
         nn.init.zeros_(final.weight)
-        nn.init.zeros_(final.bias)
+        nn.init.zeros_(cast(torch.Tensor, final.bias))
 
     def _ordered(
         self,
@@ -1078,8 +1079,14 @@ class CausalScaleTTC(nn.Module):
                     inputs.shape[3],
                     inputs.shape[4],
                 )
-                event_count = pair_inputs[:, -2].float().mean(dim=(-2, -1))
-                event_rate = pair_inputs[:, -1].float().mean(dim=(-2, -1))
+                if self.config.modality == "rgb":
+                    from e_jepa_ttc.rgb_port.features import raw_rgb_statistics
+
+                    rgb_statistics = raw_rgb_statistics(pair_inputs)
+                    event_count, event_rate = rgb_statistics.unbind(dim=-1)
+                else:
+                    event_count = pair_inputs[:, -2].float().mean(dim=(-2, -1))
+                    event_rate = pair_inputs[:, -1].float().mean(dim=(-2, -1))
                 router_features = torch.stack(
                     (
                         event_count,
@@ -1114,8 +1121,10 @@ class CausalScaleTTC(nn.Module):
                 # Clamp only the transport pathways after their causal features
                 # have been computed.  This preserves the trained graph shape and
                 # changes no checkpoint parameter or input population.
-                transport_tokens = torch.zeros_like(transport_tokens)
-                reverse_transport_tokens = torch.zeros_like(reverse_transport_tokens)
+                transport_tokens = torch.zeros_like(cast(torch.Tensor, transport_tokens))
+                reverse_transport_tokens = torch.zeros_like(
+                    cast(torch.Tensor, reverse_transport_tokens)
+                )
                 transport_raw_features = torch.zeros_like(transport_raw_features)
                 residual = self.residual(
                     previous,

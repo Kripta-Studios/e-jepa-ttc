@@ -1,0 +1,38 @@
+{
+  "authority_sha256": "39fac190a2568757511de017fb7e7d55428506382a0066804af8241d4908a66b",
+  "event_weights_reused": false,
+  "historical_artifacts_mutated": false,
+  "identical_fields": [
+    "all_other_model_config",
+    "loss_config",
+    "training_config",
+    "teacher_policy",
+    "cache_local_sampler_policy",
+    "P_roles",
+    "seed",
+    "epochs",
+    "effective_batch",
+    "fixed_endpoint"
+  ],
+  "matched_pairs": {
+    "A5": [
+      "E_A5_MATCHED",
+      "R_A5"
+    ],
+    "C2F": [
+      "E_C2F_MATCHED",
+      "R_C2F"
+    ]
+  },
+  "new_large_encoder": false,
+  "registered_data_differences": [
+    "sensor:event_v4->raw_rgb_unit_interval",
+    "timestamps:event_windows->real_rgb_frame_timestamps",
+    "teacher_targets:audited_config_identity_retained_actual_P_artifact_hash_bound_per_source"
+  ],
+  "registered_model_differences": [
+    "modality:event->rgb",
+    "in_channels:12->3"
+  ],
+  "schema": "rgb_port_diff_v1"
+}
