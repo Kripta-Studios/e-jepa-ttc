@@ -15,6 +15,7 @@ from operational.rgb_port.accounting import atomic_write_json, sha256_file
 from operational.rgb_port_continuity import producer as continuity
 from operational.rgb_port_loader_v3.contracts import NAME, validate
 from operational.rgb_port_loader_v3.loader import DepthTwoEventPrefetch, ParallelGroupRowCache
+from operational.rgb_port_loader_v3.memory import COMMIT_RESERVE_BYTES, with_requested_reserve
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -41,8 +42,11 @@ def main(argv: Sequence[str] | None = None) -> int:
         loader = DepthTwoEventPrefetch(source, batch_size=recipe.effective_batch_size, depth=2)
         original_restore = training.ProducerCheckpoint.restore
         original_save = training.ProducerCheckpoint.save
+        original_fast = training._fast_resource_guard
+        original_full = training._resource_guard
         started = time.perf_counter()
         origin: dict[str, Any] = {}
+        memory_samples: list[dict[str, Any]] = []
         receipt_root = run_root / "fits" / fit_id / "loader_v3_checkpoints"
 
         def receipt(state: Any, status: str) -> dict[str, Any]:
@@ -64,6 +68,8 @@ def main(argv: Sequence[str] | None = None) -> int:
                 "row_cache_peak_bytes": cache.peak_bytes,
                 "decoder_workers": 2,
                 "prefetch_depth": 2,
+                "commit_reserve_bytes": COMMIT_RESERVE_BYTES,
+                "memory_samples": list(memory_samples),
                 "objective_changed": False,
                 "geometry_precision": "bf16_unchanged",
             }
@@ -77,6 +83,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 completed_updates=state.completed, checkpoint_sha256=sha256_file(state.path)
             )
             started = time.perf_counter()
+            memory_samples.clear()
             atomic_write_json(
                 receipt_root / f"origin_{state.completed:06d}.json", receipt(state, "RESTORED")
             )
@@ -89,12 +96,32 @@ def main(argv: Sequence[str] | None = None) -> int:
             atomic_write_json(receipt_root / f"checkpoint_{state.completed:06d}.json", value)
             atomic_write_json(run_root / "fits" / fit_id / "LOADER_V3_RUNTIME.json", value)
 
+        def guard(original: Any, *args: Any, **kw: Any) -> Any:
+            decision = with_requested_reserve(original(*args, **kw))
+            elapsed = time.perf_counter() - started
+            if not memory_samples or elapsed - memory_samples[-1]["elapsed_s"] >= 5:
+                memory_samples.append(
+                    {
+                        "elapsed_s": elapsed,
+                        "commit_headroom_bytes": decision[1]["windows_commit_headroom_bytes"],
+                        "available_ram_bytes": decision[1]["host_available_bytes"],
+                    }
+                )
+                del memory_samples[:-120]
+            return decision
+
         if not (run_root / "fits" / fit_id / "CHECKPOINT_POINTER.json").is_file():
             raise ValueError("Loader V3 currently admits only existing durable checkpoints")
         try:
             with (
                 patch.object(training.ProducerCheckpoint, "restore", restore),
                 patch.object(training.ProducerCheckpoint, "save", save),
+                patch.object(
+                    training, "_fast_resource_guard", lambda *a, **k: guard(original_fast, *a, **k)
+                ),
+                patch.object(
+                    training, "_resource_guard", lambda *a, **k: guard(original_full, *a, **k)
+                ),
             ):
                 return original_fit(
                     cast(training.ProducerSource, loader), recipe, run_root, **kwargs

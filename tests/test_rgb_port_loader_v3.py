@@ -209,3 +209,49 @@ def test_queue_installs_route_after_parent_without_replacing_ownership(tmp_path,
     monkeypatch.setattr(queue.io_queue, "main", original_main)
     monkeypatch.setattr(queue.continuity, "main", parent_main)
     assert queue.main() == 0
+
+
+@pytest.mark.parametrize("margin,expected", [(0.99, False), (1, True), (2.95, True), (3, True)])
+def test_requested_commit_reserve_boundaries(margin, expected):
+    from operational.rgb_port_loader_v3.memory import with_requested_reserve
+
+    values = {
+        "windows_commit_headroom_bytes": int(margin * 1024**3),
+        "host_available_bytes": 4 * 1024**3,
+        "disk_free_after_reservation_bytes": 20_000_000_000,
+    }
+    admitted, snapshot = with_requested_reserve((margin >= 3, values))
+    assert admitted is expected
+    assert snapshot["commit_reserve_bytes"] == 1024**3
+
+
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("host_available_bytes", 1024**3),
+        ("disk_free_after_reservation_bytes", 9_999_999_999),
+        ("project_tree_rss_bytes", 23_000_000_001),
+    ],
+)
+def test_lower_commit_reserve_does_not_relax_other_gates(field, value):
+    from operational.rgb_port_loader_v3.memory import with_requested_reserve
+
+    values = {
+        "windows_commit_headroom_bytes": 2 * 1024**3,
+        "host_available_bytes": 4 * 1024**3,
+        "disk_free_after_reservation_bytes": 20_000_000_000,
+        field: value,
+    }
+    assert with_requested_reserve((False, values))[0] is False
+
+
+def test_reserve_overlay_rejects_unknown_upstream_gate():
+    from operational.rgb_port_loader_v3.memory import with_requested_reserve
+
+    values = {
+        "windows_commit_headroom_bytes": 5 * 1024**3,
+        "host_available_bytes": 4 * 1024**3,
+        "disk_free_after_reservation_bytes": 20_000_000_000,
+    }
+    with pytest.raises(RuntimeError, match="Upstream resource policy"):
+        with_requested_reserve((False, values))

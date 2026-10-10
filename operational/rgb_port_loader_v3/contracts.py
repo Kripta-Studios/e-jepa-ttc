@@ -31,7 +31,8 @@ def payload(run: Path, qa: Path) -> dict[str, Any]:
         "geometry_precision": "bf16_unchanged",
         "objective_changed": False,
         "canonical_validation_unchanged": True,
-        "commit_reserve_gib": 3,
+        "commit_reserve_gib": 1,
+        "commit_reserve_authorization": "explicit_user_request_20261010",
         "files": {
             path.relative_to(ROOT).as_posix(): sha256_file(path)
             for path in [

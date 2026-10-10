@@ -1,0 +1,16 @@
+{
+  "status": "PASSED",
+  "exact_batch_parity": true,
+  "cpu_evidence_sha256": "3033ed3845459a44b393932afce86ce24da1806fc01b338db5bdee06867b0d58",
+  "tests": {
+    "tests": 38,
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0
+  },
+  "ruff": "PASSED",
+  "pyright_errors": 0,
+  "user_requested_commit_reserve_bytes": 1073741824,
+  "other_resource_limits_changed": false,
+  "cpu_evidence_hash_encoding": "UTF-8, LF (Git blob)"
+}

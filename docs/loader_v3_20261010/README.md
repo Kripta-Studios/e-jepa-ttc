@@ -25,6 +25,6 @@ ABBA sequence, two independent CPU consumers; four decoder threads total; two qu
 
 `producer.py` espera a que termine la restauración y el prewarm CUDA antes de activar prefetch. `contracts.py` vincula código, QA y freeze histórico; `queue.py` conserva propiedad de procesos, límites y reintentos anteriores.
 
-Se mantiene la reserva de commit de Windows de 3 GiB. El ensayo inicial con entrenamientos vivos hizo que C2F se pausara de forma segura en 19.081 updates al detectar 2,606 GiB de margen. A5 se pausó después de forma solicitada en 27.633 para aislar las mediciones. RAM libre y margen de commit son distintos.
+El ensayo CPU se realizó con una reserva de commit de Windows de 3 GiB. La revisión posterior solicitada por el usuario usa 1 GiB; véase MEMORY_RESERVE.md. El ensayo inicial con entrenamientos vivos hizo que C2F se pausara de forma segura en 19.081 updates al detectar 2,606 GiB de margen. A5 se pausó después de forma solicitada en 27.633 para aislar las mediciones. RAM libre y margen de commit son distintos.
 
 La evidencia CPU no demuestra todavía una mejora del entrenamiento GPU. Los recibos `fits/<fit>/loader_v3_checkpoints/` registran esa continuación por separado cuando se ejecuta.
