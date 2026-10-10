@@ -1,0 +1,49 @@
+{
+  "utc": "2026-10-10T15:20:42.810423+00:00",
+  "scope": "Documentation and CPU evidence replay only",
+  "pinned_git_links_checked": 9,
+  "ruff": "Both new executable scripts pass ruff check after format",
+  "fcwd_replay": "2388 rows; maximum recomputed MiD difference 0; all original sequence aggregates verified",
+  "prediction_copies": "DEV32 and FCWD SHA256 match original frozen bindings",
+  "training_changed": false,
+  "gpu_seconds": 0,
+  "optimizer_updates": 0,
+  "pinned_git_targets": [
+    {
+      "commit": "da068ebdeb2d967ee10b2afa348e1317b8720ad0",
+      "path": "docs/decisions/ADR-0002-rgb-port-audit-corrections.md"
+    },
+    {
+      "commit": "da068ebdeb2d967ee10b2afa348e1317b8720ad0",
+      "path": "docs/rgb_port_audit_20261010"
+    },
+    {
+      "commit": "da068ebdeb2d967ee10b2afa348e1317b8720ad0",
+      "path": "operational/rgb_port_revision"
+    },
+    {
+      "commit": "da068ebdeb2d967ee10b2afa348e1317b8720ad0",
+      "path": "docs/rgb_port_streaming_20261010/README.md"
+    },
+    {
+      "commit": "da068ebdeb2d967ee10b2afa348e1317b8720ad0",
+      "path": "operational/rgb_port_streaming"
+    },
+    {
+      "commit": "da068ebdeb2d967ee10b2afa348e1317b8720ad0",
+      "path": "docs/rgb_port_streaming_20261010/evidence/GPU_PROBE.json"
+    },
+    {
+      "commit": "da068ebdeb2d967ee10b2afa348e1317b8720ad0",
+      "path": "operational/rgb_port_continuity"
+    },
+    {
+      "commit": "da068ebdeb2d967ee10b2afa348e1317b8720ad0",
+      "path": "docs/rgb_port_streaming_20261010/evidence/a5_pause_recovery"
+    },
+    {
+      "commit": "da068ebdeb2d967ee10b2afa348e1317b8720ad0",
+      "path": "docs/rgb_port_streaming_20261010/evidence"
+    }
+  ]
+}

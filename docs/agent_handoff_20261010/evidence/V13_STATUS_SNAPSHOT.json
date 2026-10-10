@@ -1,0 +1,80 @@
+{
+  "status": "READ_ONLY_SNAPSHOT",
+  "started_utc": "2026-10-10T15:19:40.234625+00:00",
+  "v13_commit": "da068ebdeb2d967ee10b2afa348e1317b8720ad0",
+  "endpoint_updates": 30330,
+  "observations": {
+    "E_A5_MATCHED": {
+      "UPDATE_JOURNAL.json": {
+        "read_utc": "2026-10-10T15:19:40.444372+00:00",
+        "sha256": "8d4e58411c7c0f0fb99e9e557620cd8ece299020043a5d81f7241befe9cfb751",
+        "content": {
+          "completed_updates": 27009,
+          "durable_updates": 27000,
+          "identity_sha256": "9a3db2b292872f71d3a57f41090e28e0719cf355144aa2eb257b5380208e282f",
+          "pending_update_upper": 0,
+          "recovery_upper": 105,
+          "schema": "rgb_port_update_journal_v1"
+        }
+      },
+      "CHECKPOINT_RECEIPT.json": {
+        "read_utc": "2026-10-10T15:19:40.444372+00:00",
+        "sha256": "acb594e9a4f2bf266cb1b532ef99e1ee50b3758d4f08b1f357412a16b3cd605e",
+        "content": {
+          "accumulation_index": 0,
+          "checkpoint_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\fits\\E_A5_MATCHED\\checkpoint_last.pt",
+          "checkpoint_sha256": "50406a1fd703747cb25212a7cea05cd1bef219a5b8cab1fe08a69ecabe60054a",
+          "complete_state": true,
+          "completed_updates": 27000,
+          "fit_id": "E_A5_MATCHED",
+          "identity_sha256": "9a3db2b292872f71d3a57f41090e28e0719cf355144aa2eb257b5380208e282f",
+          "recovery_upper": 105,
+          "schema": "rgb_port_checkpoint_receipt_v1",
+          "scientific_endpoint": false,
+          "status": "RUNNING"
+        }
+      }
+    },
+    "E_C2F_MATCHED": {
+      "UPDATE_JOURNAL.json": {
+        "read_utc": "2026-10-10T15:19:40.478869+00:00",
+        "sha256": "2d46e6a09c50a38c0f9b830f90a6a85b6083742b7b2f7ddfe8b666dab61a4ed5",
+        "content": {
+          "completed_updates": 18309,
+          "durable_updates": 18300,
+          "identity_sha256": "74625a55e58b33c6c5d70b1b0a808e66cabf6fe23fd5f041eb300826fa32b393",
+          "pending_update_upper": 0,
+          "recovery_upper": 49,
+          "schema": "rgb_port_update_journal_v1"
+        }
+      },
+      "CHECKPOINT_RECEIPT.json": {
+        "read_utc": "2026-10-10T15:19:40.518865+00:00",
+        "sha256": "d399d566bcdc0e7a4ba57e4c12c857bb6586f31b5907b1a9a0011afd834247da",
+        "content": {
+          "accumulation_index": 0,
+          "checkpoint_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\fits\\E_C2F_MATCHED\\checkpoint_last.pt",
+          "checkpoint_sha256": "bba80966c63e0e54fe4a2173785d7af3878536a461bd9479ea348ca76820dcf9",
+          "complete_state": true,
+          "completed_updates": 18300,
+          "fit_id": "E_C2F_MATCHED",
+          "identity_sha256": "74625a55e58b33c6c5d70b1b0a808e66cabf6fe23fd5f041eb300826fa32b393",
+          "recovery_upper": 49,
+          "schema": "rgb_port_checkpoint_receipt_v1",
+          "scientific_endpoint": false,
+          "status": "RUNNING"
+        }
+      }
+    }
+  },
+  "scope": "Live files read sequentially, not a transaction across fits; no optimizer updates or GPU work by this reporting process",
+  "campaign_status": "INCOMPLETE",
+  "phase_status": {
+    "P0": "COMPLETE",
+    "P1": "COMPLETE",
+    "P2": "RUNNING",
+    "P3": "WAITING",
+    "P4": "WAITING"
+  },
+  "finished_utc": "2026-10-10T15:19:40.558436+00:00"
+}

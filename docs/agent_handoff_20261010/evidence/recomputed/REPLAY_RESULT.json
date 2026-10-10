@@ -1,0 +1,21 @@
+{
+  "status": "VERIFIED_PUBLIC_CSV_REPLAY",
+  "optimizer_updates": 0,
+  "gpu_seconds": 0,
+  "eligible_queries": 597,
+  "variant_rows": 2388,
+  "sequences": 3,
+  "overall_MiD": null,
+  "overall_unavailable_reason": "No negative-TTC ground truth",
+  "maximum_row_MiD_difference": 0.0,
+  "sources": {
+    "docs/sota_evidence_20261010/evidence/streaming/fcwd_stream_cpu/SCORED_PREDICTIONS.csv": "3c69670ab689d0f58245b8433d54d4b6b16f5ee5d7ab201bb477e3bebef38df2",
+    "docs/sota_evidence_20261010/evidence/streaming/fcwd_stream_cpu/METRICS.csv": "8c101d9c238b889dc36027c38dc901a49cbc49bf75ff6a36a03e01a8b19af2e8",
+    "docs/agent_handoff_20261010/replay_public.py": "f6b1a6d840a1afd8d3f68d97a1f0354a2175ba0b134b62e2164ed54548d86c56"
+  },
+  "output_sha256": {
+    "FCWD_GAP_CONTRIBUTIONS.csv": "53f6afa21d2c816cf2c50daed3f57018dbf58f54c464f30d2d22616e52ce5e3b",
+    "FCWD_PAIRED_QUERIES.csv": "b745dcc2f119db8d9b640036c60ebee68d60d9b60a4eebba8365bc0984763749",
+    "FCWD_SUMMARY.csv": "bae01fe2b208b44053ee7c1933818b890841f973c802bf1220e567cabf9441a1"
+  }
+}
