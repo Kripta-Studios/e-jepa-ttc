@@ -1,0 +1,6 @@
+pilot,reference,variant,n,max_ttc_difference_s
+isolated_roi_graph,h8_warp,h8_warp_b2,12,1.33514404296875e-05
+isolated_roi_graph,h8_warp_b2,h8_warp_graph_b2,12,2.0503997802734375e-05
+isolated_fixed,h8_warp,h8_warp_graph_fixed,12,2.0503997802734375e-05
+isolated_fixed,garl_event,garl_event_graph,12,0.0
+isolated_fixed,garl_event,garl_event_native_input,12,0.0

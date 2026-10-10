@@ -1,0 +1,235 @@
+{
+  "status": "COMPLETE_PILOT",
+  "scope": "TRAIN40 student-heldout pilot; teacher saw these sequences",
+  "selection": "first chronological queries of first track in sorted heldout sequences",
+  "queries": [
+    "2Y46OkK3ff_000001_1564300000",
+    "2Y46OkK3ff_000001_1584500000",
+    "2Y46OkK3ff_000001_1584600000",
+    "2Y46OkK3ff_000001_1584700000",
+    "2Y46OkK3ff_000001_1584800000",
+    "2Y46OkK3ff_000001_1584900000",
+    "6WCDpro5rE_000003_5506700000",
+    "6WCDpro5rE_000003_5506800000",
+    "6WCDpro5rE_000003_5506900000",
+    "6WCDpro5rE_000003_5507000000",
+    "6WCDpro5rE_000003_5507100000",
+    "6WCDpro5rE_000003_5507200000"
+  ],
+  "sequences": [
+    "2Y46OkK3ff",
+    "6WCDpro5rE"
+  ],
+  "source_sha256": {
+    "benchmark.py": "19a7171b202313aa75598922feb9c918d7c268c08dc1b72b595f606e5469f65b",
+    "distill.py": "d4c40244dcc00528b9e441f54b93f6b45ae31755607b7cd10da7782b03414b5e",
+    "evaluate.py": "4b608a1d62deea58b1ada876590c355b47e21945c02a036af03dad2ed37d67c3",
+    "kernels.py": "6e7e29abeef09951b4653bd4666cb89002623582df4e676df7ebea0bb621f4e3",
+    "packets.py": "31b38061d5e1b22b12fa23b163c18d0fae36566dd107568afd48a95de78b99a7",
+    "preparation.py": "d29d78773a7d130c23e70ad4e2bf86b5309b04880a64611e9304296ce6cac4fd",
+    "runtime.py": "d5a83281ed3824932e81486d79ea86d7f959890a095b4d228fbabbd0778de410",
+    "state.py": "a7380e43ab6fa5599ad7bb48a25059027d16c6551a211c4b48889f2cbccaaef0",
+    "summarize.py": "bf4ff11271db0aa61e1daedba1a89c123c1661179d14e6a94a5aafb06c8faa80",
+    "__init__.py": "5c1b0fed4f3ec874c55937a762cc08eb35ae236df2d1933e277ebe238ab2267a"
+  },
+  "model_bindings": {
+    "campaign": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v12-efficient-context\\artifacts\\train40_system_20261005",
+    "device": "cuda",
+    "optimizer_updates": 0,
+    "targets_read": false,
+    "module_sha256": "cb13b23543fb569706fafc23124ee5b1035a191cc378e624b5406a6db105d21f",
+    "producers": {
+      "protocol_sha256": "39fac190a2568757511de017fb7e7d55428506382a0066804af8241d4908a66b",
+      "a5": {
+        "checkpoint_sha256": "a82e5b65ec9c3d302981438527f2cfccabbbf25c75f574946bd1e9dc97795758",
+        "committed_updates": 49932,
+        "strict_state_load": true
+      },
+      "c2f": {
+        "checkpoint_sha256": "2b337dd76bd405c63ac9f96023a82196ee32e8180b86fe0015bfd67f0e2aeb57",
+        "committed_updates": 49932,
+        "strict_state_load": true
+      },
+      "pair": {
+        "checkpoint_sha256": "679edee34cc39617da219fd54d0acfc4cd8c4fbd3d1155f8cba5d99b72e4b6bc",
+        "committed_updates": 6840,
+        "strict_state_load": true
+      }
+    },
+    "h8_heads": {
+      "7": {
+        "checkpoint_sha256": "760ee6e61133c4ed0172df6e785ccd41a5b8c3c85c0bb842d4e6217bb766cc74",
+        "committed_updates": 2500,
+        "strict_state_load": true
+      },
+      "13": {
+        "checkpoint_sha256": "67bb0c5d7946a45e12532f68afe13dfebc61d7cfdb63d9997cd91e3c26441fe5",
+        "committed_updates": 2500,
+        "strict_state_load": true
+      },
+      "23": {
+        "checkpoint_sha256": "a4074eaa69a931fadbc008ebea32e3f897bc2432a56dc221d91ce58d096b4800",
+        "committed_updates": 2500,
+        "strict_state_load": true
+      }
+    },
+    "normalization": {
+      "artifact_sha256": "49102d44b8d6c7df880dc5df73049a5ba26b8838c67f5a33533880258b371278",
+      "manifest_sha256": "7b771847be4a4010a1b2856cfdaa9e0bddf411ce8c4bbc5a4c03d0acf7ef1b23",
+      "consumed_ids_sha256": "5e0eb5120af10d5368fc05d60ce015ab145757741c6f7857d510a4fc9407c484",
+      "mean_sha256": "f0211aacde13db4eb646fb406f239cfc845a5d36b2d83d2ab3f688227993c598",
+      "scale_sha256": "f1f797f73fbd69d8d393b78ff1e26ccf7bdbf32514003295f2bb570c4aceddba",
+      "arrays_read": [
+        "mean",
+        "scale"
+      ]
+    },
+    "garl": {
+      "checkpoint_sha256": "fcaf9be47e2dafc6f73c6c3ebd102595ae06119dcae78aea698a42627b2b4fef",
+      "config_sha256": "601ecb74f1ed2f04921f8014ae648aeb8d111ca311e456be20af2d60b63be676",
+      "source_sha256": {
+        "garl_ttc/__init__.py": "90e0ac4f12e75ccb82264ee28d99b786dc0ec48bd3e6a65ce86593530c2ea383",
+        "garl_ttc/config.py": "d9d3a44725646858a61bf8b185131f540b8f4cd670c4b8ba49f560cb82ef7fcd",
+        "garl_ttc/datasets/__init__.py": "0c6eea255e95b21d4edfda8cf29d7b792134f3ca22b2d8b1328d37b94efae16c",
+        "garl_ttc/datasets/event_representation.py": "3311a5024d6f974621257639520dd05043b25f7ac728380f80028d615531e3d6",
+        "garl_ttc/datasets/ttc_dataset.py": "d21eaf3928528c2d5b9a7c2787a64e248bbf49bc60756a3156034b9d8ac5b592",
+        "garl_ttc/engine/__init__.py": "4c0b28958f60ce638537935437684394ce22be1eff696e139db8d3ff7aea958b",
+        "garl_ttc/engine/evaluator.py": "062848733e21f994bd3247d4cdacdf12d4fb177a14e15f87bad50e42cc20b8d5",
+        "garl_ttc/engine/inference.py": "78f30f84bb771c278e2b692412dd07beee8b4f12fd500be3b8e9e9003482dfa8",
+        "garl_ttc/engine/metrics.py": "1c31e7875cd6b0ceab1f6778462b9bce50eb9cacf7bff9c5246e0e04dd55431c",
+        "garl_ttc/engine/runtime.py": "98de68d5d119cd1e83180fe7c0196901e9c196aee380cbe7fe42f0615ff7f66e",
+        "garl_ttc/engine/trainer.py": "b22d170b339da5af016116e6da6d7d205f90821addb507ea9d656af1b60b001d",
+        "garl_ttc/models/__init__.py": "039bdb68efbbb07647669670110825e0d3a96ffb4232c62fff59f6d590d834ea",
+        "garl_ttc/models/focal_loss.py": "7e5e53b9efff75b0254ebd13a7361a55be63ec8bd1385770b176f439dd6369c9",
+        "garl_ttc/models/resnet.py": "6fbb6bb08d57f6a1d70fa4df31b362476a2b7af6f5c3d82a09a111da17f2f26b",
+        "garl_ttc/models/ttc_network.py": "7927946d4b9af608f1ed2e57c6cc8b498d3c4be8b9c84305647199ef812d9c14",
+        "garl_ttc/utils/__init__.py": "ed6c0144d813d3157716678fbefc0a32d941f3fb542f17cbd465109b83f43b1c",
+        "garl_ttc/utils/events.py": "722760fde3325f4f2a741b1ae9d2a9dd14716cc371a0f94f406bed7a11abc3c0",
+        "garl_ttc/utils/io.py": "637a4ef794acc57d5f91c6c6f66362560a1defdfb4810148030a20eab682bc1b",
+        "garl_ttc/utils/sam_masks.py": "965faea7a54cf8ad8de3c04160d04b2d672d602e41d4eceabe3a7d959b5bbf91"
+      },
+      "native_code_root": "E:\\Garl-TTC",
+      "strict_state_load": true,
+      "event_only_lhr": true
+    }
+  },
+  "student_sha256": "997df37d0014e843edaae2297837035315580d2f5f6f2a9992517008a0d41d01",
+  "policies": {
+    "h8_reference": {
+      "history": 8,
+      "reuse": false,
+      "time_tolerance_us": 2500,
+      "min_roi_iou": 0.65,
+      "max_log_scale": 0.35,
+      "max_age_us": 500000,
+      "max_entries": 32,
+      "precision": "fp32",
+      "vectorized": false,
+      "compile_encoder": false,
+      "compile_full": false,
+      "producer_batch": 0,
+      "distilled": false
+    },
+    "h8_warp": {
+      "history": 8,
+      "reuse": true,
+      "time_tolerance_us": 2500,
+      "min_roi_iou": 0.65,
+      "max_log_scale": 0.35,
+      "max_age_us": 500000,
+      "max_entries": 32,
+      "precision": "fp32",
+      "vectorized": false,
+      "compile_encoder": false,
+      "compile_full": false,
+      "producer_batch": 0,
+      "distilled": false
+    },
+    "h8_warp_student": {
+      "history": 8,
+      "reuse": true,
+      "time_tolerance_us": 2500,
+      "min_roi_iou": 0.65,
+      "max_log_scale": 0.35,
+      "max_age_us": 500000,
+      "max_entries": 32,
+      "precision": "fp32",
+      "vectorized": false,
+      "compile_encoder": false,
+      "compile_full": false,
+      "producer_batch": 0,
+      "distilled": true
+    }
+  },
+  "telemetry_before": "Sat Oct 10 14:32:41 2026       \n+-----------------------------------------------------------------------------------------+\n| NVIDIA-SMI 591.86                 Driver Version: 591.86         CUDA Version: 13.1     |\n+-----------------------------------------+------------------------+----------------------+\n| GPU  Name                  Driver-Model | Bus-Id          Disp.A | Volatile Uncorr. ECC |\n| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |\n|                                         |                        |               MIG M. |\n|=========================================+========================+======================|\n|   0  NVIDIA GeForce RTX 5070 ...  WDDM  |   00000000:01:00.0  On |                  N/A |\n| N/A   77C    P0             39W /  140W |    3533MiB /  12227MiB |     13%      Default |\n|                                         |                        |                  N/A |\n+-----------------------------------------+------------------------+----------------------+\n\n+-----------------------------------------------------------------------------------------+\n| Processes:                                                                              |\n|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |\n|        ID   ID                                                               Usage      |\n|=========================================================================================|\n|    0   N/A  N/A            4864    C+G   ...5n1h2txyewy\\TextInputHost.exe      N/A      |\n|    0   N/A  N/A            6880    C+G   ...s\\Mozilla Firefox\\firefox.exe      N/A      |\n|    0   N/A  N/A            7764    C+G   ...Next\\CNext\\RadeonSoftware.exe      N/A      |\n|    0   N/A  N/A            9896    C+G   ...xyewy\\ShellExperienceHost.exe      N/A      |\n|    0   N/A  N/A           11440    C+G   ...2txyewy\\CrossDeviceResume.exe      N/A      |\n|    0   N/A  N/A           14408    C+G   ...cw5n1h2txyewy\\WidgetBoard.exe      N/A      |\n|    0   N/A  N/A           14696    C+G   ...pps\\PowerToys.QuickAccess.exe      N/A      |\n|    0   N/A  N/A           15228    C+G   ...Local\\PowerToys\\PowerToys.exe      N/A      |\n|    0   N/A  N/A           16488      C   ...indows-x86_64-none\\python.exe      N/A      |\n|    0   N/A  N/A           16924    C+G   ...indows\\System32\\ShellHost.exe      N/A      |\n|    0   N/A  N/A           18536    C+G   ...8bbwe\\PhoneExperienceHost.exe      N/A      |\n|    0   N/A  N/A           19036    C+G   ...ntrolPanel\\SystemSettings.exe      N/A      |\n|    0   N/A  N/A           19916    C+G   ...s\\PowerToys.ColorPickerUI.exe      N/A      |\n|    0   N/A  N/A           20084    C+G   ...Toys\\PowerToys.FancyZones.exe      N/A      |\n|    0   N/A  N/A           20216    C+G   ...8bbwe\\Microsoft.CmdPal.UI.exe      N/A      |\n|    0   N/A  N/A           20520    C+G   ...s\\PowerToys.PowerLauncher.exe      N/A      |\n|    0   N/A  N/A           20640    C+G   ...D\\CNext\\CNext\\AMDRSSrcExt.exe      N/A      |\n|    0   N/A  N/A           21704    C+G   ...y\\StartMenuExperienceHost.exe      N/A      |\n|    0   N/A  N/A           22152    C+G   ...erToys\\PowerToys.PowerOCR.exe      N/A      |\n|    0   N/A  N/A           22976    C+G   ...yb3d8bbwe\\WindowsTerminal.exe      N/A      |\n|    0   N/A  N/A           25544    C+G   ..._cw5n1h2txyewy\\SearchHost.exe      N/A      |\n|    0   N/A  N/A           25912    C+G   ...s\\Mozilla Firefox\\firefox.exe      N/A      |\n|    0   N/A  N/A           28700    C+G   C:\\Windows\\explorer.exe               N/A      |\n|    0   N/A  N/A           30908    C+G   ...em32\\ApplicationFrameHost.exe      N/A      |\n|    0   N/A  N/A           32888    C+G   ...cord\\app-1.0.9261\\Discord.exe      N/A      |\n|    0   N/A  N/A           33120    C+G   ...icrosoft.AAD.BrokerPlugin.exe      N/A      |\n|    0   N/A  N/A           33184    C+G   ...cw5n1h2txyewy\\PrintDialog.exe      N/A      |\n|    0   N/A  N/A           36144    C+G   ...yb3d8bbwe\\Notepad\\Notepad.exe      N/A      |\n|    0   N/A  N/A           38980    C+G   ...App_cw5n1h2txyewy\\LockApp.exe      N/A      |\n|    0   N/A  N/A           39440    C+G   ....0.4258.62\\msedgewebview2.exe      N/A      |\n|    0   N/A  N/A           40120    C+G   ...al\\Programs\\Notion\\Notion.exe      N/A      |\n|    0   N/A  N/A           44984    C+G   ...SnippingTool\\SnippingTool.exe      N/A      |\n+-----------------------------------------------------------------------------------------+\n",
+  "test_labels_read": false,
+  "cold_start_included": true,
+  "raw_root": "E:\\eAP_dataset",
+  "timing_scope": "HDF5 replay; CPU includes reads and voxels; GPU wrapper wall-time synchronized",
+  "contention": "desktop WDDM and concurrent CPU/IO campaign; no other Python GPU job",
+  "garl_optimization": "same persistent reader; exact raw endpoint cache, four windows",
+  "live_input": true,
+  "roi_first": true,
+  "live_scope": "If enabled: prerecorded events replayed into a causal packet ring; file reads excluded for BOTH systems, ring ingestion included; no physical sensor test",
+  "failures": [],
+  "summary": [
+    {
+      "variant": "garl_event",
+      "n": 12,
+      "complete": true,
+      "mean_total_ms": 476.07577498517156,
+      "warm_median_ms": 430.3865499678068,
+      "warm_p95_ms": 532.2623049956746,
+      "mean_cpu_ms": 410.0132249780775,
+      "mean_producer_ms": 66.062550007094,
+      "mean_reused": 0.0,
+      "mean_MiD": 53.18831338976583,
+      "MAE_s": 2.5747268207850786,
+      "signed_bias_s": -1.2851149592900988
+    },
+    {
+      "variant": "h8_reference",
+      "n": 12,
+      "complete": true,
+      "mean_total_ms": 2101.0647749741715,
+      "warm_median_ms": 1812.2073999838904,
+      "warm_p95_ms": 2700.968509973609,
+      "mean_cpu_ms": 1215.882724985325,
+      "mean_producer_ms": 780.9696583232532,
+      "mean_reused": 0.0,
+      "mean_MiD": 31.613150365243907,
+      "MAE_s": 0.6195241931601064,
+      "signed_bias_s": 0.5955499654904293
+    },
+    {
+      "variant": "h8_warp",
+      "n": 12,
+      "complete": true,
+      "mean_total_ms": 1176.003199997164,
+      "warm_median_ms": 1045.3768500010483,
+      "warm_p95_ms": 1516.952049985411,
+      "mean_cpu_ms": 644.3274583289167,
+      "mean_producer_ms": 451.19926666181226,
+      "mean_reused": 3.75,
+      "mean_MiD": 32.67202698861954,
+      "MAE_s": 0.6175155563676056,
+      "signed_bias_s": 0.5935413286979284
+    },
+    {
+      "variant": "h8_warp_student",
+      "n": 12,
+      "complete": true,
+      "mean_total_ms": 920.5618333265496,
+      "warm_median_ms": 700.3086500044446,
+      "warm_p95_ms": 1052.9127250192687,
+      "mean_cpu_ms": 653.2109999922492,
+      "mean_producer_ms": 179.222891665025,
+      "mean_reused": 3.75,
+      "mean_MiD": 44.47336906538688,
+      "MAE_s": 0.7915411714239614,
+      "signed_bias_s": 0.7254717594281125
+    }
+  ],
+  "peak_allocated_cuda_bytes": 216513536,
+  "telemetry_after": "Sat Oct 10 14:34:14 2026       \n+-----------------------------------------------------------------------------------------+\n| NVIDIA-SMI 591.86                 Driver Version: 591.86         CUDA Version: 13.1     |\n+-----------------------------------------+------------------------+----------------------+\n| GPU  Name                  Driver-Model | Bus-Id          Disp.A | Volatile Uncorr. ECC |\n| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |\n|                                         |                        |               MIG M. |\n|=========================================+========================+======================|\n|   0  NVIDIA GeForce RTX 5070 ...  WDDM  |   00000000:01:00.0  On |                  N/A |\n| N/A   76C    P4             33W /  140W |    3611MiB /  12227MiB |      5%      Default |\n|                                         |                        |                  N/A |\n+-----------------------------------------+------------------------+----------------------+\n\n+-----------------------------------------------------------------------------------------+\n| Processes:                                                                              |\n|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |\n|        ID   ID                                                               Usage      |\n|=========================================================================================|\n|    0   N/A  N/A            4864    C+G   ...5n1h2txyewy\\TextInputHost.exe      N/A      |\n|    0   N/A  N/A            6880    C+G   ...s\\Mozilla Firefox\\firefox.exe      N/A      |\n|    0   N/A  N/A            7764    C+G   ...Next\\CNext\\RadeonSoftware.exe      N/A      |\n|    0   N/A  N/A            9896    C+G   ...xyewy\\ShellExperienceHost.exe      N/A      |\n|    0   N/A  N/A           11440    C+G   ...2txyewy\\CrossDeviceResume.exe      N/A      |\n|    0   N/A  N/A           14408    C+G   ...cw5n1h2txyewy\\WidgetBoard.exe      N/A      |\n|    0   N/A  N/A           14696    C+G   ...pps\\PowerToys.QuickAccess.exe      N/A      |\n|    0   N/A  N/A           15228    C+G   ...Local\\PowerToys\\PowerToys.exe      N/A      |\n|    0   N/A  N/A           16488      C   ...indows-x86_64-none\\python.exe      N/A      |\n|    0   N/A  N/A           16924    C+G   ...indows\\System32\\ShellHost.exe      N/A      |\n|    0   N/A  N/A           18536    C+G   ...8bbwe\\PhoneExperienceHost.exe      N/A      |\n|    0   N/A  N/A           19036    C+G   ...ntrolPanel\\SystemSettings.exe      N/A      |\n|    0   N/A  N/A           19916    C+G   ...s\\PowerToys.ColorPickerUI.exe      N/A      |\n|    0   N/A  N/A           20084    C+G   ...Toys\\PowerToys.FancyZones.exe      N/A      |\n|    0   N/A  N/A           20216    C+G   ...8bbwe\\Microsoft.CmdPal.UI.exe      N/A      |\n|    0   N/A  N/A           20520    C+G   ...s\\PowerToys.PowerLauncher.exe      N/A      |\n|    0   N/A  N/A           20640    C+G   ...D\\CNext\\CNext\\AMDRSSrcExt.exe      N/A      |\n|    0   N/A  N/A           21704    C+G   ...y\\StartMenuExperienceHost.exe      N/A      |\n|    0   N/A  N/A           22152    C+G   ...erToys\\PowerToys.PowerOCR.exe      N/A      |\n|    0   N/A  N/A           22976    C+G   ...yb3d8bbwe\\WindowsTerminal.exe      N/A      |\n|    0   N/A  N/A           25544    C+G   ..._cw5n1h2txyewy\\SearchHost.exe      N/A      |\n|    0   N/A  N/A           25912    C+G   ...s\\Mozilla Firefox\\firefox.exe      N/A      |\n|    0   N/A  N/A           28700    C+G   C:\\Windows\\explorer.exe               N/A      |\n|    0   N/A  N/A           30908    C+G   ...em32\\ApplicationFrameHost.exe      N/A      |\n|    0   N/A  N/A           32888    C+G   ...cord\\app-1.0.9261\\Discord.exe      N/A      |\n|    0   N/A  N/A           33120    C+G   ...icrosoft.AAD.BrokerPlugin.exe      N/A      |\n|    0   N/A  N/A           33184    C+G   ...cw5n1h2txyewy\\PrintDialog.exe      N/A      |\n|    0   N/A  N/A           36144    C+G   ...yb3d8bbwe\\Notepad\\Notepad.exe      N/A      |\n|    0   N/A  N/A           38980    C+G   ...App_cw5n1h2txyewy\\LockApp.exe      N/A      |\n|    0   N/A  N/A           39440    C+G   ....0.4258.62\\msedgewebview2.exe      N/A      |\n|    0   N/A  N/A           40120    C+G   ...al\\Programs\\Notion\\Notion.exe      N/A      |\n|    0   N/A  N/A           44984    C+G   ...SnippingTool\\SnippingTool.exe      N/A      |\n+-----------------------------------------------------------------------------------------+\n"
+}

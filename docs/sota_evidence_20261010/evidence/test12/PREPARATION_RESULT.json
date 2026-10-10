@@ -1,0 +1,11 @@
+{
+  "status": "COMPLETE",
+  "completed": 6762,
+  "total": 6762,
+  "input_freeze_sha256": "b3c4514bebb54112e94ad9ab52f997e5676e3ee89139294ab1b265ee9a650934",
+  "cache": "E:\\EJEPA_GARLTTC_TEST12_20261010\\inputs",
+  "elapsed_s": 1605.6560000000172,
+  "optimizer_updates": 0,
+  "test_labels_read": false,
+  "execution_sha256": "d45adba2aa816d332840ff7247936480a110ce83af02bea420f9e2cd1e40dd32"
+}

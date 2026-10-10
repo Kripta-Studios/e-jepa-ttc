@@ -1,0 +1,17 @@
+dataset,policy,ours,comparator,status,sequences,draws,delta_macro_rte_pp,ci_low_pp,ci_high_pp,grouping
+DEV32,native,H8_median3,public_Garl_event_lhr,COMPLETE,32.0,10000.0,-123.82786023429611,-241.42038301727533,-41.94364931829114,sequence; correlated scenario families may remain
+DEV32,native,H8_median3,public_Garl_rgb_event_full,COMPLETE,32.0,10000.0,-4950.40824091448,-14788.552553770516,-7.227163800258623,sequence; correlated scenario families may remain
+DEV32,native,Direct_median3,public_Garl_event_lhr,COMPLETE,32.0,10000.0,-145.66647358822343,-267.93809781203487,-53.38843606102894,sequence; correlated scenario families may remain
+DEV32,native,Direct_median3,public_Garl_rgb_event_full,COMPLETE,32.0,10000.0,-4972.246854268408,-14819.159488329524,-18.16425261389261,sequence; correlated scenario families may remain
+DEV32,equal_clip_60_sensitivity,H8_median3,public_Garl_event_lhr,COMPLETE,32.0,10000.0,-49.68770870143753,-79.6418474940451,-25.439368271544232,sequence; correlated scenario families may remain
+DEV32,equal_clip_60_sensitivity,H8_median3,public_Garl_rgb_event_full,COMPLETE,32.0,10000.0,-7.901505689809802,-18.8562341474457,2.0509133037251397,sequence; correlated scenario families may remain
+DEV32,equal_clip_60_sensitivity,Direct_median3,public_Garl_event_lhr,COMPLETE,32.0,10000.0,-71.52632205536487,-120.78357801023782,-33.89991204456817,sequence; correlated scenario families may remain
+DEV32,equal_clip_60_sensitivity,Direct_median3,public_Garl_rgb_event_full,COMPLETE,32.0,10000.0,-29.740119043737135,-56.208417058227774,-9.560787086722412,sequence; correlated scenario families may remain
+FCWD,native,H8_median3,public_Garl_event_lhr,COMPLETE,3.0,10000.0,1.0494848740910865,-6.110656642202822,6.879777636993786,sequence; correlated scenario families may remain
+FCWD,native,H8_median3,public_Garl_rgb_event_full,INCOMPLETE,,,,,,
+FCWD,native,Direct_median3,public_Garl_event_lhr,COMPLETE,3.0,10000.0,2.178992868168193,-4.920389848444916,7.95268342071421,sequence; correlated scenario families may remain
+FCWD,native,Direct_median3,public_Garl_rgb_event_full,INCOMPLETE,,,,,,
+FCWD,equal_clip_60_sensitivity,H8_median3,public_Garl_event_lhr,COMPLETE,3.0,10000.0,1.0494848740910865,-6.110656642202822,6.879777636993786,sequence; correlated scenario families may remain
+FCWD,equal_clip_60_sensitivity,H8_median3,public_Garl_rgb_event_full,INCOMPLETE,,,,,,
+FCWD,equal_clip_60_sensitivity,Direct_median3,public_Garl_event_lhr,COMPLETE,3.0,10000.0,2.178992868168193,-4.920389848444916,7.95268342071421,sequence; correlated scenario families may remain
+FCWD,equal_clip_60_sensitivity,Direct_median3,public_Garl_rgb_event_full,INCOMPLETE,,,,,,

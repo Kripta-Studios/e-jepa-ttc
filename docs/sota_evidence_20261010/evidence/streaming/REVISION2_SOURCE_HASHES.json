@@ -1,0 +1,23 @@
+{
+  "utc": "2026-10-10T13:15:19.254764+00:00",
+  "sha256": {
+    "operational\\streaming_revision\\benchmark.py": "0f1ca8ae56da445fa8636620ab5b2d1bd268547e083689b79fdc12b90114835d",
+    "operational\\streaming_revision\\diagnostics.py": "ae990c18878b8a8b4e9b6857bba6f745f428529992576a7c25a2501c8815b6a6",
+    "operational\\streaming_revision\\distill.py": "d4c40244dcc00528b9e441f54b93f6b45ae31755607b7cd10da7782b03414b5e",
+    "operational\\streaming_revision\\evaluate.py": "4b608a1d62deea58b1ada876590c355b47e21945c02a036af03dad2ed37d67c3",
+    "operational\\streaming_revision\\external_stream.py": "4806b26e63d8526cc75d0c53daa6f97a3a907b907ed4f3222b75c974b623f6ab",
+    "operational\\streaming_revision\\isolated.py": "803bf231d5b7f4af987f419959e842416a9cdaf7ee54b935fa5441348cf2a621",
+    "operational\\streaming_revision\\kernels.py": "0b1e4cf80b4708aa9c1f7e7f49e077e2fe4e0b829bf8bc083d69623032777e83",
+    "operational\\streaming_revision\\packets.py": "7398a81ff9ec5d8e3f66b91b5ef8fad33e4eb09b5d329add282950820adbbcad",
+    "operational\\streaming_revision\\packet_profile.py": "b2834c4c829167d5ec54eee4af781fe1df32de9e61f633d675ba6268f1653cc0",
+    "operational\\streaming_revision\\preparation.py": "d29d78773a7d130c23e70ad4e2bf86b5309b04880a64611e9304296ce6cac4fd",
+    "operational\\streaming_revision\\report.py": "50abd4c9ebfd69c8830710416171cb766f8fad5d14115ff779270da51e158993",
+    "operational\\streaming_revision\\runtime.py": "3edd9d17a8e83e79ff09166d661423ba956e9227a1b6d61da5e919f44344c38c",
+    "operational\\streaming_revision\\state.py": "a7380e43ab6fa5599ad7bb48a25059027d16c6551a211c4b48889f2cbccaaef0",
+    "operational\\streaming_revision\\summarize.py": "d7f98f99c2d6d82fc096a331c67d40b9eaad4d9b091cca4350b39352cdba1a8f",
+    "operational\\streaming_revision\\__init__.py": "5c1b0fed4f3ec874c55937a762cc08eb35ae236df2d1933e277ebe238ab2267a",
+    "operational\\streaming_revision\\README.md": "c396ba5f18fddfbf7251262727f3e1b9af6c884bc0e078a621a2a8e2b58adcd1",
+    "tests\\unit\\test_streaming_revision.py": "a77472772b2d7a9b670b3e96245a6c2ad0735a8f39aa8bb3a97f830ae46d16b7"
+  },
+  "note": "FCWD active run uses its own source_archive; packet CPU timing uses its recorded earlier source hash."
+}

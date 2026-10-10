@@ -1,0 +1,44 @@
+{
+  "source_sha256": "848f827af4dc30a595530ea9a94eda935facb228ed3b7648ae559eced67ab5e7",
+  "inputs": {
+    "gpu_warp_pilot": {
+      "SUMMARY.csv": "0d44b076f3eb9e6375fa0a07c77974e590b75ee5bab823547768a29ba62a6cbe",
+      "PREDICTIONS.csv": "8e0167422dbf6fcc98fefa425aa6ba70b63cf7f475ced6507b3330fad8edf849",
+      "RESULT.json": "9471ee6f77f0eddf6f455e2218d44c872bc786f581faa1cf945db45303305a61",
+      "ROWS.jsonl": "104aeb3d908fa8a1efd176886b092f733230ffbaaf8e500d2aaf7dece9a867c5"
+    },
+    "live_roi_pilot": {
+      "SUMMARY.csv": "83851557733e03055c60ba531d62999f54657b29c147d585147066444016aee2",
+      "PREDICTIONS.csv": "cea637a0c0ef0a6589173ff082ad1bd730efed72fc5ea1c3f91d69eacb3d3ba7",
+      "RESULT.json": "3f687bdfacefbd8a30694162478e8d57de81f87b0de4395d2fae644e09029031",
+      "ROWS.jsonl": "75e9e89f8eeb3ea65f3689540d1f8aa255dc6c471a5af5810151188f22e2e759"
+    },
+    "isolated_roi_graph": {
+      "SUMMARY.csv": "c006cbba47a527897ed72f0d98c596d4541c69f1e29b8208206f6be6928a393d",
+      "PREDICTIONS.csv": "26bbe7f6868d84d150dafcf06e5517d6e39242aa467b22639bd13dbf69f3318b",
+      "RESULT.json": "9584b345fcc7da563737ea476b6e2be2ee669a6dc5a96651122b88748193ed25",
+      "ROWS.jsonl": "0d33ffcfc9b9006f04d2defa3a2e3beb0bf7e696e3209c4b059adf9481070b90"
+    },
+    "isolated_fixed": {
+      "SUMMARY.csv": "b205d4244bdc2da16dcf6d1ba3932e37e53bf252e2a5cd93bbf697262f988360",
+      "PREDICTIONS.csv": "1dce6ed8fb949683c432a71f528370daa4ea7df5371c49460f92b47eb8c4adb3",
+      "RESULT.json": "6c3163d06122e0bd391bdf0779262608ed160c7b65352ac0cd432dc9d9f987d7",
+      "ROWS.jsonl": "351f99be33901fb4503c0b7f1e8b725224e2c1adebd36154a6bf452dcc9c1308"
+    },
+    "packet_cpu_profile": {
+      "RESULT.json": "932bfaa21acb96ed386ce5b136291371beebf6b9ddd4b6dc11a49832bc946bea"
+    },
+    "fcwd_raw_stream_cpu": {
+      "RESULT.json": "e2031efef4a8abff5320636fbb0224ac735b70ef25c3e060a6f188d06a76b878",
+      "METRICS.csv": "8c101d9c238b889dc36027c38dc901a49cbc49bf75ff6a36a03e01a8b19af2e8",
+      "PREDICTIONS.csv": "2954fcaf5a80e06f85c8dddbe60070b40e94abbec7b432963f1195550f29b46e",
+      "ROWS.jsonl": "c0f33df738920b06cf019006df3188ea8843a6640b6a0d55887a5862718f1d74"
+    },
+    "fcwd_diagnostics": {
+      "ERROR_BANDS.csv": "5f60fcc901a96ed8b936a718be9c22ba4438c353e26a8db32b586c138c6127e4",
+      "REUSE.csv": "92929a9d2c4b3ec682e214ebb8cff89091bd23d8ea12b81e35718046d95cdf64",
+      "DIAGNOSTICS.json": "585548767a63bd0a6354afd933f6142a39b9db71567192a6bc817fafaa4cfbba"
+    }
+  },
+  "external_sha256": "fde625009b91b5e8ec85b7d0166e807b9997f0d14ae12a2a6f3210e4cffb8e3a"
+}

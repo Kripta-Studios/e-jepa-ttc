@@ -1,0 +1,9 @@
+{
+  "status": "PACKAGED_NOT_SUBMITTED",
+  "completed": 6762,
+  "total": 6762,
+  "gpu_seconds": 0,
+  "cpu_wall_seconds": 500.1720000000205,
+  "official_score_available": false,
+  "zip_sha256": "da87e60b0ffd2849555467efb05066932896e4cf87c14e628d87d8e2c1ba9171"
+}

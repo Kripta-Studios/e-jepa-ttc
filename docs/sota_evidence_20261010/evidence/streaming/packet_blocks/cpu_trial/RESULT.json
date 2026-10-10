@@ -1,0 +1,217 @@
+{
+  "status": "COMPLETE_CPU_PROFILE",
+  "gpu_seconds": 0,
+  "scope": "TRAIN40 queries; repeated ROI reads, single push per query; concurrent frozen GPU inference",
+  "no_labels_read": true,
+  "reference_sha256": "93375a61272b06c3e0de42a5b9b1096030c2893a2633a168e68dbb8a3d1351e7",
+  "source_sha256": "b2834c4c829167d5ec54eee4af781fe1df32de9e61f633d675ba6268f1653cc0",
+  "packets_sha256": "7638b336798d7eca32a539ef4d9a0920e30cc3b86912994ef36ff30a2c8565bb",
+  "parity": [
+    {
+      "ordinal": 0,
+      "iteration": 0,
+      "raw_and_voxel_exact": true
+    },
+    {
+      "ordinal": 0,
+      "iteration": 1,
+      "raw_and_voxel_exact": true
+    },
+    {
+      "ordinal": 0,
+      "iteration": 2,
+      "raw_and_voxel_exact": true
+    },
+    {
+      "ordinal": 1,
+      "iteration": 0,
+      "raw_and_voxel_exact": true
+    },
+    {
+      "ordinal": 1,
+      "iteration": 1,
+      "raw_and_voxel_exact": true
+    },
+    {
+      "ordinal": 1,
+      "iteration": 2,
+      "raw_and_voxel_exact": true
+    },
+    {
+      "ordinal": 2,
+      "iteration": 0,
+      "raw_and_voxel_exact": true
+    },
+    {
+      "ordinal": 2,
+      "iteration": 1,
+      "raw_and_voxel_exact": true
+    },
+    {
+      "ordinal": 2,
+      "iteration": 2,
+      "raw_and_voxel_exact": true
+    },
+    {
+      "ordinal": 3,
+      "iteration": 0,
+      "raw_and_voxel_exact": true
+    },
+    {
+      "ordinal": 3,
+      "iteration": 1,
+      "raw_and_voxel_exact": true
+    },
+    {
+      "ordinal": 3,
+      "iteration": 2,
+      "raw_and_voxel_exact": true
+    },
+    {
+      "ordinal": 4,
+      "iteration": 0,
+      "raw_and_voxel_exact": true
+    },
+    {
+      "ordinal": 4,
+      "iteration": 1,
+      "raw_and_voxel_exact": true
+    },
+    {
+      "ordinal": 4,
+      "iteration": 2,
+      "raw_and_voxel_exact": true
+    },
+    {
+      "ordinal": 5,
+      "iteration": 0,
+      "raw_and_voxel_exact": true
+    },
+    {
+      "ordinal": 5,
+      "iteration": 1,
+      "raw_and_voxel_exact": true
+    },
+    {
+      "ordinal": 5,
+      "iteration": 2,
+      "raw_and_voxel_exact": true
+    },
+    {
+      "ordinal": 6,
+      "iteration": 0,
+      "raw_and_voxel_exact": true
+    },
+    {
+      "ordinal": 6,
+      "iteration": 1,
+      "raw_and_voxel_exact": true
+    },
+    {
+      "ordinal": 6,
+      "iteration": 2,
+      "raw_and_voxel_exact": true
+    },
+    {
+      "ordinal": 7,
+      "iteration": 0,
+      "raw_and_voxel_exact": true
+    },
+    {
+      "ordinal": 7,
+      "iteration": 1,
+      "raw_and_voxel_exact": true
+    },
+    {
+      "ordinal": 7,
+      "iteration": 2,
+      "raw_and_voxel_exact": true
+    },
+    {
+      "ordinal": 8,
+      "iteration": 0,
+      "raw_and_voxel_exact": true
+    },
+    {
+      "ordinal": 8,
+      "iteration": 1,
+      "raw_and_voxel_exact": true
+    },
+    {
+      "ordinal": 8,
+      "iteration": 2,
+      "raw_and_voxel_exact": true
+    },
+    {
+      "ordinal": 9,
+      "iteration": 0,
+      "raw_and_voxel_exact": true
+    },
+    {
+      "ordinal": 9,
+      "iteration": 1,
+      "raw_and_voxel_exact": true
+    },
+    {
+      "ordinal": 9,
+      "iteration": 2,
+      "raw_and_voxel_exact": true
+    },
+    {
+      "ordinal": 10,
+      "iteration": 0,
+      "raw_and_voxel_exact": true
+    },
+    {
+      "ordinal": 10,
+      "iteration": 1,
+      "raw_and_voxel_exact": true
+    },
+    {
+      "ordinal": 10,
+      "iteration": 2,
+      "raw_and_voxel_exact": true
+    },
+    {
+      "ordinal": 11,
+      "iteration": 0,
+      "raw_and_voxel_exact": true
+    },
+    {
+      "ordinal": 11,
+      "iteration": 1,
+      "raw_and_voxel_exact": true
+    },
+    {
+      "ordinal": 11,
+      "iteration": 2,
+      "raw_and_voxel_exact": true
+    }
+  ],
+  "summary": [
+    {
+      "variant": "blocks_50ms",
+      "warm_push_median_ms": 50.29569996986538,
+      "roi_median_ms": 190.4911499877926,
+      "warm_roi_median_ms": 192.20500002847984,
+      "warm_tail_roi_median_ms": 35.8352999901399,
+      "peak_retained_bytes": 253952748
+    },
+    {
+      "variant": "compact_arithmetic",
+      "warm_push_median_ms": 49.28429995197803,
+      "roi_median_ms": 207.35125002101995,
+      "warm_roi_median_ms": 208.00069998949766,
+      "warm_tail_roi_median_ms": 37.10999997565523,
+      "peak_retained_bytes": 253952748
+    },
+    {
+      "variant": "reference",
+      "warm_push_median_ms": 90.19370004534721,
+      "roi_median_ms": 195.30064999707974,
+      "warm_roi_median_ms": 201.09229994704947,
+      "warm_tail_roi_median_ms": 37.96039998997003,
+      "peak_retained_bytes": 253952748
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "pytest_unique_cases": 21,
+  "pytest_xml_sha256": "ee999344607bca0a109c76d70520a3ca7fb16155cb0e66c8a066a6c450284c01",
+  "ruff": "PASS",
+  "pyright_errors": 0,
+  "pyright_warnings": 0,
+  "frozen_code": {
+    "status": "PASS",
+    "checked_files": 827,
+    "mismatches": [],
+    "freeze_sha256": "a2cdf168e5ba64ab90b00d80f477c953b39e6b32866d960230504576bb4fdee6"
+  },
+  "gpu_repeat_status": "DEFERRED: frozen test12 GPU inference started before repeat2; no repeat GPU work launched"
+}

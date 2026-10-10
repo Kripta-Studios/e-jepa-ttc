@@ -1,0 +1,14 @@
+{
+  "status": "PACKAGED_NOT_SUBMITTED",
+  "sample_count": 6762,
+  "checkpoint_sha256": "c4028b0f6e82c8690efda81afcad8bf7f2587c132050e85ea659d4cb79d1d3d2",
+  "zip_sha256": "6e712f8ecc79f591d7b4c9be8c48032a0d461f4578d948b21b468a08b80f37f8",
+  "members": [
+    "submission.json"
+  ],
+  "predictions_sha256": "25640fcb6ca77476dc8679715edf0a1dac25fcc8a846d6b16bd46cff31ccdff4",
+  "checkpoint_identity": "MODEL_FREEZE.json binds all six trained endpoints and normalizer",
+  "official_test_score_available": false,
+  "test_labels_read": false,
+  "utc": "2026-10-10T13:38:54.670370+00:00"
+}
