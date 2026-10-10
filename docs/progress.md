@@ -274,3 +274,27 @@ No implementar R²/HSIC/CMI ni INTACT antes de ese gate: el primero fue rechazad
 y el segundo requiere acciones expertas ausentes en este problema.
 
 No existe claim SOTA.
+
+
+## 2026-10-09 — Correcciones directas RGB-PORT
+
+Por petición del usuario, se corrigen los módulos originales y se conserva la
+geometría BF16. Véase `docs/decisions/ADR-0002-rgb-port-audit-corrections.md`.
+Se corrigen el router RGB, la reducción efectiva T2/T3, caché event, intervalos
+TTC, historias Dev32, costes desde HDF5/VRAM e informe de latencias.
+`artifacts/rgb_port_20261008/AUDIT_CODE_MIGRATION.json` conserva la transición
+exacta desde las congelaciones históricas y los checkpoints event existentes.
+La pausa anterior permanece; esta tarea no consume updates ni reinicia los fits.
+Evidencia reproducible y comprobaciones negativas: `audit_fixes_20261009/`.
+
+Validación: suite `test_rgb_port*` excepto el test técnico opt-in que realiza
+updates; Ruff y Pyright sobre los módulos afectados; paridad de datos reales,
+compatibilidad de cola y restauración aislada de estados completos.
+Los benchmarks finales de GPU conjunta y de todos los endpoints siguen pendientes
+de su ejecución; no se extrapolan tiempos CPU a throughput científico.
+
+Cierre de esta corrección: 133 pruebas de la suite y 23 comprobaciones finales
+centradas en productores/regresiones (134 casos únicos). Ruff y Pyright pasan.
+Restauración exacta de ambos checkpoints y paridad CPU de pérdida/componentes/
+gradientes event contra el código archivado: PASS. Resultado:
+`artifacts/rgb_port_20261008/audit_fixes_20261009/RESULT.json`.

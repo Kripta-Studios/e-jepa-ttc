@@ -1,0 +1,16 @@
+{
+  "checkpoints_unchanged": {
+    "E_A5_MATCHED": true,
+    "E_C2F_MATCHED": true
+  },
+  "migration_sha256": "c1b142ca926741e35f230c6625f7adde8d10f255370b7b9f0be1fbb9d1917800",
+  "migration_valid": true,
+  "optimizer_updates": 0,
+  "pause_preserved": true,
+  "stop_requests_preserved": {
+    "E_A5_MATCHED": true,
+    "E_C2F_MATCHED": true
+  },
+  "test_failures": 0,
+  "tests": 133
+}

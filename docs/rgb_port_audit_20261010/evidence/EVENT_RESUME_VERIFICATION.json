@@ -1,0 +1,62 @@
+{
+  "fits": {
+    "E_A5_MATCHED": {
+      "completed_updates": 15303,
+      "cuda_graph_recompilation": "deferred_to_existing_zero_update_restore_gate_on_resume",
+      "live_checkpoint_files_unchanged": true,
+      "old_new_event_CPU_training_parity": {
+        "components_exact": true,
+        "gradients_exact": true,
+        "loss_exact": true
+      },
+      "optimizer_updates": 0,
+      "production_constructor_identity": {
+        "identity_exact": true,
+        "updates_exact": true
+      },
+      "remaining_updates": 15027,
+      "restored_state_exact": {
+        "cpu_rng": true,
+        "cuda_rng": true,
+        "cursor": true,
+        "model": true,
+        "numpy_rng": true,
+        "optimizer": true,
+        "python_rng": true,
+        "sampler_rng": true,
+        "scheduler": true,
+        "updates": true
+      }
+    },
+    "E_C2F_MATCHED": {
+      "completed_updates": 6685,
+      "cuda_graph_recompilation": "deferred_to_existing_zero_update_restore_gate_on_resume",
+      "live_checkpoint_files_unchanged": true,
+      "old_new_event_CPU_training_parity": {
+        "components_exact": true,
+        "gradients_exact": true,
+        "loss_exact": true
+      },
+      "optimizer_updates": 0,
+      "production_constructor_identity": {
+        "identity_exact": true,
+        "updates_exact": true
+      },
+      "remaining_updates": 23645,
+      "restored_state_exact": {
+        "cpu_rng": true,
+        "cuda_rng": true,
+        "cursor": true,
+        "model": true,
+        "numpy_rng": true,
+        "optimizer": true,
+        "python_rng": true,
+        "sampler_rng": true,
+        "scheduler": true,
+        "updates": true
+      }
+    }
+  },
+  "optimizer_updates": 0,
+  "status": "PASSED"
+}

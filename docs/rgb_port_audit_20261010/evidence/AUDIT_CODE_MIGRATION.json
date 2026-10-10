@@ -1,0 +1,155 @@
+{
+  "authorization": "2026-10-09 user requested direct overwrite, existing-checkpoint continuation, and unchanged BF16 geometry",
+  "changed_science_scope": [
+    "RGB modality router",
+    "RGB effective-batch reductions"
+  ],
+  "event_objective_unchanged": true,
+  "event_origins": {
+    "E_A5_MATCHED": {
+      "checkpoint_sha256": "a00ce43be86677613a8c1ee7571a43a20a5a7fbf8f04d46386697182640422a5",
+      "completed_updates": 15303,
+      "identity_sha256": "9a3db2b292872f71d3a57f41090e28e0719cf355144aa2eb257b5380208e282f",
+      "immutable_checkpoint_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\audit_fixes_20261009\\event_origins\\E_A5_MATCHED_015303.pt",
+      "paused_files_sha256": {
+        "CHECKPOINT_POINTER.json": "184ba4ad9bc2ddcda85c1956d4a3b2ffc85ed22569e0764c30a5080ea8ac09a2",
+        "CHECKPOINT_RECEIPT.json": "7b33e015df76a7fbc4d146f2697b295c41f58838c38b9723a2794fc31d80dff1",
+        "UPDATE_JOURNAL.json": "43869b194a871c532c7e633180e30a30ff5abe591b4aaf94052acc9ff8439e0a",
+        "checkpoint_last.pt": "a00ce43be86677613a8c1ee7571a43a20a5a7fbf8f04d46386697182640422a5"
+      },
+      "schema": "rgb_port_checkpoint_pointer_v1",
+      "version": "checkpoint_015303.pt"
+    },
+    "E_C2F_MATCHED": {
+      "checkpoint_sha256": "fcdfed748e1494e4aae230f5e5f305e17aee053a945dc153340566635ecdba38",
+      "completed_updates": 6685,
+      "identity_sha256": "74625a55e58b33c6c5d70b1b0a808e66cabf6fe23fd5f041eb300826fa32b393",
+      "immutable_checkpoint_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\audit_fixes_20261009\\event_origins\\E_C2F_MATCHED_006685.pt",
+      "paused_files_sha256": {
+        "CHECKPOINT_POINTER.json": "f5519426f727f15695e369207f7a3cb30fe11508341f9e00d1cd2bfe25cda9c0",
+        "CHECKPOINT_RECEIPT.json": "c4d8de75c67c287c1c766d582ebd42c663e48ef2bc22b51ec41227599909733c",
+        "UPDATE_JOURNAL.json": "6096e2ac37b96502d91413964396aca1033d49fd28af20b20def0572d02d6238",
+        "checkpoint_last.pt": "fcdfed748e1494e4aae230f5e5f305e17aee053a945dc153340566635ecdba38"
+      },
+      "schema": "rgb_port_checkpoint_pointer_v1",
+      "version": "checkpoint_006685.pt"
+    }
+  },
+  "files": {
+    "operational/rgb_port/cost_routes.py": {
+      "after_sha256": "e4d4bac34341c6ae93e5fe57c5c9f6313ccd377369b5092ee977089d186adce0",
+      "before_sha256": "d0966854f0d2000830c4f71ae7f9ee8a9271112afcc243005d37c3bcaa6cdb45"
+    },
+    "operational/rgb_port/predict_heads.py": {
+      "after_sha256": "f28107dc2576ae86203fe6bce4376b3171c418fa29c409f1c71a24ace054bbf8",
+      "before_sha256": "2dab4096b08f79556a089c27d88c19c2a7091c076fd4ded62e6756ce7286e9c3"
+    },
+    "operational/rgb_port/profile.py": {
+      "after_sha256": "291ab95e88487cc0b5fa9045aa86eaf408f96ee227c0c660d1da5224d0027eac",
+      "before_sha256": "cab5590485f207cbf835fef7bd93aed2728c9d913bbbabb243d29868b29048ae"
+    },
+    "operational/rgb_port/report.py": {
+      "after_sha256": "67ef017e8dfc57545c931a5842ef19cb72eea44e13aa8a12880a1379e2b70d2e",
+      "before_sha256": "86333cad20c8b6364bf585e40ea35b54ef53c60775c14e66047e0ef2f901f29d"
+    },
+    "operational/rgb_port/run.py": {
+      "after_sha256": "240d7be0633e6bd2d1908ceada6a1b53aea468dc550e2bc208992743a0a89354",
+      "before_sha256": "572e67a3950e72260151efbbc3fc172794a4fad5bd7147d6641060e59fa23d68"
+    },
+    "operational/rgb_port/train_producers.py": {
+      "after_sha256": "c2d977ded49f3b7928a591a07c2a9a04975dbff43e979868a7fdee69b7bb0826",
+      "before_sha256": "875d1186c3e5db198924e8d470b365fe188c6539efc83c3b5753a0a45960f01c"
+    },
+    "operational/rgb_port/transfer.py": {
+      "after_sha256": "3abedcc3a81a4834440cd586658d9f4033d9da5a593f9a723a5b1971cefa51c6",
+      "before_sha256": "908fc0a9ce8e0e96a258d80e84b65977548754dbe007b073a01cef8cacdf593a"
+    },
+    "operational/rgb_port_acceleration/contracts.py": {
+      "after_sha256": "671c5d3f318856302d43ab978942000989cd6e095372424b04a1be403bfd176f",
+      "before_sha256": "cc064b8f1c5aabd994cd01a2bdcb8f58f16b9e917781beff97e90f2fcd86359d"
+    },
+    "operational/rgb_port_acceleration/producer.py": {
+      "after_sha256": "b55be743f08a3ee6e8abb9bac1b1971f8660745459b06ef22e190958c90da78d",
+      "before_sha256": "1c41715a30db39257d643b5e66e3274b5ebd76a32bdaa552174a6d3cbdfbcb6c"
+    },
+    "operational/rgb_port_c2f_graph/contracts.py": {
+      "after_sha256": "cd89bb1264dbbb022c339c29f58d813f69262f4284d4227decebd30df62626df",
+      "before_sha256": "b92badd5a8aeb6ec17f0076427f12b1d05bd6794248f93469f70279aa1faa9bd"
+    },
+    "operational/rgb_port_concurrent/contracts.py": {
+      "after_sha256": "0c61f149429869209cd4cc9be5daa59bbb3440ff7681d6b1f77a437af87a8c82",
+      "before_sha256": "429ee1067fa2a38635665ac257fb208d8e6f87432df8fb3b13bf0df6d9bd734b"
+    },
+    "operational/rgb_port_pipeline_v2/contracts.py": {
+      "after_sha256": "3d5932f68393fa64fedf5340e9670324d958c757bb7056e84a59fd29882ea21f",
+      "before_sha256": "3460130d3a4e72dfcca03518defa33631638e5d82ea1bb58632da120bf2487f6"
+    },
+    "operational/rgb_port_revision/__init__.py": {
+      "after_sha256": "8f7dc2c69b1aaa647217045548ca3169c22e3ea3db00aad0839b65adc91442cc",
+      "before_sha256": null
+    },
+    "operational/rgb_port_revision/cache.py": {
+      "after_sha256": "4a2c7257b1042aa08ef6f74531686465cb1f74973342dc70b42f39f282004fff",
+      "before_sha256": null
+    },
+    "operational/rgb_port_revision/loss.py": {
+      "after_sha256": "d953f4c41c0c947a4ac5bc75dbafef8dd78a39f0a166cb3a899cbec6ee76d06b",
+      "before_sha256": null
+    },
+    "operational/rgb_port_revision/migration.py": {
+      "after_sha256": "f5d6acc960afe175685a423ec11579e4da673bc7068cd97cc7cc4858d64b27d6",
+      "before_sha256": null
+    },
+    "operational/rgb_port_revision/outputs.py": {
+      "after_sha256": "1128d4930b79874d50f76114505b855f0c4762dcf936714c0f69f9ec43e878e2",
+      "before_sha256": null
+    },
+    "operational/rgb_port_revision/raw_events.py": {
+      "after_sha256": "b0b99ebe490904e3b1b013ad70693bfab31a9ac9062b59bfc7fd3b428ee3a8b3",
+      "before_sha256": null
+    },
+    "operational/rgb_port_revision/transfer_inputs.py": {
+      "after_sha256": "caab2d7d8416aa0409541a0a8674b251921c9f6a221829484df3f93a34436795",
+      "before_sha256": null
+    },
+    "operational/train40_system/prepare.py": {
+      "after_sha256": "ca78a645e54dcac53f575e6ac2a7c044d63980467b568d407060ca5aebd743c0",
+      "before_sha256": null
+    },
+    "src/e_jepa_ttc/models/causal_scale_ttc.py": {
+      "after_sha256": "40c9a83714b3c9b5025ccfbd12189d5afaeffb699a48871e0345f6f5258976b2",
+      "before_sha256": "30a19e6935d237f4347473532d76ffbb5ddeeb0aff6c0d3911fcb60ce2816ef9"
+    },
+    "tests/test_rgb_port_revision.py": {
+      "after_sha256": "23e96c8f6021095828f6756fd589236c4d135999bc9d621ca5ee317219621f71",
+      "before_sha256": null
+    }
+  },
+  "geometry_precision": "bf16_unchanged",
+  "historical_freezes": {
+    "ACCELERATION_FREEZE.json": "cf875a6ab1a53acf10922f111ad5ac3882a6e14096a99ec011ba765833604940",
+    "C2F_GRAPH_FREEZE.json": "020f8c44eedce7f0285456601fde72408b36f8fd142525bdf58d741da5469d40",
+    "CONCURRENT_FREEZE.json": "b271d8bbaf4e28927813de65654b5aa767f94a8ce6faf32e73992b22d9be1378",
+    "PIPELINE_FREEZE.json": "a6e0d08c13f5573cbb7159a6001155867522fde5ab70ccff3fe9c3e00fa4b03b",
+    "SOURCE_FREEZE.json": "15e7bf1fcd3c1642e846dd0c6bd4a127602048a3d41c4c571f01c1213be107b0"
+  },
+  "identity_sha256": "ad3cd757715b430e298b943c23fce9831ff7a848b55d60dad28bef0d3fa8425c",
+  "optimizer_updates": 0,
+  "prelaunch_final_format_parent_sha256": "c2a681a666776124b4120aa2392eb5921b65b43394fd487c13a86557b2bc06ba",
+  "prelaunch_format_only_parent_sha256": "b3e935ef9c8a93054c9fbbaed3096680d90e6b30af59c682ea92db249c22d2d9",
+  "prelaunch_technical_qa_parent_sha256": "a01176dcc33674972d40b3f4db99f196007919c721603626bdad02bd5c4fa4ea",
+  "prelaunch_typing_only_parent_sha256": "17dd9e508478228b38f6fa1f523c526a6fd53f9415c96bbe05e5d9e6160e0c96",
+  "remaining_limitations": [
+    "Dev32 exposed exploratory transfer with retrospective query ROI",
+    "Concurrent GPU throughput after cache change not yet measured"
+  ],
+  "schema": "rgb_port_direct_code_migration_v1",
+  "unchanged_event_state": [
+    "weights",
+    "optimizer",
+    "scheduler",
+    "RNG",
+    "sampler cursor",
+    "update accounting"
+  ]
+}

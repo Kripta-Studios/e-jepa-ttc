@@ -1,0 +1,306 @@
+{
+  "cache_benchmark": {
+    "all_batch_tensors_and_metadata_exact": true,
+    "group_rows": {
+      "batch_sha256": [
+        "c2ac06bf6ae0934fbb7c2fcc42d60a8023cf960eefd511361c835180dab9f35e",
+        "072585cba5fc57715a47b6c3538e40e87010daa20c9c8db92b816b1f0116022e",
+        "6d427c8573116db0a7b159f8037ec44ed47d69761e0a7b6d194fe959e8baf14b",
+        "22a9ebacae76fc588db69d5a97f7ad70254926149ba915d34f821dd9056dc613",
+        "0dc903792db631e0f281a8499377cdf1ba0362a6c28466266ae37be53e29e75c",
+        "f09eb91b028085fc1316d23714a65c19fe16a453e57835971b71521bcc244c52",
+        "0f368e44ecda577fd078c9bde910ec2291a72746cc0fd27c25574405484db8d7",
+        "7998a0e05e8ef837647712accbc7b7b2ca49e667861073c08ffda0ee37f42336"
+      ],
+      "hits": 219,
+      "limit_bytes": 536870912,
+      "peak_retained_bytes": 469701456,
+      "seconds": 51.01065789995482,
+      "shard_reads": 21
+    },
+    "measurement": "sequential_CPU_shard_LRU_then_row_cache; not_joint_GPU_throughput",
+    "optimizer_updates": 0,
+    "sample_order": "unchanged_seed7_epoch1_first256",
+    "shard_lru": {
+      "batch_sha256": [
+        "c2ac06bf6ae0934fbb7c2fcc42d60a8023cf960eefd511361c835180dab9f35e",
+        "072585cba5fc57715a47b6c3538e40e87010daa20c9c8db92b816b1f0116022e",
+        "6d427c8573116db0a7b159f8037ec44ed47d69761e0a7b6d194fe959e8baf14b",
+        "22a9ebacae76fc588db69d5a97f7ad70254926149ba915d34f821dd9056dc613",
+        "0dc903792db631e0f281a8499377cdf1ba0362a6c28466266ae37be53e29e75c",
+        "f09eb91b028085fc1316d23714a65c19fe16a453e57835971b71521bcc244c52",
+        "0f368e44ecda577fd078c9bde910ec2291a72746cc0fd27c25574405484db8d7",
+        "7998a0e05e8ef837647712accbc7b7b2ca49e667861073c08ffda0ee37f42336"
+      ],
+      "hits": 0,
+      "limit_bytes": 536870912,
+      "peak_retained_bytes": null,
+      "seconds": 85.73879189998843,
+      "shard_reads": 131
+    }
+  },
+  "event_resume": {
+    "fits": {
+      "E_A5_MATCHED": {
+        "completed_updates": 15303,
+        "cuda_graph_recompilation": "deferred_to_existing_zero_update_restore_gate_on_resume",
+        "live_checkpoint_files_unchanged": true,
+        "old_new_event_CPU_training_parity": {
+          "components_exact": true,
+          "gradients_exact": true,
+          "loss_exact": true
+        },
+        "optimizer_updates": 0,
+        "production_constructor_identity": {
+          "identity_exact": true,
+          "updates_exact": true
+        },
+        "remaining_updates": 15027,
+        "restored_state_exact": {
+          "cpu_rng": true,
+          "cuda_rng": true,
+          "cursor": true,
+          "model": true,
+          "numpy_rng": true,
+          "optimizer": true,
+          "python_rng": true,
+          "sampler_rng": true,
+          "scheduler": true,
+          "updates": true
+        }
+      },
+      "E_C2F_MATCHED": {
+        "completed_updates": 6685,
+        "cuda_graph_recompilation": "deferred_to_existing_zero_update_restore_gate_on_resume",
+        "live_checkpoint_files_unchanged": true,
+        "old_new_event_CPU_training_parity": {
+          "components_exact": true,
+          "gradients_exact": true,
+          "loss_exact": true
+        },
+        "optimizer_updates": 0,
+        "production_constructor_identity": {
+          "identity_exact": true,
+          "updates_exact": true
+        },
+        "remaining_updates": 23645,
+        "restored_state_exact": {
+          "cpu_rng": true,
+          "cuda_rng": true,
+          "cursor": true,
+          "model": true,
+          "numpy_rng": true,
+          "optimizer": true,
+          "python_rng": true,
+          "sampler_rng": true,
+          "scheduler": true,
+          "updates": true
+        }
+      }
+    },
+    "optimizer_updates": 0,
+    "status": "PASSED"
+  },
+  "evidence_sha256": {
+    "BEFORE.json": "546daae0b0ae33ed889632f593143eb2ad18105e186f66ff5cf0a26e363c7e46",
+    "CACHE_PARITY_BENCHMARK.json": "724acfeb68cdde87005a0ed125a6c22779293114c7aff9fac2ad7b3d5b03a686",
+    "EVENT_RESUME_VERIFICATION.json": "b31a9fbf17a522c3467be1df573853b8bae70b1861fa1d716ecb897d65ff8742",
+    "FINAL_INTEGRITY_CHECK.json": "d075728ec6b4d0bd7d880913a3e6cc5fbf1b06d8ec369707177ffacc047f8268",
+    "QUEUE_COMPATIBILITY.json": "400e1c6a7f59bc7957ed3833cee9a9765d3de90eeec33dedcc255f8592b01abd",
+    "RAW_EVENT_PARITY.json": "c816bbbbc00dad8589d1e23b5f42c777f2c80f460263a05ad3682d64a6a05036",
+    "RESTORE_HARNESS_INITIALIZATION.json": "96ce5f86375230851a5628b18bb9636c32c455ed21d83ce5ab9594975cb83524",
+    "RGB_SOURCE_INTEGRATION.json": "517203c5809e45fb496e7fff7d516278caa8433808aac1bca1b4a9c7f4d0a5cb",
+    "TRANSFER_INPUT_PARITY.json": "f08ba7e9319bc3cf39e1508373d8845701a51f400c12b1a9b0388591fc260429",
+    "TRANSFER_SENSOR50_DEVELOPMENT_CHECK.json": "d64e9b967f7ca257deb8e141dbd4adc4e139778add19f5656f6a3951887f7ad7"
+  },
+  "geometry_precision": "bf16_unchanged",
+  "integrity": {
+    "checkpoints_unchanged": {
+      "E_A5_MATCHED": true,
+      "E_C2F_MATCHED": true
+    },
+    "migration_sha256": "c1b142ca926741e35f230c6625f7adde8d10f255370b7b9f0be1fbb9d1917800",
+    "migration_valid": true,
+    "optimizer_updates": 0,
+    "pause_preserved": true,
+    "stop_requests_preserved": {
+      "E_A5_MATCHED": true,
+      "E_C2F_MATCHED": true
+    },
+    "test_failures": 0,
+    "tests": 133
+  },
+  "migration_sha256": "c1b142ca926741e35f230c6625f7adde8d10f255370b7b9f0be1fbb9d1917800",
+  "optimizer_updates_during_fix": 0,
+  "pause_preserved": true,
+  "queue_compatibility": {
+    "all_existing_freeze_and_lineage_checks": true,
+    "commands": {
+      "E_A5_MATCHED": [
+        "../e-jepa-ttc/.venv/Scripts/python.exe",
+        "-m",
+        "operational.rgb_port_concurrent.producer",
+        "--concurrent-freeze",
+        "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\CONCURRENT_FREEZE.json",
+        "--delegate-module",
+        "operational.rgb_port_pipeline_v2.producer",
+        "--",
+        "--pipeline-freeze",
+        "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\PIPELINE_FREEZE.json",
+        "--",
+        "--acceleration-freeze",
+        "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\ACCELERATION_FREEZE.json",
+        "--",
+        "--config",
+        "configs/rgb_port/producers.json",
+        "--authority",
+        "../e-jepa-ttc-v12-efficient-context/artifacts/train40_system_20261005/TRAINING_PROTOCOL.json",
+        "--run",
+        "artifacts/rgb_port_20261008",
+        "--fit-id",
+        "E_A5_MATCHED",
+        "--source-manifest",
+        "artifacts/rgb_port_20261008/P_MANIFEST.json",
+        "--source-factory",
+        "operational.rgb_port.train_producers:make_event_producer_source",
+        "--event-source-root",
+        "../e-jepa-ttc-v12-efficient-context/artifacts/train40_system_20261005",
+        "--role-manifest-sha256",
+        "6f22b070c53c96aa851d90ae2c6836b604e8280965f4887ba6ef3a0cd6d3727c",
+        "--population",
+        "53890",
+        "--microbatch",
+        "32",
+        "--device",
+        "cuda"
+      ],
+      "E_C2F_MATCHED": [
+        "../e-jepa-ttc/.venv/Scripts/python.exe",
+        "-m",
+        "operational.rgb_port_c2f_graph.producer",
+        "--graph-freeze",
+        "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\C2F_GRAPH_FREEZE.json",
+        "--delegate-module",
+        "operational.rgb_port_concurrent.producer",
+        "--",
+        "--concurrent-freeze",
+        "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\CONCURRENT_FREEZE.json",
+        "--delegate-module",
+        "operational.rgb_port_pipeline_v2.producer",
+        "--",
+        "--pipeline-freeze",
+        "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\PIPELINE_FREEZE.json",
+        "--",
+        "--acceleration-freeze",
+        "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\ACCELERATION_FREEZE.json",
+        "--",
+        "--config",
+        "configs/rgb_port/producers.json",
+        "--authority",
+        "../e-jepa-ttc-v12-efficient-context/artifacts/train40_system_20261005/TRAINING_PROTOCOL.json",
+        "--run",
+        "artifacts/rgb_port_20261008",
+        "--fit-id",
+        "E_C2F_MATCHED",
+        "--source-manifest",
+        "artifacts/rgb_port_20261008/P_MANIFEST.json",
+        "--source-factory",
+        "operational.rgb_port.train_producers:make_event_producer_source",
+        "--event-source-root",
+        "../e-jepa-ttc-v12-efficient-context/artifacts/train40_system_20261005",
+        "--role-manifest-sha256",
+        "6f22b070c53c96aa851d90ae2c6836b604e8280965f4887ba6ef3a0cd6d3727c",
+        "--population",
+        "53890",
+        "--microbatch",
+        "32",
+        "--device",
+        "cuda"
+      ],
+      "R_A5": [
+        "../e-jepa-ttc/.venv/Scripts/python.exe",
+        "-m",
+        "operational.rgb_port_acceleration.producer",
+        "--acceleration-freeze",
+        "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\ACCELERATION_FREEZE.json",
+        "--",
+        "--config",
+        "configs/rgb_port/producers.json",
+        "--authority",
+        "../e-jepa-ttc-v12-efficient-context/artifacts/train40_system_20261005/TRAINING_PROTOCOL.json",
+        "--run",
+        "artifacts/rgb_port_20261008",
+        "--fit-id",
+        "R_A5",
+        "--source-manifest",
+        "artifacts/rgb_port_20261008/P_MANIFEST.json",
+        "--source-factory",
+        "operational.rgb_port.run:make_bound_rgb_producer_source",
+        "--role-manifest-sha256",
+        "6f22b070c53c96aa851d90ae2c6836b604e8280965f4887ba6ef3a0cd6d3727c",
+        "--population",
+        "53890",
+        "--microbatch",
+        "32",
+        "--device",
+        "cuda"
+      ],
+      "R_C2F": [
+        "../e-jepa-ttc/.venv/Scripts/python.exe",
+        "-m",
+        "operational.rgb_port_acceleration.producer",
+        "--acceleration-freeze",
+        "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\ACCELERATION_FREEZE.json",
+        "--",
+        "--config",
+        "configs/rgb_port/producers.json",
+        "--authority",
+        "../e-jepa-ttc-v12-efficient-context/artifacts/train40_system_20261005/TRAINING_PROTOCOL.json",
+        "--run",
+        "artifacts/rgb_port_20261008",
+        "--fit-id",
+        "R_C2F",
+        "--source-manifest",
+        "artifacts/rgb_port_20261008/P_MANIFEST.json",
+        "--source-factory",
+        "operational.rgb_port.run:make_bound_rgb_producer_source",
+        "--role-manifest-sha256",
+        "6f22b070c53c96aa851d90ae2c6836b604e8280965f4887ba6ef3a0cd6d3727c",
+        "--population",
+        "53890",
+        "--microbatch",
+        "32",
+        "--device",
+        "cuda"
+      ]
+    },
+    "optimizer_updates": 0,
+    "pause_preserved": true,
+    "status": "PASSED"
+  },
+  "remaining_measurements": [
+    "CUDA graph compilation and its existing exact restore gate at next resume",
+    "Joint GPU throughput with both event trainers",
+    "Full endpoint route costs and Dev32 predictions after all required endpoints exist"
+  ],
+  "static_checks": {
+    "model_typing_changes": "typing.cast annotations only; no tensor dtype conversion",
+    "pyright": "0 errors, 0 warnings",
+    "ruff": "PASSED"
+  },
+  "status": "CORRECTED_DIRECTLY",
+  "test_reports_sha256": {
+    "FINAL_FOCUSED_TEST_RESULTS.xml": "d768ade35fec9bcab426954aa6c24d86b2b9c1ce578bae3076a4810b01eb83be",
+    "TEST_RESULTS.xml": "e61f3bc53028c55b39ff49379b7d1377c252bf6e587517e467e9e8aacecd0a34"
+  },
+  "tests": {
+    "final_focused_scope": "new regression suite and producer tests after compatibility corrections",
+    "focused_failures": 0,
+    "focused_tests": 23,
+    "suite_failures": 0,
+    "suite_tests": 133,
+    "technical_optimizer_step_test": "not_executed",
+    "unique_test_cases_passed": 134
+  },
+  "training_restarted": false
+}

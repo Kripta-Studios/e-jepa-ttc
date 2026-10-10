@@ -1,0 +1,124 @@
+{
+  "event_exact_legacy_100ms_slots": true,
+  "event_shape": [
+    4,
+    3,
+    12,
+    128,
+    128
+  ],
+  "optimizer_updates": 0,
+  "query_id": "CCRm-low-0-overlap-0:00",
+  "rgb_cadence": "native_100ms_within_1ms_measured_sensor_deltas",
+  "rgb_frame_counts": [
+    3,
+    3,
+    3,
+    3,
+    3
+  ],
+  "rgb_metadata": [
+    {
+      "anchor_us": 14000363,
+      "available_us": 14400373,
+      "delta_t_s": [
+        0.100007,
+        0.099999
+      ],
+      "first_sensor_ts_us": 13800357,
+      "square_xyxy": [
+        745.75,
+        514.75,
+        897.25,
+        666.25
+      ],
+      "timestamps_us": [
+        13800357,
+        13900364,
+        14000363
+      ]
+    },
+    {
+      "anchor_us": 14100370,
+      "available_us": 14400373,
+      "delta_t_s": [
+        0.099999,
+        0.100007
+      ],
+      "first_sensor_ts_us": 13900364,
+      "square_xyxy": [
+        745.75,
+        514.75,
+        897.25,
+        666.25
+      ],
+      "timestamps_us": [
+        13900364,
+        14000363,
+        14100370
+      ]
+    },
+    {
+      "anchor_us": 14200368,
+      "available_us": 14400373,
+      "delta_t_s": [
+        0.100007,
+        0.099998
+      ],
+      "first_sensor_ts_us": 14000363,
+      "square_xyxy": [
+        745.75,
+        514.75,
+        897.25,
+        666.25
+      ],
+      "timestamps_us": [
+        14000363,
+        14100370,
+        14200368
+      ]
+    },
+    {
+      "anchor_us": 14300375,
+      "available_us": 14400373,
+      "delta_t_s": [
+        0.099998,
+        0.100007
+      ],
+      "first_sensor_ts_us": 14100370,
+      "square_xyxy": [
+        745.75,
+        514.75,
+        897.25,
+        666.25
+      ],
+      "timestamps_us": [
+        14100370,
+        14200368,
+        14300375
+      ]
+    },
+    {
+      "anchor_us": 14400373,
+      "available_us": 14400373,
+      "delta_t_s": [
+        0.100007,
+        0.099998
+      ],
+      "first_sensor_ts_us": 14200368,
+      "square_xyxy": [
+        745.75,
+        514.75,
+        897.25,
+        666.25
+      ],
+      "timestamps_us": [
+        14200368,
+        14300375,
+        14400373
+      ]
+    }
+  ],
+  "rgb_observations": 5,
+  "rgb_unavailable_reason": ""
+}
