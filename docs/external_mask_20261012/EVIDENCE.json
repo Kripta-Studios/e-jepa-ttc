@@ -1,0 +1,201 @@
+{
+  "fcwd": {
+    "files": [
+      "E:\\FCWD_dataset\\inputs\\calibration\\camera_intrinsic\\calibParams.mat",
+      "E:\\FCWD_dataset\\inputs\\calibration\\lidar_to_rgb_extrinsic\\right\\extrinsic.txt"
+    ],
+    "hdf5": [
+      {
+        "groups_and_calibration": [
+          {
+            "attrs": [],
+            "name": "base_timestamp",
+            "shape": null
+          },
+          {
+            "attrs": [],
+            "name": "blackflys",
+            "shape": null
+          },
+          {
+            "attrs": [],
+            "name": "blackflys/right",
+            "shape": null
+          },
+          {
+            "attrs": [],
+            "name": "livox",
+            "shape": null
+          },
+          {
+            "attrs": [],
+            "name": "livox/imu",
+            "shape": null
+          },
+          {
+            "attrs": [],
+            "name": "livox/lidar",
+            "shape": null
+          },
+          {
+            "attrs": [],
+            "name": "livox/lidar/points",
+            "shape": null
+          },
+          {
+            "attrs": [],
+            "name": "prophesee",
+            "shape": null
+          },
+          {
+            "attrs": [],
+            "name": "prophesee/event_cam_right",
+            "shape": null
+          }
+        ],
+        "path": "E:\\FCWD_dataset\\inputs\\sequence_1\\2024-03-02-10-35-27.hdf5",
+        "root_attrs": []
+      },
+      {
+        "groups_and_calibration": [
+          {
+            "attrs": [],
+            "name": "base_timestamp",
+            "shape": null
+          },
+          {
+            "attrs": [],
+            "name": "blackflys",
+            "shape": null
+          },
+          {
+            "attrs": [],
+            "name": "blackflys/right",
+            "shape": null
+          },
+          {
+            "attrs": [],
+            "name": "livox",
+            "shape": null
+          },
+          {
+            "attrs": [],
+            "name": "livox/imu",
+            "shape": null
+          },
+          {
+            "attrs": [],
+            "name": "livox/lidar",
+            "shape": null
+          },
+          {
+            "attrs": [],
+            "name": "livox/lidar/points",
+            "shape": null
+          },
+          {
+            "attrs": [],
+            "name": "prophesee",
+            "shape": null
+          },
+          {
+            "attrs": [],
+            "name": "prophesee/event_cam_right",
+            "shape": null
+          }
+        ],
+        "path": "E:\\FCWD_dataset\\inputs\\sequence_2\\2024-03-02-10-37-09.hdf5",
+        "root_attrs": []
+      },
+      {
+        "groups_and_calibration": [
+          {
+            "attrs": [],
+            "name": "base_timestamp",
+            "shape": null
+          },
+          {
+            "attrs": [],
+            "name": "blackflys",
+            "shape": null
+          },
+          {
+            "attrs": [],
+            "name": "blackflys/right",
+            "shape": null
+          },
+          {
+            "attrs": [],
+            "name": "livox",
+            "shape": null
+          },
+          {
+            "attrs": [],
+            "name": "livox/imu",
+            "shape": null
+          },
+          {
+            "attrs": [],
+            "name": "livox/lidar",
+            "shape": null
+          },
+          {
+            "attrs": [],
+            "name": "livox/lidar/points",
+            "shape": null
+          },
+          {
+            "attrs": [],
+            "name": "prophesee",
+            "shape": null
+          },
+          {
+            "attrs": [],
+            "name": "prophesee/event_cam_right",
+            "shape": null
+          }
+        ],
+        "path": "E:\\FCWD_dataset\\inputs\\sequence_3\\2024-03-02-10-38-25.hdf5",
+        "root_attrs": []
+      }
+    ],
+    "matlab_object_note": "cameraParameters intrinsics; supplied text transform is LiDAR to RGB; neither identifies RGB to event extrinsics",
+    "sealed_labels_read": false,
+    "status": "NO_USABLE_RGB_TO_EVENT_EXTRINSICS_FOUND"
+  },
+  "qa": {
+    "completed_fits_unchanged": true,
+    "evidence_sha256": {
+      "BEFORE.json": "731e3c86e69795bbeaa52bb6eccd921c92814872d707d89ffcc9d3b516468256",
+      "FCWD_CALIBRATION_INSPECTION.json": "8b27951618c48fe4afeeaa0732adb330328db319d2046f261e1de53c71fa62e2",
+      "QA.xml": "3ef6dfe38010c6ec59e5e6ed47d2d80cc40e45f8cac07c1f77563e1cf3cb9a9c",
+      "REAL_PARITY.json": "b5f143cb73fefc3cbb96d309fe94f7e08af086b8fbb5f6f06fae60ea858e928d"
+    },
+    "optimizer_updates": 0,
+    "protected_files": 1412,
+    "pyright_errors": 0,
+    "pyright_warnings": 0,
+    "real_producer_parity": true,
+    "ruff": "PASSED",
+    "status": "PASSED",
+    "tests": 23,
+    "tests_passed": true
+  },
+  "real_inputs": {
+    "optimizer_updates": 0,
+    "query_id": "CCRm-low-0-overlap-0:00",
+    "results": {
+      "E": {
+        "observations": 4,
+        "phase17_and_experts_exact": true,
+        "steps": 3
+      },
+      "R": {
+        "observations": 1,
+        "phase17_and_experts_exact": true,
+        "steps": 3
+      }
+    },
+    "status": "PASSED"
+  }
+}
