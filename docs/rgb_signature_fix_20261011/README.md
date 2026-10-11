@@ -55,5 +55,17 @@ exista una tarea marcada como activa. Antes de aplicar la copia se comprueba que
 hay supervisor ni tareas vivos y se conserva el estado anterior y el log del fallo.
 La cola continúa con un segundo intento y conserva el primer log.
 
-La validación de metadatos no sustituye las métricas finales TTC ni demuestra SOTA.
-La evidencia de reanudación se publicará junto con el avance real de H_R_RAW.
+## Reanudación verificada
+
+[RESUME_VERIFICATION.json](RESUME_VERIFICATION.json) registra el segundo intento de
+H_R_RAW a las 20:09:59 CEST: 128 de 18.615 observaciones escritas, proceso de
+inferencia y supervisor activos, sin marcador de pausa ni tareas en FAILED o
+SKIPPED_DEPENDENCY. Las 23 tareas reactivadas incluyen el fallo y sus descendientes;
+las 19 tareas ya completas conservaron su estado. Los ocho fits completados
+mantienen sus 40 archivos protegidos exactamente iguales. El primer log del fallo
+permanece junto al log del segundo intento.
+
+Esta es una observación registrada, no un monitor que se actualice automáticamente.
+El arranque pasó por la ruta corregida y produjo bloques reales. Las fases posteriores
+quedan en la cola; su finalización y las métricas TTC todavía están pendientes.
+La validación de metadatos no sustituye esas métricas ni demuestra SOTA.

@@ -1,0 +1,41 @@
+{
+  "attempt": 2,
+  "complete_tasks": [
+    "E_A5_MATCHED",
+    "E_C2F_MATCHED",
+    "E_CTX_MATCHED",
+    "E_H1_MATCHED",
+    "E_NORMALIZER",
+    "E_PAIR_CACHE",
+    "E_PAIR_SOURCE",
+    "H_E_HISTORY",
+    "H_E_OBS",
+    "H_E_RAW",
+    "P0_PREPARE",
+    "PAIR_E_MATCHED",
+    "PAIR_R",
+    "P_RGB_CACHE",
+    "RECOVERY_QA",
+    "R_A5",
+    "R_C2F",
+    "R_PAIR_CACHE",
+    "R_PAIR_SOURCE"
+  ],
+  "completed_fits_unchanged": true,
+  "failed_tasks": [],
+  "first_failure_log_retained": true,
+  "freeze_sha256": "53fb1bb3d5c5caae8b5b26905c582fb475659386dc44f42231d013114a032d9d",
+  "inference_alive": true,
+  "pause": false,
+  "progress": {
+    "completed_observations": 128,
+    "optimizer_updates": 0,
+    "total_observations": 18615
+  },
+  "protected_file_count": 40,
+  "queue_alive": true,
+  "runtime_module": "operational.rgb_port_signature_fix.infer",
+  "status": "RUNNING",
+  "task": "H_R_RAW",
+  "time": "2026-10-11T20:09:59.709352+02:00"
+}
