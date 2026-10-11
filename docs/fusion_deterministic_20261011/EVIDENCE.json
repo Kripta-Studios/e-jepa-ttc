@@ -1,0 +1,43 @@
+{
+  "qa": {
+    "schema": "rgb_port_fusion_qa_v1",
+    "status": "PASSED",
+    "optimizer_updates": 0,
+    "cuda_parity": true,
+    "completed_fits_unchanged": true,
+    "protected_files": 60,
+    "tests_passed": true,
+    "tests": 45,
+    "ruff": "PASSED",
+    "pyright_errors": 0,
+    "pyright_warnings": 0,
+    "evidence_sha256": {
+      "BEFORE.json": "5119c53557c4d7afc992eaa9c21f43519b4e46d60986603c5f58ec45340990c2",
+      "QA.xml": "e0b78baaea7ef5414ab4710e29fd6bfdb1c66df2ea4d8365e99591111e039573",
+      "CUDA_PARITY.json": "2b0f7c77148f6ba3d0766c823a527187a2690694d5abc4afcb29d6c090c3b2b1"
+    }
+  },
+  "real_batch": {
+    "batch_size": 128,
+    "cache_sha256": "801d9bd8189197de8d87d3d3c7636d292d60745407b86362522324f2dae2e47e",
+    "device": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+    "optimizer_updates": 0,
+    "results": {
+      "F_TRUE": {
+        "checkpoint_sha256": "908b640adaae29e0d33eb995f6c3cf5718554fcd2544a0c70d4e0a9d9e125c55",
+        "output_loss_parameter_gradients_exact": true,
+        "parameter_tensors": 32
+      },
+      "F_ZERO": {
+        "checkpoint_sha256": "eeaa2ef426ed788a00e6075df16fa84be33b41218d339bf117167fca589e2484",
+        "output_loss_parameter_gradients_exact": true,
+        "parameter_tensors": 32
+      }
+    },
+    "role": "H",
+    "schema": "rgb_port_fusion_cuda_parity_v1",
+    "seed": 7,
+    "status": "PASSED",
+    "torch": "2.11.0+cu128"
+  }
+}
