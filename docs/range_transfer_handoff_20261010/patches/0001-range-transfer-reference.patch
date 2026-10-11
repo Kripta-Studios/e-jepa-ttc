@@ -1,0 +1,254 @@
+diff --git a/src/e_jepa_ttc/range_transfer/__init__.py b/src/e_jepa_ttc/range_transfer/__init__.py
+new file mode 100644
+--- /dev/null
++++ b/src/e_jepa_ttc/range_transfer/__init__.py
+@@ -0,0 +1 @@
++"""Prospective range-transfer ablations; never modifies a running V13 fit."""
+diff --git a/src/e_jepa_ttc/range_transfer/mass.py b/src/e_jepa_ttc/range_transfer/mass.py
+new file mode 100644
+--- /dev/null
++++ b/src/e_jepa_ttc/range_transfer/mass.py
+@@ -0,0 +1,88 @@
++"""TRAIN-head-only mass ablations with unchanged query population and sampler.
++
++M0 preserves the exact native cached mass. M1 gives each group's present TTC
++bands the historical 0.5/0.3/0.1/0.1 relative masses. M2 redistributes *within*
++crucial/long bands, retaining their total mass and bounding per-query changes.
++These are training distributions, NOT replacement evaluation aggregations.
++"""
++from __future__ import annotations
++from dataclasses import dataclass
++import numpy as np
++
++@dataclass(frozen=True)
++class MassPlans:
++    native: np.ndarray
++    benchmark: np.ndarray
++    subrange: np.ndarray
++
++
++def _bounded_redistribute(base: np.ndarray, desired: np.ndarray) -> np.ndarray:
++    """Project positive desired weights, preserving mass and ratios in [1/4,4]."""
++    total = float(base.sum())
++    lower, upper = 0.25 * base, 4.0 * base
++    lo, hi = 0.0, float(np.max(upper / desired)) * 2.0
++    for _ in range(100):
++        mid = (lo + hi) / 2.0
++        value = np.clip(mid * desired, lower, upper)
++        if float(value.sum()) < total:
++            lo = mid
++        else:
++            hi = mid
++    value = np.clip(((lo + hi) / 2.0) * desired, lower, upper)
++    if not np.isclose(value.sum(), total, rtol=1e-12, atol=1e-15):
++        raise ArithmeticError('Bounded mass projection did not conserve mass')
++    return value
++
++
++def fit_mass_plans(
++    target_ttc: np.ndarray, groups: np.ndarray, native_mass: np.ndarray, *, fit_role: str
++) -> MassPlans:
++    """Create a frozen H-role mass plan. V/Dev32/FCWD labels are not admissible.
++
++    All targets must lie in the original signed training bands. Out-of-support
++    data require a new declared protocol; they are never silently dropped.
++    Caller must also verify the H-role cache and producer lineage manifests.
++    """
++    if fit_role != 'H':
++        raise ValueError('Only the verified head-training role H may fit mass plans')
++    target = np.asarray(target_ttc, dtype=np.float64)
++    group = np.asarray(groups).astype(str)
++    raw_native = np.asarray(native_mass)
++    native = np.asarray(native_mass, dtype=np.float64)
++    if target.ndim != 1 or not len(target) or group.shape != target.shape or native.shape != target.shape:
++        raise ValueError('Nonempty aligned one-dimensional arrays required')
++    if not np.isfinite(target).all() or not np.isfinite(native).all() or np.any(native <= 0):
++        raise ValueError('Finite targets and strictly positive masses required')
++    if not np.isclose(native.sum(), 1.0, rtol=1e-6, atol=1e-7):
++        raise ValueError('Native full-population mass must sum to one')
++    masks = ((target > 0.1) & (target <= 3), (target > 3) & (target <= 6),
++             (target > 6) & (target <= 10), (target > -10) & (target < 0))
++    if not np.logical_or.reduce(masks).all():
++        raise ValueError('Targets outside signed benchmark TRAIN support; no row deletion')
++    benchmark = np.zeros_like(native)
++    weights = (0.5, 0.3, 0.1, 0.1)
++    for name in np.unique(group):
++        in_group = group == name
++        group_mass = float(native[in_group].sum())
++        present = [(in_group & mask, weight) for mask, weight in zip(masks, weights, strict=True) if (in_group & mask).any()]
++        denom = sum(weight for _, weight in present)
++        for mask, weight in present:
++            benchmark[mask] = group_mass * (weight / denom) / int(mask.sum())
++    refined = benchmark.copy()
++    for name in np.unique(group):
++        in_group = group == name
++        for band_mask, intervals in ((masks[0], ((0.1,1),(1,2),(2,3))),
++                                     (masks[2], ((6,8),(8,10)))):
++            selected = in_group & band_mask
++            ids = np.flatnonzero(selected)
++            if not len(ids):
++                continue
++            submasks = [(target[ids] > low) & (target[ids] <= high) for low, high in intervals]
++            submasks = [m for m in submasks if m.any()]
++            desired = np.zeros(len(ids), dtype=np.float64)
++            total = float(benchmark[ids].sum())
++            for mask in submasks:
++                desired[mask] = total / (len(submasks) * int(mask.sum()))
++            refined[ids] = _bounded_redistribute(benchmark[ids], desired)
++    # M0 is copied without re-normalization/rounding: baseline identity matters.
++    return MassPlans(raw_native.copy(), benchmark, refined)
+diff --git a/src/e_jepa_ttc/range_transfer/objective.py b/src/e_jepa_ttc/range_transfer/objective.py
+new file mode 100644
+--- /dev/null
++++ b/src/e_jepa_ttc/range_transfer/objective.py
+@@ -0,0 +1,40 @@
++"""One isolated loss intervention, retaining native architecture and emission.
++
++L0 is the existing loss exactly. L1 adds a dimensionless symmetric relative-TTC
++SmoothL1 term. It does NOT replace phase, quantiles, costs, sign policy or cap.
++The extra term cannot fix a zero-gradient decoder saturation; audit this rather
++than inserting an undeclared straight-through gradient.
++"""
++from __future__ import annotations
++import math
++import torch
++from torch import Tensor
++from torch.nn import functional as F
++from e_jepa_ttc.simplex_t.model import training_loss
++from e_jepa_ttc.simplex_t.phase import phase_to_ttc
++
++
++def range_transfer_loss(
++    output: dict[str, Tensor], truth_phase: Tensor, experts: Tensor,
++    mass: Tensor, population: int, *, relative_weight: float = 0.0
++) -> Tensor:
++    """Uniform-query sampling; use global mass, never batch renormalization.
++
++    The protocol fixes relative_weight=0 or 0.25 before training. The target TTC
++    is reconstructed from the same target phase, without output clipping.
++    This helper is tested code, not a trainer/admission or lineage validator.
++    """
++    if not math.isfinite(relative_weight) or relative_weight < 0:
++        raise ValueError('relative_weight must be finite and nonnegative')
++    base = training_loss(output, truth_phase, experts, mass, population)
++    if relative_weight == 0:
++        return base
++    if not torch.isfinite(truth_phase).all() or (truth_phase == 0).any():
++        raise ValueError('Finite nonzero target phase required for finite TTC labels')
++    target_ttc = -0.1 / torch.expm1(-truth_phase)
++    predicted_ttc = phase_to_ttc(output['raw_location'])
++    if not torch.isfinite(target_ttc).all() or not torch.isfinite(predicted_ttc).all():
++        raise FloatingPointError('Nonfinite canonical TTC in added objective')
++    residual = (predicted_ttc - target_ttc) / target_ttc.abs().clamp_min(0.5)
++    per_row = F.smooth_l1_loss(residual, torch.zeros_like(residual), reduction='none')
++    return base + relative_weight * (population * mass * per_row).mean()
+diff --git a/tests/test_range_transfer.py b/tests/test_range_transfer.py
+new file mode 100644
+--- /dev/null
++++ b/tests/test_range_transfer.py
+@@ -0,0 +1,105 @@
++"""CPU contracts; these tests do not establish TTC accuracy on real data."""
++import unittest
++import numpy as np
++import torch
++from e_jepa_ttc.range_transfer.mass import fit_mass_plans
++from e_jepa_ttc.range_transfer.objective import range_transfer_loss
++from e_jepa_ttc.simplex_t.model import training_loss
++from e_jepa_ttc.simplex_t.phase import emitted_phase, ttc_to_phase
++
++class MassTests(unittest.TestCase):
++    def example(self):
++        t=np.array([.7]+[1.5]*8+[2.5]*16+[4.5]*25+[7.]*8+[9.]*4+[-3.]*18)
++        g=np.array(['a']*len(t));m=np.ones(len(t))/len(t)
++        return t,g,m
++    def test_native_unchanged(self):
++        t,g,m=self.example();m=m.astype('float32');p=fit_mass_plans(t,g,m,fit_role='H')
++        np.testing.assert_array_equal(p.native,m);self.assertEqual(p.native.dtype,m.dtype)
++    def test_benchmark_masses(self):
++        t,g,m=self.example();p=fit_mass_plans(t,g,m,fit_role='H')
++        for mask,w in [(t<=0,.1),((t>0)&(t<=3),.5),((t>3)&(t<=6),.3),(t>6,.1)]:
++            self.assertAlmostEqual(p.benchmark[mask].sum(),w)
++    def test_subrange_retains_outer_mass(self):
++        t,g,m=self.example();p=fit_mass_plans(t,g,m,fit_role='H')
++        for lo,hi in [(-10,0),(.1,3),(3,6),(6,10)]:
++            mask=(t>lo)&(t<=hi)
++            self.assertAlmostEqual(p.benchmark[mask].sum(),p.subrange[mask].sum())
++    def test_subrange_cap(self):
++        t,g,m=self.example();p=fit_mass_plans(t,g,m,fit_role='H');ratio=p.subrange/p.benchmark
++        self.assertTrue((ratio>=.25-1e-12).all());self.assertTrue((ratio<=4+1e-12).all())
++        self.assertGreater(p.subrange[0],p.benchmark[0])
++    def test_preserves_group_totals(self):
++        t,g,m=self.example();t=np.r_[t,[-2.,1.2,4.,9.]];g=np.r_[g,['b']*4];m=np.r_[m*.7,np.ones(4)*.3/4]
++        p=fit_mass_plans(t,g,m,fit_role='H')
++        for weights in [p.native,p.benchmark,p.subrange]:
++            self.assertAlmostEqual(weights[g=='a'].sum(),.7);self.assertAlmostEqual(weights[g=='b'].sum(),.3)
++    def test_absent_bands_training_only(self):
++        t=np.array([1.5,2.5]);m=np.array([.5,.5]);p=fit_mass_plans(t,np.array(['a','a']),m,fit_role='H')
++        self.assertAlmostEqual(p.benchmark.sum(),1)
++    def test_rejects_evaluation_roles(self):
++        t,g,m=self.example()
++        for role in ['V','DEV32','FCWD','TRAIN40','P']:
++            with self.subTest(role=role),self.assertRaises(ValueError):fit_mass_plans(t,g,m,fit_role=role)
++    def test_refuses_outside_support(self):
++        for t in [[1.,11.],[0.,2.],[.1,2.],[-11.,1.],[-10.,1.],[float('nan'),1.]]:
++            with self.subTest(t=t),self.assertRaises(ValueError):fit_mass_plans(np.array(t),np.array(['a','a']),np.array([.5,.5]),fit_role='H')
++    def test_refuses_bad_mass(self):
++        for m in [[.5,.4],[.5,-.5],[float('nan'),.5]]:
++            with self.subTest(m=m),self.assertRaises(ValueError):fit_mass_plans(np.array([1.,2.]),np.array(['a','a']),np.array(m),fit_role='H')
++    def test_row_permutation_equivariant(self):
++        t,g,m=self.example();order=np.random.default_rng(1).permutation(len(t))
++        a=fit_mass_plans(t,g,m,fit_role='H');b=fit_mass_plans(t[order],g[order],m[order],fit_role='H')
++        np.testing.assert_allclose(a.subrange[order],b.subrange,rtol=1e-13)
++    def test_single_subrange(self):
++        t=np.array([1.2,1.3,-2.]);p=fit_mass_plans(t,np.array(['a']*3),np.ones(3)/3,fit_role='H')
++        np.testing.assert_allclose(p.benchmark,p.subrange)
++
++class ObjectiveTests(unittest.TestCase):
++    def inputs(self):
++        truth=ttc_to_phase(torch.tensor([1.2,2.,4.,9.,-2.,-8.],dtype=torch.float64))
++        raw=(truth+torch.tensor([-.02,.01,-.002,.001,.003,-.001],dtype=torch.float64)).detach().requires_grad_()
++        experts=torch.stack([truth*.9,truth*1.2,truth*1.1],1)
++        output={'raw_location':raw,'point_phase':emitted_phase(raw),'q10':raw-.01,'q90':raw+.01,'relative_cost':raw[:,None]*torch.ones(1,3,dtype=raw.dtype)}
++        return output,truth,experts,torch.tensor([.1,.1,.3,.1,.2,.2],dtype=torch.float64),6
++    def test_zero_is_exact_native_loss_and_gradient(self):
++        args=self.inputs();a=training_loss(*args);b=range_transfer_loss(*args,relative_weight=0)
++        self.assertTrue(torch.equal(a,b));ga=torch.autograd.grad(a,args[0]['raw_location'],retain_graph=True)[0];gb=torch.autograd.grad(b,args[0]['raw_location'])[0];self.assertTrue(torch.equal(ga,gb))
++    def test_added_term_finite_with_negative_targets(self):
++        args=self.inputs();v=range_transfer_loss(*args,relative_weight=.25);self.assertTrue(torch.isfinite(v));v.backward();self.assertTrue(torch.isfinite(args[0]['raw_location'].grad).all())
++    def test_exact_predictions_have_no_extra_penalty(self):
++        o,t,e,m,n=self.inputs();o['raw_location']=t;o['point_phase']=emitted_phase(t)
++        a=training_loss(o,t,e,m,n);b=range_transfer_loss(o,t,e,m,n,relative_weight=.25)
++        self.assertLess(abs(float((a-b).detach())),1e-14)
++    def test_added_term_nonnegative(self):
++        args=self.inputs();self.assertGreaterEqual(float(range_transfer_loss(*args,relative_weight=.25).detach()),float(training_loss(*args).detach()))
++    def test_nonfinite_coeff_rejected(self):
++        args=self.inputs()
++        for w in [-.1,float('nan'),float('inf')]:
++            with self.subTest(w=w),self.assertRaises(ValueError):range_transfer_loss(*args,relative_weight=w)
++    def test_batch_mass_not_normalized(self):
++        args=list(self.inputs());a=range_transfer_loss(*args,relative_weight=.25);args[3]=args[3]*.2;b=range_transfer_loss(*args,relative_weight=.25)
++        self.assertAlmostEqual(float(b.detach()),.2*float(a.detach()),places=12)
++    def test_accumulation_value_equivalence(self):
++        o,t,e,m,n=self.inputs();whole=range_transfer_loss(o,t,e,m,n,relative_weight=.25)
++        parts=[]
++        for sl in [slice(0,2),slice(2,6)]:
++            part={k:v[sl] for k,v in o.items()};parts.append(range_transfer_loss(part,t[sl],e[sl],m[sl],n,relative_weight=.25)*len(t[sl])/len(t))
++        self.assertAlmostEqual(float((whole-sum(parts)).detach()),0,places=12)
++    def test_accumulation_gradient_equivalence(self):
++        o,t,e,m,n=self.inputs();whole=range_transfer_loss(o,t,e,m,n,relative_weight=.25)
++        gw=torch.autograd.grad(whole,o['raw_location'],retain_graph=True)[0]
++        pieces=[]
++        for sl in [slice(0,2),slice(2,6)]:
++            part={k:v[sl] for k,v in o.items()}
++            pieces.append(range_transfer_loss(part,t[sl],e[sl],m[sl],n,relative_weight=.25)*len(t[sl])/len(t))
++        gp=torch.autograd.grad(sum(pieces),o['raw_location'])[0]
++        self.assertTrue(torch.allclose(gw,gp,atol=1e-14,rtol=1e-14))
++    def test_decoder_dead_zone_is_not_secretly_straight_through(self):
++        o,t,e,m,n=self.inputs();raw=torch.zeros_like(t,requires_grad=True);o={**o,'raw_location':raw,'point_phase':emitted_phase(raw),'q10':raw-.01,'q90':raw+.01,'relative_cost':raw[:,None]*torch.ones(1,3)}
++        extra=range_transfer_loss(o,t,e,m,n,relative_weight=.25)-training_loss(o,t,e,m,n)
++        grad=torch.autograd.grad(extra,raw)[0];self.assertTrue(torch.equal(grad,torch.zeros_like(grad)))
++    def test_no_output_mutation(self):
++        args=self.inputs();before={k:v.detach().clone() for k,v in args[0].items()};range_transfer_loss(*args,relative_weight=.25)
++        for k,v in args[0].items():self.assertTrue(torch.equal(v.detach(),before[k]))
++
++if __name__=='__main__':unittest.main()

@@ -1,0 +1,121 @@
+{
+  "schema": "range_transfer_proposed_authorization_v1",
+  "date": "2026-10-10",
+  "status": "PROPOSED_NOT_EXECUTED",
+  "activation": "Explicit user transmission of PROMPT_CODEX_START.md authorizes only this new queue.",
+  "base_code_commit": "da068ebdeb2d967ee10b2afa348e1317b8720ad0",
+  "evidence_v12_commit": "1a686e338a1145c6794bec0704bdae4cda95f06d",
+  "branch": "scientific-recovery-v14-range-transfer",
+  "preserve_active_v13": true,
+  "parent_fit_ids": [
+    "E_A5_MATCHED",
+    "E_C2F_MATCHED",
+    "PAIR_E_MATCHED"
+  ],
+  "roles": {
+    "producer_training": "P",
+    "head_training": "H",
+    "internal_development": "V",
+    "transfer_development": [
+      "Dev32",
+      "FCWD"
+    ]
+  },
+  "scientific_updates_max": 25000,
+  "synthetic_technical_updates_max": 500,
+  "recovery_updates_max": 4500,
+  "physical_updates_max": 30000,
+  "screen": {
+    "masses": [
+      "M0_NATIVE",
+      "M1_BANDS",
+      "M2_SUBRANGES"
+    ],
+    "losses": [
+      "L0_NATIVE",
+      "L1_RELATIVE_ADD"
+    ],
+    "seeds": [
+      7
+    ],
+    "endpoint": 2500,
+    "max_fits": 6
+  },
+  "replication": {
+    "max_candidates": 1,
+    "include_native_control": true,
+    "seeds": [
+      13,
+      23
+    ],
+    "endpoint": 2500,
+    "max_fits": 4,
+    "selection_source": "V_ONLY"
+  },
+  "training": {
+    "device": "cpu",
+    "precision": "float32",
+    "batch": 128,
+    "hidden": 160,
+    "optimizer": "AdamW",
+    "learning_rate_peak": 0.0003,
+    "learning_rate_final": 3e-05,
+    "warmup_updates": 100,
+    "weight_decay": 0.001,
+    "gradient_clip": 1.0,
+    "sampler": "same uniform-query sequence by seed, replacement; no batch mass renormalization",
+    "normalization": "native sealed H normalizer unchanged",
+    "decoder": "native signed phase, unchanged finite TTC mapping and cap"
+  },
+  "relative_loss": {
+    "coefficient": 0.25,
+    "denominator_floor_seconds": 0.5,
+    "type": "SmoothL1 beta=1 on dimensionless TTC residual"
+  },
+  "subrange_weights": {
+    "crucial_edges": [
+      0.1,
+      1,
+      2,
+      3
+    ],
+    "long_edges": [
+      6,
+      8,
+      10
+    ],
+    "relative_row_cap_vs_M1": [
+      0.25,
+      4.0
+    ],
+    "preserve_group_and_band_mass": true
+  },
+  "resources": {
+    "host_available_hard_GiB": 2,
+    "host_available_resume_GiB": 3,
+    "combined_project_RSS_GB_decimal": 23,
+    "disk_free_after_reservations_GB_decimal": 10,
+    "companion_process_tree_RSS_GiB": 4,
+    "companion_numeric_threads_max": 4,
+    "gpu_training": false,
+    "active_job_priority": "V13 owner; total budget is shared, not per worktree"
+  },
+  "forbidden": [
+    "change active V13 weights/loss/splits/precision/admission",
+    "fit or select with FCWD/Dev32 labels",
+    "new encoders or PAIR fits",
+    "feature schema or normalizer changes",
+    "new H4/H2/warp/student fits",
+    "additional seeds beyond queue",
+    "stage76",
+    "private benchmark labels",
+    "test score tuning",
+    "submission",
+    "push",
+    "merge",
+    "automatic email",
+    "global driver/paging/power-policy changes"
+  ],
+  "external_data": "Existing public TRAIN inputs only; FCWD RGB calibration and official scores are independent pending tasks, not prerequisites for the matched head study.",
+  "new_runner_status": "Not included: Codex must integrate a tested runner with existing durable checkpoint machinery."
+}

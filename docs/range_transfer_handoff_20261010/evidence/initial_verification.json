@@ -1,0 +1,9 @@
+{
+  "zip_bytes": 46007562,
+  "zip_sha256": "20ce464c970d4ade5e0c41ecdde46e712ee52b399f4e4941a991b2aefd26524e",
+  "members": 6756,
+  "uncompressed_bytes": 149868398,
+  "crc": "PASS",
+  "extraction": "/mnt/data/ttc_review_20261010/extracted",
+  "clone_attempt": "FAILED_DNS"
+}

@@ -1,0 +1,17 @@
+{
+  "scope": "Reference modules and synthetic contracts, not integrated training or new inference on eAP/FCWD",
+  "tests": 21,
+  "tests_passed": 21,
+  "optimizer_updates_in_tests": 0,
+  "patch_apply_check": "PASSED",
+  "patch_bytes_verified_against_delivered_files": 4,
+  "python": "3.13.5",
+  "numpy": "2.3.5",
+  "torch": "2.10.0+cpu",
+  "device": "cpu",
+  "native_modules": "Pinned V13 phase.py and model.py loaded in isolated namespace",
+  "powershell_execution": "NOT_TESTED_ON_WINDOWS",
+  "gpu_training": "NOT_EXECUTED",
+  "integration_runner": "NOT_IMPLEMENTED_IN_THIS_HANDOFF",
+  "scientific_claim": "No accuracy improvement has been obtained by this plan."
+}

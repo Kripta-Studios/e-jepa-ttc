@@ -20,3 +20,11 @@ operational/rgb_port_continuity/** -text
 operational/rgb_port_streaming/** -text
 tests/test_rgb_port_continuity.py -text
 tests/test_rgb_port_streaming.py -text
+
+# V14 received package, executed sources and exported evidence retain SHA-256 bytes.
+docs/range_transfer_handoff_20261010/** -text
+docs/range_transfer_results_20261012/evidence/** -text
+operational/range_transfer/** -text
+src/e_jepa_ttc/range_transfer/** -text
+scripts/Resume-RangeTransfer.ps1 -text
+scripts/range_transfer_v12_trace.py -text

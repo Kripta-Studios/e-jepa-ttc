@@ -1,0 +1,21 @@
+{
+  "scope": "Descriptive arithmetic on exposed FCWD. No model training, threshold tuning or new network inference. Native median3 outputs; CPU replay differs at rounding tolerance.",
+  "population": 630,
+  "eligible": 597,
+  "excluded": 33,
+  "independent_sequences": 3,
+  "truth_min": 1.19419533654634,
+  "truth_max": 28.9226189494698,
+  "targets_at_most_1": 0,
+  "h8_predictions_at_cap60": 0,
+  "h8_mid": 79.95179294486442,
+  "garl_mid": 61.816523094350885,
+  "mid_gap": 18.13526985051353,
+  "h8_query_win_fraction": 0.5527638190954773,
+  "conditional_c_mid_to_tie_with_other_predictions_unchanged": 124.07340680397138,
+  "conditional_c_improvement_fraction_to_tie": 0.3027149854117154,
+  "overall_mid": null,
+  "official_test_score": null,
+  "source_sha256": "3afe9dcba1ad59bc2535d438026ce0c9b97c2a7df882610776a824ca2ea32082",
+  "optimizer_updates": 0
+}
