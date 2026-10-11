@@ -1,0 +1,83 @@
+{
+  "APScameraParams": {
+    "ImageSize": [
+      [
+        1200.0,
+        1920.0
+      ]
+    ],
+    "IntrinsicMatrix": [
+      [
+        4647.485996248993,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        4649.5604943245435,
+        0.0
+      ],
+      [
+        973.4593271750236,
+        608.8035007010201,
+        1.0
+      ]
+    ],
+    "RadialDistortion": [
+      [
+        -0.004178028020879751,
+        0.4841955133155294
+      ]
+    ],
+    "TangentialDistortion": [
+      [
+        0.0,
+        0.0
+      ]
+    ]
+  },
+  "DVScameraParams": {
+    "ImageSize": [
+      [
+        720.0,
+        1280.0
+      ]
+    ],
+    "IntrinsicMatrix": [
+      [
+        3292.3409766721,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        3296.0602775577345,
+        0.0
+      ],
+      [
+        637.237256681437,
+        353.57654928002603,
+        1.0
+      ]
+    ],
+    "RadialDistortion": [
+      [
+        -0.06901204084138439,
+        1.4863417316552858
+      ]
+    ],
+    "TangentialDistortion": [
+      [
+        0.0,
+        0.0
+      ]
+    ]
+  },
+  "decoder": "mat-io",
+  "decoder_version": "1.0.1",
+  "extrinsics_present": false,
+  "schema": "fcwd_published_intrinsics_v1",
+  "source_name": "calibParams.mat",
+  "source_sha256": "8e16b2261749915b046664b2b544ad6fad23595d1c698e4470ecc630889944e4",
+  "source_url": "https://nail-hnu.github.io/EventAidedTTC/"
+}

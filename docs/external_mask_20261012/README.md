@@ -1,5 +1,16 @@
 # Dev32 y costes: contrato nativo de la máscara del productor
 
+Actualización tras reanudar: PROFILE_ROUTES está COMPLETE y Dev32 vuelve a
+guardar predicciones. La comprobación `RESUME_VERIFICATION.json` del 12 de
+octubre confirma igualdad SHA-256 de los 1.412 archivos protegidos, cero updates
+y costes completos. Las latencias se obtuvieron mientras V14 seguía trabajando
+en CPU; no representan un host aislado.
+
+La petición posterior de construir una transformación RGB para FCWD se resuelve
+en `docs/fcwd_rgb_registration_20261012/README.md`: ruta exploratoria adicional
+con intrínsecos publicados y registro local, sin sustituir el contrato histórico
+que exige una calibración oficial.
+
 El 11 de octubre, después de completar los doce entrenamientos y la evaluación V,
 Dev32 y PROFILE_ROUTES fallaron con `producer known mask differs from support clock`.
 El productor emite `known[B]` para la predicción TTC actual, mientras que el soporte

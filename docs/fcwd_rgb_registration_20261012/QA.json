@@ -1,0 +1,11 @@
+{
+  "causal": true,
+  "fixed_roi_all_frames": true,
+  "junit_sha256": "87117e7d8dcdeac1897129523b0b6f99342b8ba0a8569cf50214d6f5b9fbee35",
+  "optimizer_updates": 0,
+  "pyright_errors": 0,
+  "pyright_warnings": 0,
+  "real_histories_checked": 3,
+  "ruff": "PASSED",
+  "tests_passed": 26
+}

@@ -1,0 +1,74 @@
+[
+  {
+    "query_id": "FCWD3:0179",
+    "n_observations": 5,
+    "anchors": [
+      13913757,
+      14013853,
+      14113958,
+      14214053,
+      14314149
+    ],
+    "rgb_shape": [
+      3,
+      3,
+      128,
+      128
+    ],
+    "fixed_roi_all_frames": true,
+    "causal": true,
+    "ncc": 0.256491482257843,
+    "shift_px": [
+      -23,
+      -62
+    ]
+  },
+  {
+    "query_id": "FCWD3:0183",
+    "n_observations": 5,
+    "anchors": [
+      14113958,
+      14214053,
+      14314149,
+      14414254,
+      14514350
+    ],
+    "rgb_shape": [
+      3,
+      3,
+      128,
+      128
+    ],
+    "fixed_roi_all_frames": true,
+    "causal": true,
+    "ncc": 0.2824147045612335,
+    "shift_px": [
+      -22,
+      -71
+    ]
+  },
+  {
+    "query_id": "FCWD2:0003",
+    "n_observations": 5,
+    "anchors": [
+      4054006,
+      4154102,
+      4254207,
+      4354302,
+      4454398
+    ],
+    "rgb_shape": [
+      3,
+      3,
+      128,
+      128
+    ],
+    "fixed_roi_all_frames": true,
+    "causal": true,
+    "ncc": 0.314850777387619,
+    "shift_px": [
+      -23,
+      -6
+    ]
+  }
+]

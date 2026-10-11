@@ -88,6 +88,34 @@ Limitaciones: paralaje dependiente de profundidad, oclusiones, movimiento durant
 GT, cajas de objeto proporcionadas por el dataset y adaptación sobre entradas
 del dominio destino. No afirmar equivalencia con extrínsecos oficiales ni SOTA.
 
+## Campaña completa iniciada
+
+El registro de las **630 consultas** terminó: **495 aceptadas y 135 rechazadas**
+por correlación débil o inconsistencia entre mitades. Por secuencia:
+
+| Secuencia | RGB aceptado | Total |
+|---|---:|---:|
+| FCWD1 | 164 | 214 |
+| FCWD2 | 173 | 218 |
+| FCWD3 | 158 | 198 |
+
+`REGISTRATION_SEALED.json` recoge cobertura y hashes de los 630 recibos.
+`PUBLISHED_INTRINSICS.json` contiene los intrínsecos extraídos.
+`REAL_INPUT_HISTORY_QA.json` verifica historias reales en tres consultas, incluidos
+casos próximos y de confianza baja: cinco observaciones con tripletas causales,
+ROI idéntica durante la historia y tensores `[3,3,128,128]`.
+
+La inferencia CUDA ha producido y guardado resultados reales tanto para RGB
+registrado como para fallback de eventos. `REAL_INFERENCE_QA.json` conserva un
+ejemplo de cada ruta y comprueba salidas finitas y fallback exacto. **La inferencia
+completa y sus métricas todavía estaban en ejecución al publicar esta nota.**
+No se han usado esas salidas para ajustar el registro.
+
+El estado vivo está en `campaign/STATE.json`; los fragmentos permiten reanudar.
+El resultado final se escribirá en `campaign/predictions/RESULT.json`, después
+de sellar las 630 predicciones. No confundir `REGISTRATION_SEALED.json` con una
+evaluación TTC terminada.
+
 ## Ejecución y trazabilidad
 
 Raíz de código: repositorio `e-jepa-ttc-v13-rgb-port`.
