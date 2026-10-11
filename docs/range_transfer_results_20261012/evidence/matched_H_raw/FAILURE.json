@@ -1,0 +1,5 @@
+{
+  "message": "producer known mask differs from support clock",
+  "optimizer_updates": 0,
+  "type": "ValueError"
+}

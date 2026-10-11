@@ -298,3 +298,25 @@ centradas en productores/regresiones (134 casos únicos). Ruff y Pyright pasan.
 Restauración exacta de ambos checkpoints y paridad CPU de pérdida/componentes/
 gradientes event contra el código archivado: PASS. Resultado:
 `artifacts/rgb_port_20261008/audit_fixes_20261009/RESULT.json`.
+
+## 2026-10-12: cierre y publicación V14 RANGE-TRANSFER
+
+Se ejecutaron seis cabezas M0/M1/M2 x L0/L1, seed7, 2500 updates por fit,
+con padres matched finales y caché H admitida. Los seis endpoints quedaron
+congelados antes de evaluar las 16432 consultas V. Ninguna receta cumple
+los gates: NO_CANDIDATE. No se ejecutan réplicas ni transferencia nueva.
+Contabilidad: 15000 científicos + 20 técnicos, cero recuperación.
+
+Los [informes detallados](range_transfer_results_20261012/README.md) contienen
+metodología, atribución H/V12, tablas por banda/grupo/subrango, bootstrap,
+fallos, coste con scope, pruebas y comandos de reproducción. El generador
+scripts/build_range_transfer_reports.py verifica y reconstruye la entrega
+sin entrenamiento. Las fuentes científicas ejecutadas conservan sus hashes.
+
+La petición del usuario del 12 de octubre autoriza publicar esta rama V14,
+tras la prohibición de push del encargo anterior. No autoriza merge ni ampliar
+experimentos. V13 y sus admisiones no se modifican.
+
+Validación local: 41 tests y 17 subtests aprobados; Ruff, formato y Pyright
+sobre la integración y el generador. La copia histórica del handoff se excluye
+del formateo para conservar los hashes del paquete recibido.

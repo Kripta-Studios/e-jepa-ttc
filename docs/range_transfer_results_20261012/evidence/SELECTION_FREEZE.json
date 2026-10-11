@@ -1,0 +1,104 @@
+{
+  "candidate": null,
+  "candidate_recipe": null,
+  "gates": {
+    "RT-M0-L1-S7": {
+      "checks": {
+        "aggregate": true,
+        "coverage": true,
+        "crucial_10pct": false,
+        "crucial_groups_60pct": true,
+        "crucial_over_p95": true,
+        "false_alert": true,
+        "large": false,
+        "late_warning": false,
+        "mae": true,
+        "negative": true,
+        "sign": true,
+        "small": true
+      },
+      "eligible": false,
+      "limited_denominators": [],
+      "status": "FAILED_GATES"
+    },
+    "RT-M1-L0-S7": {
+      "checks": {
+        "aggregate": true,
+        "coverage": true,
+        "crucial_10pct": true,
+        "crucial_groups_60pct": true,
+        "crucial_over_p95": true,
+        "false_alert": true,
+        "large": false,
+        "late_warning": true,
+        "mae": false,
+        "negative": false,
+        "sign": false,
+        "small": false
+      },
+      "eligible": false,
+      "limited_denominators": [],
+      "status": "FAILED_GATES"
+    },
+    "RT-M1-L1-S7": {
+      "checks": {
+        "aggregate": true,
+        "coverage": true,
+        "crucial_10pct": true,
+        "crucial_groups_60pct": true,
+        "crucial_over_p95": true,
+        "false_alert": true,
+        "large": false,
+        "late_warning": true,
+        "mae": true,
+        "negative": false,
+        "sign": true,
+        "small": false
+      },
+      "eligible": false,
+      "limited_denominators": [],
+      "status": "FAILED_GATES"
+    },
+    "RT-M2-L0-S7": {
+      "checks": {
+        "aggregate": true,
+        "coverage": true,
+        "crucial_10pct": true,
+        "crucial_groups_60pct": true,
+        "crucial_over_p95": true,
+        "false_alert": true,
+        "large": false,
+        "late_warning": true,
+        "mae": false,
+        "negative": false,
+        "sign": false,
+        "small": false
+      },
+      "eligible": false,
+      "limited_denominators": [],
+      "status": "FAILED_GATES"
+    },
+    "RT-M2-L1-S7": {
+      "checks": {
+        "aggregate": true,
+        "coverage": true,
+        "crucial_10pct": true,
+        "crucial_groups_60pct": true,
+        "crucial_over_p95": true,
+        "false_alert": true,
+        "large": false,
+        "late_warning": true,
+        "mae": true,
+        "negative": false,
+        "sign": true,
+        "small": false
+      },
+      "eligible": false,
+      "limited_denominators": [],
+      "status": "FAILED_GATES"
+    }
+  },
+  "selection_source": "V_ONLY",
+  "status": "NO_CANDIDATE",
+  "transfer_used_for_selection": false
+}

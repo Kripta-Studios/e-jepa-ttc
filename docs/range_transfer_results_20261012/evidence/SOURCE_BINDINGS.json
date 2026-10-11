@@ -1,0 +1,39 @@
+{
+  "owner_current_head": "c82db176fb09b70ec45154e7ebdb043e3a0b9d0d",
+  "owner_run": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008",
+  "policy_sha256": "cae33af3e4ee23019740f5442732a1cb7d003d845e88284af68fcc722553d31c",
+  "readmenow_sha256": {
+    "readmenow.txt": "84462b9aece63910dd1d51fe94875aebbf7c12a63fd6457db9629e599ccdd6d1"
+  },
+  "runner_sources": {
+    "operational/range_transfer/__init__.py": "0f769a98f321e67252478ac4caea1206fbef169f7174870520f7c70912161550",
+    "operational/range_transfer/admission.py": "9e7be20d604c689651e22ed6c84d9a39f7dc72cb8f6ade3f304dd4a2909eb2cf",
+    "operational/range_transfer/analyze.py": "5871f8145d0e8b736c087a9e676e075e3c69ded459cae866eb235dd6ad9bd214",
+    "operational/range_transfer/cache.py": "d24d5359ff2b0793c6dc074946e3c0e74e6dac1f5b5554f1d6f8e8d4a9036eda",
+    "operational/range_transfer/cached_traces.py": "4e93bc20d2bea8925fe4acf980cf11653c3c31cd2974321a7f6595b305e61c77",
+    "operational/range_transfer/common.py": "80f7a1b1c1844c1a8d179f5b2d14d4fc0cd3155082c26492fd6067e682c62683",
+    "operational/range_transfer/controls.py": "29eaa50aabf2608453c615806b194366321f1bac3a18286db229725f837e62a0",
+    "operational/range_transfer/diagnose.py": "c336f8324fb2fbc037ca43fd9a144cd3aa5ef007b85a137079ac733a2d0f1290",
+    "operational/range_transfer/figures.py": "c9b01783241ba2c693c16441868014fd6caa3babc8c900fe9ff50c51b5264ea1",
+    "operational/range_transfer/ledger.py": "27a9edef36b8e53483d931154eb6faeacaf942bb5b86be8ecf3043defc70e2c6",
+    "operational/range_transfer/qa.py": "151ad5ef364b28c1f690c51e38ee9a9bb0556a345e724157c15790f5ac89da2d",
+    "operational/range_transfer/raw_traces.py": "d5549e215d0441ee2d34f566cfa13680510c73b14187a045f990fbb41ed1a976",
+    "operational/range_transfer/report.py": "0a99783d7ccd8632dbfb101c28fe9a63c3fd18a3ae5b9b85e79cf129087c51ae",
+    "operational/range_transfer/run.py": "939fd8532aa054f5be922122a847185c9f59b145655bf28cc6ae37ab7eef6f1f",
+    "operational/range_transfer/train_heads.py": "f3c0f72ed995f2894c456ce410f5cb7ba6d4b46a5ddfcda05b3e55ab69b61131",
+    "operational/rgb_port/accounting.py": "a15d1a041b0e68664284d4062fc97bf1e233d310e883a757dc6ba2de7c76eb19",
+    "operational/rgb_port/evaluate.py": "9ba168380ac8432429b0585b49cc3ec5f5511ee7a019189ed8adbf02a2da86c8",
+    "operational/rgb_port/train_heads.py": "e744ecc1d8cd4fb3676af16904051b51784a16ee1340cb50fbb3aee0447c0060",
+    "operational/rgb_port/train_producers.py": "0fad9b57fd529489b55e9313fbe938fd0b84481cd3877cf5dab7f9b918544757",
+    "scripts/Resume-RangeTransfer.ps1": "fd3d113962eff170006b21b22eb7de8fe5d6cec8b4d26ae6006d3bcbd761067d",
+    "scripts/range_transfer_v12_trace.py": "2e0004ce4e0412b10ff8bb89b2e3937a4f28727fc4b3662b234c16250584235f",
+    "src/e_jepa_ttc/range_transfer/__init__.py": "3476fdac0938d78dfefa7d2b12966a346f6354577251ea53c48f49a7917ea4fe",
+    "src/e_jepa_ttc/range_transfer/mass.py": "db4d3548e4dce78ad341e762c2e443233724bac17714b96a44ba20e1abf69b4d",
+    "src/e_jepa_ttc/range_transfer/objective.py": "9914b07bacd71ddd854cfe4ad62190bfc06fb88f32d7b2183670b692d95d4a80",
+    "src/e_jepa_ttc/simplex_t/model.py": "4c26ad5ecf9e83541e29d748d4eace4e457fbeda28ff61bd30a1b954bb44d8dd",
+    "src/e_jepa_ttc/simplex_t/phase.py": "7ee447190ef7b218d0f6c6cf5110a1522c201049749a98b4395eeafefe853cde"
+  },
+  "v12_commit": "1a686e338a1145c6794bec0704bdae4cda95f06d",
+  "v12_root": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v12-efficient-context",
+  "v13_audited_base": "da068ebdeb2d967ee10b2afa348e1317b8720ad0"
+}

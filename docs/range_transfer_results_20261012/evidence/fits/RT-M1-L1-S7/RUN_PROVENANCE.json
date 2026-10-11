@@ -1,0 +1,16 @@
+{
+  "checkpoint_sha256": "5ca79e22431ec20b37bef5cf900300470701a4c1fb31ad8ba054d18f0cd1d7da",
+  "device": "cpu",
+  "draw_sequence_sha256": "724c07d39faa2fa57963ef12423c762bebd469da87e933b6038fd8ab65a8e9a9",
+  "elapsed_fit_s": 259.26134380017174,
+  "fit_id": "RT-M1-L1-S7",
+  "host": "DESKTOP-2N393IP",
+  "identity_sha256": "f12007be28648238c622dd3be38f6395c54683300a46443e92edab6316428845",
+  "precision": "float32",
+  "python": "3.11.15",
+  "scope": "H_head_fit",
+  "seed": 7,
+  "status": "COMPLETE",
+  "torch": "2.11.0+cu128",
+  "updated_utc": "2026-10-11T22:03:16.260068+00:00"
+}

@@ -1,0 +1,70 @@
+{
+  "V_labels_opened": false,
+  "roles": {
+    "H": {
+      "groups": [
+        "2JkLL5W891",
+        "34K84TaN11",
+        "CzyQ8HKP6X",
+        "JaGC4Q9pgU",
+        "L36QTEoVkB",
+        "mHGFBekt7X",
+        "pBqGOb2vYq",
+        "qGsgzl4Q8B"
+      ],
+      "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\H_MANIFEST.json",
+      "rows": 18422,
+      "sha256": "ac26288c11583d859166737feb53491167f2f1d908b309fe555220cb9ee27a92",
+      "split_assignment_sha256": "dcdd5de9d159f3a3bd5b7dd140ae325d7e96e9e8ce1fedfe9486a1d0b4e79ca0"
+    },
+    "P": {
+      "groups": [
+        "2Y46OkK3ff",
+        "6WCDpro5rE",
+        "8SdieOgbva",
+        "8mNnrXjpVB",
+        "9ITOs4twfk",
+        "A1Nhv0KtmL",
+        "ClXqVoZOFu",
+        "DGqicHUGWb",
+        "EllUE6bwVp",
+        "EuFGqTcqIz",
+        "GjMYZjmSQb",
+        "LMHPShQkaU",
+        "OBneIVg4Cw",
+        "OYgB6RGWcq",
+        "Po6ePjWYAz",
+        "VLA3oBKFyX",
+        "eX8t2nGd6O",
+        "nRcwUlHyAd",
+        "pakWgyPNTL",
+        "q2k6O0X6JY",
+        "qoohcdtLDH",
+        "vWp9XNYQ9V",
+        "wE9MZUmiJP",
+        "xkiVthsGwf"
+      ],
+      "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\P_MANIFEST.json",
+      "rows": 53890,
+      "sha256": "6f22b070c53c96aa851d90ae2c6836b604e8280965f4887ba6ef3a0cd6d3727c",
+      "split_assignment_sha256": "dcdd5de9d159f3a3bd5b7dd140ae325d7e96e9e8ce1fedfe9486a1d0b4e79ca0"
+    },
+    "V": {
+      "groups": [
+        "2cyv0Oedzg",
+        "5ilM1PX2vz",
+        "6h5yRW2LGc",
+        "WbCh1DRerJ",
+        "Z30i8WuL2N",
+        "pzJcg1OCfc",
+        "rhYxPcU29n",
+        "t79dBxj1WS"
+      ],
+      "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\V_MANIFEST.json",
+      "rows": 16432,
+      "sha256": "f73aaab45d868fcab406f8d90aea65dc97c7bd702647677e7cc77b0781f9d720",
+      "split_assignment_sha256": "dcdd5de9d159f3a3bd5b7dd140ae325d7e96e9e8ce1fedfe9486a1d0b4e79ca0"
+    }
+  },
+  "status": "DISJOINT"
+}

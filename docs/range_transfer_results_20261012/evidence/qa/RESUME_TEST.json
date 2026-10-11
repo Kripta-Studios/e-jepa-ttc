@@ -1,0 +1,22 @@
+{
+  "checkpoints": {
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v14-range-transfer\\artifacts\\range_transfer_20261010\\qa\\continuous10\\checkpoint_last.pt": "8cb142a7186654f1309e8b1a827d87f29cc935b13eeca84ff52ff30d0e1c7ebd",
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v14-range-transfer\\artifacts\\range_transfer_20261010\\qa\\split5_restore5\\checkpoint_last.pt": "48bba06aa0bbd1598ac514c4970bc38ba548f776e605589fd3b3a324a0af8b63"
+  },
+  "checks": {
+    "accumulation_index": true,
+    "completed_updates": true,
+    "draws": true,
+    "losses": true,
+    "model_state_dict": true,
+    "numpy_random_state": true,
+    "optimizer_state_dict": true,
+    "python_random_state": true,
+    "sampler_generator_state": true,
+    "scheduler_state_dict": true,
+    "torch_rng_state": true
+  },
+  "optimizer_updates": 20,
+  "scope": "CPU_FP32_GRU160_batch128_synthetic_only_no_scientific_result",
+  "status": "PASS"
+}

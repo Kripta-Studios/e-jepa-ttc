@@ -1,5 +1,12 @@
 # E-JEPA-TTC
 
+> Actualización V14 del 12 de octubre de 2026:
+> [informes RANGE-TRANSFER y resultados](docs/range_transfer_results_20261012/README.md).
+> Seis fits event-only completos y evaluación interna V: **NO_CANDIDATE**.
+> Las mejoras de TTC corto incumplen salvaguardas de otros rangos; no hay réplicas
+> ni transferencia nueva. Se conservan pesos, predicciones, diagnósticos y fallos.
+> V13 permanece intacto. Los estados fechados debajo son históricos.
+
 > Actualización del 8 de octubre de 2026:
 > [informes del 4–8 de octubre](docs/research_review_20261004_08/README.md), con
 > TRAIN40 completo, comparación EvTTC congelada frente a Garl event-only y

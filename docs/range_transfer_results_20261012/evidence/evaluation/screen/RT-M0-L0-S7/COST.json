@@ -1,0 +1,6 @@
+{
+  "raw_E2E": false,
+  "rows": 16432,
+  "scope": "CPU_cached_head_forward_batch128_including_output_conversion",
+  "seconds": 2.465301299991552
+}

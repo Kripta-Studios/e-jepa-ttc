@@ -1,0 +1,22 @@
+{
+  "dependencies": [
+    {
+      "adapter_source": "src/e_jepa_ttc/rgb_port/features.py:137",
+      "error": "producer known mask differs from support clock",
+      "evidence": "matched_H_raw/FAILURE.json; matched_H_raw_adapted/RESULT.json",
+      "observed_known_shape": [
+        1
+      ],
+      "observed_support_shape": [
+        1,
+        3
+      ],
+      "producer_source": "src/e_jepa_ttc/models/causal_scale_ttc.py:1200",
+      "resolution": "qa/matched_pair_adapter.py validates current-query known and retains exact native pair133",
+      "scientific_updates_required": 0,
+      "scope": "native_V13_adapter_only_V14_H_diagnostics_resolved_with_separate_adapter",
+      "status": "RESOLVED_FOR_V14_H_DIAGNOSTICS_NATIVE_V13_UNCHANGED",
+      "v13_changed": false
+    }
+  ]
+}

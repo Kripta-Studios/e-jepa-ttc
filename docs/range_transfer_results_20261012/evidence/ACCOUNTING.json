@@ -1,0 +1,98 @@
+{
+  "caps": {
+    "physical": 30000,
+    "recovery": 4500,
+    "scientific": 25000,
+    "technical": 500
+  },
+  "durable": 15020,
+  "fits": [
+    {
+      "completed_updates": 2500,
+      "durable_updates": 2500,
+      "fit": "RT-M0-L0-S7",
+      "identity_sha256": "daa40bb0b5833c2e8da6a5e87a43c5cf5f5e86b4a85afe1958b11e33962e7784",
+      "kind": "scientific",
+      "pending_update_upper": 0,
+      "recovery_upper": 0,
+      "schema": "rgb_port_update_journal_v1"
+    },
+    {
+      "completed_updates": 2500,
+      "durable_updates": 2500,
+      "fit": "RT-M0-L1-S7",
+      "identity_sha256": "c323a5600e3d3800d1acdf3dde7ea340e9193b7ba76bbcde7e308fb4057cdc8b",
+      "kind": "scientific",
+      "pending_update_upper": 0,
+      "recovery_upper": 0,
+      "schema": "rgb_port_update_journal_v1"
+    },
+    {
+      "completed_updates": 2500,
+      "durable_updates": 2500,
+      "fit": "RT-M1-L0-S7",
+      "identity_sha256": "63ffd8bd2e4a1456b6c54c5b74d8dc06e5c68c2f2ce5668c318eb24249f443af",
+      "kind": "scientific",
+      "pending_update_upper": 0,
+      "recovery_upper": 0,
+      "schema": "rgb_port_update_journal_v1"
+    },
+    {
+      "completed_updates": 2500,
+      "durable_updates": 2500,
+      "fit": "RT-M1-L1-S7",
+      "identity_sha256": "f12007be28648238c622dd3be38f6395c54683300a46443e92edab6316428845",
+      "kind": "scientific",
+      "pending_update_upper": 0,
+      "recovery_upper": 0,
+      "schema": "rgb_port_update_journal_v1"
+    },
+    {
+      "completed_updates": 2500,
+      "durable_updates": 2500,
+      "fit": "RT-M2-L0-S7",
+      "identity_sha256": "99195eb18a6b96b0a356cabc4c716ca994f7178e73be3e8f13426bd0f196ba0a",
+      "kind": "scientific",
+      "pending_update_upper": 0,
+      "recovery_upper": 0,
+      "schema": "rgb_port_update_journal_v1"
+    },
+    {
+      "completed_updates": 2500,
+      "durable_updates": 2500,
+      "fit": "RT-M2-L1-S7",
+      "identity_sha256": "5ff2fd71353110213aca8ab341a2164917f3b1c9531d73cde0ae86351bcaf9b8",
+      "kind": "scientific",
+      "pending_update_upper": 0,
+      "recovery_upper": 0,
+      "schema": "rgb_port_update_journal_v1"
+    },
+    {
+      "completed_updates": 10,
+      "durable_updates": 10,
+      "fit": "continuous10",
+      "identity_sha256": "0447d1ee9c06445f4c082ee64f01435be61dea2a2b248135fb2d551c13db316b",
+      "kind": "technical",
+      "pending_update_upper": 0,
+      "recovery_upper": 0,
+      "schema": "rgb_port_update_journal_v1"
+    },
+    {
+      "completed_updates": 10,
+      "durable_updates": 10,
+      "fit": "split5_restore5",
+      "identity_sha256": "e98362127d9c39d6538b5fc633a20e30704867df69dcddad71417ed9e45029fb",
+      "kind": "technical",
+      "pending_update_upper": 0,
+      "recovery_upper": 0,
+      "schema": "rgb_port_update_journal_v1"
+    }
+  ],
+  "pending_upper": 0,
+  "physical_upper": 15020,
+  "recovery_upper": 0,
+  "savings_reassigned": false,
+  "schema": "range_transfer_accounting_v1",
+  "scientific": 15000,
+  "technical": 20
+}

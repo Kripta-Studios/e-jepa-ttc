@@ -1,0 +1,20 @@
+{
+  "candidate": null,
+  "diagnostic_dependencies": "DIAGNOSTIC_DEPENDENCIES.json",
+  "phases": {
+    "N0": "COMPLETE",
+    "N1": "COMPLETE_WITH_SEPARATE_V14_NATIVE_QUERY_KNOWN_DIAGNOSTIC_ADAPTER",
+    "N2": "COMPLETE",
+    "REPLICATION": "NOT_RUN_NO_ELIGIBLE_CANDIDATE",
+    "REPORT": "COMPLETE",
+    "SCREEN": "COMPLETE_SIX_ENDPOINTS_FROZEN_THEN_V_EVALUATED",
+    "TRANSFER": "NOT_RUN_NO_ELIGIBLE_CANDIDATE"
+  },
+  "resume_command": "& pwsh -NoProfile -File scripts/Resume-RangeTransfer.ps1",
+  "savings_reassigned": false,
+  "scientific_queue_closed": true,
+  "status": "NO_CANDIDATE",
+  "transfer_is_fresh_test": false,
+  "utc": "2026-10-11T22:09:55.815192+00:00",
+  "v13_promoted_or_modified": false
+}

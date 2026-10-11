@@ -1,0 +1,12 @@
+{
+  "scope": "global_repository_lint_publication_check",
+  "ruff_errors": 1780,
+  "format_files_would_change": 370,
+  "offending_files": 188,
+  "all_offending_files_tracked_before_v14": true,
+  "offending_files_modified_by_this_delivery": [],
+  "targeted_v14_ruff": "PASS",
+  "targeted_v14_pyright": "PASS",
+  "scientific_code_modified": false,
+  "global_ci_claim": "NOT_CLAIMED_PASS"
+}

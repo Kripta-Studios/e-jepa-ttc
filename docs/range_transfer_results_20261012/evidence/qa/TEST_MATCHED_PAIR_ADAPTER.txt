@@ -1,0 +1,1 @@
+PASS: native query known semantics, exact 133 features, no fabricated clock, zero updates

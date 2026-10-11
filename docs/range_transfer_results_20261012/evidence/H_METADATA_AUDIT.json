@@ -1,0 +1,17 @@
+{
+  "available_rows": 18422,
+  "episode_definition": "track_id runs separated by >1 second; not independent scenes",
+  "expected_draws_per_row": 17.370535229616763,
+  "groups": 8,
+  "max_draws_per_row": 36,
+  "native_final_cache_audited": false,
+  "native_mass_sum": 0.9999999999999999,
+  "optimizer_updates": 0,
+  "rows": 18422,
+  "rows_path": "E:\\E_JEPA_TTC_RGB_PORT\\metadata\\H_ROWS.parquet",
+  "rows_sha256": "137420177757b802abd66b9077cb50ef0a37d8d55951dbcb8582d316d1ee60a1",
+  "schedule_sha256": "a88162a56e9c82f7eb634abe60492f245a16d39eeef9b1a77597a3c06cadf76b",
+  "status": "METADATA_COMPLETE_FEATURE_GRADIENTS_PENDING",
+  "unavailable_rows_retained": 0,
+  "unique_sampled_rows": 18422
+}
