@@ -1,0 +1,11 @@
+{
+  "campaign_root": "E:\\EJEPA_results\\fcwd_rgb_calibration_20261012\\campaign",
+  "labelled_queries": 597,
+  "official_calibration_claim": false,
+  "optimizer_updates": 0,
+  "population": 630,
+  "registration_accepted": 495,
+  "result_sha256": "2729abd590b6707de2d2b744332f9d299a6656867f977cd57515f8c856a87255",
+  "scope": "exploratory_local_RGB_registration_separate_from_original_calibration_contract",
+  "status": "COMPLETE"
+}

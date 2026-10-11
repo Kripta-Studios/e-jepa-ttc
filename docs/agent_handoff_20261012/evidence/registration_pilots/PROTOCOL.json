@@ -1,0 +1,21 @@
+{
+  "fit_sequences": [
+    1,
+    2
+  ],
+  "holdout_sequences": [
+    3
+  ],
+  "frame_fractions": [
+    0.2,
+    0.35,
+    0.5,
+    0.65,
+    0.8,
+    0.9
+  ],
+  "event_window_us": 20000,
+  "targets_read": false,
+  "model": "undistort + global affine residual over intrinsic projection",
+  "acceptance": "holdout median <= 4 event pixels and p90 <= 12; improvement over intrinsic baseline >= 10%; all frames reported"
+}

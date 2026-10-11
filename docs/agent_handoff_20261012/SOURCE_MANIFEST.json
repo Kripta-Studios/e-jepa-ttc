@@ -1,0 +1,153 @@
+{
+  "schema": "handoff_source_inventory_v1",
+  "date": "2026-10-12",
+  "v12_commit": "1a686e338a1145c6794bec0704bdae4cda95f06d",
+  "v13_evidence_commit": "133002a81454982bcf801f94dc99441c13ec1f22",
+  "files": [
+    {
+      "path": "docs/agent_handoff_20261012/evidence/FCWD_ESTIMATED_REGISTRATION_CAMPAIGN.json",
+      "bytes": 433,
+      "sha256": "1e39420f0bd917577ebe0135145536093621dea9c4a096583b5840d4e0f0ee87"
+    },
+    {
+      "path": "docs/agent_handoff_20261012/evidence/HEADS_V_ROUND_FREEZE.json",
+      "bytes": 4861,
+      "sha256": "f19468bbc67d3587198c1c37bd0c5d5067080909ef9aab3b4f631c3d948e8fe2"
+    },
+    {
+      "path": "docs/agent_handoff_20261012/evidence/PRODUCERS_PAIR_ENDPOINT_FREEZE.json",
+      "bytes": 4845,
+      "sha256": "558134b9b6d90a464048ee2323b90d845d1dad4d7fc1becc3c2b94602c6da42c"
+    },
+    {
+      "path": "docs/agent_handoff_20261012/evidence/registration_pilots/FIT_FROZEN.json",
+      "bytes": 3429,
+      "sha256": "97d23bd84bf8cb1801a23a160f2df5f059763a762fd07ce7bad09d7c9608b2f1"
+    },
+    {
+      "path": "docs/agent_handoff_20261012/evidence/registration_pilots/PILOT_RESULT.json",
+      "bytes": 5110,
+      "sha256": "c0a3938be35f823e1710d95606c64e2820f4f7d208d43b0a03e3935b80b2b8e4"
+    },
+    {
+      "path": "docs/agent_handoff_20261012/evidence/registration_pilots/PROTOCOL.json",
+      "bytes": 439,
+      "sha256": "d1f1296e5cc2c14665b417f9bee445d512c346e1c5afdadd8d93b3146e71c8fb"
+    },
+    {
+      "path": "docs/agent_handoff_20261012/evidence/ROUTE_COSTS.json",
+      "bytes": 31476,
+      "sha256": "6aece8c22337a5d817276f599cd5442008e08d270c15b7ac80249506f51c73ba"
+    },
+    {
+      "path": "docs/agent_handoff_20261012/evidence/TASK_STATUS.json",
+      "bytes": 5191,
+      "sha256": "f62828dd999e735b04dec9b455a1661e8fdc8fdee803cce2dc2c41fe6f27a5c3"
+    },
+    {
+      "path": "docs/agent_handoff_20261012/evidence/V12_TEST12_CAMPAIGN_STATUS.json",
+      "bytes": 583,
+      "sha256": "c819babb61eabf47b8c5669559eaecc54750d9e9923fdd0a171a2f14a61aab74"
+    },
+    {
+      "path": "docs/agent_handoff_20261012/evidence/V12_TRAIN40_METRICS.csv",
+      "bytes": 1546,
+      "sha256": "21bcbb2ee2e8b8389002e5db95aee41defe4bb664694a49908dc1ab05f900ab6"
+    },
+    {
+      "path": "docs/agent_handoff_20261012/evidence/V_RESULTS.json",
+      "bytes": 35847,
+      "sha256": "d310097d0327497aa120561be5ae33227e8b6def0de49662441d7af471507318"
+    },
+    {
+      "path": "docs/dev32_transfer_20261012/COMPLETION.json",
+      "bytes": 1944,
+      "sha256": "70886193282dd63a0a415122a1e89d4ddc1235c7b8983431d331fe0060bcd194"
+    },
+    {
+      "path": "docs/dev32_transfer_20261012/DIAGNOSTICS.json",
+      "bytes": 388307,
+      "sha256": "b4a1dfaf079c16270512b608a1808116fcafc36bb7d7bc8882dc2789c3e1beea"
+    },
+    {
+      "path": "docs/dev32_transfer_20261012/QUEUE_RECOVERY.json",
+      "bytes": 385,
+      "sha256": "139239b1d05a863aee3035806ce5b1358812eca6a64d2ef1892d4d6a30cd0539"
+    },
+    {
+      "path": "docs/dev32_transfer_20261012/SCORED_PREDICTIONS.csv",
+      "bytes": 296371,
+      "sha256": "456541246081bc7578f39836f333010fc2d710fcd0ac600edc9216f8285d8621"
+    },
+    {
+      "path": "docs/external_mask_20261012/COST_SUMMARY.json",
+      "bytes": 5235,
+      "sha256": "931c9ce52f0a0ef977cd91ef82cf4dfdc3e29d361b424223cde893236cd0d0d9"
+    },
+    {
+      "path": "docs/fcwd_rgb_registration_20261012/COMPLETION.json",
+      "bytes": 1943,
+      "sha256": "c41cdbef40a2ae4461a570d492dd8a9ca7dbad46a10aaf05e0375b4b848fd393"
+    },
+    {
+      "path": "docs/fcwd_rgb_registration_20261012/DIAGNOSTICS.json",
+      "bytes": 67598,
+      "sha256": "a952e468a770790b9955f418705260c955e8c4518eebaabb17606bfcc3b5b04a"
+    },
+    {
+      "path": "docs/fcwd_rgb_registration_20261012/FINAL_QA.json",
+      "bytes": 406,
+      "sha256": "04eb5bbb3a151378286ad846abe9812911945d352641d88478a683338871abb5"
+    },
+    {
+      "path": "docs/fcwd_rgb_registration_20261012/INDEPENDENT_METRIC_AUDIT.json",
+      "bytes": 4345,
+      "sha256": "100797788bf4511a150caaff2fbd52721fe00e1dd5b534037d5cf3f5283869d9"
+    },
+    {
+      "path": "docs/fcwd_rgb_registration_20261012/PUBLISHED_INTRINSICS.json",
+      "bytes": 1387,
+      "sha256": "067355de67a80cab5f0735ef8bdf9b1066f41a14890c8aefc14ba12c40f9e326"
+    },
+    {
+      "path": "docs/fcwd_rgb_registration_20261012/QA.json",
+      "bytes": 286,
+      "sha256": "6ef9e5e396c7eef2f2f6d1ecc4b1cdc35a571336c02ff8420f32e3c34616f0f0"
+    },
+    {
+      "path": "docs/fcwd_rgb_registration_20261012/REAL_INFERENCE_QA.json",
+      "bytes": 1386,
+      "sha256": "105e8c8170621fa39bd2f81577e83145573b77d04814c741f993265c92fd8dbb"
+    },
+    {
+      "path": "docs/fcwd_rgb_registration_20261012/REAL_INPUT_HISTORY_QA.json",
+      "bytes": 1153,
+      "sha256": "4f7af3187183fd92d823cc664cf22c54b781ceaea1173a562db79e631dae3342"
+    },
+    {
+      "path": "docs/fcwd_rgb_registration_20261012/REGISTRATION_SEALED.json",
+      "bytes": 58123,
+      "sha256": "1ef7fc7bbe8a1b1f694b9928e2916eb2842ec12c6da2d9dcc93571951a7348dc"
+    },
+    {
+      "path": "docs/fcwd_rgb_registration_20261012/SCORED_PREDICTIONS.csv",
+      "bytes": 168591,
+      "sha256": "e2a094317fe6dd31bf18d51466eff38f475911c0dde9a4e77486ff0bfd8ff126"
+    },
+    {
+      "path": "docs/fcwd_rgb_registration_20261012/SCORING_RECOVERY.json",
+      "bytes": 494,
+      "sha256": "6fd855f018ce567ee75a2cc102786c1cee9997b3174eed80c5a5ce183f6661b9"
+    },
+    {
+      "path": "docs/fcwd_rgb_registration_20261012/SUMMARY_COMPARISONS.json",
+      "bytes": 816,
+      "sha256": "ebe3750b680425827baa69d5ab3dee019a65929c2c7ad23b4f1f5194aff4dedd"
+    },
+    {
+      "path": "docs/fcwd_rgb_registration_20261012/VALIDATION60.json",
+      "bytes": 6382,
+      "sha256": "350922b75ef548648ae7992a075897214dea0685af4452c9644b0eb969b5899c"
+    }
+  ]
+}

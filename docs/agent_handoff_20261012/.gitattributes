@@ -1,0 +1,3 @@
+# Evidence preserves the original receipt bytes, including Windows line endings.
+evidence/** -text whitespace=cr-at-eol
+SOURCE_MANIFEST.json -text whitespace=cr-at-eol

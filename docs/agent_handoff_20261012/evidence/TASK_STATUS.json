@@ -1,0 +1,239 @@
+{
+  "observed_utc": "2026-10-11T23:37:09.573385+00:00",
+  "source_sha256": "44e31a9d895c68a83499528847ab5b5cf0769beeae61f3c1e00ec47aada21cc1",
+  "campaign_status": "TERMINAL_WITH_BLOCKERS",
+  "phases": {
+    "P0": {
+      "status": "COMPLETE"
+    },
+    "P1": {
+      "status": "COMPLETE",
+      "tasks": [
+        "P0_PREPARE",
+        "P_RGB_CACHE",
+        "RECOVERY_QA"
+      ]
+    },
+    "P2": {
+      "status": "COMPLETE",
+      "tasks": [
+        "E_A5_MATCHED",
+        "E_C2F_MATCHED",
+        "R_A5",
+        "R_C2F"
+      ]
+    },
+    "P3": {
+      "status": "COMPLETE",
+      "tasks": [
+        "E_PAIR_SOURCE",
+        "E_PAIR_CACHE",
+        "PAIR_E_MATCHED",
+        "R_PAIR_SOURCE",
+        "R_PAIR_CACHE",
+        "PAIR_R",
+        "H_E_RAW",
+        "H_E_OBS",
+        "E_NORMALIZER",
+        "H_E_HISTORY",
+        "H_R_RAW",
+        "H_R_OBS",
+        "R_NORMALIZER",
+        "H_R_HISTORY",
+        "H_FUSION",
+        "E_H1_MATCHED",
+        "E_CTX_MATCHED",
+        "R_H1",
+        "R_CTX",
+        "F_TRUE",
+        "F_ZERO"
+      ]
+    },
+    "P4": {
+      "status": "TERMINAL_WITH_BLOCKERS",
+      "tasks": [
+        "V_E_RAW",
+        "V_E_OBS",
+        "V_E_HISTORY",
+        "V_R_RAW",
+        "V_R_OBS",
+        "V_R_HISTORY",
+        "V_FUSION",
+        "V_PREDICTIONS",
+        "V_EVALUATION",
+        "PROFILE_ROUTES",
+        "DEV32_SCORE",
+        "DEV32_PREDICT",
+        "FCWD_RGB_STATUS",
+        "REPORT"
+      ]
+    }
+  },
+  "tasks": {
+    "DEV32_PREDICT": {
+      "status": "COMPLETE",
+      "completed_updates": 0
+    },
+    "DEV32_SCORE": {
+      "status": "COMPLETE",
+      "completed_updates": 0
+    },
+    "E_A5_MATCHED": {
+      "status": "COMPLETE",
+      "completed_updates": 30330
+    },
+    "E_C2F_MATCHED": {
+      "status": "COMPLETE",
+      "completed_updates": 30330
+    },
+    "E_CTX_MATCHED": {
+      "status": "COMPLETE",
+      "completed_updates": 2500
+    },
+    "E_H1_MATCHED": {
+      "status": "COMPLETE",
+      "completed_updates": 2500
+    },
+    "E_NORMALIZER": {
+      "status": "COMPLETE",
+      "completed_updates": 0
+    },
+    "E_PAIR_CACHE": {
+      "status": "COMPLETE",
+      "completed_updates": 0
+    },
+    "E_PAIR_SOURCE": {
+      "status": "COMPLETE",
+      "completed_updates": 0
+    },
+    "FCWD_RGB_STATUS": {
+      "status": "BLOCKED_EXTERNAL"
+    },
+    "F_TRUE": {
+      "status": "COMPLETE",
+      "completed_updates": 2500
+    },
+    "F_ZERO": {
+      "status": "COMPLETE",
+      "completed_updates": 2500
+    },
+    "H_E_HISTORY": {
+      "status": "COMPLETE",
+      "completed_updates": 0
+    },
+    "H_E_OBS": {
+      "status": "COMPLETE",
+      "completed_updates": 0
+    },
+    "H_E_RAW": {
+      "status": "COMPLETE",
+      "completed_updates": 0
+    },
+    "H_FUSION": {
+      "status": "COMPLETE",
+      "completed_updates": 0
+    },
+    "H_R_HISTORY": {
+      "status": "COMPLETE",
+      "completed_updates": 0
+    },
+    "H_R_OBS": {
+      "status": "COMPLETE",
+      "completed_updates": 0
+    },
+    "H_R_RAW": {
+      "status": "COMPLETE",
+      "completed_updates": 0
+    },
+    "P0_PREPARE": {
+      "status": "COMPLETE"
+    },
+    "PAIR_E_MATCHED": {
+      "status": "COMPLETE",
+      "completed_updates": 6840
+    },
+    "PAIR_R": {
+      "status": "COMPLETE",
+      "completed_updates": 6840
+    },
+    "PROFILE_ROUTES": {
+      "status": "COMPLETE",
+      "completed_updates": 0
+    },
+    "P_RGB_CACHE": {
+      "status": "COMPLETE",
+      "completed_updates": 0
+    },
+    "RECOVERY_QA": {
+      "status": "COMPLETE"
+    },
+    "REPORT": {
+      "status": "COMPLETE",
+      "completed_updates": 0
+    },
+    "R_A5": {
+      "status": "COMPLETE",
+      "completed_updates": 30330
+    },
+    "R_C2F": {
+      "status": "COMPLETE",
+      "completed_updates": 30330
+    },
+    "R_CTX": {
+      "status": "COMPLETE",
+      "completed_updates": 2500
+    },
+    "R_H1": {
+      "status": "COMPLETE",
+      "completed_updates": 2500
+    },
+    "R_NORMALIZER": {
+      "status": "COMPLETE",
+      "completed_updates": 0
+    },
+    "R_PAIR_CACHE": {
+      "status": "COMPLETE",
+      "completed_updates": 0
+    },
+    "R_PAIR_SOURCE": {
+      "status": "COMPLETE",
+      "completed_updates": 0
+    },
+    "V_EVALUATION": {
+      "status": "COMPLETE",
+      "completed_updates": 0
+    },
+    "V_E_HISTORY": {
+      "status": "COMPLETE",
+      "completed_updates": 0
+    },
+    "V_E_OBS": {
+      "status": "COMPLETE",
+      "completed_updates": 0
+    },
+    "V_E_RAW": {
+      "status": "COMPLETE",
+      "completed_updates": 0
+    },
+    "V_FUSION": {
+      "status": "COMPLETE",
+      "completed_updates": 0
+    },
+    "V_PREDICTIONS": {
+      "status": "COMPLETE",
+      "completed_updates": 0
+    },
+    "V_R_HISTORY": {
+      "status": "COMPLETE",
+      "completed_updates": 0
+    },
+    "V_R_OBS": {
+      "status": "COMPLETE",
+      "completed_updates": 0
+    },
+    "V_R_RAW": {
+      "status": "COMPLETE",
+      "completed_updates": 0
+    }
+  }
+}

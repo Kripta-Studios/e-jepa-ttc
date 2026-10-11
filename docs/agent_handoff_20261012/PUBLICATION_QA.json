@@ -1,0 +1,14 @@
+{
+  "status": "PASSED",
+  "scope": "new handoff documentation and reproduction scripts",
+  "markdown_documents": 9,
+  "relative_links_broken": 0,
+  "independent_scalar_metric_checks": 9471,
+  "source_files_verified": 29,
+  "ruff": "PASSED",
+  "pyright_errors": 0,
+  "pyright_warnings": 0,
+  "optimizer_updates": 0,
+  "new_inferences": 0,
+  "bundle_verification": "recorded in the external ZIP receipt after commit"
+}

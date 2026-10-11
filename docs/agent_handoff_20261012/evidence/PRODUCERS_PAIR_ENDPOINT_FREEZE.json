@@ -1,0 +1,83 @@
+{
+  "endpoints": {
+    "E_A5_MATCHED": {
+      "accumulation_index": 0,
+      "checkpoint_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\fits\\E_A5_MATCHED\\checkpoint_last.pt",
+      "checkpoint_sha256": "9f779a0376d6988d1e3f70ef566797f840d1fe4dbf204ce2f9ae1dad5322d512",
+      "complete_state": true,
+      "completed_updates": 30330,
+      "endpoint_freeze_sha256": "5ae647142e9bcdc73f8d27d3f18e423e6e80c2eff3d7df84c306bbe2ec9205e2",
+      "fit_id": "E_A5_MATCHED",
+      "identity_sha256": "9a3db2b292872f71d3a57f41090e28e0719cf355144aa2eb257b5380208e282f",
+      "receipt_sha256": "a335caca13bac1f6238f5e627f6fbf57936c5d49e5acd359bc54accdeaa695ca",
+      "scientific_endpoint": true,
+      "status": "COMPLETE"
+    },
+    "E_C2F_MATCHED": {
+      "accumulation_index": 0,
+      "checkpoint_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\fits\\E_C2F_MATCHED\\checkpoint_last.pt",
+      "checkpoint_sha256": "468f69aee68a0a5f8e2b536ba8c790ed45620251682aa0c70108625c426b30ec",
+      "complete_state": true,
+      "completed_updates": 30330,
+      "endpoint_freeze_sha256": "c64935222498e01b0a65c933b4e82846b348ecdbb1283e0fec2203cc07d35b20",
+      "fit_id": "E_C2F_MATCHED",
+      "identity_sha256": "74625a55e58b33c6c5d70b1b0a808e66cabf6fe23fd5f041eb300826fa32b393",
+      "receipt_sha256": "56f732fd0973e92042bb41585228cafa6db6e3c4a5e4b16f50eef7fef1a2e869",
+      "scientific_endpoint": true,
+      "status": "COMPLETE"
+    },
+    "PAIR_E_MATCHED": {
+      "accumulation_index": 0,
+      "checkpoint_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\fits\\PAIR_E_MATCHED\\checkpoint_last.pt",
+      "checkpoint_sha256": "3e503f7e1de5d7b4e460371f9bdfefb6dd7d59a280437b11258b21540994b883",
+      "complete_state": true,
+      "completed_updates": 6840,
+      "endpoint_freeze_sha256": "22a9a7c3f57c1843c905bbfde8cfcc4e3b2bccfa77970b509879833c3170ddd5",
+      "fit_id": "PAIR_E_MATCHED",
+      "identity_sha256": "125e5d4db96e2424cb2b587fa705a174bee03693e2d2b4b5687f882ca9a99eba",
+      "receipt_sha256": "1f9a0b80ac4a52db38cc61eed87a32a2035f5ed23a9856fccc4ea0258b93d281",
+      "scientific_endpoint": true,
+      "status": "COMPLETE"
+    },
+    "PAIR_R": {
+      "accumulation_index": 0,
+      "checkpoint_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\fits\\PAIR_R\\checkpoint_last.pt",
+      "checkpoint_sha256": "160ceac8c6aadeecac759373baa731b9b292c5bfe6f4fb9b24271c2cd5ca0f78",
+      "complete_state": true,
+      "completed_updates": 6840,
+      "endpoint_freeze_sha256": "f09a841dc1b864b508c82c47487bf6f1374ac1eeb22a7340c199faa2140c209f",
+      "fit_id": "PAIR_R",
+      "identity_sha256": "fd856f51f9305a38b9d5f85593245491c63fd298ccd5a5f8c217ed1373d45d2e",
+      "receipt_sha256": "30b8fcd8a830841c9e12fa59911fc42664a75943784a684091c7c8c0a1e48cb6",
+      "scientific_endpoint": true,
+      "status": "COMPLETE"
+    },
+    "R_A5": {
+      "accumulation_index": 0,
+      "checkpoint_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\fits\\R_A5\\checkpoint_last.pt",
+      "checkpoint_sha256": "dc4882e0255083f8bf0bece0e83e5e7bfaa7b494197574704f3be11b700b4cc7",
+      "complete_state": true,
+      "completed_updates": 30330,
+      "endpoint_freeze_sha256": "6efc27ef22defbcee1b79dae1f237dc5992aa1745f001f119707d329f4271a07",
+      "fit_id": "R_A5",
+      "identity_sha256": "f343b612edc1c49e6f78f74c699847a94227553221cd3fefbff35d4daa0e993d",
+      "receipt_sha256": "5a02c5cbd66df2af2d8b4512c15cb2d9936a8cd87526a3ccbd6aa9946d243151",
+      "scientific_endpoint": true,
+      "status": "COMPLETE"
+    },
+    "R_C2F": {
+      "accumulation_index": 0,
+      "checkpoint_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\fits\\R_C2F\\checkpoint_last.pt",
+      "checkpoint_sha256": "c8a6a0108167ea906de29225ac946fbfa65e6e58e2becc82e317547626969456",
+      "complete_state": true,
+      "completed_updates": 30330,
+      "endpoint_freeze_sha256": "518534aa7b9fafc6eee96fc5a422181d53b01f671600955a825e644229db43d3",
+      "fit_id": "R_C2F",
+      "identity_sha256": "2ba4882daa50530ed70c03ae566c847fcf3be3636cfa4b0166c395a3a1b859a3",
+      "receipt_sha256": "bee380a5169bf80aad03a23dbd40ab324096accd9b2fd293fe82d7ed385412dc",
+      "scientific_endpoint": true,
+      "status": "COMPLETE"
+    }
+  },
+  "schema": "rgb_port_parent_round_freeze_v1"
+}
