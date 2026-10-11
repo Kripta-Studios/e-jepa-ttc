@@ -298,3 +298,12 @@ centradas en productores/regresiones (134 casos únicos). Ruff y Pyright pasan.
 Restauración exacta de ambos checkpoints y paridad CPU de pérdida/componentes/
 gradientes event contra el código archivado: PASS. Resultado:
 `artifacts/rgb_port_20261008/audit_fixes_20261009/RESULT.json`.
+
+## 2026-10-11 — Identidad de observaciones RGB
+
+Reparación aditiva de la serialización NumPy de H_R_RAW y su ruta equivalente V.
+La QA recorre todas las identidades reales H/V, preserva los hashes nativos y los
+40 archivos protegidos de los ocho fits completados. Pasan 44 pruebas, Ruff y
+Pyright. Véanse `docs/rgb_signature_fix_20261011/README.md` y ADR-0003.
+La recuperación selectiva conserva tareas completas y reintenta el fallo y sus
+dependencias omitidas; no reinicia entrenamientos completados.

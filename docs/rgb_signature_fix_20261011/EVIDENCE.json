@@ -1,0 +1,64 @@
+{
+  "qa": {
+    "all_h_v_identities_consistent": true,
+    "completed_fits_unchanged": true,
+    "junit_sha256": "871b23acd5d5f82d5febae22e5eacfc07bc4b32c524f7d40abaa9bc6b827f664",
+    "legacy_hash_parity": true,
+    "optimizer_updates": 0,
+    "protected_files": 40,
+    "pyright_errors": 0,
+    "pyright_warnings": 0,
+    "real_qa_sha256": "8b0de4aeb4f9b3a14be277f1f1df548398336240368643e77f462660c49d8c6d",
+    "ruff": "PASSED",
+    "schema": "rgb_signature_qa_v1",
+    "source_files": {
+      "operational/rgb_port_signature_fix/__init__.py": "350d0bad93c9e531ccdbdd4a05e3aa8be041aeb6cd7dd9fafaf431ddd2002273",
+      "operational/rgb_port_signature_fix/audit.py": "5a3f00883491f40b9598d4b1fd45cd7c75c63cfe53af8f9d48c4b6bd8ea7a3ed",
+      "operational/rgb_port_signature_fix/contracts.py": "df88b2e14be5a593892472b8b44c887173968f5c4d2d59bb7f0bff6efa6e81a3",
+      "operational/rgb_port_signature_fix/infer.py": "c65d32b0b320b9b0d1d4a930595c35c408ad8771a53c71ea388ab2664e6ddf61",
+      "operational/rgb_port_signature_fix/queue.py": "404e06ac71352a11f52045ba2bae678f19a78976ebef89bdeecf8dd56edd1d5c",
+      "operational/rgb_port_signature_fix/recovery.py": "069143a6c229b28f425dde66f343a03b176c3c56c63e69c46f3e6c104faa1494",
+      "operational/rgb_port_signature_fix/signature.py": "3b1eed7d2fe6102f2ee5594b5af6da37f44c3450e05545868cca8bc58330be16",
+      "tests/test_rgb_port_signature_fix.py": "c754ef523a651068cfe5b513f8fba47e89789a58ef0f31de49c1064f032a926b"
+    },
+    "status": "PASSED",
+    "tests_passed": 44
+  },
+  "real_metadata": {
+    "H": {
+      "identity_set_sha256": "f5a3f67650fc48fc127ecbe0d364c6c1f3970ed40aa35e3f990d17fe41cc3e7a",
+      "manifest_sha256": "ac26288c11583d859166737feb53491167f2f1d908b309fe555220cb9ee27a92",
+      "queries": 18422,
+      "references": 80782,
+      "repeated_consistent": 62167,
+      "unique_observations": 18615
+    },
+    "V": {
+      "identity_set_sha256": "7391f36e7343bb57b3e477a26d7a2e928e595c20774cbf78143a69f7dcb83991",
+      "manifest_sha256": "f73aaab45d868fcab406f8d90aea65dc97c7bd702647677e7cc77b0781f9d720",
+      "queries": 16432,
+      "references": 69992,
+      "repeated_consistent": 53289,
+      "unique_observations": 16703
+    },
+    "labels_used": false,
+    "optimizer_updates": 0,
+    "status": "PASSED",
+    "time": "2026-10-11T20:03:32.959428+02:00"
+  },
+  "reproduction": {
+    "error": "Object of type ndarray is not JSON serializable",
+    "field_types": {
+      "producer_available_us": "ndarray",
+      "producer_boxes_xyxy": "ndarray",
+      "producer_members": "ndarray",
+      "producer_sensor_times_us": "ndarray",
+      "producer_shards": "ndarray",
+      "producer_times_us": "ndarray",
+      "roi_xyxy": "ndarray"
+    },
+    "reproduced": true,
+    "role": "H",
+    "rows": 18422
+  }
+}
