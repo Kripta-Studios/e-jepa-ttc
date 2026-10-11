@@ -1,0 +1,25 @@
+{
+  "Dev32": {
+    "F_TRUE_MAE": 1.3684667964424941,
+    "Garl_RGB_event_MAE": 1.8682761924690514,
+    "MAE_reduction_pct": 26.75243617840175,
+    "R_CTX_MAE": 1.2578639951816617,
+    "worst_two": [
+      "sequence_CCRs-1-medium-100-overlap-100",
+      "sequence_CCRs-1-low-100-overlap-100"
+    ],
+    "worst_two_error_fraction": 0.40720184812423144,
+    "worst_two_labelled_rows": 61
+  },
+  "FCWD": {
+    "F_TRUE_MAE": 1.4297541930912026,
+    "F_TRUE_RTE": 18.04922742648314,
+    "Garl_event_MAE": 2.146172768569033,
+    "Garl_event_RTE": 26.88726532882977,
+    "MAE_reduction_pct": 33.38121636663504,
+    "fallback_absolute_error_fraction": 0.6127727364148089,
+    "fallback_labelled_fraction": 0.20938023450586266,
+    "paired_F_TRUE_MAE": 0.7002605145396718,
+    "paired_Garl_event_MAE": 1.352260249108137
+  }
+}

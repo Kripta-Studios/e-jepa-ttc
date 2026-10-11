@@ -1,0 +1,12 @@
+{
+  "optimizer_updates": 0,
+  "prediction_seal_sha256_unchanged": "e59d33470defa42edb6964fe6afa874652689060fdefd5ddbd6e5649e5a04bd1",
+  "predictions_sha256_unchanged": "d83a05711646ef00272d29ee9df1e7e0d200c94c785076bf0ed8d6117e34815a",
+  "previous_state": {
+    "scoring_adapter": "operational.fcwd_rgb_score_fix",
+    "status": "COMPLETE"
+  },
+  "scoring_adapter_sha256": "9f3509d6493b59f4f18708b56d52d536d917f10e1ceca6bee1bf15b6a585b5bf",
+  "status": "COMPLETE",
+  "unlabelled_queries": 33
+}

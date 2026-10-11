@@ -1,0 +1,34 @@
+{
+  "cohort": "FCWD",
+  "device": "cuda",
+  "endpoint_hashes": {
+    "E_A5_MATCHED": "9f779a0376d6988d1e3f70ef566797f840d1fe4dbf204ce2f9ae1dad5322d512",
+    "E_C2F_MATCHED": "468f69aee68a0a5f8e2b536ba8c790ed45620251682aa0c70108625c426b30ec",
+    "PAIR_E_MATCHED": "3e503f7e1de5d7b4e460371f9bdfefb6dd7d59a280437b11258b21540994b883",
+    "PAIR_R": "160ceac8c6aadeecac759373baa731b9b292c5bfe6f4fb9b24271c2cd5ca0f78",
+    "R_A5": "dc4882e0255083f8bf0bece0e83e5e7bfaa7b494197574704f3be11b700b4cc7",
+    "R_C2F": "c8a6a0108167ea906de29225ac946fbfa65e6e58e2becc82e317547626969456"
+  },
+  "head_endpoint_hashes": {
+    "E_CTX_MATCHED": "fb8dcc8f7645281bee7fc71788380272fbcd7a4485c70979651289148238e744",
+    "E_H1_MATCHED": "3de31b0769f6dc3008f665a5671c28c7a71760aabf79fc1c013bd02b84c29fa2",
+    "F_TRUE": "dba93f9794e852d0e1d7323ac91ed257c59ec8e20a8ea952a93c5742a7f72f1b",
+    "F_ZERO": "026691198731dac1ecef64b59ac035b189bb975264047fc4b3e139b16c2c05be",
+    "PAIR_E_MATCHED": "3e503f7e1de5d7b4e460371f9bdfefb6dd7d59a280437b11258b21540994b883",
+    "PAIR_R": "160ceac8c6aadeecac759373baa731b9b292c5bfe6f4fb9b24271c2cd5ca0f78",
+    "R_CTX": "4838ffcd274254bd104250f116f447d2efca5ce75599d79479256091df8d65fc",
+    "R_H1": "ed38e2b298904318c31ceffe4ba6d8a46248c33e2e349eeb317bd08257419cc9"
+  },
+  "labels_read_during_inference": false,
+  "missing_truth_policy": "retain_all_queries_and_score_only_available_GT",
+  "official_comparison_admitted": false,
+  "optimizer_updates": 0,
+  "population": 630,
+  "precision": "float32",
+  "prediction_seal_sha256": "e59d33470defa42edb6964fe6afa874652689060fdefd5ddbd6e5649e5a04bd1",
+  "predictions_sha256": "d83a05711646ef00272d29ee9df1e7e0d200c94c785076bf0ed8d6117e34815a",
+  "result_sha256": "2729abd590b6707de2d2b744332f9d299a6656867f977cd57515f8c856a87255",
+  "scored_predictions_sha256": "e2a094317fe6dd31bf18d51466eff38f475911c0dde9a4e77486ff0bfd8ff126",
+  "status": "COMPLETE",
+  "unlabelled_queries": 33
+}

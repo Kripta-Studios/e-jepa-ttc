@@ -1,7 +1,9 @@
 # FCWD: adaptación RGB mediante registro local de sensores
 
 Se ha implementado una ruta adicional para evaluar los modelos RGB y de fusión
-V13 en FCWD. Usa los intrínsecos publicados y estima un desplazamiento local
+V13 en FCWD. **Evaluación terminada: 630 predicciones, 597 etiquetas disponibles**;
+tablas en [RESULTS.md](RESULTS.md) y diagnóstico en [CONCLUSIONS.md](CONCLUSIONS.md).
+Usa los intrínsecos publicados y estima un desplazamiento local
 con los píxeles RGB y eventos disponibles en cada consulta. No requiere entrenar
 pesos ni leer etiquetas TTC. **No constituye una calibración extrínseca métrica**
 y sus resultados serán exploratorios. La evaluación histórica permanece intacta.
@@ -107,14 +109,15 @@ ROI idéntica durante la historia y tensores `[3,3,128,128]`.
 
 La inferencia CUDA ha producido y guardado resultados reales tanto para RGB
 registrado como para fallback de eventos. `REAL_INFERENCE_QA.json` conserva un
-ejemplo de cada ruta y comprueba salidas finitas y fallback exacto. **La inferencia
-completa y sus métricas todavía estaban en ejecución al publicar esta nota.**
-No se han usado esas salidas para ajustar el registro.
+ejemplo de cada ruta y comprueba salidas finitas y fallback exacto. La inferencia
+y sus métricas están completas. No se han usado esas salidas para ajustar el registro.
 
 El estado vivo está en `campaign/STATE.json`; los fragmentos permiten reanudar.
-El resultado final se escribirá en `campaign/predictions/RESULT.json`, después
-de sellar las 630 predicciones. No confundir `REGISTRATION_SEALED.json` con una
-evaluación TTC terminada.
+El resultado final está en `campaign/predictions/RESULT.json`, después de sellar
+las 630 predicciones. Hay 33 consultas sin etiqueta TTC; se conservan y no se
+imputa cero. La adaptación posterior del lector está en
+`operational/fcwd_rgb_score_fix.py`, sin modificar el código ni las predicciones
+selladas. `operational/fcwd_rgb_resume.py` la integra en la campaña reanudable.
 
 ## Ejecución y trazabilidad
 
@@ -130,7 +133,7 @@ La instalación aislada utiliza `opencv-python-headless==5.0.0.93` y
 Con esas dependencias y `src` en PYTHONPATH:
 
 ```powershell
-python -B -m operational.fcwd_rgb_registration.campaign `
+python -B -m operational.fcwd_rgb_resume `
   --run artifacts/rgb_port_20261008 `
   --manifest ../e-jepa-ttc-v12-efficient-context/artifacts/sota_campaign_20261008/fcwd_population/QUERY_MANIFEST.json `
   --calibration E:/FCWD_dataset/inputs/calibration/camera_intrinsic/calibParams.mat `

@@ -1,0 +1,16 @@
+{
+  "changed_tasks": [
+    "DEV32_SCORE",
+    "REPORT"
+  ],
+  "existing_predictions_reused": true,
+  "final_tasks": {
+    "DEV32_PREDICT": "COMPLETE",
+    "DEV32_SCORE": "COMPLETE",
+    "PROFILE_ROUTES": "COMPLETE",
+    "REPORT": "COMPLETE"
+  },
+  "reason": "missing_public_GT_cells_are_not_numeric_zero",
+  "scorer": "operational.dev32_missing_truth_score",
+  "training_updates": 0
+}
