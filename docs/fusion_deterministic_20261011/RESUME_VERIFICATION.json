@@ -1,0 +1,31 @@
+{
+  "F_TRUE": {
+    "completed_updates": 265,
+    "durable_updates": 200,
+    "identity_sha256": "d4c032fe7e2c6dc569807ac6bdd813ac45322358b06432f77487fc04aea533d5",
+    "pending_update_upper": 1,
+    "recovery_upper": 0,
+    "schema": "rgb_port_update_journal_v1"
+  },
+  "F_ZERO_status": "WAITING",
+  "completed_fit_files_unchanged": 60,
+  "live_pids": [
+    18620,
+    21164,
+    42072,
+    44816
+  ],
+  "no_failed_or_skipped_tasks": true,
+  "queue_module": "operational.rgb_port_fusion_fix.queue",
+  "runtime": {
+    "deterministic_algorithms": true,
+    "fit_id": "F_TRUE",
+    "freeze_sha256": "f7ca7902e9e40b4ea7ec23cd3f2c1ad3f6cf2d0cbbcbbc2aa1d9ea3851e323c1",
+    "head_admission_sha256": "bf43ff3f29916352354f9678958375f8569811c174992eae1ff0aa5febb2af7d",
+    "parameterization_changed": false,
+    "schema": "rgb_port_fusion_runtime_v1"
+  },
+  "status": "RUNNING_VERIFIED",
+  "time": "2026-10-11T21:53:24.579849",
+  "training_module": "operational.rgb_port_fusion_fix.runtime"
+}

@@ -74,3 +74,11 @@ Se conservan el estado y la admisión Git anteriores en el directorio de evidenc
 
 Esto resuelve un bloqueo de ejecución. No constituye una evaluación de precisión
 ni demuestra superioridad frente a GarlTTC; esas mediciones siguen en la cola.
+
+## Reanudación comprobada
+
+[RESUME_VERIFICATION.json](RESUME_VERIFICATION.json) registra el segundo intento de
+F_TRUE ejecutando updates reales con checkpoint durable, después de restaurar el
+checkpoint de update cero. F_ZERO permanece en espera y no hay tareas FAILED ni
+SKIPPED_DEPENDENCY. Los 60 archivos de los diez fits completos siguen idénticos.
+La instantánea no es un monitor: los resultados finales siguen pendientes.
