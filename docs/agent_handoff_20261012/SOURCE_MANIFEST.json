@@ -122,7 +122,10 @@
     {
       "path": "docs/fcwd_rgb_registration_20261012/REAL_INPUT_HISTORY_QA.json",
       "bytes": 1153,
-      "sha256": "4f7af3187183fd92d823cc664cf22c54b781ceaea1173a562db79e631dae3342"
+      "sha256": "4f7af3187183fd92d823cc664cf22c54b781ceaea1173a562db79e631dae3342",
+      "git_blob_sha256": "cc9337185508716ef652c5dc5ea0e82c45da4525b0590989df7d9003e49dc9ae",
+      "git_blob_bytes": 1080,
+      "difference": "CRLF versus LF only"
     },
     {
       "path": "docs/fcwd_rgb_registration_20261012/REGISTRATION_SEALED.json",

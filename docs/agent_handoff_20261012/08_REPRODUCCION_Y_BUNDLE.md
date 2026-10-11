@@ -20,6 +20,11 @@ python -B docs/agent_handoff_20261010/replay_public.py --output E:/EJEPA_results
 
 Ejecutar este segundo comando desde el árbol **V12**, no desde V13.
 
+El manifiesto distingue los bytes originales de los bytes Git cuando difieren
+solo por finales CRLF/LF. Se comprobó esa equivalencia y se registraron ambos
+SHA256 para `REAL_INPUT_HISTORY_QA.json`. El replay acepta exclusivamente esas
+identidades enumeradas; no normaliza o ignora cambios arbitrarios.
+
 ## Mapa de evidencia pública V13
 
 | Pregunta | Archivos |

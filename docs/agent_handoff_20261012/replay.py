@@ -87,7 +87,10 @@ def run(output: Path) -> dict:
     manifest = read(HERE / "SOURCE_MANIFEST.json")
     for entry in manifest["files"]:
         content = (ROOT / entry["path"]).read_bytes()
-        if hashlib.sha256(content).hexdigest() != entry["sha256"]:
+        accepted_hashes = {entry["sha256"]}
+        if "git_blob_sha256" in entry:
+            accepted_hashes.add(entry["git_blob_sha256"])
+        if hashlib.sha256(content).hexdigest() not in accepted_hashes:
             raise ValueError(f"Source bytes changed: {entry['path']}")
     lines = [
         "# 04 — Resultados regenerados desde evidencia",
