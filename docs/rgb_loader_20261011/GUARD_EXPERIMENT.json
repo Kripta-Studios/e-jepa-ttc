@@ -1,0 +1,78 @@
+{
+  "conditions": {
+    "gpu_work": false,
+    "memory_info_access": "as_dict keeps original default AccessDenied/ad_value behavior",
+    "other_load": "root agent may run CPU pytest concurrently",
+    "pid_or_command_cache": false,
+    "same_project_markers_and_pytest_exclusion": true,
+    "same_thresholds": true,
+    "torch_imported": false,
+    "training": "paused_at_update_1500"
+  },
+  "created_utc": "2026-10-11T01:47:32.791221+02:00",
+  "psutil_version": "7.2.2",
+  "raw_evidence_sha256": "a140bda0deb9265b0909465651895bfd13da9743112cca585a3a910250069e38",
+  "samples": [
+    {
+      "allowed": true,
+      "elapsed_s": 4.773412599985022,
+      "project_process_count": 2,
+      "project_tree_rss_bytes": 162414592,
+      "round": 1,
+      "variant": "original"
+    },
+    {
+      "allowed": true,
+      "elapsed_s": 0.2146181999705732,
+      "project_process_count": 2,
+      "project_tree_rss_bytes": 162414592,
+      "round": 1,
+      "variant": "filtered"
+    },
+    {
+      "allowed": true,
+      "elapsed_s": 0.1901295999996364,
+      "project_process_count": 2,
+      "project_tree_rss_bytes": 162414592,
+      "round": 2,
+      "variant": "filtered"
+    },
+    {
+      "allowed": true,
+      "elapsed_s": 5.4670868999673985,
+      "project_process_count": 2,
+      "project_tree_rss_bytes": 162414592,
+      "round": 2,
+      "variant": "original"
+    },
+    {
+      "allowed": true,
+      "elapsed_s": 5.940917600004468,
+      "project_process_count": 5,
+      "project_tree_rss_bytes": 718774272,
+      "round": 3,
+      "variant": "original"
+    },
+    {
+      "allowed": true,
+      "elapsed_s": 0.21457839995855466,
+      "project_process_count": 5,
+      "project_tree_rss_bytes": 730365952,
+      "round": 3,
+      "variant": "filtered"
+    }
+  ],
+  "schema": "rgb_guard_filter_cpu_experiment_v1",
+  "source_sha256": "c2d977ded49f3b7928a591a07c2a9a04975dbff43e979868a7fdee69b7bb0826",
+  "summary": {
+    "live_rss_can_vary_between_calls": true,
+    "median_seconds": {
+      "filtered": 0.21457839995855466,
+      "original": 5.4670868999673985
+    },
+    "same_decision_all_samples": true,
+    "same_membership_all_samples": false,
+    "same_membership_each_paired_round": true,
+    "speedup_ratio": 25.478272281941493
+  }
+}

@@ -1,0 +1,357 @@
+{
+  "evidence": {
+    "FINAL_QA_JUNIT.xml": "2655dc16295d281a885af35fc648db840701e5dfd841f2221c5119ebcf4b11aa",
+    "GUARD_EXPERIMENT.json": "a140bda0deb9265b0909465651895bfd13da9743112cca585a3a910250069e38",
+    "cpu_abba/RESULT.json": "c6083292a4b003803a843ff70b1671bce6276b00a441faf0c93297c4a4cb4a65"
+  },
+  "exact_batch_parity": true,
+  "optimizer_updates": 0,
+  "pyright_errors": 0,
+  "pyright_warnings": 0,
+  "raw_receipt_sha256": "b68ea262d2ea72b752c173e2da2df2e543d0dd94f5b6e5127d8087a368b3a514",
+  "ruff": "PASSED",
+  "status": "PASSED",
+  "test_cases": [
+    {
+      "module": "tests.test_rgb_port_rgb_loader_cache",
+      "name": "test_exact_values_order_dtypes_and_fewer_reads",
+      "seconds": 0.259
+    },
+    {
+      "module": "tests.test_rgb_port_rgb_loader_cache",
+      "name": "test_both_cache_bounds_preserve_output[2-100000]",
+      "seconds": 0.229
+    },
+    {
+      "module": "tests.test_rgb_port_rgb_loader_cache",
+      "name": "test_both_cache_bounds_preserve_output[32-250]",
+      "seconds": 0.243
+    },
+    {
+      "module": "tests.test_rgb_port_rgb_loader_cache",
+      "name": "test_both_cache_bounds_preserve_output[32-1]",
+      "seconds": 0.338
+    },
+    {
+      "module": "tests.test_rgb_port_rgb_loader_cache",
+      "name": "test_validation_and_io_failures_remain_visible[token]",
+      "seconds": 0.035
+    },
+    {
+      "module": "tests.test_rgb_port_rgb_loader_cache",
+      "name": "test_validation_and_io_failures_remain_visible[ordinal]",
+      "seconds": 0.046
+    },
+    {
+      "module": "tests.test_rgb_port_rgb_loader_cache",
+      "name": "test_validation_and_io_failures_remain_visible[missing]",
+      "seconds": 0.033
+    },
+    {
+      "module": "tests.test_rgb_port_rgb_loader_cache",
+      "name": "test_validation_and_io_failures_remain_visible[missing_file]",
+      "seconds": 0.036
+    },
+    {
+      "module": "tests.test_rgb_port_rgb_loader_cache",
+      "name": "test_overlapping_metadata_preserves_first_match",
+      "seconds": 0.05
+    },
+    {
+      "module": "tests.test_rgb_port_rgb_loader_cache",
+      "name": "test_instance_override_restored_on_exception",
+      "seconds": 0.03
+    },
+    {
+      "module": "tests.test_rgb_port_rgb_loader_cache",
+      "name": "test_monolithic_source_delegates_without_shard_cache",
+      "seconds": 0.034
+    },
+    {
+      "module": "tests.test_rgb_port_rgb_loader_cache",
+      "name": "test_invalid_bounds_fail_before_replacing_source[0-10]",
+      "seconds": 0.029
+    },
+    {
+      "module": "tests.test_rgb_port_rgb_loader_cache",
+      "name": "test_invalid_bounds_fail_before_replacing_source[2-0]",
+      "seconds": 0.032
+    },
+    {
+      "module": "tests.test_rgb_port_rgb_loader_collate",
+      "name": "test_collate_matches_every_canonical_batch_field_and_keeps_rng[2]",
+      "seconds": 0.032
+    },
+    {
+      "module": "tests.test_rgb_port_rgb_loader_collate",
+      "name": "test_collate_matches_every_canonical_batch_field_and_keeps_rng[3]",
+      "seconds": 0.029
+    },
+    {
+      "module": "tests.test_rgb_port_rgb_loader_collate",
+      "name": "test_collate_preserves_effective_t2_t3_partition_and_teacher_order",
+      "seconds": 0.028
+    },
+    {
+      "module": "tests.test_rgb_port_rgb_loader_collate",
+      "name": "test_collate_rejects_invalid_requests_before_teacher[ids0-rgb]",
+      "seconds": 0.023
+    },
+    {
+      "module": "tests.test_rgb_port_rgb_loader_collate",
+      "name": "test_collate_rejects_invalid_requests_before_teacher[ids1-event]",
+      "seconds": 0.029
+    },
+    {
+      "module": "tests.test_rgb_port_rgb_loader_collate",
+      "name": "test_collate_rejects_invalid_requests_before_teacher[ids2-rgb]",
+      "seconds": 0.029
+    },
+    {
+      "module": "tests.test_rgb_port_rgb_loader_collate",
+      "name": "test_collate_keeps_teacher_identity_errors_and_restores_inherited_method",
+      "seconds": 0.021
+    },
+    {
+      "module": "tests.test_rgb_port_rgb_loader_collate",
+      "name": "test_collate_restores_existing_instance_override_on_failure",
+      "seconds": 0.023
+    },
+    {
+      "module": "tests.test_rgb_port_rgb_loader_collate",
+      "name": "test_collate_keeps_shape_errors_for_consumed_tensors",
+      "seconds": 0.03
+    },
+    {
+      "module": "tests.test_rgb_port_rgb_loader_runtime",
+      "name": "test_non_rgb_producer_delegates_without_installing_rgb_runtime",
+      "seconds": 0.11
+    },
+    {
+      "module": "tests.test_rgb_port_rgb_loader_runtime",
+      "name": "test_rgb_hooks_preserve_source_cursor_checkpoint_and_read_retries",
+      "seconds": 0.096
+    },
+    {
+      "module": "tests.test_rgb_port_rgb_loader_runtime",
+      "name": "test_queue_final_route_wins_over_parent_and_extends_package",
+      "seconds": 0.051
+    },
+    {
+      "module": "tests.test_rgb_port_rgb_loader_runtime",
+      "name": "test_rgb_admission_rejects_qa_without_exact_parity",
+      "seconds": 0.026
+    },
+    {
+      "module": "tests.test_rgb_port_rgb_loader_guards",
+      "name": "test_guard_identical_snapshot_and_skips_only_unrelated_memory",
+      "seconds": 0.029
+    },
+    {
+      "module": "tests.test_rgb_port_rgb_loader_guards",
+      "name": "test_guard_preserves_every_original_threshold[changes0-100]",
+      "seconds": 0.029
+    },
+    {
+      "module": "tests.test_rgb_port_rgb_loader_guards",
+      "name": "test_guard_preserves_every_original_threshold[changes1-100]",
+      "seconds": 0.029
+    },
+    {
+      "module": "tests.test_rgb_port_rgb_loader_guards",
+      "name": "test_guard_preserves_every_original_threshold[changes2-100]",
+      "seconds": 0.03
+    },
+    {
+      "module": "tests.test_rgb_port_rgb_loader_guards",
+      "name": "test_guard_preserves_every_original_threshold[changes3-100]",
+      "seconds": 0.028
+    },
+    {
+      "module": "tests.test_rgb_port_rgb_loader_guards",
+      "name": "test_guard_preserves_every_original_threshold[changes4-100]",
+      "seconds": 0.033
+    },
+    {
+      "module": "tests.test_rgb_port_rgb_loader_guards",
+      "name": "test_guard_preserves_every_original_threshold[changes5-100]",
+      "seconds": 0.045
+    },
+    {
+      "module": "tests.test_rgb_port_rgb_loader_guards",
+      "name": "test_guard_preserves_every_original_threshold[changes6-100]",
+      "seconds": 0.039
+    },
+    {
+      "module": "tests.test_rgb_port_rgb_loader_guards",
+      "name": "test_guard_preserves_every_original_threshold[changes7-23000000000]",
+      "seconds": 0.031
+    },
+    {
+      "module": "tests.test_rgb_port_rgb_loader_guards",
+      "name": "test_guard_preserves_every_original_threshold[changes8-23000000001]",
+      "seconds": 0.028
+    },
+    {
+      "module": "tests.test_rgb_port_rgb_loader_guards",
+      "name": "test_guard_preserves_unreadable_or_disappeared_process_handling[cmd_denied]",
+      "seconds": 0.026
+    },
+    {
+      "module": "tests.test_rgb_port_rgb_loader_guards",
+      "name": "test_guard_preserves_unreadable_or_disappeared_process_handling[cmd_gone]",
+      "seconds": 0.038
+    },
+    {
+      "module": "tests.test_rgb_port_rgb_loader_guards",
+      "name": "test_guard_preserves_unreadable_or_disappeared_process_handling[memory_gone]",
+      "seconds": 0.034
+    },
+    {
+      "module": "tests.test_rgb_port_rgb_loader_guards",
+      "name": "test_guard_preserves_original_inaccessible_selected_rss_failure",
+      "seconds": 0.029
+    },
+    {
+      "module": "tests.test_rgb_port_rgb_loader_guards",
+      "name": "test_guard_requeries_command_and_membership_every_call",
+      "seconds": 0.039
+    },
+    {
+      "module": "tests.test_rgb_port_rgb_loader_benchmark",
+      "name": "test_fingerprint_covers_values_shape_dtype_and_metadata",
+      "seconds": 0.028
+    },
+    {
+      "module": "tests.test_rgb_port_rgb_loader_benchmark",
+      "name": "test_fingerprint_preserves_all_cpu_rng_states",
+      "seconds": 0.026
+    },
+    {
+      "module": "tests.test_rgb_port_io_recovery",
+      "name": "test_retry_reopens_same_read_and_returns_original_value",
+      "seconds": 0.321
+    },
+    {
+      "module": "tests.test_rgb_port_io_recovery",
+      "name": "test_exhausted_read_enters_existing_graceful_pause_classification",
+      "seconds": 0.027
+    },
+    {
+      "module": "tests.test_rgb_port_io_recovery",
+      "name": "test_unrelated_or_corrupt_inputs_propagate_without_retry[error0]",
+      "seconds": 0.03
+    },
+    {
+      "module": "tests.test_rgb_port_io_recovery",
+      "name": "test_unrelated_or_corrupt_inputs_propagate_without_retry[error1]",
+      "seconds": 0.025
+    },
+    {
+      "module": "tests.test_rgb_port_io_recovery",
+      "name": "test_actual_npz_decode_retry_is_bit_exact_and_counts_one_success",
+      "seconds": 0.074
+    },
+    {
+      "module": "tests.test_rgb_port_io_recovery",
+      "name": "test_input_failure_saves_full_checkpoint_before_any_optimizer_update",
+      "seconds": 12.098
+    },
+    {
+      "module": "tests.test_rgb_port_io_recovery",
+      "name": "test_routing_retains_admitted_graph_delegate_and_every_original_argument[E_A5_MATCHED-operational.rgb_port_concurrent.producer]",
+      "seconds": 0.033
+    },
+    {
+      "module": "tests.test_rgb_port_io_recovery",
+      "name": "test_routing_retains_admitted_graph_delegate_and_every_original_argument[E_C2F_MATCHED-operational.rgb_port_c2f_graph.producer]",
+      "seconds": 0.027
+    },
+    {
+      "module": "tests.test_rgb_port_io_recovery",
+      "name": "test_routing_retains_admitted_graph_delegate_and_every_original_argument[R_A5-operational.rgb_port_acceleration.producer]",
+      "seconds": 0.031
+    },
+    {
+      "module": "tests.test_rgb_port_io_recovery",
+      "name": "test_only_authorized_event_pair_is_detached",
+      "seconds": 0.028
+    },
+    {
+      "module": "tests.test_rgb_port_io_recovery",
+      "name": "test_supervisor_retries_disk_io_without_hiding_contract_failures",
+      "seconds": 0.102
+    },
+    {
+      "module": "tests.test_rgb_port_io_recovery",
+      "name": "test_existing_live_supervisor_is_never_duplicated",
+      "seconds": 0.069
+    },
+    {
+      "module": "tests.test_rgb_port_io_recovery",
+      "name": "test_only_native_reconciled_orphans_are_expedited",
+      "seconds": 0.027
+    },
+    {
+      "module": "tests.test_rgb_port_io_recovery",
+      "name": "test_overlay_freeze_rejects_source_changes",
+      "seconds": 0.075
+    },
+    {
+      "module": "tests.test_rgb_port_revision",
+      "name": "test_tail_is_selected_once_over_effective_batch_with_equal_gradients",
+      "seconds": 0.152
+    },
+    {
+      "module": "tests.test_rgb_port_revision",
+      "name": "test_component_means_use_valid_counts_not_sample_counts",
+      "seconds": 0.037
+    },
+    {
+      "module": "tests.test_rgb_port_revision",
+      "name": "test_ttc_interval_reverses_levels_and_marks_discontinuity",
+      "seconds": 0.035
+    },
+    {
+      "module": "tests.test_rgb_port_revision",
+      "name": "test_report_uses_measured_nested_profile_values",
+      "seconds": 0.474
+    },
+    {
+      "module": "tests.test_rgb_port_revision",
+      "name": "test_rgb_router_receives_luma_gradient_not_green_blue_channels",
+      "seconds": 0.358
+    },
+    {
+      "module": "tests.test_rgb_port_revision",
+      "name": "test_real_loss_and_gradients_are_invariant_to_homogeneous_partition",
+      "seconds": 1.237
+    },
+    {
+      "module": "tests.test_rgb_port_revision",
+      "name": "test_mixed_t2_t3_real_loss_backpropagates_without_padding",
+      "seconds": 0.865
+    },
+    {
+      "module": "tests.test_rgb_port_revision",
+      "name": "test_transfer_uses_real_sensor_triplets_and_never_future_frames",
+      "seconds": 0.194
+    },
+    {
+      "module": "tests.test_rgb_port_revision",
+      "name": "test_cpu_profile_has_no_fabricated_cuda_measurement",
+      "seconds": 0.041
+    },
+    {
+      "module": "tests.test_rgb_port_revision",
+      "name": "test_migration_accepts_only_exact_archived_before_and_reviewed_after",
+      "seconds": 0.17
+    },
+    {
+      "module": "tests.test_rgb_port_revision",
+      "name": "test_existing_opt_in_technical_qa_binding_is_kept_without_allowing_science_bypass",
+      "seconds": 0.106
+    }
+  ],
+  "tests_passed": 68
+}

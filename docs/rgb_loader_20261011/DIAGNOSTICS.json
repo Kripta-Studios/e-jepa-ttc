@@ -1,0 +1,277 @@
+{
+  "baseline_progress": [
+    {
+      "private_bytes": 8589537280,
+      "rss_bytes": 1386033152,
+      "time": "2026-10-11T01:43:19.4330392+02:00",
+      "updates": 1470
+    },
+    {
+      "private_bytes": 8589537280,
+      "rss_bytes": 1386098688,
+      "time": "2026-10-11T01:43:24.9102152+02:00",
+      "updates": 1472
+    },
+    {
+      "private_bytes": 8589537280,
+      "rss_bytes": 1386123264,
+      "time": "2026-10-11T01:43:30.2536940+02:00",
+      "updates": 1474
+    },
+    {
+      "private_bytes": 8589537280,
+      "rss_bytes": 1386123264,
+      "time": "2026-10-11T01:43:35.5722317+02:00",
+      "updates": 1475
+    },
+    {
+      "private_bytes": 8593149952,
+      "rss_bytes": 1387331584,
+      "time": "2026-10-11T01:43:40.8783510+02:00",
+      "updates": 1475
+    },
+    {
+      "private_bytes": 8590540800,
+      "rss_bytes": 1387094016,
+      "time": "2026-10-11T01:43:46.2320275+02:00",
+      "updates": 1476
+    },
+    {
+      "private_bytes": 8589537280,
+      "rss_bytes": 1386553344,
+      "time": "2026-10-11T01:43:51.6063838+02:00",
+      "updates": 1478
+    },
+    {
+      "private_bytes": 8591654912,
+      "rss_bytes": 1388412928,
+      "time": "2026-10-11T01:43:56.9795914+02:00",
+      "updates": 1481
+    }
+  ],
+  "inclusive_percentages_overlap": true,
+  "raw_stack_profile_sha256": "423f3d483af107d095e15d317a016b94efa9d6904de46d41e135fed0597fa8da",
+  "raw_stack_summary_sha256": "a2b18d2f45a54c5f85e7bace28cbd1634213bb9ee35056358fccf96d3268c773",
+  "raw_telemetry_sha256": "3964058b40176e3f17f9b1afed65266bbfa1962525a7468a2e79bf2461f20777",
+  "sampling_profile_is_not_gpu_kernel_timing": true,
+  "threads": [
+    {
+      "samples": 1443,
+      "thread": "main",
+      "top_inclusive": [
+        {
+          "file": "operational/rgb_port_continuity/producer.py",
+          "line": 41,
+          "name": "fit",
+          "percent": 100.0
+        },
+        {
+          "file": "operational/rgb_port_acceleration/producer.py",
+          "line": 548,
+          "name": "fit",
+          "percent": 100.0
+        },
+        {
+          "file": "operational/rgb_port/train_producers.py",
+          "line": 1115,
+          "name": "main",
+          "percent": 100.0
+        },
+        {
+          "file": "operational/rgb_port_acceleration/producer.py",
+          "line": 552,
+          "name": "main",
+          "percent": 100.0
+        },
+        {
+          "file": "operational/rgb_port_io_recovery/producer.py",
+          "line": 88,
+          "name": "main",
+          "percent": 100.0
+        },
+        {
+          "file": "operational/rgb_port_continuity/producer.py",
+          "line": 44,
+          "name": "main",
+          "percent": 100.0
+        },
+        {
+          "file": "operational/rgb_port_loader_v3/producer.py",
+          "line": 29,
+          "name": "main",
+          "percent": 100.0
+        },
+        {
+          "file": "operational/rgb_port_loader_v3/producer.py",
+          "line": 138,
+          "name": "<module>",
+          "percent": 100.0
+        },
+        {
+          "file": "<frozen runpy>",
+          "line": 88,
+          "name": "_run_code",
+          "percent": 100.0
+        },
+        {
+          "file": "<frozen runpy>",
+          "line": 198,
+          "name": "_run_module_as_main",
+          "percent": 100.0
+        },
+        {
+          "file": "operational/rgb_port_io_recovery/producer.py",
+          "line": 47,
+          "name": "<lambda>",
+          "percent": 53.71
+        },
+        {
+          "file": "operational/rgb_port_io_recovery/common.py",
+          "line": 46,
+          "name": "retry_input_read",
+          "percent": 53.71
+        },
+        {
+          "file": "operational/rgb_port_io_recovery/producer.py",
+          "line": 46,
+          "name": "batch",
+          "percent": 53.71
+        },
+        {
+          "file": "operational/rgb_port_revision/loss.py",
+          "line": 81,
+          "name": "<listcomp>",
+          "percent": 53.71
+        },
+        {
+          "file": "operational/rgb_port_revision/loss.py",
+          "line": 80,
+          "name": "batch",
+          "percent": 53.71
+        },
+        {
+          "file": "operational/rgb_port/train_producers.py",
+          "line": 922,
+          "name": "fit_producer",
+          "percent": 53.71
+        },
+        {
+          "file": "numpy/lib/_npyio_impl.py",
+          "line": 257,
+          "name": "__getitem__",
+          "percent": 42.76
+        },
+        {
+          "file": "zipfile.py",
+          "line": 982,
+          "name": "read",
+          "percent": 39.99
+        },
+        {
+          "file": "numpy/lib/_format_impl.py",
+          "line": 1013,
+          "name": "_read_bytes",
+          "percent": 39.5
+        },
+        {
+          "file": "numpy/lib/_format_impl.py",
+          "line": 869,
+          "name": "read_array",
+          "percent": 39.5
+        },
+        {
+          "file": "src/e_jepa_ttc/rgb_port/data.py",
+          "line": 591,
+          "name": "batch",
+          "percent": 37.84
+        },
+        {
+          "file": "zipfile.py",
+          "line": 1058,
+          "name": "_read1",
+          "percent": 34.3
+        }
+      ],
+      "top_leaf": [
+        {
+          "file": "zipfile.py",
+          "line": 1058,
+          "name": "_read1",
+          "percent": 34.3
+        },
+        {
+          "file": "psutil/_pswindows.py",
+          "line": 726,
+          "name": "_proc_info",
+          "percent": 18.5
+        },
+        {
+          "file": "zipfile.py",
+          "line": 997,
+          "name": "_update_crc",
+          "percent": 3.26
+        },
+        {
+          "file": "src/e_jepa_ttc/rgb_port/data.py",
+          "line": 651,
+          "name": "_file_sha256",
+          "percent": 1.66
+        },
+        {
+          "file": "zipfile.py",
+          "line": 802,
+          "name": "read",
+          "percent": 1.52
+        },
+        {
+          "file": "src/e_jepa_ttc/models/local_transport.py",
+          "line": 191,
+          "name": "_weighted_mean",
+          "percent": 1.32
+        },
+        {
+          "file": "src/e_jepa_ttc/models/local_transport.py",
+          "line": 190,
+          "name": "_weighted_mean",
+          "percent": 1.11
+        },
+        {
+          "file": "numpy/lib/_format_impl.py",
+          "line": 870,
+          "name": "read_array",
+          "percent": 1.04
+        },
+        {
+          "file": "src/e_jepa_ttc/rgb_port/data.py",
+          "line": 622,
+          "name": "<genexpr>",
+          "percent": 0.97
+        },
+        {
+          "file": "torch/nn/functional.py",
+          "line": 2990,
+          "name": "group_norm",
+          "percent": 0.97
+        },
+        {
+          "file": "ast.py",
+          "line": 50,
+          "name": "parse",
+          "percent": 0.83
+        },
+        {
+          "file": "torch/_ops.py",
+          "line": 1269,
+          "name": "__call__",
+          "percent": 0.76
+        }
+      ]
+    },
+    {
+      "samples": 485,
+      "thread": "worker",
+      "top_inclusive": [],
+      "top_leaf": []
+    }
+  ]
+}

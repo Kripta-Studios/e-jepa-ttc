@@ -1,0 +1,1675 @@
+{
+  "schema": "rgb_loader_live_observation_v1",
+  "baseline": [
+    {
+      "time": "2026-10-11T01:43:19.4330392+02:00",
+      "updates": 1470,
+      "cpu_s": 3003.734375,
+      "private_bytes": 8589537280,
+      "rss_bytes": 1386033152,
+      "gpu_csv": "12, 5503, 41.87, 2482, 86"
+    },
+    {
+      "time": "2026-10-11T01:43:24.9102152+02:00",
+      "updates": 1472,
+      "cpu_s": 3008.09375,
+      "private_bytes": 8589537280,
+      "rss_bytes": 1386098688,
+      "gpu_csv": "17, 5547, 37.78, 1522, 86"
+    },
+    {
+      "time": "2026-10-11T01:43:30.2536940+02:00",
+      "updates": 1474,
+      "cpu_s": 3012.40625,
+      "private_bytes": 8589537280,
+      "rss_bytes": 1386123264,
+      "gpu_csv": "12, 5557, 42.26, 1440, 85"
+    },
+    {
+      "time": "2026-10-11T01:43:35.5722317+02:00",
+      "updates": 1475,
+      "cpu_s": 3016.3125,
+      "private_bytes": 8589537280,
+      "rss_bytes": 1386123264,
+      "gpu_csv": "6, 5566, 40.26, 1875, 85"
+    },
+    {
+      "time": "2026-10-11T01:43:40.8783510+02:00",
+      "updates": 1475,
+      "cpu_s": 3020.34375,
+      "private_bytes": 8593149952,
+      "rss_bytes": 1387331584,
+      "gpu_csv": "12, 5509, 56.63, 2445, 86"
+    },
+    {
+      "time": "2026-10-11T01:43:46.2320275+02:00",
+      "updates": 1476,
+      "cpu_s": 3024.125,
+      "private_bytes": 8590540800,
+      "rss_bytes": 1387094016,
+      "gpu_csv": "52, 5509, 57.75, 2490, 90"
+    },
+    {
+      "time": "2026-10-11T01:43:51.6063838+02:00",
+      "updates": 1478,
+      "cpu_s": 3028.765625,
+      "private_bytes": 8589537280,
+      "rss_bytes": 1386553344,
+      "gpu_csv": "13, 5509, 58.44, 2640, 87"
+    },
+    {
+      "time": "2026-10-11T01:43:56.9795914+02:00",
+      "updates": 1481,
+      "cpu_s": 3034.59375,
+      "private_bytes": 8591654912,
+      "rss_bytes": 1388412928,
+      "gpu_csv": "12, 5509, 56.39, 2602, 86"
+    }
+  ],
+  "optimized": [
+    {
+      "time": "2026-10-11T02:01:38.653989+02:00",
+      "updates": 1501,
+      "durable": 1500,
+      "pending": 0,
+      "recovery": 0,
+      "processes": [
+        {
+          "pid": 25072,
+          "rss": 4444160,
+          "private": 884736,
+          "cpu_s": 0.015625
+        },
+        {
+          "pid": 34296,
+          "rss": 3887767552,
+          "private": 6455361536,
+          "cpu_s": 21.828125
+        }
+      ],
+      "available_ram": 9759621120,
+      "gpu_csv": "53, 3942, 60.07, 2512, 80"
+    },
+    {
+      "time": "2026-10-11T02:01:48.820435+02:00",
+      "updates": 1509,
+      "durable": 1500,
+      "pending": 0,
+      "recovery": 0,
+      "processes": [
+        {
+          "pid": 25072,
+          "rss": 4419584,
+          "private": 831488,
+          "cpu_s": 0.015625
+        },
+        {
+          "pid": 34296,
+          "rss": 4019195904,
+          "private": 6686257152,
+          "cpu_s": 33.71875
+        }
+      ],
+      "available_ram": 9723998208,
+      "gpu_csv": "10, 4008, 51.05, 2647, 79"
+    },
+    {
+      "time": "2026-10-11T02:01:59.342313+02:00",
+      "updates": 1514,
+      "durable": 1500,
+      "pending": 0,
+      "recovery": 0,
+      "processes": [
+        {
+          "pid": 25072,
+          "rss": 4419584,
+          "private": 831488,
+          "cpu_s": 0.015625
+        },
+        {
+          "pid": 34296,
+          "rss": 4013060096,
+          "private": 6686535680,
+          "cpu_s": 44.734375
+        }
+      ],
+      "available_ram": 10213404672,
+      "gpu_csv": "15, 4014, 49.10, 2347, 80"
+    },
+    {
+      "time": "2026-10-11T02:02:09.858620+02:00",
+      "updates": 1516,
+      "durable": 1500,
+      "pending": 0,
+      "recovery": 0,
+      "processes": [
+        {
+          "pid": 25072,
+          "rss": 4419584,
+          "private": 831488,
+          "cpu_s": 0.015625
+        },
+        {
+          "pid": 34296,
+          "rss": 4064456704,
+          "private": 6736842752,
+          "cpu_s": 51.890625
+        }
+      ],
+      "available_ram": 9891237888,
+      "gpu_csv": "5, 4014, 36.03, 1605, 78"
+    },
+    {
+      "time": "2026-10-11T02:02:20.345060+02:00",
+      "updates": 1520,
+      "durable": 1500,
+      "pending": 0,
+      "recovery": 0,
+      "processes": [
+        {
+          "pid": 25072,
+          "rss": 4419584,
+          "private": 831488,
+          "cpu_s": 0.015625
+        },
+        {
+          "pid": 34296,
+          "rss": 4075757568,
+          "private": 6748213248,
+          "cpu_s": 59.859375
+        }
+      ],
+      "available_ram": 9602711552,
+      "gpu_csv": "9, 4014, 48.86, 2332, 80"
+    },
+    {
+      "time": "2026-10-11T02:02:30.840936+02:00",
+      "updates": 1524,
+      "durable": 1500,
+      "pending": 0,
+      "recovery": 0,
+      "processes": [
+        {
+          "pid": 25072,
+          "rss": 4419584,
+          "private": 831488,
+          "cpu_s": 0.015625
+        },
+        {
+          "pid": 34296,
+          "rss": 4101361664,
+          "private": 6773911552,
+          "cpu_s": 67.984375
+        }
+      ],
+      "available_ram": 9692020736,
+      "gpu_csv": "6, 4014, 35.76, 1725, 79"
+    },
+    {
+      "time": "2026-10-11T02:02:41.368400+02:00",
+      "updates": 1526,
+      "durable": 1500,
+      "pending": 0,
+      "recovery": 0,
+      "processes": [
+        {
+          "pid": 25072,
+          "rss": 4419584,
+          "private": 831488,
+          "cpu_s": 0.015625
+        },
+        {
+          "pid": 34296,
+          "rss": 4137500672,
+          "private": 6810234880,
+          "cpu_s": 76.3125
+        }
+      ],
+      "available_ram": 9611509760,
+      "gpu_csv": "11, 4014, 40.93, 2415, 80"
+    },
+    {
+      "time": "2026-10-11T02:02:51.924962+02:00",
+      "updates": 1531,
+      "durable": 1500,
+      "pending": 0,
+      "recovery": 0,
+      "processes": [
+        {
+          "pid": 25072,
+          "rss": 4419584,
+          "private": 831488,
+          "cpu_s": 0.015625
+        },
+        {
+          "pid": 34296,
+          "rss": 4136767488,
+          "private": 6809227264,
+          "cpu_s": 87.484375
+        }
+      ],
+      "available_ram": 9227726848,
+      "gpu_csv": "10, 4014, 60.05, 2722, 82"
+    },
+    {
+      "time": "2026-10-11T02:03:02.468124+02:00",
+      "updates": 1534,
+      "durable": 1500,
+      "pending": 0,
+      "recovery": 0,
+      "processes": [
+        {
+          "pid": 25072,
+          "rss": 4419584,
+          "private": 831488,
+          "cpu_s": 0.015625
+        },
+        {
+          "pid": 34296,
+          "rss": 4147380224,
+          "private": 6820372480,
+          "cpu_s": 97.640625
+        }
+      ],
+      "available_ram": 8883707904,
+      "gpu_csv": "5, 4014, 55.61, 2505, 81"
+    },
+    {
+      "time": "2026-10-11T02:03:13.012509+02:00",
+      "updates": 1539,
+      "durable": 1500,
+      "pending": 0,
+      "recovery": 0,
+      "processes": [
+        {
+          "pid": 25072,
+          "rss": 4419584,
+          "private": 831488,
+          "cpu_s": 0.015625
+        },
+        {
+          "pid": 34296,
+          "rss": 4162752512,
+          "private": 6836031488,
+          "cpu_s": 108.78125
+        }
+      ],
+      "available_ram": 9160077312,
+      "gpu_csv": "58, 4014, 59.25, 2722, 84"
+    },
+    {
+      "time": "2026-10-11T02:03:23.606544+02:00",
+      "updates": 1542,
+      "durable": 1500,
+      "pending": 0,
+      "recovery": 0,
+      "processes": [
+        {
+          "pid": 25072,
+          "rss": 4419584,
+          "private": 831488,
+          "cpu_s": 0.015625
+        },
+        {
+          "pid": 34296,
+          "rss": 4150476800,
+          "private": 6823145472,
+          "cpu_s": 118.890625
+        }
+      ],
+      "available_ram": 10249412608,
+      "gpu_csv": "12, 4014, 56.22, 2737, 83"
+    },
+    {
+      "time": "2026-10-11T02:03:34.108128+02:00",
+      "updates": 1547,
+      "durable": 1500,
+      "pending": 0,
+      "recovery": 0,
+      "processes": [
+        {
+          "pid": 25072,
+          "rss": 4419584,
+          "private": 831488,
+          "cpu_s": 0.015625
+        },
+        {
+          "pid": 34296,
+          "rss": 4152537088,
+          "private": 6825750528,
+          "cpu_s": 129.90625
+        }
+      ],
+      "available_ram": 10032517120,
+      "gpu_csv": "6, 4014, 58.47, 1920, 82"
+    },
+    {
+      "time": "2026-10-11T02:03:44.604757+02:00",
+      "updates": 1551,
+      "durable": 1500,
+      "pending": 0,
+      "recovery": 0,
+      "processes": [
+        {
+          "pid": 25072,
+          "rss": 4419584,
+          "private": 831488,
+          "cpu_s": 0.015625
+        },
+        {
+          "pid": 34296,
+          "rss": 4150202368,
+          "private": 6822600704,
+          "cpu_s": 139.859375
+        }
+      ],
+      "available_ram": 9297752064,
+      "gpu_csv": "56, 4014, 52.90, 2730, 84"
+    },
+    {
+      "time": "2026-10-11T02:03:55.146517+02:00",
+      "updates": 1556,
+      "durable": 1500,
+      "pending": 0,
+      "recovery": 0,
+      "processes": [
+        {
+          "pid": 25072,
+          "rss": 4419584,
+          "private": 831488,
+          "cpu_s": 0.015625
+        },
+        {
+          "pid": 34296,
+          "rss": 4148846592,
+          "private": 6821502976,
+          "cpu_s": 150.71875
+        }
+      ],
+      "available_ram": 9900339200,
+      "gpu_csv": "6, 4014, 34.62, 1680, 82"
+    },
+    {
+      "time": "2026-10-11T02:04:05.620569+02:00",
+      "updates": 1559,
+      "durable": 1500,
+      "pending": 0,
+      "recovery": 0,
+      "processes": [
+        {
+          "pid": 25072,
+          "rss": 4419584,
+          "private": 831488,
+          "cpu_s": 0.015625
+        },
+        {
+          "pid": 34296,
+          "rss": 4148502528,
+          "private": 6820966400,
+          "cpu_s": 160.78125
+        }
+      ],
+      "available_ram": 9692954624,
+      "gpu_csv": "11, 4014, 51.69, 2715, 84"
+    },
+    {
+      "time": "2026-10-11T02:04:16.155299+02:00",
+      "updates": 1564,
+      "durable": 1500,
+      "pending": 0,
+      "recovery": 0,
+      "processes": [
+        {
+          "pid": 25072,
+          "rss": 4419584,
+          "private": 831488,
+          "cpu_s": 0.015625
+        },
+        {
+          "pid": 34296,
+          "rss": 4153888768,
+          "private": 6828351488,
+          "cpu_s": 171.5
+        }
+      ],
+      "available_ram": 9708892160,
+      "gpu_csv": "7, 4014, 36.60, 1492, 82"
+    },
+    {
+      "time": "2026-10-11T02:04:26.656527+02:00",
+      "updates": 1568,
+      "durable": 1500,
+      "pending": 0,
+      "recovery": 0,
+      "processes": [
+        {
+          "pid": 25072,
+          "rss": 4419584,
+          "private": 831488,
+          "cpu_s": 0.015625
+        },
+        {
+          "pid": 34296,
+          "rss": 4149997568,
+          "private": 6823108608,
+          "cpu_s": 182.40625
+        }
+      ],
+      "available_ram": 9756368896,
+      "gpu_csv": "19, 4014, 51.42, 2722, 84"
+    },
+    {
+      "time": "2026-10-11T02:04:37.284759+02:00",
+      "updates": 1572,
+      "durable": 1500,
+      "pending": 0,
+      "recovery": 0,
+      "processes": [
+        {
+          "pid": 25072,
+          "rss": 4419584,
+          "private": 831488,
+          "cpu_s": 0.015625
+        },
+        {
+          "pid": 34296,
+          "rss": 4168437760,
+          "private": 6841462784,
+          "cpu_s": 193.03125
+        }
+      ],
+      "available_ram": 10289438720,
+      "gpu_csv": "25, 4014, 44.12, 2737, 84"
+    },
+    {
+      "time": "2026-10-11T02:04:47.953816+02:00",
+      "updates": 1576,
+      "durable": 1500,
+      "pending": 0,
+      "recovery": 0,
+      "processes": [
+        {
+          "pid": 25072,
+          "rss": 4419584,
+          "private": 831488,
+          "cpu_s": 0.015625
+        },
+        {
+          "pid": 34296,
+          "rss": 4152688640,
+          "private": 6825115648,
+          "cpu_s": 204.078125
+        }
+      ],
+      "available_ram": 10262900736,
+      "gpu_csv": "16, 4014, 52.48, 2055, 84"
+    },
+    {
+      "time": "2026-10-11T02:04:58.501018+02:00",
+      "updates": 1581,
+      "durable": 1500,
+      "pending": 0,
+      "recovery": 0,
+      "processes": [
+        {
+          "pid": 25072,
+          "rss": 4419584,
+          "private": 831488,
+          "cpu_s": 0.015625
+        },
+        {
+          "pid": 34296,
+          "rss": 4150431744,
+          "private": 6822596608,
+          "cpu_s": 214.1875
+        }
+      ],
+      "available_ram": 9926004736,
+      "gpu_csv": "14, 4014, 44.48, 2722, 84"
+    },
+    {
+      "time": "2026-10-11T02:05:09.013796+02:00",
+      "updates": 1586,
+      "durable": 1500,
+      "pending": 0,
+      "recovery": 0,
+      "processes": [
+        {
+          "pid": 25072,
+          "rss": 4419584,
+          "private": 831488,
+          "cpu_s": 0.015625
+        },
+        {
+          "pid": 34296,
+          "rss": 4152352768,
+          "private": 6825193472,
+          "cpu_s": 225.515625
+        }
+      ],
+      "available_ram": 9880399872,
+      "gpu_csv": "26, 4014, 59.27, 2707, 86"
+    },
+    {
+      "time": "2026-10-11T02:05:19.557746+02:00",
+      "updates": 1589,
+      "durable": 1500,
+      "pending": 1,
+      "recovery": 0,
+      "processes": [
+        {
+          "pid": 25072,
+          "rss": 4419584,
+          "private": 831488,
+          "cpu_s": 0.015625
+        },
+        {
+          "pid": 34296,
+          "rss": 4147085312,
+          "private": 6819188736,
+          "cpu_s": 236.078125
+        }
+      ],
+      "available_ram": 9691926528,
+      "gpu_csv": "10, 4014, 56.25, 1957, 85"
+    },
+    {
+      "time": "2026-10-11T02:05:39.028327+02:00",
+      "updates": 1600,
+      "durable": 1500,
+      "pending": 0,
+      "recovery": 0,
+      "processes": [
+        {
+          "pid": 25072,
+          "rss": 4419584,
+          "private": 831488,
+          "cpu_s": 0.015625
+        },
+        {
+          "pid": 34296,
+          "rss": 4147998720,
+          "private": 6821986304,
+          "cpu_s": 255.984375
+        }
+      ],
+      "available_ram": 9722961920,
+      "gpu_csv": "5, 4014, 47.26, 1507, 84"
+    },
+    {
+      "time": "2026-10-11T02:05:49.570862+02:00",
+      "updates": 1604,
+      "durable": 1600,
+      "pending": 0,
+      "recovery": 0,
+      "processes": [
+        {
+          "pid": 25072,
+          "rss": 4419584,
+          "private": 831488,
+          "cpu_s": 0.015625
+        },
+        {
+          "pid": 34296,
+          "rss": 4152131584,
+          "private": 6830792704,
+          "cpu_s": 266.71875
+        }
+      ],
+      "available_ram": 9907658752,
+      "gpu_csv": "4, 4126, 34.88, 1455, 84"
+    },
+    {
+      "time": "2026-10-11T02:06:00.145765+02:00",
+      "updates": 1610,
+      "durable": 1600,
+      "pending": 0,
+      "recovery": 0,
+      "processes": [
+        {
+          "pid": 25072,
+          "rss": 4419584,
+          "private": 831488,
+          "cpu_s": 0.015625
+        },
+        {
+          "pid": 34296,
+          "rss": 4152479744,
+          "private": 6826479616,
+          "cpu_s": 277.25
+        }
+      ],
+      "available_ram": 12469121024,
+      "gpu_csv": "8, 3731, 55.99, 2152, 86"
+    },
+    {
+      "time": "2026-10-11T02:06:10.611843+02:00",
+      "updates": 1615,
+      "durable": 1600,
+      "pending": 0,
+      "recovery": 0,
+      "processes": [
+        {
+          "pid": 25072,
+          "rss": 4419584,
+          "private": 831488,
+          "cpu_s": 0.015625
+        },
+        {
+          "pid": 34296,
+          "rss": 4153679872,
+          "private": 6828138496,
+          "cpu_s": 287.9375
+        }
+      ],
+      "available_ram": 12837183488,
+      "gpu_csv": "20, 3731, 55.09, 2730, 86"
+    },
+    {
+      "time": "2026-10-11T02:06:21.037639+02:00",
+      "updates": 1621,
+      "durable": 1600,
+      "pending": 0,
+      "recovery": 0,
+      "processes": [
+        {
+          "pid": 25072,
+          "rss": 4517888,
+          "private": 868352,
+          "cpu_s": 0.015625
+        },
+        {
+          "pid": 34296,
+          "rss": 4149833728,
+          "private": 6823890944,
+          "cpu_s": 298.703125
+        }
+      ],
+      "available_ram": 12530126848,
+      "gpu_csv": "5, 3731, 54.99, 2310, 84"
+    },
+    {
+      "time": "2026-10-11T02:06:31.515660+02:00",
+      "updates": 1628,
+      "durable": 1600,
+      "pending": 0,
+      "recovery": 0,
+      "processes": [
+        {
+          "pid": 25072,
+          "rss": 4517888,
+          "private": 868352,
+          "cpu_s": 0.015625
+        },
+        {
+          "pid": 34296,
+          "rss": 4157202432,
+          "private": 6832820224,
+          "cpu_s": 309.671875
+        }
+      ],
+      "available_ram": 12682133504,
+      "gpu_csv": "4, 3731, 34.57, 1327, 83"
+    },
+    {
+      "time": "2026-10-11T02:06:41.946276+02:00",
+      "updates": 1634,
+      "durable": 1600,
+      "pending": 0,
+      "recovery": 0,
+      "processes": [
+        {
+          "pid": 25072,
+          "rss": 4517888,
+          "private": 868352,
+          "cpu_s": 0.015625
+        },
+        {
+          "pid": 34296,
+          "rss": 4156026880,
+          "private": 6830096384,
+          "cpu_s": 320.65625
+        }
+      ],
+      "available_ram": 13470691328,
+      "gpu_csv": "9, 3731, 46.41, 2722, 86"
+    },
+    {
+      "time": "2026-10-11T02:06:52.431284+02:00",
+      "updates": 1640,
+      "durable": 1600,
+      "pending": 0,
+      "recovery": 0,
+      "processes": [
+        {
+          "pid": 25072,
+          "rss": 4517888,
+          "private": 868352,
+          "cpu_s": 0.015625
+        },
+        {
+          "pid": 34296,
+          "rss": 4153929728,
+          "private": 6827999232,
+          "cpu_s": 331.125
+        }
+      ],
+      "available_ram": 13452161024,
+      "gpu_csv": "17, 3731, 46.50, 1785, 85"
+    },
+    {
+      "time": "2026-10-11T02:07:02.870319+02:00",
+      "updates": 1646,
+      "durable": 1600,
+      "pending": 1,
+      "recovery": 0,
+      "processes": [
+        {
+          "pid": 25072,
+          "rss": 4517888,
+          "private": 868352,
+          "cpu_s": 0.015625
+        },
+        {
+          "pid": 34296,
+          "rss": 4155117568,
+          "private": 6829240320,
+          "cpu_s": 341.890625
+        }
+      ],
+      "available_ram": 13316063232,
+      "gpu_csv": "5, 3731, 56.77, 2730, 85"
+    },
+    {
+      "time": "2026-10-11T02:07:13.295372+02:00",
+      "updates": 1653,
+      "durable": 1600,
+      "pending": 0,
+      "recovery": 0,
+      "processes": [
+        {
+          "pid": 25072,
+          "rss": 4517888,
+          "private": 868352,
+          "cpu_s": 0.015625
+        },
+        {
+          "pid": 34296,
+          "rss": 4154826752,
+          "private": 6828883968,
+          "cpu_s": 352.703125
+        }
+      ],
+      "available_ram": 13014028288,
+      "gpu_csv": "29, 3731, 58.00, 2670, 87"
+    },
+    {
+      "time": "2026-10-11T02:07:23.705877+02:00",
+      "updates": 1660,
+      "durable": 1600,
+      "pending": 0,
+      "recovery": 0,
+      "processes": [
+        {
+          "pid": 25072,
+          "rss": 4517888,
+          "private": 868352,
+          "cpu_s": 0.015625
+        },
+        {
+          "pid": 34296,
+          "rss": 4155211776,
+          "private": 6833991680,
+          "cpu_s": 363.9375
+        }
+      ],
+      "available_ram": 13411360768,
+      "gpu_csv": "4, 3731, 32.59, 1335, 84"
+    },
+    {
+      "time": "2026-10-11T02:07:34.134394+02:00",
+      "updates": 1666,
+      "durable": 1600,
+      "pending": 0,
+      "recovery": 0,
+      "processes": [
+        {
+          "pid": 25072,
+          "rss": 4517888,
+          "private": 868352,
+          "cpu_s": 0.015625
+        },
+        {
+          "pid": 34296,
+          "rss": 4156907520,
+          "private": 6831284224,
+          "cpu_s": 374.671875
+        }
+      ],
+      "available_ram": 13297360896,
+      "gpu_csv": "29, 3731, 52.76, 2610, 86"
+    },
+    {
+      "time": "2026-10-11T02:07:44.576248+02:00",
+      "updates": 1672,
+      "durable": 1600,
+      "pending": 0,
+      "recovery": 0,
+      "processes": [
+        {
+          "pid": 25072,
+          "rss": 4517888,
+          "private": 868352,
+          "cpu_s": 0.015625
+        },
+        {
+          "pid": 34296,
+          "rss": 4152033280,
+          "private": 6825955328,
+          "cpu_s": 385.359375
+        }
+      ],
+      "available_ram": 13142306816,
+      "gpu_csv": "14, 3731, 49.37, 2647, 86"
+    },
+    {
+      "time": "2026-10-11T02:07:55.001054+02:00",
+      "updates": 1677,
+      "durable": 1600,
+      "pending": 1,
+      "recovery": 0,
+      "processes": [
+        {
+          "pid": 25072,
+          "rss": 4517888,
+          "private": 868352,
+          "cpu_s": 0.015625
+        },
+        {
+          "pid": 34296,
+          "rss": 4151238656,
+          "private": 6825086976,
+          "cpu_s": 396.171875
+        }
+      ],
+      "available_ram": 13100470272,
+      "gpu_csv": "7, 3731, 54.91, 2070, 84"
+    }
+  ],
+  "origin": {
+    "checkpoint_sha256": "8095b6cbeaa1869d950d616ece6a50c9c579669c6ee844725a85fb18d1c2d2b7",
+    "commit_reserve_bytes": 1073741824,
+    "completed_updates": 1500,
+    "dino_cache": {
+      "hits": 0,
+      "indexed_ordinals": 53890,
+      "largest_shard_bytes": 0,
+      "max_bytes": 67108864,
+      "max_shards": 32,
+      "peak_retained_bytes": 0,
+      "reads": 0,
+      "retained_bytes": 0,
+      "retained_shards": 0
+    },
+    "elapsed_s_since_restore": 0.014431999996304512,
+    "fit_id": "R_A5",
+    "freeze_sha256": "af9556b80a1579df6367adf0ef4f94db0081d0763f6801f74bf426e35cf83677",
+    "geometry_precision": "bf16_unchanged",
+    "objective_changed": false,
+    "origin": {
+      "checkpoint_sha256": "8095b6cbeaa1869d950d616ece6a50c9c579669c6ee844725a85fb18d1c2d2b7",
+      "completed_updates": 1500
+    },
+    "prefetch_depth": 0,
+    "schema": "rgb_port_rgb_loader_runtime_v1",
+    "source_calls": 0,
+    "source_prepare_s": 0.0,
+    "status": "RESTORED"
+  },
+  "last_runtime_receipt": {
+    "checkpoint_sha256": "0c2e6094e39001cbb10c0eebad1e82b0ba1b09fb8c0413d4703b11e6ef1987c8",
+    "commit_reserve_bytes": 1073741824,
+    "completed_updates": 1600,
+    "dino_cache": {
+      "hits": 2959,
+      "indexed_ordinals": 53890,
+      "largest_shard_bytes": 1200000,
+      "max_bytes": 67108864,
+      "max_shards": 32,
+      "peak_retained_bytes": 38400000,
+      "reads": 241,
+      "retained_bytes": 38400000,
+      "retained_shards": 32
+    },
+    "elapsed_s_since_restore": 245.89977650000947,
+    "fit_id": "R_A5",
+    "freeze_sha256": "af9556b80a1579df6367adf0ef4f94db0081d0763f6801f74bf426e35cf83677",
+    "geometry_precision": "bf16_unchanged",
+    "objective_changed": false,
+    "origin": {
+      "checkpoint_sha256": "8095b6cbeaa1869d950d616ece6a50c9c579669c6ee844725a85fb18d1c2d2b7",
+      "completed_updates": 1500
+    },
+    "prefetch_depth": 0,
+    "schema": "rgb_port_rgb_loader_runtime_v1",
+    "source_calls": 172,
+    "source_prepare_s": 53.70009390031919,
+    "status": "CHECKPOINTED"
+  },
+  "optimized_main_thread_profile": [
+    {
+      "name": "Thread 18568 \"MainThread\"",
+      "samples": 1121,
+      "top_inclusive": [
+        {
+          "name": "fit",
+          "file": "operational/rgb_port_rgb_loader/producer.py",
+          "line": 127,
+          "col": null,
+          "percent": 100.0
+        },
+        {
+          "name": "fit",
+          "file": "operational/rgb_port_continuity/producer.py",
+          "line": 41,
+          "col": null,
+          "percent": 100.0
+        },
+        {
+          "name": "fit",
+          "file": "operational/rgb_port_acceleration/producer.py",
+          "line": 548,
+          "col": null,
+          "percent": 100.0
+        },
+        {
+          "name": "main",
+          "file": "operational/rgb_port/train_producers.py",
+          "line": 1115,
+          "col": null,
+          "percent": 100.0
+        },
+        {
+          "name": "main",
+          "file": "operational/rgb_port_acceleration/producer.py",
+          "line": 552,
+          "col": null,
+          "percent": 100.0
+        },
+        {
+          "name": "main",
+          "file": "operational/rgb_port_io_recovery/producer.py",
+          "line": 88,
+          "col": null,
+          "percent": 100.0
+        },
+        {
+          "name": "main",
+          "file": "operational/rgb_port_continuity/producer.py",
+          "line": 44,
+          "col": null,
+          "percent": 100.0
+        },
+        {
+          "name": "main",
+          "file": "operational/rgb_port_loader_v3/producer.py",
+          "line": 29,
+          "col": null,
+          "percent": 100.0
+        },
+        {
+          "name": "main",
+          "file": "operational/rgb_port_rgb_loader/producer.py",
+          "line": 130,
+          "col": null,
+          "percent": 100.0
+        },
+        {
+          "name": "<module>",
+          "file": "operational/rgb_port_rgb_loader/producer.py",
+          "line": 134,
+          "col": null,
+          "percent": 100.0
+        },
+        {
+          "name": "_run_code",
+          "file": "<frozen runpy>",
+          "line": 88,
+          "col": null,
+          "percent": 100.0
+        },
+        {
+          "name": "_run_module_as_main",
+          "file": "<frozen runpy>",
+          "line": 198,
+          "col": null,
+          "percent": 100.0
+        },
+        {
+          "name": "fit_producer",
+          "file": "operational/rgb_port/train_producers.py",
+          "line": 942,
+          "col": null,
+          "percent": 51.12
+        },
+        {
+          "name": "loss",
+          "file": "operational/rgb_port_acceleration/producer.py",
+          "line": 512,
+          "col": null,
+          "percent": 50.94
+        },
+        {
+          "name": "forward",
+          "file": "src/e_jepa_ttc/models/causal_scale_ttc.py",
+          "line": 848,
+          "col": null,
+          "percent": 40.59
+        },
+        {
+          "name": "_call_impl",
+          "file": "site-packages/torch/nn/modules/module.py",
+          "line": 1790,
+          "col": null,
+          "percent": 40.59
+        },
+        {
+          "name": "_wrapped_call_impl",
+          "file": "site-packages/torch/nn/modules/module.py",
+          "line": 1779,
+          "col": null,
+          "percent": 40.59
+        },
+        {
+          "name": "<lambda>",
+          "file": "operational/rgb_port_rgb_loader/producer.py",
+          "line": 65,
+          "col": null,
+          "percent": 40.23
+        },
+        {
+          "name": "retry_input_read",
+          "file": "operational/rgb_port_io_recovery/common.py",
+          "line": 46,
+          "col": null,
+          "percent": 40.23
+        },
+        {
+          "name": "batch",
+          "file": "operational/rgb_port_rgb_loader/producer.py",
+          "line": 64,
+          "col": null,
+          "percent": 40.23
+        },
+        {
+          "name": "<listcomp>",
+          "file": "operational/rgb_port_revision/loss.py",
+          "line": 81,
+          "col": null,
+          "percent": 40.23
+        },
+        {
+          "name": "batch",
+          "file": "operational/rgb_port_revision/loss.py",
+          "line": 80,
+          "col": null,
+          "percent": 40.23
+        },
+        {
+          "name": "fit_producer",
+          "file": "operational/rgb_port/train_producers.py",
+          "line": 922,
+          "col": null,
+          "percent": 40.23
+        },
+        {
+          "name": "_producer_loss",
+          "file": "operational/rgb_port/train_producers.py",
+          "line": 716,
+          "col": null,
+          "percent": 40.14
+        },
+        {
+          "name": "__getitem__",
+          "file": "site-packages/numpy/lib/_npyio_impl.py",
+          "line": 257,
+          "col": null,
+          "percent": 32.02
+        },
+        {
+          "name": "<listcomp>",
+          "file": "operational/rgb_port_rgb_loader/collate.py",
+          "line": 36,
+          "col": null,
+          "percent": 30.78
+        },
+        {
+          "name": "producer_batch",
+          "file": "operational/rgb_port_rgb_loader/collate.py",
+          "line": 36,
+          "col": null,
+          "percent": 30.78
+        },
+        {
+          "name": "effective_loss",
+          "file": "operational/rgb_port_revision/loss.py",
+          "line": 109,
+          "col": null,
+          "percent": 30.69
+        },
+        {
+          "name": "__getitem__",
+          "file": "src/e_jepa_ttc/rgb_port/data.py",
+          "line": 336,
+          "col": null,
+          "percent": 30.6
+        },
+        {
+          "name": "read_array",
+          "file": "site-packages/numpy/lib/_format_impl.py",
+          "line": 869,
+          "col": null,
+          "percent": 28.9
+        },
+        {
+          "name": "read",
+          "file": "zipfile.py",
+          "line": 982,
+          "col": null,
+          "percent": 28.72
+        },
+        {
+          "name": "_read_bytes",
+          "file": "site-packages/numpy/lib/_format_impl.py",
+          "line": 1013,
+          "col": null,
+          "percent": 28.72
+        },
+        {
+          "name": "<dictcomp>",
+          "file": "src/e_jepa_ttc/rgb_port/data.py",
+          "line": 286,
+          "col": null,
+          "percent": 25.33
+        },
+        {
+          "name": "get",
+          "file": "src/e_jepa_ttc/rgb_port/data.py",
+          "line": 286,
+          "col": null,
+          "percent": 25.33
+        },
+        {
+          "name": "_read1",
+          "file": "zipfile.py",
+          "line": 1058,
+          "col": null,
+          "percent": 24.0
+        },
+        {
+          "name": "_producer_loss",
+          "file": "operational/rgb_port/train_producers.py",
+          "line": 715,
+          "col": null,
+          "percent": 10.79
+        },
+        {
+          "name": "_producer_loss",
+          "file": "operational/rgb_port/train_producers.py",
+          "line": 730,
+          "col": null,
+          "percent": 9.9
+        },
+        {
+          "name": "forward",
+          "file": "site-packages/torch/nn/modules/container.py",
+          "line": 253,
+          "col": null,
+          "percent": 8.3
+        },
+        {
+          "name": "producer_batch",
+          "file": "operational/rgb_port_rgb_loader/collate.py",
+          "line": 49,
+          "col": null,
+          "percent": 8.21
+        },
+        {
+          "name": "get",
+          "file": "operational/rgb_port_rgb_loader/loader.py",
+          "line": 104,
+          "col": null,
+          "percent": 8.12
+        },
+        {
+          "name": "<dictcomp>",
+          "file": "operational/rgb_port_rgb_loader/loader.py",
+          "line": 74,
+          "col": null,
+          "percent": 7.67
+        },
+        {
+          "name": "_read",
+          "file": "operational/rgb_port_rgb_loader/loader.py",
+          "line": 74,
+          "col": null,
+          "percent": 7.67
+        },
+        {
+          "name": "_forward_impl",
+          "file": "src/e_jepa_ttc/models/causal_scale_ttc.py",
+          "line": 1018,
+          "col": null,
+          "percent": 6.6
+        },
+        {
+          "name": "transport_physical_features",
+          "file": "src/e_jepa_ttc/models/local_transport.py",
+          "line": 306,
+          "col": null,
+          "percent": 6.16
+        },
+        {
+          "name": "transport_physical_features",
+          "file": "src/e_jepa_ttc/models/local_transport.py",
+          "line": 300,
+          "col": null,
+          "percent": 6.07
+        },
+        {
+          "name": "_forward_impl",
+          "file": "src/e_jepa_ttc/models/causal_scale_ttc.py",
+          "line": 1012,
+          "col": null,
+          "percent": 5.98
+        },
+        {
+          "name": "inner",
+          "file": "site-packages/torch/_decomp/decompositions.py",
+          "line": 91,
+          "col": null,
+          "percent": 5.71
+        },
+        {
+          "name": "_upsample_linear_vec",
+          "file": "site-packages/torch/_decomp/decompositions.py",
+          "line": 3961,
+          "col": null,
+          "percent": 5.71
+        },
+        {
+          "name": "interpolate",
+          "file": "site-packages/torch/nn/functional.py",
+          "line": 4876,
+          "col": null,
+          "percent": 5.71
+        },
+        {
+          "name": "_forward_impl",
+          "file": "src/e_jepa_ttc/models/causal_scale_ttc.py",
+          "line": 1006,
+          "col": null,
+          "percent": 5.53
+        }
+      ],
+      "top_leaf": [
+        {
+          "name": "_read1",
+          "file": "zipfile.py",
+          "line": 1058,
+          "col": null,
+          "percent": 24.0
+        },
+        {
+          "name": "_update_crc",
+          "file": "zipfile.py",
+          "line": 997,
+          "col": null,
+          "percent": 3.12
+        },
+        {
+          "name": "_weighted_mean",
+          "file": "src/e_jepa_ttc/models/local_transport.py",
+          "line": 191,
+          "col": null,
+          "percent": 2.14
+        },
+        {
+          "name": "local_correlation_match",
+          "file": "src/e_jepa_ttc/models/local_transport.py",
+          "line": 112,
+          "col": null,
+          "percent": 2.14
+        },
+        {
+          "name": "__call__",
+          "file": "site-packages/torch/_ops.py",
+          "line": 1269,
+          "col": null,
+          "percent": 2.14
+        },
+        {
+          "name": "_file_sha256",
+          "file": "src/e_jepa_ttc/rgb_port/data.py",
+          "line": 651,
+          "col": null,
+          "percent": 2.05
+        },
+        {
+          "name": "_weighted_mean",
+          "file": "src/e_jepa_ttc/models/local_transport.py",
+          "line": 190,
+          "col": null,
+          "percent": 1.78
+        },
+        {
+          "name": "forward",
+          "file": "site-packages/torch/nn/modules/linear.py",
+          "line": 134,
+          "col": null,
+          "percent": 1.78
+        },
+        {
+          "name": "local_correlation_match",
+          "file": "src/e_jepa_ttc/models/local_transport.py",
+          "line": 113,
+          "col": null,
+          "percent": 1.43
+        },
+        {
+          "name": "get",
+          "file": "src/e_jepa_ttc/rgb_port/data.py",
+          "line": 303,
+          "col": null,
+          "percent": 1.34
+        },
+        {
+          "name": "_conv_forward",
+          "file": "site-packages/torch/nn/modules/conv.py",
+          "line": 548,
+          "col": null,
+          "percent": 1.34
+        },
+        {
+          "name": "reduce_parts",
+          "file": "operational/rgb_port_revision/loss.py",
+          "line": 37,
+          "col": null,
+          "percent": 1.16
+        },
+        {
+          "name": "_file_sha256",
+          "file": "src/e_jepa_ttc/rgb_port/data.py",
+          "line": 652,
+          "col": null,
+          "percent": 1.16
+        },
+        {
+          "name": "atomic_write_bytes",
+          "file": "operational/rgb_port/accounting.py",
+          "line": 122,
+          "col": null,
+          "percent": 1.07
+        },
+        {
+          "name": "read_array",
+          "file": "site-packages/numpy/lib/_format_impl.py",
+          "line": 870,
+          "col": null,
+          "percent": 0.98
+        },
+        {
+          "name": "local_correlation_match",
+          "file": "src/e_jepa_ttc/models/local_transport.py",
+          "line": 114,
+          "col": null,
+          "percent": 0.98
+        },
+        {
+          "name": "_summarise_one",
+          "file": "src/e_jepa_ttc/models/local_transport.py",
+          "line": 252,
+          "col": null,
+          "percent": 0.89
+        },
+        {
+          "name": "_weighted_mean",
+          "file": "src/e_jepa_ttc/models/local_transport.py",
+          "line": 192,
+          "col": null,
+          "percent": 0.89
+        },
+        {
+          "name": "read",
+          "file": "zipfile.py",
+          "line": 802,
+          "col": null,
+          "percent": 0.89
+        },
+        {
+          "name": "group_norm",
+          "file": "site-packages/torch/nn/functional.py",
+          "line": 2990,
+          "col": null,
+          "percent": 0.89
+        },
+        {
+          "name": "producer_batch",
+          "file": "operational/rgb_port_rgb_loader/collate.py",
+          "line": 61,
+          "col": null,
+          "percent": 0.8
+        },
+        {
+          "name": "grid_sample",
+          "file": "site-packages/torch/nn/functional.py",
+          "line": 5242,
+          "col": null,
+          "percent": 0.8
+        },
+        {
+          "name": "layer_norm",
+          "file": "site-packages/torch/nn/functional.py",
+          "line": 2935,
+          "col": null,
+          "percent": 0.71
+        },
+        {
+          "name": "<listcomp>",
+          "file": "site-packages/torch/_decomp/decompositions.py",
+          "line": 4089,
+          "col": null,
+          "percent": 0.71
+        },
+        {
+          "name": "local_correlation_match",
+          "file": "src/e_jepa_ttc/models/local_transport.py",
+          "line": 111,
+          "col": null,
+          "percent": 0.71
+        },
+        {
+          "name": "get_values",
+          "file": "site-packages/torch/_decomp/decompositions.py",
+          "line": 4066,
+          "col": null,
+          "percent": 0.62
+        },
+        {
+          "name": "_sample_reverse_flow",
+          "file": "src/e_jepa_ttc/models/local_transport.py",
+          "line": 166,
+          "col": null,
+          "percent": 0.62
+        },
+        {
+          "name": "_engine_run_backward",
+          "file": "site-packages/torch/autograd/graph.py",
+          "line": 869,
+          "col": null,
+          "percent": 0.62
+        },
+        {
+          "name": "causal_scale_ttc_loss",
+          "file": "src/e_jepa_ttc/losses/causal_scale_ttc.py",
+          "line": 318,
+          "col": null,
+          "percent": 0.62
+        },
+        {
+          "name": "get_values",
+          "file": "site-packages/torch/_decomp/decompositions.py",
+          "line": 4067,
+          "col": null,
+          "percent": 0.62
+        },
+        {
+          "name": "causal_scale_ttc_loss",
+          "file": "src/e_jepa_ttc/losses/causal_scale_ttc.py",
+          "line": 281,
+          "col": null,
+          "percent": 0.54
+        },
+        {
+          "name": "_summarise_one",
+          "file": "src/e_jepa_ttc/models/local_transport.py",
+          "line": 222,
+          "col": null,
+          "percent": 0.54
+        },
+        {
+          "name": "_forward_impl",
+          "file": "src/e_jepa_ttc/models/causal_scale_ttc.py",
+          "line": 1175,
+          "col": null,
+          "percent": 0.54
+        },
+        {
+          "name": "_weighted_slope",
+          "file": "src/e_jepa_ttc/models/local_transport.py",
+          "line": 202,
+          "col": null,
+          "percent": 0.45
+        },
+        {
+          "name": "norm",
+          "file": "site-packages/torch/functional.py",
+          "line": 1839,
+          "col": null,
+          "percent": 0.45
+        },
+        {
+          "name": "forward",
+          "file": "site-packages/torch/nn/modules/activation.py",
+          "line": 816,
+          "col": null,
+          "percent": 0.45
+        },
+        {
+          "name": "local_cosine_relation_maps",
+          "file": "src/e_jepa_ttc/distillation/dinov3_relational.py",
+          "line": 129,
+          "col": null,
+          "percent": 0.45
+        },
+        {
+          "name": "_multi_tensor_adam",
+          "file": "site-packages/torch/optim/adam.py",
+          "line": 791,
+          "col": null,
+          "percent": 0.45
+        },
+        {
+          "name": "realpath",
+          "file": "<frozen ntpath>",
+          "line": 664,
+          "col": null,
+          "percent": 0.45
+        },
+        {
+          "name": "_summarise_one",
+          "file": "src/e_jepa_ttc/models/local_transport.py",
+          "line": 228,
+          "col": null,
+          "percent": 0.45
+        },
+        {
+          "name": "_sample_reverse_flow",
+          "file": "src/e_jepa_ttc/models/local_transport.py",
+          "line": 180,
+          "col": null,
+          "percent": 0.45
+        },
+        {
+          "name": "_sample_reverse_flow",
+          "file": "src/e_jepa_ttc/models/local_transport.py",
+          "line": 164,
+          "col": null,
+          "percent": 0.45
+        },
+        {
+          "name": "causal_scale_ttc_loss",
+          "file": "src/e_jepa_ttc/losses/causal_scale_ttc.py",
+          "line": 279,
+          "col": null,
+          "percent": 0.45
+        },
+        {
+          "name": "_summarise_one",
+          "file": "src/e_jepa_ttc/models/local_transport.py",
+          "line": 242,
+          "col": null,
+          "percent": 0.45
+        },
+        {
+          "name": "soft_vertical_extent_from_logits",
+          "file": "src/e_jepa_ttc/models/causal_scale_ttc.py",
+          "line": 263,
+          "col": null,
+          "percent": 0.45
+        },
+        {
+          "name": "cmdline",
+          "file": "site-packages/psutil/_pswindows.py",
+          "line": 768,
+          "col": null,
+          "percent": 0.45
+        },
+        {
+          "name": "_summarise_one",
+          "file": "src/e_jepa_ttc/models/local_transport.py",
+          "line": 250,
+          "col": null,
+          "percent": 0.36
+        },
+        {
+          "name": "<genexpr>",
+          "file": "operational/rgb_port_revision/loss.py",
+          "line": 37,
+          "col": null,
+          "percent": 0.36
+        },
+        {
+          "name": "_forward_impl",
+          "file": "src/e_jepa_ttc/models/causal_scale_ttc.py",
+          "line": 992,
+          "col": null,
+          "percent": 0.36
+        },
+        {
+          "name": "read_array",
+          "file": "site-packages/numpy/lib/_format_impl.py",
+          "line": 860,
+          "col": null,
+          "percent": 0.36
+        }
+      ]
+    }
+  ],
+  "source_sha256": {
+    "BASELINE_TELEMETRY.json": "3964058b40176e3f17f9b1afed65266bbfa1962525a7468a2e79bf2461f20777",
+    "LIVE_TELEMETRY.json": "ec6d73585a4ecdb375d05f49aeda8356eebb64ad48e7551de790da5c502197b8",
+    "OPTIMIZED_STACKS.json": "2e7e6c1606e111fdf67a25793f2781db38d11e06b3f8e1b53e11128ee6d47304"
+  },
+  "limits": "Sequential live observations, different batches and windows, not a controlled whole-training ABBA. ETA only for remaining R_A5 updates; excludes other V13 stages."
+}

@@ -1,0 +1,28 @@
+{
+  "checked_at": "2026-10-11T02:08:06.247820+02:00",
+  "queue_alive": true,
+  "trainer_alive": true,
+  "single_owner": true,
+  "pause_marker": false,
+  "stop_request": false,
+  "queue_module": "operational.rgb_port_rgb_loader.queue",
+  "R_A5": {
+    "status": "RUNNING",
+    "started_from_update": 1500,
+    "completed_updates": 1685,
+    "durable_updates": 1600,
+    "identity_sha256": "f343b612edc1c49e6f78f74c699847a94227553221cd3fefbff35d4daa0e993d",
+    "pending_update_upper": 0,
+    "recovery_upper": 0,
+    "schema": "rgb_port_update_journal_v1"
+  },
+  "R_C2F": {
+    "attempts": 0,
+    "next_launch_uses_same_rgb_overlay": true,
+    "historical_external_owner_still_live": false
+  },
+  "completed_producers": [
+    "E_A5_MATCHED",
+    "E_C2F_MATCHED"
+  ]
+}
