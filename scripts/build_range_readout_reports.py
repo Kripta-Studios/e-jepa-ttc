@@ -187,7 +187,7 @@ def generate() -> None:
         )
     for path in sorted((RUN / "fits").glob("*/CHECKPOINT_RECEIPT.json")):
         value = read(path)
-        if sha(Path(value["checkpoint_path"])) != value["checkpoint_sha256"]:
+        if sha(path.parent / "checkpoint_last.pt") != value["checkpoint_sha256"]:
             raise ValueError("Checkpoint hash mismatch")
         checks.append(
             {
@@ -608,6 +608,9 @@ def bundle() -> None:
         ROOT / "docs/range_readout_integration_20261012.md",
         ROOT / "pyproject.toml",
         ROOT / "uv.lock",
+        ROOT / "README.md",
+        ROOT / "LICENSE",
+        ROOT / ".python-version",
     ]:
         files[path.relative_to(ROOT).as_posix()] = path
     # Preserve the native implementation imported by the new integration as well.
