@@ -28,7 +28,7 @@ def registration() -> dict:
     """Freeze the sole real-P optimization diagnostic before any of its updates."""
     record = {
         "experiment_id": "V18_INPUT_PREFETCH_P_DIAGNOSTIC",
-        "registration_revision": 2,
+        "registration_revision": 3,
         "purpose": "Execution equivalence, exact resume and step timing; no H/V model selection",
         "population": "P",
         "fits": config()["fits"],
@@ -43,7 +43,9 @@ def registration() -> dict:
         "timing_scope": (
             "batch consumption, H2D, backward, gradient clipping, optimizer and journal"
         ),
-        "resource_checks": "Before each trajectory of at most ten updates; outside prefetch context",
+        "resource_checks": (
+            "Before each trajectory of at most ten updates; outside prefetch context"
+        ),
         "performance_gate": "native mean measured step time at least10% lower; all paths reported",
         "sources": {
             **sources(),
