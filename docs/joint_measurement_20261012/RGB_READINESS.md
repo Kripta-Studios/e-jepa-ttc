@@ -163,3 +163,25 @@ El trazado se limita al contrato de forma fija y entradas válidas declarado.
 Conserva las advertencias de PyTorch en el log. La preparación de estos artefactos
 no acredita los futuros endpoints entrenados: cada export deberá repetirse y
 verificarse con sus propios pesos después de completar la comparación RGB.
+
+## Componente de fusión con anchor RGB
+
+`operational.joint_measurement.fusion_model.RGBAnchorComplement` implementa la
+parte predictiva de la fusión pendiente. Aprende una corrección en fase sobre
+la salida RGB; no promedia TTC entre modalidades. La última capa comienza en
+cero, por lo que inicialmente reproduce el anchor salvo el redondeo de la
+conversión nativa fase/TTC. TRUE y ZERO tienen idéntica capacidad y admiten el
+mismo estado inicial. ZERO anula todo el bloque de features event, incluidos
+sus relojes; la predicción event sólo interviene en el fallback cuando falta RGB.
+
+El fallback copia exactamente el TTC event admitido y omite la red de fusión
+para esas filas. Tolera campos RGB ausentes/no finitos únicamente en dichas
+filas, evitando que contaminen el resto del batch. Nueve pruebas CPU comprueban
+el anchor con signos opuestos, fallback completo y mixto, invariancia ZERO,
+gradientes de la corrección y rechazo de entradas inválidas. Cero updates.
+
+Esto no registra todavía un experimento de fusión. Siguen pendientes la elección
+de padres a partir de P/H, extracción de sus features nuevas, normalización H,
+genealogía, receta numérica completa, trainer, QA de reanudación y los dos fits
+de 2.500 updates. El componente acepta dimensiones explícitas para permitir el
+anchor RGB elegido sin reutilizar por forma una caché de otro productor.
