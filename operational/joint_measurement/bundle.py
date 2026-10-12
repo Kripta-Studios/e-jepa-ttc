@@ -169,7 +169,11 @@ def build(output: Path) -> dict:
             excluded.append(relative.as_posix())
             continue
         files["campaign/" + relative.as_posix()] = path
-    for folder, namespace in (("sensor", "sensor_provenance"), ("rgb", "rgb_sensor_provenance")):
+    for folder, namespace in (
+        ("sensor", "sensor_provenance"),
+        ("rgb", "rgb_sensor_provenance"),
+        ("sensor_uncompressed", "uncompressed_sensor_provenance"),
+    ):
         sensor = Path(config()["cache_root"]) / folder
         for path in sensor.rglob("*.json"):
             files[namespace + "/" + path.relative_to(sensor).as_posix()] = path
