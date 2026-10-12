@@ -1,0 +1,2 @@
+# Inference receipts bind these source files byte for byte.
+*.py -text whitespace=cr-at-eol
