@@ -34,7 +34,7 @@ def run() -> dict:
     orders = [["usb", "nvme"] if i % 2 == 0 else ["nvme", "usb"] for i in range(8)]
     registration = {
         "schema": "v18_cpu_storage_probe_v1",
-        "source_sha256": sha(__file__),
+        "source_sha256": sha(ROOT / "operational/joint_measurement/profile_storage.py"),
         "source_root": str(cache_root("P")),
         "target_root": str(target),
         "packs": packs,
@@ -43,7 +43,9 @@ def run() -> dict:
         "optimizer_updates": 0,
         "gpu_work": False,
         "gate": {"mean_time_ratio_max": 0.75, "paired_ratio_max": 0.9, "min_pairs": 6},
-        "scope": "Warm CPU loader only; four packs, same data and original loader; concurrent trainer",
+        "scope": (
+            "Warm CPU loader only; four packs, same data and original loader; concurrent trainer"
+        ),
         "migration": "not automatic; requires complete-copy admission and a durable transition",
     }
     freeze(directory / "REGISTRATION.json", registration)
