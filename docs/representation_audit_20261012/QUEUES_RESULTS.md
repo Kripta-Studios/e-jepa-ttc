@@ -23,6 +23,10 @@ Tablas regeneradas desde predicciones, con replay exacto de métricas. P es ajus
 | E | H | Q1-S7 | NA | 277.121661 | 278.327699 | 240.952053 | NA | 9.164699 | 1.000000 |
 | E | P | Q0-S7 | 134.516902 | 55.382971 | 50.133988 | 48.847362 | 93.771477 | 3.779105 | 0.000000 |
 | E | P | Q1-S7 | NA | NA | NA | 250.812782 | NA | 9.056576 | 5.000000 |
+| F | H | F0-S7 | NA | 277.121661 | 278.327699 | 240.952053 | NA | 9.164699 | 1.000000 |
+| F | H | F1-S7 | 180.523017 | 92.876832 | 90.963362 | 83.354508 | 135.556345 | 6.866889 | 0.000000 |
+| F | P | F0-S7 | NA | NA | NA | 250.812782 | NA | 9.056576 | 5.000000 |
+| F | P | F1-S7 | 177.302019 | 88.482596 | 81.048945 | 74.926022 | 130.793285 | 6.142006 | 0.000000 |
 
 NA mantiene ausente el overall cuando faltan predicciones MiD válidas. Las métricas parciales no sustituyen esa cobertura ni habilitan gates o bootstrap. Las filas inválidas permanecen en las tablas originales.
 

@@ -1,5 +1,5 @@
 param(
-    [ValidateSet('all', 'A', 'B', 'D', 'E', 'F')]
+    [ValidateSet('all', 'A', 'B', 'D', 'E', 'F', 'G')]
     [string]$Queue = 'all'
 )
 $ErrorActionPreference = 'Stop'
@@ -54,6 +54,21 @@ try {
         if ($Decision.status -eq 'REPLICATE') {
             Invoke-Stage $Module 'replicate'
             Invoke-Stage $Module 'evaluate-replicas'
+        }
+    }
+    if ($Queue -in @('all', 'G')) {
+        Invoke-Stage 'operational.representation_audit.spatial_cache' 'qa'
+        Invoke-Stage 'operational.representation_audit.spatial_cache' 'P'
+        Invoke-Stage 'operational.representation_audit.spatial_cache' 'H'
+        & $Python -u -m operational.representation_audit.spatial_model *> (Join-Path $Run "RESUME_${Stamp}_SPATIAL_CALIBRATION.log")
+        if ($LASTEXITCODE -ne 0) { throw 'Fallo del ajuste cerrado espacial.' }
+        Invoke-Stage 'operational.representation_audit.spatial_geometry' 'qa'
+        Invoke-Stage 'operational.representation_audit.spatial_geometry' 'train'
+        Invoke-Stage 'operational.representation_audit.spatial_geometry' 'evaluate'
+        $Decision = Get-Content -LiteralPath (Join-Path $Run 'SPATIAL_SCREEN_DECISION.json') -Raw | ConvertFrom-Json
+        if ($Decision.status -eq 'REPLICATE') {
+            Invoke-Stage 'operational.representation_audit.spatial_geometry' 'replicate'
+            Invoke-Stage 'operational.representation_audit.spatial_geometry' 'evaluate-replicas'
         }
     }
     & $Python scripts/report_v17_queues.py *> (Join-Path $Run "RESUME_${Stamp}_REPORT.log")

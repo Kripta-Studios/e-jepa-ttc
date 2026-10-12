@@ -18,6 +18,8 @@ from .geometry_model import GeometryReadout
 from .model import RepresentationRefiner
 from .precision import initialize as init_precision
 from .run import INPUTS, OLD, OWNER, RUN, cache
+from .spatial_geometry import initialize as init_spatial
+from .spatial_model import SpatialReadout
 from .temporal_geometry import initialize as init_temporal
 
 
@@ -32,17 +34,21 @@ def load_export(path: Path) -> nn.Module:
     model: nn.Module
     if kind == "head":
         model = RepresentationRefiner(metadata["bypass_active"])
-    elif kind in ("vector_equal_slope", "vector_calibrated_height"):
+    elif kind in ("vector_equal_slope", "vector_calibrated_height", "vector_spatial_height"):
         native = CausalScaleTTC(CausalScaleTTCConfig(**metadata["model_config"]))
         spec = ResidualSpec(**metadata["operator"])
         native = wrap(native, spec, reset=False)
-        if kind == "vector_calibrated_height":
+        if kind in ("vector_calibrated_height", "vector_spatial_height"):
             calibration = {
                 key: state["height_" + key].tolist()
                 for key in ("mean", "scale", "coefficient", "intercept")
             }
             calibration["role"] = "P"
-            model = GeometryReadout(native, calibration, "Q1")
+            model = (
+                SpatialReadout(native, calibration, "SP1")
+                if kind == "vector_spatial_height"
+                else GeometryReadout(native, calibration, "Q1")
+            )
         else:
             model = VectorReadout(native)
     else:
@@ -106,7 +112,15 @@ def main() -> None:
             inputs = [torch.from_numpy(values[key][:8].copy()) for key in INPUTS]
         else:
             metadata.update(
-                kind="vector_equal_slope" if arm in ("U0", "U1") else "vector_calibrated_height",
+                kind=(
+                    "vector_equal_slope"
+                    if arm in ("U0", "U1")
+                    else (
+                        "vector_spatial_height"
+                        if arm in ("SP0", "SP1")
+                        else "vector_calibrated_height"
+                    )
+                ),
                 model_config=model_config,
                 operator=payload["identity"]["operator"],
                 calibration_branch=(
@@ -121,9 +135,19 @@ def main() -> None:
                 reference, *_ = init_geometry(seed, arm, device="cpu")
             elif arm in ("F0", "F1"):
                 reference, *_ = init_temporal(seed, arm, device="cpu")
+            elif arm in ("SP0", "SP1"):
+                reference, *_ = init_spatial(seed, arm, device="cpu")
             else:
                 raise ValueError("Unknown completed fit")
-            inputs = [raw]
+            if arm in ("SP0", "SP1"):
+                with np.load(RUN / "spatial_cache/P/part_000000.npz", allow_pickle=False) as arc:
+                    spatial = torch.from_numpy(arc["height_features"][:8].copy())
+                inputs = [{**raw, "height_features": spatial}]
+                metadata["height_features"] = (
+                    "matched_A5_dense_64x32x32_mean_pool_8x1_channel_major"
+                )
+            else:
+                inputs = [raw]
         reference.load_state_dict(payload["model_state_dict"], strict=True)
         reference.eval().requires_grad_(False)
         folder = RUN / "exports" / name

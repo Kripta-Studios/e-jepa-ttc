@@ -17,6 +17,7 @@ def main() -> None:
         ("D", "D_RESULTS.json", "evaluation"),
         ("E", "GEOMETRY_SCREEN_RESULTS.json", "geometry_evaluation"),
         ("F", "TEMP_GEOMETRY_SCREEN_RESULTS.json", "temporal_geometry_evaluation"),
+        ("G", "SPATIAL_SCREEN_RESULTS.json", "spatial_evaluation"),
     ]
     for queue, filename, directory in sources:
         if not (RUN / filename).exists():
@@ -83,7 +84,13 @@ def main() -> None:
                         "last250_loss": float(curve.loss.tail(250).mean()),
                     }
                 )
-        arms = {"B": ("U0", "U1"), "D": ("Z", "D"), "E": ("Q0", "Q1"), "F": ("F0", "F1")}[queue]
+        arms = {
+            "B": ("U0", "U1"),
+            "D": ("Z", "D"),
+            "E": ("Q0", "Q1"),
+            "F": ("F0", "F1"),
+            "G": ("SP0", "SP1"),
+        }[queue]
         for seed in (7, 13, 23):
             role = "V" if queue == "D" else "H"
             key = f"{role}/{arms[1]}-S{seed}" if queue != "D" else f"D-S{seed}"
