@@ -26,3 +26,30 @@ trainer integrado. Una eventual adopción debe medir el beneficio, conservar los
 checkpoints existentes y registrar explícitamente la transición de código, con
 paridad de entrenamiento y reanudación. No cambiar silenciosamente los hashes
 del productor activo ni reescribir su genealogía inicial para instalar el prototipo.
+
+## Diagnóstico real P cerrado a las 17:53 UTC
+
+Se registraron y ejecutaron 80 updates científicos de diagnóstico, separados de
+los endpoints primarios: diez seriales frente a cinco con prefetch, checkpoint y
+cinco reanudados, en cada uno de los cuatro brazos. Los pesos, optimizador,
+scheduler, RNG, sampler, pérdidas y cursor coinciden exactamente en los cuatro.
+
+| Brazo | Serial, s/update | Prefetch, s/update | Ratio |
+| --- | ---: | ---: | ---: |
+| NATIVE-P2-FT | 1,11815 | 1,10495 | 0,98819 |
+| PAIR-DIRECT | 0,41772 | 0,35731 | 0,85538 |
+| PAIR-CORR | 0,50314 | 0,41516 | 0,82514 |
+| PAIR-CORR-FROZEN | 0,40863 | 0,33079 | 0,80950 |
+
+Son diez pasos medidos por ejecución, después de admisión de páginas sensoriales;
+no son una medida de coste end-to-end ni una estimación precisa de toda la campaña.
+Se conservan las mediciones individuales, incluidas las fronteras de reanudación.
+
+La regla registrada requería al menos un 10 % de mejora en el modelo nativo.
+No se cumple. Decisión: **DO_NOT_INSTALL**. Las mejoras de los otros brazos se
+conservan sin cambiar retrospectivamente la regla. La matriz primaria reanuda
+desde el update 1.358 con su implementación científica intacta, sin migración de
+pesos o identidad. Los 80 updates del diagnóstico cuentan en el techo científico.
+
+Evidencia regenerable: `diagnostics/prefetch_runtime/REGISTRATION.json`,
+`COMPLETE.json`, `DECISION.json` y los CSV `TIMING_TO_*.csv` de cada ejecución.

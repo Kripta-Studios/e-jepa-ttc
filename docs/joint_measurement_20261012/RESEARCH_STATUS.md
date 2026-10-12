@@ -61,6 +61,20 @@ Preparación interrumpida se reanuda con:
 python -u -B -m operational.joint_measurement.data P
 usando el entorno compartido y PYTHONPATH=src;. documentado en el script.
 
+Actualización 17:54 UTC:
+
+- P/H/V sensoriales completos: 53.890 / 18.422 / 16.432 consultas. No se han
+  evaluado endpoints en H/V; preparar inputs no constituye evaluación.
+- Nativo guardado en 1.358 updates, sin updates pendientes ni de recuperación,
+  para el diagnóstico registrado de prefetch. Éste cerró sus 80 updates reales P
+  con reanudación y estados exactos en los cuatro brazos.
+- Prefetch no alcanza su gate de aceleración nativo: DO_NOT_INSTALL. Se reanuda
+  la matriz con código científico y checkpoint originales. Véase
+  RUNTIME_PERFORMANCE.md; las mejoras observadas en los otros brazos se conservan.
+- Contabilidad al cerrar el diagnóstico: 1.358 updates primarios + 80 científicos
+  de diagnóstico + 420 técnicos = 1.858 físicos; cero recuperación y pendientes.
+  Estos valores son una instantánea: el entrenamiento sigue avanzando.
+
 Pendientes del objetivo: completar los cuatro fits, medir y decidir en H,
 comparar en V tras congelación, ejecutar las ramas adaptativas/RGB habilitadas,
 réplicas/refit cuando corresponda, costes completos, exports y bundle verificable.
