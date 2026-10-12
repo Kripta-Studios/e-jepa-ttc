@@ -88,7 +88,10 @@ def replay_export(folder: Path) -> dict:
     with (folder / "model.torchscript.pt").open("rb") as stream:
         model = torch.jit.load(stream, map_location="cpu").eval()
     with np.load(folder / "example_input.npz", allow_pickle=False) as archive:
-        inputs = (torch.from_numpy(archive["events"]), torch.from_numpy(archive["delta_t_s"]))
+        pixel_key = binding.get("pixel_input_key", "events")
+        if pixel_key not in {"events", "rgb"}:
+            raise ValueError("Unknown portable pixel input contract")
+        inputs = (torch.from_numpy(archive[pixel_key]), torch.from_numpy(archive["delta_t_s"]))
     expected = json.loads((folder / "example_output.json").read_text(encoding="utf-8"))[
         "signed_ttc_seconds"
     ]

@@ -131,6 +131,25 @@ def test_replay_included_predictions_and_real_torchscript_bytes(tmp_path):
     # Later campaign branches retain their own artifacts, even for equal fit names.
     shutil.copytree(predictions, campaign / "rgb/predictions/P/fixture")
     shutil.copytree(export, campaign / "rgb/exports/fixture")
+    rgb_export = campaign / "rgb/exports/fixture"
+    np.savez(rgb_export / "example_input.npz", rgb=inputs[0].numpy(), delta_t_s=inputs[1].numpy())
+    write(
+        rgb_export / "BINDING.json",
+        {
+            "atol_seconds": 1e-5,
+            "rtol": 1e-5,
+            "pixel_input_key": "rgb",
+        },
+    )
+    write(
+        rgb_export / "COMPLETE.json",
+        {
+            "status": "COMPLETE",
+            "files": {
+                p.name: file_hash(p) for p in rgb_export.iterdir() if p.name != "COMPLETE.json"
+            },
+        },
+    )
     files = {
         p.relative_to(tmp_path / "input").as_posix(): p for p in campaign.rglob("*") if p.is_file()
     }
