@@ -10,6 +10,7 @@ Campaña independiente posterior al `NO_CANDIDATE` de V15. Presupuesto autorizad
 4. [Mecanismos investigados](MECHANISMS.md): hipótesis, evidencia y límites.
 5. [Comparabilidad pública](PUBLIC_COMPARABILITY.md): poblaciones, modalidades y métricas de las referencias.
 6. [Reproducción](REPRODUCTION.md) y [portabilidad](PORTABILITY.md): comandos, dependencias, pesos y ejemplos.
+7. [Piloto de foreground](FOREGROUND_PILOT.md): sensibilidad local de la ruta nativa, 40 consultas P y cero updates.
 
 ## Registro prospectivo
 
@@ -49,6 +50,8 @@ Rutas relativas a `artifacts/representation_audit_20261012`:
 | Reproducción de métricas | `BUNDLE_METRIC_REPLAY.json` |
 | Recarga portable | `PORTABLE_EXPORT_VERIFICATION.json` |
 | Continuidad sintética | `qa/*PASS.json` y checkpoints asociados |
+| Continuidad de muestras y relojes | `SAMPLING_CONTINUITY_AUDIT.json`, `sampling_audit/` |
+| Perfil CPU sobre entradas preparadas | `PORTABLE_CPU_FORWARD_PROFILE.json` |
 
 Un archivo puede estar ausente mientras su cola siga pendiente. El estado generado es la referencia; este índice no afirma que todas las ramas hayan sido admitidas.
 
