@@ -28,7 +28,7 @@ def registration() -> dict:
     """Freeze the sole real-P optimization diagnostic before any of its updates."""
     record = {
         "experiment_id": "V18_INPUT_PREFETCH_P_DIAGNOSTIC",
-        "registration_revision": 3,
+        "registration_revision": 4,
         "purpose": "Execution equivalence, exact resume and step timing; no H/V model selection",
         "population": "P",
         "fits": config()["fits"],
@@ -166,6 +166,8 @@ def run() -> dict:
             receipt = DIRECTORY / fit_id / "COMPARISON.json"
             if receipt.exists():
                 checks[fit_id] = read(receipt)
+                if checks[fit_id]["status"] != "PASS":
+                    raise AssertionError(f"Retained failed diagnostic requires review: {fit_id}")
                 continue
             with gpu_charge("real_P_prefetch_diagnostic/" + fit_id, reserve=600):
                 control = trajectory(fit_id, "serial", 10, dataset, masses)
@@ -189,6 +191,8 @@ def run() -> dict:
                 for path in sorted((DIRECTORY / fit_id / mode).glob("TIMING_TO_*.csv")):
                     with path.open(newline="") as stream:
                         measured.extend(float(row["seconds"]) for row in csv.DictReader(stream))
+                if len(measured) != 10:
+                    raise ValueError("Incomplete timing evidence; do not adopt the optimization")
                 times[mode] = {"steps": len(measured), "mean_s": float(np.mean(measured))}
             comparison = {
                 "status": "PASS" if all(equality.values()) else "FAIL",
