@@ -147,9 +147,33 @@ def local_correlation_match(
     )
 
 
+def deterministic_bilinear_sample(field: torch.Tensor, grid: torch.Tensor) -> torch.Tensor:
+    """Sample with align_corners=True/zero padding and deterministic gather gradients."""
+    batch, channels, height, width = field.shape
+    x = (grid[..., 0] + 1) * 0.5 * (width - 1)
+    y = (grid[..., 1] + 1) * 0.5 * (height - 1)
+    x0, y0 = x.floor(), y.floor()
+    dx, dy = x - x0, y - y0
+    result = field.new_zeros((batch, channels, *grid.shape[1:3]))
+    for offset_x, offset_y, weight in (
+        (0, 0, (1 - dx) * (1 - dy)),
+        (1, 0, dx * (1 - dy)),
+        (0, 1, (1 - dx) * dy),
+        (1, 1, dx * dy),
+    ):
+        xx, yy = x0 + offset_x, y0 + offset_y
+        valid = (xx >= 0) & (xx < width) & (yy >= 0) & (yy < height)
+        index = (yy.clamp(0, height - 1).long() * width + xx.clamp(0, width - 1).long()).flatten(1)
+        values = field.flatten(2).gather(2, index[:, None].expand(-1, channels, -1))
+        result = result + values.reshape_as(result) * (weight * valid)[:, None]
+    return result
+
+
 def _sample_reverse_flow(
     reverse: LocalTransportMatch,
     forward: LocalTransportMatch,
+    *,
+    deterministic_sampling: bool = False,
 ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     """Sample the reverse field at ``p + d_forward(p)`` for cycle diagnostics."""
 
@@ -169,20 +193,27 @@ def _sample_reverse_flow(
         dim=-1,
     )
     reverse_field = torch.stack((reverse.dx, reverse.dy), dim=1)
-    sampled = functional.grid_sample(
-        reverse_field,
-        sample_grid,
-        mode="bilinear",
-        padding_mode="zeros",
-        align_corners=True,
+    sampled = (
+        deterministic_bilinear_sample(reverse_field, sample_grid)
+        if deterministic_sampling
+        else functional.grid_sample(
+            reverse_field,
+            sample_grid,
+            mode="bilinear",
+            padding_mode="zeros",
+            align_corners=True,
+        )
     )
-    reverse_valid = functional.grid_sample(
-        reverse.valid[:, None].to(dtype),
-        sample_grid,
-        mode="nearest",
-        padding_mode="zeros",
-        align_corners=True,
-    )[:, 0] > 0.5
+    reverse_valid = (
+        functional.grid_sample(
+            reverse.valid[:, None].to(dtype),
+            sample_grid,
+            mode="nearest",
+            padding_mode="zeros",
+            align_corners=True,
+        )[:, 0]
+        > 0.5
+    )
     return sampled[:, 0], sampled[:, 1], reverse_valid
 
 
@@ -212,6 +243,7 @@ def _summarise_one(
     *,
     spatial_weight: torch.Tensor,
     radius: int,
+    deterministic_sampling: bool = False,
 ) -> torch.Tensor:
     batch, height, width = forward.dx.shape
     dtype = forward.dx.dtype
@@ -245,7 +277,9 @@ def _summarise_one(
     confidence = _weighted_mean(forward.confidence_margin, base_weight)
     entropy = _weighted_mean(forward.entropy, base_weight)
 
-    reverse_dx, reverse_dy, reverse_valid = _sample_reverse_flow(reverse, forward)
+    reverse_dx, reverse_dy, reverse_valid = _sample_reverse_flow(
+        reverse, forward, deterministic_sampling=deterministic_sampling
+    )
     cycle_valid = forward.valid & reverse_valid
     cycle_weight = spatial_weight.float().clamp_min(0.0) * cycle_valid.float()
     cycle_magnitude = torch.sqrt(
@@ -275,6 +309,7 @@ def transport_physical_features(
     *,
     foreground_weight: torch.Tensor | None,
     radius: int,
+    deterministic_sampling: bool = False,
 ) -> torch.Tensor:
     """Return 18 interpretable per-pair transport scalars.
 
@@ -302,12 +337,14 @@ def transport_physical_features(
         reverse,
         spatial_weight=global_weight,
         radius=radius,
+        deterministic_sampling=deterministic_sampling,
     )
     foreground_features = _summarise_one(
         forward,
         reverse,
         spatial_weight=foreground_weight,
         radius=radius,
+        deterministic_sampling=deterministic_sampling,
     )
     features = torch.cat((global_features, foreground_features), dim=-1)
     if features.shape[-1] != len(TRANSPORT_FEATURE_NAMES):

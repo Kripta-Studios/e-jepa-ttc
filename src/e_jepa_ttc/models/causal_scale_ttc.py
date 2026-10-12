@@ -64,6 +64,7 @@ class CausalScaleTTCConfig:
     risk_thresholds_s: tuple[float, ...] = (0.5, 1.0, 2.0, 4.0)
     transport_enabled: bool = False
     transport_mode: Literal["legacy", "adaptive_pyramid"] = "legacy"
+    deterministic_transport_sampling: bool = False
     transport_radius: int = 4
     transport_temperature: float = 0.07
     transport_fine_radius: int = 1
@@ -1014,12 +1015,14 @@ class CausalScaleTTC(nn.Module):
                 reverse_match,
                 foreground_weight=foreground_previous,
                 radius=fine_radius,
+                deterministic_sampling=self.config.deterministic_transport_sampling,
             )
             fine_reverse = transport_physical_features(
                 reverse_match,
                 forward_match,
                 foreground_weight=foreground_current,
                 radius=fine_radius,
+                deterministic_sampling=self.config.deterministic_transport_sampling,
             )
             fine_weight: torch.Tensor | None = None
             coarse_forward: torch.Tensor | None = None
@@ -1066,12 +1069,14 @@ class CausalScaleTTC(nn.Module):
                     coarse_reverse_match,
                     foreground_weight=coarse_foreground_previous,
                     radius=coarse_radius,
+                    deterministic_sampling=self.config.deterministic_transport_sampling,
                 )
                 coarse_reverse = transport_physical_features(
                     coarse_reverse_match,
                     coarse_match,
                     foreground_weight=coarse_foreground_current,
                     radius=coarse_radius,
+                    deterministic_sampling=self.config.deterministic_transport_sampling,
                 )
                 pair_inputs = inputs[:, 1:].reshape(
                     batch * pair_count,

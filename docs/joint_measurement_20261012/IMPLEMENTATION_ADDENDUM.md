@@ -61,3 +61,34 @@ El ejemplo PPS-PAIR outer0 usa seis grupos TRAIN y tres excluidos, no los roles
 P24/H8/V8 ni el padre A5 matched de esta campaña. No se presenta V18 como primera
 investigación histórica de pares ni se reutilizan esos pesos como padres P-only.
 Su arquitectura/procedencia se conserva en el inventario antes de nuevos fits.
+
+## Reanudación CUDA y muestreo del transporte nativo
+
+La primera comparación sintética CUDA 10 frente a 5+5 falló en igualdad exacta:
+la discrepancia comenzaba antes de guardar, con máximo 1,1920928955078125e-7
+en pesos finales. Se conserva en qa/cuda_v1_nondeterministic y sus 20 updates
+cuentan en la reserva técnica. Los RNG, draws y scheduler eran idénticos.
+
+El diagnóstico sin updates localizó el backward CUDA de grid_sample del ciclo
+forward/reverse. El propio módulo histórico collision_clock_motion documenta
+esa acumulación atómica; su solución de detach no se aplica a A5 porque cambiaría
+el objetivo diferenciable. Deshabilitar cuDNN hizo explícito el error de operación
+no determinista; no se usa ese cambio como configuración de campaña.
+
+Antes de cualquier update científico V18 añade un sampler bilineal de cuatro
+esquinas, zero-padding y align_corners=True, con gather y ambos gradientes.
+deterministic_transport_sampling permanece False por defecto en el modelo
+histórico y es True al construir los A5 privados V18, incluido A5-P2-FROZEN.
+No cambia pesos, topología, teacher, pérdida ni sampler de consultas. Se declaran
+las diferencias de redondeo entre kernels y se valida equivalencia numérica de
+forward y ambos gradientes; la prueba de reanudación sigue exigiendo igualdad
+exacta. local_transport.py se incluye en la identidad científica del fit.
+
+## Interrupción y evidencia durable
+
+Una interrupción del entorno a las 15:31 UTC dejó el índice Git y la última
+línea del registro sin bytes válidos. Se conservaron sus copias corruptas;
+se reconstruyó únicamente el índice desde HEAD y se conservó la parte JSONL
+válida. La última inscripción CUDA se volvió a registrar antes de ejecutarla.
+No había updates científicos. El cache P se reanuda verificando cada recibo
+durable; no se hereda un PID ni se supone vivo un proceso desaparecido.

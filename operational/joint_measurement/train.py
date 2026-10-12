@@ -49,9 +49,9 @@ def setup(seed: int) -> None:
 def native_config() -> tuple[CausalScaleTTCConfig, CausalScaleTTCLossConfig]:
     """Reuse the admitted native configuration without rebuilding defaults."""
     recipe = read(ROOT / "configs/rgb_port/producers.json")["producers"]["E_A5_MATCHED"]
-    return CausalScaleTTCConfig(**recipe["model_config"]), CausalScaleTTCLossConfig(
-        **recipe["loss_config"]
-    )
+    return CausalScaleTTCConfig(
+        **recipe["model_config"], deterministic_transport_sampling=True
+    ), CausalScaleTTCLossConfig(**recipe["loss_config"])
 
 
 def initialize(fit_id: str, *, random_parent: bool = False) -> CausalScaleTTC | PairMeasurement:
@@ -156,6 +156,7 @@ def sources() -> dict[str, str]:
             "configs/joint_measurement/primary.json",
             "src/e_jepa_ttc/simplex_t/phase.py",
             "src/e_jepa_ttc/models/causal_scale_ttc.py",
+            "src/e_jepa_ttc/models/local_transport.py",
             "src/e_jepa_ttc/losses/causal_scale_ttc.py",
             "operational/rgb_port/train_producers.py",
             "operational/rgb_port_revision/loss.py",
