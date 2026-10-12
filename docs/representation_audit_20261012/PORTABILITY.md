@@ -21,3 +21,5 @@ Los exports incluyen `WEIGHTS.pt`, `MODEL_METADATA.json`, `EXAMPLE_INPUT.npz`, `
 Se reutilizó el entorno compartido de este equipo. `ENVIRONMENT.json` y `ENVIRONMENT_PACKAGES.json` registran el runtime observado. No se ha validado una instalación limpia del bundle en otra máquina; el lockfile heredado no sustituye ese registro de ejecución. La igualdad bit a bit no se garantiza al cambiar hardware o versiones.
 
 Los tiempos CPU de cabeza o readout sobre características preparadas y los tiempos GPU de entrenamiento/extracción tienen scopes distintos. No se presentan como latencia completa del sistema.
+
+`PORTABLE_CPU_FORWARD_PROFILE.json` conserva las 200 duraciones por export, después de 20 warmups, con batch1 y un hilo CPU. Excluye carga del modelo, lectura de entradas, encoder, transporte, construcción del historial y normalización. Son tiempos de pared sobre un equipo compartido, no costes de kernels ni garantías para otro hardware. El perfil se regenera con `python scripts/profile_v17_exports.py ../campaign/exports`.

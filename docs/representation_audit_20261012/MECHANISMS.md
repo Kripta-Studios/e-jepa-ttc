@@ -28,6 +28,14 @@ El ajuste de altura recupera parte del sesgo mediano de los cambios temporales e
 
 E y F siguen un cribado de productores en H. Sólo una familia admitida puede reconstruir features, normalizadores H y refinadores bajo un addendum de integración. No se conectan productores modificados a features antiguas para atribuirles una mejora del sistema completo.
 
+E queda rechazado: la calibración Q1 produce una predicción H y cinco P fuera del dominio positivo de MiD. Esas filas permanecen y el agregado correspondiente es NA; no se recortan ni se eliminan para recuperar cobertura. Además, las bandas admisibles muestran regresiones grandes. F recupera cobertura H completa, pero falla los gates crucial, agregado, MAE y otras salvaguardas frente al A5 histórico. Su control emparejado es Q1 reutilizado, con cobertura insuficiente. Mejorar el ajuste de altura o su derivada en P no garantizó mejorar TTC en H.
+
+## Dos contrastes pendientes de cierre
+
+G conserva ocho posiciones verticales del mapa congelado de A5 y las contrasta con promedios globales. Sigue el mismo objetivo de altura y cambio temporal de F. La extracción no usa targets; los normalizadores y el ridge se ajustan sólo con P. Antes de su primer ajuste, la acumulación se implementó por bloques para reducir memoria, y se verificó numéricamente contra la fórmula densa en ambos brazos. Esto no cambia el objetivo, lambda, población ni gates.
+
+H cambia exclusivamente el clipping del scorer C20 respecto al control U0 ya congelado de B. Registra norma y finitud, sin volver a ponderar pérdidas. Una norma superior a1 no significa clipping aplicado en este brazo. La evaluación y las réplicas condicionales mantienen el orden G→H aunque una pausa de recursos permita preparar el fit independiente de H antes de cerrar G.
+
 ## Límites de las conclusiones
 
 P/H/V pertenecen al mismo programa de desarrollo; V ya estaba expuesto. No se han usado FCWD o Dev32 para ajustar o seleccionar estas variantes. Las comparaciones públicas tienen otras poblaciones, modalidades o métricas, descritas en `PUBLIC_COMPARABILITY.md`. Ningún resultado interno de este documento acredita SOTA universal.

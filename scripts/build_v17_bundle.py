@@ -15,6 +15,10 @@ from operational.representation_audit.run import OLD, OWNER, ROOT, RUN
 
 def dependencies() -> list[dict]:
     paths = {OLD / "ADMISSION.json", OLD / "PRODUCER_METRICS_P_H.json"}
+    paths.add(
+        ROOT.parent / "e-jepa-ttc-v14-range-transfer/artifacts/range_transfer_20261010"
+        / "evaluation/screen/RT-M0-L0-S7/METRICS.json"
+    )
     for role in ("P", "H", "V"):
         manifest = OWNER / f"{role}_MANIFEST.json"
         paths.add(manifest)
