@@ -24,6 +24,11 @@ ACTIONS = {
     "evaluate": ("evaluate", []),
     "units": ("phase_units", ["train"]),
     "evaluate_units": ("evaluate", ["--study", "units"]),
+    "parity": ("route_parity", []),
+    "next_studies": ("next_studies", ["train"]),
+    "evaluate_units_s13": ("evaluate_next", ["UNIT_REPLICATION", "13"]),
+    "evaluate_units_s23": ("evaluate_next", ["UNIT_REPLICATION", "23"]),
+    "evaluate_relative": ("evaluate_next", ["RELATIVE_PHASE", "7"]),
 }
 
 
@@ -138,6 +143,11 @@ def main() -> None:
 
     module, arguments = ACTIONS[args.action]
     sys.argv = [module, *arguments]
+    if args.action == "parity":
+        os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
+        torch.cuda.set_per_process_memory_fraction(
+            policy["max_own_reserved_cuda_bytes"] / torch.cuda.get_device_properties(0).total_memory
+        )
     try:
         with patch.object(common, "guard", admitted):
             runpy.run_module("operational.multimodal_research." + module, run_name="__main__")
