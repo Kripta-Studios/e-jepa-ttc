@@ -12,6 +12,7 @@ from .data import cache_root, prepare
 from .evaluate import freeze_primary, predict, select_h
 from .preflight import run as run_preflight
 from .qa import run as run_qa
+from .schedule import execution_order
 from .train import fit
 
 
@@ -22,7 +23,7 @@ def advance() -> dict:
         run_preflight()
     if not (cache_root("P") / "COMPLETE.json").exists():
         return {"status": "WAIT_P_SENSOR", "progress": read(RUN / "PREPARE_P_PROGRESS.json")}
-    for fit_id in config()["fits"]:
+    for fit_id in execution_order():
         receipt = fit(fit_id)
         if receipt["status"] != "COMPLETE":
             return {"status": "TRAINING", "fit_id": fit_id, "updates": receipt["completed_updates"]}
