@@ -16,6 +16,9 @@ Tablas regeneradas desde predicciones, con replay exacto de métricas. P es ajus
 | B | P | U1-S13 | 136.545564 | 57.300183 | 48.736926 | 50.804867 | 95.417016 | 4.137537 |
 | B | P | U1-S23 | 134.174453 | 57.313144 | 49.377073 | 50.781562 | 94.297033 | 4.077940 |
 | B | P | U1-S7 | 135.978965 | 57.616030 | 48.823075 | 51.032403 | 95.259839 | 4.161638 |
+| D | V | D-S13 | 148.712487 | 58.781343 | 52.749089 | 61.109618 | 103.376517 | 2.639853 |
+| D | V | D-S23 | 149.672984 | 58.503604 | 52.146352 | 60.151553 | 103.617363 | 2.396993 |
+| D | V | D-S7 | 148.094343 | 56.165763 | 54.354440 | 62.788591 | 102.611203 | 2.605942 |
 
 Las curvas comparan trayectorias dentro de cada objetivo; sus pérdidas absolutas no son una métrica común entre objetivos. El clipping cuenta normas previas al recorte >1. Los intervalos se remuestrean sobre grupos completos (2000 draws, seed12345), no ventanas independientes.
 

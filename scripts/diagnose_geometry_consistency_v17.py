@@ -88,7 +88,10 @@ def main() -> None:
             "role": "P",
             "optimizer_updates": 0,
             "rows": len(data),
-            "scope": "current pair log-ratio only; annotations are training targets, not inference inputs",
+            "scope": (
+                "current pair log-ratio only; annotations are training targets, "
+                "not inference inputs"
+            ),
             "not_model_performance": True,
             "not_system_reach_bound": True,
             "target_annotation_visibility_and_motion_assumptions_apply": True,

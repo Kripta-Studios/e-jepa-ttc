@@ -16,11 +16,13 @@ def main() -> None:
         ("B", "PRECISION_RESULTS.json", "precision_evaluation"),
         ("D", "D_RESULTS.json", "evaluation"),
         ("E", "GEOMETRY_SCREEN_RESULTS.json", "geometry_evaluation"),
+        ("F", "TEMP_GEOMETRY_SCREEN_RESULTS.json", "temporal_geometry_evaluation"),
     ]
     for queue, filename, directory in sources:
         if not (RUN / filename).exists():
             continue
-        results = read(RUN / filename)
+        replica_file = filename.replace("SCREEN", "REPLICAS")
+        results = read(RUN / replica_file if (RUN / replica_file).exists() else RUN / filename)
         for key, score in results.items():
             role, name = key.split("/") if "/" in key else ("V", key)
             folder = RUN / directory / role / name if queue != "D" else RUN / directory / name
@@ -65,17 +67,20 @@ def main() -> None:
                 }
             )
             if role == "P" or queue == "D":
-                curve = pd.read_csv(RUN / f"fits/{name}/CURVE.csv")
+                source_name = "Q1-S7" if name == "F0-S7" else name
+                curve = pd.read_csv(RUN / f"fits/{source_name}/CURVE.csv")
                 clips.append(
                     {
                         "fit": name,
+                        "curve_source": source_name,
+                        "reused_control": name == "F0-S7",
                         "updates": len(curve),
                         "clipped_fraction": float((curve.gradient_l2 > 1).mean()),
                         "last250_clipped_fraction": float((curve.gradient_l2.tail(250) > 1).mean()),
                         "last250_loss": float(curve.loss.tail(250).mean()),
                     }
                 )
-        arms = ("U0", "U1") if queue == "B" else (("Q0", "Q1") if queue == "E" else ("Z", "D"))
+        arms = {"B": ("U0", "U1"), "D": ("Z", "D"), "E": ("Q0", "Q1"), "F": ("F0", "F1")}[queue]
         for seed in (7, 13, 23):
             role = "V" if queue == "D" else "H"
             key = f"{role}/{arms[1]}-S{seed}" if queue != "D" else f"D-S{seed}"
@@ -120,7 +125,9 @@ def main() -> None:
     lines = [
         "# V17: resultados de las colas adicionales",
         "",
-        "Tablas regeneradas desde predicciones, con replay exacto de métricas. P es ajuste; H es cribado de productores; V es desarrollo interno expuesto. No son resultados oficiales ni SOTA.",
+        "Tablas regeneradas desde predicciones, con replay exacto de métricas. "
+        "P es ajuste; H es cribado de productores; V es desarrollo interno expuesto. "
+        "No son resultados oficiales ni SOTA.",
         "",
         "| Cola | Rol | Fit | MiDc | MiDs | MiDl | MiDn | Overall | MAE s |",
         "|---|---|---|---:|---:|---:|---:|---:|---:|",
@@ -146,9 +153,14 @@ def main() -> None:
         )
     lines += [
         "",
-        "Las curvas comparan trayectorias dentro de cada objetivo; sus pérdidas absolutas no son una métrica común entre objetivos. El clipping cuenta normas previas al recorte >1. Los intervalos se remuestrean sobre grupos completos (2000 draws, seed12345), no ventanas independientes.",
+        "Las curvas comparan trayectorias dentro de cada objetivo; sus pérdidas absolutas "
+        "no son una métrica común entre objetivos. El clipping cuenta normas previas al "
+        "recorte >1. Los intervalos se remuestrean sobre grupos completos "
+        "(2000 draws, seed12345), no ventanas independientes.",
         "",
-        "Los costes GPU incluyen entrenamiento, QA y evaluación registrados en GPU_BUDGET.json. No equivalen a latencia de inferencia desde eventos crudos. No se ejecuta evaluación externa para rescatar candidatos rechazados.",
+        "Los costes GPU incluyen entrenamiento, QA y evaluación registrados en GPU_BUDGET.json. "
+        "No equivalen a latencia de inferencia desde eventos crudos. "
+        "No se ejecuta evaluación externa para rescatar candidatos rechazados.",
     ]
     (ROOT / "docs/representation_audit_20261012/QUEUES_RESULTS.md").write_text(
         "\n".join(lines) + "\n", encoding="utf-8"
