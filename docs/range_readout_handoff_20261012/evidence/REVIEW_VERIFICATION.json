@@ -1,0 +1,85 @@
+{
+  "manifest_entries_verified": 771,
+  "manifest_mismatches": [],
+  "rows_per_fit": 16432,
+  "fits": 6,
+  "macro_metric_max_abs_delta": 2.842170943040401e-14,
+  "heads_not_reinferred": true,
+  "no_new_training": true,
+  "fixed_geometry_reach_scope": "Posthoc diagnostic on the 32 H controls selected in V14. Assumes documented residual cap 0.05 and native current-time blend. NOT an absolute bound on retrained encoder, PAIR or H8. Independent max at both pairs is an optimistic relaxation.",
+  "reach_summary": [
+    {
+      "gt_band": "c_0.1_1",
+      "producer": "E_A5_MATCHED",
+      "n": 4,
+      "cap_ratio_mean": 0.9090724774,
+      "unreachable_under_fixed_geometry": 4,
+      "ttc_lower_min": 1.3994926446,
+      "ttc_lower_max": 1.8618819249
+    },
+    {
+      "gt_band": "c_0.1_1",
+      "producer": "E_C2F_MATCHED",
+      "n": 4,
+      "cap_ratio_mean": 0.9333749115,
+      "unreachable_under_fixed_geometry": 4,
+      "ttc_lower_min": 1.0978567942,
+      "ttc_lower_max": 2.4980530471
+    },
+    {
+      "gt_band": "c_1_2",
+      "producer": "E_A5_MATCHED",
+      "n": 4,
+      "cap_ratio_mean": 0.8119755238,
+      "unreachable_under_fixed_geometry": 2,
+      "ttc_lower_min": 1.591878194,
+      "ttc_lower_max": 1.956242751
+    },
+    {
+      "gt_band": "c_1_2",
+      "producer": "E_C2F_MATCHED",
+      "n": 4,
+      "cap_ratio_mean": 0.8007050864,
+      "unreachable_under_fixed_geometry": 3,
+      "ttc_lower_min": 1.5697594233,
+      "ttc_lower_max": 1.9092812028
+    },
+    {
+      "gt_band": "c_2_3",
+      "producer": "E_A5_MATCHED",
+      "n": 4,
+      "cap_ratio_mean": 0.6356515456,
+      "unreachable_under_fixed_geometry": 0,
+      "ttc_lower_min": 1.7013238213,
+      "ttc_lower_max": 1.9547857111
+    },
+    {
+      "gt_band": "c_2_3",
+      "producer": "E_C2F_MATCHED",
+      "n": 4,
+      "cap_ratio_mean": 0.6583860051,
+      "unreachable_under_fixed_geometry": 0,
+      "ttc_lower_min": 1.7128913335,
+      "ttc_lower_max": 1.900355325
+    },
+    {
+      "gt_band": "other_positive",
+      "producer": "E_A5_MATCHED",
+      "n": 16,
+      "cap_ratio_mean": 0.3462416964,
+      "unreachable_under_fixed_geometry": 0,
+      "ttc_lower_min": 1.746153148,
+      "ttc_lower_max": 2.1409344328
+    },
+    {
+      "gt_band": "other_positive",
+      "producer": "E_C2F_MATCHED",
+      "n": 16,
+      "cap_ratio_mean": 0.3448068886,
+      "unreachable_under_fixed_geometry": 0,
+      "ttc_lower_min": 1.7510579613,
+      "ttc_lower_max": 2.0865911285
+    }
+  ],
+  "saved_prediction_rows_scored": 98592
+}

@@ -28,3 +28,9 @@ operational/range_transfer/** -text
 src/e_jepa_ttc/range_transfer/** -text
 scripts/Resume-RangeTransfer.ps1 -text
 scripts/range_transfer_v12_trace.py -text
+
+# V15 scientific source and received handoff retain their bound bytes.
+docs/range_readout_handoff_20261012/** -text
+operational/range_readout/** -text
+src/e_jepa_ttc/range_readout/** -text
+scripts/Resume-RangeReadout.ps1 -text

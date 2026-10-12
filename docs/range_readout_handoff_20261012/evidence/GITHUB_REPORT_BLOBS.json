@@ -1,0 +1,60 @@
+{
+  "commit": "1c251781ac845a5d661523e607e0f7c4a8d3af8a",
+  "reports": [
+    {
+      "path": "README.md",
+      "expected_blob_sha1": "4a76044e39612d7da0aafc005fefef8624f4ae5d",
+      "actual_blob_sha1": "4c64651f091281ad341ce46e91f81ec8afdb3649",
+      "matches": false,
+      "lf_normalized_blob_sha1": "4a76044e39612d7da0aafc005fefef8624f4ae5d",
+      "lf_normalized_matches": true,
+      "crlf_count": 32
+    },
+    {
+      "path": "01_EJECUCION_Y_METODO.md",
+      "expected_blob_sha1": "c14157cbf21d2b886716db80d26aecbd1c7cc4dd",
+      "actual_blob_sha1": "985ed8d4acf14097f058b6c38f1f6aa61a6cbf33",
+      "matches": false,
+      "lf_normalized_blob_sha1": "c14157cbf21d2b886716db80d26aecbd1c7cc4dd",
+      "lf_normalized_matches": true,
+      "crlf_count": 72
+    },
+    {
+      "path": "02_DIAGNOSTICOS.md",
+      "expected_blob_sha1": "ff2deb67de4646c2ccac402ed6b79f5429bfde10",
+      "actual_blob_sha1": "e99c81ccf6c6c5eeba5d31d63ab07aa08bbd80a6",
+      "matches": false,
+      "lf_normalized_blob_sha1": "ff2deb67de4646c2ccac402ed6b79f5429bfde10",
+      "lf_normalized_matches": true,
+      "crlf_count": 74
+    },
+    {
+      "path": "03_RESULTADOS_Y_DECISION.md",
+      "expected_blob_sha1": "440aeb57207bbfff07dfe71c75fe1f2e3088663a",
+      "actual_blob_sha1": "364b2e85d52912a597f87677601aa615cf6e790f",
+      "matches": false,
+      "lf_normalized_blob_sha1": "440aeb57207bbfff07dfe71c75fe1f2e3088663a",
+      "lf_normalized_matches": true,
+      "crlf_count": 118
+    },
+    {
+      "path": "04_PRUEBAS_COSTE_Y_CONTABILIDAD.md",
+      "expected_blob_sha1": "f11ca25444a8a97d941b47ed8ca4c620234b0472",
+      "actual_blob_sha1": "41468b75442bdb04a6c55843e92579314755a809",
+      "matches": false,
+      "lf_normalized_blob_sha1": "f11ca25444a8a97d941b47ed8ca4c620234b0472",
+      "lf_normalized_matches": true,
+      "crlf_count": 73
+    },
+    {
+      "path": "05_REPRODUCCION_Y_ENTREGA.md",
+      "expected_blob_sha1": "0f5bfa760bb29ad17a40c7320489597c1bc6a99e",
+      "actual_blob_sha1": "a4165084c567bf649e389a80bac03bdcd3aeb76c",
+      "matches": false,
+      "lf_normalized_blob_sha1": "0f5bfa760bb29ad17a40c7320489597c1bc6a99e",
+      "lf_normalized_matches": true,
+      "crlf_count": 90
+    }
+  ],
+  "scope": "Exact ZIP bytes retained. Reports match Git blobs after CRLF-to-LF normalization only; no changes to originals."
+}

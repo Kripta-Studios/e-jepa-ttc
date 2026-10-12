@@ -1,0 +1,55 @@
+{
+  "schema": "v15_range_readout_proposal_v1",
+  "date": "2026-10-12",
+  "activation": "New authorization only when user submits PROMPT_CODEX_START.md",
+  "base_commit": "1c251781ac845a5d661523e607e0f7c4a8d3af8a",
+  "closed_v14_decision": "NO_CANDIDATE",
+  "historical_v14_updates_not_new_budget": 15020,
+  "source_zip_sha256": "c540a53a4ebdcc4dc047d6b29340e429468ce77ce5602e938ad2292081a3dc71",
+  "stages": {
+    "sampling_screen": {
+      "fits": 2,
+      "updates_each": 2500
+    },
+    "residual_screen": {
+      "fits": 2,
+      "updates_each": 6000
+    },
+    "residual_context_screen": {
+      "fits": 2,
+      "updates_each": 2500
+    },
+    "replication": {
+      "at_most_one_family": true,
+      "sampling_max_updates": 10000,
+      "readout_and_context_max_updates": 34000
+    }
+  },
+  "budget": {
+    "scientific_max": 56000,
+    "technical_max": 500,
+    "recovery_max": 3500,
+    "physical_max": 60000
+  },
+  "resources": {
+    "head_tree_rss_max_GiB": 4,
+    "project_rss_max_GB": 23,
+    "host_available_floor_GiB": 2,
+    "host_resume_GiB": 3,
+    "disk_free_after_reserves_GB": 10
+  },
+  "prohibited": [
+    "modify_V13",
+    "reopen_V14_selection",
+    "new_encoder_training",
+    "additional_RGB_fits",
+    "extra_caps_or_losses",
+    "FCWD_fitting",
+    "private_test_labels",
+    "submissions",
+    "push",
+    "merge",
+    "outgoing_emails",
+    "global_environment_changes"
+  ]
+}
