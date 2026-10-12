@@ -64,6 +64,9 @@ def main() -> None:
                     "mae_s": score["diagnostics"]["mae_s"],
                     "late_warning": score["late_warning"]["rate"],
                     "false_alert": score["false_alert"]["rate"],
+                    "invalid_predictions": int(
+                        (~(np.isfinite(prediction) & ((prediction < 0) | (prediction > 0.1)))).sum()
+                    ),
                 }
             )
             if role == "P" or queue == "D":
@@ -93,6 +96,22 @@ def main() -> None:
             )
             candidate = results[key]
             groups = sorted(baseline["group_crucial_mid"])
+            if (
+                not baseline["complete_prediction_and_mid_coverage"]
+                or not candidate["complete_prediction_and_mid_coverage"]
+                or set(groups) != set(candidate["group_crucial_mid"])
+            ):
+                contrasts.append(
+                    {
+                        "queue": queue,
+                        "role": role,
+                        "seed": seed,
+                        "contrast": f"{arms[1]} minus {arms[0]}",
+                        "status": "LIMITED_VALIDATION_SUPPORT",
+                        "draws": 0,
+                    }
+                )
+                continue
             diff = np.array(
                 [
                     candidate["group_crucial_mid"][g] - baseline["group_crucial_mid"][g]
@@ -129,14 +148,16 @@ def main() -> None:
         "P es ajuste; H es cribado de productores; V es desarrollo interno expuesto. "
         "No son resultados oficiales ni SOTA.",
         "",
-        "| Cola | Rol | Fit | MiDc | MiDs | MiDl | MiDn | Overall | MAE s |",
-        "|---|---|---|---:|---:|---:|---:|---:|---:|",
+        "| Cola | Rol | Fit | MiDc | MiDs | MiDl | MiDn | Overall | MAE s | Inválidas |",
+        "|---|---|---|---:|---:|---:|---:|---:|---:|---:|",
     ]
     for row in rows:
         lines.append(
             "| "
             + " | ".join(
-                str(row[k]) if k in ("queue", "role", "fit") else f"{row[k]:.6f}"
+                str(row[k])
+                if k in ("queue", "role", "fit")
+                else ("NA" if row[k] is None else f"{row[k]:.6f}")
                 for k in (
                     "queue",
                     "role",
@@ -147,11 +168,16 @@ def main() -> None:
                     "negative",
                     "overall",
                     "mae_s",
+                    "invalid_predictions",
                 )
             )
             + " |"
         )
     lines += [
+        "",
+        "NA mantiene ausente el overall cuando faltan predicciones MiD válidas. "
+        "Las métricas parciales no sustituyen esa cobertura ni habilitan gates o bootstrap. "
+        "Las filas inválidas permanecen en las tablas originales.",
         "",
         "Las curvas comparan trayectorias dentro de cada objetivo; sus pérdidas absolutas "
         "no son una métrica común entre objetivos. El clipping cuenta normas previas al "
