@@ -188,6 +188,70 @@ def main() -> None:
                 ],
             ),
         ]
+    path = OUT / "PHASE_ONLY_ATTRIBUTION.json"
+    if path.exists():
+        sources[str(path.relative_to(OUT))] = sha(path)
+        attribution = read(path)
+        examples = {
+            "CCRs-1-medium-100-overlap-100:01",
+            "CCRs-1-low-100-overlap-100:24",
+        }
+        text += [
+            "## Atribución en los episodios ya publicados",
+            f"{len(attribution['rows'])} trazas de las dos cabezas congeladas sobre los "
+            "32 controles H seleccionados originalmente por hash y los 20 episodios "
+            "externos ya expuestos. Instrumentación con paridad bit a bit; las salidas "
+            "externas coinciden exactamente con las predicciones selladas. Se reutilizan "
+            "estados de padres sellados; no es una nueva inferencia sensorial.",
+            table(
+                ["Consulta", "Brazo", "GT s", "R_CTX s", "F_TRUE s", "Nueva s"],
+                [
+                    [
+                        r["query_id"],
+                        r["arm"],
+                        f"{r['truth_ttc']:.6f}",
+                        f"{r['R_CTX']:.6f}",
+                        f"{r['F_TRUE']:.6f}",
+                        f"{r['emitted_ttc']:.6f}",
+                    ]
+                    for r in attribution["rows"]
+                    if r["query_id"] in examples
+                ],
+            ),
+            "La nueva cabeza evita el extremo de F_TRUE en estos dos ejemplos, pero "
+            "no corrige el signo del caso medium:01 y empeora respecto a R_CTX en ambos. "
+            "El control ZERO resulta mejor aquí. Son diagnósticos de casos seleccionados "
+            "por fallos anteriores, no una estimación representativa de la contribución event.",
+        ]
+    path = OUT / "PHASE_ONLY_STRATA.csv"
+    if path.exists():
+        sources[str(path.relative_to(OUT))] = sha(path)
+        strata = pd.read_csv(path).query("arm == 'EVENT' and comparator == 'R_CTX'")
+        text += [
+            "## Desacuerdo de signo entre los padres",
+            "Diagnóstico posterior de todas las consultas externas del candidato S7. "
+            "Los estratos usan signos de E_CTX/R_CTX, sin ajustar umbrales al error TTC. "
+            "Delta negativo favorece al candidato; la comparación con RGB usa sólo "
+            "etiquetas con RGB disponible. No es una nueva validación independiente.",
+            table(
+                ["Cohorte", "Estrato", "Etiquetas comunes", "Delta MiD", "Delta MAE s"],
+                [
+                    [
+                        r["cohort"],
+                        r["stratum"],
+                        r["labelled_common"],
+                        f"{r['delta_MiD']:.6f}",
+                        f"{r['delta_MAE']:.6f}",
+                    ]
+                    for r in strata.to_dict("records")
+                ],
+            ),
+            "En Dev32 el desacuerdo concentra un empeoramiento respecto a RGB, aunque "
+            "la nueva cabeza reduce el error de F_TRUE en ese mismo estrato. "
+            "Las 13 predicciones negativas de R_CTX entre las 946 etiquetas positivas "
+            "siguen siendo negativas. Esto localiza una limitación, pero no demuestra "
+            "causalidad ni autoriza una compuerta ajustada con estas etiquetas.",
+        ]
     text += ["## Coste y paridad"]
     path = OUT / "EXACT_EVENT_ROUTE_SUMMARY.json"
     if path.exists():
@@ -278,9 +342,7 @@ def main() -> None:
                 f"SHA-256 del ZIP: `{package['zip_sha256']}`. No enviado, sin score oficial."
             ]
         else:
-            text += [
-                "Inferencia en curso; el ZIP se declarará completo tras su verificación."
-            ]
+            text += ["Inferencia en curso; el ZIP se declarará completo tras su verificación."]
     verification_path = OUT / "METRICS_REPLAY_VERIFICATION.json"
     if verification_path.exists():
         verification = read(verification_path)

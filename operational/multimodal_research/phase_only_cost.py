@@ -140,7 +140,7 @@ def main() -> None:
                         features = torch.cat([rb, eb], -1)
                     t6 = time.perf_counter()
                     prediction = (
-                        head(features, widths)["ttc"]
+                        phase_to_ttc(head(features, widths)["point_phase"])
                         if timeline
                         else phase_to_ttc(eo["point_phase"])
                     )
@@ -149,10 +149,12 @@ def main() -> None:
                     if timeline:
                         assert np.array_equal(features.numpy(), expected["features"])
                         assert np.array_equal(widths.numpy(), expected["rgb_width_logits"])
-                        reference = head(
-                            torch.from_numpy(expected["features"]),
-                            torch.from_numpy(expected["rgb_width_logits"]),
-                        )["ttc"]
+                        reference = phase_to_ttc(
+                            head(
+                                torch.from_numpy(expected["features"]),
+                                torch.from_numpy(expected["rgb_width_logits"]),
+                            )["point_phase"]
+                        )
                         assert torch.equal(prediction, reference)
                     record = dict(
                         cohort=cohort,
@@ -199,6 +201,9 @@ def main() -> None:
             "resident weights, public/frozen ROI and already sealed FCWD registration. "
             "Excludes registration search, detector and initialization; no streaming claim.",
             csv_sha256=sha(OUT / "PHASE_ONLY_ROUTE_COST.csv"),
+            output_route="Emitted point phase converted to TTC, matching the sealed evaluator",
+            supersedes="phase_only_cost_v1 retained direct raw-head TTC API cost; "
+            "this version also times the evaluator's final emitted-phase conversion",
         ),
     )
 
