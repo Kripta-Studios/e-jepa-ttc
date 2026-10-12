@@ -28,6 +28,7 @@ def registration() -> dict:
     """Freeze the sole real-P optimization diagnostic before any of its updates."""
     record = {
         "experiment_id": "V18_INPUT_PREFETCH_P_DIAGNOSTIC",
+        "registration_revision": 2,
         "purpose": "Execution equivalence, exact resume and step timing; no H/V model selection",
         "population": "P",
         "fits": config()["fits"],
@@ -42,6 +43,7 @@ def registration() -> dict:
         "timing_scope": (
             "batch consumption, H2D, backward, gradient clipping, optimizer and journal"
         ),
+        "resource_checks": "Before each trajectory of at most ten updates; outside prefetch context",
         "performance_gate": "native mean measured step time at least10% lower; all paths reported",
         "sources": {
             **sources(),
@@ -59,6 +61,7 @@ def trajectory(
     fit_id: str, mode: str, limit: int, dataset: SensorDataset, masses: np.ndarray
 ) -> dict:
     """Run only the declared ten-step private trajectory, retaining all physical work."""
+    require_resources()
     setup(7)
     folder = DIRECTORY / fit_id / mode
     identity = {
@@ -99,7 +102,6 @@ def trajectory(
         else nullcontext()
     ) as loader:
         while state.completed < limit:
-            require_resources()
             torch.cuda.synchronize()
             tick = time.perf_counter()
             if loader is None:
