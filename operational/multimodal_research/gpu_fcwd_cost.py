@@ -3,8 +3,6 @@
 from __future__ import annotations
 
 import hashlib
-import os
-import subprocess
 import time
 from contextlib import ExitStack
 from unittest.mock import patch
@@ -34,29 +32,15 @@ from operational.rgb_port import transfer as engine
 from operational.rgb_port_external_fix.runtime import observation_contract
 
 from . import common
-from .guard_scan import wrap
+from .guard_scan import python_first
 from .model import frozen_state
 from .phase_only_anchor import PhaseOnlyAnchor
+from .waiting_owner import active_gpu_check, wrap
 
 
 def exclusive() -> None:
     common.guard()
-    output = subprocess.check_output(
-        ["nvidia-smi", "--query-compute-apps=pid", "--format=csv,noheader,nounits"],
-        text=True,
-        timeout=10,
-    )
-    for line in output.splitlines():
-        if not line.strip().isdigit() or int(line) == os.getpid():
-            continue
-        try:
-            proc = psutil.Process(int(line))
-            assert not proc.name().lower().startswith("python"), (
-                "Another Python GPU owner must finish before profiling",
-                proc.pid,
-            )
-        except psutil.NoSuchProcess:
-            continue
+    active_gpu_check()
     assert torch.cuda.mem_get_info()[0] >= 6 * 1024**3
     assert torch.cuda.memory_reserved() <= 1024**3
 
@@ -67,7 +51,9 @@ def mark() -> float:
 
 
 def main() -> None:
-    with patch.object(common, "guard", wrap(common.guard)):
+    with patch.object(psutil, "process_iter", python_first), patch.object(
+        common, "guard", wrap(common.guard)
+    ):
         run()
 
 
@@ -246,6 +232,7 @@ def run() -> None:
         common.OUT / "FCWD_GPU_ROUTE_COST.json",
         dict(
             source_sha256=sha(__file__),
+            idle_owner_contract_sha256=sha(common.OUT / "WAITING_OWNER_CONTRACT.json"),
             checkpoint_sha256=sha(checkpoint),
             selection_sha256=sha(selection_path),
             reference_predictions_sha256=sha(scored_path),
@@ -256,7 +243,9 @@ def run() -> None:
             all_registration_states_and_predictions_exact=True,
             scope="FCWD raw sensors, fresh sealed-equivalent registration and frozen GPU parents "
             "and CPU readout. One CPU thread; batch4 event observations, batch1 RGB observations. "
-            "Stage synchronization; no other Python GPU owner, normal desktop GPU load allowed. "
+            "Stage synchronization; no other active Python GPU work. A verified waiting V18 "
+            "supervisor may retain an idle CUDA context. Normal desktop GPU and concurrent "
+            "CPU preparation loads allowed and not isolated. "
             "Resident weights, public query ROI. Excludes detector, startup and persistent "
             "cross-query service/state management. Repeat1 quantiles are warm-access observations, "
             "not isolated cold-I/O or streaming latency.",

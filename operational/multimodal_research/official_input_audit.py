@@ -35,6 +35,7 @@ def main() -> None:
         "gpu_fcwd_cost.py",
         "test12_guarded_resume.py",
         "test12_cached_resume.py",
+        "waiting_owner.py",
     }
     assert all(
         name.startswith("operational/multimodal_research/") and Path(name).name in diagnostic_files

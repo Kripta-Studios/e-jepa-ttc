@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import hashlib
-import sys
 from contextlib import ExitStack
 from datetime import UTC, datetime
 from pathlib import Path
@@ -21,11 +20,12 @@ from operational.rgb_port import transfer as engine
 from operational.rgb_port_external_fix.runtime import observation_contract
 from operational.rgb_port_fusion_fix.fusion import deterministic_forward
 
-from . import common, shared_run
+from . import common
 from .guard_scan import python_first
 from .model import frozen_state
 from .phase_only_anchor import PhaseOnlyAnchor
 from .test12_infer import DEST, context, restore, store
+from .waiting_owner import wrap as waiting_guard
 
 AUTHORIZATION = common.authorize()
 
@@ -215,6 +215,8 @@ def main() -> None:
         utc_start=datetime.now(UTC).isoformat(),
         status="RUNNING",
         source_sha256=sha(__file__),
+        admission_source_sha256=sha(Path(__file__).with_name("waiting_owner.py")),
+        idle_owner_contract_sha256=sha(common.OUT / "WAITING_OWNER_CONTRACT.json"),
         model_input_freeze_sha256=sha(DEST / "MODEL_INPUT_FREEZE.json"),
         admission=(
             "Full unchanged live guard before each 128 cached observations and 32 heads, "
@@ -227,10 +229,9 @@ def main() -> None:
     try:
         with (
             patch.object(psutil, "process_iter", python_first),
-            patch.dict(shared_run.ACTIONS, {"test12_cache_resume": ("test12_cached_resume", [])}),
-            patch.object(sys, "argv", ["shared_run", "test12_cache_resume"]),
+            patch.object(common, "guard", waiting_guard(common.guard)),
         ):
-            shared_run.main()
+            run()
         assert common.accounting() == ledger
         receipt["status"] = "COMPLETE"
     except BaseException as error:
@@ -242,8 +243,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    # The admitted shared runner executes this module a second time.
-    if sys.argv[0] == "test12_cached_resume":
-        run()
-    else:
-        main()
+    main()
