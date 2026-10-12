@@ -8,10 +8,10 @@ import numpy as np
 import torch
 
 from e_jepa_ttc.data.object_event_v4 import ObjectEventV4Batch
-from e_jepa_ttc.rgb_port.data import RGBPortDataset
+from e_jepa_ttc.rgb_port.data import PreparedRGBCache, RGBPortDataset
 from operational.range_transfer.common import read, sha
 
-from .common import owner
+from .common import RUN, owner
 from .data import role_rows
 
 
@@ -25,6 +25,10 @@ class RGBPairDataset:
         if sha(Path(read(manifest)["rows_path"])) != read(manifest)["rows_sha256"]:
             raise ValueError("RGB metadata changed")
         self.source = RGBPortDataset(manifest, role=role)
+        if self.source.prepared_cache is None and role in {"H", "V"}:
+            binding = RUN / "rgb/cache_bindings" / f"{role}_RGB_CACHE_BINDING.json"
+            if binding.exists():
+                self.source.prepared_cache = PreparedRGBCache(binding, manifest)
         self.rows = role_rows(role)
         self.population = len(self.rows)
         self.role = role
