@@ -114,7 +114,7 @@ def main() -> None:
             metadata.update(
                 kind=(
                     "vector_equal_slope"
-                    if arm in ("U0", "U1")
+                    if arm in ("U0", "U1", "N0")
                     else (
                         "vector_spatial_height"
                         if arm in ("SP0", "SP1")
@@ -125,11 +125,11 @@ def main() -> None:
                 operator=payload["identity"]["operator"],
                 calibration_branch=(
                     "none_residual_only"
-                    if arm in ("U0", "U1")
+                    if arm in ("U0", "U1", "N0")
                     else "analytic_height_only_original_PAIR_inputs"
                 ),
             )
-            if arm in ("U0", "U1"):
+            if arm in ("U0", "U1", "N0"):
                 reference, *_ = init_precision(seed, device="cpu")
             elif arm in ("Q0", "Q1"):
                 reference, *_ = init_geometry(seed, arm, device="cpu")

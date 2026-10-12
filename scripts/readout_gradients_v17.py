@@ -14,21 +14,26 @@ from operational.representation_audit.geometry import initialize as init_geometr
 from operational.representation_audit.precision import PRECISION, Vectors
 from operational.representation_audit.precision import initialize as init_precision
 from operational.representation_audit.run import RUN
+from operational.representation_audit.spatial_geometry import initialize as init_spatial
+from operational.representation_audit.spatial_model import SpatialVectors
 from operational.representation_audit.temporal_geometry import initialize as init_temporal
+from operational.representation_audit.unclipped import initialize as init_unclipped
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("queue", choices=("B", "E", "F"))
+    parser.add_argument("queue", choices=("B", "E", "F", "G", "H"))
     queue = parser.parse_args().queue
     torch.set_num_threads(1)
     source, init = {
         "B": ("PRECISION_ENDPOINTS.json", init_precision),
         "E": ("GEOMETRY_SCREEN_ENDPOINTS.json", init_geometry),
         "F": ("TEMP_GEOMETRY_SCREEN_ENDPOINTS.json", init_temporal),
+        "G": ("SPATIAL_SCREEN_ENDPOINTS.json", init_spatial),
+        "H": ("NOCLIP_SCREEN_ENDPOINTS.json", init_unclipped),
     }[queue]
     endpoints = read(RUN / source)
-    data = Vectors("P").values
+    data = SpatialVectors("P").values if queue == "G" else Vectors("P").values
     truth = data["target_ttc"]
     masks = {
         "0-1": (truth > 0) & (truth <= 1),

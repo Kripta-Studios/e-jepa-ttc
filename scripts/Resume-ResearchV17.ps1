@@ -1,5 +1,5 @@
 param(
-    [ValidateSet('all', 'A', 'B', 'D', 'E', 'F', 'G')]
+    [ValidateSet('all', 'A', 'B', 'D', 'E', 'F', 'G', 'H')]
     [string]$Queue = 'all'
 )
 $ErrorActionPreference = 'Stop'
@@ -44,6 +44,7 @@ try {
     foreach ($Item in @(
         @{ Key='E'; Module='geometry'; Prefix='GEOMETRY' },
         @{ Key='F'; Module='temporal_geometry'; Prefix='TEMP_GEOMETRY' }
+        @{ Key='H'; Module='unclipped'; Prefix='NOCLIP' }
     )) {
         if ($Queue -notin @('all', $Item.Key)) { continue }
         $Module = 'operational.representation_audit.' + $Item.Module
