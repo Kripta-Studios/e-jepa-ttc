@@ -98,8 +98,8 @@ def predict(fit_id: str, role: str) -> dict:
     endpoints = freeze_endpoints()["endpoints"]
     if fit_id not in endpoints or role not in {"P", "H", "V"}:
         raise ValueError("Unregistered RGB endpoint or population")
-    if role == "V" and not (RUN / "rgb/H_METRIC_SELECTION.json").exists():
-        raise ValueError("Complete and freeze RGB H interpretation before V")
+    if role == "V" and not (RUN / "rgb/SELECTION_FINAL.json").exists():
+        raise ValueError("Complete and freeze RGB H metrics and paired cost before V")
     require_resources(starting=True)
     dataset = RGBPairDataset(role)
     directory = RUN / "rgb/predictions" / role / fit_id

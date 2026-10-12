@@ -73,15 +73,33 @@ fragmentos verificables y reanudables. El modelo recibe únicamente píxeles y
 delta RGB; las etiquetas se incorporan después para el scorer.
 
 `select` exige P/H completos y conserva una decisión de desarrollo basada en
-métricas. La vía de coste y la comparación con R_CTX/F_TRUE quedan separadas y
-pendientes; esa decisión no afirma promoción del sistema. V exige que antes se
-haya congelado la interpretación H. No se ha ejecutado ninguna de estas
+métricas. La comparación con R_CTX/F_TRUE permanece pendiente; esa decisión no
+afirma promoción del sistema. V exige que antes se haya congelado la
+interpretación H con la comparación de coste preparada descrita abajo.
+No se ha ejecutado ninguna de estas
 evaluaciones sobre datos reales, porque todavía faltan los endpoints RGB.
 
 Seis pruebas adicionales verifican endpoints completos, ausencia de updates
 pendientes y rechazo de fragmentos con binding, intervalo o bytes distintos.
 El replay del bundle incluye las ramas anidadas de predicciones y exports,
 preservando sus nombres para evitar colisiones con los resultados primarios.
+
+`operational.joint_measurement.rgb_cost measure` medirá el padre y los dos
+endpoints RGB sobre 128 consultas P elegidas sin etiquetas, batch1, FP32,
+20 warmups por modelo y orden intercalado reproducible. El tiempo abarca tensor
+preparado residente en GPU hasta salida TTC firmada; excluye decodificación,
+transferencia y carga de pesos. Registra p50/p95/p99, throughput y memoria
+adicional. Los fragmentos reanudados deben conservar binding, consulta y rutas.
+
+`operational.joint_measurement.rgb_cost select` combinará esa evidencia con H
+usando los gates de desarrollo ya registrados. Una vía de coste exige al menos
+30 % de ahorro, deterioro agregado máximo del 2 % y los mismos límites de signo,
+bandas y cobertura. No constituye comparación E2E ni promoción sobre R_CTX/F_TRUE.
+Congela `rgb/SELECTION_FINAL.json`, necesario antes de producir predicciones V.
+
+Las 24 pruebas CPU de admisión, evaluación y coste pasan, incluida la prohibición
+de evaluar V con sólo una decisión parcial de métricas. El benchmark de coste
+real permanece pendiente hasta que estén completos ambos endpoints RGB.
 
 ## Cachés H/V propias
 

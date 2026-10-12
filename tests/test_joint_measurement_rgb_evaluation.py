@@ -75,6 +75,12 @@ def test_complete_rgb_freeze_includes_native_rgb_reference(endpoints):
     assert read(endpoints / "rgb/ENDPOINTS.json") == result
 
 
+def test_v_waits_for_metrics_and_cost_even_when_metric_selection_exists(endpoints):
+    write(endpoints / "rgb/H_METRIC_SELECTION.json", {"status": "DEVELOPMENT_METRIC_CANDIDATE"})
+    with pytest.raises(ValueError, match="metrics and paired cost before V"):
+        evaluation.predict("RGB-FT", "V")
+
+
 @pytest.mark.parametrize("change", ["binding", "interval", "bytes"])
 def test_foreign_or_modified_rgb_fragment_rejected(tmp_path, change):
     path = tmp_path / "chunk.parquet"
