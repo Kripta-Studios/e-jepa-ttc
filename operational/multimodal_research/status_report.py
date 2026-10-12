@@ -33,6 +33,7 @@ def main() -> None:
         ("RGB_REGRET", 7, OUT / "studies/RGB_REGRET/S7"),
         ("PHASE_ENSEMBLE", "7+13+23", OUT / "studies/PHASE_ENSEMBLE"),
         ("FUSION_PRESERVING", 7, OUT / "studies/FUSION_PRESERVING/S7"),
+        ("PHASE_ONLY", 7, OUT / "studies/PHASE_ONLY/S7"),
     ]
     rows, external = [], []
     for study, seed, directory in results:
@@ -101,7 +102,7 @@ def main() -> None:
         f"Updates científicos: {ledger['scientific']}; recuperación superior: "
         f"{ledger['recovery_upper']}; límite físico consumido: {ledger['physical_upper']}.",
         "## Evidencia interna V",
-        "V es desarrollo expuesto. Cada par conserva 2.500 updates por brazo y estados H "
+        "V es desarrollo expuesto. Cada par entrenado conserva 2.500 updates por brazo y estados H "
         "de refinadores previamente supervisados en H: no son OOF. Las semillas adicionales "
         "replican las cabezas, no el sistema completo.",
         table(
@@ -119,6 +120,14 @@ def main() -> None:
         "El gate principal conserva 2 % de tolerancia por bucket. El 4 % en TTC largo es "
         "una sensibilidad solicitada después de ver la semilla 7. Su análisis secundario en "
         "semillas 13/23 se registró antes de sus nuevas predicciones V; no cambia el principal.",
+        "PHASE_ENSEMBLE promedia fases emitidas de todas las semillas 7/13/23 con pesos iguales "
+        "y cero updates nuevos. FUSION_STATE compara presencia/ausencia de estados F_TRUE sobre "
+        "el ancla RGB. FUSION_PRESERVING conserva F_TRUE como ancla y compara presencia/ausencia "
+        "de estados adicionales R_CTX. Esos dos últimos controles permanecen multimodales; "
+        "sus nombres no significan ausencia de una modalidad en el sistema completo.",
+        "PHASE_ONLY conserva el ancla R_CTX y usa un corrector de 1.955 parámetros basado "
+        "en fases y relojes, sin estados ocultos. Los estudios sucesivos forman una búsqueda "
+        "adaptativa en V; sus intervalos por contraste no corrigen la selección entre recetas.",
         "## Transferencia congelada",
         "Todas las consultas permanecen. Sin RGB, los nuevos brazos usan exactamente E_CTX "
         "de la misma ruta. FCWD tiene registro estimado, no calibración extrínseca oficial. "
@@ -142,8 +151,30 @@ def main() -> None:
         "se reprodujo con matmul TF32 desactivado y cuDNN TF32 activado. El replay global "
         "de padres tiene sus recibos separados en parent_replay. Los readouts externos "
         "se ejecutan en CPU FP32 y esa precisión se declara en cada sello.",
-        "## Coste y paridad",
     ]
+    path = OUT / "H_RECIPE_DIAGNOSTICS.json"
+    if path.exists():
+        sources[str(path.relative_to(OUT))] = sha(path)
+        diagnostics = read(path)
+        text += [
+            "## Diagnóstico del ajuste sobre H",
+            "Pérdidas in-sample, sin updates nuevos. No son OOF ni una medida de generalización. "
+            "La mejora H de FUSED acompañada por su deterioro V es compatible con sobreajuste; "
+            "no demuestra una causa única.",
+            table(
+                ["Estudio", "Brazo", "Error absoluto fase H", "Pérdida nativa H"],
+                [
+                    [
+                        r["study"],
+                        r["arm"],
+                        f"{r['mean_abs_phase_error']:.8f}",
+                        f"{r['native_fusion_loss']:.8f}",
+                    ]
+                    for r in diagnostics["rows"]
+                ],
+            ),
+        ]
+    text += ["## Coste y paridad"]
     path = OUT / "EXACT_EVENT_ROUTE_SUMMARY.json"
     if path.exists():
         sources[str(path.relative_to(OUT))] = sha(path)
