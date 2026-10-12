@@ -386,6 +386,24 @@ def main() -> None:
                     "`GUARDED_RESUME_EXECUTION.json` registra esta envoltura adicional. "
                     "La comparación en vivo de los metadatos Python fue exacta."
                 ]
+            if audit.get("cache_recovery"):
+                text += [
+                    "La recuperación final carga sólo observaciones ya calculadas, verificando "
+                    "cada hash. Ejecuta el control completo de recursos cada 128 observaciones "
+                    "restauradas o 32 cabezas, y la caducidad en cada elemento. Se mantienen "
+                    "los umbrales y el límite CUDA de 1 GiB. La inicialización y el bloque "
+                    "de cálculo de las cabezas coinciden sintácticamente con el original."
+                ]
+                parity_path = OUT / "test12_phase_only/CACHE_RESUME_PARITY.json"
+                if parity_path.exists():
+                    parity = read(parity_path)
+                    assert parity["status"] == "PASS"
+                    sources[str(parity_path.relative_to(OUT))] = sha(parity_path)
+                    text += [
+                        f"Las {len(parity['tokens'])} consultas de recuperación seleccionadas "
+                        "por hash reprodujeron exactamente todos sus arrays guardados, "
+                        "incluidos estados intermedios y comparadores."
+                    ]
         if package_path.exists():
             package = read(package_path)
             sources[str(package_path.relative_to(OUT))] = sha(package_path)

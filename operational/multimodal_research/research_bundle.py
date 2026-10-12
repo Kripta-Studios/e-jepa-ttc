@@ -19,8 +19,28 @@ def main() -> None:
     assert ledger["pending_upper"] == 0
     for row in ledger["fits"]:
         assert row["completed_updates"] == 2500, "Snapshot only at fixed complete fit endpoints"
+    local_complete = all(
+        (OUT / name).exists()
+        for name in (
+            "test12_phase_only/PACKAGE_VERIFICATION.json",
+            "test12_phase_only/OFFICIAL_PARSER_VERIFICATION.json",
+            "test12_phase_only/CACHE_RESUME_PARITY.json",
+            "FCWD_GPU_ROUTE_COST.json",
+            "MULTIMODAL_REVIEW_FINAL.md",
+        )
+    )
+    status = (
+        "LOCAL_RESULTS_COMPLETE_OFFICIAL_EVALUATION_PENDING" if local_complete else "IN_PROGRESS"
+    )
+    kind = "RESULT" if local_complete else "PROGRESS"
+    if local_complete:
+        assert read(OUT / "test12_phase_only/OFFICIAL_PARSER_VERIFICATION.json")["status"] == "PASS"
+        assert read(OUT / "test12_phase_only/CACHE_RESUME_PARITY.json")["status"] == "PASS"
+        assert read(OUT / "FCWD_GPU_ROUTE_COST.json")[
+            "all_registration_states_and_predictions_exact"
+        ]
     stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
-    destination = ROOT / "artifacts" / f"E_JEPA_TTC_RESEARCH_PROGRESS_{stamp}.zip"
+    destination = ROOT / "artifacts" / f"E_JEPA_TTC_RESEARCH_{kind}_{stamp}.zip"
     assert not destination.exists()
     paths = set()
     for directory in (
@@ -87,7 +107,7 @@ def main() -> None:
             ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True
         ).strip(),
         git_status=subprocess.check_output(["git", "status", "--short"], cwd=ROOT, text=True),
-        status="IN_PROGRESS",
+        status=status,
         official_SOTA=False,
         accounting=ledger,
         next_decision=read(OUT / "NEXT_DECISION.json"),
@@ -176,7 +196,7 @@ print('Verified',len(manifest['files']),'files')
         files=len(entries),
         crc_pass=True,
         every_payload_sha256_verified=True,
-        status="IN_PROGRESS",
+        status=status,
         source_sha256=sha(__file__),
         official_SOTA=False,
     )
