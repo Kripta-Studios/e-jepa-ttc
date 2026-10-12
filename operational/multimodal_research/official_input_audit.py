@@ -32,6 +32,7 @@ def main() -> None:
         "research_metrics_replay.py",
         "status_report.py",
         "official_input_audit.py",
+        "gpu_fcwd_cost.py",
     }
     assert all(
         name.startswith("operational/multimodal_research/") and Path(name).name in diagnostic_files
