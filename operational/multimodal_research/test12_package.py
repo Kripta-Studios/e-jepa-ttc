@@ -47,6 +47,10 @@ def main() -> None:
             assert row["EVENT"] == row["ZERO"] == row["F_TRUE"] == row["E_CTX"]
         rows.append(row)
     frame = pd.DataFrame(rows)
+    lookup = frame.set_index("sample_token")
+    for token, canonical in inputs["physical_aliases"].items():
+        for model in ("EVENT", "ZERO", "E_CTX", "F_TRUE"):
+            assert lookup.loc[token, model] == lookup.loc[canonical, model]
     frame["prediction"] = frame.EVENT
     path = DEST / "TEST_PREDICTIONS.csv"
     frame.to_csv(path, index=False)

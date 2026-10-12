@@ -17,6 +17,7 @@ from operational.rgb_port.infer_experts import _observation_signature
 
 from . import test12_native_inputs as native
 from .common import OUT
+from .test12_identities import physical_histories
 from .test12_infer import DEST
 
 REVISION = "a814a946e60d37f7242358af5f344542177e50c5"
@@ -51,10 +52,10 @@ def main() -> None:
             "records"
         )
     ]
-    histories = native.native_histories(jobs)
+    histories, aliases, unique_jobs = physical_histories(jobs)
     old_rows = {r["sample_token"]: (i, r) for i, r in enumerate(old["rows"])}
     eobs = {}
-    for job in jobs:
+    for job in unique_jobs:
         number, previous = old_rows[job["sample_token"]]
         assert np.array_equal(job["windows_us"], previous["windows"])
         assert np.array_equal(job["square_xyxy"], previous["square"])
@@ -90,7 +91,8 @@ def main() -> None:
                 rgb_history=ids,
             )
         )
-    assert len(queries) == len(eobs) == 6762
+    assert len(queries) == len(aliases) == 6762
+    assert len(eobs) == len(unique_jobs) == 5805
     shards = sorted({p for row in robs.values() for p in row["producer_shards"]})
     shard_receipts = {}
     for number, relative in enumerate(shards):
@@ -123,6 +125,9 @@ def main() -> None:
             event_observations=eobs,
             rgb_observations=robs,
             rgb_sources=shard_receipts,
+            physical_aliases=aliases,
+            physical_identity_policy="All native sensor/ROI fields must match; retain all tokens, "
+            "deduplicate only evidence in same-object histories; no target fields used",
         ),
     )
     sources = dict(engine._source_bindings())
