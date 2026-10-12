@@ -169,6 +169,8 @@ def extract(cohort: str) -> None:
                         rgb_width_logits=widths.cpu().numpy(),
                         rgb_phase=rout["point_phase"].cpu().numpy(),
                         fusion_phase=fout["point_phase"].cpu().numpy(),
+                        fusion_hidden=fout["hidden"].cpu().numpy(),
+                        fusion_raw=fout["raw_location"].cpu().numpy(),
                     )
                 else:
                     values["fusion_phase"] = values["event_phase"]
