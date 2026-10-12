@@ -315,8 +315,8 @@ def evaluate(*, replicas: bool = False) -> None:
     original = read(OLD / "PRODUCER_METRICS_P_H.json")["scores"]["H/historical_A5"]
     gates = {}
     for seed in seeds:
-        gates[f"paired_S{seed}"] = gate(scores[f"H/Q0-S{seed}"], scores[f"H/Q1-S{seed}"])
-        gates[f"historical_S{seed}"] = gate(original, scores[f"H/Q1-S{seed}"])
+        gates[f"paired_S{seed}"] = gate(scores[f"H/F0-S{seed}"], scores[f"H/F1-S{seed}"])
+        gates[f"historical_S{seed}"] = gate(original, scores[f"H/F1-S{seed}"])
     passed = all(row["eligible"] for row in gates.values())
     status = (
         ("HEAD_INTEGRATION_ADMITTED" if replicas else "REPLICATE") if passed else "NO_CANDIDATE"
