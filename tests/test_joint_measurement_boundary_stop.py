@@ -19,6 +19,15 @@ def test_durable_boundary_requires_settled_post_scope_state():
     assert not durable_boundary(journal, receipt, stale, 3010, end)
 
 
+def test_input_transition_requires_the_current_pair_fit():
+    journal = {"completed_updates": 3000, "durable_updates": 3000, "pending_update_upper": 0}
+    receipt = {"completed_updates": 3000, "complete_state": True}
+    state = {"fit_id": "PAIR-DIRECT-S7", "updates": 3000, "utc": "2026-10-12T21:00:01+00:00"}
+    end = "2026-10-12T21:00:00+00:00"
+    assert durable_boundary(journal, receipt, state, 3000, end, "PAIR-DIRECT-S7")
+    assert not durable_boundary(journal, receipt, state, 3000, end, "NATIVE-P2-FT-S7")
+
+
 @pytest.mark.parametrize("change", ["pid_reused", "cwd", "command"])
 def test_stop_refuses_foreign_process_identity(change):
     class Process:

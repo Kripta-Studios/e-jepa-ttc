@@ -52,7 +52,12 @@ def check_owner(process: psutil.Process, created: float) -> None:
 
 
 def durable_boundary(
-    journal: dict, receipt: dict, state: dict, minimum: int, scope_end: str
+    journal: dict,
+    receipt: dict,
+    state: dict,
+    minimum: int,
+    scope_end: str,
+    fit_id: str = "NATIVE-P2-FT-S7",
 ) -> bool:
     """Require post-scope evidence, never a stale state with the same update count."""
     count = journal["completed_updates"]
@@ -62,23 +67,36 @@ def durable_boundary(
         and journal["pending_update_upper"] == 0
         and receipt["completed_updates"] == count
         and receipt["complete_state"]
-        and state.get("fit_id") == "NATIVE-P2-FT-S7"
+        and state.get("fit_id") == fit_id
         and state.get("updates") == count
         and "utc" in state
         and datetime.fromisoformat(state["utc"]) >= datetime.fromisoformat(scope_end)
     )
 
 
-def stop(pid: int, minimum_updates: int) -> dict:
+def stop(
+    pid: int,
+    minimum_updates: int,
+    *,
+    fit_id: str = "NATIVE-P2-FT-S7",
+    transition: str = "PAIRS_FIRST",
+) -> dict:
     """Wait for exclusive ownership and complete state; never interrupt an optimizer step."""
     import msvcrt
 
-    directory = RUN / "scheduling/PAIRS_FIRST"
+    if transition not in {"PAIRS_FIRST", "MAPPED_INPUT"}:
+        raise ValueError("Unregistered transition purpose")
+    if fit_id not in read(ROOT / "configs/joint_measurement/primary.json")["fits"]:
+        raise ValueError("Unregistered primary fit")
+    directory = RUN / "scheduling" / transition
     if (directory / "STOP_RESULT.json").exists():
         raise ValueError("Transition already has a result; inspect it instead of stopping again")
     order_path = RUN / "PRIMARY_EXECUTION_ORDER.json"
     if not order_path.is_file():
         raise ValueError("Register the complete unchanged matrix order before transition")
+    diagnostic = RUN / "diagnostics/mapped_runtime/REGISTRATION.json"
+    if transition == "MAPPED_INPUT" and not diagnostic.is_file():
+        raise ValueError("Register mapped-input equivalence checks before stopping training")
     process = psutil.Process(pid)
     created = process.create_time()
     check_owner(process, created)
@@ -90,11 +108,19 @@ def stop(pid: int, minimum_updates: int) -> dict:
             "minimum_durable_updates": minimum_updates,
             "utc": datetime.now(UTC).isoformat(),
             "order_sha256": sha(order_path),
-            "reason": "Resource-aware ordering only; resume all four unchanged 12000-update fits",
+            "fit_id": fit_id,
+            "diagnostic_registration_sha256": sha(diagnostic)
+            if transition == "MAPPED_INPUT"
+            else None,
+            "reason": (
+                "Storage-equivalence QA before possible input optimization; recipes unchanged"
+                if transition == "MAPPED_INPUT"
+                else "Resource-aware ordering only; resume all four unchanged 12000-update fits"
+            ),
         },
     )
     expires = time.monotonic() + 1200
-    fit = RUN / "fits/NATIVE-P2-FT-S7"
+    fit = RUN / "fits" / fit_id
     with (RUN / "V18_GPU.lock").open("r+b") as stream:
         while time.monotonic() < expires:
             check_owner(process, created)
@@ -116,7 +142,9 @@ def stop(pid: int, minimum_updates: int) -> dict:
                     receipt = read(fit / "CHECKPOINT_RECEIPT.json")
                     state = read(RUN / "RUNNER_STATE.json")
                     count = journal["completed_updates"]
-                    if durable_boundary(journal, receipt, state, minimum_updates, scope_end):
+                    if durable_boundary(
+                        journal, receipt, state, minimum_updates, scope_end, fit_id
+                    ):
                         break
                     time.sleep(0.1)
                 else:
@@ -142,8 +170,10 @@ def stop(pid: int, minimum_updates: int) -> dict:
                     "checkpoint_sha256": checkpoint_sha,
                     "identity_sha256": journal["identity_sha256"],
                     "order_sha256": sha(order_path),
+                    "fit_id": fit_id,
+                    "transition": transition,
                     "utc": datetime.now(UTC).isoformat(),
-                    "scope": "Execution-order transition; native scientific endpoint still 12000",
+                    "scope": "Durable execution transition; all scientific endpoints still 12000",
                 }
                 write(directory / "STOP_RESULT.json", result)
                 return result
@@ -157,5 +187,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--pid", type=int, required=True)
     parser.add_argument("--minimum-updates", type=int, required=True)
+    parser.add_argument("--fit-id", default="NATIVE-P2-FT-S7")
+    parser.add_argument(
+        "--transition", choices=["PAIRS_FIRST", "MAPPED_INPUT"], default="PAIRS_FIRST"
+    )
     args = parser.parse_args()
-    print(stop(args.pid, args.minimum_updates), flush=True)
+    print(
+        stop(args.pid, args.minimum_updates, fit_id=args.fit_id, transition=args.transition),
+        flush=True,
+    )
