@@ -1,0 +1,38 @@
+{
+  "zip_path": "/mnt/data/E_JEPA_TTC_V17_RESEARCH_RESULTS_20261012_396abe92.zip",
+  "zip_bytes": 365581652,
+  "sha256": "8ce10a722967e6f5c49e13fe176c494d562678e35b3f6c834d7d38fd005e6007",
+  "members": 5212,
+  "crc": "PASS",
+  "duplicates": 0,
+  "unsafe_paths": 0,
+  "extraction": "/mnt/data/v17_review/extracted",
+  "hashes_checked": 5211,
+  "hash_mismatches": [],
+  "manifest_scope": {
+    "SOTA": false,
+    "created_utc": "2026-10-12T13:38:04.302597+00:00",
+    "excludes": [
+      "raw datasets",
+      "V13 parent checkpoint files",
+      "V15 frozen vector caches",
+      "large V17 feature caches",
+      "Git object database and credentials"
+    ],
+    "includes": [
+      "tracked source and reports",
+      "all new training checkpoints; receipt distinguishes complete and pending fits",
+      "durable checkpoint versions",
+      "portable inference weights",
+      "predictions including invalid rows",
+      "curves and gradients",
+      "group metrics and bootstrap",
+      "QA and accounting",
+      "exact dependency inventory"
+    ],
+    "reproducibility": "metrics can be replayed from predictions; complete fits require listed external caches; portable exports load without parent files but receive prepared inputs",
+    "scientifically_closed": true,
+    "source_commit": "396abe922537d9dac19d6db3451e59d283636e20",
+    "status": "CLOSED_NO_CANDIDATE"
+  }
+}

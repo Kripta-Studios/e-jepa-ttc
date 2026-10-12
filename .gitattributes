@@ -34,3 +34,9 @@ docs/range_readout_handoff_20261012/** -text
 operational/range_readout/** -text
 src/e_jepa_ttc/range_readout/** -text
 scripts/Resume-RangeReadout.ps1 -text
+
+# V18 handoff manifests, prepared data and executed sources bind exact bytes.
+docs/joint_measurement_handoff_20261012/** -text
+operational/joint_measurement/** -text
+src/e_jepa_ttc/joint_measurement/** -text
+configs/joint_measurement/** -text

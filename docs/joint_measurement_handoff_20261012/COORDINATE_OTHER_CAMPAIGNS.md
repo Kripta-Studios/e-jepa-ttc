@@ -1,0 +1,3 @@
+V17 está cerrado NO_CANDIDATE. Voy a iniciar un worktree V18 con medición relativa entrenable; no pido reiniciar ni alterar V13/V15/V16/Stage70.
+Publica/reutiliza las rutas y hashes de padres P, roles y fuentes lossless de eventos/RGB; el estado vivo de GPU/lectura pesada; y si Stage70/PPS ya ejecutó una arquitectura equivalente con sus checkpoints/resultados. No basta un nombre de script para atribuir entrenamiento.
+Si una comparación V16 ya existe, V18 debe consumir su resultado admitido en lectura en lugar de repetirla. No bloquear el entrenamiento event por una calibración multimodal pendiente.

@@ -1,0 +1,1053 @@
+{
+  "exports": [
+    {
+      "name": "D-S13",
+      "fields": [
+        {
+          "key": "point_phase",
+          "maxabs": 1.862645149230957e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "raw_location",
+          "maxabs": 1.862645149230957e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "raw_residual",
+          "maxabs": 9.313225746154785e-10,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "q10",
+          "maxabs": 1.862645149230957e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "q90",
+          "maxabs": 2.7939677238464355e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "relative_cost",
+          "maxabs": 5.960464477539063e-08,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "expert_index",
+          "maxabs": 0.0,
+          "exact": true,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        }
+      ]
+    },
+    {
+      "name": "D-S23",
+      "fields": [
+        {
+          "key": "point_phase",
+          "maxabs": 2.7939677238464355e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "raw_location",
+          "maxabs": 3.725290298461914e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "raw_residual",
+          "maxabs": 3.725290298461914e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "q10",
+          "maxabs": 3.725290298461914e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "q90",
+          "maxabs": 3.725290298461914e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "relative_cost",
+          "maxabs": 5.960464477539063e-08,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "expert_index",
+          "maxabs": 0.0,
+          "exact": true,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        }
+      ]
+    },
+    {
+      "name": "D-S7",
+      "fields": [
+        {
+          "key": "point_phase",
+          "maxabs": 1.862645149230957e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "raw_location",
+          "maxabs": 1.862645149230957e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "raw_residual",
+          "maxabs": 1.862645149230957e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "q10",
+          "maxabs": 3.725290298461914e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "q90",
+          "maxabs": 1.862645149230957e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "relative_cost",
+          "maxabs": 5.960464477539063e-08,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "expert_index",
+          "maxabs": 0.0,
+          "exact": true,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        }
+      ]
+    },
+    {
+      "name": "F1-S7",
+      "fields": [
+        {
+          "key": "ttc_mean_seconds",
+          "maxabs": 9.5367431640625e-06,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "ttc_log_variance",
+          "maxabs": 3.814697265625e-06,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "collision_logits",
+          "maxabs": 0.0,
+          "exact": true,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "pair_tokens",
+          "maxabs": 3.814697265625e-06,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "pair_log_height_ratio",
+          "maxabs": 4.6566128730773926e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        }
+      ]
+    },
+    {
+      "name": "G-S13",
+      "fields": [
+        {
+          "key": "point_phase",
+          "maxabs": 1.862645149230957e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "raw_location",
+          "maxabs": 1.862645149230957e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "raw_residual",
+          "maxabs": 1.862645149230957e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "q10",
+          "maxabs": 3.725290298461914e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "q90",
+          "maxabs": 1.862645149230957e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "relative_cost",
+          "maxabs": 5.960464477539063e-08,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "expert_index",
+          "maxabs": 0.0,
+          "exact": true,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        }
+      ]
+    },
+    {
+      "name": "G-S23",
+      "fields": [
+        {
+          "key": "point_phase",
+          "maxabs": 1.862645149230957e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "raw_location",
+          "maxabs": 1.862645149230957e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "raw_residual",
+          "maxabs": 9.313225746154785e-10,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "q10",
+          "maxabs": 3.725290298461914e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "q90",
+          "maxabs": 1.862645149230957e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "relative_cost",
+          "maxabs": 8.940696716308594e-08,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "expert_index",
+          "maxabs": 0.0,
+          "exact": true,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        }
+      ]
+    },
+    {
+      "name": "G-S7",
+      "fields": [
+        {
+          "key": "point_phase",
+          "maxabs": 1.862645149230957e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "raw_location",
+          "maxabs": 1.862645149230957e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "raw_residual",
+          "maxabs": 1.862645149230957e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "q10",
+          "maxabs": 1.862645149230957e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "q90",
+          "maxabs": 2.7939677238464355e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "relative_cost",
+          "maxabs": 5.960464477539063e-08,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "expert_index",
+          "maxabs": 0.0,
+          "exact": true,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        }
+      ]
+    },
+    {
+      "name": "N0-S7",
+      "fields": [
+        {
+          "key": "ttc_mean_seconds",
+          "maxabs": 5.7220458984375e-06,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "ttc_log_variance",
+          "maxabs": 1.9073486328125e-06,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "collision_logits",
+          "maxabs": 0.0,
+          "exact": true,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "pair_tokens",
+          "maxabs": 3.814697265625e-06,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "pair_log_height_ratio",
+          "maxabs": 5.587935447692871e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        }
+      ]
+    },
+    {
+      "name": "NL1-S7",
+      "fields": [
+        {
+          "key": "ttc_mean_seconds",
+          "maxabs": 5.7220458984375e-05,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "ttc_log_variance",
+          "maxabs": 5.7220458984375e-06,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "collision_logits",
+          "maxabs": 1.1920928955078125e-06,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "pair_tokens",
+          "maxabs": 3.814697265625e-06,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "pair_log_height_ratio",
+          "maxabs": 8.847564458847046e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        }
+      ]
+    },
+    {
+      "name": "NLH-S7",
+      "fields": [
+        {
+          "key": "ttc_mean_seconds",
+          "maxabs": 0.0,
+          "exact": true,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "ttc_log_variance",
+          "maxabs": 0.0,
+          "exact": true,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "collision_logits",
+          "maxabs": 0.0,
+          "exact": true,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "pair_tokens",
+          "maxabs": 3.814697265625e-06,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "pair_log_height_ratio",
+          "maxabs": 0.0,
+          "exact": true,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        }
+      ]
+    },
+    {
+      "name": "Q0-S7",
+      "fields": [
+        {
+          "key": "ttc_mean_seconds",
+          "maxabs": 3.814697265625e-06,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "ttc_log_variance",
+          "maxabs": 1.9073486328125e-06,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "collision_logits",
+          "maxabs": 4.76837158203125e-07,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "pair_tokens",
+          "maxabs": 3.814697265625e-06,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "pair_log_height_ratio",
+          "maxabs": 4.6566128730773926e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        }
+      ]
+    },
+    {
+      "name": "Q1-S7",
+      "fields": [
+        {
+          "key": "ttc_mean_seconds",
+          "maxabs": 2.86102294921875e-06,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "ttc_log_variance",
+          "maxabs": 1.9073486328125e-06,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "collision_logits",
+          "maxabs": 2.86102294921875e-06,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "pair_tokens",
+          "maxabs": 3.814697265625e-06,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "pair_log_height_ratio",
+          "maxabs": 7.450580596923828e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        }
+      ]
+    },
+    {
+      "name": "SP0-S7",
+      "fields": [
+        {
+          "key": "ttc_mean_seconds",
+          "maxabs": 1.52587890625e-05,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "ttc_log_variance",
+          "maxabs": 1.9073486328125e-06,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "collision_logits",
+          "maxabs": 0.0,
+          "exact": true,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "pair_tokens",
+          "maxabs": 3.814697265625e-06,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "pair_log_height_ratio",
+          "maxabs": 3.725290298461914e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        }
+      ]
+    },
+    {
+      "name": "SP1-S7",
+      "fields": [
+        {
+          "key": "ttc_mean_seconds",
+          "maxabs": 7.62939453125e-05,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "ttc_log_variance",
+          "maxabs": 5.7220458984375e-06,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "collision_logits",
+          "maxabs": 0.0,
+          "exact": true,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "pair_tokens",
+          "maxabs": 3.814697265625e-06,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "pair_log_height_ratio",
+          "maxabs": 5.587935447692871e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        }
+      ]
+    },
+    {
+      "name": "U0-S13",
+      "fields": [
+        {
+          "key": "ttc_mean_seconds",
+          "maxabs": 5.7220458984375e-06,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "ttc_log_variance",
+          "maxabs": 1.9073486328125e-06,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "collision_logits",
+          "maxabs": 0.0,
+          "exact": true,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "pair_tokens",
+          "maxabs": 3.814697265625e-06,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "pair_log_height_ratio",
+          "maxabs": 4.6566128730773926e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        }
+      ]
+    },
+    {
+      "name": "U0-S23",
+      "fields": [
+        {
+          "key": "ttc_mean_seconds",
+          "maxabs": 3.814697265625e-06,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "ttc_log_variance",
+          "maxabs": 1.9073486328125e-06,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "collision_logits",
+          "maxabs": 1.6689300537109375e-06,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "pair_tokens",
+          "maxabs": 3.814697265625e-06,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "pair_log_height_ratio",
+          "maxabs": 4.6566128730773926e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        }
+      ]
+    },
+    {
+      "name": "U0-S7",
+      "fields": [
+        {
+          "key": "ttc_mean_seconds",
+          "maxabs": 2.86102294921875e-06,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "ttc_log_variance",
+          "maxabs": 0.0,
+          "exact": true,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "collision_logits",
+          "maxabs": 1.1920928955078125e-06,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "pair_tokens",
+          "maxabs": 3.814697265625e-06,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "pair_log_height_ratio",
+          "maxabs": 6.51925802230835e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        }
+      ]
+    },
+    {
+      "name": "U1-S13",
+      "fields": [
+        {
+          "key": "ttc_mean_seconds",
+          "maxabs": 7.62939453125e-06,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "ttc_log_variance",
+          "maxabs": 1.9073486328125e-06,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "collision_logits",
+          "maxabs": 7.152557373046875e-07,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "pair_tokens",
+          "maxabs": 3.814697265625e-06,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "pair_log_height_ratio",
+          "maxabs": 6.51925802230835e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        }
+      ]
+    },
+    {
+      "name": "U1-S23",
+      "fields": [
+        {
+          "key": "ttc_mean_seconds",
+          "maxabs": 4.76837158203125e-06,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "ttc_log_variance",
+          "maxabs": 1.9073486328125e-06,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "collision_logits",
+          "maxabs": 0.0,
+          "exact": true,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "pair_tokens",
+          "maxabs": 3.814697265625e-06,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "pair_log_height_ratio",
+          "maxabs": 5.587935447692871e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        }
+      ]
+    },
+    {
+      "name": "U1-S7",
+      "fields": [
+        {
+          "key": "ttc_mean_seconds",
+          "maxabs": 9.5367431640625e-07,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "ttc_log_variance",
+          "maxabs": 1.9073486328125e-06,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "collision_logits",
+          "maxabs": 7.152557373046875e-07,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "pair_tokens",
+          "maxabs": 3.814697265625e-06,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "pair_log_height_ratio",
+          "maxabs": 5.587935447692871e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        }
+      ]
+    },
+    {
+      "name": "Z-S13",
+      "fields": [
+        {
+          "key": "point_phase",
+          "maxabs": 3.725290298461914e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "raw_location",
+          "maxabs": 1.862645149230957e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "raw_residual",
+          "maxabs": 1.862645149230957e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "q10",
+          "maxabs": 3.725290298461914e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "q90",
+          "maxabs": 2.3283064365386963e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "relative_cost",
+          "maxabs": 6.705522537231445e-08,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "expert_index",
+          "maxabs": 0.0,
+          "exact": true,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        }
+      ]
+    },
+    {
+      "name": "Z-S23",
+      "fields": [
+        {
+          "key": "point_phase",
+          "maxabs": 1.862645149230957e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "raw_location",
+          "maxabs": 1.862645149230957e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "raw_residual",
+          "maxabs": 9.313225746154785e-10,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "q10",
+          "maxabs": 3.725290298461914e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "q90",
+          "maxabs": 1.862645149230957e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "relative_cost",
+          "maxabs": 5.960464477539063e-08,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "expert_index",
+          "maxabs": 0.0,
+          "exact": true,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        }
+      ]
+    },
+    {
+      "name": "Z-S7",
+      "fields": [
+        {
+          "key": "point_phase",
+          "maxabs": 3.725290298461914e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "raw_location",
+          "maxabs": 3.725290298461914e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "raw_residual",
+          "maxabs": 3.725290298461914e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "q10",
+          "maxabs": 5.587935447692871e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "q90",
+          "maxabs": 4.6566128730773926e-09,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "relative_cost",
+          "maxabs": 5.960464477539063e-08,
+          "exact": false,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        },
+        {
+          "key": "expert_index",
+          "maxabs": 0.0,
+          "exact": true,
+          "same_finiteness": true,
+          "allclose_1e5": true
+        }
+      ]
+    }
+  ],
+  "torch": "2.10.0+cpu",
+  "new_optimizer_updates": 0,
+  "scope": "prepared examples only; no source parent checkpoint, raw input or training cache loaded"
+}

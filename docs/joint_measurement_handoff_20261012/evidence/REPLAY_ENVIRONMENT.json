@@ -1,0 +1,8 @@
+{
+  "python": "3.13.5",
+  "torch": "2.10.0+cpu",
+  "numpy": "2.3.5",
+  "pandas": "2.2.3",
+  "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+  "scope": "Saved predictions and prepared export inputs only; cross-runtime numerical comparison"
+}

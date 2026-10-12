@@ -59,13 +59,18 @@ packages = ["src/e_jepa_ttc"]
 line-length = 100
 target-version = "py311"
 # Preserve the received handoff byte-for-byte; executable integration lives in src/operational.
-extend-exclude = ["docs/range_transfer_handoff_20261010"]
+extend-exclude = ["docs/range_transfer_handoff_20261010", "docs/joint_measurement_handoff_20261012"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "N", "ANN"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**/*.py" = ["ANN"]
+# Sensor admission already binds these executed bytes; preserve its three long lines.
+"operational/joint_measurement/data.py" = ["E501"]
+
+[tool.ruff.format]
+exclude = ["operational/joint_measurement/data.py"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
