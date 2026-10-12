@@ -182,13 +182,14 @@ def replay(root: Path) -> dict:
     }
     witnesses = {}
     verification = campaign / "verification"
-    witness = verification / "PAIR_DIRECT_ENCODER_CHANGE_100.json"
-    if witness.exists():
-        witnesses["PAIR-DIRECT-S7@100"] = replay_encoder_change(
-            verification / "PAIR_DIRECT_INITIAL_STATE.pt",
-            verification / "PAIR_DIRECT_STATE_100.pt",
-            witness,
-        )
+    for variant in ("DIRECT", "CORR"):
+        witness = verification / f"PAIR_{variant}_ENCODER_CHANGE_100.json"
+        if witness.exists():
+            witnesses[f"PAIR-{variant}-S7@100"] = replay_encoder_change(
+                verification / f"PAIR_{variant}_INITIAL_STATE.pt",
+                verification / f"PAIR_{variant}_STATE_100.pt",
+                witness,
+            )
     return {
         "integrity": integrity,
         "prediction_tables": predictions,

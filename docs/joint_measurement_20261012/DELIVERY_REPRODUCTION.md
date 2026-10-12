@@ -71,8 +71,12 @@ numéricos documentados de las tablas y se cargan los TorchScript en CPU con sus
 ejemplos sin etiquetas. Se preservan las tolerancias incluidas en cada binding;
 las diferencias no se ocultan ni se convierten en igualdad bit a bit. Esta
 verificación no reproduce eventos crudos, no reentrena productores y no confirma
-SOTA. Un paquete sin tablas o exports informa explícitamente que no ha realizado
-reproducción científica.
+SOTA. También se recalculan los testigos de cambio del encoder de DIRECT y CORR,
+cuando estén incluidos, comparando los checkpoints conservados de 0 y 100 updates.
+Se verifican hashes, identidad, pesos finitos, diferencias por tensor y continuidad
+del contador. Esto acredita adaptación sobre P; no demuestra generalización.
+Un paquete sin tablas, exports ni estos testigos informa explícitamente que no ha
+realizado reproducción científica.
 
 En este host Windows se usan streams de Python para guardar y cargar TorchScript:
 la ruta C++ directa falló con el nombre de usuario Unicode. La prueba de extracción
