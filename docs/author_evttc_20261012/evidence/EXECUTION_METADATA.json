@@ -1,0 +1,18 @@
+{
+  "checkpoint_bindings": "BASELINES_BINDING.json and v13/PREDICTIONS_SEALED.json",
+  "cuda_version": "12.8",
+  "device": "cpu",
+  "experiment_id": "author_evttc_20261012",
+  "gpu_reserved_for_other_work": true,
+  "host": "DESKTOP-2N393IP",
+  "implementation_commit": "df9ba32bd291c443c2bbcf6cd670caffd5e87da1",
+  "model_selection_performed": false,
+  "optimizer_updates": 0,
+  "platform": "Windows-10-10.0.26200-SP0",
+  "precision": "float32",
+  "protocol_manifest_sha256": "dc502b11651129fbb54b20993f5ce13afa3c2fbbaf84992c4137e82b95b229be",
+  "python_version": "3.11.15 (main, Mar 10 2026, 18:12:25) [MSC v.1944 64 bit (AMD64)]",
+  "status": "COMPLETE",
+  "torch_threads": 1,
+  "torch_version": "2.11.0+cu128"
+}

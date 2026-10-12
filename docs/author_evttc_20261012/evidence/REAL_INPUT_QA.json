@@ -1,0 +1,44 @@
+{
+  "Garl_RGB_shape": [
+    2,
+    3,
+    128,
+    128
+  ],
+  "Garl_event_shape": [
+    2,
+    20,
+    128,
+    128
+  ],
+  "V13_RGB_observations": 5,
+  "V13_event_shape": [
+    4,
+    3,
+    12,
+    128,
+    128
+  ],
+  "input_audit": {
+    "actual_deltas_us": [
+      99998,
+      100007
+    ],
+    "events": [
+      {
+        "roi": 23257,
+        "total": 981941
+      },
+      {
+        "roi": 22866,
+        "total": 998348
+      }
+    ]
+  },
+  "labels_read": false,
+  "optimizer_updates": 0,
+  "query_id": "CCRs2-medium:002",
+  "reason": "",
+  "seconds": 1.2030706999939866,
+  "status": "PASSED"
+}

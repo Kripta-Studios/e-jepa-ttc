@@ -1,0 +1,20 @@
+{
+  "all_models_finite_predictions": true,
+  "independent_metric_scalar_checks": 1260,
+  "inference_source_matches_commit": "df9ba32bd291c443c2bbcf6cd670caffd5e87da1",
+  "maximum_GT_match_offset_s": 0.004417000000000115,
+  "nearest_GT_independent_checks": 129,
+  "optimizer_updates": 0,
+  "protected_V13_endpoint_hashes_unchanged": 12,
+  "pyright_errors": 0,
+  "pyright_warnings": 0,
+  "pytest_final_focused": 9,
+  "pytest_initial_suite": 28,
+  "pytest_overlap": 8,
+  "pytest_unique_cases": 29,
+  "real_queries": 43,
+  "ruff": "PASSED",
+  "sealed_prediction_join_checks": 516,
+  "status": "PASSED",
+  "scored_GT_values_independently_matched": 43
+}

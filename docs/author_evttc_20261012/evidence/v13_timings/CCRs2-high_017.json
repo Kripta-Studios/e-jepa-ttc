@@ -1,0 +1,6 @@
+{
+  "family_all_six_heads_total_ms": 1493.239400035236,
+  "isolated_host": false,
+  "query_id": "CCRs2-high:017",
+  "scope": "raw_inputs_through_all_six_heads_excludes_loading_and_fragment_write"
+}

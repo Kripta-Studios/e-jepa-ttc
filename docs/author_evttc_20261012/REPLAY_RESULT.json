@@ -1,0 +1,8 @@
+{
+  "status": "PASSED",
+  "queries": 43,
+  "scalar_metric_checks": 1260,
+  "prediction_join_checks": 516,
+  "optimizer_updates": 0,
+  "scope": "CSV statistics and sealed prediction identity; no neural inference"
+}

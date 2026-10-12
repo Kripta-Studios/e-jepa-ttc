@@ -49,3 +49,10 @@ https://github.com/Kripta-Studios/e-jepa-ttc/tree/1a686e338a1145c6794bec0704bdae
 
 Esta publicación es documental. No consume updates, cambia modelos ni reanuda
 fases ya completas. V14 es un worktree independiente y queda fuera de esta entrega.
+
+## Anexo posterior: aclaración de los autores de Garl
+
+La [reconstrucción de tres intervalos EvTTC](../author_evttc_20261012/README.md)
+incorpora el correo recibido después de este handoff y nuevas inferencias
+congeladas de V12, V13 y Garl. Es una cohorte distinta de Dev32. Sus resultados
+y límites se publican por separado, sin reescribir las tablas históricas.

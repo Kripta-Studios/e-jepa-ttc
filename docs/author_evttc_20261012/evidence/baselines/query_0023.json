@@ -1,0 +1,39 @@
+{
+  "Garl_full_heights": [
+    93.2545166015625,
+    99.27946472167969
+  ],
+  "binding_sha256": "f518de118df99024ecc5793dcf95656248e8233b64c38aef71b994b3a94d0867",
+  "failures": {},
+  "input_audit": {
+    "actual_deltas_us": [
+      99998,
+      99998
+    ],
+    "events": [
+      {
+        "roi": 64376,
+        "total": 1233969
+      },
+      {
+        "roi": 83554,
+        "total": 1317562
+      }
+    ]
+  },
+  "predictions": {
+    "Garl_event": 3.0748677253723145,
+    "Garl_full": 1.6478056907653809,
+    "H8_median3": 2.815707206726074,
+    "H8_seed13": 2.815707206726074,
+    "H8_seed23": 2.8797194957733154,
+    "H8_seed7": 2.7981529235839844
+  },
+  "query_id": "CCRs2-high:005",
+  "timings_ms": {
+    "Garl_full_forward": 801.9514000043273,
+    "Garl_full_prepare": 504.9439999856986,
+    "Garl_full_total": 1306.895399990026,
+    "V12_H8_total": 2102.8098999522626
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "device": "cpu",
+  "isolated_host": false,
+  "routes": {
+    "Garl_full_forward": {
+      "median_ms": 749.1325000301003,
+      "n": 43,
+      "p95_ms": 808.645070012426
+    },
+    "Garl_full_prepare": {
+      "median_ms": 363.0831000045873,
+      "n": 43,
+      "p95_ms": 465.73745000059716
+    },
+    "Garl_full_total": {
+      "median_ms": 1128.3413000055589,
+      "n": 43,
+      "p95_ms": 1255.3730699873995
+    },
+    "V12_H8_total": {
+      "median_ms": 1923.728600027971,
+      "n": 43,
+      "p95_ms": 2185.157850018004
+    },
+    "V13_all_six_heads_total": {
+      "median_ms": 1538.464700046461,
+      "n": 43,
+      "p95_ms": 1763.7807699677069
+    }
+  },
+  "scope_notes": {
+    "Garl_full": "prepare + forward, two event segments and two RGB frames",
+    "V12_H8_total": "H8 three heads; legacy prepare also builds an unused Garl event tensor",
+    "V13_all_six_heads_total": "native histories, shared producers, ALL SIX heads, excludes model loading and fragment disk writes",
+    "cold_warm": "no excluded first-query warmup; per-query values retained",
+    "comparability": "Not an isolated matched-latency benchmark, not paper hardware"
+  },
+  "torch_threads": 1
+}
