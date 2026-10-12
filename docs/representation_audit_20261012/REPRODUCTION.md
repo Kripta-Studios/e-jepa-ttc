@@ -16,7 +16,7 @@ Desde PowerShell:
 pwsh -NoProfile -File 'C:\Users\Álvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\e-jepa-ttc-v17-representation-audit\scripts\Resume-ResearchV17.ps1'
 ```
 
-`-Queue A`, `B`, `D`, `E`, `F`, `G` o `H` limita la reanudación a una cola. El script rechaza un worker vivo y no crea un supervisor permanente. Cada trainer conserva checkpoint, optimizador, scheduler, RNG CPU/CUDA, sampler y diario de updates. Los checkpoints completos se verifican y se reutilizan. Una dependencia ausente o un gate fallido no autoriza un experimento sustituto.
+`-Queue A`, `B`, `D`, `E`, `F`, `G`, `H` o `I` limita la reanudación a una cola. I exige el rechazo de G y H conforme a su protocolo independiente. El script rechaza un worker vivo y no crea un supervisor permanente. Cada trainer conserva checkpoint, optimizador, scheduler, RNG CPU/CUDA, sampler y diario de updates. Los checkpoints completos se verifican y se reutilizan. Una dependencia ausente o un gate fallido no autoriza un experimento sustituto no registrado.
 
 Los contadores globales están en `ACCOUNTING.json` y `GPU_BUDGET.json`. El presupuesto es de un millón de updates físicos y 64.800 segundos dentro de scopes GPU; ambos son límites, no una obligación de consumo. Las reservas pendientes se cargan conservadoramente. Los ajustes cerrados se contabilizan aparte, sin ocultarlos como ausencia de entrenamiento.
 

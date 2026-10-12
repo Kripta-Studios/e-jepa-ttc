@@ -24,6 +24,7 @@ Campaña independiente posterior al `NO_CANDIDATE` de V15. Presupuesto autorizad
 | F | ¿Supervisar cambios de altura reduce el ruido temporal? | [F](PROTOCOL_F_TEMPORAL_GEOMETRY.md) |
 | G | ¿El mapa espacial conserva información perdida por el pooling global? | [G](PROTOCOL_G_SPATIAL_GEOMETRY.md) |
 | H | ¿El clipping permanente limita el scorer? | [H](PROTOCOL_H_UNCLIPPED_READOUT.md) |
+| I | Si G/H fallan, ¿ayuda una lectura no lineal de las mismas features espaciales? | [I](PROTOCOL_I_NONLINEAR_HEIGHT.md) |
 
 La [política de réplica](REPLICATION_POLICY.md) admite como máximo una familia condicional entre las colas pendientes. Los contrastes A/B/D de tres semillas se fijaron antes de su evaluación.
 

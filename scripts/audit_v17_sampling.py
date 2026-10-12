@@ -51,6 +51,18 @@ def main() -> None:
             raise ValueError("Optimizer clocks differ from endpoint")
         if payload["scheduler_state_dict"]["last_epoch"] != endpoint:
             raise ValueError("Scheduler clock differs from endpoint")
+        pauses = []
+        for path in sorted((run / "resume_audit" / directory.name).glob("pause_*.pt")):
+            earlier = torch.load(path, map_location="cpu", weights_only=False)
+            count = earlier["completed_updates"]
+            previous = earlier["cursor"]
+            if earlier["identity_sha256"] != payload["identity_sha256"]:
+                raise ValueError("Pause belongs to another fit")
+            if previous.get("draws", previous.get("draw_sha")) != saved[:count]:
+                raise ValueError("Pause draw prefix changed")
+            if previous.get("curve", previous.get("curves")) != curves[:count]:
+                raise ValueError("Pause loss/gradient prefix changed")
+            pauses.append({"updates": count, "sha256": sha(path), "prefix_exact": True})
         np.savez_compressed(folder / f"{directory.name}_EXPOSURE.npz", draws_per_position=counts)
         results[directory.name] = {
             "checkpoint_sha256": receipt["checkpoint_sha256"],
@@ -63,6 +75,7 @@ def main() -> None:
             "observed_unique_positions": int((counts > 0).sum()),
             "total_draws": int(counts.sum()),
             "recovery_upper": journal["recovery_upper"],
+            "retained_pause_prefix_checks": pauses,
         }
     write(
         run / "SAMPLING_CONTINUITY_AUDIT.json",

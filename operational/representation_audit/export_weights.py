@@ -16,6 +16,8 @@ from operational.range_transfer.common import read, sha, write
 from .geometry import initialize as init_geometry
 from .geometry_model import GeometryReadout
 from .model import RepresentationRefiner
+from .nonlinear import initialize as init_nonlinear
+from .nonlinear_model import NonlinearSpatialReadout
 from .precision import initialize as init_precision
 from .run import INPUTS, OLD, OWNER, RUN, cache
 from .spatial_geometry import initialize as init_spatial
@@ -34,21 +36,30 @@ def load_export(path: Path) -> nn.Module:
     model: nn.Module
     if kind == "head":
         model = RepresentationRefiner(metadata["bypass_active"])
-    elif kind in ("vector_equal_slope", "vector_calibrated_height", "vector_spatial_height"):
+    elif kind in (
+        "vector_equal_slope",
+        "vector_calibrated_height",
+        "vector_spatial_height",
+        "vector_nonlinear_height",
+    ):
         native = CausalScaleTTC(CausalScaleTTCConfig(**metadata["model_config"]))
         spec = ResidualSpec(**metadata["operator"])
         native = wrap(native, spec, reset=False)
-        if kind in ("vector_calibrated_height", "vector_spatial_height"):
+        if kind in ("vector_calibrated_height", "vector_spatial_height", "vector_nonlinear_height"):
             calibration = {
                 key: state["height_" + key].tolist()
                 for key in ("mean", "scale", "coefficient", "intercept")
             }
             calibration["role"] = "P"
-            model = (
-                SpatialReadout(native, calibration, "SP1")
-                if kind == "vector_spatial_height"
-                else GeometryReadout(native, calibration, "Q1")
-            )
+            if kind == "vector_nonlinear_height":
+                calibration.update(metadata["geometry_objective_variances"])
+                model = NonlinearSpatialReadout(native, calibration)
+            else:
+                model = (
+                    SpatialReadout(native, calibration, "SP1")
+                    if kind == "vector_spatial_height"
+                    else GeometryReadout(native, calibration, "Q1")
+                )
         else:
             model = VectorReadout(native)
     else:
@@ -130,7 +141,9 @@ def main() -> None:
                     if arm in ("U0", "U1", "N0")
                     else (
                         "vector_spatial_height"
-                        if arm in ("SP0", "SP1")
+                        if arm in ("SP0", "SP1", "NL0")
+                        else "vector_nonlinear_height"
+                        if arm in ("NLH", "NL1")
                         else "vector_calibrated_height"
                     )
                 ),
@@ -150,9 +163,20 @@ def main() -> None:
                 reference, *_ = init_temporal(seed, arm, device="cpu")
             elif arm in ("SP0", "SP1"):
                 reference, *_ = init_spatial(seed, arm, device="cpu")
+            elif arm in ("NL0", "NLH", "NL1"):
+                reference, *_ = init_nonlinear(seed, arm, device="cpu", technical=True)
+                if isinstance(reference, NonlinearSpatialReadout):
+                    metadata["geometry_objective_variances"] = {
+                        "variance_height_target": reference.height_variance,
+                        "variance_temporal_target": reference.temporal_variance,
+                    }
+                    metadata["height_mlp"] = "512_64_SiLU_1; added before delta clip[-2,2]"
+                metadata["training_stage"] = (
+                    "geometry_only_with_reset_untrained_scorer" if arm == "NLH" else "final_scorer"
+                )
             else:
                 raise ValueError("Unknown completed fit")
-            if arm in ("SP0", "SP1"):
+            if arm in ("SP0", "SP1", "NL0", "NLH", "NL1"):
                 with np.load(RUN / "spatial_cache/P/part_000000.npz", allow_pickle=False) as arc:
                     spatial = torch.from_numpy(arc["height_features"][:8].copy())
                 inputs = [{**raw, "height_features": spatial}]

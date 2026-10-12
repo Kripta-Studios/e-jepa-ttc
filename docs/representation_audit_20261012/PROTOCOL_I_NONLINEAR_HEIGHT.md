@@ -8,6 +8,8 @@ El ajuste P de G reduce el error de altura al conservar posición vertical, pero
 
 Control: SP1 de G, con su calibración lineal y scorer C05 seed7 ya terminado. Candidato: esa misma calibración, más MLP512→64→1 con SiLU y última capa cero. La entrada es la normalización P ya fijada por SP1. El resultado se suma a la corrección lineal antes del mismo clip[-2,2]. El candidato empieza exactamente en el control geométrico. No otra resolución, coeficiente, anchura, pérdida o ensayo de aprendizaje.
 
+El contraste añade capacidad y una etapa de optimización supervisada; no aísla exclusivamente la no linealidad. La parte de ajuste geométrico conserva las dos pérdidas normalizadas de G. El MLP usa la regularización AdamW declarada abajo, mientras los coeficientes ridge originales permanecen congelados. Se declara también ese coste adicional de entrenamiento.
+
 ## Dos etapas fijas
 
 1. Ajustar sólo el MLP nuevo durante6000updates sobre P uniforme, batch128, FP32/TF32off, AdamW1e-4→1e-5, warmup100/cosine6000, wd1e-4, clipping1. Objetivo: error cuadrático de corrección de log-altura y de su diferencia temporal, divididos por las varianzas P congeladas en SP1 y con peso unitario. Sin targets TTC en esta etapa, sin evaluación H para elegir epoch. Mantener fijo el scorer y todos los módulos originales.

@@ -21,15 +21,28 @@ def main() -> None:
         "F": "TEMP_GEOMETRY_SCREEN_DECISION.json",
         "G": "SPATIAL_SCREEN_DECISION.json",
         "H": "NOCLIP_SCREEN_DECISION.json",
+        "I": "NONLINEAR_SCREEN_DECISION.json",
     }
     decisions = {
         key: read(RUN / path) if (RUN / path).exists() else {"status": "PENDING"}
         for key, path in specs.items()
     }
+    for key in ("E", "F", "G", "H", "I"):
+        replica_path = RUN / specs[key].replace("SCREEN", "REPLICAS")
+        if replica_path.exists():
+            screen_status = decisions[key]["status"]
+            decisions[key] = {**read(replica_path), "screen_status": screen_status}
+    selected_path = RUN / "SELECTED_REPLICATION_FAMILY.json"
+    other_family = selected_path.exists() and read(selected_path)["family"] != "NONLINEAR"
+    if decisions["I"]["status"] == "PENDING" and (
+        other_family
+        or any(decisions[key]["status"] not in ("PENDING", "NO_CANDIDATE") for key in ("G", "H"))
+    ):
+        decisions["I"] = {"status": "NOT_TRIGGERED", "reason": "G/H admitted a family"}
     admitted = [
         key
         for key, value in decisions.items()
-        if value["status"] not in ("PENDING", "NO_CANDIDATE")
+        if value["status"] not in ("PENDING", "NO_CANDIDATE", "NOT_TRIGGERED")
     ]
     state = (
         "INTEGRATION_OR_REPLICATION_REQUIRED"

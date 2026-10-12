@@ -19,6 +19,7 @@ def main() -> None:
         ("F", "TEMP_GEOMETRY_SCREEN_RESULTS.json", "temporal_geometry_evaluation"),
         ("G", "SPATIAL_SCREEN_RESULTS.json", "spatial_evaluation"),
         ("H", "NOCLIP_SCREEN_RESULTS.json", "unclipped_evaluation"),
+        ("I", "NONLINEAR_SCREEN_RESULTS.json", "nonlinear_evaluation"),
     ]
     for queue, filename, directory in sources:
         if not (RUN / filename).exists():
@@ -72,7 +73,7 @@ def main() -> None:
                 }
             )
             if role == "P" or queue == "D":
-                source_name = "Q1-S7" if name == "F0-S7" else name
+                source_name = {"F0-S7": "Q1-S7", "NL0-S7": "SP1-S7"}.get(name, name)
                 curve = pd.read_csv(RUN / f"fits/{source_name}/CURVE.csv")
                 clipped = (curve.gradient_l2 > 1) & (
                     curve.clipping_enabled if "clipping_enabled" in curve else True
@@ -81,7 +82,7 @@ def main() -> None:
                     {
                         "fit": name,
                         "curve_source": source_name,
-                        "reused_control": name == "F0-S7"
+                        "reused_control": name in ("F0-S7", "NL0-S7")
                         or (queue == "H" and name.startswith("U0")),
                         "updates": len(curve),
                         "clipped_fraction": float(clipped.mean()),
@@ -97,6 +98,7 @@ def main() -> None:
             "F": ("F0", "F1"),
             "G": ("SP0", "SP1"),
             "H": ("U0", "N0"),
+            "I": ("NL0", "NL1"),
         }[queue]
         for seed in (7, 13, 23):
             role = "V" if queue == "D" else "H"
