@@ -29,6 +29,8 @@ def main() -> None:
         ("UNIT_REPLICATION", 13, OUT / "studies/UNIT_REPLICATION/S13"),
         ("UNIT_REPLICATION", 23, OUT / "studies/UNIT_REPLICATION/S23"),
         ("RELATIVE_PHASE", 7, OUT / "studies/RELATIVE_PHASE/S7"),
+        ("FUSION_STATE", 7, OUT / "studies/FUSION_STATE/S7"),
+        ("RGB_REGRET", 7, OUT / "studies/RGB_REGRET/S7"),
     ]
     rows, external = [], []
     for study, seed, directory in results:
@@ -38,7 +40,9 @@ def main() -> None:
             continue
         data = read(result_path)
         sources[str(result_path.relative_to(OUT))] = sha(result_path)
-        for arm in ("EVENT", "ZERO"):
+        arms = ("FUSED", "ZERO_FUSED") if study == "FUSION_STATE" else ("EVENT", "ZERO")
+        contrast_key = "fused_minus_zero_fused" if study == "FUSION_STATE" else "event_minus_zero"
+        for arm in arms:
             name = "R_ANCHOR_" + arm
             score = data["scores"][name]
             failed = [key for key, ok in data["gates"][name]["checks"].items() if not ok]
@@ -50,7 +54,7 @@ def main() -> None:
                     f"{score['group_macro_bucket_MiD']:.6f}",
                     f"{score['diagnostics']['mae_s']:.6f}",
                     ", ".join(failed) or "ninguno",
-                    str(data["event_minus_zero"]["ci95"]) if arm == "EVENT" else "—",
+                    str(data[contrast_key]["ci95"]) if arm == arms[0] else "—",
                 ]
             )
         for route in ("cpu", "native_gpu"):
@@ -62,7 +66,7 @@ def main() -> None:
                     continue
                 sources[str(metric_path.relative_to(OUT))] = sha(metric_path)
                 metrics = pd.read_csv(metric_path)
-                for arm in ("EVENT", "ZERO"):
+                for arm in arms:
                     full = metrics.query(
                         "scope == 'all_queries' and band == 'all' and method == @name",
                         local_dict={"name": "R_ANCHOR_" + arm},
@@ -101,7 +105,7 @@ def main() -> None:
                 "MiD agregado",
                 "MAE s",
                 "Gates fallidos",
-                "IC EVENT−ZERO",
+                "IC brazo−control",
             ],
             rows,
         ),
