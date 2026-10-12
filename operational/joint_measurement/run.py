@@ -10,15 +10,18 @@ from operational.range_transfer.common import read, utc, write
 from .common import RUN, accounting, config
 from .data import cache_root, prepare
 from .evaluate import freeze_primary, predict, select_h
+from .preflight import run as run_preflight
 from .qa import run as run_qa
 from .train import fit
 
 
 def advance() -> dict:
     """Complete one durable stage; adaptive choices require their next registration."""
+    run_qa("cuda")
+    if not (RUN / "PREFLIGHT32.json").exists():
+        run_preflight()
     if not (cache_root("P") / "COMPLETE.json").exists():
         return {"status": "WAIT_P_SENSOR", "progress": read(RUN / "PREPARE_P_PROGRESS.json")}
-    run_qa("cuda")
     for fit_id in config()["fits"]:
         receipt = fit(fit_id)
         if receipt["status"] != "COMPLETE":

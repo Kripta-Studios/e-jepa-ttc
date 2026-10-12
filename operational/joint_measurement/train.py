@@ -148,7 +148,7 @@ def sources() -> dict[str, str]:
     paths = list((ROOT / "src/e_jepa_ttc/joint_measurement").glob("*.py"))
     paths += [
         ROOT / "operational/joint_measurement" / name
-        for name in ("train.py", "data.py", "native_loss.py", "common.py")
+        for name in ("train.py", "data.py", "native_loss.py", "common.py", "qa.py")
     ]
     paths += [
         ROOT / p
@@ -239,6 +239,9 @@ def fit(fit_id: str, *, max_updates: int | None = None) -> dict:
                 if state.pointer.exists()
                 else None
             )
+            # Restore may add non-durable/pending work to recovery_upper.
+            # Enforce the V18 recovery cap before another optimizer boundary.
+            accounting()
             if cursor is not None:
                 curves = cursor["curves"]
             else:

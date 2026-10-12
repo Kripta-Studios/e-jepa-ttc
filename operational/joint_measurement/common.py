@@ -44,9 +44,13 @@ def resource_state(*, starting: bool = False, disk_reserve: int = 0) -> dict:
     for proc in psutil.process_iter(["pid", "name", "cmdline", "create_time"]):
         try:
             command = " ".join(proc.info["cmdline"] or [])
-            if "python" in (proc.info["name"] or "").lower() and any(
-                x in command.lower() for x in ("e-jepa-ttc", "e_jepa_ttc", "operational.")
-            ):
+            is_python = "python" in (proc.info["name"] or "").lower()
+            in_project = is_python and (
+                proc.pid == os.getpid()
+                or any(x in command.lower() for x in ("e-jepa-ttc", "e_jepa_ttc", "operational."))
+                or Path(proc.cwd()).is_relative_to(ROOT.parent)
+            )
+            if in_project:
                 processes.append({**proc.info, "rss": proc.memory_info().rss})
         except (psutil.NoSuchProcess, psutil.AccessDenied):
             pass

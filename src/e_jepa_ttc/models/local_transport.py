@@ -18,7 +18,6 @@ from dataclasses import dataclass
 import torch
 from torch.nn import functional
 
-
 TRANSPORT_FEATURE_NAMES: tuple[str, ...] = (
     "translation_x",
     "translation_y",
