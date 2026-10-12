@@ -1,0 +1,30 @@
+{
+  "schema": "multimodal_next_20261012_v1",
+  "base_commit": "62cf4dbe914ea077c68e42983f869cd5422ab71c",
+  "proposed_branch": "scientific-recovery-v16-multimodal-validation",
+  "source_bundle_sha256": "22fabc28119c21a314ebf1f857f78e5439282dda8d552bd54d0626e81aea35b2",
+  "scientific_optimizer_updates": 0,
+  "technical_optimizer_updates": 0,
+  "recover_optimizer_updates": 0,
+  "scope": [
+    "read",
+    "implement_additive_evaluators",
+    "tests_without_optimizer",
+    "frozen_inference",
+    "geometry_without_TTC",
+    "profiling",
+    "local_delivery"
+  ],
+  "existing_V15": "check_live_status_do_not_change_duplicate_or_reassign",
+  "protected": [
+    "V13_historical_endpoints",
+    "V14_NO_CANDIDATE",
+    "V15_if_active",
+    "Stage76",
+    "private_test_labels",
+    "sealed_scores"
+  ],
+  "automatic_push": false,
+  "automatic_submission": false,
+  "future_training_proposals_executable": false
+}

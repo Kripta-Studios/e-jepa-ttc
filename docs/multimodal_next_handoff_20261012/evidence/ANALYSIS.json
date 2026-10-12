@@ -1,0 +1,126 @@
+{
+  "FCWD": {
+    "csv_sha256": "e2a094317fe6dd31bf18d51466eff38f475911c0dde9a4e77486ff0bfd8ff126",
+    "queries": 630,
+    "labelled": 597,
+    "unlabelled": 33,
+    "rgb_labelled": 472,
+    "fallback_labelled": 125,
+    "fallback_equal": true,
+    "fallback_AE_share": 0.612772736414809,
+    "band_and_RGB_gap": [
+      {
+        "scope": "RGB",
+        "band": "c",
+        "n": 195,
+        "contribution_to_micro_gap": 1.3141414555912283
+      },
+      {
+        "scope": "RGB",
+        "band": "s",
+        "n": 170,
+        "contribution_to_micro_gap": -1.1003118636511378
+      },
+      {
+        "scope": "RGB",
+        "band": "l",
+        "n": 62,
+        "contribution_to_micro_gap": -1.9290801498827155
+      },
+      {
+        "scope": "RGB",
+        "band": "gt10",
+        "n": 45,
+        "contribution_to_micro_gap": -3.5219048484548297
+      },
+      {
+        "scope": "fallback",
+        "band": "c",
+        "n": 6,
+        "contribution_to_micro_gap": 1.1323133173745266
+      },
+      {
+        "scope": "fallback",
+        "band": "s",
+        "n": 19,
+        "contribution_to_micro_gap": -0.4874792463677499
+      },
+      {
+        "scope": "fallback",
+        "band": "l",
+        "n": 46,
+        "contribution_to_micro_gap": -1.284962575743077
+      },
+      {
+        "scope": "fallback",
+        "band": "gt10",
+        "n": 54,
+        "contribution_to_micro_gap": -2.0100566873308847
+      }
+    ],
+    "new_inferences": 0,
+    "optimizer_updates": 0
+  },
+  "DEV32": {
+    "csv_sha256": "456541246081bc7578f39836f333010fc2d710fcd0ac600edc9216f8285d8621",
+    "queries": 1024,
+    "labelled": 946,
+    "unlabelled": 78,
+    "rgb_labelled": 946,
+    "fallback_labelled": 0,
+    "fallback_equal": true,
+    "fallback_AE_share": 0.0,
+    "band_and_RGB_gap": [
+      {
+        "scope": "RGB",
+        "band": "c",
+        "n": 569,
+        "contribution_to_micro_gap": -63.72915920739095
+      },
+      {
+        "scope": "RGB",
+        "band": "s",
+        "n": 297,
+        "contribution_to_micro_gap": -8.448321520578396
+      },
+      {
+        "scope": "RGB",
+        "band": "l",
+        "n": 60,
+        "contribution_to_micro_gap": -0.7140045386804067
+      },
+      {
+        "scope": "RGB",
+        "band": "gt10",
+        "n": 20,
+        "contribution_to_micro_gap": -0.4095248690424486
+      },
+      {
+        "scope": "fallback",
+        "band": "c",
+        "n": 0,
+        "contribution_to_micro_gap": 0.0
+      },
+      {
+        "scope": "fallback",
+        "band": "s",
+        "n": 0,
+        "contribution_to_micro_gap": 0.0
+      },
+      {
+        "scope": "fallback",
+        "band": "l",
+        "n": 0,
+        "contribution_to_micro_gap": 0.0
+      },
+      {
+        "scope": "fallback",
+        "band": "gt10",
+        "n": 0,
+        "contribution_to_micro_gap": 0.0
+      }
+    ],
+    "new_inferences": 0,
+    "optimizer_updates": 0
+  }
+}

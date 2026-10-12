@@ -1,0 +1,26 @@
+{
+  "original_1024": {
+    "timestamp_matches": 1024,
+    "identical_query_id": 1024,
+    "max_numeric_delta": {
+      "truth_ttc_seconds": 0.0,
+      "H8_seed7": 0.0,
+      "H8_seed13": 0.0,
+      "H8_seed23": 0.0,
+      "public_Garl_event_lhr": 0.0,
+      "public_Garl_rgb_event_full": 0.0
+    }
+  },
+  "expanded_3947": {
+    "timestamp_matches": 1024,
+    "identical_query_id": 39,
+    "max_numeric_delta": {
+      "truth_ttc_seconds": 1.7763568394002505e-15,
+      "H8_seed7": 1.7763568394002505e-15,
+      "H8_seed13": 3.552713678800501e-15,
+      "H8_seed23": 3.552713678800501e-15,
+      "public_Garl_event_lhr": 1.4210854715202004e-14,
+      "public_Garl_rgb_event_full": 2.842170943040401e-14
+    }
+  }
+}

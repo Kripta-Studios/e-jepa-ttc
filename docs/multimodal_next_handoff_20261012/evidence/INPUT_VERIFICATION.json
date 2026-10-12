@@ -1,0 +1,12 @@
+{
+  "zip_bytes": 22483682,
+  "zip_sha256": "22fabc28119c21a314ebf1f857f78e5439282dda8d552bd54d0626e81aea35b2",
+  "zip_members": 6460,
+  "payload_entries": 6459,
+  "manifest_failures": [],
+  "crc_pass": true,
+  "commits": {
+    "V12": "1a686e338a1145c6794bec0704bdae4cda95f06d",
+    "V13": "62cf4dbe914ea077c68e42983f869cd5422ab71c"
+  }
+}

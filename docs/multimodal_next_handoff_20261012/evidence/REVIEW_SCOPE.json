@@ -1,0 +1,20 @@
+{
+  "input_archive": {
+    "sha256": "22fabc28119c21a314ebf1f857f78e5439282dda8d552bd54d0626e81aea35b2",
+    "bytes": 22483682,
+    "payload_count": 6459,
+    "crc": true
+  },
+  "source_commit": "62cf4dbe914ea077c68e42983f869cd5422ab71c",
+  "original_replay_scalar_checks": 9471,
+  "original_sources_verified": 29,
+  "new_tests": 10,
+  "new_tests_scope": "Python descriptive metrics, domain, missingness and identities; not repository/model/GPU tests",
+  "raw_inference_reproduced": false,
+  "optimizer_updates": 0,
+  "git_clone": "FAILED_DNS",
+  "remote_document_blob_checks": 9,
+  "powershell_tested_on_windows": false,
+  "new_multimodal_model_implemented": false,
+  "public_metric_comparison": "Calculated from source CSVs; no change to native labels/predictions"
+}

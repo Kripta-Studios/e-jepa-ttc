@@ -1,0 +1,56 @@
+[
+  {
+    "path": "README.md",
+    "git_blob_sha1": "08d18f8e327418dd638f992adcb6b927cc672b09",
+    "expected": "08d18f8e327418dd638f992adcb6b927cc672b09",
+    "match": true
+  },
+  {
+    "path": "01_ESTADO_Y_ARQUITECTURA.md",
+    "git_blob_sha1": "9df9710b0ceec87fba4cb44937e5b567b222d2c3",
+    "expected": "9df9710b0ceec87fba4cb44937e5b567b222d2c3",
+    "match": true
+  },
+  {
+    "path": "02_CAMBIOS_Y_RECUPERACION.md",
+    "git_blob_sha1": "8044f2cc496cc46346c6596901d9bd10e37fabc0",
+    "expected": "8044f2cc496cc46346c6596901d9bd10e37fabc0",
+    "match": true
+  },
+  {
+    "path": "03_PROTOCOLOS_Y_METRICAS.md",
+    "git_blob_sha1": "2f09b3d191ccde68a820a37bf8f196f30bf86c60",
+    "expected": "2f09b3d191ccde68a820a37bf8f196f30bf86c60",
+    "match": true
+  },
+  {
+    "path": "04_RESULTADOS_GENERADOS.md",
+    "git_blob_sha1": "a9fcda507a35e4d8ed78876f883af950006330fd",
+    "expected": "a9fcda507a35e4d8ed78876f883af950006330fd",
+    "match": true
+  },
+  {
+    "path": "05_DIAGNOSTICO_Y_FCWD_RGB.md",
+    "git_blob_sha1": "97843a6df87f9d2b8e6ca15240651edc796e00e6",
+    "expected": "97843a6df87f9d2b8e6ca15240651edc796e00e6",
+    "match": true
+  },
+  {
+    "path": "06_OPTIMIZACION_Y_LATENCIA.md",
+    "git_blob_sha1": "db4ab3f8d0e8ea0496aa28b7a652086ab2bbe030",
+    "expected": "db4ab3f8d0e8ea0496aa28b7a652086ab2bbe030",
+    "match": true
+  },
+  {
+    "path": "07_SOTA_Y_PLAN_DE_INVESTIGACION.md",
+    "git_blob_sha1": "976beb506694e4714ebd5c9dec703f3c7654ce10",
+    "expected": "976beb506694e4714ebd5c9dec703f3c7654ce10",
+    "match": true
+  },
+  {
+    "path": "08_REPRODUCCION_Y_BUNDLE.md",
+    "git_blob_sha1": "29f75ebb7adf99f96bff70c954023519a8981766",
+    "expected": "29f75ebb7adf99f96bff70c954023519a8981766",
+    "match": true
+  }
+]
