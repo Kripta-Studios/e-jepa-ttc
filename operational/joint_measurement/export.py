@@ -77,8 +77,11 @@ def export(fit_id: str) -> dict:
         with torch.inference_mode():
             traced = torch.jit.trace(wrapper, inputs[0], check_inputs=inputs[1:], strict=True)
             path = directory / "model.torchscript.pt"
-            torch.jit.save(traced, path)
-            replay = torch.jit.load(path, map_location="cpu").eval()
+            # Python opens Unicode Windows paths correctly; the JIT C++ path route may not.
+            with path.open("wb") as stream:
+                torch.jit.save(traced, stream)
+            with path.open("rb") as stream:
+                replay = torch.jit.load(stream, map_location="cpu").eval()
             checks = []
             for index, example in zip(binding["test_rows"], inputs, strict=True):
                 expected = wrapper(*example)
