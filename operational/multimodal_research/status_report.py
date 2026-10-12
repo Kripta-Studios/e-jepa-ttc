@@ -34,6 +34,9 @@ def main() -> None:
         ("PHASE_ENSEMBLE", "7+13+23", OUT / "studies/PHASE_ENSEMBLE"),
         ("FUSION_PRESERVING", 7, OUT / "studies/FUSION_PRESERVING/S7"),
         ("PHASE_ONLY", 7, OUT / "studies/PHASE_ONLY/S7"),
+        ("PHASE_ONLY_REPLICATION", 13, OUT / "studies/PHASE_ONLY_REPLICATION/S13"),
+        ("PHASE_ONLY_REPLICATION", 23, OUT / "studies/PHASE_ONLY_REPLICATION/S23"),
+        ("GROUP_CROSSFIT", 7, OUT / "studies/GROUP_CROSSFIT/S7"),
     ]
     rows, external = [], []
     for study, seed, directory in results:
@@ -102,9 +105,11 @@ def main() -> None:
         f"Updates científicos: {ledger['scientific']}; recuperación superior: "
         f"{ledger['recovery_upper']}; límite físico consumido: {ledger['physical_upper']}.",
         "## Evidencia interna V",
-        "V es desarrollo expuesto. Cada par entrenado conserva 2.500 updates por brazo y estados H "
-        "de refinadores previamente supervisados en H: no son OOF. Las semillas adicionales "
-        "replican las cabezas, no el sistema completo.",
+        "V es desarrollo expuesto. Cada par de correctores conserva 2.500 updates por brazo. "
+        "Los estados H originales proceden de refinadores supervisados en H y no son OOF. "
+        "GROUP_CROSSFIT prepara contextos y normalizadores excluyendo el grupo predicho; "
+        "sus ocho fits de contexto tienen contabilidad propia. Las semillas adicionales "
+        "de PHASE_ONLY replican las cabezas con productores congelados, no el sistema completo.",
         table(
             [
                 "Estudio",
