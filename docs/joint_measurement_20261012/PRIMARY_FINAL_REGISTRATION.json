@@ -1,0 +1,170 @@
+{
+  "config": {
+    "base_commit": "396abe922537d9dac19d6db3451e59d283636e20",
+    "batch_size": 32,
+    "cache_root": "E:/E_JEPA_TTC_V18_JOINT_MEASUREMENT_20261012",
+    "caps": {
+      "gpu_seconds": 64800,
+      "physical": 1000000,
+      "recovery": 5000,
+      "scientific": 994000,
+      "technical": 1000
+    },
+    "data": "exact native event P2 suffix, common ROI, native query anchor",
+    "fits": [
+      "NATIVE-P2-FT-S7",
+      "PAIR-DIRECT-S7",
+      "PAIR-CORR-S7",
+      "PAIR-CORR-FROZEN-S7"
+    ],
+    "microbatch_size": 4,
+    "native_teacher_weight": 8.0,
+    "optimizer": {
+      "backbone_lr": 0.0001,
+      "betas": [
+        0.9,
+        0.999
+      ],
+      "clip_norm": 1.0,
+      "eps": 1e-08,
+      "final_lr_fraction": 0.1,
+      "readout_lr": 0.0003,
+      "warmup": 200,
+      "weight_decay": 0.0001
+    },
+    "owner_relative": "../e-jepa-ttc-v13-rgb-port/artifacts/rgb_port_20261008",
+    "precision": "FP32",
+    "resume_save_every": 100,
+    "sampler": "uniform_with_replacement_shared_seed",
+    "schema": "v18_primary_v1",
+    "seed": 7,
+    "selection": {
+      "all_routes_band_ratio_max": 1.1,
+      "all_routes_sign_increase_max": 0.005,
+      "common_reference": "A5-P2-FROZEN",
+      "final_promotion": "V14 numerical gate unchanged vs matched full E_CTX on V; comparable E2E cost required; internal development only",
+      "mandatory_complete_coverage": true,
+      "max_integrations": 2,
+      "ranking": [
+        "overall_MiD",
+        "MiDc",
+        "fit_id"
+      ],
+      "routes": {
+        "cost_ratio_max": 0.7,
+        "cost_route_overall_ratio_max": 1.02,
+        "crucial_ratio_max": 0.95,
+        "crucial_route_overall_ratio_max": 1.02,
+        "overall_ratio_max": 0.97
+      }
+    },
+    "tf32": false,
+    "updates": 12000,
+    "v15_admission_relative": "../e-jepa-ttc-v15-range-readout/artifacts/range_readout_20261012/ADMISSION.json"
+  },
+  "continuation": "Registered authorized adaptive families and RGB; no local negative ends mission",
+  "cost_measurement": "128 identical P queries, FP32 batch1 warmup20/model, interleaved order; median prepared-input signed-output latency; excludes raw preprocessing",
+  "endpoints": {
+    "NATIVE-P2-FT-S7": 12000,
+    "PAIR-CORR-FROZEN-S7": 12000,
+    "PAIR-CORR-S7": 12000,
+    "PAIR-DIRECT-S7": 12000
+  },
+  "evaluation_role": "V_exposed_after_selection",
+  "experiment_id": "V18-PRIMARY-FINAL-ADMISSION",
+  "final_claim": "internal development only; no official score and no SOTA claim",
+  "hypothesis": "Adaptable spatial measurement and preserved correspondence versus frozen readout and continued native A5",
+  "known_confounders": [
+    "Native objective differs from pair objective",
+    "P2 context differs from historical H8 system",
+    "Native differentiable bilinear sampler uses equivalent deterministic gather kernel"
+  ],
+  "native_effective_loss_config": {
+    "auxiliary_inverse_ttc_weight": 0.05,
+    "foreground_bce_weight": 0.0,
+    "foreground_center_weight": 2.5,
+    "foreground_dice_weight": 0.0,
+    "foreground_extent_weight": 1.25,
+    "foreground_pair_ratio_weight": 0.0,
+    "foreground_width_weight": 1.25,
+    "log_ratio_huber_weight": 0.0,
+    "log_ratio_nll_weight": 1.0,
+    "log_ratio_tail_fraction": 0.1,
+    "log_ratio_tail_weight": 2.0,
+    "residual_regularization_weight": 0.1,
+    "risk_weight": 0.1,
+    "smooth_l1_beta": 0.02,
+    "supervise_pair_ratio_before_temporal_blend": true,
+    "temporal_consistency_weight": 0.0
+  },
+  "native_effective_model_config": {
+    "deterministic_transport_sampling": true,
+    "dropout": 0.05,
+    "foreground_decoder": "resize_conv",
+    "foreground_fullres_dim": 24,
+    "foreground_temperature": 1.0,
+    "foreground_temporal_smoothing": 0.15,
+    "foreground_temporal_smoothing_mode": "causal_left",
+    "geometry_dim": 128,
+    "hidden_dim": 64,
+    "in_channels": 12,
+    "initial_log_ratio_std": 0.03,
+    "log_ratio_log_variance_max": 2.0,
+    "log_ratio_log_variance_min": -12.0,
+    "max_abs_log_height_correction": 0.0,
+    "max_abs_log_ratio_residual": 0.05,
+    "min_abs_log_ratio": 0.002,
+    "min_sensor_support": 0.0001,
+    "modality": "event",
+    "residual_depth": 2,
+    "risk_thresholds_s": [
+      0.5,
+      1.0,
+      2.0,
+      4.0
+    ],
+    "temporal_channel_gate_enabled": false,
+    "temporal_channel_gate_hidden_dim": 16,
+    "temporal_channel_gate_patch_grid": 4,
+    "temporal_inverse_ttc_blend": 0.75,
+    "transport_adapter_depth": 1,
+    "transport_adapter_enabled": false,
+    "transport_coarse_downsample": 2,
+    "transport_coarse_radius": 2,
+    "transport_enabled": true,
+    "transport_encoder_copy_enabled": false,
+    "transport_fine_radius": 1,
+    "transport_mode": "legacy",
+    "transport_radius": 1,
+    "transport_temperature": 0.02,
+    "ttc_clip_seconds": 60.0
+  },
+  "parent_sha256": "9f779a0376d6988d1e3f70ef566797f840d1fe4dbf204ce2f9ae1dad5322d512",
+  "registered_utc": "2026-10-12T16:07:23.193897+00:00",
+  "role_training": "P",
+  "seed": 7,
+  "selection_role": "H_after_all_four_endpoints",
+  "source_commit": "fa57f9dc733fc6861ad5cf03764ccac2904201f3",
+  "source_evidence": [
+    "docs/joint_measurement_handoff_20261012/docs/01_REVIEW_V17.md",
+    "docs/joint_measurement_20261012/IMPLEMENTATION_ADDENDUM.md"
+  ],
+  "sources": {
+    "configs/joint_measurement/primary.json": "5ef559bf0d9e955d3ad82e51eb5f745c4af3a0f7c6891def80b44f61d75e778a",
+    "operational/joint_measurement/common.py": "74af008e2d6edb65d67b1ac3da1ee3e5467c7b5a62ff9ac43cf9b70e2ffce122",
+    "operational/joint_measurement/data.py": "c9bb33e18fd5150105206e87ae4522241dde685bbf63975f71dbabc9cc7b8594",
+    "operational/joint_measurement/native_loss.py": "a78b1b4b78352a47b6c0c65146587dd742acbb9e50a3a580aae34bf491f6e189",
+    "operational/joint_measurement/qa.py": "1463f72ae2dfd5db614bbc1151a3b5dfeb0916f68c45535f7deb37cad8aa41f1",
+    "operational/joint_measurement/train.py": "8deb17f3456d8fdaec2c5e5ba7e9cc59c29b4020ed3b3251362905448ffdde16",
+    "operational/rgb_port/train_producers.py": "0fad9b57fd529489b55e9313fbe938fd0b84481cd3877cf5dab7f9b918544757",
+    "operational/rgb_port_revision/loss.py": "4a7cf77505ce2db6afe37a3ee6eb9fa44cbd15882be39f81076250b8e62f449d",
+    "src/e_jepa_ttc/joint_measurement/__init__.py": "0f7ebcc4d14c59cee5f7fea3acefcb58e734e56bf33bad286e0ce6eee8ab63a4",
+    "src/e_jepa_ttc/joint_measurement/loss.py": "aed34461a89639e0b8a1c699e32376419bf32e83ec351e17101e7a635f2d57ca",
+    "src/e_jepa_ttc/joint_measurement/model.py": "276251a86a96cbd399ac53eed8a3d0480597ed438e2b9b4b2b8a38aaad640bc3",
+    "src/e_jepa_ttc/losses/causal_scale_ttc.py": "f82ca020f351671e0d4837fdb7bf9c9e93a5fc2755eb16078e241475c7ee719d",
+    "src/e_jepa_ttc/models/causal_scale_ttc.py": "acbf1b6583798b12ed88df173e5e5589d597d11acd4e15d376d9ee6482ff52e7",
+    "src/e_jepa_ttc/models/local_transport.py": "7177531b930bbdb359c8390eb7d1f4f377010d695b6e0919e5c255600bf2e3ec",
+    "src/e_jepa_ttc/simplex_t/phase.py": "7ee447190ef7b218d0f6c6cf5110a1522c201049749a98b4395eeafefe853cde"
+  },
+  "status": "REGISTERED_BEFORE_SCIENTIFIC_UPDATES"
+}
