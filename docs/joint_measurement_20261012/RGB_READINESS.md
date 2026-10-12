@@ -60,5 +60,25 @@ Sus resultados CUDA todavía están pendientes; el fit real los exige.
 Las pruebas de admisión verifican que no se puede registrar RGB con endpoints
 primarios incompletos o sin la comparación final, y que un cambio de código bloquea
 el fit antes de construir el optimizador. Estas pruebas no acreditan todavía
-el entrenamiento completo ni su convergencia. La evaluación RGB y la fusión
-siguen pendientes de integración y ejecución.
+el entrenamiento completo ni su convergencia. La fusión sigue pendiente de
+integración y ejecución.
+
+## Evaluación preparada
+
+`operational.joint_measurement.rgb_evaluate` exige ambos endpoints de 12.000
+updates con journals durables y sin updates pendientes. Incluye el padre
+R_A5-P2-FROZEN como referencia con el mismo contexto de dos frames. Escribe las
+predicciones completas y métricas por grupo en `rgb/predictions/{P,H,V}` mediante
+fragmentos verificables y reanudables. El modelo recibe únicamente píxeles y
+delta RGB; las etiquetas se incorporan después para el scorer.
+
+`select` exige P/H completos y conserva una decisión de desarrollo basada en
+métricas. La vía de coste y la comparación con R_CTX/F_TRUE quedan separadas y
+pendientes; esa decisión no afirma promoción del sistema. V exige que antes se
+haya congelado la interpretación H. No se ha ejecutado ninguna de estas
+evaluaciones sobre datos reales, porque todavía faltan los endpoints RGB.
+
+Seis pruebas adicionales verifican endpoints completos, ausencia de updates
+pendientes y rechazo de fragmentos con binding, intervalo o bytes distintos.
+El replay del bundle incluye las ramas anidadas de predicciones y exports,
+preservando sus nombres para evitar colisiones con los resultados primarios.

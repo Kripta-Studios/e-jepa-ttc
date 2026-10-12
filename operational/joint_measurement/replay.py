@@ -115,14 +115,16 @@ def replay(root: Path) -> dict:
     torch.set_num_threads(1)
     campaign = root / "campaign"
     predictions = {
-        path.parent.relative_to(campaign / "predictions").as_posix(): replay_predictions(
-            path.parent
-        )
-        for path in sorted((campaign / "predictions").glob("*/*/COMPLETE.json"))
+        path.parent.relative_to(campaign)
+        .as_posix()
+        .removeprefix("predictions/"): replay_predictions(path.parent)
+        for path in sorted(campaign.glob("**/predictions/*/*/COMPLETE.json"))
     }
     exports = {
-        path.parent.name: replay_export(path.parent)
-        for path in sorted((campaign / "exports").glob("*/COMPLETE.json"))
+        path.parent.relative_to(campaign).as_posix().removeprefix("exports/"): replay_export(
+            path.parent
+        )
+        for path in sorted(campaign.glob("**/exports/*/COMPLETE.json"))
     }
     return {
         "integrity": integrity,

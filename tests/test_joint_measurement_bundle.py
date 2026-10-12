@@ -1,6 +1,7 @@
 """Bundle integrity rejects omitted, extra, altered and unsafe archive contents."""
 
 import json
+import shutil
 import zipfile
 
 import numpy as np
@@ -127,6 +128,9 @@ def test_replay_included_predictions_and_real_torchscript_bytes(tmp_path):
         export / "COMPLETE.json",
         {"status": "COMPLETE", "files": {p.name: file_hash(p) for p in export.iterdir()}},
     )
+    # Later campaign branches retain their own artifacts, even for equal fit names.
+    shutil.copytree(predictions, campaign / "rgb/predictions/P/fixture")
+    shutil.copytree(export, campaign / "rgb/exports/fixture")
     files = {
         p.relative_to(tmp_path / "input").as_posix(): p for p in campaign.rglob("*") if p.is_file()
     }
@@ -136,6 +140,8 @@ def test_replay_included_predictions_and_real_torchscript_bytes(tmp_path):
     with zipfile.ZipFile(archive) as stream:
         stream.extractall(detached)
     result = replay(detached)
-    assert result["rows_recalculated"] == 4
+    assert result["rows_recalculated"] == 8
     assert result["portable_exports"]["fixture"]["bit_exact"]
+    assert result["portable_exports"]["rgb/exports/fixture"]["bit_exact"]
+    assert set(result["prediction_tables"]) == {"P/fixture", "rgb/predictions/P/fixture"}
     assert result["optimizer_updates"] == 0
