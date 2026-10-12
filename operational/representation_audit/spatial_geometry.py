@@ -25,6 +25,7 @@ from .precision import binding as precision_binding
 from .precision import initialize as native_initialize
 from .precision import learning_rate, objective
 from .run import OLD, OWNER, ROOT, RUN, accounting, gpu_charge
+from .selection import claim_family
 from .spatial_model import SpatialReadout, SpatialVectors, calibration_path
 
 SP_QUEUE = tuple((arm, seed) for seed in (7, 13, 23) for arm in ("SP0", "SP1"))
@@ -37,6 +38,7 @@ def binding() -> dict:
         Path(__file__).with_name("geometry_model.py"),
         Path(__file__).with_name("spatial_model.py"),
         Path(__file__).with_name("spatial_cache.py"),
+        Path(__file__).with_name("selection.py"),
         ROOT / "docs/representation_audit_20261012/PROTOCOL_G_SPATIAL_GEOMETRY.md",
     ]
     result.update({str(p.relative_to(ROOT)): sha(p) for p in paths})
@@ -77,6 +79,7 @@ def fit(
     if not technical and seed != 7:
         if read(RUN / "SPATIAL_SCREEN_DECISION.json")["status"] != "REPLICATE":
             raise ValueError("Geometry replicas not admitted")
+        claim_family("SPATIAL", RUN / "SPATIAL_SCREEN_DECISION.json")
     name = technical or f"{arm}-S{seed}"
     endpoint = 10 if technical else 6000
     identity = {

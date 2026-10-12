@@ -24,6 +24,7 @@ from .precision import Vectors, learning_rate, objective
 from .precision import binding as precision_binding
 from .precision import initialize as native_initialize
 from .run import OLD, OWNER, ROOT, RUN, accounting, gpu_charge
+from .selection import claim_family
 
 NC_QUEUE = tuple((arm, seed) for seed in (7, 13, 23) for arm in ("U0", "N0"))
 
@@ -32,6 +33,7 @@ def binding() -> dict:
     result = precision_binding()
     paths = [
         Path(__file__),
+        Path(__file__).with_name("selection.py"),
         ROOT / "docs/representation_audit_20261012/PROTOCOL_H_UNCLIPPED_READOUT.md",
     ]
     result.update({str(p.relative_to(ROOT)): sha(p) for p in paths})
@@ -72,6 +74,7 @@ def fit(
     if not technical and seed != 7:
         if read(RUN / "NOCLIP_SCREEN_DECISION.json")["status"] != "REPLICATE":
             raise ValueError("Geometry replicas not admitted")
+        claim_family("NOCLIP", RUN / "NOCLIP_SCREEN_DECISION.json")
     name = technical or f"{arm}-S{seed}"
     endpoint = 10 if technical else 6000
     identity = {
