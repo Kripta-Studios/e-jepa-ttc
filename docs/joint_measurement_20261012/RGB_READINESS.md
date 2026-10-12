@@ -185,3 +185,18 @@ de padres a partir de P/H, extracción de sus features nuevas, normalización H,
 genealogía, receta numérica completa, trainer, QA de reanudación y los dos fits
 de 2.500 updates. El componente acepta dimensiones explícitas para permitir el
 anchor RGB elegido sin reutilizar por forma una caché de otro productor.
+
+La exportación del componente usa scripting para conservar las ramas dinámicas
+de disponibilidad RGB. Doce pruebas CPU pasan, incluidas serialización/recarga
+TRUE y ZERO cambiando entre RGB completo, parcial y ausente. El fallback sigue
+siendo bit a bit en las filas ausentes después de recargar.
+
+TorchScript no compila los floats globales que captura la función de conversión
+compartida. `NativePhaseConversion` conserva sus operaciones y límites como
+constantes del módulo; no cambia el archivo nativo usado por la matriz primaria.
+La comprobación cubre 1.008 fases, saturaciones, fase cero y derivadas: igualdad
+exacta frente a la función nativa en eager, y tolerancia 1e-6 para scripting.
+El log fallido por constantes globales se conserva junto al log aprobado en
+`verification/FUSION_DYNAMIC_EXPORT_TESTS*.log`. Las advertencias de deprecación
+de TorchScript también se conservan. Esto acredita el componente con entradas
+sintéticas, no los futuros pesos entrenados ni el pipeline sensorial completo.

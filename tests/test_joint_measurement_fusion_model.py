@@ -1,11 +1,13 @@
 """RGB anchor, missing-modality and equal-capacity event-ablation contracts."""
 
 import copy
+import io
 
 import pytest
 import torch
 
-from operational.joint_measurement.fusion_model import RGBAnchorComplement
+from e_jepa_ttc.simplex_t.phase import MAX_PHASE, MIN_PHASE, phase_to_ttc
+from operational.joint_measurement.fusion_model import NativePhaseConversion, RGBAnchorComplement
 
 
 def example():
@@ -88,3 +90,47 @@ def test_invalid_fusion_inputs_rejected(invalid):
         values[0] = values[0].double()
     with pytest.raises(ValueError):
         RGBAnchorComplement(2, 3)(*values)
+
+
+@pytest.mark.parametrize("mode", ["TRUE", "ZERO"])
+def test_script_reload_keeps_dynamic_availability_and_exact_fallback(mode):
+    model = RGBAnchorComplement(2, 3, mode=mode).eval()
+    with torch.no_grad():
+        model.network[-1].weight.fill_(0.01)
+    buffer = io.BytesIO()
+    torch.jit.save(torch.jit.script(model), buffer)
+    buffer.seek(0)
+    loaded = torch.jit.load(buffer, map_location="cpu").eval()
+    for available in ([True, False, True], [False, False, False], [True, True, True]):
+        values = list(example())
+        values[-1] = torch.tensor(available)
+        values[2] = torch.tensor([6.0, 3.0, -4.0])
+        values[0][~values[-1]] = float("nan")
+        values[2][~values[-1]] = float("nan")
+        with torch.inference_mode():
+            expected, actual = model(*values), loaded(*values)
+        for key in expected:
+            torch.testing.assert_close(actual[key], expected[key], rtol=1e-6, atol=1e-6)
+        assert torch.equal(actual["ttc"][~values[-1]], values[3][~values[-1]])
+
+
+def test_scriptable_converter_matches_native_values_and_derivatives():
+    points = torch.cat(
+        (
+            torch.linspace(-1, 9, 1001),
+            torch.tensor([-100.0, MIN_PHASE, -1e-8, 0.0, 1e-8, MAX_PHASE, 100.0]),
+        )
+    )
+    reference = points.clone().requires_grad_(True)
+    eager = points.clone().requires_grad_(True)
+    scripted = points.clone().requires_grad_(True)
+    expected = phase_to_ttc(reference)
+    model = NativePhaseConversion()
+    actual = model(eager)
+    portable = torch.jit.script(model)(scripted)
+    assert torch.equal(expected, actual)
+    torch.testing.assert_close(portable, expected, rtol=1e-6, atol=1e-6)
+    for output in (expected, actual, portable):
+        output.sum().backward()
+    assert torch.equal(reference.grad, eager.grad)
+    torch.testing.assert_close(scripted.grad, reference.grad, rtol=1e-6, atol=1e-6)

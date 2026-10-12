@@ -9,7 +9,32 @@ from __future__ import annotations
 import torch
 from torch import Tensor, nn
 
-from e_jepa_ttc.simplex_t.phase import phase_to_ttc, ttc_to_phase
+from e_jepa_ttc.simplex_t.phase import MAX_PHASE, MIN_PHASE, ttc_to_phase
+
+
+class NativePhaseConversion(nn.Module):
+    """Canonical conversion with constants stored on the module for TorchScript.
+
+    The shared function closes over Python floats, which TorchScript cannot
+    compile. These operations and bounds are checked against that function,
+    including signed saturation, zero phase and derivatives.
+    """
+
+    __constants__ = ["minimum", "maximum"]
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.minimum = MIN_PHASE
+        self.maximum = MAX_PHASE
+
+    def forward(self, phase: Tensor) -> Tensor:
+        """Preserve the native signed output domain and 60-second saturation."""
+        if not torch.isfinite(phase).all():
+            raise ValueError("nonfinite phase")
+        phi = phase.clamp(self.minimum, self.maximum)
+        q = -torch.expm1(-phi) / 0.1
+        sign = torch.where(q < 0, -torch.ones_like(q), torch.ones_like(q))
+        return sign / q.abs().clamp_min(1.0 / 60.0)
 
 
 class RGBAnchorComplement(nn.Module):
@@ -39,6 +64,7 @@ class RGBAnchorComplement(nn.Module):
         self.event_features = event_features
         self.mode = mode
         self.residual_scale = residual_scale
+        self.convert = NativePhaseConversion()
         self.network = nn.Sequential(
             nn.Linear(rgb_features + event_features + 1, hidden),
             nn.LayerNorm(hidden),
@@ -84,7 +110,7 @@ class RGBAnchorComplement(nn.Module):
         }
         if not rgb_available.any():
             return result
-        selected = rgb_available.nonzero(as_tuple=False).squeeze(1)
+        selected = rgb_available.nonzero().squeeze(1)
         rgb = rgb_features[selected]
         event = event_features[selected]
         if self.mode == "ZERO":
@@ -94,7 +120,7 @@ class RGBAnchorComplement(nn.Module):
         anchor = ttc_to_phase(rgb_ttc[selected])
         hidden = torch.cat((rgb, event, anchor[:, None]), dim=1)
         raw = anchor + self.residual_scale * self.network(hidden).squeeze(1)
-        ttc = phase_to_ttc(raw)
+        ttc = self.convert(raw)
         result["raw_phase"][selected] = raw
         result["point_phase"][selected] = ttc_to_phase(ttc)
         result["ttc"][selected] = ttc
