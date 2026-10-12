@@ -328,6 +328,25 @@ def main() -> None:
             "El coste de registro FCWD debe añadirse; esta medición no es la latencia "
             "completa de un sistema con detector y registro en línea.",
         ]
+    path = OUT / "FCWD_GPU_ROUTE_COST.json"
+    if path.exists():
+        sources[str(path.relative_to(OUT))] = sha(path)
+        cost = read(path)
+        text += [
+            "## Coste FCWD con padres GPU y registro fresco",
+            cost["scope"],
+            table(
+                ["Etapa", "p50 ms", "p95 ms"],
+                [
+                    [name, f"{v['p50']:.3f}", f"{v['p95']:.3f}"]
+                    for name, v in cost["summary"].items()
+                ],
+            ),
+            f"{cost['rows']} llamadas con registro, estados y predicciones iguales "
+            "a sus referencias selladas. No se suman medianas de perfiles separados. "
+            "Esta ruta procesa historias por consulta y no equivale a un servicio "
+            "persistente con detector y reutilización de estado entre consultas.",
+        ]
     path = OUT / "test12_phase_only/MODEL_INPUT_FREEZE.json"
     if path.exists():
         sources[str(path.relative_to(OUT))] = sha(path)

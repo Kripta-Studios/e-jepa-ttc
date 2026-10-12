@@ -8,8 +8,8 @@ import subprocess
 import zipfile
 from datetime import UTC, datetime
 
+from operational.multimodal_validation.common import CODE, ROOT, RUN, V12, read, sha, write
 from operational.multimodal_validation.common import OUT as PREVIOUS
-from operational.multimodal_validation.common import ROOT, RUN, V12, read, sha, write
 
 from .common import OUT, accounting
 
@@ -66,6 +66,21 @@ def main() -> None:
             official_prefix + "H8_CURRENT_SENSOR_INPUT_FREEZE.json"
         ),
     }
+    garl = read(PREVIOUS / "garl_full/BINDING.json")
+    for relative, expected in garl["native_source_sha256"].items():
+        path = CODE / relative
+        assert sha(path) == expected
+        official_inputs[path] = "DEPENDENCIES/GARL_RELEASE/" + relative
+    config_path = (
+        V12 / "artifacts/evttc_rgb_transfer_20261008/public_garl/configs/ablation/ours_full.yaml"
+    )
+    assert sha(config_path) == garl["config_sha256"]
+    official_inputs[config_path] = "DEPENDENCIES/GARL_RELEASE/configs/ablation/ours_full.yaml"
+    for relative in (
+        "garl_ttc_benchmark/codabench/build_codabench_bundle.py",
+        "garl_ttc_benchmark/codabench/scoring_program/score.py",
+    ):
+        official_inputs[CODE / relative] = "DEPENDENCIES/GARL_RELEASE/" + relative
     metadata = dict(
         utc=stamp,
         git_commit=subprocess.check_output(

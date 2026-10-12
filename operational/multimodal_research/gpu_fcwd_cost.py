@@ -156,7 +156,7 @@ def run() -> None:
                     for pixels, meta in observations:
                         a = mark()
                         rs = torch.from_numpy(pixels)[None].cuda()
-                        rd = torch.tensor([meta["delta_t_s"]], device="cuda")
+                        rd = torch.tensor([meta["delta_t_s"]], dtype=torch.float32, device="cuda")
                         b = mark()
                         rr, re = engine._expert_block(models, "R", rs, rd)
                         normalized = ((rr - mean) / scale)[0]
