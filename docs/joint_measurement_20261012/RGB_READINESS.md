@@ -82,3 +82,28 @@ Seis pruebas adicionales verifican endpoints completos, ausencia de updates
 pendientes y rechazo de fragmentos con binding, intervalo o bytes distintos.
 El replay del bundle incluye las ramas anidadas de predicciones y exports,
 preservando sus nombres para evitar colisiones con los resultados primarios.
+
+## Cachés H/V propias
+
+La inspección del 12 de octubre a las 18:15 UTC confirmó que V13 sólo conserva
+la caché RGB decodificada P. Las cachés H/V de investigación V16 contienen estados
+de refinadores congelados y no sustituyen los frames necesarios para estos modelos.
+
+`python -B -m operational.joint_measurement.rgb_cache both` materializa H y después
+V, en un único proceso CPU. Reutiliza `decode_query`, los campos y el formato
+lossless del preparador nativo; no cambia los manifests ni bindings de V13.
+Los nuevos píxeles se guardan bajo el cache_root de V18, en `rgb/H` y `rgb/V`.
+Los bindings propios quedan en `rgb/cache_bindings` dentro del directorio de
+artefactos V18. `RGBPairDataset` utiliza esos bindings únicamente cuando falta
+una caché histórica del rol correspondiente.
+
+Cada fragmento registra tokens, índices, CRC y SHA-256. El cierre exige cobertura
+exacta y paridad de todos los campos contra una segunda decodificación de la
+primera y última consulta T2/T3. El manifest sólo se publica después de esos
+controles. Un fragmento admitido que cambie se rechaza y conserva para revisión.
+La preparación no realiza inferencia, optimización ni selección por TTC.
+
+El proceso se inició el 12 de octubre a las 18:15 UTC. Su estado actual está en
+`RGB_PREPARE_H_PROGRESS.json`, `RGB_PREPARE_V_PROGRESS.json` y los manifests del
+cache_root. El recibo `verification/V16_COORDINATION_20261012T1816.json` registra
+la observación de propietarios, sin utilizar resultados FCWD/Dev32 para recetas.
