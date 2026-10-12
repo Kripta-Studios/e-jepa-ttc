@@ -24,6 +24,7 @@ def main() -> None:
     checks = []
     clipping = []
     readout_draws = {}
+    context_draws = {}
     for receipt_path in sorted((RUN / "fits").glob("*/CHECKPOINT_RECEIPT.json")):
         receipt = read(receipt_path)
         if receipt["status"] != "COMPLETE":
@@ -37,6 +38,10 @@ def main() -> None:
             if sha(ROOT / relative) != expected:
                 raise ValueError("Scientific source changed: " + relative)
         name = receipt_path.parent.name
+        if "-CTX-" in name:
+            context_draws[name] = read(receipt_path.parent / "RUN_PROVENANCE.json")[
+                "draw_sequence_sha256"
+            ]
         frozen_count = None
         if name.startswith("R-") and "-CTX-" not in name:
             frozen_count = 0
@@ -76,6 +81,22 @@ def main() -> None:
             not all(present) or readout_draws[names[0]] != readout_draws[names[1]]
         ):
             raise ValueError("Paired readout draw sequence differs")
+        names = [f"R-C{cap}-CTX-S{seed}" for cap in ("05", "20")]
+        present = [name in context_draws for name in names]
+        if any(present) and (
+            not all(present) or context_draws[names[0]] != context_draws[names[1]]
+        ):
+            raise ValueError("Paired context draw sequence differs")
+    cohorts = []
+    for path in sorted((RUN / "families").glob("*/*/HISTORY.npz")):
+        role = path.parent.name
+        with np.load(OWNER / "features" / role / "E_HISTORY.npz", allow_pickle=False) as old:
+            with np.load(path, allow_pickle=False) as new:
+                keys = ("sample_token", "group_id", "target_phase", "timing", "valid")
+                for key in keys:
+                    if not np.array_equal(old[key], new[key]):
+                        raise ValueError(f"Family cohort/target/clock drift: {path}/{key}")
+        cohorts.append({"family": path.parent.parent.name, "role": role, "unchanged": list(keys)})
     owner_checks = []
     for key, value in read(RUN / "OWNER_OBSERVATION.json").items():
         if isinstance(value, dict) and "path" in value and "sha256" in value:
@@ -90,6 +111,8 @@ def main() -> None:
             "optimizer_updates": 0,
             "endpoints": checks,
             "readout_paired_draw_hashes": readout_draws,
+            "context_paired_draw_hashes": context_draws,
+            "cohort_label_clock_identity": cohorts,
             "owner_files": owner_checks,
             "admitted_V13_sources_revalidated": True,
         },

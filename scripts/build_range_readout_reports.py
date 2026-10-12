@@ -104,6 +104,7 @@ def plots() -> None:
 
 def generate() -> None:
     snapshot_historical()
+    short_producer_table()
     OUT.mkdir(parents=True, exist_ok=True)
     decision = read(RUN / "NEXT_DECISION.json")
     ledger = read(RUN / "ACCOUNTING.json")
@@ -135,6 +136,28 @@ def generate() -> None:
         receipt = read(path.parent / "RECEIPT.json")
         if sha(path.parent / "PREDICTIONS.csv") != receipt["predictions_sha256"]:
             raise ValueError("Prediction hash mismatch")
+    for mass in (0, 1):
+        name = f"RT-M{mass}-L0-S7"
+        value = read(RUN / "historical_V14/evaluation/screen" / name / "METRICS.json")
+        rows.append(
+            {
+                "fit": name,
+                "stage": "historical_V14",
+                **{
+                    key: value["bins"][band]["group_macro_mid"]
+                    for key, band in (
+                        ("MiDc", "crucial"),
+                        ("MiDs", "small"),
+                        ("MiDl", "large"),
+                        ("MiDn", "negative"),
+                    )
+                },
+                "overall_MiD": value["overall_MiD"],
+                "mean_MiD": value["mean_MiD"],
+                "MAE_s": value["diagnostics"]["mae_s"],
+                "late_warning": value["late_warning"]["rate"],
+            }
+        )
     for path in sorted((RUN / "fits").glob("*/CHECKPOINT_RECEIPT.json")):
         value = read(path)
         if sha(Path(value["checkpoint_path"])) != value["checkpoint_sha256"]:
@@ -221,6 +244,7 @@ def generate() -> None:
         ("CLIPPING.csv", "Clipping durante S"),
         ("CLIPPING_ALL_FITS.csv", "Clipping de todos los fits V15"),
         ("PRODUCER_REACH_SUMMARY.csv", "Alcance condicional P/H"),
+        ("SHORT_PRODUCER_DIAGNOSTICS.csv", "Predicciones del productor en TTC ≤1 segundo"),
     ):
         path = RUN / filename
         if path.exists():
@@ -241,6 +265,23 @@ PRODUCER_METRICS_P_H.json compara A5 original y ambos readouts sobre P/H. P es e
         + table(pd.DataFrame(checks))
         + table(pd.DataFrame(costs))
     )
+    profile_path = RUN / "A5_RAW_FORWARD_PROFILE.json"
+    if profile_path.exists():
+        profile = read(profile_path)
+        qa += "## Forward raw de A5\n\n"
+        qa += table(
+            pd.DataFrame(
+                [
+                    {"modelo": name, "mediana_ms": value["median_ms"], "p95_ms": value["p95_ms"]}
+                    for name, value in profile["results"].items()
+                ]
+            )
+        )
+        qa += (
+            "CPU FP32, un thread, batch1 T3, misma consulta P, 3 warmups y 30 repeticiones "
+            "por modelo, orden intercalado. Host compartido. Excluye lectura, preparación "
+            "de voxels, C2F, PAIR, H8 e historial. No es latencia E2E.\n\n"
+        )
     qa += f"Updates físicos superiores: {ledger['physical_upper']}. Máximos: 56.000 científicos, 500 técnicos, 3.500 recuperación y 60.000 físicos.\n\n"
     qa += """Los tests contractuales y logs se conservan en qa/. Las pruebas de continuidad comparan 10 updates sintéticos continuos frente a 5+restore+5. S consume 20 técnicos; R conserva una primera comprobación de 20 y otra de 20 tras añadir los guards explícitos. No se utilizan datos reales para consumir el presupuesto técnico.
 
@@ -291,6 +332,30 @@ No se hace push en esta campaña. Un resultado FCWD/Dev32, si la rama de transfe
         encoding="utf-8",
     )
     plots()
+
+
+def short_producer_table() -> None:
+    """Separate rare short-case error/sign/quantiles from an optimistic reach bound."""
+    path = RUN / "PRODUCER_REACH_P_H.csv"
+    if not path.exists():
+        return
+    data = pd.read_csv(path)
+    data = data[(data.target_ttc > 0.1) & (data.target_ttc <= 1)].copy()
+    data["absolute_error_s"] = (data.prediction_ttc - data.target_ttc).abs()
+    data["late_warning"] = ~((data.prediction_ttc > 0.1) & (data.prediction_ttc <= 1))
+    data["sign_error"] = data.prediction_ttc < 0
+    data.groupby(["role", "producer"]).agg(
+        queries=("sample_token", "size"),
+        target_mean_s=("target_ttc", "mean"),
+        prediction_mean_s=("prediction_ttc", "mean"),
+        prediction_median_s=("prediction_ttc", "median"),
+        prediction_p95_s=("prediction_ttc", lambda x: x.quantile(0.95)),
+        mae_s=("absolute_error_s", "mean"),
+        absolute_error_p95_s=("absolute_error_s", lambda x: x.quantile(0.95)),
+        late_warning_rate=("late_warning", "mean"),
+        sign_error_rate=("sign_error", "mean"),
+        known_rate=("known", "mean"),
+    ).reset_index().to_csv(RUN / "SHORT_PRODUCER_DIAGNOSTICS.csv", index=False)
 
 
 def snapshot_historical() -> None:
