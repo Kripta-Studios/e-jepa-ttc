@@ -35,6 +35,7 @@ from .model import frozen_state
 
 
 def extract(cohort: str) -> None:
+    assert cohort == "FCWD", "Dev32 historical inference used CPU; keep its native CPU route"
     manifest = (
         MANIFEST
         if cohort == "FCWD"
@@ -201,7 +202,7 @@ def extract(cohort: str) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("cohort", choices=("DEV32", "FCWD"))
+    parser.add_argument("cohort", choices=("FCWD",))
     args = parser.parse_args()
     setup()
     torch.backends.cuda.matmul.allow_tf32 = False
