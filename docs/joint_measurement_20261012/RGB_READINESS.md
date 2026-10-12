@@ -108,6 +108,15 @@ El proceso se inició el 12 de octubre a las 18:15 UTC. Su estado actual está e
 cache_root. El recibo `verification/V16_COORDINATION_20261012T1816.json` registra
 la observación de propietarios, sin utilizar resultados FCWD/Dev32 para recetas.
 
+H cerró a las 18:35:50 UTC: 18.422 consultas, 576 fragmentos y 1.882.328.902 bytes.
+La cobertura es exacta y los cuatro casos de segunda decodificación T2/T3
+coinciden bit a bit en todos los campos. El adaptador V18 consumió correctamente
+esos cuatro casos, con tensor [4,2,3,128,128] y reloj RGB positivo. Recibo:
+`verification/H_RGB_INPUT_ADMISSION.json`. No se ejecutó ningún modelo ni métrica.
+El manifest H tiene SHA-256
+`8cadc01ea182f4bcfc2082790ba942abd22cfca6d1cd7f1d1cbbefc119b17618`.
+V comenzó automáticamente después; su cierre todavía está pendiente.
+
 ## Export portable RGB
 
 `python -B -m operational.joint_measurement.rgb_export FIT_ID` exige la congelación
