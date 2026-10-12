@@ -20,3 +20,4 @@ operational/rgb_port_continuity/** -text
 operational/rgb_port_streaming/** -text
 tests/test_rgb_port_continuity.py -text
 tests/test_rgb_port_streaming.py -text
+docs/multimodal_next_handoff_20261012/** -text
