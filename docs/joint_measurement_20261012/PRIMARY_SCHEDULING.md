@@ -51,3 +51,12 @@ A las 19:54:34 UTC DIRECT había ejecutado sus primeros siete updates. El recibo
 científicas/configuración entre ambos brazos, endpoint y semilla originales,
 gradientes finitos y no nulos en los 18 tensores del encoder y conservación del
 checkpoint nativo. Todavía no acredita un endpoint completo ni precisión TTC.
+
+La comparación independiente de estados DIRECT 0 y 100 pasó a las 19:58:53 UTC:
+cambian los 18 tensores del encoder, con diferencia absoluta máxima
+0,0017303973. Ambos checkpoints comparten identidad científica; el modelo sigue
+siendo finito y el cursor contiene exactamente el prefijo de updates 1–100.
+Se conservan los dos estados y sus hashes en `verification/PAIR_DIRECT_*STATE*.pt`
+y el detalle en `verification/PAIR_DIRECT_ENCODER_CHANGE_100.json`.
+La comprobación sólo lee pesos CPU y añade cero updates. Demuestra adaptación
+real del encoder sobre P, no precisión TTC ni generalización.
