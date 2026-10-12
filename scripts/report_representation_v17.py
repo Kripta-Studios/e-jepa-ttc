@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import argparse
 import time
 
 import numpy as np
@@ -156,18 +157,51 @@ def main() -> None:
             "max_difference": 0,
         },
     )
-    table = pd.DataFrame(all_rows)
+    render()
+
+
+def markdown(frame: pd.DataFrame) -> str:
+    """Render a simple numeric table without additional optional dependencies."""
+
+    def cell(value: object) -> str:
+        return f"{value:.4f}" if isinstance(value, float) else str(value)
+
+    lines = [
+        "| " + " | ".join(map(str, frame.columns)) + " |",
+        "| " + " | ".join("---" for _ in frame.columns) + " |",
+    ]
+    lines += [
+        "| " + " | ".join(cell(v) for v in row) + " |"
+        for row in frame.itertuples(index=False, name=None)
+    ]
+    return "\n".join(lines)
+
+
+def render() -> None:
+    table = pd.read_csv(RUN / "H_V_TABLE.csv")
+    clipping = pd.read_csv(RUN / "CLIPPING.csv")
+    draws = read(RUN / "BOOTSTRAP.json")["pairs"]
+    mean = table.loc[table.role == "V"].copy()
+    mean["arm"] = mean.fit.str.split("-").str[0]
+    mean = (
+        mean.groupby("arm")[["MiDc", "MiDs", "MiDl", "MiDn", "overall_MiD", "MAE"]]
+        .mean()
+        .reset_index()
+    )
+    mean.to_csv(RUN / "V_SEED_MEAN.csv", index=False)
     destination = ROOT / "docs/representation_audit_20261012/RESULTS.md"
     content = [
         "# V17 — cola A: bypass geométrico\n",
         f"Decisión: **{read(RUN / 'NEXT_DECISION.json')['status']}**. "
         "V es desarrollo interno expuesto.\n",
         "## Métricas regeneradas\n",
-        table.to_markdown(index=False, floatfmt=".4f"),
+        markdown(table),
+        "\n## Media aritmética de métricas entre tres semillas\n",
+        markdown(mean),
         "\n## Clipping\n",
-        pd.DataFrame(clipping).to_markdown(index=False, floatfmt=".4f"),
+        markdown(clipping),
         "\n## Bootstrap pareado por grupos\n",
-        pd.DataFrame(draws).to_markdown(index=False),
+        markdown(pd.DataFrame(draws)),
         "\nLos resultados H son ajuste/diagnóstico; V es desarrollo expuesto. "
         "Los encoders se comparten entre semillas. Los intervalos no son un gate adicional. "
         "No se escoge semilla ni se promedian predicciones.\n",
@@ -181,4 +215,10 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--render-only", action="store_true")
+    args = parser.parse_args()
+    if args.render_only:
+        render()
+    else:
+        main()
