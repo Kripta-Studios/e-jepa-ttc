@@ -53,6 +53,12 @@ def main() -> None:
             else "NO_CANDIDATE"
         )
     )
+    resource_path = RUN / "RESOURCE_DEPENDENCY.json"
+    if state == "RUNNING" and resource_path.exists() and not (RUN / "PROCESS.lock").exists():
+        dependency = read(resource_path)
+        receipt = read(RUN / f"fits/{dependency['fit']}/CHECKPOINT_RECEIPT.json")
+        if receipt["checkpoint_sha256"] == dependency["checkpoint_sha256"]:
+            state = "RESOURCE_PAUSED"
     book = read(RUN / "GPU_BUDGET.json")
     settled = defaultdict(float)
     reserved = 0.0
@@ -94,7 +100,8 @@ def main() -> None:
                 "checkpoint_sha256": receipt["checkpoint_sha256"],
             }
         )
-    closed = 24 if (RUN / "group_probe/RESULTS.json").exists() else 0
+    probe_complete = (RUN / "group_probe/RESULTS.json").exists()
+    closed = read(RUN / "group_probe/PROVENANCE.json")["closed_form_fits"] if probe_complete else 0
     calibrations = [
         RUN / "geometry/P_HEIGHT_CALIBRATION.json",
         RUN / "temporal_geometry/P_HEIGHT_CALIBRATION.json",
@@ -107,6 +114,7 @@ def main() -> None:
         "SOTA": False,
         "utc": datetime.now(UTC).isoformat(),
         "queues": decisions,
+        "diagnostics": {"C": "COMPLETE" if probe_complete else "PENDING"},
         "accounting": counters,
         "closed_form_fits": closed,
         "cost": cost,
@@ -120,6 +128,12 @@ def main() -> None:
             "Keep the complete negative evidence."
         ),
     }
+    if state == "RESOURCE_PAUSED":
+        status["resource_dependency"] = read(resource_path)
+        status["next_action"] = (
+            "Restore sufficient shared Windows commit headroom, then run: "
+            + read(resource_path)["resume_command"]
+        )
     write(RUN / "CAMPAIGN_NEXT_DECISION.json", status)
     pd.DataFrame(fits).to_csv(RUN / "FIT_LEDGER.csv", index=False)
     lines = [
@@ -134,6 +148,7 @@ def main() -> None:
         "|---|---|",
     ]
     lines += [f"| {key} | {value['status']} |" for key, value in decisions.items()]
+    lines += [f"| C (diagnóstico OOF) | {'COMPLETE' if probe_complete else 'PENDING'} |"]
     lines += [
         "",
         f"Updates científicos: **{counters['scientific']}**; "

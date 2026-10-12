@@ -32,6 +32,30 @@ def replay(campaign: Path) -> dict:
             results.append(
                 {"table": str(path.relative_to(campaign)), "rows": len(frame), "exact": True}
             )
+    probe = campaign / "group_probe"
+    if (probe / "RESULTS.json").exists():
+        folds = pd.read_csv(probe / "FOLDS.csv", converters={"phase_mae": float})
+        for name, expected in read(probe / "RESULTS.json").items():
+            path = probe / f"{name}_OOF.csv"
+            frame = pd.read_csv(path, converters={"target_ttc": float, "prediction_ttc": float})
+            actual = metrics(
+                frame.target_ttc.to_numpy(np.float64),
+                frame.prediction_ttc.to_numpy(np.float64),
+                frame.group_id.to_numpy(str),
+            )
+            actual["macro_phase_mae"] = float(
+                folds.loc[folds.representation == name, "phase_mae"].to_numpy().mean()
+            )
+            if actual != expected:
+                raise AssertionError("OOF diagnostic metrics do not reproduce: " + name)
+            results.append(
+                {
+                    "table": str(path.relative_to(campaign)),
+                    "rows": len(frame),
+                    "exact": True,
+                    "scope": "H leave-group-out diagnostic; not H8 model evaluation",
+                }
+            )
     if not results:
         raise ValueError("No evaluation tables found")
     result = {

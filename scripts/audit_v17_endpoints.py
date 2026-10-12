@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import argparse
 import importlib.metadata
 import subprocess
 
@@ -13,6 +14,11 @@ from operational.representation_audit.run import OLD, OWNER, ROOT, RUN, accounti
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--allow-partial", action="store_true")
+    partial = parser.parse_args().allow_partial
+    if (RUN / "PROCESS.lock").exists():
+        raise ValueError("Do not audit a moving training state")
     revalidate(read(OLD / "ADMISSION.json"))
     original = torch.load(
         OWNER / "fits/E_A5_MATCHED/checkpoint_last.pt", map_location="cpu", weights_only=False
@@ -21,7 +27,7 @@ def main() -> None:
     total = 0
     for path in sorted((RUN / "fits").glob("*/CHECKPOINT_RECEIPT.json")):
         receipt = read(path)
-        if receipt["status"] != "COMPLETE":
+        if receipt["status"] != "COMPLETE" and not partial:
             raise ValueError("Finish or classify incomplete fit before endpoint audit")
         directory = path.parent
         checkpoint = directory / "checkpoint_last.pt"
@@ -36,7 +42,11 @@ def main() -> None:
         if identity_sha != receipt["identity_sha256"] or identity_sha != pointer["identity_sha256"]:
             raise ValueError("Identity receipt differs")
         if (
-            payload["completed_updates"] != identity["endpoint"]
+            (
+                receipt["status"] == "COMPLETE"
+                and payload["completed_updates"] != identity["endpoint"]
+            )
+            or payload["completed_updates"] > identity["endpoint"]
             or payload["completed_updates"] != receipt["completed_updates"]
         ):
             raise ValueError("Incorrect fixed endpoint")
@@ -66,6 +76,8 @@ def main() -> None:
         rows.append(
             {
                 "fit": directory.name,
+                "status": receipt["status"],
+                "expected_endpoint": identity["endpoint"],
                 "updates": receipt["completed_updates"],
                 "sha256": expected,
                 "sources_unchanged": True,
@@ -79,7 +91,9 @@ def main() -> None:
     write(
         RUN / "ENDPOINT_AUDIT.json",
         {
-            "status": "PASS",
+            "status": "PASS_WITH_PENDING_FITS"
+            if any(r["status"] != "COMPLETE" for r in rows)
+            else "PASS",
             "utc": utc(),
             "fits": rows,
             "scientific_updates": total,
@@ -99,7 +113,8 @@ def main() -> None:
     }
     write(RUN / "ENVIRONMENT_PACKAGES.json", packages)
     print(
-        f"{len(rows)} complete endpoints; {total} scientific updates; "
+        f"{len(rows)} durable fits; {sum(r['status'] == 'COMPLETE' for r in rows)} complete; "
+        f"{total} scientific updates; "
         "parent/source/durable checks pass"
     )
 

@@ -30,9 +30,7 @@ def main(folder: Path) -> None:
             raise ValueError("Prepared input changed")
         model = load_export(directory / "WEIGHTS.pt")
         with np.load(directory / "EXAMPLE_INPUT.npz", allow_pickle=False) as archive:
-            values = {
-                key: torch.from_numpy(archive[key][:1].copy()) for key in archive.files
-            }
+            values = {key: torch.from_numpy(archive[key][:1].copy()) for key in archive.files}
         if any(key.startswith(("target_", "dino_")) for key in values):
             raise ValueError("Training target in inference example")
         durations = []

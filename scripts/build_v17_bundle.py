@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 import subprocess
@@ -16,7 +17,8 @@ from operational.representation_audit.run import OLD, OWNER, ROOT, RUN
 def dependencies() -> list[dict]:
     paths = {OLD / "ADMISSION.json", OLD / "PRODUCER_METRICS_P_H.json"}
     paths.add(
-        ROOT.parent / "e-jepa-ttc-v14-range-transfer/artifacts/range_transfer_20261010"
+        ROOT.parent
+        / "e-jepa-ttc-v14-range-transfer/artifacts/range_transfer_20261010"
         / "evaluation/screen/RT-M0-L0-S7/METRICS.json"
     )
     for role in ("P", "H", "V"):
@@ -62,9 +64,10 @@ def dependencies() -> list[dict]:
     return result
 
 
-def build() -> None:
+def build(*, allow_paused: bool = False) -> None:
     status = read(RUN / "CAMPAIGN_NEXT_DECISION.json")
-    if status["status"] != "NO_CANDIDATE":
+    paused = status["status"] == "RESOURCE_PAUSED"
+    if status["status"] != "NO_CANDIDATE" and not (allow_paused and paused):
         raise ValueError("This closed-negative bundle requires all registered queues finished")
     if (RUN / "PROCESS.lock").exists():
         raise ValueError("A worker lock remains; do not package a moving campaign")
@@ -83,8 +86,9 @@ def build() -> None:
             "scope": "readout/head reproduction with frozen caches; raw data are external",
         },
     )
+    label = "PROGRESS" if paused else "RESULTS"
     destination = (
-        Path.home() / "Downloads" / f"E_JEPA_TTC_V17_RESEARCH_RESULTS_20261012_{commit[:8]}.zip"
+        Path.home() / "Downloads" / f"E_JEPA_TTC_V17_RESEARCH_{label}_20261012_{commit[:8]}.zip"
     )
     if destination.exists():
         raise FileExistsError("Never overwrite a delivered bundle")
@@ -117,12 +121,13 @@ def build() -> None:
                 continue
         files["campaign/" + rel.as_posix()] = path
     scope = {
-        "status": "CLOSED_NO_CANDIDATE",
+        "status": "IN_PROGRESS_RESOURCE_PAUSE" if paused else "CLOSED_NO_CANDIDATE",
+        "scientifically_closed": not paused,
         "source_commit": commit,
         "created_utc": datetime.now(UTC).isoformat(),
         "includes": [
             "tracked source and reports",
-            "all new final training checkpoints",
+            "all new training checkpoints; receipt distinguishes complete and pending fits",
             "durable checkpoint versions",
             "portable inference weights",
             "predictions including invalid rows",
@@ -147,6 +152,30 @@ def build() -> None:
     }
     write(RUN / "BUNDLE_SCOPE.json", scope)
     files["campaign/BUNDLE_SCOPE.json"] = RUN / "BUNDLE_SCOPE.json"
+    readme = RUN / "BUNDLE_README.md"
+    readme.write_text(
+        "# V17: bundle verificable\n\n"
+        + (
+            "**Campaña pendiente por recursos; no es un cierre científico.**\n\n"
+            if paused
+            else "**Campaña cerrada sin candidato admisible.**\n\n"
+        )
+        + f"Código local: `{commit}`. No hay afirmación SOTA.\n\n"
+        "- [Informes y protocolos](source/docs/representation_audit_20261012/README.md).\n"
+        "- [Estado y presupuesto](campaign/CAMPAIGN_NEXT_DECISION.json).\n"
+        "- [Scope y exclusiones](campaign/BUNDLE_SCOPE.json).\n"
+        "- [Dependencias exactas de cachés](campaign/BUNDLE_DEPENDENCIES.json).\n"
+        "- [Portabilidad y comandos](source/docs/representation_audit_20261012/PORTABILITY.md).\n\n"
+        "`source/` contiene código y documentación; `campaign/` contiene evidencia, pesos, "
+        "curvas, predicciones y estados durables. El manifiesto verifica cada miembro. "
+        "Las tablas de controles reutilizados no son observaciones independientes.\n\n"
+        "Los pesos portables reproducen ejemplos preparados incluidos. Los fits completos "
+        "requieren las cachés externas listadas; no se incluyen datasets crudos ni todos "
+        "los activos de los productores. Los receipts identifican los fits pendientes.\n",
+        encoding="utf-8",
+    )
+    files["README.md"] = readme
+    files["campaign/BUNDLE_README.md"] = readme
     manifest = {"scope": scope, "files": []}
     temporary = destination.with_suffix(".building.zip")
     with zipfile.ZipFile(
@@ -181,4 +210,6 @@ def build() -> None:
 
 
 if __name__ == "__main__":
-    build()
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--allow-paused", action="store_true")
+    build(allow_paused=parser.parse_args().allow_paused)

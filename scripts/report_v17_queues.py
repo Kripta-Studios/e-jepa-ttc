@@ -196,14 +196,35 @@ def main() -> None:
         "Las filas inválidas permanecen en las tablas originales.",
         "",
         "Las curvas comparan trayectorias dentro de cada objetivo; sus pérdidas absolutas "
-        "no son una métrica común entre objetivos. El clipping cuenta normas previas al "
-        "recorte >1. Los intervalos se remuestrean sobre grupos completos "
+        "no son una métrica común entre objetivos. Se separan normas >1 y clipping aplicado: "
+        "N0 registra norma, pero nunca recorta el gradiente. Los intervalos se remuestrean "
+        "sobre grupos completos "
         "(2000 draws, seed12345), no ventanas independientes.",
         "",
         "Los costes GPU incluyen entrenamiento, QA y evaluación registrados en GPU_BUDGET.json. "
         "No equivalen a latencia de inferencia desde eventos crudos. "
         "No se ejecuta evaluación externa para rescatar candidatos rechazados.",
     ]
+    if (RUN / "group_probe/RESULTS.json").exists():
+        lines += [
+            "",
+            "## C: diagnóstico dejando fuera grupos H completos",
+            "",
+            "R0 usa PHASE17, RG tokens completos y RD diferencias temporales. "
+            "Cada predicción procede de un ridge ajustado sin su grupo H. Son 24 ajustes "
+            "cerrados con lambda 1 fijada, no cabezas H8 ni candidatos seleccionados. "
+            "Los coeficientes, las identidades de grupos y las predicciones OOF se conservan "
+            "en `group_probe/`.",
+            "",
+            "| Representación | MAE fase macro | MiDc | Overall MiD |",
+            "|---|---:|---:|---:|",
+        ]
+        for name, score in read(RUN / "group_probe/RESULTS.json").items():
+            lines.append(
+                f"| {name} | {score['macro_phase_mae']:.8f} | "
+                f"{score['bins']['crucial']['group_macro_mid']:.6f} | "
+                f"{score['overall_MiD']:.6f} |"
+            )
     (ROOT / "docs/representation_audit_20261012/QUEUES_RESULTS.md").write_text(
         "\n".join(lines) + "\n", encoding="utf-8"
     )

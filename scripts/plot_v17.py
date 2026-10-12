@@ -8,6 +8,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import torch
 
 from operational.range_transfer.common import read, sha, write
 from operational.representation_audit.run import RUN
@@ -50,32 +51,52 @@ def main() -> None:
     fig.savefig(folder / "V_HEAD_COMPARISON.png")
     fig.savefig(folder / "V_HEAD_COMPARISON.pdf")
     plt.close(fig)
-    clipping = pd.read_csv(RUN / "CLIPPING.csv")
-    extra = pd.read_csv(RUN / "QUEUES_CLIPPING.csv")
-    if "reused_control" in extra:
-        extra = extra.loc[~extra.reused_control]
-    clipping = pd.concat([clipping, extra], ignore_index=True)
-    fig, axis = plt.subplots(figsize=(11, 4))
-    axis.bar(clipping.fit, 100 * clipping.clipped_fraction, color="#1565a7")
-    axis.set_ylabel("Updates with gradient clipping applied (%)")
-    axis.tick_params(axis="x", rotation=60)
-    axis.set_title("Actual clipping by frozen fit · N0 disables clipping; objectives differ")
-    fig.tight_layout()
-    fig.savefig(folder / "CLIPPING_ALL_FITS.png")
-    plt.close(fig)
     fits = [
         path
         for path in sorted((RUN / "fits").iterdir())
         if (path / "CHECKPOINT_RECEIPT.json").exists()
-        and read(path / "CHECKPOINT_RECEIPT.json")["status"] == "COMPLETE"
     ]
+    curves, clip_rows = {}, []
+    for path in fits:
+        receipt = read(path / "CHECKPOINT_RECEIPT.json")
+        if sha(path / "checkpoint_last.pt") != receipt["checkpoint_sha256"]:
+            raise ValueError("Checkpoint changed during plot generation")
+        payload = torch.load(path / "checkpoint_last.pt", map_location="cpu", weights_only=False)
+        cursor = payload["cursor"]
+        curve = pd.DataFrame(cursor.get("curve", cursor.get("curves")))
+        if len(curve) != receipt["completed_updates"]:
+            raise ValueError("Curve differs from durable update count")
+        curves[path.name] = curve
+        curve.to_csv(path / "CURVE_DURABLE.csv", index=False)
+        enabled = curve.clipping_enabled if "clipping_enabled" in curve else True
+        clip_rows.append(
+            {
+                "fit": path.name,
+                "status": receipt["status"],
+                "updates": len(curve),
+                "clipped_fraction": float(((curve.gradient_l2 > 1) & enabled).mean()),
+                "norm_above1_fraction": float((curve.gradient_l2 > 1).mean()),
+                "label": path.name + ("*" if receipt["status"] != "COMPLETE" else ""),
+            }
+        )
+    clipping = pd.DataFrame(clip_rows)
+    clipping.to_csv(RUN / "ALL_FIT_CLIPPING.csv", index=False)
+    fig, axis = plt.subplots(figsize=(11, 4))
+    axis.bar(clipping.label, 100 * clipping.clipped_fraction, color="#1565a7")
+    axis.set_ylabel("Updates with gradient clipping applied (%)")
+    axis.tick_params(axis="x", rotation=60)
+    axis.set_title("Actual clipping · N0 disables clipping; * incomplete fit; objectives differ")
+    fig.tight_layout()
+    fig.savefig(folder / "CLIPPING_ALL_FITS.png")
+    plt.close(fig)
     fig, axes = plt.subplots(
         (len(fits) + 3) // 4, 4, figsize=(14, 3 * ((len(fits) + 3) // 4)), squeeze=False
     )
     for axis, path in zip(axes.ravel(), fits, strict=False):
-        curve = pd.read_csv(path / "CURVE.csv")
+        curve = curves[path.name]
         axis.plot(curve["update"], curve.loss.rolling(50, min_periods=1).mean(), lw=1)
-        axis.set_title(path.name)
+        status = read(path / "CHECKPOINT_RECEIPT.json")["status"]
+        axis.set_title(path.name + (" · incomplete" if status != "COMPLETE" else ""))
         axis.set_xlabel("Optimizer update")
         axis.set_ylabel("Own objective, mean of 50")
     for axis in axes.ravel()[len(fits) :]:
@@ -83,7 +104,7 @@ def main() -> None:
     fig.suptitle(
         "Training curves · separate y scales; absolute losses are not comparable across objectives"
     )
-    fig.tight_layout()
+    fig.tight_layout(rect=(0, 0, 1, 0.97))
     fig.savefig(folder / "TRAINING_CURVES.png")
     plt.close(fig)
     write(

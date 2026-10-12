@@ -27,9 +27,31 @@ Tablas regeneradas desde predicciones, con replay exacto de métricas. P es ajus
 | F | H | F1-S7 | 180.523017 | 92.876832 | 90.963362 | 83.354508 | 135.556345 | 6.866889 | 0.000000 |
 | F | P | F0-S7 | NA | NA | NA | 250.812782 | NA | 9.056576 | 5.000000 |
 | F | P | F1-S7 | 177.302019 | 88.482596 | 81.048945 | 74.926022 | 130.793285 | 6.142006 | 0.000000 |
+| G | H | SP0-S7 | 154.094010 | 73.039137 | 68.846105 | 64.983146 | 112.341671 | 5.547519 | 0.000000 |
+| G | H | SP1-S7 | 176.407983 | 103.839252 | 99.762669 | 93.954258 | 138.727460 | 7.607709 | 0.000000 |
+| G | P | SP0-S7 | 141.284687 | 68.079575 | 61.632238 | 59.178789 | 103.147318 | 4.840834 | 0.000000 |
+| G | P | SP1-S7 | 166.831373 | 105.962779 | 98.491432 | 92.280541 | 134.281718 | 7.250877 | 0.000000 |
+| H | H | N0-S7 | 156.697261 | 62.288168 | 58.007706 | 59.440449 | 108.779896 | 4.806241 | 0.000000 |
+| H | H | U0-S7 | 156.585284 | 61.956289 | 57.782299 | 59.109314 | 108.568690 | 4.791682 | 0.000000 |
+| H | P | N0-S7 | 138.362493 | 56.951315 | 48.998256 | 50.309171 | 96.197384 | 4.105477 | 0.000000 |
+| H | P | U0-S7 | 138.257003 | 56.656686 | 48.721272 | 50.184731 | 96.016108 | 4.085028 | 0.000000 |
+| I | H | NL0-S7 | 176.407983 | 103.839252 | 99.762669 | 93.954258 | 138.727460 | 7.607709 | 0.000000 |
+| I | H | NL1-S7 | 203.453098 | 121.395401 | 116.935300 | 108.320303 | 160.670730 | 8.524792 | 0.000000 |
+| I | P | NL0-S7 | 166.831373 | 105.962779 | 98.491432 | 92.280541 | 134.281718 | 7.250877 | 0.000000 |
+| I | P | NL1-S7 | 189.472085 | 117.112410 | 105.638457 | 100.302630 | 150.463874 | 7.816056 | 0.000000 |
 
 NA mantiene ausente el overall cuando faltan predicciones MiD válidas. Las métricas parciales no sustituyen esa cobertura ni habilitan gates o bootstrap. Las filas inválidas permanecen en las tablas originales.
 
-Las curvas comparan trayectorias dentro de cada objetivo; sus pérdidas absolutas no son una métrica común entre objetivos. El clipping cuenta normas previas al recorte >1. Los intervalos se remuestrean sobre grupos completos (2000 draws, seed12345), no ventanas independientes.
+Las curvas comparan trayectorias dentro de cada objetivo; sus pérdidas absolutas no son una métrica común entre objetivos. Se separan normas >1 y clipping aplicado: N0 registra norma, pero nunca recorta el gradiente. Los intervalos se remuestrean sobre grupos completos (2000 draws, seed12345), no ventanas independientes.
 
 Los costes GPU incluyen entrenamiento, QA y evaluación registrados en GPU_BUDGET.json. No equivalen a latencia de inferencia desde eventos crudos. No se ejecuta evaluación externa para rescatar candidatos rechazados.
+
+## C: diagnóstico dejando fuera grupos H completos
+
+R0 usa PHASE17, RG tokens completos y RD diferencias temporales. Cada predicción procede de un ridge ajustado sin su grupo H. Son 24 ajustes cerrados con lambda 1 fijada, no cabezas H8 ni candidatos seleccionados. Los coeficientes, las identidades de grupos y las predicciones OOF se conservan en `group_probe/`.
+
+| Representación | MAE fase macro | MiDc | Overall MiD |
+|---|---:|---:|---:|
+| R0 | 0.00678073 | 137.870038 | 98.355675 |
+| RD | 0.00650058 | 137.289052 | 96.712964 |
+| RG | 0.00663556 | 137.838270 | 98.122597 |

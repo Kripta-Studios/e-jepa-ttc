@@ -30,11 +30,27 @@ E y F siguen un cribado de productores en H. Sólo una familia admitida puede re
 
 E queda rechazado: la calibración Q1 produce una predicción H y cinco P fuera del dominio positivo de MiD. Esas filas permanecen y el agregado correspondiente es NA; no se recortan ni se eliminan para recuperar cobertura. Además, las bandas admisibles muestran regresiones grandes. F recupera cobertura H completa, pero falla los gates crucial, agregado, MAE y otras salvaguardas frente al A5 histórico. Su control emparejado es Q1 reutilizado, con cobertura insuficiente. Mejorar el ajuste de altura o su derivada en P no garantizó mejorar TTC en H.
 
-## Dos contrastes pendientes de cierre
+## Posición espacial y clipping
 
 G conserva ocho posiciones verticales del mapa congelado de A5 y las contrasta con promedios globales. Sigue el mismo objetivo de altura y cambio temporal de F. La extracción no usa targets; los normalizadores y el ridge se ajustan sólo con P. Antes de su primer ajuste, la acumulación se implementó por bloques para reducir memoria, y se verificó numéricamente contra la fórmula densa en ambos brazos. Esto no cambia el objetivo, lambda, población ni gates.
 
 H cambia exclusivamente el clipping del scorer C20 respecto al control U0 ya congelado de B. Registra norma y finitud, sin volver a ponderar pérdidas. Una norma superior a1 no significa clipping aplicado en este brazo. La evaluación y las réplicas condicionales mantienen el orden G→H aunque una pausa de recursos permita preparar el fit independiente de H antes de cerrar G.
+
+Ambos contrastes terminaron con NO_CANDIDATE. En G, conservar posición vertical mejoró el ajuste P de altura frente al pooling global, pero empeoró TTC en H. En H, quitar el clipping dejó las métricas muy próximas a las del control y no cumplió los gates. Este resultado descarta esa intervención concreta; no demuestra que el clipping sea irrelevante bajo cualquier objetivo o sampler. Las tablas exactas y sus intervalos están en `QUEUES_RESULTS.md` y `QUEUES_BOOTSTRAP.csv`.
+
+## Lectura no lineal de la misma geometría
+
+I se registró antes de los cribados de G/H y sólo se activó tras su rechazo. Añadió un MLP512→64→1 a la calibración espacial congelada de SP1, con última capa cero y las mismas pérdidas P de altura y cambio temporal. Tras6000updates se congeló el MLP y se ajustó el scorer nativo otros6000updates. No se pasaron targets TTC a la pérdida geométrica. La prueba agrega capacidad y una etapa de entrenamiento; no aísla exclusivamente no linealidad ni elimina todas las diferencias de regularización frente al ridge.
+
+El candidato también empeoró TTC frente a SP1 y al A5 histórico. No se activaron sus réplicas ni la reconstrucción de PHASE17/H8 condicionada a admisión. Sus pesos intermedios NLH son un endpoint de geometría con scorer reiniciado y sin entrenar; el endpoint final de productor es NL1. Ambos se conservan, con esa distinción en sus metadatos portables.
+
+`geometry_gradient_I/` describe el gradiente del objetivo geométrico sobre cinco rangos TTC de P. Los rangos sólo estratifican el diagnóstico; las etiquetas TTC no entran en el objetivo. `readout_gradient_G/`, `readout_gradient_H/` y `readout_gradient_I/` mantienen el scope NLL y las limitaciones del diagnóstico B. No se suman normas como si fueran masas de probabilidad.
+
+## Qué justifica la decisión siguiente
+
+Las nueve líneas registradas quedan cerradas sin candidato promovible. Los resultados no prueban que los mapas congelados carezcan de toda información TTC ni que la arquitectura haya alcanzado un techo matemático. Sí muestran que las lecturas ensayadas, las calibraciones geométricas y las dos intervenciones de optimización no superan conjuntamente los criterios fijados.
+
+No se elige un nuevo coeficiente o epoch a partir de V, ni se gastan las réplicas condicionales en candidatos rechazados. Una continuación científica necesita una hipótesis distinta y un contraste prospectivo; por ejemplo, comprobar una medición geométrica temporal que conserve correspondencias espaciales, o conseguir evaluación independiente bajo el protocolo público. Ninguna de esas propuestas se presenta como un experimento ejecutado ni como una garantía de mejora.
 
 ## Límites de las conclusiones
 

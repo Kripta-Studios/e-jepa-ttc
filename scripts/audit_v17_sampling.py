@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import argparse
 import hashlib
 from pathlib import Path
 
@@ -12,6 +13,9 @@ from operational.range_transfer.common import read, sha, write
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--allow-partial", action="store_true")
+    partial = parser.parse_args().allow_partial
     torch.set_num_threads(1)
     run = Path(__file__).resolve().parents[1] / "artifacts/representation_audit_20261012"
     folder = run / "sampling_audit"
@@ -19,7 +23,7 @@ def main() -> None:
     results = {}
     for directory in sorted((run / "fits").iterdir()):
         receipt = read(directory / "CHECKPOINT_RECEIPT.json")
-        if receipt["status"] != "COMPLETE":
+        if receipt["status"] != "COMPLETE" and not partial:
             raise ValueError("Complete every registered fit before final sampler audit")
         if sha(directory / "checkpoint_last.pt") != receipt["checkpoint_sha256"]:
             raise ValueError("Checkpoint changed")
@@ -28,7 +32,12 @@ def main() -> None:
         )
         arm, seed_text = directory.name.split("-S")
         population = 18422 if arm in ("Z", "G", "D") else 53890
-        endpoint = 2500 if arm in ("Z", "G", "D") else 6000
+        expected_endpoint = 2500 if arm in ("Z", "G", "D") else 6000
+        endpoint = receipt["completed_updates"]
+        if endpoint > expected_endpoint or (
+            receipt["status"] == "COMPLETE" and endpoint != expected_endpoint
+        ):
+            raise ValueError("Endpoint count differs from protocol")
         cursor = payload["cursor"]
         curves = cursor.get("curve", cursor.get("curves"))
         saved = cursor.get("draws", cursor.get("draw_sha"))
@@ -66,6 +75,8 @@ def main() -> None:
         np.savez_compressed(folder / f"{directory.name}_EXPOSURE.npz", draws_per_position=counts)
         results[directory.name] = {
             "checkpoint_sha256": receipt["checkpoint_sha256"],
+            "status": receipt["status"],
+            "expected_endpoint": expected_endpoint,
             "updates": endpoint,
             "population": population,
             "sampler_every_draw_exact_from_initial_seed": True,
@@ -80,7 +91,9 @@ def main() -> None:
     write(
         run / "SAMPLING_CONTINUITY_AUDIT.json",
         {
-            "status": "PASS",
+            "status": "PASS_WITH_PENDING_FITS"
+            if any(r["status"] != "COMPLETE" for r in results.values())
+            else "PASS",
             "models": results,
             "optimizer_updates_executed": 0,
             "source_sha256": sha(Path(__file__)),
@@ -89,7 +102,9 @@ def main() -> None:
             "pause_checkpoint_retention": "native writer keeps only its latest two versions",
         },
     )
-    print(f"Verified complete uninterrupted sampler sequences for {len(results)} fits")
+    print(
+        f"Verified uninterrupted sampler sequences through durable states for {len(results)} fits"
+    )
 
 
 if __name__ == "__main__":

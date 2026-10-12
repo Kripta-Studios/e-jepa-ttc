@@ -11,6 +11,8 @@ Campaña independiente posterior al `NO_CANDIDATE` de V15. Presupuesto autorizad
 5. [Comparabilidad pública](PUBLIC_COMPARABILITY.md): poblaciones, modalidades y métricas de las referencias.
 6. [Reproducción](REPRODUCTION.md) y [portabilidad](PORTABILITY.md): comandos, dependencias, pesos y ejemplos.
 7. [Piloto de foreground](FOREGROUND_PILOT.md): sensibilidad local de la ruta nativa, 40 consultas P y cero updates.
+8. [Dependencia de recursos](RESOURCE_STATE.md): pausa observada, resolución verificada y comando real de reanudación.
+9. [Verificación](VERIFICATION.md): pruebas, continuidad, recarga, reproducción de métricas y límites del bundle.
 
 ## Registro prospectivo
 
@@ -41,17 +43,18 @@ Rutas relativas a `artifacts/representation_audit_20261012`:
 | Pesos y continuidad | `fits/<fit>/` |
 | Pesos portables y ejemplos | `exports/<fit>/` |
 | Predicciones de cabezas | `evaluation/` |
-| Predicciones de productores | `precision_evaluation/`, `geometry_evaluation/`, `temporal_geometry_evaluation/`, `spatial_evaluation/`, `unclipped_evaluation/` |
+| Predicciones de productores | `precision_evaluation/`, `geometry_evaluation/`, `temporal_geometry_evaluation/`, `spatial_evaluation/`, `unclipped_evaluation/`, `nonlinear_evaluation/` |
 | Métricas por grupo | `GROUP_METRICS.json` junto a cada tabla |
 | Bootstrap | `BOOTSTRAP.json`, `QUEUES_BOOTSTRAP.csv` |
-| Clipping | `CLIPPING.csv`, `QUEUES_CLIPPING.csv` |
-| Gradientes | `head_gradient/`, `directional_gradient/`, `readout_gradient_*/` |
+| Clipping | `CLIPPING.csv`, `QUEUES_CLIPPING.csv`, `ALL_FIT_CLIPPING.csv` |
+| Gradientes | `head_gradient/`, `directional_gradient/`, `readout_gradient_*/`, `geometry_gradient_I/` |
 | Curvas | `fits/<fit>/CURVE.csv`, `figures/TRAINING_CURVES.png` |
 | Auditoría | `ENDPOINT_AUDIT.json` |
 | Reproducción de métricas | `BUNDLE_METRIC_REPLAY.json` |
 | Recarga portable | `PORTABLE_EXPORT_VERIFICATION.json` |
 | Continuidad sintética | `qa/*PASS.json` y checkpoints asociados |
 | Continuidad de muestras y relojes | `SAMPLING_CONTINUITY_AUDIT.json`, `sampling_audit/` |
+| Reanudación terminal sin nuevos updates | `TERMINAL_RESUME_PROOF.json` |
 | Perfil CPU sobre entradas preparadas | `PORTABLE_CPU_FORWARD_PROFILE.json` |
 
 Un archivo puede estar ausente mientras su cola siga pendiente. El estado generado es la referencia; este índice no afirma que todas las ramas hayan sido admitidas.

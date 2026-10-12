@@ -1,8 +1,8 @@
 # V17: estado y contabilidad
 
-Estado: **RUNNING**. No hay afirmación SOTA.
+Estado: **NO_CANDIDATE**. No hay afirmación SOTA.
 
-Generado: 2026-10-12T11:15:37.508574+00:00. Los estados pendientes no son resultados negativos ni tareas completadas.
+Generado: 2026-10-12T13:36:40.006701+00:00. Los estados pendientes no son resultados negativos ni tareas completadas.
 
 | Cola | Estado |
 |---|---|
@@ -11,21 +11,23 @@ Generado: 2026-10-12T11:15:37.508574+00:00. Los estados pendientes no son result
 | D | NO_CANDIDATE |
 | E | NO_CANDIDATE |
 | F | NO_CANDIDATE |
-| G | PENDING |
-| H | PENDING |
+| G | NO_CANDIDATE |
+| H | NO_CANDIDATE |
+| I | NO_CANDIDATE |
+| C (diagnóstico OOF) | COMPLETE |
 
-Updates científicos: **76500**; técnicos: **100**; recuperación superior: **0**; pendiente superior: **0**. Total físico superior: **76600 / 1.000.000**.
+Updates científicos: **106500**; técnicos: **180**; recuperación superior: **0**; pendiente superior: **0**. Total físico superior: **106680 / 1.000.000**.
 
-Ajustes cerrados adicionales: **26**. Se contabilizan como entrenamiento aunque no usan optimizer.step. Las réplicas comparten encoders congelados; no son representaciones entrenadas independientemente.
+Ajustes cerrados adicionales: **28**. Se contabilizan como entrenamiento aunque no usan optimizer.step. Las réplicas comparten encoders congelados; no son representaciones entrenadas independientemente.
 
 | Scope GPU | Segundos liquidados |
 |---|---:|
-| evaluation | 79.435 |
-| feature_extraction | 847.226 |
-| scientific_training | 5213.370 |
-| technical_or_parity | 56.158 |
+| evaluation | 114.267 |
+| feature_extraction | 3162.007 |
+| scientific_training | 7263.054 |
+| technical_or_parity | 116.536 |
 
-Total liquidado: **6196.190 s**. Reserva viva/conservadora: **120.000 s**. Cargo superior: **6316.190 / 64.800 s**.
+Total liquidado: **10655.864 s**. Reserva viva/conservadora: **0.000 s**. Cargo superior: **10655.864 / 64.800 s**.
 
 Este coste incluye carga y guardado dentro de los scopes GPU. No mide energía, tiempo puro de kernels ni latencia completa desde eventos. El equipo es compartido y se preservan los propietarios ajenos.
 
@@ -40,8 +42,13 @@ Este coste incluye carga y guardado dentro de los scopes GPU. No mide energía, 
 | G-S13 | COMPLETE | 2500 |
 | G-S23 | COMPLETE | 2500 |
 | G-S7 | COMPLETE | 2500 |
+| N0-S7 | COMPLETE | 6000 |
+| NL1-S7 | COMPLETE | 6000 |
+| NLH-S7 | COMPLETE | 6000 |
 | Q0-S7 | COMPLETE | 6000 |
 | Q1-S7 | COMPLETE | 6000 |
+| SP0-S7 | COMPLETE | 6000 |
+| SP1-S7 | COMPLETE | 6000 |
 | U0-S13 | COMPLETE | 6000 |
 | U0-S23 | COMPLETE | 6000 |
 | U0-S7 | COMPLETE | 6000 |
