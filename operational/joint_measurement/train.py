@@ -112,7 +112,7 @@ def backward(
     weights: torch.Tensor | None,
     population: int,
     *,
-    recompute: bool = True,
+    recompute: bool = False,
 ) -> dict:
     """Differentiate the registered effective batch exactly once per update."""
     if isinstance(model, CausalScaleTTC):
