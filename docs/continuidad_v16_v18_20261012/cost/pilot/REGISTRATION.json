@@ -1,0 +1,39 @@
+{
+  "queries": [
+    [
+      "FCWD",
+      "FCWD1:0125"
+    ],
+    [
+      "FCWD",
+      "FCWD1:0069"
+    ],
+    [
+      "FCWD",
+      "FCWD1:0115"
+    ],
+    [
+      "DEV32",
+      "CCRm-medium-50-overlap-50:30"
+    ],
+    [
+      "DEV32",
+      "CCRs-1-medium-0-overlap-0:07"
+    ],
+    [
+      "DEV32",
+      "CCRm-medium-100-overlap-100:24"
+    ]
+  ],
+  "repeats": 2,
+  "exact_required": true,
+  "sources": {
+    "R_A5": "dc4882e0255083f8bf0bece0e83e5e7bfaa7b494197574704f3be11b700b4cc7",
+    "R_C2F": "c8a6a0108167ea906de29225ac946fbfa65e6e58e2becc82e317547626969456",
+    "rgb_exact_cache.py": "1e1425d48e0037047030c2f039f16106c6b90cbd7a4f6b71e2122304924d5d2a",
+    "profile_rgb_route.py": "366ca0a25bfd70e20c5be74bd0a51325f3493b7e3f93df92cd62fb81dce42920"
+  },
+  "CPU_only": true,
+  "optimizer_updates": 0,
+  "scope": "Paired complete resident-weight CPU routes, fresh FCWD registration, one thread, concurrent V18 GPU load. Event path unchanged. Chronological selected queries; raw RGB LRU reset before each query, repeat1 warm. Endpoint caches scoped to each complete query; no temporal state reused. Detector, startup and evidence assertions excluded. OS page cache not flushed; no cold-disk or streaming claim."
+}

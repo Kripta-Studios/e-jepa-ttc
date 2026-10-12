@@ -1,0 +1,97 @@
+import tempfile
+import unittest
+from pathlib import Path
+
+import h5py
+import numpy as np
+import torch
+from torch import nn
+
+from rgb_exact_cache import DenseMapCache, EndpointCache, FrameReadCache
+
+
+class Encoder(nn.Module):
+    def forward(self, x, *, return_dense_features=False):
+        return x*2, x.mean((2,3)), x+1 if return_dense_features else None
+
+
+class CacheContracts(unittest.TestCase):
+    def test_dense_maps_preserve_full_batch_heads_and_input_foreground(self):
+        class MapEncoder(nn.Module):
+            def __init__(self, from_input):
+                super().__init__()
+                self.features=nn.Sequential(nn.AvgPool2d(2),nn.Tanh())
+                self.foreground=nn.Identity()
+                self.token=nn.Sequential(nn.Flatten(),nn.Linear(3,5))
+                self.foreground_from_input=from_input
+            def forward(self,x,*,return_dense_features=False):
+                maps=self.features(x)
+                return self.foreground(x if self.foreground_from_input else maps),self.token(maps),maps if return_dense_features else None
+        torch.manual_seed(123)
+        for from_input in (False,True):
+            model=MapEncoder(from_input).eval(); cache=DenseMapCache(model,'source')
+            first=torch.randn(2,3,2,2)
+            second=torch.stack([first[1],torch.randn(3,2,2)])
+            with torch.inference_mode():
+                cache.timestamps=[1,2]; cache.forward(first)
+                cache.timestamps=[2,3]
+                actual=cache.forward(second,return_dense_features=True)
+                expected=model(second,return_dense_features=True)
+                self.assertEqual(cache.hits,1)
+                for a,b in zip(actual,expected,strict=True): self.assertTrue(torch.equal(a,b))
+                cache.timestamps=[2,3]
+                self.assertIsNone(cache.forward(second)[2])
+                self.assertEqual(cache.hits,3)
+
+    def test_frame_identity_and_content_both_required(self):
+        model=Encoder().eval(); cache=EndpointCache(model,'fixed-source-roi-weights')
+        x=torch.arange(24,dtype=torch.float32).reshape(2,3,2,2)
+        with torch.inference_mode():
+            cache.timestamps=[100,200]; a=cache.forward(x,return_dense_features=True)
+            cache.timestamps=[200,300]; y=torch.stack([x[1],x[0]])
+            b=cache.forward(y,return_dense_features=True)
+            self.assertEqual(cache.hits,1)
+            for actual,expected in zip(b,model(y,return_dense_features=True),strict=True):
+                self.assertTrue(torch.equal(actual,expected))
+            cache.timestamps=[200,300]; cache.forward(y+1,return_dense_features=True)
+            self.assertEqual(cache.hits,1)
+            self.assertTrue(torch.equal(a[0],x*2))
+
+    def test_train_mode_and_autograd_rejected(self):
+        model=Encoder(); cache=EndpointCache(model,'id'); cache.timestamps=[1]
+        with torch.inference_mode(), self.assertRaises(ValueError): cache.forward(torch.ones(1,3,2,2))
+        model.eval()
+        with self.assertRaises(ValueError): cache.forward(torch.ones(1,3,2,2))
+
+    def test_dense_output_contract_and_missing_clock(self):
+        cache=EndpointCache(Encoder().eval(),'id'); x=torch.ones(1,3,2,2)
+        with torch.inference_mode():
+            with self.assertRaises(ValueError): cache.forward(x)
+            cache.timestamps=[1]
+            self.assertIsNone(cache.forward(x)[2])
+            self.assertIsNotNone(cache.forward(x,return_dense_features=True)[2])
+
+    def test_memory_bound_fails_closed(self):
+        cache=EndpointCache(Encoder().eval(),'id',max_bytes=1); cache.timestamps=[1]
+        with torch.inference_mode(),self.assertRaises(MemoryError): cache.forward(torch.ones(1,3,2,2))
+
+    def test_raw_cache_copy_eviction_reset_and_file_identity(self):
+        with tempfile.TemporaryDirectory() as folder:
+            for name in ('a','b'):
+                with h5py.File(Path(folder)/f'{name}.h5','w') as f:
+                    f.create_dataset('blackflys/right/data',data=np.full((3,2,2,3),1 if name=='a' else 2,np.uint8))
+            cache=FrameReadCache(max_bytes=12)
+            getter=cache.wrap(h5py.Dataset.__getitem__)
+            with h5py.File(Path(folder)/'a.h5','r') as f:
+                d=f['blackflys/right/data']; getter(d,0)[0]=9
+                self.assertTrue((getter(d,0)==1).all()); self.assertEqual(cache.hits,1)
+                getter(d,1); self.assertLessEqual(cache.bytes,12)
+                self.assertNotIn(0,[key[4] for key in cache.cache])
+            with h5py.File(Path(folder)/'b.h5','r') as f:
+                self.assertTrue((getter(f['blackflys/right/data'],0)==2).all())
+            cache.clear(); self.assertEqual(cache.bytes,0); self.assertFalse(cache.cache)
+
+
+if __name__=='__main__':
+    torch.set_num_threads(1)
+    unittest.main()

@@ -1,0 +1,516 @@
+{
+  "observed_utc": "2026-10-12T21:10:30.556313+00:00",
+  "live_processes": [
+    {
+      "create_time": 1791834727.0753405,
+      "name": "python.exe",
+      "pid": 17268,
+      "ppid": 24480,
+      "command": [
+        "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\.venv\\Scripts\\python.exe",
+        "-u",
+        "-B",
+        "-m",
+        "operational.joint_measurement.run"
+      ],
+      "cwd": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement",
+      "rss": 4239360
+    },
+    {
+      "create_time": 1791834727.1355088,
+      "name": "python.exe",
+      "pid": 24076,
+      "ppid": 17268,
+      "command": [
+        "C:\\Users\\\u00c1lvaro Schwiedop\\AppData\\Roaming\\uv\\python\\cpython-3.11-windows-x86_64-none\\python.exe",
+        "-u",
+        "-B",
+        "-m",
+        "operational.joint_measurement.run"
+      ],
+      "cwd": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement",
+      "rss": 1503469568
+    }
+  ],
+  "two_PIDs_may_be_launcher_and_child": "Inspect ppid; do not interpret a venv launcher plus worker as duplicate supervisors",
+  "fits": {
+    "NATIVE-P2-FT-S7": {
+      "CHECKPOINT_RECEIPT.json": {
+        "accumulation_index": 0,
+        "checkpoint_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\joint_measurement_20261012\\fits\\NATIVE-P2-FT-S7\\checkpoint_last.pt",
+        "checkpoint_sha256": "86a0aeb1d4873c0575d9af5fab1a21973ff066da284d2841c170051ed25af543",
+        "complete_state": true,
+        "completed_updates": 3108,
+        "fit_id": "NATIVE-P2-FT-S7",
+        "identity_sha256": "cf27cabe012874b830b3c290173bd57c936577ec7b20c95366205a4144aec17b",
+        "recovery_upper": 0,
+        "schema": "rgb_port_checkpoint_receipt_v1",
+        "scientific_endpoint": false,
+        "status": "PAUSED"
+      },
+      "UPDATE_JOURNAL.json": {
+        "completed_updates": 3108,
+        "durable_updates": 3108,
+        "identity_sha256": "cf27cabe012874b830b3c290173bd57c936577ec7b20c95366205a4144aec17b",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1"
+      }
+    },
+    "PAIR-DIRECT-S7": {
+      "CHECKPOINT_RECEIPT.json": {
+        "accumulation_index": 0,
+        "checkpoint_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\joint_measurement_20261012\\fits\\PAIR-DIRECT-S7\\checkpoint_last.pt",
+        "checkpoint_sha256": "9fd36d897f0b7cc546e12822334c5c91d0d6cb98c773a552a2736b5a2f77d87a",
+        "complete_state": true,
+        "completed_updates": 2008,
+        "fit_id": "PAIR-DIRECT-S7",
+        "identity_sha256": "4eac5dbdc70860da232de138c2433c70e2c936257a52a2f37abf3af3a8899e02",
+        "recovery_upper": 0,
+        "schema": "rgb_port_checkpoint_receipt_v1",
+        "scientific_endpoint": false,
+        "status": "PAUSED"
+      },
+      "UPDATE_JOURNAL.json": {
+        "completed_updates": 2070,
+        "durable_updates": 2008,
+        "identity_sha256": "4eac5dbdc70860da232de138c2433c70e2c936257a52a2f37abf3af3a8899e02",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1"
+      }
+    },
+    "PAIR-CORR-S7": {},
+    "PAIR-CORR-FROZEN-S7": {}
+  },
+  "runner_snapshot": {
+    "accounting": {
+      "pending_upper": 0,
+      "physical_upper": 5616,
+      "recovery_upper": 0,
+      "scientific": 5196,
+      "technical": 420
+    },
+    "fit_id": "PAIR-DIRECT-S7",
+    "status": "TRAINING",
+    "updates": 2008,
+    "utc": "2026-10-12T21:06:23.108673+00:00"
+  },
+  "gpu_budget": {
+    "cap_s": 64800,
+    "charged_total_s": 16185.75735519999,
+    "entries": [
+      {
+        "charged_s": 38.37406790000003,
+        "end_utc": "2026-10-12T15:35:41.361604+00:00",
+        "pid": 31856,
+        "scope": "synthetic_qa/NATIVE-P2-FT-S7",
+        "status": "SETTLED",
+        "utc": "2026-10-12T15:35:02.982437+00:00"
+      },
+      {
+        "charged_s": 41.112093500000015,
+        "end_utc": "2026-10-12T15:39:10.707666+00:00",
+        "pid": 35480,
+        "scope": "zero_update_cuda_determinism",
+        "status": "SETTLED",
+        "utc": "2026-10-12T15:38:29.573236+00:00"
+      },
+      {
+        "charged_s": 15.642795400000068,
+        "end_utc": "2026-10-12T15:41:00.924037+00:00",
+        "pid": 24248,
+        "scope": "zero_update_cuda_without_cudnn",
+        "status": "SETTLED",
+        "utc": "2026-10-12T15:40:45.265966+00:00"
+      },
+      {
+        "charged_s": 88.32179740000004,
+        "end_utc": "2026-10-12T15:47:56.565264+00:00",
+        "pid": 33564,
+        "scope": "synthetic_qa/NATIVE-P2-FT-S7",
+        "status": "SETTLED",
+        "utc": "2026-10-12T15:46:28.228993+00:00"
+      },
+      {
+        "charged_s": 11.285882300000026,
+        "end_utc": "2026-10-12T15:48:08.143781+00:00",
+        "pid": 33564,
+        "scope": "synthetic_qa/PAIR-DIRECT-S7",
+        "status": "SETTLED",
+        "utc": "2026-10-12T15:47:56.843094+00:00"
+      },
+      {
+        "charged_s": 14.77931389999992,
+        "end_utc": "2026-10-12T15:48:23.224047+00:00",
+        "pid": 33564,
+        "scope": "synthetic_qa/PAIR-CORR-S7",
+        "status": "SETTLED",
+        "utc": "2026-10-12T15:48:08.429953+00:00"
+      },
+      {
+        "charged_s": 9.314124099999844,
+        "end_utc": "2026-10-12T15:48:32.856175+00:00",
+        "pid": 33564,
+        "scope": "synthetic_qa/PAIR-CORR-FROZEN-S7",
+        "status": "SETTLED",
+        "utc": "2026-10-12T15:48:23.528080+00:00"
+      },
+      {
+        "charged_s": 76.54631190000009,
+        "end_utc": "2026-10-12T16:16:59.815875+00:00",
+        "pid": 31920,
+        "scope": "synthetic_qa/NATIVE-P2-FT-S7",
+        "status": "SETTLED",
+        "utc": "2026-10-12T16:15:43.259429+00:00"
+      },
+      {
+        "charged_s": 11.530031899999813,
+        "end_utc": "2026-10-12T16:17:11.682488+00:00",
+        "pid": 31920,
+        "scope": "synthetic_qa/PAIR-DIRECT-S7",
+        "status": "SETTLED",
+        "utc": "2026-10-12T16:17:00.137928+00:00"
+      },
+      {
+        "charged_s": 14.485492799999975,
+        "end_utc": "2026-10-12T16:17:26.489283+00:00",
+        "pid": 31920,
+        "scope": "synthetic_qa/PAIR-CORR-S7",
+        "status": "SETTLED",
+        "utc": "2026-10-12T16:17:11.988305+00:00"
+      },
+      {
+        "charged_s": 10.541011700000126,
+        "end_utc": "2026-10-12T16:17:37.361373+00:00",
+        "pid": 31920,
+        "scope": "synthetic_qa/PAIR-CORR-FROZEN-S7",
+        "status": "SETTLED",
+        "utc": "2026-10-12T16:17:26.802434+00:00"
+      },
+      {
+        "charged_s": 10.467055399999936,
+        "end_utc": "2026-10-12T16:17:57.231603+00:00",
+        "pid": 31920,
+        "scope": "real_P_zero_update_preflight/NATIVE-P2-FT-S7",
+        "status": "SETTLED",
+        "utc": "2026-10-12T16:17:46.751699+00:00"
+      },
+      {
+        "charged_s": 1.2220658000001094,
+        "end_utc": "2026-10-12T16:17:58.759375+00:00",
+        "pid": 31920,
+        "scope": "real_P_zero_update_preflight/PAIR-DIRECT-S7",
+        "status": "SETTLED",
+        "utc": "2026-10-12T16:17:57.527231+00:00"
+      },
+      {
+        "charged_s": 1.6928635999997823,
+        "end_utc": "2026-10-12T16:18:00.750161+00:00",
+        "pid": 31920,
+        "scope": "real_P_zero_update_preflight/PAIR-CORR-S7",
+        "status": "SETTLED",
+        "utc": "2026-10-12T16:17:59.045676+00:00"
+      },
+      {
+        "charged_s": 1.241572399999768,
+        "end_utc": "2026-10-12T16:18:02.300303+00:00",
+        "pid": 31920,
+        "scope": "real_P_zero_update_preflight/PAIR-CORR-FROZEN-S7",
+        "status": "SETTLED",
+        "utc": "2026-10-12T16:18:01.045593+00:00"
+      },
+      {
+        "charged_s": 49.39130290000003,
+        "end_utc": "2026-10-12T16:22:56.522133+00:00",
+        "pid": 33188,
+        "scope": "zero_update_native_recompute_profile",
+        "status": "SETTLED",
+        "utc": "2026-10-12T16:22:07.128787+00:00"
+      },
+      {
+        "charged_s": 12.743750499999805,
+        "end_utc": "2026-10-12T16:32:49.437404+00:00",
+        "pid": 39168,
+        "scope": "zero_update_native_sampler_profile",
+        "status": "SETTLED",
+        "utc": "2026-10-12T16:32:36.690277+00:00"
+      },
+      {
+        "charged_s": 8.92905249999967,
+        "end_utc": "2026-10-12T16:35:19.945337+00:00",
+        "pid": 39292,
+        "scope": "synthetic_qa/NATIVE-P2-FT-S7",
+        "status": "SETTLED",
+        "utc": "2026-10-12T16:35:11.012830+00:00"
+      },
+      {
+        "charged_s": 1.7195725999999922,
+        "end_utc": "2026-10-12T16:35:21.735329+00:00",
+        "pid": 39292,
+        "scope": "synthetic_qa/PAIR-DIRECT-S7",
+        "status": "SETTLED",
+        "utc": "2026-10-12T16:35:20.012270+00:00"
+      },
+      {
+        "charged_s": 2.2043617000003906,
+        "end_utc": "2026-10-12T16:35:24.014545+00:00",
+        "pid": 39292,
+        "scope": "synthetic_qa/PAIR-CORR-S7",
+        "status": "SETTLED",
+        "utc": "2026-10-12T16:35:21.806579+00:00"
+      },
+      {
+        "charged_s": 1.5216890000001513,
+        "end_utc": "2026-10-12T16:35:25.621235+00:00",
+        "pid": 39292,
+        "scope": "synthetic_qa/PAIR-CORR-FROZEN-S7",
+        "status": "SETTLED",
+        "utc": "2026-10-12T16:35:24.097637+00:00"
+      },
+      {
+        "charged_s": 1.316945200000191,
+        "end_utc": "2026-10-12T16:35:29.120168+00:00",
+        "pid": 39292,
+        "scope": "real_P_zero_update_preflight/NATIVE-P2-FT-S7",
+        "status": "SETTLED",
+        "utc": "2026-10-12T16:35:27.801425+00:00"
+      },
+      {
+        "charged_s": 0.24628789999997025,
+        "end_utc": "2026-10-12T16:35:29.468872+00:00",
+        "pid": 39292,
+        "scope": "real_P_zero_update_preflight/PAIR-DIRECT-S7",
+        "status": "SETTLED",
+        "utc": "2026-10-12T16:35:29.220258+00:00"
+      },
+      {
+        "charged_s": 0.3027523000000656,
+        "end_utc": "2026-10-12T16:35:29.832674+00:00",
+        "pid": 39292,
+        "scope": "real_P_zero_update_preflight/PAIR-CORR-S7",
+        "status": "SETTLED",
+        "utc": "2026-10-12T16:35:29.527672+00:00"
+      },
+      {
+        "charged_s": 0.20342310000023645,
+        "end_utc": "2026-10-12T16:35:30.123830+00:00",
+        "pid": 39292,
+        "scope": "real_P_zero_update_preflight/PAIR-CORR-FROZEN-S7",
+        "status": "SETTLED",
+        "utc": "2026-10-12T16:35:29.918023+00:00"
+      },
+      {
+        "charged_s": 874.4652102999999,
+        "end_utc": "2026-10-12T16:52:06.785676+00:00",
+        "pid": 39292,
+        "scope": "scientific_training/NATIVE-P2-FT-S7",
+        "status": "SETTLED",
+        "utc": "2026-10-12T16:37:32.317548+00:00"
+      },
+      {
+        "charged_s": 871.9022936000001,
+        "end_utc": "2026-10-12T17:06:43.636400+00:00",
+        "pid": 39292,
+        "scope": "scientific_training/NATIVE-P2-FT-S7",
+        "status": "SETTLED",
+        "utc": "2026-10-12T16:52:11.731765+00:00"
+      },
+      {
+        "charged_s": 872.2300149000002,
+        "end_utc": "2026-10-12T17:21:19.782577+00:00",
+        "pid": 39292,
+        "scope": "scientific_training/NATIVE-P2-FT-S7",
+        "status": "SETTLED",
+        "utc": "2026-10-12T17:06:47.549515+00:00"
+      },
+      {
+        "charged_s": 871.4611769000003,
+        "end_utc": "2026-10-12T17:35:56.136456+00:00",
+        "pid": 39292,
+        "scope": "scientific_training/NATIVE-P2-FT-S7",
+        "status": "SETTLED",
+        "utc": "2026-10-12T17:21:24.671042+00:00"
+      },
+      {
+        "charged_s": 872.0499302999997,
+        "end_utc": "2026-10-12T17:50:31.170281+00:00",
+        "pid": 39292,
+        "scope": "scientific_training/NATIVE-P2-FT-S7",
+        "status": "SETTLED",
+        "utc": "2026-10-12T17:35:59.117744+00:00"
+      },
+      {
+        "charged_s": 28.686891499999547,
+        "end_utc": "2026-10-12T17:53:27.945266+00:00",
+        "pid": 26356,
+        "scope": "real_P_prefetch_diagnostic/NATIVE-P2-FT-S7",
+        "status": "SETTLED",
+        "utc": "2026-10-12T17:52:59.260319+00:00"
+      },
+      {
+        "charged_s": 9.39671559999988,
+        "end_utc": "2026-10-12T17:53:37.435454+00:00",
+        "pid": 26356,
+        "scope": "real_P_prefetch_diagnostic/PAIR-DIRECT-S7",
+        "status": "SETTLED",
+        "utc": "2026-10-12T17:53:28.035537+00:00"
+      },
+      {
+        "charged_s": 10.85750420000113,
+        "end_utc": "2026-10-12T17:53:48.403041+00:00",
+        "pid": 26356,
+        "scope": "real_P_prefetch_diagnostic/PAIR-CORR-S7",
+        "status": "SETTLED",
+        "utc": "2026-10-12T17:53:37.542889+00:00"
+      },
+      {
+        "charged_s": 8.850196800000049,
+        "end_utc": "2026-10-12T17:53:57.345522+00:00",
+        "pid": 26356,
+        "scope": "real_P_prefetch_diagnostic/PAIR-CORR-FROZEN-S7",
+        "status": "SETTLED",
+        "utc": "2026-10-12T17:53:48.491372+00:00"
+      },
+      {
+        "charged_s": 871.2096701999999,
+        "end_utc": "2026-10-12T18:08:52.030925+00:00",
+        "pid": 42888,
+        "scope": "scientific_training/NATIVE-P2-FT-S7",
+        "status": "SETTLED",
+        "utc": "2026-10-12T17:54:20.816699+00:00"
+      },
+      {
+        "charged_s": 870.7858228000005,
+        "end_utc": "2026-10-12T18:23:26.455563+00:00",
+        "pid": 42888,
+        "scope": "scientific_training/NATIVE-P2-FT-S7",
+        "status": "SETTLED",
+        "utc": "2026-10-12T18:08:55.664371+00:00"
+      },
+      {
+        "charged_s": 872.6418061999993,
+        "end_utc": "2026-10-12T18:38:02.495624+00:00",
+        "pid": 42888,
+        "scope": "scientific_training/NATIVE-P2-FT-S7",
+        "status": "SETTLED",
+        "utc": "2026-10-12T18:23:29.848795+00:00"
+      },
+      {
+        "charged_s": 870.955574399999,
+        "end_utc": "2026-10-12T18:52:37.070819+00:00",
+        "pid": 42888,
+        "scope": "scientific_training/NATIVE-P2-FT-S7",
+        "status": "SETTLED",
+        "utc": "2026-10-12T18:38:06.110540+00:00"
+      },
+      {
+        "charged_s": 871.5493994000008,
+        "end_utc": "2026-10-12T19:07:12.061802+00:00",
+        "pid": 42888,
+        "scope": "scientific_training/NATIVE-P2-FT-S7",
+        "status": "SETTLED",
+        "utc": "2026-10-12T18:52:40.508513+00:00"
+      },
+      {
+        "charged_s": 875.4818879000013,
+        "end_utc": "2026-10-12T19:22:03.005265+00:00",
+        "pid": 42888,
+        "scope": "scientific_training/NATIVE-P2-FT-S7",
+        "status": "SETTLED",
+        "utc": "2026-10-12T19:07:27.505671+00:00"
+      },
+      {
+        "charged_s": 878.6533013999997,
+        "end_utc": "2026-10-12T19:36:53.574422+00:00",
+        "pid": 42888,
+        "scope": "scientific_training/NATIVE-P2-FT-S7",
+        "status": "SETTLED",
+        "utc": "2026-10-12T19:22:14.908494+00:00"
+      },
+      {
+        "charged_s": 871.7795011999988,
+        "end_utc": "2026-10-12T19:51:41.225707+00:00",
+        "pid": 42888,
+        "scope": "scientific_training/NATIVE-P2-FT-S7",
+        "status": "SETTLED",
+        "utc": "2026-10-12T19:37:09.429967+00:00"
+      },
+      {
+        "charged_s": 871.3190645999985,
+        "end_utc": "2026-10-12T20:07:27.874250+00:00",
+        "pid": 24076,
+        "scope": "scientific_training/PAIR-DIRECT-S7",
+        "status": "SETTLED",
+        "utc": "2026-10-12T19:52:56.541719+00:00"
+      },
+      {
+        "charged_s": 872.0668043999976,
+        "end_utc": "2026-10-12T20:22:11.393897+00:00",
+        "pid": 24076,
+        "scope": "scientific_training/PAIR-DIRECT-S7",
+        "status": "SETTLED",
+        "utc": "2026-10-12T20:07:39.306121+00:00"
+      },
+      {
+        "charged_s": 872.1166468999982,
+        "end_utc": "2026-10-12T20:36:54.356432+00:00",
+        "pid": 24076,
+        "scope": "scientific_training/PAIR-DIRECT-S7",
+        "status": "SETTLED",
+        "utc": "2026-10-12T20:22:22.230941+00:00"
+      },
+      {
+        "charged_s": 871.2524338999974,
+        "end_utc": "2026-10-12T20:51:38.201820+00:00",
+        "pid": 24076,
+        "scope": "scientific_training/PAIR-DIRECT-S7",
+        "status": "SETTLED",
+        "utc": "2026-10-12T20:37:06.936310+00:00"
+      },
+      {
+        "charged_s": 870.9098900999998,
+        "end_utc": "2026-10-12T21:06:21.392158+00:00",
+        "pid": 24076,
+        "scope": "scientific_training/PAIR-DIRECT-S7",
+        "status": "SETTLED",
+        "utc": "2026-10-12T20:51:50.464205+00:00"
+      },
+      {
+        "charged_s": 900,
+        "pid": 24076,
+        "scope": "scientific_training/PAIR-DIRECT-S7",
+        "status": "RESERVED",
+        "utc": "2026-10-12T21:06:37.766352+00:00"
+      }
+    ]
+  },
+  "accounting_snapshot": {
+    "pending_upper": 0,
+    "physical_upper": 5616,
+    "recovery_upper": 0,
+    "scientific": 5196,
+    "technical": 420
+  },
+  "execution_order": {
+    "config_hash": "cdc82808ff454c7f361c57cd647ec35d2eef1c556dd8187652b799218bb8d67f",
+    "early_h_evaluation_allowed": false,
+    "evidence_sha256": "d9943d593bc7d253e48e38e4a7efb40fdf69a24c044a4f2b41069851445bb10f",
+    "fits": [
+      "PAIR-DIRECT-S7",
+      "PAIR-CORR-S7",
+      "PAIR-CORR-FROZEN-S7",
+      "NATIVE-P2-FT-S7"
+    ],
+    "native_resume_required": true,
+    "reason": "Recent native throughput projects beyond remaining scope budget before the other mandatory representation learners start. Prioritize the three pair endpoints, then resume native; preserve all four 12000-update endpoints and no H evaluation until all four are frozen.",
+    "recipe_change": false,
+    "schema": "v18_execution_order_only_v1",
+    "scientific_source_hash": "1e47108478cac9dc084a73ba99bfae99369bc854e2f900f4779ccb457502514a",
+    "scientific_updates_per_fit": 12000,
+    "seed": 7,
+    "utc": "2026-10-12T19:44:13.248189+00:00"
+  },
+  "snapshot_is_not_atomic": true,
+  "V18_files_or_processes_modified": false
+}

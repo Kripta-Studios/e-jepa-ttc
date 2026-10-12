@@ -1,0 +1,10 @@
+{
+  "queries": 64,
+  "iterations": 2,
+  "CPU_threads": 1,
+  "GPU_used": false,
+  "optimizer_updates": 0,
+  "original_source_sha256": "8ab7ad7ae0f5c7503dc499aaeb989bbe338a1544daa6e1c57fa4d8f0348d916c",
+  "wrapper_sha256": "27ab188db4e02b243d0d07fafc0c38bc7aa1f8810cf8aa591528be135626c4e8",
+  "scope": "Existing native Garl full + exact event fallback with previously validated optimized preprocessing. Complete raw route timed separately from resident forward. No new Garl accuracy campaign. Sequential after PHASE route; concurrent V18 load."
+}

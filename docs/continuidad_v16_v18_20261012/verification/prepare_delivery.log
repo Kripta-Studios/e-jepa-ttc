@@ -1,0 +1,35 @@
+{
+  "candidate": {
+    "status": "PASS",
+    "utc": "2026-10-12T20:18:36.460656+00:00",
+    "zip_sha256": "60b5a620848659633b875772430cddd7d7532b0fe180ec59904d04b81a9d3ca1",
+    "sample_tokens_exact": 6762,
+    "unique_observations": 5805,
+    "aliases": 957,
+    "submission_values_equal_frozen_csv": true,
+    "freeze_sha256": "85fad0dfb8bac0fa5a09e6f4090818ea2b534908ef3d018e8f88f0805e825b1a",
+    "verified_bound_files": 46,
+    "mismatches": [],
+    "official_submission": false,
+    "official_score": null,
+    "updates": 0
+  },
+  "geometry": {
+    "status": "INDEPENDENT_ANNOTATIONS_PENDING",
+    "panels": 12,
+    "rows": 72,
+    "coordinate_complete_rows": 0,
+    "independent_reprojection_error_px": null,
+    "promoted_registration": false,
+    "scene_assignment_fixed_before_annotations": {
+      "FCWD1": "development",
+      "FCWD2": "development",
+      "FCWD3": "check"
+    },
+    "views_contain_TTC_or_model_error": false,
+    "second_annotation_required": true,
+    "scope": "Prepared existing panels only; no invented correspondence; no rerun of completed 20/40/80ms experiments"
+  },
+  "diagnostic_rows": 135,
+  "V18_processes": 2
+}

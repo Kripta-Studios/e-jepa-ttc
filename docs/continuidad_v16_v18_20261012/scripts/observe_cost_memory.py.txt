@@ -1,0 +1,35 @@
+"""Read OS memory counters of our known CPU profiler, without controlling it."""
+import argparse
+import time
+from datetime import datetime, timezone
+
+import psutil
+
+from prepare_delivery import OUT, write
+
+
+def main():
+    parser=argparse.ArgumentParser()
+    parser.add_argument('--match',required=True)
+    parser.add_argument('--output',required=True)
+    args=parser.parse_args()
+    observed={}; started=datetime.now(timezone.utc).isoformat()
+    while True:
+        live=[]
+        for process in psutil.process_iter(['pid','ppid','name','create_time']):
+            try:
+                if 'python' not in (process.info['name'] or '').lower(): continue
+                command=process.cmdline()
+                if not any(arg.replace('\\','/').endswith('/'+args.match) for arg in command): continue
+                if process.pid==psutil.Process().pid: continue
+                memory=process.memory_info(); key=str(process.pid)+':'+str(process.create_time())
+                prior=observed.get(key,{})
+                observed[key]={**process.info,'command':command,'max_observed_rss_bytes':max(memory.rss,prior.get('max_observed_rss_bytes',0)),'os_lifetime_peak_working_set_bytes':max(getattr(memory,'peak_wset',0),prior.get('os_lifetime_peak_working_set_bytes',0)),'last_observed_utc':datetime.now(timezone.utc).isoformat()}
+                live.append(process.pid)
+            except (psutil.AccessDenied,psutil.NoSuchProcess): pass
+        write(OUT/args.output,{'status':'OBSERVING' if live else 'COMPLETE','observation_started_utc':started,'observation_ended_utc':datetime.now(timezone.utc).isoformat(),'processes':list(observed.values()),'scope':'Read Windows lifetime peak working-set counters and current RSS every 5 seconds. Includes model startup. Polling may miss final transient; no claim of an instrumented exact allocator peak. Venv launcher and child separate; do not sum independent peaks.'})
+        if not live: break
+        time.sleep(5)
+
+
+if __name__=='__main__':main()

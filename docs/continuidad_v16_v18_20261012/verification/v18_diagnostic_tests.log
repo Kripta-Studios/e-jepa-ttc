@@ -1,0 +1,9 @@
+test_native_raw_not_misrepresented_and_changed_seal_rejected (__main__.SealedDiagnostics.test_native_raw_not_misrepresented_and_changed_seal_rejected) ... ok
+test_signed_caps_and_separate_group_sequence_units (__main__.SealedDiagnostics.test_signed_caps_and_separate_group_sequence_units) ... ok
+{'files': 1, 'diagnostic_rows': 9}
+{'files': 1, 'diagnostic_rows': 9}
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.578s
+
+OK

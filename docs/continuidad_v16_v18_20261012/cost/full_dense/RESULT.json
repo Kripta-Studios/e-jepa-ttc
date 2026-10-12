@@ -1,0 +1,107 @@
+{
+  "status": "EXACT_PARITY_PASS",
+  "measurements": 256,
+  "paired_calls": 128,
+  "summaries": [
+    {
+      "cohort": "DEV32",
+      "variant": "native",
+      "repeat": 0,
+      "n": 32,
+      "p50_ms": 5429.908050000449,
+      "p95_ms": 11517.940239999185,
+      "p99_ms": 14463.90054299831,
+      "mean_ms": 5211.732756250058,
+      "rgb_available": 32,
+      "encoder_hits": 0
+    },
+    {
+      "cohort": "DEV32",
+      "variant": "native",
+      "repeat": 1,
+      "n": 32,
+      "p50_ms": 5190.993900001558,
+      "p95_ms": 9964.868620000923,
+      "p99_ms": 12087.451638001476,
+      "mean_ms": 4769.178824999926,
+      "rgb_available": 32,
+      "encoder_hits": 0
+    },
+    {
+      "cohort": "DEV32",
+      "variant": "optimized",
+      "repeat": 0,
+      "n": 32,
+      "p50_ms": 4887.245099998836,
+      "p95_ms": 10782.063444998128,
+      "p99_ms": 13892.44880199953,
+      "mean_ms": 5003.807965625015,
+      "rgb_available": 32,
+      "encoder_hits": 512
+    },
+    {
+      "cohort": "DEV32",
+      "variant": "optimized",
+      "repeat": 1,
+      "n": 32,
+      "p50_ms": 4453.236499999548,
+      "p95_ms": 8357.916109998223,
+      "p99_ms": 10796.429233001876,
+      "mean_ms": 4266.058006250091,
+      "rgb_available": 32,
+      "encoder_hits": 512
+    },
+    {
+      "cohort": "FCWD",
+      "variant": "native",
+      "repeat": 0,
+      "n": 32,
+      "p50_ms": 2287.007299999459,
+      "p95_ms": 5814.73417500074,
+      "p99_ms": 6505.088229000722,
+      "mean_ms": 2593.4933875003026,
+      "rgb_available": 24,
+      "encoder_hits": 0
+    },
+    {
+      "cohort": "FCWD",
+      "variant": "native",
+      "repeat": 1,
+      "n": 32,
+      "p50_ms": 1999.984800000675,
+      "p95_ms": 5598.684069999217,
+      "p99_ms": 6506.042984999186,
+      "mean_ms": 2550.4132250001703,
+      "rgb_available": 24,
+      "encoder_hits": 0
+    },
+    {
+      "cohort": "FCWD",
+      "variant": "optimized",
+      "repeat": 0,
+      "n": 32,
+      "p50_ms": 2104.7669500003394,
+      "p95_ms": 5666.825565001635,
+      "p99_ms": 8148.131086000616,
+      "mean_ms": 2697.408268750223,
+      "rgb_available": 24,
+      "encoder_hits": 384
+    },
+    {
+      "cohort": "FCWD",
+      "variant": "optimized",
+      "repeat": 1,
+      "n": 32,
+      "p50_ms": 1874.6377500010567,
+      "p95_ms": 5092.852645000312,
+      "p99_ms": 6244.607851999719,
+      "mean_ms": 2271.7209312500017,
+      "rgb_available": 24,
+      "encoder_hits": 384
+    }
+  ],
+  "cuda_initialized": false,
+  "optimizer_updates": 0,
+  "candidate_changed": false,
+  "scope": "Paired complete resident-weight CPU routes, fresh FCWD registration, one thread, concurrent V18 GPU load. Event path unchanged. Chronological selected queries; raw RGB LRU reset before each query, repeat1 warm. Endpoint caches scoped to each complete query; no temporal state reused. Detector, startup and evidence assertions excluded. OS page cache not flushed; no cold-disk or streaming claim."
+}

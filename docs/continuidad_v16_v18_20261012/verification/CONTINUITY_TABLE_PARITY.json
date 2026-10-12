@@ -1,0 +1,24 @@
+{
+  "tolerance_absolute": 1e-09,
+  "relative": 0,
+  "checks": [
+    {
+      "table": "BANDS.csv",
+      "rows": 165,
+      "max_abs_numeric_difference": 8.526512829121202e-14,
+      "status": "PASS"
+    },
+    {
+      "table": "GAP_DECOMPOSITION.csv",
+      "rows": 16,
+      "max_abs_numeric_difference": 7.105427357601002e-15,
+      "status": "PASS"
+    },
+    {
+      "table": "SIGN_ERROR_SHARE.csv",
+      "rows": 8,
+      "max_abs_numeric_difference": 0.0,
+      "status": "PASS"
+    }
+  ]
+}

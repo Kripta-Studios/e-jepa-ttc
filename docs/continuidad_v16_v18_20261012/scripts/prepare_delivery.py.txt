@@ -1,0 +1,153 @@
+"""Read historical evidence and prepare immutable candidate/annotation handoffs."""
+from __future__ import annotations
+
+import csv
+import hashlib
+import json
+import shutil
+import subprocess
+import zipfile
+from datetime import datetime, timezone
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+import psutil
+
+OUT=Path(__file__).resolve().parents[1]
+WORKSPACE=OUT.parents[1]
+ROOT=WORKSPACE/'e-jepa-ttc-v16-multimodal-validation'
+RESEARCH=ROOT/'artifacts/multimodal_research_20261012'
+PREVIOUS=ROOT/'artifacts/multimodal_validation_20261012'
+V18=WORKSPACE/'e-jepa-ttc-v18-joint-measurement'
+
+
+def read(path): return json.loads(path.read_text(encoding='utf-8'))
+
+
+def sha(path):
+    with path.open('rb') as stream: return hashlib.file_digest(stream,'sha256').hexdigest()
+
+
+def write(path,value):
+    path.parent.mkdir(parents=True,exist_ok=True)
+    path.write_text(json.dumps(value,indent=2,allow_nan=False),encoding='utf-8')
+
+
+def copy_same(source,destination):
+    destination.parent.mkdir(parents=True,exist_ok=True)
+    if destination.exists():
+        if sha(source)!=sha(destination): raise ValueError('Existing delivery differs: '+str(destination))
+    else: shutil.copy2(source,destination)
+    assert sha(source)==sha(destination)
+
+
+def snapshot():
+    run=V18/'artifacts/joint_measurement_20261012'
+    processes=[]
+    for p in psutil.process_iter(['pid','ppid','name','create_time']):
+        try:
+            if 'python' not in (p.info['name'] or '').lower(): continue
+            cmd=p.cmdline()
+            if 'operational.joint_measurement.run' in cmd and Path(p.cwd()).resolve()==V18.resolve():
+                processes.append({**p.info,'command':cmd,'cwd':p.cwd(),'rss':p.memory_info().rss})
+        except (psutil.AccessDenied,psutil.NoSuchProcess): pass
+    states={}
+    for fit in read(V18/'configs/joint_measurement/primary.json')['fits']:
+        directory=run/'fits'/fit
+        states[fit]={}
+        for name in ('CHECKPOINT_RECEIPT.json','UPDATE_JOURNAL.json'):
+            path=directory/name
+            if path.exists(): states[fit][name]=read(path)
+    result={'observed_utc':datetime.now(timezone.utc).isoformat(),'live_processes':processes,'two_PIDs_may_be_launcher_and_child':'Inspect ppid; do not interpret a venv launcher plus worker as duplicate supervisors','fits':states,'runner_snapshot':read(run/'RUNNER_STATE.json'),'gpu_budget':read(run/'GPU_BUDGET.json'),'accounting_snapshot':read(run/'ACCOUNTING.json'),'execution_order':read(run/'PRIMARY_EXECUTION_ORDER.json'),'snapshot_is_not_atomic':True,'V18_files_or_processes_modified':False}
+    write(OUT/'V18_LIVE_STATE.json',result)
+    return result
+
+
+def candidate():
+    src=RESEARCH/'test12_phase_only'; dst=OUT/'submission'; dst.mkdir(exist_ok=True)
+    names=['PHASE_ONLY_S7_GarlTTC_submission.zip','MODEL_INPUT_FREEZE.json','PACKAGE_VERIFICATION.json','TEST_PREDICTIONS.csv']
+    for name in names: copy_same(src/name,dst/name)
+    expected='60b5a620848659633b875772430cddd7d7532b0fe180ec59904d04b81a9d3ca1'
+    assert sha(dst/names[0])==expected
+    with zipfile.ZipFile(dst/names[0]) as archive:
+        assert archive.namelist()==['submission.json'] and archive.testzip() is None
+        payload=json.loads(archive.read('submission.json'))
+    inputs=read(src/'INPUTS.json'); tokens={r['sample_token'] for r in inputs['queries']}
+    assert set(payload['results'])==tokens and len(tokens)==6762
+    frame=pd.read_csv(src/'TEST_PREDICTIONS.csv',float_precision='round_trip').set_index('sample_token')
+    assert frame.index.is_unique and set(frame.index)==tokens
+    for token,row in payload['results'].items():
+        assert np.isfinite(row['ttc']) and row['ttc']==frame.loc[token,'prediction']
+    freeze=read(src/'MODEL_INPUT_FREEZE.json')
+    assert sha(src/'INPUTS.json')==freeze['inputs_sha256']
+    mismatches=[]; verified=0
+    for path,expected_hash in freeze['source_sha256'].items():
+        p=ROOT/path
+        if sha(p)!=expected_hash: mismatches.append(str(p))
+        else: verified+=1
+    for path,expected_hash in freeze['parent_sha256'].items():
+        if sha(Path(path))!=expected_hash: mismatches.append(path)
+        else: verified+=1
+    for mode,expected_hash in freeze['readout_sha256'].items():
+        p=RESEARCH/f'fits/R_ANCHOR_PHASE_ONLY_{mode}_S7/checkpoint_last.pt'
+        if sha(p)!=expected_hash: mismatches.append(str(p))
+        else: verified+=1
+    receipt={'status':'PASS' if not mismatches else 'SOURCE_CHANGE_REQUIRES_REVIEW','utc':datetime.now(timezone.utc).isoformat(),'zip_sha256':sha(dst/names[0]),'sample_tokens_exact':len(tokens),'unique_observations':len(inputs['event_observations']),'aliases':len(tokens)-len(inputs['event_observations']),'submission_values_equal_frozen_csv':True,'freeze_sha256':sha(src/'MODEL_INPUT_FREEZE.json'),'verified_bound_files':verified,'mismatches':mismatches,'official_submission':False,'official_score':None,'updates':0}
+    write(dst/'INDEPENDENT_VERIFICATION.json',receipt)
+    pd.DataFrame([{'sample_token':r['sample_token'],'physical_canonical_token':inputs['physical_aliases'][r['sample_token']],'event_history_count':len(r['event_history']),'rgb_history_count':len(r['rgb_history'])} for r in inputs['queries']]).to_csv(dst/'TOKEN_MANIFEST.csv',index=False)
+    write(dst/'FILES_MANIFEST.json',{'files':[{'path':p.name,'bytes':p.stat().st_size,'sha256':sha(p)} for p in sorted(dst.iterdir()) if p.is_file() and p.name!='FILES_MANIFEST.json']})
+    return receipt
+
+
+def geometry():
+    src=PREVIOUS/'geometry'; dst=OUT/'geometry'; dst.mkdir(exist_ok=True)
+    rows=list(csv.DictReader((src/'CORRESPONDENCES_TO_ANNOTATE.csv').open(encoding='utf-8')))
+    assert len(rows)==72
+    for name in ('CORRESPONDENCES_TO_ANNOTATE.csv','ANNOTATION_INSTRUCTIONS.md','SELECTION_SEALED.json'):
+        copy_same(src/name,dst/name)
+    # No registration scores, acceptance flags or TTC outcomes are copied into the annotator packet.
+    panels=[]
+    for panel in sorted({r['panel'] for r in rows}):
+        copy_same(src/'panels'/panel,dst/'panels'/panel)
+        panels.append({'name':panel,'sha256':sha(dst/'panels'/panel)})
+    assert len(panels)==12
+    fields=list(rows[0])+['visibility','second_annotator','adjudication','scene_role']
+    for row in rows:
+        row.update(visibility='',second_annotator='',adjudication='',scene_role='check' if row['query_id'].startswith('FCWD3:') else 'development')
+    target=dst/'ANNOTATION_TEMPLATE.csv'
+    if not target.exists():
+        with target.open('w',newline='',encoding='utf-8') as stream:
+            writer=csv.DictWriter(stream,fieldnames=fields);writer.writeheader();writer.writerows(rows)
+    existing=list(csv.DictReader(target.open(encoding='utf-8')))
+    valid=sum(all(r.get(k,'').strip() for k in ('event_x','event_y','rgb_x_native','rgb_y_native','annotator')) for r in existing)
+    status={'status':'INDEPENDENT_ANNOTATIONS_PENDING' if not valid else 'ANNOTATIONS_REQUIRE_QA','panels':12,'rows':72,'coordinate_complete_rows':valid,'independent_reprojection_error_px':None,'promoted_registration':False,'scene_assignment_fixed_before_annotations':{'FCWD1':'development','FCWD2':'development','FCWD3':'check'},'views_contain_TTC_or_model_error':False,'second_annotation_required':True,'panel_hashes':panels,'scope':'Prepared existing panels only; no invented correspondence; no rerun of completed 20/40/80ms experiments'}
+    write(OUT/'GEOMETRY_STATUS.json',status)
+    return status
+
+
+def diagnostics():
+    records=[]
+    for cohort,route in [('FCWD','native_gpu'),('DEV32','cpu')]:
+        path=RESEARCH/f'studies/PHASE_ONLY/S7/external_evaluation_v2/{route}/{cohort}/SCORED_PREDICTIONS.csv'
+        frame=pd.read_csv(path,float_precision='round_trip'); frame=frame[frame.truth_ttc_seconds.notna()]
+        t=frame.truth_ttc_seconds.to_numpy()
+        for name in ('R_ANCHOR_EVENT','R_ANCHOR_ZERO','R_CTX_SAME_ROUTE','F_TRUE_SAME_ROUTE','E_CTX_SAME_ROUTE'):
+            pred=frame[name].to_numpy()
+            for scope in ('all','rgb_available','fallback'):
+                support=np.ones(len(t),bool) if scope=='all' else frame.rgb_available.to_numpy()==(scope=='rgb_available')
+                for band,lo,hi in [('0.1-1',.1,1),('1-2',1,2),('2-3',2,3),('3-6',3,6),('6-10',6,10),('gt10',10,float('inf')),('negative',-float('inf'),0)]:
+                    mask=support&(t>lo)&(t<=hi); n=int(mask.sum()); valid=mask&np.isfinite(pred)&((pred<0)|(pred>.1))
+                    if not n: continue
+                    e=pred[valid]-t[valid]
+                    records.append({'cohort':cohort,'model':name,'scope':scope,'band':band,'n':n,'valid_n':int(valid.sum()),'missing_or_invalid_n':n-int(valid.sum()),'MAE_s':float(abs(e).mean()) if len(e) else None,'bias_s':float(e.mean()) if len(e) else None,'under_fraction':float((e<0).mean()) if len(e) else None,'wrong_sign':int((np.sign(pred[valid])!=np.sign(t[valid])).sum()),'cap60_count':int((abs(pred[valid])>=59.999).sum()),'role':'EXPOSED_TRANSFER_DESCRIPTIVE_NOT_SELECTION','source_sha256':sha(path)})
+    pd.DataFrame(records).to_csv(OUT/'DIAGNOSTICO_SIGNO_RANGO.csv',index=False)
+    return len(records)
+
+
+def main():
+    state=snapshot(); verification=candidate(); geo=geometry(); n=diagnostics()
+    print(json.dumps({'candidate':verification,'geometry':{k:v for k,v in geo.items() if k!='panel_hashes'},'diagnostic_rows':n,'V18_processes':len(state['live_processes'])},indent=2))
+
+
+if __name__=='__main__':main()

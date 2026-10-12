@@ -1,0 +1,66 @@
+{
+  "status": "INDEPENDENT_ANNOTATIONS_PENDING",
+  "panels": 12,
+  "rows": 72,
+  "coordinate_complete_rows": 0,
+  "independent_reprojection_error_px": null,
+  "promoted_registration": false,
+  "scene_assignment_fixed_before_annotations": {
+    "FCWD1": "development",
+    "FCWD2": "development",
+    "FCWD3": "check"
+  },
+  "views_contain_TTC_or_model_error": false,
+  "second_annotation_required": true,
+  "panel_hashes": [
+    {
+      "name": "FCWD1_0007.png",
+      "sha256": "cf6e370a441bef793ef184e49119fce0e1b0c7a05e1a5112271815c419825b57"
+    },
+    {
+      "name": "FCWD1_0069.png",
+      "sha256": "b05254c856bfc3e8f81e5739b0a6dea229249a92dc03a2adf96de2c0972165c4"
+    },
+    {
+      "name": "FCWD1_0125.png",
+      "sha256": "b876c808024e53f49252bad4f7381bf16e01b52ddc3d680907057a364a58ce2b"
+    },
+    {
+      "name": "FCWD1_0201.png",
+      "sha256": "2476b2f3ed9ab27c495af2e3e64317eef7bf6b8e1987257294b3818ee49d244f"
+    },
+    {
+      "name": "FCWD2_0073.png",
+      "sha256": "67a909f54986818438a4366063cfed8867e4fc98c06e7bb239853bf695380f1b"
+    },
+    {
+      "name": "FCWD2_0074.png",
+      "sha256": "db36384fc46de80c147f5449247c82f5b41cb232b25ab03e2d0639583369ea37"
+    },
+    {
+      "name": "FCWD2_0150.png",
+      "sha256": "7317d78c2879ceb709727502b631827f086db1deaf398d62aa358ca868fb4d49"
+    },
+    {
+      "name": "FCWD2_0166.png",
+      "sha256": "c2fb126362942ec7d4e823ec18026bc3a3ad4ce8d6d4f26ca70738d35e954162"
+    },
+    {
+      "name": "FCWD3_0023.png",
+      "sha256": "f1b451eb4cc4bd04d575886a2cd5cb262e1fb3086cbedf3b712584cc3668977f"
+    },
+    {
+      "name": "FCWD3_0118.png",
+      "sha256": "12d187f72d30eebe7a9ab5cbe8e17c720cf493e08fd7f0f97ad189d3c627fc5b"
+    },
+    {
+      "name": "FCWD3_0191.png",
+      "sha256": "5a5372386b46c2067b07096e732bf44564c61c5731d87672164858f268eaf4ac"
+    },
+    {
+      "name": "FCWD3_0194.png",
+      "sha256": "eed9793409cce678efa4afc48bbe8528faaafb4a6254955b5ae098d480b00de2"
+    }
+  ],
+  "scope": "Prepared existing panels only; no invented correspondence; no rerun of completed 20/40/80ms experiments"
+}

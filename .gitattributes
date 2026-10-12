@@ -28,3 +28,6 @@ operational/multimodal_research/** -text
 
 # Published evidence preserves SHA-256 hashes of the original artifact bytes.
 docs/multimodal_results_20261012/** -text
+
+# Preserve the executed continuity archive evidence byte for byte.
+docs/continuidad_v16_v18_20261012/** -text whitespace=cr-at-eol,-blank-at-eof

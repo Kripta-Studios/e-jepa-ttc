@@ -1,0 +1,11 @@
+test_dense_maps_preserve_full_batch_heads_and_input_foreground (__main__.CacheContracts.test_dense_maps_preserve_full_batch_heads_and_input_foreground) ... ok
+test_dense_output_contract_and_missing_clock (__main__.CacheContracts.test_dense_output_contract_and_missing_clock) ... ok
+test_frame_identity_and_content_both_required (__main__.CacheContracts.test_frame_identity_and_content_both_required) ... ok
+test_memory_bound_fails_closed (__main__.CacheContracts.test_memory_bound_fails_closed) ... ok
+test_raw_cache_copy_eviction_reset_and_file_identity (__main__.CacheContracts.test_raw_cache_copy_eviction_reset_and_file_identity) ... ok
+test_train_mode_and_autograd_rejected (__main__.CacheContracts.test_train_mode_and_autograd_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.070s
+
+OK

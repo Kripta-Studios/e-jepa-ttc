@@ -1,0 +1,38 @@
+{
+  "status": "COMPLETE",
+  "observation_started_utc": "2026-10-12T20:43:59.654583+00:00",
+  "observation_ended_utc": "2026-10-12T21:09:48.919180+00:00",
+  "processes": [
+    {
+      "pid": 22612,
+      "create_time": 1791837825.448862,
+      "ppid": 28460,
+      "name": "python.exe",
+      "command": [
+        "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\.venv\\Scripts\\python.exe",
+        "-u",
+        "-B",
+        "output/continuidad_v16_v18_20261012/scripts/profile_garl_existing.py"
+      ],
+      "max_observed_rss_bytes": 4481024,
+      "os_lifetime_peak_working_set_bytes": 4481024,
+      "last_observed_utc": "2026-10-12T21:09:43.758252+00:00"
+    },
+    {
+      "pid": 41472,
+      "create_time": 1791837825.5225668,
+      "ppid": 22612,
+      "name": "python.exe",
+      "command": [
+        "C:\\Users\\\u00c1lvaro Schwiedop\\AppData\\Roaming\\uv\\python\\cpython-3.11-windows-x86_64-none\\python.exe",
+        "-u",
+        "-B",
+        "output/continuidad_v16_v18_20261012/scripts/profile_garl_existing.py"
+      ],
+      "max_observed_rss_bytes": 2536579072,
+      "os_lifetime_peak_working_set_bytes": 2637398016,
+      "last_observed_utc": "2026-10-12T21:09:43.773250+00:00"
+    }
+  ],
+  "scope": "Read Windows lifetime peak working-set counters and current RSS every 5 seconds. Includes model startup. Polling may miss final transient; no claim of an instrumented exact allocator peak. Venv launcher and child separate; do not sum independent peaks."
+}

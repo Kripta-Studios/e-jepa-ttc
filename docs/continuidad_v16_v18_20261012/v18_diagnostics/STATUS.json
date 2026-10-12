@@ -1,0 +1,10 @@
+{
+  "status": "PENDING_COMPLETE_V18_PREDICTIONS",
+  "files": [],
+  "rows": 0,
+  "V18_modified": false,
+  "inference_executed": false,
+  "diagnostic_requested_after_fits_started": true,
+  "native_raw_phase_limitation": "Current V18 evaluate.py reconstructs phase from final native TTC. It is not an observed predecoder native phase. No value fabricated.",
+  "selection_or_recipe_changes": false
+}

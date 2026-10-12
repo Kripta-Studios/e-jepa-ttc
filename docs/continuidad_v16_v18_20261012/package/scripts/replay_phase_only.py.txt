@@ -1,0 +1,33 @@
+import sys,json,platform,time
+from pathlib import Path
+import numpy as np,pandas as pd,torch
+import argparse
+p=argparse.ArgumentParser();p.add_argument('--root',type=Path,required=True);p.add_argument('--output',type=Path,required=True);args=p.parse_args();r=args.root.resolve();sys.path[:0]=[str(r/'src'),str(r)]
+if args.output.resolve().is_relative_to(r): raise ValueError('Use an output directory outside the evidence root')
+from operational.multimodal_research.phase_only_anchor import PhaseOnlyAnchor
+from operational.rgb_port.evaluate import score_signed_ttc
+root=r/'artifacts/multimodal_research_20261012';out=args.output.resolve();out.mkdir(parents=True,exist_ok=True)
+torch.set_num_threads(1);torch.use_deterministic_algorithms(True)
+records=[];preds={}
+with np.load(root/'cache/V/states.npz',allow_pickle=False) as z:
+ x=torch.from_numpy(z['features']);width=torch.from_numpy(z['rgb_width_logits']);tokens=z['sample_token'];groups=z['group_id']
+ for seed in (7,13,23):
+  study='PHASE_ONLY' if seed==7 else 'PHASE_ONLY_REPLICATION';frame=pd.read_csv(root/f'studies/{study}/S{seed}/V_SCORED_PREDICTIONS.csv',float_precision='round_trip')
+  assert np.array_equal(tokens,frame.sample_token.to_numpy())
+  for mode in ('EVENT','ZERO'):
+   p=root/f'fits/R_ANCHOR_{study}_{mode}_S{seed}/checkpoint_last.pt'
+   ck=torch.load(p,map_location='cpu',weights_only=False)
+   m=PhaseOnlyAnchor(mode).eval().requires_grad_(False);m.load_state_dict(ck['model_state_dict'],strict=True)
+   batches=[];raw=[]
+   with torch.no_grad():
+    for b in range(0,len(x),128):
+     o=m(x[b:b+128],width[b:b+128]);batches.append(o['ttc'].numpy());raw.append(o['raw_location'].numpy())
+   pred=np.concatenate(batches);loc=np.concatenate(raw)
+   target=frame['target_ttc'].to_numpy();ref=frame[f'R_ANCHOR_{mode}'].to_numpy().astype('float32')
+   actual=score_signed_ttc(target,pred,groups)
+   metrics=json.loads((root/f'studies/{study}/S{seed}/V_RESULTS.json').read_text())['scores'][f'R_ANCHOR_{mode}']
+   records.append({'seed':seed,'mode':mode,'queries':len(pred),'parameters':sum(p.numel() for p in m.parameters()),'max_abs_ttc_difference':float(abs(pred-ref).max()),'bit_equal':bool(np.array_equal(pred,ref)),'score_recomputed':actual,'score_published':metrics,'capped':int((np.abs(pred)>=59.999).sum()),'wrong_sign':int((np.sign(pred)!=np.sign(target)).sum())})
+   preds[f'{mode}_{seed}']=pred;preds[f'{mode}_{seed}_raw']=loc
+np.savez_compressed(out/'PHASE_ONLY_REPLAY_V.npz',**preds)
+(out/'HEAD_REPLAY.json').write_text(json.dumps({'torch':torch.__version__,'python':platform.python_version(),'scope':'6 heads from frozen cached V inputs; no producer inference or fitting','records':records},indent=2))
+print([(v['seed'],v['mode'],v['max_abs_ttc_difference'],v['bit_equal'],v['capped'],v['wrong_sign']) for v in records])

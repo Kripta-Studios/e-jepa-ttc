@@ -1,5 +1,7 @@
 # E-JEPA-TTC
 
+> Continuación V16–V18 del 12 de octubre de 2026: [informe, evidencia y guía de envío manual](docs/continuidad_v16_v18_20261012/README.md). Candidato conservado, 17 pruebas pasadas, diagnóstico de rango/signo y coste CPU con paridad exacta. Evaluación oficial y anotación geométrica pendientes.
+
 > Actualización del 12 de octubre de 2026:
 > [informe detallado y resultados multimodales V16](docs/multimodal_results_20261012/README.md).
 > Comparación Garl visual/full FCWD completada; 32 fits, 80.000 updates y candidato

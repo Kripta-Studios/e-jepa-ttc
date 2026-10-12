@@ -1,0 +1,35 @@
+cohort scope band                 model   n  groups      MAE        MiD      bias  over_fraction  negative  capped  median_AE
+  FCWD   all    c        R_ANCHOR_EVENT 201       3 0.300083  93.304249  0.009124       0.412935         0       0   0.243707
+  FCWD   all    c     F_TRUE_SAME_ROUTE 201       3 0.314073 102.323162  0.181050       0.512438         0       0   0.211283
+  FCWD   all    c public_Garl_event_lhr 201       3 0.327243  95.056826  0.165923       0.537313         0       0   0.167955
+  FCWD   all    s        R_ANCHOR_EVENT 189       3 0.737361  52.486365 -0.621473       0.095238         0       0   0.685081
+  FCWD   all    s     F_TRUE_SAME_ROUTE 189       3 0.505803  31.682935 -0.323219       0.153439         0       0   0.389069
+  FCWD   all    s public_Garl_event_lhr 189       3 0.953610  36.698339  0.278203       0.402116         0       0   0.535776
+  FCWD   all    l        R_ANCHOR_EVENT 108       3 1.142452  21.738252 -1.066842       0.083333         0       0   0.987745
+  FCWD   all    l     F_TRUE_SAME_ROUTE 108       3 0.939449  16.445268 -0.757393       0.194444         0       0   0.784999
+  FCWD   all    l public_Garl_event_lhr 108       3 1.897139  34.211782 -1.591681       0.092593         1       0   1.502141
+  FCWD   all gt10        R_ANCHOR_EVENT  99       3 6.277301  45.476274 -6.061087       0.030303         5       0   4.410179
+  FCWD   all gt10     F_TRUE_SAME_ROUTE  99       3 5.993709  39.036391 -5.159512       0.040404         5       1   3.981261
+  FCWD   all gt10 public_Garl_event_lhr  99       3 8.387534  72.395795 -8.100636       0.030303         7       0   5.911676
+
+GAPS
+ cohort            comparator band   n  delta_MiD  pooled_contribution  positive_weighted_contribution  delta_MAE
+  FCWD     F_TRUE_SAME_ROUTE    c 201  -9.018913            -3.036518                       -4.509457  -0.013990
+  FCWD     F_TRUE_SAME_ROUTE    s 189  20.803430             6.586011                        6.241029   0.231558
+  FCWD     F_TRUE_SAME_ROUTE    l 108   5.292984             0.957525                        0.529298   0.203003
+  FCWD     F_TRUE_SAME_ROUTE gt10  99   6.439884             1.067920                        0.000000   0.283592
+  FCWD public_Garl_event_lhr    c 201  -1.752577            -0.590064                       -0.876288  -0.027160
+  FCWD public_Garl_event_lhr    s 189  15.788026             4.998219                        4.736408  -0.216249
+  FCWD public_Garl_event_lhr    l 108 -12.473530            -2.256518                       -1.247353  -0.754688
+  FCWD public_Garl_event_lhr gt10  99 -26.919521            -4.464041                       -0.000000  -2.110233
+
+SIGN
+ cohort            method   n  wrong_sign  absolute_error_share_wrong_sign  mid_error_share_wrong_sign  wrong_sign_MAE
+  FCWD    R_ANCHOR_EVENT 597           5                         0.178189                    0.019915       33.660486
+  FCWD F_TRUE_SAME_ROUTE 597           5                         0.197176                    0.021973       33.660486
+  FCWD  R_CTX_SAME_ROUTE 472           0                         0.000000                    0.000000             NaN
+  FCWD  E_CTX_SAME_ROUTE 597          10                         0.306682                    0.029752       36.016394
+ DEV32    R_ANCHOR_EVENT 946          13                         0.200870                    0.087950       17.782296
+ DEV32 F_TRUE_SAME_ROUTE 946          12                         0.258682                    0.082307       27.906843
+ DEV32  R_CTX_SAME_ROUTE 946          13                         0.165469                    0.090264       15.145969
+ DEV32  E_CTX_SAME_ROUTE 946          21                         0.185474                    0.087074       15.502268

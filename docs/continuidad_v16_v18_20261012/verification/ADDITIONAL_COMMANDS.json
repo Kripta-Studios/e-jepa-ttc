@@ -1,0 +1,73 @@
+{
+  "cwd": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff",
+  "python": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\.venv\\Scripts\\python.exe",
+  "bytecode_writes_disabled": true,
+  "cost_environment": {
+    "OMP_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1"
+  },
+  "commands": [
+    {
+      "script": "prepare_delivery.py",
+      "args": [],
+      "result": "candidate, geometry, live-state and range diagnostics"
+    },
+    {
+      "script": "prepare_coordination.py",
+      "args": [],
+      "result": "10 references, descriptive table parity, passive handoff"
+    },
+    {
+      "script": "diagnose_v18_predictions.py",
+      "args": [],
+      "result": "no sealed predictions yet; no V18 inference"
+    },
+    {
+      "script": "profile_rgb_route.py",
+      "source": "cost/pilot/source",
+      "args": [
+        "--pilot"
+      ],
+      "result": "REJECTED_EXACT_PARITY_FAILURE; old endpoint implementation"
+    },
+    {
+      "script": "profile_rgb_route.py",
+      "source": "cost/pilot_dense/source",
+      "args": [
+        "--pilot",
+        "--mode",
+        "dense"
+      ],
+      "result": "EXACT_PARITY_PASS"
+    },
+    {
+      "script": "profile_rgb_route.py",
+      "source": "cost/full_dense/source",
+      "args": [
+        "--mode",
+        "dense"
+      ],
+      "result": "EXACT_PARITY_PASS"
+    },
+    {
+      "script": "profile_garl_existing.py",
+      "args": [],
+      "result": "128 complete calls and 128 resident parity checks"
+    },
+    {
+      "script": "test_rgb_exact_cache.py",
+      "args": [
+        "-v"
+      ],
+      "result": "6 tests PASS"
+    },
+    {
+      "script": "test_v18_diagnostics.py",
+      "args": [
+        "-v"
+      ],
+      "result": "2 tests PASS on synthetic fixtures"
+    }
+  ]
+}

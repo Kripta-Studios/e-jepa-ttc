@@ -1,0 +1,61 @@
+{
+  "queries": 64,
+  "iterations": 2,
+  "model_load_ms": 14441.461200000049,
+  "scope": "same sensor queries; full with exact event fallback; FP32 CPU 1 thread",
+  "input_optimization": "existing native_feature vectorized time-volume and ROI sampling, no A5 voxels",
+  "GPU_graphs": "not_applicable_CPU; no GPU allocated by this continuation; concurrent V18 owner",
+  "binding": {
+    "checkpoint": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v12-efficient-context\\artifacts\\evttc_rgb_transfer_20261008\\public_garl\\paper_ours_full.pth",
+    "checkpoint_sha256": "e96a613a4fb877a1969d57ab562cadba89961fb202f5f2f2f0658f333a0d443e",
+    "checkpoint_bytes": 973290993,
+    "config": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v12-efficient-context\\artifacts\\evttc_rgb_transfer_20261008\\public_garl\\configs\\ablation\\ours_full.yaml",
+    "config_sha256": "c7dedc9b93d32a416b8e92a6b474cc5a17ffd96b2cdaae3a4554e3cc0ee28454",
+    "hf_revision": "b676fcdaf26c04bcf896cdb2b208c9c424e8462a",
+    "native_code_root": "E:\\Garl-TTC",
+    "native_source_sha256": {
+      "garl_ttc/models/__init__.py": "039bdb68efbbb07647669670110825e0d3a96ffb4232c62fff59f6d590d834ea",
+      "garl_ttc/models/focal_loss.py": "7e5e53b9efff75b0254ebd13a7361a55be63ec8bd1385770b176f439dd6369c9",
+      "garl_ttc/models/resnet.py": "6fbb6bb08d57f6a1d70fa4df31b362476a2b7af6f5c3d82a09a111da17f2f26b",
+      "garl_ttc/models/ttc_network.py": "7927946d4b9af608f1ed2e57c6cc8b498d3c4be8b9c84305647199ef812d9c14"
+    },
+    "removed_initializer_paths": {
+      "pretrained_ckpt_rgb": "checkpoints/paper_visual_only_lhr.pth",
+      "pretrained_ckpt_event": "checkpoints/paper_event_only_lhr.pth"
+    },
+    "strict_state_load": true,
+    "input": {
+      "shape": [
+        46,
+        128,
+        128
+      ],
+      "channel_order": [
+        "RGB0[3]",
+        "RGB1[3]",
+        "EVENT0[20]",
+        "EVENT1[20]"
+      ],
+      "rgb_mean": [
+        0.485,
+        0.456,
+        0.406
+      ],
+      "rgb_std": [
+        0.229,
+        0.224,
+        0.225
+      ],
+      "event_normalization": "none"
+    },
+    "native_delta_t_s": 0.1,
+    "native_rgb_sync": "front",
+    "optimizer_updates": 0,
+    "targets_read": false,
+    "module_sha256": "814c4a62b15d0c50ff72ef6aae46d5665778b52c34620a1fcfb817509565d2f7"
+  },
+  "event_checkpoint_sha256": "fcaf9be47e2dafc6f73c6c3ebd102595ae06119dcae78aea698a42627b2b4fef",
+  "all_bitwise_parity": true,
+  "optimizer_updates": 0,
+  "original_driver_metadata_preserved": "GARL_CPU_COST_BINDING_ORIGINAL_DRIVER.json (contains historical V15-owner wording)"
+}

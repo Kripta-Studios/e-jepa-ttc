@@ -1,0 +1,12 @@
+import sys,json,time,hashlib
+from pathlib import Path
+import argparse
+p=argparse.ArgumentParser();p.add_argument('--root',type=Path,required=True);p.add_argument('--output',type=Path,required=True);args=p.parse_args();r=args.root.resolve();sys.path[:0]=[str(r/'src'),str(r)]
+if args.output.resolve().is_relative_to(r): raise ValueError('Use an output directory outside the evidence root')
+from operational.multimodal_research import research_metrics_replay as m
+out=args.output.resolve();out.mkdir(parents=True,exist_ok=True)
+def write_safe(p,v):
+ v['review_scope']='Published computation re-run on extracted uploaded bundle; output redirected; no scientific inputs modified'
+ (out/Path(p).name).write_text(json.dumps(v,indent=2,allow_nan=False))
+m.write=write_safe
+t=time.monotonic();m.main();print('seconds',time.monotonic()-t)

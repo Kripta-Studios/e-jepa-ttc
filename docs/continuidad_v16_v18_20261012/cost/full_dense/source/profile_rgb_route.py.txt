@@ -1,0 +1,186 @@
+"""New RGB-only operational changes, complete CPU routes, strict paired parity."""
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import os
+import sys
+import time
+from contextlib import ExitStack
+from pathlib import Path
+from unittest.mock import patch
+
+OUT = Path(__file__).resolve().parents[1]
+WORKSPACE = OUT.parents[1]
+ROOT = WORKSPACE / 'e-jepa-ttc-v16-multimodal-validation'
+sys.path[:0] = [str(ROOT), str(ROOT / 'src'), 'E:/EJEPA_results/fcwd_rgb_calibration_20261012/deps']
+
+import cv2
+import h5py
+import numpy as np
+import pandas as pd
+import torch
+
+from rgb_exact_cache import DenseMapCache, EndpointCache, FrameReadCache
+from e_jepa_ttc.simplex_t.phase import phase_to_ttc
+from operational.fcwd_rgb_registration.prepare import register_query
+from operational.fcwd_rgb_registration.transfer import prepare_event, rgb_observations
+from operational.multimodal_validation import ancestry
+from operational.multimodal_validation.common import MANIFEST, RUN, V12, REG, admission, read, sha, registrations
+from operational.rgb_port import transfer as engine
+from operational.rgb_port_external_fix.runtime import observation_contract
+from operational.multimodal_research.model import frozen_state
+from operational.multimodal_research.phase_only_anchor import PhaseOnlyAnchor
+
+
+def write(path, value):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_suffix('.pending')
+    tmp.write_text(json.dumps(value, indent=2, allow_nan=False), encoding='utf-8')
+    os.replace(tmp, path)
+
+
+def route(row, cohort, optimized, models, head, normalizers, regs, calibration, frame_cache, bindings, mode):
+    traces = {}
+    marks = [time.perf_counter()]
+    if cohort == 'FCWD':
+        reg = register_query(row, calibration)
+    else:
+        reg = None
+    marks.append(time.perf_counter())
+    raw = (prepare_event if cohort == 'FCWD' else engine.prepare_event)(row)
+    sensor = torch.from_numpy(raw['own_events'])
+    marks.append(time.perf_counter())
+    eraw, experts = engine._expert_block(models, 'E', sensor, torch.full((4, 2), 0.1))
+    marks.append(time.perf_counter())
+    query = int(row['anchor_us'])
+    mean, scale = normalizers['E']
+    ef = ((eraw - mean) / scale)[None]
+    anchors = query - np.asarray(engine.EVENT_LAGS_US)
+    et = torch.from_numpy(engine._clock(anchors, np.full(len(anchors), query), query))[None]
+    ev = torch.ones((1, len(anchors)), dtype=torch.bool)
+    eb, _, eo = frozen_state(models['E_CTX_MATCHED'], ef, et, ev, experts[-1:])
+    marks.append(time.perf_counter())
+    with ExitStack() as readers:
+        if optimized:
+            readers.enter_context(patch.object(h5py.Dataset, '__getitem__', frame_cache.wrap(h5py.Dataset.__getitem__)))
+        observations, reason = rgb_observations(row, reg) if cohort == 'FCWD' else engine.raw_rgb_observations(row)
+    marks.append(time.perf_counter())
+    timeline, caches = [], {}
+    with ExitStack() as wrappers:
+        if optimized and observations and mode != 'read':
+            source = Path(row['raw_path']).resolve()
+            stat = source.stat()
+            identity = {'path': str(source), 'size': stat.st_size, 'mtime_ns': stat.st_mtime_ns, 'roi': observations[0][1]['square_xyxy'], 'registration': reg, 'dtype': 'float32', 'device': 'cpu', 'threads': 1, 'eval': True, 'code': bindings}
+            for name in ('R_A5', 'R_C2F'):
+                identity_model = {**identity, 'checkpoint': bindings[name]}
+                cache_type = DenseMapCache if mode == 'dense' else EndpointCache
+                cache = cache_type(models[name].encoder, hashlib.sha256(json.dumps(identity_model, sort_keys=True).encode()).hexdigest())
+                caches[name] = cache
+                wrappers.enter_context(patch.object(models[name].encoder, 'forward', cache.forward))
+        for i, (pixels, meta) in enumerate(observations):
+            for cache in caches.values():
+                cache.timestamps = meta['timestamps_us']
+            rr, re = engine._expert_block(models, 'R', torch.from_numpy(pixels)[None], torch.tensor([meta['delta_t_s']]))
+            timeline.append((meta['first_sensor_ts_us'], meta['anchor_us'], meta['available_us'], ((rr - normalizers['R'][0]) / normalizers['R'][1])[0], re[0]))
+            traces[f'rgb_input_{i}'] = pixels
+            traces[f'rgb_feature_{i}'] = rr
+            traces[f'rgb_experts_{i}'] = re
+    marks.append(time.perf_counter())
+    if timeline:
+        history = engine._select_rgb_history(timeline, query)
+        rf = torch.stack([v[3] for v in history])[None]
+        rt = torch.from_numpy(engine._clock(np.asarray([v[1] for v in history]), np.asarray([v[2] for v in history]), query))[None]
+        rv = torch.ones((1, len(history)), dtype=torch.bool)
+        rb, widths, ro = frozen_state(models['R_CTX'], rf, rt, rv, history[-1][4][None])
+        features = torch.cat([rb, eb], -1)
+        traces.update(rgb_block=rb, widths=widths, rgb_phase=ro['point_phase'])
+    marks.append(time.perf_counter())
+    final = head(features, widths) if timeline else eo
+    prediction = phase_to_ttc(final['point_phase'])
+    marks.append(time.perf_counter())
+    # Reference validation, tensor comparisons and disk output are outside the timer.
+    if reg is not None:
+        assert all(reg.get(k) == regs[row['query_id']].get(k) for k in reg), 'Registration changed'
+    traces.update(event_input=sensor, event_block=eb, event_features=eraw, event_experts=experts, point=final['point_phase'], q10=final['q10'], q90=final['q90'], ttc=prediction)
+    times = {name: 1000 * (b-a) for name, a, b in zip(('registration_ms','event_read_ms','event_producers_ms','event_context_ms','rgb_read_crop_ms','rgb_producers_ms','rgb_context_ms','correction_ms'), marks, marks[1:], strict=False)}
+    times.update(total_ms=1000*(marks[-1]-marks[0]),rgb_available=bool(timeline),reason=reason,encoder_hits=sum(c.hits for c in caches.values()),encoder_misses=sum(c.misses for c in caches.values()),encoder_bytes=sum(c.peak_bytes for c in caches.values()),prediction=float(prediction[0]))
+    return traces, times
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--pilot', action='store_true')
+    parser.add_argument('--mode', choices=['read','dense','endpoint'], default='read')
+    args = parser.parse_args()
+    torch.set_num_threads(1)
+    torch.set_num_interop_threads(1)
+    cv2.setNumThreads(1)
+    assert not torch.cuda.is_initialized()
+    directory = OUT / 'cost' / (('pilot_' if args.pilot else 'full_') + args.mode)
+    directory.mkdir(parents=True, exist_ok=True)
+    admission()
+    research = ROOT / 'artifacts/multimodal_research_20261012'
+    previous = ROOT / 'artifacts/multimodal_validation_20261012'
+    selected = []
+    for cohort, manifest in [('FCWD', MANIFEST), ('DEV32', V12/'artifacts/evttc_transfer_20261008/QUERY_MANIFEST.json')]:
+        lookup = {r['query_id']: r for r in read(manifest)['rows']}
+        rows = [lookup[k] for k in read(previous/f'cpu_profile/{cohort}_COST_SELECTION.json')['query_ids']]
+        rows.sort(key=lambda r:(r['sequence_id'],r['anchor_us']))
+        if args.pilot:
+            rows = sorted(rows, key=lambda r:hashlib.sha256(r['query_id'].encode()).hexdigest())[:3]
+        selected.extend((cohort,r) for r in rows)
+    bindings = {name: sha(RUN/f'fits/{name}/checkpoint_last.pt') for name in ('R_A5','R_C2F')}
+    for name in ('rgb_exact_cache.py','profile_rgb_route.py'):
+        bindings[name] = sha(Path(__file__).with_name(name))
+    plan = {'mode':args.mode,'queries':[(c,r['query_id']) for c,r in selected],'repeats':2,'exact_required':True,'sources':bindings,'CPU_only':True,'optimizer_updates':0,'scope':'Paired complete resident-weight CPU routes, fresh FCWD registration, one thread, concurrent V18 GPU load. Event path unchanged. Chronological selected queries; raw RGB LRU reset before each query, repeat1 warm. Endpoint caches scoped to each complete query; no temporal state reused. Detector, startup and evidence assertions excluded. OS page cache not flushed; no cold-disk or streaming claim.'}
+    path = directory/'REGISTRATION.json'
+    if path.exists():
+        assert read(path)==json.loads(json.dumps(plan))
+    else:
+        write(path,plan)
+    regs = registrations()
+    calibration = read(REG/'BINDING.json')['calibration']
+    records=[]
+    with ExitStack() as stack:
+        # The adapter's relocation receipt must not rewrite the frozen V16 evidence.
+        stack.enter_context(patch.object(ancestry,'OUT',directory/'source_admission'))
+        stack.enter_context(ancestry.historical_source_binding())
+        stack.enter_context(observation_contract())
+        models=engine._models(RUN,ROOT/'configs/rgb_port/producers.json',RUN/'P_MANIFEST.json','cpu')
+        for model in models.values(): model.eval().requires_grad_(False)
+        head=PhaseOnlyAnchor('EVENT').eval().requires_grad_(False)
+        head.load_state_dict(torch.load(research/'fits/R_ANCHOR_PHASE_ONLY_EVENT_S7/checkpoint_last.pt',map_location='cpu',weights_only=False)['model_state_dict'],strict=True)
+        normalizers={m:engine._normalizer(RUN/f'features/H/{m}_NORMALIZER.json',mod,sha(RUN/'rounds/PRODUCERS_PAIR_ENDPOINT_FREEZE.json')) for m,mod in [('E','event'),('R','rgb')]}
+        for index,(cohort,row) in enumerate(selected):
+            admission()
+            cache=FrameReadCache()
+            for repeat in range(2):
+                outputs,timings={},{}
+                order=('native','optimized') if (index+repeat)%2==0 else ('optimized','native')
+                for variant in order:
+                    with torch.inference_mode():
+                        outputs[variant],timings[variant]=route(row,cohort,variant=='optimized',models,head,normalizers,regs,calibration,cache,bindings,args.mode)
+                a,b=outputs['native'],outputs['optimized']
+                assert set(a)==set(b)
+                deltas={k:float(np.max(np.abs(np.asarray(a[k])-np.asarray(b[k])))) for k in a}
+                exact={k:bool(np.array_equal(np.asarray(a[k]),np.asarray(b[k]))) for k in a}
+                receipt={'cohort':cohort,'query_id':row['query_id'],'repeat':repeat,'exact':exact,'max_deltas':deltas}
+                if not all(exact.values()):
+                    write(directory/'PARITY_FAILURE.json',receipt)
+                    raise ValueError('Exact RGB route parity failed; do not promote')
+                for variant in order:
+                    records.append({'cohort':cohort,'query_id':row['query_id'],'repeat':repeat,'variant':variant,'order':','.join(order),'exact':True,**timings[variant],'raw_cache_bytes':cache.peak_bytes,'raw_cache_hits_cumulative':cache.hits})
+                pd.DataFrame(records).to_csv(directory/'MEASUREMENTS.csv',index=False)
+                write(directory/'LAST_PARITY.json',receipt)
+            print('RGB_ROUTE',index+1,len(selected),cohort,row['query_id'],flush=True)
+    assert not torch.cuda.is_initialized()
+    frame=pd.DataFrame(records)
+    summaries=[]
+    for (cohort,variant,repeat), rows in frame.groupby(['cohort','variant','repeat']):
+        summaries.append({'cohort':cohort,'variant':variant,'repeat':int(repeat),'n':len(rows),'p50_ms':float(rows.total_ms.quantile(.5)),'p95_ms':float(rows.total_ms.quantile(.95)),'p99_ms':float(rows.total_ms.quantile(.99)),'mean_ms':float(rows.total_ms.mean()),'rgb_available':int(rows.rgb_available.sum()),'encoder_hits':int(rows.encoder_hits.sum())})
+    write(directory/'RESULT.json',{'status':'EXACT_PARITY_PASS','measurements':len(frame),'paired_calls':len(frame)//2,'summaries':summaries,'cuda_initialized':False,'optimizer_updates':0,'candidate_changed':False,'scope':plan['scope']})
+
+
+if __name__=='__main__': main()

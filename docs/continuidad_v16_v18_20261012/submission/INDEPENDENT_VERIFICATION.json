@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "utc": "2026-10-12T21:10:33.806965+00:00",
+  "zip_sha256": "60b5a620848659633b875772430cddd7d7532b0fe180ec59904d04b81a9d3ca1",
+  "sample_tokens_exact": 6762,
+  "unique_observations": 5805,
+  "aliases": 957,
+  "submission_values_equal_frozen_csv": true,
+  "freeze_sha256": "85fad0dfb8bac0fa5a09e6f4090818ea2b534908ef3d018e8f88f0805e825b1a",
+  "verified_bound_files": 46,
+  "mismatches": [],
+  "official_submission": false,
+  "official_score": null,
+  "updates": 0
+}

@@ -1,0 +1,28 @@
+{
+  "schema": "v16_v18_descriptive_diagnostics_request_v1",
+  "utc": "2026-10-12T20:27:31.238236+00:00",
+  "owner": "V16 continuation; passive handoff only",
+  "delivery": "shared_file_written; no live Codex session message API available; acknowledgement pending",
+  "V18_should_not_restart_or_change_active_recipe": true,
+  "new_budget": 0,
+  "V16_optimizer_updates": 0,
+  "diagnostics_requested_after_start": true,
+  "wait_for_primary_endpoint_freeze_before_H": true,
+  "roles": [
+    "P",
+    "H",
+    "V"
+  ],
+  "diagnostics": [
+    "signed bias and MAE: 0.1-1,1-2,2-3,3-6,6-10,negative",
+    "sign confusion, raw/emitted phase, saturation, flat decoder regions",
+    "group and sequence/episode results; P fit separated from H screening and exposed V development"
+  ],
+  "native_phase_gap": "Native evaluate.py currently reconstructs raw_phase from final TTC; true predecoder phase must be observed by V18 owner in separately registered diagnostic inference, not fabricated here. No active fit change requested.",
+  "read_only_postprocessor": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\output\\continuidad_v16_v18_20261012\\scripts\\diagnose_v18_predictions.py",
+  "evidence": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\output\\continuidad_v16_v18_20261012",
+  "handoff": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\E_JEPA_SHARED_COORDINATION\\V16_V18_CONTINUIDAD_20261012_MENSAJE.md",
+  "official_submission": "manual user only; agent forbidden by latest user message",
+  "FCWD_Dev32_role": "descriptive motivation only; not recipe or checkpoint selection",
+  "model_changes_require_rebuild_of_downstream_dependencies": true
+}

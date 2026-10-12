@@ -1,0 +1,34 @@
+from pathlib import Path
+import numpy as np,pandas as pd,json
+import argparse
+p=argparse.ArgumentParser();p.add_argument('--root',type=Path,required=True);p.add_argument('--output',type=Path,required=True);args=p.parse_args()
+root=args.root.resolve()/'artifacts/multimodal_research_20261012';out=args.output.resolve();out.mkdir(parents=True,exist_ok=True)
+if out.is_relative_to(args.root.resolve()): raise ValueError('Use an output directory outside the evidence root')
+def phase(t): return -np.log1p(-0.1/np.asarray(t,dtype=float))
+records=[];gaps=[];sign_records=[]
+for cohort,route in [('FCWD','native_gpu'),('DEV32','cpu')]:
+ f=pd.read_csv(root/f'studies/PHASE_ONLY/S7/external_evaluation_v2/{route}/{cohort}/SCORED_PREDICTIONS.csv',float_precision='round_trip')
+ assert not f.query_id.duplicated().any();f=f[f.truth_ttc_seconds.notna()].copy();t=f.truth_ttc_seconds.to_numpy();f['band']=np.select([t<=3,t<=6,t<=10],['c','s','l'],default='gt10')
+ methods=['R_ANCHOR_EVENT','R_ANCHOR_ZERO','F_TRUE_SAME_ROUTE','R_CTX_SAME_ROUTE','E_CTX_SAME_ROUTE','public_Garl_event_lhr','GARL_FULL_REGISTERED_FALLBACK_EVENT' if cohort=='FCWD' else 'public_Garl_rgb_event_full']
+ for scope in ['all','rgb_available','fallback']:
+  sf=f if scope=='all' else f[f.rgb_available== (scope=='rgb_available')]
+  for band in ['all','c','s','l','gt10']:
+   b=sf if band=='all' else sf[sf.band==band]
+   for method in methods:
+    if len(b)==0:continue
+    tt=b.truth_ttc_seconds.to_numpy();pr=b[method].to_numpy();v=np.isfinite(pr)&((pr<0)|(pr>.1));
+    if not v.all(): continue
+    e=pr-tt;pherr=1e4*np.abs(phase(pr)-phase(tt))
+    records.append(dict(cohort=cohort,scope=scope,band=band,model=method,n=len(b),groups=b.sequence_id.nunique(),MAE=float(abs(e).mean()),MiD=float(pherr.mean()),bias=float(e.mean()),over_fraction=float((e>0).mean()),negative=int((pr<0).sum()),capped=int((abs(pr)>=59.999).sum()),median_AE=float(np.median(abs(e)))))
+ for comparator in ['F_TRUE_SAME_ROUTE','public_Garl_event_lhr']:
+  for band,weight in [('c',.5),('s',.3),('l',.1),('gt10',0)]:
+   b=f[f.band==band];tt=b.truth_ttc_seconds.to_numpy();a=b.R_ANCHOR_EVENT.to_numpy();bb=b[comparator].to_numpy()
+   dm=1e4*(abs(phase(a)-phase(tt))-abs(phase(bb)-phase(tt)))
+   gaps.append(dict(cohort=cohort,comparator=comparator,band=band,n=len(b),delta_MiD=float(dm.mean()),pooled_contribution=float(dm.sum()/len(f)),positive_weighted_contribution=float(weight*dm.mean()),delta_MAE=float((abs(a-tt)-abs(bb-tt)).mean())))
+ for name in ['R_ANCHOR_EVENT','F_TRUE_SAME_ROUTE','R_CTX_SAME_ROUTE','E_CTX_SAME_ROUTE']:
+  pr=f[name].to_numpy();mask=np.isfinite(pr);tt=t[mask];p=pr[mask];neg=p<0;abserr=abs(p-tt);pherr=1e4*abs(phase(p)-phase(tt));
+  sign_records.append(dict(cohort=cohort,method=name,n=len(p),wrong_sign=int(neg.sum()),absolute_error_share_wrong_sign=float(abserr[neg].sum()/abserr.sum()),mid_error_share_wrong_sign=float(pherr[neg].sum()/pherr.sum()),wrong_sign_MAE=float(abserr[neg].mean()) if neg.any() else None))
+pd.DataFrame(records).to_csv(out/'BANDS.csv',index=False);pd.DataFrame(gaps).to_csv(out/'GAP_DECOMPOSITION.csv',index=False);pd.DataFrame(sign_records).to_csv(out/'SIGN_ERROR_SHARE.csv',index=False)
+print(pd.DataFrame(records).query('cohort=="FCWD" and scope=="all" and band in ["c","s","l","gt10"] and model in ["R_ANCHOR_EVENT","F_TRUE_SAME_ROUTE","public_Garl_event_lhr"]').to_string(index=False))
+print('\nGAPS\n',pd.DataFrame(gaps).query('cohort=="FCWD"').to_string(index=False))
+print('\nSIGN\n',pd.DataFrame(sign_records).to_string(index=False))

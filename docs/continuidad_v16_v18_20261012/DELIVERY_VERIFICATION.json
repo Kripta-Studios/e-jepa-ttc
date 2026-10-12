@@ -1,0 +1,32 @@
+{
+  "status": "PASS",
+  "archive": "C:\\Users\\\u00c1lvaro Schwiedop\\Downloads\\E_JEPA_TTC_CONTINUIDAD_EJECUTADA_20261012.zip",
+  "bytes": 38849993,
+  "sha256": "bc28a8054fb89d3cdaa874344238d1768031f1c976700a2a338e93305966a103",
+  "payload_files": 137,
+  "crc": "PASS",
+  "independent_extraction_sha256": "PASS",
+  "independent_extraction_tests": [
+    {
+      "suite": "package_contracts",
+      "tests": 9,
+      "exit_code": 0,
+      "output": "\ntest_bad_domain (test_review_contracts.Checks.test_bad_domain) ... ok\ntest_duplicate_json (test_review_contracts.Checks.test_duplicate_json) ... ok\ntest_identity (test_review_contracts.Checks.test_identity) ... ok\ntest_missing_band (test_review_contracts.Checks.test_missing_band) ... ok\ntest_negative_is_not_invalid (test_review_contracts.Checks.test_negative_is_not_invalid) ... ok\ntest_partial_does_not_invent_overall (test_review_contracts.Checks.test_partial_does_not_invent_overall) ... ok\ntest_signed_domains (test_review_contracts.Checks.test_signed_domains) ... ok\ntest_submission_counts (test_review_contracts.Checks.test_submission_counts) ... ok\ntest_symmetry (test_review_contracts.Checks.test_symmetry) ... ok\n\n----------------------------------------------------------------------\nRan 9 tests in 0.003s\n\nOK\n"
+    },
+    {
+      "suite": "RGB_cache",
+      "tests": 6,
+      "exit_code": 0,
+      "output": "\ntest_dense_maps_preserve_full_batch_heads_and_input_foreground (__main__.CacheContracts.test_dense_maps_preserve_full_batch_heads_and_input_foreground) ... ok\ntest_dense_output_contract_and_missing_clock (__main__.CacheContracts.test_dense_output_contract_and_missing_clock) ... ok\ntest_frame_identity_and_content_both_required (__main__.CacheContracts.test_frame_identity_and_content_both_required) ... ok\ntest_memory_bound_fails_closed (__main__.CacheContracts.test_memory_bound_fails_closed) ... ok\ntest_raw_cache_copy_eviction_reset_and_file_identity (__main__.CacheContracts.test_raw_cache_copy_eviction_reset_and_file_identity) ... ok\ntest_train_mode_and_autograd_rejected (__main__.CacheContracts.test_train_mode_and_autograd_rejected) ... ok\n\n----------------------------------------------------------------------\nRan 6 tests in 0.185s\n\nOK\n"
+    },
+    {
+      "suite": "V18_diagnostics_synthetic",
+      "tests": 2,
+      "exit_code": 0,
+      "output": "{'files': 1, 'diagnostic_rows': 9}\n{'files': 1, 'diagnostic_rows': 9}\n\ntest_native_raw_not_misrepresented_and_changed_seal_rejected (__main__.SealedDiagnostics.test_native_raw_not_misrepresented_and_changed_seal_rejected) ... ok\ntest_signed_caps_and_separate_group_sequence_units (__main__.SealedDiagnostics.test_signed_caps_and_separate_group_sequence_units) ... ok\n\n----------------------------------------------------------------------\nRan 2 tests in 0.605s\n\nOK\n"
+    }
+  ],
+  "candidate_sha256": "60b5a620848659633b875772430cddd7d7532b0fe180ec59904d04b81a9d3ca1",
+  "official_submission": false,
+  "utc": "2026-10-12T21:11:22.765850+00:00"
+}

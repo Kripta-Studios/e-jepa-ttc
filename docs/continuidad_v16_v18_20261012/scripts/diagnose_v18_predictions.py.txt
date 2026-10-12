@@ -1,0 +1,49 @@
+"""Read only already sealed V18 predictions; never launch inference or select fits."""
+import hashlib
+import json
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+
+OUT=Path(__file__).resolve().parents[1]
+WORKSPACE=OUT.parents[1]
+RUN=WORKSPACE/'e-jepa-ttc-v18-joint-measurement/artifacts/joint_measurement_20261012'
+
+
+def main():
+    records=[]; files=[]
+    for seal in sorted((RUN/'predictions').glob('*/*/COMPLETE.json')):
+        role=seal.parent.parent.name
+        if role not in ('P','H','V'): continue
+        receipt=json.loads(seal.read_text()); path=seal.with_name('predictions.parquet')
+        if receipt.get('status')!='COMPLETE': continue
+        with path.open('rb') as stream: digest=hashlib.file_digest(stream,'sha256').hexdigest()
+        if digest!=receipt['sha256']: raise ValueError('Prediction seal mismatch')
+        frame=pd.read_parquet(path)
+        if frame.sample_token.duplicated().any(): raise ValueError('Duplicate query')
+        files.append({'path':str(path),'sha256':digest,'rows':len(frame),'seal_sha256':hashlib.sha256(seal.read_bytes()).hexdigest()})
+        native=seal.parent.name.startswith('NATIVE') or seal.parent.name=='A5-P2-FROZEN'
+        t=frame.target_ttc.to_numpy(); p=frame.prediction_ttc.to_numpy()
+        bands={'0.1-1':(t>.1)&(t<=1),'1-2':(t>1)&(t<=2),'2-3':(t>2)&(t<=3),'3-6':(t>3)&(t<=6),'6-10':(t>6)&(t<=10),'gt10':t>10,'negative':t<0}
+        populations=[('all','ALL',np.ones(len(frame),bool))]
+        for column in ('group_id','sequence_id','episode_id'):
+            if column in frame:
+                populations.extend((column,str(value),frame[column].to_numpy()==value) for value in sorted(frame[column].unique()))
+        for unit,group,population in populations:
+            for band,mask in bands.items():
+                m=mask&population
+                valid=m&np.isfinite(p)&((p<0)|(p>.1)); n=int(m.sum())
+                if not n: continue
+                errors=p[valid]-t[valid]
+                raw=frame.raw_phase.to_numpy()[valid] if 'raw_phase' in frame else None
+                emitted=-np.log1p(-.1/p[valid])
+                flat = None if raw is None or native else int(np.sum(((raw > -np.log1p(.1/60)) & (raw < -np.log1p(-.1/60))) | (raw < -np.log(2)+1e-6) | (raw > 8)))
+                records.append({'role':role,'fit':seal.parent.name,'unit':unit,'group':group,'band':band,'n':n,'valid_n':int(valid.sum()),'invalid_n':n-int(valid.sum()),'MAE':float(np.mean(abs(errors))) if len(errors) else None,'bias':float(np.mean(errors)) if len(errors) else None,'under_fraction':float(np.mean(errors<0)) if len(errors) else None,'wrong_sign':int(np.sum(np.sign(p[valid])!=np.sign(t[valid]))),'cap60':int(np.sum(abs(p[valid])>=59.999)),'raw_phase_scope':'reconstructed_from_native_TTC_not_predecoder' if native else 'actual_pair_raw_phase','raw_phase_mean':float(np.mean(raw)) if raw is not None and not native and len(raw) else None,'emitted_phase_mean':float(np.mean(emitted)) if len(emitted) else None,'raw_emitted_abs_mean':float(np.mean(abs(raw-emitted))) if raw is not None and not native and len(raw) else None,'raw_emitted_sign_changes':int(np.sum(np.sign(raw)!=np.sign(emitted))) if raw is not None and not native else None,'flat_decoder_region_count':flat,'episode_scope':'separate_episode_id_not_present' if 'episode_id' not in frame else 'explicit_episode_id'})
+    directory=OUT/'v18_diagnostics'; directory.mkdir(exist_ok=True)
+    pd.DataFrame(records,columns=list(records[0]) if records else ['role','fit','group','band','n','status']).to_csv(directory/'DIAGNOSTICO_SIGNO_RANGO.csv',index=False)
+    (directory/'STATUS.json').write_text(json.dumps({'status':'SEALED_TABLES_ANALYZED' if files else 'PENDING_COMPLETE_V18_PREDICTIONS','files':files,'rows':len(records),'V18_modified':False,'inference_executed':False,'diagnostic_requested_after_fits_started':True,'native_raw_phase_limitation':'Current V18 evaluate.py reconstructs phase from final native TTC. It is not an observed predecoder native phase. No value fabricated.','selection_or_recipe_changes':False},indent=2),encoding='utf-8')
+    print({'files':len(files),'diagnostic_rows':len(records)})
+
+
+if __name__=='__main__': main()

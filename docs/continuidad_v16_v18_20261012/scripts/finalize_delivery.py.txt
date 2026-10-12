@@ -1,0 +1,297 @@
+"""Close verified local evidence and build a self-checking delivery archive."""
+from datetime import datetime, timezone
+from pathlib import Path
+import ast
+import json
+import subprocess
+import tempfile
+import zipfile
+
+import pandas as pd
+
+from prepare_delivery import OUT, ROOT, V18, WORKSPACE, candidate, copy_same, read, sha, snapshot, write
+
+
+def cost_report():
+    folder=OUT/'cost/full_dense'
+    result=read(folder/'RESULT.json')
+    assert result['status']=='EXACT_PARITY_PASS' and result['measurements']==256
+    data=pd.read_csv(folder/'MEASUREMENTS.csv')
+    assert data['exact'].all() and len(data)==256
+    registered=read(folder/'REGISTRATION.json')
+    assert len(registered['queries'])==64
+    for filename in ('rgb_exact_cache.py','profile_rgb_route.py'):
+        assert sha(folder/'source'/filename)==registered['sources'][filename]
+    summaries=[]
+    def record(system,cohort,repeat,rows,column):
+        availability='rgb_available' if 'rgb_available' in rows else 'full_available'
+        summaries.append({'system':system,'cohort':cohort,'repeat':int(repeat),'n':len(rows),'rgb_available':int(rows[availability].sum()),'p50_ms':float(rows[column].quantile(.5)),'p95_ms':float(rows[column].quantile(.95)),'p99_ms':float(rows[column].quantile(.99)),'mean_ms':float(rows[column].mean())})
+    for (cohort,variant,repeat),rows in data.groupby(['cohort','variant','repeat']):
+        record('PHASE_'+variant,cohort,repeat,rows,'total_ms')
+    garl=pd.read_csv(OUT/'cost/garl_current/GARL_CPU_COST.csv')
+    assert len(garl)==128 and garl.bitwise_parity.all()
+    garl_registration=read(OUT/'cost/garl_current/REGISTRATION.json')
+    assert sha(OUT/'cost/garl_current/source/garl_cost.py')==garl_registration['original_source_sha256']
+    assert sha(OUT/'cost/garl_current/source/profile_garl_existing.py')==garl_registration['wrapper_sha256']
+    for cohort in ('FCWD','DEV32'):
+        assert set(data[data.cohort==cohort].query_id)==set(garl[garl.cohort==cohort].query_id)
+    for (cohort,repeat),rows in garl.groupby(['cohort','iteration']):
+        record('Garl_native_existing_optimized_inputs',cohort,repeat,rows,'total_raw_system_ms')
+    pd.DataFrame(summaries).to_csv(OUT/'COMPARACION_LATENCIA.csv',index=False)
+    paired=[]
+    for (cohort,repeat),rows in data.groupby(['cohort','repeat']):
+        wide=rows.pivot(index='query_id',columns='variant',values='total_ms')
+        ratio=wide.optimized/wide.native
+        paired.append({'cohort':cohort,'repeat':int(repeat),'n':len(wide),'median_paired_ratio':float(ratio.median()),'mean_paired_delta_ms':float((wide.optimized-wide.native).mean()),'optimized_faster_count':int((wide.optimized<wide.native).sum())})
+    pd.DataFrame(paired).to_csv(OUT/'cost/PAIRED_EFFECT.csv',index=False)
+    assessment={'status':'CPU_PARITY_CONFIRMED_NOT_DEPLOYED','queries':64,'paired_calls':128,'route_measurements':256,'Garl_complete_calls':128,'Garl_resident_parity_checks':128,'cache_memory_max_bytes':int(data.raw_cache_bytes.max()+data.encoder_bytes.max()),'cache_peak_scope':'Conservative sum of individual observed maxima; not whole-process RSS','changes_promoted_to_frozen_candidate':False,'GPU_parity_for_new_RGB_adapter':False,'timing_inference':'descriptive under concurrent V18 and desktop load; not causal speed guarantee','paired':paired,'historical_endpoint_optimization':'REJECTED_EXACT_PARITY_FAILURE','prior_event_reuse':'already completed, unchanged and not claimed as new work'}
+    write(OUT/'cost/ASSESSMENT.json',assessment)
+    table=['| Sistema | Cohorte | Pasada | n | RGB disponible | p50 ms | p95 ms | p99 ms |','|---|---|---:|---:|---:|---:|---:|---:|']
+    for r in summaries: table.append(f"| {r['system']} | {r['cohort']} | {r['repeat']} | {r['n']} | {r['rgb_available']} | {r['p50_ms']:.1f} | {r['p95_ms']:.1f} | {r['p99_ms']:.1f} |")
+    effects='\n'.join(f"- {r['cohort']}, pasada {r['repeat']}: cociente mediano pareado {r['median_paired_ratio']:.3f}; optimizada más rápida en {r['optimized_faster_count']}/{r['n']}; diferencia media {r['mean_paired_delta_ms']:+.1f} ms." for r in paired)
+    text=f'''# Coste y paridad de la continuación
+
+La nueva caché de lectura RGB y mapas CNN pasa **128 comparaciones exactas**
+en 64 consultas: 32 FCWD y 32 Dev32, dos pasadas por consulta, **256 rutas
+completas medidas**. Se comparan entradas RGB, features, expertos, bloques
+contextuales, fase, cuantiles y TTC. Las consultas son las identidades del perfil
+publicado, ordenadas por secuencia y tiempo; incluyen ROI variable y fallback.
+
+No se ha modificado el candidato ni instalado la optimización en V16. Es un
+adaptador de inferencia **CPU FP32, un hilo**. No existe medición GPU de este
+adaptador, y no se puede trasladar su paridad a otro lote, precisión o dispositivo.
+
+La primera propuesta cacheaba toda la salida del encoder y cambió el TTC en
+2,384185791015625e-7 s. Se rechazó con tolerancia cero. Su código y diferencias
+permanecen en cost/pilot. La segunda sólo reutiliza mapas CNN y reconstruye el
+lote original antes de las cabezas token/foreground. El piloto de seis consultas
+y la población de 64 pasan; se conservan las fuentes correspondientes a ambos.
+
+## Medición completa
+
+{chr(10).join(table)}
+
+Las cifras provienen del reloj de la ruta completa; no se suman medianas de
+etapas. Pesos residentes: incluye lectura/preparación de sensores, registro
+FCWD nuevo, productores event/RGB, contexto y cabeza. Excluye carga inicial,
+detector/tracker, comprobaciones de evidencia y escritura de CSV. No representa
+un detector en vídeo ni el sistema de percepción entero.
+
+Garl se mide de nuevo sólo para coste, sobre las mismas 64 identidades, con red
+nativa full y fallback event y el preprocesado exacto ya optimizado previamente.
+Sus 128 forwards residentes de control coinciden bit a bit. La comparación de
+precisión multimodal de 630 consultas no se repite. Las historias temporales de
+ambos sistemas siguen siendo diferentes. El perfil Garl se ejecuta después del
+perfil PHASE: la carga del equipo no está controlada entre ambos.
+
+## Efecto pareado
+
+{effects}
+
+V18 y el escritorio continuaron activos. Las diferencias son descriptivas;
+un tramo sin RGB puede parecer más rápido o lento por ruido aun ejecutando la
+misma ruta. Esta medición no acredita un ahorro universal ni autoriza promoción
+del sistema. Hay que repetir la aceptación en el dispositivo y régimen objetivo
+antes de desplegar, sin sustituir el candidato congelado.
+
+Pasada 0: LRU de frames vacía al inicio de cada consulta. Pasada 1: LRU de frames
+caliente para esa consulta. La caché CNN sólo vive dentro de una ruta; nunca
+arrastra estados temporales ni mapas entre consultas. No se vacía la caché del
+sistema operativo; **no es una prueba de disco frío**. Se alterna el orden
+native/optimized por consulta y pasada.
+
+Máximo conservador de memoria explícita de cachés: {assessment['cache_memory_max_bytes']:,} bytes.
+Las observaciones de RSS y máximo de working set del proceso, incluida carga de
+pesos, están en cost/*/MEMORY_OBSERVATION.json cuando se pudieron observar.
+El muestreo puede perder un transitorio final; no se presenta como pico exacto
+del allocator. No se suman picos de procesos diferentes.
+
+Identidad de mapas: archivo/frame, ROI fijo de consulta, transformación,
+checkpoint, código, CPU/FP32/eval y hash de los bytes del tensor normalizado.
+La ROI se mantiene durante la historia. La caché cruda actúa antes del crop y
+se identifica por archivo, dataset e índice; devuelve copias para impedir
+mutación de datos cacheados. El coste del hash está incluido.
+
+La reutilización event anterior permanece terminada. Los 64 tiempos GPU previos
+(p50 1.213 ms, p95 3.061 ms) y los 0,523 ms de cabeza CPU pertenecen al perfil
+histórico con su propio perímetro. No son resultados de esta caché RGB.
+'''
+    (OUT/'COSTES.md').write_text(text,encoding='utf-8')
+    return assessment
+
+
+def close():
+    tests=[]
+    for name,count in [('contracts.log',9),('cache_tests.log',6),('v18_diagnostic_tests.log',2)]:
+        path=OUT/'verification'/name
+        log=path.read_text(encoding='utf-8',errors='replace')
+        assert f'Ran {count} tests' in log and '\nOK' in log
+        tests.append({'log':name,'tests':count,'sha256':sha(path),'status':'PASS'})
+    sources=list((OUT/'scripts').glob('*.py'))
+    for path in sources: ast.parse(path.read_text(encoding='utf-8'))
+    write(OUT/'verification/QUALITY.json',{'status':'PASS','tests':tests,'total_tests':17,'python_sources_parsed':len(sources)})
+    assessment=cost_report()
+    write(OUT/'verification/ADDITIONAL_COMMANDS.json',{'cwd':str(WORKSPACE),'python':str(WORKSPACE/'e-jepa-ttc/.venv/Scripts/python.exe'),'bytecode_writes_disabled':True,'cost_environment':{'OMP_NUM_THREADS':'1','MKL_NUM_THREADS':'1','OPENBLAS_NUM_THREADS':'1'},'commands':[
+        {'script':'prepare_delivery.py','args':[],'result':'candidate, geometry, live-state and range diagnostics'},
+        {'script':'prepare_coordination.py','args':[],'result':'10 references, descriptive table parity, passive handoff'},
+        {'script':'diagnose_v18_predictions.py','args':[],'result':'no sealed predictions yet; no V18 inference'},
+        {'script':'profile_rgb_route.py','source':'cost/pilot/source','args':['--pilot'],'result':'REJECTED_EXACT_PARITY_FAILURE; old endpoint implementation'},
+        {'script':'profile_rgb_route.py','source':'cost/pilot_dense/source','args':['--pilot','--mode','dense'],'result':'EXACT_PARITY_PASS'},
+        {'script':'profile_rgb_route.py','source':'cost/full_dense/source','args':['--mode','dense'],'result':'EXACT_PARITY_PASS'},
+        {'script':'profile_garl_existing.py','args':[],'result':'128 complete calls and 128 resident parity checks'},
+        {'script':'test_rgb_exact_cache.py','args':['-v'],'result':'6 tests PASS'},
+        {'script':'test_v18_diagnostics.py','args':['-v'],'result':'2 tests PASS on synthetic fixtures'}]})
+    current=snapshot(); verification=candidate()
+    assert verification['status']=='PASS'
+    copy_same(OUT/'submission/PHASE_ONLY_S7_GarlTTC_submission.zip',Path.home()/'Downloads/PHASE_ONLY_S7_GarlTTC_submission.zip')
+    statuses={}
+    for name,repo in [('V16',ROOT),('V18',V18)]:
+        statuses[name]={'head':subprocess.check_output(['git','-C',str(repo),'rev-parse','HEAD'],text=True).strip(),'git_status':subprocess.check_output(['git','-C',str(repo),'status','--short'],text=True).strip()}
+    assert not statuses['V16']['git_status'] and statuses['V16']['head']=='71ec9d900189a120b06c3956029496e6fd704f6f'
+    write(OUT/'verification/REPOSITORY_STATE_FINAL.json',statuses)
+    progress={name:{'status':files.get('CHECKPOINT_RECEIPT.json',{}).get('status','NOT_STARTED'),'durable_updates':files.get('CHECKPOINT_RECEIPT.json',{}).get('completed_updates',0),'journal_updates':files.get('UPDATE_JOURNAL.json',{}).get('completed_updates',0)} for name,files in current['fits'].items()}
+    decision={'schema':'v16_v18_continuation_execution_v1','utc':datetime.now(timezone.utc).isoformat(),'V16':{'status':'FROZEN_CANDIDATE_PRESERVED','owner':'this continuation; CPU evidence only','candidate':'PHASE_ONLY_EVENT_S7','reference':'F_TRUE','new_optimizer_updates':0,'new_GPU_work':False,'new_training_authorization':False,'official_submission':'MANUAL_USER_ONLY_AGENT_FORBIDDEN','official_score':None},'V18':{'owner_processes':current['live_processes'],'observed_utc':current['observed_utc'],'fit_progress':progress,'files_processes_budget_modified_by_this_continuation':False,'diagnostics':'PENDING_SEALED_ENDPOINT_PREDICTIONS','coordination':'PASSIVE_SHARED_HANDOFF_ACK_PENDING'},'other_campaigns':{'V13':'frozen parents referenced','V14_V15_V17':'preserved; no new fits or reopened calibration'},'geometry':read(OUT/'GEOMETRY_STATUS.json'),'cost':assessment,'remaining_dependencies':['User performs official submission after participation approval and history-contract clarification','Independent correspondence annotations and second review; no geometric promotion yet','V18 owner completes authorized matrix and sealed predictions; native predecoder phase is not currently exposed'],'push':False,'merge':False,'new_branch':False,'all_external_dependencies_resolved':False}
+    write(OUT/'DECISION_ACTUALIZADA.json',decision)
+    replay=read(OUT/'head_replay/HEAD_REPLAY.json')['records']
+    max_ttc=max(r['max_abs_ttc_difference'] for r in replay)
+    max_score=max(abs(r['score_recomputed']['group_macro_bucket_MiD']-r['score_published']['group_macro_bucket_MiD']) for r in replay)
+    fit_table='\n'.join(f"| {name} | {r['status']} | {r['durable_updates']} | {r['journal_updates']} |" for name,r in progress.items())
+    report=f'''# Continuidad V16–V18 ejecutada
+
+Se conserva **PHASE_ONLY_EVENT_S7** y **F_TRUE** como referencia de transferencia.
+El candidato sigue sin puntuación oficial. Por tu última instrucción, el envío
+en CodaBench lo haces tú: [pasos y archivo exacto](EVALUACION_OFICIAL.md).
+
+La continuación no ha entrenado modelos, modificado V18, ampliado presupuestos,
+hecho push/merge ni creado otra rama. Todas las nuevas operaciones de modelo
+han sido inferencia CPU para reproducir cabezas y medir coste. V16 sigue limpio
+en el commit 71ec9d900189a120b06c3956029496e6fd704f6f.
+
+## Comprobaciones terminadas
+
+- ZIP de continuidad: CRC y 25 payloads del manifiesto verificados; extracción segura.
+- Nueve pruebas del paquete, seis del adaptador RGB y dos del lector diagnóstico:
+  **17 pruebas pasadas**, repetidas desde la extracción independiente al verificar
+  la entrega. Las dos últimas usan fixtures sintéticos, no resultados V18.
+  Los 50 tests mencionados en el informe original son históricos, no 50 nuevos tests.
+- Reproducción publicada: **46.778 escalares**, 13 tablas internas, 34 externas
+  y hashes/recibos de 32 fits verificados; no se repitieron esos entrenamientos.
+- Seis cabezas EVENT/ZERO, semillas 7/13/23: **98.592 predicciones V** desde
+  las 16.432 entradas cacheadas. Diferencia máxima TTC {max_ttc:.12g} s,
+  agregado interno {max_score:.12g} MiD. No hay igualdad bit a bit con la publicación;
+  las tres EVENT siguen en 89,223/89,199/89,220. No se reconstruyeron los encoders V.
+- Submission: copia byte a byte, 6.762 tokens exactos, TTC finitos e idénticos al
+  CSV congelado; 5.805 observaciones físicas y 957 aliases preservados; **46**
+  fuentes/padres/normalizadores/readouts ligados a la congelación comprobados.
+- BANDS, GAP_DECOMPOSITION y SIGN_ERROR_SHARE reproducidos: diferencias menores
+  que 1e-13; nuevo desglose descriptivo por subrango, modalidad disponible y fallback.
+- Perfil RGB: 64 consultas, 128 pares, 256 mediciones de ruta completa con paridad
+  exacta; Garl: 128 rutas completas y controles residentes. [Resultados](COSTES.md).
+
+El paquete completo histórico de 47.842 archivos y el ZIP exterior de informes
+no se reextrajeron de nuevo aquí. Sus recibos previos se leyeron; este informe
+distingue esa evidencia histórica de las verificaciones ejecutadas ahora.
+
+## Qué concluyen los resultados
+
+PHASE_ONLY pasa los criterios originales del 2 %; el 4 % no aporta predicciones
+nuevas. En FCWD, la mejora crucial convive con infraestimación en 3–6 s y peor
+agregado/MAE que F_TRUE. Esa banda aporta +6,586 puntos y explica más que el déficit
+neto +5,575, compensado parcialmente por la mejora crucial. Las 13 inversiones de
+signo en Dev32 concentran 20,09 % del AE y 8,80 % de MiD; las cinco de FCWD están
+en el fallback event. Son diagnósticos de cohortes ya expuestas, no criterios
+nuevos para ajustar o seleccionar V18. No se construyó un selector por target.
+
+La interfaz PHASE_ONLY mejora la combinación de mediciones congeladas; no prueba
+que los mapas espaciales sobren ni que se hayan replicado encoders independientes.
+La siguiente investigación sigue siendo V18, con los comparadores y negativos
+conservados en [REGISTRO_CANDIDATOS.csv](REGISTRO_CANDIDATOS.csv). No hay SOTA
+demostrado ni un refit TRAIN40 nuevo.
+
+## Estado V18 observado
+
+Lectura de {current['observed_utc']}; es una instantánea no atómica de una campaña viva.
+
+| Fit | Estado del recibo | Updates durables | Journal observado |
+|---|---|---:|---:|
+{fit_table}
+
+El lanzador y su hijo Python son un solo supervisor, no dos propietarios.
+La matriz conserva cuatro endpoints de 12.000 updates y el límite existente de
+64.800 segundos GPU contabilizados; el orden operativo registrado prioriza los
+tres pares antes de reanudar NATIVE. No hay resultados P/H/V sellados para analizar
+todavía. El mensaje está en E_JEPA_SHARED_COORDINATION; su lectura no está confirmada.
+
+Se dejó un lector externo de predicciones selladas para bandas, grupos/secuencias,
+signo, raw/emitted y cap. Para NATIVE, el evaluador actual reconstruye raw_phase
+desde el TTC: no es la fase interna predecoder. Esa instrumentación y la
+identificación de episodios distintos de sequence_id quedan al propietario V18,
+sin cambiar fits activos. [Reanudación y comandos](COMANDOS_REANUDACION.md).
+
+## Dependencias pendientes
+
+1. **Evaluación oficial manual**: archivo y ficha listos. Tu cuenta necesita
+   participación aprobada y falta aclarar el contrato de historial de hasta
+   650 ms. El agente no enviará nada ni solicita permiso para hacerlo.
+2. **Geometría independiente**: 12 paneles conservados, 72 filas sin anotación
+   válida. Hay paquete ciego, reparto por escena y protocolo. No se inventaron
+   coordenadas ni se promovió una transformación por aceptación NCC.
+3. **Resultados V18**: dependen de su entrenamiento autorizado y posterior
+   congelación. La falta de score oficial no bloquea esa campaña.
+
+Los resultados de coste CPU no se han instalado en el candidato ni acreditan
+paridad GPU. El intento que falló conserva sus resultados negativos. Los costes
+de la cabeza aislada y la reutilización event ya completada no se presentan
+como el coste del sistema ni como nuevas aportaciones.
+
+Los manifiestos contienen hashes de todos los archivos entregados. El ZIP de
+continuidad ejecutada es para archivo/revisión; **el único ZIP para CodaBench es
+PHASE_ONLY_S7_GarlTTC_submission.zip**, también copiado directamente a Descargas.
+'''
+    (OUT/'INFORME_EJECUCION.md').write_text(report,encoding='utf-8')
+    return decision
+
+
+def pack():
+    downloads=Path.home()/'Downloads'
+    blind=OUT/'PAQUETE_ANOTACION_CIEGA.zip'
+    with zipfile.ZipFile(blind,'w',compression=zipfile.ZIP_DEFLATED) as archive:
+        for name in ('ANNOTATION_TEMPLATE.csv','INSTRUCCIONES_CIEGAS.md'):
+            archive.write(OUT/'geometry'/name,name)
+        for path in sorted((OUT/'geometry/panels').glob('*.png')):
+            archive.write(path,'panels/'+path.name)
+    files=[]
+    for path in sorted(OUT.rglob('*')):
+        if path.is_file() and '__pycache__' not in path.parts and path.name!='DELIVERY_MANIFEST.json' and path.suffix!='.pending':
+            files.append({'path':path.relative_to(OUT).as_posix(),'bytes':path.stat().st_size,'sha256':sha(path)})
+    write(OUT/'DELIVERY_MANIFEST.json',{'schema':'sha256_delivery_v1','utc':datetime.now(timezone.utc).isoformat(),'files':files})
+    archive_path=downloads/'E_JEPA_TTC_CONTINUIDAD_EJECUTADA_20261012.zip'
+    if archive_path.exists(): raise FileExistsError('Delivery already exists; do not overwrite: '+str(archive_path))
+    with zipfile.ZipFile(archive_path,'w',compression=zipfile.ZIP_DEFLATED) as archive:
+        for row in files: archive.write(OUT/row['path'],row['path'])
+        archive.write(OUT/'DELIVERY_MANIFEST.json','DELIVERY_MANIFEST.json')
+    with tempfile.TemporaryDirectory(prefix='continuidad_verify_') as temp:
+        directory=Path(temp)
+        with zipfile.ZipFile(archive_path) as archive:
+            assert archive.testzip() is None
+            assert set(archive.namelist())=={r['path'] for r in files}|{'DELIVERY_MANIFEST.json'}
+            archive.extractall(directory)
+        expected=read(directory/'DELIVERY_MANIFEST.json')
+        for row in expected['files']:
+            path=directory/row['path']; assert path.stat().st_size==row['bytes'] and sha(path)==row['sha256']
+        extracted_tests=[]
+        python=WORKSPACE/'e-jepa-ttc/.venv/Scripts/python.exe'
+        commands=[('package_contracts',9,directory/'package',['-m','unittest','discover','-s','tests','-v']),('RGB_cache',6,directory,['scripts/test_rgb_exact_cache.py','-v']),('V18_diagnostics_synthetic',2,directory,['scripts/test_v18_diagnostics.py','-v'])]
+        for name,count,cwd,arguments in commands:
+            result=subprocess.run([str(python),'-B',*arguments],cwd=cwd,capture_output=True,text=True,encoding='utf-8',errors='replace',check=False)
+            log=result.stdout+'\n'+result.stderr
+            assert result.returncode==0 and f'Ran {count} tests' in log and '\nOK' in log,log
+            extracted_tests.append({'suite':name,'tests':count,'exit_code':result.returncode,'output':log})
+    receipt={'status':'PASS','archive':str(archive_path),'bytes':archive_path.stat().st_size,'sha256':sha(archive_path),'payload_files':len(files),'crc':'PASS','independent_extraction_sha256':'PASS','independent_extraction_tests':extracted_tests,'candidate_sha256':'60b5a620848659633b875772430cddd7d7532b0fe180ec59904d04b81a9d3ca1','official_submission':False,'utc':datetime.now(timezone.utc).isoformat()}
+    write(downloads/'E_JEPA_TTC_CONTINUIDAD_EJECUTADA_20261012.verification.json',receipt)
+    print(json.dumps(receipt,indent=2))
+
+
+if __name__=='__main__':
+    close()
+    pack()

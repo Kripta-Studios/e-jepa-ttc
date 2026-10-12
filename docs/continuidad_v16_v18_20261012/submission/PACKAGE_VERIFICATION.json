@@ -1,0 +1,22 @@
+{
+  "status": "PACKAGED_NOT_SUBMITTED",
+  "sample_count": 6762,
+  "checkpoint_sha256": "85fad0dfb8bac0fa5a09e6f4090818ea2b534908ef3d018e8f88f0805e825b1a",
+  "zip_sha256": "60b5a620848659633b875772430cddd7d7532b0fe180ec59904d04b81a9d3ca1",
+  "members": [
+    "submission.json"
+  ],
+  "utc": "2026-10-12T16:32:07.694752+00:00",
+  "candidate": "PHASE_ONLY_EVENT_S7",
+  "predictions_sha256": "99aa79053c50d5348e238e32270f156009590f0ef0deda250504b23aa3792e63",
+  "prediction_seal_sha256": "355c1826132d9e89476a6c02f8c8ec0667e199db3468f609482da523efec15b9",
+  "rgb_available": 6762,
+  "fallback_count": 0,
+  "checkpoint_identity": "MODEL_INPUT_FREEZE.json binds the full trained graph and normalizers",
+  "private_labels_read": false,
+  "optimizer_updates": 0,
+  "external_submission": false,
+  "official_score_available": false,
+  "official_SOTA": false,
+  "source_sha256": "1ed0f75c063523e4cc05a6e79c9e1840fe6da3f9e53a1e5bc32afa918b9a8694"
+}

@@ -1,0 +1,32 @@
+{
+  "repository": "Kripta-Studios/e-jepa-ttc",
+  "commit": "71ec9d900189a120b06c3956029496e6fd704f6f",
+  "report_path": "docs/multimodal_results_20261012/INFORME_DETALLADO.md",
+  "report_git_blob": "a1e08a3ec47603ac34b9cae5b30badc64b3cb136",
+  "uploaded_archive": {
+    "filename": "E_JEPA_TTC_INFORMES_Y_RESULTADOS_20261012.zip",
+    "bytes": 503683384,
+    "sha256": "07ff9ea7491099c74e357df8efab4ae4ff57dca383f9e6e6d8b126d03e5a4afb"
+  },
+  "inner_archive": {
+    "filename": "E_JEPA_TTC_RESEARCH_RESULT_20261012T164206Z.zip",
+    "bytes": 461398299,
+    "sha256": "a59bac60a1a97c4c5e0b279247c98b96b1b4ce1ff3dc8db7781b4cf01372bab9"
+  },
+  "original_submission": {
+    "bytes": 88954,
+    "sha256": "60b5a620848659633b875772430cddd7d7532b0fe180ec59904d04b81a9d3ca1"
+  },
+  "not_verified": [
+    "new raw-sensor inference",
+    "full retraining",
+    "current V18 results",
+    "official leaderboard or score",
+    "deployment latency"
+  ],
+  "primary_external_sources": [
+    "https://github.com/NAIL-HNU/Garl-TTC",
+    "https://www.codabench.org/competitions/17289/",
+    "https://developers.openai.com/codex/cli/reference/"
+  ]
+}

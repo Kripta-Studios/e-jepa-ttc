@@ -1,0 +1,35 @@
+"""Small standard-library checks; not a model or an alternative official scorer."""
+from __future__ import annotations
+import math
+from collections.abc import Mapping
+
+def phase(ttc: float) -> float:
+    if not math.isfinite(ttc) or not (ttc < 0 or ttc > 0.1):
+        raise ValueError('TTC outside signed benchmark phase domain')
+    return -math.log1p(-0.1 / ttc)
+
+def row_mid(target: float, prediction: float) -> float:
+    return 10000.0 * abs(phase(target) - phase(prediction))
+
+def partial_positive(bands: Mapping[str, float]) -> dict[str, float | None]:
+    for name in ('c', 's', 'l'):
+        if name not in bands or not math.isfinite(bands[name]) or bands[name]<0:
+            raise ValueError('All observed positive bands must be valid')
+    return {'observed_positive_contribution': sum(w*bands[n] for n,w in
+            (('c',.5),('s',.3),('l',.1))), 'negative_contribution':None,
+            'official_overall_MiD':None}
+
+def validate_results(payload: dict, expected_count: int = 6762) -> dict[str, int]:
+    if payload.get('meta',{}).get('format') != 'garlttc_prediction_v1':
+        raise ValueError('Unexpected submission schema')
+    results=payload.get('results')
+    if not isinstance(results,dict) or len(results)!=expected_count:
+        raise ValueError('Unexpected token count')
+    for token,row in results.items():
+        if not isinstance(token,str) or not token or not isinstance(row,dict):
+            raise ValueError('Malformed token entry')
+        value=row.get('ttc')
+        if isinstance(value,bool) or not isinstance(value,(int,float)):
+            raise ValueError('TTC must be numeric')
+        phase(float(value))
+    return {'tokens':len(results)}

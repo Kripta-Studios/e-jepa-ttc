@@ -1,0 +1,39 @@
+{
+  "files": [
+    {
+      "path": "INDEPENDENT_VERIFICATION.json",
+      "bytes": 502,
+      "sha256": "dc0c77122fd0bd86dc128e59fb420034311191dc162cdb06f2954ff539921bf2"
+    },
+    {
+      "path": "MODEL_CARD.md",
+      "bytes": 2463,
+      "sha256": "795ff29847ead66dff94a0db104c63de40523840028f749648bc86542d83dd72"
+    },
+    {
+      "path": "MODEL_INPUT_FREEZE.json",
+      "bytes": 8865,
+      "sha256": "85fad0dfb8bac0fa5a09e6f4090818ea2b534908ef3d018e8f88f0805e825b1a"
+    },
+    {
+      "path": "PACKAGE_VERIFICATION.json",
+      "bytes": 960,
+      "sha256": "5a5838385359faad5391ba2403589802692f16565ff3524a7e563f23938c62f3"
+    },
+    {
+      "path": "PHASE_ONLY_S7_GarlTTC_submission.zip",
+      "bytes": 88954,
+      "sha256": "60b5a620848659633b875772430cddd7d7532b0fe180ec59904d04b81a9d3ca1"
+    },
+    {
+      "path": "TEST_PREDICTIONS.csv",
+      "bytes": 1520619,
+      "sha256": "99aa79053c50d5348e238e32270f156009590f0ef0deda250504b23aa3792e63"
+    },
+    {
+      "path": "TOKEN_MANIFEST.csv",
+      "bytes": 943523,
+      "sha256": "9da46bfe3150fa530f98ed93dec327026f3a6597150720df2616b6d6fde28c04"
+    }
+  ]
+}

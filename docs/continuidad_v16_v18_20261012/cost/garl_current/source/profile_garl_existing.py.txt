@@ -1,0 +1,30 @@
+"""Repeat the published Garl cost perimeter without altering old artifacts."""
+import json
+from pathlib import Path
+from unittest.mock import patch
+
+import profile_rgb_route as rgb
+from operational.multimodal_validation import garl_cost
+
+
+def main():
+    destination=rgb.OUT/'cost/garl_current'
+    previous=rgb.ROOT/'artifacts/multimodal_validation_20261012'
+    for cohort,manifest in [('FCWD',rgb.MANIFEST),('DEV32',rgb.V12/'artifacts/evttc_transfer_20261008/QUERY_MANIFEST.json')]:
+        selection=rgb.read(previous/f'cpu_profile/{cohort}_COST_SELECTION.json')
+        rows={r['query_id']:r for r in rgb.read(manifest)['rows']}
+        selection['query_ids'].sort(key=lambda q:(rows[q]['sequence_id'],rows[q]['anchor_us']))
+        rgb.write(destination/f'cpu_profile/{cohort}_COST_SELECTION.json',selection)
+    rgb.write(destination/'REGISTRATION.json',{'queries':64,'iterations':2,'CPU_threads':1,'GPU_used':False,'optimizer_updates':0,'original_source_sha256':rgb.sha(Path(garl_cost.__file__)),'wrapper_sha256':rgb.sha(Path(__file__)),'scope':'Existing native Garl full + exact event fallback with previously validated optimized preprocessing. Complete raw route timed separately from resident forward. No new Garl accuracy campaign. Sequential after PHASE route; concurrent V18 load.'})
+    with patch.object(garl_cost,'OUT',destination):
+        garl_cost.main()
+    assert not rgb.torch.cuda.is_initialized()
+    receipt=rgb.read(destination/'GARL_CPU_COST_BINDING.json')
+    rgb.write(destination/'GARL_CPU_COST_BINDING_ORIGINAL_DRIVER.json',receipt)
+    receipt['GPU_graphs']='not_applicable_CPU; no GPU allocated by this continuation; concurrent V18 owner'
+    receipt['original_driver_metadata_preserved']='GARL_CPU_COST_BINDING_ORIGINAL_DRIVER.json (contains historical V15-owner wording)'
+    rgb.write(destination/'GARL_CPU_COST_BINDING.json',receipt)
+    print(json.dumps({'status':'COMPLETE','output':str(destination),'cuda_initialized':False}))
+
+
+if __name__=='__main__': main()

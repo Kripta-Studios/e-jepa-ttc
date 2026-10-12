@@ -1,0 +1,25 @@
+"""Validate the exact published archive; performs no network call or scoring."""
+from __future__ import annotations
+import argparse,hashlib,json
+from pathlib import Path
+from zipfile import ZipFile
+from review_contracts import validate_results
+EXPECTED='60b5a620848659633b875772430cddd7d7532b0fe180ec59904d04b81a9d3ca1'
+def no_duplicate_keys(pairs):
+    result={}
+    for k,v in pairs:
+        if k in result: raise ValueError(f'Duplicate JSON key: {k}')
+        result[k]=v
+    return result
+
+def verify(path: Path) -> dict:
+    with path.open('rb') as f: digest=hashlib.file_digest(f,'sha256').hexdigest()
+    if digest!=EXPECTED: raise ValueError('Not the frozen candidate archive')
+    with ZipFile(path) as z:
+        if z.namelist()!=['submission.json']: raise ValueError('Unexpected archive layout')
+        value=json.loads(z.read('submission.json'),object_pairs_hook=no_duplicate_keys)
+    return {'sha256':digest,**validate_results(value),'official_score':None,
+            'submission_sent':False,'semantic_test_labels_read':False}
+if __name__=='__main__':
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--zip',type=Path,required=True)
+    print(json.dumps(verify(p.parse_args().zip),indent=2))

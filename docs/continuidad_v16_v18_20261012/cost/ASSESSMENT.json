@@ -1,0 +1,49 @@
+{
+  "status": "CPU_PARITY_CONFIRMED_NOT_DEPLOYED",
+  "queries": 64,
+  "paired_calls": 128,
+  "route_measurements": 256,
+  "Garl_complete_calls": 128,
+  "Garl_resident_parity_checks": 128,
+  "cache_memory_max_bytes": 52054016,
+  "cache_peak_scope": "Conservative sum of individual observed maxima; not whole-process RSS",
+  "changes_promoted_to_frozen_candidate": false,
+  "GPU_parity_for_new_RGB_adapter": false,
+  "timing_inference": "descriptive under concurrent V18 and desktop load; not causal speed guarantee",
+  "paired": [
+    {
+      "cohort": "DEV32",
+      "repeat": 0,
+      "n": 32,
+      "median_paired_ratio": 0.9906146507342993,
+      "mean_paired_delta_ms": -207.92479062504307,
+      "optimized_faster_count": 17
+    },
+    {
+      "cohort": "DEV32",
+      "repeat": 1,
+      "n": 32,
+      "median_paired_ratio": 0.8958176653847134,
+      "mean_paired_delta_ms": -503.12081874983505,
+      "optimized_faster_count": 27
+    },
+    {
+      "cohort": "FCWD",
+      "repeat": 0,
+      "n": 32,
+      "median_paired_ratio": 1.017813452656701,
+      "mean_paired_delta_ms": 103.9148812499207,
+      "optimized_faster_count": 15
+    },
+    {
+      "cohort": "FCWD",
+      "repeat": 1,
+      "n": 32,
+      "median_paired_ratio": 0.9287031732551128,
+      "mean_paired_delta_ms": -278.6922937501686,
+      "optimized_faster_count": 24
+    }
+  ],
+  "historical_endpoint_optimization": "REJECTED_EXACT_PARITY_FAILURE",
+  "prior_event_reuse": "already completed, unchanged and not claimed as new work"
+}

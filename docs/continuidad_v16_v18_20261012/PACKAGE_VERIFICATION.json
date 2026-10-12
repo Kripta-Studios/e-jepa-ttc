@@ -1,0 +1,9 @@
+{
+  "utc": "2026-10-12T20:07:17.808403+00:00",
+  "status": "PASS",
+  "archive": "C:\\Users\\\u00c1lvaro Schwiedop\\Downloads\\E_JEPA_TTC_CONTINUIDAD_V16_V18_20261012.zip",
+  "sha256": "39efdf434f8092112977dc603b964c05214ef3c8a69fe65b9b65c05452783490",
+  "payloads": 25,
+  "crc_pass": true,
+  "destination": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\output\\continuidad_v16_v18_20261012\\package"
+}

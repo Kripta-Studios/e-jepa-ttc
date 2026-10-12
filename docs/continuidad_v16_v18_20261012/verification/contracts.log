@@ -1,0 +1,14 @@
+test_bad_domain (test_review_contracts.Checks.test_bad_domain) ... ok
+test_duplicate_json (test_review_contracts.Checks.test_duplicate_json) ... ok
+test_identity (test_review_contracts.Checks.test_identity) ... ok
+test_missing_band (test_review_contracts.Checks.test_missing_band) ... ok
+test_negative_is_not_invalid (test_review_contracts.Checks.test_negative_is_not_invalid) ... ok
+test_partial_does_not_invent_overall (test_review_contracts.Checks.test_partial_does_not_invent_overall) ... ok
+test_signed_domains (test_review_contracts.Checks.test_signed_domains) ... ok
+test_submission_counts (test_review_contracts.Checks.test_submission_counts) ... ok
+test_symmetry (test_review_contracts.Checks.test_symmetry) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.005s
+
+OK

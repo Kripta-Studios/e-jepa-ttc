@@ -1,0 +1,25 @@
+{
+  "status": "PASS",
+  "tests": [
+    {
+      "log": "contracts.log",
+      "tests": 9,
+      "sha256": "dfa21003ff3a1a0ab9e934736a25c9658cf6076c9acee469105fbf23c3293b85",
+      "status": "PASS"
+    },
+    {
+      "log": "cache_tests.log",
+      "tests": 6,
+      "sha256": "c8497f864cdf55f5aac6f4d3596fd16cea61920a9e8ad2f9dde0c163be7f71b9",
+      "status": "PASS"
+    },
+    {
+      "log": "v18_diagnostic_tests.log",
+      "tests": 2,
+      "sha256": "594f92a50aadab966c289b1105b7511f9a729d033bed7053747df600b1bf61a9",
+      "status": "PASS"
+    }
+  ],
+  "total_tests": 17,
+  "python_sources_parsed": 10
+}

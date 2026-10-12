@@ -1,0 +1,18 @@
+{
+  "base_commit": "71ec9d900189a120b06c3956029496e6fd704f6f",
+  "new_V16_optimizer_updates": 0,
+  "new_campaign_created": false,
+  "V18": "preserve existing authorization, protocol and active recipe; no budget extension",
+  "submission": "requires separate explicit permission and current benchmark contract check",
+  "frozen_candidate": "PHASE_ONLY_EVENT_S7",
+  "preserve_complementary_reference": "F_TRUE",
+  "do_not_repeat": [
+    "32 V16 fits",
+    "Garl full/visual FCWD comparison",
+    "6762 test12 inference",
+    "V14-V17 rejected sweeps"
+  ],
+  "scientific_claim": "internal selected candidate; transfer tradeoffs; official score unavailable",
+  "roles": "P/H/V as existing; exposed groups not fresh confirmation",
+  "resources": "read live owner/admission; preserve existing limits; do not change global machine settings"
+}

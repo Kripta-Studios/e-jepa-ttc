@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "C:\Users\�lvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\output\continuidad_v16_v18_20261012\scripts\profile_rgb_route.py", line 184, in <module>
+    if __name__=='__main__': main()
+                             ^^^^^^
+  File "C:\Users\�lvaro Schwiedop\Desktop\KriptaStudios\EVOCON_JEPA_Codex_Handoff\output\continuidad_v16_v18_20261012\scripts\profile_rgb_route.py", line 170, in main
+    raise ValueError('Exact RGB route parity failed; do not promote')
+ValueError: Exact RGB route parity failed; do not promote
