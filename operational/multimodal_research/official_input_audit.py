@@ -34,6 +34,7 @@ def main() -> None:
         "official_input_audit.py",
         "gpu_fcwd_cost.py",
         "test12_guarded_resume.py",
+        "test12_cached_resume.py",
     }
     assert all(
         name.startswith("operational/multimodal_research/") and Path(name).name in diagnostic_files
@@ -113,6 +114,11 @@ def main() -> None:
             "test12_guarded_resume.py extends the existing validated Python-first metadata "
             "scan to shared admission; original scientific and guard sources unchanged"
             if (dest / "GUARDED_RESUME_EXECUTION.json").exists()
+            else None
+        ),
+        cache_recovery=(
+            read(dest / "CACHE_RESUME_EXECUTION.json")
+            if (dest / "CACHE_RESUME_EXECUTION.json").exists()
             else None
         ),
         post_freeze_diagnostic_files_changed=changed,

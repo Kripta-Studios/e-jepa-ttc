@@ -374,10 +374,18 @@ def main() -> None:
                 "misma identidad de objeto, disponibilidad causal y aliases con historias "
                 "idénticas. Soporte sensorial máximo real en microsegundos: "
                 f"{audit['maximum_total_sensor_support_us']}. Pesos, normalizadores y "
-                "código de ejecución sin cambios desde la congelación. La comprobación "
+                "código científico original sin cambios desde la congelación. La comprobación "
                 "de grupos usa las identidades de secuencia publicadas; no establece "
                 "independencia visual de escenas más allá de esa partición."
             ]
+            if audit.get("recovery_admission_wrapper"):
+                text += [
+                    "La recuperación amplía el alcance del filtro de metadatos de procesos "
+                    "ya validado para cubrir también la admisión compartida. Conserva todos "
+                    "los controles, límites y cálculos científicos; "
+                    "`GUARDED_RESUME_EXECUTION.json` registra esta envoltura adicional. "
+                    "La comparación en vivo de los metadatos Python fue exacta."
+                ]
         if package_path.exists():
             package = read(package_path)
             sources[str(package_path.relative_to(OUT))] = sha(package_path)
