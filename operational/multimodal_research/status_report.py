@@ -437,6 +437,39 @@ def main() -> None:
             "Es un recálculo de CSV y una verificación de hashes; no se presenta como "
             "una repetición de las inferencias desde los sensores.",
         ]
+    component_path = OUT / "POSITIVE_BUCKET_COMPONENTS.csv"
+    if component_path.exists():
+        components = pd.read_csv(component_path)
+        selected = components[
+            components.method.isin(["R_ANCHOR_EVENT", "F_TRUE_SAME_ROUTE", "public_Garl_event_lhr"])
+        ]
+        sources[str(component_path.relative_to(OUT))] = sha(component_path)
+        text += [
+            "## Componentes positivos con los pesos del benchmark",
+            "Recálculo descriptivo posterior: `0.5 MiDc + 0.3 MiDs + 0.1 MiDl`. "
+            "No es un overall_MiD ni un score oficial: falta el componente negativo, "
+            "que se mantiene desconocido. No se normalizan los pesos ni se cambia "
+            "la selección del candidato. Los casos TTC >10 s quedan fuera de estos "
+            "tres buckets, como en las definiciones publicadas.",
+            table(
+                ["Cohorte", "Método", "MiDc", "MiDs", "MiDl", "Contribución positiva"],
+                [
+                    [
+                        r["cohort"],
+                        r["method"],
+                        f"{r['MiDc']:.3f}",
+                        f"{r['MiDs']:.3f}",
+                        f"{r['MiDl']:.3f}",
+                        f"{r['observed_positive_contribution']:.3f}",
+                    ]
+                    for r in pd.DataFrame(selected).to_dict("records")
+                ],
+            ),
+            "En FCWD se usan 498 etiquetas en (0,10] y se excluyen 99 >10 s. "
+            "En Dev32 son 926 y 20. La candidata S7 mejora MiDc frente a Garl event-only "
+            "en FCWD, pero su peor MiDs impide mejorar esta contribución ponderada. "
+            "Eso explica por qué ganar mean_MiD o un bucket no resuelve el ranking oficial.",
+        ]
     text += [
         "## Qué falta para una afirmación de SOTA",
         "El código oficial clasifica por `overall_MiD` ascendente: "
