@@ -385,6 +385,17 @@ def main() -> None:
                 f"Estado: {package['status']}; {package['sample_count']} predicciones. "
                 f"SHA-256 del ZIP: `{package['zip_sha256']}`. No enviado, sin score oficial."
             ]
+            parser_path = OUT / "test12_phase_only/OFFICIAL_PARSER_VERIFICATION.json"
+            if parser_path.exists():
+                parser = read(parser_path)
+                assert parser["status"] == "PASS"
+                assert parser["package_sha256"] == package["zip_sha256"]
+                sources[str(parser_path.relative_to(OUT))] = sha(parser_path)
+                text += [
+                    f"El lector público oficial acepta los {parser['tokens']} tokens y "
+                    "recupera exactamente las predicciones del CSV sellado. Esta prueba "
+                    "verifica el formato y el contenido; no ejecuta scoring ni usa etiquetas."
+                ]
         else:
             text += ["Inferencia en curso; el ZIP se declarará completo tras su verificación."]
     verification_path = OUT / "METRICS_REPLAY_VERIFICATION.json"
@@ -402,6 +413,13 @@ def main() -> None:
         ]
     text += [
         "## Qué falta para una afirmación de SOTA",
+        "El código oficial clasifica por `overall_MiD` ascendente: "
+        "`0.5 MiDc + 0.3 MiDs + 0.1 MiDl + 0.1 MiDn`. "
+        "El margen interno del 4 % no modifica esa fórmula. El mean_MiD externo sin "
+        "negativos tampoco la sustituye. La fórmula se verificó contra el blob público "
+        "de GitHub y el scorer local, sin abrir referencias privadas; "
+        "`OFFICIAL_RANKING_PROTOCOL.json` conserva el recibo. No se ha verificado "
+        "la mejor puntuación actual de la tabla en vivo.",
         "Hay que demostrar superioridad frente a métodos comparables bajo el mismo protocolo "
         "y declarar modalidades y métricas. Ganar una métrica oficial no equivale a ganar "
         "todos los regímenes. Las réplicas completas de productores/PAIR/cabezas y la "
