@@ -7,9 +7,9 @@ from pathlib import Path
 
 import numpy as np
 import torch
+
 from e_jepa_ttc.joint_measurement.model import PairMeasurement
 from e_jepa_ttc.models.causal_scale_ttc import CausalScaleTTC
-
 from operational.range_transfer.common import freeze, read, sha, write
 
 from .common import ROOT, RUN, require_resources

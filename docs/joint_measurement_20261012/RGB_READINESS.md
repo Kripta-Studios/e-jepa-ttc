@@ -107,3 +107,25 @@ El proceso se inició el 12 de octubre a las 18:15 UTC. Su estado actual está e
 `RGB_PREPARE_H_PROGRESS.json`, `RGB_PREPARE_V_PROGRESS.json` y los manifests del
 cache_root. El recibo `verification/V16_COORDINATION_20261012T1816.json` registra
 la observación de propietarios, sin utilizar resultados FCWD/Dev32 para recetas.
+
+## Export portable RGB
+
+`python -B -m operational.joint_measurement.rgb_export FIT_ID` exige la congelación
+de los endpoints RGB. Generará TorchScript batch1, ejemplos sin etiquetas,
+normalización, contrato de entrada y recibos con SHA-256 en `rgb/exports/FIT_ID`.
+La entrada RGB es [1,2,3,128,128], FP32 en [0,1], y un intervalo positivo [1,1]
+del reloj RGB. El NPZ utiliza la clave `rgb`; el replay conserva también la
+compatibilidad con los exports event cuya clave es `events`.
+
+Se ha comprobado la ruta de serialización/recarga en CPU con dos pares P reales
+(T2/T3), sobre el padre RGB histórico y sobre DIRECT/CORR con sus módulos nuevos
+aleatorios. Las tres comprobaciones pasan y el ejemplo publicado en cada
+diagnóstico coincide bit a bit. **Cero updates y ninguna medida de precisión TTC**.
+Recibos: `diagnostics/RGB_PORTABLE_PREFLIGHT/RESULT.json` y `REPLAY.json` de cada
+arquitectura. El código exacto ejecutado se conserva junto al diagnóstico; una
+corrección posterior de líneas en blanco entre imports tiene AST idéntico.
+
+El trazado se limita al contrato de forma fija y entradas válidas declarado.
+Conserva las advertencias de PyTorch en el log. La preparación de estos artefactos
+no acredita los futuros endpoints entrenados: cada export deberá repetirse y
+verificarse con sus propios pesos después de completar la comparación RGB.
