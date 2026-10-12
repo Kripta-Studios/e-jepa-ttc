@@ -81,7 +81,9 @@ def main() -> None:
             "All twelve original V13 endpoints, receipts and H normalizers are included as "
             "byte-preserved reference dependencies. Their historical absolute path bindings "
             "are preserved, not advertised as a standalone relocated runtime. Original sensor "
-            "HDF5/RGB archives and public Garl checkpoints remain external. Partial sensor "
+            "HDF5/RGB archives, historical H8 current-input caches and the public Garl "
+            "full/event checkpoints remain external; the downloaded visual checkpoint is included. "
+            "Partial sensor "
             "replay directories are recoverable per query and are complete only with SEALED.json."
         ),
         scientific_scope=(

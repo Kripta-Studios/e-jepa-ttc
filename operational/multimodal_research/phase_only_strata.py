@@ -141,6 +141,23 @@ def main() -> None:
     frame.to_csv(detail_path, index=False)
     table = pd.DataFrame(records)
     table.to_csv(table_path, index=False)
+    wrong_sign = []
+    for r in rows:
+        if r["arm"] != "EVENT" or not r["rgb_available"] or not r["truth_ttc"] > 0:
+            continue
+        if r["R_CTX"] < 0:
+            median = float(np.median(r["R_expert_phases"]))
+            wrong_sign.append(
+                dict(
+                    **r,
+                    R_expert_median_phase=median,
+                    R_context_residual_phase=r["R_raw_phase"] - median,
+                    R_context_crossed_expert_median_sign=median > 0,
+                    candidate_keeps_wrong_sign=r["emitted_ttc"] < 0,
+                )
+            )
+    wrong_path = OUT / "PHASE_ONLY_WRONG_SIGN_CASES.csv"
+    pd.DataFrame(wrong_sign).to_csv(wrong_path, index=False)
     write(
         OUT / "PHASE_ONLY_STRATA.json",
         dict(
@@ -152,6 +169,20 @@ def main() -> None:
             ),
             detail_sha256=sha(detail_path),
             table_sha256=sha(table_path),
+            wrong_sign_cases_sha256=sha(wrong_path),
+            wrong_sign_summary={
+                c: dict(
+                    RGB_wrong_sign=sum(r["cohort"] == c for r in wrong_sign),
+                    positive_expert_median=sum(
+                        r["cohort"] == c and r["R_context_crossed_expert_median_sign"]
+                        for r in wrong_sign
+                    ),
+                    candidate_keeps_wrong_sign=sum(
+                        r["cohort"] == c and r["candidate_keeps_wrong_sign"] for r in wrong_sign
+                    ),
+                )
+                for c in ("FCWD", "DEV32")
+            },
             queries_per_arm={
                 c: int((frame.cohort.eq(c) & frame.arm.eq("EVENT")).sum())
                 for c in ("FCWD", "DEV32")

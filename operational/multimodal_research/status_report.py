@@ -111,6 +111,15 @@ def main() -> None:
         "Sus ventajas externas dependen de la métrica y la cohorte: F_TRUE conserva mejor "
         "agregado/MAE FCWD y Dev32 no confirma una mejora consistente de MiD. "
         "No se declara una victoria universal ni un resultado oficial de test12.",
+        "La comparación pendiente Garl visual/full FCWD ya se ejecutó antes de la nueva "
+        "autorización de entrenamiento: 630 consultas comprobadas temporalmente, 495 "
+        "aceptadas por el registro sellado y 472 etiquetas comunes. F_TRUE supera al full "
+        "registrado tanto en ese soporte común como frente a su fallback event-only sobre "
+        "597 etiquetas. No se cambiaron tolerancias. El "
+        "[informe de esa etapa](../multimodal_validation_20261012/MULTIMODAL_REVIEW_FINAL.md) "
+        "conserva cobertura, métricas nativas/sensibilidad, 1.229 llamadas instrumentadas, "
+        "geometría y costes. Sus cero updates describen aquella etapa; esta continuación "
+        "posterior ejecuta la autorización ampliada del usuario.",
         "## Evidencia interna V",
         "V es desarrollo expuesto. Cada par de correctores conserva 2.500 updates por brazo. "
         "Los estados H originales proceden de refinadores supervisados en H y no son OOF. "
@@ -249,7 +258,10 @@ def main() -> None:
             "En Dev32 el desacuerdo concentra un empeoramiento respecto a RGB, aunque "
             "la nueva cabeza reduce el error de F_TRUE en ese mismo estrato. "
             "Las 13 predicciones negativas de R_CTX entre las 946 etiquetas positivas "
-            "siguen siendo negativas. Esto localiza una limitación, pero no demuestra "
+            "siguen siendo negativas. En seis de ellas la mediana de los expertos RGB "
+            "era positiva: el contexto RGB cruza ese signo antes de la corrección nueva. "
+            "Un signo positivo de los expertos no implica un TTC preciso. "
+            "Esto localiza una limitación, pero no demuestra "
             "causalidad ni autoriza una compuerta ajustada con estas etiquetas.",
         ]
     text += ["## Coste y paridad"]
