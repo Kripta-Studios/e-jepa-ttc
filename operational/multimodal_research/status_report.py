@@ -104,6 +104,13 @@ def main() -> None:
         f"Generado {now}. Investigación en curso; SOTA no demostrado.",
         f"Updates científicos: {ledger['scientific']}; recuperación superior: "
         f"{ledger['recovery_upper']}; límite físico consumido: {ledger['physical_upper']}.",
+        "Pasar del 2 % al 4 % cambia la tolerancia de degradación del tramo TTC largo; "
+        "no cambia las predicciones ni demuestra superioridad sobre otro sistema. "
+        "PHASE_ONLY ya cumple los criterios originales del 2 % en las semillas 7, 13 y 23, "
+        "incluido el contraste con el control sin información predictiva event. "
+        "Sus ventajas externas dependen de la métrica y la cohorte: F_TRUE conserva mejor "
+        "agregado/MAE FCWD y Dev32 no confirma una mejora consistente de MiD. "
+        "No se declara una victoria universal ni un resultado oficial de test12.",
         "## Evidencia interna V",
         "V es desarrollo expuesto. Cada par de correctores conserva 2.500 updates por brazo. "
         "Los estados H originales proceden de refinadores supervisados en H y no son OOF. "
@@ -137,7 +144,9 @@ def main() -> None:
         "Todas las consultas permanecen. Sin RGB, los nuevos brazos usan exactamente E_CTX "
         "de la misma ruta. FCWD tiene registro estimado, no calibración extrínseca oficial. "
         "Dev32 conserva 1.024 consultas/946 etiquetas. Los CSV también muestran soporte común, "
-        "cobertura, todos los comparadores y contrastes descriptivos por secuencia.",
+        "cobertura, todos los comparadores y contrastes descriptivos por secuencia. "
+        "Dev32 y FCWD ya estaban expuestos durante el desarrollo: esta transferencia es "
+        "descriptiva y no constituye un nuevo test ciego de la búsqueda completa.",
         table(
             [
                 "Estudio",
@@ -152,8 +161,8 @@ def main() -> None:
             ],
             external,
         ),
-        "La ruta histórica Dev32 era CPU; la de FCWD era GPU. En diez casos FCWD, E_CTX "
-        "se reprodujo con matmul TF32 desactivado y cuDNN TF32 activado. El replay global "
+        "La ruta histórica Dev32 era CPU; la de FCWD era GPU. La ruta FCWD conserva "
+        "matmul TF32 desactivado y cuDNN TF32 activado. El replay global "
         "de padres tiene sus recibos separados en parent_replay. Los readouts externos "
         "se ejecutan en CPU FP32 y esa precisión se declara en cada sello.",
     ]
@@ -194,14 +203,103 @@ def main() -> None:
             for r in read(path)
         ]
         text += [table(["Cohorte", "Comparaciones", "Nativo ms", "Reuso ms", "Ahorro"], cost_rows)]
+        text += [
+            "CPU, un hilo, carga concurrente; HDF5 hasta E_CTX con pesos residentes. Incluye "
+            "reuso exacto de ventanas, mapa y frames del encoder. No incluye adquisición de ROI, "
+            "carga inicial de pesos, RGB ni registro. Las 128 comparaciones preservan inputs, "
+            "features, expertos, punto y cuantiles bit a bit. No es una cifra de streaming GPU.",
+        ]
+    path = OUT / "PHASE_ONLY_GARL_POSTHOC.csv"
+    if path.exists():
+        sources[str(path.relative_to(OUT))] = sha(path)
+        comparisons = pd.read_csv(path).query("seed == 7")
+        text += [
+            "## PHASE_ONLY frente a Garl y F_TRUE",
+            "Contrastes descriptivos posteriores a la congelación del candidato semilla 7. "
+            "Delta negativo favorece PHASE_ONLY. Bootstrap de secuencias completas; "
+            "FCWD sólo tiene tres secuencias. No corrige la búsqueda adaptativa ni autoriza "
+            "escoger otra receta según estos resultados externos.",
+            table(
+                ["Cohorte", "Comparador", "Métrica", "Delta", "IC95 %"],
+                [
+                    [
+                        r["cohort"],
+                        r["comparator"],
+                        r["metric"],
+                        f"{r['delta']:.6f}",
+                        f"[{r['ci95_low']:.6f}, {r['ci95_high']:.6f}]",
+                    ]
+                    for r in comparisons.to_dict("records")
+                ],
+            ),
+        ]
+    path = OUT / "PHASE_ONLY_ROUTE_COST.json"
+    if path.exists():
+        sources[str(path.relative_to(OUT))] = sha(path)
+        cost = read(path)
+        text += [
+            "## Coste sensorial del candidato",
+            cost["scope"],
+            table(
+                ["Cohorte", "Etapa", "p50 ms", "p95 ms"],
+                [
+                    [cohort, stage, f"{v['p50']:.3f}", f"{v['p95']:.3f}"]
+                    for cohort, stages in cost["summary"].items()
+                    for stage, v in stages.items()
+                ],
+            ),
+            f"{cost['rows']} ejecuciones con paridad exacta de estados y predicción. "
+            "El coste de registro FCWD debe añadirse; esta medición no es la latencia "
+            "completa de un sistema con detector y registro en línea.",
+        ]
+    path = OUT / "test12_phase_only/MODEL_INPUT_FREEZE.json"
+    if path.exists():
+        sources[str(path.relative_to(OUT))] = sha(path)
+        frozen = read(path)
+        text += [
+            "## Preparación oficial test12",
+            f"Candidato {frozen['candidate']} congelado en {frozen['utc']}. "
+            "Se mantienen los 6.762 tokens oficiales. Las 957 repeticiones por clips "
+            "solapados se resuelven en 5.805 observaciones físicas tras comprobar igualdad "
+            "de ventanas, ROI y relojes. Cada observación aporta evidencia una sola vez "
+            "al contexto; todos los tokens reciben su predicción. No se leen etiquetas privadas.",
+            "Los productores/PAIR y refinadores siguen siendo los padres V13 originales. "
+            "No se presenta esta inferencia como un refit nuevo de TRAIN40. Las fuentes RGB "
+            "están verificadas contra los hashes de la revisión fijada de eAP. "
+            "El candidato usa historias causales de observaciones del mismo objeto, con "
+            "soporte total de hasta 650 ms; Garl full utiliza su pareja temporal nativa.",
+        ]
+        package_path = OUT / "test12_phase_only/PACKAGE_VERIFICATION.json"
+        if package_path.exists():
+            package = read(package_path)
+            sources[str(package_path.relative_to(OUT))] = sha(package_path)
+            text += [
+                f"Estado: {package['status']}; {package['sample_count']} predicciones. "
+                f"SHA-256 del ZIP: `{package['zip_sha256']}`. No enviado, sin score oficial."
+            ]
+        else:
+            text += [
+                "Inferencia en curso; el ZIP se declarará completo tras su verificación."
+            ]
+    verification_path = OUT / "METRICS_REPLAY_VERIFICATION.json"
+    if verification_path.exists():
+        verification = read(verification_path)
+        sources[str(verification_path.relative_to(OUT))] = sha(verification_path)
+        counts = verification["counts"]
+        text += [
+            "## Reproducción de las tablas",
+            f"{counts['scalar_checks']} comprobaciones escalares aprobadas sobre "
+            f"{counts['internal_tables']} tablas V y {counts['external_tables']} tablas externas. "
+            f"Se verifican los endpoints de los {counts['verified_fits']} fits. "
+            "Es un recálculo de CSV y una verificación de hashes; no se presenta como "
+            "una repetición de las inferencias desde los sensores.",
+        ]
     text += [
-        "CPU, un hilo, carga concurrente; HDF5 hasta E_CTX con pesos residentes. Incluye "
-        "reuso exacto de ventanas, mapa y frames del encoder. No incluye adquisición de ROI, "
-        "carga inicial de pesos, RGB ni registro. Las 128 comparaciones preservan inputs, "
-        "features, expertos, punto y cuantiles bit a bit. No es una cifra de streaming GPU.",
         "## Qué falta para una afirmación de SOTA",
-        "Superar métodos comparables con las mismas modalidades, cohortes y métricas, "
-        "replicar productores/PAIR/cabezas completos y verificar transferencia. El ranking "
+        "Hay que demostrar superioridad frente a métodos comparables bajo el mismo protocolo "
+        "y declarar modalidades y métricas. Ganar una métrica oficial no equivale a ganar "
+        "todos los regímenes. Las réplicas completas de productores/PAIR/cabezas y la "
+        "transferencia son evidencia pendiente para afirmaciones amplias. El ranking "
         "oficial test12 requiere scoring oficial: sus etiquetas TTC no son públicas. "
         "Los ZIP de formato no son mediciones de precisión. No se han enviado submissions. "
         "[Protocolo del release oficial](https://github.com/NAIL-HNU/Garl-TTC).",
@@ -210,6 +308,8 @@ def main() -> None:
     ]
     report_path = OUT / "CURRENT_RESEARCH_REVIEW.md"
     report_path.write_text("\n\n".join(text) + "\n", encoding="utf-8")
+    if (OUT / "test12_phase_only/PACKAGE_VERIFICATION.json").exists():
+        (OUT / "MULTIMODAL_REVIEW_FINAL.md").write_bytes(report_path.read_bytes())
     write(
         OUT / "CURRENT_RESEARCH_REVIEW_SOURCES.json",
         dict(

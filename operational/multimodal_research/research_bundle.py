@@ -9,7 +9,7 @@ import zipfile
 from datetime import UTC, datetime
 
 from operational.multimodal_validation.common import OUT as PREVIOUS
-from operational.multimodal_validation.common import ROOT, read, sha, write
+from operational.multimodal_validation.common import ROOT, RUN, read, sha, write
 
 from .common import OUT, accounting
 
@@ -43,6 +43,20 @@ def main() -> None:
         path = ROOT / name
         if path.exists():
             paths.add(path)
+    parent_paths = set((RUN / "fits").glob("*/checkpoint_last.pt"))
+    for name in ("CHECKPOINT_RECEIPT.json", "RUN_PROVENANCE.json", "UPDATE_JOURNAL.json"):
+        parent_paths.update((RUN / "fits").glob("*/" + name))
+    parent_paths.update((RUN / "features/H").glob("*_NORMALIZER.json"))
+    parent_paths.update(
+        RUN / name
+        for name in (
+            "P_MANIFEST.json",
+            "H_MANIFEST.json",
+            "V_MANIFEST.json",
+            "rounds/PRODUCERS_PAIR_ENDPOINT_FREEZE.json",
+        )
+    )
+    dependency_index = []
     metadata = dict(
         utc=stamp,
         git_commit=subprocess.check_output(
@@ -55,8 +69,10 @@ def main() -> None:
         next_decision=read(OUT / "NEXT_DECISION.json"),
         dependencies=(
             "New readout checkpoints, H/V state caches, predictions and sources included. "
-            "Original sensor HDF5/RGB archives, pretrained V13 producers/PAIR/heads and public "
-            "Garl checkpoints remain external; source bindings identify them. Partial sensor "
+            "All twelve original V13 endpoints, receipts and H normalizers are included as "
+            "byte-preserved reference dependencies. Their historical absolute path bindings "
+            "are preserved, not advertised as a standalone relocated runtime. Original sensor "
+            "HDF5/RGB archives and public Garl checkpoints remain external. Partial sensor "
             "replay directories are recoverable per query and are complete only with SEALED.json."
         ),
         scientific_scope=(
@@ -86,9 +102,21 @@ print('Verified',len(manifest['files']),'files')
             entries.append(
                 dict(path=name, bytes=len(data), sha256=hashlib.sha256(data).hexdigest())
             )
+        for path in sorted(parent_paths):
+            data = path.read_bytes()
+            name = "DEPENDENCIES/V13/" + path.relative_to(RUN).as_posix()
+            digest = hashlib.sha256(data).hexdigest()
+            archive.writestr(name, data)
+            entries.append(dict(path=name, bytes=len(data), sha256=digest))
+            dependency_index.append(
+                dict(original_path=str(path), archived_path=name, sha256=digest)
+            )
         extras = {
             "SNAPSHOT.json": json.dumps(metadata, ensure_ascii=False, indent=2).encode("utf-8"),
             "VERIFY.py": verifier.encode("utf-8"),
+            "DEPENDENCY_INDEX.json": json.dumps(
+                dependency_index, ensure_ascii=False, indent=2
+            ).encode("utf-8"),
         }
         for name, data in extras.items():
             archive.writestr(name, data)
