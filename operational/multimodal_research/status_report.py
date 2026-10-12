@@ -23,7 +23,7 @@ def main() -> None:
     ledger = accounting()
     now = datetime.now(UTC).isoformat()
     sources = {}
-    results: list[tuple[str, int, Path]] = [
+    results: list[tuple[str, int | str, Path]] = [
         ("BASELINE", 7, OUT),
         ("PHASE_UNITS", 7, OUT / "studies/PHASE_UNITS"),
         ("UNIT_REPLICATION", 13, OUT / "studies/UNIT_REPLICATION/S13"),
@@ -31,6 +31,8 @@ def main() -> None:
         ("RELATIVE_PHASE", 7, OUT / "studies/RELATIVE_PHASE/S7"),
         ("FUSION_STATE", 7, OUT / "studies/FUSION_STATE/S7"),
         ("RGB_REGRET", 7, OUT / "studies/RGB_REGRET/S7"),
+        ("PHASE_ENSEMBLE", "7+13+23", OUT / "studies/PHASE_ENSEMBLE"),
+        ("FUSION_PRESERVING", 7, OUT / "studies/FUSION_PRESERVING/S7"),
     ]
     rows, external = [], []
     for study, seed, directory in results:
@@ -42,8 +44,13 @@ def main() -> None:
         sources[str(result_path.relative_to(OUT))] = sha(result_path)
         arms = ("FUSED", "ZERO_FUSED") if study == "FUSION_STATE" else ("EVENT", "ZERO")
         contrast_key = "fused_minus_zero_fused" if study == "FUSION_STATE" else "event_minus_zero"
+        prefix = "R_ANCHOR_"
+        if study == "FUSION_PRESERVING":
+            arms = ("REFINED_RGB", "ZERO_RGB")
+            contrast_key = "refined_rgb_minus_zero_rgb"
+            prefix = "F_ANCHOR_"
         for arm in arms:
-            name = "R_ANCHOR_" + arm
+            name = prefix + arm
             score = data["scores"][name]
             failed = [key for key, ok in data["gates"][name]["checks"].items() if not ok]
             rows.append(
@@ -69,11 +76,11 @@ def main() -> None:
                 for arm in arms:
                     full = metrics.query(
                         "scope == 'all_queries' and band == 'all' and method == @name",
-                        local_dict={"name": "R_ANCHOR_" + arm},
+                        local_dict={"name": prefix + arm},
                     ).iloc[0]
                     crucial = metrics.query(
                         "scope == 'all_queries' and band == 'crucial' and method == @name",
-                        local_dict={"name": "R_ANCHOR_" + arm},
+                        local_dict={"name": prefix + arm},
                     ).iloc[0]
                     external.append(
                         [
