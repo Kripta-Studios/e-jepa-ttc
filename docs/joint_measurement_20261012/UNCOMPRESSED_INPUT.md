@@ -94,3 +94,41 @@ Actual state is authoritative in the diagnostic `COMPLETE.json`, transition
 `STOP_RESULT.json` and runtime registration. Their absence means those stages
 have not completed. No scientific improvement or SOTA claim follows from an
 input-storage speedup.
+
+## Executed outcome: do not install
+
+The full cache completed with 53,890 rows, 211 packs and 86,762,364,544 array
+bytes. The original runner stopped at durable DIRECT update 3,890, with no
+pending or recovery updates. The CUDA comparison then completed all 80 declared
+real-P diagnostic updates. All nine state components were bit exact in every
+architecture, including optimizer, RNG, sampler and loss cursor after resume.
+
+| Architecture | Original mean step, s | Mapped mean step, s | Mapped/original |
+| --- | ---: | ---: | ---: |
+| NATIVE-P2-FT | 1.13264308 | 1.12913935 | 0.99690659 |
+| PAIR-DIRECT | 0.39827002 | 0.36012072 | 0.90421247 |
+| PAIR-CORR | 0.45877190 | 0.41645708 | 0.90776501 |
+| PAIR-CORR-FROZEN | 0.36048202 | 0.34128847 | 0.94675587 |
+
+The preregistered speed gates failed. **DO_NOT_INSTALL** is the decision, with no
+retrospective threshold change. A substantial improvement in the small isolated
+row-read probe did not establish the required improvement in the measured
+training trajectories. The timing scopes and cache locality differ; do not
+extrapolate the small probe's ratio to the full trainer.
+
+Evidence resides in `diagnostics/mapped_runtime/{COMPLETE,DECISION}.json`, the
+per-architecture comparisons, input parity receipt, trajectory checkpoints and
+timing CSVs. The initial checkpoint and all diagnostic outcomes remain retained.
+
+After verifying no mapped-cache consumer remained alive, the 2,321 generated NPY
+files were retired. Their 213 JSON provenance files were independently copied to
+`diagnostics/mapped_runtime/RETIRED_CACHE_PROVENANCE`. All original compressed
+sensor packs remain untouched. The cache directory's `RETIRED.json` explicitly
+marks its old COMPLETE receipt as historical; the mapped reader cannot admit
+that retired cache. Retirement receipts record exact scope and recovered bytes.
+
+The original primary queue resumed from update 3,890. The receipt
+`verification/MAPPED_REJECTION_RESUME.json` verifies the unchanged scientific
+source hash and identity, advancing updates, and zero recovery. The optional
+mapped runner remains uninstalled and refuses this failed speed gate. This
+negative execution experiment does not end the scientific campaign.
