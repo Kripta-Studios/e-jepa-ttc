@@ -60,3 +60,14 @@ Se conservan los dos estados y sus hashes en `verification/PAIR_DIRECT_*STATE*.p
 y el detalle en `verification/PAIR_DIRECT_ENCODER_CHANGE_100.json`.
 La comprobación sólo lee pesos CPU y añade cero updates. Demuestra adaptación
 real del encoder sobre P, no precisión TTC ni generalización.
+
+El replay del bundle recalcula también esta evidencia desde los pesos retenidos:
+verifica sus bytes, identidad e intervalo, topología, finitud, diferencias por
+tensor y prefijo completo de updates. Dieciocho pruebas de replay/empaquetado
+pasan, incluyendo rechazo de pesos o afirmaciones alteradas.
+
+Una extracción independiente de un ZIP diagnóstico con esos tres artefactos
+pasó el replay real: 18 tensores cambiados, máximo 0,0017303973, cero updates
+adicionales. Recibo: `diagnostics/ENCODER_WITNESS_INDEPENDENT_REPLAY/RESULT.json`.
+Este ZIP es un subconjunto de diagnóstico, no el bundle final de la campaña;
+no contiene tablas de predicción ni exports de endpoints completos.

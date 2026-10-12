@@ -112,6 +112,57 @@ def replay_export(folder: Path) -> dict:
     }
 
 
+def replay_encoder_change(initial_path: Path, trained_path: Path, witness_path: Path) -> dict:
+    """Recompute the retained real encoder-weight change without a dataset or optimizer."""
+    witness = json.loads(witness_path.read_text(encoding="utf-8"))
+    if (
+        witness["status"] != "PASS"
+        or file_hash(initial_path) != witness["initial_checkpoint_sha256"]
+        or file_hash(trained_path) != witness["trained_checkpoint_sha256"]
+    ):
+        raise ValueError("Encoder witness checkpoint bytes differ")
+    initial, trained = [
+        torch.load(path, map_location="cpu", weights_only=False)
+        for path in (initial_path, trained_path)
+    ]
+    if (
+        initial["identity"] != trained["identity"]
+        or initial["identity_sha256"] != trained["identity_sha256"]
+        or trained["identity_sha256"] != witness["identity_sha256"]
+        or [initial["completed_updates"], trained["completed_updates"]]
+        != witness["updates_compared"]
+        or initial["completed_updates"] != 0
+        or trained["completed_updates"] <= 0
+    ):
+        raise ValueError("Encoder witness scientific identity or update interval differs")
+    a, b = initial["model_state_dict"], trained["model_state_dict"]
+    if a.keys() != b.keys() or any(a[k].shape != b[k].shape for k in a):
+        raise ValueError("Encoder witness model topology differs")
+    if not all(torch.isfinite(value).all() for value in b.values()):
+        raise ValueError("Encoder witness contains nonfinite trained weights")
+    deltas = {key: float((b[key] - a[key]).abs().max()) for key in a if key.startswith("encoder.")}
+    if (
+        not deltas
+        or deltas != witness["per_tensor_maxabs"]
+        or max(deltas.values()) != witness["encoder_maxabs"]
+        or len(deltas) != witness["encoder_tensors_checked"]
+        or sum(value > 0 for value in deltas.values()) != witness["encoder_tensors_changed"]
+        or not all(value > 0 for value in deltas.values())
+    ):
+        raise ValueError("Encoder change claim does not match retained weights")
+    updates = [row["update"] for row in trained["cursor"]["curves"]]
+    if updates != list(range(1, trained["completed_updates"] + 1)):
+        raise ValueError("Encoder witness curve has a missing or duplicated update")
+    return {
+        "status": "PASS",
+        "updates_compared": witness["updates_compared"],
+        "encoder_tensors_changed": len(deltas),
+        "encoder_maxabs": max(deltas.values()),
+        "optimizer_updates": 0,
+        "generalization_claim": False,
+    }
+
+
 def replay(root: Path) -> dict:
     """Check included evidence only; never reopen training datasets or run an optimizer."""
     integrity = verify_extraction(root)
@@ -129,14 +180,25 @@ def replay(root: Path) -> dict:
         )
         for path in sorted(campaign.glob("**/exports/*/COMPLETE.json"))
     }
+    witnesses = {}
+    verification = campaign / "verification"
+    witness = verification / "PAIR_DIRECT_ENCODER_CHANGE_100.json"
+    if witness.exists():
+        witnesses["PAIR-DIRECT-S7@100"] = replay_encoder_change(
+            verification / "PAIR_DIRECT_INITIAL_STATE.pt",
+            verification / "PAIR_DIRECT_STATE_100.pt",
+            witness,
+        )
     return {
         "integrity": integrity,
         "prediction_tables": predictions,
         "portable_exports": exports,
+        "encoder_adaptation_witnesses": witnesses,
         "rows_recalculated": sum(result["rows"] for result in predictions.values()),
-        "scientific_replay_performed": bool(predictions or exports),
+        "scientific_replay_performed": bool(predictions or exports or witnesses),
         "scope": (
-            "Included prediction scalars and portable example outputs; not raw producer replay"
+            "Included prediction scalars, portable examples and retained encoder-change witnesses; "
+            "not raw producer replay"
         ),
         "optimizer_updates": 0,
         "torch_version": str(torch.__version__),
