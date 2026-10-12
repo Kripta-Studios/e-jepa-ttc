@@ -24,6 +24,7 @@ from operational.rgb_port.train_producers import ProducerCheckpoint
 from .precision import binding as precision_binding
 from .precision import initialize as native_initialize
 from .precision import learning_rate, objective
+from .provenance import record_start
 from .run import OLD, OWNER, ROOT, RUN, accounting, gpu_charge
 from .selection import claim_family
 from .spatial_model import SpatialReadout, SpatialVectors, calibration_path
@@ -39,6 +40,7 @@ def binding() -> dict:
         Path(__file__).with_name("spatial_model.py"),
         Path(__file__).with_name("spatial_cache.py"),
         Path(__file__).with_name("selection.py"),
+        Path(__file__).with_name("provenance.py"),
         ROOT / "docs/representation_audit_20261012/PROTOCOL_G_SPATIAL_GEOMETRY.md",
     ]
     result.update({str(p.relative_to(ROOT)): sha(p) for p in paths})
@@ -125,6 +127,7 @@ def fit(
         if state.pointer.exists():
             cursor = state.restore(model, optimizer, scheduler, generator)
         else:
+            record_start(directory, identity, "SYNTHETIC" if technical else "P")
             state.save(model, optimizer, scheduler, generator, cursor, status="READY")
         count = accounting()["physical_upper"]
         started = time.perf_counter()

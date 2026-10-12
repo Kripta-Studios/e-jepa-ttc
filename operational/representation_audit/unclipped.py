@@ -23,6 +23,7 @@ from operational.rgb_port.train_producers import ProducerCheckpoint
 from .precision import Vectors, learning_rate, objective
 from .precision import binding as precision_binding
 from .precision import initialize as native_initialize
+from .provenance import record_start
 from .run import OLD, OWNER, ROOT, RUN, accounting, gpu_charge
 from .selection import claim_family
 
@@ -34,6 +35,7 @@ def binding() -> dict:
     paths = [
         Path(__file__),
         Path(__file__).with_name("selection.py"),
+        Path(__file__).with_name("provenance.py"),
         ROOT / "docs/representation_audit_20261012/PROTOCOL_H_UNCLIPPED_READOUT.md",
     ]
     result.update({str(p.relative_to(ROOT)): sha(p) for p in paths})
@@ -122,6 +124,7 @@ def fit(
         if state.pointer.exists():
             cursor = state.restore(model, optimizer, scheduler, generator)
         else:
+            record_start(directory, identity, "SYNTHETIC" if technical else "P")
             state.save(model, optimizer, scheduler, generator, cursor, status="READY")
         count = accounting()["physical_upper"]
         started = time.perf_counter()

@@ -57,6 +57,19 @@ def load_export(path: Path) -> nn.Module:
     return model.eval().requires_grad_(False)
 
 
+def save_example(path: Path, values: dict[str, torch.Tensor]) -> None:
+    """Preserve exact prepared examples, without targets or mutable ZIP timestamps."""
+    arrays = {key: value.detach().cpu().numpy() for key, value in values.items()}
+    if path.exists():
+        with np.load(path, allow_pickle=False) as existing:
+            if set(existing.files) != set(arrays) or any(
+                not np.array_equal(existing[key], value) for key, value in arrays.items()
+            ):
+                raise ValueError("Existing portable example changed")
+    else:
+        np.savez_compressed(path, allow_pickle=False, **arrays)
+
+
 def main() -> None:
     torch.set_num_threads(1)
     parent = torch.load(
@@ -149,6 +162,8 @@ def main() -> None:
             else:
                 inputs = [raw]
         reference.load_state_dict(payload["model_state_dict"], strict=True)
+        metadata["input_style"] = "positional" if arm in ("Z", "G", "D") else "dict"
+        metadata["input_order"] = list(INPUTS) if arm in ("Z", "G", "D") else sorted(inputs[0])
         reference.eval().requires_grad_(False)
         folder = RUN / "exports" / name
         folder.mkdir(parents=True, exist_ok=True)
@@ -201,6 +216,19 @@ def main() -> None:
         }
         if not all(checks.values()):
             raise AssertionError(f"Export parity failure {name}: {checks}")
+        example: dict[str, torch.Tensor] = {}
+        if arm in ("Z", "G", "D"):
+            for key, tensor in zip(INPUTS, inputs, strict=True):
+                assert isinstance(tensor, torch.Tensor)
+                example[key] = tensor
+        else:
+            assert isinstance(inputs[0], dict)
+            example = inputs[0]
+        save_example(folder / "EXAMPLE_INPUT.npz", example)
+        save_example(
+            folder / "EXAMPLE_OUTPUT.npz",
+            a if isinstance(a, dict) else {key: getattr(a, key) for key in names},
+        )
         entry = {
             "status": "PASS",
             "source_sha256": sha(source),
@@ -208,6 +236,8 @@ def main() -> None:
             "exact_cpu_reload_checks": checks,
             "optimizer_updates": 0,
             "raw_inference_parity_claimed": False,
+            "example_input_sha256": sha(folder / "EXAMPLE_INPUT.npz"),
+            "example_output_sha256": sha(folder / "EXAMPLE_OUTPUT.npz"),
         }
         write(folder / "RECEIPT.json", entry)
         write(folder / "MODEL_METADATA.json", metadata)
