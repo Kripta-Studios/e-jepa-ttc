@@ -18,12 +18,21 @@ def main() -> None:
         receipt = read(path.parent / "RECEIPT.json")
         if sha(path) != receipt["predictions_sha256"]:
             raise ValueError("Predictions changed: " + str(path))
-        frame = pd.read_csv(path)
-        target, pred = frame.target_ttc.to_numpy(), frame.prediction_ttc.to_numpy()
+        frame = pd.read_csv(path, converters={"target_ttc": float, "prediction_ttc": np.float32})
+        target = frame.target_ttc.to_numpy(np.float64)
+        # CSV uses the shortest decimal that round-trips to the native FP32 output.
+        native_pred = frame.prediction_ttc.to_numpy(np.float32)
+        pred = native_pred.astype(np.float64)
+        frame["prediction_ttc_float32_recovered"] = pred
         valid = np.isfinite(pred) & ((pred < 0) | (pred > 0.1))
         with np.errstate(divide="ignore", invalid="ignore"):
             frame["MiD"] = np.where(
                 valid, 10000 * np.abs(np.log1p(-0.1 / pred) - np.log1p(-0.1 / target)), np.nan
+            )
+            frame["native_aux_MiD"] = np.where(
+                valid,
+                10000 * np.abs(np.log1p(-0.1 / native_pred) - np.log1p(-0.1 / target)),
+                np.nan,
             )
         frame["absolute_error_s"] = np.abs(pred - target)
         frame["signed_error_s"] = pred - target
@@ -43,7 +52,7 @@ def main() -> None:
             default="invalid_target",
         )
         frame.to_csv(path.parent / "LOSSES_PER_QUERY.csv", index=False)
-        computed = metrics(target, pred, frame.group_id.to_numpy())
+        computed = metrics(target, native_pred, frame.group_id.to_numpy())
         saved = read(path.parent / "METRICS.json")
         errors = []
 
@@ -67,6 +76,7 @@ def main() -> None:
                 "rows": len(frame),
                 "max_abs_error": max(errors, default=0),
                 "sha256": sha(path),
+                "prediction_precision": "native_float32_bits_recovered_from_CSV",
             }
         )
         grouped = (

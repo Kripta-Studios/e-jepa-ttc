@@ -1,5 +1,7 @@
 """Replica aggregation preserves query losses and missing-band semantics."""
 
+from io import StringIO
+
 import numpy as np
 import pandas as pd
 
@@ -32,3 +34,20 @@ def test_missing_negative_band_does_not_receive_overall():
     summary, _ = aggregate(frames(negative=False))
     assert summary["bins"]["negative"]["count"] == 0
     assert summary["overall_MiD"] is None
+
+
+def test_replica_losses_survive_native_float32_csv_round_trip():
+    original = frames()
+    for value in original:
+        value["prediction_ttc"] = (value.prediction_ttc.to_numpy() * 1.012345678).astype(np.float32)
+    restored = [
+        pd.read_csv(
+            StringIO(value.to_csv(index=False)),
+            converters={"target_ttc": float, "prediction_ttc": np.float32},
+        )
+        for value in original
+    ]
+    before, loss_before = aggregate(original)
+    after, loss_after = aggregate(restored)
+    assert before == after
+    pd.testing.assert_frame_equal(loss_before, loss_after)

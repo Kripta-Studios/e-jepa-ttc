@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import shutil
 import subprocess
 import zipfile
@@ -30,7 +31,7 @@ def sha(path: Path) -> str:
 
 def table(frame: pd.DataFrame) -> str:
     def cell(value: object) -> str:
-        if value is None:
+        if value is None or (isinstance(value, float) and math.isnan(value)):
             return "ausente"
         if isinstance(value, float):
             return f"{value:.6g}"
@@ -74,6 +75,32 @@ def plots() -> None:
         axes[1, mass].set_xlabel("Updates")
         axes[0, mass].legend()
     fig.savefig(destination / "S_SAMPLING_CURVES.png", dpi=150)
+    plt.close(fig)
+    fig, axes = plt.subplots(1, 2, figsize=(12, 4), constrained_layout=True)
+    found = False
+    for name in ("RT-M0-L0-S7", "R-C05-CTX-S7", "R-C20-CTX-S7"):
+        source = historical if name.startswith("RT-") else RUN
+        path = source / "fits" / name / "CURVE.csv"
+        if not path.exists():
+            continue
+        found = True
+        frame = pd.read_csv(path)
+        axes[0].plot(frame["update"], frame.loss.rolling(100, min_periods=1).mean(), label=name)
+        axes[1].plot(
+            frame["update"],
+            (frame.gradient_l2_before_clip > 1).rolling(100, min_periods=1).mean(),
+            label=name,
+        )
+    if found:
+        axes[0].set_title("Refinadores M0/L0: objetivo H")
+        axes[1].set_title("Refinadores: clipping")
+        axes[0].set_ylabel("Loss, media móvil 100")
+        axes[1].set_ylabel("Fracción con clipping, media móvil 100")
+        axes[1].set_ylim(0, 1.05)
+        for ax in axes:
+            ax.legend()
+            ax.set_xlabel("Updates")
+        fig.savefig(destination / "R_CONTEXT_CURVES.png", dpi=150)
     plt.close(fig)
     fig, axes = plt.subplots(1, 2, figsize=(12, 4), constrained_layout=True)
     found = False
@@ -187,6 +214,7 @@ def generate() -> None:
 3. [Muestreo, clipping y alcance del productor](03_DIAGNOSTICOS.md).
 4. [Pruebas, fallos, recursos y coste](04_PRUEBAS_Y_COSTE.md).
 5. [Reproducción y contenido del bundle](05_REPRODUCCION.md).
+6. [Interpretación de los mecanismos](06_INTERPRETACION.md).
 """
     (OUT / "README.md").write_text(
         header
@@ -218,18 +246,47 @@ def generate() -> None:
                 }
             )
     gate_table = table(pd.DataFrame(gate_rows)) if gate_rows else "Selección pendiente.\n"
+    contrasts = contrast_table()
+    interpret(selection, contrasts)
+    bootstrap_rows = []
+    for path in sorted((RUN / "bootstrap").glob("*/SUMMARY.json")):
+        value = read(path)
+        bootstrap_rows.append(
+            {
+                "contrast": path.parent.name,
+                "delta_MiDc": value.get("delta_MiDc"),
+                "CI95_low": value.get("CI95", [None, None])[0],
+                "CI95_high": value.get("CI95", [None, None])[1],
+                "groups": value.get("groups"),
+            }
+        )
+    bootstrap_frame = pd.DataFrame(bootstrap_rows)
+    bootstrap_frame.to_csv(RUN / "BOOTSTRAP_TABLE.csv", index=False)
     (OUT / "02_RESULTADOS.md").write_text(
         "# Resultados y selección\n\n"
         + result_table
         + "## Gates registrados\n\n"
         + gate_table
+        + "\n## Diferencias de los contrastes previstos\n\n"
+        + (table(contrasts) if not contrasts.empty else "Pendientes.\n")
+        + "\n## Bootstrap por grupos\n\n"
+        + (table(bootstrap_frame) if not bootstrap_frame.empty else "Pendiente.\n")
         + "Los candidatos prospectivos son S-M1 y R-C20-CTX. Se aplican los gates V14 "
         "frente a su control pareado y al M0/L0 histórico. S-M0 y R-C05 no se promocionan "
         "a posteriori. Un intervalo favorable no es un gate adicional.\n\n"
+        "Umbrales: MiDc ≤90 % del control y mejora en ≥60 % de sus grupos; overall "
+        "sin aumento; MiDs/MiDl/MiDn como máximo control + max(2 puntos, 5 %); "
+        "MAE ≤102 %; error de signo como máximo +0,5 puntos porcentuales; p95 de "
+        "sobreestimación crucial ≤105 %; aviso tardío y falsa alerta como máximo "
+        "+1 punto porcentual, con denominadores ≥30. Se exige cobertura completa. "
+        "Cada candidato debe pasar frente a su pareja y al control histórico M0.\n\n"
         "MiD por banda promedia primero dentro de cada grupo y después entre grupos. "
         "Overall = 0,5 MiDc + 0,3 MiDs + 0,1 MiDl + 0,1 MiDn; permanece ausente si falta "
         "una banda. mean_MiD y MAE son medias por consulta. El bootstrap agrupa por escenario: "
         "1.000 draws, seed12345, descriptivo ante múltiples contrastes.\n\n"
+        "El bootstrap conserva la lectura decimal CSV de la ruta V14. La reproducción "
+        "exacta de métricas recupera primero los bits FP32 de la salida nativa; ambos "
+        "procedimientos quedan identificados, sin cambiar predicciones ni gates.\n\n"
         "Las tablas completas por consulta y grupo están en evaluation/. Los siete "
         "contrastes iniciales se conservan en bootstrap/. Si hay réplica, se promedian "
         "pérdidas por consulta sobre seeds7/13/23; no se construye un ensemble TTC. "
@@ -259,6 +316,12 @@ EVENT_CROP_ROWS_P_H.csv y EVENT_CROP_SUMMARY.csv usan las coordenadas reales del
 
 PRODUCER_METRICS_P_H.json compara A5 original y ambos readouts sobre P/H. P es entrenamiento de readout; H entrena las cabezas. Estas cifras describen el mecanismo y no son selección ni validación independiente. Las normas de gradiente R proceden de un objetivo distinto del de S; sus valores absolutos no son comparables como una única pérdida.
 """
+    for filename, caption in (
+        ("S_SAMPLING_CURVES.png", "Muestreo S frente a sus referencias V14"),
+        ("R_READOUT_CURVES.png", "Readouts A5 sobre P"),
+        ("R_CONTEXT_CURVES.png", "Refinadores sobre H"),
+    ):
+        diag += f"\n![{caption}](../../artifacts/range_readout_20261012/figures/{filename})\n"
     (OUT / "03_DIAGNOSTICOS.md").write_text(diag, encoding="utf-8")
     qa = (
         "# Pruebas, contabilidad y coste\n\n"
@@ -286,6 +349,8 @@ PRODUCER_METRICS_P_H.json compara A5 original y ambos readouts sobre P/H. P es e
     qa += """Los tests contractuales y logs se conservan en qa/. Las pruebas de continuidad comparan 10 updates sintéticos continuos frente a 5+restore+5. S consume 20 técnicos; R conserva una primera comprobación de 20 y otra de 20 tras añadir los guards explícitos. No se utilizan datos reales para consumir el presupuesto técnico.
 
 Las paridades raw/caché y GPU/CPU verifican outputs, pérdidas y gradientes. La tolerancia 2e-5 se fijó antes de los fits R. Los módulos congelados se comparan exactamente tras el entrenamiento sintético y cada fit R. Los contratos T2/T3 y negativos usan fixtures; no son evidencia de precisión.
+
+TERMINAL_RESUME_PROOF.json acredita la reanudación real de los seis endpoints ya completos: cero updates añadidos y hashes de pesos, curvas, predicciones y freezes conservados. METRICS_REPRODUCTION.json recupera los bits FP32 de las predicciones serializadas y reproduce todas las métricas guardadas. LOSSES_PER_QUERY.csv separa MiD del scorer FP64 y native_aux_MiD, que conserva la aritmética del mean_MiD auxiliar histórico. No se sustituyen predicciones ni se relajan tolerancias para la selección.
 
 Los tiempos de fit proceden de RUN_PROVENANCE e incluyen trabajo vectorial/cabeza y persistencia durante el bucle; excluyen entrenar productores y la preparación de cachés. Los COST.json de V miden sólo forward de cabeza desde caché, batch128. No son latencias E2E ni batch1. PROGRESS.json de extracción registra el tiempo de esa invocación; cuando existe resume, no equivale al total de todos los intentos.
 
@@ -356,6 +421,109 @@ def short_producer_table() -> None:
         sign_error_rate=("sign_error", "mean"),
         known_rate=("known", "mean"),
     ).reset_index().to_csv(RUN / "SHORT_PRODUCER_DIAGNOSTICS.csv", index=False)
+
+
+def contrast_table() -> pd.DataFrame:
+    """Report every registered screen contrast; do not recompute or alter gates."""
+    comparisons = [
+        ("S-M0-L0-S7", "RT-M0-L0-S7"),
+        ("S-M1-L0-S7", "RT-M1-L0-S7"),
+        ("S-M1-L0-S7", "S-M0-L0-S7"),
+        ("S-M1-L0-S7", "RT-M0-L0-S7"),
+        ("R-C20-CTX-S7", "R-C05-CTX-S7"),
+        ("R-C20-CTX-S7", "RT-M0-L0-S7"),
+        ("R-C05-CTX-S7", "RT-M0-L0-S7"),
+    ]
+    rows = []
+    for candidate, control in comparisons:
+        candidate_path = RUN / "evaluation/screen" / candidate / "METRICS.json"
+        root = RUN / "historical_V14" if control.startswith("RT-") else RUN
+        reference_path = root / "evaluation/screen" / control / "METRICS.json"
+        if not candidate_path.exists() or not reference_path.exists():
+            continue
+        a, b = read(reference_path), read(candidate_path)
+
+        def percent(left: float | None, right: float | None) -> float | None:
+            return 100 * (right / left - 1) if left and right is not None else None
+
+        row: dict[str, str | float | None] = {"candidate": candidate, "control": control}
+        for label, band in (
+            ("MiDc", "crucial"),
+            ("MiDs", "small"),
+            ("MiDl", "large"),
+            ("MiDn", "negative"),
+        ):
+            row[f"delta_{label}_pct"] = percent(
+                a["bins"][band]["group_macro_mid"], b["bins"][band]["group_macro_mid"]
+            )
+        row["delta_overall_pct"] = percent(a["overall_MiD"], b["overall_MiD"])
+        row["delta_MAE_pct"] = percent(a["diagnostics"]["mae_s"], b["diagnostics"]["mae_s"])
+        row["groups_crucial_improved"] = sum(
+            b["group_crucial_mid"].get(g, float("inf")) < value
+            for g, value in a["group_crucial_mid"].items()
+        )
+        rows.append(row)
+    frame = pd.DataFrame(rows)
+    frame.to_csv(RUN / "CONTRASTS.csv", index=False)
+    return frame
+
+
+def interpret(selection: dict[str, Any], contrasts: pd.DataFrame) -> None:
+    """Write evidence-derived conclusions without claiming unmeasured SOTA or causality."""
+    body = "# Interpretación de V15\n\n"
+    body += f"Decisión de cribado: **{selection['status']}**.\n\n"
+    for family, candidate, control in (
+        ("S", "S-M1-L0-S7", "S-M0-L0-S7"),
+        ("R", "R-C20-CTX-S7", "R-C05-CTX-S7"),
+    ):
+        if contrasts.empty:
+            continue
+        row = contrasts[(contrasts.candidate == candidate) & (contrasts.control == control)].iloc[0]
+        failed = [
+            k for k, value in selection["gates"][family]["paired"]["checks"].items() if not value
+        ]
+        body += (
+            f"{candidate} frente a {control}: MiDc cambia {row.delta_MiDc_pct:+.2f} %, "
+            f"MiDl {row.delta_MiDl_pct:+.2f} %, MiDn {row.delta_MiDn_pct:+.2f} % y "
+            f"MAE {row.delta_MAE_pct:+.2f} %. Los signos positivos indican empeoramiento. "
+            f"Gates pareados incumplidos: {', '.join(failed) or 'ninguno'}. "
+            "La tabla de resultados conserva también el contraste obligatorio con V14 M0.\n\n"
+        )
+    clip = pd.read_csv(RUN / "CLIPPING.csv").set_index("fit")
+    old, new = [float(clip.at[name, "fraction_clipped"]) for name in ("RT-M1-L0-S7", "S-M1-L0-S7")]
+    body += (
+        f"En S-M1, el clipping pasa de {old:.2%} a {new:.2%}. La prueba de igualdad "
+        "del riesgo esperado y de su gradiente impide atribuirlo a una segunda ponderación. "
+        "La estimación de varianza usa 32 batches en la inicialización: describe ese punto "
+        "y no prueba que el clipping sea la única causa de las diferencias finales. M0 "
+        "no mostró la misma reducción de varianza inicial.\n\n"
+    )
+    short = pd.read_csv(RUN / "SHORT_PRODUCER_DIAGNOSTICS.csv").set_index(["role", "producer"])
+    reach = pd.read_csv(RUN / "PRODUCER_REACH_SUMMARY.csv")
+    for role in ("P", "H"):
+        a, b = short.loc[(role, "R-C05-S7")], short.loc[(role, "R-C20-S7")]
+        reach_role = reach[(reach.role == role) & (reach.band == "0.1-1")].set_index("producer")
+        body += (
+            f"En {role}, para {int(a['queries'])} consultas de TTC ≤1 s, el límite de "
+            f"geometría fija deja fuera del alcance a {int(reach_role.at['R-C05-S7', 'overestimate_count'])} "
+            f"targets con C05 y a {int(reach_role.at['R-C20-S7', 'overestimate_count'])} con C20. "
+            f"Sin embargo, el MAE aprendido del productor cambia de {a['mae_s']:.3f} a "
+            f"{b['mae_s']:.3f} s y su mediana TTC de {a['prediction_median_s']:.3f} a "
+            f"{b['prediction_median_s']:.3f} s. El alcance disponible y el resultado "
+            "aprendido son magnitudes distintas.\n\n"
+        )
+    body += (
+        "La comparación C20/C05 mantiene el reset y los 6.000 updates del scorer en ambos "
+        "brazos. El contraste con A5 o V14 históricos incluye esa nueva receta de "
+        "entrenamiento; no se atribuye todo su efecto al cap. Los encoders permanecen "
+        "compartidos. H es diagnóstico del readout y entrenamiento de la cabeza, no "
+        "confirmación externa. Los avisos a 1 s son diagnósticos TTC, no validación AEB.\n\n"
+        "Estos datos no acreditan SOTA universal. Una campaña posterior necesitaría "
+        "un protocolo nuevo, presupuesto propio y comparaciones de la misma población, "
+        "modalidad y coste. El saldo reservado a réplicas no autoriza nuevos coeficientes "
+        "ni selección sobre FCWD/Dev32.\n"
+    )
+    (OUT / "06_INTERPRETACION.md").write_text(body, encoding="utf-8")
 
 
 def snapshot_historical() -> None:

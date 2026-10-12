@@ -20,7 +20,8 @@ def aggregate(frames: list[pd.DataFrame]) -> tuple[dict[str, Any], pd.DataFrame]
         raise ValueError("Three paired seed populations required")
     target = first.target_ttc.to_numpy()
     groups = first.group_id.to_numpy()
-    pred = np.stack([f.prediction_ttc.to_numpy() for f in frames])
+    # Restore native FP32 predictions before the scorer's FP64 arithmetic.
+    pred = np.stack([f.prediction_ttc.to_numpy(np.float32).astype(np.float64) for f in frames])
     if not np.isfinite(pred).all() or not ((pred < 0) | (pred > 0.1)).all():
         raise ValueError("Replica coverage incomplete")
     mid = (10000 * np.abs(np.log1p(-0.1 / pred) - np.log1p(-0.1 / target)[None, :])).mean(0)
@@ -83,7 +84,10 @@ def summarize(family: str) -> dict[str, Any]:
         for seed in (7, 13, 23):
             stage = "screen" if seed == 7 else "replication"
             frames.append(
-                pd.read_csv(RUN / "evaluation" / stage / template.format(seed) / "PREDICTIONS.csv")
+                pd.read_csv(
+                    RUN / "evaluation" / stage / template.format(seed) / "PREDICTIONS.csv",
+                    converters={"target_ttc": float, "prediction_ttc": np.float32},
+                )
             )
         results[label], tables[label] = aggregate(frames)
         tables[label].to_csv(directory / f"{label}_MEAN_LOSS_PER_QUERY.csv", index=False)
