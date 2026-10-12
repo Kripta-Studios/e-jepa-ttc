@@ -115,7 +115,14 @@ esos cuatro casos, con tensor [4,2,3,128,128] y reloj RGB positivo. Recibo:
 `verification/H_RGB_INPUT_ADMISSION.json`. No se ejecutó ningún modelo ni métrica.
 El manifest H tiene SHA-256
 `8cadc01ea182f4bcfc2082790ba942abd22cfca6d1cd7f1d1cbbefc119b17618`.
-V comenzó automáticamente después; su cierre todavía está pendiente.
+V cerró a las 18:53:43 UTC: 16.432 consultas, 514 fragmentos y 1.516.027.016 bytes.
+También conserva cobertura exacta y paridad bit a bit en los cuatro casos de
+segunda decodificación. El adaptador consumió los índices 0, 16.422, 1 y 16.431,
+con tensor [4,2,3,128,128] e intervalos RGB positivos. Recibo:
+`verification/V_RGB_INPUT_ADMISSION.json`. El manifest V tiene SHA-256
+`21975cfe232c6a128376abfde4caa49fa00afa1d9740971785827c7cd278e92d`.
+El proceso CPU de preparación terminó con código 0. P/H/V tienen ahora entradas
+RGB disponibles; esto no constituye entrenamiento ni evaluación de precisión.
 
 ## Export portable RGB
 
