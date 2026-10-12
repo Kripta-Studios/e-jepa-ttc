@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import shutil
 import subprocess
 import zipfile
 from pathlib import Path
@@ -51,7 +52,7 @@ def plots() -> None:
 
     destination = RUN / "figures"
     destination.mkdir(exist_ok=True)
-    historical = ROOT.parent / "e-jepa-ttc-v14-range-transfer/artifacts/range_transfer_20261010"
+    historical = RUN / "historical_V14"
     fig, axes = plt.subplots(2, 2, figsize=(12, 7), constrained_layout=True)
     for mass in (0, 1):
         for directory, label in (
@@ -91,6 +92,9 @@ def plots() -> None:
     if found:
         axes[0].set_title("Readout: objetivo nativo P")
         axes[1].set_title("Readout: clipping")
+        axes[0].set_ylabel("Loss nativa, media móvil 100")
+        axes[1].set_ylabel("Fracción con clipping, media móvil 100")
+        axes[1].set_ylim(0, 1.05)
         for ax in axes:
             ax.legend()
             ax.set_xlabel("Updates")
@@ -99,6 +103,7 @@ def plots() -> None:
 
 
 def generate() -> None:
+    snapshot_historical()
     OUT.mkdir(parents=True, exist_ok=True)
     decision = read(RUN / "NEXT_DECISION.json")
     ledger = read(RUN / "ACCOUNTING.json")
@@ -214,6 +219,7 @@ def generate() -> None:
     for filename, title in (
         ("H_GRADIENT_VARIANCE.csv", "Gradientes iniciales H"),
         ("CLIPPING.csv", "Clipping durante S"),
+        ("CLIPPING_ALL_FITS.csv", "Clipping de todos los fits V15"),
         ("PRODUCER_REACH_SUMMARY.csv", "Alcance condicional P/H"),
     ):
         path = RUN / filename
@@ -226,6 +232,8 @@ La masa no se normaliza dentro del batch. El sampler usa probabilidades globales
 El alcance del productor mantiene la geometría fija y permite residuales máximos independientes en ambas parejas. Se marca como no disponible cuando se cruza un polo del transporte. No es un límite absoluto de PAIR/H8 ni de un encoder distinto. Se conservan predicciones, known, soporte, edades y correcciones por consulta en PRODUCER_REACH_P_H.csv.
 
 EVENT_CROP_ROWS_P_H.csv y EVENT_CROP_SUMMARY.csv usan las coordenadas reales del índice de eventos congelado. La fuente identifica secuencias y tracks, pero no episodios independientes; estos últimos permanecen sin inventar.
+
+PRODUCER_METRICS_P_H.json compara A5 original y ambos readouts sobre P/H. P es entrenamiento de readout; H entrena las cabezas. Estas cifras describen el mecanismo y no son selección ni validación independiente. Las normas de gradiente R proceden de un objetivo distinto del de S; sus valores absolutos no son comparables como una única pérdida.
 """
     (OUT / "03_DIAGNOSTICOS.md").write_text(diag, encoding="utf-8")
     qa = (
@@ -243,6 +251,8 @@ Los tiempos de fit proceden de RUN_PROVENANCE e incluyen trabajo vectorial/cabez
 Se preservan el piloto CPU, la pausa controlada de extracción para validar la caché por filas, los fallos de colección iniciales y el ajuste del radio del fixture sintético. No se cambiaron los radios, datos ni parámetros científicos para resolver esos tests. Los artefactos históricos siguen identificados con sus versiones de código.
 
 Ruff/Pyright se ejecutan sobre V15. No se afirma que la suite o CI completa del histórico esté verde. V13/R1 no se modifican; los snapshots de propietarios y recursos conservan el estado observado. No se cambian drivers, paging, energía ni afinidad.
+
+Durante la ejecución cambió la admisión Git de V13, observada y conservada en OWNER_GIT_CHANGE_OBSERVATION.json. V15 no escribió ese archivo. Los padres event y la caché H vinculados por hash se volvieron a validar; la auditoría distingue estos activos científicos de la metadata viva de otra campaña.
 """
     (OUT / "04_PRUEBAS_Y_COSTE.md").write_text(qa, encoding="utf-8")
     reproduction = """# Reproducción y bundle
@@ -281,6 +291,38 @@ No se hace push en esta campaña. Un resultado FCWD/Dev32, si la rama de transfe
         encoding="utf-8",
     )
     plots()
+
+
+def snapshot_historical() -> None:
+    """Carry the two referenced baselines so report reproduction needs no sibling V14."""
+    source = ROOT.parent / "e-jepa-ttc-v14-range-transfer/artifacts/range_transfer_20261010"
+    destination = RUN / "historical_V14"
+    records = {}
+    for mass in (0, 1):
+        name = f"RT-M{mass}-L0-S7"
+        relative_paths = [
+            f"fits/{name}/CURVE.csv",
+            f"fits/{name}/CHECKPOINT_RECEIPT.json",
+            f"evaluation/screen/{name}/PREDICTIONS.csv",
+            f"evaluation/screen/{name}/PREDICTIONS_RECEIPT.json",
+            f"evaluation/screen/{name}/METRICS.json",
+        ]
+        for relative in relative_paths:
+            target = destination / relative
+            original = source / relative
+            if target.exists():
+                if original.exists() and sha(target) != sha(original):
+                    raise ValueError("Historical snapshot changed: " + relative)
+            else:
+                target.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(original, target)
+            records[relative] = sha(target)
+        csv = destination / f"evaluation/screen/{name}/PREDICTIONS.csv"
+        if sha(csv) != read(csv.parent / "PREDICTIONS_RECEIPT.json")["sha256"]:
+            raise ValueError("Historical prediction receipt mismatch")
+    (destination / "SNAPSHOT_MANIFEST.json").write_text(
+        json.dumps(records, indent=2) + "\n", encoding="utf-8"
+    )
 
 
 def verify(path: Path) -> dict[str, Any]:

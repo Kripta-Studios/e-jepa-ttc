@@ -10,6 +10,7 @@ import torch
 
 from e_jepa_ttc.range_readout.operators import ResidualSpec
 from e_jepa_ttc.range_readout.readout import VectorReadout
+from operational.range_transfer.analyze import metrics
 
 from .cache_readout import parent
 from .common import OWNER, RUN, csv_write, read, write
@@ -18,7 +19,9 @@ from .train_readout import VectorCache, load_endpoint
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.parse_args()
+    parser.add_argument("--roles", nargs="+", choices=("P", "H"), default=["P", "H"])
+    args = parser.parse_args()
+    output_dir = RUN if args.roles == ["P", "H"] else RUN / ("diagnostics_" + "_".join(args.roles))
     torch.set_num_threads(1)
     torch.set_num_interop_threads(1)
     native, _ = parent()
@@ -30,7 +33,7 @@ def main() -> None:
         )
     rows = []
     population = []
-    for role in ("P", "H"):
+    for role in args.roles:
         cache = VectorCache(role)
         manifest = read(OWNER / f"{role}_MANIFEST.json")
         metadata = pd.read_parquet(manifest["rows_path"]).set_index(
@@ -122,9 +125,9 @@ def main() -> None:
                             }
                         )
         del cache
-    csv_write(RUN / "PRODUCER_REACH_P_H.csv", rows)
+    csv_write(output_dir / "PRODUCER_REACH_P_H.csv", rows)
     write(
-        RUN / "POPULATION_AUDIT.json",
+        output_dir / "POPULATION_AUDIT.json",
         {
             "roles": population,
             "independent_episodes_invented": False,
@@ -162,7 +165,21 @@ def main() -> None:
         overestimate_count=("target_below_conditional_reach", "sum"),
         unavailable_bounds=("transport_pole_excluded", "sum"),
         mean_prediction=("prediction_ttc", "mean"),
-    ).reset_index().to_csv(RUN / "PRODUCER_REACH_SUMMARY.csv", index=False)
+    ).reset_index().to_csv(output_dir / "PRODUCER_REACH_SUMMARY.csv", index=False)
+    scores = {}
+    for key, part in data.groupby(["role", "producer"]):
+        assert isinstance(key, tuple)
+        role, producer = key
+        scores[f"{role}/{producer}"] = metrics(
+            part.target_ttc.to_numpy(), part.prediction_ttc.to_numpy(), part.group_id.to_numpy()
+        )
+    write(
+        output_dir / "PRODUCER_METRICS_P_H.json",
+        {
+            "scope": "descriptive_P_H_A5_only_not_selection_or_independent_validation",
+            "scores": scores,
+        },
+    )
 
 
 if __name__ == "__main__":
