@@ -31,3 +31,34 @@ entrenamiento RGB, reanudación CUDA ni precisión TTC. La receta RGB se registr
 después del contraste primario event, respetando el máximo de dos fits de 12.000
 updates y dos fits de fusión/control de 2.500. La fusión requiere todavía su
 integración, control ZERO, genealogía de features nueva y fallback event-only.
+
+## Entrenador preparado, pendiente de admisión científica
+
+`operational.joint_measurement.rgb_train` implementa el par entrenable/congelado,
+con 12.000 updates por brazo, las mismas masas P y objetivo de fase de V18,
+batch32/microbatch4, FP32 y optimizador registrado. Guarda modelo, optimizador,
+scheduler, RNG, sampler y cursor mediante el checkpoint transaccional existente.
+Comparte la contabilidad V18, las reservas GPU y los límites de recursos.
+
+El registro exige los cuatro endpoints primarios, sus predicciones P/H completas
+y la decisión final con coste. No se ha ejecutado ese registro ni elegido CORR o
+DIRECT para RGB. El comando posterior será:
+
+```text
+python -B -m operational.joint_measurement.rgb_train register --variant CORR --reason "Observación documentada del contraste P/H"
+python -B -m operational.joint_measurement.rgb_train qa
+python -B -m operational.joint_measurement.rgb_train fit --fit-id RGB-PAIR-CORR-FT-S7
+python -B -m operational.joint_measurement.rgb_train fit --fit-id RGB-PAIR-CORR-FROZEN-S7
+```
+
+La variante del ejemplo debe corresponder a la decisión documentada. Cada `fit`
+ejecuta un scope y conserva el cursor para la siguiente invocación. `qa` ejecutará
+40 updates sintéticos contabilizados: diez continuos frente a cinco más cinco
+reanudados para cada brazo, sobre el mismo bucle que utiliza el entrenamiento.
+Sus resultados CUDA todavía están pendientes; el fit real los exige.
+
+Las pruebas de admisión verifican que no se puede registrar RGB con endpoints
+primarios incompletos o sin la comparación final, y que un cambio de código bloquea
+el fit antes de construir el optimizador. Estas pruebas no acreditan todavía
+el entrenamiento completo ni su convergencia. La evaluación RGB y la fusión
+siguen pendientes de integración y ejecución.
