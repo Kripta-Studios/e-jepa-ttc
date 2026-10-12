@@ -1,0 +1,13 @@
+{
+  "include": ["."],
+  "typeCheckingMode": "basic",
+  "reportMissingImports": "error",
+  "reportMissingTypeStubs": "none",
+  "venvPath": "../../../e-jepa-ttc",
+  "venv": ".venv",
+  "extraPaths": [
+    "../..", "../../src",
+    "../../docs/multimodal_next_handoff_20261012/scripts",
+    "E:/EJEPA_results/fcwd_rgb_calibration_20261012/deps"
+  ]
+}
