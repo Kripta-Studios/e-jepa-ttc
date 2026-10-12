@@ -334,6 +334,19 @@ def main() -> None:
             "soporte total de hasta 650 ms; Garl full utiliza su pareja temporal nativa.",
         ]
         package_path = OUT / "test12_phase_only/PACKAGE_VERIFICATION.json"
+        audit_path = OUT / "test12_phase_only/INPUT_AUDIT.json"
+        if audit_path.exists():
+            sources[str(audit_path.relative_to(OUT))] = sha(audit_path)
+            audit = read(audit_path)
+            text += [
+                "Auditoría de las 6.762 historias: grupos P/H/V/test disjuntos, "
+                "misma identidad de objeto, disponibilidad causal y aliases con historias "
+                "idénticas. Soporte sensorial máximo real en microsegundos: "
+                f"{audit['maximum_total_sensor_support_us']}. Pesos, normalizadores y "
+                "código de ejecución sin cambios desde la congelación. La comprobación "
+                "de grupos usa las identidades de secuencia publicadas; no establece "
+                "independencia visual de escenas más allá de esa partición."
+            ]
         if package_path.exists():
             package = read(package_path)
             sources[str(package_path.relative_to(OUT))] = sha(package_path)

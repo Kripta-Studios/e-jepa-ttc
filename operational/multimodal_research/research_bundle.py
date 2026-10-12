@@ -9,7 +9,7 @@ import zipfile
 from datetime import UTC, datetime
 
 from operational.multimodal_validation.common import OUT as PREVIOUS
-from operational.multimodal_validation.common import ROOT, RUN, read, sha, write
+from operational.multimodal_validation.common import ROOT, RUN, V12, read, sha, write
 
 from .common import OUT, accounting
 
@@ -57,6 +57,15 @@ def main() -> None:
         )
     )
     dependency_index = []
+    official_prefix = "DEPENDENCIES/OFFICIAL_TEST12/"
+    official_inputs = {
+        V12 / "artifacts/sota_evidence_20261010/sources/test_inputs.parquet": (
+            official_prefix + "test_inputs.parquet"
+        ),
+        V12 / "artifacts/garlttc_submission_20261010/INPUT_FREEZE.json": (
+            official_prefix + "H8_CURRENT_SENSOR_INPUT_FREEZE.json"
+        ),
+    }
     metadata = dict(
         utc=stamp,
         git_commit=subprocess.check_output(
@@ -105,6 +114,14 @@ print('Verified',len(manifest['files']),'files')
         for path in sorted(parent_paths):
             data = path.read_bytes()
             name = "DEPENDENCIES/V13/" + path.relative_to(RUN).as_posix()
+            digest = hashlib.sha256(data).hexdigest()
+            archive.writestr(name, data)
+            entries.append(dict(path=name, bytes=len(data), sha256=digest))
+            dependency_index.append(
+                dict(original_path=str(path), archived_path=name, sha256=digest)
+            )
+        for path, name in official_inputs.items():
+            data = path.read_bytes()
             digest = hashlib.sha256(data).hexdigest()
             archive.writestr(name, data)
             entries.append(dict(path=name, bytes=len(data), sha256=digest))
