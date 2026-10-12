@@ -1,0 +1,10 @@
+{
+  "utc_start": "2026-10-12T15:46:57.710472+00:00",
+  "source_sha256": "0b644c3e8f6315b2be012221cc1e9c2028a165ee23fbf8a3f87c0a6cea4d2a93",
+  "frozen_entrypoint_sha256": "0d5613c8be612c8302fec078744121078c27d77bf25759615ed1d7baa392ee07",
+  "model_input_freeze_sha256": "85fad0dfb8bac0fa5a09e6f4090818ea2b534908ef3d018e8f88f0805e825b1a",
+  "scope": "Same frozen entrypoint, models, arithmetic and per-item guards. The already validated Python-first metadata scan also covers the shared-admission exception handler. No admission condition, threshold, PID check or accounting is skipped.",
+  "status": "STOPPED",
+  "error": "Shared admission rejects this live module: operational.joint_measurement.qa",
+  "utc_end": "2026-10-12T15:47:34.041166+00:00"
+}

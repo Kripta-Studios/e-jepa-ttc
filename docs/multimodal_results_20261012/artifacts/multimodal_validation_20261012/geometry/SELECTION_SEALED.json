@@ -1,0 +1,28 @@
+{
+  "selection": "2 accepted and 2 rejected per sequence sorted SHA256(query_id); no TTC or error read",
+  "query_ids": [
+    "FCWD1:0201",
+    "FCWD1:0007",
+    "FCWD1:0125",
+    "FCWD1:0069",
+    "FCWD2:0074",
+    "FCWD2:0073",
+    "FCWD2:0166",
+    "FCWD2:0150",
+    "FCWD3:0194",
+    "FCWD3:0191",
+    "FCWD3:0023",
+    "FCWD3:0118"
+  ],
+  "windows_us": [
+    20000,
+    40000,
+    80000
+  ],
+  "prior_max_age_us": 200000,
+  "prior_max_drift_px": 5.0,
+  "independent_correspondences_available": false,
+  "promoted": false,
+  "manifest_sha256": "5e5706ff4018161aa81b938d0093c58a33ceb2b7d780bd8721b776ccde73c2a2",
+  "registration_sha256": "1ef7fc7bbe8a1b1f694b9928e2916eb2842ec12c6da2d9dcc93571951a7348dc"
+}

@@ -1,0 +1,52 @@
+{
+  "action": "train",
+  "pid": 19444,
+  "utc_start": "2026-10-12T10:29:44.383904+00:00",
+  "policy_sha256": "8e4c26b1f29fd1e79af5bbbf663bd64fa7dda4128a98a5b638e44b49fae82e7e",
+  "accounting_before": {
+    "scientific": 2425,
+    "recovery_upper": 0,
+    "pending_upper": 0,
+    "fits": [
+      {
+        "completed_updates": 2425,
+        "durable_updates": 2425,
+        "identity_sha256": "e8960bba681057948c138b6f2e09a05d07216fca0f26ea4b3b277292d175d9cf",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_EVENT_S7"
+      }
+    ],
+    "physical_upper": 2425
+  },
+  "status": "STOPPED",
+  "error": "Shared admission rejects this live module: operational.representation_audit.temporal_calibration",
+  "utc_end": "2026-10-12T10:31:44.921017+00:00",
+  "accounting_after": {
+    "scientific": 3300,
+    "recovery_upper": 0,
+    "pending_upper": 0,
+    "fits": [
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "e8960bba681057948c138b6f2e09a05d07216fca0f26ea4b3b277292d175d9cf",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_EVENT_S7"
+      },
+      {
+        "completed_updates": 800,
+        "durable_updates": 800,
+        "identity_sha256": "cd63c668494fe3cc2365def538c36b9802c539a418e5a6410c2facf100184c3c",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_ZERO_S7"
+      }
+    ],
+    "physical_upper": 3300
+  }
+}

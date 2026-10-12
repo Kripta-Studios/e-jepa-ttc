@@ -1,0 +1,25 @@
+{
+  "utc": "2026-10-12T15:51:06.498643+00:00",
+  "campaign": "V18 joint measurement",
+  "observation": "CUDA QA completed four arms; CPU P preparation active. Our first guarded recovery stopped on its actual GPU PID; second recovery started after QA exited.",
+  "foreign_files_changed": false,
+  "foreign_processes_stopped": false,
+  "sources": {
+    "QA_CUDA_DETERMINISTIC.log": {
+      "sha256": "1188049393bf89604d2eb1a49b42c398f87a88a2000b64b6731d729cd74c9123",
+      "bytes": 120
+    },
+    "PREPARE_P_PROGRESS.json": {
+      "sha256": "911ff5513ad385d82194ccfab2a4a1383278d2f63ae10585b7f9866fbfe5186c",
+      "bytes": 142
+    },
+    "ACCOUNTING.json": {
+      "sha256": "9778fd2dd44ea324b15544c6e05d5e05374d422ce26568db12fb62d2b75d8230",
+      "bytes": 112
+    },
+    "GPU_OWNERSHIP.json": {
+      "sha256": "a52f82c72ef217ad181e901c09db9c54700835fbf0042a652416611d36d5eccd",
+      "bytes": 72
+    }
+  }
+}

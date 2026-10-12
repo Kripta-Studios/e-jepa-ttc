@@ -1,0 +1,18 @@
+{
+  "DEV32": {
+    "native_mean_ms": 60.59038594412414,
+    "selected_mean_ms": 37.53248125212849,
+    "ratio_of_total_ms": 0.6194461492082355,
+    "comparisons": 64,
+    "all_arrays_equal": true,
+    "scope": "ROI map only, already-read identical arrays"
+  },
+  "FCWD": {
+    "native_mean_ms": 144.28741406209156,
+    "selected_mean_ms": 88.6757062489778,
+    "ratio_of_total_ms": 0.6145768626140723,
+    "comparisons": 64,
+    "all_arrays_equal": true,
+    "scope": "ROI map only, already-read identical arrays"
+  }
+}

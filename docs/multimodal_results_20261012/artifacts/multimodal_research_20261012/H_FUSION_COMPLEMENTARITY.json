@@ -1,0 +1,9 @@
+{
+  "queries": 18422,
+  "RGB_mean_phase_error": 0.00359458290040493,
+  "F_TRUE_mean_phase_error": 0.0028056525625288486,
+  "oracle_min_error": 0.0022285478189587593,
+  "fusion_better": 10720,
+  "RGB_better": 7701,
+  "scope": "H descriptive oracle, not deployable; frozen supervised parents not OOF"
+}

@@ -1,0 +1,14 @@
+{
+  "historical_source_sha256": "456541246081bc7578f39836f333010fc2d710fcd0ac600edc9216f8285d8621",
+  "source_sha256": "26df40874b576f419921eb52e989dd3d2684780029f1ffc7fc1344a8b1696e41",
+  "queries": 1024,
+  "labelled": 946,
+  "rgb_available": 1024,
+  "official_overall_MiD_available": false,
+  "external_selection": false,
+  "optimizer_updates": 0,
+  "study": "RELATIVE_PHASE",
+  "seed": 7,
+  "parent_route": "cpu",
+  "validation_decision": null
+}

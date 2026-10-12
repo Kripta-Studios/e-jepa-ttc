@@ -1,0 +1,91 @@
+{
+  "checked": 890,
+  "mismatches": [
+    {
+      "receipt": "artifacts\\multimodal_research_20261012\\test12_phase_only\\predictions\\6b7a964377f69a7a98f9d002b07721d2baaf00e30876b037685c88962b0bdbd7.json",
+      "npz": "artifacts\\multimodal_research_20261012\\test12_phase_only\\predictions\\6b7a964377f69a7a98f9d002b07721d2baaf00e30876b037685c88962b0bdbd7.npz",
+      "expected": "284dc467c88e371da0ecd177b61d765e0658df5bc248fbb0ef76319ea674cf85",
+      "actual": "58157f8e17ad019aa576da398fe7fa342994b9062d6c2845a0aa58e97cf2aec4",
+      "identity": "71wUSQYMpk_002982_791413770_796413851_71wUSQYMpk_002982_10419500000",
+      "npz_mtime": 1791819051.5814464,
+      "receipt_mtime": 1791819051.5959744,
+      "quarantined_zip_error": "File is not a zip file"
+    },
+    {
+      "receipt": "artifacts\\multimodal_research_20261012\\test12_phase_only\\predictions\\a618090a9d15de8e2a92add476466022338b88ce0f4431120a3766462ec8e770.json",
+      "npz": "artifacts\\multimodal_research_20261012\\test12_phase_only\\predictions\\a618090a9d15de8e2a92add476466022338b88ce0f4431120a3766462ec8e770.npz",
+      "expected": "3efab81642d0e5bcac041427a7f4bf391ac95d3c4b38ac652aebcd29c8def283",
+      "actual": "02a8db096633485d4c972d3b4c49bf2820cc78600c7cbfef6f5f64091ea9536d",
+      "identity": "71wUSQYMpk_002982_791413770_796413851_71wUSQYMpk_002982_10419600000",
+      "npz_mtime": 1791819052.5756402,
+      "receipt_mtime": 1791819052.589693,
+      "quarantined_zip_error": "File is not a zip file"
+    },
+    {
+      "receipt": "artifacts\\multimodal_research_20261012\\test12_phase_only\\predictions\\a936615d09ca4a699c2e1bfbca33342e9592ea817ba32fa9805935fbc53b8d17.json",
+      "npz": "artifacts\\multimodal_research_20261012\\test12_phase_only\\predictions\\a936615d09ca4a699c2e1bfbca33342e9592ea817ba32fa9805935fbc53b8d17.npz",
+      "expected": "284dc467c88e371da0ecd177b61d765e0658df5bc248fbb0ef76319ea674cf85",
+      "actual": "58157f8e17ad019aa576da398fe7fa342994b9062d6c2845a0aa58e97cf2aec4",
+      "identity": "71wUSQYMpk_002982_793413803_798413884_71wUSQYMpk_002982_10419500000",
+      "npz_mtime": 1791819052.0747254,
+      "receipt_mtime": 1791819052.0799277,
+      "quarantined_zip_error": "File is not a zip file"
+    },
+    {
+      "receipt": "artifacts\\multimodal_research_20261012\\test12_phase_only\\predictions\\c95db70e22b6b9ca9e8d8841e65e9ada26dddb31bb142d3901679d4fcf5e044c.json",
+      "npz": "artifacts\\multimodal_research_20261012\\test12_phase_only\\predictions\\c95db70e22b6b9ca9e8d8841e65e9ada26dddb31bb142d3901679d4fcf5e044c.npz",
+      "expected": "3efab81642d0e5bcac041427a7f4bf391ac95d3c4b38ac652aebcd29c8def283",
+      "actual": "02a8db096633485d4c972d3b4c49bf2820cc78600c7cbfef6f5f64091ea9536d",
+      "identity": "71wUSQYMpk_002982_793413803_798413884_71wUSQYMpk_002982_10419600000",
+      "npz_mtime": 1791819053.0677896,
+      "receipt_mtime": 1791819053.0720315,
+      "quarantined_zip_error": "File is not a zip file"
+    },
+    {
+      "receipt": "artifacts\\multimodal_research_20261012\\test12_phase_only\\predictions\\ce0ed73cbdc3b6030cdec2c66dd0ceb2b2c2af336189b61c7d296d0c4b0226f6.json",
+      "npz": "artifacts\\multimodal_research_20261012\\test12_phase_only\\predictions\\ce0ed73cbdc3b6030cdec2c66dd0ceb2b2c2af336189b61c7d296d0c4b0226f6.npz",
+      "expected": "7ddf4aa4f835ed202f59aeca09874768bc74e10961c9ce5511d6eef7e9192bfb",
+      "actual": "fad2c1ea6317c4c5ec628310a432ce373ed65efa86c1635066a7738696186db2",
+      "identity": "71wUSQYMpk_002982_793413803_798413884_71wUSQYMpk_002982_10419400000",
+      "npz_mtime": 1791819051.1006815,
+      "receipt_mtime": 1791819051.1051104,
+      "quarantined_zip_error": "File is not a zip file"
+    },
+    {
+      "receipt": "artifacts\\multimodal_research_20261012\\test12_phase_only\\predictions\\d210d15b4c7990e208cfb53d184a75d539e17886abdc2278236af9a54b0afcfb.json",
+      "npz": "artifacts\\multimodal_research_20261012\\test12_phase_only\\predictions\\d210d15b4c7990e208cfb53d184a75d539e17886abdc2278236af9a54b0afcfb.npz",
+      "expected": "f06d87939da5abde7886ad39532cdfa69d495bdf1494805e5a07abb18b0637b1",
+      "actual": "23f23b5590caa0de27b58feb68b8a7fc7b292ff1aa3954f3c6d04f331cc4ab4f",
+      "identity": "71wUSQYMpk_002982_791413770_796413851_71wUSQYMpk_002982_10419700000",
+      "npz_mtime": 1791819053.6618464,
+      "receipt_mtime": 1791819053.6788878,
+      "quarantined_zip_error": "File is not a zip file"
+    },
+    {
+      "receipt": "artifacts\\multimodal_research_20261012\\test12_phase_only\\predictions\\d4436831a7c862d02f7bdd95eeba9f1bcdc287534ebb7e10daf49eb4843d7a98.json",
+      "npz": "artifacts\\multimodal_research_20261012\\test12_phase_only\\predictions\\d4436831a7c862d02f7bdd95eeba9f1bcdc287534ebb7e10daf49eb4843d7a98.npz",
+      "expected": "f06d87939da5abde7886ad39532cdfa69d495bdf1494805e5a07abb18b0637b1",
+      "actual": "23f23b5590caa0de27b58feb68b8a7fc7b292ff1aa3954f3c6d04f331cc4ab4f",
+      "identity": "71wUSQYMpk_002982_793413803_798413884_71wUSQYMpk_002982_10419700000",
+      "npz_mtime": 1791819054.1858602,
+      "receipt_mtime": 1791819054.1903841,
+      "quarantined_zip_error": "File is not a zip file"
+    },
+    {
+      "receipt": "artifacts\\multimodal_research_20261012\\test12_phase_only\\predictions\\f1d4ef820820875af8759bfbc772e5068de755a1a55161576e4384049f56fcd4.json",
+      "npz": "artifacts\\multimodal_research_20261012\\test12_phase_only\\predictions\\f1d4ef820820875af8759bfbc772e5068de755a1a55161576e4384049f56fcd4.npz",
+      "expected": "ce8da1d5c7c658a16bb4bdea4876a28c1f83b8f1a7d8843ae574d6965af53eab",
+      "actual": "565b29cb5db535897d61bb88323888a8bce51a17734f865f5179ec74c7b53be8",
+      "identity": "71wUSQYMpk_002982_791413770_796413851_71wUSQYMpk_002982_10419800000",
+      "npz_mtime": 1791819054.6810515,
+      "receipt_mtime": 1791819054.698947,
+      "quarantined_zip_error": "File is not a zip file"
+    }
+  ],
+  "pending": [],
+  "utc": "2026-10-12T16:18:21.185528+00:00",
+  "action": "Preserved all eight discrepant NPZ/receipt pairs in quarantine; recompute frozen predictions, never replace expected hashes with observed hashes",
+  "valid_predictions_retained": 882,
+  "optimizer_updates": 0,
+  "cause": "Undetermined; affected timestamps cluster at the prior process interruption. No causal assertion from timestamps alone."
+}

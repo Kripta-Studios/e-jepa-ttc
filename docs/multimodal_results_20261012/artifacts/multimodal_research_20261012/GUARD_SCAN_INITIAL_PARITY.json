@@ -1,0 +1,61 @@
+{
+  "stable_python_processes": 12,
+  "stable_metadata_exact": true,
+  "results": [
+    {
+      "mode": "native",
+      "seconds": 2.1605488999630325,
+      "admission": {
+        "available_bytes": 17720459264,
+        "own_rss": 507916288,
+        "own_queue_rss": 0,
+        "research_rss": 3646578688,
+        "commit_headroom": 29198278656,
+        "cpu_threads": 1,
+        "device": "cpu"
+      }
+    },
+    {
+      "mode": "python_first",
+      "seconds": 0.006903500005137175,
+      "admission": {
+        "available_bytes": 17022959616,
+        "own_rss": 516866048,
+        "own_queue_rss": 0,
+        "research_rss": 3646578688,
+        "commit_headroom": 29198278656,
+        "cpu_threads": 1,
+        "device": "cpu"
+      }
+    },
+    {
+      "mode": "native",
+      "seconds": 1.4776980999740772,
+      "admission": {
+        "available_bytes": 17021636608,
+        "own_rss": 516866048,
+        "own_queue_rss": 0,
+        "research_rss": 3656593408,
+        "commit_headroom": 29198278656,
+        "cpu_threads": 1,
+        "device": "cpu"
+      }
+    },
+    {
+      "mode": "python_first",
+      "seconds": 0.007076700043398887,
+      "admission": {
+        "available_bytes": 16959754240,
+        "own_rss": 516866048,
+        "own_queue_rss": 0,
+        "research_rss": 3645517824,
+        "commit_headroom": 29198409728,
+        "cpu_threads": 1,
+        "device": "cpu"
+      }
+    }
+  ],
+  "source_sha256": "7d654519a41e481efae6d20d928b080894efd1890d92c4a4f49ac987537b075a",
+  "semantics": "All three native guard loops discard every non-Python process before accessing other fields. Original resource thresholds and checks remain executed.",
+  "optimizer_updates": 0
+}

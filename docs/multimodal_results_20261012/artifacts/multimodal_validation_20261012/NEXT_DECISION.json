@@ -1,0 +1,13 @@
+{
+  "status": "FROZEN_COMPARISON_COMPLETE_WITH_EXPLICIT_GEOMETRY_AND_COST_DEPENDENCIES",
+  "Q0": "COMPLETE",
+  "Q1": "COMPLETE_ESTIMATED_REGISTRATION_NOT_OFFICIAL_EXTRINSICS",
+  "Q2": "COMPLETE_1229_BITWISE_PARITY_CALLS",
+  "Q3": "36_TRIALS_COMPLETE_72_INDEPENDENT_CORRESPONDENCES_PENDING",
+  "Q4": "64_QUERY_CPU_PILOT_COMPLETE_ISOLATED_GPU_SERVICE_PERIMETER_PENDING",
+  "sota_every_regime": false,
+  "new_recipe_promoted": false,
+  "optimizer_updates": 0,
+  "next_training": "R_ANCHOR_EVENT_vs_R_ANCHOR_ZERO_requires_new_identity_and_authorization",
+  "V15": "preserve_existing_campaign_and_authorization"
+}

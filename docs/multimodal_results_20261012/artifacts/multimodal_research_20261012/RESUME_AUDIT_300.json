@@ -1,0 +1,9 @@
+{
+  "completed_updates": 300,
+  "sampler_matches_300_batches": true,
+  "optimizer_steps": 300,
+  "loss_history_rows": 300,
+  "checkpoint_sha256": "623f5cec12a5a1e728383ad2df67d7e3f23f237404afe9de594c1f4cba64f1e9",
+  "recovery_updates": 0,
+  "additional_optimizer_updates": 0
+}

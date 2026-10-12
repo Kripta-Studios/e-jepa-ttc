@@ -1,0 +1,9 @@
+{
+  "queries": 64,
+  "paired_repeats": 2,
+  "all_input_tensors_bitwise_equal": true,
+  "algorithm": "canonical map/voxel unchanged; one query ROI; memo exact [start,end)",
+  "scope": "HDF5 read, ROI map, voxel encoding only; CPU 1 thread; no neural inference",
+  "optimizer_updates": 0,
+  "baseline_production_modified": false
+}

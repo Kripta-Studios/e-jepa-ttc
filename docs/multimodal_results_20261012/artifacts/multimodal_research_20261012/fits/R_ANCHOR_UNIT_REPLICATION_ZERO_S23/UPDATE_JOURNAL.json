@@ -1,0 +1,8 @@
+{
+  "completed_updates": 2500,
+  "durable_updates": 2500,
+  "identity_sha256": "9edf9ada28785cca782ca8be2f573dcae16cfcd94ece0d495b254b02066e78ee",
+  "pending_update_upper": 0,
+  "recovery_upper": 0,
+  "schema": "rgb_port_update_journal_v1"
+}

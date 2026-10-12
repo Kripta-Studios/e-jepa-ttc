@@ -1,0 +1,44 @@
+{
+  "utc": "2026-10-12T13:08:15.981672+00:00",
+  "name": "GROUP_CROSSFIT",
+  "folds": 4,
+  "split": "Sort8 H group IDs by SHA256 of fixed salt and group, assign round-robin4 folds; whole groups only; no target-based balancing",
+  "seed": 7,
+  "context_fits": 8,
+  "context_updates_each": 2500,
+  "readout_arms": [
+    "EVENT",
+    "ZERO"
+  ],
+  "readout_updates_each": 2500,
+  "planned_updates": 25000,
+  "hypothesis": "A corrector trained on in-sample supervised context outputs may learn an unrealistic error distribution; evaluate group-out-of-fold physical phases",
+  "basis_sources": {
+    "H_RECIPE_DIAGNOSTICS.json": "6ff8a9155ecea978e9aa66d33526efb823b2f73781ca36e6f4b45bf0b9556f5d",
+    "studies/PHASE_ONLY/S7/V_RESULTS.json": "6a74b5773cd742844ce152a02fbd4c7634aa8270793bdafd47dce62fcb255c4a"
+  },
+  "normalization": "Rebuild from sealed raw unique observations; fold mean/std fitted only on unique observation IDs in training-group histories, then transform train and held-out histories; prove disjoint IDs",
+  "models": "Native E_CTX/R_CTX architecture and temporal training_loss with native cost term, native AdamW schedule2500, batch128, seed7; frozen P producers and PAIR unchanged",
+  "mass": "Original H query masses restricted to training groups and globally normalized once; never batch renormalization",
+  "readout": "Same1955-parameter PhaseOnlyAnchor on concatenated out-of-fold physical phases/clocks, zero all hidden state coordinates to forbid cross-fold latent mixing; native RGB width logits out-of-fold",
+  "deployment": "Unchanged full-H V13 contexts and normalizers at V/external inference; no swapping parents inside historical F_TRUE",
+  "supervision": "Only H labels for fold contexts and final corrector; supervised predictions out-of-fold by group, producers/PAIR already P-only; no claims of independent teacher",
+  "gates": "Original2% and paired4000 group bootstrap. Compare existing PHASE_ONLY pair as in-sample-feature reference. All exposed development; no official SOTA.",
+  "resources": "Shared admission and1GiB GPU allocation for context fits; serial own fits;18h/1M total budgets preserved",
+  "external_exposure": "Prior recipe transfer is known; no external target use in folds,normalizers,training,weight selection or stopping; not a new blind holdout",
+  "updates_per_fit": 2500,
+  "OOF_cache_seal_sha256": "db477a0e07da6ce4ef2ce6a0c24bd4070803e857246060d7bbab3c7a0b9f915c",
+  "preregistration_sha256": "5cfc6297e2951d01febab149e547e27a2ba88de7460ed517841aed1342c66e47",
+  "original_protocol_sha256": "d955649530b1761fb62ee0410d50a44b85741a70754271789d561fce3c7565eb",
+  "frozen_scientific_sources": {
+    "operational\\multimodal_research\\common.py": "dac6d054b198ce04eab4d0b4d8f2808d4c8d946096d802a73b281455fa2263c4",
+    "operational\\multimodal_research\\model.py": "0ac640ba421c82e54005dc4cf7ae2baa042e72d6d18f21b1e80919141b204cef",
+    "operational\\multimodal_research\\cache.py": "85faa229cd41ed625f957fbbb3be46c13bb92ac0eac39526586aeb33ac13cd49",
+    "operational\\multimodal_research\\train.py": "9f21ce7ae4928fe583e2e5eaa1e60c81849bf316f079e414615f72a465c55324"
+  },
+  "phase_units_source_sha256": "0cd65eea9c8e8a2e01b7512570dc3e31c8cbcc2def468b9f4b64e3ab3edb6021",
+  "model_source_sha256": "d6c3016dc7c08b0bdb37964c1eff9cd046c88d52d1bb4b1a281dad0412496514",
+  "CPU_guard_source_sha256": "b67e3bc6b90cc90c52e5ad14af3cef38d2dd211115717eb9c44d6f43f9e8d7f0",
+  "trainer_source_sha256": "933c3b9a31fa4e9a5e0723bce13d65bcafe8a2fd395cad177de3127af236b219",
+  "validation": "Exposed V development; original gates; no external selection"
+}

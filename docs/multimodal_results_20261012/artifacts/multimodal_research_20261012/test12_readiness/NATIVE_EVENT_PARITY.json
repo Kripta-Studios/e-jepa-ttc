@@ -1,0 +1,182 @@
+{
+  "utc": "2026-10-12T13:49:13.917802+00:00",
+  "status": "PASS",
+  "records": [
+    {
+      "split": "H",
+      "sample_token": "2JkLL5W891_004799_837400000",
+      "max_abs_error": 0.0,
+      "reference_sha256": "d336984bb07a549b318517c8063d9ec07505f4d395bf937a0559b8a45e82a064"
+    },
+    {
+      "split": "H",
+      "sample_token": "2JkLL5W891_002505_677200000",
+      "max_abs_error": 0.0,
+      "reference_sha256": "82eae38655f283e3cb785919bed94fd359ee434c00d47409c53da55b4b612cc8"
+    },
+    {
+      "split": "H",
+      "sample_token": "34K84TaN11_002141_8951600000",
+      "max_abs_error": 0.0,
+      "reference_sha256": "bff6d317fd5d54de891f98ef060f4b1df335e13affbb6dec9b1c41d65448aaea"
+    },
+    {
+      "split": "H",
+      "sample_token": "34K84TaN11_002133_8950100000",
+      "max_abs_error": 0.0,
+      "reference_sha256": "cd4967fb6142c37eea269b5452841e2aa59fa4e995afd6b080b1b3511c35cf2d"
+    },
+    {
+      "split": "H",
+      "sample_token": "CzyQ8HKP6X_000470_1311800000",
+      "max_abs_error": 0.0,
+      "reference_sha256": "b1be19d0eba655d25d650e52153efebd794d195d4c9a6c76ec62ccf3224b0ba4"
+    },
+    {
+      "split": "H",
+      "sample_token": "CzyQ8HKP6X_000470_1389900000",
+      "max_abs_error": 0.0,
+      "reference_sha256": "eecdeec337f261d0cf5bddcfab3bce9c92802585c32fb53048e5e78ee94dab94"
+    },
+    {
+      "split": "H",
+      "sample_token": "JaGC4Q9pgU_000004_3630100000",
+      "max_abs_error": 0.0,
+      "reference_sha256": "3b3b7270886517ed8cdd9e7f2fd89feabfb9b5db695efe79e2cefdf326454f3e"
+    },
+    {
+      "split": "H",
+      "sample_token": "JaGC4Q9pgU_002688_3787400000",
+      "max_abs_error": 0.0,
+      "reference_sha256": "d13b95872170d3743072586e8d54f59671179ba1e425fa0f37b5f4c421692515"
+    },
+    {
+      "split": "H",
+      "sample_token": "L36QTEoVkB_000805_1922500000",
+      "max_abs_error": 0.0,
+      "reference_sha256": "3bb12155f26170e5a3a4897352224f460ba76b872a61801e6c1513739482868a"
+    },
+    {
+      "split": "H",
+      "sample_token": "L36QTEoVkB_000148_1861300000",
+      "max_abs_error": 0.0,
+      "reference_sha256": "719d7611d45f685437a14cf53164731b3a40cc250518e9709935ec7c05495ec2"
+    },
+    {
+      "split": "H",
+      "sample_token": "mHGFBekt7X_000013_2045300000",
+      "max_abs_error": 0.0,
+      "reference_sha256": "be7e535e71b0ca0ed79c21921f0ae4fbdee6c07c5ab2bba609c019568e7b3ebc"
+    },
+    {
+      "split": "H",
+      "sample_token": "mHGFBekt7X_000012_2013900000",
+      "max_abs_error": 0.0,
+      "reference_sha256": "db9a92f6b5f48e7e4f17ed0fbe5e8a1362e302800da0d40246ba96447df998f9"
+    },
+    {
+      "split": "H",
+      "sample_token": "pBqGOb2vYq_003137_1620100000",
+      "max_abs_error": 0.0,
+      "reference_sha256": "486f32ac9fa89a626057cd9447e3e04bfca141fd7a611618cc011d7ebd14d40d"
+    },
+    {
+      "split": "H",
+      "sample_token": "pBqGOb2vYq_003554_1624000000",
+      "max_abs_error": 0.0,
+      "reference_sha256": "c9a8c9f9176e2098901da6e6c15e1d41987b2ee91b5ca2ddbb26359f3c60b473"
+    },
+    {
+      "split": "H",
+      "sample_token": "qGsgzl4Q8B_000061_10198500000",
+      "max_abs_error": 0.0,
+      "reference_sha256": "4c428f913af24e09d09e2212a28d1654065f8ca392b80ecba149f7a5a4461fc2"
+    },
+    {
+      "split": "H",
+      "sample_token": "qGsgzl4Q8B_000549_10313000000",
+      "max_abs_error": 0.0,
+      "reference_sha256": "ce68be70925b7625540994110c859208728b83a7411318834e3d4a5fb800397d"
+    },
+    {
+      "split": "TEST12",
+      "sample_token": "3RUZHwnCwK_000364_779978968_784979043_3RUZHwnCwK_000364_12204300000",
+      "max_abs_error": 0.0,
+      "reference_sha256": "58e7c2df0766f1b2054c84846d69adb0221ca0f890cce2a9177d8aa39289d470"
+    },
+    {
+      "split": "TEST12",
+      "sample_token": "71wUSQYMpk_000445_611810837_616810920_71wUSQYMpk_000445_10236700000",
+      "max_abs_error": 0.0,
+      "reference_sha256": "5c67251ab9c7a092728b2e3c8cac1d55339d96dddec81f3cb20d7d5276263434"
+    },
+    {
+      "split": "TEST12",
+      "sample_token": "89fvtHGHx2_002223_360827503_365827568_89fvtHGHx2_002223_2288000000",
+      "max_abs_error": 0.0,
+      "reference_sha256": "b66affaab4ba02d1bce9a7ce6e5960c5fadbce64cc5cfed91b77f92974c6a04a"
+    },
+    {
+      "split": "TEST12",
+      "sample_token": "HHJe79eY2J_000537_1020364355_1025364427_HHJe79eY2J_000537_7068400000",
+      "max_abs_error": 0.0,
+      "reference_sha256": "93ecd5c6ca23c7d4c2acaa70d4ce3620a9ef512367af44e2e1d0d4512c12ebec"
+    },
+    {
+      "split": "TEST12",
+      "sample_token": "JcjcDPISuL_003513_818466693_823466761_JcjcDPISuL_003513_3015600000",
+      "max_abs_error": 0.0,
+      "reference_sha256": "3abedd55394d33f769a212a357b21aa8fb7b73c7f77a3ea075bb9d17e6508e7f"
+    },
+    {
+      "split": "TEST12",
+      "sample_token": "M8I2irMvY7_000690_828727256_833727328_M8I2irMvY7_000690_953700000",
+      "max_abs_error": 0.0,
+      "reference_sha256": "5a6338022f2228ac7b32c22f23e4de6ff3c799c10bfd203242822068a40fca3f"
+    },
+    {
+      "split": "TEST12",
+      "sample_token": "Mu6kaUjIz3_000004_243648654_248648730_Mu6kaUjIz3_000004_8359100000",
+      "max_abs_error": 0.0,
+      "reference_sha256": "4ea560779880660921222bac27d2025d9fa54e0aa7c549870761638bb9c4d986"
+    },
+    {
+      "split": "TEST12",
+      "sample_token": "V741M41vPW_000006_789063680_794063745_V741M41vPW_000006_8218100000",
+      "max_abs_error": 0.0,
+      "reference_sha256": "285a1f7d97409fdf6fc8ac5f39b63284936bc61725bd11a19c92cd60d3c23419"
+    },
+    {
+      "split": "TEST12",
+      "sample_token": "kafYzX6kJ4_003050_759094222_764094300_kafYzX6kJ4_003050_2978900000",
+      "max_abs_error": 0.0,
+      "reference_sha256": "5ba5beaf9c486e14ab3f3c86a0ee4b93530a3c3a25aa0153f833a095cf2f87ab"
+    },
+    {
+      "split": "TEST12",
+      "sample_token": "nP4MRdpEeO_000011_924080929_929081007_nP4MRdpEeO_000011_1188000000",
+      "max_abs_error": 0.0,
+      "reference_sha256": "881dc6c6b0568f1b53057bb3c2091fda35eac0c69f102f8fb617ad81c4b2b083"
+    },
+    {
+      "split": "TEST12",
+      "sample_token": "r0PXQOpCA6_000668_878138513_883138583_r0PXQOpCA6_000668_5507200000",
+      "max_abs_error": 0.0,
+      "reference_sha256": "a05b8f23f28723f8545f983ee3a252745cfdb7d900e7dea53859530733acf732"
+    },
+    {
+      "split": "TEST12",
+      "sample_token": "vhjB5OViA7_001830_803594811_808594895_vhjB5OViA7_001830_6482700000",
+      "max_abs_error": 0.0,
+      "reference_sha256": "1a5fbec2136d9f64a9fc797aa1a671e7bc320c93b71f59466e2862766f6837f4"
+    }
+  ],
+  "H_history_queries": 18422,
+  "H_history_identities_exact": true,
+  "H_history_sha256": "d6be748bbcbc4b1e2d6134c9494065283e09e561f52998aeb7b7ef29828fbdd7",
+  "native_source_sha256": "f4f5b3fcb9754436891b2e2bd36414ec0a299043829d92e5934c255939251f8c",
+  "source_sha256": "94c4a9c987fd4288c5094ce32b8af9fe13baf15a79dba50a58943e5598b5967b",
+  "test_targets_read": false,
+  "optimizer_updates": 0,
+  "scope": "Native same-track histories; H8 current observation tensor only is compared, never the H8 history. No candidate predictions or private labels."
+}

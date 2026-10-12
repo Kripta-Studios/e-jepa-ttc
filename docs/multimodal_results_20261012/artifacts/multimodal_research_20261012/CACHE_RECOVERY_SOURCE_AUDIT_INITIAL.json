@@ -1,0 +1,10 @@
+{
+  "utc": "2026-10-12T15:57:01.440064+00:00",
+  "original_source_sha256": "5404d1e7f400726f2cccd9d82c2ee26ed88530944d7c13a5dd81ddb3e5eb2aac",
+  "recovery_source_sha256": "a1cd16d45e5bf89ddb04b3a584b24ae92466ebe5288b6d3210c2aef673ce534f",
+  "initialization_AST_exact": true,
+  "full_head_forward_AST_exact": true,
+  "runtime_helpers": "Original context, restore, store; frozen_state and model classes unchanged",
+  "resource_cadence": "128 already computed observations or 32 heads per full unchanged guard; deadline each item; 1 GiB CUDA cap; full guard on completion",
+  "real_saved_output_parity": "16 hash-selected completed tokens, required before sealing"
+}

@@ -1,0 +1,10 @@
+{
+  "sha256": "90c5df8a950ef1fec7d1980d14717e11158dd3024843add70be4dc29e3dfd1b8",
+  "checkpoint_sha256": "c984fd1a010227f1173fce879a1f38554d5378124c5817641b8fb0c03ccbd222",
+  "fold_seal_sha256": "93c55667bea4019a5b351f3076403860fa38b63497e20e53829706bb531d57db",
+  "population": 4203,
+  "hidden_coordinates_zero": true,
+  "heldout_targets_read": false,
+  "source_sha256": "7e5a2e269beb4d89831c7333ae7826e28e2cc0fc38b9c2c44bee01e9df926440",
+  "supervised_groups_disjoint": true
+}

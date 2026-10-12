@@ -1,0 +1,15 @@
+dataset,contrast,metric,n,groups,point_micro,lo,hi,draws,role
+FCWD,F_TRUE-R_CTX,MAE,472,3,-0.23807034711511293,-0.33452567615944223,-0.12131430714134395,4000,posthoc_cluster_bootstrap_not_confirmation
+FCWD,F_TRUE-R_CTX,mean_MiD,472,3,-16.02374266794592,-20.866454906688393,-11.334573926626717,4000,posthoc_cluster_bootstrap_not_confirmation
+FCWD,F_TRUE-E_CTX_MATCHED,MAE,597,3,-0.5373953319181493,-0.9370249803426525,-0.23711937762822202,4000,posthoc_cluster_bootstrap_not_confirmation
+FCWD,F_TRUE-E_CTX_MATCHED,mean_MiD,597,3,-17.09844590422003,-20.329064792355318,-13.107309093964918,4000,posthoc_cluster_bootstrap_not_confirmation
+FCWD,F_TRUE-public_Garl_event_lhr,MAE,597,3,-0.7164185754778303,-1.129228403969067,-0.4942084573964258,4000,posthoc_cluster_bootstrap_not_confirmation
+FCWD,F_TRUE-public_Garl_event_lhr,mean_MiD,597,3,-7.887340598464637,-11.905703338978686,-5.330197311707477,4000,posthoc_cluster_bootstrap_not_confirmation
+DEV32,F_TRUE-R_CTX,MAE,946,32,0.11060280126083255,-0.14641712761306805,0.42896979187976136,4000,posthoc_cluster_bootstrap_not_confirmation
+DEV32,F_TRUE-R_CTX,mean_MiD,946,32,-1.2231779998793253,-10.761893754107454,8.570558246752555,4000,posthoc_cluster_bootstrap_not_confirmation
+DEV32,F_TRUE-E_CTX_MATCHED,MAE,946,32,-0.4869470566801127,-1.249834216264077,0.32698440654634015,4000,posthoc_cluster_bootstrap_not_confirmation
+DEV32,F_TRUE-E_CTX_MATCHED,mean_MiD,946,32,-62.23009408943712,-97.76627422180644,-31.818601867722457,4000,posthoc_cluster_bootstrap_not_confirmation
+DEV32,F_TRUE-public_Garl_event_lhr,MAE,946,32,-6.679642130194259,-17.44484901720838,-0.7952277590154321,4000,posthoc_cluster_bootstrap_not_confirmation
+DEV32,F_TRUE-public_Garl_event_lhr,mean_MiD,946,32,-73.3010101356922,-101.19932879950737,-45.85069501678788,4000,posthoc_cluster_bootstrap_not_confirmation
+DEV32,F_TRUE-public_Garl_rgb_event_full,MAE,946,32,-0.4998093960265574,-0.85177951956017,-0.14291202837629152,4000,posthoc_cluster_bootstrap_not_confirmation
+DEV32,F_TRUE-public_Garl_rgb_event_full,mean_MiD,946,32,-38.47456662609029,-72.171187013142,-10.879292344894239,4000,posthoc_cluster_bootstrap_not_confirmation

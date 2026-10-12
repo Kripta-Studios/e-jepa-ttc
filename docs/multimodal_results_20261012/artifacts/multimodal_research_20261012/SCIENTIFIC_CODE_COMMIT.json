@@ -1,0 +1,12 @@
+{
+  "commit": "d8b1102e8667882a46db63d22c55b2aa790cf910",
+  "sources": {
+    "operational\\multimodal_research\\common.py": "dac6d054b198ce04eab4d0b4d8f2808d4c8d946096d802a73b281455fa2263c4",
+    "operational\\multimodal_research\\model.py": "0ac640ba421c82e54005dc4cf7ae2baa042e72d6d18f21b1e80919141b204cef",
+    "operational\\multimodal_research\\cache.py": "85faa229cd41ed625f957fbbb3be46c13bb92ac0eac39526586aeb33ac13cd49",
+    "operational\\multimodal_research\\train.py": "9f21ce7ae4928fe583e2e5eaa1e60c81849bf316f079e414615f72a465c55324"
+  },
+  "H_binding_preserved": true,
+  "phase": "2,425 EVENT updates; no new V predictions",
+  "local_only": true
+}

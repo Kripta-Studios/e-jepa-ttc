@@ -1,0 +1,41 @@
+{
+  "sha256": "f8bdc22ccb25ca5c52bf94b815f6f9028307eeddfe21b74b58c15940ee80487e",
+  "population": 630,
+  "state_seal_sha256": "a29c4a1510c1706f0b0f6b3b94257ae6c15b6d947cdb013a225c3e1bf316250f",
+  "endpoints": {
+    "FUSED": {
+      "accumulation_index": 0,
+      "checkpoint_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v16-multimodal-validation\\artifacts\\multimodal_research_20261012\\fits\\R_ANCHOR_FUSION_STATE_FUSED_S7\\checkpoint_last.pt",
+      "checkpoint_sha256": "9ef71d43f079fc3369e4f9dc784aad5fb9252351198a17e0b407c9bd6ff81b47",
+      "complete_state": true,
+      "completed_updates": 2500,
+      "fit_id": "R_ANCHOR_FUSION_STATE_FUSED_S7",
+      "identity_sha256": "5f5994c6dc91da1401f2a51093b25c41e5094ceca9e74e882320f3fd17a4aa50",
+      "recovery_upper": 0,
+      "schema": "rgb_port_checkpoint_receipt_v1",
+      "scientific_endpoint": true,
+      "status": "COMPLETE"
+    },
+    "ZERO_FUSED": {
+      "accumulation_index": 0,
+      "checkpoint_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v16-multimodal-validation\\artifacts\\multimodal_research_20261012\\fits\\R_ANCHOR_FUSION_STATE_ZERO_FUSED_S7\\checkpoint_last.pt",
+      "checkpoint_sha256": "15665bfca73e8c2e1b2fb800429e9b8b35de7cdcab0509e2f4303cb785791148",
+      "complete_state": true,
+      "completed_updates": 2500,
+      "fit_id": "R_ANCHOR_FUSION_STATE_ZERO_FUSED_S7",
+      "identity_sha256": "6bb28df5686fd59cc059ab30254cd836104e0376bb1a4ffae27bad0ee6aae3b7",
+      "recovery_upper": 0,
+      "schema": "rgb_port_checkpoint_receipt_v1",
+      "scientific_endpoint": true,
+      "status": "COMPLETE"
+    }
+  },
+  "targets_read": false,
+  "source_sha256": "fb49f88e042dc6be55c7869ab7bc86f074db9bfb8c6c91eac63edbd2773f6633",
+  "fallback": "exact same-route E_CTX whenever RGB unavailable; keep every query",
+  "scope": "Frozen parents and CPU readout; exposed descriptive cohorts, never selection",
+  "parent_route": "native_gpu",
+  "readout_route": "CPU_FP32_one_thread",
+  "extra_fusion_seal_sha256": null,
+  "control": "Both arms retain E/R; only additional F_TRUE representation is zeroed"
+}

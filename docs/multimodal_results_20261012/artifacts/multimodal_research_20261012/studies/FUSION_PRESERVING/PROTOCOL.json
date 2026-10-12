@@ -1,0 +1,47 @@
+{
+  "utc": "2026-10-12T12:36:16.692627+00:00",
+  "name": "FUSION_PRESERVING",
+  "seeds": [
+    7
+  ],
+  "arms": [
+    "REFINED_RGB",
+    "ZERO_RGB"
+  ],
+  "updates_per_fit": 2500,
+  "planned_updates": 5000,
+  "hypothesis": "Preserve existing F_TRUE prediction while testing incremental independently-refined RGB state",
+  "input": "Sealed E/R340 and F_TRUE hidden160/raw/emitted162",
+  "control": "ZERO_RGB removes only first165 refined RGB coordinates; keeps RGB clocks, E state and full F_TRUE state/anchor. Both arms remain multimodal; this is not an RGB-ablation system.",
+  "normalization": "Original phase-unit scaling, no additional fitted statistics",
+  "output": "F_TRUE raw anchor plus unrestricted .03 residual; frozen F_TRUE native width logits plus correction; zero final layer reproduces native F_TRUE point and quantiles",
+  "parent_checkpoint_sha256": "dba93f9794e852d0e1d7323ac91ed257c59ec8e20a8ea952a93c5742a7f72f1b",
+  "optimizer": "Native fusion_loss, global H mass, AdamW3e-4 native schedule, batch128, 2500 updates, seed7",
+  "gates": "Original2% gates vsR_CTX and F_TRUE; paired REFINED_RGB minus ZERO_RGB4000 group bootstrap; 4% only secondary sensitivity",
+  "stages": "New supervised H stage over already H-supervised frozen parents; not OOF",
+  "basis_sources": {
+    "H_FUSION_COMPLEMENTARITY.json": "1aa35a7c6d03b70ad00cca2bc1b2a93ee6f9b467ecec7f9f318033c328a5dee0",
+    "studies\\FUSION_STATE\\S7\\V_RESULTS.json": "8fa9a92a84556d96936bfb71961222b0e524346e59b809745002ebcf9a37cc7f"
+  },
+  "external_exposure": "Previous research transfer already exposed; no external targets in fitting or hyperparameter selection; FUSION_STATE transfer still pending",
+  "external_selection": false,
+  "preregistration_sha256": "a388a15a277157cb38a5be9037a3c047731b5ce38dc4e3b64d14760203aa157d",
+  "original_protocol_sha256": "d955649530b1761fb62ee0410d50a44b85741a70754271789d561fce3c7565eb",
+  "frozen_scientific_sources": {
+    "operational\\multimodal_research\\common.py": "dac6d054b198ce04eab4d0b4d8f2808d4c8d946096d802a73b281455fa2263c4",
+    "operational\\multimodal_research\\model.py": "0ac640ba421c82e54005dc4cf7ae2baa042e72d6d18f21b1e80919141b204cef",
+    "operational\\multimodal_research\\cache.py": "85faa229cd41ed625f957fbbb3be46c13bb92ac0eac39526586aeb33ac13cd49",
+    "operational\\multimodal_research\\train.py": "9f21ce7ae4928fe583e2e5eaa1e60c81849bf316f079e414615f72a465c55324"
+  },
+  "phase_units_source_sha256": "0cd65eea9c8e8a2e01b7512570dc3e31c8cbcc2def468b9f4b64e3ab3edb6021",
+  "fusion_preserving_model_source_sha256": "bd92d4bbd7177e78f806af8241c9d33970a54663983cd9e5aa63c9a6e4d564ee",
+  "trainer_source_sha256": "a4cf44f48f5a50374bc732a012fac9212c488ea2618e45e6592163e0d053a460",
+  "execution": {
+    "utc": "2026-10-12T12:36:16.718457+00:00",
+    "device": "CPU FP32 one thread for fitting and V inference",
+    "resources": "Existing budget/deadline/RAM/disk guards; no CUDA initialization",
+    "planned_updates": 5000
+  },
+  "fusion_H_binding_sha256": "58822fa4389a0846d7c7beb32a03813f067cf6a4333ac3b090ca5e2fb4db5704",
+  "validation": "Exposed V development; fixed original gates; no external selection"
+}

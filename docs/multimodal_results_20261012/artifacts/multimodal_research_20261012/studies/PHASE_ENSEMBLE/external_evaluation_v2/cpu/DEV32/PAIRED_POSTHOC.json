@@ -1,0 +1,74 @@
+[
+  {
+    "comparator": "R_CTX_SAME_ROUTE",
+    "metric": "MAE",
+    "queries": 946,
+    "sequences": 32,
+    "delta": 0.00040416129697408453,
+    "ci95": [
+      -0.18419361541603202,
+      0.2655333208524704
+    ],
+    "role": "posthoc descriptive; no external candidate selection"
+  },
+  {
+    "comparator": "R_CTX_SAME_ROUTE",
+    "metric": "mean_MiD",
+    "queries": 946,
+    "sequences": 32,
+    "delta": -5.879988851856508,
+    "ci95": [
+      -10.892635632155384,
+      -1.2419823878896055
+    ],
+    "role": "posthoc descriptive; no external candidate selection"
+  },
+  {
+    "comparator": "F_TRUE_SAME_ROUTE",
+    "metric": "MAE",
+    "queries": 946,
+    "sequences": 32,
+    "delta": -0.11019865647169882,
+    "ci95": [
+      -0.46107830785738296,
+      0.14773906007952442
+    ],
+    "role": "posthoc descriptive; no external candidate selection"
+  },
+  {
+    "comparator": "F_TRUE_SAME_ROUTE",
+    "metric": "mean_MiD",
+    "queries": 946,
+    "sequences": 32,
+    "delta": -4.656812572321332,
+    "ci95": [
+      -12.905713020947305,
+      3.1038521584429617
+    ],
+    "role": "posthoc descriptive; no external candidate selection"
+  },
+  {
+    "comparator": "R_ANCHOR_ZERO",
+    "metric": "MAE",
+    "queries": 946,
+    "sequences": 32,
+    "delta": 0.07132884239441556,
+    "ci95": [
+      -0.07622705802483386,
+      0.315494168793679
+    ],
+    "role": "posthoc descriptive; no external candidate selection"
+  },
+  {
+    "comparator": "R_ANCHOR_ZERO",
+    "metric": "mean_MiD",
+    "queries": 946,
+    "sequences": 32,
+    "delta": -5.364627229655268,
+    "ci95": [
+      -9.162226765361577,
+      -1.6002945312713275
+    ],
+    "role": "posthoc descriptive; no external candidate selection"
+  }
+]

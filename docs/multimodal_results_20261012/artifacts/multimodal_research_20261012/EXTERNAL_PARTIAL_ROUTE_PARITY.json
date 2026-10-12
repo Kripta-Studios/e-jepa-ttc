@@ -1,0 +1,25 @@
+{
+  "utc": "2026-10-12T10:02:07.736175+00:00",
+  "rows": [
+    {
+      "query_id": "FCWD1:0125",
+      "new_cpu": 3.4003820419311523,
+      "old_cpu": 3.4003820419311523,
+      "absolute_delta": 0.0
+    },
+    {
+      "query_id": "FCWD1:0069",
+      "new_cpu": 6.413506031036377,
+      "old_cpu": 6.413506031036377,
+      "absolute_delta": 0.0
+    },
+    {
+      "query_id": "FCWD1:0007",
+      "new_cpu": -9.944945335388184,
+      "old_cpu": -9.944945335388184,
+      "absolute_delta": 0.0
+    }
+  ],
+  "labels_read": false,
+  "scope": "existing CPU trace vs new frozen CPU state extraction, event point only"
+}

@@ -1,0 +1,3 @@
+cohort,rows,physical_matches,identical_query_id,max_numeric_delta,sha256
+original_1024,1024,1024,1024,0.0,fbd724dc1a959c6af754bc8ea6e06c8cfe865439b4526578deb1e6380cc1b53e
+expanded_3947,3947,1024,39,3.552713678800501e-15,815e8925d350aabf77e7020f453ca3fae30a19d9467f156378f2e331aaec43c8

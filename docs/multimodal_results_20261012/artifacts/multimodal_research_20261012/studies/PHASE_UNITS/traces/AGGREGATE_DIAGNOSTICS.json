@@ -1,0 +1,46 @@
+[
+  {
+    "role": "H",
+    "arm": "EVENT",
+    "queries": 18422,
+    "phase_error_RGB": 0.003594582705878124,
+    "phase_error_new": 0.003058285245478956,
+    "sign_changes": 58,
+    "cap60": 43,
+    "improved": 10686,
+    "worsened": 7729
+  },
+  {
+    "role": "H",
+    "arm": "ZERO",
+    "queries": 18422,
+    "phase_error_RGB": 0.003594582705878124,
+    "phase_error_new": 0.003482303419503,
+    "sign_changes": 22,
+    "cap60": 44,
+    "improved": 9642,
+    "worsened": 8754
+  },
+  {
+    "role": "V",
+    "arm": "EVENT",
+    "queries": 16432,
+    "phase_error_RGB": 0.0058826928548486035,
+    "phase_error_new": 0.005778730716055979,
+    "sign_changes": 84,
+    "cap60": 81,
+    "improved": 8800,
+    "worsened": 7615
+  },
+  {
+    "role": "V",
+    "arm": "ZERO",
+    "queries": 16432,
+    "phase_error_RGB": 0.0058826928548486035,
+    "phase_error_new": 0.005941850812115057,
+    "sign_changes": 24,
+    "cap60": 66,
+    "improved": 8738,
+    "worsened": 7655
+  }
+]

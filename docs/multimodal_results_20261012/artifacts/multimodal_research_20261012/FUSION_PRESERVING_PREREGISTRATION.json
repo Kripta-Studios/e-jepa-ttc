@@ -1,0 +1,28 @@
+{
+  "utc": "2026-10-12T12:36:16.692627+00:00",
+  "name": "FUSION_PRESERVING",
+  "seeds": [
+    7
+  ],
+  "arms": [
+    "REFINED_RGB",
+    "ZERO_RGB"
+  ],
+  "updates_per_fit": 2500,
+  "planned_updates": 5000,
+  "hypothesis": "Preserve existing F_TRUE prediction while testing incremental independently-refined RGB state",
+  "input": "Sealed E/R340 and F_TRUE hidden160/raw/emitted162",
+  "control": "ZERO_RGB removes only first165 refined RGB coordinates; keeps RGB clocks, E state and full F_TRUE state/anchor. Both arms remain multimodal; this is not an RGB-ablation system.",
+  "normalization": "Original phase-unit scaling, no additional fitted statistics",
+  "output": "F_TRUE raw anchor plus unrestricted .03 residual; frozen F_TRUE native width logits plus correction; zero final layer reproduces native F_TRUE point and quantiles",
+  "parent_checkpoint_sha256": "dba93f9794e852d0e1d7323ac91ed257c59ec8e20a8ea952a93c5742a7f72f1b",
+  "optimizer": "Native fusion_loss, global H mass, AdamW3e-4 native schedule, batch128, 2500 updates, seed7",
+  "gates": "Original2% gates vsR_CTX and F_TRUE; paired REFINED_RGB minus ZERO_RGB4000 group bootstrap; 4% only secondary sensitivity",
+  "stages": "New supervised H stage over already H-supervised frozen parents; not OOF",
+  "basis_sources": {
+    "H_FUSION_COMPLEMENTARITY.json": "1aa35a7c6d03b70ad00cca2bc1b2a93ee6f9b467ecec7f9f318033c328a5dee0",
+    "studies\\FUSION_STATE\\S7\\V_RESULTS.json": "8fa9a92a84556d96936bfb71961222b0e524346e59b809745002ebcf9a37cc7f"
+  },
+  "external_exposure": "Previous research transfer already exposed; no external targets in fitting or hyperparameter selection; FUSION_STATE transfer still pending",
+  "external_selection": false
+}

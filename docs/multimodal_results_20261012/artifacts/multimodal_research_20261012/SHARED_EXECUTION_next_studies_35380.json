@@ -1,0 +1,150 @@
+{
+  "action": "next_studies",
+  "pid": 35380,
+  "utc_start": "2026-10-12T11:10:48.858927+00:00",
+  "policy_sha256": "b5de67e8d58dc558e0c6b885f979f1929354dad11eb925e1627726cbd8472737",
+  "accounting_before": {
+    "scientific": 10000,
+    "recovery_upper": 0,
+    "pending_upper": 0,
+    "fits": [
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "e8960bba681057948c138b6f2e09a05d07216fca0f26ea4b3b277292d175d9cf",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_EVENT_S7"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "5e301175dc8a26382539d26d4da1bf768827d2656327dd45b3e40b089b53cf35",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_UNITS_EVENT_S7"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "24d95b10eb7efc28348165fca96a8535bfd6e10be690f3af9dcd0e527efac299",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_UNITS_ZERO_S7"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "cd63c668494fe3cc2365def538c36b9802c539a418e5a6410c2facf100184c3c",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_ZERO_S7"
+      }
+    ],
+    "physical_upper": 10000
+  },
+  "status": "COMPLETE",
+  "utc_end": "2026-10-12T11:41:56.836186+00:00",
+  "accounting_after": {
+    "scientific": 25000,
+    "recovery_upper": 0,
+    "pending_upper": 0,
+    "fits": [
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "e8960bba681057948c138b6f2e09a05d07216fca0f26ea4b3b277292d175d9cf",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_EVENT_S7"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "566604ce57e8f91a8ad296741e5680d86b44a348eae6b0d17c4be12a9903b593",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_RELATIVE_PHASE_EVENT_S7"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "f5633c142111940218df7bb484a7fca86be69587f2a5a9e4b0701233d6855d07",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_RELATIVE_PHASE_ZERO_S7"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "23e5f421d19261530477ba18e366fbe0d2af8e50c89fcab9cf1087b115e29046",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_UNIT_REPLICATION_EVENT_S13"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "c9019c216afcf06ecc18854ce66273405a35201a6826d391545be0fd551d7607",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_UNIT_REPLICATION_EVENT_S23"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "cd852cae9d51bf08827f89a2c318c580447cb25bb7dcac624caca6e90ddd0aca",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_UNIT_REPLICATION_ZERO_S13"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "9edf9ada28785cca782ca8be2f573dcae16cfcd94ece0d495b254b02066e78ee",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_UNIT_REPLICATION_ZERO_S23"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "5e301175dc8a26382539d26d4da1bf768827d2656327dd45b3e40b089b53cf35",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_UNITS_EVENT_S7"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "24d95b10eb7efc28348165fca96a8535bfd6e10be690f3af9dcd0e527efac299",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_UNITS_ZERO_S7"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "cd63c668494fe3cc2365def538c36b9802c539a418e5a6410c2facf100184c3c",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_ZERO_S7"
+      }
+    ],
+    "physical_upper": 25000
+  }
+}

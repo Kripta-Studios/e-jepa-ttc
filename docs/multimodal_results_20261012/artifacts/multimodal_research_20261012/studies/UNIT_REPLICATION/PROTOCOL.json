@@ -1,0 +1,26 @@
+{
+  "name": "UNIT_REPLICATION",
+  "seeds": [
+    13,
+    23
+  ],
+  "arms": [
+    "EVENT",
+    "ZERO"
+  ],
+  "updates_per_fit": 2500,
+  "model": "Identical PhaseUnitAnchor; additional head seeds, not whole-system replications",
+  "preregistration_sha256": "f13fc7872c38d125e44899f574d8c4edc3da42294ab9b1ae0c65026ac23b0714",
+  "original_protocol_sha256": "d955649530b1761fb62ee0410d50a44b85741a70754271789d561fce3c7565eb",
+  "frozen_scientific_sources": {
+    "operational\\multimodal_research\\common.py": "dac6d054b198ce04eab4d0b4d8f2808d4c8d946096d802a73b281455fa2263c4",
+    "operational\\multimodal_research\\model.py": "0ac640ba421c82e54005dc4cf7ae2baa042e72d6d18f21b1e80919141b204cef",
+    "operational\\multimodal_research\\cache.py": "85faa229cd41ed625f957fbbb3be46c13bb92ac0eac39526586aeb33ac13cd49",
+    "operational\\multimodal_research\\train.py": "9f21ce7ae4928fe583e2e5eaa1e60c81849bf316f079e414615f72a465c55324"
+  },
+  "phase_units_source_sha256": "0cd65eea9c8e8a2e01b7512570dc3e31c8cbcc2def468b9f4b64e3ab3edb6021",
+  "relative_source_sha256": "bbe7cd08d143c41cb3cf2e9c63fe60f0cf4a4668f82e0aba682f67d658c3cc8b",
+  "trainer_source_sha256": "a17357a52a4d688a3da68f11c811db254d7062a64ead0e39309414ab8bc1eeb4",
+  "validation": "Exposed V development; fixed original gates; no external selection",
+  "replication_scope": "Readout seeds only; original frozen producers and contexts"
+}

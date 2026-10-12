@@ -1,0 +1,30 @@
+{
+  "utc": "2026-10-12T12:07:01.213553+00:00",
+  "name": "RGB_REGRET",
+  "seeds": [
+    7
+  ],
+  "arms": [
+    "EVENT",
+    "ZERO"
+  ],
+  "updates_per_fit": 2500,
+  "planned_updates": 5000,
+  "hypothesis": "Explicitly penalize H examples whose phase correction increases error relative to the frozen RGB anchor",
+  "model": "Unchanged PhaseUnitAnchor, 340 features, same R/E hidden states and phase units; no F_TRUE state",
+  "loss": "native fusion_loss + population*mass*relu(abs(phi_new-y)-abs(phi_RGB-y))/0.03, averaged per batch",
+  "regret_coefficient": 1.0,
+  "regret_boundary": "torch.relu derivative zero at zero; initial RGB-preserving output has zero penalty",
+  "anchor_reference": "emitted_phase(raw_RGB) on the same CPU backend as the new readout",
+  "unchanged": "H sampler/masses, native AdamW/schedule, batch128, native widths, 2500 updates, no new residual cap",
+  "device": "CPU FP32 one thread, deterministic",
+  "gates": "Original 2% per-band and all original comparative/paired gates; 4% remains secondary sensitivity",
+  "basis_sources": {
+    "studies\\PHASE_UNITS\\traces\\AGGREGATE_DIAGNOSTICS.json": "c27d2af857a9ed498a270b78b06413dd5083fe99988f47373e34803f18eaf932",
+    "studies\\FUSION_STATE\\S7\\V_RESULTS.json": "8fa9a92a84556d96936bfb71961222b0e524346e59b809745002ebcf9a37cc7f",
+    "PHASE_UNIT_REPLICATION_SUMMARY.json": "8a84fb3bc131d8645d4888cc3efd66e1c85467b4acc671ce1cf9a183822146ed"
+  },
+  "external_FUSION_STATE_scores_opened": false,
+  "external_selection": false,
+  "scope": "New supervised H stage on H-trained contexts, not OOF; V exposed development; no GT-based deployment selector"
+}

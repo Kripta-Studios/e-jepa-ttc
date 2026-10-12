@@ -1,0 +1,14 @@
+{
+  "ms": 3940.4747000080533,
+  "device": "cpu",
+  "threads": 1,
+  "resources": {
+    "available_bytes": 11609026560,
+    "own_rss": 757051392,
+    "own_queue_rss": 771006464,
+    "research_rss": 3313307648,
+    "commit_headroom": 31820206080,
+    "cpu_threads": 1,
+    "device": "cpu"
+  }
+}

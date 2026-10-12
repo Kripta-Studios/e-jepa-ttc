@@ -1,0 +1,40 @@
+{
+  "scope": "prepared_native_TRAIN40_H8_inputs_only; no sensor reading, producers or state commit",
+  "queries": 64,
+  "iterations": 2,
+  "device": "cpu",
+  "threads": 1,
+  "summary": {
+    "single_head_ms": {
+      "p50": 2.535849984269589,
+      "p95": 2.9398900194792073,
+      "p99": 2.985326002817601
+    },
+    "median3_actual_ms": {
+      "p50": 7.347900012973696,
+      "p95": 8.558940014336256,
+      "p99": 8.826383991981857
+    }
+  },
+  "bindings": {
+    "h8_heads": {
+      "7": {
+        "checkpoint_sha256": "760ee6e61133c4ed0172df6e785ccd41a5b8c3c85c0bb842d4e6217bb766cc74",
+        "committed_updates": 2500,
+        "strict_state_load": true
+      },
+      "13": {
+        "checkpoint_sha256": "67bb0c5d7946a45e12532f68afe13dfebc61d7cfdb63d9997cd91e3c26441fe5",
+        "committed_updates": 2500,
+        "strict_state_load": true
+      },
+      "23": {
+        "checkpoint_sha256": "a4074eaa69a931fadbc008ebea32e3f897bc2432a56dc221d91ce58d096b4800",
+        "committed_updates": 2500,
+        "strict_state_load": true
+      }
+    }
+  },
+  "feature_sha256": "49102d44b8d6c7df880dc5df73049a5ba26b8838c67f5a33533880258b371278",
+  "optimizer_updates": 0
+}

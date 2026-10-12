@@ -1,0 +1,19 @@
+{
+  "utc": "2026-10-12T14:51:57.343544+00:00",
+  "status": "NO_CANDIDATE",
+  "report_utc": "2026-10-12T13:36:40.006701+00:00",
+  "accounting": {
+    "pending_upper": 0,
+    "physical_upper": 106680,
+    "recovery_upper": 0,
+    "scientific": 106500,
+    "technical": 180
+  },
+  "source_hashes": {
+    "REPORT_GENERATION.json": "892c94d897eea76a4a37d8be813c65f7869504a9ac9c5e1e7e3329986ab1d703",
+    "ACCOUNTING.json": "ad4a2a0660bd2da9b00cc71541bb6b66dbd0e798ccf5b461093b66d37648bfd5",
+    "CAMPAIGN_NEXT_DECISION.json": "458eacd31a3ec39b8c730c3237b8629dfef2af099fc20d4ce39a550424caa2b4"
+  },
+  "mutated_foreign_files": false,
+  "integrated_foreign_parents": false
+}

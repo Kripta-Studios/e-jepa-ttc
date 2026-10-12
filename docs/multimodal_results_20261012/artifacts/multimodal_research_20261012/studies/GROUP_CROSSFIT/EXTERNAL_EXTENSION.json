@@ -1,0 +1,10 @@
+{
+  "study": "GROUP_CROSSFIT",
+  "seeds": [
+    7
+  ],
+  "model": "PhaseOnlyAnchor",
+  "source_sha256": "98882ee769d65a148c0ecef742129786c2b4623dc787f0af6ee11fa917b345a2",
+  "evaluator_source_sha256": "26df40874b576f419921eb52e989dd3d2684780029f1ffc7fc1344a8b1696e41",
+  "scope": "Admit registered small model and fit identity; metrics unchanged"
+}

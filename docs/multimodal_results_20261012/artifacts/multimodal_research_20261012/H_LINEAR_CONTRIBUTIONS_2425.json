@@ -1,0 +1,113 @@
+{
+  "checkpoint": {
+    "accumulation_index": 0,
+    "checkpoint_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v16-multimodal-validation\\artifacts\\multimodal_research_20261012\\fits\\R_ANCHOR_EVENT_S7\\checkpoint_last.pt",
+    "checkpoint_sha256": "c790032869dae9185d387825e3be7d37fe1a3976b4f1694a25674f7dcd76015e",
+    "complete_state": true,
+    "completed_updates": 2425,
+    "fit_id": "R_ANCHOR_EVENT_S7",
+    "identity_sha256": "e8960bba681057948c138b6f2e09a05d07216fca0f26ea4b3b277292d175d9cf",
+    "recovery_upper": 0,
+    "schema": "rgb_port_checkpoint_receipt_v1",
+    "scientific_endpoint": false,
+    "status": "PAUSED_RESOURCE"
+  },
+  "rows": [
+    {
+      "modality": "R",
+      "group": "hidden",
+      "dimensions": 160,
+      "median_input_std": 0.2436848133802414,
+      "weight_frobenius": 5.325404644012451,
+      "preactivation_rms": 0.3261387050151825,
+      "centered_preactivation_rms": 0.14608895778656006
+    },
+    {
+      "modality": "R",
+      "group": "raw_and_emitted_phase",
+      "dimensions": 2,
+      "median_input_std": 0.02287665568292141,
+      "weight_frobenius": 0.7581819891929626,
+      "preactivation_rms": 0.0017319442704319954,
+      "centered_preactivation_rms": 0.0016673221252858639
+    },
+    {
+      "modality": "R",
+      "group": "expert_phase",
+      "dimensions": 3,
+      "median_input_std": 0.022156264632940292,
+      "weight_frobenius": 0.9090021848678589,
+      "preactivation_rms": 0.00217360258102417,
+      "centered_preactivation_rms": 0.002071548020467162
+    },
+    {
+      "modality": "R",
+      "group": "clock",
+      "dimensions": 4,
+      "median_input_std": 0.0,
+      "weight_frobenius": 0.8145595788955688,
+      "preactivation_rms": 0.0033892595674842596,
+      "centered_preactivation_rms": 0.0009680904331617057
+    },
+    {
+      "modality": "R",
+      "group": "count",
+      "dimensions": 1,
+      "median_input_std": 0.15772883594036102,
+      "weight_frobenius": 0.42872190475463867,
+      "preactivation_rms": 0.019332021474838257,
+      "centered_preactivation_rms": 0.005345826968550682
+    },
+    {
+      "modality": "E",
+      "group": "hidden",
+      "dimensions": 160,
+      "median_input_std": 0.2592051327228546,
+      "weight_frobenius": 5.546670436859131,
+      "preactivation_rms": 0.2702358663082123,
+      "centered_preactivation_rms": 0.166448175907135
+    },
+    {
+      "modality": "E",
+      "group": "raw_and_emitted_phase",
+      "dimensions": 2,
+      "median_input_std": 0.022471599280834198,
+      "weight_frobenius": 0.8498281836509705,
+      "preactivation_rms": 0.0020360162016004324,
+      "centered_preactivation_rms": 0.00195395783521235
+    },
+    {
+      "modality": "E",
+      "group": "expert_phase",
+      "dimensions": 3,
+      "median_input_std": 0.021057259291410446,
+      "weight_frobenius": 1.0696561336517334,
+      "preactivation_rms": 0.002698772121220827,
+      "centered_preactivation_rms": 0.002559060463681817
+    },
+    {
+      "modality": "E",
+      "group": "clock",
+      "dimensions": 4,
+      "median_input_std": 0.0,
+      "weight_frobenius": 0.8201289176940918,
+      "preactivation_rms": 0.0032865828834474087,
+      "centered_preactivation_rms": 0.0007580349920317531
+    },
+    {
+      "modality": "E",
+      "group": "count",
+      "dimensions": 1,
+      "median_input_std": 0.09884371608495712,
+      "weight_frobenius": 0.417809396982193,
+      "preactivation_rms": 0.015622907318174839,
+      "centered_preactivation_rms": 0.0032647917978465557
+    }
+  ],
+  "cache_sha256": "7438410d5e39b2f91eb17f9ef2f8c153d2c699bbb9c1ecf2cdf7d380989a331a",
+  "source_sha256": "b4db564868510a85bc79ca2a075631faa6618eb6d36159da68a7eb1610852d46",
+  "targets_read": false,
+  "optimizer_updates": 0,
+  "stage": "first linear before LayerNorm and SiLU",
+  "limitation": "Correlated blocks; descriptive H-only decomposition"
+}

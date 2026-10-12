@@ -1,0 +1,9 @@
+model,sequence,queries,available,unavailable
+full,ALL,630,495,135
+full,FCWD1,214,164,50
+full,FCWD2,218,173,45
+full,FCWD3,198,158,40
+visual,ALL,630,495,135
+visual,FCWD1,214,164,50
+visual,FCWD2,218,173,45
+visual,FCWD3,198,158,40

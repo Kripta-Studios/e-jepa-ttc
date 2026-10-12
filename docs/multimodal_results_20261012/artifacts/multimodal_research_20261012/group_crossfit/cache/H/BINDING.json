@@ -1,0 +1,10 @@
+{
+  "source_sha256": "8b2c52e81ab66db06df20a1eb4b4bc9c65d5f5c76cd077b320b20a16896b2c50",
+  "unlabelled_seal_sha256": "c769f90cb9e0bcdf898d7bac9c369c5109fbfd181324b270ca1bf70779882df2",
+  "original_H_cache_sha256": "7438410d5e39b2f91eb17f9ef2f8c153d2c699bbb9c1ecf2cdf7d380989a331a",
+  "states_are_group_OOF": true,
+  "normalization": "Per-fold unique training observations only",
+  "upstream": "Frozen P-only producers/PAIR; H contexts exclude the target group",
+  "deployment": "Original full-H contexts and normalizers; only the small corrector is new",
+  "schema": "Physical170 blocks with all320 hidden coordinates zero; PhaseOnlyAnchor only"
+}

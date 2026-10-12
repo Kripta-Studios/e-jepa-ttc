@@ -1,0 +1,113 @@
+{
+ "format_version": 1,
+ "files": {
+  ".gitattributes": {
+   "size": 1519,
+   "blob_id": "a6344aac8c09253b3b630fb776ae94478aa0275b"
+  },
+  "README.md": {
+   "size": 791,
+   "blob_id": "7ce29c7f8f3cfbc611e826246b8ce837fc03ef3a"
+  },
+  "ablation/paper_event_only_baseline.pth": {
+   "size": 99016317,
+   "blob_id": "82430f89b4987811d2946834c2a6bb65278981fa",
+   "lfs_sha256": "210ca4c78694164e4e524196c0c795c4646dd54b540efbe40fad011a94861ab5",
+   "lfs_size": 99016317,
+   "xet_hash": "2bf4433c498653ce973cfab2ccbba5776273ef7688dea54202ac9ff1c0d45a96"
+  },
+  "ablation/paper_multi_modal_baseline.pth": {
+   "size": 99091581,
+   "blob_id": "891f8ce3935e11234ceddb2b03f7166700965f64",
+   "lfs_sha256": "19ca6c22528636c97c88a99257c3e8dac8791c21df1a024d40755e3ccc328761",
+   "lfs_size": 99091581,
+   "xet_hash": "34f85e577413e3c301347aea74d8ac2e3331f619977f48f29fd768b02efb30e8"
+  },
+  "ablation/paper_multi_modal_lhr_early_fusion.pth": {
+   "size": 99093629,
+   "blob_id": "81aa1cb7f963ef467d48e081cda840db49dc0439",
+   "lfs_sha256": "1365f774324fd7f9327cf581b2b1ccae1a7b6341e3dbc41e8d1624da9698171f",
+   "lfs_size": 99093629,
+   "xet_hash": "cf3c4127cfb5745ce6589eea23575175fa21570c569d06157cd2748352e7c5f7"
+  },
+  "ablation/paper_multi_modal_lhr_late_fusion.pth": {
+   "size": 197608193,
+   "blob_id": "088e430f6bfe72bb157f58771fea2ceb1178ea33",
+   "lfs_sha256": "23371fc95f836b13c005edb0161759e2678a84ba1b033373ea531f55df8e7dfa",
+   "lfs_size": 197608193,
+   "xet_hash": "723e22c9a9817c176aaf28a5775905dffdf5846b0f0e0c47a7393df26a1fc657"
+  },
+  "ablation/paper_visual_only_baseline.pth": {
+   "size": 98589821,
+   "blob_id": "eca0eabb29b29c213b483820b6a169b818a6e777",
+   "lfs_sha256": "04f59c7324a06200519e52805c61bcd6c11ab17f838d296572942bb13a7d5f7e",
+   "lfs_size": 98589821,
+   "xet_hash": "40a3a964328349e9dd7da63aebdbfa40360cca25b18cb1e64d6442ba19e4a7a3"
+  },
+  "configs/ablation/event_baseline.yaml": {
+   "size": 1848,
+   "blob_id": "b9da5b7d2b6115d0f6dbc2d742880d9d523fad2d"
+  },
+  "configs/ablation/event_lhr.yaml": {
+   "size": 1842,
+   "blob_id": "555058f52e9fce72d0530f256d5d155b5b88f78f"
+  },
+  "configs/ablation/multimodal_baseline.yaml": {
+   "size": 1859,
+   "blob_id": "1be05a5427c6b9e49abbf7e31c74fd4c6b9944cb"
+  },
+  "configs/ablation/multimodal_lhr_early.yaml": {
+   "size": 1865,
+   "blob_id": "d023d8c562d0a38fa4dbb1da67dcb61c0658db17"
+  },
+  "configs/ablation/multimodal_lhr_late.yaml": {
+   "size": 1861,
+   "blob_id": "ce4e54bcea803be1962a6a5bca2a14ba8d81c1b2"
+  },
+  "configs/ablation/ours_full.yaml": {
+   "size": 1840,
+   "blob_id": "3fa1c272715c2d2bdf2d4ff8db9c0b954ba5499d"
+  },
+  "configs/ablation/visual_baseline.yaml": {
+   "size": 1849,
+   "blob_id": "648ab3d35419b31815cbb8a3c7dfab93874c5f05"
+  },
+  "configs/ablation/visual_lhr.yaml": {
+   "size": 1843,
+   "blob_id": "9462d7e06210e38426f731a3837eb65bcba30aeb"
+  },
+  "configs/garl_ttc_eventdecoder.yaml": {
+   "size": 3511,
+   "blob_id": "8f2730e7aadba1d69dc677c33fe0832af00a6bb3"
+  },
+  "metrics/paper_test12.json": {
+   "size": 455,
+   "blob_id": "8093a4e1b821ea3da759ebcd83be26f0a80adbd1"
+  },
+  "model_release_metadata.json": {
+   "size": 2751,
+   "blob_id": "c999c5f5063a42733aaea42ec373d80e5eb3b79b"
+  },
+  "paper_event_only_lhr.pth": {
+   "size": 99018365,
+   "blob_id": "03fdf1b362db0b93a1785bd6201457ec2ca84d77",
+   "lfs_sha256": "fcaf9be47e2dafc6f73c6c3ebd102595ae06119dcae78aea698a42627b2b4fef",
+   "lfs_size": 99018365,
+   "xet_hash": "07a0f90114a8374a9e9bad57ed9dbde2448eed129a53ed5affc057f97d41740f"
+  },
+  "paper_ours_full.pth": {
+   "size": 973290993,
+   "blob_id": "dd2ce309a276c63715c528f3e4202b98d515f8e0",
+   "lfs_sha256": "e96a613a4fb877a1969d57ab562cadba89961fb202f5f2f2f0658f333a0d443e",
+   "lfs_size": 973290993,
+   "xet_hash": "7118e54d1b64171369b880537f6a591a5889fd0263a56561bca0f8d02ccc68fd"
+  },
+  "paper_visual_only_lhr.pth": {
+   "size": 98591869,
+   "blob_id": "2711734b49ff81e307beef59a993259918ebef91",
+   "lfs_sha256": "02d900d0ddf81086f4176b63663f952a7c753eeb033b13acc5030a892a88cf70",
+   "lfs_size": 98591869,
+   "xet_hash": "1a9e5141cb33d07631004800e6c1d0ff5043b74dc353c5498c84049c3879ab41"
+  }
+ }
+}

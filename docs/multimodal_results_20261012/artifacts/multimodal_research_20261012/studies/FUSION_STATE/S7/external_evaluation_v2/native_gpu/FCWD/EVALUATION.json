@@ -1,0 +1,14 @@
+{
+  "historical_source_sha256": "4b7b060427589424c05a9d4f4470a1671655dcbff4851f0110ab5ec2c774fda3",
+  "source_sha256": "fb49f88e042dc6be55c7869ab7bc86f074db9bfb8c6c91eac63edbd2773f6633",
+  "queries": 630,
+  "labelled": 597,
+  "rgb_available": 495,
+  "official_overall_MiD_available": false,
+  "external_selection": false,
+  "optimizer_updates": 0,
+  "study": "FUSION_STATE",
+  "seed": 7,
+  "parent_route": "native_gpu",
+  "validation_decision": null
+}

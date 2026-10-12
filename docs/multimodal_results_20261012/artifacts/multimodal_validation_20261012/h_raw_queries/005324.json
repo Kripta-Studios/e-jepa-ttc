@@ -1,0 +1,291 @@
+{
+  "sample_token": "CzyQ8HKP6X_003037_1464800000",
+  "prediction": 3.022299289703369,
+  "metadata": {
+    "ordinal": 29196,
+    "source_ordinal": 29237,
+    "sample_token": "CzyQ8HKP6X_003037_1464800000",
+    "sequence_id": "CzyQ8HKP6X",
+    "group_id": "CzyQ8HKP6X",
+    "track_id": "CzyQ8HKP6X_003037",
+    "public_track_id": "CzyQ8HKP6X_003037",
+    "role": "H",
+    "query_time_us": 1464800000,
+    "cutoff_us": 1464800000,
+    "rgb_available": true,
+    "frame_ids": [
+      "CzyQ8HKP6X_003037|rgb/000000454_000141995.png",
+      "CzyQ8HKP6X_003037|rgb/000000454_000241996.png",
+      "CzyQ8HKP6X_003037|rgb/000000454_000341997.png",
+      "CzyQ8HKP6X_003037|rgb/000000454_000441999.png",
+      "CzyQ8HKP6X_003037|rgb/000000454_000542000.png"
+    ],
+    "producer_frame_ids": [
+      "CzyQ8HKP6X_003037|rgb/000000454_000341997.png",
+      "CzyQ8HKP6X_003037|rgb/000000454_000441999.png",
+      "CzyQ8HKP6X_003037|rgb/000000454_000542000.png"
+    ],
+    "producer_times_us": [
+      1464600000,
+      1464700000,
+      1464800000
+    ],
+    "producer_available_us": [
+      1464600000,
+      1464700000,
+      1464800000
+    ],
+    "producer_sensor_times_us": [
+      454341997,
+      454441999,
+      454542000
+    ],
+    "producer_shards": [
+      "data/train/CzyQ8HKP6X/rgb_shards/rgb-00002.tar",
+      "data/train/CzyQ8HKP6X/rgb_shards/rgb-00002.tar",
+      "data/train/CzyQ8HKP6X/rgb_shards/rgb-00002.tar"
+    ],
+    "producer_members": [
+      "rgb/000000454_000341997.png",
+      "rgb/000000454_000441999.png",
+      "rgb/000000454_000542000.png"
+    ],
+    "producer_boxes_xyxy": [
+      [
+        888.0,
+        442.0,
+        1113.0,
+        585.0
+      ],
+      [
+        897.0,
+        437.0,
+        1131.0,
+        585.0
+      ],
+      [
+        903.0,
+        432.0,
+        1149.0,
+        587.0
+      ]
+    ],
+    "distinct_frames": 5,
+    "producer_frame_count": 3,
+    "distinct_observations": 3,
+    "observation_ids": [
+      "1e5b97ce7a1e772d0dd2c3f61f5802200416ebb6a3a6de4943aaee1ce1b174b1",
+      "09ac81d02f7a1af1ae8d717036cead4f8076b174327ee7a494bfbabead4d566c",
+      "9e3bfe20f642d7ccd93c9523339144cffeb9668180031e69a615477e0552fe0f"
+    ],
+    "observation_frame_ids": [
+      [
+        "CzyQ8HKP6X_003037|rgb/000000454_000141995.png",
+        "CzyQ8HKP6X_003037|rgb/000000454_000241996.png",
+        "CzyQ8HKP6X_003037|rgb/000000454_000341997.png"
+      ],
+      [
+        "CzyQ8HKP6X_003037|rgb/000000454_000241996.png",
+        "CzyQ8HKP6X_003037|rgb/000000454_000341997.png",
+        "CzyQ8HKP6X_003037|rgb/000000454_000441999.png"
+      ],
+      [
+        "CzyQ8HKP6X_003037|rgb/000000454_000341997.png",
+        "CzyQ8HKP6X_003037|rgb/000000454_000441999.png",
+        "CzyQ8HKP6X_003037|rgb/000000454_000542000.png"
+      ]
+    ],
+    "observation_times_us": [
+      [
+        1464400000,
+        1464500000,
+        1464600000
+      ],
+      [
+        1464500000,
+        1464600000,
+        1464700000
+      ],
+      [
+        1464600000,
+        1464700000,
+        1464800000
+      ]
+    ],
+    "observation_available_us": [
+      [
+        1464400000,
+        1464500000,
+        1464600000
+      ],
+      [
+        1464500000,
+        1464600000,
+        1464700000
+      ],
+      [
+        1464600000,
+        1464700000,
+        1464800000
+      ]
+    ],
+    "observation_sensor_times_us": [
+      [
+        454141995,
+        454241996,
+        454341997
+      ],
+      [
+        454241996,
+        454341997,
+        454441999
+      ],
+      [
+        454341997,
+        454441999,
+        454542000
+      ]
+    ],
+    "observation_shards": [
+      [
+        "data/train/CzyQ8HKP6X/rgb_shards/rgb-00002.tar",
+        "data/train/CzyQ8HKP6X/rgb_shards/rgb-00002.tar",
+        "data/train/CzyQ8HKP6X/rgb_shards/rgb-00002.tar"
+      ],
+      [
+        "data/train/CzyQ8HKP6X/rgb_shards/rgb-00002.tar",
+        "data/train/CzyQ8HKP6X/rgb_shards/rgb-00002.tar",
+        "data/train/CzyQ8HKP6X/rgb_shards/rgb-00002.tar"
+      ],
+      [
+        "data/train/CzyQ8HKP6X/rgb_shards/rgb-00002.tar",
+        "data/train/CzyQ8HKP6X/rgb_shards/rgb-00002.tar",
+        "data/train/CzyQ8HKP6X/rgb_shards/rgb-00002.tar"
+      ]
+    ],
+    "observation_members": [
+      [
+        "rgb/000000454_000141995.png",
+        "rgb/000000454_000241996.png",
+        "rgb/000000454_000341997.png"
+      ],
+      [
+        "rgb/000000454_000241996.png",
+        "rgb/000000454_000341997.png",
+        "rgb/000000454_000441999.png"
+      ],
+      [
+        "rgb/000000454_000341997.png",
+        "rgb/000000454_000441999.png",
+        "rgb/000000454_000542000.png"
+      ]
+    ],
+    "observation_boxes_xyxy": [
+      [
+        [
+          870.0,
+          447.0,
+          1083.0,
+          586.0
+        ],
+        [
+          882.0,
+          442.0,
+          1096.0,
+          582.0
+        ],
+        [
+          888.0,
+          442.0,
+          1113.0,
+          585.0
+        ]
+      ],
+      [
+        [
+          882.0,
+          442.0,
+          1096.0,
+          582.0
+        ],
+        [
+          888.0,
+          442.0,
+          1113.0,
+          585.0
+        ],
+        [
+          897.0,
+          437.0,
+          1131.0,
+          585.0
+        ]
+      ],
+      [
+        [
+          888.0,
+          442.0,
+          1113.0,
+          585.0
+        ],
+        [
+          897.0,
+          437.0,
+          1131.0,
+          585.0
+        ],
+        [
+          903.0,
+          432.0,
+          1149.0,
+          587.0
+        ]
+      ]
+    ],
+    "observation_rois_xyxy": [
+      [
+        824.25,
+        340.25,
+        1170.75,
+        686.75
+      ],
+      [
+        827.25,
+        328.75,
+        1191.75,
+        693.25
+      ],
+      [
+        834.0,
+        320.5,
+        1212.0,
+        698.5
+      ]
+    ],
+    "observation_anchor_us": [
+      1464600000,
+      1464700000,
+      1464800000
+    ],
+    "observation_query_age_us": [
+      200000,
+      100000,
+      0
+    ],
+    "actual_span_us": 200000,
+    "rgb_anchor_us": 1464800000,
+    "query_delay_us": 0,
+    "roi_xyxy": [
+      834.0,
+      320.5,
+      1212.0,
+      698.5
+    ],
+    "calibration_id": "eap_public_train_rgb_bbox_space_v1",
+    "foreground_source": "public_train_bbox_geometry",
+    "dino_teacher_available": false,
+    "target_ttc": 3.202847339320746,
+    "target_phase": 0.03172002122548016,
+    "mass": 6.423432682425488e-05
+  }
+}

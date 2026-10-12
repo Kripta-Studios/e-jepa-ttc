@@ -1,0 +1,41 @@
+{
+  "binding": {
+    "source_sha256": "d8deaab4997c1c89956e5b85c1d3ede51d96caf4f43595f194008c583e2d79a4",
+    "adapter_sources": {
+      "exact_event_route.py": "e6b3d3d2e4195ee0a59f4d08725d529c3c49713331c05bf88b491321e3a9466d",
+      "exact_windows.py": "8078683c7cc00e71bb89250d22a2a1dcbd41fce50981a7eb20c980d977df59ed",
+      "selected_map.py": "0a9e38b5a33a095ebc8c08b48c008b06655d2e3ab6a3fd0518f80ab01b3d2d4d"
+    },
+    "existing_evidence_sha256": "20660ce48224e056a05fe2701098fb6b09463616c81041f0a1854d16146a2cd4",
+    "manifest_sha256": "d9fe973c37f9e97ac7cb8a46de01bfe461ccc2672328bfa3e51b853763589bd5",
+    "change": "Exact CPU window/map reuse only; encoder batches and all models unchanged",
+    "resource_guards": "native RAM/disk and per-query elapsed deadline; CPU-only, zero updates"
+  },
+  "checks": [
+    {
+      "query_id": "CCRm-low-50-overlap-50:09",
+      "exact": true,
+      "shape": [
+        4,
+        3,
+        12,
+        128,
+        128
+      ]
+    },
+    {
+      "query_id": "CCRm-low-50-overlap-50:10",
+      "exact": true,
+      "shape": [
+        4,
+        3,
+        12,
+        128,
+        128
+      ]
+    }
+  ],
+  "selection": "memory-pause boundary; no TTC consulted",
+  "optimizer_updates": 0,
+  "targets_read": false
+}

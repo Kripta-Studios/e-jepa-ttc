@@ -1,0 +1,13 @@
+{
+  "accumulation_index": 0,
+  "checkpoint_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v16-multimodal-validation\\artifacts\\multimodal_research_20261012\\fits\\R_ANCHOR_FUSION_STATE_ZERO_FUSED_S7\\checkpoint_last.pt",
+  "checkpoint_sha256": "15665bfca73e8c2e1b2fb800429e9b8b35de7cdcab0509e2f4303cb785791148",
+  "complete_state": true,
+  "completed_updates": 2500,
+  "fit_id": "R_ANCHOR_FUSION_STATE_ZERO_FUSED_S7",
+  "identity_sha256": "6bb28df5686fd59cc059ab30254cd836104e0376bb1a4ffae27bad0ee6aae3b7",
+  "recovery_upper": 0,
+  "schema": "rgb_port_checkpoint_receipt_v1",
+  "scientific_endpoint": true,
+  "status": "COMPLETE"
+}

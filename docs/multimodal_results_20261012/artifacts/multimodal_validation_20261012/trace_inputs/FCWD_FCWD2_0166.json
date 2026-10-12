@@ -1,0 +1,277 @@
+{
+  "row": {
+    "anchor_relative_seconds": 12.612465,
+    "anchor_us": 12612465,
+    "bbox_sources": [
+      {
+        "available_us": 12412221,
+        "path": "E:\\FCWD_dataset\\sealed_labels\\sequence_2\\bounding_box.csv",
+        "rgb_frame_index": 247,
+        "row_index": 166,
+        "sha256": "be8b5933038609c430b1d796038345280a589874fb6b10a06f5c7bdece16c88c",
+        "timestamp_us": 12362221
+      },
+      {
+        "available_us": 12512316,
+        "path": "E:\\FCWD_dataset\\sealed_labels\\sequence_2\\bounding_box.csv",
+        "rgb_frame_index": 249,
+        "row_index": 168,
+        "sha256": "be8b5933038609c430b1d796038345280a589874fb6b10a06f5c7bdece16c88c",
+        "timestamp_us": 12462316
+      },
+      {
+        "available_us": 12612421,
+        "path": "E:\\FCWD_dataset\\sealed_labels\\sequence_2\\bounding_box.csv",
+        "rgb_frame_index": 251,
+        "row_index": 170,
+        "sha256": "be8b5933038609c430b1d796038345280a589874fb6b10a06f5c7bdece16c88c",
+        "timestamp_us": 12562421
+      }
+    ],
+    "boxes_xyxy3": [
+      [
+        438.0,
+        142.0,
+        1040.0,
+        706.0
+      ],
+      [
+        422.0,
+        129.0,
+        1067.0,
+        714.0
+      ],
+      [
+        406.0,
+        115.0,
+        1093.0,
+        720.0
+      ]
+    ],
+    "garl_full_available": false,
+    "garl_full_unavailable_reason": "MISSING_AUDITED_EVENT_TO_RGB_SPATIAL_MAPPING",
+    "metadata_sha256": "6b362d840a5345c4e7d6eb2cf280ed42cf7e6823d78672847c11ca61f9cc4cad",
+    "query_id": "FCWD2:0166",
+    "raw_path": "E:\\FCWD_dataset\\inputs\\sequence_2\\2024-03-02-10-37-09.hdf5",
+    "raw_stat": {
+      "mtime_ns": 1720709868000000000,
+      "size_bytes": 2158720024
+    },
+    "sequence_id": "FCWD2",
+    "square_xyxy": [
+      234.25,
+      -97.75,
+      1264.75,
+      932.75
+    ],
+    "windows_us": [
+      [
+        12312465,
+        12412465
+      ],
+      [
+        12412465,
+        12512465
+      ],
+      [
+        12512465,
+        12612465
+      ]
+    ]
+  },
+  "rgb_history": [
+    {
+      "first_sensor_ts_us": 12011872,
+      "anchor_us": 12212073,
+      "available_us": 12612465,
+      "timestamps_us": [
+        12011872,
+        12111968,
+        12212073
+      ],
+      "delta_t_s": [
+        0.100096,
+        0.100105
+      ],
+      "square_xyxy": [
+        372.0549785509403,
+        -60.972461374113436,
+        1828.0472425111388,
+        1395.019802586085
+      ],
+      "registration": "query_local_fixed_across_history"
+    },
+    {
+      "first_sensor_ts_us": 12111968,
+      "anchor_us": 12312168,
+      "available_us": 12612465,
+      "timestamps_us": [
+        12111968,
+        12212073,
+        12312168
+      ],
+      "delta_t_s": [
+        0.100105,
+        0.100095
+      ],
+      "square_xyxy": [
+        372.0549785509403,
+        -60.972461374113436,
+        1828.0472425111388,
+        1395.019802586085
+      ],
+      "registration": "query_local_fixed_across_history"
+    },
+    {
+      "first_sensor_ts_us": 12212073,
+      "anchor_us": 12412264,
+      "available_us": 12612465,
+      "timestamps_us": [
+        12212073,
+        12312168,
+        12412264
+      ],
+      "delta_t_s": [
+        0.100095,
+        0.100096
+      ],
+      "square_xyxy": [
+        372.0549785509403,
+        -60.972461374113436,
+        1828.0472425111388,
+        1395.019802586085
+      ],
+      "registration": "query_local_fixed_across_history"
+    },
+    {
+      "first_sensor_ts_us": 12312168,
+      "anchor_us": 12512369,
+      "available_us": 12612465,
+      "timestamps_us": [
+        12312168,
+        12412264,
+        12512369
+      ],
+      "delta_t_s": [
+        0.100096,
+        0.100105
+      ],
+      "square_xyxy": [
+        372.0549785509403,
+        -60.972461374113436,
+        1828.0472425111388,
+        1395.019802586085
+      ],
+      "registration": "query_local_fixed_across_history"
+    },
+    {
+      "first_sensor_ts_us": 12412264,
+      "anchor_us": 12612465,
+      "available_us": 12612465,
+      "timestamps_us": [
+        12412264,
+        12512369,
+        12612465
+      ],
+      "delta_t_s": [
+        0.100105,
+        0.100096
+      ],
+      "square_xyxy": [
+        372.0549785509403,
+        -60.972461374113436,
+        1828.0472425111388,
+        1395.019802586085
+      ],
+      "registration": "query_local_fixed_across_history"
+    }
+  ],
+  "reason": "",
+  "registration": {
+    "accepted": true,
+    "available_us": 12612465,
+    "binding_sha256": "87e859193cde854aa02e22c5566ad9b84d7e42be756a0f0a9a25f6d0f4ae0ef7",
+    "count_maps_sha256": "e3d66c5bb9460bd6746e2b369ea2bb3f9e88bf62e4d0a08bcfe0d90ce603dfdb",
+    "event_interval_us": [
+      12592465,
+      12612465
+    ],
+    "half_window_disagreement_px": 2.23606797749979,
+    "labels_read": false,
+    "matches": [
+      {
+        "ncc": 0.3755437433719635,
+        "shift_px": [
+          -23,
+          -23
+        ]
+      },
+      {
+        "ncc": 0.3423580229282379,
+        "shift_px": [
+          -22,
+          -22
+        ]
+      },
+      {
+        "ncc": 0.35979825258255005,
+        "shift_px": [
+          -23,
+          -24
+        ]
+      }
+    ],
+    "metric_extrinsic_calibration": false,
+    "model": "published_intrinsics_plus_query_local_translation",
+    "query_id": "FCWD2:0166",
+    "query_us": 12612465,
+    "reason": "",
+    "rgb_boxes_xyxy3": [
+      [
+        659.9492843585588,
+        278.0509860174864,
+        1510.4840427049521,
+        1074.3825680212947
+      ],
+      [
+        637.3349186321884,
+        259.6768433427344,
+        1548.6396482531097,
+        1085.6831732790256
+      ],
+      [
+        614.72035587764,
+        239.8921911455448,
+        1585.381865184439,
+        1094.1551500664268
+      ]
+    ],
+    "rgb_frame_index": 252,
+    "rgb_sensor_us": 12612465,
+    "rgb_sha256": "3b06b3a63f2883fbfabef644524b3ede090e99752d2e3ceed98afdfc7079b280",
+    "rgb_square_xyxy": [
+      372.0549785509403,
+      -60.972461374113436,
+      1828.0472425111388,
+      1395.019802586085
+    ],
+    "search_boundary": false,
+    "sequence_id": "FCWD2",
+    "shift_px": [
+      -23,
+      -23
+    ],
+    "support_pixels": 169111,
+    "template_xyxy": [
+      405,
+      114,
+      1094,
+      720
+    ]
+  },
+  "normalizers": {
+    "E": "15aaac9df8b19bc8b9df8562a48c7080a0e4294d7f34600f7e7d51dd3f272bf8",
+    "R": "411cf04805ebb83d62ad8421a129c81d38baa838d9533a2269b7cfd51f2cba11"
+  },
+  "instrumented_total_ms": 4548.707999987528
+}

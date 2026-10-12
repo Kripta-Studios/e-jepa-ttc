@@ -1,0 +1,79 @@
+{
+  "source_sha256": "d1b3acc029a7fca1a6de827f363714b80113e36b1cf8aaaee15a13a0b9af29e1",
+  "checkpoint_sha256": "7602bd42cf444c002e8d2afe09c13445661fd960754eb78fd96443e8298771bb",
+  "summary": {
+    "FCWD": {
+      "event_read_voxels_ms": {
+        "p50": 415.76860001077875,
+        "p95": 2602.54305502458
+      },
+      "event_producers_pair_ms": {
+        "p50": 419.2102499946486,
+        "p95": 431.7533050023485
+      },
+      "event_context_state_ms": {
+        "p50": 2.6383500080555677,
+        "p95": 2.9446750093484297
+      },
+      "rgb_read_crop_ms": {
+        "p50": 218.82629999890924,
+        "p95": 282.291894996888
+      },
+      "rgb_producers_pair_ms": {
+        "p50": 653.0600500118453,
+        "p95": 697.3884250037372
+      },
+      "rgb_context_state_ms": {
+        "p50": 2.5403000181540847,
+        "p95": 3.066745013347827
+      },
+      "correction_ms": {
+        "p50": 0.5954999942332506,
+        "p95": 0.8999950165161863
+      },
+      "sensor_to_candidate_ms": {
+        "p50": 1663.3770499902312,
+        "p95": 4000.6402950151823
+      }
+    },
+    "DEV32": {
+      "event_read_voxels_ms": {
+        "p50": 763.3610999910161,
+        "p95": 2032.9490000236538
+      },
+      "event_producers_pair_ms": {
+        "p50": 420.24624996702187,
+        "p95": 429.14994500461034
+      },
+      "event_context_state_ms": {
+        "p50": 2.6002499798778445,
+        "p95": 2.859134998288937
+      },
+      "rgb_read_crop_ms": {
+        "p50": 251.80050000199117,
+        "p95": 289.22346999752335
+      },
+      "rgb_producers_pair_ms": {
+        "p50": 661.7217999882996,
+        "p95": 674.6135499939555
+      },
+      "rgb_context_state_ms": {
+        "p50": 2.6746000221464783,
+        "p95": 3.331195001373999
+      },
+      "correction_ms": {
+        "p50": 0.622499966993928,
+        "p95": 0.7502799824578688
+      },
+      "sensor_to_candidate_ms": {
+        "p50": 2091.0831000073813,
+        "p95": 3396.968215017113
+      }
+    }
+  },
+  "rows": 128,
+  "all_states_and_candidate_points_exact": true,
+  "optimizer_updates": 0,
+  "scope": "CPU FP32 one thread, concurrent system load. Raw sensor read through candidate, resident weights, public/frozen ROI and already sealed FCWD registration. Excludes registration search, detector and initialization; no streaming claim.",
+  "csv_sha256": "b0ff6bcbfa6469b67c85e49f237399f2b171c20649979961b625b0495d0bbfdd"
+}

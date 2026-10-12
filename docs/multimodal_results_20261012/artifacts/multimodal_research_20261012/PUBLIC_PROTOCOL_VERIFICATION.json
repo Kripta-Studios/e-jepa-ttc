@@ -1,0 +1,11 @@
+{
+  "utc": "2026-10-12T11:42:46.352182+00:00",
+  "garl_release": "https://github.com/NAIL-HNU/Garl-TTC",
+  "official_benchmark_link": "https://www.codabench.org/competitions/17289/",
+  "test12_public_TTC_GT": false,
+  "legacy_EvTTC_page": "https://nail-hnu.github.io/EvTTC/competition/",
+  "legacy_page_scope": "10 different sequences and relative TTC error; not the GarlTTC test12 ranking",
+  "codabench_live_rank_verified": false,
+  "codabench_read_limitation": "Tool response was unrelated text rather than competition content; no ranking inferred",
+  "submissions_sent": 0
+}

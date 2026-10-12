@@ -1,0 +1,16 @@
+{
+  "utc": "2026-10-12T11:22:39.544475+00:00",
+  "seeds": [
+    13,
+    23
+  ],
+  "secondary_hypothesis": "User-requested 4% large-bucket sensitivity of phase-unit readout",
+  "threshold_large_vs_RGB": 1.04,
+  "other_gates": "unchanged original protocol",
+  "primary_threshold": 1.02,
+  "original_seed7_role": "posthoc; this threshold was motivated after its V result",
+  "new_seeds_role": "secondary analysis registered before their V predictions; same exposed V, not independent benchmark",
+  "no_training_recipe_change": true,
+  "no_external_selection": true,
+  "original_sensitivity_sha256": "03d796745ea2c2786e7a10566f8e9e9a4194dfb23279c17532977607bd0a2f67"
+}

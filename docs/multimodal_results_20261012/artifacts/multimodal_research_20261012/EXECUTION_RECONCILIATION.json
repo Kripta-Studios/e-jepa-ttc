@@ -1,0 +1,50 @@
+{
+  "utc": "2026-10-12T16:35:31.869303+00:00",
+  "historical_receipts_preserved": true,
+  "receipts": [
+    {
+      "receipt": "SHARED_EXECUTION_test12_cache_resume_12200.json",
+      "recorded_status": "STOPPED",
+      "pid": 12200,
+      "matching_campaign_process_live": false,
+      "interpretation": "Recorded terminal state preserved"
+    },
+    {
+      "receipt": "SHARED_EXECUTION_test12_cache_resume_23340.json",
+      "recorded_status": "STOPPED",
+      "pid": 23340,
+      "matching_campaign_process_live": false,
+      "interpretation": "Recorded terminal state preserved"
+    },
+    {
+      "receipt": "SHARED_EXECUTION_test12_frozen_19248.json",
+      "recorded_status": "RUNNING",
+      "pid": 19248,
+      "matching_campaign_process_live": false,
+      "interpretation": "Historical interrupted execution; terminal successor is CACHE_RESUME_EXECUTION.json"
+    },
+    {
+      "receipt": "SHARED_EXECUTION_test12_frozen_29840.json",
+      "recorded_status": "RUNNING",
+      "pid": 29840,
+      "matching_campaign_process_live": false,
+      "interpretation": "Historical interrupted execution; terminal successor is CACHE_RESUME_EXECUTION.json"
+    },
+    {
+      "receipt": "SHARED_EXECUTION_test12_frozen_37524.json",
+      "recorded_status": "RUNNING",
+      "pid": 37524,
+      "matching_campaign_process_live": false,
+      "interpretation": "Historical interrupted execution; terminal successor is CACHE_RESUME_EXECUTION.json"
+    },
+    {
+      "receipt": "SHARED_EXECUTION_test12_frozen_37936.json",
+      "recorded_status": "STOPPED",
+      "pid": 37936,
+      "matching_campaign_process_live": false,
+      "interpretation": "Recorded terminal state preserved"
+    }
+  ],
+  "successful_successor": "test12_phase_only/CACHE_RESUME_EXECUTION.json",
+  "all_local_compute_finished": true
+}

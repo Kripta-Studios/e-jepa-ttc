@@ -1,0 +1,23 @@
+{
+  "rows": [
+    {
+      "modality": "E",
+      "loss": 0.21088457107543945,
+      "gradient_parameters": 313765,
+      "loss_exact": true,
+      "gradients_exact": true
+    },
+    {
+      "modality": "R",
+      "loss": 0.1831175684928894,
+      "gradient_parameters": 313765,
+      "loss_exact": true,
+      "gradients_exact": true
+    }
+  ],
+  "optimizer_updates": 0,
+  "device": "CPU FP32",
+  "source_sha256": "a58e222d94ae346ce44f9b8eb4f55f052de37f0d70f414f525fb0b9ccd2364cf",
+  "context_source_sha256": "7e5a2e269beb4d89831c7333ae7826e28e2cc0fc38b9c2c44bee01e9df926440",
+  "meaning": "Native temporal loss and gradients preserved on the same fold data"
+}

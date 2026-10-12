@@ -1,0 +1,31 @@
+{
+  "fold": 0,
+  "modality": "E",
+  "train_groups": [
+    "2JkLL5W891",
+    "34K84TaN11",
+    "CzyQ8HKP6X",
+    "JaGC4Q9pgU",
+    "L36QTEoVkB",
+    "pBqGOb2vYq"
+  ],
+  "heldout_groups": [
+    "mHGFBekt7X",
+    "qGsgzl4Q8B"
+  ],
+  "train_queries": 12236,
+  "heldout_queries": 6186,
+  "train_observations": 12236,
+  "heldout_observations": 6186,
+  "observation_sets_disjoint": true,
+  "train_sha256": "356104fff21465a1c8e6bc1b41fa5b8b3ec85db56933cfeceb34b64631f27450",
+  "heldout_sha256": "719074815dd669d51474a6b982d112fa040b8eebfc6cb2fd739eaec75acbcff0",
+  "normalizer_sha256": "c3807ef24493573c1c8b2bb189485dc820bfc4fb6d1bbdd090b3848b2209ef15",
+  "raw_reconstruction_exact": true,
+  "normalizer_fit_ids_sha256": "a274fcf2d9a8a784a4b1b71861ade319858cc78d9e5be53a12d3afd4437eb693",
+  "source_sha256": "6e32df4fdd3f0094f9f7b82878d83d3c7bc9029912756150ca260a4ab89cdf61",
+  "protocol_sha256": "5cfc6297e2951d01febab149e547e27a2ba88de7460ed517841aed1342c66e47",
+  "raw_history_sha256": "d6be748bbcbc4b1e2d6134c9494065283e09e561f52998aeb7b7ef29828fbdd7",
+  "raw_observations_sha256": "ffc8716978482491f4abc4907518cc510523d32928f22697710e97800b1b2d06",
+  "optimizer_updates": 0
+}

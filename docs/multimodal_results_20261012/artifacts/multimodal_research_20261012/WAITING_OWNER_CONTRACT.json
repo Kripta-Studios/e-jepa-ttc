@@ -1,0 +1,8 @@
+{
+  "utc": "2026-10-12T16:21:52.092047+00:00",
+  "v18_sources": {
+    "operational/joint_measurement/run.py": "f4cc4ed7ba49483173d161f7158b99ab791519f85bb804a240546cf72367c82f",
+    "operational/joint_measurement/common.py": "74af008e2d6edb65d67b1ac3da1ee3e5467c7b5a62ff9ac43cf9b70e2ffce122"
+  },
+  "scope": "Only the V18 waiting supervisor may retain an idle CUDA context. Fresh WAIT_P_SENSOR or GPU_OWNER_WAIT state and no unsettled GPU reservations required at every full guard. Actual foreign GPU workers rejected. All original RAM, disk, deadline, optimizer-budget checks retained; >=6GiB free and <=1GiB own reserved. No changes to V18 sources, processes, locks or recipes."
+}

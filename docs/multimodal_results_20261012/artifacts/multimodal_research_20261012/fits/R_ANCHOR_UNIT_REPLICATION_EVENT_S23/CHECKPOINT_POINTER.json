@@ -1,0 +1,7 @@
+{
+  "checkpoint_sha256": "261879774c34b3250b6f8e85edf278ac4bb2b8992ce2525e32d2422139840bdb",
+  "completed_updates": 2500,
+  "identity_sha256": "c9019c216afcf06ecc18854ce66273405a35201a6826d391545be0fd551d7607",
+  "schema": "rgb_port_checkpoint_pointer_v1",
+  "version": "checkpoint_002500.pt"
+}

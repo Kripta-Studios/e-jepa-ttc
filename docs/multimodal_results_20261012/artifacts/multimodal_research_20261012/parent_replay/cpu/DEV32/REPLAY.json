@@ -1,0 +1,187 @@
+{
+  "summary": {
+    "E_CTX_MATCHED": {
+      "comparisons": 1024,
+      "max_delta_s": 1.7763568394002505e-15,
+      "mean_delta_s": 7.134050294954619e-17,
+      "sign_changes": 0,
+      "worst_queries": [
+        {
+          "query_id": "CCRm-medium-0-overlap-0:04",
+          "sequence_id": "CCRm-medium-0-overlap-0",
+          "anchor_us": 10000271,
+          "model": "E_CTX_MATCHED",
+          "replay": 9.715517044067383,
+          "historical": 9.715517044067385,
+          "delta_s": 1.7763568394002505e-15,
+          "sign_changed": false
+        },
+        {
+          "query_id": "CCRm-medium-100-overlap-100:31",
+          "sequence_id": "CCRm-medium-100-overlap-100",
+          "anchor_us": 24500621,
+          "model": "E_CTX_MATCHED",
+          "replay": -9.513364791870117,
+          "historical": -9.513364791870115,
+          "delta_s": 1.7763568394002505e-15,
+          "sign_changed": false
+        },
+        {
+          "query_id": "CCRs-1-high-50-overlap-50:03",
+          "sequence_id": "CCRs-1-high-50-overlap-50",
+          "anchor_us": 14802285,
+          "model": "E_CTX_MATCHED",
+          "replay": 11.876119613647461,
+          "historical": 11.87611961364746,
+          "delta_s": 1.7763568394002505e-15,
+          "sign_changed": false
+        },
+        {
+          "query_id": "CCRs-1-medium-100-overlap-100:00",
+          "sequence_id": "CCRs-1-medium-100-overlap-100",
+          "anchor_us": 6000360,
+          "model": "E_CTX_MATCHED",
+          "replay": 12.516551971435547,
+          "historical": 12.516551971435549,
+          "delta_s": 1.7763568394002505e-15,
+          "sign_changed": false
+        },
+        {
+          "query_id": "CCRs-1-medium-100-overlap-100:04",
+          "sequence_id": "CCRs-1-medium-100-overlap-100",
+          "anchor_us": 6950378,
+          "model": "E_CTX_MATCHED",
+          "replay": -9.666582107543945,
+          "historical": -9.666582107543944,
+          "delta_s": 1.7763568394002505e-15,
+          "sign_changed": false
+        }
+      ]
+    },
+    "F_TRUE": {
+      "comparisons": 1024,
+      "max_delta_s": 2.6702880859375e-05,
+      "mean_delta_s": 2.2974563765852402e-07,
+      "sign_changes": 0,
+      "worst_queries": [
+        {
+          "query_id": "CPNA-low:28",
+          "sequence_id": "CPNA-low",
+          "anchor_us": 25100860,
+          "model": "F_TRUE",
+          "replay": 52.528785705566406,
+          "historical": 52.52875900268555,
+          "delta_s": 2.6702880859375e-05,
+          "sign_changed": false
+        },
+        {
+          "query_id": "CCRs-1-low-100-overlap-100:23",
+          "sequence_id": "CCRs-1-low-100-overlap-100",
+          "anchor_us": 13750553,
+          "model": "F_TRUE",
+          "replay": -39.49188995361328,
+          "historical": -39.49190521240234,
+          "delta_s": 1.5258789055394573e-05,
+          "sign_changed": false
+        },
+        {
+          "query_id": "CCRs-1-low-100-overlap-100:22",
+          "sequence_id": "CCRs-1-low-100-overlap-100",
+          "anchor_us": 13600555,
+          "model": "F_TRUE",
+          "replay": -16.254776000976562,
+          "historical": -16.2547664642334,
+          "delta_s": 9.5367431640625e-06,
+          "sign_changed": false
+        },
+        {
+          "query_id": "CCRm-medium-100-overlap-100:01",
+          "sequence_id": "CCRm-medium-100-overlap-100",
+          "anchor_us": 16000412,
+          "model": "F_TRUE",
+          "replay": 16.109193801879883,
+          "historical": 16.10918617248535,
+          "delta_s": 7.62939453125e-06,
+          "sign_changed": false
+        },
+        {
+          "query_id": "CCRs-1-medium-100-overlap-100:03",
+          "sequence_id": "CCRs-1-medium-100-overlap-100",
+          "anchor_us": 6700374,
+          "model": "F_TRUE",
+          "replay": 53.96444320678711,
+          "historical": 53.96443557739258,
+          "delta_s": 7.62939453125e-06,
+          "sign_changed": false
+        }
+      ]
+    },
+    "R_CTX": {
+      "comparisons": 1024,
+      "max_delta_s": 1.9073486328125e-05,
+      "mean_delta_s": 1.8172431741141862e-07,
+      "sign_changes": 0,
+      "worst_queries": [
+        {
+          "query_id": "CPNAO-high:09",
+          "sequence_id": "CPNAO-high",
+          "anchor_us": 14650448,
+          "model": "R_CTX",
+          "replay": 44.35036087036133,
+          "historical": 44.350341796875,
+          "delta_s": 1.9073486328125e-05,
+          "sign_changed": false
+        },
+        {
+          "query_id": "CCRs-3-low-100-overlap-100:02",
+          "sequence_id": "CCRs-3-low-100-overlap-100",
+          "anchor_us": 7100198,
+          "model": "R_CTX",
+          "replay": -41.72187805175781,
+          "historical": -41.72186279296875,
+          "delta_s": 1.52587890625e-05,
+          "sign_changed": false
+        },
+        {
+          "query_id": "CCRs-side-medium:01",
+          "sequence_id": "CCRs-side-medium",
+          "anchor_us": 10450473,
+          "model": "R_CTX",
+          "replay": 43.00850296020508,
+          "historical": 43.00851821899414,
+          "delta_s": 1.52587890625e-05,
+          "sign_changed": false
+        },
+        {
+          "query_id": "CCRs-side-medium:00",
+          "sequence_id": "CCRs-side-medium",
+          "anchor_us": 10250458,
+          "model": "R_CTX",
+          "replay": 35.022029876708984,
+          "historical": 35.02204132080078,
+          "delta_s": 1.1444091796875e-05,
+          "sign_changed": false
+        },
+        {
+          "query_id": "CCRm-medium-0-overlap-0:02",
+          "sequence_id": "CCRm-medium-0-overlap-0",
+          "anchor_us": 9400256,
+          "model": "R_CTX",
+          "replay": -31.63804817199707,
+          "historical": -31.63804054260254,
+          "delta_s": 7.62939453125e-06,
+          "sign_changed": false
+        }
+      ]
+    }
+  },
+  "source_sha256": "5c5fabf40840b9bfccb7121ad22240817c57ce559d87bb546498e07aab07fce1",
+  "historical_predictions_sha256": "81a2a44bc2c68ee39a2782ce02f4c9d58bf1c51fe52effa7914ef92b729fbb8b",
+  "historical_device": "cpu",
+  "state_seal_sha256": "3e5a957ed9ecec2e7da91f424adb02cd959701b4c1bf22247139c5cc8eb4d570",
+  "physical_identities_verified": 1024,
+  "targets_read": false,
+  "optimizer_updates": 0,
+  "route": "cpu",
+  "cohort": "DEV32"
+}

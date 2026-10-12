@@ -1,0 +1,88 @@
+{
+  "sample_token": "pBqGOb2vYq_010114_1809300000",
+  "prediction": -5.9876227378845215,
+  "metadata": {
+    "ordinal": 69546,
+    "source_ordinal": 69546,
+    "sample_token": "pBqGOb2vYq_010114_1809300000",
+    "sequence_id": "pBqGOb2vYq",
+    "group_id": "pBqGOb2vYq",
+    "track_id": "pBqGOb2vYq_010114",
+    "public_track_id": "pBqGOb2vYq_010114",
+    "role": "H",
+    "query_time_us": 1809300000,
+    "cutoff_us": 1809300000,
+    "rgb_available": true,
+    "frame_ids": [
+      "pBqGOb2vYq_010114|rgb/000000796_000259703.png",
+      "pBqGOb2vYq_010114|rgb/000000796_000359704.png"
+    ],
+    "producer_frame_ids": [
+      "pBqGOb2vYq_010114|rgb/000000796_000259703.png",
+      "pBqGOb2vYq_010114|rgb/000000796_000359704.png"
+    ],
+    "producer_times_us": [
+      1809200000,
+      1809300000
+    ],
+    "producer_available_us": [
+      1809200000,
+      1809300000
+    ],
+    "producer_sensor_times_us": [
+      796259703,
+      796359704
+    ],
+    "producer_shards": [
+      "data/train/pBqGOb2vYq/rgb_shards/rgb-00003.tar",
+      "data/train/pBqGOb2vYq/rgb_shards/rgb-00003.tar"
+    ],
+    "producer_members": [
+      "rgb/000000796_000259703.png",
+      "rgb/000000796_000359704.png"
+    ],
+    "producer_boxes_xyxy": [
+      [
+        697.0,
+        462.0,
+        1246.0,
+        719.0
+      ],
+      [
+        697.0,
+        465.0,
+        1231.0,
+        719.0
+      ]
+    ],
+    "distinct_frames": 2,
+    "producer_frame_count": 2,
+    "distinct_observations": 0,
+    "observation_ids": [],
+    "observation_frame_ids": [],
+    "observation_times_us": [],
+    "observation_available_us": [],
+    "observation_sensor_times_us": [],
+    "observation_shards": [],
+    "observation_members": [],
+    "observation_boxes_xyxy": [],
+    "observation_rois_xyxy": [],
+    "observation_anchor_us": [],
+    "observation_query_age_us": [],
+    "actual_span_us": 100000,
+    "rgb_anchor_us": 1809300000,
+    "query_delay_us": 0,
+    "roi_xyxy": [
+      559.75,
+      178.75,
+      1383.25,
+      1002.25
+    ],
+    "calibration_id": "eap_public_train_rgb_bbox_space_v1",
+    "foreground_source": "public_train_bbox_geometry",
+    "dino_teacher_available": false,
+    "target_ttc": -4.935013506853948,
+    "target_phase": -0.020060798926714515,
+    "mass": 5.538325210456358e-05
+  }
+}

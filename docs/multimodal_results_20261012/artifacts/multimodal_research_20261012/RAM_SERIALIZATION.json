@@ -1,0 +1,21 @@
+{
+  "utc": "2026-10-12T11:59:53.768717+00:00",
+  "reason": "Native 2 GiB available-RAM floor triggered during concurrent CPU head fitting and two sensor replays",
+  "frozen_guards_unchanged": true,
+  "training_checkpoint": {
+    "fit": "R_ANCHOR_FUSION_STATE_ZERO_FUSED_S7",
+    "durable_updates": 950,
+    "recovery_upper": 0
+  },
+  "stopped_own_only": {
+    "module": "operational.multimodal_research.dev32_fusion_states",
+    "pids": [
+      3752,
+      48876
+    ],
+    "completed_queries": 14,
+    "optimizer_updates": 0
+  },
+  "continuing": "Native FCWD GPU replay and CPU head resume; resume Dev32 fusion-state extraction after FCWD replay releases RAM",
+  "foreign_processes_altered": false
+}

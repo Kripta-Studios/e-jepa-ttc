@@ -1,0 +1,41 @@
+{
+  "utc": "2026-10-12T11:02:19.772686+00:00",
+  "basis": "Internal V phase-unit study; large-band ratio 1.0360 fails fixed 1.02 gate",
+  "basis_sha256": "5f983142b61bf8fa1b0092e2887d910d952a47fc349e93fdbbd88a1c256cba54",
+  "external_phase_units_results_opened": false,
+  "studies": [
+    {
+      "name": "UNIT_REPLICATION",
+      "seeds": [
+        13,
+        23
+      ],
+      "arms": [
+        "EVENT",
+        "ZERO"
+      ],
+      "updates_per_fit": 2500,
+      "model": "Identical PhaseUnitAnchor; additional head seeds, not whole-system replications"
+    },
+    {
+      "name": "RELATIVE_PHASE",
+      "seeds": [
+        7
+      ],
+      "arms": [
+        "EVENT",
+        "ZERO"
+      ],
+      "updates_per_fit": 2500,
+      "formula": "raw_location_R + abs(emitted_phase_R) * f_theta; no residual cap",
+      "inputs": "Identical PhaseUnitAnchor inputs",
+      "widths": "Unchanged native R_CTX logits plus correction; 0.03 softplus",
+      "hypothesis": "Scale residual to predicted phase magnitude to reduce relative perturbation at long TTC"
+    }
+  ],
+  "optimizer": "Same native AdamW, schedule, H mass and phase/pinball objective",
+  "initialization": "Zero output preserves original RGB point and quantiles",
+  "gates": "Unchanged original thresholds; no external tuning or selection",
+  "new_scientific_updates_planned": 15000,
+  "role": "H supervised states are not OOF; V exposed development; no SOTA assertion"
+}

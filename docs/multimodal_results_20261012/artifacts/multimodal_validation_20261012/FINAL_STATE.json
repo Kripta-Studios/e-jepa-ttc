@@ -1,0 +1,67 @@
+{
+  "utc": "2026-10-12T01:06:40.002088+00:00",
+  "v14": {
+    "candidate": null,
+    "diagnostic_dependencies": "DIAGNOSTIC_DEPENDENCIES.json",
+    "phases": {
+      "N0": "COMPLETE",
+      "N1": "COMPLETE_WITH_SEPARATE_V14_NATIVE_QUERY_KNOWN_DIAGNOSTIC_ADAPTER",
+      "N2": "COMPLETE",
+      "REPLICATION": "NOT_RUN_NO_ELIGIBLE_CANDIDATE",
+      "REPORT": "COMPLETE",
+      "SCREEN": "COMPLETE_SIX_ENDPOINTS_FROZEN_THEN_V_EVALUATED",
+      "TRANSFER": "NOT_RUN_NO_ELIGIBLE_CANDIDATE"
+    },
+    "resume_command": "& pwsh -NoProfile -File scripts/Resume-RangeTransfer.ps1",
+    "savings_reassigned": false,
+    "scientific_queue_closed": true,
+    "status": "NO_CANDIDATE",
+    "transfer_is_fresh_test": false,
+    "utc": "2026-10-11T22:09:55.815192+00:00",
+    "v13_promoted_or_modified": false
+  },
+  "v15_active_stage": {
+    "command": [
+      "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\.venv\\Scripts\\python.exe",
+      "-B",
+      "-m",
+      "operational.range_readout.extract_cached",
+      "V"
+    ],
+    "log": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v15-range-readout\\artifacts\\range_readout_20261012\\logs\\extract_cached_V_1791766861677895500.log",
+    "started_utc": "2026-10-12T01:01:01.677895+00:00"
+  },
+  "v15_processes": [
+    {
+      "pid": 4240,
+      "command": "C:\\Program Files\\WindowsApps\\Microsoft.PowerShell_7.6.6.0_x64__8wekyb3d8bbwe\\pwsh.exe -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}\n@'\nfrom pathlib import Path\np=Path('operational/range_readout/replication.py');s=p.read_text().replace('table = first[keys].copy()', 'table = pd.DataFrame(first.loc[:, keys]).copy()');p.write_text(s)\n'@ | & '../e-jepa-ttc/.venv/Scripts/python.exe' -\n$env:PYTHONPATH='src;.;docs/range_readout_handoff_20261012'; $env:OMP_NUM_THREADS='1'; & '../e-jepa-ttc/.venv/Scripts/python.exe' -B -m pytest tests/test_range_readout_sampling.py tests/test_range_readout_readout.py docs/range_readout_handoff_20261012/tests/test_reference_operators.py -q --override-ini addopts= *> artifacts/range_readout_20261012/qa/V15_CONTRACTS_FINAL.txt\nif ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }\n& '../e-jepa-ttc/.venv/Scripts/python.exe' -B -m operational.range_readout.campaign --wait-active-p-extraction *> artifacts/range_readout_20261012/CAMPAIGN.log",
+      "rss": 89550848
+    },
+    {
+      "pid": 7196,
+      "command": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\.venv\\Scripts\\python.exe -B -m operational.range_readout.extract_cached V",
+      "rss": 4517888
+    },
+    {
+      "pid": 23100,
+      "command": "C:\\Users\\\u00c1lvaro Schwiedop\\AppData\\Roaming\\uv\\python\\cpython-3.11-windows-x86_64-none\\python.exe -B -m operational.range_readout.extract_cached V",
+      "rss": 2040557568
+    },
+    {
+      "pid": 34196,
+      "command": "C:\\Users\\\u00c1lvaro Schwiedop\\AppData\\Roaming\\uv\\python\\cpython-3.11-windows-x86_64-none\\python.exe -B -m operational.range_readout.campaign --wait-active-p-extraction",
+      "rss": 464044032
+    },
+    {
+      "pid": 46932,
+      "command": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\.venv\\Scripts\\python.exe -B -m operational.range_readout.campaign --wait-active-p-extraction",
+      "rss": 4374528
+    }
+  ],
+  "v15_state_is_snapshot_not_campaign_completion": true,
+  "git": {
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v16-multimodal-validation": "?? docs/multimodal_next_handoff_20261012/\n?? operational/multimodal_validation/\n?? tests/test_multimodal_validation.py\n",
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port": " M operational/rgb_port_fusion_fix/__init__.py\n M operational/rgb_port_fusion_fix/fusion.py\n?? LOCAL_RGB_PORT_BINDING.json\n"
+  },
+  "optimizer_updates": 0
+}

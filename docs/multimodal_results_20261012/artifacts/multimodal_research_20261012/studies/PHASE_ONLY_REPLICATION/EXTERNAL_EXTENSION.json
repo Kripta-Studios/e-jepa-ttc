@@ -1,0 +1,11 @@
+{
+  "study": "PHASE_ONLY_REPLICATION",
+  "seeds": [
+    13,
+    23
+  ],
+  "model": "PhaseOnlyAnchor",
+  "source_sha256": "466a365eac649acddf687453fdcd13b364b4df6e6d55d6df1d870b9f1d4c5d48",
+  "evaluator_source_sha256": "26df40874b576f419921eb52e989dd3d2684780029f1ffc7fc1344a8b1696e41",
+  "scope": "Admit registered small model and fit identity; metrics unchanged"
+}

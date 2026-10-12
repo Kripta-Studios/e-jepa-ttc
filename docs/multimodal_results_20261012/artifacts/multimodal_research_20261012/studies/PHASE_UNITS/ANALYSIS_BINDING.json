@@ -1,0 +1,8 @@
+{
+  "utc": "2026-10-12T10:22:04.943343+00:00",
+  "source": "36dca3b5b8b68a8d94487d702aeecd6cc87f048ad91cba8c064b87ad9b888ce3",
+  "protocol_sha256": "c1e4dc2a0d549dd0d1b946971a0fbda09373da32f34179b6d64c9436fe159767",
+  "model_source_sha256": "0cd65eea9c8e8a2e01b7512570dc3e31c8cbcc2def468b9f4b64e3ab3edb6021",
+  "new_V_predictions_created": false,
+  "role": "prospective fixed-endpoint analysis; registered gates; two separate studies share scorer"
+}

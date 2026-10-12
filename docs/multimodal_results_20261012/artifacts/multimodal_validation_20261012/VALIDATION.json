@@ -1,0 +1,41 @@
+{
+  "status": "PASSED",
+  "endpoint_hashes_reverified": 12,
+  "cohort_rows": 630,
+  "labels": 597,
+  "common_queries": 495,
+  "common_labels": 472,
+  "instrumented_calls": 1229,
+  "historical_max_delta_s": 0.0138311386108398,
+  "historical_route_parity": "NOT_BITWISE; controlled_same_device_replay_pending",
+  "repeated_profile_serialized_outputs_equal": true,
+  "profile_historical_max_delta_s": 0.0138311386108398,
+  "FCWD_cost_vs_sealed_prediction_max_delta_s": 5.340576171875e-05,
+  "checks": "6 extension tests, 10 package tests, scoped Ruff/format/Pyright passed",
+  "incoming_zip": {
+    "sha256": "051eaba78cf5ffe58dca720d07c02701d1f1b30a190fe8da028e0acb3fa1f2c4",
+    "bytes": 230440
+  },
+  "geometry_panels": 12,
+  "empty_independent_annotation_slots": 72,
+  "replay": {
+    "status": "PASSED",
+    "source_files_verified": 29,
+    "scalar_metric_checks": 9471,
+    "optimizer_updates": 0,
+    "new_inferences": 0,
+    "dependencies": "Python standard library"
+  },
+  "source_parity": {
+    "function_AST_parity": {
+      "timing": true,
+      "prepare": true,
+      "load": true,
+      "run": true
+    },
+    "executed_source_sha256": "76c506cd8e53fe8b4a60dbb0c926915bc3ba036c229599d9aed373676d674151",
+    "current_source_sha256": "3c6de414087d7cf9b66cc8b738addfc415e515fdb241b6a751a7abdf21455860",
+    "excluded": "type annotations, comments and imports; all function bodies identical"
+  },
+  "optimizer_updates": 0
+}

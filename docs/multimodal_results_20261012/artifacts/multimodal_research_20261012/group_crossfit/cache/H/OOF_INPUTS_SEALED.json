@@ -1,0 +1,19 @@
+{
+  "sha256": "00be7900e88e62334b667b8a9d3e91e893e15f855771946471f146ba524cb5e2",
+  "source_sha256": "8b2c52e81ab66db06df20a1eb4b4bc9c65d5f5c76cd077b320b20a16896b2c50",
+  "fold_prediction_seals": {
+    "group_crossfit\\fold0\\R": "57473bf005d12fb693156d28462bda80fc49cb6dd7c303bf19949ed83ee9f768",
+    "group_crossfit\\fold0\\E": "e66347b37a237a925f9521347c81c8b937b189f551fb16b5dfeeac0794f7c3ca",
+    "group_crossfit\\fold1\\R": "5bf206378e31936d9c811e5f11cf2d31a077f23e88799e0d2cff0f3749b234c9",
+    "group_crossfit\\fold1\\E": "8d778864f248ca29880085437fd1b4e87fab8ab2bb5b2382738db36af4fec732",
+    "group_crossfit\\fold2\\R": "8bc37e3085827f64bc28be2d4544b01c7ae884a10387229fc41f03d858a303d1",
+    "group_crossfit\\fold2\\E": "8865f24caca9f414b5ac886b726fbc0137dfffeffa6a5c9ace1464d2c46c88a7",
+    "group_crossfit\\fold3\\R": "42650d35424acca1e824df31f9ecb17abfb29242ca789caf92eb61aac175ef84",
+    "group_crossfit\\fold3\\E": "da672d5c441c78b6d4f6c934eb666c0c06c407c8c52a8625cba9ae87fa46a7b5"
+  },
+  "population": 18422,
+  "each_query_held_out_once_per_modality": true,
+  "targets_read_for_assembly": false,
+  "hidden_coordinates_zero": true,
+  "optimizer_updates": 0
+}

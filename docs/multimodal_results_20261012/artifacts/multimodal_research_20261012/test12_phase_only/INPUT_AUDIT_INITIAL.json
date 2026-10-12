@@ -1,0 +1,110 @@
+{
+  "utc": "2026-10-12T14:54:05.136809+00:00",
+  "status": "PASS",
+  "source_sha256": "d8e836b8e23f6f5232e7e36da4890de3eb5d9350ac34a558de5cd6b543ad2ea5",
+  "frozen_model_input_sha256": "85fad0dfb8bac0fa5a09e6f4090818ea2b534908ef3d018e8f88f0805e825b1a",
+  "role_manifest_sources": {
+    "P": {
+      "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\P_MANIFEST.json",
+      "sha256": "6f22b070c53c96aa851d90ae2c6836b604e8280965f4887ba6ef3a0cd6d3727c"
+    },
+    "H": {
+      "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\H_MANIFEST.json",
+      "sha256": "ac26288c11583d859166737feb53491167f2f1d908b309fe555220cb9ee27a92"
+    },
+    "V": {
+      "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v13-rgb-port\\artifacts\\rgb_port_20261008\\V_MANIFEST.json",
+      "sha256": "f73aaab45d868fcab406f8d90aea65dc97c7bd702647677e7cc77b0781f9d720"
+    }
+  },
+  "sequence_groups": {
+    "P": [
+      "2Y46OkK3ff",
+      "6WCDpro5rE",
+      "8SdieOgbva",
+      "8mNnrXjpVB",
+      "9ITOs4twfk",
+      "A1Nhv0KtmL",
+      "ClXqVoZOFu",
+      "DGqicHUGWb",
+      "EllUE6bwVp",
+      "EuFGqTcqIz",
+      "GjMYZjmSQb",
+      "LMHPShQkaU",
+      "OBneIVg4Cw",
+      "OYgB6RGWcq",
+      "Po6ePjWYAz",
+      "VLA3oBKFyX",
+      "eX8t2nGd6O",
+      "nRcwUlHyAd",
+      "pakWgyPNTL",
+      "q2k6O0X6JY",
+      "qoohcdtLDH",
+      "vWp9XNYQ9V",
+      "wE9MZUmiJP",
+      "xkiVthsGwf"
+    ],
+    "H": [
+      "2JkLL5W891",
+      "34K84TaN11",
+      "CzyQ8HKP6X",
+      "JaGC4Q9pgU",
+      "L36QTEoVkB",
+      "mHGFBekt7X",
+      "pBqGOb2vYq",
+      "qGsgzl4Q8B"
+    ],
+    "V": [
+      "2cyv0Oedzg",
+      "5ilM1PX2vz",
+      "6h5yRW2LGc",
+      "WbCh1DRerJ",
+      "Z30i8WuL2N",
+      "pzJcg1OCfc",
+      "rhYxPcU29n",
+      "t79dBxj1WS"
+    ],
+    "test": [
+      "3RUZHwnCwK",
+      "71wUSQYMpk",
+      "89fvtHGHx2",
+      "HHJe79eY2J",
+      "JcjcDPISuL",
+      "M8I2irMvY7",
+      "Mu6kaUjIz3",
+      "V741M41vPW",
+      "kafYzX6kJ4",
+      "nP4MRdpEeO",
+      "r0PXQOpCA6",
+      "vhjB5OViA7"
+    ]
+  },
+  "all_role_sequence_groups_disjoint": true,
+  "all_frozen_source_and_parent_hashes_unchanged": true,
+  "all_6762_query_histories_same_object_and_causal": true,
+  "all_aliases_have_identical_event_and_rgb_histories": true,
+  "history_length_counts": {
+    "event": {
+      "1": 105,
+      "2": 105,
+      "3": 105,
+      "4": 6447
+    },
+    "rgb": {
+      "1": 210,
+      "2": 105,
+      "3": 105,
+      "4": 105,
+      "5": 6237
+    }
+  },
+  "maximum_total_sensor_support_us": {
+    "event": 600006,
+    "rgb": 600000
+  },
+  "query_count": 6762,
+  "physical_observations": 5805,
+  "optimizer_updates": 0,
+  "test_targets_read": false,
+  "scope": "Audit of declared public sequence/object IDs and native clocks. It verifies causal sensor support, not detector latency, metric calibration, or dataset-wide scene independence beyond the released sequence split."
+}

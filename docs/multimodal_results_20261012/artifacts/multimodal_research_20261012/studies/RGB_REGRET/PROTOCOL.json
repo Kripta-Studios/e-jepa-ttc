@@ -1,0 +1,43 @@
+{
+  "utc": "2026-10-12T12:07:01.213553+00:00",
+  "name": "RGB_REGRET",
+  "seeds": [
+    7
+  ],
+  "arms": [
+    "EVENT",
+    "ZERO"
+  ],
+  "updates_per_fit": 2500,
+  "planned_updates": 5000,
+  "hypothesis": "Explicitly penalize H examples whose phase correction increases error relative to the frozen RGB anchor",
+  "model": "Unchanged PhaseUnitAnchor, 340 features, same R/E hidden states and phase units; no F_TRUE state",
+  "loss": "native fusion_loss + population*mass*relu(abs(phi_new-y)-abs(phi_RGB-y))/0.03, averaged per batch",
+  "regret_coefficient": 1.0,
+  "regret_boundary": "torch.relu derivative zero at zero; initial RGB-preserving output has zero penalty",
+  "anchor_reference": "emitted_phase(raw_RGB) on the same CPU backend as the new readout",
+  "unchanged": "H sampler/masses, native AdamW/schedule, batch128, native widths, 2500 updates, no new residual cap",
+  "device": "CPU FP32 one thread, deterministic",
+  "gates": "Original 2% per-band and all original comparative/paired gates; 4% remains secondary sensitivity",
+  "basis_sources": {
+    "studies\\PHASE_UNITS\\traces\\AGGREGATE_DIAGNOSTICS.json": "c27d2af857a9ed498a270b78b06413dd5083fe99988f47373e34803f18eaf932",
+    "studies\\FUSION_STATE\\S7\\V_RESULTS.json": "8fa9a92a84556d96936bfb71961222b0e524346e59b809745002ebcf9a37cc7f",
+    "PHASE_UNIT_REPLICATION_SUMMARY.json": "8a84fb3bc131d8645d4888cc3efd66e1c85467b4acc671ce1cf9a183822146ed"
+  },
+  "external_FUSION_STATE_scores_opened": false,
+  "external_selection": false,
+  "scope": "New supervised H stage on H-trained contexts, not OOF; V exposed development; no GT-based deployment selector",
+  "preregistration_sha256": "be240851e5571c2294715977e07304cc237cc1ab11016c84d2d670521a62d909",
+  "original_protocol_sha256": "d955649530b1761fb62ee0410d50a44b85741a70754271789d561fce3c7565eb",
+  "frozen_scientific_sources": {
+    "operational\\multimodal_research\\common.py": "dac6d054b198ce04eab4d0b4d8f2808d4c8d946096d802a73b281455fa2263c4",
+    "operational\\multimodal_research\\model.py": "0ac640ba421c82e54005dc4cf7ae2baa042e72d6d18f21b1e80919141b204cef",
+    "operational\\multimodal_research\\cache.py": "85faa229cd41ed625f957fbbb3be46c13bb92ac0eac39526586aeb33ac13cd49",
+    "operational\\multimodal_research\\train.py": "9f21ce7ae4928fe583e2e5eaa1e60c81849bf316f079e414615f72a465c55324"
+  },
+  "phase_units_source_sha256": "0cd65eea9c8e8a2e01b7512570dc3e31c8cbcc2def468b9f4b64e3ab3edb6021",
+  "regret_source_sha256": "68ee22e9ba756cbfbf9a8c39af3436c7c0c7430f958c028f59805616c3ffdf09",
+  "CPU_guard_source_sha256": "b67e3bc6b90cc90c52e5ad14af3cef38d2dd211115717eb9c44d6f43f9e8d7f0",
+  "trainer_source_sha256": "a1060313a2fcb40a10b57bcf5c23f1d13a223837a6b6ef6356f5c51bf8c6af45",
+  "validation": "Exposed V development; original gates; no external selection"
+}

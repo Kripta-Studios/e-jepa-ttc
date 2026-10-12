@@ -1,0 +1,42 @@
+{
+  "utc": "2026-10-12T15:43:04.333894+00:00",
+  "measurements": [
+    {
+      "field": "--query-compute-apps=pid",
+      "repeat": 0,
+      "elapsed_ms": 221.19290000000547,
+      "returncode": 0
+    },
+    {
+      "field": "--query-compute-apps=pid",
+      "repeat": 1,
+      "elapsed_ms": 217.4336000000494,
+      "returncode": 0
+    },
+    {
+      "field": "--query-compute-apps=pid",
+      "repeat": 2,
+      "elapsed_ms": 223.03809999993973,
+      "returncode": 0
+    },
+    {
+      "field": "--query-gpu=memory.free",
+      "repeat": 0,
+      "elapsed_ms": 213.12170000010155,
+      "returncode": 0
+    },
+    {
+      "field": "--query-gpu=memory.free",
+      "repeat": 1,
+      "elapsed_ms": 189.4604999999956,
+      "returncode": 0
+    },
+    {
+      "field": "--query-gpu=memory.free",
+      "repeat": 2,
+      "elapsed_ms": 189.04380000003584,
+      "returncode": 0
+    }
+  ],
+  "scope": "Read-only admission command overhead under concurrent frozen inference; no scientific prediction or policy changed."
+}

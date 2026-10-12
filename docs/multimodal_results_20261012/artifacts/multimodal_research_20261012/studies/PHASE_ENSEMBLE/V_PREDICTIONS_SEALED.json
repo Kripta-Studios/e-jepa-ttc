@@ -1,0 +1,21 @@
+{
+  "sha256": "61c8904434b0be3d1dbb13fbed3de5c4013a9bbc6b7f73b77d3b09e63e5d394a",
+  "sources": {
+    "studies\\PHASE_UNITS\\V_PREDICTIONS_UNSCORED.csv": "31e8c909db44b2f67a746353291b88f62d6880479c82fd9c00617499c555c73f",
+    "studies\\UNIT_REPLICATION\\S13\\V_PREDICTIONS_UNSCORED.csv": "a27a559f53d138939a3dd0fc02a334c62c94702f522018364582bb858d2a5407",
+    "studies\\UNIT_REPLICATION\\S23\\V_PREDICTIONS_UNSCORED.csv": "d8f155428194974a5c9b3df7247d8c32b74a182d970a7d3e919757e3304040c1"
+  },
+  "protocol_sha256": "53eb0ab06c4cae30e7011e4548de00699f083cca5f08b698a3a350e1c28796a2",
+  "targets_read_for_combination": false,
+  "prior_V_exposure": true,
+  "diagnostics": {
+    "EVENT": {
+      "disagree_sign": 53,
+      "cap60": 38
+    },
+    "ZERO": {
+      "disagree_sign": 19,
+      "cap60": 14
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "query_id": "FCWD2:0013",
+  "sequence_id": "FCWD2",
+  "anchor_us": 4954895,
+  "available": false,
+  "reason": "WEAK_OR_UNSTABLE_LOCAL_REGISTRATION",
+  "ttc": null,
+  "heights": null,
+  "binding_sha256": "c0860586b45af5a444cfa1c5aa0b7e03e2bc66f35320a1bc107a745b40c712f1"
+}

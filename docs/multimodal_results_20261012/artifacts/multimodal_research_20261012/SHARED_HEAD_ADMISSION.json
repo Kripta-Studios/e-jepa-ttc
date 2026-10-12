@@ -1,0 +1,44 @@
+{
+  "source_sha256": "33b7dd18f72b6792a33c1c75dca0c2523c0acd4bbd15c4cc5ee97dbc0110dde2",
+  "allowed_foreign_modules": [
+    "operational.representation_audit.directional",
+    "operational.representation_audit.precision",
+    "operational.representation_audit.run"
+  ],
+  "max_foreign_head_jobs": 1,
+  "min_free_cuda_bytes": 6442450944,
+  "max_own_reserved_cuda_bytes": 1073741824,
+  "unchanged": "Native budget, elapsed deadline, RAM/disk admission, training recipe and RNG",
+  "reason": "Exclusive admission starved the small readout while successive V17 head queues ran",
+  "scope": "Head fitting, frozen-state extraction and accuracy only; no shared latency claims",
+  "V15_closed": {
+    "SOTA_claim": false,
+    "budget_reallocated": false,
+    "collection_log_sha256": "184a6c7fbb432ae1d9132b618e6e317fa77c2bfb040cb48fe3d6b5962846a499",
+    "delivery_commit": "f33183c00481268cce38b2800050a86545b2e7c8",
+    "metrics_reproduction": "PASS",
+    "new_head_prediction_rows": 65728,
+    "new_heads": 4,
+    "new_readout_parents": 2,
+    "physical_updates": 22060,
+    "push_performed": false,
+    "recovery_updates": 0,
+    "replication_admitted": false,
+    "report_portability": "PASS",
+    "required_dependencies_missing": [],
+    "resume_proof": "PASS",
+    "scientific_updates": 22000,
+    "status": "COMPLETE_NO_CANDIDATE",
+    "technical_updates": 60,
+    "test_cases_passed": 81,
+    "transfer_admitted": false,
+    "unit_test_log_sha256": "23f946c91141facb16bce8fddcb1557eeb07a8b0f42fd847f3c804545297ec3e",
+    "utc": "2026-10-12T01:25:08.155382+00:00"
+  },
+  "scientific_sources": {
+    "operational\\multimodal_research\\common.py": "dac6d054b198ce04eab4d0b4d8f2808d4c8d946096d802a73b281455fa2263c4",
+    "operational\\multimodal_research\\model.py": "0ac640ba421c82e54005dc4cf7ae2baa042e72d6d18f21b1e80919141b204cef",
+    "operational\\multimodal_research\\cache.py": "85faa229cd41ed625f957fbbb3be46c13bb92ac0eac39526586aeb33ac13cd49",
+    "operational\\multimodal_research\\train.py": "9f21ce7ae4928fe583e2e5eaa1e60c81849bf316f079e414615f72a465c55324"
+  }
+}

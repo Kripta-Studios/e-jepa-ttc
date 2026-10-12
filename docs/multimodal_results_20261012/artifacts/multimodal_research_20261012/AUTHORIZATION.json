@@ -1,0 +1,32 @@
+{
+  "utc": "2026-10-12T09:16:28.957484+00:00",
+  "user_text": "s\u00ed puedes usar la GPU otras 18h y hasta 1M de updates o lo que necesites",
+  "max_physical_updates": 1000000,
+  "max_elapsed_seconds": 64800,
+  "initial_scientific_plan": 5000,
+  "no_push_merge_submission": true,
+  "V15_closeout": {
+    "SOTA_claim": false,
+    "budget_reallocated": false,
+    "collection_log_sha256": "184a6c7fbb432ae1d9132b618e6e317fa77c2bfb040cb48fe3d6b5962846a499",
+    "delivery_commit": "f33183c00481268cce38b2800050a86545b2e7c8",
+    "metrics_reproduction": "PASS",
+    "new_head_prediction_rows": 65728,
+    "new_heads": 4,
+    "new_readout_parents": 2,
+    "physical_updates": 22060,
+    "push_performed": false,
+    "recovery_updates": 0,
+    "replication_admitted": false,
+    "report_portability": "PASS",
+    "required_dependencies_missing": [],
+    "resume_proof": "PASS",
+    "scientific_updates": 22000,
+    "status": "COMPLETE_NO_CANDIDATE",
+    "technical_updates": 60,
+    "test_cases_passed": 81,
+    "transfer_admitted": false,
+    "unit_test_log_sha256": "23f946c91141facb16bce8fddcb1557eeb07a8b0f42fd847f3c804545297ec3e",
+    "utc": "2026-10-12T01:25:08.155382+00:00"
+  }
+}

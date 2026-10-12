@@ -1,0 +1,13 @@
+{
+  "accumulation_index": 0,
+  "checkpoint_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v16-multimodal-validation\\artifacts\\multimodal_research_20261012\\fits\\GROUP_CROSSFIT_F0_E_S7\\checkpoint_last.pt",
+  "checkpoint_sha256": "f30301a2071eafd2d8b975d32917ace2803ae37e488e92b25ecf070d82eb96b8",
+  "complete_state": true,
+  "completed_updates": 2500,
+  "fit_id": "GROUP_CROSSFIT_F0_E_S7",
+  "identity_sha256": "31cbfb8e45325cbe44f1548030355b5683d5b5de8243fabfedb0cd2b4d8fac6f",
+  "recovery_upper": 0,
+  "schema": "rgb_port_checkpoint_receipt_v1",
+  "scientific_endpoint": true,
+  "status": "COMPLETE"
+}

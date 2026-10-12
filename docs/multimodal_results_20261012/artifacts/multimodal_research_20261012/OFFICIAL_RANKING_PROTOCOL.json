@@ -1,0 +1,27 @@
+{
+  "utc": "2026-10-12T15:17:07.136150+00:00",
+  "primary_metric": "overall_MiD",
+  "direction": "lower_is_better",
+  "weights": {
+    "c": 0.5,
+    "s": 0.3,
+    "l": 0.1,
+    "n": 0.1
+  },
+  "official_source_url": "https://github.com/NAIL-HNU/Garl-TTC/blob/main/garl_ttc_benchmark/codabench/build_codabench_bundle.py",
+  "github_blob_sha": "bba02206839c4158fae56dbf00261a0333a22f9b",
+  "local_builder_sha256": "8edd00186549700dd3550aab3b47ce2a313e4564e797049f540cd00fb95cada4",
+  "local_scorer_sha256": "f3bbf089ba6e47edfce1de522c92ddc969db2260fac7544e82bc017fedf82dce",
+  "paper_rounded_test12_components": {
+    "c": 53.1,
+    "s": 37.6,
+    "l": 40.6,
+    "n": 31.3
+  },
+  "paper_approximate_weighted_score": 45.02,
+  "paper_source_url": "https://github.com/NAIL-HNU/Garl-TTC",
+  "live_best_score_verified": false,
+  "candidate_test_score_available": false,
+  "comparison_scope": "The approximate45.02 is derived from rounded paper components on test12. It is not a verified current leaderboard best and must not be compared directly to exposed internal V scores.",
+  "test_targets_read": false
+}

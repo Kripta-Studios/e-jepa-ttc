@@ -1,0 +1,28 @@
+{
+  "DEV32": {
+    "queries": 32,
+    "comparisons": 64,
+    "parity": true,
+    "native_mean_ms": 804.1989109378846,
+    "compact_mean_ms": 703.0955671889387,
+    "ratio_of_total_ms": 0.8742806756216125,
+    "median_paired_savings_percent": 23.448377287021493,
+    "all_unique_windows": [
+      6
+    ],
+    "scope": "read+map+voxel only, 1 CPU thread, concurrent research load; not system latency"
+  },
+  "FCWD": {
+    "queries": 32,
+    "comparisons": 64,
+    "parity": true,
+    "native_mean_ms": 712.9495562521697,
+    "compact_mean_ms": 547.2299124985511,
+    "ratio_of_total_ms": 0.7675576872159471,
+    "median_paired_savings_percent": 21.454549556677094,
+    "all_unique_windows": [
+      6
+    ],
+    "scope": "read+map+voxel only, 1 CPU thread, concurrent research load; not system latency"
+  }
+}

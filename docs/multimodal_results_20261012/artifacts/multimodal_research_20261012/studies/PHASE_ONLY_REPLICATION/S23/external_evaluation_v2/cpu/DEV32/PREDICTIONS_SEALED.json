@@ -1,0 +1,39 @@
+{
+  "sha256": "8477f0c28429054a4f6071d2fa3a14feb065ccf980f3b9ff7ec123b0dfe57bc3",
+  "population": 1024,
+  "state_seal_sha256": "3e5a957ed9ecec2e7da91f424adb02cd959701b4c1bf22247139c5cc8eb4d570",
+  "endpoints": {
+    "EVENT": {
+      "accumulation_index": 0,
+      "checkpoint_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v16-multimodal-validation\\artifacts\\multimodal_research_20261012\\fits\\R_ANCHOR_PHASE_ONLY_REPLICATION_EVENT_S23\\checkpoint_last.pt",
+      "checkpoint_sha256": "f47f15ab6275575eeb9cc3e367e3892cc72054de2bbffeca822f70ff5cecdad0",
+      "complete_state": true,
+      "completed_updates": 2500,
+      "fit_id": "R_ANCHOR_PHASE_ONLY_REPLICATION_EVENT_S23",
+      "identity_sha256": "6e8e8c9e71977d4da31bba1458fa89f5421f69980a1c9caa13e83f125982f30b",
+      "recovery_upper": 0,
+      "schema": "rgb_port_checkpoint_receipt_v1",
+      "scientific_endpoint": true,
+      "status": "COMPLETE"
+    },
+    "ZERO": {
+      "accumulation_index": 0,
+      "checkpoint_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v16-multimodal-validation\\artifacts\\multimodal_research_20261012\\fits\\R_ANCHOR_PHASE_ONLY_REPLICATION_ZERO_S23\\checkpoint_last.pt",
+      "checkpoint_sha256": "6a2ddd4eb3bd2cbddeffe9888ab0395f6c72e0b14e8c1da4dd8a5264f4314dca",
+      "complete_state": true,
+      "completed_updates": 2500,
+      "fit_id": "R_ANCHOR_PHASE_ONLY_REPLICATION_ZERO_S23",
+      "identity_sha256": "428e0236364e4154af8341f2789b87634dda1ff72078b15d6da23cc741bdb7a4",
+      "recovery_upper": 0,
+      "schema": "rgb_port_checkpoint_receipt_v1",
+      "scientific_endpoint": true,
+      "status": "COMPLETE"
+    }
+  },
+  "targets_read": false,
+  "source_sha256": "26df40874b576f419921eb52e989dd3d2684780029f1ffc7fc1344a8b1696e41",
+  "fallback": "exact same-route E_CTX whenever RGB unavailable; keep every query",
+  "scope": "Frozen parents and CPU readout; exposed descriptive cohorts, never selection",
+  "parent_route": "cpu",
+  "readout_route": "CPU_FP32_one_thread"
+}

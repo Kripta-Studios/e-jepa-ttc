@@ -1,0 +1,60 @@
+{
+  "action": "train",
+  "pid": 37260,
+  "utc_start": "2026-10-12T10:36:46.737467+00:00",
+  "policy_sha256": "7a2200dddf02e3b6cfbaa57a8b8534447fa82105c965b3ce6545c3fec6d4ee05",
+  "accounting_before": {
+    "scientific": 3300,
+    "recovery_upper": 0,
+    "pending_upper": 0,
+    "fits": [
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "e8960bba681057948c138b6f2e09a05d07216fca0f26ea4b3b277292d175d9cf",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_EVENT_S7"
+      },
+      {
+        "completed_updates": 800,
+        "durable_updates": 800,
+        "identity_sha256": "cd63c668494fe3cc2365def538c36b9802c539a418e5a6410c2facf100184c3c",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_ZERO_S7"
+      }
+    ],
+    "physical_upper": 3300
+  },
+  "status": "COMPLETE",
+  "utc_end": "2026-10-12T10:40:32.464865+00:00",
+  "accounting_after": {
+    "scientific": 5000,
+    "recovery_upper": 0,
+    "pending_upper": 0,
+    "fits": [
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "e8960bba681057948c138b6f2e09a05d07216fca0f26ea4b3b277292d175d9cf",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_EVENT_S7"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "cd63c668494fe3cc2365def538c36b9802c539a418e5a6410c2facf100184c3c",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_ZERO_S7"
+      }
+    ],
+    "physical_upper": 5000
+  }
+}

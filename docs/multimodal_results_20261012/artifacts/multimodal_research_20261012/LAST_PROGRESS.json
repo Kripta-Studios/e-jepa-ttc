@@ -1,0 +1,31 @@
+{
+  "utc": "2026-10-12T10:40:32.457067+00:00",
+  "fit": "R_ANCHOR_ZERO_S7",
+  "completed": 2500,
+  "accounting": {
+    "scientific": 5000,
+    "recovery_upper": 0,
+    "pending_upper": 0,
+    "fits": [
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "e8960bba681057948c138b6f2e09a05d07216fca0f26ea4b3b277292d175d9cf",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_EVENT_S7"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "cd63c668494fe3cc2365def538c36b9802c539a418e5a6410c2facf100184c3c",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_ZERO_S7"
+      }
+    ],
+    "physical_upper": 5000
+  }
+}

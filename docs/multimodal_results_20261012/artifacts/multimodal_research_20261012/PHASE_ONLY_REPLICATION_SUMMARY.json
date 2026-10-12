@@ -1,0 +1,44 @@
+{
+  "rows": [
+    {
+      "seed": 7,
+      "MiD": 89.22296001782607,
+      "MAE": 1.869603584397337,
+      "original_2pct_all_gates": true,
+      "large_degradation_pct": -2.648003720520131,
+      "paired_ci95": [
+        -5.737922430198823,
+        -1.3022189428427402
+      ],
+      "source_sha256": "6a74b5773cd742844ce152a02fbd4c7634aa8270793bdafd47dce62fcb255c4a"
+    },
+    {
+      "seed": 13,
+      "MiD": 89.19887466085854,
+      "MAE": 1.8587178099532364,
+      "original_2pct_all_gates": true,
+      "large_degradation_pct": -1.5949340396421596,
+      "paired_ci95": [
+        -5.734940908789747,
+        -1.3502580619471518
+      ],
+      "source_sha256": "a7d2b1754e505aa2578f4d3a0401798a21768c7f1135456fa72513bf70f32adc"
+    },
+    {
+      "seed": 23,
+      "MiD": 89.22002829003586,
+      "MAE": 1.86233693463625,
+      "original_2pct_all_gates": true,
+      "large_degradation_pct": -1.256831266809899,
+      "paired_ci95": [
+        -5.685388400273993,
+        -1.3988404845532494
+      ],
+      "source_sha256": "51364c81ea490e34497e0c0f1f44d9f82d3e093be7e674fb10fa69e9a988b3e3"
+    }
+  ],
+  "all_three_pass_original_2pct": true,
+  "mean_MiD": 89.21395432290683,
+  "std_MiD": 0.013141381684466094,
+  "scope": "Fixed-producer head seeds; exposed V; not complete producer replications or official SOTA"
+}

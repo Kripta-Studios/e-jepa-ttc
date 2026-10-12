@@ -1,0 +1,41 @@
+{
+  "sha256": "d29d656cd89507ec2aecaee5bd3772805ffba8ac888f130b849ab4b0301cbe12",
+  "population": 1024,
+  "state_seal_sha256": "3e5a957ed9ecec2e7da91f424adb02cd959701b4c1bf22247139c5cc8eb4d570",
+  "endpoints": {
+    "REFINED_RGB": {
+      "accumulation_index": 0,
+      "checkpoint_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v16-multimodal-validation\\artifacts\\multimodal_research_20261012\\fits\\F_ANCHOR_FUSION_PRESERVING_REFINED_RGB_S7\\checkpoint_last.pt",
+      "checkpoint_sha256": "83ba2795db24fd54d55b3b8bd1a9ea25141cf5169bf5ceb994846720942dcf51",
+      "complete_state": true,
+      "completed_updates": 2500,
+      "fit_id": "F_ANCHOR_FUSION_PRESERVING_REFINED_RGB_S7",
+      "identity_sha256": "247c0ec458ce4fd7ddd7a44c17a64f8d865eaf56c9db9241f8e62371738adcfc",
+      "recovery_upper": 0,
+      "schema": "rgb_port_checkpoint_receipt_v1",
+      "scientific_endpoint": true,
+      "status": "COMPLETE"
+    },
+    "ZERO_RGB": {
+      "accumulation_index": 0,
+      "checkpoint_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v16-multimodal-validation\\artifacts\\multimodal_research_20261012\\fits\\F_ANCHOR_FUSION_PRESERVING_ZERO_RGB_S7\\checkpoint_last.pt",
+      "checkpoint_sha256": "73dc36e170f7744448f7b8b2cde94242ed4058400df4aeb8d7f6bd4cdf7f2387",
+      "complete_state": true,
+      "completed_updates": 2500,
+      "fit_id": "F_ANCHOR_FUSION_PRESERVING_ZERO_RGB_S7",
+      "identity_sha256": "f67713703630fdaf4c69c365c637e8d55152df4cb09496a8be02214e05b22f5d",
+      "recovery_upper": 0,
+      "schema": "rgb_port_checkpoint_receipt_v1",
+      "scientific_endpoint": true,
+      "status": "COMPLETE"
+    }
+  },
+  "targets_read": false,
+  "source_sha256": "6ef00173eabfcf089ea31112d87245cc1d1f040767c495ed96cbed7ee476f683",
+  "fallback": "exact same-route E_CTX whenever RGB unavailable; keep every query",
+  "scope": "Frozen parents and CPU readout; exposed descriptive cohorts, never selection",
+  "parent_route": "cpu",
+  "readout_route": "CPU_FP32_one_thread",
+  "extra_fusion_seal_sha256": "73a62168bf5332f1dc2f9707c6b022464e6e7324b429b05f382d9e3a1544d403",
+  "control": "Both preserve F_TRUE and E; ZERO_RGB removes extra refined RGB state"
+}

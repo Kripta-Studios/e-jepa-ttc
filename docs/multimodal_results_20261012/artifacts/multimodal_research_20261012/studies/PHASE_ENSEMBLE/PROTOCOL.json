@@ -1,0 +1,33 @@
+{
+  "utc": "2026-10-12T12:28:24.268295+00:00",
+  "binding": {
+    "source_sha256": "f5bdacd926f8d9c45410b2759106e5f5f0637da68705d66fddb8657d1c931c33",
+    "seeds": [
+      7,
+      13,
+      23
+    ],
+    "weights": [
+      0.3333333333333333,
+      0.3333333333333333,
+      0.3333333333333333
+    ],
+    "operation": "mean of native emitted phases, float64, native signed conversion and 60s cap",
+    "arms": [
+      "EVENT",
+      "ZERO"
+    ],
+    "hypothesis": "Reduce head-seed variation observed on exposed internal V",
+    "selection": "All registered unit seeds; no seed dropping, fitted weights or TTC averaging",
+    "external_exposure": "Individual external scores known; descriptive development only",
+    "original_protocol_sha256": "d955649530b1761fb62ee0410d50a44b85741a70754271789d561fce3c7565eb",
+    "gates": "Original 2%; separate 4% large-only sensitivity; paired group bootstrap 4000",
+    "optimizer_updates": 0,
+    "cost": "Three readouts with shared frozen features; no full-system replicas",
+    "endpoints": {
+      "studies\\PHASE_UNITS": "e6e3367063f3b8d016817dd0d8110bb8c47704b22a875fb45e7acfe2a6efb9c8",
+      "studies\\UNIT_REPLICATION\\S13": "ccfb84153763422745a2414fa0260fe61a24f5a1df47f6ce1395d70c19606f23",
+      "studies\\UNIT_REPLICATION\\S23": "6293e38afb1067410fa86dbc897c00a363b0fc268ad57a35f9e1bcda00b69229"
+    }
+  }
+}

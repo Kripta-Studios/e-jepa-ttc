@@ -1,0 +1,96 @@
+{
+  "action": "parity",
+  "pid": 45476,
+  "utc_start": "2026-10-12T11:08:00.900130+00:00",
+  "policy_sha256": "fd73be74c427818cf06bca20e5f8d4065aa27db4e8fe44d97880f2d659e2c5aa",
+  "accounting_before": {
+    "scientific": 10000,
+    "recovery_upper": 0,
+    "pending_upper": 0,
+    "fits": [
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "e8960bba681057948c138b6f2e09a05d07216fca0f26ea4b3b277292d175d9cf",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_EVENT_S7"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "5e301175dc8a26382539d26d4da1bf768827d2656327dd45b3e40b089b53cf35",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_UNITS_EVENT_S7"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "24d95b10eb7efc28348165fca96a8535bfd6e10be690f3af9dcd0e527efac299",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_UNITS_ZERO_S7"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "cd63c668494fe3cc2365def538c36b9802c539a418e5a6410c2facf100184c3c",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_ZERO_S7"
+      }
+    ],
+    "physical_upper": 10000
+  },
+  "status": "COMPLETE",
+  "utc_end": "2026-10-12T11:09:02.536969+00:00",
+  "accounting_after": {
+    "scientific": 10000,
+    "recovery_upper": 0,
+    "pending_upper": 0,
+    "fits": [
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "e8960bba681057948c138b6f2e09a05d07216fca0f26ea4b3b277292d175d9cf",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_EVENT_S7"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "5e301175dc8a26382539d26d4da1bf768827d2656327dd45b3e40b089b53cf35",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_UNITS_EVENT_S7"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "24d95b10eb7efc28348165fca96a8535bfd6e10be690f3af9dcd0e527efac299",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_UNITS_ZERO_S7"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "cd63c668494fe3cc2365def538c36b9802c539a418e5a6410c2facf100184c3c",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_ZERO_S7"
+      }
+    ],
+    "physical_upper": 10000
+  }
+}

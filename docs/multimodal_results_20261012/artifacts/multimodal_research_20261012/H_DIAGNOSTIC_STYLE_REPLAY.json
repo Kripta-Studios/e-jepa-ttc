@@ -1,0 +1,6 @@
+{
+  "rows_identical": true,
+  "old_sha256": "4e224b21c626ba5d8792f60ebb190ac70a409ba3a5e60abfa54bcbfdc3d359c8",
+  "new_sha256": "6ff8a9155ecea978e9aa66d33526efb823b2f73781ca36e6f4b45bf0b9556f5d",
+  "change": "Line wrap only; exact repeated results; zero optimizer updates"
+}

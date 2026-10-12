@@ -1,0 +1,15 @@
+{
+  "sha256": "134f339eea348b9b147c2c4f73c6d6beb18532cdb7826a8217f54f4f4c3ab9ee",
+  "population": 630,
+  "sources": {
+    "studies\\PHASE_UNITS\\external_evaluation_v2\\native_gpu\\FCWD\\PREDICTIONS.csv": "bae18ac3df3588f9ed88d46ca01f7f030751e0137b196226ed84d388149c8d0d",
+    "studies\\UNIT_REPLICATION\\S13\\external_evaluation_v2\\native_gpu\\FCWD\\PREDICTIONS.csv": "4ec204a2cb82947596e17f1c59ad2ccb2e63fcb599909018b7ccb84a31ac6353",
+    "studies\\UNIT_REPLICATION\\S23\\external_evaluation_v2\\native_gpu\\FCWD\\PREDICTIONS.csv": "c290229a264fd00c7f503fcd26b8d10d7652b6163b72ba3a28d1671f3e265b01"
+  },
+  "source_sha256": "9ca96ec7feb592a4b16e76c345a1a08416ef554ab7ebc889bafd63012e93c006",
+  "protocol_sha256": "53eb0ab06c4cae30e7011e4548de00699f083cca5f08b698a3a350e1c28796a2",
+  "targets_read_for_combination": false,
+  "prior_external_exposure": true,
+  "fallback": "Exact same-route E_CTX; all queries retained",
+  "optimizer_updates": 0
+}

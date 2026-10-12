@@ -1,0 +1,26 @@
+{
+  "utc": "2026-10-12T14:14:51.323737+00:00",
+  "source_sha256": "403e821e94f4186d756d58ebc462680e020c3c8a158846641daf187d5fc8f3cc",
+  "sources": {
+    "studies\\PHASE_ONLY\\S7\\external_evaluation_v2\\native_gpu\\FCWD\\SCORED_PREDICTIONS.csv": "50b3b2a39a1ec0d4460fdcb404c2f8ab55afbafaf3f53e5d94b08ebfd0d5eae2",
+    "studies\\PHASE_ONLY\\S7\\external_evaluation_v2\\cpu\\DEV32\\SCORED_PREDICTIONS.csv": "571faaf2621a6e604060253fb56990527fef4e35c201be41a4ac8bffb3c67e93",
+    "studies\\PHASE_ONLY_REPLICATION\\S13\\external_evaluation_v2\\native_gpu\\FCWD\\SCORED_PREDICTIONS.csv": "0a0db483e666f24270337da2f6e87b8ece36980cec3d66d78ce3f14978451ba3",
+    "studies\\PHASE_ONLY_REPLICATION\\S13\\external_evaluation_v2\\cpu\\DEV32\\SCORED_PREDICTIONS.csv": "c4f09f161d46ad5446feeedab611d6d240627c6681380efd9775805ccb6cdde3",
+    "studies\\PHASE_ONLY_REPLICATION\\S23\\external_evaluation_v2\\native_gpu\\FCWD\\SCORED_PREDICTIONS.csv": "51df623e7418db0a8227f32d577aa1ca68861743ac8979a5253e6d16edbe599f",
+    "studies\\PHASE_ONLY_REPLICATION\\S23\\external_evaluation_v2\\cpu\\DEV32\\SCORED_PREDICTIONS.csv": "d752de38adff3b1a57f4e2d6d13f8dc3d4bb3bad845797abb68b25b6b7ad6533"
+  },
+  "fixed_candidate_sha256": "85fad0dfb8bac0fa5a09e6f4090818ea2b534908ef3d018e8f88f0805e825b1a",
+  "fixed_candidate_utc": "2026-10-12T14:05:52.846980+00:00",
+  "csv_sha256": "67c1f9b2d541c4b12174cb8e6615a092cd6a679145e8e3ae1bfe22a6db1c2944",
+  "draws": 4000,
+  "bootstrap_unit": "whole sequence",
+  "role": "Descriptive posthoc; external data cannot replace the frozen seed 7 candidate",
+  "limitations": [
+    "FCWD has only 3 sequences; intervals do not establish broad population coverage",
+    "No correction for adaptive recipe search or multiple contrasts",
+    "Event-only Garl uses fewer modalities than the candidate",
+    "Head seeds share frozen producers and are not independent system replicas"
+  ],
+  "optimizer_updates": 0,
+  "official_SOTA": false
+}

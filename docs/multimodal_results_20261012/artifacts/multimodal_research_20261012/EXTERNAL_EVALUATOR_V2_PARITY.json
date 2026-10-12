@@ -1,0 +1,8 @@
+{
+  "cohort": "FCWD",
+  "study": "baseline",
+  "all_predictions_exact": true,
+  "all_metrics_exact": true,
+  "population": 630,
+  "source_sha256": "26df40874b576f419921eb52e989dd3d2684780029f1ffc7fc1344a8b1696e41"
+}

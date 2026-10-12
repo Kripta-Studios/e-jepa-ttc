@@ -1,0 +1,42 @@
+{
+  "utc": "2026-10-12T16:39:33.284887+00:00",
+  "status": "LOCAL_RESULTS_COMPLETE_OFFICIAL_EVALUATION_PENDING",
+  "SOTA": false,
+  "physical_optimizer_updates": 80000,
+  "current_evidence": "PHASE_ONLY original2% gates and event-vs-zero contrast pass in seeds7/13/23. GROUP_CROSSFIT finished25k but fails V MAE and does not improve transfer. All registered external evaluations complete.",
+  "next": "Official evaluation requires explicit submission authorization and operational benchmark access. No new optimizer campaign registered.",
+  "test12": "6762 frozen predictions complete, official public parser PASS; 16 saved-output parity cases exact; eight quarantined files regenerated to original expected hashes.",
+  "deadline_utc": "2026-10-13T03:16:28.957484+00:00",
+  "freeze_sha256": "85fad0dfb8bac0fa5a09e6f4090818ea2b534908ef3d018e8f88f0805e825b1a",
+  "current_counts": {
+    "event_observations": 5805,
+    "rgb_observations": 5805,
+    "predictions": 6762
+  },
+  "GPU_cost_plan": {
+    "source_sha256": "eaf395e89f6d9c5725267ac582f63a1e98b9c3c3dfd3e788fee34d8b92f9556d",
+    "selection": "Original 32 hash-selected FCWD cost queries, two repeats",
+    "optimizer_updates": 0,
+    "max_own_cuda_reserved_bytes": 1073741824,
+    "requires": "Test12 packaged; no active foreign Python GPU work. Verified V18 waiting context allowed under fresh state and settled reservation checks.",
+    "prediction_change_allowed": false
+  },
+  "official_claim": "Not demonstrated. Original 2% internal gates pass all three head seeds; transfer tradeoffs persist and no private test score/current best leaderboard score is verified.",
+  "submission_authorized": false,
+  "submission_constraint_source": "Original user instruction: no submissions. Later authorization expanded GPU/training only.",
+  "GPU_cost": {
+    "calls": 64,
+    "p50_ms": 1213.117499999953,
+    "p95_ms": 3060.5612000000747,
+    "all_outputs_exact": true,
+    "scope": "FCWD raw sensors, fresh sealed-equivalent registration and frozen GPU parents and CPU readout. One CPU thread; batch4 event observations, batch1 RGB observations. Stage synchronization; no other active Python GPU work. A verified waiting V18 supervisor may retain an idle CUDA context. Normal desktop GPU and concurrent CPU preparation loads allowed and not isolated. Resident weights, public query ROI. Excludes detector, startup and persistent cross-query service/state management. Repeat1 quantiles are warm-access observations, not isolated cold-I/O or streaming latency."
+  },
+  "bundle_verification": {
+    "status": "PASS",
+    "archive_sha256": "a59bac60a1a97c4c5e0b279247c98b96b1b4ce1ff3dc8db7781b4cf01372bab9",
+    "files": 47842,
+    "scalar_checks": 46778,
+    "receipt": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v16-multimodal-validation\\artifacts\\E_JEPA_TTC_RESEARCH_RESULT_20261012T164206Z.independent-verification.json"
+  },
+  "utc_delivery": "2026-10-12T17:19:37.669312+00:00"
+}

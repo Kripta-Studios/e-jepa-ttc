@@ -1,0 +1,7 @@
+{
+  "instrumented_calls": 3056,
+  "all_bitwise_equal": null,
+  "scope": "same CPU inputs and precision, hooks return None; historical GPU-to-CPU separately reported",
+  "historical_comparisons": 368,
+  "optimizer_updates": 0
+}

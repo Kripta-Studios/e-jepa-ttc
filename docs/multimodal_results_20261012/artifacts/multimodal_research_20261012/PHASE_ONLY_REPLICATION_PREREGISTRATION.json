@@ -1,0 +1,30 @@
+{
+  "utc": "2026-10-12T13:00:17.723687+00:00",
+  "name": "PHASE_ONLY_REPLICATION",
+  "seeds": [
+    13,
+    23
+  ],
+  "arms": [
+    "EVENT",
+    "ZERO"
+  ],
+  "updates_per_fit": 2500,
+  "planned_updates": 10000,
+  "hypothesis": "Replicate the first internally eligible phase-only corrector with identical recipe and fixed additional seeds",
+  "inputs": "20 coordinates: raw/refined phase,3 expert phases,4 clock values,valid count per modality; excludes both160 hidden states",
+  "architecture": "20->32 LayerNorm SiLU->32 LayerNorm SiLU->3 zero output,1955 trainable parameters per arm",
+  "control": "ZERO removes5 event phase coordinates, retains its timing/count, same RGB inputs and capacity",
+  "output": "Raw R_CTX anchor plus unrestricted .03 residual, native R_CTX width logits plus correction",
+  "optimizer": "Native fusion_loss, global H masses, AdamW3e-4 with native2500 schedule, batch128 seed7 CPU FP32 one thread; no RGB-regret term",
+  "gates": "Original2% gates,4000 group bootstrap EVENT-ZERO;4% sensitivity separate; no selective epochs",
+  "basis_sources": {
+    "studies/PHASE_ONLY/S7/V_RESULTS.json": "6a74b5773cd742844ce152a02fbd4c7634aa8270793bdafd47dce62fcb255c4a"
+  },
+  "stage": "New supervised H stage; upstream heads already H-supervised, not OOF",
+  "scope": "Adaptive internal development; family comparisons not independent confirmations; external not used for tuning",
+  "external_selection": false,
+  "parent_protocol_sha256": "d146eff3d00038576621095bff3dddd93cbec7514d8b227f94ee7601fdcc16d8",
+  "phase_only_external_results_opened": false,
+  "replication_scope": "Readout seeds only, same frozen parents and H; not full-system replication"
+}

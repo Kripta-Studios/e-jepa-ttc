@@ -1,0 +1,50 @@
+{
+  "checkpoint": {
+    "accumulation_index": 0,
+    "checkpoint_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v16-multimodal-validation\\artifacts\\multimodal_research_20261012\\fits\\R_ANCHOR_EVENT_S7\\checkpoint_last.pt",
+    "checkpoint_sha256": "c790032869dae9185d387825e3be7d37fe1a3976b4f1694a25674f7dcd76015e",
+    "complete_state": true,
+    "completed_updates": 2425,
+    "fit_id": "R_ANCHOR_EVENT_S7",
+    "identity_sha256": "e8960bba681057948c138b6f2e09a05d07216fca0f26ea4b3b277292d175d9cf",
+    "recovery_upper": 0,
+    "schema": "rgb_port_checkpoint_receipt_v1",
+    "scientific_endpoint": false,
+    "status": "PAUSED_RESOURCE"
+  },
+  "population": 18422,
+  "results": {
+    "native": {
+      "phase_mae": 0.003103414550423622,
+      "phase_global_mass_error": 0.003139941254630685,
+      "sign_errors": 168,
+      "sign_changes_vs_RGB": 67,
+      "raw_correction_abs_mean": 0.0013400864554569125
+    },
+    "event_predictive_permuted": {
+      "phase_mae": 0.004630543291568756,
+      "phase_global_mass_error": 0.004744520410895348,
+      "sign_errors": 273,
+      "sign_changes_vs_RGB": 132,
+      "raw_correction_abs_mean": 0.0026652575470507145
+    },
+    "event_predictive_zero": {
+      "phase_mae": 0.0038471207953989506,
+      "phase_global_mass_error": 0.0039437091909348965,
+      "sign_errors": 223,
+      "sign_changes_vs_RGB": 80,
+      "raw_correction_abs_mean": 0.0011989116901531816
+    },
+    "R_CTX": {
+      "phase_mae": 0.00359458290040493,
+      "phase_global_mass_error": 0.003676924156025052,
+      "sign_errors": 219
+    }
+  },
+  "optimizer_updates": 0,
+  "source_sha256": "033826566862a1b8859d23464cee9a54bef230f90e45856d25967fe15f816dde",
+  "role": "H only, supervised in-sample states",
+  "inference": "CPU FP32; not the CUDA training loss trace",
+  "limitation": "Perturbed states can be off-manifold; reliance is not causal attribution",
+  "scientific_endpoint": false
+}

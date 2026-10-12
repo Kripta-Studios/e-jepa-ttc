@@ -1,0 +1,11 @@
+{
+  "load_ms": 651.2870999868028,
+  "resources": {
+    "available_bytes": 12142686208,
+    "own_rss": 803160064,
+    "commit_headroom": 32230035456,
+    "cpu_threads": 1,
+    "device": "cpu"
+  },
+  "concurrent_V15": true
+}

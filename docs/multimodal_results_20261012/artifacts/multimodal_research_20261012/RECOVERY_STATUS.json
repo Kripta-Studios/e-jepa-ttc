@@ -1,0 +1,51 @@
+{
+  "utc": "2026-10-12T16:39:33.284887+00:00",
+  "active": null,
+  "counts": {
+    "event_observations": 5805,
+    "rgb_observations": 5805,
+    "predictions": 6762
+  },
+  "totals": {
+    "event_observations": 5805,
+    "rgb_observations": 5805,
+    "predictions": 6762
+  },
+  "model_input_freeze_sha256": "85fad0dfb8bac0fa5a09e6f4090818ea2b534908ef3d018e8f88f0805e825b1a",
+  "all_registered_training_complete": true,
+  "physical_updates": 80000,
+  "recovery_updates": 0,
+  "metrics_replay": {
+    "scalar_checks": 46778,
+    "internal_tables": 13,
+    "external_tables": 34,
+    "verified_fits": 32
+  },
+  "resume_commands": [],
+  "SOTA": false,
+  "diagnostics": "104 selected traces and 3308 all-external traces; all frozen predictions exact",
+  "cost": "64 GPU raw-sensor FCWD runs with fresh registration and exact reference output parity",
+  "input_audit": "PASS",
+  "official_access": "No browser connected; live leaderboard unverified",
+  "next_after_test12": "Official evaluation requires explicit submission authorization and operational benchmark access. No new optimizer campaign registered.",
+  "execution_commit": "65d1b92",
+  "resource_cadence": "Full guard each 128 cached observations / 32 heads; deadline each item; unchanged thresholds",
+  "interrupted_own_processes": [
+    37524,
+    29840
+  ],
+  "status": "LOCAL_RESULTS_COMPLETE_OFFICIAL_EVALUATION_PENDING",
+  "test12_package_sha256": "60b5a620848659633b875772430cddd7d7532b0fe180ec59904d04b81a9d3ca1",
+  "official_parser": "PASS",
+  "cache_recovery_parity": "PASS: all saved arrays on16 hash-selected tokens",
+  "integrity_repair": "PASS:8 exact original archive hashes restored",
+  "utc_delivery": "2026-10-12T17:19:37.669312+00:00",
+  "bundle_verification": {
+    "status": "PASS",
+    "archive_sha256": "a59bac60a1a97c4c5e0b279247c98b96b1b4ce1ff3dc8db7781b4cf01372bab9",
+    "files": 47842,
+    "scalar_checks": 46778,
+    "receipt": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v16-multimodal-validation\\artifacts\\E_JEPA_TTC_RESEARCH_RESULT_20261012T164206Z.independent-verification.json"
+  },
+  "next": "Official evaluation requires explicit submission authorization and operational benchmark access. No new optimizer campaign registered."
+}

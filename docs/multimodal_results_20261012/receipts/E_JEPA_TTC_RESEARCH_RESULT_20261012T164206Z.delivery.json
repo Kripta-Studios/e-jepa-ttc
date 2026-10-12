@@ -1,0 +1,49 @@
+{
+  "utc": "2026-10-12T17:19:37.669312+00:00",
+  "status": "LOCAL_RESULTS_VERIFIED_OFFICIAL_EVALUATION_PENDING",
+  "archive": {
+    "path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v16-multimodal-validation\\artifacts\\E_JEPA_TTC_RESEARCH_RESULT_20261012T164206Z.zip",
+    "bytes": 461398299,
+    "sha256": "a59bac60a1a97c4c5e0b279247c98b96b1b4ce1ff3dc8db7781b4cf01372bab9",
+    "files": 47842,
+    "crc_pass": true,
+    "every_payload_sha256_verified": true,
+    "status": "LOCAL_RESULTS_COMPLETE_OFFICIAL_EVALUATION_PENDING",
+    "source_sha256": "d2c2bc40c309ce6ae17dab93053bac30850c5ea181d720d861ec32059a4493bd",
+    "official_SOTA": false
+  },
+  "independent_verification": {
+    "utc": "2026-10-12T17:15:09.804866+00:00",
+    "status": "PASS",
+    "archive": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v16-multimodal-validation\\artifacts\\E_JEPA_TTC_RESEARCH_RESULT_20261012T164206Z.zip",
+    "archive_sha256": "a59bac60a1a97c4c5e0b279247c98b96b1b4ce1ff3dc8db7781b4cf01372bab9",
+    "extraction": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v16-multimodal-validation\\artifacts\\research_independent_20261012T165833Z",
+    "files": 47842,
+    "verifier_stdout": "Verified 47842 files",
+    "replay_stdout": "{'scalar_checks': 46778, 'internal_tables': 13, 'external_tables': 34, 'verified_fits': 32}",
+    "metric_checks": {
+      "scalar_checks": 46778,
+      "internal_tables": 13,
+      "external_tables": 34,
+      "verified_fits": 32
+    },
+    "positive_component_csv_regenerated_exactly": true,
+    "source_sha256": "afc051fc716f959925cd4ad88713d9db0c0cdbe8b51d4f0b902aa559f504dfe2",
+    "scope": "Fresh extraction with existing Python dependency environment. All manifest payload hashes checked before CSV replay. No sensor inference, downloads, private labels or submissions. Replay regenerates its derived verification receipt after the hash check."
+  },
+  "report": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v16-multimodal-validation\\artifacts\\multimodal_research_20261012\\MULTIMODAL_REVIEW_FINAL.md",
+  "official_input_package": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v16-multimodal-validation\\artifacts\\multimodal_research_20261012\\test12_phase_only\\PHASE_ONLY_S7_GarlTTC_submission.zip",
+  "official_input_package_sha256": "60b5a620848659633b875772430cddd7d7532b0fe180ec59904d04b81a9d3ca1",
+  "official_score_available": false,
+  "SOTA_demonstrated": false,
+  "submission_attempted": false,
+  "submission_authorized": false,
+  "authorization_constraint": "Original user instruction excludes submissions; subsequent authorization covered GPU and optimizer updates.",
+  "browser_runtime_check": {
+    "result": "Browser use requires a trusted Node REPL browser service",
+    "public_leaderboard_verified": false,
+    "observed_approximately": "2026-10-12 17:03 UTC",
+    "recorded_at_utc": "2026-10-12T17:20:24.265077+00:00"
+  },
+  "post_archive_changes": "This delivery receipt and worktree NEXT_DECISION/RECOVERY_STATUS annotate successful independent verification after archive creation. The archive is unchanged; its archived decision records the earlier packaging stage."
+}

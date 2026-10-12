@@ -1,0 +1,15 @@
+{
+  "sha256": "72a6b8e95b598ec255542cd8d703317b9cc7e5095bae2bdcc1353d8cab3cb6cb",
+  "population": 630,
+  "sources": {
+    "studies\\PHASE_UNITS\\external_evaluation\\FCWD\\PREDICTIONS.csv": "9df1973ac32e116a9f1435eedf52f1075311a9a6bd58497ff582da4173199502",
+    "studies\\UNIT_REPLICATION\\S13\\external_evaluation_v2\\cpu\\FCWD\\PREDICTIONS.csv": "4ba8f8dcfee06fc136ef3e07f2d78890dd7c7ea32db6913c3bbf5df93a96aec1",
+    "studies\\UNIT_REPLICATION\\S23\\external_evaluation_v2\\cpu\\FCWD\\PREDICTIONS.csv": "187103b7850ae1c2363cded8d6bfa3860de4d1d4276e857c874c102718590523"
+  },
+  "source_sha256": "9ca96ec7feb592a4b16e76c345a1a08416ef554ab7ebc889bafd63012e93c006",
+  "protocol_sha256": "53eb0ab06c4cae30e7011e4548de00699f083cca5f08b698a3a350e1c28796a2",
+  "targets_read_for_combination": false,
+  "prior_external_exposure": true,
+  "fallback": "Exact same-route E_CTX; all queries retained",
+  "optimizer_updates": 0
+}

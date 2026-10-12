@@ -1,0 +1,8 @@
+{
+  "queries": 12,
+  "trials": 36,
+  "prior_eligible": 524,
+  "baseline_parity": true,
+  "independent_correspondences": 0,
+  "optimizer_updates": 0
+}

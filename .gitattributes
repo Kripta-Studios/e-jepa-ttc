@@ -25,3 +25,6 @@ docs/multimodal_next_handoff_20261012/** -text
 # Multimodal receipts pin executed source bytes, including line endings.
 operational/multimodal_validation/** -text
 operational/multimodal_research/** -text
+
+# Published evidence preserves SHA-256 hashes of the original artifact bytes.
+docs/multimodal_results_20261012/** -text

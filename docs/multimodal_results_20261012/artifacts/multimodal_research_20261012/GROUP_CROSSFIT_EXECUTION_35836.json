@@ -1,0 +1,12 @@
+{
+  "utc_start": "2026-10-12T13:23:15.023691+00:00",
+  "pid": 35836,
+  "status": "COMPLETE",
+  "source_sha256": "ecc285917aefafd6e189ad4030fd9db8243e1aa4115997fb8603eed0a117aa4f",
+  "guard_adapter_sha256": "009a5d0aa1e2ec3d8242208ed8f5b68397518811c5cacfe4659deb385d19b434",
+  "admission_policy_source_sha256": "54286378e2fd8fb1803680e47d8e97b072d642729590357b93dcf806edc967d9",
+  "trainer_source_sha256": "7e5a2e269beb4d89831c7333ae7826e28e2cc0fc38b9c2c44bee01e9df926440",
+  "guards": "Native limits and ownership unchanged; skip discarded non-Python metadata",
+  "max_own_cuda_allocation_bytes": 1073741824,
+  "utc_end": "2026-10-12T13:46:22.023851+00:00"
+}

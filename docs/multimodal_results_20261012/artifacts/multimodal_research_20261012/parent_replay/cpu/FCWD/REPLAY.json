@@ -1,0 +1,187 @@
+{
+  "summary": {
+    "E_CTX_MATCHED": {
+      "comparisons": 630,
+      "max_delta_s": 0.6095924377441406,
+      "mean_delta_s": 0.0029835360390799374,
+      "sign_changes": 0,
+      "worst_queries": [
+        {
+          "query_id": "FCWD1:0205",
+          "sequence_id": "FCWD1",
+          "anchor_us": 16366178,
+          "model": "E_CTX_MATCHED",
+          "replay": -37.75719451904297,
+          "historical": -38.36678695678711,
+          "delta_s": 0.6095924377441406,
+          "sign_changed": false
+        },
+        {
+          "query_id": "FCWD2:0211",
+          "sequence_id": "FCWD2",
+          "anchor_us": 14864695,
+          "model": "E_CTX_MATCHED",
+          "replay": 4.587038993835449,
+          "historical": 4.416272640228272,
+          "delta_s": 0.17076635360717685,
+          "sign_changed": false
+        },
+        {
+          "query_id": "FCWD1:0204",
+          "sequence_id": "FCWD1",
+          "anchor_us": 16316125,
+          "model": "E_CTX_MATCHED",
+          "replay": 18.057880401611328,
+          "historical": 17.894956588745117,
+          "delta_s": 0.16292381286621094,
+          "sign_changed": false
+        },
+        {
+          "query_id": "FCWD1:0016",
+          "sequence_id": "FCWD1",
+          "anchor_us": 6906826,
+          "model": "E_CTX_MATCHED",
+          "replay": -22.351240158081055,
+          "historical": -22.21607780456543,
+          "delta_s": 0.135162353515625,
+          "sign_changed": false
+        },
+        {
+          "query_id": "FCWD2:0000",
+          "sequence_id": "FCWD2",
+          "anchor_us": 4304250,
+          "model": "E_CTX_MATCHED",
+          "replay": -16.7784481048584,
+          "historical": -16.663002014160156,
+          "delta_s": 0.11544609069824219,
+          "sign_changed": false
+        }
+      ]
+    },
+    "F_TRUE": {
+      "comparisons": 630,
+      "max_delta_s": 0.5147342681884766,
+      "mean_delta_s": 0.002752979218013729,
+      "sign_changes": 0,
+      "worst_queries": [
+        {
+          "query_id": "FCWD2:0211",
+          "sequence_id": "FCWD2",
+          "anchor_us": 14864695,
+          "model": "F_TRUE",
+          "replay": 10.078481674194336,
+          "historical": 10.593215942382812,
+          "delta_s": 0.5147342681884766,
+          "sign_changed": false
+        },
+        {
+          "query_id": "FCWD2:0209",
+          "sequence_id": "FCWD2",
+          "anchor_us": 14764590,
+          "model": "F_TRUE",
+          "replay": -34.570430755615234,
+          "historical": -34.74057388305664,
+          "delta_s": 0.17014312744140625,
+          "sign_changed": false
+        },
+        {
+          "query_id": "FCWD1:0206",
+          "sequence_id": "FCWD1",
+          "anchor_us": 16416230,
+          "model": "F_TRUE",
+          "replay": 37.249488830566406,
+          "historical": 37.11476135253906,
+          "delta_s": 0.13472747802734375,
+          "sign_changed": false
+        },
+        {
+          "query_id": "FCWD2:0000",
+          "sequence_id": "FCWD2",
+          "anchor_us": 4304250,
+          "model": "F_TRUE",
+          "replay": -16.7784481048584,
+          "historical": -16.663002014160156,
+          "delta_s": 0.11544609069824219,
+          "sign_changed": false
+        },
+        {
+          "query_id": "FCWD1:0211",
+          "sequence_id": "FCWD1",
+          "anchor_us": 16666474,
+          "model": "F_TRUE",
+          "replay": -28.50382423400879,
+          "historical": -28.578880310058597,
+          "delta_s": 0.07505607604980824,
+          "sign_changed": false
+        }
+      ]
+    },
+    "R_CTX": {
+      "comparisons": 495,
+      "max_delta_s": 0.037288665771484375,
+      "mean_delta_s": 0.0006797491902052889,
+      "sign_changes": 0,
+      "worst_queries": [
+        {
+          "query_id": "FCWD2:0211",
+          "sequence_id": "FCWD2",
+          "anchor_us": 14864695,
+          "model": "R_CTX",
+          "replay": -21.939903259277344,
+          "historical": -21.977191925048828,
+          "delta_s": 0.037288665771484375,
+          "sign_changed": false
+        },
+        {
+          "query_id": "FCWD2:0208",
+          "sequence_id": "FCWD2",
+          "anchor_us": 14714547,
+          "model": "R_CTX",
+          "replay": 30.903968811035156,
+          "historical": 30.874181747436523,
+          "delta_s": 0.029787063598632812,
+          "sign_changed": false
+        },
+        {
+          "query_id": "FCWD3:0196",
+          "sequence_id": "FCWD3",
+          "anchor_us": 15164995,
+          "model": "R_CTX",
+          "replay": 13.132063865661621,
+          "historical": 13.10442066192627,
+          "delta_s": 0.027643203735351562,
+          "sign_changed": false
+        },
+        {
+          "query_id": "FCWD1:0205",
+          "sequence_id": "FCWD1",
+          "anchor_us": 16366178,
+          "model": "R_CTX",
+          "replay": 33.42045974731445,
+          "historical": 33.40297317504883,
+          "delta_s": 0.017486572265625,
+          "sign_changed": false
+        },
+        {
+          "query_id": "FCWD1:0016",
+          "sequence_id": "FCWD1",
+          "anchor_us": 6906826,
+          "model": "R_CTX",
+          "replay": 13.621499061584473,
+          "historical": 13.637454986572266,
+          "delta_s": 0.01595592498779297,
+          "sign_changed": false
+        }
+      ]
+    }
+  },
+  "source_sha256": "5c5fabf40840b9bfccb7121ad22240817c57ce559d87bb546498e07aab07fce1",
+  "historical_predictions_sha256": "d83a05711646ef00272d29ee9df1e7e0d200c94c785076bf0ed8d6117e34815a",
+  "historical_device": "cuda",
+  "state_seal_sha256": "52f22e85e6b28177a9cdc65224e22c3cdb00034f085dd9421f97173a40851e10",
+  "physical_identities_verified": 630,
+  "targets_read": false,
+  "optimizer_updates": 0,
+  "route": "cpu",
+  "cohort": "FCWD"
+}

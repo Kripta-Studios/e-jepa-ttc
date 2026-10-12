@@ -1,0 +1,13 @@
+{
+  "accumulation_index": 0,
+  "checkpoint_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v16-multimodal-validation\\artifacts\\multimodal_research_20261012\\fits\\R_ANCHOR_RGB_REGRET_ZERO_S7\\checkpoint_last.pt",
+  "checkpoint_sha256": "d99147e710531e3989c0be6435826ac7fa5615a2338343f4bd80222a4979764f",
+  "complete_state": true,
+  "completed_updates": 2500,
+  "fit_id": "R_ANCHOR_RGB_REGRET_ZERO_S7",
+  "identity_sha256": "1fa957a4a945fe9b69563efb51beb67fc084950eab18d867e8e06b50977a1faa",
+  "recovery_upper": 0,
+  "schema": "rgb_port_checkpoint_receipt_v1",
+  "scientific_endpoint": true,
+  "status": "COMPLETE"
+}

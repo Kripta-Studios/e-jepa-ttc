@@ -1,0 +1,6 @@
+{
+  "utc": "2026-10-12T12:36:16.718457+00:00",
+  "device": "CPU FP32 one thread for fitting and V inference",
+  "resources": "Existing budget/deadline/RAM/disk guards; no CUDA initialization",
+  "planned_updates": 5000
+}

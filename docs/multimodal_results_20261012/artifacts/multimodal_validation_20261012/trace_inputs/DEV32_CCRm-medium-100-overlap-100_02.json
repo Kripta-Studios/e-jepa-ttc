@@ -1,0 +1,198 @@
+{
+  "row": {
+    "anchor_us": 16300424,
+    "bbox_sources": [
+      {
+        "available_us": 16100411,
+        "category": "car",
+        "frame_index": 321,
+        "group": 1,
+        "object_id": null,
+        "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRm\\medium-100\\overlap-100\\leftlabel\\0321.json",
+        "sha256": "1b82d13b51b43368018d4c3bdf4a971033e84ea2766eaa4251df57d5b31658c3",
+        "timestamp_us": 16050411
+      },
+      {
+        "available_us": 16200418,
+        "category": "car",
+        "frame_index": 323,
+        "group": 1,
+        "object_id": null,
+        "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRm\\medium-100\\overlap-100\\leftlabel\\0323.json",
+        "sha256": "14bda26e8e9a27273ab77f53e0777c2b79e1355c429cd1daca1ccfd61f06b9a2",
+        "timestamp_us": 16150418
+      },
+      {
+        "available_us": 16250417,
+        "category": "car",
+        "frame_index": 324,
+        "group": 1,
+        "object_id": null,
+        "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRm\\medium-100\\overlap-100\\leftlabel\\0324.json",
+        "sha256": "d9dac530b136686e46c98f1b347502dfa1599a8e2d5877d0325d181b32cd00af",
+        "timestamp_us": 16200417
+      }
+    ],
+    "boxes_xyxy3": [
+      [
+        599.096155024114,
+        351.2026531287163,
+        635.4762102858213,
+        381.2281743579874
+      ],
+      [
+        599.1008303962317,
+        351.9070555958011,
+        636.1856288044628,
+        381.2281743579874
+      ],
+      [
+        599.8009593720532,
+        350.49353446787643,
+        635.466690281746,
+        379.80503299602407
+      ]
+    ],
+    "calibration_sha256": "95c5b51806381390e7d7fa02f3298b7256823cd3a68e7620d8546e7270e0530a",
+    "metadata_sha256": "545a8cb4af682372c768152510f71448aeb328accd99828e0858654375a1e5a2",
+    "query_id": "CCRm-medium-100-overlap-100:02",
+    "raw_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc\\datasets\\evttc\\CCRm\\medium-100\\overlap-100\\2024-08-08-10-47-11.hdf5",
+    "raw_stat": {
+      "mtime_ns": 1785101390231011300,
+      "size_bytes": 8266783070
+    },
+    "scenario_family": "CCRm",
+    "sequence_id": "CCRm-medium-100-overlap-100",
+    "speed_bucket": "medium",
+    "square_xyxy": [
+      589.8237865790268,
+      338.0437490776703,
+      645.4579972495501,
+      393.67795974819353
+    ],
+    "target_type": "car",
+    "windows_us": [
+      [
+        16000424,
+        16100424
+      ],
+      [
+        16100424,
+        16200424
+      ],
+      [
+        16200424,
+        16300424
+      ]
+    ]
+  },
+  "rgb_history": [
+    {
+      "first_sensor_ts_us": 15700409,
+      "anchor_us": 15900414,
+      "available_us": 16300424,
+      "timestamps_us": [
+        15700409,
+        15800407,
+        15900414
+      ],
+      "delta_t_s": [
+        0.099998,
+        0.100007
+      ],
+      "square_xyxy": [
+        930.0,
+        565.5,
+        1008.0,
+        643.5
+      ]
+    },
+    {
+      "first_sensor_ts_us": 15800407,
+      "anchor_us": 16000412,
+      "available_us": 16300424,
+      "timestamps_us": [
+        15800407,
+        15900414,
+        16000412
+      ],
+      "delta_t_s": [
+        0.100007,
+        0.099998
+      ],
+      "square_xyxy": [
+        930.0,
+        565.5,
+        1008.0,
+        643.5
+      ]
+    },
+    {
+      "first_sensor_ts_us": 15900414,
+      "anchor_us": 16100419,
+      "available_us": 16300424,
+      "timestamps_us": [
+        15900414,
+        16000412,
+        16100419
+      ],
+      "delta_t_s": [
+        0.099998,
+        0.100007
+      ],
+      "square_xyxy": [
+        930.0,
+        565.5,
+        1008.0,
+        643.5
+      ]
+    },
+    {
+      "first_sensor_ts_us": 16000412,
+      "anchor_us": 16200417,
+      "available_us": 16300424,
+      "timestamps_us": [
+        16000412,
+        16100419,
+        16200417
+      ],
+      "delta_t_s": [
+        0.100007,
+        0.099998
+      ],
+      "square_xyxy": [
+        930.0,
+        565.5,
+        1008.0,
+        643.5
+      ]
+    },
+    {
+      "first_sensor_ts_us": 16100419,
+      "anchor_us": 16300424,
+      "available_us": 16300424,
+      "timestamps_us": [
+        16100419,
+        16200417,
+        16300424
+      ],
+      "delta_t_s": [
+        0.099998,
+        0.100007
+      ],
+      "square_xyxy": [
+        930.0,
+        565.5,
+        1008.0,
+        643.5
+      ]
+    }
+  ],
+  "reason": "",
+  "registration": null,
+  "normalizers": {
+    "E": "15aaac9df8b19bc8b9df8562a48c7080a0e4294d7f34600f7e7d51dd3f272bf8",
+    "R": "411cf04805ebb83d62ad8421a129c81d38baa838d9533a2269b7cfd51f2cba11"
+  },
+  "instrumented_total_ms": 3418.6161000397988
+}

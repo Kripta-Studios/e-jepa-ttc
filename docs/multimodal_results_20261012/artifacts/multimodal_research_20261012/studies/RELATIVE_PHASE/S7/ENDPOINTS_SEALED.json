@@ -1,0 +1,28 @@
+{
+  "EVENT": {
+    "accumulation_index": 0,
+    "checkpoint_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v16-multimodal-validation\\artifacts\\multimodal_research_20261012\\fits\\R_ANCHOR_RELATIVE_PHASE_EVENT_S7\\checkpoint_last.pt",
+    "checkpoint_sha256": "9e003801aea4dca5833ee1d51ae2038a6b2ecdd3150a3b1dcc9863d381fc4d0d",
+    "complete_state": true,
+    "completed_updates": 2500,
+    "fit_id": "R_ANCHOR_RELATIVE_PHASE_EVENT_S7",
+    "identity_sha256": "566604ce57e8f91a8ad296741e5680d86b44a348eae6b0d17c4be12a9903b593",
+    "recovery_upper": 0,
+    "schema": "rgb_port_checkpoint_receipt_v1",
+    "scientific_endpoint": true,
+    "status": "COMPLETE"
+  },
+  "ZERO": {
+    "accumulation_index": 0,
+    "checkpoint_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v16-multimodal-validation\\artifacts\\multimodal_research_20261012\\fits\\R_ANCHOR_RELATIVE_PHASE_ZERO_S7\\checkpoint_last.pt",
+    "checkpoint_sha256": "af8e6b877e726fe00ca35ef4957629587f35e578a6b4200d2928653ca2662d88",
+    "complete_state": true,
+    "completed_updates": 2500,
+    "fit_id": "R_ANCHOR_RELATIVE_PHASE_ZERO_S7",
+    "identity_sha256": "f5633c142111940218df7bb484a7fca86be69587f2a5a9e4b0701233d6855d07",
+    "recovery_upper": 0,
+    "schema": "rgb_port_checkpoint_receipt_v1",
+    "scientific_endpoint": true,
+    "status": "COMPLETE"
+  }
+}

@@ -1,0 +1,306 @@
+{
+  "utc_start": "2026-10-12T16:24:40.574252+00:00",
+  "status": "COMPLETE",
+  "source_sha256": "1a6cd2cc629aed1d63190f1869184274b67464769950c04e602c0b5071cc1ab7",
+  "admission_source_sha256": "7ff020f27584c55a525d30a872028ed5f2635e892287186d2e2eeda919ac5daa",
+  "idle_owner_contract_sha256": "9b88abd930130067e907026ef3bd86cf806a9a7bf4159ef903734619743c388c",
+  "model_input_freeze_sha256": "85fad0dfb8bac0fa5a09e6f4090818ea2b534908ef3d018e8f88f0805e825b1a",
+  "admission": "Full unchanged live guard before each 128 cached observations and 32 heads, plus deadline every item and final full guard. Frozen inference only; fixed 1 GiB CUDA allocator cap. No optimizer steps. Python-first metadata filtering.",
+  "accounting_before": {
+    "scientific": 80000,
+    "recovery_upper": 0,
+    "pending_upper": 0,
+    "fits": [
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "247c0ec458ce4fd7ddd7a44c17a64f8d865eaf56c9db9241f8e62371738adcfc",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "F_ANCHOR_FUSION_PRESERVING_REFINED_RGB_S7"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "f67713703630fdaf4c69c365c637e8d55152df4cb09496a8be02214e05b22f5d",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "F_ANCHOR_FUSION_PRESERVING_ZERO_RGB_S7"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "31cbfb8e45325cbe44f1548030355b5683d5b5de8243fabfedb0cd2b4d8fac6f",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "GROUP_CROSSFIT_F0_E_S7"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "f9e709c5d0fedff8403966e78029481f0ef1d4783494de416bc15c8849710cda",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "GROUP_CROSSFIT_F0_R_S7"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "3fef5d41eb1c8f03ea070328c17453dce2954d2d49b0039b26e78b9271263b37",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "GROUP_CROSSFIT_F1_E_S7"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "82ba5b61edc80a0ef6041368e6fe6c4fc60a5cf530aa55c66b94c5cf635e1a99",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "GROUP_CROSSFIT_F1_R_S7"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "cfded7a28711aa8522dd4bfed82fd6a3b205e6a46abe69f2d59acad7b7f142c9",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "GROUP_CROSSFIT_F2_E_S7"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "0f089f50241c550f9d3d46ccca529513487fcabc959af453e256eaea83e67307",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "GROUP_CROSSFIT_F2_R_S7"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "8191c0f9b46993043cb18d30a47d03685a5448086a80c16b541c861cd32a7197",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "GROUP_CROSSFIT_F3_E_S7"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "2788283a8c23b38cfb1140605faf697e6595f9e1ebe592f21522515e27334581",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "GROUP_CROSSFIT_F3_R_S7"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "e8960bba681057948c138b6f2e09a05d07216fca0f26ea4b3b277292d175d9cf",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_EVENT_S7"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "5f5994c6dc91da1401f2a51093b25c41e5094ceca9e74e882320f3fd17a4aa50",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_FUSION_STATE_FUSED_S7"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "6bb28df5686fd59cc059ab30254cd836104e0376bb1a4ffae27bad0ee6aae3b7",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_FUSION_STATE_ZERO_FUSED_S7"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "7642286f59a34aacf3d4f2ddbeb3d9d65138ce13b7668c451f0f0a24656493cd",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_GROUP_CROSSFIT_EVENT_S7"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "a65e3b4fffe06227143bfdea51d8d581d5a0d5bdac8a6d535523841d8c2976cc",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_GROUP_CROSSFIT_ZERO_S7"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "eb324aca24a76ab659e9ccc6caf6937609ca74bb14cf3d368e1ad4de765efc48",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_PHASE_ONLY_EVENT_S7"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "63c3a32126b2233b7f16bbfd2dd9dc34acf8d51533dc54ec83134a3365da07bc",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_PHASE_ONLY_REPLICATION_EVENT_S13"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "6e8e8c9e71977d4da31bba1458fa89f5421f69980a1c9caa13e83f125982f30b",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_PHASE_ONLY_REPLICATION_EVENT_S23"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "24e489dfaee6a6381fc38c832d450d9c34796f2b8e038d67be2bf593d9f0a053",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_PHASE_ONLY_REPLICATION_ZERO_S13"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "428e0236364e4154af8341f2789b87634dda1ff72078b15d6da23cc741bdb7a4",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_PHASE_ONLY_REPLICATION_ZERO_S23"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "e293940ac67fa46cc87dc80f11276f259b446eff8c1424a5d4ffd807e4923892",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_PHASE_ONLY_ZERO_S7"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "566604ce57e8f91a8ad296741e5680d86b44a348eae6b0d17c4be12a9903b593",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_RELATIVE_PHASE_EVENT_S7"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "f5633c142111940218df7bb484a7fca86be69587f2a5a9e4b0701233d6855d07",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_RELATIVE_PHASE_ZERO_S7"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "4effc02958132b38f5f4d845c3f9e7399d1df119791467e73227fef7d159474f",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_RGB_REGRET_EVENT_S7"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "1fa957a4a945fe9b69563efb51beb67fc084950eab18d867e8e06b50977a1faa",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_RGB_REGRET_ZERO_S7"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "23e5f421d19261530477ba18e366fbe0d2af8e50c89fcab9cf1087b115e29046",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_UNIT_REPLICATION_EVENT_S13"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "c9019c216afcf06ecc18854ce66273405a35201a6826d391545be0fd551d7607",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_UNIT_REPLICATION_EVENT_S23"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "cd852cae9d51bf08827f89a2c318c580447cb25bb7dcac624caca6e90ddd0aca",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_UNIT_REPLICATION_ZERO_S13"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "9edf9ada28785cca782ca8be2f573dcae16cfcd94ece0d495b254b02066e78ee",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_UNIT_REPLICATION_ZERO_S23"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "5e301175dc8a26382539d26d4da1bf768827d2656327dd45b3e40b089b53cf35",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_UNITS_EVENT_S7"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "24d95b10eb7efc28348165fca96a8535bfd6e10be690f3af9dcd0e527efac299",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_UNITS_ZERO_S7"
+      },
+      {
+        "completed_updates": 2500,
+        "durable_updates": 2500,
+        "identity_sha256": "cd63c668494fe3cc2365def538c36b9802c539a418e5a6410c2facf100184c3c",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1",
+        "fit": "R_ANCHOR_ZERO_S7"
+      }
+    ],
+    "physical_upper": 80000
+  },
+  "utc_end": "2026-10-12T16:31:51.440016+00:00"
+}

@@ -1,0 +1,10 @@
+{
+  "source_sha256": "1359bfb741bba8ea638642b51302741b5cd3db593c16400823f0f1055873578a",
+  "checkpoint_sha256": "18994e8e8e01fadeb19e519f1e6c024ec27017bb2d9b448f9c103eb5f47744ca",
+  "cache_sha256": "7438410d5e39b2f91eb17f9ef2f8c153d2c699bbb9c1ecf2cdf7d380989a331a",
+  "trace_sha256": "763c0e6abc61847d270f7dc9a4ffff6b40ff2d4c8f70204ae3d3c8912137aaaa",
+  "prediction_route": "CPU FP32 batch128; GPU V parity measured separately",
+  "V_numeric_parity": null,
+  "optimizer_updates": 0,
+  "role": "Internal descriptive H/V; no causal attribution; H states not OOF"
+}

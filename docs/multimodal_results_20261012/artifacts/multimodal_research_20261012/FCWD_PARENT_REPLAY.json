@@ -1,0 +1,104 @@
+{
+  "summary": {
+    "E_CTX_MATCHED": {
+      "comparisons": 630,
+      "max_delta_s": 0.6095924377441406,
+      "mean_delta_s": 0.0029835360390799374,
+      "sign_changes": 0,
+      "worst_queries": [
+        {
+          "query_id": "FCWD1:0205",
+          "model": "E_CTX_MATCHED",
+          "cpu": -37.75719451904297,
+          "historical": -38.36678695678711,
+          "delta_s": 0.6095924377441406,
+          "sign_changed": false
+        },
+        {
+          "query_id": "FCWD2:0211",
+          "model": "E_CTX_MATCHED",
+          "cpu": 4.587038993835449,
+          "historical": 4.416272640228272,
+          "delta_s": 0.17076635360717685,
+          "sign_changed": false
+        },
+        {
+          "query_id": "FCWD1:0204",
+          "model": "E_CTX_MATCHED",
+          "cpu": 18.057880401611328,
+          "historical": 17.894956588745117,
+          "delta_s": 0.16292381286621094,
+          "sign_changed": false
+        }
+      ]
+    },
+    "F_TRUE": {
+      "comparisons": 630,
+      "max_delta_s": 0.5147342681884766,
+      "mean_delta_s": 0.002752979218013729,
+      "sign_changes": 0,
+      "worst_queries": [
+        {
+          "query_id": "FCWD2:0211",
+          "model": "F_TRUE",
+          "cpu": 10.078481674194336,
+          "historical": 10.593215942382812,
+          "delta_s": 0.5147342681884766,
+          "sign_changed": false
+        },
+        {
+          "query_id": "FCWD2:0209",
+          "model": "F_TRUE",
+          "cpu": -34.570430755615234,
+          "historical": -34.74057388305664,
+          "delta_s": 0.17014312744140625,
+          "sign_changed": false
+        },
+        {
+          "query_id": "FCWD1:0206",
+          "model": "F_TRUE",
+          "cpu": 37.249488830566406,
+          "historical": 37.11476135253906,
+          "delta_s": 0.13472747802734375,
+          "sign_changed": false
+        }
+      ]
+    },
+    "R_CTX": {
+      "comparisons": 495,
+      "max_delta_s": 0.037288665771484375,
+      "mean_delta_s": 0.0006797491902052889,
+      "sign_changes": 0,
+      "worst_queries": [
+        {
+          "query_id": "FCWD2:0211",
+          "model": "R_CTX",
+          "cpu": -21.939903259277344,
+          "historical": -21.977191925048828,
+          "delta_s": 0.037288665771484375,
+          "sign_changed": false
+        },
+        {
+          "query_id": "FCWD2:0208",
+          "model": "R_CTX",
+          "cpu": 30.903968811035156,
+          "historical": 30.874181747436523,
+          "delta_s": 0.029787063598632812,
+          "sign_changed": false
+        },
+        {
+          "query_id": "FCWD3:0196",
+          "model": "R_CTX",
+          "cpu": 13.132063865661621,
+          "historical": 13.10442066192627,
+          "delta_s": 0.027643203735351562,
+          "sign_changed": false
+        }
+      ]
+    }
+  },
+  "prediction_source_sha256": "d83a05711646ef00272d29ee9df1e7e0d200c94c785076bf0ed8d6117e34815a",
+  "queries": 630,
+  "targets_read": false,
+  "scope": "CPU frozen replay vs historical GPU; no replacement of historical output"
+}

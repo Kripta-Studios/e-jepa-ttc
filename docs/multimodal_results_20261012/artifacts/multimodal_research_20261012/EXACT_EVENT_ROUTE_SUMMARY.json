@@ -1,0 +1,24 @@
+[
+  {
+    "cohort": "DEV32",
+    "queries": 32,
+    "comparisons": 64,
+    "native_mean_ms": 1284.5929281211284,
+    "reuse_mean_ms": 1045.8663187473576,
+    "ratio_total_ms": 0.8141616661996286,
+    "native_p50_ms": 1131.0714000137523,
+    "reuse_p50_ms": 1006.8944999948144,
+    "all_outputs_exact": true
+  },
+  {
+    "cohort": "FCWD",
+    "queries": 32,
+    "comparisons": 64,
+    "native_mean_ms": 1116.8257874942356,
+    "reuse_mean_ms": 823.2432468748812,
+    "ratio_total_ms": 0.7371277204495337,
+    "native_p50_ms": 716.6739999956917,
+    "reuse_p50_ms": 565.2253000007477,
+    "all_outputs_exact": true
+  }
+]

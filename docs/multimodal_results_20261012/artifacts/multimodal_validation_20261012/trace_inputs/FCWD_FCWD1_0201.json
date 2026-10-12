@@ -1,0 +1,145 @@
+{
+  "row": {
+    "anchor_relative_seconds": 16.165977,
+    "anchor_us": 16165977,
+    "bbox_sources": [
+      {
+        "available_us": 15965734,
+        "path": "E:\\FCWD_dataset\\sealed_labels\\sequence_1\\bounding_box.csv",
+        "rgb_frame_index": 318,
+        "row_index": 201,
+        "sha256": "936fcaa0115ff1e7dbe09bedf472d1eba5196e700a4e82c79c1df86e3d4375b4",
+        "timestamp_us": 15915734
+      },
+      {
+        "available_us": 16065829,
+        "path": "E:\\FCWD_dataset\\sealed_labels\\sequence_1\\bounding_box.csv",
+        "rgb_frame_index": 320,
+        "row_index": 203,
+        "sha256": "936fcaa0115ff1e7dbe09bedf472d1eba5196e700a4e82c79c1df86e3d4375b4",
+        "timestamp_us": 16015829
+      },
+      {
+        "available_us": 16165925,
+        "path": "E:\\FCWD_dataset\\sealed_labels\\sequence_1\\bounding_box.csv",
+        "rgb_frame_index": 322,
+        "row_index": 205,
+        "sha256": "936fcaa0115ff1e7dbe09bedf472d1eba5196e700a4e82c79c1df86e3d4375b4",
+        "timestamp_us": 16115925
+      }
+    ],
+    "boxes_xyxy3": [
+      [
+        1.0,
+        1.0,
+        1280.0,
+        720.0
+      ],
+      [
+        1.0,
+        1.0,
+        1280.0,
+        720.0
+      ],
+      [
+        1.0,
+        1.0,
+        1280.0,
+        720.0
+      ]
+    ],
+    "garl_full_available": false,
+    "garl_full_unavailable_reason": "MISSING_AUDITED_EVENT_TO_RGB_SPATIAL_MAPPING",
+    "metadata_sha256": "4d679592d16bcce187eb610179c662bdff39278373cdbf17edb91af250e856fe",
+    "query_id": "FCWD1:0201",
+    "raw_path": "E:\\FCWD_dataset\\inputs\\sequence_1\\2024-03-02-10-35-27.hdf5",
+    "raw_stat": {
+      "mtime_ns": 1720708634000000000,
+      "size_bytes": 2383285966
+    },
+    "sequence_id": "FCWD1",
+    "square_xyxy": [
+      -318.75,
+      -598.75,
+      1599.75,
+      1319.75
+    ],
+    "windows_us": [
+      [
+        15865977,
+        15965977
+      ],
+      [
+        15965977,
+        16065977
+      ],
+      [
+        16065977,
+        16165977
+      ]
+    ]
+  },
+  "rgb_history": [],
+  "reason": "WEAK_OR_UNSTABLE_LOCAL_REGISTRATION",
+  "registration": {
+    "accepted": false,
+    "available_us": 16165977,
+    "binding_sha256": "87e859193cde854aa02e22c5566ad9b84d7e42be756a0f0a9a25f6d0f4ae0ef7",
+    "count_maps_sha256": "a97e2f4dec73f9a55af98288445b45c9f945ec36c4a7eacf0b12de36ae580ed6",
+    "event_interval_us": [
+      16145977,
+      16165977
+    ],
+    "half_window_disagreement_px": 4.0,
+    "labels_read": false,
+    "matches": [
+      {
+        "ncc": 0.23247180879116058,
+        "shift_px": [
+          -22,
+          -75
+        ]
+      },
+      {
+        "ncc": 0.1365041583776474,
+        "shift_px": [
+          -22,
+          -72
+        ]
+      },
+      {
+        "ncc": 0.2117501050233841,
+        "shift_px": [
+          -22,
+          -76
+        ]
+      }
+    ],
+    "metric_extrinsic_calibration": false,
+    "model": "published_intrinsics_plus_query_local_translation",
+    "query_id": "FCWD1:0201",
+    "query_us": 16165977,
+    "reason": "WEAK_OR_UNSTABLE_LOCAL_REGISTRATION",
+    "rgb_frame_index": 323,
+    "rgb_sensor_us": 16165977,
+    "rgb_sha256": "522fdc5fa51360a54e0e9dbe9edf3fa5709183d45d4aa6b2c5700697a2d6a6cc",
+    "search_boundary": false,
+    "sequence_id": "FCWD1",
+    "shift_px": [
+      -22,
+      -75
+    ],
+    "support_pixels": 24427,
+    "template_xyxy": [
+      192,
+      108,
+      1089,
+      613
+    ]
+  },
+  "normalizers": {
+    "E": "15aaac9df8b19bc8b9df8562a48c7080a0e4294d7f34600f7e7d51dd3f272bf8",
+    "R": "411cf04805ebb83d62ad8421a129c81d38baa838d9533a2269b7cfd51f2cba11"
+  },
+  "instrumented_total_ms": 2411.7585999774747
+}

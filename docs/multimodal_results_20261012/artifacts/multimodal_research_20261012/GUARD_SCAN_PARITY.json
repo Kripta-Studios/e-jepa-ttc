@@ -1,0 +1,16 @@
+{
+  "stable_python_processes": 12,
+  "stable_metadata_exact": true,
+  "admission": {
+    "available_bytes": 17869152256,
+    "own_rss": 496439296,
+    "own_queue_rss": 0,
+    "research_rss": 3659870208,
+    "commit_headroom": 29198409728,
+    "cpu_threads": 1,
+    "device": "cpu"
+  },
+  "source_sha256": "009a5d0aa1e2ec3d8242208ed8f5b68397518811c5cacfe4659deb385d19b434",
+  "optimizer_updates": 0,
+  "limits_unchanged": true
+}

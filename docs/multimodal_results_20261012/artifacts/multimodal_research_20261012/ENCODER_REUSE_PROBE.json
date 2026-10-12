@@ -1,0 +1,151 @@
+{
+  "rows": [
+    {
+      "query_id": "FCWD1:0007",
+      "encoder": [
+        {
+          "model": "E_A5_MATCHED",
+          "frames": 12,
+          "unique": 6,
+          "checks": [
+            {
+              "exact": true,
+              "max_abs_delta": 0.0
+            },
+            {
+              "exact": true,
+              "max_abs_delta": 0.0
+            },
+            {
+              "exact": true,
+              "max_abs_delta": 0.0
+            }
+          ]
+        },
+        {
+          "model": "E_C2F_MATCHED",
+          "frames": 12,
+          "unique": 6,
+          "checks": [
+            {
+              "exact": true,
+              "max_abs_delta": 0.0
+            },
+            {
+              "exact": true,
+              "max_abs_delta": 0.0
+            },
+            {
+              "exact": true,
+              "max_abs_delta": 0.0
+            }
+          ]
+        }
+      ],
+      "features_exact": true,
+      "experts_exact": true,
+      "feature_max_delta": 0.0,
+      "expert_max_delta": 0.0
+    },
+    {
+      "query_id": "FCWD2:0004",
+      "encoder": [
+        {
+          "model": "E_A5_MATCHED",
+          "frames": 12,
+          "unique": 6,
+          "checks": [
+            {
+              "exact": true,
+              "max_abs_delta": 0.0
+            },
+            {
+              "exact": true,
+              "max_abs_delta": 0.0
+            },
+            {
+              "exact": true,
+              "max_abs_delta": 0.0
+            }
+          ]
+        },
+        {
+          "model": "E_C2F_MATCHED",
+          "frames": 12,
+          "unique": 6,
+          "checks": [
+            {
+              "exact": true,
+              "max_abs_delta": 0.0
+            },
+            {
+              "exact": true,
+              "max_abs_delta": 0.0
+            },
+            {
+              "exact": true,
+              "max_abs_delta": 0.0
+            }
+          ]
+        }
+      ],
+      "features_exact": true,
+      "experts_exact": true,
+      "feature_max_delta": 0.0,
+      "expert_max_delta": 0.0
+    },
+    {
+      "query_id": "FCWD3:0023",
+      "encoder": [
+        {
+          "model": "E_A5_MATCHED",
+          "frames": 12,
+          "unique": 6,
+          "checks": [
+            {
+              "exact": true,
+              "max_abs_delta": 0.0
+            },
+            {
+              "exact": true,
+              "max_abs_delta": 0.0
+            },
+            {
+              "exact": true,
+              "max_abs_delta": 0.0
+            }
+          ]
+        },
+        {
+          "model": "E_C2F_MATCHED",
+          "frames": 12,
+          "unique": 6,
+          "checks": [
+            {
+              "exact": true,
+              "max_abs_delta": 0.0
+            },
+            {
+              "exact": true,
+              "max_abs_delta": 0.0
+            },
+            {
+              "exact": true,
+              "max_abs_delta": 0.0
+            }
+          ]
+        }
+      ],
+      "features_exact": true,
+      "experts_exact": true,
+      "feature_max_delta": 0.0,
+      "expert_max_delta": 0.0
+    }
+  ],
+  "source_sha256": "e8dda3e7b6b9fa0137e51332f94ce9516f26cad0f503deeb5b39419282f8ea0a",
+  "optimizer_updates": 0,
+  "targets_read": false,
+  "scope": "3 hash-selected FCWD queries, CPU 1 thread; batch-size change inspected",
+  "promoted": false,
+  "latency_measured": false
+}

@@ -1,0 +1,8 @@
+{
+  "utc": "2026-10-12T11:50:39.160784+00:00",
+  "device": "CPU FP32 one thread for both fitting and V inference",
+  "reason": "Keep GPU available for native FCWD replay; paired arms retain identical precision and capacity",
+  "optimizer": "Native AdamW without foreach; native complete CPU checkpoint including CPU RNG and sampler; no CUDA RNG needed",
+  "limits": "Original physical update and elapsed deadline, RAM/disk guards; GPU-owner barrier irrelevant to verified CPU-only process",
+  "preregistration_unmodified": true
+}

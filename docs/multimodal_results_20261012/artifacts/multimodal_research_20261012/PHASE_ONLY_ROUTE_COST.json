@@ -1,0 +1,81 @@
+{
+  "source_sha256": "d6648b25ae37522c96fda6a871dd878bd9fe2ee00dfc485bada3132695cba01f",
+  "checkpoint_sha256": "7602bd42cf444c002e8d2afe09c13445661fd960754eb78fd96443e8298771bb",
+  "summary": {
+    "FCWD": {
+      "event_read_voxels_ms": {
+        "p50": 438.3553499937989,
+        "p95": 2785.87745501427
+      },
+      "event_producers_pair_ms": {
+        "p50": 410.4819000058342,
+        "p95": 421.5567900071619
+      },
+      "event_context_state_ms": {
+        "p50": 2.5743500445969403,
+        "p95": 3.1097399740247056
+      },
+      "rgb_read_crop_ms": {
+        "p50": 219.66664999490604,
+        "p95": 283.6522350204177
+      },
+      "rgb_producers_pair_ms": {
+        "p50": 657.4340499937534,
+        "p95": 703.4734450018732
+      },
+      "rgb_context_state_ms": {
+        "p50": 2.5859500165097415,
+        "p95": 4.158774987445213
+      },
+      "correction_ms": {
+        "p50": 0.7181000255513936,
+        "p95": 0.8903400128474459
+      },
+      "sensor_to_candidate_ms": {
+        "p50": 1630.3490999853238,
+        "p95": 4147.541970008751
+      }
+    },
+    "DEV32": {
+      "event_read_voxels_ms": {
+        "p50": 726.7720499949064,
+        "p95": 1935.2397700306021
+      },
+      "event_producers_pair_ms": {
+        "p50": 411.81130000040866,
+        "p95": 421.13766000256874
+      },
+      "event_context_state_ms": {
+        "p50": 2.5016999861691147,
+        "p95": 2.997914992738515
+      },
+      "rgb_read_crop_ms": {
+        "p50": 239.5861000113655,
+        "p95": 300.7831949653337
+      },
+      "rgb_producers_pair_ms": {
+        "p50": 664.4180500297807,
+        "p95": 690.6325849995483
+      },
+      "rgb_context_state_ms": {
+        "p50": 2.827049989718944,
+        "p95": 3.155810001771897
+      },
+      "correction_ms": {
+        "p50": 0.7784000190440565,
+        "p95": 0.8968699985416606
+      },
+      "sensor_to_candidate_ms": {
+        "p50": 2022.164200025145,
+        "p95": 3295.2779800223648
+      }
+    }
+  },
+  "rows": 128,
+  "all_states_and_candidate_points_exact": true,
+  "optimizer_updates": 0,
+  "scope": "CPU FP32 one thread, concurrent system load. Raw sensor read through candidate, resident weights, public/frozen ROI and already sealed FCWD registration. Excludes registration search, detector and initialization; no streaming claim.",
+  "csv_sha256": "ada8362300c49e6b92b9f27a5a59bbda6e2d69fbf53b999967d9c863809dd6e0",
+  "output_route": "Emitted point phase converted to TTC, matching the sealed evaluator",
+  "supersedes": "phase_only_cost_v1 retained direct raw-head TTC API cost; this version also times the evaluator's final emitted-phase conversion"
+}

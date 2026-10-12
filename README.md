@@ -1,5 +1,12 @@
 # E-JEPA-TTC
 
+> Actualización del 12 de octubre de 2026:
+> [informe detallado y resultados multimodales V16](docs/multimodal_results_20261012/README.md).
+> Comparación Garl visual/full FCWD completada; 32 fits, 80.000 updates y candidato
+> PHASE_ONLY con tres semillas de cabeza. Inferencia test12 completa: 6.762 tokens.
+> Las tablas incluyen resultados negativos y compromisos de transferencia.
+> Sin puntuación oficial nueva; SOTA no demostrado.
+
 > Actualización del 8 de octubre de 2026:
 > [informes del 4–8 de octubre](docs/research_review_20261004_08/README.md), con
 > TRAIN40 completo, comparación EvTTC congelada frente a Garl event-only y

@@ -1,0 +1,12 @@
+{
+  "historical_source_sha256": "456541246081bc7578f39836f333010fc2d710fcd0ac600edc9216f8285d8621",
+  "source_sha256": "b221774011a8901832c404aa38802c4159e4c08dd6a1dcfa699507546062865e",
+  "queries": 1024,
+  "labelled": 946,
+  "rgb_available": 1024,
+  "official_overall_MiD_available": false,
+  "external_selection": false,
+  "optimizer_updates": 0,
+  "study": "baseline",
+  "validation_decision": null
+}

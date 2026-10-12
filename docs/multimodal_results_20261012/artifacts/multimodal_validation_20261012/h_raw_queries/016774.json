@@ -1,0 +1,291 @@
+{
+  "sample_token": "qGsgzl4Q8B_000002_10185600000",
+  "prediction": -5.582136631011963,
+  "metadata": {
+    "ordinal": 74619,
+    "source_ordinal": 74624,
+    "sample_token": "qGsgzl4Q8B_000002_10185600000",
+    "sequence_id": "qGsgzl4Q8B",
+    "group_id": "qGsgzl4Q8B",
+    "track_id": "qGsgzl4Q8B_000002",
+    "public_track_id": "qGsgzl4Q8B_000002",
+    "role": "H",
+    "query_time_us": 10185600000,
+    "cutoff_us": 10185600000,
+    "rgb_available": true,
+    "frame_ids": [
+      "qGsgzl4Q8B_000002|rgb/000000917_000731557.png",
+      "qGsgzl4Q8B_000002|rgb/000000917_000831559.png",
+      "qGsgzl4Q8B_000002|rgb/000000918_000131564.png",
+      "qGsgzl4Q8B_000002|rgb/000000918_000231565.png",
+      "qGsgzl4Q8B_000002|rgb/000000918_000331567.png"
+    ],
+    "producer_frame_ids": [
+      "qGsgzl4Q8B_000002|rgb/000000918_000131564.png",
+      "qGsgzl4Q8B_000002|rgb/000000918_000231565.png",
+      "qGsgzl4Q8B_000002|rgb/000000918_000331567.png"
+    ],
+    "producer_times_us": [
+      10185400000,
+      10185500000,
+      10185600000
+    ],
+    "producer_available_us": [
+      10185400000,
+      10185500000,
+      10185600000
+    ],
+    "producer_sensor_times_us": [
+      918131564,
+      918231565,
+      918331567
+    ],
+    "producer_shards": [
+      "data/train/qGsgzl4Q8B/rgb_shards/rgb-00000.tar",
+      "data/train/qGsgzl4Q8B/rgb_shards/rgb-00000.tar",
+      "data/train/qGsgzl4Q8B/rgb_shards/rgb-00000.tar"
+    ],
+    "producer_members": [
+      "rgb/000000918_000131564.png",
+      "rgb/000000918_000231565.png",
+      "rgb/000000918_000331567.png"
+    ],
+    "producer_boxes_xyxy": [
+      [
+        425.0,
+        455.0,
+        639.0,
+        656.0
+      ],
+      [
+        430.0,
+        456.0,
+        636.0,
+        664.0
+      ],
+      [
+        434.0,
+        468.0,
+        635.0,
+        667.0
+      ]
+    ],
+    "distinct_frames": 5,
+    "producer_frame_count": 3,
+    "distinct_observations": 3,
+    "observation_ids": [
+      "2e21edd1d6438c40ecf8b42d581156789e5aedf07261e7048e129c23e8f747d0",
+      "5b948d962573c08ecf637973e930b76ee855da44b677c374d973a34a628e001b",
+      "d5837fea67fe134e752b95d8c5c3a62159eb3a07e7962a2bb8cfafbbd0a45235"
+    ],
+    "observation_frame_ids": [
+      [
+        "qGsgzl4Q8B_000002|rgb/000000917_000731557.png",
+        "qGsgzl4Q8B_000002|rgb/000000917_000831559.png",
+        "qGsgzl4Q8B_000002|rgb/000000918_000131564.png"
+      ],
+      [
+        "qGsgzl4Q8B_000002|rgb/000000917_000831559.png",
+        "qGsgzl4Q8B_000002|rgb/000000918_000131564.png",
+        "qGsgzl4Q8B_000002|rgb/000000918_000231565.png"
+      ],
+      [
+        "qGsgzl4Q8B_000002|rgb/000000918_000131564.png",
+        "qGsgzl4Q8B_000002|rgb/000000918_000231565.png",
+        "qGsgzl4Q8B_000002|rgb/000000918_000331567.png"
+      ]
+    ],
+    "observation_times_us": [
+      [
+        10185000000,
+        10185100000,
+        10185400000
+      ],
+      [
+        10185100000,
+        10185400000,
+        10185500000
+      ],
+      [
+        10185400000,
+        10185500000,
+        10185600000
+      ]
+    ],
+    "observation_available_us": [
+      [
+        10185000000,
+        10185100000,
+        10185400000
+      ],
+      [
+        10185100000,
+        10185400000,
+        10185500000
+      ],
+      [
+        10185400000,
+        10185500000,
+        10185600000
+      ]
+    ],
+    "observation_sensor_times_us": [
+      [
+        917731557,
+        917831559,
+        918131564
+      ],
+      [
+        917831559,
+        918131564,
+        918231565
+      ],
+      [
+        918131564,
+        918231565,
+        918331567
+      ]
+    ],
+    "observation_shards": [
+      [
+        "data/train/qGsgzl4Q8B/rgb_shards/rgb-00000.tar",
+        "data/train/qGsgzl4Q8B/rgb_shards/rgb-00000.tar",
+        "data/train/qGsgzl4Q8B/rgb_shards/rgb-00000.tar"
+      ],
+      [
+        "data/train/qGsgzl4Q8B/rgb_shards/rgb-00000.tar",
+        "data/train/qGsgzl4Q8B/rgb_shards/rgb-00000.tar",
+        "data/train/qGsgzl4Q8B/rgb_shards/rgb-00000.tar"
+      ],
+      [
+        "data/train/qGsgzl4Q8B/rgb_shards/rgb-00000.tar",
+        "data/train/qGsgzl4Q8B/rgb_shards/rgb-00000.tar",
+        "data/train/qGsgzl4Q8B/rgb_shards/rgb-00000.tar"
+      ]
+    ],
+    "observation_members": [
+      [
+        "rgb/000000917_000731557.png",
+        "rgb/000000917_000831559.png",
+        "rgb/000000918_000131564.png"
+      ],
+      [
+        "rgb/000000917_000831559.png",
+        "rgb/000000918_000131564.png",
+        "rgb/000000918_000231565.png"
+      ],
+      [
+        "rgb/000000918_000131564.png",
+        "rgb/000000918_000231565.png",
+        "rgb/000000918_000331567.png"
+      ]
+    ],
+    "observation_boxes_xyxy": [
+      [
+        [
+          412.0,
+          472.0,
+          640.0,
+          691.0
+        ],
+        [
+          419.0,
+          472.0,
+          640.0,
+          689.0
+        ],
+        [
+          425.0,
+          455.0,
+          639.0,
+          656.0
+        ]
+      ],
+      [
+        [
+          419.0,
+          472.0,
+          640.0,
+          689.0
+        ],
+        [
+          425.0,
+          455.0,
+          639.0,
+          656.0
+        ],
+        [
+          430.0,
+          456.0,
+          636.0,
+          664.0
+        ]
+      ],
+      [
+        [
+          425.0,
+          455.0,
+          639.0,
+          656.0
+        ],
+        [
+          430.0,
+          456.0,
+          636.0,
+          664.0
+        ],
+        [
+          434.0,
+          468.0,
+          635.0,
+          667.0
+        ]
+      ]
+    ],
+    "observation_rois_xyxy": [
+      [
+        354.0,
+        396.5,
+        705.0,
+        747.5
+      ],
+      [
+        371.5,
+        399.0,
+        692.5,
+        720.0
+      ],
+      [
+        374.75,
+        403.25,
+        691.25,
+        719.75
+      ]
+    ],
+    "observation_anchor_us": [
+      10185400000,
+      10185500000,
+      10185600000
+    ],
+    "observation_query_age_us": [
+      200000,
+      100000,
+      0
+    ],
+    "actual_span_us": 200000,
+    "rgb_anchor_us": 10185600000,
+    "query_delay_us": 0,
+    "roi_xyxy": [
+      374.75,
+      403.25,
+      691.25,
+      719.75
+    ],
+    "calibration_id": "eap_public_train_rgb_bbox_space_v1",
+    "foreground_source": "public_train_bbox_geometry",
+    "dino_teacher_available": false,
+    "target_ttc": -7.135035223030513,
+    "target_phase": -0.013918040922022845,
+    "mass": 6.860592755214051e-05
+  }
+}

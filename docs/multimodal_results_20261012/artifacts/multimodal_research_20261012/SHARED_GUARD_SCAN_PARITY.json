@@ -1,0 +1,12 @@
+{
+  "utc": "2026-10-12T15:45:44.814061+00:00",
+  "stable_python_processes": 13,
+  "stable_metadata_exact": true,
+  "timing_ms": {
+    "native": 15484.83669999996,
+    "python_first": 19.300000000043838
+  },
+  "source_sha256": "009a5d0aa1e2ec3d8242208ed8f5b68397518811c5cacfe4659deb385d19b434",
+  "limits_unchanged": true,
+  "optimizer_updates": 0
+}

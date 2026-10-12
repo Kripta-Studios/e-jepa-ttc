@@ -1,0 +1,411 @@
+{
+  "sample_token": "L36QTEoVkB_000805_1922500000",
+  "prediction": 6.263449192047119,
+  "metadata": {
+    "ordinal": 41273,
+    "source_ordinal": 41435,
+    "sample_token": "L36QTEoVkB_000805_1922500000",
+    "sequence_id": "L36QTEoVkB",
+    "group_id": "L36QTEoVkB",
+    "track_id": "L36QTEoVkB_000805",
+    "public_track_id": "L36QTEoVkB_000805",
+    "role": "H",
+    "query_time_us": 1922500000,
+    "cutoff_us": 1922500000,
+    "rgb_available": true,
+    "frame_ids": [
+      "L36QTEoVkB_000805|rgb/000000911_000648418.png",
+      "L36QTEoVkB_000805|rgb/000000911_000748419.png",
+      "L36QTEoVkB_000805|rgb/000000911_000848420.png",
+      "L36QTEoVkB_000805|rgb/000000911_000948422.png",
+      "L36QTEoVkB_000805|rgb/000000912_000048423.png",
+      "L36QTEoVkB_000805|rgb/000000912_000148425.png",
+      "L36QTEoVkB_000805|rgb/000000912_000248426.png"
+    ],
+    "producer_frame_ids": [
+      "L36QTEoVkB_000805|rgb/000000912_000048423.png",
+      "L36QTEoVkB_000805|rgb/000000912_000148425.png",
+      "L36QTEoVkB_000805|rgb/000000912_000248426.png"
+    ],
+    "producer_times_us": [
+      1922300000,
+      1922400000,
+      1922500000
+    ],
+    "producer_available_us": [
+      1922300000,
+      1922400000,
+      1922500000
+    ],
+    "producer_sensor_times_us": [
+      912048423,
+      912148425,
+      912248426
+    ],
+    "producer_shards": [
+      "data/train/L36QTEoVkB/rgb_shards/rgb-00001.tar",
+      "data/train/L36QTEoVkB/rgb_shards/rgb-00001.tar",
+      "data/train/L36QTEoVkB/rgb_shards/rgb-00001.tar"
+    ],
+    "producer_members": [
+      "rgb/000000912_000048423.png",
+      "rgb/000000912_000148425.png",
+      "rgb/000000912_000248426.png"
+    ],
+    "producer_boxes_xyxy": [
+      [
+        597.0,
+        326.0,
+        843.0,
+        630.0
+      ],
+      [
+        601.0,
+        335.0,
+        857.0,
+        644.0
+      ],
+      [
+        607.0,
+        332.0,
+        875.0,
+        643.0
+      ]
+    ],
+    "distinct_frames": 7,
+    "producer_frame_count": 3,
+    "distinct_observations": 5,
+    "observation_ids": [
+      "7bf485f574642a62c2fcfc90935520ed08743eaed647e57c561f0325b254f029",
+      "2b1192d7e01888e7942d43e229fbd8006924ac2ae57d4f11f4df07a56775b1fc",
+      "e38be0f6df3c2d350ac7a08e1dfc19671ca6c7564b2cb67b014c8d524bdbf872",
+      "c6447d25e3b1855038c4d23c97d0fc3a779c3cc451898074a60448d2dc494f96",
+      "95ae0da85fe71e65794e2bdc99df9673381f03444f91ed6eae12e24037e50ca7"
+    ],
+    "observation_frame_ids": [
+      [
+        "L36QTEoVkB_000805|rgb/000000911_000648418.png",
+        "L36QTEoVkB_000805|rgb/000000911_000748419.png",
+        "L36QTEoVkB_000805|rgb/000000911_000848420.png"
+      ],
+      [
+        "L36QTEoVkB_000805|rgb/000000911_000748419.png",
+        "L36QTEoVkB_000805|rgb/000000911_000848420.png",
+        "L36QTEoVkB_000805|rgb/000000911_000948422.png"
+      ],
+      [
+        "L36QTEoVkB_000805|rgb/000000911_000848420.png",
+        "L36QTEoVkB_000805|rgb/000000911_000948422.png",
+        "L36QTEoVkB_000805|rgb/000000912_000048423.png"
+      ],
+      [
+        "L36QTEoVkB_000805|rgb/000000911_000948422.png",
+        "L36QTEoVkB_000805|rgb/000000912_000048423.png",
+        "L36QTEoVkB_000805|rgb/000000912_000148425.png"
+      ],
+      [
+        "L36QTEoVkB_000805|rgb/000000912_000048423.png",
+        "L36QTEoVkB_000805|rgb/000000912_000148425.png",
+        "L36QTEoVkB_000805|rgb/000000912_000248426.png"
+      ]
+    ],
+    "observation_times_us": [
+      [
+        1921900000,
+        1922000000,
+        1922100000
+      ],
+      [
+        1922000000,
+        1922100000,
+        1922200000
+      ],
+      [
+        1922100000,
+        1922200000,
+        1922300000
+      ],
+      [
+        1922200000,
+        1922300000,
+        1922400000
+      ],
+      [
+        1922300000,
+        1922400000,
+        1922500000
+      ]
+    ],
+    "observation_available_us": [
+      [
+        1921900000,
+        1922000000,
+        1922100000
+      ],
+      [
+        1922000000,
+        1922100000,
+        1922200000
+      ],
+      [
+        1922100000,
+        1922200000,
+        1922300000
+      ],
+      [
+        1922200000,
+        1922300000,
+        1922400000
+      ],
+      [
+        1922300000,
+        1922400000,
+        1922500000
+      ]
+    ],
+    "observation_sensor_times_us": [
+      [
+        911648418,
+        911748419,
+        911848420
+      ],
+      [
+        911748419,
+        911848420,
+        911948422
+      ],
+      [
+        911848420,
+        911948422,
+        912048423
+      ],
+      [
+        911948422,
+        912048423,
+        912148425
+      ],
+      [
+        912048423,
+        912148425,
+        912248426
+      ]
+    ],
+    "observation_shards": [
+      [
+        "data/train/L36QTEoVkB/rgb_shards/rgb-00001.tar",
+        "data/train/L36QTEoVkB/rgb_shards/rgb-00001.tar",
+        "data/train/L36QTEoVkB/rgb_shards/rgb-00001.tar"
+      ],
+      [
+        "data/train/L36QTEoVkB/rgb_shards/rgb-00001.tar",
+        "data/train/L36QTEoVkB/rgb_shards/rgb-00001.tar",
+        "data/train/L36QTEoVkB/rgb_shards/rgb-00001.tar"
+      ],
+      [
+        "data/train/L36QTEoVkB/rgb_shards/rgb-00001.tar",
+        "data/train/L36QTEoVkB/rgb_shards/rgb-00001.tar",
+        "data/train/L36QTEoVkB/rgb_shards/rgb-00001.tar"
+      ],
+      [
+        "data/train/L36QTEoVkB/rgb_shards/rgb-00001.tar",
+        "data/train/L36QTEoVkB/rgb_shards/rgb-00001.tar",
+        "data/train/L36QTEoVkB/rgb_shards/rgb-00001.tar"
+      ],
+      [
+        "data/train/L36QTEoVkB/rgb_shards/rgb-00001.tar",
+        "data/train/L36QTEoVkB/rgb_shards/rgb-00001.tar",
+        "data/train/L36QTEoVkB/rgb_shards/rgb-00001.tar"
+      ]
+    ],
+    "observation_members": [
+      [
+        "rgb/000000911_000648418.png",
+        "rgb/000000911_000748419.png",
+        "rgb/000000911_000848420.png"
+      ],
+      [
+        "rgb/000000911_000748419.png",
+        "rgb/000000911_000848420.png",
+        "rgb/000000911_000948422.png"
+      ],
+      [
+        "rgb/000000911_000848420.png",
+        "rgb/000000911_000948422.png",
+        "rgb/000000912_000048423.png"
+      ],
+      [
+        "rgb/000000911_000948422.png",
+        "rgb/000000912_000048423.png",
+        "rgb/000000912_000148425.png"
+      ],
+      [
+        "rgb/000000912_000048423.png",
+        "rgb/000000912_000148425.png",
+        "rgb/000000912_000248426.png"
+      ]
+    ],
+    "observation_boxes_xyxy": [
+      [
+        [
+          562.0,
+          334.0,
+          803.0,
+          630.0
+        ],
+        [
+          569.0,
+          335.0,
+          820.0,
+          638.0
+        ],
+        [
+          576.0,
+          336.0,
+          826.0,
+          630.0
+        ]
+      ],
+      [
+        [
+          569.0,
+          335.0,
+          820.0,
+          638.0
+        ],
+        [
+          576.0,
+          336.0,
+          826.0,
+          630.0
+        ],
+        [
+          588.0,
+          329.0,
+          837.0,
+          629.0
+        ]
+      ],
+      [
+        [
+          576.0,
+          336.0,
+          826.0,
+          630.0
+        ],
+        [
+          588.0,
+          329.0,
+          837.0,
+          629.0
+        ],
+        [
+          597.0,
+          326.0,
+          843.0,
+          630.0
+        ]
+      ],
+      [
+        [
+          588.0,
+          329.0,
+          837.0,
+          629.0
+        ],
+        [
+          597.0,
+          326.0,
+          843.0,
+          630.0
+        ],
+        [
+          601.0,
+          335.0,
+          857.0,
+          644.0
+        ]
+      ],
+      [
+        [
+          597.0,
+          326.0,
+          843.0,
+          630.0
+        ],
+        [
+          601.0,
+          335.0,
+          857.0,
+          644.0
+        ],
+        [
+          607.0,
+          332.0,
+          875.0,
+          643.0
+        ]
+      ]
+    ],
+    "observation_rois_xyxy": [
+      [
+        470.25,
+        259.25,
+        924.75,
+        713.75
+      ],
+      [
+        480.75,
+        253.75,
+        932.25,
+        705.25
+      ],
+      [
+        487.5,
+        250.0,
+        943.5,
+        706.0
+      ],
+      [
+        488.5,
+        246.5,
+        965.5,
+        723.5
+      ],
+      [
+        504.0,
+        254.0,
+        972.0,
+        722.0
+      ]
+    ],
+    "observation_anchor_us": [
+      1922100000,
+      1922200000,
+      1922300000,
+      1922400000,
+      1922500000
+    ],
+    "observation_query_age_us": [
+      400000,
+      300000,
+      200000,
+      100000,
+      0
+    ],
+    "actual_span_us": 200000,
+    "rgb_anchor_us": 1922500000,
+    "query_delay_us": 0,
+    "roi_xyxy": [
+      504.0,
+      254.0,
+      972.0,
+      722.0
+    ],
+    "calibration_id": "eap_public_train_rgb_bbox_space_v1",
+    "foreground_source": "public_train_bbox_geometry",
+    "dino_teacher_available": false,
+    "target_ttc": 6.332857564188458,
+    "target_phase": 0.01591666055402021,
+    "mass": 5.733944954128441e-05
+  }
+}

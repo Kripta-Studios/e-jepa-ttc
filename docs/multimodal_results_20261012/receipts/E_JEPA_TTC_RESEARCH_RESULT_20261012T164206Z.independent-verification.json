@@ -1,0 +1,19 @@
+{
+  "utc": "2026-10-12T17:15:09.804866+00:00",
+  "status": "PASS",
+  "archive": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v16-multimodal-validation\\artifacts\\E_JEPA_TTC_RESEARCH_RESULT_20261012T164206Z.zip",
+  "archive_sha256": "a59bac60a1a97c4c5e0b279247c98b96b1b4ce1ff3dc8db7781b4cf01372bab9",
+  "extraction": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v16-multimodal-validation\\artifacts\\research_independent_20261012T165833Z",
+  "files": 47842,
+  "verifier_stdout": "Verified 47842 files",
+  "replay_stdout": "{'scalar_checks': 46778, 'internal_tables': 13, 'external_tables': 34, 'verified_fits': 32}",
+  "metric_checks": {
+    "scalar_checks": 46778,
+    "internal_tables": 13,
+    "external_tables": 34,
+    "verified_fits": 32
+  },
+  "positive_component_csv_regenerated_exactly": true,
+  "source_sha256": "afc051fc716f959925cd4ad88713d9db0c0cdbe8b51d4f0b902aa559f504dfe2",
+  "scope": "Fresh extraction with existing Python dependency environment. All manifest payload hashes checked before CSV replay. No sensor inference, downloads, private labels or submissions. Replay regenerates its derived verification receipt after the hash check."
+}

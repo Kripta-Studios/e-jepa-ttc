@@ -1,0 +1,149 @@
+{
+  "scope": "in-sample supervised H; no V or external targets read",
+  "oracle_uses_GT": true,
+  "oracle_deployable": false,
+  "interpretation": "descriptive ceiling for choosing these two predictions, not all possible fusion",
+  "rows": [
+    {
+      "subset": "ALL",
+      "rows": 18422,
+      "event_better": 7772,
+      "rgb_mean_phase_error": 0.00359458290040493,
+      "event_mean_phase_error": 0.004580735694617033,
+      "oracle_min_phase_error": 0.002490399172529578,
+      "global_mass_contribution_rgb": 0.0036769243888556957,
+      "global_mass_contribution_oracle": 0.0025494368746876717
+    },
+    {
+      "subset": "true_positive",
+      "rows": 10796,
+      "event_better": 4467,
+      "rgb_mean_phase_error": 0.00419953279197216,
+      "event_mean_phase_error": 0.00539227994158864,
+      "oracle_min_phase_error": 0.0029723187908530235,
+      "global_mass_contribution_rgb": 0.002549924422055483,
+      "global_mass_contribution_oracle": 0.001813059556297958
+    },
+    {
+      "subset": "true_negative",
+      "rows": 7626,
+      "event_better": 3305,
+      "rgb_mean_phase_error": 0.0027381647378206253,
+      "event_mean_phase_error": 0.0034318463876843452,
+      "oracle_min_phase_error": 0.001808153698220849,
+      "global_mass_contribution_rgb": 0.0011269999668002129,
+      "global_mass_contribution_oracle": 0.0007363774348050356
+    },
+    {
+      "subset": "prediction_sign_disagreement",
+      "rows": 364,
+      "event_better": 82,
+      "rgb_mean_phase_error": 0.008506265468895435,
+      "event_mean_phase_error": 0.021703405305743217,
+      "oracle_min_phase_error": 0.004957911092787981,
+      "global_mass_contribution_rgb": 0.00018052858649753034,
+      "global_mass_contribution_oracle": 0.0001067663833964616
+    },
+    {
+      "subset": "RGB_wrong_sign",
+      "rows": 219,
+      "event_better": 149,
+      "rgb_mean_phase_error": 0.02887478657066822,
+      "event_mean_phase_error": 0.023206856101751328,
+      "oracle_min_phase_error": 0.021094873547554016,
+      "global_mass_contribution_rgb": 0.0003696503699757159,
+      "global_mass_contribution_oracle": 0.00027228493127040565
+    },
+    {
+      "subset": "RGB_raw_in_dead_zone",
+      "rows": 49,
+      "event_better": 36,
+      "rgb_mean_phase_error": 0.020396409556269646,
+      "event_mean_phase_error": 0.014405517838895321,
+      "oracle_min_phase_error": 0.011628390289843082,
+      "global_mass_contribution_rgb": 5.780375431641005e-05,
+      "global_mass_contribution_oracle": 3.336432928335853e-05
+    },
+    {
+      "subset": "group_2JkLL5W891",
+      "rows": 1946,
+      "event_better": 846,
+      "rgb_mean_phase_error": 0.0051008849404752254,
+      "event_mean_phase_error": 0.0067771258763968945,
+      "oracle_min_phase_error": 0.0035658408887684345,
+      "global_mass_contribution_rgb": 0.0006376106175594032,
+      "global_mass_contribution_oracle": 0.00044573014019988477
+    },
+    {
+      "subset": "group_34K84TaN11",
+      "rows": 1524,
+      "event_better": 676,
+      "rgb_mean_phase_error": 0.0029826145619153976,
+      "event_mean_phase_error": 0.0037211980670690536,
+      "oracle_min_phase_error": 0.0020428630523383617,
+      "global_mass_contribution_rgb": 0.0003728268202394247,
+      "global_mass_contribution_oracle": 0.0002553578815422952
+    },
+    {
+      "subset": "group_CzyQ8HKP6X",
+      "rows": 1946,
+      "event_better": 829,
+      "rgb_mean_phase_error": 0.004131345544010401,
+      "event_mean_phase_error": 0.004844158887863159,
+      "oracle_min_phase_error": 0.002978529781103134,
+      "global_mass_contribution_rgb": 0.000516418251208961,
+      "global_mass_contribution_oracle": 0.0003723162808455527
+    },
+    {
+      "subset": "group_JaGC4Q9pgU",
+      "rows": 2383,
+      "event_better": 964,
+      "rgb_mean_phase_error": 0.0029844390228390694,
+      "event_mean_phase_error": 0.003894105553627014,
+      "oracle_min_phase_error": 0.002070144284516573,
+      "global_mass_contribution_rgb": 0.00037305487785488367,
+      "global_mass_contribution_oracle": 0.0002587680355645716
+    },
+    {
+      "subset": "group_L36QTEoVkB",
+      "rows": 2180,
+      "event_better": 967,
+      "rgb_mean_phase_error": 0.0032165071461349726,
+      "event_mean_phase_error": 0.003679675282910466,
+      "oracle_min_phase_error": 0.002125692320987582,
+      "global_mass_contribution_rgb": 0.00040206339326687157,
+      "global_mass_contribution_oracle": 0.0002657115401234478
+    },
+    {
+      "subset": "group_mHGFBekt7X",
+      "rows": 4364,
+      "event_better": 1767,
+      "rgb_mean_phase_error": 0.0027512358501553535,
+      "event_mean_phase_error": 0.0035352157428860664,
+      "oracle_min_phase_error": 0.0019078045152127743,
+      "global_mass_contribution_rgb": 0.0003439044812694192,
+      "global_mass_contribution_oracle": 0.00023847554984968156
+    },
+    {
+      "subset": "group_pBqGOb2vYq",
+      "rows": 2257,
+      "event_better": 989,
+      "rgb_mean_phase_error": 0.005860124249011278,
+      "event_mean_phase_error": 0.007410387508571148,
+      "oracle_min_phase_error": 0.004006491973996162,
+      "global_mass_contribution_rgb": 0.0007325154729187489,
+      "global_mass_contribution_oracle": 0.0005008114967495203
+    },
+    {
+      "subset": "group_qGsgzl4Q8B",
+      "rows": 1822,
+      "event_better": 734,
+      "rgb_mean_phase_error": 0.002388243330642581,
+      "event_mean_phase_error": 0.003647594014182687,
+      "oracle_min_phase_error": 0.0016981286462396383,
+      "global_mass_contribution_rgb": 0.0002985304163303226,
+      "global_mass_contribution_oracle": 0.0002122660807799548
+    }
+  ],
+  "optimizer_updates": 0
+}

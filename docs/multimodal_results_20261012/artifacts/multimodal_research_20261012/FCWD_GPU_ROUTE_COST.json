@@ -1,0 +1,66 @@
+{
+  "source_sha256": "eaf395e89f6d9c5725267ac582f63a1e98b9c3c3dfd3e788fee34d8b92f9556d",
+  "idle_owner_contract_sha256": "9b88abd930130067e907026ef3bd86cf806a9a7bf4159ef903734619743c388c",
+  "checkpoint_sha256": "7602bd42cf444c002e8d2afe09c13445661fd960754eb78fd96443e8298771bb",
+  "selection_sha256": "2635939e314862309b2be44196dd4e0030211e93ddec7afc8dbe2ca716d428a5",
+  "reference_predictions_sha256": "50b3b2a39a1ec0d4460fdcb404c2f8ab55afbafaf3f53e5d94b08ebfd0d5eae2",
+  "rows": 64,
+  "summary": {
+    "registration_ms": {
+      "p50": 148.1074499999977,
+      "p95": 195.7224099997802
+    },
+    "event_read_voxels_ms": {
+      "p50": 293.17665000007764,
+      "p95": 1998.576949999915
+    },
+    "event_h2d_ms": {
+      "p50": 3.3242500001051667,
+      "p95": 8.106735000114895
+    },
+    "event_producers_pair_ms": {
+      "p50": 105.1793000001453,
+      "p95": 161.7145349998509
+    },
+    "event_context_ms": {
+      "p50": 5.760950000194498,
+      "p95": 8.391269999947326
+    },
+    "rgb_read_crop_ms": {
+      "p50": 160.77399999994668,
+      "p95": 234.69718000005741
+    },
+    "rgb_h2d_ms": {
+      "p50": 2.0604999999704887,
+      "p95": 3.354455000226153
+    },
+    "rgb_producers_pair_ms": {
+      "p50": 475.1259499998923,
+      "p95": 580.2120800003422
+    },
+    "rgb_dispatch_and_sync_ms": {
+      "p50": 0.08324999976139225,
+      "p95": 0.16262500005268515
+    },
+    "rgb_context_ms": {
+      "p50": 5.02825000012308,
+      "p95": 6.3689150003256145
+    },
+    "states_d2h_ms": {
+      "p50": 0.1584499998443789,
+      "p95": 0.22966999999880497
+    },
+    "cpu_correction_ms": {
+      "p50": 0.5232500000147411,
+      "p95": 0.7222949999686534
+    },
+    "sensor_to_candidate_ms": {
+      "p50": 1213.117499999953,
+      "p95": 3060.5612000000747
+    }
+  },
+  "csv_sha256": "4a525d9be02abd7d64d55044342aa06d24c3093e668f10f22d48491ec44c294f",
+  "optimizer_updates": 0,
+  "all_registration_states_and_predictions_exact": true,
+  "scope": "FCWD raw sensors, fresh sealed-equivalent registration and frozen GPU parents and CPU readout. One CPU thread; batch4 event observations, batch1 RGB observations. Stage synchronization; no other active Python GPU work. A verified waiting V18 supervisor may retain an idle CUDA context. Normal desktop GPU and concurrent CPU preparation loads allowed and not isolated. Resident weights, public query ROI. Excludes detector, startup and persistent cross-query service/state management. Repeat1 quantiles are warm-access observations, not isolated cold-I/O or streaming latency."
+}

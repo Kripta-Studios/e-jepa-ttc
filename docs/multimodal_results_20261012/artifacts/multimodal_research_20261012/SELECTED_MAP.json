@@ -1,0 +1,23 @@
+{
+  "sources": {
+    "selected_map.py": "0a9e38b5a33a095ebc8c08b48c008b06655d2e3ab6a3fd0518f80ab01b3d2d4d"
+  },
+  "bindings": {
+    "DEV32": {
+      "manifest_sha256": "d9fe973c37f9e97ac7cb8a46de01bfe461ccc2672328bfa3e51b853763589bd5",
+      "selection_sha256": "e678bb9b9407fbdb0c41e44381628577b73e1af28d2801044fc9cb7329c4523a"
+    },
+    "FCWD": {
+      "manifest_sha256": "5e5706ff4018161aa81b938d0093c58a33ceb2b7d780bd8721b776ccde73c2a2",
+      "selection_sha256": "2635939e314862309b2be44196dd4e0030211e93ddec7afc8dbe2ca716d428a5"
+    }
+  },
+  "all_arrays_equal": true,
+  "queries": 64,
+  "comparisons": 128,
+  "raw_stat_verified": true,
+  "optimizer_updates": 0,
+  "precondition": "canonical _read_crop; same ROI; zero offset; no alternate raw callers",
+  "scope": "CPU map stage only, identical already-read raw arrays; concurrent research load",
+  "production_modified": false
+}

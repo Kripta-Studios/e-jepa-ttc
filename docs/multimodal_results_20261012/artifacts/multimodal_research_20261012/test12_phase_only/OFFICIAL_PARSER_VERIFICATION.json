@@ -1,0 +1,13 @@
+{
+  "utc": "2026-10-12T16:32:44.056888+00:00",
+  "status": "PASS",
+  "source_sha256": "0b62a3f479178fe85d08e75bc7fa031cf29a3394c55c1774e3291a192426239f",
+  "public_parser_sha256": "f3bbf089ba6e47edfce1de522c92ddc969db2260fac7544e82bc017fedf82dce",
+  "package_sha256": "60b5a620848659633b875772430cddd7d7532b0fe180ec59904d04b81a9d3ca1",
+  "tokens": 6762,
+  "all_parsed_predictions_equal_sealed_CSV": true,
+  "official_scoring_executed": false,
+  "reference_labels_opened": false,
+  "optimizer_updates": 0,
+  "external_submission": false
+}

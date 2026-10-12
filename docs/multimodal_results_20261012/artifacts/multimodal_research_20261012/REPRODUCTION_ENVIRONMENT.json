@@ -1,0 +1,22 @@
+{
+  "utc": "2026-10-12T15:26:57.635076+00:00",
+  "python": "3.11.15",
+  "packages": {
+    "numpy": "2.4.6",
+    "pandas": "3.0.3",
+    "torch": "2.11.0+cu128",
+    "torchvision": "0.26.0+cu128",
+    "h5py": "3.16.0",
+    "pillow": "12.3.0",
+    "psutil": "7.2.2",
+    "pyarrow": "25.0.0",
+    "scipy": "1.17.1",
+    "huggingface-hub": "1.24.0",
+    "pyyaml": "6.0.3",
+    "opencv-python-headless": "not in base environment; see isolated dependency path"
+  },
+  "project_lock_sha256": "4883a263384a256d40e42722e9dc073cd5e09ccbee8ff0a9377ec9d264382b1c",
+  "isolated_geometry_dependencies": "E:/EJEPA_results/fcwd_rgb_calibration_20261012/deps",
+  "no_environment_install_or_mutation": true,
+  "scope": "Package versions only; no environment variables, tokens or credential stores read"
+}

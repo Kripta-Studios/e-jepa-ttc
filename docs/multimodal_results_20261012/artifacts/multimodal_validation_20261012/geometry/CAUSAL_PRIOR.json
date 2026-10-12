@@ -1,0 +1,8140 @@
+{
+  "rows": [
+    {
+      "query_id": "FCWD1:0000",
+      "eligible": false,
+      "reason": "NO_PREVIOUS_ACCEPTANCE",
+      "prior_query_id": null
+    },
+    {
+      "query_id": "FCWD1:0001",
+      "eligible": false,
+      "reason": "NO_PREVIOUS_ACCEPTANCE",
+      "prior_query_id": null
+    },
+    {
+      "query_id": "FCWD1:0002",
+      "eligible": false,
+      "reason": "NO_PREVIOUS_ACCEPTANCE",
+      "prior_query_id": null
+    },
+    {
+      "query_id": "FCWD1:0003",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0002",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -24,
+        -7
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0004",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD1:0003",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -23,
+        -7
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0005",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0003",
+      "age_us": 100096,
+      "prior_shift_px": [
+        -23,
+        -7
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0006",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD1:0003",
+      "age_us": 150148,
+      "prior_shift_px": [
+        -23,
+        -7
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0007",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD1:0003",
+      "age_us": 200192,
+      "prior_shift_px": [
+        -23,
+        -7
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0008",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD1:0003",
+      "age_us": 250244,
+      "prior_shift_px": [
+        -23,
+        -7
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0009",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD1:0008",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -23,
+        -7
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0010",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD1:0008",
+      "age_us": 100096,
+      "prior_shift_px": [
+        -23,
+        -7
+      ],
+      "measured_drift_px": 34.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0011",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD1:0008",
+      "age_us": 150148,
+      "prior_shift_px": [
+        -23,
+        -7
+      ],
+      "measured_drift_px": 6.082762530298219,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0012",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD1:0008",
+      "age_us": 200200,
+      "prior_shift_px": [
+        -23,
+        -7
+      ],
+      "measured_drift_px": 4.123105625617661,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0013",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD1:0008",
+      "age_us": 250244,
+      "prior_shift_px": [
+        -23,
+        -7
+      ],
+      "measured_drift_px": 3.605551275463989,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0014",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD1:0008",
+      "age_us": 300296,
+      "prior_shift_px": [
+        -23,
+        -7
+      ],
+      "measured_drift_px": 2.8284271247461903,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0015",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD1:0008",
+      "age_us": 350349,
+      "prior_shift_px": [
+        -23,
+        -7
+      ],
+      "measured_drift_px": 3.1622776601683795,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0016",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD1:0008",
+      "age_us": 400392,
+      "prior_shift_px": [
+        -23,
+        -7
+      ],
+      "measured_drift_px": 2.23606797749979,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0017",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0016",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -21,
+        -8
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0018",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD1:0017",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -21,
+        -8
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0019",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD1:0017",
+      "age_us": 100096,
+      "prior_shift_px": [
+        -21,
+        -8
+      ],
+      "measured_drift_px": 21.93171219946131,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0020",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0017",
+      "age_us": 150148,
+      "prior_shift_px": [
+        -21,
+        -8
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0021",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD1:0017",
+      "age_us": 200200,
+      "prior_shift_px": [
+        -21,
+        -8
+      ],
+      "measured_drift_px": 3.1622776601683795,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0022",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD1:0021",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -24,
+        -7
+      ],
+      "measured_drift_px": 5.830951894845301,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0023",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0022",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -21,
+        -12
+      ],
+      "measured_drift_px": 3.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0024",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0023",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -21,
+        -9
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0025",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD1:0024",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -21,
+        -9
+      ],
+      "measured_drift_px": 3.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0026",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0024",
+      "age_us": 100095,
+      "prior_shift_px": [
+        -21,
+        -9
+      ],
+      "measured_drift_px": 4.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0027",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD1:0024",
+      "age_us": 150148,
+      "prior_shift_px": [
+        -21,
+        -9
+      ],
+      "measured_drift_px": 3.1622776601683795,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0028",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD1:0024",
+      "age_us": 200191,
+      "prior_shift_px": [
+        -21,
+        -9
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0029",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD1:0024",
+      "age_us": 250243,
+      "prior_shift_px": [
+        -21,
+        -9
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0030",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD1:0024",
+      "age_us": 300295,
+      "prior_shift_px": [
+        -21,
+        -9
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0031",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD1:0024",
+      "age_us": 350339,
+      "prior_shift_px": [
+        -21,
+        -9
+      ],
+      "measured_drift_px": 24.20743687382041,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0032",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD1:0024",
+      "age_us": 400391,
+      "prior_shift_px": [
+        -21,
+        -9
+      ],
+      "measured_drift_px": 30.01666203960727,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0033",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD1:0024",
+      "age_us": 450444,
+      "prior_shift_px": [
+        -21,
+        -9
+      ],
+      "measured_drift_px": 4.123105625617661,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0034",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD1:0024",
+      "age_us": 500496,
+      "prior_shift_px": [
+        -21,
+        -9
+      ],
+      "measured_drift_px": 3.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0035",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD1:0024",
+      "age_us": 550539,
+      "prior_shift_px": [
+        -21,
+        -9
+      ],
+      "measured_drift_px": 24.596747752497688,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0036",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD1:0024",
+      "age_us": 600592,
+      "prior_shift_px": [
+        -21,
+        -9
+      ],
+      "measured_drift_px": 2.23606797749979,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0037",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD1:0024",
+      "age_us": 650644,
+      "prior_shift_px": [
+        -21,
+        -9
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0038",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD1:0024",
+      "age_us": 700687,
+      "prior_shift_px": [
+        -21,
+        -9
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0039",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD1:0024",
+      "age_us": 750740,
+      "prior_shift_px": [
+        -21,
+        -9
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0040",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD1:0024",
+      "age_us": 800792,
+      "prior_shift_px": [
+        -21,
+        -9
+      ],
+      "measured_drift_px": 2.23606797749979,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0041",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD1:0024",
+      "age_us": 850835,
+      "prior_shift_px": [
+        -21,
+        -9
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0042",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD1:0024",
+      "age_us": 900888,
+      "prior_shift_px": [
+        -21,
+        -9
+      ],
+      "measured_drift_px": 18.027756377319946,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0043",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD1:0024",
+      "age_us": 950940,
+      "prior_shift_px": [
+        -21,
+        -9
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0044",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD1:0024",
+      "age_us": 1000983,
+      "prior_shift_px": [
+        -21,
+        -9
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0045",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD1:0024",
+      "age_us": 1051036,
+      "prior_shift_px": [
+        -21,
+        -9
+      ],
+      "measured_drift_px": 3.1622776601683795,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0046",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD1:0024",
+      "age_us": 1101088,
+      "prior_shift_px": [
+        -21,
+        -9
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0047",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD1:0024",
+      "age_us": 1151131,
+      "prior_shift_px": [
+        -21,
+        -9
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0048",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD1:0024",
+      "age_us": 1201184,
+      "prior_shift_px": [
+        -21,
+        -9
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0049",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD1:0024",
+      "age_us": 1251236,
+      "prior_shift_px": [
+        -21,
+        -9
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0050",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD1:0024",
+      "age_us": 1301279,
+      "prior_shift_px": [
+        -21,
+        -9
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0051",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD1:0024",
+      "age_us": 1351332,
+      "prior_shift_px": [
+        -21,
+        -9
+      ],
+      "measured_drift_px": 2.23606797749979,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0052",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD1:0024",
+      "age_us": 1401384,
+      "prior_shift_px": [
+        -21,
+        -9
+      ],
+      "measured_drift_px": 2.23606797749979,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0053",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0052",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -7
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0054",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0053",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -22,
+        -7
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0055",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0053",
+      "age_us": 100096,
+      "prior_shift_px": [
+        -22,
+        -7
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0056",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD1:0053",
+      "age_us": 150148,
+      "prior_shift_px": [
+        -22,
+        -7
+      ],
+      "measured_drift_px": 38.8329756778952,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0057",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD1:0053",
+      "age_us": 200192,
+      "prior_shift_px": [
+        -22,
+        -7
+      ],
+      "measured_drift_px": 2.23606797749979,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0058",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0057",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -21,
+        -9
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0059",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0058",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -9
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0060",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0058",
+      "age_us": 100096,
+      "prior_shift_px": [
+        -22,
+        -9
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0061",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0058",
+      "age_us": 150148,
+      "prior_shift_px": [
+        -22,
+        -9
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0062",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0061",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -21,
+        -9
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0063",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0062",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -21,
+        -9
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0064",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0063",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -20,
+        -9
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0065",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0064",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -21,
+        -9
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0066",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0065",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -21,
+        -9
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0067",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0066",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -21,
+        -9
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0068",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0067",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -20,
+        -9
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0069",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0068",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -20,
+        -9
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0070",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0069",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -21,
+        -9
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0071",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0070",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -21,
+        -8
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0072",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0071",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -20,
+        -9
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0073",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0072",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -21,
+        -9
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0074",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0073",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -8
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0075",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0074",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -22,
+        -7
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0076",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0075",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -8
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0077",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0076",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -9
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0078",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0077",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -22,
+        -10
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0079",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0078",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -10
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0080",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0079",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -21,
+        -10
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0081",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0080",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -21,
+        -9
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0082",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0081",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -10
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0083",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0082",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -21,
+        -10
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0084",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0083",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -21,
+        -10
+      ],
+      "measured_drift_px": 2.23606797749979,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0085",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0084",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -22,
+        -8
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0086",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0085",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -9
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0087",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0086",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -22,
+        -9
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0088",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0087",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -21,
+        -9
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0089",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0088",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -21,
+        -10
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0090",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0089",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -21,
+        -10
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0091",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0090",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -21,
+        -11
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0092",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0091",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -21,
+        -11
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0093",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0092",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -21,
+        -10
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0094",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0093",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -21,
+        -11
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0095",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0094",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -22,
+        -11
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0096",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0095",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -11
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0097",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0096",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -22,
+        -10
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0098",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0096",
+      "age_us": 100095,
+      "prior_shift_px": [
+        -22,
+        -10
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0099",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0098",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -23,
+        -9
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0100",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0099",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -22,
+        -9
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0101",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0100",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -22,
+        -10
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0102",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0101",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -11
+      ],
+      "measured_drift_px": 2.23606797749979,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0103",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0102",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -24,
+        -9
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0104",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0103",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -23,
+        -9
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0105",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0104",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -9
+      ],
+      "measured_drift_px": 2.8284271247461903,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0106",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0105",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -21,
+        -11
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0107",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0106",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -21,
+        -12
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0108",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0107",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -21,
+        -12
+      ],
+      "measured_drift_px": 2.23606797749979,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0109",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0108",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -11
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0110",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0109",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -23,
+        -12
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0111",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0110",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -12
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0112",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0111",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -12
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0113",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0112",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -22,
+        -11
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0114",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0113",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -22,
+        -10
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0115",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0114",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -10
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0116",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0115",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -22,
+        -11
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0117",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0116",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -10
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0118",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0117",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -11
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0119",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0118",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -22,
+        -12
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0120",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0119",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -12
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0121",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0120",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -12
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0122",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0121",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -22,
+        -11
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0123",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0122",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -22,
+        -11
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0124",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0123",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -11
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0125",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0124",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -22,
+        -11
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0126",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0125",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -13
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0127",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0126",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -14
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0128",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0127",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -22,
+        -13
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0129",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0128",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -21,
+        -12
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0130",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0129",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -21,
+        -11
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0131",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0130",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -11
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0132",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0131",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -22,
+        -12
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0133",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0132",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -14
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0134",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0133",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -22,
+        -15
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0135",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0134",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -22,
+        -14
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0136",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0135",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -14
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0137",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0136",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -22,
+        -14
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0138",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0137",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -22,
+        -14
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0139",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0138",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -14
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0140",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0139",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -22,
+        -15
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0141",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0140",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -22,
+        -16
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0142",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0141",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -22,
+        -15
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0143",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0142",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -13
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0144",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0143",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -22,
+        -14
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0145",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0144",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -16
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0146",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0145",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -22,
+        -17
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0147",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0146",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -22,
+        -16
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0148",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0147",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -14
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0149",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0148",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -22,
+        -15
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0150",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0149",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -22,
+        -16
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0151",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0150",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -17
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0152",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0151",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -22,
+        -17
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0153",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0152",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -17
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0154",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0153",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -22,
+        -18
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0155",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0154",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -22,
+        -18
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0156",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0155",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -19
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0157",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0156",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -22,
+        -20
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0158",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0157",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -22,
+        -21
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0159",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0158",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -20
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0160",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0159",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -22,
+        -20
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0161",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0160",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -22,
+        -20
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0162",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0161",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -21
+      ],
+      "measured_drift_px": 2.23606797749979,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0163",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0162",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -23,
+        -23
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0164",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0163",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -23,
+        -23
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0165",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0164",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -24
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0166",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0165",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -23,
+        -25
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0167",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0166",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -26
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0168",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0167",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -26
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0169",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0168",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -23,
+        -26
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0170",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0169",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -27
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0171",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0170",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -27
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0172",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0171",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -22,
+        -28
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0173",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0172",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -22,
+        -28
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0174",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0173",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -30
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0175",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0174",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -23,
+        -31
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0176",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0175",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -22,
+        -32
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0177",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0176",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -33
+      ],
+      "measured_drift_px": 2.23606797749979,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0178",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0177",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -24,
+        -35
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0179",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0178",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -24,
+        -36
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0180",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0179",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -24,
+        -37
+      ],
+      "measured_drift_px": 2.23606797749979,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0181",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0180",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -25,
+        -39
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0182",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0181",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -25,
+        -41
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0183",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0182",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -25,
+        -43
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0184",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0183",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -25,
+        -45
+      ],
+      "measured_drift_px": 3.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0185",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0184",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -25,
+        -48
+      ],
+      "measured_drift_px": 2.23606797749979,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0186",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0185",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -26,
+        -50
+      ],
+      "measured_drift_px": 2.23606797749979,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0187",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0186",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -25,
+        -52
+      ],
+      "measured_drift_px": 2.23606797749979,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0188",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0187",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -24,
+        -54
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0189",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0188",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -24,
+        -56
+      ],
+      "measured_drift_px": 2.23606797749979,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0190",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0189",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -58
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0191",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0190",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -23,
+        -60
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0192",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0191",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -62
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0193",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0192",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -23,
+        -63
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0194",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0193",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -23,
+        -65
+      ],
+      "measured_drift_px": 2.23606797749979,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0195",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0194",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -67
+      ],
+      "measured_drift_px": 2.23606797749979,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0196",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0195",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -21,
+        -69
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0197",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0196",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -20,
+        -70
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0198",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0197",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -20,
+        -71
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0199",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0198",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -21,
+        -72
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0200",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0199",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -21,
+        -73
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0201",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0200",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -74
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0202",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD1:0200",
+      "age_us": 100105,
+      "prior_shift_px": [
+        -22,
+        -74
+      ],
+      "measured_drift_px": 6.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0203",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD1:0202",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -28,
+        -74
+      ],
+      "measured_drift_px": 5.385164807134504,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0204",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0203",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -23,
+        -72
+      ],
+      "measured_drift_px": 2.23606797749979,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0205",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0204",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -22,
+        -70
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0206",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0205",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -69
+      ],
+      "measured_drift_px": 2.23606797749979,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0207",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0206",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -25,
+        -68
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0208",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0207",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -25,
+        -69
+      ],
+      "measured_drift_px": 3.1622776601683795,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0209",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0208",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -26,
+        -72
+      ],
+      "measured_drift_px": 3.605551275463989,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0210",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0209",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -29,
+        -74
+      ],
+      "measured_drift_px": 5.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0211",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0210",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -25,
+        -77
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0212",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0211",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -25,
+        -77
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD1:0213",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD1:0212",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -25,
+        -75
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0000",
+      "eligible": false,
+      "reason": "NO_PREVIOUS_ACCEPTANCE",
+      "prior_query_id": null
+    },
+    {
+      "query_id": "FCWD2:0001",
+      "eligible": false,
+      "reason": "NO_PREVIOUS_ACCEPTANCE",
+      "prior_query_id": null
+    },
+    {
+      "query_id": "FCWD2:0002",
+      "eligible": false,
+      "reason": "NO_PREVIOUS_ACCEPTANCE",
+      "prior_query_id": null
+    },
+    {
+      "query_id": "FCWD2:0003",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0002",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -23,
+        -8
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0004",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD2:0003",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -6
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0005",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0003",
+      "age_us": 100105,
+      "prior_shift_px": [
+        -23,
+        -6
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0006",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0003",
+      "age_us": 150148,
+      "prior_shift_px": [
+        -23,
+        -6
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0007",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD2:0003",
+      "age_us": 200201,
+      "prior_shift_px": [
+        -23,
+        -6
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0008",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD2:0003",
+      "age_us": 250253,
+      "prior_shift_px": [
+        -23,
+        -6
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0009",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD2:0003",
+      "age_us": 300296,
+      "prior_shift_px": [
+        -23,
+        -6
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0010",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0009",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -23,
+        -6
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0011",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0010",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -6
+      ],
+      "measured_drift_px": 4.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0012",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0011",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -23,
+        -10
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0013",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0012",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -23,
+        -10
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0014",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD2:0012",
+      "age_us": 100105,
+      "prior_shift_px": [
+        -23,
+        -10
+      ],
+      "measured_drift_px": 3.1622776601683795,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0015",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD2:0012",
+      "age_us": 150157,
+      "prior_shift_px": [
+        -23,
+        -10
+      ],
+      "measured_drift_px": 3.1622776601683795,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0016",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD2:0012",
+      "age_us": 200201,
+      "prior_shift_px": [
+        -23,
+        -10
+      ],
+      "measured_drift_px": 3.1622776601683795,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0017",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD2:0012",
+      "age_us": 250253,
+      "prior_shift_px": [
+        -23,
+        -10
+      ],
+      "measured_drift_px": 2.23606797749979,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0018",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0017",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -24,
+        -8
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0019",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0018",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -23,
+        -8
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0020",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0019",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -8
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0021",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0020",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -8
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0022",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0021",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -23,
+        -8
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0023",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0022",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -8
+      ],
+      "measured_drift_px": 3.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0024",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0022",
+      "age_us": 100104,
+      "prior_shift_px": [
+        -23,
+        -8
+      ],
+      "measured_drift_px": 3.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0025",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0024",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -23,
+        -11
+      ],
+      "measured_drift_px": 3.1622776601683795,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0026",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0025",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -24,
+        -8
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0027",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0026",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -23,
+        -8
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0028",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0027",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -23,
+        -8
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0029",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0028",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -8
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0030",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0029",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -23,
+        -7
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0031",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0030",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -23,
+        -8
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0032",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0031",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -9
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0033",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0032",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -23,
+        -7
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0034",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0033",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -7
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0035",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0034",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -23,
+        -7
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0036",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0035",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -8
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0037",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0036",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -9
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0038",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0037",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -24,
+        -9
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0039",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0037",
+      "age_us": 100096,
+      "prior_shift_px": [
+        -24,
+        -9
+      ],
+      "measured_drift_px": 2.23606797749979,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0040",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD2:0039",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -7
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0041",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0039",
+      "age_us": 100096,
+      "prior_shift_px": [
+        -23,
+        -7
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0042",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0041",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -7
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0043",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0042",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -24,
+        -8
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0044",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD2:0042",
+      "age_us": 100096,
+      "prior_shift_px": [
+        -24,
+        -8
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0045",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0042",
+      "age_us": 150148,
+      "prior_shift_px": [
+        -24,
+        -8
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0046",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD2:0045",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -24,
+        -7
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0047",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0045",
+      "age_us": 100096,
+      "prior_shift_px": [
+        -24,
+        -7
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0048",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD2:0047",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -7
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0049",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD2:0047",
+      "age_us": 100105,
+      "prior_shift_px": [
+        -23,
+        -7
+      ],
+      "measured_drift_px": 2.23606797749979,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0050",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0047",
+      "age_us": 150148,
+      "prior_shift_px": [
+        -23,
+        -7
+      ],
+      "measured_drift_px": 2.23606797749979,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0051",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD2:0047",
+      "age_us": 200200,
+      "prior_shift_px": [
+        -23,
+        -7
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0052",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD2:0047",
+      "age_us": 250253,
+      "prior_shift_px": [
+        -23,
+        -7
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0053",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0052",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -23,
+        -9
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0054",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0052",
+      "age_us": 100095,
+      "prior_shift_px": [
+        -23,
+        -9
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0055",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0052",
+      "age_us": 150148,
+      "prior_shift_px": [
+        -23,
+        -9
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0056",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0055",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -23,
+        -9
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0057",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0056",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -23,
+        -9
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0058",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0056",
+      "age_us": 100105,
+      "prior_shift_px": [
+        -23,
+        -9
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0059",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD2:0056",
+      "age_us": 150148,
+      "prior_shift_px": [
+        -23,
+        -9
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0060",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD2:0056",
+      "age_us": 200200,
+      "prior_shift_px": [
+        -23,
+        -9
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0061",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0060",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -22,
+        -9
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0062",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0061",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -23,
+        -9
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0063",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0062",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -24,
+        -10
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0064",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0063",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -24,
+        -9
+      ],
+      "measured_drift_px": 2.23606797749979,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0065",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0064",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -8
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0066",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD2:0065",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -22,
+        -8
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0067",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0065",
+      "age_us": 100096,
+      "prior_shift_px": [
+        -22,
+        -8
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0068",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0065",
+      "age_us": 150148,
+      "prior_shift_px": [
+        -22,
+        -8
+      ],
+      "measured_drift_px": 2.8284271247461903,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0069",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD2:0065",
+      "age_us": 200192,
+      "prior_shift_px": [
+        -22,
+        -8
+      ],
+      "measured_drift_px": 2.8284271247461903,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0070",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0069",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -24,
+        -10
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0071",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0069",
+      "age_us": 100104,
+      "prior_shift_px": [
+        -24,
+        -10
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0072",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0071",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -23,
+        -10
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0073",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0072",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -24,
+        -9
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0074",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0072",
+      "age_us": 100104,
+      "prior_shift_px": [
+        -24,
+        -9
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0075",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0072",
+      "age_us": 150148,
+      "prior_shift_px": [
+        -24,
+        -9
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0076",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0075",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -10
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0077",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0076",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -23,
+        -11
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0078",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0076",
+      "age_us": 100096,
+      "prior_shift_px": [
+        -23,
+        -11
+      ],
+      "measured_drift_px": 2.23606797749979,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0079",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0076",
+      "age_us": 150148,
+      "prior_shift_px": [
+        -23,
+        -11
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0080",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD2:0076",
+      "age_us": 200201,
+      "prior_shift_px": [
+        -23,
+        -11
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0081",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0080",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -24,
+        -10
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0082",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0081",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -24,
+        -10
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0083",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0082",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -24,
+        -10
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0084",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0083",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -24,
+        -10
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0085",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0084",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -24,
+        -10
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0086",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0085",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -10
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0087",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0086",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -23,
+        -11
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0088",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0087",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -23,
+        -11
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0089",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0088",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -24,
+        -11
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0090",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0089",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -24,
+        -11
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0091",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0090",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -24,
+        -9
+      ],
+      "measured_drift_px": 2.23606797749979,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0092",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0091",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -8
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0093",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0092",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -8
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0094",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0093",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -23,
+        -9
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0095",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0094",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -9
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0096",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0095",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -23,
+        -9
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0097",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0096",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -23,
+        -9
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0098",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0097",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -9
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0099",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0098",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -23,
+        -9
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0100",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0099",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -23,
+        -9
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0101",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0100",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -9
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0102",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0101",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -10
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0103",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0102",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -23,
+        -12
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0104",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0103",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -12
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0105",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0104",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -22,
+        -12
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0106",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0105",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -22,
+        -10
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0107",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0106",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -10
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0108",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0107",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -23,
+        -10
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0109",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0108",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -23,
+        -12
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0110",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0109",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -12
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0111",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0110",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -22,
+        -11
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0112",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0111",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -22,
+        -10
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0113",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0112",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -10
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0114",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0113",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -22,
+        -10
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0115",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0114",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -10
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0116",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0115",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -22,
+        -10
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0117",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0116",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -12
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0118",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0117",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -12
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0119",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0118",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -22,
+        -13
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0120",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0119",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -13
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0121",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0120",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -21,
+        -12
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0122",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0121",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -21,
+        -12
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0123",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0122",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -21,
+        -12
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0124",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0123",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -21,
+        -13
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0125",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0124",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -21,
+        -13
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0126",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0125",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -21,
+        -13
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0127",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0126",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -22,
+        -12
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0128",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0127",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -22,
+        -11
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0129",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0128",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -12
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0130",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0129",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -22,
+        -12
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0131",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0130",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -22,
+        -14
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0132",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0131",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -14
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0133",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0132",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -22,
+        -14
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0134",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0133",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -22,
+        -14
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0135",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0134",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -15
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0136",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0135",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -22,
+        -14
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0137",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0136",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -22,
+        -14
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0138",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0137",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -22,
+        -15
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0139",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0138",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -14
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0140",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0139",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -22,
+        -13
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0141",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0140",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -22,
+        -15
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0142",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0141",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -16
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0143",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0142",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -22,
+        -16
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0144",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0143",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -23,
+        -16
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0145",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0144",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -16
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0146",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0145",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -15
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0147",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0146",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -22,
+        -15
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0148",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0147",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -15
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0149",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0148",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -22,
+        -16
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0150",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0149",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -22,
+        -17
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0151",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0150",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -18
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0152",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0151",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -17
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0153",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0152",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -23,
+        -16
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0154",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0153",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -16
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0155",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0154",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -23,
+        -16
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0156",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0155",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -23,
+        -18
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0157",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0156",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -19
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0158",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0157",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -23,
+        -19
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0159",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0158",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -23,
+        -19
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0160",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0159",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -19
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0161",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0160",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -23,
+        -19
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0162",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0161",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -23,
+        -19
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0163",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0162",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -20
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0164",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0163",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -23,
+        -21
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0165",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0164",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -22
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0166",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0165",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -23,
+        -22
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0167",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0166",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -23
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0168",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0167",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -23,
+        -24
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0169",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0168",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -23,
+        -26
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0170",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0169",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -26
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0171",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0170",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -27
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0172",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0171",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -23,
+        -28
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0173",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0172",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -29
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0174",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0173",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -28
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0175",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0174",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -23,
+        -29
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0176",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0175",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -30
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0177",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0176",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -23,
+        -31
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0178",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0177",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -23,
+        -32
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0179",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0178",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -33
+      ],
+      "measured_drift_px": 2.8284271247461903,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0180",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0179",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -24,
+        -35
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0181",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0180",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -24,
+        -36
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0182",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0181",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -24,
+        -38
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0183",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0182",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -24,
+        -40
+      ],
+      "measured_drift_px": 2.23606797749979,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0184",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0183",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -25,
+        -42
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0185",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0184",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -25,
+        -44
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0186",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0185",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -25,
+        -46
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0187",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0186",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -25,
+        -48
+      ],
+      "measured_drift_px": 2.23606797749979,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0188",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0187",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -26,
+        -50
+      ],
+      "measured_drift_px": 2.23606797749979,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0189",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0187",
+      "age_us": 100105,
+      "prior_shift_px": [
+        -26,
+        -50
+      ],
+      "measured_drift_px": 4.47213595499958,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0190",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0189",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -24,
+        -54
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0191",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0190",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -24,
+        -55
+      ],
+      "measured_drift_px": 3.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0192",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0191",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -24,
+        -58
+      ],
+      "measured_drift_px": 2.23606797749979,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0193",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0192",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -23,
+        -60
+      ],
+      "measured_drift_px": 2.23606797749979,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0194",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0193",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -24,
+        -62
+      ],
+      "measured_drift_px": 2.23606797749979,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0195",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0194",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -64
+      ],
+      "measured_drift_px": 2.23606797749979,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0196",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0195",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -66
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0197",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0196",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -22,
+        -68
+      ],
+      "measured_drift_px": 2.23606797749979,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0198",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0197",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -21,
+        -70
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0199",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0197",
+      "age_us": 100105,
+      "prior_shift_px": [
+        -21,
+        -70
+      ],
+      "measured_drift_px": 3.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0200",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0197",
+      "age_us": 150148,
+      "prior_shift_px": [
+        -21,
+        -70
+      ],
+      "measured_drift_px": 5.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0201",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0200",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -21,
+        -75
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0202",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0201",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -21,
+        -77
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0203",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0202",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -21,
+        -78
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0204",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0202",
+      "age_us": 100095,
+      "prior_shift_px": [
+        -21,
+        -78
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0205",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD2:0202",
+      "age_us": 150148,
+      "prior_shift_px": [
+        -21,
+        -78
+      ],
+      "measured_drift_px": 92.0869154657707,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0206",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD2:0202",
+      "age_us": 200191,
+      "prior_shift_px": [
+        -21,
+        -78
+      ],
+      "measured_drift_px": 4.47213595499958,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0207",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD2:0202",
+      "age_us": 250244,
+      "prior_shift_px": [
+        -21,
+        -78
+      ],
+      "measured_drift_px": 3.1622776601683795,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0208",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0207",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -24,
+        -79
+      ],
+      "measured_drift_px": 3.1622776601683795,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0209",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0208",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -23,
+        -76
+      ],
+      "measured_drift_px": 2.23606797749979,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0210",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD2:0209",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -24,
+        -74
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0211",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0209",
+      "age_us": 100105,
+      "prior_shift_px": [
+        -24,
+        -74
+      ],
+      "measured_drift_px": 2.8284271247461903,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0212",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0211",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -26,
+        -76
+      ],
+      "measured_drift_px": 3.1622776601683795,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0213",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD2:0212",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -27,
+        -79
+      ],
+      "measured_drift_px": 116.1077086157504,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0214",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0212",
+      "age_us": 100105,
+      "prior_shift_px": [
+        -27,
+        -79
+      ],
+      "measured_drift_px": 4.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0215",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0214",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -27,
+        -83
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0216",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD2:0215",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -26,
+        -83
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD2:0217",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD2:0216",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -26,
+        -82
+      ],
+      "measured_drift_px": 5.0990195135927845,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0000",
+      "eligible": false,
+      "reason": "NO_PREVIOUS_ACCEPTANCE",
+      "prior_query_id": null
+    },
+    {
+      "query_id": "FCWD3:0001",
+      "eligible": false,
+      "reason": "NO_PREVIOUS_ACCEPTANCE",
+      "prior_query_id": null
+    },
+    {
+      "query_id": "FCWD3:0002",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD3:0001",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -7
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0003",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD3:0001",
+      "age_us": 100105,
+      "prior_shift_px": [
+        -23,
+        -7
+      ],
+      "measured_drift_px": 2.23606797749979,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0004",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD3:0001",
+      "age_us": 150148,
+      "prior_shift_px": [
+        -23,
+        -7
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0005",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD3:0001",
+      "age_us": 200200,
+      "prior_shift_px": [
+        -23,
+        -7
+      ],
+      "measured_drift_px": 2.23606797749979,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0006",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD3:0001",
+      "age_us": 250253,
+      "prior_shift_px": [
+        -23,
+        -7
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0007",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD3:0001",
+      "age_us": 300296,
+      "prior_shift_px": [
+        -23,
+        -7
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0008",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD3:0001",
+      "age_us": 350348,
+      "prior_shift_px": [
+        -23,
+        -7
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0009",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0008",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -24,
+        -7
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0010",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0009",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -24,
+        -7
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0011",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD3:0010",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -24,
+        -7
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0012",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0010",
+      "age_us": 100105,
+      "prior_shift_px": [
+        -24,
+        -7
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0013",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0010",
+      "age_us": 150148,
+      "prior_shift_px": [
+        -24,
+        -7
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0014",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0013",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -24,
+        -7
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0015",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0014",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -24,
+        -7
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0016",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0015",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -24,
+        -7
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0017",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0016",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -23,
+        -7
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0018",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0017",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -24,
+        -7
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0019",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0018",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -8
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0020",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0019",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -23,
+        -6
+      ],
+      "measured_drift_px": 3.1622776601683795,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0021",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0020",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -24,
+        -9
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0022",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0021",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -23,
+        -9
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0023",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0022",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -23,
+        -9
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0024",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0023",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -8
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0025",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0024",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -8
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0026",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0025",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -23,
+        -8
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0027",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0026",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -10
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0028",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0027",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -23,
+        -8
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0029",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0028",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -23,
+        -8
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0030",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0029",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -8
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0031",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0030",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -24,
+        -8
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0032",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0031",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -24,
+        -8
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0033",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0032",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -23,
+        -7
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0034",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0033",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -8
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0035",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0034",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -24,
+        -8
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0036",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0035",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -24,
+        -8
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0037",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0036",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -8
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0038",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0037",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -8
+      ],
+      "measured_drift_px": 2.23606797749979,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0039",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0038",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -22,
+        -6
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0040",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0039",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -6
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0041",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0040",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -6
+      ],
+      "measured_drift_px": 2.8284271247461903,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0042",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0040",
+      "age_us": 100096,
+      "prior_shift_px": [
+        -22,
+        -6
+      ],
+      "measured_drift_px": 3.1622776601683795,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0043",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0042",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -9
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0044",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0042",
+      "age_us": 100105,
+      "prior_shift_px": [
+        -23,
+        -9
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0045",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0044",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -23,
+        -8
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0046",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD3:0044",
+      "age_us": 100095,
+      "prior_shift_px": [
+        -23,
+        -8
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0047",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0044",
+      "age_us": 150148,
+      "prior_shift_px": [
+        -23,
+        -8
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0048",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD3:0044",
+      "age_us": 200191,
+      "prior_shift_px": [
+        -23,
+        -8
+      ],
+      "measured_drift_px": 3.1622776601683795,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0049",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD3:0044",
+      "age_us": 250243,
+      "prior_shift_px": [
+        -23,
+        -8
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0050",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD3:0044",
+      "age_us": 300296,
+      "prior_shift_px": [
+        -23,
+        -8
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0051",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD3:0044",
+      "age_us": 350339,
+      "prior_shift_px": [
+        -23,
+        -8
+      ],
+      "measured_drift_px": 20.396078054371138,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0052",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD3:0044",
+      "age_us": 400391,
+      "prior_shift_px": [
+        -23,
+        -8
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0053",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD3:0044",
+      "age_us": 450444,
+      "prior_shift_px": [
+        -23,
+        -8
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0054",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0053",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -22,
+        -7
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0055",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0054",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -22,
+        -6
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0056",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0054",
+      "age_us": 100105,
+      "prior_shift_px": [
+        -22,
+        -6
+      ],
+      "measured_drift_px": 3.1622776601683795,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0057",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0054",
+      "age_us": 150148,
+      "prior_shift_px": [
+        -22,
+        -6
+      ],
+      "measured_drift_px": 3.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0058",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD3:0057",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -22,
+        -9
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0059",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0057",
+      "age_us": 100105,
+      "prior_shift_px": [
+        -22,
+        -9
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0060",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0057",
+      "age_us": 150148,
+      "prior_shift_px": [
+        -22,
+        -9
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0061",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0060",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -24,
+        -9
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0062",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0061",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -9
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0063",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0062",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -22,
+        -10
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0064",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0062",
+      "age_us": 100096,
+      "prior_shift_px": [
+        -22,
+        -10
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0065",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0062",
+      "age_us": 150148,
+      "prior_shift_px": [
+        -22,
+        -10
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0066",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD3:0062",
+      "age_us": 200192,
+      "prior_shift_px": [
+        -22,
+        -10
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0067",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD3:0062",
+      "age_us": 250244,
+      "prior_shift_px": [
+        -22,
+        -10
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0068",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0067",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -9
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0069",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0068",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -22,
+        -10
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0070",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0069",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -23,
+        -10
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0071",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0070",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -10
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0072",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0071",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -23,
+        -10
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0073",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0072",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -22,
+        -10
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0074",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0073",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -22,
+        -10
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0075",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0074",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -10
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0076",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0075",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -22,
+        -10
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0077",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0076",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -10
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0078",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0077",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -11
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0079",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0078",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -22,
+        -11
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0080",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0079",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -10
+      ],
+      "measured_drift_px": 2.23606797749979,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0081",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0079",
+      "age_us": 100104,
+      "prior_shift_px": [
+        -23,
+        -10
+      ],
+      "measured_drift_px": 2.23606797749979,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0082",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0081",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -21,
+        -9
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0083",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0082",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -21,
+        -9
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0084",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0083",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -9
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0085",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0083",
+      "age_us": 100096,
+      "prior_shift_px": [
+        -22,
+        -9
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0086",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0085",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -10
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0087",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0086",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -22,
+        -9
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0088",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0087",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -8
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0089",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0088",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -22,
+        -8
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0090",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0088",
+      "age_us": 100096,
+      "prior_shift_px": [
+        -22,
+        -8
+      ],
+      "measured_drift_px": 3.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0091",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0090",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -11
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0092",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0091",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -22,
+        -12
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0093",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0091",
+      "age_us": 100096,
+      "prior_shift_px": [
+        -22,
+        -12
+      ],
+      "measured_drift_px": 3.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0094",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0093",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -9
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0095",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0094",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -22,
+        -9
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0096",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0095",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -22,
+        -11
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0097",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0096",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -12
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0098",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0097",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -22,
+        -11
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0099",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0098",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -10
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0100",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0099",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -21,
+        -9
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0101",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0100",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -22,
+        -9
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0102",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0101",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -9
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0103",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0102",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -22,
+        -10
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0104",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0103",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -22,
+        -11
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0105",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0104",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -11
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0106",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0105",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -22,
+        -10
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0107",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0106",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -22,
+        -9
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0108",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0107",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -10
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0109",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0108",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -22,
+        -11
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0110",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0109",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -22,
+        -12
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0111",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0110",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -22,
+        -12
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0112",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0111",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -12
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0113",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0112",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -22,
+        -11
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0114",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0113",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -22,
+        -11
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0115",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0114",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -10
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0116",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0115",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -22,
+        -11
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0117",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0116",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -22,
+        -11
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0118",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0117",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -13
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0119",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0118",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -14
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0120",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0119",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -22,
+        -14
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0121",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0120",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -13
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0122",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0121",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -23,
+        -12
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0123",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0122",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -22,
+        -13
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0124",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0123",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -14
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0125",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0124",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -23,
+        -14
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0126",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0125",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -22,
+        -15
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0127",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0126",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -22,
+        -15
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0128",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0127",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -13
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0129",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0128",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -23,
+        -13
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0130",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0129",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -23,
+        -14
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0131",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0130",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -15
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0132",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0131",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -23,
+        -16
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0133",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0132",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -22,
+        -15
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0134",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0133",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -16
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0135",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0134",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -22,
+        -16
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0136",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0135",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -17
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0137",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0136",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -18
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0138",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0137",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -23,
+        -17
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0139",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0138",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -22,
+        -16
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0140",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0139",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -16
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0141",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0140",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -23,
+        -16
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0142",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0141",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -23,
+        -17
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0143",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0142",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -19
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0144",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0143",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -23,
+        -20
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0145",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0144",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -23,
+        -21
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0146",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0145",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -23,
+        -21
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0147",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0146",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -20
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0148",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0147",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -23,
+        -20
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0149",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0148",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -23,
+        -21
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0150",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0149",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -23
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0151",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0150",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -23,
+        -24
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0152",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0151",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -25
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0153",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0152",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -25
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0154",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0153",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -23,
+        -24
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0155",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0154",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -25
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0156",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0155",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -25
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0157",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0156",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -23,
+        -26
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0158",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0157",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -26
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0159",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0158",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -22,
+        -26
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0160",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0159",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -22,
+        -27
+      ],
+      "measured_drift_px": 2.23606797749979,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0161",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0160",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -29
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0162",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0161",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -23,
+        -30
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0163",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0162",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -23,
+        -31
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0164",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0163",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -31
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0165",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0164",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -23,
+        -32
+      ],
+      "measured_drift_px": 2.23606797749979,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0166",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0165",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -24,
+        -34
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0167",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0166",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -24,
+        -36
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0168",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0167",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -24,
+        -37
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0169",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0168",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -24,
+        -39
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0170",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0169",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -24,
+        -41
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0171",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0170",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -24,
+        -43
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0172",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0171",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -24,
+        -45
+      ],
+      "measured_drift_px": 2.23606797749979,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0173",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0172",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -25,
+        -47
+      ],
+      "measured_drift_px": 3.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0174",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0173",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -25,
+        -50
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0175",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0174",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -24,
+        -51
+      ],
+      "measured_drift_px": 3.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0176",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0175",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -24,
+        -54
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0177",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0176",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -24,
+        -56
+      ],
+      "measured_drift_px": 1.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0178",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0177",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -24,
+        -57
+      ],
+      "measured_drift_px": 3.1622776601683795,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0179",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0178",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -23,
+        -60
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0180",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0179",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -23,
+        -62
+      ],
+      "measured_drift_px": 3.1622776601683795,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0181",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0180",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -22,
+        -65
+      ],
+      "measured_drift_px": 2.23606797749979,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0182",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0181",
+      "age_us": 50043,
+      "prior_shift_px": [
+        -21,
+        -67
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0183",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0182",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -21,
+        -69
+      ],
+      "measured_drift_px": 2.23606797749979,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0184",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0183",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -71
+      ],
+      "measured_drift_px": 3.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0185",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0184",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -22,
+        -74
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0186",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0184",
+      "age_us": 100096,
+      "prior_shift_px": [
+        -22,
+        -74
+      ],
+      "measured_drift_px": 4.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0187",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD3:0184",
+      "age_us": 150148,
+      "prior_shift_px": [
+        -22,
+        -74
+      ],
+      "measured_drift_px": 6.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0188",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD3:0184",
+      "age_us": 200200,
+      "prior_shift_px": [
+        -22,
+        -74
+      ],
+      "measured_drift_px": 8.06225774829855,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0189",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0188",
+      "age_us": 50044,
+      "prior_shift_px": [
+        -21,
+        -82
+      ],
+      "measured_drift_px": 0.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0190",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0188",
+      "age_us": 100096,
+      "prior_shift_px": [
+        -21,
+        -82
+      ],
+      "measured_drift_px": 1.4142135623730951,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0191",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD3:0188",
+      "age_us": 150149,
+      "prior_shift_px": [
+        -21,
+        -82
+      ],
+      "measured_drift_px": 2.23606797749979,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0192",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD3:0188",
+      "age_us": 200192,
+      "prior_shift_px": [
+        -21,
+        -82
+      ],
+      "measured_drift_px": 3.1622776601683795,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0193",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD3:0188",
+      "age_us": 250244,
+      "prior_shift_px": [
+        -21,
+        -82
+      ],
+      "measured_drift_px": 117.27318534089538,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0194",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD3:0188",
+      "age_us": 300297,
+      "prior_shift_px": [
+        -21,
+        -82
+      ],
+      "measured_drift_px": 10.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0195",
+      "eligible": false,
+      "reason": "AGE_SUPPORT_OR_DRIFT_NOT_VERIFIED",
+      "prior_query_id": "FCWD3:0188",
+      "age_us": 350340,
+      "prior_shift_px": [
+        -21,
+        -82
+      ],
+      "measured_drift_px": 6.4031242374328485,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0196",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0195",
+      "age_us": 50053,
+      "prior_shift_px": [
+        -26,
+        -86
+      ],
+      "measured_drift_px": 5.0,
+      "promoted": false
+    },
+    {
+      "query_id": "FCWD3:0197",
+      "eligible": true,
+      "reason": "GEOMETRIC_REFERENCE_PENDING",
+      "prior_query_id": "FCWD3:0196",
+      "age_us": 50052,
+      "prior_shift_px": [
+        -22,
+        -83
+      ],
+      "measured_drift_px": 2.0,
+      "promoted": false
+    }
+  ],
+  "labels_read": false,
+  "independent_geometric_validation": false
+}

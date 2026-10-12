@@ -1,0 +1,277 @@
+{
+  "row": {
+    "anchor_relative_seconds": 11.261134,
+    "anchor_us": 11261134,
+    "bbox_sources": [
+      {
+        "available_us": 11060881,
+        "path": "E:\\FCWD_dataset\\sealed_labels\\sequence_3\\bounding_box.csv",
+        "rgb_frame_index": 220,
+        "row_index": 118,
+        "sha256": "69291c08420cdc6629c05d57c57fa7c7c1fe87f5e00273869e6e106df42823d1",
+        "timestamp_us": 11010881
+      },
+      {
+        "available_us": 11160986,
+        "path": "E:\\FCWD_dataset\\sealed_labels\\sequence_3\\bounding_box.csv",
+        "rgb_frame_index": 222,
+        "row_index": 120,
+        "sha256": "69291c08420cdc6629c05d57c57fa7c7c1fe87f5e00273869e6e106df42823d1",
+        "timestamp_us": 11110986
+      },
+      {
+        "available_us": 11261082,
+        "path": "E:\\FCWD_dataset\\sealed_labels\\sequence_3\\bounding_box.csv",
+        "rgb_frame_index": 224,
+        "row_index": 122,
+        "sha256": "69291c08420cdc6629c05d57c57fa7c7c1fe87f5e00273869e6e106df42823d1",
+        "timestamp_us": 11211082
+      }
+    ],
+    "boxes_xyxy3": [
+      [
+        557.0,
+        224.0,
+        856.0,
+        512.0
+      ],
+      [
+        552.0,
+        223.0,
+        862.0,
+        519.0
+      ],
+      [
+        547.0,
+        222.0,
+        868.0,
+        527.0
+      ]
+    ],
+    "garl_full_available": false,
+    "garl_full_unavailable_reason": "MISSING_AUDITED_EVENT_TO_RGB_SPATIAL_MAPPING",
+    "metadata_sha256": "6063430ff26c6afb82c8f50422bd9960ab45fc48bfd22511702371cd218c9bf5",
+    "query_id": "FCWD3:0118",
+    "raw_path": "E:\\FCWD_dataset\\inputs\\sequence_3\\2024-03-02-10-38-25.hdf5",
+    "raw_stat": {
+      "mtime_ns": 1720710992000000000,
+      "size_bytes": 2141646632
+    },
+    "sequence_id": "FCWD3",
+    "square_xyxy": [
+      466.75,
+      133.75,
+      948.25,
+      615.25
+    ],
+    "windows_us": [
+      [
+        10961134,
+        11061134
+      ],
+      [
+        11061134,
+        11161134
+      ],
+      [
+        11161134,
+        11261134
+      ]
+    ]
+  },
+  "rgb_history": [
+    {
+      "first_sensor_ts_us": 10660542,
+      "anchor_us": 10860733,
+      "available_us": 11261134,
+      "timestamps_us": [
+        10660542,
+        10760637,
+        10860733
+      ],
+      "delta_t_s": [
+        0.100095,
+        0.100096
+      ],
+      "square_xyxy": [
+        702.0850948476059,
+        279.0276291367487,
+        1382.0296186834971,
+        958.97215297264
+      ],
+      "registration": "query_local_fixed_across_history"
+    },
+    {
+      "first_sensor_ts_us": 10760637,
+      "anchor_us": 10960838,
+      "available_us": 11261134,
+      "timestamps_us": [
+        10760637,
+        10860733,
+        10960838
+      ],
+      "delta_t_s": [
+        0.100096,
+        0.100105
+      ],
+      "square_xyxy": [
+        702.0850948476059,
+        279.0276291367487,
+        1382.0296186834971,
+        958.97215297264
+      ],
+      "registration": "query_local_fixed_across_history"
+    },
+    {
+      "first_sensor_ts_us": 10860733,
+      "anchor_us": 11060934,
+      "available_us": 11261134,
+      "timestamps_us": [
+        10860733,
+        10960838,
+        11060934
+      ],
+      "delta_t_s": [
+        0.100105,
+        0.100096
+      ],
+      "square_xyxy": [
+        702.0850948476059,
+        279.0276291367487,
+        1382.0296186834971,
+        958.97215297264
+      ],
+      "registration": "query_local_fixed_across_history"
+    },
+    {
+      "first_sensor_ts_us": 10960838,
+      "anchor_us": 11161029,
+      "available_us": 11261134,
+      "timestamps_us": [
+        10960838,
+        11060934,
+        11161029
+      ],
+      "delta_t_s": [
+        0.100096,
+        0.100095
+      ],
+      "square_xyxy": [
+        702.0850948476059,
+        279.0276291367487,
+        1382.0296186834971,
+        958.97215297264
+      ],
+      "registration": "query_local_fixed_across_history"
+    },
+    {
+      "first_sensor_ts_us": 11060934,
+      "anchor_us": 11261134,
+      "available_us": 11261134,
+      "timestamps_us": [
+        11060934,
+        11161029,
+        11261134
+      ],
+      "delta_t_s": [
+        0.100095,
+        0.100105
+      ],
+      "square_xyxy": [
+        702.0850948476059,
+        279.0276291367487,
+        1382.0296186834971,
+        958.97215297264
+      ],
+      "registration": "query_local_fixed_across_history"
+    }
+  ],
+  "reason": "",
+  "registration": {
+    "accepted": true,
+    "available_us": 11261134,
+    "binding_sha256": "87e859193cde854aa02e22c5566ad9b84d7e42be756a0f0a9a25f6d0f4ae0ef7",
+    "count_maps_sha256": "558b5373f47662f5a2c5827342193dc50e537b3c5b5fc42f49f472c46931c3b5",
+    "event_interval_us": [
+      11241134,
+      11261134
+    ],
+    "half_window_disagreement_px": 0.0,
+    "labels_read": false,
+    "matches": [
+      {
+        "ncc": 0.33042487502098083,
+        "shift_px": [
+          -22,
+          -14
+        ]
+      },
+      {
+        "ncc": 0.31955522298812866,
+        "shift_px": [
+          -22,
+          -14
+        ]
+      },
+      {
+        "ncc": 0.301359623670578,
+        "shift_px": [
+          -22,
+          -14
+        ]
+      }
+    ],
+    "metric_extrinsic_calibration": false,
+    "model": "published_intrinsics_plus_query_local_translation",
+    "query_id": "FCWD3:0118",
+    "query_us": 11261134,
+    "reason": "",
+    "rgb_boxes_xyxy3": [
+      [
+        829.5323019288982,
+        406.6154873585815,
+        1251.7442729008612,
+        813.0323283280762
+      ],
+      [
+        822.4710173658855,
+        405.2017694617949,
+        1260.224414048924,
+        822.9159914397801
+      ],
+      [
+        815.4091821535877,
+        403.7879747955508,
+        1268.7055313775152,
+        834.2118073138379
+      ]
+    ],
+    "rgb_frame_index": 225,
+    "rgb_sensor_us": 11261134,
+    "rgb_sha256": "2df0dc3cf05440df6083b0e3a50e5458bfc1ab9a2af965bfbb71627aee5a727c",
+    "rgb_square_xyxy": [
+      702.0850948476059,
+      279.0276291367487,
+      1382.0296186834971,
+      958.97215297264
+    ],
+    "search_boundary": false,
+    "sequence_id": "FCWD3",
+    "shift_px": [
+      -22,
+      -14
+    ],
+    "support_pixels": 19200,
+    "template_xyxy": [
+      546,
+      221,
+      869,
+      528
+    ]
+  },
+  "normalizers": {
+    "E": "15aaac9df8b19bc8b9df8562a48c7080a0e4294d7f34600f7e7d51dd3f272bf8",
+    "R": "411cf04805ebb83d62ad8421a129c81d38baa838d9533a2269b7cfd51f2cba11"
+  },
+  "instrumented_total_ms": 3229.4535000110045
+}

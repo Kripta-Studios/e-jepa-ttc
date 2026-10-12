@@ -1,0 +1,54 @@
+[
+  {
+    "scope": "common_support",
+    "contrast": "F_TRUE-GARL_FULL_REGISTERED",
+    "metric": "MAE",
+    "n": 472,
+    "groups": 3,
+    "delta": -0.5522962224406732,
+    "ci95": [
+      -0.6213074833577683,
+      -0.44168438265218735
+    ],
+    "role": "posthoc_three_sequences_not_confirmation"
+  },
+  {
+    "scope": "common_support",
+    "contrast": "F_TRUE-GARL_FULL_REGISTERED",
+    "metric": "MiD",
+    "n": 472,
+    "groups": 3,
+    "delta": -20.41913335742383,
+    "ci95": [
+      -24.273914472889835,
+      -17.919076907651128
+    ],
+    "role": "posthoc_three_sequences_not_confirmation"
+  },
+  {
+    "scope": "all_system",
+    "contrast": "F_TRUE-GARL_FULL_REGISTERED_FALLBACK_EVENT",
+    "metric": "MAE",
+    "n": 597,
+    "groups": 3,
+    "delta": -0.6375910081004137,
+    "ci95": [
+      -0.8494681103808542,
+      -0.503199642851737
+    ],
+    "role": "posthoc_three_sequences_not_confirmation"
+  },
+  {
+    "scope": "all_system",
+    "contrast": "F_TRUE-GARL_FULL_REGISTERED_FALLBACK_EVENT",
+    "metric": "MiD",
+    "n": 597,
+    "groups": 3,
+    "delta": -18.79395561870713,
+    "ci95": [
+      -21.23175045268769,
+      -14.595443848815657
+    ],
+    "role": "posthoc_three_sequences_not_confirmation"
+  }
+]

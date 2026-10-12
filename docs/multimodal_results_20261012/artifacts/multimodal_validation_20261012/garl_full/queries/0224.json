@@ -1,0 +1,28 @@
+{
+  "query_id": "FCWD2:0010",
+  "sequence_id": "FCWD2",
+  "anchor_us": 4804747,
+  "available": true,
+  "reason": "",
+  "ttc": 7.029638290405273,
+  "heights": [
+    129.13137817382812,
+    130.99484252929688
+  ],
+  "binding_sha256": "c0860586b45af5a444cfa1c5aa0b7e03e2bc66f35320a1bc107a745b40c712f1",
+  "nonfinite_prediction": false,
+  "preprocess": {
+    "rgb_read_decode_normalize_ms": 186.70949997613207,
+    "rgb_crop_ms": 24.33390001533553,
+    "event_read_native_voxels_ms": 51.67209997307509,
+    "rgb_square_xyxy": [
+      1037,
+      528,
+      1205,
+      696
+    ],
+    "sensor_sha256": "eeaa2f0ca57110c774d008b339062cdc346fbd965d2920b01e9f77fc18f5665c"
+  },
+  "inference_ms": 957.6763000222854,
+  "total_ms": 1224.87600002205
+}

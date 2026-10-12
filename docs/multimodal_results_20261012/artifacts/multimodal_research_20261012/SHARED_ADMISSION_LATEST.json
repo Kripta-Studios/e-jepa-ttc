@@ -1,0 +1,10 @@
+{
+  "utc": "2026-10-12T16:15:18.995664+00:00",
+  "own_pid": 23340,
+  "foreign": [],
+  "free_cuda_bytes": 9768534016,
+  "total_cuda_bytes": 12820480000,
+  "own_reserved_cuda_bytes": 54525952,
+  "policy_sha256": "b5de67e8d58dc558e0c6b885f979f1929354dad11eb925e1627726cbd8472737",
+  "prospective_updates": 0
+}

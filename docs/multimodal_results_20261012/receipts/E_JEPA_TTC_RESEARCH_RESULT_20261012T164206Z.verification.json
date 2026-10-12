@@ -1,0 +1,11 @@
+{
+  "path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v16-multimodal-validation\\artifacts\\E_JEPA_TTC_RESEARCH_RESULT_20261012T164206Z.zip",
+  "bytes": 461398299,
+  "sha256": "a59bac60a1a97c4c5e0b279247c98b96b1b4ce1ff3dc8db7781b4cf01372bab9",
+  "files": 47842,
+  "crc_pass": true,
+  "every_payload_sha256_verified": true,
+  "status": "LOCAL_RESULTS_COMPLETE_OFFICIAL_EVALUATION_PENDING",
+  "source_sha256": "d2c2bc40c309ce6ae17dab93053bac30850c5ea181d720d861ec32059a4493bd",
+  "official_SOTA": false
+}

@@ -1,0 +1,13 @@
+{
+  "accumulation_index": 0,
+  "checkpoint_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v16-multimodal-validation\\artifacts\\multimodal_research_20261012\\fits\\R_ANCHOR_PHASE_ONLY_REPLICATION_EVENT_S23\\checkpoint_last.pt",
+  "checkpoint_sha256": "f47f15ab6275575eeb9cc3e367e3892cc72054de2bbffeca822f70ff5cecdad0",
+  "complete_state": true,
+  "completed_updates": 2500,
+  "fit_id": "R_ANCHOR_PHASE_ONLY_REPLICATION_EVENT_S23",
+  "identity_sha256": "6e8e8c9e71977d4da31bba1458fa89f5421f69980a1c9caa13e83f125982f30b",
+  "recovery_upper": 0,
+  "schema": "rgb_port_checkpoint_receipt_v1",
+  "scientific_endpoint": true,
+  "status": "COMPLETE"
+}

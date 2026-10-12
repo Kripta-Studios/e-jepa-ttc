@@ -1,0 +1,11 @@
+{
+  "population": 18422,
+  "rgb_dead_zone": 49,
+  "wrong_rgb_sign": 219,
+  "event_rgb_sign_disagreement": 364,
+  "role": "H_only_descriptive",
+  "bounds": [
+    -0.0016652793190612104,
+    0.0016680571006970203
+  ]
+}

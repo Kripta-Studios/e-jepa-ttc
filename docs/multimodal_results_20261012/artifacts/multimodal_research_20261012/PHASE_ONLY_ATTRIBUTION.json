@@ -1,0 +1,4280 @@
+{
+  "source_sha256": "294a822f8bcef2770ae101e1ab58687ca024fe09cac49cff046b48086be4fdcc",
+  "checkpoints": {
+    "EVENT": "7602bd42cf444c002e8d2afe09c13445661fd960754eb78fd96443e8298771bb",
+    "ZERO": "509e372393a3e74e1f44be1d70b158f195ee91c14299450468aff4df5de46a4a"
+  },
+  "rows": [
+    {
+      "cohort": "H",
+      "query_id": "2JkLL5W891_004799_837400000",
+      "arm": "EVENT",
+      "input_route": "sealed H states",
+      "R_raw_phase": -0.014526709914207458,
+      "R_emitted_phase": -0.014526708982884884,
+      "R_expert_phases": [
+        -0.005916167516261339,
+        -0.009354972280561924,
+        -0.007580697536468506
+      ],
+      "E_raw_phase": -0.01889836974442005,
+      "E_emitted_phase": -0.01889836974442005,
+      "E_expert_phases": [
+        -0.010761965997517109,
+        -0.01429537683725357,
+        -0.012507201172411442
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": -0.0011746954405680299,
+      "new_raw_phase": -0.015701405704021454,
+      "new_emitted_phase": -0.015701405704021454,
+      "raw_head_ttc": -6.318987846374512,
+      "emitted_ttc": -6.318987846374512,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "2JkLL5W891_004799_837400000",
+      "arm": "ZERO",
+      "input_route": "sealed H states",
+      "R_raw_phase": -0.014526709914207458,
+      "R_emitted_phase": -0.014526708982884884,
+      "R_expert_phases": [
+        -0.005916167516261339,
+        -0.009354972280561924,
+        -0.007580697536468506
+      ],
+      "E_raw_phase": -0.01889836974442005,
+      "E_emitted_phase": -0.01889836974442005,
+      "E_expert_phases": [
+        -0.010761965997517109,
+        -0.01429537683725357,
+        -0.012507201172411442
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": -0.00010568861762294546,
+      "new_raw_phase": -0.014632398262619972,
+      "new_emitted_phase": -0.014632397331297398,
+      "raw_head_ttc": -6.784271717071533,
+      "emitted_ttc": -6.784271717071533,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": true,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "2JkLL5W891_002505_677200000",
+      "arm": "EVENT",
+      "input_route": "sealed H states",
+      "R_raw_phase": 0.025219276547431946,
+      "R_emitted_phase": 0.025219278410077095,
+      "R_expert_phases": [
+        0.03378941863775253,
+        0.02654840424656868,
+        0.02842843532562256
+      ],
+      "E_raw_phase": 0.03397108241915703,
+      "E_emitted_phase": 0.03397108241915703,
+      "E_expert_phases": [
+        0.004132824018597603,
+        -0.009639223106205463,
+        0.032229065895080566
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 0.0019344293978065252,
+      "new_raw_phase": 0.027153706178069115,
+      "new_emitted_phase": 0.027153706178069115,
+      "raw_head_ttc": 3.732964515686035,
+      "emitted_ttc": 3.732964515686035,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "2JkLL5W891_002505_677200000",
+      "arm": "ZERO",
+      "input_route": "sealed H states",
+      "R_raw_phase": 0.025219276547431946,
+      "R_emitted_phase": 0.025219278410077095,
+      "R_expert_phases": [
+        0.03378941863775253,
+        0.02654840424656868,
+        0.02842843532562256
+      ],
+      "E_raw_phase": 0.03397108241915703,
+      "E_emitted_phase": 0.03397108241915703,
+      "E_expert_phases": [
+        0.004132824018597603,
+        -0.009639223106205463,
+        0.032229065895080566
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 0.00018952305254060775,
+      "new_raw_phase": 0.025408798828721046,
+      "new_emitted_phase": 0.025408798828721046,
+      "raw_head_ttc": 3.985856294631958,
+      "emitted_ttc": 3.985856294631958,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "2JkLL5W891_003966_771300000",
+      "arm": "EVENT",
+      "input_route": "sealed H states",
+      "R_raw_phase": 0.046430688351392746,
+      "R_emitted_phase": 0.046430688351392746,
+      "R_expert_phases": [
+        0.04212496429681778,
+        0.03511054441332817,
+        0.0364457368850708
+      ],
+      "E_raw_phase": 0.045549072325229645,
+      "E_emitted_phase": 0.04554907605051994,
+      "E_expert_phases": [
+        0.03662184625864029,
+        0.0425470806658268,
+        0.032487452030181885
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 0.001771626528352499,
+      "new_raw_phase": 0.04820231348276138,
+      "new_emitted_phase": 0.04820231348276138,
+      "raw_head_ttc": 2.124990940093994,
+      "emitted_ttc": 2.124990940093994,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "2JkLL5W891_003966_771300000",
+      "arm": "ZERO",
+      "input_route": "sealed H states",
+      "R_raw_phase": 0.046430688351392746,
+      "R_emitted_phase": 0.046430688351392746,
+      "R_expert_phases": [
+        0.04212496429681778,
+        0.03511054441332817,
+        0.0364457368850708
+      ],
+      "E_raw_phase": 0.045549072325229645,
+      "E_emitted_phase": 0.04554907605051994,
+      "E_expert_phases": [
+        0.03662184625864029,
+        0.0425470806658268,
+        0.032487452030181885
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 9.150736150331795e-05,
+      "new_raw_phase": 0.046522196382284164,
+      "new_emitted_phase": 0.046522196382284164,
+      "raw_head_ttc": 2.199899435043335,
+      "emitted_ttc": 2.199899435043335,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "2JkLL5W891_003966_831200000",
+      "arm": "EVENT",
+      "input_route": "sealed H states",
+      "R_raw_phase": -0.01829444244503975,
+      "R_emitted_phase": -0.01829444244503975,
+      "R_expert_phases": [
+        -0.01566428691148758,
+        -0.015368275344371796,
+        -0.009871005080640316
+      ],
+      "E_raw_phase": -0.0132274329662323,
+      "E_emitted_phase": -0.0132274329662323,
+      "E_expert_phases": [
+        -0.010604380629956722,
+        -0.010362690314650536,
+        -0.0036423802375793457
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 0.0010534796165302396,
+      "new_raw_phase": -0.017240962013602257,
+      "new_emitted_phase": -0.017240962013602257,
+      "raw_head_ttc": -5.750284194946289,
+      "emitted_ttc": -5.750284194946289,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": true,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "2JkLL5W891_003966_831200000",
+      "arm": "ZERO",
+      "input_route": "sealed H states",
+      "R_raw_phase": -0.01829444244503975,
+      "R_emitted_phase": -0.01829444244503975,
+      "R_expert_phases": [
+        -0.01566428691148758,
+        -0.015368275344371796,
+        -0.009871005080640316
+      ],
+      "E_raw_phase": -0.0132274329662323,
+      "E_emitted_phase": -0.0132274329662323,
+      "E_expert_phases": [
+        -0.010604380629956722,
+        -0.010362690314650536,
+        -0.0036423802375793457
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": -6.882911111460999e-05,
+      "new_raw_phase": -0.01836327090859413,
+      "new_emitted_phase": -0.01836327090859413,
+      "raw_head_ttc": -5.395805835723877,
+      "emitted_ttc": -5.395805835723877,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "34K84TaN11_002141_8951600000",
+      "arm": "EVENT",
+      "input_route": "sealed H states",
+      "R_raw_phase": 0.02186308242380619,
+      "R_emitted_phase": 0.02186308428645134,
+      "R_expert_phases": [
+        0.025737717747688293,
+        0.020031379535794258,
+        0.02894413471221924
+      ],
+      "E_raw_phase": 0.023633113130927086,
+      "E_emitted_phase": 0.023633109405636787,
+      "E_expert_phases": [
+        0.02584327757358551,
+        0.019326211884617805,
+        0.029474737122654915
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 0.0005076576489955187,
+      "new_raw_phase": 0.02237074077129364,
+      "new_emitted_phase": 0.02237074263393879,
+      "raw_head_ttc": 4.520310878753662,
+      "emitted_ttc": 4.520310401916504,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": true,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "34K84TaN11_002141_8951600000",
+      "arm": "ZERO",
+      "input_route": "sealed H states",
+      "R_raw_phase": 0.02186308242380619,
+      "R_emitted_phase": 0.02186308428645134,
+      "R_expert_phases": [
+        0.025737717747688293,
+        0.020031379535794258,
+        0.02894413471221924
+      ],
+      "E_raw_phase": 0.023633113130927086,
+      "E_emitted_phase": 0.023633109405636787,
+      "E_expert_phases": [
+        0.02584327757358551,
+        0.019326211884617805,
+        0.029474737122654915
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 0.0002449465391691774,
+      "new_raw_phase": 0.022108029574155807,
+      "new_emitted_phase": 0.022108029574155807,
+      "raw_head_ttc": 4.573427677154541,
+      "emitted_ttc": 4.573427677154541,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "34K84TaN11_002133_8950100000",
+      "arm": "EVENT",
+      "input_route": "sealed H states",
+      "R_raw_phase": 0.012082229368388653,
+      "R_emitted_phase": 0.012082229368388653,
+      "R_expert_phases": [
+        0.009695987217128277,
+        0.017438210546970367,
+        0.01492464542388916
+      ],
+      "E_raw_phase": -0.007191019132733345,
+      "E_emitted_phase": -0.007191019132733345,
+      "E_expert_phases": [
+        0.004239535890519619,
+        0.0055032698437571526,
+        0.002815604442730546
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": -0.0023817759938538074,
+      "new_raw_phase": 0.009700452908873558,
+      "new_emitted_phase": 0.009700452908873558,
+      "raw_head_ttc": 10.358878135681152,
+      "emitted_ttc": 10.358878135681152,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": true,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "34K84TaN11_002133_8950100000",
+      "arm": "ZERO",
+      "input_route": "sealed H states",
+      "R_raw_phase": 0.012082229368388653,
+      "R_emitted_phase": 0.012082229368388653,
+      "R_expert_phases": [
+        0.009695987217128277,
+        0.017438210546970367,
+        0.01492464542388916
+      ],
+      "E_raw_phase": -0.007191019132733345,
+      "E_emitted_phase": -0.007191019132733345,
+      "E_expert_phases": [
+        0.004239535890519619,
+        0.0055032698437571526,
+        0.002815604442730546
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 0.00041804785723797977,
+      "new_raw_phase": 0.012500276789069176,
+      "new_emitted_phase": 0.012500276789069176,
+      "raw_head_ttc": 8.0499267578125,
+      "emitted_ttc": 8.0499267578125,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "34K84TaN11_000157_8913400000",
+      "arm": "EVENT",
+      "input_route": "sealed H states",
+      "R_raw_phase": -0.012988954782485962,
+      "R_emitted_phase": -0.012988953851163387,
+      "R_expert_phases": [
+        -0.011760670691728592,
+        -0.009878149256110191,
+        -0.010147333145141602
+      ],
+      "E_raw_phase": -0.012060006149113178,
+      "E_emitted_phase": -0.012060007080435753,
+      "E_expert_phases": [
+        -0.008351012133061886,
+        -0.00833080243319273,
+        -0.004149496555328369
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 0.0003256500349380076,
+      "new_raw_phase": -0.012663304805755615,
+      "new_emitted_phase": -0.01266330387443304,
+      "raw_head_ttc": -7.846938610076904,
+      "emitted_ttc": -7.846938610076904,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": true,
+      "conversion_changed_phase": true,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "34K84TaN11_000157_8913400000",
+      "arm": "ZERO",
+      "input_route": "sealed H states",
+      "R_raw_phase": -0.012988954782485962,
+      "R_emitted_phase": -0.012988953851163387,
+      "R_expert_phases": [
+        -0.011760670691728592,
+        -0.009878149256110191,
+        -0.010147333145141602
+      ],
+      "E_raw_phase": -0.012060006149113178,
+      "E_emitted_phase": -0.012060007080435753,
+      "E_expert_phases": [
+        -0.008351012133061886,
+        -0.00833080243319273,
+        -0.004149496555328369
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": -0.00015243436791934073,
+      "new_raw_phase": -0.01314138900488615,
+      "new_emitted_phase": -0.013141389936208725,
+      "raw_head_ttc": -7.55965518951416,
+      "emitted_ttc": -7.55965518951416,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": true,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "34K84TaN11_000077_8854500000",
+      "arm": "EVENT",
+      "input_route": "sealed H states",
+      "R_raw_phase": 0.020287977531552315,
+      "R_emitted_phase": 0.020287977531552315,
+      "R_expert_phases": [
+        0.01520270761102438,
+        0.020158246159553528,
+        0.021223904564976692
+      ],
+      "E_raw_phase": 0.021130677312612534,
+      "E_emitted_phase": 0.021130677312612534,
+      "E_expert_phases": [
+        0.019514357671141624,
+        0.02188257686793804,
+        0.023300588130950928
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 0.00033699473715387285,
+      "new_raw_phase": 0.020624972879886627,
+      "new_emitted_phase": 0.020624972879886627,
+      "raw_head_ttc": 4.89866304397583,
+      "emitted_ttc": 4.89866304397583,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "34K84TaN11_000077_8854500000",
+      "arm": "ZERO",
+      "input_route": "sealed H states",
+      "R_raw_phase": 0.020287977531552315,
+      "R_emitted_phase": 0.020287977531552315,
+      "R_expert_phases": [
+        0.01520270761102438,
+        0.020158246159553528,
+        0.021223904564976692
+      ],
+      "E_raw_phase": 0.021130677312612534,
+      "E_emitted_phase": 0.021130677312612534,
+      "E_expert_phases": [
+        0.019514357671141624,
+        0.02188257686793804,
+        0.023300588130950928
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 0.0002607347269076854,
+      "new_raw_phase": 0.020548712462186813,
+      "new_emitted_phase": 0.020548712462186813,
+      "raw_head_ttc": 4.916656017303467,
+      "emitted_ttc": 4.916656017303467,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "CzyQ8HKP6X_000470_1311800000",
+      "arm": "EVENT",
+      "input_route": "sealed H states",
+      "R_raw_phase": 0.021862315014004707,
+      "R_emitted_phase": 0.021862315014004707,
+      "R_expert_phases": [
+        0.025692347437143326,
+        0.01984892599284649,
+        0.02853238582611084
+      ],
+      "E_raw_phase": 0.025917209684848785,
+      "E_emitted_phase": 0.025917209684848785,
+      "E_expert_phases": [
+        0.025194289162755013,
+        0.028508562594652176,
+        0.02578979916870594
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 0.001225892105139792,
+      "new_raw_phase": 0.023088207468390465,
+      "new_emitted_phase": 0.023088209331035614,
+      "raw_head_ttc": 4.381407737731934,
+      "emitted_ttc": 4.381407737731934,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": true,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "CzyQ8HKP6X_000470_1311800000",
+      "arm": "ZERO",
+      "input_route": "sealed H states",
+      "R_raw_phase": 0.021862315014004707,
+      "R_emitted_phase": 0.021862315014004707,
+      "R_expert_phases": [
+        0.025692347437143326,
+        0.01984892599284649,
+        0.02853238582611084
+      ],
+      "E_raw_phase": 0.025917209684848785,
+      "E_emitted_phase": 0.025917209684848785,
+      "E_expert_phases": [
+        0.025194289162755013,
+        0.028508562594652176,
+        0.02578979916870594
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 0.00024735889746807516,
+      "new_raw_phase": 0.02210967428982258,
+      "new_emitted_phase": 0.02210967428982258,
+      "raw_head_ttc": 4.573091506958008,
+      "emitted_ttc": 4.573091506958008,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "CzyQ8HKP6X_000470_1389900000",
+      "arm": "EVENT",
+      "input_route": "sealed H states",
+      "R_raw_phase": -0.013073425740003586,
+      "R_emitted_phase": -0.01307342667132616,
+      "R_expert_phases": [
+        -0.010151713155210018,
+        -0.005231849849224091,
+        -0.0107230544090271
+      ],
+      "E_raw_phase": -0.012490217573940754,
+      "E_emitted_phase": -0.012490218505263329,
+      "E_expert_phases": [
+        -0.0016652793856337667,
+        -0.0016652793856337667,
+        0.001668057288043201
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 0.00010019949695561081,
+      "new_raw_phase": -0.012973226606845856,
+      "new_emitted_phase": -0.01297322753816843,
+      "raw_head_ttc": -7.658290386199951,
+      "emitted_ttc": -7.658290386199951,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": true,
+      "conversion_changed_phase": true,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "CzyQ8HKP6X_000470_1389900000",
+      "arm": "ZERO",
+      "input_route": "sealed H states",
+      "R_raw_phase": -0.013073425740003586,
+      "R_emitted_phase": -0.01307342667132616,
+      "R_expert_phases": [
+        -0.010151713155210018,
+        -0.005231849849224091,
+        -0.0107230544090271
+      ],
+      "E_raw_phase": -0.012490217573940754,
+      "E_emitted_phase": -0.012490218505263329,
+      "E_expert_phases": [
+        -0.0016652793856337667,
+        -0.0016652793856337667,
+        0.001668057288043201
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": -0.00015258767234627157,
+      "new_raw_phase": -0.013226013630628586,
+      "new_emitted_phase": -0.013226013630628586,
+      "raw_head_ttc": -7.510967254638672,
+      "emitted_ttc": -7.510967254638672,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "CzyQ8HKP6X_003037_1464800000",
+      "arm": "EVENT",
+      "input_route": "sealed H states",
+      "R_raw_phase": 0.027999665588140488,
+      "R_emitted_phase": 0.027999667450785637,
+      "R_expert_phases": [
+        0.004906148184090853,
+        0.0034378068521618843,
+        0.02754753828048706
+      ],
+      "E_raw_phase": 0.026955515146255493,
+      "E_emitted_phase": 0.026955515146255493,
+      "E_expert_phases": [
+        0.029733171686530113,
+        0.03472072258591652,
+        0.031505171209573746
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 3,
+      "E_observations": 4,
+      "readout_correction_phase": 0.0009165944647975266,
+      "new_raw_phase": 0.028916260227560997,
+      "new_emitted_phase": 0.028916260227560997,
+      "raw_head_ttc": 3.508502721786499,
+      "emitted_ttc": 3.508502721786499,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "CzyQ8HKP6X_003037_1464800000",
+      "arm": "ZERO",
+      "input_route": "sealed H states",
+      "R_raw_phase": 0.027999665588140488,
+      "R_emitted_phase": 0.027999667450785637,
+      "R_expert_phases": [
+        0.004906148184090853,
+        0.0034378068521618843,
+        0.02754753828048706
+      ],
+      "E_raw_phase": 0.026955515146255493,
+      "E_emitted_phase": 0.026955515146255493,
+      "E_expert_phases": [
+        0.029733171686530113,
+        0.03472072258591652,
+        0.031505171209573746
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 3,
+      "E_observations": 4,
+      "readout_correction_phase": 0.0003160634951200336,
+      "new_raw_phase": 0.028315728530287743,
+      "new_emitted_phase": 0.028315728530287743,
+      "raw_head_ttc": 3.5818421840667725,
+      "emitted_ttc": 3.5818421840667725,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "CzyQ8HKP6X_000453_1235900000",
+      "arm": "EVENT",
+      "input_route": "sealed H states",
+      "R_raw_phase": 0.03949073702096939,
+      "R_emitted_phase": 0.03949074074625969,
+      "R_expert_phases": [
+        0.04434150829911232,
+        0.03902585059404373,
+        0.041715800762176514
+      ],
+      "E_raw_phase": 0.03835452347993851,
+      "E_emitted_phase": 0.03835452347993851,
+      "E_expert_phases": [
+        0.038215190172195435,
+        0.03377921134233475,
+        0.03519231081008911
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 2,
+      "E_observations": 3,
+      "readout_correction_phase": 0.0007081603398546576,
+      "new_raw_phase": 0.04019889608025551,
+      "new_emitted_phase": 0.04019889608025551,
+      "raw_head_ttc": 2.5379655361175537,
+      "emitted_ttc": 2.5379655361175537,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "CzyQ8HKP6X_000453_1235900000",
+      "arm": "ZERO",
+      "input_route": "sealed H states",
+      "R_raw_phase": 0.03949073702096939,
+      "R_emitted_phase": 0.03949074074625969,
+      "R_expert_phases": [
+        0.04434150829911232,
+        0.03902585059404373,
+        0.041715800762176514
+      ],
+      "E_raw_phase": 0.03835452347993851,
+      "E_emitted_phase": 0.03835452347993851,
+      "E_expert_phases": [
+        0.038215190172195435,
+        0.03377921134233475,
+        0.03519231081008911
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 2,
+      "E_observations": 3,
+      "readout_correction_phase": 3.6136269045528024e-05,
+      "new_raw_phase": 0.03952687233686447,
+      "new_emitted_phase": 0.03952687606215477,
+      "raw_head_ttc": 2.5802536010742188,
+      "emitted_ttc": 2.5802536010742188,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": true,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "JaGC4Q9pgU_000004_3630100000",
+      "arm": "EVENT",
+      "input_route": "sealed H states",
+      "R_raw_phase": 0.03152348846197128,
+      "R_emitted_phase": 0.03152349218726158,
+      "R_expert_phases": [
+        0.038841333240270615,
+        0.04099943861365318,
+        0.033223509788513184
+      ],
+      "E_raw_phase": 0.02117917872965336,
+      "E_emitted_phase": 0.021179180592298508,
+      "E_expert_phases": [
+        0.020200101658701897,
+        0.023370124399662018,
+        0.027764620259404182
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": -0.0020615749526768923,
+      "new_raw_phase": 0.02946191281080246,
+      "new_emitted_phase": 0.02946191281080246,
+      "raw_head_ttc": 3.444458246231079,
+      "emitted_ttc": 3.444458246231079,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": true,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "JaGC4Q9pgU_000004_3630100000",
+      "arm": "ZERO",
+      "input_route": "sealed H states",
+      "R_raw_phase": 0.03152348846197128,
+      "R_emitted_phase": 0.03152349218726158,
+      "R_expert_phases": [
+        0.038841333240270615,
+        0.04099943861365318,
+        0.033223509788513184
+      ],
+      "E_raw_phase": 0.02117917872965336,
+      "E_emitted_phase": 0.021179180592298508,
+      "E_expert_phases": [
+        0.020200101658701897,
+        0.023370124399662018,
+        0.027764620259404182
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 8.430762682110071e-05,
+      "new_raw_phase": 0.031607795506715775,
+      "new_emitted_phase": 0.031607795506715775,
+      "raw_head_ttc": 3.2140398025512695,
+      "emitted_ttc": 3.2140398025512695,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "JaGC4Q9pgU_002688_3787400000",
+      "arm": "EVENT",
+      "input_route": "sealed H states",
+      "R_raw_phase": -0.013258900493383408,
+      "R_emitted_phase": -0.013258901424705982,
+      "R_expert_phases": [
+        -0.007229674607515335,
+        -0.008543886244297028,
+        -0.0016652795020490885
+      ],
+      "E_raw_phase": -0.01180898118764162,
+      "E_emitted_phase": -0.011808980256319046,
+      "E_expert_phases": [
+        -0.008757875300943851,
+        -0.008562873117625713,
+        -0.00386655330657959
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 3,
+      "E_observations": 2,
+      "readout_correction_phase": 0.0008488688035868108,
+      "new_raw_phase": -0.012410031631588936,
+      "new_emitted_phase": -0.012410031631588936,
+      "raw_head_ttc": -8.008100509643555,
+      "emitted_ttc": -8.008100509643555,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": true,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "JaGC4Q9pgU_002688_3787400000",
+      "arm": "ZERO",
+      "input_route": "sealed H states",
+      "R_raw_phase": -0.013258900493383408,
+      "R_emitted_phase": -0.013258901424705982,
+      "R_expert_phases": [
+        -0.007229674607515335,
+        -0.008543886244297028,
+        -0.0016652795020490885
+      ],
+      "E_raw_phase": -0.01180898118764162,
+      "E_emitted_phase": -0.011808980256319046,
+      "E_expert_phases": [
+        -0.008757875300943851,
+        -0.008562873117625713,
+        -0.00386655330657959
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 3,
+      "E_observations": 2,
+      "readout_correction_phase": -7.291798829101026e-05,
+      "new_raw_phase": -0.013331818394362926,
+      "new_emitted_phase": -0.013331818394362926,
+      "raw_head_ttc": -7.450963973999023,
+      "emitted_ttc": -7.450963973999023,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "JaGC4Q9pgU_000002_3777400000",
+      "arm": "EVENT",
+      "input_route": "sealed H states",
+      "R_raw_phase": -0.01593181863427162,
+      "R_emitted_phase": -0.01593181863427162,
+      "R_expert_phases": [
+        -0.018170267343521118,
+        -0.020188549533486366,
+        -0.016075611114501953
+      ],
+      "E_raw_phase": -0.01620045118033886,
+      "E_emitted_phase": -0.01620045118033886,
+      "E_expert_phases": [
+        -0.019278109073638916,
+        -0.018674496561288834,
+        -0.013700188137590885
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": -0.00012995745055377483,
+      "new_raw_phase": -0.016061775386333466,
+      "new_emitted_phase": -0.016061775386333466,
+      "raw_head_ttc": -6.176095962524414,
+      "emitted_ttc": -6.176095962524414,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "JaGC4Q9pgU_000002_3777400000",
+      "arm": "ZERO",
+      "input_route": "sealed H states",
+      "R_raw_phase": -0.01593181863427162,
+      "R_emitted_phase": -0.01593181863427162,
+      "R_expert_phases": [
+        -0.018170267343521118,
+        -0.020188549533486366,
+        -0.016075611114501953
+      ],
+      "E_raw_phase": -0.01620045118033886,
+      "E_emitted_phase": -0.01620045118033886,
+      "E_expert_phases": [
+        -0.019278109073638916,
+        -0.018674496561288834,
+        -0.013700188137590885
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": -9.538172889733687e-05,
+      "new_raw_phase": -0.01602720096707344,
+      "new_emitted_phase": -0.01602720096707344,
+      "raw_head_ttc": -6.189526557922363,
+      "emitted_ttc": -6.189526557922363,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "JaGC4Q9pgU_002408_3780400000",
+      "arm": "EVENT",
+      "input_route": "sealed H states",
+      "R_raw_phase": -0.009138878434896469,
+      "R_emitted_phase": -0.009138878434896469,
+      "R_expert_phases": [
+        0.0016680571716278791,
+        0.007852211594581604,
+        0.005724072922021151
+      ],
+      "E_raw_phase": -0.009165201336145401,
+      "E_emitted_phase": -0.009165201336145401,
+      "E_expert_phases": [
+        0.005383315961807966,
+        0.00760773615911603,
+        0.006323993671685457
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 1.8079925212077796e-05,
+      "new_raw_phase": -0.009120798669755459,
+      "new_emitted_phase": -0.009120798669755459,
+      "raw_head_ttc": -10.91402816772461,
+      "emitted_ttc": -10.91402816772461,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": true,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "JaGC4Q9pgU_002408_3780400000",
+      "arm": "ZERO",
+      "input_route": "sealed H states",
+      "R_raw_phase": -0.009138878434896469,
+      "R_emitted_phase": -0.009138878434896469,
+      "R_expert_phases": [
+        0.0016680571716278791,
+        0.007852211594581604,
+        0.005724072922021151
+      ],
+      "E_raw_phase": -0.009165201336145401,
+      "E_emitted_phase": -0.009165201336145401,
+      "E_expert_phases": [
+        0.005383315961807966,
+        0.00760773615911603,
+        0.006323993671685457
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 0.00014344249211717397,
+      "new_raw_phase": -0.008995436131954193,
+      "new_emitted_phase": -0.008995436131954193,
+      "raw_head_ttc": -11.066823959350586,
+      "emitted_ttc": -11.066823959350586,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": true,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "L36QTEoVkB_000805_1922500000",
+      "arm": "EVENT",
+      "input_route": "sealed H states",
+      "R_raw_phase": 0.015072048641741276,
+      "R_emitted_phase": 0.01507204957306385,
+      "R_expert_phases": [
+        0.01926339976489544,
+        0.017074042931199074,
+        0.014979599975049496
+      ],
+      "E_raw_phase": 0.006414532661437988,
+      "E_emitted_phase": 0.006414532661437988,
+      "E_expert_phases": [
+        0.013850385323166847,
+        0.019325578585267067,
+        0.021587667986750603
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": -0.0010058783227577806,
+      "new_raw_phase": 0.01406616996973753,
+      "new_emitted_phase": 0.014066169038414955,
+      "raw_head_ttc": 7.1593732833862305,
+      "emitted_ttc": 7.1593732833862305,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": true,
+      "conversion_changed_phase": true,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "L36QTEoVkB_000805_1922500000",
+      "arm": "ZERO",
+      "input_route": "sealed H states",
+      "R_raw_phase": 0.015072048641741276,
+      "R_emitted_phase": 0.01507204957306385,
+      "R_expert_phases": [
+        0.01926339976489544,
+        0.017074042931199074,
+        0.014979599975049496
+      ],
+      "E_raw_phase": 0.006414532661437988,
+      "E_emitted_phase": 0.006414532661437988,
+      "E_expert_phases": [
+        0.013850385323166847,
+        0.019325578585267067,
+        0.021587667986750603
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 0.0003897513961419463,
+      "new_raw_phase": 0.015461799688637257,
+      "new_emitted_phase": 0.015461798757314682,
+      "raw_head_ttc": 6.51768159866333,
+      "emitted_ttc": 6.51768159866333,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": true,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "L36QTEoVkB_000148_1861300000",
+      "arm": "EVENT",
+      "input_route": "sealed H states",
+      "R_raw_phase": 0.02042483165860176,
+      "R_emitted_phase": 0.02042482979595661,
+      "R_expert_phases": [
+        0.02266681380569935,
+        0.02193261869251728,
+        0.024907410144805908
+      ],
+      "E_raw_phase": 0.022612225264310837,
+      "E_emitted_phase": 0.022612225264310837,
+      "E_expert_phases": [
+        0.021546339616179466,
+        0.024551397189497948,
+        0.023467183113098145
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 0.0007008404936641455,
+      "new_raw_phase": 0.02112567238509655,
+      "new_emitted_phase": 0.02112567238509655,
+      "raw_head_ttc": 4.783753395080566,
+      "emitted_ttc": 4.783753395080566,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "L36QTEoVkB_000148_1861300000",
+      "arm": "ZERO",
+      "input_route": "sealed H states",
+      "R_raw_phase": 0.02042483165860176,
+      "R_emitted_phase": 0.02042482979595661,
+      "R_expert_phases": [
+        0.02266681380569935,
+        0.02193261869251728,
+        0.024907410144805908
+      ],
+      "E_raw_phase": 0.022612225264310837,
+      "E_emitted_phase": 0.022612225264310837,
+      "E_expert_phases": [
+        0.021546339616179466,
+        0.024551397189497948,
+        0.023467183113098145
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 0.0002440653624944389,
+      "new_raw_phase": 0.02066889777779579,
+      "new_emitted_phase": 0.02066889964044094,
+      "raw_head_ttc": 4.888359546661377,
+      "emitted_ttc": 4.888359546661377,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": true,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "L36QTEoVkB_000805_1923400000",
+      "arm": "EVENT",
+      "input_route": "sealed H states",
+      "R_raw_phase": 0.01939697004854679,
+      "R_emitted_phase": 0.019396968185901642,
+      "R_expert_phases": [
+        0.02000470459461212,
+        0.0199762973934412,
+        0.02252429723739624
+      ],
+      "E_raw_phase": 0.018212860450148582,
+      "E_emitted_phase": 0.018212860450148582,
+      "E_expert_phases": [
+        0.014803800731897354,
+        0.01565118320286274,
+        0.014283418655395508
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": -1.3757643500866834e-05,
+      "new_raw_phase": 0.01938321255147457,
+      "new_emitted_phase": 0.01938321255147457,
+      "raw_head_ttc": 5.209265232086182,
+      "emitted_ttc": 5.209265232086182,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": true,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "L36QTEoVkB_000805_1923400000",
+      "arm": "ZERO",
+      "input_route": "sealed H states",
+      "R_raw_phase": 0.01939697004854679,
+      "R_emitted_phase": 0.019396968185901642,
+      "R_expert_phases": [
+        0.02000470459461212,
+        0.0199762973934412,
+        0.02252429723739624
+      ],
+      "E_raw_phase": 0.018212860450148582,
+      "E_emitted_phase": 0.018212860450148582,
+      "E_expert_phases": [
+        0.014803800731897354,
+        0.01565118320286274,
+        0.014283418655395508
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 0.0002722796343732625,
+      "new_raw_phase": 0.019669249653816223,
+      "new_emitted_phase": 0.019669249653816223,
+      "raw_head_ttc": 5.134242057800293,
+      "emitted_ttc": 5.134242057800293,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "L36QTEoVkB_002347_2036900000",
+      "arm": "EVENT",
+      "input_route": "sealed H states",
+      "R_raw_phase": -0.014088725671172142,
+      "R_emitted_phase": -0.014088726602494717,
+      "R_expert_phases": [
+        -0.013369896449148655,
+        -0.012636998668313026,
+        -0.014780879952013493
+      ],
+      "E_raw_phase": -0.011489244177937508,
+      "E_emitted_phase": -0.011489245109260082,
+      "E_expert_phases": [
+        -0.008521677926182747,
+        -0.008614674210548401,
+        -0.007777809631079435
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 0.000569688156247139,
+      "new_raw_phase": -0.013519037514925003,
+      "new_emitted_phase": -0.013519036583602428,
+      "raw_head_ttc": -7.3470892906188965,
+      "emitted_ttc": -7.3470892906188965,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": true,
+      "conversion_changed_phase": true,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "L36QTEoVkB_002347_2036900000",
+      "arm": "ZERO",
+      "input_route": "sealed H states",
+      "R_raw_phase": -0.014088725671172142,
+      "R_emitted_phase": -0.014088726602494717,
+      "R_expert_phases": [
+        -0.013369896449148655,
+        -0.012636998668313026,
+        -0.014780879952013493
+      ],
+      "E_raw_phase": -0.011489244177937508,
+      "E_emitted_phase": -0.011489245109260082,
+      "E_expert_phases": [
+        -0.008521677926182747,
+        -0.008614674210548401,
+        -0.007777809631079435
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": -0.00014955783262848854,
+      "new_raw_phase": -0.014238283038139343,
+      "new_emitted_phase": -0.014238283969461918,
+      "raw_head_ttc": -6.9734368324279785,
+      "emitted_ttc": -6.9734368324279785,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": true,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "mHGFBekt7X_000013_2045300000",
+      "arm": "EVENT",
+      "input_route": "sealed H states",
+      "R_raw_phase": -0.021562019363045692,
+      "R_emitted_phase": -0.02156202122569084,
+      "R_expert_phases": [
+        -0.017525605857372284,
+        -0.018593553453683853,
+        -0.010295451618731022
+      ],
+      "E_raw_phase": -0.01565936952829361,
+      "E_emitted_phase": -0.01565937139093876,
+      "E_expert_phases": [
+        -0.003855909686535597,
+        -0.006441380362957716,
+        -0.0016652795020490885
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 0.0010944399982690811,
+      "new_raw_phase": -0.02046757936477661,
+      "new_emitted_phase": -0.02046757936477661,
+      "raw_head_ttc": -4.835946083068848,
+      "emitted_ttc": -4.835946083068848,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": true,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "mHGFBekt7X_000013_2045300000",
+      "arm": "ZERO",
+      "input_route": "sealed H states",
+      "R_raw_phase": -0.021562019363045692,
+      "R_emitted_phase": -0.02156202122569084,
+      "R_expert_phases": [
+        -0.017525605857372284,
+        -0.018593553453683853,
+        -0.010295451618731022
+      ],
+      "E_raw_phase": -0.01565936952829361,
+      "E_emitted_phase": -0.01565937139093876,
+      "E_expert_phases": [
+        -0.003855909686535597,
+        -0.006441380362957716,
+        -0.0016652795020490885
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": -1.2012468687316868e-05,
+      "new_raw_phase": -0.021574031561613083,
+      "new_emitted_phase": -0.021574031561613083,
+      "raw_head_ttc": -4.585381984710693,
+      "emitted_ttc": -4.585381984710693,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "mHGFBekt7X_000012_2013900000",
+      "arm": "EVENT",
+      "input_route": "sealed H states",
+      "R_raw_phase": -0.016008634120225906,
+      "R_emitted_phase": -0.016008634120225906,
+      "R_expert_phases": [
+        -0.014997338876128197,
+        -0.015629636123776436,
+        -0.013418376445770264
+      ],
+      "E_raw_phase": -0.018333492800593376,
+      "E_emitted_phase": -0.018333492800593376,
+      "E_expert_phases": [
+        -0.019633732736110687,
+        -0.020955709740519524,
+        -0.013261199928820133
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": -0.0006701563252136111,
+      "new_raw_phase": -0.016678789630532265,
+      "new_emitted_phase": -0.016678789630532265,
+      "raw_head_ttc": -5.945777893066406,
+      "emitted_ttc": -5.945777893066406,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "mHGFBekt7X_000012_2013900000",
+      "arm": "ZERO",
+      "input_route": "sealed H states",
+      "R_raw_phase": -0.016008634120225906,
+      "R_emitted_phase": -0.016008634120225906,
+      "R_expert_phases": [
+        -0.014997338876128197,
+        -0.015629636123776436,
+        -0.013418376445770264
+      ],
+      "E_raw_phase": -0.018333492800593376,
+      "E_emitted_phase": -0.018333492800593376,
+      "E_expert_phases": [
+        -0.019633732736110687,
+        -0.020955709740519524,
+        -0.013261199928820133
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": -0.00011872270988533273,
+      "new_raw_phase": -0.01612735725939274,
+      "new_emitted_phase": -0.01612735725939274,
+      "raw_head_ttc": -6.150778293609619,
+      "emitted_ttc": -6.150778293609619,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "mHGFBekt7X_003192_2201500000",
+      "arm": "EVENT",
+      "input_route": "sealed H states",
+      "R_raw_phase": 0.011751832440495491,
+      "R_emitted_phase": 0.011751832440495491,
+      "R_expert_phases": [
+        0.01097102090716362,
+        0.013677754439413548,
+        0.011742948554456234
+      ],
+      "E_raw_phase": 0.015059234574437141,
+      "E_emitted_phase": 0.015059234574437141,
+      "E_expert_phases": [
+        0.0060240840539336205,
+        0.00892515480518341,
+        0.015356422401964664
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 0.0005977741093374789,
+      "new_raw_phase": 0.012349606491625309,
+      "new_emitted_phase": 0.012349605560302734,
+      "raw_head_ttc": 8.147527694702148,
+      "emitted_ttc": 8.147527694702148,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": true,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "mHGFBekt7X_003192_2201500000",
+      "arm": "ZERO",
+      "input_route": "sealed H states",
+      "R_raw_phase": 0.011751832440495491,
+      "R_emitted_phase": 0.011751832440495491,
+      "R_expert_phases": [
+        0.01097102090716362,
+        0.013677754439413548,
+        0.011742948554456234
+      ],
+      "E_raw_phase": 0.015059234574437141,
+      "E_emitted_phase": 0.015059234574437141,
+      "E_expert_phases": [
+        0.0060240840539336205,
+        0.00892515480518341,
+        0.015356422401964664
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 0.0005034293862991035,
+      "new_raw_phase": 0.012255261652171612,
+      "new_emitted_phase": 0.012255261652171612,
+      "raw_head_ttc": 8.20986270904541,
+      "emitted_ttc": 8.20986270904541,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "mHGFBekt7X_002897_2163100000",
+      "arm": "EVENT",
+      "input_route": "sealed H states",
+      "R_raw_phase": 0.011986548081040382,
+      "R_emitted_phase": 0.011986549012362957,
+      "R_expert_phases": [
+        0.012073090299963951,
+        0.013675520196557045,
+        0.013303994201123714
+      ],
+      "E_raw_phase": 0.011689635924994946,
+      "E_emitted_phase": 0.011689635924994946,
+      "E_expert_phases": [
+        0.016064966097474098,
+        0.017063071951270103,
+        0.020670710131525993
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 1,
+      "E_observations": 2,
+      "readout_correction_phase": 6.540310278069228e-05,
+      "new_raw_phase": 0.012051951140165329,
+      "new_emitted_phase": 0.012051951140165329,
+      "raw_head_ttc": 8.347512245178223,
+      "emitted_ttc": 8.347512245178223,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "mHGFBekt7X_002897_2163100000",
+      "arm": "ZERO",
+      "input_route": "sealed H states",
+      "R_raw_phase": 0.011986548081040382,
+      "R_emitted_phase": 0.011986549012362957,
+      "R_expert_phases": [
+        0.012073090299963951,
+        0.013675520196557045,
+        0.013303994201123714
+      ],
+      "E_raw_phase": 0.011689635924994946,
+      "E_emitted_phase": 0.011689635924994946,
+      "E_expert_phases": [
+        0.016064966097474098,
+        0.017063071951270103,
+        0.020670710131525993
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 1,
+      "E_observations": 2,
+      "readout_correction_phase": 0.0005194643745198846,
+      "new_raw_phase": 0.012506012804806232,
+      "new_emitted_phase": 0.012506012804806232,
+      "raw_head_ttc": 8.046257972717285,
+      "emitted_ttc": 8.046257972717285,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "pBqGOb2vYq_003137_1620100000",
+      "arm": "EVENT",
+      "input_route": "sealed H states",
+      "R_raw_phase": 0.0253550186753273,
+      "R_emitted_phase": 0.0253550186753273,
+      "R_expert_phases": [
+        -0.015621158294379711,
+        -0.026955360546708107,
+        0.024455489590764046
+      ],
+      "E_raw_phase": 0.037848617881536484,
+      "E_emitted_phase": 0.037848617881536484,
+      "E_expert_phases": [
+        0.030472736805677414,
+        0.016552982851862907,
+        0.0396350659430027
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 0.0034549764823168516,
+      "new_raw_phase": 0.02880999445915222,
+      "new_emitted_phase": 0.02880999445915222,
+      "raw_head_ttc": 3.5212578773498535,
+      "emitted_ttc": 3.5212578773498535,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "pBqGOb2vYq_003137_1620100000",
+      "arm": "ZERO",
+      "input_route": "sealed H states",
+      "R_raw_phase": 0.0253550186753273,
+      "R_emitted_phase": 0.0253550186753273,
+      "R_expert_phases": [
+        -0.015621158294379711,
+        -0.026955360546708107,
+        0.024455489590764046
+      ],
+      "E_raw_phase": 0.037848617881536484,
+      "E_emitted_phase": 0.037848617881536484,
+      "E_expert_phases": [
+        0.030472736805677414,
+        0.016552982851862907,
+        0.0396350659430027
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 0.001010398962534964,
+      "new_raw_phase": 0.02636541798710823,
+      "new_emitted_phase": 0.02636541798710823,
+      "raw_head_ttc": 3.843066930770874,
+      "emitted_ttc": 3.843066930770874,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "pBqGOb2vYq_003554_1624000000",
+      "arm": "EVENT",
+      "input_route": "sealed H states",
+      "R_raw_phase": 0.027073804289102554,
+      "R_emitted_phase": 0.027073804289102554,
+      "R_expert_phases": [
+        0.055150967091321945,
+        0.029589248821139336,
+        0.031019093468785286
+      ],
+      "E_raw_phase": 0.0232772845774889,
+      "E_emitted_phase": 0.0232772845774889,
+      "E_expert_phases": [
+        0.02547326870262623,
+        0.02586113102734089,
+        0.02917301654815674
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": -0.00011062799603678286,
+      "new_raw_phase": 0.02696317620575428,
+      "new_emitted_phase": 0.02696317620575428,
+      "raw_head_ttc": 3.758986473083496,
+      "emitted_ttc": 3.758986473083496,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": true,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "pBqGOb2vYq_003554_1624000000",
+      "arm": "ZERO",
+      "input_route": "sealed H states",
+      "R_raw_phase": 0.027073804289102554,
+      "R_emitted_phase": 0.027073804289102554,
+      "R_expert_phases": [
+        0.055150967091321945,
+        0.029589248821139336,
+        0.031019093468785286
+      ],
+      "E_raw_phase": 0.0232772845774889,
+      "E_emitted_phase": 0.0232772845774889,
+      "E_expert_phases": [
+        0.02547326870262623,
+        0.02586113102734089,
+        0.02917301654815674
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 0.00019049138063564897,
+      "new_raw_phase": 0.027264295145869255,
+      "new_emitted_phase": 0.027264295145869255,
+      "raw_head_ttc": 3.7180278301239014,
+      "emitted_ttc": 3.7180278301239014,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "pBqGOb2vYq_002502_1620600000",
+      "arm": "EVENT",
+      "input_route": "sealed H states",
+      "R_raw_phase": 0.01399499922990799,
+      "R_emitted_phase": 0.013995000161230564,
+      "R_expert_phases": [
+        0.011666265316307545,
+        -0.0018153258133679628,
+        0.023970484733581543
+      ],
+      "E_raw_phase": 0.025269420817494392,
+      "E_emitted_phase": 0.02526942268013954,
+      "E_expert_phases": [
+        0.030631031841039658,
+        0.021888090297579765,
+        0.03703838586807251
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 0.002080899430438876,
+      "new_raw_phase": 0.016075897961854935,
+      "new_emitted_phase": 0.016075897961854935,
+      "raw_head_ttc": 6.270626544952393,
+      "emitted_ttc": 6.270626544952393,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "pBqGOb2vYq_002502_1620600000",
+      "arm": "ZERO",
+      "input_route": "sealed H states",
+      "R_raw_phase": 0.01399499922990799,
+      "R_emitted_phase": 0.013995000161230564,
+      "R_expert_phases": [
+        0.011666265316307545,
+        -0.0018153258133679628,
+        0.023970484733581543
+      ],
+      "E_raw_phase": 0.025269420817494392,
+      "E_emitted_phase": 0.02526942268013954,
+      "E_expert_phases": [
+        0.030631031841039658,
+        0.021888090297579765,
+        0.03703838586807251
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 0.0006238773930817842,
+      "new_raw_phase": 0.01461887639015913,
+      "new_emitted_phase": 0.014618875458836555,
+      "raw_head_ttc": 6.8905930519104,
+      "emitted_ttc": 6.8905930519104,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": true,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "pBqGOb2vYq_010114_1809300000",
+      "arm": "EVENT",
+      "input_route": "sealed H states",
+      "R_raw_phase": -0.01785789430141449,
+      "R_emitted_phase": -0.01785789430141449,
+      "R_expert_phases": [
+        -0.009164469316601753,
+        -0.008595178835093975,
+        -0.013303518295288086
+      ],
+      "E_raw_phase": -0.017738696187734604,
+      "E_emitted_phase": -0.017738698050379753,
+      "E_expert_phases": [
+        -0.018739044666290283,
+        -0.020281514152884483,
+        -0.01801908016204834
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "R_observations": 1,
+      "E_observations": 1,
+      "readout_correction_phase": -0.0009323607082478702,
+      "new_raw_phase": -0.01879025436937809,
+      "new_emitted_phase": -0.01879025436937809,
+      "raw_head_ttc": -5.272064208984375,
+      "emitted_ttc": -5.272064208984375,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "pBqGOb2vYq_010114_1809300000",
+      "arm": "ZERO",
+      "input_route": "sealed H states",
+      "R_raw_phase": -0.01785789430141449,
+      "R_emitted_phase": -0.01785789430141449,
+      "R_expert_phases": [
+        -0.009164469316601753,
+        -0.008595178835093975,
+        -0.013303518295288086
+      ],
+      "E_raw_phase": -0.017738696187734604,
+      "E_emitted_phase": -0.017738698050379753,
+      "E_expert_phases": [
+        -0.018739044666290283,
+        -0.020281514152884483,
+        -0.01801908016204834
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "R_observations": 1,
+      "E_observations": 1,
+      "readout_correction_phase": -2.4669156118761748e-05,
+      "new_raw_phase": -0.017882563173770905,
+      "new_emitted_phase": -0.017882563173770905,
+      "raw_head_ttc": -5.54218864440918,
+      "emitted_ttc": -5.54218864440918,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "qGsgzl4Q8B_000061_10198500000",
+      "arm": "EVENT",
+      "input_route": "sealed H states",
+      "R_raw_phase": -0.01776176318526268,
+      "R_emitted_phase": -0.01776176318526268,
+      "R_expert_phases": [
+        -0.017595401033759117,
+        -0.014556449837982655,
+        -0.015253127552568913
+      ],
+      "E_raw_phase": -0.01552934106439352,
+      "E_emitted_phase": -0.01552934106439352,
+      "E_expert_phases": [
+        -0.013235543854534626,
+        -0.012510220520198345,
+        -0.012074112892150879
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 0.0004925717948935926,
+      "new_raw_phase": -0.017269192263484,
+      "new_emitted_phase": -0.017269192263484,
+      "raw_head_ttc": -5.740802764892578,
+      "emitted_ttc": -5.740802764892578,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": true,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "qGsgzl4Q8B_000061_10198500000",
+      "arm": "ZERO",
+      "input_route": "sealed H states",
+      "R_raw_phase": -0.01776176318526268,
+      "R_emitted_phase": -0.01776176318526268,
+      "R_expert_phases": [
+        -0.017595401033759117,
+        -0.014556449837982655,
+        -0.015253127552568913
+      ],
+      "E_raw_phase": -0.01552934106439352,
+      "E_emitted_phase": -0.01552934106439352,
+      "E_expert_phases": [
+        -0.013235543854534626,
+        -0.012510220520198345,
+        -0.012074112892150879
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": -9.750617755344138e-05,
+      "new_raw_phase": -0.017859268933534622,
+      "new_emitted_phase": -0.017859268933534622,
+      "raw_head_ttc": -5.549482345581055,
+      "emitted_ttc": -5.549482345581055,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "qGsgzl4Q8B_000549_10313000000",
+      "arm": "EVENT",
+      "input_route": "sealed H states",
+      "R_raw_phase": -0.012090559117496014,
+      "R_emitted_phase": -0.012090559117496014,
+      "R_expert_phases": [
+        -0.012449636124074459,
+        -0.014470409601926804,
+        -0.012799740768969059
+      ],
+      "E_raw_phase": -0.01778252050280571,
+      "E_emitted_phase": -0.01778252050280571,
+      "E_expert_phases": [
+        -0.01648593693971634,
+        -0.014999979175627232,
+        -0.01481485366821289
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": -0.0013078004121780396,
+      "new_raw_phase": -0.013398359529674053,
+      "new_emitted_phase": -0.013398358598351479,
+      "raw_head_ttc": -7.413712024688721,
+      "emitted_ttc": -7.413712024688721,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": true,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "qGsgzl4Q8B_000549_10313000000",
+      "arm": "ZERO",
+      "input_route": "sealed H states",
+      "R_raw_phase": -0.012090559117496014,
+      "R_emitted_phase": -0.012090559117496014,
+      "R_expert_phases": [
+        -0.012449636124074459,
+        -0.014470409601926804,
+        -0.012799740768969059
+      ],
+      "E_raw_phase": -0.01778252050280571,
+      "E_emitted_phase": -0.01778252050280571,
+      "E_expert_phases": [
+        -0.01648593693971634,
+        -0.014999979175627232,
+        -0.01481485366821289
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": -0.00014679499145131558,
+      "new_raw_phase": -0.012237354181706905,
+      "new_emitted_phase": -0.012237354181706905,
+      "raw_head_ttc": -8.121803283691406,
+      "emitted_ttc": -8.121803283691406,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "qGsgzl4Q8B_000002_10228100000",
+      "arm": "EVENT",
+      "input_route": "sealed H states",
+      "R_raw_phase": -0.019504426047205925,
+      "R_emitted_phase": -0.019504426047205925,
+      "R_expert_phases": [
+        -0.017820382490754128,
+        -0.02076137810945511,
+        -0.016646742820739746
+      ],
+      "E_raw_phase": -0.01865110918879509,
+      "E_emitted_phase": -0.01865110918879509,
+      "E_expert_phases": [
+        -0.021018588915467262,
+        -0.020354999229311943,
+        -0.016666412353515625
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": -6.554333231179044e-05,
+      "new_raw_phase": -0.019569968804717064,
+      "new_emitted_phase": -0.019569968804717064,
+      "raw_head_ttc": -5.060033321380615,
+      "emitted_ttc": -5.060033321380615,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "qGsgzl4Q8B_000002_10228100000",
+      "arm": "ZERO",
+      "input_route": "sealed H states",
+      "R_raw_phase": -0.019504426047205925,
+      "R_emitted_phase": -0.019504426047205925,
+      "R_expert_phases": [
+        -0.017820382490754128,
+        -0.02076137810945511,
+        -0.016646742820739746
+      ],
+      "E_raw_phase": -0.01865110918879509,
+      "E_emitted_phase": -0.01865110918879509,
+      "E_expert_phases": [
+        -0.021018588915467262,
+        -0.020354999229311943,
+        -0.016666412353515625
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": -6.609001866308972e-05,
+      "new_raw_phase": -0.019570516422390938,
+      "new_emitted_phase": -0.019570516422390938,
+      "raw_head_ttc": -5.059890270233154,
+      "emitted_ttc": -5.059890270233154,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "qGsgzl4Q8B_000002_10185600000",
+      "arm": "EVENT",
+      "input_route": "sealed H states",
+      "R_raw_phase": -0.01952090486884117,
+      "R_emitted_phase": -0.01952090673148632,
+      "R_expert_phases": [
+        -0.01786479726433754,
+        -0.019818048924207687,
+        -0.01709473319351673
+      ],
+      "E_raw_phase": -0.013488542288541794,
+      "E_emitted_phase": -0.013488542288541794,
+      "E_expert_phases": [
+        -0.008754541166126728,
+        -0.014668368734419346,
+        -0.011268854141235352
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 3,
+      "E_observations": 2,
+      "readout_correction_phase": 0.0025760289281606674,
+      "new_raw_phase": -0.016944875940680504,
+      "new_emitted_phase": -0.016944875940680504,
+      "raw_head_ttc": -5.851630210876465,
+      "emitted_ttc": -5.851630210876465,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": true,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "H",
+      "query_id": "qGsgzl4Q8B_000002_10185600000",
+      "arm": "ZERO",
+      "input_route": "sealed H states",
+      "R_raw_phase": -0.01952090486884117,
+      "R_emitted_phase": -0.01952090673148632,
+      "R_expert_phases": [
+        -0.01786479726433754,
+        -0.019818048924207687,
+        -0.01709473319351673
+      ],
+      "E_raw_phase": -0.013488542288541794,
+      "E_emitted_phase": -0.013488542288541794,
+      "E_expert_phases": [
+        -0.008754541166126728,
+        -0.014668368734419346,
+        -0.011268854141235352
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 3,
+      "E_observations": 2,
+      "readout_correction_phase": 8.74791294336319e-06,
+      "new_raw_phase": -0.019512157887220383,
+      "new_emitted_phase": -0.019512157887220383,
+      "raw_head_ttc": -5.075172424316406,
+      "emitted_ttc": -5.075172424316406,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": true,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "DEV32",
+      "query_id": "CCRm-medium-100-overlap-100:02",
+      "arm": "EVENT",
+      "input_route": "cpu parents; CPU readout",
+      "state_sha256": "d6d138e0cc362f421292dee9569446a71514ac0336b0bd55b0ce8ed0754d3e45",
+      "sealed_prediction_exact": true,
+      "truth_ttc": 17.522658439,
+      "R_CTX": 12.280563354492188,
+      "F_TRUE": 8.059537887573242,
+      "R_raw_phase": 0.008176283910870552,
+      "R_emitted_phase": 0.008176283910870552,
+      "R_expert_phases": [
+        0.002993253758177161,
+        0.0016680571716278791,
+        0.006671011447906494
+      ],
+      "E_raw_phase": -0.0036044237203896046,
+      "E_emitted_phase": -0.0036044237203896046,
+      "E_expert_phases": [
+        -0.0016652793856337667,
+        0.0027221019845455885,
+        -0.003794074058532715
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000699758529663,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": -0.0012267535785213113,
+      "new_raw_phase": 0.006949530448764563,
+      "new_emitted_phase": 0.006949530448764563,
+      "raw_head_ttc": 14.439518928527832,
+      "emitted_ttc": 14.439518928527832,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": true,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "DEV32",
+      "query_id": "CCRm-medium-100-overlap-100:02",
+      "arm": "ZERO",
+      "input_route": "cpu parents; CPU readout",
+      "state_sha256": "d6d138e0cc362f421292dee9569446a71514ac0336b0bd55b0ce8ed0754d3e45",
+      "sealed_prediction_exact": true,
+      "truth_ttc": 17.522658439,
+      "R_CTX": 12.280563354492188,
+      "F_TRUE": 8.059537887573242,
+      "R_raw_phase": 0.008176283910870552,
+      "R_emitted_phase": 0.008176283910870552,
+      "R_expert_phases": [
+        0.002993253758177161,
+        0.0016680571716278791,
+        0.006671011447906494
+      ],
+      "E_raw_phase": -0.0036044237203896046,
+      "E_emitted_phase": -0.0036044237203896046,
+      "E_expert_phases": [
+        -0.0016652793856337667,
+        0.0027221019845455885,
+        -0.003794074058532715
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000699758529663,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 0.0008928714669309556,
+      "new_raw_phase": 0.009069154970347881,
+      "new_emitted_phase": 0.009069154970347881,
+      "raw_head_ttc": 11.076460838317871,
+      "emitted_ttc": 11.076460838317871,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "DEV32",
+      "query_id": "CCRs-1-low-100-overlap-100:22",
+      "arm": "EVENT",
+      "input_route": "cpu parents; CPU readout",
+      "state_sha256": "b400188bb39d5b5a8b5e141423b9d5638eea331aa754619df98a267dce3c9da7",
+      "sealed_prediction_exact": true,
+      "truth_ttc": 1.064457005,
+      "R_CTX": -2.655745506286621,
+      "F_TRUE": -16.254776000976562,
+      "R_raw_phase": -0.0369625985622406,
+      "R_emitted_phase": -0.0369625985622406,
+      "R_expert_phases": [
+        -0.09695316106081009,
+        -0.0998491495847702,
+        -0.02298063039779663
+      ],
+      "E_raw_phase": -0.019527122378349304,
+      "E_emitted_phase": -0.019527122378349304,
+      "E_expert_phases": [
+        -0.03423338383436203,
+        -0.03749796748161316,
+        -0.02576059103012085
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000699758529663,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 0.004592089913785458,
+      "new_raw_phase": -0.03237050771713257,
+      "new_emitted_phase": -0.03237050771713257,
+      "raw_head_ttc": -3.039501667022705,
+      "emitted_ttc": -3.039501667022705,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": true,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "DEV32",
+      "query_id": "CCRs-1-low-100-overlap-100:22",
+      "arm": "ZERO",
+      "input_route": "cpu parents; CPU readout",
+      "state_sha256": "b400188bb39d5b5a8b5e141423b9d5638eea331aa754619df98a267dce3c9da7",
+      "sealed_prediction_exact": true,
+      "truth_ttc": 1.064457005,
+      "R_CTX": -2.655745506286621,
+      "F_TRUE": -16.254776000976562,
+      "R_raw_phase": -0.0369625985622406,
+      "R_emitted_phase": -0.0369625985622406,
+      "R_expert_phases": [
+        -0.09695316106081009,
+        -0.0998491495847702,
+        -0.02298063039779663
+      ],
+      "E_raw_phase": -0.019527122378349304,
+      "E_emitted_phase": -0.019527122378349304,
+      "E_expert_phases": [
+        -0.03423338383436203,
+        -0.03749796748161316,
+        -0.02576059103012085
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000699758529663,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 0.0006636598845943809,
+      "new_raw_phase": -0.03629893809556961,
+      "new_emitted_phase": -0.03629893809556961,
+      "raw_head_ttc": -2.7052040100097656,
+      "emitted_ttc": -2.7052040100097656,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": true,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "DEV32",
+      "query_id": "CCRs-1-low-100-overlap-100:23",
+      "arm": "EVENT",
+      "input_route": "cpu parents; CPU readout",
+      "state_sha256": "2c5cd61aa1d70bfe6e31adcc7a9fc05998c84e9e5994f956809bc141884e8ff8",
+      "sealed_prediction_exact": true,
+      "truth_ttc": 1.0003451729,
+      "R_CTX": 3.5199050903320312,
+      "F_TRUE": -39.49188995361328,
+      "R_raw_phase": 0.028821228072047234,
+      "R_emitted_phase": 0.028821228072047234,
+      "R_expert_phases": [
+        -0.03322293236851692,
+        -0.030127214267849922,
+        0.002550482749938965
+      ],
+      "E_raw_phase": -0.01795429363846779,
+      "E_emitted_phase": -0.01795429363846779,
+      "E_expert_phases": [
+        -0.009761886671185493,
+        -0.010299528948962688,
+        -0.0016652795020490885
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.09999900311231613,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": -0.003549848450347781,
+      "new_raw_phase": 0.025271380320191383,
+      "new_emitted_phase": 0.025271380320191383,
+      "raw_head_ttc": 4.007256031036377,
+      "emitted_ttc": 4.007256031036377,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": true,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "DEV32",
+      "query_id": "CCRs-1-low-100-overlap-100:23",
+      "arm": "ZERO",
+      "input_route": "cpu parents; CPU readout",
+      "state_sha256": "2c5cd61aa1d70bfe6e31adcc7a9fc05998c84e9e5994f956809bc141884e8ff8",
+      "sealed_prediction_exact": true,
+      "truth_ttc": 1.0003451729,
+      "R_CTX": 3.5199050903320312,
+      "F_TRUE": -39.49188995361328,
+      "R_raw_phase": 0.028821228072047234,
+      "R_emitted_phase": 0.028821228072047234,
+      "R_expert_phases": [
+        -0.03322293236851692,
+        -0.030127214267849922,
+        0.002550482749938965
+      ],
+      "E_raw_phase": -0.01795429363846779,
+      "E_emitted_phase": -0.01795429363846779,
+      "E_expert_phases": [
+        -0.009761886671185493,
+        -0.010299528948962688,
+        -0.0016652795020490885
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.09999900311231613,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 0.0016430254327133298,
+      "new_raw_phase": 0.030464254319667816,
+      "new_emitted_phase": 0.030464252457022667,
+      "raw_head_ttc": 3.332789659500122,
+      "emitted_ttc": 3.332789659500122,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": true,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "DEV32",
+      "query_id": "CCRs-1-low-100-overlap-100:24",
+      "arm": "EVENT",
+      "input_route": "cpu parents; CPU readout",
+      "state_sha256": "ddbd5b2241e70fcc0a10b79781e91bd9713c32c3e318298ad70caf373322e728",
+      "sealed_prediction_exact": true,
+      "truth_ttc": 0.9438783757000004,
+      "R_CTX": 1.7266279458999634,
+      "F_TRUE": 22.649269104003906,
+      "R_raw_phase": 0.05966121703386307,
+      "R_emitted_phase": 0.05966121330857277,
+      "R_expert_phases": [
+        0.040079135447740555,
+        0.04403635859489441,
+        0.002649366855621338
+      ],
+      "E_raw_phase": -0.01699552871286869,
+      "E_emitted_phase": -0.01699552871286869,
+      "E_expert_phases": [
+        -0.0040752780623734,
+        -0.001858641393482685,
+        0.005276024341583252
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.09999799728393555,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": -0.0042216582223773,
+      "new_raw_phase": 0.05543955788016319,
+      "new_emitted_phase": 0.05543955788016319,
+      "raw_head_ttc": 1.854228138923645,
+      "emitted_ttc": 1.854228138923645,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": true,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "DEV32",
+      "query_id": "CCRs-1-low-100-overlap-100:24",
+      "arm": "ZERO",
+      "input_route": "cpu parents; CPU readout",
+      "state_sha256": "ddbd5b2241e70fcc0a10b79781e91bd9713c32c3e318298ad70caf373322e728",
+      "sealed_prediction_exact": true,
+      "truth_ttc": 0.9438783757000004,
+      "R_CTX": 1.7266279458999634,
+      "F_TRUE": 22.649269104003906,
+      "R_raw_phase": 0.05966121703386307,
+      "R_emitted_phase": 0.05966121330857277,
+      "R_expert_phases": [
+        0.040079135447740555,
+        0.04403635859489441,
+        0.002649366855621338
+      ],
+      "E_raw_phase": -0.01699552871286869,
+      "E_emitted_phase": -0.01699552871286869,
+      "E_expert_phases": [
+        -0.0040752780623734,
+        -0.001858641393482685,
+        0.005276024341583252
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.09999799728393555,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 0.00014801818178966641,
+      "new_raw_phase": 0.059809233993291855,
+      "new_emitted_phase": 0.059809230268001556,
+      "raw_head_ttc": 1.72248113155365,
+      "emitted_ttc": 1.72248113155365,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": true,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "DEV32",
+      "query_id": "CCRs-1-low-100-overlap-100:30",
+      "arm": "EVENT",
+      "input_route": "cpu parents; CPU readout",
+      "state_sha256": "277319864b2256d7fe661ef6f4a3b0be90f5b44c9e2b7355708d25832bcfcb58",
+      "sealed_prediction_exact": true,
+      "truth_ttc": 1.6417998835000025,
+      "R_CTX": -5.333320617675781,
+      "F_TRUE": -9.830979347229004,
+      "R_raw_phase": -0.018576430156826973,
+      "R_emitted_phase": -0.018576430156826973,
+      "R_expert_phases": [
+        -0.0016652793856337667,
+        0.0016680571716278791,
+        -0.00442880392074585
+      ],
+      "E_raw_phase": -0.008128487505018711,
+      "E_emitted_phase": -0.008128487505018711,
+      "E_expert_phases": [
+        0.0016680571716278791,
+        0.0016680571716278791,
+        -0.003948688507080078
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.09999900311231613,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 0.0014389996649697423,
+      "new_raw_phase": -0.017137430608272552,
+      "new_emitted_phase": -0.017137430608272552,
+      "raw_head_ttc": -5.785323143005371,
+      "emitted_ttc": -5.785323143005371,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": true,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "DEV32",
+      "query_id": "CCRs-1-low-100-overlap-100:30",
+      "arm": "ZERO",
+      "input_route": "cpu parents; CPU readout",
+      "state_sha256": "277319864b2256d7fe661ef6f4a3b0be90f5b44c9e2b7355708d25832bcfcb58",
+      "sealed_prediction_exact": true,
+      "truth_ttc": 1.6417998835000025,
+      "R_CTX": -5.333320617675781,
+      "F_TRUE": -9.830979347229004,
+      "R_raw_phase": -0.018576430156826973,
+      "R_emitted_phase": -0.018576430156826973,
+      "R_expert_phases": [
+        -0.0016652793856337667,
+        0.0016680571716278791,
+        -0.00442880392074585
+      ],
+      "E_raw_phase": -0.008128487505018711,
+      "E_emitted_phase": -0.008128487505018711,
+      "E_expert_phases": [
+        0.0016680571716278791,
+        0.0016680571716278791,
+        -0.003948688507080078
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.09999900311231613,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 2.21389109356096e-05,
+      "new_raw_phase": -0.018554290756583214,
+      "new_emitted_phase": -0.018554290756583214,
+      "raw_head_ttc": -5.339743614196777,
+      "emitted_ttc": -5.339743614196777,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": true,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "DEV32",
+      "query_id": "CCRs-1-medium-100-overlap-100:00",
+      "arm": "EVENT",
+      "input_route": "cpu parents; CPU readout",
+      "state_sha256": "3e467a302466f1a401a08509e41522fb3d00f4376c6a22a9e50f432d4382fee8",
+      "sealed_prediction_exact": true,
+      "truth_ttc": 6.7076469095,
+      "R_CTX": -10.462044715881348,
+      "F_TRUE": -21.00189971923828,
+      "R_raw_phase": -0.00951296929270029,
+      "R_emitted_phase": -0.00951296929270029,
+      "R_expert_phases": [
+        0.0016680571716278791,
+        0.0024437648244202137,
+        -0.0038109419401735067
+      ],
+      "E_raw_phase": 0.008021507412195206,
+      "E_emitted_phase": 0.008021507412195206,
+      "E_expert_phases": [
+        0.008044838905334473,
+        0.004989658482372761,
+        0.011571049690246582
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000800341367722,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 0.0020218396093696356,
+      "new_raw_phase": -0.0074911294505000114,
+      "new_emitted_phase": -0.007491128984838724,
+      "raw_head_ttc": -13.299184799194336,
+      "emitted_ttc": -13.299184799194336,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": true,
+      "conversion_changed_phase": true,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "DEV32",
+      "query_id": "CCRs-1-medium-100-overlap-100:00",
+      "arm": "ZERO",
+      "input_route": "cpu parents; CPU readout",
+      "state_sha256": "3e467a302466f1a401a08509e41522fb3d00f4376c6a22a9e50f432d4382fee8",
+      "sealed_prediction_exact": true,
+      "truth_ttc": 6.7076469095,
+      "R_CTX": -10.462044715881348,
+      "F_TRUE": -21.00189971923828,
+      "R_raw_phase": -0.00951296929270029,
+      "R_emitted_phase": -0.00951296929270029,
+      "R_expert_phases": [
+        0.0016680571716278791,
+        0.0024437648244202137,
+        -0.0038109419401735067
+      ],
+      "E_raw_phase": 0.008021507412195206,
+      "E_emitted_phase": 0.008021507412195206,
+      "E_expert_phases": [
+        0.008044838905334473,
+        0.004989658482372761,
+        0.011571049690246582
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000800341367722,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": -2.510643935238477e-05,
+      "new_raw_phase": -0.009538075886666775,
+      "new_emitted_phase": -0.009538075886666775,
+      "raw_head_ttc": -10.434374809265137,
+      "emitted_ttc": -10.434374809265137,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "DEV32",
+      "query_id": "CCRs-1-medium-100-overlap-100:01",
+      "arm": "EVENT",
+      "input_route": "cpu parents; CPU readout",
+      "state_sha256": "b4792c370b008810dbef113a8a96787540d3c89b1102bfc077265776ecd2a35a",
+      "sealed_prediction_exact": true,
+      "truth_ttc": 6.520134291,
+      "R_CTX": -8.321331977844238,
+      "F_TRUE": -59.999996185302734,
+      "R_raw_phase": -0.011945672333240509,
+      "R_emitted_phase": -0.011945672333240509,
+      "R_expert_phases": [
+        0.002843828871846199,
+        0.0016680571716278791,
+        0.0047487616539001465
+      ],
+      "E_raw_phase": 0.012759268283843994,
+      "E_emitted_phase": 0.01275926735252142,
+      "E_expert_phases": [
+        0.0020391589496284723,
+        0.0035102390684187412,
+        0.009090065956115723
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000699758529663,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 0.002515313448384404,
+      "new_raw_phase": -0.009430359117686749,
+      "new_emitted_phase": -0.009430359117686749,
+      "raw_head_ttc": -10.554129600524902,
+      "emitted_ttc": -10.554129600524902,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": true,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "DEV32",
+      "query_id": "CCRs-1-medium-100-overlap-100:01",
+      "arm": "ZERO",
+      "input_route": "cpu parents; CPU readout",
+      "state_sha256": "b4792c370b008810dbef113a8a96787540d3c89b1102bfc077265776ecd2a35a",
+      "sealed_prediction_exact": true,
+      "truth_ttc": 6.520134291,
+      "R_CTX": -8.321331977844238,
+      "F_TRUE": -59.999996185302734,
+      "R_raw_phase": -0.011945672333240509,
+      "R_emitted_phase": -0.011945672333240509,
+      "R_expert_phases": [
+        0.002843828871846199,
+        0.0016680571716278791,
+        0.0047487616539001465
+      ],
+      "E_raw_phase": 0.012759268283843994,
+      "E_emitted_phase": 0.01275926735252142,
+      "E_expert_phases": [
+        0.0020391589496284723,
+        0.0035102390684187412,
+        0.009090065956115723
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000699758529663,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 8.01657370175235e-05,
+      "new_raw_phase": -0.011865506879985332,
+      "new_emitted_phase": -0.011865507811307907,
+      "raw_head_ttc": -8.377888679504395,
+      "emitted_ttc": -8.377888679504395,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": true,
+      "conversion_changed_phase": true,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "DEV32",
+      "query_id": "CCRs-side-medium:07",
+      "arm": "EVENT",
+      "input_route": "cpu parents; CPU readout",
+      "state_sha256": "e3c7cfcf3caf7ef13e03592108b9ee4cfe21f032f1ad62025b2bca1dee0434e6",
+      "sealed_prediction_exact": true,
+      "truth_ttc": 6.363936861900005,
+      "R_CTX": 8.402947425842285,
+      "F_TRUE": 21.04195213317871,
+      "R_raw_phase": 0.011971964500844479,
+      "R_emitted_phase": 0.011971964500844479,
+      "R_expert_phases": [
+        0.0027244524098932743,
+        0.0070633068680763245,
+        0.00668412446975708
+      ],
+      "E_raw_phase": 0.00988038256764412,
+      "E_emitted_phase": 0.00988038256764412,
+      "E_expert_phases": [
+        0.009663291275501251,
+        0.009010535664856434,
+        0.01602339744567871
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000699758529663,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": -0.000452807784313336,
+      "new_raw_phase": 0.011519156396389008,
+      "new_emitted_phase": 0.011519156396389008,
+      "raw_head_ttc": 8.731287002563477,
+      "emitted_ttc": 8.731287002563477,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": true,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "DEV32",
+      "query_id": "CCRs-side-medium:07",
+      "arm": "ZERO",
+      "input_route": "cpu parents; CPU readout",
+      "state_sha256": "e3c7cfcf3caf7ef13e03592108b9ee4cfe21f032f1ad62025b2bca1dee0434e6",
+      "sealed_prediction_exact": true,
+      "truth_ttc": 6.363936861900005,
+      "R_CTX": 8.402947425842285,
+      "F_TRUE": 21.04195213317871,
+      "R_raw_phase": 0.011971964500844479,
+      "R_emitted_phase": 0.011971964500844479,
+      "R_expert_phases": [
+        0.0027244524098932743,
+        0.0070633068680763245,
+        0.00668412446975708
+      ],
+      "E_raw_phase": 0.00988038256764412,
+      "E_emitted_phase": 0.00988038256764412,
+      "E_expert_phases": [
+        0.009663291275501251,
+        0.009010535664856434,
+        0.01602339744567871
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10000699758529663,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 0.0006996489828452468,
+      "new_raw_phase": 0.01267161313444376,
+      "new_emitted_phase": 0.01267161313444376,
+      "raw_head_ttc": 7.941761016845703,
+      "emitted_ttc": 7.941761016845703,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "FCWD",
+      "query_id": "FCWD1:0007",
+      "arm": "EVENT",
+      "input_route": "native_gpu parents; CPU readout",
+      "state_sha256": "ce6b1a0b3f872895b21a18e31e7e6746ebddcc2a0ece87369100e67179324caa",
+      "sealed_prediction_exact": true,
+      "truth_ttc": 22.96174145138112,
+      "R_CTX": null,
+      "F_TRUE": -9.958776473999023,
+      "emitted_ttc": -9.958776473999023,
+      "fallback": "Exact E_CTX",
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "FCWD",
+      "query_id": "FCWD1:0007",
+      "arm": "ZERO",
+      "input_route": "native_gpu parents; CPU readout",
+      "state_sha256": "ce6b1a0b3f872895b21a18e31e7e6746ebddcc2a0ece87369100e67179324caa",
+      "sealed_prediction_exact": true,
+      "truth_ttc": 22.96174145138112,
+      "R_CTX": null,
+      "F_TRUE": -9.958776473999023,
+      "emitted_ttc": -9.958776473999023,
+      "fallback": "Exact E_CTX",
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "FCWD",
+      "query_id": "FCWD1:0069",
+      "arm": "EVENT",
+      "input_route": "native_gpu parents; CPU readout",
+      "state_sha256": "2d0c8cc6e8be86acc0cd6311f189137c360ad12b1289db92af88f6c03a27fd27",
+      "sealed_prediction_exact": true,
+      "truth_ttc": 6.600141750467439,
+      "R_CTX": 6.372851848602295,
+      "F_TRUE": 6.900396823883057,
+      "R_raw_phase": 0.0158159751445055,
+      "R_emitted_phase": 0.01581597700715065,
+      "R_expert_phases": [
+        0.01766129955649376,
+        0.017049115151166916,
+        0.018914461135864258
+      ],
+      "E_raw_phase": 0.01571604236960411,
+      "E_emitted_phase": 0.01571604050695896,
+      "E_expert_phases": [
+        0.01215231791138649,
+        0.011745329946279526,
+        0.011364697478711605
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10009600222110748,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 0.00015165282820817083,
+      "new_raw_phase": 0.015967627987265587,
+      "new_emitted_phase": 0.015967627987265587,
+      "raw_head_ttc": 6.312804222106934,
+      "emitted_ttc": 6.312804222106934,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "FCWD",
+      "query_id": "FCWD1:0069",
+      "arm": "ZERO",
+      "input_route": "native_gpu parents; CPU readout",
+      "state_sha256": "2d0c8cc6e8be86acc0cd6311f189137c360ad12b1289db92af88f6c03a27fd27",
+      "sealed_prediction_exact": true,
+      "truth_ttc": 6.600141750467439,
+      "R_CTX": 6.372851848602295,
+      "F_TRUE": 6.900396823883057,
+      "R_raw_phase": 0.0158159751445055,
+      "R_emitted_phase": 0.01581597700715065,
+      "R_expert_phases": [
+        0.01766129955649376,
+        0.017049115151166916,
+        0.018914461135864258
+      ],
+      "E_raw_phase": 0.01571604236960411,
+      "E_emitted_phase": 0.01571604050695896,
+      "E_expert_phases": [
+        0.01215231791138649,
+        0.011745329946279526,
+        0.011364697478711605
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10009600222110748,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 0.0003518445591907948,
+      "new_raw_phase": 0.016167819499969482,
+      "new_emitted_phase": 0.016167819499969482,
+      "raw_head_ttc": 6.235260486602783,
+      "emitted_ttc": 6.235260486602783,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "FCWD",
+      "query_id": "FCWD1:0125",
+      "arm": "EVENT",
+      "input_route": "native_gpu parents; CPU readout",
+      "state_sha256": "8d895019d445d6e53eac6430ad3718c0c10c7790b89c0d7b8f19f509a9f92e99",
+      "sealed_prediction_exact": true,
+      "truth_ttc": 3.227575943969431,
+      "R_CTX": 2.648837089538574,
+      "F_TRUE": 3.0279645919799805,
+      "R_raw_phase": 0.03848349303007126,
+      "R_emitted_phase": 0.03848349675536156,
+      "R_expert_phases": [
+        0.034967001527547836,
+        0.03427911922335625,
+        0.02916830964386463
+      ],
+      "E_raw_phase": 0.029849732294678688,
+      "E_emitted_phase": 0.029849732294678688,
+      "E_expert_phases": [
+        0.030936919152736664,
+        0.02951728366315365,
+        0.029618144035339355
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10009600222110748,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": -0.0015172924613580108,
+      "new_raw_phase": 0.03696620091795921,
+      "new_emitted_phase": 0.03696620091795921,
+      "raw_head_ttc": 2.7554819583892822,
+      "emitted_ttc": 2.7554819583892822,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": true,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "FCWD",
+      "query_id": "FCWD1:0125",
+      "arm": "ZERO",
+      "input_route": "native_gpu parents; CPU readout",
+      "state_sha256": "8d895019d445d6e53eac6430ad3718c0c10c7790b89c0d7b8f19f509a9f92e99",
+      "sealed_prediction_exact": true,
+      "truth_ttc": 3.227575943969431,
+      "R_CTX": 2.648837089538574,
+      "F_TRUE": 3.0279645919799805,
+      "R_raw_phase": 0.03848349303007126,
+      "R_emitted_phase": 0.03848349675536156,
+      "R_expert_phases": [
+        0.034967001527547836,
+        0.03427911922335625,
+        0.02916830964386463
+      ],
+      "E_raw_phase": 0.029849732294678688,
+      "E_emitted_phase": 0.029849732294678688,
+      "E_expert_phases": [
+        0.030936919152736664,
+        0.02951728366315365,
+        0.029618144035339355
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10009600222110748,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 0.00010885757365031168,
+      "new_raw_phase": 0.038592349737882614,
+      "new_emitted_phase": 0.038592349737882614,
+      "raw_head_ttc": 2.6415088176727295,
+      "emitted_ttc": 2.6415088176727295,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "FCWD",
+      "query_id": "FCWD1:0201",
+      "arm": "EVENT",
+      "input_route": "native_gpu parents; CPU readout",
+      "state_sha256": "0e5991fa223d78c4d74b72e309ce15a4a7101dbc60935d086cab8660d77ef026",
+      "sealed_prediction_exact": true,
+      "truth_ttc": null,
+      "R_CTX": null,
+      "F_TRUE": 6.721709251403809,
+      "emitted_ttc": 6.721709251403809,
+      "fallback": "Exact E_CTX",
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "FCWD",
+      "query_id": "FCWD1:0201",
+      "arm": "ZERO",
+      "input_route": "native_gpu parents; CPU readout",
+      "state_sha256": "0e5991fa223d78c4d74b72e309ce15a4a7101dbc60935d086cab8660d77ef026",
+      "sealed_prediction_exact": true,
+      "truth_ttc": null,
+      "R_CTX": null,
+      "F_TRUE": 6.721709251403809,
+      "emitted_ttc": 6.721709251403809,
+      "fallback": "Exact E_CTX",
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "FCWD",
+      "query_id": "FCWD2:0073",
+      "arm": "EVENT",
+      "input_route": "native_gpu parents; CPU readout",
+      "state_sha256": "2d2be5ff23ef2eb4add523b4db4aa64fdab831857402716012f7f2677b88648a",
+      "sealed_prediction_exact": true,
+      "truth_ttc": 5.85686176822716,
+      "R_CTX": null,
+      "F_TRUE": 6.0238728523254395,
+      "emitted_ttc": 6.0238728523254395,
+      "fallback": "Exact E_CTX",
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "FCWD",
+      "query_id": "FCWD2:0073",
+      "arm": "ZERO",
+      "input_route": "native_gpu parents; CPU readout",
+      "state_sha256": "2d2be5ff23ef2eb4add523b4db4aa64fdab831857402716012f7f2677b88648a",
+      "sealed_prediction_exact": true,
+      "truth_ttc": 5.85686176822716,
+      "R_CTX": null,
+      "F_TRUE": 6.0238728523254395,
+      "emitted_ttc": 6.0238728523254395,
+      "fallback": "Exact E_CTX",
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "FCWD",
+      "query_id": "FCWD2:0074",
+      "arm": "EVENT",
+      "input_route": "native_gpu parents; CPU readout",
+      "state_sha256": "56a848df2f3852e55164b710812737b8f8bb520f72998f62cc271c0e43a4455d",
+      "sealed_prediction_exact": true,
+      "truth_ttc": 5.8070150068420805,
+      "R_CTX": null,
+      "F_TRUE": 6.140371799468994,
+      "emitted_ttc": 6.140371799468994,
+      "fallback": "Exact E_CTX",
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "FCWD",
+      "query_id": "FCWD2:0074",
+      "arm": "ZERO",
+      "input_route": "native_gpu parents; CPU readout",
+      "state_sha256": "56a848df2f3852e55164b710812737b8f8bb520f72998f62cc271c0e43a4455d",
+      "sealed_prediction_exact": true,
+      "truth_ttc": 5.8070150068420805,
+      "R_CTX": null,
+      "F_TRUE": 6.140371799468994,
+      "emitted_ttc": 6.140371799468994,
+      "fallback": "Exact E_CTX",
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "FCWD",
+      "query_id": "FCWD2:0150",
+      "arm": "EVENT",
+      "input_route": "native_gpu parents; CPU readout",
+      "state_sha256": "871281b518c67ca4b8f62736662782cb899b669962348b1418b72a6c155725b9",
+      "sealed_prediction_exact": true,
+      "truth_ttc": 2.2444816779519328,
+      "R_CTX": 1.9611707925796509,
+      "F_TRUE": 2.2538201808929443,
+      "R_raw_phase": 0.052335888147354126,
+      "R_emitted_phase": 0.052335891872644424,
+      "R_expert_phases": [
+        0.048930760473012924,
+        0.054773226380348206,
+        0.037592533975839615
+      ],
+      "E_raw_phase": 0.040892720222473145,
+      "E_emitted_phase": 0.040892720222473145,
+      "E_expert_phases": [
+        0.03651782125234604,
+        0.036679673939943314,
+        0.03806305304169655
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10009600222110748,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": -0.0020208326168358326,
+      "new_raw_phase": 0.05031505599617958,
+      "new_emitted_phase": 0.05031505599617958,
+      "raw_head_ttc": 2.037895917892456,
+      "emitted_ttc": 2.037895917892456,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": true,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "FCWD",
+      "query_id": "FCWD2:0150",
+      "arm": "ZERO",
+      "input_route": "native_gpu parents; CPU readout",
+      "state_sha256": "871281b518c67ca4b8f62736662782cb899b669962348b1418b72a6c155725b9",
+      "sealed_prediction_exact": true,
+      "truth_ttc": 2.2444816779519328,
+      "R_CTX": 1.9611707925796509,
+      "F_TRUE": 2.2538201808929443,
+      "R_raw_phase": 0.052335888147354126,
+      "R_emitted_phase": 0.052335891872644424,
+      "R_expert_phases": [
+        0.048930760473012924,
+        0.054773226380348206,
+        0.037592533975839615
+      ],
+      "E_raw_phase": 0.040892720222473145,
+      "E_emitted_phase": 0.040892720222473145,
+      "E_expert_phases": [
+        0.03651782125234604,
+        0.036679673939943314,
+        0.03806305304169655
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10009600222110748,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 2.902414053096436e-05,
+      "new_raw_phase": 0.05236491188406944,
+      "new_emitted_phase": 0.05236491188406944,
+      "raw_head_ttc": 1.9601119756698608,
+      "emitted_ttc": 1.9601119756698608,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "FCWD",
+      "query_id": "FCWD2:0166",
+      "arm": "EVENT",
+      "input_route": "native_gpu parents; CPU readout",
+      "state_sha256": "6af72c1b59814d80b45945c24116f4c4c82d56965312640d45c36c7415e14bb1",
+      "sealed_prediction_exact": true,
+      "truth_ttc": 1.4735752195105385,
+      "R_CTX": 1.3015855550765991,
+      "F_TRUE": 1.2970050573349,
+      "R_raw_phase": 0.07994119822978973,
+      "R_emitted_phase": 0.07994119822978973,
+      "R_expert_phases": [
+        0.05584458261728287,
+        0.06988902390003204,
+        0.06369894742965698
+      ],
+      "E_raw_phase": 0.06199052184820175,
+      "E_emitted_phase": 0.06199052184820175,
+      "E_expert_phases": [
+        0.050812769681215286,
+        0.051308151334524155,
+        0.06657665967941284
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10009600222110748,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": -0.001828226842917502,
+      "new_raw_phase": 0.07811297476291656,
+      "new_emitted_phase": 0.07811297476291656,
+      "raw_head_ttc": 1.330847978591919,
+      "emitted_ttc": 1.330847978591919,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": true,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "FCWD",
+      "query_id": "FCWD2:0166",
+      "arm": "ZERO",
+      "input_route": "native_gpu parents; CPU readout",
+      "state_sha256": "6af72c1b59814d80b45945c24116f4c4c82d56965312640d45c36c7415e14bb1",
+      "sealed_prediction_exact": true,
+      "truth_ttc": 1.4735752195105385,
+      "R_CTX": 1.3015855550765991,
+      "F_TRUE": 1.2970050573349,
+      "R_raw_phase": 0.07994119822978973,
+      "R_emitted_phase": 0.07994119822978973,
+      "R_expert_phases": [
+        0.05584458261728287,
+        0.06988902390003204,
+        0.06369894742965698
+      ],
+      "E_raw_phase": 0.06199052184820175,
+      "E_emitted_phase": 0.06199052184820175,
+      "E_expert_phases": [
+        0.050812769681215286,
+        0.051308151334524155,
+        0.06657665967941284
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10009600222110748,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 7.306351108127274e-06,
+      "new_raw_phase": 0.07994850724935532,
+      "new_emitted_phase": 0.07994850724935532,
+      "raw_head_ttc": 1.3014713525772095,
+      "emitted_ttc": 1.3014713525772095,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "FCWD",
+      "query_id": "FCWD3:0023",
+      "arm": "EVENT",
+      "input_route": "native_gpu parents; CPU readout",
+      "state_sha256": "c5d63642dadef9b81d24a2945df5f838ff55eae256437a4ff64fe7fcca37cc86",
+      "sealed_prediction_exact": true,
+      "truth_ttc": 10.062501364558,
+      "R_CTX": 8.355998992919922,
+      "F_TRUE": 8.900069236755371,
+      "R_raw_phase": 0.012039635330438614,
+      "R_emitted_phase": 0.012039636261761189,
+      "R_expert_phases": [
+        0.00903900433331728,
+        0.006884569767862558,
+        0.009747028350830078
+      ],
+      "E_raw_phase": 0.01246163621544838,
+      "E_emitted_phase": 0.01246163621544838,
+      "E_expert_phases": [
+        0.005782612133771181,
+        0.004910899326205254,
+        0.009700119495391846
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10009600222110748,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 0.0001982844842132181,
+      "new_raw_phase": 0.012237919494509697,
+      "new_emitted_phase": 0.012237920425832272,
+      "raw_head_ttc": 8.22142505645752,
+      "emitted_ttc": 8.22142505645752,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": true,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "FCWD",
+      "query_id": "FCWD3:0023",
+      "arm": "ZERO",
+      "input_route": "native_gpu parents; CPU readout",
+      "state_sha256": "c5d63642dadef9b81d24a2945df5f838ff55eae256437a4ff64fe7fcca37cc86",
+      "sealed_prediction_exact": true,
+      "truth_ttc": 10.062501364558,
+      "R_CTX": 8.355998992919922,
+      "F_TRUE": 8.900069236755371,
+      "R_raw_phase": 0.012039635330438614,
+      "R_emitted_phase": 0.012039636261761189,
+      "R_expert_phases": [
+        0.00903900433331728,
+        0.006884569767862558,
+        0.009747028350830078
+      ],
+      "E_raw_phase": 0.01246163621544838,
+      "E_emitted_phase": 0.01246163621544838,
+      "E_expert_phases": [
+        0.005782612133771181,
+        0.004910899326205254,
+        0.009700119495391846
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10009600222110748,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 0.0006176383467391133,
+      "new_raw_phase": 0.012657273560762405,
+      "new_emitted_phase": 0.012657273560762405,
+      "raw_head_ttc": 7.9507012367248535,
+      "emitted_ttc": 7.9507012367248535,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "FCWD",
+      "query_id": "FCWD3:0118",
+      "arm": "EVENT",
+      "input_route": "native_gpu parents; CPU readout",
+      "state_sha256": "878fb7069fdb45665073196aa718ac8292f7704c4e785d6ef06756fdad9464b9",
+      "sealed_prediction_exact": true,
+      "truth_ttc": 3.038563850805819,
+      "R_CTX": 2.432441473007202,
+      "F_TRUE": 2.8706865310668945,
+      "R_raw_phase": 0.04197990894317627,
+      "R_emitted_phase": 0.04197991266846657,
+      "R_expert_phases": [
+        0.04139850661158562,
+        0.044848594814538956,
+        0.028395116329193115
+      ],
+      "E_raw_phase": 0.028459997847676277,
+      "E_emitted_phase": 0.028459997847676277,
+      "E_expert_phases": [
+        0.03015885315835476,
+        0.0307255107909441,
+        0.02854830026626587
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10010500252246857,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": -0.002655554562807083,
+      "new_raw_phase": 0.039324354380369186,
+      "new_emitted_phase": 0.039324354380369186,
+      "raw_head_ttc": 2.5932812690734863,
+      "emitted_ttc": 2.5932812690734863,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": true,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "FCWD",
+      "query_id": "FCWD3:0118",
+      "arm": "ZERO",
+      "input_route": "native_gpu parents; CPU readout",
+      "state_sha256": "878fb7069fdb45665073196aa718ac8292f7704c4e785d6ef06756fdad9464b9",
+      "sealed_prediction_exact": true,
+      "truth_ttc": 3.038563850805819,
+      "R_CTX": 2.432441473007202,
+      "F_TRUE": 2.8706865310668945,
+      "R_raw_phase": 0.04197990894317627,
+      "R_emitted_phase": 0.04197991266846657,
+      "R_expert_phases": [
+        0.04139850661158562,
+        0.044848594814538956,
+        0.028395116329193115
+      ],
+      "E_raw_phase": 0.028459997847676277,
+      "E_emitted_phase": 0.028459997847676277,
+      "E_expert_phases": [
+        0.03015885315835476,
+        0.0307255107909441,
+        0.02854830026626587
+      ],
+      "R_clock": [
+        0.0,
+        0.0,
+        0.10010500252246857,
+        0.0
+      ],
+      "E_clock": [
+        0.0,
+        0.0,
+        0.10000000149011612,
+        0.0
+      ],
+      "R_observations": 5,
+      "E_observations": 4,
+      "readout_correction_phase": 6.799215043429285e-05,
+      "new_raw_phase": 0.042047902941703796,
+      "new_emitted_phase": 0.042047902941703796,
+      "raw_head_ttc": 2.4285902976989746,
+      "emitted_ttc": 2.4285902976989746,
+      "sign_changed_from_R": false,
+      "phase_moved_toward_zero": false,
+      "conversion_changed_phase": false,
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "FCWD",
+      "query_id": "FCWD3:0191",
+      "arm": "EVENT",
+      "input_route": "native_gpu parents; CPU readout",
+      "state_sha256": "047829c9569c39b7a0c737bea3f0028fc09f9d9228afd8b26607bf1c97386214",
+      "sealed_prediction_exact": true,
+      "truth_ttc": 5.52322628342669,
+      "R_CTX": null,
+      "F_TRUE": 6.446211814880371,
+      "emitted_ttc": 6.446211814880371,
+      "fallback": "Exact E_CTX",
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "FCWD",
+      "query_id": "FCWD3:0191",
+      "arm": "ZERO",
+      "input_route": "native_gpu parents; CPU readout",
+      "state_sha256": "047829c9569c39b7a0c737bea3f0028fc09f9d9228afd8b26607bf1c97386214",
+      "sealed_prediction_exact": true,
+      "truth_ttc": 5.52322628342669,
+      "R_CTX": null,
+      "F_TRUE": 6.446211814880371,
+      "emitted_ttc": 6.446211814880371,
+      "fallback": "Exact E_CTX",
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "FCWD",
+      "query_id": "FCWD3:0194",
+      "arm": "EVENT",
+      "input_route": "native_gpu parents; CPU readout",
+      "state_sha256": "a0dbc16bdf019e2ff840a193b261ac7b7d25e2301800cccc19ca43a06102b667",
+      "sealed_prediction_exact": true,
+      "truth_ttc": null,
+      "R_CTX": null,
+      "F_TRUE": 6.767913341522217,
+      "emitted_ttc": 6.767913341522217,
+      "fallback": "Exact E_CTX",
+      "hook_output_bitwise_parity": true
+    },
+    {
+      "cohort": "FCWD",
+      "query_id": "FCWD3:0194",
+      "arm": "ZERO",
+      "input_route": "native_gpu parents; CPU readout",
+      "state_sha256": "a0dbc16bdf019e2ff840a193b261ac7b7d25e2301800cccc19ca43a06102b667",
+      "sealed_prediction_exact": true,
+      "truth_ttc": null,
+      "R_CTX": null,
+      "F_TRUE": 6.767913341522217,
+      "emitted_ttc": 6.767913341522217,
+      "fallback": "Exact E_CTX",
+      "hook_output_bitwise_parity": true
+    }
+  ],
+  "old_trace_selection_sha256": "86ef2e81520c7198419944478174501a48c0295627198471eabf918c2ad9f0b0",
+  "H_selection_sha256": "89d588cbb0d870a15d4a80a19f95fc74c5e56aa062df5c9b5794dcf066614886",
+  "all_hook_outputs_bitwise_equal": true,
+  "all_external_predictions_equal_sealed": true,
+  "optimizer_updates": 0,
+  "selection": "32 original hash-selected H controls and 20 prior public episodes",
+  "inference_scope": "Frozen readout on sealed parent states; no new sensor replay or model selection"
+}

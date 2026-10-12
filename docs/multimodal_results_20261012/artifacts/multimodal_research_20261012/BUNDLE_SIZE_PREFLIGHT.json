@@ -1,0 +1,50 @@
+{
+  "utc": "2026-10-12T14:58:26.243379+00:00",
+  "incomplete_test12": true,
+  "counts": {
+    "research": {
+      "files": 24935,
+      "bytes": 352520608,
+      "largest": [
+        {
+          "bytes": 23826059,
+          "path": "artifacts\\multimodal_research_20261012\\test12_phase_only\\INPUTS.json"
+        },
+        {
+          "bytes": 22980972,
+          "path": "artifacts\\multimodal_research_20261012\\cache\\H\\states.npz"
+        },
+        {
+          "bytes": 20513119,
+          "path": "artifacts\\multimodal_research_20261012\\cache\\V\\states.npz"
+        },
+        {
+          "bytes": 11044031,
+          "path": "artifacts\\multimodal_research_20261012\\fusion_states\\H\\states.npz"
+        }
+      ]
+    },
+    "prior": {
+      "files": 1424,
+      "bytes": 162752151,
+      "largest": [
+        {
+          "bytes": 98591869,
+          "path": "artifacts\\multimodal_validation_20261012\\public_garl\\paper_visual_only_lhr.pth"
+        },
+        {
+          "bytes": 40597469,
+          "path": "artifacts\\multimodal_validation_20261012\\STAGE_TRACE_DETAILS.json"
+        },
+        {
+          "bytes": 2100350,
+          "path": "artifacts\\multimodal_validation_20261012\\geometry\\panels\\FCWD2_0150.png"
+        },
+        {
+          "bytes": 2088121,
+          "path": "artifacts\\multimodal_validation_20261012\\geometry\\panels\\FCWD3_0118.png"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "DEV32": {
+    "device": "cpu",
+    "source": "docs/dev32_transfer_20261012/COMPLETION.json",
+    "precision": "float32",
+    "population": 1024
+  },
+  "FCWD": {
+    "device": "cuda",
+    "observed_replay_mode": "matmulTF32_false_cudnnTF32_true",
+    "E_CTX_queries_verified": 10
+  },
+  "note": "Do not describe Dev32 CPU inference as an approximation to historical GPU; it was historically CPU."
+}

@@ -1,0 +1,28 @@
+{
+  "utc": "2026-10-12T11:46:25.193530+00:00",
+  "name": "FUSION_STATE",
+  "seeds": [
+    7
+  ],
+  "arms": [
+    "FUSED",
+    "ZERO_FUSED"
+  ],
+  "updates_per_fit": 2500,
+  "planned_updates": 5000,
+  "hypothesis": "The already-trained fusion has complementary hidden information absent from separately trained refiners; expose it to an RGB-anchored readout",
+  "input": "Existing phase-unit R/E 340 plus F_TRUE combine hidden160/raw_location/emitted_phase; 502 total",
+  "control": "Both arms retain R/E predictive states; ZERO_FUSED zeros only the 162 additional fusion coordinates. This tests incremental fused representation, not event absence.",
+  "normalization": "Existing five phase coordinates per modality /0.03; both F_TRUE phase coordinates /0.03; no V-fit normalization",
+  "output": "Original raw RGB anchor +0.03 unrestricted correction; native RGB widths plus correction; zero final layer exactly reproduces R_CTX",
+  "optimizer": "Same H mass, fusion_loss, AdamW, schedule, sampler, batch128, seed7, 2500 updates",
+  "gates": "Original 2% bucket gates and paired FUSED minus ZERO_FUSED group bootstrap; retain 4% sensitivity separately",
+  "stages": "F_TRUE and E/R contexts were already supervised on H; another supervised H stage, not OOF",
+  "basis_sources": {
+    "H_FUSION_COMPLEMENTARITY.json": "1aa35a7c6d03b70ad00cca2bc1b2a93ee6f9b467ecec7f9f318033c328a5dee0",
+    "studies\\RELATIVE_PHASE\\S7\\V_RESULTS.json": "501c3cc95e64293142fbbfbe02530055b594c1174783dd6ddf438bd07ae35db8",
+    "studies\\PHASE_UNITS\\V_RESULTS.json": "5f983142b61bf8fa1b0092e2887d910d952a47fc349e93fdbbd88a1c256cba54"
+  },
+  "external_new_replication_relative_scores_opened": false,
+  "external_selection": false
+}

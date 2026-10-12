@@ -1,0 +1,10 @@
+{
+  "study": "RGB_REGRET",
+  "seeds": [
+    7
+  ],
+  "model": "PhaseUnitAnchor",
+  "source_sha256": "2aa12979cf82a8a58d6a8724a4c5fbf9ce1a158c4ae4c551e2c3bae4b68c04ee",
+  "evaluator_source_sha256": "26df40874b576f419921eb52e989dd3d2684780029f1ffc7fc1344a8b1696e41",
+  "scope": "Add registered fit identity to existing external evaluator; metrics unchanged"
+}

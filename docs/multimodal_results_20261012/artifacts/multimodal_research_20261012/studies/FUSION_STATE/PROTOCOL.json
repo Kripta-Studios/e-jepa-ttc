@@ -1,0 +1,49 @@
+{
+  "utc": "2026-10-12T11:46:25.193530+00:00",
+  "name": "FUSION_STATE",
+  "seeds": [
+    7
+  ],
+  "arms": [
+    "FUSED",
+    "ZERO_FUSED"
+  ],
+  "updates_per_fit": 2500,
+  "planned_updates": 5000,
+  "hypothesis": "The already-trained fusion has complementary hidden information absent from separately trained refiners; expose it to an RGB-anchored readout",
+  "input": "Existing phase-unit R/E 340 plus F_TRUE combine hidden160/raw_location/emitted_phase; 502 total",
+  "control": "Both arms retain R/E predictive states; ZERO_FUSED zeros only the 162 additional fusion coordinates. This tests incremental fused representation, not event absence.",
+  "normalization": "Existing five phase coordinates per modality /0.03; both F_TRUE phase coordinates /0.03; no V-fit normalization",
+  "output": "Original raw RGB anchor +0.03 unrestricted correction; native RGB widths plus correction; zero final layer exactly reproduces R_CTX",
+  "optimizer": "Same H mass, fusion_loss, AdamW, schedule, sampler, batch128, seed7, 2500 updates",
+  "gates": "Original 2% bucket gates and paired FUSED minus ZERO_FUSED group bootstrap; retain 4% sensitivity separately",
+  "stages": "F_TRUE and E/R contexts were already supervised on H; another supervised H stage, not OOF",
+  "basis_sources": {
+    "H_FUSION_COMPLEMENTARITY.json": "1aa35a7c6d03b70ad00cca2bc1b2a93ee6f9b467ecec7f9f318033c328a5dee0",
+    "studies\\RELATIVE_PHASE\\S7\\V_RESULTS.json": "501c3cc95e64293142fbbfbe02530055b594c1174783dd6ddf438bd07ae35db8",
+    "studies\\PHASE_UNITS\\V_RESULTS.json": "5f983142b61bf8fa1b0092e2887d910d952a47fc349e93fdbbd88a1c256cba54"
+  },
+  "external_new_replication_relative_scores_opened": false,
+  "external_selection": false,
+  "preregistration_sha256": "3d11e069ac796f0f6a6da187e96d187bd55bc8b87f092017f1821437c64d9868",
+  "original_protocol_sha256": "d955649530b1761fb62ee0410d50a44b85741a70754271789d561fce3c7565eb",
+  "frozen_scientific_sources": {
+    "operational\\multimodal_research\\common.py": "dac6d054b198ce04eab4d0b4d8f2808d4c8d946096d802a73b281455fa2263c4",
+    "operational\\multimodal_research\\model.py": "0ac640ba421c82e54005dc4cf7ae2baa042e72d6d18f21b1e80919141b204cef",
+    "operational\\multimodal_research\\cache.py": "85faa229cd41ed625f957fbbb3be46c13bb92ac0eac39526586aeb33ac13cd49",
+    "operational\\multimodal_research\\train.py": "9f21ce7ae4928fe583e2e5eaa1e60c81849bf316f079e414615f72a465c55324"
+  },
+  "phase_units_source_sha256": "0cd65eea9c8e8a2e01b7512570dc3e31c8cbcc2def468b9f4b64e3ab3edb6021",
+  "fusion_model_source_sha256": "7cfe2f029f64527f2c0d70c60d889dba277d33a2477ce6f5207ee05b0582586a",
+  "trainer_source_sha256": "b67e3bc6b90cc90c52e5ad14af3cef38d2dd211115717eb9c44d6f43f9e8d7f0",
+  "execution": {
+    "utc": "2026-10-12T11:50:39.160784+00:00",
+    "device": "CPU FP32 one thread for both fitting and V inference",
+    "reason": "Keep GPU available for native FCWD replay; paired arms retain identical precision and capacity",
+    "optimizer": "Native AdamW without foreach; native complete CPU checkpoint including CPU RNG and sampler; no CUDA RNG needed",
+    "limits": "Original physical update and elapsed deadline, RAM/disk guards; GPU-owner barrier irrelevant to verified CPU-only process",
+    "preregistration_unmodified": true
+  },
+  "fusion_H_binding_sha256": "58822fa4389a0846d7c7beb32a03813f067cf6a4333ac3b090ca5e2fb4db5704",
+  "validation": "Exposed V development; fixed original gates; no external selection"
+}

@@ -1,0 +1,9 @@
+{
+  "extension": "V16_multimodal_validation",
+  "scientific": 0,
+  "technical": 0,
+  "recovery": 0,
+  "physical_optimizer_updates": 0,
+  "V15": "independent_authorization_not_in_this_ledger",
+  "training_proposals_executed": false
+}

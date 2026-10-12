@@ -1,0 +1,27 @@
+{
+  "utc": "2026-10-12T11:03:12.559044+00:00",
+  "user_question": "si subes al 4% permitido en vez de 2% permitido qu\u00e9 pasa",
+  "original_result_sha256": "5f983142b61bf8fa1b0092e2887d910d952a47fc349e93fdbbd88a1c256cba54",
+  "changed_gate_only": "large vs R_CTX maximum ratio 1.04 instead of 1.02",
+  "candidate_large_MiD": 42.68836638141212,
+  "RGB_large_MiD": 41.204263755748656,
+  "increase_pct": 3.601818089654407,
+  "limit_2pct": 42.02834903086363,
+  "limit_4pct": 42.852434305978605,
+  "checks": {
+    "aggregate_vs_RGB": true,
+    "mae_vs_RGB": true,
+    "aggregate_vs_fusion": true,
+    "mae_vs_fusion": true,
+    "sign": true,
+    "no_failures": true,
+    "crucial": true,
+    "small": true,
+    "large": true,
+    "negative": true
+  },
+  "paired_event_gate": true,
+  "passes_all_V_under_sensitivity": true,
+  "role": "User-requested posthoc sensitivity; original gate and verdict retained",
+  "official_SOTA": false
+}

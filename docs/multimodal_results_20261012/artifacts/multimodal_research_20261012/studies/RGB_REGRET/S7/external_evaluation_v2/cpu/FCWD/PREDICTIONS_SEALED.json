@@ -1,0 +1,39 @@
+{
+  "sha256": "a694c2435dfdd0caf2cd35c4981afafec08df7de29e43f3e9e13e8ccb59c0316",
+  "population": 630,
+  "state_seal_sha256": "52f22e85e6b28177a9cdc65224e22c3cdb00034f085dd9421f97173a40851e10",
+  "endpoints": {
+    "EVENT": {
+      "accumulation_index": 0,
+      "checkpoint_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v16-multimodal-validation\\artifacts\\multimodal_research_20261012\\fits\\R_ANCHOR_RGB_REGRET_EVENT_S7\\checkpoint_last.pt",
+      "checkpoint_sha256": "0ecc9e681787fd0832590d5cb5038a1f1ea87a8822e7284b5f0f1a1cd02f5636",
+      "complete_state": true,
+      "completed_updates": 2500,
+      "fit_id": "R_ANCHOR_RGB_REGRET_EVENT_S7",
+      "identity_sha256": "4effc02958132b38f5f4d845c3f9e7399d1df119791467e73227fef7d159474f",
+      "recovery_upper": 0,
+      "schema": "rgb_port_checkpoint_receipt_v1",
+      "scientific_endpoint": true,
+      "status": "COMPLETE"
+    },
+    "ZERO": {
+      "accumulation_index": 0,
+      "checkpoint_path": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v16-multimodal-validation\\artifacts\\multimodal_research_20261012\\fits\\R_ANCHOR_RGB_REGRET_ZERO_S7\\checkpoint_last.pt",
+      "checkpoint_sha256": "d99147e710531e3989c0be6435826ac7fa5615a2338343f4bd80222a4979764f",
+      "complete_state": true,
+      "completed_updates": 2500,
+      "fit_id": "R_ANCHOR_RGB_REGRET_ZERO_S7",
+      "identity_sha256": "1fa957a4a945fe9b69563efb51beb67fc084950eab18d867e8e06b50977a1faa",
+      "recovery_upper": 0,
+      "schema": "rgb_port_checkpoint_receipt_v1",
+      "scientific_endpoint": true,
+      "status": "COMPLETE"
+    }
+  },
+  "targets_read": false,
+  "source_sha256": "26df40874b576f419921eb52e989dd3d2684780029f1ffc7fc1344a8b1696e41",
+  "fallback": "exact same-route E_CTX whenever RGB unavailable; keep every query",
+  "scope": "Frozen parents and CPU readout; exposed descriptive cohorts, never selection",
+  "parent_route": "cpu",
+  "readout_route": "CPU_FP32_one_thread"
+}

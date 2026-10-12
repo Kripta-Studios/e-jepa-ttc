@@ -1,0 +1,224 @@
+{
+  "utc": "2026-10-12T13:56:59.746942+00:00",
+  "status": "INPUT_INVENTORY_ONLY",
+  "source_sha256": "aedb9da5484ceedb642ef1cbc7cf6115dcf7f368e4444b55de947989fc19a362",
+  "source_columns": [
+    "sequence_id",
+    "sample_token",
+    "track_id",
+    "public_track_id",
+    "timestamp_us",
+    "frame_timestamps_us",
+    "rgb_shard_paths",
+    "rgb_member_paths",
+    "boxes_xyxy"
+  ],
+  "previous_input_freeze_sha256": "b3c4514bebb54112e94ad9ab52f997e5676e3ee89139294ab1b265ee9a650934",
+  "queries": 6762,
+  "sequences": 12,
+  "rgb_temporal_metadata_available": 6762,
+  "observation_counts": {
+    "0": 105,
+    "1": 105,
+    "2": 105,
+    "3": 105,
+    "4": 105,
+    "5": 6237
+  },
+  "shards": [
+    {
+      "path": "data/test/3RUZHwnCwK/rgb_shards/rgb-00000.tar",
+      "present": true,
+      "bytes": 1074534400
+    },
+    {
+      "path": "data/test/3RUZHwnCwK/rgb_shards/rgb-00001.tar",
+      "present": true,
+      "bytes": 1075496960
+    },
+    {
+      "path": "data/test/3RUZHwnCwK/rgb_shards/rgb-00002.tar",
+      "present": true,
+      "bytes": 1075179520
+    },
+    {
+      "path": "data/test/71wUSQYMpk/rgb_shards/rgb-00000.tar",
+      "present": true,
+      "bytes": 1074851840
+    },
+    {
+      "path": "data/test/71wUSQYMpk/rgb_shards/rgb-00002.tar",
+      "present": true,
+      "bytes": 1073807360
+    },
+    {
+      "path": "data/test/89fvtHGHx2/rgb_shards/rgb-00000.tar",
+      "present": true,
+      "bytes": 1075087360
+    },
+    {
+      "path": "data/test/89fvtHGHx2/rgb_shards/rgb-00002.tar",
+      "present": true,
+      "bytes": 1074790400
+    },
+    {
+      "path": "data/test/HHJe79eY2J/rgb_shards/rgb-00000.tar",
+      "present": true,
+      "bytes": 1073981440
+    },
+    {
+      "path": "data/test/HHJe79eY2J/rgb_shards/rgb-00001.tar",
+      "present": true,
+      "bytes": 1074370560
+    },
+    {
+      "path": "data/test/HHJe79eY2J/rgb_shards/rgb-00002.tar",
+      "present": true,
+      "bytes": 1074718720
+    },
+    {
+      "path": "data/test/JcjcDPISuL/rgb_shards/rgb-00000.tar",
+      "present": true,
+      "bytes": 1074370560
+    },
+    {
+      "path": "data/test/JcjcDPISuL/rgb_shards/rgb-00001.tar",
+      "present": true,
+      "bytes": 1074565120
+    },
+    {
+      "path": "data/test/JcjcDPISuL/rgb_shards/rgb-00002.tar",
+      "present": true,
+      "bytes": 1075322880
+    },
+    {
+      "path": "data/test/JcjcDPISuL/rgb_shards/rgb-00003.tar",
+      "present": true,
+      "bytes": 308961280
+    },
+    {
+      "path": "data/test/M8I2irMvY7/rgb_shards/rgb-00000.tar",
+      "present": true,
+      "bytes": 1075804160
+    },
+    {
+      "path": "data/test/M8I2irMvY7/rgb_shards/rgb-00001.tar",
+      "present": true,
+      "bytes": 1075466240
+    },
+    {
+      "path": "data/test/M8I2irMvY7/rgb_shards/rgb-00002.tar",
+      "present": true,
+      "bytes": 854845440
+    },
+    {
+      "path": "data/test/Mu6kaUjIz3/rgb_shards/rgb-00000.tar",
+      "present": true,
+      "bytes": 1074411520
+    },
+    {
+      "path": "data/test/Mu6kaUjIz3/rgb_shards/rgb-00002.tar",
+      "present": true,
+      "bytes": 1075138560
+    },
+    {
+      "path": "data/test/Mu6kaUjIz3/rgb_shards/rgb-00003.tar",
+      "present": true,
+      "bytes": 328468480
+    },
+    {
+      "path": "data/test/V741M41vPW/rgb_shards/rgb-00000.tar",
+      "present": true,
+      "bytes": 1075107840
+    },
+    {
+      "path": "data/test/V741M41vPW/rgb_shards/rgb-00001.tar",
+      "present": true,
+      "bytes": 1075742720
+    },
+    {
+      "path": "data/test/V741M41vPW/rgb_shards/rgb-00002.tar",
+      "present": true,
+      "bytes": 626165760
+    },
+    {
+      "path": "data/test/kafYzX6kJ4/rgb_shards/rgb-00000.tar",
+      "present": true,
+      "bytes": 1074350080
+    },
+    {
+      "path": "data/test/kafYzX6kJ4/rgb_shards/rgb-00001.tar",
+      "present": true,
+      "bytes": 1075200000
+    },
+    {
+      "path": "data/test/kafYzX6kJ4/rgb_shards/rgb-00002.tar",
+      "present": true,
+      "bytes": 1075722240
+    },
+    {
+      "path": "data/test/nP4MRdpEeO/rgb_shards/rgb-00000.tar",
+      "present": true,
+      "bytes": 1074749440
+    },
+    {
+      "path": "data/test/nP4MRdpEeO/rgb_shards/rgb-00001.tar",
+      "present": true,
+      "bytes": 1074493440
+    },
+    {
+      "path": "data/test/nP4MRdpEeO/rgb_shards/rgb-00002.tar",
+      "present": true,
+      "bytes": 1075169280
+    },
+    {
+      "path": "data/test/nP4MRdpEeO/rgb_shards/rgb-00003.tar",
+      "present": true,
+      "bytes": 180377600
+    },
+    {
+      "path": "data/test/r0PXQOpCA6/rgb_shards/rgb-00000.tar",
+      "present": true,
+      "bytes": 1075333120
+    },
+    {
+      "path": "data/test/r0PXQOpCA6/rgb_shards/rgb-00001.tar",
+      "present": true,
+      "bytes": 1074667520
+    },
+    {
+      "path": "data/test/r0PXQOpCA6/rgb_shards/rgb-00002.tar",
+      "present": true,
+      "bytes": 975656960
+    },
+    {
+      "path": "data/test/vhjB5OViA7/rgb_shards/rgb-00000.tar",
+      "present": true,
+      "bytes": 1074872320
+    },
+    {
+      "path": "data/test/vhjB5OViA7/rgb_shards/rgb-00001.tar",
+      "present": true,
+      "bytes": 1075056640
+    },
+    {
+      "path": "data/test/vhjB5OViA7/rgb_shards/rgb-00002.tar",
+      "present": true,
+      "bytes": 1074872320
+    }
+  ],
+  "missing_shards": 0,
+  "index_sha256": "52b9bb1961db2a50a89bbeda7b6be37916c9d806ce4d1ba37930f4dec61a74fe",
+  "native_builder_sha256": "b21a6c6716aa739064a70245d70ad15bf3e1f1e9073325724a193d73a24b7c9a",
+  "audit_source_sha256": "44ba7a4e8c37887bc5b65c4b51d34ec37bce87559dd111236d1beebcf3236968",
+  "targets_read": false,
+  "predictions_generated": 0,
+  "optimizer_updates": 0,
+  "candidate_selected": false,
+  "external_submission": false,
+  "limitations": [
+    "Temporal metadata does not establish that RGB bytes exist or decode correctly.",
+    "Native event history must use real same-track observations as in TRAIN40; regular Dev32/FCWD histories or H8 history cannot be assumed equivalent.",
+    "No candidate freeze or official score is implied by this input inventory."
+  ]
+}

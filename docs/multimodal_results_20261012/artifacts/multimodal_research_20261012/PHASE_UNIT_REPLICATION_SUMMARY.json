@@ -1,0 +1,44 @@
+{
+  "rows": [
+    {
+      "seed": 7,
+      "MiD": 89.8823756302721,
+      "MAE": 1.8460636779464827,
+      "large_increase_pct": 3.601818089654407,
+      "passes_original_2pct": false,
+      "passes_secondary_4pct": true,
+      "EVENT_ZERO_CI": [
+        -5.389636206247685,
+        -0.5609412822949094
+      ]
+    },
+    {
+      "seed": 13,
+      "MiD": 90.51789754103986,
+      "MAE": 1.8439205378917087,
+      "large_increase_pct": 2.4086329746181523,
+      "passes_original_2pct": false,
+      "passes_secondary_4pct": false,
+      "EVENT_ZERO_CI": [
+        -4.100704042569719,
+        0.2149884042413878
+      ]
+    },
+    {
+      "seed": 23,
+      "MiD": 90.25773759905957,
+      "MAE": 1.8211722170916793,
+      "large_increase_pct": 4.972558763614021,
+      "passes_original_2pct": false,
+      "passes_secondary_4pct": false,
+      "EVENT_ZERO_CI": [
+        -4.868064092354796,
+        0.4001307141483954
+      ]
+    }
+  ],
+  "head_seed_MiD_mean": 90.21933692345716,
+  "head_seed_MiD_std": 0.31949645331602305,
+  "all_original_gates_pass": false,
+  "role": "Head seeds only, same frozen parents; 4% posthoc for seed7 and secondary for13/23"
+}

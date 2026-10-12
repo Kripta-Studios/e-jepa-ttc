@@ -1,0 +1,13 @@
+{
+  "utc": "2026-10-12T16:12:15.151154+00:00",
+  "source_sha256": "28d22353de1ee6049f53b875e53dfa8977364003711421f87163a2c388290dab",
+  "sources": {
+    "OFFICIAL_RANKING_PROTOCOL.json": "67cf3f6f8bbd0ed1c6f67a2d792e257b130f936b372ae8f50fde261ef9ea6530",
+    "studies\\PHASE_ONLY\\S7\\external_evaluation_v2\\native_gpu\\FCWD\\METRICS.csv": "7d79beb040a9baca4b9809b66c1a7ae164c8adcfeb80cc086dff28125ec6d93c",
+    "studies\\PHASE_ONLY\\S7\\external_evaluation_v2\\cpu\\DEV32\\METRICS.csv": "5f9fb7913a97759f60e224003e5d07d9283b19c1557fa807b85eb860d4c7222c"
+  },
+  "csv_sha256": "469022443ce9a115bb37af8ab96947cab773cda1b1d2091adc6e86c428ae89d0",
+  "role": "Posthoc arithmetic after candidate freeze. The observed positive component is not an official or complete score, and is not normalized to 1. Missing negative component is unknown, not zero. TTC above10s excluded as outside released score buckets. Different datasets cannot be compared as leaderboard scores.",
+  "selection_change": false,
+  "optimizer_updates": 0
+}

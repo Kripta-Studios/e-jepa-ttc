@@ -1,0 +1,56 @@
+{
+  "results": [
+    {
+      "role": "H",
+      "mode": "REFINED_RGB",
+      "queries": 128,
+      "max_delta": {
+        "raw_location": 0.0,
+        "point_phase": 0.0,
+        "ttc": 0.0,
+        "q10": 0.0,
+        "q90": 0.0
+      }
+    },
+    {
+      "role": "H",
+      "mode": "ZERO_RGB",
+      "queries": 128,
+      "max_delta": {
+        "raw_location": 0.0,
+        "point_phase": 0.0,
+        "ttc": 0.0,
+        "q10": 0.0,
+        "q90": 0.0
+      }
+    },
+    {
+      "role": "V",
+      "mode": "REFINED_RGB",
+      "queries": 128,
+      "max_delta": {
+        "raw_location": 0.0,
+        "point_phase": 0.0,
+        "ttc": 0.0,
+        "q10": 0.0,
+        "q90": 0.0
+      }
+    },
+    {
+      "role": "V",
+      "mode": "ZERO_RGB",
+      "queries": 128,
+      "max_delta": {
+        "raw_location": 0.0,
+        "point_phase": 0.0,
+        "ttc": 0.0,
+        "q10": 0.0,
+        "q90": 0.0
+      }
+    }
+  ],
+  "selection": "first native batch128 in each sealed H/V cache; no labels",
+  "optimizer_updates": 0,
+  "targets_read": false,
+  "source_sha256": "1a237636bda1d42d61eccd7fcff494b8b94d0da99db7e1118d3f2cd940021d1f"
+}

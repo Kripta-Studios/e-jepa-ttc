@@ -1,0 +1,58 @@
+{
+  "utc": "2026-10-12T16:35:31.836184+00:00",
+  "status": "PASS",
+  "repaired": 8,
+  "all_original_archive_hashes_recovered": true,
+  "rows": [
+    {
+      "identity": "71wUSQYMpk_002982_791413770_796413851_71wUSQYMpk_002982_10419500000",
+      "regenerated_sha256": "284dc467c88e371da0ecd177b61d765e0658df5bc248fbb0ef76319ea674cf85",
+      "original_expected_sha256": "284dc467c88e371da0ecd177b61d765e0658df5bc248fbb0ef76319ea674cf85",
+      "exact_original_archive_recovered": true
+    },
+    {
+      "identity": "71wUSQYMpk_002982_791413770_796413851_71wUSQYMpk_002982_10419600000",
+      "regenerated_sha256": "3efab81642d0e5bcac041427a7f4bf391ac95d3c4b38ac652aebcd29c8def283",
+      "original_expected_sha256": "3efab81642d0e5bcac041427a7f4bf391ac95d3c4b38ac652aebcd29c8def283",
+      "exact_original_archive_recovered": true
+    },
+    {
+      "identity": "71wUSQYMpk_002982_793413803_798413884_71wUSQYMpk_002982_10419500000",
+      "regenerated_sha256": "284dc467c88e371da0ecd177b61d765e0658df5bc248fbb0ef76319ea674cf85",
+      "original_expected_sha256": "284dc467c88e371da0ecd177b61d765e0658df5bc248fbb0ef76319ea674cf85",
+      "exact_original_archive_recovered": true
+    },
+    {
+      "identity": "71wUSQYMpk_002982_793413803_798413884_71wUSQYMpk_002982_10419600000",
+      "regenerated_sha256": "3efab81642d0e5bcac041427a7f4bf391ac95d3c4b38ac652aebcd29c8def283",
+      "original_expected_sha256": "3efab81642d0e5bcac041427a7f4bf391ac95d3c4b38ac652aebcd29c8def283",
+      "exact_original_archive_recovered": true
+    },
+    {
+      "identity": "71wUSQYMpk_002982_793413803_798413884_71wUSQYMpk_002982_10419400000",
+      "regenerated_sha256": "7ddf4aa4f835ed202f59aeca09874768bc74e10961c9ce5511d6eef7e9192bfb",
+      "original_expected_sha256": "7ddf4aa4f835ed202f59aeca09874768bc74e10961c9ce5511d6eef7e9192bfb",
+      "exact_original_archive_recovered": true
+    },
+    {
+      "identity": "71wUSQYMpk_002982_791413770_796413851_71wUSQYMpk_002982_10419700000",
+      "regenerated_sha256": "f06d87939da5abde7886ad39532cdfa69d495bdf1494805e5a07abb18b0637b1",
+      "original_expected_sha256": "f06d87939da5abde7886ad39532cdfa69d495bdf1494805e5a07abb18b0637b1",
+      "exact_original_archive_recovered": true
+    },
+    {
+      "identity": "71wUSQYMpk_002982_793413803_798413884_71wUSQYMpk_002982_10419700000",
+      "regenerated_sha256": "f06d87939da5abde7886ad39532cdfa69d495bdf1494805e5a07abb18b0637b1",
+      "original_expected_sha256": "f06d87939da5abde7886ad39532cdfa69d495bdf1494805e5a07abb18b0637b1",
+      "exact_original_archive_recovered": true
+    },
+    {
+      "identity": "71wUSQYMpk_002982_791413770_796413851_71wUSQYMpk_002982_10419800000",
+      "regenerated_sha256": "ce8da1d5c7c658a16bb4bdea4876a28c1f83b8f1a7d8843ae574d6965af53eab",
+      "original_expected_sha256": "ce8da1d5c7c658a16bb4bdea4876a28c1f83b8f1a7d8843ae574d6965af53eab",
+      "exact_original_archive_recovered": true
+    }
+  ],
+  "optimizer_updates": 0,
+  "quarantine_preserved": true
+}

@@ -1,0 +1,12 @@
+{
+  "checkpoint_sha256": "02d900d0ddf81086f4176b63663f952a7c753eeb033b13acc5030a892a88cf70",
+  "config_sha256": "ff09557e8526c94b1a654d03e4291adb0dfa8e0e1877ff6709a56e6b45af12b4",
+  "strict_state_load": true,
+  "hf_revision": "b676fcdaf26c04bcf896cdb2b208c9c424e8462a",
+  "input_scope": "FCWD estimated event-assisted registration; native normalization/crops; not official extrinsics",
+  "availability_sha256": "f5cd6cd41b7d1fa096161559c9227617a72201938c1bb07e28141158abea9bd5",
+  "adapter_sha256": "76c506cd8e53fe8b4a60dbb0c926915bc3ba036c229599d9aed373676d674151",
+  "device": "cpu",
+  "threads": 1,
+  "optimizer_updates": 0
+}
