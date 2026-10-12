@@ -44,7 +44,6 @@ try {
     foreach ($Item in @(
         @{ Key='E'; Module='geometry'; Prefix='GEOMETRY' },
         @{ Key='F'; Module='temporal_geometry'; Prefix='TEMP_GEOMETRY' }
-        @{ Key='H'; Module='unclipped'; Prefix='NOCLIP' }
     )) {
         if ($Queue -notin @('all', $Item.Key)) { continue }
         $Module = 'operational.representation_audit.' + $Item.Module
@@ -70,6 +69,18 @@ try {
         if ($Decision.status -eq 'REPLICATE') {
             Invoke-Stage 'operational.representation_audit.spatial_geometry' 'replicate'
             Invoke-Stage 'operational.representation_audit.spatial_geometry' 'evaluate-replicas'
+        }
+    }
+    # Preserve the prospectively registered conditional-family order G then H.
+    if ($Queue -in @('all', 'H')) {
+        $Module = 'operational.representation_audit.unclipped'
+        Invoke-Stage $Module 'qa'
+        Invoke-Stage $Module 'train'
+        Invoke-Stage $Module 'evaluate'
+        $Decision = Get-Content -LiteralPath (Join-Path $Run 'NOCLIP_SCREEN_DECISION.json') -Raw | ConvertFrom-Json
+        if ($Decision.status -eq 'REPLICATE') {
+            Invoke-Stage $Module 'replicate'
+            Invoke-Stage $Module 'evaluate-replicas'
         }
     }
     & $Python scripts/report_v17_queues.py *> (Join-Path $Run "RESUME_${Stamp}_REPORT.log")
