@@ -22,6 +22,7 @@ def table(headers: list[str], rows: list[list]) -> str:
 def main() -> None:
     ledger = accounting()
     now = datetime.now(UTC).isoformat()
+    status = read(OUT / "NEXT_DECISION.json")["status"]
     sources = {}
     results: list[tuple[str, int | str, Path]] = [
         ("BASELINE", 7, OUT),
@@ -101,7 +102,7 @@ def main() -> None:
                     )
     text = [
         "# Continuación multimodal: estado recuperable",
-        f"Generado {now}. Investigación en curso; SOTA no demostrado.",
+        f"Generado {now}. Estado: {status}; SOTA no demostrado.",
         f"Updates científicos: {ledger['scientific']}; recuperación superior: "
         f"{ledger['recovery_upper']}; límite físico consumido: {ledger['physical_upper']}.",
         "Pasar del 2 % al 4 % cambia la tolerancia de degradación del tramo TTC largo; "
@@ -345,7 +346,9 @@ def main() -> None:
             f"{cost['rows']} llamadas con registro, estados y predicciones iguales "
             "a sus referencias selladas. No se suman medianas de perfiles separados. "
             "Esta ruta procesa historias por consulta y no equivale a un servicio "
-            "persistente con detector y reutilización de estado entre consultas.",
+            "persistente con detector y reutilización de estado entre consultas. "
+            "Los controles del runner, lectura de referencias de paridad, aserciones "
+            "y escritura de mediciones quedan fuera del cronómetro.",
         ]
     path = OUT / "test12_phase_only/MODEL_INPUT_FREEZE.json"
     if path.exists():
@@ -365,6 +368,28 @@ def main() -> None:
             "soporte total de hasta 650 ms; Garl full utiliza su pareja temporal nativa.",
         ]
         package_path = OUT / "test12_phase_only/PACKAGE_VERIFICATION.json"
+        incident_path = OUT / "PREDICTION_CACHE_INTEGRITY_INCIDENT.json"
+        if incident_path.exists():
+            incident = read(incident_path)
+            sources[str(incident_path.relative_to(OUT))] = sha(incident_path)
+            text += [
+                f"Durante la recuperación se detectaron {len(incident['mismatches'])} "
+                "predicciones con SHA y CRC discrepantes entre 890 archivos previos. "
+                "Se conservaron en cuarentena sus bytes y recibos originales, y se "
+                "recalculan con el modelo congelado. La causa no está establecida; "
+                "sus fechas coinciden con el entorno temporal de la interrupción. "
+                "Ningún archivo afectado se acepta cambiando su hash esperado."
+            ]
+            repair_path = OUT / "PREDICTION_CACHE_INTEGRITY_REPAIR.json"
+            if repair_path.exists():
+                repair = read(repair_path)
+                assert repair["status"] == "PASS"
+                sources[str(repair_path.relative_to(OUT))] = sha(repair_path)
+                text += [
+                    f"Reparación completada: {repair['repaired']} archivos recalculados "
+                    "con CRC válido. Coincidencia con todos los SHA originales esperados: "
+                    f"{repair['all_original_archive_hashes_recovered']}."
+                ]
         audit_path = OUT / "test12_phase_only/INPUT_AUDIT.json"
         if audit_path.exists():
             sources[str(audit_path.relative_to(OUT))] = sha(audit_path)
@@ -393,6 +418,12 @@ def main() -> None:
                     "restauradas o 32 cabezas, y la caducidad en cada elemento. Se mantienen "
                     "los umbrales y el límite CUDA de 1 GiB. La inicialización y el bloque "
                     "de cálculo de las cabezas coinciden sintácticamente con el original."
+                ]
+                text += [
+                    "La admisión distingue el supervisor V18 en espera de un trabajador "
+                    "GPU activo: exige estado reciente, código de coordinación verificado "
+                    "y ninguna reserva GPU abierta. Los trabajadores activos o estados "
+                    "ambiguos detienen la ejecución. No se modificó la campaña V18."
                 ]
                 parity_path = OUT / "test12_phase_only/CACHE_RESUME_PARITY.json"
                 if parity_path.exists():
@@ -500,7 +531,7 @@ def main() -> None:
             sources=sources,
             report_sha256=sha(report_path),
             source_sha256=sha(__file__),
-            status="IN_PROGRESS",
+            status=status,
             official_SOTA=False,
         ),
     )
