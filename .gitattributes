@@ -21,3 +21,7 @@ operational/rgb_port_streaming/** -text
 tests/test_rgb_port_continuity.py -text
 tests/test_rgb_port_streaming.py -text
 docs/multimodal_next_handoff_20261012/** -text
+
+# Multimodal receipts pin executed source bytes, including line endings.
+operational/multimodal_validation/** -text
+operational/multimodal_research/** -text
