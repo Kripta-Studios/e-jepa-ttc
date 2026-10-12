@@ -71,3 +71,21 @@ pasó el replay real: 18 tensores cambiados, máximo 0,0017303973, cero updates
 adicionales. Recibo: `diagnostics/ENCODER_WITNESS_INDEPENDENT_REPLAY/RESULT.json`.
 Este ZIP es un subconjunto de diagnóstico, no el bundle final de la campaña;
 no contiene tablas de predicción ni exports de endpoints completos.
+
+## Comprobación acotada de almacenamiento
+
+La caché original está en el SSD USB E:, mientras el worktree está en NVMe C:.
+Se registró una prueba CPU de cuatro packs P (354.095.050 bytes), ocho batches
+emparejados e intercalados, sin optimizer. Los hashes de las copias coinciden y
+todos los campos de los batches son bit a bit iguales. La caché activa no cambió.
+
+El ratio observado de tiempo medio NVMe/USB fue 1,05372469; no pasó el criterio
+prospectivo de ratio máximo 0,75 y al menos seis pares con ratio máximo 0,90.
+La decisión es **DO_NOT_MIGRATE**. Recibos completos en
+`diagnostics/NVME_STORAGE_PROBE/{REGISTRATION,COPY_ADMISSION,RESULT,DECISION}.json`.
+Las copias sensoriales están fuera del árbol de resultados, bajo `data/cache`,
+ignoradas por Git y excluidas del bundle de evidencia.
+
+La prueba mide el loader caliente sobre esos cuatro packs durante entrenamiento
+concurrente; no establece un ranking universal de discos ni aísla el tiempo
+completo del trainer. El negativo cierra esta intervención de I/O y se conserva.
