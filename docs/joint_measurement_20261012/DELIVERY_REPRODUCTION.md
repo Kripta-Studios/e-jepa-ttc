@@ -75,6 +75,10 @@ SOTA. También se recalculan los testigos de cambio del encoder de DIRECT y CORR
 cuando estén incluidos, comparando los checkpoints conservados de 0 y 100 updates.
 Se verifican hashes, identidad, pesos finitos, diferencias por tensor y continuidad
 del contador. Esto acredita adaptación sobre P; no demuestra generalización.
+El testigo de CORR-FROZEN, si está incluido, comprueba por separado que los bytes
+del encoder no cambian entre 0 y 100, que el predictor sí cambia y que los pasos
+del optimizador y la curva cubren ese intervalo. No acredita por sí solo la
+invariancia durante los 12.000 updates: esa comprobación requiere el endpoint.
 Un paquete sin tablas, exports ni estos testigos informa explícitamente que no ha
 realizado reproducción científica.
 

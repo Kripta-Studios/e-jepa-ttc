@@ -163,6 +163,68 @@ def replay_encoder_change(initial_path: Path, trained_path: Path, witness_path: 
     }
 
 
+def replay_frozen_encoder(initial_path: Path, trained_path: Path, witness_path: Path) -> dict:
+    """Verify unchanged encoder bytes and learned readout from retained CPU weights."""
+    witness = json.loads(witness_path.read_text(encoding="utf-8"))
+    if (
+        witness["status"] != "PASS"
+        or file_hash(initial_path) != witness["initial_checkpoint_sha256"]
+        or file_hash(trained_path) != witness["trained_checkpoint_sha256"]
+    ):
+        raise ValueError("Frozen encoder witness checkpoint bytes differ")
+    initial, trained = [
+        torch.load(path, map_location="cpu", weights_only=False)
+        for path in (initial_path, trained_path)
+    ]
+    updates = trained["completed_updates"]
+    if (
+        initial["identity"] != trained["identity"]
+        or initial["identity_sha256"] != trained["identity_sha256"]
+        or trained["identity_sha256"] != witness["identity_sha256"]
+        or initial["completed_updates"] != 0
+        or updates <= 0
+        or updates != witness["completed_updates"]
+    ):
+        raise ValueError("Frozen encoder witness identity or update interval differs")
+    before, after = initial["model_state_dict"], trained["model_state_dict"]
+    if before.keys() != after.keys() or any(
+        before[k].shape != after[k].shape or before[k].dtype != after[k].dtype for k in before
+    ):
+        raise ValueError("Frozen encoder witness model topology differs")
+    if not all(torch.isfinite(value).all() for value in [*before.values(), *after.values()]):
+        raise ValueError("Frozen encoder witness contains nonfinite weights")
+    changed = {
+        key
+        for key in before
+        if not torch.equal(
+            before[key].contiguous().reshape(-1).view(torch.uint8),
+            after[key].contiguous().reshape(-1).view(torch.uint8),
+        )
+    }
+    encoder = {key for key in before if key.startswith("encoder.")}
+    if (
+        not encoder
+        or encoder & changed
+        or len(encoder) != witness["encoder_tensors_bitwise_unchanged"]
+        or not changed
+        or sorted(changed) != sorted(witness["changed_readout_tensors"])
+    ):
+        raise ValueError("Frozen encoder or learned readout claim differs from retained weights")
+    if [row["update"] for row in trained["cursor"]["curves"]] != list(range(1, updates + 1)):
+        raise ValueError("Frozen encoder witness curve has a missing or duplicated update")
+    steps = sorted({int(row["step"]) for row in trained["optimizer_state_dict"]["state"].values()})
+    if steps != [updates] or steps != witness["optimizer_steps"]:
+        raise ValueError("Frozen encoder witness optimizer steps differ")
+    return {
+        "status": "PASS",
+        "updates_compared": [0, updates],
+        "encoder_tensors_bitwise_unchanged": len(encoder),
+        "readout_tensors_changed": len(changed),
+        "optimizer_updates": 0,
+        "generalization_claim": False,
+    }
+
+
 def replay(root: Path) -> dict:
     """Check included evidence only; never reopen training datasets or run an optimizer."""
     integrity = verify_extraction(root)
@@ -190,15 +252,26 @@ def replay(root: Path) -> dict:
                 verification / f"PAIR_{variant}_STATE_100.pt",
                 witness,
             )
+    frozen_witnesses = {}
+    frozen_witness = verification / "PAIR_CORR_FROZEN_INVARIANT_100.json"
+    if frozen_witness.exists():
+        frozen_witnesses["PAIR-CORR-FROZEN-S7@100"] = replay_frozen_encoder(
+            verification / "PAIR_CORR_FROZEN_INITIAL_STATE.pt",
+            verification / "PAIR_CORR_FROZEN_STATE_100.pt",
+            frozen_witness,
+        )
     return {
         "integrity": integrity,
         "prediction_tables": predictions,
         "portable_exports": exports,
         "encoder_adaptation_witnesses": witnesses,
+        "frozen_encoder_witnesses": frozen_witnesses,
         "rows_recalculated": sum(result["rows"] for result in predictions.values()),
-        "scientific_replay_performed": bool(predictions or exports or witnesses),
+        "scientific_replay_performed": bool(
+            predictions or exports or witnesses or frozen_witnesses
+        ),
         "scope": (
-            "Included prediction scalars, portable examples and retained encoder-change witnesses; "
+            "Included prediction scalars, portable examples and retained encoder witnesses; "
             "not raw producer replay"
         ),
         "optimizer_updates": 0,
