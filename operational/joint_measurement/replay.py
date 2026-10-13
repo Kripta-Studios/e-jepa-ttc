@@ -260,18 +260,24 @@ def replay(root: Path) -> dict:
             verification / "PAIR_CORR_FROZEN_STATE_100.pt",
             frozen_witness,
         )
+    runtime_witnesses = {}
+    if (campaign / "runtime/optimization_20261013/RUNTIME_BINDING.json").exists():
+        from .replay_runtime import replay_runtime
+
+        runtime_witnesses["native_cuda_graph_resume"] = replay_runtime(root)
     return {
         "integrity": integrity,
         "prediction_tables": predictions,
         "portable_exports": exports,
         "encoder_adaptation_witnesses": witnesses,
         "frozen_encoder_witnesses": frozen_witnesses,
+        "optimized_runtime_witnesses": runtime_witnesses,
         "rows_recalculated": sum(result["rows"] for result in predictions.values()),
         "scientific_replay_performed": bool(
-            predictions or exports or witnesses or frozen_witnesses
+            predictions or exports or witnesses or frozen_witnesses or runtime_witnesses
         ),
         "scope": (
-            "Included prediction scalars, portable examples and retained encoder witnesses; "
+            "Included prediction scalars, portable examples, encoder and runtime witnesses; "
             "not raw producer replay"
         ),
         "optimizer_updates": 0,
