@@ -1,7 +1,30 @@
 # V18 JOINT-MEASUREMENT
 
-Estado: RESEARCH_ONGOING / PRIMARY_TRAINING. Entrenamiento científico en curso;
-todavía no hay una comparación completa de endpoints ni selección de candidato.
+Estado: RESEARCH_ONGOING / PRIMARY_EVALUATION. Los cuatro entrenamientos primarios
+están completos en 12.000 updates cada uno y sus endpoints están congelados.
+Todavía no hay una comparación completa P/H ni selección final de candidato.
+
+Actualización 21:00 UTC del 13 de octubre de 2026:
+
+- Los cuatro endpoints tienen checkpoint completo y durable en 12.000. El sello
+  `PRIMARY_ENDPOINTS.json` fija sus hashes y el padre A5-P2-FROZEN.
+- Verificación CPU de NATIVE: `verification/NATIVE_ENDPOINT.json`, PASS. Sus
+  18 tensores de `encoder.features` cambian frente al padre P-only, los 59 estados
+  de Adam llegan a 12.000 y los primeros 6.131 registros/IDs se preservan exactamente
+  tras adoptar el runtime optimizado. Cero updates nuevos durante la verificación.
+- Checkpoint final nativo SHA-256:
+  `7fee4171269785893bdbdd5e04602d01be8552215a59a1ef7a9a26653253ef3d`.
+- Contabilidad: 48.000 primarios + 200 diagnósticos reales P + 420 técnicos +
+  158 de recuperación histórica = 48.778 físicos, sin updates pendientes.
+  La corrección de journals copiados se conserva en
+  `verification/EXTRACTION_ACCOUNTING_CORRECTION_20261013.json`.
+- Evaluación en curso: cinco tablas H completas y dos P completas de las cinco.
+  No se interpreta una matriz parcial ni se abre V para escoger recetas.
+- El presupuesto ampliado a 172.800 segundos de scopes propios cubre sólo estos
+  cuatro brazos y su evaluación, según `BUDGET_AUTHORIZATION_20261013.json`.
+  No amplía automáticamente el cómputo de ramas adaptativas, RGB, réplica o refit.
+
+Las actualizaciones fechadas siguientes preservan el historial anterior.
 
 Base: `396abe922537d9dac19d6db3451e59d283636e20`. Worktree y rama propios.
 El paquete recibido permanece en `docs/joint_measurement_handoff_20261012`.
@@ -75,6 +98,6 @@ Actualización 17:54 UTC:
   de diagnóstico + 420 técnicos = 1.858 físicos; cero recuperación y pendientes.
   Estos valores son una instantánea: el entrenamiento sigue avanzando.
 
-Pendientes del objetivo: completar los cuatro fits, medir y decidir en H,
+Pendientes del objetivo: cerrar las cohortes P/H, medir y decidir en H,
 comparar en V tras congelación, ejecutar las ramas adaptativas/RGB habilitadas,
 réplicas/refit cuando corresponda, costes completos, exports y bundle verificable.

@@ -39,7 +39,11 @@ diagnóstico nuevos. No se cuentan como progreso del endpoint primario.
 `ACTIVATION_VERIFIED.json` comprueba que los 6.131 registros anteriores y sus
 IDs se preservaron exactamente hasta el primer checkpoint optimizado auditado,
 6.200, y que los 59 estados de Adam avanzaron 69 pasos sin reinicio ni recuperación.
-La verificación definitiva de 12.000 queda pendiente mientras el fit siga activo.
+La verificación definitiva de 12.000 pasó a las 21:00 UTC del 13 de octubre:
+`verification/NATIVE_ENDPOINT.json` confirma el mismo prefijo completo, los 59
+estados de Adam en 12.000, los 18 tensores del encoder adaptados y cero recuperación
+nativa. SHA-256 del endpoint:
+`7fee4171269785893bdbdd5e04602d01be8552215a59a1ef7a9a26653253ef3d`.
 
 La observación `verification/HOURLY_20261013T1800.json` midió 1.662 nuevos updates
 en 3.339 segundos de pared desde la restauración: aproximadamente 1.792 updates/h.
