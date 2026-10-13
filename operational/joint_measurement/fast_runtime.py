@@ -182,6 +182,7 @@ def batched_backward(
 def install_graph(model: torch.nn.Module) -> None:
     """Compile only the forward, retaining original parameter/state-dict identities."""
     original = model.forward
+    model._v18_eager_forward = original
     model.forward = torch.compile(  # type: ignore[method-assign]
         original, backend="cudagraphs", dynamic=False, fullgraph=False
     )

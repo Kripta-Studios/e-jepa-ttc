@@ -47,6 +47,8 @@ def binding() -> dict:
     admission = read(OUT / "ADMISSION.json")
     if admission["status"] != "PASS" or not all(admission["checks"].values()):
         raise ValueError("Runtime did not pass exact continuation and performance admission")
+    if admission["numerical_graph_policy_sha256"] != sha(OUT / "NUMERICAL_GRAPH_POLICY.json"):
+        raise ValueError("Numerical graph policy changed after admission")
     for name, expected in admission["runtime_sources"].items():
         if sha(ROOT / "operational/joint_measurement" / name) != expected:
             raise ValueError("Runtime source changed after admission")
@@ -66,6 +68,8 @@ def binding() -> dict:
         "scientific_source_hash": digest(scientific),
         "admission_sha256": sha(OUT / "ADMISSION.json"),
         "graph": admission["graph"],
+        "numerical_graph_policy_sha256": admission["numerical_graph_policy_sha256"],
+        "eager_bitwise_equivalence": False,
         "transition_sha256": sha(RUN / "scheduling/RUNTIME_OPTIMIZATION/STOP_RESULT.json"),
         "origin_updates": admission["origin_updates"],
         "preserve_existing_primary_identity": True,

@@ -168,7 +168,7 @@ def trajectory(mode: str, limit: int, payload: dict, *, graph: bool) -> dict:
     state = ProducerCheckpoint(directory, identity, 16)
     timings = []
     with gpu_charge("primary_runtime_real_P_admission/" + mode, reserve=900):
-        model = model_from(payload, graph=graph and fast)
+        model = model_from(payload, graph=graph)
         optimizer, scheduler = train.make_optimizer(model, updates=12000)
         sampler = torch.Generator()
         if state.pointer.exists():
@@ -180,14 +180,42 @@ def trajectory(mode: str, limit: int, payload: dict, *, graph: bool) -> dict:
             rng(payload)
             curve = []
             state.save(model, optimizer, scheduler, sampler, {"curve": curve}, status="RUNNING")
-        if graph and fast:
+        if graph:
             saved = torch.load(state.path, map_location="cpu", weights_only=False)
             shadow = torch.Generator().set_state(sampler.get_state())
             ids = torch.randint(dataset.population, (32,), generator=shadow).tolist()
-            batches = micros(dataset.load(ids))
+            batches = micros(dataset.load(ids) if fast else dataset.batch(ids))
             for _ in range(3):
                 optimizer.zero_grad(set_to_none=True)
                 batched_backward(model, batches, None, dataset.population)
+            if not fast and not (OUT / "COMPUTE_TIMING.json").exists():
+                compiled = model.forward
+                times = []
+                for implementation in ("eager", "graph", "graph", "eager"):
+                    model.forward = (
+                        compiled if implementation == "graph" else model._v18_eager_forward
+                    )
+                    rng(saved)
+                    optimizer.zero_grad(set_to_none=True)
+                    torch.cuda.synchronize()
+                    started = time.perf_counter()
+                    batched_backward(model, batches, None, dataset.population)
+                    torch.cuda.synchronize()
+                    times.append(
+                        {"implementation": implementation, "seconds": time.perf_counter() - started}
+                    )
+                model.forward = compiled
+                write(
+                    OUT / "COMPUTE_TIMING.json",
+                    {
+                        "optimizer_updates": 0,
+                        "samples": times,
+                        "scope": (
+                            "Paired current-checkpoint P32 forward/loss/backward; "
+                            "excludes inputs, optimizer and compilation"
+                        ),
+                    },
+                )
             state.restore(model, optimizer, scheduler, sampler)
             del saved, batches
         if fast:
@@ -238,7 +266,11 @@ def trajectory(mode: str, limit: int, payload: dict, *, graph: bool) -> dict:
                 dataset.close()
     write(directory / f"TIMING_TO_{limit:02d}.json", {"timings": timings, "cache": counters})
     accounting()
-    return torch.load(state.path, map_location="cpu", weights_only=False)
+    result = torch.load(state.path, map_location="cpu", weights_only=False)
+    del model, optimizer, scheduler, batches
+    gc.collect()
+    torch.cuda.empty_cache()
+    return result
 
 
 def validate() -> dict:
@@ -246,7 +278,17 @@ def validate() -> dict:
     if (OUT / "ADMISSION.json").exists():
         return read(OUT / "ADMISSION.json")
     probe = read(OUT / "GRAPH_PROBE.json")
-    graph = probe["status"] == "PASS"
+    policy = read(OUT / "NUMERICAL_GRAPH_POLICY.json")
+    if policy["prior_exact_probe_sha256"] != sha(OUT / "GRAPH_PROBE.json"):
+        raise ValueError("Graph numerical policy references different original evidence")
+    graph = (
+        probe["checks"]["losses"]
+        and probe["checks"]["cuda_rng"]
+        and probe["checks"]["cuda_graphs_recorded"]
+        and probe["gradient_maxabs"] <= policy["gradient_absolute_tolerance"]
+    )
+    if not graph:
+        raise ValueError("Graph failed the explicitly registered numerical policy")
     payload = origin()
     baseline = trajectory("serial", 16, payload, graph=False)
     trajectory("fast", 8, payload, graph=graph)
@@ -269,6 +311,9 @@ def validate() -> dict:
         else "REJECTED",
         "checks": checks,
         "graph": graph,
+        "numerical_graph_policy_sha256": sha(OUT / "NUMERICAL_GRAPH_POLICY.json"),
+        "eager_bitwise_equivalence": False,
+        "continuous_and_resumed_graph_state_exact": all(checks.values()),
         "optimizer_updates": 32,
         "mean_seconds": means,
         "ratio": means["fast"] / means["serial"],
