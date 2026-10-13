@@ -79,8 +79,17 @@ El testigo de CORR-FROZEN, si está incluido, comprueba por separado que los byt
 del encoder no cambian entre 0 y 100, que el predictor sí cambia y que los pasos
 del optimizador y la curva cubren ese intervalo. No acredita por sí solo la
 invariancia durante los 12.000 updates: esa comprobación requiere el endpoint.
-Un paquete sin tablas, exports ni estos testigos informa explícitamente que no ha
-realizado reproducción científica.
+Si se incluye `runtime/optimization_20261013/RUNTIME_BINDING.json`, el replay
+exige también la evidencia de reanudación optimizada: compara los nueve estados
+de graph6 frente al prefijo compartido4 más restored2, verifica su contabilidad
+física y los hashes de las fuentes del snapshot extraído. Son ocho updates
+históricos retenidos y cero nuevos. La igualdad exacta se refiere a esa
+reanudación; no a la comparación numérica entre eager y CUDA Graphs. Se preservan
+las admisiones estrictas fallidas, la política numérica y sus bindings. El replay
+de estados no vuelve a ejecutar kernels CUDA ni mide de nuevo el rendimiento.
+
+Un paquete sin tablas, exports ni testigos de encoder o runtime informa
+explícitamente que no ha realizado reproducción científica.
 
 En este host Windows se usan streams de Python para guardar y cargar TorchScript:
 la ruta C++ directa falló con el nombre de usuario Unicode. La prueba de extracción
