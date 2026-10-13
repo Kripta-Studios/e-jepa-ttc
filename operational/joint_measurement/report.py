@@ -52,6 +52,17 @@ def collect() -> dict:
     counts["physical_upper"] = sum(counts.values())
     budget_path = RUN / "GPU_BUDGET.json"
     budget = evidence(budget_path) if budget_path.exists() else {"entries": []}
+    budget_cap = budget.get("cap_s", 64800)
+    budget_authorizations = []
+    for path in sorted(RUN.glob("BUDGET_AUTHORIZATION_*.json")):
+        authorization = evidence(path)
+        if (
+            authorization.get("status") == "APPLIED"
+            and authorization.get("authorized_cap_seconds") == budget_cap
+        ):
+            budget_authorizations.append(
+                {"path": path.relative_to(RUN).as_posix(), **authorization}
+            )
     settled = sum(r["charged_s"] for r in budget["entries"] if r["status"] == "SETTLED")
     reserved = sum(r["charged_s"] for r in budget["entries"] if r["status"] == "RESERVED")
     fits = []
@@ -109,7 +120,8 @@ def collect() -> dict:
         "gpu_settled_scope_seconds": settled,
         "gpu_reserved_upper_seconds": reserved,
         "gpu_charged_upper_seconds": settled + reserved,
-        "gpu_cap_seconds": 64800,
+        "gpu_cap_seconds": budget_cap,
+        "gpu_budget_authorizations": budget_authorizations,
         "results": results,
         "decisions": decisions,
         "preparation": preparation,
@@ -198,7 +210,18 @@ def build() -> dict:
         f"recovery upper: {counts['recovery_upper']}; pending upper: {counts['pending_upper']}.",
         f"Total physical upper bound: {counts['physical_upper']} / 1,000,000.",
         f"Settled own GPU scopes: {result['gpu_settled_scope_seconds']:.3f} s; "
-        f"reserved upper bound: {result['gpu_reserved_upper_seconds']:.3f} s; cap: 64,800 s.",
+        f"reserved upper bound: {result['gpu_reserved_upper_seconds']:.3f} s; "
+        f"ledger cap: {result['gpu_cap_seconds']:,.0f} s.",
+        *[
+            f"Recorded budget amendment: [{row['path']}](../{row['path']}). "
+            f"Scope: {row['scope']}. This extension does not authorize other branches."
+            for row in result["gpu_budget_authorizations"]
+        ],
+        *(
+            ["The changed ledger cap has no matching applied authorization in this snapshot."]
+            if result["gpu_cap_seconds"] != 64800 and not result["gpu_budget_authorizations"]
+            else []
+        ),
         "Scopes include loading/saving inside the timer; these are not GPU kernel-only seconds.",
         "",
         "## Primary fixed endpoints",
