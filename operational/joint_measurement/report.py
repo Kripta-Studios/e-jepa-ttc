@@ -214,7 +214,7 @@ def build() -> dict:
         f"ledger cap: {result['gpu_cap_seconds']:,.0f} s.",
         *[
             f"Recorded budget amendment: [{row['path']}](../{row['path']}). "
-            f"Scope: {row['scope']}. This extension does not authorize other branches."
+            f"Scope: {row['scope']}. Read later applied amendments for any scope expansion."
             for row in result["gpu_budget_authorizations"]
         ],
         *(
