@@ -1,9 +1,29 @@
 # V18 JOINT-MEASUREMENT
 
-Estado: RESEARCH_ONGOING / PRIMARY_COMPLETE / NO_SYSTEM_PROMOTION.
+Estado: RESEARCH_ONGOING / RGB_AUTHORIZED; fase primaria NO_SYSTEM_PROMOTION.
 Los cuatro entrenamientos primarios están completos en 12.000 updates cada uno.
 La matriz P/H, selección H, evaluación V del candidato seleccionado, coste E2E y
 comparación con E_CTX están completos. Esto no completa el programa V18.
+
+Actualización 14 de octubre de 2026, antes de iniciar los fits RGB:
+
+- El usuario autoriza continuar y ampliar el presupuesto de todo el programa.
+  `BUDGET_AUTHORIZATION_20261014.json` aplica el techo existente de 48 horas
+  acumuladas y un millón de updates a todas las ramas habilitadas por evidencia.
+  Se conserva la autorización primaria anterior y no se reinicia la contabilidad.
+- QA CUDA RGB: 40 updates sintéticos, ambos brazos PASS para 10 continuos frente
+  a 5 + restauración + 5. Pesos, optimizador, scheduler, RNG, IDs, pérdidas y normas
+  coinciden exactamente. Es una prueba de ejecución, no de precisión TTC.
+- Se ejecuta el par ya registrado RGB-CORR-FT / RGB-CORR-FROZEN, seed7, 12k cada
+  uno. Ambos endpoints deben congelarse antes de H. El driver completa P/H,
+  coste preparado, recálculo independiente, bootstrap y exports; no consulta V
+  para seleccionar ni registra automáticamente una fusión sin interpretación.
+- Reanudación: `pwsh -NoProfile -File scripts/Resume-JointMeasurementRGB.ps1`.
+  Un lock exclusivo impide duplicar el driver. La GPU mantiene sus controles
+  existentes de propietario y presupuesto. Las revisiones del agente se realizan
+  cada hora en punto de Europe/Madrid, sin cambiar la cadencia de checkpoints.
+- El ZIP primario `31760d2` permanece como snapshot histórico verificado. Su espera
+  de autorización queda superada por este permiso, no por una edición retroactiva.
 
 Actualización tras completar la comparación de sistema, 13 de octubre de 2026:
 
