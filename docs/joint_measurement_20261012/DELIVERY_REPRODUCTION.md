@@ -22,6 +22,22 @@ El coste preparado excluye preprocesado sensorial y no sustituye la medida E2E.
 
 ## ZIP esencial
 
+La fase primaria completada se describe en `primary_milestone/README.md` dentro
+de la campaña. Para regenerar las tablas y la conclusión desde su evidencia:
+
+```powershell
+& '../e-jepa-ttc/.venv/Scripts/python.exe' -B -m operational.joint_measurement.primary_analysis
+& '../e-jepa-ttc/.venv/Scripts/python.exe' -B -m operational.joint_measurement.primary_closure
+& '../e-jepa-ttc/.venv/Scripts/python.exe' -B -m operational.joint_measurement.report
+```
+
+`primary_closure` documenta el resultado negativo de esta fase, no termina el
+objetivo. Conserva la selección previa H y añade una decisión posterior a V,
+sin sobrescribir `NEXT_DECISION.json`. El snapshot primario registra la espera
+de autorización para ampliar a RGB el alcance del presupuesto de 48 horas.
+Si cambia esa autorización o se ejecuta otra rama, hay que interpretar y
+actualizar la conclusión de campaña antes de crear una entrega posterior.
+
 Antes de empaquetar, guardar el estado completo de los fits, cerrar escritores
 propios, actualizar el informe y escribir `CAMPAIGN_CONCLUSION.json` en la carpeta
 de la campaña con `research_status`, `remaining_work` y las referencias concretas

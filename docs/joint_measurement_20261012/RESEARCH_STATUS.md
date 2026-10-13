@@ -1,8 +1,41 @@
 # V18 JOINT-MEASUREMENT
 
-Estado: RESEARCH_ONGOING / PRIMARY_EVALUATION. Los cuatro entrenamientos primarios
-están completos en 12.000 updates cada uno y sus endpoints están congelados.
-Todavía no hay una comparación completa P/H ni selección final de candidato.
+Estado: RESEARCH_ONGOING / PRIMARY_COMPLETE / NO_SYSTEM_PROMOTION.
+Los cuatro entrenamientos primarios están completos en 12.000 updates cada uno.
+La matriz P/H, selección H, evaluación V del candidato seleccionado, coste E2E y
+comparación con E_CTX están completos. Esto no completa el programa V18.
+
+Actualización tras completar la comparación de sistema, 13 de octubre de 2026:
+
+- NATIVE es candidato de desarrollo frente a A5-P2 congelado en H: mejora del
+  agregado del 7,33 % y del MiDc del 7,73 %, con las protecciones satisfechas.
+  Los tres brazos PAIR incumplen las protecciones de signo y bandas. Sus
+  debilidades están también en P; no se atribuyen sólo a transferencia P/H.
+- En las 16.432 consultas V, NATIVE no supera E_CTX: agregado 126,106 frente a
+  106,082; MiDc 178,140 frente a 156,557; MAE 5,445 s frente a 2,497 s.
+  Los gates originales rechazan la promoción. V sigue siendo desarrollo expuesto.
+- Coste E2E mediano de NATIVE: 189,140 ms frente a 991,200 ms de E_CTX sobre
+  64 consultas emparejadas. Incluye eventos crudos y preprocesado, con pesos
+  residentes y caché del sistema operativo no controlada. P2 usa menos contexto;
+  E_CTX conserva su historial y expertos. No se atribuye todo a la arquitectura.
+- Once tablas propias: 377.992 filas. Cinco exports CPU y bootstrap por grupos.
+  Los resultados se regeneran desde artefactos mediante `primary_analysis`,
+  `primary_closure` y `report` en `operational.joint_measurement`.
+- Contabilidad: 48.778 updates físicos, cero pendientes; 91.171,922 segundos
+  de scopes propios. La ampliación a 172.800 segundos sigue limitada a los
+  cuatro brazos primarios y su evaluación.
+- RGB-CORR entrenable y congelado se registraron antes de interpretar V, con
+  cero updates. Su ejecución espera ampliar el alcance del techo existente.
+  Réplica, refit y ramas adaptativas siguen condicionados a evidencia y presupuesto.
+- `NEXT_DECISION.json` conserva la decisión prospectiva P/H.
+  `NEXT_DECISION_POST_PRIMARY.json` y `CAMPAIGN_CONCLUSION.json` añaden la
+  interpretación de V y conservan el trabajo restante. No afirman SOTA.
+
+Informe generado: `artifacts/joint_measurement_20261012/primary_milestone/README.md`.
+La entrega de esta fase incluye checkpoints completos y resultados negativos;
+no debe presentarse como cierre del objetivo completo.
+
+Las actualizaciones fechadas siguientes son históricas.
 
 Actualización 21:00 UTC del 13 de octubre de 2026:
 
