@@ -84,7 +84,7 @@ def stop(
     """Wait for exclusive ownership and complete state; never interrupt an optimizer step."""
     import msvcrt
 
-    if transition not in {"PAIRS_FIRST", "MAPPED_INPUT"}:
+    if transition not in {"PAIRS_FIRST", "MAPPED_INPUT", "RUNTIME_OPTIMIZATION"}:
         raise ValueError("Unregistered transition purpose")
     if fit_id not in read(ROOT / "configs/joint_measurement/primary.json")["fits"]:
         raise ValueError("Unregistered primary fit")
@@ -95,6 +95,10 @@ def stop(
     if not order_path.is_file():
         raise ValueError("Register the complete unchanged matrix order before transition")
     diagnostic = RUN / "diagnostics/mapped_runtime/REGISTRATION.json"
+    if transition == "RUNTIME_OPTIMIZATION":
+        diagnostic = RUN / "runtime/optimization_20261013/REGISTRATION.json"
+        if not diagnostic.is_file():
+            raise ValueError("Register runtime optimization before stopping training")
     if transition == "MAPPED_INPUT" and not diagnostic.is_file():
         raise ValueError("Register mapped-input equivalence checks before stopping training")
     process = psutil.Process(pid)
@@ -110,11 +114,11 @@ def stop(
             "order_sha256": sha(order_path),
             "fit_id": fit_id,
             "diagnostic_registration_sha256": sha(diagnostic)
-            if transition == "MAPPED_INPUT"
+            if transition in {"MAPPED_INPUT", "RUNTIME_OPTIMIZATION"}
             else None,
             "reason": (
                 "Storage-equivalence QA before possible input optimization; recipes unchanged"
-                if transition == "MAPPED_INPUT"
+                if transition in {"MAPPED_INPUT", "RUNTIME_OPTIMIZATION"}
                 else "Resource-aware ordering only; resume all four unchanged 12000-update fits"
             ),
         },
@@ -189,7 +193,9 @@ if __name__ == "__main__":
     parser.add_argument("--minimum-updates", type=int, required=True)
     parser.add_argument("--fit-id", default="NATIVE-P2-FT-S7")
     parser.add_argument(
-        "--transition", choices=["PAIRS_FIRST", "MAPPED_INPUT"], default="PAIRS_FIRST"
+        "--transition",
+        choices=["PAIRS_FIRST", "MAPPED_INPUT", "RUNTIME_OPTIMIZATION"],
+        default="PAIRS_FIRST",
     )
     args = parser.parse_args()
     print(
