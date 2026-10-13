@@ -125,6 +125,12 @@ def graph_probe() -> dict:
                 "gradients": exact(baseline_gradients, gradients),
                 "cuda_rng": exact(baseline_rng, torch.cuda.get_rng_state_all()),
             }
+            from torch._inductor.cudagraph_trees import get_manager
+
+            manager = get_manager(0, create_if_none_exists=False)
+            recorded = manager.graph_counter.__reduce__()[1][0] if manager is not None else 0
+            checks["cuda_graphs_recorded"] = recorded > 0
+            result["recorded_cuda_graphs"] = recorded
             result.update(
                 status="PASS" if all(checks.values()) else "REJECTED",
                 checks=checks,
