@@ -48,6 +48,9 @@ publicación, submission ni envío a un servidor.
 ## Extracción independiente
 
 Usar una carpeta nueva y guardar el resultado de verificación fuera de ella.
+La extracción debe quedar fuera de `artifacts/joint_measurement_20261012`: el
+contador vivo recorre los journals de ese directorio y contaría otra vez los
+journals copiados. El ZIP y los recibos sí pueden conservarse en la campaña.
 El ejemplo siguiente supone que `$Bundle` apunta al ZIP creado y que la consola
 está en el worktree V18:
 

@@ -56,6 +56,15 @@ está en `verification/OPTIMIZED_RUNTIME_WITNESS_20261013.zip`, junto a sus reci
 Es un testigo parcial, no la entrega final de V18. Pasaron 32 pruebas CPU de
 empaquetado, replay y rechazo de estados alterados.
 
+La primera extracción de ese testigo se creó dentro de la carpeta de campaña;
+el contador recursivo sumó otra vez sus journals de seis y dos updates. Se detectó
+en la revisión de las 22:00 y se trasladó intacta a
+`artifacts/independent_audits/optimized_runtime_20261013`, fuera del árbol contado.
+`verification/EXTRACTION_ACCOUNTING_CORRECTION_20261013.json` conserva las rutas,
+los hashes y el agregado anterior. Son ocho registros duplicados, no ocho updates
+físicos nuevos. No se modificaron los journals originales ni el ledger GPU y se
+conservaron las observaciones históricas con ese exceso conservador.
+
 ## Histórico: prototipo aislado de lectura anticipada
 
 En el diagnóstico anterior, el trainer ejecutaba la implementación científica de 61ee840.
