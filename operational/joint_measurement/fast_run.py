@@ -44,7 +44,7 @@ def no_other_writer() -> None:
 
 def binding() -> dict:
     """Require exact-state admission and unchanged scientific and runtime sources."""
-    admission = read(OUT / "ADMISSION.json")
+    admission = read(OUT / "FINAL_ADMISSION.json")
     if admission["status"] != "PASS" or not all(admission["checks"].values()):
         raise ValueError("Runtime did not pass exact continuation and performance admission")
     if admission["numerical_graph_policy_sha256"] != sha(OUT / "NUMERICAL_GRAPH_POLICY.json"):
@@ -66,7 +66,7 @@ def binding() -> dict:
         "status": "ADMITTED",
         "runtime_sources": runtime_sources,
         "scientific_source_hash": digest(scientific),
-        "admission_sha256": sha(OUT / "ADMISSION.json"),
+        "admission_sha256": sha(OUT / "FINAL_ADMISSION.json"),
         "graph": admission["graph"],
         "numerical_graph_policy_sha256": admission["numerical_graph_policy_sha256"],
         "eager_bitwise_equivalence": False,
