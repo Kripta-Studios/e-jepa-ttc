@@ -506,3 +506,24 @@ Caché SHA-256:
 Cero optimizer updates y CUDA sin inicializar. Esta comprobación de cuatro
 filas complementa la de eventos; todavía no es una extracción de población
 completa ni una validación de precisión de la fusión.
+
+### 2026-10-14 13:50 Madrid — compact P2 cache resumed
+
+Stopped normally at a durable boundary of 6,047 updates; zero pending,
+lost or recovery updates. Preserved the prior runtime source and checkpoint.
+Prospective CPU profile `runtime/rgb_p2_profile_v1/RESULT.json` passed:
+all 14 batch fields match exactly across 16 measured batches; CPU RNG
+unchanged, CUDA uninitialized and zero optimizer updates. Median input
+load/collation was 0.32755745 s for current residency and 0.06186295 s for
+compact residency. Sequential phases allow an OS cache advantage; these
+figures do not establish full-training speedup. Compact residency retained
+4,993,210,160 bytes and 1,584 shards after the fixed profile.
+
+Runtime v3 preserves only the final two native frames and consumed metadata,
+with original FP32 conversion, model and optimizer unchanged. Five CPU
+restore/cache tests and Ruff passed. All eleven full-state restore checks
+passed at update 6,047, then scientific updates resumed under driver 40132.
+See `runtime/rgb_resident_v3/TRANSITION.json` and the restore proof. The sole
+hourly observer was rearmed for 14:00. Before migration, 407 updates over
+approximately 29 minutes implied 0.23 updates/s; do not extrapolate the
+CPU input-profile ratio into a new training ETA before sustained evidence.
