@@ -527,3 +527,20 @@ See `runtime/rgb_resident_v3/TRANSITION.json` and the restore proof. The sole
 hourly observer was rearmed for 14:00. Before migration, 407 updates over
 approximately 29 minutes implied 0.23 updates/s; do not extrapolate the
 CPU input-profile ratio into a new training ETA before sustained evidence.
+
+### Resumable P2 feature extraction integration
+
+`fusion_pair_cache.extract_shards` now connects the native pair readers, frozen
+spatial descriptor extraction and lossless sharded cache. The caller must first
+admit parent weights, population, sensor lineage, availability and GPU ownership;
+the helper does not choose fusion parents or authorize a production extraction.
+It bounds work by new chunks and retains previously verified chunks on resume.
+Only pixels and native dt enter inference. Missing RGB rows remain explicit and
+are never read or discarded, while event fallback must cover every query.
+Batch shape, availability and extraction source hashes are bound on disk.
+A read, token, clock or frozen-weight error stops publication.
+
+Eight CPU integration tests passed: interrupted/resumed inference matches direct
+predictions; all-missing chunks preserve coverage; changed binding or corrupt
+bytes are rejected; event clocks stay distinct; frozen-state mutation is caught.
+These tests do not establish full-population scientific fusion performance.
