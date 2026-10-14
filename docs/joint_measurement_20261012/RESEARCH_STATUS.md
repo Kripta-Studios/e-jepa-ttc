@@ -5,6 +5,29 @@ Los cuatro entrenamientos primarios están completos en 12.000 updates cada uno.
 La matriz P/H, selección H, evaluación V del candidato seleccionado, coste E2E y
 comparación con E_CTX están completos. Esto no completa el programa V18.
 
+Actualización 14 de octubre de 2026, 11:25 Europe/Madrid:
+
+- C1 registrado antes de updates en `adaptive/C1_geometry/REGISTRATION.json`,
+  SHA-256 `77d12a005b337039b47f3c153b1341113de8b484a777f9b4ab42e685aa731db6`.
+  Un fit nuevo de 12.000 updates se compara con el control libre primario
+  PAIR-CORR-S7 ya cerrado. Se verifican sus fuentes, pesos, seed, objetivo,
+  manifest, masas y presupuesto idénticos; no se vuelve a entrenar ni se carga
+  otra vez su coste a la contabilidad. La capacidad difiere en 517 parámetros.
+- El trainer conserva `ProducerCheckpoint`, optimizer/scheduler, sampler y RNG.
+  Reutiliza `PersistentSensors`: archivos abiertos persistentes, caché de entradas
+  de hasta 8 GiB y un batch prefetched con un generador privado. No guarda features
+  detached. CUDA Graphs permanece pendiente de validación específica de esta ruta;
+  el éxito del grafo nativo anterior no se traslada automáticamente a este modelo.
+- QA CPU 10 continuos frente a 5 + restauración + 5: PASS en los nueve controles
+  de estados y trayectoria. 20 updates sintéticos contabilizados, cero recuperación,
+  CUDA no inicializada. Recibo `qa/geometry/cpu/PASS.json`. La comprobación
+  independiente del checkpoint sintético regenera además sus 320 IDs.
+- No ha comenzado el fit científico C1. Falta QA CUDA antes de entrenar:
+  `python -B -m operational.joint_measurement.geometry_train qa --device cuda`.
+  El control RGB congelado conserva la GPU. No lanzar otro escritor ni interpretar
+  esta prueba sintética como evidencia de precisión. La evaluación completa P/H,
+  coste emparejado, export y reanudador de la cola C1 siguen pendientes.
+
 Actualización 14 de octubre de 2026, 11:17 Europe/Madrid:
 
 - El diagnóstico `diagnostics/real_temporal_P` registra antes de medir cuatro
