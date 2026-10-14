@@ -67,3 +67,40 @@ Cinco pruebas CPU del observador pasaron: separación de contadores por rama,
 rechazo de PID reutilizado, terminal RGB/C1 sin confundirlo con un proceso vivo,
 y detección de ausencia de progreso entre horas. Ruff y la ayuda CLI pasaron.
 No se han medido todavía coste, métricas o ETA científica de C1.
+
+## Prueba prospectiva de CUDA Graphs preparada a las 12:09
+
+`geometry_graph_probe.py`, commit `45b1b98`, reutiliza el instalador de forward
+`torch.compile(..., backend="cudagraphs")` de la ruta nativa ya existente.
+No modifica el trainer ni activa graphs en la cola C1. Se registró la nueva
+comparación antes de ejecutarla:
+`runtime/geometry_graph_probe_v1/REGISTRATION.json`, SHA-256
+`e4668a5a59c1239776289f367e8bb12f7c3693509b6360ae8d59200ec0248582`.
+
+La prueba utiliza inputs sintéticos 128×128, batch efectivo32/micro4, mismo
+estado inicial C1 y cero optimizer updates. Compara pérdidas y gradientes con
+rtol=1e-5/atol=1e-7, registra también igualdad bit a bit, exige RNG exacto,
+pesos e identidad de parámetros intactos y al menos un graph realmente grabado.
+Seis pares de mediciones alternan eager/graph tras tres warmups; la mediana graph
+debe ser como máximo el 90% de eager. El tiempo incluye forward/pérdida/backward
+sobre tensores CUDA preparados y excluye loader, optimizador y compilación.
+
+Sólo si cumple todo podrá considerarse `CANDIDATE_FOR_RESUME_QA`. Falta entonces
+una prueba separada con trayectoria del optimizador y reanudación completa antes
+de admitir cualquier cambio de ejecución científica. La receta primaria nativa
+no acredita la nueva capa geométrica por sí sola.
+
+El programa rechaza iniciar la prueba si sigue vivo el driver RGB o C1 del
+worktree, incluso entre sus scopes GPU. Catorce pruebas CPU de las barreras
+pasaron. A esta hora sólo se ejecutó `--register-only`: no hay `RESULT.json`,
+ninguna medición GPU ni aceleración demostrada para C1.
+
+Cuando RGB haya terminado su cola y salido, antes de arrancar C1:
+
+```powershell
+python -B -m operational.joint_measurement.geometry_graph_probe
+```
+
+Un rechazo conserva la evidencia y deja disponible el trainer eager con caché
+sensorial persistente, prefetch y pinned inputs. La prueba no entrena por sí
+misma, no modifica endpoints ni interpreta resultados TTC.
