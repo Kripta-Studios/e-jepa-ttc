@@ -12,9 +12,12 @@ from operational.joint_measurement.geometry_capture import (
     affine_tensor,
     checked_phase,
     contiguous_microbatch,
+    contiguous_subset,
+    owned_backward,
 )
 from operational.joint_measurement.geometry_model import GeometricPairMeasurement, weighted_affine
 from operational.joint_measurement.qa import exact, fixture, subset
+from operational.joint_measurement.train import backward
 
 
 @pytest.mark.parametrize("seed", [7, 23])
@@ -92,3 +95,30 @@ def test_contiguous_microbatch_same_fields_and_shared_tensor_storage():
 def test_microbatch_invalid_bounds_fail(start, stop):
     with pytest.raises(ValueError):
         contiguous_microbatch(fixture(128), start, stop)
+
+
+def test_arbitrary_sampler_ids_keep_duplicates_and_order():
+    batch = fixture(128)
+    expected = subset(batch, [4, 2, 4, 0])
+    actual = contiguous_subset(batch, [4, 2, 4, 0])
+    for field in fields(batch):
+        assert exact(getattr(actual, field.name), getattr(expected, field.name))
+
+
+def test_owned_gradient_accumulation_matches_original_multiple_microbatches():
+    torch.set_num_threads(1)
+    torch.manual_seed(13)
+    original = GeometricPairMeasurement(CausalScaleTTC()).train()
+    candidate = copy.deepcopy(original)
+    batch = fixture(128)
+    parts = [contiguous_microbatch(batch, 0, 4), contiguous_microbatch(batch, 4, 8)]
+    weights = torch.full((8,), 1 / 8)
+    rng = torch.get_rng_state()
+    baseline = backward(original, parts, weights, 8)
+    final_rng = torch.get_rng_state()
+    torch.set_rng_state(rng)
+    actual = owned_backward(candidate, parts, weights, 8)
+    assert exact(actual, baseline)
+    assert torch.equal(final_rng, torch.get_rng_state())
+    for left, right in zip(original.parameters(), candidate.parameters(), strict=True):
+        assert exact(left.grad, right.grad)

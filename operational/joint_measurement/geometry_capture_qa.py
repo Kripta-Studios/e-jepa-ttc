@@ -12,7 +12,7 @@ from operational.range_transfer.common import freeze, read, sha, utc
 
 from . import geometry_train
 from .common import ROOT, RUN, accounting, config, gpu_charge
-from .geometry_capture import install_capture
+from .geometry_capture import contiguous_subset, install_capture, owned_backward
 from .geometry_capture_probe import OUT as PROBE
 from .geometry_graph_probe import no_live_training_driver
 from .geometry_model import GeometricPairMeasurement
@@ -20,7 +20,7 @@ from .qa import exact
 from .resume_fast_proof import close
 from .train import committed_sources
 
-OUT = RUN / "qa/geometry_capture_v2"
+OUT = RUN / "qa/geometry_capture_v3"
 STATE_KEYS = (
     "model_state_dict",
     "optimizer_state_dict",
@@ -84,7 +84,13 @@ def run() -> dict:
     with gpu_charge("C1_complete_capture_resume_QA", reserve=900) as deadline:
         for mode, steps in record["trajectories"].items():
             model_type = GeometricPairMeasurement if mode == "eager" else CapturedGeometry
-            with patch.object(geometry_train, "GeometricPairMeasurement", model_type):
+            backward_fn = geometry_train.backward if mode == "eager" else owned_backward
+            subset_fn = geometry_train.subset if mode == "eager" else contiguous_subset
+            with (
+                patch.object(geometry_train, "GeometricPairMeasurement", model_type),
+                patch.object(geometry_train, "backward", backward_fn),
+                patch.object(geometry_train, "subset", subset_fn),
+            ):
                 for limit in steps:
                     result = geometry_train.segment(
                         OUT / mode,

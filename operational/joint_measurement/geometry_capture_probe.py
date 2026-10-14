@@ -15,15 +15,16 @@ from e_jepa_ttc.models.causal_scale_ttc import CausalScaleTTC
 from operational.range_transfer.common import freeze, read, sha, utc
 
 from .common import ROOT, RUN, gpu_charge, require_resources
-from .geometry_capture import contiguous_microbatch, install_capture
+from .geometry_capture import contiguous_microbatch, install_capture, owned_backward
 from .geometry_graph_probe import no_live_training_driver
 from .geometry_model import GeometricPairMeasurement
 from .geometry_train import REGISTRATION, source_binding
 from .qa import exact, fixture, subset
 from .resume_fast_proof import close
-from .train import backward, committed_sources, initialize, setup
+from .train import backward as eager_backward
+from .train import committed_sources, initialize, setup
 
-OUT = RUN / "runtime/geometry_capture_v2"
+OUT = RUN / "runtime/geometry_capture_v3"
 ORIGIN = RUN / "runtime/C1_bottleneck_20261014/origin_checkpoint.pt"
 
 
@@ -36,8 +37,11 @@ def register() -> dict:
     committed_sources(sources)
     record = {
         "schema": "v18_C1_complete_capture_probe_v1",
-        "supersedes_unexecuted_sha256": sha(RUN / "runtime/geometry_capture_v1/REGISTRATION.json"),
-        "revision_reason": "Preserve forward keyword names and fix static type annotations",
+        "prior_probe_sha256": sha(RUN / "runtime/geometry_capture_v2/RESULT.json"),
+        "gradient_diagnosis_sha256": sha(
+            RUN / "runtime/geometry_accumulation_probe_v1/RESULT.json"
+        ),
+        "revision_reason": "Own capture inputs and preallocate gradient accumulation destinations",
         "sources": sources,
         "C1_registration_sha256": sha(REGISTRATION),
         "prior_failure_sha256": sha(RUN / "runtime/geometry_graph_probe_v3/RESULT.json"),
@@ -63,6 +67,12 @@ def register() -> dict:
     }
     freeze(OUT / "REGISTRATION.json", record)
     return record
+
+
+def backward(model: torch.nn.Module, batches: list, weights: torch.Tensor, population: int) -> dict:
+    """Compare untouched eager accumulation with the independently owned capture variant."""
+    function = owned_backward if getattr(model, "_v18_capture_active", False) else eager_backward
+    return function(model, batches, weights, population)
 
 
 def run() -> dict:

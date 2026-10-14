@@ -31,6 +31,32 @@ def contiguous_microbatch(batch: ObjectEventV4Batch, start: int, stop: int) -> O
     return ObjectEventV4Batch(**values)
 
 
+def contiguous_subset(batch: ObjectEventV4Batch, indices: list[int]) -> ObjectEventV4Batch:
+    """Use views for microbatches; retain ordinary indexing for arbitrary sampled IDs."""
+    from .qa import subset
+
+    if indices and indices == list(range(indices[0], indices[0] + len(indices))):
+        return contiguous_microbatch(batch, indices[0], indices[-1] + 1)
+    return subset(batch, indices)
+
+
+def owned_backward(
+    model: nn.Module,
+    batches: list,
+    weights: Tensor | None,
+    population: int,
+    *,
+    recompute: bool = False,
+) -> dict:
+    """Prevent AccumulateGrad from borrowing a replayed graph's gradient buffers."""
+    from .train import backward
+
+    for parameter in model.parameters():
+        if parameter.requires_grad and parameter.grad is None:
+            parameter.grad = torch.zeros_like(parameter)
+    return backward(model, batches, weights, population, recompute=recompute)
+
+
 def affine_tensor(flow: Tensor, weights: Tensor, ridge: float = 1e-4) -> tuple[Tensor, Tensor]:
     """Same ordered affine operations; return the original dynamic guard separately."""
     valid = torch.isfinite(flow).all() & torch.isfinite(weights).all() & ~(weights < 0).any()
@@ -153,7 +179,9 @@ def install_capture(model: GeometricPairMeasurement, inputs: Tensor, dt: Tensor)
     cpu_rng = torch.get_rng_state()
     cuda_rng = torch.cuda.get_rng_state_all()
     try:
-        torch.cuda.make_graphed_callables(core, (inputs, dt), num_warmup_iters=3)
+        # Replay writes static input buffers. They must never alias real batch storage.
+        samples = (inputs.detach().clone(), dt.detach().clone())
+        torch.cuda.make_graphed_callables(core, samples, num_warmup_iters=3)
     finally:
         torch.set_rng_state(cpu_rng)
         torch.cuda.set_rng_state_all(cuda_rng)
@@ -168,4 +196,5 @@ def install_capture(model: GeometricPairMeasurement, inputs: Tensor, dt: Tensor)
         return checked_phase(core(inputs, delta_t_s))
 
     model.forward = forward
+    object.__setattr__(model, "_v18_capture_active", True)
     return core
