@@ -60,11 +60,7 @@ def observe(pid: int, created: float, previous: dict | None, *, job: str = "rgb"
     runner = read_optional(directory / "RUNNER_STATE.json")
     status = "RUNNING"
     if not alive:
-        status = (
-            terminal
-            if runner.get("status") == terminal
-            else "ACTION_REQUIRED_DRIVER_NOT_LIVE"
-        )
+        status = terminal if runner.get("status") == terminal else "ACTION_REQUIRED_DRIVER_NOT_LIVE"
     elif previous and signature == previous["progress_signature"]:
         status = "REVIEW_NO_PROGRESS_SINCE_PREVIOUS_HOUR"
     ledger = read_optional(RUN / "GPU_BUDGET.json")
@@ -107,7 +103,10 @@ def run(pid: int, *, job: str = "rgb") -> None:
     out = RUN / relative / "hourly"
     process = psutil.Process(pid)
     if (
-        f"operational.joint_measurement.{module}" not in process.cmdline()
+        not any(
+            f"operational.joint_measurement.{name}" in process.cmdline()
+            for name in ([module, "rgb_cached_run"] if job == "rgb" else [module])
+        )
         or Path(process.cwd()).resolve() != ROOT
     ):
         raise ValueError(f"The observed PID must be the actual V18 {job} driver")

@@ -385,3 +385,32 @@ aprende otro módulo en H, será entrenamiento supervisado secuencial, no OOF ni
 evaluación independiente H. Los perfiles históricos de las cabezas tampoco
 son costes sensoriales completos. El control P2 y estos comparadores tienen
 funciones distintas y deben conservarse ambos al interpretar el sistema final.
+
+## Caché RGB residente: perfil y transición de ejecución
+
+El perfil prospectivo `runtime/rgb_input_cache_profile_v1` comparó 16 batches
+P de 32 muestras (8 de calentamiento y 8 medidos), con orden alternado.
+Todos los campos de entrada y el RNG CPU coincidieron exactamente. No hubo
+trabajo CUDA ni updates de optimizador. La mediana del loader pasó de
+1,221072 a 1,028967 segundos (ratio 0,842675), cumpliendo el gate 0,85.
+Es una medida del loader con entrenamiento concurrente, no del entrenamiento
+completo. El perfil conserva los tiempos individuales, incluidos los lentos.
+
+`rgb_cached_run.py` reutiliza el driver, lock, trainer y contabilidad originales.
+Conserva hasta 6 GiB de shards uint8 nativos entre scopes, sin cambiar el decode,
+collation, precisión, muestreo, loss, optimizer ni endpoints registrados.
+Comprueba cambios de archivo en hits y limita la residencia si hay menos de
+4 GiB disponibles. No activa CUDA Graph ni cambia la ruta de evaluación.
+
+La transición debe ocurrir después del guardado final de un scope del driver
+original. Un hold operativo temporal en el documento de autorización hace
+que ese driver salga antes de comenzar otro scope; no retira autorización del
+usuario ni modifica los límites. Se conserva el documento original byte a byte
+y se restaura antes de iniciar la nueva ejecución. No se mata el trainer activo.
+Con driver anterior terminal, journal completamente durable y checkpoint
+preservado, el wrapper restaura el estado original y compara exactamente modelo,
+optimizer, scheduler, sampler, RNGs y cursor antes de permitir nuevos updates.
+
+La admisión y los recibos de restauración quedan en `runtime/rgb_resident_v1`.
+El perfil y el código por sí solos no demuestran que la transición se haya
+realizado; lo prueban el recibo de migración y el avance posterior del journal.
