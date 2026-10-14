@@ -461,3 +461,26 @@ no prueban una aceleración causal de 4,7× debida únicamente a la caché.
 El primer scope v1 completó 517 updates, y aún perdió la caché al siguiente.
 La revisión de las 14:00 debe comprobar counters acumulados entre scopes v2
 y actualizar el ritmo de extremo a extremo antes de atribuir una mejora estable.
+
+V2 se reanudó a las 13:14 desde 5.640 updates completos y durables, con SHA-256
+`fc1aa6afdf94ad0e1a01aef03dbb587feab98861f3585a9427f96c006dcc8eb7`.
+Las once comprobaciones de restauración fueron exactas, sin nuevos updates de
+recuperación. El proceso 17536 avanzó a 5.667 en la comprobación de arranque.
+El observador 42216 tiene programada la revisión de las 14:00. Los recibos
+`runtime/rgb_resident_v2/{DURABLE_ORIGIN,TRANSITION}.json` enlazan la evidencia.
+
+La observación temporal v2 está inscrita antes de leer su serie. Para aplicarla
+al checkpoint durable de las 14:00, reutilizar el mismo analizador y ventanas:
+
+```python
+from operational.joint_measurement import rgb_runtime_timing as timing
+timing.RUNTIME = timing.RUN / "runtime/rgb_resident_v2"
+timing.OUT = timing.RUNTIME / "timing"
+timing.run()
+```
+
+Esta selección de root queda vinculada por el hash del origen y la admisión
+de runtime en `runtime/rgb_resident_v2/timing/REGISTRATION.json`. Comparar además
+el contador acumulado de muestras atendidas por caché (`hits + misses`) con
+32 veces los updates desde 5.640: sin presión de memoria ni reinicio, esos
+contadores deben cubrir todos los scopes del mismo proceso, no sólo el último.
