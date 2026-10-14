@@ -5,6 +5,21 @@ Los cuatro entrenamientos primarios están completos en 12.000 updates cada uno.
 La matriz P/H, selección H, evaluación V del candidato seleccionado, coste E2E y
 comparación con E_CTX están completos. Esto no completa el programa V18.
 
+Actualización 14 de octubre de 2026, 11:02 Europe/Madrid:
+
+- RGB-PAIR-CORR-FT-S7 ha completado 12.000 updates. Checkpoint final:
+  `ef5ce37b507ee27b14e4a3647cdb162a41561bc4b53ce2c3c0d2bedcd473a39a`.
+  Verificación independiente CPU PASS: 384.000 IDs regenerados, sampler exacto,
+  39 estados Adam y scheduler en 12.000; los 18 tensores del encoder han cambiado.
+  Conserva 91 updates de recuperación. Recibo:
+  `verification/rgb_endpoints/RGB-PAIR-CORR-FT-S7/RESULT.json`.
+- El mismo driver ha iniciado automáticamente RGB-PAIR-CORR-FROZEN-S7 a las
+  11:01. Sus gradientes iniciales del encoder son cero, como exige el control.
+  Esto no sustituye la verificación de pesos de su futuro endpoint final.
+- Revisión horaria de las 11:00: proceso y observador vivos, sin bloqueo de
+  recursos. Próxima revisión ordinaria: 12:00. H permanece cerrado hasta que
+  el segundo endpoint esté completo y durable; no hay aún métricas RGB finales.
+
 Actualización 14 de octubre de 2026, 10:51 Europe/Madrid:
 
 - Caché de features de fusión: lectura NPZ sin pickle, hash comprobado antes de
