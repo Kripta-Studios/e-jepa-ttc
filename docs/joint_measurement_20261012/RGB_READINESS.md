@@ -315,3 +315,44 @@ Son cuatro filas diagnósticas, no una caché completa de entrenamiento ni una
 selección del padre event. La prueba no mide precisión, no abre H de RGB y no
 convierte PAIR-CORR en candidato. Las cachés completas se crearán después de
 registrar los padres y la receta a partir de la evidencia autorizada.
+
+## Export de cabeza con normalización incluida (14 de octubre, 12:17)
+
+`fusion_export.py` incorpora las medias y escalas H como buffers FP32 en una
+copia privada de la cabeza. Su entrada son las features sin normalizar y TTC de
+los productores, con máscara RGB dinámica. No incluye encoders ni preparación
+sensorial. El binding conserva identidades, estadísticas, configuración TRUE/ZERO,
+hashes de cada tensor de pesos y ejemplos; rechaza reutilizar un export bajo
+pesos o configuración distintos. El fallback event debe coincidir bit a bit.
+
+Cuatro pruebas CPU pasaron para ambos modos, normalizadores no triviales,
+disponibilidad completa/mixta/ausente, integridad del artefacto y rechazo de otro
+productor. Se preservaron los fallos iniciales: la ruta Unicode de Windows exigió
+guardar/cargar TorchScript mediante archivos abiertos desde Python; una tupla
+del binding se convirtió a lista para conservar identidad al releer JSON.
+Los logs fallidos y el aprobado permanecen en `verification/`.
+
+`fusion_export_preflight.py` produjo exports de los checkpoints **sintéticos**
+TRUE/ZERO de diez updates ya existentes, sin entrenar de nuevo. Reconstruyó sus
+normalizadores y los comprobó exactamente contra el banco usado en la QA.
+Ambos exports pasaron tres casos de disponibilidad con error TTC máximo 0.
+
+Después, `replay_fusion_export.py` recargó cada artefacto en un proceso distinto
+usando únicamente NumPy y PyTorch, sin módulos Python del proyecto. Los seis
+casos volvieron a coincidir exactamente y no inicializaron CUDA. Los recibos
+están en `verification/fusion_normalized_export_v1/{TRUE,ZERO}/REPLAY.json`.
+Los TorchScript tienen SHA-256:
+
+- TRUE: `d12fad62ab6a1a9f3b8c00e8813f646761ffefbaff0b28fd06c323d8973b2160`.
+- ZERO: `a57cdad19fa692764b807bb4c8a1710a1cdcc5dae0bbc8728bc4aacca9aceee1`.
+
+El replay es repetible, desde el entorno compartido, con:
+
+```powershell
+python -B operational/joint_measurement/replay_fusion_export.py artifacts/joint_measurement_20261012/verification/fusion_normalized_export_v1/TRUE
+python -B operational/joint_measurement/replay_fusion_export.py artifacts/joint_measurement_20261012/verification/fusion_normalized_export_v1/ZERO
+```
+
+Los pesos son de QA sintética y no son candidatos. Cada futuro endpoint
+científico necesita su propio export, normalizadores y replay, además de una
+verificación sensorial completa y las métricas del pipeline.
