@@ -1,9 +1,49 @@
 # V18 JOINT-MEASUREMENT
 
-Estado: RESEARCH_ONGOING / RGB_AUTHORIZED; fase primaria NO_SYSTEM_PROMOTION.
+Estado: RESEARCH_ONGOING / C1_RUNNING; fase primaria NO_SYSTEM_PROMOTION;
+par RGB cerrado NO_CANDIDATE_RGB_PAIR.
 Los cuatro entrenamientos primarios están completos en 12.000 updates cada uno.
 La matriz P/H, selección H, evaluación V del candidato seleccionado, coste E2E y
 comparación con E_CTX están completos. Esto no completa el programa V18.
+
+Actualización del 14 de octubre de 2026, tras la transición C1 de las 17:37
+Europe/Madrid:
+
+- Los dos fits RGB han completado 12.000 updates cada uno. La matriz completa
+  P/H, seis tablas verificadas, bootstrap por grupos y tres exports están en
+  `rgb/evidence/COMPLETE.json`. Ambos fallan las protecciones de bandas y signo:
+  `rgb/SELECTION_FINAL.json` conserva `NO_CANDIDATE_RGB_PAIR`. El informe
+  regenerable [RGB_RESULTS.md](RGB_RESULTS.md) recoge ganancias y regresiones.
+  No se abrieron resultados V para seleccionar o rescatar estas variantes.
+- Hay seis fits principales completos (48.000 updates event y 24.000 RGB).
+  Esta suma no incluye diagnósticos, QA ni recuperación y no sustituye la
+  contabilidad física acumulada. No hay promoción de sistema ni confirmación
+  SOTA; réplica y refit siguen condicionados a candidatos admisibles.
+- C1 está entrenando la lectura explícita de escala/traslación, con encoder
+  entrenable, sobre P. Mantiene el endpoint registrado de 12.000 updates y
+  reutiliza PAIR-CORR-S7 como control ya contabilizado. Su habilitación procede
+  del diagnóstico de correspondencia temporal real, no de promover los RGB
+  rechazados. Correspondencia recíproca no equivale a movimiento GT ni demuestra
+  precisión TTC. Todavía no hay una evaluación final científica de C1.
+- CUDA Graphs está admitido para C1 mediante una capa de ejecución separada;
+  se conservan la receta y las fuentes científicas registradas. El probe
+  `runtime/geometry_capture_v3/RESULT.json` verifica pérdidas y gradientes
+  exactos, RNG y pesos preservados. La QA continua frente a reanudada está en
+  `qa/geometry_capture_v3`; las variantes anteriores rechazadas se conservan.
+- La transición `runtime/geometry_captured_training_v1/TRANSITION.json`
+  restaura los 472 updates completos sin pérdidas ni recuperación adicional.
+  Sus once comprobaciones de restauración incluyen pesos, Adam, scheduler,
+  sampler y RNG. La mejora de 3,377 veces corresponde sólo al cálculo sobre
+  tensores preparados; no debe presentarse como aceleración del pipeline entero.
+  El reanudador selecciona automáticamente esta ruta admitida.
+- La siguiente decisión científica requiere el endpoint fijo y su evidencia
+  P/H completa. La fusión con anchor RGB sigue siendo un experimento separado,
+  pendiente de receta y padres prospectivos, con control ZERO y fallback event.
+  R_CTX/F_TRUE se conservan como comparadores; no se selecciona usando V.
+- La autorización aplicada es `BUDGET_AUTHORIZATION_20261014.json`: 172.800
+  segundos de scopes propios y 1.000.000 updates físicos, sin reiniciar saldos.
+  Las notas fechadas anteriores describen estados históricos y no revocan esta
+  autorización ni la admisión posterior de CUDA Graphs.
 
 Actualización 14 de octubre de 2026, 11:35 Europe/Madrid:
 
