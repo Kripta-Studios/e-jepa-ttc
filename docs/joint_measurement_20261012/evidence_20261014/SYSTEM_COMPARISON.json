@@ -1,0 +1,303 @@
+{
+  "candidates": {
+    "NATIVE-P2-FT-S7": {
+      "gates": {
+        "checks": {
+          "aggregate": false,
+          "coverage": true,
+          "crucial_10pct": false,
+          "crucial_groups_60pct": false,
+          "crucial_over_p95": false,
+          "false_alert": true,
+          "large": false,
+          "late_warning": false,
+          "mae": false,
+          "negative": false,
+          "sign": false,
+          "small": false
+        },
+        "eligible": false,
+        "limited_denominators": [],
+        "status": "FAILED_GATES"
+      },
+      "group_bootstrap": {
+        "binding": {
+          "candidate_sha256": "1fa0f2f012efd5ea62216fe312cba6be4029b16dbd3563ccc16347b3ec33a000",
+          "reference_sha256": "e5a59fcff63072f867a739a247a14b5818850c472d8d1f1333d96d72e84f04d7",
+          "replicates": 2000,
+          "scope": "paired group-macro bucket MiD; descriptive development interval",
+          "seed": 12345,
+          "unit": "acquisition_group"
+        },
+        "intervals": {
+          "delta_crucial": {
+            "ci95_if_all_defined": [
+              10.487598381911441,
+              33.34456603537366
+            ],
+            "conditional_ci95_among_defined": [
+              10.487598381911441,
+              33.34456603537366
+            ],
+            "defined_replicates": 2000,
+            "undefined_replicates": 0
+          },
+          "delta_large": {
+            "ci95_if_all_defined": [
+              17.544551113227065,
+              36.51079998520052
+            ],
+            "conditional_ci95_among_defined": [
+              17.544551113227065,
+              36.51079998520052
+            ],
+            "defined_replicates": 2000,
+            "undefined_replicates": 0
+          },
+          "delta_negative": {
+            "ci95_if_all_defined": [
+              5.892233721049299,
+              17.11372340735991
+            ],
+            "conditional_ci95_among_defined": [
+              5.892233721049299,
+              17.11372340735991
+            ],
+            "defined_replicates": 2000,
+            "undefined_replicates": 0
+          },
+          "delta_overall": {
+            "ci95_if_all_defined": [
+              13.85854208292093,
+              26.498020283673874
+            ],
+            "conditional_ci95_among_defined": [
+              13.85854208292093,
+              26.498020283673874
+            ],
+            "defined_replicates": 2000,
+            "undefined_replicates": 0
+          },
+          "delta_small": {
+            "ci95_if_all_defined": [
+              13.790600957967527,
+              22.744931514666415
+            ],
+            "conditional_ci95_among_defined": [
+              13.790600957967527,
+              22.744931514666415
+            ],
+            "defined_replicates": 2000,
+            "undefined_replicates": 0
+          }
+        },
+        "note": "Missing-band resamples remain undefined; conditional intervals are labeled.",
+        "status": "COMPLETE"
+      },
+      "metrics": {
+        "bins": {
+          "crucial": {
+            "count": 1845,
+            "coverage": 1.0,
+            "diagnostic_rte_pct": 109.12968680099016,
+            "failure_count": 0,
+            "formula_bucket_admissible": true,
+            "group_macro_mid": 178.13956851355928,
+            "groups_with_bucket": 8,
+            "phase_invalid_count": 0,
+            "pooled_diagnostic_mid": 185.9719049834449
+          },
+          "large": {
+            "count": 3283,
+            "coverage": 1.0,
+            "diagnostic_rte_pct": 113.5267284914803,
+            "failure_count": 0,
+            "formula_bucket_admissible": true,
+            "group_macro_mid": 78.79859151655495,
+            "groups_with_bucket": 8,
+            "phase_invalid_count": 0,
+            "pooled_diagnostic_mid": 79.88001215339732
+          },
+          "negative": {
+            "count": 7020,
+            "coverage": 1.0,
+            "diagnostic_rte_pct": 90.92089504145538,
+            "failure_count": 0,
+            "formula_bucket_admissible": true,
+            "group_macro_mid": 73.33154677282681,
+            "groups_with_bucket": 8,
+            "phase_invalid_count": 0,
+            "pooled_diagnostic_mid": 73.92427776942297
+          },
+          "small": {
+            "count": 4284,
+            "coverage": 1.0,
+            "diagnostic_rte_pct": 74.72392452315086,
+            "failure_count": 0,
+            "formula_bucket_admissible": true,
+            "group_macro_mid": 72.7450979922112,
+            "groups_with_bucket": 8,
+            "phase_invalid_count": 0,
+            "pooled_diagnostic_mid": 73.20937579431076
+          }
+        },
+        "complete_prediction_and_mid_coverage": true,
+        "coverage": 1.0,
+        "diagnostics": {
+          "crucial_mae_s": 1.891139842135818,
+          "crucial_positive_overestimate_mean_s": 1.2960614230072482,
+          "crucial_positive_overestimate_rate": 0.7869918699186992,
+          "crucial_positive_overestimate_rte_p90_pct": 145.66580944611457,
+          "crucial_positive_overestimate_rte_p95_pct": 271.74935847472204,
+          "mae_s": 5.4450200464165235,
+          "median_ae_s": 1.2772983585165436,
+          "p90_ae_s": 14.237096473824543,
+          "p95_ae_s": 30.85721739083768,
+          "rmse_s": 13.185227030702361,
+          "rte_pct": 93.25915881411586,
+          "sign_error_rate": 0.07540165530671859
+        },
+        "false_alert": {
+          "denominator": 16356,
+          "rate": 0.000305698214722426
+        },
+        "formula_admitted": true,
+        "group_crucial_mid": {
+          "2cyv0Oedzg": 231.46472647139237,
+          "5ilM1PX2vz": 200.0695523509396,
+          "6h5yRW2LGc": 267.76280307790404,
+          "WbCh1DRerJ": 196.51151983221567,
+          "Z30i8WuL2N": 107.91607440732896,
+          "pzJcg1OCfc": 132.89919258564962,
+          "rhYxPcU29n": 164.31239032969933,
+          "t79dBxj1WS": 124.18028905334482
+        },
+        "group_macro_bucket_MiD": 126.10632748338118,
+        "late_warning": {
+          "denominator": 76,
+          "rate": 1.0
+        },
+        "mean_MiD": 87.50861979297929,
+        "num_failed_predictions": 0,
+        "num_rows": 16432,
+        "num_targets_outside_protocol": 0,
+        "official_comparison_admitted": false,
+        "overall_MiD": 126.10632748338118,
+        "p95_positive_crucial_overestimate_s": 3.856817601405331,
+        "protocol": "garl_signed_v1_exact_buckets",
+        "schema": "rgb_port_signed_metrics_v1",
+        "warning_boundary_s": 1.0
+      },
+      "predictions_sha256": "1fa0f2f012efd5ea62216fe312cba6be4029b16dbd3563ccc16347b3ec33a000",
+      "raw_E2E_cost_ratios": {
+        "mean_seconds": 0.20749469370521928,
+        "p50_seconds": 0.1908187261689284,
+        "p95_seconds": 0.23303610348846432,
+        "p99_seconds": 0.31215867291390637
+      }
+    }
+  },
+  "contract_sha256": "a23fa8202690c9bdf88e230c2b760e6562d295ad773149e6c28b5a6077e041ef",
+  "cost_sha256": "fff4eaf2b8b9e056ef22229e0fd57f1981e9ffa1ebd4087fde12ebb455048b7f",
+  "next": "interpret full-system effects and continue only evidence-enabled authorized branches",
+  "official_comparison": false,
+  "reference": "E_CTX_MATCHED",
+  "reference_metrics": {
+    "bins": {
+      "crucial": {
+        "count": 1845,
+        "coverage": 1.0,
+        "diagnostic_rte_pct": 70.96653441977533,
+        "failure_count": 0,
+        "formula_bucket_admissible": true,
+        "group_macro_mid": 156.55658531878055,
+        "groups_with_bucket": 8,
+        "phase_invalid_count": 0,
+        "pooled_diagnostic_mid": 163.6404736984244
+      },
+      "large": {
+        "count": 3283,
+        "coverage": 1.0,
+        "diagnostic_rte_pct": 45.4923428052332,
+        "failure_count": 0,
+        "formula_bucket_admissible": true,
+        "group_macro_mid": 52.4498665049461,
+        "groups_with_bucket": 8,
+        "phase_invalid_count": 0,
+        "pooled_diagnostic_mid": 52.79173480761816
+      },
+      "negative": {
+        "count": 7020,
+        "coverage": 1.0,
+        "diagnostic_rte_pct": 48.81559288693016,
+        "failure_count": 0,
+        "formula_bucket_admissible": true,
+        "group_macro_mid": 61.602854255734016,
+        "groups_with_bucket": 8,
+        "phase_invalid_count": 0,
+        "pooled_diagnostic_mid": 63.57458360714577
+      },
+      "small": {
+        "count": 4284,
+        "coverage": 1.0,
+        "diagnostic_rte_pct": 35.263885338335754,
+        "failure_count": 0,
+        "formula_bucket_admissible": true,
+        "group_macro_mid": 54.66134097092762,
+        "groups_with_bucket": 8,
+        "phase_invalid_count": 0,
+        "pooled_diagnostic_mid": 55.109873917950665
+      }
+    },
+    "complete_prediction_and_mid_coverage": true,
+    "coverage": 1.0,
+    "diagnostics": {
+      "crucial_mae_s": 1.2258218856480767,
+      "crucial_positive_overestimate_mean_s": 0.9416961666621619,
+      "crucial_positive_overestimate_rate": 0.7306233062330624,
+      "crucial_positive_overestimate_rte_p90_pct": 156.18310897781623,
+      "crucial_positive_overestimate_rte_p95_pct": 248.86849192501236,
+      "mae_s": 2.4974334193864762,
+      "median_ae_s": 0.9366442934206245,
+      "p90_ae_s": 3.7133077411722137,
+      "p95_ae_s": 10.765192818420088,
+      "rmse_s": 6.941581549807702,
+      "rte_pct": 47.10568185794463,
+      "sign_error_rate": 0.04704235637779942
+    },
+    "false_alert": {
+      "denominator": 16356,
+      "rate": 6.113964294448521e-05
+    },
+    "formula_admitted": true,
+    "group_crucial_mid": {
+      "2cyv0Oedzg": 210.84143698647475,
+      "5ilM1PX2vz": 150.09130476963406,
+      "6h5yRW2LGc": 257.70182968430333,
+      "WbCh1DRerJ": 158.59029357466716,
+      "Z30i8WuL2N": 82.74983408903938,
+      "pzJcg1OCfc": 104.03753990395519,
+      "rhYxPcU29n": 168.67083741698931,
+      "t79dBxj1WS": 119.76960612518113
+    },
+    "group_macro_bucket_MiD": 106.08196702673658,
+    "late_warning": {
+      "denominator": 76,
+      "rate": 0.9473684210526315
+    },
+    "mean_MiD": 70.4488933869077,
+    "num_failed_predictions": 0,
+    "num_rows": 16432,
+    "num_targets_outside_protocol": 0,
+    "official_comparison_admitted": false,
+    "overall_MiD": 106.08196702673658,
+    "p95_positive_crucial_overestimate_s": 3.54271961057885,
+    "protocol": "garl_signed_v1_exact_buckets",
+    "schema": "rgb_port_signed_metrics_v1",
+    "warning_boundary_s": 1.0
+  },
+  "scope": "fixed H-selected seed7 endpoints; exposed V development, no new recipe selected",
+  "selection_sha256": "96327b62b4277dd46c574161c8eefe0af659fe971441be8967bc60b012984c71",
+  "status": "INTERNAL_SYSTEM_COMPARISON_COMPLETE",
+  "system_promotion": false
+}

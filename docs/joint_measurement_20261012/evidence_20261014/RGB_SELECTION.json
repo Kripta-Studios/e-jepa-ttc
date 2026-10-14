@@ -1,0 +1,60 @@
+{
+  "cost_evidence_sha256": "9d978320cab32db4861e98024cbf8d6b422807a2eab68636dfb8c2343ee391d5",
+  "decisions": {
+    "RGB-PAIR-CORR-FROZEN-S7": {
+      "checks": {
+        "bands": false,
+        "coverage": true,
+        "sign": false
+      },
+      "cost_route": "requires separate paired latency evidence",
+      "cost_route_pass": false,
+      "cost_scope": "prepared RGB tensor resident on GPU through signed TTC output",
+      "eligible": false,
+      "overall_ratio": 0.8590318551981733,
+      "paired_cost_ratio": 0.4193569216522615,
+      "ratios": {
+        "crucial": 0.7566502445713652,
+        "large": 0.9716258082155816,
+        "negative": 1.929799718302507,
+        "small": 0.9777653123245846
+      },
+      "signals": {
+        "aggregate": true,
+        "crucial": true
+      },
+      "status_scope": "DEVELOPMENT_ONLY_NOT_SYSTEM_PROMOTION"
+    },
+    "RGB-PAIR-CORR-FT-S7": {
+      "checks": {
+        "bands": false,
+        "coverage": true,
+        "sign": false
+      },
+      "cost_route": "requires separate paired latency evidence",
+      "cost_route_pass": false,
+      "cost_scope": "prepared RGB tensor resident on GPU through signed TTC output",
+      "eligible": false,
+      "overall_ratio": 0.7980819391441393,
+      "paired_cost_ratio": 0.42827248924380834,
+      "ratios": {
+        "crucial": 0.6918228871522686,
+        "large": 0.984787086594279,
+        "negative": 1.9943340843501491,
+        "small": 0.874015858922042
+      },
+      "signals": {
+        "aggregate": true,
+        "crucial": true
+      },
+      "status_scope": "DEVELOPMENT_ONLY_NOT_SYSTEM_PROMOTION"
+    }
+  },
+  "metric_evidence_sha256": "5d8bf06555df867738c589594550129def4bb975abc714253b2dda6a3a33f665",
+  "next": "interpret P/H, register RGB-anchor fusion and ZERO control, compare full systems",
+  "official_comparison": false,
+  "ranked": [],
+  "reference": "R_A5-P2-FROZEN",
+  "status": "NO_CANDIDATE_RGB_PAIR",
+  "system_promotion": false
+}
