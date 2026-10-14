@@ -48,3 +48,31 @@ con las ramas P/H autorizadas. El informe real todavía no se ha ejecutado.
 Seis pruebas verifican que se rechacen cohortes omitidas, duplicadas, reordenadas
 o con grupos/targets alterados, y que las predicciones inválidas permanezcan
 visibles para el gate de cobertura. No equivalen a una comparación científica.
+
+## Extensión RGB preparada el 14 de octubre
+
+`operational.joint_measurement.rgb_system_compare` conecta los candidatos RGB
+admitidos por `rgb/SELECTION_FINAL.json` con R_CTX (RGB) y F_TRUE (RGB+event).
+Revalida la selección P/H y coste preparado, los endpoints, y la admisión
+histórica de pesos, normalizadores y predicciones. Comprueba identidad, hashes,
+cohorte completa y targets antes de calcular los gates originales y bootstrap
+por grupos. Conserva predicciones inválidas y no reordena candidatos por V.
+Si H no admite ningún candidato, registra ese resultado sin abrir outcomes V.
+
+La comparación es de precisión interna: declara tanto el contexto P2 frente
+al historial de los expertos como la modalidad adicional de F_TRUE. No atribuye
+coste de cabeza al pipeline ni promociona el sistema. El coste E2E, réplica y
+decisiones científicas habilitadas siguen siendo pasos separados.
+
+```text
+python -B -m operational.joint_measurement.rgb_system_compare --register-only
+# Sólo después de la selección H final y las predicciones V del candidato admitido:
+python -B -m operational.joint_measurement.rgb_system_compare
+```
+
+Validación: 11 tests nuevos y 6 tests de cohorte existentes aprobados. Incluyen
+un informe completo con ambos comparadores sobre fixtures, ausencia de lecturas
+V sin candidato, rechazo de procedencia/bytes/targets alterados y preservación
+del candidato congelado pese a resultados inválidos. Ruff y formato aprobados.
+Estas pruebas no son resultados científicos RGB V: su entrenamiento sigue vivo
+y todavía no se ejecuta esta comparación sobre sus predicciones.
