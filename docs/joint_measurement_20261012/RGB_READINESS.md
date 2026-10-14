@@ -559,3 +559,22 @@ Six fusion export tests passed, including TRUE/ZERO isolated replay and immutabl
 artifact checks. The existing detached bundle test for both event and RGB pixel
 exports also passed. TorchScript deprecation warnings are retained in test output;
 no export format or trained weights were changed by this integration.
+
+### 2026-10-14 — V16 dependency refresh
+
+The read-only refresh at 14:08 Madrid found no live Python process under the V16
+worktree (no Python PID was inaccessible). All 630 sealed prediction shards of
+Garl full and all 630 of Garl visual match their receipts, with exact file sets
+and matching input bindings. Their FCWD scope remains estimated event-assisted
+registration with native normalization/crops, not official extrinsics. No accuracy
+values were loaded or used to select a V18 recipe. Existing weight provenance was
+read from bindings; large historical weight files were not rehashed again.
+
+V16's PHASE_ONLY_EVENT_S7 local test12 package already contains 6,762 predictions.
+Its ZIP SHA-256 and CRC, sealed CSV bytes and model/input freeze match the package
+and prior parser receipts. It remains PACKAGED_NOT_SUBMITTED, without an official
+score. The parser was not rerun, and this historical export is not a V18 candidate.
+Reuse this verified dependency evidence instead of duplicating V16 inference.
+
+Evidence: `verification/V16_COORDINATION_20261014T1406.json`. No foreign files,
+processes, private labels, optimizer updates or external submissions were changed.
