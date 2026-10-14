@@ -264,3 +264,18 @@ Faltan padres elegidos tras P/H, extracción real, normalización admitida,
 registro científico, QA del dispositivo final, entrenamiento de ambos heads,
 evaluación del pipeline y coste. Los resultados anteriores no demuestran una
 mejora TTC ni completan la rama RGB/fusión.
+
+## Caché nueva por productor y fragmentos
+
+`fusion_cache.FusionCacheWriter` publica fragmentos NPZ con compresión lossless,
+FP32, tiempos int64 y máscaras explícitas. Cada recibo fija identidad del
+endpoint, esquema, extractor, fuente sensorial, manifest y orden exacto de IDs.
+Una extracción interrumpida reutiliza sólo fragmentos admitidos y verificados;
+no sobrescribe un fragmento válido ni repara silenciosamente uno corrupto.
+El cierre exige todos los fragmentos y conserva las filas sin RGB.
+
+Diez pruebas CPU pasaron, cubriendo reanudación, igualdad de arrays, IDs Unicode
+y bytes, cambios de productor/esquema/fuente/orden, corrupción e interrupción
+antes del recibo. No ejecutan modelos ni optimizer updates. El escritor no
+selecciona padres, extrae features ni ajusta normalizadores: queda por conectar
+al extractor sensorial del pipeline elegido y generar las cachés reales.
