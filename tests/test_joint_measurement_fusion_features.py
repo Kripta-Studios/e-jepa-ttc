@@ -1,11 +1,17 @@
 """Reject stale parents, cross-role statistics and misaligned multimodal queries."""
 
-from dataclasses import replace
+import hashlib
+import json
+from dataclasses import asdict, replace
 
 import numpy as np
 import pytest
 
-from operational.joint_measurement.fusion_features import FeatureBlock, FeatureIdentity
+from operational.joint_measurement.fusion_features import (
+    FeatureBlock,
+    FeatureIdentity,
+    load_feature_cache,
+)
 
 
 def block(modality="rgb", role="H"):
@@ -125,3 +131,83 @@ def test_invalid_available_observations_fail_before_training(error):
         value.prediction_ttc[0] = 0
     with pytest.raises(ValueError):
         admit(value)
+
+
+def cache_values(value):
+    metadata = {
+        "schema": "v18_fusion_feature_cache_v1",
+        "identity": asdict(value.identity),
+        "role": value.role,
+        "manifest_sha256": value.manifest_sha256,
+    }
+    return {
+        "metadata": np.array(json.dumps(metadata)),
+        **{
+            name: getattr(value, name)
+            for name in (
+                "sample_tokens",
+                "features",
+                "prediction_ttc",
+                "available",
+                "sensor_pair_us",
+            )
+        },
+    }
+
+
+def load_cache(path, expected, checksum):
+    return load_feature_cache(
+        path,
+        expected_sha256=checksum,
+        expected_identity=expected.identity,
+        role=expected.role,
+        manifest_sha256=expected.manifest_sha256,
+        sample_tokens=expected.sample_tokens,
+        feature_count=expected.features.shape[-1],
+    )
+
+
+def test_lossless_cache_reloads_exact_arrays_and_normalizer(tmp_path):
+    value = block()
+    value.available[1] = False
+    value.features[1] = np.nan
+    path = tmp_path / "features.npz"
+    np.savez_compressed(path, **cache_values(value))
+    checksum = hashlib.sha256(path.read_bytes()).hexdigest()
+    result = load_cache(path, value, checksum)
+    for name in ("sample_tokens", "features", "prediction_ttc", "available", "sensor_pair_us"):
+        np.testing.assert_array_equal(getattr(result, name), getattr(value, name))
+    norm = result.fit_h_normalizer()
+    np.testing.assert_array_equal(result.normalized(norm), [[-1, -1], [0, 0], [1, 1]])
+
+
+def test_cache_mutation_rejected_before_decoding(tmp_path):
+    value = block()
+    path = tmp_path / "features.npz"
+    np.savez_compressed(path, **cache_values(value))
+    checksum = hashlib.sha256(path.read_bytes()).hexdigest()
+    path.write_bytes(b"corrupted, not even a zip")
+    with pytest.raises(ValueError, match="bytes differ"):
+        load_cache(path, value, checksum)
+
+
+@pytest.mark.parametrize("error", ["parent", "target", "role", "reorder", "pickle"])
+def test_even_hash_admitted_archive_must_match_recipe_and_label_free_schema(tmp_path, error):
+    expected = block()
+    value = block()
+    if error == "parent":
+        value = replace(value, identity=replace(value.identity, endpoint_sha256="e" * 64))
+    elif error == "role":
+        value = replace(value, role="V")
+    elif error == "reorder":
+        value = replace(value, sample_tokens=value.sample_tokens[::-1])
+    arrays = cache_values(value)
+    if error == "target":
+        arrays["target_ttc"] = np.ones(3, dtype=np.float32)
+    elif error == "pickle":
+        arrays["features"] = value.features.astype(object)
+    path = tmp_path / "features.npz"
+    np.savez_compressed(path, **arrays)
+    checksum = hashlib.sha256(path.read_bytes()).hexdigest()
+    with pytest.raises(ValueError):
+        load_cache(path, expected, checksum)

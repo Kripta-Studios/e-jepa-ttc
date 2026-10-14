@@ -8,7 +8,9 @@ Sensor clocks remain separate: equal queries do not imply equal frame spacing.
 from __future__ import annotations
 
 import hashlib
+import json
 from dataclasses import dataclass
+from pathlib import Path
 
 import numpy as np
 
@@ -143,3 +145,56 @@ class FeatureBlock:
         result = np.zeros_like(self.features)
         result[self.available] = normalizer.transform(self.features[self.available])
         return result
+
+
+def load_feature_cache(
+    path: Path,
+    *,
+    expected_sha256: str,
+    expected_identity: FeatureIdentity,
+    role: str,
+    manifest_sha256: str,
+    sample_tokens: np.ndarray,
+    feature_count: int,
+) -> FeatureBlock:
+    """Load a lossless NPZ against independently admitted bytes and cohort identity.
+
+    Expected values must come from the frozen recipe and extraction receipt, not
+    be copied from this archive. Hash and decode use the same read-only handle.
+    The feature cache has no targets, masses, metric results or pickle objects.
+    Call once at admission; retain the returned arrays for batches thereafter.
+    """
+    fields = {"sample_tokens", "features", "prediction_ttc", "available", "sensor_pair_us"}
+    with path.open("rb") as stream:
+        checksum = hashlib.sha256()
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            checksum.update(chunk)
+        if checksum.hexdigest() != expected_sha256:
+            raise ValueError("Fusion feature cache bytes differ from the admitted receipt")
+        stream.seek(0)
+        with np.load(stream, allow_pickle=False) as archive:
+            if set(archive.files) != fields | {"metadata"} or len(archive.files) != 6:
+                raise ValueError("Fusion feature cache contains missing or unregistered arrays")
+            metadata_array = archive["metadata"]
+            if metadata_array.shape != () or metadata_array.dtype.kind != "U":
+                raise ValueError("Fusion cache metadata must be a scalar JSON string")
+            metadata = json.loads(str(metadata_array.item()))
+            if set(metadata) != {"schema", "identity", "role", "manifest_sha256"} or (
+                metadata["schema"] != "v18_fusion_feature_cache_v1"
+            ):
+                raise ValueError("Unsupported fusion cache metadata")
+            arrays = {name: archive[name] for name in fields}
+    result = FeatureBlock(
+        identity=FeatureIdentity(**metadata["identity"]),
+        role=metadata["role"],
+        manifest_sha256=metadata["manifest_sha256"],
+        **arrays,
+    )
+    result.validate(
+        expected_identity=expected_identity,
+        role=role,
+        manifest_sha256=manifest_sha256,
+        sample_tokens=sample_tokens,
+        feature_count=feature_count,
+    )
+    return result
