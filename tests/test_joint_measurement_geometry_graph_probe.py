@@ -44,7 +44,9 @@ def test_invalid_or_insufficient_speed_does_not_enable_graph(ratio):
     )
 
 
-@pytest.mark.parametrize("module", ["rgb_run", "rgb_cached_run", "geometry_run"])
+@pytest.mark.parametrize(
+    "module", ["rgb_run", "rgb_cached_run", "geometry_run", "geometry_capture_run"]
+)
 def test_running_driver_blocks_probe_even_between_gpu_scopes(monkeypatch, module):
     process = SimpleNamespace(
         info={

@@ -86,13 +86,19 @@ def register() -> dict:
 
 def no_live_training_driver() -> None:
     """Do not steal a gap between the active RGB or C1 driver's GPU scopes."""
+    current = psutil.Process()
+    parent = current.parent()
+    own_launcher = (
+        parent.pid if parent is not None and parent.cmdline()[1:] == current.cmdline()[1:] else None
+    )
     names = {
         "operational.joint_measurement.rgb_run",
         "operational.joint_measurement.rgb_cached_run",
         "operational.joint_measurement.geometry_run",
+        "operational.joint_measurement.geometry_capture_run",
     }
     for process in psutil.process_iter(["pid", "cmdline"]):
-        if process.info["pid"] == os.getpid():
+        if process.info["pid"] in {os.getpid(), own_launcher}:
             continue
         if names.intersection(process.info["cmdline"] or []):
             try:

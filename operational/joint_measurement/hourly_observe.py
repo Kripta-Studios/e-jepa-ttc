@@ -105,7 +105,9 @@ def run(pid: int, *, job: str = "rgb") -> None:
     if (
         not any(
             f"operational.joint_measurement.{name}" in process.cmdline()
-            for name in ([module, "rgb_cached_run"] if job == "rgb" else [module])
+            for name in (
+                [module, "rgb_cached_run"] if job == "rgb" else [module, "geometry_capture_run"]
+            )
         )
         or Path(process.cwd()).resolve() != ROOT
     ):
