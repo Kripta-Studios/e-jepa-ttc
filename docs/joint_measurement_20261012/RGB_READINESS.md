@@ -200,3 +200,26 @@ El log fallido por constantes globales se conserva junto al log aprobado en
 `verification/FUSION_DYNAMIC_EXPORT_TESTS*.log`. Las advertencias de deprecación
 de TorchScript también se conservan. Esto acredita el componente con entradas
 sintéticas, no los futuros pesos entrenados ni el pipeline sensorial completo.
+
+## Entrada residente para la futura fusión (14 de octubre)
+
+`fusion_features.py` admite cachés nuevas por hashes del endpoint, esquema y
+extractor, y ajusta normalizadores únicamente sobre observaciones H disponibles.
+`fusion_data.FusionTensorBank` conecta esas observaciones con
+`RGBAnchorComplement`: valida el manifest y orden de consultas compartidos,
+normaliza una vez y conserva copias de los tensores en el dispositivo declarado.
+Cada batch transfiere sólo sus índices si las features ya residen en GPU; no
+decodifica NPZ ni calcula hashes por update. Los relojes de ambas modalidades
+siguen siendo propios y no se fuerzan a coincidir.
+
+La entrada no contiene etiquetas, masas ni IDs de grupos. El muestreador y su
+estado pertenecen al futuro trainer. Se conservan filas con RGB ausente y la
+salida event exacta para su fallback. Cambiar los arrays CPU originales después
+de admitirlos no cambia los tensores residentes del entrenamiento.
+
+Catorce pruebas CPU pasaron para alineación, normalización, aislamiento de
+memoria, índices repetidos, identidad de productor, estadísticas H aplicadas a V
+y fallback TRUE/ZERO. No se realizó ninguna ejecución CUDA ni update. Siguen
+pendientes la selección de padres, extracción real, registro de la receta,
+trainer reanudable y sus dos fits de 2.500 updates; esta preparación no los cuenta
+como completados ni acredita una aceleración medida.
