@@ -66,8 +66,12 @@ def collect() -> dict:
     settled = sum(r["charged_s"] for r in budget["entries"] if r["status"] == "SETTLED")
     reserved = sum(r["charged_s"] for r in budget["entries"] if r["status"] == "RESERVED")
     fits = []
-    for fit_id in config()["fits"]:
-        folder = RUN / "fits" / fit_id
+    fit_folders = [(fit_id, RUN / "fits" / fit_id) for fit_id in config()["fits"]]
+    rgb_registration = RUN / "rgb/REGISTRATION.json"
+    if rgb_registration.exists():
+        rgb_record = evidence(rgb_registration)
+        fit_folders.extend((fit_id, RUN / "rgb/fits" / fit_id) for fit_id in rgb_record["fits"])
+    for fit_id, folder in fit_folders:
         receipt = folder / "CHECKPOINT_RECEIPT.json"
         state = (
             evidence(receipt)
@@ -80,7 +84,12 @@ def collect() -> dict:
         )
         fits.append({"fit_id": fit_id, **state})
     results = []
-    for path in sorted((RUN / "predictions").glob("*/*/COMPLETE.json")):
+    prediction_receipts = [
+        path
+        for root in (RUN / "predictions", RUN / "rgb/predictions")
+        for path in root.glob("*/*/COMPLETE.json")
+    ]
+    for path in sorted(prediction_receipts):
         receipt = evidence(path)
         if receipt["status"] != "COMPLETE":
             continue
@@ -102,7 +111,14 @@ def collect() -> dict:
         )
         results.append(row)
     decisions = {}
-    for name in ("PRIMARY_SELECTION_FINAL.json", "NEXT_DECISION.json"):
+    for name in (
+        "PRIMARY_SELECTION_FINAL.json",
+        "NEXT_DECISION.json",
+        "NEXT_DECISION_POST_PRIMARY.json",
+        "NEXT_DECISION_AUTHORIZED_20261014.json",
+        "rgb/SELECTION_FINAL.json",
+        "CAMPAIGN_CONCLUSION.json",
+    ):
         if (RUN / name).exists():
             decisions[name] = evidence(RUN / name)
     preparation = {}
@@ -224,7 +240,7 @@ def build() -> dict:
         ),
         "Scopes include loading/saving inside the timer; these are not GPU kernel-only seconds.",
         "",
-        "## Primary fixed endpoints",
+        "## Registered fixed endpoints",
         "",
         "| Fit | Durable status | Completed updates |",
         "| --- | --- | ---: |",
