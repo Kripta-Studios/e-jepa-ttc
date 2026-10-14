@@ -160,10 +160,12 @@ def install_capture(model: GeometricPairMeasurement, inputs: Tensor, dt: Tensor)
     if ids != {key: id(value) for key, value in core.named_parameters()}:
         raise ValueError("Capture changed optimizer parameter identities")
 
-    def forward(new_inputs: Tensor, new_dt: Tensor) -> dict[str, Tensor]:
-        if new_inputs.shape != inputs.shape or new_dt.shape != dt.shape:
+    expected_input_shape, expected_dt_shape = inputs.shape, dt.shape
+
+    def forward(inputs: Tensor, delta_t_s: Tensor) -> dict[str, Tensor]:
+        if inputs.shape != expected_input_shape or delta_t_s.shape != expected_dt_shape:
             raise ValueError("Captured microbatch shape changed")
-        return checked_phase(core(new_inputs, new_dt))
+        return checked_phase(core(inputs, delta_t_s))
 
     model.forward = forward
     return core

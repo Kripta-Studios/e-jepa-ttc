@@ -20,7 +20,7 @@ from .qa import exact
 from .resume_fast_proof import close
 from .train import committed_sources
 
-OUT = RUN / "qa/geometry_capture_v1"
+OUT = RUN / "qa/geometry_capture_v2"
 STATE_KEYS = (
     "model_state_dict",
     "optimizer_state_dict",

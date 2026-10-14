@@ -6,10 +6,12 @@ import argparse
 import copy
 import time
 import traceback
+from typing import cast
 
 import numpy as np
 import torch
 
+from e_jepa_ttc.models.causal_scale_ttc import CausalScaleTTC
 from operational.range_transfer.common import freeze, read, sha, utc
 
 from .common import ROOT, RUN, gpu_charge, require_resources
@@ -21,7 +23,7 @@ from .qa import exact, fixture, subset
 from .resume_fast_proof import close
 from .train import backward, committed_sources, initialize, setup
 
-OUT = RUN / "runtime/geometry_capture_v1"
+OUT = RUN / "runtime/geometry_capture_v2"
 ORIGIN = RUN / "runtime/C1_bottleneck_20261014/origin_checkpoint.pt"
 
 
@@ -34,6 +36,8 @@ def register() -> dict:
     committed_sources(sources)
     record = {
         "schema": "v18_C1_complete_capture_probe_v1",
+        "supersedes_unexecuted_sha256": sha(RUN / "runtime/geometry_capture_v1/REGISTRATION.json"),
+        "revision_reason": "Preserve forward keyword names and fix static type annotations",
         "sources": sources,
         "C1_registration_sha256": sha(REGISTRATION),
         "prior_failure_sha256": sha(RUN / "runtime/geometry_graph_probe_v3/RESULT.json"),
@@ -69,10 +73,10 @@ def run() -> dict:
     no_live_training_driver()
     require_resources(starting=True)
     with gpu_charge("C1_complete_capture_probe", reserve=900):
-        result = {"utc": utc(), "registration_sha256": sha(OUT / "REGISTRATION.json")}
+        result: dict = {"utc": utc(), "registration_sha256": sha(OUT / "REGISTRATION.json")}
         try:
             setup(7)
-            initial = GeometricPairMeasurement(initialize("A5-P2-FROZEN"))
+            initial = GeometricPairMeasurement(cast(CausalScaleTTC, initialize("A5-P2-FROZEN")))
             payload = torch.load(ORIGIN, map_location="cpu", weights_only=False)
             initial.load_state_dict(payload["model_state_dict"], strict=True)
             del payload
