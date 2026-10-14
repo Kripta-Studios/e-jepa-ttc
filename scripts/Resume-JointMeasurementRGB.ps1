@@ -8,7 +8,13 @@ try {
     $env:PYTHONPATH = 'src;.'
     $env:OMP_NUM_THREADS = '1'
     $env:MKL_NUM_THREADS = '1'
-    $Arguments = @('-u', '-B', '-m', 'operational.joint_measurement.rgb_run')
+    $RuntimeAdmission = Join-Path $Repo 'artifacts/joint_measurement_20261012/runtime/rgb_resident_v1/REGISTRATION.json'
+    $DriverModule = if (Test-Path -LiteralPath $RuntimeAdmission) {
+        'operational.joint_measurement.rgb_cached_run'
+    } else {
+        'operational.joint_measurement.rgb_run'
+    }
+    $Arguments = @('-u', '-B', '-m', $DriverModule)
     if ($Once) { $Arguments += '--once' }
     & $Python @Arguments
     if ($LASTEXITCODE -ne 0) { throw "V18 RGB terminó con código $LASTEXITCODE." }
