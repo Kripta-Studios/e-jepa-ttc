@@ -414,3 +414,23 @@ optimizer, scheduler, sampler, RNGs y cursor antes de permitir nuevos updates.
 La admisión y los recibos de restauración quedan en `runtime/rgb_resident_v1`.
 El perfil y el código por sí solos no demuestran que la transición se haya
 realizado; lo prueban el recibo de migración y el avance posterior del journal.
+
+La transición se ejecutó el 14 de octubre a las 12:44 (Madrid). El proceso
+original 34964 terminó después de guardar sus 4.657 updates. El checkpoint
+preservado tiene SHA-256
+`48d1b4bceb2a088ae75f40cf9d98dd4b9129223a5a5b0da02f88664059228f4f`.
+El nuevo proceso 16580 pasó los once checks de restauración exacta y avanzó
+desde ese punto; no se añadieron updates de recuperación. La autorización
+original se restauró byte a byte. El mensaje de salida del driver antiguo
+por falta de estado `APPLIED` corresponde al hold operativo deliberado,
+documentado en `runtime/rgb_resident_v1/MIGRATION.json`.
+
+Ocho pruebas CPU cubren mutación de shards/binding, presión de memoria,
+restauración exacta y corrupta, rechazo de escritor vivo o estado no durable,
+y preservación de checkpoint/autorización. Todas pasaron sin optimizer updates.
+El observador 39104 vigila el proceso nuevo cada hora en punto, empezando a
+las 13:00. `Resume-JointMeasurementRGB.ps1` selecciona la ruta residente
+cuando existe su admisión; sigue usando el mismo lock de escritor.
+
+Todavía falta medir el ritmo de scopes completos con la caché caliente. El
+15,7 % observado pertenece exclusivamente al perfil previo del loader.
