@@ -279,3 +279,39 @@ y bytes, cambios de productor/esquema/fuente/orden, corrupción e interrupción
 antes del recibo. No ejecutan modelos ni optimizer updates. El escritor no
 selecciona padres, extrae features ni ajusta normalizadores: queda por conectar
 al extractor sensorial del pipeline elegido y generar las cachés reales.
+
+## Extractor de descriptores P2 y prueba con consultas reales
+
+`fusion_pair_extract.py` implementa un esquema propuesto de 196 valores:
+96 medias espaciales, 96 máximos, intervalo nativo y su logaritmo, fase previa
+y fase emitida. Reutiliza el descriptor devuelto por los modelos de par; exige
+un endpoint privado congelado en eval y no introduce targets, cajas ni metadata
+en el forward. El esquema aún debe ser elegido explícitamente al registrar la
+fusión científica. No se aplica automáticamente a R_CTX u otra arquitectura.
+
+La extracción de tiempos contrasta el intervalo FP32 del modelo con los dos
+timestamps nativos finales. Event utiliza `producer_times_us` y RGB
+`producer_sensor_times_us`. Los tiempos no se sustituyen porque sus duraciones
+sean parecidas. Ocho pruebas CPU cubrieron relojes distintos, T3 reducido al par
+final, RGB ausente, rechazo de productores entrenables y conversión firmada.
+
+El preflight reproducible `python -B -m
+operational.joint_measurement.fusion_extract_preflight` pasó en CPU a las 12:04
+del 14 de octubre. Usó el endpoint event cerrado `PAIR-CORR-S7` y únicamente los
+índices P 0, 17, 83 y 159, declarados antes de inferir. Verificó predicciones
+bit a bit contra el forward original, recarga lossless de todos los campos y
+estado del modelo intacto. CUDA no se inicializó; cero optimizer updates.
+
+Evidencia bajo `artifacts/joint_measurement_20261012/`:
+
+- `diagnostics/fusion_features_pair_P_v1/REGISTRATION.json`, SHA-256
+  `e8eabbacde9cc4ef169fcc3df4247729b45e693fca72e76a505892c56ffeab4e`.
+- `diagnostics/fusion_features_pair_P_v1/PASS.json`.
+- `diagnostics/fusion_features_pair_P_v1/event/features.npz`, SHA-256
+  `7296d1137fe073c3decafa310930652ef8c4ce884d8ab2a6ff68b39acf66b046`.
+- `verification/FUSION_PAIR_FEATURE_PREFLIGHT_20261014.log`.
+
+Son cuatro filas diagnósticas, no una caché completa de entrenamiento ni una
+selección del padre event. La prueba no mide precisión, no abre H de RGB y no
+convierte PAIR-CORR en candidato. Las cachés completas se crearán después de
+registrar los padres y la receta a partir de la evidencia autorizada.
