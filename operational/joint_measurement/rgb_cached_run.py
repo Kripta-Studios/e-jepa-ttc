@@ -15,11 +15,11 @@ from operational.rgb_port.train_producers import ProducerCheckpoint
 from . import rgb_run, rgb_train
 from .common import ROOT, RUN
 from .qa import exact
-from .rgb_cached_data import CachedRGBPairDataset
+from .rgb_p2_cached_data import P2CachedRGBPairDataset as CachedRGBPairDataset
 from .train import committed_sources
 
-OUT = RUN / "runtime/rgb_resident_v2"
-PROFILE = RUN / "runtime/rgb_input_cache_profile_v1"
+OUT = RUN / "runtime/rgb_resident_v3"
+PROFILE = RUN / "runtime/rgb_p2_profile_v1"
 
 
 def cpu(value: object) -> object:
@@ -100,7 +100,12 @@ def admission() -> dict:
             raise ValueError("Profiled RGB loader source changed")
     sources = {
         f"operational/joint_measurement/{name}": sha(ROOT / "operational/joint_measurement" / name)
-        for name in ("rgb_cached_run.py", "rgb_cached_data.py", "rgb_run.py")
+        for name in (
+            "rgb_cached_run.py",
+            "rgb_cached_data.py",
+            "rgb_p2_cached_data.py",
+            "rgb_run.py",
+        )
     }
     sources["operational/rgb_port/train_producers.py"] = sha(
         ROOT / "operational/rgb_port/train_producers.py"
@@ -108,9 +113,9 @@ def admission() -> dict:
     committed_sources(sources)
     binding = {
         "supersedes_runtime_registration_sha256": sha(
-            RUN / "runtime/rgb_resident_v1/REGISTRATION.json"
+            RUN / "runtime/rgb_resident_v2/REGISTRATION.json"
         ),
-        "correction": "Completed earlier fits cannot release or label the active fit cache",
+        "correction": "Keep exact native P2 fields in RAM; omit unused third frames and masks",
         "sources": sources,
         "RGB_registration_sha256": sha(rgb_train.REGISTRATION),
         "profile_sha256": sha(PROFILE / "RESULT.json"),
