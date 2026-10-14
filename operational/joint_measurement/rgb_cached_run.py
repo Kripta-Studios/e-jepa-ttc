@@ -18,7 +18,7 @@ from .qa import exact
 from .rgb_cached_data import CachedRGBPairDataset
 from .train import committed_sources
 
-OUT = RUN / "runtime/rgb_resident_v1"
+OUT = RUN / "runtime/rgb_resident_v2"
 PROFILE = RUN / "runtime/rgb_input_cache_profile_v1"
 
 
@@ -107,6 +107,10 @@ def admission() -> dict:
     )
     committed_sources(sources)
     binding = {
+        "supersedes_runtime_registration_sha256": sha(
+            RUN / "runtime/rgb_resident_v1/REGISTRATION.json"
+        ),
+        "correction": "Completed earlier fits cannot release or label the active fit cache",
         "sources": sources,
         "RGB_registration_sha256": sha(rgb_train.REGISTRATION),
         "profile_sha256": sha(PROFILE / "RESULT.json"),
@@ -129,19 +133,22 @@ def run(*, once: bool = False) -> None:
     original_checkpoint = rgb_train.ProducerCheckpoint
     original_fit = rgb_run.fit
     dataset = None
+    dataset_used = False
 
     def factory(role: str) -> CachedRGBPairDataset:
-        nonlocal dataset
+        nonlocal dataset, dataset_used
         if role != "P":
             raise ValueError("Resident training adapter is P-only")
         if dataset is None:
             dataset = CachedRGBPairDataset(role, limit_bytes=binding["cache_limit_bytes"])
+        dataset_used = True
         return dataset
 
     def fit(fit_id: str) -> dict:
-        nonlocal dataset
+        nonlocal dataset, dataset_used
+        dataset_used = False
         receipt = original_fit(fit_id)
-        if dataset is not None:
+        if dataset is not None and dataset_used:
             write(
                 OUT / "CACHE_STATE.json",
                 {

@@ -12,7 +12,7 @@ from operational.rgb_port.accounting import atomic_write_bytes
 
 from .common import ROOT, RUN
 
-OUT = RUN / "runtime/rgb_resident_v1"
+OUT = RUN / "runtime/rgb_resident_v2"
 AUTH = RUN / "BUDGET_AUTHORIZATION_20261014.json"
 FIT = RUN / "rgb/fits/RGB-PAIR-CORR-FROZEN-S7"
 
@@ -24,9 +24,13 @@ def hold(pid: int) -> dict:
     if (OUT / "MIGRATION.json").exists():
         raise ValueError("Migration already recorded; inspect existing state instead")
     process = psutil.Process(pid)
-    if "operational.joint_measurement.rgb_run" not in process.cmdline() or process.cwd() != str(
-        ROOT
-    ):
+    if not any(
+        module in process.cmdline()
+        for module in (
+            "operational.joint_measurement.rgb_run",
+            "operational.joint_measurement.rgb_cached_run",
+        )
+    ) or process.cwd() != str(ROOT):
         raise ValueError("Expected the original live RGB driver")
     original = read(AUTH)
     if original["status"] != "APPLIED":
