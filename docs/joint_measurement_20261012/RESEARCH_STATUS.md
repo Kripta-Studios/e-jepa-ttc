@@ -5,6 +5,27 @@ Los cuatro entrenamientos primarios están completos en 12.000 updates cada uno.
 La matriz P/H, selección H, evaluación V del candidato seleccionado, coste E2E y
 comparación con E_CTX están completos. Esto no completa el programa V18.
 
+Actualización 14 de octubre de 2026, 10:51 Europe/Madrid:
+
+- Caché de features de fusión: lectura NPZ sin pickle, hash comprobado antes de
+  decodificar y validación del endpoint/extractor, población y orden admitidos.
+  Rechaza arrays de targets. La compresión conserva los valores FP32; el lector
+  carga una vez, sin volver a calcular hashes en cada batch. 39 pruebas CPU de
+  features y modelo de fusión aprobadas. Aún faltan extracción real y trainer.
+- Diagnóstico registrado antes de medir en `diagnostics/known_translation_P`:
+  una consulta por cada uno de los 24 grupos P, cuatro traslaciones de ocho
+  píxeles y control de permutación espacial. CORR-FROZEN y CORR recuperan ambos
+  24.576/24.576 correspondencias interiores con margen estricto positivo; el
+  control recupera 961 y 971, respectivamente (aproximadamente 3,9 %).
+- Siete pruebas verifican el signo del desplazamiento, ausencia de wraparound,
+  tratamiento de empates y control permutado. La medición real se ejecutó en CPU,
+  sin inicializar CUDA ni ejecutar updates; no usa targets TTC. Código y recibo
+  distinguen expresamente traslación de texturas y movimiento temporal real.
+- Este resultado no demuestra precisión TTC ni habilita por sí solo la familia
+  C. Tampoco aporta evidencia para aumentar capacidad o preentrenar traslaciones
+  bajo la premisa de que la correspondencia básica haya fallado. Se conserva
+  la continuación RGB registrada y se esperan sus cohortes P/H completas.
+
 Actualización 14 de octubre de 2026, 10:45 Europe/Madrid:
 
 - El reinicio del equipo a las 03:31 interrumpió RGB-FT. Se reanudó a las 10:19
