@@ -223,3 +223,44 @@ y fallback TRUE/ZERO. No se realizó ninguna ejecución CUDA ni update. Siguen
 pendientes la selección de padres, extracción real, registro de la receta,
 trainer reanudable y sus dos fits de 2.500 updates; esta preparación no los cuenta
 como completados ni acredita una aceleración medida.
+
+## Motor reanudable de fusión (14 de octubre, 11:54 Madrid)
+
+`fusion_engine.py`, commit `24ee042d05427d0490e71cb06b1709a9940918c7`, implementa
+AdamW, scheduler coseno, muestreo uniforme con reemplazo, pérdida de fase emitida
+y previa a conversión y checkpoints completos mediante `ProducerCheckpoint`.
+La receta numérica no tiene defaults científicos: el futuro registro debe
+declarar semilla, TRUE/ZERO, endpoint, batch, capacidad, escala residual, LR,
+decay y clipping. Las masas se admiten explícitamente, sin sustituirlas por un
+muestreador ponderado que las cuente dos veces.
+
+El motor fija hashes de los tensores normalizados, orden de muestras, etiquetas,
+masas, receta y fuentes al iniciar cada segmento. No revalida esos bytes por
+update. El caller científico deberá verificar los padres, manifiestos, cachés y
+normalizadores y poseer el lock de escritor y scope GPU. No se ha integrado aún
+ese registro ni una cola científica de fusión.
+
+En batches sin RGB la pérdida es constante respecto a los parámetros: se
+conservan gradientes cero y la semántica ordinaria de AdamW y scheduler. No se
+redibujan muestras para encontrar una fila RGB. La salida de fallback sigue
+copiando exactamente event TTC; esta política debe constar en la receta final.
+
+Dieciséis pruebas CPU de contratos y gradientes pasaron, sin optimizer updates.
+Después se congeló una receta **exclusivamente sintética** antes de ejecutar
+40 updates CPU: TRUE y ZERO, cada uno diez continuos frente a cinco más
+restauración más cinco. Los nueve estados comparados pasaron exactamente en
+ambos brazos, incluidos pesos, AdamW, scheduler, muestreador, RNG y curvas.
+CUDA no se inicializó. Estos 40 updates están en los journals `qa` y forman
+parte del presupuesto técnico, no de los futuros 5.000 updates científicos.
+
+Recibos bajo `artifacts/joint_measurement_20261012/`:
+
+- `qa/fusion_engine/cpu/REGISTRATION.json`, SHA-256
+  `2c4c679a6deb08f738c0e80af1a46aa71d74e135d3fb41d7abb04ca27995ec4e`.
+- `qa/fusion_engine/cpu/PASS.json`, con las dieciocho comparaciones aprobadas.
+- `verification/FUSION_ENGINE_CPU_QA_20261014.log`.
+
+Faltan padres elegidos tras P/H, extracción real, normalización admitida,
+registro científico, QA del dispositivo final, entrenamiento de ambos heads,
+evaluación del pipeline y coste. Los resultados anteriores no demuestran una
+mejora TTC ni completan la rama RGB/fusión.
