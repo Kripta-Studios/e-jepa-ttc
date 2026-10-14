@@ -578,3 +578,21 @@ Reuse this verified dependency evidence instead of duplicating V16 inference.
 
 Evidence: `verification/V16_COORDINATION_20261014T1406.json`. No foreign files,
 processes, private labels, optimizer updates or external submissions were changed.
+
+### Prospective CUDA resume QA for fusion
+
+`python -B -m operational.joint_measurement.fusion_cuda_qa` is prepared for a
+future free GPU boundary. Registration binds the existing CPU proof and source
+hashes before allocation. It compares continuous10 against split5+restore5 for
+TRUE and ZERO through the same fusion engine, charging 40 synthetic physical
+updates to the shared accounting. The synthetic eight-row fixture includes three
+missing-RGB rows; it is an engine proof, not an actual scientific feature bank,
+parent selection, accuracy result or complete fusion-pipeline validation.
+
+Six CPU admission tests passed. A real guard check at 14:17 Madrid rejected the
+live RGB launcher PID31504 before CUDA initialization, reservation or optimizer
+updates. Registration SHA-256:
+`74b9100b21e05e9030d062234265d70f918c59286155cebd037773a90c03f3cf`.
+Evidence is in `qa/fusion_engine/cuda/GUARD_ADMISSION.json`; CUDA trajectory
+execution and a corresponding PASS.json remain pending. The existing CPU proof
+and historical training sources were preserved.
