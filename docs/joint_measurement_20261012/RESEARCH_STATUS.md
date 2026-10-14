@@ -5,6 +5,38 @@ Los cuatro entrenamientos primarios están completos en 12.000 updates cada uno.
 La matriz P/H, selección H, evaluación V del candidato seleccionado, coste E2E y
 comparación con E_CTX están completos. Esto no completa el programa V18.
 
+Actualización 14 de octubre de 2026, 11:17 Europe/Madrid:
+
+- El diagnóstico `diagnostics/real_temporal_P` registra antes de medir cuatro
+  consultas por cada grupo P: 96 pares reales, sin targets TTC ni acceso a H/V.
+  Las cajas P sólo delimitan una región débil para informar resultados, después
+  del encoder. La consistencia recíproca estricta dentro de esa región es
+  23.665/32.867 (72,0 %) para CORR, frente a 7.829/32.867 (23,8 %) permutando
+  posiciones. CORR-FROZEN obtiene 80,1 % frente a 24,1 %.
+- Los 24 grupos superan el contraste prospectivo; el macro por grupos de matches
+  recíprocos no nulos es 40,87 % para CORR y 42,14 % para CORR-FROZEN. Esto habilita
+  preparar familia C, no una promoción. Los matches no tienen GT de movimiento.
+  `NEXT_DECISION_MECHANISM_20261014.json` conserva límites y decisión.
+- El recálculo desde conteos enteros reproduce la decisión. La comparación
+  escalar inicial a 1e-12 falló por diferencias de hasta 1,98e-9 respecto a las
+  medias de fracciones FP32; se conserva y declara, con comprobación posterior
+  a 1e-7. No se cambian los criterios científicos ni el resultado original.
+- `geometry_model.py` implementa un ajuste afín ponderado sobre el mismo volumen
+  bidireccional multiescala, con mezcla aprendida de ejes y resoluciones. Conserva
+  escala y traslación separadas y encoder entrenable, sin residual TTC libre ni
+  cajas de entrada. Usa `ratio=1+dt/T_actual`; la fase conserva el dominio emitido
+  nativo y una extensión tangente por encima de inverse-TTC 9,9 para el gradiente.
+- Ocho pruebas CPU de geometría aprobadas, además de siete del diagnóstico real.
+  Con el padre real P-only, inicialización común de encoder, torre y capas ocultas
+  idéntica al control libre y gradientes finitos no nulos en los 18 tensores del
+  encoder. 578.854 parámetros frente a 578.337. Recibo en
+  `verification/geometry_prototype_v1/CPU_INITIALIZATION_AND_GRADIENT.json`.
+  Son pruebas sintéticas sin CUDA ni updates, no precisión TTC ni prueba de resume.
+- Pendiente antes de entrenar C: trainer integrado, QA de reanudación, control y
+  genealogía, receta numérica completa y registro prospectivo. El control RGB
+  congelado sigue siendo el único entrenamiento GPU en ejecución; su siguiente
+  revisión ordinaria permanece a las 12:00.
+
 Actualización 14 de octubre de 2026, 11:02 Europe/Madrid:
 
 - RGB-PAIR-CORR-FT-S7 ha completado 12.000 updates. Checkpoint final:
