@@ -136,14 +136,40 @@ def prepare(stage: Path) -> dict:
 
 
 def build(stage: Path, output: Path) -> dict:
-    """Build from frozen copies and committed source, then verify bytes twice."""
+    """Build a results-only delivery with an enforced 100 MB decimal limit."""
     if subprocess.check_output(["git", "status", "--porcelain"], cwd=ROOT):
         raise ValueError("Commit source before bundling")
     context = json.loads((stage / "SNAPSHOT.json").read_text(encoding="utf-8"))
     context["commit"] = (
         subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT).decode().strip()
     )
-    files = {p.relative_to(stage).as_posix(): p for p in stage.rglob("*") if p.is_file()}
+    files = {}
+    compact_omissions = []
+    for p in stage.rglob("*"):
+        if not p.is_file():
+            continue
+        name = p.relative_to(stage).as_posix()
+        if (
+            p.suffix in {".pt", ".npz", ".npy"}
+            or p.name.startswith("chunk_")
+            or name.startswith("live_C1_checkpoint/")
+            or p.name in {"SNAPSHOT.json", "COMPACT_SNAPSHOT.json"}
+        ):
+            compact_omissions.append(name)
+            continue
+        files[name] = p
+    context["max_zip_bytes"] = 100_000_000
+    context["checkpoint_payloads_included"] = False
+    context["portable_model_payloads_included"] = False
+    context["compact_omissions"] = compact_omissions
+    context["reproduction_scope"] = (
+        "Consolidated predictions, metrics, curves, documentation and verification receipts. "
+        "No model weights, checkpoint tensors, sensor data or portable input arrays. "
+        "Metadata may reference omitted payloads; this is a results-only delivery."
+    )
+    compact = stage / "COMPACT_SNAPSHOT.json"
+    compact.write_text(json.dumps(context, indent=2) + "\n", encoding="utf-8")
+    files["SNAPSHOT.json"] = compact
     tracked = (
         subprocess.check_output(["git", "ls-files", "-z"], cwd=ROOT).decode("utf-8").split("\0")
     )
@@ -157,6 +183,9 @@ def build(stage: Path, output: Path) -> dict:
     if shutil.disk_usage(output.parent).free < required + 10_000_000_000:
         raise RuntimeError("Bundle would violate free disk reserve")
     write_archive(output, files, context)
+    if output.stat().st_size > context["max_zip_bytes"]:
+        output.unlink()
+        raise RuntimeError("Removed bundle: exceeded the user limit of 100,000,000 bytes")
     result = verify_archive(output)
     output.with_suffix(output.suffix + ".sha256").write_text(
         f"{result['zip_sha256']}  {output.name}\n", encoding="utf-8"

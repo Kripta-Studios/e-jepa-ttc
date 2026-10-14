@@ -8,7 +8,7 @@ lectura explícita de expansión y traslación aprovecha mejor las correspondenc
 
 Esta entrega es un corte de investigación en curso. No es el cierre de V18.
 Los valores de precisión proceden de endpoints completos; el checkpoint C1
-incluido es parcial y no tiene una evaluación final. La hora y el update exactos
+referenciado es parcial y no tiene una evaluación final. La hora y el update exactos
 del corte constan en `SNAPSHOT.json` del ZIP.
 
 Para leer en GitHub sin descargar el paquete, se incluyen copias de la evidencia
@@ -18,7 +18,8 @@ resumida: [matriz primaria](evidence_20261014/PRIMARY_RESULTS.json),
 [decisión RGB](evidence_20261014/RGB_SELECTION.json),
 [motivación de C1](evidence_20261014/C1_MECHANISM_DECISION.json) y
 [transición de ejecución C1](evidence_20261014/C1_RUNTIME_TRANSITION.json).
-Las predicciones y pesos completos están en el ZIP, no en estas tablas resumidas.
+Las predicciones consolidadas están en el ZIP. Por petición del usuario, el ZIP
+debe ocupar menos de 100 MB: no contiene pesos ni tensores de checkpoints.
 
 ## 1. Qué cambió respecto a V17
 
@@ -234,17 +235,19 @@ prepararse, sigue necesitando autorización separada para enviarla.
 ## 10. Contenido del ZIP y reproducción
 
 - `source/`: código y documentación del commit indicado en el manifiesto.
-- `campaign/`: resultados cerrados event/RGB, predicciones, métricas, curvas,
-  checkpoints, exports y evidencia seleccionada de diagnósticos/QA/runtime.
-- `live_C1_checkpoint/`: una versión durable parcial, con hash y contador,
-  separada expresamente de los endpoints terminados.
+- `campaign/`: resultados cerrados event/RGB, predicciones consolidadas, métricas,
+  curvas y recibos seleccionados de checkpoints, exports, diagnósticos y runtime.
+- Se omiten los fragmentos redundantes `chunk_*`; se preserva la tabla final
+  completa de cada cohorte. Se omiten todos los pesos, checkpoints y arrays
+  portables. El estado C1 se referencia por contador/hash, sin incluir sus pesos.
 - `SNAPSHOT.json`: intervalo de captura, exclusiones y trabajo pendiente.
 - `BUNDLE_MANIFEST.json`: tamaños y SHA-256 de cada miembro.
 
-No contiene sensores crudos ni padres históricos externos. Se omiten grandes
-tensores de diagnóstico/QA, locks y logs vivos; algunos recibos históricos
-referencian esos payloads omitidos. No es un paquete completo para reentrenar
-sin dependencias. Los informes históricos preservados pueden describir fases
+No contiene sensores crudos ni padres históricos externos. Es una entrega de
+documentación y resultados con límite estricto de 100.000.000 bytes. Los recibos
+de pesos, exports y QA referencian payloads omitidos: no permiten reproducir
+inferencia o reanudar entrenamiento desde este ZIP. Los informes históricos
+preservados pueden describir fases
 anteriores; este documento y SNAPSHOT.json delimitan el estado de esta entrega.
 
 Desde una copia extraída con el entorno del proyecto:
