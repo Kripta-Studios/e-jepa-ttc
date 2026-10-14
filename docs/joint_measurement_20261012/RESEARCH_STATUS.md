@@ -5,6 +5,31 @@ Los cuatro entrenamientos primarios están completos en 12.000 updates cada uno.
 La matriz P/H, selección H, evaluación V del candidato seleccionado, coste E2E y
 comparación con E_CTX están completos. Esto no completa el programa V18.
 
+Actualización 14 de octubre de 2026, 11:35 Europe/Madrid:
+
+- `geometry_evaluate.py` prepara inferencia fragmentada y reanudable de P/H,
+  cobertura y orden completos, métricas por grupo y selección bajo los gates
+  registrados. Admite el checkpoint final sólo con journal durable, versiones
+  y hashes concordantes; verifica por separado sus estados y 384.000 IDs antes
+  de evaluar. Nueve pruebas bloquean H ante endpoints incompletos/alterados y
+  rechazan el uso de V/FCWD/Dev32 en esta selección de desarrollo.
+- El trazado directo del prototipo geométrico falló por su validación Python
+  de formas mediante un conjunto. Se conserva el log
+  `verification/GEOMETRY_EXPORT_PROTOTYPE_20261014.log`. No se alteran el modelo
+  de entrenamiento ni las fuentes de C1 ya registradas para corregir el export.
+- `geometry_export.py` contiene un adaptador explícito de las mismas operaciones
+  tensoriales para batch1 fijo. Compara primero contra el forward original,
+  guarda y recarga TorchScript, y vuelve a comparar. Dos pruebas incluyen gates
+  no nulos, inputs diferentes, ausencia de señal y corrupción del artefacto.
+- Replay del checkpoint sintético CPU de diez updates: tres ejemplos con
+  tiempos diferentes, diferencia máxima cero en este entorno. Recibos en
+  `verification/geometry_prototype_v1/portable_cpu_qa` y
+  `EXPORT_ADAPTER_ADMISSION.json`; cero updates nuevos y CUDA no inicializada.
+  No es el export científico ni una medida de precisión.
+- Pendientes de C1: QA CUDA, entrenamiento, predicciones reales completas,
+  medición emparejada de coste y runner de continuación. El futuro export final
+  verificará cinco entradas P reales tras congelar los 12.000 updates.
+
 Actualización 14 de octubre de 2026, 11:25 Europe/Madrid:
 
 - C1 registrado antes de updates en `adaptive/C1_geometry/REGISTRATION.json`,
