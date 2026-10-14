@@ -356,3 +356,32 @@ python -B operational/joint_measurement/replay_fusion_export.py artifacts/joint_
 Los pesos son de QA sintética y no son candidatos. Cada futuro endpoint
 científico necesita su propio export, normalizadores y replay, además de una
 verificación sensorial completa y las métricas del pipeline.
+
+## Comparadores históricos completos admitidos
+
+`historical_multimodal.py` verificó R_CTX y F_TRUE para su futura comparación con
+el sistema V18. No seleccionó padres nuevos ni leyó columnas de predicción o
+target V para calcular scores. Admitió por SHA-256 los seis expertos históricos,
+los checkpoints de ambas cabezas, sus normalizadores y cachés de entrenamiento.
+Los journals y payloads de las dos cabezas coinciden en 2.500 updates completos
+y durables. Los cachés supervisados contienen las 18.422 consultas H exactas.
+
+Las tablas V históricas contienen las 16.432 consultas, en el orden y grupos
+correctos, con sus recibos de salida nativa sin filtrado. Sus hashes se
+preservan para una comparación posterior con candidatos ya congelados. No se
+han recalculado aquí métricas antiguas ni usado V para elegir una receta.
+
+Los checkpoints admitidos son:
+
+- R_CTX: `4838ffcd274254bd104250f116f447d2efca5ce75599d79479256091df8d65fc`.
+- F_TRUE: `dba93f9794e852d0e1d7323ac91ed257c59ec8e20a8ea952a93c5742a7f72f1b`.
+
+Recibo: `verification/HISTORICAL_MULTIMODAL_ADMISSION.json`, bajo el root V18 de
+artefactos. Incluye genealogía, normalizadores, hashes de tablas y manifiestos.
+Las fuentes originales sólo se leyeron. Cero optimizer updates.
+
+Ambas cabezas se entrenaron sobre H. Si la fusión nueva usa R_CTX y después
+aprende otro módulo en H, será entrenamiento supervisado secuencial, no OOF ni
+evaluación independiente H. Los perfiles históricos de las cabezas tampoco
+son costes sensoriales completos. El control P2 y estos comparadores tienen
+funciones distintas y deben conservarse ambos al interpretar el sistema final.
