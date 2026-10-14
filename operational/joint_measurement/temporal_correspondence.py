@@ -113,7 +113,10 @@ def run() -> dict:
             },
         },
         "git_commit": source_commit,
-        "hypothesis": "Real temporal nonzero reciprocal correspondence could justify paired geometric readout versus the failed free readout; consistency alone is not accurate motion",
+        "hypothesis": (
+            "Real temporal nonzero reciprocal correspondence could justify paired geometric "
+            "readout versus the failed free readout; consistency alone is not accurate motion"
+        ),
         "python": platform.python_version(),
         "torch": torch.__version__,
         "numpy": np.__version__,
