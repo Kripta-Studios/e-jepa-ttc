@@ -93,3 +93,24 @@ def test_missing_coverage_cases_cannot_claim_dynamic_export(tmp_path):
             examples[:1],
             binding={"purpose": "unit"},
         )
+
+
+@pytest.mark.parametrize("mode", ["TRUE", "ZERO"])
+def test_bundle_replays_fusion_in_isolated_process_without_changing_artifacts(tmp_path, mode):
+    from operational.joint_measurement.replay import file_hash, replay_export
+
+    norms, identities, examples = fixtures()
+    export_head(
+        tmp_path,
+        RGBAnchorComplement(3, 3, hidden=8, mode=mode),
+        *norms,
+        *identities,
+        examples,
+        binding={"purpose": "bundle replay regression"},
+    )
+    original = {path.name: file_hash(path) for path in tmp_path.iterdir()}
+    result = replay_export(tmp_path)
+    assert result["status"] == "PASS" and result["examples"] == 3
+    assert result["fallback_bit_exact"] and result["project_python_modules_loaded"] == []
+    assert not result["cuda_initialized"] and result["optimizer_updates"] == 0
+    assert {path.name: file_hash(path) for path in tmp_path.iterdir()} == original

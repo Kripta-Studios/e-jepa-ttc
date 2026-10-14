@@ -5,6 +5,10 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import shutil
+import subprocess
+import sys
+import tempfile
 from pathlib import Path
 
 import numpy as np
@@ -79,12 +83,49 @@ def replay_predictions(folder: Path) -> dict:
 def replay_export(folder: Path) -> dict:
     """Load actual portable bytes on CPU and replay the included label-free example."""
     receipt = json.loads((folder / "COMPLETE.json").read_text(encoding="utf-8"))
-    if receipt["status"] != "COMPLETE":
-        raise ValueError("Portable export is incomplete")
     for name, digest in receipt["files"].items():
         if file_hash(folder / safe_name(name)) != digest:
             raise ValueError("Portable artifact differs from its receipt")
     binding = json.loads((folder / "BINDING.json").read_text(encoding="utf-8"))
+    if "input_names" in binding:
+        if (
+            receipt["status"] != "PASS"
+            or binding["input_names"]
+            != ["rgb_features", "event_features", "rgb_ttc", "event_ttc", "rgb_available"]
+            or binding.get("includes_encoders_or_sensor_preprocessing") is not False
+            or set(receipt["files"])
+            != {
+                "BINDING.json",
+                "model.torchscript.pt",
+                "example_inputs.npz",
+                "example_outputs.json",
+            }
+        ):
+            raise ValueError("Unknown or incomplete portable fusion contract")
+        # The standalone verifier must import no project Python models. Its local
+        # replay receipt belongs to a disposable copy, never to the extracted bundle.
+        with tempfile.TemporaryDirectory(prefix="v18-fusion-replay-") as temporary:
+            copied = Path(temporary)
+            for name in (*receipt["files"], "COMPLETE.json"):
+                shutil.copyfile(folder / name, copied / name)
+            completed = subprocess.run(
+                [
+                    sys.executable,
+                    "-I",
+                    "-B",
+                    str(Path(__file__).with_name("replay_fusion_export.py").resolve()),
+                    str(copied),
+                ],
+                cwd=copied,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            if completed.returncode:
+                raise ValueError(f"Independent fusion replay failed: {completed.stderr[-4000:]}")
+            return json.loads((copied / "REPLAY.json").read_text(encoding="utf-8"))
+    if receipt["status"] != "COMPLETE":
+        raise ValueError("Portable export is incomplete")
     with (folder / "model.torchscript.pt").open("rb") as stream:
         model = torch.jit.load(stream, map_location="cpu").eval()
     with np.load(folder / "example_input.npz", allow_pickle=False) as archive:

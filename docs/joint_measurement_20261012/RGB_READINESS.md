@@ -544,3 +544,18 @@ Eight CPU integration tests passed: interrupted/resumed inference matches direct
 predictions; all-missing chunks preserve coverage; changed binding or corrupt
 bytes are rejected; event clocks stay distinct; frozen-state mutation is caught.
 These tests do not establish full-population scientific fusion performance.
+
+### Bundle replay accepts portable fusion heads
+
+The general bundle replay previously rejected a valid fusion head because its
+receipt uses PASS and a five-input feature contract instead of the pixel export
+contract. A regression test reproduced that failure before the fix. The verifier
+now validates the explicit fusion contract and invokes the existing standalone
+CPU replay in an isolated Python process over a temporary copy. The extracted
+bundle remains byte-for-byte unchanged. This retains the stated head-only scope;
+it does not establish sensor-to-TTC parity.
+
+Six fusion export tests passed, including TRUE/ZERO isolated replay and immutable
+artifact checks. The existing detached bundle test for both event and RGB pixel
+exports also passed. TorchScript deprecation warnings are retained in test output;
+no export format or trained weights were changed by this integration.
