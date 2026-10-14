@@ -27,12 +27,15 @@ from .qa import exact, fixture, subset
 from .resume_fast_proof import close
 from .train import backward, committed_sources, initialize, setup
 
-OUT = RUN / "runtime/geometry_graph_probe_v1"
+PREVIOUS = RUN / "runtime/geometry_graph_probe_v1"
+OUT = RUN / "runtime/geometry_graph_probe_v2"
 
 
 def register() -> dict:
     """Freeze tolerances and speed gate before looking at any graph comparison."""
     registered()
+    if (PREVIOUS / "RESULT.json").exists():
+        raise ValueError("Review the prior graph result before any probe revision")
     paths = [
         "geometry_graph_probe.py",
         "resume_fast_proof.py",
@@ -49,6 +52,10 @@ def register() -> dict:
     }
     committed_sources(sources)
     record = {
+        "supersedes_unexecuted_registration_sha256": sha(PREVIOUS / "REGISTRATION.json"),
+        "revision_reason": (
+            "Recognize the admitted rgb_cached_run GPU owner; numerical recipe unchanged"
+        ),
         "sources": sources,
         "C1_registration_sha256": sha(REGISTRATION),
         "population": "synthetic8_128x128",
@@ -79,7 +86,11 @@ def register() -> dict:
 
 def no_live_training_driver() -> None:
     """Do not steal a gap between the active RGB or C1 driver's GPU scopes."""
-    names = {"operational.joint_measurement.rgb_run", "operational.joint_measurement.geometry_run"}
+    names = {
+        "operational.joint_measurement.rgb_run",
+        "operational.joint_measurement.rgb_cached_run",
+        "operational.joint_measurement.geometry_run",
+    }
     for process in psutil.process_iter(["pid", "cmdline"]):
         if process.info["pid"] == os.getpid():
             continue

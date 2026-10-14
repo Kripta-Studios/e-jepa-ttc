@@ -104,3 +104,11 @@ python -B -m operational.joint_measurement.geometry_graph_probe
 Un rechazo conserva la evidencia y deja disponible el trainer eager con caché
 sensorial persistente, prefetch y pinned inputs. La prueba no entrena por sí
 misma, no modifica endpoints ni interpreta resultados TTC.
+
+Tras la migración RGB del 14 de octubre, la admisión del probe pasa a
+`runtime/geometry_graph_probe_v2`. V1 se conserva íntegra y no tiene resultado:
+no se ejecutó su trabajo GPU. V2 añade el driver `rgb_cached_run` a la barrera
+de propietarios vivos y enlaza por hash la inscripción anterior. Mantiene
+inputs, tolerancias, repeticiones, límites y decisión prospectiva; no cambia
+la receta científica C1 ni sus fuentes registradas. El comando sigue siendo
+el mismo. Registrar V2 no autoriza ejecutarlo mientras RGB siga vivo.
