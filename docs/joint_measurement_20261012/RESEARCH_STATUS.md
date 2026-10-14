@@ -5,6 +5,27 @@ Los cuatro entrenamientos primarios están completos en 12.000 updates cada uno.
 La matriz P/H, selección H, evaluación V del candidato seleccionado, coste E2E y
 comparación con E_CTX están completos. Esto no completa el programa V18.
 
+Actualización 14 de octubre de 2026, 10:45 Europe/Madrid:
+
+- El reinicio del equipo a las 03:31 interrumpió RGB-FT. Se reanudó a las 10:19
+  desde el checkpoint durable 9.900. Los 91 updates ejecutados sin guardar se
+  contabilizan como recuperación. Los recibos CPU de
+  `verification/reboot_recovery_20261014` conservan el origen y comprueban el
+  prefijo de la trayectoria restaurada; no se reinició el fit desde cero.
+- El nuevo verificador `operational.joint_measurement.verify_rgb_endpoint`
+  comprobará cada endpoint final de 12.000 en CPU: trayectoria de IDs, estados
+  Adam, scheduler y cambio/congelación del encoder. No confundir la comprobación
+  ya realizada del checkpoint 9.900 con la verificación del endpoint final.
+- `fusion_features.py` reutiliza el normalizador existente con un vínculo a los
+  pesos, esquema y código extractor. Exige consultas ordenadas, cobertura event
+  completa y relojes separados; ajusta estadísticas sólo en observaciones H
+  disponibles. No rellena RGB ausente para calcular esas estadísticas.
+- 32 pruebas CPU de features/fusión aprobadas y Ruff sin incidencias. No consumen
+  updates de optimizador. El loader de caché deberá verificar los bytes contra
+  los recibos durables antes de entregar arrays a esta validación en memoria.
+  Faltan la extracción real, el trainer integrado y la receta de fusión, que
+  dependerá de interpretar P/H de los dos endpoints RGB congelados.
+
 Actualización 14 de octubre de 2026, antes de iniciar los fits RGB:
 
 - El usuario autoriza continuar y ampliar el presupuesto de todo el programa.
