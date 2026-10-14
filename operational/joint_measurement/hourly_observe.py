@@ -1,4 +1,4 @@
-"""Observe one RGB driver on local clock hours; never restart or modify training."""
+"""Observe one registered branch on local clock hours; never modify training."""
 
 from __future__ import annotations
 
@@ -17,7 +17,10 @@ from operational.train40_system.hourly_supervisor import next_hour
 
 ROOT = Path(__file__).resolve().parents[2]
 RUN = ROOT / "artifacts/joint_measurement_20261012"
-OUT = RUN / "rgb/hourly"
+JOBS = {
+    "rgb": ("rgb", "rgb_run", "RGB_READY_FOR_INTERPRETATION"),
+    "geometry": ("adaptive/C1_geometry", "geometry_run", "C1_READY_FOR_INTERPRETATION"),
+}
 
 
 def read_optional(path: Path) -> dict:
@@ -25,8 +28,10 @@ def read_optional(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8-sig")) if path.exists() else {}
 
 
-def observe(pid: int, created: float, previous: dict | None) -> dict:
+def observe(pid: int, created: float, previous: dict | None, *, job: str = "rgb") -> dict:
     """Verify process identity and sample cheap progress/resource metadata once."""
+    relative, _, terminal = JOBS[job]
+    directory = RUN / relative
     now = datetime.now().astimezone()
     alive = False
     memory = None
@@ -39,25 +44,25 @@ def observe(pid: int, created: float, previous: dict | None) -> dict:
         pass
     fits = {
         path.parent.name: read_optional(path)
-        for path in sorted((RUN / "rgb/fits").glob("*/UPDATE_JOURNAL.json"))
+        for path in sorted((directory / "fits").glob("*/UPDATE_JOURNAL.json"))
     }
     evaluation = {
         path.relative_to(RUN).as_posix(): read_optional(path).get("rows")
-        for path in sorted((RUN / "rgb/predictions").glob("*/*/COMPLETE.json"))
+        for path in sorted((directory / "predictions").glob("*/*/COMPLETE.json"))
     }
-    fragments = len(list((RUN / "rgb/predictions").glob("**/chunk_*.parquet")))
+    fragments = len(list((directory / "predictions").glob("**/chunk_*.parquet")))
     # A fit's journal is the authoritative counter; no checkpoint tensor is loaded.
     signature = {
         "updates": {name: value["completed_updates"] for name, value in fits.items()},
         "evaluation_complete": evaluation,
         "prediction_fragments": fragments,
     }
-    runner = read_optional(RUN / "rgb/RUNNER_STATE.json")
+    runner = read_optional(directory / "RUNNER_STATE.json")
     status = "RUNNING"
     if not alive:
         status = (
-            "RGB_READY_FOR_INTERPRETATION"
-            if runner.get("status") == "RGB_READY_FOR_INTERPRETATION"
+            terminal
+            if runner.get("status") == terminal
             else "ACTION_REQUIRED_DRIVER_NOT_LIVE"
         )
     elif previous and signature == previous["progress_signature"]:
@@ -76,6 +81,7 @@ def observe(pid: int, created: float, previous: dict | None) -> dict:
     )
     return {
         "local_time": now.isoformat(),
+        "job": job,
         "status": status,
         "driver_pid": pid,
         "driver_create_time": created,
@@ -93,19 +99,21 @@ def observe(pid: int, created: float, previous: dict | None) -> dict:
     }
 
 
-def run(pid: int) -> None:
+def run(pid: int, *, job: str = "rgb") -> None:
     """Use one observer lock and sleep until each local hour, without intermediate polls."""
     import msvcrt
 
+    relative, module, _ = JOBS[job]
+    out = RUN / relative / "hourly"
     process = psutil.Process(pid)
     if (
-        "operational.joint_measurement.rgb_run" not in process.cmdline()
+        f"operational.joint_measurement.{module}" not in process.cmdline()
         or Path(process.cwd()).resolve() != ROOT
     ):
-        raise ValueError("The observed PID must be the actual V18 RGB driver")
+        raise ValueError(f"The observed PID must be the actual V18 {job} driver")
     created = process.create_time()
-    OUT.mkdir(parents=True, exist_ok=True)
-    with (OUT / "OBSERVER.lock").open("a+b") as lock:
+    out.mkdir(parents=True, exist_ok=True)
+    with (out / "OBSERVER.lock").open("a+b") as lock:
         if lock.tell() == 0:
             lock.write(b"0")
             lock.flush()
@@ -114,9 +122,10 @@ def run(pid: int) -> None:
         try:
             target = next_hour(datetime.now().astimezone())
             atomic_json(
-                OUT / "ARMED.json",
+                out / "ARMED.json",
                 {
                     "pid": os.getpid(),
+                    "job": job,
                     "driver_pid": pid,
                     "driver_create_time": created,
                     "next_local_hour": target.isoformat(),
@@ -127,9 +136,9 @@ def run(pid: int) -> None:
             while True:
                 while (delay := target.timestamp() - time.time()) > 0:
                     time.sleep(min(60, delay))
-                result = observe(pid, created, previous)
-                atomic_json(OUT / f"{target.strftime('%Y%m%dT%H%M%S%z')}.json", result)
-                atomic_json(OUT / "LATEST.json", result)
+                result = observe(pid, created, previous, job=job)
+                atomic_json(out / f"{target.strftime('%Y%m%dT%H%M%S%z')}.json", result)
+                atomic_json(out / "LATEST.json", result)
                 print(json.dumps(result), flush=True)
                 if not result["driver_live_identity_verified"]:
                     return
@@ -143,4 +152,6 @@ def run(pid: int) -> None:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--pid", type=int, required=True)
-    run(parser.parse_args().pid)
+    parser.add_argument("--job", choices=JOBS, default="rgb")
+    args = parser.parse_args()
+    run(args.pid, job=args.job)
