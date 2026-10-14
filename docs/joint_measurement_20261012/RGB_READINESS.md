@@ -484,3 +484,25 @@ de runtime en `runtime/rgb_resident_v2/timing/REGISTRATION.json`. Comparar adem�
 el contador acumulado de muestras atendidas por caché (`hits + misses`) con
 32 veces los updates desde 5.640: sin presión de memoria ni reinicio, esos
 contadores deben cubrir todos los scopes del mismo proceso, no sólo el último.
+
+## Features RGB comprobadas sobre datos reales P
+
+`fusion_rgb_extract_preflight.py` completó en CPU las mismas cuatro consultas
+P de diagnóstico (índices 0, 17, 83, 159) con el endpoint cerrado
+RGB-PAIR-CORR-FT-S7. No evaluó H, no calculó métricas de precisión ni eligió
+padres de fusión. La receta diagnóstica quedó registrada antes del forward.
+
+Las 196 features y la TTC firmada coinciden exactamente con la salida nativa;
+la recarga del archivo conserva todos los arrays, y los pesos quedaron intactos.
+Los intervalos RGB verificados son 100.002, 100.001, 100.002 y 100.001 us,
+calculados desde timestamps int64 propios de los frames. No se reemplazaron
+por el intervalo event de 100.000 us por ser aproximadamente iguales.
+
+Evidencia: `diagnostics/fusion_features_rgb_P_v1/PASS.json`.
+Registro SHA-256:
+`d9e3103689f6ce10df3c4c41848fec6ba83300c02023ac52c4e46e6c9f9e9194`.
+Caché SHA-256:
+`19d8c2397d543ce4e7f9335dc0b76045f6692d1aed9b2e3c4ac5cde94c638e8b`.
+Cero optimizer updates y CUDA sin inicializar. Esta comprobación de cuatro
+filas complementa la de eventos; todavía no es una extracción de población
+completa ni una validación de precisión de la fusión.
