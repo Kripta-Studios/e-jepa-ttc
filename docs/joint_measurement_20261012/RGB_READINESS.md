@@ -434,3 +434,30 @@ cuando existe su admisión; sigue usando el mismo lock de escritor.
 
 Todavía falta medir el ritmo de scopes completos con la caché caliente. El
 15,7 % observado pertenece exclusivamente al perfil previo del loader.
+
+## Corrección detectada en la revisión de las 13:00
+
+El wrapper v1 vaciaba la caché cuando la siguiente vuelta del driver consultaba
+el brazo FT ya completo, aunque la caché perteneciera al fit FROZEN activo.
+El contador publicado con `fit_id=FT` permitió detectar el fallo. Esto perdió
+residencia entre scopes, no updates ni estado numérico del entrenamiento.
+Se conservan el código v1 y sus recibos, incluidos esos metadatos mal asociados.
+
+V2 marca si el fit realmente solicitó el dataset; un retorno temprano de un
+brazo ya completo no puede liberar ni atribuirse la caché de otro. La prueba
+de regresión recorre tres scopes FROZEN intercalados con FT completo y exige
+una sola instancia residente hasta el fin del fit. Esa prueba, dos de restore
+y tres de frontera durable pasaron. La admisión nueva vive en
+`runtime/rgb_resident_v2`; enlaza la anterior por hash. Se usa otra transición
+en frontera guardada para aplicar la corrección al proceso que estaba vivo.
+
+La comparación observacional v1, registrada antes de leer las series, tomó
+256 updates previos (4402–4657) y 256 posteriores (5045–5300), con al menos
+256 de calentamiento. Las medias fueron 4,305123 y 0,912533 s/update;
+las medianas, 1,900604 y 0,688124. El tramo reciente equivale a 1,095851
+updates/s, excluyendo checkpoints, restauración y pausas entre scopes.
+La cola previa incluye una fuerte ralentización del equipo: estos números
+no prueban una aceleración causal de 4,7× debida únicamente a la caché.
+El primer scope v1 completó 517 updates, y aún perdió la caché al siguiente.
+La revisión de las 14:00 debe comprobar counters acumulados entre scopes v2
+y actualizar el ritmo de extremo a extremo antes de atribuir una mejora estable.
