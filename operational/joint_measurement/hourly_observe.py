@@ -20,6 +20,11 @@ RUN = ROOT / "artifacts/joint_measurement_20261012"
 JOBS = {
     "rgb": ("rgb", "rgb_run", "RGB_READY_FOR_INTERPRETATION"),
     "geometry": ("adaptive/C1_geometry", "geometry_run", "C1_READY_FOR_INTERPRETATION"),
+    "fusion_replication": (
+        "replication/fusion_C1",
+        "fusion_replication_train",
+        "REPLICA_PRODUCERS_COMPLETE",
+    ),
 }
 
 
@@ -106,7 +111,11 @@ def run(pid: int, *, job: str = "rgb") -> None:
         not any(
             f"operational.joint_measurement.{name}" in process.cmdline()
             for name in (
-                [module, "rgb_cached_run"] if job == "rgb" else [module, "geometry_capture_run"]
+                [module, "rgb_cached_run"]
+                if job == "rgb"
+                else [module, "geometry_capture_run"]
+                if job == "geometry"
+                else [module]
             )
         )
         or Path(process.cwd()).resolve() != ROOT
