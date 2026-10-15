@@ -6,6 +6,30 @@ Los cuatro entrenamientos primarios están completos en 12.000 updates cada uno.
 La matriz P/H, selección H, evaluación V del candidato seleccionado, coste E2E y
 comparación con E_CTX están completos. Esto no completa el programa V18.
 
+Actualización del 16 de octubre de 2026, reanudación solicitada por el usuario:
+
+- C1 se reanuda desde el checkpoint completo 6.200. El journal anterior llegó
+  a 6.214: se contabilizan 14 updates no durables como recuperación. La primera
+  restauración conservó todos los estados numéricos pero rechazó el incremento
+  de recuperación en su comprobación estricta. Se conserva ese fallo.
+  `verification/C1_RECOVERY_20261016/RESULT.json` documenta la consolidación
+  mediante el escritor nativo, sin updates nuevos, con pesos, Adam, scheduler,
+  sampler, RNG y cursor idénticos. Después pasan las once comprobaciones del
+  runtime capturado. No se reinicia el entrenamiento ni la contabilidad.
+- El observador identifica el proceso real y revisa cada hora en punto de
+  Europe/Madrid. `verification/RESUME_20261016.json` contiene los identificadores
+  y recibos de esta reanudación. El endpoint científico sigue siendo 12.000.
+- Se añade un adaptador CPU para conectar el R_CTX histórico a la futura fusión.
+  Conserva el forward nativo de su historial, sus pesos y su normalizador;
+  expone 28 valores sin etiquetas y el TTC firmado original. Siete pruebas CPU,
+  Ruff y Pyright pasan. Una comprobación adicional sobre cuatro consultas H
+  verifica paridad exacta con la inferencia histórica, relojes propios, caché
+  sin pérdida, RNG y pesos intactos: `diagnostics/fusion_history_H_v1/PASS.json`.
+  Esta prueba no lee columnas target ni ejecuta optimizador; tampoco demuestra
+  precisión o generalización. R_CTX ya está supervisado en H, por lo que un
+  nuevo entrenamiento sobre H con este anchor será ajuste secuencial, no OOF.
+  Los padres y receta científicos de fusión siguen pendientes de congelación.
+
 Actualización del 14 de octubre de 2026, tras la transición C1 de las 17:37
 Europe/Madrid:
 
