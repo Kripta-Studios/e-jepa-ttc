@@ -24,11 +24,20 @@ Actualización del 16 de octubre de 2026, reanudación solicitada por el usuario
   expone 28 valores sin etiquetas y el TTC firmado original. Siete pruebas CPU,
   Ruff y Pyright pasan. Una comprobación adicional sobre cuatro consultas H
   verifica paridad exacta con la inferencia histórica, relojes propios, caché
-  sin pérdida, RNG y pesos intactos: `diagnostics/fusion_history_H_v1/PASS.json`.
+  sin pérdida, RNG y pesos intactos: `diagnostics/fusion_history_H_v2/PASS.json`.
   Esta prueba no lee columnas target ni ejecuta optimizador; tampoco demuestra
   precisión o generalización. R_CTX ya está supervisado en H, por lo que un
   nuevo entrenamiento sobre H con este anchor será ajuste secuencial, no OOF.
-  Los padres y receta científicos de fusión siguen pendientes de congelación.
+  Se conserva el primer diagnóstico v1: al repetir su admisión se detectó una
+  diferencia de tipos tuple/list en el contrato JSON, corregida y probada en v2.
+- Las 18.422 consultas H ya tienen un nuevo cache RGB de 28 features y TTC
+  firmado, ligado al R_CTX y normalizador históricos intactos. Las 72 partes
+  verifican cada salida contra la inferencia nativa antes de publicarse;
+  `fusion/inputs/H/R_CTX/EXTRACTION_PROOF.json` conserva la prueba completa.
+  La reanudación lee exactamente los mismos bytes y crea cero filas nuevas
+  (`RESUME_PROOF.json`). No se han leído etiquetas ni V, ni entrenado una
+  fusión. Se fija R_CTX como anchor tras los negativos RGB; el padre event y
+  la receta de entrenamiento todavía requieren registro prospectivo.
 
 Actualización del 14 de octubre de 2026, tras la transición C1 de las 17:37
 Europe/Madrid:
