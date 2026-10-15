@@ -18,7 +18,8 @@ from .qa import exact
 from .rgb_run import require_authorization
 from .train import committed_sources
 
-OUT = RUN / "qa/fusion_engine/cuda"
+OUT = RUN / "qa/fusion_engine/cuda_v2"
+PREVIOUS = RUN / "qa/fusion_engine/cuda"
 CPU = RUN / "qa/fusion_engine/cpu"
 STATE_KEYS = (
     "model_state_dict",
@@ -64,6 +65,8 @@ def register() -> dict:
         for mode in ("TRUE", "ZERO")
     }
     record = {
+        "supersedes_unexecuted_registration_sha256": sha(PREVIOUS / "REGISTRATION.json"),
+        "revision_reason": "Ownership guard now also recognizes the admitted captured C1 driver",
         "sources": binding_sources,
         "cpu_proof_sha256": sha(CPU / "PASS.json"),
         "recipes": recipes,
