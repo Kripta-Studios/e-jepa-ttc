@@ -43,7 +43,7 @@ def export() -> dict:
                 "P_rows": indices,
                 "rtol": 1e-5,
                 "atol_seconds": 1e-5,
-                "scope": "Native prepared P2 pixels to signed TTC; not RGB fusion or raw preprocessing",
+                "scope": "Prepared P2 pixels to signed TTC; excludes RGB and raw preprocessing",
                 "sources": sources,
             }
             results[str(seed)] = trace_portable(
