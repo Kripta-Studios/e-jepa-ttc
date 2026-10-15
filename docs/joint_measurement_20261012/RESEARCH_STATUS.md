@@ -1,12 +1,33 @@
 # V18 JOINT-MEASUREMENT
 
-Estado: RESEARCH_ONGOING / C1_RUNNING; fase primaria NO_SYSTEM_PROMOTION;
-par RGB cerrado NO_CANDIDATE_RGB_PAIR.
+Estado: RESEARCH_ONGOING / FUSION_C1_REPLICATION_RUNNING;
+fase primaria NO_SYSTEM_PROMOTION; RGB NO_CANDIDATE_RGB_PAIR;
+C1 independiente NO_CANDIDATE_C1; fusión seed7 sin promoción de sistema.
 Los cuatro entrenamientos primarios están completos en 12.000 updates cada uno.
 La matriz P/H, selección H, evaluación V del candidato seleccionado, coste E2E y
 comparación con E_CTX están completos. Esto no completa el programa V18.
 
 Actualización del 16 de octubre de 2026, reanudación solicitada por el usuario:
+
+- C1 terminó sus 12.000 updates y su evidencia P/H. Mejora el agregado H
+  frente a PAIR-CORR, pero no cumple bandas/signo frente a A5 y empeora MAE.
+  [C1_RESULTS.md](C1_RESULTS.md) conserva la interpretación y los controles.
+- La fusión prospectiva R_CTX + features espaciales C1 completó TRUE/ZERO,
+  2.500 updates por brazo, y congeló ambos antes de abrir V. En V, TRUE obtiene
+  agregado 88,270 frente a 92,638 ZERO, 93,505 R_CTX y 90,650 F_TRUE. Ninguna
+  comparación cumple la mejora crucial del 10% necesaria para promoción.
+  El intervalo agregado frente a F_TRUE incluye cero. Las siete tablas,
+  verificaciones y exports de cabeza están en [FUSION_RESULTS.md](FUSION_RESULTS.md).
+- La señal controlada habilita una familia de réplica: seeds13/23, cada una
+  con 12.000 updates nuevos de encoder/lectura C1 y dos cabezas TRUE/ZERO de
+  2.500. Son 34.000 científicos adicionales, con A5/R_CTX históricos compartidos
+  explícitamente. La QA de este motor capturado pasa con 20 técnicos contados.
+  Se reconstruirán features y normalizador event de cada productor; todos los
+  endpoints se congelan antes de abrir V de las réplicas. No hay rescate de seeds.
+- Sigue pendiente medir el coste sensorial completo de la nueva fusión. Los
+  exports disponibles comienzan en features y sus tiempos no son E2E.
+
+Registro de los pasos previos de esta reanudación:
 
 - C1 se reanuda desde el checkpoint completo 6.200. El journal anterior llegó
   a 6.214: se contabilizan 14 updates no durables como recuperación. La primera
