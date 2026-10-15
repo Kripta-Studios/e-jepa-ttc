@@ -68,6 +68,15 @@ def measure() -> dict:
     parents = _parents(
         owner(), [*admission["expert_endpoints"], "R_CTX", "F_TRUE", "E_CTX_MATCHED"]
     )
+    expected_parents = {
+        **admission["expert_endpoints"],
+        **{name: admission["heads"][name]["checkpoint_sha256"] for name in ("R_CTX", "F_TRUE")},
+    }
+    if any(parents[name] != expected for name, expected in expected_parents.items()):
+        raise ValueError("Historical cost comparator parents changed")
+    for name, key in (("event", "E_NORMALIZER.json"), ("rgb", "R_NORMALIZER.json")):
+        if sha(Path(mapping[name])) != admission["normalizers"][key]:
+            raise ValueError("Native historical cost normalizer changed")
     sources = {
         f"operational/joint_measurement/{name}.py": sha(
             ROOT / f"operational/joint_measurement/{name}.py"
@@ -133,6 +142,10 @@ def measure() -> dict:
             raise ValueError("Fusion cost binding changed")
         return result
     blocks, _, _ = inputs()
+    original_recipe = read(DIRECTORY / "REGISTRATION.json")
+    for name in ("rgb", "event"):
+        if sha(DIRECTORY / "normalizers" / f"{name}.json") != original_recipe["normalizers"][name]:
+            raise ValueError("Fusion head normalizer changed before cost audit")
     normalizers = {
         name: FrozenNormalizer.load(DIRECTORY / "normalizers" / f"{name}.json")
         for name in ("rgb", "event")
