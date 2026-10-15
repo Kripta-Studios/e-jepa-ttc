@@ -38,7 +38,7 @@ def extract() -> dict:
     if selection["ranked"]:
         raise ValueError("Revisit anchor admission when a new RGB endpoint is admitted")
     root = owner()
-    admission = read(RUN / "diagnostics/fusion_history_H_v1/REGISTRATION.json")
+    admission = read(RUN / "diagnostics/fusion_history_H_v2/REGISTRATION.json")
     sources = {
         **admission["sources"],
         "operational/joint_measurement/fusion_history_cache.py": sha(Path(__file__)),
@@ -53,9 +53,9 @@ def extract() -> dict:
         "historical_normalizer_sha256": admission["normalizer_sha256"],
         "manifest_sha256": admission["manifest_sha256"],
         "schema_sha256": SCHEMA_SHA256,
-        "feature_names": FEATURE_NAMES,
+        "feature_names": list(FEATURE_NAMES),
         "rgb_selection_sha256": sha(RUN / "rgb/SELECTION_FINAL.json"),
-        "preflight_sha256": sha(RUN / "diagnostics/fusion_history_H_v1/PASS.json"),
+        "preflight_sha256": sha(RUN / "diagnostics/fusion_history_H_v2/PASS.json"),
         "reason": "Both new RGB arms failed safeguards; preserve the established R_CTX anchor",
         "batch_size": 128,
         "chunk_size": 256,

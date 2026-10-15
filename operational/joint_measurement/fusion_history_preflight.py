@@ -28,7 +28,7 @@ def run() -> dict:
     require_resources()
     torch.set_num_threads(1)
     root = owner()
-    out = RUN / "diagnostics/fusion_history_H_v1"
+    out = RUN / "diagnostics/fusion_history_H_v2"
     old = read(RUN / "verification/HISTORICAL_MULTIMODAL_ADMISSION.json")
     parent = old["heads"]["R_CTX"]
     checkpoint = root / "fits/R_CTX/checkpoint_last.pt"
@@ -68,7 +68,7 @@ def run() -> dict:
         "cache_sha256": sha(cache),
         "normalizer_sha256": parent["normalizer_sha256"],
         "manifest_sha256": sha(root / "H_MANIFEST.json"),
-        "feature_names": FEATURE_NAMES,
+        "feature_names": list(FEATURE_NAMES),
         "schema_sha256": SCHEMA_SHA256,
         "sources": sources,
         "H_supervised_ancestry": True,
