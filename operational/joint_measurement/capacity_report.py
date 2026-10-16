@@ -113,6 +113,15 @@ def build() -> dict:
         "Fuentes durables bajo `adaptive/D1_predictor_width`: `REGISTRATION.json`, "
         "`evaluation`, `evidence/COMPLETE.json`, `predictions`, `cost` y `exports`.",
     ]
+    erratum = DIRECTORY / "evidence/COST_SCOPE_ERRATUM.json"
+    if erratum.exists():
+        lines += [
+            "",
+            "Errata de metadatos: el campo `decision.cost_scope` del JSON original "
+            "heredó la palabra RGB del helper compartido. La medición registrada y "
+            "ejecutada utiliza eventos P2, como indica este informe. Se conserva el "
+            "JSON original y `evidence/COST_SCOPE_ERRATUM.json`; no cambia ninguna cifra.",
+        ]
     path = ROOT / "docs/joint_measurement_20261012/D1_RESULTS.md"
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
     receipt = {

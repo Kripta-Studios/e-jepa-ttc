@@ -77,6 +77,13 @@ def register() -> dict:
         "development_gates": record["development_gates"],
         "mechanism": "Original development metric rules applied versus paired TTC control",
         "cost": "Paired128 fixed P queries,20warmups,FP32batch1;prepared GPU input,not E2E",
+        "supersedes_unexecuted_evaluation_registration_sha256": sha(
+            DIRECTORY / "admission_revisions/evaluation_cost_scope_label/REGISTRATION.json"
+        ),
+        "metadata_revision": (
+            "Correct the inherited RGB cost_scope display label to event tensors before "
+            "B1 evaluation. No changes to predictions, timing arithmetic or gates."
+        ),
         "bootstrap": "Existing2000 acquisition-group resamples; no window-IID claim",
         "V": "Not opened by this evaluator; requires independent prospective H admission",
     }
@@ -375,6 +382,9 @@ def run() -> dict:
         ratio = timing["results"][name]["p50_seconds"] / timing["results"][BASELINE]["p50_seconds"]
         decisions[name] = combine_decision(
             metric, ratio, registration["development_gates"]["routes"]
+        )
+        decisions[name]["cost_scope"] = (
+            "prepared event tensor resident on GPU through signed TTC output"
         )
     ranked = sorted(
         [name for name in decisions if decisions[name]["eligible"]],
