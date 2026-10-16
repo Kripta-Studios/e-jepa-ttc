@@ -10,7 +10,7 @@ checkpoints y el observador horario local son la fuente de progreso actual.
 
 | Trabajo | Informe | Alcance |
 |---|---|---|
-| Matriz primaria | [RESULTS_TABLES.md](RESULTS_TABLES.md) | Cuatro fits seed7; P/H y selección prospectiva |
+| Matriz primaria | [Resultados P/H](evidence_20261014/PRIMARY_RESULTS.json) | Cuatro fits seed7; P/H y selección prospectiva |
 | Rama RGB | [RGB_RESULTS.md](RGB_RESULTS.md) | Encoder entrenable frente a congelado |
 | Lectura geométrica C1 | [C1_RESULTS.md](C1_RESULTS.md) | Mismo volumen, otra lectura; conserva sus regresiones |
 | Capacidad D1 | [D1_RESULTS.md](D1_RESULTS.md) | Predictor más ancho y control reutilizado |

@@ -2,7 +2,7 @@
 
 **La campaña sigue abierta; no hay promoción del sistema ni confirmación SOTA.** La fusión presenta una señal controlada en las tres semillas, pero no cumple el gate crucial original del10%. Los negativos y las regresiones se conservan.
 
-Corte UTC: `2026-10-16T16:48:44.271868+00:00`. Fuente: `CAMPAIGN_CONCLUSION.json`.
+Corte UTC: `2026-10-16T18:10:52.776827+00:00`. Fuente: `CAMPAIGN_CONCLUSION.json`.
 
 | Etapa | Evidencia completa | Estado |
 |---|---|---|
@@ -24,10 +24,10 @@ El agregado mejora frente al control ZERO de igual capacidad. Esto no demuestra 
 
 ## Contabilidad del corte
 
-- Updates científicos: 159,200.
-- Técnicos: 810; recuperación superior: 273; pendientes superiores: 0.
-- Físicos superiores: 160,283.
-- Scopes GPU contabilizados/reservados: 179106.3 / 216000 s.
+- Updates científicos: 163,100.
+- Técnicos: 834; recuperación superior: 273; pendientes superiores: 0.
+- Físicos superiores: 164,207.
+- Scopes GPU contabilizados/reservados: 182719.2 / 216000 s.
 
 Es una instantánea no atómica mientras hay trabajo vivo. No son kernels GPU puros; las reservas activas pueden cambiar al liquidarse. No se recontaron los controles históricos reutilizados.
 
@@ -38,5 +38,13 @@ Es una instantánea no atómica mientras hay trabajo vivo. No son kernels GPU pu
 - Publicar informes y verificar independientemente el ZIP final <=100000000 bytes
 - Completar A1 registrada: dos endpoints, P/H, coste y exports
 - Resolver refit/export condicionado por A1 y los gates originales
+
+## Ejecución y comprobaciones recientes
+
+A1 mantiene su receta científica; el lector paralelo, la caché y los grafos persistentes tienen admisión y prueba de continuidad. [Detalle del runtime](A1_PERSISTENT_RUNTIME_20261016.md).
+
+La evaluación A1 está registrada antes de los endpoints: [contrato P/H](A1_EVALUATION_CONTRACT_20261016.md). Su implementación y pruebas no equivalen a resultados del modelo.
+
+La cabeza F_TRUE reproduce las 13 consultas diagnósticas en CPU con el batch histórico; el coste raw completo sigue pendiente de paridad. [Contrastes y límites](FUSION_COST_DIAGNOSTIC.md).
 
 Las ramas condicionadas se justifican con evidencia; un resultado negativo cierra su experimento. La evaluación oficial requiere autorización separada y no se utiliza como bucle de ajuste.
