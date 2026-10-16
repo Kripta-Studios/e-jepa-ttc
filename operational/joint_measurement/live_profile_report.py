@@ -13,15 +13,18 @@ from .common import ROOT, RUN
 
 
 def summarize(directory: Path) -> dict:
-    """Attribute each main-thread sample once and retain separate concurrent loader evidence."""
+    """Attribute main-thread time once; keep concurrent reader/decoder time separate."""
     trace, resource = read(directory / "STACKS.json"), read(directory / "RESOURCES.json")
     frames = trace["shared"]["frames"]
     main = [p for p in trace["profiles"] if '"MainThread"' in p["name"]]
     loader = [p for p in trace["profiles"] if '"v18-fast-input_0"' in p["name"]]
+    workers = [p for p in trace["profiles"] if '"p2-random_' in p["name"]]
     if len(main) != 1 or len(loader) != 1:
-        raise ValueError("Expected one main thread and the original single decoder")
+        raise ValueError("Expected one main thread and one prefetch coordinator")
     stage = Counter()
+    forward = Counter()
     leaves = Counter()
+    worker_leaves = Counter()
     replay = Counter()
     for profile in trace["profiles"]:
         for stack, weight in zip(profile["samples"], profile["weights"], strict=True):
@@ -35,16 +38,36 @@ def summarize(directory: Path) -> dict:
                 leaves[
                     f"{leaf['name']} ({Path(leaf.get('file', '')).name}:{leaf.get('line', 0)})"
                 ] += weight
+            if any(profile is worker for worker in workers) and entries:
+                leaf = entries[-1]
+                worker_leaves[
+                    f"{leaf['name']} ({Path(leaf.get('file', '')).name}:{leaf.get('line', 0)})"
+                ] += weight
             if profile is not main[0]:
                 continue
             names = {e["name"] for e in entries}
             if any(
-                e["name"] == "batch" and e.get("file", "").endswith("fast_runtime.py")
+                e["name"] == "batch"
+                and e.get("file", "").endswith(("fast_runtime.py", "parallel_training_sensor.py"))
                 for e in entries
             ):
                 category = "input_batch_wait_or_submit"
-            elif "step_backward" in names:
+            elif "step_backward" in names or any(
+                e["name"] == "backward" and e.get("file", "").endswith("phase_transport_loss.py")
+                for e in entries
+            ):
                 category = "forward_loss_backward_including_host_sync"
+                if "_engine_run_backward" in names:
+                    substage = "autograd_engine_including_captured_backward"
+                elif "checked_phase" in names:
+                    substage = "captured_forward_domain_guard"
+                elif "phase_terms" in names:
+                    substage = "loss_tensor_arithmetic"
+                elif any(e.get("file", "").endswith("graphs.py") for e in entries):
+                    substage = "captured_forward_replay"
+                else:
+                    substage = "loss_scaling_guard_and_diagnostics_or_other_forward"
+                forward[substage] += weight
             elif "step" in names:
                 category = "optimizer_or_scheduler"
             elif "begin" in names or "commit" in names:
@@ -93,12 +116,23 @@ def summarize(directory: Path) -> dict:
                 "fast_runtime.py",
                 "data.py",
                 "train.py",
+                "phase_transport_loss.py",
+                "persistent_adaptation.py",
+                "parallel_training_sensor.py",
+                "live_profile_report.py",
             )
         },
         "main_sampled_seconds": total,
         "main_stage_seconds": dict(stage),
         "main_stage_percent": {k: 100 * v / total for k, v in stage.items()},
         "loader_leaf_seconds": dict(leaves.most_common()),
+        "forward_loss_backward_breakdown_seconds": dict(forward),
+        "parallel_decoder_threads": len(workers),
+        "parallel_decoder_leaf_seconds": dict(worker_leaves.most_common()),
+        "parallel_decoder_scope": (
+            "Concurrent thread-seconds; never add to main-thread wall-time percentages. "
+            "Includes idle threads because the capture used --idle."
+        ),
         "graph_replay_sampled_seconds_by_thread": dict(replay),
         "resource_window_seconds": duration,
         "completed_updates_in_resource_window": updates,

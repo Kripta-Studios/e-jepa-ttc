@@ -135,3 +135,27 @@ Esto verifica el comportamiento durante el cambio de tramo de producción,
 además de la prueba exacta de continuidad/reanudación previa. No garantiza
 retener caché ante un reinicio del sistema: ese caso reconstruye los recursos
 efímeros y restaura el estado científico desde el checkpoint durable.
+
+## Perfil pasivo posterior a la optimización
+
+`runtime/A1_optimized_profile_20261016` conserva stacks, muestras de recursos,
+errores de muestreo y resumen con hashes. En una ventana de recursos de 44,139 s
+se completaron 52 updates: 0,849 s/update, aproximadamente 4.241 updates/h.
+Es una observación de producción con profiler, no un benchmark emparejado.
+
+El snapshot de los últimos cien updates de esa ventana mide unos 1,34 ms de
+espera expuesta por batch, 110,33 ms de envío de transferencias, 616,81 ms de
+forward/pérdida/backward y 86,04 ms de optimizador/journal. Las operaciones
+asíncronas impiden interpretar estas categorías como tiempos exclusivos de GPU.
+
+El muestreo del hilo principal atribuye 22,63 % a aritmética de `phase_terms`
+y 15,45 % a escalado, guardas, diagnósticos u otro trabajo de la ruta de pérdida.
+La suma orienta una posible captura adicional de la pérdida; **no demuestra
+que ese 38,08 % sea eliminable**. Los ocho decodificadores se contabilizan por
+separado porque sus tiempos se solapan. Se conservaron 77 errores del muestreo
+no bloqueante y 21.142 muestras de hilos.
+
+La pérdida aún se ejecuta fuera del grafo. Cualquier captura adicional requiere
+paridad exacta de gradientes, estado y reanudación, además de benchmark nativo,
+antes de instalarse. Este perfil no cambió el proceso científico ni añadió
+updates de optimizador.

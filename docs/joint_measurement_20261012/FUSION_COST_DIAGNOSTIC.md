@@ -203,3 +203,41 @@ $env:PYTHONPATH = 'src;.'
 
 El registro y resultado CPU se conservan en `fusion/cost/F_TRUE_head_diagnostic_v1`.
 La comparación mide desacuerdo entre implementaciones, no error respecto al GT.
+
+## Aceptación numérica autorizada después del diagnóstico, 16 de octubre
+
+El usuario acepta la diferencia observada de 0,000793457 s (aproximadamente
+0,00214 % de la predicción) como despreciable para este benchmark de coste.
+Ese porcentaje era la discrepancia observada, no el umbral original. Se adopta
+un criterio operativo uniforme: diferencia absoluta **menor o igual a 0,001 s**,
+salidas finitas dentro del dominio TTC nativo y mismo signo en todas las rutas
+y consultas. No se selecciona una tolerancia distinta para cada ejemplo.
+
+Es una enmienda autorizada **después de observar el fallo**, no una prueba de que
+se cumpliera el contrato estricto original. El registro y el fallo anteriores
+permanecen intactos. Cada fila nueva conserva `strict_parity` además de la
+aceptación de 1 ms; la conclusión final declarará cuántas comparaciones fallan
+el criterio estricto. Las métricas TTC científicas, pesos y gates de promoción
+no cambian. La causa numérica exacta puede seguir investigándose, pero deja de
+ser requisito previo para medir coste si se satisface el nuevo límite uniforme.
+
+La continuación está implementada en `fusion_cost_millisecond.py`, con salida
+separada `fusion/cost/raw_e2e_millisecond_v1`. Reutiliza los tiempos medidos de
+los fragmentos históricos, vinculando el SHA-256 de cada original, y completa
+las consultas pendientes. Mantiene las 64 consultas, sus identificadores, orden
+emparejado, cuatro rutas, pesos, sensores y cómputo interno histórico. No se
+interpreta un resultado parcial como coste completo.
+
+```powershell
+$env:PYTHONPATH = 'src;.'
+$env:OMP_NUM_THREADS = '1'
+$env:MKL_NUM_THREADS = '1'
+& ..\e-jepa-ttc\.venv\Scripts\python.exe -B -m operational.joint_measurement.fusion_cost_millisecond audit
+# Sólo con GPU libre; run conserva fragments y puede reanudarse tras PARTIAL:
+& ..\e-jepa-ttc\.venv\Scripts\python.exe -u -B -m operational.joint_measurement.fusion_cost_millisecond run
+```
+
+La auditoría de salidas guardadas no ejecuta modelos ni consulta GT. La medición
+raw mantiene el control de propietario y los scopes GPU existentes; no se lanza
+en paralelo con A1. La aceptación de la discrepancia conocida no garantiza que
+las consultas aún pendientes también satisfagan 1 ms.
