@@ -1,6 +1,7 @@
 """CPU proofs of the V19 loss contrast and isolated durable runtime boundaries."""
 
 from pathlib import Path
+from types import SimpleNamespace
 
 import numpy as np
 import pytest
@@ -196,3 +197,57 @@ def test_checkpoint_preserves_cpu_rng_sampler_optimizer_and_curve(tmp_path):
     ):
         assert exact(direct[key], resumed[key]), key
     assert direct["recovery_upper"] == resumed["recovery_upper"] == 0
+
+
+def process_fixture(monkeypatch, tmp_path, *, command, gpu_name=None, workspace=True):
+    """Mock process inventory and WDDM enumeration without touching a GPU."""
+    monkeypatch.setattr(common, "ROOT", tmp_path / "project/v19")
+    own = SimpleNamespace(pid=training.os.getpid(), parents=lambda: [])
+    other = SimpleNamespace(
+        pid=4242,
+        info={"name": "python.exe", "cmdline": command},
+        cwd=lambda: str(tmp_path / ("project/v18" if workspace else "outside")),
+        name=lambda: gpu_name or "python.exe",
+    )
+    monkeypatch.setattr(training.psutil, "process_iter", lambda attrs: [other])
+    monkeypatch.setattr(training.psutil, "Process", lambda pid=None: own if pid is None else other)
+    monkeypatch.setattr(
+        training.subprocess, "check_output", lambda *args, **kwargs: b"4242\n" if gpu_name else b""
+    )
+
+
+def test_exact_mlflow_mcp_control_plane_does_not_block_training(monkeypatch, tmp_path):
+    process_fixture(monkeypatch, tmp_path, command=["python.exe", "mlflow.exe", "mcp", "run"])
+    training.guard_idle()
+
+
+@pytest.mark.parametrize(
+    "command",
+    [
+        ["python.exe", "mlflow.exe", "run", "train"],
+        ["python.exe", "mlflow.exe", "mcp", "run", "train"],
+        ["python.exe", "training.py", "mcp", "run"],
+    ],
+)
+def test_mlflow_exemption_is_not_a_general_training_allowlist(monkeypatch, tmp_path, command):
+    process_fixture(monkeypatch, tmp_path, command=command)
+    with pytest.raises(RuntimeError, match="COMPUTE_WAIT"):
+        training.guard_idle()
+
+
+@pytest.mark.parametrize("name", ["firefox.exe", "explorer.exe", "ms-teams.exe"])
+def test_wddm_desktop_clients_are_not_python_compute_owners(monkeypatch, tmp_path, name):
+    process_fixture(monkeypatch, tmp_path, command=[name], gpu_name=name, workspace=False)
+    training.guard_idle()
+
+
+def test_external_python_gpu_owner_still_blocks(monkeypatch, tmp_path):
+    process_fixture(
+        monkeypatch,
+        tmp_path,
+        command=["python.exe", "train.py"],
+        gpu_name="python.exe",
+        workspace=False,
+    )
+    with pytest.raises(RuntimeError, match="GPU_OWNER_WAIT"):
+        training.guard_idle()

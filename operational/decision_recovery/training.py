@@ -322,13 +322,16 @@ def file_lock(path: Path, *, existing: bool = False) -> Iterator[None]:
 
 
 def guard_idle() -> None:
+    """Keep V18's exact control-plane exemption and Python GPU-owner semantics."""
+    from operational.joint_measurement.compute_guard import is_mlflow_mcp
+
     own = {os.getpid(), *[p.pid for p in psutil.Process().parents()]}
     for process in psutil.process_iter(["name", "cmdline"]):
         try:
             if process.pid in own or "python" not in (process.info["name"] or "").lower():
                 continue
             command = process.info["cmdline"] or []
-            if "operational.joint_measurement.hourly_observe" in command:
+            if "operational.joint_measurement.hourly_observe" in command or is_mlflow_mcp(command):
                 continue
             if Path(process.cwd()).is_relative_to(common.ROOT.parent):
                 raise RuntimeError(f"COMPUTE_WAIT: project Python {process.pid} remains live")
@@ -337,8 +340,18 @@ def guard_idle() -> None:
     raw = subprocess.check_output(
         ["nvidia-smi", "--query-compute-apps=pid", "--format=csv,noheader"], timeout=15
     ).decode()
-    if any(int(line.strip()) not in own for line in raw.splitlines() if line.strip().isdigit()):
-        raise RuntimeError("GPU_OWNER_WAIT: another GPU process remains live")
+    # On Windows WDDM this query also includes ordinary desktop C+G clients.
+    # Match the admitted V18 ownership guard: reject foreign Python GPU owners;
+    # the shared OS locks separately serialize the scientific campaign writers.
+    for line in raw.splitlines():
+        if not line.strip().isdigit() or int(line.strip()) == os.getpid():
+            continue
+        try:
+            process = psutil.Process(int(line.strip()))
+            if "python" in process.name().lower():
+                raise RuntimeError(f"GPU_OWNER_WAIT: foreign Python GPU owner {process.pid}")
+        except psutil.NoSuchProcess:
+            continue
 
 
 @contextmanager
