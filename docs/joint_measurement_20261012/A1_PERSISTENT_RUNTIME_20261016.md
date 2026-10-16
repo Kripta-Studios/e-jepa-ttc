@@ -119,3 +119,19 @@ observador horario identifican al coordinador vigente.
 Fuentes: `parallel_training_sensor.py`, `phase_transport_loss.py`,
 `persistent_adaptation.py`, `adaptation_runtime_qa.py`, `adaptation_runtime.py`.
 Pruebas y admisión exportadas en `evidence_A1_persistent_20261016`.
+
+## Continuidad comprobada en producción
+
+A las 19:53:27 del 16 de octubre se verificó el proceso científico 16080,
+creado a las 19:33:16, mediante su identidad de proceso y comando activo. El
+snapshot del update 2.600 registra dos scopes y una sola captura CUDA.
+Los identificadores de los parámetros coinciden con el snapshot del update
+1.200, los hits de caché son acumulativos y los 211 packs siguen admitidos.
+La caché mantiene filas al cambiar de scope. Los siete controles de continuidad
+son PASS, conservados en `PRODUCTION_SCOPE_CONTINUITY.json` junto con los dos
+snapshots vinculados por SHA-256.
+
+Esto verifica el comportamiento durante el cambio de tramo de producción,
+además de la prueba exacta de continuidad/reanudación previa. No garantiza
+retener caché ante un reinicio del sistema: ese caso reconstruye los recursos
+efímeros y restaura el estado científico desde el checkpoint durable.

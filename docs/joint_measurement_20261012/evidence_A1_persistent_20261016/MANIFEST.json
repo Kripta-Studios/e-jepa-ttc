@@ -44,8 +44,21 @@
     "QUIESCED.json": {
       "sha256": "c72e96a864380e53317a24a5c9b9d46cb5fdb7118b1258c6b49ffa2b7e43ea54",
       "bytes": 1275
+    },
+    "PRODUCTION_MULTI_SCOPE.json": {
+      "sha256": "88d6a278559280970ea8762a8aab1c70a207385f7ac8b0a71ba98de338ca52d4",
+      "bytes": 27973
+    },
+    "PRODUCTION_SCOPE_CONTINUITY.json": {
+      "sha256": "4cb5dcd07885ca09c52e71997f5532d5140929f66053144cce0b2da845865444",
+      "bytes": 1067
+    },
+    "A1_EVALUATION_REGISTRATION.json": {
+      "sha256": "fe5e1cc6696e941b31fc438c9a4ad7f6d6c90ff5bf427f456ced85b673e410b3",
+      "bytes": 4340
     }
   },
   "schema": "v18_runtime_evidence_v1",
-  "full_campaign_complete": false
+  "full_campaign_complete": false,
+  "additions_commit": "469537e"
 }

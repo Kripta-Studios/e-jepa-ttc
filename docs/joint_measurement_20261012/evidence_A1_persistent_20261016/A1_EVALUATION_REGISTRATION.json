@@ -1,0 +1,85 @@
+{
+  "V": "No V predictions in this evaluator; requires prospective H admission and fixed candidate",
+  "batch_size": 4,
+  "bootstrap": "2000 paired acquisition-group resamples for each arm vs A5 and LAST-BLOCK vs FULL",
+  "cohorts": [
+    "P",
+    "H"
+  ],
+  "cost": "Original128 paired P queries,20 warmups,batch1,FP32; prepared GPU input, not E2E",
+  "development_gates": {
+    "all_routes_band_ratio_max": 1.1,
+    "all_routes_sign_increase_max": 0.005,
+    "common_reference": "A5-P2-FROZEN",
+    "final_promotion": "V14 numerical gate unchanged vs matched full E_CTX on V; comparable E2E cost required; internal development only",
+    "mandatory_complete_coverage": true,
+    "max_integrations": 2,
+    "ranking": [
+      "overall_MiD",
+      "MiDc",
+      "fit_id"
+    ],
+    "routes": {
+      "cost_ratio_max": 0.7,
+      "cost_route_overall_ratio_max": 1.02,
+      "crucial_ratio_max": 0.95,
+      "crucial_route_overall_ratio_max": 1.02,
+      "overall_ratio_max": 0.97
+    }
+  },
+  "export": {
+    "P_rows": [
+      0,
+      17,
+      83,
+      159,
+      255
+    ],
+    "TorchScript_atol_seconds": 1e-05,
+    "TorchScript_rtol": 1e-05,
+    "adapter": "geometry_export.PortableGeometry",
+    "eager_parity": "exact"
+  },
+  "fits": [
+    "A1-LAST-BLOCK-S7",
+    "A1-FULL-S7"
+  ],
+  "freeze_rule": "Both12000 endpoints with complete journals/pointers/hashes before any P/H prediction",
+  "known_scale": "Same24 fixed P queries and known transforms: shared B1 correspondence parent and two A1 endpoints",
+  "mechanism": "LAST-BLOCK versus FULL under the original registered metric rules; no seed rescue",
+  "official_comparison": false,
+  "prediction_runtime": {
+    "candidate": "Previously validated inference graph and two-pack lossless prefetch",
+    "fallback": "Preserve rejected probe; use original eager reader/model if not admitted",
+    "probe": "Both new endpoints; P first64 plus final2; exact pixels/clocks/raw phase/TTC, intact weights/RNG, invalid clock rejected",
+    "speed_gate": "Median warm graph/eager <=0.90"
+  },
+  "ranking": [
+    "overall_MiD",
+    "MiDc",
+    "fit_id"
+  ],
+  "schema": "v18_A1_evaluation_v1",
+  "scientific_registration_sha256": "d3a459fd8d1422c4317fd1b9d31d5b868c40f865399ff24ed5f0da8dbf207fa9",
+  "sources": {
+    "operational/joint_measurement/adaptation_depth.py": "4ee67b7b9a804c214b683d9381aca3efcac2efe589687609509672bc9b29f4fa",
+    "operational/joint_measurement/adaptation_evaluate.py": "a6b9769b8c5e0a7a07bd0380434c3e5a7e5887853f7965028dfbc07989daee55",
+    "operational/joint_measurement/adaptation_inference.py": "e7b020f471173b9907b3ca1e070e7df99d3550218f4fcc3c3397d10b9214d426",
+    "operational/joint_measurement/bootstrap.py": "db9eb3bbc36a4a58117f08e63face89befe3438e757e09c444f3a6f452298459",
+    "operational/joint_measurement/correspondence_evaluate.py": "92df9f0b48070f2408e93864d2c8f1e1356affbc7c68751ab486e544980442e3",
+    "operational/joint_measurement/correspondence_inference_graph.py": "79e8904f8e3bb33c8ddc36a21db3c21a6502928a69759be9abdf59696862fcf4",
+    "operational/joint_measurement/evaluate.py": "9e8b3c98e1039b360b403d2cfc2c8ef1d93bcdabad6f0dad6d36633ab8dd1dd6",
+    "operational/joint_measurement/export.py": "e8756299af965538fbc39e497614800292ea3051216ebe1dbe04dec06fbed41c",
+    "operational/joint_measurement/geometry_capture.py": "d30578e9d1a90cdc19a893dd4f5e78cc442144545c52debe70fac01d41704640",
+    "operational/joint_measurement/geometry_cost.py": "2c969ecb62541acdcec47eb6aa23374dfcc7deb0c20a30244b4a4d5ee8b54f81",
+    "operational/joint_measurement/geometry_evaluate.py": "82b329e917fb5028a98ab12c7c544a98909c0a2a2761a5fb1e0e1773720350ba",
+    "operational/joint_measurement/geometry_export.py": "0191b5d6646b5fdeca2f825b7fb310990cc28d86d62cddb69ea6a9065a3752fe",
+    "operational/joint_measurement/prefetched_sensor.py": "7cc8b4deab97254d3381f569c041a5ea52387af53a57b3e2a04d9eba80ee6759",
+    "operational/joint_measurement/rgb_cost.py": "ebec40c99881b441759dd55643a8634353e612c23fabd9437377faf9ee1f35c6",
+    "operational/joint_measurement/scale_correspondence_diagnostic.py": "1f0d4507000b0569739f20570bca1d98c53266f21dedfe05dc079224baeabedf",
+    "operational/joint_measurement/verify_predictions.py": "635b510cd9865103e82bd5a6bd02d7c9c95969d1181370283ef8c8858b728f4e"
+  },
+  "system_promotion": false,
+  "tail_size": 2,
+  "updates": 0
+}
