@@ -46,6 +46,14 @@ try {
         }
     }
     $Arguments = @('-u', '-B', '-m', $Module)
+    if ($Stage -eq 'B1Evaluation') {
+        $GraphProof = Join-Path $Campaign 'runtime/B1_inference_graph_v2/RESULT.json'
+        if ((Test-Path -LiteralPath $GraphProof) -and
+            (Get-Content -LiteralPath $GraphProof -Raw | ConvertFrom-Json).status -eq 'ADMITTED') {
+            $Module = 'operational.joint_measurement.correspondence_inference_graph'
+            $Arguments = @('-u', '-B', '-m', $Module, 'run')
+        }
+    }
     if ($Once) { $Arguments += '--once' }
     if ($ShowCommand) {
         [pscustomobject]@{ Stage = $Stage; Python = $Python; Arguments = $Arguments; WorkingDirectory = $Repo }
