@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 from __future__ import annotations
+
 import argparse
 from pathlib import Path
+
 import torch
 
 
@@ -26,7 +28,14 @@ def main() -> int:
             raise ValueError(f"invalid checkpoint {path}")
     if sorted(seeds) != [7, 13, 23]:
         raise ValueError("v4.27 requires adapted seeds 7,13,23")
-    print({"status": "passed", "adapted_seeds": sorted(seeds), "official_eap_test_not_opened": True, "evttc_not_opened": True})
+    print(
+        {
+            "status": "passed",
+            "adapted_seeds": sorted(seeds),
+            "official_eap_test_not_opened": True,
+            "evttc_not_opened": True,
+        }
+    )
     return 0
 
 

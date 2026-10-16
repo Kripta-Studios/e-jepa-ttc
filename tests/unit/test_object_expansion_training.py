@@ -47,9 +47,7 @@ def test_loss_is_finite_in_both_phases() -> None:
     output = SimpleNamespace(
         log_abs_inverse_ttc=targets.log_abs_inverse_ttc.clone().requires_grad_(),
         direction_logits=logits,
-        signed_inverse_ttc_soft=(
-            targets.signed_inverse_ttc.clone().requires_grad_()
-        ),
+        signed_inverse_ttc_soft=(targets.signed_inverse_ttc.clone().requires_grad_()),
         log_height_ratio_soft=targets.log_height_ratio.clone().requires_grad_(),
         ttc_soft_seconds=batch.target_ttc_s.clone().requires_grad_(),
     )

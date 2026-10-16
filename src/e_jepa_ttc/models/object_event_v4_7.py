@@ -40,12 +40,15 @@ class ObjectEventV47Config:
             raise ValueError("v4.7 dimensions must be positive")
         if self.mask_size < 16:
             raise ValueError("v4.7 mask_size must be at least 16")
-        if min(
-            self.foreground_temperature,
-            self.edge_temperature,
-            self.moment_floor,
-            self.event_skip_epsilon,
-        ) <= 0.0:
+        if (
+            min(
+                self.foreground_temperature,
+                self.edge_temperature,
+                self.moment_floor,
+                self.event_skip_epsilon,
+            )
+            <= 0.0
+        ):
             raise ValueError("v4.7 numerical scales must be positive")
 
 
@@ -102,9 +105,7 @@ class ObjectEventTTCV47(nn.Module):
     def load_v46_geometry_state_dict(self, state_dict: dict[str, torch.Tensor]) -> None:
         prefix = "geometry_encoder."
         extracted = {
-            key[len(prefix) :]: value
-            for key, value in state_dict.items()
-            if key.startswith(prefix)
+            key[len(prefix) :]: value for key, value in state_dict.items() if key.startswith(prefix)
         }
         if not extracted:
             raise ValueError("v4.6 checkpoint contains no geometry_encoder parameters")
@@ -168,9 +169,7 @@ class ObjectEventTTCV47(nn.Module):
     def _forward_geometry(self, events: torch.Tensor) -> tuple[torch.Tensor, ...]:
         resized = self._resize(events)
         batch, steps, channels, height, width = resized.shape
-        maps = self.geometry_encoder(
-            resized.reshape(batch * steps, channels, height, width)
-        )
+        maps = self.geometry_encoder(resized.reshape(batch * steps, channels, height, width))
         decoded = self.decoder(maps)
         decoded = functional.interpolate(
             decoded,
@@ -186,21 +185,23 @@ class ObjectEventTTCV47(nn.Module):
             align_corners=False,
         )
         logits = self.refine(torch.cat((decoded, activity), dim=1))
-        probabilities = torch.sigmoid(
-            logits / self.geometry_config.foreground_temperature
-        )
+        probabilities = torch.sigmoid(logits / self.geometry_config.foreground_temperature)
         rows, top, bottom, extent = self.soft_vertical_extent(
             probabilities,
             edge_temperature=self.geometry_config.edge_temperature,
             floor=self.geometry_config.moment_floor,
         )
         log_heights = torch.log(extent).reshape(batch, steps)
-        logits = logits.reshape(batch, steps, self.geometry_config.mask_size, self.geometry_config.mask_size)
+        logits = logits.reshape(
+            batch, steps, self.geometry_config.mask_size, self.geometry_config.mask_size
+        )
         probabilities = probabilities.reshape_as(logits)
         rows = rows.reshape(batch, steps, self.geometry_config.mask_size)
         top = top.reshape(batch, steps)
         bottom = bottom.reshape(batch, steps)
-        activity = activity.reshape(batch, steps, self.geometry_config.mask_size, self.geometry_config.mask_size)
+        activity = activity.reshape(
+            batch, steps, self.geometry_config.mask_size, self.geometry_config.mask_size
+        )
         return log_heights, logits, probabilities, rows, top, bottom, activity
 
     def forward(self, events: torch.Tensor) -> ObjectEventV47Output:
@@ -215,17 +216,13 @@ class ObjectEventTTCV47(nn.Module):
         ) = self._forward_geometry(events)
         height_log_eta = log_heights[:, 1] - log_heights[:, 2]
         maximum = self.config.max_abs_expansion
-        expansion = (1.0 - torch.exp(height_log_eta)).clamp(
-            -maximum * 0.999, maximum * 0.999
-        )
+        expansion = (1.0 - torch.exp(height_log_eta)).clamp(-maximum * 0.999, maximum * 0.999)
         reverse_log_eta = -height_log_eta
         reverse_expansion = (1.0 - torch.exp(reverse_log_eta)).clamp(
             -maximum * 0.999, maximum * 0.999
         )
         raw_score = torch.atanh((expansion / maximum).clamp(-0.999, 0.999))
-        reverse_raw_score = torch.atanh(
-            (reverse_expansion / maximum).clamp(-0.999, 0.999)
-        )
+        reverse_raw_score = torch.atanh((reverse_expansion / maximum).clamp(-0.999, 0.999))
         return ObjectEventV47Output(
             expansion=expansion,
             reverse_expansion=reverse_expansion,

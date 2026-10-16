@@ -115,8 +115,7 @@ class GarlTTCObjectSignedExpansionDataset(Dataset[dict[str, Any]]):
         missing = sorted(required - fields)
         if missing:
             raise ValueError(
-                "Cache predates the causal geometry contract; missing "
-                f"model inputs: {missing}"
+                f"Cache predates the causal geometry contract; missing model inputs: {missing}"
             )
         forbidden = set(self.manifest.get("forbidden_model_input_fields", []))
         if {"ttc_s", "geometry_v2_target", "box3d_Fcam", "box3d_h"} - forbidden:
@@ -165,12 +164,8 @@ def collate_object_signed_expansion(
         [float(record["garl_delta_t_s"]) for record in records],
         dtype=torch.float32,
     )
-    observable = torch.stack(
-        [_motion_tensor(record, "observable_motion") for record in records]
-    )
-    context = torch.stack(
-        [_motion_tensor(record, "jepa_context_motion") for record in records]
-    )
+    observable = torch.stack([_motion_tensor(record, "observable_motion") for record in records])
+    context = torch.stack([_motion_tensor(record, "jepa_context_motion") for record in records])
     pair_valid = torch.tensor(
         [bool(record["jepa_pair_valid"]) for record in records],
         dtype=torch.bool,

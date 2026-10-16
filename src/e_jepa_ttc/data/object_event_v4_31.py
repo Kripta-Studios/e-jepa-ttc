@@ -137,9 +137,7 @@ def reject_forbidden_path(path: Path | str, *, source: bool = False) -> None:
     normalized = candidate.as_posix().lower()
     components = {part.lower() for part in candidate.parts}
     forbidden_components = {"annotations", "validation", "test", "development", "dev"}
-    forbidden_alias = any(
-        "evttc" in part or "development" in part for part in components
-    )
+    forbidden_alias = any("evttc" in part or "development" in part for part in components)
     if (
         components.intersection(forbidden_components)
         or forbidden_alias

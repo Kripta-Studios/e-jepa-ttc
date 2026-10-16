@@ -25,10 +25,8 @@ def test_signed_expansion_optimizer_step_changes_prediction() -> None:
                 "observable_motion": motion,
                 "jepa_context_motion": torch.zeros(18),
                 "precontext_motion_valid": index % 2 == 0,
-                    "jepa_pair_valid": True,
-                "garl_visible_heights_px": torch.tensor(
-                    [90.0, 94.0] if ttc > 0 else [94.0, 90.0]
-                ),
+                "jepa_pair_valid": True,
+                "garl_visible_heights_px": torch.tensor([90.0, 94.0] if ttc > 0 else [94.0, 90.0]),
                 "ttc_s": ttc,
                 "sequence_id": f"s{index % 2}",
                 "sample_token": str(index),

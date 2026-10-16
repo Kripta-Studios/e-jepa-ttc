@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Train Object Event TTC v4.17 signed-anchor temporal sign head."""
+
 from __future__ import annotations
 
 import argparse
@@ -8,7 +9,7 @@ import json
 import shutil
 import sys
 import time
-from collections.abc import Mapping, Sequence
+from collections.abc import Mapping
 from dataclasses import asdict, fields
 from datetime import UTC, datetime
 from pathlib import Path
@@ -17,8 +18,8 @@ from typing import Any, cast
 import numpy as np
 import pandas as pd
 import torch
-from torch.nn import functional
 import yaml
+from torch.nn import functional
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
@@ -26,6 +27,23 @@ if str(ROOT) not in sys.path:
 if str(ROOT / "src") not in sys.path:
     sys.path.insert(0, str(ROOT / "src"))
 
+from e_jepa_ttc.models.object_event_v4_17 import (  # noqa: E402
+    ObjectEventTTCV417,
+    ObjectEventV417Config,
+)
+from e_jepa_ttc.object_event_v4_4 import pearson  # noqa: E402
+from e_jepa_ttc.training.object_event_v4_16 import (  # noqa: E402
+    causal_window_indices,
+    gather_scalar_windows,
+    gather_windows,
+)
+from e_jepa_ttc.training.object_event_v4_17 import (  # noqa: E402
+    ObjectEventV417LossConfig,
+    signed_anchor_features,
+    signed_anchor_logits,
+    temporal_sign_loss,
+    v417_screen_gates,
+)
 from scripts.train_e_jepa_object_event_v4_16 import (  # noqa: E402
     IDENTITY_COLUMNS,
     ObjectEventV416TrainConfig,
@@ -44,23 +62,6 @@ from scripts.train_e_jepa_object_event_v4_16 import (  # noqa: E402
     _seed,
     _sha256,
 )
-from e_jepa_ttc.models.object_event_v4_17 import (  # noqa: E402
-    ObjectEventTTCV417,
-    ObjectEventV417Config,
-)
-from e_jepa_ttc.training.object_event_v4_16 import (  # noqa: E402
-    causal_window_indices,
-    gather_scalar_windows,
-    gather_windows,
-)
-from e_jepa_ttc.training.object_event_v4_17 import (  # noqa: E402
-    ObjectEventV417LossConfig,
-    signed_anchor_features,
-    signed_anchor_logits,
-    temporal_sign_loss,
-    v417_screen_gates,
-)
-from e_jepa_ttc.object_event_v4_4 import pearson  # noqa: E402
 
 
 def _construct(cls: type[Any], values: Mapping[str, Any]) -> Any:
@@ -83,12 +84,8 @@ def _load_config(
     if not isinstance(raw, dict):
         raise ValueError("v4.17 config must be a mapping")
     model = _construct(ObjectEventV417Config, cast(Mapping[str, Any], raw.get("model", {})))
-    train = _construct(
-        ObjectEventV416TrainConfig, cast(Mapping[str, Any], raw.get("train", {}))
-    )
-    loss = _construct(
-        ObjectEventV417LossConfig, cast(Mapping[str, Any], raw.get("loss", {}))
-    )
+    train = _construct(ObjectEventV416TrainConfig, cast(Mapping[str, Any], raw.get("train", {})))
+    loss = _construct(ObjectEventV417LossConfig, cast(Mapping[str, Any], raw.get("loss", {})))
     gates_raw = raw.get("screen_gates", {})
     if not isinstance(gates_raw, dict) or not gates_raw:
         raise ValueError("screen_gates must be a non-empty mapping")
@@ -112,9 +109,7 @@ def _extract_features(
         raise KeyError(branch)
     permutation = None
     if branch == "shuffled":
-        permutation = torch.randperm(
-            len(events), generator=torch.Generator().manual_seed(seed)
-        )
+        permutation = torch.randperm(len(events), generator=torch.Generator().manual_seed(seed))
     descriptors_out: list[torch.Tensor] = []
     magnitudes_out: list[torch.Tensor] = []
     signed_out: list[torch.Tensor] = []
@@ -140,15 +135,11 @@ def _extract_features(
                 bias=None,
                 eps=frozen.config.epsilon,
             )
-            signed = (1.0 - torch.exp(pooled_log_eta)).clamp(
-                -maximum_magnitude, maximum_magnitude
-            )
+            signed = (1.0 - torch.exp(pooled_log_eta)).clamp(-maximum_magnitude, maximum_magnitude)
             descriptors.append(descriptor)
             signed_expansions.append(signed)
         stacked = torch.stack(descriptors, dim=0)
-        consensus = torch.cat(
-            (stacked.mean(dim=0), stacked.median(dim=0).values), dim=1
-        )
+        consensus = torch.cat((stacked.mean(dim=0), stacked.median(dim=0).values), dim=1)
         signed_stack = torch.stack(signed_expansions, dim=0)
         signed_anchor = signed_stack.median(dim=0).values
         magnitude_anchor = signed_stack.abs().median(dim=0).values
@@ -208,9 +199,7 @@ def _train_head(
     seed: int,
     epoch_callback: Any | None = None,
 ) -> tuple[dict[str, torch.Tensor], list[dict[str, float]]]:
-    optimizer = torch.optim.AdamW(
-        model.parameters(), lr=learning_rate, weight_decay=weight_decay
-    )
+    optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=weight_decay)
     generator = torch.Generator().manual_seed(seed)
     history: list[dict[str, float]] = []
     for epoch in range(1, epochs + 1):
@@ -424,7 +413,9 @@ def run(
     )
 
     if mode == "overfit":
-        selected = _balanced_subset_indices(train_frame, train_config.overfit_samples, train_config.seed)
+        selected = _balanced_subset_indices(
+            train_frame, train_config.overfit_samples, train_config.seed
+        )
         frame = train_frame.iloc[selected.numpy()].reset_index(drop=True)
         model = _new_head(descriptor_dim, model_config, seed=train_config.seed, device=device)
         best: dict[str, Any] | None = None
@@ -459,12 +450,14 @@ def run(
             }
             if best is None or rank > best["rank"]:
                 best = payload
-            row.update({
-                "eval_balanced_sign_accuracy": float(metrics["balanced_sign_accuracy"]),
-                "eval_negative_accuracy": float(metrics["negative_accuracy"]),
-                "eval_expansion_mae": float(metrics["expansion_mae"]),
-                "eval_passed": float(all(gates.values())),
-            })
+            row.update(
+                {
+                    "eval_balanced_sign_accuracy": float(metrics["balanced_sign_accuracy"]),
+                    "eval_negative_accuracy": float(metrics["negative_accuracy"]),
+                    "eval_expansion_mae": float(metrics["expansion_mae"]),
+                    "eval_passed": float(all(gates.values())),
+                }
+            )
             if all(gates.values()):
                 gate = payload
                 return True
@@ -493,14 +486,17 @@ def run(
         assert chosen is not None
         passed = gate is not None
         checkpoint_name = "best_gate_passing.pt" if passed else "best_observed.pt"
-        torch.save({
-            "artifact_type": "object_event_v4_17_overfit_checkpoint",
-            "model_state_dict": chosen["state"],
-            "descriptor_dim": descriptor_dim,
-            "anchor_scale": anchor_scale,
-            "model_config": asdict(model_config),
-            "epoch": chosen["epoch"],
-        }, output_dir / checkpoint_name)
+        torch.save(
+            {
+                "artifact_type": "object_event_v4_17_overfit_checkpoint",
+                "model_state_dict": chosen["state"],
+                "descriptor_dim": descriptor_dim,
+                "anchor_scale": anchor_scale,
+                "model_config": asdict(model_config),
+                "epoch": chosen["epoch"],
+            },
+            output_dir / checkpoint_name,
+        )
         pd.DataFrame(history).to_json(output_dir / "history.jsonl", orient="records", lines=True)
         result = {
             "artifact_type": "object_event_v4_17_signed_anchor_temporal",
@@ -518,7 +514,9 @@ def run(
             "gates": chosen["gates"],
             "passed": passed,
         }
-        (output_dir / "summary.json").write_text(json.dumps(_json_safe(result), indent=2), encoding="utf-8")
+        (output_dir / "summary.json").write_text(
+            json.dumps(_json_safe(result), indent=2), encoding="utf-8"
+        )
         return result
 
     validation_descriptor, validation_anchor, validation_signed_anchor = _extract_features(
@@ -542,8 +540,8 @@ def run(
         clip=model_config.anchor_feature_clip,
         strength=model_config.anchor_logit_strength,
     )
-    validation_window_index, validation_window_mask_np, validation_history_length = causal_window_indices(
-        validation_frame, window_size=model_config.window_size
+    validation_window_index, validation_window_mask_np, validation_history_length = (
+        causal_window_indices(validation_frame, window_size=model_config.window_size)
     )
     validation_windows = gather_windows(
         validation_descriptor, validation_window_index, validation_window_mask_np
@@ -557,10 +555,16 @@ def run(
     oof_prediction = np.full(len(train_frame), np.nan, dtype=np.float64)
     oof_probability = np.full(len(train_frame), np.nan, dtype=np.float64)
     for fold_index, held_out in enumerate(
-        _folds(train_frame["sequence_id"].astype(str).tolist(), train_config.fold_count, train_config.seed)
+        _folds(
+            train_frame["sequence_id"].astype(str).tolist(),
+            train_config.fold_count,
+            train_config.seed,
+        )
     ):
         train_indices_np = np.setdiff1d(np.arange(len(train_frame)), held_out)
-        model = _new_head(descriptor_dim, model_config, seed=train_config.seed + 100 + fold_index, device=device)
+        model = _new_head(
+            descriptor_dim, model_config, seed=train_config.seed + 100 + fold_index, device=device
+        )
         _, history = _train_head(
             model=model,
             windows=train_windows,
@@ -597,13 +601,17 @@ def run(
             cast(np.ndarray, pred["prediction"]),
             minimum_negatives=train_config.per_sequence_negative_min_count,
         )
-        fold_rows.append({
-            "fold": fold_index,
-            "held_out_sequences": sorted(held_frame["sequence_id"].astype(str).unique().tolist()),
-            "epochs": train_config.fold_epochs,
-            "final_loss": history[-1]["loss"],
-            "metrics": fold_metrics,
-        })
+        fold_rows.append(
+            {
+                "fold": fold_index,
+                "held_out_sequences": sorted(
+                    held_frame["sequence_id"].astype(str).unique().tolist()
+                ),
+                "epochs": train_config.fold_epochs,
+                "final_loss": history[-1]["loss"],
+                "metrics": fold_metrics,
+            }
+        )
     if not np.isfinite(oof_prediction).all():
         raise AssertionError("OOF predictions are incomplete")
     oof_metrics, _ = _metrics(
@@ -677,18 +685,30 @@ def run(
         seed=train_config.seed + 3,
         maximum_magnitude=model_config.maximum_magnitude,
     )
-    zero_descriptor = _augment_descriptor(zero_descriptor, zero_signed, anchor_scale=anchor_scale, config=model_config)
-    shuffled_descriptor = _augment_descriptor(shuffled_descriptor, shuffled_signed, anchor_scale=anchor_scale, config=model_config)
+    zero_descriptor = _augment_descriptor(
+        zero_descriptor, zero_signed, anchor_scale=anchor_scale, config=model_config
+    )
+    shuffled_descriptor = _augment_descriptor(
+        shuffled_descriptor, shuffled_signed, anchor_scale=anchor_scale, config=model_config
+    )
     zero_anchor_logits = signed_anchor_logits(
-        zero_signed, train_scale=anchor_scale, clip=model_config.anchor_feature_clip,
+        zero_signed,
+        train_scale=anchor_scale,
+        clip=model_config.anchor_feature_clip,
         strength=model_config.anchor_logit_strength,
     )
     shuffled_anchor_logits = signed_anchor_logits(
-        shuffled_signed, train_scale=anchor_scale, clip=model_config.anchor_feature_clip,
+        shuffled_signed,
+        train_scale=anchor_scale,
+        clip=model_config.anchor_feature_clip,
         strength=model_config.anchor_logit_strength,
     )
-    zero_windows = gather_windows(zero_descriptor, validation_window_index, validation_window_mask_np)
-    shuffled_windows = gather_windows(shuffled_descriptor, validation_window_index, validation_window_mask_np)
+    zero_windows = gather_windows(
+        zero_descriptor, validation_window_index, validation_window_mask_np
+    )
+    shuffled_windows = gather_windows(
+        shuffled_descriptor, validation_window_index, validation_window_mask_np
+    )
     zero_anchor_logit_windows = gather_scalar_windows(
         zero_anchor_logits, validation_window_index, validation_window_mask_np
     )
@@ -696,12 +716,22 @@ def run(
         shuffled_anchor_logits, validation_window_index, validation_window_mask_np
     )
     zero_result = _predict(
-        final_model, zero_windows, validation_window_mask, zero_anchor, zero_anchor_logit_windows,
-        batch_size=train_config.head_batch_size, device=device,
+        final_model,
+        zero_windows,
+        validation_window_mask,
+        zero_anchor,
+        zero_anchor_logit_windows,
+        batch_size=train_config.head_batch_size,
+        device=device,
     )
     shuffled_result = _predict(
-        final_model, shuffled_windows, validation_window_mask, shuffled_anchor, shuffled_anchor_logit_windows,
-        batch_size=train_config.head_batch_size, device=device,
+        final_model,
+        shuffled_windows,
+        validation_window_mask,
+        shuffled_anchor,
+        shuffled_anchor_logit_windows,
+        batch_size=train_config.head_batch_size,
+        device=device,
     )
     target_validation = validation_frame["target_expansion"].to_numpy(dtype=np.float64)
     predicted_negative = cast(np.ndarray, validation_prediction["logit"]) >= 0.0
@@ -710,24 +740,34 @@ def run(
     oof_predicted_negative = oof_probability >= 0.5
     train_true_negative = train_frame["target_expansion"].to_numpy(dtype=np.float64) < 0.0
     diagnostics = {
-        "zero_event_pearson_drop": pearson(target_validation, prediction) - pearson(target_validation, cast(np.ndarray, zero_result["prediction"])),
-        "shuffled_event_pearson_drop": pearson(target_validation, prediction) - pearson(target_validation, cast(np.ndarray, shuffled_result["prediction"])),
+        "zero_event_pearson_drop": pearson(target_validation, prediction)
+        - pearson(target_validation, cast(np.ndarray, zero_result["prediction"])),
+        "shuffled_event_pearson_drop": pearson(target_validation, prediction)
+        - pearson(target_validation, cast(np.ndarray, shuffled_result["prediction"])),
         "sign_oddness_max_abs": float(validation_prediction["sign_oddness_max_abs"]),
         "mean_history_length": float(np.mean(validation_history_length)),
-        "full_history_fraction": float(np.mean(validation_history_length >= model_config.window_size)),
+        "full_history_fraction": float(
+            np.mean(validation_history_length >= model_config.window_size)
+        ),
         "mean_sign_temporal_weights": validation_prediction["mean_sign_temporal_weights"],
         "anchor_scale_train_only": anchor_scale,
         "signed_anchor_validation_pearson": float(anchor_metrics["pearson"]),
         "signed_anchor_validation_negative_accuracy": float(anchor_metrics["negative_accuracy"]),
-        "signed_anchor_validation_min_sequence_negative_accuracy": float(anchor_metrics["minimum_sequence_negative_accuracy"]),
+        "signed_anchor_validation_min_sequence_negative_accuracy": float(
+            anchor_metrics["minimum_sequence_negative_accuracy"]
+        ),
         "train_true_negative_rate": float(np.mean(train_true_negative)),
         "oof_predicted_negative_rate": float(np.mean(oof_predicted_negative)),
         "validation_true_negative_rate": float(np.mean(true_negative)),
         "signed_anchor_predicted_negative_rate": float(np.mean(anchor_negative)),
         "validation_predicted_negative_rate": float(np.mean(predicted_negative)),
         "temporal_vs_anchor_flip_rate": float(np.mean(predicted_negative != anchor_negative)),
-        "mean_abs_anchor_logit": float(np.mean(np.abs(cast(np.ndarray, validation_prediction["anchor_logit"])))),
-        "mean_abs_residual_logit": float(np.mean(np.abs(cast(np.ndarray, validation_prediction["residual_logit"])))),
+        "mean_abs_anchor_logit": float(
+            np.mean(np.abs(cast(np.ndarray, validation_prediction["anchor_logit"])))
+        ),
+        "mean_abs_residual_logit": float(
+            np.mean(np.abs(cast(np.ndarray, validation_prediction["residual_logit"])))
+        ),
         "uniform_without_replacement_sampling": True,
         "sign_importance_reweighting": False,
     }
@@ -746,39 +786,56 @@ def run(
     )
     passed = all(gates.values())
 
-    validation_output = validation_frame.loc[:, list(IDENTITY_COLUMNS) + [
-        "delta_t_s", "target_ttc_s", "target_expansion"
-    ]].copy()
+    validation_output = validation_frame.loc[
+        :, list(IDENTITY_COLUMNS) + ["delta_t_s", "target_ttc_s", "target_expansion"]
+    ].copy()
     validation_output["history_length"] = validation_history_length
     validation_output["baseline_prediction_expansion"] = baseline_prediction
     validation_output["v48_signed_anchor_expansion"] = validation_signed_anchor.numpy()
     validation_output["v48_anchor_magnitude"] = validation_anchor.numpy()
-    validation_output["negative_probability"] = cast(np.ndarray, validation_prediction["probability"])
+    validation_output["negative_probability"] = cast(
+        np.ndarray, validation_prediction["probability"]
+    )
     validation_output["anchor_logit"] = cast(np.ndarray, validation_prediction["anchor_logit"])
     validation_output["residual_logit"] = cast(np.ndarray, validation_prediction["residual_logit"])
     validation_output["prediction_expansion"] = prediction
-    validation_output["zero_events_prediction_expansion"] = cast(np.ndarray, zero_result["prediction"])
-    validation_output["shuffled_prediction_expansion"] = cast(np.ndarray, shuffled_result["prediction"])
+    validation_output["zero_events_prediction_expansion"] = cast(
+        np.ndarray, zero_result["prediction"]
+    )
+    validation_output["shuffled_prediction_expansion"] = cast(
+        np.ndarray, shuffled_result["prediction"]
+    )
     validation_output.to_csv(output_dir / "validation_predictions.csv", index=False)
     per_sequence.to_csv(output_dir / "validation_per_sequence.csv", index=False)
 
-    oof_output = train_frame.loc[:, list(IDENTITY_COLUMNS) + ["target_expansion", "fused_prediction_expansion"]].copy()
+    oof_output = train_frame.loc[
+        :, list(IDENTITY_COLUMNS) + ["target_expansion", "fused_prediction_expansion"]
+    ].copy()
     oof_output["history_length"] = train_history_length
     oof_output["v48_signed_anchor_expansion"] = train_signed_anchor.numpy()
     oof_output["oof_negative_probability"] = oof_probability
     oof_output["oof_prediction_expansion"] = oof_prediction
     oof_output.to_csv(output_dir / "train_oof_predictions.csv", index=False)
-    pd.DataFrame(final_history).to_json(output_dir / "final_history.jsonl", orient="records", lines=True)
-    (output_dir / "folds.json").write_text(json.dumps(_json_safe(fold_rows), indent=2), encoding="utf-8")
-    torch.save({
-        "artifact_type": "object_event_v4_17_signed_anchor_temporal_checkpoint",
-        "model_state_dict": final_state,
-        "descriptor_dim": descriptor_dim,
-        "anchor_scale": anchor_scale,
-        "model_config": asdict(model_config),
-        "train_config": asdict(train_config),
-        "checkpoint_paths": {seed: path.resolve().as_posix() for seed, path in checkpoint_paths.items()},
-    }, output_dir / "signed_anchor_temporal.pt")
+    pd.DataFrame(final_history).to_json(
+        output_dir / "final_history.jsonl", orient="records", lines=True
+    )
+    (output_dir / "folds.json").write_text(
+        json.dumps(_json_safe(fold_rows), indent=2), encoding="utf-8"
+    )
+    torch.save(
+        {
+            "artifact_type": "object_event_v4_17_signed_anchor_temporal_checkpoint",
+            "model_state_dict": final_state,
+            "descriptor_dim": descriptor_dim,
+            "anchor_scale": anchor_scale,
+            "model_config": asdict(model_config),
+            "train_config": asdict(train_config),
+            "checkpoint_paths": {
+                seed: path.resolve().as_posix() for seed, path in checkpoint_paths.items()
+            },
+        },
+        output_dir / "signed_anchor_temporal.pt",
+    )
 
     v416 = json.loads(v416_summary_path.read_text(encoding="utf-8"))
     result = {
@@ -802,7 +859,11 @@ def run(
         "cache_manifest": cache_manifest.resolve().as_posix(),
         "cache_manifest_sha256": _sha256(cache_manifest),
         "v48_checkpoints": {
-            seed: {"path": path.resolve().as_posix(), "sha256": _sha256(path), "epoch": checkpoint_payloads[seed].get("epoch")}
+            seed: {
+                "path": path.resolve().as_posix(),
+                "sha256": _sha256(path),
+                "epoch": checkpoint_payloads[seed].get("epoch"),
+            }
             for seed, path in checkpoint_paths.items()
         },
         "train_manifest": train_manifest,
@@ -833,7 +894,9 @@ def run(
             "evttc_not_opened": True,
         },
     }
-    (output_dir / "summary.json").write_text(json.dumps(_json_safe(result), indent=2), encoding="utf-8")
+    (output_dir / "summary.json").write_text(
+        json.dumps(_json_safe(result), indent=2), encoding="utf-8"
+    )
     return result
 
 
@@ -877,7 +940,9 @@ def main() -> int:
             "error": str(exc),
         }
         args.output_dir.mkdir(parents=True, exist_ok=True)
-        (args.output_dir / "failure.json").write_text(json.dumps(failure, indent=2), encoding="utf-8")
+        (args.output_dir / "failure.json").write_text(
+            json.dumps(failure, indent=2), encoding="utf-8"
+        )
         print(json.dumps(failure, indent=2))
         return 1
 

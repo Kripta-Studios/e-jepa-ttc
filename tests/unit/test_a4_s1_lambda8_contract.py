@@ -9,13 +9,11 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
 PRIMARY = (
-    ROOT
-    / "configs/experiment/"
+    ROOT / "configs/experiment/"
     "e_jepa_garl_event_causal_scale_eap_screen_a4_s1_train8192_lambda8_v1.yaml"
 )
 CONTROL = (
-    ROOT
-    / "configs/experiment/"
+    ROOT / "configs/experiment/"
     "e_jepa_garl_event_causal_scale_eap_screen_a4_s1_train8192_lambda4_control_v1.yaml"
 )
 
@@ -65,8 +63,7 @@ def test_primary_s1_contract_is_frozen_to_train_only_selected_lambda() -> None:
     assert decision["train_scaling"]["frozen_validation_rows"] == 2048
 
 
-def test_lambda4_control_differs_from_primary_only_in_declared_role_and_weight(
-) -> None:
+def test_lambda4_control_differs_from_primary_only_in_declared_role_and_weight() -> None:
     primary = _load(PRIMARY)
     control = _load(CONTROL)
 

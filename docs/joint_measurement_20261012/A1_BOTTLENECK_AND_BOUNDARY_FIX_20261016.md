@@ -27,7 +27,7 @@ La reparación está en un wrapper independiente, `adaptation_observed_run.py`: 
 
 Validación: seis pruebas CPU del cálculo de diferencias; comprobación real sin updates de LAST-BLOCK 12.000 y FULL 1.425 contra su padre. Ambas cumplen la política. El checkpoint original y el error del coordinador se conservan en `runtime/A1_boundary_evidence_v1/`.
 
-Reanudación: `./scripts/Resume-JointMeasurement.ps1 -Stage A1Training`. Resta verificar en producción la continuidad de estado y el siguiente cierre de scope, antes de declarar reparada su ejecución sostenida.
+Reanudación: `./scripts/Resume-JointMeasurement.ps1 -Stage A1Training`. La continuidad y el siguiente cierre de scope se verificaron después en producción, como se detalla abajo.
 
 ## Trabajo que sigue fuera de los grafos
 

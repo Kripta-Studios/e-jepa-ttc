@@ -1,8 +1,9 @@
 """Train-only candidate ranking for Object Event TTC v4.24."""
+
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Mapping
 
 
 @dataclass(frozen=True)
@@ -50,7 +51,8 @@ def candidate_eligible(metrics: CandidateMetrics, config: SelectionConfig) -> bo
         and metrics.negative_accuracy >= config.minimum_negative_accuracy
         and metrics.minimum_sequence_pearson >= config.minimum_sequence_pearson
         and metrics.geometry_pearson >= config.minimum_geometry_pearson
-        and abs(metrics.predicted_negative_rate - metrics.true_negative_rate) <= config.maximum_negative_prior_gap
+        and abs(metrics.predicted_negative_rate - metrics.true_negative_rate)
+        <= config.maximum_negative_prior_gap
     )
 
 
@@ -60,19 +62,23 @@ def rank_candidates(
 ) -> list[dict[str, float | str | bool]]:
     rows: list[dict[str, float | str | bool]] = []
     for name, metrics in metrics_by_name.items():
-        rows.append({
-            "arm": str(name),
-            "eligible": candidate_eligible(metrics, config),
-            "objective": candidate_objective(metrics),
-            "pearson": metrics.pearson,
-            "balanced_sign_accuracy": metrics.balanced_sign_accuracy,
-            "positive_accuracy": metrics.positive_accuracy,
-            "negative_accuracy": metrics.negative_accuracy,
-            "minimum_sequence_pearson": metrics.minimum_sequence_pearson,
-            "minimum_sequence_negative_accuracy": metrics.minimum_sequence_negative_accuracy,
-            "geometry_pearson": metrics.geometry_pearson,
-            "negative_prior_gap": abs(metrics.predicted_negative_rate - metrics.true_negative_rate),
-        })
+        rows.append(
+            {
+                "arm": str(name),
+                "eligible": candidate_eligible(metrics, config),
+                "objective": candidate_objective(metrics),
+                "pearson": metrics.pearson,
+                "balanced_sign_accuracy": metrics.balanced_sign_accuracy,
+                "positive_accuracy": metrics.positive_accuracy,
+                "negative_accuracy": metrics.negative_accuracy,
+                "minimum_sequence_pearson": metrics.minimum_sequence_pearson,
+                "minimum_sequence_negative_accuracy": metrics.minimum_sequence_negative_accuracy,
+                "geometry_pearson": metrics.geometry_pearson,
+                "negative_prior_gap": abs(
+                    metrics.predicted_negative_rate - metrics.true_negative_rate
+                ),
+            }
+        )
     rows.sort(key=lambda row: (bool(row["eligible"]), float(row["objective"])), reverse=True)
     return rows
 

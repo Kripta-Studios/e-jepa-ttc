@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import numpy as np
 import pandas as pd
-import torch
 import pytest
+import torch
 from torch import nn
 
 from e_jepa_ttc.models.object_event_v4_15 import (
@@ -49,9 +49,7 @@ def test_shared_descriptor_and_head_are_odd() -> None:
 def test_sign_magnitude_projection_never_changes_magnitude() -> None:
     baseline = torch.tensor([0.2, 0.1, -0.3])
     probability = torch.tensor([0.99, 0.2, 0.01])
-    result = sign_magnitude_projection(
-        baseline, probability, negative_threshold=0.95
-    )
+    result = sign_magnitude_projection(baseline, probability, negative_threshold=0.95)
     assert torch.allclose(result.abs(), baseline.abs())
     assert result.tolist() == pytest.approx([-0.2, 0.1, -0.3])
 
@@ -72,9 +70,7 @@ def test_magnitude_ceiling_uses_empirical_train_quantile() -> None:
 def test_projection_can_abstain_on_large_positive_magnitude() -> None:
     baseline = np.asarray([0.01, 0.04, -0.02])
     probability = np.asarray([0.99, 0.99, 0.99])
-    prediction, override = projected_numpy(
-        baseline, probability, 0.95, magnitude_ceiling=0.02
-    )
+    prediction, override = projected_numpy(baseline, probability, 0.95, magnitude_ceiling=0.02)
     assert np.allclose(prediction, [-0.01, 0.04, -0.02])
     assert override.tolist() == [True, False, False]
 

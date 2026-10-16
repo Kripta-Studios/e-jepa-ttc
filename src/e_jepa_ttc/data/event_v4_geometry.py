@@ -156,6 +156,7 @@ def shifted_precontext_window(
         raise ValueError("Shifted precontext must end no later than t1 starts")
     return shifted
 
+
 def select_active_event_channels(
     value: torch.Tensor,
     *,

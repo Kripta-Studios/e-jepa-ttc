@@ -321,8 +321,7 @@ def build_manifest(
                 "raw_path": str(raw_path),
                 "raw_stat": _pin_stat(raw_path),
                 "windows_us": [
-                    [anchor_us + start, anchor_us + end]
-                    for start, end in BASE_WINDOWS_OFFSETS_US
+                    [anchor_us + start, anchor_us + end] for start, end in BASE_WINDOWS_OFFSETS_US
                 ],
                 "boxes_xyxy3": boxes,
                 "square_xyxy": list(square),
@@ -378,9 +377,7 @@ def build_manifest(
         "bbox_values_read": True,
         "ttc_targets_read": False,
         "selection_uses_targets_or_predictions": False,
-        "rows_metadata_sha256": _canonical_sha256(
-            [row["metadata_sha256"] for row in rows]
-        ),
+        "rows_metadata_sha256": _canonical_sha256([row["metadata_sha256"] for row in rows]),
     }
     _immutable_json(destination, result)
     freeze = {

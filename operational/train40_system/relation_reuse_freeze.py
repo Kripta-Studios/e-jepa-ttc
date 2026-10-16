@@ -45,9 +45,10 @@ def run(output: Path) -> None:
         admission.get(name) is True for name in required
     ):
         raise ValueError("Real relation-reuse admission must pass")
-    if admission.get("optimizer_updates") != 0 or admission.get(
-        "training_checkpoint_modified"
-    ) is not False:
+    if (
+        admission.get("optimizer_updates") != 0
+        or admission.get("training_checkpoint_modified") is not False
+    ):
         raise ValueError("Relation-reuse admission must not change scientific state")
     if admission.get("source_sha256") != digest(admission_source):
         raise ValueError("Executed relation-reuse admission source changed")

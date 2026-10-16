@@ -46,6 +46,7 @@ def run() -> int:
         while psutil.pid_exists(old_pid):
             time.sleep(0.1)
         import torch
+
         from e_jepa_ttc.simplex_t.training import state_digest
 
         checkpoint = c.out / f"garl/fits/{fit}/checkpoint_last.pt"

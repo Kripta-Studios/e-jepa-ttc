@@ -88,9 +88,7 @@ def validate_child(row: dict[str, Any], output: Path, arm: str) -> psutil.Proces
     return process
 
 
-def validate_launcher_identity(
-    row: dict[str, Any], output: Path, arm: str
-) -> psutil.Process:
+def validate_launcher_identity(row: dict[str, Any], output: Path, arm: str) -> psutil.Process:
     """Authenticate one exact Windows venv launcher identity and route."""
     launcher_row = row.get("launcher")
     if not isinstance(launcher_row, dict):

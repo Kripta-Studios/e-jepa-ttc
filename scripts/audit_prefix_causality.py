@@ -1,5 +1,8 @@
 #!/usr/bin/env python
-"""Numerically audit prefix invariance for legacy vs causal temporal smoothing."""
+# ruff: noqa: E402
+# CLI entry point: add the checkout to sys.path before importing project modules.
+"Numerically audit prefix invariance for legacy vs causal temporal smoothing."
+
 from __future__ import annotations
 
 import argparse
@@ -15,8 +18,13 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
-from e_jepa_ttc.artifacts.hashing import sign_artifact
-from e_jepa_ttc.models.causal_scale_ttc import CausalScaleTTC, CausalScaleTTCConfig
+from e_jepa_ttc.artifacts.hashing import (
+    sign_artifact,  # noqa: E402 - CLI path bootstrap precedes project imports.
+)
+from e_jepa_ttc.models.causal_scale_ttc import (  # noqa: E402 - CLI path bootstrap precedes project imports.
+    CausalScaleTTC,
+    CausalScaleTTCConfig,
+)
 
 
 def _max_abs(a: torch.Tensor, b: torch.Tensor) -> float:
@@ -49,16 +57,32 @@ def _run_mode(base: CausalScaleTTCConfig, mode: str, seed: int, tolerance: float
         o3 = model(x[:, :3], dt3)
         o4 = model(x[:, :4], dt4)
     diffs = {
-        "foreground_pair01_append_t2": _max_abs(o2.foreground_logits[:, :2], o3.foreground_logits[:, :2]),
-        "foreground_pair01_append_t3": _max_abs(o2.foreground_logits[:, :2], o4.foreground_logits[:, :2]),
-        "geometry_endpoint01_append_t2": _max_abs(o2.geometry_tokens[:, :2], o3.geometry_tokens[:, :2]),
-        "geometry_endpoint01_append_t3": _max_abs(o2.geometry_tokens[:, :2], o4.geometry_tokens[:, :2]),
-        "analytic_pair01_append_t2": _max_abs(o2.analytic_log_height_ratio[:, :1], o3.analytic_log_height_ratio[:, :1]),
-        "residual_pair01_append_t2": _max_abs(o2.residual_log_height_ratio[:, :1], o3.residual_log_height_ratio[:, :1]),
-        "final_pair01_append_t2": _max_abs(o2.pair_log_height_ratio[:, :1], o3.pair_log_height_ratio[:, :1]),
+        "foreground_pair01_append_t2": _max_abs(
+            o2.foreground_logits[:, :2], o3.foreground_logits[:, :2]
+        ),
+        "foreground_pair01_append_t3": _max_abs(
+            o2.foreground_logits[:, :2], o4.foreground_logits[:, :2]
+        ),
+        "geometry_endpoint01_append_t2": _max_abs(
+            o2.geometry_tokens[:, :2], o3.geometry_tokens[:, :2]
+        ),
+        "geometry_endpoint01_append_t3": _max_abs(
+            o2.geometry_tokens[:, :2], o4.geometry_tokens[:, :2]
+        ),
+        "analytic_pair01_append_t2": _max_abs(
+            o2.analytic_log_height_ratio[:, :1], o3.analytic_log_height_ratio[:, :1]
+        ),
+        "residual_pair01_append_t2": _max_abs(
+            o2.residual_log_height_ratio[:, :1], o3.residual_log_height_ratio[:, :1]
+        ),
+        "final_pair01_append_t2": _max_abs(
+            o2.pair_log_height_ratio[:, :1], o3.pair_log_height_ratio[:, :1]
+        ),
         "pair_ttc01_append_t2": _max_abs(o2.pair_ttc_seconds[:, :1], o3.pair_ttc_seconds[:, :1]),
         "pair_token01_append_t2": _max_abs(o2.pair_tokens[:, :1], o3.pair_tokens[:, :1]),
-        "pair12_append_t3": _max_abs(o3.pair_log_height_ratio[:, 1:2], o4.pair_log_height_ratio[:, 1:2]),
+        "pair12_append_t3": _max_abs(
+            o3.pair_log_height_ratio[:, 1:2], o4.pair_log_height_ratio[:, 1:2]
+        ),
     }
     prefix_invariant = max(diffs.values()) <= tolerance
     return {
@@ -91,7 +115,9 @@ def run(model_config: Path, output: Path, seed: int, tolerance: float) -> dict[s
         "interpretation": {
             "legacy_claim": "endpoint-window causal only; not strict prefix-streaming causal",
             "causal_left_claim": "model-level prefix-causal if this dynamic test passes",
-            "full_pipeline_claim": "still oracle-ROI unless a causal non-oracle localizer is evaluated",
+            "full_pipeline_claim": (
+                "still oracle-ROI unless a causal non-oracle localizer is evaluated"
+            ),
         },
         "sealed_sources": {"private_test_opened": False},
     }
@@ -103,7 +129,11 @@ def run(model_config: Path, output: Path, seed: int, tolerance: float) -> dict[s
 
 def main() -> int:
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("--model-config", type=Path, default=ROOT / "configs/model/e_jepa_causal_scale_event_v9_transport_r1_t002_legacy.yaml")
+    p.add_argument(
+        "--model-config",
+        type=Path,
+        default=ROOT / "configs/model/e_jepa_causal_scale_event_v9_transport_r1_t002_legacy.yaml",
+    )
     p.add_argument("--output", type=Path, required=True)
     p.add_argument("--seed", type=int, default=20260811)
     p.add_argument("--tolerance", type=float, default=1e-6)

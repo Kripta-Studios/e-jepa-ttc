@@ -1,10 +1,10 @@
 """Partial-unfreeze controls for Object Event TTC v4.22."""
+
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import dataclass, replace
-from typing import Iterable
 
-import torch
 from torch import nn
 
 
@@ -19,12 +19,15 @@ class ObjectEventV422Config:
     def __post_init__(self) -> None:
         if self.search_radius <= 0:
             raise ValueError("search_radius must be positive")
-        if min(
-            self.correlation_temperature,
-            self.foreground_floor,
-            self.confidence_floor,
-            self.epsilon,
-        ) <= 0.0:
+        if (
+            min(
+                self.correlation_temperature,
+                self.foreground_floor,
+                self.confidence_floor,
+                self.epsilon,
+            )
+            <= 0.0
+        ):
             raise ValueError("v4.22 numerical controls must be positive")
 
 

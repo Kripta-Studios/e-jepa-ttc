@@ -7,9 +7,9 @@ from e_jepa_ttc.data.object_event_v4 import collate_object_event_v4
 
 def _record(token: str) -> dict[str, object]:
     return {
-        "event_v4_common_roi": np.random.default_rng(7).normal(
-            size=(3, 12, 16, 16)
-        ).astype(np.float32),
+        "event_v4_common_roi": np.random.default_rng(7)
+        .normal(size=(3, 12, 16, 16))
+        .astype(np.float32),
         "garl_delta_t_s": np.float32(0.1),
         "observable_motion": np.zeros(18, dtype=np.float32),
         "garl_visible_heights_px": np.asarray([20.0, 25.0], dtype=np.float32),

@@ -268,9 +268,7 @@ def run(output: Path) -> None:
     status = "STARTING_A5_WARMUP"
     try:
         processes["a5"] = launch(output, token, "a5")
-        children["a5"] = bind_launcher(
-            child_row(output, token, "a5"), processes["a5"]
-        )
+        children["a5"] = bind_launcher(child_row(output, token, "a5"), processes["a5"])
         registry = {
             "schema": "train40_parallel_pilot_v3_registry_v1",
             "token": token,
@@ -289,9 +287,7 @@ def run(output: Path) -> None:
         gpu = gpu_preflight(output)
 
         processes["c2f"] = launch(output, token, "c2f")
-        children["c2f"] = bind_launcher(
-            child_row(output, token, "c2f"), processes["c2f"]
-        )
+        children["c2f"] = bind_launcher(child_row(output, token, "c2f"), processes["c2f"])
         registry.update({"phase": "PAIR_STARTING", "children": children, "gpu_preflight": gpu})
         atomic_json(output / REGISTRY_NAME, registry)
         wait_file(output / "PARALLEL_C2F_V3_BARRIER.json", token, processes["c2f"])

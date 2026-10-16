@@ -80,9 +80,7 @@ def test_materialize_config_disables_exposed_pretraining_and_binds_exact_roles(
     assert payload["matched_protocol"]["from_scratch"] is True
     assert payload["matched_protocol"]["release_checkpoint_initialization"] is False
     assert payload["dataset"]["train"]["data_parquet"].endswith("train_data.parquet")
-    assert payload["dataset"]["test"]["data_parquet"].endswith(
-        "validation_data.parquet"
-    )
+    assert payload["dataset"]["test"]["data_parquet"].endswith("validation_data.parquet")
     assert payload["training_settings"]["snapshot_epochs"] == list(range(8, 19))
     assert output.is_file()
     assert official.read_text(encoding="utf-8").find("paper-event.pth") >= 0

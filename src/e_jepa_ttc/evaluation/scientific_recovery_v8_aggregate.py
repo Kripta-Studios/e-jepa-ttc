@@ -670,7 +670,9 @@ def aggregate_seed7(
     if isinstance(source.get("sha256"), str) and source["sha256"] != _sha(a5):
         raise V8AggregateIntegrityError("frozen A5 hash mismatch")
     a5_sha256 = _sha(a5)
-    existing = _load_signed_seed7_aggregate(existing_output) if existing_output is not None else None
+    existing = (
+        _load_signed_seed7_aggregate(existing_output) if existing_output is not None else None
+    )
     if existing is not None:
         current_refs = _collect_current_refs(
             protocol=protocol,

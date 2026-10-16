@@ -225,7 +225,10 @@ def _minimum(root: Path, *, complete: bool) -> None:
                 "queries": 630,
                 "methods": ["H8_seed7", "H8_seed13", "H8_seed23", "public_Garl_event_lhr"],
                 "planned_methods": [
-                    "H8_seed7", "H8_seed13", "H8_seed23", "public_Garl_event_lhr",
+                    "H8_seed7",
+                    "H8_seed13",
+                    "H8_seed23",
+                    "public_Garl_event_lhr",
                     "public_Garl_rgb_event_full",
                 ],
                 "optimizer_updates": 0,
@@ -546,8 +549,11 @@ def test_publication_includes_only_campaign_qa_and_preservation_evidence(tmp_pat
     artifacts = tmp_path / "artifacts/campaign"
     _minimum(artifacts, complete=False)
     wanted = (
-        "root_qa/PYTEST_RECEIPT.json", "fcwd_runner_qa/QA.json",
-        "prefetch/PILOT.json", "full_prefetch/PILOT.json", "ACCOUNTING.json",
+        "root_qa/PYTEST_RECEIPT.json",
+        "fcwd_runner_qa/QA.json",
+        "prefetch/PILOT.json",
+        "full_prefetch/PILOT.json",
+        "ACCOUNTING.json",
         "dev32_expanded/PREFETCH_PRESERVATION_VERIFIED.json",
         "dev32_expanded/REUSE.json",
     )
@@ -612,7 +618,8 @@ def test_publication_hashes_survive_git_text_filters(tmp_path: Path) -> None:
         expected, name = line.split("  ", 1)
         staged = subprocess.run(  # noqa: S603
             [git, "-C", str(repo), "show", f":docs/sota/{name}"],
-            check=True, capture_output=True,
+            check=True,
+            capture_output=True,
         ).stdout
         assert hashlib.sha256(staged).hexdigest() == expected, name
 

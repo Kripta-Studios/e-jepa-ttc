@@ -53,9 +53,7 @@ def test_phase_difference_is_exact_canonical_mid() -> None:
     target = np.array([-4.0, 0.5, 2.0, 8.0], dtype=np.float64)
     prediction = np.array([-3.0, 0.6, 2.5, 7.0], dtype=np.float64)
     target_phase, _ = ttc_to_benchmark_phase(torch.from_numpy(target), metric_delta_t_s=0.1)
-    prediction_phase, _ = ttc_to_benchmark_phase(
-        torch.from_numpy(prediction), metric_delta_t_s=0.1
-    )
+    prediction_phase, _ = ttc_to_benchmark_phase(torch.from_numpy(prediction), metric_delta_t_s=0.1)
     per_row = 1.0e4 * (target_phase - prediction_phase).abs().numpy()
     for index, (truth, estimate) in enumerate(zip(target, prediction, strict=True)):
         metrics = signed_garl_metrics(np.array([truth]), np.array([estimate]))

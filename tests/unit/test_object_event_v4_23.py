@@ -11,7 +11,10 @@ from e_jepa_ttc.models.object_event_v4_23 import (
     motion_parameters,
     named_trainable_parameters,
 )
-from e_jepa_ttc.training.object_event_v4_23 import ObjectEventV423JointLossConfig, combine_joint_losses
+from e_jepa_ttc.training.object_event_v4_23 import (
+    ObjectEventV423JointLossConfig,
+    combine_joint_losses,
+)
 
 
 class TinyGeometry(nn.Module):
@@ -67,8 +70,12 @@ def test_geometry_and_motion_parameter_groups_do_not_overlap() -> None:
 
 
 def test_combined_loss_uses_requested_weights() -> None:
-    cfg = ObjectEventV423JointLossConfig(ttc_weight=2.0, geometry_auxiliary_weight=0.5, trainable_anchor_weight=0.25)
-    value = combine_joint_losses(torch.tensor(1.0), torch.tensor(2.0), torch.tensor(4.0), config=cfg)
+    cfg = ObjectEventV423JointLossConfig(
+        ttc_weight=2.0, geometry_auxiliary_weight=0.5, trainable_anchor_weight=0.25
+    )
+    value = combine_joint_losses(
+        torch.tensor(1.0), torch.tensor(2.0), torch.tensor(4.0), config=cfg
+    )
     assert torch.allclose(value, torch.tensor(4.0))
 
 

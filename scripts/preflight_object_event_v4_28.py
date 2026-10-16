@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+
 import torch
 
 
@@ -22,7 +23,9 @@ def main() -> int:
         raise ValueError("expected v4.27 summary")
     if summary.get("status") != "completed_oof_gate_failed":
         raise ValueError("v4.28 is preregistered for the failed v4.27 OOF result")
-    if not summary.get("scientific_contract", {}).get("development_validation_not_materialized_after_oof_failure", False):
+    if not summary.get("scientific_contract", {}).get(
+        "development_validation_not_materialized_after_oof_failure", False
+    ):
         raise ValueError("v4.27 scientific contract does not prove validation remained sealed")
     seeds = []
     for item in args.adapted_checkpoint:
@@ -36,14 +39,16 @@ def main() -> int:
             raise ValueError(f"invalid checkpoint {path}")
     if sorted(seeds) != [7, 13, 23]:
         raise ValueError("v4.28 requires adapted seeds 7,13,23")
-    print({
-        "status": "passed",
-        "v427_oof_pearson": summary["oof_train_metrics"]["pearson"],
-        "v427_log_eta_pearson": summary["oof_train_metrics"]["log_eta_pearson"],
-        "development_validation_still_sealed": True,
-        "official_eap_test_not_opened": True,
-        "evttc_not_opened": True,
-    })
+    print(
+        {
+            "status": "passed",
+            "v427_oof_pearson": summary["oof_train_metrics"]["pearson"],
+            "v427_log_eta_pearson": summary["oof_train_metrics"]["log_eta_pearson"],
+            "development_validation_still_sealed": True,
+            "official_eap_test_not_opened": True,
+            "evttc_not_opened": True,
+        }
+    )
     return 0
 
 

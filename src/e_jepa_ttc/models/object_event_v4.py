@@ -144,9 +144,8 @@ def expansion_to_log_ratio(expansion: torch.Tensor, *, epsilon: float = 1.0e-6) 
     return torch.log1p(-expansion.clamp(max=1.0 - epsilon))
 
 
-
 class ObjectEventTTCV4(nn.Module):
-    """Three-step event JEPA plus explicitly separated late motion fusion."""
+    "Three-step event JEPA plus explicitly separated late motion fusion."
 
     def __init__(self, config: ObjectEventV4Config | None = None) -> None:
         super().__init__()
@@ -192,7 +191,7 @@ class ObjectEventTTCV4(nn.Module):
             nn.Linear(self.config.fusion_hidden_dim, 1),
         )
 
-    def train(self, mode: bool = True) -> "ObjectEventTTCV4":
+    def train(self, mode: bool = True) -> ObjectEventTTCV4:
         super().train(mode)
         self.target_encoder.eval()
         return self
@@ -236,9 +235,7 @@ class ObjectEventTTCV4(nn.Module):
         if delta_t_s.shape != (events.shape[0],):
             raise ValueError("delta_t_s must have shape [B]")
         if observable_motion.shape != (events.shape[0], OBSERVABLE_MOTION_DIM):
-            raise ValueError(
-                f"observable_motion must have shape [B,{OBSERVABLE_MOTION_DIM}]"
-            )
+            raise ValueError(f"observable_motion must have shape [B,{OBSERVABLE_MOTION_DIM}]")
 
     def _event_feature(self, endpoints: torch.Tensor) -> torch.Tensor:
         if endpoints.ndim != 3 or endpoints.shape[1] != EVENT_V4_STEPS:
@@ -288,7 +285,10 @@ class ObjectEventTTCV4(nn.Module):
             target_mask = target.valid_patch_mask[:, 2].detach()
         if predicted.shape != target_future.shape:
             raise RuntimeError(
-                f"Local JEPA token mismatch {tuple(predicted.shape)} != {tuple(target_future.shape)}"
+                "Local JEPA token mismatch "
+                f"{tuple(predicted.shape)}"
+                " != "
+                f"{tuple(target_future.shape)}"
             )
         return predicted, target_future, target_mask
 
@@ -301,8 +301,8 @@ class ObjectEventTTCV4(nn.Module):
         if observable_motion is None:
             observable_motion = events.new_zeros((events.shape[0], OBSERVABLE_MOTION_DIM))
         self._validate_inputs(events, delta_t_s, observable_motion)
-        online, endpoints, reversed_endpoints, raw_forward, raw_reverse = (
-            self._encode_both_orders(events)
+        online, endpoints, reversed_endpoints, raw_forward, raw_reverse = self._encode_both_orders(
+            events
         )
         # Swapping the input exchanges the two raw terms, so this coordinate is
         # exactly odd even though the causal encoder itself is order-sensitive.
@@ -316,9 +316,10 @@ class ObjectEventTTCV4(nn.Module):
         z0, z1, z2 = endpoints.unbind(dim=1)
         gate_features = torch.cat((z2 - z1, (z2 - z1).abs(), z1 * z2), dim=-1)
         unit_gate = torch.sigmoid(self.event_gate_head(gate_features).squeeze(-1))
-        event_gate = self.config.minimum_event_gate + (
-            self.config.maximum_event_gate - self.config.minimum_event_gate
-        ) * unit_gate
+        event_gate = (
+            self.config.minimum_event_gate
+            + (self.config.maximum_event_gate - self.config.minimum_event_gate) * unit_gate
+        )
         fused = event_gate * event_expansion + (1.0 - event_gate) * motion_expansion
         fused = fused.clamp(-self.config.max_abs_expansion, self.config.max_abs_expansion)
 

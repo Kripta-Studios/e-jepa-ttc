@@ -45,9 +45,7 @@ def main() -> int:
     parser.add_argument(
         "--config",
         type=Path,
-        default=Path(
-            "configs/experiment/e_jepa_garl_object_event_sign_router_v4_11.yaml"
-        ),
+        default=Path("configs/experiment/e_jepa_garl_object_event_sign_router_v4_11.yaml"),
     )
     args = parser.parse_args()
 

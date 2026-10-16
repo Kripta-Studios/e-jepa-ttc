@@ -157,12 +157,12 @@ def test_similarity_uses_one_joint_support_weighted_center_across_scales():
     assert fit.omega.item() == pytest.approx(omega, abs=2e-3)
     torch.testing.assert_close(fit.translation[0], translation, rtol=0, atol=2e-3)
 
-    affine_intercept = fit.center + fit.translation - (
-        fit.matrix @ fit.center[..., None]
-    ).squeeze(-1)
-    reconstructed_translation = affine_intercept - fit.center + (
-        fit.matrix @ fit.center[..., None]
-    ).squeeze(-1)
+    affine_intercept = (
+        fit.center + fit.translation - (fit.matrix @ fit.center[..., None]).squeeze(-1)
+    )
+    reconstructed_translation = (
+        affine_intercept - fit.center + (fit.matrix @ fit.center[..., None]).squeeze(-1)
+    )
     torch.testing.assert_close(reconstructed_translation, fit.translation, rtol=0, atol=1e-6)
 
 
@@ -234,9 +234,7 @@ def test_consensus_stability_targets_forward_contract_and_gates():
     metrics.update({f"magnitude_ratio_{i}": 1.0 for i in range(4)})
     assert all(oof_gates(metrics).values())
     assert not oof_gates({**metrics, "endpoint_swap_pearson": 0.16})["controls"]
-    assert not oof_gates({**metrics, "endpoint_swap_pearson": float("nan")})[
-        "complete_finite"
-    ]
+    assert not oof_gates({**metrics, "endpoint_swap_pearson": float("nan")})["complete_finite"]
     arms = {
         "stable_multiscale_similarity": metrics,
         "stable_multiscale_similarity_normal_flow": {
@@ -432,8 +430,10 @@ def test_full_loss_consumes_real_t1_t2_annotation_schema():
         ttc,
         **{**kwargs, "boxes_xyxy": changed_boxes, "visible_heights_px": changed_heights},
     )
-    assert torch.isfinite(total) and not torch.allclose(total, different) and not torch.allclose(
-        pieces["support"], different_pieces["support"]
+    assert (
+        torch.isfinite(total)
+        and not torch.allclose(total, different)
+        and not torch.allclose(pieces["support"], different_pieces["support"])
     )
 
 

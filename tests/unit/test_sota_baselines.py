@@ -105,12 +105,8 @@ def test_resume_uses_signed_fragment_without_prediction_rerun(
 
     monkeypatch.setattr(baselines, "_predict_cmax", predict)
     output = tmp_path / "output"
-    first = baselines.run_baselines(
-        query_manifest=manifest, output_dir=output, methods=("cmax",)
-    )
-    second = baselines.run_baselines(
-        query_manifest=manifest, output_dir=output, methods=("cmax",)
-    )
+    first = baselines.run_baselines(query_manifest=manifest, output_dir=output, methods=("cmax",))
+    second = baselines.run_baselines(query_manifest=manifest, output_dir=output, methods=("cmax",))
     assert calls == 1
     assert first["fragment_sha256"] == second["fragment_sha256"]
 
@@ -210,9 +206,7 @@ def test_first_per_sequence_selection_is_fixed_before_prediction(tmp_path: Path)
         row["metadata_sha256"] = _canonical(row)
         rows.append(row)
     document["rows"] = rows
-    document["rows_metadata_sha256"] = _canonical(
-        [row["metadata_sha256"] for row in rows]
-    )
+    document["rows_metadata_sha256"] = _canonical([row["metadata_sha256"] for row in rows])
     path.write_text(json.dumps(document), encoding="utf-8")
     _, selected = baselines._validate_manifest(path, None, "first_per_sequence")
     assert [row["query_id"] for row in selected] == ["a:00", "b:00"]

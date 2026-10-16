@@ -20,14 +20,14 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import math
 import os
 import sys
 from collections import defaultdict
+from collections.abc import Iterable
 from dataclasses import asdict
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -41,7 +41,9 @@ sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT))
 
 from e_jepa_ttc.artifacts.hashing import sign_artifact  # noqa: E402
-from e_jepa_ttc.data.dinov3_relational_teacher_cache import DINOv3RelationalTeacherDataset  # noqa: E402
+from e_jepa_ttc.data.dinov3_relational_teacher_cache import (  # noqa: E402 - CLI path bootstrap precedes project imports.
+    DINOv3RelationalTeacherDataset,  # noqa: E402
+)
 from e_jepa_ttc.data.object_event_v4 import (  # noqa: E402
     GarlTTCObjectEventV4Dataset,
     collate_object_event_v4,
@@ -49,10 +51,16 @@ from e_jepa_ttc.data.object_event_v4 import (  # noqa: E402
 from e_jepa_ttc.models.causal_scale_ttc import CausalScaleTTC, CausalScaleTTCConfig  # noqa: E402
 from e_jepa_ttc.reproducibility import resolve_device, seed_everything  # noqa: E402
 
-DEFAULT_SOURCE_CONFIG = ROOT / "configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a4d_dinov3_temporal_delta_v1.yaml"
+DEFAULT_SOURCE_CONFIG = ROOT / (
+    "configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a4d_dinov3_temporal_delta_v1.yaml"
+)
 DEFAULT_PROTOCOL = ROOT / "configs/experiment/e_jepa_garl_event_causal_scale_a5_preflight_v2.yaml"
-DEFAULT_A4 = ROOT / "artifacts/runs/causal_scale_eap_screen_a4_dinov3_relational_rgb_v2_seed7/model_best.pt"
-DEFAULT_A4D = ROOT / "artifacts/runs/causal_scale_eap_screen_a4d_dinov3_temporal_delta_seed7/model_best.pt"
+DEFAULT_A4 = (
+    ROOT / "artifacts/runs/causal_scale_eap_screen_a4_dinov3_relational_rgb_v2_seed7/model_best.pt"
+)
+DEFAULT_A4D = (
+    ROOT / "artifacts/runs/causal_scale_eap_screen_a4d_dinov3_temporal_delta_seed7/model_best.pt"
+)
 
 
 def _read_yaml(path: Path) -> dict[str, Any]:
@@ -106,7 +114,7 @@ def _same_sequence_null_partners(
     track_ids: list[str],
     original_indices: list[int],
 ) -> tuple[np.ndarray, float]:
-    """Build a deterministic same-sequence derangement, preferring other tracks."""
+    "Build a deterministic same-sequence derangement, preferring other tracks."
 
     if not (len(sequence_ids) == len(track_ids) == len(original_indices)):
         raise ValueError("metadata arrays must have identical length")
@@ -125,7 +133,10 @@ def _same_sequence_null_partners(
             # Maximise dataset-index separation to avoid a nearly adjacent pseudo-null.
             chosen = max(
                 candidates,
-                key=lambda p: (abs(original_indices[p] - original_indices[pos]), -original_indices[p]),
+                key=lambda p: (
+                    abs(original_indices[p] - original_indices[pos]),
+                    -original_indices[p],
+                ),
             )
             partner[pos] = chosen
             valid += 1
@@ -133,7 +144,9 @@ def _same_sequence_null_partners(
     return partner, float(different_track / valid) if valid else 0.0
 
 
-def _candidate_offsets(radius: int, device: torch.device, dtype: torch.dtype) -> tuple[torch.Tensor, torch.Tensor]:
+def _candidate_offsets(
+    radius: int, device: torch.device, dtype: torch.dtype
+) -> tuple[torch.Tensor, torch.Tensor]:
     values = torch.arange(-radius, radius + 1, device=device, dtype=dtype)
     dy, dx = torch.meshgrid(values, values, indexing="ij")
     return dx.reshape(-1), dy.reshape(-1)
@@ -156,9 +169,12 @@ def _teacher_match(
     patches = functional.unfold(current.float(), kernel_size=kernel, padding=radius).reshape(
         batch, relation_count, candidate_count, height, width
     )
-    valid_patches = functional.unfold(current_valid.float(), kernel_size=kernel, padding=radius).reshape(
-        batch, relation_count, candidate_count, height, width
-    ) > 0.5
+    valid_patches = (
+        functional.unfold(current_valid.float(), kernel_size=kernel, padding=radius).reshape(
+            batch, relation_count, candidate_count, height, width
+        )
+        > 0.5
+    )
     common = previous_valid[:, :, None].bool() & valid_patches
     counts = common.sum(dim=1)
     errors = ((patches - previous.float()[:, :, None]).abs() * common.float()).sum(dim=1)
@@ -210,7 +226,9 @@ def _student_correlation(
     valid_maps: list[torch.Tensor] = []
     for dy in range(-radius, radius + 1):
         for dx in range(-radius, radius + 1):
-            shifted = padded[:, :, radius + dy : radius + dy + height, radius + dx : radius + dx + width]
+            shifted = padded[
+                :, :, radius + dy : radius + dy + height, radius + dx : radius + dx + width
+            ]
             corr.append((prev * shifted).sum(dim=1))
             vy = (ys + dy >= 0) & (ys + dy < height)
             vx = (xs + dx >= 0) & (xs + dx < width)
@@ -227,7 +245,9 @@ def _student_correlation(
     count = candidate_valid.sum(dim=1).float()
     masked_zero = correlation.masked_fill(~candidate_valid, 0.0)
     mean = masked_zero.sum(dim=1) / count.clamp_min(1.0)
-    variance = (((correlation - mean[:, None]) ** 2) * candidate_valid.float()).sum(dim=1) / count.clamp_min(1.0)
+    variance = (((correlation - mean[:, None]) ** 2) * candidate_valid.float()).sum(
+        dim=1
+    ) / count.clamp_min(1.0)
     zscore = (top2[:, 0] - mean) / variance.sqrt().clamp_min(1.0e-6)
     zero_index = radius * (2 * radius + 1) + radius
     zero_corr = correlation[:, zero_index]
@@ -276,14 +296,16 @@ def _bbox_affine_flow(
     feature_height: int,
     feature_width: int,
 ) -> dict[str, torch.Tensor]:
-    """BBox-implied affine flow on the dense feature grid, diagnostics only."""
+    "BBox-implied affine flow on the dense feature grid, diagnostics only."
 
-    scale = boxes_t1.new_tensor([
-        feature_width / float(source_width),
-        feature_height / float(source_height),
-        feature_width / float(source_width),
-        feature_height / float(source_height),
-    ])
+    scale = boxes_t1.new_tensor(
+        [
+            feature_width / float(source_width),
+            feature_height / float(source_height),
+            feature_width / float(source_width),
+            feature_height / float(source_height),
+        ]
+    )
     b1 = boxes_t1 * scale
     b2 = boxes_t2 * scale
     w1 = (b1[:, 2] - b1[:, 0]).clamp_min(1.0e-6)
@@ -339,7 +361,9 @@ def _hard_cycle_error(forward: dict[str, Any], reverse: dict[str, Any]) -> torch
     batch_index = torch.arange(batch, device=dx.device)[:, None, None]
     back_dx = rdx[batch_index, qy, qx]
     back_dy = rdy[batch_index, qy, qx]
-    return torch.sqrt((forward["hard_dx"] + back_dx).square() + (forward["hard_dy"] + back_dy).square() + 1.0e-12)
+    return torch.sqrt(
+        (forward["hard_dx"] + back_dx).square() + (forward["hard_dy"] + back_dy).square() + 1.0e-12
+    )
 
 
 def _physics_metrics(
@@ -360,7 +384,9 @@ def _physics_metrics(
     }
 
 
-def _flow_scalar_summary(dx: torch.Tensor, dy: torch.Tensor, physical: dict[str, torch.Tensor]) -> list[dict[str, float]]:
+def _flow_scalar_summary(
+    dx: torch.Tensor, dy: torch.Tensor, physical: dict[str, torch.Tensor]
+) -> list[dict[str, float]]:
     rows: list[dict[str, float]] = []
     fg = physical["foreground"].float()
     batch, height, width = dx.shape
@@ -378,25 +404,37 @@ def _flow_scalar_summary(dx: torch.Tensor, dy: torch.Tensor, physical: dict[str,
         ycenter = yy - ymean
         dxmean = tx
         dymean = ty
-        slope_x = (xcenter * (dx[i] - dxmean) * weight).sum() / ((xcenter.square() * weight).sum().clamp_min(1.0e-6))
-        slope_y = (ycenter * (dy[i] - dymean) * weight).sum() / ((ycenter.square() * weight).sum().clamp_min(1.0e-6))
-        rows.append({
-            "flow_translation_x": float(tx.item()),
-            "flow_translation_y": float(ty.item()),
-            "flow_divergence_x": float(slope_x.item()),
-            "flow_divergence_y": float(slope_y.item()),
-            "bbox_translation_x": float(physical["translation_x"][i].item()),
-            "bbox_translation_y": float(physical["translation_y"][i].item()),
-            "bbox_log_width_ratio": float(physical["log_width_ratio"][i].item()),
-            "bbox_log_height_ratio": float(physical["log_height_ratio"][i].item()),
-            "bbox_log_isotropic_ratio": float(physical["log_isotropic_ratio"][i].item()),
-        })
+        slope_x = (xcenter * (dx[i] - dxmean) * weight).sum() / (
+            (xcenter.square() * weight).sum().clamp_min(1.0e-6)
+        )
+        slope_y = (ycenter * (dy[i] - dymean) * weight).sum() / (
+            (ycenter.square() * weight).sum().clamp_min(1.0e-6)
+        )
+        rows.append(
+            {
+                "flow_translation_x": float(tx.item()),
+                "flow_translation_y": float(ty.item()),
+                "flow_divergence_x": float(slope_x.item()),
+                "flow_divergence_y": float(slope_y.item()),
+                "bbox_translation_x": float(physical["translation_x"][i].item()),
+                "bbox_translation_y": float(physical["translation_y"][i].item()),
+                "bbox_log_width_ratio": float(physical["log_width_ratio"][i].item()),
+                "bbox_log_height_ratio": float(physical["log_height_ratio"][i].item()),
+                "bbox_log_isotropic_ratio": float(physical["log_isotropic_ratio"][i].item()),
+            }
+        )
     return rows
 
 
-def _load_checkpoint_model(path: Path, device: torch.device) -> tuple[CausalScaleTTC, dict[str, Any]]:
+def _load_checkpoint_model(
+    path: Path, device: torch.device
+) -> tuple[CausalScaleTTC, dict[str, Any]]:
     checkpoint = torch.load(path, map_location="cpu", weights_only=False)
-    if not isinstance(checkpoint, dict) or "model_state_dict" not in checkpoint or "model_config" not in checkpoint:
+    if (
+        not isinstance(checkpoint, dict)
+        or "model_state_dict" not in checkpoint
+        or "model_config" not in checkpoint
+    ):
         raise ValueError(f"not a causal-scale model_best.pt: {path}")
     raw = dict(checkpoint["model_config"])
     if raw.get("transport_enabled", False):
@@ -408,7 +446,9 @@ def _load_checkpoint_model(path: Path, device: torch.device) -> tuple[CausalScal
     return model, checkpoint
 
 
-def _random_model_like(checkpoint: dict[str, Any], device: torch.device, seed: int) -> CausalScaleTTC:
+def _random_model_like(
+    checkpoint: dict[str, Any], device: torch.device, seed: int
+) -> CausalScaleTTC:
     seed_everything(seed, deterministic=True)
     raw = dict(checkpoint["model_config"])
     raw["risk_thresholds_s"] = tuple(raw["risk_thresholds_s"])
@@ -448,7 +488,9 @@ def _collect_metadata_and_teacher(
     }
 
 
-def _collect_student_features(model: CausalScaleTTC, loader: DataLoader, device: torch.device) -> torch.Tensor:
+def _collect_student_features(
+    model: CausalScaleTTC, loader: DataLoader, device: torch.device
+) -> torch.Tensor:
     rows: list[torch.Tensor] = []
     with torch.inference_mode():
         for host in loader:
@@ -498,15 +540,22 @@ def _teacher_audit(
             v2 = valid[idx, 1].to(device)
             shuffled_t2 = teacher[partner_idx, 1].to(device)
             shuffled_v2 = valid[partner_idx, 1].to(device)
-            spatial_t2 = torch.roll(t2, shifts=(t2.shape[-2] // 2, t2.shape[-1] // 2), dims=(-2, -1))
-            spatial_v2 = torch.roll(v2, shifts=(v2.shape[-2] // 2, v2.shape[-1] // 2), dims=(-2, -1))
+            spatial_t2 = torch.roll(
+                t2, shifts=(t2.shape[-2] // 2, t2.shape[-1] // 2), dims=(-2, -1)
+            )
+            spatial_v2 = torch.roll(
+                v2, shifts=(v2.shape[-2] // 2, v2.shape[-1] // 2), dims=(-2, -1)
+            )
             real = _teacher_match(t1, t2, v1, v2, radius=radius)
             shuffled = _teacher_match(t1, shuffled_t2, v1, shuffled_v2, radius=radius)
             spatial_null = _teacher_match(t1, spatial_t2, v1, spatial_v2, radius=radius)
             physical = _bbox_affine_flow(
-                boxes[idx, 1].to(device), boxes[idx, 2].to(device),
-                source_height=source_h, source_width=source_w,
-                feature_height=t1.shape[-2], feature_width=t1.shape[-1],
+                boxes[idx, 1].to(device),
+                boxes[idx, 2].to(device),
+                source_height=source_h,
+                source_width=source_w,
+                feature_height=t1.shape[-2],
+                feature_width=t1.shape[-1],
             )
             fg = physical["foreground"] & real["fixed_valid"] & real["local_valid"]
             global_mask = real["fixed_valid"] & real["local_valid"]
@@ -518,16 +567,34 @@ def _teacher_audit(
             shuffled_best = _masked_mean(shuffled["best_error"], shuffled_mask)
             spatial_fixed = _masked_mean(spatial_null["fixed_error"], spatial_mask)
             spatial_best = _masked_mean(spatial_null["best_error"], spatial_mask)
-            real_reduction = (real_fixed - real_best) / real_fixed if real_fixed > 0 else float("nan")
-            shuffled_reduction = (shuffled_fixed - shuffled_best) / shuffled_fixed if shuffled_fixed > 0 else float("nan")
-            spatial_reduction = (spatial_fixed - spatial_best) / spatial_fixed if spatial_fixed > 0 else float("nan")
+            real_reduction = (
+                (real_fixed - real_best) / real_fixed if real_fixed > 0 else float("nan")
+            )
+            shuffled_reduction = (
+                (shuffled_fixed - shuffled_best) / shuffled_fixed
+                if shuffled_fixed > 0
+                else float("nan")
+            )
+            spatial_reduction = (
+                (spatial_fixed - spatial_best) / spatial_fixed
+                if spatial_fixed > 0
+                else float("nan")
+            )
             real_fg_fixed = _masked_mean(real["fixed_error"], fg)
             real_fg_best = _masked_mean(real["best_error"], fg)
             shuffled_fg = physical["foreground"] & shuffled["fixed_valid"] & shuffled["local_valid"]
             shuffled_fg_fixed = _masked_mean(shuffled["fixed_error"], shuffled_fg)
             shuffled_fg_best = _masked_mean(shuffled["best_error"], shuffled_fg)
-            real_fg_reduction = (real_fg_fixed - real_fg_best) / real_fg_fixed if real_fg_fixed > 0 else float("nan")
-            shuffled_fg_reduction = (shuffled_fg_fixed - shuffled_fg_best) / shuffled_fg_fixed if shuffled_fg_fixed > 0 else float("nan")
+            real_fg_reduction = (
+                (real_fg_fixed - real_fg_best) / real_fg_fixed
+                if real_fg_fixed > 0
+                else float("nan")
+            )
+            shuffled_fg_reduction = (
+                (shuffled_fg_fixed - shuffled_fg_best) / shuffled_fg_fixed
+                if shuffled_fg_fixed > 0
+                else float("nan")
+            )
             physics = _physics_metrics(real["hard_dx"], real["hard_dy"], physical)
             magnitude = torch.sqrt(physical["dx"].square() + physical["dy"].square())
             coverage = _masked_mean((magnitude <= radius).float(), physical["foreground"])
@@ -543,8 +610,14 @@ def _teacher_audit(
                 "spatial_null_error_reduction": spatial_reduction,
                 "excess_error_reduction": real_reduction - shuffled_reduction,
                 "excess_error_reduction_vs_spatial_null": real_reduction - spatial_reduction,
-                "real_vs_shuffled_best_error_improvement": (shuffled_best - real_best) / shuffled_best if shuffled_best > 0 else float("nan"),
-                "real_vs_spatial_null_best_error_improvement": (spatial_best - real_best) / spatial_best if spatial_best > 0 else float("nan"),
+                "real_vs_shuffled_best_error_improvement": (shuffled_best - real_best)
+                / shuffled_best
+                if shuffled_best > 0
+                else float("nan"),
+                "real_vs_spatial_null_best_error_improvement": (spatial_best - real_best)
+                / spatial_best
+                if spatial_best > 0
+                else float("nan"),
                 "real_fg_error_reduction": real_fg_reduction,
                 "shuffled_fg_error_reduction": shuffled_fg_reduction,
                 "foreground_excess_error_reduction": real_fg_reduction - shuffled_fg_reduction,
@@ -557,17 +630,29 @@ def _teacher_audit(
                 aggregate[key].append(value)
             scalar_rows.extend(_flow_scalar_summary(real["hard_dx"], real["hard_dy"], physical))
             for local, global_idx in enumerate(idx.tolist()):
-                per_sample.append({
-                    "kind": "teacher",
-                    "model": "dinov3_relations",
-                    "radius": radius,
-                    "sample_token": bank["sample_tokens"][global_idx],
-                    "sequence_id": bank["sequence_ids"][global_idx],
-                    "partner_sample_token": bank["sample_tokens"][int(partner[global_idx])],
-                    "real_best_error": float(real["best_error"][local][real["local_valid"][local]].mean().item()),
-                    "shuffled_best_error": float(shuffled["best_error"][local][shuffled["local_valid"][local]].mean().item()),
-                    "spatial_null_best_error": float(spatial_null["best_error"][local][spatial_null["local_valid"][local]].mean().item()),
-                })
+                per_sample.append(
+                    {
+                        "kind": "teacher",
+                        "model": "dinov3_relations",
+                        "radius": radius,
+                        "sample_token": bank["sample_tokens"][global_idx],
+                        "sequence_id": bank["sequence_ids"][global_idx],
+                        "partner_sample_token": bank["sample_tokens"][int(partner[global_idx])],
+                        "real_best_error": float(
+                            real["best_error"][local][real["local_valid"][local]].mean().item()
+                        ),
+                        "shuffled_best_error": float(
+                            shuffled["best_error"][local][shuffled["local_valid"][local]]
+                            .mean()
+                            .item()
+                        ),
+                        "spatial_null_best_error": float(
+                            spatial_null["best_error"][local][spatial_null["local_valid"][local]]
+                            .mean()
+                            .item()
+                        ),
+                    }
+                )
         row = {key: _finite_mean(values) for key, values in aggregate.items()}
         for flow_name, bbox_name, output_name in (
             ("flow_translation_x", "bbox_translation_x", "translation_x_pearson"),
@@ -575,7 +660,9 @@ def _teacher_audit(
             ("flow_divergence_x", "bbox_log_width_ratio", "divergence_x_vs_log_width_pearson"),
             ("flow_divergence_y", "bbox_log_height_ratio", "divergence_y_vs_log_height_pearson"),
         ):
-            row[output_name] = _pearson([r[flow_name] for r in scalar_rows], [r[bbox_name] for r in scalar_rows])
+            row[output_name] = _pearson(
+                [r[flow_name] for r in scalar_rows], [r[bbox_name] for r in scalar_rows]
+            )
         summary[str(radius)] = row
     return summary, per_sample
 
@@ -613,25 +700,38 @@ def _student_audit(
             t1 = features[idx, 0].to(device=device, dtype=torch.float32)
             t2 = features[idx, 1].to(device=device, dtype=torch.float32)
             shuffled_t2 = features[partner_idx, 1].to(device=device, dtype=torch.float32)
-            spatial_t2 = torch.roll(t2, shifts=(t2.shape[-2] // 2, t2.shape[-1] // 2), dims=(-2, -1))
+            spatial_t2 = torch.roll(
+                t2, shifts=(t2.shape[-2] // 2, t2.shape[-1] // 2), dims=(-2, -1)
+            )
             real = _student_correlation(t1, t2, radius=radius, temperatures=temperatures)
-            shuffled = _student_correlation(t1, shuffled_t2, radius=radius, temperatures=temperatures)
-            spatial_null = _student_correlation(t1, spatial_t2, radius=radius, temperatures=temperatures)
+            shuffled = _student_correlation(
+                t1, shuffled_t2, radius=radius, temperatures=temperatures
+            )
+            spatial_null = _student_correlation(
+                t1, spatial_t2, radius=radius, temperatures=temperatures
+            )
             reverse = _student_correlation(t2, t1, radius=radius, temperatures=temperatures)
             physical = _bbox_affine_flow(
-                boxes[idx, 1].to(device), boxes[idx, 2].to(device),
-                source_height=source_h, source_width=source_w,
-                feature_height=t1.shape[-2], feature_width=t1.shape[-1],
+                boxes[idx, 1].to(device),
+                boxes[idx, 2].to(device),
+                source_height=source_h,
+                source_width=source_w,
+                feature_height=t1.shape[-2],
+                feature_width=t1.shape[-1],
             )
-            fg = physical["foreground"] & real["valid"]
+            _fg = physical["foreground"] & real["valid"]
             hard_physics = _physics_metrics(real["hard_dx"], real["hard_dy"], physical)
             cycle = _hard_cycle_error(real, reverse)
             values = {
                 "real_top1_cosine": _masked_mean(real["top1"], real["valid"]),
                 "shuffled_top1_cosine": _masked_mean(shuffled["top1"], shuffled["valid"]),
-                "real_minus_shuffled_top1_cosine": _masked_mean(real["top1"], real["valid"]) - _masked_mean(shuffled["top1"], shuffled["valid"]),
-                "spatial_null_top1_cosine": _masked_mean(spatial_null["top1"], spatial_null["valid"]),
-                "real_minus_spatial_null_top1_cosine": _masked_mean(real["top1"], real["valid"]) - _masked_mean(spatial_null["top1"], spatial_null["valid"]),
+                "real_minus_shuffled_top1_cosine": _masked_mean(real["top1"], real["valid"])
+                - _masked_mean(shuffled["top1"], shuffled["valid"]),
+                "spatial_null_top1_cosine": _masked_mean(
+                    spatial_null["top1"], spatial_null["valid"]
+                ),
+                "real_minus_spatial_null_top1_cosine": _masked_mean(real["top1"], real["valid"])
+                - _masked_mean(spatial_null["top1"], spatial_null["valid"]),
                 "real_margin": _masked_mean(real["margin"], real["valid"]),
                 "shuffled_margin": _masked_mean(shuffled["margin"], shuffled["valid"]),
                 "real_zscore": _masked_mean(real["zscore"], real["valid"]),
@@ -651,26 +751,38 @@ def _student_audit(
                 tvals = {
                     "entropy": _masked_mean(soft["entropy"], real["valid"]),
                     "shuffled_entropy": _masked_mean(shuffled_soft["entropy"], shuffled["valid"]),
-                    "effective_candidates": _masked_mean(soft["effective_candidates"], real["valid"]),
+                    "effective_candidates": _masked_mean(
+                        soft["effective_candidates"], real["valid"]
+                    ),
                     "effective_fraction": _masked_mean(soft["effective_fraction"], real["valid"]),
                     "top1_probability": _masked_mean(soft["top1_probability"], real["valid"]),
-                    "top5_probability_mass": _masked_mean(soft["top5_probability_mass"], real["valid"]),
+                    "top5_probability_mass": _masked_mean(
+                        soft["top5_probability_mass"], real["valid"]
+                    ),
                     **{f"soft_{k}": v for k, v in soft_physics.items()},
                 }
                 for key, value in tvals.items():
                     temp_aggregate[tau][key].append(value)
             for local, global_idx in enumerate(idx.tolist()):
-                per_sample.append({
-                    "kind": "student",
-                    "model": model_name,
-                    "radius": radius,
-                    "sample_token": bank["sample_tokens"][global_idx],
-                    "sequence_id": bank["sequence_ids"][global_idx],
-                    "partner_sample_token": bank["sample_tokens"][int(partner[global_idx])],
-                    "real_top1_cosine": float(real["top1"][local][real["valid"][local]].mean().item()),
-                    "shuffled_top1_cosine": float(shuffled["top1"][local][shuffled["valid"][local]].mean().item()),
-                    "spatial_null_top1_cosine": float(spatial_null["top1"][local][spatial_null["valid"][local]].mean().item()),
-                })
+                per_sample.append(
+                    {
+                        "kind": "student",
+                        "model": model_name,
+                        "radius": radius,
+                        "sample_token": bank["sample_tokens"][global_idx],
+                        "sequence_id": bank["sequence_ids"][global_idx],
+                        "partner_sample_token": bank["sample_tokens"][int(partner[global_idx])],
+                        "real_top1_cosine": float(
+                            real["top1"][local][real["valid"][local]].mean().item()
+                        ),
+                        "shuffled_top1_cosine": float(
+                            shuffled["top1"][local][shuffled["valid"][local]].mean().item()
+                        ),
+                        "spatial_null_top1_cosine": float(
+                            spatial_null["top1"][local][spatial_null["valid"][local]].mean().item()
+                        ),
+                    }
+                )
         row = {key: _finite_mean(values) for key, values in hard_aggregate.items()}
         for flow_name, bbox_name, output_name in (
             ("flow_translation_x", "bbox_translation_x", "translation_x_pearson"),
@@ -678,15 +790,19 @@ def _student_audit(
             ("flow_divergence_x", "bbox_log_width_ratio", "divergence_x_vs_log_width_pearson"),
             ("flow_divergence_y", "bbox_log_height_ratio", "divergence_y_vs_log_height_pearson"),
         ):
-            row[output_name] = _pearson([r[flow_name] for r in scalar_rows], [r[bbox_name] for r in scalar_rows])
+            row[output_name] = _pearson(
+                [r[flow_name] for r in scalar_rows], [r[bbox_name] for r in scalar_rows]
+            )
         radius_summary[str(radius)] = row
         for tau in temperatures:
-            temperature_rows.append({
-                "model": model_name,
-                "radius": radius,
-                "temperature": tau,
-                **{key: _finite_mean(values) for key, values in temp_aggregate[tau].items()},
-            })
+            temperature_rows.append(
+                {
+                    "model": model_name,
+                    "radius": radius,
+                    "temperature": tau,
+                    **{key: _finite_mean(values) for key, values in temp_aggregate[tau].items()},
+                }
+            )
     return radius_summary, temperature_rows, per_sample
 
 
@@ -703,11 +819,18 @@ def _decision(
     for radius in radii:
         row = teacher[str(radius)]
         checks = {
-            "bbox_physical_coverage": float(row["bbox_physical_coverage"]) >= float(selection["bbox_physical_coverage_min"]),
-            "teacher_excess_reduction": float(row["excess_error_reduction"]) >= float(selection["teacher_excess_error_reduction_min"]),
-            "teacher_real_vs_shuffled": float(row["real_vs_shuffled_best_error_improvement"]) >= float(selection["teacher_real_vs_shuffled_best_error_improvement_min"]),
-            "teacher_real_vs_spatial_null": float(row["real_vs_spatial_null_best_error_improvement"]) >= float(selection["teacher_real_vs_spatial_null_best_error_improvement_min"]),
-            "teacher_foreground_excess": float(row["foreground_excess_error_reduction"]) >= float(selection["teacher_foreground_excess_error_reduction_min"]),
+            "bbox_physical_coverage": float(row["bbox_physical_coverage"])
+            >= float(selection["bbox_physical_coverage_min"]),
+            "teacher_excess_reduction": float(row["excess_error_reduction"])
+            >= float(selection["teacher_excess_error_reduction_min"]),
+            "teacher_real_vs_shuffled": float(row["real_vs_shuffled_best_error_improvement"])
+            >= float(selection["teacher_real_vs_shuffled_best_error_improvement_min"]),
+            "teacher_real_vs_spatial_null": float(
+                row["real_vs_spatial_null_best_error_improvement"]
+            )
+            >= float(selection["teacher_real_vs_spatial_null_best_error_improvement_min"]),
+            "teacher_foreground_excess": float(row["foreground_excess_error_reduction"])
+            >= float(selection["teacher_foreground_excess_error_reduction_min"]),
         }
         radius_checks[str(radius)] = checks
         if all(checks.values()):
@@ -719,7 +842,9 @@ def _decision(
         "selected_radius": selected_radius,
         "selected_temperature": None,
         "a5_corr_authorized": False,
-        "next_action": "REJECT_RELATIONAL_TRANSPORT" if selected_radius is None else "DIAGNOSE_STUDENT",
+        "next_action": "REJECT_RELATIONAL_TRANSPORT"
+        if selected_radius is None
+        else "DIAGNOSE_STUDENT",
     }
     if selected_radius is None:
         return result
@@ -729,15 +854,20 @@ def _decision(
     hard_epe_improvement = float(a4["physical_epe_improvement_over_zero"])
     random_improvement = float(random["physical_epe_improvement_over_zero"])
     student_checks = {
-        "hard_physics": hard_epe_improvement >= float(selection["student_hard_epe_improvement_over_zero_min"]),
-        "learned_over_random": (hard_epe_improvement - random_improvement) >= float(selection["student_hard_epe_advantage_over_random_min"]),
-        "temporal_specificity": float(a4["real_minus_shuffled_top1_cosine"]) >= float(selection["student_real_vs_shuffled_top1_cosine_min"]),
-        "spatial_null_specificity": float(a4["real_minus_spatial_null_top1_cosine"]) >= float(selection["student_real_vs_spatial_null_top1_cosine_min"]),
-        "confidence_margin": float(a4["real_margin"]) >= float(selection["student_confidence_margin_min"]),
+        "hard_physics": hard_epe_improvement
+        >= float(selection["student_hard_epe_improvement_over_zero_min"]),
+        "learned_over_random": (hard_epe_improvement - random_improvement)
+        >= float(selection["student_hard_epe_advantage_over_random_min"]),
+        "temporal_specificity": float(a4["real_minus_shuffled_top1_cosine"])
+        >= float(selection["student_real_vs_shuffled_top1_cosine_min"]),
+        "spatial_null_specificity": float(a4["real_minus_spatial_null_top1_cosine"])
+        >= float(selection["student_real_vs_spatial_null_top1_cosine_min"]),
+        "confidence_margin": float(a4["real_margin"])
+        >= float(selection["student_confidence_margin_min"]),
     }
     result["student_checks"] = student_checks
-    result["a4_minus_a4d_hard_epe_improvement"] = (
-        hard_epe_improvement - float(students["A4D"][str(selected_radius)]["physical_epe_improvement_over_zero"])
+    result["a4_minus_a4d_hard_epe_improvement"] = hard_epe_improvement - float(
+        students["A4D"][str(selected_radius)]["physical_epe_improvement_over_zero"]
     )
     result["a4_minus_random_hard_epe_improvement"] = hard_epe_improvement - random_improvement
     if not all(student_checks.values()):
@@ -745,20 +875,22 @@ def _decision(
         return result
 
     rows = [
-        row for row in temperature_rows
+        row
+        for row in temperature_rows
         if row["model"] == "A4" and int(row["radius"]) == selected_radius
     ]
     rows.sort(key=lambda row: float(row["temperature"]), reverse=True)
     acceptable = [
-        row for row in rows
-        if float(row["entropy"]) <= float(selection["student_entropy_max"])
+        row for row in rows if float(row["entropy"]) <= float(selection["student_entropy_max"])
     ]
     if not acceptable:
         result["next_action"] = "SOFTMAX_CALIBRATION_REQUIRED"
         return result
     chosen = acceptable[0]
     result["selected_temperature"] = float(chosen["temperature"])
-    result["temperature_selection_rule"] = "largest preregistered tau satisfying entropy_max after hard matching passes"
+    result["temperature_selection_rule"] = (
+        "largest preregistered tau satisfying entropy_max after hard matching passes"
+    )
     result["a5_corr_authorized"] = True
     result["next_action"] = "AUTHORIZE_A5_CORR"
     return result
@@ -783,9 +915,16 @@ def run(
     data = source.get("data")
     if not isinstance(data, dict):
         raise ValueError("source config lacks data mapping")
-    if any(data.get(key) is not False for key in ("official_test_opened", "codabench_opened", "evttc_test_opened")):
+    if any(
+        data.get(key) is not False
+        for key in ("official_test_opened", "codabench_opened", "evttc_test_opened")
+    ):
         raise ValueError("V2 refuses any config authorizing private/test access")
-    if protocol.get("public_train_only") is not True or protocol.get("validation_or_test_opened") is not False or int(protocol.get("optimizer_steps", -1)) != 0:
+    if (
+        protocol.get("public_train_only") is not True
+        or protocol.get("validation_or_test_opened") is not False
+        or int(protocol.get("optimizer_steps", -1)) != 0
+    ):
         raise ValueError("V2 protocol violated train-only/zero-training contract")
     radii = tuple(int(v) for v in protocol["radii"])
     temperatures = tuple(float(v) for v in protocol["temperatures"])
@@ -813,7 +952,13 @@ def run(
     )
     indices = _selected_indices(len(dataset), samples)
     subset = Subset(dataset, indices)
-    loader = DataLoader(subset, batch_size=batch_size, shuffle=False, num_workers=0, collate_fn=collate_object_event_v4)
+    loader = DataLoader(
+        subset,
+        batch_size=batch_size,
+        shuffle=False,
+        num_workers=0,
+        collate_fn=collate_object_event_v4,
+    )
     bank = _collect_metadata_and_teacher(loader)
     partner, different_track_fraction = _same_sequence_null_partners(
         bank["sequence_ids"], bank["track_ids"], indices
@@ -835,8 +980,14 @@ def run(
     for model_name, model in models.items():
         features = _collect_student_features(model, loader, device)
         summary, temps, rows = _student_audit(
-            model_name, features, bank, partner,
-            device=device, radii=radii, temperatures=temperatures, batch_size=batch_size,
+            model_name,
+            features,
+            bank,
+            partner,
+            device=device,
+            radii=radii,
+            temperatures=temperatures,
+            batch_size=batch_size,
         )
         student_summary[model_name] = summary
         temperature_rows.extend(temps)
@@ -851,11 +1002,16 @@ def run(
     student_csv = output_dir / "a5_preflight_v2_student_radius.csv"
     temperature_csv = output_dir / "a5_preflight_v2_temperature.csv"
     sample_csv = output_dir / "a5_preflight_v2_samples.csv"
-    pd.DataFrame([{"radius": int(r), **teacher_summary[str(r)]} for r in radii]).to_csv(teacher_csv, index=False, lineterminator="\n")
-    pd.DataFrame([
-        {"model": model, "radius": int(r), **student_summary[model][str(r)]}
-        for model in ("A4", "A4D", "RANDOM") for r in radii
-    ]).to_csv(student_csv, index=False, lineterminator="\n")
+    pd.DataFrame([{"radius": int(r), **teacher_summary[str(r)]} for r in radii]).to_csv(
+        teacher_csv, index=False, lineterminator="\n"
+    )
+    pd.DataFrame(
+        [
+            {"model": model, "radius": int(r), **student_summary[model][str(r)]}
+            for model in ("A4", "A4D", "RANDOM")
+            for r in radii
+        ]
+    ).to_csv(student_csv, index=False, lineterminator="\n")
     pd.DataFrame(temperature_rows).to_csv(temperature_csv, index=False, lineterminator="\n")
     pd.DataFrame(per_sample).to_csv(sample_csv, index=False, lineterminator="\n")
 

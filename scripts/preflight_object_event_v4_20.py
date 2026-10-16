@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Preflight for v4.20 train-only box pseudoflow decoder."""
+
 from __future__ import annotations
 
 import argparse
@@ -22,8 +23,12 @@ def main() -> int:
     args = parser.parse_args()
 
     for path in (
-        args.cache_manifest, args.v419_summary, args.v419_train_scores,
-        args.v419_validation_predictions, args.ensemble_train, args.ensemble_validation,
+        args.cache_manifest,
+        args.v419_summary,
+        args.v419_train_scores,
+        args.v419_validation_predictions,
+        args.ensemble_train,
+        args.ensemble_validation,
     ):
         if not path.is_file():
             raise FileNotFoundError(path)
@@ -60,7 +65,13 @@ def main() -> int:
     if sorted(seeds) != [7, 13, 23]:
         raise RuntimeError("v4.20 requires true v4.8 seeds 7,13,23")
 
-    required = {"sequence_id", "sample_token", "track_id", "target_expansion", "fused_prediction_expansion"}
+    required = {
+        "sequence_id",
+        "sample_token",
+        "track_id",
+        "target_expansion",
+        "fused_prediction_expansion",
+    }
     rows: dict[str, int] = {}
     for split, path in (("train", args.ensemble_train), ("validation", args.ensemble_validation)):
         frame = pd.read_csv(path)
@@ -71,22 +82,30 @@ def main() -> int:
 
     if "dense_divergence_score" not in pd.read_csv(args.v419_train_scores, nrows=1).columns:
         raise RuntimeError("v4.19 train score table missing dense_divergence_score")
-    if "dense_divergence_score" not in pd.read_csv(args.v419_validation_predictions, nrows=1).columns:
+    if (
+        "dense_divergence_score"
+        not in pd.read_csv(args.v419_validation_predictions, nrows=1).columns
+    ):
         raise RuntimeError("v4.19 validation table missing dense_divergence_score")
 
-    print(json.dumps({
-        "status": "passed",
-        "v419_recommendation": recommendation,
-        "rows": rows,
-        "scientific_contract": {
-            "boxes_are_train_only_pseudoflow_supervision": True,
-            "ttc_labels_not_used_by_decoder_loss": True,
-            "three_frozen_true_seed_v48_backbones": True,
-            "no_new_absolute_sign_classifier": True,
-            "official_eap_test_not_opened": True,
-            "evttc_not_opened": True,
-        },
-    }, indent=2))
+    print(
+        json.dumps(
+            {
+                "status": "passed",
+                "v419_recommendation": recommendation,
+                "rows": rows,
+                "scientific_contract": {
+                    "boxes_are_train_only_pseudoflow_supervision": True,
+                    "ttc_labels_not_used_by_decoder_loss": True,
+                    "three_frozen_true_seed_v48_backbones": True,
+                    "no_new_absolute_sign_classifier": True,
+                    "official_eap_test_not_opened": True,
+                    "evttc_not_opened": True,
+                },
+            },
+            indent=2,
+        )
+    )
     return 0
 
 

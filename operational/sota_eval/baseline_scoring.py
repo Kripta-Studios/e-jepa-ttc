@@ -243,12 +243,8 @@ def score_pilot(
     }
     selected = _validate_query_identity(paths["expanded_manifest"], paths["historical_manifest"])
     exposed = _read_exposed_rows(paths["exposed_predictions"])
-    cmax = _read_fragments(
-        paths["cmax_fragments"], "evttc_cmax_reference_equation_v1"
-    )
-    strttc = _read_fragments(
-        paths["strttc_fragments"], "evttc_fixed_query_geometric_baselines_v1"
-    )
+    cmax = _read_fragments(paths["cmax_fragments"], "evttc_cmax_reference_equation_v1")
+    strttc = _read_fragments(paths["strttc_fragments"], "evttc_fixed_query_geometric_baselines_v1")
     output_rows: list[dict[str, object]] = []
     for query in selected:
         query_id = str(query["query_id"])
@@ -317,9 +313,7 @@ def score_pilot(
                 "prediction_coverage_on_exposed_truth": values[
                     "prediction_coverage_on_exposed_truth"
                 ],
-                "complete_exposed_cohort_status": values[
-                    "complete_exposed_cohort_status"
-                ],
+                "complete_exposed_cohort_status": values["complete_exposed_cohort_status"],
                 "complete_cohort_mae_seconds": complete.get("mae_seconds", ""),
                 "conditional_support": values["conditional_support"],
                 "conditional_mae_seconds": conditional.get("mae_seconds", ""),
@@ -327,12 +321,8 @@ def score_pilot(
                 "conditional_median_absolute_error_seconds": conditional.get(
                     "median_absolute_error_seconds", ""
                 ),
-                "conditional_signed_bias_seconds": conditional.get(
-                    "signed_bias_seconds", ""
-                ),
-                "conditional_metrics_not_rankable": values[
-                    "conditional_metrics_not_rankable"
-                ],
+                "conditional_signed_bias_seconds": conditional.get("signed_bias_seconds", ""),
+                "conditional_metrics_not_rankable": values["conditional_metrics_not_rankable"],
             }
         )
     _atomic_csv(output / "METHOD_METRICS.csv", metric_rows, tuple(metric_rows[0]))
@@ -351,9 +341,7 @@ def score_pilot(
             "source": paths["exposed_predictions"].as_posix(),
             "already_exposed_only": True,
             "exposed_queries": sum(row["truth_status"] == "EXPOSED" for row in output_rows),
-            "not_exposed_queries": sum(
-                row["truth_status"] == "NOT_EXPOSED" for row in output_rows
-            ),
+            "not_exposed_queries": sum(row["truth_status"] == "NOT_EXPOSED" for row in output_rows),
             "new_test_labels_opened": False,
         },
         "methods": metrics,

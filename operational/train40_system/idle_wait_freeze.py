@@ -93,10 +93,8 @@ def run(output: Path) -> None:
     ):
         raise ValueError("Preserved 20ms pilot contract differs")
     if not (
-        float(pilot_passive["process_cpu_seconds"])
-        < float(pilot_baseline["process_cpu_seconds"])
-        and float(pilot_passive["wall_seconds"])
-        > float(pilot_baseline["wall_seconds"]) * 1.10
+        float(pilot_passive["process_cpu_seconds"]) < float(pilot_baseline["process_cpu_seconds"])
+        and float(pilot_passive["wall_seconds"]) > float(pilot_baseline["wall_seconds"]) * 1.10
     ):
         raise ValueError("Preserved 20ms pilot must retain its unsuccessful wall-time result")
     source_names = (

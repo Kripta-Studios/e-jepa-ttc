@@ -126,7 +126,9 @@ def _track_cluster_bootstrap(
     seed: int,
 ) -> dict[str, float]:
     cluster_key = frame["sequence_id"].astype(str) + "|" + frame["track_id"].astype(str)
-    clusters = {key: np.flatnonzero(cluster_key.to_numpy() == key) for key in sorted(cluster_key.unique())}
+    clusters = {
+        key: np.flatnonzero(cluster_key.to_numpy() == key) for key in sorted(cluster_key.unique())
+    }
     keys = np.asarray(list(clusters), dtype=object)
     target = frame["target_expansion"].to_numpy(dtype=np.float64)
     prediction = frame[prediction_column].to_numpy(dtype=np.float64)
@@ -155,9 +157,15 @@ def _load_run(run_root: Path, seed: int) -> tuple[dict[str, Any], pd.DataFrame]:
     summary = json.loads(summary_path.read_text(encoding="utf-8"))
     predictions = pd.read_csv(predictions_path)
     required = {
-        "sequence_id", "sample_token", "track_id", "delta_t_s",
-        "target_ttc_s", "target_expansion", "prediction_expansion",
-        "zero_events_expansion", "shuffled_mean_expansion",
+        "sequence_id",
+        "sample_token",
+        "track_id",
+        "delta_t_s",
+        "target_ttc_s",
+        "target_expansion",
+        "prediction_expansion",
+        "zero_events_expansion",
+        "shuffled_mean_expansion",
     }
     missing = sorted(required - set(predictions.columns))
     if missing:
@@ -170,10 +178,16 @@ def _load_run(run_root: Path, seed: int) -> tuple[dict[str, Any], pd.DataFrame]:
 
 def _align_predictions(seed_frames: dict[int, pd.DataFrame]) -> pd.DataFrame:
     seeds = sorted(seed_frames)
-    base = seed_frames[seeds[0]][[
-        "sequence_id", "sample_token", "track_id", "delta_t_s",
-        "target_ttc_s", "target_expansion",
-    ]].copy()
+    base = seed_frames[seeds[0]][
+        [
+            "sequence_id",
+            "sample_token",
+            "track_id",
+            "delta_t_s",
+            "target_ttc_s",
+            "target_expansion",
+        ]
+    ].copy()
     keys = ["sequence_id", "sample_token", "track_id"]
     for seed in seeds:
         frame = seed_frames[seed]
@@ -201,13 +215,15 @@ def _pairwise(seed_frames: dict[int, pd.DataFrame]) -> pd.DataFrame:
         prediction_a = seed_frames[seed_a]["prediction_expansion"].to_numpy(dtype=np.float64)
         for seed_b in seeds[index + 1 :]:
             prediction_b = seed_frames[seed_b]["prediction_expansion"].to_numpy(dtype=np.float64)
-            rows.append({
-                "seed_a": seed_a,
-                "seed_b": seed_b,
-                "prediction_pearson": _pearson(prediction_a, prediction_b),
-                "mean_abs_difference": float(np.mean(np.abs(prediction_a - prediction_b))),
-                "sign_agreement": float(np.mean((prediction_a < 0.0) == (prediction_b < 0.0))),
-            })
+            rows.append(
+                {
+                    "seed_a": seed_a,
+                    "seed_b": seed_b,
+                    "prediction_pearson": _pearson(prediction_a, prediction_b),
+                    "mean_abs_difference": float(np.mean(np.abs(prediction_a - prediction_b))),
+                    "sign_agreement": float(np.mean((prediction_a < 0.0) == (prediction_b < 0.0))),
+                }
+            )
     return pd.DataFrame.from_records(rows)
 
 
@@ -228,20 +244,24 @@ def aggregate(
         event = cast(dict[str, Any], metrics["event"])
         sequence = cast(dict[str, Any], metrics["per_sequence"])
         dependence = cast(dict[str, Any], metrics["event_dependence"])
-        per_seed_rows.append({
-            "seed": seed,
-            "screen_passed": bool(summary.get("screen_passed", False)),
-            "best_epoch": int(summary.get("best_epoch", 0)),
-            "pearson": _finite_float(event.get("pearson")),
-            "balanced_sign_accuracy": _finite_float(event.get("balanced_sign_accuracy")),
-            "negative_accuracy": _finite_float(event.get("negative_accuracy")),
-            "expansion_mae": _finite_float(event.get("expansion_mae"), default=float("inf")),
-            "saturation": _finite_float(event.get("ttc_saturation_rate"), default=float("inf")),
-            "sequence_macro_pearson": _finite_float(sequence.get("macro_pearson")),
-            "minimum_sequence_pearson": _finite_float(sequence.get("minimum_pearson")),
-            "zero_event_pearson_drop": _finite_float(dependence.get("zero_event_pearson_drop")),
-            "shuffled_event_pearson_drop": _finite_float(dependence.get("shuffled_event_pearson_drop")),
-        })
+        per_seed_rows.append(
+            {
+                "seed": seed,
+                "screen_passed": bool(summary.get("screen_passed", False)),
+                "best_epoch": int(summary.get("best_epoch", 0)),
+                "pearson": _finite_float(event.get("pearson")),
+                "balanced_sign_accuracy": _finite_float(event.get("balanced_sign_accuracy")),
+                "negative_accuracy": _finite_float(event.get("negative_accuracy")),
+                "expansion_mae": _finite_float(event.get("expansion_mae"), default=float("inf")),
+                "saturation": _finite_float(event.get("ttc_saturation_rate"), default=float("inf")),
+                "sequence_macro_pearson": _finite_float(sequence.get("macro_pearson")),
+                "minimum_sequence_pearson": _finite_float(sequence.get("minimum_pearson")),
+                "zero_event_pearson_drop": _finite_float(dependence.get("zero_event_pearson_drop")),
+                "shuffled_event_pearson_drop": _finite_float(
+                    dependence.get("shuffled_event_pearson_drop")
+                ),
+            }
+        )
     per_seed = pd.DataFrame.from_records(per_seed_rows).sort_values("seed").reset_index(drop=True)
     aligned = _align_predictions(seed_frames)
     pairwise = _pairwise(seed_frames)
@@ -249,8 +269,12 @@ def aggregate(
     ensemble_metrics = _branch_metrics(aligned, "ensemble_expansion")
     zero_metrics = _branch_metrics(aligned, "ensemble_zero_events_expansion")
     shuffled_metrics = _branch_metrics(aligned, "ensemble_shuffled_expansion")
-    ensemble_metrics["zero_event_pearson_drop"] = ensemble_metrics["pearson"] - zero_metrics["pearson"]
-    ensemble_metrics["shuffled_event_pearson_drop"] = ensemble_metrics["pearson"] - shuffled_metrics["pearson"]
+    ensemble_metrics["zero_event_pearson_drop"] = (
+        ensemble_metrics["pearson"] - zero_metrics["pearson"]
+    )
+    ensemble_metrics["shuffled_event_pearson_drop"] = (
+        ensemble_metrics["pearson"] - shuffled_metrics["pearson"]
+    )
     ensemble_metrics["zero_event_mean_abs_change"] = float(
         np.mean(np.abs(aligned["ensemble_expansion"] - aligned["ensemble_zero_events_expansion"]))
     )
@@ -258,7 +282,9 @@ def aggregate(
         np.mean(np.abs(aligned["ensemble_expansion"] - aligned["ensemble_shuffled_expansion"]))
     )
     ensemble_metrics["mean_sample_prediction_std"] = float(aligned["seed_prediction_std"].mean())
-    ensemble_metrics["p95_sample_prediction_std"] = float(aligned["seed_prediction_std"].quantile(0.95))
+    ensemble_metrics["p95_sample_prediction_std"] = float(
+        aligned["seed_prediction_std"].quantile(0.95)
+    )
 
     sequence_rows: list[dict[str, Any]] = []
     for sequence_id, frame in aligned.groupby("sequence_id", sort=True):
@@ -272,7 +298,8 @@ def aggregate(
     ]
     minimum_sequence_negative_accuracy = (
         float(eligible_negative_sequences["negative_accuracy"].min())
-        if not eligible_negative_sequences.empty else 0.0
+        if not eligible_negative_sequences.empty
+        else 0.0
     )
     ensemble_metrics["minimum_sequence_negative_accuracy"] = minimum_sequence_negative_accuracy
     ensemble_metrics["negative_sequence_count"] = int(len(eligible_negative_sequences))
@@ -289,13 +316,15 @@ def aggregate(
     pairwise_min = float(pairwise["prediction_pearson"].min()) if not pairwise.empty else 0.0
     gates = {
         "all_seed_screens": bool(per_seed["screen_passed"].all())
-        if config.require_all_seed_screens else True,
+        if config.require_all_seed_screens
+        else True,
         "mean_pearson": float(pearsons.mean()) >= config.mean_pearson_gate,
         "worst_pearson": float(pearsons.min()) >= config.worst_pearson_gate,
         "pearson_std": float(pearsons.std(ddof=0)) <= config.pearson_std_gate,
         "mean_balanced_sign": float(balanced.mean()) >= config.mean_balanced_sign_gate,
         "worst_balanced_sign": float(balanced.min()) >= config.worst_balanced_sign_gate,
-        "mean_negative_accuracy": float(negative_accuracy.mean()) >= config.mean_negative_accuracy_gate,
+        "mean_negative_accuracy": float(negative_accuracy.mean())
+        >= config.mean_negative_accuracy_gate,
         "ensemble_pearson": ensemble_metrics["pearson"] >= config.ensemble_pearson_gate,
         "ensemble_track_bootstrap_lower": track_bootstrap["lower_95"]
         >= config.ensemble_track_bootstrap_lower_gate,
@@ -345,7 +374,10 @@ def aggregate(
         "pairwise_min_prediction_pearson": pairwise_min,
         "fragile_sequences": per_sequence[
             (per_sequence["negative_count"] >= config.per_sequence_negative_min_count)
-            & (per_sequence["negative_accuracy"] < config.ensemble_min_sequence_negative_accuracy_gate)
+            & (
+                per_sequence["negative_accuracy"]
+                < config.ensemble_min_sequence_negative_accuracy_gate
+            )
         ].to_dict(orient="records"),
         "gates": gates,
         "robust_passed": robust_passed,

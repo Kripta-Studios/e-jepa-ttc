@@ -150,16 +150,8 @@ def _select_exact_public_rows(
     labels["_matched_order"] = [order[str(value)] for value in labels["sample_token"]]
     data_order = np.argsort(np.asarray(data["_matched_order"], dtype=np.int64))
     label_order = np.argsort(np.asarray(labels["_matched_order"], dtype=np.int64))
-    data = (
-        data.iloc[data_order]
-        .drop(columns="_matched_order")
-        .reset_index(drop=True)
-    )
-    labels = (
-        labels.iloc[label_order]
-        .drop(columns="_matched_order")
-        .reset_index(drop=True)
-    )
+    data = data.iloc[data_order].drop(columns="_matched_order").reset_index(drop=True)
+    labels = labels.iloc[label_order].drop(columns="_matched_order").reset_index(drop=True)
     return data, labels
 
 

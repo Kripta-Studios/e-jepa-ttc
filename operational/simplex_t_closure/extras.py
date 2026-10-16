@@ -17,10 +17,10 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 
-from runtime import atomic_json, digest, publish_json, resumable_hierarchical_losses
-
 from e_jepa_ttc.evaluation.stage63_65 import benchmark_phase, strict_macro_mass
 from e_jepa_ttc.simplex_t.training import state_digest
+
+from runtime import atomic_json, digest, publish_json, resumable_hierarchical_losses
 
 CAMPAIGN = ROOT / "artifacts/simplex_t/scientific_campaign"
 OUT = ROOT / "artifacts/simplex_t/closure_20261002/supplement"
@@ -257,9 +257,9 @@ def arithmetic() -> None:
             "EWMA_0P3S_H8@fixed",
         )
     }
-    from adapters import UNCERTAINTY_DIRECTORY_GUARD, UNCERTAINTY_EXISTS_GUARD, resumable_function
-
     from e_jepa_ttc.simplex_t import uncertainty_analysis
+
+    from adapters import UNCERTAINTY_DIRECTORY_GUARD, UNCERTAINTY_EXISTS_GUARD, resumable_function
 
     def hierarchical(
         frame: pd.DataFrame, losses: np.ndarray, output: Path, callback: Callable[[], None]

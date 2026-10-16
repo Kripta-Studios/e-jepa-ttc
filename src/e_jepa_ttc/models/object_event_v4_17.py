@@ -6,6 +6,7 @@ signed anchor from the three true-seed v4.8 backbones and lets the causal head
 learn only an odd residual around that anchor. Magnitude remains frozen to the
 median absolute v4.8 expansion.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -33,12 +34,15 @@ class ObjectEventV417Config:
             raise ValueError("v4.17 dimensions must be positive")
         if not 0.0 < self.magnitude_floor < self.maximum_magnitude:
             raise ValueError("invalid magnitude bounds")
-        if min(
-            self.anchor_feature_clip,
-            self.anchor_logit_strength,
-            self.maximum_residual_logit,
-            self.epsilon,
-        ) <= 0.0:
+        if (
+            min(
+                self.anchor_feature_clip,
+                self.anchor_logit_strength,
+                self.maximum_residual_logit,
+                self.epsilon,
+            )
+            <= 0.0
+        ):
             raise ValueError("v4.17 numerical controls must be positive")
 
 

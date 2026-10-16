@@ -5,6 +5,7 @@ The full 8,192-row V4 tensor is intentionally never held in RAM.  Production
 payloads are written as small signed fold shards (default eight rows each) so the
 subsequent replay can stay within the memory envelope of a 12 GiB GPU.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -390,9 +391,14 @@ def _chunk_payload(
     # Keep cache payload compact on disk.  Replay validation promotes to float32
     # one shard at a time before GPU inference.
     events = torch.stack(
-        [torch.as_tensor(record["event_v4_common_roi"]).detach().cpu().to(torch.float16) for record in records]
+        [
+            torch.as_tensor(record["event_v4_common_roi"]).detach().cpu().to(torch.float16)
+            for record in records
+        ]
     )
-    delta_scalar = torch.tensor([float(item["garl_delta_t_s"]) for item in rows], dtype=torch.float32)
+    delta_scalar = torch.tensor(
+        [float(item["garl_delta_t_s"]) for item in rows], dtype=torch.float32
+    )
     delta = delta_scalar[:, None].expand(-1, 2).clone()
     dt_us = torch.round(delta_scalar * 1_000_000.0).to(torch.int64).clamp_min(1)
     endpoints = torch.stack((torch.zeros_like(dt_us), dt_us, 2 * dt_us), dim=1)
@@ -531,7 +537,9 @@ def main() -> int:
                     "cache_recovery": (
                         {
                             "used": True,
-                            "artifact": (args.recovery_cache_dir.resolve() / "RECOVERY.json").as_posix(),
+                            "artifact": (
+                                args.recovery_cache_dir.resolve() / "RECOVERY.json"
+                            ).as_posix(),
                             "artifact_sha256": recovery_record["artifact_sha256"],
                         }
                         if recovery_record is not None
@@ -547,8 +555,7 @@ def main() -> int:
     except Exception as error:  # fail closed and surface the exact production failure
         p.exit(
             2,
-            "V8 autopsy input materialization failed closed: "
-            f"{type(error).__name__}: {error}\n",
+            f"V8 autopsy input materialization failed closed: {type(error).__name__}: {error}\n",
         )
     print(
         json.dumps(

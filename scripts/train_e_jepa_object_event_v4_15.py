@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Train Object Event TTC v4.15 shared odd sign projection."""
+
 from __future__ import annotations
 
 import argparse
@@ -26,25 +27,6 @@ if str(ROOT) not in sys.path:
 if str(ROOT / "src") not in sys.path:
     sys.path.insert(0, str(ROOT / "src"))
 
-from scripts.train_e_jepa_object_event_v4_2 import (  # noqa: E402
-    _git_commit,
-    _json_safe,
-    _resolve_device,
-    _seed,
-    _sha256,
-)
-from scripts.train_e_jepa_object_event_v4_6 import _materialize  # noqa: E402
-from scripts.train_e_jepa_object_event_v4_8 import _load_config as _load_v48_config  # noqa: E402
-from scripts.train_e_jepa_object_event_v4_12 import (  # noqa: E402
-    IDENTITY_COLUMNS,
-    _align_ensemble,
-    _balanced_subset_indices,
-    _load_backbone,
-    _load_probe_config,
-    _per_sequence,
-    _read_ensemble,
-    _sample_weights,
-)
 from e_jepa_ttc.models.object_event_v4_12 import ObjectEventTTCV412  # noqa: E402
 from e_jepa_ttc.models.object_event_v4_15 import (  # noqa: E402
     ObjectEventTTCV415,
@@ -67,6 +49,25 @@ from e_jepa_ttc.training.object_event_v4_15 import (  # noqa: E402
     select_oof_threshold,
     sign_statistics,
     v415_screen_gates,
+)
+from scripts.train_e_jepa_object_event_v4_2 import (  # noqa: E402
+    _git_commit,
+    _json_safe,
+    _resolve_device,
+    _seed,
+    _sha256,
+)
+from scripts.train_e_jepa_object_event_v4_6 import _materialize  # noqa: E402
+from scripts.train_e_jepa_object_event_v4_8 import _load_config as _load_v48_config  # noqa: E402
+from scripts.train_e_jepa_object_event_v4_12 import (  # noqa: E402
+    IDENTITY_COLUMNS,
+    _align_ensemble,
+    _balanced_subset_indices,
+    _load_backbone,
+    _load_probe_config,
+    _per_sequence,
+    _read_ensemble,
+    _sample_weights,
 )
 
 
@@ -92,17 +93,20 @@ class V415TrainConfig:
     per_sequence_negative_min_count: int = 20
 
     def __post_init__(self) -> None:
-        if min(
-            self.descriptor_batch_size,
-            self.head_batch_size,
-            self.overfit_samples,
-            self.overfit_epochs,
-            self.fold_count,
-            self.fold_epochs,
-            self.final_epochs,
-            self.tail_alpha_count,
-            self.per_sequence_negative_min_count,
-        ) <= 0:
+        if (
+            min(
+                self.descriptor_batch_size,
+                self.head_batch_size,
+                self.overfit_samples,
+                self.overfit_epochs,
+                self.fold_count,
+                self.fold_epochs,
+                self.final_epochs,
+                self.tail_alpha_count,
+                self.per_sequence_negative_min_count,
+            )
+            <= 0
+        ):
             raise ValueError("v4.15 integer controls must be positive")
         if self.fold_count < 2:
             raise ValueError("fold_count must be at least two")
@@ -242,9 +246,7 @@ def _train_head(
     device: torch.device,
     seed: int,
 ) -> tuple[dict[str, torch.Tensor], int, list[dict[str, float]]]:
-    optimizer = torch.optim.AdamW(
-        head.parameters(), lr=learning_rate, weight_decay=weight_decay
-    )
+    optimizer = torch.optim.AdamW(head.parameters(), lr=learning_rate, weight_decay=weight_decay)
     train_weights = weights[train_indices].double().clamp_min(1.0e-12)
     best_state = copy.deepcopy(head.state_dict())
     best_epoch = 0
@@ -268,9 +270,7 @@ def _train_head(
             y = target[index].to(device=device, dtype=torch.float32)
             optimizer.zero_grad(set_to_none=True)
             logits = head(x)
-            loss = reversal_balanced_sign_loss(
-                logits, -logits, y, config=loss_config
-            ).total
+            loss = reversal_balanced_sign_loss(logits, -logits, y, config=loss_config).total
             loss.backward()
             torch.nn.utils.clip_grad_norm_(head.parameters(), max_grad_norm)
             optimizer.step()
@@ -284,7 +284,7 @@ def _train_head(
                     descriptors[validation_indices].to(device=device, dtype=torch.float32)
                 ).cpu()
             labels = (target[validation_indices] < 0.0).numpy()
-            pred = (torch.sigmoid(logits).numpy() >= 0.5)
+            pred = torch.sigmoid(logits).numpy() >= 0.5
             pos = ~labels
             neg = labels
             pos_acc = float(np.mean(~pred[pos])) if pos.any() else 0.0
@@ -341,9 +341,7 @@ def _metrics(
         prediction,
         frame["delta_t_s"].to_numpy(dtype=np.float64),
     )
-    per_sequence = _per_sequence(
-        frame, prediction, minimum_negatives=minimum_negatives
-    )
+    per_sequence = _per_sequence(frame, prediction, minimum_negatives=minimum_negatives)
     result["minimum_sequence_negative_accuracy"] = per_sequence.attrs[
         "minimum_sequence_negative_accuracy"
     ]
@@ -410,9 +408,7 @@ def run(
         cache_manifest, "validation", input_size=base_config.input_size
     )
     train_frame = _align_ensemble(train_split, _read_ensemble(ensemble_train_path))
-    validation_frame = _align_ensemble(
-        validation_split, _read_ensemble(ensemble_validation_path)
-    )
+    validation_frame = _align_ensemble(validation_split, _read_ensemble(ensemble_validation_path))
 
     if mode == "overfit":
         indices = _balanced_subset_indices(
@@ -471,7 +467,15 @@ def run(
             prediction,
             minimum_negatives=train_config.per_sequence_negative_min_count,
         )
-        antisymmetry = float(np.max(np.abs(torch.sigmoid(torch.from_numpy(logits)).numpy() + torch.sigmoid(torch.from_numpy(-logits)).numpy() - 1.0)))
+        antisymmetry = float(
+            np.max(
+                np.abs(
+                    torch.sigmoid(torch.from_numpy(logits)).numpy()
+                    + torch.sigmoid(torch.from_numpy(-logits)).numpy()
+                    - 1.0
+                )
+            )
+        )
         gates = _overfit_gates(stats, antisymmetry)
         passed = all(gates.values())
         torch.save(
@@ -517,9 +521,7 @@ def run(
         branch="event",
         seed=train_config.seed + 1,
     )
-    target_train = torch.as_tensor(
-        train_frame["target_expansion"].to_numpy(dtype=np.float32)
-    )
+    target_train = torch.as_tensor(train_frame["target_expansion"].to_numpy(dtype=np.float32))
     weights = _sample_weights(train_frame)
     fold_indices = _folds(
         train_frame["sequence_id"].astype(str).tolist(),
@@ -578,7 +580,10 @@ def run(
             {
                 "fold": fold,
                 "held_out_sequences": sorted(
-                    train_frame.iloc[validation_indices_np]["sequence_id"].astype(str).unique().tolist()
+                    train_frame.iloc[validation_indices_np]["sequence_id"]
+                    .astype(str)
+                    .unique()
+                    .tolist()
                 ),
                 "best_epoch": best_epoch,
                 "best_objective": min(row["objective"] for row in history),
@@ -648,17 +653,13 @@ def run(
         np.clip(1.0 / max(final_training_median_abs_logit, 1.0e-6), 0.1, 10.0)
     )
     final_train_logits = final_train_logits * final_logit_scale
-    final_train_probability = 1.0 / (
-        1.0 + np.exp(-np.clip(final_train_logits, -40.0, 40.0))
-    )
+    final_train_probability = 1.0 / (1.0 + np.exp(-np.clip(final_train_logits, -40.0, 40.0)))
     train_positive = train_frame["target_expansion"].to_numpy(dtype=np.float64) >= 0.0
     final_threshold = positive_tail_threshold(
         final_train_probability[train_positive], selected.tail_alpha
     )
     train_positive_magnitude = np.abs(
-        train_frame["fused_prediction_expansion"].to_numpy(dtype=np.float64)[
-            train_positive
-        ]
+        train_frame["fused_prediction_expansion"].to_numpy(dtype=np.float64)[train_positive]
     )
     final_magnitude_ceiling = positive_magnitude_ceiling(
         train_positive_magnitude, train_config.magnitude_cap_positive_quantile
@@ -670,12 +671,8 @@ def run(
         device=device,
     )
     validation_logits = raw_validation_logits * final_logit_scale
-    validation_probability = 1.0 / (
-        1.0 + np.exp(-np.clip(validation_logits, -40.0, 40.0))
-    )
-    baseline_prediction = validation_frame[
-        "fused_prediction_expansion"
-    ].to_numpy(dtype=np.float64)
+    validation_probability = 1.0 / (1.0 + np.exp(-np.clip(validation_logits, -40.0, 40.0)))
+    baseline_prediction = validation_frame["fused_prediction_expansion"].to_numpy(dtype=np.float64)
     uncapped_prediction, uncapped_override = projected_numpy(
         baseline_prediction, validation_probability, final_threshold
     )
@@ -725,8 +722,7 @@ def run(
         1.0 + np.exp(-np.clip(zero_logits_raw * final_logit_scale, -40.0, 40.0))
     )
     shuffled_probability = 1.0 / (
-        1.0
-        + np.exp(-np.clip(shuffled_logits_raw * final_logit_scale, -40.0, 40.0))
+        1.0 + np.exp(-np.clip(shuffled_logits_raw * final_logit_scale, -40.0, 40.0))
     )
     zero_prediction, _ = projected_numpy(
         validation_frame["fused_zero_events_expansion"].to_numpy(dtype=np.float64),
@@ -783,11 +779,15 @@ def run(
     )
     passed = all(gates.values())
 
-    output = validation_frame.loc[:, list(IDENTITY_COLUMNS) + [
-        "delta_t_s",
-        "target_ttc_s",
-        "target_expansion",
-    ]].copy()
+    output = validation_frame.loc[
+        :,
+        list(IDENTITY_COLUMNS)
+        + [
+            "delta_t_s",
+            "target_ttc_s",
+            "target_expansion",
+        ],
+    ].copy()
     output["baseline_prediction_expansion"] = baseline_prediction
     output["negative_probability"] = validation_probability
     output["selected_threshold"] = final_threshold
@@ -800,10 +800,14 @@ def run(
     output.to_csv(output_dir / "validation_predictions.csv", index=False)
     per_sequence.to_csv(output_dir / "validation_per_sequence.csv", index=False)
     sweep.to_csv(output_dir / "oof_threshold_sweep.csv", index=False)
-    oof_output = train_frame.loc[:, list(IDENTITY_COLUMNS) + [
-        "target_expansion",
-        "fused_prediction_expansion",
-    ]].copy()
+    oof_output = train_frame.loc[
+        :,
+        list(IDENTITY_COLUMNS)
+        + [
+            "target_expansion",
+            "fused_prediction_expansion",
+        ],
+    ].copy()
     oof_output["oof_calibrated_logit"] = oof_logits
     oof_output["oof_negative_probability"] = oof_probability
     oof_output["oof_projected_prediction_expansion"] = oof_prediction
@@ -820,7 +824,9 @@ def run(
             "magnitude_ceiling_expansion": final_magnitude_ceiling,
             "final_logit_scale": final_logit_scale,
             "descriptor_dim": model.descriptor_dim,
-            "checkpoint_paths": {seed: path.resolve().as_posix() for seed, path in checkpoint_paths.items()},
+            "checkpoint_paths": {
+                seed: path.resolve().as_posix() for seed, path in checkpoint_paths.items()
+            },
         },
         output_dir / "shared_odd_projection.pt",
     )
@@ -903,12 +909,16 @@ def main() -> int:
     parser.add_argument(
         "--v412-config",
         type=Path,
-        default=Path("configs/experiment/e_jepa_garl_object_event_directional_sign_probe_v4_12.yaml"),
+        default=Path(
+            "configs/experiment/e_jepa_garl_object_event_directional_sign_probe_v4_12.yaml"
+        ),
     )
     parser.add_argument(
         "--config",
         type=Path,
-        default=Path("configs/experiment/e_jepa_garl_object_event_shared_odd_projection_v4_15.yaml"),
+        default=Path(
+            "configs/experiment/e_jepa_garl_object_event_shared_odd_projection_v4_15.yaml"
+        ),
     )
     parser.add_argument(
         "--v48-checkpoint",

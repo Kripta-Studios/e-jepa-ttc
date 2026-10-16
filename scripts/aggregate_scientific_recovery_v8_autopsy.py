@@ -73,12 +73,14 @@ def _signed_artifact(path: Path) -> dict[str, Any]:
 # autopsy calculations.
 _AUTOPSY_SCALAR_REPLAY_COLUMNS: tuple[str, ...] = tuple(
     dict.fromkeys(
-        (*OOF_V8_REQUIRED_COLUMNS,
-         "guard_margin",
-         "analytic_log_height_ratio",
-         "residual_log_height_ratio",
-         "occupancy_entropy",
-         "motion_magnitude")
+        (
+            *OOF_V8_REQUIRED_COLUMNS,
+            "guard_margin",
+            "analytic_log_height_ratio",
+            "residual_log_height_ratio",
+            "occupancy_entropy",
+            "motion_magnitude",
+        )
     )
 )
 
@@ -188,9 +190,7 @@ def _align_with_external_garl(
     if target_sha256(garl) != target_sha256(a5):
         raise ValueError("Garl comparator targets differ from A5")
 
-    reference_assignment = a5.loc[
-        :, ["token_id", "sequence_id", "track_id", "outer_fold"]
-    ].copy()
+    reference_assignment = a5.loc[:, ["token_id", "sequence_id", "track_id", "outer_fold"]].copy()
     comparator_assignment = garl.loc[
         :, ["token_id", "sequence_id", "track_id", "outer_fold"]
     ].copy()
@@ -207,9 +207,9 @@ def _align_with_external_garl(
     ):
         raise ValueError("Garl comparator outer-fold assignments differ from A5")
 
-    garl_prediction = garl.loc[
-        :, ["token_id", "sequence_id", "track_id", "prediction_ttc"]
-    ].rename(columns={"prediction_ttc": "garl_prediction_ttc"})
+    garl_prediction = garl.loc[:, ["token_id", "sequence_id", "track_id", "prediction_ttc"]].rename(
+        columns={"prediction_ttc": "garl_prediction_ttc"}
+    )
     aligned = aligned.merge(
         garl_prediction,
         on=["token_id", "sequence_id", "track_id"],
@@ -288,9 +288,7 @@ def _diagnostic_records(frame: pd.DataFrame, groups: pd.Series) -> dict[str, Any
     """Return schema-compatible, effect-based regime diagnostics."""
 
     result: dict[str, Any] = {}
-    for label, group in frame.assign(_group=groups).groupby(
-        "_group", observed=True, sort=False
-    ):
+    for label, group in frame.assign(_group=groups).groupby("_group", observed=True, sort=False):
         effect = pd.to_numeric(group["c2f_minus_a5_raw_mid"], errors="coerce").to_numpy(
             dtype=np.float64
         )
@@ -318,9 +316,7 @@ def _binary_auc(labels: np.ndarray, scores: np.ndarray) -> float:
         return float("nan")
     ranks = pd.Series(scores).rank(method="average").to_numpy(dtype=np.float64)
     rank_sum_positive = float(ranks[labels].sum())
-    return float(
-        (rank_sum_positive - positives * (positives + 1) / 2.0) / (positives * negatives)
-    )
+    return float((rank_sum_positive - positives * (positives + 1) / 2.0) / (positives * negatives))
 
 
 def _auc_separability(labels: np.ndarray, scores: np.ndarray) -> float:
@@ -328,9 +324,7 @@ def _auc_separability(labels: np.ndarray, scores: np.ndarray) -> float:
     return float(max(auc, 1.0 - auc)) if np.isfinite(auc) else float("nan")
 
 
-def _regime_evidence(
-    a5: pd.DataFrame, c2f: pd.DataFrame, garl: pd.DataFrame
-) -> dict[str, Any]:
+def _regime_evidence(a5: pd.DataFrame, c2f: pd.DataFrame, garl: pd.DataFrame) -> dict[str, Any]:
     joined = _align_with_external_garl(a5, c2f, garl)
     joined = joined.merge(
         a5.loc[
@@ -381,9 +375,11 @@ def _regime_evidence(
     for sequence, group in joined.assign(_wins=wins_c2f).groupby("sequence_id", sort=True):
         share = float(group["_wins"].mean())
         per_sequence_complementarity[str(sequence)] = min(share, 1.0 - share)
-    stable_sequence_fraction = float(
-        np.mean([value >= 0.02 for value in per_sequence_complementarity.values()])
-    ) if per_sequence_complementarity else 0.0
+    stable_sequence_fraction = (
+        float(np.mean([value >= 0.02 for value in per_sequence_complementarity.values()]))
+        if per_sequence_complementarity
+        else 0.0
+    )
     stable_sequences = bool(stable_sequence_fraction >= 0.75)
 
     a5_mid = _sequence_macro(joined, "a5_prediction_ttc")
@@ -504,13 +500,18 @@ def aggregate_autopsy(
         }
     if len(factorial) != 5:
         raise ValueError("H3 gate requires exactly five completed A5 factorial cells")
-    cell_mid = {name: float(value["metrics"]["mid_macro_sequence"]) for name, value in factorial.items()}
+    cell_mid = {
+        name: float(value["metrics"]["mid_macro_sequence"]) for name, value in factorial.items()
+    }
     factorial_contrasts = {
         "residual_on_analytic": cell_mid["analytic_residual"] - cell_mid["analytic_only"],
         "transport_on_analytic": cell_mid["analytic_transport"] - cell_mid["analytic_only"],
-        "transport_given_residual": cell_mid["analytic_residual_transport"] - cell_mid["analytic_residual"],
-        "residual_given_transport": cell_mid["analytic_residual_transport"] - cell_mid["analytic_transport"],
-        "history_given_analytic_residual_transport": cell_mid["analytic_residual_transport_history"] - cell_mid["analytic_residual_transport"],
+        "transport_given_residual": cell_mid["analytic_residual_transport"]
+        - cell_mid["analytic_residual"],
+        "residual_given_transport": cell_mid["analytic_residual_transport"]
+        - cell_mid["analytic_transport"],
+        "history_given_analytic_residual_transport": cell_mid["analytic_residual_transport_history"]
+        - cell_mid["analytic_residual_transport"],
     }
     for name, cell in factorial.items():
         residual_delta = (
@@ -594,9 +595,7 @@ def aggregate_autopsy(
             "evidence_present": bool(len(group) > 0),
             "stable": bool(
                 len(group) > 0
-                and 0.02
-                <= float((group["c2f_minus_a5_raw_mid"] < 0.0).mean())
-                <= 0.98
+                and 0.02 <= float((group["c2f_minus_a5_raw_mid"] < 0.0).mean()) <= 0.98
             ),
         }
         for name, group in joined_experts.groupby("sequence_id", sort=True)
@@ -608,9 +607,7 @@ def aggregate_autopsy(
             "evidence_present": bool(len(group) > 0),
             "stable": bool(
                 len(group) > 0
-                and 0.02
-                <= float((group["c2f_minus_a5_raw_mid"] < 0.0).mean())
-                <= 0.98
+                and 0.02 <= float((group["c2f_minus_a5_raw_mid"] < 0.0).mean()) <= 0.98
             ),
         }
         for label, group in joined_experts.groupby("_bucket", sort=False)
@@ -706,9 +703,9 @@ def aggregate_autopsy(
             {
                 "a5": a5["checkpoint_sha256"].iloc[0],
                 "c2f": c2f["checkpoint_sha256"].iloc[0],
-                "garl_frozen_oof_source_sha256": protocol_value["sources"][
-                    "garl_oof_predictions"
-                ]["sha256"],
+                "garl_frozen_oof_source_sha256": protocol_value["sources"]["garl_oof_predictions"][
+                    "sha256"
+                ],
             }
         ),
         "metrics": metrics,

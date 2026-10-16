@@ -80,8 +80,12 @@ def main() -> None:
         files.update(path for path in root.glob(pattern) if path.is_file())
     reservation = 2 * sum(path.stat().st_size for path in files) + 64 * 1024**2
     snapshot = admitted([root])
-    if args.other_reserved_bytes < 0 or not snapshot["has_headroom"] or not shared_write_admission(
-        snapshot["written_volume_free_bytes"][0], args.other_reserved_bytes + reservation
+    if (
+        args.other_reserved_bytes < 0
+        or not snapshot["has_headroom"]
+        or not shared_write_admission(
+            snapshot["written_volume_free_bytes"][0], args.other_reserved_bytes + reservation
+        )
     ):
         raise RuntimeError("RESOURCE_PAUSE before progress package")
     commit = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()

@@ -1,9 +1,10 @@
 """Leak-free OOF residual stacking utilities for Object Event TTC v4.26."""
+
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import dataclass
 from itertools import combinations
-from typing import Iterable
 
 import numpy as np
 import pandas as pd
@@ -149,16 +150,22 @@ def track_metrics(
         pred = group["prediction"].to_numpy(dtype=np.float64)
         neg = target < 0.0
         pos = target >= 0.0
-        records.append({
-            "sequence_id": str(sequence_id),
-            "track_id": str(track_id),
-            "count": int(len(group)),
-            "negative_count": int(np.sum(neg)),
-            "positive_count": int(np.sum(pos)),
-            "pearson": pearson(pred, target),
-            "negative_accuracy": float(np.mean(pred[neg] < 0.0)) if np.any(neg) else float("nan"),
-            "positive_accuracy": float(np.mean(pred[pos] >= 0.0)) if np.any(pos) else float("nan"),
-        })
+        records.append(
+            {
+                "sequence_id": str(sequence_id),
+                "track_id": str(track_id),
+                "count": int(len(group)),
+                "negative_count": int(np.sum(neg)),
+                "positive_count": int(np.sum(pos)),
+                "pearson": pearson(pred, target),
+                "negative_accuracy": float(np.mean(pred[neg] < 0.0))
+                if np.any(neg)
+                else float("nan"),
+                "positive_accuracy": float(np.mean(pred[pos] >= 0.0))
+                if np.any(pos)
+                else float("nan"),
+            }
+        )
     per_track = pd.DataFrame.from_records(records)
     eligible = per_track[per_track["count"] >= minimum_track_samples]
     negative = per_track[per_track["negative_count"] >= minimum_negative_track_samples]
@@ -168,8 +175,12 @@ def track_metrics(
         "negative_track_count": int(len(negative)),
         "track_macro_pearson": float(eligible["pearson"].mean()) if len(eligible) else 0.0,
         "minimum_track_pearson": float(eligible["pearson"].min()) if len(eligible) else 0.0,
-        "negative_track_macro_accuracy": float(negative["negative_accuracy"].mean()) if len(negative) else 0.0,
-        "minimum_negative_track_accuracy": float(negative["negative_accuracy"].min()) if len(negative) else 0.0,
+        "negative_track_macro_accuracy": float(negative["negative_accuracy"].mean())
+        if len(negative)
+        else 0.0,
+        "minimum_negative_track_accuracy": float(negative["negative_accuracy"].min())
+        if len(negative)
+        else 0.0,
     }
     return metrics, per_track
 

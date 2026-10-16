@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Train and evaluate a geometry-only box-pseudoflow refiner on frozen v4.8 correspondences."""
+"Train and evaluate a geometry-only box-pseudoflow refiner on frozen v4.8 correspondences."
+
 from __future__ import annotations
 
 import argparse
@@ -7,10 +8,11 @@ import json
 import shutil
 import sys
 import time
+from collections.abc import Mapping
 from dataclasses import asdict, dataclass, fields
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Mapping, cast
+from typing import Any, cast
 
 import numpy as np
 import pandas as pd
@@ -23,6 +25,19 @@ if str(ROOT) not in sys.path:
 if str(ROOT / "src") not in sys.path:
     sys.path.insert(0, str(ROOT / "src"))
 
+from e_jepa_ttc.models.object_event_v4_19 import (  # noqa: E402
+    dense_flow_scores,
+    local_correlation_flow,
+)
+from e_jepa_ttc.models.object_event_v4_20 import (  # noqa: E402
+    BoxPseudoFlowRefiner,
+    ObjectEventV420Config,
+)
+from e_jepa_ttc.training.object_event_v4_20 import (  # noqa: E402
+    ObjectEventV420LossConfig,
+    box_affine_pseudoflow,
+    pseudoflow_loss,
+)
 from scripts.train_e_jepa_object_event_v4_6 import _materialize  # noqa: E402
 from scripts.train_e_jepa_object_event_v4_8 import _load_config as _load_v48_config  # noqa: E402
 from scripts.train_e_jepa_object_event_v4_12 import _align_ensemble, _read_ensemble  # noqa: E402
@@ -32,13 +47,6 @@ from scripts.train_e_jepa_object_event_v4_16 import (  # noqa: E402
     _metrics,
     _parse_checkpoints,
     _resolve_device,
-)
-from e_jepa_ttc.models.object_event_v4_19 import dense_flow_scores, local_correlation_flow  # noqa: E402
-from e_jepa_ttc.models.object_event_v4_20 import BoxPseudoFlowRefiner, ObjectEventV420Config  # noqa: E402
-from e_jepa_ttc.training.object_event_v4_20 import (  # noqa: E402
-    ObjectEventV420LossConfig,
-    box_affine_pseudoflow,
-    pseudoflow_loss,
 )
 
 
@@ -61,7 +69,7 @@ class DenseInputs:
     reverse: torch.Tensor
     diagnostics: dict[str, float]
 
-    def subset(self, indices: np.ndarray | torch.Tensor) -> "DenseInputs":
+    def subset(self, indices: np.ndarray | torch.Tensor) -> DenseInputs:
         idx = torch.as_tensor(indices, dtype=torch.long)
         return DenseInputs(self.forward[idx], self.reverse[idx], dict(self.diagnostics))
 
@@ -74,7 +82,15 @@ def _construct(cls: type[Any], values: Mapping[str, Any]) -> Any:
     return cls(**dict(values))
 
 
-def _load_config(path: Path) -> tuple[ObjectEventV420Config, TrainConfig, ObjectEventV420LossConfig, dict[str, float], dict[str, float]]:
+def _load_config(
+    path: Path,
+) -> tuple[
+    ObjectEventV420Config,
+    TrainConfig,
+    ObjectEventV420LossConfig,
+    dict[str, float],
+    dict[str, float],
+]:
     raw = yaml.safe_load(path.read_text(encoding="utf-8"))
     if not isinstance(raw, dict):
         raise ValueError("v4.20 config must be a mapping")
@@ -150,13 +166,25 @@ def _extract_dense_inputs(
         conf_f = torch.stack(seed_conf_f, dim=0).median(dim=0).values
         conf_r = torch.stack(seed_conf_r, dim=0).median(dim=0).values
         fg = torch.stack(seed_fg, dim=0).median(dim=0).values
-        dis_f = torch.sqrt(((flow_f - med_f[None]).square().sum(dim=2)).median(dim=0).values + 1.0e-8)
-        dis_r = torch.sqrt(((flow_r - med_r[None]).square().sum(dim=2)).median(dim=0).values + 1.0e-8)
+        dis_f = torch.sqrt(
+            ((flow_f - med_f[None]).square().sum(dim=2)).median(dim=0).values + 1.0e-8
+        )
+        dis_r = torch.sqrt(
+            ((flow_r - med_r[None]).square().sum(dim=2)).median(dim=0).values + 1.0e-8
+        )
 
-        forward_rows.append(torch.cat((med_f, conf_f[:, None], fg[:, None], dis_f[:, None]), dim=1).half().cpu())
-        reverse_rows.append(torch.cat((med_r, conf_r[:, None], fg[:, None], dis_r[:, None]), dim=1).half().cpu())
-        confidences.append(0.5 * (conf_f.mean(dim=(-2, -1)) + conf_r.mean(dim=(-2, -1))).float().cpu())
-        disagreements.append(0.5 * (dis_f.mean(dim=(-2, -1)) + dis_r.mean(dim=(-2, -1))).float().cpu())
+        forward_rows.append(
+            torch.cat((med_f, conf_f[:, None], fg[:, None], dis_f[:, None]), dim=1).half().cpu()
+        )
+        reverse_rows.append(
+            torch.cat((med_r, conf_r[:, None], fg[:, None], dis_r[:, None]), dim=1).half().cpu()
+        )
+        confidences.append(
+            0.5 * (conf_f.mean(dim=(-2, -1)) + conf_r.mean(dim=(-2, -1))).float().cpu()
+        )
+        disagreements.append(
+            0.5 * (dis_f.mean(dim=(-2, -1)) + dis_r.mean(dim=(-2, -1))).float().cpu()
+        )
 
     if map_shape is None:
         raise ValueError("Cannot extract empty split")
@@ -174,7 +202,9 @@ def _extract_dense_inputs(
     )
 
 
-def _sequence_folds(sequence_ids: list[str], count: int) -> list[tuple[np.ndarray, np.ndarray, list[str]]]:
+def _sequence_folds(
+    sequence_ids: list[str], count: int
+) -> list[tuple[np.ndarray, np.ndarray, list[str]]]:
     unique = sorted(set(sequence_ids))
     if count <= 1 or len(unique) < count:
         raise ValueError("Invalid fold count")
@@ -217,7 +247,7 @@ def _train_decoder(
         residuals: list[float] = []
         model.train()
         for start in range(0, len(shuffled), train_config.head_batch_size):
-            batch_idx = shuffled[start:start + train_config.head_batch_size]
+            batch_idx = shuffled[start : start + train_config.head_batch_size]
             idx = torch.as_tensor(batch_idx, dtype=torch.long)
             f = dense.forward[idx].to(device=device, dtype=torch.float32)
             r = dense.reverse[idx].to(device=device, dtype=torch.float32)
@@ -243,8 +273,15 @@ def _train_decoder(
             refined_f, residual_f = model(f)
             refined_r, residual_r = model(r)
             loss, components = pseudoflow_loss(
-                refined_f, residual_f, refined_r, residual_r,
-                target_f, mask_f, target_r, mask_r, config=loss_config,
+                refined_f,
+                residual_f,
+                refined_r,
+                residual_r,
+                target_f,
+                mask_f,
+                target_r,
+                mask_r,
+                config=loss_config,
             )
             optimizer.zero_grad(set_to_none=True)
             loss.backward()
@@ -254,13 +291,15 @@ def _train_decoder(
             flows.append(float(components["flow"].detach()))
             divergences.append(float(components["divergence"].detach()))
             residuals.append(float(components["residual"].detach()))
-        history.append({
-            "epoch": float(epoch),
-            "loss": float(np.mean(totals)),
-            "flow_loss": float(np.mean(flows)),
-            "divergence_loss": float(np.mean(divergences)),
-            "residual_loss": float(np.mean(residuals)),
-        })
+        history.append(
+            {
+                "epoch": float(epoch),
+                "loss": float(np.mean(totals)),
+                "flow_loss": float(np.mean(flows)),
+                "divergence_loss": float(np.mean(divergences)),
+                "residual_loss": float(np.mean(residuals)),
+            }
+        )
     return model, history
 
 
@@ -278,19 +317,27 @@ def _score_decoder(
     model.eval()
     values: list[torch.Tensor] = []
     for start in range(0, len(indices), batch_size):
-        batch_idx = indices[start:start + batch_size]
+        batch_idx = indices[start : start + batch_size]
         idx = torch.as_tensor(batch_idx, dtype=torch.long)
         f = dense.forward[idx].to(device=device, dtype=torch.float32)
         r = dense.reverse[idx].to(device=device, dtype=torch.float32)
         refined_f, _ = model(f)
         refined_r, _ = model(r)
         div_f, _, _ = dense_flow_scores(
-            refined_f[:, 0], refined_f[:, 1], f[:, 3], f[:, 2],
-            foreground_floor=foreground_floor, confidence_floor=confidence_floor,
+            refined_f[:, 0],
+            refined_f[:, 1],
+            f[:, 3],
+            f[:, 2],
+            foreground_floor=foreground_floor,
+            confidence_floor=confidence_floor,
         )
         div_r, _, _ = dense_flow_scores(
-            refined_r[:, 0], refined_r[:, 1], r[:, 3], r[:, 2],
-            foreground_floor=foreground_floor, confidence_floor=confidence_floor,
+            refined_r[:, 0],
+            refined_r[:, 1],
+            r[:, 3],
+            r[:, 2],
+            foreground_floor=foreground_floor,
+            confidence_floor=confidence_floor,
         )
         values.append((0.5 * (div_f - div_r)).float().cpu())
     return torch.cat(values).numpy().astype(np.float64)
@@ -304,7 +351,9 @@ def _pearson(x: np.ndarray, y: np.ndarray) -> float:
     return float(np.corrcoef(x, y)[0, 1])
 
 
-def _score_diagnostics(frame: pd.DataFrame, score: np.ndarray) -> tuple[dict[str, float], pd.DataFrame]:
+def _score_diagnostics(
+    frame: pd.DataFrame, score: np.ndarray
+) -> tuple[dict[str, float], pd.DataFrame]:
     target = frame["target_expansion"].to_numpy(dtype=np.float64)
     pos = target >= 0.0
     neg = ~pos
@@ -325,13 +374,15 @@ def _score_diagnostics(frame: pd.DataFrame, score: np.ndarray) -> tuple[dict[str
         sub_pos = sub_target >= 0.0
         sub_neg = ~sub_pos
         sub_sign = sub_score >= 0.0
-        rows.append({
-            "sequence_id": sequence,
-            "count": int(mask.sum()),
-            "pearson": _pearson(sub_score, sub_target),
-            "positive_accuracy": float(np.mean(sub_sign[sub_pos])) if np.any(sub_pos) else 1.0,
-            "negative_accuracy": float(np.mean(~sub_sign[sub_neg])) if np.any(sub_neg) else 1.0,
-        })
+        rows.append(
+            {
+                "sequence_id": sequence,
+                "count": int(mask.sum()),
+                "pearson": _pearson(sub_score, sub_target),
+                "positive_accuracy": float(np.mean(sub_sign[sub_pos])) if np.any(sub_pos) else 1.0,
+                "negative_accuracy": float(np.mean(~sub_sign[sub_neg])) if np.any(sub_neg) else 1.0,
+            }
+        )
     return metrics, pd.DataFrame(rows)
 
 
@@ -356,20 +407,26 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         device=device,
     )
     base_config, _, _, _, _ = _load_v48_config(args.v48_config)
-    train_split, train_manifest = _materialize(args.cache_manifest, "train", input_size=base_config.input_size)
-    validation_split, validation_manifest = _materialize(args.cache_manifest, "validation", input_size=base_config.input_size)
+    train_split, train_manifest = _materialize(
+        args.cache_manifest, "train", input_size=base_config.input_size
+    )
+    validation_split, validation_manifest = _materialize(
+        args.cache_manifest, "validation", input_size=base_config.input_size
+    )
     train_frame = _align_ensemble(train_split, _read_ensemble(args.ensemble_train))
     validation_frame = _align_ensemble(validation_split, _read_ensemble(args.ensemble_validation))
 
     train_dense = _extract_dense_inputs(
-        frozen, train_split.events,
+        frozen,
+        train_split.events,
         batch_size=train_config.descriptor_batch_size,
         device=device,
         search_radius=int(extraction["search_radius"]),
         correlation_temperature=extraction["correlation_temperature"],
     )
     validation_dense = _extract_dense_inputs(
-        frozen, validation_split.events,
+        frozen,
+        validation_split.events,
         batch_size=train_config.descriptor_batch_size,
         device=device,
         search_radius=int(extraction["search_radius"]),
@@ -382,44 +439,66 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         _sequence_folds(train_split.sequence_ids, train_config.fold_count)
     ):
         model, history = _train_decoder(
-            train_dense, train_split, train_idx,
-            model_config=model_config, train_config=train_config, loss_config=loss_config,
-            epochs=train_config.fold_epochs, device=device, seed=train_config.seed + fold,
+            train_dense,
+            train_split,
+            train_idx,
+            model_config=model_config,
+            train_config=train_config,
+            loss_config=loss_config,
+            epochs=train_config.fold_epochs,
+            device=device,
+            seed=train_config.seed + fold,
         )
         score = _score_decoder(
-            model, train_dense, held_idx,
-            batch_size=train_config.head_batch_size, device=device,
+            model,
+            train_dense,
+            held_idx,
+            batch_size=train_config.head_batch_size,
+            device=device,
             foreground_floor=extraction["foreground_floor"],
             confidence_floor=extraction["confidence_floor"],
         )
         oof_score[held_idx] = score
         held_frame = train_frame.iloc[held_idx].reset_index(drop=True)
         metrics, per_sequence = _score_diagnostics(held_frame, score)
-        fold_records.append({
-            "fold": fold,
-            "held_out_sequences": held_sequences,
-            "epochs": train_config.fold_epochs,
-            "final_train_loss": history[-1],
-            "score_metrics": metrics,
-            "per_sequence": per_sequence.to_dict(orient="records"),
-        })
+        fold_records.append(
+            {
+                "fold": fold,
+                "held_out_sequences": held_sequences,
+                "epochs": train_config.fold_epochs,
+                "final_train_loss": history[-1],
+                "score_metrics": metrics,
+                "per_sequence": per_sequence.to_dict(orient="records"),
+            }
+        )
 
     oof_metrics, oof_per_sequence = _score_diagnostics(train_frame, oof_score)
 
     all_train = np.arange(len(train_split), dtype=np.int64)
     final_model, final_history = _train_decoder(
-        train_dense, train_split, all_train,
-        model_config=model_config, train_config=train_config, loss_config=loss_config,
-        epochs=train_config.final_epochs, device=device, seed=train_config.seed + 100,
+        train_dense,
+        train_split,
+        all_train,
+        model_config=model_config,
+        train_config=train_config,
+        loss_config=loss_config,
+        epochs=train_config.final_epochs,
+        device=device,
+        seed=train_config.seed + 100,
     )
     val_indices = np.arange(len(validation_split), dtype=np.int64)
     validation_score = _score_decoder(
-        final_model, validation_dense, val_indices,
-        batch_size=train_config.head_batch_size, device=device,
+        final_model,
+        validation_dense,
+        val_indices,
+        batch_size=train_config.head_batch_size,
+        device=device,
         foreground_floor=extraction["foreground_floor"],
         confidence_floor=extraction["confidence_floor"],
     )
-    validation_score_metrics, validation_per_sequence = _score_diagnostics(validation_frame, validation_score)
+    validation_score_metrics, validation_per_sequence = _score_diagnostics(
+        validation_frame, validation_score
+    )
 
     magnitude = np.abs(validation_frame["fused_prediction_expansion"].to_numpy(dtype=np.float64))
     decoder_prediction = _sign_magnitude_prediction(validation_score, magnitude)
@@ -431,7 +510,9 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
 
     v419 = json.loads(args.v419_summary.read_text(encoding="utf-8"))
     raw_val = next(
-        row for row in v419["score_diagnostics"]["validation"] if row["feature"] == "dense_divergence"
+        row
+        for row in v419["score_diagnostics"]["validation"]
+        if row["feature"] == "dense_divergence"
     )
     raw_train = next(
         row for row in v419["score_diagnostics"]["train"] if row["feature"] == "dense_divergence"
@@ -457,7 +538,9 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     ):
         recommendation = "pseudoflow_decoder_neutral_integrate_auxiliary_loss_then_partial_unfreeze"
     else:
-        recommendation = "frozen_refiner_insufficient_move_pseudoflow_divergence_supervision_into_encoder"
+        recommendation = (
+            "frozen_refiner_insufficient_move_pseudoflow_divergence_supervision_into_encoder"
+        )
 
     decision = {
         "recommendation": recommendation,
@@ -469,17 +552,23 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             "validation_improvement_over_v419_raw": improvement,
             "minimum_validation_sequence_divergence_pearson": per_seq_min,
         },
-        "note": "Development-only decision; validation never selects epochs/weights. Official eAP test and EvTTC remain unopened.",
+        "note": (
+            "Development-only decision; validation never selects "
+            "epochs/weights. Official eAP test and EvTTC remain unopened."
+        ),
     }
 
-    torch.save({
-        "model_state_dict": final_model.state_dict(),
-        "model_config": asdict(model_config),
-        "train_config": asdict(train_config),
-        "loss_config": asdict(loss_config),
-        "extraction": extraction,
-        "epochs": train_config.final_epochs,
-    }, args.output_dir / "box_pseudoflow_decoder.pt")
+    torch.save(
+        {
+            "model_state_dict": final_model.state_dict(),
+            "model_config": asdict(model_config),
+            "train_config": asdict(train_config),
+            "loss_config": asdict(loss_config),
+            "extraction": extraction,
+            "epochs": train_config.final_epochs,
+        },
+        args.output_dir / "box_pseudoflow_decoder.pt",
+    )
 
     train_rows = train_frame[["sequence_id", "sample_token", "track_id", "target_expansion"]].copy()
     train_rows["oof_pseudoflow_divergence_score"] = oof_score
@@ -493,8 +582,12 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     val_rows["pseudoflow_divergence_score"] = validation_score
     val_rows["pseudoflow_sign_baseline_magnitude_prediction"] = decoder_prediction
     val_rows.to_csv(args.output_dir / "validation_predictions.csv", index=False)
-    validation_per_sequence.to_csv(args.output_dir / "validation_score_per_sequence.csv", index=False)
-    decoder_prediction_per_sequence.to_csv(args.output_dir / "validation_prediction_per_sequence.csv", index=False)
+    validation_per_sequence.to_csv(
+        args.output_dir / "validation_score_per_sequence.csv", index=False
+    )
+    decoder_prediction_per_sequence.to_csv(
+        args.output_dir / "validation_prediction_per_sequence.csv", index=False
+    )
     pd.DataFrame(final_history).to_csv(args.output_dir / "final_training_history.csv", index=False)
 
     result = {
@@ -535,7 +628,9 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             "evttc_not_opened": True,
         },
     }
-    (args.output_dir / "summary.json").write_text(json.dumps(_json_safe(result), indent=2), encoding="utf-8")
+    (args.output_dir / "summary.json").write_text(
+        json.dumps(_json_safe(result), indent=2), encoding="utf-8"
+    )
     print(json.dumps(_json_safe(result), indent=2))
     return result
 

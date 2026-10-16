@@ -4,10 +4,11 @@ import argparse
 import json
 import shutil
 import sys
+from collections.abc import Mapping
 from dataclasses import asdict
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Mapping, cast
+from typing import Any, cast
 
 import numpy as np
 import pandas as pd
@@ -18,21 +19,23 @@ SRC = ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
-from e_jepa_ttc.object_event_v4_13 import (  # noqa: E402
-    ObjectEventV413Config,
-    conservative_dual_head_prediction,
-    selective_fusion_gates,
-)
 from e_jepa_ttc.object_event_v4_4 import (  # noqa: E402
     branch_metrics,
     official_eap_metrics,
     pearson,
 )
+from e_jepa_ttc.object_event_v4_13 import (  # noqa: E402
+    ObjectEventV413Config,
+    conservative_dual_head_prediction,
+    selective_fusion_gates,
+)
 
 IDENTITY = ["sequence_id", "sample_token", "track_id"]
 
 
-def _per_sequence(frame: pd.DataFrame, prediction: np.ndarray, minimum_negatives: int) -> pd.DataFrame:
+def _per_sequence(
+    frame: pd.DataFrame, prediction: np.ndarray, minimum_negatives: int
+) -> pd.DataFrame:
     rows: list[dict[str, Any]] = []
     target = frame["target_expansion"].to_numpy(dtype=np.float64)
     for sequence_id, indices in frame.groupby("sequence_id", sort=True).groups.items():
@@ -41,16 +44,18 @@ def _per_sequence(frame: pd.DataFrame, prediction: np.ndarray, minimum_negatives
         p = prediction[idx]
         neg = y < 0.0
         pos = ~neg
-        rows.append({
-            "sequence_id": str(sequence_id),
-            "count": int(len(idx)),
-            "negative_count": int(neg.sum()),
-            "positive_count": int(pos.sum()),
-            "pearson": pearson(y, p),
-            "expansion_mae": float(np.mean(np.abs(y - p))),
-            "positive_accuracy": float(np.mean(p[pos] >= 0.0)) if pos.any() else 0.0,
-            "negative_accuracy": float(np.mean(p[neg] < 0.0)) if neg.any() else 0.0,
-        })
+        rows.append(
+            {
+                "sequence_id": str(sequence_id),
+                "count": int(len(idx)),
+                "negative_count": int(neg.sum()),
+                "positive_count": int(pos.sum()),
+                "pearson": pearson(y, p),
+                "expansion_mae": float(np.mean(np.abs(y - p))),
+                "positive_accuracy": float(np.mean(p[pos] >= 0.0)) if pos.any() else 0.0,
+                "negative_accuracy": float(np.mean(p[neg] < 0.0)) if neg.any() else 0.0,
+            }
+        )
     result = pd.DataFrame(rows)
     eligible = result[result["negative_count"] >= minimum_negatives]
     result.attrs["minimum_sequence_negative_accuracy"] = (
@@ -60,7 +65,9 @@ def _per_sequence(frame: pd.DataFrame, prediction: np.ndarray, minimum_negatives
     return result
 
 
-def _metrics(frame: pd.DataFrame, prediction: np.ndarray, minimum_negatives: int) -> tuple[dict[str, Any], pd.DataFrame]:
+def _metrics(
+    frame: pd.DataFrame, prediction: np.ndarray, minimum_negatives: int
+) -> tuple[dict[str, Any], pd.DataFrame]:
     target = frame["target_expansion"].to_numpy(dtype=np.float64)
     metrics = branch_metrics(
         target,
@@ -81,7 +88,14 @@ def _metrics(frame: pd.DataFrame, prediction: np.ndarray, minimum_negatives: int
     return metrics, per_sequence
 
 
-def run(*, config_path: Path, v412_summary_path: Path, predictions_path: Path, output_dir: Path, force: bool) -> dict[str, Any]:
+def run(
+    *,
+    config_path: Path,
+    v412_summary_path: Path,
+    predictions_path: Path,
+    output_dir: Path,
+    force: bool,
+) -> dict[str, Any]:
     if output_dir.exists():
         if not force:
             raise FileExistsError(f"Output exists: {output_dir}")
@@ -98,11 +112,18 @@ def run(*, config_path: Path, v412_summary_path: Path, predictions_path: Path, o
         raise RuntimeError("v4.12 exact odd symmetry contract is missing")
 
     frame = pd.read_csv(predictions_path)
-    required = set(IDENTITY + [
-        "delta_t_s", "target_ttc_s", "target_expansion",
-        "baseline_prediction_expansion", "negative_probability",
-        "zero_events_prediction_expansion", "shuffled_prediction_expansion",
-    ])
+    required = set(
+        IDENTITY
+        + [
+            "delta_t_s",
+            "target_ttc_s",
+            "target_expansion",
+            "baseline_prediction_expansion",
+            "negative_probability",
+            "zero_events_prediction_expansion",
+            "shuffled_prediction_expansion",
+        ]
+    )
     missing = sorted(required - set(frame.columns))
     if missing:
         raise RuntimeError(f"Missing v4.12 prediction columns: {missing}")
@@ -170,7 +191,9 @@ def run(*, config_path: Path, v412_summary_path: Path, predictions_path: Path, o
             "advance_to_locked_multiseed_replication": passed,
         },
     }
-    (output_dir / "summary.json").write_text(json.dumps(result, indent=2, sort_keys=True), encoding="utf-8")
+    (output_dir / "summary.json").write_text(
+        json.dumps(result, indent=2, sort_keys=True), encoding="utf-8"
+    )
     return result
 
 
@@ -192,8 +215,14 @@ def main() -> int:
         )
     except Exception as exc:
         args.output_dir.mkdir(parents=True, exist_ok=True)
-        failure = {"artifact_type": "object_event_v4_13_failure", "error_type": type(exc).__name__, "error": str(exc)}
-        (args.output_dir / "failure.json").write_text(json.dumps(failure, indent=2), encoding="utf-8")
+        failure = {
+            "artifact_type": "object_event_v4_13_failure",
+            "error_type": type(exc).__name__,
+            "error": str(exc),
+        }
+        (args.output_dir / "failure.json").write_text(
+            json.dumps(failure, indent=2), encoding="utf-8"
+        )
         print(json.dumps(failure, indent=2), file=sys.stderr)
         return 1
     print(json.dumps(result, indent=2))

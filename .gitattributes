@@ -51,3 +51,9 @@ docs/joint_measurement_20261012/evidence_A1_loss_graph_20261016/** -text
 
 # Passive A1 performance and durable-boundary repair receipts preserve original bytes.
 docs/joint_measurement_20261012/evidence_A1_boundary_20261016/** -text
+
+# Golden metadata fixture retains its historical file checksum.
+tests/fixtures/scientific_recovery_v8/dino_teacher_manifest.json -text
+tests/fixtures/scientific_recovery_v8/essential_results_manifest.json -text
+
+docs/ci_repair_evidence_20261016/** -text

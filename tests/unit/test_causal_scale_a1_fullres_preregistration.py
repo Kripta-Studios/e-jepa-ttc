@@ -13,12 +13,10 @@ ROOT = Path(__file__).resolve().parents[2]
 PARENT_MODEL = ROOT / "configs/model/e_jepa_causal_scale_event_v8_t015.yaml"
 CANDIDATE_MODEL = ROOT / "configs/model/e_jepa_causal_scale_event_v8_t015_fullres.yaml"
 PARENT_EXPERIMENT = (
-    ROOT
-    / "configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a1_geometry_v1.yaml"
+    ROOT / "configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a1_geometry_v1.yaml"
 )
 CANDIDATE_EXPERIMENT = (
-    ROOT
-    / "configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a1_fullres_v1.yaml"
+    ROOT / "configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a1_fullres_v1.yaml"
 )
 
 
@@ -60,14 +58,9 @@ def test_fullres_preregistered_hash_and_parameter_count_are_exact() -> None:
     assert config.foreground_decoder == "equivariant_fullres"
     assert parameter_count == 340_870
     assert parameter_count < 344_591
-    assert (
-        runner._sha256(CANDIDATE_MODEL)
-        == raw["decision_contract"]["model_config_sha256"]
-    )
+    assert runner._sha256(CANDIDATE_MODEL) == raw["decision_contract"]["model_config_sha256"]
     parent_config = runner._model_config(PARENT_MODEL)
     parent_values = asdict(parent_config)
     candidate_values = asdict(config)
-    changed = {
-        key for key in parent_values if parent_values[key] != candidate_values[key]
-    }
+    changed = {key for key in parent_values if parent_values[key] != candidate_values[key]}
     assert changed == {"foreground_decoder"}

@@ -77,8 +77,7 @@ def object_event_v4_2_loss(
             output.raw_score / config.sign_temperature, label
         ),
         "variance": (
-            output.expansion.float().std(unbiased=False)
-            - target.float().std(unbiased=False)
+            output.expansion.float().std(unbiased=False) - target.float().std(unbiased=False)
         ).abs(),
         "reversal": 0.5
         * (
@@ -90,9 +89,7 @@ def object_event_v4_2_loss(
             + output.reversal_consistency_error.mean()
         ),
     }
-    reversal_scale = (
-        config.reversal_weight if epoch >= config.reversal_start_epoch else 0.0
-    )
+    reversal_scale = config.reversal_weight if epoch >= config.reversal_start_epoch else 0.0
     total = (
         config.expansion_weight * components["expansion"]
         + config.correlation_weight * components["correlation"]

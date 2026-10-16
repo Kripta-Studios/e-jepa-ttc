@@ -61,11 +61,17 @@ def _pair_gate_open(results_root: Path) -> None:
     if not isinstance(payload, dict) or not verify_artifact_hash(payload):
         raise V8JobIntegrityError("B3 is closed: seed-7 aggregate is unsigned")
     result = next(
-        (item for item in payload.get("candidate_results", []) if item.get("candidate_id") == "B1_TIMEVOL20_3"),
+        (
+            item
+            for item in payload.get("candidate_results", [])
+            if item.get("candidate_id") == "B1_TIMEVOL20_3"
+        ),
         None,
     )
     if not isinstance(result, dict) or result.get("passed") is not True:
-        raise V8JobIntegrityError("B3 is closed: B1_TIMEVOL20_3 did not pass the frozen seed-7 gate")
+        raise V8JobIntegrityError(
+            "B3 is closed: B1_TIMEVOL20_3 did not pass the frozen seed-7 gate"
+        )
 
 
 def _root(argument: Path | None, environment: str, pinned: str, label: str) -> Path:
@@ -125,7 +131,9 @@ def main() -> int:
     parser.add_argument(
         "--results-root", type=Path, default=ROOT / "artifacts/scientific_recovery_v8"
     )
-    parser.add_argument("--arm", choices=("all", "timevol20_3", "exp6_3", "pair20_2"), default="all")
+    parser.add_argument(
+        "--arm", choices=("all", "timevol20_3", "exp6_3", "pair20_2"), default="all"
+    )
     parser.add_argument("--max-parallel", type=int, default=1)
     parser.add_argument("--eap-root", type=Path)
     parser.add_argument("--garlttc-root", type=Path)

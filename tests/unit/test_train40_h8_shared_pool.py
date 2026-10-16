@@ -121,9 +121,7 @@ def test_arena_backpressure_releases_only_when_result_is_consumed() -> None:
 
 
 def test_worker_failure_propagates_and_releases_slot_for_later_work() -> None:
-    with SharedArrayProcessPool(
-        max_workers=1, shape=(2, 3), dtype=np.float32
-    ) as pool:
+    with SharedArrayProcessPool(max_workers=1, shape=(2, 3), dtype=np.float32) as pool:
         failed = pool.submit(_toy_failure, {"message": "raw preparation failed"})
         with pytest.raises(ValueError, match="raw preparation failed"):
             failed.result()
@@ -145,10 +143,7 @@ def test_shape_mismatch_fails_closed_and_single_consumption_is_enforced() -> Non
 def test_shutdown_drains_then_unlinks_every_arena() -> None:
     pool = _pool()
     names = [handle.name for handle in pool._handles]
-    futures = [
-        pool.submit(_toy_prepare, {"shape": (2, 3), "value": value})
-        for value in (1, 2)
-    ]
+    futures = [pool.submit(_toy_prepare, {"shape": (2, 3), "value": value}) for value in (1, 2)]
     pool.shutdown(wait=True)
     assert all(future.done() for future in futures)
     for name in names:

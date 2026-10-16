@@ -1,12 +1,12 @@
 """Training and evaluation utilities for Object Event TTC v4.15."""
+
 from __future__ import annotations
 
-from dataclasses import dataclass
 from collections.abc import Mapping, Sequence
+from dataclasses import dataclass
 
 import numpy as np
 import pandas as pd
-import torch
 
 
 @dataclass(frozen=True)
@@ -80,10 +80,7 @@ def sign_statistics(
     }
 
 
-
-def positive_magnitude_ceiling(
-    positive_magnitude: np.ndarray, quantile: float
-) -> float:
+def positive_magnitude_ceiling(positive_magnitude: np.ndarray, quantile: float) -> float:
     values = np.asarray(positive_magnitude, dtype=np.float64)
     if values.ndim != 1 or len(values) == 0:
         raise ValueError("positive_magnitude must be a non-empty vector")
@@ -110,6 +107,7 @@ def positive_tail_threshold(positive_probability: np.ndarray, tail_alpha: float)
     except TypeError:  # NumPy < 1.22 compatibility.
         return float(np.quantile(values, 1.0 - tail_alpha, interpolation="higher"))
 
+
 def select_oof_threshold(
     frame: pd.DataFrame,
     probability: np.ndarray,
@@ -133,9 +131,7 @@ def select_oof_threshold(
         threshold = positive_tail_threshold(probability[positive], float(tail_alpha))
         head_negative = probability >= threshold
         direct_prediction = np.where(head_negative, -1.0, 1.0)
-        stats = sign_statistics(
-            frame, direct_prediction, minimum_negatives=minimum_negatives
-        )
+        stats = sign_statistics(frame, direct_prediction, minimum_negatives=minimum_negatives)
         override = (baseline >= 0.0) & head_negative
         override_rate = float(np.mean(override))
         feasible = (
@@ -159,9 +155,7 @@ def select_oof_threshold(
             balanced_sign_accuracy=stats["balanced_sign_accuracy"],
             positive_accuracy=stats["positive_accuracy"],
             negative_accuracy=stats["negative_accuracy"],
-            minimum_sequence_negative_accuracy=stats[
-                "minimum_sequence_negative_accuracy"
-            ],
+            minimum_sequence_negative_accuracy=stats["minimum_sequence_negative_accuracy"],
             override_rate=override_rate,
             feasible=bool(feasible),
         )
@@ -182,26 +176,19 @@ def v415_screen_gates(
     gates: Mapping[str, float],
 ) -> dict[str, bool]:
     return {
-        "oof_balanced_sign": oof["balanced_sign_accuracy"]
-        >= gates["oof_balanced_sign_gate"],
-        "oof_negative_accuracy": oof["negative_accuracy"]
-        >= gates["oof_negative_accuracy_gate"],
-        "oof_min_sequence_negative_accuracy": oof[
-            "minimum_sequence_negative_accuracy"
-        ]
+        "oof_balanced_sign": oof["balanced_sign_accuracy"] >= gates["oof_balanced_sign_gate"],
+        "oof_negative_accuracy": oof["negative_accuracy"] >= gates["oof_negative_accuracy_gate"],
+        "oof_min_sequence_negative_accuracy": oof["minimum_sequence_negative_accuracy"]
         >= gates["oof_min_sequence_negative_accuracy_gate"],
-        "validation_pearson": validation["pearson"]
-        >= gates["validation_pearson_gate"],
+        "validation_pearson": validation["pearson"] >= gates["validation_pearson_gate"],
         "validation_expansion_mae": validation["expansion_mae"]
         <= gates["validation_expansion_mae_gate"],
         "validation_weighted_mid": validation["weighted_mid"]
         <= gates["validation_weighted_mid_gate"],
         "validation_weighted_rte_relative": validation["weighted_rte_percent"]
-        <= gates["validation_weighted_rte_relative_ceiling"]
-        * baseline["weighted_rte_percent"],
+        <= gates["validation_weighted_rte_relative_ceiling"] * baseline["weighted_rte_percent"],
         "validation_saturation": validation["ttc_saturation_rate"]
-        <= baseline["ttc_saturation_rate"]
-        + gates["validation_saturation_max_increase"],
+        <= baseline["ttc_saturation_rate"] + gates["validation_saturation_max_increase"],
         "validation_balanced_sign": validation["balanced_sign_accuracy"]
         >= gates["validation_balanced_sign_gate"],
         "validation_negative_accuracy": validation["negative_accuracy"]

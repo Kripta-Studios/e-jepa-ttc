@@ -1,0 +1,17 @@
+{
+  "base_commit": "ee8b1785d938b265117e004b2963803d2642eb85",
+  "candidate_commit": "5ab5f2720ab6ff5570c913922fa430943ceff2b1",
+  "patch_sha256": "350ec5b1beb9e2cac2d8af4e0cd478cfebd2943a687632798f20e9dc61193afc",
+  "changed_file_count": 390,
+  "binding_records_checked": 129,
+  "bound_paths_found": 161,
+  "registered_changed_files": [],
+  "apply_check": "PASS",
+  "condition": "Wait for complete GitHub validation before application",
+  "github_run": "https://github.com/Kripta-Studios/e-jepa-ttc/actions/runs/38964951869",
+  "github_conclusion": "success",
+  "original_runtime_admission": "PASS",
+  "scientific_registration": "PASS",
+  "no_training_restart": true,
+  "optimizer_updates_in_validation": 0
+}

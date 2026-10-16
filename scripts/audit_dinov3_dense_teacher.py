@@ -83,7 +83,9 @@ def _find_32x32_feature(
 
     def make_hook(module_name: str) -> Any:  # noqa: ANN401
         def hook(  # noqa: ANN401
-            module: Any, input: Any, output: Any,  # noqa: ANN401
+            module: Any,
+            input: Any,
+            output: Any,  # noqa: ANN401
         ) -> None:
             if isinstance(output, torch.Tensor) and output.ndim == 4:
                 hooked_features[module_name] = output
@@ -105,22 +107,15 @@ def _find_32x32_feature(
         handle.remove()
 
     candidates_32 = [
-        (name, feat)
-        for name, feat in hooked_features.items()
-        if feat.shape[-2:] == _EXPECTED_GRID
+        (name, feat) for name, feat in hooked_features.items() if feat.shape[-2:] == _EXPECTED_GRID
     ]
 
     if len(candidates_32) == 1:
         name, feat = candidates_32[0]
         return feat, name, "forward_hook"
     if len(candidates_32) == 0:
-        all_shapes = {
-            name: tuple(feat.shape) for name, feat in hooked_features.items()
-        }
-        raise RuntimeError(
-            f"No 32×32 feature found in any stage. "
-            f"Available shapes: {all_shapes}"
-        )
+        all_shapes = {name: tuple(feat.shape) for name, feat in hooked_features.items()}
+        raise RuntimeError(f"No 32×32 feature found in any stage. Available shapes: {all_shapes}")
     raise RuntimeError(
         f"Multiple 32×32 features found: "
         f"{[(n, tuple(f.shape)) for n, f in candidates_32]}. "
@@ -164,9 +159,8 @@ def audit(
 
     # Load dataset for real RGB
     from src.e_jepa_ttc.data.object_event_v4 import GarlTTCObjectEventV4Dataset
-    train_dataset = GarlTTCObjectEventV4Dataset(
-        str(event_cache_manifest), splits=("train",)
-    )
+
+    train_dataset = GarlTTCObjectEventV4Dataset(str(event_cache_manifest), splits=("train",))
     print(f"[audit] Loading {train_parquet}...")
     pq_df = pd.read_parquet(
         train_parquet,
@@ -194,7 +188,8 @@ def audit(
     # Create dummy input just for discovering the hook
     dummy_rgb = torch.randn(1, 3, _INPUT_SIZE, _INPUT_SIZE, device=device)
     features, selection_id, selection_method = _find_32x32_feature(
-        model, dummy_rgb,
+        model,
+        dummy_rgb,
     )
     print(
         f"[audit] Found 32×32 feature: selection={selection_id}, "
@@ -305,6 +300,7 @@ def main() -> int:
         )
     except Exception:
         import traceback
+
         traceback.print_exc()
         return 2
     return 0

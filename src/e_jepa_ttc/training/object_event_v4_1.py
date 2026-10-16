@@ -51,7 +51,9 @@ class ObjectEventV41LossOutput:
     target_expansion: torch.Tensor
 
 
-def target_expansion(delta_t_s: torch.Tensor, target_ttc_s: torch.Tensor, maximum: float) -> torch.Tensor:
+def target_expansion(
+    delta_t_s: torch.Tensor, target_ttc_s: torch.Tensor, maximum: float
+) -> torch.Tensor:
     if delta_t_s.shape != target_ttc_s.shape:
         raise ValueError("delta_t_s and target_ttc_s must share shape")
     if bool((target_ttc_s == 0).any()):
@@ -76,9 +78,7 @@ def _ranking(prediction: torch.Tensor, target: torch.Tensor, beta: float) -> tor
     prediction_delta = prediction[:, None] - prediction[None, :]
     target_delta = target[:, None] - target[None, :]
     mask = ~torch.eye(prediction.shape[0], dtype=torch.bool, device=prediction.device)
-    return functional.smooth_l1_loss(
-        prediction_delta[mask], target_delta[mask], beta=beta
-    )
+    return functional.smooth_l1_loss(prediction_delta[mask], target_delta[mask], beta=beta)
 
 
 def _sign_loss(raw_score: torch.Tensor, target: torch.Tensor, temperature: float) -> torch.Tensor:
@@ -98,16 +98,14 @@ def object_event_v4_1_loss(
     correlation = pearson_torch(output.expansion, target)
     components = {
         "expansion": _regression(output.expansion, target, config.smooth_l1_beta),
-        "encoded_aux": _regression(
-            output.encoded_expansion, target, config.smooth_l1_beta
-        ),
-        "activity_aux": _regression(
-            output.activity_expansion, target, config.smooth_l1_beta
-        ),
+        "encoded_aux": _regression(output.encoded_expansion, target, config.smooth_l1_beta),
+        "activity_aux": _regression(output.activity_expansion, target, config.smooth_l1_beta),
         "correlation": 1.0 - correlation,
         "ranking": _ranking(output.expansion, target, config.smooth_l1_beta),
         "sign": _sign_loss(output.raw_score, target, config.sign_temperature),
-        "variance": (output.expansion.float().std(unbiased=False) - target.float().std(unbiased=False)).abs(),
+        "variance": (
+            output.expansion.float().std(unbiased=False) - target.float().std(unbiased=False)
+        ).abs(),
         "reversal": 0.5
         * (
             _regression(

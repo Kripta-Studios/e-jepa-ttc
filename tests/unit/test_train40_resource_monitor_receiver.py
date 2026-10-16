@@ -206,9 +206,7 @@ def test_non_object_snapshot_fails_closed(tmp_path: Path) -> None:
         {"root_pid": 778},
     ],
 )
-def test_malformed_ok_snapshot_is_sticky_failure(
-    tmp_path: Path, change: dict[str, Any]
-) -> None:
+def test_malformed_ok_snapshot_is_sticky_failure(tmp_path: Path, change: dict[str, Any]) -> None:
     monitor, connection = _armed(_output(tmp_path))
     sample = _sample(1, time.monotonic())
     sample.update(change)
@@ -220,9 +218,7 @@ def test_malformed_ok_snapshot_is_sticky_failure(
     assert monitor._latest["status"] == "ERROR"
 
 
-def test_future_sample_clock_is_rejected(
-    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
-) -> None:
+def test_future_sample_clock_is_rejected(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     monitor, connection = _armed(_output(tmp_path))
     connection.append(_sample(1, 101.0))
     monkeypatch.setattr(

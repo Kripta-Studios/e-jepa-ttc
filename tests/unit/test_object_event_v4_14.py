@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import numpy as np
 import pandas as pd
 import pytest
 
@@ -15,17 +14,19 @@ from e_jepa_ttc.object_event_v4_14 import (
 
 def _frame(probability: list[float], prediction: list[float]) -> pd.DataFrame:
     count = len(probability)
-    return pd.DataFrame({
-        "sequence_id": ["s"] * count,
-        "sample_token": [f"x{i}" for i in range(count)],
-        "track_id": ["t"] * count,
-        "delta_t_s": [0.1] * count,
-        "target_ttc_s": [1.0, -1.0][:count],
-        "target_expansion": [0.1, -0.1][:count],
-        "baseline_prediction_expansion": [0.08, 0.08][:count],
-        "negative_probability": probability,
-        "selective_prediction_expansion": prediction,
-    })
+    return pd.DataFrame(
+        {
+            "sequence_id": ["s"] * count,
+            "sample_token": [f"x{i}" for i in range(count)],
+            "track_id": ["t"] * count,
+            "delta_t_s": [0.1] * count,
+            "target_ttc_s": [1.0, -1.0][:count],
+            "target_expansion": [0.1, -0.1][:count],
+            "baseline_prediction_expansion": [0.08, 0.08][:count],
+            "negative_probability": probability,
+            "selective_prediction_expansion": prediction,
+        }
+    )
 
 
 def test_config_requires_three_unique_seeds() -> None:
@@ -63,12 +64,14 @@ def test_pairwise_metrics_report_probability_and_prediction_agreement() -> None:
 
 def test_robustness_gates_can_pass() -> None:
     config = V414AggregateConfig(track_bootstrap_repeats=100)
-    per_seed = pd.DataFrame({
-        "passed": [True, True, False],
-        "pearson": [0.68, 0.67, 0.66],
-        "negative_accuracy": [0.70, 0.68, 0.66],
-        "minimum_sequence_negative_accuracy": [0.40, 0.35, 0.30],
-    })
+    per_seed = pd.DataFrame(
+        {
+            "passed": [True, True, False],
+            "pearson": [0.68, 0.67, 0.66],
+            "negative_accuracy": [0.70, 0.68, 0.66],
+            "minimum_sequence_negative_accuracy": [0.40, 0.35, 0.30],
+        }
+    )
     consensus = {
         "pearson": 0.68,
         "weighted_mid": 190.0,
@@ -87,10 +90,12 @@ def test_robustness_gates_can_pass() -> None:
         "zero_event_pearson_drop": 0.68,
         "shuffled_event_pearson_drop": 0.70,
     }
-    pairwise = pd.DataFrame({
-        "selective_prediction_pearson": [0.95, 0.94, 0.96],
-        "negative_probability_pearson": [0.70, 0.65, 0.72],
-    })
+    pairwise = pd.DataFrame(
+        {
+            "selective_prediction_pearson": [0.95, 0.94, 0.96],
+            "negative_probability_pearson": [0.70, 0.65, 0.72],
+        }
+    )
     gates = robustness_gates(
         per_seed=per_seed,
         consensus=consensus,
@@ -105,12 +110,14 @@ def test_robustness_gates_can_pass() -> None:
 
 def test_robustness_gates_reject_fragile_negative_sequence() -> None:
     config = V414AggregateConfig(track_bootstrap_repeats=100)
-    per_seed = pd.DataFrame({
-        "passed": [True, True, True],
-        "pearson": [0.68, 0.68, 0.68],
-        "negative_accuracy": [0.70, 0.70, 0.70],
-        "minimum_sequence_negative_accuracy": [0.40, 0.40, 0.40],
-    })
+    per_seed = pd.DataFrame(
+        {
+            "passed": [True, True, True],
+            "pearson": [0.68, 0.68, 0.68],
+            "negative_accuracy": [0.70, 0.70, 0.70],
+            "minimum_sequence_negative_accuracy": [0.40, 0.40, 0.40],
+        }
+    )
     consensus = {
         "pearson": 0.68,
         "weighted_mid": 190.0,
@@ -129,10 +136,12 @@ def test_robustness_gates_reject_fragile_negative_sequence() -> None:
         "zero_event_pearson_drop": 0.68,
         "shuffled_event_pearson_drop": 0.70,
     }
-    pairwise = pd.DataFrame({
-        "selective_prediction_pearson": [0.95],
-        "negative_probability_pearson": [0.70],
-    })
+    pairwise = pd.DataFrame(
+        {
+            "selective_prediction_pearson": [0.95],
+            "negative_probability_pearson": [0.70],
+        }
+    )
     gates = robustness_gates(
         per_seed=per_seed,
         consensus=consensus,

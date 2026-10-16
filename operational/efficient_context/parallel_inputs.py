@@ -19,6 +19,7 @@ from .compressed_cache import CompressedInputCache
 
 if TYPE_CHECKING:
     import torch
+
     from e_jepa_ttc.simplex_t.cached_event_reader import CachedEventReader
 
 _pool: MultiReaderPool | None = None
@@ -70,6 +71,7 @@ def worker_init() -> None:
 def prepare_record(row: dict, raw_root: str) -> tuple:
     """Execute the original frozen native encoder without parent RNG or output writes."""
     import psutil
+
     from e_jepa_ttc.efficient_context.garl_input import encode_record
 
     if psutil.virtual_memory().available < 2 * 1024**3:
@@ -112,6 +114,7 @@ class ParallelInputCache(CompressedInputCache):
         """Plan only the registered fit's exact sampler, including resumed cursor and RNG."""
         import numpy as np
         import torch
+
         from e_jepa_ttc.simplex_t.training import state_digest
 
         self.drain()

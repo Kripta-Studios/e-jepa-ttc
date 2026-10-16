@@ -1,4 +1,5 @@
 """Train-only calibration helpers for the v4.19 correspondence probe."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass

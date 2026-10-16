@@ -143,11 +143,8 @@ def apply_modality_dropout(
     else:
         draw = torch.rand(batch, device=device, generator=generator)
         motion_dropped = draw < config.motion_drop_probability
-        events_dropped = (
-            draw >= config.motion_drop_probability
-        ) & (
-            draw
-            < config.motion_drop_probability + config.event_drop_probability
+        events_dropped = (draw >= config.motion_drop_probability) & (
+            draw < config.motion_drop_probability + config.event_drop_probability
         )
     if bool((motion_dropped & events_dropped).any()):
         raise RuntimeError("Modality dropout attempted to remove both modalities")
@@ -156,15 +153,17 @@ def apply_modality_dropout(
     kept_motion = observable_motion.masked_fill(motion_dropped[:, None], 0.0)
     if config.motion_noise_std > 0.0:
         scale = observable_motion.detach().std(dim=0, keepdim=True).clamp_min(1.0e-3)
-        noise = torch.randn(
-            observable_motion.shape,
-            device=observable_motion.device,
-            dtype=observable_motion.dtype,
-            generator=generator,
-        ) * scale * config.motion_noise_std
-        kept_motion = kept_motion + noise.masked_fill(
-            motion_dropped[:, None], 0.0
+        noise = (
+            torch.randn(
+                observable_motion.shape,
+                device=observable_motion.device,
+                dtype=observable_motion.dtype,
+                generator=generator,
+            )
+            * scale
+            * config.motion_noise_std
         )
+        kept_motion = kept_motion + noise.masked_fill(motion_dropped[:, None], 0.0)
     return ModalityDropoutResult(
         events=kept_events,
         observable_motion=kept_motion,
@@ -290,9 +289,7 @@ def object_event_v4_loss(
                 temperature=config.sign_temperature,
             )
         ),
-        "event_gate_floor": functional.relu(
-            config.event_gate_target - output.event_gate
-        ).mean(),
+        "event_gate_floor": functional.relu(config.event_gate_target - output.event_gate).mean(),
     }
     total = (
         config.fused_expansion_weight * components["fused_expansion"]

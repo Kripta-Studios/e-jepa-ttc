@@ -53,9 +53,7 @@ def test_same_loss_reuse_is_exact_for_finite_and_empty_teacher(empty: bool) -> N
     features, teacher, valid = _inputs(empty=empty)
     baseline_features = features.clone().requires_grad_(True)
     baseline_module = _training_module()
-    baseline_loss, baseline_maps = baseline_module._loss(
-        baseline_features, teacher, valid
-    )
+    baseline_loss, baseline_maps = baseline_module._loss(baseline_features, teacher, valid)
     baseline_gradient: torch.Tensor | None = None
     if baseline_loss.requires_grad:
         baseline_loss.backward()
@@ -97,6 +95,7 @@ def test_same_loss_reuse_is_exact_for_finite_and_empty_teacher(empty: bool) -> N
 
 def test_offset_mismatch_calls_original_and_does_not_reuse() -> None:
     features, _teacher, _valid = _inputs()
+
     def loss(values: torch.Tensor) -> None:
         relational.local_cosine_relation_maps(values)
         with torch.no_grad():
@@ -138,9 +137,7 @@ def test_error_resets_context_and_restores_both_bindings() -> None:
     original_loss = training._loss
     original_maps = relational.local_cosine_relation_maps
     with pytest.raises(RuntimeError, match="loss failed"):
-        with relation_reuse.scoped_relation_reuse(
-            cast(relation_reuse.TrainingModule, training)
-        ):
+        with relation_reuse.scoped_relation_reuse(cast(relation_reuse.TrainingModule, training)):
             training._loss(torch.ones(1, 2, 3, 3, requires_grad=True))
     assert training._loss is original_loss
     assert relational.local_cosine_relation_maps is original_maps
@@ -257,9 +254,7 @@ def test_freeze_requires_qa_and_binds_real_zero_update_admission(
     atomic_json(coordination, {"files": [], "trainer_sha256": "trainer"})
     atomic_json(pause, {"files": [], "source_sha256": "pause"})
     atomic_json(idle, {"files": []})
-    admission_source = Path(relation_reuse_freeze.__file__).with_name(
-        "relation_reuse_admission.py"
-    )
+    admission_source = Path(relation_reuse_freeze.__file__).with_name("relation_reuse_admission.py")
     admission = tmp_path / "relation_reuse_admission/REAL_RELATION_REUSE_ADMISSION.json"
     atomic_json(
         admission,
@@ -299,8 +294,10 @@ def test_freeze_requires_qa_and_binds_real_zero_update_admission(
 
 
 def test_admission_source_has_no_optimizer_step_or_profiler() -> None:
-    source = Path(relation_reuse_freeze.__file__).with_name(
-        "relation_reuse_admission.py"
-    ).read_text(encoding="utf-8")
+    source = (
+        Path(relation_reuse_freeze.__file__)
+        .with_name("relation_reuse_admission.py")
+        .read_text(encoding="utf-8")
+    )
     assert "optimizer.step(" not in source
     assert "torch.profiler" not in source

@@ -2,6 +2,7 @@
 
 import base64
 import json
+from datetime import UTC, datetime, timedelta
 
 import pytest
 
@@ -179,7 +180,8 @@ def test_new_stop_does_not_replace_unknown_marker(tmp_path):
     assert not (artifacts / "OWN_STOP.json").exists()
 
 
-def test_only_owned_temporary_stop_is_released(tmp_path):
+def test_only_owned_temporary_stop_is_released(tmp_path, monkeypatch):
+    monkeypatch.setattr(supervisor, "DEADLINE", datetime.now(UTC) + timedelta(days=1))
     output, artifacts, _, _ = fixture_handoff(tmp_path)
     (output / "STOP_REQUEST").unlink()
     supervisor.stop_child(output, artifacts, "EXTERNAL_HEAVY")

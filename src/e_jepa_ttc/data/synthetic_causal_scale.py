@@ -202,11 +202,14 @@ class SyntheticCausalScaleDataset(Dataset[SyntheticCausalScaleSample]):
     def __getitem__(self, index: int) -> SyntheticCausalScaleSample:
         generator = self._generator(index)
         empty = float(torch.rand((), generator=generator)) < self.config.empty_probability
-        endpoint_times = torch.arange(
-            -(self.config.endpoints - 1),
-            1,
-            dtype=torch.float32,
-        ) * self.config.delta_t_s
+        endpoint_times = (
+            torch.arange(
+                -(self.config.endpoints - 1),
+                1,
+                dtype=torch.float32,
+            )
+            * self.config.delta_t_s
+        )
         delta = torch.full((self.config.endpoints - 1,), self.config.delta_t_s)
         if empty:
             return {

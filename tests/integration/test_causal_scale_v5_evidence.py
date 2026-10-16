@@ -9,14 +9,10 @@ from e_jepa_ttc.artifacts.hashing import verify_artifact_hash
 
 ROOT = Path(__file__).resolve().parents[2]
 ARTIFACT = ROOT / "artifacts/metrics/causal_scale_v5_synthetic_operator_gate_v1.json"
-LEARNING_ARTIFACT = (
-    ROOT / "artifacts/metrics/causal_scale_v5_synthetic_learning_gate_v1.json"
-)
+LEARNING_ARTIFACT = ROOT / "artifacts/metrics/causal_scale_v5_synthetic_learning_gate_v1.json"
 V6_DIAGNOSTICS = ROOT / "artifacts/metrics/causal_scale_v6_diagnostic_comparison_v1.json"
 V7_DIAGNOSTICS = ROOT / "artifacts/metrics/causal_scale_v7_diagnostic_comparison_v1.json"
-V7_LEARNING_ARTIFACT = (
-    ROOT / "artifacts/metrics/causal_scale_v7_synthetic_learning_gate_v1.json"
-)
+V7_LEARNING_ARTIFACT = ROOT / "artifacts/metrics/causal_scale_v7_synthetic_learning_gate_v1.json"
 
 
 def test_causal_scale_v5_evidence_is_signed_clean_and_synthetic_only() -> None:
@@ -85,9 +81,7 @@ def test_causal_scale_v6_diagnostics_keep_new_test_and_real_data_closed() -> Non
     assert payload["real_data_opened"] is False
     assert payload["sota_claim_authorized"] is False
     assert len(payload["rows"]) == 4
-    assert {row["source_status"] for row in payload["rows"]} == {
-        "diagnostic_nonselectable"
-    }
+    assert {row["source_status"] for row in payload["rows"]} == {"diagnostic_nonselectable"}
 
 
 def test_causal_scale_v7_diagnostics_pass_validation_without_opening_test() -> None:

@@ -6,6 +6,7 @@ seed and DataLoader throughput fields (num_workers/prefetch_factor); all model,
 data, loss, optimizer and selection fields are preserved byte-for-value after
 normalization.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -18,8 +19,15 @@ from typing import Any
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
-L4 = ROOT / "configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a4_s1_train8192_lambda4_control_v1.yaml"
-L8 = ROOT / "configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a4_s1_train8192_lambda8_v1.yaml"
+L4 = ROOT / (
+    "configs/experiment/e_jepa_garl_event_causal_scal"
+    "e_eap_screen_a4_s1_train8192_lambda4_control_v1."
+    "yaml"
+)
+L8 = (
+    ROOT
+    / "configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a4_s1_train8192_lambda8_v1.yaml"
+)
 
 
 def _read(path: Path) -> dict[str, Any]:
@@ -39,7 +47,9 @@ def _sha(path: Path) -> str:
 
 def _write(path: Path, x: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(yaml.safe_dump(x, sort_keys=False, allow_unicode=True), encoding="utf-8", newline="\n")
+    path.write_text(
+        yaml.safe_dump(x, sort_keys=False, allow_unicode=True), encoding="utf-8", newline="\n"
+    )
 
 
 def _runtime(source: dict[str, Any], seed: int, workers: int, prefetch: int) -> dict[str, Any]:
@@ -66,21 +76,30 @@ def main() -> int:
     if args.num_workers < 0 or args.prefetch_factor < 1:
         raise ValueError("invalid loader settings")
     l4, l8 = _read(L4), _read(L8)
-    out = args.output_dir.resolve(); out.mkdir(parents=True, exist_ok=True)
+    out = args.output_dir.resolve()
+    out.mkdir(parents=True, exist_ok=True)
     files: dict[str, Any] = {}
-    for label, source, seeds in (("a4_s1_lambda4", l4, (7,)), ("a4_s1_lambda8", l8, (7,13,23))):
+    for label, source, seeds in (("a4_s1_lambda4", l4, (7,)), ("a4_s1_lambda8", l8, (7, 13, 23))):
         for seed in seeds:
             path = out / f"{label}_seed{seed}.yaml"
             _write(path, _runtime(source, seed, args.num_workers, args.prefetch_factor))
             files[path.name] = {"sha256": _sha(path), "seed": seed}
     manifest = {
         "artifact_type": "a4_s1_runtime_configs_v1",
-        "sources": {"lambda4": {"path": str(L4.relative_to(ROOT)), "sha256": _sha(L4)}, "lambda8": {"path": str(L8.relative_to(ROOT)), "sha256": _sha(L8)}},
-        "hardware_only_override": {"num_workers": args.num_workers, "prefetch_factor": args.prefetch_factor},
+        "sources": {
+            "lambda4": {"path": str(L4.relative_to(ROOT)), "sha256": _sha(L4)},
+            "lambda8": {"path": str(L8.relative_to(ROOT)), "sha256": _sha(L8)},
+        },
+        "hardware_only_override": {
+            "num_workers": args.num_workers,
+            "prefetch_factor": args.prefetch_factor,
+        },
         "files": files,
         "private_test_opened": False,
     }
-    (out / "manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    (out / "manifest.json").write_text(
+        json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
     print(json.dumps(manifest, sort_keys=True))
     return 0
 

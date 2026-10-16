@@ -1,11 +1,7 @@
 from __future__ import annotations
 
-import json
-from pathlib import Path
-
 import numpy as np
 import pandas as pd
-import yaml
 
 from e_jepa_ttc.object_event_v4_11 import (
     FEATURE_NAMES,
@@ -19,7 +15,9 @@ from e_jepa_ttc.object_event_v4_11 import (
 )
 
 
-def _v49_frame(*, seed_offset: float = 0.0, sequences: int = 3, rows_per_sequence: int = 24) -> pd.DataFrame:
+def _v49_frame(
+    *, seed_offset: float = 0.0, sequences: int = 3, rows_per_sequence: int = 24
+) -> pd.DataFrame:
     rows: list[dict[str, object]] = []
     index = 0
     for sequence_index in range(sequences):
@@ -67,9 +65,7 @@ def _aligned() -> pd.DataFrame:
 def test_align_and_features_are_seed_invariant() -> None:
     aligned = _aligned()
     features, fixed = router_features(aligned, branch="event", seeds=(7, 13, 23))
-    reverse_features, reverse_fixed = router_features(
-        aligned, branch="event", seeds=(23, 13, 7)
-    )
+    reverse_features, reverse_fixed = router_features(aligned, branch="event", seeds=(23, 13, 7))
     assert features.shape == (len(aligned), len(FEATURE_NAMES))
     assert np.allclose(features, reverse_features)
     assert np.allclose(fixed, reverse_fixed)

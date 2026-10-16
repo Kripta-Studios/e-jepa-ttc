@@ -374,12 +374,8 @@ def build_cache(
                 "sha256": _sha256(release_root / "garl_ttc/datasets/ttc_dataset.py"),
             },
             "official_representation_source": {
-                "path": str(
-                    (release_root / "garl_ttc/datasets/event_representation.py").resolve()
-                ),
-                "sha256": _sha256(
-                    release_root / "garl_ttc/datasets/event_representation.py"
-                ),
+                "path": str((release_root / "garl_ttc/datasets/event_representation.py").resolve()),
+                "sha256": _sha256(release_root / "garl_ttc/datasets/event_representation.py"),
             },
             "subset_manifest": {
                 "path": str(subset_manifest.resolve()),

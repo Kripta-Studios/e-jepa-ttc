@@ -43,16 +43,10 @@ def _all_event_rows_constant(
         and str(torch.__version__).split("+", 1)[0] == _PROVEN_TORCH_VERSION
     ):
         minimum, maximum = torch.aminmax(flat, dim=1)
-        threshold = (
-            4.0
-            * torch.finfo(torch.float32).tiny
-            * math.sqrt(2.0 * (flat.shape[1] - 1))
-        )
+        threshold = 4.0 * torch.finfo(torch.float32).tiny * math.sqrt(2.0 * (flat.shape[1] - 1))
         if bool(((maximum - minimum) > threshold).any()):
             return False
-    channel_std = (
-        flat.std(dim=1) if _std_for_test is None else _std_for_test(flat)
-    )
+    channel_std = flat.std(dim=1) if _std_for_test is None else _std_for_test(flat)
     return bool((channel_std <= 0).all())
 
 
@@ -60,9 +54,7 @@ def collate_object_event_v4(records: list[dict[str, Any]]) -> ObjectEventV4Batch
     if not records:
         raise ValueError("Object Event v4 collate received an empty batch")
     events = torch.stack([_tensor(record, "event_v4_common_roi") for record in records])
-    expected_channels = {
-        int(record.get("_event_v4_expected_channels", 12)) for record in records
-    }
+    expected_channels = {int(record.get("_event_v4_expected_channels", 12)) for record in records}
     expected_steps = {
         int(record.get("_event_v4_expected_steps", EVENT_V4_STEPS)) for record in records
     }
@@ -91,13 +83,9 @@ def collate_object_event_v4(records: list[dict[str, Any]]) -> ObjectEventV4Batch
     )
     motion = torch.stack([_tensor(record, "observable_motion") for record in records])
     heights = torch.stack([_tensor(record, "garl_visible_heights_px") for record in records])
-    targets = torch.tensor(
-        [float(record["ttc_s"]) for record in records], dtype=torch.float32
-    )
+    targets = torch.tensor([float(record["ttc_s"]) for record in records], dtype=torch.float32)
     boxes = torch.stack([_tensor(record, "event_v4_boxes_xyxy") for record in records])
-    squares = torch.stack(
-        [_tensor(record, "event_v4_common_square_xyxy") for record in records]
-    )
+    squares = torch.stack([_tensor(record, "event_v4_common_square_xyxy") for record in records])
     if motion.shape != (len(records), OBSERVABLE_MOTION_DIM):
         raise ValueError(f"observable_motion has invalid shape {tuple(motion.shape)}")
     if heights.shape != (len(records), 2):
@@ -105,9 +93,7 @@ def collate_object_event_v4(records: list[dict[str, Any]]) -> ObjectEventV4Batch
     if boxes.shape != (len(records), step_count, 4):
         raise ValueError(f"event_v4_boxes_xyxy has invalid shape {tuple(boxes.shape)}")
     if squares.shape != (len(records), 4):
-        raise ValueError(
-            f"event_v4_common_square_xyxy has invalid shape {tuple(squares.shape)}"
-        )
+        raise ValueError(f"event_v4_common_square_xyxy has invalid shape {tuple(squares.shape)}")
     if bool((delta_t <= 0).any()) or not torch.isfinite(delta_t).all():
         raise ValueError("delta_t_s must be finite and positive")
     if bool((targets == 0).any()) or not torch.isfinite(targets).all():
@@ -121,9 +107,7 @@ def collate_object_event_v4(records: list[dict[str, Any]]) -> ObjectEventV4Batch
     teacher_masks = None
     teacher_valid = None
     if all(teacher_presence):
-        teacher_masks = torch.stack(
-            [_tensor(record, "sam_teacher_masks") for record in records]
-        )
+        teacher_masks = torch.stack([_tensor(record, "sam_teacher_masks") for record in records])
         teacher_valid = torch.stack(
             [
                 torch.as_tensor(record["sam_teacher_mask_valid"], dtype=torch.bool)
@@ -159,9 +143,7 @@ def collate_object_event_v4(records: list[dict[str, Any]]) -> ObjectEventV4Batch
                 "DINO teacher targets and valid must share shape, "
                 f"got {tuple(dino_targets.shape)} and {tuple(dino_valid.shape)}"
             )
-        if (
-            "dinov3_relation_valid" not in records[0]
-        ):
+        if "dinov3_relation_valid" not in records[0]:
             raise ValueError("DINO targets and valid must appear together")
 
     return ObjectEventV4Batch(

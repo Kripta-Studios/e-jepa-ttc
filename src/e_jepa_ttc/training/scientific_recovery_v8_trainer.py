@@ -202,9 +202,7 @@ def resolve_v8_cache_protocol_binding(
     raise ValueError("signed V8 cache lacks protocol artifact bindings")
 
 
-def _fold_config_entry_matches(
-    item: Mapping[str, Any], *, name: str, config_sha256: str
-) -> bool:
+def _fold_config_entry_matches(item: Mapping[str, Any], *, name: str, config_sha256: str) -> bool:
     if item.get("sha256") != config_sha256:
         return False
     raw = item.get("path")

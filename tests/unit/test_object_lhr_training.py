@@ -3,8 +3,8 @@ from __future__ import annotations
 import torch
 
 from e_jepa_ttc.data.garlttc_object_lhr import ObjectLHRBatch
-from e_jepa_ttc.models.object_lhr import ObjectCentricLHROutput
 from e_jepa_ttc.models.highres_factorized import HighResFeatures, make_patch_geometry
+from e_jepa_ttc.models.object_lhr import ObjectCentricLHROutput
 from e_jepa_ttc.training.object_lhr import (
     ObjectLHRCurriculumConfig,
     curriculum_phase,

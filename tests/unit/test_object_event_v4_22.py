@@ -59,7 +59,11 @@ def test_tail_parameter_selection_is_deterministic() -> None:
 def test_partial_unfreeze_only_enables_tail_geometry_parameters() -> None:
     backbone = TinyBackbone()
     selected = configure_partial_geometry_unfreeze(backbone, 2)
-    trainable = [name for name, p in backbone.foreground_model.geometry_encoder.named_parameters() if p.requires_grad]
+    trainable = [
+        name
+        for name, p in backbone.foreground_model.geometry_encoder.named_parameters()
+        if p.requires_grad
+    ]
     assert trainable == selected
     assert backbone.motion_config.freeze_foreground is False
     assert not any(p.requires_grad for p in backbone.foreground_model.decoder.parameters())
@@ -99,8 +103,15 @@ def test_encoder_pseudoflow_loss_backpropagates_to_flow() -> None:
     parameter = torch.nn.Parameter(torch.tensor([1.0]))
     initial = {"p": parameter.detach().clone()}
     loss, parts = encoder_pseudoflow_loss(
-        forward, reverse, target_f, mask, target_r, mask,
-        {"p": parameter}, initial, config=ObjectEventV422LossConfig(),
+        forward,
+        reverse,
+        target_f,
+        mask,
+        target_r,
+        mask,
+        {"p": parameter},
+        initial,
+        config=ObjectEventV422LossConfig(),
     )
     loss.backward()
     assert forward.grad is not None and float(forward.grad.abs().sum()) > 0.0

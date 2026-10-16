@@ -7,16 +7,17 @@ v4.8 backbones and training one shared odd sign head.  The final TTC expansion
 is a sign projection of the frozen v4.10 magnitude; it never blends opposite
 signed values and therefore cannot create new near-zero cancellation artifacts.
 """
+
 from __future__ import annotations
 
-from dataclasses import dataclass
 from collections.abc import Sequence
+from dataclasses import dataclass
 
 import torch
 from torch import nn
 from torch.nn import functional
 
-from e_jepa_ttc.models.object_event_v4_12 import ObjectEventTTCV412, ObjectEventV412Config
+from e_jepa_ttc.models.object_event_v4_12 import ObjectEventTTCV412
 
 
 @dataclass(frozen=True)
@@ -82,7 +83,7 @@ class ObjectEventTTCV415(nn.Module):
             extractor.requires_grad_(False)
             extractor.eval()
 
-    def train(self, mode: bool = True) -> "ObjectEventTTCV415":
+    def train(self, mode: bool = True) -> ObjectEventTTCV415:
         super().train(mode)
         for extractor in self.extractors:
             extractor.eval()

@@ -2,6 +2,7 @@
 
 import json
 import runpy
+import shutil
 import sys
 import uuid
 from pathlib import Path
@@ -13,8 +14,17 @@ from e_jepa_ttc.simplex_t.unit_qa_evidence import UNIT_QA_FILES
 
 
 @pytest.mark.parametrize("mode", ["complete", "resource", "invalid", "missing"])
-def test_profile_requires_semantic_verification(monkeypatch, mode):
-    work = Path(__file__).resolve().parents[2]
+def test_profile_requires_semantic_verification(monkeypatch, mode, tmp_path):
+    source = Path(__file__).resolve().parents[2]
+    work = tmp_path
+    (work / "scripts").mkdir()
+    shutil.copyfile(
+        source / "scripts/materialize_simplex_t_component_profile.py",
+        work / "scripts/materialize_simplex_t_component_profile.py",
+    )
+    ledger = work / "artifacts/simplex_t/TECHNICAL_BUDGET.json"
+    ledger.parent.mkdir(parents=True)
+    ledger.write_text('{"synthetic_test_ledger": true}', encoding="utf-8")
     root = work / "artifacts/simplex_t/T0" / ("profile_fixture_" + uuid.uuid4().hex)
     for folder in ("unit", "static", "h16"):
         (root / folder).mkdir(parents=True)

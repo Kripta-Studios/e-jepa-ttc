@@ -54,9 +54,7 @@ def _lineage(tmp_path: Path, update: int) -> tuple[Path, Path, dict[str, Any]]:
     return run, freeze_path, freeze
 
 
-def test_lineage_accepts_exact_origin(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
+def test_lineage_accepts_exact_origin(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     run, freeze_path, freeze = _lineage(tmp_path, 100)
     monkeypatch.setattr(contracts, "validate_c2f_graph_freeze", lambda _path: freeze)
     contracts.validate_c2f_graph_lineage(run, freeze_path)
@@ -149,4 +147,3 @@ def test_cli_help(module: str) -> None:
         text=True,
     )
     assert result.returncode == 0
-

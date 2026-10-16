@@ -30,7 +30,7 @@ def test_transport_summary_extracts_positive_axis_expansion() -> None:
     yy, xx = torch.meshgrid(y, x, indexing="ij")
     dx = 1.5 * xx[None]
     dy = 1.0 * yy[None]
-    zeros = torch.zeros_like(dx)
+    _zeros = torch.zeros_like(dx)
     confidence = torch.ones_like(dx) * 0.2
     entropy = torch.ones_like(dx) * 0.2
     valid = torch.ones_like(dx, dtype=torch.bool)

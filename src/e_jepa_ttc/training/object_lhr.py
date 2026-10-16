@@ -5,7 +5,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 import torch
-from torch import nn
 from torch.nn import functional
 
 from e_jepa_ttc.data.garlttc_object_lhr import ObjectLHRBatch

@@ -1,0 +1,14 @@
+{
+  "APPLICATION.json": {
+    "bytes": 725,
+    "sha256": "4de6e81b64b4036e2bb943be0ada93b850fd1fd5e3df6529735c8076c918a905"
+  },
+  "GITHUB_CI.json": {
+    "bytes": 5005,
+    "sha256": "d746c22cbe722a78a9b7830d333aba3a8daf8ab025dc31fb17b11c99c6ed581f"
+  },
+  "PATCH_PREFLIGHT.json": {
+    "bytes": 448,
+    "sha256": "3a1b61e52adf3aba80d1c9e53adb16d8e869907124fcae14f036631afd8b78a7"
+  }
+}

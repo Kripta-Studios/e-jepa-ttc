@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Run Object Event TTC v4.18 radial/divergence physics bottleneck experiment."""
+"Run Object Event TTC v4.18 radial/divergence physics bottleneck experiment."
+
 from __future__ import annotations
 
 import argparse
-import copy
 import json
 import shutil
 import sys
@@ -24,6 +24,19 @@ if str(ROOT) not in sys.path:
 if str(ROOT / "src") not in sys.path:
     sys.path.insert(0, str(ROOT / "src"))
 
+from e_jepa_ttc.models.object_event_v4_18 import (  # noqa: E402
+    FEATURE_NAMES,
+    MonotoneOddPhysicsHead,
+    ObjectEventV418Config,
+    feature_scales,
+    normalise_physics_features,
+    radial_physics_features,
+    robust_seed_consensus,
+)
+from e_jepa_ttc.training.object_event_v4_18 import (  # noqa: E402
+    raw_physics_score,
+    train_monotone_head,
+)
 from scripts.train_e_jepa_object_event_v4_6 import _materialize  # noqa: E402
 from scripts.train_e_jepa_object_event_v4_8 import _load_config as _load_v48_config  # noqa: E402
 from scripts.train_e_jepa_object_event_v4_12 import (  # noqa: E402
@@ -37,20 +50,6 @@ from scripts.train_e_jepa_object_event_v4_16 import (  # noqa: E402
     _metrics,
     _parse_checkpoints,
     _resolve_device,
-)
-from e_jepa_ttc.models.object_event_v4_18 import (  # noqa: E402
-    FEATURE_NAMES,
-    MonotoneOddPhysicsHead,
-    ObjectEventV418Config,
-    feature_scales,
-    normalise_physics_features,
-    radial_physics_features,
-    robust_seed_consensus,
-)
-from e_jepa_ttc.training.object_event_v4_18 import (  # noqa: E402
-    raw_physics_score,
-    sign_from_negative_logit,
-    train_monotone_head,
 )
 
 
@@ -89,9 +88,7 @@ def _extract(
         raise KeyError(branch)
     permutation = None
     if branch == "shuffled":
-        permutation = torch.randperm(
-            len(events), generator=torch.Generator().manual_seed(seed)
-        )
+        permutation = torch.randperm(len(events), generator=torch.Generator().manual_seed(seed))
     output: list[torch.Tensor] = []
     frozen.eval()
     for start in range(0, len(events), batch_size):
@@ -175,13 +172,15 @@ def _decision(
     pearson_ok = float(physics["pearson"]) >= (
         float(baseline["pearson"]) - thresholds["baseline_pearson_tolerance"]
     )
-    fragile_ok = float(physics["minimum_sequence_negative_accuracy"]) >= thresholds[
-        "minimum_sequence_negative_accuracy_floor"
-    ]
+    fragile_ok = (
+        float(physics["minimum_sequence_negative_accuracy"])
+        >= thresholds["minimum_sequence_negative_accuracy_floor"]
+    )
     positive_ok = float(physics["positive_accuracy"]) >= thresholds["positive_accuracy_floor"]
-    feature_support = max(
-        abs(float(row["pearson_to_target_expansion"])) for row in feature_rows
-    ) >= thresholds["feature_validation_abs_pearson_support"]
+    feature_support = (
+        max(abs(float(row["pearson_to_target_expansion"])) for row in feature_rows)
+        >= thresholds["feature_validation_abs_pearson_support"]
+    )
 
     if pearson_ok and fragile_ok and positive_ok:
         recommendation = "integrate_radial_physics_then_partial_unfreeze"
@@ -233,9 +232,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         args.cache_manifest, "validation", input_size=base_config.input_size
     )
     train_frame = _align_ensemble(train_split, _read_ensemble(args.ensemble_train))
-    validation_frame = _align_ensemble(
-        validation_split, _read_ensemble(args.ensemble_validation)
-    )
+    validation_frame = _align_ensemble(validation_split, _read_ensemble(args.ensemble_validation))
 
     train_features = _extract(
         frozen,
@@ -259,15 +256,11 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         train_features,
         minimum_scale=model_config.minimum_feature_scale,
     )
-    train_x = normalise_physics_features(
-        train_features, scales, clip=model_config.feature_clip
-    )
+    train_x = normalise_physics_features(train_features, scales, clip=model_config.feature_clip)
     validation_x = normalise_physics_features(
         validation_features, scales, clip=model_config.feature_clip
     )
-    target_train = torch.as_tensor(
-        train_frame["target_expansion"].to_numpy(dtype=np.float32)
-    )
+    target_train = torch.as_tensor(train_frame["target_expansion"].to_numpy(dtype=np.float32))
 
     held_out_folds = _folds(
         train_frame["sequence_id"].astype(str).tolist(),
@@ -309,9 +302,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         )
         histories.append({"fold": fold_index, "history": history})
 
-    train_magnitude = np.abs(
-        train_frame["fused_prediction_expansion"].to_numpy(dtype=np.float64)
-    )
+    train_magnitude = np.abs(train_frame["fused_prediction_expansion"].to_numpy(dtype=np.float64))
     validation_magnitude = np.abs(
         validation_frame["fused_prediction_expansion"].to_numpy(dtype=np.float64)
     )
@@ -358,9 +349,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         raw_prediction,
         minimum_negatives=20,
     )
-    baseline_prediction = validation_frame["fused_prediction_expansion"].to_numpy(
-        dtype=np.float64
-    )
+    baseline_prediction = validation_frame["fused_prediction_expansion"].to_numpy(dtype=np.float64)
     baseline_metrics, _ = _metrics(
         validation_frame,
         baseline_prediction,
@@ -394,9 +383,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         shuffled_logits = final_model(shuffled_x).numpy()
 
     train_feature_rows = _feature_diagnostics(train_frame, train_x.numpy())
-    validation_feature_rows = _feature_diagnostics(
-        validation_frame, validation_x.numpy()
-    )
+    validation_feature_rows = _feature_diagnostics(validation_frame, validation_x.numpy())
     pd.DataFrame(train_feature_rows).to_csv(
         output_dir / "train_feature_diagnostics.csv", index=False
     )
@@ -437,9 +424,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
 
     target_val = validation_frame["target_expansion"].to_numpy(dtype=np.float64)
     zero_sign = _prediction_from_negative_logit(zero_logits, np.ones_like(target_val))
-    shuffled_sign = _prediction_from_negative_logit(
-        shuffled_logits, np.ones_like(target_val)
-    )
+    shuffled_sign = _prediction_from_negative_logit(shuffled_logits, np.ones_like(target_val))
     zero_neg_rate = float(np.mean(zero_sign < 0.0))
     shuffled_neg_rate = float(np.mean(shuffled_sign < 0.0))
 

@@ -1,5 +1,8 @@
 #!/usr/bin/env python
-"""Build a Garl public 8192/2048 subset from the exact E-JEPA S1 cache tokens."""
+# ruff: noqa: E402
+# CLI entry point: add the checkout to sys.path before importing project modules.
+"Build a Garl public 8192/2048 subset from the exact E-JEPA S1 cache tokens."
+
 from __future__ import annotations
 
 import argparse
@@ -14,9 +17,17 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT))
-from e_jepa_ttc.artifacts.hashing import sign_artifact
-from e_jepa_ttc.data.garlttc_lhr_cache import GarlTTCLHRCacheDataset
-from scripts.build_garl_matched_screen_subset import _select_exact_public_rows, _sha256, _write_role
+from e_jepa_ttc.artifacts.hashing import (
+    sign_artifact,  # noqa: E402 - CLI path bootstrap precedes project imports.
+)
+from e_jepa_ttc.data.garlttc_lhr_cache import (
+    GarlTTCLHRCacheDataset,  # noqa: E402 - CLI path bootstrap precedes project imports.
+)
+from scripts.build_garl_matched_screen_subset import (  # noqa: E402 - CLI path bootstrap precedes project imports.
+    _select_exact_public_rows,
+    _sha256,
+    _write_role,
+)
 
 JOIN_KEYS = ("sequence_id", "sample_token", "track_id", "public_track_id", "timestamp_us")
 
@@ -26,21 +37,31 @@ def _rows(manifest: Path, split: str) -> pd.DataFrame:
     rows: list[dict[str, Any]] = []
     for i in range(len(ds)):
         r = ds[i]
-        rows.append({
-            "sequence_id": str(r["sequence_id"]),
-            "sample_token": str(r["sample_token"]),
-            "track_id": str(r["track_id"]),
-            "public_track_id": str(r["public_track_id"]),
-            "timestamp_us": int(r["timestamp_us"]),
-            "cache_ttc_s": float(r["ttc_s"]),
-        })
+        rows.append(
+            {
+                "sequence_id": str(r["sequence_id"]),
+                "sample_token": str(r["sample_token"]),
+                "track_id": str(r["track_id"]),
+                "public_track_id": str(r["public_track_id"]),
+                "timestamp_us": int(r["timestamp_us"]),
+                "cache_ttc_s": float(r["ttc_s"]),
+            }
+        )
     out = pd.DataFrame(rows)
     if out["sample_token"].duplicated().any():
         raise ValueError(f"duplicate {split} sample_token")
     return out
 
 
-def build(train_manifest: Path, validation_manifest: Path, public_data: Path, public_labels: Path, output_dir: Path, expected_train: int, expected_validation: int) -> dict[str, Any]:
+def build(
+    train_manifest: Path,
+    validation_manifest: Path,
+    public_data: Path,
+    public_labels: Path,
+    output_dir: Path,
+    expected_train: int,
+    expected_validation: int,
+) -> dict[str, Any]:
     train = _rows(train_manifest, "train")
     validation = _rows(validation_manifest, "validation")
     if len(train) != expected_train or len(validation) != expected_validation:
@@ -54,7 +75,10 @@ def build(train_manifest: Path, validation_manifest: Path, public_data: Path, pu
         "validation": _select_exact_public_rows(validation, data, labels, split="validation"),
     }
     output_dir.mkdir(parents=True, exist_ok=True)
-    roles = {split: _write_role(output_dir, split, d, l) for split, (d, l) in selected.items()}
+    roles = {
+        split: _write_role(output_dir, split, data_path, list_path)
+        for split, (data_path, list_path) in selected.items()
+    }
     result: dict[str, Any] = {
         # Keep the existing artifact type so the already-audited official cache builder
         # can consume this larger budget-matched subset without a second code path.
@@ -73,14 +97,25 @@ def build(train_manifest: Path, validation_manifest: Path, public_data: Path, pu
             "private_test_opened": False,
         },
         "sources": {
-            "train_cache_manifest": {"path": str(train_manifest.resolve()), "sha256": _sha256(train_manifest)},
-            "validation_cache_manifest": {"path": str(validation_manifest.resolve()), "sha256": _sha256(validation_manifest)},
+            "train_cache_manifest": {
+                "path": str(train_manifest.resolve()),
+                "sha256": _sha256(train_manifest),
+            },
+            "validation_cache_manifest": {
+                "path": str(validation_manifest.resolve()),
+                "sha256": _sha256(validation_manifest),
+            },
             "public_data": {"path": str(public_data.resolve()), "sha256": _sha256(public_data)},
-            "public_labels": {"path": str(public_labels.resolve()), "sha256": _sha256(public_labels)},
+            "public_labels": {
+                "path": str(public_labels.resolve()),
+                "sha256": _sha256(public_labels),
+            },
         },
     }
     sign_artifact(result)
-    (output_dir / "manifest.json").write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    (output_dir / "manifest.json").write_text(
+        json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
     return result
 
 
@@ -95,7 +130,15 @@ def main() -> int:
     p.add_argument("--expected-validation-rows", type=int, default=2048)
     args = p.parse_args()
     try:
-        result = build(args.train_cache_manifest.resolve(), args.validation_cache_manifest.resolve(), args.public_data_parquet.resolve(), args.public_labels_parquet.resolve(), args.output_dir.resolve(), args.expected_train_rows, args.expected_validation_rows)
+        result = build(
+            args.train_cache_manifest.resolve(),
+            args.validation_cache_manifest.resolve(),
+            args.public_data_parquet.resolve(),
+            args.public_labels_parquet.resolve(),
+            args.output_dir.resolve(),
+            args.expected_train_rows,
+            args.expected_validation_rows,
+        )
     except Exception as exc:
         print(f"budget-matched subset failed: {type(exc).__name__}: {exc}", file=sys.stderr)
         return 1

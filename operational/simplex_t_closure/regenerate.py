@@ -45,7 +45,6 @@ def main() -> int:
             raise ValueError(f"extracted content hash/size mismatch: {name}")
     sys.path.insert(0, str(root / "provenance/work/src"))
     import torch
-
     from e_jepa_ttc.evaluation.stage63_65 import benchmark_phase, strict_macro_mass
     from e_jepa_ttc.simplex_t.compact_weights import load_compact_endpoint
     from e_jepa_ttc.simplex_t.expert_phase import expert_benchmark_phase

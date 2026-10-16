@@ -27,7 +27,7 @@ class _FakeBackbone(nn.Module):
         self.field_head = nn.Conv2d(8 + 8, 2, kernel_size=1)
 
     def _foreground_and_features(self, events: torch.Tensor):
-        batch = events.shape[0]
+        _batch = events.shape[0]
         maps = events[:, :, :2, :4, :4]
         foreground = torch.sigmoid(events[:, :, 0, :16, :16])
         activity = events[:, :, 1, :16, :16]

@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
-"""Train the Object Event TTC v4.12 reversal-balanced directional sign probe."""
+"Train the Object Event TTC v4.12 reversal-balanced directional sign probe."
 
 from __future__ import annotations
 
 import argparse
 import json
-import math
 import shutil
 import sys
 import time
@@ -28,19 +27,6 @@ if str(ROOT) not in sys.path:
 if str(ROOT / "src") not in sys.path:
     sys.path.insert(0, str(ROOT / "src"))
 
-from scripts.train_e_jepa_object_event_v4_2 import (  # noqa: E402
-    _autocast,
-    _git_commit,
-    _json_safe,
-    _resolve_device,
-    _seed,
-    _sha256,
-)
-from scripts.train_e_jepa_object_event_v4_6 import (  # noqa: E402
-    MaterializedV46Split,
-    _materialize,
-)
-from scripts.train_e_jepa_object_event_v4_8 import _load_config as _load_v48_config  # noqa: E402
 from e_jepa_ttc.models.object_event_v4_8 import ObjectEventTTCV48  # noqa: E402
 from e_jepa_ttc.models.object_event_v4_12 import (  # noqa: E402
     ObjectEventTTCV412,
@@ -58,6 +44,19 @@ from e_jepa_ttc.training.object_event_v4_12 import (  # noqa: E402
     directional_sign_gates,
     reversal_balanced_sign_loss,
 )
+from scripts.train_e_jepa_object_event_v4_2 import (  # noqa: E402
+    _autocast,
+    _git_commit,
+    _json_safe,
+    _resolve_device,
+    _seed,
+    _sha256,
+)
+from scripts.train_e_jepa_object_event_v4_6 import (  # noqa: E402
+    MaterializedV46Split,
+    _materialize,
+)
+from scripts.train_e_jepa_object_event_v4_8 import _load_config as _load_v48_config  # noqa: E402
 
 IDENTITY_COLUMNS = ("sequence_id", "sample_token", "track_id")
 ENSEMBLE_COLUMNS = (
@@ -101,15 +100,18 @@ class ObjectEventV412TrainConfig:
     shuffled_event_pearson_drop_gate: float = 0.55
 
     def __post_init__(self) -> None:
-        if min(
-            self.batch_size,
-            self.maximum_epochs,
-            self.minimum_epochs,
-            self.patience_epochs,
-            self.overfit_samples,
-            self.overfit_maximum_epochs,
-            self.per_sequence_negative_min_count,
-        ) <= 0:
+        if (
+            min(
+                self.batch_size,
+                self.maximum_epochs,
+                self.minimum_epochs,
+                self.patience_epochs,
+                self.overfit_samples,
+                self.overfit_maximum_epochs,
+                self.per_sequence_negative_min_count,
+            )
+            <= 0
+        ):
             raise ValueError("v4.12 integer controls must be positive")
         if self.minimum_epochs > self.maximum_epochs:
             raise ValueError("minimum_epochs exceeds maximum_epochs")
@@ -180,7 +182,9 @@ def _align_ensemble(split: MaterializedV46Split, frame: pd.DataFrame) -> pd.Data
     aligned = wanted.merge(frame, on=list(IDENTITY_COLUMNS), how="left", validate="one_to_one")
     if aligned["target_expansion"].isna().any():
         raise ValueError("ensemble predictions do not cover the materialized split")
-    aligned = aligned.sort_values("_order", kind="stable").drop(columns="_order").reset_index(drop=True)
+    aligned = (
+        aligned.sort_values("_order", kind="stable").drop(columns="_order").reset_index(drop=True)
+    )
     delta = split.delta_t_s.numpy().astype(np.float64)
     target_ttc = split.target_ttc_s.numpy().astype(np.float64)
     if not np.allclose(aligned["delta_t_s"], delta, atol=1.0e-8, rtol=0.0):
@@ -219,7 +223,9 @@ def _sample_weights(frame: pd.DataFrame) -> torch.Tensor:
     return torch.as_tensor(values, dtype=torch.float64)
 
 
-def _per_sequence(frame: pd.DataFrame, prediction: np.ndarray, *, minimum_negatives: int) -> pd.DataFrame:
+def _per_sequence(
+    frame: pd.DataFrame, prediction: np.ndarray, *, minimum_negatives: int
+) -> pd.DataFrame:
     rows: list[dict[str, Any]] = []
     target = frame["target_expansion"].to_numpy(dtype=np.float64)
     work = frame.loc[:, list(IDENTITY_COLUMNS)].copy()
@@ -281,7 +287,9 @@ def _predict(
     for start in range(0, len(split), batch_size):
         end = min(start + batch_size, len(split))
         if branch == "zero":
-            events = torch.zeros_like(split.events[start:end]).to(device=device, dtype=torch.float32)
+            events = torch.zeros_like(split.events[start:end]).to(
+                device=device, dtype=torch.float32
+            )
         elif branch == "shuffled":
             assert permutation is not None
             events = split.events[permutation[start:end]].to(device=device, dtype=torch.float32)
@@ -345,7 +353,11 @@ def _thresholds(config: ObjectEventV412TrainConfig) -> dict[str, float]:
     return {
         field.name: float(getattr(config, field.name))
         for field in fields(config)
-        if field.name.endswith("gate") or field.name.endswith("ceiling") or field.name.endswith("floor") or field.name.endswith("drop") or field.name.endswith("tolerance")
+        if field.name.endswith("gate")
+        or field.name.endswith("ceiling")
+        or field.name.endswith("floor")
+        or field.name.endswith("drop")
+        or field.name.endswith("tolerance")
     }
 
 
@@ -412,9 +424,7 @@ def run(
         cache_manifest, "validation", input_size=base_config.input_size
     )
     train_frame = _align_ensemble(train_split, _read_ensemble(ensemble_train_path))
-    validation_frame = _align_ensemble(
-        validation_split, _read_ensemble(ensemble_validation_path)
-    )
+    validation_frame = _align_ensemble(validation_split, _read_ensemble(ensemble_validation_path))
 
     if mode == "overfit":
         indices = _balanced_subset_indices(
@@ -621,9 +631,9 @@ def run(
     final_metrics["zero_event_pearson_drop"] = pearson(target, event_prediction) - pearson(
         target, zero_prediction
     )
-    final_metrics["shuffled_event_pearson_drop"] = pearson(
-        target, event_prediction
-    ) - pearson(target, shuffled_prediction)
+    final_metrics["shuffled_event_pearson_drop"] = pearson(target, event_prediction) - pearson(
+        target, shuffled_prediction
+    )
     final_gates = directional_sign_gates(
         mode=mode,
         metrics=cast(Mapping[str, float], final_metrics),
@@ -632,11 +642,15 @@ def run(
     )
     final_passed = all(final_gates.values())
 
-    output = validation_frame.loc[:, list(IDENTITY_COLUMNS) + [
-        "delta_t_s",
-        "target_ttc_s",
-        "target_expansion",
-    ]].copy()
+    output = validation_frame.loc[
+        :,
+        list(IDENTITY_COLUMNS)
+        + [
+            "delta_t_s",
+            "target_ttc_s",
+            "target_expansion",
+        ],
+    ].copy()
     output["baseline_prediction_expansion"] = baseline_prediction
     output["directional_prediction_expansion"] = event_prediction
     output["negative_probability"] = probability

@@ -73,7 +73,7 @@ def materialize_config(
     num_workers: int,
     minimum_selection_epoch: int,
 ) -> dict[str, Any]:
-    """Create an outside-release from-scratch config bound to exact subset files."""
+    "Create an outside-release from-scratch config bound to exact subset files."
 
     if epochs <= 0 or batch_size <= 0 or num_workers < 0:
         raise ValueError("epochs/batch_size must be positive and num_workers non-negative.")
@@ -98,11 +98,17 @@ def materialize_config(
         raise ValueError("Matched Garl config requires positive train/validation row counts.")
     if validation_rows != 2048:
         raise ValueError(
-            f"Matched Garl public validation must remain the frozen 2048 rows; got {validation_rows}."
+            "Matched Garl public validation must remain the f"
+            "rozen 2048 rows; got "
+            f"{validation_rows}"
+            "."
         )
     if train_rows not in {2048, 8192}:
         raise ValueError(
-            f"Matched Garl train budget must be one of the preregistered 2048/8192 budgets; got {train_rows}."
+            "Matched Garl train budget must be one of the pre"
+            "registered 2048/8192 budgets; got "
+            f"{train_rows}"
+            "."
         )
 
     subset_root = subset_manifest.parent.resolve()
@@ -118,9 +124,7 @@ def materialize_config(
     dataset = payload.setdefault("dataset", {})
     model = payload.setdefault("model", {})
     training = payload.setdefault("training_settings", {})
-    sections_are_mappings = all(
-        isinstance(section, dict) for section in (dataset, model, training)
-    )
+    sections_are_mappings = all(isinstance(section, dict) for section in (dataset, model, training))
     if not sections_are_mappings:
         raise TypeError("Official config dataset/model/training_settings must be mappings.")
     dataset.update(
@@ -209,7 +213,7 @@ def run(
     evaluate_final: bool,
     timeout_hours: float,
 ) -> dict[str, Any]:
-    """Plan or execute official from-scratch training without touching release files."""
+    "Plan or execute official from-scratch training without touching release files."
 
     if timeout_hours <= 0.0 or timeout_hours > 4.5:
         raise ValueError("timeout_hours must be in (0, 4.5] to preserve the 25% safety margin.")
@@ -295,9 +299,10 @@ def run(
         stdout_path = output_dir / "training_stdout.log"
         stderr_path = output_dir / "training_stderr.log"
         started = time.perf_counter()
-        with stdout_path.open("w", encoding="utf-8") as stdout, stderr_path.open(
-            "w", encoding="utf-8"
-        ) as stderr:
+        with (
+            stdout_path.open("w", encoding="utf-8") as stdout,
+            stderr_path.open("w", encoding="utf-8") as stderr,
+        ):
             completed = subprocess.run(
                 command,
                 cwd=release_root,

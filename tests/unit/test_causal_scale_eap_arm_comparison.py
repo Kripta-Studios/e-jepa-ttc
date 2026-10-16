@@ -50,9 +50,7 @@ def test_arm_comparison_is_token_exact_signed_and_sequence_bootstrapped(
     assert result["scope"]["exact_token_equality_verified"] is True
     assert result["paired"]["bootstrap_unit"] == "complete_sequence"
     assert result["paired"]["candidate_win_rate"] == 1.0
-    bootstrap = result["paired"][
-        "candidate_minus_reference_sequence_bootstrap_paper_MiD"
-    ]
+    bootstrap = result["paired"]["candidate_minus_reference_sequence_bootstrap_paper_MiD"]
     assert bootstrap["candidate_better"] is True
 
 

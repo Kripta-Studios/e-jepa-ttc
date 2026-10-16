@@ -150,15 +150,11 @@ def smoke(*, device_name: str, output_dir: Path) -> dict[str, Any]:
             resume=(state_dir / "last.pt").is_file(),
             stop_after_epoch=1,
         )
-        point = np.asarray(
-            result.best_validation["point_prediction_ttc_s"], dtype=np.float64
-        )
+        point = np.asarray(result.best_validation["point_prediction_ttc_s"], dtype=np.float64)
         if point.shape != (32,) or not np.isfinite(point).all():
             raise RuntimeError(f"{arm} smoke did not produce 32 finite point predictions")
         if not all(
-            np.isfinite(float(value))
-            for row in result.history
-            for value in row["train"].values()
+            np.isfinite(float(value)) for row in result.history for value in row["train"].values()
         ):
             raise RuntimeError(f"{arm} smoke produced a non-finite training loss")
         arm_reports[arm] = {
@@ -168,9 +164,7 @@ def smoke(*, device_name: str, output_dir: Path) -> dict[str, Any]:
             "best_epoch": result.best_epoch,
             "elapsed_seconds": result.elapsed_seconds,
             "point_finite_fraction": float(np.isfinite(point).mean()),
-            "parameter_count": sum(
-                parameter.numel() for parameter in result.model.parameters()
-            ),
+            "parameter_count": sum(parameter.numel() for parameter in result.model.parameters()),
             "selection_only_smoke_sequence_relabel": True,
             "selection_only_abstention_thresholds_disabled": True,
             "soft_teacher_excluded_from_optimizer": result.initialization.get(

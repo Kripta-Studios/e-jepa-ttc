@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 import hashlib
-import json
 import importlib.util
+import json
 from pathlib import Path
 
 import numpy as np
@@ -229,8 +229,6 @@ def test_mechanism_cuts_include_prespecified_regimes_without_becoming_features()
     assert "category_analysis_only" in cuts
 
 
-
-
 def test_pruned_mechanism_cuts_match_full_replay_for_scalar_diagnostics() -> None:
     full = _frame()
     scalar_columns = [
@@ -247,11 +245,14 @@ def test_pruned_mechanism_cuts_match_full_replay_for_scalar_diagnostics() -> Non
 
 def test_pruned_mechanism_cuts_still_require_consumed_scalar_columns() -> None:
     full = _frame()
-    pruned = full.loc[:, [
-        *OOF_V8_REQUIRED_COLUMNS,
-        "occupancy_entropy",
-        "motion_magnitude",
-    ]].copy()
+    pruned = full.loc[
+        :,
+        [
+            *OOF_V8_REQUIRED_COLUMNS,
+            "occupancy_entropy",
+            "motion_magnitude",
+        ],
+    ].copy()
 
     with pytest.raises(ValueError, match="guard_margin"):
         mechanism_cuts_from_pruned_replay(pruned)
@@ -321,7 +322,7 @@ def test_general_gate_and_aggregate_schema_fail_closed() -> None:
 
 
 def test_factorial_replay_executes_one_real_checkpoint_graph_per_cell() -> None:
-    """A factorial autopsy must obtain every cell by model replay, not CSV edits."""
+    "A factorial autopsy must obtain every cell by model replay, not CSV edits."
 
     from e_jepa_ttc.evaluation.scientific_recovery_v8 import replay_factorial_a5
 
@@ -369,7 +370,7 @@ def test_factorial_replay_executes_one_real_checkpoint_graph_per_cell() -> None:
 def test_replay_cli_runner_loads_checkpoint_and_writes_signed_factorial_csvs(
     tmp_path: Path,
 ) -> None:
-    """The runnable replay path must consume tensors plus checkpoint, never an OOF CSV."""
+    "The runnable replay path must consume tensors plus checkpoint, never an OOF CSV."
 
     torch = pytest.importorskip("torch")
     from e_jepa_ttc.evaluation.scientific_recovery_v8 import canonical_json_sha256
@@ -424,7 +425,7 @@ def test_replay_cli_runner_loads_checkpoint_and_writes_signed_factorial_csvs(
 
 
 def test_sharded_replay_streams_signed_parts_without_fold_tensor(tmp_path: Path) -> None:
-    """Production autopsy replay must accept small signed parts instead of one fold-sized tensor."""
+    "Production autopsy replay must accept small signed parts instead of one fold-sized tensor."
 
     torch = pytest.importorskip("torch")
     from e_jepa_ttc.artifacts.hashing import sign_artifact
@@ -510,9 +511,10 @@ def test_sharded_replay_streams_signed_parts_without_fold_tensor(tmp_path: Path)
     assert set(frame["token_id"]) == {"token-0", "token-1", "token-2", "token-3"}
 
 
-
-def test_replay_accepts_historical_checkpoint_config_with_new_default_fields(tmp_path: Path) -> None:
-    """Raw historical config hash must survive backward-compatible dataclass defaults."""
+def test_replay_accepts_historical_checkpoint_config_with_new_default_fields(
+    tmp_path: Path,
+) -> None:
+    "Raw historical config hash must survive backward-compatible dataclass defaults."
 
     torch = pytest.importorskip("torch")
     from e_jepa_ttc.artifacts.hashing import sign_artifact
@@ -541,9 +543,7 @@ def test_replay_accepts_historical_checkpoint_config_with_new_default_fields(tmp
     # its default reproduces the old behavior exactly.
     raw_config.pop("transport_mode")
     checkpoint = tmp_path / "historical_checkpoint.pt"
-    torch.save(
-        {"model_config": raw_config, "model_state_dict": model.state_dict()}, checkpoint
-    )
+    torch.save({"model_config": raw_config, "model_state_dict": model.state_dict()}, checkpoint)
 
     part = tmp_path / "fold0.part0000.pt"
     torch.save(
@@ -591,17 +591,18 @@ def test_replay_accepts_historical_checkpoint_config_with_new_default_fields(tmp
         config_sha256=canonical_json_sha256(raw_config),
     )
     assert result["config_sha256"] == canonical_json_sha256(raw_config)
-    assert (
-        result["config_provenance"]["raw_checkpoint_config_sha256"]
-        == canonical_json_sha256(raw_config)
+    assert result["config_provenance"]["raw_checkpoint_config_sha256"] == canonical_json_sha256(
+        raw_config
     )
-    assert (
-        result["config_provenance"]["effective_model_config_sha256"]
-        == canonical_json_sha256(model.checkpoint_config())
+    assert result["config_provenance"]["effective_model_config_sha256"] == canonical_json_sha256(
+        model.checkpoint_config()
     )
 
-def test_autopsy_materializer_detects_pruned_historical_shards_and_builds_storage_only_recovery_config(tmp_path: Path) -> None:
-    """Missing historical shards must trigger a train-only, value-equivalent recovery cache."""
+
+def test_autopsy_recovers_pruned_historical_shards_with_storage_only_config(
+    tmp_path: Path,
+) -> None:
+    "Missing historical shards must trigger a train-only, value-equivalent recovery cache."
 
     module_spec = importlib.util.spec_from_file_location(
         "v8_autopsy_materialize_recovery",
@@ -690,7 +691,7 @@ def test_autopsy_materializer_prefers_existing_train_shards(tmp_path: Path) -> N
     assert module._missing_split_shards(manifest_path) == []
 
 
-def test_autopsy_materializer_loads_exact_sha_pinned_v7_population() -> None:
+def test_autopsy_materializer_loads_exact_sha_pinned_v7_population(tmp_path, monkeypatch) -> None:
     module_spec = importlib.util.spec_from_file_location(
         "v8_autopsy_materialize_population",
         Path("scripts/materialize_scientific_recovery_v8_autopsy_inputs.py"),
@@ -698,13 +699,25 @@ def test_autopsy_materializer_loads_exact_sha_pinned_v7_population() -> None:
     assert module_spec is not None and module_spec.loader is not None
     module = importlib.util.module_from_spec(module_spec)
     module_spec.loader.exec_module(module)
-    protocol = json.loads(
-        Path("configs/protocol/scientific_recovery_v8_temporal.json").read_text(encoding="utf-8")
+    monkeypatch.setattr(module, "ROOT", tmp_path)
+    fixture = tmp_path / "synthetic_oof.csv"
+    fixture.write_text(
+        "sample_token,sequence_id,track_id,target_ttc_s,fold,seed\n"
+        + "".join(f"fixture-{i},seq-{i % 9},track,1.0,{i % 3},7\n" for i in range(8192)),
+        encoding="utf-8",
+        newline="\n",
     )
+    protocol = {
+        "sources": {"a5_oof_predictions": {"path": fixture.name, "sha256": module.sha(fixture)}},
+        "sample_contract": {"rows": 8192},
+    }
     rows = module._frozen_a5_rows(protocol)
     assert len(rows) == 8192
     assert {row["fold"] for row in rows.values()} == {0, 1, 2}
     assert all(row["seed"] == 7 for row in rows.values())
+    fixture.write_bytes(fixture.read_bytes() + b"\n")
+    with pytest.raises(ValueError, match="SHA-256 mismatch"):
+        module._frozen_a5_rows(protocol)
 
 
 def test_future_prefix_invariance_uses_same_shape_future_perturbation() -> None:

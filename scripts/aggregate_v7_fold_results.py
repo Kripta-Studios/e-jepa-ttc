@@ -125,9 +125,7 @@ def _paired_bootstrap(
     )
     if len(merged) != len(candidate) or len(merged) != len(baseline):
         raise ValueError("candidate and baseline token universes differ")
-    if not np.allclose(
-        merged["target_ttc_s"], merged["baseline_target"], rtol=0.0, atol=1e-6
-    ):
+    if not np.allclose(merged["target_ttc_s"], merged["baseline_target"], rtol=0.0, atol=1e-6):
         raise ValueError("candidate and baseline targets differ")
     sequence_count = merged["sequence_id"].nunique()
     groups = [
@@ -259,9 +257,7 @@ def aggregate(
         "forbidden_splits_remained_closed": True,
     }
     mechanism_positive = bool(
-        delta_mid <= -5.0
-        and probability >= 0.90
-        and candidate_coverage >= baseline_coverage - 0.01
+        delta_mid <= -5.0 and probability >= 0.90 and candidate_coverage >= baseline_coverage - 0.01
     )
     confirmation_candidate = bool(
         all(value is True or value == 1.0 for value in integrity.values())
@@ -277,8 +273,7 @@ def aggregate(
         "protocol_artifact_sha256": protocol["artifact_sha256"],
         "sources": {
             "fold_predictions": [
-                {"path": str(path.resolve()), "sha256": _sha256(path)}
-                for path in prediction_paths
+                {"path": str(path.resolve()), "sha256": _sha256(path)} for path in prediction_paths
             ],
             "a5_baseline": {
                 "path": str(baseline_path.resolve()),

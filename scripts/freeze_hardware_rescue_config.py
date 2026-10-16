@@ -6,6 +6,7 @@ prefetch_factor may change. Model/data/loss/selection/gates remain unchanged.
 This is for CUDA/RAM feasibility rescue only and must never be selected by
 validation performance.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -82,9 +83,7 @@ def main() -> int:
     decision["hardware_rescue_selection_source"] = "CUDA_feasibility_only_not_validation"
     decision["hardware_rescue_original_effective_batch"] = original_effective
     decision["hardware_rescue_microbatch"] = int(args.batch_size)
-    decision["hardware_rescue_gradient_accumulation_steps"] = int(
-        args.gradient_accumulation_steps
-    )
+    decision["hardware_rescue_gradient_accumulation_steps"] = int(args.gradient_accumulation_steps)
     decision["private_test_remains_closed"] = True
 
     out.parent.mkdir(parents=True, exist_ok=True)

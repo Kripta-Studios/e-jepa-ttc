@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Train Object Event TTC v4.6 learned foreground height-ratio screen."""
+"Train Object Event TTC v4.6 learned foreground height-ratio screen."
 
 from __future__ import annotations
 
@@ -28,18 +28,6 @@ if str(ROOT) not in sys.path:
 if str(ROOT / "src") not in sys.path:
     sys.path.insert(0, str(ROOT / "src"))
 
-from scripts.train_e_jepa_object_event_v4_2 import (  # noqa: E402
-    MaterializedSplit,
-    _autocast,
-    _branch_metrics,
-    _evaluate,
-    _git_commit,
-    _json_safe,
-    _pearson,
-    _resolve_device,
-    _seed,
-    _sha256,
-)
 from e_jepa_ttc.data.object_event_v4 import GarlTTCObjectEventV4Dataset  # noqa: E402
 from e_jepa_ttc.models.object_event_v4_1 import ObjectEventV41Config  # noqa: E402
 from e_jepa_ttc.models.object_event_v4_6 import (  # noqa: E402
@@ -51,6 +39,18 @@ from e_jepa_ttc.training.object_event_v4_6 import (  # noqa: E402
     ObjectEventV46LossConfig,
     boxes_to_feature_masks,
     object_event_v4_6_loss,
+)
+from scripts.train_e_jepa_object_event_v4_2 import (  # noqa: E402
+    MaterializedSplit,
+    _autocast,
+    _branch_metrics,
+    _evaluate,
+    _git_commit,
+    _json_safe,
+    _pearson,
+    _resolve_device,
+    _seed,
+    _sha256,
 )
 
 
@@ -137,7 +137,7 @@ class MaterializedV46Split:
             track_ids=self.track_ids,
         )
 
-    def subset(self, indices: torch.Tensor) -> "MaterializedV46Split":
+    def subset(self, indices: torch.Tensor) -> MaterializedV46Split:
         values = indices.tolist()
         return MaterializedV46Split(
             events=self.events[indices],
@@ -161,7 +161,9 @@ def _construct(cls: type[Any], values: Mapping[str, Any]) -> Any:
     return cls(**dict(values))
 
 
-def _load_config(path: Path) -> tuple[
+def _load_config(
+    path: Path,
+) -> tuple[
     ObjectEventV41Config,
     ObjectEventV46Config,
     ObjectEventV46TrainConfig,
@@ -210,7 +212,9 @@ def _materialize(
         events[index].copy_(item.to(torch.float16))
         delta_t[index] = float(record["garl_delta_t_s"])
         target_ttc[index] = float(record["ttc_s"])
-        heights[index].copy_(torch.as_tensor(record["garl_visible_heights_px"], dtype=torch.float32))
+        heights[index].copy_(
+            torch.as_tensor(record["garl_visible_heights_px"], dtype=torch.float32)
+        )
         boxes[index].copy_(torch.as_tensor(record["event_v4_boxes_xyxy"], dtype=torch.float32))
         sequence_ids.append(str(record["sequence_id"]))
         sample_tokens.append(str(record["sample_token"]))
@@ -246,7 +250,9 @@ def _materialize(
     }
 
 
-def _balanced_overfit_subset(split: MaterializedV46Split, count: int, seed: int) -> MaterializedV46Split:
+def _balanced_overfit_subset(
+    split: MaterializedV46Split, count: int, seed: int
+) -> MaterializedV46Split:
     if count % 2 != 0:
         raise ValueError("overfit_samples must be even")
     target = split.target_ttc_s.numpy()
@@ -256,7 +262,9 @@ def _balanced_overfit_subset(split: MaterializedV46Split, count: int, seed: int)
     if len(positive) < half or len(negative) < half:
         raise ValueError("Insufficient positive/negative examples for v4.6 overfit")
     rng = np.random.default_rng(seed)
-    selected = np.concatenate((rng.choice(positive, half, replace=False), rng.choice(negative, half, replace=False)))
+    selected = np.concatenate(
+        (rng.choice(positive, half, replace=False), rng.choice(negative, half, replace=False))
+    )
     rng.shuffle(selected)
     return split.subset(torch.from_numpy(selected.astype(np.int64)))
 
@@ -275,7 +283,9 @@ def _sampling_weights(split: MaterializedV46Split) -> torch.Tensor:
     return torch.tensor(raw, dtype=torch.float64)
 
 
-def _load_checkpoint(model: ObjectEventTTCV46, checkpoint: Path, expected_seed: int) -> dict[str, Any]:
+def _load_checkpoint(
+    model: ObjectEventTTCV46, checkpoint: Path, expected_seed: int
+) -> dict[str, Any]:
     payload = torch.load(checkpoint, map_location="cpu", weights_only=False)
     if not isinstance(payload, dict) or "model_state_dict" not in payload:
         raise ValueError(f"Invalid v4.2 checkpoint: {checkpoint}")
@@ -354,8 +364,16 @@ def _evaluate_v46(
         batch_size=train_config.batch_size,
         device=device,
         max_abs_expansion=loss_config.max_abs_expansion,
-        shuffle_repeats=(train_config.shuffle_repeats_final if final else train_config.shuffle_repeats_during_training),
-        bootstrap_repeats=(train_config.bootstrap_repeats_final if final else train_config.bootstrap_repeats_during_training),
+        shuffle_repeats=(
+            train_config.shuffle_repeats_final
+            if final
+            else train_config.shuffle_repeats_during_training
+        ),
+        bootstrap_repeats=(
+            train_config.bootstrap_repeats_final
+            if final
+            else train_config.bootstrap_repeats_during_training
+        ),
         seed=seed,
     )
     extra = _geometry_predictions(model, split, batch_size=train_config.batch_size, device=device)
@@ -372,9 +390,18 @@ def _evaluate_v46(
     rows["geometry_blend"] = cast(np.ndarray, extra["blend"])
     rows["geometry_confidence"] = cast(np.ndarray, extra["confidence"])
     rows["foreground_soft_iou"] = cast(np.ndarray, extra["soft_iou"])
-    negative_counts = rows.assign(negative=rows["target_expansion"] < 0).groupby("sequence_id")["negative"].sum().astype(int)
-    per_sequence["negative_count"] = per_sequence["sequence_id"].map(negative_counts).fillna(0).astype(int)
-    eligible = per_sequence[per_sequence["negative_count"] >= train_config.per_sequence_negative_min_count]
+    negative_counts = (
+        rows.assign(negative=rows["target_expansion"] < 0)
+        .groupby("sequence_id")["negative"]
+        .sum()
+        .astype(int)
+    )
+    per_sequence["negative_count"] = (
+        per_sequence["sequence_id"].map(negative_counts).fillna(0).astype(int)
+    )
+    eligible = per_sequence[
+        per_sequence["negative_count"] >= train_config.per_sequence_negative_min_count
+    ]
     minimum_negative = float(eligible["negative_accuracy"].min()) if not eligible.empty else 0.0
     augmented = dict(metrics)
     augmented["official_eap"] = official_eap_metrics(
@@ -385,8 +412,12 @@ def _evaluate_v46(
         max_abs_expansion=loss_config.max_abs_expansion,
     )
     augmented["geometry"] = {
-        "height_log_eta_pearson": _pearson(target_height_log_eta, cast(np.ndarray, extra["height_log_eta"])),
-        "height_log_eta_mae": float(np.mean(np.abs(target_height_log_eta - cast(np.ndarray, extra["height_log_eta"])))),
+        "height_log_eta_pearson": _pearson(
+            target_height_log_eta, cast(np.ndarray, extra["height_log_eta"])
+        ),
+        "height_log_eta_mae": float(
+            np.mean(np.abs(target_height_log_eta - cast(np.ndarray, extra["height_log_eta"])))
+        ),
         "height_expansion": _branch_metrics(
             target_expansion,
             cast(np.ndarray, extra["height_expansion"]),
@@ -439,24 +470,37 @@ def _screen_gates(
     base_min_negative = _finite(base_sequence.get("minimum_eligible_negative_accuracy"))
     return {
         "relative_mid_improvement": relative >= config.screen_relative_mid_improvement_gate,
-        "pearson_preserved": _finite(event.get("pearson")) >= _finite(base_event.get("pearson")) - config.screen_pearson_tolerance,
-        "balanced_sign_preserved": _finite(event.get("balanced_sign_accuracy")) >= _finite(base_event.get("balanced_sign_accuracy")) - config.screen_balanced_sign_tolerance,
-        "minimum_sequence_negative_accuracy": current_min_negative >= config.screen_min_sequence_negative_accuracy_gate,
-        "minimum_sequence_negative_gain": current_min_negative >= base_min_negative + config.screen_min_sequence_negative_gain_gate,
-        "height_ratio_learned": _finite(geometry.get("height_log_eta_pearson")) >= config.screen_height_pearson_gate,
-        "foreground_learned": _finite(geometry.get("foreground_soft_iou")) >= config.screen_mask_iou_gate,
-        "zero_event_dependence": _finite(dependence.get("zero_event_pearson_drop")) >= config.zero_event_pearson_drop_gate,
-        "shuffled_event_dependence": _finite(dependence.get("shuffled_event_pearson_drop")) >= config.shuffled_event_pearson_drop_gate,
+        "pearson_preserved": _finite(event.get("pearson"))
+        >= _finite(base_event.get("pearson")) - config.screen_pearson_tolerance,
+        "balanced_sign_preserved": _finite(event.get("balanced_sign_accuracy"))
+        >= _finite(base_event.get("balanced_sign_accuracy"))
+        - config.screen_balanced_sign_tolerance,
+        "minimum_sequence_negative_accuracy": current_min_negative
+        >= config.screen_min_sequence_negative_accuracy_gate,
+        "minimum_sequence_negative_gain": current_min_negative
+        >= base_min_negative + config.screen_min_sequence_negative_gain_gate,
+        "height_ratio_learned": _finite(geometry.get("height_log_eta_pearson"))
+        >= config.screen_height_pearson_gate,
+        "foreground_learned": _finite(geometry.get("foreground_soft_iou"))
+        >= config.screen_mask_iou_gate,
+        "zero_event_dependence": _finite(dependence.get("zero_event_pearson_drop"))
+        >= config.zero_event_pearson_drop_gate,
+        "shuffled_event_dependence": _finite(dependence.get("shuffled_event_pearson_drop"))
+        >= config.shuffled_event_pearson_drop_gate,
     }
 
 
-def _overfit_gates(metrics: Mapping[str, Any], config: ObjectEventV46TrainConfig) -> dict[str, bool]:
+def _overfit_gates(
+    metrics: Mapping[str, Any], config: ObjectEventV46TrainConfig
+) -> dict[str, bool]:
     event = cast(Mapping[str, object], metrics["event"])
     geometry = cast(Mapping[str, object], metrics["geometry"])
     return {
         "pearson": _finite(event.get("pearson")) >= config.overfit_pearson_gate,
-        "balanced_sign": _finite(event.get("balanced_sign_accuracy")) >= config.overfit_balanced_sign_gate,
-        "height_ratio": _finite(geometry.get("height_log_eta_pearson")) >= config.overfit_height_pearson_gate,
+        "balanced_sign": _finite(event.get("balanced_sign_accuracy"))
+        >= config.overfit_balanced_sign_gate,
+        "height_ratio": _finite(geometry.get("height_log_eta_pearson"))
+        >= config.overfit_height_pearson_gate,
         "foreground": _finite(geometry.get("foreground_soft_iou")) >= config.overfit_mask_iou_gate,
     }
 
@@ -483,10 +527,16 @@ def run(
     device = _resolve_device(device_name)
     if device.type == "cuda":
         torch.set_float32_matmul_precision("high")
-    train_split, train_manifest = _materialize(cache_manifest, "train", input_size=base_config.input_size)
-    validation_split, validation_manifest = _materialize(cache_manifest, "validation", input_size=base_config.input_size)
+    train_split, train_manifest = _materialize(
+        cache_manifest, "train", input_size=base_config.input_size
+    )
+    validation_split, validation_manifest = _materialize(
+        cache_manifest, "validation", input_size=base_config.input_size
+    )
     if mode == "overfit":
-        train_split = _balanced_overfit_subset(train_split, train_config.overfit_samples, train_config.seed)
+        train_split = _balanced_overfit_subset(
+            train_split, train_config.overfit_samples, train_config.seed
+        )
         validation_split = train_split
         maximum_epochs = train_config.overfit_maximum_epochs
         minimum_epochs = maximum_epochs
@@ -511,14 +561,20 @@ def run(
         final=False,
         seed=train_config.seed + 101,
     )
-    baseline_state = {name: tensor.detach().cpu().clone() for name, tensor in model.state_dict().items()}
+    baseline_state = {
+        name: tensor.detach().cpu().clone() for name, tensor in model.state_dict().items()
+    }
     model.set_base_only(False)
 
-    encoder_parameters = [parameter for parameter in model.geometry_encoder.parameters() if parameter.requires_grad]
+    encoder_parameters = [
+        parameter for parameter in model.geometry_encoder.parameters() if parameter.requires_grad
+    ]
     head_parameters = [
         parameter
         for name, parameter in model.named_parameters()
-        if parameter.requires_grad and not name.startswith("geometry_encoder.") and not name.startswith("base.")
+        if parameter.requires_grad
+        and not name.startswith("geometry_encoder.")
+        and not name.startswith("base.")
     ]
     optimizer = torch.optim.AdamW(
         [
@@ -527,7 +583,11 @@ def run(
         ],
         weight_decay=train_config.weight_decay,
     )
-    scaler = torch.amp.GradScaler("cuda") if device.type == "cuda" and train_config.precision == "fp16" else None
+    scaler = (
+        torch.amp.GradScaler("cuda")
+        if device.type == "cuda" and train_config.precision == "fp16"
+        else None
+    )
     weights = _sampling_weights(train_split)
     history: list[dict[str, Any]] = []
     best_objective = _selection_objective(baseline_metrics)
@@ -628,33 +688,46 @@ def run(
         event = cast(Mapping[str, object], validation_metrics["event"])
         official = cast(Mapping[str, object], validation_metrics["official_eap"])
         geometry = cast(Mapping[str, object], validation_metrics["geometry"])
-        row = cast(dict[str, Any], _json_safe({
-            "epoch": epoch,
-            "global_step": global_step,
-            "train_loss": epoch_loss / max(examples, 1),
-            "train_components": {name: value / max(examples, 1) for name, value in components.items()},
-            "validation_selection_objective": objective,
-            "validation": validation_metrics,
-            "best_epoch": best_epoch,
-            "best_objective": best_objective,
-            "best_base_only": best_base_only,
-        }))
+        row = cast(
+            dict[str, Any],
+            _json_safe(
+                {
+                    "epoch": epoch,
+                    "global_step": global_step,
+                    "train_loss": epoch_loss / max(examples, 1),
+                    "train_components": {
+                        name: value / max(examples, 1) for name, value in components.items()
+                    },
+                    "validation_selection_objective": objective,
+                    "validation": validation_metrics,
+                    "best_epoch": best_epoch,
+                    "best_objective": best_objective,
+                    "best_base_only": best_base_only,
+                }
+            ),
+        )
         history.append(row)
         (output_dir / "history.jsonl").write_text(
             "".join(json.dumps(item, ensure_ascii=False) + "\n" for item in history),
             encoding="utf-8",
         )
-        print(json.dumps({
-            "epoch": epoch,
-            "loss": row["train_loss"],
-            "weighted_mid": official.get("weighted_mid"),
-            "pearson": event.get("pearson"),
-            "balanced_sign": event.get("balanced_sign_accuracy"),
-            "height_pearson": geometry.get("height_log_eta_pearson"),
-            "mask_iou": geometry.get("foreground_soft_iou"),
-            "best_epoch": best_epoch,
-            "best_base_only": best_base_only,
-        }, ensure_ascii=False), flush=True)
+        print(
+            json.dumps(
+                {
+                    "epoch": epoch,
+                    "loss": row["train_loss"],
+                    "weighted_mid": official.get("weighted_mid"),
+                    "pearson": event.get("pearson"),
+                    "balanced_sign": event.get("balanced_sign_accuracy"),
+                    "height_pearson": geometry.get("height_log_eta_pearson"),
+                    "mask_iou": geometry.get("foreground_soft_iou"),
+                    "best_epoch": best_epoch,
+                    "best_base_only": best_base_only,
+                },
+                ensure_ascii=False,
+            ),
+            flush=True,
+        )
         if epoch >= minimum_epochs and epochs_without_improvement >= patience_epochs:
             break
 
@@ -688,49 +761,54 @@ def run(
     else:
         gates = _screen_gates(validation_metrics, baseline_metrics, train_config)
     passed = all(gates.values()) and not bool(best_payload.get("base_only", False))
-    summary = cast(dict[str, Any], _json_safe({
-        "artifact_type": "object_event_v4_6_learned_foreground_height_ratio",
-        "status": f"{mode}_passed" if passed else f"{mode}_failed",
-        "mode": mode,
-        "created_at": datetime.now(UTC).isoformat(),
-        "started_at": started_at.isoformat(),
-        "elapsed_seconds": time.perf_counter() - started,
-        "git_commit": _git_commit(),
-        "device": str(device),
-        "gpu_name": torch.cuda.get_device_name(device) if device.type == "cuda" else None,
-        "cache_manifest": cache_manifest.resolve().as_posix(),
-        "cache_manifest_sha256": _sha256(cache_manifest),
-        "config": config_path.resolve().as_posix(),
-        "initial_checkpoint": initial_checkpoint.resolve().as_posix(),
-        "initial_checkpoint_sha256": _sha256(initial_checkpoint),
-        "initial_checkpoint_epoch": int(initial_payload.get("epoch", 0)),
-        "base_config": asdict(base_config),
-        "geometry_config": asdict(geometry_config),
-        "train_config": asdict(train_config),
-        "loss_config": asdict(loss_config),
-        "train_split": train_manifest,
-        "validation_split": validation_manifest,
-        "completed_epochs": len(history),
-        "best_epoch": int(best_payload.get("epoch", 0)),
-        "best_base_only": bool(best_payload.get("base_only", False)),
-        "baseline_validation_metrics": baseline_metrics,
-        "train_metrics": train_metrics,
-        "validation_metrics": validation_metrics,
-        "gates": gates,
-        "passed": passed,
-        "scientific_contract": {
-            "event_only_inference": True,
-            "receives_boxes_at_inference": False,
-            "receives_visible_heights_at_inference": False,
-            "boxes_are_training_only_foreground_targets": True,
-            "visible_heights_are_training_only_ratio_targets": True,
-            "frozen_v4_2_baseline_preserved": True,
-            "separate_trainable_geometry_encoder": True,
-            "validation_is_not_official_eap_test": True,
-            "evttc_not_opened": True,
-            "advance_to_multiseed": mode == "screen" and passed,
-        },
-    }))
+    summary = cast(
+        dict[str, Any],
+        _json_safe(
+            {
+                "artifact_type": "object_event_v4_6_learned_foreground_height_ratio",
+                "status": f"{mode}_passed" if passed else f"{mode}_failed",
+                "mode": mode,
+                "created_at": datetime.now(UTC).isoformat(),
+                "started_at": started_at.isoformat(),
+                "elapsed_seconds": time.perf_counter() - started,
+                "git_commit": _git_commit(),
+                "device": str(device),
+                "gpu_name": torch.cuda.get_device_name(device) if device.type == "cuda" else None,
+                "cache_manifest": cache_manifest.resolve().as_posix(),
+                "cache_manifest_sha256": _sha256(cache_manifest),
+                "config": config_path.resolve().as_posix(),
+                "initial_checkpoint": initial_checkpoint.resolve().as_posix(),
+                "initial_checkpoint_sha256": _sha256(initial_checkpoint),
+                "initial_checkpoint_epoch": int(initial_payload.get("epoch", 0)),
+                "base_config": asdict(base_config),
+                "geometry_config": asdict(geometry_config),
+                "train_config": asdict(train_config),
+                "loss_config": asdict(loss_config),
+                "train_split": train_manifest,
+                "validation_split": validation_manifest,
+                "completed_epochs": len(history),
+                "best_epoch": int(best_payload.get("epoch", 0)),
+                "best_base_only": bool(best_payload.get("base_only", False)),
+                "baseline_validation_metrics": baseline_metrics,
+                "train_metrics": train_metrics,
+                "validation_metrics": validation_metrics,
+                "gates": gates,
+                "passed": passed,
+                "scientific_contract": {
+                    "event_only_inference": True,
+                    "receives_boxes_at_inference": False,
+                    "receives_visible_heights_at_inference": False,
+                    "boxes_are_training_only_foreground_targets": True,
+                    "visible_heights_are_training_only_ratio_targets": True,
+                    "frozen_v4_2_baseline_preserved": True,
+                    "separate_trainable_geometry_encoder": True,
+                    "validation_is_not_official_eap_test": True,
+                    "evttc_not_opened": True,
+                    "advance_to_multiseed": mode == "screen" and passed,
+                },
+            }
+        ),
+    )
     (output_dir / "summary.json").write_text(
         json.dumps(summary, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
     )

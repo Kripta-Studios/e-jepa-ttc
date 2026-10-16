@@ -1,12 +1,19 @@
 #!/usr/bin/env python
 """Freeze A6 transport-adapter configs from the already frozen A5-ANCHOR controls."""
+
 from __future__ import annotations
-import argparse, copy, hashlib, json
+
+import argparse
+import copy
+import hashlib
+import json
 from pathlib import Path
 from typing import Any
+
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
+
 
 def sha256(path: Path) -> str:
     h = hashlib.sha256()
@@ -15,16 +22,21 @@ def sha256(path: Path) -> str:
             h.update(chunk)
     return h.hexdigest()
 
+
 def read_yaml(path: Path) -> dict[str, Any]:
     payload = yaml.safe_load(path.read_text(encoding="utf-8"))
     if not isinstance(payload, dict):
         raise ValueError(f"{path} is not a YAML mapping")
     return payload
 
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--base-config-dir", default="artifacts/configs/a5_postgate_recovery_v1")
-    ap.add_argument("--protocol", default="configs/experiment/e_jepa_garl_event_causal_scale_a6_transport_adapter_v1.yaml")
+    ap.add_argument(
+        "--protocol",
+        default="configs/experiment/e_jepa_garl_event_causal_scale_a6_transport_adapter_v1.yaml",
+    )
     ap.add_argument("--output-dir", default="artifacts/configs/a6_transport_adapter_v1")
     args = ap.parse_args()
 
@@ -43,7 +55,9 @@ def main() -> int:
         raise ValueError("A5 diagnostic replication artifact type is incompatible")
     if bool(diagnostic.get("passed")) is not bool(source["diagnostic_replication_required_passed"]):
         raise ValueError("A5 diagnostic replication decision differs from A6 preregistration")
-    if int(diagnostic.get("passing_seeds", -1)) != int(source["diagnostic_replication_required_passing_seeds"]):
+    if int(diagnostic.get("passing_seeds", -1)) != int(
+        source["diagnostic_replication_required_passing_seeds"]
+    ):
         raise ValueError("A5 diagnostic replication seed count differs from A6 preregistration")
 
     anchor_gate_path = ROOT / source["anchor_seed7_gate"]
@@ -66,11 +80,15 @@ def main() -> int:
         model_payload["transport_adapter_enabled"] = True
         model_payload["transport_adapter_depth"] = int(contract["transport_adapter_depth"])
         model_path = out / f"model_seed{seed}.yaml"
-        model_path.write_text(yaml.safe_dump(model_payload, sort_keys=False), encoding="utf-8", newline="\n")
+        model_path.write_text(
+            yaml.safe_dump(model_payload, sort_keys=False), encoding="utf-8", newline="\n"
+        )
         files[model_path.name] = sha256(model_path)
 
         cfg = copy.deepcopy(anchored)
-        cfg["experiment"]["name"] = f"e_jepa_garl_event_causal_scale_a6_transport_adapter_v1_seed{seed}"
+        cfg["experiment"]["name"] = (
+            f"e_jepa_garl_event_causal_scale_a6_transport_adapter_v1_seed{seed}"
+        )
         cfg["experiment"]["protocol_version"] = "causal_scale_a6_transport_adapter_v1"
         cfg["experiment"]["single_scientific_difference"] = (
             "keep_frozen_A4_geometry_but_add_identity_initialized_trainable_transport_only_feature_adapter"
@@ -118,9 +136,12 @@ def main() -> int:
         "files": files,
         "private_test_opened": False,
     }
-    (out / "manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    (out / "manifest.json").write_text(
+        json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
     print(json.dumps(manifest, sort_keys=True))
     return 0
+
 
 if __name__ == "__main__":
     raise SystemExit(main())

@@ -140,9 +140,8 @@ def object_event_v4_6_loss(
         raise ValueError("visible_heights_px must be [B,2]")
     target = target_expansion(delta_t_s, target_ttc_s, config.max_abs_expansion)
     target_log_eta = torch.log1p(-target)
-    target_height_log_eta = (
-        torch.log(visible_heights_px[:, 0].clamp_min(1.0e-4))
-        - torch.log(visible_heights_px[:, 1].clamp_min(1.0e-4))
+    target_height_log_eta = torch.log(visible_heights_px[:, 0].clamp_min(1.0e-4)) - torch.log(
+        visible_heights_px[:, 1].clamp_min(1.0e-4)
     )
     map_h, map_w = output.foreground_logits.shape[-2:]
     foreground_targets = boxes_to_feature_masks(

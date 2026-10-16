@@ -21,8 +21,7 @@ from e_jepa_ttc.artifacts.hashing import sign_artifact, verify_artifact_hash  # 
 
 PROTOCOL_PATH = ROOT / "configs/protocol/scientific_recovery_v5_train_only_grouped_dev.json"
 A4_SOURCE = (
-    ROOT
-    / "artifacts/scientific_recovery_master_v3/configs/causal_a6/"
+    ROOT / "artifacts/scientific_recovery_master_v3/configs/causal_a6/"
     "a4_s1_lambda8_causal_left_seed7.yaml"
 )
 OUTPUT_DIR = ROOT / "configs/experiment/scientific_recovery_v5_fold_chain"
@@ -45,9 +44,7 @@ def _read_mapping(path: Path) -> dict[str, Any]:
 
 
 def _git(*args: str) -> str:
-    result = subprocess.run(
-        ["git", *args], cwd=ROOT, check=True, capture_output=True, text=True
-    )
+    result = subprocess.run(["git", *args], cwd=ROOT, check=True, capture_output=True, text=True)
     return result.stdout.strip()
 
 
@@ -172,9 +169,7 @@ def main() -> int:
     entries: list[dict[str, Any]] = []
     for fold, config in sorted(configs.items()):
         path = args.output_dir / f"a4_parent_grouped_fold{fold}_seed7.yaml"
-        path.write_text(
-            yaml.safe_dump(config, sort_keys=False), encoding="utf-8", newline="\n"
-        )
+        path.write_text(yaml.safe_dump(config, sort_keys=False), encoding="utf-8", newline="\n")
         entries.append(
             {
                 "fold": fold,
@@ -183,12 +178,8 @@ def main() -> int:
                 "training_seed": 7,
                 "train_rows": protocol["folds"][fold]["train_rows"],
                 "dev_rows": protocol["folds"][fold]["dev_rows"],
-                "train_sample_tokens_sha256": protocol["folds"][fold][
-                    "train_sample_tokens_sha256"
-                ],
-                "dev_sample_tokens_sha256": protocol["folds"][fold][
-                    "dev_sample_tokens_sha256"
-                ],
+                "train_sample_tokens_sha256": protocol["folds"][fold]["train_sample_tokens_sha256"],
+                "dev_sample_tokens_sha256": protocol["folds"][fold]["dev_sample_tokens_sha256"],
             }
         )
     manifest: dict[str, Any] = {

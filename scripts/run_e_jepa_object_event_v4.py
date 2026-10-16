@@ -36,9 +36,7 @@ def _resolve_assignment_split(candidate: Path) -> Path:
     if _is_assignment_split(candidate):
         return candidate
 
-    legacy_manifest = (
-        ROOT / "artifacts" / "cache" / "garl_object_lhr_screen_v2" / "manifest.json"
-    )
+    legacy_manifest = ROOT / "artifacts" / "cache" / "garl_object_lhr_screen_v2" / "manifest.json"
     if legacy_manifest.is_file():
         value = json.loads(legacy_manifest.read_text(encoding="utf-8"))
         fallback_value = value.get("split_path")

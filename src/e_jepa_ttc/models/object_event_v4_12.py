@@ -64,9 +64,7 @@ def _weighted_mean_std(
     mass = weights.sum(dim=(-2, -1), keepdim=True).clamp_min(epsilon)
     normalised = weights[:, None] / mass[:, None]
     mean = (features * normalised).sum(dim=(-2, -1))
-    variance = (
-        (features - mean[:, :, None, None]).square() * normalised
-    ).sum(dim=(-2, -1))
+    variance = ((features - mean[:, :, None, None]).square() * normalised).sum(dim=(-2, -1))
     return mean, torch.sqrt(variance.clamp_min(epsilon))
 
 
@@ -137,7 +135,7 @@ class ObjectEventTTCV412(nn.Module):
             raise TypeError("Expected Linear sign output")
         nn.init.normal_(final.weight, mean=0.0, std=1.0e-3)
 
-    def train(self, mode: bool = True) -> "ObjectEventTTCV412":
+    def train(self, mode: bool = True) -> ObjectEventTTCV412:
         super().train(mode)
         self.backbone.eval()
         return self
@@ -160,9 +158,7 @@ class ObjectEventTTCV412(nn.Module):
         activity_change = (activity[:, 2] - activity[:, 1]).abs()
         event_presence = torch.tanh(activity_change)
         local_log_eta = (
-            backbone.motion_config.maximum_abs_log_eta
-            * torch.tanh(field[:, 0])
-            * event_presence
+            backbone.motion_config.maximum_abs_log_eta * torch.tanh(field[:, 0]) * event_presence
         )
         confidence = torch.sigmoid(field[:, 1])
         foreground_pair = torch.sqrt(
@@ -275,7 +271,9 @@ class ObjectEventTTCV412(nn.Module):
         magnitude = (
             base_expansion.abs()
             if magnitude_expansion is None
-            else magnitude_expansion.to(device=base_expansion.device, dtype=base_expansion.dtype).abs()
+            else magnitude_expansion.to(
+                device=base_expansion.device, dtype=base_expansion.dtype
+            ).abs()
         )
         sign = torch.where(
             probability >= negative_threshold,

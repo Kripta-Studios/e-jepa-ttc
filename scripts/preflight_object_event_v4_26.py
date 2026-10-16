@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Preflight for leak-free Object Event TTC v4.26 OOF residual stacking."""
+
 from __future__ import annotations
 
 import argparse
@@ -9,7 +10,9 @@ from pathlib import Path
 import torch
 
 
-def _check_seeded_checkpoints(values: list[str], *, artifact_type: str, arm: str | None = None) -> list[int]:
+def _check_seeded_checkpoints(
+    values: list[str], *, artifact_type: str, arm: str | None = None
+) -> list[int]:
     seen: list[int] = []
     for item in values:
         seed_text, path_text = item.split("=", 1)
@@ -61,19 +64,24 @@ def main() -> int:
         args.adapted_checkpoint,
         artifact_type="object_event_v4_22_adapted_v48",
     )
-    print(json.dumps({
-        "status": "passed",
-        "v424_champion": "geometry_only_regularized",
-        "v425_selected_readout": "baseline_control",
-        "champion_seeds": champions,
-        "adapted_seeds": adapted,
-        "scientific_contract": {
-            "oof_anchor_and_geometry_same_model_family": True,
-            "v410_in_sample_train_anchor_forbidden_in_selection": True,
-            "official_eap_test_not_opened": True,
-            "evttc_not_opened": True,
-        },
-    }, indent=2))
+    print(
+        json.dumps(
+            {
+                "status": "passed",
+                "v424_champion": "geometry_only_regularized",
+                "v425_selected_readout": "baseline_control",
+                "champion_seeds": champions,
+                "adapted_seeds": adapted,
+                "scientific_contract": {
+                    "oof_anchor_and_geometry_same_model_family": True,
+                    "v410_in_sample_train_anchor_forbidden_in_selection": True,
+                    "official_eap_test_not_opened": True,
+                    "evttc_not_opened": True,
+                },
+            },
+            indent=2,
+        )
+    )
     return 0
 
 

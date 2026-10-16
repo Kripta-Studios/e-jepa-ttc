@@ -96,14 +96,10 @@ def test_build_comparison_is_signed_token_exact_and_sequence_bootstrapped(tmp_pa
 
     assert verify_artifact_hash(result)
     assert result["scope"]["exact_token_equality_verified"] is True
-    assert result["release_reference"]["exposure_audit"][
-        "all_validation_sequences_exposed"
-    ] is True
+    assert result["release_reference"]["exposure_audit"]["all_validation_sequences_exposed"] is True
     paired = result["release_reference"]["paired"]
     assert paired["window_level_bootstrap_used"] is False
-    assert paired["causal_minus_release_sequence_bootstrap_paper_MiD"][
-        "sequence_count"
-    ] == 2
+    assert paired["causal_minus_release_sequence_bootstrap_paper_MiD"]["sequence_count"] == 2
     assert result["matched_training"]["status"] == "pending"
     assert paths["output_json"].is_file()
     assert paths["outliers_csv"].is_file()
@@ -150,9 +146,12 @@ def test_build_comparison_adds_exact_matched_training_table(tmp_path: Path) -> N
     assert result["status"] == "release_reference_and_matched_training_complete"
     assert result["matched_training"]["status"] == "complete"
     assert result["matched_training"]["training_budget"]["selected_epoch"] == 2
-    assert result["matched_training"]["paired"][
-        "causal_minus_matched_sequence_bootstrap_paper_MiD"
-    ]["sequence_count"] == 2
+    assert (
+        result["matched_training"]["paired"]["causal_minus_matched_sequence_bootstrap_paper_MiD"][
+            "sequence_count"
+        ]
+        == 2
+    )
     outliers = pd.read_csv(paths["outliers_csv"])
     assert "matched_mid_per_sample" in outliers.columns
     assert b"\r\n" not in paths["output_json"].read_bytes()

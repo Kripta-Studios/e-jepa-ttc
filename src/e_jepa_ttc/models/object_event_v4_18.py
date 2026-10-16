@@ -1,4 +1,5 @@
 """Low-dimensional radial/divergence physics bottleneck for Object Event TTC v4.18."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -6,7 +7,6 @@ from dataclasses import dataclass
 import torch
 from torch import nn
 from torch.nn import functional
-
 
 FEATURE_NAMES = (
     "foreground_half_log_mass",

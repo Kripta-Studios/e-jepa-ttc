@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import math
 from pathlib import Path
 from typing import Any
 
@@ -38,9 +37,12 @@ def _per_sequence_pearson(node: object) -> dict[str, float]:
 def run(child_path: Path, parent_path: Path, output_path: Path) -> dict[str, Any]:
     child = _read(child_path)
     parent = _read(parent_path)
-    if child.get("official_test_opened") is not False or parent.get("official_test_opened") is not False:
+    if (
+        child.get("official_test_opened") is not False
+        or parent.get("official_test_opened") is not False
+    ):
         raise ValueError("A5 gate refuses summaries that opened official test")
-    model_cfg = child.get("model_config")
+    _model_cfg = child.get("model_config")
     training = child.get("training_config")
     contract = child.get("decision_contract")
     if not isinstance(contract, dict):
@@ -48,12 +50,18 @@ def run(child_path: Path, parent_path: Path, output_path: Path) -> dict[str, Any
     gate = contract.get("transport_gate")
     if not isinstance(gate, dict):
         raise ValueError("A5 summary lacks transport_gate")
-    if not isinstance(training, dict) or training.get("representation_supervision") != "dinov3_local_relational":
+    if (
+        not isinstance(training, dict)
+        or training.get("representation_supervision") != "dinov3_local_relational"
+    ):
         raise ValueError("A5-CORR must keep A4 endpoint DINO and remove A4D temporal loss")
     # model_config in summary is metadata path/hash; architecture truth is also in checkpoint.
     # Require the registered A5 representation contract instead of inferring from filename.
     change = contract.get("representation_change")
-    if not isinstance(change, dict) or change.get("type") != "a4_endpoint_dino_plus_event_native_local_cross_time_transport":
+    if (
+        not isinstance(change, dict)
+        or change.get("type") != "a4_endpoint_dino_plus_event_native_local_cross_time_transport"
+    ):
         raise ValueError("summary is not registered A5-CORR")
 
     cm = child.get("validation_metrics")
@@ -85,9 +93,12 @@ def run(child_path: Path, parent_path: Path, output_path: Path) -> dict[str, Any
     thresholds = {
         "ratio": parent_ratio + float(gate["log_ratio_pearson_min_gain_vs_a4"]),
         "delta_h": parent_delta_h + float(gate["delta_log_height_vs_physical_min_gain_vs_a4"]),
-        "delta_h_macro": parent_delta_h_macro + float(gate["delta_log_height_vs_physical_macro_min_gain_vs_a4"]),
+        "delta_h_macro": parent_delta_h_macro
+        + float(gate["delta_log_height_vs_physical_macro_min_gain_vs_a4"]),
         "abs_h_macro": parent_abs_h_macro - float(gate["absolute_log_height_macro_max_drop_vs_a4"]),
-        "min_improved_sequences": int(gate["minimum_improved_validation_sequences_for_delta_height"]),
+        "min_improved_sequences": int(
+            gate["minimum_improved_validation_sequences_for_delta_height"]
+        ),
         "worst_sequence_min_delta": -float(gate["worst_sequence_delta_height_max_regression"]),
     }
     checks = {
@@ -153,7 +164,16 @@ def main() -> int:
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     result = run(args.child_summary.resolve(), args.parent_summary.resolve(), args.output.resolve())
-    print(json.dumps({"passed": result["passed"], "decision": result["decision"], "checks": result["checks"]}, sort_keys=True))
+    print(
+        json.dumps(
+            {
+                "passed": result["passed"],
+                "decision": result["decision"],
+                "checks": result["checks"],
+            },
+            sort_keys=True,
+        )
+    )
     return 0 if result["passed"] else 4
 
 

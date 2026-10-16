@@ -498,9 +498,7 @@ def mechanism_cuts(
     """
 
     validated = validate_replay_frame(frame)
-    return _mechanism_cuts_from_validated_scalars(
-        validated, prediction_column=prediction_column
-    )
+    return _mechanism_cuts_from_validated_scalars(validated, prediction_column=prediction_column)
 
 
 def mechanism_cuts_from_pruned_replay(
@@ -516,9 +514,7 @@ def mechanism_cuts_from_pruned_replay(
     """
 
     validated = validate_oof_frame(frame, label="V8 pruned mechanism replay")
-    return _mechanism_cuts_from_validated_scalars(
-        validated, prediction_column=prediction_column
-    )
+    return _mechanism_cuts_from_validated_scalars(validated, prediction_column=prediction_column)
 
 
 def classify_mechanism(
@@ -847,9 +843,7 @@ def load_causal_scale_replay_checkpoint(
     return model.to(device).eval()
 
 
-def _payload_tensor(
-    payload: Mapping[str, Any], key: str, *, dtype: torch.dtype
-) -> torch.Tensor:
+def _payload_tensor(payload: Mapping[str, Any], key: str, *, dtype: torch.dtype) -> torch.Tensor:
     if key not in payload:
         raise ValueError(f"replay input lacks {key!r}")
     tensor = torch.as_tensor(payload[key], dtype=dtype)
@@ -997,10 +991,15 @@ def replay_output_frame(
                 ),
                 "occupancy": float((events[index, -1].abs() > 1.0e-8).float().mean().cpu()),
                 "occupancy_entropy": float(
-                    -(foreground[index, -1].clamp(1e-6, 1 - 1e-6)
-                    * foreground[index, -1].clamp(1e-6, 1 - 1e-6).log()
-                    + (1 - foreground[index, -1].clamp(1e-6, 1 - 1e-6))
-                    * (1 - foreground[index, -1].clamp(1e-6, 1 - 1e-6)).log()).mean().detach().cpu()
+                    -(
+                        foreground[index, -1].clamp(1e-6, 1 - 1e-6)
+                        * foreground[index, -1].clamp(1e-6, 1 - 1e-6).log()
+                        + (1 - foreground[index, -1].clamp(1e-6, 1 - 1e-6))
+                        * (1 - foreground[index, -1].clamp(1e-6, 1 - 1e-6)).log()
+                    )
+                    .mean()
+                    .detach()
+                    .cpu()
                 ),
                 "motion_magnitude": float(
                     (events[index, -1] - events[index, -2]).square().mean().sqrt().detach().cpu()
@@ -1080,11 +1079,13 @@ def assert_causal_prefix_invariance(
         ),
     )
     if baseline.transport_raw_features is not None and perturbed.transport_raw_features is not None:
-        comparisons += ((
-            "transport_raw_features_first_pair",
-            baseline.transport_raw_features[:, 0],
-            perturbed.transport_raw_features[:, 0],
-        ),)
+        comparisons += (
+            (
+                "transport_raw_features_first_pair",
+                baseline.transport_raw_features[:, 0],
+                perturbed.transport_raw_features[:, 0],
+            ),
+        )
 
     for label, before, after in comparisons:
         if not torch.allclose(before, after, rtol=1.0e-5, atol=1.0e-6):

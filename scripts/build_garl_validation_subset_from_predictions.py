@@ -53,9 +53,8 @@ class _AtomicOutput(AbstractContextManager[Path]):
     ) -> bool | None:
         if exc_type is not None:
             if self.staging.exists():
-                if (
-                    self.staging.parent != self.target.parent
-                    or not self.staging.name.startswith(f".{self.target.name}.staging-")
+                if self.staging.parent != self.target.parent or not self.staging.name.startswith(
+                    f".{self.target.name}.staging-"
                 ):
                     raise PermissionError("refusing to clean an unverified staging path")
                 shutil.rmtree(self.staging)
@@ -85,9 +84,7 @@ def _require_columns(frame: pd.DataFrame, columns: set[str], source: Path) -> No
 
 def _validate_unique_tokens(frame: pd.DataFrame, source: Path) -> pd.Series:
     tokens = cast(pd.Series, frame["sample_token"]).astype(str)
-    if bool(tokens.isna().to_numpy().any()) or bool(
-        (tokens.str.len() == 0).to_numpy().any()
-    ):
+    if bool(tokens.isna().to_numpy().any()) or bool((tokens.str.len() == 0).to_numpy().any()):
         raise ValueError(f"{source} contains empty sample_token values")
     duplicated = cast(pd.Series, tokens[tokens.duplicated(keep=False)])
     if not duplicated.empty:
@@ -107,9 +104,7 @@ def _ordered_subset(
     indexed = source.assign(sample_token=tokens).set_index("sample_token", drop=False)
     missing = sorted(set(desired_tokens) - set(indexed.index))
     if missing:
-        raise ValueError(
-            f"{source_path} is missing {len(missing)} requested tokens: {missing[:5]}"
-        )
+        raise ValueError(f"{source_path} is missing {len(missing)} requested tokens: {missing[:5]}")
     subset = indexed.loc[desired_tokens].reset_index(drop=True)
     if subset["sample_token"].astype(str).tolist() != desired_tokens:
         raise RuntimeError("subset token order differs from frozen prediction order")
@@ -173,9 +168,7 @@ def build_subset(
         dtype=np.float64,
     )
     prediction_ttc = np.asarray(
-        pd.to_numeric(
-            cast(pd.Series, predictions["target_ttc_s"]), errors="coerce"
-        ),
+        pd.to_numeric(cast(pd.Series, predictions["target_ttc_s"]), errors="coerce"),
         dtype=np.float64,
     )
     if not np.isfinite(official_ttc).all() or not np.isfinite(prediction_ttc).all():

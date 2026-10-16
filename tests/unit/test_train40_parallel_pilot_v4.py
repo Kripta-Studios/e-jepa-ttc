@@ -186,9 +186,7 @@ def test_failure_cleanup_waits_for_live_peer_full_checkpoint(
         "request_peer_pause",
         lambda out, token, arm: pauses.append(arm),
     )
-    parallel_controller.wait_for_paused_survivors(
-        output, "nonce", cast(Any, {"a5": Process()})
-    )
+    parallel_controller.wait_for_paused_survivors(output, "nonce", cast(Any, {"a5": Process()}))
     assert pauses == ["coordinator_failure"]
 
 
@@ -234,9 +232,7 @@ def test_parallel_engine_restores_monitor_binding_on_delegate_failure(
     with pytest.raises(RuntimeError, match="delegate failed"):
         parallel_engine.run(tmp_path, "a5", "nonce")
     assert resource_monitor.ResourceMonitor is original
-    runtime = json.loads(
-        (tmp_path / "fits/a5_seed7/PARALLEL_PILOT_V4_RUNTIME.json").read_text()
-    )
+    runtime = json.loads((tmp_path / "fits/a5_seed7/PARALLEL_PILOT_V4_RUNTIME.json").read_text())
     assert runtime == {"arm": "a5", "status": "FAILED", "token": "nonce"}
 
 
@@ -296,6 +292,7 @@ def test_new_accounted_recovery_is_reserved_without_changing_quota(tmp_path: Pat
 
 def test_transient_windows_read_retries_without_using_stale_budget(monkeypatch):
     from operational.train40_system import parallel_runtime_v4 as runtime
+
     attempts = []
     waits = []
 
@@ -313,6 +310,7 @@ def test_transient_windows_read_retries_without_using_stale_budget(monkeypatch):
 
 def test_persistent_windows_read_fails_closed_after_bounded_wait(monkeypatch):
     from operational.train40_system import parallel_runtime_v4 as runtime
+
     attempts = []
     waits = []
 

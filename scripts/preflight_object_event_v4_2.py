@@ -13,10 +13,18 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 EXPECTED_HEAD = "e16e6e76c5367dc5a8ad916fc255cd9a1e9ff0a0"
 EXPECTED_V41_HASHES = {
-    "src/e_jepa_ttc/models/object_event_v4_1.py": "9250191e8515a0b4c2d18712eeeb1da24ae4ef39ac8028462ac5cfefdfcbbb24",
-    "src/e_jepa_ttc/training/object_event_v4_1.py": "1e6a96a58f9fe3b80b6ec4213361df3f8a6a97a0d0cc3d2e1b2e59815f53cf63",
-    "scripts/diagnose_object_event_v4_1.py": "c9ede4ff732ee9cfaca6be14d9b685563571589e152ce8371ee275d125564a4e",
-    "configs/experiment/e_jepa_garl_object_event_overfit_v4_1.yaml": "87a8065530015bc7adc40e4f010de96d95554e298d98c8c9fa30f478948f2715",
+    "src/e_jepa_ttc/models/object_event_v4_1.py": (
+        "9250191e8515a0b4c2d18712eeeb1da24ae4ef39ac8028462ac5cfefdfcbbb24"
+    ),
+    "src/e_jepa_ttc/training/object_event_v4_1.py": (
+        "1e6a96a58f9fe3b80b6ec4213361df3f8a6a97a0d0cc3d2e1b2e59815f53cf63"
+    ),
+    "scripts/diagnose_object_event_v4_1.py": (
+        "c9ede4ff732ee9cfaca6be14d9b685563571589e152ce8371ee275d125564a4e"
+    ),
+    ("configs/experiment/e_jepa_garl_object_event_overfit_v4_1.yaml"): (
+        "87a8065530015bc7adc40e4f010de96d95554e298d98c8c9fa30f478948f2715"
+    ),
 }
 
 
@@ -46,7 +54,8 @@ def check_cache(path: Path) -> dict[str, Any]:
         "precontext": precontext >= 0.80,
         "shape": extension.get("event_v4_common_roi_shape") == [3, 12, 128, 128],
         "common_coordinates": extension.get("event_v4_independent_endpoint_resize") is False,
-        "preserved_scale": extension.get("event_v4_preserves_absolute_scale_inside_common_roi") is True,
+        "preserved_scale": extension.get("event_v4_preserves_absolute_scale_inside_common_roi")
+        is True,
         "no_boxes_model_input": extension.get("uses_boxes_for_model_input") is False,
     }
     if not all(checks.values()):

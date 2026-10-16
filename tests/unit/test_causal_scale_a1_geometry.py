@@ -74,9 +74,7 @@ class _OneItemDataset(Dataset[int]):
 
 
 def test_box_geometry_targets_are_visible_normalized_and_exclude_proxy() -> None:
-    boxes = torch.tensor(
-        [[[-2.0, 2.0, 6.0, 10.0], [4.0, 3.0, 12.0, 11.0], [4.0, 4.0, 20.0, 12.0]]]
-    )
+    boxes = torch.tensor([[[-2.0, 2.0, 6.0, 10.0], [4.0, 3.0, 12.0, 11.0], [4.0, 4.0, 20.0, 12.0]]])
     targets = box_geometry_targets(
         boxes,
         height=16,
@@ -85,18 +83,10 @@ def test_box_geometry_targets_are_visible_normalized_and_exclude_proxy() -> None
     )
 
     assert targets.valid.tolist() == [[False, True, True]]
-    assert torch.allclose(
-        targets.height_normalized, torch.tensor([[0.0, 0.5, 0.5]])
-    )
-    assert torch.allclose(
-        targets.width_normalized, torch.tensor([[0.0, 0.5, 0.75]])
-    )
-    assert torch.allclose(
-        targets.centroid_x_normalized, torch.tensor([[0.0, 0.5, 0.625]])
-    )
-    assert torch.allclose(
-        targets.centroid_y_normalized, torch.tensor([[0.0, 0.4375, 0.5]])
-    )
+    assert torch.allclose(targets.height_normalized, torch.tensor([[0.0, 0.5, 0.5]]))
+    assert torch.allclose(targets.width_normalized, torch.tensor([[0.0, 0.5, 0.75]]))
+    assert torch.allclose(targets.centroid_x_normalized, torch.tensor([[0.0, 0.5, 0.625]]))
+    assert torch.allclose(targets.centroid_y_normalized, torch.tensor([[0.0, 0.4375, 0.5]]))
 
 
 def test_soft_observation_recovers_width_height_and_centroid() -> None:
@@ -174,8 +164,7 @@ def test_a1_geometry_loss_is_dense_mask_free_and_reaches_foreground() -> None:
         if parameter.requires_grad
     ]
     assert any(
-        gradient is not None and bool(torch.isfinite(gradient).all())
-        for gradient in gradients
+        gradient is not None and bool(torch.isfinite(gradient).all()) for gradient in gradients
     )
 
 
@@ -222,8 +211,7 @@ def test_a1_pair_ratio_uses_numeric_geometry_without_dense_masks() -> None:
         if parameter.requires_grad
     ]
     assert any(
-        gradient is not None and bool(torch.isfinite(gradient).all())
-        for gradient in gradients
+        gradient is not None and bool(torch.isfinite(gradient).all()) for gradient in gradients
     )
 
 
@@ -308,9 +296,7 @@ def test_checkpoint_evaluation_is_independent_of_dev_bbox_metadata() -> None:
     model = _model().eval()
 
     def evaluate(batch: ObjectEventV4Batch) -> dict[str, object]:
-        loader = DataLoader(
-            _OneItemDataset(), batch_size=1, collate_fn=lambda _: batch
-        )
+        loader = DataLoader(_OneItemDataset(), batch_size=1, collate_fn=lambda _: batch)
         return training.evaluate_real_causal_scale(
             model,
             cast(DataLoader[ObjectEventV4Batch], loader),
@@ -331,8 +317,7 @@ def test_checkpoint_evaluation_is_independent_of_dev_bbox_metadata() -> None:
 
 def test_a1_preregistered_config_keeps_a0_model_and_only_geometry_supervision() -> None:
     config_path = (
-        ROOT
-        / "configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a1_geometry_v1.yaml"
+        ROOT / "configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a1_geometry_v1.yaml"
     )
     raw = runner._read_yaml(config_path)
     model_path = ROOT / str(raw["model_config"])

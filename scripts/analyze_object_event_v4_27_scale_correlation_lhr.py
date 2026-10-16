@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Grouped OOF and final development-validation run for Object Event TTC v4.27."""
+"Grouped OOF and final development-validation run for Object Event TTC v4.27."
+
 from __future__ import annotations
 
 import argparse
@@ -7,9 +8,10 @@ import json
 import shutil
 import sys
 import time
-from dataclasses import asdict, fields
+from collections.abc import Mapping
+from dataclasses import fields
 from pathlib import Path
-from typing import Any, Mapping, cast
+from typing import Any, cast
 
 import numpy as np
 import pandas as pd
@@ -21,19 +23,33 @@ for candidate in (ROOT, ROOT / "src"):
     if str(candidate) not in sys.path:
         sys.path.insert(0, str(candidate))
 
-from scripts.analyze_object_event_v4_24_orchestrator import _sequence_folds, _subset_split  # noqa: E402
-from scripts.train_e_jepa_object_event_v4_6 import _materialize  # noqa: E402
-from scripts.train_e_jepa_object_event_v4_8 import _load_config as _load_v48_config  # noqa: E402
-from scripts.train_e_jepa_object_event_v4_12 import _load_backbone, _read_ensemble, _align_ensemble  # noqa: E402
-from scripts.train_e_jepa_object_event_v4_16 import _json_safe, _metrics, _resolve_device  # noqa: E402
 from e_jepa_ttc.models.object_event_v4_22 import configure_partial_geometry_unfreeze  # noqa: E402
-from e_jepa_ttc.models.object_event_v4_27 import ObjectEventTTCV427, ObjectEventV427Config  # noqa: E402
+from e_jepa_ttc.models.object_event_v4_27 import (  # noqa: E402
+    ObjectEventTTCV427,
+    ObjectEventV427Config,
+)
 from e_jepa_ttc.training.object_event_v4_22 import relative_parameter_anchor  # noqa: E402
 from e_jepa_ttc.training.object_event_v4_26 import track_metrics  # noqa: E402
 from e_jepa_ttc.training.object_event_v4_27 import (  # noqa: E402
     ObjectEventV427LossConfig,
     object_event_v4_27_loss,
     target_log_height_ratio,
+)
+from scripts.analyze_object_event_v4_24_orchestrator import (  # noqa: E402
+    _sequence_folds,
+    _subset_split,
+)
+from scripts.train_e_jepa_object_event_v4_6 import _materialize  # noqa: E402
+from scripts.train_e_jepa_object_event_v4_8 import _load_config as _load_v48_config  # noqa: E402
+from scripts.train_e_jepa_object_event_v4_12 import (  # noqa: E402
+    _align_ensemble,
+    _load_backbone,
+    _read_ensemble,
+)
+from scripts.train_e_jepa_object_event_v4_16 import (  # noqa: E402
+    _json_safe,
+    _metrics,
+    _resolve_device,
 )
 
 
@@ -58,8 +74,6 @@ def _pearson(a: np.ndarray, b: np.ndarray) -> float:
     return float(np.corrcoef(a, b)[0, 1])
 
 
-
-
 def _require_finite(name: str, tensor: torch.Tensor, *, context: str) -> None:
     finite = torch.isfinite(tensor)
     if bool(finite.all()):
@@ -79,16 +93,21 @@ def _require_finite_parameters(parameters: list[torch.Tensor], *, context: str) 
     for index, parameter in enumerate(parameters):
         _require_finite(f"parameter[{index}]", parameter, context=context)
 
+
 def _split_frame(split: Any) -> pd.DataFrame:
-    target = (split.delta_t_s / split.target_ttc_s).clamp(-0.25, 0.25).cpu().numpy().astype(np.float64)
-    return pd.DataFrame({
-        "sequence_id": [str(x) for x in split.sequence_ids],
-        "sample_token": [str(x) for x in split.sample_tokens],
-        "track_id": [str(x) for x in split.track_ids],
-        "target_expansion": target,
-        "delta_t_s": split.delta_t_s.cpu().numpy(),
-        "target_ttc_s": split.target_ttc_s.cpu().numpy(),
-    })
+    target = (
+        (split.delta_t_s / split.target_ttc_s).clamp(-0.25, 0.25).cpu().numpy().astype(np.float64)
+    )
+    return pd.DataFrame(
+        {
+            "sequence_id": [str(x) for x in split.sequence_ids],
+            "sample_token": [str(x) for x in split.sample_tokens],
+            "track_id": [str(x) for x in split.track_ids],
+            "target_expansion": target,
+            "delta_t_s": split.delta_t_s.cpu().numpy(),
+            "target_ttc_s": split.target_ttc_s.cpu().numpy(),
+        }
+    )
 
 
 def _train_model(
@@ -106,14 +125,18 @@ def _train_model(
     torch.manual_seed(seed)
     backbone, _ = _load_backbone(v48_config_path=v48_config, checkpoint_path=checkpoint)
     backbone = backbone.to(device)
-    selected = configure_partial_geometry_unfreeze(backbone, int(train_cfg["geometry_tail_tensors"]))
+    selected = configure_partial_geometry_unfreeze(
+        backbone, int(train_cfg["geometry_tail_tensors"])
+    )
     model = ObjectEventTTCV427(backbone, model_cfg).to(device)
     initial = {
         name: p.detach().float().cpu().clone()
         for name, p in backbone.foreground_model.geometry_encoder.named_parameters()
         if p.requires_grad
     }
-    geometry = [p for p in backbone.foreground_model.geometry_encoder.parameters() if p.requires_grad]
+    geometry = [
+        p for p in backbone.foreground_model.geometry_encoder.parameters() if p.requires_grad
+    ]
     projection = list(model.feature_projection.parameters())
     optimizer = torch.optim.AdamW(
         [
@@ -128,15 +151,22 @@ def _train_model(
     for epoch in range(1, epochs + 1):
         order = np.arange(len(split.events), dtype=np.int64)
         rng.shuffle(order)
-        accum = {k: [] for k in ("loss", "lhr", "expansion", "correlation", "sign", "entropy", "anchor")}
+        accum = {
+            k: [] for k in ("loss", "lhr", "expansion", "correlation", "sign", "entropy", "anchor")
+        }
         for start in range(0, len(order), batch_size):
-            idx = torch.as_tensor(order[start:start + batch_size], dtype=torch.long)
+            idx = torch.as_tensor(order[start : start + batch_size], dtype=torch.long)
             events = split.events[idx].to(device=device, dtype=torch.float32)
             dt = split.delta_t_s[idx].to(device=device, dtype=torch.float32)
             ttc = split.target_ttc_s[idx].to(device=device, dtype=torch.float32)
             heights = split.visible_heights_px[idx].to(device=device, dtype=torch.float32)
             context = f"seed={seed} epoch={epoch} batch_start={start}"
-            for input_name, input_tensor in (("events", events), ("delta_t_s", dt), ("target_ttc_s", ttc), ("visible_heights_px", heights)):
+            for input_name, input_tensor in (
+                ("events", events),
+                ("delta_t_s", dt),
+                ("target_ttc_s", ttc),
+                ("visible_heights_px", heights),
+            ):
                 _require_finite(input_name, input_tensor, context=context)
             output = model(events)
             _require_finite("predicted_log_eta", output.predicted_log_eta, context=context)
@@ -148,7 +178,9 @@ def _train_model(
             for piece_name, piece_tensor in pieces.items():
                 _require_finite(f"loss_component:{piece_name}", piece_tensor, context=context)
             trainables = {
-                name: p for name, p in backbone.foreground_model.geometry_encoder.named_parameters() if p.requires_grad
+                name: p
+                for name, p in backbone.foreground_model.geometry_encoder.named_parameters()
+                if p.requires_grad
             }
             anchor = relative_parameter_anchor(trainables, initial, epsilon=1.0e-6)
             loss = primary + float(train_cfg["geometry_anchor_weight"]) * anchor
@@ -181,11 +213,13 @@ def _train_model(
 
 
 @torch.no_grad()
-def _predict(model: ObjectEventTTCV427, split: Any, *, batch_size: int, device: torch.device) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+def _predict(
+    model: ObjectEventTTCV427, split: Any, *, batch_size: int, device: torch.device
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     expansion, log_eta, entropy = [], [], []
     model.eval()
     for start in range(0, len(split.events), batch_size):
-        events = split.events[start:start + batch_size].to(device=device, dtype=torch.float32)
+        events = split.events[start : start + batch_size].to(device=device, dtype=torch.float32)
         output = model(events)
         expansion.append(output.expansion.float().cpu())
         log_eta.append(output.predicted_log_eta.float().cpu())
@@ -197,18 +231,28 @@ def _predict(model: ObjectEventTTCV427, split: Any, *, batch_size: int, device: 
     )
 
 
-def _metrics_bundle(frame: pd.DataFrame, split: Any, prediction: np.ndarray, log_eta: np.ndarray) -> tuple[dict[str, Any], pd.DataFrame]:
+def _metrics_bundle(
+    frame: pd.DataFrame, split: Any, prediction: np.ndarray, log_eta: np.ndarray
+) -> tuple[dict[str, Any], pd.DataFrame]:
     ttc, per_sequence = _metrics(frame, prediction, minimum_negatives=20)
     target_lhr = target_log_height_ratio(split.visible_heights_px).cpu().numpy().astype(np.float64)
     ttc["log_eta_pearson"] = _pearson(log_eta, target_lhr)
     ttc["log_eta_mae"] = float(np.mean(np.abs(log_eta - target_lhr)))
     seq_lhr = []
-    for sequence_id, group in frame.assign(pred_log_eta=log_eta, target_log_eta=target_lhr).groupby("sequence_id", sort=True):
-        seq_lhr.append({
-            "sequence_id": str(sequence_id),
-            "log_eta_pearson": _pearson(group["pred_log_eta"].to_numpy(), group["target_log_eta"].to_numpy()),
-            "log_eta_mae": float(np.mean(np.abs(group["pred_log_eta"] - group["target_log_eta"]))),
-        })
+    for sequence_id, group in frame.assign(pred_log_eta=log_eta, target_log_eta=target_lhr).groupby(
+        "sequence_id", sort=True
+    ):
+        seq_lhr.append(
+            {
+                "sequence_id": str(sequence_id),
+                "log_eta_pearson": _pearson(
+                    group["pred_log_eta"].to_numpy(), group["target_log_eta"].to_numpy()
+                ),
+                "log_eta_mae": float(
+                    np.mean(np.abs(group["pred_log_eta"] - group["target_log_eta"]))
+                ),
+            }
+        )
     seq_lhr_df = pd.DataFrame(seq_lhr)
     per_sequence = per_sequence.merge(seq_lhr_df, on="sequence_id", how="left")
     ttc["minimum_sequence_log_eta_pearson"] = float(per_sequence["log_eta_pearson"].min())
@@ -241,9 +285,15 @@ def main() -> int:
     checkpoints = _parse_seed_paths(args.adapted_checkpoint)
     device = _resolve_device(args.device)
     base_cfg, _, _, _, _ = _load_v48_config(args.v48_config)
-    train_split, train_manifest = _materialize(args.cache_manifest, "train", input_size=base_cfg.input_size)
+    train_split, train_manifest = _materialize(
+        args.cache_manifest, "train", input_size=base_cfg.input_size
+    )
     train_frame = _split_frame(train_split)
-    folds = _sequence_folds(train_frame["sequence_id"].to_numpy(dtype=object), int(train_cfg["fold_count"]), int(train_cfg["seed"]))
+    folds = _sequence_folds(
+        train_frame["sequence_id"].to_numpy(dtype=object),
+        int(train_cfg["fold_count"]),
+        int(train_cfg["seed"]),
+    )
     n = len(train_frame)
     per_seed_predictions, per_seed_lhr = [], []
     fold_records: list[dict[str, Any]] = []
@@ -257,21 +307,33 @@ def main() -> int:
             print(f"[v4.27] seed={seed} fold={fold_id + 1}/{len(folds)} training", flush=True)
             fit_idx = np.setdiff1d(all_idx, held_idx, assume_unique=True)
             model, history = _train_model(
-                checkpoints[seed], _subset_split(train_split, fit_idx), v48_config=args.v48_config,
-                model_cfg=model_cfg, loss_cfg=loss_cfg, train_cfg=train_cfg, device=device,
-                seed=int(train_cfg["seed"]) + seed * 100 + fold_id, epochs=int(train_cfg["epochs"]),
+                checkpoints[seed],
+                _subset_split(train_split, fit_idx),
+                v48_config=args.v48_config,
+                model_cfg=model_cfg,
+                loss_cfg=loss_cfg,
+                train_cfg=train_cfg,
+                device=device,
+                seed=int(train_cfg["seed"]) + seed * 100 + fold_id,
+                epochs=int(train_cfg["epochs"]),
             )
             held_split = _subset_split(train_split, held_idx)
-            fold_pred, fold_lhr, fold_entropy = _predict(model, held_split, batch_size=int(train_cfg["batch_size"]), device=device)
+            fold_pred, fold_lhr, fold_entropy = _predict(
+                model, held_split, batch_size=int(train_cfg["batch_size"]), device=device
+            )
             pred[held_idx], lhr[held_idx] = fold_pred, fold_lhr
             local_frame = train_frame.iloc[held_idx].reset_index(drop=True)
             local_metrics, _ = _metrics_bundle(local_frame, held_split, fold_pred, fold_lhr)
-            fold_records.append({
-                "seed": seed, "fold": fold_id,
-                "held_out_sequences": sorted(local_frame["sequence_id"].unique().tolist()),
-                "metrics": local_metrics, "entropy_mean": float(np.mean(fold_entropy)),
-                "final_history": history[-1],
-            })
+            fold_records.append(
+                {
+                    "seed": seed,
+                    "fold": fold_id,
+                    "held_out_sequences": sorted(local_frame["sequence_id"].unique().tolist()),
+                    "metrics": local_metrics,
+                    "entropy_mean": float(np.mean(fold_entropy)),
+                    "final_history": history[-1],
+                }
+            )
             pd.DataFrame(history).to_csv(hist_dir / f"seed{seed}_fold{fold_id}.csv", index=False)
             del model
             if device.type == "cuda":
@@ -292,8 +354,10 @@ def main() -> int:
     )
     oof_pass = (
         float(oof_metrics["pearson"]) >= float(selection["minimum_oof_pearson"])
-        and float(oof_metrics["negative_accuracy"]) >= float(selection["minimum_oof_negative_accuracy"])
-        and float(oof_metrics["balanced_sign_accuracy"]) >= float(selection["minimum_oof_balanced_sign"])
+        and float(oof_metrics["negative_accuracy"])
+        >= float(selection["minimum_oof_negative_accuracy"])
+        and float(oof_metrics["balanced_sign_accuracy"])
+        >= float(selection["minimum_oof_balanced_sign"])
         and float(oof_metrics["log_eta_pearson"]) >= float(selection["minimum_oof_log_eta_pearson"])
         and float(oof_tracks["negative_track_macro_accuracy"])
         >= float(selection["minimum_oof_negative_track_macro_accuracy"])
@@ -348,16 +412,33 @@ def main() -> int:
     for seed in [int(x) for x in train_cfg["seeds"]]:
         print(f"[v4.27] final full-train seed={seed}", flush=True)
         model, history = _train_model(
-            checkpoints[seed], train_split, v48_config=args.v48_config, model_cfg=model_cfg,
-            loss_cfg=loss_cfg, train_cfg=train_cfg, device=device, seed=int(train_cfg["seed"]) + seed * 1000,
+            checkpoints[seed],
+            train_split,
+            v48_config=args.v48_config,
+            model_cfg=model_cfg,
+            loss_cfg=loss_cfg,
+            train_cfg=train_cfg,
+            device=device,
+            seed=int(train_cfg["seed"]) + seed * 1000,
             epochs=int(train_cfg["final_epochs"]),
         )
-        prediction, lhr, entropy = _predict(model, val_split, batch_size=int(train_cfg["batch_size"]), device=device)
+        prediction, lhr, entropy = _predict(
+            model, val_split, batch_size=int(train_cfg["batch_size"]), device=device
+        )
         final_predictions.append(prediction)
         final_lhr.append(lhr)
         checkpoint_path = args.output_dir / f"v427_scale_corr_seed_{seed}.pt"
-        torch.save({"model_state_dict": model.state_dict(), "seed": seed, "config": raw}, checkpoint_path)
-        final_records.append({"seed": seed, "entropy_mean": float(np.mean(entropy)), "final_history": history[-1], "checkpoint": str(checkpoint_path)})
+        torch.save(
+            {"model_state_dict": model.state_dict(), "seed": seed, "config": raw}, checkpoint_path
+        )
+        final_records.append(
+            {
+                "seed": seed,
+                "entropy_mean": float(np.mean(entropy)),
+                "final_history": history[-1],
+                "checkpoint": str(checkpoint_path),
+            }
+        )
         del model
         if device.type == "cuda":
             torch.cuda.empty_cache()
@@ -378,10 +459,16 @@ def main() -> int:
         v410, v410_pred, minimum_track_samples=8, minimum_negative_track_samples=4
     )
     strong = (
-        float(val_metrics["pearson"]) >= float(v410_metrics["pearson"]) + float(final_decision["minimum_pearson_gain_over_v410"])
-        and float(val_metrics["negative_accuracy"]) >= float(v410_metrics["negative_accuracy"]) + float(final_decision["minimum_negative_accuracy_gain_over_v410"])
-        and float(val_metrics["balanced_sign_accuracy"]) >= float(v410_metrics["balanced_sign_accuracy"]) + float(final_decision["minimum_balanced_sign_gain_over_v410"])
-        and float(val_metrics["log_eta_pearson"]) >= float(final_decision["minimum_log_eta_pearson"])
+        float(val_metrics["pearson"])
+        >= float(v410_metrics["pearson"]) + float(final_decision["minimum_pearson_gain_over_v410"])
+        and float(val_metrics["negative_accuracy"])
+        >= float(v410_metrics["negative_accuracy"])
+        + float(final_decision["minimum_negative_accuracy_gain_over_v410"])
+        and float(val_metrics["balanced_sign_accuracy"])
+        >= float(v410_metrics["balanced_sign_accuracy"])
+        + float(final_decision["minimum_balanced_sign_gain_over_v410"])
+        and float(val_metrics["log_eta_pearson"])
+        >= float(final_decision["minimum_log_eta_pearson"])
         and float(val_tracks["negative_track_macro_accuracy"])
         >= float(v410_tracks["negative_track_macro_accuracy"])
         + float(final_decision["minimum_negative_track_macro_gain_over_v410"])
@@ -389,9 +476,13 @@ def main() -> int:
     if strong:
         recommendation = "scale_correlation_lhr_supported_lock_v427_then_long_multiseed"
     elif oof_pass and float(val_metrics["log_eta_pearson"]) > 0.35:
-        recommendation = "scale_correlation_lhr_transfers_but_ttc_not_yet_sota_refine_scale_matcher_v428"
+        recommendation = (
+            "scale_correlation_lhr_transfers_but_ttc_not_yet_sota_refine_scale_matcher_v428"
+        )
     else:
-        recommendation = "scale_correlation_lhr_insufficient_move_to_multiscale_2d_event_correlation_v428"
+        recommendation = (
+            "scale_correlation_lhr_insufficient_move_to_multiscale_2d_event_correlation_v428"
+        )
 
     val_out = val_frame.copy()
     val_out["v410_prediction_expansion"] = v410_pred
@@ -400,7 +491,9 @@ def main() -> int:
     val_out.to_csv(args.output_dir / "validation_predictions.csv", index=False)
     val_per_sequence.to_csv(args.output_dir / "validation_per_sequence.csv", index=False)
     val_per_track.to_csv(args.output_dir / "validation_per_track.csv", index=False)
-    pd.DataFrame(fold_records).to_json(args.output_dir / "fold_records.jsonl", orient="records", lines=True)
+    pd.DataFrame(fold_records).to_json(
+        args.output_dir / "fold_records.jsonl", orient="records", lines=True
+    )
     summary = {
         "artifact_type": "object_event_v4_27_scale_correlation_lhr",
         "status": "completed",
@@ -422,8 +515,12 @@ def main() -> int:
                 "v427_negative_accuracy": float(val_metrics["negative_accuracy"]),
                 "v410_balanced_sign": float(v410_metrics["balanced_sign_accuracy"]),
                 "v427_balanced_sign": float(val_metrics["balanced_sign_accuracy"]),
-                "v410_negative_track_macro_accuracy": float(v410_tracks["negative_track_macro_accuracy"]),
-                "v427_negative_track_macro_accuracy": float(val_tracks["negative_track_macro_accuracy"]),
+                "v410_negative_track_macro_accuracy": float(
+                    v410_tracks["negative_track_macro_accuracy"]
+                ),
+                "v427_negative_track_macro_accuracy": float(
+                    val_tracks["negative_track_macro_accuracy"]
+                ),
             },
         },
         "final_seed_records": final_records,
@@ -439,8 +536,22 @@ def main() -> int:
         "validation_manifest": validation_manifest,
         "config": raw,
     }
-    (args.output_dir / "summary.json").write_text(json.dumps(_json_safe(summary), indent=2), encoding="utf-8")
-    print(json.dumps(_json_safe({"status": "completed", "recommendation": recommendation, "oof": oof_metrics, "validation": val_metrics}), indent=2))
+    (args.output_dir / "summary.json").write_text(
+        json.dumps(_json_safe(summary), indent=2), encoding="utf-8"
+    )
+    print(
+        json.dumps(
+            _json_safe(
+                {
+                    "status": "completed",
+                    "recommendation": recommendation,
+                    "oof": oof_metrics,
+                    "validation": val_metrics,
+                }
+            ),
+            indent=2,
+        )
+    )
     return 0
 
 

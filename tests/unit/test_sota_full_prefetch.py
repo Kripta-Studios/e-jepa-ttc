@@ -45,8 +45,8 @@ def test_backend_binding_pins_stable_and_full_sources(tmp_path: Path, monkeypatc
     )
     assert result["workers"] == 2
     assert result["scientific_binding_changed"] is False
-    assert "operational\\sota_eval\\prefetch.py" in result["sources"]
-    assert "operational\\evttc_rgb_transfer\\inputs.py" in result["sources"]
+    assert str(Path("operational/sota_eval/prefetch.py")) in result["sources"]
+    assert str(Path("operational/evttc_rgb_transfer/inputs.py")) in result["sources"]
 
 
 def test_execution_receipt_separates_worker_and_consumer_timing() -> None:

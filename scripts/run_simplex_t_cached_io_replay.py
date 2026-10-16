@@ -29,11 +29,8 @@ def validated_capacity(work: Path, report_path: Path, forwarded: list[str]) -> d
     bindings = {
         "union_source_sha256": work / "src/e_jepa_ttc/simplex_t/context_raw_union.py",
         "script_sha256": work / "artifacts/simplex_t/T0/probe_union_capacity_20260908.py",
-        "index_sha256": Path(forwarded[forwarded.index("--index") + 1])
-        / "query_context_index.npz",
-        "preprocessing_sha256": Path(
-            forwarded[forwarded.index("--preprocessing-manifest") + 1]
-        ),
+        "index_sha256": Path(forwarded[forwarded.index("--index") + 1]) / "query_context_index.npz",
+        "preprocessing_sha256": Path(forwarded[forwarded.index("--preprocessing-manifest") + 1]),
     }
     if any(sha256(path) != report[key] for key, path in bindings.items()):
         raise ValueError("capacity QA source or input binding changed")

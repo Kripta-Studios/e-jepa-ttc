@@ -356,9 +356,9 @@ def test_conditional_arm_ignored_when_run_dirs_lack_signed_summaries(tmp_path: P
     results = tmp_path / "results"
     (results / "runs" / "gated_exp6_3_fold0_seed7").mkdir(parents=True)
     (results / "runs" / "gated_exp6_3_fold1_seed7").mkdir(parents=True)
-    assert _candidate_config_entries(
-        _gated_manifest(), arm="gated_exp6_3", results_root=results
-    ) == []
+    assert (
+        _candidate_config_entries(_gated_manifest(), arm="gated_exp6_3", results_root=results) == []
+    )
 
 
 def test_conditional_arm_refuses_partial_signed_summaries(tmp_path: Path) -> None:
@@ -377,9 +377,7 @@ def test_conditional_arm_listed_when_all_folds_have_signed_summaries(tmp_path: P
     results = tmp_path / "results"
     for fold in range(3):
         _write_signed_fold_summary(results / "runs" / f"gated_exp6_3_fold{fold}_seed7")
-    entries = _candidate_config_entries(
-        _gated_manifest(), arm="gated_exp6_3", results_root=results
-    )
+    entries = _candidate_config_entries(_gated_manifest(), arm="gated_exp6_3", results_root=results)
     assert [name for name, _ in entries] == [
         "gated_exp6_3_fold0_seed7",
         "gated_exp6_3_fold1_seed7",

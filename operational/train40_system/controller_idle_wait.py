@@ -19,9 +19,7 @@ def launch(output: Path, tag: str, module: str, arguments: list[str]) -> subproc
     if module == "operational.train40_system.engine":
         if tag not in {"a5", "c2f"} or arguments != ["--arm", tag]:
             raise ValueError("Unexpected TRAIN40 engine task arguments")
-        return _frozen_launch(
-            output, tag, "operational.train40_system.engine_idle_wait", arguments
-        )
+        return _frozen_launch(output, tag, "operational.train40_system.engine_idle_wait", arguments)
     return _frozen_launch(output, tag, module, arguments)
 
 

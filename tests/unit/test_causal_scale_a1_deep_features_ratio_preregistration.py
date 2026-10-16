@@ -16,8 +16,7 @@ from e_jepa_ttc.training.causal_scale_eap import (
 
 ROOT = Path(__file__).resolve().parents[2]
 PARENT = (
-    ROOT
-    / "configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a1_deep_features_v1.yaml"
+    ROOT / "configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a1_deep_features_v1.yaml"
 )
 CANDIDATE = (
     ROOT
@@ -57,9 +56,7 @@ def test_ratio_arm_hash_model_count_and_warmup_are_frozen() -> None:
     warmup = _foreground_only_loss_config(loss_config)
 
     assert sum(parameter.numel() for parameter in model.parameters()) == 355_118
-    assert runner._sha256(model_path) == raw["decision_contract"][
-        "model_config_sha256"
-    ]
+    assert runner._sha256(model_path) == raw["decision_contract"]["model_config_sha256"]
     assert loss_config.foreground_pair_ratio_weight == 5.0
     assert warmup.foreground_pair_ratio_weight == 0.0
     runner._validate_bbox_geometry_loss(
@@ -93,8 +90,5 @@ def test_ratio_weight_matches_preregistered_train_only_scale() -> None:
     assert contract["weighted_width_contribution"] == pytest.approx(
         1.25 * contract["raw_width_loss"]
     )
-    ratio = (
-        contract["weighted_pair_ratio_contribution"]
-        / contract["weighted_width_contribution"]
-    )
+    ratio = contract["weighted_pair_ratio_contribution"] / contract["weighted_width_contribution"]
     assert 1.0 <= ratio <= 1.1

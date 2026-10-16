@@ -178,9 +178,7 @@ def test_failure_cleanup_waits_for_live_peer_full_checkpoint(
         "request_peer_pause",
         lambda out, token, arm: pauses.append(arm),
     )
-    parallel_controller.wait_for_paused_survivors(
-        output, "nonce", cast(Any, {"a5": Process()})
-    )
+    parallel_controller.wait_for_paused_survivors(output, "nonce", cast(Any, {"a5": Process()}))
     assert pauses == ["coordinator_failure"]
 
 

@@ -11,10 +11,18 @@ from pathlib import Path
 
 REQUIRED_BASE = "488b433857090e525c447bf2974ac72639f25194"
 CRITICAL_HASHES = {
-    "src/e_jepa_ttc/models/object_event_v4_7.py": "de91bf32f181af3b1f6d32087f7b31309c222a86ae5a8954222cd50023b57477",
-    "src/e_jepa_ttc/training/object_event_v4_7.py": "530e7bca7837455c1c18ef927fe38155c922bf6007527702a3370109079cab59",
-    "scripts/train_e_jepa_object_event_v4_7.py": "87d5924b90d43da4fbe7ab7e13398dab5438f558766ae274a138cb9ab1b9fbaf",
-    "scripts/run_object_event_v4_7_highres_extent.ps1": "07acfc6fcb6c494b61744a8ff994fd0d525bd646cebd50c3256c211fc0e3eb0f",
+    "src/e_jepa_ttc/models/object_event_v4_7.py": (
+        "de91bf32f181af3b1f6d32087f7b31309c222a86ae5a8954222cd50023b57477"
+    ),
+    "src/e_jepa_ttc/training/object_event_v4_7.py": (
+        "530e7bca7837455c1c18ef927fe38155c922bf6007527702a3370109079cab59"
+    ),
+    "scripts/train_e_jepa_object_event_v4_7.py": (
+        "87d5924b90d43da4fbe7ab7e13398dab5438f558766ae274a138cb9ab1b9fbaf"
+    ),
+    "scripts/run_object_event_v4_7_highres_extent.ps1": (
+        "07acfc6fcb6c494b61744a8ff994fd0d525bd646cebd50c3256c211fc0e3eb0f"
+    ),
 }
 
 
@@ -37,10 +45,13 @@ def main() -> int:
     parser.add_argument("--v47-checkpoint", type=Path, required=True)
     args = parser.parse_args()
     head = _git("rev-parse", "HEAD")
-    ancestor = subprocess.run(
-        ["git", "merge-base", "--is-ancestor", REQUIRED_BASE, head],
-        check=False,
-    ).returncode == 0
+    ancestor = (
+        subprocess.run(
+            ["git", "merge-base", "--is-ancestor", REQUIRED_BASE, head],
+            check=False,
+        ).returncode
+        == 0
+    )
     if not ancestor:
         raise RuntimeError(f"HEAD {head} does not descend from required base {REQUIRED_BASE}")
     actual_hashes: dict[str, str] = {}

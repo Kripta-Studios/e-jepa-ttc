@@ -8,19 +8,21 @@ import numpy as np
 import pandas as pd
 import yaml
 
+from e_jepa_ttc.object_event_v4_9 import FixedFusionConfig
+from e_jepa_ttc.object_event_v4_10 import align_seed_fusions, pairwise_seed_metrics
 from scripts.aggregate_object_event_v4_10_multiseed import aggregate
-from scripts.prepare_object_event_v4_10_seed_configs import materialize
+from scripts.preflight_object_event_v4_9 import assess_v42_fusion_baseline
 from scripts.preflight_object_event_v4_10 import (
     CRITICAL_V49_HASHES,
     _sha256,
     assess_v42_replication_baseline,
 )
-from scripts.preflight_object_event_v4_9 import assess_v42_fusion_baseline
-from e_jepa_ttc.object_event_v4_9 import FixedFusionConfig
-from e_jepa_ttc.object_event_v4_10 import align_seed_fusions, pairwise_seed_metrics
+from scripts.prepare_object_event_v4_10_seed_configs import materialize
 
 
-def _v42_payload(*, screen_passed: bool, failed_gates: list[str] | None = None) -> dict[str, object]:
+def _v42_payload(
+    *, screen_passed: bool, failed_gates: list[str] | None = None
+) -> dict[str, object]:
     failed = set(failed_gates or [])
     gate_names = (
         "pearson",
@@ -86,15 +88,9 @@ def test_v42_replication_rejects_multiple_failures_or_below_chance_negative_accu
 
 
 def test_v49_preflight_keeps_marginal_exception_explicit_and_narrow() -> None:
-    marginal = _v42_payload(
-        screen_passed=False, failed_gates=["negative_accuracy"]
-    )
-    strict = assess_v42_fusion_baseline(
-        marginal, allow_marginal_negative_accuracy_only=False
-    )
-    replication = assess_v42_fusion_baseline(
-        marginal, allow_marginal_negative_accuracy_only=True
-    )
+    marginal = _v42_payload(screen_passed=False, failed_gates=["negative_accuracy"])
+    strict = assess_v42_fusion_baseline(marginal, allow_marginal_negative_accuracy_only=False)
+    replication = assess_v42_fusion_baseline(marginal, allow_marginal_negative_accuracy_only=True)
     assert strict["accepted_for_fusion"] is False
     assert replication["accepted_for_fusion"] is True
     assert replication["original_screen_passed"] is False
@@ -121,43 +117,21 @@ def test_v49_analyzer_hash_contract_matches_current_file() -> None:
 
 
 def test_v49_analyzer_uses_same_explicit_marginal_contract() -> None:
-    analyzer = Path("scripts/analyze_object_event_v4_9_fixed_fusion.py").read_text(
-        encoding="utf-8"
-    )
+    analyzer = Path("scripts/analyze_object_event_v4_9_fixed_fusion.py").read_text(encoding="utf-8")
     assert "assess_v42_fusion_baseline" in analyzer
     assert '"--allow-marginal-v42-negative-accuracy-only"' in analyzer
     assert 'if not bool(v42_summary.get("screen_passed"))' not in analyzer
 
 
 def test_runner_tolerates_only_diagnostic_v46_v47_overfit_failures() -> None:
-    script = Path("scripts/run_object_event_v4_10_multiseed.ps1").read_text(
-        encoding="utf-8"
-    )
-    assert (
-        'Invoke-PythonChecked -Arguments $V46OverfitArgs -AllowedExitCodes @(0, 2)'
-        in script
-    )
-    assert (
-        'Invoke-PythonChecked -Arguments $V47OverfitArgs -AllowedExitCodes @(0, 2)'
-        in script
-    )
-    assert (
-        'Invoke-PythonChecked -Arguments $V48OverfitArgs -AllowedExitCodes @(0, 2)'
-        not in script
-    )
-    assert (
-        'Invoke-PythonChecked -Arguments $V48ScreenArgs -AllowedExitCodes @(0, 2)'
-        not in script
-    )
+    script = Path("scripts/run_object_event_v4_10_multiseed.ps1").read_text(encoding="utf-8")
+    assert "Invoke-PythonChecked -Arguments $V46OverfitArgs -AllowedExitCodes @(0, 2)" in script
+    assert "Invoke-PythonChecked -Arguments $V47OverfitArgs -AllowedExitCodes @(0, 2)" in script
+    assert "Invoke-PythonChecked -Arguments $V48OverfitArgs -AllowedExitCodes @(0, 2)" not in script
+    assert "Invoke-PythonChecked -Arguments $V48ScreenArgs -AllowedExitCodes @(0, 2)" not in script
     assert script.count('"--allow-marginal-v42-negative-accuracy-only"') == 2
-    assert (
-        'Invoke-PythonChecked -Arguments $V49Args -AllowedExitCodes @(0, 2)'
-        in script
-    )
-    assert (
-        '$AllowedStatuses = @("fusion_screen_passed", "fusion_screen_failed")'
-        in script
-    )
+    assert "Invoke-PythonChecked -Arguments $V49Args -AllowedExitCodes @(0, 2)" in script
+    assert '$AllowedStatuses = @("fusion_screen_passed", "fusion_screen_failed")' in script
     assert '"train_predictions.csv", "validation_predictions.csv"' in script
 
 
@@ -185,9 +159,9 @@ def test_align_seed_fusions_averages_by_identity() -> None:
     expected = np.mean(
         np.stack(
             [
-                frame.sort_values(
-                    ["sequence_id", "sample_token", "track_id"], kind="stable"
-                )["fused_prediction_expansion"].to_numpy()
+                frame.sort_values(["sequence_id", "sample_token", "track_id"], kind="stable")[
+                    "fused_prediction_expansion"
+                ].to_numpy()
                 for frame in frames.values()
             ]
         ),
@@ -344,7 +318,8 @@ def test_aggregate_records_completed_failed_seed_without_relabelling(tmp_path: P
     assert result["seed_screen_status"]["23"]["passed"] is False
     assert result["seed_screen_status"]["23"]["failed_gates"] == ["negative_accuracy"]
     assert result["per_seed"][2]["v49_status"] == "fusion_screen_failed"
-    assert result["scientific_contract"][
-        "completed_failed_seed_screens_are_aggregated_not_relabelled"
-    ] is True
+    assert (
+        result["scientific_contract"]["completed_failed_seed_screens_are_aggregated_not_relabelled"]
+        is True
+    )
     assert (tmp_path / "out-failed-seed" / "summary.json").is_file()

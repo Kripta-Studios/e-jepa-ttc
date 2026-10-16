@@ -52,8 +52,7 @@ def test_signed_metrics_match_manual_known_solution() -> None:
         assert metrics["bins"][bucket]["mid"] == pytest.approx(expected)
         assert metrics["bins"][bucket]["rte_pct"] == pytest.approx(50.0)
     expected_weighted = sum(
-        {"negative": 0.1, "crucial": 0.5, "small": 0.3, "large": 0.1}[key]
-        * value
+        {"negative": 0.1, "crucial": 0.5, "small": 0.3, "large": 0.1}[key] * value
         for key, value in expected_per_bucket.items()
     )
     assert metrics["paper_MiD_overall"] == pytest.approx(expected_weighted)

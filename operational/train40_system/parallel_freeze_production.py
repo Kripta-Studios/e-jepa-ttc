@@ -46,8 +46,7 @@ def run(output: Path) -> None:
         or authorization.get("holdout_access_authorized") is not False
         or authorization.get("push_or_submission_authorized") is not False
         or authorization.get("historical_roots_read_only") is not True
-        or authorization.get("checkpoint_and_partial_analysis_preservation_required")
-        is not True
+        or authorization.get("checkpoint_and_partial_analysis_preservation_required") is not True
     ):
         raise ValueError("Parallel authorization contract differs")
     source = ROOT / "operational/train40_system"

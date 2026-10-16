@@ -115,7 +115,8 @@ def main() -> int:
             and isinstance(error, (InterruptedError, RuntimeError))
             and (
                 str(error).startswith(("PAUSED_RESOURCE:", "RESOURCE_PAUSE:"))
-                or str(error) in {
+                or str(error)
+                in {
                     "prediction integrity resource pause",
                     "prediction table resource pause",
                     "endpoint validation resource pause",

@@ -8,7 +8,6 @@ from pathlib import Path
 
 import yaml
 
-
 VARIANTS = {
     "supervised_only": {
         "latent_prediction_weight": 0.0,
@@ -82,10 +81,7 @@ def main() -> int:
 
         experiment_value = {
             "model": args.base_model,
-            "finetuning": (
-                "../../train/object_signed_expansion_v3_ablations/"
-                f"{name}.yaml"
-            ),
+            "finetuning": (f"../../train/object_signed_expansion_v3_ablations/{name}.yaml"),
             "protocol": f"object_signed_expansion_v3_ablation_{name}",
             "selection": "same_gated_selection_as_v3",
         }

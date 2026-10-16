@@ -118,16 +118,12 @@ def build_report(
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument(
-        "--run-root", type=Path, default=ROOT / "artifacts/runs"
-    )
+    parser.add_argument("--run-root", type=Path, default=ROOT / "artifacts/runs")
     parser.add_argument(
         "--output",
         type=Path,
         default=(
-            ROOT
-            / "artifacts/scientific_recovery_v5/audit/"
-            "parent_exposure_classification.json"
+            ROOT / "artifacts/scientific_recovery_v5/audit/parent_exposure_classification.json"
         ),
     )
     args = parser.parse_args()

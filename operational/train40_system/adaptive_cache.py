@@ -32,12 +32,15 @@ class CachePolicy:
     tree_rss_soft_cap_bytes: int = int(POLICY["tree_rss_soft_cap_bytes"])
 
     def __post_init__(self) -> None:
-        if min(
-            self.absolute_cache_bytes,
-            self.host_reserve_bytes,
-            self.host_trim_target_bytes,
-            self.tree_rss_soft_cap_bytes,
-        ) <= 0:
+        if (
+            min(
+                self.absolute_cache_bytes,
+                self.host_reserve_bytes,
+                self.host_trim_target_bytes,
+                self.tree_rss_soft_cap_bytes,
+            )
+            <= 0
+        ):
             raise ValueError("Adaptive cache limits must be positive")
         if self.host_trim_target_bytes < self.host_reserve_bytes:
             raise ValueError("Trim target must not be below the host reserve")
@@ -138,9 +141,7 @@ class AdaptiveSealedInputs(SealedInputs):
         raw = max(host_deficit, rss_deficit)
         if raw < self._last_raw_pressure_bytes:
             observed_release = self._last_raw_pressure_bytes - raw
-            self._release_credit_bytes = max(
-                0, self._release_credit_bytes - observed_release
-            )
+            self._release_credit_bytes = max(0, self._release_credit_bytes - observed_release)
         self._last_raw_pressure_bytes = raw
         return max(0, raw - self._release_credit_bytes)
 

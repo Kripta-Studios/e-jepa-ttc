@@ -131,8 +131,7 @@ def test_build_manifest_never_opens_ttc_and_preserves_direct_event_boxes(
     assert result["sequence_count"] == 3
     assert result["query_count"] > 0
     assert all(
-        row["anchor_us"] == round(row["anchor_relative_seconds"] * 1e6)
-        for row in result["rows"]
+        row["anchor_us"] == round(row["anchor_relative_seconds"] * 1e6) for row in result["rows"]
     )
     first = result["rows"][0]
     assert first["boxes_xyxy3"][0] == [1.0, 2.0, 1280.0, 720.0]

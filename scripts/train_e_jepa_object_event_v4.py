@@ -41,7 +41,6 @@ from e_jepa_ttc.evaluation.garl_ttc_protocol import (  # noqa: E402
 from e_jepa_ttc.models.object_event_v4 import (  # noqa: E402
     ObjectEventTTCV4,
     ObjectEventV4Config,
-    safe_ttc_from_expansion,
 )
 from e_jepa_ttc.reproducibility import resolve_device  # noqa: E402
 from e_jepa_ttc.training.object_event_v4 import (  # noqa: E402
@@ -109,8 +108,7 @@ def _roc_auc(target_negative: np.ndarray, score_negative: np.ndarray) -> float |
         return None
     ranks = pd.Series(score).rank(method="average").to_numpy(dtype=np.float64)
     return float(
-        (ranks[target].sum() - positives * (positives + 1) / 2.0)
-        / (positives * negatives)
+        (ranks[target].sum() - positives * (positives + 1) / 2.0) / (positives * negatives)
     )
 
 
@@ -140,9 +138,7 @@ def _ttc_metrics(
     error = np.abs(target_ttc - prediction_ttc)
     result["mae_s"] = float(error.mean())
     result["median_ae_s"] = float(np.median(error))
-    result["sequence_macro"] = sequence_macro_signed_metrics(
-        target_ttc, prediction_ttc, sequences
-    )
+    result["sequence_macro"] = sequence_macro_signed_metrics(target_ttc, prediction_ttc, sequences)
     return result
 
 
@@ -271,9 +267,7 @@ def load_spec(
             "model": model_path.as_posix(),
             "training": train_path.as_posix(),
             "experiment_metadata": {
-                key: value
-                for key, value in experiment.items()
-                if key not in {"model", "training"}
+                key: value for key, value in experiment.items() if key not in {"model", "training"}
             },
         },
     )
@@ -438,9 +432,7 @@ def _train_epoch(
     optimizer_steps = 0
     motion_drop_count = 0
     event_drop_count = 0
-    generator = torch.Generator(device=device).manual_seed(
-        train_config.seed * 1_000_003 + epoch
-    )
+    generator = torch.Generator(device=device).manual_seed(train_config.seed * 1_000_003 + epoch)
     for step, raw_batch in enumerate(loader, start=1):
         batch = raw_batch.to(device)
         dropped = apply_modality_dropout(
@@ -460,10 +452,7 @@ def _train_epoch(
             scaler.scale(loss).backward()
         else:
             loss.backward()
-        should_step = (
-            step % train_config.gradient_accumulation_steps == 0
-            or step == len(loader)
-        )
+        should_step = step % train_config.gradient_accumulation_steps == 0 or step == len(loader)
         if should_step:
             if scaler is not None:
                 scaler.unscale_(optimizer)
@@ -562,9 +551,7 @@ def _evaluate(
         "full": branch("full", "prediction_ttc_s", "prediction_expansion"),
         "event_only": branch("event_only", "event_ttc_s", "event_expansion"),
         "motion_only": branch("motion_only", "motion_ttc_s", "motion_expansion"),
-        "zero_events": branch(
-            "zero_events", "zero_events_ttc_s", "zero_events_expansion"
-        ),
+        "zero_events": branch("zero_events", "zero_events_ttc_s", "zero_events_expansion"),
         "shuffled_events": branch(
             "shuffled_events", "shuffled_events_ttc_s", "shuffled_events_expansion"
         ),
@@ -576,9 +563,7 @@ def _evaluate(
     }
     full_pearson = float(evaluation["full"]["expansion_health"]["pearson"])
     zero_pearson = float(evaluation["zero_events"]["expansion_health"]["pearson"])
-    shuffled_pearson = float(
-        evaluation["shuffled_events"]["expansion_health"]["pearson"]
-    )
+    shuffled_pearson = float(evaluation["shuffled_events"]["expansion_health"]["pearson"])
     evaluation["event_dependence"] = {
         "pearson_drop_zero_events": full_pearson - zero_pearson,
         "pearson_drop_shuffled_events": full_pearson - shuffled_pearson,
@@ -608,15 +593,11 @@ def _selection_score(evaluation: Mapping[str, Any], config: ObjectEventV4TrainCo
     metrics = cast(Mapping[str, Any], full["metrics"])
     event_metrics = cast(Mapping[str, Any], event["metrics"])
     macro = float(
-        cast(Mapping[str, Any], metrics["sequence_macro"])[
-            "sequence_macro_paper_MiD_overall"
-        ]
+        cast(Mapping[str, Any], metrics["sequence_macro"])["sequence_macro_paper_MiD_overall"]
     )
     negative = float(cast(Mapping[str, Any], metrics["bins"])["negative"]["mid"])
     event_macro = float(
-        cast(Mapping[str, Any], event_metrics["sequence_macro"])[
-            "sequence_macro_paper_MiD_overall"
-        ]
+        cast(Mapping[str, Any], event_metrics["sequence_macro"])["sequence_macro_paper_MiD_overall"]
     )
     return (
         macro
@@ -650,16 +631,12 @@ def _eligible(
         >= config.min_event_only_negative_recall,
         "zero_events_degradation": float(dependence["pearson_drop_zero_events"])
         >= config.min_event_dependence_zero_events,
-        "shuffled_events_degradation": float(
-            dependence["pearson_drop_shuffled_events"]
-        )
+        "shuffled_events_degradation": float(dependence["pearson_drop_shuffled_events"])
         >= config.min_event_dependence_shuffled_events,
         "reversal_antisymmetry": float(evaluation["reversal_error_max"])
         <= config.max_reversal_error,
-        "saturation": float(full["saturation_rate"])
-        <= config.max_ttc_saturation_rate,
-        "event_gate": float(evaluation["event_gate_mean"])
-        >= config.min_event_gate_mean,
+        "saturation": float(full["saturation_rate"]) <= config.max_ttc_saturation_rate,
+        "event_gate": float(evaluation["event_gate_mean"]) >= config.min_event_gate_mean,
     }
     return all(bool(value) for value in gates.values()), gates
 
@@ -697,15 +674,11 @@ def train(
         raise RuntimeError("Full v4 training requires a clean git worktree")
 
     datasets = {
-        split: GarlTTCObjectEventV4Dataset(
-            str(manifest_path), splits=(split,)
-        )
+        split: GarlTTCObjectEventV4Dataset(str(manifest_path), splits=(split,))
         for split in ("train", "validation")
     }
     manifest = datasets["train"].manifest
-    precontext_fraction = float(
-        manifest.get("event_v4_precontext_valid_fraction", 0.0)
-    )
+    precontext_fraction = float(manifest.get("event_v4_precontext_valid_fraction", 0.0))
     if precontext_fraction < 0.80:
         raise RuntimeError(
             f"V4 cache real-event precontext coverage {precontext_fraction:.6f} is below 0.80"
@@ -746,9 +719,7 @@ def train(
         history = list(saved.get("history", []))
         optimizer_steps = int(saved.get("optimizer_steps", 0))
 
-    validation_loader = _loader(
-        datasets["validation"], train_config, shuffle=False, epoch=0
-    )
+    validation_loader = _loader(datasets["validation"], train_config, shuffle=False, epoch=0)
     last_evaluation: dict[str, Any] | None = None
     for epoch in range(start_epoch, train_config.epochs + 1):
         learning_rates = _set_lrs(
@@ -770,9 +741,7 @@ def train(
             scaler=scaler if scaler.is_enabled() else None,
         )
         optimizer_steps += int(train_result["optimizer_steps"])
-        predictions, evaluation = _evaluate(
-            model, validation_loader, device=device
-        )
+        predictions, evaluation = _evaluate(model, validation_loader, device=device)
         last_evaluation = evaluation
         score = _selection_score(evaluation, train_config)
         eligible, gates = _eligible(
@@ -844,9 +813,7 @@ def train(
         )
     best_payload = torch.load(best_path, map_location="cpu", weights_only=False)
     model.load_state_dict(best_payload["model_state_dict"], strict=True)
-    best_predictions, best_evaluation = _evaluate(
-        model, validation_loader, device=device
-    )
+    best_predictions, best_evaluation = _evaluate(model, validation_loader, device=device)
     best_predictions.to_csv(best_predictions_path, index=False)
     ended_at = datetime.now(UTC)
     summary = cast(
@@ -865,9 +832,7 @@ def train(
                 "python_version": platform.python_version(),
                 "torch_version": torch.__version__,
                 "cuda_version": torch.version.cuda,
-                "gpu_name": torch.cuda.get_device_name(device)
-                if device.type == "cuda"
-                else None,
+                "gpu_name": torch.cuda.get_device_name(device) if device.type == "cuda" else None,
                 "device": str(device),
                 "seed": train_config.seed,
                 "model_config": asdict(model_config),
@@ -907,8 +872,7 @@ def train(
                 "uses_v3_ordered_swap_loss": False,
                 "requires_event_dependence_gates": True,
                 "claim_eligible": False,
-                "downstream_evaluation_eligible": train_config.run_scope
-                == "full_candidate"
+                "downstream_evaluation_eligible": train_config.run_scope == "full_candidate"
                 and not dirty,
             }
         ),

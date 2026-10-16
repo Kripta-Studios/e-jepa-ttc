@@ -125,9 +125,33 @@ if ($recoveringLease) {
                 [IO.Path]::GetFileName($_.$field.script)
             }
         } | Select-Object -Unique)
-        $liveWorkers = @(Get-CimInstance Win32_Process -ErrorAction Stop | Where-Object {
+        if ([Environment]::OSVersion.Platform -eq [PlatformID]::Win32NT) {
+            $processInventory = @(Get-CimInstance Win32_Process -ErrorAction Stop)
+        } elseif (Test-Path -LiteralPath '/proc/self/cmdline') {
+            $processInventory = @(Get-Process | Where-Object {
+                $_.ProcessName -match '^python(w)?([0-9.]+)?$'
+            } | ForEach-Object {
+                $workerPid = $_.Id
+                $workerName = $_.ProcessName
+                try {
+                    $rawCommand = [IO.File]::ReadAllText("/proc/$workerPid/cmdline")
+                    [pscustomobject]@{
+                        ProcessId = $workerPid
+                        Name = $workerName
+                        CommandLine = $rawCommand.Replace([char]0, [char]32)
+                    }
+                } catch {
+                    if (Get-Process -Id $workerPid -ErrorAction SilentlyContinue) {
+                        throw "Cannot verify live Python worker $workerPid; refusing lease recovery."
+                    }
+                }
+            })
+        } else {
+            throw 'Process inventory unavailable; refusing lease recovery.'
+        }
+        $liveWorkers = @($processInventory | Where-Object {
             $candidate = $_
-            $candidate.Name -match '^python(w)?\.exe$' -and
+            $candidate.Name -match '^python(w)?([0-9.]+)?(\.exe)?$' -and
             @($workerNames | Where-Object {
                 $candidate.CommandLine -and $candidate.CommandLine.Contains($_)
             }).Count -gt 0

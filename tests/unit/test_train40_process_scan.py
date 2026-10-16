@@ -169,9 +169,22 @@ def test_wrapper_uses_five_second_cache_and_delegates_once(
 def test_wrapper_restores_cadence_when_budget_delegate_fails(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
-    monkeypatch.setattr(process_scan, "_scan", lambda: ([], {name: 0 for name in (
-        "processes_seen", "python_cmdline_reads", "skipped_non_python", "cmdline_read_failures"
-    )}))
+    monkeypatch.setattr(
+        process_scan,
+        "_scan",
+        lambda: (
+            [],
+            {
+                name: 0
+                for name in (
+                    "processes_seen",
+                    "python_cmdline_reads",
+                    "skipped_non_python",
+                    "cmdline_read_failures",
+                )
+            },
+        ),
+    )
     monkeypatch.setattr(process_scan.time, "monotonic", lambda: 20.0)
     monkeypatch.setattr(models, "_heavy_scan_at", 19.0)
 

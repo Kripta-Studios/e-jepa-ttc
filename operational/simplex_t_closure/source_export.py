@@ -11,9 +11,6 @@ from typing import Any
 import numpy as np
 import pandas as pd
 import torch
-from extras import ANALYSIS, CAMPAIGN, OUT, ROOT, check, record
-from runtime import atomic_json, digest
-
 from e_jepa_ttc.simplex_t.arms import resolve_arm
 from e_jepa_ttc.simplex_t.cache import CachedQueries
 from e_jepa_ttc.simplex_t.campaign_sources import CampaignSources
@@ -24,6 +21,9 @@ from e_jepa_ttc.simplex_t.fixed_baseline_inputs import load_fixed_baselines
 from e_jepa_ttc.simplex_t.phase import phase_to_ttc
 from e_jepa_ttc.simplex_t.registry import FitSpec
 from e_jepa_ttc.simplex_t.training import load_checkpoint
+
+from extras import ANALYSIS, CAMPAIGN, OUT, ROOT, check, record
+from runtime import atomic_json, digest
 
 
 def preserve_npz(path: Path, arrays: dict[str, np.ndarray]) -> None:

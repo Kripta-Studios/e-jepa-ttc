@@ -10,7 +10,7 @@ No optimizer steps are taken. The resulting weight is clipped to [0.25, 4.0].
 
 Usage:
     python scripts/calibrate_a4_dinov3_relational_weight.py \
-        --experiment-config configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a4_dinov3_relational_v1.yaml \
+        --experiment-config <A4-config.yaml> \
         --samples 64 \
         --seed 7
 """
@@ -31,11 +31,13 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT))
 
-from e_jepa_ttc.data.object_event_v4 import collate_object_event_v4  # noqa: E402
 from e_jepa_ttc.data.dinov3_relational_teacher_cache import (  # noqa: E402
     DINOv3RelationalTeacherDataset,
 )
-from e_jepa_ttc.data.object_event_v4 import GarlTTCObjectEventV4Dataset  # noqa: E402
+from e_jepa_ttc.data.object_event_v4 import (  # noqa: E402 - CLI path bootstrap precedes project imports.
+    GarlTTCObjectEventV4Dataset,  # noqa: E402
+    collate_object_event_v4,  # noqa: E402
+)
 from e_jepa_ttc.models.causal_scale_ttc import CausalScaleTTC  # noqa: E402
 from e_jepa_ttc.reproducibility import seed_everything  # noqa: E402
 from e_jepa_ttc.training.causal_scale_eap import _targets  # noqa: E402
@@ -46,7 +48,7 @@ def _geometry_loss_per_sample(
     targets: Any,
     beta: float = 0.02,
 ) -> torch.Tensor:
-    """Compute EXACTLY 1.25 * extent + 1.25 * width + 2.5 * center per sample."""
+    "Compute EXACTLY 1.25 * extent + 1.25 * width + 2.5 * center per sample."
     # This is a bit tricky as the original loss functions return the mean.
     # For calibration, we can just compute the mean per batch or reimplement
     # the unreduced versions here to get exactly per-sample values.
@@ -84,7 +86,9 @@ def _geometry_loss_per_sample(
         dim=-1,
     )
     # sum over x,y dims for each sample
-    center = torch.nn.functional.smooth_l1_loss(pred_center, tgt_center, beta=beta, reduction="none").mean(dim=-1)
+    center = torch.nn.functional.smooth_l1_loss(
+        pred_center, tgt_center, beta=beta, reduction="none"
+    ).mean(dim=-1)
 
     total = 1.25 * extent + 1.25 * width + 2.5 * center
     total_masked = total * valid.float()
@@ -95,16 +99,16 @@ def _geometry_loss_per_sample(
     return per_row_geo, valid
 
 
-def run(config_path: str, samples: int, seed: int, device_name: str, output_path: Path | None) -> None:
+def run(
+    config_path: str, samples: int, seed: int, device_name: str, output_path: Path | None
+) -> None:
     seed_everything(seed)
     device = torch.device(device_name)
     config = OmegaConf.load(config_path)
 
     # 1. Dataset & Loader
     manifest_path = ROOT / str(config.data.cache_manifest)
-    train_dataset = GarlTTCObjectEventV4Dataset(
-        str(manifest_path), splits=("train",)
-    )
+    train_dataset = GarlTTCObjectEventV4Dataset(str(manifest_path), splits=("train",))
 
     # Need DINO wrapper
     dino_teacher = config.data.get("dinov3_relational_teacher")
@@ -171,18 +175,21 @@ def run(config_path: str, samples: int, seed: int, device_name: str, output_path
             )
             output = model(batch.events, targets.delta_t_s, return_dense_features=True)
 
-            geo, geo_valid = _geometry_loss_per_sample(output, targets, beta=config.loss.smooth_l1_beta)
+            geo, geo_valid = _geometry_loss_per_sample(
+                output, targets, beta=config.loss.smooth_l1_beta
+            )
             if geo.numel() == 0:
                 continue
 
             student_features = output.endpoint_dense_features[:, 1:3]
             from e_jepa_ttc.distillation.dinov3_relational import local_cosine_relation_maps
+
             student_rels = local_cosine_relation_maps(student_features)
             combined_valid = batch.dinov3_relation_valid.bool() & student_rels.valid
             error_map = (student_rels.values - batch.dinov3_relation_targets.float()).abs()
 
-            B = student_features.shape[0]
-            for i in range(B):
+            batch_size = student_features.shape[0]
+            for i in range(batch_size):
                 valid_mask = combined_valid[i]
                 if valid_mask.any() and geo_valid[i].any():
                     rel_val = error_map[i][valid_mask].mean().item()
@@ -214,9 +221,11 @@ def run(config_path: str, samples: int, seed: int, device_name: str, output_path
     print(f"[calibrate] CLIPPED LAMBDA (A4): {lambda_d:.4f}")
 
     if output_path is not None:
-        from datetime import datetime, UTC
         import json
+        from datetime import UTC, datetime
+
         from e_jepa_ttc.artifacts.hashing import sign_artifact
+
         payload = {
             "artifact_type": "dinov3_relational_weight_calibration_v1",
             "created_at": datetime.now(UTC).isoformat(),
@@ -238,7 +247,9 @@ def run(config_path: str, samples: int, seed: int, device_name: str, output_path
         }
         sign_artifact(payload)
         output_path.parent.mkdir(parents=True, exist_ok=True)
-        output_path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        output_path.write_text(
+            json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+        )
         print(f"\n[calibrate] Artifact written to {output_path}")
 
     print("\nPlease update `representation_distillation_weight` in the experiment config.")
@@ -258,7 +269,13 @@ def main() -> int:
         device = "cuda" if torch.cuda.is_available() else "cpu"
 
     try:
-        run(args.experiment_config, args.samples, args.seed, device, args.output.resolve() if args.output else None)
+        run(
+            args.experiment_config,
+            args.samples,
+            args.seed,
+            device,
+            args.output.resolve() if args.output else None,
+        )
     except Exception as e:
         print(f"\n[calibrate] FAILED: {type(e).__name__}: {e}", file=sys.stderr)
         return 2

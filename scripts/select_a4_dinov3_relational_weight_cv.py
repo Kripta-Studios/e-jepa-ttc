@@ -51,8 +51,7 @@ from e_jepa_ttc.training.causal_scale_eap import (  # noqa: E402
 )
 
 DEFAULT_CONFIG = (
-    ROOT
-    / "configs/experiment/e_jepa_garl_event_causal_scale_a4_lambda_cv_train8192_v1.yaml"
+    ROOT / "configs/experiment/e_jepa_garl_event_causal_scale_a4_lambda_cv_train8192_v1.yaml"
 )
 
 
@@ -102,8 +101,7 @@ def _git_identity(parent_commit: str) -> dict[str, Any]:
     if dirty_lines:
         preview = "\n".join(dirty_lines[:20])
         raise RuntimeError(
-            "lambda selection requires a completely clean Git worktree; "
-            f"found:\n{preview}"
+            f"lambda selection requires a completely clean Git worktree; found:\n{preview}"
         )
     return {
         "git_commit": current,
@@ -303,8 +301,7 @@ def run(config_path: Path, output_dir: Path, *, device_name: str) -> dict[str, A
     present_forbidden = sorted(forbidden_data_keys & set(data))
     if present_forbidden:
         raise ValueError(
-            "lambda CV config contains forbidden validation references: "
-            f"{present_forbidden}"
+            f"lambda CV config contains forbidden validation references: {present_forbidden}"
         )
 
     parent_commit = str(experiment.get("parent_code_commit", ""))
@@ -452,8 +449,7 @@ def run(config_path: Path, output_dir: Path, *, device_name: str) -> dict[str, A
 
     for candidate_index, lambda_value in enumerate(lambdas, start=1):
         print(
-            f"\n[lambda-cv] candidate {candidate_index}/{len(lambdas)}: "
-            f"lambda={lambda_value:.12g}"
+            f"\n[lambda-cv] candidate {candidate_index}/{len(lambdas)}: lambda={lambda_value:.12g}"
         )
         fold_summaries: list[dict[str, Any]] = []
         for fold in folds:
@@ -465,14 +461,10 @@ def run(config_path: Path, output_dir: Path, *, device_name: str) -> dict[str, A
                 sequence for sequence in train_sequences if sequence not in heldout_set
             ]
             train_indices = sorted(
-                index
-                for sequence in train_fold_sequences
-                for index in sequence_indices[sequence]
+                index for sequence in train_fold_sequences for index in sequence_indices[sequence]
             )
             heldout_indices = sorted(
-                index
-                for sequence in heldout_sequences
-                for index in sequence_indices[sequence]
+                index for sequence in heldout_sequences for index in sequence_indices[sequence]
             )
             if set(train_indices) & set(heldout_indices):
                 raise RuntimeError("fold train/heldout indices overlap")
@@ -580,10 +572,9 @@ def run(config_path: Path, output_dir: Path, *, device_name: str) -> dict[str, A
     selected_lambda = float(selected["lambda"])
     lambda_min = min(lambdas)
     lambda_max = max(lambdas)
-    boundary_hit = (
-        math.isclose(selected_lambda, lambda_min, rel_tol=0.0, abs_tol=1e-12)
-        or math.isclose(selected_lambda, lambda_max, rel_tol=0.0, abs_tol=1e-12)
-    )
+    boundary_hit = math.isclose(
+        selected_lambda, lambda_min, rel_tol=0.0, abs_tol=1e-12
+    ) or math.isclose(selected_lambda, lambda_max, rel_tol=0.0, abs_tol=1e-12)
     payload: dict[str, Any] = {
         "artifact_type": "a4_dinov3_relational_lambda_train_only_group_cv_v1",
         "created_at": datetime.now(UTC).isoformat(),

@@ -155,9 +155,7 @@ def test_a3_validation_without_teacher_remains_geometry_only() -> None:
 
 def test_a3_config_requires_frozen_teacher_identity() -> None:
     with pytest.raises(ValueError, match="declared together"):
-        CausalScaleEAPTrainingConfig(
-            foreground_supervision="bbox_geometry_sam_teacher"
-        )
+        CausalScaleEAPTrainingConfig(foreground_supervision="bbox_geometry_sam_teacher")
     config = CausalScaleEAPTrainingConfig(
         foreground_supervision="bbox_geometry_sam_teacher",
         teacher_cache_artifact_sha256="a" * 64,
@@ -168,8 +166,7 @@ def test_a3_config_requires_frozen_teacher_identity() -> None:
 def test_a3_preregistered_config_is_single_teacher_difference() -> None:
     root = Path(__file__).resolve().parents[2]
     path = (
-        root
-        / "configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a3_sam_teacher_v1.yaml"
+        root / "configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a3_sam_teacher_v1.yaml"
     )
     raw = yaml.safe_load(path.read_text(encoding="utf-8"))
     train = CausalScaleEAPTrainingConfig(**raw["training"])

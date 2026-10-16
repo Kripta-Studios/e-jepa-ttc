@@ -48,9 +48,7 @@ def test_v2_policy_and_source_freeze_precede_execution_and_preserve_failure() ->
     assert policy["status"] == "REGISTERED_BEFORE_MEASUREMENT"
     assert policy["resets_per_mode_case"] == 5
     assert sha256_file(ROOT / failed["path"]) == failed["sha256"]
-    assert sha256_file(ROOT / failed["executed_source_path"]) == failed[
-        "executed_source_sha256"
-    ]
+    assert sha256_file(ROOT / failed["executed_source_path"]) == failed["executed_source_sha256"]
     assert freeze["status"] == "FROZEN_BEFORE_EXECUTION"
     assert freeze["policy_sha256"] == sha256_file(POLICY)
     assert freeze["source_sha256"][str(SCRIPT)] == sha256_file(SCRIPT)
@@ -65,4 +63,3 @@ def test_v2_contract_has_only_preregistered_numeric_gates() -> None:
         assert f"{case}_loss_repeat_max" in ADMISSION_GATES
         assert f"{case}_component_repeat_max" in ADMISSION_GATES
     assert "full_repeatability" not in ADMISSION_GATES
-

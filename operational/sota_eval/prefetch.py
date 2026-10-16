@@ -176,9 +176,7 @@ class OrderedPreparePrefetch:
         started = time.monotonic()
         while self._available() < self._min_available:
             if self._stop_requested():
-                raise PrefetchStoppedError(
-                    "stop requested while waiting for prefetch RAM headroom"
-                )
+                raise PrefetchStoppedError("stop requested while waiting for prefetch RAM headroom")
             if time.monotonic() - started >= self._admission_timeout_seconds:
                 raise PrefetchAdmissionTimeoutError(
                     "prefetch queue empty and RAM headroom admission deadline expired"
@@ -188,10 +186,7 @@ class OrderedPreparePrefetch:
         return True
 
     def _fill(self, *, block_if_empty: bool) -> None:
-        while (
-            self._next_submit < len(self._rows)
-            and len(self._futures) < self._max_ahead
-        ):
+        while self._next_submit < len(self._rows) and len(self._futures) < self._max_ahead:
             if not self._wait_for_headroom(block=block_if_empty and not self._futures):
                 return
             index = self._next_submit
@@ -474,9 +469,7 @@ def pilot(
     }
     output.mkdir(parents=True, exist_ok=True)
     atomic_json(output / "PILOT.json", result)
-    freeze = backend_binding(
-        manifest_path, workers=2, max_ahead=2, min_available_bytes=2 * GIB
-    )
+    freeze = backend_binding(manifest_path, workers=2, max_ahead=2, min_available_bytes=2 * GIB)
     atomic_json(output / "BACKEND_FREEZE.json", freeze)
     atomic_json(
         output / "SHA256.json",
@@ -504,9 +497,7 @@ def main() -> int:
     run_parser.add_argument("--max-ahead", type=int, choices=(1, 2), default=2)
     args = parser.parse_args()
     if args.command == "pilot":
-        result = pilot(
-            args.manifest.resolve(), args.output.resolve(), args.count, args.selection
-        )
+        result = pilot(args.manifest.resolve(), args.output.resolve(), args.count, args.selection)
         print(json.dumps(result, indent=2))
     else:
         run_prefetched(

@@ -18,21 +18,19 @@ def _batch():
     for index, ttc in enumerate((0.8, -1.5)):
         records.append(
             {
-                "event_v4_common_roi": np.random.default_rng(index).normal(
-                    size=(3, 12, 16, 16)
-                ).astype(np.float32),
+                "event_v4_common_roi": np.random.default_rng(index)
+                .normal(size=(3, 12, 16, 16))
+                .astype(np.float32),
                 "garl_delta_t_s": np.float32(0.1),
-                "observable_motion": np.random.default_rng(index + 3).normal(
-                    size=18
-                ).astype(np.float32),
+                "observable_motion": np.random.default_rng(index + 3)
+                .normal(size=18)
+                .astype(np.float32),
                 "garl_visible_heights_px": np.asarray(
                     [20.0, 20.0 / (1.0 - 0.1 / ttc)], dtype=np.float32
                 ),
                 "ttc_s": np.float32(ttc),
                 "event_v4_boxes_xyxy": np.ones((3, 4), dtype=np.float32),
-                "event_v4_common_square_xyxy": np.asarray(
-                    [0, 0, 16, 16], dtype=np.float32
-                ),
+                "event_v4_common_square_xyxy": np.asarray([0, 0, 16, 16], dtype=np.float32),
                 "event_v4_precontext_valid": True,
                 "sequence_id": "s",
                 "sample_token": str(index),

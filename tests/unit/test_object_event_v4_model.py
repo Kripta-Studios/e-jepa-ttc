@@ -61,9 +61,7 @@ def test_adapted_level_transfer_slices_only_patch_channels() -> None:
     )
     source = EJEPATubeletLHR(source_config)
     state = source.backbone_state_dict()
-    report = model.load_adapted_pretrained_backbone(
-        state, source.backbone_structural_config()
-    )
+    report = model.load_adapted_pretrained_backbone(state, source.backbone_structural_config())
     assert report["source_in_channels"] == 21
     assert report["target_in_channels"] == 12
     assert torch.equal(

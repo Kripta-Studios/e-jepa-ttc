@@ -19,8 +19,7 @@ sys.path.insert(0, str(ROOT / "src"))
 from e_jepa_ttc.artifacts.hashing import verify_artifact_hash  # noqa: E402
 
 PRIMARY_CONFIG = (
-    ROOT
-    / "configs/experiment/"
+    ROOT / "configs/experiment/"
     "e_jepa_garl_event_causal_scale_eap_screen_a4_s1_train8192_lambda8_v1.yaml"
 )
 
@@ -57,9 +56,7 @@ def _resolve(value: object) -> Path:
 
 
 def _git(*args: str) -> str:
-    result = subprocess.run(
-        ["git", *args], cwd=ROOT, check=True, capture_output=True, text=True
-    )
+    result = subprocess.run(["git", *args], cwd=ROOT, check=True, capture_output=True, text=True)
     return result.stdout.strip()
 
 
@@ -97,10 +94,7 @@ def run(config_path: Path) -> dict[str, Any]:
         raise ValueError("lambda selection opened public validation")
     if scope["official_test_opened"] is not False:
         raise ValueError("lambda selection opened official test")
-    if (
-        selection["code_identity"]["git_commit"]
-        != provenance["lambda_selection_code_commit"]
-    ):
+    if selection["code_identity"]["git_commit"] != provenance["lambda_selection_code_commit"]:
         raise ValueError("lambda-selection code commit mismatch")
 
     # Bind train and frozen validation cache identities.
@@ -117,10 +111,7 @@ def run(config_path: Path) -> dict[str, Any]:
     if _sha256(validation_manifest_path) != data["validation_cache_manifest_sha256"]:
         raise ValueError("validation-cache manifest SHA256 mismatch")
     validation_manifest = _read_json(validation_manifest_path)
-    if (
-        validation_manifest["artifact_sha256"]
-        != data["validation_cache_artifact_sha256"]
-    ):
+    if validation_manifest["artifact_sha256"] != data["validation_cache_artifact_sha256"]:
         raise ValueError("validation-cache artifact identity mismatch")
     if int(validation_manifest["split_counts"]["validation"]) != int(
         data["expected_validation_rows"]
@@ -158,10 +149,7 @@ def run(config_path: Path) -> dict[str, Any]:
     # Freeze the actual S1 training contract.
     if float(training["representation_distillation_weight"]) != 8.0:
         raise ValueError("primary S1 representation_distillation_weight must equal 8")
-    if (
-        training["representation_teacher_cache_artifact_sha256"]
-        != teacher["artifact_sha256"]
-    ):
+    if training["representation_teacher_cache_artifact_sha256"] != teacher["artifact_sha256"]:
         raise ValueError("training/teacher artifact identities differ")
     if int(training["epochs"]) != 18:
         raise ValueError("primary S1 must preserve the 18-epoch A4/CV horizon")
@@ -189,9 +177,7 @@ def run(config_path: Path) -> dict[str, Any]:
         "lambda_selection_artifact_sha256": selection["artifact_sha256"],
         "train_rows": int(data["expected_train_rows"]),
         "validation_rows": int(data["expected_validation_rows"]),
-        "train_validation_sequence_overlap": sorted(
-            train_sequences & validation_sequences
-        ),
+        "train_validation_sequence_overlap": sorted(train_sequences & validation_sequences),
         "teacher_rows": int(teacher["scope"]["row_count"]),
         "teacher_source_modality": teacher["claim_boundary"]["teacher_source_modality"],
         "student_parameter_count_expected": int(decision["expected_parameter_count"]),

@@ -323,14 +323,20 @@ def test_autopsy_replay_reuse_requires_clean_producer_head() -> None:
     )
     assert "assert_autopsy_replay_producer_reusable" in aggregator
     assert '"producer_git_commit_matches_head": True' not in aggregator
-    assert "a5_source.get(\"git_commit\")" in aggregator
+    assert 'a5_source.get("git_commit")' in aggregator
     assert "src/e_jepa_ttc/models/causal_scale_ttc.py" in AUTOPSY_REPLAY_IDENTITY_PATHS
-    assert "scripts/run_scientific_recovery_v8_nested_router.py" not in AUTOPSY_REPLAY_IDENTITY_PATHS
+    assert (
+        "scripts/run_scientific_recovery_v8_nested_router.py" not in AUTOPSY_REPLAY_IDENTITY_PATHS
+    )
     assert "src/e_jepa_ttc/scientific_provenance.py" not in AUTOPSY_REPLAY_IDENTITY_PATHS
-    assert "src/e_jepa_ttc/data/scientific_recovery_v8_cache.py" not in AUTOPSY_REPLAY_IDENTITY_PATHS
+    assert (
+        "src/e_jepa_ttc/data/scientific_recovery_v8_cache.py" not in AUTOPSY_REPLAY_IDENTITY_PATHS
+    )
 
 
-def test_autopsy_replay_reuse_allows_unrelated_head_advance(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_autopsy_replay_reuse_allows_unrelated_head_advance(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     complete = {
         "status": "completed_replay_without_optimizer_steps",
         "git_commit": "aaa111",

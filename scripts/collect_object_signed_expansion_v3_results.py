@@ -65,18 +65,14 @@ def row(path: Path) -> dict[str, Any]:
         ),
         "sign_auc": get(evaluation, "direction", "auc"),
         "saturation_rate": evaluation.get("ttc_saturation_rate"),
-        "latent_prediction_cosine": evaluation.get(
-            "latent_prediction_cosine"
-        ),
+        "latent_prediction_cosine": evaluation.get("latent_prediction_cosine"),
         "geometry_prior_macro_mid": get(
             evaluation,
             "geometry_prior_metrics",
             "sequence_macro",
             "sequence_macro_paper_MiD_overall",
         ),
-        "residual_abs_mean": evaluation.get(
-            "learned_residual_abs_mean"
-        ),
+        "residual_abs_mean": evaluation.get("learned_residual_abs_mean"),
     }
 
 

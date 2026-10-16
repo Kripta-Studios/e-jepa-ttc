@@ -12,16 +12,12 @@ from e_jepa_ttc.models.causal_scale_ttc import CausalScaleTTC
 
 ROOT = Path(__file__).resolve().parents[2]
 PARENT_MODEL = ROOT / "configs/model/e_jepa_causal_scale_event_v8_t015.yaml"
-CANDIDATE_MODEL = (
-    ROOT / "configs/model/e_jepa_causal_scale_event_v8_t015_resize_conv.yaml"
-)
+CANDIDATE_MODEL = ROOT / "configs/model/e_jepa_causal_scale_event_v8_t015_resize_conv.yaml"
 PARENT_EXPERIMENT = (
-    ROOT
-    / "configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a1_geometry_v1.yaml"
+    ROOT / "configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a1_geometry_v1.yaml"
 )
 CANDIDATE_EXPERIMENT = (
-    ROOT
-    / "configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a1_deep_features_v1.yaml"
+    ROOT / "configs/experiment/e_jepa_garl_event_causal_scale_eap_screen_a1_deep_features_v1.yaml"
 )
 
 
@@ -63,15 +59,11 @@ def test_deep_features_preregistered_hash_parameters_and_source_are_exact() -> N
     assert config.foreground_decoder == "resize_conv"
     assert model.encoder.foreground_from_input is False
     assert parameter_count == 355_118
-    assert runner._sha256(CANDIDATE_MODEL) == raw["decision_contract"][
-        "model_config_sha256"
-    ]
+    assert runner._sha256(CANDIDATE_MODEL) == raw["decision_contract"]["model_config_sha256"]
     parent_config = runner._model_config(PARENT_MODEL)
     parent_values = asdict(parent_config)
     candidate_values = asdict(config)
-    changed = {
-        key for key in parent_values if parent_values[key] != candidate_values[key]
-    }
+    changed = {key for key in parent_values if parent_values[key] != candidate_values[key]}
     assert changed == {"foreground_decoder"}
 
     with torch.no_grad():

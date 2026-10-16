@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Preflight for the v4.24 train-only schedule orchestrator."""
+
 from __future__ import annotations
 
 import argparse
@@ -34,9 +35,15 @@ def main() -> int:
     v423 = json.loads(args.v423_summary.read_text(encoding="utf-8"))
     if v422.get("status") != "completed" or v423.get("status") != "completed":
         raise RuntimeError("v4.22 and v4.23 must both be completed")
-    if v422.get("decision", {}).get("recommendation") != "partial_unfreeze_supported_integrate_geometry_auxiliary_with_ttc":
+    if (
+        v422.get("decision", {}).get("recommendation")
+        != "partial_unfreeze_supported_integrate_geometry_auxiliary_with_ttc"
+    ):
         raise RuntimeError("v4.22 does not support joint geometry+TTC")
-    if v423.get("decision", {}).get("recommendation") != "joint_geometry_ttc_promising_keep_architecture_adjust_train_only_loss_schedule":
+    if (
+        v423.get("decision", {}).get("recommendation")
+        != "joint_geometry_ttc_promising_keep_architecture_adjust_train_only_loss_schedule"
+    ):
         raise RuntimeError("v4.23 does not request train-only schedule search")
     contract = v423.get("scientific_contract", {})
     required = (
@@ -57,20 +64,28 @@ def main() -> int:
         if not path.exists():
             raise FileNotFoundError(path)
         payload = torch.load(path, map_location="cpu", weights_only=False)
-        if payload.get("artifact_type") != "object_event_v4_22_adapted_v48" or int(payload.get("seed", -1)) != seed:
+        if (
+            payload.get("artifact_type") != "object_event_v4_22_adapted_v48"
+            or int(payload.get("seed", -1)) != seed
+        ):
             raise RuntimeError(f"invalid v4.22 checkpoint for seed {seed}: {path}")
 
-    print(json.dumps({
-        "status": "passed",
-        "v423_recommendation": v423["decision"]["recommendation"],
-        "seeds": sorted(checkpoints),
-        "scientific_contract": {
-            "candidate_selection_uses_train_sequences_only": True,
-            "development_validation_touched_once_after_champion_selection": True,
-            "official_eap_test_not_opened": True,
-            "evttc_not_opened": True,
-        },
-    }, indent=2))
+    print(
+        json.dumps(
+            {
+                "status": "passed",
+                "v423_recommendation": v423["decision"]["recommendation"],
+                "seeds": sorted(checkpoints),
+                "scientific_contract": {
+                    "candidate_selection_uses_train_sequences_only": True,
+                    "development_validation_touched_once_after_champion_selection": True,
+                    "official_eap_test_not_opened": True,
+                    "evttc_not_opened": True,
+                },
+            },
+            indent=2,
+        )
+    )
     return 0
 
 

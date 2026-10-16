@@ -1,4 +1,5 @@
 """Object Event TTC v4.20: bounded residual refiner for dense pseudo-flow."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Grouped OOF model selection for Object Event TTC v4.28."""
+
 from __future__ import annotations
 
 import argparse
@@ -8,9 +9,10 @@ import math
 import shutil
 import sys
 import time
+from collections.abc import Mapping
 from dataclasses import fields
 from pathlib import Path
-from typing import Any, Mapping, cast
+from typing import Any, cast
 
 import numpy as np
 import pandas as pd
@@ -22,19 +24,33 @@ for candidate in (ROOT, ROOT / "src"):
     if str(candidate) not in sys.path:
         sys.path.insert(0, str(candidate))
 
-from scripts.analyze_object_event_v4_24_orchestrator import _sequence_folds, _subset_split  # noqa: E402
-from scripts.train_e_jepa_object_event_v4_6 import _materialize  # noqa: E402
-from scripts.train_e_jepa_object_event_v4_8 import _load_config as _load_v48_config  # noqa: E402
-from scripts.train_e_jepa_object_event_v4_12 import _load_backbone, _read_ensemble, _align_ensemble  # noqa: E402
-from scripts.train_e_jepa_object_event_v4_16 import _json_safe, _metrics, _resolve_device  # noqa: E402
 from e_jepa_ttc.models.object_event_v4_22 import configure_partial_geometry_unfreeze  # noqa: E402
-from e_jepa_ttc.models.object_event_v4_28 import ObjectEventTTCV428, ObjectEventV428Config  # noqa: E402
+from e_jepa_ttc.models.object_event_v4_28 import (  # noqa: E402
+    ObjectEventTTCV428,
+    ObjectEventV428Config,
+)
 from e_jepa_ttc.training.object_event_v4_22 import relative_parameter_anchor  # noqa: E402
 from e_jepa_ttc.training.object_event_v4_26 import track_metrics  # noqa: E402
 from e_jepa_ttc.training.object_event_v4_27 import target_log_height_ratio  # noqa: E402
 from e_jepa_ttc.training.object_event_v4_28 import (  # noqa: E402
     ObjectEventV428LossConfig,
     object_event_v4_28_loss,
+)
+from scripts.analyze_object_event_v4_24_orchestrator import (  # noqa: E402
+    _sequence_folds,
+    _subset_split,
+)
+from scripts.train_e_jepa_object_event_v4_6 import _materialize  # noqa: E402
+from scripts.train_e_jepa_object_event_v4_8 import _load_config as _load_v48_config  # noqa: E402
+from scripts.train_e_jepa_object_event_v4_12 import (  # noqa: E402
+    _align_ensemble,
+    _load_backbone,
+    _read_ensemble,
+)
+from scripts.train_e_jepa_object_event_v4_16 import (  # noqa: E402
+    _json_safe,
+    _metrics,
+    _resolve_device,
 )
 
 
@@ -75,15 +91,19 @@ def _require_finite(name: str, tensor: torch.Tensor, *, context: str) -> None:
 
 
 def _split_frame(split: Any) -> pd.DataFrame:
-    target = (split.delta_t_s / split.target_ttc_s).clamp(-0.25, 0.25).cpu().numpy().astype(np.float64)
-    return pd.DataFrame({
-        "sequence_id": [str(x) for x in split.sequence_ids],
-        "sample_token": [str(x) for x in split.sample_tokens],
-        "track_id": [str(x) for x in split.track_ids],
-        "target_expansion": target,
-        "delta_t_s": split.delta_t_s.cpu().numpy(),
-        "target_ttc_s": split.target_ttc_s.cpu().numpy(),
-    })
+    target = (
+        (split.delta_t_s / split.target_ttc_s).clamp(-0.25, 0.25).cpu().numpy().astype(np.float64)
+    )
+    return pd.DataFrame(
+        {
+            "sequence_id": [str(x) for x in split.sequence_ids],
+            "sample_token": [str(x) for x in split.sample_tokens],
+            "track_id": [str(x) for x in split.track_ids],
+            "target_expansion": target,
+            "delta_t_s": split.delta_t_s.cpu().numpy(),
+            "target_ttc_s": split.target_ttc_s.cpu().numpy(),
+        }
+    )
 
 
 def _train_model(
@@ -102,14 +122,18 @@ def _train_model(
     torch.manual_seed(seed)
     backbone, _ = _load_backbone(v48_config_path=v48_config, checkpoint_path=checkpoint)
     backbone = backbone.to(device)
-    selected = configure_partial_geometry_unfreeze(backbone, int(train_cfg["geometry_tail_tensors"]))
+    selected = configure_partial_geometry_unfreeze(
+        backbone, int(train_cfg["geometry_tail_tensors"])
+    )
     model = ObjectEventTTCV428(backbone, model_cfg).to(device)
     initial = {
         name: p.detach().float().cpu().clone()
         for name, p in backbone.foreground_model.geometry_encoder.named_parameters()
         if p.requires_grad
     }
-    geometry = [p for p in backbone.foreground_model.geometry_encoder.parameters() if p.requires_grad]
+    geometry = [
+        p for p in backbone.foreground_model.geometry_encoder.parameters() if p.requires_grad
+    ]
     head = model.head_parameters()
     optimizer = torch.optim.AdamW(
         [
@@ -127,14 +151,17 @@ def _train_model(
         rng.shuffle(order)
         accum = {key: [] for key in tracked}
         for start in range(0, len(order), batch_size):
-            idx = torch.as_tensor(order[start:start + batch_size], dtype=torch.long)
+            idx = torch.as_tensor(order[start : start + batch_size], dtype=torch.long)
             events = split.events[idx].to(device=device, dtype=torch.float32)
             dt = split.delta_t_s[idx].to(device=device, dtype=torch.float32)
             ttc = split.target_ttc_s[idx].to(device=device, dtype=torch.float32)
             heights = split.visible_heights_px[idx].to(device=device, dtype=torch.float32)
             context = f"{label} seed={seed} epoch={epoch} batch_start={start}"
             for input_name, input_tensor in (
-                ("events", events), ("delta_t_s", dt), ("target_ttc_s", ttc), ("visible_heights_px", heights)
+                ("events", events),
+                ("delta_t_s", dt),
+                ("target_ttc_s", ttc),
+                ("visible_heights_px", heights),
             ):
                 _require_finite(input_name, input_tensor, context=context)
             output = model(events)
@@ -149,7 +176,9 @@ def _train_model(
             primary, pieces = object_event_v4_28_loss(output, dt, ttc, heights, config=loss_cfg)
             _require_finite("primary_loss", primary, context=context)
             trainables = {
-                name: p for name, p in backbone.foreground_model.geometry_encoder.named_parameters() if p.requires_grad
+                name: p
+                for name, p in backbone.foreground_model.geometry_encoder.named_parameters()
+                if p.requires_grad
             }
             anchor = relative_parameter_anchor(trainables, initial, epsilon=1.0e-6)
             loss = primary + float(train_cfg["geometry_anchor_weight"]) * anchor
@@ -166,7 +195,10 @@ def _train_model(
             for key in ("lhr", "expansion", "correlation", "sign", "posterior", "entropy"):
                 _require_finite(f"loss_component:{key}", pieces[key], context=context)
                 accum[key].append(float(pieces[key].detach()))
-        row = {"epoch": float(epoch), **{key: float(np.mean(values)) for key, values in accum.items()}}
+        row = {
+            "epoch": float(epoch),
+            **{key: float(np.mean(values)) for key, values in accum.items()},
+        }
         history.append(row)
         print(
             f"[v4.28] {label} seed={seed} epoch={epoch}/{epochs} "
@@ -190,7 +222,7 @@ def _predict(
     expansion, log_eta, entropy, rotation = [], [], [], []
     model.eval()
     for start in range(0, len(split.events), batch_size):
-        events = split.events[start:start + batch_size].to(device=device, dtype=torch.float32)
+        events = split.events[start : start + batch_size].to(device=device, dtype=torch.float32)
         output = model(events)
         expansion.append(output.expansion.float().cpu())
         log_eta.append(output.predicted_log_eta.float().cpu())
@@ -220,12 +252,18 @@ def _metrics_bundle(
     seq_lhr = []
     extended = frame.assign(pred_log_eta=log_eta, target_log_eta=target_lhr, scale_entropy=entropy)
     for sequence_id, group in extended.groupby("sequence_id", sort=True):
-        seq_lhr.append({
-            "sequence_id": str(sequence_id),
-            "log_eta_pearson": _pearson(group["pred_log_eta"].to_numpy(), group["target_log_eta"].to_numpy()),
-            "log_eta_mae": float(np.mean(np.abs(group["pred_log_eta"] - group["target_log_eta"]))),
-            "scale_entropy_mean": float(group["scale_entropy"].mean()),
-        })
+        seq_lhr.append(
+            {
+                "sequence_id": str(sequence_id),
+                "log_eta_pearson": _pearson(
+                    group["pred_log_eta"].to_numpy(), group["target_log_eta"].to_numpy()
+                ),
+                "log_eta_mae": float(
+                    np.mean(np.abs(group["pred_log_eta"] - group["target_log_eta"]))
+                ),
+                "scale_entropy_mean": float(group["scale_entropy"].mean()),
+            }
+        )
     per_sequence = per_sequence.merge(pd.DataFrame(seq_lhr), on="sequence_id", how="left")
     ttc["minimum_sequence_log_eta_pearson"] = float(per_sequence["log_eta_pearson"].min())
     return ttc, per_sequence
@@ -256,9 +294,12 @@ def _passes_oof_gate(
     v427_tracks = cast(Mapping[str, Any], v427["oof_track_metrics"])
     checks = {
         "pearson_absolute": float(metrics["pearson"]) >= float(selection["minimum_oof_pearson"]),
-        "negative_accuracy": float(metrics["negative_accuracy"]) >= float(selection["minimum_oof_negative_accuracy"]),
-        "balanced_sign": float(metrics["balanced_sign_accuracy"]) >= float(selection["minimum_oof_balanced_sign"]),
-        "log_eta_absolute": float(metrics["log_eta_pearson"]) >= float(selection["minimum_oof_log_eta_pearson"]),
+        "negative_accuracy": float(metrics["negative_accuracy"])
+        >= float(selection["minimum_oof_negative_accuracy"]),
+        "balanced_sign": float(metrics["balanced_sign_accuracy"])
+        >= float(selection["minimum_oof_balanced_sign"]),
+        "log_eta_absolute": float(metrics["log_eta_pearson"])
+        >= float(selection["minimum_oof_log_eta_pearson"]),
         "negative_track_macro": float(tracks["negative_track_macro_accuracy"])
         >= float(selection["minimum_oof_negative_track_macro_accuracy"]),
         "minimum_sequence_pearson": float(metrics["minimum_sequence_pearson"])
@@ -268,7 +309,8 @@ def _passes_oof_gate(
         "pearson_gain_over_v427": float(metrics["pearson"])
         >= float(v427_metrics["pearson"]) + float(selection["minimum_pearson_gain_over_v427"]),
         "log_eta_gain_over_v427": float(metrics["log_eta_pearson"])
-        >= float(v427_metrics["log_eta_pearson"]) + float(selection["minimum_log_eta_gain_over_v427"]),
+        >= float(v427_metrics["log_eta_pearson"])
+        + float(selection["minimum_log_eta_gain_over_v427"]),
         "negative_track_gain_over_v427": float(tracks["negative_track_macro_accuracy"])
         >= float(v427_tracks["negative_track_macro_accuracy"])
         + float(selection["minimum_negative_track_gain_over_v427"]),
@@ -301,7 +343,9 @@ def main() -> int:
     selection = cast(Mapping[str, Any], raw["selection"])
     final_decision = cast(Mapping[str, Any], raw["final_decision"])
     arm_raw = cast(Mapping[str, Mapping[str, Any]], raw["arms"])
-    arm_configs = {name: _construct(ObjectEventV428Config, config) for name, config in arm_raw.items()}
+    arm_configs = {
+        name: _construct(ObjectEventV428Config, config) for name, config in arm_raw.items()
+    }
     if sorted(arm_configs) != ["profile_posterior", "spatial_rotation_posterior"]:
         raise ValueError("v4.28 requires the two preregistered arms")
     checkpoints = _parse_seed_paths(args.adapted_checkpoint)
@@ -310,7 +354,9 @@ def main() -> int:
         raise ValueError("--v427-summary is not the expected v4.27 artifact")
     device = _resolve_device(args.device)
     base_cfg, _, _, _, _ = _load_v48_config(args.v48_config)
-    train_split, train_manifest = _materialize(args.cache_manifest, "train", input_size=base_cfg.input_size)
+    train_split, train_manifest = _materialize(
+        args.cache_manifest, "train", input_size=base_cfg.input_size
+    )
     train_frame = _split_frame(train_split)
     folds = _sequence_folds(
         train_frame["sequence_id"].to_numpy(dtype=object),
@@ -364,15 +410,19 @@ def main() -> int:
                 local_metrics, _ = _metrics_bundle(
                     local_frame, held_split, fold_pred, fold_lhr, fold_entropy
                 )
-                fold_records.append({
-                    "seed": seed,
-                    "fold": fold_id,
-                    "held_out_sequences": sorted(local_frame["sequence_id"].unique().tolist()),
-                    "metrics": local_metrics,
-                    "rotation_abs_mean_degrees": float(np.mean(np.abs(fold_rotation))),
-                    "final_history": history[-1],
-                })
-                pd.DataFrame(history).to_csv(arm_hist / f"seed{seed}_fold{fold_id}.csv", index=False)
+                fold_records.append(
+                    {
+                        "seed": seed,
+                        "fold": fold_id,
+                        "held_out_sequences": sorted(local_frame["sequence_id"].unique().tolist()),
+                        "metrics": local_metrics,
+                        "rotation_abs_mean_degrees": float(np.mean(np.abs(fold_rotation))),
+                        "final_history": history[-1],
+                    }
+                )
+                pd.DataFrame(history).to_csv(
+                    arm_hist / f"seed{seed}_fold{fold_id}.csv", index=False
+                )
                 del model
                 if device.type == "cuda":
                     torch.cuda.empty_cache()
@@ -412,10 +462,24 @@ def main() -> int:
         per_sequence.to_csv(args.output_dir / f"oof_train_per_sequence_{arm_name}.csv", index=False)
         per_track.to_csv(args.output_dir / f"oof_train_per_track_{arm_name}.csv", index=False)
         print(
-            f"[v4.28] arm={arm_name} OOF pearson={metrics['pearson']:.4f} "
-            f"log_eta={metrics['log_eta_pearson']:.4f} neg={metrics['negative_accuracy']:.4f} "
-            f"balanced={metrics['balanced_sign_accuracy']:.4f} std_ratio={metrics['prediction_std_ratio']:.3f} "
-            f"neg_track={tracks['negative_track_macro_accuracy']:.4f} objective={objective:.4f}",
+            (
+                "[v4.28] arm="
+                f"{arm_name}"
+                " OOF pearson="
+                f"{metrics['pearson']:.4f}"
+                " log_eta="
+                f"{metrics['log_eta_pearson']:.4f}"
+                " neg="
+                f"{metrics['negative_accuracy']:.4f}"
+                " balanced="
+                f"{metrics['balanced_sign_accuracy']:.4f}"
+                " std_ratio="
+                f"{metrics['prediction_std_ratio']:.3f}"
+                " neg_track="
+                f"{tracks['negative_track_macro_accuracy']:.4f}"
+                " objective="
+                f"{objective:.4f}"
+            ),
             flush=True,
         )
 
@@ -427,29 +491,42 @@ def main() -> int:
         selection,
         v427,
     )
-    ranking = pd.DataFrame([
-        {
-            "arm": name,
-            "matcher": result["matcher"],
-            "objective": result["objective"],
-            "pearson": result["oof_metrics"]["pearson"],
-            "log_eta_pearson": result["oof_metrics"]["log_eta_pearson"],
-            "negative_accuracy": result["oof_metrics"]["negative_accuracy"],
-            "balanced_sign_accuracy": result["oof_metrics"]["balanced_sign_accuracy"],
-            "minimum_sequence_pearson": result["oof_metrics"]["minimum_sequence_pearson"],
-            "prediction_std_ratio": result["oof_metrics"]["prediction_std_ratio"],
-            "scale_entropy_mean": result["oof_metrics"]["scale_entropy_mean"],
-            "negative_track_macro_accuracy": result["oof_track_metrics"]["negative_track_macro_accuracy"],
-        }
-        for name, result in arm_results.items()
-    ]).sort_values("objective", ascending=False)
+    ranking = pd.DataFrame(
+        [
+            {
+                "arm": name,
+                "matcher": result["matcher"],
+                "objective": result["objective"],
+                "pearson": result["oof_metrics"]["pearson"],
+                "log_eta_pearson": result["oof_metrics"]["log_eta_pearson"],
+                "negative_accuracy": result["oof_metrics"]["negative_accuracy"],
+                "balanced_sign_accuracy": result["oof_metrics"]["balanced_sign_accuracy"],
+                "minimum_sequence_pearson": result["oof_metrics"]["minimum_sequence_pearson"],
+                "prediction_std_ratio": result["oof_metrics"]["prediction_std_ratio"],
+                "scale_entropy_mean": result["oof_metrics"]["scale_entropy_mean"],
+                "negative_track_macro_accuracy": result["oof_track_metrics"][
+                    "negative_track_macro_accuracy"
+                ],
+            }
+            for name, result in arm_results.items()
+        ]
+    ).sort_values("objective", ascending=False)
     ranking.to_csv(args.output_dir / "oof_arm_ranking.csv", index=False)
 
     if not oof_pass:
-        if champion == "profile_posterior" and float(champion_result["oof_metrics"]["prediction_std_ratio"]) >= 0.70:
-            recommendation = "posterior_calibration_helped_but_1d_geometry_insufficient_next_affine_normal_flow_v429"
+        if (
+            champion == "profile_posterior"
+            and float(champion_result["oof_metrics"]["prediction_std_ratio"]) >= 0.70
+        ):
+            recommendation = (
+                "posterior_calibration_helped_but_1d_geometry_ins"
+                "ufficient_next_affine_normal_flow_v429"
+            )
         elif champion == "spatial_rotation_posterior":
-            recommendation = "spatial_rotation_matcher_best_but_oof_insufficient_next_event_native_affine_flow_v429"
+            recommendation = (
+                "spatial_rotation_matcher_best_but_oof_insufficie"
+                "nt_next_event_native_affine_flow_v429"
+            )
         else:
             recommendation = "v428_oof_failed_next_event_native_affine_flow_v429"
         summary = {
@@ -480,7 +557,19 @@ def main() -> int:
         (args.output_dir / "summary.json").write_text(
             json.dumps(_json_safe(summary), indent=2), encoding="utf-8"
         )
-        print(json.dumps(_json_safe({"status": summary["status"], "champion": champion, "gate": gate_checks, "recommendation": recommendation}), indent=2))
+        print(
+            json.dumps(
+                _json_safe(
+                    {
+                        "status": summary["status"],
+                        "champion": champion,
+                        "gate": gate_checks,
+                        "recommendation": recommendation,
+                    }
+                ),
+                indent=2,
+            )
+        )
         return 0
 
     # The fixed all-seed OOF champion has earned one development-validation evaluation.
@@ -514,14 +603,19 @@ def main() -> int:
         final_entropy.append(entropy)
         final_rotation.append(rotation)
         checkpoint_path = args.output_dir / f"v428_{champion}_seed_{seed}.pt"
-        torch.save({"model_state_dict": model.state_dict(), "seed": seed, "arm": champion, "config": raw}, checkpoint_path)
-        final_records.append({
-            "seed": seed,
-            "checkpoint": str(checkpoint_path),
-            "final_history": history[-1],
-            "entropy_mean": float(np.mean(entropy)),
-            "rotation_abs_mean_degrees": float(np.mean(np.abs(rotation))),
-        })
+        torch.save(
+            {"model_state_dict": model.state_dict(), "seed": seed, "arm": champion, "config": raw},
+            checkpoint_path,
+        )
+        final_records.append(
+            {
+                "seed": seed,
+                "checkpoint": str(checkpoint_path),
+                "final_history": history[-1],
+                "entropy_mean": float(np.mean(entropy)),
+                "rotation_abs_mean_degrees": float(np.mean(np.abs(rotation))),
+            }
+        )
         del model
         if device.type == "cuda":
             torch.cuda.empty_cache()
@@ -543,10 +637,16 @@ def main() -> int:
         v410, v410_pred, minimum_track_samples=8, minimum_negative_track_samples=4
     )
     strong = (
-        float(val_metrics["pearson"]) >= float(v410_metrics["pearson"]) + float(final_decision["minimum_pearson_gain_over_v410"])
-        and float(val_metrics["negative_accuracy"]) >= float(v410_metrics["negative_accuracy"]) + float(final_decision["minimum_negative_accuracy_gain_over_v410"])
-        and float(val_metrics["balanced_sign_accuracy"]) >= float(v410_metrics["balanced_sign_accuracy"]) + float(final_decision["minimum_balanced_sign_gain_over_v410"])
-        and float(val_metrics["log_eta_pearson"]) >= float(final_decision["minimum_log_eta_pearson"])
+        float(val_metrics["pearson"])
+        >= float(v410_metrics["pearson"]) + float(final_decision["minimum_pearson_gain_over_v410"])
+        and float(val_metrics["negative_accuracy"])
+        >= float(v410_metrics["negative_accuracy"])
+        + float(final_decision["minimum_negative_accuracy_gain_over_v410"])
+        and float(val_metrics["balanced_sign_accuracy"])
+        >= float(v410_metrics["balanced_sign_accuracy"])
+        + float(final_decision["minimum_balanced_sign_gain_over_v410"])
+        and float(val_metrics["log_eta_pearson"])
+        >= float(final_decision["minimum_log_eta_pearson"])
         and float(val_tracks["negative_track_macro_accuracy"])
         >= float(v410_tracks["negative_track_macro_accuracy"])
         + float(final_decision["minimum_negative_track_macro_gain_over_v410"])
@@ -594,8 +694,12 @@ def main() -> int:
                 "v428_negative_accuracy": float(val_metrics["negative_accuracy"]),
                 "v410_balanced_sign": float(v410_metrics["balanced_sign_accuracy"]),
                 "v428_balanced_sign": float(val_metrics["balanced_sign_accuracy"]),
-                "v410_negative_track_macro_accuracy": float(v410_tracks["negative_track_macro_accuracy"]),
-                "v428_negative_track_macro_accuracy": float(val_tracks["negative_track_macro_accuracy"]),
+                "v410_negative_track_macro_accuracy": float(
+                    v410_tracks["negative_track_macro_accuracy"]
+                ),
+                "v428_negative_track_macro_accuracy": float(
+                    val_tracks["negative_track_macro_accuracy"]
+                ),
             },
         },
         "scientific_contract": {
@@ -614,7 +718,20 @@ def main() -> int:
     (args.output_dir / "summary.json").write_text(
         json.dumps(_json_safe(summary), indent=2), encoding="utf-8"
     )
-    print(json.dumps(_json_safe({"status": "completed", "champion": champion, "recommendation": recommendation, "oof": champion_result["oof_metrics"], "validation": val_metrics}), indent=2))
+    print(
+        json.dumps(
+            _json_safe(
+                {
+                    "status": "completed",
+                    "champion": champion,
+                    "recommendation": recommendation,
+                    "oof": champion_result["oof_metrics"],
+                    "validation": val_metrics,
+                }
+            ),
+            indent=2,
+        )
+    )
     return 0
 
 

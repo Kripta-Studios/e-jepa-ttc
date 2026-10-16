@@ -96,9 +96,7 @@ def test_scientific_loop_and_checkpoint_contract_preserve_overlap_ast() -> None:
 
     def run_node(tree: ast.Module) -> ast.FunctionDef:
         return next(
-            node
-            for node in tree.body
-            if isinstance(node, ast.FunctionDef) and node.name == "run"
+            node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name == "run"
         )
 
     def named_assignment(function: ast.FunctionDef, name: str) -> ast.Assign:

@@ -18,9 +18,15 @@ import torch
 ROOT = Path(__file__).resolve().parents[1]
 BASE_COMMIT = "488b433857090e525c447bf2974ac72639f25194"
 EXPECTED_V46_HASHES = {
-    "src/e_jepa_ttc/models/object_event_v4_6.py": "e66010a72ecd58804688e8d509d76b2ca6c468bbc4982232fdb426474a52dac8",
-    "src/e_jepa_ttc/training/object_event_v4_6.py": "9c5ad353a1030a8fe30079f0ef2f222aafbc05bbddde13cba7922c57523b09d5",
-    "scripts/train_e_jepa_object_event_v4_6.py": "aec5469c0b9c51f6ac7387e801be5e957473846aa16df7ae34dfd9cd4842c1a5",
+    "src/e_jepa_ttc/models/object_event_v4_6.py": (
+        "e66010a72ecd58804688e8d509d76b2ca6c468bbc4982232fdb426474a52dac8"
+    ),
+    "src/e_jepa_ttc/training/object_event_v4_6.py": (
+        "9c5ad353a1030a8fe30079f0ef2f222aafbc05bbddde13cba7922c57523b09d5"
+    ),
+    "scripts/train_e_jepa_object_event_v4_6.py": (
+        "aec5469c0b9c51f6ac7387e801be5e957473846aa16df7ae34dfd9cd4842c1a5"
+    ),
 }
 
 
@@ -72,9 +78,7 @@ def main() -> int:
         path = ROOT / relative
         actual = _sha256(path)
         if actual != expected:
-            raise RuntimeError(
-                f"Hash mismatch for {relative}: expected {expected}, got {actual}"
-            )
+            raise RuntimeError(f"Hash mismatch for {relative}: expected {expected}, got {actual}")
         hashes[relative] = actual
 
     cache_path = args.cache_manifest.resolve()

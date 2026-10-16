@@ -165,24 +165,12 @@ def pair_diagnostics(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
             {
                 "sample_token": token,
                 "sequence_id": first["sequence_id"],
-                "mask_area_log_ratio": _log_record_ratio(
-                    first, second, "mask_area_pixels"
-                ),
-                "bbox_area_log_ratio": _log_record_ratio(
-                    first, second, "bbox_area_pixels"
-                ),
-                "mask_height_log_ratio": _log_record_ratio(
-                    first, second, "mask_height_fraction"
-                ),
-                "bbox_height_log_ratio": _log_record_ratio(
-                    first, second, "bbox_height_fraction"
-                ),
-                "mask_width_log_ratio": _log_record_ratio(
-                    first, second, "mask_width_fraction"
-                ),
-                "bbox_width_log_ratio": _log_record_ratio(
-                    first, second, "bbox_width_fraction"
-                ),
+                "mask_area_log_ratio": _log_record_ratio(first, second, "mask_area_pixels"),
+                "bbox_area_log_ratio": _log_record_ratio(first, second, "bbox_area_pixels"),
+                "mask_height_log_ratio": _log_record_ratio(first, second, "mask_height_fraction"),
+                "bbox_height_log_ratio": _log_record_ratio(first, second, "bbox_height_fraction"),
+                "mask_width_log_ratio": _log_record_ratio(first, second, "mask_width_fraction"),
+                "bbox_width_log_ratio": _log_record_ratio(first, second, "bbox_width_fraction"),
             }
         )
     return pairs
@@ -249,9 +237,10 @@ def run_audit(
         raise ValueError("train parquet hash mismatch")
     model_path = model_path.resolve(strict=True)
     weights_path = model_path / "model.safetensors"
-    if model_path.name != teacher["revision"] or sha256_file(weights_path) != teacher[
-        "expected_weights_sha256"
-    ]:
+    if (
+        model_path.name != teacher["revision"]
+        or sha256_file(weights_path) != teacher["expected_weights_sha256"]
+    ):
         raise ValueError("teacher revision or weights hash mismatch")
     if runtime["device"] != "cuda" or runtime["precision"] != "bf16":
         raise ValueError("v1 requires CUDA BF16")
@@ -318,9 +307,7 @@ def run_audit(
             preprocessing_seconds = time.perf_counter() - preprocess_start
             torch.cuda.synchronize()
             inference_start = time.perf_counter()
-            with torch.inference_mode(), torch.autocast(
-                device_type="cuda", dtype=torch.bfloat16
-            ):
+            with torch.inference_mode(), torch.autocast(device_type="cuda", dtype=torch.bfloat16):
                 outputs = model(**model_inputs, multimask_output=True)
             torch.cuda.synchronize()
             inference_seconds = time.perf_counter() - inference_start
@@ -379,8 +366,7 @@ def run_audit(
         "pair_count": len(pairs) == int(gate["expected_pair_count"]),
         "endpoint_count": len(records) == int(gate["expected_endpoint_count"]),
         "all_finite": all(bool(record["outputs_finite"]) for record in records),
-        "iou_score_p10": _percentile(predicted_ious, 10)
-        >= float(gate["minimum_iou_score_p10"]),
+        "iou_score_p10": _percentile(predicted_ious, 10) >= float(gate["minimum_iou_score_p10"]),
         "bbox_mask_iou_median": statistics.median(bbox_mask_ious)
         >= float(gate["minimum_bbox_mask_iou_median"]),
         "degenerate_endpoint_fraction": degenerate_count / len(records)

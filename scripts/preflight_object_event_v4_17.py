@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Preflight for Object Event TTC v4.17 signed-anchor temporal sign."""
+
 from __future__ import annotations
 
 import argparse
@@ -28,7 +29,12 @@ def main() -> int:
     parser.add_argument("--v48-checkpoint", action="append", required=True)
     args = parser.parse_args()
 
-    for path in (args.cache_manifest, args.v416_summary, args.ensemble_train, args.ensemble_validation):
+    for path in (
+        args.cache_manifest,
+        args.v416_summary,
+        args.ensemble_train,
+        args.ensemble_validation,
+    ):
         if not path.is_file():
             raise FileNotFoundError(path)
 
@@ -66,10 +72,18 @@ def main() -> int:
 
     rows: dict[str, int] = {}
     required_columns = {
-        "sequence_id", "sample_token", "track_id", "delta_t_s", "target_ttc_s",
-        "target_expansion", "fused_prediction_expansion",
+        "sequence_id",
+        "sample_token",
+        "track_id",
+        "delta_t_s",
+        "target_ttc_s",
+        "target_expansion",
+        "fused_prediction_expansion",
     }
-    for name, path in {"train": args.ensemble_train, "validation": args.ensemble_validation}.items():
+    for name, path in {
+        "train": args.ensemble_train,
+        "validation": args.ensemble_validation,
+    }.items():
         frame = pd.read_csv(path)
         missing_columns = sorted(required_columns - set(frame.columns))
         if missing_columns:
@@ -81,7 +95,9 @@ def main() -> int:
     result = {
         "status": "passed",
         "v416_status": v416.get("status"),
-        "v416_failed_gates": [key for key, value in v416.get("gates", {}).items() if not bool(value)],
+        "v416_failed_gates": [
+            key for key, value in v416.get("gates", {}).items() if not bool(value)
+        ],
         "rows": rows,
         "v48_checkpoints": {
             seed: {"path": path.resolve().as_posix(), "sha256": _sha256(path)}

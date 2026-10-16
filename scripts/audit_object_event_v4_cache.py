@@ -24,9 +24,7 @@ def main() -> int:
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
 
-    dataset = GarlTTCLHRCacheDataset(
-        args.manifest.resolve(), splits=("train", "validation")
-    )
+    dataset = GarlTTCLHRCacheDataset(args.manifest.resolve(), splits=("train", "validation"))
     count = min(len(dataset), args.samples)
     endpoints = []
     channel_values = []

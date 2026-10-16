@@ -88,8 +88,21 @@ def main() -> int:
     parser.add_argument("--cap-m-summary", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
-    payload = run(args.base_summary.resolve(), args.cap_s_summary.resolve(), args.cap_m_summary.resolve(), args.output.resolve())
-    print(json.dumps({"selected_for_future_scaling": payload["selected_for_future_scaling"], "qualifying": payload["qualifying_capacity_arms"]}, sort_keys=True))
+    payload = run(
+        args.base_summary.resolve(),
+        args.cap_s_summary.resolve(),
+        args.cap_m_summary.resolve(),
+        args.output.resolve(),
+    )
+    print(
+        json.dumps(
+            {
+                "selected_for_future_scaling": payload["selected_for_future_scaling"],
+                "qualifying": payload["qualifying_capacity_arms"],
+            },
+            sort_keys=True,
+        )
+    )
     return 0
 
 

@@ -41,9 +41,7 @@ def test_engine_source_defers_torch_dependent_imports_until_after_configuration(
     top_imports = [node for node in tree.body if isinstance(node, (ast.Import, ast.ImportFrom))]
     assert all("torch" not in ast.unparse(node) for node in top_imports)
     run = next(
-        node
-        for node in tree.body
-        if isinstance(node, ast.FunctionDef) and node.name == "run"
+        node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name == "run"
     )
     first_statement = run.body[1] if isinstance(run.body[0], ast.Expr) else run.body[0]
     assert ast.unparse(first_statement) == "configure_environment()"

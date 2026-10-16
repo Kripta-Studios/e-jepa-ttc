@@ -115,9 +115,7 @@ def test_synthetic_learning_gates_fail_closed_and_accept_exact_thresholds() -> N
         ],
         "oddness_median": SYNTHETIC_LEARNING_THRESHOLDS["oddness_median_max"],
         "oddness_p95": SYNTHETIC_LEARNING_THRESHOLDS["oddness_p95_max"],
-        "translation_leakage_p95": SYNTHETIC_LEARNING_THRESHOLDS[
-            "translation_leakage_p95_max"
-        ],
+        "translation_leakage_p95": SYNTHETIC_LEARNING_THRESHOLDS["translation_leakage_p95_max"],
         "ttc_symmetric_relative_error": SYNTHETIC_LEARNING_THRESHOLDS[
             "ttc_symmetric_relative_error_max"
         ],

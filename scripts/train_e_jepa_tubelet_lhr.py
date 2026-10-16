@@ -271,9 +271,8 @@ def train_epoch(
             )
             backward_loss = loss / gradient_accumulation_steps
         update = (
-            (batch_index + 1) % gradient_accumulation_steps == 0
-            or batch_index + 1 == batch_count
-        )
+            batch_index + 1
+        ) % gradient_accumulation_steps == 0 or batch_index + 1 == batch_count
         if scaler is None:
             backward_loss.backward()
             if update:
@@ -516,9 +515,7 @@ def train_tubelet_garl(
         max_samples_per_split=train_config.max_samples_per_split,
     )
     rows = {
-        role: selected.loc[
-            selected["sequence_id"].astype(str).map(roles.get) == role
-        ].copy()
+        role: selected.loc[selected["sequence_id"].astype(str).map(roles.get) == role].copy()
         for role in ("train", "validation")
     }
     datasets = {

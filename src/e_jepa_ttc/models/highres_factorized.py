@@ -825,7 +825,10 @@ class EJEPATubeletLHR(nn.Module):
         constant-ratio attractor.
         """
 
-        if features.tokens.ndim != 4 or features.valid_patch_mask.shape != features.tokens.shape[:3]:
+        if (
+            features.tokens.ndim != 4
+            or features.valid_patch_mask.shape != features.tokens.shape[:3]
+        ):
             raise ValueError("HighResFeatures must contain [B,T,P,D] tokens and [B,T,P] mask.")
         pooled = [
             self._pool_tokens(
