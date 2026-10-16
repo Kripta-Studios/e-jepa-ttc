@@ -1,0 +1,70 @@
+{
+  "excluded": "Full optimizer checkpoint ORIGIN.pt stays local; its SHA is bound in QUIESCED.json",
+  "files": {
+    "qa/A1_loss_graph_v1/FULL/RESULT.json": {
+      "bytes": 936,
+      "sha256": "b326fcaae7f7e621fa3c65f851ef3408143613926e23b3c632a0dd33853790df"
+    },
+    "qa/A1_loss_graph_v1/LAST-BLOCK/RESULT.json": {
+      "bytes": 936,
+      "sha256": "b326fcaae7f7e621fa3c65f851ef3408143613926e23b3c632a0dd33853790df"
+    },
+    "runtime/A1_loss_graph_v1/ACTIVATION_VERIFIED.json": {
+      "bytes": 446,
+      "sha256": "1494e41f39bbe6b8aef94a15b167cb3aee1d29c90175e31a2a96a3c4e2bef45b"
+    },
+    "runtime/A1_loss_graph_v1/ADMISSION.json": {
+      "bytes": 3105,
+      "sha256": "74865462e2f6665a38873ec1b1e37026f5a0534b5359f8fab85f7cdd3d6b8fb3"
+    },
+    "runtime/A1_loss_graph_v1/CHECKPOINT_CAPTURED.json": {
+      "bytes": 1848,
+      "sha256": "8f4a747099436c1246d359ec01f4d33d112b7ad8c2acba2f88769437caed694e"
+    },
+    "runtime/A1_loss_graph_v1/CPU_CHECKS.json": {
+      "bytes": 625,
+      "sha256": "18ea724f827e8b9c14de20aa403fd8b64eafa5eab55b6764855a9249f5caccdd"
+    },
+    "runtime/A1_loss_graph_v1/NATIVE.json": {
+      "bytes": 2169,
+      "sha256": "7447398fe704ec92812fdc90446c7f9c18a0a406d56d84d41ab3aebab437e4bd"
+    },
+    "runtime/A1_loss_graph_v1/PRODUCTION_6600_LOSS_GRAPH_RUNTIME.json": {
+      "bytes": 255,
+      "sha256": "b3192ba8f84265bc390653716131d1a550c799fb26e04988bf38728d50990e51"
+    },
+    "runtime/A1_loss_graph_v1/PRODUCTION_6600_PERSISTENT_RUNTIME.json": {
+      "bytes": 27997,
+      "sha256": "501ee7f23dca2377191e276e704ab5725d84682604498fe37389385c1fbca3d9"
+    },
+    "runtime/A1_loss_graph_v1/PRODUCTION_6700_PERSISTENT_RUNTIME.json": {
+      "bytes": 28005,
+      "sha256": "8f46954430f3f7fd6224ab7bc2979ce80f3f16c6d435005a884e87a264e6c2ff"
+    },
+    "runtime/A1_loss_graph_v1/PRODUCTION_RATE.json": {
+      "bytes": 670,
+      "sha256": "417aee5371cf3f105ee2fed76c736bd8e625ff42597da5479bfdb493437b7f60"
+    },
+    "runtime/A1_loss_graph_v1/QUIESCED.json": {
+      "bytes": 1899,
+      "sha256": "c39f4d44f0653498c3999be109f5f782e232d2274c96e8f81546d154e6447fb0"
+    },
+    "runtime/A1_loss_graph_v1/REGISTRATION.json": {
+      "bytes": 2625,
+      "sha256": "9a323910a027de4b416bbf587f60c497039c65d451d45d1323ecf9eff6bca40a"
+    },
+    "runtime/A1_loss_graph_v1/native.stderr.log": {
+      "bytes": 1184,
+      "sha256": "a9293069fc8816213ab2e484a05218c4812745aae65722ead0f788a467954122"
+    },
+    "runtime/A1_loss_graph_v1/quiesce.py": {
+      "bytes": 4688,
+      "sha256": "8f03ec995c552e307fb67ea01c23ad2ad16d4edeafd842ed79af87b514922364"
+    },
+    "runtime/A1_loss_graph_v1/quiesce_attempt1.py": {
+      "bytes": 4259,
+      "sha256": "fddaa35d015a7573c7536a065e171011397fca01d1677b9573efdeabdeaba2d6"
+    }
+  },
+  "source_commit": "bd4e8b8"
+}

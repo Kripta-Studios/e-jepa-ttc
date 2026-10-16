@@ -2,7 +2,7 @@
 
 **La campaña sigue abierta; no hay promoción del sistema ni confirmación SOTA.** La fusión presenta una señal controlada en las tres semillas, pero no cumple el gate crucial original del10%. Los negativos y las regresiones se conservan.
 
-Corte UTC: `2026-10-16T18:30:46.919238+00:00`. Fuente: `CAMPAIGN_CONCLUSION.json`.
+Corte UTC: `2026-10-16T18:50:24.570069+00:00`. Fuente: `CAMPAIGN_CONCLUSION.json`.
 
 | Etapa | Evidencia completa | Estado |
 |---|---|---|
@@ -24,10 +24,10 @@ El agregado mejora frente al control ZERO de igual capacidad. Esto no demuestra 
 
 ## Contabilidad del corte
 
-- Updates científicos: 164,600.
-- Técnicos: 834; recuperación superior: 273; pendientes superiores: 0.
-- Físicos superiores: 165,707.
-- Scopes GPU contabilizados/reservados: 183592.4 / 216000 s.
+- Updates científicos: 165,800.
+- Técnicos: 858; recuperación superior: 273; pendientes superiores: 0.
+- Físicos superiores: 166,931.
+- Scopes GPU contabilizados/reservados: 185408.6 / 216000 s.
 
 Es una instantánea no atómica mientras hay trabajo vivo. No son kernels GPU puros; las reservas activas pueden cambiar al liquidarse. No se recontaron los controles históricos reutilizados.
 

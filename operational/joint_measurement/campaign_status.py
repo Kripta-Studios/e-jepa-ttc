@@ -25,6 +25,8 @@ def build() -> dict:
     for label, relative in {
         "A1_optimized_training": "runtime/A1_parallel_persistent_v1/ADMISSION.json",
         "A1_scope_continuity": "runtime/A1_parallel_persistent_v1/PRODUCTION_SCOPE_CONTINUITY.json",
+        "A1_loss_graph": "runtime/A1_loss_graph_v1/ADMISSION.json",
+        "A1_loss_graph_transition": "runtime/A1_loss_graph_v1/ACTIVATION_VERIFIED.json",
         "A1_evaluation_registered": "adaptive/A1_adaptation_depth/evaluation/REGISTRATION.json",
         "F_TRUE_head_CPU": "fusion/cost/F_TRUE_head_diagnostic_v1/CPU_RESULT.json",
         "fusion_cost_amended_acceptance": (

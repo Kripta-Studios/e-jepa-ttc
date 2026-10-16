@@ -1,0 +1,119 @@
+{
+  "checks": [
+    {
+      "cpu_rng": true,
+      "cuda_rng": true,
+      "gradients": true,
+      "loss": true,
+      "weights_unchanged": true
+    },
+    {
+      "cpu_rng": true,
+      "cuda_rng": true,
+      "gradients": true,
+      "loss": true,
+      "weights_unchanged": true
+    },
+    {
+      "cpu_rng": true,
+      "cuda_rng": true,
+      "gradients": true,
+      "loss": true,
+      "weights_unchanged": true
+    },
+    {
+      "cpu_rng": true,
+      "cuda_rng": true,
+      "gradients": true,
+      "loss": true,
+      "weights_unchanged": true
+    }
+  ],
+  "ids": [
+    36738,
+    746,
+    36400,
+    42429,
+    44267,
+    26758,
+    36683,
+    32107,
+    23848,
+    39724,
+    18593,
+    8884,
+    45572,
+    8031,
+    20366,
+    9866,
+    8445,
+    16355,
+    53753,
+    34330,
+    46883,
+    25987,
+    52355,
+    28212,
+    20898,
+    3516,
+    4643,
+    1506,
+    28720,
+    38872,
+    27548,
+    35705
+  ],
+  "median_warm_ratio": 0.592932387410727,
+  "optimizer_updates": 0,
+  "origin_sha256": "57ead3ddf5a73a6698d2dece9bc552a3f9023f023643ce0a9394898b93544a57",
+  "origin_updates": 6400,
+  "registration_sha256": "9a323910a027de4b416bbf587f60c497039c65d451d45d1323ecf9eff6bca40a",
+  "scope": "Prepared real P B32 forward/backward; not end-to-end production throughput",
+  "status": "PASS",
+  "timings": [
+    {
+      "iteration": 0,
+      "order": [
+        "reference",
+        "candidate"
+      ],
+      "seconds": {
+        "candidate": 1.1825353000022005,
+        "reference": 6.3730974000063725
+      }
+    },
+    {
+      "iteration": 1,
+      "order": [
+        "candidate",
+        "reference"
+      ],
+      "seconds": {
+        "candidate": 0.1489560000190977,
+        "reference": 0.2512191999994684
+      }
+    },
+    {
+      "iteration": 2,
+      "order": [
+        "reference",
+        "candidate"
+      ],
+      "seconds": {
+        "candidate": 0.16135449998546392,
+        "reference": 0.2511044999992009
+      }
+    },
+    {
+      "iteration": 3,
+      "order": [
+        "candidate",
+        "reference"
+      ],
+      "seconds": {
+        "candidate": 0.145544200000586,
+        "reference": 0.2715889999817591
+      }
+    }
+  ]
+}

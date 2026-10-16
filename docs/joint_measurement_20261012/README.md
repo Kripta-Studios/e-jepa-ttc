@@ -29,6 +29,11 @@ la reanudación desde el update 1.086 sin reinicio científico, descompresión p
 caché persistente, captura CUDA conservada entre scopes y reducción de
 sincronizaciones de la pérdida. Incluye QA exacta y observación de producción.
 
+La [captura adicional de la pérdida](A1_LOSS_GRAPH_20261016.md) pasó después los
+controles CUDA exactos y de reanudación de ambos brazos. Se instaló desde el
+update 6.400; su mejora del 40,7 % corresponde al forward/backward preparado,
+no a una garantía de aceleración del entrenamiento completo.
+
 ```powershell
 ./scripts/Resume-JointMeasurement.ps1 -ShowCommand
 ./scripts/Resume-JointMeasurement.ps1

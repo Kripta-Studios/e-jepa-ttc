@@ -110,6 +110,7 @@ def build(output: Path) -> dict:
         "A1_RESULTS.md",
         "A1_EVALUATION_CONTRACT_20261016.md",
         "A1_PERSISTENT_RUNTIME_20261016.md",
+        "A1_LOSS_GRAPH_20261016.md",
         "RESUME_20261016.md",
         "D1_EXECUTION.md",
         "B1_EXECUTION.md",

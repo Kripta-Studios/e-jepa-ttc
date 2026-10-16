@@ -159,3 +159,7 @@ La pérdida aún se ejecuta fuera del grafo. Cualquier captura adicional requier
 paridad exacta de gradientes, estado y reanudación, además de benchmark nativo,
 antes de instalarse. Este perfil no cambió el proceso científico ni añadió
 updates de optimizador.
+
+Ese párrafo describe el estado durante el perfil. La continuación posterior
+superó los controles e instaló la captura adicional desde el update 6.400:
+[pruebas, alcance y reanudación](A1_LOSS_GRAPH_20261016.md).
