@@ -1,0 +1,22 @@
+{
+  "GPU_work": false,
+  "commands": [
+    "python -B -m pytest tests/unit/test_joint_garl_route_cost.py -q",
+    "python -B -m ruff check operational/joint_measurement/garl_route_cost.py tests/unit/test_joint_garl_route_cost.py",
+    "python -B -m pyright --pythonpath ../e-jepa-ttc/.venv/Scripts/python.exe operational/joint_measurement/garl_route_cost.py"
+  ],
+  "groups": 24,
+  "new_model_inference": false,
+  "next": "After B1 training/evaluation, run garl_route_cost measure while project compute is quiescent",
+  "optimizer_updates": 0,
+  "registration_sha256": "63e937fd7e220c4b042a86c8a834d63ad2299c5ffc840db8910e2973d93457a8",
+  "status": "REGISTERED_NOT_MEASURED",
+  "unique_P_queries": 64,
+  "unit_tests_passed": 20,
+  "upstream_already_vectorized": true,
+  "validation": {
+    "dependencies_match": true,
+    "pyright": "PASS",
+    "ruff": "PASS"
+  }
+}

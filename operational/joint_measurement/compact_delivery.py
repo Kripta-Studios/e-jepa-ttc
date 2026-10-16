@@ -113,6 +113,7 @@ def build(output: Path) -> dict:
         "LEARNING_RECIPE_AUDIT.md",
         "QUERY_COMPLEMENTARITY.md",
         "HISTORICAL_BASELINES.md",
+        "GARL_ROUTE_COST.md",
     ]
     links = [
         f"- [{name}](source/docs/joint_measurement_20261012/{name})"

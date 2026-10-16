@@ -1,0 +1,2817 @@
+{
+  "P_manifest_sha256": "6f22b070c53c96aa851d90ae2c6836b604e8280965f4887ba6ef3a0cd6d3727c",
+  "batch_size": 1,
+  "campaign": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v12-efficient-context\\artifacts\\train40_system_20261005",
+  "code_root": "E:\\Garl-TTC",
+  "cold_scope": "Model load and first prepared forward; OS disk cache uncontrolled",
+  "cost_scope": "Read/decode/normalize/ROI/timevolume + native full forward + signed emission",
+  "dependencies": {
+    "operational\\evttc_rgb_transfer\\inputs.py": "498e0bb40bdacaacafb582b870725f461d325a819134d558da4aae46971ec07f",
+    "operational\\evttc_rgb_transfer\\model.py": "814c4a62b15d0c50ff72ef6aae46d5665778b52c34620a1fcfb817509565d2f7",
+    "operational\\joint_measurement\\common.py": "74af008e2d6edb65d67b1ac3da1ee3e5467c7b5a62ff9ac43cf9b70e2ffce122",
+    "operational\\joint_measurement\\garl_route_cost.py": "af12d94a6f0ffaba2e74bb1dc90910a8e36cd3fbcfbb5a2f66c01d4ac7d8308f",
+    "operational\\range_transfer\\common.py": "80f7a1b1c1844c1a8d179f5b2d14d4fc0cd3155082c26492fd6067e682c62683",
+    "operational\\sota_eval\\garl_parity.py": "0933daea78aa3f5518c0877eabce058c4d18bd86ef22dc5bcabe4bc36d9e4e4e",
+    "src\\e_jepa_ttc\\data\\garl_official_preprocessing.py": "10e8cc2bbb998144006a81e276942b76d8620a51b9ba778b62577d23ed8edd7e",
+    "src\\e_jepa_ttc\\efficient_context\\garl_input.py": "915153f34b6de0803059c709fbb668958a1ee843dabf09265393b9830a22449d",
+    "src\\e_jepa_ttc\\simplex_t\\cached_event_reader.py": "3d98509354694fd8688bb611014a9d69c55c1db65541f63db41d7f272e31db85"
+  },
+  "device": "cpu",
+  "eap_root": "E:\\eAP_dataset",
+  "full_public": "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v12-efficient-context\\artifacts\\evttc_rgb_transfer_20261008\\public_garl",
+  "labels_read": false,
+  "memory_scope": "Process RSS after each phase and lifetime peak working set; not isolated route peaks",
+  "model_selection": false,
+  "native_rows_sha256": "0e59ce2629f512f68dff6ab77beef68090816adac7adf21994cb29fa6954859c",
+  "native_sources": {
+    "garl_ttc/__init__.py": "90e0ac4f12e75ccb82264ee28d99b786dc0ec48bd3e6a65ce86593530c2ea383",
+    "garl_ttc/config.py": "d9d3a44725646858a61bf8b185131f540b8f4cd670c4b8ba49f560cb82ef7fcd",
+    "garl_ttc/datasets/__init__.py": "0c6eea255e95b21d4edfda8cf29d7b792134f3ca22b2d8b1328d37b94efae16c",
+    "garl_ttc/datasets/event_representation.py": "3311a5024d6f974621257639520dd05043b25f7ac728380f80028d615531e3d6",
+    "garl_ttc/datasets/ttc_dataset.py": "d21eaf3928528c2d5b9a7c2787a64e248bbf49bc60756a3156034b9d8ac5b592",
+    "garl_ttc/engine/__init__.py": "4c0b28958f60ce638537935437684394ce22be1eff696e139db8d3ff7aea958b",
+    "garl_ttc/engine/evaluator.py": "062848733e21f994bd3247d4cdacdf12d4fb177a14e15f87bad50e42cc20b8d5",
+    "garl_ttc/engine/inference.py": "78f30f84bb771c278e2b692412dd07beee8b4f12fd500be3b8e9e9003482dfa8",
+    "garl_ttc/engine/metrics.py": "1c31e7875cd6b0ceab1f6778462b9bce50eb9cacf7bff9c5246e0e04dd55431c",
+    "garl_ttc/engine/runtime.py": "98de68d5d119cd1e83180fe7c0196901e9c196aee380cbe7fe42f0615ff7f66e",
+    "garl_ttc/engine/trainer.py": "b22d170b339da5af016116e6da6d7d205f90821addb507ea9d656af1b60b001d",
+    "garl_ttc/models/__init__.py": "039bdb68efbbb07647669670110825e0d3a96ffb4232c62fff59f6d590d834ea",
+    "garl_ttc/models/focal_loss.py": "7e5e53b9efff75b0254ebd13a7361a55be63ec8bd1385770b176f439dd6369c9",
+    "garl_ttc/models/resnet.py": "6fbb6bb08d57f6a1d70fa4df31b362476a2b7af6f5c3d82a09a111da17f2f26b",
+    "garl_ttc/models/ttc_network.py": "7927946d4b9af608f1ed2e57c6cc8b498d3c4be8b9c84305647199ef812d9c14",
+    "garl_ttc/utils/__init__.py": "ed6c0144d813d3157716678fbefc0a32d941f3fb542f17cbd465109b83f43b1c",
+    "garl_ttc/utils/events.py": "722760fde3325f4f2a741b1ae9d2a9dd14716cc371a0f94f406bed7a11abc3c0",
+    "garl_ttc/utils/io.py": "637a4ef794acc57d5f91c6c6f66362560a1defdfb4810148030a20eab682bc1b",
+    "garl_ttc/utils/sam_masks.py": "965faea7a54cf8ad8de3c04160d04b2d672d602e41d4eceabe3a7d959b5bbf91"
+  },
+  "optimization_scope": "Existing input adapter only; both timevolumes already vectorized",
+  "optimizer_updates": 0,
+  "parity": "Exact float32 sensors and heights on every paired query/pass",
+  "passes": 2,
+  "precision": "FP32",
+  "prepared_samples": 64,
+  "prepared_warmups": 20,
+  "queries": [
+    {
+      "boxes_xyxy": [
+        [
+          0,
+          513,
+          231,
+          707
+        ],
+        [
+          0,
+          505,
+          226,
+          702
+        ]
+      ],
+      "event_windows_us": [
+        [
+          275248819,
+          275348820
+        ],
+        [
+          275348820,
+          275448822
+        ]
+      ],
+      "events_path": "data/train/2Y46OkK3ff/events.h5",
+      "frame_timestamps_us": [
+        1564200000,
+        1564300000
+      ],
+      "group_id": "2Y46OkK3ff",
+      "public_track_id": "2Y46OkK3ff_000001",
+      "rgb_member_paths": [
+        "rgb/000000275_000348820.png",
+        "rgb/000000275_000448822.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/2Y46OkK3ff/rgb_shards/rgb-00000.tar",
+        "data/train/2Y46OkK3ff/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "2Y46OkK3ff_000001_1564300000",
+      "sequence_id": "2Y46OkK3ff"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          407,
+          502,
+          544,
+          615
+        ],
+        [
+          407,
+          495,
+          548,
+          613
+        ]
+      ],
+      "event_windows_us": [
+        [
+          278046917,
+          278146918
+        ],
+        [
+          278146918,
+          278246920
+        ]
+      ],
+      "events_path": "data/train/6WCDpro5rE/events.h5",
+      "frame_timestamps_us": [
+        5506600000,
+        5506700000
+      ],
+      "group_id": "6WCDpro5rE",
+      "public_track_id": "6WCDpro5rE_000003",
+      "rgb_member_paths": [
+        "rgb/000000278_000146918.png",
+        "rgb/000000278_000246920.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/6WCDpro5rE/rgb_shards/rgb-00000.tar",
+        "data/train/6WCDpro5rE/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "6WCDpro5rE_000003_5506700000",
+      "sequence_id": "6WCDpro5rE"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          365,
+          471,
+          552,
+          627
+        ],
+        [
+          368,
+          479,
+          561,
+          639
+        ]
+      ],
+      "event_windows_us": [
+        [
+          516652242,
+          516752243
+        ],
+        [
+          516752243,
+          516852245
+        ]
+      ],
+      "events_path": "data/train/8SdieOgbva/events.h5",
+      "frame_timestamps_us": [
+        17812800000,
+        17812900000
+      ],
+      "group_id": "8SdieOgbva",
+      "public_track_id": "8SdieOgbva_000003",
+      "rgb_member_paths": [
+        "rgb/000000516_000752243.png",
+        "rgb/000000516_000852245.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/8SdieOgbva/rgb_shards/rgb-00000.tar",
+        "data/train/8SdieOgbva/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "8SdieOgbva_000003_17812900000",
+      "sequence_id": "8SdieOgbva"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          0,
+          480,
+          264,
+          679
+        ],
+        [
+          0,
+          483,
+          269,
+          673
+        ]
+      ],
+      "event_windows_us": [
+        [
+          317643186,
+          317743188
+        ],
+        [
+          317743188,
+          317843189
+        ]
+      ],
+      "events_path": "data/train/8mNnrXjpVB/events.h5",
+      "frame_timestamps_us": [
+        1626600000,
+        1626700000
+      ],
+      "group_id": "8mNnrXjpVB",
+      "public_track_id": "8mNnrXjpVB_000000",
+      "rgb_member_paths": [
+        "rgb/000000317_000743188.png",
+        "rgb/000000317_000843189.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/8mNnrXjpVB/rgb_shards/rgb-00000.tar",
+        "data/train/8mNnrXjpVB/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "8mNnrXjpVB_000000_1626700000",
+      "sequence_id": "8mNnrXjpVB"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          333,
+          456,
+          691,
+          719
+        ],
+        [
+          339,
+          455,
+          700,
+          719
+        ]
+      ],
+      "event_windows_us": [
+        [
+          175698726,
+          175798727
+        ],
+        [
+          175798727,
+          175898728
+        ]
+      ],
+      "events_path": "data/train/9ITOs4twfk/events.h5",
+      "frame_timestamps_us": [
+        1684600000,
+        1684700000
+      ],
+      "group_id": "9ITOs4twfk",
+      "public_track_id": "9ITOs4twfk_000002",
+      "rgb_member_paths": [
+        "rgb/000000175_000798727.png",
+        "rgb/000000175_000898728.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/9ITOs4twfk/rgb_shards/rgb-00000.tar",
+        "data/train/9ITOs4twfk/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "9ITOs4twfk_000002_1684700000",
+      "sequence_id": "9ITOs4twfk"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          372,
+          492,
+          568,
+          653
+        ],
+        [
+          369,
+          488,
+          564,
+          648
+        ]
+      ],
+      "event_windows_us": [
+        [
+          374496221,
+          374596223
+        ],
+        [
+          374596223,
+          374696224
+        ]
+      ],
+      "events_path": "data/train/A1Nhv0KtmL/events.h5",
+      "frame_timestamps_us": [
+        6004400000,
+        6004500000
+      ],
+      "group_id": "A1Nhv0KtmL",
+      "public_track_id": "A1Nhv0KtmL_000003",
+      "rgb_member_paths": [
+        "rgb/000000374_000596223.png",
+        "rgb/000000374_000696224.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/A1Nhv0KtmL/rgb_shards/rgb-00000.tar",
+        "data/train/A1Nhv0KtmL/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "A1Nhv0KtmL_000003_6004500000",
+      "sequence_id": "A1Nhv0KtmL"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          959,
+          474,
+          1249,
+          632
+        ],
+        [
+          962,
+          475,
+          1262,
+          637
+        ]
+      ],
+      "event_windows_us": [
+        [
+          464805856,
+          464905857
+        ],
+        [
+          464905857,
+          465005859
+        ]
+      ],
+      "events_path": "data/train/ClXqVoZOFu/events.h5",
+      "frame_timestamps_us": [
+        3270300000,
+        3270400000
+      ],
+      "group_id": "ClXqVoZOFu",
+      "public_track_id": "ClXqVoZOFu_000000",
+      "rgb_member_paths": [
+        "rgb/000000464_000905857.png",
+        "rgb/000000465_000005859.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/ClXqVoZOFu/rgb_shards/rgb-00000.tar",
+        "data/train/ClXqVoZOFu/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "ClXqVoZOFu_000000_3270400000",
+      "sequence_id": "ClXqVoZOFu"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          364,
+          426,
+          525,
+          572
+        ],
+        [
+          347,
+          422,
+          519,
+          575
+        ]
+      ],
+      "event_windows_us": [
+        [
+          879496091,
+          879596093
+        ],
+        [
+          879596093,
+          879696095
+        ]
+      ],
+      "events_path": "data/train/DGqicHUGWb/events.h5",
+      "frame_timestamps_us": [
+        3094400000,
+        3094500000
+      ],
+      "group_id": "DGqicHUGWb",
+      "public_track_id": "DGqicHUGWb_000000",
+      "rgb_member_paths": [
+        "rgb/000000879_000596093.png",
+        "rgb/000000879_000696095.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/DGqicHUGWb/rgb_shards/rgb-00000.tar",
+        "data/train/DGqicHUGWb/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "DGqicHUGWb_000000_3094500000",
+      "sequence_id": "DGqicHUGWb"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          136,
+          509,
+          284,
+          626
+        ],
+        [
+          138,
+          530,
+          288,
+          649
+        ]
+      ],
+      "event_windows_us": [
+        [
+          293663070,
+          293763072
+        ],
+        [
+          293763072,
+          293863073
+        ]
+      ],
+      "events_path": "data/train/EllUE6bwVp/events.h5",
+      "frame_timestamps_us": [
+        5724600000,
+        5724700000
+      ],
+      "group_id": "EllUE6bwVp",
+      "public_track_id": "EllUE6bwVp_000000",
+      "rgb_member_paths": [
+        "rgb/000000293_000763072.png",
+        "rgb/000000293_000863073.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/EllUE6bwVp/rgb_shards/rgb-00000.tar",
+        "data/train/EllUE6bwVp/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "EllUE6bwVp_000000_5724700000",
+      "sequence_id": "EllUE6bwVp"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          739,
+          504,
+          847,
+          573
+        ],
+        [
+          736,
+          500,
+          846,
+          568
+        ]
+      ],
+      "event_windows_us": [
+        [
+          809617331,
+          809717332
+        ],
+        [
+          809717332,
+          809817334
+        ]
+      ],
+      "events_path": "data/train/EuFGqTcqIz/events.h5",
+      "frame_timestamps_us": [
+        3576200000,
+        3576300000
+      ],
+      "group_id": "EuFGqTcqIz",
+      "public_track_id": "EuFGqTcqIz_000001",
+      "rgb_member_paths": [
+        "rgb/000000809_000717332.png",
+        "rgb/000000809_000817334.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/EuFGqTcqIz/rgb_shards/rgb-00000.tar",
+        "data/train/EuFGqTcqIz/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "EuFGqTcqIz_000001_3576300000",
+      "sequence_id": "EuFGqTcqIz"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          433,
+          509,
+          529,
+          589
+        ],
+        [
+          428,
+          508,
+          529,
+          593
+        ]
+      ],
+      "event_windows_us": [
+        [
+          162401415,
+          162501416
+        ],
+        [
+          162501416,
+          162601418
+        ]
+      ],
+      "events_path": "data/train/GjMYZjmSQb/events.h5",
+      "frame_timestamps_us": [
+        2967900000,
+        2968000000
+      ],
+      "group_id": "GjMYZjmSQb",
+      "public_track_id": "GjMYZjmSQb_000000",
+      "rgb_member_paths": [
+        "rgb/000000162_000501416.png",
+        "rgb/000000162_000601418.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/GjMYZjmSQb/rgb_shards/rgb-00000.tar",
+        "data/train/GjMYZjmSQb/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "GjMYZjmSQb_000000_2968000000",
+      "sequence_id": "GjMYZjmSQb"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          702,
+          477,
+          1072,
+          704
+        ],
+        [
+          707,
+          475,
+          1086,
+          709
+        ]
+      ],
+      "event_windows_us": [
+        [
+          286680589,
+          286780591
+        ],
+        [
+          286780591,
+          286880592
+        ]
+      ],
+      "events_path": "data/train/LMHPShQkaU/events.h5",
+      "frame_timestamps_us": [
+        13679400000,
+        13679500000
+      ],
+      "group_id": "LMHPShQkaU",
+      "public_track_id": "LMHPShQkaU_000002",
+      "rgb_member_paths": [
+        "rgb/000000286_000780591.png",
+        "rgb/000000286_000880592.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/LMHPShQkaU/rgb_shards/rgb-00000.tar",
+        "data/train/LMHPShQkaU/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "LMHPShQkaU_000002_13679500000",
+      "sequence_id": "LMHPShQkaU"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          0,
+          517,
+          201,
+          657
+        ],
+        [
+          0,
+          513,
+          206,
+          651
+        ]
+      ],
+      "event_windows_us": [
+        [
+          853999889,
+          854099891
+        ],
+        [
+          854099891,
+          854199892
+        ]
+      ],
+      "events_path": "data/train/OBneIVg4Cw/events.h5",
+      "frame_timestamps_us": [
+        3048900000,
+        3049000000
+      ],
+      "group_id": "OBneIVg4Cw",
+      "public_track_id": "OBneIVg4Cw_000003",
+      "rgb_member_paths": [
+        "rgb/000000854_000099891.png",
+        "rgb/000000854_000199892.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/OBneIVg4Cw/rgb_shards/rgb-00000.tar",
+        "data/train/OBneIVg4Cw/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "OBneIVg4Cw_000003_3049000000",
+      "sequence_id": "OBneIVg4Cw"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          725,
+          465,
+          998,
+          631
+        ],
+        [
+          723,
+          468,
+          982,
+          629
+        ]
+      ],
+      "event_windows_us": [
+        [
+          642299911,
+          642399912
+        ],
+        [
+          642399912,
+          642499913
+        ]
+      ],
+      "events_path": "data/train/OYgB6RGWcq/events.h5",
+      "frame_timestamps_us": [
+        6272200000,
+        6272300000
+      ],
+      "group_id": "OYgB6RGWcq",
+      "public_track_id": "OYgB6RGWcq_000000",
+      "rgb_member_paths": [
+        "rgb/000000642_000399912.png",
+        "rgb/000000642_000499913.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/OYgB6RGWcq/rgb_shards/rgb-00000.tar",
+        "data/train/OYgB6RGWcq/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "OYgB6RGWcq_000000_6272300000",
+      "sequence_id": "OYgB6RGWcq"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          720,
+          449,
+          883,
+          599
+        ],
+        [
+          717,
+          450,
+          887,
+          603
+        ]
+      ],
+      "event_windows_us": [
+        [
+          587226075,
+          587326076
+        ],
+        [
+          587326076,
+          587426078
+        ]
+      ],
+      "events_path": "data/train/Po6ePjWYAz/events.h5",
+      "frame_timestamps_us": [
+        9854600000,
+        9854700000
+      ],
+      "group_id": "Po6ePjWYAz",
+      "public_track_id": "Po6ePjWYAz_000005",
+      "rgb_member_paths": [
+        "rgb/000000587_000326076.png",
+        "rgb/000000587_000426078.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/Po6ePjWYAz/rgb_shards/rgb-00000.tar",
+        "data/train/Po6ePjWYAz/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "Po6ePjWYAz_000005_9854700000",
+      "sequence_id": "Po6ePjWYAz"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          995,
+          487,
+          1219,
+          592
+        ],
+        [
+          958,
+          487,
+          1162,
+          585
+        ]
+      ],
+      "event_windows_us": [
+        [
+          49854199,
+          49954200
+        ],
+        [
+          49954200,
+          50054202
+        ]
+      ],
+      "events_path": "data/train/VLA3oBKFyX/events.h5",
+      "frame_timestamps_us": [
+        7474900000,
+        7475000000
+      ],
+      "group_id": "VLA3oBKFyX",
+      "public_track_id": "VLA3oBKFyX_000002",
+      "rgb_member_paths": [
+        "rgb/000000049_000954200.png",
+        "rgb/000000050_000054202.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/VLA3oBKFyX/rgb_shards/rgb-00000.tar",
+        "data/train/VLA3oBKFyX/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "VLA3oBKFyX_000002_7475000000",
+      "sequence_id": "VLA3oBKFyX"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          838,
+          428,
+          1279,
+          719
+        ],
+        [
+          842,
+          433,
+          1279,
+          719
+        ]
+      ],
+      "event_windows_us": [
+        [
+          591167501,
+          591267503
+        ],
+        [
+          591267503,
+          591367504
+        ]
+      ],
+      "events_path": "data/train/eX8t2nGd6O/events.h5",
+      "frame_timestamps_us": [
+        6022100000,
+        6022200000
+      ],
+      "group_id": "eX8t2nGd6O",
+      "public_track_id": "eX8t2nGd6O_000000",
+      "rgb_member_paths": [
+        "rgb/000000591_000267503.png",
+        "rgb/000000591_000367504.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/eX8t2nGd6O/rgb_shards/rgb-00000.tar",
+        "data/train/eX8t2nGd6O/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "eX8t2nGd6O_000000_6022200000",
+      "sequence_id": "eX8t2nGd6O"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          631,
+          464,
+          840,
+          682
+        ],
+        [
+          646,
+          450,
+          851,
+          665
+        ]
+      ],
+      "event_windows_us": [
+        [
+          494235790,
+          494335791
+        ],
+        [
+          494335791,
+          494435793
+        ]
+      ],
+      "events_path": "data/train/nRcwUlHyAd/events.h5",
+      "frame_timestamps_us": [
+        618100000,
+        618200000
+      ],
+      "group_id": "nRcwUlHyAd",
+      "public_track_id": "nRcwUlHyAd_000001",
+      "rgb_member_paths": [
+        "rgb/000000494_000335791.png",
+        "rgb/000000494_000435793.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/nRcwUlHyAd/rgb_shards/rgb-00000.tar",
+        "data/train/nRcwUlHyAd/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "nRcwUlHyAd_000001_618200000",
+      "sequence_id": "nRcwUlHyAd"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          218,
+          464,
+          495,
+          719
+        ],
+        [
+          215,
+          468,
+          493,
+          719
+        ]
+      ],
+      "event_windows_us": [
+        [
+          527472973,
+          527572975
+        ],
+        [
+          527572975,
+          527672976
+        ]
+      ],
+      "events_path": "data/train/pakWgyPNTL/events.h5",
+      "frame_timestamps_us": [
+        18712800000,
+        18712900000
+      ],
+      "group_id": "pakWgyPNTL",
+      "public_track_id": "pakWgyPNTL_000001",
+      "rgb_member_paths": [
+        "rgb/000000527_000572975.png",
+        "rgb/000000527_000672976.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/pakWgyPNTL/rgb_shards/rgb-00000.tar",
+        "data/train/pakWgyPNTL/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "pakWgyPNTL_000001_18712900000",
+      "sequence_id": "pakWgyPNTL"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          409,
+          510,
+          587,
+          668
+        ],
+        [
+          409,
+          498,
+          589,
+          656
+        ]
+      ],
+      "event_windows_us": [
+        [
+          494698598,
+          494798600
+        ],
+        [
+          494798600,
+          494898601
+        ]
+      ],
+      "events_path": "data/train/q2k6O0X6JY/events.h5",
+      "frame_timestamps_us": [
+        2413700000,
+        2413800000
+      ],
+      "group_id": "q2k6O0X6JY",
+      "public_track_id": "q2k6O0X6JY_000001",
+      "rgb_member_paths": [
+        "rgb/000000494_000798600.png",
+        "rgb/000000494_000898601.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/q2k6O0X6JY/rgb_shards/rgb-00000.tar",
+        "data/train/q2k6O0X6JY/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "q2k6O0X6JY_000001_2413800000",
+      "sequence_id": "q2k6O0X6JY"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          72,
+          460,
+          236,
+          612
+        ],
+        [
+          67,
+          461,
+          235,
+          613
+        ]
+      ],
+      "event_windows_us": [
+        [
+          636980102,
+          637080104
+        ],
+        [
+          637080104,
+          637180105
+        ]
+      ],
+      "events_path": "data/train/qoohcdtLDH/events.h5",
+      "frame_timestamps_us": [
+        5377700000,
+        5377800000
+      ],
+      "group_id": "qoohcdtLDH",
+      "public_track_id": "qoohcdtLDH_000002",
+      "rgb_member_paths": [
+        "rgb/000000637_000080104.png",
+        "rgb/000000637_000180105.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/qoohcdtLDH/rgb_shards/rgb-00000.tar",
+        "data/train/qoohcdtLDH/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "qoohcdtLDH_000002_5377800000",
+      "sequence_id": "qoohcdtLDH"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          0,
+          518,
+          215,
+          687
+        ],
+        [
+          0,
+          517,
+          223,
+          681
+        ]
+      ],
+      "event_windows_us": [
+        [
+          915856005,
+          915956007
+        ],
+        [
+          915956007,
+          916056008
+        ]
+      ],
+      "events_path": "data/train/vWp9XNYQ9V/events.h5",
+      "frame_timestamps_us": [
+        6144400000,
+        6144500000
+      ],
+      "group_id": "vWp9XNYQ9V",
+      "public_track_id": "vWp9XNYQ9V_000001",
+      "rgb_member_paths": [
+        "rgb/000000915_000956007.png",
+        "rgb/000000916_000056008.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/vWp9XNYQ9V/rgb_shards/rgb-00000.tar",
+        "data/train/vWp9XNYQ9V/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "vWp9XNYQ9V_000001_6144500000",
+      "sequence_id": "vWp9XNYQ9V"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          0,
+          451,
+          264,
+          705
+        ],
+        [
+          0,
+          461,
+          265,
+          711
+        ]
+      ],
+      "event_windows_us": [
+        [
+          397950994,
+          398050995
+        ],
+        [
+          398050995,
+          398150997
+        ]
+      ],
+      "events_path": "data/train/wE9MZUmiJP/events.h5",
+      "frame_timestamps_us": [
+        8513200000,
+        8513300000
+      ],
+      "group_id": "wE9MZUmiJP",
+      "public_track_id": "wE9MZUmiJP_000006",
+      "rgb_member_paths": [
+        "rgb/000000398_000050995.png",
+        "rgb/000000398_000150997.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/wE9MZUmiJP/rgb_shards/rgb-00000.tar",
+        "data/train/wE9MZUmiJP/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "wE9MZUmiJP_000006_8513300000",
+      "sequence_id": "wE9MZUmiJP"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          680,
+          442,
+          1235,
+          719
+        ],
+        [
+          667,
+          446,
+          1195,
+          719
+        ]
+      ],
+      "event_windows_us": [
+        [
+          876930567,
+          877030568
+        ],
+        [
+          877030568,
+          877130570
+        ]
+      ],
+      "events_path": "data/train/xkiVthsGwf/events.h5",
+      "frame_timestamps_us": [
+        1296700000,
+        1296800000
+      ],
+      "group_id": "xkiVthsGwf",
+      "public_track_id": "xkiVthsGwf_000000",
+      "rgb_member_paths": [
+        "rgb/000000877_000030568.png",
+        "rgb/000000877_000130570.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/xkiVthsGwf/rgb_shards/rgb-00000.tar",
+        "data/train/xkiVthsGwf/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "xkiVthsGwf_000000_1296800000",
+      "sequence_id": "xkiVthsGwf"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          175,
+          519,
+          323,
+          629
+        ],
+        [
+          173,
+          522,
+          326,
+          632
+        ]
+      ],
+      "event_windows_us": [
+        [
+          295449100,
+          295549101
+        ],
+        [
+          295549101,
+          295649103
+        ]
+      ],
+      "events_path": "data/train/2Y46OkK3ff/events.h5",
+      "frame_timestamps_us": [
+        1584400000,
+        1584500000
+      ],
+      "group_id": "2Y46OkK3ff",
+      "public_track_id": "2Y46OkK3ff_000001",
+      "rgb_member_paths": [
+        "rgb/000000295_000549101.png",
+        "rgb/000000295_000649103.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/2Y46OkK3ff/rgb_shards/rgb-00000.tar",
+        "data/train/2Y46OkK3ff/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "2Y46OkK3ff_000001_1584500000",
+      "sequence_id": "2Y46OkK3ff"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          407,
+          495,
+          548,
+          613
+        ],
+        [
+          405,
+          491,
+          550,
+          612
+        ]
+      ],
+      "event_windows_us": [
+        [
+          278146918,
+          278246920
+        ],
+        [
+          278246920,
+          278346921
+        ]
+      ],
+      "events_path": "data/train/6WCDpro5rE/events.h5",
+      "frame_timestamps_us": [
+        5506700000,
+        5506800000
+      ],
+      "group_id": "6WCDpro5rE",
+      "public_track_id": "6WCDpro5rE_000003",
+      "rgb_member_paths": [
+        "rgb/000000278_000246920.png",
+        "rgb/000000278_000346921.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/6WCDpro5rE/rgb_shards/rgb-00000.tar",
+        "data/train/6WCDpro5rE/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "6WCDpro5rE_000003_5506800000",
+      "sequence_id": "6WCDpro5rE"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          368,
+          479,
+          561,
+          639
+        ],
+        [
+          361,
+          480,
+          557,
+          642
+        ]
+      ],
+      "event_windows_us": [
+        [
+          516752243,
+          516852245
+        ],
+        [
+          516852245,
+          516952246
+        ]
+      ],
+      "events_path": "data/train/8SdieOgbva/events.h5",
+      "frame_timestamps_us": [
+        17812900000,
+        17813000000
+      ],
+      "group_id": "8SdieOgbva",
+      "public_track_id": "8SdieOgbva_000003",
+      "rgb_member_paths": [
+        "rgb/000000516_000852245.png",
+        "rgb/000000516_000952246.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/8SdieOgbva/rgb_shards/rgb-00000.tar",
+        "data/train/8SdieOgbva/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "8SdieOgbva_000003_17813000000",
+      "sequence_id": "8SdieOgbva"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          0,
+          483,
+          269,
+          673
+        ],
+        [
+          24,
+          484,
+          276,
+          665
+        ]
+      ],
+      "event_windows_us": [
+        [
+          317743188,
+          317843189
+        ],
+        [
+          317843189,
+          317943191
+        ]
+      ],
+      "events_path": "data/train/8mNnrXjpVB/events.h5",
+      "frame_timestamps_us": [
+        1626700000,
+        1626800000
+      ],
+      "group_id": "8mNnrXjpVB",
+      "public_track_id": "8mNnrXjpVB_000000",
+      "rgb_member_paths": [
+        "rgb/000000317_000843189.png",
+        "rgb/000000317_000943191.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/8mNnrXjpVB/rgb_shards/rgb-00000.tar",
+        "data/train/8mNnrXjpVB/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "8mNnrXjpVB_000000_1626800000",
+      "sequence_id": "8mNnrXjpVB"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          339,
+          455,
+          700,
+          719
+        ],
+        [
+          341,
+          454,
+          708,
+          719
+        ]
+      ],
+      "event_windows_us": [
+        [
+          175798727,
+          175898728
+        ],
+        [
+          175898728,
+          175998730
+        ]
+      ],
+      "events_path": "data/train/9ITOs4twfk/events.h5",
+      "frame_timestamps_us": [
+        1684700000,
+        1684800000
+      ],
+      "group_id": "9ITOs4twfk",
+      "public_track_id": "9ITOs4twfk_000002",
+      "rgb_member_paths": [
+        "rgb/000000175_000898728.png",
+        "rgb/000000175_000998730.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/9ITOs4twfk/rgb_shards/rgb-00000.tar",
+        "data/train/9ITOs4twfk/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "9ITOs4twfk_000002_1684800000",
+      "sequence_id": "9ITOs4twfk"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          369,
+          488,
+          564,
+          648
+        ],
+        [
+          369,
+          495,
+          568,
+          658
+        ]
+      ],
+      "event_windows_us": [
+        [
+          374596223,
+          374696224
+        ],
+        [
+          374696224,
+          374796226
+        ]
+      ],
+      "events_path": "data/train/A1Nhv0KtmL/events.h5",
+      "frame_timestamps_us": [
+        6004500000,
+        6004600000
+      ],
+      "group_id": "A1Nhv0KtmL",
+      "public_track_id": "A1Nhv0KtmL_000003",
+      "rgb_member_paths": [
+        "rgb/000000374_000696224.png",
+        "rgb/000000374_000796226.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/A1Nhv0KtmL/rgb_shards/rgb-00000.tar",
+        "data/train/A1Nhv0KtmL/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "A1Nhv0KtmL_000003_6004600000",
+      "sequence_id": "A1Nhv0KtmL"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          962,
+          475,
+          1262,
+          637
+        ],
+        [
+          967,
+          477,
+          1271,
+          639
+        ]
+      ],
+      "event_windows_us": [
+        [
+          464905857,
+          465005859
+        ],
+        [
+          465005859,
+          465105860
+        ]
+      ],
+      "events_path": "data/train/ClXqVoZOFu/events.h5",
+      "frame_timestamps_us": [
+        3270400000,
+        3270500000
+      ],
+      "group_id": "ClXqVoZOFu",
+      "public_track_id": "ClXqVoZOFu_000000",
+      "rgb_member_paths": [
+        "rgb/000000465_000005859.png",
+        "rgb/000000465_000105860.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/ClXqVoZOFu/rgb_shards/rgb-00000.tar",
+        "data/train/ClXqVoZOFu/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "ClXqVoZOFu_000000_3270500000",
+      "sequence_id": "ClXqVoZOFu"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          347,
+          422,
+          519,
+          575
+        ],
+        [
+          331,
+          420,
+          510,
+          581
+        ]
+      ],
+      "event_windows_us": [
+        [
+          879596093,
+          879696095
+        ],
+        [
+          879696095,
+          879796096
+        ]
+      ],
+      "events_path": "data/train/DGqicHUGWb/events.h5",
+      "frame_timestamps_us": [
+        3094500000,
+        3094600000
+      ],
+      "group_id": "DGqicHUGWb",
+      "public_track_id": "DGqicHUGWb_000000",
+      "rgb_member_paths": [
+        "rgb/000000879_000696095.png",
+        "rgb/000000879_000796096.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/DGqicHUGWb/rgb_shards/rgb-00000.tar",
+        "data/train/DGqicHUGWb/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "DGqicHUGWb_000000_3094600000",
+      "sequence_id": "DGqicHUGWb"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          138,
+          530,
+          288,
+          649
+        ],
+        [
+          138,
+          537,
+          289,
+          661
+        ]
+      ],
+      "event_windows_us": [
+        [
+          293763072,
+          293863073
+        ],
+        [
+          293863073,
+          293963075
+        ]
+      ],
+      "events_path": "data/train/EllUE6bwVp/events.h5",
+      "frame_timestamps_us": [
+        5724700000,
+        5724800000
+      ],
+      "group_id": "EllUE6bwVp",
+      "public_track_id": "EllUE6bwVp_000000",
+      "rgb_member_paths": [
+        "rgb/000000293_000863073.png",
+        "rgb/000000293_000963075.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/EllUE6bwVp/rgb_shards/rgb-00000.tar",
+        "data/train/EllUE6bwVp/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "EllUE6bwVp_000000_5724800000",
+      "sequence_id": "EllUE6bwVp"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          736,
+          500,
+          846,
+          568
+        ],
+        [
+          737,
+          495,
+          846,
+          564
+        ]
+      ],
+      "event_windows_us": [
+        [
+          809717332,
+          809817334
+        ],
+        [
+          809817334,
+          809917335
+        ]
+      ],
+      "events_path": "data/train/EuFGqTcqIz/events.h5",
+      "frame_timestamps_us": [
+        3576300000,
+        3576400000
+      ],
+      "group_id": "EuFGqTcqIz",
+      "public_track_id": "EuFGqTcqIz_000001",
+      "rgb_member_paths": [
+        "rgb/000000809_000817334.png",
+        "rgb/000000809_000917335.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/EuFGqTcqIz/rgb_shards/rgb-00000.tar",
+        "data/train/EuFGqTcqIz/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "EuFGqTcqIz_000001_3576400000",
+      "sequence_id": "EuFGqTcqIz"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          428,
+          508,
+          529,
+          593
+        ],
+        [
+          431,
+          508,
+          533,
+          594
+        ]
+      ],
+      "event_windows_us": [
+        [
+          162501416,
+          162601418
+        ],
+        [
+          162601418,
+          162701419
+        ]
+      ],
+      "events_path": "data/train/GjMYZjmSQb/events.h5",
+      "frame_timestamps_us": [
+        2968000000,
+        2968100000
+      ],
+      "group_id": "GjMYZjmSQb",
+      "public_track_id": "GjMYZjmSQb_000000",
+      "rgb_member_paths": [
+        "rgb/000000162_000601418.png",
+        "rgb/000000162_000701419.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/GjMYZjmSQb/rgb_shards/rgb-00000.tar",
+        "data/train/GjMYZjmSQb/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "GjMYZjmSQb_000000_2968100000",
+      "sequence_id": "GjMYZjmSQb"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          707,
+          475,
+          1086,
+          709
+        ],
+        [
+          712,
+          473,
+          1105,
+          713
+        ]
+      ],
+      "event_windows_us": [
+        [
+          286780591,
+          286880592
+        ],
+        [
+          286880592,
+          286980594
+        ]
+      ],
+      "events_path": "data/train/LMHPShQkaU/events.h5",
+      "frame_timestamps_us": [
+        13679500000,
+        13679600000
+      ],
+      "group_id": "LMHPShQkaU",
+      "public_track_id": "LMHPShQkaU_000002",
+      "rgb_member_paths": [
+        "rgb/000000286_000880592.png",
+        "rgb/000000286_000980594.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/LMHPShQkaU/rgb_shards/rgb-00000.tar",
+        "data/train/LMHPShQkaU/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "LMHPShQkaU_000002_13679600000",
+      "sequence_id": "LMHPShQkaU"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          0,
+          513,
+          206,
+          651
+        ],
+        [
+          0,
+          512,
+          221,
+          646
+        ]
+      ],
+      "event_windows_us": [
+        [
+          854099891,
+          854199892
+        ],
+        [
+          854199892,
+          854299894
+        ]
+      ],
+      "events_path": "data/train/OBneIVg4Cw/events.h5",
+      "frame_timestamps_us": [
+        3049000000,
+        3049100000
+      ],
+      "group_id": "OBneIVg4Cw",
+      "public_track_id": "OBneIVg4Cw_000003",
+      "rgb_member_paths": [
+        "rgb/000000854_000199892.png",
+        "rgb/000000854_000299894.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/OBneIVg4Cw/rgb_shards/rgb-00000.tar",
+        "data/train/OBneIVg4Cw/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "OBneIVg4Cw_000003_3049100000",
+      "sequence_id": "OBneIVg4Cw"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          723,
+          468,
+          982,
+          629
+        ],
+        [
+          718,
+          471,
+          963,
+          628
+        ]
+      ],
+      "event_windows_us": [
+        [
+          642399912,
+          642499913
+        ],
+        [
+          642499913,
+          642599915
+        ]
+      ],
+      "events_path": "data/train/OYgB6RGWcq/events.h5",
+      "frame_timestamps_us": [
+        6272300000,
+        6272400000
+      ],
+      "group_id": "OYgB6RGWcq",
+      "public_track_id": "OYgB6RGWcq_000000",
+      "rgb_member_paths": [
+        "rgb/000000642_000499913.png",
+        "rgb/000000642_000599915.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/OYgB6RGWcq/rgb_shards/rgb-00000.tar",
+        "data/train/OYgB6RGWcq/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "OYgB6RGWcq_000000_6272400000",
+      "sequence_id": "OYgB6RGWcq"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          717,
+          450,
+          887,
+          603
+        ],
+        [
+          715,
+          445,
+          886,
+          601
+        ]
+      ],
+      "event_windows_us": [
+        [
+          587326076,
+          587426078
+        ],
+        [
+          587426078,
+          587526080
+        ]
+      ],
+      "events_path": "data/train/Po6ePjWYAz/events.h5",
+      "frame_timestamps_us": [
+        9854700000,
+        9854800000
+      ],
+      "group_id": "Po6ePjWYAz",
+      "public_track_id": "Po6ePjWYAz_000005",
+      "rgb_member_paths": [
+        "rgb/000000587_000426078.png",
+        "rgb/000000587_000526080.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/Po6ePjWYAz/rgb_shards/rgb-00000.tar",
+        "data/train/Po6ePjWYAz/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "Po6ePjWYAz_000005_9854800000",
+      "sequence_id": "Po6ePjWYAz"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          958,
+          487,
+          1162,
+          585
+        ],
+        [
+          924,
+          489,
+          1113,
+          582
+        ]
+      ],
+      "event_windows_us": [
+        [
+          49954200,
+          50054202
+        ],
+        [
+          50054202,
+          50154203
+        ]
+      ],
+      "events_path": "data/train/VLA3oBKFyX/events.h5",
+      "frame_timestamps_us": [
+        7475000000,
+        7475100000
+      ],
+      "group_id": "VLA3oBKFyX",
+      "public_track_id": "VLA3oBKFyX_000002",
+      "rgb_member_paths": [
+        "rgb/000000050_000054202.png",
+        "rgb/000000050_000154203.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/VLA3oBKFyX/rgb_shards/rgb-00000.tar",
+        "data/train/VLA3oBKFyX/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "VLA3oBKFyX_000002_7475100000",
+      "sequence_id": "VLA3oBKFyX"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          842,
+          433,
+          1279,
+          719
+        ],
+        [
+          835,
+          433,
+          1279,
+          719
+        ]
+      ],
+      "event_windows_us": [
+        [
+          591267503,
+          591367504
+        ],
+        [
+          591367504,
+          591467506
+        ]
+      ],
+      "events_path": "data/train/eX8t2nGd6O/events.h5",
+      "frame_timestamps_us": [
+        6022200000,
+        6022300000
+      ],
+      "group_id": "eX8t2nGd6O",
+      "public_track_id": "eX8t2nGd6O_000000",
+      "rgb_member_paths": [
+        "rgb/000000591_000367504.png",
+        "rgb/000000591_000467506.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/eX8t2nGd6O/rgb_shards/rgb-00000.tar",
+        "data/train/eX8t2nGd6O/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "eX8t2nGd6O_000000_6022300000",
+      "sequence_id": "eX8t2nGd6O"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          646,
+          450,
+          851,
+          665
+        ],
+        [
+          657,
+          443,
+          866,
+          665
+        ]
+      ],
+      "event_windows_us": [
+        [
+          494335791,
+          494435793
+        ],
+        [
+          494435793,
+          494535794
+        ]
+      ],
+      "events_path": "data/train/nRcwUlHyAd/events.h5",
+      "frame_timestamps_us": [
+        618200000,
+        618300000
+      ],
+      "group_id": "nRcwUlHyAd",
+      "public_track_id": "nRcwUlHyAd_000001",
+      "rgb_member_paths": [
+        "rgb/000000494_000435793.png",
+        "rgb/000000494_000535794.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/nRcwUlHyAd/rgb_shards/rgb-00000.tar",
+        "data/train/nRcwUlHyAd/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "nRcwUlHyAd_000001_618300000",
+      "sequence_id": "nRcwUlHyAd"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          215,
+          468,
+          493,
+          719
+        ],
+        [
+          210,
+          463,
+          493,
+          719
+        ]
+      ],
+      "event_windows_us": [
+        [
+          527572975,
+          527672976
+        ],
+        [
+          527672976,
+          527772978
+        ]
+      ],
+      "events_path": "data/train/pakWgyPNTL/events.h5",
+      "frame_timestamps_us": [
+        18712900000,
+        18713000000
+      ],
+      "group_id": "pakWgyPNTL",
+      "public_track_id": "pakWgyPNTL_000001",
+      "rgb_member_paths": [
+        "rgb/000000527_000672976.png",
+        "rgb/000000527_000772978.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/pakWgyPNTL/rgb_shards/rgb-00000.tar",
+        "data/train/pakWgyPNTL/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "pakWgyPNTL_000001_18713000000",
+      "sequence_id": "pakWgyPNTL"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          409,
+          498,
+          589,
+          656
+        ],
+        [
+          411,
+          493,
+          598,
+          657
+        ]
+      ],
+      "event_windows_us": [
+        [
+          494798600,
+          494898601
+        ],
+        [
+          494898601,
+          494998602
+        ]
+      ],
+      "events_path": "data/train/q2k6O0X6JY/events.h5",
+      "frame_timestamps_us": [
+        2413800000,
+        2413900000
+      ],
+      "group_id": "q2k6O0X6JY",
+      "public_track_id": "q2k6O0X6JY_000001",
+      "rgb_member_paths": [
+        "rgb/000000494_000898601.png",
+        "rgb/000000494_000998602.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/q2k6O0X6JY/rgb_shards/rgb-00000.tar",
+        "data/train/q2k6O0X6JY/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "q2k6O0X6JY_000001_2413900000",
+      "sequence_id": "q2k6O0X6JY"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          67,
+          461,
+          235,
+          613
+        ],
+        [
+          58,
+          460,
+          233,
+          615
+        ]
+      ],
+      "event_windows_us": [
+        [
+          637080104,
+          637180105
+        ],
+        [
+          637180105,
+          637280107
+        ]
+      ],
+      "events_path": "data/train/qoohcdtLDH/events.h5",
+      "frame_timestamps_us": [
+        5377800000,
+        5377900000
+      ],
+      "group_id": "qoohcdtLDH",
+      "public_track_id": "qoohcdtLDH_000002",
+      "rgb_member_paths": [
+        "rgb/000000637_000180105.png",
+        "rgb/000000637_000280107.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/qoohcdtLDH/rgb_shards/rgb-00000.tar",
+        "data/train/qoohcdtLDH/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "qoohcdtLDH_000002_5377900000",
+      "sequence_id": "qoohcdtLDH"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          0,
+          517,
+          223,
+          681
+        ],
+        [
+          0,
+          514,
+          232,
+          676
+        ]
+      ],
+      "event_windows_us": [
+        [
+          915956007,
+          916056008
+        ],
+        [
+          916056008,
+          916156010
+        ]
+      ],
+      "events_path": "data/train/vWp9XNYQ9V/events.h5",
+      "frame_timestamps_us": [
+        6144500000,
+        6144600000
+      ],
+      "group_id": "vWp9XNYQ9V",
+      "public_track_id": "vWp9XNYQ9V_000001",
+      "rgb_member_paths": [
+        "rgb/000000916_000056008.png",
+        "rgb/000000916_000156010.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/vWp9XNYQ9V/rgb_shards/rgb-00000.tar",
+        "data/train/vWp9XNYQ9V/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "vWp9XNYQ9V_000001_6144600000",
+      "sequence_id": "vWp9XNYQ9V"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          0,
+          461,
+          265,
+          711
+        ],
+        [
+          0,
+          462,
+          274,
+          710
+        ]
+      ],
+      "event_windows_us": [
+        [
+          398050995,
+          398150997
+        ],
+        [
+          398150997,
+          398250998
+        ]
+      ],
+      "events_path": "data/train/wE9MZUmiJP/events.h5",
+      "frame_timestamps_us": [
+        8513300000,
+        8513400000
+      ],
+      "group_id": "wE9MZUmiJP",
+      "public_track_id": "wE9MZUmiJP_000006",
+      "rgb_member_paths": [
+        "rgb/000000398_000150997.png",
+        "rgb/000000398_000250998.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/wE9MZUmiJP/rgb_shards/rgb-00000.tar",
+        "data/train/wE9MZUmiJP/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "wE9MZUmiJP_000006_8513400000",
+      "sequence_id": "wE9MZUmiJP"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          667,
+          446,
+          1195,
+          719
+        ],
+        [
+          656,
+          449,
+          1144,
+          719
+        ]
+      ],
+      "event_windows_us": [
+        [
+          877030568,
+          877130570
+        ],
+        [
+          877130570,
+          877230571
+        ]
+      ],
+      "events_path": "data/train/xkiVthsGwf/events.h5",
+      "frame_timestamps_us": [
+        1296800000,
+        1296900000
+      ],
+      "group_id": "xkiVthsGwf",
+      "public_track_id": "xkiVthsGwf_000000",
+      "rgb_member_paths": [
+        "rgb/000000877_000130570.png",
+        "rgb/000000877_000230571.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/xkiVthsGwf/rgb_shards/rgb-00000.tar",
+        "data/train/xkiVthsGwf/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "xkiVthsGwf_000000_1296900000",
+      "sequence_id": "xkiVthsGwf"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          173,
+          522,
+          326,
+          632
+        ],
+        [
+          177,
+          528,
+          328,
+          638
+        ]
+      ],
+      "event_windows_us": [
+        [
+          295549101,
+          295649103
+        ],
+        [
+          295649103,
+          295749104
+        ]
+      ],
+      "events_path": "data/train/2Y46OkK3ff/events.h5",
+      "frame_timestamps_us": [
+        1584500000,
+        1584600000
+      ],
+      "group_id": "2Y46OkK3ff",
+      "public_track_id": "2Y46OkK3ff_000001",
+      "rgb_member_paths": [
+        "rgb/000000295_000649103.png",
+        "rgb/000000295_000749104.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/2Y46OkK3ff/rgb_shards/rgb-00000.tar",
+        "data/train/2Y46OkK3ff/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "2Y46OkK3ff_000001_1584600000",
+      "sequence_id": "2Y46OkK3ff"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          405,
+          491,
+          550,
+          612
+        ],
+        [
+          401,
+          486,
+          552,
+          614
+        ]
+      ],
+      "event_windows_us": [
+        [
+          278246920,
+          278346921
+        ],
+        [
+          278346921,
+          278446922
+        ]
+      ],
+      "events_path": "data/train/6WCDpro5rE/events.h5",
+      "frame_timestamps_us": [
+        5506800000,
+        5506900000
+      ],
+      "group_id": "6WCDpro5rE",
+      "public_track_id": "6WCDpro5rE_000003",
+      "rgb_member_paths": [
+        "rgb/000000278_000346921.png",
+        "rgb/000000278_000446922.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/6WCDpro5rE/rgb_shards/rgb-00000.tar",
+        "data/train/6WCDpro5rE/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "6WCDpro5rE_000003_5506900000",
+      "sequence_id": "6WCDpro5rE"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          361,
+          480,
+          557,
+          642
+        ],
+        [
+          357,
+          478,
+          554,
+          643
+        ]
+      ],
+      "event_windows_us": [
+        [
+          516852245,
+          516952246
+        ],
+        [
+          516952246,
+          517052248
+        ]
+      ],
+      "events_path": "data/train/8SdieOgbva/events.h5",
+      "frame_timestamps_us": [
+        17813000000,
+        17813100000
+      ],
+      "group_id": "8SdieOgbva",
+      "public_track_id": "8SdieOgbva_000003",
+      "rgb_member_paths": [
+        "rgb/000000516_000952246.png",
+        "rgb/000000517_000052248.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/8SdieOgbva/rgb_shards/rgb-00000.tar",
+        "data/train/8SdieOgbva/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "8SdieOgbva_000003_17813100000",
+      "sequence_id": "8SdieOgbva"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          24,
+          484,
+          276,
+          665
+        ],
+        [
+          67,
+          493,
+          293,
+          653
+        ]
+      ],
+      "event_windows_us": [
+        [
+          317843189,
+          317943191
+        ],
+        [
+          317943191,
+          318043192
+        ]
+      ],
+      "events_path": "data/train/8mNnrXjpVB/events.h5",
+      "frame_timestamps_us": [
+        1626800000,
+        1626900000
+      ],
+      "group_id": "8mNnrXjpVB",
+      "public_track_id": "8mNnrXjpVB_000000",
+      "rgb_member_paths": [
+        "rgb/000000317_000943191.png",
+        "rgb/000000318_000043192.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/8mNnrXjpVB/rgb_shards/rgb-00000.tar",
+        "data/train/8mNnrXjpVB/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "8mNnrXjpVB_000000_1626900000",
+      "sequence_id": "8mNnrXjpVB"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          341,
+          454,
+          708,
+          719
+        ],
+        [
+          346,
+          455,
+          711,
+          719
+        ]
+      ],
+      "event_windows_us": [
+        [
+          175898728,
+          175998730
+        ],
+        [
+          175998730,
+          176098731
+        ]
+      ],
+      "events_path": "data/train/9ITOs4twfk/events.h5",
+      "frame_timestamps_us": [
+        1684800000,
+        1684900000
+      ],
+      "group_id": "9ITOs4twfk",
+      "public_track_id": "9ITOs4twfk_000002",
+      "rgb_member_paths": [
+        "rgb/000000175_000998730.png",
+        "rgb/000000176_000098731.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/9ITOs4twfk/rgb_shards/rgb-00000.tar",
+        "data/train/9ITOs4twfk/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "9ITOs4twfk_000002_1684900000",
+      "sequence_id": "9ITOs4twfk"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          369,
+          495,
+          568,
+          658
+        ],
+        [
+          367,
+          493,
+          571,
+          659
+        ]
+      ],
+      "event_windows_us": [
+        [
+          374696224,
+          374796226
+        ],
+        [
+          374796226,
+          374896227
+        ]
+      ],
+      "events_path": "data/train/A1Nhv0KtmL/events.h5",
+      "frame_timestamps_us": [
+        6004600000,
+        6004700000
+      ],
+      "group_id": "A1Nhv0KtmL",
+      "public_track_id": "A1Nhv0KtmL_000003",
+      "rgb_member_paths": [
+        "rgb/000000374_000796226.png",
+        "rgb/000000374_000896227.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/A1Nhv0KtmL/rgb_shards/rgb-00000.tar",
+        "data/train/A1Nhv0KtmL/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "A1Nhv0KtmL_000003_6004700000",
+      "sequence_id": "A1Nhv0KtmL"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          967,
+          477,
+          1271,
+          639
+        ],
+        [
+          972,
+          475,
+          1279,
+          641
+        ]
+      ],
+      "event_windows_us": [
+        [
+          465005859,
+          465105860
+        ],
+        [
+          465105860,
+          465205862
+        ]
+      ],
+      "events_path": "data/train/ClXqVoZOFu/events.h5",
+      "frame_timestamps_us": [
+        3270500000,
+        3270600000
+      ],
+      "group_id": "ClXqVoZOFu",
+      "public_track_id": "ClXqVoZOFu_000000",
+      "rgb_member_paths": [
+        "rgb/000000465_000105860.png",
+        "rgb/000000465_000205862.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/ClXqVoZOFu/rgb_shards/rgb-00000.tar",
+        "data/train/ClXqVoZOFu/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "ClXqVoZOFu_000000_3270600000",
+      "sequence_id": "ClXqVoZOFu"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          331,
+          420,
+          510,
+          581
+        ],
+        [
+          314,
+          421,
+          500,
+          587
+        ]
+      ],
+      "event_windows_us": [
+        [
+          879696095,
+          879796096
+        ],
+        [
+          879796096,
+          879896098
+        ]
+      ],
+      "events_path": "data/train/DGqicHUGWb/events.h5",
+      "frame_timestamps_us": [
+        3094600000,
+        3094700000
+      ],
+      "group_id": "DGqicHUGWb",
+      "public_track_id": "DGqicHUGWb_000000",
+      "rgb_member_paths": [
+        "rgb/000000879_000796096.png",
+        "rgb/000000879_000896098.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/DGqicHUGWb/rgb_shards/rgb-00000.tar",
+        "data/train/DGqicHUGWb/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "DGqicHUGWb_000000_3094700000",
+      "sequence_id": "DGqicHUGWb"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          138,
+          537,
+          289,
+          661
+        ],
+        [
+          137,
+          520,
+          287,
+          644
+        ]
+      ],
+      "event_windows_us": [
+        [
+          293863073,
+          293963075
+        ],
+        [
+          293963075,
+          294063076
+        ]
+      ],
+      "events_path": "data/train/EllUE6bwVp/events.h5",
+      "frame_timestamps_us": [
+        5724800000,
+        5724900000
+      ],
+      "group_id": "EllUE6bwVp",
+      "public_track_id": "EllUE6bwVp_000000",
+      "rgb_member_paths": [
+        "rgb/000000293_000963075.png",
+        "rgb/000000294_000063076.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/EllUE6bwVp/rgb_shards/rgb-00000.tar",
+        "data/train/EllUE6bwVp/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "EllUE6bwVp_000000_5724900000",
+      "sequence_id": "EllUE6bwVp"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          737,
+          495,
+          846,
+          564
+        ],
+        [
+          732,
+          493,
+          843,
+          563
+        ]
+      ],
+      "event_windows_us": [
+        [
+          809817334,
+          809917335
+        ],
+        [
+          809917335,
+          810017337
+        ]
+      ],
+      "events_path": "data/train/EuFGqTcqIz/events.h5",
+      "frame_timestamps_us": [
+        3576400000,
+        3576500000
+      ],
+      "group_id": "EuFGqTcqIz",
+      "public_track_id": "EuFGqTcqIz_000001",
+      "rgb_member_paths": [
+        "rgb/000000809_000917335.png",
+        "rgb/000000810_000017337.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/EuFGqTcqIz/rgb_shards/rgb-00000.tar",
+        "data/train/EuFGqTcqIz/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "EuFGqTcqIz_000001_3576500000",
+      "sequence_id": "EuFGqTcqIz"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          431,
+          508,
+          533,
+          594
+        ],
+        [
+          432,
+          510,
+          536,
+          597
+        ]
+      ],
+      "event_windows_us": [
+        [
+          162601418,
+          162701419
+        ],
+        [
+          162701419,
+          162801421
+        ]
+      ],
+      "events_path": "data/train/GjMYZjmSQb/events.h5",
+      "frame_timestamps_us": [
+        2968100000,
+        2968200000
+      ],
+      "group_id": "GjMYZjmSQb",
+      "public_track_id": "GjMYZjmSQb_000000",
+      "rgb_member_paths": [
+        "rgb/000000162_000701419.png",
+        "rgb/000000162_000801421.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/GjMYZjmSQb/rgb_shards/rgb-00000.tar",
+        "data/train/GjMYZjmSQb/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "GjMYZjmSQb_000000_2968200000",
+      "sequence_id": "GjMYZjmSQb"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          712,
+          473,
+          1105,
+          713
+        ],
+        [
+          716,
+          472,
+          1119,
+          719
+        ]
+      ],
+      "event_windows_us": [
+        [
+          286880592,
+          286980594
+        ],
+        [
+          286980594,
+          287080595
+        ]
+      ],
+      "events_path": "data/train/LMHPShQkaU/events.h5",
+      "frame_timestamps_us": [
+        13679600000,
+        13679700000
+      ],
+      "group_id": "LMHPShQkaU",
+      "public_track_id": "LMHPShQkaU_000002",
+      "rgb_member_paths": [
+        "rgb/000000286_000980594.png",
+        "rgb/000000287_000080595.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/LMHPShQkaU/rgb_shards/rgb-00000.tar",
+        "data/train/LMHPShQkaU/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "LMHPShQkaU_000002_13679700000",
+      "sequence_id": "LMHPShQkaU"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          0,
+          512,
+          221,
+          646
+        ],
+        [
+          0,
+          517,
+          224,
+          649
+        ]
+      ],
+      "event_windows_us": [
+        [
+          854199892,
+          854299894
+        ],
+        [
+          854299894,
+          854399895
+        ]
+      ],
+      "events_path": "data/train/OBneIVg4Cw/events.h5",
+      "frame_timestamps_us": [
+        3049100000,
+        3049200000
+      ],
+      "group_id": "OBneIVg4Cw",
+      "public_track_id": "OBneIVg4Cw_000003",
+      "rgb_member_paths": [
+        "rgb/000000854_000299894.png",
+        "rgb/000000854_000399895.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/OBneIVg4Cw/rgb_shards/rgb-00000.tar",
+        "data/train/OBneIVg4Cw/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "OBneIVg4Cw_000003_3049200000",
+      "sequence_id": "OBneIVg4Cw"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          718,
+          471,
+          963,
+          628
+        ],
+        [
+          718,
+          469,
+          959,
+          626
+        ]
+      ],
+      "event_windows_us": [
+        [
+          642499913,
+          642599915
+        ],
+        [
+          642599915,
+          642699916
+        ]
+      ],
+      "events_path": "data/train/OYgB6RGWcq/events.h5",
+      "frame_timestamps_us": [
+        6272400000,
+        6272500000
+      ],
+      "group_id": "OYgB6RGWcq",
+      "public_track_id": "OYgB6RGWcq_000000",
+      "rgb_member_paths": [
+        "rgb/000000642_000599915.png",
+        "rgb/000000642_000699916.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/OYgB6RGWcq/rgb_shards/rgb-00000.tar",
+        "data/train/OYgB6RGWcq/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "OYgB6RGWcq_000000_6272500000",
+      "sequence_id": "OYgB6RGWcq"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          715,
+          445,
+          886,
+          601
+        ],
+        [
+          713,
+          439,
+          887,
+          597
+        ]
+      ],
+      "event_windows_us": [
+        [
+          587426078,
+          587526080
+        ],
+        [
+          587526080,
+          587626081
+        ]
+      ],
+      "events_path": "data/train/Po6ePjWYAz/events.h5",
+      "frame_timestamps_us": [
+        9854800000,
+        9854900000
+      ],
+      "group_id": "Po6ePjWYAz",
+      "public_track_id": "Po6ePjWYAz_000005",
+      "rgb_member_paths": [
+        "rgb/000000587_000526080.png",
+        "rgb/000000587_000626081.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/Po6ePjWYAz/rgb_shards/rgb-00000.tar",
+        "data/train/Po6ePjWYAz/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "Po6ePjWYAz_000005_9854900000",
+      "sequence_id": "Po6ePjWYAz"
+    },
+    {
+      "boxes_xyxy": [
+        [
+          924,
+          489,
+          1113,
+          582
+        ],
+        [
+          895,
+          492,
+          1064,
+          577
+        ]
+      ],
+      "event_windows_us": [
+        [
+          50054202,
+          50154203
+        ],
+        [
+          50154203,
+          50254204
+        ]
+      ],
+      "events_path": "data/train/VLA3oBKFyX/events.h5",
+      "frame_timestamps_us": [
+        7475100000,
+        7475200000
+      ],
+      "group_id": "VLA3oBKFyX",
+      "public_track_id": "VLA3oBKFyX_000002",
+      "rgb_member_paths": [
+        "rgb/000000050_000154203.png",
+        "rgb/000000050_000254204.png"
+      ],
+      "rgb_shard_paths": [
+        "data/train/VLA3oBKFyX/rgb_shards/rgb-00000.tar",
+        "data/train/VLA3oBKFyX/rgb_shards/rgb-00000.tar"
+      ],
+      "sample_token": "VLA3oBKFyX_000002_7475200000",
+      "sequence_id": "VLA3oBKFyX"
+    }
+  ],
+  "requires_no_other_project_compute": true,
+  "routes": {
+    "LOCAL": "garl_parity._local_sensor -> same full native model",
+    "UPSTREAM": "garl_parity._reference_sensor -> full native model"
+  },
+  "schema": "v18_garl_paired_route_cost_v1",
+  "selection": "64 P queries, sorted group/token round robin; no labels or availability filtering",
+  "torch_threads": 1,
+  "warm_scope": "Resident model, per-query reader pools reopened, no sensor/prediction cache"
+}

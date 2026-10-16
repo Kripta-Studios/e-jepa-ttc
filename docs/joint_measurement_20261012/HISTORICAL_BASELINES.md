@@ -49,6 +49,10 @@ dos variantes nuevas de Garl medidas aquí. Tampoco completa el coste sensorial
 de fusión V18, que sigue sin admisión por su discrepancia numérica documentada en
 [FUSION_COST_DIAGNOSTIC.md](FUSION_COST_DIAGNOSTIC.md).
 
+Se ha preparado un [medidor emparejado UPSTREAM/LOCAL](GARL_ROUTE_COST.md), con
+64 consultas P fijadas antes de medir. Su ejecución espera a que termine B1;
+el registro y las pruebas del medidor no se presentan como costes ya medidos.
+
 ## Comparación oficial
 
 Las predicciones locales test12 de V16 permanecen congeladas y sin puntuación
