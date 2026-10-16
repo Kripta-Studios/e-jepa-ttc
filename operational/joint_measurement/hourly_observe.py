@@ -18,6 +18,16 @@ from operational.train40_system.hourly_supervisor import next_hour
 ROOT = Path(__file__).resolve().parents[2]
 RUN = ROOT / "artifacts/joint_measurement_20261012"
 JOBS = {
+    "adaptation_depth": (
+        "adaptive/A1_adaptation_depth",
+        "adaptation_depth",
+        "A1_ENDPOINTS_COMPLETE",
+    ),
+    "fusion_cost": (
+        "fusion/cost/raw_e2e_historical_shape_v1",
+        "fusion_cost_historical_shape",
+        "COMPLETE",
+    ),
     "rgb": ("rgb", "rgb_run", "RGB_READY_FOR_INTERPRETATION"),
     "geometry": ("adaptive/C1_geometry", "geometry_run", "C1_READY_FOR_INTERPRETATION"),
     "fusion_replication": (
@@ -48,6 +58,7 @@ JOBS = {
     ),
 }
 STATE_FILES = {
+    "fusion_cost": "COMPLETE.json",
     "fusion_replication_pipeline": "PIPELINE_STATE.json",
     "capacity_evaluation": "evidence/COMPLETE.json",
     "correspondence_evaluation": "evidence/COMPLETE.json",
@@ -100,6 +111,9 @@ def observe(pid: int, created: float, previous: dict | None, *, job: str = "rgb"
         "evaluation_complete": evaluation,
         "prediction_fragments": fragments,
     }
+    if job == "fusion_cost":
+        signature["cost_rows"] = len(list(directory.glob("row_*.json")))
+        signature["parity_failure"] = (directory / "PARITY_FAILURE.json").exists()
     if job == "fusion_replication_pipeline":
         signature["feature_fragments"] = len(list((directory / "inputs").glob("**/chunk_*.npz")))
         signature["feature_complete"] = {
@@ -113,6 +127,8 @@ def observe(pid: int, created: float, previous: dict | None, *, job: str = "rgb"
         status = terminal if runner.get("status") == terminal else "ACTION_REQUIRED_DRIVER_NOT_LIVE"
     elif previous and signature == previous["progress_signature"]:
         status = "REVIEW_NO_PROGRESS_SINCE_PREVIOUS_HOUR"
+    if job == "fusion_cost" and signature["parity_failure"]:
+        status = "ACTION_REQUIRED_PARITY_FAILURE"
     ledger = read_optional(RUN / "GPU_BUDGET.json")
     gpu = subprocess.run(
         [

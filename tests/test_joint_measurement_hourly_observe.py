@@ -48,7 +48,9 @@ def test_reused_pid_is_not_a_live_driver(environment):
     assert result["training_actions"] == []
 
 
-@pytest.mark.parametrize("job", ["rgb", "geometry", "capacity", "capacity_evaluation"])
+@pytest.mark.parametrize(
+    "job", ["rgb", "geometry", "capacity", "capacity_evaluation", "adaptation_depth", "fusion_cost"]
+)
 def test_terminal_receipt_never_terminates_a_live_process(environment, job):
     relative, _, terminal = observer.JOBS[job]
     atomic_json(
@@ -67,6 +69,19 @@ def test_default_rgb_and_unchanged_hour_are_preserved(environment):
     second = observer.observe(7, 100, first)
     assert second["status"] == "REVIEW_NO_PROGRESS_SINCE_PREVIOUS_HOUR"
     assert second["training_actions"] == []
+
+
+def test_cost_rows_and_parity_failure_are_visible_without_restarting(environment):
+    directory = environment / "fusion/cost/raw_e2e_historical_shape_v1"
+    first = observer.observe(7, 100, None, job="fusion_cost")
+    atomic_json(directory / "row_000.json", {"index": 42})
+    second = observer.observe(7, 100, first, job="fusion_cost")
+    assert second["status"] == "RUNNING"
+    assert second["progress_signature"]["cost_rows"] == 1
+    atomic_json(directory / "PARITY_FAILURE.json", {"row": 0})
+    failure = observer.observe(7, 100, second, job="fusion_cost")
+    assert failure["status"] == "ACTION_REQUIRED_PARITY_FAILURE"
+    assert failure["training_actions"] == []
 
 
 def test_pipeline_feature_progress_and_terminal_are_distinct_from_producer(environment):
