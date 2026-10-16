@@ -112,7 +112,7 @@ python -B -m operational.joint_measurement.correspondence_train --register-only
 python -B -m operational.joint_measurement.correspondence_evaluate --register-only
 python -B -m operational.joint_measurement.correspondence_run --prototype-cpu
 python -B -m operational.joint_measurement.correspondence_run --register-only
-python -u -B -m operational.joint_measurement.correspondence_run
+python -u -B -m operational.joint_measurement.correspondence_isolated
 python -u -B -m operational.joint_measurement.correspondence_evaluate
 ```
 
@@ -131,3 +131,19 @@ de warp, pérdida, gradientes, RNG y pesos. Se preserva también el primer inten
 de esta prueba, que comparaba draws consecutivos de dropout; la prueba corregida
 usa el mismo estado RNG. Ambos intentos CPU hicieron cero updates. La QA CUDA
 reanuda sus diez updates eager ya hechos y conserva el máximo conjunto de90.
+
+La transición a la etapa2 invalidó una captura tras completar ambos endpoints
+de etapa1. Los 4.000 updates quedaron durables y se conservaron los logs. El
+coordinador `correspondence_isolated` ejecuta el mismo segmento en un proceso CUDA
+nuevo en cada frontera durable, como en las réplicas anteriores. No cambia
+aritmética, batch, precisión, sampler, optimizador ni límites; restaura el estado
+completo y sólo reconstruye la caché sensorial sin pérdida. La QA original de
+90 updates sigue vinculada. Un hijo fallido detiene el coordinador explícitamente.
+
+Se conserva también una interrupción anterior de contabilidad en el update1.200:
+una extracción de prueba dentro del árbol de la campaña duplicó temporalmente
+journals históricos en el contador recursivo. La extracción se trasladó fuera
+de ese árbol y sus snapshots se nombraron sin `UPDATE_JOURNAL.json`; no se
+editaron contadores ni se ampliaron límites. La reanudación conservó el
+checkpoint completo1.200, sin pérdida de updates. Las extracciones de entrega
+deben permanecer fuera de `artifacts/joint_measurement_20261012`.
