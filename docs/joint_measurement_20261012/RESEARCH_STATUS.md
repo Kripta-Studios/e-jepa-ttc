@@ -1,6 +1,6 @@
 # V18 JOINT-MEASUREMENT
 
-Estado: RESEARCH_ONGOING / D1_CAPACITY_TRAINING;
+Estado: RESEARCH_ONGOING / B1_CORRESPONDENCE_TRAINING;
 fase primaria NO_SYSTEM_PROMOTION; RGB NO_CANDIDATE_RGB_PAIR;
 C1 independiente NO_CANDIDATE_C1; fusión seed7 sin promoción de sistema.
 Los cuatro entrenamientos primarios están completos en 12.000 updates cada uno.
@@ -29,18 +29,22 @@ Actualización del 16 de octubre de 2026, reanudación solicitada por el usuario
   Persiste el fallo del gate crucial del 10% en cada semilla y en la media.
   [FUSION_REPLICATION_RESULTS.md](FUSION_REPLICATION_RESULTS.md) conserva las
   tres semillas, intervalos, comparación V16 y todos los controles.
-- D1 está registrado antes de entrenar: predictor espacial y MLP con anchura
-  duplicada, CNN nativa entrenable y control PAIR-CORR-S7 reutilizado. La prueba
-  CPU pasa; la QA CUDA también pasa con 30 updates técnicos, igualdad exacta de
-  reanudación y paridad numérica eager/captura. El fit de 12.000 updates está
-  en ejecución desde las 04:27; después queda su evidencia P/H. La hipótesis no
-  presupone que la capacidad explique los errores. Véase [D1_EXECUTION.md](D1_EXECUTION.md).
+- D1 completó 12.000 updates y su evaluación P/H: **NO_CANDIDATE_D1**.
+  Duplicar la anchura del predictor empeora el agregado H de 103,510 a 115,120
+  y el error de signo de 13,804% a 20,058%. También empeora P; no aparece la
+  señal de capacidad buscada a este presupuesto. No se abrió V para rescatarlo.
+  La reanudación CUDA conserva el estado completo y cuenta 30 técnicos.
+  [D1_RESULTS.md](D1_RESULTS.md) conserva métricas, costes y limitaciones.
 - B1 queda registrado durante D1, antes de conocer su resultado: dos brazos
   desde el mismo C1, con 2.000 updates de encoder y 10.000 posteriores de TTC
   completo. Contrasta correspondencia conocida sobre texturas P con igual
   número de updates TTC. Tres pruebas CPU y once comprobaciones con el padre
-  nativo pasan, con cero updates y CUDA sin inicializar. La QA CUDA de 90
-  técnicos queda pendiente de liberar la GPU. No hay todavía resultados B1.
+  nativo pasan, con cero updates y CUDA sin inicializar. La QA CUDA completó
+  90 técnicos: reanudación exacta de los nueve estados contrastados en los
+  tres regímenes, y paridad numérica eager/captura. Un primer fallo de captura
+  por asignación CPU/CUDA se conserva; preasignar matrices fijas lo corrige
+  sin cambiar la receta ni reiniciar updates. B1 entrena desde las 07:11.
+  No hay todavía métricas científicas B1.
   [B1_EXECUTION.md](B1_EXECUTION.md) fija warps, pérdidas, etapas y criterios.
 - Sigue pendiente validar el coste sensorial completo de la nueva fusión. La
   primera medición se detuvo por admisión de fuentes históricas; una continuación
@@ -48,7 +52,10 @@ Actualización del 16 de octubre de 2026, reanudación solicitada por el usuario
   llegó a ejecutar las rutas, pero falló la paridad estricta contra la cohorte
   almacenada. Se conserva el fallo (hasta 0,00117 s en la primera consulta) y no
   se presenta como coste validado. El diagnóstico separa datos, batch y dispositivo;
-  no modifica pesos, métricas ni tolerancias. Los exports de cabeza empiezan en
+  no modifica pesos, métricas ni tolerancias. El contraste de backend histórico
+  reduce diferencias, pero una consulta todavía incumple la tolerancia original.
+  [FUSION_COST_DIAGNOSTIC.md](FUSION_COST_DIAGNOSTIC.md) documenta el límite.
+  Los exports de cabeza empiezan en
   features, y los C1 en tensores P2; ninguno mide por sí solo el pipeline completo.
 
 Registro de los pasos previos de esta reanudación:

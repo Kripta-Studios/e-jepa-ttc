@@ -1,0 +1,10 @@
+{
+  "actual_cost_registration_sha256": "be5709e0813d2ec7fe59f90518cf713fe83719f275b053085c903bda7815bc55",
+  "cause": "Inherited display label from rgb_cost.combine_decision; actual inputs are event P2",
+  "correct_label": "prepared event tensor resident on GPU through signed TTC output",
+  "numerical_values_changed": false,
+  "original_evidence_preserved": true,
+  "original_label": "prepared RGB tensor resident on GPU through signed TTC output",
+  "selection_sha256": "ef784b183ea9a23c2f8821a7ad7f34a83b0b8ad8cf304d6781ba75c2578e610e",
+  "utc": "2026-10-16T05:00:42.584282+00:00"
+}

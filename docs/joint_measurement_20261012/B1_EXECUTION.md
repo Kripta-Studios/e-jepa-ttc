@@ -110,7 +110,9 @@ Desde el worktree V18 con `PYTHONPATH=src;.` y el entorno existente:
 python -B -m operational.joint_measurement.correspondence_train --prototype-cpu
 python -B -m operational.joint_measurement.correspondence_train --register-only
 python -B -m operational.joint_measurement.correspondence_evaluate --register-only
-python -u -B -m operational.joint_measurement.correspondence_train
+python -B -m operational.joint_measurement.correspondence_run --prototype-cpu
+python -B -m operational.joint_measurement.correspondence_run --register-only
+python -u -B -m operational.joint_measurement.correspondence_run
 python -u -B -m operational.joint_measurement.correspondence_evaluate
 ```
 
@@ -119,3 +121,13 @@ comando de entrenamiento reanuda la primera etapa pendiente; no crea otra copia
 ni reinicia las etapas completas. Registro, contabilidad, pruebas y resultados
 quedan en `artifacts/joint_measurement_20261012/adaptive/B1_correspondence` y
 `artifacts/joint_measurement_20261012/qa/correspondence_B1`.
+
+La primera captura CUDA se detuvo antes del update capturado: la matriz afín
+constante se creaba mediante una copia CPU→GPU dentro del graph. Se conservan
+el fallo y sus diez updates eager técnicos completos. El runtime
+`correspondence_run` preasigna esa misma matriz como buffer antes de capturar;
+no cambia el objetivo ni los valores. La prueba CPU verifica igualdad exacta
+de warp, pérdida, gradientes, RNG y pesos. Se preserva también el primer intento
+de esta prueba, que comparaba draws consecutivos de dropout; la prueba corregida
+usa el mismo estado RNG. Ambos intentos CPU hicieron cero updates. La QA CUDA
+reanuda sus diez updates eager ya hechos y conserva el máximo conjunto de90.

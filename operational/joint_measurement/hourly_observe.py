@@ -38,7 +38,7 @@ JOBS = {
     ),
     "correspondence": (
         "adaptive/B1_correspondence",
-        "correspondence_train",
+        "correspondence_run",
         "B1_ENDPOINTS_COMPLETE",
     ),
     "correspondence_evaluation": (

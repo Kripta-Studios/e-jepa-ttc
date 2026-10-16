@@ -1,0 +1,1999 @@
+{
+  "P_capacity_signal": false,
+  "bootstrap": {
+    "H/A5-P2-FROZEN": {
+      "binding": {
+        "candidate_sha256": "0eb7111cf3d66c5c71c6652ebfa3119aa0ef0751f2d845fcd79e34bca0fcc120",
+        "reference_sha256": "3c08bcac736d930abab5b814af7630aec23309654534e56cc6eeb461e33a5890",
+        "replicates": 2000,
+        "scope": "paired group-macro bucket MiD; descriptive development interval",
+        "seed": 12345,
+        "unit": "acquisition_group"
+      },
+      "intervals": {
+        "delta_crucial": {
+          "ci95_if_all_defined": [
+            -53.23234729917481,
+            -10.386247416888274
+          ],
+          "conditional_ci95_among_defined": [
+            -53.23234729917481,
+            -10.386247416888274
+          ],
+          "defined_replicates": 2000,
+          "undefined_replicates": 0
+        },
+        "delta_large": {
+          "ci95_if_all_defined": [
+            19.3826979979363,
+            31.774881731819676
+          ],
+          "conditional_ci95_among_defined": [
+            19.3826979979363,
+            31.774881731819676
+          ],
+          "defined_replicates": 2000,
+          "undefined_replicates": 0
+        },
+        "delta_negative": {
+          "ci95_if_all_defined": [
+            103.39511938518957,
+            186.25696526247876
+          ],
+          "conditional_ci95_among_defined": [
+            103.39511938518957,
+            186.25696526247876
+          ],
+          "defined_replicates": 2000,
+          "undefined_replicates": 0
+        },
+        "delta_overall": {
+          "ci95_if_all_defined": [
+            -6.811981158641813,
+            14.373393710147424
+          ],
+          "conditional_ci95_among_defined": [
+            -6.811981158641813,
+            14.373393710147424
+          ],
+          "defined_replicates": 2000,
+          "undefined_replicates": 0
+        },
+        "delta_small": {
+          "ci95_if_all_defined": [
+            1.3332873547047144,
+            14.966758969421464
+          ],
+          "conditional_ci95_among_defined": [
+            1.3332873547047144,
+            14.966758969421464
+          ],
+          "defined_replicates": 2000,
+          "undefined_replicates": 0
+        }
+      },
+      "note": "Missing-band resamples remain undefined; conditional intervals are labeled.",
+      "status": "COMPLETE"
+    },
+    "H/PAIR-CORR-S7": {
+      "binding": {
+        "candidate_sha256": "0eb7111cf3d66c5c71c6652ebfa3119aa0ef0751f2d845fcd79e34bca0fcc120",
+        "reference_sha256": "52487a2ee5a512c566961c370c313066a640438c0f2c6b5ebd7c630c337ed693",
+        "replicates": 2000,
+        "scope": "paired group-macro bucket MiD; descriptive development interval",
+        "seed": 12345,
+        "unit": "acquisition_group"
+      },
+      "intervals": {
+        "delta_crucial": {
+          "ci95_if_all_defined": [
+            6.056375050657934,
+            11.853294625304144
+          ],
+          "conditional_ci95_among_defined": [
+            6.056375050657934,
+            11.853294625304144
+          ],
+          "defined_replicates": 2000,
+          "undefined_replicates": 0
+        },
+        "delta_large": {
+          "ci95_if_all_defined": [
+            0.2516445746185902,
+            8.722489059489963
+          ],
+          "conditional_ci95_among_defined": [
+            0.2516445746185902,
+            8.722489059489963
+          ],
+          "defined_replicates": 2000,
+          "undefined_replicates": 0
+        },
+        "delta_negative": {
+          "ci95_if_all_defined": [
+            28.566667999797485,
+            71.99861061367884
+          ],
+          "conditional_ci95_among_defined": [
+            28.566667999797485,
+            71.99861061367884
+          ],
+          "defined_replicates": 2000,
+          "undefined_replicates": 0
+        },
+        "delta_overall": {
+          "ci95_if_all_defined": [
+            9.64858489501932,
+            13.688426046299776
+          ],
+          "conditional_ci95_among_defined": [
+            9.64858489501932,
+            13.688426046299776
+          ],
+          "defined_replicates": 2000,
+          "undefined_replicates": 0
+        },
+        "delta_small": {
+          "ci95_if_all_defined": [
+            1.4195033155252579,
+            10.868191834175988
+          ],
+          "conditional_ci95_among_defined": [
+            1.4195033155252579,
+            10.868191834175988
+          ],
+          "defined_replicates": 2000,
+          "undefined_replicates": 0
+        }
+      },
+      "note": "Missing-band resamples remain undefined; conditional intervals are labeled.",
+      "status": "COMPLETE"
+    },
+    "P/A5-P2-FROZEN": {
+      "binding": {
+        "candidate_sha256": "1063e83cd5dc2c361776c4a5ede39140db9d4421f900b4d63046e141d9599f28",
+        "reference_sha256": "621f28eb108268443902ca6ab09b3d4527cd69de502ae89ed115157dd4fd30d8",
+        "replicates": 2000,
+        "scope": "paired group-macro bucket MiD; descriptive development interval",
+        "seed": 12345,
+        "unit": "acquisition_group"
+      },
+      "intervals": {
+        "delta_crucial": {
+          "ci95_if_all_defined": [
+            -69.37492300240649,
+            -43.86047246629053
+          ],
+          "conditional_ci95_among_defined": [
+            -69.37492300240649,
+            -43.86047246629053
+          ],
+          "defined_replicates": 2000,
+          "undefined_replicates": 0
+        },
+        "delta_large": {
+          "ci95_if_all_defined": [
+            18.696269514921504,
+            28.787635083799962
+          ],
+          "conditional_ci95_among_defined": [
+            18.696269514921504,
+            28.787635083799962
+          ],
+          "defined_replicates": 2000,
+          "undefined_replicates": 0
+        },
+        "delta_negative": {
+          "ci95_if_all_defined": [
+            134.22134445785125,
+            182.48551833775102
+          ],
+          "conditional_ci95_among_defined": [
+            134.22134445785125,
+            182.48551833775102
+          ],
+          "defined_replicates": 2000,
+          "undefined_replicates": 0
+        },
+        "delta_overall": {
+          "ci95_if_all_defined": [
+            -17.410187779842474,
+            -2.634428255723953
+          ],
+          "conditional_ci95_among_defined": [
+            -17.410187779842474,
+            -2.634428255723953
+          ],
+          "defined_replicates": 2000,
+          "undefined_replicates": 0
+        },
+        "delta_small": {
+          "ci95_if_all_defined": [
+            -3.8754546940952497,
+            5.761172908770085
+          ],
+          "conditional_ci95_among_defined": [
+            -3.8754546940952497,
+            5.761172908770085
+          ],
+          "defined_replicates": 2000,
+          "undefined_replicates": 0
+        }
+      },
+      "note": "Missing-band resamples remain undefined; conditional intervals are labeled.",
+      "status": "COMPLETE"
+    },
+    "P/PAIR-CORR-S7": {
+      "binding": {
+        "candidate_sha256": "1063e83cd5dc2c361776c4a5ede39140db9d4421f900b4d63046e141d9599f28",
+        "reference_sha256": "d7c5a0fe370518858b67343b383ebf8568a0093cdd8d8e94fee3917e01d4981e",
+        "replicates": 2000,
+        "scope": "paired group-macro bucket MiD; descriptive development interval",
+        "seed": 12345,
+        "unit": "acquisition_group"
+      },
+      "intervals": {
+        "delta_crucial": {
+          "ci95_if_all_defined": [
+            16.12300674452858,
+            23.348808131621908
+          ],
+          "conditional_ci95_among_defined": [
+            16.12300674452858,
+            23.348808131621908
+          ],
+          "defined_replicates": 2000,
+          "undefined_replicates": 0
+        },
+        "delta_large": {
+          "ci95_if_all_defined": [
+            -1.9569595474693,
+            2.3673609941844957
+          ],
+          "conditional_ci95_among_defined": [
+            -1.9569595474693,
+            2.3673609941844957
+          ],
+          "defined_replicates": 2000,
+          "undefined_replicates": 0
+        },
+        "delta_negative": {
+          "ci95_if_all_defined": [
+            20.979497304291947,
+            49.670908582348
+          ],
+          "conditional_ci95_among_defined": [
+            20.979497304291947,
+            49.670908582348
+          ],
+          "defined_replicates": 2000,
+          "undefined_replicates": 0
+        },
+        "delta_overall": {
+          "ci95_if_all_defined": [
+            13.722917058712707,
+            16.831605954242605
+          ],
+          "conditional_ci95_among_defined": [
+            13.722917058712707,
+            16.831605954242605
+          ],
+          "defined_replicates": 2000,
+          "undefined_replicates": 0
+        },
+        "delta_small": {
+          "ci95_if_all_defined": [
+            3.031066231482888,
+            8.46273739051783
+          ],
+          "conditional_ci95_among_defined": [
+            3.031066231482888,
+            8.46273739051783
+          ],
+          "defined_replicates": 2000,
+          "undefined_replicates": 0
+        }
+      },
+      "note": "Missing-band resamples remain undefined; conditional intervals are labeled.",
+      "status": "COMPLETE"
+    }
+  },
+  "cohorts": {
+    "H/A5-P2-FROZEN": {
+      "bins": {
+        "crucial": {
+          "count": 1827,
+          "coverage": 1.0,
+          "diagnostic_rte_pct": 103.59171241232362,
+          "failure_count": 0,
+          "formula_bucket_admissible": true,
+          "group_macro_mid": 157.26650981754457,
+          "groups_with_bucket": 8,
+          "phase_invalid_count": 0,
+          "pooled_diagnostic_mid": 162.08004683054918
+        },
+        "large": {
+          "count": 3708,
+          "coverage": 1.0,
+          "diagnostic_rte_pct": 102.20266208290677,
+          "failure_count": 0,
+          "formula_bucket_admissible": true,
+          "group_macro_mid": 66.23125971320879,
+          "groups_with_bucket": 8,
+          "phase_invalid_count": 0,
+          "pooled_diagnostic_mid": 65.41891272191786
+        },
+        "negative": {
+          "count": 7626,
+          "coverage": 1.0,
+          "diagnostic_rte_pct": 106.73366716302628,
+          "failure_count": 0,
+          "formula_bucket_admissible": true,
+          "group_macro_mid": 65.51968223993987,
+          "groups_with_bucket": 8,
+          "phase_invalid_count": 0,
+          "pooled_diagnostic_mid": 64.29841342450372
+        },
+        "small": {
+          "count": 5261,
+          "coverage": 1.0,
+          "diagnostic_rte_pct": 67.09603496616164,
+          "failure_count": 0,
+          "formula_bucket_admissible": true,
+          "group_macro_mid": 68.25677485238373,
+          "groups_with_bucket": 8,
+          "phase_invalid_count": 0,
+          "pooled_diagnostic_mid": 68.38943474068327
+        }
+      },
+      "complete_prediction_and_mid_coverage": true,
+      "coverage": 1.0,
+      "diagnostics": {
+        "crucial_mae_s": 2.070272736535329,
+        "crucial_positive_overestimate_mean_s": 1.3171627525341805,
+        "crucial_positive_overestimate_rate": 0.7684729064039408,
+        "crucial_positive_overestimate_rte_p90_pct": 142.62367993828846,
+        "crucial_positive_overestimate_rte_p95_pct": 299.48791582188215,
+        "mae_s": 5.637243357429148,
+        "median_ae_s": 1.4083480153708168,
+        "p90_ae_s": 14.636288853932411,
+        "p95_ae_s": 31.59702223017792,
+        "rmse_s": 13.260140885445471,
+        "rte_pct": 94.19024619058452,
+        "sign_error_rate": 0.05694278579958745
+      },
+      "false_alert": {
+        "denominator": 18370,
+        "rate": 0.0
+      },
+      "formula_admitted": true,
+      "group_crucial_mid": {
+        "2JkLL5W891": 213.78830567140616,
+        "34K84TaN11": 143.99702047421863,
+        "CzyQ8HKP6X": 196.6721032181228,
+        "JaGC4Q9pgU": 139.0017153630606,
+        "L36QTEoVkB": 145.04103861127305,
+        "mHGFBekt7X": 92.55555360291676,
+        "pBqGOb2vYq": 209.85896440615036,
+        "qGsgzl4Q8B": 117.21737719320824
+      },
+      "group_macro_bucket_MiD": 112.28538155980226,
+      "late_warning": {
+        "denominator": 52,
+        "rate": 1.0
+      },
+      "mean_MiD": 75.38975631735343,
+      "num_failed_predictions": 0,
+      "num_rows": 18422,
+      "num_targets_outside_protocol": 0,
+      "official_comparison_admitted": false,
+      "overall_MiD": 112.28538155980226,
+      "p95_positive_crucial_overestimate_s": 3.9953968729035996,
+      "protocol": "garl_signed_v1_exact_buckets",
+      "schema": "rgb_port_signed_metrics_v1",
+      "warning_boundary_s": 1.0
+    },
+    "H/PAIR-CORR-S7": {
+      "bins": {
+        "crucial": {
+          "count": 1827,
+          "coverage": 1.0,
+          "diagnostic_rte_pct": 35.54011826857886,
+          "failure_count": 0,
+          "formula_bucket_admissible": true,
+          "group_macro_mid": 115.55577809378953,
+          "groups_with_bucket": 8,
+          "phase_invalid_count": 0,
+          "pooled_diagnostic_mid": 113.56393745366734
+        },
+        "large": {
+          "count": 3708,
+          "coverage": 1.0,
+          "diagnostic_rte_pct": 55.016439745472525,
+          "failure_count": 0,
+          "formula_bucket_admissible": true,
+          "group_macro_mid": 88.42059923551625,
+          "groups_with_bucket": 8,
+          "phase_invalid_count": 0,
+          "pooled_diagnostic_mid": 87.03530100741004
+        },
+        "negative": {
+          "count": 7626,
+          "coverage": 1.0,
+          "diagnostic_rte_pct": 164.4495956930872,
+          "failure_count": 0,
+          "formula_bucket_admissible": true,
+          "group_macro_mid": 156.00166196064964,
+          "groups_with_bucket": 8,
+          "phase_invalid_count": 0,
+          "pooled_diagnostic_mid": 143.78995735684424
+        },
+        "small": {
+          "count": 5261,
+          "coverage": 1.0,
+          "diagnostic_rte_pct": 34.753699446294235,
+          "failure_count": 0,
+          "formula_bucket_admissible": true,
+          "group_macro_mid": 70.96752221085546,
+          "groups_with_bucket": 8,
+          "phase_invalid_count": 0,
+          "pooled_diagnostic_mid": 71.15550322835233
+        }
+      },
+      "complete_prediction_and_mid_coverage": true,
+      "coverage": 1.0,
+      "diagnostics": {
+        "crucial_mae_s": 0.7871019753462883,
+        "crucial_positive_overestimate_mean_s": 0.597690977211471,
+        "crucial_positive_overestimate_rate": 0.6672140120415982,
+        "crucial_positive_overestimate_rte_p90_pct": 93.49465321482714,
+        "crucial_positive_overestimate_rte_p95_pct": 154.2807293621614,
+        "mae_s": 5.495564922032053,
+        "median_ae_s": 1.6565639225318567,
+        "p90_ae_s": 14.725616850437458,
+        "p95_ae_s": 24.456523533012337,
+        "rmse_s": 12.060255508894397,
+        "rte_pct": 92.59931517725232,
+        "sign_error_rate": 0.13804147215286072
+      },
+      "false_alert": {
+        "denominator": 18370,
+        "rate": 0.0005988023952095808
+      },
+      "formula_admitted": true,
+      "group_crucial_mid": {
+        "2JkLL5W891": 156.986272516053,
+        "34K84TaN11": 148.870409563116,
+        "CzyQ8HKP6X": 111.6613568368902,
+        "JaGC4Q9pgU": 76.4550243892532,
+        "L36QTEoVkB": 111.0227993933921,
+        "mHGFBekt7X": 85.34023049350304,
+        "pBqGOb2vYq": 141.13356329518325,
+        "qGsgzl4Q8B": 92.97656826292533
+      },
+      "group_macro_bucket_MiD": 103.51037182976799,
+      "late_warning": {
+        "denominator": 52,
+        "rate": 0.6730769230769231
+      },
+      "mean_MiD": 108.62553073232996,
+      "num_failed_predictions": 0,
+      "num_rows": 18422,
+      "num_targets_outside_protocol": 0,
+      "official_comparison_admitted": false,
+      "overall_MiD": 103.51037182976799,
+      "p95_positive_crucial_overestimate_s": 2.4923420771113225,
+      "protocol": "garl_signed_v1_exact_buckets",
+      "schema": "rgb_port_signed_metrics_v1",
+      "warning_boundary_s": 1.0
+    },
+    "H/PAIR-CORR-WIDE-S7": {
+      "bins": {
+        "crucial": {
+          "count": 1827,
+          "coverage": 1.0,
+          "diagnostic_rte_pct": 47.41021385543403,
+          "failure_count": 0,
+          "formula_bucket_admissible": true,
+          "group_macro_mid": 124.48381855476526,
+          "groups_with_bucket": 8,
+          "phase_invalid_count": 0,
+          "pooled_diagnostic_mid": 122.05558193484472
+        },
+        "large": {
+          "count": 3708,
+          "coverage": 1.0,
+          "diagnostic_rte_pct": 63.961694209168314,
+          "failure_count": 0,
+          "formula_bucket_admissible": true,
+          "group_macro_mid": 92.36597951036367,
+          "groups_with_bucket": 8,
+          "phase_invalid_count": 0,
+          "pooled_diagnostic_mid": 89.85008303747952
+        },
+        "negative": {
+          "count": 7626,
+          "coverage": 1.0,
+          "diagnostic_rte_pct": 215.56522165788346,
+          "failure_count": 0,
+          "formula_bucket_admissible": true,
+          "group_macro_mid": 206.4205745855926,
+          "groups_with_bucket": 8,
+          "phase_invalid_count": 0,
+          "pooled_diagnostic_mid": 196.0130988250287
+        },
+        "small": {
+          "count": 5261,
+          "coverage": 1.0,
+          "diagnostic_rte_pct": 44.08897940329874,
+          "failure_count": 0,
+          "formula_bucket_admissible": true,
+          "group_macro_mid": 76.66344860755336,
+          "groups_with_bucket": 8,
+          "phase_invalid_count": 0,
+          "pooled_diagnostic_mid": 77.31272341183423
+        }
+      },
+      "complete_prediction_and_mid_coverage": true,
+      "coverage": 1.0,
+      "diagnostics": {
+        "crucial_mae_s": 1.0686729087225681,
+        "crucial_positive_overestimate_mean_s": 0.8303083297936202,
+        "crucial_positive_overestimate_rate": 0.6847290640394089,
+        "crucial_positive_overestimate_rte_p90_pct": 108.5098103727931,
+        "crucial_positive_overestimate_rte_p95_pct": 176.039332837391,
+        "mae_s": 6.792532409644229,
+        "median_ae_s": 2.0905182994067686,
+        "p90_ae_s": 17.278316477536777,
+        "p95_ae_s": 29.743107054695127,
+        "rmse_s": 13.631585426697685,
+        "rte_pct": 119.40293800050199,
+        "sign_error_rate": 0.20057539897948107
+      },
+      "false_alert": {
+        "denominator": 18370,
+        "rate": 0.000979858464888405
+      },
+      "formula_admitted": true,
+      "group_crucial_mid": {
+        "2JkLL5W891": 159.2970882950302,
+        "34K84TaN11": 160.38005835219627,
+        "CzyQ8HKP6X": 120.11136662733992,
+        "JaGC4Q9pgU": 90.30881930193732,
+        "L36QTEoVkB": 125.99533078912013,
+        "mHGFBekt7X": 94.60742333259282,
+        "pBqGOb2vYq": 149.16938466635804,
+        "qGsgzl4Q8B": 96.00107707354766
+      },
+      "group_macro_bucket_MiD": 115.11959926924428,
+      "late_warning": {
+        "denominator": 52,
+        "rate": 0.7692307692307693
+      },
+      "mean_MiD": 133.4110186520065,
+      "num_failed_predictions": 0,
+      "num_rows": 18422,
+      "num_targets_outside_protocol": 0,
+      "official_comparison_admitted": false,
+      "overall_MiD": 115.11959926924428,
+      "p95_positive_crucial_overestimate_s": 2.9244410691837213,
+      "protocol": "garl_signed_v1_exact_buckets",
+      "schema": "rgb_port_signed_metrics_v1",
+      "warning_boundary_s": 1.0
+    },
+    "P/A5-P2-FROZEN": {
+      "bins": {
+        "crucial": {
+          "count": 6069,
+          "coverage": 1.0,
+          "diagnostic_rte_pct": 94.45928438621965,
+          "failure_count": 0,
+          "formula_bucket_admissible": true,
+          "group_macro_mid": 141.81271106332113,
+          "groups_with_bucket": 24,
+          "phase_invalid_count": 0,
+          "pooled_diagnostic_mid": 156.62073635087538
+        },
+        "large": {
+          "count": 10718,
+          "coverage": 1.0,
+          "diagnostic_rte_pct": 87.64661151425258,
+          "failure_count": 0,
+          "formula_bucket_admissible": true,
+          "group_macro_mid": 55.29538224882676,
+          "groups_with_bucket": 24,
+          "phase_invalid_count": 0,
+          "pooled_diagnostic_mid": 54.118305911073755
+        },
+        "negative": {
+          "count": 22397,
+          "coverage": 1.0,
+          "diagnostic_rte_pct": 85.25643035477991,
+          "failure_count": 0,
+          "formula_bucket_admissible": true,
+          "group_macro_mid": 55.52159175592544,
+          "groups_with_bucket": 24,
+          "phase_invalid_count": 0,
+          "pooled_diagnostic_mid": 54.66484309367096
+        },
+        "small": {
+          "count": 14706,
+          "coverage": 1.0,
+          "diagnostic_rte_pct": 61.401095081387666,
+          "failure_count": 0,
+          "formula_bucket_admissible": true,
+          "group_macro_mid": 62.952009519087966,
+          "groups_with_bucket": 24,
+          "phase_invalid_count": 0,
+          "pooled_diagnostic_mid": 61.66401579865506
+        }
+      },
+      "complete_prediction_and_mid_coverage": true,
+      "coverage": 1.0,
+      "diagnostics": {
+        "crucial_mae_s": 1.8131298713466004,
+        "crucial_positive_overestimate_mean_s": 1.2677559883880891,
+        "crucial_positive_overestimate_rate": 0.7986488713132311,
+        "crucial_positive_overestimate_rte_p90_pct": 127.99807915592018,
+        "crucial_positive_overestimate_rte_p95_pct": 271.72915720547786,
+        "mae_s": 4.750671362458542,
+        "median_ae_s": 1.206502924952853,
+        "p90_ae_s": 10.413531882695368,
+        "p95_ae_s": 25.025707652703368,
+        "rmse_s": 11.95912987194801,
+        "rte_pct": 80.25835134668061,
+        "sign_error_rate": 0.03332714789385786
+      },
+      "false_alert": {
+        "denominator": 53682,
+        "rate": 0.0
+      },
+      "formula_admitted": true,
+      "group_crucial_mid": {
+        "2Y46OkK3ff": 131.2979641117578,
+        "6WCDpro5rE": 88.143560929853,
+        "8SdieOgbva": 176.26995752378983,
+        "8mNnrXjpVB": 105.30809252226898,
+        "9ITOs4twfk": 116.83970261915024,
+        "A1Nhv0KtmL": 199.0975100408705,
+        "ClXqVoZOFu": 64.72336184509686,
+        "DGqicHUGWb": 212.3163190031727,
+        "EllUE6bwVp": 233.81930287206154,
+        "EuFGqTcqIz": 98.40339422493456,
+        "GjMYZjmSQb": 77.13957758192699,
+        "LMHPShQkaU": 136.00695787576717,
+        "OBneIVg4Cw": 273.1883152822624,
+        "OYgB6RGWcq": 76.98596972058638,
+        "Po6ePjWYAz": 112.14242018861898,
+        "VLA3oBKFyX": 159.7309242912624,
+        "eX8t2nGd6O": 80.93270755631924,
+        "nRcwUlHyAd": 145.02765549892348,
+        "pakWgyPNTL": 161.07648385829754,
+        "q2k6O0X6JY": 144.86861146606356,
+        "qoohcdtLDH": 136.61383863943706,
+        "vWp9XNYQ9V": 131.25106337979557,
+        "wE9MZUmiJP": 88.7642420863347,
+        "xkiVthsGwf": 253.55713240115605
+      },
+      "group_macro_bucket_MiD": 100.87365578786218,
+      "late_warning": {
+        "denominator": 208,
+        "rate": 1.0
+      },
+      "mean_MiD": 67.94824195161108,
+      "num_failed_predictions": 0,
+      "num_rows": 53890,
+      "num_targets_outside_protocol": 0,
+      "official_comparison_admitted": false,
+      "overall_MiD": 100.87365578786218,
+      "p95_positive_crucial_overestimate_s": 4.019862796564058,
+      "protocol": "garl_signed_v1_exact_buckets",
+      "schema": "rgb_port_signed_metrics_v1",
+      "warning_boundary_s": 1.0
+    },
+    "P/PAIR-CORR-S7": {
+      "bins": {
+        "crucial": {
+          "count": 6069,
+          "coverage": 1.0,
+          "diagnostic_rte_pct": 16.06284784471058,
+          "failure_count": 0,
+          "formula_bucket_admissible": true,
+          "group_macro_mid": 65.70925213668652,
+          "groups_with_bucket": 24,
+          "phase_invalid_count": 0,
+          "pooled_diagnostic_mid": 73.48406615332489
+        },
+        "large": {
+          "count": 10718,
+          "coverage": 1.0,
+          "diagnostic_rte_pct": 50.68145304127482,
+          "failure_count": 0,
+          "formula_bucket_admissible": true,
+          "group_macro_mid": 78.5322489815638,
+          "groups_with_bucket": 24,
+          "phase_invalid_count": 0,
+          "pooled_diagnostic_mid": 78.35633480304477
+        },
+        "negative": {
+          "count": 22397,
+          "coverage": 1.0,
+          "diagnostic_rte_pct": 192.55831716281895,
+          "failure_count": 0,
+          "formula_bucket_admissible": true,
+          "group_macro_mid": 175.7528121724571,
+          "groups_with_bucket": 24,
+          "phase_invalid_count": 0,
+          "pooled_diagnostic_mid": 180.02813201657813
+        },
+        "small": {
+          "count": 14706,
+          "coverage": 1.0,
+          "diagnostic_rte_pct": 29.55434684565397,
+          "failure_count": 0,
+          "formula_bucket_admissible": true,
+          "group_macro_mid": 58.17643162753662,
+          "groups_with_bucket": 24,
+          "phase_invalid_count": 0,
+          "pooled_diagnostic_mid": 58.49870846349694
+        }
+      },
+      "complete_prediction_and_mid_coverage": true,
+      "coverage": 1.0,
+      "diagnostics": {
+        "crucial_mae_s": 0.3317461200973711,
+        "crucial_positive_overestimate_mean_s": 0.22564493047009615,
+        "crucial_positive_overestimate_rate": 0.5051903114186851,
+        "crucial_positive_overestimate_rte_p90_pct": 51.87347013725062,
+        "crucial_positive_overestimate_rte_p95_pct": 78.86978056036247,
+        "mae_s": 5.8265838192399215,
+        "median_ae_s": 1.5885202370826108,
+        "p90_ae_s": 15.77399695651381,
+        "p95_ae_s": 25.180548111351456,
+        "rmse_s": 12.472675101836595,
+        "rte_pct": 99.98226185700085,
+        "sign_error_rate": 0.1757468918166636
+      },
+      "false_alert": {
+        "denominator": 53682,
+        "rate": 0.00031667970641928396
+      },
+      "formula_admitted": true,
+      "group_crucial_mid": {
+        "2Y46OkK3ff": 49.59382135521164,
+        "6WCDpro5rE": 44.03336950429408,
+        "8SdieOgbva": 89.47559931691936,
+        "8mNnrXjpVB": 58.52628825736358,
+        "9ITOs4twfk": 68.3071224779688,
+        "A1Nhv0KtmL": 75.7073194635991,
+        "ClXqVoZOFu": 36.58588284986016,
+        "DGqicHUGWb": 69.68272202629885,
+        "EllUE6bwVp": 100.3282072983023,
+        "EuFGqTcqIz": 40.479220965032184,
+        "GjMYZjmSQb": 41.859179715862616,
+        "LMHPShQkaU": 77.82843597874827,
+        "OBneIVg4Cw": 124.22228462447009,
+        "OYgB6RGWcq": 38.345872429577504,
+        "Po6ePjWYAz": 73.06723164277902,
+        "VLA3oBKFyX": 68.77782745173026,
+        "eX8t2nGd6O": 40.325999622999646,
+        "nRcwUlHyAd": 70.89987474704533,
+        "pakWgyPNTL": 79.33904003566316,
+        "q2k6O0X6JY": 62.9577408552072,
+        "qoohcdtLDH": 73.68972763040527,
+        "vWp9XNYQ9V": 46.463869013643645,
+        "wE9MZUmiJP": 40.846853427766085,
+        "xkiVthsGwf": 105.67856058972822
+      },
+      "group_macro_bucket_MiD": 75.73606167200634,
+      "late_warning": {
+        "denominator": 208,
+        "rate": 0.5913461538461539
+      },
+      "mean_MiD": 114.64409117355815,
+      "num_failed_predictions": 0,
+      "num_rows": 53890,
+      "num_targets_outside_protocol": 0,
+      "official_comparison_admitted": false,
+      "overall_MiD": 75.73606167200634,
+      "p95_positive_crucial_overestimate_s": 1.0053844519178043,
+      "protocol": "garl_signed_v1_exact_buckets",
+      "schema": "rgb_port_signed_metrics_v1",
+      "warning_boundary_s": 1.0
+    },
+    "P/PAIR-CORR-WIDE-S7": {
+      "bins": {
+        "crucial": {
+          "count": 6069,
+          "coverage": 1.0,
+          "diagnostic_rte_pct": 22.86716427354704,
+          "failure_count": 0,
+          "formula_bucket_admissible": true,
+          "group_macro_mid": 85.37649181670962,
+          "groups_with_bucket": 24,
+          "phase_invalid_count": 0,
+          "pooled_diagnostic_mid": 94.92377433918375
+        },
+        "large": {
+          "count": 10718,
+          "coverage": 1.0,
+          "diagnostic_rte_pct": 63.87598591609649,
+          "failure_count": 0,
+          "formula_bucket_admissible": true,
+          "group_macro_mid": 78.84290458017695,
+          "groups_with_bucket": 24,
+          "phase_invalid_count": 0,
+          "pooled_diagnostic_mid": 78.53308127804864
+        },
+        "negative": {
+          "count": 22397,
+          "coverage": 1.0,
+          "diagnostic_rte_pct": 234.02231373546894,
+          "failure_count": 0,
+          "formula_bucket_admissible": true,
+          "group_macro_mid": 211.80649771625716,
+          "groups_with_bucket": 24,
+          "phase_invalid_count": 0,
+          "pooled_diagnostic_mid": 220.8286618479855
+        },
+        "small": {
+          "count": 14706,
+          "coverage": 1.0,
+          "diagnostic_rte_pct": 40.650571033014444,
+          "failure_count": 0,
+          "formula_bucket_admissible": true,
+          "group_macro_mid": 63.79679570460083,
+          "groups_with_bucket": 24,
+          "phase_invalid_count": 0,
+          "pooled_diagnostic_mid": 63.133345677149116
+        }
+      },
+      "complete_prediction_and_mid_coverage": true,
+      "coverage": 1.0,
+      "diagnostics": {
+        "crucial_mae_s": 0.47057862618792307,
+        "crucial_positive_overestimate_mean_s": 0.37712900682817674,
+        "crucial_positive_overestimate_rate": 0.6353600263634865,
+        "crucial_positive_overestimate_rte_p90_pct": 67.61041606804602,
+        "crucial_positive_overestimate_rte_p95_pct": 98.83897206855306,
+        "mae_s": 7.0284023833021,
+        "median_ae_s": 1.9814496794321164,
+        "p90_ae_s": 18.235263528885504,
+        "p95_ae_s": 31.760391878349065,
+        "rmse_s": 14.043976755427181,
+        "rte_pct": 123.6334885019426,
+        "sign_error_rate": 0.22378920022267582
+      },
+      "false_alert": {
+        "denominator": 53682,
+        "rate": 0.00020491039827130137
+      },
+      "formula_admitted": true,
+      "group_crucial_mid": {
+        "2Y46OkK3ff": 66.5696479783384,
+        "6WCDpro5rE": 65.40126431888586,
+        "8SdieOgbva": 129.1012133936527,
+        "8mNnrXjpVB": 84.54370028148284,
+        "9ITOs4twfk": 88.03528358715212,
+        "A1Nhv0KtmL": 86.98863378191209,
+        "ClXqVoZOFu": 45.4172118151928,
+        "DGqicHUGWb": 109.75312111744209,
+        "EllUE6bwVp": 127.02016570319202,
+        "EuFGqTcqIz": 56.88009901981095,
+        "GjMYZjmSQb": 48.38021123775718,
+        "LMHPShQkaU": 99.64223531435181,
+        "OBneIVg4Cw": 148.95408031315287,
+        "OYgB6RGWcq": 49.84805381920928,
+        "Po6ePjWYAz": 78.5715152449473,
+        "VLA3oBKFyX": 85.37349220667471,
+        "eX8t2nGd6O": 52.356824139155776,
+        "nRcwUlHyAd": 97.02296808425474,
+        "pakWgyPNTL": 112.78692861596619,
+        "q2k6O0X6JY": 79.35535172111719,
+        "qoohcdtLDH": 95.48577370547274,
+        "vWp9XNYQ9V": 59.57577555945375,
+        "wE9MZUmiJP": 53.926475272352214,
+        "xkiVthsGwf": 128.0457773701028
+      },
+      "group_macro_bucket_MiD": 90.89222484937847,
+      "late_warning": {
+        "denominator": 208,
+        "rate": 0.7932692307692307
+      },
+      "mean_MiD": 135.31542906921723,
+      "num_failed_predictions": 0,
+      "num_rows": 53890,
+      "num_targets_outside_protocol": 0,
+      "official_comparison_admitted": false,
+      "overall_MiD": 90.89222484937847,
+      "p95_positive_crucial_overestimate_s": 1.5185655418082886,
+      "protocol": "garl_signed_v1_exact_buckets",
+      "schema": "rgb_port_signed_metrics_v1",
+      "warning_boundary_s": 1.0
+    }
+  },
+  "endpoints": {
+    "endpoints": {
+      "A5-P2-FROZEN": "9f779a0376d6988d1e3f70ef566797f840d1fe4dbf204ce2f9ae1dad5322d512",
+      "PAIR-CORR-S7": "7acebaaee16d77a2afd7d0c68c5ee9cdd42a3d1e31ddbe1e38c845bcad24beaf",
+      "PAIR-CORR-WIDE-S7": "a7309e16297157e2db02b8328ff7330778e964d29dad3879462395ee6757f73f"
+    },
+    "registration_sha256": "a6c4363d06997fd51e0ed3c1b09ce62fd031bafaae113e95552013a78d28aab0"
+  },
+  "evaluation_registration_sha256": "5f7e89df695d80bcfe49a6575f616f667672f47808e9bd11b3bf98676c81f686",
+  "export": {
+    "files": {
+      "BINDING.json": "88e3419bb8220b41b9439da0dae8fc8eec2a2e522d62b723cee66a0294539ff0",
+      "REPLAY.json": "5662f7dc3be314a5c07559861af6d23e4374fb00d93db32e278458fb45696e9e",
+      "example_input.npz": "ebcbf7ce7d4f58dc88dcaeeb78f671f1235e4491f88b371b0140a982755251e8",
+      "example_output.json": "0278aae1d372d489482502d24f5f643bcb0270305b4d86f00c8b23c49f433403",
+      "model.torchscript.pt": "88f73a1e4e70da56dc6759362b2416e7a80e3a3c54e7eb77ea73f602b772d9a8",
+      "normalization.json": "87597531f08aa8efbfd3858a1d00abecff0fcc5a8f8ed3c8def13fb0b3f117ea"
+    },
+    "fit_id": "PAIR-CORR-WIDE-S7",
+    "status": "COMPLETE"
+  },
+  "metric_proofs": {
+    "H/A5-P2-FROZEN": {
+      "comparisons": [
+        {
+          "absolute_difference": 0.0,
+          "field": "num_rows",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "num_failed_predictions",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "coverage",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "complete_prediction_and_mid_coverage",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "mean_MiD",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "diagnostics.mae_s",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "diagnostics.median_ae_s",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "diagnostics.rmse_s",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "diagnostics.sign_error_rate",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.crucial.count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.crucial.failure_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.crucial.phase_invalid_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.crucial.pooled_diagnostic_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 2.842170943040401e-14,
+          "field": "bins.crucial.group_macro_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.small.count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.small.failure_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.small.phase_invalid_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.small.pooled_diagnostic_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.small.group_macro_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.large.count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.large.failure_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.large.phase_invalid_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 2.842170943040401e-14,
+          "field": "bins.large.pooled_diagnostic_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 4.263256414560601e-14,
+          "field": "bins.large.group_macro_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.negative.count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.negative.failure_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.negative.phase_invalid_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 2.842170943040401e-14,
+          "field": "bins.negative.pooled_diagnostic_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 2.842170943040401e-14,
+          "field": "bins.negative.group_macro_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "num_targets_outside_protocol",
+          "pass": true
+        },
+        {
+          "absolute_difference": 2.842170943040401e-14,
+          "field": "overall_MiD",
+          "pass": true
+        }
+      ],
+      "metrics_sha256": "f5bf12b2873a2ee4fad7ce2acfd6ced586bdccfa197b4ed2f4609f3f8b40ba5d",
+      "prediction_sha256": "3c08bcac736d930abab5b814af7630aec23309654534e56cc6eeb461e33a5890",
+      "rows": 18422,
+      "scope": "Listed aggregate/band/coverage scalar fields; no producer replay or raw event audit",
+      "status": "PASS",
+      "utc": "2026-10-13T21:28:42.820771+00:00"
+    },
+    "H/PAIR-CORR-S7": {
+      "comparisons": [
+        {
+          "absolute_difference": 0.0,
+          "field": "num_rows",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "num_failed_predictions",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "coverage",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "complete_prediction_and_mid_coverage",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "mean_MiD",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "diagnostics.mae_s",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "diagnostics.median_ae_s",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "diagnostics.rmse_s",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "diagnostics.sign_error_rate",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.crucial.count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.crucial.failure_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.crucial.phase_invalid_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.crucial.pooled_diagnostic_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 1.4210854715202004e-14,
+          "field": "bins.crucial.group_macro_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.small.count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.small.failure_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.small.phase_invalid_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 2.842170943040401e-14,
+          "field": "bins.small.pooled_diagnostic_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.small.group_macro_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.large.count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.large.failure_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.large.phase_invalid_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.large.pooled_diagnostic_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.large.group_macro_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.negative.count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.negative.failure_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.negative.phase_invalid_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.negative.pooled_diagnostic_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 2.842170943040401e-14,
+          "field": "bins.negative.group_macro_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "num_targets_outside_protocol",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "overall_MiD",
+          "pass": true
+        }
+      ],
+      "metrics_sha256": "fafd9cefbeddcd49cc1bb51ea67d63596a13c7c85ada0e666e846276cd3ac051",
+      "prediction_sha256": "52487a2ee5a512c566961c370c313066a640438c0f2c6b5ebd7c630c337ed693",
+      "rows": 18422,
+      "scope": "Listed aggregate/band/coverage scalar fields; no producer replay or raw event audit",
+      "status": "PASS",
+      "utc": "2026-10-13T21:28:43.434579+00:00"
+    },
+    "H/PAIR-CORR-WIDE-S7": {
+      "comparisons": [
+        {
+          "absolute_difference": 0.0,
+          "field": "num_rows",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "num_failed_predictions",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "coverage",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "complete_prediction_and_mid_coverage",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "mean_MiD",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "diagnostics.mae_s",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "diagnostics.median_ae_s",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "diagnostics.rmse_s",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "diagnostics.sign_error_rate",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.crucial.count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.crucial.failure_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.crucial.phase_invalid_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.crucial.pooled_diagnostic_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 2.842170943040401e-14,
+          "field": "bins.crucial.group_macro_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.small.count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.small.failure_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.small.phase_invalid_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 2.842170943040401e-14,
+          "field": "bins.small.pooled_diagnostic_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 2.842170943040401e-14,
+          "field": "bins.small.group_macro_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.large.count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.large.failure_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.large.phase_invalid_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.large.pooled_diagnostic_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.large.group_macro_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.negative.count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.negative.failure_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.negative.phase_invalid_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 2.842170943040401e-14,
+          "field": "bins.negative.pooled_diagnostic_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.negative.group_macro_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "num_targets_outside_protocol",
+          "pass": true
+        },
+        {
+          "absolute_difference": 2.842170943040401e-14,
+          "field": "overall_MiD",
+          "pass": true
+        }
+      ],
+      "metrics_sha256": "2b33ba213186f3c53fb344d970a130ed2c24b5ce856eeab6598dd04fc875f00b",
+      "prediction_sha256": "0eb7111cf3d66c5c71c6652ebfa3119aa0ef0751f2d845fcd79e34bca0fcc120",
+      "rows": 18422,
+      "scope": "Listed aggregate/band/coverage scalar fields; no producer replay or raw event audit",
+      "status": "PASS",
+      "utc": "2026-10-16T04:56:47.714898+00:00"
+    },
+    "P/A5-P2-FROZEN": {
+      "comparisons": [
+        {
+          "absolute_difference": 0.0,
+          "field": "num_rows",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "num_failed_predictions",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "coverage",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "complete_prediction_and_mid_coverage",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "mean_MiD",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "diagnostics.mae_s",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "diagnostics.median_ae_s",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "diagnostics.rmse_s",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "diagnostics.sign_error_rate",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.crucial.count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.crucial.failure_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.crucial.phase_invalid_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.crucial.pooled_diagnostic_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 2.842170943040401e-14,
+          "field": "bins.crucial.group_macro_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.small.count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.small.failure_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.small.phase_invalid_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 1.4210854715202004e-14,
+          "field": "bins.small.pooled_diagnostic_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 7.105427357601002e-15,
+          "field": "bins.small.group_macro_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.large.count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.large.failure_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.large.phase_invalid_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.large.pooled_diagnostic_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 1.4210854715202004e-14,
+          "field": "bins.large.group_macro_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.negative.count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.negative.failure_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.negative.phase_invalid_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 1.4210854715202004e-14,
+          "field": "bins.negative.pooled_diagnostic_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 2.1316282072803006e-14,
+          "field": "bins.negative.group_macro_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "num_targets_outside_protocol",
+          "pass": true
+        },
+        {
+          "absolute_difference": 1.4210854715202004e-14,
+          "field": "overall_MiD",
+          "pass": true
+        }
+      ],
+      "metrics_sha256": "6ca06f1b3992b884fc895cd9585182c425bfd728407d032ab2e8507b6676e913",
+      "prediction_sha256": "621f28eb108268443902ca6ab09b3d4527cd69de502ae89ed115157dd4fd30d8",
+      "rows": 53890,
+      "scope": "Listed aggregate/band/coverage scalar fields; no producer replay or raw event audit",
+      "status": "PASS",
+      "utc": "2026-10-13T21:28:23.162101+00:00"
+    },
+    "P/PAIR-CORR-S7": {
+      "comparisons": [
+        {
+          "absolute_difference": 0.0,
+          "field": "num_rows",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "num_failed_predictions",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "coverage",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "complete_prediction_and_mid_coverage",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "mean_MiD",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "diagnostics.mae_s",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "diagnostics.median_ae_s",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "diagnostics.rmse_s",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "diagnostics.sign_error_rate",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.crucial.count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.crucial.failure_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.crucial.phase_invalid_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 1.4210854715202004e-14,
+          "field": "bins.crucial.pooled_diagnostic_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.crucial.group_macro_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.small.count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.small.failure_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.small.phase_invalid_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.small.pooled_diagnostic_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.small.group_macro_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.large.count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.large.failure_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.large.phase_invalid_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 1.4210854715202004e-14,
+          "field": "bins.large.pooled_diagnostic_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.large.group_macro_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.negative.count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.negative.failure_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.negative.phase_invalid_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 2.842170943040401e-14,
+          "field": "bins.negative.pooled_diagnostic_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.negative.group_macro_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "num_targets_outside_protocol",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "overall_MiD",
+          "pass": true
+        }
+      ],
+      "metrics_sha256": "30316bce12aed42dea8bf4d287f48d7397560d9935159ac025519b914aadf4df",
+      "prediction_sha256": "d7c5a0fe370518858b67343b383ebf8568a0093cdd8d8e94fee3917e01d4981e",
+      "rows": 53890,
+      "scope": "Listed aggregate/band/coverage scalar fields; no producer replay or raw event audit",
+      "status": "PASS",
+      "utc": "2026-10-13T21:28:25.743863+00:00"
+    },
+    "P/PAIR-CORR-WIDE-S7": {
+      "comparisons": [
+        {
+          "absolute_difference": 0.0,
+          "field": "num_rows",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "num_failed_predictions",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "coverage",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "complete_prediction_and_mid_coverage",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "mean_MiD",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "diagnostics.mae_s",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "diagnostics.median_ae_s",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "diagnostics.rmse_s",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "diagnostics.sign_error_rate",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.crucial.count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.crucial.failure_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.crucial.phase_invalid_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.crucial.pooled_diagnostic_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 2.842170943040401e-14,
+          "field": "bins.crucial.group_macro_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.small.count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.small.failure_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.small.phase_invalid_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 7.105427357601002e-15,
+          "field": "bins.small.pooled_diagnostic_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 1.4210854715202004e-14,
+          "field": "bins.small.group_macro_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.large.count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.large.failure_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.large.phase_invalid_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 1.4210854715202004e-14,
+          "field": "bins.large.pooled_diagnostic_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.large.group_macro_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.negative.count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.negative.failure_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "bins.negative.phase_invalid_count",
+          "pass": true
+        },
+        {
+          "absolute_difference": 5.684341886080802e-14,
+          "field": "bins.negative.pooled_diagnostic_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 2.842170943040401e-14,
+          "field": "bins.negative.group_macro_mid",
+          "pass": true
+        },
+        {
+          "absolute_difference": 0.0,
+          "field": "num_targets_outside_protocol",
+          "pass": true
+        },
+        {
+          "absolute_difference": 1.4210854715202004e-14,
+          "field": "overall_MiD",
+          "pass": true
+        }
+      ],
+      "metrics_sha256": "262c02cdc120df87258e006052e2df36faae5ddfd9c0ef402522904bfd6b8abc",
+      "prediction_sha256": "1063e83cd5dc2c361776c4a5ede39140db9d4421f900b4d63046e141d9599f28",
+      "rows": 53890,
+      "scope": "Listed aggregate/band/coverage scalar fields; no producer replay or raw event audit",
+      "status": "PASS",
+      "utc": "2026-10-16T04:56:46.582225+00:00"
+    }
+  },
+  "next": "V only if fixed H admission passes; otherwise close D1 hypothesis",
+  "official_comparison": false,
+  "prepared_cost": {
+    "E2E": false,
+    "binding": "2f1fc980b4f047997f6afbcd1a35d7b0426b625f7d1d5c3444e144374a1be1a6",
+    "cuda_version": "12.8",
+    "gpu_name": "NVIDIA GeForce RTX 5070 Ti Laptop GPU",
+    "official_comparison": false,
+    "results": {
+      "A5-P2-FROZEN": {
+        "batch1_windows_per_second": 36.348522813502456,
+        "max_extra_allocated_bytes": 21037056,
+        "n": 128,
+        "p50_seconds": 0.024907249993702862,
+        "p95_seconds": 0.03568473000486847,
+        "p99_seconds": 0.041736112999497
+      },
+      "PAIR-CORR-S7": {
+        "batch1_windows_per_second": 105.22969382074047,
+        "max_extra_allocated_bytes": 33743872,
+        "n": 128,
+        "p50_seconds": 0.008366050002223346,
+        "p95_seconds": 0.01388687500002561,
+        "p99_seconds": 0.01638376599439653
+      },
+      "PAIR-CORR-WIDE-S7": {
+        "batch1_windows_per_second": 83.16122316598207,
+        "max_extra_allocated_bytes": 67216384,
+        "n": 128,
+        "p50_seconds": 0.009252150004613213,
+        "p95_seconds": 0.027440275003755215,
+        "p99_seconds": 0.03018823700520443
+      }
+    },
+    "status": "COMPLETE",
+    "torch_version": "2.11.0+cu128"
+  },
+  "selection": {
+    "cost_evidence_sha256": "0b1d84ad6756fd82ee637b21486c420ede45f2c20d001b2b0f175e95be52d953",
+    "decision": {
+      "checks": {
+        "bands": false,
+        "coverage": true,
+        "sign": false
+      },
+      "cost_route": "requires separate paired latency evidence",
+      "cost_route_pass": false,
+      "cost_scope": "prepared RGB tensor resident on GPU through signed TTC output",
+      "eligible": false,
+      "overall_ratio": 1.0252411994337174,
+      "paired_cost_ratio": 0.3714641322085888,
+      "ratios": {
+        "crucial": 0.7915469014934412,
+        "large": 1.3945979573742386,
+        "negative": 3.1505124495210315,
+        "small": 1.1231624812826335
+      },
+      "signals": {
+        "aggregate": false,
+        "crucial": false
+      },
+      "status_scope": "DEVELOPMENT_ONLY_NOT_SYSTEM_PROMOTION"
+    },
+    "metric_evidence_sha256": "be84becb956ae242c2d42302e924fd5d9f9b72a9c40f15a83ef3ead2e20e8808",
+    "official_comparison": false,
+    "ranked": [],
+    "status": "NO_CANDIDATE_D1",
+    "system_promotion": false
+  },
+  "status": "D1_READY_FOR_INTERPRETATION",
+  "system_promotion": false
+}

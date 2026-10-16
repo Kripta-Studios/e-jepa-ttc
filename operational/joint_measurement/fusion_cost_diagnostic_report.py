@@ -99,6 +99,29 @@ def build() -> dict:
                 + " | ".join(f"{v:.9g}" for v in values)
                 + " |"
             )
+        maximum_by_flag = {
+            flag: max(
+                row["F_TRUE_raw_vs_cached_contexts"]["maximum_absolute_difference"]
+                for row in probe["measurements"]
+                if row["producer_cudnn_tf32"] == flag
+            )
+            for flag in (False, True)
+        }
+        failed = [
+            row["index"]
+            for row in probe["measurements"]
+            if row["producer_cudnn_tf32"]
+            and abs(row["raw_ttc_s"] - row["cached_ttc_s"]) > 1e-4 + 1e-5 * abs(row["cached_ttc_s"])
+        ]
+        lines += [
+            "",
+            f"Máximo error F_TRUE raw/cache en estas consultas: "
+            f"{maximum_by_flag[False]:.9g} s con TF32 desactivado y "
+            f"{maximum_by_flag[True]:.9g} s al activarlo sólo en los productores. "
+            f"Consultas que todavía fallan la tolerancia original: `{failed}`. "
+            "El backend influye, pero este único cambio no resuelve toda la paridad. "
+            "No se promueve la ruta ni se continúa una búsqueda de tolerancias.",
+        ]
         lines += [
             "",
             f"Recibo del contraste: `{sha(backend)}`. El diagnóstico no admite "

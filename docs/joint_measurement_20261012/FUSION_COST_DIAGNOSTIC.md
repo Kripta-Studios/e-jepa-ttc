@@ -25,7 +25,20 @@ El control CPU del anchor RGB reproduce la cohorte con batch128. Cambiar únicam
 
 El extractor histórico y su constructor fijan determinismo, pero no fijan `cudnn.allow_tf32`; el setup V18 lo desactiva explícitamente. Se registra un diagnóstico de ambos valores sólo en las convoluciones de los productores históricos, manteniendo matmul TF32 desactivado y restaurando la política al salir. No cambia las convoluciones C1 ni los pesos. El flag efectivo histórico no quedó registrado: esta es una hipótesis verificable, no una causa ya demostrada por inspección del código.
 
-Estado del contraste de backend: registrado, pendiente de GPU exclusiva.
+| Índice V | cuDNN TF32 productores | Δ R_HISTORY | Δ E_HISTORY | Δ F_TRUE raw/cache, s |
+|---:|---|---:|---:|---:|
+| 16169 | False | 0.000770509243 | 0.00179815292 | 0.00116825104 |
+| 16169 | True | 0.00081127882 | 0.00160688162 | 3.33786011e-05 |
+| 7651 | False | 0.00121116638 | 0.00082886219 | 0.00219297409 |
+| 7651 | True | 0.00209283829 | 0.00417035818 | 0.00017786026 |
+| 1762 | False | 0.00118476152 | 0.00210994482 | 0.000335216522 |
+| 1762 | True | 0.00273799896 | 0.00128765404 | 7.15255737e-06 |
+| 1515 | False | 0.00113248825 | 0.00757494569 | 0.00482702255 |
+| 1515 | True | 0.000707983971 | 0.00543865561 | 0.000246047974 |
+
+Máximo error F_TRUE raw/cache en estas consultas: 0.00482702255 s con TF32 desactivado y 0.000246047974 s al activarlo sólo en los productores. Consultas que todavía fallan la tolerancia original: `[1515]`. El backend influye, pero este único cambio no resuelve toda la paridad. No se promueve la ruta ni se continúa una búsqueda de tolerancias.
+
+Recibo del contraste: `5085c1a88ea18de70685e0a18ab458baa08f14d066676115b9df7003d1bd68a4`. El diagnóstico no admite automáticamente la ruta: una nueva medición necesita su propio registro y pasar la paridad original completa.
 
 Diagnóstico GPU: `66975efa18b0cb61cf2db50e81b8207a2886f6c7ca60502536267b7146ccea97`.
 Diagnóstico CPU: `8ebc05adac761f087d3d3ab18c4e994d24a333b596552d644c179ee3b6d4c137`.
