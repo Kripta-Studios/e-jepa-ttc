@@ -41,6 +41,7 @@ def build() -> dict:
             }
         curve_path = root / "fits" / name / "CURVE.csv"
         curve = pd.read_csv(curve_path)
+        norm_column = "norm" if name == "PAIR-CORR-GEOMETRY-S7" else "grad_norm"
         if len(curve) != 12000 or not np.array_equal(curve["update"], np.arange(1, 12001)):
             raise ValueError("Conditional-branch curve is incomplete")
         blocks = []
@@ -52,7 +53,7 @@ def build() -> dict:
                     "last_update": start + 1000,
                     "mean_train_loss": float(block.loss.mean()),
                     "median_train_loss": float(block.loss.median()),
-                    "mean_gradient_norm": float(block.norm.mean()),
+                    "mean_gradient_norm": float(block[norm_column].mean()),
                 }
             )
         result[name] = {
