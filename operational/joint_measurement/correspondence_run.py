@@ -25,6 +25,8 @@ OUT = RUN / "runtime/correspondence_buffered_capture_v1"
 class BufferedCorrespondence(numerical.CorrespondenceCore):
     """Same arithmetic and constants; the immutable affine matrices live with the core."""
 
+    warp_theta: Tensor
+
     def __init__(self, encoder: nn.Module) -> None:
         super().__init__(encoder)
         self.register_buffer(
