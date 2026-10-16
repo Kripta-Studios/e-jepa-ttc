@@ -82,7 +82,8 @@ def _repeat_policy_is_exact(policy: object) -> bool:
 def _source_hashes() -> dict[str, str]:
     root = Path(__file__).resolve().parent
     return {
-        str((root / name).resolve(strict=True)): sha256_file(root / name) for name in SOURCE_FILES
+        str((root / name).resolve(strict=True)): sha256_file(root / name)
+        for name in SOURCE_FILES
     }
 
 
@@ -108,7 +109,8 @@ def build_c2f_graph_freeze(
         or admission.get("shape") != {"batch_size": 32, "frames": 3}
         or admission.get("backend") != "cudagraphs"
         or not _repeat_policy_is_exact(admission.get("repeat_policy"))
-        or admission.get("repeat_policy") != read_json_shared(Path(admission["repeat_policy_path"]))
+        or admission.get("repeat_policy")
+        != read_json_shared(Path(admission["repeat_policy_path"]))
         or admission.get("repeat_policy_sha256")
         != sha256_file(Path(admission["repeat_policy_path"]))
         or admission.get("source_freeze_sha256")
@@ -208,7 +210,8 @@ def validate_c2f_graph_freeze(path: Path) -> dict[str, Any]:
         or admission.get("optimizer_updates") != 0
         or admission.get("schema") != "rgb_port_c2f_graph_admission_numerical_v2"
         or not _repeat_policy_is_exact(admission.get("repeat_policy"))
-        or admission.get("repeat_policy") != read_json_shared(Path(admission["repeat_policy_path"]))
+        or admission.get("repeat_policy")
+        != read_json_shared(Path(admission["repeat_policy_path"]))
         or admission.get("repeat_policy_path") != value["repeat_policy_path"]
         or admission.get("repeat_policy_sha256") != value["repeat_policy_sha256"]
         or sha256_file(Path(value["repeat_policy_path"])) != value["repeat_policy_sha256"]
@@ -221,12 +224,14 @@ def validate_c2f_graph_freeze(path: Path) -> dict[str, Any]:
         != value["preserved_exact_repeat_failure"]["sha256"]
         or set(admission.get("gates", {})) != ADMISSION_GATES
         or not all(admission["gates"].values())
-        or sha256_file(Path(value["admission_source_path"])) != value["admission_source_sha256"]
+        or sha256_file(Path(value["admission_source_path"]))
+        != value["admission_source_sha256"]
         or admission.get("admission_source_path") != value["admission_source_path"]
         or admission.get("admission_source_sha256") != value["admission_source_sha256"]
         or admission.get("checkpoint_sha256") != origin["checkpoint_sha256"]
         or admission.get("completed_updates") != origin["completed_updates"]
-        or admission.get("torch_backend_source_sha256") != value["torch_backend_source_sha256"]
+        or admission.get("torch_backend_source_sha256")
+        != value["torch_backend_source_sha256"]
         or sha256_file(Path(origin["immutable_checkpoint_path"]))
         != origin["immutable_checkpoint_sha256"]
         or origin["immutable_checkpoint_sha256"] != origin["checkpoint_sha256"]
@@ -336,3 +341,4 @@ def main(argv: Sequence[str] | None = None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+

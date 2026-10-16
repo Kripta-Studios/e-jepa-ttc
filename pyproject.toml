@@ -85,11 +85,13 @@ select = ["E", "F", "I", "B", "UP", "N", "ANN"]
 "operational/joint_measurement/data.py" = ["E501"]
 
 [tool.ruff.format]
-# These loaders are currently bound by the V18 runtime admission; lint still applies.
+# These files are bound by V18 registration/admission records; lint still applies.
 exclude = [
   "operational/joint_measurement/data.py",
   "src/e_jepa_ttc/data/garlttc_lhr_cache.py",
   "src/e_jepa_ttc/data/object_event_v4.py",
+  "operational/rgb_port/report.py",
+  "operational/rgb_port_c2f_graph/contracts.py",
 ]
 
 [tool.pytest.ini_options]
