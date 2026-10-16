@@ -91,6 +91,7 @@ def build(output: Path) -> dict:
     readme = RUN / "delivery/COMPACT_README.md"
     readme.parent.mkdir(parents=True, exist_ok=True)
     reports = [
+        "CURRENT_CONCLUSION.md",
         "RESEARCH_STATUS.md",
         "RESULTS_TABLES.md",
         "FUSION_REPLICATION_RESULTS.md",
@@ -98,8 +99,10 @@ def build(output: Path) -> dict:
         "C1_RESULTS.md",
         "RGB_RESULTS.md",
         "D1_RESULTS.md",
+        "B1_RESULTS.md",
         "RESUME_20261016.md",
         "D1_EXECUTION.md",
+        "B1_EXECUTION.md",
     ]
     links = [
         f"- [{name}](source/docs/joint_measurement_20261012/{name})"

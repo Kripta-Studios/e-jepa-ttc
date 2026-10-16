@@ -35,6 +35,13 @@ Actualización del 16 de octubre de 2026, reanudación solicitada por el usuario
   reanudación y paridad numérica eager/captura. El fit de 12.000 updates está
   en ejecución desde las 04:27; después queda su evidencia P/H. La hipótesis no
   presupone que la capacidad explique los errores. Véase [D1_EXECUTION.md](D1_EXECUTION.md).
+- B1 queda registrado durante D1, antes de conocer su resultado: dos brazos
+  desde el mismo C1, con 2.000 updates de encoder y 10.000 posteriores de TTC
+  completo. Contrasta correspondencia conocida sobre texturas P con igual
+  número de updates TTC. Tres pruebas CPU y once comprobaciones con el padre
+  nativo pasan, con cero updates y CUDA sin inicializar. La QA CUDA de 90
+  técnicos queda pendiente de liberar la GPU. No hay todavía resultados B1.
+  [B1_EXECUTION.md](B1_EXECUTION.md) fija warps, pérdidas, etapas y criterios.
 - Sigue pendiente validar el coste sensorial completo de la nueva fusión. La
   primera medición se detuvo por admisión de fuentes históricas; una continuación
   con sus definiciones originales y política explícita para la mediana CUDA
