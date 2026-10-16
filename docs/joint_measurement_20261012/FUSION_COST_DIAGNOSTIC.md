@@ -44,3 +44,44 @@ Diagnóstico GPU: `66975efa18b0cb61cf2db50e81b8207a2886f6c7ca60502536267b7146cce
 Diagnóstico CPU: `8ebc05adac761f087d3d3ab18c4e994d24a333b596552d644c179ee3b6d4c137`.
 
 No se infiere precisión TTC de estos cuatro casos ni se utilizan para elegir un modelo. La inferencia preparada y los exports siguen teniendo un alcance distinto del coste sensorial completo.
+
+## Tamaños históricos de los lotes
+
+Una auditoría posterior, sólo de metadatos, ha verificado los 514 fragmentos event
+y 522 RGB que produjeron los historiales V. Sus hashes coinciden con sus recibos,
+la concatenación conserva exactamente las observaciones originales y las cuatro
+consultas son las mismas del diagnóstico anterior. No se han leído columnas TTC
+ni ejecutado modelos nuevos para este inventario.
+
+Un fragmento RGB de 32 observaciones puede mezclar T2 y T3. El código histórico
+separaba ambos tamaños antes del forward: el batch del modelo no siempre era 32.
+Estos son los tamaños reconstruidos para cada observación de los historiales
+seleccionados, en orden temporal:
+
+| Índice V | Batches de los productores event | Batches de los productores RGB |
+|---:|---|---|
+| 16169 | 32, 32, 32, 32 | 30, 29, 32, 30, 32 |
+| 7651 | 32 | 29, 30, 32 |
+| 1762 | 32, 32, 32, 32 | 31, 32, 29, 30, 31 |
+| 1515 | 32, 32, 32, 32 | 31, 30, 27 |
+
+Todas esas observaciones concretas son T3. Son los lotes de los productores
+históricos A5/C2F y de PAIR; no deben confundirse con batch8 de la extracción C1
+ni batch128 de la cabeza R_CTX en CPU, examinados en el diagnóstico anterior.
+
+El recibo completo del inventario es
+`fusion/cost/historical_batch_inventory/RESULT.json`, SHA-256
+`42239442fecddbd30ef549e2653252e94c48c1f895ce2084fcc77dfb80554d0b`.
+
+Se prepara un contraste de esas formas de batch con los dos valores de cuDNN
+TF32 ya examinados. Repetirá exclusivamente los pixels y tiempos de la propia
+observación hasta alcanzar el tamaño histórico y conservará su primera salida.
+No incorpora inputs de otras consultas ni sus etiquetas. La comparación usa las
+mismas cuatro consultas, pesos, normalizadores y tolerancia TTC
+`rtol=1e-5, atol=1e-4 s`. Los resultados batch1 anteriores permanecen intactos.
+
+Este contraste aún **no está ejecutado** y no constituye un benchmark de
+latencia. Su finalidad es comprobar si las formas de batch explican la
+discrepancia numérica. Incluso si funcionase, haría falta admitir y medir la
+ruta completa sobre toda la población de coste, declarando cualquier trabajo
+interno repetido. No se llamará aceleración a esa repetición de inputs.
