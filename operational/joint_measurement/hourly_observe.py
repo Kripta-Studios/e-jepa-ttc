@@ -18,6 +18,11 @@ from operational.train40_system.hourly_supervisor import next_hour
 ROOT = Path(__file__).resolve().parents[2]
 RUN = ROOT / "artifacts/joint_measurement_20261012"
 JOBS = {
+    "fusion_cost_millisecond": (
+        "fusion/cost/raw_e2e_millisecond_v1",
+        "fusion_cost_millisecond",
+        "COMPLETE",
+    ),
     "adaptation_evaluation": (
         "adaptive/A1_adaptation_depth",
         "adaptation_evaluate",
@@ -63,6 +68,7 @@ JOBS = {
     ),
 }
 STATE_FILES = {
+    "fusion_cost_millisecond": "COMPLETE.json",
     "adaptation_evaluation": "evidence/COMPLETE.json",
     "fusion_cost": "COMPLETE.json",
     "fusion_replication_pipeline": "PIPELINE_STATE.json",
@@ -75,6 +81,7 @@ OBSERVATION_FOLDERS = {
     "capacity_evaluation": "hourly_evaluation",
     "correspondence_evaluation": "hourly_evaluation",
 }
+COST_JOBS = {"fusion_cost", "fusion_cost_millisecond"}
 
 
 def read_optional(path: Path) -> dict:
@@ -118,7 +125,7 @@ def observe(pid: int, created: float, previous: dict | None, *, job: str = "rgb"
         "evaluation_complete": evaluation,
         "prediction_fragments": fragments,
     }
-    if job == "fusion_cost":
+    if job in COST_JOBS:
         signature["cost_rows"] = len(list(directory.glob("row_*.json")))
         signature["parity_failure"] = (directory / "PARITY_FAILURE.json").exists()
     if job == "fusion_replication_pipeline":
@@ -134,7 +141,7 @@ def observe(pid: int, created: float, previous: dict | None, *, job: str = "rgb"
         status = terminal if runner.get("status") == terminal else "ACTION_REQUIRED_DRIVER_NOT_LIVE"
     elif previous and signature == previous["progress_signature"]:
         status = "REVIEW_NO_PROGRESS_SINCE_PREVIOUS_HOUR"
-    if job == "fusion_cost" and signature["parity_failure"]:
+    if job in COST_JOBS and signature["parity_failure"]:
         status = "ACTION_REQUIRED_PARITY_FAILURE"
     ledger = read_optional(RUN / "GPU_BUDGET.json")
     gpu = subprocess.run(
