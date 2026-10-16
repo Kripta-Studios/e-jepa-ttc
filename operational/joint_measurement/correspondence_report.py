@@ -56,9 +56,32 @@ def build() -> dict:
             + f" | {100 * metric['diagnostics']['sign_error_rate']:.3f}% |"
         )
     paired = selection["paired_mechanism"]
+    development = selection["decisions"][FIT]
     lines += [
         "",
         "## Decisiones separadas",
+        "",
+        f"Frente al control con igual número de updates, la fase auxiliar reduce "
+        f"el agregado H un {100 * (1 - paired['overall_ratio']):.2f}% y MiDc un "
+        f"{100 * (1 - paired['ratios']['crucial']):.2f}%. Las protecciones "
+        "emparejadas de bandas, signo y cobertura se cumplen. Es una señal del "
+        "régimen de aprendizaje de correspondencia, con una sola semilla y sobre "
+        "H de desarrollo; no demuestra una causa única ni una mejora universal.",
+        "",
+        f"Frente a A5-P2, el agregado H se reduce un "
+        f"{100 * (1 - development['overall_ratio']):.2f}% y MiDc un "
+        f"{100 * (1 - development['ratios']['crucial']):.2f}%, pero MiDn aumenta "
+        f"un {100 * (development['ratios']['negative'] - 1):.2f}%. "
+        "El signo pasa la protección registrada; el rechazo procede de la banda "
+        "negativa. No debe describirse como rechazo por signo. Se conserva "
+        "NO_CANDIDATE_B1 y no se abre V para buscar un rescate.",
+        "",
+        "El control TTC ajusta mejor el agregado P y transfiere peor a H. "
+        "La correspondencia conocida mejora durante la fase auxiliar y pierde "
+        "parte de esa mejora durante el ajuste TTC posterior, aunque conserva "
+        "ventaja sobre el control. Estas observaciones justifican estudiar la "
+        "interacción entre representación y objetivo; no prueban por sí solas "
+        "que congelar el encoder o cambiar la pérdida vaya a resolverla.",
         "",
         f"Señal de mecanismo H frente al control TTC: **{paired['eligible']}**. "
         f"Razón agregado: {paired['overall_ratio']:.6f}. "

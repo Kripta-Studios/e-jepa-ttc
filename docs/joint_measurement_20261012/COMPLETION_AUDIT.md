@@ -1,6 +1,6 @@
 # V18: requisitos de cierre y alcance de la evidencia
 
-Corte de revisión: 16-10-2026, evaluación B1 activa. **Objetivo completo todavía
+Corte de revisión: 16-10-2026, B1 completo y diagnóstico de coste activo. **Objetivo completo todavía
 no demostrado.** Este documento deriva los requisitos del handoff, sus documentos
 02–06 y el prompt autorizado. No sustituye la verificación final de los bytes
 entregados ni convierte la existencia de un archivo en prueba de su contenido.
@@ -19,7 +19,7 @@ Las rutas de evidencia de la tabla son relativas a
 | RGB real, tiempos propios y controles | `rgb/evidence/COMPLETE.json`: RGB_READY_FOR_INTERPRETATION; comparación de sistema cierra NO_H_ADMITTED_RGB_CANDIDATE sin abrir V | No promover RGB rechazado mediante otra selección en V |
 | C1 geométrico con encoder entrenable y control CORR | `adaptive/C1_geometry/evidence/COMPLETE.json`: C1_READY_FOR_INTERPRETATION | Resultado standalone negativo; uso como productor de fusión declarado |
 | D1 capacidad con control y presupuesto igual de updates | `adaptive/D1_predictor_width/evidence/COMPLETE.json`: D1_READY_FOR_INTERPRETATION | Conservar negativo y errata explícita del nombre de scope de coste |
-| B1 correspondencia conocida y control TTC | Cuatro endpoints completos; 24.000 updates nuevos; P/H del primer brazo completos, segundo brazo evaluándose | P/H del control, recálculos, bootstrap, coste preparado, exports e interpretación emparejada |
+| B1 correspondencia conocida y control TTC | `adaptive/B1_correspondence/evidence/COMPLETE.json`: B1_READY_FOR_INTERPRETATION; cuatro endpoints, 24.000 updates, 144.624 predicciones, recálculos, bootstrap, coste y dos exports verificados. Señal emparejada positiva; NO_CANDIDATE_B1 frente a A5 por banda negativa | Incorporar evidencia y exports al replay final; no abrir V como rescate |
 | Continuación adaptativa máxima de cuatro experimentos | C1, D1 y B1 registrados prospectivamente; tres familias ejecutadas | Resolver con evidencia completa si se habilita A o datos. El máximo de cuatro no exige inventar una cuarta prueba |
 | Fusión con anchor RGB, ZERO de igual capacidad y fallback | `fusion/evaluation/RESULT.json`, contratos/exports TRUE y ZERO; no promoción de sistema | Coste desde sensores aún no admitido por discrepancia numérica |
 | Una familia de réplica completa, seeds13/23 | `replication/fusion_C1/evaluation/RESULT.json`: productores C1, heads TRUE/ZERO, nuevas features y normalizadores; tres seeds con seed7 | Mantener limitación de padres históricos compartidos; no presentar como tres pretrainings independientes |

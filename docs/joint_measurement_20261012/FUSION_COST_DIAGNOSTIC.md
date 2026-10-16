@@ -99,3 +99,34 @@ segmentos. Tras liberar esos recursos, el comando es:
 $env:PYTHONPATH = 'src;.'
 & ..\e-jepa-ttc\.venv\Scripts\python.exe -B -m operational.joint_measurement.fusion_cost_shape_probe
 ```
+
+## Resultado del contraste de batch histórico, 16 de octubre a las 18:10
+
+El contraste registrado está completo: ocho forwards de diagnóstico (cuatro
+consultas por dos configuraciones). La tabla se genera desde RESULT.json.
+
+| Índice V | cuDNN TF32 | TTC raw s | TTC histórico s | Tolerancia original |
+|---:|---|---:|---:|---|
+| 16169 | False | -7.775091171 | -7.773911953 | False |
+| 16169 | True | -7.773897648 | -7.773911953 | True |
+| 7651 | False | 7.867776871 | 7.865612507 | False |
+| 7651 | True | 7.865617275 | 7.865612507 | True |
+| 1762 | False | -4.648367882 | -4.648036003 | False |
+| 1762 | True | -4.648028374 | -4.648036003 | True |
+| 1515 | False | 4.487482071 | 4.492309570 | False |
+| 1515 | True | 4.492302418 | 4.492309570 | True |
+
+Con la forma histórica y cuDNN TF32 activado pasan las cuatro consultas. Con
+TF32 desactivado fallan las cuatro. Esta evidencia apoya una discrepancia
+de ejecución numérica, sin modificar pesos, entradas, relojes ni tolerancias.
+No prueba todavía la paridad de toda la población de coste.
+
+Se prepara la ruta raw_e2e_historical_shape_v1: las consultas y orden emparejado
+son los del contrato original; el batch externo sigue siendo uno. Los productores
+repiten cada observación hasta su tamaño histórico, conservando sólo la primera
+salida. Todo ese trabajo interno se contará y declarará. No es una optimización
+de velocidad ni un cambio de modelo. C1 y las cabezas mantienen su configuración
+original; el cambio cuDNN se limita a los productores históricos.
+
+SHA-256 de RESULT.json: 448800f85798e95904c3adbaccb9799e35db7d0c243098f06a4e130bf79e0a98.
+

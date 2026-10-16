@@ -1,17 +1,19 @@
 # V18 JOINT-MEASUREMENT
 
-Estado: RESEARCH_ONGOING / B1_ENDPOINTS_COMPLETE_EVALUATING;
+Estado: RESEARCH_ONGOING / B1_EVIDENCE_COMPLETE;
 fase primaria NO_SYSTEM_PROMOTION; RGB NO_CANDIDATE_RGB_PAIR;
 C1 independiente NO_CANDIDATE_C1; fusión seed7 sin promoción de sistema.
 Los cuatro entrenamientos primarios están completos en 12.000 updates cada uno.
 La matriz P/H, selección H, evaluación V del candidato seleccionado, coste E2E y
 comparación con E_CTX están completos. Esto no completa el programa V18.
 
-Actualización operativa del 16 de octubre, 17:44 Madrid: B1 completó sus cuatro
-etapas y 24.000 updates a las 16:40. La evaluación del brazo CORRESPONDENCE ya
-tiene P/H completos; TTC-CONTROL sigue generando P antes de H. La interpretación
-emparejada requiere las cuatro cohortes, bootstrap, coste y exports completos.
-No se elige una receta usando este corte parcial. CUDA Graphs y precarga lossless
+Actualización operativa del 16 de octubre, tras el cierre B1 de las 18:03 Madrid:
+las cuatro etapas, 24.000 updates, 144.624 predicciones P/H, bootstrap, coste
+preparado y dos exports CPU están completos. Hay señal emparejada favorable
+frente al control TTC, pero permanece NO_CANDIDATE_B1 frente a A5 por la banda
+negativa. El signo sí pasa su protección. El informe regenerado conserva todas
+las bandas y límites en [B1_RESULTS.md](B1_RESULTS.md).
+CUDA Graphs y precarga lossless
 están admitidos con comprobaciones exactas y sin reiniciar updates; véase
 [la medición y sus límites](INPUT_PIPELINE_20261016.md).
 La contabilidad durable es 159.200 científicos, 750 técnicos y 273 de recuperación

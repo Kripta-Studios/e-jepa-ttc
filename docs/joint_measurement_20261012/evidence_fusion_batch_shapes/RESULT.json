@@ -1,0 +1,602 @@
+{
+  "cost_admitted": false,
+  "full_population_cost_still_required": true,
+  "measurements": [
+    {
+      "E_HISTORY": {
+        "expert_phase": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 5.065463483333588e-06,
+          "mean_absolute_difference": 3.3577283223470053e-06,
+          "shape_equal": true
+        },
+        "features": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 0.001816391944885254,
+          "mean_absolute_difference": 0.0003620090291780584,
+          "shape_equal": true
+        },
+        "timing": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        },
+        "valid": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        }
+      },
+      "F_TRUE_raw_vs_cached_contexts": {
+        "exact": false,
+        "finite": true,
+        "maximum_absolute_difference": 0.0011792182922363281,
+        "mean_absolute_difference": 0.0011792182922363281,
+        "shape_equal": true
+      },
+      "R_HISTORY": {
+        "expert_phase": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 3.4552067518234253e-06,
+          "mean_absolute_difference": 2.5369226932525635e-06,
+          "shape_equal": true
+        },
+        "features": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 0.0007645487785339355,
+          "mean_absolute_difference": 0.0001411114600213135,
+          "shape_equal": true
+        },
+        "timing": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        },
+        "valid": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        }
+      },
+      "cached_ttc_s": -7.773911952972412,
+      "index": 16169,
+      "original_tolerance_pass": false,
+      "producer_cudnn_tf32": false,
+      "raw_ttc_s": -7.775091171264648
+    },
+    {
+      "E_HISTORY": {
+        "expert_phase": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 6.984919309616089e-08,
+          "mean_absolute_difference": 2.9491881529490154e-08,
+          "shape_equal": true
+        },
+        "features": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 3.6776065826416016e-05,
+          "mean_absolute_difference": 3.8971467053189e-06,
+          "shape_equal": true
+        },
+        "timing": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        },
+        "valid": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        }
+      },
+      "F_TRUE_raw_vs_cached_contexts": {
+        "exact": false,
+        "finite": true,
+        "maximum_absolute_difference": 1.430511474609375e-05,
+        "mean_absolute_difference": 1.430511474609375e-05,
+        "shape_equal": true
+      },
+      "R_HISTORY": {
+        "expert_phase": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 1.3969838619232178e-08,
+          "mean_absolute_difference": 4.6566128730773926e-09,
+          "shape_equal": true
+        },
+        "features": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 7.271766662597656e-06,
+          "mean_absolute_difference": 1.0753926985404071e-06,
+          "shape_equal": true
+        },
+        "timing": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        },
+        "valid": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        }
+      },
+      "cached_ttc_s": -7.773911952972412,
+      "index": 16169,
+      "original_tolerance_pass": true,
+      "producer_cudnn_tf32": true,
+      "raw_ttc_s": -7.773897647857666
+    },
+    {
+      "E_HISTORY": {
+        "expert_phase": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 2.5276094675064087e-06,
+          "mean_absolute_difference": 2.103081593910853e-06,
+          "shape_equal": true
+        },
+        "features": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 0.0008251070976257324,
+          "mean_absolute_difference": 0.00024397079558933482,
+          "shape_equal": true
+        },
+        "timing": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        },
+        "valid": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        }
+      },
+      "F_TRUE_raw_vs_cached_contexts": {
+        "exact": false,
+        "finite": true,
+        "maximum_absolute_difference": 0.0021643638610839844,
+        "mean_absolute_difference": 0.0021643638610839844,
+        "shape_equal": true
+      },
+      "R_HISTORY": {
+        "expert_phase": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 4.291534423828125e-06,
+          "mean_absolute_difference": 1.5855766832828522e-06,
+          "shape_equal": true
+        },
+        "features": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 0.0011856555938720703,
+          "mean_absolute_difference": 0.00014617224680442436,
+          "shape_equal": true
+        },
+        "timing": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        },
+        "valid": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        }
+      },
+      "cached_ttc_s": 7.865612506866455,
+      "index": 7651,
+      "original_tolerance_pass": false,
+      "producer_cudnn_tf32": false,
+      "raw_ttc_s": 7.867776870727539
+    },
+    {
+      "E_HISTORY": {
+        "expert_phase": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 1.7229467630386353e-08,
+          "mean_absolute_difference": 6.05359673500061e-09,
+          "shape_equal": true
+        },
+        "features": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 5.900859832763672e-06,
+          "mean_absolute_difference": 1.4478231177610509e-06,
+          "shape_equal": true
+        },
+        "timing": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        },
+        "valid": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        }
+      },
+      "F_TRUE_raw_vs_cached_contexts": {
+        "exact": false,
+        "finite": true,
+        "maximum_absolute_difference": 4.76837158203125e-06,
+        "mean_absolute_difference": 4.76837158203125e-06,
+        "shape_equal": true
+      },
+      "R_HISTORY": {
+        "expert_phase": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 7.869675755500793e-08,
+          "mean_absolute_difference": 2.7629236380259197e-08,
+          "shape_equal": true
+        },
+        "features": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 2.8848648071289062e-05,
+          "mean_absolute_difference": 4.161952757367901e-06,
+          "shape_equal": true
+        },
+        "timing": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        },
+        "valid": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        }
+      },
+      "cached_ttc_s": 7.865612506866455,
+      "index": 7651,
+      "original_tolerance_pass": true,
+      "producer_cudnn_tf32": true,
+      "raw_ttc_s": 7.865617275238037
+    },
+    {
+      "E_HISTORY": {
+        "expert_phase": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 2.950429916381836e-06,
+          "mean_absolute_difference": 1.3951212167739868e-06,
+          "shape_equal": true
+        },
+        "features": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 0.002080202102661133,
+          "mean_absolute_difference": 0.00036014353527742275,
+          "shape_equal": true
+        },
+        "timing": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        },
+        "valid": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        }
+      },
+      "F_TRUE_raw_vs_cached_contexts": {
+        "exact": false,
+        "finite": true,
+        "maximum_absolute_difference": 0.000331878662109375,
+        "mean_absolute_difference": 0.000331878662109375,
+        "shape_equal": true
+      },
+      "R_HISTORY": {
+        "expert_phase": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 2.9206275939941406e-06,
+          "mean_absolute_difference": 1.5441328287124634e-06,
+          "shape_equal": true
+        },
+        "features": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 0.0011884570121765137,
+          "mean_absolute_difference": 0.00019622105447685017,
+          "shape_equal": true
+        },
+        "timing": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        },
+        "valid": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        }
+      },
+      "cached_ttc_s": -4.648036003112793,
+      "index": 1762,
+      "original_tolerance_pass": false,
+      "producer_cudnn_tf32": false,
+      "raw_ttc_s": -4.648367881774902
+    },
+    {
+      "E_HISTORY": {
+        "expert_phase": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 8.568167686462402e-08,
+          "mean_absolute_difference": 2.9802322387695312e-08,
+          "shape_equal": true
+        },
+        "features": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 3.24249267578125e-05,
+          "mean_absolute_difference": 4.778177860905143e-06,
+          "shape_equal": true
+        },
+        "timing": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        },
+        "valid": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        }
+      },
+      "F_TRUE_raw_vs_cached_contexts": {
+        "exact": false,
+        "finite": true,
+        "maximum_absolute_difference": 7.62939453125e-06,
+        "mean_absolute_difference": 7.62939453125e-06,
+        "shape_equal": true
+      },
+      "R_HISTORY": {
+        "expert_phase": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 4.6566128730773926e-08,
+          "mean_absolute_difference": 2.7318795522054035e-08,
+          "shape_equal": true
+        },
+        "features": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 2.86102294921875e-05,
+          "mean_absolute_difference": 3.5122146501260643e-06,
+          "shape_equal": true
+        },
+        "timing": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        },
+        "valid": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        }
+      },
+      "cached_ttc_s": -4.648036003112793,
+      "index": 1762,
+      "original_tolerance_pass": true,
+      "producer_cudnn_tf32": true,
+      "raw_ttc_s": -4.648028373718262
+    },
+    {
+      "E_HISTORY": {
+        "expert_phase": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 1.5186145901679993e-05,
+          "mean_absolute_difference": 9.132549166679382e-06,
+          "shape_equal": true
+        },
+        "features": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 0.007546573877334595,
+          "mean_absolute_difference": 0.001015405061052126,
+          "shape_equal": true
+        },
+        "timing": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        },
+        "valid": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        }
+      },
+      "F_TRUE_raw_vs_cached_contexts": {
+        "exact": false,
+        "finite": true,
+        "maximum_absolute_difference": 0.0048274993896484375,
+        "mean_absolute_difference": 0.0048274993896484375,
+        "shape_equal": true
+      },
+      "R_HISTORY": {
+        "expert_phase": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 6.616115570068359e-06,
+          "mean_absolute_difference": 2.683450778325399e-06,
+          "shape_equal": true
+        },
+        "features": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 0.0011324882507324219,
+          "mean_absolute_difference": 0.00021369375434576295,
+          "shape_equal": true
+        },
+        "timing": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        },
+        "valid": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        }
+      },
+      "cached_ttc_s": 4.4923095703125,
+      "index": 1515,
+      "original_tolerance_pass": false,
+      "producer_cudnn_tf32": false,
+      "raw_ttc_s": 4.487482070922852
+    },
+    {
+      "E_HISTORY": {
+        "expert_phase": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 6.332993507385254e-08,
+          "mean_absolute_difference": 2.8560558954874676e-08,
+          "shape_equal": true
+        },
+        "features": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 3.1113624572753906e-05,
+          "mean_absolute_difference": 4.274989752208485e-06,
+          "shape_equal": true
+        },
+        "timing": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        },
+        "valid": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        }
+      },
+      "F_TRUE_raw_vs_cached_contexts": {
+        "exact": false,
+        "finite": true,
+        "maximum_absolute_difference": 7.152557373046875e-06,
+        "mean_absolute_difference": 7.152557373046875e-06,
+        "shape_equal": true
+      },
+      "R_HISTORY": {
+        "expert_phase": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 9.313225746154785e-08,
+          "mean_absolute_difference": 3.3527612686157227e-08,
+          "shape_equal": true
+        },
+        "features": {
+          "exact": false,
+          "finite": true,
+          "maximum_absolute_difference": 2.2619962692260742e-05,
+          "mean_absolute_difference": 3.862541680242501e-06,
+          "shape_equal": true
+        },
+        "timing": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        },
+        "valid": {
+          "exact": true,
+          "finite": true,
+          "maximum_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "shape_equal": true
+        }
+      },
+      "cached_ttc_s": 4.4923095703125,
+      "index": 1515,
+      "original_tolerance_pass": true,
+      "producer_cudnn_tf32": true,
+      "raw_ttc_s": 4.492302417755127
+    }
+  ],
+  "optimizer_updates": 0,
+  "registration_sha256": "9649f45c264b58e883663ced46a18e28a25ad3bd6235498b9ef8d8f476ed3c76",
+  "status": "COMPLETE_DIAGNOSTIC",
+  "tolerance_changes": false
+}

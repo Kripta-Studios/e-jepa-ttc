@@ -1,0 +1,86 @@
+{
+  "V_opened": false,
+  "conclusion": "Paired mechanism signal; no A5-relative candidate because negative-band protection fails. Sign protection passes for correspondence arm.",
+  "evidence_sha256": "d98e2e260515e4bcc63bafaece87c4ed94d6b9cf8598848ccfca04fcc974d0d5",
+  "optimizer_updates_added_by_interpretation": 0,
+  "remaining_scope": "Assess conditional A/data/refit; finish Garl paired cost and fusion parity; final independent bundle <=100000000 bytes.",
+  "selection": {
+    "decisions": {
+      "B1-CORRESPONDENCE-STAGE2-S7": {
+        "checks": {
+          "bands": false,
+          "coverage": true,
+          "sign": true
+        },
+        "cost_route": "requires separate paired latency evidence",
+        "cost_route_pass": false,
+        "cost_scope": "prepared event tensor resident on GPU through signed TTC output",
+        "eligible": false,
+        "overall_ratio": 0.7253169164282731,
+        "paired_cost_ratio": 0.6005661578762,
+        "ratios": {
+          "crucial": 0.6372319533751838,
+          "large": 0.9536288218329025,
+          "negative": 1.2838894533054643,
+          "small": 0.8109992209572899
+        },
+        "signals": {
+          "aggregate": true,
+          "crucial": true
+        },
+        "status_scope": "DEVELOPMENT_ONLY_NOT_SYSTEM_PROMOTION"
+      },
+      "B1-TTC-CONTROL-STAGE2-S7": {
+        "checks": {
+          "bands": false,
+          "coverage": true,
+          "sign": false
+        },
+        "cost_route": "requires separate paired latency evidence",
+        "cost_route_pass": false,
+        "cost_scope": "prepared event tensor resident on GPU through signed TTC output",
+        "eligible": false,
+        "overall_ratio": 0.7656966975068711,
+        "paired_cost_ratio": 0.5962706969092262,
+        "ratios": {
+          "crucial": 0.6785476642931006,
+          "large": 0.9620254707262393,
+          "negative": 1.4748744477263909,
+          "small": 0.8099409923910157
+        },
+        "signals": {
+          "aggregate": true,
+          "crucial": true
+        },
+        "status_scope": "DEVELOPMENT_ONLY_NOT_SYSTEM_PROMOTION"
+      }
+    },
+    "official_comparison": false,
+    "paired_mechanism": {
+      "checks": {
+        "bands": true,
+        "coverage": true,
+        "sign": true
+      },
+      "cost_route": "requires separate paired latency evidence",
+      "eligible": true,
+      "overall_ratio": 0.9472639999492285,
+      "ratios": {
+        "crucial": 0.939111556796885,
+        "large": 0.9912719058394596,
+        "negative": 0.8705076254352758,
+        "small": 1.0013065502008365
+      },
+      "signals": {
+        "aggregate": true,
+        "crucial": true
+      },
+      "status_scope": "DEVELOPMENT_ONLY_NOT_SYSTEM_PROMOTION"
+    },
+    "ranked": [],
+    "status": "NO_CANDIDATE_B1",
+    "system_promotion": false
+  },
+  "status": "B1_COMPLETE_INTERPRETED",
+  "utc": "2026-10-16T16:10:10.467382+00:00"
+}
