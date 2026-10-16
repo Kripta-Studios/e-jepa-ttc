@@ -36,14 +36,26 @@ JOBS = {
         "capacity_evaluate",
         "D1_READY_FOR_INTERPRETATION",
     ),
+    "correspondence": (
+        "adaptive/B1_correspondence",
+        "correspondence_train",
+        "B1_ENDPOINTS_COMPLETE",
+    ),
+    "correspondence_evaluation": (
+        "adaptive/B1_correspondence",
+        "correspondence_evaluate",
+        "B1_READY_FOR_INTERPRETATION",
+    ),
 }
 STATE_FILES = {
     "fusion_replication_pipeline": "PIPELINE_STATE.json",
     "capacity_evaluation": "evidence/COMPLETE.json",
+    "correspondence_evaluation": "evidence/COMPLETE.json",
 }
 OBSERVATION_FOLDERS = {
     "fusion_replication_pipeline": "hourly_pipeline",
     "capacity_evaluation": "hourly_evaluation",
+    "correspondence_evaluation": "hourly_evaluation",
 }
 
 
