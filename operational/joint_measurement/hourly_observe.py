@@ -18,6 +18,11 @@ from operational.train40_system.hourly_supervisor import next_hour
 ROOT = Path(__file__).resolve().parents[2]
 RUN = ROOT / "artifacts/joint_measurement_20261012"
 JOBS = {
+    "adaptation_evaluation": (
+        "adaptive/A1_adaptation_depth",
+        "adaptation_evaluate",
+        "A1_READY_FOR_INTERPRETATION",
+    ),
     "adaptation_depth": (
         "adaptive/A1_adaptation_depth",
         "adaptation_depth",
@@ -58,12 +63,14 @@ JOBS = {
     ),
 }
 STATE_FILES = {
+    "adaptation_evaluation": "evidence/COMPLETE.json",
     "fusion_cost": "COMPLETE.json",
     "fusion_replication_pipeline": "PIPELINE_STATE.json",
     "capacity_evaluation": "evidence/COMPLETE.json",
     "correspondence_evaluation": "evidence/COMPLETE.json",
 }
 OBSERVATION_FOLDERS = {
+    "adaptation_evaluation": "hourly_evaluation",
     "fusion_replication_pipeline": "hourly_pipeline",
     "capacity_evaluation": "hourly_evaluation",
     "correspondence_evaluation": "hourly_evaluation",

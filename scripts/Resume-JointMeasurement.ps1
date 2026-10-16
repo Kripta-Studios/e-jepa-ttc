@@ -1,5 +1,5 @@
 param(
-    [ValidateSet('Auto', 'Primary', 'B1Training', 'B1Evaluation', 'A1Training')]
+    [ValidateSet('Auto', 'Primary', 'B1Training', 'B1Evaluation', 'A1Training', 'A1Evaluation')]
     [string]$Stage = 'Auto',
     [switch]$Once,
     [switch]$ShowCommand
@@ -19,8 +19,10 @@ try {
     $B1 = Join-Path $Campaign 'adaptive/B1_correspondence'
     $A1 = Join-Path $Campaign 'adaptive/A1_adaptation_depth'
     if ($Stage -eq 'Auto') {
-        if (Test-Path -LiteralPath (Join-Path $A1 'ENDPOINTS.json')) {
-            throw 'A1 tiene ambos endpoints. Consulta NEXT_DECISION.json para su evaluación registrada.'
+        if (Test-Path -LiteralPath (Join-Path $A1 'evidence/COMPLETE.json')) {
+            throw 'A1 tiene evidencia completa. Interpreta NEXT_DECISION.json antes de la decisión final de campaña.'
+        } elseif (Test-Path -LiteralPath (Join-Path $A1 'ENDPOINTS.json')) {
+            $Stage = 'A1Evaluation'
         } elseif (Test-Path -LiteralPath (Join-Path $A1 'REGISTRATION.json')) {
             $Stage = 'A1Training'
         } elseif (Test-Path -LiteralPath (Join-Path $B1 'evidence/COMPLETE.json')) {
@@ -39,6 +41,7 @@ try {
         throw '-Once sólo corresponde al runner primario; B1 conserva sus segmentos durables registrados.'
     }
     $Module = switch ($Stage) {
+        'A1Evaluation' { 'operational.joint_measurement.adaptation_evaluate' }
         'A1Training' {
             $A1Runtime = Join-Path $Campaign 'runtime/A1_parallel_persistent_v1/ADMISSION.json'
             if (Test-Path -LiteralPath $A1Runtime) {

@@ -49,7 +49,16 @@ def test_reused_pid_is_not_a_live_driver(environment):
 
 
 @pytest.mark.parametrize(
-    "job", ["rgb", "geometry", "capacity", "capacity_evaluation", "adaptation_depth", "fusion_cost"]
+    "job",
+    [
+        "rgb",
+        "geometry",
+        "capacity",
+        "capacity_evaluation",
+        "adaptation_depth",
+        "adaptation_evaluation",
+        "fusion_cost",
+    ],
 )
 def test_terminal_receipt_never_terminates_a_live_process(environment, job):
     relative, _, terminal = observer.JOBS[job]
