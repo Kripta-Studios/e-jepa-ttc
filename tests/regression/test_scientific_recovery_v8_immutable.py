@@ -32,7 +32,7 @@ def test_v8_packaged_manifest_identity_is_unchanged() -> None:
 
 @pytest.mark.external_data
 def test_v8_manifest_and_every_packaged_member_are_unchanged() -> None:
-    """Full verification requires the historical 317 MB local results, never a synthetic substitute."""
+    """Verify the original external results; synthetic substitutes are not accepted."""
     manifest = artifact_path(MANIFEST.relative_to(ROOT).as_posix())
     assert _sha256(manifest) == EXPECTED_MANIFEST_SHA256
     payload = json.loads(manifest.read_text(encoding="utf-8"))
