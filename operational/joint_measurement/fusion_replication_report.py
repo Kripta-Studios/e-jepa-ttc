@@ -59,6 +59,13 @@ def build() -> dict:
         "inferencia V de las réplicas. R_CTX ya está supervisado en H; la nueva "
         "cabeza es ajuste secuencial, no OOF. V sigue siendo desarrollo expuesto.",
         "",
+        "![Las tres semillas, ocho métricas y comparadores históricos](figures/fusion_replicas.png)",
+        "",
+        "La figura se regenera con `python -B -m "
+        "operational.joint_measurement.fusion_replication_figure`; barras de una "
+        "desviación entre semillas, no intervalos de confianza. Su CSV, PDF y "
+        "recibos están en `report/fusion_replication_figure` dentro de la campaña.",
+        "",
         "## Cohorte V completa",
         "",
         "| Modelo | Agregado | MiDc | MiDs | MiDl | MiDn | MAE s | Error signo |",

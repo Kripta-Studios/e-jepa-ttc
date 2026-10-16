@@ -4,6 +4,10 @@ Se publican las tres semillas registradas (7, 13, 23) y sus controles ZERO. La r
 
 Por semilla adicional: 12.000 updates P del encoder y lectura C1, extracción nueva de H y normalizador event propio, y 2.500 updates H por cada cabeza TRUE/ZERO. Los seis endpoints nuevos se congelan antes de cualquier inferencia V de las réplicas. R_CTX ya está supervisado en H; la nueva cabeza es ajuste secuencial, no OOF. V sigue siendo desarrollo expuesto.
 
+![Las tres semillas, ocho métricas y comparadores históricos](figures/fusion_replicas.png)
+
+La figura se regenera con `python -B -m operational.joint_measurement.fusion_replication_figure`; barras de una desviación entre semillas, no intervalos de confianza. Su CSV, PDF y recibos están en `report/fusion_replication_figure` dentro de la campaña.
+
 ## Cohorte V completa
 
 | Modelo | Agregado | MiDc | MiDs | MiDl | MiDn | MAE s | Error signo |
