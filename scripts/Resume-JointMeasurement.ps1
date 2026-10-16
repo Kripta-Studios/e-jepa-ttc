@@ -59,6 +59,11 @@ try {
             $Module = 'operational.joint_measurement.correspondence_prefetch'
             $Arguments = @('-u', '-B', '-m', $Module, 'run')
         }
+        $GeometryExport = Join-Path $Campaign 'runtime/B1_geometry_export_v1/REGISTRATION.json'
+        if (Test-Path -LiteralPath $GeometryExport) {
+            $Module = 'operational.joint_measurement.correspondence_export'
+            $Arguments = @('-u', '-B', '-m', $Module, 'run')
+        }
     }
     if ($Once) { $Arguments += '--once' }
     if ($ShowCommand) {
