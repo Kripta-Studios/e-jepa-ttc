@@ -59,7 +59,7 @@ def collect() -> tuple[dict[str, Path], list[dict]]:
     return files, omitted
 
 
-def build(output: Path) -> dict:
+def build(output: Path, *, solid: bool = False) -> dict:
     """Verify a private candidate before publishing a ZIP of at most 100,000,000 bytes."""
     output = output.resolve()
     if output.suffix.lower() != ".zip":
@@ -87,6 +87,7 @@ def build(output: Path) -> dict:
         "optimizer_checkpoint_payloads_included": False,
         "raw_sensor_or_feature_caches_included": False,
         "external_historical_parents_embedded": False,
+        "lossless_solid_packaging": solid,
         "reproduction_scope": (
             "Recompute reported metrics from consolidated predictions and replay included "
             "portable examples. Training and raw-sensor inference require external data, "
@@ -166,6 +167,11 @@ def build(output: Path) -> dict:
                 "[BUNDLE_MANIFEST.json](BUNDLE_MANIFEST.json) contiene tamaños y SHA-256 "
                 "de cada miembro. El `.sha256` externo verifica el ZIP completo.",
                 "",
+                "En modo `--solid`, el ZIP envuelve un PAYLOAD.tar.xz sin pérdida. "
+                "Su script `unpack.py` verifica y recupera todos estos archivos originales "
+                "en una carpeta nueva. La compresión no modifica ni cuantiza pesos o tablas. "
+                "El manifiesto exterior y el de esta carpeta tienen ámbitos distintos.",
+                "",
                 "Para verificar la estructura desde la extracción, con las dependencias "
                 "del proyecto disponibles: `python source/operational/joint_measurement/bundle.py "
                 "verify RUTA_DEL_ZIP`. Es una comprobación de integridad, no un reentrenamiento.",
@@ -193,12 +199,22 @@ def build(output: Path) -> dict:
     payload_bytes = sum(path.stat().st_size for path in files.values())
     if shutil.disk_usage(output.parent).free < payload_bytes + 10_000_000_000:
         raise RuntimeError("Delivery would violate the 10 GB free disk reserve")
-    write_archive(candidate, files, context)
+    if solid:
+        from .solid_delivery import write_solid_archive
+
+        write_solid_archive(candidate, files, context)
+    else:
+        write_archive(candidate, files, context)
     if candidate.stat().st_size > LIMIT:
         measured = candidate.stat().st_size
         candidate.unlink()
         raise RuntimeError(f"Unpublished candidate removed: {measured} bytes exceeds {LIMIT}")
-    verified = verify_archive(candidate)
+    if solid:
+        from .unpack_solid import verify
+
+        verified = verify(candidate)
+    else:
+        verified = verify_archive(candidate)
     os.replace(candidate, output)
     output.with_suffix(".zip.sha256").write_text(
         f"{verified['zip_sha256']}  {output.name}\n", encoding="utf-8"
@@ -210,5 +226,6 @@ def build(output: Path) -> dict:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("output", type=Path)
+    parser.add_argument("--solid", action="store_true", help="Lossless joint TAR/XZ payload in ZIP")
     arguments = parser.parse_args()
-    print(build(arguments.output))
+    print(build(arguments.output, solid=arguments.solid))

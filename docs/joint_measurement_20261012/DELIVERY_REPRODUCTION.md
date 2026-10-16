@@ -38,6 +38,10 @@ Los scripts y recibos históricos de resume documentan la recuperación ya proba
 
 ## ZIP esencial
 
+Los comandos de análisis primario siguientes son históricos. Antes de entregar,
+`final_report` debe regenerar la conclusión de todo el programa, incluyendo A1
+y coste completo; no usar sólo el hito primario como conclusión actual.
+
 La fase primaria completada se describe en `primary_milestone/README.md` dentro
 de la campaña. Para regenerar las tablas y la conclusión desde su evidencia:
 
@@ -63,9 +67,11 @@ local antes de fijar el paquete.
 
 ```powershell
 $Bundle = Join-Path $HOME 'Downloads/E_JEPA_TTC_V18_RESULTS_COMPACT.zip'
-& '../e-jepa-ttc/.venv/Scripts/python.exe' -B -m operational.joint_measurement.compact_delivery $Bundle
+& '../e-jepa-ttc/.venv/Scripts/python.exe' -B -m operational.joint_measurement.compact_delivery $Bundle --solid
 & '../e-jepa-ttc/.venv/Scripts/python.exe' -B -m operational.joint_measurement.bundle verify $Bundle
 ```
+
+El modo `--solid` guarda todos los archivos originales en un `PAYLOAD.tar.xz` dentro del ZIP. La compresión conjunta permite aprovechar bytes repetidos entre tablas y ejemplos sin cambiar valores, eliminar filas ni cuantizar pesos. El ZIP exterior incluye un script de extracción que sólo requiere Python estándar.
 
 La ruta debe ser nueva. El empaquetador compacto publica únicamente un ZIP de
 como máximo **100.000.000 bytes**, verificado antes de publicarlo. Conserva código
@@ -94,7 +100,11 @@ $Python = (Resolve-Path '../e-jepa-ttc/.venv/Scripts/python.exe').Path
 $Extracted = Join-Path $HOME 'Downloads/E_JEPA_TTC_V18_INDEPENDENT'
 $Receipt = Join-Path $HOME 'Downloads/E_JEPA_TTC_V18_INDEPENDENT.json'
 if (Test-Path -LiteralPath $Extracted) { throw 'Usa una carpeta de extracción nueva.' }
-Expand-Archive -LiteralPath $Bundle -DestinationPath $Extracted
+$Wrapper = Join-Path $HOME 'Downloads/V18_WRAPPER_FINAL'
+if (Test-Path -LiteralPath $Wrapper) { throw 'Usa una carpeta exterior nueva.' }
+Expand-Archive -LiteralPath $Bundle -DestinationPath $Wrapper
+& $Python -B (Join-Path $Wrapper 'unpack.py') $Bundle $Extracted
+if ($LASTEXITCODE -ne 0) { throw 'Extracción o integridad fallida.' }
 Push-Location -LiteralPath (Join-Path $Extracted 'source')
 try {
     $env:PYTHONPATH = 'src;.'

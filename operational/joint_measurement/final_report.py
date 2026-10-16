@@ -82,6 +82,13 @@ def build() -> dict:
         "más rápido que F_TRUE en esta medición y más lento que R_CTX. ZERO conserva el "
         "pipeline del control de igual capacidad; no representa un RGB mínimo optimizado.",
         "",
+        "Para reproducir la aritmética histórica se conserva el tamaño de batch original "
+        "de cada productor, repitiendo la consulta cuando corresponde y cobrando todo "
+        "ese trabajo. No equivale al mínimo coste posible de una implementación batch1 "
+        "rediseñada. Las cabezas son CPU FP32 y los productores event/RGB usan CUDA, "
+        "con las transferencias incluidas. Las rutas y el hardware son los declarados "
+        "en REGISTRATION.json; no se extrapolan a otro dispositivo.",
+        "",
         "## Qué queda demostrado y qué no",
         "",
         "- La matriz primaria entrenó realmente los encoders DIRECT/CORR y mantuvo "

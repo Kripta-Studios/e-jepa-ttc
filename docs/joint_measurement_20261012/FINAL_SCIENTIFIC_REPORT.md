@@ -17,6 +17,8 @@ Diferencia absoluta máxima frente a las predicciones verificadas: 0.00079345703
 
 Son tiempos warm con el estado de cachés declarado por el runtime; no demuestran lectura física fría desde disco. Carga, primer forward y cabeza preparada se conservan por separado en los recibos. Los milisegundos de una cabeza o del forward preparado no describen estos segundos del pipeline completo. TRUE resulta más rápido que F_TRUE en esta medición y más lento que R_CTX. ZERO conserva el pipeline del control de igual capacidad; no representa un RGB mínimo optimizado.
 
+Para reproducir la aritmética histórica se conserva el tamaño de batch original de cada productor, repitiendo la consulta cuando corresponde y cobrando todo ese trabajo. No equivale al mínimo coste posible de una implementación batch1 rediseñada. Las cabezas son CPU FP32 y los productores event/RGB usan CUDA, con las transferencias incluidas. Las rutas y el hardware son los declarados en REGISTRATION.json; no se extrapolan a otro dispositivo.
+
 ## Qué queda demostrado y qué no
 
 - La matriz primaria entrenó realmente los encoders DIRECT/CORR y mantuvo el control congelado. NATIVE fue comparado como sistema y no obtuvo promoción.
@@ -41,5 +43,5 @@ P es entrenamiento; H y V son desarrollo, V ya expuesto. Las tres semillas compa
 
 Regenerar en el entorno documentado: `python -B -m operational.joint_measurement.final_report`. Exige quiescencia y verifica bindings, decisiones, población/paridad/coste y contabilidad; no realiza updates. El empaquetado y replay posterior se describen en [DELIVERY_REPRODUCTION.md](DELIVERY_REPRODUCTION.md).
 
-Evidencia del programa SHA-256: `5d98d49cb070d6b577a0d12cc9944cec1c847b64f40531b4b559a36510e0a47a`.
+Evidencia del programa SHA-256: `c3de3b1eff301aafb58028c2ca0b59ec05c91ed26d94df78a99a451e90da0e3e`.
 Coste completo SHA-256: `bc19f28d6d334264fb48c2d30e830b790946ce8201b397c8860f4ac6b2178f55`.
