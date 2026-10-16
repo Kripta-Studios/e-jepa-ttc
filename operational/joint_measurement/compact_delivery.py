@@ -50,7 +50,6 @@ def collect() -> tuple[dict[str, Path], list[dict]]:
                     "reason": "runtime file" if ephemeral else "nonportable tensor/cache/fragment",
                 }
             )
-    files["README.md"] = ROOT / "docs/joint_measurement_20261012/RESEARCH_STATUS.md"
     return files, omitted
 
 
@@ -89,6 +88,71 @@ def build(output: Path) -> dict:
             "tensor payloads. Fusion head exports alone do not include their producers."
         ),
     }
+    readme = RUN / "delivery/COMPACT_README.md"
+    readme.parent.mkdir(parents=True, exist_ok=True)
+    reports = [
+        "RESEARCH_STATUS.md",
+        "RESULTS_TABLES.md",
+        "FUSION_REPLICATION_RESULTS.md",
+        "FUSION_RESULTS.md",
+        "C1_RESULTS.md",
+        "RGB_RESULTS.md",
+        "D1_RESULTS.md",
+        "RESUME_20261016.md",
+        "D1_EXECUTION.md",
+    ]
+    links = [
+        f"- [{name}](source/docs/joint_measurement_20261012/{name})"
+        for name in reports
+        if (ROOT / "docs/joint_measurement_20261012" / name).exists()
+    ]
+    readme.write_text(
+        "\n".join(
+            [
+                "# V18: documentación, resultados y exports portables",
+                "",
+                f"Commit: `{context['commit']}`.",
+                "",
+                "La conclusión y el trabajo pendiente están en "
+                "[CAMPAIGN_CONCLUSION.json](campaign/CAMPAIGN_CONCLUSION.json). "
+                "Este paquete no concede una afirmación SOTA ni convierte "
+                "desarrollo interno en test.",
+                "",
+                "## Informes",
+                "",
+                *links,
+                "",
+                "## Contenido y límites",
+                "",
+                "`source/` contiene el código y documentación versionados. `campaign/` conserva "
+                "metadatos, curvas, predicciones consolidadas, verificaciones y exports, incluidos "
+                "los resultados negativos. Los pesos portables y ejemplos están en los directorios "
+                "`exports`; los modelos de cabeza necesitan las features de sus productores.",
+                "",
+                "No se incluyen sensores crudos, cachés de features, estados de optimizador ni "
+                "padres históricos externos. Permanecen locales. El manifiesto enumera las "
+                "omisiones; los recibos pueden referenciar esos archivos no incluidos. La "
+                "reproducción de entrenamiento requiere esos datos y padres admitidos.",
+                "",
+                "El ZIP publicado tiene como máximo 100.000.000 bytes. "
+                "[BUNDLE_MANIFEST.json](BUNDLE_MANIFEST.json) contiene tamaños y SHA-256 "
+                "de cada miembro. El `.sha256` externo verifica el ZIP completo.",
+                "",
+                "Para verificar la estructura desde la extracción, con las dependencias "
+                "del proyecto disponibles: `python source/operational/joint_measurement/bundle.py "
+                "verify RUTA_DEL_ZIP`. Es una comprobación de integridad, no un reentrenamiento.",
+                "",
+                "Ejemplo de replay independiente de una cabeza: "
+                "`python source/operational/joint_measurement/replay_fusion_export.py "
+                "campaign/fusion/exports/FUSION-TRUE-S7`. Requiere NumPy/PyTorch y usa "
+                "los ejemplos empaquetados; no importa el proyecto ni accede a sensores.",
+                "",
+            ]
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    files["README.md"] = readme
     output.parent.mkdir(parents=True, exist_ok=True)
     payload_bytes = sum(path.stat().st_size for path in files.values())
     if shutil.disk_usage(output.parent).free < payload_bytes + 10_000_000_000:
