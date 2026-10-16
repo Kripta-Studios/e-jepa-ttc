@@ -43,7 +43,10 @@ python -B -m operational.joint_measurement.system_compare
 
 Reanudar `raw_cost` mientras devuelva PARTIAL. Si no hay candidato admitido por H,
 `system_compare` deja constancia sin abrir outcomes V y la investigación continúa
-con las ramas P/H autorizadas. El informe real todavía no se ha ejecutado.
+con las ramas P/H autorizadas. La ejecución real de la matriz primaria ya
+terminó: `system_compare/RESULT.json` contiene `INTERNAL_SYSTEM_COMPARISON_COMPLETE`.
+El candidato H NATIVE-P2-FT-S7 no cumple los gates de sistema frente a E_CTX.
+Se conserva como resultado negativo; véase [la conclusión actual](CURRENT_CONCLUSION.md).
 
 Seis pruebas verifican que se rechacen cohortes omitidas, duplicadas, reordenadas
 o con grupos/targets alterados, y que las predicciones inválidas permanezcan
@@ -74,5 +77,7 @@ Validación: 11 tests nuevos y 6 tests de cohorte existentes aprobados. Incluyen
 un informe completo con ambos comparadores sobre fixtures, ausencia de lecturas
 V sin candidato, rechazo de procedencia/bytes/targets alterados y preservación
 del candidato congelado pese a resultados inválidos. Ruff y formato aprobados.
-Estas pruebas no son resultados científicos RGB V: su entrenamiento sigue vivo
-y todavía no se ejecuta esta comparación sobre sus predicciones.
+Estas pruebas no son resultados científicos RGB V. La ejecución real cerró
+`rgb/system_compare/RESULT.json` con `NO_H_ADMITTED_RGB_CANDIDATE`, sin abrir
+outcomes V de candidatos RGB rechazados por H. Los entrenamientos y sus cohortes
+P/H están completos; véase [RGB_RESULTS.md](RGB_RESULTS.md).

@@ -58,6 +58,11 @@ def build() -> dict:
         "Congelar cualquier export test admisible; el envío oficial sigue sin autorización",
         "Publicar informes y verificar independientemente el ZIP final <=100000000 bytes",
     ]
+    garl_cost = RUN / "cost/garl_routes/RESULT.json"
+    if not garl_cost.exists() or read(garl_cost)["status"] != "COMPLETE":
+        remaining.append(
+            "Medir Garl completo: rutas nativa/local emparejadas, CPU FP32 y coste raw"
+        )
     value = {
         "schema": "v18_campaign_progress_conclusion_v2",
         "utc": utc(),

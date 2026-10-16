@@ -1,11 +1,23 @@
 # V18 JOINT-MEASUREMENT
 
-Estado: RESEARCH_ONGOING / B1_CORRESPONDENCE_TRAINING;
+Estado: RESEARCH_ONGOING / B1_ENDPOINTS_COMPLETE_EVALUATING;
 fase primaria NO_SYSTEM_PROMOTION; RGB NO_CANDIDATE_RGB_PAIR;
 C1 independiente NO_CANDIDATE_C1; fusión seed7 sin promoción de sistema.
 Los cuatro entrenamientos primarios están completos en 12.000 updates cada uno.
 La matriz P/H, selección H, evaluación V del candidato seleccionado, coste E2E y
 comparación con E_CTX están completos. Esto no completa el programa V18.
+
+Actualización operativa del 16 de octubre, 17:44 Madrid: B1 completó sus cuatro
+etapas y 24.000 updates a las 16:40. La evaluación del brazo CORRESPONDENCE ya
+tiene P/H completos; TTC-CONTROL sigue generando P antes de H. La interpretación
+emparejada requiere las cuatro cohortes, bootstrap, coste y exports completos.
+No se elige una receta usando este corte parcial. CUDA Graphs y precarga lossless
+están admitidos con comprobaciones exactas y sin reiniciar updates; véase
+[la medición y sus límites](INPUT_PIPELINE_20261016.md).
+La contabilidad durable es 159.200 científicos, 750 técnicos y 273 de recuperación
+superior: 160.223 físicos, sin updates pendientes. El estado regenerado se publica
+en [CURRENT_CONCLUSION.md](CURRENT_CONCLUSION.md). Los registros fechados que
+siguen conservan la evolución anterior y no sustituyen ese estado actual.
 
 Actualización del 16 de octubre de 2026, reanudación solicitada por el usuario:
 
@@ -43,8 +55,8 @@ Actualización del 16 de octubre de 2026, reanudación solicitada por el usuario
   90 técnicos: reanudación exacta de los nueve estados contrastados en los
   tres regímenes, y paridad numérica eager/captura. Un primer fallo de captura
   por asignación CPU/CUDA se conserva; preasignar matrices fijas lo corrige
-  sin cambiar la receta ni reiniciar updates. B1 entrena desde las 07:11.
-  No hay todavía métricas científicas B1.
+  sin cambiar la receta ni reiniciar updates. B1 entrenó desde las 07:11 y
+  completó sus endpoints a las 16:40. Su evaluación emparejada está en curso.
   [B1_EXECUTION.md](B1_EXECUTION.md) fija warps, pérdidas, etapas y criterios.
 - Sigue pendiente validar el coste sensorial completo de la nueva fusión. La
   primera medición se detuvo por admisión de fuentes históricas; una continuación
