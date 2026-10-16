@@ -3,6 +3,7 @@
 import pytest
 import torch
 
+from operational.joint_measurement.compute_guard import is_mlflow_mcp
 from operational.joint_measurement.correspondence_inference_graph import validate_inputs
 
 
@@ -23,3 +24,10 @@ def test_clock_layout_and_precision_cannot_change() -> None:
         validate_inputs(pixels, torch.ones(4, 1))
     with pytest.raises(ValueError, match="FP32"):
         validate_inputs(pixels.half(), torch.ones(4))
+
+
+def test_only_known_control_plane_is_exempt() -> None:
+    assert is_mlflow_mcp(["python.exe", "mlflow.exe", "mcp", "run"])
+    assert not is_mlflow_mcp(["python.exe", "mlflow.exe", "run", "training"])
+    assert not is_mlflow_mcp(["python.exe", "train.py", "mcp", "run"])
+    assert not is_mlflow_mcp(["python.exe", "mlflow.exe", "mcp", "run", "extra"])

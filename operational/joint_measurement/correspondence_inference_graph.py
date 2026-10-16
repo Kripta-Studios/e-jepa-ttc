@@ -18,13 +18,13 @@ from operational.range_transfer.common import freeze, read, sha, utc, write
 from . import correspondence_evaluate as b1
 from . import geometry_evaluate as evaluation
 from .common import ROOT, RUN, gpu_charge
+from .compute_guard import guard_idle
 from .data import SensorDataset
-from .garl_route_cost import guard_idle
 from .geometry_capture import CaptureCore, checked_phase
 from .geometry_model import GeometricPairMeasurement
 from .train import committed_sources, setup
 
-OUT = RUN / "runtime/B1_inference_graph_v1"
+OUT = RUN / "runtime/B1_inference_graph_v2"
 
 
 def validate_inputs(inputs: Tensor, dt: Tensor) -> None:
@@ -82,6 +82,7 @@ def register() -> dict:
             ROOT / f"operational/joint_measurement/{name}.py"
         )
         for name in (
+            "compute_guard",
             "correspondence_inference_graph",
             "geometry_capture",
             "geometry_model",
@@ -91,6 +92,11 @@ def register() -> dict:
     }
     committed_sources(sources)
     record = {
+        "supersedes_unexecuted_probe": sha(RUN / "runtime/B1_inference_graph_v1/REGISTRATION.json"),
+        "revision": (
+            "Exclude exact MLflow MCP service from CPU compute guard; "
+            "GPU ownership remains enforced"
+        ),
         "sources": sources,
         "endpoints_sha256": sha(b1.DIRECTORY / "ENDPOINTS.json"),
         "evaluation_registration_sha256": sha(b1.EVALUATION),

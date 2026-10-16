@@ -27,8 +27,16 @@ Los checks de paridad no equivalen a una prueba sobre todos los inputs posibles.
 La aceleración global debe medirse después en fragmentos nuevos de la misma ruta.
 
 Código: `operational/joint_measurement/correspondence_inference_graph.py`.
-Registro y resultados: `runtime/B1_inference_graph_v1` dentro de la campaña.
+Registro y resultados: `runtime/B1_inference_graph_v2` dentro de la campaña.
 La implementación por sí sola no acredita admisión ni aceleración.
+
+El primer intento se conserva en `runtime/B1_inference_graph_v1`: su guard de
+exclusión identificó el servicio `mlflow.exe mcp run`, cuyo cwd era V17, como
+cómputo concurrente. No llegó a inferir ni reservar GPU. La revisión v2 permite
+ese entrypoint exacto de control; sigue rechazando entrenamientos MLflow y otros
+procesos Python del proyecto, y mantiene la exclusión GPU independiente. No se
+detuvo ni modificó el servicio MCP. El evaluador original se detuvo con 66
+fragmentos y 16.896 predicciones durables, conservadas y verificadas por hash.
 
 Referencia de la API: [CUDA Graphs en PyTorch](https://docs.pytorch.org/docs/2.14/notes/cuda.html#cuda-graphs).
 Context7 no estaba disponible; se consultó la documentación oficial. La versión
