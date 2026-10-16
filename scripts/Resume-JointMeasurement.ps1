@@ -45,7 +45,10 @@ try {
         'A1Training' {
             $A1Runtime = Join-Path $Campaign 'runtime/A1_parallel_persistent_v1/ADMISSION.json'
             $A1LossGraph = Join-Path $Campaign 'runtime/A1_loss_graph_v1/ADMISSION.json'
-            if (Test-Path -LiteralPath $A1LossGraph) {
+            $A1Boundary = Join-Path $Campaign 'runtime/A1_boundary_evidence_v1/ADMISSION.json'
+            if (Test-Path -LiteralPath $A1Boundary) {
+                'operational.joint_measurement.adaptation_observed_run'
+            } elseif (Test-Path -LiteralPath $A1LossGraph) {
                 'operational.joint_measurement.adaptation_loss_graph_runtime'
             } elseif (Test-Path -LiteralPath $A1Runtime) {
                 'operational.joint_measurement.adaptation_runtime'

@@ -36,6 +36,11 @@ controles CUDA exactos y de reanudación de ambos brazos. Se instaló desde el
 update 6.400; su mejora del 40,7 % corresponde al forward/backward preparado,
 no a una garantía de aceleración del entrenamiento completo.
 
+El [perfil de FULL y la reparación de su comprobación al guardar](A1_BOTTLENECK_AND_BOUNDARY_FIX_20261016.md)
+confirman los grafos y la caché persistentes, y documentan la reanudación desde
+1.425 updates sin pérdida. La investigación y validación de CI se registra
+en [ci_repair_20261016.md](../ci_repair_20261016.md).
+
 ```powershell
 ./scripts/Resume-JointMeasurement.ps1 -ShowCommand
 ./scripts/Resume-JointMeasurement.ps1

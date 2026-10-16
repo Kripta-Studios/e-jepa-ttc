@@ -199,7 +199,8 @@ class GarlTTCLHRCacheConfig:
             "shifted_event_window",
         }:
             raise ValueError(
-                "event_v4_precontext_fallback must be 'disabled' or 'shifted_event_window'."
+                "event_v4_precontext_fallback must be 'disabled' or "
+                "'shifted_event_window'."
             )
         if self.calibration_mode not in {
             "official_constant_fy",
@@ -282,7 +283,9 @@ def _load_torch_records(path: Path) -> list[dict[str, Any]]:
     try:
         if path.suffix == ".gz":
             with gzip.open(path, "rb") as handle:
-                records = torch.load(cast(Any, handle), map_location="cpu", weights_only=False)
+                records = torch.load(
+                    cast(Any, handle), map_location="cpu", weights_only=False
+                )
         else:
             records = torch.load(path, map_location="cpu", weights_only=False)
     except Exception as exc:
@@ -1115,18 +1118,30 @@ def _materialize_row(
         "ttc_label_source": "official_garlttc_annotations_train_parquet.frame_ttc[t2]",
     }
     if config.store_full_frame_events:
-        sample["full_frame_events"] = torch.stack(full_frames).numpy().astype(np.float32)
+        sample["full_frame_events"] = (
+            torch.stack(full_frames).numpy().astype(np.float32)
+        )
     if config.store_garl_event_roi:
-        sample["garl_event_roi"] = torch.cat(endpoint_events, dim=0).numpy().astype(np.float32)
+        sample["garl_event_roi"] = (
+            torch.cat(endpoint_events, dim=0).numpy().astype(np.float32)
+        )
     if config.store_jepa_event_roi:
-        sample["jepa_event_roi"] = torch.stack(jepa_endpoint_events).numpy().astype(np.float32)
+        sample["jepa_event_roi"] = (
+            torch.stack(jepa_endpoint_events).numpy().astype(np.float32)
+        )
     if config.store_event_v4_common_roi:
         if event_v4_common_square is None or event_v4_boxes is None:
             raise RuntimeError("V4 common-ROI materialization was not completed.")
-        storage_dtype = np.float16 if config.event_v4_storage_dtype == "float16" else np.float32
-        sample["event_v4_common_roi"] = torch.stack(event_v4_frames).numpy().astype(storage_dtype)
+        storage_dtype = (
+            np.float16 if config.event_v4_storage_dtype == "float16" else np.float32
+        )
+        sample["event_v4_common_roi"] = torch.stack(event_v4_frames).numpy().astype(
+            storage_dtype
+        )
         sample["event_v4_boxes_xyxy"] = event_v4_boxes
-        sample["event_v4_common_square_xyxy"] = np.asarray(event_v4_common_square, dtype=np.float32)
+        sample["event_v4_common_square_xyxy"] = np.asarray(
+            event_v4_common_square, dtype=np.float32
+        )
         sample["event_v4_precontext_valid"] = np.bool_(True)
         sample["event_v4_precontext_source"] = str(event_v4_precontext_source)
         sample["event_v4_t0_box_is_proxy"] = np.bool_(
@@ -1335,7 +1350,9 @@ def materialize_garlttc_lhr_cache(
             jepa_pair_valid_count += int(sample["jepa_pair_valid"])
             precontext_motion_valid_count += int(sample["precontext_motion_valid"])
             if "event_v4_precontext_valid" in sample:
-                event_v4_precontext_valid_count += int(sample["event_v4_precontext_valid"])
+                event_v4_precontext_valid_count += int(
+                    sample["event_v4_precontext_valid"]
+                )
                 event_v4_precontext_sources[
                     str(sample.get("event_v4_precontext_source", "unknown"))
                 ] += 1
@@ -1616,7 +1633,9 @@ def materialize_garlttc_lhr_cache(
                 else None
             ),
             "event_v4_margin_fraction": (
-                config.event_v4_margin_fraction if config.store_event_v4_common_roi else None
+                config.event_v4_margin_fraction
+                if config.store_event_v4_common_roi
+                else None
             ),
             "event_v4_bins_per_polarity": config.event_v4_bins_per_polarity,
             "event_v4_storage_dtype": config.event_v4_storage_dtype,
@@ -1663,7 +1682,9 @@ def materialize_garlttc_lhr_cache(
         "event_v4_precontext_valid_fraction": float(
             event_v4_precontext_valid_count / max(sum(split_counts.values()), 1)
         ),
-        "event_v4_precontext_source_counts": dict(sorted(event_v4_precontext_sources.items())),
+        "event_v4_precontext_source_counts": dict(
+            sorted(event_v4_precontext_sources.items())
+        ),
         "mask_valid_endpoint_fraction": (
             float(mask_valid_endpoint_count / max(mask_endpoint_count, 1))
             if config.include_masks

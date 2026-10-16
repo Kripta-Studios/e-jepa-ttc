@@ -85,7 +85,12 @@ select = ["E", "F", "I", "B", "UP", "N", "ANN"]
 "operational/joint_measurement/data.py" = ["E501"]
 
 [tool.ruff.format]
-exclude = ["operational/joint_measurement/data.py"]
+# These loaders are currently bound by the V18 runtime admission; lint still applies.
+exclude = [
+  "operational/joint_measurement/data.py",
+  "src/e_jepa_ttc/data/garlttc_lhr_cache.py",
+  "src/e_jepa_ttc/data/object_event_v4.py",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

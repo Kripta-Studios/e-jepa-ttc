@@ -1,0 +1,28 @@
+{
+  "command": [
+    "uv",
+    "tool",
+    "run",
+    "--from",
+    "py-spy==0.4.2",
+    "py-spy",
+    "record",
+    "--pid",
+    "6044",
+    "--duration",
+    "40",
+    "--rate",
+    "50",
+    "--threads",
+    "--idle",
+    "--nonblocking",
+    "--format",
+    "speedscope",
+    "--output",
+    "C:\\Users\\\u00c1lvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\joint_measurement_20261012\\runtime\\A1_FULL_profile_20261016\\STACKS.json"
+  ],
+  "returncode": 0,
+  "scope": "FULL live process; passive external nonblocking stack samples; no model mutation or new updates",
+  "limitations": "Not a controlled benchmark; host samples include synchronization and profiler overhead",
+  "stderr": ""
+}

@@ -46,7 +46,9 @@ class ObjectEventV4Batch:
         non_blocking: bool = True,
     ) -> ObjectEventV4Batch:
         return ObjectEventV4Batch(
-            events=self.events.to(device=device, dtype=torch.float32, non_blocking=non_blocking),
+            events=self.events.to(
+                device=device, dtype=torch.float32, non_blocking=non_blocking
+            ),
             delta_t_s=self.delta_t_s.to(
                 device=device, dtype=torch.float32, non_blocking=non_blocking
             ),
@@ -174,7 +176,9 @@ class GarlTTCObjectEventV4Dataset(Dataset[dict[str, Any]]):
             raise ValueError("V4 rejects independently resized endpoint ROIs")
         if extension.get("event_v4_preserves_absolute_scale_inside_common_roi") is not True:
             raise ValueError("V4 cache does not declare preserved scale")
-        valid_fraction = float(self.manifest.get("event_v4_precontext_valid_fraction", 0.0))
+        valid_fraction = float(
+            self.manifest.get("event_v4_precontext_valid_fraction", 0.0)
+        )
         if valid_fraction < 0.80:
             raise ValueError(
                 "V4 requires real causal event t0 coverage >= 0.80, "
@@ -205,7 +209,9 @@ def collate_object_event_v4(records: list[dict[str, Any]]) -> ObjectEventV4Batch
     if not records:
         raise ValueError("Object Event v4 collate received an empty batch")
     events = torch.stack([_tensor(record, "event_v4_common_roi") for record in records])
-    expected_channels = {int(record.get("_event_v4_expected_channels", 12)) for record in records}
+    expected_channels = {
+        int(record.get("_event_v4_expected_channels", 12)) for record in records
+    }
     expected_steps = {
         int(record.get("_event_v4_expected_steps", EVENT_V4_STEPS)) for record in records
     }
@@ -235,9 +241,13 @@ def collate_object_event_v4(records: list[dict[str, Any]]) -> ObjectEventV4Batch
     )
     motion = torch.stack([_tensor(record, "observable_motion") for record in records])
     heights = torch.stack([_tensor(record, "garl_visible_heights_px") for record in records])
-    targets = torch.tensor([float(record["ttc_s"]) for record in records], dtype=torch.float32)
+    targets = torch.tensor(
+        [float(record["ttc_s"]) for record in records], dtype=torch.float32
+    )
     boxes = torch.stack([_tensor(record, "event_v4_boxes_xyxy") for record in records])
-    squares = torch.stack([_tensor(record, "event_v4_common_square_xyxy") for record in records])
+    squares = torch.stack(
+        [_tensor(record, "event_v4_common_square_xyxy") for record in records]
+    )
     if motion.shape != (len(records), OBSERVABLE_MOTION_DIM):
         raise ValueError(f"observable_motion has invalid shape {tuple(motion.shape)}")
     if heights.shape != (len(records), 2):
@@ -245,7 +255,9 @@ def collate_object_event_v4(records: list[dict[str, Any]]) -> ObjectEventV4Batch
     if boxes.shape != (len(records), step_count, 4):
         raise ValueError(f"event_v4_boxes_xyxy has invalid shape {tuple(boxes.shape)}")
     if squares.shape != (len(records), 4):
-        raise ValueError(f"event_v4_common_square_xyxy has invalid shape {tuple(squares.shape)}")
+        raise ValueError(
+            f"event_v4_common_square_xyxy has invalid shape {tuple(squares.shape)}"
+        )
     if bool((delta_t <= 0).any()) or not torch.isfinite(delta_t).all():
         raise ValueError("delta_t_s must be finite and positive")
     if bool((targets == 0).any()) or not torch.isfinite(targets).all():
@@ -259,7 +271,9 @@ def collate_object_event_v4(records: list[dict[str, Any]]) -> ObjectEventV4Batch
     teacher_masks = None
     teacher_valid = None
     if all(teacher_presence):
-        teacher_masks = torch.stack([_tensor(record, "sam_teacher_masks") for record in records])
+        teacher_masks = torch.stack(
+            [_tensor(record, "sam_teacher_masks") for record in records]
+        )
         teacher_valid = torch.stack(
             [
                 torch.as_tensor(record["sam_teacher_mask_valid"], dtype=torch.bool)
@@ -295,7 +309,9 @@ def collate_object_event_v4(records: list[dict[str, Any]]) -> ObjectEventV4Batch
                 "DINO teacher targets and valid must share shape, "
                 f"got {tuple(dino_targets.shape)} and {tuple(dino_valid.shape)}"
             )
-        if "dinov3_relation_valid" not in records[0]:
+        if (
+            "dinov3_relation_valid" not in records[0]
+        ):
             raise ValueError("DINO targets and valid must appear together")
 
     return ObjectEventV4Batch(
@@ -387,10 +403,16 @@ def box_geometry_targets(
         valid = valid & endpoint_valid.bool()
     zero = torch.zeros_like(target_width)
     return BoxGeometryTargets(
-        height_normalized=torch.where(valid, target_height / float(height), zero),
+        height_normalized=torch.where(
+            valid, target_height / float(height), zero
+        ),
         width_normalized=torch.where(valid, target_width / float(width), zero),
-        centroid_x_normalized=torch.where(valid, 0.5 * (x1 + x2) / float(width), zero),
-        centroid_y_normalized=torch.where(valid, 0.5 * (y1 + y2) / float(height), zero),
+        centroid_x_normalized=torch.where(
+            valid, 0.5 * (x1 + x2) / float(width), zero
+        ),
+        centroid_y_normalized=torch.where(
+            valid, 0.5 * (y1 + y2) / float(height), zero
+        ),
         valid=valid,
     )
 
