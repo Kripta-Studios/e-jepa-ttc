@@ -26,3 +26,22 @@ def test_capacity_context_restores_historical_engine_after_exception():
             assert geometry.backward is capacity.captured_backward
             raise RuntimeError("test interruption")
     assert before == {name: getattr(geometry, name) for name in fields}
+
+
+def test_evaluation_adapter_restores_historical_paths(monkeypatch):
+    from operational.joint_measurement import capacity_evaluate as adapter
+    from operational.joint_measurement import export, geometry_cost, geometry_evaluate
+
+    monkeypatch.setattr(adapter, "registered", lambda: {})
+    original = (geometry_evaluate.DIRECTORY, geometry_cost.COST, export.RUN, export.initialize)
+    with adapter.context():
+        assert geometry_evaluate.DIRECTORY == capacity.DIRECTORY
+        assert geometry_cost.COST == capacity.DIRECTORY / "cost/prepared_forward"
+        assert export.RUN == capacity.DIRECTORY
+        assert export.initialize is adapter.capacity_initialize
+    assert original == (
+        geometry_evaluate.DIRECTORY,
+        geometry_cost.COST,
+        export.RUN,
+        export.initialize,
+    )
