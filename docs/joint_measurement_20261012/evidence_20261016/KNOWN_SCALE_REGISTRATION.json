@@ -1,0 +1,156 @@
+{
+  "P_manifest_sha256": "6f22b070c53c96aa851d90ae2c6836b604e8280965f4887ba6ef3a0cd6d3727c",
+  "decision": "Descriptive input for remaining family B after D1; no automatic training, selection or promotion",
+  "device": "cpu",
+  "endpoints": {
+    "PAIR-CORR-FROZEN-S7": "94a50dc25de07c04b526d94a58d8e16c18a4b2b46b33d4f1002da6e2db2d0208",
+    "PAIR-CORR-GEOMETRY-S7": "76ba6e75ce6d877a7ab1de3b7e22585aadc2450b44868bc310ae1413696bbd1f",
+    "PAIR-CORR-S7": "7acebaaee16d77a2afd7d0c68c5ee9cdd42a3d1e31ddbe1e38c845bcad24beaf"
+  },
+  "label_use": "No TTC targets used or synthesized; P bbox used only for reporting support",
+  "limitations": [
+    "Known texture warp, not event camera physics",
+    "one fixed query per P group",
+    "convolutional texture matching is not real temporal object motion",
+    "neither H nor V opened"
+  ],
+  "null": "spatial permutation of transformed features, CPU seed7",
+  "optimizer_updates": 0,
+  "role": "P",
+  "samples": [
+    {
+      "group": "2Y46OkK3ff",
+      "index": 3119,
+      "token": "2Y46OkK3ff_003645_1797900000"
+    },
+    {
+      "group": "6WCDpro5rE",
+      "index": 3209,
+      "token": "6WCDpro5rE_000003_5517100000"
+    },
+    {
+      "group": "8SdieOgbva",
+      "index": 7375,
+      "token": "8SdieOgbva_001916_18026200000"
+    },
+    {
+      "group": "8mNnrXjpVB",
+      "index": 8583,
+      "token": "8mNnrXjpVB_000002_1645100000"
+    },
+    {
+      "group": "9ITOs4twfk",
+      "index": 12922,
+      "token": "9ITOs4twfk_002991_1930500000"
+    },
+    {
+      "group": "A1Nhv0KtmL",
+      "index": 15538,
+      "token": "A1Nhv0KtmL_002369_6263800000"
+    },
+    {
+      "group": "ClXqVoZOFu",
+      "index": 16978,
+      "token": "ClXqVoZOFu_001167_3390500000"
+    },
+    {
+      "group": "DGqicHUGWb",
+      "index": 18372,
+      "token": "DGqicHUGWb_000080_3177200000"
+    },
+    {
+      "group": "EllUE6bwVp",
+      "index": 19179,
+      "token": "EllUE6bwVp_000017_5725800000"
+    },
+    {
+      "group": "EuFGqTcqIz",
+      "index": 22209,
+      "token": "EuFGqTcqIz_000279_3665100000"
+    },
+    {
+      "group": "GjMYZjmSQb",
+      "index": 25789,
+      "token": "GjMYZjmSQb_001069_3119200000"
+    },
+    {
+      "group": "LMHPShQkaU",
+      "index": 28782,
+      "token": "LMHPShQkaU_001421_13932100000"
+    },
+    {
+      "group": "OBneIVg4Cw",
+      "index": 30832,
+      "token": "OBneIVg4Cw_006362_3268300000"
+    },
+    {
+      "group": "OYgB6RGWcq",
+      "index": 33426,
+      "token": "OYgB6RGWcq_000778_6454000000"
+    },
+    {
+      "group": "Po6ePjWYAz",
+      "index": 36189,
+      "token": "Po6ePjWYAz_004108_10110500000"
+    },
+    {
+      "group": "VLA3oBKFyX",
+      "index": 36529,
+      "token": "VLA3oBKFyX_000094_7544700000"
+    },
+    {
+      "group": "eX8t2nGd6O",
+      "index": 38949,
+      "token": "eX8t2nGd6O_000465_6167200000"
+    },
+    {
+      "group": "nRcwUlHyAd",
+      "index": 42037,
+      "token": "nRcwUlHyAd_004588_767500000"
+    },
+    {
+      "group": "pakWgyPNTL",
+      "index": 43789,
+      "token": "pakWgyPNTL_002200_18842300000"
+    },
+    {
+      "group": "q2k6O0X6JY",
+      "index": 45390,
+      "token": "q2k6O0X6JY_000317_2527900000"
+    },
+    {
+      "group": "qoohcdtLDH",
+      "index": 46258,
+      "token": "qoohcdtLDH_000012_5461500000"
+    },
+    {
+      "group": "vWp9XNYQ9V",
+      "index": 47723,
+      "token": "vWp9XNYQ9V_000160_6115200000"
+    },
+    {
+      "group": "wE9MZUmiJP",
+      "index": 49809,
+      "token": "wE9MZUmiJP_000929_8543200000"
+    },
+    {
+      "group": "xkiVthsGwf",
+      "index": 53216,
+      "token": "xkiVthsGwf_003315_1490300000"
+    }
+  ],
+  "scales": [
+    0.9,
+    1.1
+  ],
+  "sensor_complete_sha256": "9914333c5d8cde13f7100d3645a76228a864e423f88b81534c21c21a8d13a31a",
+  "sources": {
+    "operational/joint_measurement/geometry_model.py": "63b0d2642f0e8f8558b798603a8b480272630104e8822c5eec46cb619ce90312",
+    "operational/joint_measurement/scale_correspondence_diagnostic.py": "1f0d4507000b0569739f20570bca1d98c53266f21dedfe05dc079224baeabedf",
+    "src/e_jepa_ttc/joint_measurement/model.py": "276251a86a96cbd399ac53eed8a3d0480597ed438e2b9b4b2b8a38aaad640bc3"
+  },
+  "support": "fixed8-cell interior; separately latest P weak bbox pooled>=0.5; report only",
+  "threads": 1,
+  "transform": "bilinear grid_sample, align_corners=False, zero fill, centred scale",
+  "truth": "nearest transformed feature-cell centre, with discrete-grid oracle error reported"
+}

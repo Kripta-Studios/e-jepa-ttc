@@ -1,0 +1,21 @@
+{
+  "CUDA_QA_sha256": "208f30dd0bb39e206bb94cb22cee5b4f91f523a5d5bd9066673295a9effc73dd",
+  "driver_identity_verified": true,
+  "elapsed_seconds_since_provenance": 1957.214126,
+  "fit": {
+    "completed_updates": 3064,
+    "durable_updates": 3000,
+    "identity_sha256": "9062dfa969c30a866880c69e8b535ee37d13ede3bdc125e1a3445652dd1cd7ab",
+    "pending_update_upper": 0,
+    "recovery_upper": 0,
+    "schema": "rgb_port_update_journal_v1"
+  },
+  "full_objective_complete": false,
+  "gpu_remaining_reserved_s": 24991.18029420008,
+  "gpu_reserved_upper_s": 147808.81970579992,
+  "observation_sha256": "963bd0a03db747fce23c8e09ea784513e335858746eb71f8f30d3804e01085f0",
+  "status": "ADVANCING_NO_NEW_FAILURE",
+  "training_only_eta_local": "2026-10-16T06:35:08.115731+02:00",
+  "updates_per_hour_since_provenance": 5635.76557795598,
+  "utc": "2026-10-16T03:01:18.429712+00:00"
+}

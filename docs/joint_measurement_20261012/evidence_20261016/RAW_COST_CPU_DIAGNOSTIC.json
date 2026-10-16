@@ -1,0 +1,132 @@
+{
+  "cuda_initialized": false,
+  "optimizer_updates": 0,
+  "registration_sha256": "875755e52aa7baa9775b826f9449b728f730dfbf3da49790b486b5efb90bf500",
+  "rows": [
+    {
+      "batch128_vs_stored_features": {
+        "exact": true,
+        "finite": true,
+        "maximum_absolute_difference": 0.0,
+        "mean_absolute_difference": 0.0,
+        "shape_equal": true
+      },
+      "batch128_vs_stored_ttc": {
+        "exact": true,
+        "finite": true,
+        "maximum_absolute_difference": 0.0,
+        "mean_absolute_difference": 0.0,
+        "shape_equal": true
+      },
+      "batch1_vs_stored_features": {
+        "exact": false,
+        "finite": true,
+        "maximum_absolute_difference": 1.862645149230957e-09,
+        "mean_absolute_difference": 2.3283064365386963e-10,
+        "shape_equal": true
+      },
+      "batch1_vs_stored_ttc": {
+        "exact": false,
+        "finite": true,
+        "maximum_absolute_difference": 4.76837158203125e-07,
+        "mean_absolute_difference": 4.76837158203125e-07,
+        "shape_equal": true
+      },
+      "index": 16169
+    },
+    {
+      "batch128_vs_stored_features": {
+        "exact": true,
+        "finite": true,
+        "maximum_absolute_difference": 0.0,
+        "mean_absolute_difference": 0.0,
+        "shape_equal": true
+      },
+      "batch128_vs_stored_ttc": {
+        "exact": true,
+        "finite": true,
+        "maximum_absolute_difference": 0.0,
+        "mean_absolute_difference": 0.0,
+        "shape_equal": true
+      },
+      "batch1_vs_stored_features": {
+        "exact": false,
+        "finite": true,
+        "maximum_absolute_difference": 1.862645149230957e-09,
+        "mean_absolute_difference": 1.9956912313188824e-10,
+        "shape_equal": true
+      },
+      "batch1_vs_stored_ttc": {
+        "exact": false,
+        "finite": true,
+        "maximum_absolute_difference": 9.5367431640625e-07,
+        "mean_absolute_difference": 9.5367431640625e-07,
+        "shape_equal": true
+      },
+      "index": 7651
+    },
+    {
+      "batch128_vs_stored_features": {
+        "exact": true,
+        "finite": true,
+        "maximum_absolute_difference": 0.0,
+        "mean_absolute_difference": 0.0,
+        "shape_equal": true
+      },
+      "batch128_vs_stored_ttc": {
+        "exact": true,
+        "finite": true,
+        "maximum_absolute_difference": 0.0,
+        "mean_absolute_difference": 0.0,
+        "shape_equal": true
+      },
+      "batch1_vs_stored_features": {
+        "exact": false,
+        "finite": true,
+        "maximum_absolute_difference": 5.587935447692871e-09,
+        "mean_absolute_difference": 3.3261520521981376e-10,
+        "shape_equal": true
+      },
+      "batch1_vs_stored_ttc": {
+        "exact": false,
+        "finite": true,
+        "maximum_absolute_difference": 9.5367431640625e-07,
+        "mean_absolute_difference": 9.5367431640625e-07,
+        "shape_equal": true
+      },
+      "index": 1762
+    },
+    {
+      "batch128_vs_stored_features": {
+        "exact": true,
+        "finite": true,
+        "maximum_absolute_difference": 0.0,
+        "mean_absolute_difference": 0.0,
+        "shape_equal": true
+      },
+      "batch128_vs_stored_ttc": {
+        "exact": true,
+        "finite": true,
+        "maximum_absolute_difference": 0.0,
+        "mean_absolute_difference": 0.0,
+        "shape_equal": true
+      },
+      "batch1_vs_stored_features": {
+        "exact": false,
+        "finite": true,
+        "maximum_absolute_difference": 3.725290298461914e-09,
+        "mean_absolute_difference": 5.32184328351702e-10,
+        "shape_equal": true
+      },
+      "batch1_vs_stored_ttc": {
+        "exact": false,
+        "finite": true,
+        "maximum_absolute_difference": 2.384185791015625e-07,
+        "mean_absolute_difference": 2.384185791015625e-07,
+        "shape_equal": true
+      },
+      "index": 1515
+    }
+  ],
+  "status": "COMPLETE_DIAGNOSTIC"
+}
