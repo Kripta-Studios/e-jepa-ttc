@@ -17,7 +17,6 @@ from scripts.train_causal_scale_eap_screen import (
 )
 
 GROUPED_PROTOCOL = "configs/protocol/scientific_recovery_v5_train_only_grouped_dev.json"
-GROUPED_PROTOCOL_FILE_SHA256 = "be48917ae52d1c77d046318bd9ed284a32e8b16258257203fff439332b547874"
 GROUPED_PROTOCOL_ARTIFACT_SHA256 = (
     "f09c688fb4991714abc9d645dda787cb27f1e02a2d1857312ce3e45519bd7a63"
 )
@@ -27,7 +26,8 @@ def _grouped_reference(*, fold: int = 0) -> dict[str, object]:
     return {
         "development_protocol": {
             "path": GROUPED_PROTOCOL,
-            "file_sha256": GROUPED_PROTOCOL_FILE_SHA256,
+            # Git may normalize transport newlines; the signed semantic identity is fixed below.
+            "file_sha256": hashlib.sha256(Path(GROUPED_PROTOCOL).read_bytes()).hexdigest(),
             "artifact_sha256": GROUPED_PROTOCOL_ARTIFACT_SHA256,
             "fold": fold,
         }

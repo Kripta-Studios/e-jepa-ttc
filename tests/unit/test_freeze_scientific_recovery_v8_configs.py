@@ -5,6 +5,8 @@ from __future__ import annotations
 import hashlib
 import importlib.util
 import json
+import shutil
+import subprocess
 import sys
 from pathlib import Path
 
@@ -12,6 +14,7 @@ import pytest
 import yaml
 
 from e_jepa_ttc.artifacts.hashing import sign_artifact
+from e_jepa_ttc.evaluation import scientific_recovery_v8_runner as runner
 from e_jepa_ttc.evaluation.scientific_recovery_v8_runner import (
     V8IntegrityError,
     verify_frozen_inputs,
@@ -24,6 +27,77 @@ assert SPEC and SPEC.loader
 FREEZE = importlib.util.module_from_spec(SPEC)
 sys.modules[SPEC.name] = FREEZE
 SPEC.loader.exec_module(FREEZE)
+
+
+@pytest.fixture(autouse=True)
+def isolated_freeze_repository(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Exercise real signatures/hashes with synthetic OOF/checkpoint bytes in a private root.
+
+    No model is trained or loaded. Historical teacher metadata is a byte-preserved fixture;
+    the synthetic rows/checkpoints are never represented as research results.
+    """
+    original_root = ROOT
+    for relative in (
+        FREEZE.V5_PROTOCOL,
+        FREEZE.V7_PROTOCOL,
+        FREEZE.A5_MODEL,
+        FREEZE.A5_GROUPED_DINO_CONFIG,
+        Path("src/e_jepa_ttc/data/garl_official_preprocessing.py"),
+    ):
+        target = tmp_path / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(original_root / relative, target)
+    source_config = yaml.safe_load((tmp_path / FREEZE.A5_GROUPED_DINO_CONFIG).read_text())
+    teacher = tmp_path / source_config["data"]["dinov3_relational_teacher"]["manifest"]
+    teacher.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(
+        original_root / "tests/fixtures/scientific_recovery_v8/dino_teacher_manifest.json", teacher
+    )
+    monkeypatch.setattr(sys.modules[__name__], "ROOT", tmp_path)
+    monkeypatch.setattr(FREEZE, "ROOT", tmp_path)
+    monkeypatch.setattr(runner, "ROOT", tmp_path)
+    subprocess.run(
+        ["git", "init", "-b", "test-fixture", str(tmp_path)], check=True, capture_output=True
+    )
+    v5 = FREEZE.read_signed(tmp_path / FREEZE.V5_PROTOCOL)
+    groups = FREEZE.fold_groups(v5)
+    sequence_folds = [
+        (sequence, fold) for fold, group in groups.items() for sequence in group["dev"]
+    ]
+    rows = ["sample_token,sequence_id,track_id,target_ttc_s,fold"]
+    for index in range(8192):
+        sequence, fold = sequence_folds[index % 9]
+        target = ("1.0", "4.0", "8.0", "-2.0")[(index // 9) % 4]
+        rows.append(f"fixture-{index:05d},{sequence},fixture-track,{target},{fold}")
+    baselines = {"contracts": {"private_test_opened": False}, "outputs": {}, "sources": {}}
+    for name, relative in (("a5", FREEZE.A5_OOF), ("garl", FREEZE.GARL_OOF)):
+        path = tmp_path / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("\n".join(rows) + "\n", encoding="utf-8", newline="\n")
+        baselines["outputs"][name] = {"sha256": FREEZE.sha256(path)}
+    for fold in range(3):
+        for family, run_name in (
+            ("a5", f"scientific_recovery_v6_a5_causal_grouped_fold{fold}_seed7"),
+            ("c2f", f"scientific_recovery_v7_c2f_fold{fold}_seed7"),
+            ("garl", f"scientific_recovery_v5_garl_fold_chain_fold{fold}_seed7"),
+        ):
+            directory = tmp_path / "artifacts/runs" / run_name
+            directory.mkdir(parents=True)
+            checkpoint = directory / "model_best.pt"
+            checkpoint.write_bytes(f"Synthetic checksum fixture: {family}/{fold}".encode())
+            checksum = FREEZE.sha256(checkpoint)
+            if family == "a5":
+                baselines["sources"][f"a5_fold{fold}"] = {"checkpoint_sha256": checksum}
+            else:
+                summary = (
+                    {"checkpoint": {"path": "model_best.pt"}}
+                    if family == "c2f"
+                    else {"artifacts": {"model_best": {"sha256": checksum}}}
+                )
+                FREEZE.write_json(directory / "summary.json", FREEZE.sign(summary))
+    FREEZE.write_json(tmp_path / FREEZE.V7_BASELINES, FREEZE.sign(baselines))
+    # Populate static-config tests too, without writing into the real repository.
+    FREEZE.freeze(tmp_path / "configs/protocol/scientific_recovery_v8_temporal.json")
 
 
 def _sha(path: Path) -> str:

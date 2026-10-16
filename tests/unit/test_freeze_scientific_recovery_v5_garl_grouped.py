@@ -27,6 +27,9 @@ def test_garl_fold_runs_are_from_scratch_and_train_only(
 
     # The frozen parquet was ignored; the fixture retains provenance without restoring data.
     monkeypatch.setattr(frozen_garl, "IDENTITY_METADATA", IDENTITY_FIXTURE)
+    monkeypatch.setattr(
+        frozen_garl, "CACHE_MANIFEST", IDENTITY_FIXTURE.with_name("cache_manifest.json")
+    )
     manifest = frozen_garl.build_manifest(protocol)
 
     assert len(manifest["runs"]) == 3
