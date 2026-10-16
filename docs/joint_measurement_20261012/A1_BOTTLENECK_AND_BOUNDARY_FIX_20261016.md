@@ -28,3 +28,19 @@ La reparación está en un wrapper independiente, `adaptation_observed_run.py`: 
 Validación: seis pruebas CPU del cálculo de diferencias; comprobación real sin updates de LAST-BLOCK 12.000 y FULL 1.425 contra su padre. Ambas cumplen la política. El checkpoint original y el error del coordinador se conservan en `runtime/A1_boundary_evidence_v1/`.
 
 Reanudación: `./scripts/Resume-JointMeasurement.ps1 -Stage A1Training`. Resta verificar en producción la continuidad de estado y el siguiente cierre de scope, antes de declarar reparada su ejecución sostenida.
+
+## Trabajo que sigue fuera de los grafos
+
+Cada update conserva ocho microbatches. `geometry_capture.checked_phase` materializa en CPU la validez del modelo y `captured_phase_loss.checked` la de la pérdida: hay dos barreras explícitas por microbatch, además de la transferencia final de diagnósticos. La pérdida sí está capturada; sus guardas de admisión y su agregación Python siguen fuera. Las masas se transfieren por microbatch y el batch completo se prepara en ocho llamadas `.to(cuda)`. El optimizador, clipping, scheduler y journal también siguen fuera de los grafos.
+
+Son puntos concretos para un siguiente benchmark, no ahorros demostrados. El nuevo stderr conserva un aviso de PyTorch sobre streams de AccumulateGrad: puede introducir sincronización, pero este muestreo no cuantifica su coste ni demuestra que sea la causa principal. No se suprime el aviso.
+
+La prueba de continuidad posterior a la reparación pasó en FULL 1.600: prefijos de curva/tiempos intactos, muestras y estado del sampler correctos, Adam y scheduler avanzados exactamente 175 updates y recuperación cero. Evidencia: `runtime/A1_boundary_evidence_v1/RESUME_CONTINUITY.json`.
+
+## Frontera reparada en producción
+
+A las 22:22:37 FULL cerró un scope con 3.616 updates, publicó el testigo actualizado y siguió en el mismo proceso. En el update 3.800 constaban dos scopes y exactamente una captura de modelo y una de pérdida. Recuperación cero. La reparación queda comprobada más allá del punto que provocó la parada.
+
+La nueva ventana de 100 updates arroja 0,3951 s/update: espera 0,789 ms (0,20 %), preparación/transferencia 39,476 ms (9,99 %), forward/backward y sincronización 294,471 ms (74,53 %), optimizador/journal 60,348 ms (15,27 %). Es otra observación de producción, no una comparación causal controlada con el primer perfil.
+
+Las evidencias pequeñas publicables, incluidos los stacks originales del muestreo, están en [evidence_A1_boundary_20261016](evidence_A1_boundary_20261016/MANIFEST.json). El manifiesto vincula tamaño y SHA-256. El observador quedó armado para las 23:00, PID del coordinador 18080.

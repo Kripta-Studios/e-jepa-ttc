@@ -1,0 +1,12 @@
+{
+  "changes": [
+    "Fresh CPU weight witness at each durable scope",
+    "Explicit child logs"
+  ],
+  "sources": {
+    "operational/joint_measurement/adaptation_observed_run.py": "2df4957af3d60d21c21b1bf9fc1084802e51fad1967319ed9ff6c34b343331ca",
+    "tests/unit/test_adaptation_boundary_witness.py": "2d8773edea97dcc69054a80217742b5de9827a35916bf1ba693e05a4d6e6bef1"
+  },
+  "training_admission_sha256": "74865462e2f6665a38873ec1b1e37026f5a0534b5359f8fab85f7cdd3d6b8fb3",
+  "training_changes": []
+}

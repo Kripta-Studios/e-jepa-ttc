@@ -1,0 +1,41 @@
+{
+  "files": {
+    "A1_FULL_profile_20261016/RESOURCES.json": {
+      "bytes": 15042,
+      "sha256": "6e86c03d72d43a7027e05a77c1d17b0941ef7990269f99f463c4cdb9eb204ad9"
+    },
+    "A1_FULL_profile_20261016/SAMPLING.json": {
+      "bytes": 787,
+      "sha256": "5adced03c2d40942d75c860385f11db8f36ea29bc42fa3341ba5dd651f6e16ad"
+    },
+    "A1_FULL_profile_20261016/STACKS.json": {
+      "bytes": 647526,
+      "sha256": "30565a8d8145cff36646ad6163a85e3703012e93b16bcf4d6114832c7a9f1379"
+    },
+    "A1_FULL_profile_20261016/SUMMARY.json": {
+      "bytes": 11427,
+      "sha256": "3cda9c4a0ec4adc7e854c1abce76ecd2fb7101247f100097bd78a380a5a7d342"
+    },
+    "A1_FULL_profile_20261016/SUMMARY_BEFORE_CAPTURED_LOSS_CLASSIFICATION.json": {
+      "bytes": 11036,
+      "sha256": "199fb3f2578652559434974489140fd748a95a0b680c6cf4608688aa3917895a"
+    },
+    "A1_boundary_evidence_v1/ADMISSION.json": {
+      "bytes": 501,
+      "sha256": "42df1dbf4f351f33d7f92d6d08f696f02eb4338a398b16b8453968bd5a08cb3f"
+    },
+    "A1_boundary_evidence_v1/FAILED_RUNNER_STATE.json": {
+      "bytes": 139,
+      "sha256": "3a6f0a64167f303bd1c61f5d92372a18958d4779fcfdb798448537508f1cc5be"
+    },
+    "A1_boundary_evidence_v1/PRODUCTION_SECOND_SCOPE.json": {
+      "bytes": 2260,
+      "sha256": "79e70aaea0b3398ec6484bb608ca12bb4d5e42beb270c5ddfee205dda4a5ecf9"
+    },
+    "A1_boundary_evidence_v1/RESUME_CONTINUITY.json": {
+      "bytes": 435,
+      "sha256": "163d830a7ebf03d8377cfc07dfbbec1e3be329a1e7ef730b9d45591939ca6218"
+    }
+  },
+  "scope": "Passive performance sample and zero-update durable-boundary repair proofs"
+}
