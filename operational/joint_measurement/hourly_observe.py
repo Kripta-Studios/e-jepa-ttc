@@ -134,6 +134,8 @@ def run(pid: int, *, job: str = "rgb") -> None:
                 if job == "rgb"
                 else [module, "geometry_capture_run"]
                 if job == "geometry"
+                else [module, "fusion_replication_isolated"]
+                if job == "fusion_replication"
                 else [module]
             )
         )
