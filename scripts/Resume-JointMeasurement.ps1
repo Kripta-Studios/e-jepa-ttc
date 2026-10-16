@@ -39,7 +39,14 @@ try {
         throw '-Once sólo corresponde al runner primario; B1 conserva sus segmentos durables registrados.'
     }
     $Module = switch ($Stage) {
-        'A1Training' { 'operational.joint_measurement.adaptation_depth' }
+        'A1Training' {
+            $A1Runtime = Join-Path $Campaign 'runtime/A1_parallel_persistent_v1/ADMISSION.json'
+            if (Test-Path -LiteralPath $A1Runtime) {
+                'operational.joint_measurement.adaptation_runtime'
+            } else {
+                'operational.joint_measurement.adaptation_depth'
+            }
+        }
         'B1Training' { 'operational.joint_measurement.correspondence_isolated' }
         'B1Evaluation' { 'operational.joint_measurement.correspondence_evaluate' }
         'Primary' {

@@ -176,6 +176,8 @@ def run(pid: int, *, job: str = "rgb") -> None:
                 if job == "rgb"
                 else [module, "geometry_capture_run"]
                 if job == "geometry"
+                else [module, "adaptation_runtime"]
+                if job == "adaptation_depth"
                 else [
                     module,
                     "correspondence_inference_graph",
