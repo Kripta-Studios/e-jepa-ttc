@@ -7,6 +7,8 @@ ni confirmación SOTA. Los resultados negativos se conservan.
 El estado regenerado está en [CURRENT_CONCLUSION.md](CURRENT_CONCLUSION.md).
 Su fecha identifica una instantánea: durante un entrenamiento los journals,
 checkpoints y el observador horario local son la fuente de progreso actual.
+La [revisión de cierre](CLOSURE_REVIEW_20261016.md) relaciona los trabajos
+pendientes con la evidencia necesaria y sus condiciones de ejecución.
 
 | Trabajo | Informe | Alcance |
 |---|---|---|

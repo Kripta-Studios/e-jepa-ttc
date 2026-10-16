@@ -7,7 +7,23 @@ Los cuatro entrenamientos primarios están completos en 12.000 updates cada uno.
 La matriz P/H, selección H, evaluación V del candidato seleccionado, coste E2E y
 comparación con E_CTX están completos. Esto no completa el programa V18.
 
-Corte del 16 de octubre, 18:45 Madrid: A1 está registrada y ha superado la QA
+Estado operativo revisado el 16 de octubre, 20:59 Madrid: A1 sigue entrenando.
+LAST-BLOCK alcanzó 7.530 updates, con 7.500 durables; FULL sigue a continuación.
+La captura adicional de la pérdida está aplicada desde el update 6.400 y su
+continuidad está verificada sin pérdida de updates. El detalle y el alcance de
+la mejora medida están en [A1_LOSS_GRAPH_20261016.md](A1_LOSS_GRAPH_20261016.md).
+No hay todavía resultados P/H de A1.
+
+El usuario autorizó aceptar hasta 1 ms absoluto en la paridad del coste de
+fusión, conservando signo y dominio válidos. Las 13 consultas ya medidas pasan
+ese criterio; faltan 51 de las 64. Se preservan los fallos del criterio estricto.
+Esto no demuestra precisión frente a GT ni completa el benchmark de coste.
+Véanse [el diagnóstico](FUSION_COST_DIAGNOSTIC.md) y
+[los requisitos de cierre](CLOSURE_REVIEW_20261016.md).
+El techo acumulado vigente es 216.000 s de scopes GPU y 1.000.000 updates físicos,
+sin reiniciar contadores. Los cortes siguientes son históricos.
+
+Corte histórico del 16 de octubre, 18:45 Madrid: A1 está registrada y ha superado la QA
 CUDA de ambos brazos con 60 updates técnicos, captura equivalente y reanudación
 exacta. Se ha lanzado LAST-BLOCK seguido de FULL, 12.000 updates nuevos cada uno,
 desde el mismo endpoint B1 de correspondencia. No hay resultados A1 todavía.
