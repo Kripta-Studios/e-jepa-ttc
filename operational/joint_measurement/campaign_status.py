@@ -21,6 +21,17 @@ def build() -> dict:
     accounting = read(RUN / "ACCOUNTING.json")
     budget = read(RUN / "GPU_BUDGET.json")
     evidence = {"verification/PRIMARY_MILESTONE_CONCLUSION_20261016.json": sha(primary)}
+    runtime_evidence = {}
+    for label, relative in {
+        "A1_optimized_training": "runtime/A1_parallel_persistent_v1/ADMISSION.json",
+        "A1_scope_continuity": "runtime/A1_parallel_persistent_v1/PRODUCTION_SCOPE_CONTINUITY.json",
+        "A1_evaluation_registered": "adaptive/A1_adaptation_depth/evaluation/REGISTRATION.json",
+        "F_TRUE_head_CPU": "fusion/cost/F_TRUE_head_diagnostic_v1/CPU_RESULT.json",
+    }.items():
+        source = RUN / relative
+        if source.exists():
+            runtime_evidence[label] = {"path": relative, "sha256": sha(source)}
+            evidence[relative] = sha(source)
     stages = {}
     for label, relative in {
         "primary": "primary_evidence/COMPLETE.json",
@@ -95,6 +106,10 @@ def build() -> dict:
         "adaptive_D1_snapshot": decision.get("adaptive_D1"),
         "adaptive_B1_snapshot": decision.get("adaptive_B1"),
         "full_fusion_cost": decision.get("fusion_cost"),
+        "A1_runtime_optimization": decision.get("runtime_optimization"),
+        "A1_evaluation_prepared": decision.get("A1_evaluation_prepared"),
+        "F_TRUE_head_CPU_diagnostic": decision.get("F_TRUE_head_CPU_diagnostic"),
+        "runtime_evidence": runtime_evidence,
         "evidence": evidence,
         "remaining_work": remaining,
         "limitations": [
@@ -105,6 +120,10 @@ def build() -> dict:
             "Portable exports do not alone reproduce raw-sensor pipelines or training",
         ],
     }
+    if path.exists():
+        archive = RUN / "conclusion_history" / f"{sha(path)}.json"
+        if not archive.exists():
+            freeze(archive, read(path))
     write(path, value)
     lines = [
         "# V18: conclusión actual y trabajo pendiente",
@@ -156,6 +175,23 @@ def build() -> dict:
         "",
     ]
     lines += [f"- {item}" for item in remaining]
+    if runtime_evidence:
+        lines += [
+            "",
+            "## Ejecución y comprobaciones recientes",
+            "",
+            "A1 mantiene su receta científica; el lector paralelo, la caché y los grafos "
+            "persistentes tienen admisión y prueba de continuidad. "
+            "[Detalle del runtime](A1_PERSISTENT_RUNTIME_20261016.md).",
+            "",
+            "La evaluación A1 está registrada antes de los endpoints: "
+            "[contrato P/H](A1_EVALUATION_CONTRACT_20261016.md). "
+            "Su implementación y pruebas no equivalen a resultados del modelo.",
+            "",
+            "La cabeza F_TRUE reproduce las 13 consultas diagnósticas en CPU con el "
+            "batch histórico; el coste raw completo sigue pendiente de paridad. "
+            "[Contrastes y límites](FUSION_COST_DIAGNOSTIC.md).",
+        ]
     lines += [
         "",
         "Las ramas condicionadas se justifican con evidencia; un resultado negativo "
