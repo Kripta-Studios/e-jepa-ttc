@@ -1,0 +1,32 @@
+{
+  "cost_admitted": false,
+  "factor": "Producer and PAIR forward batch shape, from admitted historical fragments",
+  "indices": [
+    16169,
+    7651,
+    1762,
+    1515
+  ],
+  "input_policy": "Repeat each query's own pixels/delta to its original batch shape; no other query inputs",
+  "interpretation": "Engineering diagnostic of runtime parity; no model/seed/recipe selection",
+  "inventory_sha256": "42239442fecddbd30ef549e2653252e94c48c1f895ce2084fcc77dfb80554d0b",
+  "not_a_latency_measurement": true,
+  "optimizer_updates": 0,
+  "original_ttc_tolerance": {
+    "atol": 0.0001,
+    "rtol": 1e-05
+  },
+  "precision": "FP32, matmul TF32 disabled, original weights and normalization",
+  "prior_batch1_backend_result_sha256": "5085c1a88ea18de70685e0a18ab458baa08f14d066676115b9df7003d1bd68a4",
+  "producer_convolution_tf32": [
+    false,
+    true
+  ],
+  "retained_prediction": "First row; all repeated rows represent the same observation",
+  "sources": {
+    "operational/joint_measurement/fusion_cost_batch_inventory.py": "47f98c245a0d732e4141bdb35012aeaff5bc7be3dcf566232e773dfe0a2cc2ba",
+    "operational/joint_measurement/fusion_cost_shape_probe.py": "7e50ccc560639602143717fd83f8a60682c877ca676ac90275433e26573c42c5",
+    "operational/joint_measurement/garl_route_cost.py": "af12d94a6f0ffaba2e74bb1dc90910a8e36cd3fbcfbb5a2f66c01d4ac7d8308f"
+  },
+  "tolerance_changes": false
+}

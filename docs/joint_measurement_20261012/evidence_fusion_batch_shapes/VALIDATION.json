@@ -1,0 +1,20 @@
+{
+  "command": "python -B -m operational.joint_measurement.fusion_cost_shape_probe",
+  "condition": "After B1 training/evaluation; no concurrent project compute; original tolerance and fixed queries",
+  "indices": [
+    16169,
+    7651,
+    1762,
+    1515
+  ],
+  "inventory_sha256": "42239442fecddbd30ef549e2653252e94c48c1f895ce2084fcc77dfb80554d0b",
+  "inventory_status": "COMPLETE_METADATA_AUDIT",
+  "model_inference": false,
+  "native_fragments_verified": 1036,
+  "optimizer_updates": 0,
+  "pyright": "PASS",
+  "registration_sha256": "9649f45c264b58e883663ced46a18e28a25ad3bd6235498b9ef8d8f476ed3c76",
+  "ruff": "PASS",
+  "status": "REGISTERED_GPU_DIAGNOSTIC_NOT_RUN",
+  "unit_tests_passed": 11
+}

@@ -85,3 +85,17 @@ latencia. Su finalidad es comprobar si las formas de batch explican la
 discrepancia numérica. Incluso si funcionase, haría falta admitir y medir la
 ruta completa sobre toda la población de coste, declarando cualquier trabajo
 interno repetido. No se llamará aceleración a esa repetición de inputs.
+
+El contraste quedó registrado antes de ejecutarse, con SHA-256
+`9649f45c264b58e883663ced46a18e28a25ad3bd6235498b9ef8d8f476ed3c76`.
+Las [condiciones fijadas](evidence_fusion_batch_shapes/REGISTRATION.json), el
+[inventario completo](evidence_fusion_batch_shapes/INVENTORY.json) y la
+[validación CPU](evidence_fusion_batch_shapes/VALIDATION.json) se conservan juntos.
+Las 11 pruebas CPU, Ruff y Pyright pasan. El runner comparte la exclusión GPU
+existente y rechaza otros procesos de cómputo, incluido el coordinador B1 entre
+segmentos. Tras liberar esos recursos, el comando es:
+
+```powershell
+$env:PYTHONPATH = 'src;.'
+& ..\e-jepa-ttc\.venv\Scripts\python.exe -B -m operational.joint_measurement.fusion_cost_shape_probe
+```
