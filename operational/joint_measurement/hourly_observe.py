@@ -25,6 +25,11 @@ JOBS = {
         "fusion_replication_train",
         "REPLICA_PRODUCERS_COMPLETE",
     ),
+    "fusion_replication_pipeline": (
+        "replication/fusion_C1",
+        "fusion_replication_pipeline",
+        "REPLICA_INPUTS_AND_HEADS_COMPLETE",
+    ),
 }
 
 
@@ -51,6 +56,13 @@ def observe(pid: int, created: float, previous: dict | None, *, job: str = "rgb"
         path.parent.name: read_optional(path)
         for path in sorted((directory / "fits").glob("*/UPDATE_JOURNAL.json"))
     }
+    if job == "fusion_replication_pipeline":
+        fits.update(
+            {
+                path.parent.name: read_optional(path)
+                for path in sorted((directory / "head_fits").glob("*/UPDATE_JOURNAL.json"))
+            }
+        )
     evaluation = {
         path.relative_to(RUN).as_posix(): read_optional(path).get("rows")
         for path in sorted((directory / "predictions").glob("*/*/COMPLETE.json"))
@@ -62,7 +74,14 @@ def observe(pid: int, created: float, previous: dict | None, *, job: str = "rgb"
         "evaluation_complete": evaluation,
         "prediction_fragments": fragments,
     }
-    runner = read_optional(directory / "RUNNER_STATE.json")
+    if job == "fusion_replication_pipeline":
+        signature["feature_fragments"] = len(list((directory / "inputs").glob("**/chunk_*.npz")))
+        signature["feature_complete"] = {
+            path.relative_to(directory).as_posix(): read_optional(path).get("rows")
+            for path in sorted((directory / "inputs").glob("**/COMPLETE.json"))
+        }
+    state = "PIPELINE_STATE.json" if job == "fusion_replication_pipeline" else "RUNNER_STATE.json"
+    runner = read_optional(directory / state)
     status = "RUNNING"
     if not alive:
         status = terminal if runner.get("status") == terminal else "ACTION_REQUIRED_DRIVER_NOT_LIVE"
@@ -105,7 +124,7 @@ def run(pid: int, *, job: str = "rgb") -> None:
     import msvcrt
 
     relative, module, _ = JOBS[job]
-    out = RUN / relative / "hourly"
+    out = RUN / relative / ("hourly_pipeline" if job == "fusion_replication_pipeline" else "hourly")
     process = psutil.Process(pid)
     if (
         not any(

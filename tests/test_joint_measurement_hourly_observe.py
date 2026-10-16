@@ -17,9 +17,7 @@ def environment(monkeypatch, tmp_path):
         memory_info=lambda: SimpleNamespace(rss=123),
     )
     monkeypatch.setattr(observer.psutil, "Process", lambda pid: process)
-    monkeypatch.setattr(
-        observer.psutil, "virtual_memory", lambda: SimpleNamespace(available=456)
-    )
+    monkeypatch.setattr(observer.psutil, "virtual_memory", lambda: SimpleNamespace(available=456))
     monkeypatch.setattr(
         observer.subprocess,
         "run",
@@ -30,9 +28,7 @@ def environment(monkeypatch, tmp_path):
 
 
 def test_geometry_uses_only_its_own_progress(environment):
-    atomic_json(
-        environment / "rgb/fits/RGB/UPDATE_JOURNAL.json", {"completed_updates": 12000}
-    )
+    atomic_json(environment / "rgb/fits/RGB/UPDATE_JOURNAL.json", {"completed_updates": 12000})
     directory = environment / "adaptive/C1_geometry"
     atomic_json(directory / "fits/GEOMETRY/UPDATE_JOURNAL.json", {"completed_updates": 100})
     atomic_json(directory / "predictions/H/GEOMETRY/COMPLETE.json", {"rows": 18422})
@@ -67,4 +63,23 @@ def test_default_rgb_and_unchanged_hour_are_preserved(environment):
     assert first["progress_signature"]["updates"] == {"RGB": 500}
     second = observer.observe(7, 100, first)
     assert second["status"] == "REVIEW_NO_PROGRESS_SINCE_PREVIOUS_HOUR"
+    assert second["training_actions"] == []
+
+
+def test_pipeline_feature_progress_and_terminal_are_distinct_from_producer(environment):
+    directory = environment / "replication/fusion_C1"
+    atomic_json(directory / "fits/C1-S13/UPDATE_JOURNAL.json", {"completed_updates": 12000})
+    atomic_json(directory / "head_fits/TRUE-S13/UPDATE_JOURNAL.json", {"completed_updates": 100})
+    atomic_json(directory / "RUNNER_STATE.json", {"status": "REPLICA_PRODUCERS_COMPLETE"})
+    first = observer.observe(7, 100, None, job="fusion_replication_pipeline")
+    fragment = directory / "inputs/H/C1-S13/chunk_00000.npz"
+    fragment.parent.mkdir(parents=True)
+    fragment.touch()
+    second = observer.observe(7, 100, first, job="fusion_replication_pipeline")
+    assert second["status"] == "RUNNING"
+    assert second["progress_signature"]["feature_fragments"] == 1
+    assert second["progress_signature"]["updates"]["TRUE-S13"] == 100
+    terminal = "REPLICA_INPUTS_AND_HEADS_COMPLETE"
+    atomic_json(directory / "PIPELINE_STATE.json", {"status": terminal})
+    assert observer.observe(7, 99, None, job="fusion_replication_pipeline")["status"] == terminal
     assert second["training_actions"] == []
