@@ -31,6 +31,19 @@ JOBS = {
         "REPLICA_INPUTS_AND_HEADS_COMPLETE",
     ),
     "capacity": ("adaptive/D1_predictor_width", "capacity_train", "D1_ENDPOINT_COMPLETE"),
+    "capacity_evaluation": (
+        "adaptive/D1_predictor_width",
+        "capacity_evaluate",
+        "D1_READY_FOR_INTERPRETATION",
+    ),
+}
+STATE_FILES = {
+    "fusion_replication_pipeline": "PIPELINE_STATE.json",
+    "capacity_evaluation": "evidence/COMPLETE.json",
+}
+OBSERVATION_FOLDERS = {
+    "fusion_replication_pipeline": "hourly_pipeline",
+    "capacity_evaluation": "hourly_evaluation",
 }
 
 
@@ -81,7 +94,7 @@ def observe(pid: int, created: float, previous: dict | None, *, job: str = "rgb"
             path.relative_to(directory).as_posix(): read_optional(path).get("rows")
             for path in sorted((directory / "inputs").glob("**/COMPLETE.json"))
         }
-    state = "PIPELINE_STATE.json" if job == "fusion_replication_pipeline" else "RUNNER_STATE.json"
+    state = STATE_FILES.get(job, "RUNNER_STATE.json")
     runner = read_optional(directory / state)
     status = "RUNNING"
     if not alive:
@@ -125,7 +138,7 @@ def run(pid: int, *, job: str = "rgb") -> None:
     import msvcrt
 
     relative, module, _ = JOBS[job]
-    out = RUN / relative / ("hourly_pipeline" if job == "fusion_replication_pipeline" else "hourly")
+    out = RUN / relative / OBSERVATION_FOLDERS.get(job, "hourly")
     process = psutil.Process(pid)
     if (
         not any(
