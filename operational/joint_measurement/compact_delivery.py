@@ -97,6 +97,9 @@ def build(output: Path) -> dict:
     readme = RUN / "delivery/COMPACT_README.md"
     readme.parent.mkdir(parents=True, exist_ok=True)
     reports = [
+        "FINAL_SCIENTIFIC_REPORT.md",
+        "COMPLETION_AUDIT.md",
+        "DELIVERY_REPRODUCTION.md",
         "CURRENT_CONCLUSION.md",
         "RESEARCH_STATUS.md",
         "RESULTS_TABLES.md",

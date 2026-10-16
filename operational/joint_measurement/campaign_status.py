@@ -90,10 +90,25 @@ def build() -> dict:
         remaining.append(
             "Medir Garl completo: rutas nativa/local emparejadas, CPU FP32 y coste raw"
         )
+    program_path = RUN / "PROGRAM_EVIDENCE.json"
+    program = None
+    if program_path.exists():
+        program = read(program_path)
+        if program["status"] != "SCIENTIFIC_PROGRAM_VERIFIED_DELIVERY_PENDING":
+            raise ValueError("Unknown scientific closure status")
+        for relative, expected in program["evidence"].items():
+            if sha(RUN / relative) != expected:
+                raise ValueError(f"Scientific closure evidence changed: {relative}")
+        evidence["PROGRAM_EVIDENCE.json"] = sha(program_path)
+        remaining = [
+            "Publicar los informes finales y verificar el ZIP <=100000000 bytes "
+            "desde otra extracción, con recibo externo que identifique su SHA-256"
+        ]
     value = {
         "schema": "v18_campaign_progress_conclusion_v2",
         "utc": utc(),
-        "research_status": "RESEARCH_ONGOING",
+        "research_status": "NO_CANDIDATE_DELIVERY_PENDING" if program else "RESEARCH_ONGOING",
+        "scientific_program_complete": bool(program),
         "full_objective_complete": False,
         "primary_status": original["primary_status"],
         "system_promotion": False,
@@ -103,9 +118,9 @@ def build() -> dict:
         "fusion_three_seed_means": replica["means"],
         "fusion_three_seed_gates": replica["gates"],
         "accounting_snapshot": accounting,
-        "accounting_snapshot_scope": (
-            "Non-atomic live snapshot; journals and GPU_BUDGET remain authoritative"
-        ),
+        "accounting_snapshot_scope": "Quiescent programme audit"
+        if program
+        else ("Non-atomic live snapshot; journals and GPU_BUDGET remain authoritative"),
         "budget_snapshot": {
             "cap_s": budget["cap_s"],
             "charged_or_reserved_s": sum(row["charged_s"] for row in budget["entries"]),
@@ -138,8 +153,13 @@ def build() -> dict:
     lines = [
         "# V18: conclusión actual y trabajo pendiente",
         "",
-        "**La campaña sigue abierta; no hay promoción del sistema ni confirmación SOTA.** "
-        "La fusión presenta una señal controlada en las tres semillas, pero no cumple "
+        (
+            "**El programa científico termina sin candidato admitido; falta verificar "
+            "la entrega final. No hay promoción del sistema ni confirmación SOTA.** "
+            if program
+            else "**La campaña sigue abierta; no hay promoción ni confirmación SOTA.** "
+        )
+        + "La fusión presenta una señal controlada en las tres semillas, pero no cumple "
         "el gate crucial original del10%. Los negativos y las regresiones se conservan.",
         "",
         f"Corte UTC: `{value['utc']}`. Fuente: `CAMPAIGN_CONCLUSION.json`.",
@@ -177,8 +197,13 @@ def build() -> dict:
         f"- Scopes GPU contabilizados/reservados: "
         f"{value['budget_snapshot']['charged_or_reserved_s']:.1f} / {budget['cap_s']:.0f} s.",
         "",
-        "Es una instantánea no atómica mientras hay trabajo vivo. No son kernels "
-        "GPU puros; las reservas activas pueden cambiar al liquidarse. No se recontaron "
+        (
+            "Corte después de cerrar los procesos. Las reservas de fallos históricos "
+            "siguen contabilizadas como cotas superiores. No son kernels "
+            if program
+            else "Es una instantánea no atómica mientras hay trabajo vivo. No son kernels "
+        )
+        + "GPU puros; las reservas activas pueden cambiar al liquidarse. No se recontaron "
         "los controles históricos reutilizados.",
         "",
         "## Pendiente",
@@ -198,9 +223,14 @@ def build() -> dict:
             "[contrato P/H](A1_EVALUATION_CONTRACT_20261016.md). "
             "Su implementación y pruebas no equivalen a resultados del modelo.",
             "",
-            "La cabeza F_TRUE reproduce las 13 consultas diagnósticas en CPU con el "
-            "batch histórico; el coste raw completo sigue pendiente de paridad. "
-            "[Contrastes y límites](FUSION_COST_DIAGNOSTIC.md).",
+            (
+                "El coste raw de fusión cubre las 64 consultas y cuatro rutas, bajo "
+                "la aceptación absoluta de 1 ms autorizada después del diagnóstico. "
+                "Los fallos estrictos permanecen visibles. "
+                if program
+                else "El coste raw completo de fusión sigue pendiente de paridad. "
+            )
+            + "[Contrastes y límites](FUSION_COST_DIAGNOSTIC.md).",
         ]
     lines += [
         "",

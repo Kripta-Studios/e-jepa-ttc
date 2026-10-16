@@ -1,14 +1,8 @@
 # V18 JOINT-MEASUREMENT: índice de evidencia
 
-La campaña sigue en ejecución. A1 es la cuarta comparación adaptativa registrada;
-sus dos brazos deben terminar antes de evaluar H. No hay promoción del sistema
-ni confirmación SOTA. Los resultados negativos se conservan.
+Estado al 17-10-2026: programa científico cerrado sin candidato admitido; entrega independiente pendiente. A1 y las 64 consultas de coste están completos. La decisión de no habilitar refit/export está registrada. Véase [FINAL_SCIENTIFIC_REPORT.md](FINAL_SCIENTIFIC_REPORT.md).
 
-El estado regenerado está en [CURRENT_CONCLUSION.md](CURRENT_CONCLUSION.md).
-Su fecha identifica una instantánea: durante un entrenamiento los journals,
-checkpoints y el observador horario local son la fuente de progreso actual.
-La [revisión de cierre](CLOSURE_REVIEW_20261016.md) relaciona los trabajos
-pendientes con la evidencia necesaria y sus condiciones de ejecución.
+El [estado regenerado](CURRENT_CONCLUSION.md) y la [auditoría de cierre](COMPLETION_AUDIT.md) separan la evidencia científica de la verificación posterior del paquete. No hay promoción del sistema ni confirmación SOTA. Los resultados negativos se conservan.
 
 | Trabajo | Informe | Alcance |
 |---|---|---|
@@ -17,12 +11,12 @@ pendientes con la evidencia necesaria y sus condiciones de ejecución.
 | Lectura geométrica C1 | [C1_RESULTS.md](C1_RESULTS.md) | Mismo volumen, otra lectura; conserva sus regresiones |
 | Capacidad D1 | [D1_RESULTS.md](D1_RESULTS.md) | Predictor más ancho y control reutilizado |
 | Correspondencias B1 | [B1_RESULTS.md](B1_RESULTS.md) | Señal frente al control TTC; rechazo frente a A5 por banda negativa |
-| Adaptación A1 | [A1_EVALUATION_CONTRACT_20261016.md](A1_EVALUATION_CONTRACT_20261016.md) | LAST-BLOCK/FULL; evaluación preparada, resultados pendientes |
+| Adaptación A1 | [A1_RESULTS.md](A1_RESULTS.md) | LAST-BLOCK/FULL completos; NO_CANDIDATE por banda negativa |
 | Fusión y tres semillas | [FUSION_REPLICATION_RESULTS.md](FUSION_REPLICATION_RESULTS.md) | Una familia replicada; no cumple el gate crucial de promoción |
 | Complementariedad por consulta | [QUERY_COMPLEMENTARITY.md](QUERY_COMPLEMENTARITY.md) | Panel completo por ID; no es un selector desplegable |
 | Objetivo de aprendizaje | [LEARNING_RECIPE_AUDIT.md](LEARNING_RECIPE_AUDIT.md) | Hipótesis sobre fase y ponderación; sin prueba causal de una nueva pérdida |
 | Coste de Garl | [GARL_ROUTE_COST.md](GARL_ROUTE_COST.md) | Rutas emparejadas CPU FP32, preprocesado nativo |
-| Paridad del coste de fusión | [FUSION_COST_DIAGNOSTIC.md](FUSION_COST_DIAGNOSTIC.md) | Fallos y contrastes preservados; coste completo todavía no admitido |
+| Paridad del coste de fusión | [FINAL_SCIENTIFIC_REPORT.md](FINAL_SCIENTIFIC_REPORT.md) | 64 consultas completas; aceptación de 1 ms y fallo estricto preservado |
 
 ## Entrenamiento, reanudación y recursos
 
@@ -41,15 +35,16 @@ confirman los grafos y la caché persistentes, y documentan la reanudación desd
 1.425 updates sin pérdida. La investigación y validación de CI se registra
 en [ci_repair_20261016.md](../ci_repair_20261016.md).
 
+La ejecución y sus observadores finalizaron. Para repetir la auditoría CPU sin entrenar:
+
 ```powershell
-./scripts/Resume-JointMeasurement.ps1 -ShowCommand
-./scripts/Resume-JointMeasurement.ps1
+$env:PYTHONPATH = 'src;.'
+$env:CUDA_VISIBLE_DEVICES = '-1'
+../e-jepa-ttc/.venv/Scripts/python.exe -B -m operational.joint_measurement.final_report
 ```
 
-No iniciar otro escritor mientras el coordinador vigente siga vivo. El script
-comprueba procesos y los módulos mantienen sus bloqueos. Después de A1, el modo
-Auto pasa a evaluación sólo con ambos endpoints completos. Los observadores
-comprueban el proceso y sus contadores cada hora en punto, sin reiniciarlo.
+El comando está probado en este host. No reinicia entrenamientos ni consume updates.
+Los comandos históricos de reanudación conservan su función de recuperación de checkpoints.
 
 La ampliación autorizada vigente fija 216.000 segundos acumulados de scopes GPU
 propios y 1.000.000 updates físicos. Los scopes incluyen carga y guardado; no son
@@ -58,11 +53,10 @@ de experimentos, replicación, recursos y acciones externas del programa.
 
 ## Qué falta para la entrega
 
-Finalizar A1, interpretar sus cohortes completas, resolver la paridad pendiente
-del coste de fusión y decidir las ramas de refit/export habilitadas por evidencia.
-El refit requiere una receta seleccionada y registrada; H/V incorporados a sus
-pesos dejan de ser evaluación independiente. La familia de réplica autorizada
-ya se utilizó en C1/fusión. No se inventa otra réplica para rescatar una semilla.
+A1 y el coste están completos. `DECISION_AFTER_A1.json` deshabilita refit y nuevo
+export test12 porque ninguna receta cumple el contrato completo. La familia de
+réplica autorizada ya se utilizó en C1/fusión. Falta certificar el ZIP final desde
+una extracción independiente; un recibo previo al ZIP no puede certificar sus bytes.
 
 La entrega final deberá contener documentación, predicciones y pesos portables,
 con replay desde otra extracción, manifiesto y SHA-256, en un ZIP de como máximo

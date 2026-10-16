@@ -20,25 +20,21 @@ NumPy, bootstrap por grupos y exports. Puede reanudarse si el coste se fragmenta
 La selección primaria no termina la investigación adaptativa ni la rama RGB.
 El coste preparado excluye preprocesado sensorial y no sustituye la medida E2E.
 
-## Reanudar la rama actual
+## Reanudar la entrega actual
+
+Los entrenamientos, evaluación A1 y coste final terminaron. Con `PYTHONPATH=src;.`
+y el entorno compartido, este comando CPU verificado reconstruye la conclusión:
 
 ```powershell
-./scripts/Resume-JointMeasurement.ps1 -ShowCommand
-./scripts/Resume-JointMeasurement.ps1
+$env:CUDA_VISIBLE_DEVICES = '-1'
+../e-jepa-ttc/.venv/Scripts/python.exe -B -m operational.joint_measurement.final_report
 ```
 
-El primer comando sólo muestra la invocación. El segundo rechaza procesos V18
-activos y, cuando B1 está registrado, continúa sus checkpoints completos con
-`correspondence_isolated`. Si ya están congelados los cuatro endpoints, selecciona
-`correspondence_evaluate`. Tras la evidencia B1 completa exige interpretar los
-resultados; no decide una nueva receta ni repite la matriz primaria. Los runtimes
-conservan sus propios locks y verificaciones de admisión. `-Stage Primary` permite
-seleccionar explícitamente el runner histórico; `-Once` sólo se admite para él.
-
-El script no programa la vigilancia. El observador existente se arma con el PID
-real del driver y comprueba su identidad cada hora; no debe duplicarse. La
-reanudación del 16 de octubre a las 12:21 y sus nueve comprobaciones de continuidad
-se documentan en [RESUME_20261016.md](RESUME_20261016.md).
+No inicia nuevos fits. A continuación se ejecuta `compact_delivery` con una ruta
+nueva y el replay desde una extracción fuera de la campaña. Después de construir
+el ZIP no se regeneran sus archivos fuente esperando que cambien dentro de él:
+la verificación final externa debe identificar el SHA-256 exacto del archivo entregado.
+Los scripts y recibos históricos de resume documentan la recuperación ya probada.
 
 ## ZIP esencial
 

@@ -1,5 +1,9 @@
 # V18 JOINT-MEASUREMENT
 
+Estado al 17-10-2026: programa científico cerrado sin candidato admitido; entrega independiente pendiente. A1 y las 64 consultas de coste están completos. La decisión de no habilitar refit/export está registrada. Véase [FINAL_SCIENTIFIC_REPORT.md](FINAL_SCIENTIFIC_REPORT.md).
+
+## Cronología histórica, no estado actual
+
 Estado: RESEARCH_ONGOING / A1_TRAINING;
 fase primaria NO_SYSTEM_PROMOTION; RGB NO_CANDIDATE_RGB_PAIR;
 C1 independiente NO_CANDIDATE_C1; fusión seed7 sin promoción de sistema.

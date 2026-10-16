@@ -1,5 +1,9 @@
 # Revisión de cierre V18, 16 de octubre
 
+Estado al 17-10-2026: programa científico cerrado sin candidato admitido; entrega independiente pendiente. A1 y las 64 consultas de coste están completos. La decisión de no habilitar refit/export está registrada. Véase [FINAL_SCIENTIFIC_REPORT.md](FINAL_SCIENTIFIC_REPORT.md).
+
+La revisión que sigue conserva el estado del 16 de octubre. Sus pendientes científicos ya están resueltos; la verificación del ZIP se realiza en una frontera posterior.
+
 La campaña permanece abierta. Esta revisión identifica evidencia pendiente;
 no certifica una entrega final ni modifica recetas, poblaciones o gates.
 Todas las rutas de artefactos siguientes son relativas a
