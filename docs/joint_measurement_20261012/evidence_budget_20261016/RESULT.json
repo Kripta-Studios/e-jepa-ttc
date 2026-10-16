@@ -1,0 +1,16 @@
+{
+  "active_authorization_sha256": "581e15d5f5cdf741410ae3f839d0e623a80b8523db6ef1735349212044d25981",
+  "after_ledger_sha256": "fb55568e54f6e71796b9ef1219615872b78fd5c4520a517dff7a56a9d4fb8015",
+  "before_ledger_sha256": "3a51687fec6ef9e488b17fd4ec1364005de09c36aabea7cdd8547899dd55923a",
+  "charged_or_reserved_s": 164154.36069849986,
+  "checkpoint_reset": false,
+  "entries_preserved": true,
+  "entry_count": 284,
+  "new_cap_s": 216000,
+  "old_cap_s": 172800,
+  "optimizer_updates": 0,
+  "previous_authorization_sha256": "3288b0ee93c4c92ab1b1764670e69d71f603c0dad7f7cc71bc57d4224a3c8d90",
+  "scientific_sources_modified": false,
+  "status": "APPLIED",
+  "utc": "2026-10-16T11:59:15.496203+00:00"
+}

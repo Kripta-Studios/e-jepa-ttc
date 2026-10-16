@@ -1,0 +1,24 @@
+{
+  "authorized_cap_seconds": 172800,
+  "charged_at_amendment_seconds": 91171.9218986,
+  "forbidden_actions_unchanged": [
+    "submission",
+    "push",
+    "merge",
+    "paid compute",
+    "global machine changes"
+  ],
+  "interpretation": "Broaden the existing48h accumulated ceiling to the full evidence-enabled V18 program; no additional numerical ceiling increase needed at admission",
+  "ledger_entries_preserved": true,
+  "ledger_sha256": "7a6266b504ecb94c5ab1dc47d0f81e71f68ac037ee22e35b1b79a3711e46e7f6",
+  "observation": "hourly_on_the_hour_Europe_Madrid",
+  "paid_services": false,
+  "physical_update_cap": 1000000,
+  "previous_authorization_sha256": "f525c60c80a811a5e619198fda2d83abf131fd6abf0b14715c3479ec2de6e728",
+  "scientific_sources_modified": false,
+  "scope": "All evidence-enabled V18 handoff branches: primary, adaptive, RGB/fusion, selected replication, final refit and local evaluation/delivery, within their registered experiment limits",
+  "status": "APPLIED",
+  "supersedes_scope_of": "BUDGET_AUTHORIZATION_20261013.json",
+  "user_authorization": "s\u00ed tienes permiso para continuar y para ampliar el presupuesto de todo, no pares hasta acabar, y vete revisando cada hora en punto que todo se est\u00e9 ejecutando y vaya bien",
+  "utc": "2026-10-13T22:37:08.519215+00:00"
+}
