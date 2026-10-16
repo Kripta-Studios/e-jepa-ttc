@@ -1,9 +1,25 @@
 # Continuación condicionada después de B1
 
-Estado: diseño de la cuarta comparación, **todavía sin registro ni updates**.
-No es un candidato seleccionado, un permiso para cambiar los gates ni un
-resultado. La ejecución requiere receta completa, fuentes congeladas y QA de
-gradientes, invariantes y reanudación antes del primer update científico.
+Estado: **A1 registrada, QA CUDA aprobada y entrenamiento lanzado**. Aún no hay
+endpoints científicos completos ni un candidato seleccionado. Las 14 pruebas CPU y Pyright
+pasan. El prototipo con pesos nativos verifica forwards inicialmente idénticos,
+gradientes finitos/no nulos en la parte entrenable y ausencia de gradientes en
+los pesos excluidos, con cero updates y el padre intacto.
+
+La QA CUDA contabiliza 60 updates técnicos. Para ambos brazos pasan los nueve
+controles de estado de reanudación exacta, incluida la curva, y los nueve de
+equivalencia numérica entre ejecución normal y capturada. Se conservan Adam,
+scheduler, sampler y los RNG CPU/CUDA/Python/NumPy. El observador quedó armado
+para las 19:00 locales y las horas siguientes; no reinicia procesos por sí solo.
+
+Registro SHA-256:
+`d3a459fd8d1422c4317fd1b9d31d5b868c40f865399ff24ed5f0da8dbf207fa9`.
+Fuentes en commit `526d052`; evidencia en `adaptive/A1_adaptation_depth/`.
+La adaptación parcial entrena `encoder.7.*` y toda la lectura: 476.646 parámetros.
+El control completo entrena 578.854. Los doce tensores anteriores del encoder
+permanecen congelados en el brazo parcial. Ambos mantienen train/dropout para
+preservar la misma distribución de forwards; no es un encoder enteramente
+congelado. No hay BatchNorm ni estadísticas acumuladas en ese prefijo.
 
 B1 aporta señal emparejada en H frente a su control TTC: mejora el agregado y
 MiDc y conserva las protecciones de signo, bandas y población. Sin embargo,
@@ -34,7 +50,7 @@ El control completo se entrenará de nuevo dentro de esta comparación porque su
 horizonte de 12.000 updates difiere de los 10.000 de B1. No se escogerá el mejor
 entre ambos controles después de ver H.
 
-El registro deberá concretar qué parámetros forman el último bloque, las
+El registro concreta qué parámetros forman el último bloque, las
 políticas train/eval y dropout, las tasas por grupo, el estado inicial de Adam y
 scheduler, los hashes del padre y de las poblaciones, y la decisión cuantitativa
 emparejada. Los dos endpoints se congelarán antes de abrir H de esta comparación.

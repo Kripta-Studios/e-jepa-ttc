@@ -1,5 +1,5 @@
 param(
-    [ValidateSet('Auto', 'Primary', 'B1Training', 'B1Evaluation')]
+    [ValidateSet('Auto', 'Primary', 'B1Training', 'B1Evaluation', 'A1Training')]
     [string]$Stage = 'Auto',
     [switch]$Once,
     [switch]$ShowCommand
@@ -17,8 +17,13 @@ try {
     $env:MKL_NUM_THREADS = '1'
     $Campaign = Join-Path $Repo 'artifacts/joint_measurement_20261012'
     $B1 = Join-Path $Campaign 'adaptive/B1_correspondence'
+    $A1 = Join-Path $Campaign 'adaptive/A1_adaptation_depth'
     if ($Stage -eq 'Auto') {
-        if (Test-Path -LiteralPath (Join-Path $B1 'evidence/COMPLETE.json')) {
+        if (Test-Path -LiteralPath (Join-Path $A1 'ENDPOINTS.json')) {
+            throw 'A1 tiene ambos endpoints. Consulta NEXT_DECISION.json para su evaluación registrada.'
+        } elseif (Test-Path -LiteralPath (Join-Path $A1 'REGISTRATION.json')) {
+            $Stage = 'A1Training'
+        } elseif (Test-Path -LiteralPath (Join-Path $B1 'evidence/COMPLETE.json')) {
             throw 'B1 ya tiene evidencia completa. Interpreta sus resultados y NEXT_DECISION.json antes de elegir otra rama.'
         } elseif (Test-Path -LiteralPath (Join-Path $B1 'ENDPOINTS.json')) {
             $Stage = 'B1Evaluation'
@@ -34,6 +39,7 @@ try {
         throw '-Once sólo corresponde al runner primario; B1 conserva sus segmentos durables registrados.'
     }
     $Module = switch ($Stage) {
+        'A1Training' { 'operational.joint_measurement.adaptation_depth' }
         'B1Training' { 'operational.joint_measurement.correspondence_isolated' }
         'B1Evaluation' { 'operational.joint_measurement.correspondence_evaluate' }
         'Primary' {
@@ -46,6 +52,7 @@ try {
         }
     }
     $Arguments = @('-u', '-B', '-m', $Module)
+    if ($Stage -eq 'A1Training') { $Arguments += 'run' }
     if ($Stage -eq 'B1Evaluation') {
         $GraphProof = Join-Path $Campaign 'runtime/B1_inference_graph_v2/RESULT.json'
         if ((Test-Path -LiteralPath $GraphProof) -and

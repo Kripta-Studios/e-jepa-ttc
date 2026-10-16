@@ -30,6 +30,7 @@ def build() -> dict:
         "fusion_three_seeds": "replication/fusion_C1/evaluation/RESULT.json",
         "D1": "adaptive/D1_predictor_width/evidence/COMPLETE.json",
         "B1": "adaptive/B1_correspondence/evidence/COMPLETE.json",
+        "A1": "adaptive/A1_adaptation_depth/evidence/COMPLETE.json",
     }.items():
         source = RUN / relative
         if source.exists():
@@ -54,10 +55,15 @@ def build() -> dict:
             )
     remaining += [
         "Resolver/documentar el fallo de paridad antes de admitir el coste sensorial de fusión",
-        "Decidir con P/H si procede familia A, datos o refit; sin búsqueda automática",
         "Congelar cualquier export test admisible; el envío oficial sigue sin autorización",
         "Publicar informes y verificar independientemente el ZIP final <=100000000 bytes",
     ]
+    if (RUN / "adaptive/A1_adaptation_depth/REGISTRATION.json").exists():
+        if not stages["A1"]["evidence_complete"]:
+            remaining.append("Completar A1 registrada: dos endpoints, P/H, coste y exports")
+        remaining.append("Resolver refit/export condicionado por A1 y los gates originales")
+    else:
+        remaining.append("Decidir con P/H si procede familia A, datos o refit")
     garl_cost = RUN / "cost/garl_routes/RESULT.json"
     if not garl_cost.exists() or read(garl_cost)["status"] != "COMPLETE":
         remaining.append(

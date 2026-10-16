@@ -1,11 +1,19 @@
 # V18 JOINT-MEASUREMENT
 
-Estado: RESEARCH_ONGOING / B1_EVIDENCE_COMPLETE;
+Estado: RESEARCH_ONGOING / A1_TRAINING;
 fase primaria NO_SYSTEM_PROMOTION; RGB NO_CANDIDATE_RGB_PAIR;
 C1 independiente NO_CANDIDATE_C1; fusión seed7 sin promoción de sistema.
 Los cuatro entrenamientos primarios están completos en 12.000 updates cada uno.
 La matriz P/H, selección H, evaluación V del candidato seleccionado, coste E2E y
 comparación con E_CTX están completos. Esto no completa el programa V18.
+
+Corte del 16 de octubre, 18:45 Madrid: A1 está registrada y ha superado la QA
+CUDA de ambos brazos con 60 updates técnicos, captura equivalente y reanudación
+exacta. Se ha lanzado LAST-BLOCK seguido de FULL, 12.000 updates nuevos cada uno,
+desde el mismo endpoint B1 de correspondencia. No hay resultados A1 todavía.
+Garl terminó sus 128 pares de coste con paridad exacta entre rutas. La medición
+raw de fusión volvió a detenerse en F_TRUE, ahora sobre la consulta V12955;
+se conserva el fallo y el coste completo sigue sin admisión.
 
 Actualización operativa del 16 de octubre, tras el cierre B1 de las 18:03 Madrid:
 las cuatro etapas, 24.000 updates, 144.624 predicciones P/H, bootstrap, coste

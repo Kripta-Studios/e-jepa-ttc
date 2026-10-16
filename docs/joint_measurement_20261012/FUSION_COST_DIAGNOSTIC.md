@@ -129,3 +129,26 @@ de velocidad ni un cambio de modelo. C1 y las cabezas mantienen su configuració
 original; el cambio cuDNN se limita a los productores históricos.
 
 SHA-256 de RESULT.json: 448800f85798e95904c3adbaccb9799e35db7d0c243098f06a4e130bf79e0a98.
+
+## Límite encontrado en la comprobación completa, 18:36
+
+La ejecución de `raw_e2e_historical_shape_v1` conservó las 64 consultas y cuatro
+rutas originales. Se detuvo en la fila 12 (índice V 12955), tras escribir trece
+fragmentos. Las primeras doce consultas pasan en sus cuatro rutas. En la
+decimotercera pasan TRUE, ZERO y R_CTX, pero F_TRUE emite 37,101306915 s frente a
+37,102100372 s de referencia: diferencia 0,000793457 s. El límite original es
+aproximadamente 0,000471021 s para ese valor. **El coste sigue sin admisión.**
+
+`fusion/cost/raw_e2e_historical_shape_v1/PARITY_FAILURE.json` y las trece filas
+permanecen intactos. No se elimina la consulta ni se aumenta la tolerancia; las
+estadísticas parciales no sustituyen la población completa de coste. El
+contraste favorable sobre las cuatro primeras consultas era un diagnóstico,
+no una garantía sobre las demás.
+
+La siguiente localización debe separar las features raw de la ejecución de la
+cabeza. `operational/rgb_port/predict_heads.py` genera la referencia con cabezas
+CPU y batch128; además convierte su `point_phase` a TTC en CPU. La ruta raw
+heredada ejecuta F_TRUE en CUDA, con batch1 e historiales recortados a su sufijo
+válido. Deben contrastarse dispositivo, forma de batch/historial y emisión con
+los mismos pesos e inputs antes de atribuir el fallo a un factor concreto.
+Esto es una hipótesis de reproducibilidad numérica, no una nueva receta TTC.

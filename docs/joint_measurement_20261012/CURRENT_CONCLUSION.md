@@ -2,7 +2,7 @@
 
 **La campaña sigue abierta; no hay promoción del sistema ni confirmación SOTA.** La fusión presenta una señal controlada en las tres semillas, pero no cumple el gate crucial original del10%. Los negativos y las regresiones se conservan.
 
-Corte UTC: `2026-10-16T16:11:08.540713+00:00`. Fuente: `CAMPAIGN_CONCLUSION.json`.
+Corte UTC: `2026-10-16T16:48:44.271868+00:00`. Fuente: `CAMPAIGN_CONCLUSION.json`.
 
 | Etapa | Evidencia completa | Estado |
 |---|---|---|
@@ -13,6 +13,7 @@ Corte UTC: `2026-10-16T16:11:08.540713+00:00`. Fuente: `CAMPAIGN_CONCLUSION.json
 | fusion_three_seeds | True | REPLICA_METRICS_READY_FOR_INTERPRETATION |
 | D1 | True | D1_READY_FOR_INTERPRETATION |
 | B1 | True | B1_READY_FOR_INTERPRETATION |
+| A1 | False | PENDING |
 
 | Fusión, media de3 seeds | Agregado V | MiDc V | MAE V, s |
 |---|---:|---:|---:|
@@ -24,18 +25,18 @@ El agregado mejora frente al control ZERO de igual capacidad. Esto no demuestra 
 ## Contabilidad del corte
 
 - Updates científicos: 159,200.
-- Técnicos: 750; recuperación superior: 273; pendientes superiores: 0.
-- Físicos superiores: 160,223.
-- Scopes GPU contabilizados/reservados: 177249.1 / 216000 s.
+- Técnicos: 810; recuperación superior: 273; pendientes superiores: 0.
+- Físicos superiores: 160,283.
+- Scopes GPU contabilizados/reservados: 179106.3 / 216000 s.
 
 Es una instantánea no atómica mientras hay trabajo vivo. No son kernels GPU puros; las reservas activas pueden cambiar al liquidarse. No se recontaron los controles históricos reutilizados.
 
 ## Pendiente
 
 - Resolver/documentar el fallo de paridad antes de admitir el coste sensorial de fusión
-- Decidir con P/H si procede familia A, datos o refit; sin búsqueda automática
 - Congelar cualquier export test admisible; el envío oficial sigue sin autorización
 - Publicar informes y verificar independientemente el ZIP final <=100000000 bytes
-- Medir Garl completo: rutas nativa/local emparejadas, CPU FP32 y coste raw
+- Completar A1 registrada: dos endpoints, P/H, coste y exports
+- Resolver refit/export condicionado por A1 y los gates originales
 
 Las ramas condicionadas se justifican con evidencia; un resultado negativo cierra su experimento. La evaluación oficial requiere autorización separada y no se utiliza como bucle de ajuste.
