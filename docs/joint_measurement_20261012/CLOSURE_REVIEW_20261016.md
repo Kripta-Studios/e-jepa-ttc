@@ -7,7 +7,7 @@ Todas las rutas de artefactos siguientes son relativas a
 
 | Trabajo pendiente | Evidencia necesaria | Estado de esta revisión |
 |---|---|---|
-| A1 LAST-BLOCK y FULL | `adaptive/A1_adaptation_depth/ENDPOINTS.json`, ambos checkpoints de 12.000 updates, journals durables y estados completos coherentes | LAST-BLOCK activo; FULL posterior; no hay dos endpoints |
+| A1 LAST-BLOCK y FULL | `adaptive/A1_adaptation_depth/ENDPOINTS.json`, ambos checkpoints de 12.000 updates, journals durables y estados completos coherentes | LAST-BLOCK completo (12.000); FULL activo (7.075 a las 23:00); no hay dos endpoints |
 | Evaluación A1 | `adaptive/A1_adaptation_depth/evidence/COMPLETE.json`, cuatro tablas P/H completas, métricas por grupo, bootstrap, diagnóstico de correspondencias, coste preparado y dos exports | Registrada e implementada; sin resultados todavía |
 | Decisión científica A1 | Informe basado en ambos endpoints; señal frente a FULL separada de admisión frente a A5 y de promoción del sistema | Pendiente de P/H; V no se abre para rescatar un rechazo |
 | Coste raw de fusión | `fusion/cost/raw_e2e_millisecond_v1/COMPLETE.json`, 64 consultas originales, cuatro rutas por consulta, tiempos y paridad por fila | 13 consultas auditadas bajo aceptación de 1 ms; faltan 51 |
@@ -82,3 +82,5 @@ No hay score oficial nuevo. Se puede preparar el export local admisible después
 de congelar candidatos, pero el envío requiere autorización separada. La falta
 de score impide afirmar SOTA; no impide cerrar honestamente los experimentos
 autorizados, incluyendo sus negativos y limitaciones.
+
+Actualización de ejecución a las 23:00: el mismo coordinador y el mismo hijo FULL siguen vivos; cuatro scopes conservan una captura de modelo y una de pérdida. Sin recuperación ni updates pendientes. CI publicado y aprobado en `27b8d8a`; no cambia el orden de cierre ni las decisiones científicas.

@@ -1,6 +1,6 @@
 # V18: requisitos de cierre y alcance de la evidencia
 
-Corte de revisión: 16-10-2026, B1 completo y diagnóstico de coste activo. **Objetivo completo todavía
+Corte de revisión: 16-10-2026, 23:00 locales; B1 completo, A1 FULL activo y coste de fusión pendiente. **Objetivo completo todavía
 no demostrado.** Este documento deriva los requisitos del handoff, sus documentos
 02–06 y el prompt autorizado. No sustituye la verificación final de los bytes
 entregados ni convierte la existencia de un archivo en prueba de su contenido.
@@ -20,18 +20,18 @@ Las rutas de evidencia de la tabla son relativas a
 | C1 geométrico con encoder entrenable y control CORR | `adaptive/C1_geometry/evidence/COMPLETE.json`: C1_READY_FOR_INTERPRETATION | Resultado standalone negativo; uso como productor de fusión declarado |
 | D1 capacidad con control y presupuesto igual de updates | `adaptive/D1_predictor_width/evidence/COMPLETE.json`: D1_READY_FOR_INTERPRETATION | Conservar negativo y errata explícita del nombre de scope de coste |
 | B1 correspondencia conocida y control TTC | `adaptive/B1_correspondence/evidence/COMPLETE.json`: B1_READY_FOR_INTERPRETATION; cuatro endpoints, 24.000 updates, 144.624 predicciones, recálculos, bootstrap, coste y dos exports verificados. Señal emparejada positiva; NO_CANDIDATE_B1 frente a A5 por banda negativa | Incorporar evidencia y exports al replay final; no abrir V como rescate |
-| Continuación adaptativa máxima de cuatro experimentos | C1, D1, B1 y A1 registrados prospectivamente. A1 tiene prototipo nativo, QA CUDA/resume aprobada (60 técnicos) y entrenamiento lanzado; `ADAPTIVE_SCOPE_AFTER_B1.md` conserva fundamento y límites | Completar ambos endpoints A1, P/H, decisión, coste y exports. No habilita una quinta comparación |
-| Fusión con anchor RGB, ZERO de igual capacidad y fallback | `fusion/evaluation/RESULT.json`, contratos/exports TRUE y ZERO; no promoción de sistema | Coste desde sensores aún no admitido por discrepancia numérica |
+| Continuación adaptativa máxima de cuatro experimentos | C1, D1, B1 y A1 registrados prospectivamente. A1 tiene prototipo nativo, QA CUDA/resume aprobada (60 técnicos), LAST-BLOCK completo (12.000) y FULL activo; `ADAPTIVE_SCOPE_AFTER_B1.md` conserva fundamento y límites | Completar ambos endpoints A1, P/H, decisión, coste y exports. No habilita una quinta comparación |
+| Fusión con anchor RGB, ZERO de igual capacidad y fallback | `fusion/evaluation/RESULT.json`, contratos/exports TRUE y ZERO; no promoción de sistema | Coste sensorial completo pendiente; aceptación absoluta de 1 ms autorizada después del diagnóstico, con fallo estricto conservado |
 | Una familia de réplica completa, seeds13/23 | `replication/fusion_C1/evaluation/RESULT.json`: productores C1, heads TRUE/ZERO, nuevas features y normalizadores; tres seeds con seed7 | Mantener limitación de padres históricos compartidos; no presentar como tres pretrainings independientes |
 | Garl completo sin debilitar inputs/modelo | `cost/garl_routes/RESULT.json`: COMPLETE, 64 consultas P, 128 pares y 256 observaciones; inputs/salidas exactos. CPU FP32, carga/primer forward/preparado y rutas raw separados; `GARL_ROUTE_COST.md` regenerable | Incluir recibos por par, resultados y límites de caché/memoria en el ZIP final; no extrapolar CPU a CUDA ni a precisión oficial |
-| Coste sensorial de fusión | Las cuatro consultas diagnósticas pasan al restaurar batch/cuDNN. La medición completa se detuvo en fila12/índice12955: F_TRUE difiere0,000793457s; tolerancia aproximada0,000471021s. Trece fragmentos conservados | Localizar cabeza/dispositivo/historial y emisión frente a referencia CPU batch128; no admitir coste parcial ni relajar tolerancia |
+| Coste sensorial de fusión | Las cuatro consultas diagnósticas pasan al restaurar batch/cuDNN. La medición completa se detuvo en fila12/índice12955: F_TRUE difiere0,000793457s; tolerancia aproximada0,000471021s. Trece fragmentos conservados | Completar las 51 consultas restantes con aceptación absoluta de 1 ms autorizada por el usuario, signo/dominio intactos y registro prospectivo de la enmienda antes de nuevas mediciones; conservar el rechazo estricto original. No admitir el coste parcial como completo |
 | Refit final event/multimodal, sólo con receta seleccionada | No se declara candidato final ni se consumen H/V como refit | Resolver después de la continuación A y gates completos; si no se habilita, registrar decisión y motivo, no entrenar para gastar presupuesto |
 | Export local test12, condicionado por congelación/contrato | V16 conserva su export histórico; no se sustituye ni se envía | Decidir aplicabilidad de un export V18 tras selección/refit; ninguna submission autorizada |
 | No ajustar con FCWD/Dev32, no etiquetas privadas | Contratos y coordinación V16 conservan transferencia descriptiva y ausencia de envío | Mantener límites en decisiones finales; no afirmar SOTA |
 | Panel solicitado A5/NATIVE/CORR/C1 y auditoría de pérdida | Panel P/H completo con IDs/relojes, controles de población y Parquet; auditoría de pérdida sólo P | Incluir tablas completas y advertencia de que complementariedad condicionada por GT no es selector desplegable |
 | Registro de experimentos y negativos | 18 entradas en `EXPERIMENT_REGISTRY.jsonl`; fusión/réplica conservan además sus registros prospectivos propios | Incluir `.jsonl` y registros por fase; no crear fechas prospectivas retroactivas |
 | Recursos y contabilidad | 160.223 físicos durables: 159.200 científicos, 750 técnicos, 273 recuperación superior; scopes originales preservados | Corte final tras quiescencia, contabilizando evaluaciones/probes; presupuesto ampliado explícitamente a 216.000 s, no saldo borrado |
-| Endpoints, pesos, predicciones, curvas y métricas por grupo | Artefactos por fase, exports portables y curvas CSV; disponibilidad local de checkpoints completos | Incorporar B1 y explicar pesos/optimizer/inputs externos omitidos del ZIP ≤100 MB |
+| Endpoints, pesos, predicciones, curvas y métricas por grupo | Artefactos por fase, exports portables y curvas CSV; disponibilidad local de checkpoints completos | Incorporar B1 y A1 cuando esté completo; explicar pesos/optimizer/inputs externos omitidos del ZIP ≤100 MB |
 | Reproducción desde otra extracción | Preflight ejecutado: 40 tablas, 1.065.690 filas y 18 exports, con omisiones explícitas | Repetir sobre el ZIP final con B1 y evidencia nueva. El preflight no verifica un archivo aún no construido |
 | Informes, NEXT_DECISION, SHA-256 y bundle final | Informes parciales publicados; builder con límite 100.000.000 bytes y comprobación CRC/hash | Congelar conclusión final, construir sin escritor vivo, verificar extracción fuera de RUN y entregar ZIP/SHA/recibo |
 
@@ -43,3 +43,5 @@ La confirmación oficial y una promoción del sistema son conclusiones diferente
 de completar honestamente una campaña. Un cierre negativo sólo podrá emitirse
 después de resolver las ramas condicionadas y entregar la evidencia verificable;
 el entrenamiento terminado por sí solo no satisface este listado.
+
+La reparación del CI pasa en el commit `27b8d8a` (4.244 pruebas, 23 omisiones explícitas). La comparación de 129 registros confirma cero cambios a 161 rutas vinculadas; las admisiones originales pasan sin nuevos updates. Este control de ingeniería no completa A1 ni sustituye evidencia científica pendiente.
