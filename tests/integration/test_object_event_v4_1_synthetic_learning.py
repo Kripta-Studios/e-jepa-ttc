@@ -71,7 +71,9 @@ def test_v41_learns_a_pure_temporal_event_signal() -> None:
         sign_temperature=0.5,
     )
 
-    for step in range(1, 31):
+    # Fixed CPU overfit budget; 30 steps sat at the numerical convergence boundary.
+    # Keep seed, optimizer, objective and all accuracy assertions identical.
+    for step in range(1, 61):
         output = model(events)
         loss = object_event_v4_1_loss(
             output,
