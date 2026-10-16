@@ -114,3 +114,35 @@ todos los bytes. La copia al buffer contiguo conserva exactamente FP32.
 La fuente v1 permanece reproducible en el commit `41f398f` y sus recibos se
 conservan bajo `runtime/B1_sensor_prefetch_v1`. V2 tiene registro y resultados
 separados; el código nuevo por sí solo no acredita su admisión.
+
+## V2 admitido: resultados emparejados
+
+El recibo `runtime/B1_sensor_prefetch_v2/RESULT.json` terminó `ADMITTED`.
+Registro SHA-256: `bf8ad4e806bf5e2a1934ac2b746c447e2e5f9b095ef4660cc264b146c5dfaf50`.
+
+| Medida | CORRESPONDENCE original | CORRESPONDENCE v2 | TTC-CONTROL original | TTC-CONTROL v2 |
+|---|---:|---:|---:|---:|
+| Espera media de carga por B4 | 25,84 ms | 5,59 ms | 25,52 ms | 5,21 ms |
+| Tiempo total de 512 consultas, incluido cierre | 3,899 s | 2,173 s | 3,939 s | 2,053 s |
+| Tiempo total amortizado por B4 | 30,46 ms | 16,97 ms | 30,78 ms | 16,04 ms |
+| Razón nuevo/original | — | 0,5573 | — | 0,5213 |
+
+Esto equivale a 44,3–47,9% menos tiempo total, o aproximadamente 1,79–1,92×
+throughput en este benchmark. La espera de carga disminuye 78,4–79,6%.
+No se presenta como una reducción causal de 170 a 5 ms: los 170 ms proceden de
+otro momento y condiciones del host. Los números de esta tabla son emparejados.
+El primer batch todavía espera la decodificación inicial: 494–530 ms en esta
+prueba. La ventaja se amortiza durante el consumo secuencial del pack.
+
+Se verificaron 516 inputs exactos (514 P y dos H) y 132 salidas exactas de los
+dos modelos, con pesos intactos y cero updates. Las pruebas CPU suman 16 casos
+del lector y observador; Ruff y Pyright pasaron. El lector original conserva
+la responsabilidad sobre los targets y el scorer a través del evaluador: el
+nuevo lector nunca devuelve etiquetas a la red.
+
+El proceso de prueba terminó con RSS 4,37 GB, que incluye modelos, PyTorch,
+buffers del benchmark y runtime CUDA; no es sólo memoria del lector ni un pico
+medido. No se hicieron cambios globales al host ni al codec de los archivos.
+La evaluación se reanuda desde 203 fragmentos durables, 51.968 consultas,
+verificados por hash. `Resume-JointMeasurement.ps1 -Stage B1Evaluation` elige
+esta ruta sólo si está admitida; el runtime vuelve a comprobar sus bindings.

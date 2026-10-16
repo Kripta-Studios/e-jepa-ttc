@@ -1,0 +1,42 @@
+{
+  "exact": true,
+  "measurements": [
+    {
+      "elapsed_s": 5.005900599993765,
+      "rss_bytes": 2560290816,
+      "seconds_per_batch4": 0.07821719687490258,
+      "timings": [
+        {
+          "compressed_bytes": 116296353,
+          "decode_s": 4.316943999991054,
+          "decoded_bytes": 402654208,
+          "pack": "E:\\E_JEPA_TTC_V18_JOINT_MEASUREMENT_20261012\\sensor\\P\\pack_00000.zip",
+          "read_hash_s": 0.6377647999906912,
+          "rows": 256,
+          "sha256": "0599a77ebec2ae6f3d00c43e9e7381c60ecb4db2b022d18bb61b625fc76ceecb"
+        }
+      ],
+      "workers": 4
+    },
+    {
+      "elapsed_s": 3.508368499984499,
+      "rss_bytes": 2658762752,
+      "seconds_per_batch4": 0.0548182578122578,
+      "timings": [
+        {
+          "compressed_bytes": 116296353,
+          "decode_s": 2.8758621999877505,
+          "decoded_bytes": 402654208,
+          "pack": "E:\\E_JEPA_TTC_V18_JOINT_MEASUREMENT_20261012\\sensor\\P\\pack_00000.zip",
+          "read_hash_s": 0.5925510000088252,
+          "rows": 256,
+          "sha256": "0599a77ebec2ae6f3d00c43e9e7381c60ecb4db2b022d18bb61b625fc76ceecb"
+        }
+      ],
+      "workers": 8
+    }
+  ],
+  "optimizer_updates": 0,
+  "scope": "CPU only while GPU evaluation live; fixed P pack0",
+  "utc": "2026-10-16T15:26:05.283637+00:00"
+}

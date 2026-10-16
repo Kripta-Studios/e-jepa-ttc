@@ -41,3 +41,11 @@ fragmentos y 16.896 predicciones durables, conservadas y verificadas por hash.
 Referencia de la API: [CUDA Graphs en PyTorch](https://docs.pytorch.org/docs/2.14/notes/cuda.html#cuda-graphs).
 Context7 no estaba disponible; se consultó la documentación oficial. La versión
 instalada y la ejecución local determinan la compatibilidad efectiva.
+
+La prueba v2 terminó `ADMITTED`: razón mediana graph/eager 0,05921, pesos y RNG
+intactos, 132 salidas exactas y cero updates. Las medianas de forward preparado
+fueron 158,46→9,43 ms (CORRESPONDENCE) y 158,29→9,10 ms (TTC-CONTROL).
+Esta cifra no incluye la carga de sensores. La evaluación se reanudó conservando
+sus 66 fragmentos y después alcanzó 203 antes de la optimización del lector.
+Los resultados emparejados posteriores y sus límites están documentados en
+[INPUT_PIPELINE_20261016.md](INPUT_PIPELINE_20261016.md).

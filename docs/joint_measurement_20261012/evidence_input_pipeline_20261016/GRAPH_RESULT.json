@@ -1,0 +1,520 @@
+{
+  "exact_phase_and_ttc": true,
+  "invalid_clock_rejected": true,
+  "measurements": [
+    {
+      "first_call_seconds": 3.428028099995572,
+      "indices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "load_seconds": 0.8027360999840312,
+      "model": "B1-CORRESPONDENCE-STAGE2-S7",
+      "timings": {
+        "eager": 0.24121320000267588,
+        "graph": 0.01046010002028197
+      }
+    },
+    {
+      "first_call_seconds": 0.0058895999973174185,
+      "indices": [
+        4,
+        5,
+        6,
+        7
+      ],
+      "load_seconds": 0.18116249999729916,
+      "model": "B1-CORRESPONDENCE-STAGE2-S7",
+      "timings": {
+        "eager": 0.15814279997721314,
+        "graph": 0.010451699985424057
+      }
+    },
+    {
+      "first_call_seconds": 0.005456399987451732,
+      "indices": [
+        8,
+        9,
+        10,
+        11
+      ],
+      "load_seconds": 0.17944040001020767,
+      "model": "B1-CORRESPONDENCE-STAGE2-S7",
+      "timings": {
+        "eager": 0.16098310000961646,
+        "graph": 0.009807199996430427
+      }
+    },
+    {
+      "first_call_seconds": 0.004886100010480732,
+      "indices": [
+        12,
+        13,
+        14,
+        15
+      ],
+      "load_seconds": 0.1684730999986641,
+      "model": "B1-CORRESPONDENCE-STAGE2-S7",
+      "timings": {
+        "eager": 0.1650513999920804,
+        "graph": 0.009770800010301173
+      }
+    },
+    {
+      "first_call_seconds": 0.0049854000099003315,
+      "indices": [
+        16,
+        17,
+        18,
+        19
+      ],
+      "load_seconds": 0.15716990001965314,
+      "model": "B1-CORRESPONDENCE-STAGE2-S7",
+      "timings": {
+        "eager": 0.14202540001133457,
+        "graph": 0.008856699976604432
+      }
+    },
+    {
+      "first_call_seconds": 0.00546859999303706,
+      "indices": [
+        20,
+        21,
+        22,
+        23
+      ],
+      "load_seconds": 0.1672268999973312,
+      "model": "B1-CORRESPONDENCE-STAGE2-S7",
+      "timings": {
+        "eager": 0.16654529998777434,
+        "graph": 0.008443400001851842
+      }
+    },
+    {
+      "first_call_seconds": 0.006220200011739507,
+      "indices": [
+        24,
+        25,
+        26,
+        27
+      ],
+      "load_seconds": 0.18444899999303743,
+      "model": "B1-CORRESPONDENCE-STAGE2-S7",
+      "timings": {
+        "eager": 0.1536686000181362,
+        "graph": 0.007598600001074374
+      }
+    },
+    {
+      "first_call_seconds": 0.005971300008241087,
+      "indices": [
+        28,
+        29,
+        30,
+        31
+      ],
+      "load_seconds": 0.17152060000807978,
+      "model": "B1-CORRESPONDENCE-STAGE2-S7",
+      "timings": {
+        "eager": 0.16718359998776577,
+        "graph": 0.00876520000747405
+      }
+    },
+    {
+      "first_call_seconds": 0.007392500003334135,
+      "indices": [
+        32,
+        33,
+        34,
+        35
+      ],
+      "load_seconds": 0.20218340001883917,
+      "model": "B1-CORRESPONDENCE-STAGE2-S7",
+      "timings": {
+        "eager": 0.16517289998591878,
+        "graph": 0.009869200002867728
+      }
+    },
+    {
+      "first_call_seconds": 0.007198300008894876,
+      "indices": [
+        36,
+        37,
+        38,
+        39
+      ],
+      "load_seconds": 0.191879499994684,
+      "model": "B1-CORRESPONDENCE-STAGE2-S7",
+      "timings": {
+        "eager": 0.16034669999498874,
+        "graph": 0.011307299981126562
+      }
+    },
+    {
+      "first_call_seconds": 0.007835099997464567,
+      "indices": [
+        40,
+        41,
+        42,
+        43
+      ],
+      "load_seconds": 0.21113209999748506,
+      "model": "B1-CORRESPONDENCE-STAGE2-S7",
+      "timings": {
+        "eager": 0.15917619998799637,
+        "graph": 0.009427899989532307
+      }
+    },
+    {
+      "first_call_seconds": 0.005363199976272881,
+      "indices": [
+        44,
+        45,
+        46,
+        47
+      ],
+      "load_seconds": 0.17501559999072924,
+      "model": "B1-CORRESPONDENCE-STAGE2-S7",
+      "timings": {
+        "eager": 0.15821439999854192,
+        "graph": 0.010614500002702698
+      }
+    },
+    {
+      "first_call_seconds": 0.004747300001326948,
+      "indices": [
+        48,
+        49,
+        50,
+        51
+      ],
+      "load_seconds": 0.15817629999946803,
+      "model": "B1-CORRESPONDENCE-STAGE2-S7",
+      "timings": {
+        "eager": 0.15704760001972318,
+        "graph": 0.009652099979575723
+      }
+    },
+    {
+      "first_call_seconds": 0.005569900007685646,
+      "indices": [
+        52,
+        53,
+        54,
+        55
+      ],
+      "load_seconds": 0.16579480000655167,
+      "model": "B1-CORRESPONDENCE-STAGE2-S7",
+      "timings": {
+        "eager": 0.15721760000451468,
+        "graph": 0.009050099994055927
+      }
+    },
+    {
+      "first_call_seconds": 0.006300700013525784,
+      "indices": [
+        56,
+        57,
+        58,
+        59
+      ],
+      "load_seconds": 0.1926069000037387,
+      "model": "B1-CORRESPONDENCE-STAGE2-S7",
+      "timings": {
+        "eager": 0.1516469999914989,
+        "graph": 0.009381699986988679
+      }
+    },
+    {
+      "first_call_seconds": 0.005486600013682619,
+      "indices": [
+        60,
+        61,
+        62,
+        63
+      ],
+      "load_seconds": 0.15369659999851137,
+      "model": "B1-CORRESPONDENCE-STAGE2-S7",
+      "timings": {
+        "eager": 0.15119309999863617,
+        "graph": 0.008516100002452731
+      }
+    },
+    {
+      "first_call_seconds": 0.68965990000288,
+      "indices": [
+        53888,
+        53889
+      ],
+      "load_seconds": 0.42075049999402836,
+      "model": "B1-CORRESPONDENCE-STAGE2-S7",
+      "timings": {
+        "eager": 0.1584619999921415,
+        "graph": 0.007914899993920699
+      }
+    },
+    {
+      "first_call_seconds": 0.646686399995815,
+      "indices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "load_seconds": 0.1746794999926351,
+      "model": "B1-TTC-CONTROL-STAGE2-S7",
+      "timings": {
+        "eager": 0.15375739999581128,
+        "graph": 0.0086038000008557
+      }
+    },
+    {
+      "first_call_seconds": 0.005323899997165427,
+      "indices": [
+        4,
+        5,
+        6,
+        7
+      ],
+      "load_seconds": 0.17051019999780692,
+      "model": "B1-TTC-CONTROL-STAGE2-S7",
+      "timings": {
+        "eager": 0.15361889998894185,
+        "graph": 0.0090998999949079
+      }
+    },
+    {
+      "first_call_seconds": 0.005134800012456253,
+      "indices": [
+        8,
+        9,
+        10,
+        11
+      ],
+      "load_seconds": 0.17006010000477545,
+      "model": "B1-TTC-CONTROL-STAGE2-S7",
+      "timings": {
+        "eager": 0.17372489999979734,
+        "graph": 0.008761500008404255
+      }
+    },
+    {
+      "first_call_seconds": 0.00747319997753948,
+      "indices": [
+        12,
+        13,
+        14,
+        15
+      ],
+      "load_seconds": 0.1628723999892827,
+      "model": "B1-TTC-CONTROL-STAGE2-S7",
+      "timings": {
+        "eager": 0.15564049998647533,
+        "graph": 0.009419000009074807
+      }
+    },
+    {
+      "first_call_seconds": 0.005812599993078038,
+      "indices": [
+        16,
+        17,
+        18,
+        19
+      ],
+      "load_seconds": 0.16109209999558516,
+      "model": "B1-TTC-CONTROL-STAGE2-S7",
+      "timings": {
+        "eager": 0.15314420001232065,
+        "graph": 0.008449299988569692
+      }
+    },
+    {
+      "first_call_seconds": 0.005418499989900738,
+      "indices": [
+        20,
+        21,
+        22,
+        23
+      ],
+      "load_seconds": 0.16717470000730827,
+      "model": "B1-TTC-CONTROL-STAGE2-S7",
+      "timings": {
+        "eager": 0.14754079998238012,
+        "graph": 0.01008239999646321
+      }
+    },
+    {
+      "first_call_seconds": 0.005244500003755093,
+      "indices": [
+        24,
+        25,
+        26,
+        27
+      ],
+      "load_seconds": 0.19097729999339208,
+      "model": "B1-TTC-CONTROL-STAGE2-S7",
+      "timings": {
+        "eager": 0.15384699997957796,
+        "graph": 0.009240899991709739
+      }
+    },
+    {
+      "first_call_seconds": 0.0055988999956753105,
+      "indices": [
+        28,
+        29,
+        30,
+        31
+      ],
+      "load_seconds": 0.18782330001704395,
+      "model": "B1-TTC-CONTROL-STAGE2-S7",
+      "timings": {
+        "eager": 0.16057599999476224,
+        "graph": 0.008801599993603304
+      }
+    },
+    {
+      "first_call_seconds": 0.00598859999445267,
+      "indices": [
+        32,
+        33,
+        34,
+        35
+      ],
+      "load_seconds": 0.20100209998781793,
+      "model": "B1-TTC-CONTROL-STAGE2-S7",
+      "timings": {
+        "eager": 0.15829150000354275,
+        "graph": 0.009436799999093637
+      }
+    },
+    {
+      "first_call_seconds": 0.005945000011706725,
+      "indices": [
+        36,
+        37,
+        38,
+        39
+      ],
+      "load_seconds": 0.20652150001842529,
+      "model": "B1-TTC-CONTROL-STAGE2-S7",
+      "timings": {
+        "eager": 0.17227440001443028,
+        "graph": 0.008599699998740107
+      }
+    },
+    {
+      "first_call_seconds": 0.005403899995144457,
+      "indices": [
+        40,
+        41,
+        42,
+        43
+      ],
+      "load_seconds": 0.20687729999190196,
+      "model": "B1-TTC-CONTROL-STAGE2-S7",
+      "timings": {
+        "eager": 0.16905499997665174,
+        "graph": 0.009706500015454367
+      }
+    },
+    {
+      "first_call_seconds": 0.006032599980244413,
+      "indices": [
+        44,
+        45,
+        46,
+        47
+      ],
+      "load_seconds": 0.18102540000109002,
+      "model": "B1-TTC-CONTROL-STAGE2-S7",
+      "timings": {
+        "eager": 0.17026120002265088,
+        "graph": 0.008209100022213534
+      }
+    },
+    {
+      "first_call_seconds": 0.006023099995218217,
+      "indices": [
+        48,
+        49,
+        50,
+        51
+      ],
+      "load_seconds": 0.16406520002055913,
+      "model": "B1-TTC-CONTROL-STAGE2-S7",
+      "timings": {
+        "eager": 0.18308930000057444,
+        "graph": 0.011202099994989112
+      }
+    },
+    {
+      "first_call_seconds": 0.0056828999950084835,
+      "indices": [
+        52,
+        53,
+        54,
+        55
+      ],
+      "load_seconds": 0.16701020000618882,
+      "model": "B1-TTC-CONTROL-STAGE2-S7",
+      "timings": {
+        "eager": 0.14882880001096055,
+        "graph": 0.009212999982992187
+      }
+    },
+    {
+      "first_call_seconds": 0.005111200007377192,
+      "indices": [
+        56,
+        57,
+        58,
+        59
+      ],
+      "load_seconds": 0.1620587999932468,
+      "model": "B1-TTC-CONTROL-STAGE2-S7",
+      "timings": {
+        "eager": 0.1692103999957908,
+        "graph": 0.009070700005395338
+      }
+    },
+    {
+      "first_call_seconds": 0.004954999982146546,
+      "indices": [
+        60,
+        61,
+        62,
+        63
+      ],
+      "load_seconds": 0.15522099999361672,
+      "model": "B1-TTC-CONTROL-STAGE2-S7",
+      "timings": {
+        "eager": 0.15570629999274388,
+        "graph": 0.009302500024205074
+      }
+    },
+    {
+      "first_call_seconds": 0.5665372000075877,
+      "indices": [
+        53888,
+        53889
+      ],
+      "load_seconds": 0.07407940001576208,
+      "model": "B1-TTC-CONTROL-STAGE2-S7",
+      "timings": {
+        "eager": 0.16851720001432113,
+        "graph": 0.008299200009787455
+      }
+    }
+  ],
+  "optimizer_updates": 0,
+  "paired_ratio": 0.059213930242809756,
+  "registration_sha256": "3d63450ead9da30715f91b1435bee6f82db447470731066b20d33e6ebc89ec08",
+  "rng_unchanged": true,
+  "status": "ADMITTED",
+  "stored_fragment_exact": true,
+  "utc": "2026-10-16T15:12:54.042569+00:00",
+  "weights_unchanged": true
+}

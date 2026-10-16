@@ -1,0 +1,32 @@
+{
+  "endpoints_sha256": "4547a154b02c9cb9abeec122ffb310d4aac0c651749bc03c7785dac0c5c9e66f",
+  "graph_proof_sha256": "bafba387c748bab3b1b6961b56df5671254635698eee4610feecec529ba966f4",
+  "graph_registration_sha256": "3d63450ead9da30715f91b1435bee6f82db447470731066b20d33e6ebc89ec08",
+  "input_parity": "Exact FP32 pixels/clocks: all P rows0:512, P final2, H final2",
+  "integrity": "SHA256 of bytes consumed per pack, ZIP CRC, unique members, native tokens",
+  "maximum_end_to_end_ratio": 0.8,
+  "maximum_resident_packs": 2,
+  "optimizer_updates": 0,
+  "output_parity": "Both frozen endpoints: P rows0:64 and final2, exact raw phase and TTC",
+  "performance": "P rows0:512, graph original/prefetch, including startup and drain",
+  "persistent_disk_cache_bytes": 0,
+  "previous_source_commit": "41f398f",
+  "references": [
+    "https://docs.ffcv.io/making_dataloaders.html",
+    "https://docs.pytorch.org/tutorials/intermediate/pinmem_nonblock.html",
+    "https://docs.nvidia.com/cuda/nvcomp/installation.html",
+    "https://docs.nvidia.com/deeplearning/dali/user-guide/docs/installation.html",
+    "https://arxiv.org/abs/2602.08190"
+  ],
+  "revision": "Avoid inner NPY copies and repeated file loaders; retain the speed gate",
+  "scope": "Prediction reader only; original ordering, B4/tail2, scoring, costs and exports",
+  "sources": {
+    "operational/joint_measurement/compute_guard.py": "826c5bb54ea862e454b47e70b80723078be14e37f10af02484f16a3bf27f939c",
+    "operational/joint_measurement/correspondence_prefetch.py": "61c01d40bdd1f1ba7cbb414a38edc41260cb239e950f32d25f3609f5e68f0f51",
+    "operational/joint_measurement/data.py": "c9bb33e18fd5150105206e87ae4522241dde685bbf63975f71dbabc9cc7b8594",
+    "operational/joint_measurement/prefetched_sensor.py": "7cc8b4deab97254d3381f569c041a5ea52387af53a57b3e2a04d9eba80ee6759"
+  },
+  "sources_researched_as_of": "2026-10-16",
+  "supersedes_rejected_probe": "50244173070d7b134eff25ba87f134e83829c93546a29265ba31d633def5ae53",
+  "workers": 8
+}
