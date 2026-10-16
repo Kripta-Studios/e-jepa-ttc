@@ -149,6 +149,14 @@ def build(output: Path) -> dict:
                 "del proyecto disponibles: `python source/operational/joint_measurement/bundle.py "
                 "verify RUTA_DEL_ZIP`. Es una comprobación de integridad, no un reentrenamiento.",
                 "",
+                "Para recalcular todas las tablas y ejecutar todos los exports, desde `source/` "
+                "y con `PYTHONPATH=src;.` en PowerShell, ejecutar "
+                "`python -B -m operational.joint_measurement.replay .. "
+                "--output RUTA_EXTERNA.json`. "
+                "Guardar el recibo fuera de la extracción para mantener intacto el manifiesto. "
+                "Las pruebas que necesitan checkpoints omitidos se enumeran como no reproducidas; "
+                "no se confunden con verificaciones aprobadas.",
+                "",
                 "Ejemplo de replay independiente de una cabeza: "
                 "`python source/operational/joint_measurement/replay_fusion_export.py "
                 "campaign/fusion/exports/FUSION-TRUE-S7`. Requiere NumPy/PyTorch y usa "

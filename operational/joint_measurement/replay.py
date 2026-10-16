@@ -266,6 +266,21 @@ def replay_frozen_encoder(initial_path: Path, trained_path: Path, witness_path: 
     }
 
 
+def omitted_payloads(root: Path, paths: list[Path]) -> list[str]:
+    """Allow only missing payloads explicitly excluded by the compact manifest."""
+    manifest = json.loads((root / MANIFEST).read_text(encoding="utf-8"))
+    excluded = {row["path"] for row in manifest.get("context", {}).get("omitted_files", [])}
+    missing = []
+    for path in paths:
+        if path.is_file():
+            continue
+        relative = path.relative_to(root / "campaign").as_posix()
+        if relative not in excluded:
+            raise ValueError(f"Missing undeclared replay payload: {relative}")
+        missing.append(relative)
+    return missing
+
+
 def replay(root: Path) -> dict:
     """Check included evidence only; never reopen training datasets or run an optimizer."""
     integrity = verify_extraction(root)
@@ -275,7 +290,7 @@ def replay(root: Path) -> dict:
         path.parent.relative_to(campaign)
         .as_posix()
         .removeprefix("predictions/"): replay_predictions(path.parent)
-        for path in sorted(campaign.glob("**/predictions/*/*/COMPLETE.json"))
+        for path in sorted(campaign.rglob("predictions.parquet"))
     }
     exports = {
         path.parent.relative_to(campaign).as_posix().removeprefix("exports/"): replay_export(
@@ -284,28 +299,55 @@ def replay(root: Path) -> dict:
         for path in sorted(campaign.glob("**/exports/*/COMPLETE.json"))
     }
     witnesses = {}
+    excluded_replays = {}
     verification = campaign / "verification"
     for variant in ("DIRECT", "CORR"):
         witness = verification / f"PAIR_{variant}_ENCODER_CHANGE_100.json"
         if witness.exists():
-            witnesses[f"PAIR-{variant}-S7@100"] = replay_encoder_change(
+            paths = [
                 verification / f"PAIR_{variant}_INITIAL_STATE.pt",
                 verification / f"PAIR_{variant}_STATE_100.pt",
+            ]
+            missing = omitted_payloads(root, paths)
+            if missing:
+                excluded_replays[f"PAIR-{variant}-S7@100"] = missing
+                continue
+            witnesses[f"PAIR-{variant}-S7@100"] = replay_encoder_change(
+                paths[0],
+                paths[1],
                 witness,
             )
     frozen_witnesses = {}
     frozen_witness = verification / "PAIR_CORR_FROZEN_INVARIANT_100.json"
     if frozen_witness.exists():
-        frozen_witnesses["PAIR-CORR-FROZEN-S7@100"] = replay_frozen_encoder(
+        paths = [
             verification / "PAIR_CORR_FROZEN_INITIAL_STATE.pt",
             verification / "PAIR_CORR_FROZEN_STATE_100.pt",
-            frozen_witness,
-        )
+        ]
+        missing = omitted_payloads(root, paths)
+        if missing:
+            excluded_replays["PAIR-CORR-FROZEN-S7@100"] = missing
+        else:
+            frozen_witnesses["PAIR-CORR-FROZEN-S7@100"] = replay_frozen_encoder(
+                paths[0], paths[1], frozen_witness
+            )
     runtime_witnesses = {}
     if (campaign / "runtime/optimization_20261013/RUNTIME_BINDING.json").exists():
         from .replay_runtime import replay_runtime
 
-        runtime_witnesses["native_cuda_graph_resume"] = replay_runtime(root)
+        paths = []
+        for name in ("resume_continuous", "resume_restored"):
+            directory = campaign / "diagnostics/fast_runtime_20261013" / name
+            pointer = json.loads((directory / "CHECKPOINT_POINTER.json").read_text())
+            version = safe_name(pointer["version"])
+            if "/" in version:
+                raise ValueError("Unsafe runtime checkpoint version")
+            paths.append(directory / "checkpoint_versions" / version)
+        missing = omitted_payloads(root, paths)
+        if missing:
+            excluded_replays["native_cuda_graph_resume"] = missing
+        else:
+            runtime_witnesses["native_cuda_graph_resume"] = replay_runtime(root)
     return {
         "integrity": integrity,
         "prediction_tables": predictions,
@@ -313,13 +355,15 @@ def replay(root: Path) -> dict:
         "encoder_adaptation_witnesses": witnesses,
         "frozen_encoder_witnesses": frozen_witnesses,
         "optimized_runtime_witnesses": runtime_witnesses,
+        "not_replayed_explicitly_omitted_payloads": excluded_replays,
         "rows_recalculated": sum(result["rows"] for result in predictions.values()),
         "scientific_replay_performed": bool(
             predictions or exports or witnesses or frozen_witnesses or runtime_witnesses
         ),
         "scope": (
-            "Included prediction scalars, portable examples, encoder and runtime witnesses; "
-            "not raw producer replay"
+            "Included prediction scalars and portable examples. Encoder/runtime witnesses "
+            "only when their tensor payloads are present; explicit omissions are not PASS. "
+            "No raw producer replay or retraining."
         ),
         "optimizer_updates": 0,
         "torch_version": str(torch.__version__),
