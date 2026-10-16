@@ -124,6 +124,30 @@ def build() -> dict:
         "",
         "Regeneración: `python -B -m operational.joint_measurement.fusion_report`.",
     ]
+    supplementary = DIRECTORY / "v16_compare/SEED7.json"
+    if supplementary.exists():
+        contrast = read(supplementary)
+        baseline = contrast["reference_metrics"]["7"]
+        candidate = contrast["candidate_seed7_metrics"]
+        interval = contrast["bootstrap_seed7"]["intervals"]["delta_overall"]["ci95_if_all_defined"]
+        lines += [
+            "", "## Comparador V16 conservado", "",
+            "Tras congelar la decisión de réplica se volvió a comprobar el estado real "
+            "de V16: su candidato PHASE_ONLY y sus réplicas están terminados; conserva "
+            "6.762 predicciones test12 sin envío ni score oficial. No se repite ese trabajo.",
+            "",
+            f"En el contraste descriptivo de semilla 7 y cohorte V idéntica, PHASE_ONLY "
+            f"obtiene agregado {baseline['overall_MiD']:.3f} y la nueva fusión "
+            f"{candidate['overall_MiD']:.3f}. El IC95 del cambio es "
+            f"[{interval[0]:.3f}, {interval[1]:.3f}] e incluye cero. La banda larga "
+            f"empeora de {baseline['bins']['large']['group_macro_mid']:.3f} a "
+            f"{candidate['bins']['large']['group_macro_mid']:.3f}, superando también "
+            "esa salvaguarda V18. No se ha demostrado superioridad sobre el candidato V16.",
+            "", "La comparación usa los CSV sin etiquetas sellados y sus checkpoints "
+            "verificados; adjunta los targets V nativos sin modificar predicciones. "
+            "No cambia los gates históricos de V16 ni la receta V18 ya registrada. "
+            "La evidencia queda en `fusion/v16_compare`.",
+        ]
     path = ROOT / "docs/joint_measurement_20261012/FUSION_RESULTS.md"
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
     summary = {
