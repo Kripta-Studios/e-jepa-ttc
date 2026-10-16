@@ -160,7 +160,7 @@ def run(pid: int, *, job: str = "rgb") -> None:
                 if job == "rgb"
                 else [module, "geometry_capture_run"]
                 if job == "geometry"
-                else [module, "correspondence_inference_graph"]
+                else [module, "correspondence_inference_graph", "correspondence_prefetch"]
                 if job == "correspondence_evaluation"
                 else [module, "fusion_replication_isolated"]
                 if job == "fusion_replication"

@@ -87,3 +87,25 @@ def test_tail_resume_and_invalid_orders(tmp_path, monkeypatch):
     reader.close()
     with pytest.raises(ValueError, match="closed"):
         reader.batch([0, 1])
+
+
+def test_stored_array_exact_view_and_object_rejected():
+    stream = io.BytesIO()
+    values = np.arange(96, dtype=np.float32).reshape(2, 4, 12)
+    np.savez(stream, events=values, unsafe=np.array([{"secret": 1}], dtype=object))
+    raw = stream.getvalue()
+    with zipfile.ZipFile(io.BytesIO(raw)) as archive:
+        actual = runtime.stored_array(raw, archive, "events")
+        assert np.array_equal(actual, values)
+        assert not actual.flags.writeable
+        with pytest.raises(ValueError, match="non-object"):
+            runtime.stored_array(raw, archive, "unsafe")
+
+
+def test_compressed_inner_array_rejected():
+    stream = io.BytesIO()
+    np.savez_compressed(stream, events=np.arange(12, dtype=np.float32))
+    raw = stream.getvalue()
+    with zipfile.ZipFile(io.BytesIO(raw)) as archive:
+        with pytest.raises(ValueError, match="stored inner"):
+            runtime.stored_array(raw, archive, "events")

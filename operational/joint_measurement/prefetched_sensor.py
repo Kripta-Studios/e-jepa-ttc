@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import io
+import struct
 import time
 import zipfile
 from concurrent.futures import Future, ThreadPoolExecutor
@@ -24,6 +25,33 @@ class SensorInputs:
 
     events: torch.Tensor
     delta_t_s: torch.Tensor
+
+
+def stored_array(raw: bytes, archive: zipfile.ZipFile, name: str) -> np.ndarray:
+    """View a stored NPY payload without copying its full array through ZipExtFile."""
+    member = archive.getinfo(name + ".npy")
+    if member.compress_type != zipfile.ZIP_STORED or member.flag_bits & 1:
+        raise ValueError("Expected unencrypted stored inner NPY")
+    header = struct.unpack_from("<IHHHHHIIIHH", raw, member.header_offset)
+    if header[0] != 0x04034B50:
+        raise ValueError("Invalid inner local ZIP header")
+    offset = member.header_offset + 30 + header[-2] + header[-1]
+    end = offset + member.file_size
+    if end > len(raw):
+        raise ValueError("Truncated inner NPY")
+    # Parse only the small header. The outer member CRC and consumed-pack SHA bind all bytes.
+    stream = io.BytesIO(raw[offset : min(end, offset + 65536)])
+    version = np.lib.format.read_magic(stream)
+    if version != (1, 0):
+        raise ValueError("Only admitted NPY v1 format supported")
+    shape, fortran, dtype = np.lib.format.read_array_header_1_0(stream)
+    if fortran or dtype.hasobject:
+        raise ValueError("Expected C-contiguous non-object NPY")
+    count = int(np.prod(shape, dtype=np.int64))
+    start = offset + stream.tell()
+    if start + count * dtype.itemsize != end:
+        raise ValueError("NPY payload length mismatch")
+    return np.frombuffer(raw, dtype=dtype, count=count, offset=start).reshape(shape)
 
 
 def decode_pack(path: Path, tokens: list[str], workers: int = 8) -> tuple[SensorInputs, dict]:
@@ -52,8 +80,12 @@ def decode_pack(path: Path, tokens: list[str], workers: int = 8) -> tuple[Sensor
                 raise ValueError("Duplicate, missing or extra sensor member")
             for position in range(offset, len(tokens), workers):
                 raw = archive.read(expected[position])  # ZIP validates each complete member CRC.
-                with np.load(io.BytesIO(raw), allow_pickle=False) as inner:
-                    token, pixels, dt = str(inner["token"]), inner["events"], inner["delta"]
+                with zipfile.ZipFile(io.BytesIO(raw)) as inner:
+                    if len(inner.namelist()) != len(set(inner.namelist())):
+                        raise ValueError("Duplicate inner sensor member")
+                    token = str(stored_array(raw, inner, "token"))
+                    pixels = stored_array(raw, inner, "events")
+                    dt = stored_array(raw, inner, "delta")
                 if token != tokens[position]:
                     raise ValueError("Sensor row token mismatch")
                 if pixels.dtype != np.float32 or pixels.shape != (2, 12, 128, 128):

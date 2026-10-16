@@ -89,5 +89,28 @@ duplicados, relojes inválidos y cambios de orden/tamaño del batch.
 La comparación de coste científico del modelo conserva su ruta original: la
 aceleración del proceso de evaluación no sustituye silenciosamente ese benchmark.
 
-Los resultados de admisión se añadirán desde el recibo ejecutado; esta sección
-no presupone que el nuevo runtime haya superado el gate.
+## Resultado v1 y revisión v2
+
+V1 pasó todas las comprobaciones exactas y conservó los pesos, pero se rechazó
+por velocidad. Sobre 512 consultas por modelo, original/prefetch tardaron
+4,324/3,587 s y 4,315/3,489 s: razones 0,8294 y 0,8086, ambas superiores a 0,8.
+No se rebaja el gate para aceptar ese resultado.
+
+En esta medición aislada el original ya cargaba B4 en 28,3–28,6 ms de media;
+prefetch bajó la espera a 11,3–11,6 ms. Sin embargo, el tiempo medido de
+forward/decodificación/salida subió por la concurrencia del productor CPU.
+La diferencia grande con los 170–180 ms iniciales muestra que el estado del
+host y de sus cachés importa; no se puede atribuir toda ella a este cambio.
+El benchmark emparejado sustituye esa comparación entre momentos distintos.
+
+La revisión v2 mantiene población, orden, ocho trabajadores y gate. Cambia
+únicamente la extracción interna de los arrays: analiza sus pequeñas cabeceras
+NPY y usa vistas sobre los bytes descomprimidos en vez de copiar el payload a
+través de varias capas NPZ. Comprueba formato almacenado, longitudes y dtype;
+rechaza objetos, Fortran, versiones desconocidas y miembros internos duplicados.
+El CRC del miembro exterior y el SHA de los bytes consumidos siguen vinculando
+todos los bytes. La copia al buffer contiguo conserva exactamente FP32.
+
+La fuente v1 permanece reproducible en el commit `41f398f` y sus recibos se
+conservan bajo `runtime/B1_sensor_prefetch_v1`. V2 tiene registro y resultados
+separados; el código nuevo por sí solo no acredita su admisión.

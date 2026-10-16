@@ -53,6 +53,12 @@ try {
             $Module = 'operational.joint_measurement.correspondence_inference_graph'
             $Arguments = @('-u', '-B', '-m', $Module, 'run')
         }
+        $PrefetchProof = Join-Path $Campaign 'runtime/B1_sensor_prefetch_v2/RESULT.json'
+        if ((Test-Path -LiteralPath $PrefetchProof) -and
+            (Get-Content -LiteralPath $PrefetchProof -Raw | ConvertFrom-Json).status -eq 'ADMITTED') {
+            $Module = 'operational.joint_measurement.correspondence_prefetch'
+            $Arguments = @('-u', '-B', '-m', $Module, 'run')
+        }
     }
     if ($Once) { $Arguments += '--once' }
     if ($ShowCommand) {

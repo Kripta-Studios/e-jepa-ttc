@@ -20,7 +20,7 @@ from .data import SensorDataset
 from .prefetched_sensor import PrefetchedSensor
 from .train import committed_sources, setup
 
-OUT = RUN / "runtime/B1_sensor_prefetch_v1"
+OUT = RUN / "runtime/B1_sensor_prefetch_v2"
 
 
 def register() -> dict:
@@ -33,6 +33,9 @@ def register() -> dict:
     }
     committed_sources(sources)
     record = {
+        "supersedes_rejected_probe": sha(RUN / "runtime/B1_sensor_prefetch_v1/RESULT.json"),
+        "revision": "Avoid inner NPY copies and repeated file loaders; retain the speed gate",
+        "previous_source_commit": "41f398f",
         "sources": sources,
         "graph_registration_sha256": sha(graph.OUT / "REGISTRATION.json"),
         "graph_proof_sha256": sha(graph.OUT / "RESULT.json"),
