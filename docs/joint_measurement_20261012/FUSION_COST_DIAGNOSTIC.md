@@ -129,4 +129,3 @@ de velocidad ni un cambio de modelo. C1 y las cabezas mantienen su configuració
 original; el cambio cuDNN se limita a los productores históricos.
 
 SHA-256 de RESULT.json: 448800f85798e95904c3adbaccb9799e35db7d0c243098f06a4e130bf79e0a98.
-
