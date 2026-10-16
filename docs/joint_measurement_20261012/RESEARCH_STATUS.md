@@ -1,6 +1,6 @@
 # V18 JOINT-MEASUREMENT
 
-Estado: RESEARCH_ONGOING / FUSION_REPLICA_FEATURES_AND_HEADS;
+Estado: RESEARCH_ONGOING / D1_CAPACITY_TRAINING;
 fase primaria NO_SYSTEM_PROMOTION; RGB NO_CANDIDATE_RGB_PAIR;
 C1 independiente NO_CANDIDATE_C1; fusión seed7 sin promoción de sistema.
 Los cuatro entrenamientos primarios están completos en 12.000 updates cada uno.
@@ -23,14 +23,26 @@ Actualización del 16 de octubre de 2026, reanudación solicitada por el usuario
   2.500. Son 34.000 científicos adicionales, con A5/R_CTX históricos compartidos
   explícitamente. La QA de este motor capturado pasa con 20 técnicos contados.
   Ambos productores terminaron en 12.000 updates el 16 de octubre, antes de las
-  04:03 locales. Se están reconstruyendo features y normalizador event; todos los
-  endpoints se congelan antes de abrir V de las réplicas. No hay rescate de seeds.
+  04:03 locales. Las cuatro cabezas, nuevas features y normalizadores terminaron
+  a las 04:16. Los seis endpoints se congelaron antes de abrir V de las réplicas.
+  La media TRUE obtiene agregado 87,287 frente a 92,469 ZERO y 90,650 F_TRUE.
+  Persiste el fallo del gate crucial del 10% en cada semilla y en la media.
+  [FUSION_REPLICATION_RESULTS.md](FUSION_REPLICATION_RESULTS.md) conserva las
+  tres semillas, intervalos, comparación V16 y todos los controles.
 - D1 está registrado antes de entrenar: predictor espacial y MLP con anchura
   duplicada, CNN nativa entrenable y control PAIR-CORR-S7 reutilizado. La prueba
-  CPU pasa; quedan QA CUDA, 12.000 updates y evidencia P/H. La hipótesis no
+  CPU pasa; la QA CUDA también pasa con 30 updates técnicos, igualdad exacta de
+  reanudación y paridad numérica eager/captura. El fit de 12.000 updates está
+  en ejecución desde las 04:27; después queda su evidencia P/H. La hipótesis no
   presupone que la capacidad explique los errores. Véase [D1_EXECUTION.md](D1_EXECUTION.md).
-- Sigue pendiente medir el coste sensorial completo de la nueva fusión. Los
-  exports disponibles comienzan en features y sus tiempos no son E2E.
+- Sigue pendiente validar el coste sensorial completo de la nueva fusión. La
+  primera medición se detuvo por admisión de fuentes históricas; una continuación
+  con sus definiciones originales y política explícita para la mediana CUDA
+  llegó a ejecutar las rutas, pero falló la paridad estricta contra la cohorte
+  almacenada. Se conserva el fallo (hasta 0,00117 s en la primera consulta) y no
+  se presenta como coste validado. El diagnóstico separa datos, batch y dispositivo;
+  no modifica pesos, métricas ni tolerancias. Los exports de cabeza empiezan en
+  features, y los C1 en tensores P2; ninguno mide por sí solo el pipeline completo.
 
 Registro de los pasos previos de esta reanudación:
 

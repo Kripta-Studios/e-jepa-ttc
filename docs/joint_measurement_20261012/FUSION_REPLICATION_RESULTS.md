@@ -56,3 +56,14 @@ Las tablas H se conservan como diagnóstico del ajuste, no generalización. Los 
 Esta tabla no concede promoción ni confirma SOTA. La decisión del sistema requiere además el comparador V16 conservado, coste completo y las condiciones del protocolo. Una cifra interna no es una evaluación oficial.
 
 Fuentes: `replication/fusion_C1/evaluation/RESULT.json`, `predictions/{H,V}`, `ENDPOINTS.json`, `exports` y `verification/predictions`. Regenerar con `python -B -m operational.joint_measurement.fusion_replication_report`.
+
+## Comparador V16 conservado
+
+Comparación descriptiva posterior a la selección de la familia de réplica. No se reajustan cabezas, normalizadores ni gates con este resultado. Se conservan las tres semillas de V16 y las tres de V18.
+
+| Modelo | Agregado | MiDc | MiDs | MiDl | MiDn | MAE s | Error signo |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Media V16 PHASE_ONLY_EVENT | 89.214 | 131.704 | 48.714 | 40.449 | 47.028 | 1.864 | 2.615% |
+| Media V18 TRUE | 87.287 | 126.569 | 50.008 | 41.719 | 48.285 | 1.814 | 2.599% |
+
+Gates fallidos de la media: crucial_10pct. IC95 del cambio agregado V18 − V16: [-3.6855, 0.1406]. Una menor media agregada no demuestra por sí sola superioridad sobre V16; deben conservarse el intervalo, cada banda y los controles de promoción.

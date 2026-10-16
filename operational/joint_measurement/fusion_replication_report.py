@@ -120,6 +120,37 @@ def build() -> dict:
         "`verification/predictions`. Regenerar con "
         "`python -B -m operational.joint_measurement.fusion_replication_report`.",
     ]
+    v16_path = RUN / "fusion/v16_compare/THREE_SEEDS.json"
+    if v16_path.exists():
+        comparison = read(v16_path)
+        if comparison["status"] != "COMPLETE_DESCRIPTIVE_THREE_SEEDS":
+            raise ValueError("Complete fixed-seed V16 comparison required")
+        evidence["V16_three_seeds"] = sha(v16_path)
+        failed = [
+            name for name, passed in comparison["gate_seed_mean"]["checks"].items() if not passed
+        ]
+        interval = comparison["group_bootstrap_seed_mean_loss"]["intervals"]["overall"][
+            "ci95_if_all_defined"
+        ]
+        ci_text = f"[{interval[0]:.4f}, {interval[1]:.4f}]" if interval else "no definido"
+        lines += [
+            "",
+            "## Comparador V16 conservado",
+            "",
+            "Comparación descriptiva posterior a la selección de la familia de réplica. "
+            "No se reajustan cabezas, normalizadores ni gates con este resultado. "
+            "Se conservan las tres semillas de V16 y las tres de V18.",
+            "",
+            "| Modelo | Agregado | MiDc | MiDs | MiDl | MiDn | MAE s | Error signo |",
+            "|---|---:|---:|---:|---:|---:|---:|---:|",
+            row("Media V16 PHASE_ONLY_EVENT", comparison["reference_mean"]),
+            row("Media V18 TRUE", comparison["candidate_mean"]),
+            "",
+            f"Gates fallidos de la media: {', '.join(failed) or 'ninguno'}. "
+            f"IC95 del cambio agregado V18 − V16: {ci_text}. "
+            "Una menor media agregada no demuestra por sí sola superioridad sobre V16; "
+            "deben conservarse el intervalo, cada banda y los controles de promoción.",
+        ]
     output = ROOT / "docs/joint_measurement_20261012/FUSION_REPLICATION_RESULTS.md"
     output.write_text("\n".join(lines) + "\n", encoding="utf-8")
     receipt = {"sources": evidence, "report_sha256": sha(output), "automatic_promotion": False}
