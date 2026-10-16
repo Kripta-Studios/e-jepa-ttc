@@ -1,0 +1,69 @@
+{
+  "SOTA_confirmation": false,
+  "accounting": {
+    "pending_upper": 0,
+    "physical_upper": 184331,
+    "recovery_upper": 273,
+    "scientific": 183200,
+    "technical": 858
+  },
+  "archive": {
+    "bytes": 91583756,
+    "filename": "E_JEPA_TTC_V18_FINAL_RESEARCH_20261017_c3f1440.zip",
+    "packaging": "lossless TAR/XZ inside standard ZIP; unpack.py uses stdlib",
+    "sha256": "65e762c560530ddacfc8523e5bd930d127ad4adc1b26403ebbd61545828aa181",
+    "source_commit": "c3f14408babda11f9f9d50ab1e4158992e6f9c19"
+  },
+  "conditional_refit_export_decision_sha256": "1d43d721c3e28178491164f074cd78c2991148d5b66a9cfd0958928b9e667423",
+  "delivery_boundary": "This external receipt certifies the immutable preceding archive; embedded remaining_work records the pre-packaging boundary, not a missing fit.",
+  "external_dependencies": "Raw sensors, feature caches, optimizer checkpoints and historical parents remain local and are explicitly omitted from the compact ZIP.",
+  "extraction": {
+    "payload_members": 12424,
+    "sha256": "80570094f21ff264a6ed526984c5d9e925f7efa463c55ecab67f551430d6f7ec",
+    "status": "PASS"
+  },
+  "full_objective_complete": true,
+  "gpu_scope_charged_upper_s": 196739.72180179984,
+  "independent_replay": {
+    "filename": "E_JEPA_TTC_V18_FINAL_RESEARCH_20261017_c3f1440.zip.independent.json",
+    "not_replayed": {
+      "PAIR-CORR-FROZEN-S7@100": [
+        "verification/PAIR_CORR_FROZEN_INITIAL_STATE.pt",
+        "verification/PAIR_CORR_FROZEN_STATE_100.pt"
+      ],
+      "PAIR-CORR-S7@100": [
+        "verification/PAIR_CORR_INITIAL_STATE.pt",
+        "verification/PAIR_CORR_STATE_100.pt"
+      ],
+      "PAIR-DIRECT-S7@100": [
+        "verification/PAIR_DIRECT_INITIAL_STATE.pt",
+        "verification/PAIR_DIRECT_STATE_100.pt"
+      ],
+      "native_cuda_graph_resume": [
+        "diagnostics/fast_runtime_20261013/resume_continuous/checkpoint_versions/checkpoint_000006.pt",
+        "diagnostics/fast_runtime_20261013/resume_restored/checkpoint_versions/checkpoint_000002.pt"
+      ]
+    },
+    "optimizer_updates": 0,
+    "portable_exports": 22,
+    "rows": 1354938,
+    "scope": "Included prediction scalars and portable examples. Encoder/runtime witnesses only when their tensor payloads are present; explicit omissions are not PASS. No raw producer replay or retraining.",
+    "sha256": "38f639f4c831a395fcd086c4b264c281b8d5a6b7e602200aa3ae99841c045931",
+    "status": "PASS",
+    "tables": 48
+  },
+  "remaining_work": [],
+  "schema": "v18_final_delivery_receipt_v1",
+  "scientific_program_evidence_sha256": "c3de3b1eff301aafb58028c2ca0b59ec05c91ed26d94df78a99a451e90da0e3e",
+  "source_CI": {
+    "conclusion": "success",
+    "headSha": "c3f14408babda11f9f9d50ab1e4158992e6f9c19",
+    "passed": 4260,
+    "skipped": 23,
+    "status": "completed",
+    "url": "https://github.com/Kripta-Studios/e-jepa-ttc/actions/runs/38976381419"
+  },
+  "status": "PROGRAM_AND_PORTABLE_DELIVERY_COMPLETE_NO_CANDIDATE",
+  "system_promotion": false,
+  "utc": "2026-10-16T22:40:51.865881+00:00"
+}

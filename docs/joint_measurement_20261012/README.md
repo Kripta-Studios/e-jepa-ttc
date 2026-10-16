@@ -1,5 +1,8 @@
 # V18 JOINT-MEASUREMENT: índice de evidencia
 
+**Entrega verificada el 17-10-2026:** [ZIP, replay y alcance](DELIVERY_VERIFIED_20261017.md).
+El corte previo a continuación se conserva como procedencia del paquete.
+
 Estado al 17-10-2026: programa científico cerrado sin candidato admitido; entrega independiente pendiente. A1 y las 64 consultas de coste están completos. La decisión de no habilitar refit/export está registrada. Véase [FINAL_SCIENTIFIC_REPORT.md](FINAL_SCIENTIFIC_REPORT.md).
 
 El [estado regenerado](CURRENT_CONCLUSION.md) y la [auditoría de cierre](COMPLETION_AUDIT.md) separan la evidencia científica de la verificación posterior del paquete. No hay promoción del sistema ni confirmación SOTA. Los resultados negativos se conservan.
