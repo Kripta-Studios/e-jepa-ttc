@@ -33,7 +33,7 @@ El primer arranque se detuvo antes de reservar GPU o hacer updates: el guard nue
 
 - `artifacts/decision_recovery_20261017/training/REGISTRATION.json`
 - `artifacts/decision_recovery_20261017/training/qa/RESULT.json`
-- `artifacts/decision_recovery_20261017/training/qa/ADMISSION.json`
+- `artifacts/decision_recovery_20261017/training/ADMISSION.json`
 - `artifacts/decision_recovery_20261017/performance/SENSOR_CPU_BENCHMARK.json`
 - `artifacts/decision_recovery_20261017/performance/SENSOR_CPU_BENCHMARK_OBSERVATION_1.json`
 - `artifacts/decision_recovery_20261017/PIPELINE_STATE.json`
