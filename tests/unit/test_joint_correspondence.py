@@ -27,7 +27,10 @@ def test_bilinear_targets_encode_both_directions_and_resolutions():
     oy, ox = torch.meshgrid(torch.arange(-2, 3), torch.arange(-2, 3), indexing="ij")
     for size in (16, 32):
         yy, xx = torch.meshgrid(torch.arange(size), torch.arange(size), indexing="ij")
-        xx, yy = xx.float() + 0.5 - size / 2, yy.float() + 0.5 - size / 2
+        stride = 128 / size
+        first_center = 0.5 if size == 32 else 2.5
+        xx = (xx.float() * stride + first_center - 64) / stride
+        yy = (yy.float() * stride + first_center - 64) / stride
         for reverse in (False, True):
             target, support = correspondence_target(size, reverse=reverse)
             assert (target >= 0).all() and support.sum() == 4 * (size // 2) ** 2

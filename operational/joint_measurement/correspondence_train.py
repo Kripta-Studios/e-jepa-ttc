@@ -90,9 +90,18 @@ def register() -> dict:
     rows = role_rows("P")
     masses = training_mass(rows.target_ttc.to_numpy(), rows.group_id.to_numpy(), role="P")
     record = {
-        "schema": "v18_adaptive_B1_v1",
+        "schema": "v18_adaptive_B1_v2",
         "experiment_id": "V18_ADAPTIVE_B1",
         "family": "B",
+        "supersedes_unexecuted_registration_sha256": sha(
+            DIRECTORY / "admission_revisions/v1_before_coordinate_correction/REGISTRATION.json"
+        ),
+        "revision": (
+            "Before any B1 optimizer update: use actual native convolution receptive centres "
+            "for known warp targets. Fine stride4 starts at input pixel centre0.5; "
+            "coarse avgpool stride8 starts at2.5. Old nominal-centre registration and "
+            "CPU proof/source bytes remain archived; no outcome-driven recipe selection."
+        ),
         "modes": list(MODES),
         "seed": 7,
         "stages": {str(k): v for k, v in STEPS.items()},
@@ -126,6 +135,7 @@ def register() -> dict:
             "warp": "bilinear zero-fill, align_cornersFalse, centred scale plus translation",
             "maps": "native32 and avgpool16, both directions, native5x5 cosine volume",
             "target": "bilinear probability on known displacement, no TTC targets",
+            "coordinate_centres": "fine4*j+0.5; coarse8*j+2.5 in input pixel-centre coordinates",
             "support": "central half of each spatial axis, displacement within radius2",
             "temperature": 0.07,
             "reduction": "equal queries, positions, scales and directions",
@@ -167,16 +177,24 @@ def register() -> dict:
     freeze(REGISTRATION, record)
     prior = [r for r in existing if r["experiment_id"] == record["experiment_id"]]
     if prior:
-        if any(r["registration_sha256"] != sha(REGISTRATION) for r in prior):
+        allowed = {sha(REGISTRATION), record["supersedes_unexecuted_registration_sha256"]}
+        if any(r["registration_sha256"] not in allowed for r in prior):
             raise ValueError("B1 registry changed")
-    else:
+    if not any(r["registration_sha256"] == sha(REGISTRATION) for r in prior):
+        if prior and (
+            list(DIRECTORY.rglob("UPDATE_JOURNAL.json")) or list(QA.rglob("UPDATE_JOURNAL.json"))
+        ):
+            raise ValueError("B1 coordinate revision must precede every optimizer update")
         with registry.open("a", encoding="utf-8") as stream:
             stream.write(
                 json.dumps(
                     {
                         "experiment_id": record["experiment_id"],
                         "registered_utc": utc(),
-                        "status": "REGISTERED_BEFORE_UPDATES",
+                        "status": "REVISED_BEFORE_UPDATES",
+                        "supersedes_registration_sha256": record[
+                            "supersedes_unexecuted_registration_sha256"
+                        ],
                         "registration_sha256": sha(REGISTRATION),
                         "maximum_scientific_updates": 24000,
                         "maximum_synthetic_qa_updates": 90,

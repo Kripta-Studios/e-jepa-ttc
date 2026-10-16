@@ -21,7 +21,11 @@ TRANSFORMS = ((0.9, -2.0, 0.0), (0.9, 2.0, 0.0), (1.1, 0.0, -2.0), (1.1, 0.0, 2.
 def correspondence_target(size: int, *, reverse: bool) -> tuple[Tensor, Tensor]:
     """Bilinear probability over the native 5x5 displacement grid, on fixed interiors."""
     y, x = torch.meshgrid(torch.arange(size), torch.arange(size), indexing="ij")
-    x, y = x.float() + 0.5 - size / 2, y.float() + 0.5 - size / 2
+    # Native stride2 k5/p2 then stride2 k3/p1 have first receptive centre0.5
+    # in input pixel-centre coordinates. Pooling2 produces first centre2.5.
+    # Both are1.5 input pixels left/up of nominal equal-cell centres.
+    offset = 1.5 * size / 128
+    x, y = x.float() + 0.5 - size / 2 - offset, y.float() + 0.5 - size / 2 - offset
     probabilities, supports = [], []
     margin = size // 4
     interior = torch.zeros(size, size, dtype=torch.bool)

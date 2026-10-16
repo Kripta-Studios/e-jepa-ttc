@@ -19,6 +19,8 @@ del handoff. No abre una búsqueda de temperaturas, transformaciones o semillas.
 
 Ambos brazos parten del mismo C1 seed7, completo a 12.000 updates y entrenado sólo
 en P. Ese coste histórico se reutiliza y se cuenta una sola vez.
+El padre ya recibió supervisión TTC. Sólo la nueva etapa de correspondencia
+prescinde de esas etiquetas; no es preentrenamiento independiente desde cero.
 
 | Etapa | CORRESPONDENCE | TTC-CONTROL |
 |---|---|---|
@@ -53,6 +55,15 @@ etiqueta de correspondencia es la distribución bilineal del desplazamiento
 conocido sobre los25 offsets nativos. Se supervisan las dos direcciones y las
 resoluciones32 y16, con temperatura0,07, dentro de la mitad central de cada eje.
 Las consultas, posiciones, direcciones y resoluciones tienen igual peso.
+
+Antes de cualquier update B1 se corrigió el origen de coordenadas: las dos
+convoluciones nativas tienen centros `4*j+0,5` en píxeles de entrada; el pooling
+posterior tiene centros `8*j+2,5`. La etiqueta usa esos centros, con una diferencia
+de 1,5 píxeles frente a los centros nominales de celdas uniformes. El registro v1,
+sus fuentes y su prueba CPU de cero updates permanecen en
+`admission_revisions/v1_before_coordinate_correction`. El registro v2 conserva
+presupuesto, transformaciones y comparador; la corrección precede a la QA CUDA y
+a cualquier resultado de entrenamiento B1.
 
 No se fabrican etiquetas TTC. No es una simulación física de una cámara de
 eventos. Las etiquetas P sí existen en el loader compartido y en el control
