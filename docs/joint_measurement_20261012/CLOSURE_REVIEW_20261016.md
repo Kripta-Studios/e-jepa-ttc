@@ -38,6 +38,10 @@ ni un ranking de CPU frente a CUDA.
    Su [contrato](A1_EVALUATION_CONTRACT_20261016.md) mantiene P/H, costes y exports.
    El modo Auto elige esa etapa al invocarlo; no es un supervisor que la arranque
    automáticamente al terminar el entrenamiento.
+   Después de `evidence/COMPLETE.json`, generar las tablas del informe con
+   `python -B -m operational.joint_measurement.adaptation_report` en el mismo
+   entorno. El generador exige las poblaciones y pruebas completas de ambos
+   brazos; no publica `A1_RESULTS.md` mientras sólo haya entrenamiento parcial.
 3. Completar el coste raw en una ventana exclusiva de GPU. Desde el worktree,
    con el entorno compartido y `PYTHONPATH=src;.`, ejecutar:
 
