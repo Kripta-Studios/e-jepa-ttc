@@ -691,7 +691,7 @@ def test_autopsy_materializer_prefers_existing_train_shards(tmp_path: Path) -> N
     assert module._missing_split_shards(manifest_path) == []
 
 
-def test_autopsy_materializer_loads_exact_sha_pinned_v7_population() -> None:
+def test_autopsy_materializer_loads_exact_sha_pinned_v7_population(tmp_path, monkeypatch) -> None:
     module_spec = importlib.util.spec_from_file_location(
         "v8_autopsy_materialize_population",
         Path("scripts/materialize_scientific_recovery_v8_autopsy_inputs.py"),
@@ -699,13 +699,25 @@ def test_autopsy_materializer_loads_exact_sha_pinned_v7_population() -> None:
     assert module_spec is not None and module_spec.loader is not None
     module = importlib.util.module_from_spec(module_spec)
     module_spec.loader.exec_module(module)
-    protocol = json.loads(
-        Path("configs/protocol/scientific_recovery_v8_temporal.json").read_text(encoding="utf-8")
+    monkeypatch.setattr(module, "ROOT", tmp_path)
+    fixture = tmp_path / "synthetic_oof.csv"
+    fixture.write_text(
+        "sample_token,sequence_id,track_id,target_ttc_s,fold,seed\n"
+        + "".join(f"fixture-{i},seq-{i % 9},track,1.0,{i % 3},7\n" for i in range(8192)),
+        encoding="utf-8",
+        newline="\n",
     )
+    protocol = {
+        "sources": {"a5_oof_predictions": {"path": fixture.name, "sha256": module.sha(fixture)}},
+        "sample_contract": {"rows": 8192},
+    }
     rows = module._frozen_a5_rows(protocol)
     assert len(rows) == 8192
     assert {row["fold"] for row in rows.values()} == {0, 1, 2}
     assert all(row["seed"] == 7 for row in rows.values())
+    fixture.write_bytes(fixture.read_bytes() + b"\n")
+    with pytest.raises(ValueError, match="SHA-256 mismatch"):
+        module._frozen_a5_rows(protocol)
 
 
 def test_future_prefix_invariance_uses_same_shape_future_perturbation() -> None:

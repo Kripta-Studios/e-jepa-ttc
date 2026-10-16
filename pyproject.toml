@@ -68,6 +68,9 @@ extend-exclude = [
   "docs/joint_measurement_20261012/evidence_A1_loss_graph_20261016",
   "docs/rgb_port_streaming_20261010/evidence",
   "docs/sota_campaign_20261008",
+  # These executed V4.9 entry points have explicit immutable SHA-256 contracts.
+  "scripts/preflight_object_event_v4_9.py",
+  "scripts/analyze_object_event_v4_9_fixed_fusion.py",
 ]
 
 [tool.ruff.lint]

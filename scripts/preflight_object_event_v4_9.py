@@ -59,14 +59,22 @@ def assess_v42_fusion_baseline(
 
     minimum_checks = {
         "pearson": _finite_float(event.get("pearson"), default=-math.inf) >= 0.50,
-        "balanced_sign": _finite_float(event.get("balanced_sign_accuracy"), default=-math.inf)
+        "balanced_sign": _finite_float(
+            event.get("balanced_sign_accuracy"), default=-math.inf
+        )
         >= 0.68,
         "negative_accuracy_above_chance": _finite_float(
             event.get("negative_accuracy"), default=-math.inf
         )
         >= 0.50,
-        "expansion_mae": _finite_float(event.get("expansion_mae"), default=math.inf) <= 0.025,
-        "saturation": _finite_float(event.get("ttc_saturation_rate"), default=math.inf) <= 0.10,
+        "expansion_mae": _finite_float(
+            event.get("expansion_mae"), default=math.inf
+        )
+        <= 0.025,
+        "saturation": _finite_float(
+            event.get("ttc_saturation_rate"), default=math.inf
+        )
+        <= 0.10,
         "all_sequences_positive": _finite_float(
             per_sequence.get("minimum_pearson"), default=-math.inf
         )
@@ -122,12 +130,9 @@ def main() -> int:
     args = parser.parse_args()
 
     head = _git("rev-parse", "HEAD")
-    ancestor = (
-        subprocess.run(
-            ["git", "merge-base", "--is-ancestor", REQUIRED_BASE, head], check=False
-        ).returncode
-        == 0
-    )
+    ancestor = subprocess.run(
+        ["git", "merge-base", "--is-ancestor", REQUIRED_BASE, head], check=False
+    ).returncode == 0
     if not ancestor:
         raise RuntimeError(f"HEAD {head} does not descend from {REQUIRED_BASE}")
     for path in (
@@ -146,11 +151,14 @@ def main() -> int:
         raise RuntimeError("Unexpected v4.2 summary")
     v42_assessment = assess_v42_fusion_baseline(
         v42,
-        allow_marginal_negative_accuracy_only=(args.allow_marginal_v42_negative_accuracy_only),
+        allow_marginal_negative_accuracy_only=(
+            args.allow_marginal_v42_negative_accuracy_only
+        ),
     )
     if not bool(v42_assessment["accepted_for_fusion"]):
         raise RuntimeError(
-            f"v4.2 is not usable for this fusion run: {json.dumps(v42_assessment, sort_keys=True)}"
+            "v4.2 is not usable for this fusion run: "
+            f"{json.dumps(v42_assessment, sort_keys=True)}"
         )
     if v48.get("artifact_type") != "object_event_v4_8_dense_foreground_motion":
         raise RuntimeError("Unexpected v4.8 summary")

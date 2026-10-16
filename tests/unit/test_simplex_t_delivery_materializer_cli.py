@@ -2,6 +2,7 @@
 
 import json
 import runpy
+import shutil
 import sys
 import uuid
 from pathlib import Path
@@ -11,8 +12,17 @@ import pytest
 from e_jepa_ttc.artifacts.simplex_t_preflight import sha256
 
 
-def test_delivery_metadata_cli_is_idempotent_and_retains_unknown_attempts(monkeypatch):
-    work = Path(__file__).resolve().parents[2]
+def test_delivery_metadata_cli_is_idempotent_and_retains_unknown_attempts(monkeypatch, tmp_path):
+    source = Path(__file__).resolve().parents[2]
+    work = tmp_path
+    (work / "scripts").mkdir()
+    shutil.copyfile(
+        source / "scripts/materialize_simplex_t_delivery.py",
+        work / "scripts/materialize_simplex_t_delivery.py",
+    )
+    ledger = work / "artifacts/simplex_t/TECHNICAL_BUDGET.json"
+    ledger.parent.mkdir(parents=True)
+    ledger.write_text('{"synthetic_test_ledger": true}', encoding="utf-8")
     root = work / "artifacts/simplex_t/T0" / ("delivery_cli_fixture_" + uuid.uuid4().hex)
     logs = root / "logs"
     for name in ("launches", "execution", "publication", "logs"):

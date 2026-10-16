@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
+from dataclasses import asdict
 from pathlib import Path
 
 import pytest
 import torch
+import yaml
 from torch import nn
 
 from e_jepa_ttc.models.causal_scale_ttc import CausalScaleTTC, CausalScaleTTCConfig
@@ -41,8 +43,23 @@ def test_scalar_safe_hash_matches_original_for_every_nonscalar_dtype() -> None:
     assert engine.scalar_safe_module_tensor_sha256(module) == training._module_tensor_sha256(module)
 
 
-def test_scalar_safe_hash_covers_real_checkpoint_full_model_on_cpu() -> None:
-    output = Path("artifacts/train40_system_20261005")
+def test_scalar_safe_hash_covers_full_model_checkpoint_on_cpu(tmp_path: Path) -> None:
+    output = tmp_path
+    directory = output / "fits/a5_seed7"
+    directory.mkdir(parents=True)
+    recipe = yaml.safe_load(
+        Path("configs/model/e_jepa_causal_scale_event_v9_transport_r1_t002_causal.yaml").read_text()
+    )
+    recipe.pop("model")
+    recipe.pop("modality")
+    config = CausalScaleTTCConfig(**recipe)
+    fixture = CausalScaleTTC(config)
+    torch.save({"model_state_dict": fixture.state_dict()}, directory / "checkpoint_last.pt")
+    for name in ("CHECKPOINT_RECEIPT.json", "UPDATE_JOURNAL.json"):
+        atomic_json(directory / name, {"synthetic_test_fixture": True})
+    atomic_json(
+        output / "TRAINING_PROTOCOL.json", {"producers": {"a5": {"model_config": asdict(config)}}}
+    )
     protected = [
         output / "fits/a5_seed7/checkpoint_last.pt",
         output / "fits/a5_seed7/CHECKPOINT_RECEIPT.json",
