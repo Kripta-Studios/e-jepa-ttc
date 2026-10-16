@@ -48,7 +48,7 @@ def test_reused_pid_is_not_a_live_driver(environment):
     assert result["training_actions"] == []
 
 
-@pytest.mark.parametrize("job", ["rgb", "geometry"])
+@pytest.mark.parametrize("job", ["rgb", "geometry", "capacity"])
 def test_terminal_receipt_never_terminates_a_live_process(environment, job):
     relative, _, terminal = observer.JOBS[job]
     atomic_json(environment / relative / "RUNNER_STATE.json", {"status": terminal})

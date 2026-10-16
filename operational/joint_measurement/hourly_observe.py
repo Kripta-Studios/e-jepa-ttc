@@ -30,6 +30,7 @@ JOBS = {
         "fusion_replication_pipeline",
         "REPLICA_INPUTS_AND_HEADS_COMPLETE",
     ),
+    "capacity": ("adaptive/D1_predictor_width", "capacity_train", "D1_ENDPOINT_COMPLETE"),
 }
 
 
