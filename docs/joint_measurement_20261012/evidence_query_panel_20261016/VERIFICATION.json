@@ -1,0 +1,47 @@
+{
+  "status": "PASS",
+  "scope": "Independent outer joins against all eight original tables; target/group/role/sequence/TTC/saved phases exact; MiD recalculated; contingency totals cover complete bands",
+  "checks": {
+    "P/A5": {
+      "status": "PASS",
+      "rows": 53890
+    },
+    "P/NATIVE": {
+      "status": "PASS",
+      "rows": 53890
+    },
+    "P/CORR": {
+      "status": "PASS",
+      "rows": 53890
+    },
+    "P/C1": {
+      "status": "PASS",
+      "rows": 53890
+    },
+    "H/A5": {
+      "status": "PASS",
+      "rows": 18422
+    },
+    "H/NATIVE": {
+      "status": "PASS",
+      "rows": 18422
+    },
+    "H/CORR": {
+      "status": "PASS",
+      "rows": 18422
+    },
+    "H/C1": {
+      "status": "PASS",
+      "rows": 18422
+    }
+  },
+  "panel_result_sha256": "90156d298af0c9ff9bffc163530c253d047a24f53569e2e91a0cb6480a03e4d6",
+  "panel_hashes": {
+    "P": "6e7f182db0fca7405bc90296fdffd5a337a131d024a40bb0188d8c9a71088c7a",
+    "H": "68236742613a83afa1838fe39e747d8b0545698630ebf828e1b5039aeeb39311"
+  },
+  "adversarial_cpu_tests": 12,
+  "ruff": "PASS",
+  "pyright": "PASS",
+  "optimizer_updates": 0
+}

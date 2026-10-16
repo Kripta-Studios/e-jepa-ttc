@@ -39,7 +39,10 @@ def collect() -> tuple[dict[str, Path], list[dict]]:
         )
         portable = "exports" in relative.parts and path.suffix in {".pt", ".npz", ".npy"}
         historical_source = "admission_revisions" in relative.parts and path.suffix == ".py"
-        table = path.name == "predictions.parquet"
+        table = path.name == "predictions.parquet" or (
+            relative.parent == Path("diagnostics/query_panel")
+            and path.name in {"P_QUERY_PANEL.parquet", "H_QUERY_PANEL.parquet"}
+        )
         include = not ephemeral and (
             path.suffix in TEXT | {".png", ".pdf"} or portable or table or historical_source
         )
@@ -107,6 +110,9 @@ def build(output: Path) -> dict:
         "RESUME_20261016.md",
         "D1_EXECUTION.md",
         "B1_EXECUTION.md",
+        "LEARNING_RECIPE_AUDIT.md",
+        "QUERY_COMPLEMENTARITY.md",
+        "HISTORICAL_BASELINES.md",
     ]
     links = [
         f"- [{name}](source/docs/joint_measurement_20261012/{name})"
