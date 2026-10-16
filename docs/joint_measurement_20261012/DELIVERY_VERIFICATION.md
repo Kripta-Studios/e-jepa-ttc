@@ -18,3 +18,14 @@ Pruebas no repetidas desde esta copia compacta:
 La prueba del ZIP histórico de 14 de octubre detecta que conserva metadatos de exports pero no sus pesos y ejemplos binarios. Ese archivo se conserva como entrega histórica, sin presentarlo como paquete portable completo. El empaquetador actual incluye pesos y ejemplos de todos los exports; la verificación final se repetirá desde una extracción independiente del ZIP publicado.
 
 El límite de publicación es 100.000.000 bytes. Los estados completos de optimizador, sensores, cachés y padres históricos permanecen locales y se declaran en el inventario de omisiones.
+
+La revisión del empaquetador detectó que la selección de archivos de texto omitía
+la extensión `.jsonl`. Se ha corregido para incluir el registro central de
+experimentos. La comprobación sobre la campaña real conserva sus 18 entradas y
+17.662 bytes, sin modificar el registro, y confirma la inclusión de los registros
+originales de fusión y réplica. El [recibo de inclusión](evidence_delivery_20261016/COMPACT_REGISTRY_INCLUSION.json),
+también conservado en `verification/COMPACT_REGISTRY_INCLUSION_20261016.json`, registra
+`PASS_SELECTION_ONLY`: comprueba qué archivos recogerá el empaquetador; todavía
+no prueba un ZIP final ni sustituye su extracción y replay independientes.
+El SHA-256 del registro conservado es
+`2c552dabb8e91cd21580484055d193e1430b6ef2ab95a15d8bce89b1310a8692`.

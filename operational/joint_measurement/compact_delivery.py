@@ -14,7 +14,7 @@ from .bundle import require_quiescent, verify_archive, write_archive
 from .common import ROOT, RUN
 
 LIMIT = 100_000_000
-TEXT = {".json", ".csv", ".md", ".txt", ".log", ".yaml", ".yml"}
+TEXT = {".json", ".jsonl", ".csv", ".md", ".txt", ".log", ".yaml", ".yml"}
 
 
 def collect() -> tuple[dict[str, Path], list[dict]]:
@@ -142,6 +142,13 @@ def build(output: Path) -> dict:
                 "metadatos, curvas, predicciones consolidadas, verificaciones y exports, incluidos "
                 "los resultados negativos. Los pesos portables y ejemplos están en los directorios "
                 "`exports`; los modelos de cabeza necesitan las features de sus productores.",
+                "",
+                "El registro central está en "
+                "[EXPERIMENT_REGISTRY.jsonl](campaign/EXPERIMENT_REGISTRY.jsonl). "
+                "Las recetas de fusión y réplica conservan además sus registros originales "
+                "en `campaign/fusion/REGISTRATION.json` y "
+                "`campaign/replication/fusion_C1/REGISTRATION.json`. "
+                "No se reconstruyen fechas de registro a partir de esta entrega.",
                 "",
                 "No se incluyen sensores crudos, cachés de features, estados de optimizador ni "
                 "padres históricos externos. Permanecen locales. El manifiesto enumera las "
