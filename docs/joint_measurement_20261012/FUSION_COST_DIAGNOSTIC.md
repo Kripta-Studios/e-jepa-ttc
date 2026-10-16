@@ -241,3 +241,9 @@ La auditoría de salidas guardadas no ejecuta modelos ni consulta GT. La medici�
 raw mantiene el control de propietario y los scopes GPU existentes; no se lanza
 en paralelo con A1. La aceptación de la discrepancia conocida no garantiza que
 las consultas aún pendientes también satisfagan 1 ms.
+
+La auditoría ya ejecutada acepta **las 52 salidas guardadas** (13 consultas por
+cuatro rutas) con el criterio de 1 ms. Sólo F_TRUE en el índice 12955 falla el
+criterio estricto; ese fallo queda explícito. Faltan 51 consultas completas para
+cerrar la población de coste. Se han aprobado 20 pruebas CPU de la enmienda y
+del diagnóstico de cabeza, además de Ruff y Pyright.

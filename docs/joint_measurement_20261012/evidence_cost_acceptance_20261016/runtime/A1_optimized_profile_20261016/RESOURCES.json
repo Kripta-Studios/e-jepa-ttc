@@ -1,0 +1,497 @@
+{
+  "pid": 16080,
+  "create_time": 1792171996.036665,
+  "command": [
+    "C:\\Users\\\u00c1lvaro Schwiedop\\AppData\\Roaming\\uv\\python\\cpython-3.11-windows-x86_64-none\\python.exe",
+    "-u",
+    "-B",
+    "-m",
+    "operational.joint_measurement.adaptation_runtime",
+    "child",
+    "--arm",
+    "LAST-BLOCK"
+  ],
+  "utc": "2026-10-16T18:15:32.176442+00:00",
+  "samples": [
+    {
+      "t": 1792174487.9563699,
+      "cpu_percent": 0.0,
+      "rss": 9533407232,
+      "threads": 16,
+      "available": 4259123200,
+      "io": {
+        "read_count": 315188,
+        "write_count": 30245,
+        "read_bytes": 55834244734,
+        "write_bytes": 232963283,
+        "other_count": 2607367,
+        "other_bytes": 137588838
+      },
+      "journal": {
+        "completed_updates": 4277,
+        "durable_updates": 4200,
+        "identity_sha256": "6dbe215f459485932d716376ff264aa65bfa6650190e29419980bcd1a1265401",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1"
+      },
+      "gpu": "32, 13, 3503, 84, 45.58, 2565"
+    },
+    {
+      "t": 1792174490.2980583,
+      "cpu_percent": 197.3,
+      "rss": 9489113088,
+      "threads": 16,
+      "available": 4284145664,
+      "io": {
+        "read_count": 315421,
+        "write_count": 30250,
+        "read_bytes": 55863989886,
+        "write_bytes": 232964493,
+        "other_count": 2609062,
+        "other_bytes": 137631254
+      },
+      "journal": {
+        "completed_updates": 4279,
+        "durable_updates": 4200,
+        "identity_sha256": "6dbe215f459485932d716376ff264aa65bfa6650190e29419980bcd1a1265401",
+        "pending_update_upper": 1,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1"
+      },
+      "gpu": "31, 12, 3475, 85, 43.88, 2490"
+    },
+    {
+      "t": 1792174492.6453512,
+      "cpu_percent": 206.0,
+      "rss": 9502347264,
+      "threads": 16,
+      "available": 4297744384,
+      "io": {
+        "read_count": 315677,
+        "write_count": 30256,
+        "read_bytes": 55899184546,
+        "write_bytes": 232969446,
+        "other_count": 2611092,
+        "other_bytes": 137680066
+      },
+      "journal": {
+        "completed_updates": 4282,
+        "durable_updates": 4200,
+        "identity_sha256": "6dbe215f459485932d716376ff264aa65bfa6650190e29419980bcd1a1265401",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1"
+      },
+      "gpu": "30, 10, 3475, 85, 46.16, 2572"
+    },
+    {
+      "t": 1792174495.0017536,
+      "cpu_percent": 198.6,
+      "rss": 9484288000,
+      "threads": 16,
+      "available": 4273197056,
+      "io": {
+        "read_count": 315937,
+        "write_count": 30262,
+        "read_bytes": 55930977698,
+        "write_bytes": 232970898,
+        "other_count": 2612830,
+        "other_bytes": 137721290
+      },
+      "journal": {
+        "completed_updates": 4285,
+        "durable_updates": 4200,
+        "identity_sha256": "6dbe215f459485932d716376ff264aa65bfa6650190e29419980bcd1a1265401",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1"
+      },
+      "gpu": "39, 10, 3589, 85, 47.83, 2617"
+    },
+    {
+      "t": 1792174497.3414752,
+      "cpu_percent": 184.6,
+      "rss": 9458380800,
+      "threads": 16,
+      "available": 4261670912,
+      "io": {
+        "read_count": 316162,
+        "write_count": 30268,
+        "read_bytes": 55960903074,
+        "write_bytes": 232972350,
+        "other_count": 2614888,
+        "other_bytes": 137772362
+      },
+      "journal": {
+        "completed_updates": 4288,
+        "durable_updates": 4200,
+        "identity_sha256": "6dbe215f459485932d716376ff264aa65bfa6650190e29419980bcd1a1265401",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1"
+      },
+      "gpu": "10, 4, 3547, 84, 47.89, 2280"
+    },
+    {
+      "t": 1792174499.6621697,
+      "cpu_percent": 168.5,
+      "rss": 9421348864,
+      "threads": 16,
+      "available": 4278255616,
+      "io": {
+        "read_count": 316389,
+        "write_count": 30274,
+        "read_bytes": 55988215202,
+        "write_bytes": 232973802,
+        "other_count": 2616914,
+        "other_bytes": 137822442
+      },
+      "journal": {
+        "completed_updates": 4291,
+        "durable_updates": 4200,
+        "identity_sha256": "6dbe215f459485932d716376ff264aa65bfa6650190e29419980bcd1a1265401",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1"
+      },
+      "gpu": "15, 7, 3616, 85, 51.01, 2130"
+    },
+    {
+      "t": 1792174502.0052626,
+      "cpu_percent": 194.6,
+      "rss": 9400377344,
+      "threads": 16,
+      "available": 4277952512,
+      "io": {
+        "read_count": 316605,
+        "write_count": 30280,
+        "read_bytes": 56015232418,
+        "write_bytes": 232975254,
+        "other_count": 2618677,
+        "other_bytes": 137864714
+      },
+      "journal": {
+        "completed_updates": 4293,
+        "durable_updates": 4200,
+        "identity_sha256": "6dbe215f459485932d716376ff264aa65bfa6650190e29419980bcd1a1265401",
+        "pending_update_upper": 1,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1"
+      },
+      "gpu": "19, 8, 3560, 83, 42.48, 1927"
+    },
+    {
+      "t": 1792174504.384577,
+      "cpu_percent": 202.6,
+      "rss": 9371328512,
+      "threads": 16,
+      "available": 4300685312,
+      "io": {
+        "read_count": 316869,
+        "write_count": 30284,
+        "read_bytes": 56049089954,
+        "write_bytes": 232976222,
+        "other_count": 2620648,
+        "other_bytes": 137913834
+      },
+      "journal": {
+        "completed_updates": 4296,
+        "durable_updates": 4200,
+        "identity_sha256": "6dbe215f459485932d716376ff264aa65bfa6650190e29419980bcd1a1265401",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1"
+      },
+      "gpu": "18, 8, 3503, 83, 41.90, 1830"
+    },
+    {
+      "t": 1792174506.7247303,
+      "cpu_percent": 192.7,
+      "rss": 9366487040,
+      "threads": 16,
+      "available": 4282585088,
+      "io": {
+        "read_count": 317124,
+        "write_count": 30290,
+        "read_bytes": 56078499234,
+        "write_bytes": 232977674,
+        "other_count": 2622666,
+        "other_bytes": 137963946
+      },
+      "journal": {
+        "completed_updates": 4299,
+        "durable_updates": 4200,
+        "identity_sha256": "6dbe215f459485932d716376ff264aa65bfa6650190e29419980bcd1a1265401",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1"
+      },
+      "gpu": "18, 5, 3475, 83, 46.62, 2362"
+    },
+    {
+      "t": 1792174509.0335817,
+      "cpu_percent": 89.1,
+      "rss": 9366495232,
+      "threads": 16,
+      "available": 4305502208,
+      "io": {
+        "read_count": 317263,
+        "write_count": 30986,
+        "read_bytes": 56085598020,
+        "write_bytes": 240072038,
+        "other_count": 2630433,
+        "other_bytes": 139862342
+      },
+      "journal": {
+        "completed_updates": 4300,
+        "durable_updates": 4300,
+        "identity_sha256": "6dbe215f459485932d716376ff264aa65bfa6650190e29419980bcd1a1265401",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1"
+      },
+      "gpu": "5, 5, 3475, 82, 33.76, 1335"
+    },
+    {
+      "t": 1792174511.3213632,
+      "cpu_percent": 211.6,
+      "rss": 9369722880,
+      "threads": 16,
+      "available": 4295790592,
+      "io": {
+        "read_count": 317533,
+        "write_count": 30991,
+        "read_bytes": 56118480708,
+        "write_bytes": 240076749,
+        "other_count": 2632304,
+        "other_bytes": 139911770
+      },
+      "journal": {
+        "completed_updates": 4302,
+        "durable_updates": 4300,
+        "identity_sha256": "6dbe215f459485932d716376ff264aa65bfa6650190e29419980bcd1a1265401",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1"
+      },
+      "gpu": "23, 12, 3475, 85, 49.10, 1950"
+    },
+    {
+      "t": 1792174513.6140618,
+      "cpu_percent": 191.1,
+      "rss": 9379405824,
+      "threads": 16,
+      "available": 4297641984,
+      "io": {
+        "read_count": 317779,
+        "write_count": 30997,
+        "read_bytes": 56149782340,
+        "write_bytes": 240078201,
+        "other_count": 2634290,
+        "other_bytes": 139960794
+      },
+      "journal": {
+        "completed_updates": 4305,
+        "durable_updates": 4300,
+        "identity_sha256": "6dbe215f459485932d716376ff264aa65bfa6650190e29419980bcd1a1265401",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1"
+      },
+      "gpu": "5, 5, 3475, 83, 47.80, 1582"
+    },
+    {
+      "t": 1792174515.946331,
+      "cpu_percent": 196.0,
+      "rss": 9329377280,
+      "threads": 16,
+      "available": 4302401536,
+      "io": {
+        "read_count": 318045,
+        "write_count": 31003,
+        "read_bytes": 56183082820,
+        "write_bytes": 240079653,
+        "other_count": 2636412,
+        "other_bytes": 140012066
+      },
+      "journal": {
+        "completed_updates": 4308,
+        "durable_updates": 4300,
+        "identity_sha256": "6dbe215f459485932d716376ff264aa65bfa6650190e29419980bcd1a1265401",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1"
+      },
+      "gpu": "11, 4, 3475, 83, 43.50, 1860"
+    },
+    {
+      "t": 1792174518.237163,
+      "cpu_percent": 206.2,
+      "rss": 9319706624,
+      "threads": 16,
+      "available": 4314628096,
+      "io": {
+        "read_count": 318300,
+        "write_count": 31009,
+        "read_bytes": 56215203652,
+        "write_bytes": 240081105,
+        "other_count": 2638478,
+        "other_bytes": 140063714
+      },
+      "journal": {
+        "completed_updates": 4311,
+        "durable_updates": 4300,
+        "identity_sha256": "6dbe215f459485932d716376ff264aa65bfa6650190e29419980bcd1a1265401",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1"
+      },
+      "gpu": "35, 11, 3475, 85, 47.11, 2460"
+    },
+    {
+      "t": 1792174520.5411227,
+      "cpu_percent": 190.5,
+      "rss": 9352577024,
+      "threads": 16,
+      "available": 4247334912,
+      "io": {
+        "read_count": 318546,
+        "write_count": 31015,
+        "read_bytes": 56247521092,
+        "write_bytes": 240082557,
+        "other_count": 2640272,
+        "other_bytes": 140106562
+      },
+      "journal": {
+        "completed_updates": 4314,
+        "durable_updates": 4300,
+        "identity_sha256": "6dbe215f459485932d716376ff264aa65bfa6650190e29419980bcd1a1265401",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1"
+      },
+      "gpu": "18, 5, 3489, 84, 45.36, 2632"
+    },
+    {
+      "t": 1792174522.8566935,
+      "cpu_percent": 198.7,
+      "rss": 9346514944,
+      "threads": 16,
+      "available": 4266258432,
+      "io": {
+        "read_count": 318798,
+        "write_count": 31021,
+        "read_bytes": 56279887684,
+        "write_bytes": 240084009,
+        "other_count": 2642306,
+        "other_bytes": 140157154
+      },
+      "journal": {
+        "completed_updates": 4317,
+        "durable_updates": 4300,
+        "identity_sha256": "6dbe215f459485932d716376ff264aa65bfa6650190e29419980bcd1a1265401",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1"
+      },
+      "gpu": "9, 5, 3489, 83, 43.17, 2025"
+    },
+    {
+      "t": 1792174525.1533878,
+      "cpu_percent": 163.3,
+      "rss": 9184268288,
+      "threads": 16,
+      "available": 4320501760,
+      "io": {
+        "read_count": 318969,
+        "write_count": 31028,
+        "read_bytes": 56300205672,
+        "write_bytes": 240089204,
+        "other_count": 2644211,
+        "other_bytes": 140200494
+      },
+      "journal": {
+        "completed_updates": 4320,
+        "durable_updates": 4300,
+        "identity_sha256": "6dbe215f459485932d716376ff264aa65bfa6650190e29419980bcd1a1265401",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1"
+      },
+      "gpu": "27, 12, 3475, 85, 44.68, 2092"
+    },
+    {
+      "t": 1792174527.4529605,
+      "cpu_percent": 208.2,
+      "rss": 9326288896,
+      "threads": 16,
+      "available": 4282671104,
+      "io": {
+        "read_count": 319256,
+        "write_count": 31034,
+        "read_bytes": 56335177320,
+        "write_bytes": 240090656,
+        "other_count": 2646405,
+        "other_bytes": 140256598
+      },
+      "journal": {
+        "completed_updates": 4323,
+        "durable_updates": 4300,
+        "identity_sha256": "6dbe215f459485932d716376ff264aa65bfa6650190e29419980bcd1a1265401",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1"
+      },
+      "gpu": "34, 13, 3475, 85, 45.72, 2152"
+    },
+    {
+      "t": 1792174529.800372,
+      "cpu_percent": 190.1,
+      "rss": 9387618304,
+      "threads": 16,
+      "available": 4291543040,
+      "io": {
+        "read_count": 319527,
+        "write_count": 31040,
+        "read_bytes": 56367945320,
+        "write_bytes": 240092108,
+        "other_count": 2648479,
+        "other_bytes": 140308686
+      },
+      "journal": {
+        "completed_updates": 4326,
+        "durable_updates": 4300,
+        "identity_sha256": "6dbe215f459485932d716376ff264aa65bfa6650190e29419980bcd1a1265401",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1"
+      },
+      "gpu": "27, 9, 3489, 85, 47.25, 2617"
+    },
+    {
+      "t": 1792174532.0954278,
+      "cpu_percent": 209.5,
+      "rss": 9448943616,
+      "threads": 16,
+      "available": 4314828800,
+      "io": {
+        "read_count": 319779,
+        "write_count": 31046,
+        "read_bytes": 56401532520,
+        "write_bytes": 240093560,
+        "other_count": 2650537,
+        "other_bytes": 140360046
+      },
+      "journal": {
+        "completed_updates": 4329,
+        "durable_updates": 4300,
+        "identity_sha256": "6dbe215f459485932d716376ff264aa65bfa6650190e29419980bcd1a1265401",
+        "pending_update_upper": 0,
+        "recovery_upper": 0,
+        "schema": "rgb_port_update_journal_v1"
+      },
+      "gpu": "18, 8, 3489, 83, 44.00, 1687"
+    }
+  ]
+}

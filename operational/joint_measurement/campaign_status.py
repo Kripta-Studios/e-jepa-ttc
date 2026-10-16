@@ -27,6 +27,9 @@ def build() -> dict:
         "A1_scope_continuity": "runtime/A1_parallel_persistent_v1/PRODUCTION_SCOPE_CONTINUITY.json",
         "A1_evaluation_registered": "adaptive/A1_adaptation_depth/evaluation/REGISTRATION.json",
         "F_TRUE_head_CPU": "fusion/cost/F_TRUE_head_diagnostic_v1/CPU_RESULT.json",
+        "fusion_cost_amended_acceptance": (
+            "fusion/cost/raw_e2e_millisecond_v1/SAVED_OUTPUT_AUDIT.json"
+        ),
     }.items():
         source = RUN / relative
         if source.exists():
@@ -65,7 +68,12 @@ def build() -> dict:
                 f"Completar {label}: endpoint, P/H, coste, export e interpretación registrados"
             )
     remaining += [
-        "Resolver/documentar el fallo de paridad antes de admitir el coste sensorial de fusión",
+        (
+            "Completar las 64 consultas de coste de fusión con aceptación autorizada de 1 ms; "
+            "conservar en paralelo los fallos del criterio estricto"
+            if "fusion_cost_amended_acceptance" in runtime_evidence
+            else "Resolver/documentar la paridad antes de admitir el coste sensorial de fusión"
+        ),
         "Congelar cualquier export test admisible; el envío oficial sigue sin autorización",
         "Publicar informes y verificar independientemente el ZIP final <=100000000 bytes",
     ]

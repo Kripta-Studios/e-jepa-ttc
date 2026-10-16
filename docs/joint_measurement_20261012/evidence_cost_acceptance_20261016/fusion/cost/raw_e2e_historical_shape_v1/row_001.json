@@ -1,0 +1,42 @@
+{
+  "binding": "483fe30c81b188a01e357eeeeb0f4f1c22e730fd2c07b836d1070b8ecd8efc5b",
+  "index": 7651,
+  "timings": {
+    "FUSION-TRUE-S7": {
+      "absolute_difference": 2.193450927734375e-05,
+      "parity": true,
+      "peak_extra_allocated_bytes": 749318144,
+      "prediction": 8.3297119140625,
+      "process_rss_bytes": 3616960512,
+      "reference": 8.329689979553223,
+      "seconds": 3.660315899993293
+    },
+    "FUSION-ZERO-S7": {
+      "absolute_difference": 3.0517578125e-05,
+      "parity": true,
+      "peak_extra_allocated_bytes": 749318144,
+      "prediction": 8.213631629943848,
+      "process_rss_bytes": 3616960512,
+      "reference": 8.213601112365723,
+      "seconds": 4.059735600021668
+    },
+    "F_TRUE": {
+      "absolute_difference": 7.62939453125e-06,
+      "parity": true,
+      "peak_extra_allocated_bytes": 807710720,
+      "prediction": 7.865617275238037,
+      "process_rss_bytes": 3616960512,
+      "reference": 7.865609645843506,
+      "seconds": 4.092423499998404
+    },
+    "R_CTX": {
+      "absolute_difference": 3.337860107421875e-05,
+      "parity": true,
+      "peak_extra_allocated_bytes": 749318144,
+      "prediction": 8.75808334350586,
+      "process_rss_bytes": 3616960512,
+      "reference": 8.758049964904785,
+      "seconds": 2.0040222000097856
+    }
+  }
+}

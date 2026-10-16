@@ -2,7 +2,7 @@
 
 **La campaña sigue abierta; no hay promoción del sistema ni confirmación SOTA.** La fusión presenta una señal controlada en las tres semillas, pero no cumple el gate crucial original del10%. Los negativos y las regresiones se conservan.
 
-Corte UTC: `2026-10-16T18:10:52.776827+00:00`. Fuente: `CAMPAIGN_CONCLUSION.json`.
+Corte UTC: `2026-10-16T18:30:46.919238+00:00`. Fuente: `CAMPAIGN_CONCLUSION.json`.
 
 | Etapa | Evidencia completa | Estado |
 |---|---|---|
@@ -24,16 +24,16 @@ El agregado mejora frente al control ZERO de igual capacidad. Esto no demuestra 
 
 ## Contabilidad del corte
 
-- Updates científicos: 163,100.
+- Updates científicos: 164,600.
 - Técnicos: 834; recuperación superior: 273; pendientes superiores: 0.
-- Físicos superiores: 164,207.
-- Scopes GPU contabilizados/reservados: 182719.2 / 216000 s.
+- Físicos superiores: 165,707.
+- Scopes GPU contabilizados/reservados: 183592.4 / 216000 s.
 
 Es una instantánea no atómica mientras hay trabajo vivo. No son kernels GPU puros; las reservas activas pueden cambiar al liquidarse. No se recontaron los controles históricos reutilizados.
 
 ## Pendiente
 
-- Resolver/documentar el fallo de paridad antes de admitir el coste sensorial de fusión
+- Completar las 64 consultas de coste de fusión con aceptación autorizada de 1 ms; conservar en paralelo los fallos del criterio estricto
 - Congelar cualquier export test admisible; el envío oficial sigue sin autorización
 - Publicar informes y verificar independientemente el ZIP final <=100000000 bytes
 - Completar A1 registrada: dos endpoints, P/H, coste y exports
