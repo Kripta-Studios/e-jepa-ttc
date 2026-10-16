@@ -93,7 +93,11 @@ def prototype() -> dict:
     buffered = BufferedCorrespondence(copy.deepcopy(model.encoder))
     pixels = fixture(128).events[:4, -1]
     initial = copy.deepcopy(model.encoder.state_dict())
-    a, b = original(pixels), buffered(pixels)
+    rng = torch.get_rng_state()
+    a = original(pixels)
+    after_original = torch.get_rng_state()
+    torch.set_rng_state(rng)
+    b = buffered(pixels)
     a.backward()
     b.backward()
     checks = {
@@ -103,6 +107,7 @@ def prototype() -> dict:
             [p.grad for p in original.encoder.parameters()],
             [p.grad for p in buffered.encoder.parameters()],
         ),
+        "rng_exact": torch.equal(after_original, torch.get_rng_state()),
         "original_weights_unchanged": exact(initial, original.encoder.state_dict()),
         "buffered_weights_unchanged": exact(initial, buffered.encoder.state_dict()),
         "cuda_uninitialized": not torch.cuda.is_initialized(),
@@ -113,6 +118,10 @@ def prototype() -> dict:
         "optimizer_updates": 0,
         "sources": sources(),
         "loss": float(a.detach()),
+        "prototype_revision": (
+            "Compare forwards with identical dropout RNG. The first retained CPU test "
+            "incorrectly used consecutive draws; zero optimizer updates in either test."
+        ),
     }
     freeze(OUT / "CPU_PROOF.json", result)
     return result
