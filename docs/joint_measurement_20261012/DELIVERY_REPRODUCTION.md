@@ -20,6 +20,26 @@ NumPy, bootstrap por grupos y exports. Puede reanudarse si el coste se fragmenta
 La selección primaria no termina la investigación adaptativa ni la rama RGB.
 El coste preparado excluye preprocesado sensorial y no sustituye la medida E2E.
 
+## Reanudar la rama actual
+
+```powershell
+./scripts/Resume-JointMeasurement.ps1 -ShowCommand
+./scripts/Resume-JointMeasurement.ps1
+```
+
+El primer comando sólo muestra la invocación. El segundo rechaza procesos V18
+activos y, cuando B1 está registrado, continúa sus checkpoints completos con
+`correspondence_isolated`. Si ya están congelados los cuatro endpoints, selecciona
+`correspondence_evaluate`. Tras la evidencia B1 completa exige interpretar los
+resultados; no decide una nueva receta ni repite la matriz primaria. Los runtimes
+conservan sus propios locks y verificaciones de admisión. `-Stage Primary` permite
+seleccionar explícitamente el runner histórico; `-Once` sólo se admite para él.
+
+El script no programa la vigilancia. El observador existente se arma con el PID
+real del driver y comprueba su identidad cada hora; no debe duplicarse. La
+reanudación del 16 de octubre a las 12:21 y sus nueve comprobaciones de continuidad
+se documentan en [RESUME_20261016.md](RESUME_20261016.md).
+
 ## ZIP esencial
 
 La fase primaria completada se describe en `primary_milestone/README.md` dentro
@@ -46,16 +66,19 @@ autoriza escribir una conclusión sin esa evidencia. Confirmar el código en Git
 local antes de fijar el paquete.
 
 ```powershell
-$Bundle = Join-Path $HOME 'Downloads/E_JEPA_TTC_V18_RESEARCH_RESULTS.zip'
-& '../e-jepa-ttc/.venv/Scripts/python.exe' -B -m operational.joint_measurement.bundle build $Bundle
+$Bundle = Join-Path $HOME 'Downloads/E_JEPA_TTC_V18_RESULTS_COMPACT.zip'
+& '../e-jepa-ttc/.venv/Scripts/python.exe' -B -m operational.joint_measurement.compact_delivery $Bundle
 & '../e-jepa-ttc/.venv/Scripts/python.exe' -B -m operational.joint_measurement.bundle verify $Bundle
 ```
 
-La ruta debe ser nueva. El empaquetador conserva código versionado, evidencia
-V18 positiva y negativa, checkpoints, predicciones, curvas y recibos sensoriales.
-Excluye locks, archivos temporales y bytecode. No incluye las cachés sensoriales
-masivas ni los padres históricos externos. Los exports permiten inferencia
-portable sobre sus ejemplos; reentrenar requiere esas dependencias admitidas.
+La ruta debe ser nueva. El empaquetador compacto publica únicamente un ZIP de
+como máximo **100.000.000 bytes**, verificado antes de publicarlo. Conserva código
+versionado, evidencia positiva y negativa, pesos portables y sus ejemplos,
+predicciones consolidadas, curvas y recibos. Omite estados de optimizador, sensores,
+cachés, fragmentos, locks, temporales y padres históricos externos. El manifiesto
+enumera las omisiones. Reentrenar requiere las dependencias admitidas que permanecen
+locales. El antiguo comando `bundle build` no aplica este límite y no debe usarse
+para esta entrega.
 
 La verificación compara el conjunto exacto de miembros, tamaños, SHA-256 y CRC.
 Publica un `.sha256` y un `.verification.json` locales. No realiza ningún push,
