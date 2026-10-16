@@ -70,7 +70,7 @@ Después de que terminen B1 y los otros evaluadores activos:
 $env:PYTHONPATH = "$env:LOCALAPPDATA\Temp\garl_parity_cv2_cp311;src;."
 $env:OMP_NUM_THREADS = '1'
 $env:MKL_NUM_THREADS = '1'
-& ..\e-jepa-ttc\.venv\Scripts\python.exe -B -m operational.joint_measurement.garl_route_cost measure
+& ..\e-jepa-ttc\.venv\Scripts\python.exe -B -m operational.joint_measurement.cost_guard_overlay garl
 ```
 
 Se reutiliza la instalación aislada de OpenCV de la auditoría anterior; no se
@@ -86,3 +86,13 @@ del medidor, no mediciones de Garl ni evidencia de precisión TTC.
 Esta medición tampoco resolverá por sí sola la paridad pendiente del pipeline
 sensorial de fusión V18. Ese límite se conserva por separado en
 [FUSION_COST_DIAGNOSTIC.md](FUSION_COST_DIAGNOSTIC.md).
+
+El 16 de octubre se añadió `cost_guard_overlay`: permite únicamente el servicio
+de control `mlflow.exe mcp run`, que el guard histórico confundía con cómputo
+por tener cwd dentro del proyecto. Conserva exclusión GPU, comprobaciones de
+recursos, población, modelo, tolerancias y fuentes originales. No mata ese
+servicio ni permite entrenamientos MLflow concurrentes. Su registro queda en
+`runtime/cost_guard_overlay_v1/REGISTRATION.json`; cada medidor guarda además
+`GUARD_RUNTIME.json`. Para el diagnóstico de shapes de fusión se usa el mismo
+comando con `shape` en lugar de `garl`. Ambos se ejecutan secuencialmente y sólo
+cuando no queda otro proceso de cómputo del proyecto.
