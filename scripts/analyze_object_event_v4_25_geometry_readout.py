@@ -1,6 +1,6 @@
+#!/usr/bin/env python3
 # ruff: noqa: E402
 # CLI entry point: add the checkout to sys.path before importing project modules.
-#!/usr/bin/env python3
 "Train-only meta-CV of an explicit geometry-conditioned TTC readout."
 
 from __future__ import annotations

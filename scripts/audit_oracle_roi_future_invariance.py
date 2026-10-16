@@ -1,6 +1,6 @@
+#!/usr/bin/env python
 # ruff: noqa: E402
 # CLI entry point: add the checkout to sys.path before importing project modules.
-#!/usr/bin/env python
 """Emit machine-readable evidence for oracle-ROI endpoint/future invariance.
 
 This dynamic geometry-helper audit complements the static materializer source audit.

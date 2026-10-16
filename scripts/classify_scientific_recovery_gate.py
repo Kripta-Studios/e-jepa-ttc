@@ -1,6 +1,6 @@
+#!/usr/bin/env python
 # ruff: noqa: E402
 # CLI entry point: add the checkout to sys.path before importing project modules.
-#!/usr/bin/env python
 """Pre-registered branch classifier for A5-S1, A6-S1 and A7-S1.
 
 Decisions are data, not process exit failures: the script exits zero after a valid

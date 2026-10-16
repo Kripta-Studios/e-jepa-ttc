@@ -1,6 +1,6 @@
+#!/usr/bin/env python
 # ruff: noqa: E402
 # CLI entry point: add the checkout to sys.path before importing project modules.
-#!/usr/bin/env python
 "Build a Garl public 8192/2048 subset from the exact E-JEPA S1 cache tokens."
 
 from __future__ import annotations

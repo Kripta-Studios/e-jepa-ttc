@@ -1,6 +1,6 @@
+#!/usr/bin/env python3
 # ruff: noqa: E402
 # CLI entry point: add the checkout to sys.path before importing project modules.
-#!/usr/bin/env python3
 """Run the train-only Object Event TTC v4.11 sign-router screen."""
 
 from __future__ import annotations

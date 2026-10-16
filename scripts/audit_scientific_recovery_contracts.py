@@ -1,6 +1,6 @@
+#!/usr/bin/env python
 # ruff: noqa: E402
 # CLI entry point: add the checkout to sys.path before importing project modules.
-#!/usr/bin/env python
 "Audit causal/oracle-ROI and Garl protocol claims without opening any sealed test."
 
 from __future__ import annotations

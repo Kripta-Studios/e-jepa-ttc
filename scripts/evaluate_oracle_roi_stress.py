@@ -1,6 +1,6 @@
+#!/usr/bin/env python
 # ruff: noqa: E402
 # CLI entry point: add the checkout to sys.path before importing project modules.
-#!/usr/bin/env python
 """Stress an E-JEPA checkpoint against synthetic common-ROI mis-localization proxies.
 
 This does NOT simulate a detector. It applies deterministic affine perturbations to the
