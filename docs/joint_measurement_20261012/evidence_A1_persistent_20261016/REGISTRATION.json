@@ -1,0 +1,25 @@
+{
+  "cpu": "12 next native P batches from saved sampler plus duplicate draw; two alternating-order passes, no row cache",
+  "gpu": "Both arms: original captured4, persistent2+2, persistent2 then fresh-session resume2;24 physical technical updates",
+  "gpu_gate": "Exact model, Adam, scheduler, sampler, all RNG, loss/gradient norm/ID curves; only wall timings excluded",
+  "loader_gate": "All batch fields bitwise exact; second-pass median paired parallel/serial <=0.85",
+  "loss": "Identical FP32 ordered arithmetic; combine guards before backward and transfer all per-microbatch diagnostics once; original Python-double aggregation order",
+  "native_gpu": "Next real P B32 at saved1086 weights/RNG: original versus combined loss, exact losses/gradients/RNG, zero optimizer updates, median warm ratio<=1.10",
+  "origin_sha256": "80abe18a5b973a83267f6039383247d4772bedbb0a18808709a5f3d6d0339069",
+  "origin_updates": 1086,
+  "original_QA_sha256": "82187411f5639781a2b496ca747d1294abe4b3c3a179719d1a8696cf9f93cea6",
+  "persistent_graph_gate": "Same parameter identities and one capture across both bounded scopes",
+  "physical_technical_updates": 24,
+  "preserved": "Weights, complete optimizer/scheduler/sampler/RNG/cursor, original journal, source hashes and update accounting; no precision or recipe change",
+  "runtime": "One fresh child per arm; retain model, CUDA graph and bounded sensor cache between max900s charged scopes",
+  "scientific_registration_sha256": "d3a459fd8d1422c4317fd1b9d31d5b868c40f865399ff24ed5f0da8dbf207fa9",
+  "scientific_updates_from_QA": 0,
+  "sources": {
+    "operational/joint_measurement/adaptation_runtime.py": "becde5e793ced4abfe4a6b3981a55d774f1eb8b699838644a0f2abf55180c8ec",
+    "operational/joint_measurement/adaptation_runtime_qa.py": "b963bd9011b52247fd83d8a36536888bb4d0bef912536ec688ff6be9d4b531fd",
+    "operational/joint_measurement/parallel_training_sensor.py": "91bbb2ad0accda141534c15ed8b695e36b99e1f7d7459ccb154748f8acb8ea48",
+    "operational/joint_measurement/persistent_adaptation.py": "24df7d16d05003609637e71d6f6d328df5530a2bb5a9c9b7398ae1ff8217b231",
+    "operational/joint_measurement/phase_transport_loss.py": "47e21e0c6ece47a21bbededdc919bd29d3ae1ec56c3764ae445eef211a77fa24",
+    "operational/joint_measurement/prefetched_sensor.py": "7cc8b4deab97254d3381f569c041a5ea52387af53a57b3e2a04d9eba80ee6759"
+  }
+}

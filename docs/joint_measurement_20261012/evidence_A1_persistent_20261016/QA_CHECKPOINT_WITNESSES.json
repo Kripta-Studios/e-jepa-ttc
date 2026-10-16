@@ -1,0 +1,174 @@
+{
+  "LAST-BLOCK": {
+    "resumed": {
+      "checkpoint_sha256": "dac828399b8213a317db31f382107e525bd5d1d96bce021e7a60c6669872f636",
+      "identity": {
+        "device": "cuda",
+        "endpoint": 10,
+        "fit_id": "resumed",
+        "identity_sha256": "39741980082a01781088d68f0682ce83a29c790cb75e3219095d80605e1e1989",
+        "mass_sha256": "4873df2f43cdc74a68e2bcc22f07eb7fe54887322be8ae38c410127a1073093f",
+        "mode": "LAST-BLOCK",
+        "parent_sha256": "c2eaa9606de06812c659e318b8f53e2b1fc7b95f0e28de977e600e67501db5b5",
+        "population": "synthetic8",
+        "registration_sha256": "d3a459fd8d1422c4317fd1b9d31d5b868c40f865399ff24ed5f0da8dbf207fa9",
+        "stage": 2
+      },
+      "receipt": {
+        "accumulation_index": 0,
+        "checkpoint_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\joint_measurement_20261012\\qa\\A1_parallel_persistent_v1\\LAST-BLOCK\\resumed\\checkpoint_last.pt",
+        "checkpoint_sha256": "dac828399b8213a317db31f382107e525bd5d1d96bce021e7a60c6669872f636",
+        "complete_state": true,
+        "completed_updates": 4,
+        "fit_id": "resumed",
+        "identity_sha256": "39741980082a01781088d68f0682ce83a29c790cb75e3219095d80605e1e1989",
+        "recovery_upper": 0,
+        "schema": "rgb_port_checkpoint_receipt_v1",
+        "scientific_endpoint": false,
+        "status": "PAUSED"
+      }
+    },
+    "persistent": {
+      "checkpoint_sha256": "e48ddc388e2751d3781236bb904613633f9ce4596a80a9def88b843a09d871c4",
+      "identity": {
+        "device": "cuda",
+        "endpoint": 10,
+        "fit_id": "persistent",
+        "identity_sha256": "50a9714ab889b80a2560ff04e506eedbe96c2f1de7947fa1478fed26d1e34c9e",
+        "mass_sha256": "4873df2f43cdc74a68e2bcc22f07eb7fe54887322be8ae38c410127a1073093f",
+        "mode": "LAST-BLOCK",
+        "parent_sha256": "c2eaa9606de06812c659e318b8f53e2b1fc7b95f0e28de977e600e67501db5b5",
+        "population": "synthetic8",
+        "registration_sha256": "d3a459fd8d1422c4317fd1b9d31d5b868c40f865399ff24ed5f0da8dbf207fa9",
+        "stage": 2
+      },
+      "receipt": {
+        "accumulation_index": 0,
+        "checkpoint_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\joint_measurement_20261012\\qa\\A1_parallel_persistent_v1\\LAST-BLOCK\\persistent\\checkpoint_last.pt",
+        "checkpoint_sha256": "e48ddc388e2751d3781236bb904613633f9ce4596a80a9def88b843a09d871c4",
+        "complete_state": true,
+        "completed_updates": 4,
+        "fit_id": "persistent",
+        "identity_sha256": "50a9714ab889b80a2560ff04e506eedbe96c2f1de7947fa1478fed26d1e34c9e",
+        "recovery_upper": 0,
+        "schema": "rgb_port_checkpoint_receipt_v1",
+        "scientific_endpoint": false,
+        "status": "PAUSED"
+      }
+    },
+    "original": {
+      "checkpoint_sha256": "ffc10c5fff15a6dd89747d711f2c8b746ac9fbce73a3ef7b372c9b306423daad",
+      "identity": {
+        "device": "cuda",
+        "endpoint": 10,
+        "fit_id": "original",
+        "identity_sha256": "87def95d30134291d7f013b04110a4eb572f34cd22679e2b9cea28d1a317659d",
+        "mass_sha256": "4873df2f43cdc74a68e2bcc22f07eb7fe54887322be8ae38c410127a1073093f",
+        "mode": "LAST-BLOCK",
+        "parent_sha256": "c2eaa9606de06812c659e318b8f53e2b1fc7b95f0e28de977e600e67501db5b5",
+        "population": "synthetic8",
+        "registration_sha256": "d3a459fd8d1422c4317fd1b9d31d5b868c40f865399ff24ed5f0da8dbf207fa9",
+        "stage": 2
+      },
+      "receipt": {
+        "accumulation_index": 0,
+        "checkpoint_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\joint_measurement_20261012\\qa\\A1_parallel_persistent_v1\\LAST-BLOCK\\original\\checkpoint_last.pt",
+        "checkpoint_sha256": "ffc10c5fff15a6dd89747d711f2c8b746ac9fbce73a3ef7b372c9b306423daad",
+        "complete_state": true,
+        "completed_updates": 4,
+        "fit_id": "original",
+        "identity_sha256": "87def95d30134291d7f013b04110a4eb572f34cd22679e2b9cea28d1a317659d",
+        "recovery_upper": 0,
+        "schema": "rgb_port_checkpoint_receipt_v1",
+        "scientific_endpoint": false,
+        "status": "PAUSED"
+      }
+    }
+  },
+  "FULL": {
+    "resumed": {
+      "checkpoint_sha256": "e427658d6c6edd542286e46660d1911d4a5dfd5a42504a39d8dde71c6c78fa60",
+      "identity": {
+        "device": "cuda",
+        "endpoint": 10,
+        "fit_id": "resumed",
+        "identity_sha256": "e85ac8c71cb0b1cffd35d03891bcf98c055ad2836b2907743cbc90a658e79908",
+        "mass_sha256": "4873df2f43cdc74a68e2bcc22f07eb7fe54887322be8ae38c410127a1073093f",
+        "mode": "FULL",
+        "parent_sha256": "c2eaa9606de06812c659e318b8f53e2b1fc7b95f0e28de977e600e67501db5b5",
+        "population": "synthetic8",
+        "registration_sha256": "d3a459fd8d1422c4317fd1b9d31d5b868c40f865399ff24ed5f0da8dbf207fa9",
+        "stage": 2
+      },
+      "receipt": {
+        "accumulation_index": 0,
+        "checkpoint_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\joint_measurement_20261012\\qa\\A1_parallel_persistent_v1\\FULL\\resumed\\checkpoint_last.pt",
+        "checkpoint_sha256": "e427658d6c6edd542286e46660d1911d4a5dfd5a42504a39d8dde71c6c78fa60",
+        "complete_state": true,
+        "completed_updates": 4,
+        "fit_id": "resumed",
+        "identity_sha256": "e85ac8c71cb0b1cffd35d03891bcf98c055ad2836b2907743cbc90a658e79908",
+        "recovery_upper": 0,
+        "schema": "rgb_port_checkpoint_receipt_v1",
+        "scientific_endpoint": false,
+        "status": "PAUSED"
+      }
+    },
+    "persistent": {
+      "checkpoint_sha256": "1db4972cd42862ebe350def370ae16cf7b58d05497e7ec9bd3b99fdcd3e83e53",
+      "identity": {
+        "device": "cuda",
+        "endpoint": 10,
+        "fit_id": "persistent",
+        "identity_sha256": "8c1c604ef7f8c2a13da9c208d2f9e46f3ed3e67714ef0c9ba6af3530f60ad93b",
+        "mass_sha256": "4873df2f43cdc74a68e2bcc22f07eb7fe54887322be8ae38c410127a1073093f",
+        "mode": "FULL",
+        "parent_sha256": "c2eaa9606de06812c659e318b8f53e2b1fc7b95f0e28de977e600e67501db5b5",
+        "population": "synthetic8",
+        "registration_sha256": "d3a459fd8d1422c4317fd1b9d31d5b868c40f865399ff24ed5f0da8dbf207fa9",
+        "stage": 2
+      },
+      "receipt": {
+        "accumulation_index": 0,
+        "checkpoint_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\joint_measurement_20261012\\qa\\A1_parallel_persistent_v1\\FULL\\persistent\\checkpoint_last.pt",
+        "checkpoint_sha256": "1db4972cd42862ebe350def370ae16cf7b58d05497e7ec9bd3b99fdcd3e83e53",
+        "complete_state": true,
+        "completed_updates": 4,
+        "fit_id": "persistent",
+        "identity_sha256": "8c1c604ef7f8c2a13da9c208d2f9e46f3ed3e67714ef0c9ba6af3530f60ad93b",
+        "recovery_upper": 0,
+        "schema": "rgb_port_checkpoint_receipt_v1",
+        "scientific_endpoint": false,
+        "status": "PAUSED"
+      }
+    },
+    "original": {
+      "checkpoint_sha256": "8491703943fd67822958241e43e5b65e72c26287ce90fe933cc6d4aa888df445",
+      "identity": {
+        "device": "cuda",
+        "endpoint": 10,
+        "fit_id": "original",
+        "identity_sha256": "ce21f27344914b2f7e1e3aa26d9a4f417ddc549dd11486f6dcd534fda0d637c2",
+        "mass_sha256": "4873df2f43cdc74a68e2bcc22f07eb7fe54887322be8ae38c410127a1073093f",
+        "mode": "FULL",
+        "parent_sha256": "c2eaa9606de06812c659e318b8f53e2b1fc7b95f0e28de977e600e67501db5b5",
+        "population": "synthetic8",
+        "registration_sha256": "d3a459fd8d1422c4317fd1b9d31d5b868c40f865399ff24ed5f0da8dbf207fa9",
+        "stage": 2
+      },
+      "receipt": {
+        "accumulation_index": 0,
+        "checkpoint_path": "C:\\Users\\Álvaro Schwiedop\\Desktop\\KriptaStudios\\EVOCON_JEPA_Codex_Handoff\\e-jepa-ttc-v18-joint-measurement\\artifacts\\joint_measurement_20261012\\qa\\A1_parallel_persistent_v1\\FULL\\original\\checkpoint_last.pt",
+        "checkpoint_sha256": "8491703943fd67822958241e43e5b65e72c26287ce90fe933cc6d4aa888df445",
+        "complete_state": true,
+        "completed_updates": 4,
+        "fit_id": "original",
+        "identity_sha256": "ce21f27344914b2f7e1e3aa26d9a4f417ddc549dd11486f6dcd534fda0d637c2",
+        "recovery_upper": 0,
+        "schema": "rgb_port_checkpoint_receipt_v1",
+        "scientific_endpoint": false,
+        "status": "PAUSED"
+      }
+    }
+  }
+}

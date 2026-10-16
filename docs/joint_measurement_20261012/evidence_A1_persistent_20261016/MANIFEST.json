@@ -1,0 +1,51 @@
+{
+  "source_commit": "a3b021dc6c9670ddb48b82a058b1bf77c98d4db5",
+  "files": {
+    "QUIESCE_REQUEST.json": {
+      "sha256": "6745c089beb9c017c2fac90f0f391301370fe804db7e775abe25a1253436d96a",
+      "bytes": 538
+    },
+    "QA_LAST-BLOCK.json": {
+      "sha256": "04d517e57e4e4166b63fda9b4f5c7dd34713549f203d7c386bd7609ad98b7324",
+      "bytes": 865
+    },
+    "CPU.json": {
+      "sha256": "32ffe7fab05f98184528496a55a0b89aed888fd19911ddebcff3f9d6424eecb7",
+      "bytes": 31730
+    },
+    "QA_FULL.json": {
+      "sha256": "04d517e57e4e4166b63fda9b4f5c7dd34713549f203d7c386bd7609ad98b7324",
+      "bytes": 865
+    },
+    "REGISTRATION.json": {
+      "sha256": "5f6e5c7d21dc32b1116c596e1cb4dab5821a36410c609b48299924fa47c5fc12",
+      "bytes": 2367
+    },
+    "PRODUCTION_1200.json": {
+      "sha256": "684da9b1c0e23ac0b422b6673434356eaa11484b6558329f95a07008efc7e2d2",
+      "bytes": 27937
+    },
+    "ADMISSION.json": {
+      "sha256": "3a445e4d25c1f0e6bfc86e4fe53a4c01c5fd2c3600736227f9cb7f0132abecbd",
+      "bytes": 1320
+    },
+    "NATIVE.json": {
+      "sha256": "a7b5a251724bf51557e15bacbe5416c9ef61f27be3d0b7d86f4b638969088b51",
+      "bytes": 1947
+    },
+    "ACTIVATION_VERIFIED.json": {
+      "sha256": "e247c2eab5030416696e2c6caf60de78738660e13cb3c8ad9c6bdd3f73bf9718",
+      "bytes": 445
+    },
+    "QA_CHECKPOINT_WITNESSES.json": {
+      "sha256": "a3274af97fe81b38d3dd039cc78035c3843d40a5d13613a6440143f164bdc24e",
+      "bytes": 8827
+    },
+    "QUIESCED.json": {
+      "sha256": "c72e96a864380e53317a24a5c9b9d46cb5fdb7118b1258c6b49ffa2b7e43ea54",
+      "bytes": 1275
+    }
+  },
+  "schema": "v18_runtime_evidence_v1",
+  "full_campaign_complete": false
+}
