@@ -152,3 +152,54 @@ heredada ejecuta F_TRUE en CUDA, con batch1 e historiales recortados a su sufijo
 válido. Deben contrastarse dispositivo, forma de batch/historial y emisión con
 los mismos pesos e inputs antes de atribuir el fallo a un factor concreto.
 Esto es una hipótesis de reproducibilidad numérica, no una nueva receta TTC.
+
+## Contraste de la cabeza F_TRUE sobre caché fija, 20:02 del 16 de octubre
+
+El diagnóstico `fusion_head_parity.py` conserva las primeras trece consultas del
+orden original, incluida la consulta 12955 que falló. Registra cuatro variantes
+antes de medirlas: batch128 histórico con sus vecinos reales, repetición de la
+consulta hasta batch128, batch1 con padding y batch1 con el sufijo válido. Todas
+usan los mismos pesos y la caché FUSION admitida; no cargan targets TTC.
+
+Se ejecutaron las 52 llamadas CPU. Los pesos y el RNG permanecen iguales, CUDA
+no se inicializó y se hicieron cero updates. Las 13 consultas pasan la tolerancia
+original en las cuatro variantes, tanto usando `output['ttc']` como convirtiendo
+`output['point_phase']` a TTC. Ruff, Pyright y cuatro tests de preservación de
+batch/sufijo y rechazo de historiales inválidos pasan.
+
+| Variante CPU | Máxima diferencia TTC directo frente a referencia | Máxima diferencia desde fase emitida |
+|---|---:|---:|
+| Batch128 histórico | 0,000000119209 s | 0 s |
+| Consulta repetida hasta batch128 | 0,000000119209 s | 0 s |
+| Batch1 con padding | 0,000049591064 s | 0,000049591064 s |
+| Batch1 con sufijo válido | 0,000049591064 s | 0,000049591064 s |
+
+En la consulta 12955, el batch128 reproduce exactamente 37,10210037231445 s
+por ambas emisiones. Batch1 produce 37,102149963378906 s por ambas emisiones:
+la diferencia es 0,049591 ms, dentro de la tolerancia. El fallo raw previo era
+de 0,793457 ms, con otros factores de ejecución además del tamaño de batch.
+
+Por tanto, **la conversión adicional no explica por sí sola el fallo**, ni el
+recorte del padding lo reproduce en este contraste CPU. La forma de batch sí
+introduce una pequeña diferencia observada sobre inputs fijos. Quedan por
+separar la ejecución CUDA de la cabeza y las features reconstruidas desde
+sensores. El resultado no admite el coste completo ni cambia la conclusión
+científica de la campaña.
+
+La fase firmada se convierte, fuera de los límites numéricos, mediante
+`T = 0.1 / (1 - exp(-fase))`. Para fases pequeñas, `T ≈ 0.1 / fase`: una pequeña
+diferencia de fase puede amplificarse en segundos cuando el TTC es grande.
+La referencia calcula fase → TTC → fase emitida → TTC; la ruta de coste
+devuelve el TTC de la primera conversión. Matemáticamente deberían coincidir
+dentro del soporte, pero FP32 y las distintas formas/dispositivos pueden producir
+redondeos diferentes. El contraste anterior mide su efecto real en estas consultas.
+
+El siguiente comando requiere GPU exclusiva, después del entrenamiento A1:
+
+```powershell
+$env:PYTHONPATH = 'src;.'
+& ..\e-jepa-ttc\.venv\Scripts\python.exe -B -m operational.joint_measurement.fusion_head_parity cuda
+```
+
+El registro y resultado CPU se conservan en `fusion/cost/F_TRUE_head_diagnostic_v1`.
+La comparación mide desacuerdo entre implementaciones, no error respecto al GT.

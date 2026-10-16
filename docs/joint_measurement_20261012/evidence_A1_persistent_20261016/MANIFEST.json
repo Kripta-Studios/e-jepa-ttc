@@ -56,9 +56,18 @@
     "A1_EVALUATION_REGISTRATION.json": {
       "sha256": "fe5e1cc6696e941b31fc438c9a4ad7f6d6c90ff5bf427f456ced85b673e410b3",
       "bytes": 4340
+    },
+    "F_TRUE_HEAD_DIAGNOSTIC_REGISTRATION.json": {
+      "sha256": "1f0f392ef8ed5ead6d4480c6d926a26d405004a05ad279255796cf9697f41bf2",
+      "bytes": 2473
+    },
+    "F_TRUE_HEAD_DIAGNOSTIC_CPU.json": {
+      "sha256": "8c380a58aee335988ca6aaf3f0233a0679403194b299576cf4818236d927b036",
+      "bytes": 45986
     }
   },
   "schema": "v18_runtime_evidence_v1",
   "full_campaign_complete": false,
-  "additions_commit": "469537e"
+  "additions_commit": "469537e",
+  "F_TRUE_diagnostic_code_commit": "3597a51"
 }

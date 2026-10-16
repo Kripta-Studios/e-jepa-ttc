@@ -1,0 +1,68 @@
+{
+  "cache_sha256": "5483d53b0088e278800294cedaa673fe8b19316bf0e7b8e925567615d8cae5b3",
+  "checkpoint_sha256": "dba93f9794e852d0e1d7323ac91ed257c59ec8e20a8ea952a93c5742a7f72f1b",
+  "cost_registration_sha256": "b203502bbeda59da11670010dfdc171fe660f85cdc78fda9bb34df966facc5af",
+  "devices": [
+    "cpu",
+    "cuda"
+  ],
+  "failed_parity_sha256": "2101676fc56d7290bbc5ae44909ed8723a6ebe24a7b2adf3b37dd7630c9905fc",
+  "indices": [
+    16169,
+    7651,
+    1762,
+    1515,
+    5733,
+    16080,
+    9793,
+    5107,
+    7652,
+    8792,
+    7296,
+    1104,
+    12955
+  ],
+  "interpretation": "Cached features isolate head device/batch/history/emission. No raw-producer parity, no automatic cost admission, no fitting or tolerance changes.",
+  "labels_read": false,
+  "optimizer_updates": 0,
+  "outputs": [
+    "raw_location",
+    "point_phase",
+    "direct_ttc",
+    "emitted_ttc"
+  ],
+  "parity_atol": 0.0001,
+  "parity_rtol": 1e-05,
+  "precision": "FP32; TF32 disabled for this head-only diagnostic",
+  "reference_sha256": "e0a6d92bd8dec29dda590fd8d39ee749a4d4d549b3f3951bf99c9be2d7604614",
+  "selection": "All queries through the first recorded failure in the original cost order",
+  "sources": {
+    "operational/joint_measurement/fusion_head_parity.py": "ac88e7c6e66fefdb07d3e682da78e17ee811351a64721abda6f41c4bb09af1f9",
+    "operational/rgb_port/predict_heads.py": "f135c768646d82f95c63e2c8cfebe5c04b52cd53b0b8273b09520c3697b741f7",
+    "operational/rgb_port/train_heads.py": "e744ecc1d8cd4fb3676af16904051b51784a16ee1340cb50fbb3aee0447c0060",
+    "src/e_jepa_ttc/rgb_port/fusion.py": "3aafc191fad82d389f199cfb9a36905fba966ef9230ec6b5570af5e4cb6f4085",
+    "src/e_jepa_ttc/simplex_t/model.py": "4c26ad5ecf9e83541e29d748d4eace4e457fbeda28ff61bd30a1b954bb44d8dd",
+    "src/e_jepa_ttc/simplex_t/phase.py": "7ee447190ef7b218d0f6c6cf5110a1522c201049749a98b4395eeafefe853cde"
+  },
+  "tokens": [
+    "t79dBxj1WS_002800_8044900000",
+    "WbCh1DRerJ_002786_9629400000",
+    "5ilM1PX2vz_000007_9759400000",
+    "2cyv0Oedzg_002704_19598500000",
+    "6h5yRW2LGc_004701_5413800000",
+    "t79dBxj1WS_002800_8033000000",
+    "Z30i8WuL2N_002617_10690900000",
+    "6h5yRW2LGc_002925_5280600000",
+    "WbCh1DRerJ_002786_9629500000",
+    "Z30i8WuL2N_000189_10591100000",
+    "WbCh1DRerJ_001698_9586200000",
+    "2cyv0Oedzg_001282_19555600000",
+    "rhYxPcU29n_001292_7294200000"
+  ],
+  "variants": [
+    "historical_batch128",
+    "repeat128",
+    "padded_batch1",
+    "trimmed_batch1"
+  ]
+}
