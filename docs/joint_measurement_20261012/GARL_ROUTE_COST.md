@@ -1,7 +1,6 @@
-# Coste de las dos rutas Garl: registro previo
+# Coste medido de las dos rutas Garl
 
-El medidor está implementado y registrado; **la medición real está pendiente**.
-B1 conserva prioridad y no se ha cargado otro modelo junto a su entrenamiento.
+La medición registrada está completa: 64 consultas y 128 pares. Se ejecutó después de B1, sin entrenamiento concurrente.
 Este trabajo completa una comparación de implementación, no selecciona pesos ni
 recetas con P, H, V, Dev32 o FCWD.
 
@@ -96,3 +95,30 @@ servicio ni permite entrenamientos MLflow concurrentes. Su registro queda en
 `GUARD_RUNTIME.json`. Para el diagnóstico de shapes de fusión se usa el mismo
 comando con `shape` en lugar de `garl`. Ambos se ejecutan secuencialmente y sólo
 cuando no queda otro proceso de cómputo del proyecto.
+
+## Resultados medidos el 16 de octubre de 2026
+
+64 consultas P, dos pasadas y dos rutas: 128 pares / 256 observaciones. Todos los pares conservan inputs y predicciones exactamente iguales, incluidos los TTC no finitos representados explícitamente. Modelo público completo, CPU FP32 y un hilo PyTorch; cero updates.
+
+| Ruta | Componente | Media ms | p50 ms | p95 ms | p99 ms |
+|---|---|---:|---:|---:|---:|
+| UPSTREAM | preprocess_ms | 408.256 | 264.171 | 657.570 | 1169.323 |
+| UPSTREAM | model_emission_ms | 701.038 | 610.853 | 1089.678 | 1490.353 |
+| UPSTREAM | total_ms | 1109.374 | 871.522 | 1892.168 | 2616.572 |
+| LOCAL | preprocess_ms | 379.893 | 313.581 | 815.214 | 985.087 |
+| LOCAL | model_emission_ms | 705.022 | 637.341 | 1274.400 | 1571.351 |
+| LOCAL | total_ms | 1084.994 | 951.143 | 1791.273 | 2492.282 |
+
+LOCAL mejora ligeramente la media total y empeora la mediana frente a UPSTREAM. Esta medición no establece una aceleración uniforme ni un ganador de precisión. El original ya estaba vectorizado. El estado de la caché de disco del sistema operativo no se controló; los dos órdenes se alternaron según el registro.
+
+| Sesión | Carga ms | Primer forward ms | Preparado p50 ms | Preparado p95 ms |
+|---|---:|---:|---:|---:|
+| 1792167163563631500 | 13284.104 | 3283.731 | 3160.944 | 3285.506 |
+
+La medición preparada usa un único tensor residente antes de las rutas raw; sus tiempos difieren de los forwards posteriores. Se conservan ambos ámbitos y su orden temporal, sin tratarlos como observaciones intercambiables ni atribuir una causa no medida a esa diferencia. Primer forward no significa disco frío. La memoria registrada es RSS y pico de vida del proceso; no un pico aislado por ruta.
+
+Las cifras CPU no son comparables directamente con los costes CUDA de V18 ni con las métricas del benchmark oficial. Esta comparación de implementación no accede a etiquetas para seleccionar consultas o modelos.
+
+Fuente RESULT.json, SHA-256: `3b27e6ef697fab66362a3c296bf7aa8449d9133db44b244af4e3bed2ce3c4188`.
+
+Regenerar: `pwsh -NoProfile -File scripts/Build-JointMeasurementGarlCostReport.ps1`. Los JSON por par y MEASUREMENTS.csv permanecen en cost/garl_routes y se incluyen en el bundle de resultados.
