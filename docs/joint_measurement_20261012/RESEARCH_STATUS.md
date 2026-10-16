@@ -1,6 +1,6 @@
 # V18 JOINT-MEASUREMENT
 
-Estado: RESEARCH_ONGOING / FUSION_C1_REPLICATION_RUNNING;
+Estado: RESEARCH_ONGOING / FUSION_REPLICA_FEATURES_AND_HEADS;
 fase primaria NO_SYSTEM_PROMOTION; RGB NO_CANDIDATE_RGB_PAIR;
 C1 independiente NO_CANDIDATE_C1; fusión seed7 sin promoción de sistema.
 Los cuatro entrenamientos primarios están completos en 12.000 updates cada uno.
@@ -22,8 +22,13 @@ Actualización del 16 de octubre de 2026, reanudación solicitada por el usuario
   con 12.000 updates nuevos de encoder/lectura C1 y dos cabezas TRUE/ZERO de
   2.500. Son 34.000 científicos adicionales, con A5/R_CTX históricos compartidos
   explícitamente. La QA de este motor capturado pasa con 20 técnicos contados.
-  Se reconstruirán features y normalizador event de cada productor; todos los
+  Ambos productores terminaron en 12.000 updates el 16 de octubre, antes de las
+  04:03 locales. Se están reconstruyendo features y normalizador event; todos los
   endpoints se congelan antes de abrir V de las réplicas. No hay rescate de seeds.
+- D1 está registrado antes de entrenar: predictor espacial y MLP con anchura
+  duplicada, CNN nativa entrenable y control PAIR-CORR-S7 reutilizado. La prueba
+  CPU pasa; quedan QA CUDA, 12.000 updates y evidencia P/H. La hipótesis no
+  presupone que la capacidad explique los errores. Véase [D1_EXECUTION.md](D1_EXECUTION.md).
 - Sigue pendiente medir el coste sensorial completo de la nueva fusión. Los
   exports disponibles comienzan en features y sus tiempos no son E2E.
 
